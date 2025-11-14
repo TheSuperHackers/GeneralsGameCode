@@ -20,7 +20,7 @@
 // Class to handle cell size slider.
 // Author: John Ahlquist, April 2001
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 
 #include "Lib/BaseType.h"
 #include "MyToolbar.h"
@@ -74,13 +74,13 @@ void CellSizeToolBar::SetupSlider(void)
 	m_staticThis = this;
 }
 
-void CellSizeToolBar::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CellSizeToolBar::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	if (nSBCode != TB_THUMBTRACK) {
 		nPos = m_cellSlider.GetPos();
 	}
 	UnsignedInt i;
-	// invert 
+	// invert
 	nPos = MAX_POS - nPos + MIN_POS;
 	int newSize = 1;
 	for (i=1; i<nPos; i++) {

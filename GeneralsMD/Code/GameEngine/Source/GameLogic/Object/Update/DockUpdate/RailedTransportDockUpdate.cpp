@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
@@ -53,7 +53,7 @@ RailedTransportDockUpdateModuleData::RailedTransportDockUpdateModuleData( void )
 	m_pullInsideDurationInFrames = 0;
 	m_pushOutsideDurationInFrames = 0;
 	m_toleranceDistance = 50.0f;
-}  // end RailedTransportDockUpdateModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -61,10 +61,10 @@ RailedTransportDockUpdateModuleData::RailedTransportDockUpdateModuleData( void )
 {
   DockUpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 
-		{ "PullInsideDuration", INI::parseDurationUnsignedInt, NULL, offsetof( RailedTransportDockUpdateModuleData, m_pullInsideDurationInFrames ) },	
+		{ "PullInsideDuration", INI::parseDurationUnsignedInt, NULL, offsetof( RailedTransportDockUpdateModuleData, m_pullInsideDurationInFrames ) },
 		{ "PushOutsideDuration",INI::parseDurationUnsignedInt, NULL, offsetof( RailedTransportDockUpdateModuleData, m_pushOutsideDurationInFrames ) },
 		{ "ToleranceDistance",  INI::parseReal,								 NULL, offsetof( RailedTransportDockUpdateModuleData, m_toleranceDistance ) },
 		{ 0, 0, 0, 0 }
@@ -73,7 +73,7 @@ RailedTransportDockUpdateModuleData::RailedTransportDockUpdateModuleData( void )
 
   p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,23 +91,23 @@ RailedTransportDockUpdate::RailedTransportDockUpdate( Thing *thing, const Module
 	m_pushOutsideDistancePerFrame = 0.0f;
 	m_unloadCount = UNLOAD_ALL;
 
-}  // end RailedTransportDockUpdate
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 RailedTransportDockUpdate::~RailedTransportDockUpdate( void )
 {
 
-}  // end ~RailedTransportDockUpdate
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 UpdateSleepTime RailedTransportDockUpdate::update( void )
 {
-	
+
 	// extend functionality
 	UpdateSleepTime result;
-	
+
 	result = DockUpdate::update();
 
 	// do any pull in docking we need to
@@ -117,7 +117,7 @@ UpdateSleepTime RailedTransportDockUpdate::update( void )
 	doPushOutDocking();
 
 	return UPDATE_SLEEP_NONE;
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** The dock action callback, return FALSE when done docking */
@@ -170,12 +170,12 @@ Bool RailedTransportDockUpdate::action( Object *docker, Object *drone )
 			angleVector.y = dockPos->y - dockerPos->y;
 			docker->setOrientation( angleVector.toAngle() );
 		}
-		
-	}  // end if	
+
+	}
 
 	return TRUE;
 
-}  // end action
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Is clear to enter the railed transport */
@@ -195,8 +195,8 @@ Bool RailedTransportDockUpdate::isClearToEnter( Object const *docker ) const
 		return FALSE;
 
 	return TRUE;
-		
-}  // end isClearToEnter
+
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Is anything currently loading or unloading */
@@ -206,10 +206,10 @@ Bool RailedTransportDockUpdate::isLoadingOrUnloading( void )
 
 	if( m_unloadingObjectID != INVALID_ID || m_dockingObjectID != INVALID_ID )
 		return TRUE;
-	
+
 	return FALSE;
 
-}  // end isLoadingOrUnloading
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Start the unload process */
@@ -225,7 +225,7 @@ void RailedTransportDockUpdate::unloadAll( void )
 	m_unloadCount = UNLOAD_ALL;
 	unloadNext();
 
-}  // end manualUnload
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Unload a single individual only */
@@ -237,7 +237,7 @@ void RailedTransportDockUpdate::unloadSingleObject( Object *obj )
 	m_unloadCount = 1;
 	unloadNext();
 
-}  // end unloadSingleObject
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -259,7 +259,7 @@ void RailedTransportDockUpdate::doPullInDocking( void )
 	{
 		Object *us = getObject();
 		Object *docker = TheGameLogic->findObjectByID( m_dockingObjectID );
-		
+
 		// check for docker gone
 		if( docker == NULL )
 			m_dockingObjectID = INVALID_ID;
@@ -319,17 +319,17 @@ void RailedTransportDockUpdate::doPullInDocking( void )
 				{
 					contain->addToContain( docker );
 				}
-				
+
 				// no object is docking now
 				m_dockingObjectID = INVALID_ID;
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
-}  // end doPullInDocking
+}
 
 // ------------------------------------------------------------------------------------------------
 /** If we have an object recorded as being pushed out of us then do that here */
@@ -348,7 +348,7 @@ void RailedTransportDockUpdate::doPushOutDocking( void )
 			unloadNext();
 			return;
 
-		}  // end if
+		}
 
 		// pull it
 		if( unloader )
@@ -417,18 +417,18 @@ void RailedTransportDockUpdate::doPushOutDocking( void )
 					us->convertBonePosToWorldPos( &finalPos, NULL, &finalPos, NULL );
 					unloaderAI->aiMoveToPosition( &finalPos, CMD_FROM_AI );
 
-				}  // end if
-						
+				}
+
 				// unload the next object
-				unloadNext();				
+				unloadNext();
 
-			}  // end if
-		
-		}  // end if
+			}
 
-	}  // end if, m_unloadingID
+		}
 
-}  // end doPushOutDocking
+	}
+
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Iterate callback for the finding the first contained object */
@@ -444,7 +444,7 @@ static void getFirstContain( Object *obj, void *userData )
 	// assign this as the first object found
 	*firstContain = obj;
 
-}  // end getFirstContain
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Start the next object contained by us as "unloading and coming out" */
@@ -466,7 +466,7 @@ void RailedTransportDockUpdate::unloadNext( void )
 	// better be an open container
 	ContainModuleInterface *contain = us->getContain();
 	OpenContain *openContain = contain ? contain->asOpenContain() : NULL;
-	DEBUG_ASSERTCRASH( openContain, ("Unloading next from railed transport, but '%s' has no open container\n",
+	DEBUG_ASSERTCRASH( openContain, ("Unloading next from railed transport, but '%s' has no open container",
 										 us->getTemplate()->getName().str()) );
 
 	// get the first contained object
@@ -480,7 +480,7 @@ void RailedTransportDockUpdate::unloadNext( void )
 
 		// set position of the loader to our position
 		unloader->setPosition( us->getPosition() );
-	
+
 		// orient unloader to the same angle as us so we can drive out the front
 		unloader->setOrientation( us->getOrientation() );
 
@@ -507,17 +507,17 @@ void RailedTransportDockUpdate::unloadNext( void )
 		// now that we know how far we must go, now much distance should we travel every frame
 		const RailedTransportDockUpdateModuleData *modData = getRailedTransportDockUpdateModuleData();
 		m_pushOutsideDistancePerFrame = mag / modData->m_pushOutsideDurationInFrames;
-		
+
 		// set this as our current unloader
 		m_unloadingObjectID = unloader->getID();
-	
+
 		// we've now used an unload (if we're keeping count for single exits)
 		if( m_unloadCount != UNLOAD_ALL )
 			--m_unloadCount;
-						
-	}  // end if
 
-}  // end unloadNext
+	}
+
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -528,7 +528,7 @@ void RailedTransportDockUpdate::crc( Xfer *xfer )
 	// extend base class
 	DockUpdate::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -545,7 +545,7 @@ void RailedTransportDockUpdate::xfer( Xfer *xfer )
 
 	// extend base class
 	DockUpdate::xfer( xfer );
-	
+
 	// docking object id
 	xfer->xferObjectID( &m_dockingObjectID );
 
@@ -561,7 +561,7 @@ void RailedTransportDockUpdate::xfer( Xfer *xfer )
 	// unload count
 	xfer->xferInt( &m_unloadCount );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -572,4 +572,4 @@ void RailedTransportDockUpdate::loadPostProcess( void )
 	// extend base class
 	DockUpdate::loadPostProcess();
 
-}  // end loadPostProcess
+}

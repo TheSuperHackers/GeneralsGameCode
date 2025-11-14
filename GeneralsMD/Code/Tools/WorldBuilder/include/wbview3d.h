@@ -21,12 +21,8 @@
 // Class to encapsulate height map.
 // Author: Steven Johnson, Aug 2001
 
-#if !defined(AFX_WBVIEW3D_H__832D8241_87F6_11D5_8CE0_00010297BBAC__INCLUDED_)
-#define AFX_WBVIEW3D_H__832D8241_87F6_11D5_8CE0_00010297BBAC__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // wbview3d.h : header file
 //
 
@@ -40,7 +36,7 @@
 #include "dx8wrapper.h"
 
 //#include "GameLogic/Module/BodyModule.h" -- Yikes... not necessary to include this! (KM)
-enum BodyDamageType; //Ahhhh much better!
+enum BodyDamageType CPP_11(: Int); //Ahhhh much better!
 
 class WorldHeightMap;
 class LayerClass;
@@ -86,7 +82,7 @@ public:
 // Implementation
 protected:
 	virtual ~WbView3d();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
@@ -260,7 +256,7 @@ public:
 	virtual void scrollInView(Real x, Real y, Bool end);
 
 	virtual void setDefaultCamera();
-	virtual void rotateCamera(Real delta);	 
+	virtual void rotateCamera(Real delta);
 	virtual void pitchCamera(Real delta);
 	void setCameraPitch(Real absolutePitch);
 	Real getCameraPitch(void);
@@ -290,7 +286,7 @@ public:
 	AsciiString getModelNameAndScale(MapObject *pMapObj, Real *scale, BodyDamageType curDamageState);
 
 	virtual Int getPickPixels(void) {return m_pickPixels;}
-	virtual Bool viewToDocCoordZ(CPoint curPt, Coord3D *newPt, Real Z); 
+	virtual Bool viewToDocCoordZ(CPoint curPt, Coord3D *newPt, Real Z);
 public:
 
 //	void init(CWorldBuilderView *pMainView, HINSTANCE hInstance, CWnd* parent);
@@ -329,5 +325,3 @@ inline Bool WbView3d::getShowWireframe() { return m_showWireframe; }
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_WBVIEW3D_H__832D8241_87F6_11D5_8CE0_00010297BBAC__INCLUDED_)

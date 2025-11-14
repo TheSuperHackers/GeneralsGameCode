@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _OBJECT_ITER_H_
-#define _OBJECT_ITER_H_
-
 #include "Common/GameType.h"
 #include "Common/GameMemory.h"
 
@@ -39,7 +36,7 @@ class Object;
 
 //-------------------------------------------------------------------------------------------
 /** */
-enum IterOrderType
+enum IterOrderType CPP_11(: Int)
 {
 	ITER_FASTEST,										///< iterate in arbitrary order
 	ITER_SORTED_NEAR_TO_FAR,				///< iterate in nearest-to-farthest order (may be slower)
@@ -67,9 +64,9 @@ enum IterOrderType
 	{
 		// do something with other
 	}
-	iter->deleteInstance();								// you own it, so you must delete it
+	deleteInstance(iter);								// you own it, so you must delete it
 
-	note that the iterator is required to deal intelligently with deleted objects; 
+	note that the iterator is required to deal intelligently with deleted objects;
 	in particular, next() will check if an obj has been killed and simply skip it.
 */
 class ObjectIterator : public MemoryPoolObject
@@ -90,12 +87,12 @@ inline ObjectIterator::~ObjectIterator() { }
 */
 class SimpleObjectIterator : public ObjectIterator
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SimpleObjectIterator, "SimpleObjectIteratorPool" )		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SimpleObjectIterator, "SimpleObjectIteratorPool" )
 private:
 
 	class Clump : public MemoryPoolObject
 	{
-		MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Clump, "SimpleObjectIteratorClumpPool" )		
+		MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Clump, "SimpleObjectIteratorClumpPool" )
 	public:
 
 		Clump			*m_nextClump;
@@ -135,7 +132,7 @@ public:
 	/**
 		throw away all contents of the iterator.
 	*/
-	void makeEmpty();	
+	void makeEmpty();
 
 	/**
 		insert an object at the head of the iterator. the given numeric value
@@ -155,7 +152,3 @@ public:
 	*/
 	Int getCount() { return m_clumpCount; }
 };
-
-
-#endif // _OBJECT_ITER_H_
-

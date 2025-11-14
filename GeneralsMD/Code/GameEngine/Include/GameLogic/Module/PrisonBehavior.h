@@ -27,8 +27,7 @@
 // Desc:   Prison Behaviors
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __PRISON_BEHAVIOR_H_
-#define __PRISON_BEHAVIOR_H_
+#pragma once
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/OpenContain.h"
@@ -81,9 +80,7 @@ protected:
 	void removeVisual( Object *obj );						///< remove prisoner visual
 
 	PrisonVisual *m_visualList;									///< list of visual representation data (if needed)
-			
+
 };
 
 #endif
-
-#endif  // end __PRISON_BEHAVIOR_H_

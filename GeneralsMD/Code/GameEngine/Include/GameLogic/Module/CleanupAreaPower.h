@@ -24,27 +24,24 @@
 
 // FILE: CleanupAreaPower.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	Created:	September 2002
 //
 //	Author:		Kris Morness
-//	
-//  Makes use of the cleanup hazard update by augmenting the cleanup range 
+//
+//  Makes use of the cleanup hazard update by augmenting the cleanup range
 //  until there is nothing left to cleanup at which time it goes idle.
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __CLEANUP_AREA_POWER_H_
-#define __CLEANUP_AREA_POWER_H_
 
 //-----------------------------------------------------------------------------
 #include "GameLogic/Module/SpecialPowerModule.h"
@@ -75,5 +72,3 @@ public:
 
 	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
 };
-
-#endif 

@@ -24,12 +24,12 @@
 
 // FILE: GUIEditDisplay.h /////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -44,9 +44,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __GUIEDITDISPLAY_H_
-#define __GUIEDITDISPLAY_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -72,9 +69,9 @@ public:
 	virtual void draw( void ) { };
 
 	/// draw a line on the display in pixel coordinates with the specified color
-	virtual void drawLine( Int startX, Int startY, Int endX, Int endY, 
+	virtual void drawLine( Int startX, Int startY, Int endX, Int endY,
 												 Real lineWidth, UnsignedInt lineColor );
-	virtual void drawLine( Int startX, Int startY, Int endX, Int endY, 
+	virtual void drawLine( Int startX, Int startY, Int endX, Int endY,
 												 Real lineWidth, UnsignedInt lineColor1, UnsignedInt lineColor2 ) { }
 	/// draw a rect border on the display in pixel coordinates with the specified color
 	virtual void drawOpenRect( Int startX, Int startY, Int width, Int height,
@@ -88,7 +85,7 @@ public:
 	virtual void drawRemainingRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color) { }
 
 	/// draw an image fit within the screen coordinates
-	virtual void drawImage( const Image *image, Int startX, Int startY, 
+	virtual void drawImage( const Image *image, Int startX, Int startY,
 													Int endX, Int endY, Color color = 0xFFFFFFFF, DrawImageMode mode=DRAW_IMAGE_ALPHA);
 	/// image clipping support
 	virtual void setClipRegion( IRegion2D *region );
@@ -101,14 +98,15 @@ public:
 	virtual VideoBuffer*	createVideoBuffer( void ) { return NULL; }
 
 	/// draw a video buffer fit within the screen coordinates
-	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY, 
+	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream ) { }
+	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY,
 																Int endX, Int endY ) { }
 	virtual void takeScreenShot(void){ }
 	virtual void toggleMovieCapture(void) {}
 
 	// methods that we need to stub
 	virtual void setTimeOfDay( TimeOfDay tod ) {}
-	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius, Real attenuationWidth, 
+	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius, Real attenuationWidth,
 																 UnsignedInt increaseFrameTime, UnsignedInt decayFrameTime ) {}
 	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting) {}
 	void setBorderShroudLevel(UnsignedByte level){}
@@ -117,24 +115,22 @@ public:
 	virtual void preloadTextureAssets( AsciiString texture ) {}
 	virtual void toggleLetterBox(void) {}
 	virtual void enableLetterBox(Bool enable) {}
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual void dumpModelAssets(const char *path) {}
 #endif
 	virtual void doSmartAssetPurgeAndPreload(const char* usageFileName) {}
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual void dumpAssetUsage(const char* mapname) {}
 #endif
 
 	virtual Real getAverageFPS(void) { return 0; }
+	virtual Real getCurrentFPS(void) { return 0; }
 	virtual Int getLastFrameDrawCalls( void ) { return 0; }
 
 protected:
 
-};  // end GUIEditDisplay
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GUIEDITDISPLAY_H_
-

@@ -24,12 +24,9 @@
 
 // FILE:		DumbProjectileBehavior.h
 // Author:	Steven Johnson, July 2002
-// Desc:		
+// Desc:
 
 #pragma once
-
-#ifndef _DumbProjectileBehavior_H_
-#define _DumbProjectileBehavior_H_
 
 #include "Common/GameType.h"
 #include "Common/GlobalData.h"
@@ -116,15 +113,12 @@ private:
 	Int										m_flightPathSegments;			///< number of segments in the flightpath (in case we must regen it)
 	Int										m_currentFlightPathStep;	///< Our current index in the flight path vector.  Quicker than popping off.
 	WeaponBonusConditionFlags		m_extraBonusFlags;
-  
-  Bool                  m_hasDetonated;           ///< 
+
+  Bool                  m_hasDetonated;           ///<
 
 	Bool calcFlightPath(Bool recalcNumSegments);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	void displayFlightPath();	///< Uses little debug icons in worldspace to show the path chosen when it is decided upon
 #endif
 
 };
-
-#endif // _DumbProjectileBehavior_H_
-

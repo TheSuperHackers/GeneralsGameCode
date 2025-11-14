@@ -24,12 +24,12 @@
 
 // FILE: GenerateMinefieldBehavior.cpp ///////////////////////////////////////////////////////////////////////
 // Author:
-// Desc:  
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #define DEFINE_SLOWDEATHPHASE_NAMES
 
 #include "Common/GlobalData.h"
@@ -54,11 +54,6 @@
 #include "GameLogic/Weapon.h"
 #include "GameClient/Drawable.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 GenerateMinefieldBehaviorModuleData::GenerateMinefieldBehaviorModuleData()
@@ -77,10 +72,10 @@ GenerateMinefieldBehaviorModuleData::GenerateMinefieldBehaviorModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void GenerateMinefieldBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void GenerateMinefieldBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "MineName", INI::parseAsciiString,	NULL, offsetof( GenerateMinefieldBehaviorModuleData, m_mineName ) },
 		{ "GenerationFX", INI::parseFXList,	NULL, offsetof( GenerateMinefieldBehaviorModuleData, m_genFX ) },
@@ -254,7 +249,7 @@ void GenerateMinefieldBehavior::placeMinesAlongLine(const Coord3D& posStart, con
 		pt.z = TheTerrainLogic->getGroundHeight( pt.x, pt.y );
 		offsetBySmallRandomAmount(pt, mineJitter);
 		placeMineAt(pt, mineTemplate, team, obj);
-	} 
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -315,7 +310,7 @@ void GenerateMinefieldBehavior::placeMinesAroundCircle(const Coord3D& pos, Real 
 		pt.z = TheTerrainLogic->getGroundHeight( pt.x, pt.y );
 		offsetBySmallRandomAmount(pt, mineJitter);
 		placeMineAt(pt, mineTemplate, team, obj);
-	} 
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -338,7 +333,7 @@ void GenerateMinefieldBehavior::placeMinesInFootprint(const GeometryInfo& geom, 
 	{
 		Coord3D pt;
 		Int maxRetry = 100;
-		do 
+		do
 		{
 			geom.makeRandomOffsetWithinFootprint(pt);
 			pt.x += target->x;
@@ -371,7 +366,7 @@ void GenerateMinefieldBehavior::placeMines()
 	const ThingTemplate* mineTemplate = TheThingFactory->findTemplate(d->m_mineName);
 	if (!mineTemplate)
 	{
-		DEBUG_CRASH(("mine %s not found\n",d->m_mineName.str()));
+		DEBUG_CRASH(("mine %s not found",d->m_mineName.str()));
 		return;
 	}
 
@@ -446,7 +441,7 @@ void GenerateMinefieldBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpgradeMux::upgradeMuxCRC( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -472,7 +467,7 @@ void GenerateMinefieldBehavior::xfer( Xfer *xfer )
 	xfer->xferBool( &m_hasTarget );
 	xfer->xferCoord3D( &m_target );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -486,4 +481,4 @@ void GenerateMinefieldBehavior::loadPostProcess( void )
 	// extend base class
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
-}  // end loadPostProcess
+}

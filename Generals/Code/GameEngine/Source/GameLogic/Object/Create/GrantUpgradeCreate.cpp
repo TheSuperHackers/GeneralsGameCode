@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_OBJECT_STATUS_NAMES
 #include "Common/Player.h"
@@ -42,7 +42,6 @@
 GrantUpgradeCreateModuleData::GrantUpgradeCreateModuleData()
 {
 	m_upgradeName = "";
-	m_exemptStatus = OBJECT_STATUS_NONE;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -51,10 +50,10 @@ void GrantUpgradeCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   CreateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "UpgradeToGrant",	INI::parseAsciiString,		NULL, offsetof( GrantUpgradeCreateModuleData, m_upgradeName ) },
-		{ "ExemptStatus",	INI::parseBitString32,	TheObjectStatusBitNames, offsetof( GrantUpgradeCreateModuleData, m_exemptStatus ) },
+		{ "ExemptStatus",	ObjectStatusMaskType::parseFromINI, NULL, offsetof( GrantUpgradeCreateModuleData, m_exemptStatus ) },
 		{ 0, 0, 0, 0 }
 	};
 
@@ -69,14 +68,14 @@ void GrantUpgradeCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-------------------------------------------------------------------------------------------------
 GrantUpgradeCreate::GrantUpgradeCreate( Thing *thing, const ModuleData* moduleData ) : CreateModule( thing, moduleData )
 {
-}  // end GrantUpgradeCreate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 GrantUpgradeCreate::~GrantUpgradeCreate( void )
 {
 
-}  // end ~GrantUpgradeCreate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** The create callback. */
@@ -84,16 +83,16 @@ GrantUpgradeCreate::~GrantUpgradeCreate( void )
 void GrantUpgradeCreate::onCreate( void )
 {
 
-	ObjectStatusBits exemptStatus = (ObjectStatusBits)getGrantUpgradeCreateModuleData()->m_exemptStatus;
-	ObjectStatusBits currentStatus = (ObjectStatusBits)getObject()->getStatusBits();
-	if( BitIsSet( exemptStatus, OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
+	ObjectStatusMaskType exemptStatus = getGrantUpgradeCreateModuleData()->m_exemptStatus;
+	ObjectStatusMaskType currentStatus = getObject()->getStatusBits();
+	if( exemptStatus.test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 	{
-		if(	BitIsSet( currentStatus, OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE ) 
+		if(	!currentStatus.test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 		{
 			const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( getGrantUpgradeCreateModuleData()->m_upgradeName );
 			if( !upgradeTemplate )
 			{
-				DEBUG_ASSERTCRASH( 0, ("GrantUpdateCreate for %s can't find upgrade template %s.", getObject()->getName(), getGrantUpgradeCreateModuleData()->m_upgradeName ) );
+				DEBUG_ASSERTCRASH( 0, ("GrantUpdateCreate for %s can't find upgrade template %s.", getObject()->getName().str(), getGrantUpgradeCreateModuleData()->m_upgradeName.str() ) );
 				return;
 			}
 
@@ -110,7 +109,7 @@ void GrantUpgradeCreate::onCreate( void )
 		}
 	}
 
-}  // end onCreate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -124,7 +123,7 @@ void GrantUpgradeCreate::onBuildComplete( void )
 	const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( getGrantUpgradeCreateModuleData()->m_upgradeName );
 	if( !upgradeTemplate )
 	{
-		DEBUG_ASSERTCRASH( 0, ("GrantUpdateCreate for %s can't find upgrade template %s.", getObject()->getName(), getGrantUpgradeCreateModuleData()->m_upgradeName ) );
+		DEBUG_ASSERTCRASH( 0, ("GrantUpdateCreate for %s can't find upgrade template %s.", getObject()->getName().str(), getGrantUpgradeCreateModuleData()->m_upgradeName.str() ) );
 		return;
 	}
 
@@ -138,7 +137,7 @@ void GrantUpgradeCreate::onBuildComplete( void )
 	{
 		getObject()->giveUpgrade( upgradeTemplate );
 	}
-}  // end onBuildComplete
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -149,7 +148,7 @@ void GrantUpgradeCreate::crc( Xfer *xfer )
 	// extend base class
 	CreateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -167,7 +166,7 @@ void GrantUpgradeCreate::xfer( Xfer *xfer )
 	// extend base class
 	CreateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -178,4 +177,4 @@ void GrantUpgradeCreate::loadPostProcess( void )
 	// extend base class
 	CreateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

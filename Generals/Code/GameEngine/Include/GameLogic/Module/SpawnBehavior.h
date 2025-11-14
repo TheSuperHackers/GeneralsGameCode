@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef _SPAWN_BEHAVIOR_H_
-#define _SPAWN_BEHAVIOR_H_
-
 const Int SPAWN_UPDATE_RATE = LOGICFRAMES_PER_SECOND/2; ///< This is a low priority module that only needs to be called every this many frames
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +41,7 @@ const Int SPAWN_UPDATE_RATE = LOGICFRAMES_PER_SECOND/2; ///< This is a low prior
 
 //-------------------------------------------------------------------------------------------------
 class ThingTemplate;
-enum CanAttackResult;
+enum CanAttackResult CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
 class SpawnBehaviorModuleData : public BehaviorModuleData
@@ -62,7 +59,7 @@ public:
 	DamageTypeFlags m_damageTypesToPropagateToSlaves;
 	std::vector<AsciiString> m_spawnTemplateNameData;
 	DieMuxData m_dieMuxData;
-	
+
 	SpawnBehaviorModuleData()
 	{
 		m_spawnNumberData = 0;
@@ -74,23 +71,23 @@ public:
 		m_initialBurst = 0;
 		m_isOneShotData = FALSE;
 		m_canReclaimOrphans = FALSE;
-		m_aggregateHealth = FALSE;	
+		m_aggregateHealth = FALSE;
 		m_exitByBudding = FALSE;
 		m_spawnTemplateNameData.clear();
 		m_spawnedRequireSpawner = FALSE;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     BehaviorModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "SpawnNumber",							INI::parseInt,										NULL, offsetof( SpawnBehaviorModuleData, m_spawnNumberData ) },
 			{ "SpawnReplaceDelay",				INI::parseDurationUnsignedInt,		NULL, offsetof( SpawnBehaviorModuleData, m_spawnReplaceDelayData ) },
 			{ "OneShot",									INI::parseBool,										NULL, offsetof( SpawnBehaviorModuleData, m_isOneShotData ) },
 			{ "CanReclaimOrphans",				INI::parseBool,										NULL,	offsetof( SpawnBehaviorModuleData, m_canReclaimOrphans ) },
-			{ "AggregateHealth",  				INI::parseBool,										NULL, offsetof( SpawnBehaviorModuleData, m_aggregateHealth ) },		
-			{ "ExitByBudding",    				INI::parseBool,										NULL, offsetof( SpawnBehaviorModuleData, m_exitByBudding ) },		
+			{ "AggregateHealth",  				INI::parseBool,										NULL, offsetof( SpawnBehaviorModuleData, m_aggregateHealth ) },
+			{ "ExitByBudding",    				INI::parseBool,										NULL, offsetof( SpawnBehaviorModuleData, m_exitByBudding ) },
 			{ "SpawnTemplateName",				INI::parseAsciiStringVectorAppend,NULL, offsetof( SpawnBehaviorModuleData, m_spawnTemplateNameData ) },
 			{ "SpawnedRequireSpawner",		INI::parseBool,										NULL,	offsetof( SpawnBehaviorModuleData, m_spawnedRequireSpawner ) },
 			{ "PropagateDamageTypesToSlavesWhenExisting",   INI::parseDamageTypeFlags, NULL, offsetof( SpawnBehaviorModuleData, m_damageTypesToPropagateToSlaves ) },
@@ -152,8 +149,8 @@ public:
 	// damage methods
 	virtual void onDamage( DamageInfo *damageInfo );
 	virtual void onHealing( DamageInfo *damageInfo ) { }
-	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo, 
-																				BodyDamageType oldState, 
+	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
+																				BodyDamageType oldState,
 																				BodyDamageType newState) { }
 
 	// SpawnBehaviorInterface methods
@@ -196,7 +193,7 @@ private:
 	intList m_replacementTimes;			///< A list of frame times that I need to create new spawns
 	objectIDList m_spawnIDs;				///< My darling little spawns.  I need to keep track of them explicitly for the Slave type stuff
 	Bool m_active;									///< Am I currently turned on
-	
+
 
 	Object *reclaimOrphanSpawn( void );		///< find existing orphaned spawn object if present
 
@@ -210,5 +207,3 @@ private:
 	std::vector<AsciiString>::const_iterator m_templateNameIterator;
 
 };
-
-#endif

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
@@ -42,7 +42,7 @@ RepairDockUpdateModuleData::RepairDockUpdateModuleData( void )
 
 	m_framesForFullHeal = 1.0f;  // 1 frame, instant heal by default (keeps away from divide by 0's)
 
-}  // end RepairDockUpdateModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ RepairDockUpdateModuleData::RepairDockUpdateModuleData( void )
 
 	DockUpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "TimeForFullHeal", INI::parseDurationReal, NULL, offsetof( RepairDockUpdateModuleData, m_framesForFullHeal ) },
 		{ 0, 0, 0, 0 }
@@ -59,7 +59,7 @@ RepairDockUpdateModuleData::RepairDockUpdateModuleData( void )
 
   p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,14 +74,14 @@ RepairDockUpdate::RepairDockUpdate( Thing *thing, const ModuleData* moduleData )
   m_lastRepair = INVALID_ID;
 	m_healthToAddPerFrame = 0.0f;
 
-}  // end RepairDockUpdate
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 RepairDockUpdate::~RepairDockUpdate( void )
 {
 
-}  // end ~RepairDockUpdate
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Do the action while docked
@@ -120,7 +120,7 @@ Bool RepairDockUpdate::action( Object *docker, Object *drone )
 		//
 		m_healthToAddPerFrame = (body->getMaxHealth() - body->getHealth()) / modData->m_framesForFullHeal;
 
-	}  // end if
+	}
 
 	// if we're at max health we're done
 	if( body->getHealth() >= body->getMaxHealth() )
@@ -132,7 +132,7 @@ Bool RepairDockUpdate::action( Object *docker, Object *drone )
 		// returning false will complete the docking process
 		return FALSE;
 
-	}  // end if
+	}
 
 	// give us some health buddy
 	DamageInfo healingInfo;
@@ -147,11 +147,11 @@ Bool RepairDockUpdate::action( Object *docker, Object *drone )
 		healingInfo.in.m_amount = body->getMaxHealth();
 		body->attemptHealing( &healingInfo );
 	}
-	
+
 	// stay docked
 	return TRUE;
 
-}  // end action
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -162,7 +162,7 @@ void RepairDockUpdate::crc( Xfer *xfer )
 	// extend base class
 	DockUpdate::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -186,7 +186,7 @@ void RepairDockUpdate::xfer( Xfer *xfer )
 	// health to add per frame
 	xfer->xferReal( &m_healthToAddPerFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -197,4 +197,4 @@ void RepairDockUpdate::loadPostProcess( void )
 	// extend base class
 	DockUpdate::loadPostProcess();
 
-}  // end loadPostProcess
+}

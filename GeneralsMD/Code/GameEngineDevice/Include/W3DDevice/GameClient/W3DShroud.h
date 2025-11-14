@@ -22,11 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __W3DSHROUD_H_
-#define __W3DSHROUD_H_
 
 #include "WW3D2/matpass.h"
 #include "WW3D2/dx8wrapper.h"
@@ -99,8 +95,8 @@ public:
 	void setShroudLevel(Int x, Int y, W3DShroudLevel,Bool textureOnly=FALSE);
 	void setShroudFilter(Bool enable);	///<turns on bilinear filtering of shroud cells.
 	void setBorderShroudLevel(W3DShroudLevel level);	///<color that will appear in unused border terrain.
-	Real	getDrawOriginX(void)	{return m_drawOriginX;}	///<returns ws origin of first pixel in shroud texture.			
-	Real	getDrawOriginY(void)	{return m_drawOriginY;}	///<returns ws origin of first pixel in shroud texture.			
+	Real	getDrawOriginX(void)	{return m_drawOriginX;}	///<returns ws origin of first pixel in shroud texture.
+	Real	getDrawOriginY(void)	{return m_drawOriginY;}	///<returns ws origin of first pixel in shroud texture.
 
 protected:
 	Int m_numCellsX;						///<number of cells covering entire map
@@ -127,5 +123,3 @@ protected:
 	void interpolateFogLevels(RECT *rect);		///<fade current fog levels to actual logic side levels.
 	void fillBorderShroudData(W3DShroudLevel level, SurfaceClass* pDestSurface);	///<fill the destination texture with a known value
 };
-
-#endif	//__W3DSHROUD_H_

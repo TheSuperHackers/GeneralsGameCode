@@ -27,7 +27,7 @@
 // Desc:   Behavior common to all DockUpdates is here.  Everything but action()
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Debug.h"
 #include "Common/Xfer.h"
 #include "GameClient/Drawable.h"
@@ -51,7 +51,7 @@ DockUpdateModuleData::DockUpdateModuleData( void )
 
 	UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "NumberApproachPositions"	,INI::parseInt,		NULL, offsetof( DockUpdateModuleData, m_numberApproachPositionsData ) },
 		{ "AllowsPassthrough"				,INI::parseBool,	NULL, offsetof( DockUpdateModuleData, m_isAllowPassthrough ) },
@@ -61,7 +61,7 @@ DockUpdateModuleData::DockUpdateModuleData( void )
 
   p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 DockUpdate::DockUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
@@ -96,7 +96,7 @@ DockUpdate::DockUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateMod
 		m_approachPositionReached.resize(DEFAULT_APPROACH_VECTOR_SIZE);
 	}
 
-	for( Int vectorIndex = 0; vectorIndex < m_approachPositions.size(); ++vectorIndex )
+	for( size_t vectorIndex = 0; vectorIndex < m_approachPositions.size(); ++vectorIndex )
 	{
 		// Whatever size we are, init everything.
 		m_approachPositions[vectorIndex].zero();
@@ -118,7 +118,7 @@ Bool DockUpdate::isClearToApproach( Object const* docker ) const
 
 	ObjectID dockerID = docker->getID();
 
-	for( Int positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
+	for( size_t positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
 	{
 		if( m_approachPositionOwners[positionIndex] == INVALID_ID )
 		{
@@ -228,7 +228,7 @@ Bool DockUpdate::isClearToAdvance( Object const* docker, Int dockerIndex ) const
 	Bool correctRequest = dockerID == m_approachPositionOwners[dockerIndex];
 	Bool approachReached = m_approachPositionReached[dockerIndex];
 	Bool nextSpotFree = (dockerIndex > 0)  &&  (m_approachPositionOwners[dockerIndex - 1] == INVALID_ID);
-	
+
 	return correctRequest && approachReached && nextSpotFree;
 }
 
@@ -315,7 +315,7 @@ void DockUpdate::getExitPosition( Object* docker, Coord3D *position )
 void DockUpdate::onApproachReached( Object* docker )
 {
 	ObjectID dockerID = docker->getID();
-	for( Int positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
+	for( size_t positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
 	{
 		if( m_approachPositionOwners[positionIndex] == dockerID )
 		{
@@ -335,7 +335,7 @@ void DockUpdate::onEnterReached( Object* docker )
 	m_dockerInside = TRUE;
 
 	ObjectID dockerID = docker->getID();
-	for( Int positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
+	for( size_t positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
 	{
 		if( m_approachPositionOwners[positionIndex] == dockerID )
 		{
@@ -356,9 +356,9 @@ void DockUpdate::onDockReached( Object* docker )
 void DockUpdate::onExitReached( Object* docker )
 {
 	Object *me = getObject();
-	me->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK2(MODELCONDITION_DOCKING_ACTIVE, MODELCONDITION_DOCKING), 
+	me->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK2(MODELCONDITION_DOCKING_ACTIVE, MODELCONDITION_DOCKING),
 																			MAKE_MODELCONDITION_MASK(MODELCONDITION_DOCKING_ENDING) );
-	docker->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK2(MODELCONDITION_DOCKING_ACTIVE, MODELCONDITION_DOCKING), 
+	docker->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK2(MODELCONDITION_DOCKING_ACTIVE, MODELCONDITION_DOCKING),
 																					MAKE_MODELCONDITION_MASK(MODELCONDITION_DOCKING_ENDING) );
 	m_dockerInside = FALSE;
 
@@ -381,7 +381,7 @@ void DockUpdate::onExitReached( Object* docker )
 void DockUpdate::cancelDock( Object* docker )
 {
 	ObjectID dockerID = docker->getID();
-	for( Int positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
+	for( size_t positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
 	{
 		if( m_approachPositionOwners[positionIndex] == dockerID )
 		{
@@ -394,7 +394,7 @@ void DockUpdate::cancelDock( Object* docker )
 		Object *dockingObject = TheGameLogic->findObjectByID(m_activeDocker);
 		m_activeDocker = INVALID_ID;
 		m_dockerInside = FALSE;
-		// clear any model conditions related to docking that may be set on us and them.  
+		// clear any model conditions related to docking that may be set on us and them.
 		// (Normal clear is part of each stage, but we won't get there.)
 		ModelConditionFlags clear;
 		clear.set( MODELCONDITION_DOCKING_ENDING );
@@ -418,7 +418,7 @@ UpdateSleepTime DockUpdate::update()
 	if( m_activeDocker == INVALID_ID  &&  !m_dockCrippled )
 	{
 		// if setDockCrippled has been called, I will never give enterance permission.
-		for( Int positionIndex = 0; positionIndex < m_approachPositionReached.size(); ++positionIndex )
+		for( size_t positionIndex = 0; positionIndex < m_approachPositionReached.size(); ++positionIndex )
 		{
 			if( m_approachPositionReached[positionIndex] )
 			{
@@ -430,7 +430,7 @@ UpdateSleepTime DockUpdate::update()
 	else if ( getObject()->isKindOf( KINDOF_SUPPLY_SOURCE ) )
 	{
 		Object *docker = TheGameLogic->findObjectByID( m_activeDocker );
-		if ( docker && docker->isKindOf( KINDOF_DOZER ) && docker->isKindOf( KINDOF_HARVESTER ))// a worker 
+		if ( docker && docker->isKindOf( KINDOF_DOZER ) && docker->isKindOf( KINDOF_HARVESTER ))// a worker
 		{
 			ModelConditionFlags test;
 			test.set( MODELCONDITION_DOCKING_BEGINNING );
@@ -452,10 +452,10 @@ Coord3D DockUpdate::computeApproachPosition( Int positionIndex, Object *forWhom 
 
 	Coord3D bestPosition;// This answer is the best, as it includes findPositionAround
 	Coord3D workingPosition;// But if findPositionAround fails, we need to say something.
-	
+
 	FindPositionOptions fpOptions;
 	// Start with the pristine bone, then convert it to the world, then find a clean spot around it.
-	
+
 	Object *us = getObject();
 	us->convertBonePosToWorldPos( &m_approachPositions[positionIndex], NULL, &workingPosition, NULL );
 
@@ -501,7 +501,13 @@ void DockUpdate::loadDockPositions()
 		if( m_numberApproachPositions != DYNAMIC_APPROACH_VECTOR_FLAG )
 		{
 			// Dynamic means no bones
-			Coord3D approachBones[DEFAULT_APPROACH_VECTOR_SIZE];
+
+			// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+			// We shouldn't depend on bones of a drawable here!
+
+			// TheSuperHackers @fix helmutbuhler 19/04/2025 Zero initialize array to prevent uninitialized memory reads.
+			// Important: the entire target vector is used for serialization and crc and must not contain random data.
+			Coord3D approachBones[DEFAULT_APPROACH_VECTOR_SIZE] = {0};
 			m_numberApproachPositionBones = myDrawable->getPristineBonePositions( "DockWaiting", 1, approachBones, NULL, m_numberApproachPositions);
 			if( m_numberApproachPositions == m_approachPositions.size() )//safeguard: will always be true
 			{
@@ -534,7 +540,7 @@ void DockUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -610,7 +616,7 @@ void DockUpdate::xfer( Xfer *xfer )
 	// dock open
 	xfer->xferBool( &m_dockOpen );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -621,5 +627,5 @@ void DockUpdate::loadPostProcess( void )
 	// call base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

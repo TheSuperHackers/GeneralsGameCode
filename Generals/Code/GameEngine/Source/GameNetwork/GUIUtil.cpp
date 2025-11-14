@@ -25,7 +25,7 @@
 // FILE: GUIUtil.cpp //////////////////////////////////////////////////////
 // Author: Matthew D. Campbell, Sept 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameNetwork/GUIUtil.h"
 #include "GameNetwork/NetworkDefs.h"
@@ -44,11 +44,6 @@
 #include "Common/PlayerTemplate.h"
 #include "GameNetwork/LANAPICallbacks.h" // for acceptTrueColor, etc
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // -----------------------------------------------------------------------------
 
@@ -140,7 +135,7 @@ void ShowUnderlyingGUIElements( Bool show, const char *layoutFilename, const cha
 	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
 	if (!parent)
 	{
-		DEBUG_CRASH(("Window %s not found\n", parentNameStr.str()));
+		DEBUG_CRASH(("Window %s not found", parentNameStr.str()));
 		return;
 	}
 
@@ -196,7 +191,7 @@ void PopulateColorComboBox(Int comboBox, GameWindow *comboArray[], GameInfo *myG
 
 	for (i = 0; i < MAX_SLOTS; i++)
 	{
-		GameSlot *slot = myGame->getSlot(i);	
+		GameSlot *slot = myGame->getSlot(i);
 		if( slot && (i != comboBox) && (slot->getColor() >= 0 )&& (slot->getColor() < numColors))
 		{
 			DEBUG_ASSERTCRASH(slot->getColor() >= 0,("We've tried to access array %d and that ain't good",slot->getColor()));
@@ -269,14 +264,12 @@ void PopulatePlayerTemplateComboBox(Int comboBox, GameWindow *comboArray[], Game
 	seenSides.clear();
 
 	// disabling observers for Multiplayer test
-#ifndef _PLAYTEST
 	if (allowObservers)
 	{
 		def = TheMultiplayerSettings->getColor(PLAYERTEMPLATE_OBSERVER);
 		newIndex = GadgetComboBoxAddEntry(comboArray[comboBox], TheGameText->fetch("GUI:Observer"), def->getColor());
 		GadgetComboBoxSetItemData(comboArray[comboBox], newIndex, (void *)PLAYERTEMPLATE_OBSERVER);
 	}
-#endif
 	GadgetComboBoxSetSelectedPos(comboArray[comboBox], 0);
 
 }
@@ -318,7 +311,7 @@ void PopulateTeamComboBox(Int comboBox, GameWindow *comboArray[], GameInfo *myGa
 //-------------------------------------------------------------------------------------------------
 void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 										GameWindow *comboColor[], GameWindow *comboPlayerTemplate[],
-										GameWindow *comboTeam[], GameWindow *buttonAccept[], 
+										GameWindow *comboTeam[], GameWindow *buttonAccept[],
 										GameWindow *buttonStart, GameWindow *buttonMapStartPosition[] )
 {
 	if(!AreSlotListUpdatesEnabled())
@@ -341,13 +334,14 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 		for( int i =0; i < MAX_SLOTS; i++ )
 		{
 			GameSlot * slot = myGame->getSlot(i);
+
 			// if i'm host, enable the controls for AI
-			if(myGame->amIHost() && slot && slot->isAI())
+			if(myGame->amIHost() && slot->isAI())
 			{
 				EnableAcceptControls(TRUE, myGame, comboPlayer, comboColor, comboPlayerTemplate,
 					comboTeam, buttonAccept, buttonStart, buttonMapStartPosition, i);
 			}
-			else if (slot && myGame->getLocalSlotNum() == i)
+			else if (myGame->getLocalSlotNum() == i)
 			{
 				if(slot->isAccepted() && !myGame->amIHost())
 				{
@@ -366,14 +360,14 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 							comboTeam, buttonAccept, buttonStart, buttonMapStartPosition);
 					}
 				}
-				
+
 			}
 			else if(myGame->amIHost())
 			{
 				EnableAcceptControls(FALSE, myGame, comboPlayer, comboColor, comboPlayerTemplate,
 					comboTeam, buttonAccept, buttonStart, buttonMapStartPosition, i);
 			}
-			if(slot && slot->isHuman())
+			if(slot->isHuman())
 			{
 				UnicodeString newName = slot->getName();
 				UnicodeString oldName = GadgetComboBoxGetText(comboPlayer[i]);
@@ -402,7 +396,7 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 				}
 			}
 			else
-			{				
+			{
 				GadgetComboBoxSetSelectedPos(comboPlayer[i], slot->getState(), TRUE);
         if( buttonAccept &&  buttonAccept[i] )
 				  buttonAccept[i]->winHide(TRUE);

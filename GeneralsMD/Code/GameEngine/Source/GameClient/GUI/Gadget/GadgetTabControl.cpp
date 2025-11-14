@@ -24,12 +24,12 @@
 
 // FILE: RadioButton.cpp //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
@@ -86,7 +86,7 @@ WindowMsgHandledType GadgetTabControlInput( GameWindow *tabControl, UnsignedInt 
 	Int tabsBottom = tabData->tabsBottomLimit;
 	Int tabsTop = tabData->tabsTopLimit;
 
-	switch( msg ) 
+	switch( msg )
 	{
 		case GWM_LEFT_DOWN:
 		{
@@ -124,7 +124,7 @@ WindowMsgHandledType GadgetTabControlInput( GameWindow *tabControl, UnsignedInt 
 
 	return MSG_HANDLED;
 
-}  // end GadgetTabControlInput
+}
 
 // GadgetTabControlSystem ====================================================
 /** Handle system messages for TabControl */
@@ -132,7 +132,7 @@ WindowMsgHandledType GadgetTabControlInput( GameWindow *tabControl, UnsignedInt 
 WindowMsgHandledType GadgetTabControlSystem( GameWindow *tabControl, UnsignedInt msg,
 															WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 		// ------------------------------------------------------------------------
 		case GWM_CREATE:
@@ -141,14 +141,13 @@ WindowMsgHandledType GadgetTabControlSystem( GameWindow *tabControl, UnsignedInt
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
-			TabControlData *tabData = (TabControlData *)tabControl->winGetUserData();
-
 			// free tab control user data
-			delete tabData;
+			delete (TabControlData *)tabControl->winGetUserData();
+			tabControl->winSetUserData( NULL );
 
 			break;
-		
-		}  // end destroy
+
+		}
 
 		case GGM_RESIZED:
 		{//On resize, we need to upkeep the pane sizes and tabs since they are bound to us
@@ -164,16 +163,18 @@ WindowMsgHandledType GadgetTabControlSystem( GameWindow *tabControl, UnsignedInt
 
 			if( parent )
 				return TheWindowManager->winSendSystemMsg( parent, msg, mData1, mData2 );
+
+			break;
 		}
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end GadgetTabControlSystem
+}
 
 void GadgetTabControlComputeTabRegion( GameWindow *tabControl )///< Recalc the tab positions based on userData
 {
@@ -302,7 +303,7 @@ void GadgetTabControlCreateSubPanes( GameWindow *tabControl )///< Create User Wi
 
 	for( Int paneIndex = 0; paneIndex < NUM_TAB_PANES; paneIndex++ )
 	{
-		if( (tabData->subPanes[paneIndex] == NULL) )//This one is blank
+		if( tabData->subPanes[paneIndex] == NULL )//This one is blank
 		{
 			tabData->subPanes[paneIndex] = TheWindowManager->winCreate( tabControl,
 																																	WIN_STATUS_NONE, x, y,

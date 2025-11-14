@@ -71,8 +71,8 @@ void parseFactionObjectCreationList( INI *ini, void *instance, void *store, cons
 	// Insert the info into the ocl hashmap
 	OCLUpdateModuleData::FactionOCLList * theList = (OCLUpdateModuleData::FactionOCLList*)store;
 	theList->push_back(info);
-	
-}  // end parseFactionObjectCreationList
+
+}
 
 //-------------------------------------------------------------------------------------------------
 OCLUpdateModuleData::OCLUpdateModuleData()
@@ -86,11 +86,11 @@ OCLUpdateModuleData::OCLUpdateModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void OCLUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void OCLUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "OCL",					INI::parseObjectCreationList,		NULL, offsetof( OCLUpdateModuleData, m_ocl ) },
 		{ "FactionOCL",		parseFactionObjectCreationList,	NULL, offsetof( OCLUpdateModuleData, m_factionOCL ) },
@@ -123,11 +123,22 @@ OCLUpdate::~OCLUpdate( void )
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime OCLUpdate::update( void )
 {
+#if RETAIL_COMPATIBLE_CRC
 	if( getObject()->isDisabled() )
 	{
 		m_nextCreationFrame++;
 		return UPDATE_SLEEP_NONE;
 	}
+#else
+	// TheSuperHackers @bugfix dizzyj/Caball009/Mauller 14/07/2025 prevent triggering supply drop when subdued while under construction
+	// When the construction is finished, we allow the timer to be initialized and then start shifting the timer while subdued
+	if ( m_timerStartedFrame > 0 && getObject()->isDisabled() )
+	{
+		m_nextCreationFrame++;
+		m_timerStartedFrame++;
+		return UPDATE_SLEEP_NONE;
+	}
+#endif
 
 	const OCLUpdateModuleData *data = getOCLUpdateModuleData();
 
@@ -192,7 +203,7 @@ UpdateSleepTime OCLUpdate::update( void )
 
 			Player *player = getObject()->getControllingPlayer();
 			if (!player) return UPDATE_SLEEP_NONE;
-			
+
 			const PlayerTemplate *playerT = player->getPlayerTemplate();
 			if (!playerT) return UPDATE_SLEEP_NONE;
 
@@ -242,7 +253,7 @@ Bool OCLUpdate::shouldCreate()
 // ------------------------------------------------------------------------------------------------
 void OCLUpdate::setNextCreationFrame()
 {
-	UnsignedInt delay = GameLogicRandomValue( getOCLUpdateModuleData()->m_minDelay, 
+	UnsignedInt delay = GameLogicRandomValue( getOCLUpdateModuleData()->m_minDelay,
 																						getOCLUpdateModuleData()->m_maxDelay );
 	m_timerStartedFrame = TheGameLogic->getFrame();
 	m_nextCreationFrame = m_timerStartedFrame + delay;
@@ -276,7 +287,7 @@ void OCLUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -302,11 +313,11 @@ void OCLUpdate::xfer( Xfer *xfer )
 
 	// faction status
 	xfer->xferBool( &m_isFactionNeutral );
-	
+
 	// current owning player color
 	xfer->xferInt( &m_currentPlayerColor );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -317,4 +328,4 @@ void OCLUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

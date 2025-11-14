@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _SUPPLY_CENTER_DOCK_UPDATE_H_
-#define _SUPPLY_CENTER_DOCK_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "Common/GameMemory.h"
@@ -69,5 +66,3 @@ protected:
 
 
 };
-
-#endif

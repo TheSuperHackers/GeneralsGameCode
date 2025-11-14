@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"
@@ -50,7 +50,7 @@
 
 //-------------------------------------------------------------------------------------------------
 // this is our "bounce" limit -- slightly less that 90 degrees, to account for slop.
-static const Real ANGULAR_LIMIT = PI/2 - PI/64;		
+static const Real ANGULAR_LIMIT = PI/2 - PI/64;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -74,11 +74,11 @@ ToppleUpdateModuleData::ToppleUpdateModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ToppleUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void ToppleUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "ToppleFX",	INI::parseFXList, NULL, offsetof( ToppleUpdateModuleData, m_toppleFX ) },
 		{ "BounceFX",	INI::parseFXList, NULL, offsetof( ToppleUpdateModuleData, m_bounceFX ) },
@@ -112,7 +112,7 @@ ToppleUpdate::ToppleUpdate( Thing *thing, const ModuleData* moduleData ) : Updat
 	//
 	m_angularVelocity = 0;
 	m_angularAccumulation = 0;
-	m_angularAcceleration = 0;	
+	m_angularAcceleration = 0;
 	m_toppleDirection.x = 0;
 	m_toppleDirection.y = 0;
 	m_toppleDirection.z = 0;
@@ -145,7 +145,7 @@ void ToppleUpdate::applyTopplingForce( const Coord3D* toppleDirection, Real topp
 	if (getObject()->isEffectivelyDead())
 		return;
 
-	//DEBUG_LOG(("awaking ToppleUpdate %08lx\n",this));
+	//DEBUG_LOG(("awaking ToppleUpdate %08lx",this));
 	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 
 	const ToppleUpdateModuleData* d = getToppleUpdateModuleData();
@@ -252,7 +252,7 @@ Bool ToppleUpdate::isAbleToBeToppled() const
 static void deathByToppling(Object* obj)
 {
 	// use a special "topppling" damage type here so that
-	// toppled stuff can have different damage/die modules 
+	// toppled stuff can have different damage/die modules
 	// for toppled-death vs other-death
 	DamageInfo damageInfo;
 	damageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
@@ -267,7 +267,7 @@ static void deathByToppling(Object* obj)
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime ToppleUpdate::update()
 {
-	//DEBUG_LOG(("updating ToppleUpdate %08lx\n",this));
+	//DEBUG_LOG(("updating ToppleUpdate %08lx",this));
 	DEBUG_ASSERTCRASH(m_toppleState != TOPPLE_UPRIGHT, ("hmm, we should be sleeping here"));
 	if ( (m_toppleState == TOPPLE_UPRIGHT)  ||  (m_toppleState == TOPPLE_DOWN) )
 		return UPDATE_SLEEP_FOREVER;
@@ -300,7 +300,7 @@ UpdateSleepTime ToppleUpdate::update()
 		// Hit so either bounce or stop if too little remaining velocity.
 		m_angularVelocity *= -d->m_bounceVelocityPercent;
 
-		if( BitIsSet( m_options, TOPPLE_OPTIONS_NO_BOUNCE ) == TRUE || 
+		if( BitIsSet( m_options, TOPPLE_OPTIONS_NO_BOUNCE ) == TRUE ||
 				fabs(m_angularVelocity) < VELOCITY_BOUNCE_LIMIT )
 		{
 			// too slow, just stop
@@ -330,7 +330,7 @@ UpdateSleepTime ToppleUpdate::update()
 					obj->setOrientation(obj->getOrientation());
 
 				}
-			} // if kill when toppled
+			}
 
 			if (d->m_killStumpWhenToppled)
 			{
@@ -381,7 +381,7 @@ void ToppleUpdate::onCollide( Object *other, const Coord3D *loc, const Coord3D *
 		toppleVector.x -= other->getPosition()->x;
 		toppleVector.y -= other->getPosition()->y;
 		toppleVector.z = 0;
-		
+
 		Coord3D vel;
 		PhysicsBehavior* phys = other->getPhysics();
 		if (phys)
@@ -403,7 +403,7 @@ void ToppleUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -451,7 +451,7 @@ void ToppleUpdate::xfer( Xfer *xfer )
 	// stump id
 	xfer->xferObjectID( &m_stumpID );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -462,4 +462,4 @@ void ToppleUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

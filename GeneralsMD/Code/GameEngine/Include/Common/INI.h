@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __INI_H_
-#define __INI_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include <stddef.h>	// for offsetof, which we don't use but everyone who includes us does
 #include "Common/STLTypedefs.h"
@@ -42,13 +39,13 @@
 class INI;
 class Xfer;
 class File;
-enum ScienceType;
+enum ScienceType CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
 /** These control the behavior of loading the INI data into items */
 //-------------------------------------------------------------------------------------------------
-enum INILoadType
-{	
+enum INILoadType CPP_11(: Int)
+{
 	INI_LOAD_INVALID,						///< invalid load type
 	INI_LOAD_OVERWRITE,					///< create new or load *over* existing data instance
 	INI_LOAD_CREATE_OVERRIDES,	///< create new or load into *new* override data instance
@@ -91,14 +88,14 @@ enum
 /** Function typedef for parsing data block fields.
 	*
 	* buffer - the character buffer of the line from INI that we are reading and parsing
-	* instance - instance of what we're loading (for example a thingtemplate instance)
+	* instance - instance of what we're loading (for example a ThingTemplate instance)
 	* store - where to store the data parsed, this is a field in the *instance* 'instance'
 	*/
 //-------------------------------------------------------------------------------------------------
 typedef void (*INIFieldParseProc)( INI *ini, void *instance, void *store, const void* userData );
 
 //-------------------------------------------------------------------------------------------------
-typedef const char* ConstCharPtr;
+typedef const char* const ConstCharPtr;
 typedef ConstCharPtr* ConstCharPtrArray;
 
 //-------------------------------------------------------------------------------------------------
@@ -139,8 +136,8 @@ private:
 	Int								m_count;
 
 public:
-	MultiIniFieldParse() : m_count(0) 
-	{ 
+	MultiIniFieldParse() : m_count(0)
+	{
 		//Added By Sadullah Nader
 		//Initializations missing and needed
 		for(Int i = 0; i < MAX_MULTI_FIELDS; i++)
@@ -148,7 +145,7 @@ public:
 		//
 
 	}
-	
+
 	void add(const FieldParse* f, UnsignedInt e = 0);
 
 	inline Int getCount() const { return m_count; }
@@ -175,8 +172,19 @@ public:
 	INI();
 	~INI();
 
-	void loadDirectory( AsciiString dirName, Bool subdirs, INILoadType loadType, Xfer *pXfer );  ///< load directory of INI files
-	void load( AsciiString filename, INILoadType loadType, Xfer *pXfer );		///< load INI file
+	// TheSuperHackers @feature xezon 19/08/2025
+	// Load a specific INI file by name and/or INI files from a directory (and its subdirectories).
+	// For example "Data\INI\Armor" loads "Data\INI\Armor.ini" and all *.ini files in "Data\INI\Armor".
+	// Throws if not a single INI file is found or one is not read correctly.
+	UnsignedInt loadFileDirectory( AsciiString fileDirName, INILoadType loadType, Xfer *pXfer, Bool subdirs = TRUE );
+
+	// Load INI files from a directory (and its subdirectories).
+	// Throws if one INI file is not read correctly.
+	UnsignedInt loadDirectory( AsciiString dirName, INILoadType loadType, Xfer *pXfer, Bool subdirs = TRUE );
+
+	// Load one specific INI file by name.
+	// Throws if the INI file is not found or is not read correctly.
+	UnsignedInt load( AsciiString filename, INILoadType loadType, Xfer *pXfer );
 
 	static Bool isDeclarationOfType( AsciiString blockType, AsciiString blockName, char *bufferToCheck );
 	static Bool isEndOfBlock( char *bufferToCheck );
@@ -256,7 +264,7 @@ public:
 	void initFromINI( void *what, const FieldParse* parseTable );
 	void initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList );
 	void initFromINIMultiProc( void *what, BuildMultiIniFieldProc proc );
-	
+
 	static void parseUnsignedByte( INI *ini, void *instance, void *store, const void* userData );
 	static void parseShort( INI *ini, void *instance, void *store, const void* userData );
 	static void parseUnsignedShort( INI *ini, void *instance, void *store, const void* userData );
@@ -316,11 +324,11 @@ public:
 	static void parseDeathTypeFlags(INI* ini, void* instance, void* store, const void* userData);
 	static void parseVeterancyLevelFlags(INI* ini, void* instance, void* store, const void* userData);
 	static void parseSoundsList( INI* ini, void *instance, void *store, const void* /*userData*/ );
-	
-	
+
+
 	/**
 		return the next token. if seps is null (or omitted), the standard seps are used.
-		
+
 		this will *never* return null; if there are no more tokens, an exception will be thrown.
 	*/
 	const char* getNextToken(const char* seps = NULL);
@@ -334,7 +342,7 @@ public:
 
 	/**
 		This is called when the next thing you expect is something like:
-			
+
 			Tag:value
 
 		pass "Tag" (without the colon) for 'expected', and you will have the 'value'
@@ -384,7 +392,7 @@ public:
 
 protected:
 
-	static Bool isValidINIFilename( const char *filename ); ///< is this a valid .ini filename		
+	static Bool isValidINIFilename( const char *filename ); ///< is this a valid .ini filename
 
 	void prepFile( AsciiString filename, INILoadType loadType );
 	void unPrepFile();
@@ -411,10 +419,7 @@ protected:
 	const char *m_sepsQuote;									///< token to represent a quoted ascii string
 	const char *m_blockEndToken;							///< token to represent end of data block
 	Bool m_endOfFile;													///< TRUE when we've hit EOF
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_CRASHING
 	char m_curBlockStart[ INI_MAX_CHARS_PER_LINE ];	///< first line of cur block
 #endif
 };
-
-#endif // __INI_H_
-

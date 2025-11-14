@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __Locomotor_H_
-#define __Locomotor_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/NameKeyGenerator.h"
 #include "Common/Override.h"
@@ -44,14 +41,14 @@ class Locomotor;
 class LocomotorTemplate;
 class INI;
 class PhysicsBehavior;
-enum BodyDamageType;
-enum PhysicsTurningType;
+enum BodyDamageType CPP_11(: Int);
+enum PhysicsTurningType CPP_11(: Int);
 
 // if we ever re-enable jets circling for landing, we need this. so keep in around just in case. (srj)
 #define NO_CIRCLE_FOR_LANDING
 
 //-------------------------------------------------------------------------------------------------
-enum LocomotorAppearance
+enum LocomotorAppearance CPP_11(: Int)
 {
 	LOCO_LEGS_TWO,
 	LOCO_WHEELS_FOUR,
@@ -61,18 +58,22 @@ enum LocomotorAppearance
 	LOCO_WINGS,
 	LOCO_CLIMBER,			// human climber - backs down cliffs.
 	LOCO_OTHER,
-	LOCO_MOTORCYCLE
+	LOCO_MOTORCYCLE,
+
+	LOCOMOTOR_APPEARANCE_COUNT
 };
 
-enum LocomotorPriority
+enum LocomotorPriority CPP_11(: Int)
 {
-	LOCO_MOVES_BACK=0,				// In a group, this one moves toward the back
-	LOCO_MOVES_MIDDLE=1,			// In a group, this one stays in the middle
-	LOCO_MOVES_FRONT=2				// In a group, this one moves toward the front of the group
+	LOCO_MOVES_BACK,				// In a group, this one moves toward the back
+	LOCO_MOVES_MIDDLE,			// In a group, this one stays in the middle
+	LOCO_MOVES_FRONT,				// In a group, this one moves toward the front of the group
+
+	LOCOMOTOR_PRIORITY_COUNT
 };
 
 #ifdef DEFINE_LOCO_APPEARANCE_NAMES
-static const char *TheLocomotorAppearanceNames[] = 
+static const char *const TheLocomotorAppearanceNames[] =
 {
 	"TWO_LEGS",
 	"FOUR_WHEELS",
@@ -86,10 +87,11 @@ static const char *TheLocomotorAppearanceNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheLocomotorAppearanceNames) == LOCOMOTOR_APPEARANCE_COUNT + 1, "Array size");
 #endif
 
 //-------------------------------------------------------------------------------------------------
-enum LocomotorBehaviorZ
+enum LocomotorBehaviorZ CPP_11(: Int)
 {
 	Z_NO_Z_MOTIVE_FORCE,							// does whatever physics tells it, but has no z-force of its own.
 	Z_SEA_LEVEL,											// keep at surface-of-water level
@@ -98,11 +100,13 @@ enum LocomotorBehaviorZ
 	Z_FIXED_SURFACE_RELATIVE_HEIGHT,		// stays fixed at surface-rel height, regardless of physics
 	Z_FIXED_ABSOLUTE_HEIGHT,						// stays fixed at absolute height, regardless of physics
 	Z_RELATIVE_TO_GROUND_AND_BUILDINGS,	// stays fixed at surface-rel height including buildings, regardless of physics
-	Z_SMOOTH_RELATIVE_TO_HIGHEST_LAYER	// try to follow a height relative to the highest layer.
+	Z_SMOOTH_RELATIVE_TO_HIGHEST_LAYER,	// try to follow a height relative to the highest layer.
+
+	LOCOMOTOR_BEHAVIOR_Z_COUNT
 };
 
 #ifdef DEFINE_LOCO_Z_NAMES
-static const char *TheLocomotorBehaviorZNames[] = 
+static const char *const TheLocomotorBehaviorZNames[] =
 {
 	"NO_Z_MOTIVE_FORCE",
 	"SEA_LEVEL",
@@ -115,6 +119,7 @@ static const char *TheLocomotorBehaviorZNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheLocomotorBehaviorZNames) == LOCOMOTOR_BEHAVIOR_Z_COUNT + 1, "Array size");
 #endif
 
 //-------------------------------------------------------------------------------------------------
@@ -187,7 +192,7 @@ private:
 	Real											m_uniformAxialDamping;	///< For Attenuating the pitch and roll rates
 	Real											m_turnPivotOffset;			///< should we pivot around noncenter? (-1.0 = rear, 0.0 = center, 1.0 = front)
 	Int												m_airborneTargetingHeight;	///< The height transition at witch I should mark myself as a AA target.
-	
+
 	Real											m_closeEnoughDist;			///< How close we have to approach the end of a path before stopping
 	Bool											m_isCloseEnoughDist3D;	///< And is that calculation 3D, for very rare cases that need to move straight down.
 	Real											m_ultraAccurateSlideIntoPlaceFactor;			///< how much we can fudge turning when ultra-accurate
@@ -210,17 +215,17 @@ private:
 
 
 	Real											m_rudderCorrectionDegree;
-	Real											m_rudderCorrectionRate;	
+	Real											m_rudderCorrectionRate;
 	Real											m_elevatorCorrectionDegree;
 	Real											m_elevatorCorrectionRate;
-};	
+};
 
 typedef OVERRIDE<LocomotorTemplate> LocomotorTemplateOverride;
 
 // ---------------------------------------------------------
 class Locomotor : public MemoryPoolObject, public Snapshot
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Locomotor, "Locomotor" )		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Locomotor, "Locomotor" )
 
 	friend class LocomotorStore;
 
@@ -228,7 +233,7 @@ public:
 
 	void setPhysicsOptions(Object* obj);
 
-	void locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalPos, 
+	void locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalPos,
 		Real onPathDistToGoal, Real desiredSpeed, Bool *blocked);
 	void locoUpdate_moveTowardsAngle(Object* obj, Real angle);
 	/**
@@ -237,7 +242,7 @@ public:
 		return true if we can maintain the position without being called every frame (eg, we are
 		resting on the ground), false if not (eg, we are hovering or circling)
 	*/
-	Bool locoUpdate_maintainCurrentPosition(Object* obj); 
+	Bool locoUpdate_maintainCurrentPosition(Object* obj);
 
 	Real getMaxSpeedForCondition(BodyDamageType condition) const;  ///< get max speed given condition
 	Real getMaxTurnRate(BodyDamageType condition) const;  ///< get max turning rate given condition
@@ -247,7 +252,7 @@ public:
 
 	inline Real getPreferredHeight() const { return m_preferredHeight;} ///< Just return preferredheight, no damage consideration
 	inline void restorePreferredHeightFromTemplate() { m_preferredHeight = m_template->m_preferredHeight; };
-	inline Real getPreferredHeightDamping() const { return m_preferredHeightDamping;} 
+	inline Real getPreferredHeightDamping() const { return m_preferredHeightDamping;}
 	inline LocomotorAppearance getAppearance() const { return m_template->m_appearance; }
 	inline LocomotorPriority getMovePriority() const { return m_template->m_movePriority; }
 	inline LocomotorSurfaceTypeMask getLegalSurfaces() const { return m_template->m_surfaces; }
@@ -287,7 +292,7 @@ public:
 	inline Real getMaxWheelCompression() const {return m_template->m_maximumWheelCompression;}
 	inline Real getWheelTurnAngle() const {return m_template->m_wheelTurnAngle;}
 
-  
+
 	inline Real getRudderCorrectionDegree()	  const { return m_template->m_rudderCorrectionDegree;}			///< How much we roll in response to acceleration.
 	inline Real getRudderCorrectionRate()	    const { return m_template->m_rudderCorrectionRate;}			///< How much we roll in response to acceleration.
 	inline Real getElevatorCorrectionDegree() const { return m_template->m_elevatorCorrectionDegree;}			///< How much we roll in response to acceleration.
@@ -301,10 +306,10 @@ public:
 
 	/// this is handy for doing things like forcing helicopters to crash realistically: cut their lift.
 	inline void setMaxLift(Real lift) { m_maxLift = lift; }
-	inline void setMaxSpeed(Real speed) 
-	{ 
-		DEBUG_ASSERTCRASH(!(speed <= 0.0f && m_template->m_appearance == LOCO_THRUST), ("THRUST locos may not have zero speeds!\n")); 
-		m_maxSpeed = speed; 
+	inline void setMaxSpeed(Real speed)
+	{
+		DEBUG_ASSERTCRASH(!(speed <= 0.0f && m_template->m_appearance == LOCO_THRUST), ("THRUST locos may not have zero speeds!"));
+		m_maxSpeed = speed;
 	}
 	inline void setMaxAcceleration(Real accel) { m_maxAccel = accel; }
 	inline void setMaxBraking(Real braking) { m_maxBraking = braking; }
@@ -323,10 +328,10 @@ public:
 	*/
 	inline void setAltitudeChangeThresholdForCircling(Real a) { m_circleThresh = a; }
 #endif
-	
+
 	/**
 		when off (the default), things get to adjust their z-pos as their
-		loco says (in particular, airborne things tend to try to fly at a preferred height). 
+		loco says (in particular, airborne things tend to try to fly at a preferred height).
 
 		when on, they do their best to reach the specified zpos, even if it's not at their preferred height.
 		this is used mainly for force missiles to swoop in on their target, and to force airplane takeoff/landing
@@ -335,7 +340,7 @@ public:
 	inline void setUsePreciseZPos(Bool u) { setFlag(PRECISE_Z_POS, u); }
 
 	/**
-    when off (the default), units slow down as they approach their target. 
+    when off (the default), units slow down as they approach their target.
 
     when on, units go full speed till the end, and may overshoot their target.
     this is useful mainly in some weird, temporary situations where we know we are
@@ -489,7 +494,7 @@ public:
 
 	// locoTemplate is who we're overriding
 	LocomotorTemplate *newOverride(LocomotorTemplate *locoTemplate);
-	
+
 
 	static void parseLocomotorTemplateDefinition(INI* ini);
 
@@ -505,6 +510,3 @@ private:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern LocomotorStore *TheLocomotorStore;
-
-#endif // __Locomotor_H_
-

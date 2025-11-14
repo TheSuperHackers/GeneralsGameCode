@@ -24,12 +24,12 @@
 
 // FILE: SliderProperties.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -81,7 +81,7 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 	// are designed to have controls doing the same functionality
 	// and names
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message, 
+	if( HandleCommonDialogMessages( hWndDialog, message,
 																	wParam, lParam, &returnCode ) == TRUE )
 		return returnCode;
 
@@ -94,7 +94,7 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 //			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 //			HWND hWndControl = (HWND)lParam;  // control window handle
- 
+
       switch( controlID )
       {
 
@@ -127,7 +127,7 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 						StoreColor( VSLIDER_THUMB_HILITE, info->color, info->borderColor );
 						StoreColor( VSLIDER_THUMB_HILITE_PUSHED, info->borderColor, info->color );
 
-					}  // end if, vertical slider
+					}
 					else
 					{
 
@@ -143,11 +143,11 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 						StoreColor( HSLIDER_THUMB_HILITE, info->color, info->borderColor );
 						StoreColor( HSLIDER_THUMB_HILITE_PUSHED, info->borderColor, info->color );
 
-					}  // end else horizontal slider
+					}
 
 					break;
 
-				}  // end case subcontrol color
+				}
 
 				// --------------------------------------------------------------------
         case IDOK:
@@ -172,20 +172,20 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 							GadgetSliderSetEnabledImageTop( window, info->image );
 							GadgetSliderSetEnabledColor( window, info->color );
 							GadgetSliderSetEnabledBorderColor( window, info->borderColor );
-						
+
 							info = GetStateInfo( VSLIDER_ENABLED_BOTTOM );
 							GadgetSliderSetEnabledImageBottom( window, info->image );
-						}  // end if
+						}
 						else
 						{
 							info = GetStateInfo( HSLIDER_ENABLED_LEFT );
 							GadgetSliderSetEnabledImageLeft( window, info->image );
 							GadgetSliderSetEnabledColor( window, info->color );
 							GadgetSliderSetEnabledBorderColor( window, info->borderColor );
-							
+
 							info = GetStateInfo( HSLIDER_ENABLED_RIGHT );
 							GadgetSliderSetEnabledImageRight( window, info->image );
-						}  // end else
+						}
 
 						info = GetStateInfo( vert ? VSLIDER_ENABLED_CENTER : HSLIDER_ENABLED_CENTER );
 						GadgetSliderSetEnabledImageCenter( window, info->image );
@@ -200,20 +200,20 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 							GadgetSliderSetDisabledImageTop( window, info->image );
 							GadgetSliderSetDisabledColor( window, info->color );
 							GadgetSliderSetDisabledBorderColor( window, info->borderColor );
-						
+
 							info = GetStateInfo( VSLIDER_DISABLED_BOTTOM );
 							GadgetSliderSetDisabledImageBottom( window, info->image );
-						}  // end if
+						}
 						else
 						{
 							info = GetStateInfo( HSLIDER_DISABLED_LEFT );
 							GadgetSliderSetDisabledImageLeft( window, info->image );
 							GadgetSliderSetDisabledColor( window, info->color );
 							GadgetSliderSetDisabledBorderColor( window, info->borderColor );
-							
+
 							info = GetStateInfo( HSLIDER_DISABLED_RIGHT );
 							GadgetSliderSetDisabledImageRight( window, info->image );
-						}  // end else
+						}
 
 						info = GetStateInfo( vert ? VSLIDER_DISABLED_CENTER : HSLIDER_DISABLED_CENTER );
 						GadgetSliderSetDisabledImageCenter( window, info->image );
@@ -228,20 +228,20 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 							GadgetSliderSetHiliteImageTop( window, info->image );
 							GadgetSliderSetHiliteColor( window, info->color );
 							GadgetSliderSetHiliteBorderColor( window, info->borderColor );
-						
+
 							info = GetStateInfo( VSLIDER_HILITE_BOTTOM );
 							GadgetSliderSetHiliteImageBottom( window, info->image );
-						}  // end if
+						}
 						else
 						{
 							info = GetStateInfo( HSLIDER_HILITE_LEFT );
 							GadgetSliderSetHiliteImageLeft( window, info->image );
 							GadgetSliderSetHiliteColor( window, info->color );
 							GadgetSliderSetHiliteBorderColor( window, info->borderColor );
-							
+
 							info = GetStateInfo( HSLIDER_HILITE_RIGHT );
 							GadgetSliderSetHiliteImageRight( window, info->image );
-						}  // end else
+						}
 
 						info = GetStateInfo( vert ? VSLIDER_HILITE_CENTER : HSLIDER_HILITE_CENTER );
 						GadgetSliderSetHiliteImageCenter( window, info->image );
@@ -295,17 +295,17 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 							sliderData->minVal = sliderData->maxVal;
 							sliderData->maxVal = temp;
 
-							MessageBox( NULL, "Slider min greated than max, the values were swapped", 
+							MessageBox( NULL, "Slider min greated than max, the values were swapped",
 													"Warning", MB_OK | MB_ICONINFORMATION );
 
-						}  // end if
+						}
 
-					}  // end if
+					}
 
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end OK
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -314,13 +314,13 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -329,15 +329,15 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
       DestroyWindow( hWndDialog );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end sliderPropertiesCallback
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -478,7 +478,7 @@ HWND InitSliderPropertiesDialog( GameWindow *window )
 
 	return dialog;
 
-}  // end InitSliderPropertiesDialog
+}
 
 
 

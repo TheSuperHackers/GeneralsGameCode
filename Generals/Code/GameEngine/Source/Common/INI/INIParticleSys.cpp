@@ -27,14 +27,14 @@
 // Desc:   Parsing Particle System INI entries
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "GameClient/ParticleSys.h"
 
 
-/** 
- * Parse entry 
+/**
+ * Parse entry
  */
 void INI::parseParticleSystemDefinition( INI* ini )
 {
@@ -42,7 +42,7 @@ void INI::parseParticleSystemDefinition( INI* ini )
 
 	// read the name
 	const char* c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	// find existing item if present
 	ParticleSystemTemplate *sysTemplate = const_cast<ParticleSystemTemplate*>(TheParticleSystemManager->findTemplate( name ));

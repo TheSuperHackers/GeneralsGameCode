@@ -21,9 +21,6 @@
 
 #pragma once
 
-#ifndef SCORCHTOOL_H
-#define SCORCHTOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 class MapObject;
@@ -31,7 +28,7 @@ class MapObject;
 /**                             ScorchTool
 ***************************************************************************/
 ///  Scorch tool.
-class ScorchTool : public Tool 
+class ScorchTool : public Tool
 {
 public:
 	ScorchTool(void);
@@ -40,7 +37,7 @@ public:
 protected:
 	Coord3D m_mouseDownPt;
 
-protected: 
+protected:
 	MapObject *pickScorch(Coord3D loc);
 
 public:
@@ -51,6 +48,3 @@ public:
 	virtual void activate(); ///< Become the current tool.
 	virtual void deactivate(); ///< Become not the current tool.
 };
-
-
-#endif //SCORCHTOOL_H

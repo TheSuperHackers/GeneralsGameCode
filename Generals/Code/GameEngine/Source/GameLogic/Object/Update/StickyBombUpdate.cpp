@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
@@ -104,7 +104,7 @@ void StickyBombUpdate::init( const Object *target, const Object *bomber)
 	{
 		//we are a timer bomb
 		m_dieFrame = update->getDieFrame();
-	
+
 		//Calculate the number of seconds (rounded down)
 		UnsignedInt pings = (m_dieFrame - now) / LOGICFRAMES_PER_SECOND;
 		//Now determine the next frame we will make a "ping" sound.
@@ -220,7 +220,7 @@ void StickyBombUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -247,7 +247,7 @@ void StickyBombUpdate::xfer( Xfer *xfer )
 	//Next frame that a ping sound will play.
 	xfer->xferUnsignedInt( &m_nextPingFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -258,4 +258,4 @@ void StickyBombUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

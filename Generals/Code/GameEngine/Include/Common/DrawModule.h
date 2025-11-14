@@ -23,14 +23,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // FILE: DrawModule.h /////////////////////////////////////////////////////////////////////////////////
-// Author: 
-// Desc:	 
+// Author:
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __DRAWMODULE_H_
-#define __DRAWMODULE_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameType.h"
@@ -54,8 +51,8 @@ class TracerDrawInterface;
 class RopeDrawInterface;
 class LaserDrawInterface;
 class FXList;
-enum TerrainDecalType;
-enum ShadowType;
+enum TerrainDecalType CPP_11(: Int);
+enum ShadowType CPP_11(: Int);
 
 //class ModelConditionFlags;
 
@@ -66,18 +63,18 @@ class DrawModule : public DrawableModule
 	MAKE_STANDARD_MODULE_MACRO_ABC( DrawModule )
 
 public:
-	
+
 	DrawModule( Thing *thing, const ModuleData* moduleData );
 	static ModuleType getModuleType() { return MODULETYPE_DRAW; }
 	static Int getInterfaceMask() { return MODULEINTERFACE_DRAW; }
-	
+
 	virtual void doDrawModule(const Matrix3D* transformMtx) = 0;
 
 	virtual void setShadowsEnabled(Bool enable) = 0;
 	virtual void releaseShadows(void) = 0;	///< frees all shadow resources used by this module - used by Options screen.
 	virtual void allocateShadows(void) = 0; ///< create shadow resources if not already present. Used by Options screen.
 
-#if defined(_DEBUG) || defined(_INTERNAL)	
+#if defined(RTS_DEBUG)
 	virtual void getRenderCost(RenderCost & rc) const { };  ///< estimates the render cost of this draw module
 #endif
 
@@ -86,12 +83,12 @@ public:
 	virtual void setTerrainDecalOpacity(Real o) {};
 
 	virtual void setFullyObscuredByShroud(Bool fullyObscured) = 0;
-	
+
 	virtual Bool isVisible() const { return true; }	///< for limiting tree sway, etc to visible objects
 
 	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) = 0;
 	virtual void reactToGeometryChange() = 0;
-	
+
 	virtual Bool isLaser() const { return false; }
 
 	// interface acquisition
@@ -161,8 +158,8 @@ public:
 		Find the bone(s) with the given name and return their positions and/or transforms in the given arrays.
 		We look for a bone named "boneNamePrefixQQ", where QQ is 01, 02, 03, etc, starting at the
 		value of "startIndex". Want to look for just a specific boneName with no numeric suffix?
-		just pass zero (0) for startIndex. (no, we never look for "boneNamePrefix00".) 
-		We copy up to 'maxBones' into the array(s), and return the total count found. 
+		just pass zero (0) for startIndex. (no, we never look for "boneNamePrefix00".)
+		We copy up to 'maxBones' into the array(s), and return the total count found.
 
 		NOTE: this returns the positions and transform for the "ideal" model... that is,
 		at its default rotation and scale, located at (0,0,0). You'll have to concatenate
@@ -187,7 +184,7 @@ public:
 	virtual void setSelectable(Bool selectable) = 0;
 
 	/**
-		This call says, "I want the current animation (if any) to take n frames to complete a single cycle". 
+		This call says, "I want the current animation (if any) to take n frames to complete a single cycle".
 		If it's a looping anim, each loop will take n frames. someday, we may want to add the option to insert
 		"pad" frames at the start and/or end, but for now, we always just "stretch" the animation to fit.
 		Note that you must call this AFTER setting the condition codes.
@@ -196,12 +193,12 @@ public:
 
 	/**
 		similar to the above, but assumes that the current state is a "ONCE",
-		and is smart about transition states... if there is a transition state 
+		and is smart about transition states... if there is a transition state
 		"inbetween", it is included in the completion time.
 	*/
 	virtual void setAnimationCompletionTime(UnsignedInt numFrames) = 0;
 	virtual Bool updateBonesForClientParticleSystems( void ) = 0;///< this will reposition particle systems on the fly ML
-	
+
 	/**
 	  This call is used to pause or resume an animation.
 	*/
@@ -211,7 +208,7 @@ public:
 	virtual void showSubObject( const AsciiString& name, Bool show ) = 0;
 
 	/**
-		This call asks, "In the current animation (if any) how far along are you, from 0.0f to 1.0f". 
+		This call asks, "In the current animation (if any) how far along are you, from 0.0f to 1.0f".
 	*/
 #ifdef ALLOW_ANIM_INQUIRIES
 // srj sez: not sure if this is a good idea, for net sync reasons...
@@ -248,7 +245,3 @@ protected:
 	int		m_boneCount;
 	int		m_shadowDrawCount;
 };
-
-
-#endif // __DRAWMODULE_H_
-

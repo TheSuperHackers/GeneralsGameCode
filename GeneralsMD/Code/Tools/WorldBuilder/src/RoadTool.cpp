@@ -20,7 +20,7 @@
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "RoadTool.h"
@@ -41,30 +41,30 @@
 //
 /// Constructor
 RoadTool::RoadTool(void) :
-	Tool(ID_ROAD_TOOL, IDC_ROAD) 
+	Tool(ID_ROAD_TOOL, IDC_ROAD)
 {
 	m_mapObj = NULL;
 }
-	
+
 /// Destructor
-RoadTool::~RoadTool(void) 
+RoadTool::~RoadTool(void)
 {
 	m_mapObj = NULL;
 }
 //-----------------------------------------------------------------------------
-//         Public Functions                                               
+//         Public Functions
 //-----------------------------------------------------------------------------
 
 MapObject* RoadTool::findSegment(const Coord3D *pLoc, Coord3D *outLoc)
 {
-	for (MapObject* pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) 
+	for (MapObject* pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
 	{
-		if (pMapObj->getFlag(FLAG_ROAD_POINT1)) 
+		if (pMapObj->getFlag(FLAG_ROAD_POINT1))
 		{
 			MapObject* pMapObj2 = pMapObj->getNext();
-			if (pMapObj2==NULL) 
+			if (pMapObj2==NULL)
 				break;
-			if (!pMapObj2->getFlag(FLAG_ROAD_POINT2)) 
+			if (!pMapObj2->getFlag(FLAG_ROAD_POINT2))
 				continue;
 			Coord2D start, end, loc, snapLoc;
 			start.x = pMapObj->getLocation()->x;
@@ -85,7 +85,7 @@ MapObject* RoadTool::findSegment(const Coord3D *pLoc, Coord3D *outLoc)
 			segment.y = loc.y - snapLoc.y;
 			dist = segment.length();
 
-			if (dist < ROAD_SNAP_DISTANCE*MAP_XY_FACTOR) 
+			if (dist < ROAD_SNAP_DISTANCE*MAP_XY_FACTOR)
 			{
 				outLoc->x = snapLoc.x;
 				outLoc->y = snapLoc.y;
@@ -147,7 +147,7 @@ Bool RoadTool::snap(Coord3D *pLoc, Bool skipFirst)
 
 
 /// Shows the road options panel.
-void RoadTool::activate() 
+void RoadTool::activate()
 {
 	PointerTool::clearSelection();
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_ROAD_OPTIONS);
@@ -156,7 +156,7 @@ void RoadTool::activate()
 }
 
 /** Execute the tool on mouse up - Place a road segment. */
-void RoadTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void RoadTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 
@@ -260,7 +260,7 @@ void RoadTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 		} else if (RoadOptions::isTightCurve()) {
 			pNew1->setFlag(FLAG_ROAD_CORNER_TIGHT);
 			pNew2->setFlag(FLAG_ROAD_CORNER_TIGHT);
-		}	
+		}
 	}
 
 	// Roads belong to the neutral player. :)
@@ -333,7 +333,7 @@ void RoadTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 	pDoc->invalObject(m_mapObj);
 }
 
-void RoadTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void RoadTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 	m_mapObj = NULL;

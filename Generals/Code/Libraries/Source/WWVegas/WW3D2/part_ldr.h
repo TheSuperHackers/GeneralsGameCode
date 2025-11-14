@@ -24,7 +24,7 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/ww3d2/part_ldr.h          $*
  *                                                                                             *
- *                       Author:: Patrick Smith                                                
+ *                       Author:: Patrick Smith
  *                                                                                             *
  *                     $Modtime:: 8/01/01 3:35p                                               $*
  *                                                                                             *
@@ -32,14 +32,7 @@
  *                                                                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __PART_EMT_LDR_H
-#define __PART_EMT_LDR_H
-
 
 #include "proto.h"
 #include "rendobj.h"
@@ -100,7 +93,7 @@ class ParticleEmitterDefClass
 		///////////////////////////////////////////////////////////
 		//
 		//	Public constructors/destructors
-		//		
+		//
 		ParticleEmitterDefClass (void);
 		ParticleEmitterDefClass (const ParticleEmitterDefClass &src);
 		virtual ~ParticleEmitterDefClass (void);
@@ -109,14 +102,14 @@ class ParticleEmitterDefClass
 		///////////////////////////////////////////////////////////
 		//
 		//	Public operators
-		//		
+		//
 		const ParticleEmitterDefClass &operator= (const ParticleEmitterDefClass &src);
 
 
 		///////////////////////////////////////////////////////////
 		//
 		//	Public methods
-		//		
+		//
 		virtual WW3DErrorType	Load_W3D (ChunkLoadClass &chunk_load);
 		virtual WW3DErrorType	Save_W3D (ChunkSaveClass &chunk_save);
 		const char *				Get_Name (void) const					{ return m_pName; }
@@ -146,7 +139,7 @@ class ParticleEmitterDefClass
 		float						Get_Vel_Inherit (void) const			{ return m_InfoV2.VelInherit; }
 
 		virtual void			Set_Render_Mode (int mode)						{ m_InfoV2.RenderMode = mode; } // values in w3d_file.h
-		virtual void			Set_Frame_Mode (int mode)						{ m_InfoV2.FrameMode = mode; } // values in w3d_file.h 
+		virtual void			Set_Frame_Mode (int mode)						{ m_InfoV2.FrameMode = mode; } // values in w3d_file.h
 		virtual void			Set_Texture_Filename (const char *pname);
 		virtual void			Set_Lifetime (float value)						{ m_Info.Lifetime = value; }
 		virtual void			Set_Emission_Rate (float value)				{ m_Info.EmissionRate = value; }
@@ -179,6 +172,7 @@ class ParticleEmitterDefClass
 		virtual void			Get_Size_Keyframes (ParticlePropertyStruct<float> &keyframes) const;
 		virtual void			Get_Rotation_Keyframes (ParticlePropertyStruct<float> &rotationframes) const;
 		virtual void			Get_Frame_Keyframes (ParticlePropertyStruct<float> &frameframes) const;
+		virtual void			Get_Blur_Time_Keyframes (ParticlePropertyStruct<float> &blurtimeframes) const;
 		virtual float			Get_Initial_Orientation_Random (void) const { return m_InitialOrientationRandom; }
 
 		virtual void			Set_Color_Keyframes (ParticlePropertyStruct<Vector3> &keyframes);
@@ -186,6 +180,7 @@ class ParticleEmitterDefClass
 		virtual void			Set_Size_Keyframes (ParticlePropertyStruct<float> &keyframes);
 		virtual void			Set_Rotation_Keyframes (ParticlePropertyStruct<float> &keyframes, float orient_rnd);
 		virtual void			Set_Frame_Keyframes (ParticlePropertyStruct<float> &keyframes);
+		virtual void			Set_Blur_Time_Keyframes (ParticlePropertyStruct<float> &keyframes);
 
 		//
 		//	User data accessors
@@ -211,7 +206,7 @@ class ParticleEmitterDefClass
 		float						Get_Merge_Abort_Factor(void) const			{ return m_LineProperties.MergeAbortFactor; }
 		float						Get_Texture_Tile_Factor(void) const			{ return m_LineProperties.TextureTileFactor; }
 		Vector2					Get_UV_Offset_Rate(void) const				{ return Vector2(m_LineProperties.UPerSec,m_LineProperties.VPerSec); }
-		
+
 		virtual void			Set_Line_Texture_Mapping_Mode(int mode);
 		virtual void			Set_Merge_Intersections(int onoff)			{ if (onoff) { m_LineProperties.Flags |= W3D_ELINE_MERGE_INTERSECTIONS; } else { m_LineProperties.Flags &= ~W3D_ELINE_MERGE_INTERSECTIONS; }; }
 		virtual void			Set_Freeze_Random(int onoff)					{ if (onoff) { m_LineProperties.Flags |= W3D_ELINE_FREEZE_RANDOM; } else { m_LineProperties.Flags &= ~W3D_ELINE_FREEZE_RANDOM; }; }
@@ -224,12 +219,12 @@ class ParticleEmitterDefClass
 		virtual void			Set_UV_Offset_Rate(const Vector2 & rate)	{ m_LineProperties.UPerSec = rate.X; m_LineProperties.VPerSec = rate.Y; }
 
 	protected:
-		
+
 		///////////////////////////////////////////////////////////
 		//
 		//	Protected methods
 		//
-		
+
 		//
 		//	Loading methods
 		//
@@ -241,6 +236,7 @@ class ParticleEmitterDefClass
 		virtual WW3DErrorType	Read_Line_Properties (ChunkLoadClass &chunk_load);
 		virtual WW3DErrorType	Read_Rotation_Keyframes (ChunkLoadClass &chunk_load);
 		virtual WW3DErrorType	Read_Frame_Keyframes (ChunkLoadClass &chunk_load);
+		virtual WW3DErrorType	Read_Blur_Time_Keyframes (ChunkLoadClass &chunk_load);
 
 		virtual bool				Read_Color_Keyframe (ChunkLoadClass &chunk_load, float *key_time, Vector3 *value);
 		virtual bool				Read_Opacity_Keyframe (ChunkLoadClass &chunk_load, float *key_time, float *value);
@@ -257,6 +253,7 @@ class ParticleEmitterDefClass
 		virtual WW3DErrorType	Save_Line_Properties (ChunkSaveClass &chunk_save);
 		virtual WW3DErrorType	Save_Frame_Keyframes (ChunkSaveClass & chunk_save);
 		virtual WW3DErrorType	Save_Rotation_Keyframes (ChunkSaveClass & chunk_save);
+		virtual WW3DErrorType	Save_Blur_Time_Keyframes (ChunkSaveClass & chunk_save);
 
 		virtual WW3DErrorType	Save_Color_Keyframes (ChunkSaveClass &chunk_save);
 		virtual WW3DErrorType	Save_Opacity_Keyframes (ChunkSaveClass &chunk_save);
@@ -298,14 +295,15 @@ class ParticleEmitterDefClass
 		ParticlePropertyStruct<float>		m_RotationKeyframes;
 		float										m_InitialOrientationRandom;
 		ParticlePropertyStruct<float>		m_FrameKeyframes;
+		ParticlePropertyStruct<float>		m_BlurTimeKeyframes;
 		Vector3Randomizer *					m_pCreationVolume;
 		Vector3Randomizer *					m_pVelocityRandomizer;
 };
 
-inline void ParticleEmitterDefClass::Set_Line_Texture_Mapping_Mode(int mode)	
-{ 
+inline void ParticleEmitterDefClass::Set_Line_Texture_Mapping_Mode(int mode)
+{
 	m_LineProperties.Flags &= ~W3D_ELINE_TEXTURE_MAP_MODE_MASK;
-	m_LineProperties.Flags |= ((mode << W3D_ELINE_TEXTURE_MAP_MODE_OFFSET) & W3D_ELINE_TEXTURE_MAP_MODE_MASK); 
+	m_LineProperties.Flags |= ((mode << W3D_ELINE_TEXTURE_MAP_MODE_OFFSET) & W3D_ELINE_TEXTURE_MAP_MODE_MASK);
 }
 
 
@@ -314,7 +312,7 @@ inline void ParticleEmitterDefClass::Set_Line_Texture_Mapping_Mode(int mode)
 //
 //	ParticleEmitterPrototypeClass
 //
-class ParticleEmitterPrototypeClass : public W3DMPO, public PrototypeClass 
+class ParticleEmitterPrototypeClass : public W3DMPO, public PrototypeClass
 {
 	W3DMPO_GLUE(ParticleEmitterPrototypeClass)
 	public:
@@ -322,9 +320,9 @@ class ParticleEmitterPrototypeClass : public W3DMPO, public PrototypeClass
 		///////////////////////////////////////////////////////////
 		//
 		//	Public constructors/destructors
-		//		
+		//
 		ParticleEmitterPrototypeClass (ParticleEmitterDefClass *pdef)	{ m_pDefinition = pdef; }
-		
+
 		///////////////////////////////////////////////////////////
 		//
 		//	Public methods
@@ -365,6 +363,3 @@ class ParticleEmitterLoaderClass : public PrototypeLoaderClass
 //	Global variables
 //
 extern ParticleEmitterLoaderClass	_ParticleEmitterLoader;
-
-
-#endif //__PART_EMT_LDR_H

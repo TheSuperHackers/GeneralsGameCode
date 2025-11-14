@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GAMEFONT_H_
-#define __GAMEFONT_H_
-
 #include "Common/SubsystemInterface.h"
 #include "Lib/BaseType.h"
 #include "Common/AsciiString.h"
@@ -42,7 +39,7 @@
 //-------------------------------------------------------------------------------------------------
 class GameFont : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameFont, "GameFont")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameFont, "GameFont")
 public:
 	GameFont*			next;  ///< for library use
 	AsciiString		nameString;
@@ -97,7 +94,7 @@ protected:
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
 inline Int FontLibrary::getCount( void ) { return m_count; }
 inline GameFont *FontLibrary::firstFont( void ) { return m_fontList; }
-inline GameFont *FontLibrary::nextFont( GameFont *font ) 
+inline GameFont *FontLibrary::nextFont( GameFont *font )
 {
 	if( font )
 		return font->next;
@@ -106,6 +103,3 @@ inline GameFont *FontLibrary::nextFont( GameFont *font )
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern FontLibrary *TheFontLibrary;  ///< font library external
-
-#endif // __GAMEFONT_H_
-

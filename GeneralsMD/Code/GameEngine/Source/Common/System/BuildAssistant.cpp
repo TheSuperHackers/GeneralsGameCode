@@ -25,11 +25,11 @@
 // FILE: BuildAssistant.cpp ///////////////////////////////////////////////////////////////////////
 // Author: Colin Day, February 2002
 // Desc:   Singleton class to encapsulate some of the more common functions or rules
-//				 that apply to building structures and units 
+//				 that apply to building structures and units
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/BuildAssistant.h"
 #include "Common/GlobalData.h"
@@ -59,11 +59,6 @@
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 BuildAssistant *TheBuildAssistant = NULL;
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,17 +69,17 @@ BuildAssistant *TheBuildAssistant = NULL;
 ObjectSellInfo::ObjectSellInfo( void )
 {
 
-	m_id = INVALID_ID; 
+	m_id = INVALID_ID;
 	m_sellFrame = 0;
-	
-}  // end ObjectSellInfo
+
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 ObjectSellInfo::~ObjectSellInfo( void )
 {
 
-}  // end ~ObjectSellInfo
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -104,7 +99,7 @@ static Bool isDozer( Object *obj )
 
 	return FALSE;
 
-}  // end isDozer
+}
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -116,24 +111,18 @@ BuildAssistant::BuildAssistant( void )
 	m_buildPositions = NULL;
 	m_buildPositionSize = 0;
 	m_sellList.clear();
-}  // end BuildAssistant
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 BuildAssistant::~BuildAssistant( void )
 {
 
-	// delete build position array if we used it
-	if( m_buildPositions )
-	{
-		
-		delete [] m_buildPositions;
-		m_buildPositions = NULL;
-		m_buildPositionSize = 0;
+	delete [] m_buildPositions;
+	m_buildPositions = NULL;
+	m_buildPositionSize = 0;
 
-	}  // end if
-
-}  // end ~BuildAssistant
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -147,7 +136,7 @@ void BuildAssistant::init( void )
 	m_buildPositionSize = TheGlobalData->m_maxLineBuildObjects;
 	m_buildPositions = NEW Coord3D[ m_buildPositionSize ];
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -164,14 +153,14 @@ void BuildAssistant::reset( void )
 		sellInfo = (*it);
 
 		// delete our data and erase this entry from the list
-		sellInfo->deleteInstance();
+		deleteInstance(sellInfo);
 
-	}  // end for
+	}
 
 	// clear the sell list
 	m_sellList.clear();
 
-}  // end reset
+}
 
 static const Real FRAMES_TO_ALLOW_SCAFFOLD = LOGICFRAMES_PER_SECOND * 1.5f;
 static const Real TOTAL_FRAMES_TO_SELL_OBJECT = LOGICFRAMES_PER_SECOND * 3.0f;
@@ -205,11 +194,11 @@ void BuildAssistant::update( void )
 		if( obj == NULL )
 		{
 
-			sellInfo->deleteInstance();			
-			m_sellList.erase( thisIterator );		
+			deleteInstance(sellInfo);
+			m_sellList.erase( thisIterator );
 			continue;
 
-		}  // end if
+		}
 
 		// decrement the construction percent
 		if( TheGameLogic->getFrame() - sellInfo->m_sellFrame >= FRAMES_TO_ALLOW_SCAFFOLD )
@@ -226,7 +215,7 @@ void BuildAssistant::update( void )
 			if( previousConstructionPercent > 0.0f && obj->getConstructionPercent() <= 0.0f )
 			{
 
-				obj->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK2( MODELCONDITION_PARTIALLY_CONSTRUCTED, 
+				obj->clearAndSetModelConditionFlags( MAKE_MODELCONDITION_MASK2( MODELCONDITION_PARTIALLY_CONSTRUCTED,
 																																				MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED ),
 																						 MAKE_MODELCONDITION_MASK( MODELCONDITION_SOLD ) );
 
@@ -238,9 +227,9 @@ void BuildAssistant::update( void )
 				if( draw )
 					draw->setAnimationLoopDuration( TOTAL_FRAMES_TO_SELL_OBJECT / 2 );
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
 		//
 		// after we've reached zero ... the object has "sunk" back down into the ground ... but
@@ -258,14 +247,14 @@ void BuildAssistant::update( void )
 				if( obj->getTemplate()->getRefundValue() != 0 )
 					sellValue = obj->getTemplate()->getRefundValue();
 				else
-					sellValue = REAL_TO_UNSIGNEDINT( obj->getTemplate()->calcCostToBuild( player ) * 
+					sellValue = REAL_TO_UNSIGNEDINT( obj->getTemplate()->calcCostToBuild( player ) *
 																										 TheGlobalData->m_sellPercentage );
 
-				player->getMoney()->deposit( sellValue );
+				player->getMoney()->deposit( sellValue, TRUE, FALSE );
 				// this money shouldn't be scored since it wasn't really "earned."
 //				player->getScoreKeeper()->addMoneyEarned( sellValue );
 
-			}  // end if
+			}
 
 			// cancel any of the production items and refund to the controlling player
 			ProductionUpdateInterface *pui = obj->getProductionUpdateInterface();
@@ -281,14 +270,14 @@ void BuildAssistant::update( void )
 			TheGameLogic->destroyObject( obj );
 
 			// remove this object from the sell list
-			sellInfo->deleteInstance();
+			deleteInstance(sellInfo);
 			m_sellList.erase( thisIterator );
 
-		}  // end if
+		}
 
-	}  // end for
+	}
 
-}  // end update
+}
 //-------------------------------------------------------------------------------------------------
 /** Xfer the sell list. */
 //-------------------------------------------------------------------------------------------------
@@ -325,12 +314,12 @@ void BuildAssistant::xferTheSellList( Xfer *xfer )
 		DEBUG_ASSERTCRASH(count==0, ("Inconsistent list size counts."));
 	}
 
-}  // end xferTheSellList
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Nice little method to wrap up creating an object from a build */
 //-------------------------------------------------------------------------------------------------
-Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTemplate *what, 
+Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTemplate *what,
 																			  const Coord3D *pos, Real angle, Player *owningPlayer )
 {
 
@@ -347,8 +336,8 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 		DEBUG_ASSERTCRASH( constructorObject->getControllingPlayer() == owningPlayer,
 											 ("buildObjectNow: Constructor object player is not the same as the controlling player passed in\n") );
 
-	}  // end if
-	
+	}
+
 	// Need to validate that we can make this in case someone fakes their CommandSet
 	// A NULL constructor Object means a script built building so let it slide.
 	if( (constructorObject != NULL) && !isPossibleToMakeUnit(constructorObject, what) )
@@ -359,7 +348,7 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 
 	if ( moveObjectsForConstruction( what, pos, angle, owningPlayer ) == FALSE )
 	{
-		// totally bogus. We tried to move our units out of the way, but they wouldn't. 
+		// totally bogus. We tried to move our units out of the way, but they wouldn't.
 		// Chode-boys.
 		if (owningPlayer->getPlayerType()==PLAYER_HUMAN) {
 			return NULL;	// ai gets to cheat.  jba.
@@ -378,7 +367,7 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 		}
 		return NULL;
 
-	}  // end else if
+	}
 	else
 	{
 
@@ -414,7 +403,7 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 			owningPlayer->onStructureCreated( constructorObject, obj );
 			owningPlayer->onStructureConstructionComplete( constructorObject, obj, FALSE );
 
-		}  // end if
+		}
 		else
 		{
 			owningPlayer->onUnitCreated( constructorObject, obj );
@@ -435,17 +424,17 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 
 			create->onBuildComplete();
 		}
-		
+
 		// Creation is another valid and essential time to call this. This building now Looks.
 		obj->handlePartitionCellMaintenance();
 
 		return obj;
 
-	}  // end else
+	}
 
   return NULL;
 
-}  // end buildObjectNow
+}
 
 //-------------------------------------------------------------------------------------------------
 /** This method will create a line of objects end to end along the line defined in 3D
@@ -463,19 +452,19 @@ void BuildAssistant::buildObjectLineNow( Object *constructorObject, const ThingT
 
 	// how big are each of our objects
 	Real objectSize = what->getTemplateGeometryInfo().getMajorRadius() * 2.0f;
-	
+
 	// what is our max tiling length we can make
 	Int maxObjects = TheGlobalData->m_maxLineBuildObjects;
 
 	// build an array of locations that we want to build from start to end
-	tileBuildInfo = buildTiledLocations( what, angle, start, end, 
+	tileBuildInfo = buildTiledLocations( what, angle, start, end,
 																			 objectSize, maxObjects, constructorObject );
 
 	// create an object at each position
 	for( Int i = 0; i < tileBuildInfo->tilesUsed; i++ )
 		buildObjectNow( constructorObject, what, &tileBuildInfo->positions[ i ], angle, owningPlayer );
 
-}  // end buildObjectLineNow
+}
 
 //-------------------------------------------------------------------------------------------------
 /** This structure is passed along to the checkSampleBuildLocation while iterating the
@@ -507,11 +496,11 @@ static void checkSampleBuildLocation( const Coord3D *samplePoint, void *userData
 		if( terrain->getRestrictConstruction() )
 			sampleData->terrainRestricted = TRUE;
 
-	}  // end if
+	}
 
 	Int cellX = REAL_TO_INT_FLOOR( samplePoint->x / PATHFIND_CELL_SIZE );
 	Int cellY = REAL_TO_INT_FLOOR( samplePoint->y / PATHFIND_CELL_SIZE );
-	
+
 	PathfindCell* cell = TheAI->pathfinder()->getCell( LAYER_GROUND, cellX, cellY );
 	if (!cell) {
 		sampleData->terrainRestricted = TRUE;
@@ -544,7 +533,7 @@ static void checkSampleBuildLocation( const Coord3D *samplePoint, void *userData
 		}
 	}
 
-}  // end checkSampleBuildLocation
+}
 
 //-------------------------------------------------------------------------------------------------
 /** This function will call the user callback at each "sample point" across the footprint
@@ -575,7 +564,7 @@ void BuildAssistant::iterateFootprint( const ThingTemplate *build,
 	transform.Rotate_Z( buildOrientation );
 
 	// get the bounding footprint rectangle for the geometry we're looking at
-	Real halfFootprintHeight, 
+	Real halfFootprintHeight,
 			 halfFootprintWidth;
 	if( build->getTemplateGeometryInfo().getGeomType() == GEOMETRY_BOX )
 	{
@@ -583,7 +572,7 @@ void BuildAssistant::iterateFootprint( const ThingTemplate *build,
 		halfFootprintHeight = build->getTemplateGeometryInfo().getMinorRadius();
 		halfFootprintWidth = build->getTemplateGeometryInfo().getMajorRadius();
 
-	}  // end if
+	}
 	else if( build->getTemplateGeometryInfo().getGeomType() == GEOMETRY_SPHERE ||
 					 build->getTemplateGeometryInfo().getGeomType() == GEOMETRY_CYLINDER )
 	{
@@ -591,15 +580,15 @@ void BuildAssistant::iterateFootprint( const ThingTemplate *build,
 		halfFootprintHeight = build->getTemplateGeometryInfo().getBoundingCircleRadius();
 		halfFootprintWidth = build->getTemplateGeometryInfo().getBoundingCircleRadius();
 
-	}  // end else if
+	}
 	else
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("iterateFootprint: Undefined geometry '%d' for '%s'\n",
+		DEBUG_ASSERTCRASH( 0, ("iterateFootprint: Undefined geometry '%d' for '%s'",
 											     build->getTemplateGeometryInfo().getGeomType(), build->getName().str()) );
 		return;
 
-	}  // end else
+	}
 
 	//
 	// start at a corner of the extent ... box geometries have a major radius down
@@ -611,8 +600,8 @@ void BuildAssistant::iterateFootprint( const ThingTemplate *build,
 	//
 	Real x, y;
 	Vector3 v;
-	for( y = -halfFootprintHeight; 
-			 y < halfFootprintHeight + sampleResolution; 
+	for( y = -halfFootprintHeight;
+			 y < halfFootprintHeight + sampleResolution;
 			 y += sampleResolution )
 	{
 
@@ -620,8 +609,8 @@ void BuildAssistant::iterateFootprint( const ThingTemplate *build,
 		if( y > halfFootprintHeight )
 			y = halfFootprintHeight;
 
-		for( x = -halfFootprintWidth; 
-				 x < halfFootprintWidth + sampleResolution; 
+		for( x = -halfFootprintWidth;
+				 x < halfFootprintWidth + sampleResolution;
 				 x += sampleResolution )
 		{
 
@@ -634,7 +623,7 @@ void BuildAssistant::iterateFootprint( const ThingTemplate *build,
 			transform.Transform_Vector( transform, v, &v );
 
 			// for circular geometries we must actually be within the circle
-			if( build->getTemplateGeometryInfo().getGeomType() == GEOMETRY_SPHERE || 
+			if( build->getTemplateGeometryInfo().getGeomType() == GEOMETRY_SPHERE ||
 					build->getTemplateGeometryInfo().getGeomType() == GEOMETRY_CYLINDER )
 			{
 				Coord2D vector;
@@ -644,8 +633,8 @@ void BuildAssistant::iterateFootprint( const ThingTemplate *build,
 				if( vector.length() > halfFootprintWidth )  // could be height too, radius is all the same for circles
 					continue;  // ignore this point
 
-			}  // end if
-		
+			}
+
 			// call the user callback
 			Coord3D pos;
 			pos.x = v.X;
@@ -653,24 +642,26 @@ void BuildAssistant::iterateFootprint( const ThingTemplate *build,
 			pos.z = TheTerrainLogic->getGroundHeight( pos.x, pos.y );
 			func( &pos, funcUserData );
 
-		}  // end for x
+		}
 
-	}  // end for y	
+	}
 
-}  // end iterateFootprint
+}
 
 
 //-------------------------------------------------------------------------------------------------
-/** Check for objects preventing building at this location.  */
+/** Check for objects preventing building at this location.
+  * TheSuperHackers @tweak Stubbjax 05/09/2025 Return LBC_SHROUD for shrouded objects near the
+	* edge of the shroud so that players cannot use this info to determine whether they exist. */
 //-------------------------------------------------------------------------------------------------
-LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos, 
+LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 																											 const ThingTemplate *build,
 																											 Real angle,
 																											 Object *builderObject,
 																											 UnsignedInt options,
 																											 Player *thePlayer)
 {
-	ObjectIterator *iter = 
+	ObjectIterator *iter =
 			ThePartitionManager->iteratePotentialCollisions( worldPos,
 																											 build->getTemplateGeometryInfo(),
 																											 angle );
@@ -680,7 +671,6 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 	for( them = iter->first(); them; them = iter->next() )
 	{
 		Bool feedbackWithFailure = TRUE;
-
 		Relationship rel = builderObject ? builderObject->getRelationship( them ) : NEUTRAL;
 
 		//Kris: If the object is stealthed and we can't see it, pretend we can build there.
@@ -695,20 +685,10 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 						feedbackWithFailure = FALSE; //We want to fail now but without feedback
 					}
 					else
-					{	
+					{
 						continue;
 					}
 				}
-			}
-		}
-
-		//Kris: Patch 1.01 - November 5, 2003
-		//Prevent busy units (black lotus hacking from being moved by trying to place a building -- exploit).
-		if( rel == ALLIES )
-		{
-			if( them->testStatus( OBJECT_STATUS_IS_USING_ABILITY ) || them->getAI() && them->getAI()->isBusy() )
-			{
-				return LBC_OBJECTS_IN_THE_WAY;
 			}
 		}
 
@@ -725,13 +705,28 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 		if (them->isKindOf(KINDOF_INERT))
 			continue;
 
-		// an immobile object may obstruct our building depending on flags.
-		if( them->isKindOf( KINDOF_IMMOBILE ) )	
+		if (them->isKindOf(KINDOF_IMMOBILE))
 		{
-			if (onlyCheckEnemies && builderObject && rel != ENEMIES )	
-			{
+			if (onlyCheckEnemies && builderObject && rel != ENEMIES)
 				continue;
+		}
+
+		if (builderObject && them->getShroudedStatus(builderObject->getControllingPlayer()->getPlayerIndex()) >= OBJECTSHROUD_FOGGED)
+			return LBC_SHROUD;
+
+		//Kris: Patch 1.01 - November 5, 2003
+		//Prevent busy units (black lotus hacking from being moved by trying to place a building -- exploit).
+		if (rel == ALLIES)
+		{
+			if (them->testStatus(OBJECT_STATUS_IS_USING_ABILITY) || them->getAI() && them->getAI()->isBusy())
+			{
+				return LBC_OBJECTS_IN_THE_WAY;
 			}
+		}
+
+		// an immobile object may obstruct our building depending on flags.
+		if( them->isKindOf( KINDOF_IMMOBILE ) )
+		{
 			if( feedbackWithFailure )
 			{
 				TheTerrainVisual->addFactionBib( them, TRUE );
@@ -755,7 +750,7 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 		// if this is an enemy object of the builder object (and therefore the thing
 		// that will be constructed) we can't build here
 		//
-		if( builderObject && rel == ENEMIES ) 
+		if( builderObject && rel == ENEMIES )
 		{
 			if( feedbackWithFailure )
 			{
@@ -765,9 +760,9 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 			return LBC_GENERIC_FAILURE;
 		}
 
-	}  // end for, them
+	}
 
-	if (onlyCheckEnemies) 
+	if (onlyCheckEnemies)
 	{
 		return LBC_OK;
 	}
@@ -864,56 +859,66 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 			hisExitPos.x += c*offset;
 			hisExitPos.y += s*offset;
 		}
-		if (ThePartitionManager->geomCollidesWithGeom(them->getPosition(), hisBounds, them->getOrientation(), 
+		if (ThePartitionManager->geomCollidesWithGeom(them->getPosition(), hisBounds, them->getOrientation(),
 			worldPos, myBounds, angle)) {
 			TheTerrainVisual->addFactionBib(them, true);
 			return LBC_OBJECTS_IN_THE_WAY;
 		}
-		if (!checkMyExit && !checkHisExit && !hisExtraWidth && !myExtraWidth) 
+		if (!checkMyExit && !checkHisExit && !hisExtraWidth && !myExtraWidth)
 		{
 			continue; // neither has extra exit space.
 		}
 
 		// an immobile object will obstruct our building no matter what team it's on
 		if ( them->isKindOf( KINDOF_IMMOBILE ) )	{
+			Bool shrouded = builderObject && them->getShroudedStatus(builderObject->getControllingPlayer()->getPlayerIndex()) >= OBJECTSHROUD_FOGGED;
 			/* Check for overlap of my exit rectangle to his geom info. */
-			if (checkMyExit && ThePartitionManager->geomCollidesWithGeom(them->getPosition(), hisBounds, them->getOrientation(), 
+			if (checkMyExit && ThePartitionManager->geomCollidesWithGeom(them->getPosition(), hisBounds, them->getOrientation(),
 				&myExitPos, myGeom, angle)) {
+				if (shrouded)
+					return LBC_SHROUD;
+				
 				TheTerrainVisual->addFactionBib(them, true);
 				return LBC_OBJECTS_IN_THE_WAY;
 			}
 			// Check for overlap of his exit rectangle with my geom info
-			if (checkHisExit && ThePartitionManager->geomCollidesWithGeom(&hisExitPos, hisGeom, them->getOrientation(), 
+			if (checkHisExit && ThePartitionManager->geomCollidesWithGeom(&hisExitPos, hisGeom, them->getOrientation(),
 					worldPos, myBounds, angle)) {
+				if (shrouded)
+					return LBC_SHROUD;
+				
 				TheTerrainVisual->addFactionBib(them, true);
 				return LBC_OBJECTS_IN_THE_WAY;
 			}
 			// Check both exit rectangles together.
-			if (checkMyExit&&checkHisExit&&ThePartitionManager->geomCollidesWithGeom(&hisExitPos, hisGeom, them->getOrientation(), 
+			if (checkMyExit&&checkHisExit&&ThePartitionManager->geomCollidesWithGeom(&hisExitPos, hisGeom, them->getOrientation(),
 					&myExitPos, myGeom, angle)) {
+				if (shrouded)
+					return LBC_SHROUD;
+				
 				TheTerrainVisual->addFactionBib(them, true);
 				return LBC_OBJECTS_IN_THE_WAY;
 			}
 		}
 
-	}  // end for, them
+	}
 	return LBC_OK;
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Query if we can build at this location.  Note that 'build' may be null and is NOT required
-	* to be valid to know if a location is legal to build at.  'builderObject' is used 
+	* to be valid to know if a location is legal to build at.  'builderObject' is used
 	* for queries that require a pathfind check and should be NULL if not required */
 //-------------------------------------------------------------------------------------------------
-LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos, 
+LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 																											 const ThingTemplate *build,
-																											 Real angle, 
-																											 UnsignedInt options, 
+																											 Real angle,
+																											 UnsignedInt options,
 																											 Object *builderObject,
 																											 Player *player)
 {
 
-	/* You just can't never build off the map, regardless of options.  jba. */			
+	/* You just can't never build off the map, regardless of options.  jba. */
 	Region3D mapExtent;
 	TheTerrainLogic->getMaximumPathfindExtent(&mapExtent);
 	if (!mapExtent.isInRegionNoZ(worldPos)) {
@@ -940,7 +945,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 
 	//
 	// if NO_OBJECT_OVERLAP is set, we are not allowed to construct 'build' if it would overlap
-	// any immobile objects, or an enemy object.  Friendly objects should politely 
+	// any immobile objects, or an enemy object.  Friendly objects should politely
 	// "move out of the way" when you build something where they're standing
 	//
 	if( BitIsSet( options, NO_OBJECT_OVERLAP ) )
@@ -951,7 +956,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 			return code;
 		}
 
-	}  // end if
+	}
 	//
 	// if NO_ENEMY_OBJECT_OVERLAP is set, we are not allowed to construct 'build' if it would overlap
 	// any enemy objects.  Friendly objects are ignored.
@@ -963,14 +968,14 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 		{
 			return code;
 		}
-	}  // end if
+	}
 
 	if (build->isKindOf(KINDOF_CANNOT_BUILD_NEAR_SUPPLIES) && TheGlobalData->m_SupplyBuildBorder > 0)
 	{
-		// special case for supply centers: can't build too close to supply sources 
+		// special case for supply centers: can't build too close to supply sources
 		PartitionFilterAcceptByKindOf f1(MAKE_KINDOF_MASK(KINDOF_SUPPLY_SOURCE), KINDOFMASK_NONE);
 		PartitionFilter *filters[] = { &f1, NULL };
-		
+
 		// see if there are any reasonably close by
 		Real range = build->getTemplateGeometryInfo().getBoundingCircleRadius() + TheGlobalData->m_SupplyBuildBorder*2;
 		Object* tooClose = ThePartitionManager->getClosestObject(worldPos, range, FROM_BOUNDINGSPHERE_2D, filters);
@@ -1011,7 +1016,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 		if( ai->isQuickPathAvailable( worldPos ) == FALSE )
 				return LBC_NO_CLEAR_PATH;
 
-	}  // end if
+	}
 
 	// check basic terrain restrctions
 	if( BitIsSet( options, TERRAIN_RESTRICTIONS ) )
@@ -1043,7 +1048,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 		sampleData.loZ = terrainExtent.hi.z;  // note we set lo point to highest point
 
 		// quick check at triple res.
-		iterateFootprint( build, angle, worldPos, 3*sampleResolution, 
+		iterateFootprint( build, angle, worldPos, 3*sampleResolution,
 		                  checkSampleBuildLocation, &sampleData );
 		if( sampleData.terrainRestricted == TRUE )
 			return LBC_RESTRICTED_TERRAIN;
@@ -1052,7 +1057,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 			return LBC_NOT_FLAT_ENOUGH;
 
 		// careful check at full res.
-		iterateFootprint( build, angle, worldPos, sampleResolution, 
+		iterateFootprint( build, angle, worldPos, sampleResolution,
 		                  checkSampleBuildLocation, &sampleData );
 		if( sampleData.terrainRestricted == TRUE )
 			return LBC_RESTRICTED_TERRAIN;
@@ -1060,12 +1065,12 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 		if( sampleData.hiZ - sampleData.loZ > TheGlobalData->m_allowedHeightVariationForBuilding )
 			return LBC_NOT_FLAT_ENOUGH;
 
-	}  // end if
+	}
 
 	// we passed all the checks
 	return LBC_OK;
 
-}  // end isLocationLegalToBuild
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Adds bibs to structures near to worldPos */
@@ -1094,7 +1099,7 @@ void BuildAssistant::addBibs(const Coord3D *worldPos,
 			TheTerrainVisual->addFactionBib(them, true);
 		}
 
-	}  // end for, them
+	}
 
 }
 
@@ -1108,14 +1113,14 @@ void BuildAssistant::addBibs(const Coord3D *worldPos,
 	* of positions in the tile build info.
 	*
 	* REQUIRES: Note that the array at 'postions' must be large enough to hold 'maxTiles'
-	* entries of positions 
+	* entries of positions
 	*/
 //-------------------------------------------------------------------------------------------------
 BuildAssistant::TileBuildInfo *BuildAssistant::buildTiledLocations( const ThingTemplate *thingBeingTiled,
 																																		Real angle,
-																																		const Coord3D *start, 
+																																		const Coord3D *start,
 																																		const Coord3D *end,
-																																		Real tilingSize, 
+																																		Real tilingSize,
 																																		Int maxTiles,
 																																		Object *builderObject )
 {
@@ -1144,7 +1149,7 @@ BuildAssistant::TileBuildInfo *BuildAssistant::buildTiledLocations( const ThingT
 		//
 		DEBUG_ASSERTCRASH( m_buildPositionSize < 200, ("Do you really need to tile this many objects!!!") );
 
-	}  // end if
+	}
 	Coord3D *positions = m_buildPositions;
 
 	// compute a vector from the start of the line in the world to the end
@@ -1164,7 +1169,7 @@ BuildAssistant::TileBuildInfo *BuildAssistant::buildTiledLocations( const ThingT
 	// line start to the placement line end, we are guaranteed to have one thing (+1)
 	//
 	Int tilesNeeded = REAL_TO_INT(placementLength / tilingSize) + 1;
-	
+
 	// we have a max that we are allowed to build to
 	if( tilesNeeded > maxTiles )
 		tilesNeeded = maxTiles;
@@ -1206,7 +1211,7 @@ BuildAssistant::TileBuildInfo *BuildAssistant::buildTiledLocations( const ThingT
 		// we have now actually used one more "tile"
 		tilesUsed++;
 
-	}  // end for i
+	}
 
 	// return a struct filled out with the actual tiles used and the array of locations
 	static TileBuildInfo tileInfo;
@@ -1214,10 +1219,10 @@ BuildAssistant::TileBuildInfo *BuildAssistant::buildTiledLocations( const ThingT
 	tileInfo.positions = positions;
 	return &tileInfo;
 
-}  // end buildTiledLocations
+}
 
 //-------------------------------------------------------------------------------------------------
-/** Is the template passed in one of those wall type structures that we "build" in 
+/** Is the template passed in one of those wall type structures that we "build" in
 	* the world after drawing a line of where we want the object(s) placed.  The objects
 	* are placed "tiled" in a line */
 //-------------------------------------------------------------------------------------------------
@@ -1232,12 +1237,12 @@ Bool BuildAssistant::isLineBuildTemplate( const ThingTemplate *tTemplate )
 
 	return FALSE;  // not a line build object
 
-}  // end isLineBuildTemplate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** This method will check to make sure it is possible to build the requested unit.  The
 	* builder object MUST be present since all construction comes comes from either a Dozer or
-	* a production building.  The player must have satisfied the prereqs for 'whatToBuild' 
+	* a production building.  The player must have satisfied the prereqs for 'whatToBuild'
   * This does NOT check available money (see canMakeUnit) */
 //-------------------------------------------------------------------------------------------------
 Bool BuildAssistant::isPossibleToMakeUnit( Object *builder, const ThingTemplate *whatToBuild ) const
@@ -1249,18 +1254,18 @@ Bool BuildAssistant::isPossibleToMakeUnit( Object *builder, const ThingTemplate 
 
 	// get the command set for the producer object
 	const CommandSet *commandSet = TheControlBar->findCommandSet( builder->getCommandSetString() );
-	
+
 	// if no command set we cannot build anything
 	if( commandSet == NULL )
 	{
 
-		DEBUG_ASSERTLOG( 0, ("Can't build a '%s' from the builder '%s' because '%s' doesn't have any command set defined\n",
+		DEBUG_ASSERTLOG( 0, ("Can't build a '%s' from the builder '%s' because '%s' doesn't have any command set defined",
 													whatToBuild->getName().str(),
 													builder->getTemplate()->getName().str(),
 													builder->getTemplate()->getName().str()) );
 		return FALSE;
 
-	}  // end if
+	}
 
 	//
 	// scan the command set, we must find whatToBuild as one of the "build" commands available
@@ -1272,16 +1277,15 @@ Bool BuildAssistant::isPossibleToMakeUnit( Object *builder, const ThingTemplate 
 	Int i;
 	for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
 	{
-		
+
 		// get this button
 		commandButton = commandSet->getCommandButton(i);
 		if( commandButton &&
-				(commandButton->getCommandType() == GUI_COMMAND_UNIT_BUILD ||
-				 commandButton->getCommandType() == GUI_COMMAND_DOZER_CONSTRUCT) &&
-				commandButton->getThingTemplate()->isEquivalentTo(whatToBuild) )
+				(commandButton->getCommandType() == GUI_COMMAND_UNIT_BUILD || commandButton->getCommandType() == GUI_COMMAND_DOZER_CONSTRUCT) &&
+				commandButton->getThingTemplate() && commandButton->getThingTemplate()->isEquivalentTo(whatToBuild) )
 			foundCommand = commandButton;
 
-	}  // end for i
+	}
 	if( foundCommand == NULL )
 		return FALSE;
 
@@ -1306,7 +1310,7 @@ CanMakeType BuildAssistant::canMakeUnit( Object *builder, const ThingTemplate *w
 	// sanity
 	if( builder == NULL || whatToBuild == NULL )
 		return CANMAKE_NO_PREREQ;
-	
+
 	if (builder->testScriptStatusBit(OBJECT_STATUS_SCRIPT_DISABLED) || builder->testScriptStatusBit(OBJECT_STATUS_SCRIPT_UNPOWERED))
 		return CANMAKE_FACTORY_IS_DISABLED;
 
@@ -1327,8 +1331,8 @@ CanMakeType BuildAssistant::canMakeUnit( Object *builder, const ThingTemplate *w
   // canBuildMoreOfType(), so do this check first
   if ( player && !player->canBuildMoreOfType( whatToBuild ) )
     return CANMAKE_MAXED_OUT_FOR_PLAYER;
-  
-	if (!isPossibleToMakeUnit(builder, whatToBuild)) 
+
+	if (!isPossibleToMakeUnit(builder, whatToBuild))
 		return CANMAKE_NO_PREREQ;
 
 	if (pu != NULL)
@@ -1380,7 +1384,7 @@ Bool BuildAssistant::isRemovableForConstruction( Object *obj )
 	// not removable
 	return FALSE;
 
-}  // end isRemovableForConstruction
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given that we are about to build 'whatToBuild' remove all the objects that are in the
@@ -1390,7 +1394,7 @@ void BuildAssistant::clearRemovableForConstruction( const ThingTemplate *whatToB
 																										const Coord3D *pos,
 																										Real angle )
 {
-	ObjectIterator *iter = 
+	ObjectIterator *iter =
 			ThePartitionManager->iteratePotentialCollisions( pos,
 																											 whatToBuild->getTemplateGeometryInfo(),
 																											 angle );
@@ -1403,34 +1407,34 @@ void BuildAssistant::clearRemovableForConstruction( const ThingTemplate *whatToB
 		if( isRemovableForConstruction( them ) == TRUE && !them->isKindOf( KINDOF_ALWAYS_SELECTABLE ) )
 			TheGameLogic->destroyObject( them );
 
-	}  // end for, them
+	}
 	TheTerrainVisual->removeTreesAndPropsForConstruction(pos, whatToBuild->getTemplateGeometryInfo(), angle);
 
-}  // end clearRemovableForConstruction
+}
 
 // ------------------------------------------------------------------------------------------------
 /** clearRemovable is set up to delete objects that should cease to exist (for instance, trees).
-	* moveObjects will move objects that are owned by the player. It will also return false if 
+	* moveObjects will move objects that are owned by the player. It will also return false if
     the association with the object is enemy. (We can move neutral things) */
 // ------------------------------------------------------------------------------------------------
-Bool BuildAssistant::moveObjectsForConstruction( const ThingTemplate *whatToBuild, 
+Bool BuildAssistant::moveObjectsForConstruction( const ThingTemplate *whatToBuild,
 																								 const Coord3D *pos,
 																								 Real angle,
 																								 Player *playerToBuild )
-{	 
-	GeometryInfo gi (GEOMETRY_BOX, false, 10, whatToBuild->getTemplateGeometryInfo().getMajorRadius(), 
+{
+	GeometryInfo gi (GEOMETRY_BOX, false, 10, whatToBuild->getTemplateGeometryInfo().getMajorRadius(),
 		whatToBuild->getTemplateGeometryInfo().getMajorRadius());
 	if (whatToBuild->getTemplateGeometryInfo().getGeomType()==GEOMETRY_BOX) {
 		gi = whatToBuild->getTemplateGeometryInfo();
-	} 
-	ObjectIterator *iter = 
+	}
+	ObjectIterator *iter =
 			ThePartitionManager->iteratePotentialCollisions( pos,
 																											 gi,
 																											 angle );
 	Bool anyUnmovables = false;
 	MemoryPoolObjectHolder hold( iter );
 
-	Real radius = sqrt(pow(gi.getMajorRadius(), 2) + pow(gi.getMinorRadius(), 2)); 
+	Real radius = sqrt(pow(gi.getMajorRadius(), 2) + pow(gi.getMinorRadius(), 2));
 	radius *= 1.4f;	// Fudge the distance,
 
 	for( Object *them = iter->first(); them; them = iter->next() )
@@ -1444,7 +1448,7 @@ Bool BuildAssistant::moveObjectsForConstruction( const ThingTemplate *whatToBuil
 		if (them->isKindOf(KINDOF_INERT))
 			continue;
 
-		// Skip KINDOF_ALWAYS_SELECTABLE and isRemovableForConstruction, because if it is 
+		// Skip KINDOF_ALWAYS_SELECTABLE and isRemovableForConstruction, because if it is
 		// RemovableForConstruction, it just got destroyed, and won't actually be gone until
 		// the end of the frame.  jba.
 		if ( !them->isKindOf( KINDOF_ALWAYS_SELECTABLE ) && !isRemovableForConstruction(them) )
@@ -1457,13 +1461,13 @@ Bool BuildAssistant::moveObjectsForConstruction( const ThingTemplate *whatToBuil
 				// Pick an arbitrary direction and tell the unit to move there, at a distance greater
 				// than the object's radius.
 				AIUpdateInterface *ai = them->getAIUpdateInterface();
-				if (ai) 
+				if (ai)
 				{
-					// Vary the distance to move between one half the diameter of the building (roughly) 
+					// Vary the distance to move between one half the diameter of the building (roughly)
 					// and 1.5 times the diameter of the building
 					Real variedRadius = GameLogicRandomValueReal(0.5, 1.5) * radius;
 
-					Coord3D destPos;					
+					Coord3D destPos;
 					Real dir = GameLogicRandomValueReal(-PI, PI);
 					Vector3 vec(variedRadius, 0, 0);
 					vec.Rotate_Z(dir);
@@ -1471,7 +1475,7 @@ Bool BuildAssistant::moveObjectsForConstruction( const ThingTemplate *whatToBuil
 					destPos.x = pos->x + vec.X;
 					destPos.y = pos->y + vec.Y;
 					destPos.z = pos->z + vec.Z;
-					
+
 					// note that this is an extra-special case... even if the unit's mood is "sleep"
 					// it still needs to move here. (units with an ai mood of "sleep" won't respond to
 					// any AI commands. this is a special case that ignores the "sleep" ai mood.) (srj)
@@ -1482,8 +1486,8 @@ Bool BuildAssistant::moveObjectsForConstruction( const ThingTemplate *whatToBuil
 					anyUnmovables = true;
 				}
 
-			} 
-			else 
+			}
+			else
 			{
 				anyUnmovables = true;
 			}
@@ -1519,7 +1523,7 @@ void BuildAssistant::sellObject( Object *obj )
 		else
 			sellInfo = NULL;
 
-	}  // end for
+	}
 	if( sellInfo != NULL )
 		return;
 
@@ -1536,17 +1540,29 @@ void BuildAssistant::sellObject( Object *obj )
 	// set the model condition in the drawable for this object that will show the buildup
 	// scaffold and adjust the model height by construction percent
 	//
-	obj->setModelConditionFlags( MAKE_MODELCONDITION_MASK2( MODELCONDITION_PARTIALLY_CONSTRUCTED, 
-																													MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED) );
+	obj->setModelConditionFlags( MAKE_MODELCONDITION_MASK2( MODELCONDITION_PARTIALLY_CONSTRUCTED, MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED) );
 
+#if RETAIL_COMPATIBLE_AIGROUP
 	//
-	// set this object as under de-construction (sold).  It is still a legal target, since you get the money at 
+	// set this object as under de-construction (sold).  It is still a legal target, since you get the money at
 	// the completion of sale.
 	//
 	obj->setStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_SOLD, OBJECT_STATUS_UNSELECTABLE ) );
+#endif
+
+	// TheSuperHackers @bugfix Mauller 27/06/2025 we need to deselect the object before setting it as unselectable
+	// If the object is set unselectable too soon, it fails to be removed from the selection group
 
 	// for everybody, unselect them at this time.  You can't just deselect a drawable.  Selection is a logic property.
 	TheGameLogic->deselectObject(obj, PLAYERMASK_ALL, TRUE);
+
+#if !RETAIL_COMPATIBLE_AIGROUP
+	//
+	// set this object as under de-construction (sold).  It is still a legal target, since you get the money at
+	// the completion of sale.
+	//
+	obj->setStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_SOLD, OBJECT_STATUS_UNSELECTABLE ) );
+#endif
 
 	//
 	// set the animation durations so that the regular build up loop animations can be
@@ -1569,7 +1585,7 @@ void BuildAssistant::sellObject( Object *obj )
 	{
 		contain->onSelling();
 	}
-	
+
 	// Tell it to stop attacking or anything else it is doing
 	if( obj->getAI() )
 		obj->getAI()->aiIdle(CMD_FROM_AI);
@@ -1584,7 +1600,7 @@ void BuildAssistant::sellObject( Object *obj )
 			break;
 		}
 	}
-	
+
 	// destroy any mines that are owned by this structure, right now.
 	// unfortunately, structures don't keep list of mines they own, so we must do
 	// this the hard way :-( [fortunately, this doens't happen very often, so this
@@ -1600,5 +1616,5 @@ void BuildAssistant::sellObject( Object *obj )
 		}
 	}
 
-}  // end sellObject
+}
 

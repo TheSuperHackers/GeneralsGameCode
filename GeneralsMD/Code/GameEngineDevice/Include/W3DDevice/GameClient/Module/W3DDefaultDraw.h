@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __W3DDEFAULTDRAW_H_
-#define __W3DDEFAULTDRAW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameType.h"
 #include "Common/DrawModule.h"
@@ -62,7 +59,7 @@ public:
 	virtual void doDrawModule(const Matrix3D* transformMtx);
 
 	virtual void setShadowsEnabled(Bool enable);
-	virtual void releaseShadows(void) {};	///< we don't care about preserving temporary shadows.	
+	virtual void releaseShadows(void) {};	///< we don't care about preserving temporary shadows.
 	virtual void allocateShadows(void) {};	///< we don't care about preserving temporary shadows.
 	virtual void setFullyObscuredByShroud(Bool fullyObscured);
 	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle);
@@ -75,6 +72,3 @@ private:
 	Shadow*				m_shadow;													///< Updates/Renders shadows of this object
 #endif
 };
-
-#endif // __W3DDEFAULTDRAW_H_
-

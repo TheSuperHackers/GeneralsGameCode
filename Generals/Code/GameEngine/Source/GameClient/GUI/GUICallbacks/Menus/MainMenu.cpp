@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "gamespy/ghttp/ghttp.h"
 
@@ -75,16 +75,6 @@
 //for accessing the InGameUI
 #include "GameClient/InGameUI.h"
 
-// This define removes the code that could get you to solo and LAN games.
-//#if !defined(_DEBUG) && !defined(_INTERNAL)
-//#define _PLAYTEST
-//#endif
-// 10-20  GS  Made this a project setting so we can set it in one place.  (It has spread to several files, inclding MessageStream.h)
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -97,13 +87,13 @@ enum
 	DROPDOWN_MAIN,
 	DROPDOWN_LOADREPLAY,
 	DROPDOWN_DIFFICULTY,
-	
-	DROPDOWN_COUNT // keep last
+
+	DROPDOWN_COUNT
 };
 
 static Bool raiseMessageBoxes = TRUE;
 static Bool campaignSelected = FALSE;
-#if defined _DEBUG || defined _INTERNAL
+#if defined(RTS_DEBUG)
 static NameKeyType campaignID = NAMEKEY_INVALID;
 static GameWindow *buttonCampaign = NULL;
 #ifdef TEST_COMPRESSION
@@ -253,7 +243,7 @@ static void quitCallback( void )
 	TheGameEngine->setQuitting( TRUE );
 
 	if (TheGameLogic->isInGame())
-		TheMessageStream->appendMessage( GameMessage::MSG_CLEAR_GAME_DATA );
+		TheGameLogic->exitGame();
 }
 
 
@@ -299,7 +289,6 @@ static MessageBoxReturnType checkCDCallback( void *userData )
 
 static void doGameStart( void )
 {
-#if !defined(_PLAYTEST)
 	startGame = FALSE;
 
 	if (TheGameLogic->isInGame())
@@ -313,7 +302,6 @@ static void doGameStart( void )
 	InitRandom(0);
 
 	isShuttingDown = TRUE;
-#endif
 }
 
 static void checkCDBeforeCampaign(GameDifficulty diff)
@@ -333,14 +321,14 @@ static void checkCDBeforeCampaign(GameDifficulty diff)
 static void shutdownComplete( WindowLayout *layout )
 {
 	isShuttingDown = FALSE;
-	
+
 	// hide the layout
 	layout->hide( TRUE );
 
 	// our shutdown is complete
 	TheShell->shutdownComplete( layout );
 
-}  // end if
+}
 
 
 
@@ -419,6 +407,28 @@ GameWindow *win = NULL;
 		win->winHide(TRUE);
 
 }
+
+// TheSuperHackers @tweak Now prints version information in an optional version label.
+// Originally this label does not exist in the Main Menu. It can be copied from the Options Menu.
+static void initLabelVersion()
+{
+	NameKeyType versionID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:LabelVersion") );
+	GameWindow *labelVersion = TheWindowManager->winGetWindowFromId( NULL, versionID );
+
+	if (labelVersion)
+	{
+		if (TheVersion && TheGlobalData)
+		{
+			UnicodeString text = TheVersion->getUnicodeProductVersionHashString();
+			GadgetStaticTextSetText( labelVersion, text );
+		}
+		else
+		{
+			labelVersion->winHide( TRUE );
+		}
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Initialize the main menu */
 //-------------------------------------------------------------------------------------------------
@@ -448,7 +458,6 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	exitID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonExit") );
 	motdID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonMOTD") );
 	worldBuilderID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonWorldBuilder") );
-//	NameKeyType versionID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:LabelVersion") );
 	getUpdateID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonGetUpdate") );
 	buttonTRAININGID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonTRAINING") );
 	buttonUSAID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonUSA") );
@@ -497,9 +506,6 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	buttonHard = TheWindowManager->winGetWindowFromId( parentMainMenu, buttonHardID );
 	buttonDiffBack = TheWindowManager->winGetWindowFromId( parentMainMenu, buttonDiffBackID );
 
-
-//	GameWindow *labelVersion = TheWindowManager->winGetWindowFromId( parentMainMenu, versionID );
-	
 	getUpdate = TheWindowManager->winGetWindowFromId( parentMainMenu, getUpdateID );
 	buttonTRAINING = TheWindowManager->winGetWindowFromId( parentMainMenu, buttonTRAININGID );
 	buttonUSA = TheWindowManager->winGetWindowFromId( parentMainMenu, buttonUSAID );
@@ -519,50 +525,38 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	dropDownWindows[DROPDOWN_DIFFICULTY] = TheWindowManager->winGetWindowFromId( parentMainMenu, TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:MapBorder4") ) );
 	for(i = 1; i < DROPDOWN_COUNT; ++i)
 		dropDownWindows[i]->winHide(TRUE);
-	
+
 	initialHide();
-	
+
 	showSelectiveButtons(SHOW_NONE);
 	// Set up the version number
-#if defined _DEBUG || defined _INTERNAL
+#if defined(RTS_DEBUG)
 	WinInstanceData instData;
 #ifdef TEST_COMPRESSION
 	instData.init();
 	BitSet( instData.m_style, GWS_PUSH_BUTTON | GWS_MOUSE_TRACK );
 	instData.m_textLabelString = "Debug: Compress/Decompress Maps";
 	instData.setTooltipText(UnicodeString(L"Only Used in Debug and Internal!"));
-	buttonCompressTest = TheWindowManager->gogoGadgetPushButton( parentMainMenu, 
-																									 WIN_STATUS_ENABLED | WIN_STATUS_IMAGE, 
-																									 25, 175, 
-																									 400, 400, 
+	buttonCompressTest = TheWindowManager->gogoGadgetPushButton( parentMainMenu,
+																									 WIN_STATUS_ENABLED | WIN_STATUS_IMAGE,
+																									 25, 175,
+																									 400, 400,
 																									 &instData, NULL, TRUE );
 #endif // TEST_COMPRESSION
 
 	instData.init();
 	BitSet( instData.m_style, GWS_PUSH_BUTTON | GWS_MOUSE_TRACK );
 	instData.m_textLabelString = "Debug: Load Map";
-	
+
 	instData.setTooltipText(UnicodeString(L"Only Used in Debug and Internal!"));
-	buttonCampaign = TheWindowManager->gogoGadgetPushButton( parentMainMenu, 
-																									 WIN_STATUS_ENABLED, 
-																									 25, 54, 
-																									 180, 26, 
+	buttonCampaign = TheWindowManager->gogoGadgetPushButton( parentMainMenu,
+																									 WIN_STATUS_ENABLED,
+																									 25, 54,
+																									 180, 26,
 																									 &instData, NULL, TRUE );
-	
-//	if (TheVersion)
-//	{
-//		UnicodeString version;
-//		version.format(L"%s\n%s", TheVersion->getUnicodeVersion().str(), TheVersion->getUnicodeBuildTime().str());
-//		GadgetStaticTextSetText( labelVersion, version );
-//	}
-//	else
-//	{
-//		labelVersion->winHide( TRUE );
-//	}
-//#else
-	
-//	GadgetStaticTextSetText( labelVersion, TheVersion->getUnicodeVersion() );
 #endif
+
+	initLabelVersion();
 
 	//TheShell->registerWithAnimateManager(buttonCampaign, WIN_ANIMATION_SLIDE_LEFT, TRUE, 800);
 	//TheShell->registerWithAnimateManager(buttonSkirmish, WIN_ANIMATION_SLIDE_LEFT, TRUE, 600);
@@ -570,7 +564,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 //	TheShell->registerWithAnimateManager(buttonMultiPlayer, WIN_ANIMATION_SLIDE_LEFT, TRUE, 200);
 //	TheShell->registerWithAnimateManager(buttonOptions, WIN_ANIMATION_SLIDE_LEFT, TRUE, 1);
 //	TheShell->registerWithAnimateManager(buttonExit, WIN_ANIMATION_SLIDE_RIGHT, TRUE, 1);
-//	
+//
 	layout->hide( FALSE );
 
 	/*
@@ -582,7 +576,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 		{
 			// wohoo - we're connected!  fire off a check for updates
 			checkedForUpdate = TRUE;
-			DEBUG_LOG(("Looking for a patch for productID=%d, versionStr=%s, distribution=%d\n",
+			DEBUG_LOG(("Looking for a patch for productID=%d, versionStr=%s, distribution=%d",
 				gameProductID, gameVersionUniqueIDStr, gameDistributionID));
 			ptCheckForPatch( gameProductID, gameVersionUniqueIDStr, gameDistributionID, patchAvailableCallback, PTFalse, NULL );
 			//ptCheckForPatch( productID, versionUniqueIDStr, distributionID, mapPackAvailableCallback, PTFalse, NULL );
@@ -597,7 +591,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 
 	if (TheGameSpyPeerMessageQueue && !TheGameSpyPeerMessageQueue->isConnected())
 	{
-		DEBUG_LOG(("Tearing down GameSpy from MainMenuInit()\n"));
+		DEBUG_LOG(("Tearing down GameSpy from MainMenuInit()"));
 		TearDownGameSpy();
 	}
 	if (TheMapCache)
@@ -609,7 +603,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 		buttonMOTD->winHide(FALSE);
 	}
 	*/
-	
+
 	TheShell->loadScheme("MainMenu");
 	raiseMessageBoxes = TRUE;
 
@@ -617,28 +611,8 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 //		localAnimateWindowManager = NEW AnimateWindowManager;
 
 	//pendingDropDown =DROPDOWN_MAIN;
-	
-#if defined(_PLAYTEST)
-	// force these buttons enabled in DEBUG and INTERNAL, so we can still work. :-)
-	buttonNetwork->winEnable(FALSE);
-	buttonSinglePlayer->winEnable(FALSE);
-	buttonReplay->winEnable(FALSE);
-#endif
 
-#if defined(_PLAYTEST)
 
-	static Bool didMinSpecCheck = false;
-
-	if (!didMinSpecCheck)
-	{
-		Bool videoPassed, cpuPassed, memPassed;
-		if (!TheDisplay->testMinSpecRequirements(&videoPassed, &cpuPassed, &memPassed))
-		{	//system failed the test
-			MessageBoxOk(TheGameText->fetch("GUI:MinSpecFailedTitle"), TheGameText->fetch("GUI:MinSpecFailedMessage"),NULL);		
-		}
-		didMinSpecCheck = true;
-	}
-#endif
 	GameWindow *rule = TheWindowManager->winGetWindowFromId( parentMainMenu, TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:MainMenuRuler") ) );
 	if(rule)
 		rule->winHide(TRUE);
@@ -660,12 +634,12 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 		rule->winHide(FALSE);
 	}
 
-	layout->bringForward();	
+	layout->bringForward();
 	// set keyboard focus to main parent
 	TheWindowManager->winSetFocus( parentMainMenu );
-	
-	
-}  // end MainMenuInit
+
+
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Main menu shutdown method */
@@ -679,11 +653,11 @@ void MainMenuShutdown( WindowLayout *layout, void *userData )
 
 	// if we are shutting down for an immediate pop, skip the animations
 	Bool popImmediate = *(Bool *)userData;
-	
+
 //	if(winVidManager)
 	//		delete winVidManager;
 	//	winVidManager = NULL;
-	
+
 
 	if( popImmediate )
 	{
@@ -695,21 +669,21 @@ void MainMenuShutdown( WindowLayout *layout, void *userData )
 		shutdownComplete( layout );
 		return;
 
-	}  //end if
+	}
 
 	if (!startGame)
 		TheShell->reverseAnimatewindow();
 	//TheShell->reverseAnimatewindow();
 //	if(localAnimateWindowManager && dropDown != DROPDOWN_NONE)
 //		localAnimateWindowManager->reverseAnimateWindow();
-}  // end MainMenuShutdown
+}
 
 extern Bool DontShowMainMenu;
 
 ////////////////////////////////////////////////////////////////////////////
 //Added By Sadullah Nader
 //Added as a fix to the resolution change
-//Allows the user to confirm the change, goes back to the previous mode 
+//Allows the user to confirm the change, goes back to the previous mode
 //if the time to change expires.
 ////////////////////////////////////////////////////////////////////////////
 
@@ -729,10 +703,10 @@ void AcceptResolution()
 //-------------------------------------------------------------------------------------------------
 void DeclineResolution()
 {
-	//Revert back to old resolution and reset all necessary 
+	//Revert back to old resolution and reset all necessary
 	//parts of the shell
 
-	if (TheDisplay->setDisplayMode(oldDispSettings.xRes, oldDispSettings.yRes, 
+	if (TheDisplay->setDisplayMode(oldDispSettings.xRes, oldDispSettings.yRes,
 										oldDispSettings.bitDepth, oldDispSettings.windowed))
 	{
 		dispChanged = FALSE;
@@ -740,29 +714,20 @@ void DeclineResolution()
 
 		TheWritableGlobalData->m_xResolution = newDispSettings.xRes;
 		TheWritableGlobalData->m_yResolution = newDispSettings.yRes;
-		
+
 		TheHeaderTemplateManager->headerNotifyResolutionChange();
 		TheMouse->mouseNotifyResolutionChange();
-				
+
 		AsciiString prefString;
 		prefString.format("%d %d", newDispSettings.xRes, newDispSettings.yRes);
-		
+
 		OptionPreferences optionPref;
 		optionPref["Resolution"] = prefString;
 		optionPref.write();
 
-		// delete the shell
-		delete TheShell;
-		TheShell = NULL;
+		TheShell->recreateWindowLayouts();
 
-		// create the shell
-		TheShell = MSGNEW("GameClientSubsystem") Shell;
-		if( TheShell )
-			TheShell->init();
-		
 		TheInGameUI->recreateControlBar();
-
-		TheShell->push( AsciiString("Menus/MainMenu.wnd") );
 	}
 }
 
@@ -773,25 +738,25 @@ void DoResolutionDialog()
 {
 	//Bring up a dialog to accept the resolution chosen in the options menu
 	UnicodeString resolutionNew;
-	
+
 	UnicodeString resTimerString = TheGameText->fetch("GUI:Resolution");
-	
+
 	resolutionNew.format(L": %dx%d\n", newDispSettings.xRes , newDispSettings.yRes);
-	
+
 	resTimerString.concat(resolutionNew);
-		
-	
-	resAcceptMenu = TheWindowManager->gogoMessageBox( CORNER, CORNER, -1, -1,MSG_BOX_OK | MSG_BOX_CANCEL , 
-																									 TheGameText->fetch("GUI:Resolution"), 
-																									 resTimerString, NULL, NULL, AcceptResolution, 
+
+
+	resAcceptMenu = TheWindowManager->gogoMessageBox( CORNER, CORNER, -1, -1,MSG_BOX_OK | MSG_BOX_CANCEL ,
+																									 TheGameText->fetch("GUI:Resolution"),
+																									 resTimerString, NULL, NULL, AcceptResolution,
 																									 DeclineResolution);
 }
 
-/* This function is not being currently used because we do not need a timer on the 
+/* This function is not being currently used because we do not need a timer on the
 // dialog box.
 //-------------------------------------------------------------------------------------------------
-//ResolutionDialogUpdate() - if resolution dialog box is shown, this must count 10 seconds for 
-//	accepting resolution changes otherwise we go back to previous display settings 
+//ResolutionDialogUpdate() - if resolution dialog box is shown, this must count 10 seconds for
+//	accepting resolution changes otherwise we go back to previous display settings
 //-------------------------------------------------------------------------------------------------
 void ResolutionDialogUpdate()
 {
@@ -799,11 +764,11 @@ void ResolutionDialogUpdate()
 	{
 		timeStarted = currentTime = time(NULL);
 	}
-	else 
+	else
 	{
 		currentTime = time(NULL);
 	}
-	
+
 	if ( ( currentTime - timeStarted ) >= TIME_OUT)
 	{
 		currentTime = timeStarted = 0;
@@ -812,7 +777,7 @@ void ResolutionDialogUpdate()
 	//------------------------------------------------------------------------------------------------------
 	// Used for debugging purposes
 	//------------------------------------------------------------------------------------------------------
-	DEBUG_LOG(("Resolution Timer :  started at %d,  current time at %d, frameTicker is %d\n", timeStarted, 
+	DEBUG_LOG(("Resolution Timer :  started at %d,  current time at %d, frameTicker is %d", timeStarted,
 							time(NULL) , currentTime));
 }
 */
@@ -829,7 +794,7 @@ void MainMenuUpdate( WindowLayout *layout, void *userData )
 	}
 	if(DontShowMainMenu && justEntered)
 		justEntered = FALSE;
-	
+
 	if (TheDownloadManager && !TheDownloadManager->isDone())
 	{
 		TheDownloadManager->update();
@@ -858,7 +823,7 @@ void MainMenuUpdate( WindowLayout *layout, void *userData )
 		else
 			initialGadgetDelay--;
 	}
-	
+
 	if(dontAllowTransitions && TheTransitionHandler->isFinished())
 		dontAllowTransitions = FALSE;
 
@@ -885,7 +850,7 @@ void MainMenuUpdate( WindowLayout *layout, void *userData )
 				break;
 			}
 			showLogo = FALSE;
-//			showFrames = 0;	
+//			showFrames = 0;
 //			logoIsShown = TRUE;
 //		}
 //		else
@@ -930,7 +895,7 @@ void MainMenuUpdate( WindowLayout *layout, void *userData )
 //			dropDownWindows[dropDown]->winHide(TRUE);
 //		dropDown = pendingDropDown;
 //		dropDownWindows[dropDown]->winHide(FALSE);
-//		localAnimateWindowManager->registerGameWindow(dropDownWindows[dropDown],WIN_ANIMATION_SLIDE_TOP_FAST,TRUE,1,1);						
+//		localAnimateWindowManager->registerGameWindow(dropDownWindows[dropDown],WIN_ANIMATION_SLIDE_TOP_FAST,TRUE,1,1);
 //		//buttonPushed = FALSE;
 //		pendingDropDown = DROPDOWN_NONE;
 //	}
@@ -940,31 +905,31 @@ void MainMenuUpdate( WindowLayout *layout, void *userData )
 //		for(Int i = 1; i < DROPDOWN_COUNT; ++i)
 //			dropDownWindows[i]->winHide(TRUE);
 //	}
-	
-	
-	
-	
+
+
+
+
 
 	if (startGame && TheShell->isAnimFinished() && TheTransitionHandler->isFinished())
 	{
 		doGameStart();
 	}
 
-	// We'll only be successful if we've requested to 
+	// We'll only be successful if we've requested to
 	if(isShuttingDown && TheShell->isAnimFinished() && TheTransitionHandler->isFinished())
 	{
 		shutdownComplete(layout);
 	}
-	
 
-	// We'll only be successful if we've requested to 
+
+	// We'll only be successful if we've requested to
 //	if(TheShell->isAnimReversed() && TheShell->isAnimFinished())
 //		shutdownComplete( layout );
 
 //	if(winVidManager)
 //		winVidManager->update();
 
-}  // end MainMenuUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Main menu input callback */
@@ -975,8 +940,8 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 
 	if(!notShown)
 		return MSG_IGNORED;
-	
-	switch( msg ) 
+
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -985,15 +950,17 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 			ICoord2D mouse;
 			mouse.x = mData1 & 0xFFFF;
 			mouse.y = mData1 >> 16;
-			if( mouse.x == 0 && mouse.y == 0)
+
+			// TheSuperHackers @tweak 20/08/2025 Show mouse and menu immediately when shellmap is disabled.
+			if (TheGlobalData->m_shellMapOn && mouse.x == 0 && mouse.y == 0)
 				break;
 
 			static Int mousePosX = mouse.x;
 			static Int mousePosY = mouse.y;
 			if(abs(mouse.x - mousePosX) > 20 || abs(mouse.y - mousePosY) > 20)
 			{
-			
-				DEBUG_LOG(("Mouse X:%d, Y:%d\n", mouse.x, mouse.y));
+
+				DEBUG_LOG(("Mouse X:%d, Y:%d", mouse.x, mouse.y));
 				if(notShown)
 				{
 					initialGadgetDelay = 1;
@@ -1005,8 +972,8 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 					return MSG_HANDLED;
 				}
 			}
-			
-		}  // end char
+
+		}
 		break;
 		case GWM_CHAR:
 		{
@@ -1020,26 +987,26 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 				notShown = FALSE;
 				return MSG_HANDLED;
 			}
-			
-		}  // end char
 
-	}  // end switch( msg )
-	
+		}
+
+	}
+
 
 	return MSG_IGNORED;
 
-}  // end MainMenuInput
+}
 void PrintOffsetsFromControlBarParent( void );
 //-------------------------------------------------------------------------------------------------
 /** Main menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 										 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	static Bool triedToInitWOLAPI = FALSE;
 	static Bool canInitWOLAPI = FALSE;
-	
-	switch( msg ) 
+
+	switch( msg )
 	{
 
 		//---------------------------------------------------------------------------------------------
@@ -1047,18 +1014,18 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 		{
 			ghttpStartup();
 			break;
-		}  // end case
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
 			ghttpCleanup();
-			DEBUG_LOG(("Tearing down GameSpy from MainMenuSystem(GWM_DESTROY)\n"));
+			DEBUG_LOG(("Tearing down GameSpy from MainMenuSystem(GWM_DESTROY)"));
 			TearDownGameSpy();
 			StopAsyncDNSCheck(); // kill off the async DNS check thread in case it is still running
 			break;
 
-		}  // end case
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -1070,8 +1037,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end input
-#ifndef _PLAYTEST
+		}
 		//---------------------------------------------------------------------------------------------
 		case GBM_MOUSE_ENTERING:
 		{
@@ -1125,7 +1091,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				TheTransitionHandler->setGroup("MainMenuFactionSkirmish");
 				//showSelectiveButtons(SHOW_NONE);
 			}
-			
+
 			else if(controlID == buttonUSAID)
 			{
 				if(dontAllowTransitions && !campaignSelected)
@@ -1175,7 +1141,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 //				showFrames = 0;
 //				showSide = SHOW_CHINA;
 			}
-			
+
 		break;
 		}
 		//---------------------------------------------------------------------------------------------
@@ -1212,7 +1178,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				if(campaignSelected || dontAllowTransitions)
 					break;
 				TheTransitionHandler->reverse("MainMenuFactionTraining");
-				
+
 				//showSelectiveButtons(SHOW_NONE);
 			}
 			else if(controlID == skirmishID)
@@ -1237,7 +1203,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				if(campaignSelected || dontAllowTransitions)
 					break;
 				TheTransitionHandler->reverse("MainMenuFactionUS");
-				
+
 				//showSelectiveButtons(SHOW_NONE);
 			}
 			else if(controlID == buttonGLAID)
@@ -1263,20 +1229,19 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 					break;
 				TheTransitionHandler->reverse("MainMenuFactionChina");
 				//showSelectiveButtons(SHOW_NONE);
-			}	
+			}
 		break;
 		}
-#endif _PLAYTEST
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
-			
+
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
-			
+
 			if(buttonPushed)
 				break;
-#if defined _DEBUG || defined _INTERNAL
+#if defined(RTS_DEBUG)
 			if( control == buttonCampaign )
 			{
 				buttonPushed = TRUE;
@@ -1289,7 +1254,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				DoCompressTest();
 			}
 #endif // TEST_COMPRESSION
-			else 
+			else
 #endif
 			if( controlID == buttonSinglePlayerID )
 			{
@@ -1302,7 +1267,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				TheTransitionHandler->remove("MainMenuDefaultMenu");
 				TheTransitionHandler->reverse("MainMenuDefaultMenuBack");
 				TheTransitionHandler->setGroup("MainMenuSinglePlayerMenu");
-			}  // end if
+			}
 			else if( controlID == buttonSingleBackID )
 			{
 				if(campaignSelected || dontAllowTransitions)
@@ -1313,7 +1278,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				TheTransitionHandler->reverse("MainMenuSinglePlayerMenuBack");
 				TheTransitionHandler->setGroup("MainMenuDefaultMenu");
 				dontAllowTransitions = TRUE;
-			}  // end if
+			}
 			else if( controlID == buttonMultiBackID )
 			{
 				if(dontAllowTransitions)
@@ -1324,7 +1289,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				TheTransitionHandler->remove("MainMenuMultiPlayerMenu");
 				TheTransitionHandler->reverse("MainMenuMultiPlayerMenuReverse");
 				TheTransitionHandler->setGroup("MainMenuDefaultMenu");
-			}  // end if
+			}
 			else if( controlID == buttonLoadReplayBackID )
 			{
 				if(dontAllowTransitions)
@@ -1335,8 +1300,8 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				TheTransitionHandler->remove("MainMenuLoadReplayMenu");
 				TheTransitionHandler->reverse("MainMenuLoadReplayMenuBack");
 				TheTransitionHandler->setGroup("MainMenuDefaultMenu");
-			}  // end if
-			
+			}
+
 			else if( control == buttonCredits )
 			{
 				if(dontAllowTransitions)
@@ -1357,7 +1322,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				dropDownWindows[DROPDOWN_MULTIPLAYER]->winHide(FALSE);
 				TheTransitionHandler->remove("MainMenuDefaultMenu");
 				TheTransitionHandler->reverse("MainMenuDefaultMenuBack");
-				TheTransitionHandler->setGroup("MainMenuMultiPlayerMenu");		
+				TheTransitionHandler->setGroup("MainMenuMultiPlayerMenu");
 			}
 			else if( controlID == buttonLoadReplayID)
 			{
@@ -1378,7 +1343,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				dontAllowTransitions = TRUE;
 //				SaveLoadLayoutType layoutType = SLLT_LOAD_ONLY;
 //        WindowLayout *saveLoadMenuLayout = TheShell->getSaveLoadMenuLayout();
-//				DEBUG_ASSERTCRASH( saveLoadMenuLayout, ("Unable to get save load menu layout.\n") );
+//				DEBUG_ASSERTCRASH( saveLoadMenuLayout, ("Unable to get save load menu layout.") );
 //				saveLoadMenuLayout->runInit( &layoutType );
 //				saveLoadMenuLayout->hide( FALSE );
 //				saveLoadMenuLayout->bringForward();
@@ -1424,7 +1389,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 //				localAnimateWindowManager->reverseAnimateWindow();
 				dropDown = DROPDOWN_NONE;
 
-			}  // end else if
+			}
 			else if( controlID == networkID )
 			{
 				if(dontAllowTransitions)
@@ -1436,7 +1401,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				TheShell->push( AsciiString("Menus/LanLobbyMenu.wnd") );
 
 				TheScriptEngine->signalUIInteract(TheShellHookNames[SHELL_SCRIPT_HOOK_MAIN_MENU_NETWORK_SELECTED]);
-			}  // end else if
+			}
 			else if( controlID == optionsID )
 			{
 				if(dontAllowTransitions)
@@ -1451,14 +1416,11 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				optLayout->runInit();
 				optLayout->hide(FALSE);
 				optLayout->bringForward();
-			}  // end else if
+			}
 			else if( controlID == worldBuilderID )
 			{
-#if defined _DEBUG
+#if defined RTS_DEBUG
 				if(_spawnl(_P_NOWAIT,"WorldBuilderD.exe","WorldBuilderD.exe", NULL) < 0)
-					MessageBoxOk(TheGameText->fetch("GUI:WorldBuilder"), TheGameText->fetch("GUI:WorldBuilderLoadFailed"),NULL);
-#elif defined  _INTERNAL
-				if(_spawnl(_P_NOWAIT,"WorldBuilderI.exe","WorldBuilderI.exe", NULL) < 0)
 					MessageBoxOk(TheGameText->fetch("GUI:WorldBuilder"), TheGameText->fetch("GUI:WorldBuilderLoadFailed"),NULL);
 #else
 				if(_spawnl(_P_NOWAIT,"WorldBuilder.exe","WorldBuilder.exe", NULL) < 0)
@@ -1472,14 +1434,14 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 			else if( controlID == exitID )
 			{
 				// If we ever want to add a dialog before we exit out of the game, uncomment this line and kill the quitCallback() line below.
-//#if defined(_DEBUG) || defined(_INTERNAL)
-				
+//#if defined(RTS_DEBUG)
+
 				//Added By Sadullah Nader
 				//Changed the preprocessing code to normal code
 				if (TheGlobalData->m_windowed)
 				{
 					quitCallback();
-//#else	
+//#else
 				}
 				else
 				{
@@ -1487,9 +1449,8 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				}
 				//
 //#endif
-				
-			}  // end else if
-#ifndef _PLAYTEST
+
+			}
 			else if(controlID == buttonTRAININGID)
 			{
 				if(campaignSelected || dontAllowTransitions)
@@ -1541,7 +1502,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				TheTransitionHandler->remove("MainMenuFactionGLA", TRUE);
 				GameWindow *win = TheWindowManager->winGetWindowFromId(parentMainMenu, TheNameKeyGenerator->nameToKey("MainMenu.wnd:WinFactionGLA"));
 				if(win)
-					win->winHide(TRUE);				
+					win->winHide(TRUE);
 				TheTransitionHandler->reverse("MainMenuSinglePlayerMenuBackGLA");
 				TheTransitionHandler->setGroup("MainMenuDifficultyMenuGLA");
 				campaignSelected = TRUE;
@@ -1565,7 +1526,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				TheTransitionHandler->remove("MainMenuFactionChina", TRUE);
 				GameWindow *win = TheWindowManager->winGetWindowFromId(parentMainMenu, TheNameKeyGenerator->nameToKey("MainMenu.wnd:WinFactionChina"));
 				if(win)
-					win->winHide(TRUE);				
+					win->winHide(TRUE);
 				TheTransitionHandler->reverse("MainMenuSinglePlayerMenuBackChina");
 				TheTransitionHandler->setGroup("MainMenuDifficultyMenuChina");
 				campaignSelected = TRUE;
@@ -1580,7 +1541,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 //				layout->bringForward();
 
 //				setupGameStart(TheCampaignManager->getCurrentMap());
-			}// end else if
+			}
 			else if(controlID == buttonEasyID)
 			{
 				if(dontAllowTransitions)
@@ -1612,21 +1573,20 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				campaignSelected = FALSE;
 			}
 
-#endif _PLAYTEST
 
 			break;
 
-		}  // end selected
-		
+		}
+
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-}  // end MainMenuSystem
+}
 
 void diffReverseSide( void )
 {

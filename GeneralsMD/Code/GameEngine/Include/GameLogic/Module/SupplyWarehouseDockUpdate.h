@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _SUPPLY_WAREHOUSE_DOCK_UPDATE_H_
-#define _SUPPLY_WAREHOUSE_DOCK_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "Common/GameMemory.h"
@@ -44,7 +41,7 @@ class SupplyWarehouseDockUpdateModuleData : public DockUpdateModuleData
 public:
 
   SupplyWarehouseDockUpdateModuleData( void );
-	
+
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 	Int m_startingBoxesData;
@@ -78,5 +75,3 @@ protected:
 	Int m_boxesStored;
 
 };
-
-#endif

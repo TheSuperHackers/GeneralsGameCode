@@ -27,22 +27,24 @@
 // Author: Michael S. Booth, October 2000
 
 #pragma once
-#ifndef _OBJECT_H_
-#define _OBJECT_H_
 
 #include "Lib/BaseType.h"
+#include "ref_ptr.h"
 
 #include "Common/Geometry.h"
 #include "Common/Snapshot.h"
 #include "Common/SpecialPowerMaskType.h"
 #include "Common/DisabledTypes.h"
 #include "Common/Thing.h"
+#include "Common/ObjectStatusTypes.h"
+#include "Common/Upgrade.h"
 
 #include "GameClient/Color.h"
 
 #include "GameLogic/WeaponBonusConditionFlags.h"
 #include "GameLogic/WeaponSet.h"
 #include "GameLogic/WeaponSetFlags.h"
+#include "GameLogic/Module/StealthUpdate.h"
 
 //-----------------------------------------------------------------------------
 //           Forward References
@@ -100,21 +102,21 @@ class ObjectRepulsorHelper;
 class ObjectWeaponStatusHelper;
 class ObjectDefectionHelper;
 
-enum CommandSourceType;
-enum DamageType;
-enum HackerAttackMode;
-enum NameKeyType;
-enum SpecialPowerType;
-enum WeaponBonusConditionType;
-enum WeaponChoiceCriteria;
-enum WeaponSetConditionType;
-enum WeaponSetType;
-enum WeaponStatus;
-enum RadarPriorityType;
-enum CanAttackResult;
+enum CommandSourceType CPP_11(: Int);
+enum DamageType CPP_11(: Int);
+enum HackerAttackMode CPP_11(: Int);
+enum NameKeyType CPP_11(: Int);
+enum SpecialPowerType CPP_11(: Int);
+enum WeaponBonusConditionType CPP_11(: Int);
+enum WeaponChoiceCriteria CPP_11(: Int);
+enum WeaponSetConditionType CPP_11(: Int);
+enum WeaponSetType CPP_11(: Int);
+enum WeaponStatus CPP_11(: Int);
+enum RadarPriorityType CPP_11(: Int);
+enum CanAttackResult CPP_11(: Int);
 
-// For ObjectStatusBits and TheObjectStatusBitNames
-#include "GameLogic/ObjectStatusBits.h"
+// For ObjectStatusTypes
+#include "Common/ObjectStatusTypes.h"
 
 // For ObjectScriptStatusBit
 #include "GameLogic/ObjectScriptStatusBits.h"
@@ -138,10 +140,10 @@ struct TTriggerInfo
 //----------------------------------------------------
 
 
-enum CrushSquishTestType
+enum CrushSquishTestType CPP_11(: Int)
 {
-	TEST_CRUSH_ONLY, 
-	TEST_SQUISH_ONLY, 
+	TEST_CRUSH_ONLY,
+	TEST_SQUISH_ONLY,
 	TEST_CRUSH_OR_SQUISH
 };
 
@@ -154,14 +156,12 @@ enum CrushSquishTestType
 class Object : public Thing, public Snapshot
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Object, "ObjectPool" )		
-	/// destructor is non-public in order to require the use of TheGameLogic->destroyObject()
-	MEMORY_POOL_DELETEINSTANCE_VISIBILITY(protected)
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Object, "ObjectPool" )
 
 public:
 
 	/// Object constructor automatically attaches all objects to "TheGameLogic"
-	Object(const ThingTemplate *thing, ObjectStatusBits statusBits, Team *team);
+	Object(const ThingTemplate *thing, const ObjectStatusMaskType &objectStatusMask, Team *team);
 
 	void initObject();
 
@@ -194,8 +194,8 @@ public:
 	void maskObject( Bool mask );				///< mask/unmask object
 
 	// cannot set velocity, since this is calculated from position every frame
-	Bool isDestroyed() const { return (m_status & OBJECT_STATUS_DESTROYED) != 0; }		///< Returns TRUE if object has been destroyed
-	Bool isAirborneTarget() const { return (m_status & OBJECT_STATUS_AIRBORNE_TARGET) != 0; }	///< Our locomotor will control marking us as a valid target for anti air weapons or not
+	Bool isDestroyed() const { return m_status.test( OBJECT_STATUS_DESTROYED ); }		///< Returns TRUE if object has been destroyed
+	Bool isAirborneTarget() const { return m_status.test( OBJECT_STATUS_AIRBORNE_TARGET ); }	///< Our locomotor will control marking us as a valid target for anti air weapons or not
 	Bool isUsingAirborneLocomotor( void ) const;										///< returns true if the current locomotor is an airborne one
 
 	/// central place for us to put any additional capture logic
@@ -214,8 +214,8 @@ public:
 	void kill();																			///< do max health amount of kill damage to object
 	void healCompletely();														///< Restore max health to this Object
 
-	void scoreTheKill( const Object *victim );						///< I just killed this object.  
-	void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel );	///< I just achieved this level right this moment
+	void scoreTheKill( const Object *victim );						///< I just killed this object.
+	void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback = TRUE );	///< I just achieved this level right this moment
 	ExperienceTracker* getExperienceTracker() {return m_experienceTracker;}
 	const ExperienceTracker* getExperienceTracker() const {return m_experienceTracker;}
 	VeterancyLevel getVeterancyLevel() const;
@@ -242,7 +242,7 @@ public:
 
 	Bool isLocallyControlled() const;
 	Bool isNeutralControlled() const;
-	
+
 	Bool getIsUndetectedDefector(void) const { return BitIsSet(m_privateStatus, UNDETECTED_DEFECTOR); }
 	void friend_setUndetectedDefector(Bool status);
 
@@ -256,10 +256,10 @@ public:
 	void setGeometryInfoZ( Real newZ );
 
 	void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal );
-	
+
 	// access to modules
 	//-----------------------------------------------------------------------------
-	
+
 	//This is a good creation inspector. There's been multitudes of issues with conflicts of
 	//Objects getting constructed causing crashes either because the modules aren't created
 	//yet, and there's stuff being done inside of setTeam() that cares.
@@ -269,6 +269,7 @@ public:
 
 	BodyModuleInterface* getBodyModule() const { return m_body; }
 	ContainModuleInterface* getContain() const { return m_contain; }
+	StealthUpdate* getStealth() const { return m_stealth; }
 	SpawnBehaviorInterface* getSpawnBehaviorInterface() const;
 
 
@@ -294,7 +295,7 @@ public:
 	//
 	ProductionUpdateInterface* getProductionUpdateInterface( void );
 
-	// 
+	//
 	// Find us our dock update interface if we have one.  Again, this method exists simple
 	// because we want to do this in a lot of places throughout the code
 	//
@@ -302,22 +303,24 @@ public:
 
 	// Ditto for special powers -- Kris
 	SpecialPowerModuleInterface* findSpecialPowerModuleInterface( SpecialPowerType type ) const;
+	SpecialPowerModuleInterface* findAnyShortcutSpecialPowerModuleInterface() const;
 	SpecialAbilityUpdate* findSpecialAbilityUpdate( SpecialPowerType type ) const;
 	SpecialPowerCompletionDie* findSpecialPowerCompletionDie() const;
 	SpecialPowerUpdateInterface* findSpecialPowerWithOverridableDestinationActive( SpecialPowerType type = SPECIAL_INVALID ) const;
+	SpecialPowerUpdateInterface* findSpecialPowerWithOverridableDestination( SpecialPowerType type = SPECIAL_INVALID ) const;
 
-	inline UnsignedInt getStatusBits() const { return m_status; }
-	inline Bool testStatus(ObjectStatusBits bit) const { return (m_status & bit) != 0; }
-	void setStatus( ObjectStatusBits bits, Bool set = true );
-	inline void clearStatus( ObjectStatusBits bits ) { setStatus(bits, false); }
+	inline ObjectStatusMaskType getStatusBits() const { return m_status; }
+	inline Bool testStatus( ObjectStatusTypes bit ) const { return m_status.test( bit ); }
+	void setStatus( ObjectStatusMaskType objectStatus, Bool set = true );
+	inline void clearStatus( ObjectStatusMaskType objectStatus ) { setStatus( objectStatus, false ); }
 	void updateUpgradeModules();	///< We need to go through our Upgrade Modules and see which should be activated
-	Int64 getObjectCompletedUpgradeMask() const { return m_objectUpgradesCompleted; } ///< Upgrades I complete locally
+	UpgradeMaskType getObjectCompletedUpgradeMask() const { return m_objectUpgradesCompleted; } ///< Upgrades I complete locally
 
 	//This function sucks.
-	//It was added for objects that can disguise as other objects and contain upgraded subobject overrides. 
+	//It was added for objects that can disguise as other objects and contain upgraded subobject overrides.
 	//A concrete example is the bomb truck. Different payloads are displayed based on which upgrades have been
 	//made. When the bomb truck disguises as something else, these subobjects are lost because the vector is
-	//stored in W3DDrawModule. When we revert back to the original bomb truck, we call this function to 
+	//stored in W3DDrawModule. When we revert back to the original bomb truck, we call this function to
 	//recalculate those upgraded subobjects.
 	void forceRefreshSubObjectUpgradeStatus();
 
@@ -327,12 +330,12 @@ public:
 	inline void clearScriptStatus( ObjectScriptStatusBit bit ) { setScriptStatus(bit, false); }
 
 	// Selectable is individually controlled on an object by object basis for design now.
-	// It defaults to the thingTemplate->isKindof(KINDOF_SELECTABLE), however, it can be overridden on an 
-	// object by object basis.  Finally, it can be temporarily overriden by the OBJECT_STATUS_UNSELECTABLE. 
+	// It defaults to the thingTemplate->isKindof(KINDOF_SELECTABLE), however, it can be overridden on an
+	// object by object basis.  Finally, it can be temporarily overriden by the OBJECT_STATUS_UNSELECTABLE.
 	// jba.
 	void setSelectable(Bool selectable);
 	Bool isSelectable() const;
-	
+
 	Bool isMassSelectable() const;
 
 	// User specified formation.
@@ -340,7 +343,7 @@ public:
 	enum FormationID getFormationID(void) const {return m_formationID;}
 	void setFormationOffset(const Coord2D& offset) {m_formationOffset = offset;}
 	void getFormationOffset(Coord2D* offset) const {*offset = m_formationOffset;}
-		
+
 
 //THIS FUNCTION BELONGS AT THE OBJECT LEVEL BECAUSE THERE IS AT LEAST ONE SPECIAL UNIT
 //(ANGRY MOB) WHICH NEEDS LOGIC-SIDE POSITION CALC'S...
@@ -354,8 +357,8 @@ public:
 
 	void markSingleUseCommandUsed() { m_singleUseCommandUsed = true; }
 	Bool hasSingleUseCommandBeenUsed() const { return m_singleUseCommandUsed; }
-	
-	/// returns true iff the object can run over the other object. 
+
+	/// returns true iff the object can run over the other object.
 	Bool canCrushOrSquish(Object *otherObj, CrushSquishTestType testType = TEST_CRUSH_OR_SQUISH) const;
 	UnsignedByte getCrusherLevel() const;
 	UnsignedByte getCrushableLevel() const;
@@ -380,12 +383,13 @@ public:
 	Bool isInList(Object **pListHead) const;
 
 	// this is intended for use ONLY by GameLogic.
-	void friend_deleteInstance() { deleteInstance(); }
+	static void friend_deleteInstance(Object* object) { deleteInstance(object); }
 
 	/// cache the partition module (should be called only by PartitionData)
 	void friend_setPartitionData(PartitionData *pd) { m_partitionData = pd; }
 	PartitionData *friend_getPartitionData() const { return m_partitionData; }
 	const PartitionData *friend_getConstPartitionData() const { return m_partitionData; }
+	Bool hasGhostObject() const; ///< This object has a ghost object. This does not imply that a ghost snapshot is taken or active.
 
 	void onPartitionCellChange();///< We have moved a 'significant' amount, so do maintenence that can be considered 'cell-based'
 	void handlePartitionCellMaintenance();					///< Undo and redo all shroud actions.  Call when something has changed, like position or ownership or Death
@@ -416,18 +420,19 @@ public:
 	void onRemovedFrom( Object *removedFrom );
 	Int getTransportSlotCount() const;
 	void friend_setContainedBy( Object *containedBy ) { m_containedBy = containedBy; }
+	Object* getEnclosingContainedBy(); ///< Find the first enclosing container in the containment chain.
 
 	// Special Powers -------------------------------------------------------------------------------
 	SpecialPowerModuleInterface *getSpecialPowerModule( const SpecialPowerTemplate *specialPowerTemplate ) const;
 	void doSpecialPower( const SpecialPowerTemplate *specialPowerTemplate, UnsignedInt commandOptions, Bool forced = false );	///< execute power
 	void doSpecialPowerAtObject( const SpecialPowerTemplate *specialPowerTemplate, Object *obj, UnsignedInt commandOptions, Bool forced = false );	///< execute power
-	void doSpecialPowerAtLocation( const SpecialPowerTemplate *specialPowerTemplate, const Coord3D *loc, UnsignedInt commandOptions, Bool forced = false );	///< execute power
-	void doSpecialPowerAtMultipleLocations( const SpecialPowerTemplate *specialPowerTemplate,
-																					const Coord3D *locations, Int locCount, UnsignedInt commandOptions, Bool forced = false );	///< execute power
+	void doSpecialPowerAtLocation( const SpecialPowerTemplate *specialPowerTemplate, const Coord3D *loc, Real angle, UnsignedInt commandOptions, Bool forced = false );	///< execute power
+	void doSpecialPowerUsingWaypoints( const SpecialPowerTemplate *specialPowerTemplate, const Waypoint *way, UnsignedInt commandOptions, Bool forced = false );	///< execute power
+
 	void doCommandButton( const CommandButton *commandButton, CommandSourceType cmdSource );
 	void doCommandButtonAtObject( const CommandButton *commandButton, Object *obj, CommandSourceType cmdSource );
 	void doCommandButtonAtPosition( const CommandButton *commandButton, const Coord3D *pos, CommandSourceType cmdSource );
-	
+
 	/**
 		 For Object specific dynamic command sets.  Different from the Science specific ones handled in ThingTemplate
 	*/
@@ -448,12 +453,12 @@ public:
 	Weapon* getWeaponInWeaponSlot(WeaponSlotType wslot) const { return m_weaponSet.getWeaponInWeaponSlot(wslot); }
 
 	// see if this current weapon set's weapons has shared reload times
-	const Bool isReloadTimeShared() const { return m_weaponSet.isSharedReloadTime(); }
+	Bool isReloadTimeShared() const { return m_weaponSet.isSharedReloadTime(); }
 
 	Weapon* getCurrentWeapon(WeaponSlotType* wslot = NULL);
 	const Weapon* getCurrentWeapon(WeaponSlotType* wslot = NULL) const;
 	void setFiringConditionForCurrentWeapon() const;
-	void adjustModelConditionForWeaponStatus();	///< Check to see if I should change my model condition. 
+	void adjustModelConditionForWeaponStatus();	///< Check to see if I should change my model condition.
 	void fireCurrentWeapon(Object *target);
 	void fireCurrentWeapon(const Coord3D* pos);
 	void preFireCurrentWeapon( const Object *victim );
@@ -464,12 +469,12 @@ public:
 
 	/**
 		Determines if the unit has any weapon that could conceivably
-		harm the victim. this does not take range, ammo, etc. into 
+		harm the victim. this does not take range, ammo, etc. into
 		account, but immutable weapon properties, such as "can you
 		target airborne victims".
 	*/
 	/*
-		NOTE: getAbleToAttackSpecificObject NO LONGER internally calls isAbleToAttack(), 
+		NOTE: getAbleToAttackSpecificObject NO LONGER internally calls isAbleToAttack(),
 		since that isn't an incredibly fast call, and this is called repeatedly in some inner loops
 		where we already know that isAbleToAttack() == true. so you should always
 		call isAbleToAttack prior to calling this! (srj)
@@ -524,7 +529,7 @@ public:
 	Bool getSingleLogicalBonePosition(const char* boneName, Coord3D* position, Matrix3D* transform) const;
 	Bool getSingleLogicalBonePositionOnTurret(WhichTurretType whichTurret, const char* boneName, Coord3D* position, Matrix3D* transform) const;
 	Int getMultiLogicalBonePosition(const char* boneNamePrefix, Int maxBones, Coord3D* positions, Matrix3D* transforms, Bool convertToWorld = TRUE ) const;
-	
+
 	// Entered & exited.
 	Bool didEnter(const PolygonTrigger *pTrigger) const;
 	Bool didExit(const PolygonTrigger *pTrigger) const;
@@ -544,29 +549,29 @@ public:
 	void setDisabledUntil( DisabledType type, UnsignedInt frame );
 	Bool isDisabledByType( DisabledType type ) const { return TEST_DISABLEDMASK( m_disabledMask, type ); }
 
-	void pauseAllSpecialPowers( const Bool disabling ) const;	
-	
+	void pauseAllSpecialPowers( const Bool disabling ) const;
+
 	//Checks any timers and clears disabled statii that have expired.
 	void checkDisabledStatus();
-	
+
 	//When an AIAttackState is over, it needs to clean up any weapons that might be in leech range mode
 	//or else those weapons will have unlimited range!
 	void clearLeechRangeModeForAllWeapons();
-	
+
 	Int getNumConsecutiveShotsFiredAtTarget( const Object *victim) const;
 
 	void setHealthBoxOffset( const Coord3D& offset ) { m_healthBoxOffset = offset; } ///< for special amorphous like angry mob
 
 	void defect( Team *newTeam, UnsignedInt detectionTime );
 	void goInvulnerable( UnsignedInt time );
-	
+
 	// This is public, since there is no Thing level master setting of Turret stuff.  It is all done in a sleepy hamlet
 	// of a module called TurretAI.
 	virtual void reactToTurretChange( WhichTurretType turret, Real oldRotation, Real oldPitch );
 
 	// Convenience function for checking certain kindof bits
 	Bool isStructure(void) const;
-	
+
 	// Convenience function for checking certain kindof bits
 	Bool isFactionStructure(void) const;
 
@@ -577,7 +582,7 @@ public:
 	void setReceivingDifficultyBonus(Bool receive);
 
 	inline UnsignedInt getSafeOcclusionFrame(void) { return m_safeOcclusionFrame; }	//< this is an object specific frame at which it's safe to enable building occlusion.
-	inline void	setSafeOcclusionFrame(UnsignedInt frame) { m_safeOcclusionFrame = frame;} 
+	inline void	setSafeOcclusionFrame(UnsignedInt frame) { m_safeOcclusionFrame = frame;}
 
 	// All of our cheating for radars and power go here.
 	// This is the function that we now call in becomingTeamMember to adjust our power.
@@ -619,7 +624,7 @@ protected:
 
 	void updateTriggerAreaFlags(void);
 	void setTriggerAreaFlagsForChangeInPosition(void);
-	
+
 	/// Look and unlook are protected.  They should be called from Object::reasonToLook.  Like Capture, or death.
 	void look();
 	void unlook();
@@ -655,11 +660,15 @@ private:
 
 	Object *			m_next;
 	Object *			m_prev;
-	UnsignedInt		m_status;									///< status bits (see ObjectStatusBits enum)
+	ObjectStatusMaskType		m_status;									///< status bits (see ObjectStatusMaskType)
 
 	GeometryInfo	m_geometryInfo;
 
+#if RETAIL_COMPATIBLE_AIGROUP
 	AIGroup*			m_group;								///< if non-NULL, we are part of this group of agents
+#else
+	RefCountPtr<AIGroup> m_group; ///< if non-NULL, we are part of this group of agents
+#endif
 
 	// These will last for my lifetime.  I will reuse them and reset them.  The truly dynamic ones are in PartitionManager
 	SightingInfo	*m_partitionLastLook;		///< Where and for whom I last looked, so I can undo its effects when I stop
@@ -689,6 +698,7 @@ private:
 	// cache these, for convenience
 	ContainModuleInterface*				m_contain;
 	BodyModuleInterface*					m_body;
+	StealthUpdate*						m_stealth;
 
 	AIUpdateInterface*						m_ai;	///< ai interface (if any), cached for handy access. (duplicate of entry in the module array!)
 	PhysicsBehavior*							m_physics;	///< physics interface (if any), cached for handy access. (duplicate of entry in the module array!)
@@ -703,14 +713,14 @@ private:
 	UnsignedInt										m_containedByFrame;	///< frame we were contained by m_containedBy
 
 	Real													m_constructionPercent;			///< for objects being built ... this is the amount completed (0.0 to 100.0)
-	Int64													m_objectUpgradesCompleted;	///< Bit field of upgrades locally completed.
+	UpgradeMaskType								m_objectUpgradesCompleted;	///< Bit field of upgrades locally completed.
 
 	Team*													m_team;								///< team that is current owner of this guy
 	AsciiString										m_originalTeamName;		///< team that was the original ("birth") team of this guy
 	Color													m_indicatorColor;			///< if nonzero, use this instead of controlling player's color
 
 	Coord3D												m_healthBoxOffset; ///< generally zero, except for special amorphous ones like angry mob
-	
+
 	/// @todo srj -- convert to non-DLINK list, after it is once again possible to test the change
 	MAKE_DLINK(Object, TeamMemberList)			///< other Things that are members of the same team
 
@@ -732,7 +742,7 @@ private:
 	TTriggerInfo									m_triggerInfo[MAX_TRIGGER_AREA_INFOS];
 	UnsignedInt										m_enteredOrExitedFrame;
 	ICoord3D											m_iPos;
-	
+
 	PathfindLayerEnum							m_layer;							// Layer object is pathing on.
 	PathfindLayerEnum							m_destinationLayer;		// Layer of current path goal.
 
@@ -741,13 +751,13 @@ private:
 	Coord2D												m_formationOffset;
 
 	AsciiString										m_commandSetStringOverride;///< To allow specific object to switch command sets
-	
+
 	UnsignedInt										m_safeOcclusionFrame;	///<flag used by occlusion renderer so it knows when objects have exited their production building.
 
 	// --------- BYTE-SIZED THINGS GO HERE
 	Bool													m_isSelectable;
 	Bool													m_modulesReady;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	Bool													m_hasDiedAlready;
 #endif
 	UnsignedByte									m_scriptStatus;					///< status as set by scripting, corresponds to ORed ObjectScriptStatusBits
@@ -756,14 +766,15 @@ private:
 	Bool													m_singleUseCommandUsed;
 	Bool													m_isReceivingDifficultyBonus;
 
-};  // end class Object
+};
 
-#ifdef DEBUG_LOGGING
+// deleteInstance is not meant to be used with Object in order to require the use of TheGameLogic->destroyObject()
+void deleteInstance(Object* object) CPP_11(= delete);
+
 // describe an object as an AsciiString: e.g. "Object 102 (KillerBuggy) [GLARocketBuggy, owned by player 2 (GLAIntroPlayer)]"
-AsciiString DescribeObject(const Object *obj);
-#endif // DEBUG_LOGGING
+AsciiString DebugDescribeObject(const Object *obj);
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	#define DEBUG_OBJECT_ID_EXISTS
 #else
 	#undef DEBUG_OBJECT_ID_EXISTS
@@ -772,5 +783,3 @@ AsciiString DescribeObject(const Object *obj);
 #ifdef DEBUG_OBJECT_ID_EXISTS
 extern ObjectID TheObjectIDToDebug;
 #endif
-
-#endif // _OBJECT_H_

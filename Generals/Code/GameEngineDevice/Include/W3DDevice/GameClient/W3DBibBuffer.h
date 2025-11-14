@@ -24,12 +24,12 @@
 
 // FILE: W3DBibBuffer.h //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -44,11 +44,8 @@
 
 #pragma once
 
-#ifndef __W3DBIB_BUFFER_H_
-#define __W3DBIB_BUFFER_H_
-
 //-----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //-----------------------------------------------------------------------------
 #include "always.h"
 #include "rendobj.h"
@@ -64,7 +61,7 @@
 //-----------------------------------------------------------------------------
 //           Forward References
 //-----------------------------------------------------------------------------
-class MeshClass; 
+class MeshClass;
 
 //-----------------------------------------------------------------------------
 //           Type Defines
@@ -84,8 +81,8 @@ typedef struct {
 // W3DBibBuffer: Draw buffer for the bibs.
 //
 //
-class W3DBibBuffer 
-{	
+class W3DBibBuffer
+{
 friend class HeightMapRenderObjClass;
 public:
 
@@ -101,13 +98,13 @@ public:
 	void clearAllBibs(void);
 	/// Removes highlighting.
 	void removeHighlighting(void);
-	/// Draws the bibs.  
+	/// Draws the bibs.
 	void renderBibs();
 	/// Called when the view changes, and sort key needs to be recalculated.
 	/// Normally sortKey gets calculated when a bib becomes visible.
 protected:
-	enum { INITIAL_BIB_VERTEX=256, 
-					INITIAL_BIB_INDEX=384, 
+	enum { INITIAL_BIB_VERTEX=256,
+					INITIAL_BIB_INDEX=384,
 					MAX_BIBS=1000};
 	DX8VertexBufferClass	*m_vertexBib;	///<Bib vertex buffer.
 	Int										m_vertexBibSize; ///< Num vertices in bib buffer.
@@ -131,5 +128,3 @@ protected:
 	void allocateBibBuffers(void);							 ///< Allocates the buffers.
 	void freeBibBuffers(void);									 ///< Frees the index and vertex buffers.
 };
-
-#endif  // end __W3DBIB_BUFFER_H_

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __StructureCollapseUpdate_H_
-#define __StructureCollapseUpdate_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -46,14 +43,14 @@ typedef std::vector<const FXList*> FXVec;
 
 
 //-------------------------------------------------------------------------------------------------
-enum StructureCollapsePhaseType
+enum StructureCollapsePhaseType CPP_11(: Int)
 {
 	SCPHASE_INITIAL = 0,
 	SCPHASE_DELAY,
 	SCPHASE_BURST,
 	SCPHASE_FINAL,
 
-	SC_PHASE_COUNT	// keep last
+	SC_PHASE_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -134,14 +131,14 @@ protected:
 
 	void doPhaseStuff(StructureCollapsePhaseType scphase, const Coord3D *target);
 
-	enum StructureCollapseStateType 
+	enum StructureCollapseStateType
 	{
 		COLLAPSESTATE_STANDING,
 		COLLAPSESTATE_WAITINGFORCOLLAPSESTART,
 		COLLAPSESTATE_COLLAPSING,
 		COLLAPSESTATE_DONE
 	};
-	
+
 	UnsignedInt									m_collapseFrame;
 	UnsignedInt									m_burstFrame;
 	StructureCollapseStateType	m_collapseState;
@@ -149,6 +146,3 @@ protected:
 	Real												m_currentHeight;
 
 };
-
-#endif // __StructureCollapseUpdate_H_
-

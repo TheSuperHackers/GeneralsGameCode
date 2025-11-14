@@ -38,8 +38,8 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-StatusDamageHelper::StatusDamageHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData ) 
-{ 
+StatusDamageHelper::StatusDamageHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData )
+{
 	m_statusToHeal = OBJECT_STATUS_NONE;
 	m_frameToHeal = 0;
 
@@ -80,7 +80,7 @@ void StatusDamageHelper::clearStatusCondition()
 void StatusDamageHelper::doStatusDamage( ObjectStatusTypes status, Real duration )
 {
 	Int durationAsInt = REAL_TO_INT_FLOOR(duration);
-	
+
 	// Clear any different status we may have.  Re-getting the same status will just reset the timer
 	if( m_statusToHeal != status )
 		clearStatusCondition();
@@ -101,7 +101,7 @@ void StatusDamageHelper::crc( Xfer *xfer )
 	// object helper crc
 	ObjectHelper::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -122,7 +122,7 @@ void StatusDamageHelper::xfer( Xfer *xfer )
 	xfer->xferUser( &m_statusToHeal, sizeof(ObjectStatusTypes) );// an enum
 	xfer->xferUnsignedInt( &m_frameToHeal );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -133,5 +133,5 @@ void StatusDamageHelper::loadPostProcess( void )
 	// object helper base class
 	ObjectHelper::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

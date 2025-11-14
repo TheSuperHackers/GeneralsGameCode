@@ -27,13 +27,14 @@
 // Desc:	 An update that checks for a status bit to stealth the owning object
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_STEALTHLEVEL_NAMES
 #define DEFINE_OBJECT_STATUS_NAMES
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Radar.h"
@@ -58,24 +59,19 @@
 #include "GameLogic/Module/ContainModule.h"
 
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 //-------------------------------------------------------------------------------------------------
-void StealthUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void StealthUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "StealthDelay",									INI::parseDurationUnsignedInt,	NULL, offsetof( StealthUpdateModuleData, m_stealthDelay ) },
 		{ "MoveThresholdSpeed",						INI::parseVelocityReal,					NULL, offsetof( StealthUpdateModuleData, m_stealthSpeed ) },
-		{ "StealthForbiddenConditions",		INI::parseBitString32,					TheStealthLevelNames, offsetof( StealthUpdateModuleData, m_stealthLevel) }, 
-		{ "HintDetectableConditions",	  	INI::parseBitString32,					TheObjectStatusBitNames, offsetof( StealthUpdateModuleData, m_hintDetectableStates) },
+		{ "StealthForbiddenConditions",		INI::parseBitString32,					TheStealthLevelNames, offsetof( StealthUpdateModuleData, m_stealthLevel) },
+		{ "HintDetectableConditions",	  	ObjectStatusMaskType::parseFromINI,	NULL, offsetof( StealthUpdateModuleData, m_hintDetectableStates) },
 		{ "FriendlyOpacityMin",						INI::parsePercentToReal,				NULL, offsetof( StealthUpdateModuleData, m_friendlyOpacityMin ) },
 		{ "FriendlyOpacityMax",						INI::parsePercentToReal,				NULL, offsetof( StealthUpdateModuleData, m_friendlyOpacityMax ) },
 		{ "PulseFrequency",								INI::parseDurationUnsignedInt,	NULL, offsetof( StealthUpdateModuleData, m_pulseFrames ) },
@@ -116,11 +112,11 @@ StealthUpdate::StealthUpdate( Thing *thing, const ModuleData* moduleData ) : Upd
 	m_disguised									= false;
 	m_disguiseTransitionFrames	= 0;
 	m_disguiseHalfpointReached  = false;
-	
+
 	if( data->m_innateStealth )
 	{
 		//Giving innate stealth units this status bit allows other code to easily check the status bit.
-		getObject()->setStatus( OBJECT_STATUS_CAN_STEALTH );
+		getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_CAN_STEALTH ) );
 	}
 
 	// start active, since some stealths start enabled from the get-go
@@ -129,7 +125,7 @@ StealthUpdate::StealthUpdate( Thing *thing, const ModuleData* moduleData ) : Upd
 	// we do not need to restore a disguise
 	m_xferRestoreDisguise = FALSE;
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -144,25 +140,25 @@ Bool StealthUpdate::allowedToStealth() const
 	const Object *self = getObject();
 	UnsignedInt flags = getStealthUpdateModuleData()->m_stealthLevel;
 
-	if( flags & STEALTH_NOT_WHILE_ATTACKING && self->getStatusBits() & OBJECT_STATUS_IS_FIRING_WEAPON )
+	if( flags & STEALTH_NOT_WHILE_ATTACKING && self->getStatusBits().test( OBJECT_STATUS_IS_FIRING_WEAPON ) )
 	{
 		//Doesn't stealth while aggressive (includes approaching).
-		return false;
+		return FALSE;
 	}
-	
-	if( flags & STEALTH_NOT_WHILE_USING_ABILITY && self->getStatusBits() & OBJECT_STATUS_IS_USING_ABILITY )
+
+	if( flags & STEALTH_NOT_WHILE_USING_ABILITY && self->getStatusBits().test( OBJECT_STATUS_IS_USING_ABILITY ) )
 	{
 		//Doesn't stealth while using a special ability (starting with preparation, which takes place after unpacking).
-		return false;
+		return FALSE;
 	}
 
 	//Do a quick preliminary test to see if we are restricted by firing particular weapons and we fired a shot last frame or this frame.
-	if( flags & STEALTH_NOT_WHILE_FIRING_WEAPON && self->getStatusBits() & OBJECT_STATUS_IS_FIRING_WEAPON )
+	if( flags & STEALTH_NOT_WHILE_FIRING_WEAPON && self->getStatusBits().test( OBJECT_STATUS_IS_FIRING_WEAPON ) )
 	{
 		if( (flags & STEALTH_NOT_WHILE_FIRING_WEAPON) == STEALTH_NOT_WHILE_FIRING_WEAPON )
 		{
 			//Not allowed to stealth while firing ANY weapon!
-			return false;
+			return FALSE;
 		}
 
 		//Now do weapon specific checks.
@@ -199,10 +195,10 @@ Bool StealthUpdate::allowedToStealth() const
 	}
 
 	const PhysicsBehavior *physics = self->getPhysics();
-	if ((flags & STEALTH_NOT_WHILE_MOVING) && physics != NULL && 
+	if ((flags & STEALTH_NOT_WHILE_MOVING) && physics != NULL &&
 					physics->getVelocityMagnitude() > getStealthUpdateModuleData()->m_stealthSpeed)
 		return false;
-	
+
 	if( self->testScriptStatusBit(OBJECT_STATUS_SCRIPT_UNSTEALTHED))
 	{
 		//We can't stealth because a script disabled this ability for this object!
@@ -216,14 +212,14 @@ Bool StealthUpdate::allowedToStealth() const
 //---------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-void StealthUpdate::hintDetectableWhileUnstealthed() 
+void StealthUpdate::hintDetectableWhileUnstealthed()
 {
 	Object *self = getObject();
 	const StealthUpdateModuleData *md = getStealthUpdateModuleData();
 
-	if( self && (md->m_hintDetectableStates & self->getStatusBits()) )
+	if( self && md->m_hintDetectableStates.testForAny( self->getStatusBits() ) )
 	{
-		if ( self->getControllingPlayer() == ThePlayerList->getLocalPlayer() )
+		if ( self->getControllingPlayer() == rts::getObservedOrLocalPlayer() )
 		{
 			Drawable *selfDraw = self->getDrawable();
 			if ( selfDraw )
@@ -239,7 +235,7 @@ void StealthUpdate::hintDetectableWhileUnstealthed()
 
 Real StealthUpdate::getFriendlyOpacity() const
 {
-	return getStealthUpdateModuleData()->m_friendlyOpacityMin; 
+	return getStealthUpdateModuleData()->m_friendlyOpacityMin;
 }
 
 
@@ -251,7 +247,7 @@ StealthLookType StealthUpdate::calcStealthedStatusForPlayer(const Object* obj, c
 		for stealthy things, there are these distinct "logical" states:
 
 		-- not stealthed at all (ie, totally visible)
-		-- stealthed 
+		-- stealthed
 		-- stealthed-but-detected
 
 		and the following visual states:
@@ -262,7 +258,7 @@ StealthLookType StealthUpdate::calcStealthedStatusForPlayer(const Object* obj, c
 		-- stealthed-but-visible-to-everyone-due-to-being-detected (sd)
 
 		Let's be ubergeeks and make a matrix of the possibilities:
-				
+
 								Ally		Nonally
 		normal:			(n)			(n)
 		stealthed:	(sv)		(i)
@@ -272,7 +268,7 @@ StealthLookType StealthUpdate::calcStealthedStatusForPlayer(const Object* obj, c
 		Or, to put it another way:
 
 		If normal, you always appear normal.
-		If stealthed (and not detected), you appear as (sv) to allies and (i) to others. 
+		If stealthed (and not detected), you appear as (sv) to allies and (i) to others.
 		If detected, you always appears as (sd).
 
 		Sorry, there is one more condition, stealthed, but visible to friendly folks, YET detected
@@ -281,12 +277,12 @@ StealthLookType StealthUpdate::calcStealthedStatusForPlayer(const Object* obj, c
 
 
 	*/
-	
+
 
 	if (obj->isEffectivelyDead())
 		return STEALTHLOOK_NONE;			// making sure he turns visible when he dies
 
-	if (obj->getStatusBits() & OBJECT_STATUS_STEALTHED)
+	if( obj->getStatusBits().test( OBJECT_STATUS_STEALTHED ) )
 	{
 		const Team* team = obj->getTeam();
 		Relationship r = team ? team->getRelationship(player->getDefaultTeam()) : NEUTRAL;
@@ -306,7 +302,7 @@ StealthLookType StealthUpdate::calcStealthedStatusForPlayer(const Object* obj, c
 				return STEALTHLOOK_NONE;
 		}
 
-		if (obj->getStatusBits() & OBJECT_STATUS_DETECTED)			// we're detected.
+		if( obj->getStatusBits().test( OBJECT_STATUS_DETECTED ) )			// we're detected.
 		{
 			if (r == ALLIES)// if we're friendly to the given player, detection DOES matter though.
 				return STEALTHLOOK_VISIBLE_FRIENDLY_DETECTED;
@@ -370,7 +366,7 @@ UpdateSleepTime StealthUpdate::update( void )
 		if( wasHidden && draw )
 			draw->setDrawableHidden( TRUE );
 
-	}  // end if
+	}
 
 	Object *self = getObject();
 	UnsignedInt now = TheGameLogic->getFrame();
@@ -411,6 +407,10 @@ UpdateSleepTime StealthUpdate::update( void )
 			{
 				//Switch models at the halfway point
 				changeVisualDisguise();
+
+				// TheSuperHackers @fix Skyaero 06/05/2025 obtain the new drawable
+				draw = getObject()->getDrawable();
+
 				m_disguiseHalfpointReached = true;
 			}
 			//Opacity ranges from full to none at midpoint and full again at the end
@@ -421,8 +421,8 @@ UpdateSleepTime StealthUpdate::update( void )
 			{
 				//We're finished removing disguise so turn off stealth update.
 				m_enabled = false;
-				self->clearStatus( OBJECT_STATUS_STEALTHED );
-				self->clearStatus( OBJECT_STATUS_DETECTED );
+				self->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_STEALTHED ) );
+				self->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DETECTED ) );
 				return calcSleepTime();
 			}
 		}
@@ -456,7 +456,7 @@ UpdateSleepTime StealthUpdate::update( void )
 	}
 
 	// If the object is unable to Stealth, don't bother trying.
-	if( !(self->getStatusBits() & OBJECT_STATUS_CAN_STEALTH) )
+	if( !(self->getStatusBits().test(OBJECT_STATUS_CAN_STEALTH)) )
 	{
 		return calcSleepTime();
 	}
@@ -472,7 +472,7 @@ UpdateSleepTime StealthUpdate::update( void )
 
 		// If we haven't stealthed yet( still destealthed ), play stealthOn here
 		//if ( ( self->getStatusBits() && OBJECT_STATUS_STEALTHED ) == 0 )
-		if ( ( self->getStatusBits() & OBJECT_STATUS_STEALTHED ) == 0 )
+		if( !self->getStatusBits().test( OBJECT_STATUS_STEALTHED ) )
 		{
 			AudioEventRTS soundEvent = *self->getTemplate()->getSoundStealthOn();
 			soundEvent.setObjectID(self->getID());
@@ -480,25 +480,25 @@ UpdateSleepTime StealthUpdate::update( void )
 		}
 
 		// The timer is zero, so if we aren't stealthed, do so now!
-		self->setStatus( OBJECT_STATUS_STEALTHED );
+		self->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_STEALTHED ) );
 	}
 	else
 	{
 		m_stealthAllowedFrame = now + getStealthUpdateModuleData()->m_stealthDelay;
-		
+
 		// if you are destealthing on your own free will, play sound for all to hear
-		if ( ( self->getStatusBits() & OBJECT_STATUS_STEALTHED ) != 0 )
+		if( self->getStatusBits().test( OBJECT_STATUS_STEALTHED ) )
 		{
 			AudioEventRTS soundEvent = *self->getTemplate()->getSoundStealthOn();
 			soundEvent.setObjectID(self->getID());
 			TheAudio->addAudioEvent( &soundEvent );
 		}
 
-		self->clearStatus( OBJECT_STATUS_STEALTHED );
-		
+		self->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_STEALTHED ) );
+
 		hintDetectableWhileUnstealthed();
-	
-		
+
+
 	}
 
 
@@ -506,7 +506,7 @@ UpdateSleepTime StealthUpdate::update( void )
 	if (m_detectionExpiresFrame > now)
 	{
 		// if this is the first time being detected, play stealth off sound
-		if( !(self->getStatusBits() & OBJECT_STATUS_DETECTED) )
+		if( !self->getStatusBits().test( OBJECT_STATUS_DETECTED ) )
 		{
 			detectedStatusChangedThisFrame = TRUE;
 			AudioEventRTS soundEvent = *self->getTemplate()->getSoundStealthOff();
@@ -514,12 +514,12 @@ UpdateSleepTime StealthUpdate::update( void )
 			TheAudio->addAudioEvent( &soundEvent );
 		}
 
-		self->setStatus( OBJECT_STATUS_DETECTED );
+		self->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DETECTED ) );
 	}
 	else
 	{
 		// if this is the first time your clearing the detected status, play the stealth on sound
-		if( ( self->getStatusBits() & OBJECT_STATUS_DETECTED ) )
+		if( self->getStatusBits().test( OBJECT_STATUS_DETECTED ) )
 		{
 			detectedStatusChangedThisFrame = TRUE;
 			//Only play sound effect if the selected object is controllable.
@@ -531,7 +531,7 @@ UpdateSleepTime StealthUpdate::update( void )
 			}
 		}
 
-		self->clearStatus( OBJECT_STATUS_DETECTED );
+		self->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DETECTED ) );
 	}
 
 	if ( detectedStatusChangedThisFrame )
@@ -557,7 +557,7 @@ UpdateSleepTime StealthUpdate::update( void )
 
 	if (draw)
 	{
-		StealthLookType stealthLook = calcStealthedStatusForPlayer( self, ThePlayerList->getLocalPlayer() );
+		StealthLookType stealthLook = calcStealthedStatusForPlayer( self, rts::getObservedOrLocalPlayer() );
 		draw->setStealthLook( stealthLook );
 	}
 
@@ -621,7 +621,7 @@ void StealthUpdate::markAsDetected(UnsignedInt numFrames)
 	if( data->m_orderIdleEnemiesToAttackMeUponReveal )
 	{
 		// This can't be a partitionmanager thing, because we need to know which objects can see
-		// us. Therefore, walk the play list, and for each player that considers us an enemy, 
+		// us. Therefore, walk the play list, and for each player that considers us an enemy,
 		// check if any of their units can see us.
 
 		Int numPlayers = ThePlayerList->getPlayerCount();
@@ -647,8 +647,7 @@ void StealthUpdate::disguiseAsObject( const Object *target )
 	const StealthUpdateModuleData *data = getStealthUpdateModuleData();
 	if( target && target->getControllingPlayer() )
 	{
-		static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-		StealthUpdate* stealth = (StealthUpdate*)target->findUpdateModule( key_StealthUpdate );
+		StealthUpdate* stealth = target->getStealth();
 		if( stealth && stealth->getDisguisedTemplate() )
 		{
 			m_disguiseAsTemplate				= stealth->getDisguisedTemplate();
@@ -659,7 +658,7 @@ void StealthUpdate::disguiseAsObject( const Object *target )
 			m_disguiseAsTemplate				= target->getTemplate();
 			m_disguiseAsPlayerIndex			= target->getControllingPlayer()->getPlayerIndex();
 		}
-		
+
 		m_enabled										= true;
 		m_transitioningToDisguise		= true; //Means we are gaining disguise over time.
 		m_disguiseTransitionFrames	= data->m_disguiseTransitionFrames;
@@ -683,7 +682,7 @@ void StealthUpdate::disguiseAsObject( const Object *target )
 	{
 		TheControlBar->markUIDirty();
 	}
-	
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -701,7 +700,7 @@ void StealthUpdate::changeVisualDisguise()
 		Player *player = ThePlayerList->getNthPlayer( m_disguiseAsPlayerIndex );
 
 		ModelConditionFlags flags = draw->getModelConditionFlags();
-		
+
 		//Get rid of the old instance!
 		TheGameClient->destroyDrawable( draw );
 
@@ -750,13 +749,15 @@ void StealthUpdate::changeVisualDisguise()
 	{
 		m_disguiseAsPlayerIndex = -1;
 		ModelConditionFlags flags = draw->getModelConditionFlags();
-		
+
 		//Get rid of the old instance!
 		TheGameClient->destroyDrawable( draw );
 
 		const ThingTemplate *tTemplate = self->getTemplate();
 
-		TheThingFactory->newDrawable( tTemplate );
+		// TheSuperHackers @fix helmutbuhler 13/04/2025 Fixes missing pointer assignment for the new drawable.
+		// This originally caused no runtime crash because the new drawable is allocated at the same address as the previously deleted drawable via the MemoryPoolBlob.
+		draw = TheThingFactory->newDrawable( tTemplate );
 		if( draw )
 		{
 			TheGameLogic->bindObjectAndDrawable(self, draw);
@@ -777,7 +778,7 @@ void StealthUpdate::changeVisualDisguise()
 			//UGH!
 			//A concrete example is the bomb truck. Different payloads are displayed based on which upgrades have been
 			//made. When the bomb truck disguises as something else, these subobjects are lost because the vector is
-			//stored in W3DDrawModule. When we revert back to the original bomb truck, we call this function to 
+			//stored in W3DDrawModule. When we revert back to the original bomb truck, we call this function to
 			//recalculate those upgraded subobjects.
 			self->forceRefreshSubObjectUpgradeStatus();
 		}
@@ -828,7 +829,7 @@ void StealthUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -860,7 +861,7 @@ void StealthUpdate::xfer( Xfer *xfer )
 
 	// pulse phase
 	xfer->xferReal( &m_pulsePhase );
-	
+
 	// disguise as player index
 	xfer->xferInt( &m_disguiseAsPlayerIndex );
 
@@ -878,14 +879,14 @@ void StealthUpdate::xfer( Xfer *xfer )
 			if( m_disguiseAsTemplate == NULL )
 			{
 
-				DEBUG_CRASH(( "StealthUpdate::xfer - Unknown template '%s'\n", name.str() ));
+				DEBUG_CRASH(( "StealthUpdate::xfer - Unknown template '%s'", name.str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// disguise transition frames
 	xfer->xferUnsignedInt( &m_disguiseTransitionFrames );
@@ -899,7 +900,7 @@ void StealthUpdate::xfer( Xfer *xfer )
 	// disguised
 	xfer->xferBool( &m_disguised );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -920,4 +921,4 @@ void StealthUpdate::loadPostProcess( void )
 	if( isDisguised() )
 		m_xferRestoreDisguise = TRUE;
 
-}  // end loadPostProcess
+}

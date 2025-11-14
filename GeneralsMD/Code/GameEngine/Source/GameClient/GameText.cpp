@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright(C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright(C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -40,10 +40,10 @@
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/GameText.h"
 #include "Common/Language.h"
@@ -55,26 +55,22 @@
 #include "Common/GlobalData.h"
 #include "Common/file.h"
 #include "Common/FileSystem.h"
+#include "Common/version.h"
 
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 //----------------------------------------------------------------------------
-//         Externals                                                     
+//         Externals
 //----------------------------------------------------------------------------
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 Bool g_useStringFile = TRUE;
 #endif
 
 
 //----------------------------------------------------------------------------
-//         Defines                                                         
+//         Defines
 //----------------------------------------------------------------------------
 
 #define CSF_ID ( ('C'<<24) | ('S'<<16) | ('F'<<8) | (' ') )
@@ -87,11 +83,11 @@ Bool g_useStringFile = TRUE;
 #define CSF_FILE 1
 #define MAX_UITEXT_LENGTH (10*1024)
 //----------------------------------------------------------------------------
-//         Private Types                                                     
+//         Private Types
 //----------------------------------------------------------------------------
 
 //===============================
-// StringInfo 
+// StringInfo
 //===============================
 
 struct StringInfo
@@ -108,7 +104,7 @@ struct StringLookUp
 };
 
 //===============================
-// CSFHeader 
+// CSFHeader
 //===============================
 
 struct CSFHeader
@@ -123,7 +119,7 @@ struct CSFHeader
 };
 
 //===============================
-// struct NoString 
+// struct NoString
 //===============================
 
 struct NoString
@@ -134,7 +130,7 @@ struct NoString
 
 
 //===============================
-// GameTextManager 
+// GameTextManager
 //===============================
 
 class GameTextManager : public GameTextInterface
@@ -144,13 +140,18 @@ class GameTextManager : public GameTextInterface
 		GameTextManager();
 		virtual ~GameTextManager();
 
-		virtual void					init( void );						///< Initlaizes the text system
-		virtual void					deinit( void );					///< De-initlaizes the text system
+		virtual void					init( void );						///< Initializes the text system
+		virtual void					deinit( void );					///< Shuts down the text system
 		virtual void					update( void ) {};			///< update text manager
 		virtual void					reset( void );					///< Resets the text system
 
 		virtual UnicodeString fetch( const Char *label, Bool *exists = NULL );		///< Returns the associated labeled unicode text
 		virtual UnicodeString fetch( AsciiString label, Bool *exists = NULL );		///< Returns the associated labeled unicode text
+		virtual UnicodeString fetchFormat( const Char *label, ... );
+		virtual UnicodeString fetchOrSubstitute( const Char *label, const WideChar *substituteText );
+		virtual UnicodeString fetchOrSubstituteFormat( const Char *label, const WideChar *substituteFormat, ... );
+		virtual UnicodeString fetchOrSubstituteFormatVA( const Char *label, const WideChar *substituteFormat, va_list args );
+
 		virtual AsciiStringVec& getStringsWithLabelPrefix(AsciiString label);
 
 		virtual void					initMapStringFile( const AsciiString& filename );
@@ -163,11 +164,11 @@ class GameTextManager : public GameTextInterface
 		Char						m_buffer2[MAX_UITEXT_LENGTH];
 		Char						m_buffer3[MAX_UITEXT_LENGTH];
 		WideChar				m_tbuffer[MAX_UITEXT_LENGTH*2];
-		
+
 		StringInfo			*m_stringInfo;
 		StringLookUp		*m_stringLUT;
 		Bool						m_initialized;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 		Bool						m_jabberWockie;
 		Bool						m_munkee;
 #endif
@@ -200,31 +201,31 @@ class GameTextManager : public GameTextInterface
 
 static int _cdecl			compareLUT ( const void *,  const void*);
 //----------------------------------------------------------------------------
-//         Private Data                                                     
+//         Private Data
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Public Data                                                      
+//         Public Data
 //----------------------------------------------------------------------------
 
 GameTextInterface *TheGameText = NULL;
 
 //----------------------------------------------------------------------------
-//         Private Prototypes                                               
+//         Private Prototypes
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Private Functions                                               
+//         Private Functions
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-//         Public Functions                                                
+//         Public Functions
 //----------------------------------------------------------------------------
 
 //============================================================================
@@ -248,7 +249,7 @@ GameTextManager::GameTextManager()
 	m_stringLUT(NULL),
 	m_initialized(FALSE),
 	m_noStringList(NULL),
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	m_jabberWockie(FALSE),
 	m_munkee(FALSE),
 	m_useStringFile(g_useStringFile),
@@ -264,9 +265,9 @@ GameTextManager::GameTextManager()
 
 	for(Int i=0; i < MAX_UITEXT_LENGTH; i++)
 	{
-		m_buffer[i] = 0; 
-		m_buffer2[i] = 0; 
-		m_buffer3[i] = 0; 
+		m_buffer[i] = 0;
+		m_buffer2[i] = 0;
+		m_buffer3[i] = 0;
 	}
 	//
 }
@@ -278,7 +279,7 @@ GameTextManager::GameTextManager()
 GameTextManager::~GameTextManager()
 {
 	deinit();
-}							
+}
 
 //============================================================================
 // GameTextManager::init
@@ -301,7 +302,7 @@ void GameTextManager::init( void )
 	m_initialized = TRUE;
 
 	m_maxLabelLen = 0;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	if(TheGlobalData)
 	{
 		m_jabberWockie = TheGlobalData->m_jabberOn;
@@ -322,7 +323,7 @@ void GameTextManager::init( void )
 		return;
 	}
 
-	if( (m_textCount == 0) )
+	if( m_textCount == 0 )
 	{
 		return;
 	}
@@ -369,17 +370,6 @@ void GameTextManager::init( void )
 
 	qsort( m_stringLUT, m_textCount, sizeof(StringLookUp), compareLUT  );
 
-	UnicodeString ourName = fetch("GUI:Command&ConquerGenerals");
-	AsciiString ourNameA;
-	ourNameA.translate(ourName);	//get ASCII version for Win 9x
-
-	extern HWND ApplicationHWnd;  ///< our application window handle
-	if (ApplicationHWnd) {
-		//Set it twice because Win 9x does not support SetWindowTextW.
-		::SetWindowText(ApplicationHWnd, ourNameA.str());
-		::SetWindowTextW(ApplicationHWnd, ourName.str());
-	}
-
 }
 
 //============================================================================
@@ -389,31 +379,27 @@ void GameTextManager::init( void )
 void GameTextManager::deinit( void )
 {
 
-	if( m_stringInfo != NULL )
-	{
-		delete [] m_stringInfo;
-		m_stringInfo = NULL;
-	}
+	delete [] m_stringInfo;
+	m_stringInfo = NULL;
 
-	if( m_stringLUT != NULL )
-	{
-		delete [] m_stringLUT;
-		m_stringLUT = NULL;
-	}
+	delete [] m_stringLUT;
+	m_stringLUT = NULL;
 
 	m_textCount = 0;
 
 	NoString *noString = m_noStringList;
 
-	DEBUG_LOG(("\n*** Missing strings ***\n"));
+	DEBUG_LOG_RAW(("\n"));
+	DEBUG_LOG(("*** Missing strings ***"));
 	while ( noString )
 	{
-		DEBUG_LOG(("*** %ls ***\n", noString->text.str()));
+		DEBUG_LOG(("*** %ls ***", noString->text.str()));
 		NoString *next = noString->next;
 		delete noString;
 		noString = next;
 	}
-	DEBUG_LOG(("*** End missing strings ***\n\n"));
+	DEBUG_LOG(("*** End missing strings ***"));
+	DEBUG_LOG_RAW(("\n"));
 
 	m_noStringList = NULL;
 
@@ -426,22 +412,16 @@ void GameTextManager::deinit( void )
 
 void GameTextManager::reset( void )
 {
-	if( m_mapStringInfo != NULL )
-	{
-		delete [] m_mapStringInfo;
-		m_mapStringInfo = NULL;
-	}
+	delete [] m_mapStringInfo;
+	m_mapStringInfo = NULL;
 
-	if( m_mapStringLUT != NULL )
-	{
-		delete [] m_mapStringLUT;
-		m_mapStringLUT = NULL;
-	}
+	delete [] m_mapStringLUT;
+	m_mapStringLUT = NULL;
 }
 
 
 //============================================================================
-// GameTextManager::stripSpaces 
+// GameTextManager::stripSpaces
 //============================================================================
 
 void GameTextManager::stripSpaces ( WideChar *string )
@@ -488,7 +468,7 @@ void GameTextManager::stripSpaces ( WideChar *string )
 }
 
 //============================================================================
-// GameTextManager::removeLeadingAndTrailing 
+// GameTextManager::removeLeadingAndTrailing
 //============================================================================
 
 void GameTextManager::removeLeadingAndTrailing ( Char *buffer )
@@ -619,6 +599,7 @@ void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *w
 				}
 
 				state = 1;
+				FALLTHROUGH;
 			case 1:
 				if ( ( ch >= 'a' && ch <= 'z') || ( ch >= 'A' && ch <='Z') || (ch >= '0' && ch <= '9') || ch == '_' )
 				{
@@ -627,6 +608,7 @@ void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *w
 					break;
 				}
 				state = 2;
+				FALLTHROUGH;
 			case 2:
 				break;
 		}
@@ -647,7 +629,7 @@ void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *w
 
 
 //============================================================================
-// GameTextManager::reverseWord 
+// GameTextManager::reverseWord
 //============================================================================
 
 void GameTextManager::reverseWord ( Char *file, Char *lp )
@@ -695,7 +677,7 @@ void GameTextManager::translateCopy( WideChar *outbuf, Char *inbuf )
 {
 	Int slash = FALSE;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	if ( m_jabberWockie )
 	{
 		static Char buffer[MAX_UITEXT_LENGTH*2];
@@ -826,8 +808,8 @@ Bool GameTextManager::getStringCount( const char *filename, Int& textCount )
 
 	File *file;
 	file = TheFileSystem->openFile(filename, File::READ | File::TEXT);
-	DEBUG_LOG(("Looking in %s for string file\n", filename));
-	
+	DEBUG_LOG(("Looking in %s for string file", filename));
+
 	if ( file == NULL )
 	{
 		return FALSE;
@@ -859,7 +841,7 @@ Bool GameTextManager::getStringCount( const char *filename, Int& textCount )
 }
 
 //============================================================================
-// GameTextManager::getCSFInfo 
+// GameTextManager::getCSFInfo
 //============================================================================
 
 Bool GameTextManager::getCSFInfo ( const Char *filename )
@@ -867,7 +849,7 @@ Bool GameTextManager::getCSFInfo ( const Char *filename )
 	CSFHeader header;
 	Int ok = FALSE;
 	File *file = TheFileSystem->openFile(filename, File::READ | File::BINARY);
-	DEBUG_LOG(("Looking in %s for compiled string file\n", filename));
+	DEBUG_LOG(("Looking in %s for compiled string file", filename));
 
 	if ( file != NULL )
 	{
@@ -973,19 +955,19 @@ Bool GameTextManager::parseCSF( const Char *filename )
 			{
 				// only use the first string found
 				m_tbuffer[len] = 0;
-				
+
 				{
 					WideChar *ptr;
-				
+
 					ptr = m_tbuffer;
-				
+
 					while ( *ptr )
 					{
 						*ptr = ~*ptr;
 						ptr++;
 					}
 				}
-				
+
 				stripSpaces ( m_tbuffer );
 				m_stringInfo[listCount].text = m_tbuffer;
 			}
@@ -1034,7 +1016,7 @@ Bool GameTextManager::parseStringFile( const char *filename )
 	Int ok = TRUE;
 
 	File *file = TheFileSystem->openFile(filename, File::READ | File::TEXT);
-	
+
 	if ( file == NULL )
 	{
 		return FALSE;
@@ -1102,7 +1084,7 @@ Bool GameTextManager::parseStringFile( const char *filename )
 					// Copy string into new home
 					translateCopy( m_tbuffer, m_buffer2 );
 					stripSpaces ( m_tbuffer );
-					
+
 					m_stringInfo[listCount].text = m_tbuffer ;
 					m_stringInfo[listCount].speech = m_buffer3;
 					readString = TRUE;
@@ -1165,7 +1147,7 @@ Bool GameTextManager::parseMapStringFile( const char *filename )
 
 	File *file;
 
-	file = TheFileSystem->openFile(filename, File::READ | File::TEXT);	
+	file = TheFileSystem->openFile(filename, File::READ | File::TEXT);
 	if ( file == NULL )
 	{
 		return FALSE;
@@ -1237,7 +1219,7 @@ Bool GameTextManager::parseMapStringFile( const char *filename )
 					UnicodeString text = UnicodeString(m_tbuffer);
 					if (TheLanguageFilter)
 						TheLanguageFilter->filterLine(text);
-					
+
 					m_mapStringInfo[listCount].text = text;
 					m_mapStringInfo[listCount].speech = m_buffer3;
 					readString = TRUE;
@@ -1310,7 +1292,7 @@ UnicodeString GameTextManager::fetch( const Char *label, Bool *exists )
 			noString = noString->next;
 		}
 
-		//DEBUG_LOG(("*** MISSING:'%s' ***\n", label));
+		//DEBUG_LOG(("*** MISSING:'%s' ***", label));
 		// Remember file could have been altered at this point.
 		noString = NEW NoString;
 		noString->text = missingString;
@@ -1318,7 +1300,7 @@ UnicodeString GameTextManager::fetch( const Char *label, Bool *exists )
 		m_noStringList = noString;
 		return noString->text;
 	}
-	if( exists )	
+	if( exists )
 		*exists = TRUE;
 	return lookUp->info->text;
 }
@@ -1333,6 +1315,77 @@ UnicodeString GameTextManager::fetch( AsciiString label, Bool *exists )
 }
 
 //============================================================================
+// *GameTextManager::fetchFormat
+//============================================================================
+
+UnicodeString GameTextManager::fetchFormat( const Char *label, ... )
+{
+	Bool exists;
+	UnicodeString str = fetch(label, &exists);
+	if (exists)
+	{
+		UnicodeString strFormat;
+
+		va_list args;
+		va_start(args, label);
+		strFormat.format_va(str.str(), args);
+		va_end(args);
+
+		str = strFormat;
+	}
+	return str;
+}
+
+//============================================================================
+// GameTextManager::fetchOrSubstitute
+//============================================================================
+
+UnicodeString GameTextManager::fetchOrSubstitute( const Char *label, const WideChar *substituteText )
+{
+	Bool exists;
+	UnicodeString str = fetch(label, &exists);
+	if (!exists)
+		str = substituteText;
+	return str;
+}
+
+//============================================================================
+// GameTextManager::fetchOrSubstituteFormat
+//============================================================================
+
+UnicodeString GameTextManager::fetchOrSubstituteFormat( const Char *label, const WideChar *substituteFormat, ... )
+{
+	va_list args;
+	va_start(args, substituteFormat);
+	UnicodeString str = fetchOrSubstituteFormatVA(label, substituteFormat, args);
+	va_end(args);
+
+	return str;
+}
+
+//============================================================================
+// GameTextManager::fetchOrSubstituteFormatVA
+//============================================================================
+
+UnicodeString GameTextManager::fetchOrSubstituteFormatVA( const Char *label, const WideChar *substituteFormat, va_list args )
+{
+	Bool exists;
+	UnicodeString str = fetch(label, &exists);
+	if (exists)
+	{
+		UnicodeString strFormat;
+		strFormat.format_va(strFormat.str(), args);
+		str = strFormat;
+	}
+	else
+	{
+		str.format_va(substituteFormat, args);
+	}
+
+	return str;
+}
+
+//============================================================================
 // GameTextManager::getStringsWithLabelPrefix
 //============================================================================
 
@@ -1340,14 +1393,14 @@ AsciiStringVec& GameTextManager::getStringsWithLabelPrefix(AsciiString label)
 {
 	m_asciiStringVec.clear();
 	if (m_stringLUT) {
-		for (int i = 0; i < m_textCount; ++i) {		
+		for (int i = 0; i < m_textCount; ++i) {
 			if (strstr(m_stringLUT[i].label->str(), label.str()) == m_stringLUT[i].label->str()) {
 				m_asciiStringVec.push_back(*m_stringLUT[i].label);
 			}
 		}
 	}
 	if (m_mapStringLUT) {
-		for (int i = 0; i < m_mapTextCount; ++i) {		
+		for (int i = 0; i < m_mapTextCount; ++i) {
 			if (strstr(m_mapStringLUT[i].label->str(), label.str()) == m_mapStringLUT[i].label->str()) {
 				m_asciiStringVec.push_back(*m_mapStringLUT[i].label);
 			}
@@ -1399,7 +1452,7 @@ Char	GameTextManager::readChar( File *file )
 }
 
 //============================================================================
-// GameTextManager::compareLUT 
+// compareLUT
 //============================================================================
 
 static int __cdecl compareLUT ( const void *i1,  const void*i2)
@@ -1409,3 +1462,4 @@ static int __cdecl compareLUT ( const void *i1,  const void*i2)
 
 	return stricmp( lut1->label->str(), lut2->label->str());
 }
+

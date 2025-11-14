@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: MoreParmsDialog.h 
+// FILE: MoreParmsDialog.h
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -32,8 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_MOREPARMSDIALOG_
-#define _H_MOREPARMSDIALOG_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Resource.h"
@@ -51,8 +49,8 @@ class MoreParmsDialog : public CDialog
 		virtual ~MoreParmsDialog();
 
 		void InitPanel( void );
-	
-		// if true, updates the UI from the Particle System. 
+
+		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
 		void performUpdate( IN Bool toUI );
 
@@ -60,5 +58,3 @@ class MoreParmsDialog : public CDialog
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()
 };
-
-#endif /* _H_MOREPARMSDIALOG_ */

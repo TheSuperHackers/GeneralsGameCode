@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SWAYCLIENTUPDATE_H_
-#define __SWAYCLIENTUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/ClientUpdateModule.h"
 
@@ -61,7 +58,7 @@ protected:
 
 	Real			m_curValue;
 	Real			m_curAngle;
-	Real			m_curDelta;	 
+	Real			m_curDelta;
 	Real			m_curAngleLimit;
 	Real			m_leanAngle;							///<Angle that the tree leans away from the wind.
 	Short			m_curVersion;
@@ -70,6 +67,3 @@ protected:
 
 	void updateSway(void);
 };
-
-#endif // __SWAYCLIENTUPDATE_H_
-

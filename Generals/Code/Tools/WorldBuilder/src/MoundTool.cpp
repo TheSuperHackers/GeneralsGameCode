@@ -20,7 +20,7 @@
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "MoundTool.h"
@@ -41,7 +41,7 @@ Int MoundTool::m_brushFeather;
 
 
 
-/// Constructor 
+/// Constructor
 MoundTool::MoundTool(void) :
 	Tool(ID_BRUSH_ADD_TOOL, IDC_BRUSH_CROSS)
 {
@@ -49,17 +49,17 @@ MoundTool::MoundTool(void) :
 	m_htMapSaveCopy = NULL;
 	m_raising = true;
 }
-	
+
 /// Destructor
-MoundTool::~MoundTool(void) 
+MoundTool::~MoundTool(void)
 {
 	REF_PTR_RELEASE(m_htMapEditCopy);
 	REF_PTR_RELEASE(m_htMapSaveCopy);
 }
 
 
-void MoundTool::setMoundHeight(Int height) 
-{ 
+void MoundTool::setMoundHeight(Int height)
+{
 	if (m_moundHeight != height) {
 		m_moundHeight = height;
 		// notify mound options panel
@@ -68,19 +68,19 @@ void MoundTool::setMoundHeight(Int height)
 	}
 };
 /// Set the brush width and notify the height options panel of the change.
-void MoundTool::setWidth(Int width) 
-{ 
+void MoundTool::setWidth(Int width)
+{
 	if (m_brushWidth != width) {
 		m_brushWidth = width;
 		// notify brush palette options panel
-		MoundOptions::setWidth(width);  
+		MoundOptions::setWidth(width);
 		DrawObject::setBrushFeedbackParms(false, m_brushWidth, m_brushFeather);
 	}
 };
 
 /// Set the brush feather and notify the height options panel of the change.
-void MoundTool::setFeather(Int feather) 
-{ 
+void MoundTool::setFeather(Int feather)
+{
 	if (m_brushFeather != feather) {
 		m_brushFeather = feather;
 		// notify height palette options panel
@@ -91,14 +91,14 @@ void MoundTool::setFeather(Int feather)
 
 
 /// Shows the brush options panel.
-void MoundTool::activate() 
+void MoundTool::activate()
 {
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_MOUND_OPTIONS);
 	DrawObject::setDoBrushFeedback(true);
 	DrawObject::setBrushFeedbackParms(false, m_brushWidth, m_brushFeather);
 }
 
-void MoundTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void MoundTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 
@@ -115,7 +115,7 @@ void MoundTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 	mouseMoved(m, viewPt, pView, pDoc);
 }
 
-void MoundTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void MoundTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 
@@ -166,7 +166,7 @@ void MoundTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		if (i<0 || i>=m_htMapEditCopy->getXExtent()) {
 			continue;
 		}
-		for (j=ndx.y-sub; j<ndx.y+add; j++) {					
+		for (j=ndx.y-sub; j<ndx.y+add; j++) {
 			if (j<0 || j>=m_htMapEditCopy->getYExtent()) {
 				continue;
 			}
@@ -178,24 +178,24 @@ void MoundTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 			float fNewHeight = (blendFactor*(htDelta+curHeight))+((1.0f-blendFactor)*curHeight);
 			Int newHeight = floor(fNewHeight+0.5f);
 
-			// check boundary values	
+			// check boundary values
 			if (newHeight < m_htMapSaveCopy->getMinHeightValue()) newHeight = m_htMapSaveCopy->getMinHeightValue();
 			if (newHeight > m_htMapSaveCopy->getMaxHeightValue()) newHeight = m_htMapSaveCopy->getMaxHeightValue();
 
 			m_htMapEditCopy->setHeight(i, j, newHeight);
 			pDoc->invalCell(i, j);
-#else 
+#else
 			// Previous integer calculated mounding and blending.
 			// If not re-enabled by Dec 2001, delete as obsolete.
 			Int xd = abs( (2*(i-(ndx.x-sub)))+1 - brushWidth);
 			Int yd = abs( (2*(j-(ndx.y-sub)))+1 - brushWidth);
-			
+
 			float delta = (float)sqrt(xd*xd+yd*yd);
 			//Int curHeight = m_htMapSaveCopy->getHeight(i,j);
 			Int curHeight = m_htMapEditCopy->getHeight(i,j);
 			Int newHeight = curHeight + htDelta;
 
-			// check boundary values	
+			// check boundary values
 			if (newHeight < m_htMapSaveCopy->getMinHeightValue()) newHeight = m_htMapSaveCopy->getMinHeightValue();
 			if (newHeight > m_htMapSaveCopy->getMaxHeightValue()) newHeight = m_htMapSaveCopy->getMaxHeightValue();
 
@@ -242,6 +242,6 @@ void MoundTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 DigTool::DigTool(void)
 {
 	m_toolID = ID_BRUSH_SUBTRACT_TOOL;
-	m_raising = false;  // digging. 
+	m_raising = false;  // digging.
 }
 

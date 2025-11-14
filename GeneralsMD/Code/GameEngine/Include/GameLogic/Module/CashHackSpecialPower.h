@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __CASHHACKSPECIALPOWER_H_
-#define __CASHHACKSPECIALPOWER_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/SpecialPowerModule.h"
 
@@ -39,7 +36,7 @@
 class Object;
 class SpecialPowerTemplate;
 struct FieldParse;
-enum ScienceType;
+enum ScienceType CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -85,6 +82,3 @@ protected:
 	Int findAmountToSteal() const;
 
 };
-
-#endif  // end __CASHHACKSPECIALPOWER_H_
-

@@ -36,17 +36,12 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DECALMSH_H
-#define DECALMSH_H
 
 #include "always.h"
 #include "bittype.h"
 #include "simplevec.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "vector2.h"
 #include "vector3.h"
 #include "Vector3i.h"
@@ -79,7 +74,7 @@ class TextureClass;
 class DecalMeshClass : public RefCountClass
 {
 public:
-	
+
 	DecalMeshClass(MeshClass * parent,DecalSystemClass * system);
 	virtual ~DecalMeshClass(void);
 
@@ -106,7 +101,7 @@ public:
 	void														Set_Next_Visible(DecalMeshClass * mesh) { NextVisible = mesh; }
 
 protected:
-	
+
 	/*
 	** Members
 	*/
@@ -124,7 +119,7 @@ protected:
 class RigidDecalMeshClass : public DecalMeshClass
 {
 public:
-	
+
 	RigidDecalMeshClass(MeshClass * parent,DecalSystemClass * system);
 	virtual ~RigidDecalMeshClass(void);
 
@@ -169,14 +164,14 @@ protected:
 	** Decal Organization
 	*/
 	struct DecalStruct
-	{	
+	{
 		uint32	DecalID;
 		uint16	VertexStartIndex;
 		uint16	VertexCount;
 		uint16	FaceStartIndex;
 		uint16	FaceCount;
 	};
-	
+
 	SimpleDynVecClass<DecalStruct>					Decals;
 };
 
@@ -189,7 +184,7 @@ protected:
 class SkinDecalMeshClass : public DecalMeshClass
 {
 public:
-	
+
 	SkinDecalMeshClass(MeshClass * parent,DecalSystemClass * system);
 	virtual ~SkinDecalMeshClass(void);
 
@@ -233,14 +228,14 @@ protected:
 	** Decal Organization
 	*/
 	struct DecalStruct
-	{	
+	{
 		uint32	DecalID;
 		uint16	VertexStartIndex;
 		uint16	VertexCount;
 		uint16	FaceStartIndex;
 		uint16	FaceCount;
 	};
-	
+
 	SimpleDynVecClass<DecalStruct>					Decals;
 };
 
@@ -288,7 +283,3 @@ inline uint32 SkinDecalMeshClass::Get_Decal_ID(int decal_index)
 {
 	return Decals[decal_index].DecalID;
 }
-
-
-#endif //DECALMSH_H
-

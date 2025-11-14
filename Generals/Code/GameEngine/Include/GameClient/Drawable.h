@@ -27,8 +27,6 @@
 // Author: Michael S. Booth, March 2001
 
 #pragma once
-#ifndef _DRAWABLE_H_
-#define _DRAWABLE_H_
 
 #include "Common/AudioEventRTS.h"
 #include "Common/GameType.h"
@@ -55,9 +53,9 @@ class Shadow;
 class ModuleInfo;
 class Anim2DTemplate;
 class Image;
-enum BodyDamageType;
+enum BodyDamageType CPP_11(: Int);
 
-// this is a very worthwhile performance win. left conditionally defined for now, just 
+// this is a very worthwhile performance win. left conditionally defined for now, just
 // in case, but probably should be made permanent soon. (srj)
 #define DIRTY_CONDITION_FLAGS
 
@@ -69,21 +67,20 @@ enum BodyDamageType;
 
 //-----------------------------------------------------------------------------
 //@TODO -- The drawable icon system needs to be implemented in a proper manner -- KM
-//				 Fact 1: Every drawable in the world shouldn't have to have a pointer 
+//				 Fact 1: Every drawable in the world shouldn't have to have a pointer
 //				 and frame counter for every possible icon type. It should be a dynamic vector.
 //				 Fact 2: It's polling every frame for every object on screen for every possible icon condition...
 // KM : I moved this into Drawable.cpp so I don't have to recompile the entire project
 //      each time I add a new icon, and made the arrays dynamic...
 // CD: No so good, core engine components should not be made dynamic in this way
 
-enum DrawableIconType
+enum DrawableIconType CPP_11(: Int)
 {
 /** NOTE: This enum MUST appear in the same order as TheDrawableIconNames array to be
 	* indexed correctly using that array */
 	ICON_INVALID = -1,
-	ICON_FIRST = 0,
 
-	ICON_DEFAULT_HEAL = ICON_FIRST,
+	ICON_DEFAULT_HEAL,
 	ICON_STRUCTURE_HEAL,
 	ICON_VEHICLE_HEAL,
 #ifdef ALLOW_DEMORALIZE
@@ -102,27 +99,28 @@ enum DrawableIconType
 	ICON_ENTHUSIASTIC_SUBLIMINAL,
 	ICON_CARBOMB,
 
-	MAX_ICONS									///< keep this last
+	MAX_ICONS,
+	ICON_FIRST = 0,
 };
 
 //-----------------------------------------------------------------------------
 class DrawableIconInfo : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DrawableIconInfo, "DrawableIconInfo" )		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DrawableIconInfo, "DrawableIconInfo" )
 public:
 	Anim2D*								m_icon[MAX_ICONS];
 	UnsignedInt						m_keepTillFrame[MAX_ICONS];
 
 	DrawableIconInfo();
 	//~DrawableIconInfo();
-	
+
 	void clear();
 	void killIcon(DrawableIconType t);
 
 };
 
 //-----------------------------------------------------------------------------
-struct TWheelInfo 
+struct TWheelInfo
 {
 	Real m_frontLeftHeightOffset;			 ///< Height offsets for tires due to suspension sway
 	Real m_frontRightHeightOffset;
@@ -136,7 +134,7 @@ struct TWheelInfo
 //-----------------------------------------------------------------------------
 class DrawableLocoInfo : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DrawableLocoInfo, "DrawableLocoInfo" )		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DrawableLocoInfo, "DrawableLocoInfo" )
 public:
 	Real m_pitch;								///< pitch of the entire drawable
 	Real m_pitchRate;						///< rate of change of pitch
@@ -158,18 +156,18 @@ public:
 //-----------------------------------------------------------------------------
 //* TintEnvelope handles the fading of the tint color up, down stable etc...
 //* assumes that 0,0,0, is the color for the AT REST state, used as decay target
-//* works like an ADSR envelope, 
-//* except that SUSTAIN and RELEASE are randomly (or never) triggered, externally 
+//* works like an ADSR envelope,
+//* except that SUSTAIN and RELEASE are randomly (or never) triggered, externally
 class TintEnvelope : public MemoryPoolObject, public Snapshot
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TintEnvelope, "TintEnvelope" )		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TintEnvelope, "TintEnvelope" )
 public:
 
 	TintEnvelope(void);
 	void update(void);  ///< does all the work
-	void play(const RGBColor *peak, 
-						UnsignedInt atackFrames = DEF_ATTACK_FRAMES, 
-						UnsignedInt decayFrames = DEF_DECAY_FRAMES, 
+	void play(const RGBColor *peak,
+						UnsignedInt attackFrames = DEF_ATTACK_FRAMES,
+						UnsignedInt decayFrames = DEF_DECAY_FRAMES,
 						UnsignedInt sustainAtPeak = DEF_SUSTAIN_FRAMES ); // ask MLorenzen
 	void sustain(void) { m_envState = ENVELOPE_STATE_SUSTAIN; }
 	void release(void) { m_envState = ENVELOPE_STATE_DECAY; }
@@ -187,7 +185,7 @@ protected:
 private:
 
 	void setAttackFrames(UnsignedInt frames);
-	void setDecayFrames( UnsignedInt frames); 
+	void setDecayFrames( UnsignedInt frames);
 	void setPeakColor( const RGBColor *peak) {m_peakColor = Vector3( peak->red, peak->green, peak->blue );};
 	void setPeakColor( Real r, Real g, Real b ) {m_peakColor.Set( r, g, b );};
 
@@ -196,28 +194,28 @@ private:
 		ENVELOPE_STATE_REST,
 		ENVELOPE_STATE_ATTACK,
 		ENVELOPE_STATE_DECAY,
-		ENVELOPE_STATE_SUSTAIN ///< RELEASE IS THE LOGICAL COMPLIMENT TO SUSTAIN								
+		ENVELOPE_STATE_SUSTAIN ///< RELEASE IS THE LOGICAL COMPLIMENT TO SUSTAIN
 	};
 
-	Vector3							m_attackRate;		 	///< step amount to make tint turn on slow or fast 
+	Vector3							m_attackRate;		 	///< step amount to make tint turn on slow or fast
 	Vector3							m_decayRate;			///< step amount to make tint turn off slow or fast
 	Vector3							m_peakColor;			///< um, the peak color, what color we are headed toward during attack
 	Vector3							m_currentColor;		///< um, the current color, how we are colored, now
-	UnsignedInt					m_sustainCounter;
+	Real								m_sustainCounter;
 	Byte								m_envState;				///< a randomly switchable SUSTAIN state, release is compliment
 	Bool								m_affect;         ///< set TRUE if this has any effect (has a non 0,0,0 color).
 };
 EMPTY_DTOR(TintEnvelope)
 
 //-----------------------------------------------------------------------------
-enum StealthLookType
+enum StealthLookType CPP_11(: Int)
 {
 	STEALTHLOOK_NONE,								///< unit is not stealthed at all
 	STEALTHLOOK_VISIBLE_FRIENDLY,		///< unit is stealthed-but-visible due to friendly status
 	STEALTHLOOK_DISGUISED_ENEMY,		///< we can have units that are disguised (instead of invisible)
 	STEALTHLOOK_VISIBLE_DETECTED,		///< unit is stealthed and invisible, but a second material pass
 																						///< is added to reveal the invisible unit as with heat vision
-	STEALTHLOOK_VISIBLE_FRIENDLY_DETECTED,		///< unit is stealthed-but-visible due to being detected, 
+	STEALTHLOOK_VISIBLE_FRIENDLY_DETECTED,		///< unit is stealthed-but-visible due to being detected,
 																						///< and rendered in heatvision effect second material pass
 	STEALTHLOOK_INVISIBLE						///< unit is stealthed-and-invisible
 };
@@ -225,17 +223,19 @@ enum StealthLookType
 // ------------------------------------------------------------------------------------------------
 /** Drawable status bits */
 // ------------------------------------------------------------------------------------------------
-enum DrawableStatus
+typedef UnsignedInt DrawableStatusBits;
+enum DrawableStatus CPP_11(: DrawableStatusBits)
 {
 	DRAWABLE_STATUS_NONE									= 0x00000000,		///< no status
 	DRAWABLE_STATUS_DRAWS_IN_MIRROR				=	0x00000001,		///< drawable can reflect
 	DRAWABLE_STATUS_SHADOWS								=	0x00000002,		///< use setShadowsEnabled() access method
-	DRAWABLE_STATUS_TINT_COLOR_LOCKED			=	0x00000004,		///< drawable tint color is "locked" and won't fade to normal
 	DRAWABLE_STATUS_NO_STATE_PARTICLES		= 0x00000008,		///< do *not* auto-create particle systems based on model condition
 	DRAWABLE_STATUS_NO_SAVE								= 0x00000010,		///< do *not* save this drawable (UI fluff only). ignored (error, actually) if attached to an object
+
+	DRAWABLE_STATUS_DEFAULT = DRAWABLE_STATUS_SHADOWS,
 };
 
-enum TintStatus
+enum TintStatus CPP_11(: Int)
 {
 	TINT_STATUS_DISABLED		= 0x00000001,///< drawable tint color is deathly dark grey
 	TINT_STATUS_IRRADIATED	= 0x00000002,///< drawable tint color is sickly green
@@ -249,7 +249,7 @@ enum TintStatus
 // Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
 // existing values!
 //
-enum TerrainDecalType
+enum TerrainDecalType CPP_11(: Int)
 {
 #ifdef ALLOW_DEMORALIZE
 	TERRAIN_DECAL_DEMORALIZED = 0,
@@ -261,12 +261,23 @@ enum TerrainDecalType
 	TERRAIN_DECAL_HORDE_VEHICLE,
 	TERRAIN_DECAL_HORDE_WITH_NATIONALISM_UPGRADE_VEHICLE,
 	TERRAIN_DECAL_CRATE,
+#if RTS_GENERALS && RETAIL_COMPATIBLE_XFER_SAVE
 	TERRAIN_DECAL_NONE,
+	TERRAIN_DECAL_HORDE_WITH_FANATICISM_UPGRADE,
+	TERRAIN_DECAL_CHEMSUIT,
+#else
+	TERRAIN_DECAL_HORDE_WITH_FANATICISM_UPGRADE,
+	TERRAIN_DECAL_CHEMSUIT,
+	TERRAIN_DECAL_NONE,
+#endif
+	TERRAIN_DECAL_SHADOW_TEXTURE,	//use the shadow texture as the terrain decal.
 
-	TERRAIN_DECAL_MAX	///< keep this last
+	TERRAIN_DECAL_MAX
 };
 
 //-----------------------------------------------------------------------------
+
+constexpr const UnsignedInt InvalidShroudClearFrame = ~0u;
 
 const Int DRAWABLE_FRAMES_PER_FLASH = LOGICFRAMES_PER_SECOND / 2;
 
@@ -279,11 +290,11 @@ class Drawable : public Thing,
 								 public Snapshot
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Drawable, "Drawable" )		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Drawable, "Drawable" )
 
 public:
 
-	Drawable( const ThingTemplate *thing, DrawableStatus statusBits = DRAWABLE_STATUS_NONE );
+	Drawable( const ThingTemplate *thing, DrawableStatusBits statusBits = DRAWABLE_STATUS_DEFAULT );
 
 	void onDestroy( void );																							///< run from GameClient::destroyDrawable
 
@@ -293,7 +304,7 @@ public:
 
 	void friend_bindToObject( Object *obj ); ///< bind this drawable to an object ID. for use ONLY by GameLogic!
 	void setIndicatorColor(Color color);
-	
+
 	void setTintStatus( TintStatus statusBits ) { BitSet( m_tintStatus, statusBits ); };
 	void clearTintStatus( TintStatus statusBits ) { BitClear( m_tintStatus, statusBits ); };
 	Bool testTintStatus( TintStatus statusBits ) const { return BitIsSet( m_tintStatus, statusBits ); };
@@ -316,7 +327,7 @@ public:
 	//
 	inline Bool isDrawableEffectivelyHidden() const { return m_hidden || m_hiddenByStealth; }
 
-	void setSelectable( Bool selectable );												///< Changes the drawables selectability	
+	void setSelectable( Bool selectable );												///< Changes the drawables selectability
 	Bool isSelectable( void ) const;
 	Bool isMassSelectable( void ) const;
 
@@ -326,7 +337,7 @@ public:
 
 	void updateDrawableClipStatus( UnsignedInt shotsRemaining, UnsignedInt maxShots, WeaponSlotType slot ); ///< This will do the show/hide work if ProjectileBoneFeedbackEnabled is set.
 	void updateDrawableSupplyStatus( Int maxSupply, Int currentSupply ); ///< This will do visual feedback on Supplies carried
-	
+
 	void notifyDrawableDependencyCleared();///< If any of your draw modules were waiting for something, it's ready now.
 
 	// Override.
@@ -336,8 +347,8 @@ public:
 	const GeometryInfo& getDrawableGeometryInfo() const;
 
 	void reactToBodyDamageStateChange(BodyDamageType newState);
-	
-	const Real getScale (void) const ;
+
+	Real getScale (void) const ;
 
 	// access to modules
 	//---------------------------------------------------------------------------
@@ -346,6 +357,7 @@ public:
 	ClientUpdateModule const** getClientUpdateModules() const { return (ClientUpdateModule const**)getModuleList(MODULETYPE_CLIENT_UPDATE); }
 	ClientUpdateModule* findClientUpdateModule( NameKeyType key );
 
+	// never returns null
 	DrawModule** getDrawModules();
 	DrawModule const** getDrawModules() const;
 
@@ -356,7 +368,7 @@ public:
 
 	void setShroudClearFrame( UnsignedInt frame )  { m_shroudClearFrame = frame; }
 	UnsignedInt getShroudClearFrame( void ) { return m_shroudClearFrame; }
- 
+
 	void setShadowsEnabled(Bool enable);
 	Bool getShadowsEnabled() const { return BitIsSet(m_status, DRAWABLE_STATUS_SHADOWS); }
 
@@ -368,11 +380,11 @@ public:
 
 	Bool getDrawsInMirror() const { return BitIsSet(m_status, DRAWABLE_STATUS_DRAWS_IN_MIRROR) || isKindOf(KINDOF_CAN_CAST_REFLECTIONS); }
 
-	void colorFlash( const RGBColor *color, UnsignedInt decayFrames = DEF_DECAY_FRAMES, UnsignedInt attackFrames = 0, UnsignedInt sustainAtPeak = FALSE );  ///< flash a drawable in the color specified for a short time
+	void colorFlash( const RGBColor *color, UnsignedInt decayFrames = DEF_DECAY_FRAMES, UnsignedInt attackFrames = 0, UnsignedInt sustainAtPeak = 0 );  ///< flash a drawable in the color specified for a short time
 	void colorTint( const RGBColor *color );	 ///< tint this drawable the color specified
 	void setTintEnvelope( const RGBColor *color, Real attack, Real decay );	 ///< how to transition color
 	void flashAsSelected( const RGBColor *color = NULL ); ///< drawable takes care of the details if you spec no color
-	
+
 	/// Return true if drawable has been marked as "selected"
 	Bool isSelected( void ) const {	return m_selected; }
 	void onSelected();														///< Work unrelated to selection that must happen at time of selection
@@ -390,7 +402,7 @@ public:
 
 	const Matrix3D *getTransformMatrix( void ) const;	///< return the world transform
 
-	void draw( View *view );													///< render the drawable to the given view
+	void draw();													///< render the drawable to the given view
 	void updateDrawable();														///< update the drawable
 
 	void drawIconUI( void );													///< draw "icon"(s) needed on drawable (health bars, veterency, etc)
@@ -407,7 +419,7 @@ public:
 	inline const ModelConditionFlags& getModelConditionFlags( void ) const { return m_conditionState; }
 
 	//
-	// NOTE: avoid repeated calls to the set and clear for the condition state as they 
+	// NOTE: avoid repeated calls to the set and clear for the condition state as they
 	// reconstruct and load models which is expensive ... wrap up all our bit flags to
 	// set and clear into one function call
 	//
@@ -421,15 +433,15 @@ public:
 	void replaceModelConditionFlags( const ModelConditionFlags &flags, Bool forceReplace = FALSE );
 
 	void attachToParticleSystem( Particle *p );								///< attach this Drawable to a particle system
-	void detachFromParticleSystem( void );										///< detach this from any particle system 
+	void detachFromParticleSystem( void );										///< detach this from any particle system
 
 	Bool handleWeaponFireFX(
-							WeaponSlotType wslot, 
-							Int specificBarrelToUse, 
-							const FXList* fxl, 
-							Real weaponSpeed, 
-							Real recoilAmount, 
-							Real recoilAngle, 
+							WeaponSlotType wslot,
+							Int specificBarrelToUse,
+							const FXList* fxl,
+							Real weaponSpeed,
+							Real recoilAmount,
+							Real recoilAngle,
 							const Coord3D* victimPos,
 							Real damageRadius
 							);
@@ -451,8 +463,8 @@ public:
 		Find the bone(s) with the given name and return their positions and/or transforms in the given arrays.
 		We look for a bone named "boneNamePrefixQQ", where QQ is 01, 02, 03, etc, starting at the
 		value of "startIndex". Want to look for just a specific boneName with no numeric suffix?
-		just pass zero (0) for startIndex. (no, we never look for "boneNamePrefix00".) 
-		We copy up to 'maxBones' into the array(s), and return the total count found. 
+		just pass zero (0) for startIndex. (no, we never look for "boneNamePrefix00".)
+		We copy up to 'maxBones' into the array(s), and return the total count found.
 
 		NOTE: this returns the positions and transform for the "ideal" model... that is,
 		at its default rotation and scale, located at (0,0,0). You'll have to concatenate
@@ -462,14 +474,14 @@ public:
 	*/
 	Int getPristineBonePositions(const char* boneNamePrefix, Int startIndex, Coord3D* positions, Matrix3D* transforms, Int maxBones) const;
 	Int getCurrentClientBonePositions(const char* boneNamePrefix, Int startIndex, Coord3D* positions, Matrix3D* transforms, Int maxBones) const;
-	
+
 	// this is a special-purpose call for W3DModelDraw. (srj)
 	Bool getCurrentWorldspaceClientBonePositions(const char* boneName, Matrix3D& transform) const;
 
 	Bool getProjectileLaunchOffset(WeaponSlotType wslot, Int specificBarrelToUse, Matrix3D* launchPos, WhichTurretType tur, Coord3D* turretRotPos, Coord3D* turretPitchPos = NULL) const;
 
 	/**
-		This call says, "I want the current animation (if any) to take n frames to complete a single cycle". 
+		This call says, "I want the current animation (if any) to take n frames to complete a single cycle".
 		If it's a looping anim, each loop will take n frames. someday, we may want to add the option to insert
 		"pad" frames at the start and/or end, but for now, we always just "stretch" the animation to fit.
 		Note that you must call this AFTER setting the condition codes.
@@ -477,7 +489,7 @@ public:
 	void setAnimationLoopDuration(UnsignedInt numFrames);
 	/**
 		similar to the above, but assumes that the current state is a "ONCE",
-		and is smart about transition states... if there is a transition state 
+		and is smart about transition states... if there is a transition state
 		"inbetween", it is included in the completion time.
 	*/
 	void setAnimationCompletionTime(UnsignedInt numFrames);
@@ -496,8 +508,8 @@ public:
 	// *ONLY* the InGameUI should do the actual drawable selection and de-selection
 	//
 	void friend_setSelected( void );							///< mark drawable as "selected"
-	void friend_clearSelected( void );						///< clear drawable's "selected" 
-	
+	void friend_clearSelected( void );						///< clear drawable's "selected"
+
 	Vector3 * getAmbientLight( void );					///< get color value to add to ambient light when drawing
 	void setAmbientLight( Vector3 *ambient );		///< set color value to add to ambient light when drawing
 
@@ -507,21 +519,21 @@ public:
 	inline TerrainDecalType getTerrainDecalType( void ) const { return m_terrainDecalType; }
 
 	inline void setDrawableOpacity( Real value ) { m_explicitOpacity = value; }	///< set alpha/opacity value used to override defaults when drawing.
-	
+
 	// note that this is not the 'get' inverse of setDrawableOpacity, since stealthing can also affect the effective opacity!
 	inline Real getEffectiveOpacity() const { return m_explicitOpacity * m_effectiveStealthOpacity; }		///< get alpha/opacity value used to override defaults when drawing.
 	void setEffectiveOpacity( Real pulseFactor, Real explicitOpacity = -1.0f );
-	
+
 	// this is for the heatvision effect which operates completely independently of the stealth opacity effects. Draw() does the fading every frame.
 	inline Real getHeatVisionOpacity() const { return m_heatVisionOpacity; }		///< get alpha/opacity value used to render add'l heatvision rendering pass.
 	void setHeatVisionOpacity( Real op ) { m_heatVisionOpacity = op; }; ///< set alpha/opacity value used to render add'l heatvision rendering pass.
-	
+
 	// both of these assume that you are starting at one extreme 100% or 0% opacity and are trying to go to the other!! -- amit
 	void fadeOut( UnsignedInt frames );		///< fade object out...how gradually this is done is determined by frames
 	void fadeIn( UnsignedInt frames );		///< fade object in...how gradually this is done is determined by frames
 
 	void preloadAssets( TimeOfDay timeOfDay );	///< preload the assets
-	
+
 	Bool isVisible();											///< for limiting tree sway, etc to visible objects
 
 	Bool getShouldAnimate( Bool considerPower ) const;
@@ -545,6 +557,7 @@ public:
 	void killIcon(DrawableIconType t) { if (m_iconInfo) m_iconInfo->killIcon(t); }
 	Bool hasIconInfo() const { return m_iconInfo != NULL; }
 
+  const AudioEventRTS * getAmbientSound() const { return m_ambientSound == NULL ? NULL : &m_ambientSound->m_event; }
 protected:
 
 	// snapshot methods
@@ -590,14 +603,18 @@ protected:
 
 	const AudioEventRTS& getAmbientSoundByDamage(BodyDamageType dt);
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	void validatePos() const;
 #endif
 
 	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle);
 	void updateHiddenStatus();
 
+	void replaceModelConditionStateInDrawable();
+
 private:
+
+	const Locomotor* getLocomotor() const;
 
 	// note, these are lazily allocated!
 	TintEnvelope*		m_selectionFlashEnvelope;	///< used for selection flash, works WITH m_colorTintEnvelope
@@ -620,15 +637,15 @@ private:
 
 	Object *m_object;						///< object (if any) that this drawable represents
 	Particle *m_particle;				///< particle (if any) that this Drawable is associated with
-		
+
 	DrawableID m_id;						///< this drawable's unique ID
-	Drawable *m_nextDrawable; 
+	Drawable *m_nextDrawable;
 	Drawable *m_prevDrawable;		///< list links
 
-	UnsignedInt m_status;				///< status bits (see DrawableStatus enum)
+	DrawableStatusBits m_status;		///< status bits (see DrawableStatus enum)
 	UnsignedInt m_tintStatus;				///< tint color status bits (see TintStatus enum)
 	UnsignedInt m_prevTintStatus;///< for edge testing with m_tintStatus
-	
+
 	enum FadingMode
 	{
 		FADING_NONE,
@@ -643,6 +660,8 @@ private:
 
 	DrawableLocoInfo*	m_locoInfo;	// lazily allocated
 
+	PhysicsXformInfo* m_physicsXform;
+
 	DynamicAudioEventRTS*	m_ambientSound;		///< sound module for ambient sound (lazily allocated)
 	Bool								m_ambientSoundEnabled;
 
@@ -654,7 +673,7 @@ private:
 	Color m_flashColor;					///< color to flash the drawable
 
 	Matrix3D m_instance;				///< The instance matrix that holds the initial/default position & orientation
-	Real m_instanceScale;				///< the uniform scale factor applied to the instance matrix before it is sent to W3D. 
+	Real m_instanceScale;				///< the uniform scale factor applied to the instance matrix before it is sent to W3D.
 
 	DrawableInfo				m_drawableInfo;		///< structure pointed to by W3D render objects so they know which drawable they belong to.
 
@@ -676,14 +695,14 @@ private:
 	Bool m_instanceIsIdentity;	///< If true, instance matrix can be skipped
 	Bool m_drawableFullyObscuredByShroud;	///<drawable is hidden by shroud/fog
 #ifdef DIRTY_CONDITION_FLAGS
-	mutable Bool m_isModelDirty;				///< if true, must call replaceModelConditionState() before drawing or accessing drawmodule info
+	Bool m_isModelDirty;				///< if true, must call replaceModelConditionState() before drawing or accessing drawmodule info
 #endif
 
 	//*******************************************
 	//Perhaps we can move this out of Drawable???
 public:
 	static void killStaticImages();
-	
+
 #ifdef DIRTY_CONDITION_FLAGS
 	// only for StDrawableDirtyStuffLocker!
 	static void friend_lockDirtyStuffForIteration();
@@ -714,7 +733,7 @@ private:
 	void drawBattlePlans( const IRegion2D* healthBarRegion );				///< Icons rendering for active battle plan statii
 
 	Bool drawsAnyUIText( void );
-	
+
 	static Bool							s_staticImagesInited;
 	static const Image*			s_veterancyImage[LEVEL_COUNT];
 	static const Image*			s_fullAmmo;
@@ -748,5 +767,3 @@ public:
 	}
 };
 #endif
-
-#endif // _DRAWABLE_H_

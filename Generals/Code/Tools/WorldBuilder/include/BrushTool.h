@@ -22,17 +22,14 @@
 
 #pragma once
 
-#ifndef BRUSHTOOL_H
-#define BRUSHTOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 /*************************************************************************/
 /**                             BrushTool
-	 Does the Height Brush tool operation. 
+	 Does the Height Brush tool operation.
 ***************************************************************************/
 ///  Height brush tool.
-class BrushTool : public Tool 
+class BrushTool : public Tool
 {
 protected:
 	WorldHeightMapEdit *m_htMapEditCopy; ///< ref counted.
@@ -64,6 +61,3 @@ public:
 	virtual Bool followsTerrain(void) {return false;};
 
 };
-
-
-#endif //BRUSHTOOL_H

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DOZERAIUPDATE_H_
-#define __DOZERAIUPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/AIUpdate.h"
 
@@ -68,30 +65,32 @@ protected:
 //-------------------------------------------------------------------------------------------------
 /** Dozer behaviors that use action sub state machines */
 //-------------------------------------------------------------------------------------------------
-enum DozerTask // These enums are saved in the game save file, so DO NOT renumber them. jba.
+enum DozerTask CPP_11(: Int) // These enums are saved in the game save file, so DO NOT renumber them. jba.
 {
 	DOZER_TASK_INVALID = -1,
-	DOZER_TASK_FIRST = 0,
-	DOZER_TASK_BUILD = DOZER_TASK_FIRST,		///< go build something
-	DOZER_TASK_REPAIR = 1,											///< go repair something
-	DOZER_TASK_FORTIFY = 2,											///< go fortify something
 
-	DOZER_NUM_TASKS													// keep this last
+	DOZER_TASK_BUILD,												///< go build something
+	DOZER_TASK_REPAIR,											///< go repair something
+	DOZER_TASK_FORTIFY,											///< go fortify something
+
+	DOZER_NUM_TASKS,												// keep this last
+	DOZER_TASK_FIRST = 0,
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum DozerDockPoint	 // These enums are saved in the game save file, so DO NOT renumber them. jba.
+enum DozerDockPoint CPP_11(: Int)	 // These enums are saved in the game save file, so DO NOT renumber them. jba.
 {
 	DOZER_DOCK_POINT_START	= 0,
 	DOZER_DOCK_POINT_ACTION	= 1,
 	DOZER_DOCK_POINT_END		= 2,
-	DOZER_NUM_DOCK_POINTS  // keep this one last
+
+	DOZER_NUM_DOCK_POINTS
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum DozerBuildSubTask  // These enums are saved in the game save file, so DO NOT renumber them. jba.
+enum DozerBuildSubTask CPP_11(: Int)  // These enums are saved in the game save file, so DO NOT renumber them. jba.
 {
 	DOZER_SELECT_BUILD_DOCK_LOCATION		= 0,
 	DOZER_MOVING_TO_BUILD_DOCK_LOCATION	=	1,
@@ -119,8 +118,8 @@ public:
 	virtual Real getBoredRange( void ) const = 0;							///< when we're bored, we look this far away to do things
 
 	// methods to override for the dozer behaviors
-	virtual Object *construct( const ThingTemplate *what, 
-														 const Coord3D *pos, Real angle, 
+	virtual Object *construct( const ThingTemplate *what,
+														 const Coord3D *pos, Real angle,
 														 Player *owningPlayer,
 														 Bool isRebuild ) = 0;
 
@@ -188,7 +187,7 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 /** The Dozer AI Update interface.  Dozers are workers that are capable of building all the
-	* structures available to a player, as well as repairing building, and fortifying 
+	* structures available to a player, as well as repairing building, and fortifying
 	* civilian structures */
 //-------------------------------------------------------------------------------------------------
 class DozerAIUpdate : public AIUpdateInterface, public DozerAIInterface
@@ -221,8 +220,8 @@ public:
 	virtual Real getBoredRange( void ) const;							///< when we're bored, we look this far away to do things
 
 	// methods to override for the dozer behaviors
-	virtual Object* construct( const ThingTemplate *what, 
-														 const Coord3D *pos, Real angle, 
+	virtual Object* construct( const ThingTemplate *what,
+														 const Coord3D *pos, Real angle,
 														 Player *owningPlayer,
 														 Bool isRebuild );								///< construct an object
 
@@ -274,11 +273,11 @@ protected:
 
 	virtual void privateRepair( Object *obj, CommandSourceType cmdSource );	///< repair the target
 	virtual void privateResumeConstruction( Object *obj, CommandSourceType cmdSource );  ///< resume construction on obj
-	
+
 	struct DozerTaskInfo
 	{
 		ObjectID m_targetObjectID;				///< target object ID of task
-		UnsignedInt m_taskOrderFrame;			///< logic frame we decided we wanted to do this task	
+		UnsignedInt m_taskOrderFrame;			///< logic frame we decided we wanted to do this task
 	} m_task[ DOZER_NUM_TASKS ];				///< tasks we want to do indexed by DozerTask
 
 	DozerPrimaryStateMachine *m_dozerMachine;  ///< the custom state machine for Dozer behavior
@@ -303,7 +302,3 @@ private:
 	void createMachines( void );		///< create our behavior machines we need
 
 };
-
-
-#endif // __DOZERAIUPDATE_H_
-

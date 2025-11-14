@@ -24,12 +24,12 @@
 
 // FILE: Energy.cpp /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -42,7 +42,7 @@
 //
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Energy.h"
 #include "Common/Player.h"
@@ -53,11 +53,6 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 Energy::Energy()
@@ -70,19 +65,19 @@ Energy::Energy()
 
 //-----------------------------------------------------------------------------
 Int Energy::getProduction() const
-{ 
+{
 	if( TheGameLogic->getFrame() < m_powerSabotagedTillFrame )
 	{
 		//Power sabotaged, therefore no power.
 		return 0;
 	}
-	return m_energyProduction; 
+	return m_energyProduction;
 }
 
 //-----------------------------------------------------------------------------
-Real Energy::getEnergySupplyRatio() const 
-{ 
-	DEBUG_ASSERTCRASH(m_energyProduction >= 0 && m_energyConsumption >= 0, ("neg Energy numbers\n"));
+Real Energy::getEnergySupplyRatio() const
+{
+	DEBUG_ASSERTCRASH(m_energyProduction >= 0 && m_energyConsumption >= 0, ("neg Energy numbers"));
 
 	if( TheGameLogic->getFrame() < m_powerSabotagedTillFrame )
 	{
@@ -115,7 +110,7 @@ void Energy::adjustPower(Int powerDelta, Bool adding)
 	}
 
 	if (powerDelta > 0) {
-		if (adding) { 
+		if (adding) {
 			addProduction(powerDelta);
 		} else {
 			addProduction(-powerDelta);
@@ -150,11 +145,11 @@ void Energy::objectEnteringInfluence( Object *obj )
 		addProduction( energy );
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_energyProduction >= 0 && m_energyConsumption >= 0, 
+	DEBUG_ASSERTCRASH( m_energyProduction >= 0 && m_energyConsumption >= 0,
 										 ("Energy - Negative Energy numbers, Produce=%d Consume=%d\n",
 										 m_energyProduction, m_energyConsumption) );
 
-}  // end objectEnteringInfluence
+}
 
 //-------------------------------------------------------------------------------------------------
 /** 'obj' will now no longer add/subtrack from this energy construct */
@@ -176,7 +171,7 @@ void Energy::objectLeavingInfluence( Object *obj )
 		addProduction( -energy );
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_energyProduction >= 0 && m_energyConsumption >= 0, 
+	DEBUG_ASSERTCRASH( m_energyProduction >= 0 && m_energyConsumption >= 0,
 										 ("Energy - Negative Energy numbers, Produce=%d Consume=%d\n",
 										 m_energyProduction, m_energyConsumption) );
 
@@ -196,7 +191,7 @@ void Energy::addPowerBonus( Object *obj )
 	addProduction(obj->getTemplate()->getEnergyBonus());
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_energyProduction >= 0 && m_energyConsumption >= 0, 
+	DEBUG_ASSERTCRASH( m_energyProduction >= 0 && m_energyConsumption >= 0,
 										 ("Energy - Negative Energy numbers, Produce=%d Consume=%d\n",
 										 m_energyProduction, m_energyConsumption) );
 
@@ -215,11 +210,11 @@ void Energy::removePowerBonus( Object *obj )
 	addProduction( -obj->getTemplate()->getEnergyBonus() );
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_energyProduction >= 0 && m_energyConsumption >= 0, 
+	DEBUG_ASSERTCRASH( m_energyProduction >= 0 && m_energyConsumption >= 0,
 										 ("Energy - Negative Energy numbers, Produce=%d Consume=%d\n",
 										 m_energyProduction, m_energyConsumption) );
 
-}  // end removePowerBonus
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -227,7 +222,7 @@ void Energy::removePowerBonus( Object *obj )
 // ------------------------------------------------------------------------------------------------
 void Energy::addProduction(Int amt)
 {
-	m_energyProduction += amt; 
+	m_energyProduction += amt;
 
 	if( m_owner == NULL )
 		return;
@@ -240,7 +235,7 @@ void Energy::addProduction(Int amt)
 // ------------------------------------------------------------------------------------------------
 void Energy::addConsumption(Int amt)
 {
-	m_energyConsumption += amt; 
+	m_energyConsumption += amt;
 
 	if( m_owner == NULL )
 		return;
@@ -254,7 +249,7 @@ void Energy::addConsumption(Int amt)
 void Energy::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -275,7 +270,7 @@ void Energy::xfer( Xfer *xfer )
 	// production
 	if( version < 2 )
 		xfer->xferInt( &m_energyProduction );
-	
+
 	// consumption
 	if( version < 2 )
 		xfer->xferInt( &m_energyConsumption );
@@ -293,7 +288,7 @@ void Energy::xfer( Xfer *xfer )
 		xfer->xferUnsignedInt( &m_powerSabotagedTillFrame );
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -301,4 +296,4 @@ void Energy::xfer( Xfer *xfer )
 void Energy::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

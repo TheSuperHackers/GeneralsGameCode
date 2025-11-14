@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Lib/BaseType.h"
 #include "Common/INI.h"
@@ -39,11 +39,6 @@
 #include "Common/WellKnownKeys.h"
 #include "Common/QuotedPrintable.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 class MapMetaDataReader
 {
@@ -86,7 +81,7 @@ void parseTechPositionsCoord3D( INI* ini, void * instance, void * /*store*/, con
 
 }
 
-const FieldParse MapMetaDataReader::m_mapFieldParseTable[] = 
+const FieldParse MapMetaDataReader::m_mapFieldParseTable[] =
 {
 
 	{ "isOfficial",							INI::parseBool,			NULL,	offsetof( MapMetaDataReader, m_isOfficial ) },
@@ -115,7 +110,7 @@ const FieldParse MapMetaDataReader::m_mapFieldParseTable[] =
 
 	{ "InitialCameraPosition",	INI::parseCoord3D,	NULL,	offsetof( MapMetaDataReader, m_initialCameraPosition ) },
 
-	{ NULL,					NULL,						NULL,						0 }  // keep this last
+	{ NULL,					NULL,						NULL,						0 }
 
 };
 
@@ -136,6 +131,7 @@ void INI::parseMapCacheDefinition( INI* ini )
 
 	md.m_extent = mdr.m_extent;
 	md.m_isOfficial = mdr.m_isOfficial != 0;
+	md.m_doesExist = TRUE;
 	md.m_isMultiplayer = mdr.m_isMultiplayer != 0;
 	md.m_numPlayers = mdr.m_numPlayers;
 	md.m_filesize = mdr.m_filesize;
@@ -144,8 +140,9 @@ void INI::parseMapCacheDefinition( INI* ini )
 
 	md.m_waypoints[TheNameKeyGenerator->keyToName(TheKey_InitialCameraPosition)] = mdr.m_initialCameraPosition;
 
-//	md.m_displayName = QuotedPrintableToUnicodeString(mdr.m_asciiDisplayName);
-// this string is never to be used, but we'll leave it in to allow people with an old mapcache.ini to parse it
+#if RTS_GENERALS
+	md.m_displayName = QuotedPrintableToUnicodeString(mdr.m_asciiDisplayName);
+#else
 	md.m_nameLookupTag = QuotedPrintableToAsciiString(mdr.m_asciiNameLookupTag);
 
 	if (md.m_nameLookupTag.isEmpty())
@@ -172,6 +169,7 @@ void INI::parseMapCacheDefinition( INI* ini )
 			md.m_displayName.concat(extension);
 		}
 	}
+#endif
 
 	AsciiString startingCamName;
 	for (Int i=0; i<md.m_numPlayers; ++i)
@@ -199,7 +197,7 @@ void INI::parseMapCacheDefinition( INI* ini )
 		AsciiString lowerName = name;
 		lowerName.toLower();
 		md.m_fileName = lowerName;
-//		DEBUG_LOG(("INI::parseMapCacheDefinition - adding %s to map cache\n", lowerName.str()));
+//		DEBUG_LOG(("INI::parseMapCacheDefinition - adding %s to map cache", lowerName.str()));
 		(*TheMapCache)[lowerName] = md;
 	}
 }

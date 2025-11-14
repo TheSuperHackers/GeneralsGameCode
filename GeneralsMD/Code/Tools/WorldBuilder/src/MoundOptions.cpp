@@ -36,7 +36,7 @@ Int MoundOptions::m_currentFeather = 0;
 
 MoundOptions::MoundOptions(CWnd* pParent /*=NULL*/)
 {
-	//{{AFX_DATA_INIT(MoundOptions) 
+	//{{AFX_DATA_INIT(MoundOptions)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
@@ -52,8 +52,8 @@ void MoundOptions::DoDataExchange(CDataExchange* pDX)
 
 /// Sets the feather value in the dialog.
 /** Update the value in the edit control and the slider. */
-void MoundOptions::setFeather(Int feather) 
-{ 
+void MoundOptions::setFeather(Int feather)
+{
 	CString buf;
 	buf.Format("%d", feather);
 	m_currentFeather = feather;
@@ -65,8 +65,8 @@ void MoundOptions::setFeather(Int feather)
 
 /// Sets the brush width value in the dialog.
 /** Update the value in the edit control and the slider. */
-void MoundOptions::setWidth(Int width) 
-{ 
+void MoundOptions::setWidth(Int width)
+{
 	CString buf;
 	buf.Format("%d", width);
 	m_currentWidth = width;
@@ -76,10 +76,10 @@ void MoundOptions::setWidth(Int width)
 	}
 }
 
-void MoundOptions::setHeight(Int height) 
-{ 
-	char buffer[50];
-	sprintf(buffer, "%d", height);
+void MoundOptions::setHeight(Int height)
+{
+	char buffer[12];
+	snprintf(buffer, ARRAY_SIZE(buffer), "%d", height);
 	m_currentHeight = height;
 	if (m_staticThis && !m_staticThis->m_updating) {
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_HEIGHT_EDIT);
@@ -93,12 +93,12 @@ void MoundOptions::setHeight(Int height)
 // MoundOptions message handlers
 
 /// Dialog UI initialization.
-/** Creates the slider controls, and sets the initial values for 
+/** Creates the slider controls, and sets the initial values for
 width and feather in the ui controls. */
-BOOL MoundOptions::OnInitDialog() 
+BOOL MoundOptions::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	m_updating = true;
 	m_brushWidthPopup.SetupPopSliderButton(this, IDC_SIZE_POPUP, this);
 	m_brushFeatherPopup.SetupPopSliderButton(this, IDC_FEATHER_POPUP, this);
@@ -117,7 +117,7 @@ BOOL MoundOptions::OnInitDialog()
 /// Handles feather edit ui messages.
 /** Gets the new edit control text, converts it to an int, then updates
 		the slider and brush tool. */
-void MoundOptions::OnChangeFeatherEdit() 
+void MoundOptions::OnChangeFeatherEdit()
 {
 		if (m_updating) return;
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_FEATHER_EDIT);
@@ -129,7 +129,7 @@ void MoundOptions::OnChangeFeatherEdit()
 			if (1==sscanf(buffer, "%d", &feather)) {
 				m_currentFeather = feather;
 				MoundTool::setFeather(m_currentFeather);
-				sprintf(buffer, "%.1f FEET.", m_currentFeather*MAP_XY_FACTOR);
+				snprintf(buffer, ARRAY_SIZE(buffer), "%.1f FEET.", m_currentFeather*MAP_XY_FACTOR);
 				pEdit = m_staticThis->GetDlgItem(IDC_FEATHER_LABEL);
 				if (pEdit) pEdit->SetWindowText(buffer);
 			}
@@ -140,7 +140,7 @@ void MoundOptions::OnChangeFeatherEdit()
 /// Handles width edit ui messages.
 /** Gets the new edit control text, converts it to an int, then updates
 		the slider and brush tool. */
-void MoundOptions::OnChangeSizeEdit() 
+void MoundOptions::OnChangeSizeEdit()
 {
 		if (m_updating) return;
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_SIZE_EDIT);
@@ -152,7 +152,7 @@ void MoundOptions::OnChangeSizeEdit()
 			if (1==sscanf(buffer, "%d", &width)) {
 				m_currentWidth = width;
 				MoundTool::setWidth(m_currentWidth);
-				sprintf(buffer, "%.1f FEET.", m_currentWidth*MAP_XY_FACTOR);
+				snprintf(buffer, ARRAY_SIZE(buffer), "%.1f FEET.", m_currentWidth*MAP_XY_FACTOR);
 				pEdit = m_staticThis->GetDlgItem(IDC_WIDTH_LABEL);
 				if (pEdit) pEdit->SetWindowText(buffer);
 			}
@@ -163,7 +163,7 @@ void MoundOptions::OnChangeSizeEdit()
 /// Handles width edit ui messages.
 /** Gets the new edit control text, converts it to an int, then updates
 		the slider and brush tool. */
-void MoundOptions::OnChangeHeightEdit() 
+void MoundOptions::OnChangeHeightEdit()
 {
 		if (m_updating) return;
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_HEIGHT_EDIT);
@@ -175,7 +175,7 @@ void MoundOptions::OnChangeHeightEdit()
 			if (1==sscanf(buffer, "%d", &height)) {
 				m_currentHeight = height;
 				MoundTool::setMoundHeight(m_currentHeight);
-				sprintf(buffer, "%.1f FEET.", m_currentHeight*MAP_HEIGHT_SCALE);
+				snprintf(buffer, ARRAY_SIZE(buffer), "%.1f FEET.", m_currentHeight*MAP_HEIGHT_SCALE);
 				pEdit = m_staticThis->GetDlgItem(IDC_HEIGHT_LABEL);
 				if (pEdit) pEdit->SetWindowText(buffer);
 			}
@@ -212,7 +212,7 @@ void MoundOptions::GetPopSliderInfo(const long sliderID, long *pMin, long *pMax,
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 void MoundOptions::PopSliderChanged(const long sliderID, long theVal)
@@ -249,7 +249,7 @@ void MoundOptions::PopSliderChanged(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 void MoundOptions::PopSliderFinished(const long sliderID, long theVal)
@@ -266,7 +266,7 @@ void MoundOptions::PopSliderFinished(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 
 }
 

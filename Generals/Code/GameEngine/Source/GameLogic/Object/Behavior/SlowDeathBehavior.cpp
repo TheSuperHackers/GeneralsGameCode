@@ -24,12 +24,12 @@
 
 // FILE: SlowDeathBehavior.cpp ///////////////////////////////////////////////////////////////////////
 // Author:
-// Desc:  
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #define DEFINE_SLOWDEATHPHASE_NAMES
 #include "Common/GameLOD.h"
 #include "Common/INI.h"
@@ -51,11 +51,6 @@
 #include "GameLogic/Weapon.h"
 #include "GameClient/Drawable.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 const Real BEGIN_MIDPOINT_RATIO = 0.35f;
 const Real END_MIDPOINT_RATIO = 0.65f;
@@ -125,11 +120,11 @@ static void parseWeapon( INI* ini, void *instance, void * /*store*/, const void*
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void SlowDeathBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void SlowDeathBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "SinkRate",													INI::parseVelocityReal,						NULL, offsetof( SlowDeathBehaviorModuleData, m_sinkRate ) },
 		{ "ProbabilityModifier",							INI::parseInt,										NULL, offsetof( SlowDeathBehaviorModuleData, m_probabilityModifier ) },
@@ -164,7 +159,7 @@ SlowDeathBehavior::SlowDeathBehavior( Thing *thing, const ModuleData* moduleData
 
 	if (getSlowDeathBehaviorModuleData()->m_probabilityModifier < 1)
 	{
-		DEBUG_CRASH(("ProbabilityModifer must be >= 1.\n"));
+		DEBUG_CRASH(("ProbabilityModifer must be >= 1."));
 		throw INI_INVALID_DATA;
 	}
 
@@ -235,19 +230,19 @@ void SlowDeathBehavior::beginSlowDeath(const DamageInfo *damageInfo)
 
 		}
 
-		
+
 		// Ask game detail manager if we need to speedup all deaths to improve performance
 		Real timeScale = TheGameLODManager->getSlowDeathScale();
 		m_acceleratedTimeScale = 1.0f;	// assume normal death speed.
 
 		if (timeScale == 0.0f && !d->hasNonLodEffects())
-		{	
+		{
 			// Deaths happen instantly so just delete the object and return
 			TheGameLogic->destroyObject(obj);
 			return;
 		}
 		else
-		{	
+		{
 			// timescale is some non-zero value so we may need to speed up death
 			if( getObject()->isKindOf( KINDOF_HULK ) && TheGameLogic->getHulkMaxLifetimeOverride() != -1 )
 			{
@@ -271,7 +266,7 @@ void SlowDeathBehavior::beginSlowDeath(const DamageInfo *damageInfo)
 		if (d->m_flingForce > 0)
 		{
 
-			
+
 			//Just in case this is a stingersoldier or other HELD object, lets set them free so they will fly
 			// with their own physics during slow death
 			if( obj->isDisabledByType( DISABLED_HELD ) )
@@ -282,7 +277,7 @@ void SlowDeathBehavior::beginSlowDeath(const DamageInfo *damageInfo)
 				{
 					slave->onSlaverDie( NULL );
 				}
-			}				
+			}
 
 			PhysicsBehavior* physics = obj->getPhysics();
 			if (physics)
@@ -298,7 +293,7 @@ void SlowDeathBehavior::beginSlowDeath(const DamageInfo *damageInfo)
 				}
 
 				Coord3D force;
-				calcRandomForce(d->m_flingForce, d->m_flingForce + d->m_flingForceVariance, 
+				calcRandomForce(d->m_flingForce, d->m_flingForce + d->m_flingForceVariance,
 												d->m_flingPitch, d->m_flingPitch + d->m_flingPitchVariance, force);
 				physics->setAllowToFall(true);
 				physics->applyForce(&force);
@@ -317,9 +312,9 @@ void SlowDeathBehavior::beginSlowDeath(const DamageInfo *damageInfo)
 			// we don't need to wake up immediately, but only when the first of these
 			// counters wants to trigger....
 			Int whenToWakeTime = m_sinkFrame;
-			if (whenToWakeTime > m_destructionFrame) 
+			if (whenToWakeTime > m_destructionFrame)
 				whenToWakeTime = m_destructionFrame;
-			if (whenToWakeTime > m_midpointFrame) 
+			if (whenToWakeTime > m_midpointFrame)
 				whenToWakeTime = m_midpointFrame;
 			setWakeFrame(obj, UPDATE_SLEEP(whenToWakeTime));
 		}
@@ -382,7 +377,7 @@ void SlowDeathBehavior::doPhaseStuff(SlowDeathPhaseType sdphase)
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime SlowDeathBehavior::update()
 {
-	//DEBUG_LOG(("updating SlowDeathBehavior %08lx\n",this));
+	//DEBUG_LOG(("updating SlowDeathBehavior %08lx",this));
 	DEBUG_ASSERTCRASH(isSlowDeathActivated(), ("hmm, this should not be possible"));
 
 	const SlowDeathBehaviorModuleData* d = getSlowDeathBehaviorModuleData();
@@ -392,11 +387,11 @@ UpdateSleepTime SlowDeathBehavior::update()
 
 	// Check if we have normal time scale but LODManager is requeseting acceleration
 	if (timeScale != 1.0f && m_acceleratedTimeScale == 1.0f && !d->hasNonLodEffects())
-	{	
+	{
 		// speed of deaths has been increased since beginning of death
 		// so adjust it to current levels.
 		if (timeScale == 0)
-		{	
+		{
 			// instant death
 			TheGameLogic->destroyObject(obj);
 			return UPDATE_SLEEP_NONE;
@@ -406,10 +401,10 @@ UpdateSleepTime SlowDeathBehavior::update()
 		m_midpointFrame = (Real)m_midpointFrame * timeScale;
 		m_destructionFrame = (Real)m_destructionFrame * timeScale;
 		m_acceleratedTimeScale = timeScale;
-	};	
+	};
 
 	UnsignedInt now = TheGameLogic->getFrame();
-	
+
 
 	if ((m_flags & (1<<FLUNG_INTO_AIR)) != 0)
 	{
@@ -420,11 +415,11 @@ UpdateSleepTime SlowDeathBehavior::update()
 			++m_destructionFrame;
 			if (!obj->isAboveTerrain())
 			{
-				obj->clearAndSetModelConditionFlags(MAKE_MODELCONDITION_MASK(MODELCONDITION_EXPLODED_FLAILING), 
+				obj->clearAndSetModelConditionFlags(MAKE_MODELCONDITION_MASK(MODELCONDITION_EXPLODED_FLAILING),
 																						MAKE_MODELCONDITION_MASK(MODELCONDITION_EXPLODED_BOUNCING));
 				m_flags |= (1<<BOUNCED);
 			}
-			
+
 			// Here we want to make sure we die if we collide with a tree on the way down
 			PhysicsBehavior *phys = obj->getPhysics();
 			if ( phys )
@@ -436,8 +431,8 @@ UpdateSleepTime SlowDeathBehavior::update()
 					if (tree->isKindOf( KINDOF_SHRUBBERY ) )
 					{
 						obj->setDisabled( DISABLED_HELD );
-						obj->clearModelConditionFlags( MAKE_MODELCONDITION_MASK(MODELCONDITION_EXPLODED_FLAILING) ); 
-						obj->clearModelConditionFlags( MAKE_MODELCONDITION_MASK(MODELCONDITION_EXPLODED_BOUNCING) ); 
+						obj->clearModelConditionFlags( MAKE_MODELCONDITION_MASK(MODELCONDITION_EXPLODED_FLAILING) );
+						obj->clearModelConditionFlags( MAKE_MODELCONDITION_MASK(MODELCONDITION_EXPLODED_BOUNCING) );
 						obj->setModelConditionFlags(   MAKE_MODELCONDITION_MASK(MODELCONDITION_PARACHUTING) ); //looks like he is snagged in a tree
 						obj->setPositionZ( obj->getPosition()->z - (d->m_sinkRate * 50.0f) );// make him sink faster
 						if ( !obj->isAboveTerrain() )
@@ -536,7 +531,7 @@ void SlowDeathBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -569,7 +564,7 @@ void SlowDeathBehavior::xfer( Xfer *xfer )
 	// flags
 	xfer->xferUnsignedInt( &m_flags );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -580,4 +575,4 @@ void SlowDeathBehavior::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -34,9 +34,6 @@
 
 #pragma once
 
-#ifndef __GUIEDITWINDOWMANAGER_H_
-#define __GUIEDITWINDOWMANAGER_H_
-
 #include <stdlib.h>
 #include "W3DDevice/GameClient/W3DGameWindowManager.h"
 
@@ -88,7 +85,7 @@ protected:
 	Bool isWindowInClipboard( GameWindow *window, GameWindow **list );
 	void linkToClipboard( GameWindow *window, GameWindow **list );  ///< add window to clipboard
 	void unlinkFromClipboard( GameWindow *window, GameWindow **list );  ///< remove window from clipboard
-		
+
 	/** remove selected children from the select list that have a parent
 	also in the select list */
 	void removeSupervisedChildSelections( void );
@@ -114,6 +111,3 @@ inline GameWindow *GUIEditWindowManager::getClipboardDupeList( void ) { return m
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
 extern GUIEditWindowManager *TheGUIEditWindowManager;  ///< editor use only
-
-#endif // __GUIEDITWINDOWMANAGER_H_
-

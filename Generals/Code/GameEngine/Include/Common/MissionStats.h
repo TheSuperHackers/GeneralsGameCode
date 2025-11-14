@@ -24,12 +24,12 @@
 
 // FILE: MissionStats.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -44,16 +44,13 @@
 
 #pragma once
 
-#ifndef _MISSIONSTATS_H_
-#define _MISSIONSTATS_H_
-
 #include "Lib/BaseType.h"
 #include "Common/GameCommon.h"
 #include "Common/Snapshot.h"
 
 // ----------------------------------------------------------------------------------------------
 /**
-	Class that accumulates stats during a mission. Some of this will be for scoring purposes, 
+	Class that accumulates stats during a mission. Some of this will be for scoring purposes,
 	and some will probably be used by AI to determine future moves.
 
 	@todo: not sure what need to be here. Alas. For now, I have just put in the fields from RA2
@@ -64,7 +61,7 @@ class MissionStats : public Snapshot
 {
 
 public:
-	
+
 	MissionStats();
 
 	/// reset all stats to "nothing".
@@ -85,6 +82,3 @@ private:
 	Int m_buildingsLost;													///< how many of our buildings were destroyed?
 	//Int	m_whoLastHurtMe;													///< last Player to destroy one of my units
 };
-
-#endif // _MISSIONSTATS_H_
-

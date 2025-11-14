@@ -25,8 +25,8 @@
 // DrawGroupInfo.cpp //////////////////////////////////////////////////////////////////////////////
 // Author: John McDonald, October 2002
 ///////////////////////////////////////////////////////////////////////////////////////////////////
- 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/DrawGroupInfo.h"
 

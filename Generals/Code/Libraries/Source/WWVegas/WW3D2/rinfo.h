@@ -24,31 +24,27 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/ww3d2/rinfo.h                                $*
  *                                                                                             *
- *                       Author:: Greg Hjelstrom                                               *
+ *                   Org Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 8/24/01 3:33p                                               $*
+ *                       Author : Kenny Mitchell                                               *
  *                                                                                             *
- *                    $Revision:: 13                                                          $*
+ *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
+ *                    $Revision:: 16                                                          $*
+ *                                                                                             *
+ * 06/27/02 KM Render to shadow buffer texture support														*
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef RINFO_H
-#define RINFO_H
-
 
 #include "always.h"
 #include "bittype.h"
 #include "ww3d.h"
 #include "wwdebug.h"
 #include "shader.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "matrix3d.h"
 #include "matrix4.h"
 
@@ -57,6 +53,7 @@ class MaterialPassClass;
 class LightEnvironmentClass;
 class VisRasterizerClass;
 class BWRenderClass;
+class TexProjectClass;
 
 const unsigned MAX_ADDITIONAL_MATERIAL_PASSES=32;
 const unsigned MAX_OVERRIDE_FLAG_LEVEL=32;
@@ -76,10 +73,11 @@ public:
 	~RenderInfoClass(void);
 
 	enum RINFO_OVERRIDE_FLAGS {
-		RINFO_OVERRIDE_DEFAULT						= 0x0,	// No overrides
-		RINFO_OVERRIDE_FORCE_TWO_SIDED			= 0x1,	// Override mesh settings to force no backface culling
-		RINFO_OVERRIDE_FORCE_SORTING				= 0x2,	// Override mesh settings to force sorting
-		RINFO_OVERRIDE_ADDITIONAL_PASSES_ONLY	= 0x4		// Do not render base passes (only additional passes)
+		RINFO_OVERRIDE_DEFAULT						= 0x0000,	// No overrides
+		RINFO_OVERRIDE_FORCE_TWO_SIDED			= 0x0001,	// Override mesh settings to force no backface culling
+		RINFO_OVERRIDE_FORCE_SORTING				= 0x0002,	// Override mesh settings to force sorting
+		RINFO_OVERRIDE_ADDITIONAL_PASSES_ONLY	= 0x0004,	// Do not render base passes (only additional passes)
+		RINFO_OVERRIDE_SHADOW_RENDERING			= 0x0008		// Hint: we are rendering a shadow
 	};
 
 	void								Push_Material_Pass(MaterialPassClass * matpass);
@@ -103,39 +101,42 @@ public:
 
 	LightEnvironmentClass*		light_environment;
 
+	TexProjectClass*				Texture_Projector;
+
 protected:
 	MaterialPassClass*			AdditionalMaterialPassArray[MAX_ADDITIONAL_MATERIAL_PASSES];
 	unsigned							AdditionalMaterialPassCount;
+	unsigned							RejectedMaterialPasses;
 	RINFO_OVERRIDE_FLAGS			OverrideFlag[MAX_OVERRIDE_FLAG_LEVEL];
 	unsigned							OverrideFlagLevel;
 
 };
 
-	
+
 /**
 ** SpecialRenderInfoClass
 ** This structure also contains a "grab-bag" of junk for use by the Special_Render
-** function.  The first use that I have for Special_Render is to implement the 
+** function.  The first use that I have for Special_Render is to implement the
 ** visibility detection algorithm where each object is rendered in such a way
 ** that I can get the 'id' of the object which generated each pixel on the screen.
 ** Another use I have planned for Special_Render is a shadow rendering mode that
-** just draws an object in solid black from the point of view of a light source. 
+** just draws an object in solid black from the point of view of a light source.
 ** This would just need another enum for the RenderType...
-** 
+**
 ** The reason for a Special_Render function is that I didn't want to pollute
 ** the main rendering pipeline with checks for these alternate rendering operations.
-*/	
+*/
 class SpecialRenderInfoClass : public RenderInfoClass
-{	
+{
 
-public:	
+public:
 	SpecialRenderInfoClass(CameraClass & cam,int render_type);
 	~SpecialRenderInfoClass(void);
 
 	// The following fields are only used by the Special_Render function.
 	// this is basically just a place to stick whatever information you need.
-	enum 
-	{ 
+	enum
+	{
 		RENDER_VIS,
 		RENDER_SHADOW
 	};
@@ -155,7 +156,3 @@ private:
 	SpecialRenderInfoClass & operator = (const RenderInfoClass &);
 
 };
-
-
-
-#endif

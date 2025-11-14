@@ -29,10 +29,8 @@
 
 #pragma once
 
-#ifndef _MULTIPLAYERSETTINGS_H_
-#define _MULTIPLAYERSETTINGS_H_
-
 #include "GameClient/Color.h"
+#include "Common/Money.h"
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 struct FieldParse;
@@ -69,6 +67,9 @@ private:
 typedef std::map<Int, MultiplayerColorDefinition> MultiplayerColorList;
 typedef std::map<Int, MultiplayerColorDefinition>::iterator MultiplayerColorIter;
 
+// A list of values to display in the starting money dropdown
+typedef std::vector< Money > MultiplayerStartingMoneyList;
+
 //-------------------------------------------------------------------------------------------------
 /** Multiplayer Settings container class
   *	Defines multiplayer settings */
@@ -79,9 +80,9 @@ public:
 
 	MultiplayerSettings( void );
 
-	void init() { }
-	void update() { }
-	void reset() { }
+	virtual void init() { }
+	virtual void update() { }
+	virtual void reset() { }
 
 	//-----------------------------------------------------------------------------------------------
 	static const FieldParse m_multiplayerSettingsFieldParseTable[];		///< the parse table for INI definition
@@ -91,8 +92,6 @@ public:
 	MultiplayerColorDefinition * findMultiplayerColorDefinitionByName(AsciiString name);
 	MultiplayerColorDefinition * newMultiplayerColorDefinition(AsciiString name);
 
-	inline Int getInitialCreditsMin( void ) { return m_initialCreditsMin; }
-	inline Int getInitialCreditsMax( void ) { return m_initialCreditsMax; }
 	inline Int getStartCountdownTimerSeconds( void ) { return m_startCountdownTimerSeconds; }
 	inline Int getMaxBeaconsPerPlayer( void ) { return m_maxBeaconsPerPlayer; }
 	inline Bool isShroudInMultiplayer( void ) { return m_isShroudInMultiplayer; }
@@ -100,7 +99,7 @@ public:
 	inline Bool showRandomStartPos( void ) { return m_showRandomStartPos; }
 	inline Bool showRandomColor( void ) { return m_showRandomColor; }
 
-	inline Int getNumColors( void ) 
+	inline Int getNumColors( void )
 	{
 		if (m_numColors == 0) {
 			m_numColors = m_colorList.size();
@@ -108,6 +107,17 @@ public:
 		return m_numColors;
 	}
 	MultiplayerColorDefinition * getColor(Int which);
+
+
+  const Money & getDefaultStartingMoney() const
+  {
+    DEBUG_ASSERTCRASH( m_gotDefaultStartingMoney, ("You must specify a default starting money amount in multiplayer.ini") );
+    return m_defaultStartingMoney;
+  }
+
+  const MultiplayerStartingMoneyList & getStartingMoneyList() const { return m_startingMoneyList; }
+
+  void addStartingMoneyChoice( const Money & money, Bool isDefault );
 
 private:
 	Int m_initialCreditsMin;
@@ -123,9 +133,10 @@ private:
 	Int m_numColors;
 	MultiplayerColorDefinition m_observerColor;
 	MultiplayerColorDefinition m_randomColor;
+  MultiplayerStartingMoneyList      m_startingMoneyList;
+  Money                             m_defaultStartingMoney;
+  Bool                              m_gotDefaultStartingMoney;
 };
 
 // singleton
 extern MultiplayerSettings *TheMultiplayerSettings;
-
-#endif

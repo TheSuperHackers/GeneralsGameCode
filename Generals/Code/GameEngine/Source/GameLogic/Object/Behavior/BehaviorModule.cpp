@@ -41,7 +41,7 @@ void BehaviorModule::crc( Xfer *xfer )
 	// call base class
 	ObjectModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method
@@ -59,7 +59,7 @@ void BehaviorModule::xfer( Xfer *xfer )
 	// call base class
 	ObjectModule::xfer( xfer );
 
-}  // xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -70,4 +70,4 @@ void BehaviorModule::loadPostProcess( void )
 	// call base class
 	ObjectModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

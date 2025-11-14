@@ -31,9 +31,6 @@
 
 #pragma once
 
-#ifndef __MODULE_H_
-#define __MODULE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "Common/GameMemory.h"
@@ -41,8 +38,8 @@
 #include "Common/Snapshot.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
-enum TimeOfDay;
-enum StaticGameLODLevel;
+enum TimeOfDay CPP_11(: Int);
+enum StaticGameLODLevel CPP_11(: Int);
 class Drawable;
 class Object;
 class Player;
@@ -55,7 +52,7 @@ struct FieldParse;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum ModuleType 
+enum ModuleType CPP_11(: Int)
 {
 	MODULETYPE_BEHAVIOR = 0,
 
@@ -70,7 +67,7 @@ enum ModuleType
 	MODULETYPE_CLIENT_UPDATE = 2,
 	// put new drawable module types here
 
-	NUM_MODULE_TYPES,  // keep this last!
+	NUM_MODULE_TYPES,
 
 	FIRST_DRAWABLE_MODULE_TYPE = MODULETYPE_DRAW,
 	LAST_DRAWABLE_MODULE_TYPE = MODULETYPE_CLIENT_UPDATE,
@@ -80,7 +77,7 @@ enum ModuleType
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum ModuleInterfaceType 
+enum ModuleInterfaceType CPP_11(: Int)
 {
 	MODULEINTERFACE_UPDATE					= 0x00000001,
 	MODULEINTERFACE_DIE							= 0x00000002,
@@ -110,14 +107,14 @@ public:
 	NameKeyType getModuleTagNameKey() const { return m_moduleTagNameKey; }
 
 	virtual Bool isAiModuleData() const { return false; }
-	
+
 	// ugh, hack
 	virtual const W3DModelDrawModuleData* getAsW3DModelDrawModuleData() const { return NULL; }
 	// ugh, hack
 	virtual const W3DTreeDrawModuleData* getAsW3DTreeDrawModuleData() const { return NULL; }
 	virtual StaticGameLODLevel getMinimumRequiredGameLOD() const { return (StaticGameLODLevel)0;}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
 		// nothing
 	}
@@ -173,7 +170,7 @@ public: \
 	MAKE_STANDARD_MODULE_DATA_MACRO_ABC(cls, clsmd)
 
 //-------------------------------------------------------------------------------------------------
-/** Common interface for thing modules, we want a single common base class 
+/** Common interface for thing modules, we want a single common base class
 	* for all the modules (either object or drawable) so that we can use
 	* a single module factory to handle instancing them ... it's just
 	* convenient this way */
@@ -201,9 +198,9 @@ public:
 		allows Modules to resolve any inter-Module dependencies.
 	*/
 	virtual void onObjectCreated() { }
-	
+
 	/**
-		this is called whenever a drawable is bound to the object. 
+		this is called whenever a drawable is bound to the object.
 		drawable is NOT guaranteed to be non-null.
 	*/
 	virtual void onDrawableBoundToObject() { }
@@ -226,7 +223,7 @@ protected:
 private:
 	const ModuleData* m_moduleData;
 
-};  // end Module
+};
 //-------------------------------------------------------------------------------------------------
 
 
@@ -318,7 +315,3 @@ private:
 //-------------------------------------------------------------------------------------------------
 /** VARIOUS MODULE INTERFACES */
 //-------------------------------------------------------------------------------------------------
-
-
-#endif // __MODULE_H_
-

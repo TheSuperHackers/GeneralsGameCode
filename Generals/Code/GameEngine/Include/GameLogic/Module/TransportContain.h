@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __TransportContain_H_
-#define __TransportContain_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/OpenContain.h"
 
@@ -102,12 +99,9 @@ protected:
 private:
 
 	void createPayload();
-	
-	Bool m_payloadCreated;	
+
+	Bool m_payloadCreated;
 	Int m_extraSlotsInUse;
 	UnsignedInt m_frameExitNotBusy;
 
 };
-
-#endif // __TransportContain_H_
-

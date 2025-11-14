@@ -22,18 +22,13 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: SubsystemInterface.cpp 
+// FILE: SubsystemInterface.cpp
 // ----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/SubsystemInterface.h"
 #include "Common/Xfer.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #ifdef DUMP_PERF_STATS
 #include "GameLogic/GameLogic.h"
@@ -68,7 +63,7 @@ SubsystemInterface::~SubsystemInterface()
 
 #ifdef DUMP_PERF_STATS
 static const Real MIN_TIME_THRESHOLD = 0.0002f; // .2 msec. [8/13/2003]
-void SubsystemInterface::UPDATE(void) 
+void SubsystemInterface::UPDATE(void)
 {
 	__int64 startTime64;
 	__int64 endTime64,freq64;
@@ -84,7 +79,7 @@ void SubsystemInterface::UPDATE(void)
 		m_dumpUpdate = true;
 	}
 	if (m_curUpdateTime > MIN_TIME_THRESHOLD/10.0f) {
-		//DLOG(Debug::Format("Subsys %s total time %.2f, subTime %.2f, net time %.2f\n", 
+		//DLOG(Debug::Format("Subsys %s total time %.2f, subTime %.2f, net time %.2f\n",
 		//	m_name.str(), m_curUpdateTime*1000, subTime*1000, (m_curUpdateTime-subTime)*1000	));
 
 		m_curUpdateTime -= subTime;
@@ -93,8 +88,8 @@ void SubsystemInterface::UPDATE(void)
 		m_curUpdateTime = 0;
 	}
 
-}																
-void SubsystemInterface::DRAW(void) 
+}
+void SubsystemInterface::DRAW(void)
 {
 	__int64 startTime64;
 	__int64 endTime64,freq64;
@@ -110,7 +105,7 @@ void SubsystemInterface::DRAW(void)
 		m_dumpDraw = true;
 	}
 	if (m_curDrawTime > MIN_TIME_THRESHOLD/10.0f) {
-		//DLOG(Debug::Format("Subsys %s total time %.2f, subTime %.2f, net time %.2f\n", 
+		//DLOG(Debug::Format("Subsys %s total time %.2f, subTime %.2f, net time %.2f\n",
 		//	m_name.str(), m_curUpdateTime*1000, subTime*1000, (m_curUpdateTime-subTime)*1000	));
 
 		m_curDrawTime -= subTime;
@@ -146,8 +141,8 @@ void SubsystemInterfaceList::addSubsystem(SubsystemInterface* sys)
 void SubsystemInterfaceList::removeSubsystem(SubsystemInterface* sys)
 {
 #ifdef DUMP_PERF_STATS
-	for (SubsystemList::iterator it = m_allSubsystems.begin(); it != m_subsystems.end(); ++it)
-	{	 
+	for (SubsystemList::iterator it = m_allSubsystems.begin(); it != m_allSubsystems.end(); ++it)
+	{
 		if ( (*it) == sys) {
 			m_allSubsystems.erase(it);
 			break;
@@ -156,18 +151,16 @@ void SubsystemInterfaceList::removeSubsystem(SubsystemInterface* sys)
 #endif
 }
 //-----------------------------------------------------------------------------
-void SubsystemInterfaceList::initSubsystem(SubsystemInterface* sys, const char* path1, const char* path2, const char* dirpath, Xfer *pXfer, AsciiString name)
+void SubsystemInterfaceList::initSubsystem(SubsystemInterface* sys, const char* path1, const char* path2, Xfer *pXfer, AsciiString name)
 {
 	sys->setName(name);
 	sys->init();
 
 	INI ini;
 	if (path1)
-		ini.load(path1, INI_LOAD_OVERWRITE, pXfer );
+		ini.loadFileDirectory(path1, INI_LOAD_OVERWRITE, pXfer );
 	if (path2)
-		ini.load(path2, INI_LOAD_OVERWRITE, pXfer );
-	if (dirpath)
-		ini.loadDirectory(dirpath, TRUE, INI_LOAD_OVERWRITE, pXfer );
+		ini.loadFileDirectory(path2, INI_LOAD_OVERWRITE, pXfer );
 
 	m_subsystems.push_back(sys);
 }
@@ -210,7 +203,7 @@ AsciiString SubsystemInterfaceList::dumpTimesForAll()
 
 	AsciiString buffer;
 	buffer = "ALL SUBSYSTEMS:\n";
-	//buffer.format("\nSUBSYSTEMS: total time %.2f MS\n", 
+	//buffer.format("\nSUBSYSTEMS: total time %.2f MS\n",
 	//	SubsystemInterface::getTotalTime()*1000.0f);
 	Real misc = 0;
 	Real total = 0;

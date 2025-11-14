@@ -16,19 +16,17 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#pragma once
 
-#ifndef __WBHEIGHTMAP_H_
-#define __WBHEIGHTMAP_H_
-
-#include "W3DDevice/GameClient/FlatHeightMap.h"	
-#include "W3DDevice/GameClient/HeightMap.h"	
+#include "W3DDevice/GameClient/FlatHeightMap.h"
+#include "W3DDevice/GameClient/HeightMap.h"
 #define dont_USE_FLAT_HEIGHT_MAP // Use the origina height map for mission disk. jba. [4/15/2003]
 #ifdef USE_FLAT_HEIGHT_MAP
 class WBHeightMap : public FlatHeightMapRenderObjClass
 #else
 class WBHeightMap : public HeightMapRenderObjClass
-#endif	
-{	
+#endif
+{
 
 public:
 	WBHeightMap(void);
@@ -52,5 +50,3 @@ protected:
 	Bool m_drawEntireMap;
 	Bool m_flattenHeights;
 };
-
-#endif  // end __WBHEIGHTMAP_H_

@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: EmissionTypePanels.h 
+// FILE: EmissionTypePanels.h
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -32,8 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_EMISSIONTYPEPANELS_
-#define _H_EMISSIONTYPEPANELS_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Resource.h"
@@ -55,9 +53,9 @@ class EmissionPanelPoint : public ISwapablePanel
 
 		void InitPanel( void );
 
-		// if true, updates the UI from the Particle System. 
+		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );	
+		void performUpdate( IN Bool toUI );
 	protected:
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()
@@ -73,9 +71,9 @@ class EmissionPanelLine : public ISwapablePanel
 
 		void InitPanel( void );
 
-		// if true, updates the UI from the Particle System. 
+		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );	
+		void performUpdate( IN Bool toUI );
 	protected:
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()
@@ -91,9 +89,9 @@ class EmissionPanelBox : public ISwapablePanel
 
 		void InitPanel( void );
 
-		// if true, updates the UI from the Particle System. 
+		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );	
+		void performUpdate( IN Bool toUI );
 	protected:
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()
@@ -109,9 +107,9 @@ class EmissionPanelSphere : public ISwapablePanel
 
 		void InitPanel( void );
 
-		// if true, updates the UI from the Particle System. 
+		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );	
+		void performUpdate( IN Bool toUI );
 	protected:
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()
@@ -127,12 +125,10 @@ class EmissionPanelCylinder : public ISwapablePanel
 
 		void InitPanel( void );
 
-		// if true, updates the UI from the Particle System. 
+		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );	
+		void performUpdate( IN Bool toUI );
 	protected:
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()
 };
-
-#endif /* _H_EMISSIONTYPEPANELS_ */

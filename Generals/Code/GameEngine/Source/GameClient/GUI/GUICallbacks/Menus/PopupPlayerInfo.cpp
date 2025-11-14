@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/PlayerTemplate.h"
 #include "Common/BattleHonors.h"
@@ -60,11 +60,6 @@
 
 #include "WWDownload/Registry.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 // window ids ------------------------------------------------------------------------------
@@ -95,7 +90,7 @@ static Int lookAtPlayerID = 0;
 static std::string lookAtPlayerName;
 
 
-static const char *rankNames[] = {
+static const char *const rankNames[] = {
 	"Private",
 	"Corporal",
 	"Sergeant",
@@ -107,6 +102,8 @@ static const char *rankNames[] = {
 	"Brigadier",
 	"Commander",
 };
+static_assert(ARRAY_SIZE(rankNames) == MAX_RANKS, "Incorrect array size");
+
 
 static const Image* lookupRankImage(AsciiString side, Int rank)
 {
@@ -133,11 +130,11 @@ static const Image* lookupRankImage(AsciiString side, Int rank)
 	const Image *img = TheMappedImageCollection->findImageByName(fullImageName);
 	if (img)
 	{
-		DEBUG_LOG(("*** Loaded rank image '%s' from TheMappedImageCollection!\n", fullImageName.str()));
+		DEBUG_LOG(("*** Loaded rank image '%s' from TheMappedImageCollection!", fullImageName.str()));
 	}
 	else
 	{
-		DEBUG_LOG(("*** Could not load rank image '%s' from TheMappedImageCollection!\n", fullImageName.str()));
+		DEBUG_LOG(("*** Could not load rank image '%s' from TheMappedImageCollection!", fullImageName.str()));
 	}
 	return img;
 }
@@ -153,7 +150,7 @@ static Int getTotalDisconnectsFromFile(Int playerID)
 	UserPreferences pref;
 	AsciiString userPrefFilename;
 	userPrefFilename.format("GeneralsOnline\\MiscPref%d.ini", playerID);
-	DEBUG_LOG(("setPersistentDataCallback - reading stats from file %s\n", userPrefFilename.str()));
+	DEBUG_LOG(("setPersistentDataCallback - reading stats from file %s", userPrefFilename.str()));
 	pref.load(userPrefFilename);
 
 	// if there is a file override, use that data instead.
@@ -176,7 +173,7 @@ static Int getTotalDisconnectsFromFile(Int playerID)
 		retval += atoi(pref.find("5")->second.str());
 	}
 
-	return retval;	
+	return retval;
 }
 
 Int GetAdditionalDisconnectsFromUserFile(Int playerID)
@@ -189,7 +186,7 @@ Int GetAdditionalDisconnectsFromUserFile(Int playerID)
 
 	if (TheGameSpyInfo->getAdditionalDisconnects() > 0 && !retval)
 	{
-		DEBUG_LOG(("Clearing additional disconnects\n"));
+		DEBUG_LOG(("Clearing additional disconnects"));
 		TheGameSpyInfo->clearAdditionalDisconnects();
 	}
 
@@ -209,7 +206,7 @@ void GetAdditionalDisconnectsFromUserFile(PSPlayerStats *stats)
 
 	if (TheGameSpyInfo->getAdditionalDisconnects() > 0 && !getTotalDisconnectsFromFile(stats->id))
 	{
-		DEBUG_LOG(("Clearing additional disconnects\n"));
+		DEBUG_LOG(("Clearing additional disconnects"));
 		TheGameSpyInfo->clearAdditionalDisconnects();
 	}
 
@@ -221,7 +218,7 @@ void GetAdditionalDisconnectsFromUserFile(PSPlayerStats *stats)
 	UserPreferences pref;
 	AsciiString userPrefFilename;
 	userPrefFilename.format("GeneralsOnline\\MiscPref%d.ini", stats->id);
-	DEBUG_LOG(("setPersistentDataCallback - reading stats from file %s\n", userPrefFilename.str()));
+	DEBUG_LOG(("setPersistentDataCallback - reading stats from file %s", userPrefFilename.str()));
 	pref.load(userPrefFilename);
 
 	// if there is a file override, use that data instead.
@@ -451,7 +448,7 @@ void BattleHonorTooltip(GameWindow *window,
 		else if(BitIsSet(battleHonor, BATTLE_HONOR_CHALLENGE))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorChallenge"), -1, NULL, tooltipWidth );
 	}
-	
+
 }
 
 static Int rowsToSkip = 0;
@@ -461,8 +458,8 @@ void ResetBattleHonorInsertion(void)
 }
 void InsertBattleHonor(GameWindow *list, const Image *image, Bool enabled, Int itemData, Int& row, Int& column, UnicodeString text = UnicodeString::TheEmptyString)
 {
-	Int width = MAX_BATTLE_HONOR_IMAGE_WIDTH * (TheDisplay->getWidth() / 800.0f);
-	Int height = MAX_BATTLE_HONOR_IMAGE_HEIGHT * (TheDisplay->getHeight() / 600.0f);
+	Int width = MAX_BATTLE_HONOR_IMAGE_WIDTH * (TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH);
+	Int height = MAX_BATTLE_HONOR_IMAGE_HEIGHT * (TheDisplay->getHeight() / (Real)DEFAULT_DISPLAY_HEIGHT);
 
 	static Int enabledColor = 0xFFFFFFFF;
 	static Int disabledColor = GameMakeColor(80, 80, 80, 255);
@@ -471,7 +468,7 @@ void InsertBattleHonor(GameWindow *list, const Image *image, Bool enabled, Int i
 		color = enabledColor;
 	else
 		color = disabledColor;
-	
+
 	if (!enabled)
 		itemData |= BATTLE_HONOR_NOT_GAINED;
 
@@ -681,7 +678,7 @@ Int GetFavoriteSide( const PSPlayerStats& stats )
 
 Int CalculateRank( const PSPlayerStats& stats )
 {
-	if(stats.id == 0 || !TheRankPointValues)	
+	if(stats.id == 0 || !TheRankPointValues)
 		return 0;
 	PerGeneralMap::const_iterator it;
 	Int rankPoints = 0;
@@ -692,7 +689,7 @@ Int CalculateRank( const PSPlayerStats& stats )
 		numGames += it->second;
 	}
 	rankPoints += (numGames * TheRankPointValues->m_winMultiplier);
-	
+
 	numGames = 0;
 	for(it =stats.losses.begin(); it != stats.losses.end(); ++it)
 	{
@@ -735,7 +732,7 @@ static GameWindow* findWindow(GameWindow *parent, AsciiString baseWindow, AsciiS
 	AsciiString fullPath;
 	fullPath.format("%s:%s", baseWindow.str(), gadgetName.str());
 	GameWindow *res = TheWindowManager->winGetWindowFromId(parent, NAMEKEY(fullPath));
-	DEBUG_ASSERTLOG(res, ("Cannot find window %s\n", fullPath.str()));
+	DEBUG_ASSERTLOG(res, ("Cannot find window %s", fullPath.str()));
 	return res;
 }
 
@@ -760,7 +757,7 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 
 		weHaveStats = TRUE;
 	}
-	
+
 	Int currentRank = 0;
 	Int rankPoints = CalculateRank(stats);
 	Int i = 0;
@@ -793,7 +790,7 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 	numDiscons += GetAdditionalDisconnectsFromUserFile(lookupID);
 
 	numGames = numWins + numLosses + numDiscons;
-	
+
 	GameWindow *win = NULL;
 	UnicodeString uStr;
 	win = findWindow(NULL, parentWindowName, "StaticTextPlayerStatisticsLabel");
@@ -871,17 +868,17 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 			}
 		}
 		if(numGames == 0)
-			GadgetStaticTextSetText(win, TheGameText->fetch("GUI:None"));	
+			GadgetStaticTextSetText(win, TheGameText->fetch("GUI:None"));
 		else if( stats.gamesAsRandom >= numGames )
-			GadgetStaticTextSetText(win, TheGameText->fetch("GUI:Random"));	
+			GadgetStaticTextSetText(win, TheGameText->fetch("GUI:Random"));
 		else
-		{		
+		{
 			const PlayerTemplate *fac = ThePlayerTemplateStore->getNthPlayerTemplate(favorite);
 			if (fac)
 			{
 				AsciiString side;
 				side.format("SIDE:%s", fac->getSide().str());
-				
+
 				GadgetStaticTextSetText(win, TheGameText->fetch(side));
 
 				favoriteSide = fac->getSide();
@@ -1005,7 +1002,7 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 			GadgetStaticTextSetText(win, TheGameText->fetch("GUI:FetchingPlayerInfo"));
 		}
 	}
-	
+
 	win = findWindow(NULL, parentWindowName, "ListboxInfo");
 	if(win)
 	{
@@ -1048,7 +1045,7 @@ void HandlePersistentStorageResponses( void )
 				break;
 			case PSResponse::PSRESPONSE_PLAYERSTATS:
 				{
-					DEBUG_LOG(("LocalProfileID %d, resp.player.id %d, resp.player.locale %d\n", TheGameSpyInfo->getLocalProfileID(), resp.player.id, resp.player.locale));
+					DEBUG_LOG(("LocalProfileID %d, resp.player.id %d, resp.player.locale %d", TheGameSpyInfo->getLocalProfileID(), resp.player.id, resp.player.locale));
 					/*
 					if(resp.player.id == TheGameSpyInfo->getLocalProfileID() && resp.player.locale < LOC_MIN)
 					{
@@ -1097,7 +1094,7 @@ void HandlePersistentStorageResponses( void )
 						Bool isPreorder = TheGameSpyInfo->didPlayerPreorder( TheGameSpyInfo->getLocalProfileID() );
 						req.statsToPush.preorder = isPreorder;
 
-						DEBUG_LOG(("PEERREQUEST_PUSHSTATS: stats will be %d,%d,%d,%d,%d,%d\n",
+						DEBUG_LOG(("PEERREQUEST_PUSHSTATS: stats will be %d,%d,%d,%d,%d,%d",
 							req.statsToPush.locale, req.statsToPush.wins, req.statsToPush.losses, req.statsToPush.rankPoints, req.statsToPush.side, req.statsToPush.preorder));
 						TheGameSpyPeerMessageQueue->addRequest(req);
 					}
@@ -1106,10 +1103,10 @@ void HandlePersistentStorageResponses( void )
 					{
 						UpdateLocalPlayerStats();
 					}
-					DEBUG_LOG(("PopulatePlayerInfoWindows() - lookAtPlayerID is %d, got %d\n", lookAtPlayerID, resp.player.id));
+					DEBUG_LOG(("PopulatePlayerInfoWindows() - lookAtPlayerID is %d, got %d", lookAtPlayerID, resp.player.id));
 					PopulatePlayerInfoWindows("PopupPlayerInfo.wnd");
 					//GadgetListBoxAddEntryText(listboxInfo, UnicodeString(L"Got info!"), GameSpyColor[GSCOLOR_DEFAULT], -1);
-					
+
 					// also update info for player list in lobby
 					PlayerInfoMap::iterator it = TheGameSpyInfo->getPlayerInfoMap()->begin();
 					while (it != TheGameSpyInfo->getPlayerInfoMap()->end())
@@ -1248,7 +1245,7 @@ void GameSpyPlayerInfoOverlayInit( WindowLayout *layout, void *userData )
 	}
 
 	//TheWindowManager->winSetModal(parent);
-} // GameSpyPlayerInfoOverlayInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Overlay shutdown method */
@@ -1262,7 +1259,7 @@ void GameSpyPlayerInfoOverlayShutdown( WindowLayout *layout, void *userData )
 
 	// our shutdown is complete
 	isOverlayActive = false;
-}  // GameSpyPlayerInfoOverlayShutdown
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -1273,7 +1270,7 @@ void GameSpyPlayerInfoOverlayUpdate( WindowLayout * layout, void *userData)
 	if (raiseMessageBox)
 		RaiseGSMessageBox();
 	raiseMessageBox = false;
-}// GameSpyPlayerInfoOverlayUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Overlay input callback */
@@ -1281,7 +1278,7 @@ void GameSpyPlayerInfoOverlayUpdate( WindowLayout * layout, void *userData)
 WindowMsgHandledType GameSpyPlayerInfoOverlayInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -1296,63 +1293,63 @@ WindowMsgHandledType GameSpyPlayerInfoOverlayInput( GameWindow *window, Unsigned
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonClose, buttonCloseID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// GameSpyPlayerInfoOverlayInput
+}
 void messageBoxYes( void );
 //-------------------------------------------------------------------------------------------------
 /** Overlay window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType GameSpyPlayerInfoOverlaySystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType GameSpyPlayerInfoOverlaySystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
 
 	switch( msg )
 	{
-		
-		
+
+
 		case GWM_CREATE:
 			{
-				
+
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
-			{	
+			{
 				// if we're givin the opportunity to take the keyboard focus we must say we want it
 				if( mData1 == TRUE )
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 		case GBM_SELECTED:
 			{
 				GameWindow *control = (GameWindow *)mData1;
@@ -1413,7 +1410,7 @@ WindowMsgHandledType GameSpyPlayerInfoOverlaySystem( GameWindow *window, Unsigne
 					Bool isChecked = !GadgetCheckBoxIsChecked(control);
 					CustomMatchPreferences pref;
 					pref.setDisallowNonAsianText(isChecked);
-					pref.write();				
+					pref.write();
 					if(TheGameSpyInfo)
 						TheGameSpyInfo->setDisallowNonAsianText(isChecked);
 					if(isChecked && !GadgetCheckBoxIsChecked(checkBoxAsianFont))
@@ -1428,15 +1425,15 @@ WindowMsgHandledType GameSpyPlayerInfoOverlaySystem( GameWindow *window, Unsigne
 				}
 
 				break;
-			}// case GBM_SELECTED:
-	
+			}
+
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// GameSpyPlayerInfoOverlaySystem
+}
 
 static void messageBoxYes( void )
 {
@@ -1444,5 +1441,5 @@ static void messageBoxYes( void )
 	breq.buddyRequestType = BuddyRequest::BUDDYREQUEST_DELETEACCT;
 	TheGameSpyBuddyMessageQueue->addRequest( breq );
 	TheGameSpyInfo->setLocalProfileID(0);
-	
+
 }

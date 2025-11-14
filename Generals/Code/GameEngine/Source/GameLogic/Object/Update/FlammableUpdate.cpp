@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AudioEventRTS.h"
 #include "Common/GameAudio.h"
@@ -56,11 +56,11 @@ FlammableUpdateModuleData::FlammableUpdateModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void FlammableUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void FlammableUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "BurnedDelay",						INI::parseDurationUnsignedInt,	NULL, offsetof( FlammableUpdateModuleData, m_burnedDelay ) },
 		{ "AflameDuration",					INI::parseDurationUnsignedInt,	NULL, offsetof( FlammableUpdateModuleData, m_aflameDuration ) },
@@ -84,6 +84,7 @@ FlammableUpdate::FlammableUpdate( Thing *thing, const ModuleData* moduleData ) :
 	m_damageEndFrame = 0;
 	m_audioHandle = NULL;
 	m_flameDamageLimit = getFlammableUpdateModuleData()->m_flameDamageLimitData;
+	m_flameSource = INVALID_ID;
 	m_lastFlameDamageDealt = 0;
 
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
@@ -110,9 +111,15 @@ void FlammableUpdate::onDamage( DamageInfo *damageInfo )
 			m_flameDamageLimit = getFlammableUpdateModuleData()->m_flameDamageLimitData;
 		}
 		m_lastFlameDamageDealt = now;
-		
+#if RETAIL_COMPATIBLE_CRC
+		m_flameSource = getObject()->getID();
+#else
+		// TheSuperHackers @bugfix Stubbjax 03/09/2025 Allow flame damage to award xp to the flame source.
+		m_flameSource = damageInfo->in.m_sourceID;
+#endif
+
 		Object *me = getObject();
-		if( ((me->getStatusBits() & OBJECT_STATUS_AFLAME) == 0) && ((me->getStatusBits() & OBJECT_STATUS_BURNED) == 0) )
+		if( !me->getStatusBits().test( OBJECT_STATUS_AFLAME ) && !me->getStatusBits().test( OBJECT_STATUS_BURNED ) )
 		{
 			// If I'm not on fire, and I haven't burned up, see if I should try to catch fire.
 			m_flameDamageLimit -= damageInfo->out.m_actualDamageDealt;
@@ -143,14 +150,14 @@ UpdateSleepTime FlammableUpdate::update( void )
 	if( m_burnedEndFrame != 0 && now >= m_burnedEndFrame )
 	{
 		// So this status is set, but I am still aflame on an independent timer.
-		me->setStatus( OBJECT_STATUS_BURNED );
+		me->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_BURNED ) );
 		me->setModelConditionState( MODELCONDITION_SMOLDERING );
 	}
 
 	if( m_aflameEndFrame != 0 && now >= m_aflameEndFrame )
 	{
 		// This is the important one.  I am no longer on fire.
-		if( (me->getStatusBits() & OBJECT_STATUS_BURNED) != 0 )
+		if( me->getStatusBits().test( OBJECT_STATUS_BURNED ) )
 		{
 			// If I am burned, then I will never catch fire again.
 			m_status = FS_BURNED;
@@ -161,7 +168,7 @@ UpdateSleepTime FlammableUpdate::update( void )
 			m_status = FS_NORMAL;
 		}
 		stopBurningSound();
-		me->clearStatus( OBJECT_STATUS_AFLAME );
+		me->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_AFLAME ) );
 		me->getBodyModule()->setAflame( FALSE );
 		me->clearModelConditionState( MODELCONDITION_AFLAME );
 	}
@@ -180,7 +187,7 @@ UpdateSleepTime FlammableUpdate::calcSleepTime()
 		if (m_burnedEndFrame != 0 && m_burnedEndFrame < soonest && m_burnedEndFrame > now) soonest = m_burnedEndFrame;
 		if (m_damageEndFrame != 0 && m_damageEndFrame < soonest && m_damageEndFrame > now) soonest = m_damageEndFrame;
 		DEBUG_ASSERTCRASH(soonest - now > 0, ("hmm"));
-		// UPDATE_SLEEP requires a count-of-frames, not an absolute-frame, so subtract 'now' 
+		// UPDATE_SLEEP requires a count-of-frames, not an absolute-frame, so subtract 'now'
 		return UPDATE_SLEEP(soonest - now);
 	}
 	else
@@ -196,7 +203,7 @@ void FlammableUpdate::tryToIgnite()
 	if( m_status == FS_NORMAL )
 	{
 		Object *me = getObject();
-		me->setStatus( OBJECT_STATUS_AFLAME );
+		me->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_AFLAME ) );
 		me->getBodyModule()->setAflame( TRUE );
 		me->setModelConditionState( MODELCONDITION_AFLAME );
 		startBurningSound();
@@ -229,7 +236,7 @@ void FlammableUpdate::doAflameDamage()
 
 	DamageInfo info;
 	info.in.m_amount = data->m_aflameDamageAmount;
-	info.in.m_sourceID = getObject()->getID();
+	info.in.m_sourceID = m_flameSource;
 	info.in.m_damageType = DAMAGE_FLAME;
 	info.in.m_deathType = DEATH_BURNED;
 
@@ -276,7 +283,7 @@ void FlammableUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -287,7 +294,11 @@ void FlammableUpdate::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
+#else
+	XferVersion currentVersion = 2;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -312,7 +323,13 @@ void FlammableUpdate::xfer( Xfer *xfer )
 	// last flame damage dealt
 	xfer->xferUnsignedInt( &m_lastFlameDamageDealt );
 
-}  // end xfer
+#if !RETAIL_COMPATIBLE_XFER_SAVE
+	if (version >= 2)
+	{
+		xfer->xferObjectID(&m_flameSource);
+	}
+#endif
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -323,4 +340,4 @@ void FlammableUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

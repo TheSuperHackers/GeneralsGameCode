@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __UPGRADE_H_
-#define __UPGRADE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/INI.h"
@@ -41,17 +38,65 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Player;
 class UpgradeTemplate;
-enum NameKeyType;
+enum NameKeyType CPP_11(: Int);
 class Image;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum UpgradeStatusType
+enum UpgradeStatusType CPP_11(: Int)
 {
 	UPGRADE_STATUS_INVALID = 0,
 	UPGRADE_STATUS_IN_PRODUCTION,
 	UPGRADE_STATUS_COMPLETE
 };
+
+//The maximum number of upgrades.
+#define UPGRADE_MAX_COUNT 64
+
+typedef BitFlags<UPGRADE_MAX_COUNT>	UpgradeMaskType;
+
+#define MAKE_UPGRADE_MASK(k) UpgradeMaskType(UpgradeMaskType::kInit, (k))
+#define MAKE_UPGRADE_MASK2(k,a) UpgradeMaskType(UpgradeMaskType::kInit, (k), (a))
+#define MAKE_UPGRADE_MASK3(k,a,b) UpgradeMaskType(UpgradeMaskType::kInit, (k), (a), (b))
+#define MAKE_UPGRADE_MASK4(k,a,b,c) UpgradeMaskType(UpgradeMaskType::kInit, (k), (a), (b), (c))
+#define MAKE_UPGRADE_MASK5(k,a,b,c,d) UpgradeMaskType(UpgradeMaskType::kInit, (k), (a), (b), (c), (d))
+
+inline Bool TEST_UPGRADE_MASK( const UpgradeMaskType& m, Int index )
+{
+	return m.test( index );
+}
+
+inline Bool TEST_UPGRADE_MASK_ANY( const UpgradeMaskType& m, const UpgradeMaskType& mask )
+{
+	return m.anyIntersectionWith( mask );
+}
+
+inline Bool TEST_UPGRADE_MASK_MULTI( const UpgradeMaskType& m, const UpgradeMaskType& mustBeSet, const UpgradeMaskType& mustBeClear )
+{
+	return m.testSetAndClear( mustBeSet, mustBeClear );
+}
+
+inline Bool UPGRADE_MASK_ANY_SET( const UpgradeMaskType& m)
+{
+	return m.any();
+}
+
+inline void CLEAR_UPGRADE_MASK( UpgradeMaskType& m )
+{
+	m.clear();
+}
+
+inline void SET_ALL_UPGRADE_MASK_BITS( UpgradeMaskType& m )
+{
+	m.clear( );
+	m.flip( );
+}
+
+inline void FLIP_UPGRADE_MASK( UpgradeMaskType& m )
+{
+	m.flip();
+}
+
 
 //-------------------------------------------------------------------------------------------------
 /** A single upgrade *INSTANCE* */
@@ -96,21 +141,14 @@ protected:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum UpgradeType
+enum UpgradeType CPP_11(: Int)
 {
 	UPGRADE_TYPE_PLAYER = 0,						// upgrade applies to a player as a whole
 	UPGRADE_TYPE_OBJECT,								// upgrade applies to an object instance only
 
-	NUM_UPGRADE_TYPES,		// keep this last
+	NUM_UPGRADE_TYPES
 };
-#ifdef DEFINE_UPGRADE_TYPE_NAMES
-static const Char *UpgradeTypeNames[] = 
-{
-	"PLAYER",
-	"OBJECT",
-	NULL
-};
-#endif  // end DEFINE_UPGRADE_TYPE_NAMES
+extern const char *const TheUpgradeTypeNames[]; //Change above, change this!
 
 //-------------------------------------------------------------------------------------------------
 /** A single upgrade template definition */
@@ -134,7 +172,7 @@ public:
 	void setUpgradeNameKey( NameKeyType key ) { m_nameKey = key; }
 	NameKeyType getUpgradeNameKey( void ) const { return m_nameKey; }
 	const AsciiString& getDisplayNameLabel( void ) const { return m_displayNameLabel; }
-	Int64 getUpgradeMask() const { return m_upgradeMask; }
+	UpgradeMaskType getUpgradeMask() const { return m_upgradeMask; }
 	UpgradeType getUpgradeType( void ) const { return m_type; }
 	const AudioEventRTS* getResearchCompleteSound() const { return &m_researchSound; }
 	const AudioEventRTS* getUnitSpecificSound() const { return &m_unitSpecificSound; }
@@ -153,7 +191,7 @@ public:
 	UpgradeTemplate *friend_getPrev( void ) { return m_prev; }
 	const UpgradeTemplate *friend_getNext( void ) const { return m_next; }
 	const UpgradeTemplate *friend_getPrev( void ) const { return m_prev; }
-	void friend_setUpgradeMask( Int64 mask ) { m_upgradeMask = mask; }
+	void friend_setUpgradeMask( UpgradeMaskType mask ) { m_upgradeMask = mask; }
 	void friend_makeVeterancyUpgrade(VeterancyLevel v);
 
 protected:
@@ -163,8 +201,8 @@ protected:
 	NameKeyType m_nameKey;							///< name key
 	AsciiString m_displayNameLabel;			///< String manager label for UI display name
 	Real m_buildTime;										///< database # for how long it takes to "build" this
-	Int m_cost;													///< cost for production 
-	Int64 m_upgradeMask;								///< Unique bitmask for this upgrade template
+	Int m_cost;													///< cost for production
+	UpgradeMaskType m_upgradeMask;			///< Unique bitmask for this upgrade template
 	AudioEventRTS	m_researchSound;			///< Sound played when upgrade researched.
 	AudioEventRTS	m_unitSpecificSound;	///< Secondary sound played when upgrade researched.
 
@@ -222,5 +260,3 @@ protected:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern UpgradeCenter *TheUpgradeCenter;
-
-#endif  // end __UPGRADE_H_

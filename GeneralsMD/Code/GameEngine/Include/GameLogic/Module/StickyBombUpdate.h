@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __STICK_BOMB_UPDATE_H
-#define __STICK_BOMB_UPDATE_H
-
 #include "GameLogic/Module/UpdateModule.h"
 
 class WeaponTemplate;
@@ -54,10 +51,10 @@ public:
 		m_geometryBasedDamageFX = NULL;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "AttachToTargetBone",				INI::parseAsciiString,		NULL, offsetof( StickyBombUpdateModuleData, m_attachToBone ) },
 			{ "OffsetZ",									INI::parseReal,						NULL, offsetof( StickyBombUpdateModuleData, m_offsetZ ) },
@@ -98,6 +95,3 @@ private:
 	UnsignedInt		m_dieFrame;
 	UnsignedInt   m_nextPingFrame;
 };
-
-#endif // __STICK_BOMB_UPDATE_H
-

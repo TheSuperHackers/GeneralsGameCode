@@ -24,12 +24,12 @@
 
 // FILE: GadgetSlider.h ///////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -45,16 +45,13 @@
 //						 to fill small seams.  Since there are vertical sliders
 //						 and horizontal sliders, the LEFT end of a horizontal
 //						 slider is stored in the same place as the TOP end for a
-//						 vertical slider.  The RIGHT end of a horizontal is 
+//						 vertical slider.  The RIGHT end of a horizontal is
 //						 also equivalent to the BOTTOM end of a vertical one.
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __GADGETSLIDER_H_
-#define __GADGETSLIDER_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -103,7 +100,7 @@ inline Int GadgetSliderGetPosition( GameWindow *win )
 
 // sliders are drawn from pieces, a left/top, right/bottom, repeating center, and small repeating center
 inline void GadgetSliderSetEnabledImages( GameWindow *g, const Image *left, const Image *right, const Image *center, const Image *smallCenter )
-{ 
+{
 	g->winSetEnabledImage( 0, left );
 	g->winSetEnabledImage( 1, right );
 	g->winSetEnabledImage( 2, center );
@@ -128,7 +125,7 @@ inline Color	GadgetSliderGetEnabledBorderColor( GameWindow *g )			{ return g->wi
 
 // sliders are drawn from pieces, a left/top, right/bottom, repeating center, and small repeating center
 inline void GadgetSliderSetDisabledImages( GameWindow *g, const Image *left, const Image *right, const Image *center, const Image *smallCenter )
-{ 
+{
 	g->winSetDisabledImage( 0, left );
 	g->winSetDisabledImage( 1, right );
 	g->winSetDisabledImage( 2, center );
@@ -153,7 +150,7 @@ inline Color	GadgetSliderGetDisabledBorderColor( GameWindow *g )			{ return g->w
 
 // sliders are drawn from pieces, a left/top, right/bottom, repeating center, and small repeating center
 inline void GadgetSliderSetHiliteImages( GameWindow *g, const Image *left, const Image *right, const Image *center, const Image *smallCenter )
-{ 
+{
 	g->winSetHiliteImage( 0, left );
 	g->winSetHiliteImage( 1, right );
 	g->winSetHiliteImage( 2, center );
@@ -440,6 +437,3 @@ inline Color GadgetSliderGetHiliteSelectedThumbBorderColor( GameWindow *g )
 																						}
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GADGETSLIDER_H_
-

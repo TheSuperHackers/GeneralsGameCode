@@ -28,18 +28,13 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameLogic/Module/InternetHackContain.h"
 
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/AIUpdate.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -54,7 +49,7 @@ void InternetHackContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   TransportContainModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ 0, 0, 0, 0 }
 	};
@@ -68,7 +63,7 @@ void InternetHackContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-InternetHackContain::InternetHackContain( Thing *thing, const ModuleData *moduleData ) : 
+InternetHackContain::InternetHackContain( Thing *thing, const ModuleData *moduleData ) :
 								 TransportContain( thing, moduleData )
 {
 }
@@ -99,7 +94,7 @@ void InternetHackContain::crc( Xfer *xfer )
 	// extend base class
 	TransportContain::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -117,7 +112,7 @@ void InternetHackContain::xfer( Xfer *xfer )
 	// extend base class
 	TransportContain::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -128,4 +123,4 @@ void InternetHackContain::loadPostProcess( void )
 	// extend base class
 	TransportContain::loadPostProcess();
 
-}  // end loadPostProcess
+}

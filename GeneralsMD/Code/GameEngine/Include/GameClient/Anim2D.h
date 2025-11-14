@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __ANIM_2D_H_
-#define __ANIM_2D_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Snapshot.h"
 
@@ -40,9 +37,9 @@ class Image;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum Anim2DMode
+enum Anim2DMode CPP_11(: Int)
 {
-	
+
 	ANIM_2D_INVALID = 0,
 	ANIM_2D_ONCE,
 	ANIM_2D_ONCE_BACKWARDS,
@@ -52,11 +49,11 @@ enum Anim2DMode
 	ANIM_2D_PING_PONG_BACKWARDS,
 	// dont' forget to add new animation mode names to Anim2DModeNames[] below
 
-	ANIM_2D_NUM_MODES						// keep this last please
+	ANIM_2D_NUM_MODES
 
 };
 #ifdef DEFINE_ANIM_2D_MODE_NAMES
-static const char *Anim2DModeNames[] = 
+static const char *const Anim2DModeNames[] =
 {
 	"NONE",
 	"ONCE",
@@ -67,6 +64,7 @@ static const char *Anim2DModeNames[] =
 	"PING_PONG_BACKWARDS",
 	NULL
 };
+static_assert(ARRAY_SIZE(Anim2DModeNames) == ANIM_2D_NUM_MODES + 1, "Incorrect array size");
 #endif
 
 // ------------------------------------------------------------------------------------------------
@@ -74,7 +72,7 @@ static const char *Anim2DModeNames[] =
 // ------------------------------------------------------------------------------------------------
 class Anim2DTemplate : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Anim2DTemplate, "Anim2DTemplate")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Anim2DTemplate, "Anim2DTemplate")
 public:
 
 	Anim2DTemplate( AsciiString name );
@@ -90,7 +88,7 @@ public:
 	// list access for use by the Anim2DCollection only
 	void friend_setNextTemplate( Anim2DTemplate *animTemplate ) { m_nextTemplate = animTemplate; }
 	Anim2DTemplate *friend_getNextTemplate( void ) const { return m_nextTemplate; };
-	
+
 	// INI methods
 	const FieldParse *getFieldParse( void ) const { return s_anim2DFieldParseTable; }
 	void storeImage( const Image *image );								///< store image in next available slot
@@ -120,7 +118,7 @@ protected:
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum Anim2DStatus
+enum Anim2DStatus CPP_11(: Int)
 {
 	ANIM_2D_STATUS_NONE			= 0x00,
 	ANIM_2D_STATUS_FROZEN		= 0x01,
@@ -221,5 +219,3 @@ protected:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern Anim2DCollection *TheAnim2DCollection;
-
-#endif  // end __ANIM_2D_H_

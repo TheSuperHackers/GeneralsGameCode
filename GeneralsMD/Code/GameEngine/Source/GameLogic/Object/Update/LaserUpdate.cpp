@@ -28,8 +28,9 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/GameUtility.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Xfer.h"
@@ -38,16 +39,11 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/GameClient.h"
 #include "GameClient/ParticleSys.h"
-#include "GameLogic/Object.h" 
+#include "GameLogic/Object.h"
 #include "GameLogic/GameLogic.h" // For frame number
 #include "GameLogic/Module/LaserUpdate.h"
 #include "WWMath/vector3.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -61,7 +57,7 @@ LaserUpdateModuleData::LaserUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "MuzzleParticleSystem",		INI::parseAsciiString,	NULL, offsetof( LaserUpdateModuleData, m_particleSystemName ) },
 		{ "TargetParticleSystem",		INI::parseAsciiString,  NULL, offsetof( LaserUpdateModuleData, m_targetParticleSystemName ) },
@@ -69,6 +65,20 @@ LaserUpdateModuleData::LaserUpdateModuleData()
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
+}
+
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+LaserRadiusUpdate::LaserRadiusUpdate()
+{
+	m_widening = false;
+	m_widenStartFrame = 0;
+	m_widenFinishFrame = 0;
+	m_currentWidthScalar = 1.0f;
+	m_decaying = false;
+	m_decayStartFrame = 0;
+	m_decayFinishFrame = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -83,17 +93,10 @@ LaserUpdate::LaserUpdate( Thing *thing, const ModuleData* moduleData ) : ClientU
 	//
 	m_particleSystemID = INVALID_PARTICLE_SYSTEM_ID;
 	m_targetParticleSystemID = INVALID_PARTICLE_SYSTEM_ID;
-	m_widening = false;
-	m_widenStartFrame = 0;
-	m_widenFinishFrame = 0;
-	m_currentWidthScalar = 1.0f;
-	m_decaying = false;
-	m_decayStartFrame = 0;
-	m_decayFinishFrame = 0;
 	m_parentID = INVALID_DRAWABLE_ID;
 	m_targetID = INVALID_DRAWABLE_ID;
 	m_parentBoneName.clear();
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -118,11 +121,11 @@ void LaserUpdate::updateStartPos()
 	const Drawable *parentDrawable = TheGameClient->findDrawableByID(m_parentID);
 	if( parentDrawable == NULL )
 		return;// Can't update if no one to ask
-		
+
 	if( m_parentBoneName.isNotEmpty() )
 	{
 		Matrix3D startPosMatrix;
-		
+
 		if( !parentDrawable->getCurrentWorldspaceClientBonePositions( m_parentBoneName.str(), startPosMatrix ) )
 		{
 			// failed to find the required bone, so just die
@@ -130,15 +133,15 @@ void LaserUpdate::updateStartPos()
 			//Kris: Doing this CRASHES THE GAME LATER!!!! Instead, let's set the position to the drawable, then
 			//      create a nasty assert.
 			//TheGameClient->destroyDrawable( getDrawable() );
-			
+
 			m_startPos.set( parentDrawable->getPosition() );
-			DEBUG_CRASH( ("LaserUpdate::updateStartPos() -- Drawable %s is expecting to find a bone %s but can't. Defaulting to position of drawable.", 
+			DEBUG_CRASH( ("LaserUpdate::updateStartPos() -- Drawable %s is expecting to find a bone %s but can't. Defaulting to position of drawable.",
 				parentDrawable->getTemplate()->getName().str(), m_parentBoneName.str() ) );
 
 			return;
 		}
 
-		
+
 
 		m_startPos.x = startPosMatrix.Get_X_Translation();
 		m_startPos.y = startPosMatrix.Get_Y_Translation();
@@ -164,8 +167,8 @@ void LaserUpdate::updateEndPos()
 		return;// Can't update if not told to update
 
 	const Drawable *targetDrawable = TheGameClient->findDrawableByID(m_targetID);
-	Bool targetDead = (targetDrawable && targetDrawable->getObject()) 
-										? targetDrawable->getObject()->isEffectivelyDead() 
+	Bool targetDead = (targetDrawable && targetDrawable->getObject())
+										? targetDrawable->getObject()->isEffectivelyDead()
 										: FALSE;
 	if( targetDrawable == NULL || targetDead )
 	{
@@ -201,19 +204,22 @@ void LaserUpdate::clientUpdate( void )
 {
 	updateStartPos();
 	updateEndPos();
+	m_dirty |= m_laserRadius.updateRadius();
+}
 
+//-------------------------------------------------------------------------------------------------
+bool LaserRadiusUpdate::updateRadius()
+{
+	bool updated = false;
 	if( m_decaying )
 	{
 		UnsignedInt now = TheGameLogic->getFrame();
 		m_currentWidthScalar = 1.0f - (Real)(now - m_decayStartFrame) / (Real)(m_decayFinishFrame - m_decayStartFrame);
-		m_dirty = true;
+		updated = true;
 		if( m_currentWidthScalar <= 0.0f )
 		{
 			m_currentWidthScalar = 0.0f;
-
-			//When decay is finished... delete the laser.
-			//TheGameLogic->destroyObject( getObject() );
-			return;
+			//m_decaying = false // ?????
 		}
 	}
 	else if( m_widening )
@@ -221,17 +227,19 @@ void LaserUpdate::clientUpdate( void )
 		//We need to resize our laser width based on the growth ratio completed.
 		UnsignedInt now = TheGameLogic->getFrame();
 		m_currentWidthScalar = (Real)(now - m_widenStartFrame) / (Real)(m_widenFinishFrame - m_widenStartFrame);
-		m_dirty = true;
+		updated = true;
 		if( m_currentWidthScalar >= 1.0f )
 		{
 			m_currentWidthScalar = 1.0f;
 			m_widening = false;
 		}
 	}
-	return;
+
+	return updated;
 }
 
-void LaserUpdate::setDecayFrames( UnsignedInt decayFrames )
+//-------------------------------------------------------------------------------------------------
+void LaserRadiusUpdate::setDecayFrames( UnsignedInt decayFrames )
 {
 	if( decayFrames > 0 )
 	{
@@ -242,12 +250,9 @@ void LaserUpdate::setDecayFrames( UnsignedInt decayFrames )
 	}
 }
 
-
 //-------------------------------------------------------------------------------------------------
-void LaserUpdate::initLaser( const Object *parent, const Object *target, const Coord3D *startPos, const Coord3D *endPos, AsciiString parentBoneName, Int sizeDeltaFrames )
+void LaserRadiusUpdate::initRadius( Int sizeDeltaFrames )
 {
-	const LaserUpdateModuleData *data = getLaserUpdateModuleData();
-	ParticleSystem *system;
 	if( sizeDeltaFrames > 0 )
 	{
 		m_widening = true;
@@ -262,6 +267,40 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 		m_decayFinishFrame = m_decayStartFrame - sizeDeltaFrames;
 		m_currentWidthScalar = 1.0f;
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void LaserRadiusUpdate::xfer( Xfer *xfer )
+{
+	// widening
+	xfer->xferBool( &m_widening );
+
+	// decaying
+	xfer->xferBool( &m_decaying );
+
+	// widen start frame
+	xfer->xferUnsignedInt( &m_widenStartFrame );
+
+	// widen finish frame
+	xfer->xferUnsignedInt( &m_widenFinishFrame );
+
+	// current width scalar
+	xfer->xferReal( &m_currentWidthScalar );
+
+	// decay start frame
+	xfer->xferUnsignedInt( &m_decayStartFrame );
+
+	// decay finish frame
+	xfer->xferUnsignedInt( &m_decayFinishFrame );
+}
+
+//-------------------------------------------------------------------------------------------------
+void LaserUpdate::initLaser( const Object *parent, const Object *target, const Coord3D *startPos, const Coord3D *endPos, AsciiString parentBoneName, Int sizeDeltaFrames )
+{
+	const LaserUpdateModuleData *data = getLaserUpdateModuleData();
+	ParticleSystem *system;
+
+	m_laserRadius.initRadius( sizeDeltaFrames );
 
 	// Write down the bone name override
 	m_parentBoneName = parentBoneName;
@@ -297,7 +336,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 	}
 	else if( endPos )
 	{
-		// just use what they gave, no override here 
+		// just use what they gave, no override here
 		m_endPos = *endPos;
 	}
 	else
@@ -311,7 +350,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 	//PLEASE NOTE You cannot check an ID for NULL.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
 	if( !m_particleSystemID )
 	{
-		const Player *localPlayer = ThePlayerList->getLocalPlayer();
+		const Player *localPlayer = rts::getObservedOrLocalPlayer();
 
 		//Make sure the laser flare is visible to the player. If no parent, assume laser owner will handle it.
 		if (!parent || parent->getShroudedStatus( localPlayer->getPlayerIndex() ) <= OBJECTSHROUD_PARTIAL_CLEAR )
@@ -357,7 +396,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 			system->setPosition( &m_startPos );
 		}
 	}
-	
+
 	//PLEASE NOTE You cannot check an ID for NULL.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
 	if( m_targetParticleSystemID )
 	{
@@ -393,7 +432,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 }
 
 //-------------------------------------------------------------------------------------------------
-Real LaserUpdate::getCurrentLaserRadius() const
+Real LaserUpdate::getTemplateLaserRadius() const
 {
 	const Drawable *draw = getDrawable();
 	const LaserDrawInterface* ldi = NULL;
@@ -404,12 +443,18 @@ Real LaserUpdate::getCurrentLaserRadius() const
 		{
 			//***NOTE***
 			//While it appears the logic is accessing client data, it is actually accessing template module
-			//data from the client. This value is INI constant thus can't change. It's grouped with other 
+			//data from the client. This value is INI constant thus can't change. It's grouped with other
 			//laser defining attributes and having it there makes it easier for artists.
-			return ldi->getLaserTemplateWidth() * m_currentWidthScalar;
+			return ldi->getLaserTemplateWidth();
 		}
 	}
 	return 0.0f;
+}
+
+//-------------------------------------------------------------------------------------------------
+Real LaserUpdate::getCurrentLaserRadius() const
+{
+	return getTemplateLaserRadius() * getWidthScale();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -421,7 +466,7 @@ void LaserUpdate::crc( Xfer *xfer )
 	// extend base class
 	ClientUpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -454,33 +499,14 @@ void LaserUpdate::xfer( Xfer *xfer )
 	// target particle system id
 	xfer->xferUser( &m_targetParticleSystemID, sizeof( ParticleSystemID ) );
 
-	// widening
-	xfer->xferBool( &m_widening );
-
-	// decaying
-	xfer->xferBool( &m_decaying );
-
-	// widen start frame
-	xfer->xferUnsignedInt( &m_widenStartFrame );
-
-	// widen finish frame
-	xfer->xferUnsignedInt( &m_widenFinishFrame );
-
-	// current width scalar
-	xfer->xferReal( &m_currentWidthScalar );
-
-	// decay start frame
-	xfer->xferUnsignedInt( &m_decayStartFrame );
-
-	// decay finish frame
-	xfer->xferUnsignedInt( &m_decayFinishFrame );
+	m_laserRadius.xfer( xfer );
 
 	xfer->xferDrawableID(&m_parentID);
 	xfer->xferDrawableID(&m_targetID);
 
 	xfer->xferAsciiString(&m_parentBoneName);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -491,4 +517,4 @@ void LaserUpdate::loadPostProcess( void )
 	// extend base class
 	ClientUpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

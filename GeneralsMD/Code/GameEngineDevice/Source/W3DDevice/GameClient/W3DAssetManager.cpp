@@ -65,17 +65,10 @@
 #include "ffactory.h"
 #include "font3d.h"
 #include "render2dsentence.h"
-#include <stdio.h>
-#include "W3DDevice/GameClient/W3DGranny.h"
 #include "Common/PerfTimer.h"
 #include "Common/GlobalData.h"
 #include "Common/GameCommon.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //---------------------------------------------------------------------
 // Constants
@@ -111,7 +104,7 @@ public:
 	virtual const char*					Get_Name(void) const			{ return Name.str(); }
 	virtual int									Get_Class_ID(void) const	{ return Proto->Class_ID(); }
 	virtual RenderObjClass *		Create(void);
-	virtual void								DeleteSelf()							{	deleteInstance(); }
+	virtual void								DeleteSelf()							{	deleteInstance(this); }
 
 protected:
 	//virtual ~W3DPrototypeClass(void);
@@ -125,26 +118,26 @@ private:
 W3DPrototypeClass::W3DPrototypeClass(RenderObjClass * proto, const AsciiString& name) :
 	Proto(proto),
 	Name(name)
-{ 
-	assert(Proto); 
-	Proto->Add_Ref(); 
+{
+	assert(Proto);
+	Proto->Add_Ref();
 }
 
 //---------------------------------------------------------------------
-W3DPrototypeClass::~W3DPrototypeClass(void)						
-{ 
-	if (Proto) { 
-		Proto->Release_Ref(); 
+W3DPrototypeClass::~W3DPrototypeClass(void)
+{
+	if (Proto) {
+		Proto->Release_Ref();
 		Proto = NULL;
 	}
 }
 
 //---------------------------------------------------------------------
-RenderObjClass * W3DPrototypeClass::Create(void)					
-{ 
-	return (RenderObjClass *)( SET_REF_OWNER( Proto->Clone() ) ); 
+RenderObjClass * W3DPrototypeClass::Create(void)
+{
+	return (RenderObjClass *)( SET_REF_OWNER( Proto->Clone() ) );
 }
-	
+
 //---------------------------------------------------------------------
 // W3DAssetManager
 //---------------------------------------------------------------------
@@ -152,17 +145,11 @@ RenderObjClass * W3DPrototypeClass::Create(void)
 //---------------------------------------------------------------------
 W3DAssetManager::W3DAssetManager(void)
 {
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	m_GrannyAnimManager = NEW GrannyAnimManagerClass;
-#endif
 }
 
 //---------------------------------------------------------------------
 W3DAssetManager::~W3DAssetManager(void)
 {
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	delete m_GrannyAnimManager;
-#endif
 }
 
 #ifdef DUMP_PERF_STATS
@@ -171,7 +158,7 @@ __int64 Total_Get_Texture_Time=0;
 
 TextureClass *	W3DAssetManager::Get_Texture
 	(
-		const char * filename, 
+		const char * filename,
 		MipCountType mip_level_count,
 		WW3DFormat texture_format,
 		bool allow_compression,
@@ -185,7 +172,7 @@ TextureClass *	W3DAssetManager::Get_Texture
 	if (filename && *filename && _strnicmp(filename,"ZHC",3) == 0)
 		allow_reduction = false;	//don't allow reduction on our infantry textures.
 
-	return WW3DAssetManager::Get_Texture(	filename, 
+	return WW3DAssetManager::Get_Texture(	filename,
 		mip_level_count,
 		texture_format,
 		allow_compression,
@@ -213,7 +200,7 @@ TextureClass *W3DAssetManager::Get_Texture(
 	/*
 	** Bail if the user isn't really asking for anything
 	*/
-	if (!filename || !*filename) 
+	if (!filename || !*filename)
 	{
 		#ifdef DUMP_PERF_STATS
 		GetPrecisionTimer(&endTime64);
@@ -223,13 +210,13 @@ TextureClass *W3DAssetManager::Get_Texture(
 	}
 
 	StringClass lower_case_name(filename,true);
-	_strlwr(lower_case_name.Peek_Buffer());
+	_strlwr(lower_case_name.str());
 
 	/*
 	** See if the texture has already been loaded.
 	*/
 	TextureClass* tex = TextureHash.Get(lower_case_name);
-	if (tex && texture_format != WW3D_FORMAT_UNKNOWN) 
+	if (tex && texture_format != WW3D_FORMAT_UNKNOWN)
 	{
 		WWASSERT_PRINT(tex->Get_Texture_Format() == texture_format, ("Texture %s has already been loaded with different format",filename));
 	}
@@ -237,7 +224,7 @@ TextureClass *W3DAssetManager::Get_Texture(
 	/*
 	** Didn't have it so we have to create a new texture
 	*/
-	if (!tex) 
+	if (!tex)
 	{
 		tex = NEW_REF(TextureClass, (lower_case_name, NULL, mip_level_count, texture_format, allow_compression));
 		TextureHash.Insert(tex->Get_Texture_Name(),tex);
@@ -246,13 +233,13 @@ TextureClass *W3DAssetManager::Get_Texture(
 //			extern std::vector<std::string>	preloadTextureNamesGlobalHack;
 //			preloadTextureNamesGlobalHack.push_back(tex->Get_Texture_Name());
 //		}
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 		if (TheGlobalData->m_preloadReport)
-		{	
+		{
 			//loading a new asset and app is requesting a log of all loaded assets.
 			FILE *logfile=fopen("PreloadedAssets.txt","a+");	//append to log
 			if (logfile)
-			{	
+			{
 				fprintf(logfile,"TX: %s\n",tex->Get_Texture_Name());
 				fclose(logfile);
 			}
@@ -283,7 +270,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char* name)
 static inline void Munge_Render_Obj_Name(char *newname, const char *oldname, float scale, const int color, const char *textureName)
 {
 	char lower_case_name[255];
-	strcpy(lower_case_name, oldname);
+	strlcpy(lower_case_name, oldname, ARRAY_SIZE(lower_case_name));
 	_strlwr(lower_case_name);
 
 	if (!textureName)
@@ -296,7 +283,7 @@ static inline void Munge_Render_Obj_Name(char *newname, const char *oldname, flo
 static inline void Munge_Texture_Name(char *newname, const char *oldname, const int color)
 {
 	char lower_case_name[255];
-	strcpy(lower_case_name, oldname);
+	strlcpy(lower_case_name, oldname, ARRAY_SIZE(lower_case_name));
 	_strlwr(lower_case_name);
 	sprintf(newname,"#%d#%s", color, lower_case_name);
 }
@@ -304,7 +291,7 @@ static inline void Munge_Texture_Name(char *newname, const char *oldname, const 
 //---------------------------------------------------------------------
 int W3DAssetManager::replaceAssetTexture(RenderObjClass *robj, TextureClass *oldTex, TextureClass *newTex)
 {
-	switch (robj->Class_ID())	{	
+	switch (robj->Class_ID())	{
 	case RenderObjClass::CLASSID_MESH:
 		return replaceMeshTexture(robj, oldTex, newTex);
 		break;
@@ -335,21 +322,21 @@ Int W3DAssetManager::replaceMeshTexture(RenderObjClass *robj, TextureClass *oldT
 	int i;
 	int didReplace=0;
 
-	MeshClass *mesh=(MeshClass*) robj;	
+	MeshClass *mesh=(MeshClass*) robj;
 	MeshModelClass * model = mesh->Get_Model();
 	MaterialInfoClass	*material = mesh->Get_Material_Info();
 
 	for (i=0; i<material->Texture_Count(); i++)
 	{
 		if (material->Peek_Texture(i) == oldTex)
-		{	
+		{
 			model->Replace_Texture(oldTex,newTex);
 			material->Replace_Texture(i,newTex);
 			didReplace=1;
 		}
 	}
 
-	REF_PTR_RELEASE(material);	
+	REF_PTR_RELEASE(material);
 	REF_PTR_RELEASE(model);
 	return didReplace;
 }
@@ -380,7 +367,7 @@ int W3DAssetManager::replacePrototypeTexture(RenderObjClass *robj, const char * 
 */
 TextureClass * W3DAssetManager::Find_Texture(const char * name, const int color)
 {
-	char newname[512];	
+	char newname[512];
 	Munge_Texture_Name(newname, name, color);
 
 	// see if we have a cached copy
@@ -394,7 +381,7 @@ TextureClass * W3DAssetManager::Find_Texture(const char * name, const int color)
 //---------------------------------------------------------------------
 TextureClass * W3DAssetManager::Recolor_Texture(TextureClass *texture, const int color)
 {
-	const char *name=texture->Get_Texture_Name();	
+	const char *name=texture->Get_Texture_Name();
 
 	TextureClass *newtex = Find_Texture(name, color);
 	if (newtex) {
@@ -406,7 +393,7 @@ TextureClass * W3DAssetManager::Recolor_Texture(TextureClass *texture, const int
 
 //---------------------------------------------------------------------
 const Int TEAM_COLOR_PALETTE_SIZE = 16;
-const UnsignedShort houseColorScale[TEAM_COLOR_PALETTE_SIZE] = 
+const UnsignedShort houseColorScale[TEAM_COLOR_PALETTE_SIZE] =
 {
 	255,239,223,211,195,174,167,151,135,123,107,91,79,63,47,35
 };
@@ -419,7 +406,7 @@ static void remapPalette16Bit(SurfaceClass::SurfaceDescription *sd, UnsignedShor
 
 	//Generate a new color gradient palette based on reference color
 	for (Int y=0; y<TEAM_COLOR_PALETTE_SIZE; y++)
-	{	
+	{
 		rgb.X=(Real)houseColorScale[y]*v_color.X;
 		rgb.Y=(Real)houseColorScale[y]*v_color.Y;
 		rgb.Z=(Real)houseColorScale[y]*v_color.Z;
@@ -442,7 +429,7 @@ static void remapTexture16Bit(Int dx, Int dy, Int pitch, SurfaceClass::SurfaceDe
 	//Generate a new color gradient palette based on reference color
 	Int y=0;
 	for (; y<TEAM_COLOR_PALETTE_SIZE; y++)
-	{	
+	{
 		rgb.X=(Real)houseColorScale[y]*v_color.X;
 		rgb.Y=(Real)houseColorScale[y]*v_color.Y;
 		rgb.Z=(Real)houseColorScale[y]*v_color.Z;
@@ -487,7 +474,7 @@ static void remapAlphaTexture16Bit(Int dx, Int dy, Int pitch, SurfaceClass::Surf
 #endif
 
 	for (y=0; y<dy; y++)
-	{	
+	{
 		for (x=0; x<dx; x++)
 		{
 			pixel=data[x];
@@ -523,7 +510,7 @@ static void remapPalette32Bit(SurfaceClass::SurfaceDescription *sd, UnsignedInt 
 
 	//Generate a new color gradient palette based on reference color
 	for (Int y=0; y<TEAM_COLOR_PALETTE_SIZE; y++)
-	{	
+	{
 		rgb.X=(Real)houseColorScale[y]*v_color.X;
 		rgb.Y=(Real)houseColorScale[y]*v_color.Y;
 		rgb.Z=(Real)houseColorScale[y]*v_color.Z;
@@ -546,7 +533,7 @@ static void remapTexture32Bit(Int dx, Int dy, Int pitch, SurfaceClass::SurfaceDe
 	//Generate a new color gradient palette based on reference color
 	Int y=0;
 	for (; y<TEAM_COLOR_PALETTE_SIZE; y++)
-	{	
+	{
 		rgb.X=(Real)houseColorScale[y]*v_color.X;
 		rgb.Y=(Real)houseColorScale[y]*v_color.Y;
 		rgb.Z=(Real)houseColorScale[y]*v_color.Z;
@@ -638,7 +625,7 @@ void W3DAssetManager::Remap_Palette(SurfaceClass *surface, const int color, Bool
 			remapPalette32Bit(&sd, (UnsignedInt *)bits,color);
 	}
 	else
-	{	
+	{
 		if (useAlpha)
 		{
 			if (size == 2)
@@ -663,18 +650,18 @@ void W3DAssetManager::Remap_Palette(SurfaceClass *surface, const int color, Bool
 //---------------------------------------------------------------------
 TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, const int color)
 {
-	const char *name=texture->Get_Texture_Name();	
+	const char *name=texture->Get_Texture_Name();
 
 	// if texture is procedural return NULL
 	if (name && name[0]=='!') return NULL;
 
 	// make sure texture is loaded
-	if (!texture->Is_Initialized())	
+	if (!texture->Is_Initialized())
 		TextureLoader::Request_Foreground_Loading(texture);
 
 	SurfaceClass::SurfaceDescription desc;
 	SurfaceClass *newsurf, *oldsurf;
-	texture->Get_Level_Description(desc);		
+	texture->Get_Level_Description(desc);
 
 	Int psize;
 	psize=PixelSize(desc);
@@ -698,7 +685,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 	newtex->Get_Filter().Set_U_Addr_Mode(texture->Get_Filter().Get_U_Addr_Mode());
 	newtex->Get_Filter().Set_V_Addr_Mode(texture->Get_Filter().Get_V_Addr_Mode());
 
-	char newname[512];	
+	char newname[512];
 	Munge_Texture_Name(newname, name, color);
 	newtex->Set_Texture_Name(newname);
 
@@ -720,9 +707,9 @@ __int64 Total_Create_Render_Obj_Time=0;
 */
 RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	const char * name,
-	float scale, 
+	float scale,
 	const int color,
-	const char *oldTexture, 
+	const char *oldTexture,
 	const char *newTexture
 )
 {
@@ -731,18 +718,12 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	GetPrecisionTimer(&startTime64);
 	#endif
 
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	Bool isGranny = false;
-	char *pext=strrchr(name,'.');	//find file extension
-	if (pext)
-		isGranny=(strnicmp(pext,".GR2",4) == 0);
-#endif
 	Bool reallyscale = (WWMath::Fabs(scale - ident_scale) > scale_epsilon);
 	Bool reallycolor = (color & 0xFFFFFF) != 0;	//black is not a valid color and assumes no custom coloring.
 	Bool reallytexture = (oldTexture != NULL && newTexture != NULL);
 
 	// base case, no scale or color
-	if (!reallyscale && !reallycolor && !reallytexture) 
+	if (!reallyscale && !reallycolor && !reallytexture)
 	{
 		RenderObjClass *robj=WW3DAssetManager::Create_Render_Obj(name);
 	#ifdef DUMP_PERF_STATS
@@ -758,12 +739,6 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	// see if we got a cached version
 	RenderObjClass *rendobj = NULL;
 
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	if (isGranny)
-	{	//Granny objects share the same prototype since they allow instance scaling.
-		strcpy(newname,name);	//use same name for all granny objects at any scale.
-	}
-#endif
 	Set_WW3D_Load_On_Demand(false); // munged name will never be found in a file.
 	rendobj = WW3DAssetManager::Create_Render_Obj(newname);
 	if (rendobj)
@@ -771,11 +746,6 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 		//when we need to save this render object to a file.  Used during saving
 		//of fog of war ghost objects.
 		rendobj->Set_ObjectColor(color);
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-		if (isGranny)
-			///@todo Granny objects are realtime scaled - fix to scale like W3D.
-			rendobj->Set_ObjectScale(scale);
-#endif
 		Set_WW3D_Load_On_Demand(true); // Auto Load.
 
 	#ifdef DUMP_PERF_STATS
@@ -794,48 +764,35 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	PrototypeClass * proto = Find_Prototype(name);
 
 	Set_WW3D_Load_On_Demand(true); // Auto Load.
-	if (WW3D_Load_On_Demand && proto == NULL) 
-	{	
+	if (WW3D_Load_On_Demand && proto == NULL)
+	{
 		// If we didn't find one, try to load on demand
 		char filename [MAX_PATH];
-		const char *mesh_name = ::strchr (name, '.');
-		if (mesh_name != NULL) 
+		const char *mesh_name = strchr (name, '.');
+		if (mesh_name != NULL)
 		{
-			::lstrcpyn(filename, name, ((int)mesh_name) - ((int)name) + 1);
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-			if (isGranny)
-				::lstrcat(filename, ".gr2");
-			else
-#endif
-				::lstrcat(filename, ".w3d");
+			lstrcpyn(filename, name, ((int)mesh_name) - ((int)name) + 1);
+			lstrcat(filename, ".w3d");
 		} else {
 			sprintf( filename, "%s.w3d", name);
 		}
 
 		// If we can't find it, try the parent directory
-		if ( Load_3D_Assets( filename ) == false ) 
+		if ( Load_3D_Assets( filename ) == false )
 		{
 			StringClass	new_filename = StringClass("..\\") + filename;
-			if (Load_3D_Assets( new_filename ) == false)
-			{
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-				char *mesh_name = ::strchr (filename, '.');
-				::lstrcpyn (mesh_name, ".gr2",5);
-				Load_3D_Assets( filename );
-				isGranny=true;
-#endif
-			}
+			Load_3D_Assets(new_filename);
 		}
 
 		proto = Find_Prototype(name);		// try again
 	}
 
-	if (proto == NULL) 
+	if (proto == NULL)
 	{
 		static int warning_count = 0;
-		if (++warning_count <= 20) 
+		if (++warning_count <= 20)
 		{
-			WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s\r\n",name));
+			WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s",name));
 		}
 	#ifdef DUMP_PERF_STATS
 		GetPrecisionTimer(&endTime64);
@@ -846,7 +803,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 
 	rendobj = proto->Create();
 
-	if (!rendobj) 
+	if (!rendobj)
 	{
 	#ifdef DUMP_PERF_STATS
 		GetPrecisionTimer(&endTime64);
@@ -854,37 +811,25 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	#endif
 		return NULL;
 	}
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	if (!isGranny)
-#endif
-	{	
-		if (reallyscale)
-			rendobj->Scale(scale);	//this also makes it unique
 
-		Make_Unique(rendobj,reallyscale,reallycolor);
+	if (reallyscale)
+		rendobj->Scale(scale);	//this also makes it unique
 
-		if (reallytexture)
-		{	
-			TextureClass *oldTex = Get_Texture(oldTexture);
-			TextureClass *newTex = Get_Texture(newTexture);
-			replaceAssetTexture(rendobj,oldTex,newTex);
-			REF_PTR_RELEASE(newTex);
-			REF_PTR_RELEASE(oldTex);
-		}
+	Make_Unique(rendobj,reallyscale,reallycolor);
 
-		if (reallycolor)
-			Recolor_Asset(rendobj,color);
+	if (reallytexture)
+	{
+		TextureClass *oldTex = Get_Texture(oldTexture);
+		TextureClass *newTex = Get_Texture(newTexture);
+		replaceAssetTexture(rendobj,oldTex,newTex);
+		REF_PTR_RELEASE(newTex);
+		REF_PTR_RELEASE(oldTex);
 	}
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	else
-	{	
-		///@todo Granny objects are realtime scaled - fix to scale like W3D.
-		rendobj->Set_ObjectScale(scale);
-		return rendobj;
-	}
-#endif
 
-	W3DPrototypeClass *w3dproto = newInstance(W3DPrototypeClass)(rendobj, newname);	
+	if (reallycolor)
+		Recolor_Asset(rendobj,color);
+
+	W3DPrototypeClass *w3dproto = newInstance(W3DPrototypeClass)(rendobj, newname);
 	rendobj->Release_Ref();
 	Add_Prototype(w3dproto);
 
@@ -904,7 +849,10 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 */
 int W3DAssetManager::Recolor_Asset(RenderObjClass *robj, const int color)
 {
-	switch (robj->Class_ID())	{	
+	if (TheGlobalData->m_headless)
+		return 0;
+
+	switch (robj->Class_ID())	{
 	case RenderObjClass::CLASSID_MESH:
 		return Recolor_Mesh(robj,color);
 		break;
@@ -920,11 +868,14 @@ int W3DAssetManager::Recolor_Asset(RenderObjClass *robj, const int color)
 */
 int W3DAssetManager::Recolor_Mesh(RenderObjClass *robj, const int color)
 {
+	if (TheGlobalData->m_headless)
+		return 0;
+
 	int i;
 	int didRecolor=0;
 	const char *meshName;
 
-	MeshClass *mesh=(MeshClass*) robj;	
+	MeshClass *mesh=(MeshClass*) robj;
 	MeshModelClass * model = mesh->Get_Model();
 	MaterialInfoClass	*material = mesh->Get_Material_Info();
 
@@ -954,7 +905,7 @@ int W3DAssetManager::Recolor_Mesh(RenderObjClass *robj, const int color)
 		}
 	}
 
-	REF_PTR_RELEASE(material);	
+	REF_PTR_RELEASE(material);
 	REF_PTR_RELEASE(model);
 	return didRecolor;
 }
@@ -965,6 +916,9 @@ int W3DAssetManager::Recolor_Mesh(RenderObjClass *robj, const int color)
 
 int W3DAssetManager::Recolor_HLOD(RenderObjClass *robj, const int color)
 {
+	if (TheGlobalData->m_headless)
+		return 0;
+
 	int didRecolor=0;
 
 	int num_sub = robj->Get_Num_Sub_Objects();
@@ -1019,17 +973,9 @@ bool W3DAssetManager::Load_3D_Assets( const char * filename )
 		GetPrecisionTimer(&startTime64);
 #endif
 
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	Bool isGranny = false;
-	char *pext=strrchr(filename,'.');	//find file extension
-	if (pext)
-		isGranny=(strnicmp(pext,".GR2",4) == 0);
-	if (!isGranny)
-#endif
-
 	// Try to find an existing prototype
 	char basename[512];
-	strcpy(basename, filename);
+	strlcpy(basename, filename, ARRAY_SIZE(basename));
 	char *pext = strrchr(basename, '.');	//find file extension
 	if (pext)
 		*pext = '\0';	//drop the extension
@@ -1048,16 +994,16 @@ bool W3DAssetManager::Load_3D_Assets( const char * filename )
 
 	bool result = WW3DAssetManager::Load_3D_Assets(filename);
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (result && TheGlobalData->m_preloadReport)
-	{	
+	{
 		//loading a new asset and app is requesting a log of all loaded assets.
 		FILE *logfile=fopen("PreloadedAssets.txt","a+");	//append to log
 		if (logfile)
-		{	
+		{
 			StringClass lower_case_name(filename,true);
 			_strlwr(lower_case_name.Peek_Buffer());
-			fprintf(logfile,"3D: %s\n",lower_case_name.Peek_Buffer());
+			fprintf(logfile,"3D: %s\n",lower_case_name.str());
 			fclose(logfile);
 		}
 	}
@@ -1071,40 +1017,6 @@ bool W3DAssetManager::Load_3D_Assets( const char * filename )
 #endif
 	return result;
 
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	//Loading assets for Granny File
-	PrototypeClass * newproto = NULL;
-	newproto = _GrannyLoader.Load_W3D(filename);
-	/*
-	** Now, see if the prototype that we loaded has a duplicate
-	** name with any of our currently loaded prototypes (can't have that!)
-	*/
-	if (newproto != NULL) {
-		if (!Render_Obj_Exists(newproto->Get_Name())) {
-			/*
-			** Add the new, unique prototype to our list
-			*/
-			Add_Prototype(newproto);
-		} else {
-			/*
-			** Warn the user about a name collision with this prototype 
-			** and dump it
-			*/
-			WWDEBUG_SAY(("Render Object Name Collision: %s\r\n",newproto->Get_Name()));
-			delete newproto;
-			newproto = NULL;
-			return false;
-		}
-	} else {
-		/*
-		** Warn user that a prototype was not generated from this 
-		** chunk type
-		*/
-		WWDEBUG_SAY(("Could not generate Granny prototype!  File  = %d\r\n",filename));
-		return false;
-	}
-	return true;
-#endif
 }
 
 #ifdef DUMP_PERF_STATS
@@ -1122,47 +1034,17 @@ HAnimClass *	W3DAssetManager::Get_HAnim(const char * name)
 #endif
 	WWPROFILE( "WW3DAssetManager::Get_HAnim" );
 
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	Bool isGranny = false;
-	char *pext=strrchr(name,'.');	//find file extension
-	if (pext)
-		isGranny=(strnicmp(pext,".GR2",4) == 0);
-	if (!isGranny)
-#endif
-	{
-		HAnimClass *anim=WW3DAssetManager::Get_HAnim(name);	//we only do custom granny processing.
+	HAnimClass *anim=WW3DAssetManager::Get_HAnim(name);
 #ifdef DUMP_PERF_STATS
-		if (HAnim_Recursions == 1)
-		{
-			GetPrecisionTimer(&endTime64);
-			Total_Get_HAnim_Time += endTime64-startTime64;
-		}
-		HAnim_Recursions--;
+	if (HAnim_Recursions == 1)
+	{
+		GetPrecisionTimer(&endTime64);
+		Total_Get_HAnim_Time += endTime64-startTime64;
+	}
+	HAnim_Recursions--;
 #endif
-		return anim;
-	}
-
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	// Try to find the hanim
-	HAnimClass * anim = m_GrannyAnimManager->Get_Anim(name);
-	if (WW3D_Load_On_Demand && anim == NULL) {	// If we didn't find it, try to load on demand
-		if ( !m_GrannyAnimManager->Is_Missing( name ) ) {	// if this is NOT a known missing anim
-
-			// If we can't find it, try the parent directory
-			if ( m_GrannyAnimManager->Load_Anim(name) == 1 ) {
-				StringClass	new_filename = StringClass("..\\") + name;
-				m_GrannyAnimManager->Load_Anim( new_filename );
-			}
-
-			anim = m_GrannyAnimManager->Get_Anim(name);		// Try again
-			if (anim == NULL) {
-//				WWDEBUG_SAY(("WARNING: Animation %s not found!\n", name));
-				m_GrannyAnimManager->Register_Missing( name );		// This is now a KNOWN missing anim
-			}
-		}
-	}
 	return anim;
-#endif
+
 }
 
 //---------------------------------------------------------------------
@@ -1187,7 +1069,7 @@ void W3DAssetManager::Make_HLOD_Unique(RenderObjClass *robj, Bool geometry, Bool
 */
 void W3DAssetManager::Make_Unique(RenderObjClass *robj, Bool geometry, Bool colors)
 {
-	switch (robj->Class_ID())	{	
+	switch (robj->Class_ID())	{
 	case RenderObjClass::CLASSID_MESH:
 		Make_Mesh_Unique(robj,geometry,colors);
 		break;
@@ -1244,14 +1126,14 @@ void W3DAssetManager::Make_Mesh_Unique(RenderObjClass *robj, Bool geometry, Bool
 		//Create unique data for this mesh
 		if (!geometry)	//scaling geometry automatically makes it unique so not needed here.
 			mesh->Make_Unique();
-		
+
 		MeshModelClass * model = mesh->Get_Model();
 
 		if (colors && isVertexColor)
 		{
 			MaterialInfoClass	*material=mesh->Get_Material_Info();
 			for (i=0; i<material->Vertex_Material_Count(); i++)
-				material->Peek_Vertex_Material(i)->Make_Unique();	
+				material->Peek_Vertex_Material(i)->Make_Unique();
 			REF_PTR_RELEASE(material);
 		}
 
@@ -1270,7 +1152,7 @@ void W3DAssetManager::Report_Used_Prototypes(void)
 		PrototypeClass * proto = Prototypes[count];
 		if (proto->Get_Class_ID() == RenderObjClass::CLASSID_HLOD || proto->Get_Class_ID() == RenderObjClass::CLASSID_MESH)
 		{
-			DEBUG_LOG(("**Unfreed Prototype On Map Reset: %s\n",proto->Get_Name()));
+			DEBUG_LOG(("**Unfreed Prototype On Map Reset: %s",proto->Get_Name()));
 		}
 	}
 }
@@ -1300,7 +1182,7 @@ void W3DAssetManager::Report_Used_FontChars(void)
 	{
 		if (FontCharsList[count]->Num_Refs() >= 1)
 		{
-			DEBUG_LOG(("**Unfreed FontChar On Map Reset: %s\n",FontCharsList[count]->Get_Name()));
+			DEBUG_LOG(("**Unfreed FontChar On Map Reset: %s",FontCharsList[count]->Get_Name()));
 			//FontCharsList[count]->Release_Ref();
 			//FontCharsList.Delete(count);
 		}
@@ -1336,7 +1218,7 @@ void W3DAssetManager::Report_Used_Textures(void)
 		}
 		else
 		{
-			DEBUG_LOG(("**Texture \"%s\" referenced %d times on map reset\n",tex->Get_Texture_Name(),tex->Num_Refs()-1));
+			DEBUG_LOG(("**Texture \"%s\" referenced %d times on map reset",tex->Get_Texture_Name().str(),tex->Num_Refs()-1));
 		}
 	}
 /*	for (unsigned i=0;i<count;++i) {
@@ -1363,7 +1245,7 @@ void W3DAssetManager::Report_Used_Font3DDatas( void )
 		}
 		else
 		{
-			DEBUG_LOG(("**Unfreed Font3DDatas On Map Reset: %s\n",font->Name));
+			DEBUG_LOG(("**Unfreed Font3DDatas On Map Reset: %s",font->Name));
 		}
 	}
 }
@@ -1388,7 +1270,7 @@ void W3DAssetManager::Make_Mesh_Unique(RenderObjClass *robj, Bool geometry, Bool
 		// make all vertex materials unique
 		MaterialInfoClass	*material = mesh->Get_Material_Info();
 		for (i=0; i<material->Vertex_Material_Count(); i++)
-			material->Peek_Vertex_Material(i)->Make_Unique();	
+			material->Peek_Vertex_Material(i)->Make_Unique();
 		REF_PTR_RELEASE(material);
 		// make all color arrays unique
 		model->Make_Color_Array_Unique(0);
@@ -1398,10 +1280,10 @@ void W3DAssetManager::Make_Mesh_Unique(RenderObjClass *robj, Bool geometry, Bool
 		// for the top mip level and then
 		// mip filter instead of converting all mip levels
 	}
-		
+
 	if (geometry)	{
-		// make geometry unique		
-		model->Make_Geometry_Unique();		
+		// make geometry unique
+		model->Make_Geometry_Unique();
 	}
 
 	REF_PTR_RELEASE(model);
@@ -1419,7 +1301,7 @@ void W3DAssetManager::Make_HLOD_Unique(RenderObjClass *robj, Bool geometry, Bool
 
 void W3DAssetManager::Make_Unique(RenderObjClass *robj, Bool geometry, Bool colors)
 {
-	switch (robj->Class_ID())	{	
+	switch (robj->Class_ID())	{
 	case RenderObjClass::CLASSID_MESH:
 		Make_Mesh_Unique(robj,geometry,colors);
 		break;
@@ -1432,7 +1314,7 @@ void W3DAssetManager::Make_Unique(RenderObjClass *robj, Bool geometry, Bool colo
 static inline void Munge_Render_Obj_Name(char *newname, const char *oldname, float scale, const Vector3 &hsv_shift)
 {
 	char lower_case_name[255];
-	strcpy(lower_case_name, oldname);
+	strlcpy(lower_case_name, oldname, ARRAY_SIZE(lower_case_name));
 	_strlwr(lower_case_name);
 	sprintf(newname,"#%s!%gH%gS%gV%g", lower_case_name, scale, hsv_shift.X, hsv_shift.Y, hsv_shift.Z);
 }
@@ -1440,7 +1322,7 @@ static inline void Munge_Render_Obj_Name(char *newname, const char *oldname, flo
 static inline void Munge_Texture_Name(char *newname, const char *oldname, const Vector3 &hsv_shift)
 {
 	char lower_case_name[255];
-	strcpy(lower_case_name, oldname);
+	strlcpy(lower_case_name, oldname, ARRAY_SIZE(lower_case_name));
 	_strlwr(lower_case_name);
 	sprintf(newname,"#%s!H%gS%gV%g", lower_case_name, hsv_shift.X, hsv_shift.Y, hsv_shift.Z);
 }
@@ -1448,11 +1330,6 @@ static inline void Munge_Texture_Name(char *newname, const char *oldname, const 
 RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scale, const Vector3 &hsv_shift)
 {
 	Bool isGranny = false;
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	char *pext=strrchr(name,'.');	//find file extension
-	if (pext)
-		isGranny=(strnicmp(pext,".GR2",4) == 0);
-#endif
 	Bool reallyscale = (WWMath::Fabs(scale - ident_scale) > scale_epsilon);
 	Bool reallyhsv_shift = (WWMath::Fabs(hsv_shift.X - ident_HSV.X) > H_epsilon ||
 		WWMath::Fabs(hsv_shift.Y - ident_HSV.Y) > S_epsilon || WWMath::Fabs(hsv_shift.Z - ident_HSV.Z) > V_epsilon);
@@ -1468,7 +1345,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scal
 
 	if (isGranny)
 	{	//Granny objects share the same prototype since they allow instance scaling.
-		strcpy(newname,name);	//use same name for all granny objects at any scale.
+		strlcpy(newname, name, ARRAY_SIZE(newname));	//use same name for all granny objects at any scale.
 	}
 	Set_WW3D_Load_On_Demand(false); // munged name will never be found in a file.
 	rendobj=WW3DAssetManager::Create_Render_Obj(newname);
@@ -1521,7 +1398,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scal
 	if (proto == NULL) {
 		static int warning_count = 0;
 		if (++warning_count <= 20) {
-			WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s\r\n",name));
+			WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s",name));
 		}
 		return NULL;		// Failed to find a prototype
 	}
@@ -1529,7 +1406,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scal
 	rendobj=proto->Create();
 
 	if (!rendobj) return NULL;
-	
+
 	if (!isGranny)
 	{	Make_Unique(rendobj,reallyscale,reallyhsv_shift);
 		if (reallyscale) rendobj->Scale(scale);
@@ -1571,10 +1448,10 @@ TextureClass * W3DAssetManager::Get_Texture_With_HSV_Shift(const char * filename
 		TextureClass *newtex = Find_Texture(filename, hsv_shift);
 
 		if (!newtex) {
-		
+
 			// No cached texture - need to create
 			char lower_case_name[255];
-			strcpy(lower_case_name, filename);
+			strlcpy(lower_case_name, filename, ARRAY_SIZE(lower_case_name));
 			_strlwr(lower_case_name);
 			TextureClass *oldtex = TextureHash.Get(lower_case_name);
 			if (!oldtex) {
@@ -1620,8 +1497,8 @@ void W3DAssetManager::Recolor_Vertex_Material(VertexMaterialClass *vmat, const V
 
 void W3DAssetManager::Recolor_Vertices(unsigned int *color, int count, const Vector3 &hsv_shift)
 {
-	int i;	
-	Vector4 rgba;	
+	int i;
+	Vector4 rgba;
 
 	for (i=0; i<count; i++)
 	{
@@ -1633,7 +1510,7 @@ void W3DAssetManager::Recolor_Vertices(unsigned int *color, int count, const Vec
 
 TextureClass * W3DAssetManager::Recolor_Texture(TextureClass *texture, const Vector3 &hsv_shift)
 {
-	const char *name=texture->Get_Texture_Name();	
+	const char *name=texture->Get_Texture_Name();
 
 	TextureClass *newtex = Find_Texture(name, hsv_shift);
 	if (newtex) {
@@ -1645,21 +1522,21 @@ TextureClass * W3DAssetManager::Recolor_Texture(TextureClass *texture, const Vec
 
 TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, const Vector3 &hsv_shift)
 {
-	const char *name=texture->Get_Texture_Name();	
+	const char *name=texture->Get_Texture_Name();
 
 	// if texture is procedural return NULL
 	if (name && name[0]=='!') return NULL;
 
 	// make sure texture is loaded
-	if (!texture->Is_Initialized())	
+	if (!texture->Is_Initialized())
 		TextureLoader::Request_High_Priority_Loading(texture, (TextureClass::MipCountType)texture->Get_Mip_Level_Count());
 
 	SurfaceClass::SurfaceDescription desc;
 	SurfaceClass *newsurf, *oldsurf, *smallsurf;
-	texture->Get_Level_Description(desc);		
+	texture->Get_Level_Description(desc);
 
 	// if texture is monochrome and no value shifting
-	// return NULL	
+	// return NULL
 	smallsurf=texture->Get_Surface_Level((TextureClass::MipCountType)texture->Get_Mip_Level_Count()-1);
 	if (hsv_shift.Z==0.0f && smallsurf->Is_Monochrome())
 	{
@@ -1680,7 +1557,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 	newtex->Set_U_Addr_Mode(texture->Get_U_Addr_Mode());
 	newtex->Set_V_Addr_Mode(texture->Get_V_Addr_Mode());
 
-	char newname[512];	
+	char newname[512];
 	Munge_Texture_Name(newname, name, hsv_shift);
 	newtex->Set_Texture_Name(newname);
 
@@ -1695,7 +1572,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 
 TextureClass * W3DAssetManager::Find_Texture(const char * name, const Vector3 &hsv_shift)
 {
-	char newname[512];	
+	char newname[512];
 	Munge_Texture_Name(newname, name, hsv_shift);
 
 	// see if we have a cached copy
@@ -1710,13 +1587,13 @@ void W3DAssetManager::Recolor_Mesh(RenderObjClass *robj, const Vector3 &hsv_shif
 {
 	int i;
 
-	MeshClass *mesh=(MeshClass*) robj;	
+	MeshClass *mesh=(MeshClass*) robj;
 	MeshModelClass * model = mesh->Get_Model();
 	MaterialInfoClass	*material = mesh->Get_Material_Info();
 
 	// recolor vertex material
 	for (i=0; i<material->Vertex_Material_Count(); i++)
-			Recolor_Vertex_Material(material->Peek_Vertex_Material(i),hsv_shift);	
+			Recolor_Vertex_Material(material->Peek_Vertex_Material(i),hsv_shift);
 
 	// recolor color arrays
 	unsigned int * color;
@@ -1740,7 +1617,7 @@ void W3DAssetManager::Recolor_Mesh(RenderObjClass *robj, const Vector3 &hsv_shif
 		}
 	}
 
-	REF_PTR_RELEASE(material);	
+	REF_PTR_RELEASE(material);
 	REF_PTR_RELEASE(model);
 }
 
@@ -1783,7 +1660,7 @@ void W3DAssetManager::Recolor_ParticleEmitter(RenderObjClass *robj, const Vector
 
 void W3DAssetManager::Recolor_Asset(RenderObjClass *robj, const Vector3 &hsv_shift)
 {
-	switch (robj->Class_ID())	{	
+	switch (robj->Class_ID())	{
 	case RenderObjClass::CLASSID_MESH:
 		Recolor_Mesh(robj,hsv_shift);
 		break;

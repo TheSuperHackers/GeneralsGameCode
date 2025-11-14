@@ -32,12 +32,15 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/GlobalData.h"
+
 #define DEFINE_TERRAIN_LOD_NAMES
 #define DEFINE_TIME_OF_DAY_NAMES
 #define DEFINE_WEATHER_NAMES
 #define DEFINE_BODYDAMAGETYPE_NAMES
 #define DEFINE_PANNING_NAMES
 
+#include "Common/AddonCompat.h"
 #include "Common/crc.h"
 #include "Common/file.h"
 #include "Common/FileSystem.h"
@@ -64,13 +67,11 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-/*static*/ const FieldParse GlobalData::s_GlobalDataFieldParseTable[] = 
+/*static*/ const FieldParse GlobalData::s_GlobalDataFieldParseTable[] =
 {
-#if !defined(_PLAYTEST)
 	{ "Windowed",									INI::parseBool,				NULL,			offsetof( GlobalData, m_windowed ) },
 	{ "XResolution",							INI::parseInt,				NULL,			offsetof( GlobalData, m_xResolution ) },
 	{ "YResolution",							INI::parseInt,				NULL,			offsetof( GlobalData, m_yResolution ) },
-#endif
 	{ "MapName",									INI::parseAsciiString,NULL,			offsetof( GlobalData, m_mapName ) },
 	{ "MoveHintName",							INI::parseAsciiString,NULL,			offsetof( GlobalData, m_moveHintName ) },
 	{ "UseTrees",									INI::parseBool,				NULL,			offsetof( GlobalData, m_useTrees ) },
@@ -89,8 +90,8 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "StretchTerrain",						INI::parseBool,				NULL,			offsetof( GlobalData, m_stretchTerrain ) },
 	{ "UseHalfHeightMap",					INI::parseBool,				NULL,			offsetof( GlobalData, m_useHalfHeightMap ) },
 	{ "UserDataLeafName",					INI::parseQuotedAsciiString,	NULL,			offsetof( GlobalData, m_userDataLeafName ) },
-	
-	
+
+
 	{ "DrawEntireTerrain",					INI::parseBool,				NULL,			offsetof( GlobalData, m_drawEntireTerrain ) },
 	{ "TerrainLOD",									INI::parseIndexList,	TerrainLODNames,	offsetof( GlobalData, m_terrainLOD ) },
 	{ "TerrainLODTargetTimeMS",			INI::parseInt,				NULL,			offsetof( GlobalData, m_terrainLODTargetTimeMS ) },
@@ -178,6 +179,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "SkyBoxPositionZ",				INI::parseReal,				NULL,			offsetof( GlobalData, m_skyBoxPositionZ ) },
 	{ "SkyBoxScale",				INI::parseReal,				NULL,			offsetof( GlobalData, m_skyBoxScale ) },
 	{ "DrawSkyBox",				INI::parseBool,				NULL,			offsetof( GlobalData, m_drawSkyBox ) },
+	{ "ViewportHeightScale", INI::parseReal, NULL, offsetof( GlobalData, m_viewportHeightScale ) },
 	{ "CameraPitch",								INI::parseReal,				NULL,			offsetof( GlobalData, m_cameraPitch ) },
 	{ "CameraYaw",									INI::parseReal,				NULL,			offsetof( GlobalData, m_cameraYaw ) },
 	{ "CameraHeight",								INI::parseReal,				NULL,			offsetof( GlobalData, m_cameraHeight ) },
@@ -191,7 +193,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "Gravity",									INI::parseAccelerationReal,				NULL,				offsetof( GlobalData, m_gravity ) },
 	{ "StealthFriendlyOpacity",		INI::parsePercentToReal,				NULL,				offsetof( GlobalData, m_stealthFriendlyOpacity ) },
 	{ "DefaultOcclusionDelay",				INI::parseDurationUnsignedInt,				NULL,			offsetof( GlobalData, m_defaultOcclusionDelay ) },
-	
+
 	{ "PartitionCellSize",				INI::parseReal,				NULL,			offsetof( GlobalData, m_partitionCellSize ) },
 
 	{ "AmmoPipScaleFactor",				INI::parseReal,				NULL,			offsetof( GlobalData, m_ammoPipScaleFactor ) },
@@ -245,7 +247,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "TerrainObjectsLightingNightDiffuse",				INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][0].diffuse ) },
 	{ "TerrainObjectsLightingNightLightPos",			INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][0].lightPos ) },
 
-	//Secondary global light	
+	//Secondary global light
 	{ "TerrainLightingMorningAmbient2",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][1].ambient ) },
 	{ "TerrainLightingMorningDiffuse2",			INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][1].diffuse ) },
 	{ "TerrainLightingMorningLightPos2",		INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainLighting[ TIME_OF_DAY_MORNING ][1].lightPos ) },
@@ -299,7 +301,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "TerrainObjectsLightingNightDiffuse3",				INI::parseRGBColor,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][2].diffuse ) },
 	{ "TerrainObjectsLightingNightLightPos3",			INI::parseCoord3D,			NULL,			offsetof( GlobalData, m_terrainObjectsLighting[ TIME_OF_DAY_NIGHT ][2].lightPos ) },
 
-	
+
 	{ "NumberGlobalLights",								INI::parseInt,				NULL,			offsetof( GlobalData, m_numGlobalLights)},
 	{ "InfantryLightMorningScale",				INI::parseReal,			NULL,			offsetof( GlobalData, m_infantryLightScale[TIME_OF_DAY_MORNING] ) },
 	{ "InfantryLightAfternoonScale",				INI::parseReal,			NULL,			offsetof( GlobalData, m_infantryLightScale[TIME_OF_DAY_AFTERNOON] ) },
@@ -309,7 +311,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "MaxTranslucentObjects",						INI::parseInt,				NULL,			offsetof( GlobalData, m_maxVisibleTranslucentObjects) },
 	{ "OccludedColorLuminanceScale",				INI::parseReal,				NULL,			offsetof( GlobalData, m_occludedLuminanceScale) },
 
-/* These are internal use only, they do not need file definitons 
+/* These are internal use only, they do not need file definitons
 	{ "TerrainAmbientRGB",				INI::parseRGBColor,		NULL,			offsetof( GlobalData, m_terrainAmbient ) },
 	{ "TerrainDiffuseRGB",				INI::parseRGBColor,		NULL,			offsetof( GlobalData, m_terrainDiffuse ) },
 	{ "TerrainLightPos",					INI::parseCoord3D,		NULL,			offsetof( GlobalData, m_terrainLightPos ) },
@@ -320,7 +322,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "MaxRoadTypes",								INI::parseInt,				NULL,			offsetof( GlobalData, m_maxRoadTypes ) },
 
 	{ "ValuePerSupplyBox",					INI::parseInt,				NULL,			offsetof( GlobalData, m_baseValuePerSupplyBox ) },
-	
+
 	{ "AudioOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_audioOn ) },
 	{ "MusicOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_musicOn ) },
 	{ "SoundsOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_soundsOn ) },
@@ -329,7 +331,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "VideoOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_videoOn ) },
 	{ "DisableCameraMovements",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableCameraMovement ) },
 
-/* These are internal use only, they do not need file definitons 		
+/* These are internal use only, they do not need file definitons
 	/// @todo remove this hack
 	{ "InGame",											INI::parseBool,				NULL,			offsetof( GlobalData, m_inGame ) },
 */
@@ -363,7 +365,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "AutoAflameParticleSystem",					INI::parseAsciiString,  NULL,  offsetof( GlobalData, m_autoAflameParticleSystem ) },
 	{ "AutoAflameParticleMax",						INI::parseInt,					NULL,	 offsetof( GlobalData, m_autoAflameParticleMax ) },
 
-/* These are internal use only, they do not need file definitons 	
+/* These are internal use only, they do not need file definitons
 	{ "LatencyAverage",							INI::parseInt,				NULL,			offsetof( GlobalData, m_latencyAverage ) },
 	{ "LatencyAmplitude",						INI::parseInt,				NULL,			offsetof( GlobalData, m_latencyAmplitude ) },
 	{ "LatencyPeriod",							INI::parseInt,				NULL,			offsetof( GlobalData, m_latencyPeriod ) },
@@ -399,6 +401,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "EnforceMaxCameraHeight",			INI::parseBool,				NULL,			offsetof( GlobalData, m_enforceMaxCameraHeight ) },
 	{ "KeyboardScrollSpeedFactor",	INI::parseReal,				NULL,			offsetof( GlobalData, m_keyboardScrollFactor ) },
 	{ "KeyboardDefaultScrollSpeedFactor",	INI::parseReal,				NULL,			offsetof( GlobalData, m_keyboardDefaultScrollFactor ) },
+	{ "KeyboardCameraRotateSpeed", INI::parseReal, NULL, offsetof( GlobalData, m_keyboardCameraRotateSpeed ) },
 	{ "MovementPenaltyDamageState",	INI::parseIndexList,	TheBodyDamageTypeNames,	 offsetof( GlobalData, m_movementPenaltyDamageState ) },
 
 // you cannot set this; it always has a value of 100%.
@@ -458,13 +461,18 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 
 	{ "SpecialPowerViewObject",			INI::parseAsciiString,	NULL,			offsetof( GlobalData, m_specialPowerViewObjectName ) },
 
+	// TheSuperHackers @feature Customize the opacity (0..1) and shadows of build preview objects. Shadows are enabled by default.
+	// Note that disabling shadows loses a fair bit of contrast visually and warrants raising the opacity.
+	{ "ObjectPlacementOpacity", INI::parseReal, NULL, offsetof( GlobalData, m_objectPlacementOpacity ) },
+	{ "ObjectPlacementShadows", INI::parseBool, NULL, offsetof( GlobalData, m_objectPlacementShadows ) },
+
 	{ "StandardPublicBone", INI::parseAsciiStringVectorAppend, NULL, offsetof(GlobalData, m_standardPublicBones) },
-	{ "ShowMetrics",								INI::parseBool,				NULL,			offsetof( GlobalData, m_showMetrics ) },
-	{ "DefaultStartingCash",				INI::parseUnsignedInt, NULL,		offsetof( GlobalData, m_defaultStartingCash ) },
+	{ "ShowMetrics",								INI::parseBool,				   NULL,		offsetof( GlobalData, m_showMetrics ) },
+  { "DefaultStartingCash",				Money::parseMoneyAmount, NULL,		offsetof( GlobalData, m_defaultStartingCash ) },
 
 // NOTE: m_doubleClickTimeMS is still in use, but we disallow setting it from the GameData.ini file. It is now set in the constructor according to the windows parameter.
 //	{ "DoubleClickTimeMS",									INI::parseUnsignedInt,			NULL, offsetof( GlobalData, m_doubleClickTimeMS ) },
-	
+
 	{ "ShroudColor",		INI::parseRGBColor,						NULL,	offsetof( GlobalData, m_shroudColor) },
 	{ "ClearAlpha",			INI::parseUnsignedByte,				NULL,	offsetof( GlobalData, m_clearAlpha) },
 	{ "FogAlpha",				INI::parseUnsignedByte,				NULL,	offsetof( GlobalData, m_fogAlpha) },
@@ -486,11 +494,10 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "NetworkDisconnectTime", INI::parseInt, NULL, offsetof(GlobalData, m_networkDisconnectTime) },
 	{ "NetworkPlayerTimeoutTime", INI::parseInt, NULL, offsetof(GlobalData, m_networkPlayerTimeoutTime) },
 	{ "NetworkDisconnectScreenNotifyTime", INI::parseInt, NULL, offsetof(GlobalData, m_networkDisconnectScreenNotifyTime) },
-	
-	{ "KeyboardCameraRotateSpeed", INI::parseReal, NULL, offsetof( GlobalData, m_keyboardCameraRotateSpeed ) },
+
 	{ "PlayStats",									INI::parseInt,				NULL,			offsetof( GlobalData, m_playStats ) },
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	{ "DisableCameraFade",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableCameraFade ) },
 	{ "DisableScriptedInputDisabling",			INI::parseBool,		NULL,			offsetof( GlobalData, m_disableScriptedInputDisabling ) },
 	{ "DisableMilitaryCaption",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableMilitaryCaption ) },
@@ -502,6 +509,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "ShroudOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_shroudOn ) },
 	{ "FogOfWarOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_fogOfWarOn ) },
 	{ "ShowCollisionExtents",				INI::parseBool,				NULL,			offsetof( GlobalData, m_showCollisionExtents ) },
+  { "ShowAudioLocations",  				INI::parseBool,				NULL,			offsetof( GlobalData, m_showAudioLocations ) },
 	{ "DebugProjectileTileWidth",		INI::parseReal,				NULL,			offsetof( GlobalData, m_debugProjectileTileWidth) },
 	{ "DebugProjectileTileDuration",INI::parseInt,				NULL,			offsetof( GlobalData, m_debugProjectileTileDuration) },
 	{ "DebugProjectileTileColor",		INI::parseRGBColor,		NULL,			offsetof( GlobalData, m_debugProjectileTileColor) },
@@ -520,9 +528,10 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "UseLocalMOTD",								INI::parseBool,				NULL,			offsetof( GlobalData, m_useLocalMOTD ) },
 	{ "BaseStatsDir",								INI::parseAsciiString,NULL,			offsetof( GlobalData, m_baseStatsDir ) },
 	{ "LocalMOTDPath",							INI::parseAsciiString,NULL,			offsetof( GlobalData, m_MOTDPath ) },
+	{ "ExtraLogging",								INI::parseBool,				NULL,			offsetof( GlobalData, m_extraLogging ) },
 #endif
 
-	{ NULL,					NULL,						NULL,						0 }  // keep this last
+	{ NULL,					NULL,						NULL,						0 }
 
 };
 
@@ -535,7 +544,7 @@ GlobalData::GlobalData()
 
 	//
 	// we have now instanced a global data instance, if theOriginal is NULL, this is
-	// *the* very first instance and it shall be recorded.  This way, when we load 
+	// *the* very first instance and it shall be recorded.  This way, when we load
 	// overrides of the global data, we can revert to the common, original data
 	// in m_theOriginal
 	//
@@ -543,15 +552,21 @@ GlobalData::GlobalData()
 		m_theOriginal = this;
 	m_next = NULL;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+  m_TiVOFastMode = FALSE;
+
+#if defined(RTS_DEBUG) || ENABLE_CONFIGURABLE_SHROUD
+	m_shroudOn = TRUE;
+#endif
+
+#if defined(RTS_DEBUG)
 	m_wireframe = 0;
 	m_stateMachineDebug = FALSE;
 	m_useCameraConstraints = TRUE;
-	m_shroudOn = TRUE;
 	m_fogOfWarOn = FALSE;
 	m_jabberOn = FALSE;
 	m_munkeeOn = FALSE;
 	m_showCollisionExtents = FALSE;
+  m_showAudioLocations = FALSE;
 	m_debugCamera = FALSE;
 	m_specialPowerUsesDelay = TRUE;
 	m_debugVisibility = FALSE;
@@ -566,8 +581,6 @@ GlobalData::GlobalData()
 	m_debugCashValueMap = FALSE;
 	m_maxDebugValue = 10000;
 	m_debugCashValueMapTileDuration = LOGICFRAMES_PER_SECOND; // Changed By Sadullah Nader
-	m_debugIgnoreAsserts = FALSE;
-	m_debugIgnoreStackTrace = FALSE;
 	m_vTune = false;
 	m_checkForLeaks = TRUE;
 	m_benchmarkTimer = -1;
@@ -585,6 +598,15 @@ GlobalData::GlobalData()
 	m_useLocalMOTD = FALSE;
 	m_baseStatsDir = ".\\";
 	m_MOTDPath = "MOTD.txt";
+	m_extraLogging = FALSE;
+#endif
+
+#ifdef DEBUG_CRASHING
+	m_debugIgnoreAsserts = FALSE;
+#endif
+
+#ifdef DEBUG_STACKTRACE
+	m_debugIgnoreStackTrace = FALSE;
 #endif
 
 	m_playStats = -1;
@@ -598,9 +620,10 @@ GlobalData::GlobalData()
 	m_dumpAssetUsage = FALSE;
 	m_framesPerSecondLimit = 0;
 	m_chipSetType = 0;
+	m_headless = FALSE;
 	m_windowed = 0;
-	m_xResolution = 800;
-	m_yResolution = 600;
+	m_xResolution = DEFAULT_DISPLAY_WIDTH;
+	m_yResolution = DEFAULT_DISPLAY_HEIGHT;
 	m_maxShellScreens = 0;
 	m_useCloudMap = FALSE;
 	m_use3WayTerrainBlends = 1;
@@ -636,7 +659,7 @@ GlobalData::GlobalData()
 	m_waterPositionX = 0.0f;
 	m_waterPositionY = 0.0f;
 	m_waterPositionZ = 0.0f;
-	m_waterExtentX = 0.0f;	
+	m_waterExtentX = 0.0f;
 	m_waterExtentY = 0.0f;
 	m_waterType = 0;
 	m_featherWater = FALSE;
@@ -664,7 +687,7 @@ GlobalData::GlobalData()
 		//Added By Sadullah Nader
 		//Initializations missing and needed
 		m_vertexWaterAvailableMaps[i].clear();
-	}  // end for i
+	}
 
 	m_skyBoxPositionZ = 0.0f;
 	m_drawSkyBox = FALSE;
@@ -735,7 +758,7 @@ GlobalData::GlobalData()
 
 	for (j=TIME_OF_DAY_FIRST; j<TIME_OF_DAY_COUNT; j++)
 		m_infantryLightScale[j] = 1.5f;
-	
+
 	m_scriptOverrideInfantryLightScale = -1.0f;
 
 	m_numGlobalLights = 3;
@@ -761,7 +784,7 @@ GlobalData::GlobalData()
 
 	m_useFX = TRUE;
 
-//	m_inGame = FALSE;	
+//	m_inGame = FALSE;
 
 	m_noDraw = 0;
 	m_particleScale = 1.0f;
@@ -773,7 +796,7 @@ GlobalData::GlobalData()
 	m_autoSmokeParticleMediumMax = 0;
 	m_autoSmokeParticleLargeMax = 0;
 	m_autoAflameParticleMax = 0;
-  
+
 	// Added By Sadullah Nader
 	// Initializations missing and needed
 	m_autoFireParticleSmallPrefix.clear();
@@ -798,16 +821,19 @@ GlobalData::GlobalData()
 	m_drawEntireTerrain = FALSE;
 	m_maxParticleCount = 0;
 	m_maxFieldParticleCount = 30;
-	
+
 	// End Add
 
 	m_debugAI = AI_DEBUG_NONE;
+	m_debugSupplyCenterPlacement = FALSE;
 	m_debugAIObstacles = FALSE;
 	m_showClientPhysics = TRUE;
 	m_showTerrainNormals = FALSE;
 	m_showObjectHealth = FALSE;
 
 	m_particleEdit = FALSE;
+
+	m_viewportHeightScale = 0.80f; // Default value for the original Control Bar.
 
 	m_cameraPitch = 0.0f;
 	m_cameraYaw = 0.0f;
@@ -849,7 +875,10 @@ GlobalData::GlobalData()
 
 	m_standardMinefieldDensity = 0.01f;
 	m_standardMinefieldDistance = 40.0f;
-	
+
+	m_objectPlacementOpacity = 0.45f;
+	m_objectPlacementShadows = TRUE;
+
 	m_groupSelectMinSelectSize = 5;
 	m_groupSelectVolumeBase = 0.5f;
 	m_groupSelectVolumeIncrement = 0.02f;
@@ -903,10 +932,17 @@ GlobalData::GlobalData()
 	m_firewallPortAllocationDelta = 0;
 	m_loadScreenDemo = FALSE;
 	m_disableRender = false;
-	
+
 	m_saveCameraInReplay = FALSE;
 	m_useCameraInReplay = FALSE;
+	m_enablePlayerObserver = FALSE;
 
+	m_networkLatencyFontSize = 8;
+	m_renderFpsFontSize = 8;
+	m_systemTimeFontSize = 8;
+	m_gameTimeFontSize = 8;
+
+	m_showMoneyPerMinute = FALSE;
 
 	m_debugShowGraphicalFramerate = FALSE;
 
@@ -936,6 +972,9 @@ GlobalData::GlobalData()
 	m_initialFile.clear();
 	m_pendingFile.clear();
 
+	m_simulateReplays.clear();
+	m_simulateReplayJobs = SIMULATE_REPLAYS_SEQUENTIAL;
+
 	for (i = LEVEL_FIRST; i <= LEVEL_LAST; ++i)
 		m_healthBonus[i] = 1.0f;
 
@@ -953,79 +992,30 @@ GlobalData::GlobalData()
 	m_shellMapName.set("Maps\\ShellMap1\\ShellMap1.map");
 	m_shellMapOn =TRUE;
 	m_playIntro = TRUE;
+	m_playSizzle = TRUE;
 	m_afterIntro = FALSE;
 	m_allowExitOutOfMovies = FALSE;
 	m_loadScreenRender = FALSE;
-  m_musicVolumeFactor = 0.5f;
- 	m_SFXVolumeFactor = 0.5f;
-  m_voiceVolumeFactor = 0.5f;
-  m_3DSoundPref = false;
 
 	m_keyboardDefaultScrollFactor = m_keyboardScrollFactor = 0.5f;
+	m_drawScrollAnchor = FALSE;
+	m_moveScrollAnchor = FALSE;
 	m_scrollAmountCutoff = 10.0f;
 	m_cameraAdjustSpeed = 0.1f;
 	m_enforceMaxCameraHeight = TRUE;
-	
+
 	m_animateWindows = TRUE;
-	
+
 	m_iniCRC = 0;
 	m_exeCRC = 0;
-	
-	// lets CRC the executable!  Whee!
-	const Int blockSize = 65536;
-	Char buffer[ _MAX_PATH ];
-	CRC exeCRC;
-	GetModuleFileName( NULL, buffer, sizeof( buffer ) );
-	File *fp = TheFileSystem->openFile(buffer, File::READ | File::BINARY);
-	if (fp != NULL) {
-		unsigned char crcBlock[blockSize];
-		Int amtRead = 0;
-		while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
-		{
-			exeCRC.computeCRC(crcBlock, amtRead);
-		}
-		fp->close();
-		fp = NULL;
-	}
-	if (TheVersion)
-	{
-		UnsignedInt version = TheVersion->getVersionNumber();
-		exeCRC.computeCRC( &version, sizeof(UnsignedInt) );
-	}
-	// Add in MP scripts to the EXE CRC, since the game will go out of sync if they change
-	fp = TheFileSystem->openFile("Data\\Scripts\\SkirmishScripts.scb", File::READ | File::BINARY);
-	if (fp != NULL) {
-		unsigned char crcBlock[blockSize];
-		Int amtRead = 0;
-		while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
-		{
-			exeCRC.computeCRC(crcBlock, amtRead);
-		}
-		fp->close();
-		fp = NULL;
-	}
-	fp = TheFileSystem->openFile("Data\\Scripts\\MultiplayerScripts.scb", File::READ | File::BINARY);
-	if (fp != NULL) {
-		unsigned char crcBlock[blockSize];
-		Int amtRead = 0;
-		while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
-		{
-			exeCRC.computeCRC(crcBlock, amtRead);
-		}
-		fp->close();
-		fp = NULL;
-	}
 
-	m_exeCRC = exeCRC.get();
-	DEBUG_LOG(("EXE CRC: 0x%8.8X\n", m_exeCRC));
-	
 	m_movementPenaltyDamageState = BODY_REALLYDAMAGED;
-	
+
 	m_shouldUpdateTGAToDDS = FALSE;
-	
+
 	// Default DoubleClickTime to System double click time.
 	m_doubleClickTimeMS = GetDoubleClickTime(); // Note: This is actual MS, not frames.
-	
+
 #ifdef DUMP_PERF_STATS
 	m_dumpPerformanceStatistics = FALSE;
 #endif
@@ -1034,7 +1024,7 @@ GlobalData::GlobalData()
 
 	m_keyboardCameraRotateSpeed = 0.1f;
 
-}  // end GlobalData
+}
 
 //-------------------------------------------------------------------------------------------------
 AsciiString GlobalData::getPath_UserData() const
@@ -1046,15 +1036,16 @@ AsciiString GlobalData::getPath_UserData() const
 //-------------------------------------------------------------------------------------------------
 GlobalData::~GlobalData( void )
 {
-	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("~GlobalData: theOriginal is not original\n") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("~GlobalData: theOriginal is not original") );
 
-	if (m_weaponBonusSet)
-		m_weaponBonusSet->deleteInstance();
+	deleteInstance(m_weaponBonusSet);
 
-	if( m_theOriginal == this )
+	if( m_theOriginal == this )	{
 		m_theOriginal = NULL;
+		TheWritableGlobalData = NULL;
+	}
 
-}  // end ~GlobalData
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -1083,10 +1074,11 @@ Bool GlobalData::setTimeOfDay( TimeOfDay tod )
 //-------------------------------------------------------------------------------------------------
 GlobalData *GlobalData::newOverride( void )
 {
+	// TheSuperHackers @info This copy is not implemented in VS6 builds
 	GlobalData *override = NEW GlobalData;
 
 	// copy the data from the latest override (TheWritableGlobalData) to the newly created instance
-	DEBUG_ASSERTCRASH( TheWritableGlobalData, ("GlobalData::newOverride() - no existing data\n") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData, ("GlobalData::newOverride() - no existing data") );
 	*override = *TheWritableGlobalData;
 
 	//
@@ -1101,12 +1093,12 @@ GlobalData *GlobalData::newOverride( void )
 
 	return override;
 
-}  // end newOveride
+}
 
 //-------------------------------------------------------------------------------------------------
 void GlobalData::init( void )
 {
-	// nothing
+	m_exeCRC = generateExeCRC();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1133,16 +1125,16 @@ void GlobalData::reset( void )
 		// set next as top
 		TheWritableGlobalData = next;
 
-	}  // end while
+	}
 
 	//
 	// we now have the one single global data in TheWritableGlobalData singleton, lets sanity check
 	// some of all that
 	//
-	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("ResetGlobalData: theOriginal is not original\n") );
-	DEBUG_ASSERTCRASH( TheWritableGlobalData == GlobalData::m_theOriginal, ("ResetGlobalData: oops\n") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("ResetGlobalData: theOriginal is not original") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData == GlobalData::m_theOriginal, ("ResetGlobalData: oops") );
 
-}  // end ResetGlobalData
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse GameData entry */
@@ -1152,21 +1144,21 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	if( TheWritableGlobalData && ini->getLoadType() != INI_LOAD_MULTIFILE)
 	{
 
-		// 
+		//
 		// if the type of loading we're doing creates override data, we need to
 		// be loading into a new override item
 		//
 		if( ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES )
 			TheWritableGlobalData->newOverride();
 
-	}  // end if
+	}
 	else if (!TheWritableGlobalData)
 	{
 
 		// we don't have any global data instance at all yet, create one
 		TheWritableGlobalData = NEW GlobalData;
 
-	}  // end else
+	}
 	// If we're multifile, then continue loading stuff into the Global Data as normal.
 
 	// parse the ini weapon definition
@@ -1189,15 +1181,24 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	OptionPreferences optionPref;
  	TheWritableGlobalData->m_useAlternateMouse = optionPref.getAlternateMouseModeEnabled();
 	TheWritableGlobalData->m_keyboardScrollFactor = optionPref.getScrollFactor();
+	TheWritableGlobalData->m_drawScrollAnchor = optionPref.getDrawScrollAnchor();
+	TheWritableGlobalData->m_moveScrollAnchor = optionPref.getMoveScrollAnchor();
 	TheWritableGlobalData->m_defaultIP = optionPref.getLANIPAddress();
 	TheWritableGlobalData->m_firewallSendDelay = optionPref.getSendDelay();
 	TheWritableGlobalData->m_firewallBehavior = optionPref.getFirewallBehavior();
 	TheWritableGlobalData->m_firewallPortAllocationDelta = optionPref.getFirewallPortAllocationDelta();
 	TheWritableGlobalData->m_firewallPortOverride = optionPref.getFirewallPortOverride();
-	
+
 	TheWritableGlobalData->m_saveCameraInReplay = optionPref.saveCameraInReplays();
 	TheWritableGlobalData->m_useCameraInReplay = optionPref.useCameraInReplays();
-	
+	TheWritableGlobalData->m_enablePlayerObserver = optionPref.getPlayerObserverEnabled();
+
+	TheWritableGlobalData->m_networkLatencyFontSize = optionPref.getNetworkLatencyFontSize();
+	TheWritableGlobalData->m_renderFpsFontSize = optionPref.getRenderFpsFontSize();
+	TheWritableGlobalData->m_systemTimeFontSize = optionPref.getSystemTimeFontSize();
+	TheWritableGlobalData->m_gameTimeFontSize = optionPref.getGameTimeFontSize();
+	TheWritableGlobalData->m_showMoneyPerMinute = optionPref.getShowMoneyPerMinute();
+
 	Int val=optionPref.getGammaValue();
 	//generate a value between 0.6 and 2.0.
 	if (val < 50)
@@ -1218,3 +1219,87 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	TheWritableGlobalData->m_yResolution = yres;
 }
 
+void GlobalData::parseCustomDefinition()
+{
+	if (addon::HasFullviewportDat())
+	{
+		// TheSuperHackers @tweak xezon 03/08/2025 Force full viewport for 'Control Bar Pro' Addons like GenTool did it.
+		m_viewportHeightScale = 1.0f;
+	}
+}
+
+UnsignedInt GlobalData::generateExeCRC()
+{
+	DEBUG_ASSERTCRASH(TheFileSystem != NULL, ("TheFileSystem is NULL"));
+
+	// lets CRC the executable!  Whee!
+	const Int blockSize = 65536;
+	CRC exeCRC;
+	File *fp;
+	// TheSuperHackers @tweak SkyAero/xezon 27/05/2025
+	// Simulate the EXE's CRC value to force Network and Replay compatibility with another build.
+#if (defined(_MSC_VER) && _MSC_VER < 1300) && RETAIL_COMPATIBLE_CRC
+
+#define GENERALS_108_CD_EXE_CRC    0x93d1eab4u
+#define GENERALS_108_STEAM_EXE_CRC 0x8d6e4dd7u
+#define GENERALS_108_EAAPP_EXE_CRC 0xb07fbd50u
+
+	exeCRC.set(GENERALS_108_CD_EXE_CRC);
+	DEBUG_LOG(("Fake EXE CRC is 0x%8.8X", exeCRC.get()));
+
+#else
+	{
+		Char buffer[ _MAX_PATH ];
+		GetModuleFileName( NULL, buffer, sizeof( buffer ) );
+		fp = TheFileSystem->openFile(buffer, File::READ | File::BINARY);
+		if (fp != NULL) {
+			unsigned char crcBlock[blockSize];
+			Int amtRead = 0;
+			while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
+			{
+				exeCRC.computeCRC(crcBlock, amtRead);
+			}
+			DEBUG_LOG(("EXE CRC is 0x%8.8X", exeCRC.get()));
+			fp->close();
+			fp = NULL;
+		}
+		else {
+			DEBUG_CRASH(("Executable file has failed to open"));
+		}
+	}
+#endif
+
+	UnsignedInt version = 0;
+	if (TheVersion)
+	{
+		version = TheVersion->getVersionNumber();
+		exeCRC.computeCRC( &version, sizeof(UnsignedInt) );
+	}
+	// Add in MP scripts to the EXE CRC, since the game will go out of sync if they change
+	fp = TheFileSystem->openFile("Data\\Scripts\\SkirmishScripts.scb", File::READ | File::BINARY);
+	if (fp != NULL) {
+		unsigned char crcBlock[blockSize];
+		Int amtRead = 0;
+		while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
+		{
+			exeCRC.computeCRC(crcBlock, amtRead);
+		}
+		fp->close();
+		fp = NULL;
+	}
+	fp = TheFileSystem->openFile("Data\\Scripts\\MultiplayerScripts.scb", File::READ | File::BINARY);
+	if (fp != NULL) {
+		unsigned char crcBlock[blockSize];
+		Int amtRead = 0;
+		while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
+		{
+			exeCRC.computeCRC(crcBlock, amtRead);
+		}
+		fp->close();
+		fp = NULL;
+	}
+
+	DEBUG_LOG(("EXE+Version(%d.%d)+SCB CRC is 0x%8.8X", version >> 16, version & 0xffff, exeCRC.get()));
+
+	return exeCRC.get();
+}

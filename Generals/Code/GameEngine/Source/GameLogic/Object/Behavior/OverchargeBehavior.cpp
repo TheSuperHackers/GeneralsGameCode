@@ -30,7 +30,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Radar.h"
@@ -43,11 +43,6 @@
 #include "GameClient/InGameUI.h"
 
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -57,16 +52,16 @@ OverchargeBehaviorModuleData::OverchargeBehaviorModuleData( void )
 	m_healthPercentToDrainPerSecond = 0.0f;
 	m_notAllowedWhenHealthBelowPercent = 0.0f;
 
-}  // end OverchargeBehaviorModuleData
+}
 
 //-------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void OverchargeBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p ) 
+/*static*/ void OverchargeBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
 
   UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "HealthPercentToDrainPerSecond", INI::parsePercentToReal,	NULL, offsetof( OverchargeBehaviorModuleData, m_healthPercentToDrainPerSecond ) },
 		{ "NotAllowedWhenHealthBelowPercent", INI::parsePercentToReal, NULL, offsetof( OverchargeBehaviorModuleData, m_notAllowedWhenHealthBelowPercent ) },
@@ -75,7 +70,7 @@ OverchargeBehaviorModuleData::OverchargeBehaviorModuleData( void )
 
   p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +78,7 @@ OverchargeBehaviorModuleData::OverchargeBehaviorModuleData( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OverchargeBehavior::OverchargeBehavior( Thing *thing, const ModuleData* moduleData ) 
+OverchargeBehavior::OverchargeBehavior( Thing *thing, const ModuleData* moduleData )
 									 : UpdateModule( thing, moduleData )
 {
 
@@ -92,14 +87,14 @@ OverchargeBehavior::OverchargeBehavior( Thing *thing, const ModuleData* moduleDa
 	// start off sleeping forever until we become active
 	setWakeFrame( getObject(), UPDATE_SLEEP_FOREVER );
 
-}  // end OverchargeBehavior
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 OverchargeBehavior::~OverchargeBehavior( void )
 {
 
-}  // end ~OverchargeBehavior
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -140,25 +135,25 @@ UpdateSleepTime OverchargeBehavior::update( void )
 				// do radar event
 				TheRadar->createEvent( us->getPosition(), RADAR_EVENT_INFORMATION );
 
-			}  // end of
+			}
 
 			// do nothing else
 			return UPDATE_SLEEP_NONE;
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	return UPDATE_SLEEP_NONE;
 
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void OverchargeBehavior::onDamage( DamageInfo *damageInfo )
 {
 
-}  // end onDie
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Flip the state of our 'overcharge-ness' */
@@ -169,7 +164,7 @@ void OverchargeBehavior::toggle( void )
 	// just toggle using enable()
 	enable( !m_overchargeActive );
 
-}  // end toggle
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Enable or disable an overcharge */
@@ -200,13 +195,13 @@ void OverchargeBehavior::enable( Bool enable )
 
 			// we are no longer active
 			m_overchargeActive = FALSE;
-			
+
 			// sleep forever
 			setWakeFrame( us, UPDATE_SLEEP_FOREVER );
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 	else
 	{
 
@@ -234,11 +229,11 @@ void OverchargeBehavior::enable( Bool enable )
 			// need to update every frame now
 			setWakeFrame( us, UPDATE_SLEEP_NONE );
 
-		}  // end if
+		}
 
-	}  // end else
+	}
 
-}  // end enable
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -256,7 +251,7 @@ void OverchargeBehavior::onDelete( void )
 
 	m_overchargeActive = FALSE;
 
-}  // end onDelete
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -267,7 +262,7 @@ void OverchargeBehavior::onCapture( Player *oldOwner, Player *newOwner )
 	if( m_overchargeActive == FALSE )
 		return;
 
-	if (getObject()->isDisabled()) 
+	if (getObject()->isDisabled())
 		return;
 
 	// remove power bonus from old owner
@@ -278,7 +273,7 @@ void OverchargeBehavior::onCapture( Player *oldOwner, Player *newOwner )
 	if( newOwner )
 		newOwner->addPowerBonus( getObject() );
 
-}  // end onCapture
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -289,7 +284,7 @@ void OverchargeBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -310,7 +305,7 @@ void OverchargeBehavior::xfer( Xfer *xfer )
 	// overcharge active
 	xfer->xferBool( &m_overchargeActive );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -320,9 +315,9 @@ void OverchargeBehavior::loadPostProcess( void )
 
 	// extend base class
 	UpdateModule::loadPostProcess();
-	
+
 	// Our effect is a fire and forget effect, not an upgrade state that is itself saved, so need to re-fire.
 	if( m_overchargeActive && getObject()->getControllingPlayer() )
 		getObject()->getControllingPlayer()->addPowerBonus( getObject() );
 
-}  // end loadPostProcess
+}

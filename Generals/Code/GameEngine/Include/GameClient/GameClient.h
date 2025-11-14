@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _GAME_INTERFACE_H_
-#define _GAME_INTERFACE_H_
-
 #include "Common/GameType.h"
 #include "Common/MessageStream.h"		// for GameMessageTranslator
 #include "Common/Snapshot.h"
@@ -56,7 +53,7 @@ class VideoPlayerInterface;
 struct RayEffectData;
 
 /// Function pointers for use by GameClient callback functions.
-typedef void (*GameClientFuncPtr)( Drawable *draw, void *userData ); 
+typedef void (*GameClientFuncPtr)( Drawable *draw, void *userData );
 typedef std::hash_map<DrawableID, Drawable *, rts::hash<DrawableID>, rts::equal_to<DrawableID> > DrawablePtrHash;
 typedef DrawablePtrHash::iterator DrawablePtrHashIt;
 
@@ -70,12 +67,12 @@ class GameClientMessageDispatcher : public GameMessageTranslator
 public:
 	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
 	virtual ~GameClientMessageDispatcher() { }
-};	
+};
 
 
 //-----------------------------------------------------------------------------
 /**
- * The GameClient class is used to instantiate a singleton which 
+ * The GameClient class is used to instantiate a singleton which
  * implements the interface to all GameClient operations such as Drawable access and user-interface functions.
  */
 class GameClient : public SubsystemInterface,
@@ -95,6 +92,10 @@ public:
 	virtual void setFrame( UnsignedInt frame ) { m_frame = frame; }			///< Set the GameClient's internal frame number
 	virtual void registerDrawable( Drawable *draw );										///< Given a drawable, register it with the GameClient and give it a unique ID
 
+	void step(); ///< Do one fixed time step
+
+	void updateHeadless();
+
 	void addDrawableToLookupTable( Drawable *draw );			///< add drawable ID to hash lookup table
 	void removeDrawableFromLookupTable( Drawable *draw );	///< remove drawable ID from hash lookup table
 
@@ -105,12 +106,13 @@ public:
 
 	virtual Drawable *firstDrawable( void ) { return m_drawableList; }
 
-	virtual GameMessage::Type evaluateContextCommand( Drawable *draw, 
-																										const Coord3D *pos, 
+	virtual GameMessage::Type evaluateContextCommand( Drawable *draw,
+																										const Coord3D *pos,
 																										CommandTranslator::CommandEvaluateType cmdType );
 	void addTextBearingDrawable( Drawable *tbd );
 	void flushTextBearingDrawables( void);
-	
+	void updateFakeDrawables(void);
+
 	virtual void removeFromRayEffects( Drawable *draw );  ///< remove the drawable from the ray effect system if present
 	virtual void getRayEffectData( Drawable *draw, RayEffectData *effectData );  ///< get ray effect data for a drawable
 	virtual void createRayEffectByTemplate( const Coord3D *start, const Coord3D *end, const ThingTemplate* tmpl ) = 0;  ///< create effect needing start and end location
@@ -122,7 +124,7 @@ public:
 
 	virtual void iterateDrawablesInRegion( Region3D *region, GameClientFuncPtr userFunc, void *userData );		///< Calls userFunc for each drawable contained within the region
 
-	virtual Drawable *friend_createDrawable( const ThingTemplate *thing, DrawableStatus statusBits = DRAWABLE_STATUS_NONE ) = 0;
+	virtual Drawable *friend_createDrawable( const ThingTemplate *thing, DrawableStatusBits statusBits = DRAWABLE_STATUS_DEFAULT ) = 0;
 	virtual void destroyDrawable( Drawable *draw );											///< Destroy the given drawable
 
 	virtual void setTimeOfDay( TimeOfDay tod );													///< Tell all the drawables what time of day it is now
@@ -134,7 +136,8 @@ public:
 
 	//---------------------------------------------------------------------------
 	virtual void setTeamColor( Int red, Int green, Int blue ) = 0;  ///< @todo superhack for demo, remove!!!
-	virtual void adjustLOD( Int adj ) = 0; ///< @todo hack for evaluation, remove.
+
+	virtual void setTextureLOD( Int level ) = 0;
 
 	virtual void releaseShadows(void);	///< frees all shadow resources used by this module - used by Options screen.
 	virtual void allocateShadows(void); ///< create shadow resources if not already present. Used by Options screen.
@@ -142,7 +145,7 @@ public:
   virtual void preloadAssets( TimeOfDay timeOfDay );									///< preload assets
 
 	virtual Drawable *getDrawableList( void ) { return m_drawableList; }
-	
+
 	void resetRenderedObjectCount() { m_renderedObjectCount = 0; }
 	UnsignedInt getRenderedObjectCount() const { return m_renderedObjectCount; }
 	void incrementRenderedObjectCount() { m_renderedObjectCount++; }
@@ -199,15 +202,15 @@ private:
 	DrawableTOCEntry *findTOCEntryByName( AsciiString name );	///< find DrawableTOC by name
 	DrawableTOCEntry *findTOCEntryById( UnsignedShort id );		///< find DrawableTOC by id
 	void xferDrawableTOC( Xfer *xfer );												///< save/load drawable TOC for current state of map
-	
+
 	typedef std::list< Drawable* > TextBearingDrawableList;
 	typedef TextBearingDrawableList::iterator TextBearingDrawableListIterator;
 	TextBearingDrawableList m_textBearingDrawableList;	///< the drawables that have registered here during drawablepostdraw
 };
 
 //Kris: Try not to use this if possible. In every case I found in the code base, the status was always Drawable::SELECTED.
-//      There is another iterator already in game that stores JUST selected drawables. Take a look at the efficient 
-//      example, InGameUI::getAllSelectedDrawables(). 
+//      There is another iterator already in game that stores JUST selected drawables. Take a look at the efficient
+//      example, InGameUI::getAllSelectedDrawables().
 #define BEGIN_ITERATE_DRAWABLES_WITH_STATUS(STATUS, DRAW) \
 	do \
 	{ \
@@ -216,7 +219,7 @@ private:
 		{ \
 			_xq_nextDrawable = DRAW->getNextDrawable(); \
 			if (DRAW->getStatusFlags() & (STATUS)) \
-			{ 
+			{
 
 #define END_ITERATE_DRAWABLES \
 			} \
@@ -227,4 +230,45 @@ private:
 // the singleton
 extern GameClient *TheGameClient;
 
-#endif // _GAME_INTERFACE_H_
+
+// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+// Some information about the architecture and headless mode:
+// The game is structurally separated into GameLogic and GameClient.
+// The Logic is responsible for everything that affects the game mechanic and what is synchronized over
+// the network. The Client is responsible for rendering, input, audio and similar stuff.
+//
+// Unfortunately there are some places in the code that make the Logic depend on the Client.
+// (Search for @logic-client-separation)
+// That means if we want to run the game headless, we cannot just disable the Client. We need to disable
+// the parts in the Client that don't work in headless mode and need to keep the parts that are needed
+// to run the Logic.
+// The following describes which parts we disable in headless mode:
+//
+//	GameEngine:
+//		TheGameClient is partially disabled:
+//			TheKeyboard = NULL
+//			TheMouse = NULL
+//			TheDisplay is partially disabled:
+//				m_3DInterfaceScene = NULL
+//				m_2DScene = NULL
+//				m_3DScene = NULL
+//				(m_assetManager remains!)
+//			TheWindowManager = GameWindowManagerDummy
+//			TheIMEManager = NULL
+//			TheTerrainVisual is partially disabled:
+//				TheTerrainTracksRenderObjClassSystem = NULL
+//				TheW3DShadowManager = NULL
+//				TheWaterRenderObj = NULL
+//				TheSmudgeManager = NULL
+//				TheTerrainRenderObject is partially disabled:
+//					m_treeBuffer = NULL
+//					m_propBuffer = NULL
+//					m_bibBuffer = NULL
+//					m_bridgeBuffer is partially disabled:
+//						m_vertexBridge = NULL
+//						m_indexBridge = NULL
+//						m_vertexMaterial = NULL
+//					m_waypointBuffer = NULL
+//					m_roadBuffer = NULL
+//					m_shroud = NULL
+//		TheRadar = RadarDummy

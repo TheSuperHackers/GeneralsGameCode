@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _W3D_TANKTRUCK_DRAW_H_
-#define _W3D_TANKTRUCK_DRAW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DrawModule.h"
 #include "Common/AudioEventRTS.h"
@@ -81,7 +78,7 @@ class W3DTankTruckDraw : public W3DModelDraw
 
  	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DTankTruckDraw, "W3DTankTruckDraw" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DTankTruckDraw, W3DTankTruckDrawModuleData )
-		
+
 public:
 
 	W3DTankTruckDraw( Thing *thing, const ModuleData* moduleData );
@@ -152,6 +149,3 @@ protected:
 	void updateTreadObjects(void);												///< update pointers to sub-objects like treads.
 	void updateTreadPositions(Real uvDelta);									///< update uv coordinates on each tread
 };
-
-#endif // _W3D_TANKTRUCK_DRAW_H_
-

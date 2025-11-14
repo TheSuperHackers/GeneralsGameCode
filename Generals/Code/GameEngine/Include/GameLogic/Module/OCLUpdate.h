@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __OCL_UPDATE_H_
-#define __OCL_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -73,7 +70,7 @@ public:
 	UnsignedInt getRemainingFrames() const; ///< For feedback display
 
 protected:
-	
+
 	UnsignedInt m_nextCreationFrame;
 	UnsignedInt m_timerStartedFrame;
 
@@ -81,6 +78,3 @@ protected:
 	void setNextCreationFrame();
 
 };
-
-#endif
-

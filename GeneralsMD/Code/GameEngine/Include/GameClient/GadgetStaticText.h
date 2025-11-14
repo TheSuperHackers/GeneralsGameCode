@@ -24,12 +24,12 @@
 
 // FILE: GadgetStaticText.h ///////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -40,7 +40,7 @@
 //
 // Desc:       Helpful interface for StaticTexts
 //
-// StaticText IMAGE/COLOR organization 
+// StaticText IMAGE/COLOR organization
 // When control is enabled:
 //   enabledDrawData[ 0 ] is the background image for the whole enabled control
 //
@@ -54,9 +54,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __GADGETSTATICTEXT_H_
-#define __GADGETSTATICTEXT_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -101,6 +98,3 @@ inline Color		 GadgetStaticTextGetHiliteColor( GameWindow *g )								{ return g
 inline Color		 GadgetStaticTextGetHiliteBorderColor( GameWindow *g )					{ return g->winGetHiliteBorderColor( 0 ); }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GADGETSTATICTEXT_H_
-

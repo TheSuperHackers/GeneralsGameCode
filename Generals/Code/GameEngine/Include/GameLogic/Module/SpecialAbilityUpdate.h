@@ -29,20 +29,17 @@
 
 #pragma once
 
-#ifndef __SPECIAL_ABILITY_UPDATE_H
-#define __SPECIAL_ABILITY_UPDATE_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/INI.h"
-#include "GameLogic/Module/UpdateModule.h"
-#include "GameClient/ParticleSys.h"	
+#include "GameLogic/Module/SpecialPowerUpdateModule.h"
+#include "GameClient/ParticleSys.h"
 
 class DamageInfo;
 class SpecialPowerTemplate;
 class SpecialPowerModule;
 class FXList;
-enum SpecialPowerType;
+enum SpecialPowerType CPP_11(: Int);
 
 #define SPECIAL_ABILITY_HUGE_DISTANCE 10000000.0f
 
@@ -113,11 +110,11 @@ public:
 		m_preTriggerUnstealthFrames = 0;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			//Primary data values
 			{ "SpecialPowerTemplate",				INI::parseSpecialPowerTemplate,		NULL, offsetof( SpecialAbilityUpdateModuleData, m_specialPowerTemplate ) },
@@ -130,7 +127,7 @@ public:
 			{ "PreTriggerUnstealthTime",	  INI::parseDurationUnsignedInt,		NULL, offsetof( SpecialAbilityUpdateModuleData, m_preTriggerUnstealthFrames ) },
 			{ "SkipPackingWithNoTarget",		INI::parseBool,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_skipPackingWithNoTarget ) },
 			{ "PackUnpackVariationFactor",	INI::parseReal,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_packUnpackVariationFactor ) },
- 
+
 			//Secondary data values
 			{ "SpecialObject",							INI::parseAsciiString,						NULL, offsetof( SpecialAbilityUpdateModuleData, m_specialObjectName ) },
 			{ "SpecialObjectAttachToBone",	INI::parseAsciiString,						NULL, offsetof( SpecialAbilityUpdateModuleData, m_specialObjectAttachToBoneName ) },
@@ -173,11 +170,12 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// SpecialPowerUpdateInterface
-	virtual void initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, UnsignedInt commandOptions, Int locationCount );
+	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions );
 	virtual Bool isSpecialAbility() const { return true; }
 	virtual Bool isSpecialPower() const { return false; }
 	virtual Bool isActive() const { return m_active; }
-	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const { return false; }
+	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const { return false; } //Is it active now?
+	virtual Bool doesSpecialPowerHaveOverridableDestination() const { return false; }	//Does it have it, even if it's not active?
 	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) {}
 	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const;
 
@@ -186,7 +184,7 @@ public:
 	// UpdateModule
 	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return this; }
 	virtual CommandOption getCommandOption() const { return (CommandOption)0; }
-	virtual UpdateSleepTime update();	
+	virtual UpdateSleepTime update();
 
 	// ??? ugh, public stuff that shouldn't be -- hell yeah!
 	UnsignedInt getSpecialObjectCount() const;
@@ -249,13 +247,13 @@ private:
 
 	enum PackingState
 	{
-		STATE_NONE, 
-		STATE_PACKING, 
+		STATE_NONE,
+		STATE_PACKING,
 		STATE_UNPACKING,
-		STATE_PACKED,		
-		STATE_UNPACKED,	
+		STATE_PACKED,
+		STATE_UNPACKED,
 	};
-	
+
 	AudioEventRTS									m_prepSoundLoop;
 	UnsignedInt										m_prepFrames;
 	UnsignedInt										m_animFrames;	//Used for packing/unpacking unit before or after using ability.
@@ -273,5 +271,3 @@ private:
 	Bool													m_withinStartAbilityRange;
 	Bool													m_doDisableFXParticles;      // smaller targets cause this flag to toggle, making the particle effect more sparse
 };
-
-#endif // _SPECIAL_POWER_UPDATE_H_

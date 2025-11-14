@@ -16,12 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TEXTURELOADER_H
-#define TEXTURELOADER_H
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #include "always.h"
 #include "texture.h"
@@ -32,7 +27,7 @@ class TextureLoadTaskClass;
 
 class TextureLoader
 {
-	static void Init_Load_Task(TextureClass* tc);
+	static void Init_Load_Task(TextureBaseClass* tc);
 
 	static bool Load_Uncompressed_Mipmap_Levels_From_TGA(TextureLoadTaskClass* texture);
 
@@ -41,13 +36,13 @@ public:
 	static void Deinit();
 
 	// Modify given texture size to nearest valid size on current hardware.
-	static void Validate_Texture_Size(unsigned& width, unsigned& height);
+	static void Validate_Texture_Size(unsigned& width, unsigned& height, unsigned& depth);
 
 	// Adds a loading task to the system. The task if processed in a separate
 	// thread as soon as possible. The task will appear in finished tasks list
 	// when it's been completed. The texture will be refreshed on the next
 	// update call after appearing to the finished tasks list.
-	static void Add_Load_Task(TextureClass* tc);
+	static void Add_Load_Task(TextureBaseClass* tc);
 	static IDirect3DTexture8* Load_Thumbnail(
 		const StringClass& filename,
 		WW3DFormat texture_format);	// Pass WW3D_FORMAT_UNKNOWN if you don't care
@@ -62,14 +57,14 @@ public:
 	// handling system to load the texture immediatelly next time it enters the main thread. If this function
 	// is called from the main thread the texture is loaded immediatelly.
 	static void Request_High_Priority_Loading(
-		TextureClass* texture,
-		TextureClass::MipCountType mip_level_count);
-	static void	Request_Thumbnail(TextureClass* tc);
+		TextureBaseClass* texture,
+		MipCountType mip_level_count);
+	static void	Request_Thumbnail(TextureBaseClass* tc);
 
 	static void Update();
 	static void Flush_Pending_Load_Tasks();
 
-	static IDirect3DTexture8* Generate_Bumpmap(TextureClass* texture);
+	static IDirect3DTexture8* Generate_Bumpmap(TextureBaseClass* texture);
 
 };
 
@@ -85,13 +80,13 @@ class TextureLoadTaskClass : public W3DMPO
 
 	static TextureLoadTaskClass* FreeTaskListHead;
 
-	TextureClass* Texture;
+	TextureBaseClass* Texture;
 	IDirect3DTexture8 *D3DTexture;
 	unsigned Width;
 	unsigned Height;
 	WW3DFormat Format;
-	unsigned char* LockedSurfacePtr[TextureClass::MIP_LEVELS_MAX];
-	unsigned LockedSurfacePitch[TextureClass::MIP_LEVELS_MAX];
+	unsigned char* LockedSurfacePtr[MIP_LEVELS_MAX];
+	unsigned LockedSurfacePitch[MIP_LEVELS_MAX];
 	unsigned MipLevelCount;
 	unsigned Reduction;
 	TextureLoadTaskClass* Succ;
@@ -102,11 +97,11 @@ class TextureLoadTaskClass : public W3DMPO
 	~TextureLoadTaskClass();
 	TextureLoadTaskClass();
 public:
-	static TextureLoadTaskClass* Get_Instance(TextureClass* tc, bool high_priority);
+	static TextureLoadTaskClass* Get_Instance(TextureBaseClass* tc, bool high_priority);
 	static void Release_Instance(TextureLoadTaskClass* task);
 	static void shutdown(void) {TextureLoadTaskClass *pT; while (FreeTaskListHead) {pT = FreeTaskListHead; FreeTaskListHead = pT->Peek_Succ(); pT->Set_Succ(NULL); delete pT;} };
 
-	void Init(TextureClass* tc,bool high_priority);
+	void Init(TextureBaseClass* tc,bool high_priority);
 	void Deinit();
 
 	unsigned Get_Mip_Level_Count() const { return MipLevelCount; }
@@ -131,12 +126,8 @@ public:
 	TextureLoadTaskClass* Peek_Succ() { return Succ; }
 	void Set_Succ(TextureLoadTaskClass* succ);
 
-	TextureClass* Peek_Texture() { return Texture; }
+	TextureBaseClass* Peek_Texture() { return Texture; }
 	IDirect3DTexture8* Peek_D3D_Texture() { return D3DTexture; }
 
 	void Set_D3D_Texture(IDirect3DTexture8* texture);
 };
-
-#endif
-
-

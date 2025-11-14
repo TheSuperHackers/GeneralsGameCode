@@ -24,16 +24,13 @@
 
 // FILE: Win32GameEngine.h ////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, April 2001
-// Description: 
-//   Device implementation of the game engine ... this is, of course, the 
-//   highest level of the game that creates the necessary interfaces to the 
+// Description:
+//   Device implementation of the game engine ... this is, of course, the
+//   highest level of the game that creates the necessary interfaces to the
 //   devices we need
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __WIN32GAMEENGINE_H_
-#define __WIN32GAMEENGINE_H_
 
 #include "Common/GameEngine.h"
 #include "GameLogic/GameLogic.h"
@@ -64,7 +61,7 @@ public:
 	Win32GameEngine();
 	virtual ~Win32GameEngine();
 
-	virtual void init( void );															///< initialization 
+	virtual void init( void );															///< initialization
 	virtual void reset( void );															///< reset engine
 	virtual void update( void );														///< update the game engine
 	virtual void serviceWindowsOS( void );									///< allow windows maintenance in background
@@ -87,7 +84,7 @@ protected:
 
 protected:
 	UINT m_previousErrorMode;
-};  // end Win32GameEngine
+};
 
 // INLINE -----------------------------------------------------------------------------------------
 inline GameLogic *Win32GameEngine::createGameLogic( void ) { return NEW W3DGameLogic; }
@@ -103,5 +100,3 @@ inline NetworkInterface *Win32GameEngine::createNetwork( void ) { return Network
 inline Radar *Win32GameEngine::createRadar( void ) { return NEW W3DRadar; }
 inline WebBrowser *Win32GameEngine::createWebBrowser( void ) { return NEW CComObject<W3DWebBrowser>; }
 inline AudioManager *Win32GameEngine::createAudioManager( void ) { return NEW MilesAudioManager; }
- 
-#endif  // end __WIN32GAMEENGINE_H_

@@ -24,12 +24,12 @@
 
 // FILE: Thing.h //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -48,13 +48,10 @@
 
 #pragma once
 
-#ifndef __THING_H_
-#define __THING_H_
-
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //-----------------------------------------------------------------------------
 #include "Common/GameMemory.h"
 #include "Common/KindOf.h"
@@ -98,7 +95,7 @@ public:
 
 	Thing( const ThingTemplate *thingTemplate );
 
-	/** 
+	/**
 		return the thing template for this thing.
 	*/
 	const ThingTemplate *getTemplate() const;
@@ -121,6 +118,9 @@ public:
 
 	inline const Coord3D *getPosition() const { return &m_cachedPos; }
 	inline Real getOrientation() const { return m_cachedAngle; }
+
+	Bool isPositioned() const;
+
 	const Coord3D *getUnitDirectionVector2D() const;
 	void getUnitDirectionVector2D(Coord3D& dir) const;
 	void getUnitDirectionVector3D(Coord3D& dir) const;
@@ -161,7 +161,7 @@ private:
 	// since ThingTemplates are shared between many, many Things, the Thing
 	// should never be able to change it.
 	OVERRIDE<ThingTemplate> m_template;	///< reference back to template database
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	AsciiString m_templateName;
 #endif
 	/*
@@ -188,12 +188,9 @@ private:
 	mutable Real			m_cachedAltitudeAboveTerrainOrWater;
 	mutable Int				m_cacheFlags;
 
-}; 
+};
 
 
 //-----------------------------------------------------------------------------
-//           Externals                                                     
+//           Externals
 //-----------------------------------------------------------------------------
-
-#endif // $label
-

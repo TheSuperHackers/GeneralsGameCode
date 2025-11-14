@@ -24,12 +24,12 @@
 
 // FILE: BaikonurLaunchPower.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	Created:	November 2002
@@ -45,15 +45,12 @@
 
 #pragma once
 
-#ifndef __BAIKONUR_LAUNCH_POWER_H_
-#define __BAIKONUR_LAUNCH_POWER_H_
-
 #include "GameLogic/Module/SpecialPowerModule.h"
 
 class Object;
 class SpecialPowerTemplate;
 struct FieldParse;
-enum ScienceType;
+enum ScienceType CPP_11(: Int);
 
 class BaikonurLaunchPowerModuleData : public SpecialPowerModuleData
 {
@@ -64,7 +61,7 @@ public:
 
 	static void buildFieldParse( MultiIniFieldParse& p );
 
-	AsciiString m_detonationObject;		
+	AsciiString m_detonationObject;
 };
 
 
@@ -80,10 +77,8 @@ public:
 	BaikonurLaunchPower( Thing *thing, const ModuleData *moduleData );
 
 	virtual void doSpecialPower( UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, UnsignedInt commandOptions );
+	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
 
 protected:
 
 };
-
-#endif // __BAIKONUR_LAUNCH_POWER_H_

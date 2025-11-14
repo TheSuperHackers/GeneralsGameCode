@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef UNIT_CRATE_COLLIDE_H_
-#define UNIT_CRATE_COLLIDE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
 #include "GameLogic/Module/CrateCollide.h"
@@ -52,11 +49,11 @@ public:
 		m_unitType = "";
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "UnitCount",	INI::parseUnsignedInt,	NULL, offsetof( UnitCrateCollideModuleData, m_unitCount ) },
 			{ "UnitName",		INI::parseAsciiString,	NULL, offsetof( UnitCrateCollideModuleData, m_unitType ) },
@@ -84,5 +81,3 @@ public:
 protected:
 
 };
-
-#endif

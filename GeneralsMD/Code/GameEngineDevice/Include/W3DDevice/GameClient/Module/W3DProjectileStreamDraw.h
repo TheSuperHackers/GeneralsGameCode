@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _W3D_PROJECTILE_STREAM_DRAW_H_
-#define _W3D_PROJECTILE_STREAM_DRAW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DrawModule.h"
 #include "GameLogic/Module/ProjectileStreamUpdate.h" // I am the draw module for this update.  Very tight.
@@ -62,14 +59,14 @@ class W3DProjectileStreamDraw : public DrawModule
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DProjectileStreamDraw, "W3DProjectileStreamDraw" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DProjectileStreamDraw, W3DProjectileStreamDrawModuleData )
-		
+
 public:
 
 	W3DProjectileStreamDraw( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual void doDrawModule(const Matrix3D* transformMtx);
-	virtual void releaseShadows(void) {};	///< we don't care about preserving temporary shadows.	
+	virtual void releaseShadows(void) {};	///< we don't care about preserving temporary shadows.
 	virtual void allocateShadows(void) {};	///< we don't care about preserving temporary shadows.
 	virtual void setShadowsEnabled(Bool ) { }
 	virtual void setFullyObscuredByShroud(Bool);
@@ -83,6 +80,3 @@ protected:
 	SegmentedLineClass *m_allLines[MAX_PROJECTILE_STREAM];	///< Persist, so I can ensure they live a full cycle, and minimize re-creates by holding on
 	Int m_linesValid;
 };
-
-#endif
-

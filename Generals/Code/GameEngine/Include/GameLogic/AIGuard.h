@@ -22,7 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: AIGuard.h 
+// FILE: AIGuard.h
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -38,8 +38,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_AIGUARD_
-#define _H_AIGUARD_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
@@ -52,7 +50,7 @@
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 enum
 {
-	// prevent collisions with other states that we might use, (namely AI_IDLE) 
+	// prevent collisions with other states that we might use, (namely AI_IDLE)
 	AI_GUARD_INNER = 5000,					///< Attack anything within this area till death
 	AI_GUARD_IDLE,									///< Wait till something shows up to attack.
 	AI_GUARD_OUTER,									///< Attack anything within this area that has been aggressive, until the timer expires
@@ -110,14 +108,14 @@ protected:
 	virtual void loadPostProcess();
 
 public:
-	/** 
+	/**
 	 * The implementation of this constructor defines the states
 	 * used by this machine.
 	 */
 	AIGuardMachine( Object *owner );
 	Object* findTargetToGuardByID( void ) { return TheGameLogic->findObjectByID(m_targetToGuard); }
 	void setTargetToGuard( const Object *object ) { m_targetToGuard = object ? object->getID() : INVALID_ID; }
-	
+
 	const Coord3D *getPositionToGuard( void ) const { return &m_positionToGuard; }
 	void setTargetPositionToGuard( const Coord3D *pos) { m_positionToGuard = *pos; }
 
@@ -138,9 +136,12 @@ public:
 //--------------------------------------------------------------------------------------
 class AIGuardInnerState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardInnerState, "AIGuardInnerState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardInnerState, "AIGuardInnerState")
 public:
-	AIGuardInnerState( StateMachine *machine ) : State( machine, "AIGuardInner" ) { }
+	AIGuardInnerState( StateMachine *machine ) : State( machine, "AIGuardInner" )
+	{
+		m_attackState = NULL;
+	}
 	virtual StateReturnType onEnter( void );
 	virtual StateReturnType update( void );
 	virtual void onExit( StateExitType status );
@@ -152,15 +153,14 @@ protected:
 private:
 	AIGuardMachine* getGuardMachine() { return (AIGuardMachine*)getMachine(); }
 
-	ExitConditions m_exitConditions; 
+	ExitConditions m_exitConditions;
 	AIAttackState *m_attackState;
 };
-EMPTY_DTOR(AIGuardInnerState)
 
 //--------------------------------------------------------------------------------------
 class AIGuardIdleState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardIdleState, "AIGuardIdleState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardIdleState, "AIGuardIdleState")
 public:
 	AIGuardIdleState( StateMachine *machine ) : State( machine, "AIGuardIdleState" ) { }
 	virtual StateReturnType onEnter( void );
@@ -182,9 +182,9 @@ EMPTY_DTOR(AIGuardIdleState)
 //--------------------------------------------------------------------------------------
 class AIGuardOuterState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardOuterState, "AIGuardOuterState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardOuterState, "AIGuardOuterState")
 public:
-	AIGuardOuterState( StateMachine *machine ) : State( machine, "AIGuardOuter" ) 
+	AIGuardOuterState( StateMachine *machine ) : State( machine, "AIGuardOuter" )
 	{
 		m_attackState = NULL;
 	}
@@ -199,19 +199,18 @@ protected:
 private:
 	AIGuardMachine* getGuardMachine() { return (AIGuardMachine*)getMachine(); }
 
-	ExitConditions m_exitConditions; 
+	ExitConditions m_exitConditions;
 	AIAttackState *m_attackState;
 };
-EMPTY_DTOR(AIGuardOuterState)
 
 //--------------------------------------------------------------------------------------
 class AIGuardReturnState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardReturnState, "AIGuardReturnState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardReturnState, "AIGuardReturnState")
 private:
 	AIGuardMachine* getGuardMachine() { return (AIGuardMachine*)getMachine(); }
 public:
-	AIGuardReturnState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIGuardReturn" ) 
+	AIGuardReturnState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIGuardReturn" )
 	{
 		m_nextReturnScanTime = 0;
 	}
@@ -232,7 +231,7 @@ EMPTY_DTOR(AIGuardReturnState)
 //--------------------------------------------------------------------------------------
 class AIGuardPickUpCrateState : public AIPickUpCrateState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardPickUpCrateState, "AIGuardPickUpCrateState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardPickUpCrateState, "AIGuardPickUpCrateState")
 public:
 	AIGuardPickUpCrateState( StateMachine *machine );
 	virtual StateReturnType onEnter( void );
@@ -244,7 +243,7 @@ EMPTY_DTOR(AIGuardPickUpCrateState)
 //--------------------------------------------------------------------------------------
 class AIGuardAttackAggressorState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardAttackAggressorState, "AIGuardAttackAggressorState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardAttackAggressorState, "AIGuardAttackAggressorState")
 public:
 	AIGuardAttackAggressorState( StateMachine *machine );
 	virtual StateReturnType onEnter( void );
@@ -257,12 +256,8 @@ protected:
 	virtual void loadPostProcess();
 private:
 	AIGuardMachine* getGuardMachine() { return (AIGuardMachine*)getMachine(); }
-	ExitConditions m_exitConditions; 
+	ExitConditions m_exitConditions;
 	AIAttackState *m_attackState;
 };
 
-EMPTY_DTOR(AIGuardAttackAggressorState)
-
 //--------------------------------------------------------------------------------------
-
-#endif /* _H_AIGUARD_ */

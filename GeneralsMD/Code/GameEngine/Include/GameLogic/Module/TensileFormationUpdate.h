@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __TENSILEFORMATIONUPDATE_H_
-#define __TENSILEFORMATIONUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -49,7 +46,7 @@ public:
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 	Bool m_enabled;							///< enabled
-	AudioEventRTS				m_crackSound;						
+	AudioEventRTS				m_crackSound;
 
 };
 
@@ -83,12 +80,10 @@ protected:
 	Coord3D m_inertia;
 	Bool m_enabled;			///< enabled
 	Bool m_linksInited;
-	UnsignedInt m_motionlessCounter; 
+	UnsignedInt m_motionlessCounter;
 	UnsignedInt m_life;
 	Real m_lowestSlideElevation;
 
-	AudioEventRTS				m_crackSound;						
+	AudioEventRTS				m_crackSound;
 
 };
-
-#endif  // end __TENSILEFORMATIONUPDATE_H_

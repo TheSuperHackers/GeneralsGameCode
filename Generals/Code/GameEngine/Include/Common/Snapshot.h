@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __SNAPSHOT_H_
-#define __SNAPSHOT_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AsciiString.h"
 
@@ -50,7 +47,7 @@ friend class XferSave;
 friend class XferCRC;
 
 public:
-	
+
 	Snapshot( void );
 	~Snapshot( void );
 
@@ -68,6 +65,3 @@ protected:
 	virtual void loadPostProcess( void ) = 0;
 
 };
-
-#endif // __SNAPSHOT_H_
-

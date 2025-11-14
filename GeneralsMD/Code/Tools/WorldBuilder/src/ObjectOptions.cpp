@@ -64,9 +64,7 @@ ObjectOptions::ObjectOptions(CWnd* pParent /*=NULL*/)
 
 ObjectOptions::~ObjectOptions(void)
 {
-	if (m_objectsList) {
-		m_objectsList->deleteInstance();
-	}
+	deleteInstance(m_objectsList);
 	m_objectsList = NULL;
 }
 
@@ -101,7 +99,7 @@ static Int findSideListEntryWithPlayerOfSide(AsciiString side)
 		}
 	}
 
-	// DEBUG_CRASH(("no SideList entry found for %s!\n",side.str()));
+	// DEBUG_CRASH(("no SideList entry found for %s!",side.str()));
 	return -1;
 }
 
@@ -218,7 +216,7 @@ static const PlayerTemplate* findFirstPlayerTemplateOnSide(AsciiString side)
 		}
 	}
 
-	DEBUG_CRASH(("no player found for %s!\n",side.str()));
+	DEBUG_CRASH(("no player found for %s!",side.str()));
 	return NULL;
 }
 #endif
@@ -227,12 +225,12 @@ static const PlayerTemplate* findFirstPlayerTemplateOnSide(AsciiString side)
 // ObjectOptions message handlers
 
 /// Setup the controls in the dialog.
-BOOL ObjectOptions::OnInitDialog() 
+BOOL ObjectOptions::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
 	m_updating = true;
-	
+
 //	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 
 
@@ -249,12 +247,12 @@ BOOL ObjectOptions::OnInitDialog()
 		pMap = newInstance( MapObject)( loc, tTemplate->getName(), 0.0f, 0, NULL, tTemplate );
 		pMap->setNextMap( m_objectsList );
 		m_objectsList = pMap;
-			
+
 		// get display color for the editor
 		Color cc = tTemplate->getDisplayColor();
 		pMap->setColor(cc);
 
-	}  // end for tTemplate
+	}
 
 #if 0		// Lights are not working right now.
 	{
@@ -262,10 +260,10 @@ BOOL ObjectOptions::OnInitDialog()
 		char base[1024] = "*Lights/Light";
 		MapObject *pMap = newInstance(MapObject)(pt, AsciiString(base), 0.0f, 0, NULL, NULL );
 		pMap->setIsLight();
-		
+
 		Dict *props = pMap->getProperties();
 		RGBColor tmp;
-		tmp.red = tmp.green = tmp.blue = 1.0f;		
+		tmp.red = tmp.green = tmp.blue = 1.0f;
 		Int tmpi = tmp.getAsInt();
 		props->setReal(TheKey_lightHeightAboveTerrain, 0.0f);
 		props->setReal(TheKey_lightInnerRadius, 15.0f);
@@ -276,32 +274,20 @@ BOOL ObjectOptions::OnInitDialog()
 		pMap->setNextMap(m_objectsList);
 		m_objectsList = pMap;
 	}
-#endif 
+#endif
 #ifdef LOAD_TEST_ASSETS
 	{
-		char				dirBuf[_MAX_PATH];
-		char				findBuf[_MAX_PATH];
 		char				fileBuf[_MAX_PATH];
 		Int					i;
 
-		strcpy(dirBuf, TEST_W3D_DIR_PATH);
-		int len = strlen(dirBuf);
-
-		if (len > 0 && dirBuf[len - 1] != '\\' && dirBuf[len-1] != '/') {
-			dirBuf[len++] = '\\';
-			dirBuf[len] = 0;
-		}
-		strcpy(findBuf, dirBuf);
-		strcat(findBuf, "*.*");
-
 		FilenameList filenameList;
-		TheFileSystem->getFileListInDirectory(AsciiString(dirBuf), AsciiString("*.w3d"), filenameList, FALSE);
+		TheFileSystem->getFileListInDirectory(TEST_W3D_DIR_PATH, "*.w3d", filenameList, FALSE);
 
 		if (filenameList.size() > 0) {
 			FilenameList::iterator it = filenameList.begin();
 			do {
 				AsciiString filename = *it;
-				len = filename.getLength();
+				int len = filename.getLength();
 				if (len<5) continue;
 				// only do .w3d files
 
@@ -312,8 +298,8 @@ BOOL ObjectOptions::OnInitDialog()
 				}
 
 				strcpy(fileBuf, TEST_STRING);
-				strcat(fileBuf, "/");
-				strcat(fileBuf, token.str());
+				strlcat(fileBuf, "/", ARRAY_SIZE(fileBuf));
+				strlcat(fileBuf, token.str(), ARRAY_SIZE(fileBuf));
 				for (i=strlen(fileBuf)-1; i>0; i--) {
 					if (fileBuf[i] == '.') {
 						// strip off .w3d file extension.
@@ -386,7 +372,7 @@ HTREEITEM ObjectOptions::findOrAdd(HTREEITEM parent, const char *pLabel)
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
-		ins.item.cchTextMax = sizeof(buffer)-2;				
+		ins.item.cchTextMax = sizeof(buffer)-2;
 		m_objectTreeView.GetItem(&ins.item);
 		if (strcmp(buffer, pLabel) == 0) {
 			return(child);
@@ -401,7 +387,7 @@ HTREEITEM ObjectOptions::findOrAdd(HTREEITEM parent, const char *pLabel)
 	ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 	ins.item.lParam = -1;
 	ins.item.pszText = (char*)pLabel;
-	ins.item.cchTextMax = strlen(pLabel);				
+	ins.item.cchTextMax = strlen(pLabel);
 	child = m_objectTreeView.InsertItem(&ins);
 	return(child);
 }
@@ -415,7 +401,7 @@ HTREEITEM ObjectOptions::_FindOrDont(const char* pLabel, HTREEITEM startPoint)
 {
 	std::list<HTREEITEM> itemsToEx;
 	itemsToEx.push_back(startPoint);
-	
+
 	while (itemsToEx.front()) {
 		char buffer[_MAX_PATH];
 		HTREEITEM hItem = itemsToEx.front();
@@ -428,19 +414,19 @@ HTREEITEM ObjectOptions::_FindOrDont(const char* pLabel, HTREEITEM startPoint)
 			item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT;
 			item.hItem = hItem;
 			item.pszText = buffer;
-			item.cchTextMax = sizeof(buffer)-2;				
+			item.cchTextMax = sizeof(buffer)-2;
 			m_objectTreeView.GetItem(&item);
 
 			const char* strToTest = strrchr(pLabel, '/');
-//		if (strstr((strToTest ? strToTest : pLabel), buffer)) 
-			if (strcmp((strToTest ? strToTest : pLabel), buffer) == 0) 
+//		if (strstr((strToTest ? strToTest : pLabel), buffer))
+			if (strcmp((strToTest ? strToTest : pLabel), buffer) == 0)
 			{
 				return hItem;
 			}
 		} else {
 			// add the first child, the others will be caught by the adding of the siblings
 			itemsToEx.push_back(m_objectTreeView.GetChildItem(hItem));
-		} // Always add the first sibling, if it exists
+		}
 
 		if (m_objectTreeView.GetNextSiblingItem(hItem)) {
 			itemsToEx.push_back(m_objectTreeView.GetNextSiblingItem(hItem));
@@ -453,7 +439,7 @@ HTREEITEM ObjectOptions::_FindOrDont(const char* pLabel, HTREEITEM startPoint)
 //-------------------------------------------------------------------------------------------------
 /** Add the object hierarchy paths to the tree view. */
 //-------------------------------------------------------------------------------------------------
-void ObjectOptions::addObject( MapObject *mapObject, const char *pPath, 
+void ObjectOptions::addObject( MapObject *mapObject, const char *pPath,
 															 Int terrainNdx, HTREEITEM parent )
 {
 	char buffer[ _MAX_PATH ];
@@ -466,7 +452,7 @@ void ObjectOptions::addObject( MapObject *mapObject, const char *pPath,
 	//
 	// if we have an thing template in mapObject, we've read it from the new INI database,
 	// we will sort those items into the tree based on properties of the template that
-	// make it easier for us to browse when building levels 
+	// make it easier for us to browse when building levels
 	//
 	// Feel free to reorganize how this tree is constructed from the template
 	// data at will, whatever makes it easier for design
@@ -478,12 +464,11 @@ void ObjectOptions::addObject( MapObject *mapObject, const char *pPath,
 		// first check for test sorted objects
 		if( thingTemplate->getEditorSorting() == ES_TEST )
 			parent = findOrAdd( parent, "TEST" );
-	
+
 		// first sort by side, either create or find the tree item with matching side name
 		AsciiString side = thingTemplate->getDefaultOwningSide();
-		DEBUG_ASSERTCRASH( !side.isEmpty(), ("NULL default side in template\n") );
-		strcpy( buffer, side.str() );
-		parent = findOrAdd( parent, buffer );
+		DEBUG_ASSERTCRASH( !side.isEmpty(), ("NULL default side in template") );
+		parent = findOrAdd( parent, side.str());
 
 		// next tier uses the editor sorting that design can specify in the INI
 		EditorSortingType i = ES_FIRST;
@@ -498,9 +483,9 @@ void ObjectOptions::addObject( MapObject *mapObject, const char *pPath,
 				parent = findOrAdd( parent, EditorSortingNames[ i ] );
 				break;  // exit for
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
 		if( i == ES_NUM_SORTING_TYPES )
 			parent = findOrAdd( parent, "UNSORTED" );
@@ -508,10 +493,10 @@ void ObjectOptions::addObject( MapObject *mapObject, const char *pPath,
 		// the leaf name is the name of the template
 		leafName = thingTemplate->getName().str();
 
-	}  // end if
-	else 
+	}
+	else
 	{
-	
+
 		// all these old entries we will put in a tree for legacy GDF items
 		parent = findOrAdd( parent, "**TEST MODELS" );
 
@@ -523,7 +508,7 @@ void ObjectOptions::addObject( MapObject *mapObject, const char *pPath,
 			}
 			if (pPath[i] == '/') {
 				pPath+= i+1;
-				i = 0;			
+				i = 0;
 			}
 			buffer[i] = pPath[i];
 			i++;
@@ -534,9 +519,9 @@ void ObjectOptions::addObject( MapObject *mapObject, const char *pPath,
 			buffer[ i ] = 0;
 			leafName = buffer;
 
-		}  // end if
+		}
 
-	}  // end else if
+	}
 
 	// add to the tree view
 	if( leafName )
@@ -549,7 +534,7 @@ void ObjectOptions::addObject( MapObject *mapObject, const char *pPath,
 		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 		ins.item.lParam = terrainNdx;
 		ins.item.pszText = (char*)leafName;
-		ins.item.cchTextMax = strlen(leafName)+2;				
+		ins.item.cchTextMax = strlen(leafName)+2;
 		m_objectTreeView.InsertItem(&ins);
 
 	}
@@ -567,13 +552,13 @@ Bool ObjectOptions::setObjectTreeViewSelection(HTREEITEM parent, Int selection)
 		item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT;
 		item.hItem = child;
 		item.pszText = buffer;
-		item.cchTextMax = sizeof(buffer)-2;				
+		item.cchTextMax = sizeof(buffer)-2;
 		m_objectTreeView.GetItem(&item);
 		if (item.lParam == selection) {
 			m_objectTreeView.SelectItem(child);
 			return(true);
 		}
-		if (setObjectTreeViewSelection(child, selection)) 
+		if (setObjectTreeViewSelection(child, selection))
 		{
 			strcpy(m_currentObjectName, buffer);
 			updateLabel();
@@ -585,7 +570,7 @@ Bool ObjectOptions::setObjectTreeViewSelection(HTREEITEM parent, Int selection)
 }
 
 
-BOOL ObjectOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+BOOL ObjectOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam;
 	if (pHdr->hdr.hwndFrom == m_objectTreeView.m_hWnd) {
@@ -610,7 +595,7 @@ BOOL ObjectOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
 			item.hItem = hItem;
 			item.pszText = buffer;
-			item.cchTextMax = sizeof(buffer)-2;				
+			item.cchTextMax = sizeof(buffer)-2;
 			m_objectTreeView.GetItem(&item);
 			if (item.lParam >= 0) {
 				m_currentObjectIndex = item.lParam;
@@ -622,7 +607,7 @@ BOOL ObjectOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			updateLabel();
 		}
 	}
-	
+
 	return CDialog::OnNotify(wParam, lParam, pResult);
 }
 
@@ -657,13 +642,13 @@ MapObject *ObjectOptions::duplicateCurMapObjectForPlace(const Coord3D* loc, Real
 	MapObject *pCur = getCurMapObject();
 	if (pCur)
 	{
-		
+
 		Bool found = false;
 		const ThingTemplate* tt = pCur->getThingTemplate();
-		if (checkPlayers) 
+		if (checkPlayers)
 		{
 			AsciiString defaultTeam("team");
-			
+
 			AsciiString objectTeamName = m_curOwnerName;
 			if (objectTeamName != defaultTeam) {
 				TeamsInfo *teamInfo = TheSidesList->findTeamInfo(objectTeamName);
@@ -684,7 +669,7 @@ MapObject *ObjectOptions::duplicateCurMapObjectForPlace(const Coord3D* loc, Real
 				if (!found)
 				{
 					AddPlayerDialog addPlyr(pCur->getThingTemplate()->getDefaultOwningSide());
-					if (addPlyr.DoModal() == IDOK) 
+					if (addPlyr.DoModal() == IDOK)
 					{
 						for (int i = 0; i < TheSidesList->getNumSides(); i++)
 						{
@@ -713,8 +698,8 @@ MapObject *ObjectOptions::duplicateCurMapObjectForPlace(const Coord3D* loc, Real
 		}
 		if (found)
 		{
-			MapObject *pNew = newInstance(MapObject)( *loc, pCur->getName(), angle, 
-																			 pCur->getFlags(), pCur->getProperties(), 
+			MapObject *pNew = newInstance(MapObject)( *loc, pCur->getName(), angle,
+																			 pCur->getFlags(), pCur->getProperties(),
 																			 pCur->getThingTemplate() );
 			pNew->getProperties()->setAsciiString(TheKey_originalOwner, m_curOwnerName);
 			pNew->setColor(pCur->getColor());
@@ -795,7 +780,7 @@ Int ObjectOptions::getObjectNamedIndex(const AsciiString& name)
 }
 
 
-void ObjectOptions::OnEditchangeOwningteam() 
+void ObjectOptions::OnEditchangeOwningteam()
 {
 	CComboBox *list = (CComboBox*)GetDlgItem(IDC_OWNINGTEAM);
 	Int sel = list->GetCurSel();
@@ -826,7 +811,7 @@ void ObjectOptions::selectObject(const MapObject* pObj)
 		item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
 		item.hItem = objToSel;
 		item.pszText = buffer;
-		item.cchTextMax = sizeof(buffer)-2;				
+		item.cchTextMax = sizeof(buffer)-2;
 		m_staticThis->m_objectTreeView.GetItem(&item);
 
 		if (m_staticThis->m_objectTreeView.SelectItem(objToSel)) {
@@ -836,12 +821,12 @@ void ObjectOptions::selectObject(const MapObject* pObj)
 	}
 }
 
-void ObjectOptions::OnCloseupOwningteam() 
+void ObjectOptions::OnCloseupOwningteam()
 {
 	OnEditchangeOwningteam();
 }
 
-void ObjectOptions::OnSelchangeOwningteam() 
+void ObjectOptions::OnSelchangeOwningteam()
 {
 	OnEditchangeOwningteam();
 }

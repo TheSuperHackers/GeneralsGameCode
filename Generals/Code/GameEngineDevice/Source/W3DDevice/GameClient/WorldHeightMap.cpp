@@ -30,7 +30,6 @@
 
 #include "windows.h"
 #include "stdlib.h"
-#include <string.h>
 #include "Common/STLTypedefs.h"
 
 #include "Common/DataChunk.h"
@@ -56,7 +55,7 @@
 
 #define K_OBSOLETE_HEIGHT_MAP_VERSION 8
 
-#define PATHFIND_CLIFF_SLOPE_LIMIT_F	9.8f	
+#define PATHFIND_CLIFF_SLOPE_LIMIT_F	9.8f
 
 // -----------------------------------------------------------
 static AsciiString validateName(AsciiString n, Int flags)
@@ -104,8 +103,8 @@ MapObject::MapObject(Coord3D loc, AsciiString name, Real angle, Int flags, const
 			Bool selectable = thingTemplate->isKindOf(KINDOF_SELECTABLE);
 			m_properties.setBool(TheKey_objectSelectable, selectable);
 		}
-	} 
-	else 
+	}
+	else
 	{
 		m_properties.setInt(TheKey_objectInitialHealth, 100);
 		m_properties.setBool(TheKey_objectEnabled, true);
@@ -114,7 +113,7 @@ MapObject::MapObject(Coord3D loc, AsciiString name, Real angle, Int flags, const
 		m_properties.setBool(TheKey_objectPowered, true);
 		m_properties.setBool(TheKey_objectRecruitableAI, true);
 		m_properties.setBool(TheKey_objectTargetable, false );
-		
+
 		Bool selectable = false;
 		if (thingTemplate) {
 			selectable = thingTemplate->isKindOf(KINDOF_SELECTABLE);
@@ -125,7 +124,7 @@ MapObject::MapObject(Coord3D loc, AsciiString name, Real angle, Int flags, const
 	for( Int i = 0; i < BRIDGE_MAX_TOWERS; ++i )
 		setBridgeRenderObject( (BridgeTowerType)i, NULL );
 
-}	
+}
 
 
 MapObject::~MapObject(void)
@@ -137,12 +136,12 @@ MapObject::~MapObject(void)
 		MapObject *next;
 		while (cur) {
 			next = cur->getNext();
-			cur->setNextMap(NULL); // prevents recursion. 
-			cur->deleteInstance();
+			cur->setNextMap(NULL); // prevents recursion.
+			deleteInstance(cur);
 			cur = next;
 		}
 	}
-	for( Int i = 0; i < BRIDGE_MAX_TOWERS; ++i )	
+	for( Int i = 0; i < BRIDGE_MAX_TOWERS; ++i )
 		setBridgeRenderObject( (BridgeTowerType)i, NULL );
 
 }
@@ -186,7 +185,7 @@ void MapObject::validate(void)
 void MapObject::verifyValidTeam(void)
 {
 	// if this map object has a valid team, then do nothing.
-	// if it has an invalid team, the place it on the default neutral team, (by clearing the 
+	// if it has an invalid team, the place it on the default neutral team, (by clearing the
 	// existing team name.)
 	Bool exists;
 	AsciiString teamName = getProperties()->getAsciiString(TheKey_originalOwner, &exists);
@@ -200,7 +199,7 @@ void MapObject::verifyValidTeam(void)
 			if (!teamInfo) {
 				continue;
 			}
-			
+
 			Bool itBetter;
 			AsciiString testAgainstTeamName = teamInfo->getDict()->getAsciiString(TheKey_teamName, &itBetter);
 			if (itBetter) {
@@ -227,7 +226,7 @@ void MapObject::verifyValidUniqueID(void)
 
 	while (obj) {
 		if (obj == this) {
-			// the first object is THIS OBJECT, cause we've already been added. 
+			// the first object is THIS OBJECT, cause we've already been added.
 			obj = obj->getNext();
 			continue;
 		}
@@ -242,7 +241,7 @@ void MapObject::verifyValidUniqueID(void)
 		AsciiString tempStr = obj->getProperties()->getAsciiString(TheKey_uniqueID, &iterateExists);
 		const char* lastSpace = tempStr.reverseFind(' ');
 
-		int testIndex = -1; 
+		int testIndex = -1;
 		if (lastSpace) {
 			testIndex = atoi(lastSpace);
 		}
@@ -254,7 +253,7 @@ void MapObject::verifyValidUniqueID(void)
 	}
 
 	int indexOfThisObject = highestIndex + 1;
-	
+
 	const char* thingName;
 	if (getThingTemplate()) {
 		thingName = getThingTemplate()->getName().str();
@@ -290,7 +289,7 @@ void MapObject::fastAssignAllUniqueIDs(void)
 
 	std::stack<MapObject*> objStack;
 	Int actualNumObjects = 0;
-	
+
 	while (pMapObj) {
 		++actualNumObjects;
 		objStack.push(pMapObj);
@@ -300,7 +299,7 @@ void MapObject::fastAssignAllUniqueIDs(void)
 	Int indexOfThisObject = 0;
 	while (actualNumObjects) {
 		MapObject *obj = objStack.top();
-		
+
 
 		const char* thingName;
 		if (obj->getThingTemplate()) {
@@ -328,7 +327,7 @@ void MapObject::fastAssignAllUniqueIDs(void)
 
 		obj->getProperties()->setAsciiString(TheKey_uniqueID, newID);
 		objStack.pop();
-	
+
 		++indexOfThisObject;
 		--actualNumObjects;
 	}
@@ -356,7 +355,7 @@ void MapObject::setWaypointName(AsciiString n) { getProperties()->setAsciiString
 /*static */ Int MapObject::countMapObjectsWithOwner(const AsciiString& n)
 {
 	Int count = 0;
-	for (MapObject *pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) 
+	for (MapObject *pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
 	{
 		if (pMapObj->getProperties()->getAsciiString(TheKey_originalOwner) == n)
 			++count;
@@ -368,8 +367,8 @@ void MapObject::setWaypointName(AsciiString n) { getProperties()->setAsciiString
 const ThingTemplate *MapObject::getThingTemplate( void ) const
 {
 	if (m_thingTemplate)
-		return (const ThingTemplate*) m_thingTemplate->getFinalOverride(); 
-	
+		return (const ThingTemplate*) m_thingTemplate->getFinalOverride();
+
 	return NULL;
 }
 
@@ -382,34 +381,27 @@ const ThingTemplate *MapObject::getThingTemplate( void ) const
 //
 WorldHeightMap::~WorldHeightMap(void)
 {
-	if (m_data) {
-		delete(m_data);
-		m_data = NULL;
-	}
-	if (m_tileNdxes) {
-		delete(m_tileNdxes);
-		m_tileNdxes = NULL;
-	}
-	if (m_blendTileNdxes) {
-		delete(m_blendTileNdxes);
-		m_blendTileNdxes = NULL;
-	}
-	if (m_extraBlendTileNdxes) {
-		delete(m_extraBlendTileNdxes);
-		m_extraBlendTileNdxes = NULL;
-	}
-	if (m_cliffInfoNdxes) {
-		delete(m_cliffInfoNdxes);
-		m_cliffInfoNdxes = NULL;
-	}
-	if (m_cellFlipState)
-	{	delete (m_cellFlipState);
-		m_cellFlipState = NULL;
-	}
-	if (m_cellCliffState)
-	{	delete (m_cellCliffState);
-		m_cellCliffState = NULL;
-	}
+	delete[](m_data);
+	m_data = NULL;
+
+	delete[](m_tileNdxes);
+	m_tileNdxes = NULL;
+
+	delete[](m_blendTileNdxes);
+	m_blendTileNdxes = NULL;
+
+	delete[](m_extraBlendTileNdxes);
+	m_extraBlendTileNdxes = NULL;
+
+	delete[](m_cliffInfoNdxes);
+	m_cliffInfoNdxes = NULL;
+
+	delete[](m_cellFlipState);
+	m_cellFlipState = NULL;
+
+	delete[](m_cellCliffState);
+	m_cellCliffState = NULL;
+
 	int i;
 	for (i=0; i<NUM_SOURCE_TILES; i++) {
 		REF_PTR_RELEASE(m_sourceTiles[i]);
@@ -422,9 +414,9 @@ WorldHeightMap::~WorldHeightMap(void)
 
 void WorldHeightMap::freeListOfMapObjects(void)
 {
-	if (MapObject::TheMapObjectListPtr) 
+	if (MapObject::TheMapObjectListPtr)
 	{
-		MapObject::TheMapObjectListPtr->deleteInstance();
+		deleteInstance(MapObject::TheMapObjectListPtr);
 		MapObject::TheMapObjectListPtr = NULL;
 	}
 	MapObject::getWorldDict()->clear();
@@ -437,10 +429,10 @@ void WorldHeightMap::freeListOfMapObjects(void)
  transparent tile for non-blended tiles.
 */
 WorldHeightMap::WorldHeightMap():
-	m_width(0), m_height(0),  m_dataSize(0), m_data(NULL), m_cellFlipState(NULL), 
-	m_drawOriginX(0), m_drawOriginY(0), 
-	m_numTextureClasses(0),	
-	m_drawWidthX(NORMAL_DRAW_WIDTH), m_drawHeightY(NORMAL_DRAW_HEIGHT), 
+	m_width(0), m_height(0),  m_dataSize(0), m_data(NULL), m_cellFlipState(NULL),
+	m_drawOriginX(0), m_drawOriginY(0),
+	m_numTextureClasses(0),
+	m_drawWidthX(NORMAL_DRAW_WIDTH), m_drawHeightY(NORMAL_DRAW_HEIGHT),
 	m_tileNdxes(NULL), m_blendTileNdxes(NULL), m_extraBlendTileNdxes(NULL), m_cliffInfoNdxes(NULL),
 	m_terrainTexHeight(1), m_alphaTexHeight(1),	m_cellCliffState(NULL),
 #ifdef EVAL_TILING_MODES
@@ -471,14 +463,14 @@ static Bool ParseFunkyTilingDataChunk(DataChunkInput &file, DataChunkInfo *info,
 * WorldHeightMap - read a height map from a file.
 * Format is  Chunky.
 *
-*	Input: ChunkInputStream, 
-*		
+*	Input: ChunkInputStream,
+*
 */
 WorldHeightMap::WorldHeightMap(ChunkInputStream *pStrm, Bool logicalDataOnly):
-	m_width(0), m_height(0),  m_dataSize(0), m_data(NULL), m_cellFlipState(NULL), 
+	m_width(0), m_height(0),  m_dataSize(0), m_data(NULL), m_cellFlipState(NULL),
 	m_drawOriginX(0),	m_cellCliffState(NULL), m_drawOriginY(0),
-	m_numTextureClasses(0),	
-	m_drawWidthX(NORMAL_DRAW_WIDTH), m_drawHeightY(NORMAL_DRAW_HEIGHT), 
+	m_numTextureClasses(0),
+	m_drawWidthX(NORMAL_DRAW_WIDTH), m_drawHeightY(NORMAL_DRAW_HEIGHT),
 	m_tileNdxes(NULL), m_blendTileNdxes(NULL), m_extraBlendTileNdxes(NULL), m_cliffInfoNdxes(NULL),
 	m_terrainTexHeight(1), m_alphaTexHeight(1),
 #ifdef EVAL_TILING_MODES
@@ -520,17 +512,17 @@ WorldHeightMap::WorldHeightMap(ChunkInputStream *pStrm, Bool logicalDataOnly):
 	if (!file.parse(this)) {
 		throw(ERROR_CORRUPT_FILE_FORMAT);
 	}
-	// patch bad maps. 
+	// patch bad maps.
 	if (!logicalDataOnly) {
 		for(i=0; i<m_dataSize; i++) {
 			if (m_cliffInfoNdxes[i]<0 || m_cliffInfoNdxes[i]>= m_numCliffInfo) {
-				m_cliffInfoNdxes[i] = 0;		
+				m_cliffInfoNdxes[i] = 0;
 			}
 			if (m_blendTileNdxes[i]<0 || m_blendTileNdxes[i]>= m_numBlendedTiles) {
-				m_blendTileNdxes[i] = 0;		
+				m_blendTileNdxes[i] = 0;
 			}
 			if (m_extraBlendTileNdxes[i]<0 || m_extraBlendTileNdxes[i]>= m_numBlendedTiles) {
-				m_extraBlendTileNdxes[i] = 0;		
+				m_extraBlendTileNdxes[i] = 0;
 			}
 		}
 	}
@@ -576,7 +568,7 @@ Bool WorldHeightMap::getCliffState(Int xIndex, Int yIndex) const
 //=============================================================================
 /** Sets the cliff state for a given cell. */
 //=============================================================================
-void WorldHeightMap::setCliffState(Int xIndex, Int yIndex, Bool state) 
+void WorldHeightMap::setCliffState(Int xIndex, Int yIndex, Bool state)
 {
 	if (xIndex<0 || yIndex<0) return;
 	if (yIndex>=m_height) return;
@@ -608,8 +600,8 @@ Bool WorldHeightMap::ParseWorldDictDataChunk(DataChunkInput &file, DataChunkInfo
 * WorldHeightMap::ParseLightingDataChunk - read a global lights chunk.
 * Format is the newer CHUNKY format.
 *	See WHeightMapEdit.cpp for the writer.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 Bool WorldHeightMap::ParseLightingDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
@@ -689,8 +681,8 @@ Bool WorldHeightMap::ParseLightingDataChunk(DataChunkInput &file, DataChunkInfo 
 * WorldHeightMap::ParseObjectsDataChunk - read a height map chunk.
 * Format is the newer CHUNKY format.
 *	See WHeightMapEdit.cpp for the writer.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 Bool WorldHeightMap::ParseObjectsDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
@@ -703,8 +695,8 @@ Bool WorldHeightMap::ParseObjectsDataChunk(DataChunkInput &file, DataChunkInfo *
 * WorldHeightMap::ParseHeightMapData - read a height map chunk.
 * Format is the newer CHUNKY format.
 *	See WHeightMapEdit.cpp for the writer.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 Bool WorldHeightMap::ParseHeightMapDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
@@ -716,8 +708,8 @@ Bool WorldHeightMap::ParseHeightMapDataChunk(DataChunkInput &file, DataChunkInfo
 * WorldHeightMap::ParseHeightMapData - read a height map chunk.
 * Format is the newer CHUNKY format.
 *	See WHeightMapEdit.cpp for the writer.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 Bool WorldHeightMap::ParseHeightMapData(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
@@ -748,7 +740,7 @@ Bool WorldHeightMap::ParseHeightMapData(DataChunkInput &file, DataChunkInfo *inf
 		throw ERROR_CORRUPT_FILE_FORMAT	;
 	}
 	file.readArrayOfBytes((char *)m_data, m_dataSize);
-	// Resize me. 
+	// Resize me.
 	if (info->version == K_HEIGHT_MAP_VERSION_1) {
 		Int newWidth = (m_width+1)/2;
 		Int newHeight = (m_height+1)/2;
@@ -767,8 +759,8 @@ Bool WorldHeightMap::ParseHeightMapData(DataChunkInput &file, DataChunkInfo *inf
 * WorldHeightMap::ParseHeightMapData - read a height map chunk.
 * Format is the newer CHUNKY format.
 *	See WHeightMapEdit.cpp for the writer.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 Bool WorldHeightMap::ParseSizeOnlyInChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
@@ -780,8 +772,8 @@ Bool WorldHeightMap::ParseSizeOnlyInChunk(DataChunkInput &file, DataChunkInfo *i
 * WorldHeightMap::ParseHeightMapData - read a height map chunk.
 * Format is the newer CHUNKY format.
 *	See WHeightMapEdit.cpp for the writer.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 Bool WorldHeightMap::ParseSizeOnly(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
@@ -812,7 +804,7 @@ Bool WorldHeightMap::ParseSizeOnly(DataChunkInput &file, DataChunkInfo *info, vo
 		throw ERROR_CORRUPT_FILE_FORMAT	;
 	}
 	file.readArrayOfBytes((char *)m_data, m_dataSize);
-	// Resize me. 
+	// Resize me.
 	if (info->version == K_HEIGHT_MAP_VERSION_1) {
 		Int newWidth = (m_width+1)/2;
 		Int newHeight = (m_height+1)/2;
@@ -832,8 +824,8 @@ Bool WorldHeightMap::ParseSizeOnly(DataChunkInput &file, DataChunkInfo *info, vo
 * WorldHeightMap::ParseBlendTileDataChunk - read a blend tile info chunk.
 * Format is the newer CHUNKY format.
 *	See WHeightMapEdit.cpp for the writer.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 Bool WorldHeightMap::ParseBlendTileDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
@@ -842,7 +834,7 @@ Bool WorldHeightMap::ParseBlendTileDataChunk(DataChunkInput &file, DataChunkInfo
 }
 
 /** Function to read in the tiles for a texture class. */
-void WorldHeightMap::readTexClass(TXTextureClass *texClass, TileData **tileData) 
+void WorldHeightMap::readTexClass(TXTextureClass *texClass, TileData **tileData)
 {
 	char path[_MAX_PATH];
 	path[0] = 0;
@@ -851,13 +843,13 @@ void WorldHeightMap::readTexClass(TXTextureClass *texClass, TileData **tileData)
 	// get the file from the description in TheTerrainTypes
 	TerrainType *terrain = TheTerrainTypes->findTerrain( texClass->name );
 	char texturePath[ _MAX_PATH ];
-	if (terrain==NULL) 
+	if (terrain==NULL)
 	{
 #ifdef LOAD_TEST_ASSETS
 		theFile = TheFileSystem->openFile( texClass->name.str(), File::READ|File::BINARY);
 #endif
-	} 
-	else 
+	}
+	else
 	{
 		sprintf( texturePath, "%s%s", TERRAIN_TGA_DIR_PATH, terrain->getTexture().str() );
 		theFile = TheFileSystem->openFile( texturePath, File::READ|File::BINARY);
@@ -868,7 +860,7 @@ void WorldHeightMap::readTexClass(TXTextureClass *texClass, TileData **tileData)
 		InputStream *pStr = &theStream;
 		Int numTiles = WorldHeightMap::countTiles(pStr);
 		theFile->seek(0, File::START);
-		if (numTiles >= texClass->numTiles) { 
+		if (numTiles >= texClass->numTiles) {
 			numTiles = texClass->numTiles;
 			Int width;
 			for (width = 10; width >= 1; width--) {
@@ -877,7 +869,7 @@ void WorldHeightMap::readTexClass(TXTextureClass *texClass, TileData **tileData)
 					break;
 				}
 			}
-			WorldHeightMap::readTiles(pStr, tileData+texClass->firstTile, width);						
+			WorldHeightMap::readTiles(pStr, tileData+texClass->firstTile, width);
 		}
 		theFile->close();
 	}
@@ -887,8 +879,8 @@ void WorldHeightMap::readTexClass(TXTextureClass *texClass, TileData **tileData)
 * WorldHeightMap::ParseBlendTileData - read a blend tile info chunk.
 * Format is the newer CHUNKY format.
 *	See WHeightMapEdit.cpp for the writer.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
@@ -897,14 +889,14 @@ Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *inf
 		throw ERROR_CORRUPT_FILE_FORMAT	;
 	}
 	m_tileNdxes = MSGNEW("WorldHeightMap_ParseBlendTileData") Short[m_dataSize];
-	m_cliffInfoNdxes = MSGNEW("WorldHeightMap_ParseBlendTileData") Short[m_dataSize]; 
+	m_cliffInfoNdxes = MSGNEW("WorldHeightMap_ParseBlendTileData") Short[m_dataSize];
 	m_blendTileNdxes = MSGNEW("WorldHeightMap_ParseBlendTileData") Short[m_dataSize];
 	m_extraBlendTileNdxes = MSGNEW("WorldHeightMap_ParseBlendTileData") Short[m_dataSize];
 	// Note - we have one less cell than the width & height. But for paranoia, allocate
 	// extra row. jba.
-	// 
+	//
 	Int numBytesX = (m_width+1)/8;	//how many bytes to fit all bitflags
-	Int numBytesY = m_height;	
+	Int numBytesY = m_height;
 
 	m_flipStateWidth=numBytesX;
 
@@ -920,11 +912,11 @@ Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *inf
 		//Allow clearing of extra blend tiles via ini and resaving of map.
 		//Useful for flushing out initial maps made with buggy 3-way blending.
 		if (!TheGlobalData->m_use3WayTerrainBlends)
-			memset(m_extraBlendTileNdxes,0,m_dataSize*sizeof(Short));		
-	} 
+			memset(m_extraBlendTileNdxes,0,m_dataSize*sizeof(Short));
+	}
 	if (info->version >= K_BLEND_TILE_VERSION_5) {
 		file.readArrayOfBytes((char*)m_cliffInfoNdxes, m_dataSize*sizeof(Short));
-	} 
+	}
 	if (info->version >= K_BLEND_TILE_VERSION_7) {
 		file.readArrayOfBytes((char*)m_cellCliffState, m_height*m_flipStateWidth);
 	} else {
@@ -993,7 +985,7 @@ Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *inf
 		} else {
 			m_blendedTiles[i].customBlendEdgeClass = -1;
 		}
-		
+
 		flag = file.readInt();
 		DEBUG_ASSERTCRASH(flag==FLAG_VAL, ("Invalid format."));
 		if (flag != FLAG_VAL) {
@@ -1015,7 +1007,7 @@ Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *inf
 			m_cliffInfo[i].mutant = file.readByte();
 		}
 	}
-	// Resize me. 
+	// Resize me.
 	if (info->version == K_BLEND_TILE_VERSION_1) {
 		Int newWidth = (m_width+1)/2;
 		Int newHeight = (m_height+1)/2;
@@ -1025,7 +1017,7 @@ Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *inf
 				m_tileNdxes[i*newWidth+j] = m_tileNdxes[2*i*m_width+2*j];
 				m_blendTileNdxes[i*newWidth+j] = 0;
 				m_extraBlendTileNdxes[i*newWidth+j] = 0;
-				m_cliffInfoNdxes[i*newWidth+j] = 0;	 
+				m_cliffInfoNdxes[i*newWidth+j] = 0;
 			}
 		}
 		m_numBlendedTiles = 1;
@@ -1043,8 +1035,8 @@ Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *inf
 * WorldHeightMap::ParseObjectData - read a object info chunk.
 * Format is the newer CHUNKY format.
 *	See WHeightMapEdit.cpp for the writer.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 Bool WorldHeightMap::ParseObjectDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
@@ -1056,8 +1048,8 @@ Bool WorldHeightMap::ParseObjectDataChunk(DataChunkInput &file, DataChunkInfo *i
 * WorldHeightMap::ParseObjectData - read a object info chunk.
 * Format is the newer CHUNKY format.
 *	See WHeightMapEdit.cpp for the writer.
-*	Input: DataChunkInput 
-*		
+*	Input: DataChunkInput
+*
 */
 Bool WorldHeightMap::ParseObjectData(DataChunkInput &file, DataChunkInfo *info, void *userData, Bool readDict)
 {
@@ -1076,26 +1068,26 @@ Bool WorldHeightMap::ParseObjectData(DataChunkInput &file, DataChunkInfo *info, 
 	}
 
 	Real angle = file.readReal();
-	Int flags = file.readInt(); 
+	Int flags = file.readInt();
 	AsciiString name = file.readAsciiString();
 	Dict d;
 	if (readDict)
 	{
 		d = file.readDict();
-	}		 
+	}
 
 	if (loc.z<minZ || loc.z>maxZ) {
-		DEBUG_LOG(("Removing object at z height %f\n", loc.z));
+		DEBUG_LOG(("Removing object at z height %f", loc.z));
 		return true;
 	}
 
 	MapObject *pThisOne;
-	
+
 	// create the map object
-	pThisOne = newInstance( MapObject )( loc, name, angle, flags, &d, 
+	pThisOne = newInstance( MapObject )( loc, name, angle, flags, &d,
 														TheThingFactory->findTemplate( name ) );
 
-//DEBUG_LOG(("obj %s owner %s\n",name.str(),d.getAsciiString(TheKey_originalOwner).str()));
+//DEBUG_LOG(("obj %s owner %s",name.str(),d.getAsciiString(TheKey_originalOwner).str()));
 
 	if (pThisOne->getProperties()->getType(TheKey_waypointID) == Dict::DICT_INT)
 		pThisOne->setIsWaypoint();
@@ -1105,7 +1097,7 @@ Bool WorldHeightMap::ParseObjectData(DataChunkInput &file, DataChunkInfo *info, 
 
 	if (pThisOne->getProperties()->getType(TheKey_scorchType) == Dict::DICT_INT)
 		pThisOne->setIsScorch();
-	
+
 
 	if (pPrevious) {
 		DEBUG_ASSERTCRASH(MapObject::TheMapObjectListPtr != NULL && pPrevious->getNext() == NULL, ("Bad linkage."));
@@ -1163,9 +1155,9 @@ Int WorldHeightMap::countTiles(InputStream *pStr)
 
 	if (hdr.pixelDepth < 24) return(false);
 	if (hdr.pixelDepth > 32) return(false);
-	// 3x3 gives 9, 
-	// 2x2 gives 4, 
-	// 1x1 gives 1, 
+	// 3x3 gives 9,
+	// 2x2 gives 4,
+	// 1x1 gives 1,
 	// else 0;
 	if (tileWidth>10 || tileHeight>10) return(0);  // don't do huge images, or bad files.
 	if (tileWidth>=10 && tileHeight >=10) return(100);
@@ -1186,7 +1178,7 @@ Bool WorldHeightMap::readTiles(InputStream *pStr, TileData **tiles, Int numRows)
 	TTargaHeader hdr;
 	pStr->read(&hdr, sizeof(hdr));
 	Int tileWidth = hdr.imageWidth/TILE_PIXEL_EXTENT;
-	Int tileHeight = hdr.imageHeight/TILE_PIXEL_EXTENT; 
+	Int tileHeight = hdr.imageHeight/TILE_PIXEL_EXTENT;
 
 	if (tileWidth<numRows && tileHeight<numRows) {
 		return(false);
@@ -1202,8 +1194,8 @@ Bool WorldHeightMap::readTiles(InputStream *pStr, TileData **tiles, Int numRows)
 	if (bytesPerPixel > 4) return(false);
 	int i;
 	for (i=0; i<numRows*numRows; i++) {
-		if (tiles[i] == NULL) 
-			tiles[i] = MSGNEW("WorldHeightMap_readTiles") TileData;	
+		if (tiles[i] == NULL)
+			tiles[i] = MSGNEW("WorldHeightMap_readTiles") TileData;
 	}
 	UnsignedByte buf[4];
 	int repeatCount = 0;
@@ -1230,14 +1222,14 @@ Bool WorldHeightMap::readTiles(InputStream *pStr, TileData **tiles, Int numRows)
 			}
 			if (column >= (numRows*TILE_PIXEL_EXTENT)) continue;
 			r = buf[2]; g = buf[1]; b = buf[0];
-			
+
 			int tileNdx = (column/TILE_PIXEL_EXTENT) + numRows*(row/TILE_PIXEL_EXTENT);
 			int pixelNdx = (column%TILE_PIXEL_EXTENT) + TILE_PIXEL_EXTENT*(row%TILE_PIXEL_EXTENT);
 
 			UnsignedByte *pixel = tiles[tileNdx]->getDataPtr();
 
 			pixel += pixelNdx*TILE_BYTES_PER_PIXEL;
-			*pixel++ = b; 
+			*pixel++ = b;
 			*pixel++ = g;
 			*pixel++ = r;
 			*pixel = 0xFF; // solid alpha.
@@ -1274,7 +1266,7 @@ Int WorldHeightMap::updateTileTexturePositions(Int *edgeHeight)
 			m_sourceTiles[i]->m_tileLocationInTexture.x = 0;
 			m_sourceTiles[i]->m_tileLocationInTexture.y = 0;
 		}
-	}	 
+	}
 
 	/* put the normal tiles into the terrain texture */
 	Int texClass;
@@ -1335,7 +1327,7 @@ Int WorldHeightMap::updateTileTexturePositions(Int *edgeHeight)
 			m_edgeTiles[i]->m_tileLocationInTexture.x = 0;
 			m_edgeTiles[i]->m_tileLocationInTexture.y = 0;
 		}
-	}	 
+	}
 
 	/* put the blend edge tiles into the blend edges texture */
 	Int maxEdgeHeight = 0;
@@ -1410,17 +1402,17 @@ void WorldHeightMap::getUVForNdx(Int tileNdx, float *minU, float *minV, float *m
 	ICoord2D pos = m_sourceTiles[baseNdx]->m_tileLocationInTexture;
 	*minU = pos.x;
 	*minV = pos.y;
-	*maxU = *minU+TILE_PIXEL_EXTENT; 
+	*maxU = *minU+TILE_PIXEL_EXTENT;
 	*maxV = *minV+TILE_PIXEL_EXTENT;
-#ifdef EVAL_TILING_MODES 
+#ifdef EVAL_TILING_MODES
 	if (m_tileMode == TILE_8x8) {
-		*maxU = *minU+TILE_PIXEL_EXTENT/2.0f; 
+		*maxU = *minU+TILE_PIXEL_EXTENT/2.0f;
 		*maxV = *minV+TILE_PIXEL_EXTENT/2.0f;
 	} else if (m_tileMode == TILE_6x6) {
-		*maxU = *minU+2.0f*TILE_PIXEL_EXTENT/3.0f; 
+		*maxU = *minU+2.0f*TILE_PIXEL_EXTENT/3.0f;
 		*maxV = *minV+2.0f*TILE_PIXEL_EXTENT/3.0f;
 	} else {
-		*maxU = *minU+TILE_PIXEL_EXTENT; 
+		*maxU = *minU+TILE_PIXEL_EXTENT;
 		*maxV = *minV+TILE_PIXEL_EXTENT;
 	}
 #endif
@@ -1429,7 +1421,7 @@ void WorldHeightMap::getUVForNdx(Int tileNdx, float *minU, float *minV, float *m
 	*maxU/=TEXTURE_WIDTH;
 	*maxV/=m_terrainTexHeight;
 	if (!fullTile) {
-		// Tiles are 64x64 pixels, height grids map to 32x32. 
+		// Tiles are 64x64 pixels, height grids map to 32x32.
 		// So get the proper quadrant of the tile.
 		Real midX = (*minU+*maxU)/2;
 		Real midY = (*minV+*maxV)/2;
@@ -1459,7 +1451,7 @@ void WorldHeightMap::getUVForBlend(Int edgeClass, Region2D *range)
 }
 
 /// Get whether something is cliff indexed with the offset that HeightMapRenderObjClass uses built in.
-Bool WorldHeightMap::isCliffMappedTexture(Int x, Int y) { 
+Bool WorldHeightMap::isCliffMappedTexture(Int x, Int y) {
 	Int ndx = x+m_drawOriginX+m_width*(y+m_drawOriginY);
 	if (ndx>=0 && ndx<m_dataSize) {
 		return m_cliffInfoNdxes[ndx] != 0;
@@ -1535,7 +1527,7 @@ Bool WorldHeightMap::getUVForTileIndex(Int ndx, Short tileNdx, float U[4], float
 			return false;
 		}
 		if (m_cliffInfoNdxes[ndx]) {
-			TCliffInfo info = m_cliffInfo[m_cliffInfoNdxes[ndx]]; 
+			TCliffInfo info = m_cliffInfo[m_cliffInfoNdxes[ndx]];
 			Bool tilesMatch = false;
 			Int ndx1 = tileNdx>>2;
 			Int ndx2 = info.tileIndex>>2;
@@ -1566,12 +1558,12 @@ Bool WorldHeightMap::getUVForTileIndex(Int ndx, Short tileNdx, float U[4], float
 		}
 #define DO_OLD_UV
 #ifdef DO_OLD_UV
-// old uv adjustment for cliffs 
+// old uv adjustment for cliffs
 		static Real STRETCH_LIMIT = 1.5f;	 // If it is stretching less than this, don't adjust.
 		static Real TILE_LIMIT = 4.0;			// Our tiles are currently 4 cells wide & tall, so dont'
 																			// adjust to more than 4.0.
 
-		static Real TALL_STRETCH_LIMIT = 2.0f; 
+		static Real TALL_STRETCH_LIMIT = 2.0f;
 		static Real DIAMOND_STRETCH_LIMIT = 2.4f;
 		static Real HEIGHT_SCALE = MAP_HEIGHT_SCALE / MAP_XY_FACTOR;
 
@@ -1593,7 +1585,7 @@ Bool WorldHeightMap::getUVForTileIndex(Int ndx, Short tileNdx, float U[4], float
 		if (fullTile) {
 			return false;
 		}
-		// check for excessive heights. 
+		// check for excessive heights.
 		if (ndx < this->m_dataSize - m_width - 1) {
 			Int h0 = m_data[ndx];
 			Int h1 = m_data[ndx+1];
@@ -1621,7 +1613,7 @@ Bool WorldHeightMap::getUVForTileIndex(Int ndx, Short tileNdx, float U[4], float
 			if (h1>aboveLimit) above++;
 			if (h2>aboveLimit) above++;
 			if (h3>aboveLimit) above++;
-			if (deltaH*HEIGHT_SCALE < STRETCH_LIMIT) { 
+			if (deltaH*HEIGHT_SCALE < STRETCH_LIMIT) {
 				return false;
 			}
 
@@ -1632,7 +1624,7 @@ Bool WorldHeightMap::getUVForTileIndex(Int ndx, Short tileNdx, float U[4], float
 					continue;
 				}
 				// see if the blend tile is in a texture class, and get the right tile for xIndex, yIndex.
-				if (baseNdx >= m_textureClasses[texClass].firstTile && 
+				if (baseNdx >= m_textureClasses[texClass].firstTile &&
 					baseNdx < m_textureClasses[texClass].firstTile+m_textureClasses[texClass].numTiles) {
 					break;
 				}
@@ -1641,7 +1633,7 @@ Bool WorldHeightMap::getUVForTileIndex(Int ndx, Short tileNdx, float U[4], float
 			Real nUb, nVb, xUb, xVb;
 			nUb = m_textureClasses[texClass].positionInTexture.x;
 			nVb = m_textureClasses[texClass].positionInTexture.y;
-			xUb = nUb+m_textureClasses[texClass].width*TILE_PIXEL_EXTENT; 
+			xUb = nUb+m_textureClasses[texClass].width*TILE_PIXEL_EXTENT;
 			xVb = nVb+m_textureClasses[texClass].width*TILE_PIXEL_EXTENT;
 			nUb/=TEXTURE_WIDTH;
 			nVb/=m_terrainTexHeight;
@@ -1652,18 +1644,18 @@ Bool WorldHeightMap::getUVForTileIndex(Int ndx, Short tileNdx, float U[4], float
 			Real divisor = TILE_LIMIT/(deltaH*HEIGHT_SCALE);
 			if (divisor > TILE_LIMIT) divisor = TILE_LIMIT;
 			if (divisor < 1.0f) divisor = 1.0f;
-			Real deltaV = (xVb-nVb); 
-//			Real deltaU = (xUb-nUb); 
+			Real deltaV = (xVb-nVb);
+//			Real deltaU = (xUb-nUb);
 
 			if (above != 1 && below != 1 && (above!=2 || below != 2)) {
 				// diamond shaped.  Use default if it is not too stretched, as
 				// the fix is not that appealing either.
-				if (deltaH*HEIGHT_SCALE < DIAMOND_STRETCH_LIMIT) { 
+				if (deltaH*HEIGHT_SCALE < DIAMOND_STRETCH_LIMIT) {
 					return false;
 				}
 			}
 
-			if (below==1 || above>below) { //(avgH > minH + (2*deltaH+2)/3) 
+			if (below==1 || above>below) { //(avgH > minH + (2*deltaH+2)/3)
 				// we got one low guy.
 				if (h0==minH) {
 					V[0] = nV+deltaV/divisor;
@@ -1680,7 +1672,7 @@ Bool WorldHeightMap::getUVForTileIndex(Int ndx, Short tileNdx, float U[4], float
 				V[0] = xV; V[1] = xV; V[2] = nV; V[3] = nV;
 				return false;
 #endif
-			}	else if (above==1 || below>above) { //(avgH < minH + (deltaH+1)/3) 
+			}	else if (above==1 || below>above) { //(avgH < minH + (deltaH+1)/3)
 				// we got one high guy
 				if (h0==maxH) {
 					V[0] = nV+deltaV/divisor;
@@ -1699,7 +1691,7 @@ Bool WorldHeightMap::getUVForTileIndex(Int ndx, Short tileNdx, float U[4], float
 #endif
 			} else {
 				// we got two up and two down.
-				if (deltaH*HEIGHT_SCALE < TALL_STRETCH_LIMIT) { 
+				if (deltaH*HEIGHT_SCALE < TALL_STRETCH_LIMIT) {
 					return false;
 				}
 #if 0
@@ -1712,10 +1704,10 @@ Bool WorldHeightMap::getUVForTileIndex(Int ndx, Short tileNdx, float U[4], float
 				dx = sqrt(1+dx*dx); // lenght of the bottom of the cell
 				Real dy =	(h3-h0)*HEIGHT_SCALE;
 				dy = sqrt(1+dy*dy); // length of the left side.
-				if (dx<STRETCH_LIMIT) dx = 1.0f; // don't make a seam unless there is great stretch. 
-				if (dy<STRETCH_LIMIT) dy = 1.0f; // don't make a seam unless there is great stretch. 
-				if (dx>TILE_LIMIT) dx = TILE_LIMIT; // don't tile past the texture's edge. 
-				if (dy>TILE_LIMIT) dy = TILE_LIMIT; // don't tile past the texture's edge. 
+				if (dx<STRETCH_LIMIT) dx = 1.0f; // don't make a seam unless there is great stretch.
+				if (dy<STRETCH_LIMIT) dy = 1.0f; // don't make a seam unless there is great stretch.
+				if (dx>TILE_LIMIT) dx = TILE_LIMIT; // don't tile past the texture's edge.
+				if (dy>TILE_LIMIT) dy = TILE_LIMIT; // don't tile past the texture's edge.
 				dx *= xU-nU;
 				dy *= xV-nV;
 				U[0] = nU; U[1] = nU+dx; U[2] = nU+dx; U[3] = nU;
@@ -1728,10 +1720,10 @@ Bool WorldHeightMap::getUVForTileIndex(Int ndx, Short tileNdx, float U[4], float
 				dx = sqrt(1+dx*dx); // lenght of the bottom of the cell
 				dy =	(h2-h1)*HEIGHT_SCALE;
 				dy = sqrt(1+dy*dy); // length of the left side.
-				if (dx<STRETCH_LIMIT) dx = 1.0f; // don't make a seam unless there is great stretch. 
-				if (dy<STRETCH_LIMIT) dy = 1.0f; // don't make a seam unless there is great stretch. 
-				if (dx>TILE_LIMIT) dx = TILE_LIMIT; // don't tile past the texture's edge. 
-				if (dy>TILE_LIMIT) dy = TILE_LIMIT; // don't tile past the texture's edge. 
+				if (dx<STRETCH_LIMIT) dx = 1.0f; // don't make a seam unless there is great stretch.
+				if (dy<STRETCH_LIMIT) dy = 1.0f; // don't make a seam unless there is great stretch.
+				if (dx>TILE_LIMIT) dx = TILE_LIMIT; // don't tile past the texture's edge.
+				if (dy>TILE_LIMIT) dy = TILE_LIMIT; // don't tile past the texture's edge.
 				dx *= xU-nU;
 				dy *= xV-nV;
 				U[1] = U[0]+dx;
@@ -1756,12 +1748,12 @@ Bool WorldHeightMap::getUVForTileIndex(Int ndx, Short tileNdx, float U[4], float
 				U[i] -= adjU;
 				V[i] -= adjV;
 			}
-		}	
+		}
 		return true;
-// 
+//
 #endif
 
-	}	
+	}
 	return false;
 }
 
@@ -1844,15 +1836,15 @@ Bool WorldHeightMap::getExtraAlphaUVData(Int xIndex, Int yIndex, float U[4], flo
 	return TRUE;
 }
 
-/** getUVData - Gets the texture coordinates to use with the alpha texture.  
+/** getUVData - Gets the texture coordinates to use with the alpha texture.
 		xIndex and yIndex are the integer coorddinates into the height map.
 		U and V are the texture coordiantes for the 4 corners of a height map cell.
 		fullTile is true if we are doing 1/2 resolution height map, and require a full
 		tile to texture  a cell.  Otherwise, we use quarter tiles per cell.
-		flip is set if we need to flip the diagonal across the cell to make the 
+		flip is set if we need to flip the diagonal across the cell to make the
 		alpha coordinates blend properly.  Filling a square with 2 triangles is not symmetrical :)
 */
-void WorldHeightMap::getAlphaUVData(Int xIndex, Int yIndex, float U[4], float V[4], 
+void WorldHeightMap::getAlphaUVData(Int xIndex, Int yIndex, float U[4], float V[4],
 																		UnsignedByte alpha[4], Bool *flip, Bool fullTile)
 {
 	xIndex += m_drawOriginX;
@@ -1865,7 +1857,7 @@ void WorldHeightMap::getAlphaUVData(Int xIndex, Int yIndex, float U[4], float V[
 		Short blendNdx = m_blendTileNdxes[ndx];
 		if (fullTile) blendNdx = 0;
 		if (blendNdx == 0) {
-			stretchedForCliff = getUVForTileIndex(ndx, m_tileNdxes[ndx], U, V, fullTile);		
+			stretchedForCliff = getUVForTileIndex(ndx, m_tileNdxes[ndx], U, V, fullTile);
 			alpha[0] = alpha[1] = alpha[2] = alpha[3] = 0;
 			// No alpha blend, so never need to flip.
 			needFlip = false;
@@ -1959,7 +1951,7 @@ TextureClass *WorldHeightMap::getTerrainTexture(void)
 		m_terrainTex = MSGNEW("WorldHeightMap_getTerrainTexture") TerrainTextureClass(pow2Height);
 		m_terrainTexHeight = m_terrainTex->update(this);
 		char buf[64];
-		sprintf(buf, "Base tex height %d\n", pow2Height);
+		sprintf(buf, "Base tex height %d", pow2Height);
 		DEBUG_LOG((buf));
 		REF_PTR_RELEASE(m_alphaTerrainTex);
 		m_alphaTerrainTex = MSGNEW("WorldHeightMap_getTerrainTexture") AlphaTerrainTextureClass(m_terrainTex);
@@ -2000,7 +1992,7 @@ TextureClass *WorldHeightMap::getAlphaTerrainTexture(void)
 	}
 	return m_alphaTerrainTex;
 }
-	
+
 TextureClass *WorldHeightMap::getEdgeTerrainTexture(void)
 {
 	if (m_alphaEdgeTex == NULL) {
@@ -2008,7 +2000,7 @@ TextureClass *WorldHeightMap::getEdgeTerrainTexture(void)
 	}
 	return m_alphaEdgeTex;
 }
-	
+
 Bool WorldHeightMap::setDrawOrg(Int xOrg, Int yOrg)
 {
 	Int newX, newY;
@@ -2027,9 +2019,9 @@ Bool WorldHeightMap::setDrawOrg(Int xOrg, Int yOrg)
 	}
 	if (newWidth > m_width) newWidth = m_width;
 	if (newHeight > m_height) newHeight = m_height;
-	if (newX > m_width - newWidth) newX = m_width-newWidth; 
+	if (newX > m_width - newWidth) newX = m_width-newWidth;
 	if (newX<0) newX=0;
-	if (newY > m_height - newHeight) newY = m_height - newHeight; 
+	if (newY > m_height - newHeight) newY = m_height - newHeight;
 	if (newY<0) newY=0;
 	Bool anythingDifferent = (m_drawOriginX!=newX) ||
 										 (m_drawOriginY!=newY) ||
@@ -2087,14 +2079,14 @@ void WorldHeightMap::setCellCliffFlagFromHeights(Int xIndex, Int yIndex)
 	if (maxZ < height2) maxZ = height2;
 	if (maxZ < height3) maxZ = height3;
 	if (maxZ < height4) maxZ = height4;
-	const Real cliffRange = PATHFIND_CLIFF_SLOPE_LIMIT_F;	
+	const Real cliffRange = PATHFIND_CLIFF_SLOPE_LIMIT_F;
 	Bool isCliff = (maxZ-minZ > cliffRange);
 	setCliffState(xIndex, yIndex, isCliff);
 
 }
 
 /** Gets global texture class. */
-Int WorldHeightMap::getTextureClassFromNdx(Int tileNdx) 
+Int WorldHeightMap::getTextureClassFromNdx(Int tileNdx)
 {
 	Int i;
 	tileNdx = tileNdx>>2;
@@ -2103,7 +2095,7 @@ Int WorldHeightMap::getTextureClassFromNdx(Int tileNdx)
 			continue;
 		}
 		// see if the blend tile is in a texture class, and get the right tile for xIndex, yIndex.
-		if (tileNdx >= m_textureClasses[i].firstTile && 
+		if (tileNdx >= m_textureClasses[i].firstTile &&
 			tileNdx < m_textureClasses[i].firstTile+m_textureClasses[i].numTiles) {
 			return(m_textureClasses[i].globalTextureClass);
 		}
@@ -2142,7 +2134,7 @@ void WorldHeightMap::getTerrainColorAt(Real x, Real y, RGBColor *pColor)
 		pColor->green = pData[1]/255.0;
 		pColor->blue = pData[0]/255.0;
 	}
-}	
+}
 
 AsciiString WorldHeightMap::getTerrainNameAt(Real x, Real y)
 {
@@ -2166,6 +2158,6 @@ AsciiString WorldHeightMap::getTerrainNameAt(Real x, Real y)
 		}
 	}
 	return AsciiString::TheEmptyString;
-}	
+}
 
 

@@ -25,12 +25,12 @@
 
 // FILE: HotKey.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Sep 2002
@@ -38,16 +38,13 @@
 //	Filename: 	HotKey.h
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __HOT_KEY_H_
-#define __HOT_KEY_H_
 
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
@@ -79,7 +76,7 @@ class HotKey
 public:
 	HotKey( void );
 	GameWindow *m_win;
-	AsciiString m_key;	
+	AsciiString m_key;
 	// we may need a checkmark system.
 };
 
@@ -97,7 +94,7 @@ public:
 
 	void addHotKey( GameWindow *win, const AsciiString& key);
 	Bool executeHotKey( const AsciiString& key); // called fromt eh HotKeyTranslator
-	
+
 	AsciiString searchHotKey( const AsciiString& label);
 	AsciiString searchHotKey( const UnicodeString& uStr );
 
@@ -113,6 +110,3 @@ extern HotKeyManager *TheHotKeyManager;
 //-----------------------------------------------------------------------------
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-
-#endif // __HOT_KEY_H_
-

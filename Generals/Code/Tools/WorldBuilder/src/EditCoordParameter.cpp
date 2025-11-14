@@ -56,10 +56,10 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // EditCoordParameter message handlers
 
-BOOL EditCoordParameter::OnInitDialog() 
+BOOL EditCoordParameter::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	CEdit *pEditX = (CEdit *)GetDlgItem(IDC_EDIT_X);
 	CEdit *pEditY = (CEdit *)GetDlgItem(IDC_EDIT_Y);
 	CEdit *pEditZ = (CEdit *)GetDlgItem(IDC_EDIT_Z);
@@ -77,7 +77,7 @@ BOOL EditCoordParameter::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void EditCoordParameter::OnOK() 
+void EditCoordParameter::OnOK()
 {
 	CEdit *pEditX = (CEdit *)GetDlgItem(IDC_EDIT_X);
 	CEdit *pEditY = (CEdit *)GetDlgItem(IDC_EDIT_Y);
@@ -113,7 +113,7 @@ void EditCoordParameter::OnOK()
 	CDialog::OnOK();
 }
 
-void EditCoordParameter::OnCancel() 
+void EditCoordParameter::OnCancel()
 {
 
 	CDialog::OnCancel();

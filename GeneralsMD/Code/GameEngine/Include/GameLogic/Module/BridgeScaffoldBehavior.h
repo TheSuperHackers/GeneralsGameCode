@@ -29,16 +29,13 @@
 
 #pragma once
 
-#ifndef __BRIDGE_SCAFFOLD_BEHAVIOR_H_
-#define __BRIDGE_SCAFFOLD_BEHAVIOR_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/UpdateModule.h"
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum ScaffoldTargetMotion
+enum ScaffoldTargetMotion CPP_11(: Int)
 {
 	STM_STILL,
 	STM_RISE,
@@ -112,6 +109,3 @@ protected:
 	Coord3D m_targetPos;									///< current target position for our motion type
 
 };
-
-
-#endif  // end __BRIDGE_SCAFFOLD_BEHAVIOR_H_

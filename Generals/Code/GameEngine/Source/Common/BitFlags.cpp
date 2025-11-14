@@ -32,13 +32,14 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include "Common/BitFlags.h" 
+#include "Common/BitFlags.h"
 #include "Common/BitFlagsIO.h"
 #include "Common/ModelState.h"
 #include "GameLogic/ArmorSet.h"
 
-const char* ModelConditionFlags::s_bitNameList[] = 
-{	
+template<>
+const char* const ModelConditionFlags::s_bitNameList[] =
+{
 	"TOPPLED",
 	"FRONTCRUSHED",
 	"BACKCRUSHED",
@@ -125,7 +126,7 @@ const char* ModelConditionFlags::s_bitNameList[] =
 	"RAPPELLING",
 	"ARMED",
 	"POWER_PLANT_UPGRADING",
-	
+
 	"SPECIAL_CHEERING",
 
 	"CONTINUOUS_FIRE_SLOW",
@@ -147,14 +148,17 @@ const char* ModelConditionFlags::s_bitNameList[] =
 
 	NULL
 };
- 
-const char* ArmorSetFlags::s_bitNameList[] = 
+static_assert(ARRAY_SIZE(ModelConditionFlags::s_bitNameList) == ModelConditionFlags::NumBits + 1, "Incorrect array size");
+
+template<>
+const char* const ArmorSetFlags::s_bitNameList[] =
 {
 	"VETERAN",
 	"ELITE",
 	"HERO",
 	"PLAYER_UPGRADE",
+	"WEAK_VERSUS_BASEDEFENSES",
 
 	NULL
 };
-
+static_assert(ARRAY_SIZE(ArmorSetFlags::s_bitNameList) == ArmorSetFlags::NumBits + 1, "Incorrect array size");

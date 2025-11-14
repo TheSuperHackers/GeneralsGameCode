@@ -24,12 +24,12 @@
 
 // FILE: W3DGadget.h //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -45,9 +45,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DGADGET_H_
-#define __W3DGADGET_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -89,6 +86,3 @@ extern void W3DGadgetStaticTextDraw( GameWindow *window, WinInstanceData *instDa
 extern void W3DGadgetStaticTextImageDraw( GameWindow *window, WinInstanceData *instData );
 extern void W3DGadgetTextEntryDraw( GameWindow *window, WinInstanceData *instData );
 extern void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData );
-
-#endif // __W3DGADGET_H_
-

@@ -29,12 +29,9 @@
 
 #pragma once
 
-#ifndef _MODEL_CONDITION_UPGRADE_H
-#define _MODEL_CONDITION_UPGRADE_H
-
 #include "GameLogic/Module/UpgradeModule.h"
 
-enum ModelConditionFlagType;
+enum ModelConditionFlagType CPP_11(: Int);
 //-----------------------------------------------------------------------------
 class ModelConditionUpgradeModuleData : public UpgradeModuleData
 {
@@ -63,6 +60,3 @@ protected:
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };
-#endif // _MODEL_CONDITION_UPGRADE_H
-
-

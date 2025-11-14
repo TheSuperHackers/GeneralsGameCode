@@ -24,12 +24,12 @@
 
 // FILE: Win32DIKeyboard.h ////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -45,9 +45,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __WIN32DIKEYBOARD_H_
-#define __WIN32DIKEYBOARD_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #ifndef DIRECTINPUT_VERSION
@@ -95,12 +92,9 @@ protected:
 	// direct input data members
 	LPDIRECTINPUT8 m_pDirectInput;  ///< pointer to direct input interface
 	LPDIRECTINPUTDEVICE8 m_pKeyboardDevice;  ///< pointer to keyboard device
- 
-};  // end class DirectInputKeyboard
+
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __WIN32DIKEYBOARD_H_
-

@@ -24,14 +24,11 @@
 
 // FILE: Special Ability.h ///////////////////////////////////////////////////////////////
 // Author: Kris Morness, July 2002
-// Desc:   This is the class that handles processing of any special attack from a unit. There are 
+// Desc:   This is the class that handles processing of any special attack from a unit. There are
 //         many different styles and rules for various attacks.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __SPECIAL_ABILITY_H_
-#define __SPECIAL_ABILITY_H_
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/SpecialPowerModule.h"
@@ -65,5 +62,3 @@ public:
 protected:
 
 };
-
-#endif  // end __SPECIAL_ABILITY_H_

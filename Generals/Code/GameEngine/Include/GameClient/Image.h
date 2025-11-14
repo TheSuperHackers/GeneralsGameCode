@@ -30,12 +30,10 @@
 
 #pragma once
 
-#ifndef __IMAGE_H_
-#define __IMAGE_H_
-
 #include "Common/AsciiString.h"
 #include "Common/GameMemory.h"
 #include "Common/SubsystemInterface.h"
+#include <map>
 
 struct FieldParse;
 class INI;
@@ -51,7 +49,7 @@ typedef enum
 
 } ImageStatus;
 #ifdef DEFINE_IMAGE_STATUS_NAMES
-static const char *imageStatusNames[] =
+static const char *const imageStatusNames[] =
 {
 	"ROTATED_90_CLOCKWISE",
 	"RAW_TEXTURE",
@@ -68,7 +66,7 @@ class Image : public MemoryPoolObject
 MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( Image, "Image" );
 
 public:
-	
+
 	Image( void );
 	// virtual desctructor defined by memory pool object
 
@@ -109,11 +107,9 @@ friend class ImageCollection;
 	void *m_rawTextureData;		///< raw texture data
 	UnsignedInt m_status;			///< status bits from ImageStatus
 
-	Image *m_next;						///< for maintaining lists as collections
-
 	static const FieldParse m_imageFieldParseTable[];		///< the parse table for INI definition
 
-};  // end Image
+};
 
 //-------------------------------------------------------------------------------------------------
 /** A collection of images */
@@ -131,27 +127,30 @@ public:
 	virtual void update( void ) { };			///< update system
 
 	void load( Int textureSize );												 ///< load images
-		
-	const Image *findImageByName( const AsciiString& name );					 ///< find image based on name
-	const Image *findImageByFilename( const AsciiString& name );  ///< find image based on filename
-	
-	Image *firstImage( void );						///< return first image in list
-	Image *nextImage( Image *image );			///< return next image
 
-	Image *newImage( void );							///< return a new, linked image
+	const Image *findImageByName( const AsciiString& name );					 ///< find image based on name
+
+  /// adds the given image to the collection, transfers ownership to this object
+  void addImage(Image *image);
+
+  /// enumerates the list of existing images
+  Image *Enum(unsigned index)
+  {
+    for (std::map<unsigned,Image *>::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
+      if (!index--)
+        return i->second;
+    return NULL;
+  }
 
 protected:
-
-	Image *m_imageList;  ///< the image list
-
-};  // end ImageCollection
+  std::map<unsigned,Image *> m_imageMap;  ///< maps named keys to images
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
 inline void Image::setName( AsciiString name ) { m_name = name; }
 inline AsciiString Image::getName( void ) const { return m_name; }
 inline void Image::setFilename( AsciiString name ) { m_filename = name; }
 inline AsciiString Image::getFilename( void ) const { return m_filename; }
-inline Image *ImageCollection::firstImage( void ) { return m_imageList; }
 inline void Image::setUV( Region2D *uv ) { if( uv ) m_UVCoords = *uv; }
 inline const Region2D *Image::getUV( void ) const { return &m_UVCoords; }
 inline void Image::setTextureWidth( Int width ) { m_textureSize.x = width; }
@@ -167,6 +166,3 @@ inline UnsignedInt Image::getStatus( void ) const { return m_status; }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern ImageCollection *TheMappedImageCollection;  ///< mapped images
-
-#endif // __IMAGE_H_
-

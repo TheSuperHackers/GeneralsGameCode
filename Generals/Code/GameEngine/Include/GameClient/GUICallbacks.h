@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GUICALLBACKS_H_
-#define __GUICALLBACKS_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameClient/GameWindow.h"
 
@@ -325,7 +322,7 @@ extern WindowMsgHandledType ReplayControlInput( GameWindow *window, UnsignedInt 
 // InGame Chat Controls --------------------------------------------------------------------------------
 extern WindowMsgHandledType InGameChatSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
 extern WindowMsgHandledType InGameChatInput( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
-enum InGameChatType
+enum InGameChatType CPP_11(: Int)
 {
 	INGAME_CHAT_ALLIES,
 	INGAME_CHAT_EVERYONE,
@@ -378,7 +375,3 @@ extern WindowMsgHandledType MOTDSystem( GameWindow *window, UnsignedInt msg, Win
 // Message Box --------------------------------------------------------------------------------
 extern WindowMsgHandledType MessageBoxSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
 extern WindowMsgHandledType QuitMessageBoxSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
-
-
-#endif // __GUICALLBACKS_H_
-

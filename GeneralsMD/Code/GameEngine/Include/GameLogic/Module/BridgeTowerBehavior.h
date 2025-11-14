@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BRIDGE_TOWER_BEHAVIOR_H_
-#define __BRIDGE_TOWER_BEHAVIOR_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DamageModule.h"
@@ -49,7 +46,7 @@ public:
 	virtual void setBridge( Object *bridge ) = 0;
 	virtual ObjectID getBridgeID( void ) = 0;
 	virtual void setTowerType( BridgeTowerType type ) = 0;
-	
+
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -81,8 +78,8 @@ public:
 	virtual DamageModuleInterface* getDamage() { return this; }
 	virtual void onDamage( DamageInfo *damageInfo );
 	virtual void onHealing( DamageInfo *damageInfo );
-	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo, 
-																				BodyDamageType oldState, 
+	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
+																				BodyDamageType oldState,
 																				BodyDamageType newState );
 
 	// Die methods
@@ -95,5 +92,3 @@ protected:
 	BridgeTowerType m_type;				///< type of tower (positioning) we are
 
 };
-
-#endif  // end __BRIDGE_TOWER_DAMAGE_H_

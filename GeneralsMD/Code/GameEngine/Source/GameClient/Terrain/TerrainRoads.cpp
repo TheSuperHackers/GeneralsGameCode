@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLDUES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_BODYDAMAGETYPE_NAMES
 #include "Common/INI.h"
@@ -42,7 +42,7 @@ UnsignedInt TerrainRoadCollection::m_idCounter = 0;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-const FieldParse TerrainRoadType::m_terrainRoadFieldParseTable[] = 
+const FieldParse TerrainRoadType::m_terrainRoadFieldParseTable[] =
 {
 
 	{ "Texture",						INI::parseAsciiString,				NULL, offsetof( TerrainRoadType, m_texture ) },
@@ -55,7 +55,7 @@ const FieldParse TerrainRoadType::m_terrainRoadFieldParseTable[] =
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] = 
+const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 {
 
 	{ "BridgeScale",									INI::parseReal,								NULL, offsetof( TerrainRoadType, m_bridgeScale ) },
@@ -91,12 +91,12 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 };
 
 // ------------------------------------------------------------------------------------------------
-/** In the form of 
+/** In the form of
 	* Label = Transition:<Damage|Repair> ToState:<BODYTYPE> EffectNum:<INT> OCL:<OCL NAME> */
 // ------------------------------------------------------------------------------------------------
-/*static*/ void TerrainRoadType::parseTransitionToOCL( INI *ini, 
-																											 void *instance, 
-																											 void *store, 
+/*static*/ void TerrainRoadType::parseTransitionToOCL( INI *ini,
+																											 void *instance,
+																											 void *store,
 																											 const void *userData )
 {
 	const char *token;
@@ -112,10 +112,10 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 	else
 	{
 
-		DEBUG_CRASH(( "Expected Damage/Repair transition keyword\n" ));
+		DEBUG_CRASH(( "Expected Damage/Repair transition keyword" ));
 		throw INI_INVALID_DATA;
 
-	}  // end else
+	}
 
 	// get body damage state
 	token = ini->getNextSubToken( "ToState" );
@@ -124,7 +124,7 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 	// get effect num
 	token = ini->getNextSubToken( "EffectNum" );
 	Int effectNum = ini->scanInt( token );
-	
+
 	// make effectNum zero based
 	--effectNum;
 
@@ -132,10 +132,10 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 	if( effectNum < 0 || effectNum >= MAX_BRIDGE_BODY_FX )
 	{
 
-		DEBUG_CRASH(( "Effect number max on bridge transitions is '%d'\n", MAX_BRIDGE_BODY_FX ));
+		DEBUG_CRASH(( "Effect number max on bridge transitions is '%d'", MAX_BRIDGE_BODY_FX ));
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// read the string
 	token = ini->getNextSubToken( "OCL" );
@@ -143,16 +143,16 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 		theInstance->friend_setDamageToOCLString( state, effectNum, AsciiString( token ) );
 	else
 		theInstance->friend_setRepairedToOCLString( state, effectNum, AsciiString( token ) );
-	
-}  // end parseTransitionToOCL
+
+}
 
 // ------------------------------------------------------------------------------------------------
 /** In the form of
 	* Label = Transition:<Damage|Repair> ToState:<BODYTYPE> EffectNum:<INT> FX:<FXLIST NAME> */
 // ------------------------------------------------------------------------------------------------
-/*static*/ void TerrainRoadType::parseTransitionToFX( INI *ini, 
-																											void *instance, 
-																											void *store, 
+/*static*/ void TerrainRoadType::parseTransitionToFX( INI *ini,
+																											void *instance,
+																											void *store,
 																											const void *userData )
 {
 	const char *token;
@@ -168,10 +168,10 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 	else
 	{
 
-		DEBUG_CRASH(( "Expected Damage/Repair transition keyword\n" ));
+		DEBUG_CRASH(( "Expected Damage/Repair transition keyword" ));
 		throw INI_INVALID_DATA;
 
-	}  // end else
+	}
 
 	// get body damage state
 	token = ini->getNextSubToken( "ToState" );
@@ -180,7 +180,7 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 	// get effect num
 	token = ini->getNextSubToken( "EffectNum" );
 	Int effectNum = ini->scanInt( token );
-	
+
 	// make effectNum zero based
 	--effectNum;
 
@@ -188,10 +188,10 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 	if( effectNum < 0 || effectNum >= MAX_BRIDGE_BODY_FX )
 	{
 
-		DEBUG_CRASH(( "Effect number max on bridge transitions is '%d'\n", MAX_BRIDGE_BODY_FX ));
+		DEBUG_CRASH(( "Effect number max on bridge transitions is '%d'", MAX_BRIDGE_BODY_FX ));
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// read the string
 	token = ini->getNextSubToken( "FX" );
@@ -200,7 +200,7 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 	else
 		theInstance->friend_setRepairedToFXString( state, effectNum, AsciiString( token ) );
 
-}  // end parseTransitionToFX
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -219,14 +219,14 @@ TerrainRoadType::TerrainRoadType( void )
 	m_transitionEffectsHeight = 0.0f;
 	m_numFXPerType = 0;
 
-}  // end TerrainRoadType
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 TerrainRoadType::~TerrainRoadType( void )
 {
 
-}  // end ~TerrainRoadType
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -242,7 +242,7 @@ TerrainRoadCollection::TerrainRoadCollection( void )
 
 	m_idCounter = 1;   ///< MUST start this at 1.
 
-}  // end TerrainRoadCollection
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -258,12 +258,12 @@ TerrainRoadCollection::~TerrainRoadCollection( void )
 		temp = m_roadList->friend_getNext();
 
 		// delete this road
-		m_roadList->deleteInstance();
+		deleteInstance(m_roadList);
 
 		// set the new head of the list
 		m_roadList = temp;
 
-	}  // end while
+	}
 
 	// delete all bridges in the list
 	while( m_bridgeList )
@@ -273,14 +273,14 @@ TerrainRoadCollection::~TerrainRoadCollection( void )
 		temp = m_bridgeList->friend_getNext();
 
 		// delete this bridge
-		m_bridgeList->deleteInstance();
+		deleteInstance(m_bridgeList);
 
 		// set the new head of the list
 		m_bridgeList = temp;
 
-	}  // end while
+	}
 
-}  // end ~TerrainRoadCollection
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Find road with matching name */
@@ -295,12 +295,12 @@ TerrainRoadType *TerrainRoadCollection::findRoad( AsciiString name )
 		if( road->getName() == name )
 			return road;
 
-	}  // end for road
+	}
 
 	// not found
 	return NULL;
 
-}  // end findRoad
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Find bridge with matching name */
@@ -315,12 +315,12 @@ TerrainRoadType *TerrainRoadCollection::findBridge( AsciiString name )
 		if( bridge->getName() == name )
 			return bridge;
 
-	}  // end for bridge
+	}
 
 	// not found
 	return NULL;
 
-}  // end findBridge
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Search the roads AND bridge lists for the name */
@@ -334,7 +334,7 @@ TerrainRoadType *TerrainRoadCollection::findRoadOrBridge( AsciiString name )
 	else
 		return findBridge( name );
 
-}  // end findRoadOrBridge
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Allocate a new road, set the name, and link to the road list */
@@ -356,12 +356,12 @@ TerrainRoadType *TerrainRoadCollection::newRoad( AsciiString name )
 	TerrainRoadType *defaultRoad = findRoad( AsciiString( "DefaultRoad" ) );
 	if( defaultRoad )
 	{
-		
+
 		road->friend_setTexture( defaultRoad->getTexture() );
 		road->friend_setRoadWidth( defaultRoad->getRoadWidth() );
 		road->friend_setRoadWidthInTexture( defaultRoad->getRoadWidthInTexture() );
 
-	}  // end if
+	}
 
 	// link to list
 	road->friend_setNext( m_roadList );
@@ -370,7 +370,7 @@ TerrainRoadType *TerrainRoadCollection::newRoad( AsciiString name )
 	// return the new road
 	return road;
 
-}  // end newRoad
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Allocate a new bridge */
@@ -392,7 +392,7 @@ TerrainRoadType *TerrainRoadCollection::newBridge( AsciiString name )
 	TerrainRoadType *defaultBridge = findBridge( AsciiString( "DefaultBridge" ) );
 	if( defaultBridge )
 	{
-		
+
 		bridge->friend_setTexture( defaultBridge->getTexture() );
 		bridge->friend_setBridgeScale( defaultBridge->getBridgeScale() );
 		bridge->friend_setBridgeModelName( defaultBridge->getBridgeModel() );
@@ -419,11 +419,11 @@ TerrainRoadType *TerrainRoadCollection::newBridge( AsciiString name )
 				bridge->friend_setRepairedToOCLString( (BodyDamageType)state, i, bridge->getDamageToOCLString( (BodyDamageType)state, i ) );
 				bridge->friend_setRepairedToFXString( (BodyDamageType)state, i, bridge->getDamageToOCLString( (BodyDamageType)state, i ) );
 
-			}  // end for i
+			}
 
-		}  // end for
+		}
 
-	}  // end if
+	}
 
 	// link to list
 	bridge->friend_setNext( m_bridgeList );
@@ -432,7 +432,7 @@ TerrainRoadType *TerrainRoadCollection::newBridge( AsciiString name )
 	// return the new bridge
 	return bridge;
 
-}  // end newBridge
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return next road in list */
@@ -440,10 +440,10 @@ TerrainRoadType *TerrainRoadCollection::newBridge( AsciiString name )
 TerrainRoadType *TerrainRoadCollection::nextRoad( TerrainRoadType *road )
 {
 
-	DEBUG_ASSERTCRASH( road->isBridge() == FALSE, ("nextRoad: road not a road\n") );
+	DEBUG_ASSERTCRASH( road->isBridge() == FALSE, ("nextRoad: road not a road") );
 	return road->friend_getNext();
 
-}  // end nextRoad
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return next bridge in list */
@@ -451,8 +451,8 @@ TerrainRoadType *TerrainRoadCollection::nextRoad( TerrainRoadType *road )
 TerrainRoadType *TerrainRoadCollection::nextBridge( TerrainRoadType *bridge )
 {
 
-	DEBUG_ASSERTCRASH( bridge->isBridge() == TRUE, ("nextBridge, bridge is not a bridge\n") );
+	DEBUG_ASSERTCRASH( bridge->isBridge() == TRUE, ("nextBridge, bridge is not a bridge") );
 	return bridge->friend_getNext();
 
-}  // end nextBridge
+}
 

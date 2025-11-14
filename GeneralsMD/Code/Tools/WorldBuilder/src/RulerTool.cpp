@@ -19,7 +19,7 @@
 // RulerTool.cpp
 // Author: Mike Lytle, January 2003
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "RulerTool.h"
@@ -42,14 +42,14 @@ Tool(ID_RULER_TOOL, IDC_POINTER)
 	m_View = NULL;
 	m_staticThis = this;
 }
-	
+
 /// Destructor
-RulerTool::~RulerTool(void) 
+RulerTool::~RulerTool(void)
 {
 }
 
 // Activate.
-void RulerTool::activate() 
+void RulerTool::activate()
 {
 	Tool::activate();
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_RULER_OPTIONS);
@@ -60,7 +60,7 @@ void RulerTool::activate()
 }
 
 // Deactivate.
-void RulerTool::deactivate() 
+void RulerTool::deactivate()
 {
 	Tool::deactivate();
 
@@ -71,14 +71,14 @@ void RulerTool::deactivate()
 }
 
 /** Set the cursor. */
-void RulerTool::setCursor(void) 
+void RulerTool::setCursor(void)
 {
 	Tool::setCursor();
 }
 
 
 /** Execute the tool on mouse down */
-void RulerTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void RulerTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 

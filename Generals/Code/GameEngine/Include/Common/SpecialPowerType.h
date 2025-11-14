@@ -27,8 +27,6 @@
 // JKMCD Aug 2002
 
 #pragma once
-#ifndef __SPECIALPOWERTYPE_H__
-#define __SPECIALPOWERTYPE_H__
 
 // ------------------------------------------------------------------------------------------------
 // don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
@@ -37,7 +35,7 @@
 // Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
 // existing values!
 //
-enum SpecialPowerType
+enum SpecialPowerType CPP_11(: Int)
 {
 	SPECIAL_INVALID,
 	// don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
@@ -91,11 +89,9 @@ enum SpecialPowerType
 	SPECIAL_CLEANUP_AREA,
 	// don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
 	SPECIAL_LAUNCH_BAIKONUR_ROCKET,
-		
+
 	SPECIALPOWER_COUNT,
 	// don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]
 };
 
 	// Definition of these names is located in SpecialPower.cpp
-
-#endif /* __SPECIALPOWERTYPE_H__ */

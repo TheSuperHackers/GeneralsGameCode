@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef FIRING_TRACKER_H
-#define FIRING_TRACKER_H
-
 #include "Common/GameType.h"
 #include "Common/GameMemory.h"
 #include "Common/AudioEventRTS.h"
@@ -52,7 +49,7 @@ class FiringTrackerModuleData : public ModuleData
 class FiringTracker : public UpdateModule
 {
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( FiringTracker, FiringTrackerModuleData )
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FiringTracker, "FiringTrackerPool" )	
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FiringTracker, "FiringTrackerPool" )
 public:
 	FiringTracker(Thing *thing, const ModuleData *modData);
 	void shotFired(const Weapon* weaponFired, ObjectID victimID );			///< Owner just fired this weapon at this Object
@@ -91,6 +88,3 @@ private:
 	UnsignedInt			m_frameToStopLoopingSound;	///< if sound is looping, frame to stop looping it (or zero if not looping)
 	AudioHandle			m_audioHandle;
 };
-
-#endif
-

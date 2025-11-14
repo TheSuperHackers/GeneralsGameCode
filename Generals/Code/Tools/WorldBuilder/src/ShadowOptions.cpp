@@ -61,7 +61,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // ShadowOptions message handlers
 
-void ShadowOptions::setShadowColor(void) 
+void ShadowOptions::setShadowColor(void)
 {
 	Int r, g, b, shift;
 
@@ -82,11 +82,11 @@ void ShadowOptions::setShadowColor(void)
 	if (b<0) b = 0;
 
 	UnsignedInt clr = (255<<24) + (r<<16) + (g<<8) + b;
-	DEBUG_LOG(("Setting shadows to %x\n", clr));
+	DEBUG_LOG(("Setting shadows to %x", clr));
 	TheW3DShadowManager->setShadowColor(clr);
 }
 
-void ShadowOptions::OnChangeAlphaEdit() 
+void ShadowOptions::OnChangeAlphaEdit()
 {
 	CWnd *pEdit = GetDlgItem(IDC_ALPHA_EDIT);
 	Real clr;
@@ -100,7 +100,7 @@ void ShadowOptions::OnChangeAlphaEdit()
 	}
 }
 
-void ShadowOptions::OnChangeBaEdit() 
+void ShadowOptions::OnChangeBaEdit()
 {
 	CWnd *pEdit = GetDlgItem(IDC_BA_EDIT);
 	Real clr;
@@ -114,7 +114,7 @@ void ShadowOptions::OnChangeBaEdit()
 	}
 }
 
-void ShadowOptions::OnChangeGaEdit() 
+void ShadowOptions::OnChangeGaEdit()
 {
 	CWnd *pEdit = GetDlgItem(IDC_GA_EDIT);
 	Real clr;
@@ -128,7 +128,7 @@ void ShadowOptions::OnChangeGaEdit()
 	}
 }
 
-void ShadowOptions::OnChangeRaEdit() 
+void ShadowOptions::OnChangeRaEdit()
 {
 	CWnd *pEdit = GetDlgItem(IDC_RA_EDIT);
 	Real clr;
@@ -142,10 +142,10 @@ void ShadowOptions::OnChangeRaEdit()
 	}
 }
 
-BOOL ShadowOptions::OnInitDialog() 
+BOOL ShadowOptions::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	UnsignedInt clr = TheW3DShadowManager->getShadowColor();
 	m_red = ((clr>>16)&0x00FF)/255.0f;
 	m_green = ((clr>>8)&0x00FF)/255.0f;

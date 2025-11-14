@@ -26,9 +26,6 @@
 
 #pragma once
 
-#ifndef _ArmorSet_H_
-#define _ArmorSet_H_
-
 #include "Lib/BaseType.h"
 #include "Common/GameType.h"
 #include "Common/SparseMatchFinder.h"
@@ -43,7 +40,7 @@ class INI;
 // IMPORTANT NOTE: you should endeavor to set up states such that the most "normal"
 // state is defined by the bit being off. That is, the typical "normal" condition
 // has all condition flags set to zero.
-enum ArmorSetType
+enum ArmorSetType CPP_11(: Int)
 {
 	// The access and use of this enum has the bit shifting built in, so this is a 0,1,2,3,4,5 enum
 	ARMORSET_VETERAN		= 0,
@@ -53,9 +50,9 @@ enum ArmorSetType
 	ARMORSET_WEAK_VERSUS_BASEDEFENSES = 4,
 	ARMORSET_SECOND_LIFE = 5,	///< Body Module has marked us as on our second life
 	ARMORSET_CRATE_UPGRADE_ONE, ///< Just like weaponset type from salvage.
-	ARMORSET_CRATE_UPGRADE_TWO, 
+	ARMORSET_CRATE_UPGRADE_TWO,
 
-	ARMORSET_COUNT			///< keep last, please
+	ARMORSET_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -82,12 +79,12 @@ public:
 		m_fx = NULL;
 	}
 
-	inline const ArmorTemplate* getArmorTemplate() const { return m_template; } 
-	inline const DamageFX* getDamageFX() const { return m_fx; } 
+	inline const ArmorTemplate* getArmorTemplate() const { return m_template; }
+	inline const DamageFX* getDamageFX() const { return m_fx; }
 
 	inline Int getConditionsYesCount() const { return 1; }
 	inline const ArmorSetFlags& getNthConditionsYes(Int i) const { return m_types; }
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	inline AsciiString getDescription() const { return AsciiString("ArmorTemplateSet"); }
 #endif
 
@@ -96,8 +93,3 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 typedef std::vector<ArmorTemplateSet> ArmorTemplateSetVector;
-
-//-------------------------------------------------------------------------------------------------
-typedef SparseMatchFinder<ArmorTemplateSet, ArmorSetFlags> ArmorTemplateSetFinder;
-
-#endif	// _ArmorSet_H_

@@ -26,109 +26,10 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // tell the compiler to only load this file once
+
 #pragma once
 
-
-#ifndef _BASE_TYPE_H_
-#define _BASE_TYPE_H_
-
-#include <math.h>
-#include <string.h>
-
-/*
-**	Turn off some unneeded warnings.
-**	Within the windows headers themselves, Microsoft has disabled the warnings 4290, 4514, 
-**	4069, 4200, 4237, 4103, 4001, 4035, 4164. Makes you wonder, eh?
-*/
-
-// "unreferenced inline function has been removed" Yea, so what?
-#pragma warning(disable : 4514)
-
-// Unreferenced local function removed.
-#pragma warning(disable : 4505)
-
-// 'unreferenced formal parameter'
-#pragma warning(disable : 4100)
-
-// 'identifier was truncated to '255' characters in the browser information':
-// Tempates create LLLOOONNNGGG identifiers!
-#pragma warning(disable : 4786)
-
-// 'function selected for automatic inline expansion'.  Cool, but since we're treating
-// warnings as errors, don't warn me about this!
-#pragma warning(disable : 4711)
-
-#if 0
-// 'assignment within condition expression'. actually a pretty useful warning, 
-// but way too much existing code violates it.
-//#pragma warning(disable : 4706)
-#else
-// actually, it turned out not to be too bad, so this is now ENABLED. (srj)
-#pragma warning(error : 4706)
-#endif
-
-// 'conditional expression is constant'. used lots in debug builds.
-#pragma warning(disable : 4127)
-
-// 'nonstandard extension used : nameless struct/union'. MS headers violate this...
-#pragma warning(disable : 4201)
-
-// 'unreachable code'. STL violates this...
-#pragma warning(disable : 4702)
-
-// 'local variable is initialized but not referenced'. good thing to know about...
-#pragma warning(error : 4189)
-
-// 'unreferenced local variable'. good thing to know about...
-#pragma warning(error : 4101)
-
-#ifndef PI
-#define PI     3.14159265359f
-#define TWO_PI 6.28318530718f
-#endif
-
-#ifndef NULL
-//#define NULL ((void *)0)
-#define NULL 0						// C++ doesn't like casting void *'s into other pointers
-#endif
-
-// MSVC math.h defines overloaded functions with this name...
-//#ifndef abs
-//#define abs(x) (((x) < 0) ? -(x) : (x))
-//#endif
-
-#ifndef min
-#define min(x,y) (((x)<(y)) ? (x) : (y))
-#endif
-
-#ifndef max
-#define max(x,y) (((x)>(y)) ? (x) : (y))
-#endif
-
-#ifndef TRUE
-#define TRUE true
-#endif
-
-#ifndef FALSE
-#define FALSE false
-#endif
-
-//--------------------------------------------------------------------
-// Fundamental type definitions
-//--------------------------------------------------------------------
-typedef float							Real;							// 4 bytes 
-typedef int								Int;							// 4 bytes 
-typedef unsigned int			UnsignedInt;	  	// 4 bytes 
-typedef unsigned short		UnsignedShort;		// 2 bytes 
-typedef short							Short;					  // 2 bytes 
-typedef unsigned char			UnsignedByte;			// 1 byte		USED TO BE "Byte"
-typedef char							Byte;							// 1 byte		USED TO BE "SignedByte"
-typedef char							Char;							// 1 byte of text
-typedef bool							Bool;							// 
-// note, the types below should use "long long", but MSVC doesn't support it yet
-typedef __int64						Int64;							// 8 bytes 
-typedef unsigned __int64	UnsignedInt64;	  	// 8 bytes 
-
+#include "Lib/BaseTypeCore.h"
 #include "Lib/trig.h"
 
 //-----------------------------------------------------------------------------
@@ -164,7 +65,7 @@ inline Real deg2rad(Real rad) { return rad * (PI/180); }
 //-----------------------------------------------------------------------------
 // For twiddling bits
 //-----------------------------------------------------------------------------
-// TheSuperHackers @compile xezon 22/03/2025 Renames BitTest to BitIsSet to prevent conflict with BitTest macro from winnt.h
+// TheSuperHackers @build xezon 22/03/2025 Renames BitTest to BitIsSet to prevent conflict with BitTest macro from winnt.h
 #define BitIsSet( x, i ) ( ( (x) & (i) ) != 0 )
 #define BitSet( x, i ) ( (x) |= (i) )
 #define BitClear( x, i ) ( (x ) &= ~(i) )
@@ -172,7 +73,7 @@ inline Real deg2rad(Real rad) { return rad * (PI/180); }
 
 //-------------------------------------------------------------------------------------------------
 
-// note, this function depends on the cpu rounding mode, which we set to CHOP every frame, 
+// note, this function depends on the cpu rounding mode, which we set to CHOP every frame,
 // but apparently tends to be left in unpredictable modes by various system bits of
 // code, so use this function with caution -- it might not round in the way you want.
 __forceinline long fast_float2long_round(float f)
@@ -215,7 +116,7 @@ __forceinline long fast_float2long_round(float f)
 // so they can be used within unions.
 
 // real-valued range defined by low and high values
-struct RealRange 
+struct RealRange
 {
 	Real lo, hi;							// low and high values of the range
 
@@ -228,7 +129,7 @@ struct RealRange
 	}
 };
 
-struct Coord2D 
+struct Coord2D
 {
 	Real x, y;
 
@@ -243,7 +144,7 @@ struct Coord2D
 			y /= len;
 		}
 	}
-	
+
 	Real toAngle( void );  ///< turn 2D vector into angle (where angle 0 is down the +x axis)
 
 };
@@ -292,9 +193,9 @@ inline Real Coord2D::toAngle( void )
 
 	return value;
 
-}  // end toAngle
+}
 
-struct ICoord2D 
+struct ICoord2D
 {
 	Int x, y;
 
@@ -318,7 +219,7 @@ struct IRegion2D
 };
 
 
-struct Coord3D 
+struct Coord3D
 {
 	Real x, y, z;
 
@@ -336,14 +237,14 @@ struct Coord3D
 			z /= len;
 		}
 	}
-	
+
 	static void crossProduct( const Coord3D *a, const Coord3D *b, Coord3D *r )
 	{
 		r->x = (a->y * b->z - a->z * b->y);
 		r->y = (a->z * b->x - a->x * b->z);
 		r->z = (a->x * b->y - a->y * b->x);
 	}
-	
+
 	void zero( void )
 	{
 		x = 0.0f;
@@ -357,21 +258,21 @@ struct Coord3D
 		y += a->y;
 		z += a->z;
 	}
-	
+
 	void sub( const Coord3D *a )
 	{
 		x -= a->x;
 		y -= a->y;
 		z -= a->z;
 	}
-	
+
 	void set( const Coord3D *a )
 	{
 		x = a->x;
 		y = a->y;
 		z = a->z;
 	}
-	
+
 	void set( Real ax, Real ay, Real az )
 	{
 		x = ax;
@@ -388,7 +289,7 @@ struct Coord3D
 
 	Bool equals( const Coord3D &r )
 	{
-		return (x == r.x && 
+		return (x == r.x &&
 						y == r.y &&
 						z == r.z);
 	}
@@ -401,7 +302,7 @@ struct Coord3D
 	}
 };
 
-struct ICoord3D 
+struct ICoord3D
 {
 	Int x, y, z;
 
@@ -426,12 +327,12 @@ struct Region3D
 	void zero() { lo.zero(); hi.zero(); }
 	Bool isInRegionNoZ( const Coord3D *query ) const
 	{
-		return (lo.x < query->x) && (query->x < hi.x) 
+		return (lo.x < query->x) && (query->x < hi.x)
 						&& (lo.y < query->y) && (query->y < hi.y);
 	}
 	Bool isInRegionWithZ( const Coord3D *query ) const
 	{
-		return (lo.x < query->x) && (query->x < hi.x) 
+		return (lo.x < query->x) && (query->x < hi.x)
 						&& (lo.y < query->y) && (query->y < hi.y)
 						&& (lo.z < query->z) && (query->z < hi.z);
 	}
@@ -481,5 +382,3 @@ struct RGBAColorInt
 	UnsignedInt red, green, blue, alpha;  // range between 0 and 255
 
 };
-
-#endif // _BASE_TYPE_H_

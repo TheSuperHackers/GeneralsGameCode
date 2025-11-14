@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __PROJECTILE_STREAM_UPDATE_H_
-#define __PROJECTILE_STREAM_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
@@ -74,7 +71,3 @@ protected:
 	Int m_firstValidIndex;
 	ObjectID m_owningObject;
 };
-
-
-#endif
-

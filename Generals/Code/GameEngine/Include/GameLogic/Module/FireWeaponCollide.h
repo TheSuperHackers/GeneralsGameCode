@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FireWeaponCollide_H_
-#define __FireWeaponCollide_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/CollideModule.h"
 #include "GameLogic/Weapon.h"
@@ -44,15 +41,13 @@ class FireWeaponCollideModuleData : public CollideModuleData
 {
 public:
 	const WeaponTemplate* m_collideWeaponTemplate;
-	UnsignedInt m_requiredStatus;
-	UnsignedInt m_forbiddenStatus;
+	ObjectStatusMaskType m_requiredStatus;
+	ObjectStatusMaskType m_forbiddenStatus;
 	Bool m_fireOnce;
 
 	FireWeaponCollideModuleData()
 	{
 		m_collideWeaponTemplate = NULL;
-		m_requiredStatus = 0;		// nothing required
-		m_forbiddenStatus = 0;	// nothing forbidden
 		m_fireOnce = FALSE;
 	}
 
@@ -82,7 +77,3 @@ private:
 	Bool m_everFired;
 
 };
-
-
-#endif
-

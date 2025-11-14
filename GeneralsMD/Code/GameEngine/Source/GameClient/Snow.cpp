@@ -27,15 +27,10 @@
 // Author: Mark Wilczynski, July 2003
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the Game
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the Game
 #include "GameClient/Snow.h"
 #include "GameClient/View.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 SnowManager *TheSnowManager=NULL;
 
@@ -73,9 +68,9 @@ void SnowManager::updateIniSettings(void)
 	m_velocity = TheWeatherSetting->m_snowVelocity;
 	m_frequencyScaleX = TheWeatherSetting->m_snowFrequencyScaleX;
 	m_frequencyScaleY = TheWeatherSetting->m_snowFrequencyScaleY;
-	m_amplitude	= TheWeatherSetting->m_snowAmplitude;	
-	m_pointSize = TheWeatherSetting->m_snowPointSize;	
-	m_quadSize	= TheWeatherSetting->m_snowQuadSize;		
+	m_amplitude	= TheWeatherSetting->m_snowAmplitude;
+	m_pointSize = TheWeatherSetting->m_snowPointSize;
+	m_quadSize	= TheWeatherSetting->m_snowQuadSize;
 	m_boxDimensions	= TheWeatherSetting->m_snowBoxDimensions;
 	m_emitterSpacing = 1.0f/TheWeatherSetting->m_snowBoxDensity;
 	m_maxPointSize = TheWeatherSetting->m_snowMaxPointSize;
@@ -99,12 +94,16 @@ SnowManager::~SnowManager()
 {
 	delete [] m_startingHeights;
 	m_startingHeights=NULL;
+
+	// TheSuperHackers @fix Mauller 13/04/2025 Delete the instance of the weather settings
+	deleteInstance((WeatherSetting*)TheWeatherSetting.getNonOverloadedPointer());
+	TheWeatherSetting=NULL;
 }
 
 OVERRIDE<WeatherSetting> TheWeatherSetting = NULL;
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
-const FieldParse WeatherSetting::m_weatherSettingFieldParseTable[] = 
+const FieldParse WeatherSetting::m_weatherSettingFieldParseTable[] =
 {
 	{ "SnowTexture",							INI::parseAsciiString,NULL,			offsetof( WeatherSetting, m_snowTexture ) },
 	{ "SnowFrequencyScaleX",					INI::parseReal,NULL,			offsetof( WeatherSetting, m_snowFrequencyScaleX ) },

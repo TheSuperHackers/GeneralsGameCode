@@ -22,11 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __W3DVOLUMETRICSHADOW_H_
-#define __W3DVOLUMETRICSHADOW_H_
 
 #include "matrix4.h"
 #include "W3DDevice/GameClient/W3DBufferManager.h"
@@ -54,7 +50,7 @@ class W3DVolumetricShadowManager
 {
 
 public:
-	
+
 	W3DVolumetricShadowManager( void );
 	~W3DVolumetricShadowManager( void );
 	Bool init( void );	///<initialize resources used by manager, must have valid D3D device.
@@ -85,7 +81,7 @@ protected:
 		W3DVolumetricShadow *m_shadowList;
 		W3DVolumetricShadowRenderTask *m_dynamicShadowVolumesToRender;
 		W3DShadowGeometryManager *m_W3DShadowGeometryManager;
-};  // end class W3DVolumetricShadowManager
+};
 
 extern W3DVolumetricShadowManager *TheW3DVolumetricShadowManager;
 
@@ -94,7 +90,7 @@ class W3DVolumetricShadow	: public Shadow
 {
 	friend class W3DVolumetricShadowManager;
 
-	enum														
+	enum
 	{
 		SHADOW_DYNAMIC	=	0x1			//flag indicating a dynamic shadow caster (animated mesh).
 	};
@@ -108,7 +104,7 @@ class W3DVolumetricShadow	: public Shadow
 
 		virtual void release(void)	{TheW3DVolumetricShadowManager->removeShadow(this);}	///<release shadow from manager
 
-		#if defined(_DEBUG) || defined(_INTERNAL)	
+		#if defined(RTS_DEBUG)
 		virtual void getRenderCost(RenderCost & rc) const;
 		#endif
 
@@ -156,7 +152,7 @@ class W3DVolumetricShadow	: public Shadow
 
 		// this is our current geometry we will derive the shadow from
 		W3DShadowGeometry *m_geometry;
-		
+
 		RenderObjClass	*m_robj;	///<render object belonging to model casting shadow
 
 		Real	m_shadowLengthScale;	///<scale factor used to reduce/clamp shadow length
@@ -176,19 +172,17 @@ class W3DVolumetricShadow	: public Shadow
 		W3DVolumetricShadowRenderTask m_shadowVolumeRenderTask[ MAX_SHADOW_LIGHTS ][MAX_SHADOW_CASTER_MESHES];
 		Int m_shadowVolumeCount[MAX_SHADOW_CASTER_MESHES];  // how man shadows are valid in m_shadowVolume
 		Vector3 m_lightPosHistory[ MAX_SHADOW_LIGHTS ][MAX_SHADOW_CASTER_MESHES];
-		Matrix4 m_objectXformHistory[ MAX_SHADOW_LIGHTS ][MAX_SHADOW_CASTER_MESHES];
+		Matrix4x4 m_objectXformHistory[ MAX_SHADOW_LIGHTS ][MAX_SHADOW_CASTER_MESHES];
 
 		// silhouette building space
 		Short *m_silhouetteIndex[MAX_SHADOW_CASTER_MESHES];  // silhouette vertex index list, edges occur
 									 // as disjoint pairs.  The acutal size of this
 									 // piece of memory must accomodate #vertices*2
 		Short m_numSilhouetteIndices[MAX_SHADOW_CASTER_MESHES];  // total number of edge indices in the index
-									   // array, these are pairs and therefore 
+									   // array, these are pairs and therefore
 									   // always a multiple of two
 		Short m_maxSilhouetteEntries[MAX_SHADOW_CASTER_MESHES];  // how big the silhouette index can hold max
 
 		Int	  m_numIndicesPerMesh[MAX_SHADOW_CASTER_MESHES];	///<silhouette indices from each mesh.
 
-};  // end class W3DVolumetricShadow
-
-#endif	//__W3DVOLUMETRICSHADOW_H_
+};

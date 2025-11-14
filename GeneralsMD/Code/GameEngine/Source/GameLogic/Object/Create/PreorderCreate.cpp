@@ -28,18 +28,13 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/PreorderCreate.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -53,7 +48,7 @@ PreorderCreate::PreorderCreate( Thing *thing, const ModuleData* moduleData ) : C
 PreorderCreate::~PreorderCreate( void )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 void PreorderCreate::onCreate( void )
@@ -82,7 +77,7 @@ void PreorderCreate::crc( Xfer *xfer )
 	// extend base class
 	CreateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -100,7 +95,7 @@ void PreorderCreate::xfer( Xfer *xfer )
 	// extend base class
 	CreateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -111,4 +106,4 @@ void PreorderCreate::loadPostProcess( void )
 	// extend base class
 	CreateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

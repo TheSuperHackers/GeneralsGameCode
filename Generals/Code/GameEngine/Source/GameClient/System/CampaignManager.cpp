@@ -24,12 +24,12 @@
 
 // FILE: CampaignManager.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Jul 2002
@@ -37,7 +37,7 @@
 //	Filename: 	CampaignManager.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	The flow of the campaigns are stored up in here!
 //
 //-----------------------------------------------------------------------------
@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "Common/Xfer.h"
@@ -61,7 +61,10 @@
 //-----------------------------------------------------------------------------
 CampaignManager *TheCampaignManager = NULL;
 
-const FieldParse CampaignManager::m_campaignFieldParseTable[] = 
+
+
+
+const FieldParse CampaignManager::m_campaignFieldParseTable[] =
 {
 
 	{ "Mission",						CampaignManager::parseMissionPart,	NULL, NULL },
@@ -69,7 +72,7 @@ const FieldParse CampaignManager::m_campaignFieldParseTable[] =
 	{ "CampaignNameLabel",	INI::parseAsciiString,							NULL, offsetof( Campaign, m_campaignNameLabel ) },
 	{ "FinalVictoryMovie",	INI::parseAsciiString,							NULL, offsetof( Campaign, m_finalMovieName ) },
 
-	{ NULL,										NULL,													NULL, 0 }  // keep this last
+	{ NULL,										NULL,													NULL, 0 }
 
 };
 
@@ -85,10 +88,10 @@ void INI::parseCampaignDefinition( INI *ini )
 
 	// read the name
 	const char* c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	// find existing item if present
-	DEBUG_ASSERTCRASH( TheCampaignManager, ("parseCampaignDefinition: Unable to Get TheCampaignManager\n") );
+	DEBUG_ASSERTCRASH( TheCampaignManager, ("parseCampaignDefinition: Unable to Get TheCampaignManager") );
 	if( !TheCampaignManager )
 		return;
 
@@ -96,12 +99,12 @@ void INI::parseCampaignDefinition( INI *ini )
 	campaign = TheCampaignManager->newCampaign( name );
 
 	// sanity
-	DEBUG_ASSERTCRASH( campaign, ("parseCampaignDefinition: Unable to allocate campaign '%s'\n", name.str()) );
+	DEBUG_ASSERTCRASH( campaign, ("parseCampaignDefinition: Unable to allocate campaign '%s'", name.str()) );
 
 	// parse the ini definition
 	ini->initFromINI( campaign, TheCampaignManager->getFieldParse() );
 
-}  // end parseCampaignDefinition
+}
 
 //-----------------------------------------------------------------------------
 Campaign::Campaign( void )
@@ -120,8 +123,7 @@ Campaign::~Campaign( void )
 	{
 		Mission *mission = *it;
 		it = m_missions.erase( it );
-		if(mission)
-			mission->deleteInstance();
+		deleteInstance(mission);
 	}
 }
 
@@ -142,13 +144,13 @@ Mission *Campaign::newMission( AsciiString name )
 		if(mission->m_name.compare(name) == 0)
 		{
 			m_missions.erase( it );
-			mission->deleteInstance();
+			deleteInstance(mission);
 			break;
 		}
 		else
 			++it;
 	}
-	Mission *newMission = newInstance(Mission);	
+	Mission *newMission = newInstance(Mission);
 	newMission->m_name.set(name);
 	m_missions.push_back(newMission);
 	return newMission;
@@ -160,7 +162,7 @@ Mission *Campaign::getMission( AsciiString missionName )
 	if(missionName.isEmpty())
 		return NULL;
 	MissionListIt it;
-	it = m_missions.begin();	
+	it = m_missions.begin();
 	// we've reached the end of the campaign
 	while(it != m_missions.end())
 	{
@@ -186,7 +188,7 @@ Mission *Campaign::getNextMission( Mission *current)
 		name = current->m_nextMission;
 	name.toLower();
 	MissionListIt it;
-	it = m_missions.begin();	
+	it = m_missions.begin();
 	// we've reached the end of the campaign
 	if(name.isEmpty())
 		return NULL;
@@ -225,8 +227,7 @@ CampaignManager::~CampaignManager( void )
 	{
 		Campaign *campaign = *it;
 		it = m_campaignList.erase( it );
-		if(campaign)
-			campaign->deleteInstance();
+		deleteInstance(campaign);
 	}
 }
 
@@ -235,7 +236,7 @@ void CampaignManager::init( void )
 {
 	INI ini;
 	// Read from INI all the CampaignManager
-	ini.load( AsciiString( "Data\\INI\\Campaign.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\Campaign" ), INI_LOAD_OVERWRITE, NULL );
 }
 
 //-----------------------------------------------------------------------------
@@ -257,7 +258,7 @@ Mission *CampaignManager::gotoNextMission( void )
 		return NULL;
 	m_currentMission = m_currentCampaign->getNextMission(m_currentMission);
 	return m_currentMission;
-	
+
 }
 
 //-----------------------------------------------------------------------------
@@ -282,7 +283,7 @@ void CampaignManager::setCampaignAndMission( AsciiString campaign, AsciiString m
 		}
 		++it;
 	}
-}	
+}
 
 //-----------------------------------------------------------------------------
 void CampaignManager::setCampaign( AsciiString campaign )
@@ -313,7 +314,7 @@ AsciiString CampaignManager::getCurrentMap( void )
 {
 	if(!m_currentMission)
 		return AsciiString::TheEmptyString;
-	
+
 	return m_currentMission->m_mapName;
 }
 
@@ -328,8 +329,8 @@ Int CampaignManager::getCurrentMissionNumber( void )
 	{
 		Campaign::MissionListIt it;
 
-		for( it = m_currentCampaign->m_missions.begin(); 
-				 it != m_currentCampaign->m_missions.end(); 
+		for( it = m_currentCampaign->m_missions.begin();
+				 it != m_currentCampaign->m_missions.end();
 				 ++it )
 		{
 
@@ -337,9 +338,9 @@ Int CampaignManager::getCurrentMissionNumber( void )
 			if( *it == m_currentMission )
 				return number;
 		}
-		
+
 	}
-	
+
 	return number;
 
 }
@@ -347,7 +348,7 @@ Int CampaignManager::getCurrentMissionNumber( void )
 //-----------------------------------------------------------------------------
 void CampaignManager::parseMissionPart( INI* ini, void *instance, void *store, const void *userData )
 {
-	static const FieldParse myFieldParse[] = 
+	static const FieldParse myFieldParse[] =
 		{
 			{ "Map",							INI::parseAsciiString,				NULL, offsetof( Mission, m_mapName ) },
 			{ "NextMission",			INI::parseAsciiString,				NULL, offsetof( Mission, m_nextMission ) },
@@ -365,16 +366,16 @@ void CampaignManager::parseMissionPart( INI* ini, void *instance, void *store, c
 			{ "VoiceLength",			INI::parseInt ,								NULL, offsetof( Mission, m_voiceLength ) },
 
 
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 	AsciiString name;
 	const char* c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	Mission *mission = ((Campaign*)instance)->newMission(name );
 	ini->initFromINI(mission, myFieldParse);
 }
-	
+
 
 //-----------------------------------------------------------------------------
 Campaign *CampaignManager::newCampaign(AsciiString name)
@@ -388,7 +389,7 @@ Campaign *CampaignManager::newCampaign(AsciiString name)
 		if(campaign->m_name.compare(name) == 0)
 		{
 			m_campaignList.erase( it );
-			campaign->deleteInstance();
+			deleteInstance(campaign);
 			break;
 		}
 		else
@@ -403,7 +404,7 @@ Campaign *CampaignManager::newCampaign(AsciiString name)
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info
-	* 1: Initial version 
+	* 1: Initial version
 	* 2: Added RankPoints Saving*/
 // ------------------------------------------------------------------------------------------------
 void CampaignManager::xfer( Xfer *xfer )
@@ -419,7 +420,7 @@ void CampaignManager::xfer( Xfer *xfer )
 	if( m_currentCampaign )
 		currentCampaign = m_currentCampaign->m_name;
 	xfer->xferAsciiString( &currentCampaign );
-	
+
 	// current mission
 	AsciiString currentMission;
 	if( m_currentMission )
@@ -437,7 +438,7 @@ void CampaignManager::xfer( Xfer *xfer )
 	if( xfer->getXferMode() == XFER_LOAD )
 		setCampaignAndMission( currentCampaign, currentMission );
 
-}  // end xfer
+}
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
@@ -456,4 +457,4 @@ Mission::~Mission( void )
 {
 
 }
-	
+

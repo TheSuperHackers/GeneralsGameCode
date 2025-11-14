@@ -16,38 +16,36 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : G                                        * 
- *                                                                         * 
- *                     $Archive:: /VSS_Sync/ww3d2/mapper.h                $* 
- *                                                                         * 
- *                      $Author:: Vss_sync                                $* 
- *                                                                         * 
- *                     $Modtime:: 8/30/01 1:38a                           $* 
- *                                                                         * 
- *                    $Revision:: 23                                      $* 
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : G                                        *
+ *                                                                         *
+ *                     $Archive:: /Commando/Code/ww3d2/mapper.h           $*
+ *                                                                         *
+ *                     $Org Author:: Greg_h                                  $*
+ *                                                                         *
+ *                       $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
+ *                                                                         *
+ *                    $Revision:: 26                                      $*
+ *                                                                         *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
-#ifndef VERTEXMAPPER_H
-#define VERTEXMAPPER_H
-
-#include "refcount.h"
+#include "always.h"
 #include "w3d_file.h"
 #include "w3derr.h"
-#include "wwdebug.h"
 #include "vector2.h"
 #include "vector3.h"
 #include "ww3d.h"
+#include "matrix4.h"
 
 class INIClass;
 
@@ -86,13 +84,14 @@ class TextureMapperClass : public W3DMPO, public RefCountClass
 		TextureMapperClass(unsigned int stage=0);
 		TextureMapperClass(const TextureMapperClass & src) : Stage(src.Stage) { }
 
-		virtual void Reset(void) { }
-		
-		virtual TextureMapperClass *		Clone(void) const=0;		
+
 		virtual int								Mapper_ID(void) const { return MAPPER_ID_UNKNOWN;}
 
-		virtual bool Is_Time_Variant(void) { return false; }
-		virtual void							Apply(int uv_array_index)=0;
+		virtual TextureMapperClass *		Clone(void) const = 0;
+
+		virtual bool							Is_Time_Variant(void) { return false; }
+		virtual void							Apply(int uv_array_index) = 0;
+		virtual void							Reset(void) { }
 		virtual bool							Needs_Normals(void) { return false; }
 		void										Set_Stage(int stage) { Stage = stage; }
 		int										Get_Stage(void) const { return Stage; }
@@ -108,7 +107,7 @@ class TextureMapperClass : public W3DMPO, public RefCountClass
 class ScaleTextureMapperClass : public TextureMapperClass
 {
 	W3DMPO_GLUE(ScaleTextureMapperClass)
-public:	
+public:
 	ScaleTextureMapperClass(unsigned int stage);
 	ScaleTextureMapperClass(const Vector2 &scale, unsigned int stage);
 	ScaleTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
@@ -126,7 +125,7 @@ protected:
 
 /*
 ** LinearOffsetTextureMapperClass
-** Modifies the UV coodinates by a linear offset
+** Modifies the UV coordinates by a linear offset
 */
 class LinearOffsetTextureMapperClass : public ScaleTextureMapperClass
 {
@@ -140,10 +139,10 @@ public:
 
 	virtual TextureMapperClass *Clone(void) const { return NEW_REF( LinearOffsetTextureMapperClass, (*this)); }
 
+	virtual bool Is_Time_Variant(void) { return true; }
+
 	virtual void Apply(int uv_array_index);
 	virtual void Reset(void) { Set_Current_UV_Offset(Vector2(0.0f, 0.0f)); }
-
-	virtual bool Is_Time_Variant(void) { return true; }
 
 	void Set_Current_UV_Offset(const Vector2 &cur)  {
 		CurrentUVOffset = cur;
@@ -157,7 +156,7 @@ public:
 	}
 	void Set_LastUsedSyncTime(unsigned int time) { LastUsedSyncTime = time;}
 	unsigned int Get_LastUsedSyncTime() { return LastUsedSyncTime;}
-	
+
 protected:
 	Vector2			CurrentUVOffset;		// Current UV offset
 	Vector2			UVOffsetDeltaPerMS;	// Amount to increase offset each millisec
@@ -180,17 +179,14 @@ public:
 
 	virtual TextureMapperClass *Clone(void) const { return NEW_REF( GridTextureMapperClass, (*this)); }
 
+	virtual bool Is_Time_Variant(void) { return true; }
 	virtual void Apply(int uv_array_index);
-
 	virtual void Reset(void);
 
-	virtual bool Is_Time_Variant(void) { return true; }
-
 	void Set_Frame(unsigned int frame) { CurrentFrame=frame; }
-
 	void Set_Frame_Per_Second(float fps);
-	
-protected:	
+
+protected:
 	// Utility functions
 	void initialize(float fps, unsigned int gridwidth_log2);
 	void update_temporal_state(void);
@@ -201,7 +197,7 @@ protected:
 	unsigned int	MSPerFrame;			// milliseconds per frame
 	float				OOGridWidth;		// 1.0f / size of the side of the grid)
 	unsigned int	GridWidthLog2;		// log base 2 of size of the side of the grid
-	unsigned int	LastFrame;				// Last frame to use
+	unsigned int	LastFrame;			// Last frame to use
 
 	// Temporal state
 	unsigned int	Remainder;			// used for timing calculations
@@ -225,11 +221,9 @@ public:
 
 	virtual TextureMapperClass *Clone(void) const { return NEW_REF( RotateTextureMapperClass, (*this)); }
 
-	virtual void Apply(int uv_array_index);
-	
-	virtual void Reset(void) { CurrentAngle = 0.0f; }
-
 	virtual bool Is_Time_Variant(void) { return true; }
+	virtual void Apply(int uv_array_index);
+	virtual void Reset(void) { CurrentAngle = 0.0f; }
 
 private:
 	float CurrentAngle;
@@ -254,11 +248,9 @@ public:
 
 	virtual TextureMapperClass *Clone(void) const { return NEW_REF( SineLinearOffsetTextureMapperClass, (*this)); }
 
-	virtual void Apply(int uv_array_index);	
-	
-	virtual void Reset(void) { CurrentAngle = 0.0f; }
-	
 	virtual bool Is_Time_Variant(void) { return true; }
+	virtual void Apply(int uv_array_index);
+	virtual void Reset(void) { CurrentAngle = 0.0f; }
 
 private:
 	Vector3 UAFP;								// U Coordinate Amplitude frequency phase
@@ -283,11 +275,9 @@ public:
 
 	virtual TextureMapperClass *Clone(void) const { return NEW_REF( StepLinearOffsetTextureMapperClass, (*this)); }
 
-	virtual void Apply(int uv_array_index);	
-	
-	virtual void Reset(void);
-
 	virtual bool Is_Time_Variant(void) { return true; }
+	virtual void Apply(int uv_array_index);
+	virtual void Reset(void);
 
 private:
 	Vector2 Step;								// Size of step
@@ -312,15 +302,13 @@ public:
 
 	virtual TextureMapperClass *Clone(void) const { return NEW_REF( ZigZagLinearOffsetTextureMapperClass, (*this)); }
 
-	virtual void Apply(int uv_array_index);	
-	
-	virtual void Reset(void);
-	
 	virtual bool Is_Time_Variant(void) { return true; }
+	virtual void Apply(int uv_array_index);
+	virtual void Reset(void);
 
 private:
 	Vector2 Speed;								// Speed of zigzag
-	float Period;								// Time taken for a period	
+	float Period;								// Time taken for a period
 	unsigned int	LastUsedSyncTime;		// Sync time last used to update offset
 };
 
@@ -415,7 +403,7 @@ public:
 class GridEnvironmentMapperClass : public GridTextureMapperClass
 {
 	W3DMPO_GLUE(GridEnvironmentMapperClass)
-public:	
+public:
 	GridEnvironmentMapperClass(float fps,unsigned int gridwidth, unsigned int stage):GridTextureMapperClass(fps,gridwidth,stage) { }
 	GridEnvironmentMapperClass(const INIClass &ini, const char *section, unsigned int stage) : GridTextureMapperClass(ini,section,stage) { }
 	GridEnvironmentMapperClass(const GridTextureMapperClass & src) : GridTextureMapperClass(src) { }
@@ -441,7 +429,6 @@ public:
 	virtual int	Mapper_ID(void) const { return MAPPER_ID_SCREEN;}
 	virtual TextureMapperClass* Clone() const { return NEW_REF( ScreenMapperClass, (*this)); }
 	virtual void Apply(int uv_array_index);
-
 };
 
 /**
@@ -504,5 +491,3 @@ protected:
 ** Utility functions
 */
 void Reset_All_Texture_Mappers(RenderObjClass *robj, bool make_unique);
-
-#endif

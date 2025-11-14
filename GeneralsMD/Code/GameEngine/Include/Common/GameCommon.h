@@ -24,12 +24,12 @@
 
 // FILE: GameCommon.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -47,20 +47,17 @@
 
 #pragma once
 
-#ifndef _GAMECOMMON_H_
-#define _GAMECOMMON_H_
-
-
-
 #define DONT_ALLOW_DEBUG_CHEATS_IN_RELEASE ///< Take of the DONT to get cheats back in to release
 
 //#define _CAMPEA_DEMO
 
 // ----------------------------------------------------------------------------------------------
 #include "Lib/BaseType.h"
+#include "WWCommon.h"
+#include "Common/GameDefines.h"
 
 // ----------------------------------------------------------------------------------------------
-#if defined(_INTERNAL) || defined(_DEBUG)
+#if defined(RTS_DEBUG)
 	#define DUMP_PERF_STATS
 #else
 	#define NO_DUMP_PERF_STATS
@@ -69,7 +66,8 @@
 // ----------------------------------------------------------------------------------------------
 enum
 {
-	LOGICFRAMES_PER_SECOND = 30,
+	BaseFps = 30, // The historic base frame rate for this game. This value must never change.
+	LOGICFRAMES_PER_SECOND = WWSyncPerSecond,
 	MSEC_PER_SECOND = 1000
 };
 const Real LOGICFRAMES_PER_MSEC_REAL = (((Real)LOGICFRAMES_PER_SECOND) / ((Real)MSEC_PER_SECOND));
@@ -80,36 +78,36 @@ const Real SECONDS_PER_LOGICFRAME_REAL = 1.0f / LOGICFRAMES_PER_SECONDS_REAL;
 // ----------------------------------------------------------------------------------------------
 // note that this returns a REAL value, not an int... most callers will want to
 // call ceil() on the result, so that partial frames get converted to full frames!
-inline Real ConvertDurationFromMsecsToFrames(Real msec) 
-{	
-	return (msec * LOGICFRAMES_PER_MSEC_REAL); 
+inline Real ConvertDurationFromMsecsToFrames(Real msec)
+{
+	return (msec * LOGICFRAMES_PER_MSEC_REAL);
 }
 
 // ----------------------------------------------------------------------------------------------
-inline Real ConvertVelocityInSecsToFrames(Real distPerMsec) 
-{	
+inline Real ConvertVelocityInSecsToFrames(Real distPerMsec)
+{
 	// this looks wrong, but is the correct conversion factor.
-	return (distPerMsec * SECONDS_PER_LOGICFRAME_REAL); 
+	return (distPerMsec * SECONDS_PER_LOGICFRAME_REAL);
 }
 
 // ----------------------------------------------------------------------------------------------
-inline Real ConvertAccelerationInSecsToFrames(Real distPerSec2) 
-{	
+inline Real ConvertAccelerationInSecsToFrames(Real distPerSec2)
+{
 	// this looks wrong, but is the correct conversion factor.
 	const Real SEC_PER_LOGICFRAME_SQR = (SECONDS_PER_LOGICFRAME_REAL * SECONDS_PER_LOGICFRAME_REAL);
-	return (distPerSec2 * SEC_PER_LOGICFRAME_SQR); 
+	return (distPerSec2 * SEC_PER_LOGICFRAME_SQR);
 }
 
 // ----------------------------------------------------------------------------------------------
-inline Real ConvertAngularVelocityInDegreesPerSecToRadsPerFrame(Real degPerSec) 
-{	
+inline Real ConvertAngularVelocityInDegreesPerSecToRadsPerFrame(Real degPerSec)
+{
 	const Real RADS_PER_DEGREE = PI / 180.0f;
-	return (degPerSec * (SECONDS_PER_LOGICFRAME_REAL * RADS_PER_DEGREE)); 
+	return (degPerSec * (SECONDS_PER_LOGICFRAME_REAL * RADS_PER_DEGREE));
 }
 
 // ----------------------------------------------------------------------------------------------
-enum 
-{ 
+enum
+{
 	MAX_PLAYER_COUNT = 16											///< max number of Players.
 };
 
@@ -126,19 +124,19 @@ enum
 #endif
 
 // ----------------------------------------------------------------------------------------------
-enum 
-{ 
+enum
+{
 	MAX_GLOBAL_GENERAL_TYPES = 9,		///< number of playable General Types, not including the boss)
-	
+
 	/// The start of the playable global generals playertemplates
 	GLOBAL_GENERAL_BEGIN = 5,
-	
+
 	/// The end of the playable global generals
 	GLOBAL_GENERAL_END = (GLOBAL_GENERAL_BEGIN + MAX_GLOBAL_GENERAL_TYPES - 1)
 };
 
 //-------------------------------------------------------------------------------------------------
-enum GameDifficulty
+enum GameDifficulty CPP_11(: Int)
 {
 	DIFFICULTY_EASY,
 	DIFFICULTY_NORMAL,
@@ -148,7 +146,7 @@ enum GameDifficulty
 };
 
 //-------------------------------------------------------------------------------------------------
-enum PlayerType
+enum PlayerType CPP_11(: Int)
 {
 	PLAYER_HUMAN,				///< player is human-controlled
 	PLAYER_COMPUTER,		///< player is computer-controlled
@@ -158,18 +156,16 @@ enum PlayerType
 
 //-------------------------------------------------------------------------------------------------
 /// A PartitionCell can be one of three states for Shroud
-enum CellShroudStatus
+enum CellShroudStatus CPP_11(: Int)
 {
 	CELLSHROUD_CLEAR,
 	CELLSHROUD_FOGGED,
 	CELLSHROUD_SHROUDED,
-
-	CELLSHROUD_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------
 /// Since an object can take up more than a single PartitionCell, this is a status that applies to the whole Object
-enum ObjectShroudStatus
+enum ObjectShroudStatus CPP_11(: Int)
 {
 	OBJECTSHROUD_INVALID,				///< indeterminate state, will recompute
 	OBJECTSHROUD_CLEAR,					///< object is not shrouded at all (ie, completely visible)
@@ -177,12 +173,10 @@ enum ObjectShroudStatus
 	OBJECTSHROUD_FOGGED,				///< object is completely fogged
 	OBJECTSHROUD_SHROUDED,			///< object is completely shrouded
 	OBJECTSHROUD_INVALID_BUT_PREVIOUS_VALID,			///< indeterminate state, will recompute, BUT previous status is valid, don't reset (used for save/load)
-
-	OBJECTSHROUD_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------
-enum GuardMode
+enum GuardMode CPP_11(: Int)
 {
 	GUARDMODE_NORMAL,
 	GUARDMODE_GUARD_WITHOUT_PURSUIT,	// no pursuit out of guard area
@@ -190,8 +184,8 @@ enum GuardMode
 };
 
 // ---------------------------------------------------
-enum 
-{ 
+enum
+{
 	NEVER				= 0,
 	FOREVER			= 0x3fffffff			// (we use 0x3fffffff so that we can add offsets and not overflow...
 																//		at 30fps we're still pretty safe!)
@@ -203,9 +197,9 @@ enum
 
 /// Veterancy level define needed by several files that don't need the full Experience code.
 // NOTE NOTE NOTE: Keep TheVeterencyNames in sync with these.
-enum VeterancyLevel
+enum VeterancyLevel CPP_11(: Int)
 {
-	LEVEL_REGULAR = 0,
+	LEVEL_REGULAR,
 	LEVEL_VETERAN,
 	LEVEL_ELITE,
 	LEVEL_HEROIC,
@@ -213,28 +207,29 @@ enum VeterancyLevel
 	LEVEL_COUNT,
 	LEVEL_INVALID,
 
-	LEVEL_FIRST = LEVEL_REGULAR,
+	LEVEL_FIRST = 0,
 	LEVEL_LAST = LEVEL_HEROIC
 };
 
 // TheVeterancyNames is defined in GameCommon.cpp
-extern const char *TheVeterancyNames[]; 
+extern const char *const TheVeterancyNames[];
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum CommandSourceType 
-{ 
+enum CommandSourceType CPP_11(: Int)
+{
 
-	CMD_FROM_PLAYER = 0, 
-	CMD_FROM_SCRIPT, 
+	CMD_FROM_PLAYER = 0,
+	CMD_FROM_SCRIPT,
 	CMD_FROM_AI,
 	CMD_FROM_DOZER,							// Special rare command when the dozer originates a command to attack a mine. Mines are not ai-attackable, and it seems deceitful for the dozer to generate a player or script command. jba.
 	CMD_DEFAULT_SWITCH_WEAPON,	// Special case: A weapon that can be chosen -- this is the default case (machine gun vs flashbang).
 
-};		///< the source of a command
+	COMMAND_SOURCE_TYPE_COUNT
+};
 
 //-------------------------------------------------------------------------------------------------
-enum AbleToAttackType
+enum AbleToAttackType CPP_11(: Int)
 {
 	_ATTACK_FORCED			= 0x01,
 	_ATTACK_CONTINUED		= 0x02,
@@ -250,7 +245,7 @@ enum AbleToAttackType
 		(The only current difference between this and ATTACK_NEW_TARGET is that disguised units
 		are force-attackable even when stealthed.)
 	*/
-	ATTACK_NEW_TARGET_FORCED= (_ATTACK_FORCED),	
+	ATTACK_NEW_TARGET_FORCED= (_ATTACK_FORCED),
 
 	/**
 		can we attack if this is continuation of an existing attack?
@@ -271,7 +266,7 @@ enum AbleToAttackType
 		For example, a unit inside couldn't normally see outside and would fail.
 	*/
 	ATTACK_TUNNEL_NETWORK_GUARD = (_ATTACK_TUNNELNETWORK_GUARD)
-	
+
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -377,7 +372,7 @@ private:																																							\
 		inline ~DLINKHEAD_##LISTNAME()																										\
 			{ DEBUG_ASSERTCRASH(!m_head,("destroying dlinkhead still in a list " #LISTNAME)); }				\
 	};																																									\
-	DLINKHEAD_##LISTNAME m_dlinkhead_##LISTNAME;	
+	DLINKHEAD_##LISTNAME m_dlinkhead_##LISTNAME;
 
 // ----------------------------------------------------------------------------------------------
 #define MAKE_DLINK(OBJCLASS, LISTNAME)	\
@@ -431,11 +426,11 @@ private:																\
 		inline ~DLINK_##LISTNAME()					\
 			{ DEBUG_ASSERTCRASH(!m_prev && !m_next,("destroying dlink still in a list "  #LISTNAME)); } \
 	};																		\
-	DLINK_##LISTNAME m_dlink_##LISTNAME;	
+	DLINK_##LISTNAME m_dlink_##LISTNAME;
 
 // ------------------------------------------------------------------------
 // this is the weird C++ syntax for "call pointer-to-member-function"... see C++ FAQ LITE for details.
-#define callMemberFunction(object,ptrToMember)  ((object).*(ptrToMember)) 
+#define callMemberFunction(object,ptrToMember)  ((object).*(ptrToMember))
 
 // ------------------------------------------------------------------------
 template<class OBJCLASS>
@@ -443,36 +438,36 @@ class DLINK_ITERATOR
 {
 public:
 	// this is the weird C++ syntax for "pointer-to-member-function"
-	typedef OBJCLASS* (OBJCLASS::*GetNextFunc)() const;	
+	typedef OBJCLASS* (OBJCLASS::*GetNextFunc)() const;
 private:
 	OBJCLASS* m_cur;
 	GetNextFunc m_getNextFunc;	// this is the weird C++ syntax for "pointer-to-member-function"
 public:
-	DLINK_ITERATOR(OBJCLASS* cur, GetNextFunc getNextFunc) : m_cur(cur), m_getNextFunc(getNextFunc) 
-	{ 
+	DLINK_ITERATOR(OBJCLASS* cur, GetNextFunc getNextFunc) : m_cur(cur), m_getNextFunc(getNextFunc)
+	{
 	}
-	
+
 	void advance()
-	{ 
+	{
 		if (m_cur)
 			m_cur = callMemberFunction(*m_cur, m_getNextFunc)();
 	}
-	
+
 	Bool done() const
-	{ 
-		return m_cur == NULL; 
+	{
+		return m_cur == NULL;
 	}
 
-	OBJCLASS* cur() const 
-	{ 
-		return m_cur; 
+	OBJCLASS* cur() const
+	{
+		return m_cur;
 	}
 
 };
 
 // ------------------------------------------------------------------------
 
-enum WhichTurretType
+enum WhichTurretType CPP_11(: Int)
 {
 	TURRET_INVALID = -1,
 
@@ -484,6 +479,7 @@ enum WhichTurretType
 
 // ------------------------------------------------------------------------
 // this normalizes an angle to the range -PI...PI.
+// TheSuperHackers @todo DO NOT USE THIS FUNCTION! Use WWMath::Normalize_Angle instead. Delete this.
 extern Real normalizeAngle(Real angle);
 
 // ------------------------------------------------------------------------
@@ -495,16 +491,15 @@ inline Real stdAngleDiff(Real a1, Real a2)
 
 // ------------------------------------------------------------------------
 // NOTE NOTE NOTE: Keep TheRelationShipNames in sync with this enum
-enum Relationship
+enum Relationship CPP_11(: Int)
 {
-	ENEMIES = 0,
+	ENEMIES,
 	NEUTRAL,
-	ALLIES
+	ALLIES,
+
+	RELATIONSHIP_COUNT
 };
 
 
 // TheRelationShipNames is defined in Common/GameCommon.cpp
-extern const char *TheRelationshipNames[];
-
-#endif // _GAMECOMMON_H_
-
+extern const char *const TheRelationshipNames[];

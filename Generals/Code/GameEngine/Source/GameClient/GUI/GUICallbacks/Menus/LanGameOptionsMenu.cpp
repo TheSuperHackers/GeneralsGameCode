@@ -27,7 +27,7 @@
 // Author: Chris Huybregts, October 2001
 // Description: Lan Game Options Menu
 ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 
 #include "Common/PlayerTemplate.h"
@@ -57,11 +57,6 @@
 #include "GameClient/GameText.h"
 #include "GameNetwork/GUIUtil.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 extern char *LANnextScreen;
 extern Bool LANisShuttingDown;
@@ -188,7 +183,7 @@ void updateMapStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[
 void positionStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[], GameWindow *mapWindow);
 void LanPositionStartSpots( void )
 {
-	
+
 	positionStartSpots( TheLAN->GetMyGame(), buttonMapStartPosition, windowMap);
 }
 static void playerTooltip(GameWindow *window,
@@ -219,9 +214,8 @@ static void playerTooltip(GameWindow *window,
 		TheMouse->setCursorTooltip( UnicodeString::TheEmptyString );
 		return;
 	}
-	UnicodeString tooltip;
-	tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getName().str(), player->getLogin().str(), player->getHost().str());
-	TheMouse->setCursorTooltip( tooltip );
+
+	setLANPlayerTooltip(player);
 }
 
 void StartPressed(void)
@@ -290,7 +284,7 @@ void StartPressed(void)
 
 	// Check for too few teams
 	int numRandom = 0;
-	std::set<Int> teams; 
+	std::set<Int> teams;
 	for (i=0; i<MAX_SLOTS; ++i)
 	{
 		GameSlot *slot = myGame->getSlot(i);
@@ -387,7 +381,7 @@ void StartPressed(void)
 		}
 	}
 
-}//void StartPressed(void)
+}
 
 void LANEnableStartButton(Bool enabled)
 {
@@ -512,7 +506,7 @@ static void handlePlayerTemplateSelection(int index)
 static void handleStartPositionSelection(Int player, int startPos)
 {
 	LANGameInfo *myGame = TheLAN->GetMyGame();
-	
+
 	if (myGame)
 	{
 		LANGameSlot * slot = myGame->getLANSlot(player);
@@ -525,7 +519,7 @@ static void handleStartPositionSelection(Int player, int startPos)
 		}
 
 		if(!skip)
-		{	
+		{
 			Bool isAvailable = TRUE;
 			for(Int i = 0; i < MAX_SLOTS; ++i)
 			{
@@ -611,7 +605,7 @@ void lanUpdateSlotList( void )
 		return;
 	UpdateSlotList( TheLAN->GetMyGame(), comboBoxPlayer, comboBoxColor,
 		comboBoxPlayerTemplate, comboBoxTeam, buttonAccept, buttonStart, buttonMapStartPosition);
-	
+
 	updateMapStartSpots(TheLAN->GetMyGame(), buttonMapStartPosition);
 }
 
@@ -670,11 +664,7 @@ void InitLanGameGadgets( void )
 		GadgetComboBoxReset(comboBoxPlayer[i]);
 		GadgetComboBoxGetEditBox(comboBoxPlayer[i])->winSetTooltipFunc(playerTooltip);
 
-		if(localSlotNum == i)
-		{
-			GadgetComboBoxAddEntry(comboBoxPlayer[i],TheLAN->GetMyName(),white);
-		}
-		else
+		if(localSlotNum != i)
 		{
 			GadgetComboBoxAddEntry(comboBoxPlayer[i],TheGameText->fetch("GUI:Open"),white);
 			GadgetComboBoxAddEntry(comboBoxPlayer[i],TheGameText->fetch("GUI:Closed"),white);
@@ -696,7 +686,7 @@ void InitLanGameGadgets( void )
 		DEBUG_ASSERTCRASH(comboBoxColor[i], ("Could not find the comboBoxColor[%d]",i ));
 		PopulateColorComboBox(i, comboBoxColor, TheLAN->GetMyGame());
 		GadgetComboBoxSetSelectedPos(comboBoxColor[i], 0);
-		
+
 		tmpString.format("LanGameOptionsMenu.wnd:ComboBoxPlayerTemplate%d", i);
 		comboBoxPlayerTemplateID[i] = TheNameKeyGenerator->nameToKey( tmpString );
 		comboBoxPlayerTemplate[i] = TheWindowManager->winGetWindowFromId( parentLanGameOptions, comboBoxPlayerTemplateID[i] );
@@ -710,13 +700,13 @@ void InitLanGameGadgets( void )
 		PopulateTeamComboBox(i, comboBoxTeam, TheLAN->GetMyGame());
 
 		tmpString.clear();
-		tmpString.format("LanGameOptionsMenu.wnd:ButtonAccept%d", i); 
+		tmpString.format("LanGameOptionsMenu.wnd:ButtonAccept%d", i);
 		buttonAcceptID[i] = TheNameKeyGenerator->nameToKey( tmpString );
 		buttonAccept[i] = TheWindowManager->winGetWindowFromId( parentLanGameOptions, buttonAcceptID[i] );
 		DEBUG_ASSERTCRASH(buttonAccept[i], ("Could not find the buttonAccept[%d]",i ));
 		//Added by Saad for the tooltips on the MultiPlayer icons
 		buttonAccept[i]->winSetTooltipFunc(gameAcceptTooltip);
-//		
+//
 //		tmpString.format("LanGameOptionsMenu.wnd:ButtonStartPosition%d", i);
 //		buttonStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString );
 //		buttonStartPosition[i] = TheWindowManager->winGetWindowFromId( parentLanGameOptions, buttonStartPositionID[i] );
@@ -732,7 +722,7 @@ void InitLanGameGadgets( void )
 	}
 	if( buttonAccept[0] )
 		GadgetButtonSetEnabledColor(buttonAccept[0], acceptTrueColor );
-	
+
 }
 
 void DeinitLanGameGadgets( void )
@@ -745,7 +735,11 @@ void DeinitLanGameGadgets( void )
 	listboxChatWindowLanGame = NULL;
 	textEntryChat = NULL;
 	textEntryMapDisplay = NULL;
-	windowMap = NULL;
+	if (windowMap)
+	{
+		windowMap->winSetUserData(NULL);
+		windowMap = NULL;
+	}
 	for (Int i = 0; i < MAX_SLOTS; i++)
 	{
 		comboBoxPlayer[i] = NULL;
@@ -767,7 +761,7 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 	{
 		// If we init while the game is in progress, we are really returning to the menu
 		// after the game.  So, we pop the menu and go back to the lobby.  Whee!
-		DEBUG_LOG(("Popping to lobby after a game!\n"));
+		DEBUG_LOG(("Popping to lobby after a game!"));
 		TheShell->popImmediate();
 		return;
 	}
@@ -784,7 +778,7 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 
 	// Make sure the text fields are clear
 	GadgetListBoxReset( listboxChatWindowLanGame );
-	GadgetTextEntrySetText(textEntryChat, UnicodeString::TheEmptyString);	
+	GadgetTextEntrySetText(textEntryChat, UnicodeString::TheEmptyString);
 
 	//The dialog needs to react differently depending on whether it's the host or not.
 	TheMapCache->updateCache();
@@ -814,11 +808,14 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 		lanUpdateSlotList();
 		updateGameOptions();
 		start = 1; // leave my combo boxes usable
+
+		// TheSuperHackers @tweak disable the combo box for the host's player name
+		comboBoxPlayer[0]->winEnable(FALSE);
 	}
 	else
 	{
 
-		//DEBUG_LOG(("LanGameOptionsMenuInit(): map is %s\n", TheLAN->GetMyGame()->getMap().str()));
+		//DEBUG_LOG(("LanGameOptionsMenuInit(): map is %s", TheLAN->GetMyGame()->getMap().str()));
 		buttonStart->winSetText(TheGameText->fetch("GUI:Accept"));
 		buttonSelectMap->winEnable( FALSE );
 		TheLAN->GetMyGame()->setMapCRC( TheLAN->GetMyGame()->getMapCRC() );		// force a recheck
@@ -847,7 +844,7 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 //
 	// Show the Menu
 	layout->hide( FALSE );
-	
+
 	// Set Keyboard to Main Parent
 	TheWindowManager->winSetFocus( parentLanGameOptions );
 
@@ -864,8 +861,8 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 
 	// animate controls
 	//TheShell->registerWithAnimateManager(buttonBack, WIN_ANIMATION_SLIDE_RIGHT, TRUE, 1);
-	
-}// void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
+
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update options on screen */
@@ -899,6 +896,29 @@ void updateGameOptions( void )
 }
 
 
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void setLANPlayerTooltip(LANPlayer* player)
+{
+	UnicodeString tooltip;
+
+	if (!player->getLogin().isEmpty() || !player->getHost().isEmpty())
+	{
+		tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getLogin().str(), player->getHost().str());
+	}
+
+#if defined(RTS_DEBUG)
+	UnicodeString ip;
+	ip.format(L" - %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(player->getIP()));
+	tooltip.concat(ip);
+#endif
+
+	if (!tooltip.isEmpty())
+	{
+		TheMouse->setCursorTooltip( tooltip );
+	}
+}
+
 
 //-------------------------------------------------------------------------------------------------
 /** This is called when a shutdown is complete for this menu */
@@ -922,7 +942,7 @@ static void shutdownComplete( WindowLayout *layout )
 
 	LANnextScreen = NULL;
 
-}  // end if
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Lan Game Options menu shutdown method */
@@ -942,7 +962,7 @@ void LanGameOptionsMenuShutdown( WindowLayout *layout, void *userData )
 		shutdownComplete( layout );
 		return;
 
-	}  //end if
+	}
 
 	TheShell->reverseAnimatewindow();
 	TheTransitionHandler->reverse("LanGameOptionsFade");
@@ -959,7 +979,7 @@ void LanGameOptionsMenuShutdown( WindowLayout *layout, void *userData )
 	// our shutdown is complete
 	TheShell->shutdownComplete( layout );
 	*/
-}  // void LanGameOptionsMenuShutdown( WindowLayout *layout, void *userData )
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Lan Game Options menu update method */
@@ -969,7 +989,7 @@ void LanGameOptionsMenuUpdate( WindowLayout * layout, void *userData)
 	if(LANisShuttingDown && TheShell->isAnimFinished() && TheTransitionHandler->isFinished())
 		shutdownComplete(layout);
 	//TheLAN->update(); // this is handled in the lobby
-}// void LanGameOptionsMenuUpdate( WindowLayout * layout, void *userData)
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Lan Game Options menu input callback */
@@ -977,7 +997,7 @@ void LanGameOptionsMenuUpdate( WindowLayout * layout, void *userData)
 WindowMsgHandledType LanGameOptionsMenuInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -999,51 +1019,54 @@ WindowMsgHandledType LanGameOptionsMenuInput( GameWindow *window, UnsignedInt ms
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonBack, buttonBackID );
-					}  // end if
+					}
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
-				}  // end escape
-			}  // end switch( key )
-		}  // end char
-	}  // end switch( msg )
+				}
+			}
+		}
+	}
 	return MSG_IGNORED;
-}//WindowMsgHandledType LanGameOptionsMenuInput( GameWindow *window, UnsignedInt msg,
+}
 
 
 //-------------------------------------------------------------------------------------------------
 /** Lan Game Options menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
 	switch( msg )
 	{
-		//-------------------------------------------------------------------------------------------------	
+		//-------------------------------------------------------------------------------------------------
 		case GWM_CREATE:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 		//-------------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 			{
+				if (windowMap)
+					windowMap->winSetUserData(NULL);
+
 				break;
-			} // case GWM_DESTROY:
+			}
 		//-------------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
-			{	
+			{
 				// if we're givin the opportunity to take the keyboard focus we must say we want it
 				if( mData1 == TRUE )
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 		//-------------------------------------------------------------------------------------------------
 		case GCM_SELECTED:
 			{
-				
+
 				if (LANbuttonPushed)
 					break;
 				GameWindow *control = (GameWindow *)mData1;
@@ -1099,7 +1122,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 						break;
 					}
 				}
-			}// case GCM_SELECTED:
+			}
 		//-------------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 			{
@@ -1113,13 +1136,13 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 					if( mapSelectLayout )
 						{
 							mapSelectLayout->destroyWindows();
-							mapSelectLayout->deleteInstance();
+							deleteInstance(mapSelectLayout);
 							mapSelectLayout = NULL;
 						}
 					TheLAN->RequestGameLeave();
 					//TheShell->pop();
 
-				} //if ( controlID == buttonBack )				
+				}
 				else if ( controlID == buttonEmoteID )
 				{
 					// read the user's input
@@ -1131,11 +1154,11 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 					// Echo the user's input to the chat window
 					if (!txtInput.isEmpty())
 						TheLAN->RequestChat(txtInput, LANAPIInterface::LANCHAT_EMOTE);
-				} //if ( controlID == buttonEmote )
+				}
 				else if ( controlID == buttonSelectMapID )
 				{
 					//buttonBack->winEnable( false );
-				
+
 					mapSelectLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/LanMapSelectMenu.wnd" ) );
 					mapSelectLayout->runInit();
 					mapSelectLayout->hide( FALSE );
@@ -1157,7 +1180,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 						// Disable the accept button
 						EnableAcceptControls(TRUE, TheLAN->GetMyGame(), comboBoxPlayer, comboBoxColor, comboBoxPlayerTemplate,
 							comboBoxTeam, buttonAccept, buttonStart, buttonMapStartPosition);
-						
+
 					}
 				}
 				else
@@ -1204,7 +1227,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 				}
 
 				break;
-			}// case GBM_SELECTED:
+			}
 		//-------------------------------------------------------------------------------------------------
 		case GBM_SELECTED_RIGHT:
 		{
@@ -1238,7 +1261,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 						}
 					}
 				}
-			}					
+			}
 			break;
 		}
 		//-------------------------------------------------------------------------------------------------
@@ -1253,7 +1276,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 				// send it to the other clients on the lan
 				if ( controlID == textEntryChatID )
 				{
-					
+
 					// read the user's input
 					txtInput.set(GadgetTextEntryGetText( textEntryChat ));
 					// Clear the text entry line
@@ -1264,15 +1287,15 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 					if (!txtInput.isEmpty())
 						TheLAN->RequestChat(txtInput, LANAPIInterface::LANCHAT_NORMAL);
 
-				}// if ( controlID == textEntryChatID )
+				}
 				break;
 			}
 		//-------------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
-	}//Switch
+	}
 	return MSG_HANDLED;
-}//WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt msg, 
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Utility FUnction used as a bridge from other windows to this one */
@@ -1288,12 +1311,12 @@ void PostToLanGameOptions( PostToLanGameType post )
 		case SEND_GAME_OPTS:
 		{
 			LANGameInfo *game = TheLAN->GetMyGame();
-			game->resetAccepted();			
-			updateGameOptions();		
+			game->resetAccepted();
+			updateGameOptions();
 			lanUpdateSlotList();
-			
+
 			//buttonBack->winEnable( true );
-			
+
 			for(Int i = 0; i < MAX_SLOTS; ++i)
 			{
 				game->getSlot(i)->setStartPos(-1);
@@ -1301,7 +1324,7 @@ void PostToLanGameOptions( PostToLanGameType post )
 
 			TheLAN->RequestGameOptions(GenerateGameOptionsString(), true);
 			break;
-		}		//-------------------------------------------------------------------------------------------------
+		}
 		case MAP_BACK:
 		{
 				//buttonBack->winEnable( true );

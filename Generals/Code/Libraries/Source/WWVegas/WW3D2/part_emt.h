@@ -16,32 +16,28 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : G                                        * 
- *                                                                         * 
- *                     $Archive:: /VSS_Sync/ww3d2/part_emt.h              $* 
- *                                                                         * 
- *                      $Author:: Vss_sync                                $* 
- *                                                                         * 
- *                     $Modtime:: 8/29/01 7:29p                           $* 
- *                                                                         * 
- *                    $Revision:: 10                                      $* 
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : G                                        *
+ *                                                                         *
+ *                     $Archive:: /VSS_Sync/ww3d2/part_emt.h              $*
+ *                                                                         *
+ *                      $Author:: Vss_sync                                $*
+ *                                                                         *
+ *                     $Modtime:: 8/29/01 7:29p                           $*
+ *                                                                         *
+ *                    $Revision:: 10                                      $*
+ *                                                                         *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if defined(_MSC_VER)
-#pragma once
-#endif
 
-#ifndef PART_EMT_H
-#define PART_EMT_H
+#pragma once
 
 #include "rendobj.h"
-#include "RANDOM.H"
+#include "RANDOM.h"
 #include "part_buf.h"
 #include "quat.h"
 #include "w3d_file.h"
@@ -71,11 +67,11 @@ template<class T> struct ParticlePropertyStruct {
 /*
 ** Utility function for copying the contents of one keyframe struct into another.
 */
-template<class T> __inline 
+template<class T> __inline
 void Copy_Emitter_Property_Struct
 (
 	ParticlePropertyStruct<T> &dest,
-	const ParticlePropertyStruct<T> &src	
+	const ParticlePropertyStruct<T> &src
 )
 {
 	dest.Start			= src.Start;
@@ -109,23 +105,24 @@ class ParticleEmitterClass : public RenderObjClass
 
 		// Note: all time/velocity/acceleration quantities use seconds (converted to ms internally)
 		ParticleEmitterClass(float emit_rate, unsigned int burst_size, Vector3Randomizer *pos_rnd,
-			Vector3 base_vel, Vector3Randomizer *vel_rnd, float out_vel, float vel_inherit_factor, 
-			ParticlePropertyStruct<Vector3> &color, 
+			Vector3 base_vel, Vector3Randomizer *vel_rnd, float out_vel, float vel_inherit_factor,
+			ParticlePropertyStruct<Vector3> &color,
 			ParticlePropertyStruct<float> &opacity,
-			ParticlePropertyStruct<float> &size, 
+			ParticlePropertyStruct<float> &size,
 			ParticlePropertyStruct<float> &rotation, float orient_rnd,
 			ParticlePropertyStruct<float> &frames,
-			Vector3 accel, float max_age, TextureClass *tex,
-			ShaderClass shader = ShaderClass::_PresetAdditiveSpriteShader, 
+			ParticlePropertyStruct<float> &blur_times,
+			Vector3 accel, float max_age, float future_start, TextureClass *tex,
+			ShaderClass shader = ShaderClass::_PresetAdditiveSpriteShader,
 			int max_particles = 0, int max_buffer_size = -1, bool pingpong = false,
 			int render_mode = W3D_EMITTER_RENDER_MODE_TRI_PARTICLES,
 			int frame_mode = W3D_EMITTER_FRAME_MODE_1x1,
 			const W3dEmitterLinePropertiesStruct * line_props = NULL);
-				
+
 		ParticleEmitterClass(const ParticleEmitterClass & src);
 		ParticleEmitterClass & operator = (const ParticleEmitterClass &);
-		virtual ~ParticleEmitterClass(void);				
-		
+		virtual ~ParticleEmitterClass(void);
+
 		// Creation/serialization methods
 		virtual RenderObjClass *		Clone(void) const;
 		static ParticleEmitterClass * Create_From_Definition (const ParticleEmitterDefClass &definition);
@@ -159,7 +156,7 @@ class ParticleEmitterClass : public RenderObjClass
 		virtual void			Set_Animation_Hidden(int onoff)	{ RenderObjClass::Set_Animation_Hidden (onoff); Update_On_Visibilty (); }
 		virtual void			Set_Force_Visible(int onoff)		{ RenderObjClass::Set_Force_Visible (onoff); Update_On_Visibilty (); }
 
-		virtual void				Set_LOD_Bias(float bias)			{ if (Buffer) Buffer->Set_LOD_Bias(bias); }
+		virtual void			Set_LOD_Bias(float bias)			{ if (Buffer) Buffer->Set_LOD_Bias(bias); }
 
 
 		// These are not part of the renderobject interface:
@@ -169,7 +166,7 @@ class ParticleEmitterClass : public RenderObjClass
 		void						Start(void);
 		void						Stop(void);
 		bool						Is_Stopped(void);
-		
+
 		// Change starting position/velocity/acceleration parameters:
 		void Set_Position_Randomizer(Vector3Randomizer *rand);
 		void Set_Velocity_Randomizer(Vector3Randomizer *rand);
@@ -177,13 +174,14 @@ class ParticleEmitterClass : public RenderObjClass
 		void Set_Outwards_Velocity(float out_vel);
 		void Set_Velocity_Inheritance_Factor(float inh_factor);
 		void Set_Acceleration (const Vector3 &acceleration)	{ if (Buffer != NULL) Buffer->Set_Acceleration (acceleration/1000000.0f); }
-	
+
 		// Change visual properties of emitter / buffer:
 		void Reset_Colors(ParticlePropertyStruct<Vector3> &new_props)							{ if (Buffer) Buffer->Reset_Colors(new_props); }
 		void Reset_Opacity(ParticlePropertyStruct<float> &new_props)							{ if (Buffer) Buffer->Reset_Opacity(new_props); }
 		void Reset_Size(ParticlePropertyStruct<float> &new_props)								{ if (Buffer) Buffer->Reset_Size(new_props); }
 		void Reset_Rotations(ParticlePropertyStruct<float> &new_props, float orient_rnd)	{ if (Buffer) Buffer->Reset_Rotations(new_props, orient_rnd); }
 		void Reset_Frames(ParticlePropertyStruct<float> &new_props)								{ if (Buffer) Buffer->Reset_Frames(new_props); }
+		void Reset_Blur_Times(ParticlePropertyStruct<float> &new_props)								{ if (Buffer) Buffer->Reset_Blur_Times(new_props); }
 
 		// Change emission/burst rate, or tell the emitter to emit a one-time burst.
 		// NOTE: default buffer size fits the emission/burst rate that the emitter was created with.
@@ -205,7 +203,7 @@ class ParticleEmitterClass : public RenderObjClass
 
 		// from RenderObj...
       virtual bool			Is_Complete(void)							{ return IsComplete; }
-		
+
 		// Auto deletion behavior controls
 		bool						Is_Remove_On_Complete_Enabled(void)				{ return RemoveOnComplete; }
 		void						Enable_Remove_On_Complete(bool onoff)			{ RemoveOnComplete = onoff; }
@@ -252,6 +250,7 @@ class ParticleEmitterClass : public RenderObjClass
 		void						Get_Size_Key_Frames (ParticlePropertyStruct<float>	&sizes) const				{ Buffer->Get_Size_Key_Frames (sizes); }
 		void						Get_Rotation_Key_Frames (ParticlePropertyStruct<float> &rotations) const	{ Buffer->Get_Rotation_Key_Frames (rotations); }
 		void						Get_Frame_Key_Frames (ParticlePropertyStruct<float> &frames) const			{ Buffer->Get_Frame_Key_Frames (frames); }
+		void						Get_Blur_Time_Key_Frames (ParticlePropertyStruct<float> &blurtimes) const	{ Buffer->Get_Blur_Time_Key_Frames (blurtimes); }
 		float						Get_Initial_Orientation_Random (void) const											{ return Buffer->Get_Initial_Orientation_Random(); }
 
 		// Line rendering accessors
@@ -276,11 +275,11 @@ class ParticleEmitterClass : public RenderObjClass
 
 		// Used to build a list of filenames this emitter is dependent on
 		virtual void			Add_Dependencies_To_List (DynamicVectorClass<StringClass> &file_list, bool textures_only = false);
-		
+
 		// This method is called each time the visiblity state of the emitter changes.
 		virtual void			Update_On_Visibilty (void);
 
-	private:		
+	private:
 
 		// Collision sphere is a point - emitter emits also when not visible,
       // so this is only important to avoid affecting the collision spheres
@@ -317,7 +316,7 @@ class ParticleEmitterClass : public RenderObjClass
 		bool							BufferSceneNeeded;// Does the buffer need a scene?
 		int							ParticlesLeft;		// Particles left to emit
 		int							MaxParticles;		// Total particles to emit
-		bool							IsComplete;			// Completed Emissions		
+		bool							IsComplete;			// Completed Emissions
 		char *						NameString;
 		char *						UserString;
 		bool							RemoveOnComplete;	// Should this emitter destroy itself when it completes?
@@ -336,7 +335,3 @@ class ParticleEmitterClass : public RenderObjClass
 		// all particle emitters.
 		static bool					DebugDisable;
 };
-
-#endif // PART_EMT_H
-
-

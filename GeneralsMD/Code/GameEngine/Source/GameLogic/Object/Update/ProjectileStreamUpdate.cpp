@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/GameLogic.h"
@@ -36,11 +36,6 @@
 #include "GameLogic/Module/ProjectileStreamUpdate.h"
 #include "WWMath/vector3.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -55,10 +50,10 @@ ProjectileStreamUpdate::ProjectileStreamUpdate( Thing *thing, const ModuleData* 
 	m_owningObject = INVALID_ID;
 	m_nextFreeIndex = 0;
 	m_firstValidIndex = 0;
-	
+
 	m_targetObject = INVALID_ID;
 	m_targetPosition.zero();
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -174,7 +169,7 @@ void ProjectileStreamUpdate::getAllPoints( Vector3 *points, Int *count )
 			points[pointCount].X = thisPoint.x;
 			points[pointCount].Y = thisPoint.y;
 			points[pointCount].Z = thisPoint.z;
-			
+
 
 			if ( obj && obj->isKindOf( KINDOF_VEHICLE ) )				// this makes the stream skim along my roof, if I have a roof
 			{
@@ -221,12 +216,12 @@ void ProjectileStreamUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version 
+	* 1: Initial version
 	* 2: Target tracking for line breaking
 */
 // ------------------------------------------------------------------------------------------------
@@ -259,7 +254,7 @@ void ProjectileStreamUpdate::xfer( Xfer *xfer )
 		xfer->xferCoord3D( &m_targetPosition );
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -270,4 +265,4 @@ void ProjectileStreamUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

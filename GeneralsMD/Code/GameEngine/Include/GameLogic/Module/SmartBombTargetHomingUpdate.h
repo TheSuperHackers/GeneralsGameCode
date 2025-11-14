@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SMARTBOMB_UPDATE_H_
-#define __SMARTBOMB_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -46,10 +43,10 @@ public:
 		m_courseCorrectionScalar = 0.99f;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "CourseCorrectionScalar",	INI::parseReal,		NULL, offsetof( SmartBombTargetHomingUpdateModuleData, m_courseCorrectionScalar ) },
 			{ 0, 0, 0, 0 }
@@ -83,6 +80,3 @@ protected:
 
 
 };
-
-#endif // __SMARTBOMB_UPDATE_H_
-

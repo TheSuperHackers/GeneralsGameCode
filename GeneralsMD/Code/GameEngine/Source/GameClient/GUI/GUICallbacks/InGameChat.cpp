@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -266,7 +266,7 @@ WindowMsgHandledType InGameChatInput( GameWindow *window, UnsignedInt msg,
 																			WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -284,26 +284,26 @@ WindowMsgHandledType InGameChatInput( GameWindow *window, UnsignedInt msg,
 					HideInGameChat();
 					return MSG_HANDLED;
 					//return MSG_IGNORED;
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
 			return MSG_HANDLED;
 
-		}  // end char
+		}
 
 	}
 
 	return MSG_IGNORED;
 
-}  // end InGameChatInput
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType InGameChatSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType InGameChatSystem( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 		//---------------------------------------------------------------------------------------------
 		case GGM_FOCUS_CHANGE:
@@ -312,17 +312,17 @@ WindowMsgHandledType InGameChatSystem( GameWindow *window, UnsignedInt msg,
 			//if (focus)
 				//TheWindowManager->winSetGrabWindow( chatTextEntry );
 			break;
-		} // end focus change
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
-		{	
+		{
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
 			if( mData1 == TRUE )
 				*(Bool *)mData2 = TRUE;
 
 			return MSG_HANDLED;
-		}//case GWM_INPUT_FOCUS:
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GEM_EDIT_DONE:
@@ -332,7 +332,7 @@ WindowMsgHandledType InGameChatSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end button selected
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -347,15 +347,15 @@ WindowMsgHandledType InGameChatSystem( GameWindow *window, UnsignedInt msg,
 			}
 			break;
 
-		}  // end button selected
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end InGameChatSystem
+}
 

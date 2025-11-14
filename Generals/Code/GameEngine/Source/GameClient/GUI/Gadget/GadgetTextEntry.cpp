@@ -24,12 +24,12 @@
 
 // FILE: TextEntry.cpp ////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
@@ -57,11 +57,6 @@
 // DEFINES ////////////////////////////////////////////////////////////////////
 
 // PRIVATE TYPES //////////////////////////////////////////////////////////////
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 ///////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -95,7 +90,7 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 		return MSG_HANDLED;
 	}
 
-	switch( msg ) 
+	switch( msg )
 	{
 		// ------------------------------------------------------------------------
 		case GWM_IME_CHAR:
@@ -106,9 +101,9 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 			if ( ch == VK_RETURN )
 			{
 				// Done with this edit
-			 		TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
+			 		TheWindowManager->winSendSystemMsg( window->winGetOwner(),
 			 																				GEM_EDIT_DONE,
-			 																				(WindowMsgData)window, 
+			 																				(WindowMsgData)window,
 			 																				0 );
 				return MSG_HANDLED;
 			};
@@ -139,9 +134,9 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 						e->text->appendChar( ch );
 						e->sText->appendChar( L'*' );
 						e->charPos++;
-						TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
+						TheWindowManager->winSendSystemMsg( window->winGetOwner(),
 																						GEM_UPDATE_TEXT,
-																						(WindowMsgData)window, 
+																						(WindowMsgData)window,
 																						0 );
 				}
 			}
@@ -165,9 +160,9 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 					{
 						if( e->receivedUnichar == FALSE )
 						{
-							TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
+							TheWindowManager->winSendSystemMsg( window->winGetOwner(),
 																									GEM_EDIT_DONE,
-																									(WindowMsgData)window, 
+																									(WindowMsgData)window,
 																									0 );
 						}
 					}
@@ -213,7 +208,7 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 						else
 							TheWindowManager->winNextTab(window);
 					}
-					
+
 					break;
 
 				// --------------------------------------------------------------------
@@ -248,16 +243,16 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 								e->text->removeLastChar();
 								e->sText->removeLastChar();
 								e->charPos--;
-								TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
+								TheWindowManager->winSendSystemMsg( window->winGetOwner(),
 																								GEM_UPDATE_TEXT,
-																								(WindowMsgData)window, 
+																								(WindowMsgData)window,
 																								0 );
-							}  // end if
+							}
 						}
 					}
 					break;
 
-			}  // end switch( mData1 )
+			}
 
 			break;
 
@@ -274,7 +269,7 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 			{
 
 				BitSet( instData->m_state, WIN_STATE_HILITED );
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
+				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
 																						GBM_MOUSE_ENTERING,
 																						(WindowMsgData)window, 0 );
 				//TheWindowManager->winSetFocus( window );
@@ -289,7 +284,7 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 			{
 
 				BitClear( instData->m_state, WIN_STATE_HILITED );
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
+				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
 																						GBM_MOUSE_LEAVING,
 																						(WindowMsgData)window, 0 );
 			}
@@ -299,7 +294,7 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 		case GWM_LEFT_DRAG:
 
 			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
+				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
 																						GGM_LEFT_DRAG,
 																						(WindowMsgData)window, 0 );
 			break;
@@ -308,11 +303,11 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end GadgetTextEntryInput
+}
 
 // GadgetTextEntrySystem ======================================================
 /** Handle system messages for entry field */
@@ -349,7 +344,7 @@ WindowMsgHandledType GadgetTextEntrySystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end set text
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_CREATE:
@@ -370,6 +365,8 @@ WindowMsgHandledType GadgetTextEntrySystem( GameWindow *window, UnsignedInt msg,
 
 			// free all edit data
 			delete( (EntryData *)window->winGetUserData() );
+			window->winSetUserData(NULL);
+			e = NULL;
 			break;
 
 		// ------------------------------------------------------------------------
@@ -402,9 +399,9 @@ WindowMsgHandledType GadgetTextEntrySystem( GameWindow *window, UnsignedInt msg,
 				BitSet( instData->m_state, WIN_STATE_HILITED );
 			}
 
-			TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
+			TheWindowManager->winSendSystemMsg( window->winGetOwner(),
 																					GGM_FOCUS_CHANGE,
-																					mData1, 
+																					mData1,
 																					window->winGetWindowId() );
 
 			*(Bool*)mData2 = TRUE;
@@ -413,11 +410,11 @@ WindowMsgHandledType GadgetTextEntrySystem( GameWindow *window, UnsignedInt msg,
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end GadgetTextEntrySystem
+}
 
 /** @todo we might want to do something like this if we use IME for language
 	* support in this product */
@@ -562,9 +559,9 @@ void GadgetTextEntrySetFont( GameWindow *g, GameFont *font )
 		if( dString )
 			dString->setFont( font );
 
-	}  // end if
+	}
 
-}  // end GadgetTextEntrySetFont
+}
 
 // GadgetTextEntryGetText =======================================================
 /** Get the text for a Text entry */
@@ -584,4 +581,4 @@ UnicodeString GadgetTextEntryGetText( GameWindow *textentry )
 	TheWindowManager->winSendSystemMsg( textentry, GEM_GET_TEXT, 0, (WindowMsgData)&result );
 	return result;
 
-}  // end GadgetListBoxGetText
+}

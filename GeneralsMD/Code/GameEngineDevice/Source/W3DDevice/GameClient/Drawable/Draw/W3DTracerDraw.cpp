@@ -41,11 +41,6 @@
 #include "WW3D2/line3d.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
@@ -66,13 +61,13 @@ W3DTracerDraw::W3DTracerDraw( Thing *thing, const ModuleData* moduleData ) : Dra
 	m_speedInDistPerFrame = 1.0f;
 	m_theTracer = NULL;
 
-}  // end W3DTracerDraw
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void W3DTracerDraw::setTracerParms(Real speed, Real length, Real width, const RGBColor& color, Real initialOpacity)
-{ 
-	m_speedInDistPerFrame = speed; 
+{
+	m_speedInDistPerFrame = speed;
 	m_length = length;
 	m_width = width;
 	m_color = color;
@@ -102,8 +97,8 @@ W3DTracerDraw::~W3DTracerDraw( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DTracerDraw::reactToTransformChange( const Matrix3D *oldMtx, 
-																							 const Coord3D *oldPos, 
+void W3DTracerDraw::reactToTransformChange( const Matrix3D *oldMtx,
+																							 const Coord3D *oldPos,
 																							 Real oldAngle )
 {
 	if( m_theTracer )
@@ -165,7 +160,7 @@ void W3DTracerDraw::crc( Xfer *xfer )
 	// extend base class
 	DrawModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -185,7 +180,7 @@ void W3DTracerDraw::xfer( Xfer *xfer )
 
 	// no data to save here, nobody will ever notice
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -196,4 +191,4 @@ void W3DTracerDraw::loadPostProcess( void )
 	// extend base class
 	DrawModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

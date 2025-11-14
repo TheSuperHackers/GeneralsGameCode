@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __PASSENGERS_FIRE_UPGRADE_H_
-#define __PASSENGERS_FIRE_UPGRADE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
 
@@ -56,7 +53,3 @@ protected:
 
 
 };
-
-
-#endif // __PASSENGERS_FIRE_UPGRADE_H_
-

@@ -22,12 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-
-#ifndef __HEIGHTMAP_H_
-#define __HEIGHTMAP_H_
 
 #include "always.h"
 #include "rendobj.h"
@@ -58,7 +53,7 @@ scorchmarks and intersection tests.
 
 
 class HeightMapRenderObjClass : public BaseHeightMapRenderObjClass
-{	
+{
 
 public:
 
@@ -74,15 +69,12 @@ public:
 	// Render Object Interface (W3D methods)
 	/////////////////////////////////////////////////////////////////////////////
 	virtual void					Render(RenderInfoClass & rinfo);
-	virtual void					On_Frame_Update(void); 
+	virtual void					On_Frame_Update(void);
 
 	///allocate resources needed to render heightmap
 	virtual int initHeightData(Int width, Int height, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator, Bool updateExtraPassTiles=TRUE);
 	virtual Int freeMapResources(void);	///< free resources used to render heightmap
 	virtual void updateCenter(CameraClass *camera, RefRenderObjListIterator *pLightsIterator);
-
-	void renderExtraBlendTiles(void);			///< render 3-way blend tiles that have blend of 3 textures.
-
 
 	virtual void staticLightingChanged(void);
 	virtual	void adjustTerrainLOD(Int adj);
@@ -90,20 +82,20 @@ public:
 	virtual void doPartialUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, RefRenderObjListIterator *pLightsIterator);
 
 	virtual void oversizeTerrain(Int tilesToOversize);
-  
+
 	virtual int updateBlock(Int x0, Int y0, Int x1, Int y1, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator);
 
 protected:
 	Int *m_extraBlendTilePositions;	///<array holding x,y tile positions of all extra blend tiles. (used for 3 textures per tile).
 	Int m_numExtraBlendTiles;		///<number of blend tiles in m_extraBlendTilePositions.
-	Int	m_numVisibleExtraBlendTiles; ///<number rendered last frame.	
+	Int	m_numVisibleExtraBlendTiles; ///<number rendered last frame.
 	Int m_extraBlendTilePositionsSize;	//<total size of array including unused memory.
 	DX8VertexBufferClass	**m_vertexBufferTiles;	///<collection of smaller vertex buffers that make up 1 heightmap
 	char	**m_vertexBufferBackup;	///< In memory copy of the vertex buffer data for quick update of dynamic lighting.
 	Int m_originX; ///<  Origin point in the grid.  Slides around.
 	Int m_originY; ///< Origin point in the grid.  Slides around.
 	DX8IndexBufferClass			*m_indexBuffer;	///<indices defining triangles in a VB tile.
-	Int	m_numVBTilesX;	///<dimensions of array containing all the vertex buffers 
+	Int	m_numVBTilesX;	///<dimensions of array containing all the vertex buffers
 	Int	m_numVBTilesY;	///<dimensions of array containing all the vertex buffers
 	Int m_numVertexBufferTiles;	///<number of vertex buffers needed to store this heightmap
 	Int	m_numBlockColumnsInLastVB;///<a VB tile may be partially filled, this indicates how many 2x2 vertex blocks are filled.
@@ -123,9 +115,5 @@ protected:
 	void renderTerrainPass(CameraClass *pCamera);	///< renders additional terrain pass.
 	Int	getNumExtraBlendTiles(Bool visible) { return visible?m_numVisibleExtraBlendTiles:m_numExtraBlendTiles;}
 	void freeIndexVertexBuffers(void);
-
-
-  
+	void renderExtraBlendTiles(void);	///< render 3-way blend tiles that have blend of 3 textures.
 };
-
-#endif  // end __HEIGHTMAP_H_

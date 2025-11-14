@@ -34,16 +34,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef SCENE_H
-#define SCENE_H
 
 #include "always.h"
-#include "refcount.h"
 #include "vector3.h"
 #include "robjlist.h"
 #include "wwdebug.h"
@@ -83,7 +76,7 @@ protected:
 **   to surrender when asked in the Render method.
 ** - The ability to add and remove render objects from the scene
 ** - The ability to create an iterator for the user which uses the
-**   SceneIterator interface and allows the user to iterate through 
+**   SceneIterator interface and allows the user to iterate through
 **   all render objects or visible render objects in the scene.
 **
 ** The "registration" interface is used by certain render objects to enable
@@ -94,10 +87,22 @@ protected:
 class SceneClass : public RefCountClass
 {
 public:
-
 	SceneClass(void);
 	virtual ~SceneClass(void);
-	
+
+	///////////////////////////////////////////////////////////////////////////////////
+	// RTTI information.
+	///////////////////////////////////////////////////////////////////////////////////
+	enum {
+		SCENE_ID_UNKOWN = 0xFFFFFFFF,
+		SCENE_ID_SCENE = 0,
+		SCENE_ID_SIMPLE,
+
+		SCENE_ID_LAST = 0x0000FFFF,
+	};
+	virtual int					Get_Scene_ID(void) const	{	return SCENE_ID_SCENE;	}
+
+
 	virtual void				Add_Render_Object(RenderObjClass * obj);
 	virtual void				Remove_Render_Object(RenderObjClass * obj);
 
@@ -173,7 +178,7 @@ public:
 
 protected:
 	virtual void	Render(RenderInfoClass & rinfo);	//Made virtual so we can override -MW
-	
+
 	Vector3						AmbientLight;
 	PolyRenderType				PolyRenderMode;
 	ExtraPassPolyRenderType	ExtraPassPolyRenderMode;
@@ -215,6 +220,8 @@ public:
 	SimpleSceneClass(void);
 	virtual ~SimpleSceneClass(void);
 
+	virtual int	Get_Scene_ID(void)	{	return SCENE_ID_SIMPLE;	}
+
 	virtual void Add_Render_Object(RenderObjClass * obj);
 	virtual void Remove_Render_Object(RenderObjClass * obj);
 
@@ -237,19 +244,17 @@ public:
 																		const Vector3 & point);
 
 protected:
-	
+
    // Has a visibility check been performed since scene was last rendered?
    bool Visibility_Checked;
 
 	RefRenderObjListClass	RenderList;
 	RefRenderObjListClass	UpdateList;
 	RefRenderObjListClass	LightList;
-	RefRenderObjListClass	ReleaseList;	
+	RefRenderObjListClass	ReleaseList;
 
 	friend class SimpleSceneIterator;
 
 	virtual void Customized_Render(RenderInfoClass & rinfo);
 	virtual void Post_Render_Processing(RenderInfoClass& rinfo);
 };
-
-#endif

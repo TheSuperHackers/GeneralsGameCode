@@ -22,7 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: Statistics.h 
+// FILE: Statistics.h
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -38,8 +38,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_STATISTICS_
-#define _H_STATISTICS_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
@@ -50,7 +48,7 @@
 
 
 // valueToRun is the value (between 0 and maxValueForVal) to test.
-// mu is designates the steepness of the curve. 
+// mu is designates the steepness of the curve.
 // The return value is a value in [-1, 1]
 extern Real MuLaw(Real valueToRun, Real maxValueForVal, Real mu);
 
@@ -62,5 +60,3 @@ extern Real Normalize(Real valueToNormalize, Real minRange, Real maxRange);
 
 // same as Normalize, except that output will be in the range [outRangeMin, outRangeMax]
 extern Real NormalizeToRange(Real valueToNormalize, Real minRange, Real maxRange, Real outRangeMin, Real outRangeMax);
-
-#endif /* _H_STATISTICS_ */

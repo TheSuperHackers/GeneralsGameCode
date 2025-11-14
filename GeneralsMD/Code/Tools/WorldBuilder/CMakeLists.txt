@@ -110,7 +110,7 @@ set(WORLDBUILDER_SRC
     "include/BuildList.h"
     "include/BuildListTool.h"
     "include/CameraOptions.h"
-    "src/CButtonShowColor.h"
+    "include/CButtonShowColor.h"
     "include/CellWidth.h"
     "include/CFixTeamOwnerDialog.h"
     "include/ContourOptions.h"
@@ -180,7 +180,7 @@ set(WORLDBUILDER_SRC
     "include/TeamIdentity.h"
     "include/TeamReinforcement.h"
     "include/teamsdialog.h"
-    "include/terrainmaterial.h"
+    "include/TerrainMaterial.h"
     "include/TerrainModal.h"
     "include/TerrainSwatches.h"
     "include/TileTool.h"
@@ -204,25 +204,29 @@ add_executable(z_worldbuilder WIN32)
 target_sources(z_worldbuilder PRIVATE ${WORLDBUILDER_SRC})
 
 target_include_directories(z_worldbuilder PRIVATE
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
     include
     res
 )
 
+target_precompile_headers(z_worldbuilder PRIVATE
+    [["always.h"]]
+    [["Common/STLTypedefs.h"]]
+    [["StdAfx.h"]]
+    [["WWCommon.h"]]
+)
+
 target_link_libraries(z_worldbuilder PRIVATE
+    core_debug
+    core_profile
     d3d8lib
-    dbghelplib
     imm32
     vfw32
     winmm
-    z_browserdispatch
-    z_debug
+    core_browserdispatch
     z_gameengine
     z_gameenginedevice
-    z_profile
-    zi_gameengine_include
-    zi_gameenginedevice_include
-    zi_libraries_include
+    zi_always
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

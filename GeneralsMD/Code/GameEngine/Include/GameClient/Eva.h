@@ -27,8 +27,6 @@
 // DO NOT DISTRIBUTE
 
 #pragma once
-#ifndef __EVA_H__
-#define __EVA_H__
 
 #include "Common/SubsystemInterface.h"
 #include "Common/AudioEventRTS.h"
@@ -38,12 +36,11 @@ class INI;
 
 //------------------------------------------------------------------------------------ Eva Messages
 // Keep in sync with TheEvaMessageNames AND Eva::s_shouldPlayFuncs
-enum EvaMessage
+enum EvaMessage CPP_11(: Int)
 {
   EVA_Invalid = -1,
-    
-	EVA_FIRST = 0,
-	EVA_LowPower = EVA_FIRST,
+
+	EVA_LowPower,
 	EVA_InsufficientFunds,
 	EVA_SuperweaponDetected_Own_ParticleCannon,
 	EVA_SuperweaponDetected_Own_Nuke,
@@ -98,9 +95,10 @@ enum EvaMessage
   EVA_SuperweaponLaunched_Enemy_Sneak_Attack,
 
 	EVA_COUNT,
+	EVA_FIRST = 0,
 };
 
-extern const char *TheEvaMessageNames[];
+extern const char *const TheEvaMessageNames[];
 
 //------------------------------------------------------------------------------------ EvaCheckInfo
 struct EvaSideSounds
@@ -115,7 +113,7 @@ struct EvaSideSounds
 //------------------------------------------------------------------------------------ EvaCheckInfo
 class EvaCheckInfo : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(EvaCheckInfo, "EvaCheckInfo")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(EvaCheckInfo, "EvaCheckInfo")
 
 public:
 	EvaMessage									m_message;
@@ -123,7 +121,7 @@ public:
 	UnsignedInt									m_framesToExpire;
 	UnsignedInt									m_priority;	// higher priority is more important, and will be played in preference to lower preference
 	std::vector<EvaSideSounds>	m_evaSideSounds;
-	
+
 	EvaCheckInfo();
 
 	static const FieldParse s_evaEventInfo[];		///< the parse table for INI definition
@@ -140,7 +138,7 @@ struct EvaCheck
 	const EvaCheckInfo *m_evaInfo;
 	UnsignedInt m_triggeredOnFrame;
 	UnsignedInt m_timeForNextCheck;
-	Bool m_alreadyPlayed;	
+	Bool m_alreadyPlayed;
 
 		EvaCheck();
 };
@@ -161,7 +159,7 @@ class Eva : public SubsystemInterface
 		typedef std::vector<EvaCheck> EvaCheckVec;
 		typedef EvaCheckVec::iterator EvaCheckVecIt;
 
-		// This list contains things that either want to play, 
+		// This list contains things that either want to play,
 		// or have played and are waiting till they are allowed to check again to play.
 		EvaCheckVec m_checks;
 
@@ -170,12 +168,12 @@ class Eva : public SubsystemInterface
 
 		Player *m_localPlayer;
 
-		// Variables for condition checks go here. 
+		// Variables for condition checks go here.
 		Int m_previousBuildingCount;
 		Int m_previousUnitCount;
 		mutable EvaMessage m_messageBeingTested;	// Used by the generic hooks so they can figure out which flag to test.
 		Bool m_shouldPlay[EVA_COUNT];	// These aren't all used, but some of them are.
-		
+
 		Bool m_enabled;
 
 	public:
@@ -215,5 +213,3 @@ class Eva : public SubsystemInterface
 };
 
 extern Eva *TheEva;
-
-#endif /* __EVA_H__ */

@@ -31,7 +31,8 @@
 #include "Common/KindOf.h"
 #include "Common/BitFlagsIO.h"
 
-const char* KindOfMaskType::s_bitNameList[] = 
+template<>
+const char* const KindOfMaskType::s_bitNameList[] =
 {
 	"OBSTACLE",
 	"SELECTABLE",
@@ -160,6 +161,7 @@ const char* KindOfMaskType::s_bitNameList[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(KindOfMaskType::s_bitNameList) == KindOfMaskType::NumBits + 1, "Incorrect array size");
 
 KindOfMaskType KINDOFMASK_NONE;	// inits to all zeroes
 KindOfMaskType KINDOFMASK_FS;		// inits to all zeroes
@@ -167,12 +169,12 @@ KindOfMaskType KINDOFMASK_FS;		// inits to all zeroes
 void initKindOfMasks()
 {
 	KINDOFMASK_FS.set( KINDOF_FS_FACTORY );
-	KINDOFMASK_FS.set( KINDOF_FS_BASE_DEFENSE ); 
-	KINDOFMASK_FS.set( KINDOF_FS_TECHNOLOGY ); 
-	KINDOFMASK_FS.set( KINDOF_FS_SUPPLY_DROPZONE ); 
-	KINDOFMASK_FS.set( KINDOF_FS_SUPERWEAPON );		
-	KINDOFMASK_FS.set( KINDOF_FS_BLACK_MARKET ); 
-	KINDOFMASK_FS.set( KINDOF_FS_SUPPLY_CENTER ); 
+	KINDOFMASK_FS.set( KINDOF_FS_BASE_DEFENSE );
+	KINDOFMASK_FS.set( KINDOF_FS_TECHNOLOGY );
+	KINDOFMASK_FS.set( KINDOF_FS_SUPPLY_DROPZONE );
+	KINDOFMASK_FS.set( KINDOF_FS_SUPERWEAPON );
+	KINDOFMASK_FS.set( KINDOF_FS_BLACK_MARKET );
+	KINDOFMASK_FS.set( KINDOF_FS_SUPPLY_CENTER );
 	KINDOFMASK_FS.set( KINDOF_FS_STRATEGY_CENTER );
 	KINDOFMASK_FS.set( KINDOF_FS_FAKE );
 	KINDOFMASK_FS.set( KINDOF_FS_INTERNET_CENTER );

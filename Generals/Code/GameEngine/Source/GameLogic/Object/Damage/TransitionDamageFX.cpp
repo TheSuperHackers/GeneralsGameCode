@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameClient/Drawable.h"
@@ -69,15 +69,15 @@ TransitionDamageFXModuleData::TransitionDamageFXModuleData( void )
 			m_particleSystem[ i ][ j ].locInfo.locType = FX_DAMAGE_LOC_TYPE_COORD;
 			m_particleSystem[ i ][ j ].locInfo.randomBone = FALSE;
 
-		}  // end for j
+		}
 
-	}  // end for i
+	}
 
 	m_damageFXTypes = DAMAGE_TYPE_FLAGS_ALL;
 	m_damageOCLTypes = DAMAGE_TYPE_FLAGS_ALL;
 	m_damageParticleTypes = DAMAGE_TYPE_FLAGS_ALL;
 
-}  // end TransitionDamageFXModuleData
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse fx location info ... that is a named bone or a coord3d position */
@@ -105,12 +105,12 @@ static void parseFXLocInfo( INI *ini, void *instance, FXLocInfo *locInfo )
 			DEBUG_CRASH(( "parseFXLocInfo: Bone name not followed by RandomBone specifier\nPress IGNORE to see which INI file and line # is incorrect." ));
 			throw INI_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// parse the Bool definition
 		ini->parseBool( ini, instance, &locInfo->randomBone, NULL );
 
-	}  // end if
+	}
 	else if( stricmp( token, "loc" ) == 0 )
 	{
 
@@ -120,22 +120,22 @@ static void parseFXLocInfo( INI *ini, void *instance, FXLocInfo *locInfo )
 		locInfo->loc.z = ini->scanReal( ini->getNextSubToken("Z") );
 		locInfo->locType = FX_DAMAGE_LOC_TYPE_COORD;
 
-	}  // end else
+	}
 	else
 	{
 
 		// error
 		throw INI_INVALID_DATA;
 
-	}  // end else
+	}
 
-}  // end parseFXLocInfo
+}
 
 //-------------------------------------------------------------------------------------------------
 /** In the form of:
 	* FXListSlot = <<Bone:BoneName BoneRandom:<Yes|No>> | <Loc: X:x Y:y Z:z>> FXList:FXListName */
 //-------------------------------------------------------------------------------------------------
-void TransitionDamageFXModuleData::parseFXList( INI *ini, void *instance, 
+void TransitionDamageFXModuleData::parseFXList( INI *ini, void *instance,
 																								void *store, const void *userData )
 {
 	const char *token;
@@ -152,18 +152,18 @@ void TransitionDamageFXModuleData::parseFXList( INI *ini, void *instance,
 		// error
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// parse the fx list name
 	ini->parseFXList( ini, instance, &info->fx, NULL );
 
-}  // end parseFXList
+}
 
 //-------------------------------------------------------------------------------------------------
 /** In the form of:
 	* OCLSlot = <<Bone:BoneName BoneRandom:<Yes|No>> | <Loc: X:x Y:y Z:z>> OCL:OCLName */
 //-------------------------------------------------------------------------------------------------
-void TransitionDamageFXModuleData::parseObjectCreationList( INI *ini, void *instance, 
+void TransitionDamageFXModuleData::parseObjectCreationList( INI *ini, void *instance,
 																														void *store, const void *userData )
 {
 	const char *token;
@@ -180,18 +180,18 @@ void TransitionDamageFXModuleData::parseObjectCreationList( INI *ini, void *inst
 		// error
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// parse the ocl name
 	ini->parseObjectCreationList( ini, instance, store, &info->ocl );
 
-}  // end parseObjectCreationList
+}
 
 //-------------------------------------------------------------------------------------------------
 /** In the form of:
 	* ParticleSlot = <<Bone:BoneName BoneRandom:<Yes|No>> | <Loc: X:x Y:y Z:z>> PSys:PSysName */
 //-------------------------------------------------------------------------------------------------
-void TransitionDamageFXModuleData::parseParticleSystem( INI *ini, void *instance, 
+void TransitionDamageFXModuleData::parseParticleSystem( INI *ini, void *instance,
 																												void *store, const void *userData )
 {
 	const char *token;
@@ -208,16 +208,16 @@ void TransitionDamageFXModuleData::parseParticleSystem( INI *ini, void *instance
 		// error
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// parse the particle system name
 	ini->parseParticleSystemTemplate( ini, instance, store, &info->particleSysTemplate );
 
-}  // end parseParticleSystem
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-TransitionDamageFX::TransitionDamageFX( Thing *thing, const ModuleData* moduleData ) 
+TransitionDamageFX::TransitionDamageFX( Thing *thing, const ModuleData* moduleData )
 																		  : DamageModule( thing, moduleData )
 {
 	Int i, j;
@@ -226,14 +226,14 @@ TransitionDamageFX::TransitionDamageFX( Thing *thing, const ModuleData* moduleDa
 		for( j = 0; j < DAMAGE_MODULE_MAX_FX; j++ )
 			m_particleSystemID[ i ][ j ] = INVALID_PARTICLE_SYSTEM_ID;
 
-}  // end TransitionDamageFX
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 TransitionDamageFX::~TransitionDamageFX( void )
 {
 
-}  // end ~TransitionDamageFX
+}
 
 /*
 //-------------------------------------------------------------------------------------------------
@@ -246,17 +246,17 @@ void TransitionDamageFX::onDelete( void )
 	// particle system will automatically delete itself when the object is destroyed
 	//
 
-}  // end onDelete
+}
 */
 
 //-------------------------------------------------------------------------------------------------
-/** Given an FXLoc info struct, return the effect position that we are supposed to use. 
+/** Given an FXLoc info struct, return the effect position that we are supposed to use.
 	* The position is local to to the object */
 //-------------------------------------------------------------------------------------------------
 static Coord3D getLocalEffectPos( const FXLocInfo *locInfo, Drawable *draw )
 {
 
-	DEBUG_ASSERTCRASH( locInfo, ("getLocalEffectPos: locInfo is NULL\n") );
+	DEBUG_ASSERTCRASH( locInfo, ("getLocalEffectPos: locInfo is NULL") );
 
 	if( locInfo->locType == FX_DAMAGE_LOC_TYPE_BONE && draw )
 	{
@@ -264,7 +264,7 @@ static Coord3D getLocalEffectPos( const FXLocInfo *locInfo, Drawable *draw )
 		if( locInfo->randomBone == FALSE )
 		{
 			Coord3D pos;
-		
+
 			// get the bone position
 			Int count = draw->getPristineBonePositions( locInfo->boneName.str(), 0, &pos, NULL, 1 );
 
@@ -275,7 +275,7 @@ static Coord3D getLocalEffectPos( const FXLocInfo *locInfo, Drawable *draw )
 			// return the position retrieved
 			return pos;
 
-		}  // end if
+		}
 		else
 		{
 		  const Int MAX_BONES = 32;
@@ -293,19 +293,19 @@ static Coord3D getLocalEffectPos( const FXLocInfo *locInfo, Drawable *draw )
 			Int pick = GameLogicRandomValue( 0, boneCount - 1 );
 			return positions[ pick ];
 
-		}  // end else
+		}
 
-	}  // end if
+	}
 	else
 		return locInfo->loc;
 
-}  // end getLocalEffectPos
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Switching damage states */
 //-------------------------------------------------------------------------------------------------
-void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo, 
-																									BodyDamageType oldState, 
+void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
+																									BodyDamageType oldState,
 																									BodyDamageType newState )
 {
 	Object *damageSource = NULL;
@@ -316,7 +316,7 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 	// get the source of the damage if present
 	if( damageInfo )
 		damageSource = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
-	
+
 	// remove any particle systems that might be emitting from our old state
 	for( i = 0; i < DAMAGE_MODULE_MAX_FX; i++ )
 	{
@@ -327,9 +327,9 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 			TheParticleSystemManager->destroyParticleSystemByID( m_particleSystemID[ oldState ][ i ] );
 			m_particleSystemID[ oldState ][ i ] = INVALID_PARTICLE_SYSTEM_ID;
 
-		}  // end if
+		}
 
-	}  // end for i
+	}
 
 	//
 	// when we are transitioning to a "worse" state we will play a set of effects for that
@@ -350,7 +350,7 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 			if( modData->m_fxList[ newState ][ i ].fx )
 			{
 
-				if( lastDamageInfo == NULL || 
+				if( lastDamageInfo == NULL ||
 						getDamageTypeFlag( modData->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )
 				{
 
@@ -358,33 +358,33 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 					getObject()->convertBonePosToWorldPos( &pos, NULL, &pos, NULL );
 					FXList::doFXPos( modData->m_fxList[ newState ][ i ].fx, &pos );
 
-				}  // end if
+				}
 
-			}  // end if
-					
+			}
+
 			// do any object creation list for our new state
-			if( modData->m_OCL[ newState ][ i ].ocl )
+			if( damageSource && modData->m_OCL[ newState ][ i ].ocl )
 			{
 
-				if( lastDamageInfo == NULL || 
+				if( lastDamageInfo == NULL ||
 						getDamageTypeFlag( modData->m_damageOCLTypes, lastDamageInfo->in.m_damageType ) )
 				{
 
 					pos = getLocalEffectPos( &modData->m_OCL[ newState ][ i ].locInfo, draw );
 					getObject()->convertBonePosToWorldPos( &pos, NULL, &pos, NULL );
-					ObjectCreationList::create( modData->m_OCL[ newState ][ i ].ocl, 
+					ObjectCreationList::create( modData->m_OCL[ newState ][ i ].ocl,
 																			getObject(), &pos, damageSource->getPosition() );
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 
 			// get the template of the system to create
 			pSystemT = modData->m_particleSystem[ newState ][ i ].particleSysTemplate;
 			if( pSystemT )
 			{
 
-				if( lastDamageInfo == NULL || 
+				if( lastDamageInfo == NULL ||
 						getDamageTypeFlag( modData->m_damageParticleTypes, lastDamageInfo->in.m_damageType ) )
 				{
 
@@ -392,7 +392,7 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 					ParticleSystem* pSystem = TheParticleSystemManager->createParticleSystem( pSystemT );
 					if( pSystem )
 					{
-			
+
 						// get the what is the position we're going to playe the effect at
 						pos = getLocalEffectPos( &modData->m_particleSystem[ newState ][ i ].locInfo, draw );
 
@@ -410,17 +410,17 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 						// save the id of this particle system so we can remove it later if it still exists
 						m_particleSystemID[ newState ][ i ] = pSystem->getSystemID();
 
-					}  // end if
+					}
 
-				}  // end if
+				}
 
-			}  // end if
-						
-		}  // end for i
+			}
 
-	}  // end if
-			
-}  // end onBodyDamageStateChange
+		}
+
+	}
+
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -431,7 +431,7 @@ void TransitionDamageFX::crc( Xfer *xfer )
 	// extend base class
 	DamageModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -452,7 +452,7 @@ void TransitionDamageFX::xfer( Xfer *xfer )
 	// particle systems ids
 	xfer->xferUser( m_particleSystemID, sizeof( ParticleSystemID ) * BODYDAMAGETYPE_COUNT * DAMAGE_MODULE_MAX_FX );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -463,4 +463,4 @@ void TransitionDamageFX::loadPostProcess( void )
 	// extend base class
 	DamageModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

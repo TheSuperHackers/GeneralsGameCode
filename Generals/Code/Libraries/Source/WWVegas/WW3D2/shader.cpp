@@ -100,6 +100,15 @@ ShaderClass ShaderClass::_PresetMultiplicativeShader(SC_MULTIPLICATIVE);
 	DETAILCOLOR_DISABLE, DETAILALPHA_DISABLE) )
 ShaderClass ShaderClass::_PresetOpaque2DShader(SC_OP_2D);
 
+// Texturing, default zbuffer reading, no zbuffer writing, no gradients, no blending, no
+// fogging - mostly for opaque sprite objects.
+#define SC_OP_SPRITE ( SHADE_CNST(PASS_LEQUAL, DEPTH_WRITE_DISABLE, COLOR_WRITE_ENABLE, SRCBLEND_ONE, \
+	DSTBLEND_ZERO, FOG_DISABLE, GRADIENT_DISABLE, SECONDARY_GRADIENT_DISABLE, TEXTURING_ENABLE, \
+	ALPHATEST_DISABLE, CULL_MODE_ENABLE, \
+	DETAILCOLOR_DISABLE, DETAILALPHA_DISABLE) )
+ShaderClass ShaderClass::_PresetOpaqueSpriteShader(SC_OP_SPRITE);
+
+
 // Texturing, no zbuffer reading/writing, no gradients, additive blending,
 // no fogging - mostly for additive 2D objects.
 #define SC_ADD_2D ( SHADE_CNST(PASS_ALWAYS, DEPTH_WRITE_DISABLE, COLOR_WRITE_ENABLE, SRCBLEND_ONE, \
@@ -265,7 +274,7 @@ void ShaderClass::Init_From_Material3(const W3dMaterial3Struct & mat3)
  * WARNINGS:                                                                                   *
  *                                                                                             *
  * HISTORY:																												  *
- *		05/02/00    IML : Created.																					  *	
+ *		05/02/00    IML : Created.																					  *
  *=============================================================================================*/
 
 void ShaderClass::Enable_Fog (const char *source)
@@ -278,12 +287,12 @@ void ShaderClass::Enable_Fog (const char *source)
 				Set_Fog_Func (ShaderClass::FOG_WHITE);
 			} else {
 				Report_Unable_To_Fog (source);
-			}	
+			}
 			break;
 
 		case ShaderClass::SRCBLEND_ONE:
 			switch (Get_Dst_Blend_Func()) {
-				
+
 				case ShaderClass::DSTBLEND_ZERO:							// Opaque.
 					Set_Fog_Func (ShaderClass::FOG_ENABLE);
 					break;
@@ -304,7 +313,7 @@ void ShaderClass::Enable_Fog (const char *source)
 				Set_Fog_Func (ShaderClass::FOG_ENABLE);
 			} else {
 				Report_Unable_To_Fog (source);
-			}	
+			}
 			break;
 
 		case ShaderClass::SRCBLEND_ONE_MINUS_SRC_ALPHA:
@@ -312,14 +321,14 @@ void ShaderClass::Enable_Fog (const char *source)
 				Set_Fog_Func (ShaderClass::FOG_ENABLE);
 			} else {
 				Report_Unable_To_Fog (source);
-			}	
+			}
 			break;
 	}
 }
 
 
 /***********************************************************************************************
- * ShaderClass::Report_Unable_To_Fog --																		  *	
+ * ShaderClass::Report_Unable_To_Fog --																		  *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -328,15 +337,15 @@ void ShaderClass::Enable_Fog (const char *source)
  * WARNINGS:                                                                                   *
  *                                                                                             *
  * HISTORY:																												  *
- *		10/04/00    IML : Created.																					  *	
+ *		10/04/00    IML : Created.																					  *
  *=============================================================================================*/
 void ShaderClass::Report_Unable_To_Fog (const char *source)
 {
 	#ifdef WWDEBUG
 	static unsigned _reportcount = 0;
 
-	const char		*unabletofogtext		= "WARNING: Unable to fog shader in %s with given blending mode.\r\n";
-	const char		*unabletofogmoretext = "WARNING: Unable to fog additional shaders (further warnings will be suppressed).\r\n";
+	const char		*unabletofogtext		= "WARNING: Unable to fog shader in %s with given blending mode.";
+	const char		*unabletofogmoretext = "WARNING: Unable to fog additional shaders (further warnings will be suppressed).";
 	const unsigned  maxreportcount		= 10;
 
 	// Limit the no. of warning messages to some practical maximum. Suppress all subsequent warnings.
@@ -366,7 +375,7 @@ public:
 	bool		useAlpha;
 };
 
-const Blend srcBlendLUT[ShaderClass::SRCBLEND_MAX] = 
+const Blend srcBlendLUT[ShaderClass::SRCBLEND_MAX] =
 {
 	Blend(D3DBLEND_ZERO, false),
 	Blend(D3DBLEND_ONE, false),
@@ -374,7 +383,7 @@ const Blend srcBlendLUT[ShaderClass::SRCBLEND_MAX] =
  	Blend(D3DBLEND_DESTCOLOR, true)
 };
 
-const Blend dstBlendLUT[ShaderClass::DSTBLEND_MAX] = 
+const Blend dstBlendLUT[ShaderClass::DSTBLEND_MAX] =
 {
 	Blend(D3DBLEND_ZERO, false),
 	Blend(D3DBLEND_ONE, false),
@@ -401,7 +410,7 @@ void ShaderClass::Apply()
 {
 	unsigned long diff;
 
-	unsigned int TextureOpCaps=DX8Caps::Get_Default_Caps().TextureOpCaps;
+	unsigned int TextureOpCaps=DX8Wrapper::Get_Current_Caps()->Get_DX8_Caps().TextureOpCaps;
 
 	if (ShaderDirty)
 	{
@@ -458,7 +467,7 @@ void ShaderClass::Apply()
 		if(Get_Alpha_Test() == ShaderClass::ALPHATEST_ENABLE)
 		{
 			unsigned char alphareference = 0x60;	// Alpha reference value that produces best results with mip-mapped textures.
-			
+
 			if(sf == D3DBLEND_INVSRCALPHA)
 			{
 				DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHAREF,0xff - alphareference);
@@ -487,14 +496,14 @@ void ShaderClass::Apply()
 
 			BOOL fm = FALSE;
 			D3DCOLOR fogColor = DX8Wrapper::Get_Fog_Color();
-			
+
 			switch(Get_Fog_Func())
 			{
 			case ShaderClass::FOG_ENABLE:
 				fm = TRUE;
 				break;
 			case ShaderClass::FOG_SCALE_FRAGMENT:
-				fogColor = 0;	
+				fogColor = 0;
 				fm = TRUE;
 				break;
 			case ShaderClass::FOG_WHITE:
@@ -516,63 +525,80 @@ void ShaderClass::Apply()
 		} else {
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_FOGENABLE,FALSE);
 		}
-		
+
 		diff &= ~(ShaderClass::MASK_FOG);
 		if(!diff)
 			return;
 	}
 
-	if(diff & (ShaderClass::MASK_PRIGRADIENT|ShaderClass::MASK_TEXTURING))
-	{
-		D3DTEXTUREOP	cOp = D3DTOP_SELECTARG1;
-		D3DTEXTUREOP	aOp = D3DTOP_SELECTARG1;
-		DWORD	cArg1 = D3DTA_DIFFUSE, cArg2 = D3DTA_DIFFUSE;
-		DWORD	aArg1 = D3DTA_DIFFUSE, aArg2 = D3DTA_DIFFUSE;
+	// Defaults
 
+	D3DTEXTUREOP	PricOp	= D3DTOP_SELECTARG1;
+	DWORD				PricArg1 = D3DTA_DIFFUSE;
+	DWORD				PricArg2 = D3DTA_DIFFUSE;
+
+	D3DTEXTUREOP	PriaOp	 = D3DTOP_SELECTARG1;
+	DWORD			PriaArg1 = D3DTA_DIFFUSE;
+	DWORD			PriaArg2 = D3DTA_DIFFUSE;
+
+	D3DTEXTUREOP	SeccOp	 = D3DTOP_DISABLE;
+	DWORD			SeccArg1 = D3DTA_TEXTURE;
+	DWORD			SeccArg2 = D3DTA_CURRENT;
+
+	D3DTEXTUREOP	SecaOp	 = D3DTOP_DISABLE;
+	DWORD			SecaArg1 = D3DTA_TEXTURE;
+	DWORD			SecaArg2 = D3DTA_CURRENT;
+
+	int pri_mask=ShaderClass::MASK_PRIGRADIENT|ShaderClass::MASK_TEXTURING;
+	int sec_mask=ShaderClass::MASK_POSTDETAILCOLORFUNC|ShaderClass::MASK_TEXTURING;
+	int seca_mask=ShaderClass::MASK_POSTDETAILALPHAFUNC|ShaderClass::MASK_TEXTURING;
+
+	if(diff & pri_mask)
+	{
 		if(Get_Texturing() == ShaderClass::TEXTURING_ENABLE)
 		{
 			switch(Get_Primary_Gradient())
 			{
 			case ShaderClass::GRADIENT_DISABLE:
 				//Decal
-				cOp = D3DTOP_SELECTARG1;
-				cArg1 = D3DTA_TEXTURE;
-				cArg2 = D3DTA_CURRENT;
-				aOp = D3DTOP_SELECTARG1;
-				aArg1 = D3DTA_TEXTURE;
-				aArg2 = D3DTA_CURRENT;
+				PricOp = D3DTOP_SELECTARG1;
+				PricArg1 = D3DTA_TEXTURE;
+				PricArg2 = D3DTA_CURRENT;
+				PriaOp = D3DTOP_SELECTARG1;
+				PriaArg1 = D3DTA_TEXTURE;
+				PriaArg2 = D3DTA_CURRENT;
 				break;
 			default:
 			case ShaderClass::GRADIENT_MODULATE:
 				//Modulate Alpha
-				cOp = D3DTOP_MODULATE;
-				cArg1 = D3DTA_TEXTURE;
-				cArg2 = D3DTA_DIFFUSE;
-				aOp = D3DTOP_MODULATE;
-				aArg1 = D3DTA_TEXTURE;
-				aArg2 = D3DTA_DIFFUSE;
+				PricOp = D3DTOP_MODULATE;
+				PricArg1 = D3DTA_TEXTURE;
+				PricArg2 = D3DTA_DIFFUSE;
+				PriaOp = D3DTOP_MODULATE;
+				PriaArg1 = D3DTA_TEXTURE;
+				PriaArg2 = D3DTA_DIFFUSE;
 				break;
 			case ShaderClass::GRADIENT_ADD:
-				if(!(TextureOpCaps & D3DTEXOPCAPS_ADD))	
-					cOp = D3DTOP_MODULATE;
+				if(!(TextureOpCaps & D3DTEXOPCAPS_ADD))
+					PricOp = D3DTOP_MODULATE;
 				else
-					cOp = D3DTOP_ADD;
-				cArg1 = D3DTA_TEXTURE;
-				cArg2 = D3DTA_DIFFUSE;
-				aOp = D3DTOP_MODULATE;
-				aArg1 = D3DTA_TEXTURE;
-				aArg2 = D3DTA_DIFFUSE;
+					PricOp = D3DTOP_ADD;
+				PricArg1 = D3DTA_TEXTURE;
+				PricArg2 = D3DTA_DIFFUSE;
+				PriaOp = D3DTOP_MODULATE;
+				PriaArg1 = D3DTA_TEXTURE;
+				PriaArg2 = D3DTA_DIFFUSE;
 				break;
 			// Bump map is a hack currently as we only have two stages in use!
 			case ShaderClass::GRADIENT_BUMPENVMAP:
 				if(TextureOpCaps & D3DTEXOPCAPS_BUMPENVMAP)
 				{
-					cOp=D3DTOP_BUMPENVMAP;
-					cArg1=D3DTA_TEXTURE;
-					cArg2=D3DTA_DIFFUSE;
-					aOp = D3DTOP_DISABLE;
-					aArg1 = D3DTA_TEXTURE;
-					aArg2 = D3DTA_CURRENT;
+					PricOp=D3DTOP_BUMPENVMAP;
+					PricArg1=D3DTA_TEXTURE;
+					PricArg2=D3DTA_DIFFUSE;
+					PriaOp = D3DTOP_DISABLE;
+					PriaArg1 = D3DTA_TEXTURE;
+					PriaArg2 = D3DTA_CURRENT;
 				}
 				break;
 
@@ -580,12 +606,12 @@ void ShaderClass::Apply()
 			case ShaderClass::GRADIENT_BUMPENVMAPLUMINANCE:
 				if(TextureOpCaps & D3DTEXOPCAPS_BUMPENVMAPLUMINANCE)
 				{
-					cOp=D3DTOP_BUMPENVMAPLUMINANCE;
-					cArg1=D3DTA_TEXTURE;
-					cArg2=D3DTA_DIFFUSE;
-					aOp = D3DTOP_DISABLE;
-					aArg1 = D3DTA_TEXTURE;
-					aArg2 = D3DTA_CURRENT;
+					PricOp=D3DTOP_BUMPENVMAPLUMINANCE;
+					PricArg1=D3DTA_TEXTURE;
+					PricArg2=D3DTA_DIFFUSE;
+					PriaOp = D3DTOP_DISABLE;
+					PriaArg1 = D3DTA_TEXTURE;
+					PriaArg2 = D3DTA_CURRENT;
 				}
 				break;
 
@@ -593,12 +619,12 @@ void ShaderClass::Apply()
 			case ShaderClass::GRADIENT_DOTPRODUCT3:
 				if(TextureOpCaps & D3DTEXOPCAPS_DOTPRODUCT3)
 				{
-					cOp=D3DTOP_DOTPRODUCT3;
-					cArg1=D3DTA_TEXTURE;
-					cArg2=D3DTA_DIFFUSE;
-					aOp = D3DTOP_DISABLE;
-					aArg1 = D3DTA_TEXTURE;
-					aArg2 = D3DTA_CURRENT;
+					PricOp = D3DTOP_DOTPRODUCT3;
+					PricArg1 = D3DTA_TEXTURE;
+					PricArg2 = D3DTA_DIFFUSE;
+					PriaOp = D3DTOP_DISABLE;
+					PriaArg1 = D3DTA_TEXTURE;
+					PriaArg2 = D3DTA_CURRENT;
 				}
 				break;
 			}
@@ -608,54 +634,50 @@ void ShaderClass::Apply()
 			switch(Get_Primary_Gradient())
 			{
 			case ShaderClass::GRADIENT_DISABLE:
-				cOp = D3DTOP_DISABLE;
-				cArg1 = D3DTA_TEXTURE;
-				cArg2 = D3DTA_CURRENT;
-				aOp = D3DTOP_DISABLE;
-				aArg1 = D3DTA_TEXTURE;
-				aArg2 = D3DTA_CURRENT;
+				PricOp = D3DTOP_DISABLE;
+				PricArg1 = D3DTA_TEXTURE;
+				PricArg2 = D3DTA_CURRENT;
+				PriaOp = D3DTOP_DISABLE;
+				PriaArg1 = D3DTA_TEXTURE;
+				PriaArg2 = D3DTA_CURRENT;
 				break;
 			default:
 			case ShaderClass::GRADIENT_MODULATE:
-				cOp = D3DTOP_SELECTARG2;
-				cArg1 = D3DTA_TEXTURE;
-				cArg2 = D3DTA_DIFFUSE;
-				aOp = D3DTOP_SELECTARG2;
-				aArg1 = D3DTA_TEXTURE;
-				aArg2 = D3DTA_DIFFUSE;
+				PricOp = D3DTOP_SELECTARG2;
+				PricArg1 = D3DTA_TEXTURE;
+				PricArg2 = D3DTA_DIFFUSE;
+				PriaOp = D3DTOP_SELECTARG2;
+				PriaArg1 = D3DTA_TEXTURE;
+				PriaArg2 = D3DTA_DIFFUSE;
 				break;
 			case ShaderClass::GRADIENT_ADD:
-				cOp = D3DTOP_SELECTARG2;
-				cArg1 = D3DTA_TEXTURE;
-				cArg2 = D3DTA_DIFFUSE;
-				aOp = D3DTOP_SELECTARG2;
-				aArg1 = D3DTA_TEXTURE;
-				aArg2 = D3DTA_DIFFUSE;
+				PricOp = D3DTOP_SELECTARG2;
+				PricArg1 = D3DTA_TEXTURE;
+				PricArg2 = D3DTA_DIFFUSE;
+				PriaOp = D3DTOP_SELECTARG2;
+				PriaArg1 = D3DTA_TEXTURE;
+				PriaArg2 = D3DTA_DIFFUSE;
 				break;
 			}
 		}
 
 		if (WW3D::Is_Coloring_Enabled())
 		{
-			cArg2=aArg2=D3DTA_TFACTOR;
-			cOp=aOp=D3DTOP_SELECTARG2;
+			PricArg2=PriaArg2=D3DTA_TFACTOR;
+			PricOp=PriaOp=D3DTOP_SELECTARG2;
 		}
 
-		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLOROP,cOp);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLORARG1,cArg1);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLORARG2,cArg2);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAOP,aOp);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAARG1,aArg1);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAARG2,aArg2);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLOROP,PricOp);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLORARG1,PricArg1);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLORARG2,PricArg2);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAOP,PriaOp);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAARG1,PriaArg1);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAARG2,PriaArg2);
 		diff &= ~(ShaderClass::MASK_PRIGRADIENT);
 	}
 
-	if(diff & (ShaderClass::MASK_POSTDETAILCOLORFUNC|ShaderClass::MASK_TEXTURING))
+	if(diff & sec_mask)
 	{
-		D3DTEXTUREOP	cOp	= D3DTOP_DISABLE;
-		DWORD			cArg1 = D3DTA_TEXTURE;
-		DWORD			cArg2 = D3DTA_CURRENT;
-
 		if(Get_Texturing()== ShaderClass::TEXTURING_ENABLE)
 		{
 			switch(Get_Post_Detail_Color_Func())
@@ -667,88 +689,84 @@ void ShaderClass::Apply()
 			case ShaderClass::DETAILCOLOR_DETAIL:
 				if(TextureOpCaps & D3DTEXOPCAPS_MODULATE)
 				{
-					cOp = D3DTOP_SELECTARG1;
-					cArg1 = D3DTA_TEXTURE;
-					cArg2 = D3DTA_CURRENT;
+					SeccOp = D3DTOP_SELECTARG1;
+					SeccArg1 = D3DTA_TEXTURE;
+					SeccArg2 = D3DTA_CURRENT;
 				}
 				break;
 
 			case ShaderClass::DETAILCOLOR_SCALE:
 				if(TextureOpCaps & D3DTEXOPCAPS_MODULATE)
 				{
-					cOp = D3DTOP_MODULATE;
-					cArg1 = D3DTA_TEXTURE;
-					cArg2 = D3DTA_CURRENT;
+					SeccOp = D3DTOP_MODULATE;
+					SeccArg1 = D3DTA_TEXTURE;
+					SeccArg2 = D3DTA_CURRENT;
 				}
 				break;
 
 			case ShaderClass::DETAILCOLOR_INVSCALE:
 				if(TextureOpCaps & D3DTEXOPCAPS_ADDSMOOTH)
 				{
-					cOp = D3DTOP_ADDSMOOTH;
-					cArg1 = D3DTA_TEXTURE;
-					cArg2 = D3DTA_CURRENT;
+					SeccOp = D3DTOP_ADDSMOOTH;
+					SeccArg1 = D3DTA_TEXTURE;
+					SeccArg2 = D3DTA_CURRENT;
 				}
 				break;
 
 			case ShaderClass::DETAILCOLOR_ADD:
 				if(TextureOpCaps & D3DTEXOPCAPS_ADD)
 				{
-					cOp = D3DTOP_ADD;
-					cArg1 = D3DTA_TEXTURE;
-					cArg2 = D3DTA_CURRENT;
+					SeccOp = D3DTOP_ADD;
+					SeccArg1 = D3DTA_TEXTURE;
+					SeccArg2 = D3DTA_CURRENT;
 				}
 				break;
 
 			case ShaderClass::DETAILCOLOR_SUB:
 				if(TextureOpCaps & D3DTEXOPCAPS_SUBTRACT)
 				{
-					cOp = D3DTOP_SUBTRACT;
-					cArg1 = D3DTA_TEXTURE;
-					cArg2 = D3DTA_CURRENT;
+					SeccOp = D3DTOP_SUBTRACT;
+					SeccArg1 = D3DTA_TEXTURE;
+					SeccArg2 = D3DTA_CURRENT;
 				}
 				break;
 
 			case ShaderClass::DETAILCOLOR_SUBR:
 				if(TextureOpCaps & D3DTEXOPCAPS_SUBTRACT)
 				{
-					cOp = D3DTOP_SUBTRACT;
-					cArg1 = D3DTA_CURRENT;
-					cArg2 = D3DTA_TEXTURE;
+					SeccOp = D3DTOP_SUBTRACT;
+					SeccArg1 = D3DTA_CURRENT;
+					SeccArg2 = D3DTA_TEXTURE;
 				}
 				break;
 
 			case ShaderClass::DETAILCOLOR_BLEND:
 				if(TextureOpCaps & D3DTEXOPCAPS_BLENDTEXTUREALPHA)
 				{
-					cOp = D3DTOP_BLENDTEXTUREALPHA;
-					cArg1 = D3DTA_TEXTURE;
-					cArg2 = D3DTA_CURRENT;
+					SeccOp = D3DTOP_BLENDTEXTUREALPHA;
+					SeccArg1 = D3DTA_TEXTURE;
+					SeccArg2 = D3DTA_CURRENT;
 				}
 				break;
 
 			case ShaderClass::DETAILCOLOR_DETAILBLEND:
 				if(TextureOpCaps & D3DTEXOPCAPS_BLENDCURRENTALPHA)
 				{
-					cOp = D3DTOP_BLENDCURRENTALPHA;
-					cArg1 = D3DTA_TEXTURE;
-					cArg2 = D3DTA_CURRENT;
+					SeccOp = D3DTOP_BLENDCURRENTALPHA;
+					SeccArg1 = D3DTA_TEXTURE;
+					SeccArg2 = D3DTA_CURRENT;
 				}
 				break;
 			}
 		}
-		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_COLOROP,cOp);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_COLORARG1,cArg1);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_COLORARG2,cArg2);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_COLOROP,SeccOp);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_COLORARG1,SeccArg1);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_COLORARG2,SeccArg2);
 	}
 	diff &= ~(ShaderClass::MASK_POSTDETAILCOLORFUNC);
 
-	if(diff & (ShaderClass::MASK_POSTDETAILALPHAFUNC|ShaderClass::MASK_TEXTURING))
+	if(diff & seca_mask)
 	{
-		D3DTEXTUREOP	aOp	= D3DTOP_DISABLE;
-		DWORD			aArg1 = D3DTA_TEXTURE;
-		DWORD			aArg2 = D3DTA_CURRENT;
-
 		if(Get_Texturing() == ShaderClass::TEXTURING_ENABLE)
 		{
 			switch(Get_Post_Detail_Alpha_Func())
@@ -760,34 +778,34 @@ void ShaderClass::Apply()
 			case ShaderClass::DETAILALPHA_DETAIL:
 				if(TextureOpCaps & D3DTEXOPCAPS_MODULATE)
 				{
-					aOp = D3DTOP_SELECTARG1;
-					aArg1 = D3DTA_TEXTURE;
-					aArg2 = D3DTA_CURRENT;
+					SecaOp = D3DTOP_SELECTARG1;
+					SecaArg1 = D3DTA_TEXTURE;
+					SecaArg2 = D3DTA_CURRENT;
 				}
 				break;
 
 			case ShaderClass::DETAILALPHA_SCALE:
 				if(TextureOpCaps & D3DTEXOPCAPS_MODULATE)
 				{
-					aOp = D3DTOP_MODULATE;
-					aArg1 = D3DTA_TEXTURE;
-					aArg2 = D3DTA_CURRENT;
+					SecaOp = D3DTOP_MODULATE;
+					SecaArg1 = D3DTA_TEXTURE;
+					SecaArg2 = D3DTA_CURRENT;
 				}
 				break;
 
 			case ShaderClass::DETAILALPHA_INVSCALE:
 				if(TextureOpCaps & D3DTEXOPCAPS_ADDSMOOTH)
 				{
-					aOp = D3DTOP_ADDSMOOTH;
-					aArg1 = D3DTA_TEXTURE;
-					aArg2 = D3DTA_CURRENT;
+					SecaOp = D3DTOP_ADDSMOOTH;
+					SecaArg1 = D3DTA_TEXTURE;
+					SecaArg2 = D3DTA_CURRENT;
 				}
 				break;
 			}
 		}
-		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_ALPHAOP,aOp);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_ALPHAARG1,aArg1);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_ALPHAARG2,aArg2);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_ALPHAOP,SecaOp);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_ALPHAARG1,SecaArg1);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_ALPHAARG2,SecaArg2);
 	}
 	diff &= ~(ShaderClass::MASK_POSTDETAILALPHAFUNC);
 	diff &= ~(ShaderClass::MASK_TEXTURING);
@@ -817,7 +835,7 @@ void ShaderClass::Apply()
 	}
 
 	// Enable/disable alpha test
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHATESTENABLE,BOOL(Get_Alpha_Test()));	
+	DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHATESTENABLE,BOOL(Get_Alpha_Test()));
 
 	// Enable/disable stencil test
 	// Not supported yet
@@ -934,3 +952,99 @@ bool ShaderClass::Is_Backface_Culling_Inverted(void)
 {
 	return (_PolygonCullMode == D3DCULL_CCW);
 }
+
+const StringClass& ShaderClass::Get_Description(StringClass& str) const
+{
+	str="";
+	switch (Get_Depth_Compare()) {
+	case PASS_NEVER: str+="DEPTH_COMPARE:PASS_NEVER | "; break;
+	case PASS_LESS: str+="DEPTH_COMPARE:PASS_LESS | "; break;
+	case PASS_EQUAL: str+="DEPTH_COMPARE:PASS_EQUAL | "; break;
+	case PASS_LEQUAL: str+="DEPTH_COMPARE:PASS_LEQUAL | "; break;
+	case PASS_GREATER: str+="DEPTH_COMPARE:PASS_GREATER | "; break;
+	case PASS_NOTEQUAL: str+="DEPTH_COMPARE:PASS_NOTEQUAL | "; break;
+	case PASS_GEQUAL: str+="DEPTH_COMPARE:PASS_GEQUAL | "; break;
+	case PASS_ALWAYS: str+="DEPTH_COMPARE:PASS_ALWAYS | "; break;
+	}
+
+	switch (Get_Depth_Mask()) {
+	case DEPTH_WRITE_DISABLE: str+="DEPTH_WRITE_DISABLE | "; break;
+	case DEPTH_WRITE_ENABLE: str+="DEPTH_WRITE_ENABLE | "; break;
+	}
+
+	switch (Get_Color_Mask()) {
+	case COLOR_WRITE_DISABLE: str+="COLOR_WRITE_DISABLE | "; break;
+	case COLOR_WRITE_ENABLE: str+="COLOR_WRITE_ENABLE | "; break;
+	}
+
+	switch (Get_Dst_Blend_Func()) {
+	case DSTBLEND_ZERO: str+="DSTBLEND_ZERO | "; break;
+  	case DSTBLEND_ONE: str+="DSTBLEND_ONE | "; break;
+ 	case DSTBLEND_SRC_COLOR: str+="DSTBLEND_SRC_COLOR | "; break;
+ 	case DSTBLEND_ONE_MINUS_SRC_COLOR: str+="DSTBLEND_ONE_MINUS_SRC_COLOR | "; break;
+ 	case DSTBLEND_SRC_ALPHA: str+="DSTBLEND_SRC_ALPHA | "; break;
+ 	case DSTBLEND_ONE_MINUS_SRC_ALPHA: str+="DSTBLEND_ONE_MINUS_SRC_ALPHA | "; break;
+	}
+
+	switch (Get_Fog_Func()) {
+	case FOG_DISABLE: str+="FOG_DISABLE | "; break;
+ 	case FOG_ENABLE: str+="FOG_ENABLE | "; break;
+ 	case FOG_SCALE_FRAGMENT: str+="FOG_SCALE_FRAGMENT | "; break;
+ 	case FOG_WHITE: str+="FOG_WHITE | "; break;
+	}
+
+	switch (Get_Primary_Gradient()) {
+ 	case GRADIENT_DISABLE: str+="GRADIENT_DISABLE | "; break;
+	case GRADIENT_MODULATE: str+="GRADIENT_MODULATE | "; break;
+	case GRADIENT_ADD: str+="GRADIENT_ADD | "; break;
+	case GRADIENT_BUMPENVMAP: str+="GRADIENT_BUMPENVMAP | "; break;
+	case GRADIENT_BUMPENVMAPLUMINANCE: str+="GRADIENT_BUMPENVMAPLUMINANCE | "; break;
+	case GRADIENT_DOTPRODUCT3: str+="GRADIENT_DOTPRODUCT3 | "; break;
+	}
+
+	switch (Get_Secondary_Gradient()) {
+	case SECONDARY_GRADIENT_DISABLE: str+="SECONDARY_GRADIENT_DISABLE | "; break;
+	case SECONDARY_GRADIENT_ENABLE: str+="SECONDARY_GRADIENT_ENABLE | "; break;
+	}
+
+	switch (Get_Src_Blend_Func()) {
+  	case SRCBLEND_ZERO: str+="SRCBLEND_ZERO | "; break;
+  	case SRCBLEND_ONE: str+="SRCBLEND_ONE | "; break;
+ 	case SRCBLEND_SRC_ALPHA: str+="SRCBLEND_SRC_ALPHA | "; break;
+ 	case SRCBLEND_ONE_MINUS_SRC_ALPHA: str+="SRCBLEND_ONE_MINUS_SRC_ALPHA | "; break;
+	}
+
+	switch (Get_Texturing()) {
+	case TEXTURING_DISABLE: str+="TEXTURING_DISABLE | "; break;
+	case TEXTURING_ENABLE: str+="TEXTURING_ENABLE | "; break;
+	}
+
+	switch (Get_NPatch_Enable()) {
+	case NPATCH_DISABLE: str+="NPATCH_DISABLE | "; break;
+	case NPATCH_ENABLE: str+="NPATCH_ENABLE | "; break;
+	}
+
+	switch (Get_Alpha_Test()) {
+	case ALPHATEST_DISABLE: str+="ALPHATEST_DISABLE | "; break;
+	case ALPHATEST_ENABLE: str+="ALPHATEST_ENABLE | "; break;
+	}
+
+	switch (Get_Cull_Mode()) {
+	case CULL_MODE_DISABLE: str+="CULL_MODE_DISABLE | "; break;
+	case CULL_MODE_ENABLE: str+="CULL_MODE_ENABLE | "; break;
+	}
+
+	switch (Get_Post_Detail_Color_Func()) {
+	case DETAILCOLOR_DISABLE: str+="DETAILCOLOR_DISABLE"; break;
+	case DETAILCOLOR_DETAIL: str+="DETAILCOLOR_DETAIL"; break;
+	case DETAILCOLOR_SCALE: str+="DETAILCOLOR_SCALE"; break;
+	case DETAILCOLOR_INVSCALE: str+="DETAILCOLOR_INVSCALE"; break;
+	case DETAILCOLOR_ADD: str+="DETAILCOLOR_ADD"; break;
+	case DETAILCOLOR_SUB: str+="DETAILCOLOR_SUB"; break;
+	case DETAILCOLOR_SUBR: str+="DETAILCOLOR_SUBR"; break;
+	case DETAILCOLOR_BLEND: str+="DETAILCOLOR_BLEND"; break;
+	case DETAILCOLOR_DETAILBLEND: str+="DETAILCOLOR_DETAILBLEND"; break;
+	}
+	return str;
+}
+

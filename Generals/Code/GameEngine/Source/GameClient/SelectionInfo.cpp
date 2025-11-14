@@ -37,11 +37,6 @@
 #include "GameClient/GameClient.h"
 #include "GameClient/KeyDefs.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 SelectionInfo::SelectionInfo() :
@@ -83,10 +78,10 @@ PickDrawableStruct::PickDrawableStruct() : drawableListToFill(NULL)
 
 //-------------------------------------------------------------------------------------------------
 /**
- * Given a list of currently selected things and a list of things that are currently under 
+ * Given a list of currently selected things and a list of things that are currently under
  * the selection (pointer or drag), generate some useful information about each.
  */
-extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedDrawables, 
+extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedDrawables,
 																					const DrawableList *newlySelectedDrawables,
 																					SelectionInfo *outSelectionInfo,
 																					Bool selectionIsPoint)
@@ -156,7 +151,7 @@ extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedD
 		}
 
 		if (obj->isLocallyControlled()) {
-			++outSelectionInfo->newCountMine;	
+			++outSelectionInfo->newCountMine;
 			newMine = *it;
 			if (obj->isKindOf(KINDOF_STRUCTURE)) {
 				++outSelectionInfo->newCountMineBuildings;
@@ -274,7 +269,7 @@ UnsignedInt getPickTypesForContext( Bool forceAttackMode )
 
 	return types;
 
-}  // end getPickTypesForContext
+}
 
 //-------------------------------------------------------------------------------------------------
 UnsignedInt getPickTypesForCurrentSelection( Bool forceAttackMode )
@@ -313,7 +308,7 @@ UnsignedInt getPickTypesForCurrentSelection( Bool forceAttackMode )
 	}
 
 	return retVal;
-		
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -333,7 +328,7 @@ void translatePickTypesToKindof(UnsignedInt pickTypes, KindOfMaskType& outMask)
 
 	if (BitIsSet(pickTypes, PICK_TYPE_FORCEATTACKABLE)) {
 		outMask.set(KINDOF_FORCEATTACKABLE);
-	}	
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -342,7 +337,7 @@ void translatePickTypesToKindof(UnsignedInt pickTypes, KindOfMaskType& outMask)
 Bool addDrawableToList( Drawable *draw, void *userData )
 {
 	PickDrawableStruct *pds = (PickDrawableStruct *) userData;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_allowUnselectableSelection) {
 		pds->drawableListToFill->push_back(draw);
 		return TRUE;
@@ -351,6 +346,18 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 
 	if (!pds->drawableListToFill)
 		return FALSE;
+
+#if !RTS_GENERALS || !RETAIL_COMPATIBLE_BUG
+	// TheSuperHackers @info
+	// In retail, drag-selecting allows the player to select stealthed objects and objects through the
+	// fog. Some players exploit this bug to determine where an opponent's units are and consider this
+	// an important feature and an advanced skill to pull off, so we must leave the exploit.
+	if (draw->getFullyObscuredByShroud())
+		return FALSE;
+
+	if (draw->isDrawableEffectivelyHidden())
+		return FALSE;
+#endif
 
 	if (!draw->getTemplate()->isAnyKindOf(pds->kindofsToMatch))
 		return FALSE;

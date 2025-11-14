@@ -20,7 +20,7 @@
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "TileTool.h"
@@ -42,15 +42,15 @@ TileTool::TileTool(void) :
 {
 	m_htMapEditCopy = NULL;
 }
-	
+
 /// Destructor
-TileTool::~TileTool(void) 
+TileTool::~TileTool(void)
 {
 	REF_PTR_RELEASE(m_htMapEditCopy);
 }
 
 /// Shows the terrain materials options panel.
-void TileTool::activate() 
+void TileTool::activate()
 {
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_TERRAIN_MATERIAL);
 	TerrainMaterial::setToolOptions(true);
@@ -60,7 +60,7 @@ void TileTool::activate()
 
 
 /// Common mouse down code for left and right clicks.
-void TileTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void TileTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m == TRACK_L)
 		m_textureClassToDraw = TerrainMaterial::getFgTexClass();
@@ -80,7 +80,7 @@ void TileTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 }
 
 /// Common mouse up code for left and right clicks.
-void TileTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void TileTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L && m != TRACK_R) return;
 #define DONT_DO_FULL_UPDATE
@@ -188,14 +188,14 @@ BigTileTool::BigTileTool(void)
 }
 
 /// Shows the terrain materials options panel.
-void BigTileTool::setWidth(Int width) 
+void BigTileTool::setWidth(Int width)
 {
 	m_currentWidth = width;
 	DrawObject::setBrushFeedbackParms(true, m_currentWidth, 0);
 }
 
 /// Shows the terrain materials options panel.
-void BigTileTool::activate() 
+void BigTileTool::activate()
 {
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_TERRAIN_MATERIAL);
 	TerrainMaterial::setToolOptions(false);

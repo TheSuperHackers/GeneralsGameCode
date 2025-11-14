@@ -24,12 +24,12 @@
 
 // FILE: W3DWaypointBuffer.cpp ////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   Command & Conquers: Generals
@@ -42,19 +42,17 @@
 //            are rendered after terrain, after roads & bridges, and after
 //            global fog, but before structures, objects, units, trees, etc.
 //            This way if we have two waypoints at the bottom of a hill but
-//            going through the hill, the line won't get cut off. However, 
+//            going through the hill, the line won't get cut off. However,
 //            structures and units on top of paths will render above it. Waypoints
 //            are only shown for selected units while in waypoint plotting mode.
 //
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //-----------------------------------------------------------------------------
 #include "W3DDevice/GameClient/W3DWaypointBuffer.h"
 
-#include <stdio.h>
-#include <string.h>
 #include <assetmgr.h>
 #include <texture.h>
 
@@ -63,6 +61,7 @@
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
 
+#include "GameClient/ControlBar.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/GameClient.h"
 #include "GameClient/InGameUI.h"
@@ -86,11 +85,6 @@
 
 
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 //=============================================================================
@@ -236,7 +230,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 			Int numPoints = 0;
 			if( obj )
 			{
-				if ( ! obj->isLocallyControlled())
+				if ( obj->getControllingPlayer() != TheControlBar->getCurrentlyViewedPlayer())
 					continue;
 
 
@@ -245,7 +239,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
         // lets test for that very special case of having a listeningoutpost selected, and some enemy drawable moused-over
         if ( obj->isKindOf( KINDOF_REVEALS_ENEMY_PATHS ) )
         {
- 
+
           DrawableID enemyID = TheInGameUI->getMousedOverDrawableID();
           Drawable *enemyDraw = TheGameClient->findDrawableByID( enemyID );
           if ( enemyDraw )
@@ -255,18 +249,18 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
             {
               if ( enemy->getRelationship( obj ) == ENEMIES )
               {
-                
+
                 Coord3D delta = *obj->getPosition();
                 delta.sub( enemy->getPosition() );
                 if ( delta.length() <= obj->getVisionRange() ) // is listening outpost close enough to do this?
                 {
 
 
-                  //////////////////////////////////////////////////////////////////////                
+                  //////////////////////////////////////////////////////////////////////
                   AIUpdateInterface *ai = enemy->getAI();
 				          Int goalSize = ai ? ai->friend_getWaypointGoalPathSize() : 0;
 				          Int gpIdx = ai ? ai->friend_getCurrentGoalPathIndex() : 0;
-                  if( ai ) 
+                  if( ai )
                   {
                     Bool lineExists = FALSE;
 
@@ -317,7 +311,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 					            m_line->Render( localRinfo );
                     }
                   }
-                  //////////////////////////////////////////////////////////////////////                
+                  //////////////////////////////////////////////////////////////////////
 
 
 
@@ -340,13 +334,13 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 					Coord3D exitPoint;
 					if ( ! exitInterface->getExitPosition(exitPoint))
 						exitPoint = *obj->getPosition();
-						
+
 					points[ numPoints ].Set( Vector3( exitPoint.x, exitPoint.y, exitPoint.z ) );
 					numPoints++;
 
 					Bool boxWrap = TRUE;
 					Coord3D naturalRallyPoint;
-					if (exitInterface->getNaturalRallyPoint(naturalRallyPoint, FALSE))//FALSE means "without the extra offset" 
+					if (exitInterface->getNaturalRallyPoint(naturalRallyPoint, FALSE))//FALSE means "without the extra offset"
 					{
 						if( !naturalRallyPoint.equals( exitPoint ) )
 						{
@@ -359,7 +353,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 							boxWrap = FALSE;
 						}
 					}
-					else 
+					else
 						continue; //next drawable
 
 					const Coord3D *rallyPoint = exitInterface->getRallyPoint();
@@ -391,7 +385,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 							//if the rallypoint is closer to the wayoutpoint than it is to the natural rally point then we definitely do not wrap
 							Coord3D rallyToWayOutDelta = wayOutPoint;
 							rallyToWayOutDelta.sub(rallyPoint);
-							if ( (100.0f + rallyToWayOutDelta.length()) > wayOutLength) 
+							if ( (100.0f + rallyToWayOutDelta.length()) > wayOutLength)
 							{
 
 								//if we passed the above idiot test, now lets be sure by testing the dotproduct of the rp against the wayoutpoint
@@ -406,7 +400,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 
 									Real angle = obj->getOrientation();
 									Real c = (Real)cos(angle);
-									Real s = (Real)sin(angle); 
+									Real s = (Real)sin(angle);
 
 									Coord3D NRPToCtrDelta;
 									NRPToCtrDelta.x = naturalRallyPoint.x - ctr->x;
@@ -437,7 +431,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 									cornerToExitDelta.z = 0.0f;
 									Real elbowDistanceNear = 99999.9f;
 									Real elbowDistanceFar = 99999.9f;
-									
+
 									for (UnsignedInt cornerIndex = 0; cornerIndex < 4; ++ cornerIndex)
 									{
 										nearCandidate = &corners[cornerIndex];//for quicker array access
@@ -528,8 +522,8 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 					m_line->Set_Points( numPoints, points );
 					m_line->Render( localRinfo );
 
-				}// end if exit interface
-				
+				}
+
 			}
 		}
 

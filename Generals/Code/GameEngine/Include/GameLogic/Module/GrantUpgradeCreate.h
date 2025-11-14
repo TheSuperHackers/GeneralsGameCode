@@ -29,14 +29,12 @@
 
 #pragma once
 
-#ifndef __GRANTUPGRADECREATE_H_
-#define __GRANTUPGRADECREATE_H_
-
 #define DEFINE_OBJECT_STATUS_NAMES
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/CreateModule.h"
 #include "GameLogic/Object.h"
+#include "Common/ObjectStatusTypes.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Thing;
@@ -49,7 +47,7 @@ class GrantUpgradeCreateModuleData : public CreateModuleData
 {
 public:
 	AsciiString		m_upgradeName;			///< name of the upgrade to be granted.
-	UnsignedInt m_exemptStatus;				///< do not execute if this status is set in the object
+	ObjectStatusMaskType m_exemptStatus; ///< do not execute if this status is set in the object
 
 	GrantUpgradeCreateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
@@ -76,6 +74,3 @@ public:
 protected:
 
 };
-
-#endif // __GRANTUPGRADECREATE_H_
-

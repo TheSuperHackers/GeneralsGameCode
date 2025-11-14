@@ -36,16 +36,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DX8VERTEXBUFFER_H
-#define DX8VERTEXBUFFER_H
 
 #include "always.h"
 #include "wwdebug.h"
-#include "refcount.h"
 #include "dx8fvf.h"
 
 const unsigned dynamic_fvf_type=D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX2|D3DFVF_DIFFUSE;
@@ -94,12 +88,12 @@ public:
 
 	void Add_Engine_Ref() const;
 	void Release_Engine_Ref() const;
-	inline unsigned Engine_Refs() const { return engine_refs; } 
+	inline unsigned Engine_Refs() const { return engine_refs; }
 
 	class WriteLockClass : public VertexBufferLockClass
 	{
 	public:
-		WriteLockClass(VertexBufferClass* vertex_buffer);
+		WriteLockClass(VertexBufferClass* vertex_buffer, int flags=0);
 		~WriteLockClass();
 	};
 
@@ -178,7 +172,7 @@ public:
 	public:
 		WriteLockClass(DynamicVBAccessClass* vb_access);
 		~WriteLockClass();
-		
+
 		// Use this function to get a pointer to the first vertex you can write into.
 		// If we ever change the format used by DynamicVBAccessClass, then the
 		// return type of this function will change and we'll easily find all code
@@ -259,6 +253,3 @@ protected:
 public:
 	SortingVertexBufferClass(unsigned short VertexCount);
 };
-
-
-#endif //DX8VERTEXBUFFER_H

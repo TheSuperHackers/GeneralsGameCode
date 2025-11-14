@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
@@ -40,11 +40,6 @@
 
 
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 // ------------------------------------------------------------------------------------------------
@@ -54,7 +49,7 @@ FloatUpdateModuleData::FloatUpdateModuleData( void )
 
 	m_enabled = FALSE;
 
-}  // end FloatUpdateModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -63,14 +58,14 @@ FloatUpdateModuleData::FloatUpdateModuleData( void )
 
 	UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "Enabled",	INI::parseBool,	NULL, offsetof( FloatUpdateModuleData, m_enabled ) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -85,14 +80,14 @@ FloatUpdate::FloatUpdate( Thing *thing, const ModuleData *moduleData )
 	// save our initial enabled status based on INI settings
 	m_enabled = ((FloatUpdateModuleData *)moduleData)->m_enabled;
 
-}  // end FloatUpdate
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 FloatUpdate::~FloatUpdate( void )
 {
 
-}  // end ~FloatUpdate
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -105,7 +100,7 @@ UpdateSleepTime FloatUpdate::update( void )
 	{
 		// get object position
 		const Coord3D *pos = getObject()->getPosition();
-		
+
 		// get the height of the water here
 		Real waterZ;
 		TheTerrainLogic->isUnderwater( pos->x, pos->y, &waterZ );
@@ -134,12 +129,12 @@ UpdateSleepTime FloatUpdate::update( void )
 		mx.Rotate_Z(zRot);
 		mx.Rotate_Y(yaw);
 		mx.Rotate_X(pitch);
-		
+
 		draw->setInstanceMatrix(&mx);
 	}
 
 	return UPDATE_SLEEP_NONE;
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -150,7 +145,7 @@ void FloatUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -171,7 +166,7 @@ void FloatUpdate::xfer( Xfer *xfer )
 	// enabled
 	xfer->xferBool( &m_enabled );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -182,4 +177,4 @@ void FloatUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

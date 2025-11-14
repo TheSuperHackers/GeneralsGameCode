@@ -27,7 +27,7 @@
 // Desc:   Keeps track of shots fired and people targeted for weapons that want a history of such a thing
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AudioHandleSpecialValues.h"
 #include "Common/GameType.h"
@@ -42,11 +42,6 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Weapon.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 FiringTracker::FiringTracker(Thing* thing, const ModuleData *modData) : UpdateModule( thing, modData )
@@ -245,7 +240,7 @@ void FiringTracker::speedUp()
 {
 	ModelConditionFlags clr, set;
 	Object *self = getObject();
-	
+
 	if( self->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST ) )
 	{
 		//self->clearWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN );
@@ -270,7 +265,7 @@ void FiringTracker::speedUp()
 
 
 	}
-	else 
+	else
 	{
 
 		self->setWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN );
@@ -292,13 +287,13 @@ void FiringTracker::coolDown()
 {
 	ModelConditionFlags clr, set;
 
-	if( getObject()->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST ) 
+	if( getObject()->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST )
 	 || getObject()->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN ))
 	{
 
 		// Straight to zero from wherever it is
 		set.set(MODELCONDITION_CONTINUOUS_FIRE_SLOW);
-		
+
 		getObject()->clearWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST );
 		getObject()->clearWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN );
 		clr.set(MODELCONDITION_CONTINUOUS_FIRE_FAST);
@@ -335,7 +330,7 @@ void FiringTracker::crc( Xfer *xfer )
 	// object helper base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -362,7 +357,7 @@ void FiringTracker::xfer( Xfer *xfer )
 	// frame to start cooldown
 	xfer->xferUnsignedInt( &m_frameToStartCooldown );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -373,4 +368,4 @@ void FiringTracker::loadPostProcess( void )
 	// object helper back class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

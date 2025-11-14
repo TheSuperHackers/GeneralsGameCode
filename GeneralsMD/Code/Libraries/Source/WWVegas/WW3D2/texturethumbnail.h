@@ -17,12 +17,8 @@
 */
 
 // 08/07/02 KM Texture class redesign (revisited)
-#ifndef TEXTURETHUMBNAIL_H
-#define TEXTURETHUMBNAIL_H
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #include "always.h"
 #include "wwstring.h"
@@ -54,12 +50,12 @@ class ThumbnailClass
 
 	ThumbnailClass(
 		ThumbnailManagerClass* manager,
-		const char* name, 
-		unsigned char* bitmap, 
-		unsigned w, 
-		unsigned h, 
-		unsigned original_w, 
-		unsigned original_h, 
+		const char* name,
+		unsigned char* bitmap,
+		unsigned w,
+		unsigned h,
+		unsigned original_w,
+		unsigned original_h,
 		unsigned original_mip_level_count,
 		WW3DFormat original_format,
 		bool allocated,
@@ -94,28 +90,22 @@ class ThumbnailManagerClass : public DLNodeClass<ThumbnailManagerClass>
 	static bool CreateThumbnailIfNotFound;
 	bool PerTextureTimeStampUsed;
 	StringClass ThumbnailFileName;
-	StringClass MixFileName;
 	HashTemplateClass<StringClass,ThumbnailClass*> ThumbnailHash;
 	unsigned char* ThumbnailMemory;
 	bool Changed;
 	unsigned long DateTime;
 
-	ThumbnailManagerClass(const char* thumbnail_filename, const char* mix_file_name);
+	ThumbnailManagerClass(const char* thumbnail_filename);
 	~ThumbnailManagerClass();
 
 	void Remove_From_Hash(ThumbnailClass* thumb);
 	void Insert_To_Hash(ThumbnailClass* thumb);
 	ThumbnailClass* Get_From_Hash(const StringClass& name);
 
-	void Create_Thumbnails();
-	static void Update_Thumbnail_File(const char* mix_file_name, bool display_message_box);
-
-	void Load();
-	void Save(bool force=false);
 public:
 	ThumbnailClass* Peek_Thumbnail_Instance(const StringClass& name);
 
-	static void Add_Thumbnail_Manager(const char* thumbnail_filename, const char* mix_file_name);
+	static void Add_Thumbnail_Manager(const char* thumbnail_filename);
 	static void Remove_Thumbnail_Manager(const char* thumbnail_filename);
 	static ThumbnailManagerClass* Peek_Thumbnail_Manager(const char* thumbnail_filename);
 
@@ -127,11 +117,8 @@ public:
 	bool Is_Per_Texture_Time_Stamp_Used() const { return PerTextureTimeStampUsed; }
 	void Enable_Per_Texture_Time_Stamp(bool enable) { PerTextureTimeStampUsed=enable; }
 
-	static void Pre_Init(bool display_message_box);
 	static void Init();
 	static void Deinit();
 };
 
 // ----------------------------------------------------------------------------
-
-#endif

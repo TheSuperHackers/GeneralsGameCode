@@ -176,11 +176,11 @@ void GroveOptions::_setTreesToLists(void)
 {
 	CString str;
 	for (VecPairNameDisplayNameIt it = mVecDisplayNames.begin(); it != mVecDisplayNames.end(); it++) {
-		// TODO: If/when Models get Display strings, we need to replace the 
+		// TODO: If/when Models get Display strings, we need to replace the
 		// current (str = ...) line with the commented one JKMCD
 		str = it->first.str();
 		//str = GetDisplayNameFromPair(it).str();
-		
+
 		CComboBox* pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type1);
 		if (pComboBox) {
 			pComboBox->AddString(str);
@@ -266,35 +266,35 @@ void GroveOptions::_setDefaultRatios(void)
 	CWnd* pWnd = GetDlgItem(IDC_Grove_Per1);
 	if (pWnd) {
 		defaultRatio = AfxGetApp()->GetProfileInt("GroveOptions", "DefaultRatio1", 0);
-		sprintf(buff, "%d", defaultRatio);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", defaultRatio);
 		pWnd->SetWindowText(buff);
 	}
 
 	pWnd = GetDlgItem(IDC_Grove_Per2);
 	if (pWnd) {
 		defaultRatio = AfxGetApp()->GetProfileInt("GroveOptions", "DefaultRatio2", 0);
-		sprintf(buff, "%d", defaultRatio);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", defaultRatio);
 		pWnd->SetWindowText(buff);
 	}
 
 	pWnd = GetDlgItem(IDC_Grove_Per3);
 	if (pWnd) {
 		defaultRatio = AfxGetApp()->GetProfileInt("GroveOptions", "DefaultRatio3", 0);
-		sprintf(buff, "%d", defaultRatio);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", defaultRatio);
 		pWnd->SetWindowText(buff);
 	}
 
 	pWnd = GetDlgItem(IDC_Grove_Per4);
 	if (pWnd) {
 		defaultRatio = AfxGetApp()->GetProfileInt("GroveOptions", "DefaultRatio4", 0);
-		sprintf(buff, "%d", defaultRatio);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", defaultRatio);
 		pWnd->SetWindowText(buff);
 	}
 
 	pWnd = GetDlgItem(IDC_Grove_Per5);
 	if (pWnd) {
 		defaultRatio = AfxGetApp()->GetProfileInt("GroveOptions", "DefaultRatio5", 0);
-		sprintf(buff, "%d", defaultRatio);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", defaultRatio);
 		pWnd->SetWindowText(buff);
 	}
 }
@@ -308,7 +308,7 @@ void GroveOptions::_setDefaultNumTrees(void)
 
 	int defaultNumTrees = AfxGetApp()->GetProfileInt("GroveOptions", "NumberofTrees", 10);
 	static char buff[ARBITRARY_BUFF_SIZE];
-	sprintf(buff, "%d", defaultNumTrees);
+	snprintf(buff, ARRAY_SIZE(buff), "%d", defaultNumTrees);
 
 	pWnd->SetWindowText(buff);
 }
@@ -379,14 +379,14 @@ void GroveOptions::_updateTreeWeights(void)
 
 	pWnd = GetDlgItem(IDC_Grove_PerTotal);
 	if (pWnd) {
-		sprintf(buff, "%d", val);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", val);
 		pWnd->SetWindowText(buff);
 	}
 }
 
 void GroveOptions::_updateTreeCount(void)
 {
-	static char buff[ARBITRARY_BUFF_SIZE];	
+	static char buff[ARBITRARY_BUFF_SIZE];
 	CWnd* pWnd = GetDlgItem(IDC_Grove_NumberTrees);
 	if (pWnd) {
 		pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
@@ -426,7 +426,7 @@ void GroveOptions::_updateGroveMakeup(void)
 			AfxGetApp()->WriteProfileInt("GroveOptions", "TreeType4", curSel);
 		} else if (type == 5) {
 			AfxGetApp()->WriteProfileInt("GroveOptions", "TreeType5", curSel);
-		}		
+		}
 	}
 }
 
@@ -442,7 +442,7 @@ void GroveOptions::_updatePlacementAllowed(void)
 
 	pButt = (CButton*) GetDlgItem(IDC_Grove_AllowWaterPlacement);
 	if (pButt) {
-		AfxGetApp()->WriteProfileInt("GroveOptions", "AllowWaterPlace", pButt->GetCheck()); 
+		AfxGetApp()->WriteProfileInt("GroveOptions", "AllowWaterPlace", pButt->GetCheck());
 	}
 
 

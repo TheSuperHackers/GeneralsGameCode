@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __W3DTERRAINLOGIC_H_
-#define __W3DTERRAINLOGIC_H_
-
 #include "GameLogic/TerrainLogic.h"
 
 //-------------------------------------------------------------------------------------------------
@@ -80,6 +77,4 @@ protected:
 	Real m_mapMinZ;	///< Minimum terrain z value.
 	Real m_mapMaxZ;	///< Maximum terrain z value.
 
-};  // end W3DTerrainLogic
-
-#endif  // end __W3DTERRAINLOGIC_H_
+};

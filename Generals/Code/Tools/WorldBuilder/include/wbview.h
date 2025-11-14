@@ -16,12 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_WBVIEW_H__875234A1_8815_11D5_8CE0_00010297BBAC__INCLUDED_)
-#define AFX_WBVIEW_H__875234A1_8815_11D5_8CE0_00010297BBAC__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "Lib/BaseType.h"
 #include "Tool.h"
@@ -98,7 +93,7 @@ public:
 
 	virtual Bool viewToDocCoords(CPoint curPt, Coord3D *newPt, Bool constrained=true) { DEBUG_CRASH(("should not call")); newPt->zero(); return false; }
 	virtual Bool docToViewCoords(Coord3D curPt, CPoint* newPt) { DEBUG_CRASH(("should not call")); return false; }
- 
+
 	virtual Bool viewToDocCoordZ(CPoint curPt, Coord3D *newPt, Real Z) { return viewToDocCoords(curPt, newPt, false); }
 
 	/// Set the center for display.
@@ -160,7 +155,7 @@ public:
 // Implementation
 protected:
 	virtual ~WbView();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
@@ -245,5 +240,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_WBVIEW_H__875234A1_8815_11D5_8CE0_00010297BBAC__INCLUDED_)

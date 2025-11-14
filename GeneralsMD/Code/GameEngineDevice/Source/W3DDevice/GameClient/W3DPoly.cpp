@@ -61,18 +61,18 @@ void ClipPolyClass::Clip(const PlaneClass & plane,ClipPolyClass & dest) const
 
 	// perform clipping
 	prev_point_in_front = !plane.In_Front(Verts[iprev]);		// Note, plane normal is outward so we invert this test
-	for (Int j=0; j<vcount; j++) { 
-		
+	for (Int j=0; j<vcount; j++) {
+
 		cur_point_in_front = !plane.In_Front(Verts[i]);			// Note, plane nomral is out so we invert this test
 		if (prev_point_in_front) {
 
 			if (cur_point_in_front) {
-			
+
 				// Previous vertex was in front of plane and this vertex is in
 				// front of the plane so we emit this vertex.
 				dest.Add_Vertex(Verts[i]);
 
-			} else { 
+			} else {
 
 				// Previous vert was in front, this vert is behind, compute
 				// the intersection and emit the point.
@@ -93,13 +93,13 @@ void ClipPolyClass::Clip(const PlaneClass & plane,ClipPolyClass & dest) const
 				Vector3::Lerp(Verts[iprev],Verts[i],alpha,&int_point);
 				dest.Add_Vertex(int_point);
 				dest.Add_Vertex(Verts[i]);
-			
-			} 
-		} 
+
+			}
+		}
 
 		prev_point_in_front = cur_point_in_front;
 		iprev = i;
-		
+
 		//i = (i+1)%(Verts.Count());
 		i++;
 		if (i>=vcount) {

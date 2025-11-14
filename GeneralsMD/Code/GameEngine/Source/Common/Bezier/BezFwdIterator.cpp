@@ -27,13 +27,13 @@
 
 //-------------------------------------------------------------------------------------------------
 BezFwdIterator::BezFwdIterator(): mStep(0), mStepsDesired(0)
-{ 
+{
 	// Added by Sadullah Nader
 	mCurrPoint.zero();
 	mDDDq.zero();
 	mDDq.zero();
 	mDq.zero();
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 BezFwdIterator::BezFwdIterator(Int stepsDesired, const BezierSegment *bezSeg)

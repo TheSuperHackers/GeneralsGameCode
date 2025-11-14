@@ -23,11 +23,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/CriticalSection.h"
 
 // Definitions.
-FastCriticalSectionClass TheAsciiStringCriticalSection;
+CriticalSection *TheAsciiStringCriticalSection = NULL;
 CriticalSection *TheUnicodeStringCriticalSection = NULL;
 CriticalSection *TheDmaCriticalSection = NULL;
 CriticalSection *TheMemoryPoolCriticalSection = NULL;

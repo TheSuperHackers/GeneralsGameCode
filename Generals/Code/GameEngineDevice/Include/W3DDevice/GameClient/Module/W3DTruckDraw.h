@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _W3D_TRUCK_DRAW_H_
-#define _W3D_TRUCK_DRAW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DrawModule.h"
 #include "Common/AudioEventRTS.h"
@@ -84,7 +81,7 @@ class W3DTruckDraw : public W3DModelDraw
 
  	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DTruckDraw, "W3DTruckDraw" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DTruckDraw, W3DTruckDrawModuleData )
-		
+
 public:
 
 	W3DTruckDraw( Thing *thing, const ModuleData* moduleData );
@@ -141,6 +138,3 @@ protected:
 	void enableEmitters( Bool enable );						///< stop creating debris from the tank treads
 	void updateBones( void );
 };
-
-#endif // _W3D_TRUCK_DRAW_H_
-

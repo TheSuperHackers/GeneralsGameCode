@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DEMO_TRAP_UPDATE_H_
-#define __DEMO_TRAP_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -54,11 +51,11 @@ public:
 	Bool						m_defaultsToProximityMode;
 	Bool						m_friendlyDetonation;
 	Bool						m_detonateWhenKilled;
-	
+
 	DemoTrapUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -86,7 +83,3 @@ protected:
 	Int m_nextScanFrames;
 	Bool m_detonated;
 };
-
-
-#endif
-

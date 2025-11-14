@@ -24,12 +24,12 @@
 
 // FILE: Properties.cpp ///////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -46,11 +46,10 @@
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
- 
+
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
 #include <assert.h>
-#include <stdio.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"
@@ -83,7 +82,7 @@ static Int enabledTextIndex,
 			 disabledTextIndex,
 			 hiliteTextIndex;
 
-ColorControl colorControlTable[] = 
+ColorControl colorControlTable[] =
 {
 	{ BUTTON_ENABLED_COLOR, { 255, 255, 255, 255 } },
 	{ BUTTON_ENABLED_BORDER_COLOR, { 255, 255, 255, 255 } },
@@ -91,14 +90,14 @@ ColorControl colorControlTable[] =
 	{ BUTTON_DISABLED_BORDER_COLOR, { 255, 255, 255, 255 } },
 	{ BUTTON_HILITE_COLOR, { 255, 255, 255, 255 } },
 	{ BUTTON_HILITE_BORDER_COLOR, { 255, 255, 255, 255 } },
-	
+
 	{ BUTTON_COLOR, 0, },
 	{ BUTTON_BORDER_COLOR, 0 },
 
-	{ 0, { 0, 0, 0, 0 } }  // keep this last!
+	{ 0, { 0, 0, 0, 0 } }
 };
 
-ImageAndColorInfo imageAndColorTable[] = 
+ImageAndColorInfo imageAndColorTable[] =
 {
 	{ GWS_PUSH_BUTTON, BUTTON_ENABLED, "[Button] Enabled (Normal)", NULL, 0, 0 },
 	{ GWS_PUSH_BUTTON, BUTTON_ENABLED_PUSHED, "[Button] Enabled (Pushed)", NULL, 0, 0 },
@@ -205,7 +204,7 @@ ImageAndColorInfo imageAndColorTable[] =
 	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_HILITE_BOTTOM, "[Slider [Listbox]] Hilite Bottom End", NULL, 0, 0 },
 	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_HILITE_CENTER, "[Slider [Listbox]] Hilite Repeating Center", NULL, 0, 0 },
 	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_HILITE_SMALL_CENTER, "[Slider [Listbox]] Hilite Repeating Small Cener", NULL, 0, 0 },
-	
+
 	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_ENABLED, "[Slider Thumb [Listbox]] Enabled (Normal)", NULL, 0, 0 },
 	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_ENABLED_PUSHED, "[Slider Thumb [Listbox]] Enabled (Pushed)", NULL, 0, 0 },
 	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_DISABLED, "[Slider Thumb [Listbox]] Disabled (Normal)", NULL, 0, 0 },
@@ -248,7 +247,7 @@ ImageAndColorInfo imageAndColorTable[] =
 	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_HILITE_RIGHT, "[Text Entry [ComboBox]] Hilite Right End", NULL, 0, 0 },
 	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_HILITE_CENTER, "[Text Entry [ComboBox]] Hilite Repeating Center", NULL, 0, 0 },
 	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_HILITE_SMALL_CENTER, "[Text Entry [ComboBox]] Hilite Small Repeating Center", NULL, 0, 0 },
-	
+
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_ENABLED,															"[Listbox [ComboBox]] Enabled Surface", NULL, 0, 0 },
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_LEFT,						"[Listbox [ComboBox]] Enabled Selected Item Left End (or colors)", NULL, 0, 0 },
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_RIGHT,					"[Listbox [ComboBox]] Enabled Selected Item Right End", NULL, 0, 0 },
@@ -289,7 +288,7 @@ ImageAndColorInfo imageAndColorTable[] =
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_HILITE_BOTTOM, "[Slider [Listbox [ComboBox]]] Hilite Bottom End", NULL, 0, 0 },
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_HILITE_CENTER, "[Slider [Listbox [ComboBox]]] Hilite Repeating Center", NULL, 0, 0 },
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_HILITE_SMALL_CENTER, "[Slider [Listbox [ComboBox]]] Hilite Repeating Small Cener", NULL, 0, 0 },
-	
+
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_ENABLED, "[Slider Thumb [Listbox [ComboBox]]] Enabled (Normal)", NULL, 0, 0 },
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_ENABLED_PUSHED, "[Slider Thumb [Listbox [ComboBox]]] Enabled (Pushed)", NULL, 0, 0 },
 	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_DISABLED, "[Slider Thumb [Listbox [ComboBox]]] Disabled (Normal)", NULL, 0, 0 },
@@ -373,7 +372,7 @@ ImageAndColorInfo imageAndColorTable[] =
 	{ GWS_USER_WINDOW, GENERIC_DISABLED, "[User]Disabled Surface", NULL, 0, 0 },
 	{ GWS_USER_WINDOW, GENERIC_HILITE, "[User]Hilite Surface", NULL, 0, 0 },
 
-	{ 0, IDENTIFIER_INVALID, NULL, NULL, 0, 0 }  // keep this last!
+	{ 0, IDENTIFIER_INVALID, NULL, NULL, 0, 0 }
 
 };
 
@@ -432,12 +431,12 @@ void InitPropertiesDialog( GameWindow *window, Int x, Int y )
 	if( dialog == NULL )
 	{
 
-		DEBUG_LOG(( "Error creating properties dialog\n" ));
+		DEBUG_LOG(( "Error creating properties dialog" ));
 		MessageBox( TheEditor->getWindowHandle(), "Error creating property dialog!", "Error", MB_OK );
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	// save the window we're working with
 	TheEditor->setPropertyTarget( window );
@@ -448,7 +447,7 @@ void InitPropertiesDialog( GameWindow *window, Int x, Int y )
 	//
 	PositionWindowOnScreen( dialog, screen.x, screen.y );
 
-}  // end InitPropertiesDialog
+}
 
 // LoadFontCombo ==============================================================
 /** Load the font combo with fonts currently available */
@@ -486,7 +485,7 @@ void LoadFontCombo( HWND comboBox, GameFont *currFont )
 		// attach pointer to font at combo index
 		SendMessage( comboBox, CB_SETITEMDATA, index, (DWORD)font );
 
-	}  // end for font
+	}
 
 	// add a "[None]" at the top index
 	SendMessage( comboBox, CB_INSERTSTRING, 0, (LPARAM)"[None]" );
@@ -497,7 +496,7 @@ void LoadFontCombo( HWND comboBox, GameFont *currFont )
 
 		SendMessage( comboBox, CB_SETCURSEL, 0, 0 );
 
-	}  // end if
+	}
 	else
 	{
 		Int count;
@@ -518,13 +517,13 @@ void LoadFontCombo( HWND comboBox, GameFont *currFont )
 				SendMessage( comboBox, CB_SETCURSEL, i, 0 );
 				break;  // exit for i
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
-	}  // end else
+	}
 
-}  // end LoadFontCombo
+}
 
 // GetSelectedFontFromCombo ===================================================
 /** Based on the combo box selection return the game font associated
@@ -548,7 +547,7 @@ GameFont *GetSelectedFontFromCombo( HWND combo )
 	// get the font from the selected item
 	return (GameFont *)SendMessage( combo, CB_GETITEMDATA, selected, 0 );
 
-}  // end GetSelectedFontFromCombo
+}
 
 // saveFontSelection ==========================================================
 /** Save the font from the currently selected item in the font dialog */
@@ -565,7 +564,7 @@ static void saveFontSelection( HWND combo, GameWindow *window )
 	font = GetSelectedFontFromCombo( combo );
 	window->winSetFont( font );
 
-}  // end saveFontSelection
+}
 
 // saveHeaderSelection ========================================================
 /** Save the Header from the currently selected item in the font dialog */
@@ -592,7 +591,7 @@ static void saveHeaderSelection( HWND comboBox, GameWindow *window )
 	// return the image loc that matches the string
 	window->winGetInstanceData()->m_headerTemplateName.set(buffer);
 
-}  // end ComboBoxSelectionToImage
+}
 
 // loadTooltipTextLabel ==============================================================
 /** Load the edit control with the window text label */
@@ -609,9 +608,9 @@ static void loadTooltipTextLabel( HWND edit, GameWindow *window )
 
 	// load the text
 	WinInstanceData *instData = window->winGetInstanceData();
-	
+
 	SendMessage( edit, WM_SETTEXT, 0, (LPARAM)instData->m_tooltipString.str() );
-}  // end loadTooltipTextLabel
+}
 
 // loadTooltipDelayTextLabel ==============================================================
 /** Load the edit control with the window text label */
@@ -628,9 +627,9 @@ static void loadTooltipDelayTextLabel( HWND dialog, HWND edit, GameWindow *windo
 
 	// load the text
 //	WinInstanceData *instData = window->winGetInstanceData();
-	
+
 //	SetDlgItemInt( dialog, edit, instData->m_tooltipDelay, TRUE );
-}  // end loadTooltipDelayTextLabel
+}
 
 // saveTooltipTextLabel ==============================================================
 /** Save the text label entry */
@@ -649,7 +648,7 @@ static void saveTooltipTextLabel( HWND edit, GameWindow *window )
 	instData->m_tooltipString.set(buffer);
 	instData->setTooltipText(TheGameText->fetch(buffer) );
 
-}  // end saveTooltipTextLabel
+}
 
 // saveTooltipTextLabel ==============================================================
 /** Save the text label entry */
@@ -663,8 +662,8 @@ static void saveTooltipDelayTextLabel(HWND dialog, HWND edit, GameWindow *window
 //  WinInstanceData *instData = window->winGetInstanceData();
 
 //  instData->m_tooltipDelay = GetDlgItemInt( dialog, edit, NULL, TRUE );
-	
-}  // end saveTooltipDelayTextLabel
+
+}
 
 
 // loadTextLabel ==============================================================
@@ -683,7 +682,7 @@ static void loadTextLabel( HWND edit, GameWindow *window )
 	// load the text
 	WinInstanceData *instData = window->winGetInstanceData();
 	SendMessage( edit, WM_SETTEXT, 0, (LPARAM)instData->m_textLabelString.str() );
-}  // end loadTextLabel
+}
 
 // saveTextLabel ==============================================================
 /** Save the text label entry */
@@ -707,7 +706,7 @@ static void saveTextLabel( HWND edit, GameWindow *window )
 	//
 	UnicodeString text;
 	text = TheGameText->fetch( (char *)instData->m_textLabelString.str()); //TheWindowManager->winTextLabelToText( instData->m_textLabelString );
-	
+
 	UnsignedInt style = window->winGetStyle();
 	if( BitIsSet( style, GWS_PUSH_BUTTON ) )
 		GadgetButtonSetText( window, text );
@@ -722,12 +721,12 @@ static void saveTextLabel( HWND edit, GameWindow *window )
 	else
 		window->winSetText( text );
 
-}  // end saveTextLavel
+}
 
 // LoadTextStateCombo =========================================================
 /** Load the text state combo */
 //=============================================================================
-void LoadTextStateCombo( HWND comboBox, 
+void LoadTextStateCombo( HWND comboBox,
 												 Color enabled, Color enabledBorder,
 												 Color disabled, Color disabledBorder,
 												 Color hilite, Color hiliteBorder )
@@ -756,7 +755,7 @@ void LoadTextStateCombo( HWND comboBox,
 	currTextIndex = 0;
 	SendMessage( comboBox, CB_SETCURSEL, currTextIndex, 0 );
 
-}  // end LoadTextStateCombo
+}
 
 // LoadStateCombo =============================================================
 /** Load the state combo box passed in based on the window type
@@ -779,18 +778,18 @@ void LoadStateCombo( UnsignedInt style, HWND comboBox )
 
 		if( BitIsSet( entry->windowType, style ) )
 		{
-			
+
 			// add string
 			index = SendMessage( comboBox, CB_ADDSTRING, 0, (LPARAM)entry->stateName );
 
 			// set the state identifier as the item data of this entry
 			SendMessage( comboBox, CB_SETITEMDATA, index, entry->stateID );
 
-		}  // end if
+		}
 
-	}  // end for entry
+	}
 
-}  // end LoadStateCombo
+}
 
 // CommonDialogInitialize =====================================================
 /** Called from all dialog initializations */
@@ -827,12 +826,12 @@ void CommonDialogInitialize( GameWindow *window, HWND dialog )
 		CheckDlgButton( dialog, CHECK_WRAP_CENTERED, BST_CHECKED );
 	if( BitIsSet( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) )
 		CheckDlgButton( dialog, CHECK_CHECK_LIKE, BST_CHECKED );
-		
+
 	//
 	// limit the window name box to the max name size minus some breathing
 	// room for the filename
 	//
-	SendMessage( GetDlgItem( dialog, EDIT_NAME ), EM_SETLIMITTEXT, 
+	SendMessage( GetDlgItem( dialog, EDIT_NAME ), EM_SETLIMITTEXT,
 							 MAX_WINDOW_NAME_LEN - 16, 0 );
 
 	// set the text explaining the name size limit to the user
@@ -840,7 +839,7 @@ void CommonDialogInitialize( GameWindow *window, HWND dialog )
 	sprintf( buffer, "Name length + layout filename length (.wnd) must not exceed %d characters.",
 					 MAX_WINDOW_NAME_LEN );
 	SetDlgItemText( dialog, STATIC_NAME_MAX, buffer );
-								
+
 	// set name
 	SetDlgItemText( dialog, EDIT_NAME, instData->m_decoratedNameString.str() );
 
@@ -849,7 +848,7 @@ void CommonDialogInitialize( GameWindow *window, HWND dialog )
 
 		// load listbox with image names
 	LoadHeaderTemplateListComboBox( GetDlgItem( dialog, COMBO_HEADER ), instData->m_headerTemplateName);
-	
+
 
 	// load the combo box for available properties
 	LoadStateCombo( window->winGetStyle(), GetDlgItem( dialog, COMBO_STATE ) );
@@ -882,10 +881,10 @@ void CommonDialogInitialize( GameWindow *window, HWND dialog )
 	HWND tooltipDelay = GetDlgItem( dialog, EDIT_TOOLTIP_DELAY );
 	if( tooltipDelay )
     SetDlgItemInt( dialog, EDIT_TOOLTIP_DELAY, instData->m_tooltipDelay, TRUE );
-		
 
 
-}  // end CommonDialogInitialize
+
+}
 
 // validateName ===============================================================
 /** Validate a name before saving it into a window.  All window names
@@ -907,7 +906,7 @@ static Bool validateName( GameWindow *root, GameWindow *exception, char *name )
 		MessageBox( TheEditor->getWindowHandle(), buffer, "Illegal Character", MB_OK );
 		return FALSE;
 
-	}  // end if
+	}
 
 	// if this root window is not the exception window compare name
 	if( root != exception )
@@ -922,10 +921,10 @@ static Bool validateName( GameWindow *root, GameWindow *exception, char *name )
 			MessageBox( TheEditor->getWindowHandle(), buffer, "Duplicate Name", MB_OK );
 			return FALSE;
 
-		}  // end if
+		}
 
 
-	}  // end if
+	}
 
 	// check our children
 	GameWindow *child;
@@ -936,7 +935,7 @@ static Bool validateName( GameWindow *root, GameWindow *exception, char *name )
 	// check the next window in the list
 	return validateName( root->winGetNext(), exception, name );
 
-}  // end validateName
+}
 
 // adjustGadgetDrawMethods ====================================================
 /** Based on the WIN_STATUS_IMAGE, set the draw callbacks to the
@@ -944,7 +943,7 @@ static Bool validateName( GameWindow *root, GameWindow *exception, char *name )
 //=============================================================================
 static void adjustGadgetDrawMethods( Bool useImages, GameWindow *window )
 {
-	
+
 	// sanity
 	if( window == NULL )
 		return;
@@ -983,16 +982,16 @@ static void adjustGadgetDrawMethods( Bool useImages, GameWindow *window )
 			else
 			{
 
-				DEBUG_LOG(( "Unable to adjust draw method, undefined gadget\n" ));
+				DEBUG_LOG(( "Unable to adjust draw method, undefined gadget" ));
 				assert( 0 );
 				return;
 
-			}  // end else
+			}
 
 			// set the image status bit
 			window->winSetStatus( WIN_STATUS_IMAGE );
 
-		}  // end if, image set
+		}
 		else
 		{
 
@@ -1021,24 +1020,24 @@ static void adjustGadgetDrawMethods( Bool useImages, GameWindow *window )
 			else
 			{
 
-				DEBUG_LOG(( "Unable to adjust draw method, undefined gadget\n" ));
+				DEBUG_LOG(( "Unable to adjust draw method, undefined gadget" ));
 				assert( 0 );
 				return;
 
-			}  // end else
+			}
 
 			// clear the image bit
 			window->winClearStatus( WIN_STATUS_IMAGE );
 
-		}  // end else, image not set
-	}//end if window is gadget
+		}
+	}
 
 	// adjust any child gadgets
 	GameWindow *child;
 	for( child = window->winGetChild(); child; child = child->winGetNext() )
 		adjustGadgetDrawMethods( useImages, child );
 
-}  // end adjustGadgetDrawMethods
+}
 
 // SaveCommonDialogProperties =================================================
 /** Save properties common on all dialogs for all windows */
@@ -1148,7 +1147,7 @@ Bool SaveCommonDialogProperties( HWND dialog, GameWindow *window )
   	// save delay text label data if present
 	HWND editTooltipDelayText = GetDlgItem( dialog, EDIT_TOOLTIP_DELAY );
 	if( editTooltipDelayText )
-  	instData->m_tooltipDelay = GetDlgItemInt( dialog, EDIT_TOOLTIP_DELAY, NULL, TRUE ); 
+  	instData->m_tooltipDelay = GetDlgItemInt( dialog, EDIT_TOOLTIP_DELAY, NULL, TRUE );
 
 	HWND headerCombo = GetDlgItem( dialog, COMBO_HEADER );
 	if( headerCombo )
@@ -1158,8 +1157,8 @@ Bool SaveCommonDialogProperties( HWND dialog, GameWindow *window )
 	TheEditor->setUnsaved( TRUE );
 
 	return TRUE;
-								
-}  // end SaveCommonDialogProperties
+
+}
 
 // LoadImageListComboBox ======================================================
 /** Load a combo box with image names from the GUI image collection
@@ -1177,22 +1176,20 @@ void LoadImageListComboBox( HWND comboBox )
 	SendMessage( comboBox, CB_RESETCONTENT, 0, 0 );
 
 	// load the combo box with string names from the GUI image collection
-	for( image = TheMappedImageCollection->firstImage();
-			 image;
-			 image = TheMappedImageCollection->nextImage( image ) )
+  for (unsigned index=0;(image=TheMappedImageCollection->Enum(index))!=NULL;index++)
 	{
 
 		SendMessage( comboBox, CB_ADDSTRING, 0, (LPARAM)image->getName().str() );
 
-	}  // end for image
+	}
 
 	// add a [NONE] at the top of the image lists
 	SendMessage( comboBox, CB_INSERTSTRING, 0, (LPARAM)"[NONE]" );
 
 	// select the [NONE] label
 	SendMessage( comboBox, CB_SETCURSEL, 0, 0 );
-	
-}  // end LoadImageListComboBox
+
+}
 
 // LoadHeaderTemplateListComboBox =============================================
 /** Load a combo box with header template names
@@ -1217,7 +1214,7 @@ void LoadHeaderTemplateListComboBox( HWND comboBox, AsciiString selected )
 
 		SendMessage( comboBox, CB_ADDSTRING, 0, (LPARAM)ht->m_name.str());
 
-	}  // end for image
+	}
 
 	// add a [NONE] at the top of the image lists
 	SendMessage( comboBox, CB_INSERTSTRING, 0, (LPARAM)"[NONE]" );
@@ -1227,9 +1224,9 @@ void LoadHeaderTemplateListComboBox( HWND comboBox, AsciiString selected )
 		SendMessage( comboBox, CB_SETCURSEL, 0, 0 );
 	else
 		SendMessage( comboBox, CB_SELECTSTRING, -1, (LPARAM)selected.str() );
-	
-		
-}  // end LoadHeaderTemplateListComboBox
+
+
+}
 
 
 // ComboBoxSelectionToImage ===================================================
@@ -1238,7 +1235,7 @@ void LoadHeaderTemplateListComboBox( HWND comboBox, AsciiString selected )
 	* image Loc from the GUI collection
 	*
 	* NOTE: The image list combo boxes have a [NONE] at index 0, if that
-	* is selected NULL will be returned 
+	* is selected NULL will be returned
 	*/
 //=============================================================================
 const Image *ComboBoxSelectionToImage( HWND comboBox )
@@ -1263,7 +1260,7 @@ const Image *ComboBoxSelectionToImage( HWND comboBox )
 	// return the image loc that matches the string
 	return TheMappedImageCollection->findImageByName( AsciiString( buffer ) );
 
-}  // end ComboBoxSelectionToImage
+}
 
 // GetControlColor ============================================================
 /** Search the control color table and return the color for the
@@ -1279,12 +1276,12 @@ RGBColorInt *GetControlColor( UnsignedInt controlID )
 		if( entry->controlID == controlID )
 			return &entry->color;
 
-	}  // end for
+	}
 
 	// not found
 	return NULL;
 
-}  // end GetControlColor
+}
 
 // SetControlColor ============================================================
 /** Set the color in the table with the matching control ID */
@@ -1309,11 +1306,11 @@ void SetControlColor( UnsignedInt controlID, Color color )
 			entry->color.blue = blue;
 			break;
 
-		}  // end if
+		}
 
-	}  // end for
+	}
 
-}  // end SetControlColor
+}
 
 // GetStateInfo ===============================================================
 /** Get a image and color state entry */
@@ -1328,11 +1325,11 @@ ImageAndColorInfo *GetStateInfo( StateIdentifier id )
 		if( entry->stateID == id )
 			return entry;
 
-	}  // end for entry
+	}
 
 	return NULL;
 
-}  // end GetStateInfo
+}
 
 // SwitchToState ==============================================================
 /** Switch the image and color combo box to specified state, invalidate
@@ -1351,11 +1348,11 @@ void SwitchToState( StateIdentifier id, HWND dialog )
 	if( info == NULL )
 	{
 
-		DEBUG_LOG(( "Invalid state request\n" ));
+		DEBUG_LOG(( "Invalid state request" ));
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	// select the string in the state combo box
 	SendMessage( stateBox, CB_SELECTSTRING, -1, (LPARAM)info->stateName );
@@ -1373,7 +1370,7 @@ void SwitchToState( StateIdentifier id, HWND dialog )
 	InvalidateRect( colorButton, NULL, TRUE );
 	InvalidateRect( borderColorButton, NULL, TRUE );
 
-}  // end SwitchToState
+}
 
 // StoreImageAndColor =========================================================
 /** Store the image and colors in the table */
@@ -1394,11 +1391,11 @@ void StoreImageAndColor( StateIdentifier id, const Image *image,
 			entry->borderColor = borderColor;
 			break;  // exit for
 
-		}  // end if
+		}
 
-	}  // end for
+	}
 
-}  // end StoreImageAndColor
+}
 
 // StoreColor =================================================================
 /** Store the colors in the table */
@@ -1417,11 +1414,11 @@ void StoreColor( StateIdentifier id, Color color, Color borderColor )
 			entry->borderColor = borderColor;
 			break;  // exit for
 
-		}  // end if
+		}
 
-	}  // end for
+	}
 
-}  // end StoreColor
+}
 
 // GetCurrentStateInfo ========================================================
 /** Get the info on the current state selected in the state combo */
@@ -1442,7 +1439,7 @@ ImageAndColorInfo *GetCurrentStateInfo( HWND dialog )
 
 	return GetStateInfo( stateID );
 
-}  // end GetCurrentStateInfo
+}
 
 // PositionWindowOnScreen =====================================================
 /** Position the window on the screen, but keep the window completely
@@ -1476,13 +1473,13 @@ void PositionWindowOnScreen( HWND window, Int x, Int y )
 		windowPos.y = screenRect.bottom - windowSize.y;
 
 	// place the window
-	MoveWindow( window, windowPos.x, windowPos.y, 
+	MoveWindow( window, windowPos.x, windowPos.y,
 							windowSize.x, windowSize.y, TRUE );
 
 	// show the window
 	ShowWindow( window, SW_SHOW );
 
-}  // end PositionWindowOnScreen
+}
 
 // HandleCommonDialogMessages =================================================
 /** Handle any messages common to all controls on all property dialogs */
@@ -1499,8 +1496,8 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 		// ------------------------------------------------------------------------
 		case WM_DRAWITEM:
 		{
-      UINT controlID = (UINT)wParam;  // control identifier 
-      LPDRAWITEMSTRUCT drawItem = (LPDRAWITEMSTRUCT)lParam; // item drawing 
+      UINT controlID = (UINT)wParam;  // control identifier
+      LPDRAWITEMSTRUCT drawItem = (LPDRAWITEMSTRUCT)lParam; // item drawing
 			Color color = GAME_COLOR_UNDEFINED;
 //			ImageAndColorInfo *info = GetCurrentStateInfo( hWndDialog );
 
@@ -1515,9 +1512,9 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 					else
 						color = info->borderColor;
 
-			}  // end if
+			}
 			else if( controlID == BUTTON_TEXT_COLOR || controlID == BUTTON_TEXT_BORDER_COLOR )
-			{		
+			{
 				TextDrawData textDraw = textDrawData[ currTextIndex ];
 
 				if( controlID == BUTTON_TEXT_COLOR )
@@ -1525,7 +1522,7 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 				else
 					color = textDraw.borderColor;
 
-			}  // end else if
+			}
 
 			if( color != GAME_COLOR_UNDEFINED )
 			{
@@ -1537,11 +1534,11 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 				// if this control is disabled just let windows handle drawing
 				if( IsWindowEnabled( hWndControl ) == FALSE )
 				{
-					
+
 					*returnCode = FALSE;
 					break;
 
-				}  // end if
+				}
 
 				// get the color info
 				GameGetColorComponents( color, &r, &g, &b, &a );
@@ -1568,12 +1565,12 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 				used = TRUE;
 				break;
 
-			}  // end if
+			}
 
 			*returnCode = FALSE;
 			break;
 
-		}  // end draw item
+		}
 
 		// ------------------------------------------------------------------------
     case WM_COMMAND:
@@ -1581,7 +1578,7 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 			HWND hWndControl = (HWND)lParam;  // control window handle
- 
+
       switch( controlID )
       {
 
@@ -1600,11 +1597,11 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 						newState = (StateIdentifier)SendMessage( hWndControl, CB_GETITEMDATA, selected, 0 );
 						SwitchToState( newState, hWndDialog );
 
-					}  // end if
+					}
 					used = TRUE;
 					break;
 
-				}  // end state
+				}
 
 				// --------------------------------------------------------------------
 				case COMBO_TEXT_STATE:
@@ -1621,31 +1618,31 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 						InvalidateRect( GetDlgItem( hWndDialog, BUTTON_TEXT_COLOR ), NULL, TRUE );
 						InvalidateRect( GetDlgItem( hWndDialog, BUTTON_TEXT_BORDER_COLOR ), NULL, TRUE );
 
-					}  // end if
+					}
 					used = TRUE;
 					break;
 
-				}  // end text state
+				}
 
 				// --------------------------------------------------------------------
 				case COMBO_IMAGE:
 				{
-					
+
 					// store image selection changes
 					if( notifyCode == CBN_SELCHANGE )
 					{
 						ImageAndColorInfo *info = GetCurrentStateInfo( hWndDialog );
 						const Image *newImage = ComboBoxSelectionToImage( hWndControl );
 
-						StoreImageAndColor( info->stateID, newImage, 
+						StoreImageAndColor( info->stateID, newImage,
 																info->color, info->borderColor );
 
-					}  // end if
-	
+					}
+
 					used = TRUE;
 					break;
 
-				}  // end image
+				}
 
 				// --------------------------------------------------------------------
 				case BUTTON_COLOR:
@@ -1700,25 +1697,25 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 						// invalidate the color preview
 						InvalidateRect( hWndControl, NULL, TRUE );
 
-					}  // end if
+					}
 
 					used = TRUE;
 					break;
 
-				}  // end color buttons
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       *returnCode = 0;
 			break;
 
-    } // end of WM_COMMAND
+    }
 
-  }  // end of switch
+  }
 
 	return used;
 
-}  // end HandleCommonDialogMessages
+}
 
 // GetProprsEnabledTextColor ==================================================
 //=============================================================================

@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __SPECIALPOWER_H_
-#define __SPECIALPOWER_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/GameMemory.h"
@@ -45,7 +42,7 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class ObjectCreationList;
 class Object;
-enum ScienceType;
+enum ScienceType CPP_11(: Int);
 struct FieldParse;
 
 // For SpecialPowerType and SpecialPowerMaskType::s_bitNameList. Part of detangling.
@@ -56,25 +53,25 @@ struct FieldParse;
 
 #define MAKE_SPECIALPOWER_MASK(k) SpecialPowerMaskType(SpecialPowerMaskType::kInit, (k))
 
-inline Bool TEST_SPECIALPOWERMASK(const SpecialPowerMaskType& m, SpecialPowerType t) 
-{ 
-	return m.test(t); 
+inline Bool TEST_SPECIALPOWERMASK(const SpecialPowerMaskType& m, SpecialPowerType t)
+{
+	return m.test(t);
 }
-inline Bool TEST_SPECIALPOWERMASK_ANY(const SpecialPowerMaskType& m, const SpecialPowerMaskType& mask) 
-{ 
+inline Bool TEST_SPECIALPOWERMASK_ANY(const SpecialPowerMaskType& m, const SpecialPowerMaskType& mask)
+{
 	return m.anyIntersectionWith(mask);
 }
 inline Bool TEST_SPECIALPOWERMASK_MULTI(const SpecialPowerMaskType& m, const SpecialPowerMaskType& mustBeSet, const SpecialPowerMaskType& mustBeClear)
 {
 	return m.testSetAndClear(mustBeSet, mustBeClear);
 }
-inline Bool SPECIALPOWERMASK_ANY_SET(const SpecialPowerMaskType& m) 
-{ 
-	return m.any(); 
+inline Bool SPECIALPOWERMASK_ANY_SET(const SpecialPowerMaskType& m)
+{
+	return m.any();
 }
-inline void CLEAR_SPECIALPOWERMASK(SpecialPowerMaskType& m) 
-{ 
-	m.clear(); 
+inline void CLEAR_SPECIALPOWERMASK(SpecialPowerMaskType& m)
+{
+	m.clear();
 }
 inline void SET_SPECIALPOWERMASK( SpecialPowerMaskType& m, SpecialPowerType t, Int val = 1 )
 {
@@ -123,8 +120,9 @@ public:
 	UnsignedInt getViewObjectDuration( void ) const { return getFO()->m_viewObjectDuration; }
 	Real getViewObjectRange( void ) const { return getFO()->m_viewObjectRange; }
 	Real getRadiusCursorRadius() const { return getFO()->m_radiusCursorRadius; }
+	Bool isShortcutPower() const { return getFO()->m_shortcutPower; }
 
-private: 
+private:
 
 	const SpecialPowerTemplate* getFO() const { return (const SpecialPowerTemplate*)friend_getFinalOverride(); }
 
@@ -135,13 +133,14 @@ private:
 	ScienceType				m_requiredScience;		///< science required (if any) to actually execute this power
 	AudioEventRTS			m_initiateSound;			///< sound to play when initiated
 	AudioEventRTS			m_initiateAtLocationSound;		///< sound to play at target location (if any)
-	UnsignedInt				m_detectionTime;			///< (frames) after using infiltration power (defection, etc.), 
+	UnsignedInt				m_detectionTime;			///< (frames) after using infiltration power (defection, etc.),
 																					///< how long it takes for ex comrades to realize it on their own
 	UnsignedInt				m_viewObjectDuration;	///< Lifetime of a looking object we slap down so you can watch the effect
 	Real							m_viewObjectRange;		///< And how far that object can see.
 	Real							m_radiusCursorRadius;	///< size of radius cursor, if any
 	Bool							m_publicTimer;				///< display a countdown timer for this special power for all to see
 	Bool							m_sharedNSync;				///< If true, this is a special that is shared between all of a player's command centers
+	Bool							m_shortcutPower;		///< Is this shortcut power capable of being fired by the side panel?
 
 	static const FieldParse m_specialPowerFieldParse[];		///< the parse table
 
@@ -186,5 +185,3 @@ protected:
 
 // EXTERNAL ///////////////////////////////////////////////////////////////////////////////////////
 extern SpecialPowerStore *TheSpecialPowerStore;
-
-#endif  // end __SPECIALPOWER_H_

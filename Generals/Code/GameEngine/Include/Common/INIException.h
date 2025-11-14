@@ -45,8 +45,6 @@ public:
 
 	~INIException()
 	{
-		if (mFailureMessage) {
-			delete [] mFailureMessage;
-		}
+		delete [] mFailureMessage;
 	}
 };

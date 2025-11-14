@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "GameClient/TerrainRoads.h"
@@ -43,7 +43,7 @@ void INI::parseTerrainRoadDefinition( INI* ini )
 
 	// read the name
 	const char* c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	// find existing item if present or allocate new one
 	road = TheTerrainRoads->findRoad( name );
@@ -53,21 +53,21 @@ void INI::parseTerrainRoadDefinition( INI* ini )
 	{
 
 		// sanity
-		DEBUG_ASSERTCRASH( road->isBridge() == FALSE, ("Redefining bridge '%s' as a road!\n", 
+		DEBUG_ASSERTCRASH( road->isBridge() == FALSE, ("Redefining bridge '%s' as a road!",
 											 road->getName().str()) );
 		throw INI_INVALID_DATA;
 
-	}  // end if
+	}
 
-	if( road == NULL )	
+	if( road == NULL )
 		road = TheTerrainRoads->newRoad( name );
 
-	DEBUG_ASSERTCRASH( road, ("Unable to allocate road '%s'\n", name.str()) );
+	DEBUG_ASSERTCRASH( road, ("Unable to allocate road '%s'", name.str()) );
 
 	// parse the ini definition
 	ini->initFromINI( road, road->getRoadFieldParse() );
 
-}  // end parseTerrainRoad
+}
 
 
 

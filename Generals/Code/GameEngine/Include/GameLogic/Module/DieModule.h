@@ -24,17 +24,15 @@
 
 // FILE: DieModule.h /////////////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, September 2001
-// Desc:	 
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
-#ifndef __DieModule_H_
-#define __DieModule_H_
-
 #include "Common/Module.h"
 #include "GameLogic/Damage.h"
 #include "GameLogic/Module/BehaviorModule.h"
+#include "Common/ObjectStatusTypes.h"
 
 //-------------------------------------------------------------------------------------------------
 /** OBJECT DIE MODULE base class */
@@ -54,8 +52,8 @@ class DieMuxData	// does NOT inherit from ModuleData.
 public:
 	DeathTypeFlags				m_deathTypes;
 	VeterancyLevelFlags		m_veterancyLevels;
-	UnsignedInt						m_exemptStatus;						///< die module is ignored if any of these status bits are set
-	UnsignedInt						m_requiredStatus;					///< die module is ignored if any of these status bits are clear
+	ObjectStatusMaskType	m_exemptStatus;						///< die module is ignored if any of these status bits are set
+	ObjectStatusMaskType	m_requiredStatus;					///< die module is ignored if any of these status bits are clear
 
 	DieMuxData();
 	static const FieldParse* getFieldParse();
@@ -72,7 +70,7 @@ class DieModuleData : public BehaviorModuleData
 public:
 	DieMuxData			m_dieMuxData;
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
 		BehaviorModuleData::buildFieldParse(p);
 		p.add(DieMuxData::getFieldParse(), offsetof( DieModuleData, m_dieMuxData ));
@@ -103,9 +101,7 @@ public:
 
 protected:
 	Bool isDieApplicable(const DamageInfo *damageInfo) const { return getDieModuleData()->isDieApplicable(getObject(), damageInfo); }
-	
+
 };
 inline DieModule::DieModule( Thing *thing, const ModuleData* moduleData ) : BehaviorModule( thing, moduleData ) { }
 inline DieModule::~DieModule() { }
-
-#endif

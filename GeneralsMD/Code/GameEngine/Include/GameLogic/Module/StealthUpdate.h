@@ -29,16 +29,13 @@
 
 #pragma once
 
-#ifndef __STEALTH_UPDATE_H_
-#define __STEALTH_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Thing;
-enum StealthLookType;
-enum EvaMessage;
+enum StealthLookType CPP_11(: Int);
+enum EvaMessage CPP_11(: Int);
 class FXList;
 
 enum
@@ -51,12 +48,13 @@ enum
 	STEALTH_NOT_WHILE_FIRING_TERTIARY		= 0x00000020,
 	STEALTH_ONLY_WITH_BLACK_MARKET			= 0x00000040,
 	STEALTH_NOT_WHILE_TAKING_DAMAGE			= 0x00000080,
-	STEALTH_NOT_WHILE_FIRING_WEAPON			= (STEALTH_NOT_WHILE_FIRING_PRIMARY | STEALTH_NOT_WHILE_FIRING_SECONDARY | STEALTH_NOT_WHILE_FIRING_TERTIARY),
   STEALTH_NOT_WHILE_RIDERS_ATTACKING  = 0x00000100,
+
+	STEALTH_NOT_WHILE_FIRING_WEAPON			= (STEALTH_NOT_WHILE_FIRING_PRIMARY | STEALTH_NOT_WHILE_FIRING_SECONDARY | STEALTH_NOT_WHILE_FIRING_TERTIARY),
 };
 
 #ifdef DEFINE_STEALTHLEVEL_NAMES
-static const char *TheStealthLevelNames[] = 
+static const char *const TheStealthLevelNames[] =
 {
 	"ATTACKING",
 	"MOVING",
@@ -144,7 +142,7 @@ public:
 
   Bool isGrantedBySpecialPower( void ) { return getStealthUpdateModuleData()->m_grantedBySpecialPower; }
 	Bool isTemporaryGrant() { return m_framesGranted > 0; }
-  
+
 protected:
 
 	StealthLookType calcStealthedStatusForPlayer(const Object* obj, const Player* player);
@@ -161,7 +159,7 @@ private:
 	UnsignedInt						m_detectionExpiresFrame;
 	mutable UnsignedInt		m_nextBlackMarketCheckFrame;
 	Bool									m_enabled;
-	
+
 	Real                  m_pulsePhaseRate;
 	Real                  m_pulsePhase;
 
@@ -179,7 +177,3 @@ private:
 	WeaponSetType					m_requiresWeaponSetType;
 
 };
-
-
-#endif 
-

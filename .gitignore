@@ -1,8 +1,10 @@
-# Ignore everything starting with dot, except git files.
+# Ignore everything starting with dot, except specific files.
 .*
+!.editorconfig
 !.gitignore
 !.gitattributes
 !.github
+!.gitmodules
 
 *.user
 *.ncb
@@ -45,3 +47,14 @@ thumbs.db
 .clang-format
 /.vscode
 /Dependencies/MaxSDK/maxsdk
+
+## IntelliJ, CLion, etc.
+/.idea
+
+# IntelliJ-style CMake bits
+cmake-build-*/
+
+## Ninja
+.ninja_deps
+.ninja_log
+build.ninja

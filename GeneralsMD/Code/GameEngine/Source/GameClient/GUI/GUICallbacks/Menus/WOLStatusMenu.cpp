@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "GameClient/WindowLayout.h"
@@ -66,7 +66,7 @@ void WOLStatusMenuInit( WindowLayout *layout, void *userData )
 
 	progressTextWindow = TheWindowManager->winGetWindowFromId( NULL,
 		TheNameKeyGenerator->nameToKey( AsciiString( "WOLStatusMenu.wnd:ListboxStatus" ) ) );
-	
+
 	// Show Menu
 	layout->hide( FALSE );
 
@@ -76,7 +76,7 @@ void WOLStatusMenuInit( WindowLayout *layout, void *userData )
 	//progressLayout = TheShell->top();
 
 	//WOL::raiseWOLMessageBox();
-} // WOLStatusMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu shutdown method */
@@ -93,7 +93,7 @@ void WOLStatusMenuShutdown( WindowLayout *layout, void *userData )
 	//progressLayout = NULL;
 
 	//WOL::raiseWOLMessageBox();
-}  // WOLStatusMenuShutdown
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -103,7 +103,7 @@ void WOLStatusMenuUpdate( WindowLayout * layout, void *userData)
 {
 	//if (WOL::TheWOL)
 		//WOL::TheWOL->update();
-}// WOLStatusMenuUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu input callback */
@@ -111,7 +111,7 @@ void WOLStatusMenuUpdate( WindowLayout * layout, void *userData)
 WindowMsgHandledType WOLStatusMenuInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -126,63 +126,63 @@ WindowMsgHandledType WOLStatusMenuInput( GameWindow *window, UnsignedInt msg,
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonDisconnect, buttonDisconnectID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// WOLStatusMenuInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLStatusMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType WOLStatusMenuSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
 
 	switch( msg )
 	{
-		
-		
+
+
 		case GWM_CREATE:
 			{
-				
+
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
-			{	
+			{
 				// if we're givin the opportunity to take the keyboard focus we must say we want it
 				if( mData1 == TRUE )
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 
 		case GBM_SELECTED:
 			{
@@ -198,11 +198,11 @@ WindowMsgHandledType WOLStatusMenuSystem( GameWindow *window, UnsignedInt msg,
 						WOL::TheWOL->addCommand( WOL::WOLCOMMAND_RESET );  // don't display an error, log out, or anything
 					}
 
-				} //if ( controlID == buttonDisconnect )
+				}
 				*/
 				break;
-			}// case GBM_SELECTED:
-	
+			}
+
 		case GEM_EDIT_DONE:
 			{
 				break;
@@ -210,7 +210,7 @@ WindowMsgHandledType WOLStatusMenuSystem( GameWindow *window, UnsignedInt msg,
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// WOLStatusMenuSystem
+}

@@ -20,6 +20,9 @@ if(MSVC)
     # Create PDB for Release as long as debug info was generated during compile.
     string(APPEND CMAKE_EXE_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF")
     string(APPEND CMAKE_SHARED_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF")
+    
+    # /INCREMENTAL:NO prevents PDB size bloat in Debug configuration(s).
+    add_link_options("/INCREMENTAL:NO")
 else()
     # We go a bit wild here and assume any other compiler we are going to use supports -g for debug info.
     string(APPEND CMAKE_CXX_FLAGS_RELEASE " -g")
@@ -35,5 +38,28 @@ if (NOT IS_VS6_BUILD)
         add_compile_options(/MP)
         # Enforce strict __cplusplus version
         add_compile_options(/Zc:__cplusplus)
+    endif()
+else()
+    if(RTS_BUILD_OPTION_VC6_FULL_DEBUG)
+        set_property(GLOBAL PROPERTY JOB_POOLS compile=1 link=1)
+    else()
+        # Define two pools: 'compile' with plenty of slots, 'link' with just one
+        set_property(GLOBAL PROPERTY JOB_POOLS compile=0 link=1)
+    endif()
+
+    # Tell CMake that all compile steps go into 'compile'
+    set(CMAKE_JOB_POOL_COMPILE compile)
+    # and all link steps go into 'link' (so only one link ever runs since vc6 can't handle multithreaded linking)
+    set(CMAKE_JOB_POOL_LINK link)
+endif()
+
+if(RTS_BUILD_OPTION_ASAN)
+    if(MSVC)
+        set(ENV{ASAN_OPTIONS} "shadow_scale=2")
+        add_compile_options(/fsanitize=address)
+        add_link_options(/fsanitize=address)
+    else()
+        add_compile_options(-fsanitize=address)
+        add_link_options(-fsanitize=address)
     endif()
 endif()

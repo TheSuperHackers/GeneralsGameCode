@@ -16,38 +16,32 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* $Header: /Commando/Code/ww3d2/assetmgr.h 15    7/24/01 6:28p Jani_p $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando                                                     * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/ww3d2/assetmgr.h                             $* 
- *                                                                                             * 
- *                       Author:: Greg_h                                                       * 
- *                                                                                             * 
- *                     $Modtime:: 7/17/01 5:52p                                               $* 
- *                                                                                             * 
- *                    $Revision:: 15                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/* $Header: /Commando/Code/ww3d2/assetmgr.h 19    12/17/01 7:55p Jani_p $ */
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando                                                     *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/ww3d2/assetmgr.h                             $*
+ *                                                                                             *
+ *                       Author:: Greg_h                                                       *
+ *                                                                                             *
+ *                     $Modtime:: 12/15/01 4:14p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 19                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef ASSETMGR_H
-#define ASSETMGR_H
 
 #include "always.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "htreemgr.h"
 #include "hanimmgr.h"
-#include "SLIST.H"
+#include "SLIST.h"
 #include "texture.h"
 #include "hashtemplate.h"
 #include "simplevec.h"
@@ -74,6 +68,7 @@ class StreamingTextureClass;
 struct StreamingTextureConfig;
 class TextureClass;
 class MetalMapManagerClass;
+
 
 /*
 ** AssetIterator
@@ -115,7 +110,7 @@ public:
 	WW3DAssetManager
 
 	This object is the manager of all of the 3D data.  Load your meshes, animations,
-	etc etc using the Load_3D_Assets function.  
+	etc etc using the Load_3D_Assets function.
 
 	WARNING: hierarchy trees should be loaded before the meshes and animations
 	which attach to them.
@@ -123,15 +118,15 @@ public:
 	-------------------------------------------------------------------------------------
 	Dec 11, 1997, Asset Manager Brainstorming:
 
-	- WW3DAssetManager will be diferentiated from other game data asset managers
+	- WW3DAssetManager will be differentiated from other game data asset managers
 	(sounds, strings, etc) because they behave differently and serve different
 	purposes
 
 	- WW3D creates "clones" from the blueprints it has of render objects whereas
-	Our commando data asset manager will provide the data (file images) for the 
+	Our commando data asset manager will provide the data (file images) for the
 	blueprints.  Maybe the CommandoDataManager could deal in MemoryFileClasses.
 	Or void * and then the ww3d manager could convert to MemoryFiles...
-	
+
 	- Future caching: In the case that we want to implement a caching system,
 	assets must be "released" when not in use.
 
@@ -153,7 +148,7 @@ public:
 	the 3d asset manager may find that it needs another asset (such as a hierarchy tree).
 	It will then recurse, and ask for that asset.
 
-	- Copy Mode will go away.  It will be internally set based on whether the mesh 
+	- Copy Mode will go away.  It will be internally set based on whether the mesh
 	contains vertex animation.  All other render objects will simply "Clone".
 
 	- Commando will derive a Cmdo3DAssetManager which knows about the special chunks
@@ -162,14 +157,14 @@ public:
 	-------------------------------------------------------------------------------------
 	July 28, 1998
 
-	- Exposed the prototype system and added prototype loaders (PrototypeClass and 
+	- Exposed the prototype system and added prototype loaders (PrototypeClass and
 	PrototypeLoaderClass in proto.h).  This now allows the user to install his own
-	loaders for new render object types. 
+	loaders for new render object types.
 
 	- Simplified the interface by removing the special purpose creation functions,
-	leaving only the Create_Render_Obj function.  
-	
-	- In certain cases some users need to know what kind of render object was created 
+	leaving only the Create_Render_Obj function.
+
+	- In certain cases some users need to know what kind of render object was created
 	so we added a Class_ID mechanism to RenderObjClass.
 
 	- Class_ID for render objects is not enough.  Need the asset iterator to be able
@@ -177,6 +172,10 @@ public:
 	the prototype class needs to be able to tell you the class ID.  Actually this
 	code only seems to be used by tools such as SView but is needed anyway...
 
+	-------------------------------------------------------------------------------------
+	TheSuperHackers @fix xezon 08/11/2025
+	The Asset Manager will now return null when it cannot find or create a valid font
+	with the given inputs. This way the user knows that the requested font is unusable.
 */
 
 
@@ -202,7 +201,7 @@ public:
 	**	WW3DAssetManager::Get_Instance();
 	*/
 	static WW3DAssetManager *		Get_Instance(void) { return TheInstance; }
-	static void							Delete_This(void) { if (TheInstance) delete TheInstance; }
+	static void							Delete_This(void) { delete TheInstance; TheInstance=NULL; }
 
 	/*
 	** Load data from any type of w3d file
@@ -229,7 +228,7 @@ public:
 	/*
 	** create me an instance of one of the prototype render objects
 	*/
-	virtual RenderObjClass *		Create_Render_Obj(const char * name);	
+	virtual RenderObjClass *		Create_Render_Obj(const char * name);
 
 	/*
 	** query if there is a render object with the specified name
@@ -261,11 +260,15 @@ public:
 
 	static void Log_Texture_Statistics();
 
-	virtual TextureClass *			Get_Texture(
-		const char * filename, 
-		TextureClass::MipCountType mip_level_count=TextureClass::MIP_LEVELS_ALL,
+	virtual TextureClass *			Get_Texture
+	(
+		const char * filename,
+		MipCountType mip_level_count=MIP_LEVELS_ALL,
 		WW3DFormat texture_format=WW3D_FORMAT_UNKNOWN,
-		bool allow_compression=true);
+		bool allow_compression=true,
+		TextureBaseClass::TexAssetType type=TextureBaseClass::TEX_REGULAR,
+		bool allow_reduction=true
+	);
 	TextureClass*						Get_Bumpmap_Based_On_Texture(TextureClass* texture);
 
 	virtual void						Release_All_Textures(void);
@@ -276,12 +279,12 @@ public:
 
 	/*
 	** Access to Font3DInstances. (These are not saved, we just use the
-	** asset manager as a convienient way to create them.)
+	** asset manager as a convenient way to create them.)
 	*/
 	virtual Font3DInstanceClass * Get_Font3DInstance( const char * name);
 
 	/*
-	** Access to FontChars. Used by Render2DSentenceClass
+	** Access to FontChars. Used by Render2DSentenceClass. Can return null.
 	*/
 	virtual FontCharsClass *		Get_FontChars( const char * name, int point_size, bool is_bold = false );
 
@@ -299,7 +302,7 @@ public:
 	virtual void						Register_Prototype_Loader(PrototypeLoaderClass * loader);
 
 	/*
-	**	The Add_Prototype is public so that we can add prototypes for procedurally 
+	**	The Add_Prototype is public so that we can add prototypes for procedurally
 	** generated objects to the asset manager.
 	*/
 	void									Add_Prototype(PrototypeClass * newproto);
@@ -321,6 +324,7 @@ public:
 
 	// Log texture statistics
 	void Log_All_Textures();
+
 protected:
 
 	/*
@@ -343,7 +347,7 @@ protected:
 	/*
 	** Compile time control over the dynamic arrays:
 	*/
-	enum 
+	enum
 	{
 		PROTOLOADERS_VECTOR_SIZE =	32,
 		PROTOLOADERS_GROWTH_RATE =	16,
@@ -358,7 +362,7 @@ protected:
 	** them into prototypes.
 	*/
 	DynamicVectorClass < PrototypeLoaderClass * >			PrototypeLoaders;
-	
+
 	/*
 	** Prototypes
 	** These objects are abstract factories for named render objects.  Prototypes is
@@ -370,10 +374,10 @@ protected:
 	** Prototype Hash Table
 	** This structure is simply used to speed up the name lookup for prototypes
 	*/
-	enum 
-	{ 
-		PROTOTYPE_HASH_TABLE_SIZE =	4096, 
-		PROTOTYPE_HASH_BITS =			12, 
+	enum
+	{
+		PROTOTYPE_HASH_TABLE_SIZE =	4096,
+		PROTOTYPE_HASH_BITS =			12,
 		PROTOTYPE_HASH_MASK =			0x00000FFF
 	};
 
@@ -384,12 +388,6 @@ protected:
 	*/
 	HTreeManagerClass					HTreeManager;
 	HAnimManagerClass					HAnimManager;
-
-	/*
-	** When enabled, this handles all the caching for the texture class.
-	** If NULL then textures are not being cached.
-	*/
-	TextureFileCache *				TextureCache;
 
 	/*
 	** list of Font3DDatas
@@ -437,5 +435,3 @@ protected:
 	// Font3DInstance need access to the Font3DData
 	friend class Font3DInstanceClass;
 };
-
-#endif

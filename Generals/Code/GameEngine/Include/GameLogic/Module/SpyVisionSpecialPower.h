@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SPY_VISION_SPECIAL_POWER_H_
-#define __SPY_VISION_SPECIAL_POWER_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/SpecialPowerModule.h"
 
@@ -73,5 +70,3 @@ public:
 protected:
 
 };
-
-#endif

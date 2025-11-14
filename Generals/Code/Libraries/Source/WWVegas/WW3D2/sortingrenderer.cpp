@@ -123,7 +123,7 @@ void QuickSort (
 	do {
 		do { i++; } while (i<r && keys[i]<v);
 		do { j--; } while (j>0 && keys[j]>v);
-		
+
 		WWASSERT(j>=0);
 		WWASSERT(i<=r);
 
@@ -137,7 +137,7 @@ void QuickSort (
 	keys[j]=keys[i];
 	keys[i]=keys[r];
 	keys[r]=t;
-	
+
 	if (i-1>l) QuickSort(array,keys,l,i-1);
 	if (r>i+1) QuickSort(array,keys,i+1,r);
 }
@@ -319,7 +319,7 @@ static ShortVectorIStruct* Get_Polygon_Index_Array(unsigned count)
 
 void SortingRendererClass::Insert_Triangles(
 	const SphereClass& bounding_sphere,
-	unsigned short start_index, 
+	unsigned short start_index,
 	unsigned short polygon_count,
 	unsigned short min_vertex_index,
 	unsigned short vertex_count)
@@ -357,10 +357,10 @@ void SortingRendererClass::Insert_Triangles(
 	D3DXVec3Transform(
 		&transformed_vec,
 		&vec,
-		&mtx); 
+		&mtx);
 	state->transformed_center=Vector3(transformed_vec[0],transformed_vec[1],transformed_vec[2]);
 
-	
+
 	/// @todo lorenzen sez use a bucket sort here... and stop copying so much data so many times
 
 	SortingNodeStruct* node=sorted_list.Head();
@@ -403,7 +403,7 @@ void SortingRendererClass::Insert_Triangles(
 // ----------------------------------------------------------------------------
 
 void SortingRendererClass::Insert_Triangles(
-	unsigned short start_index, 
+	unsigned short start_index,
 	unsigned short polygon_count,
 	unsigned short min_vertex_index,
 	unsigned short vertex_count)
@@ -420,10 +420,12 @@ void SortingRendererClass::Insert_Triangles(
 
 void Release_Refs(SortingNodeStruct* state)
 {
+	int i;
 	REF_PTR_RELEASE(state->sorting_state.vertex_buffer);
 	REF_PTR_RELEASE(state->sorting_state.index_buffer);
 	REF_PTR_RELEASE(state->sorting_state.material);
-	for (unsigned i=0;i<MAX_TEXTURE_STAGES;++i) {
+	for (i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i)
+	{
 		REF_PTR_RELEASE(state->sorting_state.Textures[i]);
 	}
 }
@@ -431,7 +433,7 @@ void Release_Refs(SortingNodeStruct* state)
 static unsigned overlapping_node_count;
 static unsigned overlapping_polygon_count;
 static unsigned overlapping_vertex_count;
-const unsigned MAX_OVERLAPPING_NODES=4096;
+static const unsigned MAX_OVERLAPPING_NODES=4096;
 static SortingNodeStruct* overlapping_nodes[MAX_OVERLAPPING_NODES];
 
 // ----------------------------------------------------------------------------
@@ -440,6 +442,7 @@ void SortingRendererClass::Insert_To_Sorting_Pool(SortingNodeStruct* state)
 {
 	if (overlapping_node_count>=MAX_OVERLAPPING_NODES) {
 		Release_Refs(state);
+		delete state;
 		WWASSERT(0);
 		return;
 	}
@@ -451,11 +454,10 @@ void SortingRendererClass::Insert_To_Sorting_Pool(SortingNodeStruct* state)
 }
 
 // ----------------------------------------------------------------------------
+//static unsigned prevLight = 0xffffffff;
 
 static void Apply_Render_State(RenderStateStruct& render_state)
 {
-/*	state->sorting_state.shader.Apply();
-*/
 	DX8Wrapper::Set_Shader(render_state.shader);
 
 /*	if (render_state.material) render_state.material->Apply();
@@ -469,7 +471,8 @@ static void Apply_Render_State(RenderStateStruct& render_state)
 	if (render_state.Textures[6]) render_state.Textures[6]->Apply();
 	if (render_state.Textures[7]) render_state.Textures[7]->Apply();
 */
-	for (unsigned i=0;i<MAX_TEXTURE_STAGES;++i) {
+	for (int i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i)
+	{
 		DX8Wrapper::Set_Texture(i,render_state.Textures[i]);
 	}
 
@@ -479,6 +482,7 @@ static void Apply_Render_State(RenderStateStruct& render_state)
 
 	if (!render_state.material->Get_Lighting())
 		return;	//no point changing lights if they are ignored.
+  //prevLight = render_state.lightsHash;
 
 	if (render_state.LightEnable[0]) {
 		DX8Wrapper::Set_DX8_Light(0,&render_state.Lights[0]);
@@ -505,11 +509,6 @@ static void Apply_Render_State(RenderStateStruct& render_state)
 		DX8Wrapper::Set_DX8_Light(0,NULL);
 	}
 
-//	Matrix4 mtx;
-//	mtx=render_state.world.Transpose();
-//	DX8Wrapper::Set_Transform(D3DTS_WORLD,mtx);
-//	mtx=render_state.view.Transpose();
-//	DX8Wrapper::Set_Transform(D3DTS_VIEW,mtx);
 
 }
 
@@ -519,7 +518,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 {
 	if (!overlapping_node_count) return;
 
-	SNAPSHOT_SAY(("SortingSystem - Flush \n"));
+	SNAPSHOT_SAY(("SortingSystem - Flush"));
 
 	unsigned node_id;
 	// Fill dynamic index buffer with sorting index buffer vertices
@@ -555,7 +554,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 
 			D3DXMATRIX d3d_mtx=(D3DXMATRIX&)state->sorting_state.world*(D3DXMATRIX&)state->sorting_state.view;
 			D3DXMatrixTranspose(&d3d_mtx,&d3d_mtx);
-			const Matrix4& mtx=(const Matrix4&)d3d_mtx;
+			const Matrix4x4& mtx=(const Matrix4x4&)d3d_mtx;
 			unsigned i=0;
 			for (;i<state->vertex_count;++i,++src_verts) {
 				vertex_z_array[i] = (mtx[2][0] * src_verts->x + mtx[2][1] * src_verts->y + mtx[2][2] * src_verts->z + mtx[2][3]);
@@ -689,7 +688,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 	overlapping_polygon_count=0;
 	overlapping_vertex_count=0;
 
-	SNAPSHOT_SAY(("SortingSystem - Done flushing\n"));
+	SNAPSHOT_SAY(("SortingSystem - Done flushing"));
 
 }
 
@@ -697,14 +696,14 @@ void SortingRendererClass::Flush_Sorting_Pool()
 
 void SortingRendererClass::Flush()
 {
-	Matrix4 old_view;
-	Matrix4 old_world;
+	Matrix4x4 old_view;
+	Matrix4x4 old_world;
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,old_view);
 	DX8Wrapper::Get_Transform(D3DTS_WORLD,old_world);
 
 	while (SortingNodeStruct* state=sorted_list.Head()) {
 		state->Remove();
-		
+
 		if ((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
 			(state->sorting_state.vertex_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING)) {
 			Insert_To_Sorting_Pool(state);
@@ -784,7 +783,7 @@ void SortingRendererClass::Deinit()
 
 void SortingRendererClass::Insert_VolumeParticle(
 	const SphereClass& bounding_sphere,
-	unsigned short start_index, 
+	unsigned short start_index,
 	unsigned short polygon_count,
 	unsigned short min_vertex_index,
 	unsigned short vertex_count,
@@ -802,7 +801,8 @@ void SortingRendererClass::Insert_VolumeParticle(
 	SortingNodeStruct* state=Get_Sorting_Struct();
 	DX8Wrapper::Get_Render_State(state->sorting_state);
 
- 	WWASSERT(((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
+	WWASSERT(
+		((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
 		(state->sorting_state.vertex_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING)));
 
 	state->bounding_sphere=bounding_sphere;
@@ -823,14 +823,14 @@ void SortingRendererClass::Insert_VolumeParticle(
 	D3DXVec3Transform(
 		&transformed_vec,
 		&vec,
-		&mtx); 
+		&mtx);
 	state->transformed_center=Vector3(transformed_vec[0],transformed_vec[1],transformed_vec[2]);
 
 
 	// BUT WHAT IS THE DEAL WITH THE VERTCOUNT AND POLYCOUNT BEING N BUT TRANSFORMED CENTER COUNT == 1
 
 	//THE TRANSFORMED CENTER[2] IS THE ZBUFFER DEPTH
-	
+
 	/// @todo lorenzen sez use a bucket sort here... and stop copying so much data so many times
 
 	SortingNodeStruct* node=sorted_list.Head();
@@ -865,10 +865,3 @@ void SortingRendererClass::Insert_VolumeParticle(
 //	}
 //#endif
 }
-
-
-
-
-
-
-

@@ -30,16 +30,13 @@
 
 #pragma once
 
-#ifndef __GAMESPYMISCPREFERENCES_H__
-#define __GAMESPYMISCPREFERENCES_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "Common/UserPreferences.h"
 
 //-----------------------------------------------------------------------------
-// GameSpyMiscPreferences base class 
+// GameSpyMiscPreferences base class
 //-----------------------------------------------------------------------------
 class GameSpyMiscPreferences : public UserPreferences
 {
@@ -57,5 +54,3 @@ public:
 
 	Int getMaxMessagesPerUpdate( void );
 };
-
-#endif // __GAMESPYMISCPREFERENCES_H__

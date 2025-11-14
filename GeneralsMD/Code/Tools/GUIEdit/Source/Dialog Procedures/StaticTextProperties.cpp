@@ -24,12 +24,12 @@
 
 // FILE: StaticTextProperties.cpp /////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -84,7 +84,7 @@ static LRESULT CALLBACK staticTextPropertiesCallback( HWND hWndDialog,
 	// are designed to have controls doing the same functionality
 	// and names
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message, 
+	if( HandleCommonDialogMessages( hWndDialog, message,
 																	wParam, lParam, &returnCode ) == TRUE )
 		return returnCode;
 
@@ -97,7 +97,7 @@ static LRESULT CALLBACK staticTextPropertiesCallback( HWND hWndDialog,
 //			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 //			HWND hWndControl = (HWND)lParam;  // control window handle
- 
+
       switch( controlID )
       {
 
@@ -112,7 +112,7 @@ static LRESULT CALLBACK staticTextPropertiesCallback( HWND hWndDialog,
 						SetDlgItemText( hWndDialog, BUTTON_CENTERED, "No" );
 					break;
 
-				}  // end centered
+				}
 
 				// --------------------------------------------------------------------
         case IDOK:
@@ -150,13 +150,13 @@ static LRESULT CALLBACK staticTextPropertiesCallback( HWND hWndDialog,
 						// text data
 						TextData *textData = (TextData *)window->winGetUserData();
 						textData->centered = currCentered;
-						
-					}  // end if
+
+					}
 
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end OK
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -165,13 +165,13 @@ static LRESULT CALLBACK staticTextPropertiesCallback( HWND hWndDialog,
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -180,15 +180,15 @@ static LRESULT CALLBACK staticTextPropertiesCallback( HWND hWndDialog,
       DestroyWindow( hWndDialog );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end staticTextPropertiesCallback
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -248,10 +248,10 @@ HWND InitStaticTextPropertiesDialog( GameWindow *window )
 
 	// select the button enabled state for display
 	SwitchToState( STATIC_TEXT_ENABLED, dialog );
-	
+
 	return dialog;
 
-}  // end InitStaticTextPropertiesDialog
+}
 
 
 

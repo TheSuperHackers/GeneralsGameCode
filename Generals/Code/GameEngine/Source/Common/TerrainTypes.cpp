@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_TERRAIN_TYPE_NAMES
 
@@ -39,7 +39,7 @@
 TerrainTypeCollection *TheTerrainTypes = NULL;
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
-const FieldParse TerrainType::m_terrainTypeFieldParseTable[] = 
+const FieldParse TerrainType::m_terrainTypeFieldParseTable[] =
 {
 
 	{ "Texture",		INI::parseAsciiString,			NULL,		offsetof( TerrainType, m_texture ) },
@@ -63,14 +63,14 @@ TerrainType::TerrainType( void )
 	m_restrictConstruction = FALSE;
 	m_next = NULL;
 
-}  // end TerrainType
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 TerrainType::~TerrainType( void )
 {
 
-}  // end ~TerrainType
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ TerrainTypeCollection::TerrainTypeCollection( void )
 
 	m_terrainList = NULL;
 
-}  // end TerrainTypeCollection
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -99,14 +99,14 @@ TerrainTypeCollection::~TerrainTypeCollection( void )
 		temp = m_terrainList->friend_getNext();
 
 		// delete the head of the type list
-		m_terrainList->deleteInstance();
+		deleteInstance(m_terrainList);
 
 		// set the new head of the type list
 		m_terrainList = temp;
 
-	}  // end while
+	}
 
-}  // end ~TerrainTypeCollection
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Find a terrain type given the name */
@@ -121,12 +121,12 @@ TerrainType *TerrainTypeCollection::findTerrain( AsciiString name )
 		if( terrain->getName() == name )
 			return terrain;
 
-	}  // end for terrain
+	}
 
 	// not found
 	return NULL;
 
-}  // end findTerrain
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Allocate a new type, assign the name, and tie to type list */
@@ -148,8 +148,8 @@ TerrainType *TerrainTypeCollection::newTerrain( AsciiString name )
 		terrain->friend_setTexture( defaultTerrain->getTexture() );
 		terrain->friend_setClass( defaultTerrain->getClass() );
 		terrain->friend_setBlendEdge( defaultTerrain->isBlendEdge() );
-			
-	}  // end if
+
+	}
 */
 
 	// assign a name
@@ -158,8 +158,8 @@ TerrainType *TerrainTypeCollection::newTerrain( AsciiString name )
 	// tie to list
 	terrain->friend_setNext( m_terrainList );
 	m_terrainList = terrain;
-			
+
 	// return the new terrain
 	return terrain;
 
-}  // end newTerrain
+}

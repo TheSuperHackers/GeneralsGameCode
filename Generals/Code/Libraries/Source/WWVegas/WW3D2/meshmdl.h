@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef MESHMDL_H
-#define MESHMDL_H
 
 #include "vector2.h"
 #include "vector3.h"
@@ -82,6 +76,7 @@ class LightEnvironmentClass;
 class DX8MeshRendererClass;
 class DX8PolygonRendererAttachClass;
 class DX8SkinFVFCategoryContainer;
+class GapFillerClass;
 
 struct VertexFormatXYZNDUV2;
 
@@ -99,13 +94,13 @@ struct VertexFormatXYZNDUV2;
 ** Copy/Add_Ref Rules:
 ** The purpose of this model was to share data between models whenever possible.  To this
 ** end, some of the arrays of data are handled differently:
-** 
+**
 ** ALWAYS SHARED: These are *ALWAYS* Add_Ref'd and thus all point to the same array
 ** Poly - Connectivity of a mesh are always shared (cannot be changed at runtime)
 ** VertexShadeIdx - Shade indices of a mesh are always shared (cannot be changed at runtime)
 ** VertexInfluences - Vertex bone attachments are always shared (cannot be changed at runtime)
 **
-** SHARED UNTIL SCALED, SKIN DEFORMED, or DAMAGED:  
+** SHARED UNTIL SCALED, SKIN DEFORMED, or DAMAGED:
 ** Vertex - vertex positions must be copied if any are moved...
 ** VertexNorm - vertex normals cannot be shared if a vertex is moved
 ** PlaneEq - plane equations cannot be shared if a vertex is moved
@@ -115,14 +110,18 @@ struct VertexFormatXYZNDUV2;
 ** UV, DIG, DCG, SCG
 ** Texture, Shader, Material,
 ** TextureArray, MaterialArray, ShaderArray
-** 
 */
 
+
+/**
+** GapFillerClass
+** This class is used to generate gap-filling polygons for "N-Patched" meshes
+*/
 class GapFillerClass : public W3DMPO
 {
 	W3DMPO_GLUE(GapFillerClass)
 
-	Vector3i* PolygonArray;
+	TriIndex* PolygonArray;
 	unsigned PolygonCount;
 	unsigned ArraySize;
 	TextureClass** TextureArray[MeshMatDescClass::MAX_PASSES][MeshMatDescClass::MAX_TEX_STAGES];
@@ -130,13 +129,13 @@ class GapFillerClass : public W3DMPO
 	ShaderClass* ShaderArray[MeshMatDescClass::MAX_PASSES];
 	MeshModelClass* mmc;
 
-	GapFillerClass& operator = (const GapFillerClass & that) {}
+	GapFillerClass& operator = (const GapFillerClass&) CPP_11(= delete);
 public:
 	GapFillerClass(MeshModelClass* mmc);
 	GapFillerClass(const GapFillerClass& that);
 	~GapFillerClass();
 
-	WWINLINE const Vector3i* Get_Polygon_Array() const { return PolygonArray; }
+	WWINLINE const TriIndex* Get_Polygon_Array() const { return PolygonArray; }
 	WWINLINE unsigned Get_Polygon_Count() const { return PolygonCount; }
 	WWINLINE TextureClass** Get_Texture_Array(int pass, int stage) const { return TextureArray[pass][stage]; }
 	WWINLINE VertexMaterialClass** Get_Material_Array(int pass) const { return MaterialArray[pass]; }
@@ -149,21 +148,18 @@ public:
 class MeshModelClass : public MeshGeometryClass
 {
 	W3DMPO_GLUE(MeshModelClass)
-	// Jani: Adding this here temporarily... must fine better place
-//	Vector3i*					GapFillerPolygonArray;
-//	unsigned						GapFillerPolygonCount;
 	GapFillerClass* GapFiller;
 
-public:	
+public:
 
 	MeshModelClass(void);
 	MeshModelClass(const MeshModelClass & that);
 	~MeshModelClass(void);
-	
+
 	MeshModelClass & operator = (const MeshModelClass & that);
 	void							Reset(int polycount,int vertcount,int passcount);
 	void							Register_For_Rendering();
-	void							Shadow_Render(SpecialRenderInfoClass & rinfo,const Matrix3D & tm,const HTreeClass * htree);	
+	void							Shadow_Render(SpecialRenderInfoClass & rinfo,const Matrix3D & tm,const HTreeClass * htree);
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	// Material interface, All of these functions call through to the current
@@ -171,11 +167,10 @@ public:
 	/////////////////////////////////////////////////////////////////////////////////////
 	void							Set_Pass_Count(int passes)														{ CurMatDesc->Set_Pass_Count(passes); }
 	int							Get_Pass_Count(void) const														{ return CurMatDesc->Get_Pass_Count(); }
-	
+
 	const Vector2 *			Get_UV_Array(int pass = 0, int stage = 0)									{ return CurMatDesc->Get_UV_Array(pass,stage); }
 	int							Get_UV_Array_Count(void)														{ return CurMatDesc->Get_UV_Array_Count(); }
 	const Vector2 *			Get_UV_Array_By_Index(int index)												{ return CurMatDesc->Get_UV_Array_By_Index(index, false); }
-//	Vector3i *					Get_UVIndex_Array (int pass = 0, bool create = true)					{ return CurMatDesc->Get_UVIndex_Array(pass,create); }
 
 	unsigned *					Get_DCG_Array(int pass)															{ return CurMatDesc->Get_DCG_Array(pass); }
 	unsigned *					Get_DIG_Array(int pass)															{ return CurMatDesc->Get_DIG_Array(pass); }
@@ -190,10 +185,10 @@ public:
 
 	// the "Get" functions add a reference before returning the pointer (if appropriate)
 	VertexMaterialClass *	Get_Single_Material(int pass=0) const										{ return CurMatDesc->Get_Single_Material(pass); }
-	TextureClass *				Get_Single_Texture(int pass=0,int stage=0) const						{ return CurMatDesc->Get_Single_Texture(pass,stage); }	
+	TextureClass *				Get_Single_Texture(int pass=0,int stage=0) const						{ return CurMatDesc->Get_Single_Texture(pass,stage); }
 	ShaderClass					Get_Single_Shader(int pass=0) const											{ return CurMatDesc->Get_Single_Shader(pass); }
 
-	// the "Peek" functions just return the pointer and it's the caller's responsibility to 
+	// the "Peek" functions just return the pointer and it's the caller's responsibility to
 	// maintain a reference to an object with a reference to the data
 	VertexMaterialClass *	Peek_Single_Material(int pass=0) const										{ return CurMatDesc->Peek_Single_Material(pass); }
 	TextureClass *				Peek_Single_Texture(int pass=0,int stage=0) const						{ return CurMatDesc->Peek_Single_Texture(pass,stage); }
@@ -255,6 +250,8 @@ public:
 
 	void							Init_For_NPatch_Rendering();
 	const GapFillerClass*	Get_Gap_Filler() const { return GapFiller; }
+
+	bool							Has_Polygon_Renderers(void) { return !PolygonRendererList.Is_Empty(); }
 
 protected:
 
@@ -328,7 +325,7 @@ protected:
 	void install_materials(MeshLoadContextClass * loadinfo);
 	void clone_materials(const MeshModelClass & srcmesh);
 	void install_alternate_material_desc(MeshLoadContextClass * context);
-	
+
 	// Material Descriptions
 	// DefMatDesc - the default material description, allocated in constructor, always present.
 	// AlternateMatDes - an optional alternate material description, allocated at load time if needed
@@ -339,7 +336,7 @@ protected:
 
 	// Collection of the unique materials in the mesh
 	MaterialInfoClass	*									MatInfo;
-	
+
 	// DX8 Mesh rendering system data
 	DX8PolygonRendererList								PolygonRendererList;
 
@@ -364,27 +361,22 @@ protected:
 
 #if 0
 inline void	MeshModelClass::Apply_Deformation (float percent, bool additive)
-{	
+{
 	MeshDeformer.Apply (*this, percent, additive);
 }
 
 inline void	MeshModelClass::Apply_Deformation (int set_index, float percent, bool additive)
-{	
+{
 	MeshDeformer.Apply (*this, set_index, percent, additive);
 }
 
 inline void	MeshModelClass::Apply_Deformation (const Vector3 &point, float percent, bool additive)
-{	
+{
 	MeshDeformer.Apply (*this, point, percent, additive);
 }
 
 inline void	MeshModelClass::Apply_Deformation (const SphereClass &sphere, float percent, bool additive)
-{	
+{
 	MeshDeformer.Apply (*this, sphere, percent, additive);
 }
 #endif
-
-
-
-#endif
-

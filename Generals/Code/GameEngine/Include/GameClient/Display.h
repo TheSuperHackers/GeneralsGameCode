@@ -28,10 +28,6 @@
 
 #pragma once
 
-#ifndef _GAME_DISPLAY_H_
-#define _GAME_DISPLAY_H_
-
-#include <stdio.h>
 #include "Common/SubsystemInterface.h"
 #include "View.h"
 #include "GameClient/Color.h"
@@ -51,7 +47,7 @@ class DebugDisplayInterface;
 class Radar;
 class Image;
 class DisplayString;
-enum StaticGameLODLevel;
+enum StaticGameLODLevel CPP_11(: Int);
 /**
  * The Display class implements the Display interface
  */
@@ -78,7 +74,7 @@ public:
 
 	//---------------------------------------------------------------------------------------
 	// Display attribute methods
-	virtual void setWidth( UnsignedInt width );										///< Sets the width of the display		
+	virtual void setWidth( UnsignedInt width );										///< Sets the width of the display
 	virtual void setHeight( UnsignedInt height );									///< Sets the height of the display
 	virtual UnsignedInt getWidth( void ) { return m_width; }			///< Returns the width of the display
 	virtual UnsignedInt getHeight( void ) { return m_height; }		///< Returns the height of the display
@@ -92,7 +88,7 @@ public:
  	virtual void setGamma(Real gamma, Real bright, Real contrast, Bool calibrate) {};
 	virtual Bool testMinSpecRequirements(Bool *videoPassed, Bool *cpuPassed, Bool *memPassed,StaticGameLODLevel *idealVideoLevel=NULL, Real *cpuTime=NULL) {*videoPassed=*cpuPassed=*memPassed=true; return true;}
 	virtual void doSmartAssetPurgeAndPreload(const char* usageFileName) = 0;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual void dumpAssetUsage(const char* mapname) = 0;
 #endif
 
@@ -109,6 +105,7 @@ public:
 
 	virtual void drawViews( void );																///< Render all views of the world
 	virtual void updateViews ( void );															///< Updates state of world views
+	virtual void stepViews(); ///< Update views for every fixed time step
 
 	virtual VideoBuffer*	createVideoBuffer( void ) = 0;							///< Create a video buffer that can be used for this display
 
@@ -118,17 +115,18 @@ public:
 	virtual	Bool isClippingEnabled( void ) = 0;
 	virtual	void enableClipping( Bool onoff ) = 0;
 
+	virtual void step() {}; ///< Do one fixed time step
 	virtual void draw( void );																		///< Redraw the entire display
 	virtual void setTimeOfDay( TimeOfDay tod ) = 0;								///< Set the time of day for this display
-	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius,Real attenuationWidth, 
+	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius,Real attenuationWidth,
 																 UnsignedInt increaseFrameTime, UnsignedInt decayFrameTime//, Bool donut = FALSE
 																 ) = 0;
 
 	/// draw a line on the display in pixel coordinates with the specified color
-	virtual void drawLine( Int startX, Int startY, Int endX, Int endY, 
+	virtual void drawLine( Int startX, Int startY, Int endX, Int endY,
 												 Real lineWidth, UnsignedInt lineColor ) = 0;
 	/// draw a line on the display in pixel coordinates with the specified 2 colors
-	virtual void drawLine( Int startX, Int startY, Int endX, Int endY, 
+	virtual void drawLine( Int startX, Int startY, Int endX, Int endY,
 												 Real lineWidth, UnsignedInt lineColor1, UnsignedInt lineColor2 ) = 0;
 	/// draw a rect border on the display in pixel coordinates with the specified color
 	virtual void drawOpenRect( Int startX, Int startY, Int width, Int height,
@@ -136,20 +134,21 @@ public:
 	/// draw a filled rect on the display in pixel coords with the specified color
 	virtual void drawFillRect( Int startX, Int startY, Int width, Int height,
 														 UnsignedInt color ) = 0;
-	
+
 	/// Draw a percentage of a rectange, much like a clock
 	virtual void drawRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color) = 0;
 	virtual void drawRemainingRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color) = 0;
 
 	/// draw an image fit within the screen coordinates
-	virtual void drawImage( const Image *image, Int startX, Int startY, 
+	virtual void drawImage( const Image *image, Int startX, Int startY,
 													Int endX, Int endY, Color color = 0xFFFFFFFF, DrawImageMode mode=DRAW_IMAGE_ALPHA) = 0;
 
 	/// draw a video buffer fit within the screen coordinates
-	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY, 
+	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream ) = 0;
+	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY,
 													Int endX, Int endY ) = 0;
 
-	/// FullScreen video playback 
+	/// FullScreen video playback
 	virtual void playLogoMovie( AsciiString movieName, Int minMovieLength, Int minCopyrightLength );
 	virtual void playMovie( AsciiString movieName );
 	virtual void stopMovie( void );
@@ -163,7 +162,7 @@ public:
 	virtual void clearShroud() = 0;														///< empty the entire shroud
 	virtual void setBorderShroudLevel(UnsignedByte level) = 0;	///<color that will appear in unused border terrain.
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual void dumpModelAssets(const char *path) = 0;	///< dump all used models/textures to a file.
 #endif
 	virtual void preloadModelAssets( AsciiString model ) = 0;	///< preload model asset
@@ -180,6 +179,7 @@ public:
 	virtual void setCinematicTextFrames( Int frames ) { m_cinematicTextFrames = frames; }
 
 	virtual Real getAverageFPS( void ) = 0;	///< returns the average FPS.
+	virtual Real getCurrentFPS( void ) = 0;	///< returns the current FPS.
 	virtual Int getLastFrameDrawCalls( void ) = 0;  ///< returns the number of draw calls issued in the previous frame
 
 protected:
@@ -230,6 +230,3 @@ typedef struct _DisplaySettings
 	Int bitDepth; //Color Depth
 	Bool windowed; //Window mode TRUE: we're windowed, FALSE: we're not windowed
 } DisplaySettings;
-
-
-#endif // _GAME_DISPLAY_H_

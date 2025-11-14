@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Player.h"
 #include "Common/Radar.h"
 #include "Common/ThingTemplate.h"
@@ -46,14 +46,14 @@
 ConvertToCarBombCrateCollide::ConvertToCarBombCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ConvertToCarBombCrateCollide::~ConvertToCarBombCrateCollide( void )
 {
 
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -68,14 +68,14 @@ Bool ConvertToCarBombCrateCollide::isValidToExecute( const Object *other ) const
 	{
 		return FALSE;
 	}
-	
+
 	if( other->isKindOf( KINDOF_AIRCRAFT ) || other->isKindOf( KINDOF_BOAT ) )
 	{
 		//Can't make carbombs out of planes and boats!
 		return FALSE;
 	}
 
-	if ( other->getStatusBits() & OBJECT_STATUS_IS_CARBOMB )
+	if( other->getStatusBits().test( OBJECT_STATUS_IS_CARBOMB ) )
 	{
 		return FALSE;// oops, sorry, I'll convert the next one.
 	}
@@ -95,7 +95,7 @@ Bool ConvertToCarBombCrateCollide::isValidToExecute( const Object *other ) const
 		//weaponset.
 		return FALSE;
 	}
-	
+
 	// Also make sure that the car isn't already a carbomb!
 	if( other->testWeaponSetFlag( WEAPONSET_CARBOMB ) )
 	{
@@ -131,7 +131,7 @@ Bool ConvertToCarBombCrateCollide::executeCrateBehavior( Object *other )
 	//This is kinda special... we will endow our new ride with our vision and shroud range, since we are driving
 	other->setVisionRange(getObject()->getVisionRange());
 	other->setShroudClearingRange(getObject()->getShroudClearingRange());
-	other->setStatus( OBJECT_STATUS_IS_CARBOMB );
+	other->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_CARBOMB ) );
 
 	ExperienceTracker *exp = other->getExperienceTracker();
 	if (exp)
@@ -159,7 +159,7 @@ void ConvertToCarBombCrateCollide::crc( Xfer *xfer )
 	// extend base class
 	CrateCollide::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -177,7 +177,7 @@ void ConvertToCarBombCrateCollide::xfer( Xfer *xfer )
 	// extend base class
 	CrateCollide::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -188,4 +188,4 @@ void ConvertToCarBombCrateCollide::loadPostProcess( void )
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+}

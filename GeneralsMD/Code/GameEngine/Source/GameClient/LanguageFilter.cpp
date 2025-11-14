@@ -23,22 +23,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/LanguageFilter.h"
 #include "Common/FileSystem.h"
 #include "Common/file.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 LanguageFilter *TheLanguageFilter = NULL;
 
-LanguageFilter::LanguageFilter() 
+LanguageFilter::LanguageFilter()
 {
 	//Modified by Saad
 	//Unnecessary
@@ -69,7 +64,7 @@ void LanguageFilter::init() {
 		}
 		UnicodeString uniword(word);
 		unHaxor(uniword);
-		//DEBUG_LOG(("Just read %ls from the bad word file.  Entered as %ls\n", word, uniword.str()));
+		//DEBUG_LOG(("Just read %ls from the bad word file.  Entered as %ls", word, uniword.str()));
 		m_wordList[uniword] = true;
 	}
 
@@ -86,7 +81,7 @@ void LanguageFilter::update() {
 
 wchar_t ignoredChars[] = L"-_*'\"";
 
-void LanguageFilter::filterLine(UnicodeString &line) 
+void LanguageFilter::filterLine(UnicodeString &line)
 {
 	WideChar *buf = NEW WideChar[line.getLength()+1];
 	wcscpy(buf, line.str());
@@ -106,7 +101,7 @@ void LanguageFilter::filterLine(UnicodeString &line)
 		unHaxor(token);
 		LangMapIter iter = m_wordList.find(token);
 		if (iter != m_wordList.end()) {
-			DEBUG_LOG(("Found word %ls in bad word list. Token was %ls\n", (*iter).first.str(), token.str()));
+			DEBUG_LOG(("Found word %ls in bad word list. Token was %ls", (*iter).first.str(), token.str()));
 			for (Int i = 0; i < len; ++i) {
 				*pos = L'*';
 				++pos;
@@ -192,7 +187,7 @@ Bool LanguageFilter::readWord(File *file1, WideChar *buf) {
 	return retval;
 }
 
-LanguageFilter * createLanguageFilter() 
+LanguageFilter * createLanguageFilter()
 {
 	return NEW LanguageFilter;
 }

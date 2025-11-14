@@ -24,12 +24,12 @@
 
 // FILE: MessageBox.cpp /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -46,7 +46,7 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "Common/NameKeyGenerator.h"
@@ -98,12 +98,12 @@ GameWindow *MessageBoxCancel(UnicodeString titleString,UnicodeString bodyString,
 //-------------------------------------------------------------------------------------------------
 /** Message Box window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType MessageBoxSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType MessageBoxSystem( GameWindow *window, UnsignedInt msg,
 										 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	
-	
-	switch( msg ) 
+
+
+	switch( msg )
 	{
 
 		//---------------------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ WindowMsgHandledType MessageBoxSystem( GameWindow *window, UnsignedInt msg,
 			window->winSetUserData( NULL );
 			break;
 
-		}  // end case
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -125,7 +125,7 @@ WindowMsgHandledType MessageBoxSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end input
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -137,57 +137,57 @@ WindowMsgHandledType MessageBoxSystem( GameWindow *window, UnsignedInt msg,
 			static NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonNo" ) );
 			static NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonCancel" ) );
 			WindowMessageBoxData *MsgBoxCallbacks = (WindowMessageBoxData *)window->winGetUserData();
-			
+
 			if( controlID == buttonOkID )
 			{
 				//simple enough,if we have a callback, call it, if not, then just destroy the window
 				if (MsgBoxCallbacks->okCallback)
 					MsgBoxCallbacks->okCallback();
-				
+
 				TheWindowManager->winDestroy(window);
 
-			}  // end if
+			}
 			else if( controlID == buttonYesID )
 			{
 				if (MsgBoxCallbacks->yesCallback)
 					MsgBoxCallbacks->yesCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
+			}
 			else if( controlID == buttonNoID )
 			{
 				if (MsgBoxCallbacks->noCallback)
 					MsgBoxCallbacks->noCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
+			}
 			else if( controlID == buttonCancelID )
 			{
 				if (MsgBoxCallbacks->cancelCallback)
 					MsgBoxCallbacks->cancelCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
-			
+			}
+
 			break;
 
-		}  // end selected
-		
+		}
+
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-}  // end MessageBoxSystem
+}
 //-------------------------------------------------------------------------------------------------
 /** Message Box window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType QuitMessageBoxSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType QuitMessageBoxSystem( GameWindow *window, UnsignedInt msg,
 										 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	
-	
-	switch( msg ) 
+
+
+	switch( msg )
 	{
 
 		//---------------------------------------------------------------------------------------------
@@ -197,7 +197,7 @@ WindowMsgHandledType QuitMessageBoxSystem( GameWindow *window, UnsignedInt msg,
 			window->winSetUserData( NULL );
 			break;
 
-		}  // end case
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -209,7 +209,7 @@ WindowMsgHandledType QuitMessageBoxSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end input
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -221,45 +221,45 @@ WindowMsgHandledType QuitMessageBoxSystem( GameWindow *window, UnsignedInt msg,
 			static NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( AsciiString( "QuitMessageBox.wnd:ButtonNo" ) );
 			static NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( AsciiString( "QuitMessageBox.wnd:ButtonCancel" ) );
 			WindowMessageBoxData *MsgBoxCallbacks = (WindowMessageBoxData *)window->winGetUserData();
-			
+
 			if( controlID == buttonOkID )
 			{
 				//simple enough,if we have a callback, call it, if not, then just destroy the window
 				if (MsgBoxCallbacks->okCallback)
 					MsgBoxCallbacks->okCallback();
-				
+
 				TheWindowManager->winDestroy(window);
 
-			}  // end if
+			}
 			else if( controlID == buttonYesID )
 			{
 				if (MsgBoxCallbacks->yesCallback)
 					MsgBoxCallbacks->yesCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
+			}
 			else if( controlID == buttonNoID )
 			{
 				if (MsgBoxCallbacks->noCallback)
 					MsgBoxCallbacks->noCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
+			}
 			else if( controlID == buttonCancelID )
 			{
 				if (MsgBoxCallbacks->cancelCallback)
 					MsgBoxCallbacks->cancelCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
-			
+			}
+
 			break;
 
-		}  // end selected
-		
+		}
+
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-}  // end MessageBoxSystem
+}

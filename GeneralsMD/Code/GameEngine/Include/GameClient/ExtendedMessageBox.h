@@ -30,13 +30,10 @@
 
 #pragma once
 
-#ifndef __EXTENDEDMESSAGEBOX_H_
-#define __EXTENDEDMESSAGEBOX_H_
-
 #include "GameClient/GameWindowManager.h"
 
 // return codes for message box callbacks
-enum MessageBoxReturnType {
+enum MessageBoxReturnType CPP_11(: Int) {
 	MB_RETURN_CLOSE,
 	MB_RETURN_KEEPOPEN
 };
@@ -70,5 +67,3 @@ GameWindow *ExMessageBoxOk					(UnicodeString titleString,UnicodeString bodyStri
 
 GameWindow *ExMessageBoxCancel			(UnicodeString titleString,UnicodeString bodyString, void *userData,
 																		 MessageBoxFunc cancelCallback);
-
-#endif //__EXTENDEDMESSAGEBOX_H_

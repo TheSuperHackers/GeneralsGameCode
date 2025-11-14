@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
@@ -70,11 +70,6 @@
 #include "GameNetwork/GameSpy/LobbyUtils.h"
 #include "GameNetwork/RankPointValue.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 void refreshGameList( Bool forceRefresh = FALSE );
 void refreshPlayerList( Bool forceRefresh = FALSE );
 
@@ -133,7 +128,7 @@ static Int groupRoomToJoin = 0;
 static Int	initialGadgetDelay = 2;
 static Bool justEntered = FALSE;
 
-#if defined(_INTERNAL) || defined(_DEBUG)
+#if defined(RTS_DEBUG)
 Bool g_fakeCRC = FALSE;
 Bool g_debugSlots = FALSE;
 #endif
@@ -176,7 +171,7 @@ Bool handleLobbySlashCommands(UnicodeString uText)
 	else if (token == "refresh")
 	{
 		// Added 2/19/03 added the game refresh
-		refreshGameList(TRUE);	
+		refreshGameList(TRUE);
 		refreshPlayerList(TRUE);
 		return TRUE; // was a slash command
 	}
@@ -202,7 +197,7 @@ Bool handleLobbySlashCommands(UnicodeString uText)
 		return TRUE; // was a slash command
 	}
 	*/
-#if defined(_INTERNAL) || defined(_DEBUG)
+#if defined(RTS_DEBUG)
 	else if (token == "fakecrc")
 	{
 		g_fakeCRC = !g_fakeCRC;
@@ -318,7 +313,7 @@ static void playerTooltip(GameWindow *window,
 	rank = i;
 	AsciiString sideName = "GUI:RandomSide";
 	if (info->m_side > 0)
-	{		
+	{
 		const PlayerTemplate *fac = ThePlayerTemplateStore->getNthPlayerTemplate(info->m_side);
 		if (fac)
 		{
@@ -349,7 +344,7 @@ static void populateGroupRoomListbox(GameWindow *lb)
 		GameSpyGroupRoom room = iter->second;
 		if (room.m_groupID != TheGameSpyConfig->getQMChannel())
 		{
-			DEBUG_LOG(("populateGroupRoomListbox(): groupID %d\n", room.m_groupID));
+			DEBUG_LOG(("populateGroupRoomListbox(): groupID %d", room.m_groupID));
 			if (room.m_groupID == TheGameSpyInfo->getCurrentGroupRoom())
 			{
 				Int selected = GadgetComboBoxAddEntry(lb, room.m_translatedName, GameSpyColor[GSCOLOR_CURRENTROOM]);
@@ -364,14 +359,14 @@ static void populateGroupRoomListbox(GameWindow *lb)
 		}
 		else
 		{
-			DEBUG_LOG(("populateGroupRoomListbox(): skipping QM groupID %d\n", room.m_groupID));
+			DEBUG_LOG(("populateGroupRoomListbox(): skipping QM groupID %d", room.m_groupID));
 		}
 	}
 
 	GadgetComboBoxSetSelectedPos(lb, indexToSelect);
 }
 
-static const char *rankNames[] = {
+static const char *const rankNames[] = {
 	"Private",
 	"Corporal",
 	"Sergeant",
@@ -383,6 +378,8 @@ static const char *rankNames[] = {
 	"Brigadier",
 	"Commander",
 };
+static_assert(ARRAY_SIZE(rankNames) == MAX_RANKS, "Incorrect array size");
+
 
 const Image* LookupSmallRankImage(Int side, Int rankPoints)
 {
@@ -415,7 +412,7 @@ const Image* LookupSmallRankImage(Int side, Int rankPoints)
 	AsciiString fullImageName;
 	fullImageName.format("%s-%s", rankNames[rank], sideStr.str());
 	const Image *img = TheMappedImageCollection->findImageByName(fullImageName);
-	DEBUG_ASSERTLOG(img, ("*** Could not load small rank image '%s' from TheMappedImageCollection!\n", fullImageName.str()));
+	DEBUG_ASSERTLOG(img, ("*** Could not load small rank image '%s' from TheMappedImageCollection!", fullImageName.str()));
 	return img;
 }
 
@@ -504,7 +501,7 @@ void PopulateLobbyPlayerListbox(void)
 			uStr = GadgetListBoxGetText(listboxLobbyPlayers, selectedIndices[i], 2);
 			selectedName.translate(uStr);
 			selectedNames.insert(selectedName);
-			DEBUG_LOG(("Saving off old selection %d (%s)\n", selectedIndices[i], selectedName.str()));
+			DEBUG_LOG(("Saving off old selection %d (%s)", selectedIndices[i], selectedName.str()));
 		}
 
 		// save off old top entry
@@ -523,7 +520,7 @@ void PopulateLobbyPlayerListbox(void)
 				selIt = selectedNames.find(info.m_name);
 				if (selIt != selectedNames.end())
 				{
-					DEBUG_LOG(("Marking index %d (%s) to re-select\n", index, info.m_name.str()));
+					DEBUG_LOG(("Marking index %d (%s) to re-select", index, info.m_name.str()));
 					indicesToSelect.insert(index);
 				}
 			}
@@ -541,7 +538,7 @@ void PopulateLobbyPlayerListbox(void)
 				selIt = selectedNames.find(info.m_name);
 				if (selIt != selectedNames.end())
 				{
-					DEBUG_LOG(("Marking index %d (%s) to re-select\n", index, info.m_name.str()));
+					DEBUG_LOG(("Marking index %d (%s) to re-select", index, info.m_name.str()));
 					indicesToSelect.insert(index);
 				}
 			}
@@ -559,7 +556,7 @@ void PopulateLobbyPlayerListbox(void)
 				selIt = selectedNames.find(info.m_name);
 				if (selIt != selectedNames.end())
 				{
-					DEBUG_LOG(("Marking index %d (%s) to re-select\n", index, info.m_name.str()));
+					DEBUG_LOG(("Marking index %d (%s) to re-select", index, info.m_name.str()));
 					indicesToSelect.insert(index);
 				}
 			}
@@ -568,14 +565,18 @@ void PopulateLobbyPlayerListbox(void)
 		// restore selection
 		if (indicesToSelect.size())
 		{
-			std::set<Int>::const_iterator indexIt;
-			Int *newIndices = NEW Int[indicesToSelect.size()];
-			for (i=0, indexIt = indicesToSelect.begin(); indexIt != indicesToSelect.end(); ++i, ++indexIt)
+			std::set<Int>::const_iterator indexIt = indicesToSelect.begin();
+			const size_t count = indicesToSelect.size();
+			size_t index = 0;
+			Int *newIndices = NEW Int[count];
+			while (index < count)
 			{
-				newIndices[i] = *indexIt;
-				DEBUG_LOG(("Queueing up index %d to re-select\n", *indexIt));
+				newIndices[index] = *indexIt;
+				DEBUG_LOG(("Queueing up index %d to re-select", *indexIt));
+				++index;
+				++indexIt;
 			}
-			GadgetListBoxSetSelected(listboxLobbyPlayers, newIndices, indicesToSelect.size());
+			GadgetListBoxSetSelected(listboxLobbyPlayers, newIndices, count);
 			delete[] newIndices;
 		}
 
@@ -652,19 +653,19 @@ void WOLLobbyMenuInit( WindowLayout *layout, void *userData )
 	{
 		if (groupRoomToJoin)
 		{
-			DEBUG_LOG(("WOLLobbyMenuInit() - rejoining group room %d\n", groupRoomToJoin));
+			DEBUG_LOG(("WOLLobbyMenuInit() - rejoining group room %d", groupRoomToJoin));
 			TheGameSpyInfo->joinGroupRoom(groupRoomToJoin);
 			groupRoomToJoin = 0;
 		}
 		else
 		{
-			DEBUG_LOG(("WOLLobbyMenuInit() - joining best group room\n"));
+			DEBUG_LOG(("WOLLobbyMenuInit() - joining best group room"));
 			TheGameSpyInfo->joinBestGroupRoom();
 		}
 	}
 	else
 	{
-		DEBUG_LOG(("WOLLobbyMenuInit() - not joining group room because we're already in one\n"));
+		DEBUG_LOG(("WOLLobbyMenuInit() - not joining group room because we're already in one"));
 	}
 
 	GrabWindowInfo();
@@ -679,7 +680,7 @@ void WOLLobbyMenuInit( WindowLayout *layout, void *userData )
 //	TheShell->registerWithAnimateManager(parent, WIN_ANIMATION_SLIDE_TOP, TRUE);
 	TheShell->showShellMap(TRUE);
 	TheGameSpyGame->reset();
-	
+
 	CustomMatchPreferences pref;
 //	GameWindow *slider = TheWindowManager->winGetWindowFromId(parent, sliderChatAdjustID);
 //	if (slider)
@@ -704,7 +705,7 @@ void WOLLobbyMenuInit( WindowLayout *layout, void *userData )
 	if(win)
 		win->winHide(TRUE);
 	DontShowMainMenu = TRUE;
-} // WOLLobbyMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** This is called when a shutdown is complete for this menu */
@@ -727,7 +728,7 @@ static void shutdownComplete( WindowLayout *layout )
 
 	nextScreen = NULL;
 
-}  // end if
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Lobby Menu shutdown method */
@@ -772,7 +773,7 @@ void WOLLobbyMenuShutdown( WindowLayout *layout, void *userData )
 		shutdownComplete( layout );
 		return;
 
-	}  //end if
+	}
 
 	TheShell->reverseAnimatewindow();
 	DontShowMainMenu = FALSE;
@@ -780,7 +781,7 @@ void WOLLobbyMenuShutdown( WindowLayout *layout, void *userData )
 	RaiseGSMessageBox();
 	TheTransitionHandler->reverse("WOLCustomLobbyFade");
 
-}  // WOLLobbyMenuShutdown
+}
 
 static void fillPlayerInfo(const PeerResponse *resp, PlayerInfo *info)
 {
@@ -844,7 +845,7 @@ static const char* getMessageString(Int t)
 #endif // PERF_TEST
 
 //-------------------------------------------------------------------------------------------------
-/** refreshGameList 
+/** refreshGameList
 		The Bool is used to force refresh if the refresh button was hit.*/
 //-------------------------------------------------------------------------------------------------
 static void refreshGameList( Bool forceRefresh )
@@ -855,19 +856,19 @@ static void refreshGameList( Bool forceRefresh )
 	{
 		if (TheGameSpyInfo->hasStagingRoomListChanged())
 		{
-			//DEBUG_LOG(("################### refreshing game list\n"));
-			//DEBUG_LOG(("gameRefreshTime=%d, refreshInterval=%d, now=%d\n", gameListRefreshTime, refreshInterval, timeGetTime()));
+			//DEBUG_LOG(("################### refreshing game list"));
+			//DEBUG_LOG(("gameRefreshTime=%d, refreshInterval=%d, now=%d", gameListRefreshTime, refreshInterval, timeGetTime()));
 			RefreshGameListBoxes();
 			gameListRefreshTime = timeGetTime();
 		} else {
 			//DEBUG_LOG(("-"));
 		}
 	} else {
-		//DEBUG_LOG(("gameListRefreshTime: %d refreshInterval: %d\n"));
+		//DEBUG_LOG(("gameListRefreshTime: %d refreshInterval: %d", gameListRefreshTime, refreshInterval));
 	}
 }
 //-------------------------------------------------------------------------------------------------
-/** refreshPlayerList 
+/** refreshPlayerList
 		The Bool is used to force refresh if the refresh button was hit.*/
 //-------------------------------------------------------------------------------------------------
 static void refreshPlayerList( Bool forceRefresh )
@@ -901,9 +902,9 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 	{
 		SignalUIInteraction(SHELL_SCRIPT_HOOK_GENERALS_ONLINE_ENTERED_FROM_GAME);
 	}
-	
 
-	// We'll only be successful if we've requested to 
+
+	// We'll only be successful if we've requested to
 	if(isShuttingDown && TheShell->isAnimFinished() && TheTransitionHandler->isFinished())
 		shutdownComplete(layout);
 
@@ -955,7 +956,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 				}
 				else
 				{
-					DEBUG_LOG(("WOLLobbyMenuUpdate() - joining best group room\n"));
+					DEBUG_LOG(("WOLLobbyMenuUpdate() - joining best group room"));
 					TheGameSpyInfo->joinBestGroupRoom();
 				}
 				populateGroupRoomListbox(comboLobbyGroupRooms);
@@ -999,7 +1000,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 			case PeerResponse::PEERRESPONSE_PLAYERUTM:
 			case PeerResponse::PEERRESPONSE_ROOMUTM:
 				{
-					DEBUG_LOG(("Putting off a UTM in the lobby\n"));
+					DEBUG_LOG(("Putting off a UTM in the lobby"));
 					TheLobbyQueuedUTMs.push_back(resp);
 				}
 				break;
@@ -1030,6 +1031,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 					TheGameSpyInfo->reset();
 					TheShell->pop();
 				}
+				break;
 			case PeerResponse::PEERRESPONSE_CREATESTAGINGROOM:
 				{
 					sawImportantMessage = TRUE;
@@ -1067,7 +1069,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 								const char *firstPlayer = resp.stagingRoomPlayerNames[i].c_str();
 								if (!strcmp(hostName.str(), firstPlayer))
 								{
-									DEBUG_LOG(("Saw host %s == %s in slot %d\n", hostName.str(), firstPlayer, i));
+									DEBUG_LOG(("Saw host %s == %s in slot %d", hostName.str(), firstPlayer, i));
 									isHostPresent = TRUE;
 								}
 							}
@@ -1111,13 +1113,13 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 						GSMessageBoxOk(TheGameText->fetch("GUI:JoinFailedDefault"), s);
 						if (groupRoomToJoin)
 						{
-							DEBUG_LOG(("WOLLobbyMenuUpdate() - rejoining group room %d\n", groupRoomToJoin));
+							DEBUG_LOG(("WOLLobbyMenuUpdate() - rejoining group room %d", groupRoomToJoin));
 							TheGameSpyInfo->joinGroupRoom(groupRoomToJoin);
 							groupRoomToJoin = 0;
 						}
 						else
 						{
-							DEBUG_LOG(("WOLLobbyMenuUpdate() - joining best group room\n"));
+							DEBUG_LOG(("WOLLobbyMenuUpdate() - joining best group room"));
 							TheGameSpyInfo->joinBestGroupRoom();
 						}
 					}
@@ -1171,6 +1173,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 							room.setExeCRC(resp.stagingRoom.exeCRC);
 							room.setIniCRC(resp.stagingRoom.iniCRC);
 							room.setAllowObservers(resp.stagingRoom.allowObservers);
+              room.setUseStats(resp.stagingRoom.useStats);
 							room.setPingString(resp.stagingServerPingString.c_str());
 							room.setLadderIP(resp.stagingServerLadderIP.c_str());
 							room.setLadderPort(resp.stagingRoom.ladderPort);
@@ -1230,8 +1233,8 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 									}
 								}
 							}
-							DEBUG_ASSERTCRASH(numPlayers, ("Game had no players!\n"));
-							//DEBUG_LOG(("Saw room: hasPass=%d, allowsObservers=%d\n", room.getHasPassword(), room.getAllowObservers()));
+							DEBUG_ASSERTCRASH(numPlayers, ("Game had no players!"));
+							//DEBUG_LOG(("Saw room: hasPass=%d, allowsObservers=%d", room.getHasPassword(), room.getAllowObservers()));
 							if (resp.stagingRoom.action == PEER_ADD)
 							{
 								TheGameSpyInfo->addStagingRoom(room);
@@ -1276,38 +1279,38 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 #ifdef PERF_TEST
 		// check performance
 		end = timeGetTime();
-		PERF_LOG(("Frame time was %d ms\n", end-start));
+		PERF_LOG(("Frame time was %d ms", end-start));
 		std::list<Int>::const_iterator it;
 		for (it = responses.begin(); it != responses.end(); ++it)
 		{
-			PERF_LOG(("  %s\n", getMessageString(*it)));
+			PERF_LOG(("  %s", getMessageString(*it)));
 		}
-		PERF_LOG(("\n"));
+		PERF_LOG((""));
 #endif // PERF_TEST
 
 #if 0
-// Removed 2-17-03 to pull out into a function so we can do the same checks 
+// Removed 2-17-03 to pull out into a function so we can do the same checks
 		Int refreshInterval = gameListRefreshInterval;
 
 		if ((gameListRefreshTime == 0) || ((gameListRefreshTime + refreshInterval) <= timeGetTime()))
 		{
 			if (TheGameSpyInfo->hasStagingRoomListChanged())
 			{
-				//DEBUG_LOG(("################### refreshing game list\n"));
-				//DEBUG_LOG(("gameRefreshTime=%d, refreshInterval=%d, now=%d\n", gameListRefreshTime, refreshInterval, timeGetTime()));
+				//DEBUG_LOG(("################### refreshing game list"));
+				//DEBUG_LOG(("gameRefreshTime=%d, refreshInterval=%d, now=%d", gameListRefreshTime, refreshInterval, timeGetTime()));
 				RefreshGameListBoxes();
 				gameListRefreshTime = timeGetTime();
 			} else {
 				//DEBUG_LOG(("-"));
 			}
 		} else {
-			//DEBUG_LOG(("gameListRefreshTime: %d refreshInterval: %d\n"));
+			//DEBUG_LOG(("gameListRefreshTime: %d refreshInterval: %d", gameListRefreshTime, refreshInterval));
 		}
 #else
 	refreshGameList();
 #endif
 	}
-}// WOLLobbyMenuUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Lobby Menu input callback */
@@ -1315,7 +1318,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 WindowMsgHandledType WOLLobbyMenuInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -1332,31 +1335,31 @@ WindowMsgHandledType WOLLobbyMenuInput( GameWindow *window, UnsignedInt msg,
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonBack, buttonBackID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// WOLLobbyMenuInput
+}
 
 //static void doSliderTrack(GameWindow *control, Int val)
 //{
@@ -1410,7 +1413,7 @@ WindowMsgHandledType WOLLobbyMenuInput( GameWindow *window, UnsignedInt msg,
 //-------------------------------------------------------------------------------------------------
 /** WOL Lobby Menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
@@ -1418,32 +1421,32 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 
 	switch( msg )
 	{
-		
-		
+
+
 		//---------------------------------------------------------------------------------------------
 		case GWM_CREATE:
 			{
 				buttonGameListTypeToggleID = NAMEKEY("WOLCustomLobby.wnd:ButtonGameListToggle");
 //				sliderChatAdjustID = NAMEKEY("WOLCustomLobby.wnd:SliderChatAdjust");
-				
+
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
-			{	
+			{
 				// if we're givin the opportunity to take the keyboard focus we must say we want it
 				if( mData1 == TRUE )
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 
 		//---------------------------------------------------------------------------------------------
 		case GLM_SELECTED:
@@ -1480,7 +1483,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					{
 						RefreshGameInfoListBox(GetGameListBox(), GetGameInfoListBox());
 					}
-				} //if ( controlID == GetGameListBoxID() )
+				}
 
 				break;
 			}
@@ -1511,11 +1514,11 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					nextScreen = "Menus/WOLWelcomeMenu.wnd";
 					TheShell->pop();
 
-				} //if ( controlID == buttonBack )
+				}
 				else if ( controlID == buttonRefreshID )
 				{
 					// Added 2/17/03 added the game refresh button
-					refreshGameList(TRUE);	
+					refreshGameList(TRUE);
 					refreshPlayerList(TRUE);
 				}
 				else if ( controlID == buttonHostID )
@@ -1551,8 +1554,8 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 								if (!roomToJoin || roomToJoin->getExeCRC() != TheGlobalData->m_exeCRC || roomToJoin->getIniCRC() != TheGlobalData->m_iniCRC)
 								{
 									// bad crc.  don't go.
-									DEBUG_LOG(("WOLLobbyMenuSystem - CRC mismatch with the game I'm trying to join. My CRC's - EXE:0x%08X INI:0x%08X  Their CRC's - EXE:0x%08x INI:0x%08x\n", TheGlobalData->m_exeCRC, TheGlobalData->m_iniCRC, roomToJoin->getExeCRC(), roomToJoin->getIniCRC()));
-#if defined(_DEBUG) || defined(_INTERNAL)
+									DEBUG_LOG(("WOLLobbyMenuSystem - CRC mismatch with the game I'm trying to join. My CRC's - EXE:0x%08X INI:0x%08X  Their CRC's - EXE:0x%08x INI:0x%08x", TheGlobalData->m_exeCRC, TheGlobalData->m_iniCRC, roomToJoin->getExeCRC(), roomToJoin->getIniCRC()));
+#if defined(RTS_DEBUG)
 									if (TheGlobalData->m_netMinPlayers)
 									{
 										GSMessageBoxOk(TheGameText->fetch("GUI:JoinFailedDefault"), TheGameText->fetch("GUI:JoinFailedCRCMismatch"));
@@ -1631,9 +1634,9 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 						TheGameSpyInfo->sendChat( txtInput, FALSE, listboxLobbyPlayers ); // 'emote' button now just sends text
 					}
 				}
-				
+
 				break;
-			}// case GBM_SELECTED:
+			}
 
 		//---------------------------------------------------------------------------------------------
 		case GCM_SELECTED:
@@ -1642,17 +1645,17 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					break;
 				GameWindow *control = (GameWindow *)mData1;
 				Int controlID = control->winGetWindowId();
-				if( controlID == comboLobbyGroupRoomsID ) 
+				if( controlID == comboLobbyGroupRoomsID )
 				{
 					int rowSelected = -1;
 					GadgetComboBoxGetSelectedPos(control, &rowSelected);
-				
-					DEBUG_LOG(("Row selected = %d\n", rowSelected));
+
+					DEBUG_LOG(("Row selected = %d", rowSelected));
 					if (rowSelected >= 0)
 					{
 						Int groupID;
 						groupID = (Int)GadgetComboBoxGetItemData(comboLobbyGroupRooms, rowSelected);
-						DEBUG_LOG(("ItemData was %d, current Group Room is %d\n", groupID, TheGameSpyInfo->getCurrentGroupRoom()));
+						DEBUG_LOG(("ItemData was %d, current Group Room is %d", groupID, TheGameSpyInfo->getCurrentGroupRoom()));
 						if (groupID && groupID != TheGameSpyInfo->getCurrentGroupRoom())
 						{
 							TheGameSpyInfo->leaveGroupRoom();
@@ -1670,7 +1673,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 						}
 					}
 				}
-			} // case GCM_SELECTED
+			}
 			break;
 
 		//---------------------------------------------------------------------------------------------
@@ -1684,18 +1687,18 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 				if (controlID == GetGameListBoxID())
 				{
 					int rowSelected = mData2;
-				
+
 					if (rowSelected >= 0)
 					{
 						GadgetListBoxSetSelected( control, rowSelected );
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonJoinID );
 
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)button, buttonJoinID );
 					}
 				}
 				break;
-			}// case GLM_DOUBLE_CLICKED:
+			}
 
 		//---------------------------------------------------------------------------------------------
 		case GLM_RIGHT_CLICKED:
@@ -1703,7 +1706,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 				GameWindow *control = (GameWindow *)mData1;
 				Int controlID = control->winGetWindowId();
 
-				if( controlID == listboxLobbyPlayersID ) 
+				if( controlID == listboxLobbyPlayersID )
 				{
 					RightClickStruct *rc = (RightClickStruct *)mData2;
 					WindowLayout *rcLayout = NULL;
@@ -1723,7 +1726,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 
 					Bool isBuddy = FALSE;
 					if (profileID <= 0)
-						rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCNoProfileMenu.wnd"));	
+						rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCNoProfileMenu.wnd"));
 					else
 					{
 						if (profileID == TheGameSpyInfo->getLocalProfileID())
@@ -1740,9 +1743,9 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					}
 					if(!rcLayout)
 						break;
-					
+
 					GadgetListBoxSetSelected(control, rc->pos);
-					
+
 					rcMenu = rcLayout->getFirstWindow();
 					rcMenu->winGetLayout()->runInit();
 					rcMenu->winBringToTop();
@@ -1757,7 +1760,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					if(rc->mouseY + rcSize.y > TheDisplay->getHeight())
 						rcPos.y = TheDisplay->getHeight() - rcSize.y;
 					rcMenu->winSetPosition(rcPos.x, rcPos.y);
-					
+
 					GameSpyRCMenuData *rcData = NEW GameSpyRCMenuData;
 					rcData->m_id = profileID;
 					rcData->m_nick = aName;
@@ -1765,7 +1768,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					rcMenu->winSetUserData((void *)rcData);
 					TheWindowManager->winSetLoneWindow(rcMenu);
 				}
-				else if( controlID == GetGameListBoxID() ) 
+				else if( controlID == GetGameListBoxID() )
 				{
 					RightClickStruct *rc = (RightClickStruct *)mData2;
 					WindowLayout *rcLayout = NULL;
@@ -1789,7 +1792,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 							const LadderInfo *linfo = TheLadderList->findLadder(theRoom->getLadderIP(), theRoom->getLadderPort());
 							if (linfo)
 							{
-								rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCGameDetailsMenu.wnd"));	
+								rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCGameDetailsMenu.wnd"));
 								if (!rcLayout)
 									break;
 
@@ -1800,7 +1803,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 								rcMenu->winBringToTop();
 								rcMenu->winHide(FALSE);
 								rcMenu->winSetPosition(rc->mouseX, rc->mouseY);
-								
+
 								rcMenu->winSetUserData((void *)selectedID);
 								TheWindowManager->winSetLoneWindow(rcMenu);
 							}
@@ -1852,7 +1855,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// WOLLobbyMenuSystem
+}

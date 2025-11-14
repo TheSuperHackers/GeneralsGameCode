@@ -24,12 +24,12 @@
 
 // FILE: DisplayString.h //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -45,9 +45,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __DISPLAYSTRING_H_
-#define __DISPLAYSTRING_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -100,6 +97,9 @@ public:
 	virtual void setClipRegion( IRegion2D *region );  ///< clip text in this region
 
 	virtual void removeLastChar( void );			///< remove the last character
+	virtual void truncateBy(const Int charCount);	///< remove the last charCount characters
+	virtual void truncateTo(const Int maxLength);	///< remove characters, if needed, until the string is maxLength long excluding null terminator
+
 	virtual void appendChar( WideChar c );		///< append character to end
 
 	DisplayString *next( void );							///< return next string
@@ -108,11 +108,11 @@ protected:
 
 	UnicodeString m_textString;
 	GameFont *m_font;			 ///< font to display this string with
-	
+
 	DisplayString *m_next;  ///< for the display string factory list ONLY
 	DisplayString *m_prev;	///< for the display string factory list ONLY
 
-};  // end DisplayString
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 // INLINING ///////////////////////////////////////////////////////////////////
@@ -126,6 +126,3 @@ inline void DisplayString::notifyTextChanged( void ) {}
 inline DisplayString *DisplayString::next( void ) { return m_next; }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __DISPLAYSTRING_H_
-

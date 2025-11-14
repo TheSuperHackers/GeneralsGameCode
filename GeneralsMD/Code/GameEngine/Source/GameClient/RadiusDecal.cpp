@@ -25,7 +25,7 @@
 // RadiusDecal.cpp ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_SHADOW_NAMES
 
@@ -36,15 +36,10 @@
 #include "GameClient/Shadow.h"
 #include "GameLogic/GameLogic.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // ------------------------------------------------------------------------------------------------
-RadiusDecalTemplate::RadiusDecalTemplate() : 
-	m_shadowType(SHADOW_ALPHA_DECAL), 
+RadiusDecalTemplate::RadiusDecalTemplate() :
+	m_shadowType(SHADOW_ALPHA_DECAL),
 	m_minOpacity(1.0f),
 	m_maxOpacity(1.0f),
 	m_opacityThrobTime(LOGICFRAMES_PER_SECOND),
@@ -58,10 +53,10 @@ RadiusDecalTemplate::RadiusDecalTemplate() :
 void RadiusDecalTemplate::createRadiusDecal(const Coord3D& pos, Real radius, const Player* owningPlayer, RadiusDecal& result) const
 {
 	result.clear();
-	
+
 	if (owningPlayer == NULL)
 	{
-		DEBUG_CRASH(("You MUST specify a non-NULL owningPlayer to createRadiusDecal. (srj)\n"));
+		DEBUG_CRASH(("You MUST specify a non-NULL owningPlayer to createRadiusDecal. (srj)"));
 		return;
 	}
 
@@ -78,7 +73,7 @@ void RadiusDecalTemplate::createRadiusDecal(const Coord3D& pos, Real radius, con
 		decalInfo.allowUpdates = FALSE;										// shadow texture will never update
 		decalInfo.allowWorldAlign = TRUE;									// shadow image will wrap around world objects
 		decalInfo.m_type = m_shadowType;
-		strcpy(decalInfo.m_ShadowName, m_name.str());		// name of your texture
+		strlcpy(decalInfo.m_ShadowName, m_name.str(), ARRAY_SIZE(decalInfo.m_ShadowName));		// name of your texture
 		decalInfo.m_sizeX = radius*2;									// world space dimensions
 		decalInfo.m_sizeY = radius*2;									// world space dimensions
 
@@ -87,12 +82,12 @@ void RadiusDecalTemplate::createRadiusDecal(const Coord3D& pos, Real radius, con
 		{
 			result.m_decal->setAngle(0.0f);
 			result.m_decal->setColor(m_color == 0 ? owningPlayer->getPlayerColor() : m_color);
-			result.m_decal->setPosition(pos.x, pos.y, pos.z);	
+			result.m_decal->setPosition(pos.x, pos.y, pos.z);
 			result.m_template = this;
 		}
 		else
 		{
-			DEBUG_CRASH(("Unable to add decal %s\n",decalInfo.m_ShadowName));
+			DEBUG_CRASH(("Unable to add decal %s",decalInfo.m_ShadowName));
 		}
 	}
 }
@@ -105,8 +100,8 @@ void RadiusDecalTemplate::xferRadiusDecalTemplate( Xfer *xfer )
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
 
-	xfer->xferAsciiString(&m_name);	
-	xfer->xferUser(&m_shadowType, sizeof(m_shadowType));	
+	xfer->xferAsciiString(&m_name);
+	xfer->xferUser(&m_shadowType, sizeof(m_shadowType));
 	xfer->xferReal(&m_minOpacity);
   xfer->xferReal(&m_maxOpacity);
 	xfer->xferUnsignedInt(&m_opacityThrobTime);
@@ -117,7 +112,7 @@ void RadiusDecalTemplate::xferRadiusDecalTemplate( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /*static*/ void RadiusDecalTemplate::parseRadiusDecalTemplate(INI* ini, void *instance, void * store, const void* /*userData*/)
 {
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "Texture",										INI::parseAsciiString,				NULL,							offsetof( RadiusDecalTemplate, m_name ) },
 		{ "Style",											INI::parseBitString32,				TheShadowNames,		offsetof( RadiusDecalTemplate, m_shadowType ) },
@@ -133,16 +128,16 @@ void RadiusDecalTemplate::xferRadiusDecalTemplate( Xfer *xfer )
 }
 
 // ------------------------------------------------------------------------------------------------
-RadiusDecal::RadiusDecal() : 
-	m_template(NULL), 
+RadiusDecal::RadiusDecal() :
+	m_template(NULL),
 	m_decal(NULL),
 	m_empty(true)
 {
 }
 
 // ------------------------------------------------------------------------------------------------
-RadiusDecal::RadiusDecal(const RadiusDecal& that) : 
-	m_template(NULL), 
+RadiusDecal::RadiusDecal(const RadiusDecal& that) :
+	m_template(NULL),
 	m_decal(NULL),
 	m_empty(true)
 {

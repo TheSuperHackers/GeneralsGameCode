@@ -46,11 +46,11 @@ W3DOverlordTruckDrawModuleData::~W3DOverlordTruckDrawModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-void W3DOverlordTruckDrawModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void W3DOverlordTruckDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   W3DTruckDrawModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ 0, 0, 0, 0 }
 	};
@@ -62,7 +62,7 @@ void W3DOverlordTruckDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 W3DOverlordTruckDraw::W3DOverlordTruckDraw( Thing *thing, const ModuleData* moduleData )
 : W3DTruckDraw( thing, moduleData )
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ void W3DOverlordTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	// Our big thing is that we get our specific passenger (the turret thing) and then wake it up and make it draw
 	// It depends on us because our renderObject is only made correct in the act of drawing.
 	Object *me = getDrawable()->getObject();
-	if( me 
+	if( me
 		&& me->getContain()
 		&& me->getContain()->friend_getRider()
 		&& me->getContain()->friend_getRider()->getDrawable()
@@ -88,7 +88,7 @@ void W3DOverlordTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 		riderDraw->setColorTintEnvelope( *getDrawable()->getColorTintEnvelope() );
 
 		riderDraw->notifyDrawableDependencyCleared();
-		riderDraw->draw( NULL );// What the hell?  This param isn't used for anything
+		riderDraw->draw();
 	}
 }
 
@@ -99,7 +99,7 @@ void W3DOverlordTruckDraw::setHidden(Bool h)
 
 	// We need to hide our rider, since he won't realize he's being contained in a contained container
 	Object *me = getDrawable()->getObject();
-	if( me 
+	if( me
 		&& me->getContain()
 		&& me->getContain()->friend_getRider()
 		&& me->getContain()->friend_getRider()->getDrawable()
@@ -108,7 +108,7 @@ void W3DOverlordTruckDraw::setHidden(Bool h)
 		me->getContain()->friend_getRider()->getDrawable()->setDrawableHidden(h);
 	}
 }
- 
+
 //-------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -119,7 +119,7 @@ void W3DOverlordTruckDraw::crc( Xfer *xfer )
 	// extend base class
 	W3DTruckDraw::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -137,7 +137,7 @@ void W3DOverlordTruckDraw::xfer( Xfer *xfer )
 	// extend base class
 	W3DTruckDraw::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -148,4 +148,4 @@ void W3DOverlordTruckDraw::loadPostProcess( void )
 	// extend base class
 	W3DTruckDraw::loadPostProcess();
 
-}  // end loadPostProcess
+}

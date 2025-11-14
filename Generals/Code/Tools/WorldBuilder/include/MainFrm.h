@@ -20,12 +20,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_MAINFRM_H__371EC7AB_29D3_11D5_8CE0_00010297BBAC__INCLUDED_)
-#define AFX_MAINFRM_H__371EC7AB_29D3_11D5_8CE0_00010297BBAC__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "Lib/BaseType.h"
 #include "MyToolbar.h"
@@ -59,9 +54,9 @@ class LayersList;
 
 class CMainFrame : public CFrameWnd
 {
-  DECLARE_DYNAMIC(CMainFrame) 
+  DECLARE_DYNAMIC(CMainFrame)
 
-public:	
+public:
 	CMainFrame();
 
 // Attributes
@@ -79,7 +74,7 @@ public:
 // Implementation
 public:
 	virtual ~CMainFrame();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
@@ -118,7 +113,7 @@ protected:  // control bar embedded members
 	GlobalLightOptions	m_globalLightOptions;
 	CameraOptions				m_cameraOptions;
 	LayersList*					m_layersList;
-	
+
 
 	CWnd							*m_curOptions;
 	Int								m_curOptionsX;
@@ -155,5 +150,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_MAINFRM_H__371EC7AB_29D3_11D5_8CE0_00010297BBAC__INCLUDED_)

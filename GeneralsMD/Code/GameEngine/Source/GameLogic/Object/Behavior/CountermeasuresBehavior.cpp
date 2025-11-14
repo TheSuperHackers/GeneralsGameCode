@@ -30,7 +30,7 @@
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Thing.h"
 #include "Common/ThingTemplate.h"
 #include "Common/INI.h"
@@ -47,11 +47,6 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -59,7 +54,7 @@ struct CountermeasuresPlayerScanHelper
 {
 	KindOfMaskType m_kindOfToTest;
 	Object *m_theHealer;
-	ObjectPointerList *m_objectList;	
+	ObjectPointerList *m_objectList;
 };
 
 static void checkForCountermeasures( Object *testObj, void *userData )
@@ -96,7 +91,7 @@ CountermeasuresBehavior::CountermeasuresBehavior( Thing *thing, const ModuleData
 	m_divertedMissiles = 0;
 	m_incomingMissiles = 0;
 	m_nextVolleyFrame = 0;
-	
+
 	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
 }
 
@@ -119,7 +114,7 @@ void CountermeasuresBehavior::reportMissileForCountermeasures( Object *missile )
 
   if( m_availableCountermeasures + m_activeCountermeasures > 0 )
 	{
-		//We have countermeasures we can use. Determine now whether or not the incoming missile will 
+		//We have countermeasures we can use. Determine now whether or not the incoming missile will
 		//be diverted.
 		const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
 
@@ -133,16 +128,16 @@ void CountermeasuresBehavior::reportMissileForCountermeasures( Object *missile )
 				{
 					//Make sure the missile diverts after a delay. The delay needs to be larger than
 					//the countermeasure reaction time or else the missile won't have a countermeasure to divert to!
-					DEBUG_ASSERTCRASH( data->m_countermeasureReactionFrames < data->m_missileDecoyFrames, 
+					DEBUG_ASSERTCRASH( data->m_countermeasureReactionFrames < data->m_missileDecoyFrames,
 						("MissileDecoyDelay needs to be less than CountermeasureReactionTime in order to function properly.") );
 					pui->setFramesTillCountermeasureDiversionOccurs( data->m_missileDecoyFrames );
 					m_divertedMissiles++;
 
 					if( m_activeCountermeasures == 0 && m_reactionFrame == 0 )
 					{
-						//We need to launch our first volley of countermeasures, but we can't do it now. If we 
+						//We need to launch our first volley of countermeasures, but we can't do it now. If we
 						//do, it'll look too artificial. Instead, we need to set up a timer to fake a reaction
-						//delay. 
+						//delay.
 						m_reactionFrame = TheGameLogic->getFrame() + data->m_countermeasureReactionFrames;
 					}
 					break;
@@ -157,36 +152,38 @@ ObjectID CountermeasuresBehavior::calculateCountermeasureToDivertTo( const Objec
 {
 	const CountermeasuresBehaviorModuleData *data = getCountermeasuresBehaviorModuleData();
 
-	//Flares are pushed to the front of the list, but we only want to acquire the "newest" of the flares, therefore
-	//stop iterating after we've reached size of a single volley.
-	Int iteratorMax = MAX( data->m_volleySize, 1 );
+	// TheSuperHackers @bugfix Mauller/Stubbjax 27/07/2025 Fix unsafe iterator handling and correct the countermeasures behavior
+	// The code now iterates through all flares in the volley and selects the nearest one to the weapon as intended in the original EA code
+	// This can slightly change behavior but does not significantly impact the overall survivability of the aircraft
 
-	Real closestDist = 1e15f;
+	Real closestFlareDist = 1e15f;
 	Object *closestFlare = NULL;
 
+	const int volleySize = data->m_volleySize;
+	int volleyFlaresCounted = 0;
+
+	//Flares are pushed to the front of the list, but we only want to acquire the "newest" of the flares, therefore
 	//Start at the end of the list and go towards the beginning.
-	CountermeasuresVec::iterator it = m_counterMeasures.end();
-	DEBUG_ASSERTCRASH(iteratorMax <= (Int)m_counterMeasures.size(), ("Unsafe size"));
-	//end is actually the end so advance the iterator.
-	if( it != m_counterMeasures.begin() )
+	CountermeasuresVec::reverse_iterator it = m_counterMeasures.rbegin();
+	//stop iterating after we've reached size of a single volley.
+	while( it != m_counterMeasures.rend() && volleyFlaresCounted < volleySize )
 	{
-		--it;
-		while( iteratorMax-- )
+		Object *obj = TheGameLogic->findObjectByID( *it++ );
+		if( obj )
 		{
-			Object *obj = TheGameLogic->findObjectByID( *it );
-			if( obj )
+			Real weaponToFlareDist = ThePartitionManager->getDistanceSquared( obj, getObject(), FROM_CENTER_2D );
+			if( weaponToFlareDist < closestFlareDist )
 			{
-				Real dist = ThePartitionManager->getDistanceSquared( obj, getObject(), FROM_CENTER_2D );
-				if( dist < closestDist )
-				{
-					closestDist = dist;
-					closestFlare = obj;
-				}
+				closestFlareDist = weaponToFlareDist;
+				closestFlare = obj;
 			}
-			else
-			{
-				--it;
-			}
+#if RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @info Original EA code did not work as intended and stopped on the first retrieved flare
+			// The non retail behaviour corrects the code to iterate through all flares in the volley
+			break;
+#else
+			volleyFlaresCounted++;
+#endif
 		}
 	}
 
@@ -201,7 +198,7 @@ ObjectID CountermeasuresBehavior::calculateCountermeasureToDivertTo( const Objec
 Bool CountermeasuresBehavior::isActive() const
 {
 	return isUpgradeActive();
-}	
+}
 
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
@@ -235,7 +232,7 @@ UpdateSleepTime CountermeasuresBehavior::update( void )
 			++it;
 		}
 	}
-	
+
 	if( obj->isAirborneTarget() )
 	{
 
@@ -293,7 +290,7 @@ void CountermeasuresBehavior::reloadCountermeasures()
 	m_availableCountermeasures = data->m_numberOfVolleys * data->m_volleySize;
 	m_reloadFrame = 0;
 }
- 
+
 //-------------------------------------------------------------------------------------------------
 void CountermeasuresBehavior::launchVolley()
 {
@@ -301,9 +298,9 @@ void CountermeasuresBehavior::launchVolley()
 	Object *obj = getObject();
 
 	Real volleySize = (Real)data->m_volleySize;
-	for( int i = 0; i < data->m_volleySize; i++ )
+	for( UnsignedInt i = 0; i < data->m_volleySize; i++ )
 	{
-		//Each flare in a volley will calculate a different vector to fly out. We have a +/- angle to 
+		//Each flare in a volley will calculate a different vector to fly out. We have a +/- angle to
 		//spread out equally. With only one flare, it'll come straight out the back. Two flares will
 		//launch at the extreme positive and negative angle. Three flares will launch at extreme angles
 		//plus straight back. Four or more will divy it up equally.
@@ -368,7 +365,7 @@ void CountermeasuresBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpgradeMux::upgradeMuxCRC( xfer );
 
-}  // end crc
+}
 
 //------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -400,7 +397,7 @@ void CountermeasuresBehavior::xfer( Xfer *xfer )
 		xfer->xferUnsignedInt( &m_nextVolleyFrame );
 	}
 
-}  // end xfer
+}
 
 //------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -414,6 +411,6 @@ void CountermeasuresBehavior::loadPostProcess( void )
 	// extend base class
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
-}  // end loadPostProcess
+}
 
 

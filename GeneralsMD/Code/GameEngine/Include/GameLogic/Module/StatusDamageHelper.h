@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __StatusDamageHelper_H_
-#define __StatusDamageHelper_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/ObjectHelper.h"
 
@@ -48,7 +45,7 @@ class StatusDamageHelper : public ObjectHelper
 {
 
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( StatusDamageHelper, StatusDamageHelperModuleData )
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(StatusDamageHelper, "StatusDamageHelper" )	
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(StatusDamageHelper, "StatusDamageHelper" )
 
 public:
 
@@ -65,6 +62,3 @@ protected:
 	UnsignedInt m_frameToHeal;
 	void clearStatusCondition();
 };
-
-
-#endif  // end __StatusDamageHelper_H_

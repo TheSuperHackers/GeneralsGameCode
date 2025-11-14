@@ -24,12 +24,12 @@
 
 // FILE: LayoutScheme.cpp /////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -46,7 +46,6 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
 #include <assert.h>
-#include <stdio.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"
@@ -99,7 +98,7 @@ static void loadSchemeDataToDialog( HWND hWndDialog )
 {
 
 	// load the name of the current scheme
-	SetDlgItemText( hWndDialog, STATIC_CURRENT_SCHEME, 
+	SetDlgItemText( hWndDialog, STATIC_CURRENT_SCHEME,
 									theScheme->getSchemeFilename() );
 
 	// load the state combo box with every option available
@@ -112,7 +111,7 @@ static void loadSchemeDataToDialog( HWND hWndDialog )
 									GWS_HORZ_SLIDER |
 									GWS_VERT_SLIDER |
 									GWS_STATIC_TEXT |
-									GWS_ENTRY_FIELD | 
+									GWS_ENTRY_FIELD |
 									GWS_USER_WINDOW |
 									GWS_COMBO_BOX,
 									GetDlgItem( hWndDialog, COMBO_STATE ) );
@@ -122,7 +121,7 @@ static void loadSchemeDataToDialog( HWND hWndDialog )
 	LoadImageListComboBox( GetDlgItem( hWndDialog, COMBO_IMAGE ) );
 
 	//
-	// load our own internal table of images and colors to the 
+	// load our own internal table of images and colors to the
 	// property dialog tables
 	//
 	Int i;
@@ -137,7 +136,7 @@ static void loadSchemeDataToDialog( HWND hWndDialog )
 												info->color,
 												info->borderColor );
 
-	}  // end for i
+	}
 
 	// switch to the generic state
 	SwitchToState( GENERIC_ENABLED, hWndDialog );
@@ -156,7 +155,7 @@ static void loadSchemeDataToDialog( HWND hWndDialog )
 	SendDlgItemMessage( hWndDialog, COMBO_FONT, CB_RESETCONTENT, 0, 0 );
 	LoadFontCombo( GetDlgItem( hWndDialog, COMBO_FONT ), theScheme->getFont() );
 
-}  // end loadSchemeDataToDialog
+}
 
 // saveData ===================================================================
 //=============================================================================
@@ -179,7 +178,7 @@ static void saveData( HWND hWndDialog )
 																 info->color,
 																 info->borderColor );
 
-	}  // end for i
+	}
 
 	// save default text colors
 	theScheme->setEnabledTextColor( GetPropsEnabledTextColor() );
@@ -192,7 +191,7 @@ static void saveData( HWND hWndDialog )
 	// save the font
 	theScheme->setFont( GetSelectedFontFromCombo( GetDlgItem( hWndDialog, COMBO_FONT ) ) );
 
-}  // end saveData
+}
 
 // saveAsDialog ===============================================================
 /** Bring up the standard windows browser save as dialog and return
@@ -234,7 +233,7 @@ char *saveAsDialog( void )
 	else
 		return NULL;
 
-}  // end saveAsDialog
+}
 
 // openDialog =================================================================
 /** Bring up the standard windows browser open dialog and return
@@ -276,7 +275,7 @@ char *openDialog( void )
 	else
 		return NULL;
 
-}  // end openDialog
+}
 
 // layoutSchemeCallback =======================================================
 /** Dialog callback for layout scheme dialog */
@@ -292,7 +291,7 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 	// this is largely based on the property dialog code so lets just
 	// let the default handle code work here too
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message, 
+	if( HandleCommonDialogMessages( hWndDialog, message,
 																	wParam, lParam, &returnCode ) == TRUE )
 		return returnCode;
 
@@ -307,7 +306,7 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 			loadSchemeDataToDialog( hWndDialog );
 			break;
 
-		}  // end init dialog
+		}
 
 		// ------------------------------------------------------------------------
     case WM_COMMAND:
@@ -315,7 +314,7 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 //			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 //			HWND hWndControl = (HWND)lParam;  // control window handle
-		
+
 			switch( controlID )
 			{
 
@@ -355,7 +354,7 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 
 					break;
 
-				}  // end apply scheme
+				}
 
 				// --------------------------------------------------------------------
 				case BUTTON_SAVE:
@@ -367,15 +366,15 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 
 						saveData( hWndDialog );
 						theScheme->saveScheme( filename );
-						SetDlgItemText( hWndDialog, STATIC_CURRENT_SCHEME, 
+						SetDlgItemText( hWndDialog, STATIC_CURRENT_SCHEME,
 														theScheme->getSchemeFilename() );
 
-					}  // end if
+					}
 
 					break;
 
-				}  // end save
-				
+				}
+
 				// --------------------------------------------------------------------
 				case BUTTON_LOAD:
 				{
@@ -387,25 +386,25 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 						// load the new data
 						if( theScheme->loadScheme( filename ) )
 						{
-										
+
 							// load the dialog engine and items with the current data of the scheme
 							loadSchemeDataToDialog( hWndDialog );
 
-						}  // end if
+						}
 						else
 						{
 
 							MessageBox( TheEditor->getWindowHandle(),
 													"Unable to open scheme file.", "Error", MB_OK );
 
-						}  // end else
+						}
 
-					}  // end if
+					}
 
 					break;
 
-				}  // end load
-							
+				}
+
 				// --------------------------------------------------------------------
 				case IDOK:
 
@@ -421,17 +420,17 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 					EndDialog( hWndDialog, FALSE );
 					break;
 
-			}  // end switch
-				
+			}
+
 			break;
 
-		}  // end command
+		}
 
-	}  // end switch, message
+	}
 
 	return 0;
 
-}  // end layoutSchemeCallback
+}
 
 // LayoutScheme::applyPropertyTablesToWindow ==================================
 /** apply the image and color info stored in the state identifer tables
@@ -478,7 +477,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetButtonSetHiliteSelectedColor( root, info->color );
 		GadgetButtonSetHiliteSelectedBorderColor( root, info->borderColor );
 
-	}  // end if
+	}
 	else if( BitIsSet( root->winGetStyle(), GWS_RADIO_BUTTON ) )
 	{
 
@@ -521,7 +520,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetRadioSetHiliteCheckedBoxColor( root, info->color );
 		GadgetRadioSetHiliteCheckedBoxBorderColor( root, info->borderColor );
 
-	}  // end else if
+	}
 	else if( BitIsSet( root->winGetStyle(), GWS_CHECK_BOX ) )
 	{
 
@@ -564,7 +563,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetCheckBoxSetHiliteCheckedBoxColor( root, info->color );
 		GadgetCheckBoxSetHiliteCheckedBoxBorderColor( root, info->borderColor );
 
-	}  // end else if
+	}
 	else if( BitIsSet( root->winGetStyle(), GWS_VERT_SLIDER ) )
 	{
 
@@ -628,7 +627,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetSliderSetHiliteSelectedThumbColor( root, info->color );
 		GadgetSliderSetHiliteSelectedThumbBorderColor( root, info->borderColor );
 
-	}  // end else if
+	}
 	else if( BitIsSet( root->winGetStyle(), GWS_HORZ_SLIDER ) )
 	{
 
@@ -692,7 +691,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetSliderSetHiliteSelectedThumbColor( root, info->color );
 		GadgetSliderSetHiliteSelectedThumbBorderColor( root, info->borderColor );
 
-	}  // end else if
+	}
 	else if( BitIsSet( root->winGetStyle(), GWS_SCROLL_LISTBOX ) )
 	{
 
@@ -772,7 +771,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 			GadgetButtonSetHiliteSelectedColor( upButton, info->color );
 			GadgetButtonSetHiliteSelectedBorderColor( upButton, info->borderColor );
 
-		}  // end if
+		}
 
 		GameWindow *downButton = GadgetListBoxGetDownButton( root );
 		if( downButton )
@@ -805,7 +804,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 			GadgetButtonSetHiliteSelectedColor( downButton, info->color );
 			GadgetButtonSetHiliteSelectedBorderColor( downButton, info->borderColor );
 
-		}  // end if
+		}
 
 		GameWindow *slider = GadgetListBoxGetSlider( root );
 		if( slider )
@@ -871,9 +870,9 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 			GadgetSliderSetHiliteSelectedThumbColor( slider, info->color );
 			GadgetSliderSetHiliteSelectedThumbBorderColor( slider, info->borderColor );
 
-		}  // end if
+		}
 
-	}  // end else if
+	}
 	else if( BitIsSet( root->winGetStyle(), GWS_COMBO_BOX ) )
 	{
 		info = GetStateInfo( COMBOBOX_ENABLED );
@@ -950,8 +949,8 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 			GadgetButtonSetHiliteSelectedImage( dropDownButton, info->image );
 			GadgetButtonSetHiliteSelectedColor( dropDownButton, info->color );
 			GadgetButtonSetHiliteSelectedBorderColor( dropDownButton, info->borderColor );
-		}// end if
-		
+		}
+
 		GameWindow *editBox = GadgetComboBoxGetEditBox( root );
 		if ( editBox )
 		{
@@ -987,7 +986,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 			GadgetTextEntrySetHiliteImageCenter( editBox, info->image );
 			info = GetStateInfo( COMBOBOX_EDIT_BOX_HILITE_SMALL_CENTER );
 			GadgetTextEntrySetHiliteImageSmallCenter( editBox, info->image );
-		} // end if
+		}
 
 		GameWindow *listBox = GadgetComboBoxGetListBox( root );
 		if( listBox )
@@ -1068,7 +1067,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 				GadgetButtonSetHiliteSelectedColor( upButton, info->color );
 				GadgetButtonSetHiliteSelectedBorderColor( upButton, info->borderColor );
 
-			}  // end if
+			}
 
 			GameWindow *downButton = GadgetListBoxGetDownButton( listBox );
 			if( downButton )
@@ -1101,7 +1100,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 				GadgetButtonSetHiliteSelectedColor( downButton, info->color );
 				GadgetButtonSetHiliteSelectedBorderColor( downButton, info->borderColor );
 
-			}  // end if
+			}
 
 			GameWindow *slider = GadgetListBoxGetSlider( listBox );
 			if( slider )
@@ -1167,9 +1166,9 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 				GadgetSliderSetHiliteSelectedThumbColor( slider, info->color );
 				GadgetSliderSetHiliteSelectedThumbBorderColor( slider, info->borderColor );
 
-			}  // end if
-		}// end if (combo listbox)
-	}// end if
+			}
+		}
+	}
 	else if( BitIsSet( root->winGetStyle(), GWS_ENTRY_FIELD ) )
 	{
 
@@ -1206,7 +1205,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		info = GetStateInfo( TEXT_ENTRY_HILITE_SMALL_CENTER );
 		GadgetTextEntrySetHiliteImageSmallCenter( root, info->image );
 
-	}  // end else if
+	}
 	else if( BitIsSet( root->winGetStyle(), GWS_STATIC_TEXT ) )
 	{
 
@@ -1225,7 +1224,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetStaticTextSetHiliteColor( root, info->color );
 		GadgetStaticTextSetHiliteBorderColor( root, info->borderColor );
 
-	}  // end else if
+	}
 	else if( BitIsSet( root->winGetStyle(), GWS_PROGRESS_BAR ) )
 	{
 
@@ -1292,7 +1291,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		info = GetStateInfo( PROGRESS_BAR_HILITE_BAR_SMALL_CENTER );
 		GadgetProgressBarSetHiliteBarImageSmallCenter( root, info->image );
 
-	}  // end else if
+	}
 	else if( BitIsSet( root->winGetStyle(), GWS_TAB_CONTROL ) )
 	{
 		info = GetStateInfo( TC_TAB_0_ENABLED );
@@ -1341,7 +1340,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetTabControlSetEnabledBorderColorBackground( root, info->borderColor );
 
 
-	
+
 		info = GetStateInfo( TC_TAB_0_DISABLED );
 		GadgetTabControlSetDisabledImageTabZero( root, info->image );
 		GadgetTabControlSetDisabledColorTabZero( root, info->color );
@@ -1388,7 +1387,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetTabControlSetDisabledBorderColorBackground( root, info->borderColor );
 
 
-		
+
 
 		info = GetStateInfo( TC_TAB_0_HILITE );
 		GadgetTabControlSetHiliteImageTabZero( root, info->image );
@@ -1454,10 +1453,10 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		root->winSetHiliteColor( 0, info->color );
 		root->winSetHiliteBorderColor( 0, info->borderColor );
 
-	}  // end else
+	}
 
 	//
-	// apply changes to children of this window, unless this 
+	// apply changes to children of this window, unless this
 	// window is a gadget itself, those are "atomic" units remember ;)
 	//
 	if( TheEditor->windowIsGadget( root ) == FALSE )
@@ -1469,7 +1468,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 	// force an update of the edit window
 	TheEditWindow->draw();
 
-}  // end applyPropertyTablesToWindow
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -1491,7 +1490,7 @@ LayoutScheme::LayoutScheme( void )
 	m_hiliteText.borderColor = GAME_COLOR_UNDEFINED;
 	m_font = NULL;
 
-}  // end LayoutScheme
+}
 
 // LayoutScheme::~LayoutScheme ================================================
 /** */
@@ -1506,16 +1505,16 @@ LayoutScheme::~LayoutScheme( void )
 
 		if( m_imageAndColorTable[ i ].stateNameBuffer )
 		{
-			
+
 			delete [] m_imageAndColorTable[ i ].stateNameBuffer;
 			m_imageAndColorTable[ i ].stateNameBuffer = NULL;
 			m_imageAndColorTable[ i ].stateName = NULL;
 
-		}  // end if
+		}
 
-	}  // end for i
+	}
 
-}  // end ~LayoutScheme
+}
 
 // LayoutScheme::init =========================================================
 /** Init */
@@ -1528,10 +1527,10 @@ void LayoutScheme::init( void )
 	// just up the default state values
 	for( i = FIRST_VALID_IDENTIFIER; i < NUM_STATE_IDENTIFIERS; i++ )
 	{
-	
+
 		// get info from the static table created for property editing
 		info = GetStateInfo( (StateIdentifier)i );
-		assert( info );	
+		assert( info );
 		m_imageAndColorTable[ i ].windowType = info->windowType;
 		m_imageAndColorTable[ i ].stateID = info->stateID;
 		m_imageAndColorTable[ i ].image = info->image;
@@ -1541,7 +1540,7 @@ void LayoutScheme::init( void )
 		m_imageAndColorTable[ i ].stateName = m_imageAndColorTable[ i ].stateNameBuffer;
 		strcpy(m_imageAndColorTable[ i ].stateNameBuffer, info->stateName );
 
-	}  // end for i
+	}
 
 	// assign a default set of colors
 	UnsignedByte alpha = 255;
@@ -1809,7 +1808,7 @@ void LayoutScheme::init( void )
 	image = TheMappedImageCollection->findImageByName( AsciiString(  "VSliderLargeThumbHiliteSelected" ) );
 	storeImageAndColor( LISTBOX_SLIDER_THUMB_HILITE_PUSHED, image, white, darkGreen );
 
-	// Combo Box 
+	// Combo Box
 	//---------------------------------------------------------------------------
 	image = TheMappedImageCollection->findImageByName( AsciiString( "ListBoxEnabled" ) );
 	storeImageAndColor( COMBOBOX_ENABLED, image, red, lightRed );
@@ -1879,7 +1878,7 @@ void LayoutScheme::init( void )
 	storeImageAndColor( COMBOBOX_EDIT_BOX_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
 	image = TheMappedImageCollection->findImageByName( AsciiString( "TextEntryHiliteSmallRepeatingCenter" ) );
 	storeImageAndColor( COMBOBOX_EDIT_BOX_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	
+
 	image = TheMappedImageCollection->findImageByName( AsciiString( "ListBoxEnabled" ) );
 	storeImageAndColor( COMBOBOX_LISTBOX_ENABLED, image, red, lightRed );
 	image = TheMappedImageCollection->findImageByName( AsciiString( "ListBoxEnabledSelectedItemLeftEnd" ) );
@@ -2132,12 +2131,12 @@ void LayoutScheme::init( void )
 
 	storeImageAndColor( TAB_CONTROL_ENABLED, NULL, black, white );
 	storeImageAndColor( TAB_CONTROL_DISABLED, NULL, darkGray, white );
-	storeImageAndColor( TAB_CONTROL_HILITE, NULL, black, white );	
+	storeImageAndColor( TAB_CONTROL_HILITE, NULL, black, white );
 
 	// generic
 	storeImageAndColor( GENERIC_ENABLED, NULL, darkBlue, white );
 	storeImageAndColor( GENERIC_DISABLED, NULL, darkGray, white );
-	storeImageAndColor( GENERIC_HILITE, NULL, lightBlue, white );	
+	storeImageAndColor( GENERIC_HILITE, NULL, lightBlue, white );
 
 	// default text colors
 	m_enabledText.color = white;
@@ -2149,7 +2148,7 @@ void LayoutScheme::init( void )
 
 	// default font
 	m_font = TheWindowManager->winFindFont( AsciiString("Times New Roman"), 14, FALSE );
-}  // end init
+}
 
 // LayoutScheme::openDialog ===================================================
 /** Bring up the layout scheme dialog box */
@@ -2166,7 +2165,7 @@ void LayoutScheme::openDialog( void )
 
 	theScheme = NULL;
 
-}  // end openDialog
+}
 
 // LayoutScheme::findEntry ====================================================
 /** Find the entry for the state */
@@ -2178,11 +2177,11 @@ ImageAndColorInfo *LayoutScheme::findEntry( StateIdentifier id )
 	if( id < 0 || id >= NUM_STATE_IDENTIFIERS )
 	{
 
-		DEBUG_LOG(( "Illegal state to to layout 'findEntry' '%d'\n", id ));
+		DEBUG_LOG(( "Illegal state to to layout 'findEntry' '%d'", id ));
 		assert( 0 );
 		return NULL;
 
-	}  // end if
+	}
 
 	// search the state table
 	for( Int i = 0; i < NUM_STATE_IDENTIFIERS; i++ )
@@ -2191,11 +2190,11 @@ ImageAndColorInfo *LayoutScheme::findEntry( StateIdentifier id )
 		if( m_imageAndColorTable[ i ].stateID == id )
 			return &m_imageAndColorTable[ i ];
 
-	}  // end for i
+	}
 
 	return NULL;  // not found
 
-}  // end findEntry
+}
 
 // LayoutScheme::getImageAndColor =============================================
 /** Get the color and color info for the state */
@@ -2207,16 +2206,16 @@ ImageAndColorInfo *LayoutScheme::getImageAndColor( StateIdentifier id )
 	if( id < 0 || id >= NUM_STATE_IDENTIFIERS )
 	{
 
-		DEBUG_LOG(( "getImageAndColor: Illegal state '%d'\n", id ));
+		DEBUG_LOG(( "getImageAndColor: Illegal state '%d'", id ));
 		assert( 0 );
 		return NULL;
 
-	}  // end if
+	}
 
 	// return the entry for the state
 	return findEntry( id );
 
-}  // end getImageAndColor
+}
 
 // LayoutScheme::storeImageAndColor ===========================================
 /** Store the image and colors of the specific state in our own data array */
@@ -2229,11 +2228,11 @@ void LayoutScheme::storeImageAndColor( StateIdentifier id, const Image *image,
 	if( id < 0 || id >= NUM_STATE_IDENTIFIERS )
 	{
 
-		DEBUG_LOG(( "Illegal state identifier in layout scheme store image and color '%d'\n", id ));
+		DEBUG_LOG(( "Illegal state identifier in layout scheme store image and color '%d'", id ));
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	// store the info
 	ImageAndColorInfo *entry = findEntry( id );
@@ -2244,9 +2243,9 @@ void LayoutScheme::storeImageAndColor( StateIdentifier id, const Image *image,
 		entry->color = color;
 		entry->borderColor = borderColor;
 
-	}  // en dif
+	}
 
-}  // end storeImageAndColor
+}
 
 // LayoutScheme::saveScheme ===================================================
 /** Save the scheme to the filename provided */
@@ -2262,12 +2261,12 @@ Bool LayoutScheme::saveScheme( char *filename )
 	if( fp == NULL )
 	{
 
-		DEBUG_LOG(( "saveScheme: Unable to open file '%s'\n", filename ));
+		DEBUG_LOG(( "saveScheme: Unable to open file '%s'", filename ));
 		MessageBox( TheEditor->getWindowHandle(),
 								"Unable to open scheme for for saving.  Read only?", "Save Error", MB_OK );
 		return FALSE;
 
-	}  // end if
+	}
 
 	// save the filename we're using now
 	setSchemeFilename( filename );
@@ -2311,9 +2310,9 @@ Bool LayoutScheme::saveScheme( char *filename )
 		assert( info );
 
 		// get the color data in more RGB friendly output
-		GameGetColorComponents( info->color, &colorR, &colorG, 
+		GameGetColorComponents( info->color, &colorR, &colorG,
 														&colorB, &colorA );
-		GameGetColorComponents( info->borderColor, &bColorR, &bColorG, 
+		GameGetColorComponents( info->borderColor, &bColorR, &bColorG,
 														&bColorB, &bColorA );
 
 		// output it
@@ -2321,14 +2320,14 @@ Bool LayoutScheme::saveScheme( char *filename )
 						 i, info->image ? info->image->getName().str() : "NONE", colorR, colorG, colorB, colorA,
 						 bColorR, bColorG, bColorB, bColorA );
 
-	}  // end for i
+	}
 
 	// close the file
 	fclose( fp );
 
 	return TRUE;
 
-}  // end saveScheme
+}
 
 // LayoutScheme::loadScheme ===================================================
 /** Load the layout scheme into this class instance */
@@ -2349,32 +2348,43 @@ Bool LayoutScheme::loadScheme( char *filename )
 
 	// write header
 	Int version;
-	fscanf( fp, "Window Layout Scheme: Version '%d'\n", &version );
-	if( version != SCHEME_VERSION )
+	if (fscanf( fp, "Window Layout Scheme: Version '%d'\n", &version ) == 1)
 	{
+		if( version != SCHEME_VERSION )
+		{
 
-		DEBUG_LOG(( "loadScheme: Old layout file version '%d'\n", version ));
-		MessageBox( TheEditor->getWindowHandle(),
-								"Old layout version, cannot open.", "Old File", MB_OK );
-		return FALSE;
+			DEBUG_LOG(( "loadScheme: Old layout file version '%d'", version ));
+			MessageBox( TheEditor->getWindowHandle(),
+									"Old layout version, cannot open.", "Old File", MB_OK );
+			return FALSE;
 
-	}  // end if
-
+		}
+	}
 	// default text colors
-	fscanf( fp, "Enabled Text: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
-	m_enabledText.color = GameMakeColor( colorR, colorG, colorB, colorA );
-	fscanf( fp, "Enabled Text Border: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
-	m_enabledText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
-
-	fscanf( fp, "Disabled Text: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
-	m_disabledText.color = GameMakeColor( colorR, colorG, colorB, colorA );
-	fscanf( fp, "Disabled Text Border: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
-	m_disabledText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
-
-	fscanf( fp, "Hilite Text: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
-	m_hiliteText.color = GameMakeColor( colorR, colorG, colorB, colorA );
-	fscanf( fp, "Hilite Text Border: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
-	m_hiliteText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
+	if (fscanf( fp, "Enabled Text: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	{
+		m_enabledText.color = GameMakeColor( colorR, colorG, colorB, colorA );
+	}
+	if (fscanf( fp, "Enabled Text Border: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	{
+		m_enabledText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
+	}
+	if (fscanf( fp, "Disabled Text: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	{
+		m_disabledText.color = GameMakeColor( colorR, colorG, colorB, colorA );
+	}
+	if (fscanf( fp, "Disabled Text Border: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	{
+		m_disabledText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
+	}
+	if (fscanf( fp, "Hilite Text: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	{
+		m_hiliteText.color = GameMakeColor( colorR, colorG, colorB, colorA );
+	}
+	if (fscanf( fp, "Hilite Text Border: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	{
+		m_hiliteText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
+	}
 
 	// default font
 	char fontBuffer[ 256 ];
@@ -2394,43 +2404,45 @@ Bool LayoutScheme::loadScheme( char *filename )
 		fontBuffer[ index++ ] = c;
 		c = fgetc( fp );
 
-	}  // end while
+	}
 	fontBuffer[ index ] = '\0';
 	c = fgetc( fp );  // the end quite itself
 
 	// read the size and bold data elements
-	fscanf( fp, " Size: %d Bold: %d\n", &size, &bold );
-
-	// set the font
-	m_font = TheFontLibrary->getFont( AsciiString(fontBuffer), size, bold );
+	if(fscanf( fp, " Size: %i Bold: %i\n", &size, &bold ) == 2)
+	{
+		// set the font
+		m_font = TheFontLibrary->getFont( AsciiString(fontBuffer), size, bold );
+	}
 
 	// all the data for all the states
 	Int numStates, state;
 	char imageBuffer[ 128 ];
-	fscanf( fp, "Number of states: %d\n", &numStates );
-	for( Int i = 0; i < numStates; i++ )
+	if (fscanf( fp, "Number of states: %i\n", &numStates ) == 1)
 	{
+		for( Int i = 0; i < numStates; i++ )
+		{
 
-		// read all the data
-		fscanf( fp, "%d: Image: %s Color: (%d,%d,%d,%d) Border: (%d,%d,%d,%d)\n",
-						&state, imageBuffer, &colorR, &colorG, &colorB, &colorA,
-						&bColorR, &bColorG, &bColorB, &bColorA );
+			// read all the data
+			if( fscanf( fp, "%d: Image: %s Color: (%hhu,%hhu,%hhu,%hhu) Border: (%hhu,%hhu,%hhu,%hhu)\n",
+							&state, imageBuffer, &colorR, &colorG, &colorB, &colorA,
+							&bColorR, &bColorG, &bColorB, &bColorA ) == 10)
+			{
+				// sanity
+				assert( state == i );
 
-		// sanity
-		assert( state == i );
-
-		// store the info
-		storeImageAndColor( (StateIdentifier)state,
-												TheMappedImageCollection->findImageByName( AsciiString(  imageBuffer ) ),
-												GameMakeColor( colorR, colorG, colorB, colorA ),
-												GameMakeColor( bColorR, bColorG, bColorB, bColorA ) );
-
-	}  // end for i
-
+				// store the info
+				storeImageAndColor( (StateIdentifier)state,
+														TheMappedImageCollection->findImageByName( AsciiString(  imageBuffer ) ),
+														GameMakeColor( colorR, colorG, colorB, colorA ),
+														GameMakeColor( bColorR, bColorG, bColorB, bColorA ) );
+			}
+		}
+	}
 	// close the file
 	fclose( fp );
 
 	return TRUE;
 
-}  // end loadScheme
+}
 

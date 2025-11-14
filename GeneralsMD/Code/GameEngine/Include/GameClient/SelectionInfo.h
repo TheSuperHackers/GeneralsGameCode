@@ -28,12 +28,9 @@
 
 #pragma once
 
-#ifndef __SELECTIONINFO_H__
-#define __SELECTIONINFO_H__
-
 #include "GameClient/InGameUI.h"
 
-// This structure gives you a rough idea about the counts of the kinds of guys in the 
+// This structure gives you a rough idea about the counts of the kinds of guys in the
 // current selection, and in the selection that would be made.
 struct SelectionInfo
 {
@@ -59,7 +56,7 @@ struct SelectionInfo
 	Bool selectFriends;
 
 
-	SelectionInfo(); 
+	SelectionInfo();
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -67,8 +64,10 @@ struct PickDrawableStruct
 {
 	// List to fill with Drawables. This should be provided by the caller.
 	DrawableList *drawableListToFill;
+
+	Bool isPointSelection;
 	Bool forceAttackMode;
-	
+
 	// Note, this is OR'd with the things we are attempting to select.
 	KindOfMaskType kindofsToMatch;
 
@@ -76,7 +75,7 @@ struct PickDrawableStruct
 };
 
 //-------------------------------------------------------------------------------------------------
-extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedDrawables, 
+extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedDrawables,
 																					const DrawableList *newlySelectedDrawables,
 																					SelectionInfo *outSelectionInfo,
 																					Bool selectionIsPoint);
@@ -97,9 +96,6 @@ extern void translatePickTypesToKindof(UnsignedInt pickTypes, KindOfMaskType& ou
 
 //-------------------------------------------------------------------------------------------------
 // Given a drawable, add it to an stl list. Useful for iterateDrawablesInRegion.
-// userData should be a pointer to a PickDrawableStruct, which is defined in 
+// userData should be a pointer to a PickDrawableStruct, which is defined in
 // above.
 extern Bool addDrawableToList( Drawable *draw, void *userData );
-
-
-#endif /* __SELECTIONINFO_H__ */

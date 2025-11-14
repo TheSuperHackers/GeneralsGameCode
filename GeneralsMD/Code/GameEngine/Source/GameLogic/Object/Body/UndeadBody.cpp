@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Xfer.h"
 #include "GameLogic/Module/UndeadBody.h"
 
@@ -38,10 +38,10 @@
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
-void UndeadBodyModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void UndeadBodyModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   ActiveBodyModuleData::buildFieldParse(p);
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "SecondLifeMaxHealth",			INI::parseReal,	NULL,		offsetof( UndeadBodyModuleData, m_secondLifeMaxHealth ) },
 		{ 0, 0, 0, 0 }
@@ -58,7 +58,7 @@ UndeadBodyModuleData::UndeadBodyModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UndeadBody::UndeadBody( Thing *thing, const ModuleData* moduleData ) 
+UndeadBody::UndeadBody( Thing *thing, const ModuleData* moduleData )
 						 : ActiveBody( thing, moduleData )
 {
 	m_isSecondLife = FALSE;
@@ -79,9 +79,14 @@ void UndeadBody::attemptDamage( DamageInfo *damageInfo )
 	// remaining, then go ahead and take it.
 	Bool shouldStartSecondLife = FALSE;
 
-	if( damageInfo->in.m_damageType != DAMAGE_UNRESISTABLE  
+	if( damageInfo->in.m_damageType != DAMAGE_UNRESISTABLE
 			&& !m_isSecondLife
+#if RETAIL_COMPATIBLE_CRC
 			&& damageInfo->in.m_amount >= getHealth()
+#else
+			// TheSuperHackers @bugfix Stubbjax 20/09/2025 Battle Buses now correctly apply damage modifiers when calculating lethal damage
+			&& estimateDamage(damageInfo->in) >= getHealth()
+#endif
 			&& IsHealthDamagingDamage(damageInfo->in.m_damageType)
 			)
 	{
@@ -154,7 +159,7 @@ void UndeadBody::crc( Xfer *xfer )
 	// extend base class
 	ActiveBody::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -174,7 +179,7 @@ void UndeadBody::xfer( Xfer *xfer )
 
 	xfer->xferBool(&m_isSecondLife);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -185,4 +190,4 @@ void UndeadBody::loadPostProcess( void )
 	// extend base class
 	ActiveBody::loadPostProcess();
 
-}  // end loadPostProcess
+}

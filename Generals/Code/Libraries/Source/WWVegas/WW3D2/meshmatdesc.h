@@ -26,18 +26,17 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Jani_p                                                      $*
+ *                      $Author:: Greg_h                                                      $*
  *                                                                                             *
- *                     $Modtime:: 7/10/01 7:47p                                               $*
+ *                     $Modtime:: 1/18/02 3:08p                                               $*
  *                                                                                             *
- *                    $Revision:: 12                                                          $*
+ *                    $Revision:: 14                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef MESHMATDESC_H
-#define MESHMATDESC_H
+#pragma once
 
 #include "always.h"
 #include "vector2.h"
@@ -52,6 +51,7 @@ class MatBufferClass;
 class TexBufferClass;
 class UVBufferClass;
 class TextureClass;
+class MeshModelClass;
 
 /**
 ** MeshMatDescClass - This class encapsulates all of the material description data for a mesh.
@@ -62,7 +62,7 @@ class MeshMatDescClass : public W3DMPO
 	W3DMPO_GLUE(MeshMatDescClass)
 public:
 
-	enum 
+	enum
 	{
 		MAX_PASSES = 4,
 		MAX_TEX_STAGES = 2,
@@ -103,8 +103,7 @@ public:
 
 	int							Get_UV_Array_Count(void);
 	Vector2 *					Get_UV_Array_By_Index(int index, bool create = true);
-//	Vector3i *					Get_UVIndex_Array (int pass = 0, bool create = true);
-	
+
 	unsigned*					Get_DCG_Array(int pass);
 	unsigned*					Get_DIG_Array(int pass);
 	void							Set_DCG_Source(int pass,VertexMaterialClass::ColorSourceType source);
@@ -121,15 +120,15 @@ public:
 	** the "Get" functions add a reference before returning the pointer (if appropriate)
 	*/
 	VertexMaterialClass *	Get_Single_Material(int pass=0) const;
-	TextureClass *				Get_Single_Texture(int pass=0,int stage=0) const;	
+	TextureClass *				Get_Single_Texture(int pass=0,int stage=0) const;
 	ShaderClass					Get_Single_Shader(int pass=0) const;
 
 	/*
-	** the "Peek" functions just return the pointer and it's the caller's responsibility to 
+	** the "Peek" functions just return the pointer and it's the caller's responsibility to
 	** maintain a reference to an object with a reference to the data
 	*/
 	VertexMaterialClass *	Peek_Single_Material(int pass=0) const;
-	TextureClass *				Peek_Single_Texture(int pass=0,int stage=0) const;	
+	TextureClass *				Peek_Single_Texture(int pass=0,int stage=0) const;
 
 	void							Set_Material(int vidx,VertexMaterialClass * vmat,int pass=0);
 	void							Set_Shader(int pidx,ShaderClass shader,int pass=0);
@@ -146,12 +145,11 @@ public:
 	** Determine whether this material description contains data for the specified category
 	*/
 	bool							Has_UV(int pass,int stage)					{ return UVSource[pass][stage] != -1; }
-//	bool							Has_UVIndex(int pass)						{ return UVIndex[pass] != NULL; }
 	bool							Has_Color_Array(int array)					{ return ColorArray[array] != NULL; }
-	
+
 	bool							Has_Texture_Data(int pass,int stage)	{ return (Texture[pass][stage] != NULL) || (TextureArray[pass][stage] != NULL); }
-	bool							Has_Shader_Data(int pass)					{ return (Shader[pass] != NullShader) || (ShaderArray[pass] != NULL); }					
-	bool							Has_Material_Data(int pass)				{ return (Material[pass] != NULL) || (MaterialArray[pass] != NULL); }				
+	bool							Has_Shader_Data(int pass)					{ return (Shader[pass] != NullShader) || (ShaderArray[pass] != NULL); }
+	bool							Has_Material_Data(int pass)				{ return (Material[pass] != NULL) || (MaterialArray[pass] != NULL); }
 
 	/*
 	** "Get" functions for Materials, Textures, and Shaders when there are more than one (per-polygon or per-vertex)
@@ -177,10 +175,10 @@ public:
 	void							Make_Color_Array_Unique(int index);
 
 	/*
-	** Post-Load processing, configures all materials to use the correct passes and 
+	** Post-Load processing, configures all materials to use the correct passes and
 	** material color sources, etc.
 	*/
-	void							Post_Load_Process(bool enable_lighting = true);
+	void							Post_Load_Process(bool enable_lighting = true,MeshModelClass * parent = NULL);
 	void							Disable_Lighting(void);
 
 	/*
@@ -191,22 +189,22 @@ public:
 	static ShaderClass NullShader;	// Used to mark no shader data
 
 protected:
-	
+
 	void							Configure_Material(VertexMaterialClass * mtl,int pass,bool lighting_enabled);
 	void							Disable_Backface_Culling(void);
+	void							Delete_Pass(int pass);
 
 	int													PassCount;
 	int													VertexCount;
-	int													PolyCount;	
+	int													PolyCount;
 
 	// u-v coordinates
 	UVBufferClass *									UV[MAX_UV_ARRAYS];
 	int													UVSource[MAX_PASSES][MAX_TEX_STAGES];
-//	ShareBufferClass<Vector3i> *					UVIndex[MAX_PASSES];
 
-	// vertex color arrays, we support two arrays: each can only be used on the 
+	// vertex color arrays, we support two arrays: each can only be used on the
 	// first pass.
-	ShareBufferClass<unsigned> *					ColorArray[2];	
+	ShareBufferClass<unsigned> *					ColorArray[2];
 	VertexMaterialClass::ColorSourceType		DCGSource[MAX_PASSES];
 	VertexMaterialClass::ColorSourceType		DIGSource[MAX_PASSES];
 
@@ -226,11 +224,9 @@ protected:
 
 /**
 ** MatBufferClass
-** This is a ShareBufferClass of pointers to vertex materials.  Could have written as a template but
-** don't think I'll need another array like this and I couldn't make one template do both the materials
-** and the textures (one uses our ref-counting system, the other uses surrender's).  So, here are
-** two quick and dirty ref-counted arrays of ref-counted pointers...  Get and Peek work like normal, and
-** all non-NULL pointers will be released when the buffer is destroyed.
+** This is a ShareBufferClass of pointers to vertex materials.  Should be written as a template...
+** Get and Peek work like normal, and all non-NULL pointers will be released when the buffer
+** is destroyed.
 */
 class MatBufferClass : public ShareBufferClass < VertexMaterialClass * >
 {
@@ -251,8 +247,8 @@ private:
 
 /**
 ** TexBufferClass
-** This is a ShareBufferClass of pointers to textures.  Works just like MatBufferClass but with 
-** srTextureIFace's...
+** This is a ShareBufferClass of pointers to textures.  Works just like MatBufferClass but with
+** TextureClass's...
 */
 class TexBufferClass : public ShareBufferClass < TextureClass * >
 {
@@ -260,7 +256,7 @@ class TexBufferClass : public ShareBufferClass < TextureClass * >
 public:
 	TexBufferClass(int count, const char* msg) : ShareBufferClass<TextureClass *>(count, msg) { Clear(); }
 	TexBufferClass(const TexBufferClass & that);
-	~TexBufferClass(void);						
+	~TexBufferClass(void);
 
 	void				Set_Element(int index,TextureClass * mat);
 	TextureClass *	Get_Element(int index);
@@ -321,7 +317,7 @@ inline void MeshMatDescClass::Set_UV_Source(int pass,int stage,int sourceindex)
 	WWASSERT(pass < MAX_PASSES);
 	WWASSERT(stage >= 0);
 	WWASSERT(stage < MAX_TEX_STAGES);
-	UVSource[pass][stage] = sourceindex;	
+	UVSource[pass][stage] = sourceindex;
 }
 
 inline int MeshMatDescClass::Get_UV_Source(int pass,int stage)
@@ -354,18 +350,7 @@ inline Vector2 * MeshMatDescClass::Get_UV_Array_By_Index(int index, bool create)
 	}
 	return NULL;
 }
-/*
-inline Vector3i * MeshMatDescClass::Get_UVIndex_Array (int pass, bool create)
-{
-	if (create && !UVIndex[pass]) {
-		UVIndex[pass] = NEW_REF(ShareBufferClass<Vector3i>,(PolyCount));
-	}
-	if (UVIndex[pass]) {
-		return UVIndex[pass]->Get_Array();
-	}
-	return NULL;
-}
-*/
+
 inline unsigned* MeshMatDescClass::Get_DCG_Array(int pass)
 {
 	WWASSERT(pass >= 0);
@@ -493,7 +478,7 @@ inline bool MeshMatDescClass::Has_Texture_Array(int pass,int stage) const
 	return (TextureArray[pass][stage] != NULL);
 }
 
-inline void MeshMatDescClass::Disable_Backface_Culling(void) 
+inline void MeshMatDescClass::Disable_Backface_Culling(void)
 {
 	for (int pass = 0; pass < PassCount; pass++) {
 		Shader[pass].Set_Cull_Mode(ShaderClass::CULL_MODE_DISABLE);
@@ -504,6 +489,3 @@ inline void MeshMatDescClass::Disable_Backface_Culling(void)
 		}
 	}
 }
-
-#endif //MESHMATDESC_H
-

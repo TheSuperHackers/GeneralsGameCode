@@ -28,14 +28,11 @@
 
 #pragma once
 
-#ifndef _OVERRIDABLE_H_
-#define _OVERRIDABLE_H_
-
 #include "Common/GameMemory.h"
 
 /*
-	In order for something to live in an OVERRIDE<> object, it must be derived from Overridable 
-	(publicly). 
+	In order for something to live in an OVERRIDE<> object, it must be derived from Overridable
+	(publicly).
 
 	This is useful for things like templates, where we want to override the template and make sure
 	that all instances get the updated values (for instance, via map.ini)
@@ -52,7 +49,7 @@ class Overridable : public MemoryPoolObject
 	public:
 		Overridable() : m_nextOverride(NULL), m_isOverride(false) {}
 
-		// return a constant version of m_nextOverride, which can be NULL if there is no 
+		// return a constant version of m_nextOverride, which can be NULL if there is no
 		// override
 		const Overridable *getNextOverride( void ) const
 		{
@@ -108,7 +105,7 @@ class Overridable : public MemoryPoolObject
 		{
 			if ( m_isOverride )
 			{
-				deleteInstance();
+				deleteInstance(this);
 				return NULL;
 			}
 			else if ( m_nextOverride )
@@ -120,11 +117,7 @@ class Overridable : public MemoryPoolObject
 };
 
 // cleans up and dangling overrides.
-__inline Overridable::~Overridable() 
+__inline Overridable::~Overridable()
 {
-	if (m_nextOverride) 
-		m_nextOverride->deleteInstance();
+	deleteInstance(m_nextOverride);
 }
-
-
-#endif /* _OVERRIDABLE_H_ */

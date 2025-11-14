@@ -26,9 +26,6 @@
 
 #pragma once
 
-#ifndef _WeaponSet_H_
-#define _WeaponSet_H_
-
 #include "Lib/BaseType.h"
 #include "Common/GameType.h"
 #include "Common/KindOf.h"
@@ -42,8 +39,8 @@ class Object;
 class Weapon;
 class WeaponTemplate;
 
-enum CommandSourceType;
-enum DamageType;
+enum CommandSourceType CPP_11(: Int);
+enum DamageType CPP_11(: Int);
 
 // for WeaponSetType. Part of detangling.
 #include "GameLogic/WeaponSetType.h"
@@ -53,7 +50,7 @@ enum DamageType;
 #include "GameLogic/WeaponSetFlags.h"
 
 #ifdef DEFINE_WEAPONSLOTTYPE_NAMES
-static const char *TheWeaponSlotTypeNames[] = 
+static const char *const TheWeaponSlotTypeNames[] =
 {
 	"PRIMARY",
 	"SECONDARY",
@@ -61,17 +58,19 @@ static const char *TheWeaponSlotTypeNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheWeaponSlotTypeNames) == WEAPONSLOT_COUNT + 1, "Incorrect array size");
 
-static const LookupListRec TheWeaponSlotTypeNamesLookupList[] = 
+static const LookupListRec TheWeaponSlotTypeNamesLookupList[] =
 {
 	{ "PRIMARY",		PRIMARY_WEAPON },
 	{ "SECONDARY",	SECONDARY_WEAPON },
 	{ "TERTIARY",		TERTIARY_WEAPON },
-	
-	{ NULL, 0	}// keep this last!
-};
 
-#endif  
+	{ NULL, 0	}
+};
+static_assert(ARRAY_SIZE(TheWeaponSlotTypeNamesLookupList) == WEAPONSLOT_COUNT + 1, "Incorrect array size");
+
+#endif
 
 //-------------------------------------------------------------------------------------------------
 #ifdef DEFINE_WEAPONCONDITIONMAP
@@ -87,7 +86,7 @@ static const ModelConditionFlagType TheWeaponSetTypeToModelConditionTypeMap[WEAP
 #endif
 
 //-------------------------------------------------------------------------------------------------
-enum WeaponSetConditionType
+enum WeaponSetConditionType CPP_11(: Int)
 {
 	WSF_INVALID = -1,
 
@@ -132,13 +131,13 @@ public:
 	Bool isWeaponLockSharedAcrossSets() const {return m_isWeaponLockSharedAcrossSets; }
 
 	Bool hasAnyWeapons() const;
-	inline const WeaponTemplate* getNth(WeaponSlotType n) const { return m_template[n]; } 
-	inline UnsignedInt getNthCommandSourceMask(WeaponSlotType n) const { return m_autoChooseMask[n]; } 
-	inline const KindOfMaskType& getNthPreferredAgainstMask(WeaponSlotType n) const { return m_preferredAgainst[n]; } 
+	inline const WeaponTemplate* getNth(WeaponSlotType n) const { return m_template[n]; }
+	inline UnsignedInt getNthCommandSourceMask(WeaponSlotType n) const { return m_autoChooseMask[n]; }
+	inline const KindOfMaskType& getNthPreferredAgainstMask(WeaponSlotType n) const { return m_preferredAgainst[n]; }
 
 	inline Int getConditionsYesCount() const { return 1; }
 	inline const WeaponSetFlags& getNthConditionsYes(Int i) const { return m_types; }
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	inline AsciiString getDescription() const { return AsciiString("ArmorTemplateSet"); }
 #endif
 };
@@ -147,17 +146,14 @@ public:
 typedef std::vector<WeaponTemplateSet> WeaponTemplateSetVector;
 
 //-------------------------------------------------------------------------------------------------
-typedef SparseMatchFinder<WeaponTemplateSet, WeaponSetFlags> WeaponTemplateSetFinder;
-
-//-------------------------------------------------------------------------------------------------
-enum WeaponChoiceCriteria
+enum WeaponChoiceCriteria CPP_11(: Int)
 {
 	PREFER_MOST_DAMAGE,		///< choose the weapon that will do the most damage
 	PREFER_LONGEST_RANGE	///< choose the weapon with the longest range (that will do nonzero damage)
 };
 
 //-------------------------------------------------------------------------------------------------
-enum WeaponLockType
+enum WeaponLockType CPP_11(: Int)
 {
 	NOT_LOCKED,							///< Weapon is not locked
 	LOCKED_TEMPORARILY,			///< Weapon is locked until clip is empty, or current "attack" state exits
@@ -165,7 +161,7 @@ enum WeaponLockType
 };
 
 //-------------------------------------------------------------------------------------------------
-enum CanAttackResult
+enum CanAttackResult CPP_11(: Int)
 {
 	//Worst scenario to best scenario -- These must be done this way now!
 	ATTACKRESULT_NOT_POSSIBLE,					//Can't possibly attack target.
@@ -225,7 +221,7 @@ public:
 
 	/**
 		Determines if the unit has any weapon that could conceivably
-		harm the victim. this does not take range, ammo, etc. into 
+		harm the victim. this does not take range, ammo, etc. into
 		account, but immutable weapon properties, such as "can you
 		target airborne victims".
 	*/
@@ -246,5 +242,3 @@ public:
 
 	static ModelConditionFlags getModelConditionForWeaponSlot(WeaponSlotType wslot, WeaponSetConditionType a);
 };
-
-#endif	// _WeaponSet_H_

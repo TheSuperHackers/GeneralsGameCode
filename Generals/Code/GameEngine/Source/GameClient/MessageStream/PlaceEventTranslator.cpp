@@ -25,7 +25,7 @@
 // FILE: PlaceEventTranslator.cpp ///////////////////////////////////////////////////////////
 // Author: Steven Johnson, Dec 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameAudio.h"
 #include "Common/Player.h"
@@ -62,6 +62,8 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 	{
 
 		//---------------------------------------------------------------------------------------------
+		// TheSuperHackers @bugfix Prevent double-clicks from falling through to other translators during building placement
+		case GameMessage::MSG_RAW_MOUSE_LEFT_DOUBLE_CLICK:
 		case GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN:
 		{
 			// if we're in a building placement mode, do the place and send to all players
@@ -87,10 +89,10 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 					TheInGameUI->placeBuildAvailable( NULL, NULL );
 					break;
 
-				}  // end if
+				}
 
 				// set this location as the placement anchor
-				TheInGameUI->setPlacementStart( &mouse );	
+				TheInGameUI->setPlacementStart( &mouse );
 
 /*
 //
@@ -107,12 +109,12 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 				//
 				LegalBuildCode lbc;
 				lbc = TheBuildAssistant->isLocationLegalToBuild( &world,
-																												 whatToBuild, 
+																												 whatToBuild,
 																												 TheInGameUI->getPlacementAngle(),
 																												 BuildAssistant::USE_QUICK_PATHFIND |
-																												 BuildAssistant::TERRAIN_RESTRICTIONS | 
+																												 BuildAssistant::TERRAIN_RESTRICTIONS |
 																												 BuildAssistant::CLEAR_PATH |
-																												 BuildAssistant::NO_OBJECT_OVERLAP, 
+																												 BuildAssistant::NO_OBJECT_OVERLAP,
 																												 builderObject );
 				if( lbc != LBC_OK )
 				{
@@ -124,22 +126,22 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 					// display a message to the user as to why you can't build there
 					TheInGameUI->displayCantBuildMessage( lbc );
 
-				}  // end if
+				}
 				else
 				{
 
 					// start placement anchor
-					TheInGameUI->setPlacementStart(&mouse);	
+					TheInGameUI->setPlacementStart(&mouse);
 
-				}  // end else
+				}
 */
-															
+
 				// used the input
 				disp = DESTROY_MESSAGE;
 
-			}  
+			}
 			break;
-		}  
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_MOUSE_LEFT_DOUBLE_CLICK:
@@ -170,11 +172,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 				// translate the screen position of start to world target location
 				TheTacticalView->screenToTerrain( &anchorStart, &world );
 
-				// get the source object ID of the thing that is "building" the object 
-				ObjectID builderID = INVALID_ID;
 				Object *builderObj = TheGameLogic->findObjectByID( TheInGameUI->getPendingPlaceSourceObjectID() );
-				if( builderObj )
-					builderID = builderObj->getID();
 
 				//Kris: September 27, 2002
 				//Make sure we have enough CASH to build it! It's possible that between the
@@ -188,7 +186,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 						TheEva->setShouldPlay(EVA_InsufficientFunds);
 						TheInGameUI->message( "GUI:NotEnoughMoneyToBuild" );
 						break;
-					} 
+					}
 					else if (cmt == CANMAKE_QUEUE_FULL)
 					{
 						TheInGameUI->message( "GUI:ProductionQueueFull" );
@@ -203,11 +201,13 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 					{
 						TheInGameUI->message( "GUI:UnitMaxedOut" );
 						break;
-					} 
+					}
 					// get out of pending placement mode, this will also clear the arrow anchor status
 					TheInGameUI->placeBuildAvailable( NULL, NULL );
 					break;
-				} 
+				}
+
+				DEBUG_ASSERTCRASH(builderObj != NULL, ("builderObj is NULL"));
 
 				// check to see if this is a legal location to build something at
 				LegalBuildCode lbc;
@@ -215,10 +215,10 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 																												 build,
 																												 angle,
 																												 BuildAssistant::USE_QUICK_PATHFIND |
-																												 BuildAssistant::TERRAIN_RESTRICTIONS | 
+																												 BuildAssistant::TERRAIN_RESTRICTIONS |
 																												 BuildAssistant::CLEAR_PATH |
 																												 BuildAssistant::NO_OBJECT_OVERLAP |
-																												 BuildAssistant::SHROUD_REVEALED, 
+																												 BuildAssistant::SHROUD_REVEALED,
 																												 builderObj, NULL );
 				if( lbc == LBC_OK )
 				{
@@ -242,14 +242,14 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 						TheTacticalView->screenToTerrain( &anchorEnd, &worldEnd );
 						placeMsg->appendLocationArgument( worldEnd );
 
-					}  // end if
+					}
 
 					pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), placeMsg->getType() );
 
 					// get out of pending placement mode, this will also clear the arrow anchor status
 					TheInGameUI->placeBuildAvailable( NULL, NULL );
 
-				}  // end if, location legal to build at
+				}
 				else
 				{
 					// can't place, display why
@@ -267,20 +267,20 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 					// unhook the anchor so they can try again
 					TheInGameUI->setPlacementStart( NULL );
 
-				}  // end else
-								
+				}
+
 				// used the input
 				disp = DESTROY_MESSAGE;
 				m_frameOfUpButton = TheGameLogic->getFrame();
 
 			}
 
-			if (disp == DESTROY_MESSAGE) 
+			if (disp == DESTROY_MESSAGE)
 				TheInGameUI->clearAttackMoveToMode();
 
 			break;
 
-		}  
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_POSITION:
@@ -297,24 +297,24 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 				//
 				ICoord2D start;
 				TheInGameUI->getPlacementPoints( &start, NULL );
-				
+
 				Int x, y;
 				x = mouse.x - start.x;
 				y = mouse.y - start.y;
 				if( sqrt( (x * x) + (y * y) ) >= PLACEMENT_DRAG_THRESHOLD_DIST )
 				{
-				
+
 					TheInGameUI->setPlacementEnd(&mouse);
 					disp = DESTROY_MESSAGE;
 
-				}  // end if
+				}
 
-			}  
+			}
 			break;
 		}
-	}  
+	}
 
 	return disp;
-}  
+}
 
 

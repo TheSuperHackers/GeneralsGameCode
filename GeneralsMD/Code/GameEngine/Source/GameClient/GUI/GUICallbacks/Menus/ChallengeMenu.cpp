@@ -28,7 +28,7 @@
 // Description: General's Challenge Mode Menu
 ///////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/FileSystem.h"
 #include "Common/GameEngine.h"
@@ -55,11 +55,6 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/ScriptEngine.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 SkirmishGameInfo *TheChallengeGameInfo = NULL;
 
@@ -135,7 +130,7 @@ Int findPositionButton( Int controlID )
 {
 	for (Int i = 0; i < NUM_GENERALS; i++)
 	{
-		if (controlID == buttonGeneralPositionID[i]) 
+		if (controlID == buttonGeneralPositionID[i])
 			return i;
 	}
 	return -1;
@@ -259,7 +254,7 @@ void updateButtonSequence(Int stepsPerUpdate)
 			if (playerTemplate)
 				GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[pos], TheMappedImageCollection->findImageByName( playerTemplate->getMedallionHilite() ) );
 		}
-		
+
 		// regular look
 		if (--pos > 0 && pos < NUM_GENERALS && !buttonGeneralPosition[pos]->winIsHidden())
 		{
@@ -334,7 +329,7 @@ void ChallengeMenuInit( WindowLayout *layout, void *userData )
 	if( !TheChallengeGameInfo )
 		TheChallengeGameInfo = NEW SkirmishGameInfo;
 
-	TheChallengeGameInfo->init();  
+	TheChallengeGameInfo->init();
 	TheChallengeGameInfo->clearSlotList();
 	TheChallengeGameInfo->reset();
 	TheChallengeGameInfo->enterGame();
@@ -459,14 +454,13 @@ void ChallengeMenuUpdate( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 void ChallengeMenuShutdown( WindowLayout *layout, void *userData )
 {
-	if(wndVideoManager)
-		delete wndVideoManager;
+	delete wndVideoManager;
 	wndVideoManager = NULL;
 
 	lastButtonIndex = -1;
 
 	buttonSequenceStep = 0;
-	
+
 	Bool popImmediate = *(Bool *)userData;
 	if( popImmediate )
 	{
@@ -478,8 +472,7 @@ void ChallengeMenuShutdown( WindowLayout *layout, void *userData )
 	TheTransitionHandler->reverse("ChallengeMenuFade");
 	isShuttingDown = TRUE;
 
-	if(TheChallengeGameInfo)
-		delete TheChallengeGameInfo;
+	delete TheChallengeGameInfo;
 	TheChallengeGameInfo = NULL;
 
 	TheAudio->removeAudioEvent( lastSelectionSound );
@@ -495,7 +488,7 @@ void ChallengeMenuShutdown( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 WindowMsgHandledType ChallengeMenuInput( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -510,7 +503,7 @@ WindowMsgHandledType ChallengeMenuInput( GameWindow *window, UnsignedInt msg, Wi
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
@@ -520,18 +513,18 @@ WindowMsgHandledType ChallengeMenuInput( GameWindow *window, UnsignedInt msg, Wi
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, (WindowMsgData)buttonBack, buttonBackID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
 
@@ -543,7 +536,7 @@ WindowMsgHandledType ChallengeMenuInput( GameWindow *window, UnsignedInt msg, Wi
 //-------------------------------------------------------------------------------------------------
 WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 		case GWM_CREATE: break;
 
@@ -653,7 +646,7 @@ WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, W
  			{
 				if( TheChallengeGameInfo == NULL )
 				{
-					// If this is NULL, then we must be on the way back out of this menu.  
+					// If this is NULL, then we must be on the way back out of this menu.
 					// Don't crash, just eat the button click message.
 					return MSG_HANDLED;
 				}
@@ -676,7 +669,7 @@ WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, W
 
 				// If the campaign has been reset, so has the campaign difficulty.  Restore it, just in case.
 				DEBUG_ASSERTCRASH(TheChallengeGenerals, ("TheChallengeGenerals are not initialized."));
-				if (TheChallengeGenerals) 
+				if (TheChallengeGenerals)
 				{
 	        TheCampaignManager->setGameDifficulty(TheChallengeGenerals->getCurrentDifficulty());
 					TheScriptEngine->setGlobalDifficulty(TheChallengeGenerals->getCurrentDifficulty());
@@ -687,12 +680,12 @@ WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, W
 				msg->appendIntegerArgument(GAME_SINGLE_PLAYER);
 				msg->appendIntegerArgument(TheCampaignManager->getGameDifficulty());
 				msg->appendIntegerArgument(TheCampaignManager->getRankPoints());
-	
-        
+
+
         // Added so that, even though a ChallengeGame is really a SkirmishGame in SinglePlayerGame's clothing,
         // GameEngine will still apply the default "FRAME CAP" as it does during "Solo Missions."
         msg->appendIntegerArgument(LOGICFRAMES_PER_SECOND);	// FPS limit
-				
+
 				InitRandom(0);
 			}
 			else if( controlID == buttonBackID )

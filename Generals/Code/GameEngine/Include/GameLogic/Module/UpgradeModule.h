@@ -29,11 +29,9 @@
 
 #pragma once
 
-#ifndef __UPGRADE_MODULE_H_
-#define __UPGRADE_MODULE_H_
-
 #include "Common/Module.h"
 #include "Common/STLTypedefs.h"
+#include "Common/Upgrade.h"
 
 #include "GameClient/Drawable.h"
 #include "GameClient/FXList.h"
@@ -53,12 +51,12 @@ class UpgradeModuleInterface
 public:
 
  	virtual Bool isAlreadyUpgraded() const = 0;
-	virtual Bool attemptUpgrade( Int64 keyMask ) = 0;
-	virtual Bool wouldUpgrade( Int64 keyMask ) const = 0;
-	virtual Bool resetUpgrade( Int64 keyMask ) = 0;
+	virtual Bool attemptUpgrade( UpgradeMaskType keyMask ) = 0;
+	virtual Bool wouldUpgrade( UpgradeMaskType keyMask ) const = 0;
+	virtual Bool resetUpgrade( UpgradeMaskType keyMask ) = 0;
 	virtual Bool isSubObjectsUpgrade() = 0;
 	virtual void forceRefreshUpgrade() = 0;
-	virtual Bool testUpgradeConditions( Int64 keyMask ) const = 0;
+	virtual Bool testUpgradeConditions( UpgradeMaskType keyMask ) const = 0;
 
 };
 
@@ -69,21 +67,21 @@ public:
 	mutable std::vector<AsciiString>	m_activationUpgradeNames;
 	mutable std::vector<AsciiString>	m_conflictingUpgradeNames;
 	mutable const FXList*							m_fxListUpgrade;
-	mutable Int64		m_activationMask;				///< Activation only supports a single name currently
-	mutable Int64		m_conflictingMask;			///< Conflicts support multiple listings, and they are an OR
-	mutable Bool    m_requiresAllTriggers;
+	mutable UpgradeMaskType						m_activationMask;				///< Activation only supports a single name currently
+	mutable UpgradeMaskType						m_conflictingMask;			///< Conflicts support multiple listings, and they are an OR
+	mutable Bool											m_requiresAllTriggers;
 
 	UpgradeMuxData()
 	{
-		m_activationMask = 0;
-		m_conflictingMask = 0;
 		m_fxListUpgrade = NULL;
+		m_activationMask.clear();
+		m_conflictingMask.clear();
 		m_requiresAllTriggers = false;
 	}
 
-	static const FieldParse* getFieldParse() 
+	static const FieldParse* getFieldParse()
 	{
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "TriggeredBy",		INI::parseAsciiStringVector, NULL, offsetof( UpgradeMuxData, m_activationUpgradeNames ) },
 			{ "ConflictsWith",	INI::parseAsciiStringVector, NULL, offsetof( UpgradeMuxData, m_conflictingUpgradeNames ) },
@@ -94,7 +92,7 @@ public:
 		return dataFieldParse;
 	}
 	Bool requiresAllActivationUpgrades() const;
-	void getUpgradeActivationMasks(Int64& activation, Int64& conflicting) const;	///< The first time someone looks at my mask, I'll figure it out.
+	void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const;	///< The first time someone looks at my mask, I'll figure it out.
 	void performUpgradeFX(Object* obj) const;
 };
 
@@ -110,20 +108,20 @@ public:
 	virtual Bool isAlreadyUpgraded() const ;
 	// ***DANGER! DANGER! Don't use this, unless you are forcing an already made upgrade to refresh!!
 	virtual void forceRefreshUpgrade();
-	virtual Bool attemptUpgrade( Int64 keyMask );
-	virtual Bool wouldUpgrade( Int64 keyMask ) const;
-	virtual Bool resetUpgrade( Int64 keyMask );
-	virtual Bool testUpgradeConditions( Int64 keyMask ) const;
+	virtual Bool attemptUpgrade( UpgradeMaskType keyMask );
+	virtual Bool wouldUpgrade( UpgradeMaskType keyMask ) const;
+	virtual Bool resetUpgrade( UpgradeMaskType keyMask );
+	virtual Bool testUpgradeConditions( UpgradeMaskType keyMask ) const;
 
 protected:
 
 	void setUpgradeExecuted(Bool e) { m_upgradeExecuted = e; }
 	virtual void upgradeImplementation( ) = 0; ///< Here's the actual work of Upgrading
-	virtual void getUpgradeActivationMasks(Int64& activation, Int64& conflicting) const = 0; ///< Here's the actual work of Upgrading
+	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const = 0; ///< Here's the actual work of Upgrading
 	virtual void performUpgradeFX() = 0;	///< perform the associated fx list
 	virtual Bool requiresAllActivationUpgrades() const = 0;
 	virtual Bool isSubObjectsUpgrade() = 0;
-	
+
 	void giveSelfUpgrade()
 	{
 		// If I have an activation condition, and I haven't activated, and this key matches my condition.
@@ -152,7 +150,7 @@ struct UpgradeModuleData : public BehaviorModuleData
 public:
 	UpgradeMuxData				m_upgradeMuxData;
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     ModuleData::buildFieldParse(p);
 		p.add(UpgradeMuxData::getFieldParse(), offsetof( UpgradeModuleData, m_upgradeMuxData ));
@@ -185,7 +183,7 @@ protected:
 		return getUpgradeModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
 	}
 
-	virtual void getUpgradeActivationMasks(Int64& activation, Int64& conflicting) const
+	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
 	{
 		getUpgradeModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
 	}
@@ -198,6 +196,3 @@ protected:
 };
 inline UpgradeModule::UpgradeModule( Thing *thing, const ModuleData* moduleData ) : BehaviorModule( thing, moduleData ) { }
 inline UpgradeModule::~UpgradeModule() { }
-
-
-#endif

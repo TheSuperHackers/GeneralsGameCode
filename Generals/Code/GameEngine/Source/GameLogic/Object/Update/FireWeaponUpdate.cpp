@@ -28,18 +28,13 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/FireWeaponUpdate.h"
 #include "GameLogic/WeaponStatus.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
@@ -48,11 +43,11 @@ FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void FireWeaponUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void FireWeaponUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "Weapon",	INI::parseWeaponTemplate,	NULL, offsetof( FireWeaponUpdateModuleData, m_weaponTemplate ) },
 		{ 0, 0, 0, 0 }
@@ -62,7 +57,7 @@ FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData ) : 
+FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData ) :
 	UpdateModule( thing, moduleData ),
 	m_weapon(NULL)
 {
@@ -78,8 +73,7 @@ FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData )
 //-------------------------------------------------------------------------------------------------
 FireWeaponUpdate::~FireWeaponUpdate( void )
 {
-	if (m_weapon)
-		m_weapon->deleteInstance();
+	deleteInstance(m_weapon);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -87,11 +81,25 @@ FireWeaponUpdate::~FireWeaponUpdate( void )
 UpdateSleepTime FireWeaponUpdate::update( void )
 {
 	// If my weapon is ready, shoot it.
-	if( m_weapon && m_weapon->getStatus() == READY_TO_FIRE )
+	if( isOkayToFire() )
 	{
 		m_weapon->forceFireWeapon( getObject(), getObject()->getPosition() );
 	}
 	return UPDATE_SLEEP_NONE;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Bool FireWeaponUpdate::isOkayToFire()
+{
+	if( m_weapon == NULL )
+		return FALSE;
+
+	// Weapon is reloading
+	if( m_weapon->getStatus() != READY_TO_FIRE )
+		return FALSE;
+
+	return TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -102,7 +110,7 @@ void FireWeaponUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -123,7 +131,7 @@ void FireWeaponUpdate::xfer( Xfer *xfer )
 	// weapon
 	xfer->xferSnapshot( m_weapon );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -134,4 +142,4 @@ void FireWeaponUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

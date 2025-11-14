@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef RENDER2D_H
-#define RENDER2D_H
 
 #include "always.h"
 #include "simplevec.h"
@@ -71,6 +65,12 @@ class	Vector4;
 //
 #define RGB_TO_INT32(r,g,b)		(unsigned(r)<<16)|(unsigned(g)<<8)|(unsigned(b))|0xFF000000
 #define RGBA_TO_INT32(r,g,b,a)	(unsigned(a)<<24)|(unsigned(r)<<16)|(unsigned(g)<<8)|(unsigned(b))
+
+//
+// Float RGB to INT32 methods (each component is a float between 0.0 and 1.0)
+//
+#define FRGB_TO_INT32(r,g,b)		(unsigned(r*255.0f)<<16)|(unsigned(g*255.0f)<<8)|(unsigned(b*255.0f))|0xFF000000
+#define FRGBA_TO_INT32(r,g,b,a)	(unsigned(a*255.0f)<<24)|(unsigned(r*255.0f)<<16)|(unsigned(g*255.0f)<<8)|(unsigned(b*255.0f))
 
 //
 //	INT32 to Vector RGB methods
@@ -109,7 +109,7 @@ public:
 	void	Enable_Alpha(bool b);
 	void	Enable_Grayscale(bool b);///<added for generals to draw disabled button states - MW
 	void  Enable_Texturing(bool b);
-	
+
 	ShaderClass *			Get_Shader( void ) { return &Shader; }
 	static ShaderClass	Get_Default_Shader( void );
 
@@ -142,7 +142,7 @@ public:
 	// Z-value support (this is usefull for playing tricks with the z-buffer)
 	void	Set_Z_Value (float z_value)	{ ZValue = z_value; }
 
-	// Move all verts 
+	// Move all verts
 	void	Move( const Vector2 & a );
 
 	// Color access
@@ -156,7 +156,7 @@ protected:
 	Vector2										CoordinateScale;
 	Vector2										CoordinateOffset;
 	Vector2										BiasedCoordinateOffset;
-	TextureClass *							Texture;
+	TextureClass *								Texture;
 	ShaderClass									Shader;
 	SimpleDynVecClass<unsigned short>	Indices;
 	SimpleDynVecClass<Vector2>				Vertices;
@@ -198,7 +198,7 @@ public:
 
 	void	Set_Location( const Vector2 & loc )				{ Location = loc; Cursor = loc; }
 	void	Set_Wrapping_Width (float width)					{ WrapWidth = width; }
-	
+
 	// Clipping support
 	void	Set_Clipping_Rect( const RectClass &rect )	{ ClipRect = rect; IsClippedEnabled = true; }
 	bool	Is_Clipping_Enabled( void ) const				{ return IsClippedEnabled; }
@@ -228,5 +228,3 @@ private:
 
 	void	Draw_Char( WCHAR ch, unsigned long color );
 };
-
-#endif	// RENDER2D_H

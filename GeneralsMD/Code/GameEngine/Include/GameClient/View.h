@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _VIEW_H_
-#define _VIEW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
@@ -49,11 +46,13 @@ class ViewLocation;
 class Thing;
 class Waypoint;
 class LookAtTranslator;
+enum FilterTypes CPP_11(: Int);
+enum FilterModes CPP_11(: Int);
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum PickType
+enum PickType CPP_11(: Int)
 {
 	PICK_TYPE_TERRAIN						= COLL_TYPE_0,
 	PICK_TYPE_SELECTABLE				= COLL_TYPE_1,
@@ -71,26 +70,29 @@ class View : public Snapshot
 
 public:
 
+	enum
+	{
+		ZoomHeightPerSecond = 10,
+	};
+
 	/// Add an impulse force to shake the camera
-	enum CameraShakeType 
-	{ 
-		SHAKE_SUBTLE = 0, 
-		SHAKE_NORMAL, 
-		SHAKE_STRONG, 
-		SHAKE_SEVERE, 
+	enum CameraShakeType
+	{
+		SHAKE_SUBTLE = 0,
+		SHAKE_NORMAL,
+		SHAKE_STRONG,
+		SHAKE_SEVERE,
 		SHAKE_CINE_EXTREME,		//Added for cinematics ONLY
 		SHAKE_CINE_INSANE,		//Added for cinematics ONLY
-		SHAKE_COUNT 
+		SHAKE_COUNT
 	};
 
   // Return values for worldToScreenTriReturn
-  enum WorldToScreenReturn
+  enum WorldToScreenReturn CPP_11(: Int)
   {
     WTS_INSIDE_FRUSTUM = 0, // On the screen (inside frustum of camera)
     WTS_OUTSIDE_FRUSTUM,    // Return is valid but off the screen (outside frustum of camera)
     WTS_INVALID,            // No transform possible
-
-    WTS_COUNT
   };
 
 public:
@@ -123,9 +125,10 @@ public:
 	virtual Int getWidth( void ) { return m_width; }
 	virtual void setHeight( Int height ) { m_height = height; }
 	virtual Int getHeight( void ) { return m_height; }
-	virtual void setOrigin( Int x, Int y) { m_originX=x; m_originY=y;}				///< Sets location of top-left view corner on display 
+	virtual void setOrigin( Int x, Int y) { m_originX=x; m_originY=y;}				///< Sets location of top-left view corner on display
 	virtual void getOrigin( Int *x, Int *y) { *x=m_originX; *y=m_originY;}			///< Return location of top-left view corner on display
 
+	virtual void lockViewUntilFrame(UnsignedInt frame); ///< Locks the current view until the given frame is reached.
 	virtual void forceRedraw() = 0;
 
 	virtual void lookAt( const Coord3D *o );														///< Center the view on the given coordinate
@@ -149,11 +152,11 @@ public:
 	virtual void cameraEnableSlaveMode(const AsciiString & thingtemplateName, const AsciiString & boneName) {}
 	virtual void cameraDisableSlaveMode(void) {}
 	virtual	void Add_Camera_Shake(const Coord3D & position,float radius, float duration, float power) {}
-	virtual enum FilterModes getViewFilterMode(void) {return (enum FilterModes)0;}			///< Turns on viewport special effect (black & white mode)
-	virtual enum FilterTypes getViewFilterType(void) {return (enum FilterTypes)0;}			///< Turns on viewport special effect (black & white mode)
-	virtual Bool setViewFilterMode(enum FilterModes filterMode) { return FALSE; }			///< Turns on viewport special effect (black & white mode)
+	virtual FilterModes getViewFilterMode(void) {return (FilterModes)0;}			///< Turns on viewport special effect (black & white mode)
+	virtual FilterTypes getViewFilterType(void) {return (FilterTypes)0;}			///< Turns on viewport special effect (black & white mode)
+	virtual Bool setViewFilterMode(FilterModes filterMode) { return FALSE; }			///< Turns on viewport special effect (black & white mode)
 	virtual void setViewFilterPos(const Coord3D *pos) { };			///<  Passes a position to the special effect filter.
-	virtual Bool setViewFilter(	enum FilterTypes filter) { return FALSE;}			///< Turns on viewport special effect (black & white mode)
+	virtual Bool setViewFilter( FilterTypes filter) { return FALSE;}			///< Turns on viewport special effect (black & white mode)
 
 	virtual void setFadeParameters(Int fadeFrames, Int direction) { };
 	virtual void set3DWireFrameMode(Bool enable) { };
@@ -173,19 +176,17 @@ public:
 	virtual Real getAngle( void ) { return m_angle; }
 	virtual void setPitch( Real angle );																///< Rotate the view around the horizontal axis to the given angle
 	virtual Real getPitch( void ) { return m_pitchAngle; }							///< Return current camera pitch
-	virtual void setAngleAndPitchToDefault( void );											///< Set the view angle back to default 
+	virtual void setAngleAndPitchToDefault( void );											///< Set the view angle back to default
 	virtual void getPosition(Coord3D *pos)	{ *pos=m_pos;}							///< Returns position camera is looking at (z will be zero)
 
 	virtual const Coord3D& get3DCameraPosition() const = 0;							///< Returns the actual camera position
 
 	virtual Real getZoom() { return m_zoom; }
-	virtual void setZoom(Real z) { }
+	virtual void setZoom(Real z) { m_zoom = z; }
 	virtual Real getHeightAboveGround() { return m_heightAboveGround; }
-	virtual void setHeightAboveGround(Real z) { m_heightAboveGround = z; }
-	virtual void zoomIn( void );																				///< Zoom in, closer to the ground, limit to min
-	virtual void zoomOut( void );																				///< Zoom out, farther away from the ground, limit to max
-	virtual void setZoomToDefault( void ) { }														///< Set zoom to default value
-	virtual Real getMaxZoom( void ) { return m_maxZoom; }								///< return max zoom value
+	virtual void setHeightAboveGround(Real z);
+	virtual void zoom( Real height ); ///< Zoom in/out, closer to the ground, limit to min, or farther away from the ground, limit to max
+	virtual void setZoomToDefault( void ) { m_zoom  = 1.0f; } ///< Set zoom to default value
 	virtual void setOkToAdjustHeight( Bool val ) { m_okToAdjustHeight = val; }	///< Set this to adjust camera height
 
 	// for debugging
@@ -209,6 +210,7 @@ public:
 
 	virtual void drawView( void ) = 0;															///< Render the world visible in this view.
 	virtual void updateView(void) = 0;					///<called once per frame to determine the final camera and object transforms
+	virtual void stepView() = 0; ///< Update view for every fixed time step
 
 
 
@@ -241,8 +243,8 @@ protected:
 	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess( void ) { }
 
-	void setPosition( const Coord3D *pos ) { m_pos = *pos; }					
-	const Coord3D *getPosition( void ) const { return &m_pos; }					
+	void setPosition( const Coord3D *pos ) { m_pos = *pos; }
+	const Coord3D *getPosition( void ) const { return &m_pos; }
 
 	virtual View *prependViewToList( View *list );							///< Prepend this view to the given list, return the new list
 	virtual View *getNextView( void ) { return m_next; }				///< Return next view in the set
@@ -255,6 +257,8 @@ protected:
 	UnsignedInt m_id;																						///< Rhe ID of this view
 	static UnsignedInt m_idNext;																///< Used for allocating view ID's for all views
 
+	UnsignedInt m_viewLockedUntilFrame;
+
 	Coord3D m_pos;																							///< Position of this view, in world coordinates
 	Int m_width, m_height;																			///< Dimensions of the view
 	Int m_originX, m_originY;																		///< Location of top/left view corner
@@ -262,10 +266,8 @@ protected:
 	Real m_angle;																								///< Angle at which view has been rotated about the Z axis
 	Real m_pitchAngle;																					///< Rotation of view direction around horizontal (X) axis
 
-	Real m_maxZoom;																							///< Largest zoom value (minimum actual zoom)
-	Real m_minZoom;																							///< Smallest zoom value (maximum actual zoom)
-	Real m_maxHeightAboveGround;
-	Real m_minHeightAboveGround;
+	Real m_maxHeightAboveGround;																///< Highest camera above ground value
+	Real m_minHeightAboveGround;																///< Lowest camera above ground value
 	Real m_zoom;																								///< Current zoom value
 	Real m_heightAboveGround;																		///< User's desired height above ground
 	Bool m_zoomLimited;																					///< Camera restricted in zoom height
@@ -275,7 +277,7 @@ protected:
 	Real m_terrainHeightUnderCamera;														///< Cached value for debugging
 
 	ObjectID m_cameraLock;																			///< if nonzero, id of object that the camera should follow
-	Drawable *m_cameraLockDrawable;															///< if nonzero, drawble of object that camera should follow.
+	Drawable *m_cameraLockDrawable;															///< if nonzero, drawable of object that camera should follow.
 	CameraLockType m_lockType;																	///< are we following or just tethering?
 	Real m_lockDist;																						///< how far can we be when tethered?
 
@@ -285,7 +287,7 @@ protected:
 	Bool m_okToAdjustHeight;																		///< Should we attempt to adjust camera height?
 	Bool m_snapImmediate;																				///< Should we immediately snap to the object we're following?
 
-	Coord2D m_guardBandBias; ///< Exttra beefy margins so huge thins can stay "on-screen"
+	Coord2D m_guardBandBias; ///< Extra beefy margins so huge thins can stay "on-screen"
 
 };
 
@@ -306,8 +308,8 @@ class ViewLocation
 
 	public:
 
-		ViewLocation() 
-		{ 
+		ViewLocation()
+		{
 			m_valid = FALSE;
 			//Added By Sadullah Nader
 			//Initialization(s) inserted
@@ -315,7 +317,7 @@ class ViewLocation
 			m_angle = m_pitch = m_zoom = 0.0;
 			//
 		}
-		
+
 		const Coord3D& getPosition() const { return m_pos; }
 		Bool isValid() const { return m_valid; }
 		Real getAngle() const { return m_angle; }
@@ -336,5 +338,3 @@ class ViewLocation
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern View *TheTacticalView;		///< the main tactical interface to the game world
-
-#endif // _VIEW_H_

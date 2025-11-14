@@ -24,12 +24,12 @@
 
 // FILE: SubObjectsUpgrade.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	Created:	September 2002
@@ -37,7 +37,7 @@
 //	Filename: SubObjectsUpgrade.cpp
 //
 //	Author:		Kris Morness
-//	
+//
 //	Purpose:	Shows or hides a list of subobjects based on upgrade statii. It
 //            will override any animation subobjects states.
 //
@@ -45,9 +45,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __SUB_OBJECTS_UPGRADE_H
-#define __SUB_OBJECTS_UPGRADE_H
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -88,7 +85,3 @@ protected:
 	virtual Bool isSubObjectsUpgrade() { return true; }
 
 };
-
-#endif
-
-

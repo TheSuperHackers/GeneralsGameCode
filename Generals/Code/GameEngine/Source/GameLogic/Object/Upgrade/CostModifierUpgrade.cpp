@@ -24,12 +24,12 @@
 
 // FILE: CostModifierUpgrade.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Aug 2002
@@ -37,7 +37,7 @@
 //	Filename: 	CostModifierUpgrade.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	Upgrade that modifies the cost by a certain percentage
 //
 //-----------------------------------------------------------------------------
@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Xfer.h"
@@ -78,7 +78,7 @@ CostModifierUpgradeModuleData::CostModifierUpgradeModuleData( void )
 	m_kindOf = KINDOFMASK_NONE;
 	m_percentage = 0;
 
-}  // end CostModifierUpgradeModuleData
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -86,15 +86,15 @@ CostModifierUpgradeModuleData::CostModifierUpgradeModuleData( void )
 {
 	UpgradeModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "EffectKindOf",		KindOfMaskType::parseFromINI, NULL, offsetof( CostModifierUpgradeModuleData, m_kindOf ) },
 		{ "Percentage",			INI::parsePercentToReal, NULL, offsetof( CostModifierUpgradeModuleData, m_percentage ) },
-		{ 0, 0, 0, 0 } 
+		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -102,18 +102,18 @@ CostModifierUpgradeModuleData::CostModifierUpgradeModuleData( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CostModifierUpgrade::CostModifierUpgrade( Thing *thing, const ModuleData* moduleData ) : 
+CostModifierUpgrade::CostModifierUpgrade( Thing *thing, const ModuleData* moduleData ) :
 							UpgradeModule( thing, moduleData )
 {
 
-}  // end CostModifierUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 CostModifierUpgrade::~CostModifierUpgrade( void )
 {
 
-}  // end ~CostModifierUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ void CostModifierUpgrade::onDelete( void )
 	// this upgrade module is now "not upgraded"
 	setUpgradeExecuted(FALSE);
 
-}  // end onDelete
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -150,16 +150,16 @@ void CostModifierUpgrade::onCapture( Player *oldOwner, Player *newOwner )
 		oldOwner->removeKindOfProductionCostChange(getCostModifierUpgradeModuleData()->m_kindOf,getCostModifierUpgradeModuleData()->m_percentage );
 		setUpgradeExecuted(FALSE);
 
-	}  // end if
+	}
 	if( newOwner )
 	{
 
 		newOwner->addKindOfProductionCostChange(getCostModifierUpgradeModuleData()->m_kindOf,getCostModifierUpgradeModuleData()->m_percentage );
 		setUpgradeExecuted(TRUE);
 
-	}  // end if
+	}
 
-}  // end onCapture
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -170,7 +170,7 @@ void CostModifierUpgrade::upgradeImplementation( void )
 	// update the player with another TypeOfProductionCostChange
 	player->addKindOfProductionCostChange(getCostModifierUpgradeModuleData()->m_kindOf,getCostModifierUpgradeModuleData()->m_percentage );
 
-}  // end upgradeImplementation
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -181,7 +181,7 @@ void CostModifierUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -199,7 +199,7 @@ void CostModifierUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -210,4 +210,4 @@ void CostModifierUpgrade::loadPostProcess( void )
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

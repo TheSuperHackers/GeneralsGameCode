@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef _W3D_OVERLORD_TANK_DRAW_H_
-#define _W3D_OVERLORD_TANK_DRAW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "W3DDevice/GameClient/Module/W3DTankDraw.h"
 
@@ -58,7 +55,7 @@ class W3DOverlordTankDraw : public W3DTankDraw
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DOverlordTankDraw, "W3DOverlordTankDraw" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DOverlordTankDraw, W3DOverlordTankDrawModuleData )
-		
+
 public:
 
 	W3DOverlordTankDraw( Thing *thing, const ModuleData* moduleData );
@@ -70,6 +67,3 @@ public:
 protected:
 
 };
-
-#endif
-

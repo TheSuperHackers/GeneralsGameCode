@@ -26,7 +26,7 @@
 // Author: Graham Smallwood, September 2002
 // Desc:	 UpgradeModule that sets a new override string for Command Set look ups
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameClient/ControlBar.h"
@@ -35,11 +35,11 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void CommandSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void CommandSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "CommandSet",	INI::parseAsciiString,	NULL, offsetof( CommandSetUpgradeModuleData, m_newCommandSet ) },
 		{ 0, 0, 0, 0 }
@@ -63,7 +63,7 @@ CommandSetUpgrade::~CommandSetUpgrade( void )
 //-------------------------------------------------------------------------------------------------
 void CommandSetUpgrade::upgradeImplementation( )
 {
-	Object *obj = getObject();	
+	Object *obj = getObject();
 	obj->setCommandSetStringOverride( getCommandSetUpgradeModuleData()->m_newCommandSet );
 
 	TheControlBar->markUIDirty();// Refresh the UI in case we are selected
@@ -78,7 +78,7 @@ void CommandSetUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -96,7 +96,7 @@ void CommandSetUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -107,4 +107,4 @@ void CommandSetUpgrade::loadPostProcess( void )
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

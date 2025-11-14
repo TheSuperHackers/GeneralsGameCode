@@ -24,12 +24,12 @@
 
 // FILE: GenericProperties.cpp ////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -48,7 +48,6 @@
 #include <assert.h>
 #include <windows.h>
 #include <commctrl.h>
-#include <stdio.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"
@@ -89,7 +88,7 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
 	// are designed to have controls doing the same functionality
 	// and names
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message, 
+	if( HandleCommonDialogMessages( hWndDialog, message,
 																	wParam, lParam, &returnCode ) == TRUE )
 		return returnCode;
 
@@ -99,8 +98,8 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
 		// ------------------------------------------------------------------------
 		case WM_DRAWITEM:
 		{
-      UINT controlID = (UINT)wParam;  // control identifier 
-      LPDRAWITEMSTRUCT drawItem = (LPDRAWITEMSTRUCT)lParam; // item drawing 
+      UINT controlID = (UINT)wParam;  // control identifier
+      LPDRAWITEMSTRUCT drawItem = (LPDRAWITEMSTRUCT)lParam; // item drawing
 			RGBColorInt *color = GetControlColor( controlID );
 
 			// we only care about color button controls
@@ -136,11 +135,11 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
 				// we have taken care of it
 				return TRUE;
 
-			}  // end if
+			}
 
 			return FALSE;
 
-		}  // end draw item
+		}
 
 		// ------------------------------------------------------------------------
     case WM_COMMAND:
@@ -148,7 +147,7 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
 //			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 			HWND hWndControl = (HWND)lParam;  // control window handle
- 
+
       switch( controlID )
       {
 
@@ -167,9 +166,9 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
 					{
 						RGBColorInt *newColor;
 						POINT mouse;
-						
+
 						GetCursorPos( &mouse );
-						newColor = SelectColor( currColor->red, currColor->green, 
+						newColor = SelectColor( currColor->red, currColor->green,
 																		currColor->blue, currColor->alpha,
 																		mouse.x, mouse.y );
 
@@ -182,13 +181,13 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
 							SetControlColor( controlID, newGameColor );
 							InvalidateRect( hWndControl, NULL, TRUE );
 
-						}  // end if
+						}
 
-					}  // end if
+					}
 
 					break;
 
-				}  // end color buttons
+				}
 
 				// --------------------------------------------------------------------
         case IDOK:
@@ -239,12 +238,12 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
 						color = GameMakeColor( rgbColor->red, rgbColor->green, rgbColor->blue, rgbColor->alpha );
 						window->winSetHiliteBorderColor( 0, color );
 
-					}  // end if
+					}
 
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end OK
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -253,13 +252,13 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -268,15 +267,15 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
       DestroyWindow( hWndDialog );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end genericPropertiesCallback
+}
 
 // InitCallbackCombos =========================================================
 /** load the callbacks combo boxes with the functions that the user cal
@@ -300,7 +299,7 @@ void InitCallbackCombos( HWND dialog, GameWindow *window )
 	{
 		SendMessage( combo, CB_ADDSTRING, 0, (LPARAM)entry->name );
 		entry++;
-	}  // end while
+	}
 	SendMessage( combo, CB_INSERTSTRING, 0, (LPARAM)GUIEDIT_NONE_STRING );
 
 	// select the current function of the window in the combo if present
@@ -318,7 +317,7 @@ void InitCallbackCombos( HWND dialog, GameWindow *window )
 	{
 		SendMessage( combo, CB_ADDSTRING, 0, (LPARAM)entry->name );
 		entry++;
-	}  // end while
+	}
 	SendMessage( combo, CB_INSERTSTRING, 0, (LPARAM)GUIEDIT_NONE_STRING );
 
 	// select the current function of the window in the combo if present
@@ -336,7 +335,7 @@ void InitCallbackCombos( HWND dialog, GameWindow *window )
 	{
 		SendMessage( combo, CB_ADDSTRING, 0, (LPARAM)entry->name );
 		entry++;
-	}  // end while
+	}
 	SendMessage( combo, CB_INSERTSTRING, 0, (LPARAM)GUIEDIT_NONE_STRING );
 
 	// select the current function of the window in the combo if present
@@ -354,13 +353,13 @@ void InitCallbackCombos( HWND dialog, GameWindow *window )
 	{
 		SendMessage( combo, CB_ADDSTRING, 0, (LPARAM)entry->name );
 		entry++;
-	}  // end while
+	}
 	entry = TheFunctionLexicon->getTable( FunctionLexicon::TABLE_GAME_WIN_DEVICEDRAW );
 	while( entry && entry ->key != NAMEKEY_INVALID )
 	{
 		SendMessage( combo, CB_ADDSTRING, 0, (LPARAM)entry->name );
 		entry++;
-	}  // end while
+	}
 	SendMessage( combo, CB_INSERTSTRING, 0, (LPARAM)GUIEDIT_NONE_STRING );
 
 	// select the current function of the window in the combo if present
@@ -417,7 +416,7 @@ void InitCallbackCombos( HWND dialog, GameWindow *window )
 	name = TheEditor->getLayoutShutdown();
 	SendMessage( combo, CB_SELECTSTRING, -1, (LPARAM)name.str() );
 
-}  // end InitCallbackCombos
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -445,7 +444,7 @@ HWND InitUserWinPropertiesDialog( GameWindow *window )
 	// initialize the dialog with values from the window
 	//
 
-	// fill out the image combo boxes	
+	// fill out the image combo boxes
 	LoadImageListComboBox( GetDlgItem( dialog, COMBO_ENABLED_IMAGE ) );
 	LoadImageListComboBox( GetDlgItem( dialog, COMBO_DISABLED_IMAGE ) );
 	LoadImageListComboBox( GetDlgItem( dialog, COMBO_HILITE_IMAGE ) );
@@ -455,15 +454,15 @@ HWND InitUserWinPropertiesDialog( GameWindow *window )
 
 	image = window->winGetEnabledImage( 0 );
 	if( image )
-		SendDlgItemMessage( dialog, COMBO_ENABLED_IMAGE, CB_SELECTSTRING, 
+		SendDlgItemMessage( dialog, COMBO_ENABLED_IMAGE, CB_SELECTSTRING,
 												-1, (LPARAM)image->getName().str() );
 	image = window->winGetDisabledImage( 0 );
 	if( image )
-		SendDlgItemMessage( dialog, COMBO_DISABLED_IMAGE, CB_SELECTSTRING, 
+		SendDlgItemMessage( dialog, COMBO_DISABLED_IMAGE, CB_SELECTSTRING,
 												-1, (LPARAM)image->getName().str() );
 	image = window->winGetHiliteImage( 0 );
 	if( image )
-		SendDlgItemMessage( dialog, COMBO_HILITE_IMAGE, CB_SELECTSTRING, 
+		SendDlgItemMessage( dialog, COMBO_HILITE_IMAGE, CB_SELECTSTRING,
 												-1, (LPARAM)image->getName().str() );
 
 	// initialize the color buttons
@@ -479,7 +478,7 @@ HWND InitUserWinPropertiesDialog( GameWindow *window )
 
 	return dialog;
 
-}  // end InitUserWinPropertiesDialog
+}
 
 
 

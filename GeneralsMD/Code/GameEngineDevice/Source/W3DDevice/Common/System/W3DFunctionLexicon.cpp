@@ -36,11 +36,11 @@
 #include "W3DDevice/GameClient/W3DGadget.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// PRIVATE DATA 
+// PRIVATE DATA
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Game Window draw methods -----------------------------------------------------------------------
-static FunctionLexicon::TableEntry gameWinDrawTable [] = 
+static FunctionLexicon::TableEntry gameWinDrawTable [] =
 {
 
 	{ NAMEKEY_INVALID, "GameWinDefaultDraw",						GameWinDefaultDraw },
@@ -100,7 +100,7 @@ static FunctionLexicon::TableEntry gameWinDrawTable [] =
 };
 
 // Game Window init methods -----------------------------------------------------------------------
-static FunctionLexicon::TableEntry layoutInitTable [] = 
+static FunctionLexicon::TableEntry layoutInitTable [] =
 {
 
 	{ NAMEKEY_INVALID, "W3DMainMenuInit",								W3DMainMenuInit },
@@ -110,7 +110,7 @@ static FunctionLexicon::TableEntry layoutInitTable [] =
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// PUBLIC FUNCTIONS 
+// PUBLIC FUNCTIONS
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
@@ -118,14 +118,14 @@ static FunctionLexicon::TableEntry layoutInitTable [] =
 W3DFunctionLexicon::W3DFunctionLexicon( void )
 {
 
-}  // end W3DFunctionLexicon
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DFunctionLexicon::~W3DFunctionLexicon( void )
 {
 
-}  // end ~W3DFunctionLexicon
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the function table specific for our implementations of
@@ -141,7 +141,7 @@ void W3DFunctionLexicon::init( void )
 	loadTable( gameWinDrawTable, TABLE_GAME_WIN_DEVICEDRAW );
 	loadTable( layoutInitTable, TABLE_WIN_LAYOUT_DEVICEINIT );
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
@@ -154,7 +154,7 @@ void W3DFunctionLexicon::reset( void )
 	// extend
 	FunctionLexicon::reset();
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update */
@@ -165,6 +165,6 @@ void W3DFunctionLexicon::update( void )
 	// extend?
 	FunctionLexicon::update();
 
-}  // end update
+}
 
 

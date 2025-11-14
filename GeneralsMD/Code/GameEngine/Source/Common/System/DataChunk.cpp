@@ -26,10 +26,9 @@
 // Implementation of Data Chunk save/load system
 // Author: Michael S. Booth, October 2000
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "stdlib.h"
-#include "string.h"
 #include "Compression.h"
 #include "Common/DataChunk.h"
 #include "Common/file.h"
@@ -44,10 +43,8 @@ CachedFileInputStream::CachedFileInputStream(void):m_buffer(NULL),m_size(0)
 
 CachedFileInputStream::~CachedFileInputStream(void)
 {
-	if (m_buffer) {
-		delete[] m_buffer;
-		m_buffer=NULL;
-	}
+	delete[] m_buffer;
+	m_buffer=NULL;
 }
 
 Bool CachedFileInputStream::open(AsciiString path)
@@ -66,32 +63,32 @@ Bool CachedFileInputStream::open(AsciiString path)
 
 	if (CompressionManager::isDataCompressed(m_buffer, m_size) == 0)
 	{
-		//DEBUG_LOG(("CachedFileInputStream::open() - file %s is uncompressed at %d bytes!\n", path.str(), m_size));
+		//DEBUG_LOG(("CachedFileInputStream::open() - file %s is uncompressed at %d bytes!", path.str(), m_size));
 	}
 	else
 	{
 		Int uncompLen = CompressionManager::getUncompressedSize(m_buffer, m_size);
-		//DEBUG_LOG(("CachedFileInputStream::open() - file %s is compressed!  It should go from %d to %d\n", path.str(),
+		//DEBUG_LOG(("CachedFileInputStream::open() - file %s is compressed!  It should go from %d to %d", path.str(),
 		//	m_size, uncompLen));
 		char *uncompBuffer = NEW char[uncompLen];
 		Int actualLen = CompressionManager::decompressData(m_buffer, m_size, uncompBuffer, uncompLen);
 		if (actualLen == uncompLen)
 		{
-			//DEBUG_LOG(("Using uncompressed data\n"));
+			//DEBUG_LOG(("Using uncompressed data"));
 			delete[] m_buffer;
 			m_buffer = uncompBuffer;
 			m_size = uncompLen;
 		}
 		else
 		{
-			//DEBUG_LOG(("Decompression failed - using compressed data\n"));
+			//DEBUG_LOG(("Decompression failed - using compressed data"));
 			// decompression failed.  Maybe we invalidly thought it was compressed?
 			delete[] uncompBuffer;
 		}
 	}
 	//if (m_size >= 4)
 	//{
-	//	DEBUG_LOG(("File starts as '%c%c%c%c'\n", m_buffer[0], m_buffer[1],
+	//	DEBUG_LOG(("File starts as '%c%c%c%c'", m_buffer[0], m_buffer[1],
 	//		m_buffer[2], m_buffer[3]));
 	//}
 
@@ -104,10 +101,9 @@ Bool CachedFileInputStream::open(AsciiString path)
 
 void CachedFileInputStream::close(void)
 {
-	if (m_buffer) {
-		delete[] m_buffer;
-		m_buffer=NULL;
-	}
+	delete[] m_buffer;
+	m_buffer=NULL;
+
 	m_pos=0;
 	m_size=0;
 }
@@ -214,7 +210,7 @@ Bool FileInputStream::eof(void)
 {
 	if (m_file != NULL) {
 		return (m_file->size() == m_file->position());
-	}	 
+	}
 	return(true);
 }
 
@@ -235,16 +231,16 @@ void FileInputStream::rewind()
 
 #define TEMP_FILENAME		"_tmpChunk.dat"
 
-DataChunkOutput::DataChunkOutput( OutputStream *pOut ) :  
+DataChunkOutput::DataChunkOutput( OutputStream *pOut ) :
 m_pOut(pOut)
 {
 	AsciiString tmpFileName = TheGlobalData->getPath_UserData();
 	tmpFileName.concat(TEMP_FILENAME);
-	m_tmp_file = ::fopen( tmpFileName.str(), "wb" );	
+	m_tmp_file = ::fopen( tmpFileName.str(), "wb" );
 	// Added Sadullah Nader
 	// Initializations missing and needed
 	m_chunkStack = NULL;
-	
+
 	// End Add
 }
 
@@ -259,7 +255,7 @@ DataChunkOutput::~DataChunkOutput()
 	AsciiString tmpFileName = TheGlobalData->getPath_UserData();
 	tmpFileName.concat(TEMP_FILENAME);
 
- 	m_tmp_file = ::fopen( tmpFileName.str(), "rb" );	
+ 	m_tmp_file = ::fopen( tmpFileName.str(), "rb" );
 	::fseek(m_tmp_file, 0, SEEK_SET);
 
 	// append the temp m_tmp_file m_contents
@@ -295,7 +291,7 @@ void DataChunkOutput::openDataChunk( const char *name, DataChunkVersionType ver 
 	// remember this m_tmp_file position so we can write the real data size later
 	c->filepos = ::ftell(m_tmp_file);
 #ifdef VERBOSE
-	DEBUG_LOG(("Writing chunk %s at %d (%x)\n", name, ::ftell(m_tmp_file), ::ftell(m_tmp_file)));
+	DEBUG_LOG(("Writing chunk %s at %d (%x)", name, ::ftell(m_tmp_file), ::ftell(m_tmp_file)));
 #endif
 	// store a placeholder for the data size
 	Int dummy = 0xffff;
@@ -328,48 +324,48 @@ void DataChunkOutput::closeDataChunk( void )
 	// pop the chunk off the stack
 	OutputChunk *c = m_chunkStack;
 #ifdef VERBOSE
-	DEBUG_LOG(("Closing chunk %s at %d (%x)\n", m_contents.getName(c->id).str(), here, here));
+	DEBUG_LOG(("Closing chunk %s at %d (%x)", m_contents.getName(c->id).str(), here, here));
 #endif
 	m_chunkStack = m_chunkStack->next;
-	c->deleteInstance();
+	deleteInstance(c);
 }
 
-void DataChunkOutput::writeReal( Real r ) 
-{ 
-	::fwrite( (const char *)&r, sizeof(float) , 1, m_tmp_file  ); 
+void DataChunkOutput::writeReal( Real r )
+{
+	::fwrite( (const char *)&r, sizeof(float) , 1, m_tmp_file  );
 }
 
-void DataChunkOutput::writeInt( Int i ) 
-{ 
-	::fwrite( (const char *)&i, sizeof(Int) , 1, m_tmp_file ); 
+void DataChunkOutput::writeInt( Int i )
+{
+	::fwrite( (const char *)&i, sizeof(Int) , 1, m_tmp_file );
 }
 
-void DataChunkOutput::writeByte( Byte b ) 
-{ 
-	::fwrite( (const char *)&b, sizeof(Byte) , 1, m_tmp_file ); 
+void DataChunkOutput::writeByte( Byte b )
+{
+	::fwrite( (const char *)&b, sizeof(Byte) , 1, m_tmp_file );
 }
 
-void DataChunkOutput::writeArrayOfBytes(char *ptr, Int len) 
-{ 
-	::fwrite( (const char *)ptr, 1, len , m_tmp_file ); 
+void DataChunkOutput::writeArrayOfBytes(char *ptr, Int len)
+{
+	::fwrite( (const char *)ptr, 1, len , m_tmp_file );
 }
 
-void DataChunkOutput::writeAsciiString( const AsciiString& theString ) 
-{ 
+void DataChunkOutput::writeAsciiString( const AsciiString& theString )
+{
 	UnsignedShort len = theString.getLength();
 	::fwrite( (const char *)&len, sizeof(UnsignedShort) , 1, m_tmp_file );
-	::fwrite( theString.str(), len , 1, m_tmp_file ); 
+	::fwrite( theString.str(), len , 1, m_tmp_file );
 }
 
-void DataChunkOutput::writeUnicodeString( UnicodeString theString ) 
-{ 
+void DataChunkOutput::writeUnicodeString( UnicodeString theString )
+{
 	UnsignedShort len = theString.getLength();
 	::fwrite( (const char *)&len, sizeof(UnsignedShort) , 1, m_tmp_file );
-	::fwrite( theString.str(), len*sizeof(WideChar) , 1, m_tmp_file ); 
+	::fwrite( theString.str(), len*sizeof(WideChar) , 1, m_tmp_file );
 }
 
-void DataChunkOutput::writeNameKey( const NameKeyType key ) 
-{ 
+void DataChunkOutput::writeNameKey( const NameKeyType key )
+{
 		AsciiString kname = TheNameKeyGenerator->keyToName(key);
 		Int keyAndType = m_contents.allocateID(kname);
 		keyAndType <<= 8;
@@ -378,8 +374,8 @@ void DataChunkOutput::writeNameKey( const NameKeyType key )
 		writeInt(keyAndType);
 }
 
-void DataChunkOutput::writeDict( const Dict& d ) 
-{ 
+void DataChunkOutput::writeDict( const Dict& d )
+{
 	UnsignedShort len = d.getPairCount();
 	::fwrite( (const char *)&len, sizeof(UnsignedShort) , 1, m_tmp_file );
 	for (int i = 0; i < len; i++)
@@ -421,9 +417,9 @@ void DataChunkOutput::writeDict( const Dict& d )
 // DataChunkTableOfContents
 //----------------------------------------------------------------------
 
-DataChunkTableOfContents::DataChunkTableOfContents( void ) : 
-m_list(NULL), 
-m_nextID(1), 
+DataChunkTableOfContents::DataChunkTableOfContents( void ) :
+m_list(NULL),
+m_nextID(1),
 m_listLength(0),
 m_headerOpened(false)
 {
@@ -437,7 +433,7 @@ DataChunkTableOfContents::~DataChunkTableOfContents()
 	for( m=m_list; m; m=next )
 	{
 		next = m->next;
-		m->deleteInstance();
+		deleteInstance(m);
 	}
 }
 
@@ -454,19 +450,19 @@ Mapping *DataChunkTableOfContents::findMapping( const AsciiString& name )
 }
 
 // convert name to integer identifier
-UnsignedInt DataChunkTableOfContents::getID( const AsciiString& name )		
+UnsignedInt DataChunkTableOfContents::getID( const AsciiString& name )
 {
 	Mapping *m = findMapping( name );
 
 	if (m)
 		return m->id;
 
-	DEBUG_CRASH(("name not found in DataChunkTableOfContents::getName for name %s\n",name.str()));
+	DEBUG_CRASH(("name not found in DataChunkTableOfContents::getName for name %s",name.str()));
 	return 0;
 }
 
 // convert integer identifier to name
-AsciiString DataChunkTableOfContents::getName( UnsignedInt id )	
+AsciiString DataChunkTableOfContents::getName( UnsignedInt id )
 {
 	Mapping *m;
 
@@ -474,7 +470,7 @@ AsciiString DataChunkTableOfContents::getName( UnsignedInt id )
 		if (m->id == id)
 			return m->name;
 
-	DEBUG_CRASH(("name not found in DataChunkTableOfContents::getName for id %d\n",id));
+	DEBUG_CRASH(("name not found in DataChunkTableOfContents::getName for id %d",id));
 	return AsciiString::TheEmptyString;
 }
 
@@ -581,8 +577,8 @@ void DataChunkTableOfContents::read( ChunkInputStream &s)
 //----------------------------------------------------------------------
 // DataChunkInput
 //----------------------------------------------------------------------
-DataChunkInput::DataChunkInput( ChunkInputStream *pStream ) : m_file( pStream ), 
-																										m_userData(NULL), 
+DataChunkInput::DataChunkInput( ChunkInputStream *pStream ) : m_file( pStream ),
+																										m_userData(NULL),
 																										m_currentObject(NULL),
 																										m_chunkStack(NULL),
 																										m_parserList(NULL)
@@ -601,13 +597,13 @@ DataChunkInput::~DataChunkInput()
 	UserParser *p, *next;
 	for (p=m_parserList; p; p=next) {
 		next = p->next;
-		p->deleteInstance();
+		deleteInstance(p);
 	}
 
 }
 
 // register a user parsing function for a given DataChunk label
-void DataChunkInput::registerParser( const AsciiString& label, const AsciiString& parentLabel, 
+void DataChunkInput::registerParser( const AsciiString& label, const AsciiString& parentLabel,
 																		 DataChunkParserPtr parser, void *userData )
 {
 	UserParser *p = newInstance(UserParser);
@@ -633,8 +629,8 @@ Bool DataChunkInput::parse( void *userData )
 	UserParser *parser;
 	Bool scopeOK;
 	DataChunkInfo info;
-	
-	// If the header wasn't a chunk table of contents, we can't parse. 
+
+	// If the header wasn't a chunk table of contents, we can't parse.
 	if (!m_contents.isOpenedForRead()) {
 		return false;
 	}
@@ -645,7 +641,7 @@ Bool DataChunkInput::parse( void *userData )
 
 	while( atEndOfFile() == false )
 	{
-		if (m_chunkStack) { // If we are parsing chunks in a chunk, check current length. 
+		if (m_chunkStack) { // If we are parsing chunks in a chunk, check current length.
 			if (m_chunkStack->dataLeft < CHUNK_HEADER_BYTES) {
 				DEBUG_ASSERTCRASH( m_chunkStack->dataLeft==0, ("Unexpected extra data in chunk."));
 				break;
@@ -666,7 +662,7 @@ Bool DataChunkInput::parse( void *userData )
 				// make sure parent name (scope) also matches
 				scopeOK = true;
 
-				if (parentLabel != parser->parentLabel) 
+				if (parentLabel != parser->parentLabel)
 					scopeOK = false;
 
 				if (scopeOK)
@@ -679,7 +675,7 @@ Bool DataChunkInput::parse( void *userData )
 
 					if (parser->parser( *this, &info, userData ) == false)
 						return false;
-					break; 
+					break;
 				}
 			}
 		}
@@ -699,7 +695,7 @@ void DataChunkInput::clearChunkStack( void )
 	for( c=m_chunkStack; c; c=next )
 	{
 		next = c->next;
-		c->deleteInstance();
+		deleteInstance(c);
 	}
 
 	m_chunkStack = NULL;
@@ -725,7 +721,7 @@ AsciiString DataChunkInput::openDataChunk(DataChunkVersionType *ver )
 	c->id = 0;
 	c->version = 0;
 	c->dataSize = 0;
-	//DEBUG_LOG(("Opening data chunk at offset %d (%x)\n", m_file->tell(), m_file->tell()));
+	//DEBUG_LOG(("Opening data chunk at offset %d (%x)", m_file->tell(), m_file->tell()));
 	// read the chunk ID
 	m_file->read( (char *)&c->id, sizeof(UnsignedInt) );
 	decrementDataLeft( sizeof(UnsignedInt) );
@@ -754,7 +750,7 @@ AsciiString DataChunkInput::openDataChunk(DataChunkVersionType *ver )
 
 // close chunk and move to start of next chunk
 void DataChunkInput::closeDataChunk( void )
-{										
+{
 	if (m_chunkStack == NULL)
 	{
 		// TODO: Throw exception
@@ -772,7 +768,7 @@ void DataChunkInput::closeDataChunk( void )
 	// pop the chunk off the stack
 	InputChunk *c = m_chunkStack;
 	m_chunkStack = m_chunkStack->next;
-	c->deleteInstance();
+	deleteInstance(c);
 }
 
 
@@ -800,7 +796,7 @@ DataChunkVersionType DataChunkInput::getChunkVersion( void )
 	}
 
 	return m_chunkStack->version;
-}		
+}
 
 // return size of data stored in this chunk
 UnsignedInt DataChunkInput::getChunkDataSize( void )
@@ -838,7 +834,7 @@ Bool DataChunkInput::atEndOfChunk( void )
 		return false;
 	}
 
-	return true; 
+	return true;
 }
 
 // update data left in chunk(s)
@@ -856,44 +852,44 @@ void DataChunkInput::decrementDataLeft( Int size )
 	// The sizes of the parent chunks on the stack are adjusted in closeDataChunk.
 }
 
-Real DataChunkInput::readReal(void) 
-{ 
+Real DataChunkInput::readReal(void)
+{
 	Real r;
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=sizeof(Real), ("Read past end of chunk."));
-	m_file->read( (char *)&r, sizeof(Real) ); 
+	m_file->read( (char *)&r, sizeof(Real) );
 	decrementDataLeft( sizeof(Real) );
-	return r; 
+	return r;
 }
 
-Int DataChunkInput::readInt(void) 
-{ 
+Int DataChunkInput::readInt(void)
+{
 	Int i;
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=sizeof(Int), ("Read past end of chunk."));
-	m_file->read( (char *)&i, sizeof(Int) ); 
+	m_file->read( (char *)&i, sizeof(Int) );
 	decrementDataLeft( sizeof(Int) );
-	return i; 
+	return i;
 }
 
-Byte DataChunkInput::readByte(void) 
-{ 
+Byte DataChunkInput::readByte(void)
+{
 	Byte b;
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=sizeof(Byte), ("Read past end of chunk."));
-	m_file->read( (char *)&b, sizeof(Byte) ); 
+	m_file->read( (char *)&b, sizeof(Byte) );
 	decrementDataLeft( sizeof(Byte) );
-	return b; 
+	return b;
 }
 
-void DataChunkInput::readArrayOfBytes(char *ptr, Int len) 
-{ 
+void DataChunkInput::readArrayOfBytes(char *ptr, Int len)
+{
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=len, ("Read past end of chunk."));
-	m_file->read( ptr, len ); 
+	m_file->read( ptr, len );
 	decrementDataLeft( len );
 }
 
 NameKeyType DataChunkInput::readNameKey(void)
 {
 		Int keyAndType = readInt();
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#ifdef DEBUG_CRASHING
 		Dict::DataType t = (Dict::DataType)(keyAndType & 0xff);
 		DEBUG_ASSERTCRASH(t==Dict::DICT_ASCIISTRING,("Invalid key data."));
 #endif
@@ -904,9 +900,9 @@ NameKeyType DataChunkInput::readNameKey(void)
 		return k;
 }
 
-Dict DataChunkInput::readDict() 
-{ 
-	UnsignedShort len;	
+Dict DataChunkInput::readDict()
+{
+	UnsignedShort len;
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=sizeof(UnsignedShort), ("Read past end of chunk."));
 	m_file->read( &len, sizeof(UnsignedShort) );
 	decrementDataLeft( sizeof(UnsignedShort) );
@@ -949,9 +945,9 @@ Dict DataChunkInput::readDict()
 	return d;
 }
 
-AsciiString DataChunkInput::readAsciiString(void) 
-{ 
-	UnsignedShort len;	
+AsciiString DataChunkInput::readAsciiString(void)
+{
+	UnsignedShort len;
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=sizeof(UnsignedShort), ("Read past end of chunk."));
 	m_file->read( &len, sizeof(UnsignedShort) );
 	decrementDataLeft( sizeof(UnsignedShort) );
@@ -965,12 +961,12 @@ AsciiString DataChunkInput::readAsciiString(void)
 		str[len] = '\000';
 	}
 
-	return theString; 
+	return theString;
 }
 
-UnicodeString DataChunkInput::readUnicodeString(void) 
-{ 
-	UnsignedShort len;	
+UnicodeString DataChunkInput::readUnicodeString(void)
+{
+	UnsignedShort len;
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=sizeof(UnsignedShort), ("Read past end of chunk."));
 	m_file->read( &len, sizeof(UnsignedShort) );
 	decrementDataLeft( sizeof(UnsignedShort) );
@@ -984,5 +980,5 @@ UnicodeString DataChunkInput::readUnicodeString(void)
 		str[len] = '\000';
 	}
 
-	return theString; 
+	return theString;
 }

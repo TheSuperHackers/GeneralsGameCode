@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Jani Penttinen                                               *
  *                                                                                             *
- *                      $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                      $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 5:06p                                             $*
  *                                                                                             *
  *                    $Revision:: 7                                                          $*
@@ -39,13 +39,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DX8_FVF_H
-#define DX8_FVF_H
 
 #include "always.h"
 #include <d3d8.h>
@@ -260,7 +254,7 @@ class FVFInfoClass : public W3DMPO
 	unsigned							location_offset;
 	unsigned							normal_offset;
 	unsigned							blend_offset;
-	unsigned							texcoord_offset[D3DDP_MAXTEXCOORD];	
+	unsigned							texcoord_offset[D3DDP_MAXTEXCOORD];
 	unsigned							diffuse_offset;
 	unsigned							specular_offset;
 public:
@@ -269,9 +263,9 @@ public:
 	inline unsigned Get_Location_Offset() const { return location_offset; }
 	inline unsigned Get_Normal_Offset() const { return normal_offset; }
 #ifdef WWDEBUG
-	inline unsigned Get_Tex_Offset(unsigned int n) const { WWASSERT(n<D3DDP_MAXTEXCOORD); return texcoord_offset[n]; }	
+	inline unsigned Get_Tex_Offset(unsigned int n) const { WWASSERT(n<D3DDP_MAXTEXCOORD); return texcoord_offset[n]; }
 #else
-	inline unsigned Get_Tex_Offset(unsigned int n) const { return texcoord_offset[n]; }	
+	inline unsigned Get_Tex_Offset(unsigned int n) const { return texcoord_offset[n]; }
 #endif
 
 	inline unsigned Get_Diffuse_Offset() const { return diffuse_offset; }
@@ -285,6 +279,3 @@ public:
 	inline void Set_FVF(unsigned fvf) const { FVF=fvf; }
 	inline void Set_FVF_Size(unsigned size) const { fvf_size=size; }
 };
-
-
-#endif

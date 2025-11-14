@@ -24,12 +24,12 @@
 
 // FILE: PopupJoinGame.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Jul 2002
@@ -37,7 +37,7 @@
 //	Filename: 	PopupJoinGame.cpp
 //
 //	author:		Matthew D. Campbell
-//	
+//
 //	purpose:	Contains the Callbacks for the Join Game Popup
 //
 //-----------------------------------------------------------------------------
@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GlobalData.h"
 #include "Common/NameKeyGenerator.h"
@@ -113,7 +113,7 @@ void PopupJoinGameInit( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 WindowMsgHandledType PopupJoinGameInput( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -130,7 +130,7 @@ WindowMsgHandledType PopupJoinGameInput( GameWindow *window, UnsignedInt msg, Wi
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
@@ -140,18 +140,18 @@ WindowMsgHandledType PopupJoinGameInput( GameWindow *window, UnsignedInt msg, Wi
 						GameSpyCloseOverlay(GSOVERLAY_GAMEPASSWORD);
 						SetLobbyAttemptHostJoin( FALSE );
 						parentPopup = NULL;
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
 
@@ -162,7 +162,7 @@ WindowMsgHandledType PopupJoinGameInput( GameWindow *window, UnsignedInt msg, Wi
 //-------------------------------------------------------------------------------------------------
 WindowMsgHandledType PopupJoinGameSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
 {
-  switch( msg ) 
+  switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -171,14 +171,14 @@ WindowMsgHandledType PopupJoinGameSystem( GameWindow *window, UnsignedInt msg, W
 
 			break;
 
-		}  // end create
+		}
     //---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
 
 			break;
 
-		}  // end case
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -204,13 +204,13 @@ WindowMsgHandledType PopupJoinGameSystem( GameWindow *window, UnsignedInt msg, W
 
 			break;
 
-		}  // end input
+		}
     //---------------------------------------------------------------------------------------------
 		case GEM_EDIT_DONE:
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
-     
+
       if( controlID == textEntryGamePasswordID )
 			{
 				// read the user's input and clear the entry box
@@ -230,7 +230,7 @@ WindowMsgHandledType PopupJoinGameSystem( GameWindow *window, UnsignedInt msg, W
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
@@ -257,7 +257,7 @@ static void joinGame( AsciiString password )
 	req.stagingRoom.id = ourRoom->getID();
 	req.password = password.str();
 	TheGameSpyPeerMessageQueue->addRequest(req);
-	DEBUG_LOG(("Attempting to join game %d(%ls) with password [%s]\n", ourRoom->getID(), ourRoom->getGameName().str(), password.str()));
+	DEBUG_LOG(("Attempting to join game %d(%ls) with password [%s]", ourRoom->getID(), ourRoom->getGameName().str(), password.str()));
 	GameSpyCloseOverlay(GSOVERLAY_GAMEPASSWORD);
 	parentPopup = NULL;
 }

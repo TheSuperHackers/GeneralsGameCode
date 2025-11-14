@@ -24,12 +24,12 @@
 
 // FILE: DownloadMenu.cpp /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "Common/NameKeyGenerator.h"
@@ -82,11 +82,14 @@ static void closeDownloadWindow( void )
 	if (!parent)
 		return;
 
-  WindowLayout *menuLayout = parent->winGetLayout();
-	menuLayout->runShutdown();
-  menuLayout->destroyWindows();
-	menuLayout->deleteInstance();
-	menuLayout = NULL;
+	WindowLayout *menuLayout = parent->winGetLayout();
+	if (menuLayout)
+	{
+		menuLayout->runShutdown();
+		menuLayout->destroyWindows();
+		deleteInstance(menuLayout);
+		menuLayout = NULL;
+	}
 
 	GameWindow *mainWin = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY("MainMenu.wnd:MainMenuParent") );
 	if (mainWin)
@@ -106,7 +109,7 @@ static void successQuitCallback( void )
 
 	// Clean up game data.  No crashy-crash for you!
 	if (TheGameLogic->isInGame())
-		TheMessageStream->appendMessage( GameMessage::MSG_CLEAR_GAME_DATA );
+		TheGameLogic->exitGame();
 }
 
 static void successNoQuitCallback( void )
@@ -259,13 +262,11 @@ void DownloadMenuInit( WindowLayout *layout, void *userData )
 	progressBarMunkee = TheWindowManager->winGetWindowFromId( parent, progressBarMunkeeID );
 
 	DEBUG_ASSERTCRASH(!TheDownloadManager, ("Download manager already exists"));
-	if (TheDownloadManager)
-	{
-		delete TheDownloadManager;
-	}
+
+	delete TheDownloadManager;
 	TheDownloadManager = NEW DownloadManagerMunkee;
 
-}  // end DownloadMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** menu shutdown method */
@@ -273,11 +274,9 @@ void DownloadMenuInit( WindowLayout *layout, void *userData )
 void DownloadMenuShutdown( WindowLayout *layout, void *userData )
 {
 	DEBUG_ASSERTCRASH(TheDownloadManager, ("No download manager"));
-	if (TheDownloadManager)
-	{
-		delete TheDownloadManager;
-		TheDownloadManager = NULL;
-	}
+
+	delete TheDownloadManager;
+	TheDownloadManager = NULL;
 
 	staticTextSize = NULL;
 	staticTextTime = NULL;
@@ -286,7 +285,7 @@ void DownloadMenuShutdown( WindowLayout *layout, void *userData )
 	progressBarMunkee = NULL;
 	parent = NULL;
 
-}  // end DownloadMenuShutdown
+}
 
 //-------------------------------------------------------------------------------------------------
 /** menu update method */
@@ -319,7 +318,7 @@ void DownloadMenuUpdate( WindowLayout *layout, void *userData )
 		GadgetStaticTextSetText(staticTextTime, timeString);
 	}
 
-}  // end DownloadMenuUpdate 
+}
 
 //-------------------------------------------------------------------------------------------------
 /** menu input callback */
@@ -328,7 +327,7 @@ WindowMsgHandledType DownloadMenuInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -343,7 +342,7 @@ WindowMsgHandledType DownloadMenuInput( GameWindow *window, UnsignedInt msg,
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
@@ -354,34 +353,34 @@ WindowMsgHandledType DownloadMenuInput( GameWindow *window, UnsignedInt msg,
 						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)button, buttonID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
 
-}  // end DownloadMenuInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType DownloadMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType DownloadMenuSystem( GameWindow *window, UnsignedInt msg,
 																		 WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-  switch( msg ) 
+  switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -390,14 +389,14 @@ WindowMsgHandledType DownloadMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end create
+		}
     //---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
 
 			break;
 
-		}  // end case
+		}
 
     //----------------------------------------------------------------------------------------------
     case GWM_INPUT_FOCUS:
@@ -409,28 +408,28 @@ WindowMsgHandledType DownloadMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end input
+		}
     //---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
-      
+
 			if( controlID == buttonCancelID )
 			{
 				HandleCanceledDownload();
 				closeDownloadWindow();
-			}  // end if
-	
+			}
+
 			break;
 
-		}  // end selected
+		}
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-} // end DownloadMenuSystem
+}

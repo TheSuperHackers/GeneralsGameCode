@@ -39,11 +39,6 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/KeyDefs.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 SelectionInfo::SelectionInfo() :
@@ -68,12 +63,8 @@ SelectionInfo::SelectionInfo() :
 { }
 
 //-------------------------------------------------------------------------------------------------
-PickDrawableStruct::PickDrawableStruct() : drawableListToFill(NULL)
+PickDrawableStruct::PickDrawableStruct() : drawableListToFill(NULL), isPointSelection(FALSE)
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
-	drawableListToFill = FALSE;
-	//
 	forceAttackMode = TheInGameUI->isInForceAttackMode();
 	UnsignedInt pickType = getPickTypesForContext(forceAttackMode);
 	translatePickTypesToKindof(pickType, kindofsToMatch);
@@ -85,10 +76,10 @@ PickDrawableStruct::PickDrawableStruct() : drawableListToFill(NULL)
 
 //-------------------------------------------------------------------------------------------------
 /**
- * Given a list of currently selected things and a list of things that are currently under 
+ * Given a list of currently selected things and a list of things that are currently under
  * the selection (pointer or drag), generate some useful information about each.
  */
-extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedDrawables, 
+extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedDrawables,
 																					const DrawableList *newlySelectedDrawables,
 																					SelectionInfo *outSelectionInfo,
 																					Bool selectionIsPoint)
@@ -158,7 +149,7 @@ extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedD
 		}
 
 		if (obj->isLocallyControlled()) {
-			++outSelectionInfo->newCountMine;	
+			++outSelectionInfo->newCountMine;
 			newMine = *it;
 			if (obj->isKindOf(KINDOF_STRUCTURE)) {
 				++outSelectionInfo->newCountMineBuildings;
@@ -276,7 +267,7 @@ UnsignedInt getPickTypesForContext( Bool forceAttackMode )
 
 	return types;
 
-}  // end getPickTypesForContext
+}
 
 //-------------------------------------------------------------------------------------------------
 UnsignedInt getPickTypesForCurrentSelection( Bool forceAttackMode )
@@ -315,7 +306,7 @@ UnsignedInt getPickTypesForCurrentSelection( Bool forceAttackMode )
 	}
 
 	return retVal;
-		
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -335,7 +326,7 @@ void translatePickTypesToKindof(UnsignedInt pickTypes, KindOfMaskType& outMask)
 
 	if (BitIsSet(pickTypes, PICK_TYPE_FORCEATTACKABLE)) {
 		outMask.set(KINDOF_FORCEATTACKABLE);
-	}	
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -344,7 +335,7 @@ void translatePickTypesToKindof(UnsignedInt pickTypes, KindOfMaskType& outMask)
 Bool addDrawableToList( Drawable *draw, void *userData )
 {
 	PickDrawableStruct *pds = (PickDrawableStruct *) userData;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_allowUnselectableSelection) {
 		pds->drawableListToFill->push_back(draw);
 		return TRUE;
@@ -354,6 +345,14 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 	if (!pds->drawableListToFill)
 		return FALSE;
 
+#if !RTS_GENERALS || !RETAIL_COMPATIBLE_BUG
+	if (draw->getFullyObscuredByShroud())
+		return FALSE;
+
+	if (draw->isDrawableEffectivelyHidden())
+		return FALSE;
+#endif
+
 	if (!draw->getTemplate()->isAnyKindOf(pds->kindofsToMatch))
 		return FALSE;
 
@@ -362,7 +361,7 @@ Bool addDrawableToList( Drawable *draw, void *userData )
     const Object *obj = draw->getObject();
     if ( obj && obj->getContainedBy() )//hmm, interesting... he is not selectable but he is contained
     {// What we are after here is to propagate the selection the selection ti the container
-      // if the cobtainer is non-enclosing... see also selectionxlat, in the left_click case
+      // if the container is non-enclosing... see also SelectionXlat, in the left_click case
 
       ContainModuleInterface *contain = obj->getContainedBy()->getContain();
       Drawable *containDraw = obj->getContainedBy()->getDrawable();
@@ -373,28 +372,21 @@ Bool addDrawableToList( Drawable *draw, void *userData )
       return FALSE;
   }
 
-	//Kris: Aug 9, 2003!!! Wow, this bug has been around a LONG time!!
-	//Basically, it was possible to drag select a single enemy/neutral unit even if you couldn't see it
-	//including stealthed units.
-	const Object *obj = draw->getObject();
-	if( obj )
+#if !RTS_GENERALS && RETAIL_COMPATIBLE_BUG
+	// TheSuperHackers @info
+	// In retail, hidden objects such as passengers are included here when drag-selected, which causes
+	// enemy selection logic to exit early (only 1 enemy unit can be selected at a time). Some players
+	// exploit this bug to determine if a transport contains passengers and consider this an important
+	// feature and an advanced skill to pull off, so we must leave the exploit.
+	if (!pds->isPointSelection)
 	{
-		const Player *player = ThePlayerList->getLocalPlayer();
-		Relationship rel = player->getRelationship( obj->getTeam() );
-		if( rel == NEUTRAL || rel == ENEMIES )
-		{
-			if( obj->getShroudedStatus( player->getPlayerIndex() ) >= OBJECTSHROUD_FOGGED )
-			{
-				return FALSE;
-			}
-
-			//If stealthed, no way!
-			if( obj->testStatus( OBJECT_STATUS_STEALTHED ) && !obj->testStatus( OBJECT_STATUS_DETECTED ) )
-			{
-				return FALSE;
-			}
-		}
+		const Object *obj = draw->getObject();
+		if (obj)
+			if (obj->getControllingPlayer() != ThePlayerList->getLocalPlayer())
+				if (obj->getContain() && draw->getObject()->getContain()->getContainCount() > 0)
+					return FALSE;
 	}
+#endif
 
 	pds->drawableListToFill->push_back(draw);
 	return TRUE;

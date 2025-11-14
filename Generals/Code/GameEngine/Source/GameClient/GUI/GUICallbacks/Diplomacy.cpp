@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GlobalData.h"
 #include "Common/MultiplayerSettings.h"
@@ -57,11 +57,6 @@
 #include "GameNetwork/GameSpy/BuddyDefs.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 
@@ -94,7 +89,7 @@ static Int slotNumInRow[MAX_SLOTS];
 static WindowLayout *theLayout = NULL;
 static GameWindow *theWindow = NULL;
 static AnimateWindowManager *theAnimateWindowManager = NULL;
-WindowMsgHandledType BuddyControlSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType BuddyControlSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2);
 void InitBuddyControls(Int type);
 void updateBuddyInfo( void );
@@ -198,10 +193,10 @@ void UpdateDiplomacyBriefingText(AsciiString newText, Bool clear)
 // ------------------------------------------------------------------------------------------------
 void ShowDiplomacy( Bool immediate )
 {
-	if (!TheInGameUI->getInputEnabled() || TheGameLogic->isIntroMoviePlaying() || 
+	if (!TheInGameUI->getInputEnabled() || TheGameLogic->isIntroMoviePlaying() ||
 			TheGameLogic->isLoadingGame())
 		return;
-	
+
 
 	if (TheInGameUI->isQuitMenuVisible())
 		return;
@@ -279,7 +274,7 @@ void ShowDiplomacy( Bool immediate )
 		PopulateOldBuddyMessages();
 		updateBuddyInfo();
 	}
-	
+
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -290,13 +285,13 @@ void ResetDiplomacy( void )
 	{
 		TheInGameUI->unregisterWindowLayout(theLayout);
 		theLayout->destroyWindows();
-		theLayout->deleteInstance();
+		deleteInstance(theLayout);
 		InitBuddyControls(-1);
+		theLayout = NULL;
 	}
-	theLayout = NULL;
 	theWindow = NULL;
-	if (theAnimateWindowManager)
-		delete theAnimateWindowManager;
+
+	delete theAnimateWindowManager;
 	theAnimateWindowManager = NULL;
 }
 
@@ -348,7 +343,7 @@ WindowMsgHandledType DiplomacyInput( GameWindow *window, UnsignedInt msg,
 																			WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -366,29 +361,29 @@ WindowMsgHandledType DiplomacyInput( GameWindow *window, UnsignedInt msg,
 					HideDiplomacy();
 					return MSG_HANDLED;
 					//return MSG_IGNORED;
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
 			return MSG_HANDLED;
 
-		}  // end char
+		}
 
 	}
 
 	return MSG_IGNORED;
 
-}  // end DiplomacyInput
+}
 
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType DiplomacySystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType DiplomacySystem( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	if(BuddyControlSystem(window, msg, mData1, mData2) == MSG_HANDLED)
 	{
 		return MSG_HANDLED;
 	}
-	switch( msg ) 
+	switch( msg )
 	{
 		//---------------------------------------------------------------------------------------------
 		case GGM_FOCUS_CHANGE:
@@ -397,17 +392,17 @@ WindowMsgHandledType DiplomacySystem( GameWindow *window, UnsignedInt msg,
 			//if (focus)
 				//TheWindowManager->winSetGrabWindow( chatTextEntry );
 			break;
-		} // end focus change
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
-		{	
+		{
 			// if we're given the opportunity to take the keyboard focus we must say we don't want it
 			if( mData1 == TRUE )
 				*(Bool *)mData2 = FALSE;
 
 			return MSG_HANDLED;
-		}//case GWM_INPUT_FOCUS:
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -447,17 +442,17 @@ WindowMsgHandledType DiplomacySystem( GameWindow *window, UnsignedInt msg,
 			}
 			break;
 
-		}  // end button selected
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end DiplomacySystem
+}
 
 void PopulateInGameDiplomacyPopup( void )
 {

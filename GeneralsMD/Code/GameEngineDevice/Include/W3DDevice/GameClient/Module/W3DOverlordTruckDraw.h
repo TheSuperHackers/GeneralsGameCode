@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef _W3D_OVERLORD_TRUCK_DRAW_H_
-#define _W3D_OVERLORD_TRUCK_DRAW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "W3DDevice/GameClient/Module/W3DTruckDraw.h"
 
@@ -58,7 +55,7 @@ class W3DOverlordTruckDraw : public W3DTruckDraw
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DOverlordTruckDraw, "W3DOverlordTruckDraw" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DOverlordTruckDraw, W3DOverlordTruckDrawModuleData )
-		
+
 public:
 
 	W3DOverlordTruckDraw( Thing *thing, const ModuleData* moduleData );
@@ -70,6 +67,3 @@ public:
 protected:
 
 };
-
-#endif
-

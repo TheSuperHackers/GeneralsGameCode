@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef _QUEUE_PRODUCTION_EXIT_UPDATE_H
-#define _QUEUE_PRODUCTION_EXIT_UPDATE_H
-
 #include "GameLogic/Module/UpdateModule.h"
 #include "Common/INI.h"
 #include "Lib/BaseType.h"
@@ -47,7 +44,7 @@ public:
 	Coord3D m_naturalRallyPoint;
 	UnsignedInt m_exitDelayData;
 	Bool m_allowAirborneCreationData;
-	UnsignedInt m_initialBurst; 
+	UnsignedInt m_initialBurst;
 
 	QueueProductionExitUpdateModuleData()
 	{
@@ -58,10 +55,10 @@ public:
 		m_initialBurst = 0;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "UnitCreatePoint",				INI::parseCoord3D,							NULL, offsetof( QueueProductionExitUpdateModuleData, m_unitCreatePoint ) },
 			{ "NaturalRallyPoint",			INI::parseCoord3D,							NULL, offsetof( QueueProductionExitUpdateModuleData, m_naturalRallyPoint ) },
@@ -81,7 +78,7 @@ class QueueProductionExitUpdate : public UpdateModule, public ExitInterface
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( QueueProductionExitUpdate, "QueueProductionExitUpdate" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( QueueProductionExitUpdate, QueueProductionExitUpdateModuleData )
 
-public: 
+public:
 
 	virtual ExitInterface* getUpdateExitInterface() { return this; }
 
@@ -110,7 +107,7 @@ protected:
 	Real				m_creationClearDistance;		///< I can think of myself as ready when the previous guy is this far away.
 	UnsignedInt m_currentBurstCount;				///< how many times must I still override the delay timer
 
-	Bool isFreeToExit() const; 
+	Bool isFreeToExit() const;
 };
 
 inline void QueueProductionExitUpdate::setRallyPoint( const Coord3D *pos )
@@ -126,5 +123,3 @@ inline const Coord3D *QueueProductionExitUpdate::getRallyPoint( void )  const
 
 	return NULL;
 }
-
-#endif

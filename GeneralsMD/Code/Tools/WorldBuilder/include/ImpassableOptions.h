@@ -16,11 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #pragma once
-
-#ifndef __IMPASSABLEOPTIONS_H__
-#define __IMPASSABLEOPTIONS_H__
 
 class ImpassableOptions : public CDialog
 {
@@ -40,12 +36,10 @@ class ImpassableOptions : public CDialog
 		Bool m_showImpassableAreas;
 
 		Bool ValidateSlope();	// Returns TRUE if it was valid, FALSE if it had to adjust it.
-		
+
 	protected:
 		virtual BOOL OnInitDialog();
 		afx_msg void OnAngleChange();
 		afx_msg void OnPreview();
 		DECLARE_MESSAGE_MAP()
 };
-
-#endif /* __IMPASSABLEOPTIONS_H__ */

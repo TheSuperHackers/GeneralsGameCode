@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BONEFXUPDATE_H_
-#define __BONEFXUPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -39,7 +36,7 @@
 //#include "GameLogic/Module/DamageModule.h" -- Yikes... not necessary to include this! (KM)
 class DamageInfo; //Ahhhh much better!
 
-#include "GameLogic/Module/BodyModule.h" 
+#include "GameLogic/Module/BodyModule.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Thing;
@@ -99,11 +96,11 @@ public:
 
 	BoneFXUpdateModuleData( void );
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 
 			{ "DamageFXTypes",				INI::parseDamageTypeFlags, NULL, offsetof( BoneFXUpdateModuleData, m_damageFXTypes ) },
@@ -277,5 +274,3 @@ protected:
 	Bool m_bonesResolved[BODYDAMAGETYPE_COUNT];
 	Bool m_active;
 };
-
-#endif  // end __BONEFXUPDATE_H_

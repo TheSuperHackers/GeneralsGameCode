@@ -17,7 +17,7 @@
 */
 
 
-// FILE: VelocityTypePanels.cpp 
+// FILE: VelocityTypePanels.cpp
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -66,7 +66,7 @@ void VelocityPanelOrtho::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelOrthoFromSystem(0, ortho);
-				
+
 				sprintf(buff, FORMAT_STRING, ortho);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -81,7 +81,7 @@ void VelocityPanelOrtho::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelOrthoFromSystem(1, ortho);
-				
+
 				sprintf(buff, FORMAT_STRING, ortho);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -96,7 +96,7 @@ void VelocityPanelOrtho::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelOrthoFromSystem(2, ortho);
-				
+
 				sprintf(buff, FORMAT_STRING, ortho);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -111,7 +111,7 @@ void VelocityPanelOrtho::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelOrthoFromSystem(3, ortho);
-				
+
 				sprintf(buff, FORMAT_STRING, ortho);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -126,7 +126,7 @@ void VelocityPanelOrtho::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelOrthoFromSystem(4, ortho);
-				
+
 				sprintf(buff, FORMAT_STRING, ortho);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -141,7 +141,7 @@ void VelocityPanelOrtho::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelOrthoFromSystem(5, ortho);
-				
+
 				sprintf(buff, FORMAT_STRING, ortho);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -159,7 +159,7 @@ void VelocityPanelOrtho::OnParticleSystemEdit()
 	if (!pParent) {
 		return;
 	}
-	
+
 	pParent->signalParticleSystemEdit();
 }
 
@@ -200,7 +200,7 @@ void VelocityPanelSphere::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelSphereFromSystem(0, radial);
-				
+
 				sprintf(buff, FORMAT_STRING, radial);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -215,7 +215,7 @@ void VelocityPanelSphere::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelSphereFromSystem(1, radial);
-				
+
 				sprintf(buff, FORMAT_STRING, radial);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -233,7 +233,7 @@ void VelocityPanelSphere::OnParticleSystemEdit()
 	if (!pParent) {
 		return;
 	}
-	
+
 	pParent->signalParticleSystemEdit();
 }
 
@@ -271,7 +271,7 @@ void VelocityPanelHemisphere::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelHemisphereFromSystem(0, radial);
-				
+
 				sprintf(buff, FORMAT_STRING, radial);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -286,7 +286,7 @@ void VelocityPanelHemisphere::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelHemisphereFromSystem(1, radial);
-				
+
 				sprintf(buff, FORMAT_STRING, radial);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -304,7 +304,7 @@ void VelocityPanelHemisphere::OnParticleSystemEdit()
 	if (!pParent) {
 		return;
 	}
-	
+
 	pParent->signalParticleSystemEdit();
 }
 
@@ -341,7 +341,7 @@ void VelocityPanelCylinder::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelCylinderFromSystem(0, cylinder);
-				
+
 				sprintf(buff, FORMAT_STRING, cylinder);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -356,7 +356,7 @@ void VelocityPanelCylinder::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelCylinderFromSystem(1, cylinder);
-				
+
 				sprintf(buff, FORMAT_STRING, cylinder);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -371,7 +371,7 @@ void VelocityPanelCylinder::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelCylinderFromSystem(2, cylinder);
-				
+
 				sprintf(buff, FORMAT_STRING, cylinder);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -386,7 +386,7 @@ void VelocityPanelCylinder::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelCylinderFromSystem(3, cylinder);
-				
+
 				sprintf(buff, FORMAT_STRING, cylinder);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -404,7 +404,7 @@ void VelocityPanelCylinder::OnParticleSystemEdit()
 	if (!pParent) {
 		return;
 	}
-	
+
 	pParent->signalParticleSystemEdit();
 }
 
@@ -443,7 +443,7 @@ void VelocityPanelOutward::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelOutwardFromSystem(0, outward);
-				
+
 				sprintf(buff, FORMAT_STRING, outward);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -458,7 +458,7 @@ void VelocityPanelOutward::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelOutwardFromSystem(1, outward);
-				
+
 				sprintf(buff, FORMAT_STRING, outward);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -473,7 +473,7 @@ void VelocityPanelOutward::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelOutwardFromSystem(2, outward);
-				
+
 				sprintf(buff, FORMAT_STRING, outward);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -488,7 +488,7 @@ void VelocityPanelOutward::performUpdate( IN Bool toUI )
 		if (pWnd) {
 			if (toUI) {
 				pParent->getVelOutwardFromSystem(3, outward);
-				
+
 				sprintf(buff, FORMAT_STRING, outward);
 				pWnd->SetWindowText(buff);
 			} else {
@@ -506,7 +506,7 @@ void VelocityPanelOutward::OnParticleSystemEdit()
 	if (!pParent) {
 		return;
 	}
-	
+
 	pParent->signalParticleSystemEdit();
 }
 

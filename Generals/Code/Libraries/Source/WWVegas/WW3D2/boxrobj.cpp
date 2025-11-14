@@ -26,9 +26,9 @@
  *                                                                                             *
  *                       Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 7/05/01 4:11p                                               $*
+ *                     $Modtime:: 1/19/02 12:57p                                              $*
  *                                                                                             *
- *                    $Revision:: 27                                                          $*
+ *                    $Revision:: 35                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -103,30 +103,31 @@
 #include "dx8fvf.h"
 #include "sortingrenderer.h"
 #include "visrasterizer.h"
+#include "meshgeometry.h"
 
 
 #define NUM_BOX_VERTS	8
 #define NUM_BOX_FACES	12
 
 // Face Connectivity
-static Vector3i					_BoxFaces[NUM_BOX_FACES] = 
+static TriIndex					_BoxFaces[NUM_BOX_FACES] =
 {
-	Vector3i( 0,1,2 ),		// +z faces
-	Vector3i( 0,2,3 ),		
-	Vector3i( 4,7,6 ),		// -z faces
-	Vector3i( 4,6,5 ),
-	Vector3i( 0,3,7 ),		// +x faces
-	Vector3i( 0,7,4 ),
-	Vector3i( 1,5,6 ),		// -x faces
-	Vector3i( 1,6,2 ),
-	Vector3i( 4,5,1 ),		// +y faces
-	Vector3i( 4,1,0 ),
-	Vector3i( 3,2,6 ),		// -y faces
-	Vector3i( 3,6,7 )
+	TriIndex( 0,1,2 ),		// +z faces
+	TriIndex( 0,2,3 ),
+	TriIndex( 4,7,6 ),		// -z faces
+	TriIndex( 4,6,5 ),
+	TriIndex( 0,3,7 ),		// +x faces
+	TriIndex( 0,7,4 ),
+	TriIndex( 1,5,6 ),		// -x faces
+	TriIndex( 1,6,2 ),
+	TriIndex( 4,5,1 ),		// +y faces
+	TriIndex( 4,1,0 ),
+	TriIndex( 3,2,6 ),		// -y faces
+	TriIndex( 3,6,7 )
 };
 
 // Vertex Positions as a function of the box extents
-static Vector3						_BoxVerts[NUM_BOX_VERTS] = 
+static Vector3						_BoxVerts[NUM_BOX_VERTS] =
 {
 	Vector3(  1.0f, 1.0f, 1.0f ),		// +z ring of 4 verts
 	Vector3( -1.0f, 1.0f, 1.0f ),
@@ -182,6 +183,7 @@ BoxRenderObjClass::BoxRenderObjClass(void)
 {
 	memset(Name,0,sizeof(Name));
 	Color.Set(1,1,1);
+	Opacity = 0.25f;
 	ObjSpaceCenter.Set(0,0,0);
 	ObjSpaceExtent.Set(1,1,1);
 }
@@ -207,6 +209,7 @@ BoxRenderObjClass::BoxRenderObjClass(const W3dBoxStruct & def)
 	W3dUtilityClass::Convert_Vector(def.Extent,&ObjSpaceExtent);
 	int col_bits = (def.Attributes & W3D_BOX_ATTRIBUTE_COLLISION_TYPE_MASK) >> W3D_BOX_ATTRIBUTE_COLLISION_TYPE_SHIFT;
 	Set_Collision_Type(col_bits<<1);
+	Opacity = 0.25f;
 }
 
 
@@ -304,8 +307,8 @@ const char * BoxRenderObjClass::Get_Name(void) const
 void BoxRenderObjClass::Set_Name(const char * name)
 {
 	WWASSERT(name != NULL);
-	WWASSERT(strlen(name) < 2*W3D_NAME_LEN);
-	strcpy(Name,name);
+	size_t nameLen = strlcpy(Name, name, ARRAY_SIZE(Name));
+	(void)nameLen; WWASSERT(nameLen < ARRAY_SIZE(Name));
 }
 
 
@@ -357,7 +360,7 @@ void BoxRenderObjClass::Init(void)
 	_BoxMaterial->Set_Opacity(1.0f);		// uses vertex alpha...
 	_BoxMaterial->Set_Shininess(0.0f);
 
-	_BoxShader = ShaderClass::_PresetAlphaSolidShader;
+	_BoxShader = ShaderClass::_PresetAlphaSolidShader; //_PresetAdditiveSolidShader;
 
 	IsInitted = true;
 }
@@ -382,7 +385,7 @@ void BoxRenderObjClass::Shutdown(void)
 {
 	WWASSERT(IsInitted == true);
 	REF_PTR_RELEASE(_BoxMaterial);
-	
+
 	IsInitted = false;
 }
 
@@ -453,10 +456,10 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 		}
 
 		/*
-		** Dump the box vertices into the sorting dynamic vertex buffer. 
+		** Dump the box vertices into the sorting dynamic vertex buffer.
 		*/
-		DWORD color = DX8Wrapper::Convert_Color(Color,0.25f);
-		
+		DWORD color = DX8Wrapper::Convert_Color(Color,Opacity);
+
 		int buffer_type = BUFFER_TYPE_DYNAMIC_SORTING;
 
 		DynamicVBAccessClass vbaccess(buffer_type,dynamic_fvf_type,NUM_BOX_VERTS);
@@ -471,7 +474,7 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 				vb->x=verts[i][0];
 				vb->y=verts[i][1];
 				vb->z=verts[i][2];
-				
+
 				// Normals
 				vb->nx=_BoxVertexNormals[i][0];
 				vb->ny=_BoxVertexNormals[i][1];
@@ -504,12 +507,12 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 		DX8Wrapper::Set_Material(_BoxMaterial);
 		DX8Wrapper::Set_Shader(_BoxShader);
 		DX8Wrapper::Set_Texture(0,NULL);
-		
+
 		DX8Wrapper::Set_Index_Buffer(ibaccess,0);
 		DX8Wrapper::Set_Vertex_Buffer(vbaccess);
 
 		SphereClass sphere;
-		Get_Obj_Space_Bounding_Sphere(sphere); 
+		Get_Obj_Space_Bounding_Sphere(sphere);
 
 		DX8Wrapper::Draw_Triangles(buffer_type,0,NUM_BOX_FACES,0,NUM_BOX_VERTS);
 	}
@@ -533,7 +536,7 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 void BoxRenderObjClass::vis_render_box(SpecialRenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent)
 {
 	if (!IsInitted) return;
-	
+
 	static Vector3 verts[NUM_BOX_VERTS];
 
 	// compute the vertex positions
@@ -871,7 +874,7 @@ bool AABoxRenderObjClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 bool AABoxRenderObjClass::Intersect_AABox(AABoxIntersectionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
-	return CollisionMath::Intersection_Test(CachedBox,boxtest.Box);	
+	return CollisionMath::Intersection_Test(CachedBox,boxtest.Box);
 }
 
 
@@ -1078,8 +1081,7 @@ int OBBoxRenderObjClass::Class_ID(void) const
  *=============================================================================================*/
 void OBBoxRenderObjClass::Render(RenderInfoClass & rinfo)
 {
-	Matrix3D tm(Transform);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+	DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);
 	render_box(rinfo,ObjSpaceCenter,ObjSpaceExtent);
 }
 
@@ -1248,7 +1250,7 @@ bool OBBoxRenderObjClass::Cast_OBBox(OBBoxCollisionTestClass & boxtest)
 bool OBBoxRenderObjClass::Intersect_AABox(AABoxIntersectionTestClass & boxtest)
 {
 	if ((Get_Collision_Type() & boxtest.CollisionType) == 0) return false;
-	return CollisionMath::Intersection_Test(CachedBox,boxtest.Box);	
+	return CollisionMath::Intersection_Test(CachedBox,boxtest.Box);
 }
 
 
@@ -1357,7 +1359,7 @@ int BoxPrototypeClass::Get_Class_ID(void) const
 		return RenderObjClass::CLASSID_AABOX;
 	}
 }
-	
+
 RenderObjClass * BoxPrototypeClass::Create(void)
 {
 	if (Definition.Attributes & W3D_BOX_ATTRIBUTE_ORIENTED) {

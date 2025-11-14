@@ -30,16 +30,13 @@
 
 #pragma once
 
-#ifndef __CUSTOMMATCHPREFERENCES_H__
-#define __CUSTOMMATCHPREFERENCES_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "Common/UserPreferences.h"
 
 //-----------------------------------------------------------------------------
-// CustomMatchPreferences base class 
+// CustomMatchPreferences base class
 //-----------------------------------------------------------------------------
 class CustomMatchPreferences : public UserPreferences
 {
@@ -86,9 +83,7 @@ public:
 
   Bool getFactionsLimited(void) const; // Prefers to only use the original 3 sides, not USA Air Force General, GLA Toxin General, et al
   void setFactionsLimited( Bool factionsLimited );
-  
+
   Bool getUseStats( void ) const;
   void setUseStats( Bool useStats );
 };
-
-#endif // __CUSTOMMATCHPREFERENCES_H__

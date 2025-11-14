@@ -24,12 +24,12 @@
 
 // FILE: StaticText.cpp ///////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
@@ -76,13 +76,13 @@ WindowMsgHandledType GadgetStaticTextInput( GameWindow *window, UnsignedInt msg,
 											      WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-  switch( msg ) 
+  switch( msg )
 	{
 		// ------------------------------------------------------------------------
     case GWM_CHAR:
       switch (mData1)
 			{
-					
+
         case KEY_DOWN:
         case KEY_RIGHT:
         case KEY_TAB:
@@ -108,9 +108,9 @@ WindowMsgHandledType GadgetStaticTextInput( GameWindow *window, UnsignedInt msg,
 
   }
 	return MSG_HANDLED;
- 
 
-}  // end GadgetStaticTextInput
+
+}
 
 // GadgetStaticTextSystem =====================================================
 /** Handle system messages for text field */
@@ -129,8 +129,8 @@ WindowMsgHandledType GadgetStaticTextSystem( GameWindow *window, UnsignedInt msg
 			if (tData && tData->text)
 				*(UnicodeString*)mData2 = tData->text->getText();
 			break;
-		
-		}  // end get label
+
+		}
 
 		// ------------------------------------------------------------------------
 		case GGM_SET_LABEL:
@@ -144,7 +144,7 @@ WindowMsgHandledType GadgetStaticTextSystem( GameWindow *window, UnsignedInt msg
 
       break;
 
-		}  // end set label
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_CREATE:
@@ -159,19 +159,20 @@ WindowMsgHandledType GadgetStaticTextSystem( GameWindow *window, UnsignedInt msg
 			TheDisplayStringManager->freeDisplayString( data->text );
 
 			// free text data
-			delete( data );
+			delete (TextData *)window->winGetUserData();
+			window->winSetUserData( NULL );
 
       break;
 
-		}  // end destroy
+		}
 
 		default:
 			return MSG_IGNORED;
 
-  }  // end switch( msg )
+  }
 
 	return MSG_HANDLED;
-}  // end GadgetStaticTextSystem
+}
 
 // GadgetStaticTextSetText ====================================================
 /** Set the text for a static text control */
@@ -182,7 +183,7 @@ void GadgetStaticTextSetText( GameWindow *window, UnicodeString text )
 		return;
 	TheWindowManager->winSendSystemMsg( window, GGM_SET_LABEL, (WindowMsgData)&text, 0 );
 
-}  // end GadgetStaticTextSetText
+}
 
 UnicodeString GadgetStaticTextGetText( GameWindow *window )
 {
@@ -220,6 +221,6 @@ void GadgetStaticTextSetFont( GameWindow *g, GameFont *font )
 		if( dString )
 			dString->setFont( font );
 
-	}  // end if
+	}
 
-}  // end GadgetStaticTextSetFont
+}

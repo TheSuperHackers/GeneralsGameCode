@@ -25,13 +25,10 @@
 // FILE: BuildAssistant.h /////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, February 2002
 // Desc:   Singleton class to encapsulate some of the more common functions or rules
-//				 that apply to building structures and units 
+//				 that apply to building structures and units
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __BUILDASSISTANT_H_
-#define __BUILDASSISTANT_H_
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/STLTypedefs.h"
@@ -72,7 +69,7 @@ typedef ObjectSellList::iterator ObjectSellListIterator;
 //-------------------------------------------------------------------------------------------------
 /** Return codes for queries about being able to build */
 //-------------------------------------------------------------------------------------------------
-enum CanMakeType
+enum CanMakeType CPP_11(: Int)
 {
 	CANMAKE_OK,
 	CANMAKE_NO_PREREQ,
@@ -86,7 +83,7 @@ enum CanMakeType
 //-------------------------------------------------------------------------------------------------
 /** Return codes for queries about legal build locations */
 //-------------------------------------------------------------------------------------------------
-enum LegalBuildCode
+enum LegalBuildCode CPP_11(: Int)
 {
 	LBC_OK = 0,
 	LBC_RESTRICTED_TERRAIN,
@@ -103,7 +100,7 @@ class BuildAssistant : public SubsystemInterface
 {
 
 public:
-	
+
 	struct TileBuildInfo
 	{
 		Int tilesUsed;
@@ -114,10 +111,10 @@ public:
 	{
 		TERRAIN_RESTRICTIONS	= 0x00000001,	///< Check for basic terrain restrictions
 		CLEAR_PATH						= 0x00000002,	///< Must be able to path find to location
-		NO_OBJECT_OVERLAP			= 0X00000004,	///< Can't overlap enemy objects, or locally controled objects that can't move out of the way			
+		NO_OBJECT_OVERLAP			= 0X00000004,	///< Can't overlap enemy objects, or locally controled objects that can't move out of the way
 		USE_QUICK_PATHFIND    = 0x00000008, ///< Use the quick pathfind method for CLEAR_PATH
 		SHROUD_REVEALED				= 0x00000010,	///< Check to make sure the shroud is revealed
-		NO_ENEMY_OBJECT_OVERLAP=0x00000020,	///< Can't overlap enemy objects only.			
+		NO_ENEMY_OBJECT_OVERLAP=0x00000020,	///< Can't overlap enemy objects only.
 	};
 
 public:
@@ -138,17 +135,17 @@ public:
 												 void *funcUserData );
 
 	/// create object from a build and put it in the world now
-	virtual Object *buildObjectNow( Object *constructorObject, const ThingTemplate *what, 
+	virtual Object *buildObjectNow( Object *constructorObject, const ThingTemplate *what,
 																	const Coord3D *pos, Real angle, Player *owningPlayer );
 
 	/// using the "line placement" for objects (like walls etc) create that line of objects line
-	virtual void buildObjectLineNow( Object *constructorObject, const ThingTemplate *what, 
+	virtual void buildObjectLineNow( Object *constructorObject, const ThingTemplate *what,
 																	 const Coord3D *start, const Coord3D *end, Real angle,
 																	 Player *owningPlayer );
 
 	/// query if we can build at this location
 	virtual LegalBuildCode isLocationLegalToBuild( const Coord3D *worldPos,
-																								 const ThingTemplate *build, 
+																								 const ThingTemplate *build,
 																								 Real angle,  // angle to construct 'build' at
 																								 UnsignedInt options,		// use LocationLegalToBuildOptions
 																								 Object *builderObject,
@@ -156,10 +153,10 @@ public:
 
 	/// query if we can build at this location
 	virtual Bool isLocationClearOfObjects( const Coord3D *worldPos,
-																								 const ThingTemplate *build, 
+																								 const ThingTemplate *build,
 																								 Real angle,  // angle to construct 'build' a
 																								 Object *builderObject,
-																								 UnsignedInt options, 
+																								 UnsignedInt options,
 																								 Player *thePlayer);
 
 	/// Adds bib highlighting for this location.
@@ -194,24 +191,21 @@ protected:
 
 	/// some objects will be "cleared" automatically when constructing
 	Bool isRemovableForConstruction( Object *obj );
-	
+
 	/// clear the area of removable objects for construction
-	void clearRemovableForConstruction( const ThingTemplate *whatToBuild, 
+	void clearRemovableForConstruction( const ThingTemplate *whatToBuild,
 																			const Coord3D *pos, Real angle );
 
 	/// will move objects that can move out of the way.
 	/// will return false if there are objects that cannot be moved out of the way.
-	Bool moveObjectsForConstruction( const ThingTemplate *whatToBuild, 
+	Bool moveObjectsForConstruction( const ThingTemplate *whatToBuild,
 																	 const Coord3D *pos, Real angle, Player *playerToBuild );
 
 	Coord3D *m_buildPositions;			///< array used to create a line of build locations (think walls)
 	Int m_buildPositionSize;				///< number of elements in the build position array
 	ObjectSellList m_sellList;			///< list of objects currently going through the "sell process"
 
-};  // end BuildAssistant
+};
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
 extern BuildAssistant *TheBuildAssistant;
-
-#endif // __BUILDASSISTANT_H_
-

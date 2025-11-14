@@ -16,30 +16,25 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : Commando/G                               * 
- *                                                                         * 
- *                     $Archive:: /Commando/Code/ww3d2/bmp2d.h            $* 
- *                                                                         * 
- *                      $Author:: Hector_y                                $* 
- *                                                                         * 
- *                     $Modtime:: 2/21/01 1:31p                           $* 
- *                                                                         * 
- *                    $Revision:: 3                                       $* 
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : Commando/G                               *
+ *                                                                         *
+ *                     $Archive:: /Commando/Code/ww3d2/bmp2d.h            $*
+ *                                                                         *
+ *                      $Author:: Hector_y                                $*
+ *                                                                         *
+ *                     $Modtime:: 2/21/01 1:31p                           $*
+ *                                                                         *
+ *                    $Revision:: 3                                       $*
+ *                                                                         *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef BMP2D_H
-#define BMP2D_H
 
 #include "dynamesh.h"
 
@@ -55,5 +50,3 @@ class Bitmap2DObjClass : public DynamicScreenMeshClass
 		virtual RenderObjClass * 	Clone(void) const;
 		virtual int						Class_ID(void) const { return CLASSID_BITMAP2D; }
 };
-
-#endif

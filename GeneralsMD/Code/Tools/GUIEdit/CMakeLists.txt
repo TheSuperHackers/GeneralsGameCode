@@ -46,20 +46,18 @@ target_include_directories(z_guiedit PRIVATE
 )
 
 target_link_libraries(z_guiedit PRIVATE
-    benchmark
     comctl32
+    core_debug
+    core_profile
     d3d8lib
-    dbghelplib
     imm32
     stlport
     vfw32
     winmm
-    z_debug
     z_gameengine
     z_gameenginedevice
-    z_profile
     z_wwvegas
-    zi_libraries_include
+    zi_always
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

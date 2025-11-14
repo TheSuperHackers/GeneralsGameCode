@@ -27,7 +27,7 @@
 // Desc:   Update module to handle demo trap proximity triggering.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 
@@ -65,7 +65,7 @@ DemoTrapUpdateModuleData::DemoTrapUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
     { "DefaultProximityMode",      INI::parseBool,								NULL, offsetof( DemoTrapUpdateModuleData, m_defaultsToProximityMode ) },
     { "DetonationWeaponSlot",      INI::parseLookupList,					TheWeaponSlotTypeNamesLookupList, offsetof( DemoTrapUpdateModuleData, m_detonationWeaponSlot ) },
@@ -87,7 +87,7 @@ DemoTrapUpdate::DemoTrapUpdate( Thing *thing, const ModuleData* moduleData ) : U
 {
 	m_nextScanFrames = 0;
 	m_detonated = false;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -129,7 +129,7 @@ void DemoTrapUpdate::onObjectCreated()
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime DemoTrapUpdate::update()
-{	
+{
 /// @todo srj use SLEEPY_UPDATE here
 	const DemoTrapUpdateModuleData *data = getDemoTrapUpdateModuleData();
 
@@ -171,7 +171,7 @@ UpdateSleepTime DemoTrapUpdate::update()
 		return UPDATE_SLEEP_NONE;
 	}
 
-	
+
 	if( weaponSlot == data->m_manualModeWeaponSlot )
 	{
 		//Don't scan!
@@ -201,7 +201,7 @@ UpdateSleepTime DemoTrapUpdate::update()
 		{
 			continue;
 		}
-		
+
 		if( other->isKindOf( KINDOF_DOZER ) )
 		{
 			//If we're dealing with a dozer... check if it's trying to disarm me. If so, don't blow up!
@@ -283,7 +283,7 @@ void DemoTrapUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -307,7 +307,7 @@ void DemoTrapUpdate::xfer( Xfer *xfer )
 	// detonated
 	xfer->xferBool( &m_detonated );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -318,4 +318,4 @@ void DemoTrapUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

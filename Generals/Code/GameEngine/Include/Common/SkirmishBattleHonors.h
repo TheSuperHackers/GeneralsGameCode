@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __SKIRMISHBATTLEHONORS_H__
-#define __SKIRMISHBATTLEHONORS_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -44,13 +41,15 @@ class GameWindow;
 class WinInstanceData;
 
 //-----------------------------------------------------------------------------
-// CustomMatchPreferences base class 
+// CustomMatchPreferences base class
 //-----------------------------------------------------------------------------
 class SkirmishBattleHonors : public UserPreferences
 {
 public:
 	SkirmishBattleHonors();
 	virtual ~SkirmishBattleHonors();
+
+	Bool loadFromIniFile();
 
 	void setWins(Int val);
 	Int getWins(void) const;
@@ -94,5 +93,3 @@ void InsertBattleHonor(GameWindow *list, const Image *image, Bool enabled, Int i
 void BattleHonorTooltip(GameWindow *window,
 												WinInstanceData *instData,
 												UnsignedInt mouse);
-
-#endif // __SKIRMISHBATTLEHONORS_H__

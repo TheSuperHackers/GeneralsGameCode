@@ -36,12 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef LINEGRP_H
-#define LINEGRP_H
 
 #include "shader.h"
 #include "vector4.h"
@@ -52,11 +47,11 @@ class RenderInfoClass;
 class TextureClass;
 
 template <class T> class ShareBufferClass;
- 
+
 /*
-** LineGroupClass -- a custom object for rendering 
+** LineGroupClass -- a custom object for rendering
 ** groups of lines (such as motion blurred particle systems).
-*/ 
+*/
 class LineGroupClass
 {
 public:
@@ -71,7 +66,7 @@ public:
 	};
 
 	LineGroupClass(void);
-	virtual ~LineGroupClass(void);	
+	virtual ~LineGroupClass(void);
 
 	// LineGroupClass interface:
 	void						Set_Arrays(
@@ -114,7 +109,7 @@ protected:
 	ShareBufferClass<Vector4> *			LineDiffuse; // (NULL if not used) RGBA values
 	ShareBufferClass<Vector4> *			TailDiffuse; // (NULL if not used) RGBA values
 	ShareBufferClass<unsigned int> *		ALT;			// (NULL if not used) active line table
-	ShareBufferClass<float> *				LineSize;	// (NULL if not used) size override table	
+	ShareBufferClass<float> *				LineSize;	// (NULL if not used) size override table
 	ShareBufferClass<float> *				LineUCoord; // (NULL if not used) U coordinates
 	int											LineCount;	// Active (if ALT) or total point count
 
@@ -125,10 +120,8 @@ protected:
 	unsigned int			Flags;						// operation control flags
 	float						DefaultLineSize;			// Line size (size array overrides if present)
 	Vector3					DefaultLineColor;		// Line color (color array overrides if present)
-	float						DefaultLineAlpha;		// Line alpha (alpha array overrides if present)	
+	float						DefaultLineAlpha;		// Line alpha (alpha array overrides if present)
 	float						DefaultLineUCoord;	// Line texture Ucoord (ucoord array overrides if present)
 	Vector4					DefaultTailDiffuse;	// Tail diffuse RGBA
 	LineModeType			LineMode;
 };
-
-#endif

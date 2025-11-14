@@ -27,13 +27,14 @@
 // Desc:      Basic mouse interactions
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Debug.h"
 #include "Common/MessageStream.h"
 #include "Common/GameEngine.h"
 #include "Common/GlobalData.h"
 #include "Common/INI.h"
+#include "Common/UserPreferences.h"
 
 #include "GameClient/Display.h"
 #include "GameClient/DisplayStringManager.h"
@@ -45,29 +46,30 @@
 #include "GameClient/Mouse.h"
 #include "GameClient/GlobalLanguage.h"
 
+#include "GameLogic/GameLogic.h"
 #include "GameLogic/ScriptEngine.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 Mouse *TheMouse = NULL;
 
-const char *Mouse::RedrawModeName[RM_MAX] = {
+const char *const Mouse::RedrawModeName[] = {
 	"Mouse:Windows",
 	"Mouse:W3D",
 	"Mouse:Poly",
 	"Mouse:DX8",
 };
 
+const char *const Mouse::CursorCaptureBlockReasonNames[] = {
+	"CursorCaptureBlockReason_NoInit",
+	"CursorCaptureBlockReason_Paused",
+	"CursorCaptureBlockReason_Unfocused",
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-static const FieldParse TheMouseCursorFieldParseTable[] = 
+static const FieldParse TheMouseCursorFieldParseTable[] =
 {
 	{ "CursorText",						INI::parseAsciiString,	NULL, offsetof( CursorInfo, cursorText ) },
 	{ "CursorTextColor",			INI::parseRGBAColorInt,	NULL, offsetof( CursorInfo, cursorTextColor ) },
@@ -84,7 +86,7 @@ static const FieldParse TheMouseCursorFieldParseTable[] =
 	{ "Directions",							INI::parseInt,	NULL,	offsetof( CursorInfo, numDirections ) },
 };
 
-static const FieldParse TheMouseFieldParseTable[] = 
+static const FieldParse TheMouseFieldParseTable[] =
 {
 	{ "TooltipFontName",						INI::parseAsciiString,NULL,			offsetof( Mouse, m_tooltipFontName ) },
 	{ "TooltipFontSize",						INI::parseInt,				NULL,			offsetof( Mouse, m_tooltipFontSize ) },
@@ -141,7 +143,7 @@ void Mouse::moveMouse( Int x, Int y, Int relOrAbs )
 	else if( m_currMouse.pos.y < m_minY )
 		m_currMouse.pos.y = m_minY;
 
-}  // end moveMouse
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Get the current information for the mouse from the device */
@@ -173,7 +175,7 @@ void Mouse::updateMouseData( )
 
 		busy = FALSE;
 
-	}  // end if
+	}
 
 	if( index > 0 )
 		m_eventsThisFrame = index - 1;
@@ -183,7 +185,7 @@ void Mouse::updateMouseData( )
 	if( index != 0 )
 		m_deadInputFrame = m_inputFrame;
 
-}  // end updateMouseData
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Combine mouse events into the main mouse variables */
@@ -210,8 +212,8 @@ void Mouse::processMouseEvent( Int index )
 		checkForDrag();
 
 	// add Mouse Position Changes to Master Position
-	moveMouse( m_mouseEvents[ index ].pos.x, 
-						 m_mouseEvents[ index ].pos.y, 
+	moveMouse( m_mouseEvents[ index ].pos.x,
+						 m_mouseEvents[ index ].pos.y,
 						 movementType );
 
 	// Cumulate Wheel Adjustments
@@ -246,7 +248,7 @@ void Mouse::processMouseEvent( Int index )
 			}
 		}
 	}
-	else if( m_currMouse.leftState != MBS_Up && 
+	else if( m_currMouse.leftState != MBS_Up &&
 					(	(m_prevMouse.leftEvent == GWM_LEFT_DOWN) ||
 						(m_prevMouse.leftEvent == GWM_LEFT_DRAG) ) )
 	{
@@ -282,7 +284,7 @@ void Mouse::processMouseEvent( Int index )
 			}
 		}
 	}
-	else if( m_currMouse.rightState != MBS_Up && 
+	else if( m_currMouse.rightState != MBS_Up &&
 					(	(m_prevMouse.rightEvent == GWM_RIGHT_DOWN) ||
 						(m_prevMouse.rightEvent == GWM_RIGHT_DRAG) ) )
 	{
@@ -316,7 +318,7 @@ void Mouse::processMouseEvent( Int index )
 			}
 		}
 	}
-	else if( m_currMouse.middleState != MBS_Up && 
+	else if( m_currMouse.middleState != MBS_Up &&
 					(	(m_prevMouse.middleEvent == GWM_MIDDLE_DOWN) ||
 						(m_prevMouse.middleEvent == GWM_MIDDLE_DRAG) ) )
 	{
@@ -325,7 +327,7 @@ void Mouse::processMouseEvent( Int index )
 
 	m_currMouse.deltaPos.x = m_currMouse.pos.x - m_prevMouse.pos.x;
 	m_currMouse.deltaPos.y = m_currMouse.pos.y - m_prevMouse.pos.y;
-//	DEBUG_LOG(("Mouse dx %d, dy %d, index %d, frame %d\n", m_currMouse.deltaPos.x, m_currMouse.deltaPos.y, index, m_inputFrame));
+//	DEBUG_LOG(("Mouse dx %d, dy %d, index %d, frame %d", m_currMouse.deltaPos.x, m_currMouse.deltaPos.y, index, m_inputFrame));
 //	// check if mouse is still and flag tooltip
 //	if( ((dx*dx) + (dy*dy)) < CURSOR_MOVE_TOL_SQ )
 //	{
@@ -334,7 +336,7 @@ void Mouse::processMouseEvent( Int index )
 //    Int delay = m_tooltipDelayTime;
 //    if(m_tooltipDelay >= 0 )
 //       delay = m_tooltipDelay;
-//    
+//
 //		if( now - m_stillTime >= delay )
 //		{
 //			if (!m_displayTooltip)
@@ -358,7 +360,7 @@ void Mouse::processMouseEvent( Int index )
 
 	m_prevMouse = m_currMouse;
 
-}  // end processMouseEvent
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Check for mouse drag */
@@ -366,28 +368,28 @@ void Mouse::processMouseEvent( Int index )
 void Mouse::checkForDrag( void )
 {
 
-	if( m_currMouse.leftState && 
+	if( m_currMouse.leftState &&
 			(	(m_prevMouse.leftEvent == GWM_LEFT_DOWN) ||
 				(m_prevMouse.leftEvent == GWM_LEFT_DRAG) ) )
 	{
 		m_currMouse.leftEvent = GWM_LEFT_DRAG;
 	}
 
-	if( m_currMouse.rightState && 
+	if( m_currMouse.rightState &&
 			(	(m_prevMouse.rightEvent == GWM_RIGHT_DOWN) ||
 				(m_prevMouse.rightEvent == GWM_RIGHT_DRAG) ) )
 	{
 		m_currMouse.rightEvent = GWM_RIGHT_DRAG;
 	}
 
-	if( m_currMouse.middleState && 
+	if( m_currMouse.middleState &&
 			(	(m_prevMouse.middleEvent == GWM_MIDDLE_DOWN) ||
 				(m_prevMouse.middleEvent == GWM_MIDDLE_DRAG) ) )
 	{
 		m_currMouse.middleEvent = GWM_MIDDLE_DRAG;
 	}
 
-}  // end checkForDrag
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -423,12 +425,12 @@ CursorInfo::CursorInfo( void )
 {
 	// Added Sadullah Nader
 	// Initializations missing and needed
-	
+
 	cursorName.clear();
 	cursorText.clear();
 	cursorTextColor.red = cursorTextColor.green = cursorTextColor.blue = 0;
 	cursorTextDropColor.red = cursorTextDropColor.blue = cursorTextDropColor.green = 0;
-	 
+
 	//
 	textureName.clear();
 	imageName.clear();
@@ -448,18 +450,21 @@ CursorInfo::CursorInfo( void )
 //-------------------------------------------------------------------------------------------------
 Mouse::Mouse( void )
 {
+	static_assert(ARRAY_SIZE(CursorCaptureBlockReasonNames) == CursorCaptureBlockReason_Count, "Incorrect array size");
+	static_assert(ARRAY_SIZE(RedrawModeName) == RM_MAX, "Incorrect array size");
+
 	// device info
 	m_numButtons = 0;
 	m_numAxes = 0;
 	m_forceFeedback = FALSE;
-	
+
 	//Added By Sadullah Nader
 	//Initializations missing and needed
 	m_dragTolerance = 0;
 	m_dragTolerance3D = 0;
 	m_dragToleranceMS = 0;
 	//
-	
+
 	//m_tooltipString.clear();	// redundant
 	m_displayTooltip = FALSE;
 	m_tooltipDisplayString = NULL;
@@ -486,6 +491,7 @@ Mouse::Mouse( void )
 	else
 		m_currentRedrawMode = RM_W3D;//RM_WINDOWS;
 	m_visible = FALSE;
+	m_isCursorCaptured = FALSE;
 	m_tooltipFontName = "Times New Roman";
 	m_tooltipFontSize = 12;
 	m_tooltipFontIsBold = FALSE;
@@ -522,7 +528,7 @@ Mouse::Mouse( void )
 	m_cursorTextDropColor.green = 255;
 	m_cursorTextDropColor.blue  = 255;
 	m_cursorTextDropColor.alpha = 255;
-	
+
 	m_highlightPos = 0;
 	m_highlightUpdateStart = 0;
 	m_stillTime = 0;
@@ -535,7 +541,12 @@ Mouse::Mouse( void )
 	m_tooltipBackColor.blue = 0;
 	m_tooltipBackColor.alpha = 255;
 
-}  // end Mouse
+	m_cursorCaptureMode = CursorCaptureMode_Default;
+
+	m_captureBlockReasonBits = (1 << CursorCaptureBlockReason_NoInit);
+	DEBUG_LOG(("Mouse::Mouse: m_blockCaptureReason=CursorCaptureBlockReason_NoInit"));
+
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -549,14 +560,14 @@ Mouse::~Mouse( void )
 		TheDisplayStringManager->freeDisplayString( m_cursorTextDisplayString );
 	m_cursorTextDisplayString = NULL;
 
-}  // end ~Mouse
+}
 
 /**Had to move this out of main init() because I need this data to properly initialize
 the Win32 version of the mouse (by preloading resources before D3D device is created).*/
 void Mouse::parseIni(void)
 {
 	INI ini;
-	ini.load( AsciiString( "Data\\INI\\Mouse.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\Mouse" ), INI_LOAD_OVERWRITE, NULL );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -596,7 +607,9 @@ void Mouse::init( void )
  	// allocate a new display string
 	m_cursorTextDisplayString = TheDisplayStringManager->newDisplayString();
 
-}  // end init
+	initCapture();
+
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Tell mouse system display resolution changed. */
@@ -626,8 +639,26 @@ void Mouse::mouseNotifyResolutionChange( void )
 
 	m_tooltipDisplayString->setWordWrap(120);
 
-}  // end reset
+}
 
+//-------------------------------------------------------------------------------------------------
+void Mouse::onGameModeChanged(GameMode prev, GameMode next)
+{
+	refreshCursorCapture();
+}
+
+//-------------------------------------------------------------------------------------------------
+void Mouse::onGamePaused(Bool paused)
+{
+	if (paused)
+	{
+		blockCapture(CursorCaptureBlockReason_Paused);
+	}
+	else
+	{
+		unblockCapture(CursorCaptureBlockReason_Paused);
+	}
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset mouse system */
@@ -641,7 +672,9 @@ void Mouse::reset( void )
   if ( m_cursorTextDisplayString )
   	m_cursorTextDisplayString->reset();
 
-}  // end reset
+	blockCapture(CursorCaptureBlockReason_NoInit);
+
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update the states of the mouse position and buttons */
@@ -655,7 +688,7 @@ void Mouse::update( void )
 	// update the mouse data
 	updateMouseData( );
 
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Given the current state of this input device, turn the raw input
@@ -686,7 +719,7 @@ void Mouse::createStreamMessages( void )
 		//No delay while scriptdebugging!
 		delay = 0;
 	}
-  
+
 	if( now - m_stillTime >= delay )
 	{
 		if (!m_displayTooltip)
@@ -700,10 +733,10 @@ void Mouse::createStreamMessages( void )
 	}
 	else
 	{
-		//DEBUG_LOG(("%d %d %d %d\n", TheGameClient->getFrame(), delay, now, m_stillTime));
+		//DEBUG_LOG(("%d %d %d %d", TheGameClient->getFrame(), delay, now, m_stillTime));
 		m_displayTooltip = FALSE;
 	}
-	
+
 	for (Int i = 0; i < m_eventsThisFrame; ++i)
 	{
 		processMouseEvent(i);
@@ -743,7 +776,7 @@ void Mouse::createStreamMessages( void )
 				msg->appendIntegerArgument( TheKeyboard->getModifierFlags() );
 				break;
 
-		}  // end switch
+		}
 
 		msg = NULL;
 		switch( m_currMouse.middleEvent )
@@ -778,7 +811,7 @@ void Mouse::createStreamMessages( void )
 				msg->appendIntegerArgument( TheKeyboard->getModifierFlags() );
 				break;
 
-		}  // end switch
+		}
 
 		msg = NULL;
 		switch( m_currMouse.rightEvent )
@@ -813,7 +846,7 @@ void Mouse::createStreamMessages( void )
 				msg->appendIntegerArgument( TheKeyboard->getModifierFlags() );
 				break;
 
-		}  // end switch
+		}
 
 		// wheel pos
 		msg = NULL;
@@ -823,10 +856,10 @@ void Mouse::createStreamMessages( void )
 			msg->appendPixelArgument( m_currMouse.pos );
 			msg->appendIntegerArgument( m_currMouse.wheelPos / 120 );  // wheel delta
 			msg->appendIntegerArgument( TheKeyboard->getModifierFlags() );
-		}  // end if
-	
-	}	// end for
-}  // end createStreamMessages
+		}
+
+	}
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Set the string to display at the cursor for the tooltip */
@@ -834,7 +867,7 @@ void Mouse::createStreamMessages( void )
 void Mouse::setCursorTooltip( UnicodeString tooltip, Int delay, const RGBColor *color, Real width )
 {
 
-	//DEBUG_LOG(("%d Tooltip: %ls\n", TheGameClient->getFrame(), tooltip.str()));
+	//DEBUG_LOG(("%d Tooltip: %ls", TheGameClient->getFrame(), tooltip.str()));
 
 	m_isTooltipEmpty = tooltip.isEmpty();
   m_tooltipDelay = delay;
@@ -852,7 +885,7 @@ void Mouse::setCursorTooltip( UnicodeString tooltip, Int delay, const RGBColor *
 		{
 			widthInPixels = TheDisplay->getWidth();
 		}
-		//DEBUG_LOG(("Setting tooltip width to %d pixels (%g%% of the normal tooltip width)\n", widthInPixels, width*100));
+		//DEBUG_LOG(("Setting tooltip width to %d pixels (%g%% of the normal tooltip width)", widthInPixels, width*100));
 		m_tooltipDisplayString->setWordWrap( widthInPixels );
 		m_lastTooltipWidth = width;
 	}
@@ -860,7 +893,7 @@ void Mouse::setCursorTooltip( UnicodeString tooltip, Int delay, const RGBColor *
 	if (forceRecalc || !m_isTooltipEmpty && tooltip.compare(m_tooltipDisplayString->getText()))
 	{
 		m_tooltipDisplayString->setText(tooltip);
-		//DEBUG_LOG(("Tooltip: %ls\n", tooltip.str()));
+		//DEBUG_LOG(("Tooltip: %ls", tooltip.str()));
 	}
 	if (color)
 	{
@@ -903,14 +936,14 @@ void Mouse::setCursorTooltip( UnicodeString tooltip, Int delay, const RGBColor *
 		m_tooltipBackColor = m_tooltipColorBackground;
 	}
 
-}  // end setCursorTooltip
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Set the text for the mouse cursor ... note that this is *NOT* the tooltip text we
 	* can set to be at the mouse position */
 // ------------------------------------------------------------------------------------------------
-void Mouse::setMouseText( UnicodeString text, 
-													const RGBAColorInt *color, 
+void Mouse::setMouseText( UnicodeString text,
+													const RGBAColorInt *color,
 													const RGBAColorInt *dropColor )
 {
 
@@ -927,7 +960,7 @@ void Mouse::setMouseText( UnicodeString text,
 	if( dropColor )
 		m_cursorTextDropColor = *dropColor;
 
-}  // end setMouseText
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Move the mouse to the position */
@@ -938,14 +971,14 @@ void Mouse::setPosition( Int x, Int y )
 	m_currMouse.pos.x = x;
 	m_currMouse.pos.y = y;
 
-}  // end setPosition
+}
 
 //-------------------------------------------------------------------------------------------------
-/** This default implemtation of SetMouseLimits will just set the limiting	
+/** This default implementation of SetMouseLimits will just set the limiting
 	* rectangle to be the width and height of the game display with the
 	* origin in the upper left at (0,0).  However, if the game is running
 	* in a windowed mode then these limits should reflect the SCREEN
-	* coords that the mouse is allowed to move in.  Also, if the game is in
+	* coordinates that the mouse is allowed to move in.  Also, if the game is in
 	* a window you may want to adjust for any title bar available in
 	* the operating system.  For system specific limits and windows etc,
 	* just override this function in the device implementation of the mouse */
@@ -960,10 +993,141 @@ void Mouse::setMouseLimits( void )
 
 		m_maxX = TheDisplay->getWidth();
 		m_maxY = TheDisplay->getHeight();
-	
-	}  // end if
 
-}  // end setMouseLimits
+	}
+
+}
+
+// ------------------------------------------------------------------------------------------------
+void Mouse::setCursorCaptureMode(CursorCaptureMode mode)
+{
+	if (m_cursorCaptureMode != mode)
+	{
+		m_cursorCaptureMode = mode;
+		refreshCursorCapture();
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+void Mouse::refreshCursorCapture()
+{
+	if (canCapture())
+	{
+		capture();
+	}
+	else
+	{
+		releaseCapture();
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+Bool Mouse::isCursorCaptured()
+{
+	return m_isCursorCaptured;
+}
+
+// ------------------------------------------------------------------------------------------------
+void Mouse::loseFocus()
+{
+	// Free the cursor when losing window focus.
+	blockCapture(CursorCaptureBlockReason_Unfocused);
+}
+
+// ------------------------------------------------------------------------------------------------
+void Mouse::regainFocus()
+{
+	// Recapture the cursor when returning from desktop.
+	unblockCapture(CursorCaptureBlockReason_Unfocused);
+}
+
+// ------------------------------------------------------------------------------------------------
+void Mouse::initCapture()
+{
+	OptionPreferences prefs;
+	m_cursorCaptureMode = prefs.getCursorCaptureMode();
+
+	unblockCapture(CursorCaptureBlockReason_NoInit);
+}
+
+// ------------------------------------------------------------------------------------------------
+Bool Mouse::canCapture() const
+{
+	if (m_captureBlockReasonBits != 0)
+		return false;
+
+	DEBUG_ASSERTCRASH(TheDisplay != NULL, ("The Display is NULL"));
+	const Bool inInteractiveGame = TheGameLogic && TheGameLogic->isInInteractiveGame();
+
+	if (TheDisplay->getWindowed())
+	{
+		if (inInteractiveGame)
+		{
+			if ((m_cursorCaptureMode & CursorCaptureMode_EnabledInWindowedGame) == 0)
+				return false;
+		}
+		else
+		{
+			if ((m_cursorCaptureMode & CursorCaptureMode_EnabledInWindowedMenu) == 0)
+				return false;
+		}
+	}
+	else
+	{
+		if (inInteractiveGame)
+		{
+			if ((m_cursorCaptureMode & CursorCaptureMode_EnabledInFullscreenGame) == 0)
+				return false;
+		}
+		else
+		{
+			if ((m_cursorCaptureMode & CursorCaptureMode_EnabledInFullscreenMenu) == 0)
+				return false;
+		}
+	}
+
+	return true;
+}
+
+// ------------------------------------------------------------------------------------------------
+void Mouse::unblockCapture(CursorCaptureBlockReason reason)
+{
+	Bool canCaptureBefore = canCapture();
+	m_captureBlockReasonBits &= ~(1 << reason);
+	Bool canCaptureNow = canCapture();
+
+	if (canCaptureNow != canCaptureBefore)
+	{
+		DEBUG_ASSERTCRASH(canCaptureNow, ("Mouse::unblockCapture(%s): Unexpected logic", CursorCaptureBlockReasonNames[reason]));
+		capture();
+	}
+
+	DEBUG_LOG(("Mouse::unblockCapture(%s): m_captureBlockReason=%u canCapture=%d",
+		CursorCaptureBlockReasonNames[reason], m_captureBlockReasonBits, (Int)canCapture()));
+}
+
+// ------------------------------------------------------------------------------------------------
+void Mouse::blockCapture(CursorCaptureBlockReason reason)
+{
+	Bool canCaptureBefore = canCapture();
+	m_captureBlockReasonBits |= (1 << reason);
+	Bool canCaptureNow = canCapture();
+
+	if (canCaptureNow != canCaptureBefore)
+	{
+		DEBUG_ASSERTCRASH(!canCaptureNow, ("Mouse::blockCapture(%s): Unexpected logic", CursorCaptureBlockReasonNames[reason]));
+		releaseCapture();
+	}
+
+	DEBUG_LOG(("Mouse::blockCapture(%s): m_captureBlockReason=%u canCapture=%d",
+		CursorCaptureBlockReasonNames[reason], m_captureBlockReasonBits, (Int)canCapture()));
+}
+
+// ------------------------------------------------------------------------------------------------
+void Mouse::onCursorCaptured( Bool captured )
+{
+	m_isCursorCaptured = captured;
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Draw the mouse */
@@ -1041,10 +1205,10 @@ void Mouse::drawTooltip( void )
 			UnsignedInt now = timeGetTime();
 			m_highlightPos = (width*(now-m_highlightUpdateStart))/m_tooltipFillTime;
 		}
-	}  // end if
+	}
 
 
-}  // end drawTooltip
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Draw the cursor text at the mouse position.  Note that this is *NOT* the tooltip text */
@@ -1058,13 +1222,13 @@ void Mouse::drawCursorText( void )
 
 	// get the colors to draw the text in an acceptable format
 	Color color, dropColor;
-	color = GameMakeColor( m_cursorTextColor.red, 
-												 m_cursorTextColor.green, 
-												 m_cursorTextColor.blue, 
+	color = GameMakeColor( m_cursorTextColor.red,
+												 m_cursorTextColor.green,
+												 m_cursorTextColor.blue,
 												 m_cursorTextColor.alpha );
-	dropColor = GameMakeColor( m_cursorTextDropColor.red, 
-														 m_cursorTextDropColor.green, 
-														 m_cursorTextDropColor.blue, 
+	dropColor = GameMakeColor( m_cursorTextDropColor.red,
+														 m_cursorTextDropColor.green,
+														 m_cursorTextDropColor.blue,
 														 m_cursorTextDropColor.alpha );
 
 	// get the size of the text to draw
@@ -1077,7 +1241,7 @@ void Mouse::drawCursorText( void )
 	y = m_currMouse.pos.y - height / 2;
 	m_cursorTextDisplayString->draw( x, y, color, dropColor );
 
-}  // end drawCursorText
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -1086,7 +1250,7 @@ Int Mouse::getCursorIndex(const AsciiString& name)
 	if (name.isEmpty())
 		return INVALID_MOUSE_CURSOR;
 
-	/** @todo This is silly to have to define these names from INI in the code ... 
+	/** @todo This is silly to have to define these names from INI in the code ...
 		* that should be changed (CBD) */
 	static const char *CursorININames[NUM_MOUSE_CURSORS] =
 	{
@@ -1152,7 +1316,7 @@ Int Mouse::getCursorIndex(const AsciiString& name)
 			return i;
 	}
 
-	DEBUG_CRASH(( "Mouse::getCursorIndex - Invalid cursor name '%s'\n", name.str() ));
+	DEBUG_CRASH(( "Mouse::getCursorIndex - Invalid cursor name '%s'", name.str() ));
 	return INVALID_MOUSE_CURSOR;
 
 }
@@ -1161,7 +1325,7 @@ Int Mouse::getCursorIndex(const AsciiString& name)
 // ------------------------------------------------------------------------------------------------
 void Mouse::setCursor( MouseCursor cursor )
 {
-	
+
 	// if cursor has not changed do nothing
 	if( m_currentCursor == cursor )
 		return;
@@ -1182,9 +1346,9 @@ void Mouse::setCursor( MouseCursor cursor )
 		else
 			setMouseText( UnicodeString( L"" ), NULL, NULL );
 
-	}  // end if
+	}
 
-}  // end setCursor
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse MouseCursor entry */
@@ -1196,7 +1360,7 @@ void INI::parseMouseCursorDefinition( INI* ini )
 
 	// read the name
 	c = ini->getNextToken();
-	name.set( c );	
+	name.set( c );
 
 	if( TheMouse )
 	{

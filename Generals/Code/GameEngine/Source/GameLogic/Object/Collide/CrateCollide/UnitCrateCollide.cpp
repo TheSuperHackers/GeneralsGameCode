@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/AudioEventRTS.h"
 #include "Common/MiscAudio.h"
 #include "Common/Player.h"
@@ -43,14 +43,14 @@
 UnitCrateCollide::UnitCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 UnitCrateCollide::~UnitCrateCollide( void )
 {
 
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 Bool UnitCrateCollide::executeCrateBehavior( Object *other )
@@ -63,7 +63,7 @@ Bool UnitCrateCollide::executeCrateBehavior( Object *other )
 		return FALSE;
 	}
 
-	for( Int unitIndex = 0; unitIndex < unitCount; unitIndex++ )
+	for( UnsignedInt unitIndex = 0; unitIndex < unitCount; unitIndex++ )
 	{
 		Team *creationTeam = other->getControllingPlayer()->getDefaultTeam();
 		Object *newObj = TheThingFactory->newObject( unitType, creationTeam );
@@ -80,7 +80,7 @@ Bool UnitCrateCollide::executeCrateBehavior( Object *other )
 
 			newObj->setOrientation( other->getOrientation() );
 			newObj->setPosition( &creationPoint );
-		} 
+		}
 	}
 
 	//Play a crate pickup sound.
@@ -100,7 +100,7 @@ void UnitCrateCollide::crc( Xfer *xfer )
 	// extend base class
 	CrateCollide::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -118,7 +118,7 @@ void UnitCrateCollide::xfer( Xfer *xfer )
 	// extend base class
 	CrateCollide::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -129,4 +129,4 @@ void UnitCrateCollide::loadPostProcess( void )
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+}

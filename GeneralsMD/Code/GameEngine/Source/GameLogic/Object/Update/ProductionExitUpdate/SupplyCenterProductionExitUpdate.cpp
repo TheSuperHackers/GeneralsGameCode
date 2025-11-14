@@ -28,7 +28,7 @@
 //					This instance kicks things it outputs into SupplyTruck autopilot after exiting.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/RandomValue.h"
 #include "Common/ThingTemplate.h"
@@ -42,11 +42,6 @@
 #include "GameLogic/Object.h"
 //#include "GameLogic/PartitionManager.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 SupplyCenterProductionExitUpdate::SupplyCenterProductionExitUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
@@ -99,7 +94,7 @@ void SupplyCenterProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDo
 		for objects in general */
 		// tell the AI about it
 		TheAI->pathfinder()->addObjectToPathfindMap( newObj );
-		
+
 		Vector3 p;
 
 		//
@@ -134,12 +129,12 @@ void SupplyCenterProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDo
 			if( supplyTruckAI )
 				supplyTruckAI->setForceWantingState(true);
 		}
-		
+
 		if( md->m_grantTemporaryStealthFrames )
 		{
 			StealthUpdate *stealth = newObj->getStealth();
 			//Only grant temporary stealth to the default stealth update. It's
-			//possible that another type of stealth was granted... like the 
+			//possible that another type of stealth was granted... like the
 			//GPS scrambler. We want that to take precendence.
 			if( getObject()->testStatus( OBJECT_STATUS_STEALTHED ) )
 			{
@@ -171,7 +166,7 @@ Bool SupplyCenterProductionExitUpdate::getExitPosition( Coord3D& exitPosition ) 
 	exitPosition.x = loc.X;
 	exitPosition.y = loc.Y;
 	exitPosition.z = loc.Z;
-	
+
 	return TRUE;
 
 }
@@ -215,7 +210,7 @@ void SupplyCenterProductionExitUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -239,7 +234,7 @@ void SupplyCenterProductionExitUpdate::xfer( Xfer *xfer )
 	// rally point exists
 	xfer->xferBool( &m_rallyPointExists );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -250,4 +245,4 @@ void SupplyCenterProductionExitUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

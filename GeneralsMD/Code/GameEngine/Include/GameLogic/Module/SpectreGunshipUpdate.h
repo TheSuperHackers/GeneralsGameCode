@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SPECTRE_GUNSHIP_UPDATE_H_
-#define __SPECTRE_GUNSHIP_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
@@ -41,10 +38,10 @@ class SpecialPowerModule;
 class ParticleSystem;
 class FXList;
 class AudioEventRTS;
-enum ParticleSystemID;
+enum ParticleSystemID CPP_11(: Int);
 
 //#define MAX_OUTER_NODES 16
-//#define TRACKERS 
+//#define TRACKERS
 
 //#define PUCK
 
@@ -75,11 +72,11 @@ public:
 	SpectreGunshipUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
-enum GunshipStatus
+enum GunshipStatus CPP_11(: Int)
 {
    GUNSHIP_STATUS_INSERTING,
    GUNSHIP_STATUS_ORBITING,
@@ -136,7 +133,7 @@ protected:
 
   void friend_enableAfterburners(Bool v);
 
-  
+
 
 
   Coord3D				m_initialTargetPosition;
@@ -166,11 +163,7 @@ protected:
   RadiusDecal			m_howitzerTrackerDecal;
 #endif
 
-  AudioEventRTS m_afterburnerSound; 
+  AudioEventRTS m_afterburnerSound;
   AudioEventRTS m_howitzerFireSound;
 
 };
-
-
-#endif // __SPECTRE_GUNSHIP_UPDATE_H_
-

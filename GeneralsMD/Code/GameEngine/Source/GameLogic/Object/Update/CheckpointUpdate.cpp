@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/PerfTimer.h"
 #include "Common/ThingTemplate.h"
@@ -62,7 +62,7 @@ CheckpointUpdate::~CheckpointUpdate( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** 
+/**
  * Look around us for enemies.
  */
 void CheckpointUpdate::checkForAlliesAndEnemies( void )
@@ -107,10 +107,10 @@ void CheckpointUpdate::checkForAlliesAndEnemies( void )
 UpdateSleepTime CheckpointUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
-	
+
 	Bool wasAnAlly  = m_allyNear;
 	Bool wasAnEnemy = m_enemyNear;
-	
+
 	checkForAlliesAndEnemies();
 
 	Bool change = ( (wasAnAlly != m_allyNear) || (wasAnEnemy != m_enemyNear) );
@@ -141,7 +141,7 @@ UpdateSleepTime CheckpointUpdate::update()
 				}
 			}
 
-		}// end if change
+		}
 
 		GeometryInfo geom = obj->getGeometryInfo();
 
@@ -151,7 +151,7 @@ UpdateSleepTime CheckpointUpdate::update()
 
 		// THis method is more accidental than above, but it works for an unimportant thing like checkpoint
 		Real radius = geom.getMinorRadius();
-		
+
 		if ( open )
 		{
 			if ( radius > 0 ) geom.setMinorRadius( radius - 0.333f );
@@ -160,11 +160,11 @@ UpdateSleepTime CheckpointUpdate::update()
 		{
 			if ( radius < m_maxMinorRadius ) geom.setMinorRadius( radius + 0.333f );
 		}
-		
+
 
 		obj->setGeometryInfo( geom );
 
-	} // end if draw
+	}
 
 	return UPDATE_SLEEP_NONE;
 
@@ -179,7 +179,7 @@ void CheckpointUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -209,7 +209,7 @@ void CheckpointUpdate::xfer( Xfer *xfer )
 	// enemy scan delay
 	xfer->xferUnsignedInt( &m_enemyScanDelay );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -220,4 +220,4 @@ void CheckpointUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

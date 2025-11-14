@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/RandomValue.h"
 #include "Common/Xfer.h"
@@ -49,9 +49,9 @@ class PartitionFilterFlammable : public PartitionFilter
 public:
 
 	PartitionFilterFlammable(){ }
-	
+
 	virtual Bool allow(Object *objOther);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual const char* debugGetName() { return "PartitionFilterFlammable"; }
 #endif
 };
@@ -84,11 +84,11 @@ FireSpreadUpdateModuleData::FireSpreadUpdateModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void FireSpreadUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void FireSpreadUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "OCLEmbers",				INI::parseObjectCreationList,		NULL, offsetof( FireSpreadUpdateModuleData, m_oclEmbers ) },
 		{ "MinSpreadDelay",		INI::parseDurationUnsignedInt,	NULL, offsetof( FireSpreadUpdateModuleData, m_minSpreadTryDelayData ) },
@@ -119,7 +119,7 @@ UpdateSleepTime FireSpreadUpdate::update( void )
 	const FireSpreadUpdateModuleData* d = getFireSpreadUpdateModuleData();
 	Object* me = getObject();
 
-	if( (me->getStatusBits() & OBJECT_STATUS_AFLAME) == 0 )
+	if( !me->getStatusBits().test( OBJECT_STATUS_AFLAME ) )
 		return UPDATE_SLEEP_FOREVER;		// not on fire -- sleep forever
 	{
 		ObjectCreationList::create( d->m_oclEmbers, getObject(), NULL );
@@ -131,17 +131,17 @@ UpdateSleepTime FireSpreadUpdate::update( void )
 			PartitionFilter *filters[] = { &fFilter, NULL };
 
 //			SimpleObjectIterator *iter = NULL;
-//			iter = ThePartitionManager->iterateObjectsInRange(getObject(), 
-//																									d->m_spreadTryRange, 
-//																									FROM_CENTER_3D, 
-//																									filters, 
+//			iter = ThePartitionManager->iterateObjectsInRange(getObject(),
+//																									d->m_spreadTryRange,
+//																									FROM_CENTER_3D,
+//																									filters,
 //																									ITER_SORTED_NEAR_TO_FAR
 //																									);
 //			MemoryPoolObjectHolder hold(iter);
 //			Object *objectToLight = iter->first();
 //
 // srj sez: the above code is stupid and slow. since we only want the closest object,
-// just ask for that; the above has to find ALL objects in range, but we ignore all 
+// just ask for that; the above has to find ALL objects in range, but we ignore all
 // but the first (closest).
 //
 			Object* objectToLight = ThePartitionManager->getClosestObject(getObject(), d->m_spreadTryRange, FROM_CENTER_3D, filters);
@@ -162,7 +162,7 @@ UpdateSleepTime FireSpreadUpdate::update( void )
 //-------------------------------------------------------------------------------------------------
 void FireSpreadUpdate::startFireSpreading()
 {
-	if ((getObject()->getStatusBits() & OBJECT_STATUS_AFLAME) == 0)
+	if( !getObject()->getStatusBits().test( OBJECT_STATUS_AFLAME ) )
 		return;	// sorry, must be on fire
 
 	setWakeFrame(getObject(), UPDATE_SLEEP(calcNextSpreadDelay()));
@@ -188,7 +188,7 @@ void FireSpreadUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -206,7 +206,7 @@ void FireSpreadUpdate::xfer( Xfer *xfer )
 	// extend base class
 	UpdateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -217,4 +217,4 @@ void FireSpreadUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

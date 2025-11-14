@@ -29,15 +29,12 @@
 
 #pragma once
 
-#ifndef __BONEFXDAMAGE_H_
-#define __BONEFXDAMAGE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 
-#include "GameLogic/Module/DamageModule.h" 
+#include "GameLogic/Module/DamageModule.h"
 
 //#include "GameLogic/Module/BodyModule.h" -- Yikes... not necessary to include this! (KM)
-enum BodyDamageType; //Ahhhh much better!
+enum BodyDamageType CPP_11(: Int); //Ahhhh much better!
 
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
@@ -57,8 +54,8 @@ public:
 	// damage module methods
 	virtual void onDamage( DamageInfo *damageInfo ) { }
 	virtual void onHealing( DamageInfo *damageInfo ) { }
-	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo, 
-																				BodyDamageType oldState, 
+	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
+																				BodyDamageType oldState,
 																				BodyDamageType newState );
 
 protected:
@@ -66,5 +63,3 @@ protected:
 	virtual void onObjectCreated();
 
 };
-
-#endif  // end __BONEFXDAMAGE_H_

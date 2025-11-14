@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __POINT_DEFENSE_LASER_UPDATE_H_
-#define __POINT_DEFENSE_LASER_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -56,7 +53,7 @@ public:
 	PointDefenseLaserUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -87,7 +84,3 @@ protected:
 	Int m_nextScanFrames;
 	Int m_nextShotAvailableInFrames;
 };
-
-
-#endif
-

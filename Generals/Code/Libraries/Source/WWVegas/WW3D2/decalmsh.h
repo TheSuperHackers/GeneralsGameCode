@@ -26,33 +26,29 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Greg_h                                                      $*
+ *                      $Author:: Jani_p                                                      $*
  *                                                                                             *
- *                     $Modtime:: 6/14/01 9:32a                                               $*
+ *                     $Modtime:: 11/24/01 6:18p                                              $*
  *                                                                                             *
- *                    $Revision:: 6                                                           $*
+ *                    $Revision:: 7                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DECALMSH_H
-#define DECALMSH_H
 
 #include "always.h"
 #include "bittype.h"
 #include "simplevec.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "vector2.h"
 #include "vector3.h"
 #include "Vector3i.h"
 #include "vector4.h"
 #include "shader.h"
 #include "vertmaterial.h"
+#include "meshgeometry.h"
 
 class MeshClass;
 class RenderInfoClass;
@@ -78,7 +74,7 @@ class TextureClass;
 class DecalMeshClass : public RefCountClass
 {
 public:
-	
+
 	DecalMeshClass(MeshClass * parent,DecalSystemClass * system);
 	virtual ~DecalMeshClass(void);
 
@@ -105,7 +101,7 @@ public:
 	void														Set_Next_Visible(DecalMeshClass * mesh) { NextVisible = mesh; }
 
 protected:
-	
+
 	/*
 	** Members
 	*/
@@ -123,7 +119,7 @@ protected:
 class RigidDecalMeshClass : public DecalMeshClass
 {
 public:
-	
+
 	RigidDecalMeshClass(MeshClass * parent,DecalSystemClass * system);
 	virtual ~RigidDecalMeshClass(void);
 
@@ -148,7 +144,7 @@ protected:
 	/*
 	** Connectivity
 	*/
-	SimpleDynVecClass<Vector3i>						Polys;
+	SimpleDynVecClass<TriIndex>						Polys;
 
 	/*
 	** Geometry
@@ -168,14 +164,14 @@ protected:
 	** Decal Organization
 	*/
 	struct DecalStruct
-	{	
+	{
 		uint32	DecalID;
 		uint16	VertexStartIndex;
 		uint16	VertexCount;
 		uint16	FaceStartIndex;
 		uint16	FaceCount;
 	};
-	
+
 	SimpleDynVecClass<DecalStruct>					Decals;
 };
 
@@ -188,7 +184,7 @@ protected:
 class SkinDecalMeshClass : public DecalMeshClass
 {
 public:
-	
+
 	SkinDecalMeshClass(MeshClass * parent,DecalSystemClass * system);
 	virtual ~SkinDecalMeshClass(void);
 
@@ -213,7 +209,7 @@ protected:
 	/*
 	** Connectivity
 	*/
-	SimpleDynVecClass<Vector3i>						Polys;
+	SimpleDynVecClass<TriIndex>						Polys;
 
 	/*
 	** Indirected vertex indices (for copying dynamically updated mesh geometry)
@@ -232,14 +228,14 @@ protected:
 	** Decal Organization
 	*/
 	struct DecalStruct
-	{	
+	{
 		uint32	DecalID;
 		uint16	VertexStartIndex;
 		uint16	VertexCount;
 		uint16	FaceStartIndex;
 		uint16	FaceCount;
 	};
-	
+
 	SimpleDynVecClass<DecalStruct>					Decals;
 };
 
@@ -287,7 +283,3 @@ inline uint32 SkinDecalMeshClass::Get_Decal_ID(int decal_index)
 {
 	return Decals[decal_index].DecalID;
 }
-
-
-#endif //DECALMSH_H
-

@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Jani Penttinen                                               *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 29                                                          $*
@@ -37,19 +37,12 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DX8_RENDERER_H
-#define DX8_RENDERER_H
 
 #include "always.h"
 #include "wwstring.h"
 #include "simplevec.h"
-#include "refcount.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "dx8list.h"
 #include "shader.h"
 #include "dx8wrapper.h"
@@ -85,9 +78,9 @@ class DX8TextureCategoryClass : public MultiListObjectClass
 	int												pass;
 	TextureClass *									textures[MeshMatDescClass::MAX_TEX_STAGES];
 	ShaderClass										shader;
-	VertexMaterialClass *						material;					
+	VertexMaterialClass *						material;
 	DX8PolygonRendererList						PolygonRendererList;
-	DX8FVFCategoryContainer*					container;	
+	DX8FVFCategoryContainer*					container;
 
 	PolyRenderTaskClass *						render_task_head;			// polygon renderers queued for rendering
 	static bool											m_gForceMultiply;  // Forces opaque materials to use the multiply blend - pseudo transparent effect.  jba.
@@ -101,10 +94,10 @@ public:
 
 	void									Render(void);
 	bool									Anything_To_Render() { return (render_task_head != NULL); }
-	void									Clear_Render_List() { render_task_head = NULL; }
+	void									Clear_Render_List();
 
 	TextureClass *						Peek_Texture(int stage)	{ return textures[stage]; }
-	const VertexMaterialClass *	Peek_Material() { return material; }	
+	const VertexMaterialClass *	Peek_Material() { return material; }
 	ShaderClass							Get_Shader() { return shader; }
 
 	DX8PolygonRendererList&			Get_Polygon_Renderer_List() { return PolygonRendererList; }
@@ -119,7 +112,7 @@ public:
 
 	void Remove_Polygon_Renderer(DX8PolygonRendererClass* p_renderer);
 	void Add_Polygon_Renderer(DX8PolygonRendererClass* p_renderer,DX8PolygonRendererClass* add_after_this=NULL);
-	
+
 
 	DX8FVFCategoryContainer * Get_Container(void) { return container; }
 
@@ -144,10 +137,10 @@ protected:
 
 	TextureCategoryList									texture_category_list[MAX_PASSES];
 	TextureCategoryList									visible_texture_category_list[MAX_PASSES];
-	
+
 	MatPassTaskClass *									visible_matpass_head;
 	MatPassTaskClass *									visible_matpass_tail;
-	
+
 	IndexBufferClass *									index_buffer;
 	int														used_indices;
 	unsigned													FVF;
@@ -179,11 +172,11 @@ protected:
 
 	DX8TextureCategoryClass* Find_Matching_Texture_Category(
 		VertexMaterialClass* vmat,
-		unsigned pass,		
+		unsigned pass,
 		DX8TextureCategoryClass* ref_category);
 
 public:
-	
+
 	DX8FVFCategoryContainer(unsigned FVF,bool sorting);
 	virtual ~DX8FVFCategoryContainer();
 
@@ -211,8 +204,8 @@ public:
 	virtual bool Check_If_Mesh_Fits(MeshModelClass* mmc)=0;
 
 	inline unsigned Get_FVF() const { return FVF; }
-	
-	inline void Add_Visible_Texture_Category(DX8TextureCategoryClass * tex_category,int pass) 
+
+	inline void Add_Visible_Texture_Category(DX8TextureCategoryClass * tex_category,int pass)
 	{
 		WWASSERT(pass<MAX_PASSES);
 		WWASSERT(tex_category != NULL);
@@ -225,8 +218,8 @@ public:
 	** Material pass rendering.  The following two functions allow procedural material passes
 	** to be applied to meshes in this FVF category.  In certain cases, the game will *only* render
 	** the procedural pass and not the base materials for the mesh.  When this happens there can
-	** be rendering errors unless these procedural passes are rendered after all of the meshes in 
-	** the scene.  The virtual method Add_Delayed_Material_Pass is used in this case.  
+	** be rendering errors unless these procedural passes are rendered after all of the meshes in
+	** the scene.  The virtual method Add_Delayed_Material_Pass is used in this case.
 	*/
 	void Add_Visible_Material_Pass(MaterialPassClass * pass,MeshClass * mesh);
 	virtual void Add_Delayed_Visible_Material_Pass(MaterialPassClass * pass, MeshClass * mesh) = 0;
@@ -250,8 +243,8 @@ public:
 
 	void Render(void);	// Generic render function
 
-	/* 
-	** This method adds a material pass which must be rendered after all of the other rendering is complete. 
+	/*
+	** This method adds a material pass which must be rendered after all of the other rendering is complete.
 	** This is needed whenever a mesh turns off its base passes and renders a translucent pass on its geometry.
 	*/
 	virtual void Add_Delayed_Visible_Material_Pass(MaterialPassClass * pass, MeshClass * mesh);
@@ -286,7 +279,7 @@ public:
 
 	void Add_Visible_Skin(MeshClass * mesh);
 
-	/* 
+	/*
 	** Since skins are already rendered after the rigid meshes, the Add_Delayed_Material_Pass function simply
 	** routes into the Add_Visible_Material_Pass method and no extra overhead is added.
 	*/
@@ -296,7 +289,7 @@ public:
 private:
 
 	void Reset();
- 	void clearVisibleSkinList();
+	void clearVisibleSkinList();
 
 	unsigned int								VisibleVertexCount;
 	MeshClass *									VisibleSkinHead;
@@ -309,7 +302,7 @@ private:
 /**
 ** DX8MeshRendererClass
 ** This object is controller for the entire DX8 mesh rendering system.  It organizes mesh
-** fragments into groups based on FVF, texture, and material.  During rendering, a list of 
+** fragments into groups based on FVF, texture, and material.  During rendering, a list of
 ** the visible mesh fragments is composed and rendered.  There is a global instance of this
 ** class called TheDX8MeshRenderer that should be used for all mesh rendering.
 */
@@ -356,5 +349,3 @@ protected:
 };
 
 extern DX8MeshRendererClass TheDX8MeshRenderer;
-
-#endif

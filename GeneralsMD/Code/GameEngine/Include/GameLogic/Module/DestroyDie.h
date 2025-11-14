@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DestroyDie_H_
-#define __DestroyDie_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/DieModule.h"
 #include "Common/INI.h"
@@ -50,9 +47,6 @@ public:
 	DestroyDie( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDie( const DamageInfo *damageInfo ); 
+	virtual void onDie( const DamageInfo *damageInfo );
 
 };
-
-#endif // __DestroyDie_H_
-

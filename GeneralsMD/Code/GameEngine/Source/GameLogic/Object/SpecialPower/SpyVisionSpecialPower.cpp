@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
@@ -52,8 +52,8 @@ SpyVisionSpecialPowerModuleData::SpyVisionSpecialPowerModuleData( void )
 void SpyVisionSpecialPowerModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
 	SpecialPowerModuleData::buildFieldParse( p );
-	
-	static const FieldParse dataFieldParse[] = 
+
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "BaseDuration",								INI::parseDurationUnsignedInt,	NULL,   offsetof( SpyVisionSpecialPowerModuleData, m_baseDurationInFrames ) },
 		{ "BonusDurationPerCaptured",		INI::parseDurationUnsignedInt,	NULL,   offsetof( SpyVisionSpecialPowerModuleData, m_bonusDurationPerCapturedInFrames ) },
@@ -61,8 +61,8 @@ void SpyVisionSpecialPowerModuleData::buildFieldParse( MultiIniFieldParse &p )
 		{ 0, 0, 0, 0 }
 	};
 	p.add( dataFieldParse );
-	
-}  // end buildFieldParse
+
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,14 +74,14 @@ SpyVisionSpecialPower::SpyVisionSpecialPower( Thing *thing, const ModuleData *mo
 												: SpecialPowerModule( thing, moduleData )
 {
 
-}  
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 SpyVisionSpecialPower::~SpyVisionSpecialPower( void )
 {
 
-} 
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ void SpyVisionSpecialPower::doSpecialPower( UnsignedInt commandOptions )
 	// call the base class action cause we are *EXTENDING* functionality
 	SpecialPowerModule::doSpecialPower( commandOptions );
 
-	
+
 	// get the source of this power
 	Object *source = getObject();
 
@@ -124,7 +124,7 @@ void SpyVisionSpecialPower::doSpecialPower( UnsignedInt commandOptions )
 	}
 
 	update->activateSpyVision( duration );
-} 
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -135,7 +135,7 @@ void SpyVisionSpecialPower::crc( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -153,7 +153,7 @@ void SpyVisionSpecialPower::xfer( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -164,4 +164,4 @@ void SpyVisionSpecialPower::loadPostProcess( void )
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

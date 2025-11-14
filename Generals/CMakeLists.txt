@@ -2,11 +2,10 @@ cmake_minimum_required(VERSION 3.25)
 
 project(g_generals LANGUAGES C CXX)
 
-# Do we want to build extra SDK stuff or just the game binary?
-option(GENZH_BUILD_GENERALS_TOOLS "Build tools for Generals" ON)
-add_feature_info(GeneralsTools GENZH_BUILD_GENERALS_TOOLS "Build Generals Mod Tools")
-option(GENZH_BUILD_GENERALS_EXTRAS "Build extra tools/tests for Generals" OFF)
-add_feature_info(GeneralsExtras GENZH_BUILD_GENERALS_EXTRAS "Build Generals Extra Tools/Tests")
+if (RTS_BUILD_GENERALS_DOCS)
+    find_package(Doxygen REQUIRED)
+    doxygen_add_docs(g_docs Code)
+endif()
 
 # Set where the build results will end up
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
@@ -17,52 +16,61 @@ add_subdirectory(Code)
 # If we are building on windows for windows, try and get the game install path from the registry.
 if("${CMAKE_HOST_SYSTEM}" MATCHES "Windows" AND "${CMAKE_SYSTEM}" MATCHES "Windows")
     # Check the CD registry path
-    if(NOT GENZH_GENERALS_INSTALL_PREFIX)
-        get_filename_component(GENZH_GENERALS_INSTALL_PREFIX  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\EA Games\\Generals;InstallPath]" ABSOLUTE CACHE)
+    if(NOT RTS_INSTALL_PREFIX_GENERALS)
+        get_filename_component(RTS_INSTALL_PREFIX_GENERALS  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\EA Games\\Generals;InstallPath]" ABSOLUTE CACHE)
     endif()
 
     # Check the "First Decade" registry path
-    if(NOT GENZH_GENERALS_INSTALL_PREFIX OR "${GENZH_GENERALS_INSTALL_PREFIX}" STREQUAL "/registry")
-        get_filename_component(GENZH_GENERALS_INSTALL_PREFIX  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer The First Decade;gr_folder]" ABSOLUTE CACHE)
+    if(NOT RTS_INSTALL_PREFIX_GENERALS OR "${RTS_INSTALL_PREFIX_GENERALS}" STREQUAL "/registry")
+        get_filename_component(RTS_INSTALL_PREFIX_GENERALS  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer The First Decade;gr_folder]" ABSOLUTE CACHE)
     endif()
 
     # Check the Steam registry path
-    if(NOT GENZH_GENERALS_INSTALL_PREFIX OR "${GENZH_GENERALS_INSTALL_PREFIX}" STREQUAL "/registry")
-        get_filename_component(GENZH_GENERALS_INSTALL_PREFIX  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\EA Games\\Generals;installPath]" ABSOLUTE CACHE)
+    if(NOT RTS_INSTALL_PREFIX_GENERALS OR "${RTS_INSTALL_PREFIX_GENERALS}" STREQUAL "/registry")
+        get_filename_component(RTS_INSTALL_PREFIX_GENERALS  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\EA Games\\Generals;installPath]" ABSOLUTE CACHE)
     endif()
 endif()
 
-if(GENZH_GENERALS_INSTALL_PREFIX AND NOT "${GENZH_GENERALS_INSTALL_PREFIX}" STREQUAL "/registry")
-    install(TARGETS g_generals RUNTIME DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}")
-    install(FILES $<TARGET_PDB_FILE:g_generals> DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}" OPTIONAL)
+if(RTS_INSTALL_PREFIX_GENERALS AND NOT "${RTS_INSTALL_PREFIX_GENERALS}" STREQUAL "/registry")
+    install(TARGETS g_generals RUNTIME DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}")
+    install(FILES $<TARGET_PDB_FILE:g_generals> DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}" OPTIONAL)
 
     if(TARGET g_worldbuilder)
-        install(TARGETS g_worldbuilder RUNTIME DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}")
-        install(FILES $<TARGET_PDB_FILE:g_worldbuilder> DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}" OPTIONAL)
+        install(TARGETS g_worldbuilder RUNTIME DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}")
+        install(FILES $<TARGET_PDB_FILE:g_worldbuilder> DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}" OPTIONAL)
     endif()
 
     if(TARGET g_particleeditor)
-        install(TARGETS g_particleeditor RUNTIME DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}")
-        install(FILES $<TARGET_PDB_FILE:g_particleeditor> DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}" OPTIONAL)
+        install(TARGETS g_particleeditor RUNTIME DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}")
+        install(FILES $<TARGET_PDB_FILE:g_particleeditor> DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}" OPTIONAL)
     endif()
 
     if(TARGET g_debugwindow)
-        install(TARGETS g_debugwindow RUNTIME DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}")
-        install(FILES $<TARGET_PDB_FILE:g_debugwindow> DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}" OPTIONAL)
+        install(TARGETS g_debugwindow RUNTIME DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}")
+        install(FILES $<TARGET_PDB_FILE:g_debugwindow> DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}" OPTIONAL)
     endif()
 
     if(TARGET g_guiedit)
-        install(TARGETS g_guiedit RUNTIME DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}")
-        install(FILES $<TARGET_PDB_FILE:g_guiedit> DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}" OPTIONAL)
+        install(TARGETS g_guiedit RUNTIME DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}")
+        install(FILES $<TARGET_PDB_FILE:g_guiedit> DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}" OPTIONAL)
     endif()
 
     if(TARGET g_imagepacker)
-        install(TARGETS g_imagepacker RUNTIME DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}")
-        install(FILES $<TARGET_PDB_FILE:g_imagepacker> DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}" OPTIONAL)
+        install(TARGETS g_imagepacker RUNTIME DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}")
+        install(FILES $<TARGET_PDB_FILE:g_imagepacker> DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}" OPTIONAL)
     endif()
 
     if(TARGET g_mapcachebuilder)
-        install(TARGETS g_mapcachebuilder RUNTIME DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}")
-        install(FILES $<TARGET_PDB_FILE:g_mapcachebuilder> DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}" OPTIONAL)
+        install(TARGETS g_mapcachebuilder RUNTIME DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}")
+        install(FILES $<TARGET_PDB_FILE:g_mapcachebuilder> DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}" OPTIONAL)
     endif()
+
+    if(TARGET g_w3dview)
+        install(TARGETS g_w3dview RUNTIME DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}")
+        install(FILES $<TARGET_PDB_FILE:g_w3dview> DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}" OPTIONAL)
+    endif()
+else()
+    message(STATUS "Generals install path not found. Registry keys for 'Generals' not found. "
+                   "Generals targets will be built, but not installed. "
+                   "You can specify the path manually by setting RTS_INSTALL_PREFIX_GENERALS.")
 endif()

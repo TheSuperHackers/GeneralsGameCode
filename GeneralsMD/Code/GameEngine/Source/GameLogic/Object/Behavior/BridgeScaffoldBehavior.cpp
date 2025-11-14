@@ -49,14 +49,14 @@ BridgeScaffoldBehavior::BridgeScaffoldBehavior( Thing *thing, const ModuleData *
 	m_lateralSpeed = 1.0f;
 	m_verticalSpeed = 1.0f;
 
-}  // end BridgeScaffoldBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 BridgeScaffoldBehavior::~BridgeScaffoldBehavior( void )
 {
 
-}  // end ~BridgeScaffoldBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Set all of the target positions that we're care about as a moving scaffold object */
@@ -70,12 +70,12 @@ void BridgeScaffoldBehavior::setPositions( const Coord3D *createPos,
 	m_riseToPos = *riseToPos;
 	m_buildPos = *buildPos;
 
-}  // end setPositions
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Set us moving to the right target position for the requested motion type */
 // ------------------------------------------------------------------------------------------------
-void BridgeScaffoldBehavior::setMotion( ScaffoldTargetMotion targetMotion ) 
+void BridgeScaffoldBehavior::setMotion( ScaffoldTargetMotion targetMotion )
 {
 
 	// save the target motion type
@@ -86,9 +86,9 @@ void BridgeScaffoldBehavior::setMotion( ScaffoldTargetMotion targetMotion )
 	{
 
 		// --------------------------------------------------------------------------------------------
-		case STM_RISE: 
+		case STM_RISE:
 		case STM_TEAR_DOWN_ACROSS:
-			m_targetPos = m_riseToPos; 
+			m_targetPos = m_riseToPos;
 			break;
 
 		// --------------------------------------------------------------------------------------------
@@ -101,9 +101,9 @@ void BridgeScaffoldBehavior::setMotion( ScaffoldTargetMotion targetMotion )
 			m_targetPos = m_createPos;
 			break;
 
-	}  // end switch
+	}
 
-}  // end setMotion
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Whatever our current state of motion is, reverse it */
@@ -134,9 +134,9 @@ void BridgeScaffoldBehavior::reverseMotion( void )
 			setMotion( STM_RISE );
 			break;
 
-	}  // end switch
+	}
 
-}  // end reverseMotion
+}
 
 // ------------------------------------------------------------------------------------------------
 /** The update method */
@@ -192,7 +192,11 @@ UpdateSleepTime BridgeScaffoldBehavior::update( void )
 			end = &m_riseToPos;
 			break;
 
-	}  // end switch
+		default:
+			DEBUG_CRASH(("Unhandled case in BridgeScaffoldBehavior::update()"));
+			return UPDATE_SLEEP_NONE;
+
+	}
 
 	// adjust speed so it's slower at the end of motion
 	Coord3D speedVector;
@@ -241,7 +245,7 @@ UpdateSleepTime BridgeScaffoldBehavior::update( void )
 		newPos = m_targetPos;
 
 		//
-		// we have reached our target position, switch motion to the next position in 
+		// we have reached our target position, switch motion to the next position in
 		// the chain (which may be stay still and don't move anymore)
 		//
 		switch( m_targetMotion )
@@ -258,11 +262,11 @@ UpdateSleepTime BridgeScaffoldBehavior::update( void )
 				TheGameLogic->destroyObject( us );
 				break;
 
-			}  // end case
+			}
 
-		}  // end switch
+		}
 
-	}  // end if
+	}
 
 	// set the new position
 	us->setPosition( &newPos );
@@ -270,7 +274,7 @@ UpdateSleepTime BridgeScaffoldBehavior::update( void )
 	// do not sleep
 	return UPDATE_SLEEP_NONE;
 
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** STATIC MEMBER:
@@ -293,12 +297,12 @@ BridgeScaffoldBehaviorInterface *BridgeScaffoldBehavior::getBridgeScaffoldBehavi
 		if( bridgeScaffoldInterface )
 			return bridgeScaffoldInterface;
 
-	}  // end for bmi
+	}
 
 	// interface not found
 	return NULL;
 
-}  // end getBridgeScaffoldBehaviorInterfaceFromObject
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -309,7 +313,7 @@ void BridgeScaffoldBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -348,7 +352,7 @@ void BridgeScaffoldBehavior::xfer( Xfer *xfer )
 	// current target pos
 	xfer->xferCoord3D( &m_targetPos );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -359,4 +363,4 @@ void BridgeScaffoldBehavior::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

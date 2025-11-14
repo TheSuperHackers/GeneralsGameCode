@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/RandomValue.h"
 #include "GameClient/Shell.h"
@@ -47,16 +47,26 @@
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 Shell *TheShell = NULL;  ///< the shell singleton definition
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 Shell::Shell( void )
+{
+	construct();
+
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Shell::~Shell( void )
+{
+	deconstruct();
+
+}
+
+//-------------------------------------------------------------------------------------------------
+void Shell::construct( void )
 {
 	Int i;
 
@@ -80,12 +90,10 @@ Shell::Shell( void )
 	m_optionsLayout = NULL;
 	m_screenCount = 0;
 	//
-
-}  // end Shell
+}
 
 //-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-Shell::~Shell( void )
+void Shell::deconstruct( void )
 {
 	WindowLayout *newTop = top();
 	while(newTop)
@@ -97,16 +105,14 @@ Shell::~Shell( void )
 	if(m_background)
 	{
 		m_background->destroyWindows();
-		m_background->deleteInstance();
+		deleteInstance(m_background);
 		m_background = NULL;
 	}
 
-	if(m_animateWindowManager)
-		delete m_animateWindowManager;
+	delete m_animateWindowManager;
 	m_animateWindowManager = NULL;
 
-	if(m_schemeManager)
-		delete m_schemeManager;
+	delete m_schemeManager;
 	m_schemeManager = NULL;
 
 	// delete the save/load menu if present
@@ -114,29 +120,28 @@ Shell::~Shell( void )
 	{
 
 		m_saveLoadMenuLayout->destroyWindows();
-		m_saveLoadMenuLayout->deleteInstance();
+		deleteInstance(m_saveLoadMenuLayout);
 		m_saveLoadMenuLayout = NULL;
 
-	}  //end if
+	}
 
 	// delete the replay save menu if present
 	if( m_popupReplayLayout )
 	{
 
 		m_popupReplayLayout->destroyWindows();
-		m_popupReplayLayout->deleteInstance();
+		deleteInstance(m_popupReplayLayout);
 		m_popupReplayLayout = NULL;
 
-	}  //end if
+	}
 
 	// delete the options menu if present.
 	if (m_optionsLayout != NULL) {
 		m_optionsLayout->destroyWindows();
-		m_optionsLayout->deleteInstance();
+		deleteInstance(m_optionsLayout);
 		m_optionsLayout = NULL;
 	}
-
-}  // end ~Shell
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the shell system */
@@ -145,13 +150,13 @@ void Shell::init( void )
 {
 	INI ini;
 	// Read from INI all the ShellMenuScheme
-	ini.load( AsciiString( "Data\\INI\\Default\\ShellMenuScheme.ini" ), INI_LOAD_OVERWRITE, NULL );
-	ini.load( AsciiString( "Data\\INI\\ShellMenuScheme.ini" ), INI_LOAD_OVERWRITE, NULL );
-	
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\Default\\ShellMenuScheme" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( AsciiString( "Data\\INI\\ShellMenuScheme" ), INI_LOAD_OVERWRITE, NULL );
+
 	if( m_schemeManager )
 		m_schemeManager->init();
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset the shell system to a clean state just as though init had
@@ -159,17 +164,17 @@ void Shell::init( void )
 //-------------------------------------------------------------------------------------------------
 void Shell::reset( void )
 {
-	
+
 	if (TheIMEManager)
 		TheIMEManager->detatch();
 
 	// pop all screens
 	while( m_screenCount )
-		pop();
+		popImmediate();
 
 	m_animateWindowManager->reset();
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update shell system cycle.  All windows are updated that are on the stack, starting
@@ -180,7 +185,7 @@ void Shell::update( void )
 	static Int lastUpdate = timeGetTime();
 	static const Int shellUpdateDelay = 30;  // try to update 30 frames a second
 	Int now = timeGetTime();
-	
+
 	//
 	// we keep the shell updates fixed in time so that we can write consitent animation
 	// speeds during the screen update functions
@@ -192,19 +197,19 @@ void Shell::update( void )
 		for( Int i = m_screenCount - 1; i >= 0; i-- )
 		{
 
-			DEBUG_ASSERTCRASH( m_screenStack[ i ], ("Top of shell stack is NULL!\n") );
+			DEBUG_ASSERTCRASH( m_screenStack[ i ], ("Top of shell stack is NULL!") );
 			m_screenStack[ i ]->runUpdate( NULL );
 
-		}  // end for i
+		}
 		if(TheGlobalData->m_shellMapOn && m_shellMapOn &&m_background)
 		{
-			
+
 			m_background->destroyWindows();
-			m_background->deleteInstance();
+			deleteInstance(m_background);
 			m_background = NULL;
-			
+
 		}
-		
+
 		// Update the animate window manager
 		m_animateWindowManager->update();
 
@@ -213,9 +218,56 @@ void Shell::update( void )
 		// mark last time we ran the updates
 		lastUpdate = now;
 
-	}  // end if
+	}
 
-}  // end update
+}
+
+//-------------------------------------------------------------------------------------------------
+namespace
+{
+	struct ScreenInfo
+	{
+		ScreenInfo() : isHidden(false) {}
+		AsciiString filename;
+		bool isHidden;
+	};
+}
+
+//-------------------------------------------------------------------------------------------------
+void Shell::recreateWindowLayouts( void )
+{
+		// collect state of the current shell
+	const Int screenCount = getScreenCount();
+	std::vector<ScreenInfo> screenStackInfos;
+
+	{
+		screenStackInfos.resize(screenCount);
+		Int screenIndex = 0;
+		for (; screenIndex < screenCount; ++screenIndex)
+		{
+			const WindowLayout* layout = getScreenLayout(screenIndex);
+			ScreenInfo& screenInfo = screenStackInfos[screenIndex];
+			screenInfo.filename = layout->getFilename();
+			screenInfo.isHidden = layout->isHidden();
+		}
+	}
+
+	// reconstruct the shell now
+	deconstruct();
+	construct();
+	init();
+
+	// restore the screen stack
+	Int screenIndex = 0;
+	for (; screenIndex < screenCount; ++screenIndex)
+	{
+		const ScreenInfo& screenInfo = screenStackInfos[screenIndex];
+		push(screenInfo.filename);
+
+		WindowLayout* layout = getScreenLayout(screenIndex);
+		layout->hide(screenInfo.isHidden);
+	}
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Find a screen via the .wnd script filename loaded */
@@ -236,11 +288,20 @@ WindowLayout *Shell::findScreenByFilename( AsciiString filename )
 		if( screen && filename.compareNoCase(screen->getFilename()) == 0 )
 			return screen;
 
-	}  // end for i
+	}
 
 	return NULL;
 
-}  // end findScreenByFilename
+}
+
+//-------------------------------------------------------------------------------------------------
+WindowLayout *Shell::getScreenLayout( Int index ) const
+{
+	if (index >= 0 && index < m_screenCount)
+		return m_screenStack[index];
+
+	return NULL;
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Hide or unhide all window layouts loaded */
@@ -256,7 +317,7 @@ void Shell::hide( Bool hide )
 	if (TheIMEManager)
 		TheIMEManager->detatch();
 
-}  // end hide
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Push layout onto shell */
@@ -272,22 +333,22 @@ void Shell::push( AsciiString filename, Bool shutdownImmediate )
 
 
 #ifdef DEBUG_LOGGING
-	DEBUG_LOG(("Shell:push(%s) - stack was\n", filename.str()));
+	DEBUG_LOG(("Shell:push(%s) - stack was", filename.str()));
 	for (Int i=0; i<m_screenCount; ++i)
 	{
-		DEBUG_LOG(("\t\t%s\n", m_screenStack[i]->getFilename().str()));
+		DEBUG_LOG(("\t\t%s", m_screenStack[i]->getFilename().str()));
 	}
 #endif
 
 	// make sure we have an available spot for another screen
 	if( m_screenCount >= MAX_SHELL_STACK )
 	{
-	
-		DEBUG_LOG(( "Unable to load screen '%s', max '%d' reached\n",
-								filename, MAX_SHELL_STACK ));
+
+		DEBUG_LOG(( "Unable to load screen '%s', max '%d' reached",
+								filename.str(), MAX_SHELL_STACK ));
 		return;
 
-	}  // end if
+	}
 
 	// set a push as pending with the layout name passed in
 	m_pendingPush = TRUE;
@@ -308,19 +369,19 @@ void Shell::push( AsciiString filename, Bool shutdownImmediate )
 		// run the shutdown
 		currentTop->runShutdown( &shutdownImmediate );
 
-	}  // end if
+	}
 	else
 	{
 
 		// just call shutdownComplete() which will immediately cause the push to happen
 		shutdownComplete( NULL );
 
-	}  // end else
+	}
 
 //	if (TheIMEManager)
 //		TheIMEManager->detatch();
 
-}  // end push
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Pop top layout of the stack.  Note that we don't actually do the pop right here,
@@ -339,10 +400,10 @@ void Shell::pop( void )
 		return;
 
 #ifdef DEBUG_LOGGING
-	DEBUG_LOG(("Shell:pop() - stack was\n"));
+	DEBUG_LOG(("Shell:pop() - stack was"));
 	for (Int i=0; i<m_screenCount; ++i)
 	{
-		DEBUG_LOG(("\t\t%s\n", m_screenStack[i]->getFilename().str()));
+		DEBUG_LOG(("\t\t%s", m_screenStack[i]->getFilename().str()));
 	}
 #endif
 
@@ -360,7 +421,7 @@ void Shell::pop( void )
 	if (TheIMEManager)
 		TheIMEManager->detatch();
 
-}  // end pop
+}
 
 //-------------------------------------------------------------------------------------------------
 /** When you need to immediately pop a screen off the stack use this method.  It
@@ -378,10 +439,10 @@ void Shell::popImmediate( void )
 		return;
 
 #ifdef DEBUG_LOGGING
-	DEBUG_LOG(("Shell:popImmediate() - stack was\n"));
+	DEBUG_LOG(("Shell:popImmediate() - stack was"));
 	for (Int i=0; i<m_screenCount; ++i)
 	{
-		DEBUG_LOG(("\t\t%s\n", m_screenStack[i]->getFilename().str()));
+		DEBUG_LOG(("\t\t%s", m_screenStack[i]->getFilename().str()));
 	}
 #endif
 
@@ -398,7 +459,7 @@ void Shell::popImmediate( void )
 	if (TheIMEManager)
 		TheIMEManager->detatch();
 
-}  // end popImmediate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Run the initialize function for the top of the stack just as though it was pushed
@@ -408,14 +469,14 @@ void Shell::popImmediate( void )
 //-------------------------------------------------------------------------------------------------
 void Shell::showShell( Bool runInit )
 {
-	DEBUG_LOG(("Shell:showShell() - %s (%s)\n", TheGlobalData->m_initialFile.str(), (top())?top()->getFilename().str():"no top screen"));
+	DEBUG_LOG(("Shell:showShell() - %s (%s)", TheGlobalData->m_initialFile.str(), (top())?top()->getFilename().str():"no top screen"));
 
-	if(!TheGlobalData->m_initialFile.isEmpty())
+	if(!TheGlobalData->m_initialFile.isEmpty() || !TheGlobalData->m_simulateReplays.empty())
 	{
 		return;
 	}
-	
-	// runInit is used if we want show shell to run 
+
+	// runInit is used if we want show shell to run
 	if(runInit)
 	{
 		WindowLayout *layout = top();
@@ -447,32 +508,32 @@ void Shell::showShell( Bool runInit )
 	//	}
 	//	else
 	//	{
-	//		
+	//
 	//		m_background = TheWindowManager->winCreateLayout("Menus/BlankWindow.wnd");
-	//		
+	//
 	//		DEBUG_ASSERTCRASH(m_background,("We Couldn't Load Menus/BlankWindow.wnd"));
 	//		m_background->hide(FALSE);
 	//		if (top())
 	//			top()->bringForward();
-	//		
+	//
 	//	}
-	
+
 
 	if (!TheGlobalData->m_shellMapOn && m_screenCount == 0)
   {
-#ifdef _PROFILE
+#ifdef RTS_PROFILE
     Profile::StopRange("init");
 #endif
 	//else
-		TheShell->push( AsciiString("Menus/MainMenu.wnd") );
+		push( AsciiString("Menus/MainMenu.wnd") );
   }
 	m_isShellActive = TRUE;
-}  // end showShell
+}
 
 void Shell::showShellMap(Bool useShellMap )
 {
 	// we don't want any of this to show if we're loading straight into a file
-	if(TheGlobalData->m_initialFile.isNotEmpty() || !TheGameLogic )
+	if (TheGlobalData->m_initialFile.isNotEmpty() || !TheGameLogic || !TheGlobalData->m_simulateReplays.empty())
 		return;
 	if(useShellMap && TheGlobalData->m_shellMapOn)
 	{
@@ -481,7 +542,7 @@ void Shell::showShellMap(Bool useShellMap )
 			return;
 		// we're in some other kind of game, clear it out foo!
 		if(TheGameLogic->isInGame())
-			TheMessageStream->appendMessage( GameMessage::MSG_CLEAR_GAME_DATA );
+			TheGameLogic->exitGame();
 
 		TheWritableGlobalData->m_pendingFile = TheGlobalData->m_shellMapName;
 		InitGameLogicRandom(0);
@@ -493,14 +554,14 @@ void Shell::showShellMap(Bool useShellMap )
 	{
 		// we're in a shell game, stop it!
 		if(TheGameLogic->isInGame() && TheGameLogic->getGameMode() == GAME_SHELL)
-			TheMessageStream->appendMessage( GameMessage::MSG_CLEAR_GAME_DATA );
+			TheGameLogic->exitGame();
 
 		// if the shell is active,we need a background
 		if(!m_isShellActive)
 			return;
 		if(!m_background)
 			m_background = TheWindowManager->winCreateLayout("Menus/BlankWindow.wnd");
-		
+
 		DEBUG_ASSERTCRASH(m_background,("We Couldn't Load Menus/BlankWindow.wnd"));
 		m_background->getFirstWindow()->winSetStatus(WIN_STATUS_IMAGE);
 		m_background->hide(FALSE);
@@ -522,7 +583,7 @@ void Shell::hideShell( void )
 	// If we have the 3d background running, mark it to close
 	m_clearBackground = TRUE;
 
-	DEBUG_LOG(("Shell:hideShell() - %s\n", (top())?top()->getFilename().str():"no top screen"));
+	DEBUG_LOG(("Shell:hideShell() - %s", (top())?top()->getFilename().str():"no top screen"));
 
 	WindowLayout *layout = top();
 
@@ -532,7 +593,7 @@ void Shell::hideShell( void )
 
 		layout->runShutdown( &immediatePop );
 
-	}  // end if
+	}
 
 	if (TheIMEManager)
 		TheIMEManager->detatch();
@@ -540,7 +601,7 @@ void Shell::hideShell( void )
 	// Mark that the shell is no longer up.
 	m_isShellActive = FALSE;
 
-}  // end hideShell
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return the top layout on the stack */
@@ -555,7 +616,7 @@ WindowLayout *Shell::top( void )
 	// top layout is at count index
 	return m_screenStack[ m_screenCount - 1 ];
 
-}  // end top
+}
 
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
@@ -572,34 +633,34 @@ void Shell::linkScreen( WindowLayout *screen )
 	if( m_screenCount == MAX_SHELL_STACK )
 	{
 
-		DEBUG_CRASH(( "No room in shell stack for screen\n" ));
+		DEBUG_CRASH(( "No room in shell stack for screen" ));
 		return;
 
-	}  // end if
+	}
 
 	// add to array at top index
 	m_screenStack[ m_screenCount++ ] = screen;
 
-}  // end linkScreen
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Remove screen from our list */
 //-------------------------------------------------------------------------------------------------
 void Shell::unlinkScreen( WindowLayout *screen )
 {
-	
+
 	// sanity
 	if( screen == NULL )
 		return;
 
-	DEBUG_ASSERTCRASH( m_screenStack[ m_screenCount - 1 ] == screen, 
-										 ("Screen not on top of stack\n") );
+	DEBUG_ASSERTCRASH( m_screenStack[ m_screenCount - 1 ] == screen,
+										 ("Screen not on top of stack") );
 
 	// remove reference to screen and decrease count
 	if( m_screenStack[ m_screenCount - 1 ] == screen )
 		m_screenStack[ --m_screenCount ] = NULL;
 
-}  // end unlinkScreen
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Actually do the work for a push */
@@ -609,10 +670,10 @@ void Shell::doPush( AsciiString layoutFile )
 	if(TheGameSpyInfo)
 			GameSpyCloseAllOverlays();
 	WindowLayout *newScreen;
-	
+
 	// create new layout and load from window manager
 	newScreen = TheWindowManager->winCreateLayout( layoutFile );
-	DEBUG_ASSERTCRASH( newScreen != NULL, ("Shell unable to load pending push layout\n") );
+	DEBUG_ASSERTCRASH( newScreen != NULL, ("Shell unable to load pending push layout") );
 
 	// link screen to the top
 	linkScreen( newScreen );
@@ -625,7 +686,7 @@ void Shell::doPush( AsciiString layoutFile )
 	newScreen->bringForward();
 
 
-}  // end doPush
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Actually do the work for a pop */
@@ -635,16 +696,19 @@ void Shell::doPop( Bool impendingPush )
 	WindowLayout *currentTop = top();
 
 	// there better be a top of the stack since we're popping
-	DEBUG_ASSERTCRASH( currentTop, ("Shell: No top of stack and we want to pop!\n") );
-		
-	// remove this screen from our list
-	unlinkScreen( currentTop );
+	DEBUG_ASSERTCRASH( currentTop, ("Shell: No top of stack and we want to pop!") );
 
-	// delete all the windows in the screen
-	currentTop->destroyWindows();
+	if (currentTop)
+	{
+		// remove this screen from our list
+		unlinkScreen(currentTop);
 
-	// release the screen object back to the memory pool
-	currentTop->deleteInstance();
+		// delete all the windows in the screen
+		currentTop->destroyWindows();
+
+		// release the screen object back to the memory pool
+		deleteInstance(currentTop);
+	}
 
 	// run the init for the new top of the stack if present
 	WindowLayout *newTop = top();
@@ -657,7 +721,7 @@ void Shell::doPop( Bool impendingPush )
 	if (TheIMEManager)
 		TheIMEManager->detatch();
 
-}  // end doPop
+}
 
 //-------------------------------------------------------------------------------------------------
 /** This is called when a layout has finished its shutdown process.  Layouts are
@@ -674,7 +738,7 @@ void Shell::shutdownComplete( WindowLayout *screen, Bool impendingPush )
 
 	// there should never be a pending push AND pop operation
 	DEBUG_ASSERTCRASH( m_pendingPush == FALSE || m_pendingPop == FALSE,
-										 ("There is a pending push AND pop in the shell.  Not allowed!\n") );	
+										 ("There is a pending push AND pop in the shell.  Not allowed!") );
 
 	// Reset the AnimateWindowManager
 	m_animateWindowManager->reset();
@@ -690,31 +754,31 @@ void Shell::shutdownComplete( WindowLayout *screen, Bool impendingPush )
 		m_pendingPush = FALSE;
 		m_pendingPushName.set( "" );
 
-	}  // end if
+	}
 	else if( m_pendingPop )
 	{
 
 		// do the pop
 		doPop( impendingPush );
-				
+
 		// no more pending pop for you!
 		m_pendingPop = FALSE;
 
-	}  // end else if
-	
+	}
+
 	if(m_clearBackground)
 	{
 		if(m_background)
 		{
 			m_background->destroyWindows();
-			m_background->deleteInstance();
+			deleteInstance(m_background);
 			m_background = NULL;
 			m_clearBackground = FALSE;
 		}
-			
+
 	}
 
-}  // end shutdownComplete
+}
 
 
 void Shell::registerWithAnimateManager( GameWindow *win, AnimTypes animType, Bool needsToFinish, UnsignedInt delayMS)
@@ -782,35 +846,35 @@ void Shell::loadScheme( AsciiString name )
 // ------------------------------------------------------------------------------------------------
 WindowLayout *Shell::getSaveLoadMenuLayout( void )
 {
-	
+
 	// if layout has not been created, create it now
 	if( m_saveLoadMenuLayout == NULL )
    m_saveLoadMenuLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/PopupSaveLoad.wnd" ) );
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_saveLoadMenuLayout, ("Unable to create save/load menu layout\n") );
+	DEBUG_ASSERTCRASH( m_saveLoadMenuLayout, ("Unable to create save/load menu layout") );
 
 	// return the layout
 	return m_saveLoadMenuLayout;
 
-}  // end getSaveLoadMenuLayout
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 WindowLayout *Shell::getPopupReplayLayout( void )
 {
-	
+
 	// if layout has not been created, create it now
 	if( m_popupReplayLayout == NULL )
    m_popupReplayLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/PopupReplay.wnd" ) );
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_popupReplayLayout, ("Unable to create replay save menu layout\n") );
+	DEBUG_ASSERTCRASH( m_popupReplayLayout, ("Unable to create replay save menu layout") );
 
 	// return the layout
 	return m_popupReplayLayout;
 
-}  // end getSaveLoadMenuLayout
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -822,19 +886,19 @@ WindowLayout *Shell::getOptionsLayout( Bool create )
 		m_optionsLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/OptionsMenu.wnd" ) );
 
 		// sanity
-		DEBUG_ASSERTCRASH( m_optionsLayout, ("Unable to create options menu layout\n") );
+		DEBUG_ASSERTCRASH( m_optionsLayout, ("Unable to create options menu layout") );
 	}
 
 	// return the layout
 	return m_optionsLayout;
-} // end getOptionsLayout
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void Shell::destroyOptionsLayout() {
 	if (m_optionsLayout != NULL) {
 		m_optionsLayout->destroyWindows();
-		m_optionsLayout->deleteInstance();
+		deleteInstance(m_optionsLayout);
 		m_optionsLayout = NULL;
 	}
 }

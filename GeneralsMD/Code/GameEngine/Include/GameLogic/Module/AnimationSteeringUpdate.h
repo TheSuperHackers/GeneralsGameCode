@@ -29,13 +29,10 @@
 
 #pragma once
 
-#ifndef __ANIMATION_STEERING_UPDATE_H
-#define __ANIMATION_STEERING_UPDATE_H
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
-enum PhysicsTurningType;
+enum PhysicsTurningType CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -46,11 +43,11 @@ public:
 
 	AnimationSteeringUpdateModuleData( void );
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse( p );
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "MinTransitionTime", INI::parseDurationUnsignedInt, NULL, offsetof( AnimationSteeringUpdateModuleData, m_transitionFrames ) },
 			{ 0, 0, 0, 0 }
@@ -83,5 +80,3 @@ protected:
   ModelConditionFlagType m_currentTurnAnim;
 	UnsignedInt m_nextTransitionFrame;
 };
-
-#endif  // end __ANIMATION_STEERING_UPDATE_H

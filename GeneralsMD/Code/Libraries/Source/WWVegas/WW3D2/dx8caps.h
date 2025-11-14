@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Hector Yee                                                   *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 24                                                          $*
@@ -37,12 +37,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
-
-#ifndef DX8CAPS_H
-#define DX8CAPS_H
 
 #include "always.h"
 #include "ww3dformat.h"
@@ -69,7 +64,9 @@ public:
 		VENDOR_3DFX,
 		VENDOR_3DLABS,
 		VENDOR_CIRRUSLOGIC,
-		VENDOR_RENDITION
+		VENDOR_RENDITION,
+
+		VENDOR_COUNT
 	};
 
 	enum DeviceTypeATI {
@@ -212,7 +209,7 @@ public:
 	static void Shutdown(void);
 
 	void Compute_Caps(WW3DFormat display_format, const D3DADAPTER_IDENTIFIER8& adapter_id);
-	bool Support_TnL() const { return SupportTnL; };	
+	bool Support_TnL() const { return SupportTnL; };
 	bool Support_DXTC() const { return SupportDXTC; }
 	bool Support_Gamma() const { return supportGamma; }
 	bool Support_NPatches() const { return SupportNPatches; }
@@ -287,7 +284,7 @@ private:
 	int MaxDisplayHeight;
 
 	D3DCAPS8 Caps;
-	bool SupportTnL;	
+	bool SupportTnL;
 	bool SupportDXTC;
 	bool supportGamma;
 	bool SupportNPatches;
@@ -317,6 +314,3 @@ private:
 	StringClass CapsLog;
 	StringClass CompactLog;
 };
-
-
-#endif

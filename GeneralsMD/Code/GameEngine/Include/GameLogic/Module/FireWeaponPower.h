@@ -24,12 +24,12 @@
 
 // FILE: FireWeaponPower.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	Created:	August 2003
@@ -44,15 +44,12 @@
 
 #pragma once
 
-#ifndef __FIRE_WEAPON_POWER_H
-#define __FIRE_WEAPON_POWER_H
-
 #include "GameLogic/Module/SpecialPowerModule.h"
 
 class Object;
 class SpecialPowerTemplate;
 struct FieldParse;
-enum ScienceType;
+enum ScienceType CPP_11(: Int);
 
 class FireWeaponPowerModuleData : public SpecialPowerModuleData
 {
@@ -85,5 +82,3 @@ public:
 protected:
 
 };
-
-#endif // __FIRE_WEAPON_POWER_H

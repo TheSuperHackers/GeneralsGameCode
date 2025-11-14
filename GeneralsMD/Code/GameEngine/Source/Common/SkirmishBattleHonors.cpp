@@ -31,7 +31,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -42,6 +42,7 @@
 #include "Common/PlayerTemplate.h"
 #include "Common/QuotedPrintable.h"
 #include "Common/MultiplayerSettings.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/MapUtil.h"
 
 //-----------------------------------------------------------------------------
@@ -74,16 +75,28 @@
 
 
 //-----------------------------------------------------------------------------
-// SkirmishBattleHonors base class 
+// SkirmishBattleHonors base class
 //-----------------------------------------------------------------------------
 
 SkirmishBattleHonors::SkirmishBattleHonors()
 {
-	load("SkirmishStats.ini");
+	loadFromIniFile();
 }
 
 SkirmishBattleHonors::~SkirmishBattleHonors()
 {
+}
+
+Bool SkirmishBattleHonors::loadFromIniFile()
+{
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		AsciiString fname;
+		fname.format("SkirmishStats_Instance%.2u.ini", rts::ClientInstance::getInstanceId());
+		return load(fname);
+	}
+
+	return load("SkirmishStats.ini");
 }
 
 void SkirmishBattleHonors::setWins(Int val)

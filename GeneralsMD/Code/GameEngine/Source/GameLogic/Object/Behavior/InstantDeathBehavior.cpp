@@ -24,12 +24,12 @@
 
 // FILE: InstantDeathBehavior.cpp ///////////////////////////////////////////////////////////////////////
 // Author:
-// Desc:  
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #define DEFINE_SLOWDEATHPHASE_NAMES
 
 #include "Common/Thing.h"
@@ -93,11 +93,11 @@ static void parseWeapon( INI* ini, void *instance, void * /*store*/, const void*
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void InstantDeathBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void InstantDeathBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   DieModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "FX",										parseFX,													NULL, 0 },
 		{ "OCL",									parseOCL,													NULL, 0 },
@@ -136,12 +136,12 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 
 	const InstantDeathBehaviorModuleData* d = getInstantDeathBehaviorModuleData();
 
-	Int idx, listSize;
+	size_t idx, listSize;
 
 	listSize = d->m_fx.size();
 	if (listSize > 0)
 	{
-		idx = GameLogicRandomValue(0, listSize-1);
+		idx = (size_t)GameLogicRandomValue(0, listSize-1);
 		const FXListVec& v = d->m_fx;
 		DEBUG_ASSERTCRASH(idx>=0&&idx<v.size(),("bad idx"));
 		const FXList* fxl = v[idx];
@@ -151,7 +151,7 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 	listSize = d->m_ocls.size();
 	if (listSize > 0)
 	{
-		idx = GameLogicRandomValue(0, listSize-1);
+		idx = (size_t)GameLogicRandomValue(0, listSize-1);
 		const OCLVec& v = d->m_ocls;
 		DEBUG_ASSERTCRASH(idx>=0&&idx<v.size(),("bad idx"));
 		const ObjectCreationList* ocl = v[idx];
@@ -161,7 +161,7 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 	listSize = d->m_weapons.size();
 	if (listSize > 0)
 	{
-		idx = GameLogicRandomValue(0, listSize-1);
+		idx = (size_t)GameLogicRandomValue(0, listSize-1);
 		const WeaponTemplateVec& v = d->m_weapons;
 		DEBUG_ASSERTCRASH(idx>=0&&idx<v.size(),("bad idx"));
 		const WeaponTemplate* wt = v[idx];
@@ -183,7 +183,7 @@ void InstantDeathBehavior::crc( Xfer *xfer )
 	// extend base class
 	DieModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -201,7 +201,7 @@ void InstantDeathBehavior::xfer( Xfer *xfer )
 	// extend base class
 	DieModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -212,4 +212,4 @@ void InstantDeathBehavior::loadPostProcess( void )
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

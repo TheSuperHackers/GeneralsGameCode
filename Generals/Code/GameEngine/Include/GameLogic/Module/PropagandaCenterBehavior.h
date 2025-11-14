@@ -27,8 +27,7 @@
 // Desc:   Propaganda Center Behavior
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __PROPAGANDA_CENTER_BEHAVIOR_H_
-#define __PROPAGANDA_CENTER_BEHAVIOR_H_
+#pragma once
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/PrisonBehavior.h"
@@ -80,9 +79,7 @@ protected:
 	ObjectID m_brainwashingSubjectID;								///< who we're currently brainwashing
 	UnsignedInt m_brainwashingSubjectStartFrame;		///< frame we started brainwashing
 	BrainwashedIDList m_brainwashedList;						///< list of objects we've brainwashed
-		
+
 };
 
 #endif
-
-#endif  // end __PROPAGANDA_CENTER_BEHAVIOR_H_

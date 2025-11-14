@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/WindowLayout.h"
 #include "GameClient/MapUtil.h"
@@ -44,11 +44,6 @@
 #include "GameNetwork/GameInfo.h"
 #include "GameNetwork/LANAPI.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 static GameWindow *parent = NULL;
 static GameWindow *staticTextGameName = NULL;
@@ -73,7 +68,7 @@ void CreateLANGameInfoWindow( GameWindow *sizeAndPosWin )
 {
 	if( !gameInfoWindowLayout )
 		gameInfoWindowLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/GameInfoWindow.wnd" ) );
-	
+
 	gameInfoWindowLayout->runInit();
 	gameInfoWindowLayout->bringForward();
 	gameInfoWindowLayout->hide( TRUE );
@@ -94,8 +89,8 @@ void DestroyGameInfoWindow(void)
 	if (gameInfoWindowLayout)
 	{
 		gameInfoWindowLayout->destroyWindows();
-		gameInfoWindowLayout->deleteInstance();
-		gameInfoWindowLayout = NULL;		
+		deleteInstance(gameInfoWindowLayout);
+		gameInfoWindowLayout = NULL;
 	}
 }
 
@@ -124,7 +119,7 @@ void RefreshGameInfoWindow(GameInfo *gameInfo, UnicodeString gameName)
 	{
 		// can happen if the map will have to be transferred... so use the leaf name (srj)
 		const char *noPath = gameInfo->getMap().reverseFind('\\');
-		if (noPath) 
+		if (noPath)
 		{
 			++noPath;
 		}
@@ -201,7 +196,7 @@ void RefreshGameInfoWindow(GameInfo *gameInfo, UnicodeString gameName)
 			GadgetListBoxAddEntryImage(listBoxPlayers, fact->getSideIconImage(),addedRow, 0, 22,25);
 			//GadgetListBoxAddEntryText(listBoxPlayers,fact->getDisplayName(),playerColor,addedRow, 0);
 		}
-	
+
 	}
 }
 
@@ -226,7 +221,7 @@ void GameInfoWindowInit( WindowLayout *layout, void *userData )
 	winCratesID = TheNameKeyGenerator->nameToKey( "GameInfoWindow.wnd:WinCrates" );
 	winSuperWeaponsID = TheNameKeyGenerator->nameToKey( "GameInfoWindow.wnd:WinSuperWeapons" );
 	winFreeForAllID = TheNameKeyGenerator->nameToKey( "GameInfoWindow.wnd:WinFreeForAll" );
-	
+
 	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
 	staticTextGameName = TheWindowManager->winGetWindowFromId( parent, staticTextGameNameID );
 	staticTextMapName = TheWindowManager->winGetWindowFromId( parent, staticTextMapNameID );
@@ -238,17 +233,17 @@ void GameInfoWindowInit( WindowLayout *layout, void *userData )
 	GadgetStaticTextSetText(staticTextGameName,UnicodeString::TheEmptyString);
 	GadgetStaticTextSetText(staticTextMapName,UnicodeString::TheEmptyString);
 	GadgetListBoxReset(listBoxPlayers);
-	
-}  // end MapSelectMenuInit
+
+}
 
 
 //-------------------------------------------------------------------------------------------------
 /** GameInfo window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType GameInfoWindowSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType GameInfoWindowSystem( GameWindow *window, UnsignedInt msg,
 																				  WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 // might use these later
 //			GameWindow *control = (GameWindow *)mData1;
@@ -261,7 +256,7 @@ WindowMsgHandledType GameInfoWindowSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end create
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
@@ -269,7 +264,7 @@ WindowMsgHandledType GameInfoWindowSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end case
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -281,15 +276,15 @@ WindowMsgHandledType GameInfoWindowSystem( GameWindow *window, UnsignedInt msg,
 
 			return MSG_HANDLED;
 
-		}  // end input
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-}  // end MapSelectMenuSystem
+}
 

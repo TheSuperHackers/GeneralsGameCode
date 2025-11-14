@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "gamespy/peer/peer.h"
 
@@ -69,11 +69,6 @@
 #include "GameNetwork/GameSpy/MainMenuUtils.h"
 #include "GameNetwork/WOLBrowser/WebBrowser.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 static Bool isShuttingDown = FALSE;
 static Bool buttonPushed = FALSE;
@@ -208,7 +203,7 @@ static void shutdownComplete( WindowLayout *layout )
 
 	nextScreen = NULL;
 
-}  // end if
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Handle Num Players Online data */
@@ -291,7 +286,7 @@ static void updateNumPlayersOnline(void)
 				g = grabUByte(aLine.str()+5);
 				b = grabUByte(aLine.str()+7);
 				c = GameMakeColor(r, g, b, a);
-				DEBUG_LOG(("MOTD line '%s' has color %X\n", aLine.str(), c));
+				DEBUG_LOG(("MOTD line '%s' has color %X", aLine.str(), c));
 				aLine = aLine.str() + 9;
 			}
 			line = UnicodeString(MultiByteToWideCharSingleLine(aLine.str()).c_str());
@@ -330,12 +325,12 @@ static const char* FindNextNumber( const char* pStart )
 //parse win/loss stats received from GameSpy
 void HandleOverallStats( const char* szHTTPStats, unsigned len )
 {
-//x	DEBUG_LOG(("Parsing win percent stats:\n%s\n", szHTTPStats));
+//x	DEBUG_LOG(("Parsing win percent stats:\n%s", szHTTPStats));
 	//find today's stats
 	const char* pToday = strstr( szHTTPStats, "Today" );
 	if( !pToday )
 	{	//error
-		DEBUG_LOG(( "Unable to parse win/loss stats.  Could not find 'Today' in:\n%s\n", szHTTPStats ));
+		DEBUG_LOG(( "Unable to parse win/loss stats.  Could not find 'Today' in:\n%s", szHTTPStats ));
 		return;
 	}
 	s_winStats.clear();
@@ -356,7 +351,7 @@ void HandleOverallStats( const char* szHTTPStats, unsigned len )
 		const char* pSide = strstr( pToday, side.str() );
 		if( pSide == NULL )
 		{	//error, skip this side
-			DEBUG_LOG(( "Unable to parse win/loss stats for %s in:\n%s\n", side.str(), szHTTPStats ));
+			DEBUG_LOG(( "Unable to parse win/loss stats for %s in:\n%s", side.str(), szHTTPStats ));
 			continue;
 		}
 
@@ -368,9 +363,9 @@ void HandleOverallStats( const char* szHTTPStats, unsigned len )
 		s_totalWinPercent += percent;
 
 		s_winStats.insert(std::make_pair( side, percent ));
-//x		DEBUG_LOG(("Added win percent: %s, %d\n", side.str(), percent));
-	} //for i
-} //HandleOverallStats
+//x		DEBUG_LOG(("Added win percent: %s, %d", side.str(), percent));
+	}
+}
 
 
 //called only from WOLWelcomeMenuInit to set %win stats
@@ -391,9 +386,9 @@ static void updateOverallStats(void)
 		wndName.format( "WOLWelcomeMenu.wnd:Percent%s", it->first.str() );
 		pWin = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY(wndName) );
 		GadgetCheckBoxSetText( pWin, percStr );
-//x		DEBUG_LOG(("Initialized win percent: %s -> %s %f=%s\n", wndName.str(), it->first.str(), it->second, percStr.str() ));
-	} //for
-} //updateOverallStats
+//x		DEBUG_LOG(("Initialized win percent: %s -> %s %f=%s", wndName.str(), it->first.str(), it->second, percStr.str() ));
+	}
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -413,7 +408,7 @@ void UpdateLocalPlayerStats(void)
 	{
 		PopulatePlayerInfoWindows( "WOLQuickMatchMenu.wnd" );
 	}
-	
+
 	return;
 }
 
@@ -526,9 +521,9 @@ void WOLWelcomeMenuInit( WindowLayout *layout, void *userData )
 		const char *keys[3] = { "locale", "wins", "losses" };
 		char valueStrings[3][20];
 		char *values[3] = { valueStrings[0], valueStrings[1], valueStrings[2] };
-		_snprintf(values[0], 20, "%s", TheGameSpyPlayerInfo->getLocale().str());
-		_snprintf(values[1], 20, "%d", TheGameSpyPlayerInfo->getWins());
-		_snprintf(values[2], 20, "%d", TheGameSpyPlayerInfo->getLosses());
+		snprintf(values[0], 20, "%s", TheGameSpyPlayerInfo->getLocale().str());
+		snprintf(values[1], 20, "%d", TheGameSpyPlayerInfo->getWins());
+		snprintf(values[2], 20, "%d", TheGameSpyPlayerInfo->getLosses());
 		peerSetGlobalKeys(TheGameSpyChat->getPeer(), 3, (const char **)keys, (const char **)values);
 		peerSetGlobalWatchKeys(TheGameSpyChat->getPeer(), GroupRoom,   3, keys, PEERFalse);
 		peerSetGlobalWatchKeys(TheGameSpyChat->getPeer(), StagingRoom, 3, keys, PEERFalse);
@@ -566,7 +561,7 @@ void WOLWelcomeMenuInit( WindowLayout *layout, void *userData )
 	raiseMessageBoxes = TRUE;
 	TheTransitionHandler->setGroup("WOLWelcomeMenuFade");
 
-} // WOLWelcomeMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Welcome Menu shutdown method */
@@ -575,10 +570,8 @@ void WOLWelcomeMenuShutdown( WindowLayout *layout, void *userData )
 {
 	listboxInfo = NULL;
 
-	if (TheFirewallHelper != NULL) {
-		delete TheFirewallHelper;
-		TheFirewallHelper = NULL;
-	}
+	delete TheFirewallHelper;
+	TheFirewallHelper = NULL;
 
 	isShuttingDown = TRUE;
 
@@ -590,14 +583,14 @@ void WOLWelcomeMenuShutdown( WindowLayout *layout, void *userData )
 		shutdownComplete( layout );
 		return;
 
-	}  //end if
+	}
 
 	TheShell->reverseAnimatewindow();
 	TheTransitionHandler->reverse("WOLWelcomeMenuFade");
 
 
 	RaiseGSMessageBox();
-}  // WOLWelcomeMenuShutdown
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -605,7 +598,7 @@ void WOLWelcomeMenuShutdown( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 void WOLWelcomeMenuUpdate( WindowLayout * layout, void *userData)
 {
-	// We'll only be successful if we've requested to 
+	// We'll only be successful if we've requested to
 	if(isShuttingDown && TheShell->isAnimFinished() && TheTransitionHandler->isFinished())
 		shutdownComplete(layout);
 
@@ -624,7 +617,7 @@ void WOLWelcomeMenuUpdate( WindowLayout * layout, void *userData)
 			TheFirewallHelper->writeFirewallBehavior();
 
 			TheFirewallHelper->flagNeedToRefresh(FALSE); // 2/19/03 BGC, we're done, so we don't need to refresh the NAT anymore.
-			
+
 			// we are now done with the firewall helper
 			delete TheFirewallHelper;
 			TheFirewallHelper = NULL;
@@ -698,7 +691,7 @@ void WOLWelcomeMenuUpdate( WindowLayout * layout, void *userData)
 		}
 	}
 
-}// WOLWelcomeMenuUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Welcome Menu input callback */
@@ -706,7 +699,7 @@ void WOLWelcomeMenuUpdate( WindowLayout * layout, void *userData)
 WindowMsgHandledType WOLWelcomeMenuInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -723,63 +716,63 @@ WindowMsgHandledType WOLWelcomeMenuInput( GameWindow *window, UnsignedInt msg,
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonBack, buttonBackID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// WOLWelcomeMenuInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Welcome Menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
 
 	switch( msg )
 	{
-		
-		
+
+
 		case GWM_CREATE:
 			{
-				
+
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
-			{	
+			{
 				// if we're givin the opportunity to take the keyboard focus we must say we want it
 				if( mData1 == TRUE )
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 
 		case GBM_SELECTED:
 			{
@@ -793,7 +786,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 				{
 					//DEBUG_ASSERTCRASH(TheGameSpyChat->getPeer(), ("No GameSpy Peer object!"));
 					//TheGameSpyChat->disconnectFromChat();
-					
+
 					PeerRequest req;
 					req.peerRequestType = PeerRequest::PEERREQUEST_LOGOUT;
 					TheGameSpyPeerMessageQueue->addRequest( req );
@@ -801,7 +794,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 					breq.buddyRequestType = BuddyRequest::BUDDYREQUEST_LOGOUT;
 					TheGameSpyBuddyMessageQueue->addRequest( breq );
 
-					DEBUG_LOG(("Tearing down GameSpy from WOLWelcomeMenuSystem(GBM_SELECTED)\n"));
+					DEBUG_LOG(("Tearing down GameSpy from WOLWelcomeMenuSystem(GBM_SELECTED)"));
 					TearDownGameSpy();
 
 					/*
@@ -826,15 +819,15 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 					TheWOLGame = NULL;
 					**/
 
-				} //if ( controlID == buttonBack )
+				}
 				else if (controlID == buttonOptionsID)
-				{					
+				{
 					GameSpyOpenOverlay( GSOVERLAY_OPTIONS );
 				}
 				else if (controlID == buttonQuickMatchID)
 				{
 					GameSpyMiscPreferences mPref;
-					if ((TheDisplay->getWidth() != 800 || TheDisplay->getHeight() != 600) && mPref.getQuickMatchResLocked())
+					if ((TheDisplay->getWidth() != DEFAULT_DISPLAY_WIDTH || TheDisplay->getHeight() != DEFAULT_DISPLAY_HEIGHT) && mPref.getQuickMatchResLocked())
 					{
 						GSMessageBoxOk(TheGameText->fetch("GUI:GSErrorTitle"), TheGameText->fetch("GUI:QuickMatch800x600"));
 					}
@@ -844,7 +837,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 						nextScreen = "Menus/WOLQuickMatchMenu.wnd";
 						TheShell->pop();
 					}
-				}// else if
+				}
 				else if (controlID == buttonMyInfoID )
 				{
 					SetLookAtPlayer(TheGameSpyInfo->getLocalProfileID(), TheGameSpyInfo->getLocalName());
@@ -864,7 +857,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 					TheWOL->setState( WOL::WOLAPI_LOBBY );
 					TheWOL->addCommand( WOL::WOLCOMMAND_REFRESH_CHANNELS );
 					*/
-				}// else if
+				}
 				else if (controlID == buttonBuddiesID)
 				{
 					GameSpyToggleOverlay( GSOVERLAY_BUDDY );
@@ -891,8 +884,8 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 					TheShell->push(AsciiString("Menus/WOLLadderScreen.wnd"));
 				}
 				break;
-			}// case GBM_SELECTED:
-	
+			}
+
 		case GEM_EDIT_DONE:
 			{
 				break;
@@ -900,7 +893,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// WOLWelcomeMenuSystem
+}

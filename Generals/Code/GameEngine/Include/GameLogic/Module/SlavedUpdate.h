@@ -29,10 +29,8 @@
 //        soldiers that are close to a stinger site. It's important to note that any slaved units
 //				can use any or all features, some of which are specialized.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma once
 
-#ifndef _SLAVED_UPDATE_H_
-#define _SLAVED_UPDATE_H_
+#pragma once
 
 const Int SLAVED_UPDATE_RATE = LOGICFRAMES_PER_SECOND/4; ///< This is a low priority module that only needs to be called every this many frames
 
@@ -40,7 +38,7 @@ const Int SLAVED_UPDATE_RATE = LOGICFRAMES_PER_SECOND/4; ///< This is a low prio
 #include "Common/INI.h"
 #include "GameLogic/Module/UpdateModule.h"
 class DamageInfo;
-enum ModelConditionFlagType;
+enum ModelConditionFlagType CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
 class SlavedUpdateModuleData : public UpdateModuleData
@@ -56,7 +54,7 @@ public:
 	Int m_scoutRange;				//If master is moving somewhere, I'll scout ahead -- how far am I allowed to go?
 	Int m_scoutWanderRange;	//If I'm at the scout point, how far can I wander from it.
 	Int m_distToTargetToGrantRangeBonus;	//How close I have to be to the master's target in order to grant master a range bonus.
-	
+
 	//Example: Below are used by battle drones
 	Int m_repairRange;
 	Real m_repairMinAltitude;
@@ -67,7 +65,7 @@ public:
 	Int m_minReadyFrames;
 	Int m_maxReadyFrames;
 	Int m_minWeldFrames;
-	Int m_maxWeldFrames; 
+	Int m_maxWeldFrames;
 	AsciiString m_weldingSysName;
 	AsciiString m_weldingFXBone;
 
@@ -93,10 +91,10 @@ public:
 		m_stayOnSameLayerAsMaster = false;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "GuardMaxRange",			INI::parseInt,	NULL, offsetof( SlavedUpdateModuleData, m_guardMaxRange ) },
 			{ "GuardWanderRange",		INI::parseInt,	NULL, offsetof( SlavedUpdateModuleData, m_guardWanderRange ) },
@@ -123,7 +121,7 @@ public:
 	}
 };
 
-enum RepairStates
+enum RepairStates CPP_11(: Int)
 {
 	REPAIRSTATE_NONE,
 	REPAIRSTATE_UNPACKING,
@@ -177,5 +175,3 @@ private:
 	RepairStates m_repairState;
 	Bool m_repairing;
 };
-
-#endif

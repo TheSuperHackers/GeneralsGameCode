@@ -28,13 +28,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "GameClient/GameClient.h"
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/ActionManager.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
@@ -83,11 +84,6 @@
 #include "GameLogic/GhostObject.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/ScriptEngine.h"		// For TheScriptEngine - jkmcd
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #define DRAWABLE_HASH_SIZE	8192
 
@@ -103,7 +99,7 @@ GameClient::GameClient()
 		m_translators[ i ] = TRANSLATOR_ID_INVALID;
 	m_numTranslators = 0;
 	m_commandTranslator = NULL;
-	
+
 	// Added By Sadullah Nader
 	// Initializations missing and needed
 	m_drawableTOC.clear();
@@ -113,7 +109,7 @@ GameClient::GameClient()
 	m_frame = 0;
 
 	m_drawableList = NULL;
-	
+
 	m_nextDrawableID = (DrawableID)1;
 	TheDrawGroupInfo = new DrawGroupInfo;
 }
@@ -129,28 +125,25 @@ GameClient::~GameClient()
 	TheGraphDraw = NULL;
 #endif
 
-	if (TheDrawGroupInfo) 
-	{
-		delete TheDrawGroupInfo;
-		TheDrawGroupInfo = NULL;
-	}
+	delete TheDrawGroupInfo;
+	TheDrawGroupInfo = NULL;
 
 	// clear any drawable TOC we might have
 	m_drawableTOC.clear();
 
-	//DEBUG_LOG(("Preloaded texture files ------------------------------------------\n"));
+	//DEBUG_LOG(("Preloaded texture files ------------------------------------------"));
 	//for (Int oog=0; oog<preloadTextureNamesGlobalHack2.size(); ++oog)
 	//{
-	//	DEBUG_LOG(("%s\n", preloadTextureNamesGlobalHack2[oog]));
+	//	DEBUG_LOG(("%s", preloadTextureNamesGlobalHack2[oog]));
 	//}
-	//DEBUG_LOG(("------------------------------------------------------------------\n"));
+	//DEBUG_LOG(("------------------------------------------------------------------"));
 	//for (oog=0; oog<preloadTextureNamesGlobalHack.size(); ++oog)
 	//{
-	//	DEBUG_LOG(("%s\n", preloadTextureNamesGlobalHack[oog]));
+	//	DEBUG_LOG(("%s", preloadTextureNamesGlobalHack[oog]));
 	//}
-	//DEBUG_LOG(("End Texture files ------------------------------------------------\n"));
-	if(TheCampaignManager)
-		delete TheCampaignManager;
+	//DEBUG_LOG(("End Texture files ------------------------------------------------"));
+
+	delete TheCampaignManager;
 	TheCampaignManager = NULL;
 
 	// destroy all Drawables
@@ -193,6 +186,7 @@ GameClient::~GameClient()
 	delete TheFontLibrary;
 	TheFontLibrary = NULL;
 
+	TheMouse->reset();
 	delete TheMouse;
 	TheMouse = NULL;
 
@@ -210,7 +204,7 @@ GameClient::~GameClient()
 
 	delete TheHeaderTemplateManager;
 	TheHeaderTemplateManager = NULL;
-	
+
 	delete TheLanguageFilter;
 	TheLanguageFilter = NULL;
 
@@ -218,17 +212,17 @@ GameClient::~GameClient()
 	TheVideoPlayer = NULL;
 
 	// destroy all translators
-	for( Int i = 0; i < m_numTranslators; i++ )
-		TheMessageStream->removeTranslator( m_translators[ i ] );	
+	for( UnsignedInt i = 0; i < m_numTranslators; i++ )
+		TheMessageStream->removeTranslator( m_translators[ i ] );
 	m_numTranslators = 0;
 	m_commandTranslator = NULL;
 
 	delete TheAnim2DCollection;
-	TheAnim2DCollection = NULL;	
+	TheAnim2DCollection = NULL;
 
 	delete TheMappedImageCollection;
-	TheMappedImageCollection = NULL;	
-	
+	TheMappedImageCollection = NULL;
+
 	delete TheKeyboard;
 	TheKeyboard = NULL;
 
@@ -241,7 +235,7 @@ GameClient::~GameClient()
 	delete TheSnowManager;
 	TheSnowManager = NULL;
 
-}  // end ~GameClient
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize resources for the game client */
@@ -253,8 +247,8 @@ void GameClient::init( void )
 
 	INI ini;
 	// Load the DrawGroupInfo here, before the Display Manager is loaded.
-	ini.load("Data\\INI\\DrawGroupInfo.ini", INI_LOAD_OVERWRITE, NULL);
-	
+	ini.loadFileDirectory("Data\\INI\\DrawGroupInfo", INI_LOAD_OVERWRITE, NULL);
+
 	// Override the ini values with localized versions:
 	if (TheGlobalLanguageData && TheGlobalLanguageData->m_drawGroupInfoFont.name.isNotEmpty())
 	{
@@ -269,11 +263,14 @@ void GameClient::init( void )
 		TheDisplayStringManager->init();
 		TheDisplayStringManager->setName("TheDisplayStringManager");
 	}
-	
-	// create the keyboard
-	TheKeyboard = createKeyboard();
-	TheKeyboard->init();
-	TheKeyboard->setName("TheKeyboard");
+
+	if (!TheGlobalData->m_headless)
+	{
+		// create the keyboard
+		TheKeyboard = createKeyboard();
+		TheKeyboard->init();
+		TheKeyboard->setName("TheKeyboard");
+	}
 
 	// allocate and load image collection for the GUI and just load the 256x256 ones for now
 	TheMappedImageCollection = MSGNEW("GameClientSubsystem") ImageCollection;
@@ -314,7 +311,7 @@ void GameClient::init( void )
 		//
 		m_translators[ m_numTranslators++ ] =	TheMessageStream->attachTranslator( MSGNEW("GameClientSubsystem") GameClientMessageDispatcher, 999999999 );
 
-	}  
+	}
 
 	// create the font library
 	TheFontLibrary = createFontLibrary();
@@ -322,7 +319,7 @@ void GameClient::init( void )
 		TheFontLibrary->init();
 
 	// create the mouse
-	TheMouse = createMouse();
+	TheMouse = TheGlobalData->m_headless ? NEW MouseDummy : createMouse();
 	TheMouse->parseIni();
 	TheMouse->initCursorResources();
  	TheMouse->setName("TheMouse");
@@ -333,14 +330,14 @@ void GameClient::init( void )
 		TheDisplay->init();
  		TheDisplay->setName("TheDisplay");
 	}
-	
+
 	TheHeaderTemplateManager = MSGNEW("GameClientSubsystem") HeaderTemplateManager;
 	if(TheHeaderTemplateManager){
 		TheHeaderTemplateManager->init();
 	}
 
 	// create the window manager
-	TheWindowManager = createWindowManager();
+	TheWindowManager = TheGlobalData->m_headless ? NEW GameWindowManagerDummy : createWindowManager();
 	if( TheWindowManager )
 	{
 
@@ -348,7 +345,7 @@ void GameClient::init( void )
  		TheWindowManager->setName("TheWindowManager");
 //		TheWindowManager->initTestGUI();
 
-	}  // end if
+	}
 
 	// create the IME manager
 	TheIMEManager = CreateIMEManagerInterface();
@@ -405,7 +402,7 @@ void GameClient::init( void )
 		TheMouse->setPosition( 0, 0 );
 		TheMouse->setMouseLimits();
  		TheMouse->setName("TheMouse");
-	}  // end if
+	}
 
 	// create the video player
 	TheVideoPlayer = createVideoPlayer();
@@ -443,7 +440,7 @@ void GameClient::init( void )
 	TheGraphDraw = new GraphDraw;
 #endif
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset the game client for a new game */
@@ -478,7 +475,10 @@ void GameClient::reset( void )
 	// clear any drawable TOC we might have
 	m_drawableTOC.clear();
 
-}  // end reset
+	// TheSuperHackers @fix Mauller 13/04/2025 Reset the drawable id so it does not keep growing over the lifetime of the game.
+	m_nextDrawableID = (DrawableID)1;
+
+}
 
 /** -----------------------------------------------------------------------------------------------
  * Return a new unique object id.
@@ -494,7 +494,7 @@ DrawableID GameClient::allocDrawableID( void )
 /** -----------------------------------------------------------------------------------------------
  * Given a drawable, register it with the GameClient and give it a unique ID.
  */
-void GameClient::registerDrawable( Drawable *draw ) 
+void GameClient::registerDrawable( Drawable *draw )
 {
 
 	// assign this drawable a unique ID, this will add it to the fast lookup table too
@@ -503,7 +503,7 @@ void GameClient::registerDrawable( Drawable *draw )
 	// add the drawable to the master list
 	draw->prependToList( &m_drawableList );
 
-}  // end registerDrawable
+}
 
 /** -----------------------------------------------------------------------------------------------
  * Redraw all views, update the GUI, play sound effects, etc.
@@ -529,7 +529,7 @@ void GameClient::update( void )
 		playSizzle = TRUE;
 	}
 
-	//Initial Game Codition.  We must show the movie first and then we can display the shell	
+	//Initial Game Codition.  We must show the movie first and then we can display the shell
 	if(TheGlobalData->m_afterIntro && !TheDisplay->isMoviePlaying())
 	{
 		if( playSizzle && TheGlobalData->m_playSizzle )
@@ -552,7 +552,7 @@ void GameClient::update( void )
 
 				WindowLayout *legal = TheWindowManager->winCreateLayout("Menus/LegalPage.wnd");
 				if(legal)
-				{				
+				{
 					legal->hide(FALSE);
 					legal->bringForward();
 					Int beginTime = timeGetTime();
@@ -567,12 +567,12 @@ void GameClient::update( void )
 
 
 					legal->destroyWindows();
-					legal->deleteInstance();
+					deleteInstance(legal);
 
 				}
 				TheWritableGlobalData->m_breakTheMovie = TRUE;
 
-				
+
 			}
 
 			TheShell->showShellMap(TRUE);
@@ -594,7 +594,7 @@ void GameClient::update( void )
 		TheKeyboard->UPDATE();
 		TheKeyboard->createStreamMessages();
 
-	}  // end if
+	}
 
 	// Update the Eva stuff
 	TheEva->UPDATE();
@@ -605,8 +605,8 @@ void GameClient::update( void )
 		TheMouse->UPDATE();
 		TheMouse->createStreamMessages();
 
-	}  // end if
-	
+	}
+
 
   if (TheInGameUI->isCameraTrackingDrawable())
   {
@@ -623,12 +623,8 @@ void GameClient::update( void )
 	if(TheGlobalData->m_playIntro || TheGlobalData->m_afterIntro)
 	{
 		// redraw all views, update the GUI
-		{
-			TheDisplay->DRAW();
-		}
-		{
-			TheDisplay->UPDATE();
-		}
+		TheDisplay->DRAW();
+		TheDisplay->UPDATE();
 		return;
 	}
 
@@ -642,42 +638,38 @@ void GameClient::update( void )
 		TheVideoPlayer->UPDATE();
 	}
 
-	Bool freezeTime = TheTacticalView->isTimeFrozen() && !TheTacticalView->isCameraMovementFinished();
-	freezeTime = freezeTime || TheScriptEngine->isTimeFrozenDebug();
-	freezeTime = freezeTime || TheScriptEngine->isTimeFrozenScript();
-	freezeTime = freezeTime || TheGameLogic->isGamePaused();
-	Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
+	const Bool freezeTime = TheGameEngine->isTimeFrozen() || TheGameEngine->isGameHalted();
 
-	// hack to let client spin fast in network games but still do effects at the same pace. -MDC
-	static UnsignedInt lastFrame = ~0;
-	freezeTime = freezeTime || (lastFrame == m_frame);
-	lastFrame = m_frame;
+	const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
 
 	if (!freezeTime)
 	{
-#if defined(_DEBUG) || defined(_INTERNAL)
+		Int numPlayers = ThePlayerList->getPlayerCount();
+		Int numNonLocalPlayers = 0;
+		Int nonLocalPlayerIndices[MAX_PLAYER_COUNT];
+
+#if ENABLE_CONFIGURABLE_SHROUD
 		if (TheGlobalData->m_shroudOn)
 #else
 		if (true)
 #endif
-		{	
-			//localPlayerIndex=TheGhostObjectManager->getLocalPlayerIndex();	//always use the first local player set since normally can't change.  Doesn't work with debug "CTRL_SHIFT_SPACE"
-#ifdef DEBUG_FOG_MEMORY
-			//Find indices of all active players
-			Int numPlayers=ThePlayerList->getPlayerCount();
-			Int numNonLocalPlayers=0;
-			Int nonLocalPlayerIndices[MAX_PLAYER_COUNT];
-			for (Int i=0; i<numPlayers; i++)
-			{	Player *player=ThePlayerList->getNthPlayer(i);
-				//if (player->getPlayerType == PLAYER_HUMAN)
-				if (player->getPlayerIndex() != localPlayerIndex)
-					nonLocalPlayerIndices[numNonLocalPlayers++]=player->getPlayerIndex();
+		{
+			if (TheGhostObjectManager->trackAllPlayers())
+			{
+				//Find indices of all active players
+				for (Int i=0; i < numPlayers; i++)
+				{
+					Player *player = ThePlayerList->getNthPlayer(i);
+					if (player->getPlayerTemplate() != NULL && player->getPlayerIndex() != localPlayerIndex)
+						nonLocalPlayerIndices[numNonLocalPlayers++] = player->getPlayerIndex();
+				}
+				//update ghost objects which don't have drawables or objects.
+				TheGhostObjectManager->updateOrphanedObjects(nonLocalPlayerIndices, numNonLocalPlayers);
 			}
-			//update ghostObjects which don't have drawables or objects.
-			TheGhostObjectManager->updateOrphanedObjects(nonLocalPlayerIndices,numNonLocalPlayers);
-#else
-			TheGhostObjectManager->updateOrphanedObjects(NULL,0);
-#endif
+			else
+			{
+				TheGhostObjectManager->updateOrphanedObjects(NULL, 0);
+			}
 		}
 
 
@@ -686,25 +678,36 @@ void GameClient::update( void )
 		while (draw)
 		{	// update() could free the Drawable, so go ahead and grab 'next'
 			Drawable* next = draw->getNextDrawable();
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if ENABLE_CONFIGURABLE_SHROUD
 			if (TheGlobalData->m_shroudOn)
 #else
 			if (true)
 #endif
-			{	//immobile objects need to take snapshots whenever they become fogged
+			{
+				//immobile objects need to take snapshots whenever they become fogged
 				//so need to refresh their status.  We can't rely on external calls
 				//to getShroudStatus() because they are only made for visible on-screen
 				//objects.
 				Object *object=draw->getObject();
 				if (object)
 				{
-	#ifdef DEBUG_FOG_MEMORY
-					Int *playerIndex=nonLocalPlayerIndices;
-					for (i=0; i<numNonLocalPlayers; i++, playerIndex++)
-						object->getShroudedStatus(*playerIndex);
-	#endif
+					if (TheGhostObjectManager->trackAllPlayers())
+					{
+						// TheSuperHackers @info Update the shrouded status for all objects
+						// that own a ghost object for all non local players. This is costly.
+						if (object->hasGhostObject())
+						{
+							Int *playerIndex = nonLocalPlayerIndices;
+							Int *const playerIndexEnd = nonLocalPlayerIndices + numNonLocalPlayers;
+							for (; playerIndex < playerIndexEnd; ++playerIndex)
+							{
+								object->getShroudedStatus(*playerIndex);
+							}
+						}
+					}
+
 					ObjectShroudStatus ss=object->getShroudedStatus(localPlayerIndex);
-					if (ss >= OBJECTSHROUD_FOGGED && draw->getShroudClearFrame()!=0) {
+					if (ss >= OBJECTSHROUD_FOGGED && draw->getShroudClearFrame() != InvalidShroudClearFrame) {
 						UnsignedInt limit = 2*LOGICFRAMES_PER_SECOND;
 						if (object->isEffectivelyDead()) {
 							// extend the time, so we can see the dead plane blow up & crash.
@@ -723,9 +726,9 @@ void GameClient::update( void )
 		}
 	}
 
-#if defined(_INTERNAL) || defined(_DEBUG)
+#if defined(RTS_DEBUG)
 	// need to draw the first frame, then don't draw again until TheGlobalData->m_noDraw
-	if (TheGlobalData->m_noDraw > TheGameLogic->getFrame() && TheGameLogic->getFrame() > 0) 
+	if (TheGlobalData->m_noDraw > TheGameLogic->getFrame() && TheGameLogic->getFrame() > 0)
 	{
 		return;
 	}
@@ -738,7 +741,7 @@ void GameClient::update( void )
 		TheParticleSystemManager->setLocalPlayerIndex(localPlayerIndex);
 //		TheParticleSystemManager->update();
 
-	}  // end if
+	}
 
 	// update the terrain visuals
 	{
@@ -752,10 +755,10 @@ void GameClient::update( void )
 
 	{
 		USE_PERF_TIMER(GameClient_draw)
-			
+
 	// redraw all views, update the GUI
 	//if(TheGameLogic->getFrame() >= 2)
-		
+
 		TheDisplay->DRAW();
 	}
 
@@ -770,10 +773,27 @@ void GameClient::update( void )
 	}
 
 	{
-		// update the in game UI 
+		// update the in game UI
 		TheInGameUI->UPDATE();
 	}
-}  // end update
+}
+
+void GameClient::step()
+{
+	TheDisplay->step();
+}
+
+void GameClient::updateHeadless()
+{
+	// TheSuperHackers @info helmutbuhler 03/05/2025
+	// When we play a replay back in headless mode, we want to skip the update of GameClient
+	// because it's not necessary for CRC checking.
+	// But we do reset the particles. The problem is that particles can be generated during
+	// GameLogic and are only cleaned up during rendering. If we don't clean this up here,
+	// the particles accumulate and slow things down a lot and can even cause a crash on
+	// longer replays.
+	TheParticleSystemManager->reset();
+}
 
 /** -----------------------------------------------------------------------------------------------
  * Call the given callback function for each object contained within the given region.
@@ -807,8 +827,8 @@ void GameClient::updateFakeDrawables(void)
 		const Object *object=draw->getObject();
 
 		if( object && object->isKindOf( KINDOF_FS_FAKE ) )
-		{	
-			Relationship rel=ThePlayerList->getLocalPlayer()->getRelationship(object->getTeam());
+		{
+			Relationship rel = rts::getObservedOrLocalPlayer()->getRelationship(object->getTeam());
 			if (rel == ALLIES || rel == NEUTRAL)
 				draw->setTerrainDecal(TERRAIN_DECAL_SHADOW_TEXTURE);
 			else
@@ -838,16 +858,16 @@ void GameClient::destroyDrawable( Drawable *draw )
 	if( obj )
 	{
 
-		DEBUG_ASSERTCRASH( obj->getDrawable() == draw, ("Object/Drawable pointer mismatch!\n") );
+		DEBUG_ASSERTCRASH( obj->getDrawable() == draw, ("Object/Drawable pointer mismatch!") );
 		obj->friend_bindToDrawable( NULL );
 
-	}  // end if
+	}
 
 	// remove the drawable from our hash of drawables
 	removeDrawableFromLookupTable( draw );
 
 	// free storage
-	draw->deleteInstance();
+	deleteInstance(draw);
 
 }
 
@@ -869,7 +889,7 @@ void GameClient::addDrawableToLookupTable(Drawable *draw )
 
 	m_drawableVector[ newID ] = draw;
 
-}  // end addDrawableToLookupTable
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Remove drawable from lookup table of fast id searching */
@@ -878,14 +898,15 @@ void GameClient::removeDrawableFromLookupTable( Drawable *draw )
 {
 
 	// sanity
-	if( draw == NULL )
+	// TheSuperHackers @fix Mauller/Xezon 24/04/2025 Prevent out of range access to vector lookup table
+	if( draw == NULL || static_cast<size_t>(draw->getID()) >= m_drawableVector.size() )
 		return;
 
 	// remove from table
 //	m_drawableHash.erase( draw->getID() );
 	m_drawableVector[ draw->getID() ] = NULL;
 
-}  // end removeDrawableFromLookupTable
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Load a map into the game interface */
@@ -900,7 +921,7 @@ Bool GameClient::loadMap( AsciiString mapName )
 
 	return TRUE;
 
-}  // end loadMap
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Unload a map from the game interface */
@@ -909,7 +930,7 @@ void GameClient::unloadMap( AsciiString mapName )
 
 	assert( 0 );  // who calls this?
 
-}  // end unloadMap
+}
 
 //-------------------------------------------------------------------------------------------------
 void GameClient::setTimeOfDay( TimeOfDay tod )
@@ -931,7 +952,7 @@ void GameClient::assignSelectedDrawablesToGroup( Int group )
 	Drawable *draw = firstDrawable();
 	while( draw )
 	{
-	
+
 		if( draw->isSelected() && draw->getObject()->isLocallyControlled())
 		{
 			draw->setDrawableGroup( group );
@@ -964,7 +985,7 @@ void GameClient::selectDrawablesInGroup( Int group )
 	while( draw )
 	{
 		int counter = 0;
-	
+
 		const Object *object = draw->getObject();
 
 		if( object && draw->getDrawableGroup() == group && object->isLocallyControlled() && !object->isContained() )
@@ -1016,7 +1037,7 @@ GameMessage::Type GameClient::evaluateContextCommand( Drawable *draw,
 	else
 		return GameMessage::MSG_INVALID;
 
-}  // end evaluateContextCommand
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Get the ray effect data for a drawable */
@@ -1025,7 +1046,7 @@ void GameClient::getRayEffectData( Drawable *draw, RayEffectData *effectData )
 
 	TheRayEffects->getRayEffectData( draw, effectData );
 
-}  // end getRayEffectData
+}
 
 //-------------------------------------------------------------------------------------------------
 /** remove the drawble from the ray effects sytem if present */
@@ -1034,7 +1055,7 @@ void GameClient::removeFromRayEffects( Drawable *draw )
 
 	TheRayEffects->deleteRayEffect( draw );
 
-}  // end removeFromRayEffects
+}
 
 /** frees all shadow resources used by this module - used by Options screen.*/
 void GameClient::releaseShadows(void)
@@ -1078,7 +1099,7 @@ void GameClient::preloadAssets( TimeOfDay timeOfDay )
 			 tTemplate;
 			 tTemplate = tTemplate->friend_getNextTemplate() )
 	{
-			
+
 		// if this isn't one of the objects that can be preloaded ignore it
 		if( tTemplate->isKindOf( KINDOF_PRELOAD ) == FALSE && !TheGlobalData->m_preloadEverything )
 			continue;
@@ -1094,33 +1115,33 @@ void GameClient::preloadAssets( TimeOfDay timeOfDay )
 			// destroy the drawable
 			TheGameClient->destroyDrawable( draw );
 
-		}  // end if
+		}
 
-	}  // end for
+	}
 	GlobalMemoryStatus(&after);
 
-	DEBUG_LOG(("Preloading memory dwAvailPageFile %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailPageFile %d --> %d : %d",
 		before.dwAvailPageFile, after.dwAvailPageFile, before.dwAvailPageFile - after.dwAvailPageFile));
-	DEBUG_LOG(("Preloading memory dwAvailPhys     %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailPhys     %d --> %d : %d",
 		before.dwAvailPhys, after.dwAvailPhys, before.dwAvailPhys - after.dwAvailPhys));
-	DEBUG_LOG(("Preloading memory dwAvailVirtual  %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailVirtual  %d --> %d : %d",
 		before.dwAvailVirtual, after.dwAvailVirtual, before.dwAvailVirtual - after.dwAvailVirtual));
 	/*
-	DEBUG_LOG(("Preloading memory dwLength        %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwLength        %d --> %d : %d",
 		before.dwLength, after.dwLength, before.dwLength - after.dwLength));
-	DEBUG_LOG(("Preloading memory dwMemoryLoad    %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwMemoryLoad    %d --> %d : %d",
 		before.dwMemoryLoad, after.dwMemoryLoad, before.dwMemoryLoad - after.dwMemoryLoad));
-	DEBUG_LOG(("Preloading memory dwTotalPageFile %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwTotalPageFile %d --> %d : %d",
 		before.dwTotalPageFile, after.dwTotalPageFile, before.dwTotalPageFile - after.dwTotalPageFile));
-	DEBUG_LOG(("Preloading memory dwTotalPhys     %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwTotalPhys     %d --> %d : %d",
 		before.dwTotalPhys , after.dwTotalPhys, before.dwTotalPhys - after.dwTotalPhys));
-	DEBUG_LOG(("Preloading memory dwTotalVirtual  %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwTotalVirtual  %d --> %d : %d",
 		before.dwTotalVirtual , after.dwTotalVirtual, before.dwTotalVirtual - after.dwTotalVirtual));
 	*/
 
 	GlobalMemoryStatus(&before);
 	extern std::vector<AsciiString>	debrisModelNamesGlobalHack;
-	Int i=0;
+	size_t i=0;
 	for (; i<debrisModelNamesGlobalHack.size(); ++i)
 	{
 		TheDisplay->preloadModelAssets(debrisModelNamesGlobalHack[i]);
@@ -1128,11 +1149,11 @@ void GameClient::preloadAssets( TimeOfDay timeOfDay )
 	GlobalMemoryStatus(&after);
 	debrisModelNamesGlobalHack.clear();
 
-	DEBUG_LOG(("Preloading memory dwAvailPageFile %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailPageFile %d --> %d : %d",
 		before.dwAvailPageFile, after.dwAvailPageFile, before.dwAvailPageFile - after.dwAvailPageFile));
-	DEBUG_LOG(("Preloading memory dwAvailPhys     %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailPhys     %d --> %d : %d",
 		before.dwAvailPhys, after.dwAvailPhys, before.dwAvailPhys - after.dwAvailPhys));
-	DEBUG_LOG(("Preloading memory dwAvailVirtual  %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailVirtual  %d --> %d : %d",
 		before.dwAvailVirtual, after.dwAvailVirtual, before.dwAvailVirtual - after.dwAvailVirtual));
 
 	TheControlBar->preloadAssets( timeOfDay );
@@ -1141,14 +1162,14 @@ void GameClient::preloadAssets( TimeOfDay timeOfDay )
 	TheParticleSystemManager->preloadAssets( timeOfDay );
 	GlobalMemoryStatus(&after);
 
-	DEBUG_LOG(("Preloading memory dwAvailPageFile %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailPageFile %d --> %d : %d",
 		before.dwAvailPageFile, after.dwAvailPageFile, before.dwAvailPageFile - after.dwAvailPageFile));
-	DEBUG_LOG(("Preloading memory dwAvailPhys     %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailPhys     %d --> %d : %d",
 		before.dwAvailPhys, after.dwAvailPhys, before.dwAvailPhys - after.dwAvailPhys));
-	DEBUG_LOG(("Preloading memory dwAvailVirtual  %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailVirtual  %d --> %d : %d",
 		before.dwAvailVirtual, after.dwAvailVirtual, before.dwAvailVirtual - after.dwAvailVirtual));
 
-	const char *textureNames[] = {
+	const char *const textureNames[] = {
 		"ptspruce01.tga",
 		"exrktflame.tga",
 		"cvlimo3_d2.tga",
@@ -1195,17 +1216,17 @@ void GameClient::preloadAssets( TimeOfDay timeOfDay )
 		TheDisplay->preloadTextureAssets(textureNames[i]);
 	GlobalMemoryStatus(&after);
 
-	DEBUG_LOG(("Preloading memory dwAvailPageFile %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailPageFile %d --> %d : %d",
 		before.dwAvailPageFile, after.dwAvailPageFile, before.dwAvailPageFile - after.dwAvailPageFile));
-	DEBUG_LOG(("Preloading memory dwAvailPhys     %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailPhys     %d --> %d : %d",
 		before.dwAvailPhys, after.dwAvailPhys, before.dwAvailPhys - after.dwAvailPhys));
-	DEBUG_LOG(("Preloading memory dwAvailVirtual  %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailVirtual  %d --> %d : %d",
 		before.dwAvailVirtual, after.dwAvailVirtual, before.dwAvailVirtual - after.dwAvailVirtual));
 
 //	preloadTextureNamesGlobalHack2 = preloadTextureNamesGlobalHack;
 //	preloadTextureNamesGlobalHack.clear();
 
-}  // end preloadAssets
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given a string name, find the drawable TOC entry (if any) associated with it */
@@ -1219,7 +1240,7 @@ GameClient::DrawableTOCEntry *GameClient::findTOCEntryByName( AsciiString name )
 
 	return NULL;
 
-}  // end findTOCEntryByname
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given a drawable TOC identifier, find the drawable TOC if any */
@@ -1233,7 +1254,7 @@ GameClient::DrawableTOCEntry *GameClient::findTOCEntryById( UnsignedShort id )
 
 	return NULL;
 
-}  // end findTOCEntryById
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Add an drawable TOC entry */
@@ -1246,7 +1267,7 @@ void GameClient::addTOCEntry( AsciiString name, UnsignedShort id )
 	tocEntry.id = id;
 	m_drawableTOC.push_back( tocEntry );
 
-}  // end addTOCEntry
+}
 
 // ------------------------------------------------------------------------------------------------
 static Bool shouldSaveDrawable(const Drawable* draw)
@@ -1259,7 +1280,7 @@ static Bool shouldSaveDrawable(const Drawable* draw)
 		}
 		else
 		{
-			DEBUG_CRASH(("You should not ever set DRAWABLE_STATUS_NO_SAVE for a Drawable with an object. (%s)\n",draw->getTemplate()->getName().str()));
+			DEBUG_CRASH(("You should not ever set DRAWABLE_STATUS_NO_SAVE for a Drawable with an object. (%s)",draw->getTemplate()->getName().str()));
 		}
 	}
 	return true;
@@ -1297,11 +1318,11 @@ void GameClient::xferDrawableTOC( Xfer *xfer )
 			// if is this drawable name already in the TOC, skip it
 			if( findTOCEntryByName( templateName ) != NULL )
 				continue;
-			
+
 			// add this entry to the TOC
 			addTOCEntry( draw->getTemplate()->getName(), ++tocCount );
 
-		}  // end for obj
+		}
 
 		// xfer entries in the TOC
 		xfer->xferUnsignedInt( &tocCount );
@@ -1321,9 +1342,9 @@ void GameClient::xferDrawableTOC( Xfer *xfer )
 			// xfer the paired id
 			xfer->xferUnsignedShort( &tocEntry->id );
 
-		}  // end for
+		}
 
-	}  // end if
+	}
 	else
 	{
 		AsciiString templateName;
@@ -1341,15 +1362,15 @@ void GameClient::xferDrawableTOC( Xfer *xfer )
 
 			// read the id
 			xfer->xferUnsignedShort( &id );
-			
+
 			// add this to the TOC
 			addTOCEntry( templateName, id );
-					
-		}  // end for i
 
-	}  // end else
+		}
 
-}  // end xferDrawableTOC
+	}
+
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method for Game Client
@@ -1375,7 +1396,7 @@ void GameClient::xfer( Xfer *xfer )
 	// note that we do not do the id counter here, we did it in the game state block because
 	// it's important to do that part very early in the load process
 	//
-	// !!!DON'T DO THIS!!! ----> xfer->xferDrawableID( &m_nextDrawableID ); <---- !!!DON'T DO THIS!!! 
+	// !!!DON'T DO THIS!!! ----> xfer->xferDrawableID( &m_nextDrawableID ); <---- !!!DON'T DO THIS!!!
 
 	//
 	// xfer a table of contents that contain thing template and indentifier pairs.  this
@@ -1400,7 +1421,7 @@ void GameClient::xfer( Xfer *xfer )
 	ObjectID objectID;
 	if( xfer->getXferMode() == XFER_SAVE )
 	{
-	
+
 		// iterate all drawables
 		for( draw = getDrawableList(); draw; draw = draw->getNextDrawable() )
 		{
@@ -1412,10 +1433,10 @@ void GameClient::xfer( Xfer *xfer )
 			if( tocEntry == NULL )
 			{
 
-				DEBUG_CRASH(( "GameClient::xfer - Drawable TOC entry not found for '%s'\n", draw->getTemplate()->getName().str() ));
+				DEBUG_CRASH(( "GameClient::xfer - Drawable TOC entry not found for '%s'", draw->getTemplate()->getName().str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
 			// xfer toc id entry
 			xfer->xferUnsignedShort( &tocEntry->id );
@@ -1433,9 +1454,9 @@ void GameClient::xfer( Xfer *xfer )
 			// end data block
 			xfer->endBlock();
 
-		}  // end for, draw
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 		UnsignedShort tocID;
@@ -1454,10 +1475,10 @@ void GameClient::xfer( Xfer *xfer )
 			if( tocEntry == NULL )
 			{
 
-				DEBUG_CRASH(( "GameClient::xfer - No TOC entry match for id '%d'\n", tocID ));
+				DEBUG_CRASH(( "GameClient::xfer - No TOC entry match for id '%d'", tocID ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
 			// read data block size
 			dataSize = xfer->beginBlock();
@@ -1467,12 +1488,12 @@ void GameClient::xfer( Xfer *xfer )
 			if( thingTemplate == NULL )
 			{
 
-				DEBUG_CRASH(( "GameClient::xfer - Unrecognized thing template '%s', skipping.  ENGINEERS - Are you *sure* it's OK to be ignoring this object from the save file???  Think hard about it!\n",
+				DEBUG_CRASH(( "GameClient::xfer - Unrecognized thing template '%s', skipping.  ENGINEERS - Are you *sure* it's OK to be ignoring this object from the save file???  Think hard about it!",
 											tocEntry->name.str() ));
 				xfer->skip( dataSize );
 				continue;
 
-			}  // end if
+			}
 
 			// read the object ID this drawable is attached to (if any)
 			xfer->xferObjectID( &objectID );
@@ -1489,22 +1510,22 @@ void GameClient::xfer( Xfer *xfer )
 				if( object == NULL )
 				{
 
-					DEBUG_CRASH(( "GameClient::xfer - Cannot find object '%d' that is supposed to be attached to this drawable '%s'\n",
+					DEBUG_CRASH(( "GameClient::xfer - Cannot find object '%d' that is supposed to be attached to this drawable '%s'",
 												objectID, thingTemplate->getName().str() ));
 					throw SC_INVALID_DATA;
 
-				}  // end if
+				}
 
 				// get the drawable from the object
 				draw = object->getDrawable();
 				if( draw == NULL )
 				{
 
-					DEBUG_CRASH(( "GameClient::xfer - There is no drawable attached to the object '%s' (%d) and there should be\n",
+					DEBUG_CRASH(( "GameClient::xfer - There is no drawable attached to the object '%s' (%d) and there should be",
 												object->getTemplate()->getName().str(), object->getID() ));
 					throw SC_INVALID_DATA;
 
-				}  // end if
+				}
 
 				// srj sez: some objects (eg, diguised bombtrucks) may have an "abnormal" drawable. so check.
 				//
@@ -1521,7 +1542,7 @@ void GameClient::xfer( Xfer *xfer )
 					TheGameLogic->bindObjectAndDrawable(object, draw);
 				}
 
-			}  // end if
+			}
 			else
 			{
 
@@ -1530,18 +1551,18 @@ void GameClient::xfer( Xfer *xfer )
 				// whole brand new drawable now
 				//
 				draw = TheThingFactory->newDrawable( thingTemplate );
-				
+
 				// sanity
 				if( draw == NULL )
 				{
 
-					DEBUG_CRASH(( "GameClient::xfer - Unable to create drawable for '%s'\n",
+					DEBUG_CRASH(( "GameClient::xfer - Unable to create drawable for '%s'",
 												thingTemplate->getName().str() ));
 					throw SC_INVALID_DATA;
 
-				}  // end if
+				}
 
-			}  // end else
+			}
 
 			// xfer the drawable data
 			xfer->xferSnapshot( draw );
@@ -1549,10 +1570,10 @@ void GameClient::xfer( Xfer *xfer )
 			// end block (not necessary since this is a no-op but symettrically nice)
 			xfer->endBlock();
 
-		}  // end for, i
+		}
 
-	}  // end else, load
-	
+	}
+
 	// xfer the in-game mission briefing history list
 	if (version >= 2)
 	{
@@ -1561,11 +1582,11 @@ void GameClient::xfer( Xfer *xfer )
 			BriefingList *bList = GetBriefingTextList();
 			Int numEntries = bList->size();
 			xfer->xferInt(&numEntries);
-			DEBUG_LOG(("Saving %d briefing lines\n", numEntries));
+			DEBUG_LOG(("Saving %d briefing lines", numEntries));
 			for (BriefingList::const_iterator bIt = bList->begin(); bIt != bList->end(); ++bIt)
 			{
 				AsciiString tempStr = *bIt;
-				DEBUG_LOG(("'%s'\n", tempStr.str()));
+				DEBUG_LOG(("'%s'", tempStr.str()));
 				xfer->xferAsciiString(&tempStr);
 			}
 		}
@@ -1573,19 +1594,19 @@ void GameClient::xfer( Xfer *xfer )
 		{
 			Int numEntries = 0;
 			xfer->xferInt(&numEntries);
-			DEBUG_LOG(("Loading %d briefing lines\n", numEntries));
+			DEBUG_LOG(("Loading %d briefing lines", numEntries));
 			UpdateDiplomacyBriefingText(AsciiString::TheEmptyString, TRUE); // clear out briefing list first
 			while (numEntries-- > 0)
 			{
 				AsciiString tempStr;
 				xfer->xferAsciiString(&tempStr);
-				DEBUG_LOG(("'%s'\n", tempStr.str()));
+				DEBUG_LOG(("'%s'", tempStr.str()));
 				UpdateDiplomacyBriefingText(tempStr, FALSE);
 			}
 		}
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1603,7 +1624,7 @@ void GameClient::loadPostProcess( void )
 		if( draw->getID() >= m_nextDrawableID )
 			m_nextDrawableID = (DrawableID)((UnsignedInt)draw->getID() + 1);
 
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -1611,4 +1632,4 @@ void GameClient::loadPostProcess( void )
 void GameClient::crc( Xfer *xfer )
 {
 
-}  // end crc
+}

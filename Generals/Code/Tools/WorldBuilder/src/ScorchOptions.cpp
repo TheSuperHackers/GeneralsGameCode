@@ -63,10 +63,10 @@ END_MESSAGE_MAP()
 
 MapObject *ScorchOptions::getSingleSelectedScorch(void)
 {
-	MapObject *theMapObj = NULL; 
+	MapObject *theMapObj = NULL;
 //	Bool found = false;
 	Int selCount=0;
-	MapObject *pMapObj; 
+	MapObject *pMapObj;
 	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
 		if (pMapObj->isSelected()) {
 			if (pMapObj->isScorch()) {
@@ -82,10 +82,10 @@ MapObject *ScorchOptions::getSingleSelectedScorch(void)
 	return(NULL);
 }
 
-void ScorchOptions::updateTheUI(void) 
+void ScorchOptions::updateTheUI(void)
 {
 	m_updating = true;
-	MapObject *theMapObj = getSingleSelectedScorch(); 
+	MapObject *theMapObj = getSingleSelectedScorch();
 	CString str;
 	CWnd *pEdit;
 	if (theMapObj) {
@@ -102,7 +102,7 @@ void ScorchOptions::updateTheUI(void)
 	m_updating = false;
 }
 
-void ScorchOptions::update(void) 
+void ScorchOptions::update(void)
 {
 	if (m_staticThis) {
 		m_staticThis->updateTheUI();
@@ -112,11 +112,11 @@ void ScorchOptions::update(void)
 /////////////////////////////////////////////////////////////////////////////
 // ScorchOptions message handlers
 
-BOOL ScorchOptions::OnInitDialog() 
+BOOL ScorchOptions::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	m_staticThis = this;
-	
+
 
 	m_radiusPopup.SetupPopSliderButton(this, IDC_SIZE_POPUP, this);
 
@@ -138,7 +138,7 @@ BOOL ScorchOptions::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void ScorchOptions::OnChangeScorchtype() 
+void ScorchOptions::OnChangeScorchtype()
 {
 	if (m_updating)
 		return;
@@ -148,7 +148,7 @@ void ScorchOptions::OnChangeScorchtype()
 	changeScorch();
 }
 
-void ScorchOptions::OnChangeSizeEdit() 
+void ScorchOptions::OnChangeSizeEdit()
 {
 	if (m_updating)
 		return;
@@ -176,7 +176,7 @@ void ScorchOptions::GetPopSliderInfo(const long sliderID, long *pMin, long *pMax
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 void ScorchOptions::PopSliderChanged(const long sliderID, long theVal)
@@ -197,7 +197,7 @@ void ScorchOptions::PopSliderChanged(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 	m_updating = false;
 }
 
@@ -212,7 +212,7 @@ void ScorchOptions::PopSliderFinished(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 
 }
 
@@ -222,7 +222,7 @@ void ScorchOptions::changeScorch(void)
 
 	Dict newDict;
 	newDict.setInt(TheKey_scorchType, (Int)m_scorchtype);
-	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	DictItemUndoable *pUndo = new DictItemUndoable(getAllSelectedDictsData(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
@@ -237,7 +237,7 @@ void ScorchOptions::changeSize(void)
 
 	Dict newDict;
 	newDict.setReal(TheKey_objectRadius, m_scorchsize);
-	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	DictItemUndoable *pUndo = new DictItemUndoable(getAllSelectedDictsData(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
@@ -256,4 +256,13 @@ void ScorchOptions::getAllSelectedDicts(void)
 		}
 		m_allSelectedDicts.push_back(pMapObj->getProperties());
 	}
+}
+
+Dict** ScorchOptions::getAllSelectedDictsData()
+{
+#if defined(USING_STLPORT) || __cplusplus < 201103L
+	return !m_allSelectedDicts.empty() ? &m_allSelectedDicts.front() : NULL;
+#else
+	return m_allSelectedDicts.data();
+#endif
 }

@@ -28,13 +28,13 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/CRCDebug.h"
 #include "Common/Player.h"
 #include "Common/RandomValue.h"
 #include "Common/ThingTemplate.h"
-#include "Common/Xfer.h" 
+#include "Common/Xfer.h"
 
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/Locomotor.h"
@@ -50,17 +50,12 @@
 const Real NO_START_Z = 1e10;
 
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 // PRIVATE ////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
-ParachuteContainModuleData::ParachuteContainModuleData() : 
+ParachuteContainModuleData::ParachuteContainModuleData() :
 	m_pitchRateMax(0),
 	m_rollRateMax(0),
 	m_lowAltitudeDamping(0.2f),
@@ -71,11 +66,11 @@ ParachuteContainModuleData::ParachuteContainModuleData() :
 }
 
 //-------------------------------------------------------------------------------------------------
-void ParachuteContainModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void ParachuteContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   OpenContainModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "PitchRateMax",	INI::parseAngularVelocityReal,		NULL, offsetof( ParachuteContainModuleData, m_pitchRateMax ) },
 		{ "RollRateMax",	INI::parseAngularVelocityReal,		NULL, offsetof( ParachuteContainModuleData, m_rollRateMax ) },
@@ -92,7 +87,7 @@ void ParachuteContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ParachuteContain::ParachuteContain( Thing *thing, const ModuleData *moduleData ) : 
+ParachuteContain::ParachuteContain( Thing *thing, const ModuleData *moduleData ) :
 								 OpenContain( thing, moduleData )
 {
 	m_opened = false;
@@ -104,9 +99,9 @@ ParachuteContain::ParachuteContain( Thing *thing, const ModuleData *moduleData )
 	m_rollRate = 0;
 	m_isLandingOverrideSet = FALSE;
 	m_startZ = NO_START_Z;
-	
+
 	//Added By Sadullah Nader
-	//Initializations 
+	//Initializations
 	m_landingOverride.zero();
 	m_paraAttachBone.zero();
 	m_paraAttachOffset.zero();
@@ -136,7 +131,7 @@ ParachuteContain::~ParachuteContain( void )
 
 //-------------------------------------------------------------------------------------------------
 /**
-	this is called whenever a drawable is bound to the object. 
+	this is called whenever a drawable is bound to the object.
 	drawable is NOT guaranteed to be non-null.
 */
 void ParachuteContain::onDrawableBoundToObject()
@@ -162,23 +157,23 @@ void ParachuteContain::updateBonePositions()
 	if (m_needToUpdateParaBones)
 	{
 		m_needToUpdateParaBones = false;	// yeah, even if not found.
-		
+
 		Drawable* parachuteDraw = getObject()->getDrawable();
 		if (parachuteDraw)
 		{
 			if (parachuteDraw->getPristineBonePositions( "PARA_COG", 0, &m_paraSwayBone, NULL, 1) != 1)
 			{
-				DEBUG_CRASH(("PARA_COG not found\n"));
+				DEBUG_CRASH(("PARA_COG not found"));
 				m_paraSwayBone.zero();
 			}
 
 			if (parachuteDraw->getPristineBonePositions( "PARA_ATTCH", 0, &m_paraAttachBone, NULL, 1 ) != 1)
 			{
-				DEBUG_CRASH(("PARA_ATTCH not found\n"));
+				DEBUG_CRASH(("PARA_ATTCH not found"));
 				m_paraAttachBone.zero();
 			}
 		}
-		//DEBUG_LOG(("updating para bone positions %d...\n",TheGameLogic->getFrame()));
+		//DEBUG_LOG(("updating para bone positions %d...",TheGameLogic->getFrame()));
 	}
 
 	if (m_needToUpdateRiderBones)
@@ -192,13 +187,13 @@ void ParachuteContain::updateBonePositions()
 		{
 			if (riderDraw->getPristineBonePositions( "PARA_MAN", 0, &m_riderAttachBone, NULL, 1) != 1)
 			{
-				//DEBUG_LOG(("*** No parachute-attach bone... using object height!\n"));
+				//DEBUG_LOG(("*** No parachute-attach bone... using object height!"));
 				m_riderAttachBone.zero();
 				m_riderAttachBone.z += riderDraw->getDrawableGeometryInfo().getMaxHeightAbovePosition();
 			}
 		}
 
-		//DEBUG_LOG(("updating rider bone positions %d...\n",TheGameLogic->getFrame()));
+		//DEBUG_LOG(("updating rider bone positions %d...",TheGameLogic->getFrame()));
 	}
 }
 
@@ -239,8 +234,8 @@ void ParachuteContain::updateOffsetsFromBones()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/** 
-	can this container contain this kind of object? 
+/**
+	can this container contain this kind of object?
 	and, if checkCapacity is TRUE, does this container have enough space left to hold the given unit?
 */
 Bool ParachuteContain::isValidContainerFor(const Object* rider, Bool checkCapacity) const
@@ -299,11 +294,11 @@ UpdateSleepTime ParachuteContain::update( void )
 	Object* rider = (getContainCount() > 0) ? getContainList().front() : NULL;
 
 	if (m_startZ == NO_START_Z)	{
-		m_startZ = parachute->getPosition()->z;	
+		m_startZ = parachute->getPosition()->z;
 		Real groundHeight = TheTerrainLogic->getGroundHeight(parachute->getPosition()->x, parachute->getPosition()->y);
 		if (m_startZ-groundHeight < 2*d->m_paraOpenDist) {
 			// Oh dear - we ejected too close to the ground, and there isn't enough
-			// room to open the chute.  Well, since it's only a game, we'll fudge 
+			// room to open the chute.  Well, since it's only a game, we'll fudge
 			// a little so that the pilot doesn't slam into the ground & stick.
 			m_startZ = groundHeight+2*d->m_paraOpenDist;
 		}
@@ -326,11 +321,11 @@ UpdateSleepTime ParachuteContain::update( void )
 				soundToPlay.setObjectID( rider->getID() );
 				TheAudio->addAudioEvent( &soundToPlay );
 			}
-			
+
 
 			// When a parachute opens, it should look for a good place to land.  This could be explicitly set
 			// by a DeliverPayload, otherwise any place clear is good.
-			if( parachuteAI ) 
+			if( parachuteAI )
 			{
 				Coord3D target = *parachute->getPosition();
 				if( m_isLandingOverrideSet )
@@ -345,7 +340,7 @@ UpdateSleepTime ParachuteContain::update( void )
 					fpOptions.minRadius = 0.0f;
 					fpOptions.maxRadius = 100.0f;
 					fpOptions.relationshipObject = NULL;
-					fpOptions.flags = FPF_NONE; 
+					fpOptions.flags = FPF_NONE;
 					ThePartitionManager->findPositionAround( &target, &fpOptions, &target );
 				}
 				parachuteAI->aiMoveToPosition( &target, CMD_FROM_AI );
@@ -374,11 +369,11 @@ UpdateSleepTime ParachuteContain::update( void )
 	}
 
 	AIUpdateInterface* ai = parachute->getAIUpdateInterface();
-	if (ai && !parachute->isEffectivelyDead()) 
+	if (ai && !parachute->isEffectivelyDead())
 	{
 		ai->chooseLocomotorSet(m_opened ? LOCOMOTORSET_NORMAL : LOCOMOTORSET_FREEFALL);
 
-		Locomotor* locomotor = ai->getCurLocomotor(); 
+		Locomotor* locomotor = ai->getCurLocomotor();
 		if (locomotor)
 		{
 			// damp the swaying a bunch when we get close, so that things land vertically (or nearly so)
@@ -455,7 +450,7 @@ UpdateSleepTime ParachuteContain::update( void )
 //-------------------------------------------------------------------------------------------------
 void ParachuteContain::onContaining( Object *rider, Bool wasSelected )
 {
-	OpenContain::onContaining( rider, wasSelected );	
+	OpenContain::onContaining( rider, wasSelected );
 
 	// objects inside a transport are held
 	rider->setDisabled( DISABLED_HELD );
@@ -472,7 +467,7 @@ void ParachuteContain::onContaining( Object *rider, Bool wasSelected )
 //-------------------------------------------------------------------------------------------------
 void ParachuteContain::onRemoving( Object *rider )
 {
-	OpenContain::onRemoving(rider);	
+	OpenContain::onRemoving(rider);
 
 	const ParachuteContainModuleData* d = getParachuteContainModuleData();
 
@@ -491,7 +486,7 @@ void ParachuteContain::onRemoving( Object *rider )
 	rider->clearModelConditionFlags(MAKE_MODELCONDITION_MASK2(MODELCONDITION_FREEFALL, MODELCONDITION_PARACHUTING));
 	m_needToUpdateRiderBones = true;
 
-	// temporarily mark the guy as being allowed to fall 
+	// temporarily mark the guy as being allowed to fall
 	// (overriding his locomotor's stick-to-ground attribute).
 	// this will be reset (by PhysicsBehavior) when he touches the ground.
 	PhysicsBehavior* physics = rider->getPhysics();
@@ -530,7 +525,7 @@ void ParachuteContain::onRemoving( Object *rider )
 					{
 						exitInterface->exitObjectViaDoor(rider, DOOR_1);
 						hasRallyPoint = true;
-					}			
+					}
 				}
 			}
 
@@ -538,7 +533,7 @@ void ParachuteContain::onRemoving( Object *rider )
 				riderAI->aiIdle(CMD_FROM_AI); // become idle.
 		}
 	}
-	
+
 	// if we land in the water, we die. alas.
 	const Coord3D* riderPos = rider->getPosition();
 	Real waterZ, terrainZ;
@@ -554,19 +549,19 @@ void ParachuteContain::onRemoving( Object *rider )
 		damageInfo.in.m_amount = HUGE_DAMAGE_AMOUNT;
 		rider->attemptDamage( &damageInfo );
 	}
-	
+
 	// Kill if we landed on impassable ground
 	Int cellX = REAL_TO_INT( rider->getPosition()->x / PATHFIND_CELL_SIZE );
 	Int cellY = REAL_TO_INT( rider->getPosition()->y / PATHFIND_CELL_SIZE );
-	
+
 	PathfindCell* cell = TheAI->pathfinder()->getCell( rider->getLayer(), cellX, cellY );
 	PathfindCell::CellType cellType = cell ? cell->getType() : PathfindCell::CELL_IMPASSABLE;
-	
-	// If we land outside the map from a faulty parachute, we die too.  
+
+	// If we land outside the map from a faulty parachute, we die too.
 	// Otherwise we exist outside the PartitionManger like a cheater.
-	if( rider->isOffMap() 
-    || (cellType == PathfindCell::CELL_CLIFF) 
-    || (cellType == PathfindCell::CELL_WATER) 
+	if( rider->isOffMap()
+    || (cellType == PathfindCell::CELL_CLIFF)
+    || (cellType == PathfindCell::CELL_WATER)
     || (cellType == PathfindCell::CELL_IMPASSABLE) )
 	{
 		// The Paradrop command was legal, the parachute destination was legal, but the parachute
@@ -575,7 +570,7 @@ void ParachuteContain::onRemoving( Object *rider )
 	}
 
   // Note: for future enhancement of this feature, we should test the object against the cell type he is on,
-  // using obj->getAI()->hasLocomotorForSurface( __ ). We cshould not assume here that the parachutist can not 
+  // using obj->getAI()->hasLocomotorForSurface( __ ). We cshould not assume here that the parachutist can not
   // find happiness on cliffs or water or whatever.
 
 
@@ -694,7 +689,7 @@ void ParachuteContain::onCollide( Object *other, const Coord3D *loc, const Coord
 		// kill it, so that the chute's SlowDeath will trigger!
 		getObject()->kill();
 	}
-} 
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -705,7 +700,7 @@ void ParachuteContain::crc( Xfer *xfer )
 	// extend base class
 	OpenContain::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -740,7 +735,7 @@ void ParachuteContain::xfer( Xfer *xfer )
 
 	// is landing override set
 	xfer->xferBool( &m_isLandingOverrideSet );
-	
+
 	// landing override
 	xfer->xferCoord3D( &m_landingOverride );
 
@@ -777,7 +772,7 @@ void ParachuteContain::xfer( Xfer *xfer )
 	// opened
 	xfer->xferBool( &m_opened );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -788,4 +783,4 @@ void ParachuteContain::loadPostProcess( void )
 	// extend base class
 	OpenContain::loadPostProcess();
 
-}  // end loadPostProcess
+}

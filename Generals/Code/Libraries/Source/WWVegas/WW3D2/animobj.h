@@ -26,9 +26,9 @@
  *                                                                                             *
  *                       Author:: Greg_h                                                       *
  *                                                                                             *
- *                     $Modtime:: 6/26/01 7:01p                                               $*
+ *                     $Modtime:: 12/10/01 11:18a                                             $*
  *                                                                                             *
- *                    $Revision:: 3                                                           $*
+ *                    $Revision:: 4                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -38,12 +38,7 @@
  *   Animatable3DObjClass::Combo_Update -- Animation update for a combination of anims         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef ANIMOBJ_H
-#define ANIMOBJ_H
 
 #include "always.h"
 #include "composite.h"
@@ -97,7 +92,7 @@ public:
 	virtual void					Set_Animation_Frame_Rate_Multiplier(float multiplier);	// 020607 srj -- added
 
 	virtual HAnimClass *	Peek_Animation_And_Info(float& frame, int& numFrames, int& mode, float& mult);	// 020710 srj -- added
-	
+
 	virtual HAnimClass *			Peek_Animation( void );
 	virtual bool					Is_Animation_Complete( void ) const;
 	virtual int						Get_Num_Bones(void);
@@ -110,10 +105,10 @@ public:
 	virtual bool					Is_Bone_Captured(int boneindex) const;
 	virtual void					Control_Bone(int bindex,const Matrix3D & objtm,bool world_space_translation = false);
 	virtual const HTreeClass *	Get_HTree(void) const { return HTree; }
-	
+
 	//
 	//	Simple bone evaluation methods for when the caller doesn't want
-	// to update the heirarchy, but needs to know the transform of
+	// to update the hierarchy, but needs to know the transform of
 	// a bone at a given frame.
 	//
 	virtual bool					Simple_Evaluate_Bone(int boneindex, Matrix3D *tm) const;
@@ -121,7 +116,6 @@ public:
 
 	// (gth) TESTING DYNAMICALLY SWAPPING SKELETONS!
 	virtual void					Set_HTree(HTreeClass * htree);
-
 	///Generals change so we can set sub-object transforms directly without having them revert to base pose
 	///when marked dirty.  DON'T USE THIS UNLESS YOU HAVE A GOOD REASON! -MW
 	void							Friend_Set_Hierarchy_Valid(bool onoff) const  	{ IsTreeValid = onoff; }
@@ -154,14 +148,14 @@ protected:
 	void								Combo_Update(	const Matrix3D & root,
 															HAnimComboClass *anim);
 
-	// flag to kep track of whether the hierarchy tree transforms are currently valid
+	// flag to keep track of whether the hierarchy tree transforms are currently valid
 	bool								Is_Hierarchy_Valid(void) const				{ return IsTreeValid; }
 	void								Set_Hierarchy_Valid(bool onoff) const  	{ IsTreeValid = onoff; }
 
-	// Progress anims for single anim (loop and once)
+	// Progress animations for single anim (loop and once)
 	void								Single_Anim_Progress( void );
 
-	// Release any anims
+	// Release any animations
 	void								Release( void );
 
 protected:
@@ -171,7 +165,7 @@ protected:
 
 	// Hierarchy Tree
 	HTreeClass *					HTree;
-	
+
 	// Animation state for the next frame.  When we add more flexible motion
 	// compositing, add a new state and its associated data to the union below
 	enum {
@@ -189,19 +183,22 @@ protected:
     struct {
 			HAnimClass *			Motion;
 			float		  				Frame;
-			int								AnimMode;
-			mutable int				LastSyncTime;
+			float						PrevFrame;
+			int						AnimMode;
+			int								LastSyncTime;
 			float							animDirection;
 			float							frameRateMultiplier;	// 020607 srj -- added
-		} ModeAnim;				  
+		} ModeAnim;
 
 		// CurMotionMode == DOUBLE_ANIM
 		struct {
-			
+
 			HAnimClass *			Motion0;
 			HAnimClass *			Motion1;
 			float		  				Frame0;
 			float		  				Frame1;
+			float						PrevFrame0;
+			float						PrevFrame1;
 			float		  				Percentage;
 		} ModeInterp;
 
@@ -209,9 +206,9 @@ protected:
 		struct {
 			HAnimComboClass *		AnimCombo;
 		} ModeCombo;
-  
+
 	};
-	
+
 	friend class SkinClass;
 };
 
@@ -260,9 +257,11 @@ inline void Animatable3DObjClass::Anim_Update(const Matrix3D & root,HAnimClass *
 	** Apply motion to the base pose
 	*/
 	if ((motion) && (HTree)) {
-		if (ModeAnim.Motion->Class_ID() == HAnimClass::CLASSID_HRAWANIM)
-			HTree->Anim_Update(Transform,(HRawAnimClass*)ModeAnim.Motion,ModeAnim.Frame);
+#if !WW3D_ENABLE_RAW_ANIM_INTERPOLATION
+		if (motion->Class_ID() == HAnimClass::CLASSID_HRAWANIM)
+			HTree->Anim_Update_Without_Interpolation(root,(HRawAnimClass*)motion,frame);
 		else
+#endif
 			HTree->Anim_Update(root,motion,frame);
 	}
 	Set_Hierarchy_Valid(true);
@@ -320,7 +319,3 @@ inline void Animatable3DObjClass::Combo_Update( const Matrix3D & root, HAnimComb
 	}
 	Set_Hierarchy_Valid(true);
 }
-
-
-
-#endif //ANIMOBJ_H

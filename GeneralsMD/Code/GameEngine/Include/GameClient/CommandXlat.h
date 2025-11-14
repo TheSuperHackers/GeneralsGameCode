@@ -27,12 +27,9 @@
 
 #pragma once
 
-#ifndef _H_CommandXlat
-#define _H_CommandXlat
-
 #include "GameClient/InGameUI.h"
 
-enum GUICommandType;
+enum GUICommandType CPP_11(: Int);
 
 //-----------------------------------------------------------------------------
 class CommandTranslator : public GameMessageTranslator
@@ -58,7 +55,7 @@ private:
 	ICoord2D m_mouseRightDragLift;			// the location of a possible mouse drag end
 	UnsignedInt m_mouseRightDown;	// when the mouse down happened
 	UnsignedInt m_mouseRightUp;		// when the mouse up happened
-  
+
 	GameMessage::Type createMoveToLocationMessage( Drawable *draw, const Coord3D *dest, CommandEvaluateType commandType );
 	GameMessage::Type createAttackMessage( Drawable *draw, Drawable *other, CommandEvaluateType commandType );
 	GameMessage::Type createEnterMessage( Drawable *enter, CommandEvaluateType commandType );
@@ -72,7 +69,7 @@ private:
 };
 
 
-enum FilterTypes
+enum FilterTypes CPP_11(: Int)
 {
 	FT_NULL_FILTER=0,
 	// The following are screen filter shaders, that modify the rendered viewport after it is drawn.
@@ -83,7 +80,7 @@ enum FilterTypes
 	FT_MAX
 };
 
-enum FilterModes
+enum FilterModes CPP_11(: Int)
 {
 	FM_NULL_MODE = 0,
 
@@ -96,7 +93,7 @@ enum FilterModes
 	FM_VIEW_CROSSFADE_CIRCLE,	// Fades from previous to current view using expanding circle.
 	FM_VIEW_CROSSFADE_FB_MASK,	// Fades from previous to current using mask stored in framebuffer alpha.
 
-	// These apply to FT_VIEW_MOTION_BLUR_FILTER 
+	// These apply to FT_VIEW_MOTION_BLUR_FILTER
 	FM_VIEW_MB_IN_AND_OUT_ALPHA, // Motion blur filter in and out alpha blur
 	FM_VIEW_MB_IN_AND_OUT_SATURATE, // Motion blur filter in and out saturated blur
 	FM_VIEW_MB_IN_ALPHA, // Motion blur filter in alpha blur
@@ -106,7 +103,7 @@ enum FilterModes
 	FM_VIEW_MB_END_PAN_ALPHA, // Moton blur on screen pan (for camera tracks object mode)
 
 	FM_VIEW_DEFAULT,	//Default filter that's enabled when all others are off.
-	
+
 	// NOTE: This has to be the last entry in this enum.
 	// Add new entries before this one.  jba.
 	FM_VIEW_MB_PAN_ALPHA, // Moton blur on screen pan (for camera tracks object mode)
@@ -125,5 +122,3 @@ public:
 };
 
 extern void pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type msgType, PickAndPlayInfo *info = NULL );
-
-#endif

@@ -24,12 +24,12 @@
 
 // FILE: GlobalLanguage.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Aug 2002
@@ -37,7 +37,7 @@
 //	Filename: 	GlobalLanguage.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	Contains the member functions for the language munkee
 //
 //-----------------------------------------------------------------------------
@@ -52,17 +52,30 @@
 //-----------------------------------------------------------------------------
 #include "PreRTS.h"
 
+#include "Common/AddonCompat.h"
 #include "Common/INI.h"
 #include "Common/Registry.h"
-#include "GameClient/GlobalLanguage.h"
 #include "Common/FileSystem.h"
+#include "Common/UserPreferences.h"
+
+#include "GameClient/Display.h"
+#include "GameClient/GlobalLanguage.h"
 
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-GlobalLanguage *TheGlobalLanguageData = NULL;				///< The global language singalton
+GlobalLanguage *TheGlobalLanguageData = NULL;				///< The global language singleton
 
-static const FieldParse TheGlobalLanguageDataFieldParseTable[] = 
+static const LookupListRec ResolutionFontSizeMethodNames[] =
+{
+	{ "CLASSIC", GlobalLanguage::ResolutionFontSizeMethod_Classic },
+	{ "CLASSIC_NO_CEILING", GlobalLanguage::ResolutionFontSizeMethod_ClassicNoCeiling },
+	{ "STRICT", GlobalLanguage::ResolutionFontSizeMethod_Strict },
+	{ "BALANCED", GlobalLanguage::ResolutionFontSizeMethod_Balanced },
+	{ NULL, 0 }
+};
+
+static const FieldParse TheGlobalLanguageDataFieldParseTable[] =
 {
 	{ "UnicodeFontName",									INI::parseAsciiString,NULL,									offsetof( GlobalLanguage, m_unicodeFontName ) },
 	//{	"UnicodeFontFileName",							INI::parseAsciiString,NULL,									offsetof( GlobalLanguage, m_unicodeFontFileName ) },
@@ -70,9 +83,9 @@ static const FieldParse TheGlobalLanguageDataFieldParseTable[] =
 	{ "MilitaryCaptionSpeed",						INI::parseInt,					NULL,		offsetof( GlobalLanguage, m_militaryCaptionSpeed ) },
 	{ "UseHardWordWrap",						INI::parseBool,					NULL,		offsetof( GlobalLanguage, m_useHardWrap) },
 	{ "ResolutionFontAdjustment",						INI::parseReal,					NULL,		offsetof( GlobalLanguage, m_resolutionFontSizeAdjustment) },
-	
+	{ "ResolutionFontSizeMethod", INI::parseLookupList, ResolutionFontSizeMethodNames, offsetof( GlobalLanguage, m_resolutionFontSizeMethod) },
 	{ "CopyrightFont",					GlobalLanguage::parseFontDesc,	NULL,	offsetof( GlobalLanguage, m_copyrightFont ) },
-	{ "MessageFont",					GlobalLanguage::parseFontDesc,	NULL,	offsetof( GlobalLanguage, m_messageFont) },					
+	{ "MessageFont",					GlobalLanguage::parseFontDesc,	NULL,	offsetof( GlobalLanguage, m_messageFont) },
 	{ "MilitaryCaptionTitleFont",		GlobalLanguage::parseFontDesc,	NULL,	offsetof( GlobalLanguage, m_militaryCaptionTitleFont) },
 	{ "MilitaryCaptionFont",			GlobalLanguage::parseFontDesc,	NULL,	offsetof( GlobalLanguage, m_militaryCaptionFont) },
 	{ "SuperweaponCountdownNormalFont",	GlobalLanguage::parseFontDesc,	NULL,	offsetof( GlobalLanguage, m_superweaponCountdownNormalFont) },
@@ -89,7 +102,7 @@ static const FieldParse TheGlobalLanguageDataFieldParseTable[] =
 	{ "CreditsMinorTitleFont",				GlobalLanguage::parseFontDesc,	NULL,	offsetof( GlobalLanguage, m_creditsPositionFont) },
 	{ "CreditsNormalFont",				GlobalLanguage::parseFontDesc,	NULL,	offsetof( GlobalLanguage, m_creditsNormalFont) },
 
-	{ NULL,					NULL,						NULL,						0 }  // keep this last
+	{ NULL,					NULL,						NULL,						0 }
 };
 
 //-----------------------------------------------------------------------------
@@ -101,7 +114,7 @@ void INI::parseLanguageDefinition( INI *ini )
 	{
 		DEBUG_ASSERTCRASH(TheGlobalLanguageData, ("INI::parseLanguageDefinition - TheGlobalLanguage Data is not around, please create it before trying to parse the ini file."));
 		return;
-	}  // end if
+	}
 	// parse the ini weapon definition
 	ini->initFromINI( TheGlobalLanguageData, TheGlobalLanguageDataFieldParseTable );
 }
@@ -116,7 +129,10 @@ GlobalLanguage::GlobalLanguage()
 	m_militaryCaptionSpeed = 0;
 	m_useHardWrap = FALSE;
 	m_resolutionFontSizeAdjustment = 0.7f;
+	m_resolutionFontSizeMethod = ResolutionFontSizeMethod_Default;
 	//End Add
+
+	m_userResolutionFontSizeAdjustment = -1.0f;
 }
 
 GlobalLanguage::~GlobalLanguage()
@@ -131,25 +147,16 @@ GlobalLanguage::~GlobalLanguage()
 	}
 }
 
-void GlobalLanguage::init( void ) 
+void GlobalLanguage::init( void )
 {
+	{
+		AsciiString fname;
+		fname.format("Data\\%s\\Language", GetRegistryLanguage().str());
 
-	INI ini;
-	AsciiString fname;
-	fname.format("Data\\%s\\Language.ini", GetRegistryLanguage().str());
+		INI ini;
+		ini.loadFileDirectory( fname, INI_LOAD_OVERWRITE, NULL );
+ 	}
 
-	OSVERSIONINFO	osvi;
-	osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFO);
-	//GS NOTE: Must call doesFileExist in either case so that NameKeyGenerator will stay in sync
-	AsciiString tempName;
-	tempName.format("Data\\%s\\Language9x.ini", GetRegistryLanguage().str());
-	bool isExist = TheFileSystem->doesFileExist(tempName.str());
-	if (GetVersionEx(&osvi)  &&  osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS  && isExist)
-	{	//check if we're running Win9x variant since they may need different fonts
-		fname = tempName;
-	}
-
-	ini.load( fname, INI_LOAD_OVERWRITE, NULL );
 	StringListIt it = m_localFonts.begin();
 	while( it != m_localFonts.end())
 	{
@@ -165,7 +172,10 @@ void GlobalLanguage::init( void )
 		++it;
 	}
 
-	
+	// override values with user preferences
+	OptionPreferences optionPref;
+	m_userResolutionFontSizeAdjustment = optionPref.getResolutionFontAdjustment();
+
 }
 void GlobalLanguage::reset( void ) {}
 
@@ -183,16 +193,98 @@ void GlobalLanguage::parseFontFileName( INI *ini, void * instance, void *store, 
 	GlobalLanguage *monkey = (GlobalLanguage *)instance;
 	AsciiString asciiString = ini->getNextAsciiString();
 	monkey->m_localFonts.push_front(asciiString);
-}	 
+}
 
-Int GlobalLanguage::adjustFontSize(Int theFontSize) 
+float GlobalLanguage::getResolutionFontSizeAdjustment( void ) const
 {
-	Real adjustFactor = TheGlobalData->m_xResolution/800.0f;
-	adjustFactor = 1.0f + (adjustFactor-1.0f) * m_resolutionFontSizeAdjustment;
-	if (adjustFactor<1.0f) adjustFactor = 1.0f;
-	if (adjustFactor>2.0f) adjustFactor = 2.0f;
+	if (m_userResolutionFontSizeAdjustment >= 0.0f)
+		return m_userResolutionFontSizeAdjustment;
+	else
+		return m_resolutionFontSizeAdjustment;
+}
+
+Int GlobalLanguage::adjustFontSize(Int theFontSize)
+{
+	// TheSuperHackers @todo This function is called very often.
+	// Therefore cache the adjustFactor on resolution change to not recompute it on every call.
+	Real adjustFactor;
+
+	switch (m_resolutionFontSizeMethod)
+	{
+	default:
+	case ResolutionFontSizeMethod_Classic:
+	{
+		// TheSuperHackers @info The original font scaling for this game.
+		// Useful for not breaking legacy Addons and Mods. Scales poorly with large resolutions.
+		adjustFactor = TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH;
+		adjustFactor = 1.0f + (adjustFactor - 1.0f) * getResolutionFontSizeAdjustment();
+		if (adjustFactor > 2.0f)
+			adjustFactor = 2.0f;
+		break;
+	}
+	case ResolutionFontSizeMethod_ClassicNoCeiling:
+	{
+		// TheSuperHackers @feature The original font scaling, but without ceiling.
+		// Useful for not changing the original look of the game. Scales alright with large resolutions.
+		adjustFactor = TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH;
+		adjustFactor = 1.0f + (adjustFactor - 1.0f) * getResolutionFontSizeAdjustment();
+		break;
+	}
+	case ResolutionFontSizeMethod_Strict:
+	{
+		// TheSuperHackers @feature The strict method scales fonts based on the smallest screen
+		// dimension so they scale independent of aspect ratio.
+		const Real wScale = TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH;
+		const Real hScale = TheDisplay->getHeight() / (Real)DEFAULT_DISPLAY_HEIGHT;
+		adjustFactor = min(wScale, hScale);
+		adjustFactor = 1.0f + (adjustFactor - 1.0f) * getResolutionFontSizeAdjustment();
+		break;
+	}
+	case ResolutionFontSizeMethod_Balanced:
+	{
+		// TheSuperHackers @feature The balanced method evenly weighs the display width and height
+		// for a balanced rescale on non 4:3 resolutions. The aspect ratio scaling is clamped to
+		// prevent oversizing.
+		constexpr const Real maxAspect = 1.8f;
+		constexpr const Real minAspect = 1.0f;
+		Real w = TheDisplay->getWidth();
+		Real h = TheDisplay->getHeight();
+		const Real aspect = w / h;
+		Real wScale = w / (Real)DEFAULT_DISPLAY_WIDTH;
+		Real hScale = h / (Real)DEFAULT_DISPLAY_HEIGHT;
+
+		if (aspect > maxAspect)
+		{
+			// Recompute width at max aspect
+			w = maxAspect * h;
+			wScale = w / (Real)DEFAULT_DISPLAY_WIDTH;
+		}
+		else if (aspect < minAspect)
+		{
+			// Recompute height at min aspect
+			h = minAspect * w;
+			hScale = h / (Real)DEFAULT_DISPLAY_HEIGHT;
+		}
+		adjustFactor = (wScale + hScale) * 0.5f;
+		adjustFactor = 1.0f + (adjustFactor - 1.0f) * getResolutionFontSizeAdjustment();
+		break;
+	}
+	}
+
+	if (adjustFactor < 1.0f)
+		adjustFactor = 1.0f;
 	Int pointSize = REAL_TO_INT_FLOOR(theFontSize*adjustFactor);
 	return pointSize;
+}
+
+void GlobalLanguage::parseCustomDefinition()
+{
+	if (addon::HasFullviewportDat())
+	{
+		// TheSuperHackers @tweak xezon 19/08/2025 Force the classic font size adjustment for the old
+		// 'Control Bar Pro' Addons because they use manual font upscaling in higher resolution packages.
+		m_resolutionFontSizeMethod = ResolutionFontSizeMethod_Classic;
+	}
 }
 
 FontDesc::FontDesc(void)

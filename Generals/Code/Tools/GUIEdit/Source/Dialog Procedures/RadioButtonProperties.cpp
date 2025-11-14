@@ -24,12 +24,12 @@
 
 // FILE: RadioButtonProperties.cpp ////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -45,7 +45,6 @@
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
-#include <stdio.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/NameKeyGenerator.h"
@@ -87,7 +86,7 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
 	// are designed to have controls doing the same functionality
 	// and names
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message, 
+	if( HandleCommonDialogMessages( hWndDialog, message,
 																	wParam, lParam, &returnCode ) == TRUE )
 		return returnCode;
 
@@ -100,7 +99,7 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
 //			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 //			HWND hWndControl = (HWND)lParam;  // control window handle
- 
+
       switch( controlID )
       {
 
@@ -111,7 +110,7 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
 					SetDlgItemInt( hWndDialog, COMBO_GROUP, 0, FALSE );
 					break;
 
-				}  // end clear group
+				}
 
 				// --------------------------------------------------------------------
         case IDOK:
@@ -159,7 +158,7 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
 						GadgetRadioSetDisabledCheckedBoxImage( window, info->image );
 						GadgetRadioSetDisabledCheckedBoxColor( window, info->color );
 						GadgetRadioSetDisabledCheckedBoxBorderColor( window, info->borderColor );
-						
+
 						// ----------------------------------------------------------------
 						info = GetStateInfo( RADIO_HILITE );
 						GadgetRadioSetHiliteImage( window, info->image );
@@ -180,13 +179,13 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
 						Int group = GetDlgItemInt( hWndDialog, COMBO_GROUP, NULL, FALSE );
 						Int screen = TheNameKeyGenerator->nameToKey( AsciiString(TheEditor->getSaveFilename()) );
 						GadgetRadioSetGroup( window, group, screen );
-																	
-					}  // end if
+
+					}
 
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end OK
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -195,13 +194,13 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -210,15 +209,15 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
       DestroyWindow( hWndDialog );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end radioButtonPropertiesCallback
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -252,7 +251,7 @@ static void loadExistingGroupsCombo( HWND combo, GameWindow *window )
 		if( SendMessage( combo, CB_FINDSTRINGEXACT, -1, (LPARAM)buffer ) == CB_ERR )
 			SendMessage( combo, CB_ADDSTRING, 0, (LPARAM)buffer );
 
-	}  // end if
+	}
 
 	// search our children
 	GameWindow *child;
@@ -261,8 +260,8 @@ static void loadExistingGroupsCombo( HWND combo, GameWindow *window )
 
 	// search the next in line
 	loadExistingGroupsCombo( combo, window->winGetNext() );
-	
-}  // end loadExistingGroupsCombo
+
+}
 
 // InitRadioButtonPropertiesDialog ============================================
 /** Bring up the radio button properties dialog */
@@ -355,7 +354,7 @@ HWND InitRadioButtonPropertiesDialog( GameWindow *window )
 
 	return dialog;
 
-}  // end InitRadioButtonPropertiesDialog
+}
 
 
 

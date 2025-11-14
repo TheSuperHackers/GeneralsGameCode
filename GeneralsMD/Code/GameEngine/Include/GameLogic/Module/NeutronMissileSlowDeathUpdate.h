@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __NEUTRONMISSILESlowDeathBehavior_H_
-#define __NEUTRONMISSILESlowDeathBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/SlowDeathBehavior.h"
 
@@ -39,8 +36,8 @@ class FXList;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum NeutronBlast
-{ 
+enum NeutronBlast CPP_11(: Int)
+{
 	NEUTRON_BLAST_1 = 0,
 	NEUTRON_BLAST_2,
 	NEUTRON_BLAST_3,
@@ -51,7 +48,7 @@ enum NeutronBlast
 	NEUTRON_BLAST_8,
 	NEUTRON_BLAST_9,
 
-	MAX_NEUTRON_BLASTS  // keep this last
+	MAX_NEUTRON_BLASTS
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -60,7 +57,7 @@ struct BlastInfo
 {
   Bool enabled;					///< this blast is enabled
 	Real delay;						///< delay after death to start the regular blast
-	Real scorchDelay;			///< delay after death to start a scorch blast 
+	Real scorchDelay;			///< delay after death to start a scorch blast
 	Real innerRadius;			///< inner radius of damage
 	Real outerRadius;			///< outer radius of damage
 	Real maxDamage;				///< max amount
@@ -112,5 +109,3 @@ protected:
 	Bool m_scorchPlaced;														///< TRUE once we've placed the scorch mark
 
 };
-
-#endif  // end __NEUTRONMISSILESlowDeathBehavior_H_

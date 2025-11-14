@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __OCLSPECIALPOWER_H_
-#define __OCLSPECIALPOWER_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/SpecialPowerModule.h"
 #include "Common/Science.h"
@@ -39,7 +36,7 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class ObjectCreationList;
 
-enum OCLCreateLocType
+enum OCLCreateLocType CPP_11(: Int)
 {
 	CREATE_AT_EDGE_NEAR_SOURCE,
 	CREATE_AT_EDGE_NEAR_TARGET,
@@ -47,6 +44,8 @@ enum OCLCreateLocType
 	USE_OWNER_OBJECT,
 	CREATE_ABOVE_LOCATION,
 	CREATE_AT_EDGE_FARTHEST_FROM_TARGET,
+
+	OCL_CREATE_LOC_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -71,7 +70,7 @@ public:
 	OCLCreateLocType					m_createLoc;
 	Bool											m_isOCLAdjustPositionToPassable; ///< Adjust target to nearest Passable cell
 
-	//We need to know what the final product is going to be for script placement calculations 
+	//We need to know what the final product is going to be for script placement calculations
 	//for construction sites like the sneak attack.
 	AsciiString				m_referenceThingName;
 
@@ -104,5 +103,3 @@ protected:
 
 	const ObjectCreationList* findOCL() const;
 };
-
-#endif  // end __OCLSPECIALPOWER_H_

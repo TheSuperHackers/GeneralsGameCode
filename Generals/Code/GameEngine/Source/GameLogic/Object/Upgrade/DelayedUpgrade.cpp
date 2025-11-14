@@ -24,12 +24,12 @@
 
 // FILE: DelayedUpgrade.cpp /////////////////////////////////////////////////////////////////////////////
 // Author: Graham Smallwood, April 2002
-// Desc:	 An Upgrade that broadcasts to all DelayedUpgradeUpdates that maybe they should start 
+// Desc:	 An Upgrade that broadcasts to all DelayedUpgradeUpdates that maybe they should start
 //					counting down to execution
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
@@ -56,7 +56,7 @@ void DelayedUpgrade::upgradeImplementation( )
 	DelayedUpgradeUpdateInterface *upgradeUpdate = NULL;
 	Object *me = getObject();
 
-	Int64 activation, conflicting;
+	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks(activation, conflicting);
 
 	for (BehaviorModule** u = me->getBehaviorModules(); *u; ++u)
@@ -82,7 +82,7 @@ void DelayedUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -100,7 +100,7 @@ void DelayedUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -111,4 +111,4 @@ void DelayedUpgrade::loadPostProcess( void )
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

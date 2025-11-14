@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _CREATE_OBJECT_DIE_H_
-#define _CREATE_OBJECT_DIE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "GameLogic/Module/DieModule.h"
@@ -68,9 +65,6 @@ public:
 	CreateObjectDie( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDie( const DamageInfo *damageInfo ); 
+	virtual void onDie( const DamageInfo *damageInfo );
 
 };
-
-#endif // _CREATE_OBJECT_DIE_H_
-

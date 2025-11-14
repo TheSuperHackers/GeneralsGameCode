@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __W3DFUNCTIONLEXICON_H_
-#define __W3DFUNCTIONLEXICON_H_
-
 #include "Common/FunctionLexicon.h"
 
 //-------------------------------------------------------------------------------------------------
@@ -48,10 +45,7 @@ public:
 	virtual void init( void );
 	virtual void reset( void );
 	virtual void update( void );
-	
+
 protected:
 
 };
-
-#endif // __W3DFUNCTIONLEXICON_H_
-

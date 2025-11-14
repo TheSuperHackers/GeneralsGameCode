@@ -30,7 +30,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ActionManager.h"
 #include "Common/GameCommon.h"
@@ -47,14 +47,9 @@
 #include "GameClient/GUICommandTranslator.h"
 #include "GameClient/CommandXlat.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // PRIVATE ////////////////////////////////////////////////////////////////////////////////////////
-static enum CommandStatus
+enum CommandStatus
 {
 	COMMAND_INCOMPLETE = 0,
 	COMMAND_COMPLETE
@@ -92,7 +87,7 @@ static Object *validUnderCursor( const ICoord2D *mouse, const CommandButton *com
 	Object *pickObj = NULL;
 
 	// pick a drawable at the mouse location
-	Drawable *pick = TheTacticalView->pickDrawable( mouse, FALSE, pickType );																																				 
+	Drawable *pick = TheTacticalView->pickDrawable( mouse, FALSE, pickType );
 
 	// only continue if there is something there
 	if( pick && pick->getObject() )
@@ -103,20 +98,20 @@ static Object *validUnderCursor( const ICoord2D *mouse, const CommandButton *com
 		pickObj = pick->getObject();
 
 		if (!command->isValidObjectTarget(player, pickObj))
-				pickObj = NULL;		
+				pickObj = NULL;
 
-	}  // end if
+	}
 
 
 	return pickObj;
 
-}  // end validUnderCursor
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 static CommandStatus doFireWeaponCommand( const CommandButton *command, const ICoord2D *mouse )
 {
-	
+
 	// sanity
 	if( command == NULL || mouse == NULL )
 		return COMMAND_COMPLETE;
@@ -129,7 +124,7 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 	if( TheInGameUI->getSelectCount() == 1 )
 	{
 		Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
-		
+
 		// sanity
 		if( draw == NULL || draw->getObject() == NULL )
 			return COMMAND_COMPLETE;
@@ -137,7 +132,7 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 		// get object id
 		sourceID = draw->getObject()->getID();
 
-	}  // end if
+	}
 
 	// create message and send to the logic
 	GameMessage *msg;
@@ -147,8 +142,8 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 
 		// translate the mouse location into world coords
 		TheTacticalView->screenToTerrain( mouse, &world );
-			
-		// create the message and append arguments	
+
+		// create the message and append arguments
 		msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_WEAPON_AT_LOCATION );
 		msg->appendIntegerArgument( command->getWeaponSlot() );
 		msg->appendLocationArgument( world );
@@ -160,7 +155,7 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 		msg->appendObjectIDArgument( targetID );
 
 
-	}  // end if
+	}
 	else if( BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
 	{
 
@@ -185,9 +180,9 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 			msg->appendObjectIDArgument( target->getID() );
 			msg->appendIntegerArgument( command->getMaxShotsToFire() );
 
-		}  // end if
+		}
 
-	}  // end else
+	}
 	else
 	{
 		msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_WEAPON );
@@ -196,15 +191,15 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 
 		//This could be legit now -- think of firing a self destruct weapon
 		//-----------------------------------------------------------------
-		//DEBUG_ASSERTCRASH( 0, ("doFireWeaponCommand: Command options say it doesn't need additional user input '%s'\n", 
+		//DEBUG_ASSERTCRASH( 0, ("doFireWeaponCommand: Command options say it doesn't need additional user input '%s'",
 		//											command->m_name.str()) );
 		//return COMMAND_COMPLETE;
 
-	}  // end else
+	}
 
 	return COMMAND_COMPLETE;
 
-}  // end fire weapon
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -247,8 +242,8 @@ static CommandStatus doGuardCommand( const CommandButton *command, GuardMode gua
 				return COMMAND_COMPLETE;
 			world = *draw->getObject()->getPosition();
 		}
-			
-		// create the message and append arguments	
+
+		// create the message and append arguments
 		msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_GUARD_POSITION );
 		msg->appendLocationArgument(world);
 		msg->appendIntegerArgument(guardMode);
@@ -274,7 +269,7 @@ static CommandStatus doAttackMoveCommand( const CommandButton *command, const IC
 	// so we must be sure there is only one thing selected (that thing we will set the point on)
 	//
 	Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
-	DEBUG_ASSERTCRASH( draw, ("doAttackMoveCommand: No selected object(s)\n") );
+	DEBUG_ASSERTCRASH( draw, ("doAttackMoveCommand: No selected object(s)") );
 
 	// sanity
 	if( draw == NULL || draw->getObject() == NULL )
@@ -313,7 +308,7 @@ static CommandStatus doSetRallyPointCommand( const CommandButton *command, const
 	DEBUG_ASSERTCRASH( TheInGameUI->getSelectCount() == 1,
 										 ("doSetRallyPointCommand: The selected count is not 1, we can only set a rally point on a *SINGLE* building\n") );
 	Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
-	DEBUG_ASSERTCRASH( draw, ("doSetRallyPointCommand: No selected object\n") );
+	DEBUG_ASSERTCRASH( draw, ("doSetRallyPointCommand: No selected object") );
 
 	// sanity
 	if( draw == NULL || draw->getObject() == NULL )
@@ -330,7 +325,7 @@ static CommandStatus doSetRallyPointCommand( const CommandButton *command, const
 
 	return COMMAND_COMPLETE;
 
-}  // end doSetRallyPointCommand
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Do the beacon placement command */
@@ -352,7 +347,7 @@ static CommandStatus doPlaceBeacon( const CommandButton *command, const ICoord2D
 
 	return COMMAND_COMPLETE;
 
-}  // end doPlaceBeacon
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -383,7 +378,7 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 
 			break;
 
-		}  // end left mouse down
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_MOUSE_LEFT_DOUBLE_CLICK:
@@ -402,15 +397,15 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 					case GUI_COMMAND_FIRE_WEAPON:
 					{
 						commandStatus = doFireWeaponCommand( command, &mouse );
-						
+
 						PickAndPlayInfo info;
 						WeaponSlotType slot = command->getWeaponSlot();
 						info.m_weaponSlot = &slot;
-						
+
 	 					pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_DO_WEAPON_AT_LOCATION, &info );
 						break;
 
-					}  // end fire weapon command
+					}
 
 
 					//---------------------------------------------------------------------------------------
@@ -423,7 +418,7 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 
 							GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_EVACUATE);
 							msg->appendLocationArgument(worldPos);
-							
+
 							pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_EVACUATE );
 
 							commandStatus = COMMAND_COMPLETE;
@@ -461,7 +456,7 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 						return KEEP_MESSAGE;
 						break;
 
-					}  // end special power
+					}
 
 					case GUI_COMMAND_ATTACK_MOVE:
 					{
@@ -475,7 +470,7 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 						commandStatus = doSetRallyPointCommand( command, &mouse );
 						break;
 
-					}  // end set rally point
+					}
 
 					//---------------------------------------------------------------------------------------
 					case GUICOMMANDMODE_PLACE_BEACON:
@@ -483,9 +478,9 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 						commandStatus = doPlaceBeacon( command, &mouse );
 						break;
 
-					}  // end set rally point
+					}
 
-				}  // end switch
+				}
 
 				// used the input
 				disp = DESTROY_MESSAGE;
@@ -496,22 +491,22 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 					TheInGameUI->setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( TRUE );
 					TheInGameUI->setGUICommand( NULL );
 				}
-			}  // end if
+			}
 
 			break;
 
-		}  // end left mouse up
+		}
 
-	}  // end switch 
+	}
 
 	// If we're destroying the message, it means we used it. Therefore, destroy the current
 	// attack move instruction as well.
-	if (disp == DESTROY_MESSAGE) 
+	if (disp == DESTROY_MESSAGE)
 		TheInGameUI->clearAttackMoveToMode();
 
 
 	return disp;
 
-}  // end translateMessage
+}
 
 

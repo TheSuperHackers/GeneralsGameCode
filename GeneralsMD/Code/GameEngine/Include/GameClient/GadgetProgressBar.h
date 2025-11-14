@@ -24,12 +24,12 @@
 
 // FILE: GadgetProgressBar.h //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -44,9 +44,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __GADGETPROGRESSBAR_H_
-#define __GADGETPROGRESSBAR_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -141,6 +138,3 @@ inline const Image * GadgetProgressBarGetHiliteBarImageCenter( GameWindow *g )		
 inline const Image * GadgetProgressBarGetHiliteBarImageSmallCenter( GameWindow *g )	{ return g->winGetHiliteImage( 7 ); }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GADGETPROGRESSBAR_H_
-

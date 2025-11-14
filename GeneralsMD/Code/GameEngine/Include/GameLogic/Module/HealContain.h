@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __HEALCONTAIN_H_
-#define __HEALCONTAIN_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/OpenContain.h"
 
@@ -58,7 +55,7 @@ class HealContain : public OpenContain
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( HealContain, "HealContain" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( HealContain, HealContainModuleData )
-	
+
 public:
 
 	HealContain( Thing *thing, const ModuleData* moduleData );
@@ -73,5 +70,3 @@ protected:
 	Bool doHeal( Object *obj, UnsignedInt framesForFullHeal );		///< do the heal on an object
 
 };
-
-#endif  // end __HEALCONTAIN_H_

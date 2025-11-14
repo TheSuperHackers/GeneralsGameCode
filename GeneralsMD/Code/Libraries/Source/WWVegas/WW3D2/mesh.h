@@ -17,31 +17,25 @@
 */
 
 /* $Header: /Commando/Code/ww3d2/mesh.h 16    11/07/01 5:50p Jani_p $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
- *                    File Name : MESH.H                                                       * 
- *                                                                                             * 
- *                   Programmer : Greg Hjelstrom                                               * 
- *                                                                                             * 
- *                   Start Date : 06/11/97                                                     * 
- *                                                                                             * 
- *                  Last Update : June 11, 1997 [GH]                                           * 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
+ *                    File Name : MESH.h                                                       *
+ *                                                                                             *
+ *                   Programmer : Greg Hjelstrom                                               *
+ *                                                                                             *
+ *                   Start Date : 06/11/97                                                     *
+ *                                                                                             *
+ *                  Last Update : June 11, 1997 [GH]                                           *
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef MESH_H
-#define MESH_H
 
 #include "always.h"
 #include "rendobj.h"
@@ -82,7 +76,7 @@ public:
 	virtual ~MeshClass(void);
 
 	/////////////////////////////////////////////////////////////////////////////
-	// Render Object Interface 
+	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
 	virtual RenderObjClass *	Clone(void) const;
 	virtual int						Class_ID(void) const { return CLASSID_MESH; }
@@ -95,13 +89,13 @@ public:
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Collision Detection
-	/////////////////////////////////////////////////////////////////////////////	
+	/////////////////////////////////////////////////////////////////////////////
 	virtual bool					Cast_Ray(RayCollisionTestClass & raytest);
 	virtual bool					Cast_AABox(AABoxCollisionTestClass & boxtest);
 	virtual bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest);
 	virtual bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest);
 	virtual bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest);
-   
+
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Bounding Volumes
 	/////////////////////////////////////////////////////////////////////////////
@@ -114,9 +108,9 @@ public:
 	virtual void					Scale(float scale);
 	virtual void					Scale(float scalex, float scaley, float scalez);
 	virtual MaterialInfoClass * Get_Material_Info(void);
-	
+
    virtual int						Get_Sort_Level(void) const;
-   virtual void					Set_Sort_Level(int level);	
+   virtual void					Set_Sort_Level(int level);
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -124,7 +118,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	virtual void					Create_Decal(DecalGeneratorClass * generator);
 	virtual void					Delete_Decal(uint32 decal_id);
-	
+
 	/////////////////////////////////////////////////////////////////////////////
 	// MeshClass Interface
 	/////////////////////////////////////////////////////////////////////////////
@@ -203,6 +197,3 @@ inline MeshModelClass * MeshClass::Peek_Model(void)
 // model. This is useful for stuff like making a RenderObjects' polys sort.
 //void Set_MeshModel_Flag(RenderObjClass *robj, MeshModelClass::FlagsType flag, int onoff);
 void Set_MeshModel_Flag(RenderObjClass *robj, int flag, int onoff);
-
-#endif /*MESH_H*/
-

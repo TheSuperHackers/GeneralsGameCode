@@ -23,17 +23,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: SabotageInternetCenterCrateCollide.cpp 
+//
+// FILE: SabotageInternetCenterCrateCollide.cpp
 // Author: Kris Morness, July 2003
 // Desc:   A crate (actually a saboteur - mobile crate) that temporarily disables an internet center
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
- 
+
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameAudio.h"
 #include "Common/MiscAudio.h"
@@ -63,23 +63,18 @@
 #include "GameLogic/Module/SpyVisionUpdate.h"
 
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SabotageInternetCenterCrateCollide::SabotageInternetCenterCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SabotageInternetCenterCrateCollide::~SabotageInternetCenterCrateCollide( void )
 {
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -102,6 +97,14 @@ Bool SabotageInternetCenterCrateCollide::isValidToExecute( const Object *other )
 		//We can only sabotage supply dropzones.
 		return FALSE;
 	}
+
+#if !RETAIL_COMPATIBLE_CRC
+	if (other->getStatusBits().testForAny(MAKE_OBJECT_STATUS_MASK2(OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_SOLD)))
+	{
+		// TheSuperHackers @bugfix Stubbjax 03/08/2025 Can't enter something being sold or under construction.
+		return FALSE;
+	}
+#endif
 
 	Relationship r = getObject()->getRelationship( other );
 	if( r != ENEMIES )
@@ -136,7 +139,7 @@ static void disableInternetCenterSpyVision( Object *obj, void *userData )
 			if( svUpdate )
 			{
 				//Turn off the vision temporarily. When it recovers from being disabled, the
-				//timer will need to start over from scratch so it won't come on right away unless 
+				//timer will need to start over from scratch so it won't come on right away unless
 				//it's a permanent spy vision.
 				svUpdate->setDisabledUntilFrame( frame );
 			}
@@ -170,7 +173,7 @@ Bool SabotageInternetCenterCrateCollide::executeCrateBehavior( Object *other )
 
 	//Loop through every internet center to temporarily disable the spy vision upgrades.
 	UnsignedInt frame = TheGameLogic->getFrame() + getSabotageInternetCenterCrateCollideModuleData()->m_sabotageFrames;
-	
+
 	//Disable all internet center spy visions (they stack) without visually disabling the other centers.
 	//Kris: Note -- Design has changed that we only can have one center at a time... logically, this code
 	//doesn't need to change.
@@ -186,7 +189,7 @@ Bool SabotageInternetCenterCrateCollide::executeCrateBehavior( Object *other )
 	//Disable all the hackers inside.
 	ContainModuleInterface *contain = other->getContain();
 	contain->iterateContained( disableHacker, (void*)frame, FALSE );
-		
+
 	return TRUE;
 }
 
@@ -199,7 +202,7 @@ void SabotageInternetCenterCrateCollide::crc( Xfer *xfer )
 	// extend base class
 	CrateCollide::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -217,7 +220,7 @@ void SabotageInternetCenterCrateCollide::xfer( Xfer *xfer )
 	// extend base class
 	CrateCollide::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -228,4 +231,4 @@ void SabotageInternetCenterCrateCollide::loadPostProcess( void )
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+}

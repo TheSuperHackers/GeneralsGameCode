@@ -26,25 +26,20 @@
  *                                                                                             *
  *              Original Author:: Jani Penttinen                                               *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 08/05/02 2:40p                                              $*
  *                                                                                             *
  *                    $Revision:: 92                                                          $*
  *                                                                                             *
  * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  * 06/27/02 KM Render to shadow buffer texture support														*
- * 08/05/02 KM Texture class redesign 
+ * 08/05/02 KM Texture class redesign
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DX8_WRAPPER_H
-#define DX8_WRAPPER_H
 
 #include "always.h"
 #include "dllist.h"
@@ -494,8 +489,8 @@ public:
 	// for depth map support KJM V
 	static void Create_Render_Target
 	(
-		int width, 
-		int height, 
+		int width,
+		int height,
 		WW3DFormat format,
 		WW3DZFormat zformat,
 		TextureClass** target,
@@ -612,6 +607,7 @@ protected:
 	/*
 	** Internal functions
 	*/
+	static void Resize_And_Position_Window();
 	static bool Find_Color_And_Z_Mode(int resx,int resy,int bitdepth,D3DFORMAT * set_colorbuffer,D3DFORMAT * set_backbuffer, D3DFORMAT * set_zmode);
 	static bool Find_Color_Mode(D3DFORMAT colorbuffer, int resx, int resy, UINT *mode);
 	static bool Find_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORMAT *zmode);
@@ -642,7 +638,7 @@ protected:
 	static int								TextureBitDepth;
 	static bool								IsWindowed;
 	static D3DFORMAT					DisplayFormat;
-	
+
 	static D3DMATRIX						old_world;
 	static D3DMATRIX						old_view;
 	static D3DMATRIX						old_prj;
@@ -763,11 +759,11 @@ WWINLINE void DX8Wrapper::_Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,con
 {
 	WWASSERT(transform<=D3DTS_WORLD);
 #if 0 // (gth) this optimization is breaking generals because they set the transform behind our backs.
-	if (m!=DX8Transforms[transform]) 
+	if (m!=DX8Transforms[transform])
 #endif
 	{
 		DX8Transforms[transform]=m;
-		SNAPSHOT_SAY(("DX8 - SetTransform %d [%f,%f,%f,%f][%f,%f,%f,%f][%f,%f,%f,%f][%f,%f,%f,%f]\n",transform,m[0][0],m[0][1],m[0][2],m[0][3],m[1][0],m[1][1],m[1][2],m[1][3],m[2][0],m[2][1],m[2][2],m[2][3],m[3][0],m[3][1],m[3][2],m[3][3]));
+		SNAPSHOT_SAY(("DX8 - SetTransform %d [%f,%f,%f,%f][%f,%f,%f,%f][%f,%f,%f,%f][%f,%f,%f,%f]",transform,m[0][0],m[0][1],m[0][2],m[0][3],m[1][0],m[1][1],m[1][2],m[1][3],m[2][0],m[2][1],m[2][2],m[2][3],m[3][0],m[3][1],m[3][2],m[3][3]));
 		DX8_RECORD_MATRIX_CHANGE();
 		DX8CALL(SetTransform(transform,(D3DMATRIX*)&m));
 	}
@@ -779,11 +775,11 @@ WWINLINE void DX8Wrapper::_Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,con
 	WWASSERT(transform<=D3DTS_WORLD);
 	Matrix4x4 mtx(m);
 #if 0 // (gth) this optimization is breaking generals because they set the transform behind our backs.
-	if (mtx!=DX8Transforms[transform]) 
+	if (mtx!=DX8Transforms[transform])
 #endif
 	{
 		DX8Transforms[transform]=mtx;
-		SNAPSHOT_SAY(("DX8 - SetTransform %d [%f,%f,%f,%f][%f,%f,%f,%f][%f,%f,%f,%f]\n",transform,m[0][0],m[0][1],m[0][2],m[0][3],m[1][0],m[1][1],m[1][2],m[1][3],m[2][0],m[2][1],m[2][2],m[2][3]));
+		SNAPSHOT_SAY(("DX8 - SetTransform %d [%f,%f,%f,%f][%f,%f,%f,%f][%f,%f,%f,%f]",transform,m[0][0],m[0][1],m[0][2],m[0][3],m[1][0],m[1][1],m[1][2],m[1][3],m[2][0],m[2][1],m[2][2],m[2][3]));
 		DX8_RECORD_MATRIX_CHANGE();
 		DX8CALL(SetTransform(transform,(D3DMATRIX*)&m));
 	}
@@ -849,7 +845,7 @@ WWINLINE void DX8Wrapper::Set_DX8_Material(const D3DMATERIAL8* mat)
 {
 	DX8_RECORD_MATERIAL_CHANGE();
 	WWASSERT(mat);
-	SNAPSHOT_SAY(("DX8 - SetMaterial\n"));
+	SNAPSHOT_SAY(("DX8 - SetMaterial"));
 	DX8CALL(SetMaterial(mat));
 }
 
@@ -860,13 +856,13 @@ WWINLINE void DX8Wrapper::Set_DX8_Light(int index, D3DLIGHT8* light)
 		DX8CALL(SetLight(index,light));
 		DX8CALL(LightEnable(index,TRUE));
 		CurrentDX8LightEnables[index]=true;
-		SNAPSHOT_SAY(("DX8 - SetLight %d\n",index));
+		SNAPSHOT_SAY(("DX8 - SetLight %d",index));
 	}
 	else if (CurrentDX8LightEnables[index]) {
 		DX8_RECORD_LIGHT_CHANGE();
 		CurrentDX8LightEnables[index]=false;
 		DX8CALL(LightEnable(index,FALSE));
-		SNAPSHOT_SAY(("DX8 - DisableLight %d\n",index));
+		SNAPSHOT_SAY(("DX8 - DisableLight %d",index));
 	}
 }
 
@@ -879,9 +875,9 @@ WWINLINE void DX8Wrapper::Set_DX8_Render_State(D3DRENDERSTATETYPE state, unsigne
 	if (WW3D::Is_Snapshot_Activated()) {
 		StringClass value_name(0,true);
 		Get_DX8_Render_State_Value_Name(value_name,state,value);
-		SNAPSHOT_SAY(("DX8 - SetRenderState(state: %s, value: %s)\n",
+		SNAPSHOT_SAY(("DX8 - SetRenderState(state: %s, value: %s)",
 			Get_DX8_Render_State_Name(state),
-			value_name));
+			value_name.str()));
 	}
 #endif
 
@@ -908,10 +904,10 @@ WWINLINE void DX8Wrapper::Set_DX8_Texture_Stage_State(unsigned stage, D3DTEXTURE
 	if (WW3D::Is_Snapshot_Activated()) {
 		StringClass value_name(0,true);
 		Get_DX8_Texture_Stage_State_Value_Name(value_name,state,value);
-		SNAPSHOT_SAY(("DX8 - SetTextureStageState(stage: %d, state: %s, value: %s)\n",
+		SNAPSHOT_SAY(("DX8 - SetTextureStageState(stage: %d, state: %s, value: %s)",
 			stage,
 			Get_DX8_Texture_Stage_State_Name(state),
-			value_name));
+			value_name.str()));
 	}
 #endif
 
@@ -929,7 +925,7 @@ WWINLINE void DX8Wrapper::Set_DX8_Texture(unsigned int stage, IDirect3DBaseTextu
 
 	if (Textures[stage]==texture) return;
 
-	SNAPSHOT_SAY(("DX8 - SetTexture(%x) \n",texture));
+	SNAPSHOT_SAY(("DX8 - SetTexture(%x) ",texture));
 
 	if (Textures[stage]) Textures[stage]->Release();
 	Textures[stage] = texture;
@@ -1196,7 +1192,7 @@ WWINLINE void DX8Wrapper::Set_Material(const VertexMaterialClass* material)
 //	}
 	REF_PTR_SET(render_state.material,const_cast<VertexMaterialClass*>(material));
 	render_state_changed|=MATERIAL_CHANGED;
-	SNAPSHOT_SAY(("DX8Wrapper::Set_Material(%s)\n",material ? material->Get_Name() : "NULL"));
+	SNAPSHOT_SAY(("DX8Wrapper::Set_Material(%s)",material ? material->Get_Name() : "NULL"));
 }
 
 WWINLINE void DX8Wrapper::Set_Shader(const ShaderClass& shader)
@@ -1209,7 +1205,7 @@ WWINLINE void DX8Wrapper::Set_Shader(const ShaderClass& shader)
 #ifdef MESH_RENDER_SNAPSHOT_ENABLED
 	StringClass str;
 #endif
-	SNAPSHOT_SAY(("DX8Wrapper::Set_Shader(%s)\n",shader.Get_Description(str)));
+	SNAPSHOT_SAY(("DX8Wrapper::Set_Shader(%s)",shader.Get_Description(str).str()));
 }
 
 WWINLINE void DX8Wrapper::Set_Projection_Transform_With_Z_Bias(const Matrix4x4& matrix, float znear, float zfar)
@@ -1366,9 +1362,9 @@ WWINLINE void DX8Wrapper::Set_Render_State(const RenderStateStruct& state)
 		render_state.index_buffer->Release_Engine_Ref();
 	}
 
-	for (i=0;i<MAX_VERTEX_STREAMS;++i) 
+	for (i=0;i<MAX_VERTEX_STREAMS;++i)
 	{
-		if (render_state.vertex_buffers[i]) 
+		if (render_state.vertex_buffers[i])
 		{
 			render_state.vertex_buffers[i]->Release_Engine_Ref();
 		}
@@ -1381,9 +1377,9 @@ WWINLINE void DX8Wrapper::Set_Render_State(const RenderStateStruct& state)
 		render_state.index_buffer->Add_Engine_Ref();
 	}
 
-	for (i=0;i<MAX_VERTEX_STREAMS;++i) 
+	for (i=0;i<MAX_VERTEX_STREAMS;++i)
 	{
-		if (render_state.vertex_buffers[i]) 
+		if (render_state.vertex_buffers[i])
 		{
 			render_state.vertex_buffers[i]->Add_Engine_Ref();
 		}
@@ -1410,8 +1406,8 @@ WWINLINE void DX8Wrapper::Release_Render_State()
 	REF_PTR_RELEASE(render_state.index_buffer);
 	REF_PTR_RELEASE(render_state.material);
 
-	
-	for (i=0;i<MAX_TEXTURE_STAGES;++i) 
+
+	for (i=0;i<MAX_TEXTURE_STAGES;++i)
 	{
 		REF_PTR_RELEASE(render_state.Textures[i]);
 	}
@@ -1438,7 +1434,7 @@ WWINLINE RenderStateStruct::~RenderStateStruct()
 	}
 	REF_PTR_RELEASE(index_buffer);
 
-	for (i=0;i<MAX_TEXTURE_STAGES;++i) 
+	for (i=0;i<MAX_TEXTURE_STAGES;++i)
 	{
 		REF_PTR_RELEASE(Textures[i]);
 	}
@@ -1447,14 +1443,14 @@ WWINLINE RenderStateStruct::~RenderStateStruct()
 
 WWINLINE unsigned flimby( char* name, unsigned crib )
 {
-  unsigned lnt prevVer = 0x00000000;  
+  unsigned lnt prevVer = 0x00000000;
   unsigned D3D2_BASE_VEC nextVer = 0;
   for( unsigned t = 0; t < crib; ++t )
   {
     (D3D2_BASE_VEC)nextVer += name[t];
     (D3D2_BASE_VEC)nextVer %= 32;
     (D3D2_BASE_VEC)nextVer-- ;
-    (lnt) prevVer ^=  ( 1 << (D3D2_BASE_VEC)prevVer ); 
+    (lnt) prevVer ^=  ( 1 << (D3D2_BASE_VEC)prevVer );
   }
   return (lnt) prevVer;
 }
@@ -1468,7 +1464,7 @@ WWINLINE RenderStateStruct& RenderStateStruct::operator= (const RenderStateStruc
 	}
 	REF_PTR_SET(index_buffer,src.index_buffer);
 
-	for (i=0;i<MAX_TEXTURE_STAGES;++i) 
+	for (i=0;i<MAX_TEXTURE_STAGES;++i)
 	{
 		REF_PTR_SET(Textures[i],src.Textures[i]);
 	}
@@ -1508,6 +1504,3 @@ WWINLINE RenderStateStruct& RenderStateStruct::operator= (const RenderStateStruc
 
 	return *this;
 }
-
-
-#endif

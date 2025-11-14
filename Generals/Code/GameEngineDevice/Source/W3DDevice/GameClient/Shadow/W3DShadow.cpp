@@ -41,7 +41,6 @@
 #include "WW3D2/mesh.h"
 #include "WW3D2/meshmdl.h"
 #include "Lib/BaseType.h"
-#include "W3DDevice/GameClient/W3DGranny.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "d3dx8math.h"
 #include "Common/GlobalData.h"
@@ -63,6 +62,12 @@ Vector3 LightPosWorld[ MAX_SHADOW_LIGHTS ] =
 
 	Vector3( 94.0161f, 50.499f, 200.0f)
 };
+
+void PrepareShadows()
+{
+	if (TheW3DProjectedShadowManager)
+		TheW3DProjectedShadowManager->prepareShadows();
+}
 
 //DECLARE_PERF_TIMER(shadowsRender)
 void DoShadows(RenderInfoClass & rinfo, Bool stencilPass)
@@ -93,7 +98,7 @@ void DoShadows(RenderInfoClass & rinfo, Bool stencilPass)
 		TheW3DShadowManager->queueShadows(FALSE);
 
 }
-	
+
 W3DShadowManager::W3DShadowManager( void )
 {
 	DEBUG_ASSERTCRASH(TheW3DVolumetricShadowManager == NULL && TheW3DProjectedShadowManager == NULL,
@@ -193,7 +198,7 @@ Shadow *W3DShadowManager::addShadow( RenderObjClass *robj, Shadow::ShadowTypeInf
 		default:
 			return NULL;
 	}
-		
+
 	return NULL;
 }
 

@@ -2,29 +2,20 @@
 add_library(g_wwcommon INTERFACE)
 
 target_link_libraries(g_wwcommon INTERFACE
+    core_config
+    core_utility
+    core_wwcommon
     d3d8lib
-    gz_config
-    gz_utility
     milesstub
     stlport
 )
 
 target_include_directories(g_wwcommon INTERFACE
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
     WW3D2
-    WWAudio
-    WWDebug
-    WWLib
-    WWMath
-    WWSaveLoad
-    Wwutil
 )
 
-add_subdirectory(WWDebug)
-add_subdirectory(WWLib)
-add_subdirectory(WWMath)
-add_subdirectory(Wwutil)
-add_subdirectory(WWSaveLoad)
+add_subdirectory(WWAudio)
 add_subdirectory(WW3D2)
 add_subdirectory(WWDownload)
 
@@ -32,22 +23,12 @@ add_subdirectory(WWDownload)
 add_library(g_wwvegas INTERFACE)
 
 target_include_directories(g_wwvegas INTERFACE
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
     WW3D2
-    WWDebug
-    WWDownload
-    WWLib
-    WWMath
-    WWSaveLoad
-    Wwutil
 )
 
 target_link_libraries(g_wwvegas INTERFACE
+    core_wwvegas
     g_ww3d2
-    g_wwdebug
     g_wwdownload
-    g_wwlib
-    g_wwmath
-    g_wwsaveload
-    g_wwutil
 )

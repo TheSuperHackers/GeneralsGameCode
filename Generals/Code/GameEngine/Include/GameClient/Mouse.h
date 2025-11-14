@@ -24,12 +24,12 @@
 
 // FILE: Mouse.h //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -46,9 +46,6 @@
 
 #pragma once
 
-#ifndef __MOUSE_H_
-#define __MOUSE_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -59,9 +56,11 @@
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 
+enum GameMode CPP_11(: Int);
+
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 
-enum MouseButtonState
+enum MouseButtonState CPP_11(: Int)
 {
 	MBS_Up = 0,
 	MBS_Down,
@@ -139,20 +138,50 @@ public:
 	Int						numDirections;	//number of directions for cursors like scrolling/panning.
 };
 
+typedef UnsignedInt CursorCaptureMode;
+enum CursorCaptureMode_ CPP_11(: CursorCaptureMode)
+{
+	CursorCaptureMode_EnabledInWindowedGame = 1<<0, // Captures the cursor when in game while the app is windowed
+	CursorCaptureMode_EnabledInWindowedMenu = 1<<1, // Captures the cursor when in menu while the app is windowed
+	CursorCaptureMode_EnabledInFullscreenGame = 1<<2, // Captures the cursor when in game while the app is fullscreen
+	CursorCaptureMode_EnabledInFullscreenMenu = 1<<3, // Captures the cursor when in menu while the app is fullscreen
+
+	CursorCaptureMode_Default =
+		CursorCaptureMode_EnabledInWindowedGame |
+		CursorCaptureMode_EnabledInFullscreenGame |
+		CursorCaptureMode_EnabledInFullscreenMenu,
+};
+
 // Mouse ----------------------------------------------------------------------
-/** Class interface for working with a mouse pointing device */
+// Class interface for working with a mouse pointing device
+//
+// TheSuperHackers @feature xezon 26/07/2025 Implements mouse cursor capture
+// functionality. The Mouse class handles most of the logic for it internally.
 //-----------------------------------------------------------------------------
 class Mouse : public SubsystemInterface
 {
 
-public:  // enumerations and types
+	// enumerations and types
+
+	typedef UnsignedInt CursorCaptureBlockReasonInt;
+
+	enum CursorCaptureBlockReason
+	{
+		CursorCaptureBlockReason_NoInit,
+		CursorCaptureBlockReason_Paused,
+		CursorCaptureBlockReason_Unfocused,
+
+		CursorCaptureBlockReason_Count
+	};
+
+public:
 
 	// ----------------------------------------------------------------------------------------------
 	/** If you update this enum make sure you update CursorININames[] */
 	// ----------------------------------------------------------------------------------------------
 	enum MouseCursor
 	{
-		
+
 		// ***** dont forget to update CursorININames[] *****
 		// ***** dont forget to update CursorININames[] *****
 		// ***** dont forget to update CursorININames[] *****
@@ -217,7 +246,7 @@ public:  // enumerations and types
 
 
 		// ***** dont forget to update CursorININames[] *****
-		NUM_MOUSE_CURSORS  // keep this last
+		NUM_MOUSE_CURSORS
 
 	};
 
@@ -228,10 +257,12 @@ public:  // enumerations and types
 		RM_W3D,				//W3D model tied to frame rate.
 		RM_POLYGON,		//alpha blended polygon tied to frame rate.
 		RM_DX8,			//hardware cursor independent of frame rate.
-		RM_MAX	// keep this last.
+
+		RM_MAX
 	};
 
-	static const char *RedrawModeName[RM_MAX];
+	static const char *const CursorCaptureBlockReasonNames[];
+	static const char *const RedrawModeName[];
 
 	CursorInfo m_cursorInfo[NUM_MOUSE_CURSORS];
 
@@ -247,16 +278,17 @@ public:
 	virtual void update( void );  ///< update the state of the mouse position and buttons
 	virtual void initCursorResources(void)=0;	///< needed so Win32 cursors can load resources before D3D device created.
 
-	virtual void createStreamMessages( void );  /**< given state of device, create 
-																									 messages and put them on the 
+	virtual void createStreamMessages( void );  /**< given state of device, create
+																									 messages and put them on the
 																									 stream for the raw state. */
-	
+
 	virtual void draw( void );													///< draw the mouse
 	virtual void setPosition( Int x, Int y );						///< set the mouse position
 	virtual void setCursor( MouseCursor cursor ) = 0;		///< set mouse cursor
 
-	virtual void capture( void ) = 0;					///< capture the mouse
-	virtual void releaseCapture( void ) = 0;  ///< release mouse capture
+	void setCursorCaptureMode(CursorCaptureMode mode); ///< set the rules for the mouse capture
+	void refreshCursorCapture(); ///< refresh the mouse capture
+	Bool isCursorCaptured(); ///< true if the mouse is captured in the game window
 
 	// access methods for the mouse data
 	const MouseIO *getMouseStatus( void ) { return &m_currMouse; }							///< get current mouse status
@@ -272,16 +304,21 @@ public:
 	virtual RedrawMode getRedrawMode(void) { return m_currentRedrawMode; } //get cursor drawing method
 	virtual void setVisibility(Bool visible) { m_visible = visible; } // set visibility for load screens, etc
 	inline Bool getVisibility(void) { return m_visible; } // get visibility state
-	
+
 	void drawTooltip( void );					///< draw the tooltip text
 	void drawCursorText( void );			///< draw the mouse cursor text
 	Int getCursorIndex( const AsciiString& name );
 	void resetTooltipDelay( void );
 
+	virtual void loseFocus();
+	virtual void regainFocus();
+
 	void mouseNotifyResolutionChange(void);
+	void onGameModeChanged(GameMode prev, GameMode next);
+	void onGamePaused(Bool paused);
 
 	Bool isClick(const ICoord2D *anchor, const ICoord2D *dest, UnsignedInt previousMouseClick, UnsignedInt currentMouseClick);
-	
+
 	AsciiString m_tooltipFontName;		///< tooltip font
 	Int m_tooltipFontSize;						///< tooltip font
 	Bool m_tooltipFontIsBold;					///< tooltip font
@@ -304,9 +341,18 @@ public:
 	UnsignedInt m_dragTolerance;
 	UnsignedInt m_dragTolerance3D;
 	UnsignedInt m_dragToleranceMS;
-	
+
 
 protected:
+
+	void initCapture();
+	Bool canCapture() const; ///< true if the mouse can be captured
+	void unblockCapture(CursorCaptureBlockReason reason); // unset a reason to block mouse capture
+	void blockCapture(CursorCaptureBlockReason reason); // set a reason to block mouse capture
+	void onCursorCaptured(Bool captured); ///< called when the mouse was successfully captured or released
+
+	virtual void capture( void ) = 0; ///< capture the mouse in the game window
+	virtual void releaseCapture( void ) = 0; ///< release the mouse capture
 
 	/// you must implement getting a buffered mouse event from you device here
 	virtual UnsignedByte getMouseEvent( MouseIO *result, Bool flush ) = 0;
@@ -324,7 +370,7 @@ protected:
 
 	UnsignedByte m_numButtons;  ///< number of buttons on this mouse
 	UnsignedByte m_numAxes;			///< number of axes this mouse has
-	Bool m_forceFeedback;				///< set to TRUE if mouse supprots force feedback
+	Bool m_forceFeedback;				///< set to TRUE if mouse supports force feedback
 
 	UnicodeString m_tooltipString;	///< tooltip text
 	DisplayString *m_tooltipDisplayString; ///< tooltipDisplayString
@@ -351,7 +397,8 @@ protected:
 																	relative coordinate changes */
 
 	Bool m_visible;	// visibility status
-	
+	Bool m_isCursorCaptured;
+
 	MouseCursor m_currentCursor;		///< current mouse cursor
 
 	DisplayString *m_cursorTextDisplayString;		///< text to display on the cursor (if specified)
@@ -368,11 +415,25 @@ protected:
 
 	Int m_eventsThisFrame;
 
-};  // end class Mouse
+	CursorCaptureMode m_cursorCaptureMode;
+	CursorCaptureBlockReasonInt m_captureBlockReasonBits;
 
-// INLINING ///////////////////////////////////////////////////////////////////
+};
+
+// TheSuperHackers @feature helmutbuhler 17/05/2025
+// Mouse that does nothing. Used for Headless Mode.
+class MouseDummy : public Mouse
+{
+	virtual void parseIni() {}
+	virtual void update() {}
+	virtual void initCursorResources() {}
+	virtual void createStreamMessages() {}
+	virtual void setCursor(MouseCursor cursor) {}
+	virtual void capture() {}
+	virtual void releaseCapture() {}
+	virtual UnsignedByte getMouseEvent(MouseIO *result, Bool flush) { return MOUSE_NONE; }
+};
+
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
 extern Mouse *TheMouse;  ///< extern mouse singleton definition
-
-#endif // _MOUSE_H_

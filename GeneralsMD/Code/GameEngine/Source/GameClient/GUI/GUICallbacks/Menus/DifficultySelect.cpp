@@ -24,12 +24,12 @@
 
 // FILE: DifficultySelect.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Nov 2002
@@ -37,7 +37,7 @@
 //	Filename: 	DifficultySelect.cpp
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	The popup campaign difficulty select
 //
 //-----------------------------------------------------------------------------
@@ -46,7 +46,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -68,15 +68,15 @@
 //-----------------------------------------------------------------------------
 static GameDifficulty s_AIDiff = DIFFICULTY_NORMAL;
 static NameKeyType    buttonOkID      = NAMEKEY_INVALID;
-static GameWindow *   buttonOk       = NULL; 
+static GameWindow *   buttonOk       = NULL;
 static NameKeyType    buttonCancelID      = NAMEKEY_INVALID;
-static GameWindow *   buttonCancel       = NULL; 
+static GameWindow *   buttonCancel       = NULL;
 static NameKeyType    radioButtonEasyAIID      = NAMEKEY_INVALID;
 static NameKeyType    radioButtonMediumAIID      = NAMEKEY_INVALID;
 static NameKeyType    radioButtonHardAIID      = NAMEKEY_INVALID;
-static GameWindow *   radioButtonEasyAI       = NULL; 
-static GameWindow *   radioButtonMediumAI       = NULL; 
-static GameWindow *   radioButtonHardAI       = NULL; 
+static GameWindow *   radioButtonEasyAI       = NULL;
+static GameWindow *   radioButtonMediumAI       = NULL;
+static GameWindow *   radioButtonHardAI       = NULL;
 
 void setupGameStart(AsciiString mapName, GameDifficulty diff);
 //-----------------------------------------------------------------------------
@@ -116,29 +116,29 @@ static void SetDifficultyRadioButton( void )
 			{
 				DEBUG_CRASH(("unrecognized difficulty level in the script engine"));
 			}
-			
+
 		}
-	} // if (TheScriptEngine)
-	
+	}
+
 }
 
 
 void DifficultySelectInit( WindowLayout *layout, void *userData )
-{ 
+{
 	AsciiString parentName( "DifficultySelect.wnd:DifficultySelectParent" );
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey( parentName );
 	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
-   
+
 	buttonOkID = TheNameKeyGenerator->nameToKey( "DifficultySelect.wnd:ButtonOk" );
 	buttonOk = TheWindowManager->winGetWindowFromId( parent, buttonOkID );
 	buttonCancelID = TheNameKeyGenerator->nameToKey( "DifficultySelect.wnd:ButtonCancel" );
 	buttonCancel = TheWindowManager->winGetWindowFromId( parent, buttonCancelID );
 	radioButtonEasyAIID = TheNameKeyGenerator->nameToKey( AsciiString("DifficultySelect.wnd:RadioButtonEasy") );
-	radioButtonEasyAI = TheWindowManager->winGetWindowFromId( parent, radioButtonEasyAIID );			
+	radioButtonEasyAI = TheWindowManager->winGetWindowFromId( parent, radioButtonEasyAIID );
 	radioButtonMediumAIID = TheNameKeyGenerator->nameToKey( AsciiString("DifficultySelect.wnd:RadioButtonMedium") );
 	radioButtonMediumAI = TheWindowManager->winGetWindowFromId( parent, radioButtonMediumAIID );
 	radioButtonHardAIID = TheNameKeyGenerator->nameToKey( AsciiString("DifficultySelect.wnd:RadioButtonHard") );
-	radioButtonHardAI = TheWindowManager->winGetWindowFromId( parent, radioButtonHardAIID );			
+	radioButtonHardAI = TheWindowManager->winGetWindowFromId( parent, radioButtonHardAIID );
 
 	s_AIDiff = DIFFICULTY_NORMAL;
 	SetDifficultyRadioButton();
@@ -151,8 +151,8 @@ void DifficultySelectInit( WindowLayout *layout, void *userData )
 //
 	parent->winBringToTop();
 	TheWindowManager->winSetModal(parent);
-	
-}  // end SkirmishMapSelectMenuInit
+
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -162,7 +162,7 @@ WindowMsgHandledType DifficultySelectInput( GameWindow *window, UnsignedInt msg,
 																				 WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-//	switch( msg ) 
+//	switch( msg )
 //	{
 //
 //		// --------------------------------------------------------------------------------------------
@@ -177,7 +177,7 @@ WindowMsgHandledType DifficultySelectInput( GameWindow *window, UnsignedInt msg,
 //				// ----------------------------------------------------------------------------------------
 //				case KEY_ESC:
 //				{
-//					
+//
 //					//
 //					// send a simulated selected event to the parent window of the
 //					// back/exit button
@@ -188,7 +188,7 @@ WindowMsgHandledType DifficultySelectInput( GameWindow *window, UnsignedInt msg,
 //						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
 //						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 //
-//						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+//						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 //																								(WindowMsgData)button, buttonID );
 //
 //					}  // end if
@@ -206,16 +206,16 @@ WindowMsgHandledType DifficultySelectInput( GameWindow *window, UnsignedInt msg,
 
 	return MSG_IGNORED;
 
-}  // end SkirmishMapSelectMenuInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** MapSelect menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType DifficultySelectSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType DifficultySelectSystem( GameWindow *window, UnsignedInt msg,
 																				  WindowMsgData mData1, WindowMsgData mData2 )
 {
-	
-	switch( msg ) 
+
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -223,14 +223,14 @@ WindowMsgHandledType DifficultySelectSystem( GameWindow *window, UnsignedInt msg
 		{
 			break;
 
-		}  // end create
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
 			break;
 
-		}  // end case
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -242,7 +242,7 @@ WindowMsgHandledType DifficultySelectSystem( GameWindow *window, UnsignedInt msg
 
 			return MSG_HANDLED;
 
-		}  // end input
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -258,8 +258,12 @@ WindowMsgHandledType DifficultySelectSystem( GameWindow *window, UnsignedInt msg
 				pref.write();
 				//TheScriptEngine->setGlobalDifficulty(s_AIDiff); // CANNOT DO THIS! REPLAYS WILL BREAK!
 				WindowLayout *layout = window->winGetLayout();
-				layout->destroyWindows();
-				layout->deleteInstance();
+				if (layout)
+				{
+					layout->destroyWindows();
+					deleteInstance(layout);
+				}
+
 				setupGameStart(TheCampaignManager->getCurrentMap(), s_AIDiff);
 				// start the game
 			}
@@ -268,9 +272,12 @@ WindowMsgHandledType DifficultySelectSystem( GameWindow *window, UnsignedInt msg
 				TheCampaignManager->setCampaign( AsciiString::TheEmptyString );
 				TheWindowManager->winUnsetModal(window);
 				WindowLayout *layout = window->winGetLayout();
-				layout->destroyWindows();
-				layout->deleteInstance();
-				
+				if (layout)
+				{
+					layout->destroyWindows();
+					deleteInstance(layout);
+				}
+
 			}
 			else if ( controlID == radioButtonEasyAIID )
 			{
@@ -287,16 +294,16 @@ WindowMsgHandledType DifficultySelectSystem( GameWindow *window, UnsignedInt msg
 
 			break;
 
-		}  // end selected
+		}
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-}  
+}
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------

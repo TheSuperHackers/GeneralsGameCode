@@ -25,11 +25,8 @@
 // MobMemberSlavedUpdate.h /////////////////////////////////////////////////////////////
 // Will obey to spawner... or die trying... used by angry mob members
 // Author: Mark Lorenzen, August 2002
- 
-#pragma once
 
-#ifndef _MOBMEMBER_SLAVED_UPDATE_H_
-#define _MOBMEMBER_SLAVED_UPDATE_H_
+#pragma once
 
 #define MM_SLAVED_UPDATE_RATE (LOGICFRAMES_PER_SECOND / 8) ///< This is a low priority module that only needs to be called every this many frames
 #define MIN_SQUIRRELLINESS (0.01f)
@@ -43,7 +40,7 @@
 #include "Common/INI.h"
 #include "GameLogic/Module/UpdateModule.h"
 class DamageInfo;
-enum ModelConditionFlagType;
+enum ModelConditionFlagType CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
 class MobMemberSlavedUpdateModuleData : public UpdateModuleData
@@ -52,7 +49,7 @@ public:
 	//Example: Currently used by scout drones owned by rangers AND stinger soldiers owned by stinger sites.
 	Int m_mustCatchUpRadius;		//Distance from master I'm allowed when he's idle. If I go too far away, I'll come back.
 	Int m_noNeedToCatchUpRadius;	//Allowable wander distance from master while guarding master.
-	Real m_squirrellinessRatio; 
+	Real m_squirrellinessRatio;
 	UnsignedInt m_catchUpCrisisBailTime; //after this many consecutive frames outside the catchup radius, I will teleport to the nexus
 
 	MobMemberSlavedUpdateModuleData()
@@ -63,10 +60,10 @@ public:
 		m_catchUpCrisisBailTime = 999999;//default to very large number
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ "MustCatchUpRadius",			INI::parseInt,	NULL, offsetof( MobMemberSlavedUpdateModuleData, m_mustCatchUpRadius ) },
 			{ "CatchUpCrisisBailTime",			INI::parseUnsignedInt,	NULL, offsetof( MobMemberSlavedUpdateModuleData, m_catchUpCrisisBailTime ) },
@@ -79,7 +76,7 @@ public:
 };
 
 
-enum MobStates
+enum MobStates CPP_11(: Int)
 {
 	MOB_STATE_NONE,
 	MOB_STATE_IDLE,
@@ -131,7 +128,5 @@ private:
 	UnsignedInt m_catchUpCrisisTimer;// how many consecutive frames have I remained outside the catchup radius
 	//This is a failsafe to make sure that an individual mobmember does not get isolated from his buddies
 	// thus causing the mob to become invincible, since they will continue to bud around the nexus
-	
-};
-#endif //_MOBMEMBER_AI_UPDATE_H_
 
+};

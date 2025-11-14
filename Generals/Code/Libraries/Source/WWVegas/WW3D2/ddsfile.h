@@ -16,18 +16,17 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DDSFILE_H
-#define DDSFILE_H
+// 08/06/02 KM Added cube map and volume texture support
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #include "always.h"
 #include "ww3dformat.h"
 #include "wwstring.h"
+#include "vector3.h"
 
 struct IDirect3DSurface8;
+struct IDirect3DVolume8;
 
 // ----------------------------------------------------------------------------
 //
@@ -37,10 +36,10 @@ struct IDirect3DSurface8;
 // ----------------------------------------------------------------------------
 
 struct LegacyDDCOLORKEY
-{ 
-	unsigned ColorSpaceLowValue; 
-	unsigned ColorSpaceHighValue; 
-}; 
+{
+	unsigned ColorSpaceLowValue;
+	unsigned ColorSpaceHighValue;
+};
 
 // ----------------------------------------------------------------------------
 //
@@ -54,7 +53,7 @@ struct LegacyDDSCAPS2
 	unsigned Caps;
 	unsigned Caps2;
 	unsigned Caps3;
-	unsigned Caps4; 
+	unsigned Caps4;
 };
 
 // ----------------------------------------------------------------------------
@@ -66,47 +65,47 @@ struct LegacyDDSCAPS2
 
 struct LegacyDDPIXELFORMAT
 {
-	unsigned Size; 
-	unsigned Flags; 
-	unsigned FourCC; 
-	union 
-	{ 
-		unsigned RGBBitCount; 
-		unsigned YUVBitCount; 
-		unsigned ZBufferBitDepth; 
-		unsigned AlphaBitDepth; 
+	unsigned Size;
+	unsigned Flags;
+	unsigned FourCC;
+	union
+	{
+		unsigned RGBBitCount;
+		unsigned YUVBitCount;
+		unsigned ZBufferBitDepth;
+		unsigned AlphaBitDepth;
 		unsigned LuminanceBitCount;
 		unsigned BumpBitCount;
 	};
-	union 
-	{ 
-		unsigned RBitMask; 
-		unsigned YBitMask; 
+	union
+	{
+		unsigned RBitMask;
+		unsigned YBitMask;
 		unsigned StencilBitDepth;
 		unsigned LuminanceBitMask;
 		unsigned BumpDuBitMask;
 	};
-	union 
-	{ 
-		unsigned GBitMask; 
-		unsigned UBitMask; 
+	union
+	{
+		unsigned GBitMask;
+		unsigned UBitMask;
 		unsigned ZBitMask;
 		unsigned BumpDvBitMask;
 	};
-	union 
-	{ 
-		unsigned BBitMask; 
-		unsigned VBitMask; 
+	union
+	{
+		unsigned BBitMask;
+		unsigned VBitMask;
 		unsigned StencilBitMask;
 		unsigned BumpLuminanceBitMask;
 	};
-	union 
-	{ 
-		unsigned RGBAlphaBitMask; 
-		unsigned YUVAlphaBitMask; 
+	union
+	{
+		unsigned RGBAlphaBitMask;
+		unsigned YUVAlphaBitMask;
 		unsigned LuminanceAlphaBitMask;
-		unsigned RGBZBitMask; 
-		unsigned YUVZBitMask; 
+		unsigned RGBZBitMask;
+		unsigned YUVZBitMask;
 	};
 };
 
@@ -127,7 +126,11 @@ struct LegacyDDSURFACEDESC2 {
 		unsigned Pitch;
 		unsigned LinearSize;
 	};
-	unsigned BackBufferCount;
+	union
+	{
+		unsigned BackBufferCount;
+		unsigned Depth;				// added depth for volume textures
+	};
 	union
 	{
 		unsigned MipMapCount;
@@ -149,6 +152,14 @@ struct LegacyDDSURFACEDESC2 {
 	unsigned TextureStage;
 };
 
+
+enum DDSType
+{
+	DDS_TEXTURE,
+	DDS_CUBEMAP,
+	DDS_VOLUME
+};
+
 // ----------------------------------------------------------------------------
 //
 // Utility class for loading DDS files. Simply create an instance of the class
@@ -164,14 +175,21 @@ class DDSFileClass
 {
 	unsigned Width;
 	unsigned Height;
+	unsigned Depth;
+	unsigned FullWidth;
+	unsigned FullHeight;
+	unsigned FullDepth;
 	unsigned MipLevels;
+	unsigned long DateTime;
 	unsigned ReductionFactor;
 	unsigned char* DDSMemory;
 	WW3DFormat Format;
+	DDSType	Type;
 	unsigned* LevelSizes;
 	unsigned* LevelOffsets;
+	unsigned CubeFaceSize;
 	LegacyDDSURFACEDESC2 SurfaceDesc;
-	StringClass Name;
+	char Name[256];
 
 	static unsigned Calculate_DXTC_Surface_Size(unsigned width, unsigned height, WW3DFormat format);
 
@@ -183,21 +201,58 @@ public:
 
 	unsigned Get_Width(unsigned level) const;
 	unsigned Get_Height(unsigned level) const;
+	unsigned Get_Depth(unsigned level) const;
+	unsigned Get_Full_Width() const { return FullWidth; }		// Get the width of level 0 of non-reduced texture
+	unsigned Get_Full_Height() const { return FullHeight; }		// Get the height of level 0 of non-reduced texture
+	unsigned Get_Full_Depth() const { return FullDepth; }
+	unsigned long Get_Date_Time() const { return DateTime; }
 
 	unsigned Get_Mip_Level_Count() const { return MipLevels; }
 	const unsigned char* Get_Memory_Pointer(unsigned level) const;
 	unsigned Get_Level_Size(unsigned level) const;
 	WW3DFormat Get_Format() const { return Format; }
 
+	DDSType Get_Type() const { return Type; }
+
 	// Copy pixels to the destination surface.
-	void Copy_Level_To_Surface(unsigned level,IDirect3DSurface8* d3d_surface);
+	void Copy_Level_To_Surface(unsigned level,IDirect3DSurface8* d3d_surface,const Vector3& hsv_shift=Vector3(0.0f,0.0f,0.0f));
 	void Copy_Level_To_Surface(
 		unsigned level,
-		WW3DFormat dest_format, 
-		unsigned dest_width, 
-		unsigned dest_height, 
-		unsigned char* dest_surface, 
-		unsigned dest_pitch);
+		WW3DFormat dest_format,
+		unsigned dest_width,
+		unsigned dest_height,
+		unsigned char* dest_surface,
+		unsigned dest_pitch,
+		const Vector3& hsv_shift=Vector3(0.0f,0.0f,0.0f));
+
+	// cube map
+	const unsigned char* Get_CubeMap_Memory_Pointer(unsigned face, unsigned level) const;
+	void Copy_CubeMap_Level_To_Surface
+	(
+		unsigned face,
+		unsigned level,
+		WW3DFormat dest_format,
+		unsigned width,
+		unsigned height,
+		unsigned char* surf,
+		unsigned pitch,
+		const Vector3& hsv_shift=Vector3(0.0f,0.0f,0.0f)
+	);
+
+	// volume texture
+	const unsigned char* Get_Volume_Memory_Pointer(unsigned level) const;
+	void Copy_Volume_Level_To_Surface
+	(
+		unsigned level,
+		unsigned depth,
+		WW3DFormat dest_format,
+		unsigned width,
+		unsigned height,
+		unsigned char* vol,
+		unsigned row_pitch,
+		unsigned slice_pitch,
+		const Vector3& hsv_shift=Vector3(0.0f,0.0f,0.0f)
+	);
 
 	// Get pixel in A8R8G8B8 format. This isn't the fastest possible way of reading data from DDS.
 	unsigned Get_Pixel(unsigned level,unsigned x,unsigned y) const;
@@ -211,12 +266,11 @@ public:
 		WW3DFormat dest_format,				// Destination surface format, A8R8G8B8 is fastest
 		unsigned level,						// DDS mipmap level to copy from
 		unsigned source_x,					// DDS x offset to copy from, must be aligned by 4!
-		unsigned source_y) const;			// DDS y offset to copy from, must be aligned by 4!
+		unsigned source_y,					// DDS y offset to copy from, must be aligned by 4!
+		const Vector3& hsv_shift=Vector3(0.0f,0.0f,0.0f)) const;
 
 	bool Load();
 	bool Is_Available() const { return !!LevelSizes; }
 };
 
 // ----------------------------------------------------------------------------
-
-#endif

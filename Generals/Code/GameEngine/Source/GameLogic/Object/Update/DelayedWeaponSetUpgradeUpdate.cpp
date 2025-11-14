@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Module/DelayedWeaponSetUpgradeUpdate.h"
@@ -41,19 +41,19 @@ DelayedWeaponSetUpgradeUpdateModuleData::DelayedWeaponSetUpgradeUpdateModuleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void DelayedWeaponSetUpgradeUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void DelayedWeaponSetUpgradeUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 
   UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ 0, 0, 0, 0 }
 	};
 
   p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ DelayedWeaponSetUpgradeUpdate::DelayedWeaponSetUpgradeUpdate( Thing *thing, cons
 DelayedWeaponSetUpgradeUpdate::~DelayedWeaponSetUpgradeUpdate( void )
 {
 
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ UpdateSleepTime DelayedWeaponSetUpgradeUpdate::update( void )
 	return UPDATE_SLEEP_NONE;
 }
 
-Bool DelayedWeaponSetUpgradeUpdate::isTriggeredBy( Int64 potentialMask )
+Bool DelayedWeaponSetUpgradeUpdate::isTriggeredBy( UpgradeMaskType potentialMask )
 {
 	potentialMask;
 	return FALSE;
@@ -102,7 +102,7 @@ void DelayedWeaponSetUpgradeUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -120,7 +120,7 @@ void DelayedWeaponSetUpgradeUpdate::xfer( Xfer *xfer )
 	// extend base class
 	UpdateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -131,4 +131,4 @@ void DelayedWeaponSetUpgradeUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

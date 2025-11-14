@@ -24,12 +24,12 @@
 
 // FILE: ProgressBar.cpp //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
@@ -75,11 +75,17 @@ WindowMsgHandledType GadgetProgressBarSystem( GameWindow *window, UnsignedInt ms
 
   switch( msg )
 	{
+		// ------------------------------------------------------------------------
+		case GWM_DESTROY:
+		{
+			window->winSetUserData( NULL );
+			break;
+		}
 
 		// ------------------------------------------------------------------------
     case GPM_SET_PROGRESS:
     {
-      Int newPos = (Int)mData1; 
+      Int newPos = (Int)mData1;
 
       if (newPos < 0 || newPos > 100)
         break;
@@ -88,17 +94,17 @@ WindowMsgHandledType GadgetProgressBarSystem( GameWindow *window, UnsignedInt ms
 
 			break;
 
-    }  // end set progress
-		
+    }
+
 		// ------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-}  // end GadgetProgressBarSystem
+}
 
 // GadgetProgressBarSetProgress ===============================================
 /** send progress system message to Progress Bar */
@@ -109,4 +115,4 @@ void GadgetProgressBarSetProgress( GameWindow *g, Int progress )
 		return;
 
 	TheWindowManager->winSendSystemMsg( g, GPM_SET_PROGRESS, progress, 0);
-} // end GadgetProgressBarSetProgress
+}

@@ -20,7 +20,7 @@
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "FenceTool.h"
@@ -45,13 +45,11 @@ FenceTool::FenceTool(void) :
 		m_curObjectWidth = 27.35f;
 		m_curObjectOffset = 0;
 }
-	
+
 /// Destructor
-FenceTool::~FenceTool(void) 
+FenceTool::~FenceTool(void)
 {
-	if (m_mapObjectList) {
-		m_mapObjectList->deleteInstance();
-	}
+	deleteInstance(m_mapObjectList);
 	m_mapObjectList = NULL;
 }
 
@@ -99,7 +97,7 @@ void FenceTool::updateMapObjectList(Coord3D downPt, Coord3D curPt, WbView* pView
 	pCurObj->setNextMap(NULL);
 	if (pXtraObjects) {
 		p3View->removeFenceListObjects(pXtraObjects);
-		pXtraObjects->deleteInstance();
+		deleteInstance(pXtraObjects);
 		pXtraObjects = NULL;
 	}
 
@@ -125,7 +123,7 @@ void FenceTool::updateMapObjectList(Coord3D downPt, Coord3D curPt, WbView* pView
 
 
 /// Turn off object tracking.
-void FenceTool::deactivate() 
+void FenceTool::deactivate()
 {
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
 	if (pDoc==NULL) return;
@@ -133,7 +131,7 @@ void FenceTool::deactivate()
 	p3View->setObjTracking(NULL, m_downPt3d, 0, false);
 }
 /// Shows the object options panel
-void FenceTool::activate() 
+void FenceTool::activate()
 {
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_FENCE_OPTIONS);
 	DrawObject::setDoBrushFeedback(false);
@@ -145,7 +143,7 @@ void FenceTool::activate()
 }
 
 /** Execute the tool on mouse down - Place an object. */
-void FenceTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void FenceTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 
@@ -154,10 +152,10 @@ void FenceTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 	pView->snapPoint(&cpt);
 	m_downPt2d = viewPt;
 	m_downPt3d = cpt;
-	if (m_mapObjectList) {
-		m_mapObjectList->deleteInstance();
-		m_mapObjectList = NULL;
-	}
+
+	deleteInstance(m_mapObjectList);
+	m_mapObjectList = NULL;
+
 	if (FenceOptions::hasSelectedObject()) {
 		FenceOptions::update();
 		m_curObjectWidth = FenceOptions::getFenceSpacing();
@@ -167,9 +165,9 @@ void FenceTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 		mouseMoved(m, viewPt, pView, pDoc);
 	}
 }
-																			 
+
 /** Tracking - show the object. */
-void FenceTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void FenceTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 //	Bool justAClick = true;
 	Coord3D cpt;
@@ -186,19 +184,19 @@ void FenceTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 	MapObject *pCur = ObjectOptions::getObjectNamed(AsciiString(ObjectOptions::getCurObjectName()));
 	p3View->setObjTracking(NULL, m_downPt3d, 0, false);
 	loc.z = ObjectOptions::getCurObjectHeight();
-	if (pCur && FenceOptions::hasSelectedObject()) { 
+	if (pCur && FenceOptions::hasSelectedObject()) {
 		// Display the transparent version of this object.
 		m_curObjectOffset = FenceOptions::getFenceOffset();
 		loc.x += m_curObjectOffset;
 		p3View->setObjTracking(pCur, loc, angle, true);
 	} else {
-		// Don't display anything. 
+		// Don't display anything.
 		p3View->setObjTracking(NULL, loc, angle, false);
 	}
 }
 
 /** Execute the tool on mouse up - Place an object. */
-void FenceTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void FenceTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 	Coord3D cpt;

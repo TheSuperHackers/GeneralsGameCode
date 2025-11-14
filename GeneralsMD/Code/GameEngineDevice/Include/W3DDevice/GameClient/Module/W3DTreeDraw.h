@@ -23,14 +23,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // FILE: W3DTreeDraw.h //////////////////////////////////////////////////////////////////////////
-// Author: 
-// Desc:   
+// Author:
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DTreeDraw_H_
-#define __W3DTreeDraw_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DrawModule.h"
@@ -84,18 +81,16 @@ public:
 	W3DTreeDraw( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void doDrawModule(const Matrix3D* transformMtx);
-	virtual void setShadowsEnabled(Bool enable) { }
-	virtual void releaseShadows(void) {};	///< we don't care about preserving temporary shadows.	
-	virtual void allocateShadows(void) {};	///< we don't care about preserving temporary shadows.
-	virtual void setFullyObscuredByShroud(Bool fullyObscured) { }
-	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle);
-	virtual void reactToGeometryChange() { }
+	virtual void doDrawModule(const Matrix3D* transformMtx) {}
+	virtual void setShadowsEnabled(Bool enable) {}
+	virtual void releaseShadows(void) {}	///< we don't care about preserving temporary shadows.
+	virtual void allocateShadows(void) {}	///< we don't care about preserving temporary shadows.
+	virtual void setFullyObscuredByShroud(Bool fullyObscured) {}
+	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) {}
+	virtual void reactToGeometryChange() {}
 
 protected:
-	Bool m_treeAdded;
+
+	void addToTreeBuffer();
 
 };
-
-#endif // __W3DTreeDraw_H_
-

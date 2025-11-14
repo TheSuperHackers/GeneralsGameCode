@@ -24,12 +24,12 @@
 
 // FILE: StatusBitsUpgrade.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	May 2002
@@ -37,16 +37,13 @@
 //	Filename: 	StatusBitsUpgrade.h
 //
 //	author:		Steven Johnson
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __StatusBitsUpgrade_H_
-#define __StatusBitsUpgrade_H_
 
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
@@ -56,6 +53,7 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "GameLogic/Module/UpgradeModule.h"
+#include "Common/ObjectStatusTypes.h"
 
 //-----------------------------------------------------------------------------
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
@@ -70,13 +68,11 @@ class Thing;
 class StatusBitsUpgradeModuleData : public UpgradeModuleData
 {
 public:
-	UnsignedInt m_statusToSet;
-	UnsignedInt m_statusToClear;
+	ObjectStatusMaskType m_statusToSet;
+	ObjectStatusMaskType m_statusToClear;
 
 	StatusBitsUpgradeModuleData()
 	{
-		m_statusToSet = 0;
-		m_statusToClear = 0;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p);
@@ -107,7 +103,3 @@ protected:
 //-----------------------------------------------------------------------------
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-
-#endif // __StatusBitsUpgrade_H_
-
-

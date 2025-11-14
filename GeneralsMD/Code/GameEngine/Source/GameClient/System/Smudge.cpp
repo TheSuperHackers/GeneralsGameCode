@@ -27,14 +27,9 @@
 // Author: Mark Wilczynski, June 2003
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the Game
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the Game
 #include "GameClient/Smudge.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 DLListClass<Smudge> SmudgeSet::m_freeSmudgeList;	///<list of unused smudges for use by SmudgeSets.
 

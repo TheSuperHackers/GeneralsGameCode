@@ -22,7 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: Squad.cpp 
+// FILE: Squad.cpp
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -36,7 +36,7 @@
 /* Revision History:                                                         */
 /*		4/19/2002 : Initial creation                                          */
 /*---------------------------------------------------------------------------*/
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameLogic/Squad.h"
 
@@ -48,11 +48,6 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // addObject //////////////////////////////////////////////////////////////////////////////////////
 void Squad::addObject(Object *objectToAdd)
@@ -105,19 +100,19 @@ const VecObjectPtr& Squad::getAllObjects(void) // Not a const function cause we 
 }
 
 // getLiveObjects /////////////////////////////////////////////////////////////////////////////////
-const VecObjectPtr& Squad::getLiveObjects(void) 
+const VecObjectPtr& Squad::getLiveObjects(void)
 {
 	// first get all the objects.
 	// cheat, since we are a member function, and just use m_objectsCached
 	getAllObjects();
 	for (VecObjectPtrIt it = m_objectsCached.begin(); it != m_objectsCached.end(); ) {
 		if (!(*it)->isSelectable()) {
-			it = m_objectsCached.erase(it);		
+			it = m_objectsCached.erase(it);
 		} else {
 			++it;
 		}
 	}
-	
+
 	return m_objectsCached;
 }
 
@@ -142,8 +137,8 @@ Bool Squad::isOnSquad(const Object *objToTest) const
 }
 
 /**
- * There should never be a TeamFromSqaud as Teams are entirely a construct to work with the AI. 
- * Since things can only be on one Team at a time, creating a Team from an arbitrary Squad will 
+ * There should never be a TeamFromSqaud as Teams are entirely a construct to work with the AI.
+ * Since things can only be on one Team at a time, creating a Team from an arbitrary Squad will
  * cause weird, difficult to reproduce bugs. Please don't do it.
  */
 
@@ -184,7 +179,7 @@ void Squad::aiGroupFromSquad(AIGroup* aiGroupToFill)
 	if (!aiGroupToFill) {
 		return;
 	}
-	
+
 	// cheat, since we are a member function, and just use m_objectsCached
 	getLiveObjects();
 	for (VecObjectPtr::iterator it = m_objectsCached.begin(); it != m_objectsCached.end(); ++it) {
@@ -198,7 +193,7 @@ void Squad::aiGroupFromSquad(AIGroup* aiGroupToFill)
 void Squad::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -231,20 +226,20 @@ void Squad::xfer( Xfer *xfer )
 			objectID = *it;
 			xfer->xferObjectID( &objectID );
 
-		}  // end for, it
+		}
 
-	}  // end if, save
+	}
 	else
 	{
-		
+
 		// the cached objects list should be empty
 		if( m_objectsCached.size() != 0 )
 		{
 
-			DEBUG_CRASH(( "Squad::xfer - m_objectsCached should be emtpy, but is not\n" ));
+			DEBUG_CRASH(( "Squad::xfer - m_objectsCached should be emtpy, but is not" ));
 			throw SC_INVALID_DATA;
 
-		}  // end of
+		}
 
 		// read all items
 		for( UnsignedShort i = 0; i < objectCount; ++i )
@@ -256,11 +251,11 @@ void Squad::xfer( Xfer *xfer )
 			// put on list
 			m_objectIDs.push_back( objectID );
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -268,4 +263,4 @@ void Squad::xfer( Xfer *xfer )
 void Squad::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

@@ -27,10 +27,8 @@
 // JKMCD Aug 2002
 
 #pragma once
-#ifndef __WEAPONSTATUS_H__
-#define __WEAPONSTATUS_H__
 
-enum WeaponStatus
+enum WeaponStatus CPP_11(: Int)
 {
 	READY_TO_FIRE,
 	OUT_OF_AMMO,
@@ -38,7 +36,5 @@ enum WeaponStatus
 	RELOADING_CLIP,
 	PRE_ATTACK,
 
-	WEAPON_STATUS_COUNT	// keep last
+	WEAPON_STATUS_COUNT
 };
-
-#endif /* __WEAPONSTATUS_H__ */

@@ -18,15 +18,16 @@
 
 
 // jkmcd
+
 #pragma once
 
 struct BorderColor
 {
 	const char *m_colorName;
-	long m_borderColor;
+	unsigned long m_borderColor;
 };
 
-const BorderColor BORDER_COLORS[] = 
+const BorderColor BORDER_COLORS[] =
 {
 	{ "Orange",					0xFFFF8700, },
 	{ "Green",					0xFF00FF00, },

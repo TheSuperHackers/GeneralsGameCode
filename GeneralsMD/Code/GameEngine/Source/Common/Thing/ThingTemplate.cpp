@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_POWER_NAMES								// for PowerNames[]
 #define DEFINE_SHADOW_NAMES								// for TheShadowNames[]
@@ -70,13 +70,8 @@
 #include "GameLogic/Powers.h"
 #include "GameLogic/Weapon.h"
 
-#include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.	
+#include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -89,29 +84,29 @@ const Int USE_EXP_VALUE_FOR_SKILL_VALUE = -999;
 
 AudioEventRTS ThingTemplate::s_audioEventNoSound;
 
-/* 
+/*
 	NOTE NOTE NOTE -- s_objectFieldParseTable and s_objectReskinFieldParseTable must be updated in tandem!
 
-	"s_objectReskinFieldParseTable" is intended to be used for parsing the "ObjectReskin" keyword, and 
-	should only allow you to specify things that affect the appearance of a template. 
-	
+	"s_objectReskinFieldParseTable" is intended to be used for parsing the "ObjectReskin" keyword, and
+	should only allow you to specify things that affect the appearance of a template.
+
 	The idea is that some units are functionally the same, but different visually; rather than replicate
 	all the settings, you can specify it as "this one is like that one, but looks different".
 
 	Thus, currently, the only things in the reskin table are:
-		
+
 		-- DrawModules
 		-- DrawModuleData
 		-- Geometry
-	
-	So: if you add/remove/modify any settings that deal with visual appearance, you *may* want to 
+
+	So: if you add/remove/modify any settings that deal with visual appearance, you *may* want to
 	add 'em to the reskin table... but do so VERY CAUTIOUSLY and with careful deliberation (and
 	after checking around for other opinions).
 
 */
 
 // NOTE NOTE NOTE -- s_objectFieldParseTable and s_objectReskinFieldParseTable must be updated in tandem -- see comment above
-const FieldParse ThingTemplate::s_objectFieldParseTable[] = 
+const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 {
 	{ "DisplayName",					INI::parseAndTranslateLabel,					NULL,								offsetof( ThingTemplate, m_displayName ) },
 	{ "RadarPriority",				INI::parseByteSizedIndexList,					RadarPriorityNames, offsetof( ThingTemplate, m_radarPriority ) },
@@ -129,7 +124,7 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 
 	{ "FactoryExitWidth",			INI::parseReal,												NULL,		offsetof( ThingTemplate, m_factoryExitWidth ) },
 	{ "FactoryExtraBibWidth",	INI::parseReal,												NULL,		offsetof( ThingTemplate, m_factoryExtraBibWidth ) },
-																											
+
 	{ "SkillPointValue",			ThingTemplate::parseIntList,					(void*)LEVEL_COUNT,		offsetof( ThingTemplate, m_skillPointValues ) },
 	{ "ExperienceValue",			ThingTemplate::parseIntList,					(void*)LEVEL_COUNT,		offsetof( ThingTemplate, m_experienceValues ) },
 	{ "ExperienceRequired",		ThingTemplate::parseIntList,					(void*)LEVEL_COUNT,		offsetof( ThingTemplate, m_experienceRequired ) },
@@ -153,7 +148,7 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 	{ "DisplayColor",					INI::parseColorInt,									NULL,		offsetof( ThingTemplate, m_displayColor ) },
 	{ "EditorSorting",				INI::parseByteSizedIndexList,				EditorSortingNames, offsetof( ThingTemplate, m_editorSorting ) },
 	{ "KindOf",								KindOfMaskType::parseFromINI,				NULL,		offsetof( ThingTemplate, m_kindof ) },
-	{ "CommandSet",						INI::parseAsciiString,							NULL,		offsetof( ThingTemplate, m_commandSetString ) },	
+	{ "CommandSet",						INI::parseAsciiString,							NULL,		offsetof( ThingTemplate, m_commandSetString ) },
 	{ "BuildVariations",			INI::parseAsciiStringVector,				NULL,		offsetof( ThingTemplate, m_buildVariations ) },
 
 // NOTE NOTE NOTE -- s_objectFieldParseTable and s_objectReskinFieldParseTable must be updated in tandem -- see comment above
@@ -165,19 +160,19 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 
 	{ "SelectPortrait",					INI::parseAsciiString,	NULL,		offsetof( ThingTemplate, m_selectedPortraitImageName ) },
 	{ "ButtonImage",						INI::parseAsciiString,	NULL,		offsetof( ThingTemplate, m_buttonImageName ) },
-	
+
 	//Code renderer handles these states now.
 	//{ "InventoryImageEnabled",	INI::parseAsciiString,	NULL,		offsetof( ThingTemplate, m_inventoryImage[ INV_IMAGE_ENABLED ] ) },
 	//{ "InventoryImageDisabled",	INI::parseAsciiString,	NULL,		offsetof( ThingTemplate, m_inventoryImage[ INV_IMAGE_DISABLED ] ) },
 	//{ "InventoryImageHilite",		INI::parseAsciiString,	NULL,		offsetof( ThingTemplate, m_inventoryImage[ INV_IMAGE_HILITE ] ) },
 	//{ "InventoryImagePushed",		INI::parseAsciiString,	NULL,		offsetof( ThingTemplate, m_inventoryImage[ INV_IMAGE_PUSHED ] ) },
-	
+
 	{ "UpgradeCameo1",		INI::parseAsciiString,	NULL,		offsetof( ThingTemplate, m_upgradeCameoUpgradeNames[ 0 ] ) },
 	{ "UpgradeCameo2",		INI::parseAsciiString,	NULL,		offsetof( ThingTemplate, m_upgradeCameoUpgradeNames[ 1 ] ) },
 	{ "UpgradeCameo3",		INI::parseAsciiString,	NULL,		offsetof( ThingTemplate, m_upgradeCameoUpgradeNames[ 2 ] ) },
 	{ "UpgradeCameo4",		INI::parseAsciiString,	NULL,		offsetof( ThingTemplate, m_upgradeCameoUpgradeNames[ 3 ] ) },
 	{ "UpgradeCameo5",		INI::parseAsciiString,	NULL,		offsetof( ThingTemplate, m_upgradeCameoUpgradeNames[ 4 ] ) },
-	
+
 // NOTE NOTE NOTE -- s_objectFieldParseTable and s_objectReskinFieldParseTable must be updated in tandem -- see comment above
 
 	{ "VoiceSelect",					INI::parseDynamicAudioEventRTS,	NULL,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_voiceSelect]) },
@@ -196,9 +191,9 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 	{ "VoiceSurrender",				INI::parseDynamicAudioEventRTS,	NULL,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_voiceSurrender]) },
 #endif
 	{ "VoiceDefect",					INI::parseDynamicAudioEventRTS,	NULL,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_voiceDefect]) },
-	{ "VoiceAttackSpecial",		INI::parseDynamicAudioEventRTS,	NULL,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_voiceAttackSpecial ]) },	
-	{ "VoiceAttackAir",				INI::parseDynamicAudioEventRTS,	NULL,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_voiceAttackAir ]) },	
-	{ "VoiceGuard",						INI::parseDynamicAudioEventRTS,	NULL,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_voiceGuard ]) },	
+	{ "VoiceAttackSpecial",		INI::parseDynamicAudioEventRTS,	NULL,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_voiceAttackSpecial ]) },
+	{ "VoiceAttackAir",				INI::parseDynamicAudioEventRTS,	NULL,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_voiceAttackAir ]) },
+	{ "VoiceGuard",						INI::parseDynamicAudioEventRTS,	NULL,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_voiceGuard ]) },
 	{ "SoundMoveStart",				INI::parseDynamicAudioEventRTS,	NULL,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundMoveStart]) },
 	{ "SoundMoveStartDamaged",INI::parseDynamicAudioEventRTS,	NULL,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundMoveStartDamaged]) },
 	{ "SoundMoveLoop",				INI::parseDynamicAudioEventRTS,	NULL,		offsetof( ThingTemplate, m_audioarray.m_audio[TTAUDIO_soundMoveLoop]) },
@@ -244,19 +239,19 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 	{ "Locomotor",						AIUpdateModuleData::parseLocomotorSet, NULL, 0 },
 	{ "InstanceScaleFuzziness",	INI::parseReal,					NULL, offsetof(ThingTemplate, m_instanceScaleFuzziness ) },
 	{ "StructureRubbleHeight",	INI::parseUnsignedByte,					NULL, offsetof(ThingTemplate, m_structureRubbleHeight ) },
-	{ "ThreatValue",						INI::parseUnsignedShort,		NULL, offsetof(ThingTemplate, m_threatValue ) }, 
-  { "MaxSimultaneousOfType",	ThingTemplate::parseMaxSimultaneous,		NULL, offsetof(ThingTemplate, m_maxSimultaneousOfType ) }, 
-  { "MaxSimultaneousLinkKey",	NameKeyGenerator::parseStringAsNameKeyType,		NULL, offsetof(ThingTemplate, m_maxSimultaneousLinkKey ) }, 
+	{ "ThreatValue",						INI::parseUnsignedShort,		NULL, offsetof(ThingTemplate, m_threatValue ) },
+  { "MaxSimultaneousOfType",	ThingTemplate::parseMaxSimultaneous,		NULL, offsetof(ThingTemplate, m_maxSimultaneousOfType ) },
+  { "MaxSimultaneousLinkKey",	NameKeyGenerator::parseStringAsNameKeyType,		NULL, offsetof(ThingTemplate, m_maxSimultaneousLinkKey ) },
 	{ "CrusherLevel",					INI::parseUnsignedByte,			NULL, offsetof( ThingTemplate, m_crusherLevel ) },
 	{ "CrushableLevel",				INI::parseUnsignedByte,			NULL, offsetof( ThingTemplate, m_crushableLevel ) },
 
-	{ 0, 0, 0, 0 }  // keep this last
+	{ 0, 0, 0, 0 }
 
 };
 // NOTE NOTE NOTE -- s_objectFieldParseTable and s_objectReskinFieldParseTable must be updated in tandem -- see comment above
 
 // NOTE NOTE NOTE -- s_objectFieldParseTable and s_objectReskinFieldParseTable must be updated in tandem -- see comment above
-const FieldParse ThingTemplate::s_objectReskinFieldParseTable[] = 
+const FieldParse ThingTemplate::s_objectReskinFieldParseTable[] =
 {
 	{ "Draw",									ThingTemplate::parseModuleName,		(const void*)MODULETYPE_DRAW, offsetof(ThingTemplate, m_drawModuleInfo) },
 
@@ -269,10 +264,10 @@ const FieldParse ThingTemplate::s_objectReskinFieldParseTable[] =
 	{ "FenceXOffset",					INI::parseReal,													NULL,		offsetof( ThingTemplate, m_fenceXOffset ) },
 
   // Needed to avoid some cheats with the scud storm rebuild hole
-  { "MaxSimultaneousOfType",	ThingTemplate::parseMaxSimultaneous,		NULL, offsetof(ThingTemplate, m_maxSimultaneousOfType ) }, 
-  { "MaxSimultaneousLinkKey",	NameKeyGenerator::parseStringAsNameKeyType,		NULL, offsetof(ThingTemplate, m_maxSimultaneousLinkKey ) }, 
+  { "MaxSimultaneousOfType",	ThingTemplate::parseMaxSimultaneous,		NULL, offsetof(ThingTemplate, m_maxSimultaneousOfType ) },
+  { "MaxSimultaneousLinkKey",	NameKeyGenerator::parseStringAsNameKeyType,		NULL, offsetof(ThingTemplate, m_maxSimultaneousLinkKey ) },
 
-	{ 0, 0, 0, 0 }  // keep this last
+	{ 0, 0, 0, 0 }
 
 };
 // NOTE NOTE NOTE -- s_objectFieldParseTable and s_objectReskinFieldParseTable must be updated in tandem -- see comment above
@@ -291,16 +286,16 @@ const ModuleInfo::Nugget *ModuleInfo::getNuggetWithTag( const AsciiString& tag )
 	// no match
 	return NULL;
 
-}  // end isTagPresent
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Add this module info to the thing template */
 // ------------------------------------------------------------------------------------------------
-void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate, 
-															 const AsciiString& name, 
-															 const AsciiString& moduleTag, 
-															 const ModuleData* data, 
-															 Int interfaceMask, 
+void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
+															 const AsciiString& name,
+															 const AsciiString& moduleTag,
+															 const ModuleData* data,
+															 Int interfaceMask,
 															 Bool inheritable,
                                Bool overrideableByLikeKind)
 {
@@ -309,17 +304,17 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 	// there must be a module tag present, and it must be unique across all module infos
 	// for this thing template
 	//
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	// get module info
 	const Nugget *nugget;
-	
+
 	nugget = thingTemplate->getBehaviorModuleInfo().getNuggetWithTag( moduleTag );
 	if( nugget != NULL )
 	{
 
 		// compare this nugget tag against the tag for the new data we're going to submit
 		DEBUG_ASSERTCRASH( nugget->m_moduleTag != moduleTag,
-											 ("addModuleInfo - ERROR defining module '%s' on thing template '%s'.  The module '%s' has the tag '%s' which must be unique among all modules for this object, but the tag '%s' is also already on module '%s' within this object.\n\nPlease make unique tag names within an object definition\n",
+											 ("addModuleInfo - ERROR defining module '%s' on thing template '%s'.  The module '%s' has the tag '%s' which must be unique among all modules for this object, but the tag '%s' is also already on module '%s' within this object.\n\nPlease make unique tag names within an object definition",
 												name.str(),
 												thingTemplate->getName().str(),
 												name.str(),
@@ -329,7 +324,7 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 
 		// srj sez: prevent people from ignoring this.
 		throw INI_INVALID_DATA;
-	}  // end if
+	}
 
 	nugget = thingTemplate->getDrawModuleInfo().getNuggetWithTag( moduleTag );
 	if( nugget != NULL )
@@ -337,7 +332,7 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 
 		// compare this nugget tag against the tag for the new data we're going to submit
 		DEBUG_ASSERTCRASH( nugget->m_moduleTag != moduleTag,
-											 ("addModuleInfo - ERROR defining module '%s' on thing template '%s'.  The module '%s' has the tag '%s' which must be unique among all modules for this object, but the tag '%s' is also already on module '%s' within this object.\n\nPlease make unique tag names within an object definition\n",
+											 ("addModuleInfo - ERROR defining module '%s' on thing template '%s'.  The module '%s' has the tag '%s' which must be unique among all modules for this object, but the tag '%s' is also already on module '%s' within this object.\n\nPlease make unique tag names within an object definition",
 												name.str(),
 												thingTemplate->getName().str(),
 												name.str(),
@@ -347,7 +342,7 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 
 		// srj sez: prevent people from ignoring this.
 		throw INI_INVALID_DATA;
-	}  // end if
+	}
 
 	nugget = thingTemplate->getClientUpdateModuleInfo().getNuggetWithTag( moduleTag );
 	if( nugget != NULL )
@@ -355,7 +350,7 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 
 		// compare this nugget tag against the tag for the new data we're going to submit
 		DEBUG_ASSERTCRASH( nugget->m_moduleTag != moduleTag,
-											 ("addModuleInfo - ERROR defining module '%s' on thing template '%s'.  The module '%s' has the tag '%s' which must be unique among all modules for this object, but the tag '%s' is also already on module '%s' within this object.\n\nPlease make unique tag names within an object definition\n",
+											 ("addModuleInfo - ERROR defining module '%s' on thing template '%s'.  The module '%s' has the tag '%s' which must be unique among all modules for this object, but the tag '%s' is also already on module '%s' within this object.\n\nPlease make unique tag names within an object definition",
 												name.str(),
 												thingTemplate->getName().str(),
 												name.str(),
@@ -364,7 +359,7 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 												nugget->first.str()) );
 		// srj sez: prevent people from ignoring this.
 		throw INI_INVALID_DATA;
-	}  // end if
+	}
 
 #endif
 
@@ -373,15 +368,15 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ModuleInfo::clearModuleDataWithTag(const AsciiString& tagToClear, AsciiString& clearedModuleNameOut) 
-{ 
+Bool ModuleInfo::clearModuleDataWithTag(const AsciiString& tagToClear, AsciiString& clearedModuleNameOut)
+{
 	Bool cleared = false;
 
 	// do NOT clear... we only want to modify this if we return true.
 	// if we return false, we should leave this unmodified.
 	//clearedModuleNameOut.clear();
 
-	for (std::vector<Nugget>::iterator it = m_info.begin(); it != m_info.end(); /* empty */ ) 
+	for (std::vector<Nugget>::iterator it = m_info.begin(); it != m_info.end(); /* empty */ )
 	{
 		if (it->m_moduleTag == tagToClear)
 		{
@@ -403,8 +398,8 @@ Bool ModuleInfo::clearModuleDataWithTag(const AsciiString& tagToClear, AsciiStri
 
 
 //-------------------------------------------------------------------------------------------------
-Bool ModuleInfo::clearCopiedFromDefaultEntries(Int interfaceMask, const AsciiString &newName, const ThingTemplate *fullTemplate ) 
-{ 
+Bool ModuleInfo::clearCopiedFromDefaultEntries(Int interfaceMask, const AsciiString &newName, const ThingTemplate *fullTemplate )
+{
   static KindOfMaskType ImmuneToGPSScramblerMask;
   KindOfMaskType &m = ImmuneToGPSScramblerMask;
   m.set(KINDOF_AIRCRAFT);// NO PLANES or helicopters
@@ -454,7 +449,7 @@ Bool ModuleInfo::clearCopiedFromDefaultEntries(Int interfaceMask, const AsciiStr
 			}
       else if ( it->overrideableByLikeKind)
       {
-        
+
         AsciiString oldName = it->first;
         if ( oldName == newName  //we will dump this instance, since the INI author requested a specific one of the same class
              || disallowed  // or, we just do not Add these special overrideables to these kinds of templates, so just dump it
@@ -486,8 +481,8 @@ Bool ModuleInfo::clearCopiedFromDefaultEntries(Int interfaceMask, const AsciiStr
 
 
 //-------------------------------------------------------------------------------------------------
-Bool ModuleInfo::clearAiModuleInfo() 
-{ 
+Bool ModuleInfo::clearAiModuleInfo()
+{
 	Bool ret = false;
 
 	std::vector<Nugget>::iterator it = m_info.begin();
@@ -524,11 +519,11 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 	catch( ... )
 	{
 
-		DEBUG_CRASH(( "[LINE: %d - FILE: '%s'] Module tag not found for module '%s' on thing template '%s'.  Module tags are required and must be unique for all modules within an object definition\n",
-									ini->getLineNum(), ini->getFilename().str(), 
+		DEBUG_CRASH(( "[LINE: %d - FILE: '%s'] Module tag not found for module '%s' on thing template '%s'.  Module tags are required and must be unique for all modules within an object definition",
+									ini->getLineNum(), ini->getFilename().str(),
 									tokenStr.str(), self->getName().str() ));
 		throw;
-				
+
 	}
 
 	Int interfaceMask;
@@ -554,17 +549,17 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 			throw INI_INVALID_DATA;
 		}
 	}
-	
+
 	// if we're overriding, we can totally skip over this block
 	if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
-	{	
+	{
 		if (self->m_moduleParsingMode == MODULEPARSE_ADD_REMOVE_REPLACE)
 		{
 			// do nothing, just fall thru
 		}
 		else
 		{
-			DEBUG_CRASH(("[LINE: %d - FILE: '%s'] You must use AddModule to add modules in override INI files.\n",
+			DEBUG_CRASH(("[LINE: %d - FILE: '%s'] You must use AddModule to add modules in override INI files.",
 				ini->getLineNum(), ini->getFilename().str(), self->getName().str()));
 			throw INI_INVALID_DATA;
 		}
@@ -580,20 +575,20 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 		self->m_clientUpdateModuleInfo.clearCopiedFromDefaultEntries(interfaceMask, tokenStr, self );
 	}
 
-	if (self->m_moduleParsingMode == MODULEPARSE_ADD_REMOVE_REPLACE 
+	if (self->m_moduleParsingMode == MODULEPARSE_ADD_REMOVE_REPLACE
 			&& self->m_moduleBeingReplacedName.isNotEmpty()
 			&& self->m_moduleBeingReplacedName != tokenStr)
 	{
-		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule must replace modules with another module of the same type, but you are attempting to replace a %s with a %s for Object %s.\n",
+		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule must replace modules with another module of the same type, but you are attempting to replace a %s with a %s for Object %s.",
 			ini->getLineNum(), ini->getFilename().str(), self->m_moduleBeingReplacedName.str(), tokenStr.str(), self->getName().str()));
 		throw INI_INVALID_DATA;
 	}
 
-	if (self->m_moduleParsingMode == MODULEPARSE_ADD_REMOVE_REPLACE 
+	if (self->m_moduleParsingMode == MODULEPARSE_ADD_REMOVE_REPLACE
 			&& self->m_moduleBeingReplacedTag.isNotEmpty()
 			&& self->m_moduleBeingReplacedTag == moduleTagStr)
 	{
-		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule must specify a new, unique tag for the replaced module, but you are not doing so for %s (%s) for Object %s.\n",
+		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule must specify a new, unique tag for the replaced module, but you are not doing so for %s (%s) for Object %s.",
 			ini->getLineNum(), ini->getFilename().str(), moduleTagStr.str(), self->m_moduleBeingReplacedName.str(), self->getName().str()));
 		throw INI_INVALID_DATA;
 	}
@@ -606,7 +601,7 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 		if (replaced)
 		{
 			//Kris: Commented this out for SPAM reasons. Do we really need this?
-			//DEBUG_LOG(("replaced an AI for %s!\n",self->getName().str()));
+			//DEBUG_LOG(("replaced an AI for %s!",self->getName().str()));
 		}
 	}
 
@@ -660,7 +655,7 @@ void ThingTemplate::parsePrerequisites( INI* ini, void *instance, void *store, c
 {
 	ThingTemplate* self = (ThingTemplate*)instance;
 
-	static const FieldParse myFieldParse[] = 
+	static const FieldParse myFieldParse[] =
 	{
 		{ "Object", parsePrerequisiteUnit, 0, 0 },
 		{ "Science", parsePrerequisiteScience,	0, 0 },
@@ -682,8 +677,8 @@ static void parseArbitraryFXIntoMap( INI* ini, void *instance, void* /* store */
 	const char* name = (const char*)userData;
 	const char* token = ini->getNextToken();
 	const FXList* fxl = TheFXListStore->findFXList(token);	// could be null!
-	DEBUG_ASSERTCRASH(fxl != NULL || stricmp(token, "None") == 0, ("FXList %s not found!\n",token));
-	mapFX->insert(std::make_pair(AsciiString(name), fxl));	
+	DEBUG_ASSERTCRASH(fxl != NULL || stricmp(token, "None") == 0, ("FXList %s not found!",token));
+	mapFX->insert(std::make_pair(AsciiString(name), fxl));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -694,7 +689,7 @@ void ThingTemplate::parsePerUnitFX( INI* ini, void *instance, void *store, const
 
 	fxmap->clear();
 
-	static const FieldParse myFieldParse[] = 
+	static const FieldParse myFieldParse[] =
 	{
 		{ 0, parseArbitraryFXIntoMap, NULL, 0 },
 		{ 0, 0, 0, 0 }
@@ -709,11 +704,11 @@ static void parseArbitrarySoundsIntoMap( INI* ini, void *instance, void* /* stor
 	PerUnitSoundMap *mapSounds = (PerUnitSoundMap*) instance;
 	const char* name = (const char*)userData;
 	const char* token = ini->getNextToken();
-	
+
 	AudioEventRTS a;
 	if (token)
 		a.setEventName(token);
-	mapSounds->insert(std::make_pair(AsciiString(name), a));	
+	mapSounds->insert(std::make_pair(AsciiString(name), a));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -724,7 +719,7 @@ void ThingTemplate::parsePerUnitSounds( INI* ini, void *instance, void *store, c
 	PerUnitSoundMap *mapSounds = (PerUnitSoundMap*)store;
 	mapSounds->clear();
 
-	static const FieldParse myFieldParse[] = 
+	static const FieldParse myFieldParse[] =
 	{
 		{ 0, parseArbitrarySoundsIntoMap, NULL, 0 },
 		{ 0, 0, 0, 0 }
@@ -739,7 +734,7 @@ void ThingTemplate::parsePerUnitSounds( INI* ini, void *instance, void *store, c
 void ThingTemplate::parseAddModule(INI *ini, void *instance, void *store, const void *userData)
 {
 	// don't care about the result.
-	ThingTemplate* self = (ThingTemplate*)instance;	
+	ThingTemplate* self = (ThingTemplate*)instance;
 
 	ModuleParseMode oldMode = (ModuleParseMode)self->m_moduleParsingMode;
 	if (oldMode != MODULEPARSE_NORMAL)
@@ -757,7 +752,7 @@ void ThingTemplate::parseAddModule(INI *ini, void *instance, void *store, const 
 //-------------------------------------------------------------------------------------------------
 void ThingTemplate::parseRemoveModule(INI *ini, void *instance, void *store, const void *userData)
 {
-	ThingTemplate* self = (ThingTemplate*)instance;	
+	ThingTemplate* self = (ThingTemplate*)instance;
 
 	ModuleParseMode oldMode = (ModuleParseMode)self->m_moduleParsingMode;
 	if (oldMode != MODULEPARSE_NORMAL)
@@ -770,7 +765,7 @@ void ThingTemplate::parseRemoveModule(INI *ini, void *instance, void *store, con
 	Bool removed = self->removeModuleInfo(modToRemove, removedModuleName);
 	if (!removed)
 	{
-		DEBUG_ASSERTCRASH(removed, ("RemoveModule %s was not found for %s. The game will crash now!\n",modToRemove, self->getName().str()));
+		DEBUG_ASSERTCRASH(removed, ("RemoveModule %s was not found for %s. The game will crash now!",modToRemove, self->getName().str()));
 		throw INI_INVALID_DATA;
 	}
 
@@ -782,7 +777,7 @@ void ThingTemplate::parseRemoveModule(INI *ini, void *instance, void *store, con
 //-------------------------------------------------------------------------------------------------
 void ThingTemplate::parseReplaceModule(INI *ini, void *instance, void *store, const void *userData)
 {
-	ThingTemplate* self = (ThingTemplate*)instance;	
+	ThingTemplate* self = (ThingTemplate*)instance;
 
 	ModuleParseMode oldMode = (ModuleParseMode)self->m_moduleParsingMode;
 	if (oldMode != MODULEPARSE_NORMAL)
@@ -795,7 +790,7 @@ void ThingTemplate::parseReplaceModule(INI *ini, void *instance, void *store, co
 	Bool removed = self->removeModuleInfo(modToRemove, removedModuleName);
 	if (!removed)
 	{
-		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule %s was not found for %s; cannot continue.\n",
+		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule %s was not found for %s; cannot continue.",
 															ini->getLineNum(), ini->getFilename().str(), modToRemove, self->getName().str()));
 		throw INI_INVALID_DATA;
 	}
@@ -814,7 +809,7 @@ void ThingTemplate::parseReplaceModule(INI *ini, void *instance, void *store, co
 //-------------------------------------------------------------------------------------------------
 void ThingTemplate::parseInheritableModule(INI *ini, void *instance, void *store, const void *userData)
 {
-	ThingTemplate* self = (ThingTemplate*)instance;	
+	ThingTemplate* self = (ThingTemplate*)instance;
 
 	ModuleParseMode oldMode = (ModuleParseMode)self->m_moduleParsingMode;
 	if (oldMode != MODULEPARSE_NORMAL)
@@ -833,7 +828,7 @@ void ThingTemplate::parseInheritableModule(INI *ini, void *instance, void *store
 //-------------------------------------------------------------------------------------------------
 void ThingTemplate::OverrideableByLikeKind(INI *ini, void *instance, void *store, const void *userData)
 {
-	ThingTemplate* self = (ThingTemplate*)instance;	
+	ThingTemplate* self = (ThingTemplate*)instance;
 
 	ModuleParseMode oldMode = (ModuleParseMode)self->m_moduleParsingMode;
 	if (oldMode != MODULEPARSE_NORMAL)
@@ -885,7 +880,7 @@ Bool ThingTemplate::removeModuleInfo(const AsciiString& moduleToRemove, AsciiStr
 /// @todo srj -- move this to another file
 void ArmorTemplateSet::parseArmorTemplateSet( INI* ini )
 {
-	static const FieldParse myFieldParse[] = 
+	static const FieldParse myFieldParse[] =
 	{
 		{ "Conditions", ArmorSetFlags::parseFromINI, NULL, offsetof( ArmorTemplateSet, m_types ) },
 		{ "Armor", INI::parseArmorTemplate,	NULL, offsetof( ArmorTemplateSet, m_template ) },
@@ -908,14 +903,14 @@ void ThingTemplate::parseArmorTemplateSet( INI* ini, void *instance, void * /*st
 
 	ArmorTemplateSet ws;
 	ws.parseArmorTemplateSet(ini);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES)
 	{
 		for (ArmorTemplateSetVector::const_iterator it = self->m_armorTemplateSets.begin(); it != self->m_armorTemplateSets.end(); ++it)
 		{
 			if (it->getNthConditionsYes(0) == ws.getNthConditionsYes(0))
 			{
-				DEBUG_CRASH(("dup armorset condition in %s\n",self->getName().str()));
+				DEBUG_CRASH(("dup armorset condition in %s",self->getName().str()));
 			}
 		}
 	}
@@ -936,14 +931,14 @@ void ThingTemplate::parseWeaponTemplateSet( INI* ini, void *instance, void * /*s
 
 	WeaponTemplateSet ws;
 	ws.parseWeaponTemplateSet(ini, self);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES)
 	{
 		for (WeaponTemplateSetVector::const_iterator it = self->m_weaponTemplateSets.begin(); it != self->m_weaponTemplateSets.end(); ++it)
 		{
 			if (it->getNthConditionsYes(0) == ws.getNthConditionsYes(0))
 			{
-				DEBUG_CRASH(("dup weaponset condition in %s\n",self->getName().str()));
+				DEBUG_CRASH(("dup weaponset condition in %s",self->getName().str()));
 			}
 		}
 	}
@@ -1053,9 +1048,9 @@ ThingTemplate::ThingTemplate() :
 AIUpdateModuleData *ThingTemplate::friend_getAIModuleInfo(void)
 {
 	Int numModInfos = m_behaviorModuleInfo.getCount();
-	for (int j = 0; j < numModInfos; ++j) 
+	for (int j = 0; j < numModInfos; ++j)
 	{
-		if (m_behaviorModuleInfo.getNthData(j) && m_behaviorModuleInfo.getNthData(j)->isAiModuleData()) 
+		if (m_behaviorModuleInfo.getNthData(j) && m_behaviorModuleInfo.getNthData(j)->isAiModuleData())
 		{
 			return (AIUpdateModuleData *)m_behaviorModuleInfo.friend_getNthData(j);
 		}
@@ -1068,11 +1063,11 @@ AIUpdateModuleData *ThingTemplate::friend_getAIModuleInfo(void)
 //-------------------------------------------------------------------------------------------------
 void ThingTemplate::validateAudio()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 
 	#define AUDIO_TEST(y) \
 		if (!get##y()->getEventName().isEmpty() && get##y()->getEventName().compareNoCase("NoSound") != 0) { \
-			DEBUG_ASSERTLOG(TheAudio->isValidAudioEvent(get##y()), ("Invalid Sound '%s' in Object '%s'. (%s?)\n", #y, getName().str(), get##y()->getEventName().str())); \
+			DEBUG_ASSERTLOG(TheAudio->isValidAudioEvent(get##y()), ("Invalid Sound '%s' in Object '%s'. (%s?)", #y, getName().str(), get##y()->getEventName().str())); \
 		}
 
 	AUDIO_TEST(VoiceSelect)
@@ -1115,24 +1110,24 @@ void ThingTemplate::validateAudio()
 	AUDIO_TEST(SoundPromotedVeteran)
 	AUDIO_TEST(SoundPromotedElite)
 	AUDIO_TEST(SoundPromotedHero)
-	
+
 	#undef AUDIO_TEST
 
 	const PerUnitSoundMap *perUnitSounds = getAllPerUnitSounds();
-	if (!perUnitSounds) 
+	if (!perUnitSounds)
 	{
 		return;
 	}
 
-	for (PerUnitSoundMap::const_iterator it = perUnitSounds->begin(); it != perUnitSounds->end(); ++it) 
+	for (PerUnitSoundMap::const_iterator it = perUnitSounds->begin(); it != perUnitSounds->end(); ++it)
 	{
-		if (!it->second.getEventName().isEmpty() && it->second.getEventName().compareNoCase("NoSound") != 0) 
+		if (!it->second.getEventName().isEmpty() && it->second.getEventName().compareNoCase("NoSound") != 0)
 		{
-			DEBUG_ASSERTCRASH(TheAudio->isValidAudioEvent(&it->second), 
-												("Invalid UnitSpecificSound '%s' in Object '%s'. (%s?)", 
-												it->first.str(), 
-												getName().str(), 
-												it->second.getEventName().str())); 
+			DEBUG_ASSERTCRASH(TheAudio->isValidAudioEvent(&it->second),
+												("Invalid UnitSpecificSound '%s' in Object '%s'. (%s?)",
+												it->first.str(),
+												getName().str(),
+												it->second.getEventName().str()));
 		}
 	}
 #endif
@@ -1142,7 +1137,7 @@ void ThingTemplate::validateAudio()
 void ThingTemplate::validate()
 {
 	if (m_shadowTextureName.isEmpty())
-	{	
+	{
 		// no texture given, pick a default
 		switch (getTemplateGeometryInfo().getGeomType())
 		{
@@ -1158,8 +1153,8 @@ void ThingTemplate::validate()
 
 	validateAudio();
 
-#if defined(_DEBUG) || defined(_INTERNAL)
-	
+#if defined(RTS_DEBUG)
+
 	if (getName() == "DefaultThingTemplate")
 		return;
 
@@ -1180,7 +1175,7 @@ void ThingTemplate::validate()
 		return;
 
 	Bool isImmobile = isKindOf(KINDOF_IMMOBILE);
-	
+
 	if (isKindOf(KINDOF_SHRUBBERY) && !isImmobile)
 	{
 		DEBUG_CRASH(("SHRUBBERY %s must be marked IMMOBILE!",getName().str()));
@@ -1188,25 +1183,25 @@ void ThingTemplate::validate()
 
 	if (isKindOf(KINDOF_STRUCTURE) && !isImmobile)
 	{
-		DEBUG_CRASH(("Structure %s is not marked immobile, but probably should be -- please fix it. (If we ever add mobile structures, this debug sniffer will need to be revised.)\n",getName().str()));
+		DEBUG_CRASH(("Structure %s is not marked immobile, but probably should be -- please fix it. (If we ever add mobile structures, this debug sniffer will need to be revised.)",getName().str()));
 	}
 
 	if (isKindOf(KINDOF_STICK_TO_TERRAIN_SLOPE) && !isImmobile)
 	{
-		DEBUG_CRASH(("item %s is marked STICK_TO_TERRAIN_SLOPE but not IMMOBILE -- please fix it.\n",getName().str()));
+		DEBUG_CRASH(("item %s is marked STICK_TO_TERRAIN_SLOPE but not IMMOBILE -- please fix it.",getName().str()));
 	}
 
 	if (isKindOf(KINDOF_STRUCTURE))
 	{
 		if (m_armorTemplateSets.empty() || (m_armorTemplateSets.size() == 1 && m_armorTemplateSets[0].getArmorTemplate() == NULL))
 		{
-			DEBUG_CRASH(("Structure %s has no armor, but probably should (StructureArmor) -- please fix it.)\n",getName().str()));
+			DEBUG_CRASH(("Structure %s has no armor, but probably should (StructureArmor) -- please fix it.)",getName().str()));
 		}
 		for (ArmorTemplateSetVector::const_iterator it = m_armorTemplateSets.begin(); it != m_armorTemplateSets.end(); ++it)
 		{
 			if (it->getDamageFX() == NULL)
 			{
-				DEBUG_CRASH(("Structure %s has no ArmorDamageFX, and really should.\n",getName().str()));
+				DEBUG_CRASH(("Structure %s has no ArmorDamageFX, and really should.",getName().str()));
 			}
 		}
 	}
@@ -1248,13 +1243,13 @@ ThingTemplate::~ThingTemplate()
 	// note, we don't need to take any special action for Armor/WeaponSets...
 	// though it is just a list of 'raw' pointers, we don't have ownership of 'em,
 	// and so we MUST NOT delete them
-} 
+}
 
 //=============================================================================
 void ThingTemplate::resolveNames()
 {
 	Int i, j;
-	
+
 	//Kris: July 31, 2003
 	//NOTE: Make sure that all code in this function supports caching properly. For example,
 	//      templates can be partially overridden by map.ini files. When this happens, strings
@@ -1263,7 +1258,7 @@ void ThingTemplate::resolveNames()
 	//      so we will want to make sure we don't NULL out cached data if the string is empty. A
 	//      concrete example is overriding an object with prerequisites. We just override the portrait.
 	//      So the 1st time we call this function, we get the standard template data. During this first
-	//      call, the strings are looked up, cached, and cleared. Then we override the portrait in the 
+	//      call, the strings are looked up, cached, and cleared. Then we override the portrait in the
 	//      map.ini. The next time we call this function, we look up all the strings again. The prereq
 	//      names didn't used to check for empty strings so they would NULL out all the previous prereqs
 	//      the object had. So be sure to make sure all string lookups don't blindly lookup things -- check
@@ -1286,10 +1281,10 @@ void ThingTemplate::resolveNames()
 			// but ThingTemplate can muck with stuff with gleeful abandon. (srj)
 			if( tmpls[ j ] )
 				const_cast<ThingTemplate*>(tmpls[j])->m_isBuildFacility = true;
-			// DEBUG_LOG(("BF: %s is a buildfacility for %s\n",tmpls[j]->m_nameString.str(),this->m_nameString.str()));
+			// DEBUG_LOG(("BF: %s is a buildfacility for %s",tmpls[j]->m_nameString.str(),this->m_nameString.str()));
 		}
 	}
-	
+
 	if (isKindOf(KINDOF_COMMANDCENTER)) {
 		// Command centers are considered factories. jba.
 		m_isBuildFacility = true;
@@ -1321,7 +1316,7 @@ void ThingTemplate::initForLTA(const AsciiString& name)
 	m_nameString = name;
 
 	char buffer[1024];
-	strncpy(buffer, name.str(), sizeof(buffer));
+	strlcpy(buffer, name.str(), sizeof(buffer));
 	int i=0;
 	for (; buffer[i]; i++) {
 		if (buffer[i] == '/') {
@@ -1357,7 +1352,7 @@ void ThingTemplate::initForLTA(const AsciiString& name)
 	m_shadowType = SHADOW_VOLUME;
 
 	m_geometryInfo.set(GEOMETRY_SPHERE, false, 10.0, 10.0, 10.0);
-	
+
 }
 #endif
 
@@ -1379,7 +1374,7 @@ const WeaponTemplateSet* ThingTemplate::findWeaponTemplateSet(const WeaponSetFla
 // returns false if we have no weaponsets, or they are all empty.
 Bool ThingTemplate::canPossiblyHaveAnyWeapon() const
 {
-	for (WeaponTemplateSetVector::const_iterator it = m_weaponTemplateSets.begin(); 
+	for (WeaponTemplateSetVector::const_iterator it = m_weaponTemplateSets.begin();
 					it != m_weaponTemplateSets.end();
 					++it)
 	{
@@ -1390,13 +1385,13 @@ Bool ThingTemplate::canPossiblyHaveAnyWeapon() const
 }
 
 //-----------------------------------------------------------------------------
-Int ThingTemplate::getSkillPointValue(Int level) const 
-{ 
-	Int value = m_skillPointValues[level]; 
-	
+Int ThingTemplate::getSkillPointValue(Int level) const
+{
+	Int value = m_skillPointValues[level];
+
 	if (value == USE_EXP_VALUE_FOR_SKILL_VALUE)
 		value = getExperienceValue(level);
-	
+
 	return value;
 }
 
@@ -1414,27 +1409,27 @@ const ThingTemplate *ThingTemplate::getBuildFacilityTemplate( const Player *play
 }
 
 //-------------------------------------------------------------------------------------------------
-BuildableStatus ThingTemplate::getBuildable() const 
-{ 
+BuildableStatus ThingTemplate::getBuildable() const
+{
 	BuildableStatus bs;
 	if (TheGameLogic && TheGameLogic->findBuildableStatusOverride(this, bs))
 		return bs;
 
-	return (BuildableStatus)m_buildable; 
+	return (BuildableStatus)m_buildable;
 }
 
 //-------------------------------------------------------------------------------------------------
 const FXList *ThingTemplate::getPerUnitFX(const AsciiString& fxName) const
 {
-	if (fxName.isEmpty()) 
+	if (fxName.isEmpty())
 	{
 		return NULL;
 	}
-	
+
 	PerUnitFXMap::const_iterator it = m_perUnitFX.find(fxName);
-	if (it == m_perUnitFX.end()) 
+	if (it == m_perUnitFX.end())
 	{
-		DEBUG_CRASH(("Unknown FX name (%s) asked for in ThingTemplate (%s). ", fxName.str(), m_nameString.str()));
+		DEBUG_CRASH(("Unknown FX name (%s) asked for in ThingTemplate (%s)", fxName.str(), m_nameString.str()));
 		return NULL;
 	}
 
@@ -1444,16 +1439,16 @@ const FXList *ThingTemplate::getPerUnitFX(const AsciiString& fxName) const
 //-------------------------------------------------------------------------------------------------
 const AudioEventRTS *ThingTemplate::getPerUnitSound(const AsciiString& soundName) const
 {
-	if (soundName.isEmpty()) 
+	if (soundName.isEmpty())
 	{
 		return &s_audioEventNoSound;
 	}
-	
+
 	PerUnitSoundMap::const_iterator it = m_perUnitSounds.find(soundName);
-	if (it == m_perUnitSounds.end()) 
+	if (it == m_perUnitSounds.end())
 	{
 #ifndef DO_UNIT_TIMINGS
-    DEBUG_LOG(("Unknown Audio name (%s) asked for in ThingTemplate (%s).\n", soundName.str(), m_nameString.str()));
+    DEBUG_LOG(("Unknown Audio name (%s) asked for in ThingTemplate (%s).", soundName.str(), m_nameString.str()));
 #endif
     return &s_audioEventNoSound;
 	}
@@ -1479,14 +1474,14 @@ UnsignedInt ThingTemplate::getMaxSimultaneousOfType() const
 Bool ThingTemplate::isEquivalentTo(const ThingTemplate* tt) const
 {
 	// sanity
-	if (!(this && tt)) 
+	if (!tt)
 		return false;
 
 	// sanity
-	if (this == tt) 
+	if (this == tt)
 		return true;
-	
-	if (this->getFinalOverride() == tt->getFinalOverride()) 
+
+	if (this->getFinalOverride() == tt->getFinalOverride())
 		return true;
 
 	// This reskinned from that?
@@ -1506,10 +1501,10 @@ Bool ThingTemplate::isEquivalentTo(const ThingTemplate* tt) const
 	Int i;
 
 	Int numVariations = m_buildVariations.size();
-	for (i = 0; i < numVariations; ++i) 
+	for (i = 0; i < numVariations; ++i)
 		if (m_buildVariations[i].compareNoCase(tt->getName()) == 0)
 			return true;
-	
+
 	numVariations = tt->m_buildVariations.size();
 	for (i = 0; i < numVariations; ++i)
 		if (tt->m_buildVariations[i].compareNoCase(getName()) == 0)
@@ -1554,7 +1549,7 @@ Int ThingTemplate::calcTimeToBuild( const Player* player) const
 	Real factionModifier = 1 + player->getProductionTimeChangePercent( getName() );
 	buildTime *= factionModifier;
 
-#if defined (_DEBUG) || defined (_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	if( player->buildsInstantly() )
 	{
 		buildTime = 1;

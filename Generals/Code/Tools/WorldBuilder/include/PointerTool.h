@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef POINTER_TOOL_H
-#define POINTER_TOOL_H
-
 #include "PolygonTool.h"
 class WorldHeightMapEdit;
 #include "../../GameEngine/Include/Common/MapObject.h"
@@ -32,7 +29,7 @@ class WorldHeightMapEdit;
 class ModifyObjectUndoable;
 /*************************************************************************/
 /**                             PointerTool
-	 Does the select/move tool operation. 
+	 Does the select/move tool operation.
 ***************************************************************************/
 ///  Blend edges out tool.
 class PointerTool : public PolygonTool
@@ -48,7 +45,7 @@ protected:
 	Bool m_dragSelect; ///< True if we are drag selecting.
 
 	Bool m_doPolyTool; ///< True if we are using the polygon tool to modify a polygon triggter.
-	
+
 	ModifyObjectUndoable *m_modifyUndoable;	 ///< The modify undoable that is in progress while we track the mouse.
 
 	Bool m_mouseUpRotate;///< True if we are over the "rotate" hotspot.
@@ -77,6 +74,3 @@ public:
 	static void clearSelection(void); ///< Clears the selected objects selected flags.
 	static Bool allowPick(MapObject* pMapObj, WbView* pView);
 };
-
-
-#endif //POINTER_TOOL_H

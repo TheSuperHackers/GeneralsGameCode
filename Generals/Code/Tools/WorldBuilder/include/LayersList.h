@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: LayersList.h 
+// FILE: LayersList.h
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -32,8 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_LAYERSLIST_
-#define _H_LAYERSLIST_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Common/AsciiString.h"
@@ -65,14 +63,14 @@ class CLLTreeCtrl : public CTreeCtrl
 	public:
 		AsciiString getLastClickedLayer(void) {	return mLastClickedLayer; }
 		AsciiString getLastClickedObject(void) {	return mLastClickedObject; }
-	
+
 	protected:
 		AsciiString mLastClickedLayer;
 		AsciiString mLastClickedObject;
 		void buildMoveMenu(CMenu* pPopup, UINT firstID);
 		virtual void OnRButtonDown(UINT nFlags, CPoint point);
 		DECLARE_MESSAGE_MAP()
-		
+
 };
 
 
@@ -83,7 +81,7 @@ class LayersList : public CDialog
 
 	public:
 		enum { IDD = IDD_LAYERSLIST };
-		LayersList(UINT nIDTemplate = LayersList::IDD, CWnd *parentWnd = NULL); 
+		LayersList(UINT nIDTemplate = LayersList::IDD, CWnd *parentWnd = NULL);
 		virtual ~LayersList();
 
 		void resetLayers();
@@ -107,7 +105,7 @@ class LayersList : public CDialog
 		const ListLayer& GetAllLayers(void) const { return mLayers; }
 
 		static MapObject *findObjectByUID(AsciiString objectIDToFind);
-		
+
 	protected:
 		AsciiString mCurrentlyEditingLabel;
 		ListLayer mLayers;
@@ -124,15 +122,15 @@ class LayersList : public CDialog
 		static std::string TheDefaultNewLayerName;
 		static const std::string TheUnmutableDefaultLayerName;
 
-		// This function takes an MapObject, and does one of the following: 
-		// 1) Return true if the MapObject can be found, and 
-		//    layerIt points to a valid layer iterator in which the MapObject was found 
-		//    MapObjectIt points to a valid MapObject iterator on the layerIts MapObjectsInLayer member 
+		// This function takes an MapObject, and does one of the following:
+		// 1) Return true if the MapObject can be found, and
+		//    layerIt points to a valid layer iterator in which the MapObject was found
+		//    MapObjectIt points to a valid MapObject iterator on the layerIts MapObjectsInLayer member
 		// 2) Returns false if the MapObject cannot be found.
 		Bool findMapObjectAndList(IN MapObject *MapObjectToFind, OUT ListLayerIt *layerIt = NULL, OUT ListMapObjectPtrIt *MapObjectIt = NULL);
-		
+
 		// This function takes a layer name, and does one of the following:
-		// 1) Return true if the layer can be found, and 
+		// 1) Return true if the layer can be found, and
 		//		layerIt points to a valid layer iterator named layerName
 		// 2) Returns false if the layer cannot be found.
 		Bool findLayerNamed(IN AsciiString layerName, OUT ListLayerIt *layerIt = NULL);
@@ -152,7 +150,7 @@ class LayersList : public CDialog
 		afx_msg void OnMergeObject(UINT commandID);
 		afx_msg void OnMergeViewSelection(UINT commandID);
 
-		
+
 		afx_msg void OnNewLayer();
 		afx_msg void OnDeleteLayer();
 		afx_msg void OnHideShowLayer();
@@ -160,5 +158,3 @@ class LayersList : public CDialog
 };
 
 extern LayersList *TheLayersList;
-
-#endif /* _H_LAYERSLIST_ */

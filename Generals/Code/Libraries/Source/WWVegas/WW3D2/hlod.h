@@ -34,38 +34,14 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
-#ifndef HLOD_H
-#define HLOD_H
-
-#ifndef ANIMOBJ_H
 #include "animobj.h"
-#endif
-
-#ifndef VECTOR_H
-#include "Vector.H"
-#endif
-
-#ifndef SNAPPTS_H
+#include "Vector.h"
 #include "snapPts.h"
-#endif
-
-#ifndef PROTO_H
 #include "proto.h"
-#endif
-
-#ifndef W3DERR_H
 #include "w3derr.h"
-#endif
-
-#ifndef __PROXY_H
 #include "proxy.h"
-#endif
-
 
 class DistLODClass;
 class HModelClass;
@@ -107,7 +83,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	virtual void					Set_Max_Screen_Size(int lod_index, float size);
 	virtual float					Get_Max_Screen_Size(int lod_index) const;
-	
+
 	virtual int						Get_Lod_Count(void) const;
 	virtual int						Get_Lod_Model_Count (int lod_index) const;
 	virtual RenderObjClass *	Peek_Lod_Model (int lod_index, int model_index) const;
@@ -117,6 +93,7 @@ public:
 	virtual RenderObjClass *	Peek_Additional_Model (int model_index) const;
 	virtual RenderObjClass *	Get_Additional_Model (int model_index) const;
 	virtual int						Get_Additional_Model_Bone (int model_index) const;
+	virtual void					Add_Lod_Model(int lod, RenderObjClass * robj, int boneindex);
 
 	virtual bool					Is_NULL_Lod_Included (void) const;
 	virtual void					Include_NULL_Lod (bool include = true);
@@ -142,12 +119,12 @@ public:
 	virtual void					Notify_Added(SceneClass * scene);
 	virtual void					Notify_Removed(SceneClass * scene);
 
-	virtual int						Get_Num_Sub_Objects(void) const; 					
+	virtual int						Get_Num_Sub_Objects(void) const;
 	virtual RenderObjClass *	Get_Sub_Object(int index) const;
 	virtual int						Add_Sub_Object(RenderObjClass * subobj);
 	virtual int						Remove_Sub_Object(RenderObjClass * robj);
 
-	virtual int						Get_Num_Sub_Objects_On_Bone(int boneindex) const;							
+	virtual int						Get_Num_Sub_Objects_On_Bone(int boneindex) const;
 	virtual RenderObjClass *	Get_Sub_Object_On_Bone(int index,int boneindex) const;
 	virtual int						Get_Sub_Object_Bone_Index(RenderObjClass * subobj) const;
 	virtual int						Get_Sub_Object_Bone_Index(int LodIndex, int ModelIndex)	const;
@@ -205,7 +182,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	virtual void					Create_Decal(DecalGeneratorClass * generator);
 	virtual void					Delete_Decal(uint32 decal_id);
-	
+
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Attributes, Options, Properties, etc
 	/////////////////////////////////////////////////////////////////////////////
@@ -226,12 +203,11 @@ protected:
 	void								Free(void);
 	virtual void					Update_Sub_Object_Transforms(void);
 	virtual void					Update_Obj_Space_Bounding_Volumes(void);
-	void								add_lod_model(int lod,RenderObjClass * robj,int boneindex);
 
 protected:
-	
-	
-	class ModelNodeClass 
+
+
+	class ModelNodeClass
 	{
 	public:
 		RenderObjClass *			Model;
@@ -240,7 +216,7 @@ protected:
 		bool operator != (const ModelNodeClass & that) { return !operator == (that); }
 	};
 
-	class ModelArrayClass : public DynamicVectorClass<ModelNodeClass> 
+	class ModelArrayClass : public DynamicVectorClass<ModelNodeClass>
 	{
 	public:
 		ModelArrayClass(void) : MaxScreenSize(NO_MAX_SCREEN_SIZE), NonPixelCost(0.0f),
@@ -250,7 +226,7 @@ protected:
 		float							PixelCostPerArea;	// PixelCostPerArea * area(normalized) + NonPixelCost = total Cost
 		float							BenefitFactor;		// BenefitFactor * area(normalized) = Benefit
 	};
-	
+
 	// Lod Render Objects, basically one of the LOD Models will be rendered. Typically
 	// each model in an HLodModel will be a mesh or a "simple" HLod (one with a single LOD)
 	int								LodCount;
@@ -263,7 +239,7 @@ protected:
 	//
 	int								BoundingBoxIndex;
 
-	float *							Cost;					// Cost array (recalculated every frame) 
+	float *							Cost;					// Cost array (recalculated every frame)
 	float *							Value;				// Value array (recalculated every frame)
 
 	// Additional Models, these models have been linked to one of the bones in this
@@ -277,7 +253,7 @@ protected:
 	SnapPointsClass *				SnapPoints;
 
 	// possible array of proxy objects (names and bone indexes for application defined usage)
-	ProxyArrayClass *				ProxyArray; 
+	ProxyArrayClass *				ProxyArray;
 
 	// Current LOD Bias (affects recalculation of the Value array)
 	float								LODBias;
@@ -297,7 +273,7 @@ public:
 
 /**
 ** HLodDefClass
-** This description object is generated when reading a W3D_CHUNK_HLOD.  It 
+** This description object is generated when reading a W3D_CHUNK_HLOD.  It
 ** directly describes the contents of an HLod model.
 */
 class HLodDefClass : public W3DMPO
@@ -335,7 +311,7 @@ private:
 	{
 	public:
 		SubObjectArrayClass(void);
-		~SubObjectArrayClass(void);		
+		~SubObjectArrayClass(void);
 		void		Reset(void);
 		void		operator = (const SubObjectArrayClass & that);
 
@@ -371,12 +347,12 @@ class HLodPrototypeClass : public W3DMPO, public PrototypeClass
 	W3DMPO_GLUE(HLodPrototypeClass)
 public:
 	HLodPrototypeClass( HLodDefClass *def )					{ Definition = def; }
-	
+
 	virtual const char *			Get_Name(void) const			{ return Definition->Get_Name(); }
 	virtual int								Get_Class_ID(void) const	{ return RenderObjClass::CLASSID_HLOD; }
 	virtual RenderObjClass *	Create(void);
 	virtual void							DeleteSelf()							{ delete this; }
-	
+
 	HLodDefClass *					Get_Definition(void) const	{ return Definition; }
 
 protected:
@@ -390,6 +366,3 @@ private:
 ** Instance of the loaders which the asset manager install
 */
 extern HLodLoaderClass			_HLodLoader;
-
-
-#endif

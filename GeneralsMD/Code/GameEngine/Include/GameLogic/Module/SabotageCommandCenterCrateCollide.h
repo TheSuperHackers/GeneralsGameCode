@@ -23,17 +23,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: SabotageCommandCenterCrateCollide.h 
+//
+// FILE: SabotageCommandCenterCrateCollide.h
 // Author: Kris Morness, June 2003
 // Desc:   A crate (actually a saboteur - mobile crate) that resets ALL command center general powers
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef SABOTAGE_COMMAND_CENTER_CRATE_COLLIDE_H_
-#define SABOTAGE_COMMAND_CENTER_CRATE_COLLIDE_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
@@ -51,11 +48,11 @@ public:
 	{
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
 			{ 0, 0, 0, 0 }
 		};
@@ -87,5 +84,3 @@ protected:
 	virtual Bool isSabotageBuildingCrateCollide() const { return TRUE; }
 
 };
-
-#endif

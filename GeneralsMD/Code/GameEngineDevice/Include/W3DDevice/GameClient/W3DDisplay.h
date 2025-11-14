@@ -33,9 +33,6 @@
 
 #pragma once
 
-#ifndef __W3DDISPLAY_H_
-#define __W3DDISPLAY_H_
-
 #include "GameClient/Display.h"
 #include "WW3D2/lightenvironment.h"
 
@@ -52,7 +49,7 @@ class RTS3DInterfaceScene;
 
 //=============================================================================
 /** W3D implementation of the game display which is responsible for creating
-  * all interaction with the screen and updating the display 
+  * all interaction with the screen and updating the display
 	*/
 class W3DDisplay : public Display
 {
@@ -71,7 +68,7 @@ public:
 	virtual void getDisplayModeDescription(Int modeIndex, Int *xres, Int *yres, Int *bitDepth);	///<return description of mode
  	virtual void setGamma(Real gamma, Real bright, Real contrast, Bool calibrate);
 	virtual void doSmartAssetPurgeAndPreload(const char* usageFileName);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual void dumpAssetUsage(const char* mapname);
 #endif
 
@@ -81,20 +78,21 @@ public:
 	virtual Bool	isClippingEnabled( void ) 	{ return m_isClippedEnabled; }
 	virtual void	enableClipping( Bool onoff )		{ m_isClippedEnabled = onoff; }
 
+	virtual void step(); ///< Do one fixed time step
 	virtual void draw( void );  ///< redraw the entire display
 
 	/// @todo Replace these light management routines with a LightManager singleton
-	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius,Real outerRadius, 
-																 UnsignedInt increaseFrameTime, UnsignedInt decayFrameTime//, Bool donut = FALSE 
+	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius,Real outerRadius,
+																 UnsignedInt increaseFrameTime, UnsignedInt decayFrameTime//, Bool donut = FALSE
 																 );
 	virtual void setTimeOfDay ( TimeOfDay tod );
 
 	/// draw a line on the display in screen coordinates
-	virtual void drawLine( Int startX, Int startY, Int endX, Int endY, 
+	virtual void drawLine( Int startX, Int startY, Int endX, Int endY,
 												 Real lineWidth, UnsignedInt lineColor );
 
 	/// draw a line on the display in screen coordinates
-	virtual void drawLine( Int startX, Int startY, Int endX, Int endY, 
+	virtual void drawLine( Int startX, Int startY, Int endX, Int endY,
 												 Real lineWidth, UnsignedInt lineColor1, UnsignedInt lineColor2 );
 
 	/// draw a rect border on the display in pixel coordinates with the specified color
@@ -102,9 +100,9 @@ public:
 														 Real lineWidth, UnsignedInt lineColor );
 
 	/// draw a filled rect on the display in pixel coords with the specified color
-	virtual void drawFillRect( Int startX, Int startY, Int width, Int height, 
+	virtual void drawFillRect( Int startX, Int startY, Int width, Int height,
 														 UnsignedInt color );
-	
+
 	/// Draw a percentage of a rectangle, much like a clock (0 to x%)
 	virtual void drawRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color);
 
@@ -112,11 +110,12 @@ public:
 	virtual void drawRemainingRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color);
 
 	/// draw an image fit within the screen coordinates
-	virtual void drawImage( const Image *image, Int startX, Int startY, 
+	virtual void drawImage( const Image *image, Int startX, Int startY,
 													Int endX, Int endY, Color color = 0xFFFFFFFF, DrawImageMode mode=DRAW_IMAGE_ALPHA);
 
 	/// draw a video buffer fit within the screen coordinates
-	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY, 
+	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream );
+	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY,
 													Int endX, Int endY );
 
 	virtual VideoBuffer*	createVideoBuffer( void ) ;							///< Create a video buffer that can be used for this display
@@ -133,7 +132,7 @@ public:
 	virtual void clearShroud();
 	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting);
 	virtual void setBorderShroudLevel(UnsignedByte level);	///<color that will appear in unused border terrain.
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual void dumpModelAssets(const char *path);	///< dump all used models/textures to a file.
 #endif
 	virtual void preloadModelAssets( AsciiString model );			///< preload model asset
@@ -146,7 +145,8 @@ public:
 	static W3DAssetManager *m_assetManager;		///< W3D asset manager
 
 	void drawFPSStats( void );								///< draw the fps on the screen
-	virtual Real getAverageFPS( void );								///< return the average FPS.
+	virtual Real getAverageFPS( void );						///< return the average FPS.
+	virtual Real getCurrentFPS( void );						///< return the current FPS.
 	virtual Int getLastFrameDrawCalls( void );				///< returns the number of draw calls issued in the previous frame
 
 protected:
@@ -159,7 +159,7 @@ protected:
 	void drawCurrentDebugDisplay( void );			///< draws current debug display
 	void calculateTerrainLOD(void);						///< Calculate terrain LOD.
 	void renderLetterBox(UnsignedInt time);							///< draw letter box border
-	void updateAverageFPS(void);	///< figure out the average fps over the last 30 frames.
+	void updateAverageFPS(void);	///< calculate the average fps over the last 30 frames.
 
 	Byte m_initialized;												///< TRUE when system is initialized
 	LightClass *m_myLight[LightEnvironmentClass::MAX_LIGHTS];										///< light hack for now
@@ -167,7 +167,8 @@ protected:
 	IRegion2D m_clipRegion;									///< the clipping region for images
 	Bool m_isClippedEnabled;	///<used by 2D drawing operations to define clip re
 	Real m_averageFPS;		///<average fps over the last 30 frames.
-#if defined(_DEBUG) || defined(_INTERNAL)
+	Real m_currentFPS;		///<current fps value.
+#if defined(RTS_DEBUG)
 	Int64 m_timerAtCumuFPSStart;
 #endif
 
@@ -198,6 +199,4 @@ protected:
 
 	W3DDebugDisplay *m_nativeDebugDisplay;		///< W3D specific debug display interface
 
-};  // end W3DDisplay
-
-#endif  // end __W3DDISPLAY_H_
+};

@@ -27,7 +27,7 @@
 // Desc:       Access to our representation for fonts
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/GameFont.h"
 
@@ -55,7 +55,7 @@ void FontLibrary::linkFont( GameFont *font )
 	// increment linked count
 	m_count++;
 
-}  // end linkFont
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Unlink a font from the font list */
@@ -75,10 +75,10 @@ void FontLibrary::unlinkFont( GameFont *font )
 	if( other == NULL )
 	{
 
-		DEBUG_CRASH(( "Font '%s' not found in library\n", font->nameString.str() ));
+		DEBUG_CRASH(( "Font '%s' not found in library", font->nameString.str() ));
 		return;
 
-	}  // end if
+	}
 
 	// scan for the font pointing to the one we're going to unlink
 	for( other = m_fontList; other; other = other->next )
@@ -100,7 +100,7 @@ void FontLibrary::unlinkFont( GameFont *font )
 	// we now have one less font on the list
 	m_count--;
 
-}  // end unlinkFont
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Delete all font data, DO NOT throw an exception ... the destructor uses this */
@@ -123,11 +123,11 @@ void FontLibrary::deleteAllFonts( void )
 		releaseFontData( font );
 
 		// delete the font list element
-		font->deleteInstance();
+		deleteInstance(font);
 
-	}  // end while
+	}
 
-}  // deleteAllFonts
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
@@ -141,7 +141,7 @@ FontLibrary::FontLibrary( void )
 	m_fontList = NULL;
 	m_count = 0;
 
-}  // end FontLibrary
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -151,7 +151,7 @@ FontLibrary::~FontLibrary( void )
 	// delete all font data
 	deleteAllFonts();
 
-}  // end ~FontLibrary
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize what we need to in the font library */
@@ -159,7 +159,7 @@ FontLibrary::~FontLibrary( void )
 void FontLibrary::init( void )
 {
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset the fonts for this font library */
@@ -167,10 +167,10 @@ void FontLibrary::init( void )
 void FontLibrary::reset( void )
 {
 
-	// delete all font data 
+	// delete all font data
 	deleteAllFonts();
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Get a font from our list, if we don't have that font loaded we will
@@ -178,6 +178,13 @@ void FontLibrary::reset( void )
 //-------------------------------------------------------------------------------------------------
 GameFont *FontLibrary::getFont( AsciiString name, Int pointSize, Bool bold )
 {
+	// sanity check the size - anything over 100 is probably wrong. -MW
+	// TheSuperHackers @fix Now also no longer creates fonts with zero size.
+	if (pointSize < 1 || pointSize > 100)
+	{
+		return NULL;
+	}
+
 	GameFont *font;
 
 	// search for font in list
@@ -186,21 +193,21 @@ GameFont *FontLibrary::getFont( AsciiString name, Int pointSize, Bool bold )
 
 		if( font->pointSize == pointSize &&
 				font->bold == bold &&
-				font->nameString == name 
+				font->nameString == name
 			)
 			return font;  // found
 
-	}  // end for font
+	}
 
 	// font not found, allocate a new font element
 	font = newInstance(GameFont);
 	if( font == NULL )
 	{
 
-		DEBUG_CRASH(( "getFont: Unable to allocate new font list element\n" ));
+		DEBUG_CRASH(( "getFont: Unable to allocate new font list element" ));
 		return NULL;
 
-	}  // end if
+	}
 
 	// copy font data over to new element
 	font->nameString = name;
@@ -208,16 +215,16 @@ GameFont *FontLibrary::getFont( AsciiString name, Int pointSize, Bool bold )
 	font->bold = bold;
 	font->fontData = NULL;
 
-	//DEBUG_LOG(("Font: Loading font '%s' %d point\n", font->nameString.str(), font->pointSize));
+	//DEBUG_LOG(("Font: Loading font '%s' %d point", font->nameString.str(), font->pointSize));
 	// load the device specific data pointer
 	if( loadFontData( font ) == FALSE )
 	{
 
-		DEBUG_CRASH(( "getFont: Unable to load font data pointer '%s'\n", name ));
-		font->deleteInstance();
+		DEBUG_CRASH(( "getFont: Unable to load font data pointer '%s'", name.str() ));
+		deleteInstance(font);
 		return NULL;
 
-	}  // end if
+	}
 
 	// tie font into list
 	linkFont( font );
@@ -225,4 +232,4 @@ GameFont *FontLibrary::getFont( AsciiString name, Int pointSize, Bool bold )
 	// all is done and loaded
 	return font;
 
-}  // end getFont
+}

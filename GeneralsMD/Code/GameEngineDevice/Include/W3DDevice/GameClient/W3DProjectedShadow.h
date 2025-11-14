@@ -30,10 +30,8 @@
 //
 //
 ///////////////////////////////////////////////////////////////////////////////
-#pragma once
 
-#ifndef __W3D_PROJECTED_SHADOW_H_
-#define __W3D_PROJECTED_SHADOW_H_
+#pragma once
 
 #include "GameClient/Shadow.h"
 
@@ -57,6 +55,7 @@ class W3DProjectedShadowManager	: public ProjectedShadowManager
 		Bool init(void);					///<allocate one-time shadow assets for length of entire game.
 		void reset(void);					///<free all existing shadows - ready for next map.
 		void shutdown(void);			///<free all assets prior to shutdown of entire game.
+		void prepareShadows();
 		Int	 renderShadows(RenderInfoClass & rinfo);	///<iterate over each object and render its shadow onto affected objects.
 		void ReleaseResources(void);	///<release device dependent D3D resources.
 		Bool ReAcquireResources(void);	///<allocate device dependent D3D resources.
@@ -76,6 +75,10 @@ class W3DProjectedShadowManager	: public ProjectedShadowManager
 		void flushDecals(W3DShadowTexture *texture, ShadowType type);	///<empty queue by rendering all decals with given texture
 
 	private:
+		Int renderProjectedTerrainShadow(W3DProjectedShadow *shadow, AABoxClass &box);	///<render shadow on map terrain.
+		void updateShadowNumbers(ShadowType shadowType, Int addNum);
+
+	private:
 		W3DProjectedShadow *m_shadowList;
 		W3DProjectedShadow *m_decalList;
 		TextureClass	*m_dynamicRenderTarget;	///<offscreen video memory texture used to render all shadow textures.
@@ -86,7 +89,12 @@ class W3DProjectedShadowManager	: public ProjectedShadowManager
 		W3DShadowTextureManager *m_W3DShadowTextureManager;
 		Int m_numDecalShadows;							///< number of decal shadows in the system.
 		Int m_numProjectionShadows;						///< number of projected shadows in the system.
-		Int renderProjectedTerrainShadow(W3DProjectedShadow *shadow, AABoxClass &box);	///<render shadow on map terrain.
+
+		//Bounding rectangle around rendered portion of terrain.
+		Int m_drawEdgeX;
+		Int m_drawEdgeY;
+		Int m_drawStartX;
+		Int m_drawStartY;
 };
 
 extern W3DProjectedShadowManager *TheW3DProjectedShadowManager;
@@ -108,17 +116,17 @@ class W3DProjectedShadow	: public Shadow
 		void updateTexture(Vector3 &lightPos);	///<updates the shadow texture image using render object and given light position.
 		void updateProjectionParameters(const Matrix3D &cameraXform);	///<recompute projection matrix - needed when light or object moves.
 		TexProjectClass *getShadowProjector(void)	{return m_shadowProjector;}
-		#if defined(_DEBUG) || defined(_INTERNAL)	
+		#if defined(RTS_DEBUG)
 		virtual void getRenderCost(RenderCost & rc) const;
 		#endif
 		W3DShadowTexture *getTexture(Int lightIndex) {return m_shadowTexture[lightIndex];}
-		
+
 
 	protected:
 		W3DShadowTexture *m_shadowTexture[MAX_SHADOW_LIGHTS];		///<cached shadow data
 		TexProjectClass	 *m_shadowProjector;										///<object used to generate texture and projection matrix.
 		RenderObjClass	*m_robj;						///<render object used to cast the shadow.
-		Vector3		m_lastObjPosition;	///<position of  object at time of projection matrix update.		
+		Vector3		m_lastObjPosition;	///<position of  object at time of projection matrix update.
 		W3DProjectedShadow *m_next;	/// for the shadow manager list
 		Bool	m_allowWorldAlign;	/// wrap shadow around world geometry - else align perpendicular to local z-axis.
 		Real	m_decalOffsetU;		/// texture coordinate offset so not centered at object origin.
@@ -126,5 +134,3 @@ class W3DProjectedShadow	: public Shadow
 		Int		m_flags;			/// custom rendering flags
 		virtual void release(void)	{TheW3DProjectedShadowManager->removeShadow(this);}	///<release shadow from manager
 };
-
-#endif	//__W3D_PROJECTED_SHADOW_H_

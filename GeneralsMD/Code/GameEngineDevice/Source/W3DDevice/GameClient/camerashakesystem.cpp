@@ -36,9 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <assetmgr.h>
 #include <texture.h>
 #include <tri.h>
@@ -85,7 +83,7 @@
 
 /*
 ** (gth) According to my "research" the artists say that there are several factors that
-** go into a good camera shake.  
+** go into a good camera shake.
 ** - The motion should be sinusoidal.
 ** - Camera rotation is more effective than camera motion (good, I won't use any translation)
 ** - The camera should pitch up and down a lot more than it yaws left and right.
@@ -140,7 +138,7 @@ void CameraShakeSystemClass::CameraShakerClass::Compute_Rotations(const Vector3 
 	WWASSERT(set_angles != NULL);
 
 	/*
-	** We want several different sinusiods, each with a different phase shift and 
+	** We want several different sinusiods, each with a different phase shift and
 	** frequency.  The frequency is a function of time as well, stretching the
 	** sine wave out.  These waves are modulated based on the distance from the
 	** center of the "shake", the intensity of the shake, and based on the axis
@@ -265,7 +263,7 @@ void CameraShakeSystemClass::Timestep(float dt)
 void CameraShakeSystemClass::Update_Camera_Shaker(Vector3 camera_position, Vector3 *shaker_angle)
 {
 	MultiListIterator<CameraShakerClass> iterator(&CameraShakerList);
-	
+
 	Vector3 angles(0,0,0);
 	Matrix3D camera_transform;
 
@@ -286,7 +284,7 @@ void CameraShakeSystemClass::Update_Camera_Shaker(Vector3 camera_position, Vecto
 	for (int i=0; i<3; i++) {
 		WWMath::Clamp(angles[i],-AXIS_ROTATION[i],AXIS_ROTATION[i]);
 	}
-	
+
 	*shaker_angle = angles;
 
 	/*

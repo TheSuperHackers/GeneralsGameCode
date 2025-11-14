@@ -22,7 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: Statistics.h 
+// FILE: Statistics.h
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -38,8 +38,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_PARTITIONSOLVER_
-#define _H_PARTITIONSOLVER_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 
@@ -59,7 +57,7 @@ typedef std::vector<PairObjectIDAndUInt> SpacesVec;
 // the first ObjectID is the id of the entry, while the second is the id of the hole
 typedef std::vector<PairObjectID> SolutionVec;
 
-enum SolutionType
+enum SolutionType CPP_11(: Int)
 {
 	PREFER_FAST_SOLUTION = 0,
 	PREFER_CORRECT_SOLUTION = 0x7FFFFFFF
@@ -78,10 +76,8 @@ class PartitionSolver
 
 	public:
 		PartitionSolver(const EntriesVec& elements, const SpacesVec& spaces, SolutionType solveHow);
-		
+
 		// Solve could potentially take a LONG TIME (as in NEVER complete). This problem is NP-complete.
 		void solve(void);
 		const SolutionVec& getSolution( void ) const;
 };
-
-#endif /* _H_PARTITIONSOLVER_ */

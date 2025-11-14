@@ -50,22 +50,17 @@
 #include "WW3D2/ww3d.h"
 #include "WW3D2/hanim.h"
 
-#include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.		 
-
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
+#include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
 
 
-#ifdef _DEBUG
+
+#ifdef RTS_DEBUG
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "WW3D2/dx8indexbuffer.h"
 #include "WW3D2/dx8vertexbuffer.h"
 #include "WW3D2/vertmaterial.h"
 class DebugHintObject : public RenderObjClass
-{	
+{
 
 public:
 
@@ -124,7 +119,7 @@ DebugHintObject::DebugHintObject(void) :
 
 Bool DebugHintObject::Cast_Ray(RayCollisionTestClass & raytest)
 {
-	return false;	
+	return false;
 }
 
 DebugHintObject::DebugHintObject(const DebugHintObject & src)
@@ -174,7 +169,7 @@ void DebugHintObject::freeMapResources(void)
 //Allocate a heightmap of x by y vertices.
 //data must be an array matching this size.
 void DebugHintObject::initData(void)
-{	
+{
 	freeMapResources();	//free old data and ib/vb
 
 	m_indexBuffer = NEW_REF(DX8IndexBufferClass,(3));
@@ -194,7 +189,7 @@ void DebugHintObject::initData(void)
 	m_vertexMaterialClass = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 
 	//use a multi-texture shader: (text1*diffuse)*text2.
-	m_shaderClass = ShaderClass::ShaderClass(SC_ALPHA);
+	m_shaderClass = ShaderClass(SC_ALPHA);
 }
 
 void DebugHintObject::setLocAndColorAndSize(const Coord3D *loc, Int argb, Int size)
@@ -203,7 +198,7 @@ void DebugHintObject::setLocAndColorAndSize(const Coord3D *loc, Int argb, Int si
 	m_myColor = argb;
 	m_mySize = size;
 
-	if (m_myLoc.z < 0 && TheTerrainRenderObject) 
+	if (m_myLoc.z < 0 && TheTerrainRenderObject)
 	{
 		m_myLoc.z = TheTerrainRenderObject->getHeightMapHeight(m_myLoc.x, m_myLoc.y, NULL);
 	}
@@ -215,7 +210,7 @@ void DebugHintObject::setLocAndColorAndSize(const Coord3D *loc, Int argb, Int si
 
 		Real x1 = m_mySize * 0.866;	// cos(30)
 		Real y1 = m_mySize * 0.5;		// sin(30)
-		
+
 		// note, pts must go in a counterclockwise order!
 		vb[0].x = 0;
 		vb[0].y = m_mySize;
@@ -242,8 +237,8 @@ void DebugHintObject::setLocAndColorAndSize(const Coord3D *loc, Int argb, Int si
 
 void DebugHintObject::Render(RenderInfoClass & rinfo)
 {
-	SphereClass bounds(Vector3(m_myLoc.x, m_myLoc.y, m_myLoc.z), m_mySize); 
-	if (!rinfo.Camera.Cull_Sphere(bounds)) 
+	SphereClass bounds(Vector3(m_myLoc.x, m_myLoc.y, m_myLoc.z), m_mySize);
+	if (!rinfo.Camera.Cull_Sphere(bounds))
 	{
 		DX8Wrapper::Set_Material(m_vertexMaterialClass);
 		DX8Wrapper::Set_Shader(m_shaderClass);
@@ -259,7 +254,7 @@ void DebugHintObject::Render(RenderInfoClass & rinfo)
 		DX8Wrapper::Draw_Triangles(	0, 1, 0, 3);
 	}
 }
-#endif // _DEBUG
+#endif // RTS_DEBUG
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -278,12 +273,12 @@ W3DInGameUI::W3DInGameUI()
 		m_moveHintRenderObj[ i ] = NULL;
 		m_moveHintAnim[ i ] = NULL;
 
-	}  // end for i
+	}
 
 	m_buildingPlacementAnchor = NULL;
 	m_buildingPlacementArrow = NULL;
 
-}  // end W3DInGameUI
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -298,12 +293,12 @@ W3DInGameUI::~W3DInGameUI()
 		REF_PTR_RELEASE( m_moveHintRenderObj[ i ] );
 		REF_PTR_RELEASE( m_moveHintAnim[ i ] );
 
-	}  // end for i
+	}
 
 	REF_PTR_RELEASE( m_buildingPlacementAnchor );
 	REF_PTR_RELEASE( m_buildingPlacementArrow );
 
-}  // end ~W3DInGameUI
+}
 
 // loadText ===================================================================
 /** Load text from the file */
@@ -331,12 +326,12 @@ static void loadText( char *filename, GameWindow *listboxText )
 		if (line.isEmpty())
 			line = UnicodeString(L" ");
 		GadgetListBoxAddEntryText(listboxText, line, color, -1, -1);
-	}  // end while
+	}
 
 	// close the file
 	fclose( fp );
 
-}  // end loadText
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -354,16 +349,16 @@ void W3DInGameUI::init( void )
 		{
 			NameKeyType listboxTextID = TheNameKeyGenerator->nameToKey( "MOTD.wnd:ListboxMOTD" );
 			GameWindow *listboxText = TheWindowManager->winGetWindowFromId(motd, listboxTextID);
-	
+
 			loadText( "HelpScreen.txt", listboxText );
-	
+
 			// hide it for now
 			motd->winHide( TRUE );
-	
-		}  // end if*/
-	
-		
-}  // end init
+
+		}
+*/
+
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update in game UI */
@@ -374,7 +369,7 @@ void W3DInGameUI::update( void )
 	// call base
 	InGameUI::update();
 
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset the in game ui */
@@ -385,7 +380,7 @@ void W3DInGameUI::reset( void )
 	// call base
 	InGameUI::reset();
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Draw member for the W3D implemenation of the game user interface */
@@ -418,9 +413,9 @@ void W3DInGameUI::draw( void )
 			// draw placement angle selection if needed
 			drawPlaceAngle( view );
 
-		}  // end for view
+		}
 
-	}  // end if
+	}
 
 	// repaint all our windows
 
@@ -428,7 +423,7 @@ void W3DInGameUI::draw( void )
 	if (!DX8Wrapper::stats.m_disableConsole) {
 #endif
 
-#ifdef DO_UNIT_TIMINGS	 
+#ifdef DO_UNIT_TIMINGS
 #pragma MESSAGE("*** WARNING *** DOING DO_UNIT_TIMINGS!!!!")
 	extern Bool g_UT_startTiming;
 	if (!g_UT_startTiming)
@@ -437,12 +432,14 @@ void W3DInGameUI::draw( void )
 	postDraw();
 
 	TheWindowManager->winRepaint();
-	
+
+	postWindowDraw();
+
 #ifdef EXTENDED_STATS
 	}
 #endif
 
-}  // end draw
+}
 
 //-------------------------------------------------------------------------------------------------
 /** draw 2d selection region on screen */
@@ -459,7 +456,7 @@ void W3DInGameUI::drawSelectionRegion( void )
 														width,
 														color );
 
-}  // end drawSelectionRegion
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Draw the visual feedback for clicking in the world and telling units
@@ -496,7 +493,7 @@ void W3DInGameUI::drawMoveHints( View *view )
 				AsciiString animName;
 				animName.format("%s.%s", TheGlobalData->m_moveHintName.str(), TheGlobalData->m_moveHintName.str());
 				anim = W3DDisplay::m_assetManager->Get_HAnim(animName.str());
-	
+
 				// sanity
 				if( hint == NULL )
 				{
@@ -504,17 +501,17 @@ void W3DInGameUI::drawMoveHints( View *view )
 					DEBUG_CRASH(("unable to create hint"));
 					return;
 
-				}  // end if
+				}
 
 				// asign render objects to GUI data
 				m_moveHintRenderObj[ i ] = hint;
-				
+
 				// note that 'anim' is returned from Get_HAnim with an AddRef, so we don't need to addref it again.
 				// however, we do need to release the contents of moveHintAnim (if any)
 				REF_PTR_RELEASE(m_moveHintAnim[i]);
 				m_moveHintAnim[i] = anim;
-								
-			}  // end if, create render objects
+
+			}
 
 			// show the render object if hidden
 			if( m_moveHintRenderObj[ i ]->Is_Hidden() == 1 ) {
@@ -528,9 +525,9 @@ void W3DInGameUI::drawMoveHints( View *view )
 			// move this hint render object to the position and align with terrain
 			Matrix3D transform;
 			PathfindLayerEnum layer = TheTerrainLogic->alignOnTerrain( 0, m_moveHint[ i ].pos, true, transform );
-			
+
 			Real waterZ;
-			if (layer == LAYER_GROUND && TheTerrainLogic->isUnderwater(m_moveHint[ i ].pos.x, m_moveHint[ i ].pos.y, &waterZ)) 
+			if (layer == LAYER_GROUND && TheTerrainLogic->isUnderwater(m_moveHint[ i ].pos.x, m_moveHint[ i ].pos.y, &waterZ))
 			{
 				Coord3D tmp = m_moveHint[ i ].pos;
 				tmp.z = waterZ;
@@ -563,8 +560,8 @@ void W3DInGameUI::drawMoveHints( View *view )
 					// draw the line
 					TheDisplay->drawLine( start.x, start.y, end.x, end.y, width, color );
 
-				}  // end if
-			}  // end if
+				}
+			}
 #endif
 
 		}
@@ -578,11 +575,11 @@ void W3DInGameUI::drawMoveHints( View *view )
 					W3DDisplay::m_3DScene->Remove_Render_Object( m_moveHintRenderObj[ i ] );
 				}
 
-		}  // end else
+		}
 
-	}  // end for i
+	}
 
-}  // end drawMoveHints
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Draw visual back for clicking to attack a unit in the world */
@@ -590,7 +587,7 @@ void W3DInGameUI::drawMoveHints( View *view )
 void W3DInGameUI::drawAttackHints( View *view )
 {
 
-}  // end drawAttackHints
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Draw the angle selection for placing building if needed */
@@ -697,7 +694,7 @@ void W3DInGameUI::drawPlaceAngle( View *view )
 			m_buildingPlacementArrow->Set_Transform( *m_placeIcon[ 0 ]->getTransformMatrix() );
 	}
 
-	
+
 	//m_buildingPlacementArrow->Set_Transform(
 
 	// draw a little box at the start to show the "anchor" point
@@ -732,5 +729,5 @@ void W3DInGameUI::drawPlaceAngle( View *view )
 	//start.y = o.y * size + p.y * (size/2.0f) + end.y;
 	//TheDisplay->drawLine( start.x, start.y, end.x, end.y, width, color );
 
-}  // end drawPlaceAngle
+}
 

@@ -79,4 +79,4 @@ void W3DModuleFactory::init( void )
 	addModule( W3DTreeDraw );
 	addModule( W3DPropDraw );
 
-}  // end init
+}

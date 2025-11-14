@@ -30,16 +30,13 @@
 
 #pragma once
 
-#ifndef __LADDERPREFERENCES_H__
-#define __LADDERPREFERENCES_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "Common/UserPreferences.h"
 
 //-----------------------------------------------------------------------------
-// LadderPreferences base class 
+// LadderPreferences base class
 //-----------------------------------------------------------------------------
 
 class LadderPref
@@ -59,7 +56,7 @@ public:
 typedef std::map<time_t, LadderPref> LadderPrefMap;
 
 //-----------------------------------------------------------------------------
-// LadderPreferences base class 
+// LadderPreferences base class
 //-----------------------------------------------------------------------------
 class LadderPreferences : public UserPreferences
 {
@@ -76,5 +73,3 @@ public:
 private:
 	LadderPrefMap m_ladders;
 };
-
-#endif // __LADDERPREFERENCES_H__

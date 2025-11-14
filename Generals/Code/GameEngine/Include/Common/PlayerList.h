@@ -24,12 +24,12 @@
 
 // FILE: PlayerList.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -44,9 +44,6 @@
 
 #pragma once
 
-#ifndef _PLAYERLIST_H_
-#define _PLAYERLIST_H_
-
 #include "Common/SubsystemInterface.h"
 #include "Common/GameCommon.h"
 #include "Common/NameKeyGenerator.h"
@@ -60,11 +57,11 @@ class Team;
 class TeamFactory;
 
 //-------------------------------------------------------------------------------------------------
-enum AllowPlayerRelationship
+enum AllowPlayerRelationship CPP_11(: Int)
 {
 	ALLOW_SAME_PLAYER			= 0x01,		///< allow only objects of the same player as m_obj
 	ALLOW_ALLIES					= 0x02,		///< allow objects that m_obj considers allies
-	ALLOW_ENEMIES					= 0x04,		///< allow objects that m_obj considers enemy 
+	ALLOW_ENEMIES					= 0x04,		///< allow objects that m_obj considers enemy
 	ALLOW_NEUTRAL					= 0x08		///< allow objects that m_obj considers neutral
 };
 
@@ -112,7 +109,7 @@ public:
 	Player *getNeutralPlayer() { DEBUG_ASSERTCRASH(m_players[0] != NULL, ("null neutral")); return m_players[0]; }
 
 	/**
-		return the Player with the given internal name, or null if none found. 
+		return the Player with the given internal name, or null if none found.
 	*/
 	Player *findPlayerWithNameKey(NameKeyType key);
 
@@ -132,7 +129,7 @@ public:
 		Return the player matching the player mask
 	*/
 	Player *getPlayerFromMask( PlayerMaskType mask );
-	
+
 	/**
 		Get each player in numerical order that this mask represents.
 		Note that maskToAdjust will be adjusted by removing the associated player's mask from it.
@@ -147,8 +144,8 @@ public:
 	void updateTeamStates(void);
 
 	/**
-		a convenience routine to return the players who srcPlayer considers to have one of the 
-		relationships specified in allowedRelationships. Note that allowedRelationships should be 
+		a convenience routine to return the players who srcPlayer considers to have one of the
+		relationships specified in allowedRelationships. Note that allowedRelationships should be
 		a bitwise OR of AllowPlayerRelationship flags.
 	*/
 	PlayerMaskType getPlayersWithRelationship( Int srcPlayerIndex, UnsignedInt allowedRelationships );
@@ -171,5 +168,3 @@ private:
 
 // ----------------------------------------------------------------------------------------------
 extern PlayerList *ThePlayerList;	///< singleton instance of PlayerList
-
-#endif // _PLAYERLIST_H_

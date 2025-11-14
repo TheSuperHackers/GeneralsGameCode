@@ -42,36 +42,36 @@ include(FetchContent)
 if((WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows") AND ${CMAKE_SIZEOF_VOID_P} EQUAL 4)
     include(cmake/miles.cmake)
     include(cmake/bink.cmake)
-    if (IS_VS6_BUILD)
-        include(cmake/stlport.cmake)
-    else()
-        add_library(stlport INTERFACE) # Do not use stlport
-    endif()
     include(cmake/dx8.cmake)
-    include(cmake/dbghelp.cmake)
+endif()
+
+# Define a dummy stlport target when not on VC6.
+if (IS_VS6_BUILD)
+    include(cmake/stlport.cmake)
+else()
+    add_library(stlport INTERFACE)
 endif()
 
 include(cmake/config.cmake)
 include(cmake/gamespy.cmake)
 include(cmake/lzhl.cmake)
-include(cmake/zlib.cmake)
 
-add_subdirectory(Dependencies/Benchmark)
 if (IS_VS6_BUILD)
     # The original max sdk does not compile against a modern compiler.
     # If there is a desire to make this work, then a fixed max sdk needs to be created.
     add_subdirectory(Dependencies/MaxSDK)
 endif()
-add_subdirectory(Dependencies/SafeDisc)
 add_subdirectory(Dependencies/Utility)
 add_subdirectory(resources)
 
+add_subdirectory(Core)
+
 # Add main build targets
-if(GENZH_BUILD_ZEROHOUR)
+if(RTS_BUILD_ZEROHOUR)
     add_subdirectory(GeneralsMD)
 endif()
 
-if(GENZH_BUILD_GENERALS)
+if(RTS_BUILD_GENERALS)
     add_subdirectory(Generals)
 endif()
 

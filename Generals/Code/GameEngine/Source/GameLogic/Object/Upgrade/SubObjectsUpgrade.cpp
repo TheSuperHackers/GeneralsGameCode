@@ -24,12 +24,12 @@
 
 // FILE: SubObjectsUpgrade.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	Created:	September 2002
@@ -37,14 +37,14 @@
 //	Filename: SubObjectsUpgrade.cpp
 //
 //	Author:		Kris Morness
-//	
+//
 //	Purpose:	Shows or hides a list of subobjects based on upgrade statii. It
 //            will override any animation subobjects states.
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_OBJECT_STATUS_NAMES
 #include "Common/Player.h"
@@ -55,11 +55,11 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SubObjectsUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void SubObjectsUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "ShowSubObjects", INI::parseAsciiStringVectorAppend, NULL, offsetof( SubObjectsUpgradeModuleData, m_showSubObjectNames ) },
 		{ "HideSubObjects", INI::parseAsciiStringVectorAppend, NULL, offsetof( SubObjectsUpgradeModuleData, m_hideSubObjectNames ) },
@@ -85,17 +85,17 @@ SubObjectsUpgrade::~SubObjectsUpgrade( void )
 void SubObjectsUpgrade::upgradeImplementation( )
 {
 	const SubObjectsUpgradeModuleData *data = getSubObjectsUpgradeModuleData();
-	Int64 activation, conflicting;
+	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks( activation, conflicting );
-	
+
 	//First make sure we have the right combination of upgrades
 
-	if( getObject()->getObjectCompletedUpgradeMask() & conflicting )
+	if( getObject()->getObjectCompletedUpgradeMask().testForAny( conflicting ) )
 	{
 		//If it has ANY of the conflicting OBJECT upgrades, then don't do it!
 		return;
 	}
-	if( getObject()->getControllingPlayer()->getCompletedUpgradeMask() & conflicting )
+	if( getObject()->getControllingPlayer()->getCompletedUpgradeMask().testForAny( conflicting ) )
 	{
 		//If it has ANY of the conflicting PLAYER upgrades, then don't do it!
 		return;
@@ -136,12 +136,12 @@ void SubObjectsUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 //------------------------------------------------------------------------------------------------
 // Xfer method
 // Version Info:
-// 1: Initial version 
+// 1: Initial version
 //------------------------------------------------------------------------------------------------
 void SubObjectsUpgrade::xfer( Xfer *xfer )
 {
@@ -154,7 +154,7 @@ void SubObjectsUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 //------------------------------------------------------------------------------------------------
 void SubObjectsUpgrade::loadPostProcess( void )
@@ -163,4 +163,4 @@ void SubObjectsUpgrade::loadPostProcess( void )
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

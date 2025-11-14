@@ -24,12 +24,12 @@
 
 // FILE: FireWeaponWhenDamagedBehavior.cpp ///////////////////////////////////////////////////////////////////////
 // Author:
-// Desc:  
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #define DEFINE_SLOWDEATHPHASE_NAMES
 
 #include "Common/Thing.h"
@@ -56,7 +56,7 @@ const Real END_MIDPOINT_RATIO = 0.65f;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponWhenDamagedBehavior::FireWeaponWhenDamagedBehavior( Thing *thing, const ModuleData* moduleData ) : 
+FireWeaponWhenDamagedBehavior::FireWeaponWhenDamagedBehavior( Thing *thing, const ModuleData* moduleData ) :
 	UpdateModule( thing, moduleData ),
 	m_reactionWeaponPristine( NULL ),
 	m_reactionWeaponDamaged( NULL ),
@@ -86,7 +86,7 @@ FireWeaponWhenDamagedBehavior::FireWeaponWhenDamagedBehavior( Thing *thing, cons
 	if ( d->m_reactionWeaponReallyDamaged )
 	{
 		m_reactionWeaponReallyDamaged		= TheWeaponStore->allocateNewWeapon(
-			d->m_reactionWeaponReallyDamaged,		PRIMARY_WEAPON); 
+			d->m_reactionWeaponReallyDamaged,		PRIMARY_WEAPON);
 		m_reactionWeaponReallyDamaged->reloadAmmo( obj );
 	}
 	if ( d->m_reactionWeaponRubble )
@@ -146,23 +146,15 @@ FireWeaponWhenDamagedBehavior::FireWeaponWhenDamagedBehavior( Thing *thing, cons
 //-------------------------------------------------------------------------------------------------
 FireWeaponWhenDamagedBehavior::~FireWeaponWhenDamagedBehavior( void )
 {
-	if (m_reactionWeaponPristine)
-		m_reactionWeaponPristine->deleteInstance();
-	if (m_reactionWeaponDamaged)
-		m_reactionWeaponDamaged->deleteInstance();
-	if (m_reactionWeaponReallyDamaged)
-		m_reactionWeaponReallyDamaged->deleteInstance();
-	if (m_reactionWeaponRubble)
-		m_reactionWeaponRubble->deleteInstance();
+	deleteInstance(m_reactionWeaponPristine);
+	deleteInstance(m_reactionWeaponDamaged);
+	deleteInstance(m_reactionWeaponReallyDamaged);
+	deleteInstance(m_reactionWeaponRubble);
 
-	if (m_continuousWeaponPristine)
-		m_continuousWeaponPristine->deleteInstance();
-	if (m_continuousWeaponDamaged)
-		m_continuousWeaponDamaged->deleteInstance();
-	if (m_continuousWeaponReallyDamaged)
-		m_continuousWeaponReallyDamaged->deleteInstance();
-	if (m_continuousWeaponRubble)
-		m_continuousWeaponRubble->deleteInstance();
+	deleteInstance(m_continuousWeaponPristine);
+	deleteInstance(m_continuousWeaponDamaged);
+	deleteInstance(m_continuousWeaponReallyDamaged);
+	deleteInstance(m_continuousWeaponRubble);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -277,7 +269,7 @@ void FireWeaponWhenDamagedBehavior::crc( Xfer *xfer )
 	// extend upgrade mux
 	UpgradeMux::upgradeMuxCRC( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -348,7 +340,7 @@ void FireWeaponWhenDamagedBehavior::xfer( Xfer *xfer )
 	if( weaponPresent )
 		xfer->xferSnapshot( m_continuousWeaponRubble );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -362,4 +354,4 @@ void FireWeaponWhenDamagedBehavior::loadPostProcess( void )
 	// extend upgrade mux
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
-}  // end loadPostProcess
+}

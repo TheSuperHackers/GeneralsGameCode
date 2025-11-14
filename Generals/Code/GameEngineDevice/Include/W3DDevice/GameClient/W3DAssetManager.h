@@ -42,33 +42,27 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef W3DASSETMANAGER_H
-#define W3DASSETMANAGER_H
 
 #include "assetmgr.h"
 #include "Lib/BaseType.h"
 
 class Vector3;
 class VertexMaterialClass;
-class GrannyAnimManagerClass;
 
 class W3DAssetManager: public WW3DAssetManager
 {
 public:
 	W3DAssetManager(void);
-	virtual ~W3DAssetManager(void);	
+	virtual ~W3DAssetManager(void);
 
 	virtual RenderObjClass * Create_Render_Obj(const char * name);
 	// unique to W3DAssetManager
 	virtual HAnimClass *	Get_HAnim(const char * name);
 	virtual bool Load_3D_Assets( const char * filename ); // This CANNOT be Bool, as it will not inherit properly if you make Bool == Int
 	virtual TextureClass *			Get_Texture(
-		const char * filename, 
-		TextureClass::MipCountType mip_level_count=TextureClass::MIP_LEVELS_ALL,
+		const char * filename,
+		MipCountType mip_level_count=MIP_LEVELS_ALL,
 		WW3DFormat texture_format=WW3D_FORMAT_UNKNOWN,
 		bool allow_compression=true);
 
@@ -103,13 +97,11 @@ private:
 	int replaceHLODTexture(RenderObjClass *robj, TextureClass *oldTex, TextureClass *newTex);
 	int replaceMeshTexture(RenderObjClass *robj, TextureClass *oldTex, TextureClass *newTex);
 
-	GrannyAnimManagerClass		*m_GrannyAnimManager;
-
 	//'E&B' customizations
-/*	virtual RenderObjClass * Create_Render_Obj(const char * name, float scale, const Vector3 &hsv_shift);	
-	TextureClass * Get_Texture_With_HSV_Shift(const char * filename, const Vector3 &hsv_shift, TextureClass::MipCountType mip_level_count = TextureClass::MIP_LEVELS_ALL);
+/*	virtual RenderObjClass * Create_Render_Obj(const char * name, float scale, const Vector3 &hsv_shift);
+	TextureClass * Get_Texture_With_HSV_Shift(const char * filename, const Vector3 &hsv_shift, MipCountType mip_level_count = MIP_LEVELS_ALL);
 	void Recolor_Vertex_Material(VertexMaterialClass *vmat, const Vector3 &hsv_shift);
-	void Recolor_Vertices(unsigned int *color, int count, const Vector3 &hsv_shift);	
+	void Recolor_Vertices(unsigned int *color, int count, const Vector3 &hsv_shift);
 	void Recolor_Mesh(RenderObjClass *robj, const Vector3 &hsv_shift);
 	TextureClass * Recolor_Texture(TextureClass *texture, const Vector3 &hsv_shift);
 	TextureClass * Recolor_Texture_One_Time(TextureClass *texture, const Vector3 &hsv_shift);
@@ -118,6 +110,3 @@ private:
 	void Recolor_ParticleEmitter(RenderObjClass *robj, const Vector3 &hsv_shift);
 	void Recolor_Asset(RenderObjClass *robj, const Vector3 &hsv_shift);*/
 };
-
-#endif
-

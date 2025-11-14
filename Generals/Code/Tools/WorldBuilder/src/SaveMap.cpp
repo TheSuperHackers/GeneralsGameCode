@@ -32,11 +32,7 @@ SaveMap::SaveMap(TSaveMapInfo *pInfo, CWnd* pParent /*=NULL*/)
 	: CDialog(SaveMap::IDD, pParent),
 	m_pInfo(pInfo)
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
 	m_pInfo->usingSystemDir = m_usingSystemDir = ::AfxGetApp()->GetProfileInt(MAP_OPENSAVE_PANEL_SECTION, "UseSystemDir", TRUE);
-#else
-	m_pInfo->usingSystemDir = m_usingSystemDir = FALSE;
-#endif
 
 	//{{AFX_DATA_INIT(SaveMap)
 		// NOTE: the ClassWizard will add member initialization here
@@ -75,7 +71,7 @@ void SaveMap::OnUserMaps()
 	populateMapListbox( FALSE );
 }
 
-void SaveMap::OnOK() 
+void SaveMap::OnOK()
 {
 	CWnd *pEdit = GetDlgItem(IDC_SAVE_MAP_EDIT);
 	if (pEdit == NULL) {
@@ -107,12 +103,12 @@ void SaveMap::OnOK()
 	CDialog::OnOK();
 }
 
-void SaveMap::OnCancel() 
+void SaveMap::OnCancel()
 {
 	CDialog::OnCancel();
 }
 
-void SaveMap::OnBrowse() 
+void SaveMap::OnBrowse()
 {
 	m_pInfo->browse = true;
 	CDialog::OnOK();
@@ -121,12 +117,10 @@ void SaveMap::OnBrowse()
 void SaveMap::populateMapListbox( Bool systemMaps )
 {
 	m_pInfo->usingSystemDir = m_usingSystemDir = systemMaps;
-#if defined(_DEBUG) || defined(_INTERNAL)
 	::AfxGetApp()->WriteProfileInt(MAP_OPENSAVE_PANEL_SECTION, "UseSystemDir", m_usingSystemDir);
-#endif
 
 	HANDLE			hFindFile = 0;
-	WIN32_FIND_DATA			findData; 
+	WIN32_FIND_DATA			findData;
 	char				dirBuf[_MAX_PATH];
 	char				findBuf[_MAX_PATH];
 	char				fileBuf[_MAX_PATH];
@@ -134,7 +128,7 @@ void SaveMap::populateMapListbox( Bool systemMaps )
 	if (systemMaps)
 		strcpy(dirBuf, ".\\Maps\\");
 	else
-		sprintf(dirBuf, "%sMaps\\", TheGlobalData->getPath_UserData().str());
+		snprintf(dirBuf, ARRAY_SIZE(dirBuf), "%sMaps\\", TheGlobalData->getPath_UserData().str());
 	int len = strlen(dirBuf);
 
 	if (len > 0 && dirBuf[len - 1] != '\\') {
@@ -144,10 +138,9 @@ void SaveMap::populateMapListbox( Bool systemMaps )
 	CListBox *pList = (CListBox *)this->GetDlgItem(IDC_SAVE_LIST);
 	if (pList == NULL) return;
 	pList->ResetContent();
-	strcpy(findBuf, dirBuf);
-	strcat(findBuf, "*.*");
+	snprintf(findBuf, ARRAY_SIZE(findBuf), "%s*.*", dirBuf);
 
-	hFindFile = FindFirstFile(findBuf, &findData); 
+	hFindFile = FindFirstFile(findBuf, &findData);
 	if (hFindFile != INVALID_HANDLE_VALUE) {
 		do {
 			if (strcmp(findData.cFileName, ".") == 0 || strcmp(findData.cFileName, "..") == 0)
@@ -155,11 +148,7 @@ void SaveMap::populateMapListbox( Bool systemMaps )
 			if ((findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
 				continue;
 			}
-			strcpy(fileBuf, dirBuf);
-			strcat(fileBuf, findData.cFileName);
-			strcat(fileBuf, "\\");
-			strcat(fileBuf, findData.cFileName);
-			strcat(fileBuf, ".map");
+			snprintf(fileBuf, ARRAY_SIZE(fileBuf), "%s%s\\%s.map", dirBuf, findData.cFileName, findData.cFileName);
 			try {
 				CFileStatus status;
 				if (CFile::GetStatus(fileBuf, status)) {
@@ -175,7 +164,7 @@ void SaveMap::populateMapListbox( Bool systemMaps )
  	}
 	CEdit *pEdit = (CEdit*)GetDlgItem(IDC_SAVE_MAP_EDIT);
 	if (pEdit != NULL) {
-		strcpy(fileBuf, m_pInfo->filename);
+		strlcpy(fileBuf, m_pInfo->filename, ARRAY_SIZE(fileBuf));
 		Int len = strlen(fileBuf);
 		if (len>4 && stricmp(".map", fileBuf+(len-4)) == 0) {
 			// strip of the .map
@@ -194,13 +183,13 @@ void SaveMap::populateMapListbox( Bool systemMaps )
 	}
 }
 
-void SaveMap::OnSelchangeSaveList() 
+void SaveMap::OnSelchangeSaveList()
 {
 	CListBox *pList = (CListBox *)this->GetDlgItem(IDC_SAVE_LIST);
 	if (pList == NULL) {
 		return;
 	}
-	
+
 	Int sel = pList->GetCurSel();
 	CString filename;
 	if (sel != LB_ERR) {
@@ -213,7 +202,7 @@ void SaveMap::OnSelchangeSaveList()
 	pEdit->SetWindowText(filename);
 }
 
-BOOL SaveMap::OnInitDialog() 
+BOOL SaveMap::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -225,15 +214,12 @@ BOOL SaveMap::OnInitDialog()
 	if (pUserMaps != NULL)
 		pUserMaps->SetCheck( !m_usingSystemDir );
 
-#if !defined(_DEBUG) && !defined(_INTERNAL)
-	if (pSystemMaps)
-		pSystemMaps->ShowWindow( FALSE );
-	if (pUserMaps)
-		pUserMaps->ShowWindow( FALSE );
-#endif
+	// TheSuperHackers @tweak Originally World Builder has hidden the System Maps tab button in Release builds,
+	// perhaps with the intention to only show User Maps to community users. However, World Builder did release
+	// as a Debug build and always had the System Maps tab, therefore this now shows it always for simplicity.
 
 	populateMapListbox( m_usingSystemDir );
 
 	return FALSE;  // return TRUE unless you set the focus to a control
-	              
+
 }

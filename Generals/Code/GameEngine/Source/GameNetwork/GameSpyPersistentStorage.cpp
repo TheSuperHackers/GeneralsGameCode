@@ -26,7 +26,7 @@
 // GameSpy Persistent Storage callbacks, utils, etc
 // Author: Matthew D. Campbell, March 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "gamespy/gstats/gpersist.h"
 
@@ -86,7 +86,7 @@ void GameSpyPlayerInfo::update( void )
 	{
 		if (m_shouldDisconnect)
 		{
-			DEBUG_LOG(("Persistent Storage close\n"));
+			DEBUG_LOG(("Persistent Storage close"));
 			CloseStatsConnection();
 		}
 		else
@@ -108,7 +108,7 @@ void GameSpyPlayerInfo::threadReadFromServer( void )
 	{
 		// get persistent info
 		m_operationCount++;
-		DEBUG_LOG(("GameSpyPlayerInfo::readFromServer() operation count = %d\n", m_operationCount));
+		DEBUG_LOG(("GameSpyPlayerInfo::readFromServer() operation count = %d", m_operationCount));
 		GetPersistDataValues(0, TheGameSpyChat->getProfileID(), pd_public_rw, 0, "\\locale\\wins\\losses", getPersistentDataCallback, &m_operationCount);
 	}
 	else
@@ -180,7 +180,7 @@ void GameSpyPlayerInfo::threadSetLocale( AsciiString val )
 	str.format("\\%s\\%s", key.str(), val.str());
 	char *writable = strdup(str.str());
 	m_operationCount++;
-	DEBUG_LOG(("GameSpyPlayerInfo::set%s() operation count = %d\n", key.str(), m_operationCount));
+	DEBUG_LOG(("GameSpyPlayerInfo::set%s() operation count = %d", key.str(), m_operationCount));
 	SetPersistDataValues(0, TheGameSpyChat->getProfileID(), pd_public_rw, 0, writable, setPersistentDataCallback, &m_operationCount);
 	free(writable);
 }
@@ -197,7 +197,7 @@ void GameSpyPlayerInfo::threadSetWins( AsciiString val )
 	str.format("\\%s\\%s", key.str(), val.str());
 	char *writable = strdup(str.str());
 	m_operationCount++;
-	DEBUG_LOG(("GameSpyPlayerInfo::set%s() operation count = %d\n", key.str(), m_operationCount));
+	DEBUG_LOG(("GameSpyPlayerInfo::set%s() operation count = %d", key.str(), m_operationCount));
 	SetPersistDataValues(0, TheGameSpyChat->getProfileID(), pd_public_rw, 0, writable, setPersistentDataCallback, &m_operationCount);
 	free(writable);
 }
@@ -214,7 +214,7 @@ void GameSpyPlayerInfo::threadSetLosses( AsciiString val )
 	str.format("\\%s\\%s", key.str(), val.str());
 	char *writable = strdup(str.str());
 	m_operationCount++;
-	DEBUG_LOG(("GameSpyPlayerInfo::set%s() operation count = %d\n", key.str(), m_operationCount));
+	DEBUG_LOG(("GameSpyPlayerInfo::set%s() operation count = %d", key.str(), m_operationCount));
 	SetPersistDataValues(0, TheGameSpyChat->getProfileID(), pd_public_rw, 0, writable, setPersistentDataCallback, &m_operationCount);
 	free(writable);
 }
@@ -236,13 +236,13 @@ GameSpyPlayerInfoInterface *createGameSpyPlayerInfo( void )
 
 static void persAuthCallback(int localid, int profileid, int authenticated, char *errmsg, void *instance)
 {
-	DEBUG_LOG(("Auth callback: localid: %d profileid: %d auth: %d err: %s\n",localid, profileid, authenticated, errmsg));
+	DEBUG_LOG(("Auth callback: localid: %d profileid: %d auth: %d err: %s",localid, profileid, authenticated, errmsg));
 	isProfileAuthorized = (authenticated != 0);
 }
 
 static void getPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, char *data, int len, void *instance)
 {
-	DEBUG_LOG(("Data get callback: localid: %d profileid: %d success: %d len: %d data: %s\n",localid, profileid, success, len, data));
+	DEBUG_LOG(("Data get callback: localid: %d profileid: %d success: %d len: %d data: %s",localid, profileid, success, len, data));
 
 	if (!TheGameSpyPlayerInfo)
 	{
@@ -278,19 +278,19 @@ static void getPersistentDataCallback(int localid, int profileid, persisttype_t 
 	// decrement count of active operations
 	Int *opCount = (Int *)instance;
 	(*opCount) --;
-	DEBUG_LOG(("getPersistentDataCallback() operation count = %d\n", (*opCount)));
+	DEBUG_LOG(("getPersistentDataCallback() operation count = %d", (*opCount)));
 	if (!*opCount)
 	{
-		DEBUG_LOG(("getPersistentDataCallback() queue disconnect\n"));
+		DEBUG_LOG(("getPersistentDataCallback() queue disconnect"));
 		((GameSpyPlayerInfo *)TheGameSpyPlayerInfo)->queueDisconnect();
 	}
 
 	const char *keys[3] = { "locale", "wins", "losses" };
 	char valueStrings[3][20];
 	char *values[3] = { valueStrings[0], valueStrings[1], valueStrings[2] };
-	_snprintf(values[0], 20, "%s", TheGameSpyPlayerInfo->getLocale().str());
-	_snprintf(values[1], 20, "%d", TheGameSpyPlayerInfo->getWins());
-	_snprintf(values[2], 20, "%d", TheGameSpyPlayerInfo->getLosses());
+	snprintf(values[0], 20, "%s", TheGameSpyPlayerInfo->getLocale().str());
+	snprintf(values[1], 20, "%d", TheGameSpyPlayerInfo->getWins());
+	snprintf(values[2], 20, "%d", TheGameSpyPlayerInfo->getLosses());
 	peerSetGlobalKeys(TheGameSpyChat->getPeer(), 3, (const char **)keys, (const char **)values);
 	peerSetGlobalWatchKeys(TheGameSpyChat->getPeer(), GroupRoom,   3, keys, PEERTrue);
 	peerSetGlobalWatchKeys(TheGameSpyChat->getPeer(), StagingRoom, 3, keys, PEERTrue);
@@ -304,14 +304,14 @@ static void getPersistentDataCallback(int localid, int profileid, persisttype_t 
 
 static void setPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, void *instance)
 {
-	DEBUG_LOG(("Data save callback: localid: %d profileid: %d success: %d\n", localid, profileid, success));
+	DEBUG_LOG(("Data save callback: localid: %d profileid: %d success: %d", localid, profileid, success));
 
 	Int *opCount = (Int *)instance;
 	(*opCount) --;
-	DEBUG_LOG(("setPersistentDataCallback() operation count = %d\n", (*opCount)));
+	DEBUG_LOG(("setPersistentDataCallback() operation count = %d", (*opCount)));
 	if (!*opCount)
 	{
-		DEBUG_LOG(("setPersistentDataCallback() queue disconnect\n"));
+		DEBUG_LOG(("setPersistentDataCallback() queue disconnect"));
 		((GameSpyPlayerInfo *)TheGameSpyPlayerInfo)->queueDisconnect();
 	}
 }
@@ -344,7 +344,7 @@ static Bool gameSpyInitPersistentStorageConnection( void )
 
 	if (result != GE_NOERROR)
 	{
-		DEBUG_LOG(("InitStatsConnection returned %d\n",result));
+		DEBUG_LOG(("InitStatsConnection returned %d",result));
 		return isProfileAuthorized;
 	}
 
@@ -386,7 +386,7 @@ static Bool gameSpyInitPersistentStorageConnection( void )
 		msleep(10);
 	}
 
-	DEBUG_LOG(("Persistent Storage connect: %d\n", isProfileAuthorized));
+	DEBUG_LOG(("Persistent Storage connect: %d", isProfileAuthorized));
 	return isProfileAuthorized;
 }
 

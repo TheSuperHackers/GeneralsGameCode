@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    Generals
@@ -43,12 +43,8 @@
 
 #pragma once
 
-#ifndef __GAMECLIENT_IMEMANAGER_H
-#define __GAMECLIENT_IMEMANAGER_H
-
-
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include "Lib/BaseType.h"
@@ -77,7 +73,7 @@ class IMEManagerInterface : public SubsystemInterface
 	public:
 
 		virtual ~IMEManagerInterface() {};
-		
+
 		virtual void					attach( GameWindow *window ) = 0;		///< attach IME to specified window
 		virtual void					detatch( void ) = 0;								///< detatch IME from current window
 		virtual void					enable( void ) = 0;									///< Enable IME
@@ -87,12 +83,12 @@ class IMEManagerInterface : public SubsystemInterface
 		virtual GameWindow*		getWindow( void ) = 0;							///< Returns the window we are currently attached to
 		virtual Bool					isComposing( void ) = 0;						///< Manager is currently composing new input string
 		virtual void					getCompositionString( UnicodeString &string ) = 0; ///< Return the current composition string
-		virtual Int						getCompositionCursorPosition( void ) =0;			///< Returns the composition cursor position 
+		virtual Int						getCompositionCursorPosition( void ) =0;			///< Returns the composition cursor position
 		virtual Int						getIndexBase( void ) = 0;						///< Get index base for candidate list
 
 
 		virtual Int						getCandidateCount() = 0;						///< Returns the total number of candidates
-		virtual UnicodeString*getCandidate( Int index ) = 0;			///< Returns the candidate string 
+		virtual UnicodeString*getCandidate( Int index ) = 0;			///< Returns the candidate string
 		virtual Int						getSelectedCandidateIndex() = 0;		///< Returns the indexed of the currently selected candidate
 		virtual Int						getCandidatePageSize() = 0;					///< Returns the page size for the candidates list
 		virtual Int						getCandidatePageStart() = 0;				///< Returns the index of the first visibel candidate
@@ -100,7 +96,7 @@ class IMEManagerInterface : public SubsystemInterface
 
 
 		/// Checks for and service IME messages. Returns TRUE if message serviced
-		virtual Bool serviceIMEMessage(	void *windowsHandle, 
+		virtual Bool serviceIMEMessage(	void *windowsHandle,
 												UnsignedInt message,
 												Int wParam,
 												Int lParam ) = 0;
@@ -113,9 +109,5 @@ extern IMEManagerInterface *CreateIMEManagerInterface( void );
 
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
-
-
-
-#endif // __GAMECLIENT_IMEMANAGER_H

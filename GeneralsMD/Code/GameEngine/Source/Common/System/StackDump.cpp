@@ -22,21 +22,21 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(IG_DEBUG_STACKTRACE)
+#if defined(RTS_DEBUG) || defined(IG_DEBUG_STACKTRACE)
 
 #pragma pack(push, 8)
 
 #include "Common/StackDump.h"
 #include "Common/Debug.h"
 
+#include "DbgHelpLoader.h"
 
 //*****************************************************************************
 //	Prototypes
 //*****************************************************************************
 BOOL InitSymbolInfo(void);
-void UninitSymbolInfo(void);
 void MakeStackTrace(DWORD myeip,DWORD myesp,DWORD myebp, int skipFrames, void (*callback)(const char*));
 void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* linenumber, unsigned int* address);
 void WriteStackLine(void*address, void (*callback)(const char*));
@@ -45,14 +45,6 @@ void WriteStackLine(void*address, void (*callback)(const char*));
 //	Mis-named globals :-)
 //*****************************************************************************
 static CONTEXT gsContext;
-static Bool gsInit=FALSE;
-
-BOOL (__stdcall *gsSymGetLineFromAddr)(
-		IN  HANDLE                  hProcess,
-		IN  DWORD                   dwAddr,
-		OUT PDWORD                  pdwDisplacement,
-		OUT PIMAGEHLP_LINE          Line
-			);
 
 
 //*****************************************************************************
@@ -67,12 +59,13 @@ void StackDumpDefaultHandler(const char*line)
 //*****************************************************************************
 void StackDump(void (*callback)(const char*))
 {
-	if (callback == NULL) 
+	if (callback == NULL)
 	{
 		callback = StackDumpDefaultHandler;
 	}
 
-	InitSymbolInfo();
+	if (!InitSymbolInfo())
+		return;
 
 	DWORD myeip,myesp,myebp;
 
@@ -96,12 +89,13 @@ MYEIP1:
 //*****************************************************************************
 void StackDumpFromContext(DWORD eip,DWORD esp,DWORD ebp, void (*callback)(const char*))
 {
-	if (callback == NULL) 
+	if (callback == NULL)
 	{
 		callback = StackDumpDefaultHandler;
 	}
 
-	InitSymbolInfo();
+	if (!InitSymbolInfo())
+		return;
 
 	MakeStackTrace(eip,esp,ebp, 0,  callback);
 }
@@ -111,27 +105,24 @@ void StackDumpFromContext(DWORD eip,DWORD esp,DWORD ebp, void (*callback)(const 
 //*****************************************************************************
 BOOL InitSymbolInfo()
 {
-	if (gsInit == TRUE) 
+	if (DbgHelpLoader::isLoaded())
 		return TRUE;
 
-	gsInit = TRUE;
+	if (DbgHelpLoader::isFailed())
+		return FALSE;
 
-	atexit(UninitSymbolInfo);
-
-	// See if we have the line from address function
-	// We use GetProcAddress to stop link failures at dll loadup
-	HINSTANCE hInstDebugHlp = GetModuleHandle("dbghelp.dll");
-
-	gsSymGetLineFromAddr = (BOOL (__stdcall *)(	IN  HANDLE,IN  DWORD,OUT PDWORD,OUT PIMAGEHLP_LINE))
-							GetProcAddress(hInstDebugHlp , "SymGetLineFromAddr");
+	if (!DbgHelpLoader::load())
+	{
+		atexit(DbgHelpLoader::unload);
+		return FALSE;
+	}
 
 	char pathname[_MAX_PATH+1];
 	char drive[10];
 	char directory[_MAX_PATH+1];
 	HANDLE process;
 
-
-	::SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME | SYMOPT_LOAD_LINES | SYMOPT_OMAP_FIND_NEAREST);
+	DbgHelpLoader::symSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME | SYMOPT_LOAD_LINES | SYMOPT_OMAP_FIND_NEAREST);
 
 	process = GetCurrentProcess();
 
@@ -145,36 +136,21 @@ BOOL InitSymbolInfo()
 	// append the current directory to build a search path for SymInit
 	::lstrcat(pathname, ";.;");
 
-	if(::SymInitialize(process, pathname, FALSE))
+	if(DbgHelpLoader::symInitialize(process, pathname, FALSE))
 	{
 		// regenerate the name of the app
 		::GetModuleFileName(NULL, pathname, _MAX_PATH);
-		if(::SymLoadModule(process, NULL, pathname, NULL, 0, 0))
+		if(DbgHelpLoader::symLoadModule(process, NULL, pathname, NULL, 0, 0))
 		{
 				//Load any other relevant modules (ie dlls) here
+				atexit(DbgHelpLoader::unload);
 				return TRUE;
 		}
-		::SymCleanup(process);
 	}
 
-	return(FALSE);
+	DbgHelpLoader::unload();
+	return FALSE;
 }
-
-
-//*****************************************************************************
-//*****************************************************************************
-void UninitSymbolInfo(void)
-{
-	if (gsInit == FALSE)
-	{
-		return;
-	}
-
-	gsInit = FALSE;
-
-	::SymCleanup(GetCurrentProcess());
-}
-
 
 
 //*****************************************************************************
@@ -217,14 +193,14 @@ stack_frame.AddrFrame.Offset = myebp;
 			unsigned int skip = skipFrames;
 			while (b_ret&&skip)
 			{
-					b_ret = StackWalk(      IMAGE_FILE_MACHINE_I386,
+					b_ret = DbgHelpLoader::stackWalk(      IMAGE_FILE_MACHINE_I386,
 											process,
 											thread,
 											&stack_frame,
 											NULL, //&gsContext,
 											NULL,
-											SymFunctionTableAccess,
-											SymGetModuleBase,
+											DbgHelpLoader::symFunctionTableAccess,
+											DbgHelpLoader::symGetModuleBase,
 											NULL);
 					skip--;
 			}
@@ -233,18 +209,18 @@ stack_frame.AddrFrame.Offset = myebp;
 			while(b_ret&&skip)
 			{
 
-					b_ret = StackWalk(      IMAGE_FILE_MACHINE_I386,
+					b_ret = DbgHelpLoader::stackWalk(      IMAGE_FILE_MACHINE_I386,
 											process,
 											thread,
 											&stack_frame,
 											NULL, //&gsContext,
 											NULL,
-											SymFunctionTableAccess,
-											SymGetModuleBase,
+											DbgHelpLoader::symFunctionTableAccess,
+											DbgHelpLoader::symGetModuleBase,
 											NULL);
-					
 
-					
+
+
 					if (b_ret) WriteStackLine((void *) stack_frame.AddrPC.Offset, callback);
 					skip--;
 			}
@@ -256,7 +232,9 @@ stack_frame.AddrFrame.Offset = myebp;
 //*****************************************************************************
 void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* linenumber, unsigned int* address)
 {
-	InitSymbolInfo();
+	if (!InitSymbolInfo())
+		return;
+
 	if (name)
 	{
 		strcpy(name, "<Unknown>");
@@ -285,8 +263,8 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
     psymbol->SizeOfStruct = sizeof(symbol_buffer);
     psymbol->MaxNameLength = 512;
 
-    if (SymGetSymFromAddr(process, (DWORD) pointer, &displacement, psymbol))
-    {
+	if (DbgHelpLoader::symGetSymFromAddr(process, (DWORD) pointer, &displacement, psymbol))
+	{
 		if (name)
 		{
 			strcpy(name, psymbol->Name);
@@ -294,32 +272,27 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
 		}
 
 		// Get line now
-		if (gsSymGetLineFromAddr)
+
+		IMAGEHLP_LINE line;
+		memset(&line,0,sizeof(line));
+		line.SizeOfStruct = sizeof(line);
+
+		if (DbgHelpLoader::symGetLineFromAddr(process, (DWORD) pointer, &displacement, &line))
 		{
-			// Unsupported for win95/98 at least with my current dbghelp.dll
-
-			IMAGEHLP_LINE line;
-			memset(&line,0,sizeof(line));
-			line.SizeOfStruct = sizeof(line);
-
-		
-			if (gsSymGetLineFromAddr(process, (DWORD) pointer, &displacement, &line))
+			if (filename)
 			{
-				if (filename)
-				{
-					strcpy(filename, line.FileName);
-				}
-				if (linenumber)
-				{
-					*linenumber = (unsigned int)line.LineNumber;
-				}
-				if (address)
-				{
-					*address = (unsigned int)line.Address;
-				}
-			} 					
+				strcpy(filename, line.FileName);
+			}
+			if (linenumber)
+			{
+				*linenumber = (unsigned int)line.LineNumber;
+			}
+			if (address)
+			{
+				*address = (unsigned int)line.Address;
+			}
 		}
-    }
+	}
 }
 
 
@@ -328,11 +301,12 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
 //*****************************************************************************
 void FillStackAddresses(void**addresses, unsigned int count, unsigned int skip)
 {
-	InitSymbolInfo();
+	if (!InitSymbolInfo())
+		return;
 
 	STACKFRAME	stack_frame;
 
-	
+
 	HANDLE thread = GetCurrentThread();
 	HANDLE process = GetCurrentProcess();
 
@@ -378,32 +352,32 @@ stack_frame.AddrFrame.Offset = myebp;
 		// Skip some?
 		while (stillgoing&&skip)
 		{
-			stillgoing = StackWalk(IMAGE_FILE_MACHINE_I386,
+			stillgoing = DbgHelpLoader::stackWalk(IMAGE_FILE_MACHINE_I386,
 								process,
 								thread,
 								&stack_frame,
 								NULL,	//&gsContext,
 								NULL,
-								SymFunctionTableAccess,
-								SymGetModuleBase,
+								DbgHelpLoader::symFunctionTableAccess,
+								DbgHelpLoader::symGetModuleBase,
 								NULL) != 0;
 			skip--;
 		}
 
 		while(stillgoing&&count)
 		{
-			stillgoing = StackWalk(IMAGE_FILE_MACHINE_I386,
+			stillgoing = DbgHelpLoader::stackWalk(IMAGE_FILE_MACHINE_I386,
 								process,
 								thread,
 								&stack_frame,
 								NULL, //&gsContext,
 								NULL,
-								SymFunctionTableAccess,
-								SymGetModuleBase,
+								DbgHelpLoader::symFunctionTableAccess,
+								DbgHelpLoader::symGetModuleBase,
 								NULL) != 0;
 			if (stillgoing)
 			{
-				*addresses  = (void*)stack_frame.AddrPC.Offset;				
+				*addresses  = (void*)stack_frame.AddrPC.Offset;
 				addresses++;
 				count--;
 			}
@@ -423,7 +397,7 @@ stack_frame.AddrFrame.Offset = myebp;
 	{
 		memset(addresses,NULL,count*sizeof(void*));
 	}
-*/	
+*/
 }
 
 
@@ -433,18 +407,19 @@ stack_frame.AddrFrame.Offset = myebp;
 //*****************************************************************************
 void StackDumpFromAddresses(void**addresses, unsigned int count, void (*callback)(const char *))
 {
-	if (callback == NULL) 
+	if (callback == NULL)
 	{
 		callback = StackDumpDefaultHandler;
 	}
 
-	InitSymbolInfo();
+	if (!InitSymbolInfo())
+		return;
 
 	while ((count--) && (*addresses!=NULL))
 	{
-		WriteStackLine(*addresses,callback);	
+		WriteStackLine(*addresses,callback);
 		addresses++;
-	}	
+	}
 }
 
 
@@ -466,7 +441,6 @@ void WriteStackLine(void*address, void (*callback)(const char*))
 			g_LastErrorDump.concat("\n");
 		}
 	callback(line);
-	callback("\n");
 }
 
 
@@ -474,11 +448,12 @@ void WriteStackLine(void*address, void (*callback)(const char*))
 //*****************************************************************************
 void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 {
-   DEBUG_LOG(( "\n********** EXCEPTION DUMP ****************\n" ));
+	DEBUG_LOG_RAW(("\n"));
+	DEBUG_LOG(( "********** EXCEPTION DUMP ****************" ));
 	/*
 	** List of possible exceptions
 	*/
-	 g_LastErrorDump.clear(); 
+	 g_LastErrorDump.clear();
 
 	static const unsigned int _codes[] = {
 		EXCEPTION_ACCESS_VIOLATION,
@@ -531,30 +506,30 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 		"Error code: ?????\nDescription: Unknown exception."
 	};
 
-	DEBUG_LOG( ("Dump exception info\n") );
+	DEBUG_LOG( ("Dump exception info") );
 	CONTEXT *context = e_info->ContextRecord;
 	/*
 	** The following are set for access violation only
 	*/
 	int access_read_write=-1;
 	unsigned long access_address = 0;
-	AsciiString msg; 
+	AsciiString msg;
 
 // DOUBLE_DEBUG does a DEBUG_LOG, and concats to g_LastErrorDump.  jba.
 #define DOUBLE_DEBUG(x) { msg.format x; g_LastErrorDump.concat(msg); DEBUG_LOG( x ); }
 
 	if ( e_info->ExceptionRecord->ExceptionCode == EXCEPTION_ACCESS_VIOLATION )
 	{
-		DOUBLE_DEBUG (("Exception is access violation\n"));
+		DOUBLE_DEBUG (("Exception is access violation"));
 		access_read_write = e_info->ExceptionRecord->ExceptionInformation[0];  // 0=read, 1=write
 		access_address = e_info->ExceptionRecord->ExceptionInformation[1];
 	}
 	else
 	{
-		DOUBLE_DEBUG (("Exception code is %x\n", e_info->ExceptionRecord->ExceptionCode));
+		DOUBLE_DEBUG (("Exception code is %x", e_info->ExceptionRecord->ExceptionCode));
 	}
 	Int *winMainAddr = (Int *)WinMain;
-	DOUBLE_DEBUG(("WinMain at %x\n", winMainAddr));
+	DOUBLE_DEBUG(("WinMain at %x", winMainAddr));
 	/*
 	** Match the exception type with the error string and print it out
 	*/
@@ -563,46 +538,46 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 	{
 		if ( _codes[i] == e_info->ExceptionRecord->ExceptionCode )
 		{
-			DEBUG_LOG ( ("Found exception description\n") );
+			DEBUG_LOG ( ("Found exception description") );
 			break;
 		}
 	}
-	DOUBLE_DEBUG( ("%s\n", _code_txt[i]));
+	DOUBLE_DEBUG( ("%s", _code_txt[i]));
 	/** For access violations, print out the violation address and if it was read or write.
 	*/
 	if ( e_info->ExceptionRecord->ExceptionCode == EXCEPTION_ACCESS_VIOLATION )
 	{
 		if ( access_read_write )
 		{
-			DOUBLE_DEBUG( ("Access address:%08X was written to.\n", access_address));
+			DOUBLE_DEBUG( ("Access address:%08X was written to.", access_address));
 		}
 		else
 		{
-			DOUBLE_DEBUG( ("Access address:%08X was read from.\n", access_address));
+			DOUBLE_DEBUG( ("Access address:%08X was read from.", access_address));
 		}
 	}
 
-	DOUBLE_DEBUG (("\nStack Dump:\n"));
+	DOUBLE_DEBUG (("\nStack Dump:"));
 	StackDumpFromContext(context->Eip, context->Esp, context->Ebp, NULL);
 
-	DOUBLE_DEBUG (("\nDetails:\n"));
+	DOUBLE_DEBUG (("\nDetails:"));
 
-	DOUBLE_DEBUG (("Register dump...\n"));
+	DOUBLE_DEBUG (("Register dump..."));
 
 	/*
 	** Dump the registers.
 	*/
-	DOUBLE_DEBUG ( ( "Eip:%08X\tEsp:%08X\tEbp:%08X\n", context->Eip, context->Esp, context->Ebp));
-	DOUBLE_DEBUG ( ( "Eax:%08X\tEbx:%08X\tEcx:%08X\n", context->Eax, context->Ebx, context->Ecx));
-	DOUBLE_DEBUG ( ( "Edx:%08X\tEsi:%08X\tEdi:%08X\n", context->Edx, context->Esi, context->Edi));
-	DOUBLE_DEBUG ( ( "EFlags:%08X \n", context->EFlags));
-	DOUBLE_DEBUG ( ( "CS:%04x  SS:%04x  DS:%04x  ES:%04x  FS:%04x  GS:%04x\n", context->SegCs, context->SegSs, context->SegDs, context->SegEs, context->SegFs, context->SegGs));
+	DOUBLE_DEBUG ( ( "Eip:%08X\tEsp:%08X\tEbp:%08X", context->Eip, context->Esp, context->Ebp));
+	DOUBLE_DEBUG ( ( "Eax:%08X\tEbx:%08X\tEcx:%08X", context->Eax, context->Ebx, context->Ecx));
+	DOUBLE_DEBUG ( ( "Edx:%08X\tEsi:%08X\tEdi:%08X", context->Edx, context->Esi, context->Edi));
+	DOUBLE_DEBUG ( ( "EFlags:%08X ", context->EFlags));
+	DOUBLE_DEBUG ( ( "CS:%04x  SS:%04x  DS:%04x  ES:%04x  FS:%04x  GS:%04x", context->SegCs, context->SegSs, context->SegDs, context->SegEs, context->SegFs, context->SegGs));
 
 	/*
 	** Dump the bytes at EIP. This will make it easier to match the crash address with later versions of the game.
 	*/
 	char scrap[512];
-	DOUBLE_DEBUG ( ("EIP bytes dump...\n"));
+	DOUBLE_DEBUG ( ("EIP bytes dump..."));
 	wsprintf (scrap, "\nBytes at CS:EIP (%08X)  : ", context->Eip);
 
 	unsigned char *eip_ptr = (unsigned char *) (context->Eip);
@@ -617,15 +592,15 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 		else
 		{
 			sprintf (bytestr, "%02X ", *eip_ptr);
-			strcat (scrap, bytestr);
+			strlcat(scrap, bytestr, ARRAY_SIZE(scrap));
 		}
 		eip_ptr++;
 	}
 
-	strcat (scrap, "\n");
 	DOUBLE_DEBUG ( ( (scrap)));
-  DEBUG_LOG(( "********** END EXCEPTION DUMP ****************\n\n" ));
-}																									 
+	DEBUG_LOG(( "********** END EXCEPTION DUMP ****************" ));
+	DEBUG_LOG_RAW(("\n"));
+}
 
 
 #pragma pack(pop)

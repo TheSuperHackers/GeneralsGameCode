@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ThingFactory.h"
 #include "Common/Xfer.h"
@@ -41,11 +41,6 @@
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/PartitionManager.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -69,7 +64,7 @@ void SquishCollide::onCollide( Object *other, const Coord3D *loc, const Coord3D 
 	// Note that other == null means "collide with ground"
 	if (other == NULL)
 		return;
-	
+
 	Object *self = getObject();
 	AIUpdateInterface *ai = self->getAI();
 	if( ai && ai->getGoalObject() == other )
@@ -104,7 +99,7 @@ void SquishCollide::onCollide( Object *other, const Coord3D *loc, const Coord3D 
  		GeometryInfo myGeom = self->getGeometryInfo();
 		myGeom.setMajorRadius(1.0f);
 		myGeom.setMinorRadius(1.0f);
-		if (!ThePartitionManager->geomCollidesWithGeom(other->getPosition(), other->getGeometryInfo(), other->getOrientation(), 
+		if (!ThePartitionManager->geomCollidesWithGeom(other->getPosition(), other->getGeometryInfo(), other->getOrientation(),
 			self->getPosition(), myGeom, self->getOrientation())) {
 			return;
 		}
@@ -143,7 +138,7 @@ void SquishCollide::crc( Xfer *xfer )
 	// extend base class
 	CollideModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -161,7 +156,7 @@ void SquishCollide::xfer( Xfer *xfer )
 	// extend base class
 	CollideModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -172,4 +167,4 @@ void SquishCollide::loadPostProcess( void )
 	// extend base class
 	CollideModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

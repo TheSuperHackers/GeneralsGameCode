@@ -29,10 +29,6 @@
 #pragma once
 
 #error this file is obsolete
-
-#ifndef __GAMESPYGAMEINFO_H__
-#define __GAMESPYGAMEINFO_H__
-
 #include "gamespy/peer/peer.h"
 
 #include "GameNetwork/GameInfo.h"
@@ -74,7 +70,7 @@ public:
 
 	inline void setServer(SBServer server) { m_server = server; }
 	inline SBServer getServer( void ) { return m_server; }
-	
+
 	AsciiString generateGameResultsPacket( void );
 
 	virtual void init(void);
@@ -94,5 +90,3 @@ void WOLDisplaySlotList( void );
 void GameSpyStartGame( void );
 void GameSpyLaunchGame( void );
 Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverPort, UnsignedInt& localIP);
-
-#endif // __LANGAMEINFO_H__

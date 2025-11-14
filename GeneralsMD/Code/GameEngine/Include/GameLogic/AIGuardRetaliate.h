@@ -22,7 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: AIGuardRetaliate.h 
+// FILE: AIGuardRetaliate.h
 /*---------------------------------------------------------------------------*/
 /* Electronic Arts Los Angeles                                               */
 /* Confidential Information	                                                 */
@@ -36,8 +36,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef __AI_GUARD_RETALIATION_H
-#define __AI_GUARD_RETALIATION_H
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
@@ -50,7 +48,7 @@
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 enum
 {
-	// prevent collisions with other states that we might use, (namely AI_IDLE) 
+	// prevent collisions with other states that we might use, (namely AI_IDLE)
 	AI_GUARD_RETALIATE_INNER = 5000,					///< Attack anything within this area till death
 	AI_GUARD_RETALIATE_IDLE,									///< Wait till something shows up to attack.
 	AI_GUARD_RETALIATE_OUTER,									///< Attack anything within this area that has been aggressive, until the timer expires
@@ -105,12 +103,12 @@ protected:
 	virtual void loadPostProcess();
 
 public:
-	/** 
+	/**
 	 * The implementation of this constructor defines the states
 	 * used by this machine.
 	 */
 	AIGuardRetaliateMachine( Object *owner );
-	
+
 	virtual Bool isIdle() const;
 
 	const Coord3D *getPositionToGuard( void ) const { return &m_positionToGuard; }
@@ -127,10 +125,10 @@ public:
 //--------------------------------------------------------------------------------------
 class AIGuardRetaliateInnerState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateInnerState, "AIGuardRetaliateInnerState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateInnerState, "AIGuardRetaliateInnerState")
 public:
-	AIGuardRetaliateInnerState( StateMachine *machine ) : State( machine, "AIGuardRetaliateInner" ) 
-	{ 
+	AIGuardRetaliateInnerState( StateMachine *machine ) : State( machine, "AIGuardRetaliateInner" )
+	{
 		m_attackState = 0;
 		m_enterState = 0;
 	}
@@ -145,16 +143,15 @@ protected:
 private:
 	AIGuardRetaliateMachine* getGuardMachine() { return (AIGuardRetaliateMachine*)getMachine(); }
 
-	GuardRetaliateExitConditions m_exitConditions; 
+	GuardRetaliateExitConditions m_exitConditions;
 	AIAttackState *m_attackState;
 	AIEnterState *m_enterState;
 };
-EMPTY_DTOR(AIGuardRetaliateInnerState)
 
 //--------------------------------------------------------------------------------------
 class AIGuardRetaliateIdleState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateIdleState, "AIGuardRetaliateIdleState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateIdleState, "AIGuardRetaliateIdleState")
 public:
 	AIGuardRetaliateIdleState( StateMachine *machine ) : State( machine, "AIGuardRetaliateIdleState" ) { }
 	virtual StateReturnType onEnter( void );
@@ -176,9 +173,9 @@ EMPTY_DTOR(AIGuardRetaliateIdleState)
 //--------------------------------------------------------------------------------------
 class AIGuardRetaliateOuterState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateOuterState, "AIGuardRetaliateOuterState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateOuterState, "AIGuardRetaliateOuterState")
 public:
-	AIGuardRetaliateOuterState( StateMachine *machine ) : State( machine, "AIGuardRetaliateOuter" ) 
+	AIGuardRetaliateOuterState( StateMachine *machine ) : State( machine, "AIGuardRetaliateOuter" )
 	{
 		m_attackState = NULL;
 	}
@@ -193,19 +190,18 @@ protected:
 private:
 	AIGuardRetaliateMachine* getGuardMachine() { return (AIGuardRetaliateMachine*)getMachine(); }
 
-	GuardRetaliateExitConditions m_exitConditions; 
+	GuardRetaliateExitConditions m_exitConditions;
 	AIAttackState *m_attackState;
 };
-EMPTY_DTOR(AIGuardRetaliateOuterState)
 
 //--------------------------------------------------------------------------------------
 class AIGuardRetaliateReturnState : public AIInternalMoveToState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateReturnState, "AIGuardRetaliateReturnState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateReturnState, "AIGuardRetaliateReturnState")
 private:
 	AIGuardRetaliateMachine* getGuardMachine() { return (AIGuardRetaliateMachine*)getMachine(); }
 public:
-	AIGuardRetaliateReturnState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIGuardRetaliateReturn" ) 
+	AIGuardRetaliateReturnState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIGuardRetaliateReturn" )
 	{
 		m_nextReturnScanTime = 0;
 	}
@@ -226,7 +222,7 @@ EMPTY_DTOR(AIGuardRetaliateReturnState)
 //--------------------------------------------------------------------------------------
 class AIGuardRetaliatePickUpCrateState : public AIPickUpCrateState
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliatePickUpCrateState, "AIGuardRetaliatePickUpCrateState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliatePickUpCrateState, "AIGuardRetaliatePickUpCrateState")
 public:
 	AIGuardRetaliatePickUpCrateState( StateMachine *machine );
 	virtual StateReturnType onEnter( void );
@@ -238,7 +234,7 @@ EMPTY_DTOR(AIGuardRetaliatePickUpCrateState)
 //--------------------------------------------------------------------------------------
 class AIGuardRetaliateAttackAggressorState : public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateAttackAggressorState, "AIGuardRetaliateAttackAggressorState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateAttackAggressorState, "AIGuardRetaliateAttackAggressorState")
 public:
 	AIGuardRetaliateAttackAggressorState( StateMachine *machine );
 	virtual StateReturnType onEnter( void );
@@ -254,12 +250,8 @@ protected:
 	virtual void loadPostProcess();
 private:
 	AIGuardRetaliateMachine* getGuardMachine() { return (AIGuardRetaliateMachine*)getMachine(); }
-	GuardRetaliateExitConditions m_exitConditions; 
+	GuardRetaliateExitConditions m_exitConditions;
 	AIAttackState *m_attackState;
 };
 
-EMPTY_DTOR(AIGuardRetaliateAttackAggressorState)
-
 //--------------------------------------------------------------------------------------
-
-#endif 

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BRIDGE_BEHAVIOR_H_
-#define __BRIDGE_BEHAVIOR_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "GameClient/TerrainRoads.h"
@@ -41,7 +38,7 @@
 #include "GameLogic/Module/UpdateModule.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
-enum BridgeTowerType;
+enum BridgeTowerType CPP_11(: Int);
 class FXList;
 class ObjectCreationList;
 class Bridge;
@@ -129,7 +126,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// module methods
-	static Int getInterfaceMask( void ) { return (MODULEINTERFACE_DAMAGE) | 
+	static Int getInterfaceMask( void ) { return (MODULEINTERFACE_DAMAGE) |
 																							 (MODULEINTERFACE_DIE) |
 																							 (MODULEINTERFACE_UPDATE); }
 	virtual BridgeBehaviorInterface* getBridgeBehaviorInterface( void ) { return this; }
@@ -139,8 +136,8 @@ public:
 	virtual DamageModuleInterface* getDamage( void ) { return this; }
 	virtual void onDamage( DamageInfo *damageInfo );
 	virtual void onHealing( DamageInfo *damageInfo );
-	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo, 
-																				BodyDamageType oldState, 
+	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
+																				BodyDamageType oldState,
 																				BodyDamageType newState );
 
 	// Die methods
@@ -164,17 +161,17 @@ protected:
 
 	void resolveFX( void );
 	void handleObjectsOnBridgeOnDie( void );
-	void doAreaEffects( TerrainRoadType *bridgeTemplate, Bridge *bridge, 
+	void doAreaEffects( TerrainRoadType *bridgeTemplate, Bridge *bridge,
 											const ObjectCreationList *ocl, const FXList *fx );
-	void setScaffoldData( Object *obj, 
-												Real *angle, 
-												Real *sunkenHeight, 
-												const Coord3D *riseToPos, 
-												const Coord3D *buildPos, 
+	void setScaffoldData( Object *obj,
+												Real *angle,
+												Real *sunkenHeight,
+												const Coord3D *riseToPos,
+												const Coord3D *buildPos,
 												const Coord3D *bridgeCenter );
 
-	void getRandomSurfacePosition( TerrainRoadType *bridgeTemplate, 
-																 const BridgeInfo *bridgeInfo, 
+	void getRandomSurfacePosition( TerrainRoadType *bridgeTemplate,
+																 const BridgeInfo *bridgeInfo,
 																 Coord3D *pos );
 
 	ObjectID m_towerID[ BRIDGE_MAX_TOWERS ];		///< the towers that are a part of us
@@ -197,5 +194,3 @@ protected:
 	UnsignedInt m_deathFrame;								///< frame we died on
 
 };
-
-#endif  // end __BRIDGE_DAMAGE_H_

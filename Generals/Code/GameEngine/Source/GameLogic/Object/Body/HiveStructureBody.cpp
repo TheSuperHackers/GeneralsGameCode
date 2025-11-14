@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "Common/ThingTemplate.h"
@@ -52,7 +52,7 @@ HiveStructureBodyModuleData::HiveStructureBodyModuleData()
 
 
 //-------------------------------------------------------------------------------------------------
-HiveStructureBody::HiveStructureBody( Thing *thing, const ModuleData* moduleData ) 
+HiveStructureBody::HiveStructureBody( Thing *thing, const ModuleData* moduleData )
 							: StructureBody( thing, moduleData )
 {
 }
@@ -67,7 +67,7 @@ void HiveStructureBody::attemptDamage( DamageInfo *damageInfo )
 {
 	const HiveStructureBodyModuleData *data = getHiveStructureBodyModuleData();
 	Object *hive = getObject();
-	
+
 	if( getDamageTypeFlag( data->m_damageTypesToPropagateToSlaves, damageInfo->in.m_damageType ) )
 	{
 		//We have the right type of damage types incoming to propagate to slaves. Do we have slaves?
@@ -101,7 +101,7 @@ void HiveStructureBody::attemptDamage( DamageInfo *damageInfo )
 		}
 	}
 
-	//Nothing to propagate (either different damage type or no slaves), 
+	//Nothing to propagate (either different damage type or no slaves),
 	//so damage me instead!
 	StructureBody::attemptDamage( damageInfo );
 }
@@ -113,7 +113,7 @@ void HiveStructureBody::crc( Xfer *xfer )
 	// extend parent class
 	StructureBody::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method

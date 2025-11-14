@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef WorldHeightMap_H
-#define WorldHeightMap_H
-
 #include "Lib/BaseType.h"
 #include "WWLib/refcount.h"
 #include "WWMath/vector3.h"
@@ -42,7 +39,7 @@
 typedef std::vector<ICoord2D> VecICoord2D;
 
 
-/** MapObject class 
+/** MapObject class
 Not ref counted.  Do not store pointers to this class.  */
 
 #define K_MIN_HEIGHT  0
@@ -59,7 +56,7 @@ Not ref counted.  Do not store pointers to this class.  */
 
 /// Struct in memory.
 typedef struct {
-	Int globalTextureClass; 
+	Int globalTextureClass;
 	Int firstTile;
 	Int numTiles;
 	Int width;
@@ -124,11 +121,11 @@ protected:
 
 	/// Texture indices.
 	Short  *m_tileNdxes;  ///< matches m_Data, indexes into m_SourceTiles.
-	Short  *m_blendTileNdxes;  ///< matches m_Data, indexes into m_blendedTiles.  0 means no blend info.	
+	Short  *m_blendTileNdxes;  ///< matches m_Data, indexes into m_blendedTiles.  0 means no blend info.
 	Short  *m_cliffInfoNdxes;  ///< matches m_Data, indexes into m_cliffInfo.	 0 means no cliff info.
-	Short  *m_extraBlendTileNdxes;  ///< matches m_Data, indexes into m_extraBlendedTiles.  0 means no blend info.	
+	Short  *m_extraBlendTileNdxes;  ///< matches m_Data, indexes into m_extraBlendedTiles.  0 means no blend info.
 
-	
+
 	Int m_numBitmapTiles;	// Number of tiles initialized from bitmaps in m_SourceTiles.
 	Int m_numEdgeTiles;	// Number of tiles initialized from bitmaps in m_SourceTiles.
 	Int m_numBlendedTiles;	// Number of blended tiles created from bitmap tiles.
@@ -143,7 +140,7 @@ protected:
 	Int m_numCliffInfo; ///< Number of cliffInfo's used in m_cliffInfo.
 
 	// Texture classes.  There is one texture class for each bitmap read in.
-	// A class may have more than one tile.  For example, if the grass bitmap is 
+	// A class may have more than one tile.  For example, if the grass bitmap is
 	// 128x128, it creates 4 64x64 tiles, so the grass texture class will have 4 tiles.
 	int m_numTextureClasses;
 	TXTextureClass m_textureClasses[NUM_TEXTURE_CLASSES];
@@ -153,13 +150,13 @@ protected:
 	int m_numEdgeTextureClasses;
 	TXTextureClass m_edgeTextureClasses[NUM_TEXTURE_CLASSES];
 
-	/** The actual texture used to render the 3d mesh.  Note that it is 
+	/** The actual texture used to render the 3d mesh.  Note that it is
 	 basically m_SourceTiles laid out in rows, so by itself it is not useful.
-	 Use GetUVData to get the mapping info for height cells to map into the 
+	 Use GetUVData to get the mapping info for height cells to map into the
 	 texture. */
 	TerrainTextureClass *m_terrainTex;
 	Int	m_terrainTexHeight; /// Height of m_terrainTex allocated.
-	/** The texture that contains the alpha edge tiles that get blended on 
+	/** The texture that contains the alpha edge tiles that get blended on
 			top of the base texture. getAlphaUVData does the mapping. */
 	AlphaTerrainTextureClass *m_alphaTerrainTex;
 	Int	m_alphaTexHeight; /// Height of m_alphaTerrainTex allocated.
@@ -183,7 +180,7 @@ protected:
 	void getUVForNdx(Int ndx, float *minU, float *minV, float *maxU, float*maxV, Bool fullTile);
 	Bool getUVForTileIndex(Int ndx, Short tileNdx, float U[4], float V[4], Bool fullTile);
 	Int getTextureClassFromNdx(Int tileNdx);
-	void readTexClass(TXTextureClass *texClass, TileData **tileData); 
+	void readTexClass(TXTextureClass *texClass, TileData **tileData);
 	Int updateTileTexturePositions(Int *edgeHeight); ///< Places each tile in the texture.
 	void initCliffFlagsFromHeights(void);
 	void setCellCliffFlagFromHeights(Int xIndex, Int yIndex);
@@ -217,7 +214,7 @@ public:  // height map info.
 
 	UnsignedByte *getDataPtr(void) {return m_data;}
 
-	
+
 	Int getXExtent(void) {return m_width;}	///<number of vertices in x
 	Int getYExtent(void) {return m_height;}	///<number of vertices in y
 
@@ -233,12 +230,12 @@ public:  // height map info.
 	inline UnsignedByte getDisplayHeight(Int x, Int y) { return m_data[x+m_drawOriginX+m_width*(y+m_drawOriginY)];}
 
 	/// Get height in normal coordinates.
-	inline UnsignedByte getHeight(Int xIndex, Int yIndex) 
-	{ 
+	inline UnsignedByte getHeight(Int xIndex, Int yIndex)
+	{
 		Int ndx = (yIndex*m_width)+xIndex;
-		if ((ndx>=0) && (ndx<m_dataSize) && m_data) 
-			return(m_data[ndx]); 
-		else 
+		if ((ndx>=0) && (ndx<m_dataSize) && m_data)
+			return(m_data[ndx]);
+		else
 			return(0);
 	};
 
@@ -252,7 +249,7 @@ public:  // height map info.
 	Int getTextureClass(Int xIndex, Int yIndex, Bool baseClass=false);
 	TXTextureClass getTextureFromIndex( Int textureIndex );
 
-public:  // tile and texture info.	
+public:  // tile and texture info.
 	TextureClass *getTerrainTexture(void);  //< generates if needed and returns the terrain texture
 	TextureClass *getAlphaTerrainTexture(void); //< generates if needed and returns alpha terrain texture
 	TextureClass *getEdgeTerrainTexture(void); //< generates if needed and returns blend edge texture
@@ -268,7 +265,7 @@ public:  // tile and texture info.
 	Bool isCliffMappedTexture(Int xIndex, Int yIndex);
 
 public:  // modify height value
-	void setRawHeight(Int xIndex, Int yIndex, UnsignedByte height) { 
+	void setRawHeight(Int xIndex, Int yIndex, UnsignedByte height) {
 		Int ndx = (yIndex*m_width)+xIndex;
 		if ((ndx>=0) && (ndx<m_dataSize) && m_data) m_data[ndx]=height;
 	};
@@ -277,5 +274,3 @@ protected:
 	void setCliffState(Int xIndex, Int yIndex, Bool state);
 
 };
-
-#endif

@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __GAMESPYCHAT_H__
-#define __GAMESPYCHAT_H__
-
 #include "gamespy/peer/peer.h"
 
 class GameWindow;
@@ -56,5 +53,3 @@ void RoomMessageCallback(PEER peer, RoomType roomType,
 void PlayerMessageCallback(PEER peer, const char * nick,
 													 const char * message, MessageType messageType,
 													 void * param);														///< Called when a private message is received from another player.
-
-#endif // __GAMESPYCHAT_H__

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __ANIMPARTICLESYSBONEUPDATE_H_
-#define __ANIMPARTICLESYSBONEUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/ClientUpdateModule.h"
 
@@ -59,6 +56,3 @@ protected:
 	UnsignedInt m_life;
 
 };
-
-#endif // __ANIMPARTICLESYSBONEUPDATE_H_
-

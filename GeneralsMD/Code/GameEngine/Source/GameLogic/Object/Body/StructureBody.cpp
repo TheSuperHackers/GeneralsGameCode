@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Damage.h"
@@ -39,30 +39,30 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StructureBody::StructureBody( Thing *thing, const ModuleData* moduleData ) 
+StructureBody::StructureBody( Thing *thing, const ModuleData* moduleData )
 							: ActiveBody( thing, moduleData )
 {
 
 	m_constructorObjectID = INVALID_ID;
 
-}  // end StructureBody
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 StructureBody::~StructureBody( void )
 {
 
-}  // end ~StructureBody
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void StructureBody::setConstructorObject( Object *obj )
-{ 
+{
 
-	if( obj ) 
-		m_constructorObjectID = obj->getID(); 
+	if( obj )
+		m_constructorObjectID = obj->getID();
 
-}  // end setConstructorObject
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -73,7 +73,7 @@ void StructureBody::crc( Xfer *xfer )
 	// extend base class
 	ActiveBody::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -94,7 +94,7 @@ void StructureBody::xfer( Xfer *xfer )
 	// constructor object id
 	xfer->xferObjectID( &m_constructorObjectID );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -105,4 +105,4 @@ void StructureBody::loadPostProcess( void )
 	// extend base class
 	ActiveBody::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -24,12 +24,12 @@
 
 // FILE: WellKnownKeys.h ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -44,9 +44,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef _H_WELLKNOWNKEYS
-#define _H_WELLKNOWNKEYS
 
 #include "Common/NameKeyGenerator.h"
 
@@ -431,7 +428,7 @@ DEFINE_KEY(teamVeterancy)
 /**
 	Which: Team
 	Type: Bool
-	Usage: Does the team execute the actions in 
+	Usage: Does the team execute the actions in
 */
 DEFINE_KEY(teamExecutesActionsOnCreate)
 
@@ -490,7 +487,7 @@ DEFINE_KEY(lightAmbientColor)
 	Type: Int (RGB color in 0xAARRGGBB format)
 	Usage: If unit is a light, Diffuse color.
 */
-DEFINE_KEY(lightDiffuseColor)	
+DEFINE_KEY(lightDiffuseColor)
 
 /**
 	Which: MapObject Properties
@@ -846,5 +843,3 @@ DEFINE_KEY(Player_7_Start)
 DEFINE_KEY(Player_8_Start)
 
 // ---------------------------------------------------------------------------------------
-
-#endif	// _H_WELLKNOWNKEYS

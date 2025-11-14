@@ -24,13 +24,10 @@
 
 // FILE: ContainModule.h /////////////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, September 2001
-// Desc:	 
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __ContainModule_H_
-#define __ContainModule_H_
 
 #include "Common/Module.h"
 #include "GameLogic/WeaponBonusConditionFlags.h" // Can't forward a typedef.  This should me made a BitFlags class.
@@ -42,10 +39,10 @@ class Player;
 class ExitInterface;
 class Matrix3D;
 class Weapon;
-enum CommandSourceType;
+enum CommandSourceType CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
-enum ObjectEnterExitType
+enum ObjectEnterExitType CPP_11(: Int)
 {
 	WANTS_TO_ENTER,
 	WANTS_TO_EXIT,
@@ -53,7 +50,7 @@ enum ObjectEnterExitType
 };
 
 
-enum EvacDisposition
+enum EvacDisposition CPP_11(: Int)
 {
   EVAC_INVALID = 0,
   EVAC_TO_LEFT,
@@ -80,7 +77,7 @@ typedef void (*ContainIterateFunc)( Object *obj, void *userData );		///< callbac
 class ContainModuleInterface
 {
 public:
-	
+
 	// we have a two basic container types that it is convenient to query and use
 	virtual OpenContain *asOpenContain() = 0;
 
@@ -104,10 +101,10 @@ public:
 	virtual Bool isImmuneToClearBuildingAttacks() const = 0;
   virtual Bool isSpecialOverlordStyleContainer() const = 0;
   virtual Bool isAnyRiderAttacking() const = 0;
-	
+
 	///< if my object gets selected, then my visible passengers should, too
 	///< this gets called from
-	virtual void clientVisibleContainedFlashAsSelected() = 0; 
+	virtual void clientVisibleContainedFlashAsSelected() = 0;
 
 
 
@@ -129,7 +126,7 @@ public:
 	virtual const Player* getApparentControllingPlayer(const Player* observingPlayer) const = 0;
 
 	virtual void recalcApparentControllingPlayer() = 0;
- 
+
 	//
 	// you will want to override onContaining() and onRemoving() if you need to
 	// do special actions at those event times for your module
@@ -142,18 +139,18 @@ public:
 	virtual Int getContainMax() const = 0; ///< The max needs to be virtual, but only two inheritors care.  -1 means "I don't care".
 
 	virtual ExitInterface* getContainExitInterface() = 0;
-	
+
 	virtual void orderAllPassengersToExit( CommandSourceType, Bool instantly ) = 0; ///< All of the smarts of exiting are in the passenger's AIExit. removeAllFrommContain is a last ditch system call, this is the game Evacuate
 	virtual void orderAllPassengersToIdle( CommandSourceType ) = 0; ///< Just like it sounds
 	virtual void orderAllPassengersToHackInternet( CommandSourceType ) = 0; ///< Just like it sounds
 	virtual void markAllPassengersDetected() = 0;										///< Cool game stuff got added to the system calls since this layer didn't exist, so this regains that functionality
- 
+
 	//
 	// interface for containing objects inside of objects.  Objects that are
 	// contained remove their drawable representations entirely from the client
 	//
-	/** 
-		can this container contain this kind of object? 
+	/**
+		can this container contain this kind of object?
 		and, if checkCapacity is TRUE, does this container have enough space left to hold the given unit?
 	*/
 	virtual Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const = 0;
@@ -162,7 +159,7 @@ public:
 	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE ) = 0;			///< remove 'obj' from contain list
 	virtual void removeAllContained( Bool exposeStealthUnits = FALSE ) = 0;									///< remove all objects on contain list
 	virtual void killAllContained( void ) = 0;									///< kill all objects on contain list
-  virtual void harmAndForceExitAllContained( DamageInfo *info ) = 0; // apply canned damage against those containes 
+  virtual void harmAndForceExitAllContained( DamageInfo *info ) = 0; // apply canned damage against those containes
 	virtual Bool isEnclosingContainerFor( const Object *obj ) const = 0;	///< Does this type of Contain Visibly enclose its contents?
 	virtual Bool isPassengerAllowedToFire( ObjectID id = INVALID_ID ) const = 0;	///< Hey, can I shoot out of this container?
 	virtual void setPassengerAllowedToFire( Bool permission = TRUE ) = 0;	///< Hey, can I shoot out of this container?
@@ -178,7 +175,7 @@ public:
 	virtual const Object *friend_getRider() const = 0; ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
 	virtual Real getContainedItemsMass() const = 0;
 	virtual UnsignedInt getStealthUnitsContained() const = 0;
-	
+
 	virtual Bool calcBestGarrisonPosition( Coord3D *sourcePos, const Coord3D *targetPos ) = 0;
 	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, Object *victim ) = 0;
 	virtual Bool attemptBestFirePointPosition( Object *source, Weapon *weapon, const Coord3D *targetPos ) = 0;
@@ -210,5 +207,3 @@ public:
 	}
 };
 //-------------------------------------------------------------------------------------------------
-
-#endif

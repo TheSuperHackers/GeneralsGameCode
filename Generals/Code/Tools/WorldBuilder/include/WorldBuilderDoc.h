@@ -20,12 +20,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_WORLDBUILDERDOC_H__FBA4134D_2826_11D5_8CE0_00010297BBAC__INCLUDED_)
-#define AFX_WORLDBUILDERDOC_H__FBA4134D_2826_11D5_8CE0_00010297BBAC__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "Lib/BaseType.h"
 #include "Common/MapObject.h"
@@ -65,7 +60,7 @@ protected:
 	std::vector<ICoord2D> m_boundaries;
 
 protected:	// waypoint stuff.
-	MapObject		*m_waypointTable[MAX_WAYPOINTS];							
+	MapObject		*m_waypointTable[MAX_WAYPOINTS];
 	Bool				m_waypointTableNeedsUpdate;
 	struct {
 		Int waypoint1;
@@ -86,7 +81,7 @@ public:
 	Bool waypointLinkExists(Int waypointID1, Int waypointID2);
 	Bool isWaypointLinked(MapObject *pWay);
 	void updateLinkedWaypointLabels(MapObject *pWay);
-	
+
 	// Boundary stuff
 	Int getNumBoundaries(void) const ;
 	void getBoundary(Int ndx, ICoord2D* border) const;
@@ -134,10 +129,10 @@ public:
 
 	/// Gets a real xy location from a pixel point.
 	Bool getCellPositionFromCoord(Coord3D pt,  Coord3D *locP);
-	
+
 	/// Gets all of the indices within widthOutside of the rectangle and places them into
 	/// allIndices
-	Bool getAllIndexesInRect(const Coord3D* bl, const Coord3D* br, 
+	Bool getAllIndexesInRect(const Coord3D* bl, const Coord3D* br,
 													 const Coord3D* tl, const Coord3D* tr,
 													 Int widthOutside, VecHeightMapIndexes* allIndices);
 
@@ -170,7 +165,7 @@ public:
 // Implementation
 public:
 	virtual ~CWorldBuilderDoc();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
@@ -213,5 +208,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_WORLDBUILDERDOC_H__FBA4134D_2826_11D5_8CE0_00010297BBAC__INCLUDED_)

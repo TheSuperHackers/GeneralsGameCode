@@ -26,7 +26,7 @@
 // Author: Michael S. Booth, December 2001
 // Desc:   Implementation of missile behavior
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameState.h"
 #include "Common/Thing.h"
@@ -76,7 +76,7 @@ void NeutronMissileUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "DistanceToTravelBeforeTurning",	INI::parseReal,		NULL, offsetof( NeutronMissileUpdateModuleData, m_initialDist ) },
 		{ "MaxTurnRate",			INI::parseAngularVelocityReal,		NULL, offsetof( NeutronMissileUpdateModuleData, m_maxTurnRate ) },
@@ -126,7 +126,7 @@ NeutronMissileUpdate::NeutronMissileUpdate( Thing *thing, const ModuleData* modu
 
 	m_exhaustSysTmpl = NULL;
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 NeutronMissileUpdate::~NeutronMissileUpdate( void )
@@ -215,7 +215,7 @@ void NeutronMissileUpdate::doLaunch( void )
 		if (!launcher->getDrawable() ||
 			!launcher->getDrawable()->getProjectileLaunchOffset(m_attach_wslot, m_attach_specificBarrelToUse, &attachTransform, TURRET_INVALID, NULL))
 		{
-			DEBUG_CRASH(("ProjectileLaunchPos %d %d not found!\n",m_attach_wslot, m_attach_specificBarrelToUse));
+			DEBUG_CRASH(("ProjectileLaunchPos %d %d not found!",m_attach_wslot, m_attach_specificBarrelToUse));
 			attachTransform.Make_Identity();
 		}
 
@@ -230,7 +230,7 @@ void NeutronMissileUpdate::doLaunch( void )
 
 		//
 		// the missile on the raising up launch platform is actually 45 degrees from the missile
-		// that is flying around the world ... we want to rotate it "on end and in place" so 
+		// that is flying around the world ... we want to rotate it "on end and in place" so
 		// that we don't see any decals on the side of the missile 'pop' to the new angle
 		/// @todo, this should not be a hard coded value ... I love demos!!!
 		//
@@ -263,7 +263,7 @@ void NeutronMissileUpdate::doLaunch( void )
 	getObject()->setPosition( &pos );
 
 	FXList::doFXObj(getNeutronMissileUpdateModuleData()->m_ignitionFX, getObject());
-	
+
 	if (m_exhaustSysTmpl != NULL)
 		TheParticleSystemManager->createAttachedParticleSystemID(m_exhaustSysTmpl, getObject());
 
@@ -338,7 +338,7 @@ void NeutronMissileUpdate::doAttack( void )
 
 	if (getNeutronMissileUpdateModuleData()->m_targetFromDirectlyAbove && m_reachedIntermediatePos)
 		speed *= STRAIGHT_DOWN_SLOW_FACTOR;
-	
+
 	// if we're still in the no-turning-time, OR if we're out of fuel
 	if (m_noTurnDistLeft > 0.0f)
 	{
@@ -365,7 +365,7 @@ void NeutronMissileUpdate::doAttack( void )
 	Vector3 trueDir = mx.Get_X_Vector();
 	trueDir.Normalize();
 
-	// 
+	//
 	// Move forward along forward direction
 	//
 	Real damping = getNeutronMissileUpdateModuleData()->m_forwardDamping;
@@ -417,9 +417,9 @@ void NeutronMissileUpdate::doAttack( void )
 	pos.y += m_vel.y;
 	pos.z += m_vel.z;
 
-//DEBUG_LOG(("vel %f accel %f z %f\n",m_vel.length(),m_accel.length(), pos.z));
+//DEBUG_LOG(("vel %f accel %f z %f",m_vel.length(),m_accel.length(), pos.z));
 //Real vm = sqrt(m_vel.x*m_vel.x+m_vel.y*m_vel.y+m_vel.z*m_vel.z);
-//DEBUG_LOG(("vel is %f %f %f (%f)\n",m_vel.x,m_vel.y,m_vel.z,vm));
+//DEBUG_LOG(("vel is %f %f %f (%f)",m_vel.x,m_vel.y,m_vel.z,vm));
 	getObject()->setTransformMatrix( &mx );
 	getObject()->setPosition( &pos );
 
@@ -484,7 +484,7 @@ UpdateSleepTime NeutronMissileUpdate::update( void )
 			Real vel = m_vel.length();
 			m_vel.x = 0;
 			m_vel.y = 0;
-			m_vel.z = -vel * STRAIGHT_DOWN_SLOW_FACTOR;	
+			m_vel.z = -vel * STRAIGHT_DOWN_SLOW_FACTOR;
 
 		}
 	}
@@ -513,7 +513,7 @@ UpdateSleepTime NeutronMissileUpdate::update( void )
 	{
 		Coord3D newPos = *getObject()->getPosition();
 		Real distThisTurn = sqrt(sqr(newPos.x-oldPos.x) + sqr(newPos.y-oldPos.y) + sqr(newPos.z-oldPos.z));
-		//DEBUG_LOG(("noTurnDist goes from %f to %f\n",m_noTurnDistLeft,m_noTurnDistLeft-distThisTurn));
+		//DEBUG_LOG(("noTurnDist goes from %f to %f",m_noTurnDistLeft,m_noTurnDistLeft-distThisTurn));
 		m_noTurnDistLeft -= distThisTurn;
 	}
 
@@ -538,7 +538,7 @@ void NeutronMissileUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -619,16 +619,16 @@ void NeutronMissileUpdate::xfer( Xfer *xfer )
 			if( m_exhaustSysTmpl == NULL )
 			{
 
-				DEBUG_CRASH(( "NeutronMissileUpdate::xfer - Unable to find particle system '%s'\n", name.str() ));
+				DEBUG_CRASH(( "NeutronMissileUpdate::xfer - Unable to find particle system '%s'", name.str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -639,4 +639,4 @@ void NeutronMissileUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

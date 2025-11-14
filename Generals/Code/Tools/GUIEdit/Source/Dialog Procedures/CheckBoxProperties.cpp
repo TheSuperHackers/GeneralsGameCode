@@ -24,12 +24,12 @@
 
 // FILE: CheckBoxProperties.cpp ///////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    GUIEdit
@@ -80,7 +80,7 @@ static LRESULT CALLBACK checkBoxPropertiesCallback( HWND hWndDialog,
 	// are designed to have controls doing the same functionality
 	// and names
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message, 
+	if( HandleCommonDialogMessages( hWndDialog, message,
 																	wParam, lParam, &returnCode ) == TRUE )
 		return returnCode;
 
@@ -93,7 +93,7 @@ static LRESULT CALLBACK checkBoxPropertiesCallback( HWND hWndDialog,
 //			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 //			HWND hWndControl = (HWND)lParam;  // control window handle
- 
+
       switch( controlID )
       {
 
@@ -143,7 +143,7 @@ static LRESULT CALLBACK checkBoxPropertiesCallback( HWND hWndDialog,
 						GadgetCheckBoxSetDisabledCheckedBoxImage( window, info->image );
 						GadgetCheckBoxSetDisabledCheckedBoxColor( window, info->color );
 						GadgetCheckBoxSetDisabledCheckedBoxBorderColor( window, info->borderColor );
-						
+
 						// ----------------------------------------------------------------
 						info = GetStateInfo( CHECK_BOX_HILITE );
 						GadgetCheckBoxSetHiliteImage( window, info->image );
@@ -160,12 +160,12 @@ static LRESULT CALLBACK checkBoxPropertiesCallback( HWND hWndDialog,
 						GadgetCheckBoxSetHiliteCheckedBoxColor( window, info->color );
 						GadgetCheckBoxSetHiliteCheckedBoxBorderColor( window, info->borderColor );
 
-					}  // end if
+					}
 
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end OK
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -174,13 +174,13 @@ static LRESULT CALLBACK checkBoxPropertiesCallback( HWND hWndDialog,
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -189,15 +189,15 @@ static LRESULT CALLBACK checkBoxPropertiesCallback( HWND hWndDialog,
       DestroyWindow( hWndDialog );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end checkBoxPropertiesCallback
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -284,7 +284,7 @@ HWND InitCheckBoxPropertiesDialog( GameWindow *window )
 
 	return dialog;
 
-}  // end InitCheckBoxPropertiesDialog
+}
 
 
 

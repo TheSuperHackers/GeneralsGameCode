@@ -26,19 +26,18 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Greg_h                                                      $*
+ *                      $Author:: Kenny Mitchell                                               *
  *                                                                                             *
- *                     $Modtime:: 6/21/01 10:22a                                              $*
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
- *                    $Revision:: 7                                                           $*
+ *                    $Revision:: 8                                                           $*
  *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef MATRIXMAPPER_H
-#define MATRIXMAPPER_H
+#pragma once
 
 #include "always.h"
 #include "bittype.h"
@@ -49,7 +48,7 @@
 // Hector Yee 1/29/01
 
 /**
-** MatrixMapperClass.  Does the chore of computing the u-v coorinates for 
+** MatrixMapperClass.  Does the chore of computing the u-v coorinates for
 ** a projected texture.  Note that this VP must be "baby-sat" by something
 ** external to ensure that its ViewToTexture transform is up-to-date.  I
 ** use it in the TexProjectClass to implement projected textures.
@@ -57,7 +56,7 @@
 ** NOTE: for projected textures, the equation for computing a valid ViewToTexture
 ** transform is as follows (assuming my usual column vectors, etc):
 **                                                        -1
-** ViewToTexture = Projection * Mwrld-shadow * Mwrld-camera 
+** ViewToTexture = Projection * Mwrld-shadow * Mwrld-camera
 */
 class MatrixMapperClass : public TextureMapperClass
 {
@@ -81,14 +80,14 @@ public:
 	** Interface
 	*/
 	void						Set_Flag(uint32 flag,bool onoff);
-	bool						Get_Flag(uint32 flag) const;	
-	
+	bool						Get_Flag(uint32 flag) const;
+
 	void						Set_Type(MappingType type);
 	MappingType				Get_Type(void);
 
 	void						Set_Texture_Transform(const Matrix3D & view_to_texture,float texsize);
-	void						Set_Texture_Transform(const Matrix4 & view_to_texture,float texsize);
-	const Matrix4 &		Get_Texture_Transform(void) const;
+	void						Set_Texture_Transform(const Matrix4x4 & view_to_texture,float texsize);
+	const Matrix4x4 &		Get_Texture_Transform(void) const;
 
 	void						Set_Gradient_U_Coord(float coord) { GradientUCoord = coord; }
 	float						Get_Gradient_U_Coord(void) { return GradientUCoord; }
@@ -100,29 +99,29 @@ public:
 	virtual void			Apply(int uv_array_index);
 
 protected:
-	
+
 	void						Update_View_To_Pixel_Transform(float texsize);
 
 	uint32					Flags;
 	MappingType				Type;
-	Matrix4					ViewToTexture;
-	Matrix4					ViewToPixel;
+	Matrix4x4				ViewToTexture;
+	Matrix4x4					ViewToPixel;
 	Vector3					ViewSpaceProjectionNormal;
 	float						GradientUCoord;
 };
 
-inline void MatrixMapperClass::Set_Flag(uint32 flag,bool onoff)	
-{ 
-	if (onoff) { 
-		Flags |= flag; 
-	} else { 
-		Flags &= ~flag; 
-	} 
+inline void MatrixMapperClass::Set_Flag(uint32 flag,bool onoff)
+{
+	if (onoff) {
+		Flags |= flag;
+	} else {
+		Flags &= ~flag;
+	}
 }
 
 inline bool MatrixMapperClass::Get_Flag(uint32 flag) const
-{ 
-	return (Flags & flag) == flag; 
+{
+	return (Flags & flag) == flag;
 }
 
 inline void MatrixMapperClass::Set_Type(MappingType type)
@@ -135,9 +134,7 @@ inline MatrixMapperClass::MappingType MatrixMapperClass::Get_Type(void)
 	return Type;
 }
 
-inline const Matrix4 & MatrixMapperClass::Get_Texture_Transform(void) const	
-{ 
-	return ViewToTexture; 
+inline const Matrix4x4 & MatrixMapperClass::Get_Texture_Transform(void) const
+{
+	return ViewToTexture;
 }
-
-#endif

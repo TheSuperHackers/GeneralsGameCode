@@ -28,19 +28,17 @@
 
 #pragma once
 
-#ifndef _AI_H_
-#define _AI_H_
-
 #include "Common/Snapshot.h"
 #include "Common/SubsystemInterface.h"
 #include "Common/GameMemory.h"
 #include "Common/GameType.h"
 #include "GameLogic/Damage.h"
 #include "Common/STLTypedefs.h"
+#include "ref_ptr.h"
 
 class AIGroup;
 class AttackPriorityInfo;
-class BuildListInfo;	
+class BuildListInfo;
 class CommandButton;
 class Object;
 class PartitionFilter;
@@ -51,11 +49,17 @@ class PolygonTrigger;
 class UpgradeTemplate;
 class WeaponTemplate;
 
-enum GUICommandType;
-enum HackerAttackMode;
-enum WeaponSetType;
-enum WeaponLockType;
-enum SpecialPowerType;
+enum GUICommandType CPP_11(: Int);
+enum HackerAttackMode CPP_11(: Int);
+enum WeaponSetType CPP_11(: Int);
+enum WeaponLockType CPP_11(: Int);
+enum SpecialPowerType CPP_11(: Int);
+
+#if RETAIL_COMPATIBLE_AIGROUP
+typedef AIGroup* AIGroupPtr;
+#else
+typedef RefCountPtr<AIGroup> AIGroupPtr;
+#endif
 
 typedef std::vector<ObjectID> VecObjectID;
 typedef VecObjectID::iterator VecObjectIDIt;
@@ -63,9 +67,9 @@ typedef VecObjectID::iterator VecObjectIDIt;
 typedef std::list<Object *> ListObjectPtr;
 typedef ListObjectPtr::iterator ListObjectPtrIt;
 
-enum AIDebugOptions
+enum AIDebugOptions CPP_11(: Int)
 {
-	AI_DEBUG_NONE = 0, 
+	AI_DEBUG_NONE = 0,
 	AI_DEBUG_PATHS,
 	AI_DEBUG_TERRAIN,
 	AI_DEBUG_CELLS,
@@ -73,7 +77,7 @@ enum AIDebugOptions
 	AI_DEBUG_END
 };
 
-enum 
+enum
 {
 	// multiply by the owner type, either AI or human
 	AI_VISIONFACTOR_OWNERTYPE = 0x01,
@@ -93,7 +97,7 @@ typedef struct {
 
 class AISideInfo : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AISideInfo, "AISideInfo")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AISideInfo, "AISideInfo")
 public:
 	AISideInfo( void ) : m_easy(0), m_normal(1), m_hard(2), m_next(NULL)
 	{
@@ -103,7 +107,7 @@ public:
 
 	AsciiString m_side;						///< Name of the side
 	Int					m_easy;						///< Number of gatherers to use in easy, normal & hard
-	Int					m_normal;	
+	Int					m_normal;
 	Int					m_hard;
 	TSkillSet		m_skillSet1;
 	TSkillSet		m_skillSet2;
@@ -117,11 +121,11 @@ EMPTY_DTOR(AISideInfo)
 
 class AISideBuildList : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AISideBuildList, "AISideBuildList")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AISideBuildList, "AISideBuildList")
 public:
-	AISideBuildList( AsciiString side ); 
+	AISideBuildList( AsciiString side );
 	//~AISideBuildList();
-	
+
 	void addInfo(BuildListInfo *info);
 
 public:
@@ -160,36 +164,36 @@ public:
 	Real m_guardOuterModifierAI;	// Multiply the AI unit's vision by this much == guard outer circle.
 	Real m_guardInnerModifierHuman;	// Multiply the human unit's vision by this much == guard inner circle
 	Real m_guardOuterModifierHuman;	// Multiply the human unit's vision by this much == guard outer circle
-	UnsignedInt m_guardChaseUnitFrames;		// Number of frames for which a unit should 
+	UnsignedInt m_guardChaseUnitFrames;		// Number of frames for which a unit should
 	UnsignedInt m_guardEnemyScanRate;		// rate to scan for enemies while guarding
 	UnsignedInt m_guardEnemyReturnScanRate;		// rate to scan for enemies while guarding but returning
 
 	Real m_wallHeight;				// Height of special wall units can walk on top of.
-	
+
 	Real m_alertRangeModifier;			// When a unit is alert, its range will be modified by this value
 	Real m_aggressiveRangeModifier;	// When a unit is aggressive, its range will be modified by this value
 
 	/* The attack priority distance modifier changes relative values.  The relative priority
 	   is reduced by the distance away, divided by the modifier.
 		 Example: tanks are priority 10, powerplants priority 15, and modifier = 100.0
-		 If a powerplant is 700 feet away from the attacker, and the tank is 
+		 If a powerplant is 700 feet away from the attacker, and the tank is
 		 100 feet, the effective priority for tank is 9 (10-(100/100), and the
 		 effective priority for powerplant is 8 (15 -(700/100).  So the tanks
 		 would be attacked first because their distance weighted priority is greater. */
 	Real m_attackPriorityDistanceModifier; // Distance to reduce a relative AttackPriority by 1.
-	
-	
-	/* 
+
+
+	/*
 		How close to a waypoint does a group of units have to be to consider itself at the waypoint?
 		m_skirmishGroupFudgeValue is multiplied by the number of the units in the group asking if its
 		close enough to determine this.
-		
-		So for instance (if m_skirmishGroupFudgeValue was 5), if 2 units are walking along a path, 
-		they would check to see if they were less than 10 feet away from the waypoint in order 
-		to say they were close enough. A group of 10 units would consider themselves close enough 
+
+		So for instance (if m_skirmishGroupFudgeValue was 5), if 2 units are walking along a path,
+		they would check to see if they were less than 10 feet away from the waypoint in order
+		to say they were close enough. A group of 10 units would consider themselves close enough
 		if they were within 50 feet of the waypoint.
 	*/
-	Real m_skirmishGroupFudgeValue;	
+	Real m_skirmishGroupFudgeValue;
 
 	Real m_maxRecruitDistance; // Maximum distance away that units can be recruited.
 	Real m_repulsedDistance; // How far a repulsed unit will run past vision range before stopping.
@@ -229,7 +233,7 @@ public:
 //------------------------------------------------------------------------------------------------------------
 /**
  * The AI subsystem is responsible for the implementation of
- * the Artificial Intelligence of the game.  This includes 
+ * the Artificial Intelligence of the game.  This includes
  * the behaviors or all game entities, pathfinding, etc.
  */
 class AI : public SubsystemInterface, public Snapshot
@@ -252,7 +256,7 @@ public:
 		WITHIN_ATTACK_RANGE								= 1 << 4,
 		UNFOGGED													= 1 << 5
 	};
-	Object *findClosestEnemy( const Object *me, Real range, UnsignedInt qualifiers, 
+	Object *findClosestEnemy( const Object *me, Real range, UnsignedInt qualifiers,
 		const AttackPriorityInfo *info=NULL, PartitionFilter *optionalFilter=NULL);
 
 	Object *findClosestRepulsor( const Object *me, Real range);
@@ -265,7 +269,7 @@ public:
 	void loadPostProcess( void );
 
 	// AI Groups -----------------------------------------------------------------------------------------------
-	AIGroup *createGroup( void );					///< instantiate a new AI Group
+	AIGroupPtr createGroup( void ); ///< instantiate a new AI Group
 	void destroyGroup( AIGroup *group );	///< destroy the given AI Group
 	AIGroup *findGroup( UnsignedInt id );	///< return the AI Group with the given ID
 
@@ -292,7 +296,7 @@ protected:
 	TAiData *m_aiData;
 	void newOverride(void);
 	void addSideInfo(AISideInfo *info);
-	
+
 	UnsignedInt m_nextGroupID;
 	FormationID m_nextFormationID;
 };
@@ -304,36 +308,38 @@ class Waypoint;
 class Team;
 class Weapon;
 
-// TheSuperHackers @compile xezon 22/03/2025 Renames AI_PASSIVE to not conflict with macro in ws2def.h
+// TheSuperHackers @build xezon 22/03/2025 Renames AI_PASSIVE to not conflict with macro in ws2def.h
 
-// Note - written out in save/load xfer and .map files, don't change these numbers.  
-enum AttitudeType {
+// Note - written out in save/load xfer and .map files, don't change these numbers.
+enum AttitudeType CPP_11(: Int) {
 	ATTITUDE_SLEEP = -2,
 	ATTITUDE_PASSIVE=-1,
 	ATTITUDE_NORMAL=0,
 	ATTITUDE_ALERT=1,
 	ATTITUDE_AGGRESSIVE=2,
 	ATTITUDE_INVALID=3
-};		///< AI "attitude" behavior modifiers
+};
 
-enum CommandSourceType;
+enum CommandSourceType CPP_11(: Int);
 
 typedef UnsignedInt CommandSourceMask;
 
 #ifdef DEFINE_COMMANDSOURCEMASK_NAMES
-static const char *TheCommandSourceMaskNames[] = 
+static const char *const TheCommandSourceMaskNames[] =
 {
 	"FROM_PLAYER",
 	"FROM_SCRIPT",
 	"FROM_AI",
+	"FROM_DOZER", //don't use this
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheCommandSourceMaskNames) == COMMAND_SOURCE_TYPE_COUNT + 1, "Incorrect array size");
 #endif
 
 //------------------------------------------------------------------------------------------------------------
 
-enum AICommandType	// Stored in save file, do not reorder/renumber.  jba.
+enum AICommandType CPP_11(: Int)	// Stored in save file, do not reorder/renumber.  jba.
 {
 	AICMD_MOVE_TO_POSITION = 0,
 	AICMD_MOVE_TO_OBJECT,
@@ -391,8 +397,6 @@ enum AICommandType	// Stored in save file, do not reorder/renumber.  jba.
 	AICMD_FOLLOW_PATH_APPEND,
 	AICMD_MOVE_TO_POSITION_EVEN_IF_SLEEPING,	// same as AICMD_MOVE_TO_POSITION, but even ATTITUDE_SLEEP units respond.
 	AICMD_GUARD_TUNNEL_NETWORK,
-
-	AICMD_NUM_COMMANDS	// keep last
 };
 
 struct AICommandParms
@@ -404,8 +408,8 @@ struct AICommandParms
   Object*									m_otherObj;
   const Team*							m_team;
 	std::vector<Coord3D>		m_coords;
-  const Waypoint*         m_waypoint; 
-  const PolygonTrigger*   m_polygon;     
+  const Waypoint*         m_waypoint;
+  const PolygonTrigger*   m_polygon;
   Int											m_intValue;       /// misc usage
   DamageInfo							m_damage;
 	const CommandButton*		m_commandButton;
@@ -424,8 +428,8 @@ private:
   ObjectID								m_otherObj;
   AsciiString							m_teamName;
 	std::vector<Coord3D>		m_coords;
-  const Waypoint*         m_waypoint; 
-  const PolygonTrigger*   m_polygon;     
+  const Waypoint*         m_waypoint;
+  const PolygonTrigger*   m_polygon;
   Int											m_intValue;       /// misc usage
   DamageInfo							m_damage;
 	const CommandButton*  	m_commandButton;
@@ -439,7 +443,7 @@ public:
 
 /**
 	AI interface.  AIGroups, or Objects with an AIUpdate can be given these commands.
-	
+
 	NOTE NOTE NOTE: all of these may be overridden and possibly deferred by various AI classes,
 	so they are NOT ALLOWED TO RETURN ANY VALUES, since the particular command issued might
 	not be executed immediately...
@@ -447,7 +451,7 @@ public:
 class AICommandInterface
 {
 public:
-	
+
 	virtual void aiDoCommand(const AICommandParms* parms) = 0;
 
 	inline void aiMoveToPosition( const Coord3D *pos, CommandSourceType cmdSource )
@@ -636,7 +640,7 @@ public:
 	{
 		AICommandParms parms( AICMD_PICK_UP_PRISONER, cmdSource );
 		parms.m_obj = obj;
-		aiDoCommand( &parms );	
+		aiDoCommand( &parms );
 	}
 #endif
 
@@ -851,6 +855,12 @@ public:
 	void xfer( Xfer *xfer );
 	void loadPostProcess( void );
 
+#if !RETAIL_COMPATIBLE_AIGROUP
+	void Add_Ref() const { m_refCount.Add_Ref(); }
+	void Release_Ref() const { m_refCount.Release_Ref(destroy, this); }
+	UnsignedShort Num_Refs() const { return m_refCount.Num_Refs(); }
+#endif
+
 	void groupMoveToPosition( const Coord3D *pos, Bool addWaypoint, CommandSourceType cmdSource );
 	void groupMoveToAndEvacuate( const Coord3D *pos, CommandSourceType cmdSource );			///< move to given position(s)
 	void groupMoveToAndEvacuateAndExit( const Coord3D *pos, CommandSourceType cmdSource );			///< move to given position & unload transport.
@@ -891,8 +901,8 @@ public:
 	void groupAttackArea( const PolygonTrigger *areaToGuard, CommandSourceType cmdSource ); ///< guard an area
 	void groupHackInternet( CommandSourceType cmdSource );				///< Begin hacking the internet for free cash from the heavens.
 	void groupDoSpecialPower( UnsignedInt specialPowerID, UnsignedInt commandOptions );
-	void groupDoSpecialPowerAtObject( UnsignedInt specialPowerID, Object *object, UnsignedInt commandOptions ); 
-	void groupDoSpecialPowerAtLocation( UnsignedInt specialPowerID, const Coord3D *location, const Object *object, UnsignedInt commandOptions );
+	void groupDoSpecialPowerAtObject( UnsignedInt specialPowerID, Object *object, UnsignedInt commandOptions );
+	void groupDoSpecialPowerAtLocation( UnsignedInt specialPowerID, const Coord3D *location, Real angle, const Object *object, UnsignedInt commandOptions );
 #ifdef ALLOW_SURRENDER
 	void groupSurrender( const Object *objWeSurrenderedTo, Bool surrender, CommandSourceType cmdSource );
 #endif
@@ -911,7 +921,7 @@ public:
 	void groupOverrideSpecialPowerDestination( SpecialPowerType spType, const Coord3D *loc, CommandSourceType cmdSource );
 
 	void setAttitude( AttitudeType tude );	///< set the behavior modifier for this agent
-	AttitudeType getAttitude( void ) const;				///< get the current behavior modifier state	
+	AttitudeType getAttitude( void ) const;				///< get the current behavior modifier state
 
 	Bool isIdle() const;
 	//Definition of busy -- when explicitly in the busy state. Moving or attacking is not considered busy!
@@ -930,32 +940,34 @@ public:
 	Real getSpeed( void );									///< return the speed of the group's slowest member
 	Bool getCenter( Coord3D *center );				///< compute centroid of group
 	Bool getMinMaxAndCenter( Coord2D *min, Coord2D *max, Coord3D *center );
-	void computeIndividualDestination( Coord3D *dest, const Coord3D *groupDest, 
+	void computeIndividualDestination( Coord3D *dest, const Coord3D *groupDest,
 		Object *obj, const Coord3D *center, Bool isFormation ); ///< compute destination of individual object, based on group destination
 	Int getCount( void );										///< return the number of objects in the group
 	Bool isEmpty( void );										///< returns true if the group has no members
 	void queueUpgrade( const UpgradeTemplate *upgrade );	///< queue an upgrade
 
 	void add( Object *obj );								///< add object to group
-	
-	// returns true if remove destroyed the group for us.
+
+	// Returns true if the group was emptied.
 	Bool remove( Object *obj);
-	
+
+	void removeAll( void );
+
 	// If the group contains any objects not owned by ownerPlayer, return TRUE.
 	Bool containsAnyObjectsNotOwnedByPlayer( const Player *ownerPlayer );
 
-	// Remove any objects that aren't owned by the player, and return true if the group was destroyed due to emptiness
+	// Removes any objects that aren't owned by the player, and returns true if the group was emptied.
 	Bool removeAnyObjectsNotOwnedByPlayer( const Player *ownerPlayer );
-	
+
 	UnsignedInt getID( void );
-		
+
 	///< get IDs for every object in this group
 	const VecObjectID& getAllIDs ( void ) const;
 
 	void recomputeGroupSpeed() { m_dirty = true; }
 
 	void setMineClearingDetail( Bool set );
-	Bool setWeaponLockForGroup( WeaponSlotType weaponSlot, WeaponLockType lockType ); ///< Set the groups' weapon choice.  
+	Bool setWeaponLockForGroup( WeaponSlotType weaponSlot, WeaponLockType lockType ); ///< Set the groups' weapon choice.
 	void releaseWeaponLockForGroup(WeaponLockType lockType);///< Clear each guys weapon choice
 	void setWeaponSetFlag( WeaponSetType wst );
 
@@ -974,6 +986,13 @@ private:
 	friend class AI;
 	AIGroup( void );
 
+#if !RETAIL_COMPATIBLE_AIGROUP
+	static void destroy(AIGroup* self)
+	{
+		TheAI->destroyGroup(self);
+	}
+#endif
+
 	void recompute( void );									///< recompute various group info, such as speed, leader, etc
 
 	ListObjectPtr m_memberList;							///< the list of member Objects
@@ -982,11 +1001,12 @@ private:
 	Real m_speed;														///< maximum speed of group (slowest member)
 	Bool m_dirty;														///< "dirty bit" - if true then group speed, leader, needs recompute
 
+#if !RETAIL_COMPATIBLE_AIGROUP
+	RefCountValue<UnsignedShort> m_refCount; ///< the reference counter
+#endif
+
 	UnsignedInt m_id;												///< the unique ID of this group
 	Path *m_groundPath;											///< Group ground path.
-	
+
 	mutable VecObjectID	m_lastRequestedIDList;			///< this is used so we can return by reference, saving a copy
 };
-
-
-#endif // _AI_H_

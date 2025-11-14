@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 
@@ -51,7 +51,7 @@ ProneUpdateModuleData::ProneUpdateModuleData() :
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "DamageToFramesRatio", INI::parseReal, NULL, offsetof(ProneUpdateModuleData, m_damageToFramesRatio) },
 		{ 0, 0, 0, 0 }
@@ -63,7 +63,7 @@ ProneUpdateModuleData::ProneUpdateModuleData() :
 ProneUpdate::ProneUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
 	m_proneFrames = 0;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ void ProneUpdate::startProneEffects()
 {
 	Object *me = getObject();
 	me->getDrawable()->setModelConditionState( MODELCONDITION_PRONE );
-	me->setStatus( OBJECT_STATUS_NO_ATTACK );
+	me->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_NO_ATTACK ) );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ void ProneUpdate::stopProneEffects()
 {
 	Object *me = getObject();
 	me->getDrawable()->clearModelConditionState( MODELCONDITION_PRONE );
-	me->clearStatus( OBJECT_STATUS_NO_ATTACK );
+	me->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_NO_ATTACK ) );
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ void ProneUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -148,7 +148,7 @@ void ProneUpdate::xfer( Xfer *xfer )
 	// prone frames
 	xfer->xferInt( &m_proneFrames );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -159,5 +159,5 @@ void ProneUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

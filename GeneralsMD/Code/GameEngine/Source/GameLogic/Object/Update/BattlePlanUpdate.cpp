@@ -27,7 +27,7 @@
 // Desc:   Update module to handle building states and battle plan execution & changes
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_MAXHEALTHCHANGETYPE_NAMES						// for TheMaxHealthChangeTypeNames[]
 
@@ -61,11 +61,6 @@
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/StealthDetectorUpdate.h"
 
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -77,7 +72,7 @@ BattlePlanUpdateModuleData::BattlePlanUpdateModuleData()
 	m_searchAndDestroyPlanAnimationFrames = 0;
 	m_battlePlanParalyzeFrames						= 0;
 
-	
+
 	m_holdTheLineArmorDamageScalar				= 1.0f;
 	m_searchAndDestroySightRangeScalar		= 1.0f;
 	m_strategyCenterSearchAndDestroySightRangeScalar = 1.0f;
@@ -92,7 +87,7 @@ BattlePlanUpdateModuleData::BattlePlanUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "SpecialPowerTemplate",									INI::parseSpecialPowerTemplate,	NULL, offsetof( BattlePlanUpdateModuleData, m_specialPowerTemplate ) },
 
@@ -124,7 +119,7 @@ BattlePlanUpdateModuleData::BattlePlanUpdateModuleData()
 		{ "StrategyCenterSearchAndDestroySightRangeScalar", INI::parseReal,				NULL, offsetof( BattlePlanUpdateModuleData, m_strategyCenterSearchAndDestroySightRangeScalar ) },
 		{ "StrategyCenterSearchAndDestroyDetectsStealth",   INI::parseBool,				NULL, offsetof( BattlePlanUpdateModuleData, m_strategyCenterSearchAndDestroyDetectsStealth ) },
 		{ "StrategyCenterHoldTheLineMaxHealthScalar",				INI::parseReal,				NULL, offsetof( BattlePlanUpdateModuleData, m_strategyCenterHoldTheLineMaxHealthScalar ) },
-    { "StrategyCenterHoldTheLineMaxHealthChangeType",		INI::parseIndexList,  TheMaxHealthChangeTypeNames, offsetof( BattlePlanUpdateModuleData, m_strategyCenterHoldTheLineMaxHealthChangeType ) }, 
+    { "StrategyCenterHoldTheLineMaxHealthChangeType",		INI::parseIndexList,  TheMaxHealthChangeTypeNames, offsetof( BattlePlanUpdateModuleData, m_strategyCenterHoldTheLineMaxHealthChangeType ) },
 
 		{ "VisionObjectName",											INI::parseAsciiString,					NULL, offsetof( BattlePlanUpdateModuleData, m_visionObjectName ) },
 
@@ -134,7 +129,7 @@ BattlePlanUpdateModuleData::BattlePlanUpdateModuleData()
 }
 
 //-------------------------------------------------------------------------------------------------
-BattlePlanUpdate::BattlePlanUpdate( Thing *thing, const ModuleData* moduleData ) : 
+BattlePlanUpdate::BattlePlanUpdate( Thing *thing, const ModuleData* moduleData ) :
 	SpecialPowerUpdateModule( thing, moduleData ),
 	m_bonuses(NULL)
 {
@@ -166,7 +161,7 @@ BattlePlanUpdate::BattlePlanUpdate( Thing *thing, const ModuleData* moduleData )
 
 	m_specialPowerModule   = NULL;
 	//
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -198,7 +193,7 @@ void BattlePlanUpdate::onDelete()
 		obj = TheGameLogic->findObjectByID( m_visionObjectID );
 		if( obj )
 			TheGameLogic->destroyObject( obj );
-	}  // end if
+	}
 
 	// If we get destroyed, then make sure we remove our bonus!
 	// srj sez: we can't do this in the dtor because our team
@@ -320,7 +315,7 @@ CommandOption BattlePlanUpdate::getCommandOption() const
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime BattlePlanUpdate::update()
-{	
+{
 
 	if( m_invalidSettings )
 	{
@@ -359,7 +354,7 @@ UpdateSleepTime BattlePlanUpdate::update()
 				}
 				break;
 			case TRANSITIONSTATUS_ACTIVE:
-				//If we're active and the user has selected a different plan, then we need to 
+				//If we're active and the user has selected a different plan, then we need to
 				//pack up.
 				if( m_currentPlan != m_desiredPlan )
 				{
@@ -415,7 +410,7 @@ void BattlePlanUpdate::createVisionObject()
 
 	// get template of object to create
 	const ThingTemplate *tt = TheThingFactory->findTemplate( data->m_visionObjectName );
-	DEBUG_ASSERTCRASH( tt, ("BattlePlanUpdate::setStatus - Invalid vision object name '%s'\n",
+	DEBUG_ASSERTCRASH( tt, ("BattlePlanUpdate::setStatus - Invalid vision object name '%s'",
 													data->m_visionObjectName.str()) );
 
 	if (!tt)
@@ -442,9 +437,9 @@ void BattlePlanUpdate::createVisionObject()
 		// set the shroud clearing range
 		visionObject->setShroudClearingRange( obj->getGeometryInfo().getBoundingSphereRadius() );
 
-	}  // end if
+	}
 
-}  // end createVisionObject
+}
 
 //-------------------------------------------------------------------------------------------------
 void BattlePlanUpdate::setStatus( TransitionStatus newStatus )
@@ -782,7 +777,7 @@ void BattlePlanUpdate::setBattlePlan( BattlePlanStatus plan )
 						update->setSDEnabled( false );
 					}
 				}
-				
+
 				break;
 			}
 		}
@@ -801,7 +796,7 @@ void BattlePlanUpdate::setBattlePlan( BattlePlanStatus plan )
 				//Paralyze troops!
 				player->iterateObjects( paralyzeTroop, (void*)data );
 				break;
-				
+
 			case PLANSTATUS_BOMBARDMENT:
 				//Set the bombardment bonuses
 				m_bonuses->m_bombardment	= 1; //for weapon bonuses
@@ -857,7 +852,7 @@ void BattlePlanUpdate::setBattlePlan( BattlePlanStatus plan )
 }
 
 //------------------------------------------------------------------------------------------------
-//Returns the currently active battle plan -- unpacked and ready... returns PLANSTATUS_NONE if in 
+//Returns the currently active battle plan -- unpacked and ready... returns PLANSTATUS_NONE if in
 //transition!
 //------------------------------------------------------------------------------------------------
 BattlePlanStatus BattlePlanUpdate::getActiveBattlePlan() const
@@ -876,7 +871,7 @@ void BattlePlanUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 //------------------------------------------------------------------------------------------------
 // Xfer method
@@ -930,7 +925,7 @@ void BattlePlanUpdate::xfer( Xfer *xfer )
 	// vision object data
 	xfer->xferObjectID( &m_visionObjectID );
 
-}  // end xfer
+}
 
 //------------------------------------------------------------------------------------------------
 void BattlePlanUpdate::loadPostProcess( void )
@@ -939,4 +934,4 @@ void BattlePlanUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

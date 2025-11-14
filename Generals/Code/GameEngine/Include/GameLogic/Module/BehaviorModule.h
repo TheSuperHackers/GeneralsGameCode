@@ -24,13 +24,10 @@
 
 // FILE: BehaviorModule.h /////////////////////////////////////////////////////////////////////////////////
 // Author: Steven Johnson
-// Desc:	 
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __BehaviorModule_H_
-#define __BehaviorModule_H_
 
 #include "Common/GameType.h"
 #include "Common/Module.h"
@@ -79,6 +76,7 @@ class SpecialPowerTemplate;
 class WeaponTemplate;
 class DamageInfo;
 class ParticleSystemTemplate;
+class StealthUpdate;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -89,7 +87,7 @@ public:
 	{
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     ModuleData::buildFieldParse(p);
 	}
@@ -163,6 +161,7 @@ public:
 	virtual SpecialPowerModuleInterface* getSpecialPower() { return NULL; }
 	virtual UpdateModuleInterface* getUpdate() { return NULL; }
 	virtual UpgradeModuleInterface* getUpgrade() { return NULL; }
+	virtual StealthUpdate* getStealth() { return NULL; }
 
 	virtual ParkingPlaceBehaviorInterface* getParkingPlaceBehaviorInterface() { return NULL; }
 	virtual RebuildHoleBehaviorInterface* getRebuildHoleBehaviorInterface() { return NULL; }
@@ -200,28 +199,34 @@ protected:
 inline BehaviorModule::BehaviorModule( Thing *thing, const ModuleData* moduleData ) : ObjectModule( thing, moduleData ) { }
 inline BehaviorModule::~BehaviorModule() { }
 
+enum
+{
+	InvalidRunway = -1,
+};
+
 //-------------------------------------------------------------------------------------------------
 class ParkingPlaceBehaviorInterface
 {
 public:
 	struct PPInfo
 	{
-		Coord3D		parkingSpace; 
+		Coord3D		parkingSpace;
 		Real			parkingOrientation;
-		Coord3D		runwayPrep; 
-		Coord3D		runwayStart; 
-		Coord3D		runwayEnd; 
+		Coord3D		runwayPrep;
+		Coord3D		runwayStart;
+		Coord3D		runwayEnd;
 		Coord3D		runwayApproach;
 		Coord3D		hangarInternal;
 		Real			hangarInternalOrient;
 	};
-	virtual Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const = 0; 
-	virtual Bool hasAvailableSpaceFor(const ThingTemplate* thing) const = 0; 
-	virtual Bool hasReservedSpace(ObjectID id) const = 0; 
+	virtual Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const = 0;
+	virtual Bool hasAvailableSpaceFor(const ThingTemplate* thing) const = 0;
+	virtual Bool hasReservedSpace(ObjectID id) const = 0;
 	virtual Bool reserveSpace(ObjectID id, Real parkingOffset, PPInfo* info) = 0;
-	virtual void releaseSpace(ObjectID id) = 0; 
+	virtual void releaseSpace(ObjectID id) = 0;
 	virtual Bool reserveRunway(ObjectID id, Bool forLanding) = 0;
-	virtual void releaseRunway(ObjectID id) = 0; 
+	virtual void releaseRunway(ObjectID id) = 0;
+	virtual Int getRunwayIndex(ObjectID id) = 0;
 	virtual Int getRunwayCount() const = 0;
 	virtual ObjectID getRunwayReservation(Int r) = 0;
 	virtual void transferRunwayReservationToNextInLineForTakeoff(ObjectID id) = 0;
@@ -255,5 +260,3 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
-
-#endif
