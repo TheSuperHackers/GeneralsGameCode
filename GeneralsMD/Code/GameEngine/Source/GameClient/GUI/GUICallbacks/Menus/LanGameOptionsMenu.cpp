@@ -1256,7 +1256,8 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 					txtInput.trim();
 					// Echo the user's input to the chat window
 					if (!txtInput.isEmpty())
-						TheLAN->RequestChat(txtInput, LANAPIInterface::LANCHAT_EMOTE);
+						// TheSuperHackers @tweak arcticdolphin 07/11/2025 changed from LANCHAT_EMOTE for consistency
+						TheLAN->RequestChat(txtInput, LANAPIInterface::LANCHAT_NORMAL);
 				}
 				else if ( controlID == buttonSelectMapID )
 				{
