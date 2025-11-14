@@ -1199,7 +1199,8 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 		}
 	}
 
-	m_mode = RECORDERMODETYPE_PLAYBACK;
+	// TheSuperHackers @bugfix bobtista Don't set playback mode until after file opens successfully
+	// to prevent crash if playback is updated while m_file is NULL
 
 	ReplayHeader header;
 	header.forPlayback = TRUE;
@@ -1209,6 +1210,8 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	{
 		return FALSE;
 	}
+
+	m_mode = RECORDERMODETYPE_PLAYBACK;
 
 #ifdef DEBUG_CRASHING
 	Bool versionStringDiff = header.versionString != TheVersion->getUnicodeVersion();
