@@ -765,6 +765,8 @@ void DeclineResolution()
 		TheShell->recreateWindowLayouts();
 
 		TheInGameUI->recreateControlBar();
+		TheInGameUI->refreshCustomUiResources();
+		TheInGameUI->calcUnitInfoScaleFactor();
 	}
 }
 
