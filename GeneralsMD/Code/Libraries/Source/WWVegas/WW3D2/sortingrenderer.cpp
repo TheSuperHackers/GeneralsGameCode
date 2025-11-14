@@ -246,7 +246,19 @@ void SortingRendererClass::Insert_Triangles(
 	WWASSERT(vertex_buffer);
 	WWASSERT(state->vertex_count<=vertex_buffer->Get_Vertex_Count());
 
-	D3DXMATRIX mtx=(D3DXMATRIX&)state->sorting_state.world*(D3DXMATRIX&)state->sorting_state.view;
+	D3DXMATRIX worldMat(
+		state->sorting_state.world[0][0], state->sorting_state.world[0][1], state->sorting_state.world[0][2], state->sorting_state.world[0][3],
+		state->sorting_state.world[1][0], state->sorting_state.world[1][1], state->sorting_state.world[1][2], state->sorting_state.world[1][3],
+		state->sorting_state.world[2][0], state->sorting_state.world[2][1], state->sorting_state.world[2][2], state->sorting_state.world[2][3],
+		state->sorting_state.world[3][0], state->sorting_state.world[3][1], state->sorting_state.world[3][2], state->sorting_state.world[3][3]
+	);
+	D3DXMATRIX viewMat(
+		state->sorting_state.view[0][0], state->sorting_state.view[0][1], state->sorting_state.view[0][2], state->sorting_state.view[0][3],
+		state->sorting_state.view[1][0], state->sorting_state.view[1][1], state->sorting_state.view[1][2], state->sorting_state.view[1][3],
+		state->sorting_state.view[2][0], state->sorting_state.view[2][1], state->sorting_state.view[2][2], state->sorting_state.view[2][3],
+		state->sorting_state.view[3][0], state->sorting_state.view[3][1], state->sorting_state.view[3][2], state->sorting_state.view[3][3]
+	);
+	D3DXMATRIX mtx=worldMat*viewMat;
 	D3DXVECTOR3 vec=(D3DXVECTOR3&)state->bounding_sphere.Center;
 	D3DXVECTOR4 transformed_vec;
 	D3DXVec3Transform(
@@ -441,7 +453,9 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			memcpy(dest_verts, src_verts, sizeof(VertexFormatXYZNDUV2)*state->vertex_count);
 			dest_verts += state->vertex_count;
 
-			D3DXMATRIX d3d_mtx=(D3DXMATRIX&)state->sorting_state.world*(D3DXMATRIX&)state->sorting_state.view;
+			D3DXMATRIX worldMat2 = Build_D3DXMATRIX(state->sorting_state.world);
+			D3DXMATRIX viewMat2 = Build_D3DXMATRIX(state->sorting_state.view);
+			D3DXMATRIX d3d_mtx=worldMat2*viewMat2;
 			const Matrix4x4& mtx=(const Matrix4x4&)d3d_mtx;
 
 			unsigned short* indices=NULL;
@@ -709,7 +723,19 @@ void SortingRendererClass::Insert_VolumeParticle(
 
 	// Transform the center point to view space for sorting
 
-	D3DXMATRIX mtx=(D3DXMATRIX&)state->sorting_state.world*(D3DXMATRIX&)state->sorting_state.view;
+	D3DXMATRIX worldMat3(
+		state->sorting_state.world[0][0], state->sorting_state.world[0][1], state->sorting_state.world[0][2], state->sorting_state.world[0][3],
+		state->sorting_state.world[1][0], state->sorting_state.world[1][1], state->sorting_state.world[1][2], state->sorting_state.world[1][3],
+		state->sorting_state.world[2][0], state->sorting_state.world[2][1], state->sorting_state.world[2][2], state->sorting_state.world[2][3],
+		state->sorting_state.world[3][0], state->sorting_state.world[3][1], state->sorting_state.world[3][2], state->sorting_state.world[3][3]
+	);
+	D3DXMATRIX viewMat3(
+		state->sorting_state.view[0][0], state->sorting_state.view[0][1], state->sorting_state.view[0][2], state->sorting_state.view[0][3],
+		state->sorting_state.view[1][0], state->sorting_state.view[1][1], state->sorting_state.view[1][2], state->sorting_state.view[1][3],
+		state->sorting_state.view[2][0], state->sorting_state.view[2][1], state->sorting_state.view[2][2], state->sorting_state.view[2][3],
+		state->sorting_state.view[3][0], state->sorting_state.view[3][1], state->sorting_state.view[3][2], state->sorting_state.view[3][3]
+	);
+	D3DXMATRIX mtx=worldMat3*viewMat3;
 	D3DXVECTOR3 vec=(D3DXVECTOR3&)state->bounding_sphere.Center;
 	D3DXVECTOR4 transformed_vec;
 	D3DXVec3Transform(
