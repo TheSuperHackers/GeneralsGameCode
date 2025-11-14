@@ -800,7 +800,6 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 			map->m_transition = DOWN;
 			map->m_modState = CTRL;
 			map->m_usableIn = COMMANDUSABLE_GAME;
-			map->m_category = CATEGORY_SELECTION;
 		}
 	}
 	{
@@ -810,7 +809,6 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 			map->m_transition = DOWN;
 			map->m_modState = CTRL;
 			map->m_usableIn = COMMANDUSABLE_GAME;
-			map->m_category = CATEGORY_SELECTION;
 		}
 	}
 
