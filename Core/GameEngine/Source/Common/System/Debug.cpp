@@ -406,7 +406,7 @@ void DebugInit(int flags)
 		remove(theLogFileNamePrev);
 		if (rename(theLogFileName, theLogFileNamePrev) != 0)
 		{
-			DEBUG_ASSERTLOG(false, ("Could not rename log file and will remove instead"));
+			DebugLog("Could not rename log file '%s' to '%s' and is remove instead", theLogFileName, theLogFileNamePrev);
 			remove(theLogFileName);
 		}
 
@@ -745,7 +745,7 @@ void ReleaseCrash(const char *reason)
  	remove(prevbuf);
 	if (rename(curbuf, prevbuf) != 0)
 	{
-		DEBUG_ASSERTLOG(false, ("Could not rename buffer file and will remove instead"));
+		DebugLog("Could not rename buffer file '%s' to '%s' and is remove instead", curbuf, prevbuf);
 		remove(curbuf);
 	}
 
@@ -838,7 +838,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
  	remove(prevbuf);
 	if (rename(curbuf, prevbuf) != 0)
 	{
-		DEBUG_ASSERTLOG(false, ("Could not rename buffer file and will remove instead"));
+		DebugLog("Could not rename buffer file '%s' to '%s' and is remove instead", curbuf, prevbuf);
 		remove(curbuf);
 	}
 
