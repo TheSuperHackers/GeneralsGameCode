@@ -552,7 +552,7 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
 	SpecialPowerType type = getSpecialPowerModuleData()->m_specialPowerTemplate->getSpecialPowerType();
 
 	Player *localPlayer = rts::getObservedOrLocalPlayer();
-	Relationship relationship = TheControlBar->getCurrentlyViewedPlayerRelationship(getObject()->getTeam());
+	Relationship relationship = localPlayer->getRelationship(getObject()->getTeam());
 
   // Only play the EVA sounds if this is not the local player, and the local player doesn't consider the
 	// person an enemy.
