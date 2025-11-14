@@ -3418,7 +3418,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			break;
 		case GameMessage::MSG_META_ALT_CAMERA_ROTATE_LEFT:
 			if (TheTacticalView->isCameraMovementFinished())
-				TheTacticalView->rotateCamera(-1.0f / 8.0f, 500, 99.9f, 399.9f);
+				TheTacticalView->rotateCamera(-1.0f / 8.0f, 500, 100, 400);
 			break;
 		case GameMessage::MSG_META_BEGIN_CAMERA_ROTATE_RIGHT:
 			DEBUG_ASSERTCRASH(!TheInGameUI->isCameraRotatingRight(), ("Setting rotate camera right, but it's already set!"));
@@ -3430,7 +3430,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			break;
 		case GameMessage::MSG_META_ALT_CAMERA_ROTATE_RIGHT:
 			if (TheTacticalView->isCameraMovementFinished())
-				TheTacticalView->rotateCamera(1.0f / 8.0f, 500, 99.9f, 399.9f);
+				TheTacticalView->rotateCamera(1.0f / 8.0f, 500, 100, 400);
 			break;
 		case GameMessage::MSG_META_BEGIN_CAMERA_ZOOM_IN:
 			DEBUG_ASSERTCRASH(!TheInGameUI->isCameraZoomingIn(), ("Setting zoom camera in, but it's already set!"));
