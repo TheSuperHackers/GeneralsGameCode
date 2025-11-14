@@ -59,8 +59,8 @@ ParabolicEase::setEaseTimes(Real easeInTime, Real easeOutTime)
 		m_out = clamp(m_out);
 	}
 
-	if (m_in > m_out + FLT_EPSILON) {
-		DEBUG_CRASH(("Ease-in and ease-out overlap (in = %g, out = %g)", m_in, m_out));
+	if (m_in > m_out) {
+		DEBUG_ASSERTCRASH(m_in <= m_out + FLT_EPSILON, ("Ease-in and ease-out overlap (in = %g, out = %g)", m_in, m_out));
 		m_in = m_out;
 	}
 }
