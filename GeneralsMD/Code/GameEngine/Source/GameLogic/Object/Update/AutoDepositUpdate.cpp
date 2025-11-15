@@ -173,11 +173,7 @@ UpdateSleepTime AutoDepositUpdate::update( void )
 			getObject()->getControllingPlayer()->getScoreKeeper()->addMoneyEarned( modData->m_depositAmount);
 		}
 
-		Bool displayMoney = moneyAmount > 0 ? TRUE : FALSE;
-		if (!getObject()->getDrawable()->isVisible())
-			displayMoney = FALSE;
-
-		if( displayMoney )
+		if (moneyAmount > 0 && getObject()->getDrawable()->isVisible())
 		{
 
       const Object *owner = getObject();

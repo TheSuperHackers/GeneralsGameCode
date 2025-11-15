@@ -129,11 +129,7 @@ Bool SupplyCenterDockUpdate::action( Object* docker, Object *drone )
 		}
 	}
 
-	Bool displayMoney = value > 0 ? TRUE : FALSE;
-	if (!getObject()->getDrawable()->isVisible())
-		displayMoney = FALSE;
-
-	if( displayMoney )
+	if (value > 0 && getObject()->getDrawable()->isVisible())
 	{
 		// OY LOOK!  I AM USING LOCAL PLAYER.  Do not put anything other than TheInGameUI->addFloatingText in the block this controls!!!
 		// Setup info for adding a floating text
