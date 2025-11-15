@@ -63,6 +63,7 @@
 #include "GameLogic/Module/AutoDepositUpdate.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Object.h"
+#include "GameClient/Drawable.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/Color.h"
 #include "GameClient/GameText.h"
@@ -172,18 +173,7 @@ UpdateSleepTime AutoDepositUpdate::update( void )
 			getObject()->getControllingPlayer()->getScoreKeeper()->addMoneyEarned( modData->m_depositAmount);
 		}
 
-		Bool displayMoney = moneyAmount > 0 ? TRUE : FALSE;
-		if( getObject()->testStatus(OBJECT_STATUS_STEALTHED) )
-		{
-			// OY LOOK!  I AM USING LOCAL PLAYER.  Do not put anything other than TheInGameUI->addFloatingText in the block this controls!!!
-			if( !getObject()->isLocallyControlled() && !getObject()->testStatus(OBJECT_STATUS_DETECTED) )
-			{
-				displayMoney = FALSE;
-			}
-
-		}
-
-		if( displayMoney )
+		if (moneyAmount > 0 && getObject()->getDrawable()->isVisible())
 		{
 
       const Object *owner = getObject();
