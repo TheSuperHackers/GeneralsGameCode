@@ -406,8 +406,15 @@ void DebugInit(int flags)
 		remove(theLogFileNamePrev);
 		if (rename(theLogFileName, theLogFileNamePrev) != 0)
 		{
-			DebugLog("Could not rename log file '%s' to '%s' and is remove instead", theLogFileName, theLogFileNamePrev);
-			remove(theLogFileName);
+#ifdef DEBUG_LOGGING
+			DebugLog("Warning: Could not rename buffer file '%s' to '%s' and is remove instead", theLogFileName, theLogFileNamePrev);
+#endif
+			if (remove(theLogFileName) != 0)
+			{
+#ifdef DEBUG_LOGGING
+				DebugLog("Warning: Failed to remove file '%s'.", theLogFileName);
+#endif
+			}
 		}
 
 		theLogFile = fopen(theLogFileName, "w");
@@ -745,8 +752,15 @@ void ReleaseCrash(const char *reason)
  	remove(prevbuf);
 	if (rename(curbuf, prevbuf) != 0)
 	{
-		DebugLog("Could not rename buffer file '%s' to '%s' and is remove instead", curbuf, prevbuf);
-		remove(curbuf);
+#ifdef DEBUG_LOGGING
+		DebugLog("Warning: Could not rename buffer file '%s' to '%s' and is remove instead", curbuf, prevbuf);
+#endif
+		if (remove(curbuf) != 0)
+		{
+#ifdef DEBUG_LOGGING
+			DebugLog("Warning: Failed to remove file '%s'.", curbuf);
+#endif
+		}
 	}
 
 	theReleaseCrashLogFile = fopen(curbuf, "w");
@@ -838,8 +852,15 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
  	remove(prevbuf);
 	if (rename(curbuf, prevbuf) != 0)
 	{
-		DebugLog("Could not rename buffer file '%s' to '%s' and is remove instead", curbuf, prevbuf);
-		remove(curbuf);
+#ifdef DEBUG_LOGGING
+		DebugLog("Warning: Could not rename buffer file '%s' to '%s' and is remove instead", curbuf, prevbuf);
+#endif
+		if (remove(curbuf) != 0)
+		{
+#ifdef DEBUG_LOGGING
+			DebugLog("Warning: Failed to remove file '%s'.", curbuf);
+#endif
+		}
 	}
 
 	theReleaseCrashLogFile = fopen(curbuf, "w");
