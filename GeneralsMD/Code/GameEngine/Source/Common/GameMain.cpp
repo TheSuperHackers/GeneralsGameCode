@@ -31,6 +31,7 @@
 #include "Common/FramePacer.h"
 #include "Common/GameEngine.h"
 #include "Common/ReplaySimulation.h"
+#include "Common/ReplayListCsv.h"
 
 
 /**
@@ -48,6 +49,11 @@ Int GameMain()
 	if (!TheGlobalData->m_simulateReplays.empty())
 	{
 		exitcode = ReplaySimulation::simulateReplays(TheGlobalData->m_simulateReplays, TheGlobalData->m_simulateReplayJobs);
+	}
+	else if (!TheGlobalData->m_writeReplayList.isEmpty())
+	{
+		bool success = WriteOutReplayList(TheGlobalData->m_writeReplayList);
+		exitcode = success ? 0 : 1;
 	}
 	else
 	{
