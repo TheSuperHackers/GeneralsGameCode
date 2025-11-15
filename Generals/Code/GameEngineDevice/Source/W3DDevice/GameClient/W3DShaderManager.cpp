@@ -62,6 +62,7 @@
 #include "W3DDevice/GameClient/W3DShroud.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DCustomScene.h"
+#include "W3DDevice/GameClient/W3DBrightnessFilter.h"
 #include "GameClient/View.h"
 #include "GameClient/CommandXlat.h"
 #include "GameClient/Display.h"
@@ -126,6 +127,20 @@ W3DFilterInterface *ScreenBWFilterList[]=
 {
 	&screenBWFilter,
 	&screenBWFilterDOT3,	//slower version for older cards without pixel shaders.
+	NULL
+};
+
+/*=========  ScreenBrightnessFilter	=============================================================*/
+///applies brightness/gamma adjustment to viewport.
+
+ScreenBrightnessFilter screenBrightnessFilter;
+ScreenBrightnessFilterFixedFunction screenBrightnessFilterFixedFunction;	//fallback version for cards without pixel shaders.
+
+///List of different Brightness shader implementations in order of preference
+W3DFilterInterface *ScreenBrightnessFilterList[]=
+{
+	&screenBrightnessFilter,
+	&screenBrightnessFilterFixedFunction,	//fallback version for cards without pixel shaders.
 	NULL
 };
 
@@ -2304,6 +2319,7 @@ W3DFilterInterface **MasterFilterList[]=
 	ScreenBWFilterList,
 	ScreenMotionBlurFilterList,
 	ScreenCrossFadeFilterList,
+	ScreenBrightnessFilterList,
 	NULL
 };
 
