@@ -1341,7 +1341,7 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
 			if( targetMoney && objectMoney )
 			{
 				UnsignedInt cash = targetMoney->countMoney();
-#if RETAIL_COMPATIBLE_CRC
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_BUG
 				UnsignedInt desiredAmount = 1000;
 #else
 				UnsignedInt desiredAmount = data->m_effectValue;
