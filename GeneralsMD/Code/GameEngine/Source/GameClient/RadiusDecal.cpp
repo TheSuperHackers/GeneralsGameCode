@@ -45,7 +45,7 @@ RadiusDecalTemplate::RadiusDecalTemplate() :
 	m_opacityThrobTime(LOGICFRAMES_PER_SECOND),
 	m_color(0),
 	m_onlyVisibleToOwningPlayer(true),
-	m_name(AsciiString::TheEmptyString)  // Added By Sadullah Nader for Init purposes
+	m_name(AsciiString::TheEmptyString)
 {
 }
 

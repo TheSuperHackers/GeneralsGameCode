@@ -189,8 +189,6 @@ ControlBarSchemeImage::~ControlBarSchemeImage( void )
 
 ControlBarSchemeAnimation::ControlBarSchemeAnimation( void )
 {
-	// Added by Sadullah Nader
-	// Initializations missing and needed
 
 	m_animDuration = 0;
 	m_finalPos.x = m_finalPos.y = 0;
@@ -304,8 +302,6 @@ ControlBarScheme::ControlBarScheme(void)
 	m_optionsButtonPushed = NULL;
 	m_optionsButtonDisabled = NULL;
 
-	// Added By Sadullah Nader
-	// Initializations needed
 
 	m_commandBarBorderColor = 0;
 

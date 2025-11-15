@@ -88,11 +88,8 @@ Bool LANGameSlot::isLocalPlayer( void ) const
 
 LANGameInfo::LANGameInfo()
 {
-	//Added By Sadullah Nader
-	//Initializtions missing and needed
 	m_lastHeard = 0;
 	m_next = NULL;
-	//
 	for (Int i = 0; i< MAX_SLOTS; ++i)
 		setSlotPointer(i, &m_LANSlot[i]);
 

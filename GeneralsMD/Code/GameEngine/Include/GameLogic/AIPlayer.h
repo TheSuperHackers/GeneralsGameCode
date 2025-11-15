@@ -113,11 +113,8 @@ public:
 		m_reinforcement(false),
 		m_stopQueueing(false),
 		m_reinforcementID(INVALID_ID),
-		//Added By Sadullah Nader
-		//Initialization(s) inserted
 		m_frameStarted(0),
 		m_priorityBuild(FALSE)
-		//
 	{
 	}
 

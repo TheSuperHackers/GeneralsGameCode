@@ -43,7 +43,6 @@ Connection::Connection() {
 	m_frameGrouping = 1;
 	m_isQuitting = false;
 	m_quitTime = 0;
-	// Added By Sadullah Nader
 	// clearing out the latency tracker
 	m_averageLatency = 0.0f;
 	Int i;

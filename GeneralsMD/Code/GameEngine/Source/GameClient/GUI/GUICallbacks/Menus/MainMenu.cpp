@@ -718,7 +718,6 @@ void MainMenuShutdown( WindowLayout *layout, void *userData )
 extern Bool DontShowMainMenu;
 
 ////////////////////////////////////////////////////////////////////////////
-//Added By Sadullah Nader
 //Added as a fix to the resolution change
 //Allows the user to confirm the change, goes back to the previous mode
 //if the time to change expires.
@@ -1520,7 +1519,6 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				// If we ever want to add a dialog before we exit out of the game, uncomment this line and kill the quitCallback() line below.
 //#if defined(RTS_DEBUG)
 
-				//Added By Sadullah Nader
 				//Changed the preprocessing code to normal code
 				if (TheGlobalData->m_windowed)
 				{

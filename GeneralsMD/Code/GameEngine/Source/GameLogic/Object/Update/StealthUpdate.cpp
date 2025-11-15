@@ -64,11 +64,8 @@
 
 StealthUpdateModuleData::StealthUpdateModuleData()
 {
-		//Added By Sadullah Nader
-		//Initialization(s) inserted
 		m_disguiseFX = NULL;
     m_disguiseRevealFX = NULL;
-    //
     m_stealthDelay		= UINT_MAX;
     m_stealthLevel		= 0;
     m_stealthSpeed		= 0.0f;
@@ -133,10 +130,7 @@ StealthUpdate::StealthUpdate( Thing *thing, const ModuleData* moduleData ) : Upd
 	//Must be enabled manually if using disguise system (bomb truck uses)
 	m_enabled = !data->m_teamDisguised;
 
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_detectionExpiresFrame = 0;
-	//
 	m_pulsePhaseRate		= 0.2f;
 	m_pulsePhase				= GameClientRandomValueReal(0, PI);
 

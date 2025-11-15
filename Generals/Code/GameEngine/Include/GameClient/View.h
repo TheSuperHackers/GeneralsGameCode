@@ -307,11 +307,8 @@ class ViewLocation
 		ViewLocation()
 		{
 			m_valid = FALSE;
-			//Added By Sadullah Nader
-			//Initialization(s) inserted
 			m_pos.zero();
 			m_angle = m_pitch = m_zoom = 0.0;
-			//
 		}
 
 		const Coord3D& getPosition() const { return m_pos; }

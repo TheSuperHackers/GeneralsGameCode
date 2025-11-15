@@ -64,8 +64,6 @@ Display::Display()
 	m_elapsedCopywriteTime = 0;
 	m_copyrightDisplayString = NULL;
 
-	// Added by Sadullah Nader
-	// Initializations missing and needed
 	m_currentlyPlayingMovie.clear();
 	m_letterBoxFadeStartTime = 0;
 	// End Add

@@ -1024,7 +1024,6 @@ void InitWOLGameGadgets( void )
 	windowMap = TheWindowManager->winGetWindowFromId( parentWOLGameSetup,windowMapID  );
 	DEBUG_ASSERTCRASH(windowMap, ("Could not find the parentWOLGameSetup.wnd:MapWindow" ));
 
-	//Added By Sadullah Nader
 	//Tooltip Function set
 	windowMap->winSetTooltipFunc(MapSelectorTooltip);
 	//

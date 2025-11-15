@@ -41,8 +41,6 @@ View *TheTacticalView = NULL;
 
 View::View( void )
 {
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_viewLockedUntilFrame = 0u;
 	m_currentHeightAboveGround = 0.0f;
 	m_defaultAngle = 0.0f;

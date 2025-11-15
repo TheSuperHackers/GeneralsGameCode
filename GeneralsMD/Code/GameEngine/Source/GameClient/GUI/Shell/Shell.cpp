@@ -85,11 +85,8 @@ void Shell::construct( void )
 	m_schemeManager = NEW ShellMenuSchemeManager;
 	m_saveLoadMenuLayout = NULL;
 	m_popupReplayLayout = NULL;
-	//Added By Sadullah Nader
-	//Initializations
 	m_optionsLayout = NULL;
 	m_screenCount = 0;
-	//
 }
 
 //-------------------------------------------------------------------------------------------------

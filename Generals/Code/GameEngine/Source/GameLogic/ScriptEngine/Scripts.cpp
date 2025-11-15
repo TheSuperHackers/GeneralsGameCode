@@ -632,10 +632,7 @@ m_firstScript(NULL),
 m_hasWarnings(false),
 m_isGroupActive(true),
 m_isGroupSubroutine(false),
-//Added By Sadullah Nader
-//Initializations inserted
 m_nextGroup(NULL)
-//
 {
 	m_groupName.format("Script Group %d", ScriptList::getNextID());
 }
@@ -906,11 +903,8 @@ m_hasWarnings(false),
 m_nextScript(NULL),
 m_condition(NULL),
 m_action(NULL),
-//Added By Sadullah Nader
-//Initializations inserted
 m_actionFalse(NULL),
 m_curTime(0.0f)
-//
 {
 }
 
@@ -2172,10 +2166,7 @@ ScriptAction::ScriptAction():
 m_actionType(NO_OP),
 m_hasWarnings(false),
 m_numParms(0),
-//Added By Sadullah Nader
-//Initializations inserted
 m_nextAction(NULL)
-//
 {
 }
 

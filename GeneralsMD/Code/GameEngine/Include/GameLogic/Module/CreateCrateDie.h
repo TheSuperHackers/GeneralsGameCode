@@ -46,8 +46,6 @@ public:
 
 	CreateCrateDieModuleData()
 	{
-		// Added By Sadullah Nader
-		// Initializations missing and needed
 		m_crateNameList.clear();
 	}
 	~CreateCrateDieModuleData()
