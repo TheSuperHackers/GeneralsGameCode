@@ -886,8 +886,8 @@ void findCommandCenterOrMostExpensiveBuilding(Object* obj, void* vccl)
 
 static void viewCommandCenter( void )
 {
-	Player* localPlayer = TheControlBar->getCurrentlyViewedPlayer();
-	if (!localPlayer)
+	Player* localPlayer = rts::getObservedOrLocalPlayer();
+	if (!localPlayer->isPlayerActive())
 		return;
 
 	CommandCenterLocator ccl;
@@ -928,8 +928,8 @@ void amIAHero(Object* obj, void* heroHolder)
 
 static Object *iNeedAHero( void )
 {
-	Player* localPlayer = TheControlBar->getCurrentlyViewedPlayer();
-	if (!localPlayer)
+	Player* localPlayer = rts::getObservedOrLocalPlayer();
+	if (!localPlayer->isPlayerActive())
 		return NULL;
 
 	HeroHolder heroHolder;
