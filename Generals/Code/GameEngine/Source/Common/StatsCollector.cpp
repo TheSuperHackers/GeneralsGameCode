@@ -76,7 +76,6 @@ static char statsDir[255] = "Stats\\";
 //=============================================================================
 StatsCollector::StatsCollector( void )
 {
-	//Initialization(s) inserted
 	m_isScrolling = FALSE;
 	m_scrollBeginTime = 0;
 	m_scrollTime = 0;

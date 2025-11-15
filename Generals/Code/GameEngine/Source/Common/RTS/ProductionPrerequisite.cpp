@@ -235,7 +235,6 @@ UnicodeString ProductionPrerequisite::getRequiresList(const Player *player) cons
 
 	Bool orRequirements[MAX_PREREQ];
 	//Added for fix below in getRequiresList
-	//By Sadullah Nader
 	//Initializes the OR_WITH_PREV structures
 	for (i = 0; i < MAX_PREREQ; i++)
 	{

@@ -368,7 +368,6 @@ RecorderClass::RecorderClass()
 	m_file = NULL;
 	m_fileName.clear();
 	m_currentFilePosition = 0;
-	//Initializtion(s) inserted
 	m_doingAnalysis = FALSE;
 	m_archiveReplays = FALSE;
 	m_nextFrame = 0;

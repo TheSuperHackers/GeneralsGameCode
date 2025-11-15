@@ -672,7 +672,6 @@ Locomotor::Locomotor(const LocomotorTemplate* tmpl)
 //-------------------------------------------------------------------------------------------------
 Locomotor::Locomotor(const Locomotor& that)
 {
-	//Initializations
 	m_angleOffset = 0.0f;
 	m_maintainPos.zero();
 

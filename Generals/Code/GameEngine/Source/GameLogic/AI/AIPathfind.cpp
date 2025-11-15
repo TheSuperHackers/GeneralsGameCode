@@ -2811,7 +2811,6 @@ zoneStorageType PathfindZoneManager::getEffectiveZone( LocomotorSurfaceTypeMask 
 }
 //-------------------- PathfindLayer ----------------------------------------
 PathfindLayer::PathfindLayer() : m_blockOfMapCells(NULL), m_layerCells(NULL), m_bridge(NULL),
-// Initializations inserted
 m_destroyed(FALSE),
 m_height(0),
 m_width(0),

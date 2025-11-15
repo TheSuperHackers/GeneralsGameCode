@@ -1316,10 +1316,8 @@ Team::Team(TeamPrototype *proto, TeamID id ) :
 	m_curUnits(0),
 	m_wasIdle(false)
 {
-	//Initialization(s) inserted
 	m_created = FALSE;
 
-	//
 	m_commonAttackTarget = INVALID_ID;
 
 	// allocate new relation map pools

@@ -69,9 +69,7 @@
 //-------------------------------------------------------------------------------------------------
 SpecialAbilityUpdate::SpecialAbilityUpdate( Thing *thing, const ModuleData* moduleData ) : SpecialPowerUpdateModule( thing, moduleData )
 {
-  //Initialization(s) inserted
   m_captureFlashPhase = 0.0f;
-  //
   m_active = false;
   m_prepFrames = 0;
   m_animFrames = 0;

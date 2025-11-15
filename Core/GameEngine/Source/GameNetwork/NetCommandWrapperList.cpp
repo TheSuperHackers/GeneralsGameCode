@@ -36,10 +36,8 @@
 
 NetCommandWrapperListNode::NetCommandWrapperListNode(NetWrapperCommandMsg *msg)
 {
-	//Initializations inserted
 	m_next = NULL;
 
-	//
 
 	m_numChunks = msg->getNumChunks();
 	m_chunksPresent = NEW Bool[m_numChunks];	// pool[]ify

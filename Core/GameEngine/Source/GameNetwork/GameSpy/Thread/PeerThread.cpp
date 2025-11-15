@@ -179,7 +179,6 @@ class PeerThreadClass : public ThreadClass
 public:
 	PeerThreadClass() : ThreadClass()
 	{
-		//Initializations inserted
 		m_roomJoined = m_allowObservers = m_hasPassword = FALSE;
     m_useStats = TRUE;
 		m_exeCRC = m_iniCRC = 0;
@@ -192,7 +191,6 @@ public:
 		m_qmGroupRoom = 0;
 		m_sawEndOfEnumPlayers = m_sawMatchbot = FALSE;
 		m_sawCompleteGameList = FALSE;
-		//
 		m_isConnecting = m_isConnected = false;
 		m_groupRoomID = m_profileID = 0;
 		m_nextStagingServer = 1; m_stagingServers.clear();
@@ -200,16 +198,11 @@ public:
 		for (Int i=0; i<MAX_SLOTS; ++i)
 		{
 			m_playerNames[i] = "";
-
-			//Added by Sadullah Nader
-			//Initializations
 			m_playerColors[i] = 0;
 			m_playerFactions[i] = 0;
 			m_playerLosses[i] = 0;
 			m_playerProfileID[i] = 0;
 			m_playerWins[i] = 0;
-
-			//
 		}
 	}
 

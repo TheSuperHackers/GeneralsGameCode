@@ -123,7 +123,6 @@ void INI::parseLanguageDefinition( INI *ini )
 GlobalLanguage::GlobalLanguage()
 {
 	m_unicodeFontName.clear();
-	//Initializations missing and needed
 	m_unicodeFontFileName.clear();
 	m_unicodeFontName.clear();
 	m_militaryCaptionSpeed = 0;

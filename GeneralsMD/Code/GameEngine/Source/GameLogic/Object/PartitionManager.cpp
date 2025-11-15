@@ -1226,9 +1226,7 @@ void CellAndObjectIntersection::removeAllCoverage()
 //-----------------------------------------------------------------------------
 PartitionCell::PartitionCell()
 {
-	//Initializations inserted
 	m_cellX = m_cellY = 0;
-	//
 	m_firstCoiInCell = NULL;
 	m_coiCount = 0;
 #ifdef PM_CACHE_TERRAIN_HEIGHT

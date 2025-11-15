@@ -53,7 +53,6 @@ CrateCollideModuleData::CrateCollideModuleData()
 	m_executeFX = NULL;
 	m_pickupScience = SCIENCE_INVALID;
 
-	// Initializations missing and needed
 
 	m_executionAnimationTemplate = AsciiString::TheEmptyString;
 

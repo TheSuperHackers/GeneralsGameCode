@@ -87,11 +87,8 @@ WorkerAIUpdate::WorkerAIUpdate( Thing *thing, const ModuleData* moduleData ) :
 	//
 	// initialize the dozer machine to NULL, we want to do this and create it during the update
 	// implementation because at this point we don't have the object all setup
-	//
 
-	//Initialization(s) inserted
 	m_isRebuild = FALSE;
-	//
 	m_dozerMachine = NULL;
 	for( Int i = 0; i < DOZER_NUM_TASKS; i++ )
 	{

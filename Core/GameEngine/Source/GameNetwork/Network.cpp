@@ -265,7 +265,6 @@ NetworkInterface *NetworkInterface::createNetwork()
  */
 Network::Network()
 {
-	//Initializations inserted
 	m_checkCRCsThisFrame = FALSE;
 	m_didSelfSlug = FALSE;
 	m_frameDataReady = FALSE;

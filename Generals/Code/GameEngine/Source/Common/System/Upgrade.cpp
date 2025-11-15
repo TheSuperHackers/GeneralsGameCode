@@ -131,9 +131,7 @@ const FieldParse UpgradeTemplate::m_upgradeFieldParseTable[] =
 //-------------------------------------------------------------------------------------------------
 UpgradeTemplate::UpgradeTemplate( void )
 {
-	//Initialization(s) inserted
 	m_cost = 0;
-	//
 	m_type = UPGRADE_TYPE_PLAYER;
 	m_nameKey = NAMEKEY_INVALID;
 	m_buildTime = 0.0f;

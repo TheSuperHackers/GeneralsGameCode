@@ -85,7 +85,6 @@ LaserRadiusUpdate::LaserRadiusUpdate()
 //-------------------------------------------------------------------------------------------------
 LaserUpdate::LaserUpdate( Thing *thing, const ModuleData* moduleData ) : ClientUpdateModule( thing, moduleData )
 {
-	//Initialization missing and needed
 	m_dirty = FALSE;
 	m_endPos.zero();
 	m_startPos.zero();

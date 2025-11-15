@@ -152,7 +152,6 @@ AudioManager::AudioManager() :
 	m_hardwareAccel(FALSE),
 	m_musicPlayingFromCD(FALSE)
 {
-	// Added by Sadullah Nader
 	m_adjustedVolumes.clear();
 	m_audioRequests.clear();
 	m_listenerPosition.zero();

@@ -35,7 +35,6 @@
  */
 NetCommandMsg::NetCommandMsg()
 {
-	//Initializations inserted
 	m_executionFrame = 0;
 	m_id = 0;
 	m_playerID = 0;
@@ -89,10 +88,8 @@ Int NetCommandMsg::getSortNumber() {
  * Constructor with no argument, sets everything to default values.
  */
 NetGameCommandMsg::NetGameCommandMsg() : NetCommandMsg() {
-	//Initializations inserted
 	m_argSize = 0;
 	m_numArgs = 0;
-	//
 
 	m_type = (GameMessage::Type)0;
 	m_commandType = NETCOMMANDTYPE_GAMECOMMAND;
@@ -712,10 +709,7 @@ UnicodeString NetDisconnectChatCommandMsg::getText() {
 NetChatCommandMsg::NetChatCommandMsg() : NetCommandMsg()
 {
 	m_commandType = NETCOMMANDTYPE_CHAT;
-	//added by Sadullah Nader
-	//Initializations inserted
 	m_playerMask = 0;
-	//
 }
 
 /**

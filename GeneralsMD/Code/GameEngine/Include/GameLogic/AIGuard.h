@@ -78,7 +78,6 @@ public:
 
 	ExitConditions() : m_attackGiveUpFrame(0), m_conditionsToConsider(0), m_radiusSqr(0.0f)
 	{
-		// Initializations missing and needed
 		m_center.zero();
 	}
 

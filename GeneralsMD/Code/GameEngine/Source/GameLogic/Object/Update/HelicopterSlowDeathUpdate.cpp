@@ -61,7 +61,6 @@
 //-------------------------------------------------------------------------------------------------
 HelicopterSlowDeathBehaviorModuleData::HelicopterSlowDeathBehaviorModuleData( void )
 {
-	//Initializations missing and needed
 	m_attachParticleBone.clear();
 	m_bladeBone.clear();
 	m_bladeObjectName.clear();

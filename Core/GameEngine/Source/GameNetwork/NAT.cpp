@@ -144,7 +144,6 @@ NAT *TheNAT = NULL;
 
 NAT::NAT()
 {
-	//Initializations inserted
 	m_beenProbed = FALSE;
 	m_connectionPairIndex = 0;
 	m_connectionRound = 0;

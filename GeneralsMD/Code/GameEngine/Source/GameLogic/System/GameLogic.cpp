@@ -218,7 +218,6 @@ void setFPMode( void )
 // ------------------------------------------------------------------------------------------------
 GameLogic::GameLogic( void )
 {
-	//Initializations missing and necessary
 	m_background = NULL;
 	m_CRC = 0;
 	m_isInUpdate = FALSE;
@@ -234,7 +233,6 @@ GameLogic::GameLogic( void )
 	m_shouldValidateCRCs = FALSE;
 
 	m_startNewGame = FALSE;
-	//
 
 	m_frame = 0;
 	m_hasUpdated = FALSE;
@@ -2395,9 +2393,6 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
     }
   }
 
-	//Added to fix the quit menu
-	//ReAllows quit menu to work during loading scene
-	//setGameLoading(FALSE);
 	setLoadingMap( FALSE );
 
 #ifdef DUMP_PERF_STATS

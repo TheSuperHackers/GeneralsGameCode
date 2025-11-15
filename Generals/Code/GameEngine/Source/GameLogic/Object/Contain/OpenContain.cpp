@@ -127,10 +127,8 @@ OpenContain::OpenContain( Thing *thing, const ModuleData* moduleData ) : UpdateM
 	m_stealthUnitsContained = 0;
 	m_doorCloseCountdown = 0;
 
-	//Initializations inserted
 	m_rallyPoint.zero();
 	m_rallyPointExists = FALSE;
-	//
 	m_conditionState.clear();
 	m_firePointStart = -1;
 	m_firePointNext = 0;

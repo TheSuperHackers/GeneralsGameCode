@@ -46,9 +46,7 @@ class HackInternetState :  public State
 public:
 	HackInternetState( StateMachine *machine ) :State( machine, "HackInternetState" )
 	{
-		//Initializations missing and needed
 		m_framesRemaining = 0;
-		//
 	}
 	virtual StateReturnType update();
 	virtual StateReturnType onEnter();
@@ -72,9 +70,7 @@ class PackingState :  public State
 public:
 	PackingState( StateMachine *machine ) : State( machine, "PackingState" )
 	{
-		//Initializations inserted
 		m_framesRemaining = 0;
-		//
 	}
 	virtual StateReturnType update();
 	virtual StateReturnType onEnter();

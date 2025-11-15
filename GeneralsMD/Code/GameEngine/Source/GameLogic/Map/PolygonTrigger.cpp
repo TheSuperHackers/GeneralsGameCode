@@ -50,10 +50,8 @@ m_exportWithScripts(false),
 m_isWaterArea(false),
 m_shouldRender(true),
 m_selected(false),
-//Initializations inserted
 m_isRiver(FALSE),
 m_riverStart(0)
-//
 {
 	if (initialAllocation < 2) initialAllocation = 2;
 	m_points = NEW ICoord3D[initialAllocation];		// pool[]ify

@@ -1109,9 +1109,7 @@ private:
 public:
 	PartitionFilterGarrisonable( Bool match ) : m_match(match)
 	{
-		//Initializations
 		m_player = NULL;
-		//
 	}
 protected:
 	virtual Bool allow( Object *other );

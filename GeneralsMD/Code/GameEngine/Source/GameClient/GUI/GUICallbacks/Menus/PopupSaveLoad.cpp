@@ -894,7 +894,6 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 				// do the load game
 				if( controlID == buttonLoadConfirm )
 				{
-					//Moved by Sadullah Nader
 					//moved to fix the
 					// close save/load layout menu
 					closeSaveMenu( window );

@@ -978,7 +978,6 @@ InGameUI::InGameUI()
 	m_mouseModeCursor = Mouse::ARROW;
 	m_mousedOverDrawableID = INVALID_DRAWABLE_ID;
 
-	//Initializations missing and needed
 	m_currentlyPlayingMovie.clear();
 	m_militarySubtitle = NULL;
 	m_popupMessageData = NULL;
@@ -5471,7 +5470,6 @@ void InGameUI::clearPopupMessageData( void )
 //-------------------------------------------------------------------------------------------------
 FloatingTextData::FloatingTextData(void)
 {
-	// Initializations missing and needed
 	m_color = 0;
 	m_frameCount = 0;
 	m_frameTimeOut = 0;

@@ -83,8 +83,6 @@ FirewallHelperClass * createFirewallHelper()
 
 FirewallHelperClass::FirewallHelperClass(void)
 {
-	//Added Sadullah Nader
-	//Initializations missing and needed
 	m_currentTry = 0;
 	m_numManglers = 0;
 	m_numResponses = 0;

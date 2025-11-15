@@ -248,8 +248,6 @@ public:
 	{
 		//Note: m_data is constructed with default values.
 
-		// Added by Sadullah Nader
-		// Initialization missing and needed
 
 		m_payload.clear();
 		m_putInContainerName.clear();
@@ -768,7 +766,6 @@ public:
 		m_preserveLayer(true),
 		m_objectCount(0)
 	{
-		// Change Made by Sadullah Nader
 		// for init purposes, easier to read
 		m_offset.zero();
 	}

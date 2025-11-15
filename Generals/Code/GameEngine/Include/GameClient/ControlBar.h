@@ -434,7 +434,6 @@ class SideSelectWindowData
 public:
 	SideSelectWindowData(void)
 	{
-		//Initializations
 		generalSpeak = NULL;
 		m_currColor = 0;
 		m_gereralsNameWin = NULL;

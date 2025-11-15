@@ -38,7 +38,6 @@ DownloadManager::DownloadManager()
 	m_download = NEW CDownload(this);
 	m_wasError = m_sawEnd = false;
 
-	//Initializations missing and needed
 
 	m_queuedDownloads.clear();
 

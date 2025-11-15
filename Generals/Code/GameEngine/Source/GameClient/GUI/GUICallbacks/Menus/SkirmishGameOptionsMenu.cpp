@@ -542,7 +542,6 @@ static void startPressed(void)
 /////////////////////////////////////////////////////
 // MapSelectorTooltip - shows tooltips for the tech buildings
 //											and supply depots
-// Added By : Sadullah Nader
 /////////////////////////////////////////////////////
 void MapSelectorTooltip(GameWindow *window,
 												WinInstanceData *instData,

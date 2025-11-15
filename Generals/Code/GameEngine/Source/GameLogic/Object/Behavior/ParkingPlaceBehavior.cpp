@@ -52,7 +52,6 @@ ParkingPlaceBehavior::ParkingPlaceBehavior( Thing *thing, const ModuleData* modu
 {
 	m_gotInfo = false;
 
-	//Initializations
 
 	m_heliRallyPoint.zero();
 

@@ -42,9 +42,7 @@ XferCRC::XferCRC( void )
 {
 
 	m_xferMode = XFER_CRC;
-	//Initialization(s) inserted
 	m_crc = 0;
-	//
 }
 
 //-------------------------------------------------------------------------------------------------

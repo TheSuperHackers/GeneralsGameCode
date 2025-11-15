@@ -75,7 +75,6 @@ public:
 		m_minCollapseDelay = 0;
 		m_maxCollapseDelay = 0;
 		m_minBurstDelay = 9999;
-		//Removed by Sadullah Nader
 		//Redundancy from above
 		//m_minBurstDelay = 9999;
 		m_maxShudder = 0;

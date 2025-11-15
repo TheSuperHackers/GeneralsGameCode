@@ -61,7 +61,6 @@ public:
 
 	ObjectDefectionHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData )
 	{
-		//Initializations inserted
 		m_defectionDetectionEnd = 0;
 		m_defectionDetectionFlashPhase = FALSE;
 		m_defectionDetectionStart = 0;

@@ -46,7 +46,6 @@ public:
 
 	CreateCrateDieModuleData()
 	{
-		// Initializations missing and needed
 		m_crateNameList.clear();
 	}
 	~CreateCrateDieModuleData()

@@ -107,7 +107,6 @@ m_font(NULL),
 m_point(0),
 m_bold(FALSE)
 {
-	//Initializations missing and needed
 	m_fontName.clear();
 	m_name.clear();
 }

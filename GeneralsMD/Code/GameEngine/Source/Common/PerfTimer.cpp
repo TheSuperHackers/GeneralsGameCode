@@ -312,9 +312,7 @@ PerfGather::PerfGather(const char *identifier) :
 	m_next(0),
 	m_prev(0)
 {
-	//Initializations inserted
 	m_ignore = FALSE;
-	//
 	DEBUG_ASSERTCRASH(strchr(m_identifier, ',') == NULL, ("PerfGather names must not contain commas"));
 	addToList();
 }

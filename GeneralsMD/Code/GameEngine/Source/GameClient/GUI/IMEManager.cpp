@@ -506,7 +506,6 @@ IMEManager::IMEManager()
 	m_result(0),
 	m_indexBase(1),
 
-	//Initializations missing and needed
 	m_compositionCharsDisplayed(0),
 	m_candidateDownArrow(NULL),
 	m_candidateTextArea(NULL),

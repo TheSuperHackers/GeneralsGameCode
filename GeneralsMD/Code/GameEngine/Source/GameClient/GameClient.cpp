@@ -100,9 +100,7 @@ GameClient::GameClient()
 	m_numTranslators = 0;
 	m_commandTranslator = NULL;
 
-	// Initializations missing and needed
 	m_drawableTOC.clear();
-	//
 	m_textBearingDrawableList.clear();
 
 	m_frame = 0;

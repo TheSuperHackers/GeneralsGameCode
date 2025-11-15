@@ -104,9 +104,7 @@
 RAMFile::RAMFile()
 : m_size(0),
 	m_data(NULL),
-//Initializtion(s) inserted
 	m_pos(0)
-//
 {
 
 }

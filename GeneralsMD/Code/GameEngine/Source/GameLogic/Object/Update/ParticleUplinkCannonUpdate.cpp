@@ -86,11 +86,8 @@ ParticleUplinkCannonUpdateModuleData::ParticleUplinkCannonUpdateModuleData()
   m_manualDrivingSpeed						= 0.0f;
   m_manualFastDrivingSpeed				= 0.0f;
   m_doubleClickToFastDriveDelay		= 500;
-	//Added by Sadullah Nader
-	//Initializations inserted
 	m_swathOfDeathAmplitude					= 0.0f;
 	m_swathOfDeathDistance					=	0.0f;
-	//
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -570,7 +570,6 @@ CommandButton::CommandButton( void )
 
 	m_flashCount = 0;
 
-	// Added by Sadullah Nader
 	// The purpose is to initialize these variable to values that are zero or empty
 
 	m_conflictingLabel.clear();

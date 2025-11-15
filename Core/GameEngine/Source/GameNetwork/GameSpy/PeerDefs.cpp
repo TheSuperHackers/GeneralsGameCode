@@ -89,7 +89,6 @@ void GameSpyInfo::reset( void )
 	m_localProfileID = 0;
 	m_maxMessagesPerUpdate = 100;
 
-	// Initialization missing and needed
 	m_disallowAsainText = FALSE;
 	m_disallowNonAsianText = FALSE;
 	m_disconReason = 0;

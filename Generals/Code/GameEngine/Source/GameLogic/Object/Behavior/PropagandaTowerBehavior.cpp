@@ -119,9 +119,7 @@ PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData( void )
 PropagandaTowerBehavior::PropagandaTowerBehavior( Thing *thing, const ModuleData *modData )
 											 : UpdateModule( thing, modData )
 {
-	//Initializations inserted
 	m_lastScanFrame = 0;
-	//
 	m_insideList = NULL;
 	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
 
