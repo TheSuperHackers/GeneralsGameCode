@@ -2273,7 +2273,7 @@ Bool Drawable::drawsAnyUIText( void )
 		return FALSE;
 
 	const Object *obj = getObject();
-	if ( !obj || obj->getControllingPlayer() != TheControlBar->getCurrentlyViewedPlayer())
+	if ( !obj || obj->getControllingPlayer() != rts::getObservedOrLocalPlayer())
 		return FALSE;
 
 	Player *owner = obj->getControllingPlayer();
@@ -2422,7 +2422,7 @@ void Drawable::drawAmmo( const IRegion2D *healthBarRegion )
 	if (!(
 				TheGlobalData->m_showObjectHealth &&
 				(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
-				obj->getControllingPlayer() == TheControlBar->getCurrentlyViewedPlayer()
+				obj->getControllingPlayer() == rts::getObservedOrLocalPlayer()
 			))
 		return;
 
@@ -2480,7 +2480,7 @@ void Drawable::drawContained( const IRegion2D *healthBarRegion )
 	if (!(
 				TheGlobalData->m_showObjectHealth &&
 				(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
-				obj->getControllingPlayer() == TheControlBar->getCurrentlyViewedPlayer()
+				obj->getControllingPlayer() == rts::getObservedOrLocalPlayer()
 			))
 		return;
 
@@ -2953,7 +2953,7 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 	UnsignedInt now = TheGameLogic->getFrame();
 
 	if( obj->testWeaponSetFlag( WEAPONSET_CARBOMB ) &&
-				obj->getControllingPlayer() == TheControlBar->getCurrentlyViewedPlayer())
+				obj->getControllingPlayer() == rts::getObservedOrLocalPlayer())
 	{
 		if( !getIconInfo()->m_icon[ ICON_CARBOMB ] )
 			getIconInfo()->m_icon[ ICON_CARBOMB ] = newInstance(Anim2D)( s_animationTemplates[ ICON_CARBOMB ], TheAnim2DCollection );
