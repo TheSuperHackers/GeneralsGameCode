@@ -139,7 +139,7 @@ Bool SabotageMilitaryFactoryCrateCollide::executeCrateBehavior( Object *other )
 
   doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_MILITARY_FACTORY );
 
-	if( other->isLocallyControlled() )
+	if( other->isLocallyViewed() )
 	{
 		TheEva->setShouldPlay( EVA_BuildingSabotaged );
 	}

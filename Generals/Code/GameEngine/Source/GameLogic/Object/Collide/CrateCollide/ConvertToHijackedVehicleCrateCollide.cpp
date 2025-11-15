@@ -144,7 +144,7 @@ Bool ConvertToHijackedVehicleCrateCollide::executeCrateBehavior( Object *other )
 
 	//Before the actual defection takes place, play the "vehicle stolen" EVA
 	//event if the local player is the victim!
-	if( other->isLocallyControlled() )
+	if( other->isLocallyViewed() )
 	{
 		TheEva->setShouldPlay( EVA_VehicleStolen );
 	}

@@ -35,6 +35,7 @@
 #include "Common/Dict.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/ModuleFactory.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -1696,6 +1697,14 @@ Color Object::getNightIndicatorColor() const
 Bool Object::isLocallyControlled() const
 {
 	return getControllingPlayer() == ThePlayerList->getLocalPlayer();
+}
+
+//=============================================================================
+// Object::isLocallyViewed
+//=============================================================================
+Bool Object::isLocallyViewed() const
+{
+	return getControllingPlayer() == rts::getObservedOrLocalPlayer();
 }
 
 //=============================================================================
@@ -4595,7 +4604,7 @@ void Object::onDie( DamageInfo *damageInfo )
 	if(m_team)
 		m_team->notifyTeamOfObjectDeath();
 
-	if (isLocallyControlled() && !selfInflicted) // wasLocallyControlled? :-)
+	if (isLocallyViewed() && !selfInflicted) // wasLocallyControlled? :-)
 	{
 		if (isKindOf(KINDOF_STRUCTURE) && isKindOf(KINDOF_MP_COUNT_FOR_VICTORY))
 		{
