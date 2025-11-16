@@ -194,12 +194,12 @@ void Energy::removePowerBonus( Object *obj )
 #else
 	if ( !obj->isDisabled() )
 		addProduction( -obj->getTemplate()->getEnergyBonus() );
+#endif
 
 	// sanity
 	DEBUG_ASSERTCRASH( m_energyProduction >= 0 && m_energyConsumption >= 0,
 										 ("Energy - Negative Energy numbers, Produce=%d Consume=%d\n",
 										 m_energyProduction, m_energyConsumption) );
-#endif
 
 }
 
