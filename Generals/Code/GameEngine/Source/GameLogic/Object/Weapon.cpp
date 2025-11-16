@@ -884,9 +884,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 
 		Bool handled;
 
-		if(!sourceObj->isLocallyControlled()									// if user watching is not controller and
-			&&  sourceObj->testStatus(OBJECT_STATUS_STEALTHED)	// if unit is stealthed (like a Pathfinder)
-			&& !sourceObj->testStatus(OBJECT_STATUS_DETECTED)		// but not detected...
+		if(!sourceObj->getDrawable()->isVisible()							// if user watching cannot see us
 			&& !sourceObj->isKindOf(KINDOF_MINE)								// and not a mine (which always do the FX, even if hidden)...
 			&& !isPlayFXWhenStealthed()													// and not a weapon marked to playwhenstealthed
 			)
