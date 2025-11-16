@@ -915,7 +915,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 
 		Bool handled;
 
-		// TODO: Remove hardcoded KINDOF_MINE check and apply PlayFXWhenStealthed = Yes to the mine weapons instead.
+		// TheSuperHackers @todo: Remove hardcoded KINDOF_MINE check and apply PlayFXWhenStealthed = Yes to the mine weapons instead.
 
 		if(!sourceObj->getDrawable()->isVisible()							// if user watching cannot see us
 			&& !sourceObj->isKindOf(KINDOF_MINE)								// and not a mine (which always do the FX, even if hidden)...
