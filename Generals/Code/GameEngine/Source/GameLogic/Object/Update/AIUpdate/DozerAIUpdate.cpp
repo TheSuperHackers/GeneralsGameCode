@@ -2041,6 +2041,15 @@ void DozerAIUpdate::cancelTask( DozerTask task )
 }
 
 //-------------------------------------------------------------------------------------------------
+/** Attempt to resume the previous task */
+//-------------------------------------------------------------------------------------------------
+void DozerAIUpdate::resumePreviousTask(void)
+{
+	if (m_previousTask != DOZER_TASK_INVALID)
+		newTask(m_previousTask, TheGameLogic->findObjectByID(m_previousTaskInfo.m_targetObjectID));
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Is there a given task waiting to be done */
 //-------------------------------------------------------------------------------------------------
 Bool DozerAIUpdate::isTaskPending( DozerTask task )
@@ -2117,6 +2126,9 @@ void DozerAIUpdate::internalCancelTask( DozerTask task )
 
 	// call the single method that gets called for completing and canceling tasks
 	internalTaskCompleteOrCancelled( task );
+
+	m_previousTask = task;
+	m_previousTaskInfo = m_task[task];
 
 	// remove the info for this task
 	m_task[ task ].m_targetObjectID = INVALID_ID;
