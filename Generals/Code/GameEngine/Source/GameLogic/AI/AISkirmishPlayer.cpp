@@ -262,6 +262,7 @@ void AISkirmishPlayer::processBaseBuilding( void )
 
 #else
 			// force delay between rebuilds
+			Int framesToBuild = bldgPlan->calcTimeToBuild(m_player);
 			if (TheGameLogic->getFrame() - m_frameLastBuildingBuilt < framesToBuild)
 			{
 				m_buildDelay = framesToBuild - (TheGameLogic->getFrame() - m_frameLastBuildingBuilt);
@@ -276,12 +277,12 @@ void AISkirmishPlayer::processBaseBuilding( void )
 					m_player->getMoney()->withdraw( cost );
 
 					// inst-construct the building
-					bldg = buildStructureNow(bldgPlan, info, NULL);
+					bldg = buildStructureNow(bldgPlan, bldgInfo);
 					// store the object with the build order
 					if (bldg)
 					{
-						info->setObjectID( bldg->getID() );
-						info->decrementNumRebuilds();
+						bldgInfo->setObjectID( bldg->getID() );
+						bldgInfo->decrementNumRebuilds();
 
 						m_readyToBuildStructure = false;
 						m_structureTimer = TheAI->getAiData()->m_structureSeconds*LOGICFRAMES_PER_SECOND;
@@ -291,8 +292,6 @@ void AISkirmishPlayer::processBaseBuilding( void )
 							m_structureTimer = m_structureTimer/TheAI->getAiData()->m_structuresWealthyMod;
 						}
 						m_frameLastBuildingBuilt = TheGameLogic->getFrame();
-						// only build one building per delay loop
-						break;
 					}
 				}
 			}

@@ -801,6 +801,7 @@ void AIPlayer::processBaseBuilding( void )
 
 #else
 					// force delay between rebuilds
+					Int framesToBuild = bldgPlan->calcTimeToBuild(m_player);
 					if (TheGameLogic->getFrame() - m_frameLastBuildingBuilt < framesToBuild)
 					{
 						m_buildDelay = framesToBuild - (TheGameLogic->getFrame() - m_frameLastBuildingBuilt);
@@ -815,7 +816,7 @@ void AIPlayer::processBaseBuilding( void )
 							m_player->getMoney()->withdraw( cost );
 
 							// inst-construct the building
-							bldg = buildStructureNow(bldgPlan, info, NULL);
+							bldg = buildStructureNow(bldgPlan, info);
 							// store the object with the build order
 							if (bldg)
 							{
