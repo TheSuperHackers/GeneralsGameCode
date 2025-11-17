@@ -208,12 +208,12 @@ void Energy::removePowerBonus( Object *obj )
 		return;
 
 	// TheSuperHackers @bugfix Caball009 14/11/2025 Don't remove power bonus for disabled power plants.
-#if RETAIL_COMPATIBLE_CRC
-	addProduction( -obj->getTemplate()->getEnergyBonus() );
-#else
-	if ( !obj->isDisabled() )
-		addProduction( -obj->getTemplate()->getEnergyBonus() );
+#if !RETAIL_COMPATIBLE_CRC
+	if ( obj->isDisabled() )
+		return;
 #endif
+
+	addProduction( -obj->getTemplate()->getEnergyBonus() );
 
 	// sanity
 	DEBUG_ASSERTCRASH( m_energyProduction >= 0 && m_energyConsumption >= 0,
