@@ -50,7 +50,6 @@
 #include "Vector.h"
 #include "wwmath.h"
 #include "quat.h"
-#include "wwmath.h"
 //#include <Windows.h>
 // Static Table, for Adaptive Delta Decompressor
 #define FILTER_TABLE_SIZE (256)

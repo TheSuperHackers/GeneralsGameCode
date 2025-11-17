@@ -82,7 +82,6 @@
 
 #ifdef RTS_DEBUG
 //#include "GameClient/InGameUI.h"	// for debugHints
-#include "Common/PlayerList.h"
 #endif
 
 #ifdef DUMP_PERF_STATS

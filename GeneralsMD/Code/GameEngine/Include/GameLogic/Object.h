@@ -121,9 +121,6 @@ enum WeaponStatus CPP_11(: Int);
 enum RadarPriorityType CPP_11(: Int);
 enum CanAttackResult CPP_11(: Int);
 
-// For ObjectStatusTypes
-#include "Common/ObjectStatusTypes.h"
-
 // For ObjectScriptStatusBit
 #include "GameLogic/ObjectScriptStatusBits.h"
 

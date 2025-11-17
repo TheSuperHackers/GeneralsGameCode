@@ -58,7 +58,6 @@
 #include "Common/STLTypedefs.h"
 #include "Common/ScoreKeeper.h"
 #include "Common/Team.h"
-#include "Common/STLTypedefs.h"
 #include "Common/Upgrade.h"
 
 // ----------------------------------------------------------------------------------------------

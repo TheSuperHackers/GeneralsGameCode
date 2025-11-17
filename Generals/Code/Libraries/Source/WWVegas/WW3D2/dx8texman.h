@@ -43,7 +43,6 @@
 #include "dx8wrapper.h"
 #include "ww3dformat.h"
 #include "dx8list.h"
-#include "ww3dformat.h"
 #include "multilist.h"
 
 class DX8TextureManagerClass;

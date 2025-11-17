@@ -56,7 +56,6 @@
 #include "GameClient/Drawable.h"
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
-#include "W3DDevice/GameClient/HeightMap.h"
 
 
 /** @todo: We're going to have a pool of a couple rendertargets to use

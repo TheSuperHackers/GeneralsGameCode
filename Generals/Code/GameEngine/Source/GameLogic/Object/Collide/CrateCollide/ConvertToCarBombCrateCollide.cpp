@@ -39,7 +39,6 @@
 #include "GameLogic/Module/ConvertToCarBombCrateCollide.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/ScriptEngine.h"
-#include "GameLogic/ExperienceTracker.h"
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

@@ -25,7 +25,6 @@
 #include "CameraOptions.h"
 #include "wbview3d.h"
 #include "WorldBuilderDoc.h"
-#include "wbview3d.h"
 
 
 #include "WaypointOptions.h" //WST 10/7/2002

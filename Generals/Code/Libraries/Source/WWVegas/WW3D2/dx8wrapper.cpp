@@ -79,7 +79,6 @@
 #include "formconv.h"
 #include "dx8texman.h"
 #include "bound.h"
-#include "dx8webbrowser.h"
 #include "DbgHelpGuard.h"
 
 

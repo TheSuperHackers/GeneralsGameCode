@@ -48,7 +48,6 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ObjectCreationList.h"
 #include "GameLogic/Weapon.h"
-#include "GameClient/Drawable.h"
 
 //-------------------------------------------------------------------------------------------------
 InstantDeathBehaviorModuleData::InstantDeathBehaviorModuleData()

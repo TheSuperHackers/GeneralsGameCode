@@ -73,7 +73,6 @@
 #include "GameClient/SelectionXlat.h"
 #include "GameClient/Shadow.h"
 #include "GameClient/GlobalLanguage.h"
-#include "GameClient/Display.h"
 
 #include "GameLogic/AIGuard.h"
 #include "GameLogic/Weapon.h"

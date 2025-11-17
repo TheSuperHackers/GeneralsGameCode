@@ -35,7 +35,6 @@
 #include "Common/STLTypedefs.h"
 #include "Common/ObjectStatusTypes.h"
 #include "GameNetwork/NetworkDefs.h"
-#include "Common/STLTypedefs.h"
 #include "GameLogic/Module/UpdateModule.h"	// needed for DIRECT_UPDATEMODULE_ACCESS
 
 /*
