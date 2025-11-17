@@ -1417,7 +1417,11 @@ void WorkerAIUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void WorkerAIUpdate::xfer( Xfer *xfer )
 {
-  XferVersion currentVersion = 1;
+#if RETAIL_COMPATIBLE_XFER_SAVE
+	XferVersion currentVersion = 1;
+#else
+	XferVersion currentVersion = 2;
+#endif
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
 
@@ -1440,6 +1444,12 @@ void WorkerAIUpdate::xfer( Xfer *xfer )
 	}
 	xfer->xferSnapshot(m_dozerMachine);
 	xfer->xferUser(&m_currentTask, sizeof(m_currentTask));
+
+	if (currentVersion >= 2)
+	{
+		xfer->xferUser(&m_previousTask, sizeof(m_previousTask));
+		xfer->xferUser(&m_previousTaskInfo, sizeof(m_previousTaskInfo));
+	}
 
 	Int dockPoints = DOZER_NUM_DOCK_POINTS;
 	xfer->xferInt(&dockPoints);
