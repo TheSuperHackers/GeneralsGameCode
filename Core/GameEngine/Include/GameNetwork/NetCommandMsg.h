@@ -39,16 +39,16 @@ class NetCommandMsg : public MemoryPoolObject
 public:
 	NetCommandMsg();
 	//virtual ~NetCommandMsg();
-	UnsignedInt GetTimestamp() { return m_timestamp; }
-	void SetTimestamp(UnsignedInt timestamp) { m_timestamp = timestamp; }
-	void setExecutionFrame(UnsignedInt frame) { m_executionFrame = frame; }
-	void setPlayerID(UnsignedInt playerID) { m_playerID = playerID; }
-	void setID(UnsignedShort id) { m_id = id; }
-	UnsignedInt getExecutionFrame() { return m_executionFrame; }
-	UnsignedInt getPlayerID() { return m_playerID; }
-	UnsignedShort getID() { return m_id; }
-	void setNetCommandType(NetCommandType type) { m_commandType = type; }
-	NetCommandType getNetCommandType() { return m_commandType; }
+	inline UnsignedInt GetTimestamp() { return m_timestamp; }
+	inline void SetTimestamp(UnsignedInt timestamp) { m_timestamp = timestamp; }
+	inline void setExecutionFrame(UnsignedInt frame) { m_executionFrame = frame; }
+	inline void setPlayerID(UnsignedInt playerID) { m_playerID = playerID; }
+	inline void setID(UnsignedShort id) { m_id = id; }
+	inline UnsignedInt getExecutionFrame() const { return m_executionFrame; }
+	inline UnsignedInt getPlayerID() const { return m_playerID; }
+	inline UnsignedShort getID() const { return m_id; }
+	inline void setNetCommandType(NetCommandType type) { m_commandType = type; }
+	inline NetCommandType getNetCommandType() { return m_commandType; }
 	virtual Int getSortNumber();
 	virtual size_t getPackedByteCount() const = 0;
 	void attach();
@@ -77,7 +77,7 @@ public:
 	NetGameCommandMsg(GameMessage *msg);
 	//virtual ~NetGameCommandMsg();
 
-	GameMessage *constructGameMessage();
+	GameMessage *constructGameMessage() const;
 	void addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg);
 	void setGameMessageType(GameMessage::Type type);
 
@@ -396,6 +396,7 @@ public:
 	void setPercentage( UnsignedByte percent );
 
 	virtual size_t getPackedByteCount() const;
+
 protected:
 	UnsignedByte m_percent;
 };

@@ -163,7 +163,7 @@ static Int indexFromMask(UnsignedInt mask)
 /**
  * Construct a new GameMessage object from the data in this object.
  */
-GameMessage *NetGameCommandMsg::constructGameMessage()
+GameMessage *NetGameCommandMsg::constructGameMessage() const
 {
 	GameMessage *retval = newInstance(GameMessage)(m_type);
 
@@ -224,14 +224,11 @@ void NetGameCommandMsg::setGameMessageType(GameMessage::Type type) {
 	m_type = type;
 }
 
-/**
- * Get the byte count for this game command message.
- */
 size_t NetGameCommandMsg::getPackedByteCount() const {
 	UnsignedShort msglen = sizeof(NetPacketGameCommand);
 
 	// Variable data portion
-	GameMessage *gmsg = const_cast<NetGameCommandMsg*>(this)->constructGameMessage();
+	GameMessage *gmsg = constructGameMessage();
 	GameMessageParser *parser = newInstance(GameMessageParser)(gmsg);
 
 	msglen += sizeof(GameMessage::Type);
@@ -871,23 +868,22 @@ void NetChatCommandMsg::setPlayerMask( Int playerMask )
 	m_playerMask = playerMask;
 }
 
-/**
- * Get the byte count for this chat message.
- */
 size_t NetChatCommandMsg::getPackedByteCount() const
 {
-	return sizeof(NetPacketChatCommand) + sizeof(UnsignedByte) /* text length byte */ + m_text.getByteCount() + sizeof(m_playerMask);
+	return sizeof(NetPacketChatCommand)
+		+ sizeof(UnsignedByte) // text length byte
+		+ m_text.getByteCount()
+		+ sizeof(m_playerMask);
 }
 
 //-------------------------
 // NetDisconnectChatCommandMsg
 //-------------------------
-/**
- * Get the byte count for this disconnect chat message.
- */
 size_t NetDisconnectChatCommandMsg::getPackedByteCount() const
 {
-	return sizeof(NetPacketDisconnectChatCommand) + sizeof(UnsignedByte) /* text length byte */ + m_text.getByteCount();
+	return sizeof(NetPacketDisconnectChatCommand)
+		+ sizeof(UnsignedByte) // text length byte
+		+ m_text.getByteCount();
 }
 
 //-------------------------
@@ -1083,13 +1079,11 @@ void NetFileCommandMsg::setFileData(UnsignedByte *data, UnsignedInt dataLength)
 	memcpy(m_data, data, dataLength);
 }
 
-/**
- * Get the byte count for this file command message.
- */
 size_t NetFileCommandMsg::getPackedByteCount() const
 {
-	return sizeof(NetPacketFileCommand) + m_portableFilename.getLength() + 1  // filename + null terminator
-		+ sizeof(UnsignedInt)  // file data length
+	return sizeof(NetPacketFileCommand)
+		+ m_portableFilename.getLength() + 1  // filename + null terminator
+		+ sizeof(m_dataLength)  // file data length
 		+ m_dataLength;  // the file data
 }
 
@@ -1132,9 +1126,6 @@ void NetFileAnnounceCommandMsg::setPlayerMask(UnsignedByte playerMask) {
 	m_playerMask = playerMask;
 }
 
-/**
- * Get the byte count for this file announce command message.
- */
 size_t NetFileAnnounceCommandMsg::getPackedByteCount() const
 {
 	return sizeof(NetPacketFileAnnounceCommand)
