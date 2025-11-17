@@ -480,7 +480,11 @@ Bool ActionManager::canResumeConstructionOf( const Object *obj,
 	// in the future)
 	//
 	Object *builder = TheGameLogic->findObjectByID( objectBeingConstructed->getBuilderID() );
+#if RETAIL_COMPATIBLE_CRC
 	if( builder )
+#else
+	if (builder && !builder->isEffectivelyDead())
+#endif
 	{
 		AIUpdateInterface *ai = builder->getAI();
 		DEBUG_ASSERTCRASH( ai, ("Builder object does not have an AI interface!") );
