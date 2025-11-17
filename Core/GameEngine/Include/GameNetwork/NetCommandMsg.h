@@ -44,9 +44,9 @@ public:
 	inline void setExecutionFrame(UnsignedInt frame) { m_executionFrame = frame; }
 	inline void setPlayerID(UnsignedInt playerID) { m_playerID = playerID; }
 	inline void setID(UnsignedShort id) { m_id = id; }
-	inline UnsignedInt getExecutionFrame() { return m_executionFrame; }
-	inline UnsignedInt getPlayerID() { return m_playerID; }
-	inline UnsignedShort getID() { return m_id; }
+	inline UnsignedInt getExecutionFrame() const { return m_executionFrame; }
+	inline UnsignedInt getPlayerID() const { return m_playerID; }
+	inline UnsignedShort getID() const { return m_id; }
 	inline void setNetCommandType(NetCommandType type) { m_commandType = type; }
 	inline NetCommandType getNetCommandType() { return m_commandType; }
 	virtual Int getSortNumber();
@@ -77,7 +77,7 @@ public:
 	NetGameCommandMsg(GameMessage *msg);
 	//virtual ~NetGameCommandMsg();
 
-	GameMessage *constructGameMessage();
+	GameMessage *constructGameMessage() const;
 	void addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg);
 	void setGameMessageType(GameMessage::Type type);
 
@@ -396,6 +396,7 @@ public:
 	void setPercentage( UnsignedByte percent );
 
 	virtual size_t getPackedByteCount() const;
+
 protected:
 	UnsignedByte m_percent;
 };

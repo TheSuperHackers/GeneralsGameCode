@@ -1,6 +1,6 @@
 /*
 **	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 TheSuperHackers.
+**	Copyright 2025 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// TheSuperHackers @refactor BobTista 10/07/2025
+// TheSuperHackers @refactor BobTista 07/10/2025
 // Packed struct definitions for network packet serialization/deserialization.
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,37 +52,37 @@ namespace NetPacketFieldTypes {
 
 // Command Type field: 'T' + UnsignedByte
 struct NetPacketCommandTypeField {
-	char header;              // 'T'
+	char header;
 	UnsignedByte commandType;
 };
 
 // Relay field: 'R' + UnsignedByte
 struct NetPacketRelayField {
-	char header;              // 'R'
+	char header;
 	UnsignedByte relay;
 };
 
 // Player ID field: 'P' + UnsignedByte
 struct NetPacketPlayerIdField {
-	char header;              // 'P'
+	char header;
 	UnsignedByte playerId;
 };
 
 // Frame field: 'F' + UnsignedInt
 struct NetPacketFrameField {
-	char header;              // 'F'
+	char header;
 	UnsignedInt frame;
 };
 
 // Command ID field: 'C' + UnsignedShort
 struct NetPacketCommandIdField {
-	char header;              // 'C'
+	char header;
 	UnsignedShort commandId;
 };
 
 // Data field header: 'D' (followed by variable-length data)
 struct NetPacketDataFieldHeader {
-	char header;              // 'D'
+	char header;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
