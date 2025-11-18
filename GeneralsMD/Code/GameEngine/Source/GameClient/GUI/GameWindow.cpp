@@ -1544,8 +1544,6 @@ WindowMsgHandledType GameWinBlockInput( GameWindow *window, UnsignedInt msg,
 	if (msg == GWM_CHAR || msg == GWM_MOUSE_POS)
 		return MSG_IGNORED;
 
-	//Added By Sadullah Nader
-	//Fix for drag selecting in the control bar
 	if (msg == GWM_LEFT_UP )//|| msg == GWM_LEFT_DRAG)
 	{
 		//stop drag selecting

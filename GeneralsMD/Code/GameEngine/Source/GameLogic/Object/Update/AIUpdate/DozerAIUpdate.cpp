@@ -384,8 +384,6 @@ public:
 	DozerActionDoActionState( StateMachine *machine, DozerTask task ) : State( machine, "DozerActionDoActionState" )
 	{
 		m_task = task;
-		//Added By Sadullah Nader
-		// Initializations missing and needed
 		m_enterFrame = 0;
 	}
 	virtual StateReturnType update( void );

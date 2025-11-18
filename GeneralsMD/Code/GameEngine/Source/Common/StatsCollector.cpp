@@ -76,13 +76,10 @@ static char statsDir[255] = "Stats\\";
 //=============================================================================
 StatsCollector::StatsCollector( void )
 {
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_isScrolling = FALSE;
 	m_scrollBeginTime = 0;
 	m_scrollTime = 0;
 
-	//
 	m_timeCount = 0;
 	m_buildCommands = 0;
 	m_moveCommands = 0;

@@ -188,13 +188,10 @@ ControlBarSchemeImage::~ControlBarSchemeImage( void )
 
 ControlBarSchemeAnimation::ControlBarSchemeAnimation( void )
 {
-	// Added by Sadullah Nader
-	// Initializations missing and needed
 
 	m_animDuration = 0;
 	m_finalPos.x = m_finalPos.y = 0;
 
-	// End Add
 	m_name.clear();
 	m_animType = 0;
 	m_animImage = NULL;
@@ -302,12 +299,9 @@ ControlBarScheme::ControlBarScheme(void)
 	m_optionsButtonPushed = NULL;
 	m_optionsButtonDisabled = NULL;
 
-	// Added By Sadullah Nader
-	// Initializations needed
 
 	m_commandBarBorderColor = 0;
 
-	//
 	m_idleWorkerButtonEnable = NULL;
 	m_idleWorkerButtonHightlited = NULL;
 	m_idleWorkerButtonPushed = NULL;

@@ -660,12 +660,9 @@ Locomotor::Locomotor(const LocomotorTemplate* tmpl)
 //-------------------------------------------------------------------------------------------------
 Locomotor::Locomotor(const Locomotor& that)
 {
-	//Added By Sadullah Nader
-	//Initializations
 	m_angleOffset = 0.0f;
 	m_maintainPos.zero();
 
-	//
 
 	m_template = that.m_template;
 	m_brakingFactor = that.m_brakingFactor;

@@ -61,13 +61,10 @@ public:
 
 	ObjectDefectionHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData )
 	{
-		//Added By Sadullah Nader
-		//Initializations inserted
 		m_defectionDetectionEnd = 0;
 		m_defectionDetectionFlashPhase = FALSE;
 		m_defectionDetectionStart = 0;
 		m_doDefectorFX = FALSE;
-		//
 	}
 	// virtual destructor prototype provided by memory pool object
 

@@ -155,10 +155,6 @@ BattlePlanUpdate::BattlePlanUpdate( Thing *thing, const ModuleData* moduleData )
 
 	m_visionObjectID = INVALID_ID;
 
-	//------------------------//
-	// Added by Sadullah Nader//
-	//------------------------//
-
 	m_specialPowerModule   = NULL;
 	//
 }

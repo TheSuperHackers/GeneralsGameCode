@@ -917,8 +917,6 @@ m_automaticallyBuild(true),
 m_priorityBuild(false),
 m_buildingName(AsciiString::TheEmptyString)
 {
-	// Added by Sadullah Nader
-	// these initialized values are necessary!!!
 	m_location.zero();
 	m_rallyPointOffset.x = 0.0f;
 	m_rallyPointOffset.y = 0.0f;

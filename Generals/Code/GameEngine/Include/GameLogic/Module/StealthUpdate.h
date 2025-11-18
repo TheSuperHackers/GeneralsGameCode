@@ -85,11 +85,8 @@ public:
 
 	StealthUpdateModuleData()
 	{
-		//Added By Sadullah Nader
-		//Initialization(s) inserted
 		m_disguiseFX = NULL;
 		m_disguiseRevealFX = NULL;
-		//
 		m_stealthDelay		= UINT_MAX;
 		m_stealthLevel		= 0;
 		m_stealthSpeed		= 0.0f;

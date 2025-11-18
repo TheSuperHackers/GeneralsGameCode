@@ -423,15 +423,12 @@ Bool Mouse::isClick(const ICoord2D *anchor, const ICoord2D *dest, UnsignedInt pr
 //-------------------------------------------------------------------------------------------------
 CursorInfo::CursorInfo( void )
 {
-	// Added Sadullah Nader
-	// Initializations missing and needed
 
 	cursorName.clear();
 	cursorText.clear();
 	cursorTextColor.red = cursorTextColor.green = cursorTextColor.blue = 0;
 	cursorTextDropColor.red = cursorTextDropColor.blue = cursorTextDropColor.green = 0;
 
-	//
 	textureName.clear();
 	imageName.clear();
 	W3DModelName.clear();
@@ -458,13 +455,9 @@ Mouse::Mouse( void )
 	m_numAxes = 0;
 	m_forceFeedback = FALSE;
 
-	//Added By Sadullah Nader
-	//Initializations missing and needed
 	m_dragTolerance = 0;
 	m_dragTolerance3D = 0;
 	m_dragToleranceMS = 0;
-	//
-
 	//m_tooltipString.clear();	// redundant
 	m_displayTooltip = FALSE;
 	m_tooltipDisplayString = NULL;

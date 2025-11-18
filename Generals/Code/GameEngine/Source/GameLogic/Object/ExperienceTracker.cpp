@@ -43,7 +43,7 @@ ExperienceTracker::ExperienceTracker(Object *parent) :
 	m_currentLevel(LEVEL_REGULAR),
 	m_experienceSink(INVALID_ID),
 	m_experienceScalar( 1.0f ),
-	m_currentExperience(0) // Added By Sadullah Nader
+	m_currentExperience(0)
 {
 }
 
