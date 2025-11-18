@@ -89,7 +89,6 @@ FirewallHelperClass::FirewallHelperClass(void)
 	m_packetID = 0;
 	m_timeoutLength = 0;
 	m_timeoutStart = 0;
-
 	m_behavior = FIREWALL_TYPE_UNKNOWN;
 	m_lastBehavior = FIREWALL_TYPE_UNKNOWN;
 	m_sourcePortAllocationDelta = 0;

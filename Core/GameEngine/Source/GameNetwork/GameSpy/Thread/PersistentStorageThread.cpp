@@ -1107,7 +1107,6 @@ void PSPlayerStats::reset( void )
 	desyncsInARow = 0;
 	maxDesyncsInARow = 0;
 	lastLadderPort = 0;
-
 	maxQMwinsInARow = 0;
 	QMwinsInARow = 0;
 }

@@ -180,7 +180,7 @@ public:
 	PeerThreadClass() : ThreadClass()
 	{
 		m_roomJoined = m_allowObservers = m_hasPassword = FALSE;
-    m_useStats = TRUE;
+    	m_useStats = TRUE;
 		m_exeCRC = m_iniCRC = 0;
 		m_gameVersion = 0;
 		m_ladderPort = 0;
@@ -198,13 +198,11 @@ public:
 		for (Int i=0; i<MAX_SLOTS; ++i)
 		{
 			m_playerNames[i] = "";
-
 			m_playerColors[i] = 0;
 			m_playerFactions[i] = 0;
 			m_playerLosses[i] = 0;
 			m_playerProfileID[i] = 0;
 			m_playerWins[i] = 0;
-
 		}
 	}
 

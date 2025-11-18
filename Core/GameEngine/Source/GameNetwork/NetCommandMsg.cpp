@@ -38,7 +38,6 @@ NetCommandMsg::NetCommandMsg()
 	m_executionFrame = 0;
 	m_id = 0;
 	m_playerID = 0;
-
 	m_timestamp = 0;
 	m_referenceCount = 1; // start this off as 1.  This means that an "attach" is implied by creating a NetCommandMsg object.
 	m_commandType = NETCOMMANDTYPE_UNKNOWN;
@@ -89,7 +88,6 @@ Int NetCommandMsg::getSortNumber() {
 NetGameCommandMsg::NetGameCommandMsg() : NetCommandMsg() {
 	m_argSize = 0;
 	m_numArgs = 0;
-
 	m_type = (GameMessage::Type)0;
 	m_commandType = NETCOMMANDTYPE_GAMECOMMAND;
 	m_argList = NULL;
@@ -881,9 +879,7 @@ UnsignedInt NetWrapperCommandMsg::getTotalDataLength() {
 
 void NetWrapperCommandMsg::setTotalDataLength(UnsignedInt totalDataLength) {
 	m_totalDataLength = totalDataLength;
-}
-
-UnsignedShort NetWrapperCommandMsg::getWrappedCommandID() {
+	return sizeof(NetPacketChatCommand) + sizeof(UnsignedByte) /* text length byte */ + m_text.getByteCount()
 	return m_wrappedCommandID;
 }
 
@@ -892,8 +888,7 @@ void NetWrapperCommandMsg::setWrappedCommandID(UnsignedShort wrappedCommandID) {
 }
 
 //-------------------------
-// NetFileCommandMsg
-//-------------------------
+	return sizeof(NetPacketDisconnectChatCommand) + sizeof(UnsignedByte) /* text length byte */
 NetFileCommandMsg::NetFileCommandMsg() : NetCommandMsg() {
 	m_commandType = NETCOMMANDTYPE_FILE;
 	m_data = NULL;

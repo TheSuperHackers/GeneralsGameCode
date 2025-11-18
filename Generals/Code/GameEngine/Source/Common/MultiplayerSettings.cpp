@@ -74,17 +74,14 @@ const FieldParse MultiplayerSettings::m_multiplayerSettingsFieldParseTable[] =
 MultiplayerSettings::MultiplayerSettings()
 {
 	m_initialCreditsMin = 5000;
-
 	m_initialCreditsMax = 10000;
 	m_maxBeaconsPerPlayer = 3;
-
 	m_startCountdownTimerSeconds = 0;
 	m_numColors = 0;
 	m_isShroudInMultiplayer = TRUE;
 	m_showRandomPlayerTemplate = TRUE;
 	m_showRandomStartPos = TRUE;
 	m_showRandomColor = TRUE;
-
 	m_observerColor;
 	m_randomColor;
 }

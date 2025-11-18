@@ -162,7 +162,6 @@ NAT::NAT()
 	m_transport = NULL;
 	m_slotList = NULL;
 	m_roundTimeout = 0;
-
 	m_maxNumRetriesAllowed = 10;
 	m_packetID = 0x7f00;
 }

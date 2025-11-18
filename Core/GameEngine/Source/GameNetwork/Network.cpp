@@ -270,7 +270,6 @@ Network::Network()
 	m_frameDataReady = FALSE;
 	m_isStalling = FALSE;
 	m_sawCRCMismatch = FALSE;
-
 	m_conMgr = NULL;
 	m_messageWindow = NULL;
 

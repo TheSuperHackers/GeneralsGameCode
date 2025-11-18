@@ -41,7 +41,6 @@ BezFwdIterator::BezFwdIterator(Int stepsDesired, const BezierSegment *bezSeg)
 	mDDDq.zero();
 	mDDq.zero();
 	mDq.zero();
-
 	mStepsDesired = stepsDesired;
 	mBezSeg = (*bezSeg);
 }

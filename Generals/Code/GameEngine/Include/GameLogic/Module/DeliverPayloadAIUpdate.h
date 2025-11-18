@@ -202,7 +202,6 @@ public:
 		m_dropOffset.zero();
 		m_dropVariance.zero();
 		m_deliveryDecalRadius = 0;
-
 		m_putInContainerName.clear();
 	}
 
@@ -290,11 +289,9 @@ public:
 		m_visiblePayloadWeaponTemplate = NULL;
 		m_selfDestructObject = FALSE;
 		m_deliveryDecalRadius = 0;
-
 		m_visibleDropBoneName.clear();
 		m_visiblePayloadTemplateName.clear();
 		m_visibleSubObjectName.clear();
-
 	}
 
 	static const FieldParse* getFieldParse();

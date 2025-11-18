@@ -165,7 +165,6 @@ AudioManager::AudioManager() :
 	m_systemSoundVolume   = 0.0f;
 	m_systemSpeechVolume  = 0.0f;
 	m_volumeHasChanged			= FALSE;
-
 	m_listenerOrientation.set(0.0, 1.0, 0.0);
 	theAudioHandlePool = AHSV_FirstHandle;
 	m_audioSettings = NEW AudioSettings;
