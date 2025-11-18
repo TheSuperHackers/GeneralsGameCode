@@ -743,6 +743,15 @@ const Object* Object::getEnclosingContainedBy() const
 	return NULL;
 }
 
+Bool Object::isSelfOrEnclosingContainedByVisible() const
+{
+	if (getDrawable() && getDrawable()->isVisible())
+		return TRUE;
+
+	const Object* container = getEnclosingContainedBy();
+	return container && container->getDrawable() && container->getDrawable()->isVisible();
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Run from GameLogic::destroyObject */
 //-------------------------------------------------------------------------------------------------

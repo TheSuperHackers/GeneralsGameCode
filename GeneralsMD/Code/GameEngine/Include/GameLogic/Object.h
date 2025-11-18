@@ -443,6 +443,7 @@ public:
 	Int getTransportSlotCount() const;
 	void friend_setContainedBy( Object *containedBy ) { m_containedBy = containedBy; }
 	const Object* getEnclosingContainedBy() const; ///< Find the first enclosing container in the containment chain.
+	Bool isSelfOrEnclosingContainedByVisible() const; ///< Is this object or its top-level container visible?
 
 	// Special Powers -------------------------------------------------------------------------------
 	SpecialPowerModuleInterface *getSpecialPowerModule( const SpecialPowerTemplate *specialPowerTemplate ) const;
