@@ -314,7 +314,6 @@ void GameInfo::reset( void )
   m_superweaponRestriction = 0;
   m_startingCash = TheGlobalData->m_defaultStartingCash;
 
-
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
 		if (m_slot[i])

@@ -829,7 +829,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 				buttonFrame->winEnable( TRUE );
 				updateMenuActions();
 
-				// close save menuu
+				// close save menu
 				closeSaveMenu( window );
 
 				// get save filename
@@ -886,9 +886,6 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 				//GameWindow *buttonFrame  = TheWindowManager->winGetWindowFromId( parent, NAMEKEY( "PopupSaveLoad.wnd:MenuButtonFrame" ) );
 				buttonFrame->winEnable( TRUE );
 				updateMenuActions();
-
-
-
 
 				// do the load game
 				if( controlID == buttonLoadConfirm )

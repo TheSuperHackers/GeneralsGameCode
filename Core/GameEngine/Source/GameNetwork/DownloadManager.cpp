@@ -37,11 +37,7 @@ DownloadManager::DownloadManager()
 {
 	m_download = NEW CDownload(this);
 	m_wasError = m_sawEnd = false;
-
-
 	m_queuedDownloads.clear();
-
-
 	m_statusString = TheGameText->fetch("FTP:StatusIdle");
 
 	// ----- Initialize Winsock -----

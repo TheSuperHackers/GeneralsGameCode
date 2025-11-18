@@ -156,7 +156,6 @@ BattlePlanUpdate::BattlePlanUpdate( Thing *thing, const ModuleData* moduleData )
 	m_visionObjectID = INVALID_ID;
 
 	m_specialPowerModule   = NULL;
-	//
 }
 
 //-------------------------------------------------------------------------------------------------

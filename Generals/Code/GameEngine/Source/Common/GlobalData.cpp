@@ -818,7 +818,6 @@ GlobalData::GlobalData()
 	m_maxParticleCount = 0;
 	m_maxFieldParticleCount = 30;
 
-
 	m_debugAI = AI_DEBUG_NONE;
 	m_debugSupplyCenterPlacement = FALSE;
 	m_debugAIObstacles = FALSE;

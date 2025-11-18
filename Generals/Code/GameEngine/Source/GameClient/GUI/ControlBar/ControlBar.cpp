@@ -570,7 +570,6 @@ CommandButton::CommandButton( void )
 
 	m_flashCount = 0;
 
-
 	m_conflictingLabel.clear();
 	m_cursorName.clear();
 	m_descriptionLabel.clear();
@@ -579,7 +578,6 @@ CommandButton::CommandButton( void )
 	m_options = 0;
 	m_purchasedLabel.clear();
 	m_textLabel.clear();
-
 
 	m_window = NULL;
 	m_commandButtonBorder = COMMAND_BUTTON_BORDER_NONE;
