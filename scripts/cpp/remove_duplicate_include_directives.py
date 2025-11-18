@@ -33,7 +33,7 @@ def remove_duplicate_includes_from_file(filepath):
 def process_directory(root_dir):
     for subdir, _, files in os.walk(root_dir):
         for file in files:
-            if file.endswith(('.cpp', '.h', '.hpp', '.c')):
+            if file.endswith(('.cpp', '.h', '.hpp', '.c', '.inl')):
                 filepath = os.path.join(subdir, file)
                 remove_duplicate_includes_from_file(filepath)
 
