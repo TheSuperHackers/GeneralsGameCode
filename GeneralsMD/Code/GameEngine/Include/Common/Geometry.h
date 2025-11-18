@@ -113,7 +113,6 @@ public:
 	{
 		m_boundingCircleRadius = 0.0f;
 		m_boundingSphereRadius = 0.0f;
-
 		set(type, isSmall, height, majorRadius, minorRadius);
 	}
 

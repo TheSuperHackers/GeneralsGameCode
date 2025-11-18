@@ -879,7 +879,9 @@ UnsignedInt NetWrapperCommandMsg::getTotalDataLength() {
 
 void NetWrapperCommandMsg::setTotalDataLength(UnsignedInt totalDataLength) {
 	m_totalDataLength = totalDataLength;
-	return sizeof(NetPacketChatCommand) + sizeof(UnsignedByte) /* text length byte */ + m_text.getByteCount()
+}
+
+UnsignedShort NetWrapperCommandMsg::getWrappedCommandID() {
 	return m_wrappedCommandID;
 }
 
@@ -888,7 +890,8 @@ void NetWrapperCommandMsg::setWrappedCommandID(UnsignedShort wrappedCommandID) {
 }
 
 //-------------------------
-	return sizeof(NetPacketDisconnectChatCommand) + sizeof(UnsignedByte) /* text length byte */
+// NetFileCommandMsg
+//-------------------------
 NetFileCommandMsg::NetFileCommandMsg() : NetCommandMsg() {
 	m_commandType = NETCOMMANDTYPE_FILE;
 	m_data = NULL;

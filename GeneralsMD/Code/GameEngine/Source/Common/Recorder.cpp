@@ -372,7 +372,6 @@ RecorderClass::RecorderClass()
 	m_archiveReplays = FALSE;
 	m_nextFrame = 0;
 	m_wasDesync = FALSE;
-
 	init(); // just for the heck of it.
 }
 

@@ -189,10 +189,8 @@ ControlBarSchemeImage::~ControlBarSchemeImage( void )
 
 ControlBarSchemeAnimation::ControlBarSchemeAnimation( void )
 {
-
 	m_animDuration = 0;
 	m_finalPos.x = m_finalPos.y = 0;
-
 	m_name.clear();
 	m_animType = 0;
 	m_animImage = NULL;
@@ -301,7 +299,6 @@ ControlBarScheme::ControlBarScheme(void)
 	m_optionsButtonPushed = NULL;
 	m_optionsButtonDisabled = NULL;
 
-
 	m_commandBarBorderColor = 0;
 
 	m_idleWorkerButtonEnable = NULL;
@@ -348,7 +345,6 @@ ControlBarScheme::ControlBarScheme(void)
 	m_minMaxButtonEnable = NULL;
 	m_minMaxButtonHightlited = NULL;
 	m_minMaxButtonPushed = NULL;
-
 	m_minMaxUL.x = 0;
 	m_minMaxLR.x = 0;
 
