@@ -2833,7 +2833,7 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 	Bool doAnimation = provideFeedback
 		&& newLevel > oldLevel
 		&& !isKindOf(KINDOF_IGNORED_IN_GUI)
-		&& getDrawable()->isVisible();
+		&& isSelfOrEnclosingContainedByVisible();
 
 	if( doAnimation && TheGameLogic->getDrawIconUI() )
 	{

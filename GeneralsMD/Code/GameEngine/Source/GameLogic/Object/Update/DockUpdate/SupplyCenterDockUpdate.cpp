@@ -34,7 +34,6 @@
 #include "GameLogic/Module/SupplyCenterDockUpdate.h"
 #include "GameLogic/Module/SupplyTruckAIUpdate.h"
 #include "GameClient/Color.h"
-#include "GameClient/Drawable.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/GameText.h"
 
@@ -129,7 +128,7 @@ Bool SupplyCenterDockUpdate::action( Object* docker, Object *drone )
 		}
 	}
 
-	if (value > 0 && getObject()->getDrawable()->isVisible())
+	if (value > 0 && getObject()->isSelfOrEnclosingContainedByVisible())
 	{
 		// OY LOOK!  I AM USING LOCAL PLAYER.  Do not put anything other than TheInGameUI->addFloatingText in the block this controls!!!
 		// Setup info for adding a floating text
