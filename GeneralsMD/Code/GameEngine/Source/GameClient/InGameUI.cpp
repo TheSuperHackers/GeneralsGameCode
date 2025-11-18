@@ -5736,10 +5736,12 @@ void InGameUI::removeIdleWorker( Object *obj, Int playerNumber )
 
 void InGameUI::selectNextIdleWorker( void )
 {
-	Int index = rts::getObservedOrLocalPlayer()->getPlayerIndex();
+	Player* player = rts::getObservedOrLocalPlayer();
+	Int index = player->getPlayerIndex();
+
 	if(m_idleWorkers[index].empty())
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("InGameUI::selectNextIdleWorker We're trying to select a worker when our list is empty for player %ls", ThePlayerList->getNthPlayer(index)->getPlayerDisplayName().str()));
+		DEBUG_ASSERTCRASH(FALSE, ("InGameUI::selectNextIdleWorker We're trying to select a worker when our list is empty for player %ls", player->getPlayerDisplayName().str()));
 		return;
 	}
 	Object *selectThisObject = NULL;
