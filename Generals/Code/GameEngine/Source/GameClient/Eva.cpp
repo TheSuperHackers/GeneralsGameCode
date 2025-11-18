@@ -430,7 +430,7 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 	}
 
 	// We've got a winner!
-	AsciiString side = TheControlBar->getCurrentlyViewedPlayerSide();
+	AsciiString side = rts::getObservedOrLocalPlayer()->getSide();
 	Int numSides = storedIt->m_evaInfo->m_evaSideSounds.size();
 
 	for (Int i = 0; i < numSides; ++i) {

@@ -504,7 +504,7 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 	}
 
 	// We've got a winner!
-	AsciiString side = TheControlBar->getCurrentlyViewedPlayerSide();
+	AsciiString side = rts::getObservedOrLocalPlayer()->getSide();
 	Int numSides = storedIt->m_evaInfo->m_evaSideSounds.size();
 
   // clear it. If we can't find the side we want, don't play anything
