@@ -2596,7 +2596,15 @@ StateReturnType AIAttackApproachTargetState::updateInternal()
 	{
 		if( victim->testStatus( OBJECT_STATUS_STEALTHED ) && !victim->testStatus( OBJECT_STATUS_DETECTED ) )
 		{
+#if RETAIL_COMPATIBLE_CRC
 			return STATE_FAILURE;	// If obj is stealthed, can no longer approach.
+#else
+			Bool isTargetingMine = weapon && weapon->getDamageType() == DAMAGE_DISARM &&
+				(victim->isKindOf(KINDOF_MINE));
+
+			if (!isTargetingMine)
+				return STATE_FAILURE;	// If obj is stealthed, can no longer approach - unless we're targeting a mine!
+#endif
 		}
 		ai->setCurrentVictim(victim);
 		// Attacking an object.
