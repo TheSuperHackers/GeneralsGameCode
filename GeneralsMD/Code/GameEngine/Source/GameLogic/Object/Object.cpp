@@ -731,9 +731,9 @@ Int Object::getTransportSlotCount() const
 	return count;
 }
 
-Object* Object::getEnclosingContainedBy()
+const Object* Object::getEnclosingContainedBy() const
 {
-	for (Object* child = this, *container = getContainedBy(); container; child = container, container = container->getContainedBy())
+	for (const Object* child = this, *container = getContainedBy(); container; child = container, container = container->getContainedBy())
 	{
 		ContainModuleInterface* containModule = container->getContain();
 		if (containModule && containModule->isEnclosingContainerFor(child))
