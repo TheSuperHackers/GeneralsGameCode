@@ -4604,7 +4604,7 @@ void Object::onDie( DamageInfo *damageInfo )
 	if(m_team)
 		m_team->notifyTeamOfObjectDeath();
 
-	if (isLocallyViewed() && !selfInflicted) // wasLocallyControlled? :-)
+	if (isLocallyViewed() && !selfInflicted) // wasLocallyViewed? :-)
 	{
 		if (isKindOf(KINDOF_STRUCTURE) && isKindOf(KINDOF_MP_COUNT_FOR_VICTORY))
 		{

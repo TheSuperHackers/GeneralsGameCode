@@ -4101,7 +4101,7 @@ void Object::onDie( DamageInfo *damageInfo )
 	deathSound.setPlayerIndex( index );
 	TheAudio->addAudioEvent(&deathSound);
 
-	if (isLocallyViewed() && !selfInflicted) // wasLocallyControlled? :-)
+	if (isLocallyViewed() && !selfInflicted) // wasLocallyViewed? :-)
 	{
 		if (isKindOf(KINDOF_STRUCTURE) && isKindOf(KINDOF_MP_COUNT_FOR_VICTORY))
 		{
