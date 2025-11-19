@@ -215,6 +215,14 @@ Bool StdBIGFileSystem::loadBigFilesFromDirectory(AsciiString dir, AsciiString fi
 	Bool actuallyAdded = FALSE;
 	FilenameListIter it = filenameList.begin();
 	while (it != filenameList.end()) {
+		AsciiString filePath = (*it);
+		filePath.toLower();
+		// TheSuperHackers @fix bobtista 18/11/2025 Skip duplicate INIZH.big in Data\INI to prevent CRC mismatches on EA App/Origin installs
+		if (strstr(filePath.str(), "data\\ini\\inizh.big") != NULL || strstr(filePath.str(), "data/ini/inizh.big") != NULL) {
+			it++;
+			continue;
+		}
+
 		ArchiveFile *archiveFile = openArchiveFile((*it).str());
 
 		if (archiveFile != NULL) {
