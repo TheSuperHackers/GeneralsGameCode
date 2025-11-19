@@ -1390,7 +1390,11 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			// get the unit production interface
 			ProductionUpdateInterface *pu = producer->getProductionUpdateInterface();
 			if( pu == NULL )
+#if RETAIL_COMPATIBLE_CRC
 				return;
+#else
+				break;
+#endif
 
 			// cancel the production
 			pu->cancelUnitCreate( productionID );
