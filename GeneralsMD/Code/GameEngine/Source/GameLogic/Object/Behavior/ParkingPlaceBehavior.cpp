@@ -51,11 +51,7 @@
 ParkingPlaceBehavior::ParkingPlaceBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
 	m_gotInfo = false;
-
-
 	m_heliRallyPoint.zero();
-
-
 	m_heliRallyPointExists = FALSE;
 	m_nextHealFrame = FOREVER;
 	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);

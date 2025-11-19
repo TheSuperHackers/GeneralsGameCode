@@ -62,7 +62,8 @@ public:
 	SelectionTranslator();
 	~SelectionTranslator();
 	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
-
+	//added for fix to the drag selection when entering control bar
+	//changes the mode of drag selecting to it's opposite
 	void setDragSelecting(Bool dragSelect);
 	void setLeftMouseButton(Bool state);
 };

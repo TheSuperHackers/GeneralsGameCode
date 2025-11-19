@@ -180,7 +180,7 @@ public:
 	PeerThreadClass() : ThreadClass()
 	{
 		m_roomJoined = m_allowObservers = m_hasPassword = FALSE;
-    	m_useStats = TRUE;
+		m_useStats = TRUE;
 		m_exeCRC = m_iniCRC = 0;
 		m_gameVersion = 0;
 		m_ladderPort = 0;

@@ -119,8 +119,6 @@ DeliverPayloadAIUpdate::DeliverPayloadAIUpdate( Thing *thing, const ModuleData* 
 
 	m_freeToExit = FALSE;
 	m_acceptingCommands = TRUE;
-
-
 	m_diveState = DIVESTATE_PREDIVE;
 
 }

@@ -369,7 +369,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatusBits statu
 	m_expirationDate = 0;  // 0 == never expires
 
 	m_lastConstructDisplayed = -1.0f;
-
+	//Fix for the building percent
 	m_constructDisplayString = TheDisplayStringManager->newDisplayString();
 	m_constructDisplayString->setFont(TheFontLibrary->getFont(TheInGameUI->getDrawableCaptionFontName(),
 																TheGlobalLanguageData->adjustFontSize(TheInGameUI->getDrawableCaptionPointSize()),

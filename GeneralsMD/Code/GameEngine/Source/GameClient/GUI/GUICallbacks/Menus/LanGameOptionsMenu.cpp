@@ -719,6 +719,7 @@ void InitLanGameGadgets( void )
 	Int localSlotNum = TheLAN->GetMyGame()->getLocalSlotNum();
 	DEBUG_ASSERTCRASH(localSlotNum >= 0, ("Bad slot number!"));
 
+	//Tooltip function is being set for techBuildings, and supplyDocks
 	windowMap->winSetTooltipFunc(MapSelectorTooltip);
 
 	for (Int i = 0; i < MAX_SLOTS; i++)

@@ -52,10 +52,7 @@ CrateCollideModuleData::CrateCollideModuleData()
 	m_isHumanOnlyPickup = FALSE;
 	m_executeFX = NULL;
 	m_pickupScience = SCIENCE_INVALID;
-
-
 	m_executionAnimationTemplate = AsciiString::TheEmptyString;
-
 }
 
 //-------------------------------------------------------------------------------------------------

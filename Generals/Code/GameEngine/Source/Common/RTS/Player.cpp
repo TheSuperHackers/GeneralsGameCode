@@ -336,7 +336,6 @@ Player::Player( Int playerIndex )
 	{
 		m_squads[i] = NULL;
 	}
-	//
 	for (i = 0; i < MAX_PLAYER_COUNT; ++i)
 	{
 		m_attackedBy[i] = false;
