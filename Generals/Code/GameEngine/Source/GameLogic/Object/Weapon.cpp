@@ -2746,9 +2746,11 @@ static void makeAssistanceRequest( Object *requestOf, void *userData )
 	if( requestOf == requestData->m_requestingObject )
 		return;
 
+#if !RETAIL_COMPATIBLE_CRC
 	// TheSuperHackers @bugfix bobtista Prevent patriot from assisting when it is the target
 	if( requestOf == requestData->m_victimObject )
 		return;
+#endif
 
 	// Only request of our kind of people
 	if( !requestOf->getTemplate()->isEquivalentTo( requestData->m_requestingObject->getTemplate() ) )

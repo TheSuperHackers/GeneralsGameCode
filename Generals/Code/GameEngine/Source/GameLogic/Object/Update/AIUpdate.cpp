@@ -3286,8 +3286,10 @@ void AIUpdateInterface::privateAttackObject( Object *victim, Int maxShotsToFire,
 
 	if (!victim)
 	{
+#if !RETAIL_COMPATIBLE_CRC
 		// TheSuperHackers @bugfix bobtista Reset weapons lock to fix patriot turret extended range bug
 		getObject()->releaseWeaponLock(LOCKED_TEMPORARILY);
+#endif
 		// Hard to kill em if they're already dead.  jba
 		return;
 	}
@@ -3307,8 +3309,10 @@ void AIUpdateInterface::privateAttackObject( Object *victim, Int maxShotsToFire,
 void AIUpdateInterface::privateForceAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource )
 {
 	if (!victim) {
+#if !RETAIL_COMPATIBLE_CRC
 		// TheSuperHackers @bugfix bobtista Reset weapons lock to fix patriot turret extended range bug
 		getObject()->releaseWeaponLock(LOCKED_TEMPORARILY);
+#endif
 		return;
 	}
 
