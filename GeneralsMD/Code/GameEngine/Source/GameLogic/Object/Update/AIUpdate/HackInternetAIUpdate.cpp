@@ -543,7 +543,8 @@ StateReturnType HackInternetState::update()
 				//Grant the unit some experience for a successful hack.
 				xp->addExperiencePoints( ai->getXpPerCashUpdate() );
 
-				if (owner->isSelfOrEnclosingContainedByVisible())
+				Drawable* outerDrawable = owner->getOuterObject()->getDrawable();
+				if (outerDrawable && outerDrawable->isVisible())
 				{
 					// OY LOOK!  I AM USING LOCAL PLAYER.  Do not put anything other than TheInGameUI->addFloatingText in the block this controls!!!
 					//Display cash income floating over the hacker.

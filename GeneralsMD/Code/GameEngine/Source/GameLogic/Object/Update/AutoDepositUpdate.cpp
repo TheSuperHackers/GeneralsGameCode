@@ -63,6 +63,7 @@
 #include "GameLogic/Module/AutoDepositUpdate.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Object.h"
+#include "GameClient/Drawable.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/Color.h"
 #include "GameClient/GameText.h"
@@ -172,7 +173,8 @@ UpdateSleepTime AutoDepositUpdate::update( void )
 			getObject()->getControllingPlayer()->getScoreKeeper()->addMoneyEarned( modData->m_depositAmount);
 		}
 
-		if (moneyAmount > 0 && getObject()->isSelfOrEnclosingContainedByVisible())
+		Drawable* outerDrawable = getObject()->getOuterObject()->getDrawable();
+		if (moneyAmount > 0 && outerDrawable && outerDrawable->isVisible())
 		{
 
       const Object *owner = getObject();

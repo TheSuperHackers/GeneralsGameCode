@@ -743,13 +743,12 @@ const Object* Object::getEnclosingContainedBy() const
 	return NULL;
 }
 
-Bool Object::isSelfOrEnclosingContainedByVisible() const
+const Object* Object::getOuterObject() const
 {
-	if (getDrawable() && getDrawable()->isVisible())
-		return TRUE;
+	if (const Object* enclosing = getEnclosingContainedBy())
+		return enclosing;
 
-	const Object* container = getEnclosingContainedBy();
-	return container && container->getDrawable() && container->getDrawable()->isVisible();
+	return this;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3148,7 +3147,8 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 	Bool doAnimation = provideFeedback
 		&& newLevel > oldLevel
 		&& !isKindOf(KINDOF_IGNORED_IN_GUI)
-		&& isSelfOrEnclosingContainedByVisible();
+		&& getOuterObject()->getDrawable()
+		&& getOuterObject()->getDrawable()->isVisible();
 
 	if( doAnimation && TheGameLogic->getDrawIconUI() )
 	{
