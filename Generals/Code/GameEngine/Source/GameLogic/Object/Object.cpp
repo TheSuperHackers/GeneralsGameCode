@@ -2829,11 +2829,13 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 			break;
 	}
 
+	Drawable* outerDrawable = getOuterObject()->getDrawable();
+
 	Bool doAnimation = provideFeedback
 		&& newLevel > oldLevel
 		&& !isKindOf(KINDOF_IGNORED_IN_GUI)
-		&& getOuterObject()->getDrawable()
-		&& getOuterObject()->getDrawable()->isVisible();
+		&& outerDrawable
+		&& outerDrawable->isVisible();
 
 	if( doAnimation && TheGameLogic->getDrawIconUI() )
 	{
