@@ -258,7 +258,7 @@ GameTextManager::GameTextManager()
 #endif
 	m_mapStringInfo(NULL),
 	m_mapStringLUT(NULL),
-	m_failed(L"***FATAL*** String Manager failed to initilaize properly")
+	m_failed(L"***FATAL*** String Manager failed to initialize properly")
 {
 
 	for(Int i=0; i < MAX_UITEXT_LENGTH; i++)

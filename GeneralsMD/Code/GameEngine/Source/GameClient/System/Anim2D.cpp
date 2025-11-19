@@ -295,10 +295,8 @@ const Image* Anim2DTemplate::getFrame( UnsignedShort frameNumber ) const
 // ------------------------------------------------------------------------------------------------
 Anim2D::Anim2D( Anim2DTemplate *animTemplate, Anim2DCollection *collectionSystem )
 {
-
 	// sanity
 	DEBUG_ASSERTCRASH( animTemplate != NULL, ("Anim2D::Anim2D - NULL template") );
-
 
 	m_currentFrame = 0;
 
@@ -329,8 +327,6 @@ Anim2D::Anim2D( Anim2DTemplate *animTemplate, Anim2DCollection *collectionSystem
 	m_collectionSystem = collectionSystem;
 	if( m_collectionSystem )
 		m_collectionSystem->registerAnimation( this );
-
-
 }
 
 // ------------------------------------------------------------------------------------------------

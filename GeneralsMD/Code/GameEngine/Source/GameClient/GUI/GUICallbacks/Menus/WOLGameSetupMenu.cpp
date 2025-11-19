@@ -1172,7 +1172,6 @@ void InitWOLGameGadgets( void )
 		NameKeyType labelID = TheNameKeyGenerator->nameToKey(AsciiString("GameSpyGameOptionsMenu.wnd:StartingCashLabel"));
 		TheWindowManager->winGetWindowFromId(parentWOLGameSetup, labelID)->winEnable( FALSE );
 	}
-
 	windowMap->winSetTooltipFunc(MapSelectorTooltip);
 
 	GameWindow *staticTextTitle = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, staticTextTitleID );

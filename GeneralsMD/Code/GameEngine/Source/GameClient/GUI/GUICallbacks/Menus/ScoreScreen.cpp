@@ -944,7 +944,6 @@ void finishSinglePlayerInit( void )
 
 	}
 
-
 	TheInGameUI->freeMessageResources();
 
 	if (s_blankLayout)
