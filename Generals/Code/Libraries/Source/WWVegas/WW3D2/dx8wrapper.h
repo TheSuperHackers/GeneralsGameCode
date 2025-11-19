@@ -41,6 +41,7 @@
 #include "always.h"
 #include "dllist.h"
 #include "d3d8.h"
+#include "d3dx8.h"
 #include "matrix4.h"
 #include "statistics.h"
 #include "wwstring.h"
@@ -301,6 +302,7 @@ public:
 
 	static void _Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4x4& m);
 	static void _Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix3D& m);
+	static void _Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,const D3DXMATRIX& m);
 	static void _Get_DX8_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4x4& m);
 
 	static void Set_DX8_Light(int index,D3DLIGHT8* light);
@@ -691,6 +693,16 @@ WWINLINE void DX8Wrapper::Set_Pixel_Shader_Constant(int reg, const void* data, i
 }
 // shader system updates KJM ^
 
+// (bobtista) Helper function to convert Matrix4x4 to D3DXMATRIX
+WWINLINE D3DXMATRIX Build_D3DXMATRIX(const Matrix4x4& m)
+{
+	return D3DXMATRIX(
+		m[0][0], m[0][1], m[0][2], m[0][3],
+		m[1][0], m[1][1], m[1][2], m[1][3],
+		m[2][0], m[2][1], m[2][2], m[2][3],
+		m[3][0], m[3][1], m[3][2], m[3][3]
+	);
+}
 
 WWINLINE void DX8Wrapper::_Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4x4& m)
 {
@@ -702,7 +714,8 @@ WWINLINE void DX8Wrapper::_Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,con
 		DX8Transforms[transform]=m;
 		SNAPSHOT_SAY(("DX8 - SetTransform %d [%f,%f,%f,%f][%f,%f,%f,%f][%f,%f,%f,%f][%f,%f,%f,%f]",transform,m[0][0],m[0][1],m[0][2],m[0][3],m[1][0],m[1][1],m[1][2],m[1][3],m[2][0],m[2][1],m[2][2],m[2][3],m[3][0],m[3][1],m[3][2],m[3][3]));
 		DX8_RECORD_MATRIX_CHANGE();
-		DX8CALL(SetTransform(transform,(D3DMATRIX*)&m));
+		D3DXMATRIX d3dMat = Build_D3DXMATRIX(m);
+		DX8CALL(SetTransform(transform, &d3dMat));
 	}
 }
 
@@ -718,13 +731,26 @@ WWINLINE void DX8Wrapper::_Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,con
 		DX8Transforms[transform]=mtx;
 		SNAPSHOT_SAY(("DX8 - SetTransform %d [%f,%f,%f,%f][%f,%f,%f,%f][%f,%f,%f,%f]",transform,m[0][0],m[0][1],m[0][2],m[0][3],m[1][0],m[1][1],m[1][2],m[1][3],m[2][0],m[2][1],m[2][2],m[2][3]));
 		DX8_RECORD_MATRIX_CHANGE();
-		DX8CALL(SetTransform(transform,(D3DMATRIX*)&m));
+		D3DXMATRIX d3dMat = Build_D3DXMATRIX(mtx);
+		DX8CALL(SetTransform(transform, &d3dMat));
 	}
+}
+
+WWINLINE void DX8Wrapper::_Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,const D3DXMATRIX& m)
+{
+	DX8_RECORD_MATRIX_CHANGE();
+	DX8CALL(SetTransform(transform, &m));
 }
 
 WWINLINE void DX8Wrapper::_Get_DX8_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4x4& m)
 {
-	DX8CALL(GetTransform(transform,(D3DMATRIX*)&m));
+	D3DXMATRIX d3dMat;
+	DX8CALL(GetTransform(transform,&d3dMat));
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			m[i][j] = d3dMat.m[i][j];
+		}
+	}
 }
 
 // ----------------------------------------------------------------------------
@@ -1155,13 +1181,15 @@ WWINLINE void DX8Wrapper::Set_Transform(D3DTRANSFORMSTATETYPE transform,const Ma
 			Matrix4x4 ProjectionMatrix=m.Transpose();
 			ZFar=0.0f;
 			ZNear=0.0f;
-			DX8CALL(SetTransform(D3DTS_PROJECTION,(D3DMATRIX*)&ProjectionMatrix));
+			D3DXMATRIX d3dMat = Build_D3DXMATRIX(ProjectionMatrix);
+			DX8CALL(SetTransform(D3DTS_PROJECTION,&d3dMat));
 		}
 		break;
 	default:
 		DX8_RECORD_MATRIX_CHANGE();
 		Matrix4x4 m2=m.Transpose();
-		DX8CALL(SetTransform(transform,(D3DMATRIX*)&m2));
+		D3DXMATRIX d3dMat2 = Build_D3DXMATRIX(m2);
+		DX8CALL(SetTransform(transform,&d3dMat2));
 		break;
 	}
 }
@@ -1183,7 +1211,8 @@ WWINLINE void DX8Wrapper::Set_Transform(D3DTRANSFORMSTATETYPE transform,const Ma
 	default:
 		DX8_RECORD_MATRIX_CHANGE();
 		m2=m2.Transpose();
-		DX8CALL(SetTransform(transform,(D3DMATRIX*)&m2));
+		D3DXMATRIX d3dMat3 = Build_D3DXMATRIX(m2);
+		DX8CALL(SetTransform(transform,&d3dMat3));
 		break;
 	}
 }
