@@ -95,7 +95,6 @@
 #include "GameNetwork/GameSpyOverlay.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
-//Added By Saad
 #include "GameClient/InGameUI.h"
 
 
@@ -767,12 +766,8 @@ void finishSinglePlayerInit( void )
 
 	}
 
-	//Added By Sadullah Nader
-	//Fix for the black screen text that appears after loading sequence
-
 	TheInGameUI->freeMessageResources();
 
-	//
 	if (s_blankLayout)
 	{
 		s_blankLayout->destroyWindows();

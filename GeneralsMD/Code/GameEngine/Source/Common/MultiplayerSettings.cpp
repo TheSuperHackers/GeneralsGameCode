@@ -80,7 +80,6 @@ MultiplayerSettings::MultiplayerSettings()
 	m_showRandomPlayerTemplate = TRUE;
 	m_showRandomStartPos = TRUE;
 	m_showRandomColor = TRUE;
-
 	m_observerColor;
 	m_randomColor;
 

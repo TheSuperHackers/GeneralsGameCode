@@ -237,11 +237,7 @@ m_pOut(pOut)
 	AsciiString tmpFileName = TheGlobalData->getPath_UserData();
 	tmpFileName.concat(TEMP_FILENAME);
 	m_tmp_file = ::fopen( tmpFileName.str(), "wb" );
-	// Added Sadullah Nader
-	// Initializations missing and needed
 	m_chunkStack = NULL;
-
-	// End Add
 }
 
 DataChunkOutput::~DataChunkOutput()

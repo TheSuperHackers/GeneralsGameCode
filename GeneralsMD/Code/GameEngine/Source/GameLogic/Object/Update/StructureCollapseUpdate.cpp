@@ -68,11 +68,8 @@ StructureCollapseUpdate::StructureCollapseUpdate( Thing *thing, const ModuleData
 	m_collapseFrame = 0;
 	m_collapseState = COLLAPSESTATE_STANDING;
 	m_collapseVelocity = 0.0f;
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_burstFrame = 0;
 	m_currentHeight = 0.0f;
-	//
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 }
 

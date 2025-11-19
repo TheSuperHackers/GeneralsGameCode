@@ -445,8 +445,6 @@ m_skirmishHumanPlayer(NULL),
 m_fade(FADE_NONE),
 m_freezeByScript(FALSE),
 m_frameObjectCountChanged(0),
-//Added By Sadullah Nader
-//Initializations inserted
 m_closeWindowTimer(0),
 m_curFadeFrame(0),
 m_curFadeValue(0.0f),
@@ -461,7 +459,6 @@ m_numAttackInfo(0),
 m_shownMPLocalDefeatWindow(FALSE),
 m_objectsShouldReceiveDifficultyBonus(TRUE),
 m_ChooseVictimAlwaysUsesNormal(false)
-//
 {
 	st_CanAppCont = true;
 	st_LastCurrentFrame = st_CurrentFrame = 0;

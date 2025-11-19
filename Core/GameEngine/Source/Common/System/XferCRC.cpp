@@ -42,10 +42,7 @@ XferCRC::XferCRC( void )
 {
 
 	m_xferMode = XFER_CRC;
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_crc = 0;
-	//
 }
 
 //-------------------------------------------------------------------------------------------------

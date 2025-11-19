@@ -321,8 +321,6 @@ Player::Player( Int playerIndex )
 	m_playerTemplate = NULL;
 	m_battlePlanBonuses = NULL;
 	m_skillPointsModifier = 1.0f;
-	//Added By Sadullah
-	//Initializations inserted
 	m_canBuildUnits = TRUE;
 	m_canBuildBase  = TRUE;
 	m_cashBountyPercent = 0.0f;
@@ -339,7 +337,6 @@ Player::Player( Int playerIndex )
 	{
 		m_squads[i] = NULL;
 	}
-	//
 	for (i = 0; i < MAX_PLAYER_COUNT; ++i)
 	{
 		m_attackedBy[i] = false;

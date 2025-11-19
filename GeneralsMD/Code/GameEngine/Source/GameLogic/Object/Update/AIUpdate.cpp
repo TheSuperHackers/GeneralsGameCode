@@ -2774,7 +2774,6 @@ void AIUpdateInterface::aiDoCommand(const AICommandParms* parms)
 			{
 				state->clear();
 			}
-			//end
 
 			privateGuardPosition(&parms->m_pos, (GuardMode)parms->m_intValue, parms->m_cmdSource);
 			break;
@@ -2790,7 +2789,6 @@ void AIUpdateInterface::aiDoCommand(const AICommandParms* parms)
 			{
 				state->clear();
 			}
-			//end
 
 			privateGuardObject(parms->m_obj, (GuardMode)parms->m_intValue, parms->m_cmdSource);
 			break;
@@ -2806,7 +2804,6 @@ void AIUpdateInterface::aiDoCommand(const AICommandParms* parms)
 			{
 				state->clear();
 			}
-			//end
 
 			privateGuardTunnelNetwork((GuardMode)parms->m_intValue, parms->m_cmdSource);
 			break;
@@ -2822,7 +2819,6 @@ void AIUpdateInterface::aiDoCommand(const AICommandParms* parms)
 			{
 				state->clear();
 			}
-			//end
 
 			privateGuardArea(parms->m_polygon, (GuardMode)parms->m_intValue, parms->m_cmdSource);
 			break;

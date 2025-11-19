@@ -99,8 +99,6 @@ ParachuteContain::ParachuteContain( Thing *thing, const ModuleData *moduleData )
 	m_isLandingOverrideSet = FALSE;
 	m_startZ = NO_START_Z;
 
-	//Added By Sadullah Nader
-	//Initializations
 	m_landingOverride.zero();
 	m_paraAttachBone.zero();
 	m_paraAttachOffset.zero();
@@ -111,7 +109,6 @@ ParachuteContain::ParachuteContain( Thing *thing, const ModuleData *moduleData )
 	m_riderSwayBone.zero();
 	m_riderSwayOffset.zero();
 
-	//
 	const ParachuteContainModuleData* d = getParachuteContainModuleData();
 	if (d)
 	{

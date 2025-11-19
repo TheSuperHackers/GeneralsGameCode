@@ -62,8 +62,6 @@ GameSpyGameSlot::GameSpyGameSlot()
 	m_rankPoints = 0;
 	m_favoriteSide = 0;
 	m_pingInt = 0;
-	// Added By Sadullah Nader
-	// Initializations missing and needed
 	m_profileID = 0;
 	m_pingStr.clear();
 }

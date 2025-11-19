@@ -158,11 +158,8 @@ ProductionEntry::ProductionEntry( void )
 	m_framesUnderConstruction = 0;
 	m_next = NULL;
 	m_prev = NULL;
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_productionQuantityProduced = 0;
 	m_productionQuantityTotal = 0;
-	//
 }
 
 //-------------------------------------------------------------------------------------------------

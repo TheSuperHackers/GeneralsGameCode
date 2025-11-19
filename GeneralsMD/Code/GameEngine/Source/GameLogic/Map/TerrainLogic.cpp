@@ -959,11 +959,8 @@ TerrainLogic::TerrainLogic()
 {
 	Int i;
 
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_activeBoundary = 0;
 	m_waterGridEnabled = FALSE;
-	//
 	for( i = 0; i < MAX_DYNAMIC_WATER; ++i )
 	{
 

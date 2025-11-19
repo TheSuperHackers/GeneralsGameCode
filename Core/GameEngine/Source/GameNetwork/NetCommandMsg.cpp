@@ -35,13 +35,9 @@
  */
 NetCommandMsg::NetCommandMsg()
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_executionFrame = 0;
 	m_id = 0;
 	m_playerID = 0;
-
-	//
 	m_timestamp = 0;
 	m_referenceCount = 1; // start this off as 1.  This means that an "attach" is implied by creating a NetCommandMsg object.
 	m_commandType = NETCOMMANDTYPE_UNKNOWN;
@@ -90,12 +86,8 @@ Int NetCommandMsg::getSortNumber() {
  * Constructor with no argument, sets everything to default values.
  */
 NetGameCommandMsg::NetGameCommandMsg() : NetCommandMsg() {
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_argSize = 0;
 	m_numArgs = 0;
-	//
-
 	m_type = (GameMessage::Type)0;
 	m_commandType = NETCOMMANDTYPE_GAMECOMMAND;
 	m_argList = NULL;
@@ -714,10 +706,7 @@ UnicodeString NetDisconnectChatCommandMsg::getText() {
 NetChatCommandMsg::NetChatCommandMsg() : NetCommandMsg()
 {
 	m_commandType = NETCOMMANDTYPE_CHAT;
-	//added by Sadullah Nader
-	//Initializations inserted
 	m_playerMask = 0;
-	//
 }
 
 /**

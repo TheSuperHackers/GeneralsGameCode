@@ -368,14 +368,10 @@ RecorderClass::RecorderClass()
 	m_file = NULL;
 	m_fileName.clear();
 	m_currentFilePosition = 0;
-	//Added By Sadullah Nader
-	//Initializtion(s) inserted
 	m_doingAnalysis = FALSE;
 	m_archiveReplays = FALSE;
 	m_nextFrame = 0;
 	m_wasDesync = FALSE;
-	//
-
 	init(); // just for the heck of it.
 }
 

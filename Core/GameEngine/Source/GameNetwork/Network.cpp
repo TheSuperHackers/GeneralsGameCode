@@ -265,15 +265,11 @@ NetworkInterface *NetworkInterface::createNetwork()
  */
 Network::Network()
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_checkCRCsThisFrame = FALSE;
 	m_didSelfSlug = FALSE;
 	m_frameDataReady = FALSE;
 	m_isStalling = FALSE;
 	m_sawCRCMismatch = FALSE;
-	//
-
 	m_conMgr = NULL;
 	m_messageWindow = NULL;
 

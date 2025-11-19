@@ -573,10 +573,6 @@ CommandButton::CommandButton( void )
 	//m_pushedImage = NULL;
 
 	m_flashCount = 0;
-
-	// Added by Sadullah Nader
-	// The purpose is to initialize these variable to values that are zero or empty
-
 	m_conflictingLabel.clear();
 	m_cursorName.clear();
 	m_descriptionLabel.clear();
@@ -585,9 +581,6 @@ CommandButton::CommandButton( void )
 	m_options = 0;
 	m_purchasedLabel.clear();
 	m_textLabel.clear();
-
-	// End Add
-
 	m_window = NULL;
 	m_commandButtonBorder = COMMAND_BUTTON_BORDER_NONE;
 	//m_prev = NULL;
@@ -892,8 +885,6 @@ ControlBar::ControlBar( void )
 	m_buildToolTipLayout = NULL;
 	m_showBuildToolTipLayout = FALSE;
 
-	// Added By Sadullah Nader
-	// initializing vars to zero
 	m_animateDownWin1Pos.x = m_animateDownWin1Pos.y = 0;
 	m_animateDownWin1Size.x = m_animateDownWin1Size.y = 0;
 	m_animateDownWin2Pos.x = m_animateDownWin2Pos.y = 0;
@@ -913,7 +904,6 @@ ControlBar::ControlBar( void )
   m_genStarOff = NULL;
 	m_genStarOn  = NULL;
 	m_UIDirty    = FALSE;
-	//
 //	m_controlBarResizer = NULL;
 	m_buildUpClockColor = GameMakeColor(0,0,0,100);
 	m_commandBarBorderColor = GameMakeColor(0,0,0,100);

@@ -316,11 +316,8 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatusBits statu
 	// assign status bits before anything else can be done
 	m_status = statusBits;
 
-	// Added By Sadullah Nader
-	// Initialization missing and needed
 	m_nextDrawable = NULL;
 	m_prevDrawable = NULL;
-	//
 
 	// register drawable with the GameClient ... do this first before we start doing anything
 	// complex that uses any of the drawable data so that we have and ID!!  It's ok to initialize
@@ -330,17 +327,12 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatusBits statu
 
 	Int i;
 
-	// Added By Sadullah Nader
-	// Initialization missing and needed
 	m_flashColor = 0;
 	m_selected = '\0';
-	//
 
 	m_expirationDate = 0;  // 0 == never expires
 
 	m_lastConstructDisplayed = -1.0f;
-
-	//Added By Sadullah Nader
 	//Fix for the building percent
 	m_constructDisplayString = TheDisplayStringManager->newDisplayString();
 	m_constructDisplayString->setFont(TheFontLibrary->getFont(TheInGameUI->getDrawableCaptionFontName(),

@@ -144,8 +144,6 @@ NAT *TheNAT = NULL;
 
 NAT::NAT()
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_beenProbed = FALSE;
 	m_connectionPairIndex = 0;
 	m_connectionRound = 0;
@@ -161,11 +159,9 @@ NAT::NAT()
 	m_spareSocketPort = 0;
 	m_startingPortNumber = 0;
 	m_targetNodeNumber = 0;
-	//
 	m_transport = NULL;
 	m_slotList = NULL;
 	m_roundTimeout = 0;
-
 	m_maxNumRetriesAllowed = 10;
 	m_packetID = 0x7f00;
 }

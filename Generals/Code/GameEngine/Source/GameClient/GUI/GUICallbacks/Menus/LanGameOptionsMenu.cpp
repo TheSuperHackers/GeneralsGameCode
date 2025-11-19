@@ -649,11 +649,8 @@ void InitLanGameGadgets( void )
 	Int localSlotNum = TheLAN->GetMyGame()->getLocalSlotNum();
 	DEBUG_ASSERTCRASH(localSlotNum >= 0, ("Bad slot number!"));
 
-	//Added By Sadullah Nader
 	//Tooltip function is being set for techBuildings, and supplyDocks
-
 	windowMap->winSetTooltipFunc(MapSelectorTooltip);
-	//End Add
 
 	for (Int i = 0; i < MAX_SLOTS; i++)
 	{
@@ -704,7 +701,6 @@ void InitLanGameGadgets( void )
 		buttonAcceptID[i] = TheNameKeyGenerator->nameToKey( tmpString );
 		buttonAccept[i] = TheWindowManager->winGetWindowFromId( parentLanGameOptions, buttonAcceptID[i] );
 		DEBUG_ASSERTCRASH(buttonAccept[i], ("Could not find the buttonAccept[%d]",i ));
-		//Added by Saad for the tooltips on the MultiPlayer icons
 		buttonAccept[i]->winSetTooltipFunc(gameAcceptTooltip);
 //
 //		tmpString.format("LanGameOptionsMenu.wnd:ButtonStartPosition%d", i);

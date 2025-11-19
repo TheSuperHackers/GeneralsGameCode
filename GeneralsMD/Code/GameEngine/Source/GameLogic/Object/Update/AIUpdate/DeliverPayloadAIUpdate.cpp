@@ -119,13 +119,8 @@ DeliverPayloadAIUpdate::DeliverPayloadAIUpdate( Thing *thing, const ModuleData* 
 
 	m_freeToExit = FALSE;
 	m_acceptingCommands = TRUE;
-
-	// Added By Sadullah Nader
-	// Initialization missing and needed
-
 	m_diveState = DIVESTATE_PREDIVE;
 
-	// End Add
 }
 
 //-------------------------------------------------------------------------------------------------

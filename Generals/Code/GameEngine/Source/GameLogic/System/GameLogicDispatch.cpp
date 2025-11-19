@@ -299,10 +299,7 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 // ------------------------------------------------------------------------------------------------
 void GameLogic::prepareNewGame( GameMode gameMode, GameDifficulty diff, Int rankPoints )
 {
-	//Added By Sadullah Nader
-	//Fix for loading game scene
 	setGameLoading(TRUE);
-	//
 
 	TheScriptEngine->setGlobalDifficulty(diff);
 

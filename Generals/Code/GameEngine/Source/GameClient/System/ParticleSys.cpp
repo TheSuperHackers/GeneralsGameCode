@@ -68,8 +68,6 @@ ParticleSystemManager *TheParticleSystemManager = NULL;
 // ------------------------------------------------------------------------------------------------
 ParticleInfo::ParticleInfo( void )
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_angleX = m_angleY = m_angleZ = 0.0f;
 	m_angularDamping = 0.0f;
 	m_angularRateX = m_angularRateY = m_angularRateZ = 0.0f;
@@ -87,7 +85,6 @@ ParticleInfo::ParticleInfo( void )
 	m_lifetime = 0;
 	m_particleUpTowardsEmitter = FALSE;
 
-	//
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -288,10 +285,7 @@ Particle::Particle( ParticleSystem *system, const ParticleInfo *info )
 	m_angleY = info->m_angleY;
 	m_angleZ = info->m_angleZ;
 
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_lastPos.zero();
-	//
 	m_windRandomness = info->m_windRandomness;
 	m_particleUpTowardsEmitter = info->m_particleUpTowardsEmitter;
 	m_emitterPos = info->m_emitterPos;
@@ -826,8 +820,6 @@ ParticleSystemInfo::ParticleSystemInfo()
 	m_isEmitAboveGroundOnly = false;
 	m_isParticleUpTowardsEmitter = false;
 
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_driftVelocity.zero();
 	m_gravity = 0.0f;
 	m_isEmissionVolumeHollow = FALSE;
@@ -835,7 +827,6 @@ ParticleSystemInfo::ParticleSystemInfo()
 	m_slavePosOffset.zero();
 	m_systemLifetime = 0;
 
-	//
 	// some default values for the wind motion values
 	m_windMotion = WIND_MOTION_NOT_USED;
 	m_windAngle = 0.0f;
@@ -1135,12 +1126,9 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 	m_template = sysTemplate;
 	m_systemID = id;
 
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_lastPos.zero();
 	m_pos.zero();
 	m_velCoeff.zero();
-	//
 
 	m_attachedToDrawableID = INVALID_DRAWABLE_ID;
 	m_attachedToObjectID = INVALID_ID;
@@ -2881,10 +2869,7 @@ void ParticleSystemTemplate::parseRandomRGBColor( INI* ini, void *instance,
 ParticleSystemTemplate::ParticleSystemTemplate( const AsciiString &name ) :
 	m_name(name)
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_slaveTemplate = NULL;
-	//
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2925,13 +2910,10 @@ ParticleSystemManager::ParticleSystemManager( void )
 	m_onScreenParticleCount = 0;
 	m_localPlayerIndex = 0;
 
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_lastLogicFrameUpdate = 0;
 	m_particleCount = 0;
 	m_fieldParticleCount = 0;
 	m_particleSystemCount = 0;
-	//
 
 	for( Int i = 0; i < NUM_PARTICLE_PRIORITIES; ++i )
 	{

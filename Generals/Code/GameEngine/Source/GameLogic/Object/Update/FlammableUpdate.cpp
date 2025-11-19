@@ -47,10 +47,7 @@ FlammableUpdateModuleData::FlammableUpdateModuleData()
 	m_aflameDuration = 0;
 	m_aflameDamageDelay = 0;
 	m_aflameDamageAmount = 0;
-	// Enabled By Sadullah Nader
-	// Initialization needed
 	m_burningSoundName.clear();
-	//
 	m_flameDamageLimitData = 20.0f;
 	m_flameDamageExpirationDelay = LOGICFRAMES_PER_SECOND * 2;
 }

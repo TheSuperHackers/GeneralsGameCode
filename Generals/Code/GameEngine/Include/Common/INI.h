@@ -138,12 +138,8 @@ private:
 public:
 	MultiIniFieldParse() : m_count(0)
 	{
-		//Added By Sadullah Nader
-		//Initializations missing and needed
 		for(Int i = 0; i < MAX_MULTI_FIELDS; i++)
 			m_extraOffset[i] = 0;
-		//
-
 	}
 
 	void add(const FieldParse* f, UnsignedInt e = 0);

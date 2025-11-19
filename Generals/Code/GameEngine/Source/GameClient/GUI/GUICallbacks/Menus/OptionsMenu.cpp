@@ -72,8 +72,6 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/ScriptEngine.h"
 #include "WWDownload/Registry.h"
-//added by saad
-//used to access a messagebox that does "ok" and "cancel"
 #include "GameClient/MessageBox.h"
 
 #include "ww3d.h"
@@ -201,13 +199,10 @@ static GameWindow *   radioLow   = NULL;
 
 */
 
-//Added By Saad for the resolution confirmation dialog box
 DisplaySettings oldDispSettings, newDispSettings;
 Bool dispChanged = FALSE;
 extern Int timer;
 extern void DoResolutionDialog();
-//
-
 static Bool ignoreSelected = FALSE;
 WindowLayout *OptionsLayout = NULL;
 

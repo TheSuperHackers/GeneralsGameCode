@@ -175,13 +175,10 @@ void LoadScreen::update( Int percent )
 //-----------------------------------------------------------------------------
 SinglePlayerLoadScreen::SinglePlayerLoadScreen( void )
 {
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_currentObjectiveLine = 0;
 	m_currentObjectiveLineCharacter = 0;
 	m_finishedObjectiveText = NULL;
 	m_currentObjectiveWidthOffset = 0;
-	//
 	m_progressBar = NULL;
 	m_percent = NULL;
 	m_videoStream = NULL;
@@ -1225,17 +1222,11 @@ void ShellGameLoadScreen::update( Int percent )
 //-----------------------------------------------------------------------------
 MultiPlayerLoadScreen::MultiPlayerLoadScreen( void )
 {
-	//Added By Sadullah Nader
-	//Initializations missing and needed
 	m_mapPreview = NULL;
 
-	//
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
-		//Added By Sadullah Nader
-		//Initializations missing and needed
 		m_buttonMapStartPosition[i] = NULL;
-		//
 		m_progressBars[i] = NULL;
 		m_playerNames[i] = NULL;
 		m_playerSide[i]= NULL;
@@ -1491,19 +1482,13 @@ void MultiPlayerLoadScreen::processProgress(Int playerId, Int percentage)
 GameSpyLoadScreen::GameSpyLoadScreen( void )
 {
 
-	// Added By Sadullah Nader
-	// Initializations missing and needed
 	m_mapPreview = NULL;
-	//
 
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
 
-		// Added By Sadullah Nader
-		// Initializations missing and needed
 		m_buttonMapStartPosition[i] = NULL;
 		m_playerRank[i] = NULL;
-		//
 
 		m_playerOfficerMedal[i] = NULL;
 		m_progressBars[i] = NULL;
@@ -1858,10 +1843,7 @@ void GameSpyLoadScreen::processProgress(Int playerId, Int percentage)
 //-----------------------------------------------------------------------------
 MapTransferLoadScreen::MapTransferLoadScreen( void )
 {
-	//Added By Sadullah Nader
-	//Initializations missing and needed
 	m_oldTimeout = 0;
-	//
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
 		m_progressBars[i] = NULL;

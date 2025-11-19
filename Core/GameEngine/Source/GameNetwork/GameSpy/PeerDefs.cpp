@@ -88,9 +88,6 @@ void GameSpyInfo::reset( void )
 	m_localName = "";
 	m_localProfileID = 0;
 	m_maxMessagesPerUpdate = 100;
-
-	// Added By Sadullah Nader
-	// Initialization missing and needed
 	m_disallowAsainText = FALSE;
 	m_disallowNonAsianText = FALSE;
 	m_disconReason = 0;
@@ -100,15 +97,10 @@ void GameSpyInfo::reset( void )
 	m_pingString.clear();
 	m_rawConfig.clear();
 	m_rawMotd.clear();
-	//
-
 	m_internalIP = m_externalIP = 0;
-
 	m_savedIgnoreMap.clear();
 	m_preorderPlayers.clear();
-
 	m_cachedLocalPlayerStats.reset();
-
 	m_additionalDisconnects = -1;
 }
 
