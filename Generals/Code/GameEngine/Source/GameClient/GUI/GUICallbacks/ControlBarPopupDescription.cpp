@@ -67,6 +67,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/BuildAssistant.h"
 #include "Common/Player.h"
@@ -518,9 +519,9 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 			name = TheGameText->fetch("CONTROLBAR:Power");
 			descrip = TheGameText->fetch("CONTROLBAR:PowerDescription");
 
-			Player* playerToDisplay = TheControlBar->getCurrentlyViewedPlayer();
+			Player* playerToDisplay = rts::getObservedOrLocalPlayer();
 
-			if( playerToDisplay && playerToDisplay->getEnergy() )
+			if( playerToDisplay->getEnergy() )
 			{
 				Energy *energy = playerToDisplay->getEnergy();
 				descrip.format(descrip, energy->getProduction(), energy->getConsumption());

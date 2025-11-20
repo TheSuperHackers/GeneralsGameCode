@@ -28,6 +28,7 @@
 #include "GameClient/ControlBar.h"
 #include "GameClient/Eva.h"
 
+#include "Common/GameUtility.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "GameLogic/GameLogic.h"
@@ -212,7 +213,7 @@ void Eva::update()
 		return;
 	}
 
-	m_localPlayer = TheControlBar->getCurrentlyViewedPlayer();
+	m_localPlayer = rts::getObservedOrLocalPlayer();
 	UnsignedInt frame = TheGameLogic->getFrame();
 
 	// Don't update for the first few frames. This way, we don't have to deal with our initial power
@@ -429,7 +430,7 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 	}
 
 	// We've got a winner!
-	AsciiString side = TheControlBar->getCurrentlyViewedPlayerSide();
+	AsciiString side = rts::getObservedOrLocalPlayer()->getSide();
 	Int numSides = storedIt->m_evaInfo->m_evaSideSounds.size();
 
 	for (Int i = 0; i < numSides; ++i) {
