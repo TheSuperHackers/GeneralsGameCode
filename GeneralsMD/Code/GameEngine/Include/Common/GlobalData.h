@@ -186,8 +186,11 @@ public:
 	Real m_cameraPitch;
 	Real m_cameraYaw;
 	Real m_cameraHeight;
+
+	 // TheSuperHackers @info Max and Min camera height for the original 4:3 view, these are then scaled for other aspect ratios.
 	Real m_maxCameraHeight;
 	Real m_minCameraHeight;
+
 	Real m_terrainHeightAtEdgeOfMap;
 	Real m_unitDamagedThresh;
 	Real m_unitReallyDamagedThresh;
