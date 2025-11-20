@@ -1,0 +1,30 @@
+; Brightness Adjustment Pixel Shader
+; For DirectX 8.1 Pixel Shader 1.1
+; Author: @bobtista, November 2025
+;
+; Constants:
+; c0.x = black lift amount (-1.0 to 1.0)
+; c0.y = gamma adjustment (inverse gamma value)
+; c0.z = brightness add amount
+; c0.w = unused
+;
+; Registers:
+; t0 = texture coordinates
+; v0 = vertex color (currently unused, set to white)
+
+ps.1.1
+
+; Sample the texture
+tex t0
+
+; Add black lift
+; r0 = texture color + black lift
+add r0, t0, c0.x
+
+; For basic brightness:
+; Modulate with a brightness factor
+; Since we can't do pow() in PS 1.1, we use a simpler linear adjustment
+mul r0, r0, c0.y
+
+; Clamp to valid range (handled by hardware)
+
