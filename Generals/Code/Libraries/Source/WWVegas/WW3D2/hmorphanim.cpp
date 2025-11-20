@@ -623,8 +623,10 @@ int HMorphAnimClass::Save_W3D(ChunkSaveClass & csave)
 
 	// init the header data
 	W3dMorphAnimHeaderStruct header;
-	strlcpy(header.Name,AnimName,sizeof(header.Name));
-	strlcpy(header.HierarchyName,HierarchyName,sizeof(header.HierarchyName));
+	static_assert(ARRAY_SIZE(header.Name) >= ARRAY_SIZE(AnimName), "Incorrect array size");
+	static_assert(ARRAY_SIZE(header.HierarchyName) >= ARRAY_SIZE(HierarchyName), "Incorrect array size");
+	strcpy(header.Name, AnimName);
+	strcpy(header.HierarchyName, HierarchyName);
 
 	header.FrameCount = FrameCount;
 	header.FrameRate = FrameRate;

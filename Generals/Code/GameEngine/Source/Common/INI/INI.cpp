@@ -404,7 +404,8 @@ UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 				if (parse)
 				{
 					#ifdef DEBUG_CRASHING
-					strlcpy(m_curBlockStart, m_buffer, ARRAY_SIZE(m_curBlockStart));
+					static_assert(ARRAY_SIZE(m_curBlockStart) >= ARRAY_SIZE(m_buffer), "Incorrect array size");
+					strcpy(m_curBlockStart, m_buffer);
 					#endif
 					try {
 						(*parse)( this );
