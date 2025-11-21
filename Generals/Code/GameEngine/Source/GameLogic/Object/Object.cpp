@@ -596,6 +596,8 @@ Object::~Object()
 }
 
 //-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+#if RETAIL_COMPATIBLE_CRC
 void localIsHero( Object *obj, void* userData )
 {
 	Bool *hero = (Bool*)userData;
@@ -605,19 +607,28 @@ void localIsHero( Object *obj, void* userData )
 		*hero = TRUE;
 	}
 }
+#endif
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @performance bobtista 13/11/2025 Use cached hero count for O(1) lookup instead of O(n) iteration.
 Bool Object::isHero() const
 {
 	ContainModuleInterface *contain = getContain();
 	if( contain )
 	{
+#if !RETAIL_COMPATIBLE_CRC
+		if( contain->getHeroUnitsContained() > 0 )
+		{
+			return TRUE;
+		}
+#else
 		Bool heroInside = FALSE;
 		contain->iterateContained( localIsHero, (void*)(&heroInside), FALSE );
 		if( heroInside )
 		{
 			return TRUE;
 		}
+#endif
 	}
 	return isKindOf( KINDOF_HERO );
 }
