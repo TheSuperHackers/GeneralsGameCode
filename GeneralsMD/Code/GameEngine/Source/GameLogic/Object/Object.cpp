@@ -6282,10 +6282,8 @@ void Object::goInvulnerable( UnsignedInt time )
 // ------------------------------------------------------------------------------------------------
 RadarPriorityType Object::getRadarPriority( void ) const
 {
-	RadarPriorityType priority = RADAR_PRIORITY_INVALID;
-
 	// first, get the priority at the thing template level
-	priority = getTemplate()->getDefaultRadarPriority();
+	RadarPriorityType priority = getTemplate()->getDefaultRadarPriority();
 
 	//
 	// there are some objects that we want to show up on the radar when they have

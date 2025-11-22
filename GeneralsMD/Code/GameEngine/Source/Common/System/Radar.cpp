@@ -62,56 +62,40 @@ Radar *TheRadar = NULL;  ///< the radar global singleton
 #define RADAR_QUEUE_TERRAIN_REFRESH_DELAY (LOGICFRAMES_PER_SECOND * 3.0f)
 
 //-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void Radar::deleteList( RadarObject **list )
+{
+	while( *list )
+	{
+		// get next object
+		RadarObject *nextObject = (*list)->friend_getNext();
+
+		// remove radar data from object
+		(*list)->friend_getObject()->friend_setRadarData( NULL );
+
+		// delete the head of the list
+		deleteInstance(*list);
+
+		// set head of the list to the next object
+		*list = nextObject;
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Delete list resources used by the radar and return them to the memory pools */
 //-------------------------------------------------------------------------------------------------
 void Radar::deleteListResources( void )
 {
-	RadarObject *nextObject;
+	deleteList(&m_objectList);
+	deleteList(&m_localObjectList);
+	deleteList(&m_localHeroObjectList);
 
-	// delete entries from the local object list
-	while( m_localObjectList )
+#ifdef DEBUG_CRASHING
+	for( Object *obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
 	{
-
-		// get next object
-		nextObject = m_localObjectList->friend_getNext();
-
-		// remove radar data from object
-		m_localObjectList->friend_getObject()->friend_setRadarData( NULL );
-
-		// delete the head of the list
-		deleteInstance(m_localObjectList);
-
-		// set head of the list to the next object
-		m_localObjectList = nextObject;
-
-	}
-
-	// delete entries from the regular object list
-	while( m_objectList )
-	{
-
-		// get next object
-		nextObject = m_objectList->friend_getNext();
-
-		// remove radar data from object
-		m_objectList->friend_getObject()->friend_setRadarData( NULL );
-
-		// delete the head of the list
-		deleteInstance(m_objectList);
-
-		// set head of the list to the next object
-		m_objectList = nextObject;
-
-	}
-
-	Object *obj;
-	for( obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
-	{
-
 		DEBUG_ASSERTCRASH( obj->friend_getRadarData() == NULL, ("oops") );
-
 	}
-
+#endif
 }
 
 // PUBLIC METHODS /////////////////////////////////////////////////////////////////////////////////
@@ -214,6 +198,7 @@ Radar::Radar( void )
 	m_radarWindow = NULL;
 	m_objectList = NULL;
 	m_localObjectList = NULL;
+	m_localHeroObjectList = NULL;
 	std::fill(m_radarHidden, m_radarHidden + ARRAY_SIZE(m_radarHidden), false);
 	std::fill(m_radarForceOn, m_radarForceOn + ARRAY_SIZE(m_radarForceOn), false);
 	m_terrainAverageZ = 0.0f;
@@ -403,13 +388,13 @@ void Radar::newMap( TerrainLogic *terrain )
 /** Add an object to the radar list.  The object will be sorted in the list to be grouped
 	* using it's radar priority */
 //-------------------------------------------------------------------------------------------------
-RadarObjectType Radar::addObject( Object *obj )
+Bool Radar::addObject( Object *obj )
 {
 
 	// get the radar priority for this object
 	RadarPriorityType newPriority = obj->getRadarPriority();
 	if( isPriorityVisible( newPriority ) == FALSE )
-		return RadarObjectType_None;
+		return FALSE;
 
 	// if this object is on the radar, remove it in favor of the new add
 	RadarObject **list;
@@ -427,140 +412,31 @@ RadarObjectType Radar::addObject( Object *obj )
 	newObj->friend_setObject( obj );
 
 	// set color for this object on the radar
-	const Player *player = obj->getControllingPlayer();
-	Player *clientPlayer = rts::getObservedOrLocalPlayer();
-	Bool useIndicatorColor = true;
-
-	if( obj->isKindOf( KINDOF_DISGUISER ) )
-	{
-		//Because we have support for disguised units pretending to be units from another
-		//team, we need to intercept it here and make sure it's rendered appropriately
-		//based on which client is rendering it.
-    StealthUpdate *update = obj->getStealth();
-		if( update )
-		{
-			if( update->isDisguised() )
-			{
-				Player *disguisedPlayer = ThePlayerList->getNthPlayer( update->getDisguisedPlayerIndex() );
-				if( player->getRelationship( clientPlayer->getDefaultTeam() ) != ALLIES && clientPlayer->isPlayerActive() )
-				{
-					//Neutrals and enemies will see this disguised unit as the team it's disguised as.
-					player = disguisedPlayer;
-					if( player )
-						useIndicatorColor = false;
-				}
-				//Otherwise, the color will show up as the team it really belongs to (already set above).
-			}
-		}
-	}
-
-	if( obj->getContain() )
-	{
-		// To handle Stealth garrison, ask containers what color they are drawing with to the local player.
-		// Local is okay because radar display is not synced.
-		player = obj->getContain()->getApparentControllingPlayer( clientPlayer );
-		if( player )
-			useIndicatorColor = false;
-	}
-
-	if( useIndicatorColor || (player == NULL) )
-	{
-		newObj->setColor( obj->getIndicatorColor() );
-	}
-	else
-	{
-		newObj->setColor( player->getPlayerColor() );
-	}
+	assignObjectColorToRadarObject( newObj, obj );
 
 	// set a chunk of radar data in the object
 	obj->friend_setRadarData( newObj );
 
-	RadarObjectType objectType;
 	//
 	// we will put this on either the local object list for objects that belong to the
 	// local player, or on the regular object list for all other objects
 	//
 	if( obj->isLocallyControlled() )
 	{
-		list = &m_localObjectList;
-		objectType = RadarObjectType_Local;
+		if ( obj->isHero() )
+			list = &m_localHeroObjectList;
+		else
+			list = &m_localObjectList;
 	}
 	else
 	{
 		list = &m_objectList;
-		objectType = RadarObjectType_Regular;
 	}
 
 	// link object to master list at the head of it's priority section
-	if( *list == NULL )
-		*list = newObj;  // trivial case, an empty list
-	else
-	{
-		RadarPriorityType prevPriority, currPriority;
-		RadarObject *currObject, *prevObject, *nextObject;
+	linkRadarObject(newObj, list);
 
-		prevObject = NULL;
-		prevPriority = RADAR_PRIORITY_INVALID;
-		for( currObject = *list; currObject; currObject = nextObject )
-		{
-
-			// get the next object
-			nextObject = currObject->friend_getNext();
-
-			// get the priority of this entry in the list (currPriority)
-			currPriority = currObject->friend_getObject()->getRadarPriority();
-
-			//
-			// if there is no previous object, or the previous priority is less than the
-			// our new priority, and the current object in the list has a priority
-			// higher than our equal to our own we need to be inserted here
-			//
-			if( (prevObject == NULL || prevPriority < newPriority ) &&
-					(currPriority >= newPriority) )
-			{
-
-				// insert into the list just ahead of currObject
-				if( prevObject )
-				{
-
-					// the new entry next points to what the previous one used to point to
-					newObj->friend_setNext( prevObject->friend_getNext() );
-
-					// the previous one next now points to the new entry
-					prevObject->friend_setNext( newObj );
-
-				}
-				else
-				{
-
-					// the new object next points to the current object
-					newObj->friend_setNext( currObject );
-
-					// new list head is now newObj
-					*list = newObj;
-
-				}
-
-				break;  // exit for, stop the insert
-
-			}
-			else if( nextObject == NULL )
-			{
-
-				// at the end of the list, put object here
-				currObject->friend_setNext( newObj );
-
-			}
-
-			// our current object is now the previous object
-			prevObject = currObject;
-			prevPriority = currPriority;
-
-		}
-
-	}
-
-	return objectType;
+	return TRUE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -607,24 +483,24 @@ Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 //-------------------------------------------------------------------------------------------------
 /** Remove an object from the radar, the object may reside in any list */
 //-------------------------------------------------------------------------------------------------
-RadarObjectType Radar::removeObject( Object *obj )
+Bool Radar::removeObject( Object *obj )
 {
 
 	// sanity
 	if( obj->friend_getRadarData() == NULL )
-		return RadarObjectType_None;
+		return FALSE;
 
+	if( deleteFromList( obj, &m_localHeroObjectList ) == TRUE )
+		return TRUE;
 	if( deleteFromList( obj, &m_localObjectList ) == TRUE )
-		return RadarObjectType_Local;
+		return TRUE;
 	else if( deleteFromList( obj, &m_objectList ) == TRUE )
-		return RadarObjectType_Regular;
+		return TRUE;
 	else
 	{
-
-		// sanity
 		DEBUG_ASSERTCRASH( 0, ("Radar: Tried to remove object '%s' which was not found",
 											 obj->getTemplate()->getName().str()) );
-		return RadarObjectType_None;
+		return FALSE;
 	}
 
 }
@@ -849,10 +725,14 @@ Object *Radar::objectUnderRadarPixel( const ICoord2D *pixel )
 	// to the radar location
 	//
 
-	// search the local object list
-	obj = searchListForRadarLocationMatch( m_localObjectList, &radar );
+	// search the local hero object list
+	obj = searchListForRadarLocationMatch( m_localHeroObjectList, &radar );
 
-	// search all other objects if not found
+	// search the local object list if not found
+	if( obj == NULL )
+		obj = searchListForRadarLocationMatch( m_localObjectList, &radar );
+
+	// search all other objects if still not found
 	if( obj == NULL )
 		obj = searchListForRadarLocationMatch( m_objectList, &radar );
 
@@ -1492,6 +1372,7 @@ static void xferRadarObjectList( Xfer *xfer, RadarObject **head )
 	* Version Info:
 	* 1: Initial version
 	* 2: TheSuperHackers @tweak Serialize m_radarHidden, m_radarForceOn for each player
+	* 3: TheSuperHackers @tweak Serialize m_localHeroObjectList
 	*/
 // ------------------------------------------------------------------------------------------------
 void Radar::xfer( Xfer *xfer )
@@ -1501,13 +1382,13 @@ void Radar::xfer( Xfer *xfer )
 #if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
 #else
-	XferVersion currentVersion = 2;
+	XferVersion currentVersion = 3;
 #endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
 	
-	if (version <= 1)
+	if (version < 2)
 	{
 		const Int localPlayerIndex = ThePlayerList->getLocalPlayer()->getPlayerIndex();
 		Bool value;
@@ -1531,11 +1412,65 @@ void Radar::xfer( Xfer *xfer )
 		xfer->xferUser(&m_radarForceOn, sizeof(m_radarForceOn));
 	}
 
+	if (version < 3)
+	{
+		if (xfer->getXferMode() == XFER_SAVE)
+		{
+			// TheSuperHackers @info For legacy xfer compatibility.
+			// Transfer all local hero objects to local object list.
+			RadarObject **fromList = &m_localHeroObjectList;
+			RadarObject **toList = &m_localObjectList;
+			while (*fromList != NULL)
+			{
+				RadarObject* nextObject = (*fromList)->friend_getNext();
+				(*fromList)->friend_setNext(NULL);
+				linkRadarObject(*fromList, toList);
+				*fromList = nextObject;
+			}
+		}
+	}
+	else
+	{
+		xferRadarObjectList( xfer, &m_localHeroObjectList );
+	}
+
 	// save our local object list
 	xferRadarObjectList( xfer, &m_localObjectList );
 
 	// save the regular object list
 	xferRadarObjectList( xfer, &m_objectList );
+
+	if (version < 3)
+	{
+		// TheSuperHackers @info For legacy xfer compatibility.
+		// Transfer hero local object(s) back to local hero object list.
+		// This needs to be done on both load and save.
+		RadarObject **fromList = &m_localObjectList;
+		RadarObject **toList = &m_localHeroObjectList;
+		RadarObject *currObject;
+		RadarObject *prevObject;
+		RadarObject *nextObject;
+		prevObject = NULL;
+		for (currObject = *fromList; currObject != NULL; currObject = nextObject)
+		{
+			nextObject = currObject->friend_getNext();
+			if (currObject->friend_getObject()->isHero())
+			{
+				if (prevObject != NULL)
+				{
+					prevObject->friend_setNext(nextObject);
+				}
+				else
+				{
+					*fromList = nextObject;
+				}
+				currObject->friend_setNext(NULL);
+				linkRadarObject(currObject, toList);
+				continue;
+			}
+			prevObject = currObject;
+		}
+	}
 
 	// save the radar event count and data
 	UnsignedShort eventCountVerify = MAX_RADAR_EVENTS;
@@ -1606,4 +1541,122 @@ Bool Radar::isPriorityVisible( RadarPriorityType priority )
 
 	}
 
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void Radar::linkRadarObject( RadarObject *newObj, RadarObject **list )
+{
+	if( *list == NULL )
+	{
+		// trivial case, an empty list
+		*list = newObj;
+		return;
+	}
+
+	RadarPriorityType newPriority = newObj->friend_getObject()->getRadarPriority();
+	RadarPriorityType prevPriority;
+	RadarPriorityType currPriority;
+	RadarObject *currObject;
+	RadarObject *prevObject;
+	RadarObject *nextObject;
+
+	DEBUG_ASSERTCRASH(newObj->friend_getNext() == NULL, ("newObj->friend_getNext is not NULL"));
+
+	prevObject = NULL;
+	prevPriority = RADAR_PRIORITY_INVALID;
+	for( currObject = *list; currObject; currObject = nextObject )
+	{
+		// get the next object
+		nextObject = currObject->friend_getNext();
+
+		// get the priority of this entry in the list (currPriority)
+		currPriority = currObject->friend_getObject()->getRadarPriority();
+
+		//
+		// if there is no previous object, or the previous priority is less than the
+		// our new priority, and the current object in the list has a priority
+		// higher than our equal to our own we need to be inserted here
+		//
+		if( (prevObject == NULL || prevPriority < newPriority ) && (currPriority >= newPriority) )
+		{
+			// insert into the list just ahead of currObject
+			if( prevObject )
+			{
+				// the new entry next points to what the previous one used to point to
+				newObj->friend_setNext( prevObject->friend_getNext() );
+
+				// the previous one next now points to the new entry
+				prevObject->friend_setNext( newObj );
+			}
+			else
+			{
+				// the new object next points to the current object
+				newObj->friend_setNext( currObject );
+
+				// new list head is now newObj
+				*list = newObj;
+			}
+			break;
+		}
+		else if( nextObject == NULL )
+		{
+			// at the end of the list, put object here
+			currObject->friend_setNext( newObj );
+		}
+
+		// our current object is now the previous object
+		prevObject = currObject;
+		prevPriority = currPriority;
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void Radar::assignObjectColorToRadarObject( RadarObject *radarObj, Object *obj )
+{
+	const Player *player = obj->getControllingPlayer();
+	Player *clientPlayer = rts::getObservedOrLocalPlayer();
+	Bool useIndicatorColor = true;
+
+	if( obj->isKindOf( KINDOF_DISGUISER ) )
+	{
+		//Because we have support for disguised units pretending to be units from another
+		//team, we need to intercept it here and make sure it's rendered appropriately
+		//based on which client is rendering it.
+		StealthUpdate *update = obj->getStealth();
+		if( update )
+		{
+			if( update->isDisguised() )
+			{
+				Player *disguisedPlayer = ThePlayerList->getNthPlayer( update->getDisguisedPlayerIndex() );
+				if( player->getRelationship( clientPlayer->getDefaultTeam() ) != ALLIES && clientPlayer->isPlayerActive() )
+				{
+					//Neutrals and enemies will see this disguised unit as the team it's disguised as.
+					player = disguisedPlayer;
+					if( player )
+						useIndicatorColor = false;
+				}
+				//Otherwise, the color will show up as the team it really belongs to (already set above).
+			}
+		}
+	}
+
+	if( obj->getContain() )
+	{
+		// To handle Stealth garrison, ask containers what color they are drawing with to the local player.
+		// Local is okay because radar display is not synced.
+		player = obj->getContain()->getApparentControllingPlayer( clientPlayer );
+		if( player )
+			useIndicatorColor = false;
+	}
+
+	if( useIndicatorColor || (player == NULL) )
+	{
+		radarObj->setColor( obj->getIndicatorColor() );
+	}
+	else
+	{
+		radarObj->setColor( player->getPlayerColor() );
+	}
 }
