@@ -70,6 +70,9 @@
 #if defined(DEBUG_STACKTRACE) || defined(IG_DEBUG_STACKTRACE)
 	#include "Common/StackDump.h"
 #endif
+#ifdef RTS_ENABLE_CRASHDUMP
+#include "Common/MiniDumper.h"
+#endif
 
 // Horrible reference, but we really, really need to know if we are windowed.
 extern bool DX8Wrapper_IsWindowed;
@@ -727,6 +730,22 @@ double SimpleProfiler::getAverageTime()
 		}
 	}
 
+
+static void TriggerMiniDump()
+{
+#ifdef RTS_ENABLE_CRASHDUMP
+	if (TheMiniDumper && TheMiniDumper->IsInitialized())
+	{
+		// Do dumps both with and without extended info
+		TheMiniDumper->TriggerMiniDump(DUMP_TYPE_MINIMAL);
+		TheMiniDumper->TriggerMiniDump(DUMP_TYPE_GAMEMEMORY);
+	}
+
+	MiniDumper::shutdownMiniDumper();
+#endif
+}
+
+
 void ReleaseCrash(const char *reason)
 {
 	/// do additional reporting on the crash, if possible
@@ -736,6 +755,8 @@ void ReleaseCrash(const char *reason)
 			ShowWindow(ApplicationHWnd, SW_HIDE);
 		}
 	}
+
+	TriggerMiniDump();
 
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];
@@ -812,6 +833,8 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		// This won't ever return
 		return;
 	}
+
+	TriggerMiniDump();
 
 	UnicodeString prompt = TheGameText->fetch(p);
 	UnicodeString mesg = TheGameText->fetch(m);

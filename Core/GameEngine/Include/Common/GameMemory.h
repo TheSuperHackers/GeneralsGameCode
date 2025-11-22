@@ -223,6 +223,9 @@ class MemoryPool;
 class MemoryPoolFactory;
 class DynamicMemoryAllocator;
 class BlockCheckpointInfo;
+#ifdef RTS_ENABLE_CRASHDUMP
+class AllocationRangeIterator;
+#endif
 
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 
@@ -276,6 +279,14 @@ public:
 	void debugCheckpointReport(Int flags, Int startCheckpoint, Int endCheckpoint, const char *poolName);
 	/// reset all the checkpoints for this pool/dma
 	void debugResetCheckpoints();
+};
+#endif
+
+#ifdef RTS_ENABLE_CRASHDUMP
+struct MemoryPoolAllocatedRange
+{
+	char* allocationAddr;
+	size_t allocationSize;
 };
 #endif
 
@@ -384,6 +395,9 @@ public:
 		/// return true iff this block was allocated by this pool.
 		Bool debugIsBlockInPool(void *pBlock);
 	#endif
+#ifdef RTS_ENABLE_CRASHDUMP
+		friend class AllocationRangeIterator;
+#endif
 };
 
 // ----------------------------------------------------------------------------
@@ -474,11 +488,78 @@ public:
 		Bool debugIsPoolInDma(MemoryPool *pool);
 
 	#endif	// MEMORYPOOL_DEBUG
+#ifdef RTS_ENABLE_CRASHDUMP
+		Int getRawBlockCount() const;
+		void fillAllocationRangeForRawBlockN(const Int n, MemoryPoolAllocatedRange& allocationRange) const;
+#endif
 };
 
 // ----------------------------------------------------------------------------
 #ifdef MEMORYPOOL_DEBUG
 enum { MAX_SPECIAL_USED = 256 };
+#endif
+
+#ifdef RTS_ENABLE_CRASHDUMP
+class AllocationRangeIterator
+{
+	typedef const MemoryPoolAllocatedRange value_type;
+	typedef const MemoryPoolAllocatedRange* pointer;
+	typedef const MemoryPoolAllocatedRange& reference;
+
+public:
+
+	AllocationRangeIterator(const MemoryPoolFactory* factory);
+	AllocationRangeIterator(MemoryPool& pool, MemoryPoolBlob& blob)
+	{
+		m_currentPool = &pool;
+		m_currentBlobInPool = &blob;
+		m_factory = NULL;
+		m_range = MemoryPoolAllocatedRange();
+	};
+
+	AllocationRangeIterator(MemoryPool* pool, MemoryPoolBlob* blob)
+	{
+		m_currentPool = pool;
+		m_currentBlobInPool = blob;
+		m_factory = NULL;
+		m_range = MemoryPoolAllocatedRange();
+	};
+
+	AllocationRangeIterator()
+	{
+		m_currentPool = NULL;
+		m_currentBlobInPool = NULL;
+		m_factory = NULL;
+		m_range = MemoryPoolAllocatedRange();
+	};
+
+	reference operator*() { UpdateRange(); return m_range; }
+	pointer operator->() { UpdateRange(); return &m_range; }
+
+	// Prefix increment
+	AllocationRangeIterator& operator++() { MoveToNextBlob(); return *this; }
+
+	// Postfix increment
+	AllocationRangeIterator operator++(int) { AllocationRangeIterator tmp = *this; ++(*this); return tmp; }
+
+	friend const bool operator== (const AllocationRangeIterator& a, const AllocationRangeIterator& b)
+	{
+		return a.m_currentBlobInPool == b.m_currentBlobInPool;
+	};
+
+	friend const bool operator!= (const AllocationRangeIterator& a, const AllocationRangeIterator& b)
+	{
+		return a.m_currentBlobInPool != b.m_currentBlobInPool;
+	};
+
+private:
+	const MemoryPoolFactory* m_factory;
+	MemoryPool* m_currentPool;
+	MemoryPoolBlob* m_currentBlobInPool;
+	MemoryPoolAllocatedRange m_range;
+	void UpdateRange();
+	void MoveToNextBlob();
+};
 #endif
 
 // ----------------------------------------------------------------------------
@@ -573,6 +654,21 @@ public:
 		void debugResetCheckpoints();
 
 	#endif
+#ifdef RTS_ENABLE_CRASHDUMP
+		AllocationRangeIterator cbegin() const
+		{
+			return AllocationRangeIterator(this);
+		}
+
+		AllocationRangeIterator cend() const
+		{
+			return AllocationRangeIterator(NULL, NULL);
+		}
+
+		Int getMemoryPoolCount() const;
+		MemoryPool* getMemoryPoolN(const Int n) const;
+		friend class AllocationRangeIterator;
+#endif
 };
 
 // how many bytes are we allowed to 'waste' per pool allocation before the debug code starts yelling at us...

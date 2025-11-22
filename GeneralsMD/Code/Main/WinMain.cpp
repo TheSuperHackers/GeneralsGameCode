@@ -67,6 +67,9 @@
 #include "resource.h"
 
 #include <rts/profile.h>
+#ifdef RTS_ENABLE_CRASHDUMP
+#include "Common/MiniDumper.h"
+#endif
 
 
 // GLOBALS ////////////////////////////////////////////////////////////////////
@@ -763,6 +766,16 @@ static CriticalSection critSec1, critSec2, critSec3, critSec4, critSec5;
 static LONG WINAPI UnHandledExceptionFilter( struct _EXCEPTION_POINTERS* e_info )
 {
 	DumpExceptionInfo( e_info->ExceptionRecord->ExceptionCode, e_info );
+#ifdef RTS_ENABLE_CRASHDUMP
+	if (TheMiniDumper && TheMiniDumper->IsInitialized())
+	{
+		// Do dumps both with and without extended info
+		TheMiniDumper->TriggerMiniDumpForException(e_info, DUMP_TYPE_MINIMAL);
+		TheMiniDumper->TriggerMiniDumpForException(e_info, DUMP_TYPE_GAMEMEMORY);
+	}
+
+	MiniDumper::shutdownMiniDumper();
+#endif
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 
@@ -847,6 +860,10 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif
 
 		CommandLine::parseCommandLineForStartup();
+#ifdef RTS_ENABLE_CRASHDUMP
+		// Initialize minidump facilities - requires TheGlobalData so performed after parseCommandLineForStartup
+		MiniDumper::initMiniDumper(TheGlobalData->getPath_UserData());
+#endif
 
 		// register windows class and create application window
 		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
@@ -916,6 +933,9 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	}
 
+#ifdef RTS_ENABLE_CRASHDUMP
+	MiniDumper::shutdownMiniDumper();
+#endif
 	TheUnicodeStringCriticalSection = NULL;
 	TheDmaCriticalSection = NULL;
 	TheMemoryPoolCriticalSection = NULL;

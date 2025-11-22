@@ -23,6 +23,9 @@
 #include <win.h>
 #include <imagehlp.h> // Must be included after Windows.h
 #include <set>
+#ifdef RTS_ENABLE_CRASHDUMP
+#include <DbgHelpLoader_minidump.h>
+#endif
 
 #include "mutex.h"
 #include "SystemAllocator.h"
@@ -109,6 +112,17 @@ public:
 		PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
 		PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
 
+#ifdef RTS_ENABLE_CRASHDUMP
+	static BOOL WINAPI miniDumpWriteDump(
+		HANDLE hProcess,
+		DWORD ProcessId,
+		HANDLE hFile,
+		MINIDUMP_TYPE DumpType,
+		PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
+		PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
+		PMINIDUMP_CALLBACK_INFORMATION CallbackParam);
+#endif
+
 private:
 
 	static void freeResources();
@@ -167,6 +181,17 @@ private:
 		PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
 		PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
 
+#ifdef RTS_ENABLE_CRASHDUMP
+	typedef BOOL(WINAPI* MiniDumpWriteDump_t)(
+		HANDLE hProcess,
+		DWORD ProcessId,
+		HANDLE hFile,
+		MINIDUMP_TYPE DumpType,
+		PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
+		PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
+		PMINIDUMP_CALLBACK_INFORMATION CallbackParam);
+#endif
+
 	SymInitialize_t m_symInitialize;
 	SymCleanup_t m_symCleanup;
 	SymLoadModule_t m_symLoadModule;
@@ -177,13 +202,15 @@ private:
 	SymSetOptions_t m_symSetOptions;
 	SymFunctionTableAccess_t m_symFunctionTableAccess;
 	StackWalk_t m_stackWalk;
+#ifdef RTS_ENABLE_CRASHDUMP
+	MiniDumpWriteDump_t m_miniDumpWriteDump;
+#endif
 
 	typedef std::set<HANDLE, std::less<HANDLE>, stl::system_allocator<HANDLE> > Processes;
 
 	Processes m_initializedProcesses;
 	HMODULE m_dllModule;
 	int m_referenceCount;
-	CriticalSectionClass m_criticalSection;
 	bool m_failed;
 	bool m_loadedFromSystem;
 };
