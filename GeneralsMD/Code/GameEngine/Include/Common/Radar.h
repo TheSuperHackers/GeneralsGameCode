@@ -239,6 +239,7 @@ protected:
 	void internalCreateEvent( const Coord3D *world, RadarEventType type, Real secondsToLive,
 														const RGBAColorInt *color1, const RGBAColorInt *color2 );
 
+	void deleteList( RadarObject **list );
 	void deleteListResources( void );			///< delete list radar resources used
 	Bool deleteFromList( Object *obj, RadarObject **list );	///< try to remove object from specific list
 
