@@ -380,9 +380,9 @@ CW3DViewDoc::InitScene (void)
 		m_pC2DScene = new SimpleSceneClass;
 		ASSERT (m_pC2DScene);
 
-	// Instantiate a new 2D cursor scene
-	m_pCursorScene = RefCountPtr<SceneClass>::Create_NoAddRef(new SimpleSceneClass);
-	ASSERT (m_pCursorScene.Peek());
+		// Instantiate a new 2D cursor scene
+		m_pCursorScene = RefCountPtr<SceneClass>::Create_NoAddRef(new SimpleSceneClass);
+		ASSERT (m_pCursorScene.Peek());
 
 		Create_Cursor ();
 		m_pCursorScene->Add_Render_Object (m_pCursor.Peek());
@@ -652,6 +652,7 @@ CW3DViewDoc::DisplayObject
     {
         // Lose the animation
 		  SAFE_DELETE (m_pCAnimCombo);
+		  m_pCAnimation.Clear();
 
         // Do we have an old object to remove from the scene?
 		  if (add_ghost == false) {
