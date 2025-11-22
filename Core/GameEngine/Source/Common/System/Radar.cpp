@@ -62,56 +62,33 @@ Radar *TheRadar = NULL;  ///< the radar global singleton
 #define RADAR_QUEUE_TERRAIN_REFRESH_DELAY (LOGICFRAMES_PER_SECOND * 3.0f)
 
 //-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void Radar::deleteList( RadarObject **list )
+{
+	while( *list )
+	{
+		RadarObject *nextObject = (*list)->friend_getNext();
+		(*list)->friend_getObject()->friend_setRadarData( NULL );
+		deleteInstance(*list);
+		*list = nextObject;
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Delete list resources used by the radar and return them to the memory pools */
 //-------------------------------------------------------------------------------------------------
 void Radar::deleteListResources( void )
 {
-	RadarObject *nextObject;
+	deleteList(&m_objectList);
+	deleteList(&m_localObjectList);
 
-	// delete entries from the local object list
-	while( m_localObjectList )
+#ifdef DEBUG_CRASHING
+	for( Object *obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
 	{
-
-		// get next object
-		nextObject = m_localObjectList->friend_getNext();
-
-		// remove radar data from object
-		m_localObjectList->friend_getObject()->friend_setRadarData( NULL );
-
-		// delete the head of the list
-		deleteInstance(m_localObjectList);
-
-		// set head of the list to the next object
-		m_localObjectList = nextObject;
-
+		DEBUG_ASSERTCRASH( obj->friend_getRadarData() == NULL,
+			("Radar::deleteListResources: Unexpectedly an object still has radar data assigned") );
 	}
-
-	// delete entries from the regular object list
-	while( m_objectList )
-	{
-
-		// get next object
-		nextObject = m_objectList->friend_getNext();
-
-		// remove radar data from object
-		m_objectList->friend_getObject()->friend_setRadarData( NULL );
-
-		// delete the head of the list
-		deleteInstance(m_objectList);
-
-		// set head of the list to the next object
-		m_objectList = nextObject;
-
-	}
-
-	Object *obj;
-	for( obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
-	{
-
-		DEBUG_ASSERTCRASH( obj->friend_getRadarData() == NULL, ("oops") );
-
-	}
-
+#endif
 }
 
 // PUBLIC METHODS /////////////////////////////////////////////////////////////////////////////////
