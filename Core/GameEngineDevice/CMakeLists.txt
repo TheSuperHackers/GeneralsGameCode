@@ -71,6 +71,7 @@ set(GAMEENGINEDEVICE_SRC
 #    Include/W3DDevice/GameClient/W3DTerrainVisual.h
 #    Include/W3DDevice/GameClient/W3DTreeBuffer.h
     Include/W3DDevice/GameClient/W3DVideoBuffer.h
+    Include/W3DDevice/GameClient/W3DScreenshot.h
 #    Include/W3DDevice/GameClient/W3DView.h
 #    Include/W3DDevice/GameClient/W3DVolumetricShadow.h
 #    Include/W3DDevice/GameClient/W3DWater.h
@@ -220,6 +221,7 @@ target_include_directories(corei_gameenginedevice_public INTERFACE
 target_link_libraries(corei_gameenginedevice_private INTERFACE
     corei_always
     corei_main
+    stb
 )
 
 target_link_libraries(corei_gameenginedevice_public INTERFACE
