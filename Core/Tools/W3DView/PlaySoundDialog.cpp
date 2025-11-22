@@ -99,6 +99,7 @@ void
 PlaySoundDialogClass::OnCancel (void)
 {
 	SoundObj->Stop ();
+	SoundObj.Clear();
 
 	CDialog::OnCancel ();
 	return ;
