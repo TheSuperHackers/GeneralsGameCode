@@ -3422,7 +3422,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			break;
 		}
 
-		case GameMessage::MSG_META_TAKE_SCREENSHOT_JPEG:
+		case GameMessage::MSG_META_TAKE_SCREENSHOT_PNG:
 		{
 			if (TheDisplay)
 				TheDisplay->takeScreenShot(SCREENSHOT_PNG);
