@@ -170,7 +170,6 @@ CW3DViewDoc::CleanupResources (void)
 
 	if (m_pCursor != nullptr) {
 		m_pCursor->Remove ();
-		m_pCursor.Clear();
 	}
 	m_pCursorScene.Clear();
 
