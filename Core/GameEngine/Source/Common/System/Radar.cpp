@@ -426,50 +426,7 @@ RadarObjectType Radar::addObject( Object *obj )
 	newObj->friend_setObject( obj );
 
 	// set color for this object on the radar
-	const Player *player = obj->getControllingPlayer();
-	Player *clientPlayer = rts::getObservedOrLocalPlayer();
-	Bool useIndicatorColor = true;
-
-	if( obj->isKindOf( KINDOF_DISGUISER ) )
-	{
-		//Because we have support for disguised units pretending to be units from another
-		//team, we need to intercept it here and make sure it's rendered appropriately
-		//based on which client is rendering it.
-		StealthUpdate *update = obj->getStealth();
-		if( update )
-		{
-			if( update->isDisguised() )
-			{
-				Player *disguisedPlayer = ThePlayerList->getNthPlayer( update->getDisguisedPlayerIndex() );
-				if( player->getRelationship( clientPlayer->getDefaultTeam() ) != ALLIES && clientPlayer->isPlayerActive() )
-				{
-					//Neutrals and enemies will see this disguised unit as the team it's disguised as.
-					player = disguisedPlayer;
-					if( player )
-						useIndicatorColor = false;
-				}
-				//Otherwise, the color will show up as the team it really belongs to (already set above).
-			}
-		}
-	}
-
-	if( obj->getContain() )
-	{
-		// To handle Stealth garrison, ask containers what color they are drawing with to the local player.
-		// Local is okay because radar display is not synced.
-		player = obj->getContain()->getApparentControllingPlayer( clientPlayer );
-		if( player )
-			useIndicatorColor = false;
-	}
-
-	if( useIndicatorColor || (player == NULL) )
-	{
-		newObj->setColor( obj->getIndicatorColor() );
-	}
-	else
-	{
-		newObj->setColor( player->getPlayerColor() );
-	}
+	assignObjectColorToRadarObject( newObj, obj );
 
 	// set a chunk of radar data in the object
 	obj->friend_setRadarData( newObj );
@@ -491,73 +448,7 @@ RadarObjectType Radar::addObject( Object *obj )
 	}
 
 	// link object to master list at the head of it's priority section
-	if( *list == NULL )
-		*list = newObj;  // trivial case, an empty list
-	else
-	{
-		RadarPriorityType prevPriority, currPriority;
-		RadarObject *currObject, *prevObject, *nextObject;
-
-		prevObject = NULL;
-		prevPriority = RADAR_PRIORITY_INVALID;
-		for( currObject = *list; currObject; currObject = nextObject )
-		{
-
-			// get the next object
-			nextObject = currObject->friend_getNext();
-
-			// get the priority of this entry in the list (currPriority)
-			currPriority = currObject->friend_getObject()->getRadarPriority();
-
-			//
-			// if there is no previous object, or the previous priority is less than the
-			// our new priority, and the current object in the list has a priority
-			// higher than our equal to our own we need to be inserted here
-			//
-			if( (prevObject == NULL || prevPriority < newPriority ) &&
-					(currPriority >= newPriority) )
-			{
-
-				// insert into the list just ahead of currObject
-				if( prevObject )
-				{
-
-					// the new entry next points to what the previous one used to point to
-					newObj->friend_setNext( prevObject->friend_getNext() );
-
-					// the previous one next now points to the new entry
-					prevObject->friend_setNext( newObj );
-
-				}
-				else
-				{
-
-					// the new object next points to the current object
-					newObj->friend_setNext( currObject );
-
-					// new list head is now newObj
-					*list = newObj;
-
-				}
-
-				break;  // exit for, stop the insert
-
-			}
-			else if( nextObject == NULL )
-			{
-
-				// at the end of the list, put object here
-				currObject->friend_setNext( newObj );
-
-			}
-
-			// our current object is now the previous object
-			prevObject = currObject;
-			prevPriority = currPriority;
-
-		}
-
-	}
+	linkRadarObject(newObj, list);
 
 	return objectType;
 }
@@ -1605,4 +1496,122 @@ Bool Radar::isPriorityVisible( RadarPriorityType priority )
 
 	}
 
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void Radar::linkRadarObject( RadarObject *newObj, RadarObject **list )
+{
+	if( *list == NULL )
+	{
+		// trivial case, an empty list
+		*list = newObj;
+		return;
+	}
+
+	RadarPriorityType newPriority = newObj->friend_getObject()->getRadarPriority();
+	RadarPriorityType prevPriority;
+	RadarPriorityType currPriority;
+	RadarObject *currObject;
+	RadarObject *prevObject;
+	RadarObject *nextObject;
+
+	DEBUG_ASSERTCRASH(newObj->friend_getNext() == NULL, ("newObj->friend_getNext is not NULL"));
+
+	prevObject = NULL;
+	prevPriority = RADAR_PRIORITY_INVALID;
+	for( currObject = *list; currObject; currObject = nextObject )
+	{
+		// get the next object
+		nextObject = currObject->friend_getNext();
+
+		// get the priority of this entry in the list (currPriority)
+		currPriority = currObject->friend_getObject()->getRadarPriority();
+
+		//
+		// if there is no previous object, or the previous priority is less than the
+		// our new priority, and the current object in the list has a priority
+		// higher than our equal to our own we need to be inserted here
+		//
+		if( (prevObject == NULL || prevPriority < newPriority ) && (currPriority >= newPriority) )
+		{
+			// insert into the list just ahead of currObject
+			if( prevObject )
+			{
+				// the new entry next points to what the previous one used to point to
+				newObj->friend_setNext( prevObject->friend_getNext() );
+
+				// the previous one next now points to the new entry
+				prevObject->friend_setNext( newObj );
+			}
+			else
+			{
+				// the new object next points to the current object
+				newObj->friend_setNext( currObject );
+
+				// new list head is now newObj
+				*list = newObj;
+			}
+			break;
+		}
+		else if( nextObject == NULL )
+		{
+			// at the end of the list, put object here
+			currObject->friend_setNext( newObj );
+		}
+
+		// our current object is now the previous object
+		prevObject = currObject;
+		prevPriority = currPriority;
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void Radar::assignObjectColorToRadarObject( RadarObject *radarObj, Object *obj )
+{
+	const Player *player = obj->getControllingPlayer();
+	Player *clientPlayer = rts::getObservedOrLocalPlayer();
+	Bool useIndicatorColor = true;
+
+	if( obj->isKindOf( KINDOF_DISGUISER ) )
+	{
+		//Because we have support for disguised units pretending to be units from another
+		//team, we need to intercept it here and make sure it's rendered appropriately
+		//based on which client is rendering it.
+		StealthUpdate *update = obj->getStealth();
+		if( update )
+		{
+			if( update->isDisguised() )
+			{
+				Player *disguisedPlayer = ThePlayerList->getNthPlayer( update->getDisguisedPlayerIndex() );
+				if( player->getRelationship( clientPlayer->getDefaultTeam() ) != ALLIES && clientPlayer->isPlayerActive() )
+				{
+					//Neutrals and enemies will see this disguised unit as the team it's disguised as.
+					player = disguisedPlayer;
+					if( player )
+						useIndicatorColor = false;
+				}
+				//Otherwise, the color will show up as the team it really belongs to (already set above).
+			}
+		}
+	}
+
+	if( obj->getContain() )
+	{
+		// To handle Stealth garrison, ask containers what color they are drawing with to the local player.
+		// Local is okay because radar display is not synced.
+		player = obj->getContain()->getApparentControllingPlayer( clientPlayer );
+		if( player )
+			useIndicatorColor = false;
+	}
+
+	if( useIndicatorColor || (player == NULL) )
+	{
+		radarObj->setColor( obj->getIndicatorColor() );
+	}
+	else
+	{
+		radarObj->setColor( player->getPlayerColor() );
+	}
 }

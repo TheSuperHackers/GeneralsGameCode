@@ -1018,6 +1018,8 @@ RadarObjectType W3DRadar::addObject( Object* obj )
 }
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix xezon 05/07/2025 Now removes the cached hero immediately because
+// otherwise the object pointer could be dangling and used for a bit too long.
 //-------------------------------------------------------------------------------------------------
 RadarObjectType W3DRadar::removeObject( Object* obj )
 {

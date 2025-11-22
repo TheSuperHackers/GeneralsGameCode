@@ -196,8 +196,8 @@ public:
  	Bool tryEvent( RadarEventType event, const Coord3D *pos );	///< try to make a "stealth" event
 
 	// adding and removing objects from the radar
-	virtual RadarObjectType addObject( Object *obj );									///< add object to radar
-	virtual RadarObjectType removeObject( Object *obj );								///< remove object from radar
+	virtual RadarObjectType addObject( Object *obj ); ///< add object to radar
+	virtual RadarObjectType removeObject( Object *obj ); ///< remove object from radar
 
 	// radar options
 	void hide( Int playerIndex, Bool hide ) { m_radarHidden[playerIndex] = hide; } ///< hide/show the radar
@@ -251,6 +251,9 @@ protected:
 
 	// search the object list for an object that maps to the given logical radar coordinates
 	Object *searchListForRadarLocationMatch( RadarObject *listHead, ICoord2D *radarMatch );
+
+	void linkRadarObject( RadarObject *newObj, RadarObject **list );
+	void assignObjectColorToRadarObject( RadarObject *radarObj, Object *obj );
 
 	Bool m_radarHidden[MAX_PLAYER_COUNT]; ///< true when radar is not visible
 	Bool m_radarForceOn[MAX_PLAYER_COUNT]; ///< true when radar is forced to be on
