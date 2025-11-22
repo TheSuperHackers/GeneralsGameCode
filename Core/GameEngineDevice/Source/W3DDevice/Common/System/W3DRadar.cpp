@@ -626,6 +626,54 @@ void W3DRadar::updateObjectTexture(TextureClass *texture)
 }
 
 //-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Bool W3DRadar::canRenderObject( const RadarObject *rObj, const Player *localPlayer )
+{
+	if (rObj->isTemporarilyHidden())
+	{
+		return false;
+	}
+
+	const Int playerIndex = localPlayer->getPlayerIndex();
+	const Object *obj = rObj->friend_getObject();
+
+	//
+	// check for shrouded status
+	// if object is fogged or shrouded, don't render it
+	//
+	if (obj->getShroudedStatus(playerIndex) > OBJECTSHROUD_PARTIAL_CLEAR)
+	{
+		return false;
+	}
+
+	//
+	// objects with a local only unit priority will only appear on the radar if they
+	// are controlled by the local player, or if the local player is an observer (cause
+	// they are godlike and can see everything)
+	//
+	if (obj->getRadarPriority() == RADAR_PRIORITY_LOCAL_UNIT_ONLY &&
+		obj->getControllingPlayer() != localPlayer &&
+		localPlayer->isPlayerActive() )
+	{
+		return false;
+	}
+
+	//
+	// ML-- What the heck is this? local-only and neutral-observer-viewed units are stealthy?? Since when?
+	// Now it twinkles for any stealthed object, whether locally controlled or neutral-observer-viewed
+	//
+	if (TheControlBar->getCurrentlyViewedPlayerRelationship(obj->getTeam()) == ENEMIES &&
+		obj->testStatus( OBJECT_STATUS_STEALTHED ) &&
+		!obj->testStatus( OBJECT_STATUS_DETECTED ) &&
+		!obj->testStatus( OBJECT_STATUS_DISGUISED ) )
+	{
+		return false;
+	}
+
+	return true;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Render an object list into the texture passed in */
 //-------------------------------------------------------------------------------------------------
 void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *texture, Bool calcHero )
@@ -642,7 +690,6 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 	ICoord2D radarPoint;
 
 	Player *player = rts::getObservedOrLocalPlayer();
-	const Int playerIndex = player->getPlayerIndex();
 
 	if( calcHero )
 	{
@@ -652,38 +699,19 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 
 	for( const RadarObject *rObj = listHead; rObj; rObj = rObj->friend_getNext() )
 	{
-
-		if (rObj->isTemporarilyHidden())
+		if (!canRenderObject(rObj, player))
 			continue;
 
-		// get object
-		const Object *obj = rObj->friend_getObject();
-
-		// check for shrouded status
-		if (obj->getShroudedStatus(playerIndex) > OBJECTSHROUD_PARTIAL_CLEAR)
-			continue;	//object is fogged or shrouded, don't render it.
-
- 		//
- 		// objects with a local only unit priority will only appear on the radar if they
- 		// are controlled by the local player, or if the local player is an observer (cause
-		// they are godlike and can see everything)
- 		//
- 		if( obj->getRadarPriority() == RADAR_PRIORITY_LOCAL_UNIT_ONLY &&
- 				obj->getControllingPlayer() != player &&
-				player->isPlayerActive() )
- 			continue;
-
 		// get object position
+		const Object *obj = rObj->friend_getObject();
 		const Coord3D *pos = obj->getPosition();
 
 		// compute object position as a radar blip
 		radarPoint.x = pos->x / (m_mapExtent.width() / RADAR_CELL_WIDTH);
 		radarPoint.y = pos->y / (m_mapExtent.height() / RADAR_CELL_HEIGHT);
 
-    // get the color we're going to draw in
+		// get the color we're going to draw in
 		Color c = rObj->getColor();
-
-
 
 		// adjust the alpha for stealth units so they "fade/blink" on the radar for the controller
 		// if( obj->getRadarPriority() == RADAR_PRIORITY_LOCAL_UNIT_ONLY )
@@ -691,10 +719,6 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 		// Now it twinkles for any stealthed object, whether locally controlled or neutral-observer-viewed
 		if( obj->testStatus( OBJECT_STATUS_STEALTHED ) )
 		{
-      if ( TheControlBar->getCurrentlyViewedPlayerRelationship(obj->getTeam()) == ENEMIES )
-        if( !obj->testStatus( OBJECT_STATUS_DETECTED ) && !obj->testStatus( OBJECT_STATUS_DISGUISED ) )
-				  continue;
-
 			UnsignedByte r, g, b, a;
 			GameGetColorComponents( c, &r, &g, &b, &a );
 

@@ -84,6 +84,7 @@ protected:
 	void buildTerrainTexture( TerrainLogic *terrain );	 ///< create the terrain texture of the radar
 	void drawIcons( Int pixelX, Int pixelY, Int width, Int height );	///< draw all of the radar icons
 	void updateObjectTexture(TextureClass *texture);
+	static Bool canRenderObject( const RadarObject *rObj, const Player *localPlayer );
 	void renderObjectList( const RadarObject *listHead, TextureClass *texture, Bool calcHero = FALSE );			 ///< render an object list to the texture
 	void interpolateColorForHeight( RGBColor *color,
 																	Real height,
