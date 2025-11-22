@@ -77,13 +77,6 @@ enum RadarEventType CPP_11(: Int)
 
 };
 
-enum RadarObjectType CPP_11(: Int)
-{
-	RadarObjectType_None = 0,
-	RadarObjectType_Regular,
-	RadarObjectType_Local,
-};
-
 // PROTOTYPES /////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
@@ -196,8 +189,8 @@ public:
  	Bool tryEvent( RadarEventType event, const Coord3D *pos );	///< try to make a "stealth" event
 
 	// adding and removing objects from the radar
-	virtual RadarObjectType addObject( Object *obj ); ///< add object to radar
-	virtual RadarObjectType removeObject( Object *obj ); ///< remove object from radar
+	virtual Bool addObject( Object *obj ); ///< add object to radar
+	virtual Bool removeObject( Object *obj ); ///< remove object from radar
 
 	// radar options
 	void hide( Int playerIndex, Bool hide ) { m_radarHidden[playerIndex] = hide; } ///< hide/show the radar
@@ -245,8 +238,6 @@ protected:
 
 	inline Real getTerrainAverageZ() const { return m_terrainAverageZ; }
 	inline Real getWaterAverageZ() const { return m_waterAverageZ; }
-	inline const RadarObject* getObjectList() const { return m_objectList; }
-	inline const RadarObject* getLocalObjectList() const { return m_localObjectList; }
 
 	void clearAllEvents( void );					///< remove all radar events in progress
 
@@ -258,10 +249,17 @@ protected:
 
 	Bool m_radarHidden[MAX_PLAYER_COUNT]; ///< true when radar is not visible
 	Bool m_radarForceOn[MAX_PLAYER_COUNT]; ///< true when radar is forced to be on
+
 	RadarObject *m_objectList;						///< list of objects in the radar
 	RadarObject *m_localObjectList;				/** list of objects for the local player, sorted
 																					* in exactly the same priority as the regular
 																					* object list for all other objects */
+
+	// TheSuperHackers @bugfix xezon 22/11/2025 Now stores local heroes in a separate list,
+	// because they are treated with special icons but should otherwise work like all other
+	// radar objects. In retail version, the cached hero object data was able to dangle
+	// for a few frames and cause undefined behavior.
+	RadarObject *m_localHeroObjectList; ///< list of hero objects for the local player
 
 	Real m_terrainAverageZ;								///< average Z for terrain samples
 	Real m_waterAverageZ;									///< average Z for water samples

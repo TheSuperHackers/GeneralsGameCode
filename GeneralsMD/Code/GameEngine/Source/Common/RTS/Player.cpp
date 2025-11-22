@@ -1086,12 +1086,12 @@ void Player::becomingLocalPlayer(Bool yes)
 			{
 				// Added support for updating the perceptions of garrisoned buildings containing enemy stealth units.
 				// When changing teams, it is necessary to update this information.
+				Bool requireRadarRefresh = false;
 				ContainModuleInterface *contain = object->getContain();
 				if( contain )
 				{
 					contain->recalcApparentControllingPlayer();
-					TheRadar->removeObject( object );
-					TheRadar->addObject( object );
+					requireRadarRefresh = true;
 				}
 
 				if( object->isKindOf( KINDOF_DISGUISER ) )
@@ -1123,10 +1123,15 @@ void Player::becomingLocalPlayer(Bool yes)
 								else
 									draw->setIndicatorColor( object->getIndicatorColor() );
 							}
-							TheRadar->removeObject( object );
-							TheRadar->addObject( object );
+							requireRadarRefresh = true;
 						}
 					}
+				}
+
+				if (requireRadarRefresh)
+				{
+					TheRadar->removeObject( object );
+					TheRadar->addObject( object );
 				}
 			}
 			deleteInstance(iter);

@@ -602,12 +602,13 @@ void W3DRadar::drawEvents( Int pixelX, Int pixelY, Int width, Int height )
 //-------------------------------------------------------------------------------------------------
 void W3DRadar::drawIcons( Int pixelX, Int pixelY, Int width, Int height )
 {
-	// draw the hero icons
-	std::vector<const Object *>::const_iterator iter = m_cachedHeroObjectList.begin();
-	while (iter != m_cachedHeroObjectList.end())
+	Player *player = rts::getObservedOrLocalPlayer();
+	for (RadarObject *heroObj = m_localHeroObjectList; heroObj; heroObj = heroObj->friend_getNext())
 	{
-		drawHeroIcon( pixelX, pixelY, width, height, (*iter)->getPosition() );
-		++iter;
+		if (canRenderObject(heroObj, player))
+		{
+			drawHeroIcon(pixelX, pixelY, width, height, heroObj->friend_getObject()->getPosition());
+		}
 	}
 }
 
@@ -621,8 +622,9 @@ void W3DRadar::updateObjectTexture(TextureClass *texture)
 	REF_PTR_RELEASE(surface);
 
 	// rebuild the object overlay
-	renderObjectList( getObjectList(), texture );
-	renderObjectList( getLocalObjectList(), texture, TRUE );
+	renderObjectList( m_objectList, texture );
+	renderObjectList( m_localObjectList, texture );
+	renderObjectList( m_localHeroObjectList, texture );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -676,7 +678,7 @@ Bool W3DRadar::canRenderObject( const RadarObject *rObj, const Player *localPlay
 //-------------------------------------------------------------------------------------------------
 /** Render an object list into the texture passed in */
 //-------------------------------------------------------------------------------------------------
-void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *texture, Bool calcHero )
+void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *texture )
 {
 
 	// sanity
@@ -690,12 +692,6 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 	ICoord2D radarPoint;
 
 	Player *player = rts::getObservedOrLocalPlayer();
-
-	if( calcHero )
-	{
-		// clear all entries from the cached hero object list
-		m_cachedHeroObjectList.clear();
-	}
 
 	for( const RadarObject *rObj = listHead; rObj; rObj = rObj->friend_getNext() )
 	{
@@ -732,12 +728,6 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 				a = REAL_TO_UNSIGNEDBYTE( (alphaScale * (255.0f - minAlpha)) + minAlpha );
 			c = GameMakeColor( r, g, b, a );
 
-		}
-
-		// cache hero objects for drawing in icon layer
-		if( calcHero && obj->isHero() )
-		{
-			m_cachedHeroObjectList.push_back(obj);
 		}
 
 		// draw the blip, but make sure the points are legal
@@ -988,8 +978,6 @@ void W3DRadar::reset( void )
 	// extending functionality, call base class
 	Radar::reset();
 
-	m_cachedHeroObjectList.clear();
-
 	// clear our texture data, but do not delete the resources
 	SurfaceClass *surface;
 
@@ -1022,39 +1010,6 @@ void W3DRadar::update( void )
 	// extend base class
 	Radar::update();
 
-}
-
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-RadarObjectType W3DRadar::addObject( Object* obj )
-{
-	RadarObjectType addedType = Radar::addObject(obj);
-
-	if (addedType == RadarObjectType_Local)
-	{
-		if (obj->isHero() && !RadarObject::isTemporarilyHidden(obj))
-		{
-			m_cachedHeroObjectList.push_back(obj);
-		}
-	}
-
-	return addedType;
-}
-
-//-------------------------------------------------------------------------------------------------
-// TheSuperHackers @bugfix xezon 05/07/2025 Now removes the cached hero immediately because
-// otherwise the object pointer could be dangling and used for a bit too long.
-//-------------------------------------------------------------------------------------------------
-RadarObjectType W3DRadar::removeObject( Object* obj )
-{
-	RadarObjectType removedType = Radar::removeObject(obj);
-
-	if (removedType == RadarObjectType_Local)
-	{
-		stl::find_and_erase_unordered(m_cachedHeroObjectList, obj);
-	}
-
-	return removedType;
 }
 
 //-------------------------------------------------------------------------------------------------
