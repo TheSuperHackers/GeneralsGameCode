@@ -55,6 +55,11 @@ template<size_t Size> size_t strlmove_t(char (&dst)[Size], const char *src);
 template<size_t Size> size_t strlmcat_t(char (&dst)[Size], const char *src);
 #endif
 
+template<typename T> bool startsWith(const T *str, const T *prefix);
+template<typename T> bool startsWithNoCase(const T *str, const T *prefix);
+template<typename T> bool endsWith(const T *str, const T *suffix);
+template<typename T> bool endsWithNoCase(const T *str, const T *suffix);
+
 
 // Implementation
 
@@ -182,3 +187,47 @@ template<size_t Size> size_t strlcat_t(char (&dst)[Size], const char *src) { ret
 template<size_t Size> size_t strlmove_t(char (&dst)[Size], const char *src) { return strlmove_t(dst, src, Size); }
 template<size_t Size> size_t strlmcat_t(char (&dst)[Size], const char *src) { return strlmcat_t(dst, src, Size); }
 #endif
+
+inline int compare_string(const char *a, const char *b, const size_t maxCount, const bool caseSensitive = true)
+{
+	return caseSensitive ? strncmp(a, b, maxCount) : _strnicmp(a, b, maxCount);
+}
+
+inline int compare_string(const wchar_t *a, const wchar_t *b, const size_t maxCount, const bool caseSensitive = true)
+{
+	return caseSensitive ? wcsncmp(a, b, maxCount) : _wcsnicmp(a, b, maxCount);
+}
+
+template<typename T> bool string_edge_equals(const T *str, const T *smaller, const bool endEdge, const bool case_sensitive = true)
+{
+	if (*smaller == T(0))
+		return true;	// everything starts or ends with the empty string
+
+	const size_t strlen = strlen_t(str);
+	const size_t smallen = strlen_t(smaller);
+	if (strlen < smallen)
+		return false;	// smaller must be smaller than str
+
+	const T* strStart = endEdge ? str + strlen - smallen : str;
+
+	return compare_string(strStart, smaller, smallen, case_sensitive) == 0;
+}
+
+template<typename T> bool startsWith(const T *str, const T *prefix)
+{
+	return string_edge_equals(str, prefix, false);
+};
+template<typename T> bool startsWithNoCase(const T *str, const T *prefix)
+{
+	return string_edge_equals(str, prefix, false, false);
+};
+
+template<typename T> bool endsWith(const T *str, const T *suffix)
+{
+	return string_edge_equals(str, suffix, true);
+};
+
+template<typename T> bool endsWithNoCase(const T *str, const T *suffix)
+{
+	return string_edge_equals(str, suffix, true, false);
+};

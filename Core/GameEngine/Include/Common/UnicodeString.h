@@ -307,6 +307,30 @@ public:
 	int compareNoCase(const WideChar* s) const;
 
 	/**
+		return true iff self starts with the given string.
+	*/
+	Bool startsWith(const WideChar* p) const;
+	inline Bool startsWith(const UnicodeString& stringSrc) const { return startsWith(stringSrc.str()); }
+
+	/**
+		return true iff self starts with the given string. (case insensitive)
+	*/
+	Bool startsWithNoCase(const WideChar* p) const;
+	inline Bool startsWithNoCase(const UnicodeString& stringSrc) const { return startsWithNoCase(stringSrc.str()); }
+
+	/**
+		return true iff self ends with the given string.
+	*/
+	Bool endsWith(const WideChar* p) const;
+	Bool endsWith(const UnicodeString& stringSrc) const { return endsWith(stringSrc.str()); }
+
+	/**
+		return true iff self ends with the given string. (case insensitive)
+	*/
+	Bool endsWithNoCase(const WideChar* p) const;
+	Bool endsWithNoCase(const UnicodeString& stringSrc) const { return endsWithNoCase(stringSrc.str()); }
+
+	/**
 		conceptually similar to strtok():
 
 		extract the next whitespace-delimited token from the front

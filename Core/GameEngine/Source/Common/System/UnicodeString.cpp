@@ -406,6 +406,30 @@ void UnicodeString::format_va(const WideChar* format, va_list args)
 	}
 }
 
+// -----------------------------------------------------
+Bool UnicodeString::startsWith(const WideChar* p) const
+{
+	return ::startsWith(peek(), p);
+}
+
+// -----------------------------------------------------
+Bool UnicodeString::startsWithNoCase(const WideChar* p) const
+{
+	return ::startsWithNoCase(peek(), p);
+}
+
+// -----------------------------------------------------
+Bool UnicodeString::endsWith(const WideChar* p) const
+{
+	return ::endsWith(peek(), p);
+}
+
+// -----------------------------------------------------
+Bool UnicodeString::endsWithNoCase(const WideChar* p) const
+{
+	return ::endsWithNoCase(peek(), p);
+}
+
 //-----------------------------------------------------------------------------
 Bool UnicodeString::nextToken(UnicodeString* tok, UnicodeString delimiters)
 {
