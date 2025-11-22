@@ -200,14 +200,6 @@ CW3DViewDoc::CleanupResources (void)
 	 delete m_pDazzleLayer;
 	 m_pDazzleLayer = NULL;
 
-    // Was there a valid scene object?
-    if (m_pCBackObjectScene)
-    {
-        // Free the scene object
-        m_pCBackObjectScene->Release_Ref ();
-        m_pCBackObjectScene = NULL;
-    }
-
     // Was there a valid 2D camera?
     if (m_pC2DCamera)
     {
