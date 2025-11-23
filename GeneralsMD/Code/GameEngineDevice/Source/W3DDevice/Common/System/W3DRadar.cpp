@@ -890,8 +890,8 @@ void W3DRadar::init( void )
 	DEBUG_ASSERTCRASH( m_overlayTexture, ("W3DRadar: Unable to allocate overlay texture") );
 
 	// set filter type for the overlay texture, try it and see if you like it, I don't ;)
-//	m_overlayTexture->Set_Min_Filter( TextureClass::FILTER_TYPE_NONE );
-//	m_overlayTexture->Set_Mag_Filter( TextureClass::FILTER_TYPE_NONE );
+//	m_overlayTexture->Set_Min_Filter( TextureFilterClass::FILTER_TYPE_NONE );
+//	m_overlayTexture->Set_Mag_Filter( TextureFilterClass::FILTER_TYPE_NONE );
 
 	// allocate our shroud texture
 	m_shroudTexture = MSGNEW("TextureClass") TextureClass( m_textureWidth, m_textureHeight,
@@ -1136,7 +1136,7 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 								radarToWorld2D( &radarPoint, &worldPoint );
 
 								// get color for this Z and add to our sample color
-                Real underwaterZ;
+								Real underwaterZ;
 								if( terrain->isUnderwater( worldPoint.x, worldPoint.y, NULL, &underwaterZ ) )
 								{
 									// this is our "color" for water
@@ -1544,7 +1544,7 @@ void W3DRadar::refreshObjects()
 		// they are godlike and can see everything)
  		//
  		if( obj->getRadarPriority() == RADAR_PRIORITY_LOCAL_UNIT_ONLY &&
- 				obj->getControllingPlayer() != player &&
+				obj->getControllingPlayer() != player &&
 				player->isPlayerActive() )
  			continue;
 

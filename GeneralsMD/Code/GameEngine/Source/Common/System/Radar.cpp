@@ -362,15 +362,15 @@ void Radar::newMap( TerrainLogic *terrain )
 	m_waterAverageZ = 0.0f;
 	Coord3D worldPoint;
 
-  // since we're averaging let's skip every second sample...
-  worldPoint.y=0;
+	// since we're averaging let's skip every second sample...
+	worldPoint.y=0;
 	for( y = 0; y < RADAR_CELL_HEIGHT; y+=2, worldPoint.y+=2.0*m_ySample )
-  {
-    worldPoint.x=0;
-    for( x = 0; x < RADAR_CELL_WIDTH; x+=2, worldPoint.x+=2.0*m_xSample )
+	{
+		worldPoint.x=0;
+		for( x = 0; x < RADAR_CELL_WIDTH; x+=2, worldPoint.x+=2.0*m_xSample )
 		{
 			// don't use this, we don't really need the
-      // Z position by this function... radarToWorld( &radarPoint, &worldPoint );
+			// Z position by this function... radarToWorld( &radarPoint, &worldPoint );
 			// and this is done by isUnderwater anyway: z = terrain->getGroundHeight( worldPoint.x, worldPoint.y );
 			Real z,waterZ;
 			if( terrain->isUnderwater( worldPoint.x, worldPoint.y, &waterZ, &z ) )
@@ -383,9 +383,8 @@ void Radar::newMap( TerrainLogic *terrain )
 				m_terrainAverageZ += z;
 				terrainSamples++;
 			}
-
 		}
-  }
+	}
 
 	// avoid divide by zeros
 	if( terrainSamples == 0 )
@@ -436,7 +435,7 @@ RadarObjectType Radar::addObject( Object *obj )
 		//Because we have support for disguised units pretending to be units from another
 		//team, we need to intercept it here and make sure it's rendered appropriately
 		//based on which client is rendering it.
-    StealthUpdate *update = obj->getStealth();
+		StealthUpdate *update = obj->getStealth();
 		if( update )
 		{
 			if( update->isDisguised() )
@@ -1506,7 +1505,7 @@ void Radar::xfer( Xfer *xfer )
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
-	
+
 	if (version <= 1)
 	{
 		const Int localPlayerIndex = ThePlayerList->getLocalPlayer()->getPlayerIndex();

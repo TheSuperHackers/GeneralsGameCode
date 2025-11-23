@@ -73,7 +73,7 @@ enum RadarEventType CPP_11(: Int)
 	RADAR_EVENT_FAKE,					//Internally creates a radar event, but doesn't notify the player (unit lost
 														//for example, so we can use the spacebar to jump to the event).
 
- 	RADAR_EVENT_NUM_EVENTS
+	RADAR_EVENT_NUM_EVENTS
 
 };
 
@@ -258,8 +258,6 @@ protected:
 	RadarObject *m_localObjectList;				/** list of objects for the local player, sorted
 																					* in exactly the same priority as the regular
 																					* object list for all other objects */
-//	typedef std::list<Object*> HeroList;
-//	HeroList m_heroList;		//< list of pointers to objects with radar icon representations
 
 	Real m_terrainAverageZ;								///< average Z for terrain samples
 	Real m_waterAverageZ;									///< average Z for water samples

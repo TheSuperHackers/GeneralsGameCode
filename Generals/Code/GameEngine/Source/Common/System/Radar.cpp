@@ -355,23 +355,25 @@ void Radar::newMap( TerrainLogic *terrain )
 	m_ySample = m_mapExtent.height() / RADAR_CELL_HEIGHT;
 
 	// find the "middle" height for the terrain (most used value) and water table
-	Int x, y, z;
+	Int x, y;
 	Int terrainSamples = 0, waterSamples = 0;
 
 	m_terrainAverageZ = 0.0f;
 	m_waterAverageZ = 0.0f;
-	ICoord2D radarPoint;
 	Coord3D worldPoint;
-	for( y = 0; y < RADAR_CELL_HEIGHT; y++ )
-		for( x = 0; x < RADAR_CELL_WIDTH; x++ )
-		{
 
-			radarPoint.x = x;
-			radarPoint.y = y;
-			radarToWorld( &radarPoint, &worldPoint );
-			z = terrain->getGroundHeight( worldPoint.x, worldPoint.y );
-			Real waterZ;
-			if( terrain->isUnderwater( worldPoint.x, worldPoint.y, &waterZ ) )
+	// since we're averaging let's skip every second sample...
+	worldPoint.y=0;
+	for( y = 0; y < RADAR_CELL_HEIGHT; y+=2, worldPoint.y+=2.0*m_ySample )
+	{
+		worldPoint.x=0;
+		for( x = 0; x < RADAR_CELL_WIDTH; x+=2, worldPoint.x+=2.0*m_xSample )
+		{
+			// don't use this, we don't really need the
+			// Z position by this function... radarToWorld( &radarPoint, &worldPoint );
+			// and this is done by isUnderwater anyway: z = terrain->getGroundHeight( worldPoint.x, worldPoint.y );
+			Real z,waterZ;
+			if( terrain->isUnderwater( worldPoint.x, worldPoint.y, &waterZ, &z ) )
 			{
 				m_waterAverageZ += z;
 				waterSamples++;
@@ -381,8 +383,8 @@ void Radar::newMap( TerrainLogic *terrain )
 				m_terrainAverageZ += z;
 				terrainSamples++;
 			}
-
 		}
+	}
 
 	// avoid divide by zeros
 	if( terrainSamples == 0 )

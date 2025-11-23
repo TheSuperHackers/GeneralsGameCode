@@ -40,8 +40,6 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 
-#include "GameLogic/Module/StealthUpdate.h"
-
 #include "GameClient/Color.h"
 #include "GameClient/ControlBar.h"
 #include "GameClient/Display.h"
@@ -671,9 +669,9 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 		// they are godlike and can see everything)
  		//
  		if( obj->getRadarPriority() == RADAR_PRIORITY_LOCAL_UNIT_ONLY &&
-				obj->getControllingPlayer() != player &&
+ 				obj->getControllingPlayer() != player &&
 				player->isPlayerActive() )
-			continue;
+ 			continue;
 
 		// get object position
 		const Coord3D *pos = obj->getPosition();
@@ -693,12 +691,8 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 		// Now it twinkles for any stealthed object, whether locally controlled or neutral-observer-viewed
 		if( obj->testStatus( OBJECT_STATUS_STEALTHED ) )
 		{
-			StealthUpdate* stealth = obj->getStealth();
-			if( !stealth )
-				continue;
-
       if ( TheControlBar->getCurrentlyViewedPlayerRelationship(obj->getTeam()) == ENEMIES )
-        if( !obj->testStatus( OBJECT_STATUS_DETECTED ) && !stealth->isDisguised() )
+        if( !obj->testStatus( OBJECT_STATUS_DETECTED ) && !obj->testStatus( OBJECT_STATUS_DISGUISED ) )
 				  continue;
 
 			UnsignedByte r, g, b, a;
@@ -1081,7 +1075,7 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 	RGBColor sampleColor;
 	RGBColor color;
 	Int i, j, samples;
-	Int x, y, z;
+	Int x, y;
 	ICoord2D radarPoint;
 	Coord3D worldPoint;
 	Bridge *bridge;
@@ -1094,10 +1088,7 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 			// what point are we inspecting
 			radarPoint.x = x;
 			radarPoint.y = y;
-			radarToWorld( &radarPoint, &worldPoint );
-
-			// get height of the terrain at this sample point
-			z = terrain->getGroundHeight( worldPoint.x, worldPoint.y );
+			radarToWorld2D( &radarPoint, &worldPoint );
 
 			// check to see if this point is part of a working bridge
 			Bool workingBridge = FALSE;
@@ -1142,15 +1133,12 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 								// the the world point we are concerned with
 								radarPoint.x = i;
 								radarPoint.y = j;
-								radarToWorld( &radarPoint, &worldPoint );
-
-								// get Z at this sample height
-								Real underwaterZ = terrain->getGroundHeight( worldPoint.x, worldPoint.y );
+								radarToWorld2D( &radarPoint, &worldPoint );
 
 								// get color for this Z and add to our sample color
-								if( terrain->isUnderwater( worldPoint.x, worldPoint.y ) )
+								Real underwaterZ;
+								if( terrain->isUnderwater( worldPoint.x, worldPoint.y, NULL, &underwaterZ ) )
 								{
-
 									// this is our "color" for water
 									color = waterColor;
 
@@ -1246,7 +1234,7 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 									TheTerrainVisual->getTerrainColorAt( worldPoint.x, worldPoint.y, &color );
 
 									// interpolate the color for height
-									interpolateColorForHeight( &color, z, getTerrainAverageZ(),
+									interpolateColorForHeight( &color, worldPoint.z, getTerrainAverageZ(),
 																						 m_mapExtent.hi.z, m_mapExtent.lo.z );
 
 								}
