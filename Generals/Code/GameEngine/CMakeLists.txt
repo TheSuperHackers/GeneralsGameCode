@@ -74,7 +74,7 @@ set(GAMEENGINE_SRC
     Include/Common/Money.h
     Include/Common/MultiplayerSettings.h
     Include/Common/NameKeyGenerator.h
-    Include/Common/ObjectStatusTypes.h
+#    Include/Common/ObjectStatusTypes.h
     Include/Common/OSDisplay.h
     Include/Common/Overridable.h
     Include/Common/Override.h
@@ -87,7 +87,7 @@ set(GAMEENGINE_SRC
     Include/Common/ProductionPrerequisite.h
     Include/Common/QuickmatchPreferences.h
     Include/Common/QuotedPrintable.h
-    Include/Common/Radar.h
+#    Include/Common/Radar.h
 #    Include/Common/RAMFile.h
 #    Include/Common/RandomValue.h
     Include/Common/Recorder.h
@@ -610,9 +610,9 @@ set(GAMEENGINE_SRC
 #    Source/Common/System/LocalFile.cpp
 #    Source/Common/System/LocalFileSystem.cpp
     #Source/Common/System/MemoryInit.cpp
-    Source/Common/System/ObjectStatusTypes.cpp
+#    Source/Common/System/ObjectStatusTypes.cpp
     Source/Common/System/QuotedPrintable.cpp
-    Source/Common/System/Radar.cpp
+#    Source/Common/System/Radar.cpp
 #    Source/Common/System/RAMFile.cpp
     Source/Common/System/registry.cpp
     Source/Common/System/SaveGame/GameState.cpp

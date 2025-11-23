@@ -4,7 +4,7 @@ set(GAMEENGINEDEVICE_SRC
     Include/W3DDevice/Common/W3DConvert.h
     Include/W3DDevice/Common/W3DFunctionLexicon.h
     Include/W3DDevice/Common/W3DModuleFactory.h
-    Include/W3DDevice/Common/W3DRadar.h
+#    Include/W3DDevice/Common/W3DRadar.h
     Include/W3DDevice/Common/W3DThingFactory.h
     Include/W3DDevice/GameClient/HeightMap.h
     Include/W3DDevice/GameClient/Module/W3DDebrisDraw.h
@@ -81,7 +81,7 @@ set(GAMEENGINEDEVICE_SRC
 #    Source/MilesAudioDevice/MilesAudioManager.cpp
 #    Source/VideoDevice/Bink/BinkVideoPlayer.cpp
     Source/W3DDevice/Common/System/W3DFunctionLexicon.cpp
-    Source/W3DDevice/Common/System/W3DRadar.cpp
+#    Source/W3DDevice/Common/System/W3DRadar.cpp
     Source/W3DDevice/Common/Thing/W3DModuleFactory.cpp
     Source/W3DDevice/Common/Thing/W3DThingFactory.cpp
     Source/W3DDevice/Common/W3DConvert.cpp
