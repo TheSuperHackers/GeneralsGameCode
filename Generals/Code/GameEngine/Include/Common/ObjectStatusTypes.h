@@ -70,6 +70,25 @@ enum ObjectStatusTypes CPP_11(: Int)
 	OBJECT_STATUS_NO_ATTACK_FROM_AI,		///< attacking this object may not be done from commandSource == CMD_FROM_AI
 	OBJECT_STATUS_IGNORING_STEALTH,			///< temporarily ignoring all stealth bits. (used only for some special-case mine clearing stuff.)
 	OBJECT_STATUS_IS_CARBOMB,						///< Object is now a carbomb.
+
+	// TheSuperHackers @info New statuses added in Zero Hour
+	// Note: Loading old save games that do not track these flags in objects will not recover them. Expect logic bugs.
+	OBJECT_STATUS_DECK_HEIGHT_OFFSET,		///< Object factors deck height on top of ground altitude.
+	OBJECT_STATUS_RIDER1,
+	OBJECT_STATUS_RIDER2,
+	OBJECT_STATUS_RIDER3,
+	OBJECT_STATUS_RIDER4,
+	OBJECT_STATUS_RIDER5,
+	OBJECT_STATUS_RIDER6,
+	OBJECT_STATUS_RIDER7,
+	OBJECT_STATUS_RIDER8,
+	OBJECT_STATUS_FAERIE_FIRE,			///< Anyone shooting at you shoots faster than normal
+  OBJECT_STATUS_MISSILE_KILLING_SELF, ///< Object (likely a missile or bomb) is *BUSTING* its way through the *BUNKER*, building or ground, awaiting death at the bottom.
+	OBJECT_STATUS_REASSIGN_PARKING,			///< Jet is trying to get a better parking assignment.
+	OBJECT_STATUS_BOOBY_TRAPPED,				///< We need to know we have a booby trap on us so we can detonate it from many different code segments
+	OBJECT_STATUS_IMMOBILE,							///< Do not move!
+	OBJECT_STATUS_DISGUISED,						///< Object is disguised (a type of stealth)
+	OBJECT_STATUS_DEPLOYED,							///< Object is deployed.
 	// add more status types here and don't forget to add to the string table ObjectStatusMaskType::s_bitNameList[]
 
 	OBJECT_STATUS_COUNT

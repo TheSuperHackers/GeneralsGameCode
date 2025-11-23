@@ -64,6 +64,7 @@ const char* const ObjectStatusMaskType::s_bitNameList[] =
 	"NO_ATTACK_FROM_AI",
 	"IGNORING_STEALTH",
 	"IS_CARBOMB",
+	// TheSuperHackers @info New statuses added in Zero Hour
 	"DECK_HEIGHT_OFFSET",
 	"STATUS_RIDER1",
 	"STATUS_RIDER2",

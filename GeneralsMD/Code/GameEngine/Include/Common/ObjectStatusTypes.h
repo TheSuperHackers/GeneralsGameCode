@@ -70,6 +70,9 @@ enum ObjectStatusTypes CPP_11(: Int)
 	OBJECT_STATUS_NO_ATTACK_FROM_AI,		///< attacking this object may not be done from commandSource == CMD_FROM_AI
 	OBJECT_STATUS_IGNORING_STEALTH,			///< temporarily ignoring all stealth bits. (used only for some special-case mine clearing stuff.)
 	OBJECT_STATUS_IS_CARBOMB,						///< Object is now a carbomb.
+
+	// TheSuperHackers @info New statuses added in Zero Hour
+	// Note: Loading old save games that do not track these flags in objects will not recover them. Expect logic bugs.
 	OBJECT_STATUS_DECK_HEIGHT_OFFSET,		///< Object factors deck height on top of ground altitude.
 	OBJECT_STATUS_RIDER1,
 	OBJECT_STATUS_RIDER2,

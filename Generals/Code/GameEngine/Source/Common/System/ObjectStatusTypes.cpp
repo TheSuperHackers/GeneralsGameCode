@@ -64,6 +64,23 @@ const char* const ObjectStatusMaskType::s_bitNameList[] =
 	"NO_ATTACK_FROM_AI",
 	"IGNORING_STEALTH",
 	"IS_CARBOMB",
+	// TheSuperHackers @info New statuses added in Zero Hour
+	"DECK_HEIGHT_OFFSET",
+	"STATUS_RIDER1",
+	"STATUS_RIDER2",
+	"STATUS_RIDER3",
+	"STATUS_RIDER4",
+	"STATUS_RIDER5",
+	"STATUS_RIDER6",
+	"STATUS_RIDER7",
+	"STATUS_RIDER8",
+	"FAERIE_FIRE",
+  "KILLING_SELF",
+	"REASSIGN_PARKING",
+	"BOOBY_TRAPPED",
+	"IMMOBILE",
+	"DISGUISED",
+	"DEPLOYED",
 	NULL
 };
 static_assert(ARRAY_SIZE(ObjectStatusMaskType::s_bitNameList) == ObjectStatusMaskType::NumBits + 1, "Incorrect array size");
