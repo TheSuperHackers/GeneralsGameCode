@@ -75,7 +75,7 @@
 #include "W3DDevice/GameClient/W3DPoly.h"
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 
-#include "W3DDevice/GameClient/camerashakesystem.h"
+#include "W3DDevice/GameClient/CameraShakeSystem.h"
 #include "WW3D2/camera.h"
 
 //#include "W3DDevice/GameClient/camera.h"

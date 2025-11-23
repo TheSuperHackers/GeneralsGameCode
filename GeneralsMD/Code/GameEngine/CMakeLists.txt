@@ -206,7 +206,7 @@ set(GAMEENGINE_SRC
     Include/GameClient/Module/BeaconClientUpdate.h
     Include/GameClient/Module/SwayClientUpdate.h
     Include/GameClient/Mouse.h
-    Include/GameClient/ParabolicEase.h
+#    Include/GameClient/ParabolicEase.h
     Include/GameClient/ParticleSys.h
     Include/GameClient/PlaceEventTranslator.h
     Include/GameClient/ProcessAnimateWindow.h
@@ -807,7 +807,7 @@ set(GAMEENGINE_SRC
     Source/GameClient/MessageStream/PlaceEventTranslator.cpp
     Source/GameClient/MessageStream/SelectionXlat.cpp
     Source/GameClient/MessageStream/WindowXlat.cpp
-    Source/GameClient/ParabolicEase.cpp
+#    Source/GameClient/ParabolicEase.cpp
     Source/GameClient/RadiusDecal.cpp
     Source/GameClient/SelectionInfo.cpp
     Source/GameClient/Snow.cpp

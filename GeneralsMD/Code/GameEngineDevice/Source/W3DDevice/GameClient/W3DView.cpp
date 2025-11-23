@@ -93,7 +93,7 @@
 #include "WW3D2/predlod.h"
 #include "WW3D2/ww3d.h"
 
-#include "W3DDevice/GameClient/camerashakesystem.h"
+#include "W3DDevice/GameClient/CameraShakeSystem.h"
 
 #include "WinMain.h"  /** @todo Remove this, it's only here because we
 													are using timeGetTime, but we can remove that

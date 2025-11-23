@@ -98,7 +98,7 @@ set(GAMEENGINEDEVICE_SRC
 #    Source/W3DDevice/Common/Thing/W3DThingFactory.cpp
 #    Source/W3DDevice/Common/W3DConvert.cpp
 #    Source/W3DDevice/GameClient/BaseHeightMap.cpp
-#    Source/W3DDevice/GameClient/camerashakesystem.cpp
+    Source/W3DDevice/GameClient/CameraShakeSystem.cpp
 #    Source/W3DDevice/GameClient/Drawable/Draw/W3DDebrisDraw.cpp
 #    Source/W3DDevice/GameClient/Drawable/Draw/W3DDefaultDraw.cpp
 #    Source/W3DDevice/GameClient/Drawable/Draw/W3DDependencyModelDraw.cpp
