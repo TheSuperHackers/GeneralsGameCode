@@ -4751,7 +4751,15 @@ void Object::adjustModelConditionForWeaponStatus()
 			if (newStatus == READY_TO_FIRE && conditionToSet == WSF_NONE && testStatus( OBJECT_STATUS_IS_ATTACKING ) &&
 					(testStatus( OBJECT_STATUS_IS_AIMING_WEAPON ) || testStatus( OBJECT_STATUS_IS_FIRING_WEAPON )))
 			{
+				// TheSuperHackers @bugfix bobtista 11/11/2025 Don't resume firing animation if underpowered.
+#if !RETAIL_COMPATIBLE_CRC
+				if ( !( isKindOf( KINDOF_POWERED ) && isDisabledByType( DISABLED_UNDERPOWERED ) ) )
+				{
+					conditionToSet = WSF_BETWEEN;
+				}
+#else
 				conditionToSet = WSF_BETWEEN;
+#endif
 			}
 
 		}
