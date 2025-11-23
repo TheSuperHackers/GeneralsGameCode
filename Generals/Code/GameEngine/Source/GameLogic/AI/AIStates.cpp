@@ -816,9 +816,9 @@ void AIStateMachine::loadPostProcess( void )
 /**
  * Define a simple path
  */
-void AIStateMachine::setGoalPath( const std::vector<Coord3D>* path )
+void AIStateMachine::setGoalPath( std::vector<Coord3D>* path )
 {
-	m_goalPath = *path;
+	m_goalPath = std::move(*path);
 }
 
 #ifdef STATE_MACHINE_DEBUG
