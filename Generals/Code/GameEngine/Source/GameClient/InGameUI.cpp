@@ -5656,7 +5656,6 @@ ObjectPtrVector InGameUI::getUniqueIdleWorkers(const ObjectList& idleWorkers)
 Int InGameUI::getIdleWorkerCount( void )
 {
 	Player* player = rts::getObservedOrLocalPlayer();
-
 	Int index = player->getPlayerIndex();
 	return m_idleWorkers[index].size();
 }
