@@ -1940,6 +1940,12 @@ Bool W3DDisplay::isLetterBoxFading(void)
 	return FALSE;
 }
 
+//WST 10/2/2002 added query function.  JSC Integrated 5/20/03
+Bool W3DDisplay::isLetterBoxed(void)
+{
+	return (m_letterBoxEnabled);
+}
+
 // W3DDisplay::createLightPulse ===============================================
 /** Create a "light pulse" which is a dynamic light that grows, decays
 	* and vanishes over several frames */

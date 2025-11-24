@@ -377,6 +377,14 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 	}
 	else
 	{
+		// TheSuperHackers @todo Investigate whether the non Generals code is correct for Zero Hour.
+		// It certainly is incorrect for Generals when m_FXPitch goes above 1:
+		// Seen in USA mission 1 second cut scene with SCUD Storm.
+#if RTS_GENERALS
+		Real height = sourcePos.Z - targetPos.Z;
+		height *= m_FXPitch;
+		targetPos.Z = sourcePos.Z - height;
+#else
 		if (m_FXPitch <= 1.0f)
 		{
 			Real height = sourcePos.Z - targetPos.Z;
@@ -388,6 +396,7 @@ void W3DView::buildCameraTransform( Matrix3D *transform )
 			sourcePos.X = targetPos.X + ((sourcePos.X - targetPos.X) / m_FXPitch);
 			sourcePos.Y = targetPos.Y + ((sourcePos.Y - targetPos.Y) / m_FXPitch);
 		}
+#endif
 	}
 
 	//m_3DCamera->Set_View_Plane(DEG_TO_RADF(50.0f));
@@ -2512,7 +2521,13 @@ void W3DView::rotateCameraTowardPosition(const Coord3D *pLoc, Int milliseconds, 
 	m_rcInfo.curFrame = 0;
 	m_doingRotateCamera = true;
 	m_rcInfo.angle.startAngle = m_angle;
+	// TheSuperHackers @todo Investigate if the non Generals code is correct for Zero Hour.
+	// It certainly is incorrect for Generals: Seen in GLA mission 1 opening cut scene.
+#if RTS_GENERALS
+	m_rcInfo.angle.endAngle = m_angle + angle;
+#else
 	m_rcInfo.angle.endAngle = angle;
+#endif
 	m_rcInfo.startTimeMultiplier = m_timeMultiplier;
 	m_rcInfo.endTimeMultiplier = m_timeMultiplier;
 	m_rcInfo.ease.setEaseTimes(easeIn/milliseconds, easeOut/milliseconds);
@@ -3130,8 +3145,14 @@ void W3DView::moveAlongWaypointPath(Real milliseconds)
 	const Real deltaTime = m_mcwpInfo.ease(m_mcwpInfo.elapsedTimeMilliseconds/totalTime) -
 		m_mcwpInfo.ease((m_mcwpInfo.elapsedTimeMilliseconds - milliseconds)/totalTime);
 	m_mcwpInfo.curSegDistance += deltaTime*m_mcwpInfo.totalDistance;
-	while (m_mcwpInfo.curSegDistance >= m_mcwpInfo.waySegLength[m_mcwpInfo.curSegment]) {
-
+	// TheSuperHacker @todo Investigate which one is really correct.
+	// The non Generals condition causes camera bug in Generals Shell Map.
+#if RTS_GENERALS
+	while (m_mcwpInfo.curSegDistance > m_mcwpInfo.waySegLength[m_mcwpInfo.curSegment])
+#else
+	while (m_mcwpInfo.curSegDistance >= m_mcwpInfo.waySegLength[m_mcwpInfo.curSegment])
+#endif
+	{
 		if ( m_doingMoveCameraOnWaypointPath )
 		{
 			//WWDEBUG_SAY(( "MBL TEST: Camera waypoint along path reached!" ));

@@ -3458,6 +3458,48 @@ Int W3DModelDraw::getPristineBonePositionsForConditionState(
 	return posCount;
 }
 
+
+//-------------------------------------------------------------------------------------------------
+// (gth) C&C3 Added this accessor for the bounding box of a render object in a W3DModelDraw module
+// this method must ONLY be called from the client, NEVER From the logic, not even indirectly.
+Bool W3DModelDraw::clientOnly_getRenderObjBoundBox(OBBoxClass * boundbox) const
+{
+	if (!m_renderObject)
+		return false;
+
+	AABoxClass aabox;
+	m_renderObject->Get_Obj_Space_Bounding_Box(aabox);
+
+	Matrix3D tm = m_renderObject->Get_Transform();
+
+	// build an OBB for this AAB,transform
+	OBBoxClass box0(aabox.Center,aabox.Extent);
+	OBBoxClass::Transform(tm,box0,boundbox);
+
+	return true;
+}
+
+
+//-------------------------------------------------------------------------------------------------
+// (gth) C&C3 Added this accessor for a bone transform in the render object
+// this method must ONLY be called from the client, NEVER From the logic, not even indirectly.
+Bool W3DModelDraw::clientOnly_getRenderObjBoneTransform(const AsciiString & boneName,Matrix3D * set_tm) const
+{
+	if (!m_renderObject) {
+		return false;
+	}
+
+	int idx = m_renderObject->Get_Bone_Index(boneName.str());
+	if (idx == 0) {
+		set_tm->Make_Identity();
+		return false;
+	} else {
+		*set_tm = m_renderObject->Get_Bone_Transform(idx);
+		return true;
+	}
+}
+
+
 //-------------------------------------------------------------------------------------------------
 Bool W3DModelDraw::getCurrentWorldspaceClientBonePositions(const char* boneName, Matrix3D& transform) const
 {

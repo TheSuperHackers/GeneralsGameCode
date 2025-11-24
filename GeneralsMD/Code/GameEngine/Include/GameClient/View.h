@@ -135,13 +135,13 @@ public:
 	virtual void initHeightForMap( void ) {};														///<  Init the camera height for the map at the current position.
 	virtual void scrollBy( Coord2D *delta );														///< Shift the view by the given delta
 
-	virtual void moveCameraTo(const Coord3D *o, Int frames, Int shutter, Bool orient, Real easeIn, Real easeOut) { lookAt( o ); }
-	virtual void moveCameraAlongWaypointPath(Waypoint *way, Int frames, Int shutter, Bool orient, Real easeIn, Real easeOut) { }
+	virtual void moveCameraTo(const Coord3D *o, Int frames, Int shutter, Bool orient, Real easeIn=0.0f, Real easeOut=0.0f) { lookAt( o ); }
+	virtual void moveCameraAlongWaypointPath(Waypoint *way, Int frames, Int shutter, Bool orient, Real easeIn=0.0f, Real easeOut=0.0f) { }
 	virtual Bool isCameraMovementFinished( void ) { return TRUE; }
-	virtual void cameraModFinalZoom(Real finalZoom, Real easeIn, Real easeOut){}; ///< Final zoom for current camera movement.
+	virtual void cameraModFinalZoom(Real finalZoom, Real easeIn=0.0f, Real easeOut=0.0f){}; ///< Final zoom for current camera movement.
 	virtual void cameraModRollingAverage(Int framesToAverage){}; ///< Number of frames to average movement for current camera movement.
 	virtual void cameraModFinalTimeMultiplier(Int finalMultiplier){}; ///< Final time multiplier for current camera movement.
-	virtual void cameraModFinalPitch(Real finalPitch, Real easeIn, Real easeOut){};	 ///< Final pitch for current camera movement.
+	virtual void cameraModFinalPitch(Real finalPitch, Real easeIn=0.0f, Real easeOut=0.0f){};	 ///< Final pitch for current camera movement.
 	virtual void cameraModFreezeTime(void){ }					///< Freezes time during the next camera movement.
 	virtual void cameraModFreezeAngle(void){ }					///< Freezes time during the next camera movement.
 	virtual void cameraModLookToward(Coord3D *pLoc){}			///< Sets a look at point during camera movement.
@@ -161,16 +161,16 @@ public:
 	virtual void setFadeParameters(Int fadeFrames, Int direction) { };
 	virtual void set3DWireFrameMode(Bool enable) { };
 
- 	virtual void resetCamera(const Coord3D *location, Int frames, Real easeIn, Real easeOut) {}; ///< Move camera to location, and reset to default angle & zoom.
- 	virtual void rotateCamera(Real rotations, Int frames, Real easeIn, Real easeOut) {}; ///< Rotate camera about current viewpoint.
-	virtual void rotateCameraTowardObject(ObjectID id, Int milliseconds, Int holdMilliseconds, Real easeIn, Real easeOut) {};	///< Rotate camera to face an object, and hold on it
-	virtual void rotateCameraTowardPosition(const Coord3D *pLoc, Int milliseconds, Real easeIn, Real easeOut, Bool reverseRotation) {};	///< Rotate camera to face a location.
+ 	virtual void resetCamera(const Coord3D *location, Int frames, Real easeIn=0.0f, Real easeOut=0.0f) {}; ///< Move camera to location, and reset to default angle & zoom.
+ 	virtual void rotateCamera(Real rotations, Int frames, Real easeIn=0.0f, Real easeOut=0.0f) {}; ///< Rotate camera about current viewpoint.
+	virtual void rotateCameraTowardObject(ObjectID id, Int milliseconds, Int holdMilliseconds, Real easeIn=0.0f, Real easeOut=0.0f) {};	///< Rotate camera to face an object, and hold on it
+	virtual void rotateCameraTowardPosition(const Coord3D *pLoc, Int milliseconds, Real easeIn=0.0f, Real easeOut=0.0f, Bool reverseRotation=FALSE) {};	///< Rotate camera to face a location.
 	virtual Bool isTimeFrozen(void){ return false;}					///< Freezes time during the next camera movement.
 	virtual Int	 getTimeMultiplier(void) {return 1;};				///< Get the time multiplier.
 	virtual void setTimeMultiplier(Int multiple) {}; ///< Set the time multiplier.
 	virtual void setDefaultView(Real pitch, Real angle, Real maxHeight) {};
-	virtual void zoomCamera( Real finalZoom, Int milliseconds, Real easeIn, Real easeOut ) {};
-	virtual void pitchCamera( Real finalPitch, Int milliseconds, Real easeIn, Real easeOut ) {};
+	virtual void zoomCamera( Real finalZoom, Int milliseconds, Real easeIn=0.0f, Real easeOut=0.0f ) {};
+	virtual void pitchCamera( Real finalPitch, Int milliseconds, Real easeIn=0.0f, Real easeOut=0.0f ) {};
 
 	virtual void setAngle( Real angle );																///< Rotate the view around the up axis to the given angle
 	virtual Real getAngle( void ) { return m_angle; }

@@ -38,6 +38,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/STLTypedefs.h"
+#include "GameClient/ParabolicEase.h"
 #include "GameClient/View.h"
 #include "WW3D2/camera.h"
 
@@ -55,8 +56,6 @@ typedef struct
 	Coord3D	waypoints[MAX_WAYPOINTS+2];		// We pad first & last for interpolation.
 	Real		waySegLength[MAX_WAYPOINTS+2];	// Length of each segment;
 	Real		cameraAngle[MAX_WAYPOINTS+2];	// Camera Angle;
-	Real		cameraFXPitch[MAX_WAYPOINTS+2];	// Camera Pitch;
-	Real		cameraZoom[MAX_WAYPOINTS+2];	// Camera Zoom;
 	Int			timeMultiplier[MAX_WAYPOINTS+2];	// Time speedup factor.
 	Real		groundHeight[MAX_WAYPOINTS+1];	// Ground height.
 	Real		totalTimeMilliseconds;					// Num of ms to do this movement.
@@ -67,6 +66,7 @@ typedef struct
 	Int			curSegment;										// The current segment.
 	Int			curShutter;										// The current shutter.
 	Int			rollingAverageFrames;					// Number of frames to roll.
+	ParabolicEase ease;										// Ease in/out function.
 } TMoveAlongWaypointPathInfo;
 
 // ------------------------------------------------------------------------------------------------
@@ -75,17 +75,23 @@ typedef struct
 {
 	Int			numFrames;						///< Number of frames to rotate.
 	Int			curFrame;							///< Current frame.
-	Real		angle;
-	Real		startZoom;
-	Real		endZoom;
-	Real		startPitch;
-	Real		endPitch;
 	Int			startTimeMultiplier;
 	Int			endTimeMultiplier;
-	ObjectID targetObjectID;			///< Target if we are tracking an object instead of just rotating
-	Coord3D	targetObjectPos;			///< Target's position (so we can stay looking at that spot if he dies)
-	Bool		trackObject;					///< Are we tracking an object or just rotating?
 	Int			numHoldFrames;				///< Number of frames to hold the camera before finishing the movement
+	ParabolicEase ease;
+	Bool		trackObject;					///< Are we tracking an object or just rotating?
+	struct Target {
+		ObjectID targetObjectID;			///< Target if we are tracking an object instead of just rotating
+		Coord3D	targetObjectPos;			///< Target's position (so we can stay looking at that spot if he dies)
+	};
+	struct Angle {
+		Real startAngle;
+		Real endAngle;
+	};
+	union {
+		Target target;
+		Angle angle;
+	};
 } TRotateCameraInfo;
 
 // ------------------------------------------------------------------------------------------------
@@ -99,6 +105,7 @@ typedef struct
 	Real		endPitch;
 	Int			startTimeMultiplier;
 	Int			endTimeMultiplier;
+	ParabolicEase ease;
 } TPitchCameraInfo;
 
 // ------------------------------------------------------------------------------------------------
@@ -111,6 +118,7 @@ typedef struct
 	Real		endZoom;
 	Int			startTimeMultiplier;
 	Int			endTimeMultiplier;
+	ParabolicEase ease;
 } TZoomCameraInfo;
 
 // ------------------------------------------------------------------------------------------------
@@ -155,28 +163,36 @@ public:
 
 	virtual void lookAt( const Coord3D *o );											///< Center the view on the given coordinate
 	virtual void initHeightForMap( void );												///<  Init the camera height for the map at the current position.
-	virtual void moveCameraTo(const Coord3D *o, Int miliseconds,  Int shutter, Bool orient);
-	virtual void moveCameraAlongWaypointPath(Waypoint *pWay, Int frames, Int shutter, Bool orient);
+	virtual void moveCameraTo(const Coord3D *o, Int miliseconds,  Int shutter, Bool orient, Real easeIn, Real easeOut);
+	virtual void moveCameraAlongWaypointPath(Waypoint *pWay, Int frames, Int shutter, Bool orient, Real easeIn, Real easeOut);
 	virtual Bool isCameraMovementFinished(void);
- 	virtual void resetCamera(const Coord3D *location, Int frames);	///< Move camera to location, and reset to default angle & zoom.
- 	virtual void rotateCamera(Real rotations, Int frames);					///< Rotate camera about current viewpoint.
-	virtual void rotateCameraTowardObject(ObjectID id, Int milliseconds, Int holdMilliseconds);	///< Rotate camera to face an object, and hold on it
-	virtual void rotateCameraTowardPosition(const Coord3D *pLoc, Int milliseconds);	///< Rotate camera to face a location.
+	virtual Bool isCameraMovementAtWaypointAlongPath(void);
+ 	virtual void resetCamera(const Coord3D *location, Int frames, Real easeIn, Real easeOut);	///< Move camera to location, and reset to default angle & zoom.
+ 	virtual void rotateCamera(Real rotations, Int frames, Real easeIn, Real easeOut);					///< Rotate camera about current viewpoint.
+	virtual void rotateCameraTowardObject(ObjectID id, Int milliseconds, Int holdMilliseconds, Real easeIn, Real easeOut);	///< Rotate camera to face an object, and hold on it
+	virtual void rotateCameraTowardPosition(const Coord3D *pLoc, Int milliseconds, Real easeIn, Real easeOut, Bool reverseRotation);	///< Rotate camera to face a location.
 	virtual void cameraModFreezeTime(void){ m_freezeTimeForCameraMovement = true;}					///< Freezes time during the next camera movement.
 	virtual void cameraModFreezeAngle(void);												///< Freezes time during the next camera movement.
 	virtual Bool isTimeFrozen(void){ return m_freezeTimeForCameraMovement;}					///< Freezes time during the next camera movement.
-	virtual void cameraModFinalZoom(Real finalZoom);								///< Final zoom for current camera movement.
+	virtual void cameraModFinalZoom(Real finalZoom, Real easeIn, Real easeOut);	///< Final zoom for current camera movement.
 	virtual void cameraModRollingAverage(Int framesToAverage);			///< Number of frames to average movement for current camera movement.
 	virtual void cameraModFinalTimeMultiplier(Int finalMultiplier); ///< Final time multiplier for current camera movement.
-	virtual void cameraModFinalPitch(Real finalPitch);							///< Final pitch for current camera movement.
+	virtual void cameraModFinalPitch(Real finalPitch, Real easeIn, Real easeOut);	///< Final pitch for current camera movement.
 	virtual void cameraModLookToward(Coord3D *pLoc);								///< Sets a look at point during camera movement.
 	virtual void cameraModFinalLookToward(Coord3D *pLoc);						///< Sets a look at point during camera movement.
 	virtual void cameraModFinalMoveTo(Coord3D *pLoc);			///< Sets a final move to.
+	// (gth) C&C3 animation controlled camera feature
+	virtual void cameraEnableSlaveMode(const AsciiString & thingtemplateName, const AsciiString & boneName);
+	virtual void cameraDisableSlaveMode(void);
+	virtual void cameraEnableRealZoomMode(void); //WST 10.18.2002
+	virtual void cameraDisableRealZoomMode(void);
+
+	virtual	void Add_Camera_Shake(const Coord3D & position,float radius, float duration, float power); //WST 10.18.2002
 	virtual Int	 getTimeMultiplier(void) {return m_timeMultiplier;};///< Get the time multiplier.
 	virtual void setTimeMultiplier(Int multiple) {m_timeMultiplier = multiple;}; ///< Set the time multiplier.
 	virtual void setDefaultView(Real pitch, Real angle, Real maxHeight);
-	virtual void zoomCamera( Real finalZoom, Int milliseconds );
-	virtual void pitchCamera( Real finalPitch, Int milliseconds );
+	virtual void zoomCamera( Real finalZoom, Int milliseconds, Real easeIn, Real easeOut );
+	virtual void pitchCamera( Real finalPitch, Int milliseconds, Real easeIn, Real easeOut );
 
 	virtual void setHeightAboveGround(Real z);
 	virtual void setZoom(Real z);
@@ -229,7 +245,7 @@ private:
 	Real m_shakeAngleCos;														///< the cosine of the orientation of the oscillation
 	Real m_shakeAngleSin;														///< the sine of the orientation of the oscillation
 	Real m_shakeIntensity;													///< the intensity of the oscillation
-
+	Vector3 m_shakerAngles;													//WST 11/12/2002 new multiple instance camera shaker system
 
 	TRotateCameraInfo	m_rcInfo;
 	Bool		m_doingRotateCamera;										///< True if we are doing a camera rotate.
@@ -244,7 +260,8 @@ private:
 	Real		m_FXPitch;															///< Camera effects pitch.  0 = flat, infinite = look down, 1 = normal.
 
 	TMoveAlongWaypointPathInfo m_mcwpInfo;					///< Move camera along waypoint path info.
-	Bool		m_doingMoveCameraOnWaypointPath;				///< If true, moving camera along waypoint path.
+	Bool	m_doingMoveCameraOnWaypointPath;				///< If true, moving camera along waypoint path.
+	Bool	m_CameraArrivedAtWaypointOnPathFlag;
 
 	Bool		m_freezeTimeForCameraMovement;
 	Int			m_timeMultiplier;												///< Time speedup multiplier.
@@ -274,6 +291,11 @@ private:
 	void getAxisAlignedViewRegion(Region3D &axisAlignedRegion);	///< Find 3D Region enclosing all possible drawables.
 	void calcDeltaScroll(Coord2D &screenDelta);
 
+	// (gth) C&C3 animation controlled camera feature
+	Bool				m_isCameraSlaved;
+	Bool				m_useRealZoomCam;
+	AsciiString		m_cameraSlaveObjectName;
+	AsciiString		m_cameraSlaveObjectBoneName;
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
