@@ -37,7 +37,6 @@
 
 #include "Common/ActionManager.h"
 #include "Common/GameType.h"
-#include "Common/GameUtility.h"
 #include "Common/MultiplayerSettings.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/Override.h"
@@ -1447,7 +1446,7 @@ void ControlBar::update( void )
 		setPortraitByObject(obj);
 
 		const Coord3D* exitPosition = NULL;
-		if (obj && obj->getControllingPlayer() == rts::getObservedOrLocalPlayer() && obj->getObjectExitInterface())
+		if (obj && obj->getControllingPlayer() == getCurrentlyViewedPlayer() && obj->getObjectExitInterface())
 			exitPosition = obj->getObjectExitInterface()->getRallyPoint();
 
 		showRallyPoint(exitPosition);
@@ -2725,12 +2724,14 @@ void ControlBar::showRallyPoint(const Coord3D* loc)
 	marker->setOrientation(TheGlobalData->m_downwindAngle); // To blow down wind -- ML
 
 	// set the marker colors to that of the local player
-	Player* player = rts::getObservedOrLocalPlayer();
-
-	if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
-		marker->setIndicatorColor(player->getPlayerNightColor());
-	else
-		marker->setIndicatorColor(player->getPlayerColor());
+	Player* player = TheControlBar->getCurrentlyViewedPlayer();
+	if (player)
+	{
+		if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
+			marker->setIndicatorColor(player->getPlayerNightColor());
+		else
+			marker->setIndicatorColor(player->getPlayerColor());
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
