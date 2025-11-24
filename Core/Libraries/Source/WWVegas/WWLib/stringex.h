@@ -24,48 +24,43 @@
 
 // Declaration
 
-template<typename T> size_t strlen_t(const T* str);
-template<typename T> size_t strnlen_t(const T* str, size_t maxlen);
+template<typename T> size_t strlen_t(const T *str);
+template<typename T> size_t strnlen_t(const T *str, size_t maxlen);
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
-size_t strnlen(const char* str, size_t maxlen);
-size_t wcsnlen(const wchar_t* str, size_t maxlen);
+size_t strnlen(const char *str, size_t maxlen);
+size_t wcsnlen(const wchar_t *str, size_t maxlen);
 #endif
 
-template<typename T> size_t strlcpy_t(T* dst, const T* src, size_t dstsize);
-template<typename T> size_t strlcat_t(T* dst, const T* src, size_t dstsize);
+template<typename T> size_t strlcpy_t(T *dst, const T *src, size_t dstsize);
+template<typename T> size_t strlcat_t(T *dst, const T *src, size_t dstsize);
 
-size_t strlcpy(char* dst, const char* src, size_t dstsize);
-size_t strlcat(char* dst, const char* src, size_t dstsize);
-size_t wcslcpy(wchar_t* dst, const wchar_t* src, size_t dstsize);
-size_t wcslcat(wchar_t* dst, const wchar_t* src, size_t dstsize);
+size_t strlcpy(char *dst, const char *src, size_t dstsize);
+size_t strlcat(char *dst, const char *src, size_t dstsize);
+size_t wcslcpy(wchar_t *dst, const wchar_t *src, size_t dstsize);
+size_t wcslcat(wchar_t *dst, const wchar_t *src, size_t dstsize);
 
-template<typename T> size_t strlmove_t(T* dst, const T* src, size_t dstsize);
-template<typename T> size_t strlmcat_t(T* dst, const T* src, size_t dstsize);
+template<typename T> size_t strlmove_t(T *dst, const T *src, size_t dstsize);
+template<typename T> size_t strlmcat_t(T *dst, const T *src, size_t dstsize);
 
-size_t strlmove(char* dst, const char* src, size_t dstsize);
-size_t strlmcat(char* dst, const char* src, size_t dstsize);
-size_t wcslmove(wchar_t* dst, const wchar_t* src, size_t dstsize);
-size_t wcslmcat(wchar_t* dst, const wchar_t* src, size_t dstsize);
+size_t strlmove(char *dst, const char *src, size_t dstsize);
+size_t strlmcat(char *dst, const char *src, size_t dstsize);
+size_t wcslmove(wchar_t *dst, const wchar_t *src, size_t dstsize);
+size_t wcslmcat(wchar_t *dst, const wchar_t *src, size_t dstsize);
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
-template<size_t Size> size_t strlcpy_t(char(&dst)[Size], const char* src);
-template<size_t Size> size_t strlcat_t(char(&dst)[Size], const char* src);
-template<size_t Size> size_t strlmove_t(char(&dst)[Size], const char* src);
-template<size_t Size> size_t strlmcat_t(char(&dst)[Size], const char* src);
+template<size_t Size> size_t strlcpy_t(char (&dst)[Size], const char *src);
+template<size_t Size> size_t strlcat_t(char (&dst)[Size], const char *src);
+template<size_t Size> size_t strlmove_t(char (&dst)[Size], const char *src);
+template<size_t Size> size_t strlmcat_t(char (&dst)[Size], const char *src);
 #endif
-
-template<typename T> bool startsWith(const T* str, const T* prefix);
-template<typename T> bool startsWithNoCase(const T* str, const T* prefix);
-template<typename T> bool endsWith(const T* str, const T* suffix);
-template<typename T> bool endsWithNoCase(const T* str, const T* suffix);
 
 
 // Implementation
 
 // Templated strlen.
 // Returns the number of characters until the first zero character.
-template<typename T> size_t strlen_t(const T* str)
+template<typename T> size_t strlen_t(const T *str)
 {
 	const T* begin = str;
 	while (*str)
@@ -75,7 +70,7 @@ template<typename T> size_t strlen_t(const T* str)
 
 // Templated strlen.
 // Returns the number of characters until the first zero character or when maxlen is reached.
-template<typename T> size_t strnlen_t(const T* str, size_t maxlen)
+template<typename T> size_t strnlen_t(const T *str, size_t maxlen)
 {
 	const T* begin = str;
 	const T* end = str + maxlen;
@@ -85,14 +80,14 @@ template<typename T> size_t strnlen_t(const T* str, size_t maxlen)
 }
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
-inline size_t strnlen(const char* str, size_t maxlen) { return strnlen_t(str, maxlen); }
-inline size_t wcsnlen(const wchar_t* str, size_t maxlen) { return strnlen_t(str, maxlen); }
+inline size_t strnlen(const char *str, size_t maxlen) { return strnlen_t(str, maxlen); }
+inline size_t wcsnlen(const wchar_t *str, size_t maxlen) { return strnlen_t(str, maxlen); }
 #endif
 
 // Templated strlcpy. Prefer using this over strncpy.
 // Copies src into dst until dstsize minus one. Always null terminates.
 // Returns the length of src, excluding the null terminator.
-template<typename T> size_t strlcpy_t(T* dst, const T* src, size_t dstsize)
+template<typename T> size_t strlcpy_t(T *dst, const T *src, size_t dstsize)
 {
 	const size_t srclen = strlen_t(src);
 	if (dstsize != 0)
@@ -107,7 +102,7 @@ template<typename T> size_t strlcpy_t(T* dst, const T* src, size_t dstsize)
 // Templated strlcat. Prefer using this over strncpy.
 // Appends src into dst until dstsize minus one. Always null terminates.
 // Returns the length of dst + src, excluding the null terminator.
-template<typename T> size_t strlcat_t(T* dst, const T* src, size_t dstsize)
+template<typename T> size_t strlcat_t(T *dst, const T *src, size_t dstsize)
 {
 	const size_t dstlen = strnlen_t(dst, dstsize);
 	const size_t srclen = strlen_t(src);
@@ -129,18 +124,18 @@ template<typename T> size_t strlcat_t(T* dst, const T* src, size_t dstsize)
 }
 
 #ifndef HAVE_STRLCPY
-inline size_t strlcpy(char* dst, const char* src, size_t dstsize) { return strlcpy_t(dst, src, dstsize); }
+inline size_t strlcpy(char *dst, const char *src, size_t dstsize) { return strlcpy_t(dst, src, dstsize); }
 #endif
 #ifndef HAVE_STRLCAT
-inline size_t strlcat(char* dst, const char* src, size_t dstsize) { return strlcat_t(dst, src, dstsize); }
+inline size_t strlcat(char *dst, const char *src, size_t dstsize) { return strlcat_t(dst, src, dstsize); }
 #endif
-inline size_t wcslcpy(wchar_t* dst, const wchar_t* src, size_t dstsize) { return strlcpy_t(dst, src, dstsize); }
-inline size_t wcslcat(wchar_t* dst, const wchar_t* src, size_t dstsize) { return strlcat_t(dst, src, dstsize); }
+inline size_t wcslcpy(wchar_t *dst, const wchar_t *src, size_t dstsize) { return strlcpy_t(dst, src, dstsize); }
+inline size_t wcslcat(wchar_t *dst, const wchar_t *src, size_t dstsize) { return strlcat_t(dst, src, dstsize); }
 
 // Templated strlmove. Prefer using this over strlcpy if dst and src overlap.
 // Moves src into dst until dstsize minus one. Always null terminates.
 // Returns the length of src, excluding the null terminator.
-template<typename T> size_t strlmove_t(T* dst, const T* src, size_t dstsize)
+template<typename T> size_t strlmove_t(T *dst, const T *src, size_t dstsize)
 {
 	const size_t srclen = strlen_t(src);
 	if (dstsize > 0)
@@ -155,7 +150,7 @@ template<typename T> size_t strlmove_t(T* dst, const T* src, size_t dstsize)
 // Templated strlmcat. Prefer using this over strlcat if dst and src overlap.
 // Appends src into dst until dstsize minus one. Always null terminates.
 // Returns the length of dst + src, excluding the null terminator.
-template<typename T> size_t strlmcat_t(T* dst, const T* src, size_t dstsize)
+template<typename T> size_t strlmcat_t(T *dst, const T *src, size_t dstsize)
 {
 	const size_t dstlen = strnlen_t(dst, dstsize);
 	const size_t srclen = strlen_t(src);
@@ -176,19 +171,19 @@ template<typename T> size_t strlmcat_t(T* dst, const T* src, size_t dstsize)
 	return dstlen + srclen; // length tried to create
 }
 
-inline size_t strlmove(char* dst, const char* src, size_t dstsize) { return strlmove_t(dst, src, dstsize); }
-inline size_t strlmcat(char* dst, const char* src, size_t dstsize) { return strlmcat_t(dst, src, dstsize); }
-inline size_t wcslmove(wchar_t* dst, const wchar_t* src, size_t dstsize) { return strlmove_t(dst, src, dstsize); }
-inline size_t wcslmcat(wchar_t* dst, const wchar_t* src, size_t dstsize) { return strlmcat_t(dst, src, dstsize); }
+inline size_t strlmove(char *dst, const char *src, size_t dstsize) { return strlmove_t(dst, src, dstsize); }
+inline size_t strlmcat(char *dst, const char *src, size_t dstsize) { return strlmcat_t(dst, src, dstsize); }
+inline size_t wcslmove(wchar_t *dst, const wchar_t *src, size_t dstsize) { return strlmove_t(dst, src, dstsize); }
+inline size_t wcslmcat(wchar_t *dst, const wchar_t *src, size_t dstsize) { return strlmcat_t(dst, src, dstsize); }
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
-template<size_t Size> size_t strlcpy_t(char(&dst)[Size], const char* src) { return strlcpy_t(dst, src, Size); }
-template<size_t Size> size_t strlcat_t(char(&dst)[Size], const char* src) { return strlcat_t(dst, src, Size); }
-template<size_t Size> size_t strlmove_t(char(&dst)[Size], const char* src) { return strlmove_t(dst, src, Size); }
-template<size_t Size> size_t strlmcat_t(char(&dst)[Size], const char* src) { return strlmcat_t(dst, src, Size); }
+template<size_t Size> size_t strlcpy_t(char (&dst)[Size], const char *src) { return strlcpy_t(dst, src, Size); }
+template<size_t Size> size_t strlcat_t(char (&dst)[Size], const char *src) { return strlcat_t(dst, src, Size); }
+template<size_t Size> size_t strlmove_t(char (&dst)[Size], const char *src) { return strlmove_t(dst, src, Size); }
+template<size_t Size> size_t strlmcat_t(char (&dst)[Size], const char *src) { return strlmcat_t(dst, src, Size); }
 #endif
 
-inline bool startsWith(const char* str, const char* prefix)
+inline bool startsWith(const char *str, const char *prefix)
 {
 	if (*prefix == char(0))
 		return true;	// everything starts with the empty string
@@ -201,7 +196,7 @@ inline bool startsWith(const char* str, const char* prefix)
 	return ::strncmp(str, prefix, prefixlen) == 0;
 }
 
-inline bool startsWith(const wchar_t* str, const wchar_t* prefix)
+inline bool startsWith(const wchar_t *str, const wchar_t *prefix)
 {
 	if (*prefix == wchar_t(0))
 		return true;	// everything starts with the empty string
@@ -214,7 +209,7 @@ inline bool startsWith(const wchar_t* str, const wchar_t* prefix)
 	return ::wcsncmp(str, prefix, prefixlen) == 0;
 }
 
-inline bool startsWithNoCase(const char* str, const char* prefix)
+inline bool startsWithNoCase(const char *str, const char *prefix)
 {
 	if (*prefix == char(0))
 		return true;	// everything starts with the empty string
@@ -227,7 +222,7 @@ inline bool startsWithNoCase(const char* str, const char* prefix)
 	return ::strnicmp(str, prefix, prefixlen) == 0;
 }
 
-inline bool startsWithNoCase(const wchar_t* str, const wchar_t* prefix)
+inline bool startsWithNoCase(const wchar_t *str, const wchar_t *prefix)
 {
 	if (*prefix == wchar_t(0))
 		return true;	// everything starts with the empty string
@@ -240,7 +235,7 @@ inline bool startsWithNoCase(const wchar_t* str, const wchar_t* prefix)
 	return ::wcsnicmp(str, prefix, prefixlen) == 0;
 }
 
-inline bool endsWith(const char* str, const char* suffix)
+inline bool endsWith(const char *str, const char *suffix)
 {
 	if (*suffix == char(0))
 		return true;	// everything ends with the empty string
@@ -253,7 +248,7 @@ inline bool endsWith(const char* str, const char* suffix)
 	return ::strncmp(str + strlen - suffixlen, suffix, suffixlen) == 0;
 }
 
-inline bool endsWith(const wchar_t* str, const wchar_t* suffix)
+inline bool endsWith(const wchar_t *str, const wchar_t *suffix)
 {
 	if (*suffix == wchar_t(0))
 		return true;	// everything ends with the empty string
@@ -266,7 +261,7 @@ inline bool endsWith(const wchar_t* str, const wchar_t* suffix)
 	return ::wcsncmp(str + strlen - suffixlen, suffix, suffixlen) == 0;
 }
 
-inline bool endsWithNoCase(const char* str, const char* suffix)
+inline bool endsWithNoCase(const char *str, const char *suffix)
 {
 	if (*suffix == char(0))
 		return true;	// everything ends with the empty string
@@ -279,7 +274,7 @@ inline bool endsWithNoCase(const char* str, const char* suffix)
 	return ::strnicmp(str + strlen - suffixlen, suffix, suffixlen) == 0;
 }
 
-inline bool endsWithNoCase(const wchar_t* str, const wchar_t* suffix)
+inline bool endsWithNoCase(const wchar_t *str, const wchar_t *suffix)
 {
 	if (*suffix == wchar_t(0))
 		return true;	// everything ends with the empty string
