@@ -551,8 +551,8 @@ void CWorldBuilderApp::updateCurTool(Bool forceHand)
 		} else if (0x8000 & ::GetAsyncKeyState(VK_MENU)) {
 			// Alt key gives eyedropper.
 			m_curTool = &m_eyedropperTool;
-		} else if (0x8000 & ::GetAsyncKeyState(VK_CONTROL)) {
-			// Control key gives pointer.
+		} else if (0x8000 & ::GetAsyncKeyState('W')) {
+			// W key gives pointer.
 			m_curTool = &m_pointerTool;
 		} else {
 			// Else the tool selected in the tool palette.

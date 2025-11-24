@@ -205,6 +205,9 @@ private:
 	Int											m_pickPixels;
 	Int											m_partialMapSize;
 
+	Int											m_lastBrushMode;							///< Last brush mode displayed (for flicker reduction).
+	RECT										m_lastHintRect;								///< Last hint rectangle (for flicker reduction).
+
 protected:
 
 	UINT getLastDrawTime();
@@ -213,6 +216,7 @@ protected:
 	void initWW3D();
 	void drawLabels(HDC hdc);
 	void drawLabels(void);
+	void drawBrushModeHint(HDC hdc);
 	void shutdownWW3D();
 	void killTheTimer();
 	void render();

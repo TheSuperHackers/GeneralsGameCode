@@ -64,6 +64,9 @@ protected:
 	afx_msg void OnChangeFeatherEdit();
 	afx_msg void OnChangeSizeEdit();
 	afx_msg void OnChangeHeightEdit();
+	afx_msg void OnChangeRaiseLowerEdit();
+	afx_msg void OnChangeSmoothRadiusEdit();
+	afx_msg void OnChangeSmoothRateEdit();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -72,16 +75,25 @@ protected:
 	static Int m_currentWidth;					///< current brush width in the ui.
 	static Int m_currentFeather;				///< current feather width in the ui.
 	static Int m_currentHeight;
+	static Int m_currentRaiseLower;
+	static Int m_currentSmoothRadius;
+	static Int m_currentSmoothRate;
 
 	Bool		m_updating; ///<true if the ui is updating itself.
 	WBPopupSliderButton m_brushWidthPopup;
 	WBPopupSliderButton m_brushFeatherPopup;
 	WBPopupSliderButton m_brushHeightPopup;
+	WBPopupSliderButton m_raiseLowerPopup;
+	WBPopupSliderButton m_smoothRadiusPopup;
+	WBPopupSliderButton m_smoothRatePopup;
 
 public:
 	static void setWidth(Int width);
 	static void setFeather(Int feather);
 	static void setHeight(Int height);
+	static void setRaiseLowerAmount(Int amount);
+	static void setSmoothRadius(Int radius);
+	static void setSmoothRate(Int rate);
 
 public:
 

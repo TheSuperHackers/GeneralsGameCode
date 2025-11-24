@@ -55,6 +55,8 @@
 #include "MainFrm.h"
 #include "CUndoable.h"
 #include "Common/Debug.h"
+#include "BrushTool.h"
+#include "DrawObject.h"
 
 //-----------------------------------------------------------------------------
 //         Private Data
@@ -79,6 +81,8 @@ CWorldBuilderView::CWorldBuilderView() :
 	m_scrollMin(0,0),
 	m_scrollMax(0,0),
 	mShowGrid(true),
+	m_lastBrushMode(-1),
+	m_lastHintRect(0, 0, 0, 0),
 	m_showTexture(true)
 {
 	Int show;
@@ -406,6 +410,8 @@ void CWorldBuilderView::OnPaint()
 		}
 	}
 
+	drawBrushModeHint(&dc);
+
 }
 
 
@@ -724,6 +730,143 @@ void CWorldBuilderView::drawContours(CDC *pDc, CRgn *pRgn, Int minX, Int maxX, I
 			curHeight = ContourOptions::getContourOffset() - ContourOptions::getContourStep();
 		}
 	}
+}
+
+void CWorldBuilderView::drawBrushModeHint(CDC *pDc)
+{
+	if (pDc == NULL) {
+		return;
+	}
+
+	Tool *curTool = WbApp()->getCurTool();
+	if (curTool == NULL || curTool->getToolID() != ID_BRUSH_TOOL) {
+		if (m_lastBrushMode != -1) {
+			// Brush tool no longer active, invalidate old hint area
+			InvalidateRect(&m_lastHintRect, false);
+			m_lastBrushMode = -1;
+			m_lastHintRect.SetRectEmpty();
+		}
+		return;
+	}
+
+	// Hide hint when LMB is pressed (actively brushing)
+	Bool lmbDown = (0x8000 & ::GetAsyncKeyState(VK_LBUTTON)) != 0;
+	if (lmbDown) {
+		// LMB is pressed - hide the hint if it was visible
+		if (m_lastBrushMode != -1 && !m_lastHintRect.IsRectEmpty()) {
+			InvalidateRect(&m_lastHintRect, false);
+			m_lastBrushMode = -1;
+			m_lastHintRect.SetRectEmpty();
+		}
+		return;
+	}
+
+	// Check current mode FIRST (before doing expensive work)
+	Bool shiftDown = (0x8000 & ::GetAsyncKeyState(VK_SHIFT)) != 0;
+	Bool ctrlDown = (0x8000 & ::GetAsyncKeyState(VK_CONTROL)) != 0;
+	BrushTool::EBrushMode currentMode = BrushTool::getModeFromModifiers(shiftDown, ctrlDown);
+	Int currentModeInt = (Int)currentMode;
+
+	// Get position
+	Coord3D docPos = DrawObject::getFeedbackPos();
+	CPoint hintPt;
+	if (!docToViewCoords(docPos, &hintPt)) {
+		if (m_lastBrushMode != -1) {
+			InvalidateRect(&m_lastHintRect, false);
+			m_lastBrushMode = -1;
+			m_lastHintRect.SetRectEmpty();
+		}
+		return;
+	}
+	hintPt.x += mXScrollOffset;
+	hintPt.y += mYScrollOffset;
+
+	// Quick check: if mode and position haven't changed, skip all drawing work
+	Bool modeChanged = (currentModeInt != m_lastBrushMode);
+	Bool positionChanged = m_lastBrushMode != -1 && 
+		(abs(hintPt.x - (m_lastHintRect.left - 12)) > 5 || 
+		 abs(hintPt.y - (m_lastHintRect.bottom + 8)) > 5);
+
+	// If nothing changed and we've drawn before, skip expensive drawing work
+	if (!modeChanged && !positionChanged && m_lastBrushMode != -1 && !m_lastHintRect.IsRectEmpty()) {
+		return; // Hint is already on screen, no need to redraw
+	}
+
+	// Something changed or first draw - do the expensive work
+	CRect clientRect;
+	GetClientRect(&clientRect);
+	clientRect.OffsetRect(mXScrollOffset, mYScrollOffset);
+
+	LOGFONT lf = {0};
+	lf.lfHeight = -MulDiv(11, pDc->GetDeviceCaps(LOGPIXELSY), 72);
+	lf.lfWeight = FW_SEMIBOLD;
+	strcpy(lf.lfFaceName, "Tahoma");
+	CFont font;
+	if (!font.CreateFontIndirect(&lf)) {
+		return;
+	}
+	CFont *oldFont = pDc->SelectObject(&font);
+
+	char primary[64];
+	char secondary[160];
+	BrushTool::getModeHintStrings(primary, ARRAY_SIZE(primary), secondary, ARRAY_SIZE(secondary));
+
+	CSize primarySize = pDc->GetTextExtent(primary);
+	CSize secondarySize = pDc->GetTextExtent(secondary);
+	int padding = 4;
+	int bubbleWidth = max(primarySize.cx, secondarySize.cx) + padding * 2;
+	int bubbleHeight = primarySize.cy + secondarySize.cy + padding * 2;
+	CRect bubble(hintPt.x + 12,
+							 hintPt.y - bubbleHeight - 8,
+							 hintPt.x + 12 + bubbleWidth,
+							 hintPt.y - 8);
+
+	if (bubble.right > clientRect.right - 4) {
+		bubble.OffsetRect((clientRect.right - 4) - bubble.right, 0);
+	}
+	if (bubble.left < clientRect.left + 4) {
+		bubble.OffsetRect((clientRect.left + 4) - bubble.left, 0);
+	}
+	if (bubble.top < clientRect.top + 4) {
+		bubble.OffsetRect(0, (clientRect.top + 4) - bubble.top);
+	}
+	if (bubble.bottom > clientRect.bottom - 4) {
+		bubble.OffsetRect(0, (clientRect.bottom - 4) - bubble.bottom);
+	}
+
+	// Invalidate old hint area if it exists and is different
+	if (modeChanged || positionChanged) {
+		if (m_lastBrushMode != -1 && !m_lastHintRect.IsRectEmpty()) {
+			if (m_lastHintRect != bubble) {
+				InvalidateRect(&m_lastHintRect, false);
+			}
+		}
+		// Update cached values
+		m_lastBrushMode = currentModeInt;
+		m_lastHintRect = bubble;
+	} else {
+		// First draw - just cache the values
+		m_lastBrushMode = currentModeInt;
+		m_lastHintRect = bubble;
+	}
+
+	// Draw the hint
+	pDc->FillSolidRect(&bubble, RGB(0, 0, 0));
+	CBrush borderBrush;
+	borderBrush.CreateSolidBrush(RGB(160, 160, 160));
+	pDc->FrameRect(&bubble, &borderBrush);
+
+	int oldBkMode = pDc->SetBkMode(TRANSPARENT);
+	COLORREF oldColor = pDc->SetTextColor(RGB(255, 255, 255));
+
+	int textX = bubble.left + padding;
+	int textY = bubble.top + padding;
+	pDc->TextOut(textX, textY, primary);
+	pDc->TextOut(textX, textY + primarySize.cy, secondary);
+
+	pDc->SetTextColor(oldColor);
+	pDc->SetBkMode(oldBkMode);
+	pDc->SelectObject(oldFont);
 }
 
 

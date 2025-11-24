@@ -28,6 +28,8 @@
 #include "wbview.h"
 #include "WHeightMapEdit.h"
 #include "MainFrm.h"
+#include "BrushTool.h"
+#include "brushoptions.h"
 #include "Common/Debug.h"
 #include "Common/ThingTemplate.h"
 #include "W3DDevice/GameClient/HeightMap.h"
@@ -139,6 +141,7 @@ BEGIN_MESSAGE_MAP(WbView, CView)
 	ON_COMMAND(ID_VIEW_SHOW_TERRAIN, OnShowTerrain)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOW_TERRAIN, OnUpdateShowTerrain)
 	ON_WM_CREATE()
+	ON_WM_MOUSEWHEEL()
 
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -374,6 +377,55 @@ void WbView::OnMButtonUp(UINT nFlags, CPoint point)
 void WbView::OnMButtonDown(UINT nFlags, CPoint point)
 {
 	mouseDown(TRACK_M, point);
+}
+
+Bool WbView::handleBrushMouseWheel(UINT nFlags, short zDelta)
+{
+	Tool *curTool = WbApp()->getCurTool();
+	if (curTool == NULL || curTool->getToolID() != ID_BRUSH_TOOL) {
+		return false;
+	}
+
+	Bool adjustSize = ((nFlags & MK_SHIFT) != 0);
+	Bool adjustFeather = ((nFlags & MK_CONTROL) != 0);
+	if (!adjustSize && !adjustFeather) {
+		return false;
+	}
+
+	if (zDelta == 0) {
+		return true;
+	}
+
+	Int steps = zDelta / WHEEL_DELTA;
+	if (steps == 0) {
+		steps = (zDelta > 0) ? 1 : -1;
+	}
+
+	CString status;
+	if (adjustFeather) {
+		Int newFeather = BrushTool::getFeather() + steps;
+		if (newFeather < BrushOptions::MIN_FEATHER) newFeather = BrushOptions::MIN_FEATHER;
+		if (newFeather > BrushOptions::MAX_FEATHER) newFeather = BrushOptions::MAX_FEATHER;
+		BrushTool::setFeather(newFeather);
+		status.Format("Brush Feather: %d cell%s", newFeather, (newFeather == 1) ? "" : "s");
+	} else if (adjustSize) {
+		Int newWidth = BrushTool::getWidth() + steps;
+		if (newWidth < BrushOptions::MIN_BRUSH_SIZE) newWidth = BrushOptions::MIN_BRUSH_SIZE;
+		if (newWidth > BrushOptions::MAX_BRUSH_SIZE) newWidth = BrushOptions::MAX_BRUSH_SIZE;
+		BrushTool::setWidth(newWidth);
+		status.Format("Brush Size: %d cell%s", newWidth, (newWidth == 1) ? "" : "s");
+	}
+
+	CMainFrame::GetMainFrame()->SetMessageText(status);
+	return true;
+}
+
+BOOL WbView::OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
+{
+	if (handleBrushMouseWheel(nFlags, zDelta)) {
+		return TRUE;
+	}
+	return CView::OnMouseWheel(nFlags, zDelta, point);
 }
 
 //=============================================================================

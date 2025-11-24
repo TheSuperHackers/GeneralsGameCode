@@ -2654,6 +2654,9 @@ void WbView3d::OnSize(UINT nType, int cx, int cy)
 // ----------------------------------------------------------------------------
 BOOL WbView3d::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
+	if (handleBrushMouseWheel(nFlags, zDelta)) {
+		return TRUE;
+	}
 	if (m_trackingMode == TRACK_NONE) {
 
 		//WST 11/21/02 New Triple speed camera zoom request by designers

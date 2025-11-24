@@ -165,6 +165,7 @@ public:
 
 // Implementation
 protected:
+	Bool handleBrushMouseWheel(UINT nFlags, short zDelta);
 	virtual ~WbView();
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const;
@@ -241,6 +242,7 @@ protected:
 	afx_msg void OnShowTerrain();
 	afx_msg void OnUpdateShowTerrain(CCmdUI* pCmdUI);
 	afx_msg int OnCreate(LPCREATESTRUCT lpcs);
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint point);
 
 
 	//}}AFX_MSG

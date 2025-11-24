@@ -504,8 +504,8 @@ BEGIN
     EDITTEXT        IDC_FEATHER_EDIT,71,55,17,12,ES_AUTOHSCROLL
     RTEXT           "Size in cells:",IDC_STATIC,24,56,39,10
     PUSHBUTTON      "1",IDC_SIZE_POPUP,93,11,8,12,BS_BITMAP
-    GROUPBOX        "Brush Width:",IDC_STATIC,1,1,113,34
-    GROUPBOX        "Brush Feather Width:",IDC_STATIC,1,43,113,39
+    GROUPBOX        "Brush Width (Shift + Scroll Wheel):",IDC_STATIC,1,1,113,34
+    GROUPBOX        "Brush Feather Width (Ctrl + Scroll Wheel):",IDC_STATIC,1,43,113,39
     PUSHBUTTON      "1",IDC_FEATHER_POPUP,93,55,8,12,BS_BITMAP
     LTEXT           "35 FT.",IDC_WIDTH_LABEL,71,24,43,8
     LTEXT           "35 FT.",IDC_HEIGHT_LABEL,71,120,36,8

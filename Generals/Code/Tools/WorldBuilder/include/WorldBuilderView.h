@@ -73,6 +73,9 @@ protected:
 	CPoint	m_scrollMin;								///< The minimum scrollbar positions.
 	CPoint	m_scrollMax;								///< The maximum scroll bar positions.
 
+	Int			m_lastBrushMode;							///< Last brush mode displayed (for flicker reduction).
+	CRect		m_lastHintRect;								///< Last hint rectangle (for flicker reduction).
+
 protected:
 
 	/// Draw a texture bitmap in a rectangle in the dc.
@@ -83,6 +86,7 @@ protected:
 
 	/// Draw the contours for the height map in the dc.
 	void drawContours(CDC *pDc, CRgn *pRgn, Int minX, Int maxX, Int minY, Int maxY);
+	void drawBrushModeHint(CDC *pDc);
 
 	/// Compound boolean expression.
 	static inline Bool isBetween(Int cur, Int first, Int second) {

@@ -91,6 +91,7 @@
 #include "GlobalLightOptions.h"
 #include "LayersList.h"
 #include "ImpassableOptions.h"
+#include "BrushTool.h"
 
 
 #include <d3dx8.h>
@@ -400,8 +401,10 @@ WbView3d::WbView3d() :
 	m_curTrackingZ(10),
 	m_ww3dInited(false),
 	m_showLayersList(false),
-	m_showMapBoundaries(false)
+	m_showMapBoundaries(false),
+	m_lastBrushMode(-1)
 {
+	::memset(&m_lastHintRect, 0, sizeof(m_lastHintRect));
 	TheTacticalView = &bogusTacticalView;
 	m_actualWinSize.x = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "Width", THREE_D_VIEW_WIDTH);
 	m_actualWinSize.y = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "Height", THREE_D_VIEW_HEIGHT);
@@ -2409,6 +2412,8 @@ void WbView3d::drawLabels(HDC hdc)
 		}
 	}
 
+	drawBrushModeHint(hdc);
+
 	// Draw tracking box.
 	if (hdc && m_doRectFeedback) {
 		CBrush brush;
@@ -2499,6 +2504,201 @@ void WbView3d::drawLabels(HDC hdc)
 
 
 // ----------------------------------------------------------------------------
+void WbView3d::drawBrushModeHint(HDC hdc)
+{
+	Tool *curTool = WbApp()->getCurTool();
+	if (curTool == NULL || curTool->getToolID() != ID_BRUSH_TOOL) {
+		if (m_lastBrushMode != -1) {
+			// Brush tool no longer active, invalidate old hint area
+			InvalidateRect(&m_lastHintRect, false);
+			m_lastBrushMode = -1;
+			::memset(&m_lastHintRect, 0, sizeof(m_lastHintRect));
+		}
+		return;
+	}
+
+	// Hide hint when LMB is pressed (actively brushing)
+	Bool lmbDown = (0x8000 & ::GetAsyncKeyState(VK_LBUTTON)) != 0;
+	if (lmbDown) {
+		// LMB is pressed - hide the hint if it was visible
+		if (m_lastBrushMode != -1 && 
+				(m_lastHintRect.left != 0 || m_lastHintRect.top != 0 || 
+				 m_lastHintRect.right != 0 || m_lastHintRect.bottom != 0)) {
+			InvalidateRect(&m_lastHintRect, false);
+			m_lastBrushMode = -1;
+			::memset(&m_lastHintRect, 0, sizeof(m_lastHintRect));
+		}
+		return;
+	}
+
+	// Check current mode FIRST (before doing expensive work)
+	Bool shiftDown = (0x8000 & ::GetAsyncKeyState(VK_SHIFT)) != 0;
+	Bool ctrlDown = (0x8000 & ::GetAsyncKeyState(VK_CONTROL)) != 0;
+	BrushTool::EBrushMode currentMode = BrushTool::getModeFromModifiers(shiftDown, ctrlDown);
+	Int currentModeInt = (Int)currentMode;
+
+	Coord3D docPos = DrawObject::getFeedbackPos();
+
+	Real terrainZ = 0.0f;
+	if (m_heightMapRenderObj) {
+		terrainZ = m_heightMapRenderObj->getHeightMapHeight(docPos.x, docPos.y, NULL);
+	}
+
+	Vector3 world;
+	world.Set(docPos.x + MAP_XY_FACTOR * 0.5f, docPos.y, terrainZ + 8.0f);
+	Vector3 screen;
+	if (CameraClass::INSIDE_FRUSTUM != m_camera->Project(screen, world)) {
+		if (m_lastBrushMode != -1) {
+			InvalidateRect(&m_lastHintRect, false);
+			m_lastBrushMode = -1;
+			::memset(&m_lastHintRect, 0, sizeof(m_lastHintRect));
+		}
+		return;
+	}
+
+	CRect clientRect;
+	GetClientRect(&clientRect);
+
+	Int sx, sy;
+	W3DLogicalScreenToPixelScreen(screen.X, screen.Y,
+															 &sx, &sy,
+															 clientRect.Width(), clientRect.Height());
+	CPoint pt(clientRect.left + sx + 12, clientRect.top + sy - 20);
+
+	// Quick check: if mode and position haven't changed, skip all drawing work
+	Bool modeChanged = (currentModeInt != m_lastBrushMode);
+	Bool positionChanged = m_lastBrushMode != -1 && 
+		(abs(pt.x - (m_lastHintRect.left)) > 5 || 
+		 abs(pt.y - (m_lastHintRect.top)) > 5);
+
+	// For 3D font path (no hdc), always draw (can't easily cache)
+	if (m3DFont && !hdc) {
+		char primary[64];
+		char secondary[160];
+		BrushTool::getModeHintStrings(primary, ARRAY_SIZE(primary), secondary, ARRAY_SIZE(secondary));
+		RECT rct = {pt.x, pt.y, pt.x, pt.y};
+		m3DFont->DrawText(primary, -1, &rct, DT_LEFT | DT_NOCLIP | DT_TOP | DT_SINGLELINE, 0xD0FFFFFF);
+		rct.top += 14;
+		rct.bottom += 14;
+		m3DFont->DrawText(secondary, -1, &rct, DT_LEFT | DT_NOCLIP | DT_TOP | DT_SINGLELINE, 0xA0FFFFFF);
+		// Update cache for 3D font path
+		if (modeChanged || positionChanged || m_lastBrushMode == -1) {
+			m_lastBrushMode = currentModeInt;
+			m_lastHintRect.left = pt.x;
+			m_lastHintRect.top = pt.y;
+			m_lastHintRect.right = pt.x;
+			m_lastHintRect.bottom = pt.y;
+		}
+		return;
+	}
+
+	if (!hdc) {
+		return;
+	}
+
+	// If nothing changed and we've drawn before, skip expensive drawing work
+	if (!modeChanged && !positionChanged && m_lastBrushMode != -1 && 
+			(m_lastHintRect.left != 0 || m_lastHintRect.top != 0 || 
+			 m_lastHintRect.right != 0 || m_lastHintRect.bottom != 0)) {
+		return; // Hint is already on screen, no need to redraw
+	}
+
+	// Something changed or first draw - do the expensive work
+	char primary[64];
+	char secondary[160];
+	BrushTool::getModeHintStrings(primary, ARRAY_SIZE(primary), secondary, ARRAY_SIZE(secondary));
+
+	int oldBkMode = ::SetBkMode(hdc, TRANSPARENT);
+	COLORREF oldColor = ::SetTextColor(hdc, RGB(255, 255, 255));
+	HFONT hFont = (HFONT)::GetStockObject(ANSI_VAR_FONT);
+	HFONT oldFont = NULL;
+	if (hFont) {
+		oldFont = (HFONT)::SelectObject(hdc, hFont);
+	}
+
+	SIZE primarySize = {0};
+	SIZE secondarySize = {0};
+	::GetTextExtentPoint32(hdc, primary, lstrlen(primary), &primarySize);
+	::GetTextExtentPoint32(hdc, secondary, lstrlen(secondary), &secondarySize);
+
+	int padding = 4;
+	RECT bubble;
+	bubble.left = pt.x;
+	bubble.top = pt.y;
+	bubble.right = bubble.left + max(primarySize.cx, secondarySize.cx) + padding * 2;
+	bubble.bottom = bubble.top + primarySize.cy + secondarySize.cy + padding * 2;
+
+	if (bubble.right > clientRect.right - 4) {
+		int delta = bubble.right - (clientRect.right - 4);
+		bubble.left -= delta;
+		bubble.right -= delta;
+	}
+	if (bubble.left < clientRect.left + 4) {
+		int delta = (clientRect.left + 4) - bubble.left;
+		bubble.left += delta;
+		bubble.right += delta;
+	}
+	if (bubble.top < clientRect.top + 4) {
+		int delta = (clientRect.top + 4) - bubble.top;
+		bubble.top += delta;
+		bubble.bottom += delta;
+	}
+	if (bubble.bottom > clientRect.bottom - 4) {
+		int delta = bubble.bottom - (clientRect.bottom - 4);
+		bubble.top -= delta;
+		bubble.bottom -= delta;
+	}
+
+	// Invalidate old hint area if it exists and is different
+	if (modeChanged || positionChanged) {
+		if (m_lastBrushMode != -1 && 
+				(m_lastHintRect.left != 0 || m_lastHintRect.top != 0 || 
+				 m_lastHintRect.right != 0 || m_lastHintRect.bottom != 0)) {
+			if (bubble.left != m_lastHintRect.left || bubble.top != m_lastHintRect.top ||
+					bubble.right != m_lastHintRect.right || bubble.bottom != m_lastHintRect.bottom) {
+				InvalidateRect(&m_lastHintRect, false);
+			}
+		}
+		// Update cached values
+		m_lastBrushMode = currentModeInt;
+		m_lastHintRect = bubble;
+	} else {
+		// First draw - just cache the values
+		m_lastBrushMode = currentModeInt;
+		m_lastHintRect = bubble;
+	}
+
+	// Draw the hint
+	HBRUSH fillBrush = CreateSolidBrush(RGB(0, 0, 0));
+	if (fillBrush) {
+		::FillRect(hdc, &bubble, fillBrush);
+		DeleteObject(fillBrush);
+	}
+
+	HPEN pen = CreatePen(PS_SOLID, 1, RGB(160, 160, 160));
+	if (pen) {
+		HGDIOBJ oldPen = ::SelectObject(hdc, pen);
+		::MoveToEx(hdc, bubble.left, bubble.top, NULL);
+		::LineTo(hdc, bubble.right, bubble.top);
+		::LineTo(hdc, bubble.right, bubble.bottom);
+		::LineTo(hdc, bubble.left, bubble.bottom);
+		::LineTo(hdc, bubble.left, bubble.top);
+		::SelectObject(hdc, oldPen);
+		DeleteObject(pen);
+	}
+
+	int textX = bubble.left + padding;
+	int textY = bubble.top + padding;
+	::TextOut(hdc, textX, textY, primary, lstrlen(primary));
+	::TextOut(hdc, textX, textY + primarySize.cy, secondary, lstrlen(secondary));
+
+	if (oldFont) {
+		::SelectObject(hdc, oldFont);
+	}
+	::SetTextColor(hdc, oldColor);
+	::SetBkMode(hdc, oldBkMode);
+}
+
 void WbView3d::OnSize(UINT nType, int cx, int cy)
 {
 	WbView::OnSize(nType, cx, cy);
@@ -2508,6 +2708,9 @@ void WbView3d::OnSize(UINT nType, int cx, int cy)
 // ----------------------------------------------------------------------------
 BOOL WbView3d::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
+	if (handleBrushMouseWheel(nFlags, zDelta)) {
+		return TRUE;
+	}
 	if (m_trackingMode == TRACK_NONE) {
 		m_mouseWheelOffset += zDelta;
 		MSG msg;
