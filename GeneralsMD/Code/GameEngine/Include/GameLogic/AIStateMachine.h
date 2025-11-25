@@ -111,6 +111,8 @@ extern Bool outOfWeaponRangeObject( State *thisState, void* userData );
 extern Bool outOfWeaponRangePosition( State *thisState, void* userData );
 extern Bool wantToSquishTarget( State *thisState, void* userData );
 
+#include "Utility/CppMacros.h"
+
 //-----------------------------------------------------------------------------------------------------------
 /**
   The AI state machine.  This is used by AIUpdate to implement all of the

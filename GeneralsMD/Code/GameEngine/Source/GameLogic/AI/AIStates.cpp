@@ -823,13 +823,7 @@ void AIStateMachine::loadPostProcess( void )
  */
 void AIStateMachine::setGoalPath( std::vector<Coord3D>* path )
 {
-#if __cplusplus >= 201103L
-	m_goalPath = std::move(*path);
-#else
-	// TheSuperHackers @performance bobtista 23/11/2025 Use swap to emulate move semantics for VC6 compatibility
-	m_goalPath.swap(*path);
-	path->clear();
-#endif
+	move_assign_from_pointer(m_goalPath, path);
 }
 
 #ifdef STATE_MACHINE_DEBUG

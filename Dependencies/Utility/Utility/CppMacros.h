@@ -19,6 +19,10 @@
 // This file contains macros to help upgrade the code for newer cpp standards.
 #pragma once
 
+#if __cplusplus >= 201103L
+#include <utility>
+#endif
+
 #if __cplusplus >= 201703L
 #define NOEXCEPT_17 noexcept
 #define REGISTER
@@ -44,3 +48,15 @@
 #define constexpr
 #define nullptr 0
 #endif
+
+// TheSuperHackers @performance bobtista 25/11/2025 Helper to move-assign from pointer: uses std::move in C++11, swap in C++98
+template<typename T>
+inline void move_assign_from_pointer(T& dest, T* src)
+{
+#if __cplusplus >= 201103L
+	dest = std::move(*src);
+#else
+	// Use swap to emulate move semantics for VC6 compatibility
+	dest.swap(*src);
+#endif
+}
