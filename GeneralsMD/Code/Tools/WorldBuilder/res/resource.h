@@ -202,6 +202,7 @@
 #define IDC_RAISELOWER_EDIT             1800
 #define IDC_RAISELOWER_POPUP            1801
 #define IDC_RAISELOWER_LABEL            1802
+#define IDC_MODE_LEGEND                 1803
 #define IDC_TERRAIN_TREEVIEW            1033
 #define IDC_SLIDER3                     1034
 #define IDC_SWAP_TEXTURES               1035

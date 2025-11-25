@@ -93,6 +93,7 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnTimer(UINT nIDEvent);
 	afx_msg void OnDestroy();
@@ -216,6 +217,12 @@ private:
 	Int											m_pickPixels;
 	Int											m_partialMapSize;
 
+	// Brush mode hint flicker reduction
+	Int											m_lastBrushMode;		///< Last brush mode drawn (for flicker reduction)
+	RECT										m_lastHintRect;			///< Last hint rectangle drawn (for flicker reduction)
+	CPoint										m_lastHintPos;			///< Last hint position (for flicker reduction)
+	Bool										m_hintDrawnThisFrame;	///< Flag to prevent double-drawing in same frame
+
 protected:
 
 	UINT getLastDrawTime();
@@ -225,6 +232,7 @@ protected:
   void drawCircle( HDC hdc, const Coord3D & centerPoint, Real radius, COLORREF color );
 	void drawLabels(HDC hdc);
 	void drawLabels(void);
+	void drawBrushModeHint(HDC hdc);
 	void shutdownWW3D();
 	void killTheTimer();
 	void render();

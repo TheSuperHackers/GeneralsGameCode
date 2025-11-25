@@ -73,6 +73,12 @@ protected:
 	CPoint	m_scrollMin;								///< The minimum scrollbar positions.
 	CPoint	m_scrollMax;								///< The maximum scroll bar positions.
 
+	// Brush mode hint flicker reduction
+	Int			m_lastBrushMode;							///< Last brush mode drawn (for flicker reduction)
+	CRect		m_lastHintRect;								///< Last hint rectangle drawn (for flicker reduction)
+	CPoint		m_lastHintPos;								///< Last hint position (for flicker reduction)
+	Bool		m_hintDrawnThisPaint;						///< Flag to prevent double-drawing in same paint cycle
+
 protected:
 
 	/// Draw a texture bitmap in a rectangle in the dc.
@@ -97,6 +103,9 @@ protected:
 
 	/// Draw the object's icon in the dc at a given point.
 	void drawObjectInView(CDC *pDc, MapObject *pMapObj);
+
+	/// Draw brush mode hint on canvas
+	void drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn = NULL);
 
 public:
 	/// Get the current draw size in pixels in the 2d window of one height map cell.
