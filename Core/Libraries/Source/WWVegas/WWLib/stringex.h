@@ -20,6 +20,7 @@
 
 #include "bittype.h"
 #include <string.h>
+#include <ctype.h>
 
 
 // Declaration
@@ -54,6 +55,14 @@ template<size_t Size> size_t strlcat_t(char (&dst)[Size], const char *src);
 template<size_t Size> size_t strlmove_t(char (&dst)[Size], const char *src);
 template<size_t Size> size_t strlmcat_t(char (&dst)[Size], const char *src);
 #endif
+
+template<typename CharT> int strncmp_t(const CharT *str1, const CharT *str2, size_t maxcount);
+template<typename CharT> int strnicmp_t(const CharT* str1, const CharT* str2, size_t maxcount);
+
+template<typename CharT> bool startsWith(const CharT *str, const CharT *prefix);
+template<typename CharT> bool startsWithNoCase(const CharT *str, const CharT *prefix);
+template<typename CharT> bool endsWithNoCase(const CharT *str, const CharT *suffix);
+template<typename CharT> bool endsWithNoCase(const CharT *str, const CharT *suffix);
 
 
 // Implementation
@@ -183,106 +192,140 @@ template<size_t Size> size_t strlmove_t(char (&dst)[Size], const char *src) { re
 template<size_t Size> size_t strlmcat_t(char (&dst)[Size], const char *src) { return strlmcat_t(dst, src, Size); }
 #endif
 
-inline bool startsWith(const char *str, const char *prefix)
+// Templated strncmp.
+// Compares up to maxcount chars or a null byte is encountered, whichever comes first.
+// Returns < 0 if str1 is less than str2, 0 is str1 and str2 are equal and > 0 if str2 is greater than str1.
+template<typename CharT> int strncmp_t(const CharT *str1, const CharT *str2, const size_t maxcount)
 {
-	if (*prefix == char(0))
+	if (str1 == nullptr || str2 == nullptr)
+	{
+		switch (str1)
+		{
+		case str2:
+			return 0;
+		case nullptr:
+			return -1;
+		default:
+			return 1;
+		}
+	}
+	for (size_t i = 0; i < maxcount; ++i)
+	{
+		CharT c1 = str1[i];
+		CharT c2 = str2[i];
+		int diff = c1 - c2;
+		if (diff != 0)
+		{
+			return diff;
+		}
+		if (c1 == CharT(0)) // both c1 and c2 are null terminators
+		{
+			return 0;
+		}
+	}
+	return 0;
+}
+
+// Lower case conversion helpers
+inline char tolower_t(char c) {
+	// cast to unsigned char for correct behavior of tolower()
+	return (char)::tolower((unsigned char)c);
+}
+
+inline wchar_t tolower_t(wchar_t c) {
+	return (wchar_t)::towlower(c);
+}
+
+// Templated strnicmp.
+// Case insensitively compares up to maxcount chars or a null byte is encountered, whichever comes first.
+// Returns < 0 if str1 is less than str2, 0 is str1 and str2 are equal and > 0 if str2 is greater than str1.
+template<typename CharT> int strnicmp_t(const CharT *str1, const CharT *str2, const size_t maxcount)
+{
+	if (str1 == nullptr || str2 == nullptr)
+	{
+		switch (str1)
+		{
+		case str2:
+			return 0;
+		case nullptr:
+			return -1;
+		default:
+			return 1;
+		}
+	}
+	for (size_t i = 0; i < maxcount; ++i)
+	{
+		CharT c1 = tolower_t(str1[i]);
+		CharT c2 = tolower_t(str2[i]);
+		int diff = c1 - c2;
+		if (diff != 0)
+		{
+			return diff;
+		}
+		if (c1 == CharT(0)) // both c1 and c2 are null terminators
+		{
+			return 0;
+		}
+	}
+	return 0;
+}
+
+inline int strncmp_t(const char *str1, const char *str2, size_t maxcount) { return ::strncmp(str1, str2, maxcount); };
+inline int strncmp_t(const wchar_t *str1, const wchar_t *str2, size_t maxcount) { return ::wcsncmp(str1, str2, maxcount); };
+#ifdef _WIN32
+inline int strnicmp_t(const char *str1, const char *str2, size_t maxcount) { return ::_strnicmp(str1, str2, maxcount); };
+inline int strnicmp_t(const wchar_t *str1, const wchar_t *str2, size_t maxcount) { return ::_wcsnicmp(str1, str2, maxcount); };
+#endif
+
+template<typename CharT> inline bool startsWith(const CharT *str, const CharT *prefix)
+{
+	if (*prefix == CharT(0))
 		return true;	// everything starts with the empty string
 
-	const size_t strlen = ::strlen(str);
-	const size_t prefixlen = ::strlen(prefix);
+	const size_t strlen = ::strlen_t(str);
+	const size_t prefixlen = ::strlen_t(prefix);
 	if (strlen < prefixlen)
 		return false;	// prefix must be as long or shorter than str
 
-	return ::strncmp(str, prefix, prefixlen) == 0;
+	return strncmp_t(str, prefix, prefixlen) == 0;
 }
 
-inline bool startsWith(const wchar_t *str, const wchar_t *prefix)
+template<typename CharT> inline bool startsWithNoCase(const CharT *str, const CharT *prefix)
 {
-	if (*prefix == wchar_t(0))
+	if (*prefix == CharT(0))
 		return true;	// everything starts with the empty string
 
-	const size_t strlen = ::wcslen(str);
-	const size_t prefixlen = ::wcslen(prefix);
+	const size_t strlen = ::strlen_t(str);
+	const size_t prefixlen = ::strlen_t(prefix);
 	if (strlen < prefixlen)
 		return false;	// prefix must be as long or shorter than str
 
-	return ::wcsncmp(str, prefix, prefixlen) == 0;
+	return strnicmp_t(str, prefix, prefixlen) == 0;
 }
 
-inline bool startsWithNoCase(const char *str, const char *prefix)
+template<typename CharT> inline bool endsWith(const CharT *str, const CharT *suffix)
 {
-	if (*prefix == char(0))
-		return true;	// everything starts with the empty string
-
-	const size_t strlen = ::strlen(str);
-	const size_t prefixlen = ::strlen(prefix);
-	if (strlen < prefixlen)
-		return false;	// prefix must be as long or shorter than str
-
-	return ::strnicmp(str, prefix, prefixlen) == 0;
-}
-
-inline bool startsWithNoCase(const wchar_t *str, const wchar_t *prefix)
-{
-	if (*prefix == wchar_t(0))
-		return true;	// everything starts with the empty string
-
-	const size_t strlen = ::wcslen(str);
-	const size_t prefixlen = ::wcslen(prefix);
-	if (strlen < prefixlen)
-		return false;	// prefix must be as long or shorter than str
-
-	return ::wcsnicmp(str, prefix, prefixlen) == 0;
-}
-
-inline bool endsWith(const char *str, const char *suffix)
-{
-	if (*suffix == char(0))
+	if (*suffix == CharT(0))
 		return true;	// everything ends with the empty string
 
-	const size_t strlen = ::strlen(str);
-	const size_t suffixlen = ::strlen(suffix);
+	const size_t strlen = ::strlen_t(str);
+	const size_t suffixlen = ::strlen_t(suffix);
 	if (strlen < suffixlen)
 		return false;	// suffix must be as long or shorter than str
 
-	return ::strncmp(str + strlen - suffixlen, suffix, suffixlen) == 0;
+	return strncmp_t(str + strlen - suffixlen, suffix, suffixlen) == 0;
 }
 
-inline bool endsWith(const wchar_t *str, const wchar_t *suffix)
+template<typename CharT> inline bool endsWithNoCase(const CharT *str, const CharT *suffix)
 {
-	if (*suffix == wchar_t(0))
+	if (*suffix == CharT(0))
 		return true;	// everything ends with the empty string
 
-	const size_t strlen = ::wcslen(str);
-	const size_t suffixlen = ::wcslen(suffix);
+	const size_t strlen = ::strlen_t(str);
+	const size_t suffixlen = ::strlen_t(suffix);
 	if (strlen < suffixlen)
 		return false;	// suffix must be as long or shorter than str
 
-	return ::wcsncmp(str + strlen - suffixlen, suffix, suffixlen) == 0;
+	return strnicmp_t(str + strlen - suffixlen, suffix, suffixlen) == 0;
 }
 
-inline bool endsWithNoCase(const char *str, const char *suffix)
-{
-	if (*suffix == char(0))
-		return true;	// everything ends with the empty string
-
-	const size_t strlen = ::strlen(str);
-	const size_t suffixlen = ::strlen(suffix);
-	if (strlen < suffixlen)
-		return false;	// suffix must be as long or shorter than str
-
-	return ::strnicmp(str + strlen - suffixlen, suffix, suffixlen) == 0;
-}
-
-inline bool endsWithNoCase(const wchar_t *str, const wchar_t *suffix)
-{
-	if (*suffix == wchar_t(0))
-		return true;	// everything ends with the empty string
-
-	const size_t strlen = ::wcslen(str);
-	const size_t suffixlen = ::wcslen(suffix);
-	if (strlen < suffixlen)
-		return false;	// suffix must be as long or shorter than str
-
-	return ::wcsnicmp(str + strlen - suffixlen, suffix, suffixlen) == 0;
-}
