@@ -1323,6 +1323,8 @@ Bool ActiveBody::isSubdued() const
 #if RETAIL_COMPATIBLE_CRC
 	return m_maxHealth <= m_currentSubdualDamage;
 #else
+  // TheSuperHackers @info Projectiles don't receive the DISABLED_SUBDUED flag (or any flag for
+	// that matter) when jammed, so we have to check their subdual damage directly.
 	if (getObject()->isKindOf(KINDOF_PROJECTILE))
 		return m_maxHealth <= m_currentSubdualDamage;
 
