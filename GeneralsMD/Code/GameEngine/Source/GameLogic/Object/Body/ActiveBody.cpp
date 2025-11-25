@@ -1323,6 +1323,9 @@ Bool ActiveBody::isSubdued() const
 #if RETAIL_COMPATIBLE_CRC
 	return m_maxHealth <= m_currentSubdualDamage;
 #else
+	if (getObject()->isKindOf(KINDOF_PROJECTILE))
+		return m_maxHealth <= m_currentSubdualDamage;
+
 	return getObject()->isDisabledByType(DISABLED_SUBDUED);
 #endif
 }
