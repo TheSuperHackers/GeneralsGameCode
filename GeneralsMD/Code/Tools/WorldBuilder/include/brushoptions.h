@@ -35,7 +35,13 @@ public:
 				FREQ_BRUSH_TICKS=10,
 				MIN_FEATHER=0,
 				FREQ_FEATHER_TICKS=4,
-				MAX_FEATHER=20};
+				MAX_FEATHER=20,
+				MIN_RAISE_LOWER=1,
+				MAX_RAISE_LOWER=21,
+				MIN_SMOOTH_RADIUS=1,
+				MAX_SMOOTH_RADIUS=5,
+				MIN_SMOOTH_RATE=1,
+				MAX_SMOOTH_RATE=10};
 
 	BrushOptions(CWnd* pParent = NULL);   // standard constructor
 
@@ -64,6 +70,9 @@ protected:
 	afx_msg void OnChangeFeatherEdit();
 	afx_msg void OnChangeSizeEdit();
 	afx_msg void OnChangeHeightEdit();
+	afx_msg void OnChangeRaiseLowerEdit();
+	afx_msg void OnChangeSmoothRadiusEdit();
+	afx_msg void OnChangeSmoothRateEdit();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -72,16 +81,25 @@ protected:
 	static Int m_currentWidth;					///< current brush width in the ui.
 	static Int m_currentFeather;				///< current feather width in the ui.
 	static Int m_currentHeight;
+	static Int m_currentRaiseLower;
+	static Int m_currentSmoothRadius;
+	static Int m_currentSmoothRate;
 
 	Bool		m_updating; ///<true if the ui is updating itself.
 	WBPopupSliderButton m_brushWidthPopup;
 	WBPopupSliderButton m_brushFeatherPopup;
 	WBPopupSliderButton m_brushHeightPopup;
+	WBPopupSliderButton m_raiseLowerPopup;
+	WBPopupSliderButton m_smoothRadiusPopup;
+	WBPopupSliderButton m_smoothRatePopup;
 
 public:
 	static void setWidth(Int width);
 	static void setFeather(Int feather);
 	static void setHeight(Int height);
+	static void setRaiseLowerAmount(Int amount);
+	static void setSmoothRadius(Int radius);
+	static void setSmoothRate(Int rate);
 
 public:
 

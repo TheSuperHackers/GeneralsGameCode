@@ -199,6 +199,9 @@
 #define IDC_PSEd_Color1                 1031
 #define IDC_FEATHER_LABEL               1032
 #define IDC_WIDTH_LABEL3                1032
+#define IDC_RAISELOWER_EDIT             1800
+#define IDC_RAISELOWER_POPUP            1801
+#define IDC_RAISELOWER_LABEL            1802
 #define IDC_TERRAIN_TREEVIEW            1033
 #define IDC_SLIDER3                     1034
 #define IDC_SWAP_TEXTURES               1035
