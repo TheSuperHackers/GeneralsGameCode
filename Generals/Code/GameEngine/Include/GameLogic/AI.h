@@ -539,7 +539,13 @@ public:
 	inline void aiFollowExitProductionPath( std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_FOLLOW_EXITPRODUCTION_PATH, cmdSource);
+#if __cplusplus >= 201103L
+		parms.m_coords = std::move(*path);
+#else
+		// TheSuperHackers @performance bobtista 23/11/2025 Use swap to emulate move semantics for VC6 compatibility
 		parms.m_coords.swap(*path);
+		path->clear();
+#endif
 		parms.m_obj = ignoreObject;
 		aiDoCommand(&parms);
 	}
@@ -547,7 +553,13 @@ public:
 	inline void aiFollowPath( std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_FOLLOW_PATH, cmdSource);
+#if __cplusplus >= 201103L
+		parms.m_coords = std::move(*path);
+#else
+		// TheSuperHackers @performance bobtista 23/11/2025 Use swap to emulate move semantics for VC6 compatibility
 		parms.m_coords.swap(*path);
+		path->clear();
+#endif
 		parms.m_obj = ignoreObject;
 		aiDoCommand(&parms);
 	}
