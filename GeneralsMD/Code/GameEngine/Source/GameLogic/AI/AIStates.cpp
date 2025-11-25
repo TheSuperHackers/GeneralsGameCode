@@ -827,7 +827,6 @@ void AIStateMachine::setGoalPath( std::vector<Coord3D>* path )
 	m_goalPath = std::move(*path);
 #else
 	// TheSuperHackers @performance bobtista 23/11/2025 Use swap to emulate move semantics for VC6 compatibility
-	// Swap transfers ownership without copying. Clear source to make intent explicit.
 	m_goalPath.swap(*path);
 	path->clear();
 #endif
