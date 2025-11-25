@@ -35,6 +35,7 @@
 #include "playerlistdlg.h"
 #include "teamsdialog.h"
 #include "LayersList.h"
+#include "BrushTool.h"
 
 Bool WbView::m_snapToGrid = false;
 
@@ -139,6 +140,7 @@ BEGIN_MESSAGE_MAP(WbView, CView)
 	ON_COMMAND(ID_VIEW_SHOW_TERRAIN, OnShowTerrain)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOW_TERRAIN, OnUpdateShowTerrain)
 	ON_WM_CREATE()
+	ON_WM_MOUSEWHEEL()
 
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -1082,4 +1084,63 @@ void WbView::rulerFeedbackInfo(Coord3D &point1, Coord3D &point2, Real dist)
 	m_rulerPoints[0] = point1;
 	m_rulerPoints[1] = point2;
 	m_rulerLength = dist;
+}
+
+// ----------------------------------------------------------------------------
+BOOL WbView::OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
+{
+	// Check if brush tool should handle this
+	if (handleBrushMouseWheel(nFlags, zDelta)) {
+		return TRUE;
+	}
+	
+	// Default behavior: pass to base class for scrolling
+	return CView::OnMouseWheel(nFlags, zDelta, point);
+}
+
+// ----------------------------------------------------------------------------
+Bool WbView::handleBrushMouseWheel(UINT nFlags, short zDelta)
+{
+	// Only handle if brush tool is active
+	Tool *pCurTool = WbApp()->getCurTool();
+	if (pCurTool && dynamic_cast<BrushTool*>(pCurTool) != NULL) {
+		Bool shiftDown = (nFlags & MK_SHIFT) != 0;
+		Bool ctrlDown = (nFlags & MK_CONTROL) != 0;
+		
+		if (shiftDown && !ctrlDown) {
+			// Shift + Scroll Wheel -> Adjust brush width
+			Int currentWidth = BrushTool::getWidth();
+			Int delta = zDelta > 0 ? 1 : -1;
+			Int newWidth = currentWidth + delta;
+			// Clamp to reasonable range (1-100)
+			if (newWidth < 1) newWidth = 1;
+			if (newWidth > 100) newWidth = 100;
+			BrushTool::setWidth(newWidth);
+			
+			// Update status bar
+			CString statusText;
+			statusText.Format("Brush Width: %d", newWidth);
+			CMainFrame::GetMainFrame()->SetMessageText(statusText);
+			
+			return TRUE;
+		} else if (ctrlDown && !shiftDown) {
+			// Control + Scroll Wheel -> Adjust brush feather
+			Int currentFeather = BrushTool::getFeather();
+			Int delta = zDelta > 0 ? 1 : -1;
+			Int newFeather = currentFeather + delta;
+			// Clamp to reasonable range (0-100)
+			if (newFeather < 0) newFeather = 0;
+			if (newFeather > 100) newFeather = 100;
+			BrushTool::setFeather(newFeather);
+			
+			// Update status bar
+			CString statusText;
+			statusText.Format("Brush Feather: %d", newFeather);
+			CMainFrame::GetMainFrame()->SetMessageText(statusText);
+			
+			return TRUE;
+		}
+	}
+	
+	return FALSE;
 }

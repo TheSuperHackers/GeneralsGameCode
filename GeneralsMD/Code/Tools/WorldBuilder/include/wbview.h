@@ -241,10 +241,13 @@ protected:
 	afx_msg void OnShowTerrain();
 	afx_msg void OnUpdateShowTerrain(CCmdUI* pCmdUI);
 	afx_msg int OnCreate(LPCREATESTRUCT lpcs);
-
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint point);
 
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+
+protected:
+	Bool handleBrushMouseWheel(UINT nFlags, short zDelta);
 };
 
 /////////////////////////////////////////////////////////////////////////////
