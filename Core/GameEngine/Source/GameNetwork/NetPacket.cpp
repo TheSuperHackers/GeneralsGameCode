@@ -2458,6 +2458,7 @@ Bool NetPacket::addTimeOutGameStartMessage(NetCommandRef *msg) {
 Bool NetPacket::isRoomForTimeOutGameStartMessage(NetCommandRef *msg) {
 	Int len = 0;
 	NetCommandMsg *cmdMsg = static_cast<NetCommandMsg *>(msg->getCommand());
+	Bool needNewCommandID = FALSE;
 	if (m_lastCommandType != cmdMsg->getNetCommandType()) {
 		++len;
 		len += sizeof(UnsignedByte);
@@ -2468,6 +2469,13 @@ Bool NetPacket::isRoomForTimeOutGameStartMessage(NetCommandRef *msg) {
 	if (m_lastPlayerID != cmdMsg->getPlayerID()) {
 		++len;
 		len += sizeof(UnsignedByte);
+		needNewCommandID = TRUE;
+	}
+
+	// If necessary, account for the command ID of this command.
+	if (((m_lastCommandID + 1) != (UnsignedShort)(cmdMsg->getID())) || (needNewCommandID == TRUE)) {
+		len += sizeof(UnsignedByte); // NetPacketFieldTypes::CommandId
+		len += sizeof(UnsignedShort); // command ID value
 	}
 
 	++len; // for NetPacketFieldTypes::Data
@@ -2550,6 +2558,7 @@ Bool NetPacket::addLoadCompleteMessage(NetCommandRef *msg) {
 Bool NetPacket::isRoomForLoadCompleteMessage(NetCommandRef *msg) {
 	Int len = 0;
 	NetCommandMsg *cmdMsg = static_cast<NetCommandMsg *>(msg->getCommand());
+	Bool needNewCommandID = FALSE;
 	if (m_lastCommandType != cmdMsg->getNetCommandType()) {
 		++len;
 		len += sizeof(UnsignedByte);
@@ -2560,6 +2569,13 @@ Bool NetPacket::isRoomForLoadCompleteMessage(NetCommandRef *msg) {
 	if (m_lastPlayerID != cmdMsg->getPlayerID()) {
 		++len;
 		len += sizeof(UnsignedByte);
+		needNewCommandID = TRUE;
+	}
+
+	// If necessary, account for the command ID of this command.
+	if (((m_lastCommandID + 1) != (UnsignedShort)(cmdMsg->getID())) || (needNewCommandID == TRUE)) {
+		len += sizeof(UnsignedByte); // NetPacketFieldTypes::CommandId
+		len += sizeof(UnsignedShort); // command ID value
 	}
 
 	++len; // for NetPacketFieldTypes::Data
