@@ -69,7 +69,7 @@ void PopupCommunicatorInit( WindowLayout *layout, void *userData )
 	TheWindowManager->winSetModal( parent );
 
 	// get ids for our children controls
-	buttonOkID = TheNameKeyGenerator->nameToKey( AsciiString("PopupCommunicator.wnd:ButtonOk") );
+	buttonOkID = TheNameKeyGenerator->nameToKey( "PopupCommunicator.wnd:ButtonOk" );
 	buttonOk = TheWindowManager->winGetWindowFromId( parent, buttonOkID );
 
 }

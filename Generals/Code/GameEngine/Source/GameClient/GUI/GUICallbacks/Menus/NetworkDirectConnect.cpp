@@ -262,12 +262,12 @@ void NetworkDirectConnectInit( WindowLayout *layout, void *userData )
 	buttonPushed = false;
 	isShuttingDown = false;
 	TheShell->showShellMap(TRUE);
-	buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:ButtonBack" ) );
-	buttonHostID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:ButtonHost" ) );
-	buttonJoinID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:ButtonJoin" ) );
-	editPlayerNameID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:EditPlayerName" ) );
-	comboboxRemoteIPID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:ComboboxRemoteIP" ) );
-	staticLocalIPID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:StaticLocalIP" ) );
+	buttonBackID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:ButtonBack" );
+	buttonHostID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:ButtonHost" );
+	buttonJoinID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:ButtonJoin" );
+	editPlayerNameID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:EditPlayerName" );
+	comboboxRemoteIPID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:ComboboxRemoteIP" );
+	staticLocalIPID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:StaticLocalIP" );
 
 	buttonBack = TheWindowManager->winGetWindowFromId( NULL,  buttonBackID);
 	buttonHost = TheWindowManager->winGetWindowFromId( NULL,	buttonHostID);

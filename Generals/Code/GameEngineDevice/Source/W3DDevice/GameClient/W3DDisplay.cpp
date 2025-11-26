@@ -772,7 +772,7 @@ void W3DDisplay::init( void )
 					TheGlobalLanguageData->m_nativeDebugDisplay.bold);
 			}
 			else
-				font=TheFontLibrary->getFont( AsciiString("FixedSys"), 8, FALSE );
+				font=TheFontLibrary->getFont( "FixedSys", 8, FALSE );
 
 			m_nativeDebugDisplay->setFont( font );
 			m_nativeDebugDisplay->setFontHeight( 13 );
@@ -891,7 +891,7 @@ void W3DDisplay::gatherDebugStats( void )
 				TheGlobalLanguageData->m_nativeDebugDisplay.bold);
 		}
 		else
-			font = TheFontLibrary->getFont( AsciiString("FixedSys"), 8, FALSE );
+			font = TheFontLibrary->getFont( "FixedSys", 8, FALSE );
 
 		for (int i = 0; i < DisplayStringCount; i++)
 		{
@@ -907,7 +907,7 @@ void W3DDisplay::gatherDebugStats( void )
 
 	if (m_benchmarkDisplayString == NULL)
 	{
-		GameFont *thisFont = TheFontLibrary->getFont( AsciiString("FixedSys"), 8, FALSE );
+		GameFont *thisFont = TheFontLibrary->getFont( "FixedSys", 8, FALSE );
 		m_benchmarkDisplayString = TheDisplayStringManager->newDisplayString();
 		DEBUG_ASSERTCRASH( m_benchmarkDisplayString, ("Failed to create DisplayString") );
 		m_benchmarkDisplayString->setFont( thisFont );

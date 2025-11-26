@@ -353,7 +353,7 @@ TerrainRoadType *TerrainRoadCollection::newRoad( AsciiString name )
 	road->friend_setBridge( FALSE );
 
 	// set defaults from the default road
-	TerrainRoadType *defaultRoad = findRoad( AsciiString( "DefaultRoad" ) );
+	TerrainRoadType *defaultRoad = findRoad( "DefaultRoad" );
 	if( defaultRoad )
 	{
 
@@ -389,7 +389,7 @@ TerrainRoadType *TerrainRoadCollection::newBridge( AsciiString name )
 	bridge->friend_setBridge( TRUE );
 
 	// set defaults from the default bridge
-	TerrainRoadType *defaultBridge = findBridge( AsciiString( "DefaultBridge" ) );
+	TerrainRoadType *defaultBridge = findBridge( "DefaultBridge" );
 	if( defaultBridge )
 	{
 

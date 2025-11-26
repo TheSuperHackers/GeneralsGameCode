@@ -301,7 +301,7 @@ void GameInfo::reset( void )
 	m_inGame = false;
 	m_inProgress = false;
 	m_gameID = 0;
-	m_mapName = AsciiString("NOMAP");
+	m_mapName = "NOMAP";
 	m_mapMask = 0;
 	m_seed = GetTickCount(); //GameClientRandomValue(0, INT_MAX - 1);
 	m_useStats = TRUE;

@@ -138,10 +138,10 @@ void LanMapSelectMenuInit( WindowLayout *layout, void *userData )
 	}
 
 
-	buttonBack = TheNameKeyGenerator->nameToKey( AsciiString("LanMapSelectMenu.wnd:ButtonBack") );
-	buttonOK = TheNameKeyGenerator->nameToKey( AsciiString("LanMapSelectMenu.wnd:ButtonOK") );
-	listboxMap = TheNameKeyGenerator->nameToKey( AsciiString("LanMapSelectMenu.wnd:ListboxMap") );
-	winMapPreviewID = TheNameKeyGenerator->nameToKey( AsciiString("LanMapSelectMenu.wnd:WinMapPreview") );
+	buttonBack = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:ButtonBack" );
+	buttonOK = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:ButtonOK" );
+	listboxMap = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:ListboxMap" );
+	winMapPreviewID = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:WinMapPreview" );
 
 	radioButtonSystemMapsID = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:RadioButtonSystemMaps" );
 	radioButtonUserMapsID = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:RadioButtonUserMaps" );

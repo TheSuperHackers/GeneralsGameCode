@@ -743,7 +743,7 @@ AsciiString DataChunkInput::openDataChunk(DataChunkVersionType *ver )
 	c->next = m_chunkStack;
 	m_chunkStack = c;
 	if (this->atEndOfFile()) {
-		return (AsciiString(""));
+		return ("");
 	}
 	return m_contents.getName( c->id );
 }
@@ -779,7 +779,7 @@ AsciiString DataChunkInput::getChunkLabel( void )
 	{
 		// TODO: Throw exception
 		DEBUG_CRASH(("Bad."));
-		return AsciiString("");
+		return "";
 	}
 
 	return m_contents.getName( m_chunkStack->id );

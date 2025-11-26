@@ -425,13 +425,13 @@ void WOLWelcomeMenuInit( WindowLayout *layout, void *userData )
 
 	//TheWOL->reset();
 
-	parentWOLWelcomeID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLWelcomeMenu.wnd:WOLWelcomeMenuParent" ) );
-	buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLWelcomeMenu.wnd:ButtonBack" ) );
+	parentWOLWelcomeID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:WOLWelcomeMenuParent" );
+	buttonBackID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:ButtonBack" );
 	parentWOLWelcome = TheWindowManager->winGetWindowFromId( NULL, parentWOLWelcomeID );
 	buttonBack = TheWindowManager->winGetWindowFromId( NULL,  buttonBackID);
 	buttonOptionsID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:ButtonOptions" );
 	buttonbuttonOptions = TheWindowManager->winGetWindowFromId( NULL,  buttonOptionsID);
-	listboxInfoID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLWelcomeMenu.wnd:InfoListbox" ) );
+	listboxInfoID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:InfoListbox" );
 
 	listboxInfo = TheWindowManager->winGetWindowFromId( NULL,  listboxInfoID);
 
@@ -490,19 +490,19 @@ void WOLWelcomeMenuInit( WindowLayout *layout, void *userData )
 
 	//DEBUG_ASSERTCRASH(listboxInfo, ("No control found!"));
 
-	buttonQuickMatchID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLWelcomeMenu.wnd:ButtonQuickMatch" ) );
+	buttonQuickMatchID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:ButtonQuickMatch" );
 	buttonQuickMatch = TheWindowManager->winGetWindowFromId( parentWOLWelcome, buttonQuickMatchID );
 
-	buttonLobbyID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLWelcomeMenu.wnd:ButtonCustomMatch" ) );
+	buttonLobbyID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:ButtonCustomMatch" );
 	buttonLobby = TheWindowManager->winGetWindowFromId( parentWOLWelcome, buttonLobbyID );
 
-	buttonBuddiesID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLWelcomeMenu.wnd:ButtonBuddies" ) );
+	buttonBuddiesID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:ButtonBuddies" );
 	buttonBuddies = TheWindowManager->winGetWindowFromId( parentWOLWelcome, buttonBuddiesID );
 
-	buttonMyInfoID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLWelcomeMenu.wnd:ButtonMyInfo" ) );
+	buttonMyInfoID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:ButtonMyInfo" );
 	buttonMyInfo = TheWindowManager->winGetWindowFromId( parentWOLWelcome, buttonMyInfoID );
 
-	buttonLadderID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLWelcomeMenu.wnd:ButtonLadder" ) );
+	buttonLadderID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:ButtonLadder" );
 	buttonLadder = TheWindowManager->winGetWindowFromId( parentWOLWelcome, buttonLadderID );
 
 	if (TheFirewallHelper == NULL) {
@@ -880,7 +880,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 				}
 				else if (controlID == buttonLadderID)
 				{
-					TheShell->push(AsciiString("Menus/WOLLadderScreen.wnd"));
+					TheShell->push("Menus/WOLLadderScreen.wnd");
 				}
 				break;
 			}

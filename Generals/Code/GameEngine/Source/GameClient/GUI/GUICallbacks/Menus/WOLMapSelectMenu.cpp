@@ -135,7 +135,7 @@ void WOLMapSelectMenuInit( WindowLayout *layout, void *userData )
 
 	CustomMatchPreferences pref;
 	Bool usesSystemMapDir = pref.usesSystemMapDir();
-	winMapPreviewID = TheNameKeyGenerator->nameToKey( AsciiString("WOLMapSelectMenu.wnd:WinMapPreview") );
+	winMapPreviewID = TheNameKeyGenerator->nameToKey( "WOLMapSelectMenu.wnd:WinMapPreview" );
 	winMapPreview = TheWindowManager->winGetWindowFromId(parent, winMapPreviewID);
 
 	const MapMetaData *mmd = TheMapCache->findMap(TheGameSpyGame->getMap());
@@ -144,9 +144,9 @@ void WOLMapSelectMenuInit( WindowLayout *layout, void *userData )
 		usesSystemMapDir = mmd->m_isOfficial;
 	}
 
-	buttonBack = TheNameKeyGenerator->nameToKey( AsciiString("WOLMapSelectMenu.wnd:ButtonBack") );
-	buttonOK = TheNameKeyGenerator->nameToKey( AsciiString("WOLMapSelectMenu.wnd:ButtonOK") );
-	listboxMap = TheNameKeyGenerator->nameToKey( AsciiString("WOLMapSelectMenu.wnd:ListboxMap") );
+	buttonBack = TheNameKeyGenerator->nameToKey( "WOLMapSelectMenu.wnd:ButtonBack" );
+	buttonOK = TheNameKeyGenerator->nameToKey( "WOLMapSelectMenu.wnd:ButtonOK" );
+	listboxMap = TheNameKeyGenerator->nameToKey( "WOLMapSelectMenu.wnd:ListboxMap" );
 	radioButtonSystemMapsID = TheNameKeyGenerator->nameToKey( "WOLMapSelectMenu.wnd:RadioButtonSystemMaps" );
 	radioButtonUserMapsID = TheNameKeyGenerator->nameToKey( "WOLMapSelectMenu.wnd:RadioButtonUserMaps" );
 	winMapWindow = TheWindowManager->winGetWindowFromId( parent, listboxMap );

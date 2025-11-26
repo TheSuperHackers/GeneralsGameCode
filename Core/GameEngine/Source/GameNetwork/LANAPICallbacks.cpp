@@ -506,7 +506,7 @@ void LANAPI::OnGameJoin( ReturnType ret, LANGameInfo *theGame )
 	if (ret == RET_OK)
 	{
 		LANbuttonPushed = true;
-		TheShell->push( AsciiString("Menus/LanGameOptionsMenu.wnd") );
+		TheShell->push( "Menus/LanGameOptionsMenu.wnd" );
 		//lanUpdateSlotList();
 
 		LANPreferences pref;
@@ -597,7 +597,7 @@ void LANAPI::OnGameCreate( ReturnType ret )
 	{
 
 		LANbuttonPushed = true;
-		TheShell->push( AsciiString("Menus/LanGameOptionsMenu.wnd") );
+		TheShell->push( "Menus/LanGameOptionsMenu.wnd" );
 
 		RequestLobbyLeave( false );
 		//RequestGameAnnounce( ); // can't do this here, since we don't have a map set

@@ -210,7 +210,7 @@ void StdBIGFileSystem::closeAllFiles() {
 Bool StdBIGFileSystem::loadBigFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite) {
 
 	FilenameList filenameList;
-	TheLocalFileSystem->getFileListInDirectory(dir, AsciiString(""), fileMask, filenameList, TRUE);
+	TheLocalFileSystem->getFileListInDirectory(dir, "", fileMask, filenameList, TRUE);
 
 	Bool actuallyAdded = FALSE;
 	FilenameListIter it = filenameList.begin();

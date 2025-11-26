@@ -2276,7 +2276,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
 			Locale_GetString( "Autorun:Install" ),
 #else
-			AsciiString("Autorun:Install"),
+			"Autorun:Install",
 #endif
 			TTButtonFontPtr );
 
@@ -2295,7 +2295,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
 			Locale_GetString( "Autorun:Play" ),
 #else
-			AsciiString("Autorun:Play"),
+			"Autorun:Play",
 #endif
 			TTButtonFontPtr );
 /*
@@ -2314,7 +2314,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
 			Locale_GetString( "Autorun:Worldbuilder" ),
 #else
-			AsciiString("Autorun:Worldbuilder"),
+			"Autorun:Worldbuilder",
 #endif
 			TTButtonFontPtr );
 */
@@ -2333,7 +2333,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
 			Locale_GetString( "Autorun:CheckForUpdates" ),
 #else
-			AsciiString("Autorun:CheckForUpdates"),
+			"Autorun:CheckForUpdates",
 #endif
 			TTButtonFontPtr );
 	}
@@ -2351,7 +2351,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
 		Locale_GetString( "Autorun:ExploreCD" ),
 #else
-		AsciiString("Autorun:ExploreCD"),
+		"Autorun:ExploreCD",
 #endif
 		TTButtonFontPtr );
 //	strcpy( next_button_name, ButtonImages[button_index] );
@@ -2372,7 +2372,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
 			Locale_GetString( "Autorun:Website" ),
 #else
-			AsciiString("Autorun:Website"),
+			"Autorun:Website",
 #endif
 			TTButtonFontPtr );
 
@@ -2395,7 +2395,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
 			Locale_GetString( "Autorun:Uninstall" ),
 #else
-			AsciiString("Autorun:Uninstall"),
+			"Autorun:Uninstall",
 #endif
 			TTButtonFontPtr );
 
@@ -2417,7 +2417,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
     Locale_GetString( "Autorun:Previews" ),
 #else
-		AsciiString("Autorun:Previews"),
+		"Autorun:Previews",
 #endif
 		TTButtonFontPtr );
 
@@ -2434,7 +2434,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
     Locale_GetString( "Autorun:Help" ),
 #else
-		AsciiString("Autorun:Help"),
+		"Autorun:Help",
 #endif
 		TTButtonFontPtr );
 
@@ -2451,7 +2451,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
 		Locale_GetString( "Autorun:Cancel" ),
 #else
-		AsciiString("Autorun:Cancel"),
+		"Autorun:Cancel",
 #endif
 		TTButtonFontPtr );
 
@@ -3856,7 +3856,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 							Reformat_Volume_Name( PRODUCT_VOLUME_CD2, volume_to_match );
 //							result = Prompt_For_CD( window_handle, volume_to_match, IDS_INSERT_CDROM_WITH_VOLUME2, IDS_EXIT_MESSAGE2, &cd_drive );
-							result = Prompt_For_CD( window_handle, volume_to_match, AsciiString("Autorun:InsertCDROMWithVolume2"), AsciiString("Autorun:ExitMessage2"), &cd_drive );
+							result = Prompt_For_CD( window_handle, volume_to_match, "Autorun:InsertCDROMWithVolume2", "Autorun:ExitMessage2", &cd_drive );
 						}
 
 						if ( result ) {
@@ -3883,7 +3883,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						}
 						else
 						{
-							Error_Message( Main::hInstance, AsciiString("Autorun:Generals"), AsciiString("Autorun:CantFindExplorer"), GAME_WEBSITE );
+							Error_Message( Main::hInstance, "Autorun:Generals", "Autorun:CantFindExplorer", GAME_WEBSITE );
 						}
 						break;
 				#endif

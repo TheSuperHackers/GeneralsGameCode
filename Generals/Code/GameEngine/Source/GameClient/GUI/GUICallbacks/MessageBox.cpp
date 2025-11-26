@@ -132,10 +132,10 @@ WindowMsgHandledType MessageBoxSystem( GameWindow *window, UnsignedInt msg,
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
-			static NameKeyType buttonOkID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonOk" ) );
-			static NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonYes" ) );
-			static NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonNo" ) );
-			static NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonCancel" ) );
+			static NameKeyType buttonOkID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonOk" );
+			static NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonYes" );
+			static NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonNo" );
+			static NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonCancel" );
 			WindowMessageBoxData *MsgBoxCallbacks = (WindowMessageBoxData *)window->winGetUserData();
 
 			if( controlID == buttonOkID )
@@ -216,10 +216,10 @@ WindowMsgHandledType QuitMessageBoxSystem( GameWindow *window, UnsignedInt msg,
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
-			static NameKeyType buttonOkID = TheNameKeyGenerator->nameToKey( AsciiString( "QuitMessageBox.wnd:ButtonOk" ) );
-			static NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey( AsciiString( "QuitMessageBox.wnd:ButtonYes" ) );
-			static NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( AsciiString( "QuitMessageBox.wnd:ButtonNo" ) );
-			static NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( AsciiString( "QuitMessageBox.wnd:ButtonCancel" ) );
+			static NameKeyType buttonOkID = TheNameKeyGenerator->nameToKey( "QuitMessageBox.wnd:ButtonOk" );
+			static NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey( "QuitMessageBox.wnd:ButtonYes" );
+			static NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( "QuitMessageBox.wnd:ButtonNo" );
+			static NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( "QuitMessageBox.wnd:ButtonCancel" );
 			WindowMessageBoxData *MsgBoxCallbacks = (WindowMessageBoxData *)window->winGetUserData();
 
 			if( controlID == buttonOkID )

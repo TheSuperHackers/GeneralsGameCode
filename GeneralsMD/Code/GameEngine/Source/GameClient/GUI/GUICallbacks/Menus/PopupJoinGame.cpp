@@ -86,14 +86,14 @@ static void joinGame( AsciiString password );
 //-------------------------------------------------------------------------------------------------
 void PopupJoinGameInit( WindowLayout *layout, void *userData )
 {
-	parentPopupID = TheNameKeyGenerator->nameToKey(AsciiString("PopupJoinGame.wnd:ParentJoinPopUp"));
+	parentPopupID = TheNameKeyGenerator->nameToKey("PopupJoinGame.wnd:ParentJoinPopUp");
 	parentPopup = TheWindowManager->winGetWindowFromId(NULL, parentPopupID);
 
-	textEntryGamePasswordID = TheNameKeyGenerator->nameToKey(AsciiString("PopupJoinGame.wnd:TextEntryGamePassword"));
+	textEntryGamePasswordID = TheNameKeyGenerator->nameToKey("PopupJoinGame.wnd:TextEntryGamePassword");
 	textEntryGamePassword = TheWindowManager->winGetWindowFromId(parentPopup, textEntryGamePasswordID);
 	GadgetTextEntrySetText(textEntryGamePassword, UnicodeString::TheEmptyString);
 
-	NameKeyType staticTextGameNameID = TheNameKeyGenerator->nameToKey(AsciiString("PopupJoinGame.wnd:StaticTextGameName"));
+	NameKeyType staticTextGameNameID = TheNameKeyGenerator->nameToKey("PopupJoinGame.wnd:StaticTextGameName");
 	GameWindow *staticTextGameName = TheWindowManager->winGetWindowFromId(parentPopup, staticTextGameNameID);
 	GadgetStaticTextSetText(staticTextGameName, UnicodeString::TheEmptyString);
 

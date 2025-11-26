@@ -541,7 +541,7 @@ void FirewallHelperClass::flagNeedToRefresh(Bool flag)
 {
 	OptionPreferences pref;
 
-	(pref)["FirewallNeedToRefresh"] = flag ? AsciiString("TRUE") : AsciiString("FALSE");
+	(pref)["FirewallNeedToRefresh"] = flag ? "TRUE" : "FALSE";
 
 	pref.write();
 }

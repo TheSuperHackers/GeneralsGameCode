@@ -332,7 +332,7 @@ void CWorldBuilderDoc::Serialize(CArchive& ar)
 				DataChunkInput file( pStrm );
 				if (file.isValidFileType()) {	// Backwards compatible files aren't valid data chunk files.
 					// Read the waypoints.
-					file.registerParser( AsciiString("WaypointsList"), AsciiString::TheEmptyString, ParseWaypointDataChunk );
+					file.registerParser( "WaypointsList", AsciiString::TheEmptyString, ParseWaypointDataChunk );
 					if (!file.parse(this)) {
 						throw(ERROR_CORRUPT_FILE_FORMAT);
 					}

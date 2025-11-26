@@ -133,11 +133,11 @@ void DifficultySelectInit( WindowLayout *layout, void *userData )
 	buttonOk = TheWindowManager->winGetWindowFromId( parent, buttonOkID );
 	buttonCancelID = TheNameKeyGenerator->nameToKey( "DifficultySelect.wnd:ButtonCancel" );
 	buttonCancel = TheWindowManager->winGetWindowFromId( parent, buttonCancelID );
-	radioButtonEasyAIID = TheNameKeyGenerator->nameToKey( AsciiString("DifficultySelect.wnd:RadioButtonEasy") );
+	radioButtonEasyAIID = TheNameKeyGenerator->nameToKey( "DifficultySelect.wnd:RadioButtonEasy" );
 	radioButtonEasyAI = TheWindowManager->winGetWindowFromId( parent, radioButtonEasyAIID );
-	radioButtonMediumAIID = TheNameKeyGenerator->nameToKey( AsciiString("DifficultySelect.wnd:RadioButtonMedium") );
+	radioButtonMediumAIID = TheNameKeyGenerator->nameToKey( "DifficultySelect.wnd:RadioButtonMedium" );
 	radioButtonMediumAI = TheWindowManager->winGetWindowFromId( parent, radioButtonMediumAIID );
-	radioButtonHardAIID = TheNameKeyGenerator->nameToKey( AsciiString("DifficultySelect.wnd:RadioButtonHard") );
+	radioButtonHardAIID = TheNameKeyGenerator->nameToKey( "DifficultySelect.wnd:RadioButtonHard" );
 	radioButtonHardAI = TheWindowManager->winGetWindowFromId( parent, radioButtonHardAIID );
 
 	s_AIDiff = DIFFICULTY_NORMAL;

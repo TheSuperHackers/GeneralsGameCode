@@ -58,9 +58,9 @@ void WOLLadderScreenInit( WindowLayout *layout, void *userData )
 	TheShell->showShellMap(TRUE);
 
 	// get ids for our children controls
-	parentWindowID = TheNameKeyGenerator->nameToKey( AsciiString("WOLLadderScreen.wnd:LadderParent") );
-	buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString("WOLLadderScreen.wnd:ButtonBack") );
-	windowLadderID = TheNameKeyGenerator->nameToKey( AsciiString("WOLLadderScreen.wnd:WindowLadder") );
+	parentWindowID = TheNameKeyGenerator->nameToKey( "WOLLadderScreen.wnd:LadderParent" );
+	buttonBackID = TheNameKeyGenerator->nameToKey( "WOLLadderScreen.wnd:ButtonBack" );
+	windowLadderID = TheNameKeyGenerator->nameToKey( "WOLLadderScreen.wnd:WindowLadder" );
 
 	parentWindow = TheWindowManager->winGetWindowFromId( NULL, parentWindowID );
 	buttonBack = TheWindowManager->winGetWindowFromId( parentWindow, buttonBackID );

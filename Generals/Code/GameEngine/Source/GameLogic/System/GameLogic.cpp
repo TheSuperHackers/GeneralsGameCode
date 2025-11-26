@@ -1421,7 +1421,7 @@ void GameLogic::startNewGame( Bool saveGame )
 			{
 				ChunkInputStream *pStrm = &theInputStream;
 				DataChunkInput file( pStrm );
-				file.registerParser( AsciiString("PlayerScriptsList"), AsciiString::TheEmptyString, ScriptList::ParseScriptsDataChunk );
+				file.registerParser( "PlayerScriptsList", AsciiString::TheEmptyString, ScriptList::ParseScriptsDataChunk );
 				if (!file.parse(NULL)) {
 					DEBUG_LOG(("ERROR - Unable to read in multiplayer scripts."));
 					return;
@@ -1980,7 +1980,7 @@ void GameLogic::startNewGame( Bool saveGame )
 		if (!TheGlobalData->m_headless)
 		{
 			if(TheShell->getScreenCount() == 0)
-				TheShell->push( AsciiString("Menus/MainMenu.wnd") );
+				TheShell->push( "Menus/MainMenu.wnd" );
 			else if (TheShell->top())
 			{
 				TheShell->top()->hide(FALSE);

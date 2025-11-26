@@ -373,12 +373,12 @@ void ReplayMenuInit( WindowLayout *layout, void *userData )
 	TheShell->showShellMap(TRUE);
 
 	// get ids for our children controls
-	parentReplayMenuID = TheNameKeyGenerator->nameToKey( AsciiString("ReplayMenu.wnd:ParentReplayMenu") );
-	buttonLoadID = TheNameKeyGenerator->nameToKey( AsciiString("ReplayMenu.wnd:ButtonLoadReplay") );
-	buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString("ReplayMenu.wnd:ButtonBack") );
-	listboxReplayFilesID = TheNameKeyGenerator->nameToKey( AsciiString("ReplayMenu.wnd:ListboxReplayFiles") );
-	buttonDeleteID = TheNameKeyGenerator->nameToKey( AsciiString("ReplayMenu.wnd:ButtonDeleteReplay") );
-	buttonCopyID = TheNameKeyGenerator->nameToKey( AsciiString("ReplayMenu.wnd:ButtonCopyReplay") );
+	parentReplayMenuID = TheNameKeyGenerator->nameToKey( "ReplayMenu.wnd:ParentReplayMenu" );
+	buttonLoadID = TheNameKeyGenerator->nameToKey( "ReplayMenu.wnd:ButtonLoadReplay" );
+	buttonBackID = TheNameKeyGenerator->nameToKey( "ReplayMenu.wnd:ButtonBack" );
+	listboxReplayFilesID = TheNameKeyGenerator->nameToKey( "ReplayMenu.wnd:ListboxReplayFiles" );
+	buttonDeleteID = TheNameKeyGenerator->nameToKey( "ReplayMenu.wnd:ButtonDeleteReplay" );
+	buttonCopyID = TheNameKeyGenerator->nameToKey( "ReplayMenu.wnd:ButtonCopyReplay" );
 
 	parentReplayMenu = TheWindowManager->winGetWindowFromId( NULL, parentReplayMenuID );
 	buttonLoad = TheWindowManager->winGetWindowFromId( parentReplayMenu, buttonLoadID );

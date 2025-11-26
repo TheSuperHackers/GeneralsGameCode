@@ -120,7 +120,7 @@ void ArchiveFileSystem::loadIntoDirectoryTree(ArchiveFile *archiveFile, Bool ove
 
 	FilenameList filenameList;
 
-	archiveFile->getFileListInDirectory(AsciiString(""), AsciiString(""), AsciiString("*"), filenameList, TRUE);
+	archiveFile->getFileListInDirectory("", "", "*", filenameList, TRUE);
 
 	FilenameListIter it = filenameList.begin();
 

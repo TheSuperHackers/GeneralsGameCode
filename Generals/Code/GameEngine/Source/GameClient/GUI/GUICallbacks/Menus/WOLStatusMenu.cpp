@@ -59,13 +59,13 @@ GameWindow *progressTextWindow = NULL;
 //-------------------------------------------------------------------------------------------------
 void WOLStatusMenuInit( WindowLayout *layout, void *userData )
 {
-	parentWOLStatusID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLStatusMenu.wnd:WOLStatusMenuParent" ) );
-	buttonDisconnectID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLStatusMenu.wnd:ButtonDisconnect" ) );
+	parentWOLStatusID = TheNameKeyGenerator->nameToKey( "WOLStatusMenu.wnd:WOLStatusMenuParent" );
+	buttonDisconnectID = TheNameKeyGenerator->nameToKey( "WOLStatusMenu.wnd:ButtonDisconnect" );
 	parentWOLStatus = TheWindowManager->winGetWindowFromId( NULL, parentWOLStatusID );
 	buttonDisconnect = TheWindowManager->winGetWindowFromId( NULL,  buttonDisconnectID);
 
 	progressTextWindow = TheWindowManager->winGetWindowFromId( NULL,
-		TheNameKeyGenerator->nameToKey( AsciiString( "WOLStatusMenu.wnd:ListboxStatus" ) ) );
+		TheNameKeyGenerator->nameToKey( "WOLStatusMenu.wnd:ListboxStatus" ) );
 
 	// Show Menu
 	layout->hide( FALSE );

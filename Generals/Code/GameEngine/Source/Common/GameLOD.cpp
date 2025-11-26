@@ -300,10 +300,10 @@ void GameLODManager::init(void)
 {
 	INI ini;
 	//Get Presets for each LOD level.
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\GameLOD" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\GameLOD", INI_LOAD_OVERWRITE, NULL );
 
 	//Get presets for each known hardware configuration
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\GameLODPresets"), INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory( "Data\\INI\\GameLODPresets", INI_LOAD_OVERWRITE, NULL);
 
 	//Get Presets for custom LOD level by pulling them out of initial globaldata (which should
 	//have all settings already applied).

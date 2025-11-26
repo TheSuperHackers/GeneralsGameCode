@@ -210,22 +210,22 @@ AudioManager::~AudioManager()
 void AudioManager::init()
 {
 	INI ini;
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\AudioSettings" ), INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory( "Data\\INI\\AudioSettings", INI_LOAD_OVERWRITE, NULL);
 
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\Default\\Music" ), INI_LOAD_OVERWRITE, NULL );
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\Music" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\Music", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Music", INI_LOAD_OVERWRITE, NULL );
 
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\Default\\SoundEffects" ), INI_LOAD_OVERWRITE, NULL );
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\SoundEffects" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\SoundEffects", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\SoundEffects", INI_LOAD_OVERWRITE, NULL );
 
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\Default\\Speech" ), INI_LOAD_OVERWRITE, NULL );
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\Speech" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\Speech", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Speech", INI_LOAD_OVERWRITE, NULL );
 
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\Default\\Voice" ), INI_LOAD_OVERWRITE, NULL );
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\Voice" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\Voice", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Voice", INI_LOAD_OVERWRITE, NULL );
 
 	// do the miscellaneous sound files last so that we find the AudioEventRTS associated with the events.
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\MiscAudio" ), INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory( "Data\\INI\\MiscAudio", INI_LOAD_OVERWRITE, NULL);
 
 	// determine if one of the music tracks exists. Since their now BIGd, one implies all.
 	// If they don't exist, then attempt to load them from the CD.
@@ -407,7 +407,7 @@ void AudioManager::getInfoForAudioEvent( const AudioEventRTS *eventToFindAndFill
 //-------------------------------------------------------------------------------------------------
 AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 {
-	if (eventToAdd->getEventName().isEmpty() || eventToAdd->getEventName() == AsciiString("NoSound")) {
+	if (eventToAdd->getEventName().isEmpty() || eventToAdd->getEventName() == "NoSound") {
 		return AHSV_NoSound;
 	}
 

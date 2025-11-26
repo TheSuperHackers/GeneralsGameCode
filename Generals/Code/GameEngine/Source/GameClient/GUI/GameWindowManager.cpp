@@ -1386,7 +1386,7 @@ GameWindow *GameWindowManager::winCreate( GameWindow *parent,
 			TheGlobalLanguageData->m_defaultWindowFont.bold) );
 	}
 	else
-		window->winSetFont( winFindFont( AsciiString("Times New Roman"), 14, FALSE ) );
+		window->winSetFont( winFindFont( "Times New Roman", 14, FALSE ) );
 
 	return window;
 
@@ -1618,9 +1618,9 @@ GameWindow *GameWindowManager::gogoMessageBox(Int x, Int y, Int width, Int heigh
 	GameWindow *trueParent = NULL;
 	//Changed by Chris
 	if(useLogo)
-		trueParent = winCreateFromScript( AsciiString("Menus/QuitMessageBox.wnd") );
+		trueParent = winCreateFromScript( "Menus/QuitMessageBox.wnd" );
 	else
-		trueParent = winCreateFromScript( AsciiString("Menus/MessageBox.wnd") );
+		trueParent = winCreateFromScript( "Menus/MessageBox.wnd" );
 	//Added By Chris
 	AsciiString menuName;
 	if(useLogo)
@@ -2854,7 +2854,7 @@ void GameWindowManager::assignDefaultGadgetLook( GameWindow *gadget,
 				TheGlobalLanguageData->m_defaultWindowFont.bold) );
 		}
 		else
-			gadget->winSetFont( TheWindowManager->winFindFont( AsciiString("Times New Roman"), 14, FALSE ) );
+			gadget->winSetFont( TheWindowManager->winFindFont( "Times New Roman", 14, FALSE ) );
 	}
 
 	// if we don't want to assign default colors/images get out of here
@@ -3802,7 +3802,7 @@ Bool GameWindowManager::initTestGUI( void )
 												 TheWindowManager->winMakeColor( 235, 105, 255, 255 ), -1, 0 );
 	GadgetListBoxAddEntryText( window, UnicodeString(L"Natural"),
 												 TheWindowManager->winMakeColor( 105, 205, 45, 255 ), -1, 0 );
-	window->winSetFont( TheFontLibrary->getFont( AsciiString("Times New Roman"), 12, FALSE ) );
+	window->winSetFont( TheFontLibrary->getFont( "Times New Roman", 12, FALSE ) );
 
 	// make a listbox
 	memset( &listData, 0, sizeof( ListboxData ) );

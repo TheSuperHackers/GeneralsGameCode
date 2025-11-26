@@ -306,39 +306,39 @@ void PopulateCustomLadderComboBox( void )
 //-------------------------------------------------------------------------------------------------
 void PopupHostGameInit( WindowLayout *layout, void *userData )
 {
-	parentPopupID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:ParentHostPopUp"));
+	parentPopupID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:ParentHostPopUp");
 	parentPopup = TheWindowManager->winGetWindowFromId(NULL, parentPopupID);
 
-	textEntryGameNameID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:TextEntryGameName"));
+	textEntryGameNameID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:TextEntryGameName");
 	textEntryGameName = TheWindowManager->winGetWindowFromId(parentPopup, textEntryGameNameID);
 	UnicodeString name;
 	name.translate(TheGameSpyInfo->getLocalName());
 	GadgetTextEntrySetText(textEntryGameName, name);
 
-	textEntryGameDescriptionID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:TextEntryGameDescription"));
+	textEntryGameDescriptionID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:TextEntryGameDescription");
 	textEntryGameDescription = TheWindowManager->winGetWindowFromId(parentPopup, textEntryGameDescriptionID);
 	GadgetTextEntrySetText(textEntryGameDescription, UnicodeString::TheEmptyString);
 
-	textEntryLadderPasswordID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:TextEntryLadderPassword"));
+	textEntryLadderPasswordID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:TextEntryLadderPassword");
 	textEntryLadderPassword = TheWindowManager->winGetWindowFromId(parentPopup, textEntryLadderPasswordID);
 	GadgetTextEntrySetText(textEntryLadderPassword, UnicodeString::TheEmptyString);
 
-	textEntryGamePasswordID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:TextEntryGamePassword"));
+	textEntryGamePasswordID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:TextEntryGamePassword");
 	textEntryGamePassword = TheWindowManager->winGetWindowFromId(parentPopup, textEntryGamePasswordID);
 	GadgetTextEntrySetText(textEntryGamePassword, UnicodeString::TheEmptyString);
 
-	buttonCreateGameID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:ButtonCreateGame"));
+	buttonCreateGameID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:ButtonCreateGame");
 	buttonCreateGame = TheWindowManager->winGetWindowFromId(parentPopup, buttonCreateGameID);
 
-	buttonCancelID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:ButtonCancel"));
+	buttonCancelID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:ButtonCancel");
 	buttonCancel = TheWindowManager->winGetWindowFromId(parentPopup, buttonCancelID);
 
-	checkBoxAllowObserversID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:CheckBoxAllowObservers"));
+	checkBoxAllowObserversID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:CheckBoxAllowObservers");
 	checkBoxAllowObservers = TheWindowManager->winGetWindowFromId(parentPopup, checkBoxAllowObserversID);
 	CustomMatchPreferences customPref;
 	GadgetCheckBoxSetChecked(checkBoxAllowObservers, customPref.allowsObservers());
 
-	comboBoxLadderNameID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:ComboBoxLadderName"));
+	comboBoxLadderNameID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:ComboBoxLadderName");
 	comboBoxLadderName = TheWindowManager->winGetWindowFromId(parentPopup, comboBoxLadderNameID);
 	if (comboBoxLadderName)
 		GadgetComboBoxReset(comboBoxLadderName);

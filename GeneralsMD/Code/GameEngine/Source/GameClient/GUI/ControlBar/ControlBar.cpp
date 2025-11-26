@@ -1062,11 +1062,11 @@ void ControlBar::init( void )
 	INI ini;
 	m_sideSelectAnimateDown = FALSE;
 	// load the command buttons
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\Default\\CommandButton" ), INI_LOAD_OVERWRITE, NULL );
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\CommandButton" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\CommandButton", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\CommandButton", INI_LOAD_OVERWRITE, NULL );
 
 	// load the command sets
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\CommandSet" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\CommandSet", INI_LOAD_OVERWRITE, NULL );
 
 	// post process step after loading the command buttons and command sets
 	postProcessCommands();
@@ -1253,9 +1253,9 @@ void ControlBar::init( void )
 		m_radarAttackGlowWindow = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:WinUAttack"));
 
 
-		win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( AsciiString( "ControlBar.wnd:BackgroundMarker" ) ));
+		win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" ));
 		win->winGetScreenPosition(&m_controlBarForegroundMarkerPos.x, &m_controlBarForegroundMarkerPos.y);
-		win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( AsciiString( "ControlBar.wnd:BackgroundMarker" ) ));
+		win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" ));
 		win->winGetScreenPosition(&m_controlBarBackgroundMarkerPos.x,&m_controlBarBackgroundMarkerPos.y);
 
 		if(!m_videoManager)
@@ -1411,7 +1411,7 @@ void ControlBar::update( void )
 		{
 			if (m_animateWindowManager->isFinished() && m_animateWindowManager->isReversed())
 			{
-				Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
+				Int id = (Int)TheNameKeyGenerator->nameToKey("ControlBar.wnd:ControlBarParent");
 				GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
 				if (window && !window->winIsHidden())
 					window->winHide(TRUE);

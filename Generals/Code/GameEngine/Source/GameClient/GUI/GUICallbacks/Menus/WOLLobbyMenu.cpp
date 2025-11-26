@@ -605,40 +605,40 @@ void WOLLobbyMenuInit( WindowLayout *layout, void *userData )
 	gameListRefreshTime = 0;
 	playerListRefreshTime = 0;
 
-	parentWOLLobbyID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLCustomLobby.wnd:WOLLobbyMenuParent" ) );
+	parentWOLLobbyID = TheNameKeyGenerator->nameToKey( "WOLCustomLobby.wnd:WOLLobbyMenuParent" );
 	parent = TheWindowManager->winGetWindowFromId(NULL, parentWOLLobbyID);
 
-	buttonBackID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ButtonBack"));
+	buttonBackID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ButtonBack");
 	buttonBack = TheWindowManager->winGetWindowFromId(parent, buttonBackID);
 
-	buttonHostID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ButtonHost"));
+	buttonHostID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ButtonHost");
 	buttonHost = TheWindowManager->winGetWindowFromId(parent, buttonHostID);
 
-	buttonRefreshID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ButtonRefresh"));
+	buttonRefreshID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ButtonRefresh");
 	buttonRefresh = TheWindowManager->winGetWindowFromId(parent, buttonRefreshID);
 
-	buttonJoinID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ButtonJoin"));
+	buttonJoinID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ButtonJoin");
 	buttonJoin = TheWindowManager->winGetWindowFromId(parent, buttonJoinID);
 	buttonJoin->winEnable(FALSE);
 
-	buttonBuddyID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ButtonBuddy"));
+	buttonBuddyID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ButtonBuddy");
 	buttonBuddy = TheWindowManager->winGetWindowFromId(parent, buttonBuddyID);
 
-	buttonEmoteID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ButtonEmote"));
+	buttonEmoteID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ButtonEmote");
 	buttonEmote = TheWindowManager->winGetWindowFromId(parent, buttonEmoteID);
 
-	textEntryChatID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:TextEntryChat"));
+	textEntryChatID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:TextEntryChat");
 	textEntryChat = TheWindowManager->winGetWindowFromId(parent, textEntryChatID);
 
-	listboxLobbyPlayersID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ListboxPlayers"));
+	listboxLobbyPlayersID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ListboxPlayers");
 	listboxLobbyPlayers = TheWindowManager->winGetWindowFromId(parent, listboxLobbyPlayersID);
 	listboxLobbyPlayers->winSetTooltipFunc(playerTooltip);
 
-	listboxLobbyChatID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ListboxChat"));
+	listboxLobbyChatID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ListboxChat");
 	listboxLobbyChat = TheWindowManager->winGetWindowFromId(parent, listboxLobbyChatID);
 	TheGameSpyInfo->registerTextWindow(listboxLobbyChat);
 
-	comboLobbyGroupRoomsID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ComboBoxGroupRooms"));
+	comboLobbyGroupRoomsID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ComboBoxGroupRooms");
 	comboLobbyGroupRooms = TheWindowManager->winGetWindowFromId(parent, comboLobbyGroupRoomsID);
 
 	GadgetTextEntrySetText(textEntryChat, UnicodeString::TheEmptyString);
@@ -1726,20 +1726,20 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 
 					Bool isBuddy = FALSE;
 					if (profileID <= 0)
-						rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCNoProfileMenu.wnd"));
+						rcLayout = TheWindowManager->winCreateLayout("Menus/RCNoProfileMenu.wnd");
 					else
 					{
 						if (profileID == TheGameSpyInfo->getLocalProfileID())
 						{
-							rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCLocalPlayerMenu.wnd"));
+							rcLayout = TheWindowManager->winCreateLayout("Menus/RCLocalPlayerMenu.wnd");
 						}
 						else if(TheGameSpyInfo->isBuddy(profileID))
 						{
-							rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCBuddiesMenu.wnd"));
+							rcLayout = TheWindowManager->winCreateLayout("Menus/RCBuddiesMenu.wnd");
 							isBuddy = TRUE;
 						}
 						else
-							rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCNonBuddiesMenu.wnd"));
+							rcLayout = TheWindowManager->winCreateLayout("Menus/RCNonBuddiesMenu.wnd");
 					}
 					if(!rcLayout)
 						break;
@@ -1792,7 +1792,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 							const LadderInfo *linfo = TheLadderList->findLadder(theRoom->getLadderIP(), theRoom->getLadderPort());
 							if (linfo)
 							{
-								rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCGameDetailsMenu.wnd"));
+								rcLayout = TheWindowManager->winCreateLayout("Menus/RCGameDetailsMenu.wnd");
 								if (!rcLayout)
 									break;
 

@@ -256,7 +256,7 @@ void GameSpyChat::update( void )
 		{
 			TheGameSpyThread->setShowLocaleSelect(false);
 			WindowLayout *layout = NULL;
-			layout = TheWindowManager->winCreateLayout( AsciiString( "Menus/PopupLocaleSelect.wnd" ) );
+			layout = TheWindowManager->winCreateLayout( "Menus/PopupLocaleSelect.wnd" );
 			layout->runInit();
 			layout->hide( FALSE );
 			layout->bringForward();

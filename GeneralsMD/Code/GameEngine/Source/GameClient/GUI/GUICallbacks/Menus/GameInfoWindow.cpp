@@ -67,7 +67,7 @@ static WindowLayout *gameInfoWindowLayout = NULL;
 void CreateLANGameInfoWindow( GameWindow *sizeAndPosWin )
 {
 	if( !gameInfoWindowLayout )
-		gameInfoWindowLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/GameInfoWindow.wnd" ) );
+		gameInfoWindowLayout = TheWindowManager->winCreateLayout( "Menus/GameInfoWindow.wnd" );
 
 	gameInfoWindowLayout->runInit();
 	gameInfoWindowLayout->bringForward();

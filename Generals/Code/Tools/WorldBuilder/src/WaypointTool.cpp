@@ -119,14 +119,14 @@ void WaypointTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 		WaypointOptions::update();
 	}	else {
 		pView->snapPoint(&docPt);
-		MapObject *pNew = newInstance( MapObject)(docPt, AsciiString("*Waypoints/Waypoint"), 0, 0, NULL, NULL );
+		MapObject *pNew = newInstance( MapObject)(docPt, "*Waypoints/Waypoint", 0, 0, NULL, NULL );
 		Int id = pDoc->getNextWaypointID();
 		AsciiString name = WaypointOptions::GenerateUniqueName(id);
 		pNew->setSelected(true);
 		pNew->setIsWaypoint();
 		pNew->setWaypointID(id);
 		pNew->setWaypointName(name);
-		pNew->getProperties()->setAsciiString(TheKey_originalOwner, AsciiString("team"));
+		pNew->getProperties()->setAsciiString(TheKey_originalOwner, "team");
 		AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, pNew);
 		pDoc->AddAndDoUndoable(pUndo);
 		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
@@ -166,7 +166,7 @@ void WaypointTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 	pObj = pickWaypoint(docPt);
 	if (pObj == NULL) {
 		pView->snapPoint(&docPt);
-		MapObject *pNew = newInstance( MapObject)(docPt, AsciiString("*Waypoints/Waypoint"), 0, 0, NULL, NULL );
+		MapObject *pNew = newInstance( MapObject)(docPt, "*Waypoints/Waypoint", 0, 0, NULL, NULL );
 		Int id = pDoc->getNextWaypointID();
 		AsciiString name;
 		name.format("Waypoint %d", id);
@@ -174,7 +174,7 @@ void WaypointTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		pNew->setIsWaypoint();
 		pNew->setWaypointID(id);
 		pNew->setWaypointName(name);
-		pNew->getProperties()->setAsciiString(TheKey_originalOwner, AsciiString("team"));
+		pNew->getProperties()->setAsciiString(TheKey_originalOwner, "team");
 		AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, pNew);
 		pDoc->AddAndDoUndoable(pUndo);
 		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.

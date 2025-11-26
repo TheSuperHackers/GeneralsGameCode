@@ -566,7 +566,7 @@ void IMEManager::init( void )
 	m_context = ImmCreateContext();
 	m_oldContext = ImmGetContext( ApplicationHWnd );
 	m_disabled = 0;
-	m_candidateWindow = TheWindowManager->winCreateFromScript( AsciiString("IMECandidateWindow.wnd"));
+	m_candidateWindow = TheWindowManager->winCreateFromScript( "IMECandidateWindow.wnd");
 	m_candidateWindow->winSetStatus(WIN_STATUS_ABOVE);
 
 	if ( m_candidateWindow )
@@ -574,14 +574,14 @@ void IMEManager::init( void )
 		m_candidateWindow->winHide( TRUE );
 
 		// find text area window
-		NameKeyType id = TheNameKeyGenerator->nameToKey( AsciiString( "IMECandidateWindow.wnd:TextArea" ) );
+		NameKeyType id = TheNameKeyGenerator->nameToKey( "IMECandidateWindow.wnd:TextArea" );
 		m_candidateTextArea = TheWindowManager->winGetWindowFromId(m_candidateWindow, id);
 
 		// find arrows
-		id = TheNameKeyGenerator->nameToKey( AsciiString( "IMECandidateWindow.wnd:UpArrow" ) );
+		id = TheNameKeyGenerator->nameToKey( "IMECandidateWindow.wnd:UpArrow" );
 		m_candidateUpArrow = TheWindowManager->winGetWindowFromId(m_candidateWindow, id);
 
-		id = TheNameKeyGenerator->nameToKey( AsciiString( "IMECandidateWindow.wnd:DownArrow" ) );
+		id = TheNameKeyGenerator->nameToKey( "IMECandidateWindow.wnd:DownArrow" );
 		m_candidateDownArrow = TheWindowManager->winGetWindowFromId(m_candidateWindow, id);
 
 
@@ -593,7 +593,7 @@ void IMEManager::init( void )
 		}
 	}
 
-	m_statusWindow = TheWindowManager->winCreateFromScript( AsciiString("IMEStatusWindow.wnd"));
+	m_statusWindow = TheWindowManager->winCreateFromScript( "IMEStatusWindow.wnd");
 
 	if ( m_statusWindow )
 	{

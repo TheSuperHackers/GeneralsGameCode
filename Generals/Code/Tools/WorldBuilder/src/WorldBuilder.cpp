@@ -337,7 +337,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	TheFramePacer = new FramePacer();
 
 #if defined(RTS_DEBUG)
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\GameDataDebug" ), INI_LOAD_MULTIFILE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\GameDataDebug", INI_LOAD_MULTIFILE, NULL );
 #endif
 
 #ifdef DEBUG_CRASHING
@@ -362,8 +362,8 @@ BOOL CWorldBuilderApp::InitInstance()
 	CreateDirectory(buf, NULL);
 
 	// read the water settings from INI (must do prior to initing GameClient, apparently)
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\Default\\Water" ), INI_LOAD_OVERWRITE, NULL );
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\Water" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\Water", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Water", INI_LOAD_OVERWRITE, NULL );
 
 	initSubsystem(TheGameText, CreateGameTextInterface());
 	initSubsystem(TheScienceStore, new ScienceStore(), "Data\\INI\\Default\\Science", "Data\\INI\\Science");
@@ -681,7 +681,7 @@ void CWorldBuilderApp::OnFileOpen()
 #endif
 
 	CFileStatus status;
-	if (m_currentDirectory != AsciiString("")) try {
+	if (m_currentDirectory != "") try {
 		if (CFile::GetStatus(m_currentDirectory.str(), status)) {
 			if (status.m_attribute & CFile::directory) {
 				::SetCurrentDirectory(m_currentDirectory.str());
