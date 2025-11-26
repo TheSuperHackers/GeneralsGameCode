@@ -127,8 +127,7 @@ void WOLMapSelectMenuInit( WindowLayout *layout, void *userData )
 {
 
 	// set keyboard focus to main parent
-	AsciiString parentName( "WOLMapSelectMenu.wnd:WOLMapSelectMenuParent" );
-	NameKeyType parentID = TheNameKeyGenerator->nameToKey( parentName );
+	NameKeyType parentID = TheNameKeyGenerator->nameToKey( "WOLMapSelectMenu.wnd:WOLMapSelectMenuParent" );
 	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
 
 	TheWindowManager->winSetFocus( parent );
@@ -171,7 +170,7 @@ void WOLMapSelectMenuInit( WindowLayout *layout, void *userData )
 	for (Int i = 0; i < MAX_SLOTS; i++)
 	{
 		tmpString.format("WOLMapSelectMenu.wnd:ButtonMapStartPosition%d", i);
-		buttonMapStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		buttonMapStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		buttonMapStartPosition[i] = TheWindowManager->winGetWindowFromId( winMapPreview, buttonMapStartPositionID[i] );
 		DEBUG_ASSERTCRASH(buttonMapStartPosition[i], ("Could not find the ButtonMapStartPosition[%d]",i ));
 		buttonMapStartPosition[i]->winHide(TRUE);
@@ -182,8 +181,7 @@ void WOLMapSelectMenuInit( WindowLayout *layout, void *userData )
 	showGameSpyGameOptionsUnderlyingGUIElements( FALSE );
 
 	// get the listbox window
-	AsciiString listString( "WOLMapSelectMenu.wnd:ListboxMap" );
-	NameKeyType mapListID = TheNameKeyGenerator->nameToKey( listString );
+	NameKeyType mapListID = TheNameKeyGenerator->nameToKey( "WOLMapSelectMenu.wnd:ListboxMap" );
 	mapList = TheWindowManager->winGetWindowFromId( parent, mapListID );
 	if( mapList )
 	{
@@ -254,8 +252,7 @@ WindowMsgHandledType WOLMapSelectMenuInput( GameWindow *window, UnsignedInt msg,
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						AsciiString buttonName( "WOLMapSelectMenu.wnd:ButtonBack" );
-						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
+						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( "WOLMapSelectMenu.wnd:ButtonBack" );
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,

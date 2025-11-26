@@ -213,15 +213,15 @@ ImageCollection::~ImageCollection( void )
 //-------------------------------------------------------------------------------------------------
 void ImageCollection::addImage( Image *image )
 {
-  m_imageMap[TheNameKeyGenerator->nameToLowercaseKey(image->getName())]=image;
+  m_imageMap[TheNameKeyGenerator->nameToLowercaseKey(image->getName().str())]=image;
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Find an image given the image name */
 //-------------------------------------------------------------------------------------------------
-const Image *ImageCollection::findImageByName( const AsciiString& name )
+const Image *ImageCollection::findImageByName( const char* name ) const
 {
-  std::map<unsigned,Image *>::iterator i=m_imageMap.find(TheNameKeyGenerator->nameToLowercaseKey(name));
+  std::map<unsigned,Image *>::const_iterator i=m_imageMap.find(TheNameKeyGenerator->nameToLowercaseKey(name));
   return i==m_imageMap.end()?NULL:i->second;
 }
 

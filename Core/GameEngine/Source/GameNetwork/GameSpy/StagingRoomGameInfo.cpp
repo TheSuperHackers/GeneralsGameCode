@@ -602,7 +602,7 @@ AsciiString GameSpyStagingRoom::generateGameSpyGameResultsPacket( void )
 	{
 		AsciiString playerName;
 		playerName.format("player%d", i);
-		Player *p = ThePlayerList->findPlayerWithNameKey(NAMEKEY(playerName));
+		Player *p = ThePlayerList->findPlayerWithNameKey(NAMEKEY(playerName.str()));
 		if (p)
 		{
 			++numHumans;
@@ -648,7 +648,7 @@ AsciiString GameSpyStagingRoom::generateGameSpyGameResultsPacket( void )
 	{
 		AsciiString playerName;
 		playerName.format("player%d", i);
-		Player *p = ThePlayerList->findPlayerWithNameKey(NAMEKEY(playerName));
+		Player *p = ThePlayerList->findPlayerWithNameKey(NAMEKEY(playerName.str()));
 		if (p)
 		{
 			GameSpyGameSlot *slot = &(m_GameSpySlot[i]);
@@ -696,7 +696,7 @@ AsciiString GameSpyStagingRoom::generateLadderGameResultsPacket( void )
 	{
 		AsciiString playerName;
 		playerName.format("player%d", i);
-		p[i] = ThePlayerList->findPlayerWithNameKey(NAMEKEY(playerName));
+		p[i] = ThePlayerList->findPlayerWithNameKey(NAMEKEY(playerName.str()));
 		if (p[i])
 		{
 			++numPlayers;

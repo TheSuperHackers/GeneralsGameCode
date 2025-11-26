@@ -892,7 +892,7 @@ NameKeyType DataChunkInput::readNameKey(void)
 		keyAndType >>= 8;
 
 		AsciiString kname = m_contents.getName(keyAndType);
-		NameKeyType k = TheNameKeyGenerator->nameToKey(kname);
+		NameKeyType k = TheNameKeyGenerator->nameToKey(kname.str());
 		return k;
 }
 
@@ -913,7 +913,7 @@ Dict DataChunkInput::readDict()
 		keyAndType >>= 8;
 
 		AsciiString kname = m_contents.getName(keyAndType);
-		NameKeyType k = TheNameKeyGenerator->nameToKey(kname);
+		NameKeyType k = TheNameKeyGenerator->nameToKey(kname.str());
 
 		switch(t)
 		{

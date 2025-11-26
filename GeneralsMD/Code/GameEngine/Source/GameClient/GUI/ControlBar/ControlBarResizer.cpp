@@ -139,7 +139,7 @@ ResizerWindow *ControlBarResizer::newResizerWindow( AsciiString name )
 
 	newRwin->m_name = name;
 	GameWindow *win = NULL;
-	win = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(name));
+	win = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(name.str()));
 	if( !win )
 	{
 		DEBUG_ASSERTCRASH(win,("ControlBarResizer::newResizerWindow could not find window %s Are you sure that window is loaded yet?", name.str()) );
@@ -164,7 +164,7 @@ void ControlBarResizer::sizeWindowsDefault( void )
 			it++;
 			continue;
 		}
-		win = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(rWin->m_name));
+		win = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(rWin->m_name.str()));
 		if(!win)
 		{
 			it++;
@@ -191,7 +191,7 @@ void ControlBarResizer::sizeWindowsAlt( void )
 			it++;
 			continue;
 		}
-		win = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(rWin->m_name));
+		win = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(rWin->m_name.str()));
 		if(!win)
 		{
 			it++;

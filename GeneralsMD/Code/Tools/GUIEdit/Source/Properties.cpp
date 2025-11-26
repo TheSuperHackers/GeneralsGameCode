@@ -1258,7 +1258,7 @@ const Image *ComboBoxSelectionToImage( HWND comboBox )
 	SendMessage( comboBox, CB_GETLBTEXT, selected, (LPARAM)buffer );
 
 	// return the image loc that matches the string
-	return TheMappedImageCollection->findImageByName( AsciiString( buffer ) );
+	return TheMappedImageCollection->findImageByName( buffer );
 
 }
 

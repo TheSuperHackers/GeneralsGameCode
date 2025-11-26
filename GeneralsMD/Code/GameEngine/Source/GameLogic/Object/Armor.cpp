@@ -116,7 +116,7 @@ ArmorStore::~ArmorStore()
 }
 
 //-------------------------------------------------------------------------------------------------
-const ArmorTemplate* ArmorStore::findArmorTemplate(AsciiString name) const
+const ArmorTemplate* ArmorStore::findArmorTemplate(const char* name) const
 {
 	NameKeyType namekey = TheNameKeyGenerator->nameToKey(name);
   ArmorTemplateMap::const_iterator it = m_armorTemplates.find(namekey);

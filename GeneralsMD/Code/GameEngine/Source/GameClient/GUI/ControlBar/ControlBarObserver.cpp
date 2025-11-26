@@ -114,10 +114,10 @@ void ControlBar::initObserverControls( void )
 	{
 		AsciiString tmpString;
 		tmpString.format("ControlBar.wnd:ButtonPlayer%d", i);
-		buttonPlayerID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		buttonPlayerID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		buttonPlayer[i] = TheWindowManager->winGetWindowFromId( ObserverPlayerListWindow, buttonPlayerID[i] );
 		tmpString.format("ControlBar.wnd:StaticTextPlayer%d", i);
-		staticTextPlayerID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		staticTextPlayerID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		staticTextPlayer[i] = TheWindowManager->winGetWindowFromId( ObserverPlayerListWindow, staticTextPlayerID[i] );
 	}
 
@@ -259,7 +259,7 @@ void ControlBar::populateObserverList( void )
 		{
 			AsciiString name;
 			name.format("player%d", i);
-			Player *p = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(name));
+			Player *p = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(name.str()));
 			if(p)
 			{
 				if(p->isPlayerObserver())

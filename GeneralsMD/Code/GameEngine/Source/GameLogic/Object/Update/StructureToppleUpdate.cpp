@@ -379,7 +379,7 @@ void StructureToppleUpdate::applyCrushingDamage(Real theta)
 	Real facingWidth = temp3D.length() / 2;
 
 	// Get the crushing weapon.
-	const WeaponTemplate* wt = TheWeaponStore->findWeaponTemplate(d->m_crushingWeaponName);
+	const WeaponTemplate* wt = TheWeaponStore->findWeaponTemplate(d->m_crushingWeaponName.str());
 	if (wt == NULL) {
 		return;
 	}

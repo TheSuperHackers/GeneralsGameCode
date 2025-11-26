@@ -125,8 +125,7 @@ static void SetDifficultyRadioButton( void )
 
 void DifficultySelectInit( WindowLayout *layout, void *userData )
 {
-	AsciiString parentName( "DifficultySelect.wnd:DifficultySelectParent" );
-	NameKeyType parentID = TheNameKeyGenerator->nameToKey( parentName );
+	NameKeyType parentID = TheNameKeyGenerator->nameToKey( "DifficultySelect.wnd:DifficultySelectParent" );
 	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
 
 	buttonOkID = TheNameKeyGenerator->nameToKey( "DifficultySelect.wnd:ButtonOk" );

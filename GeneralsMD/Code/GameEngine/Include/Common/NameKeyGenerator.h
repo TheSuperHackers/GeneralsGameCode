@@ -92,10 +92,6 @@ public:
 	virtual void update() { }
 
 	/// Given a string, convert into a unique integer key.
-	NameKeyType nameToKey(const AsciiString& name) { return nameToKey(name.str()); }
-	NameKeyType nameToLowercaseKey(const AsciiString& name) { return nameToLowercaseKey(name.str()); }
-
-	/// Given a string, convert into a unique integer key.
 	NameKeyType nameToKey(const char* name);
 	NameKeyType nameToLowercaseKey(const char *name);
 
@@ -138,7 +134,7 @@ private:
 extern NameKeyGenerator *TheNameKeyGenerator;  ///< just one namespace for now
 
 // typing "TheNameKeyGenerator->nameToKey()" is awfully wordy. Here are shorter synonyms:
-inline NameKeyType NAMEKEY(const AsciiString& name) { return TheNameKeyGenerator->nameToKey(name); }
+
 inline NameKeyType NAMEKEY(const char* name) { return TheNameKeyGenerator->nameToKey(name); }
 
 inline AsciiString KEYNAME(NameKeyType nk) { return TheNameKeyGenerator->keyToName(nk); }

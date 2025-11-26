@@ -167,7 +167,7 @@ GameMessage *NetGameCommandMsg::constructGameMessage()
 
 	AsciiString name;
 	name.format("player%d", getPlayerID());
-	retval->friend_setPlayerIndex( ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(name))->getPlayerIndex());
+	retval->friend_setPlayerIndex( ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(name.str()))->getPlayerIndex());
 
 	GameMessageArgument *arg = m_argList;
 	while (arg != NULL) {

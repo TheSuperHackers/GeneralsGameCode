@@ -648,7 +648,7 @@ void ConnectionManager::processChat(NetChatCommandMsg *msg)
 
 	AsciiString playerName;
 	playerName.format("player%d", msg->getPlayerID());
-	const Player *player = ThePlayerList->findPlayerWithNameKey( TheNameKeyGenerator->nameToKey( playerName ) );
+	const Player *player = ThePlayerList->findPlayerWithNameKey( TheNameKeyGenerator->nameToKey( playerName.str() ) );
 	if (!player)
 	{
 		TheInGameUI->message(L"%ls", unitext.str());

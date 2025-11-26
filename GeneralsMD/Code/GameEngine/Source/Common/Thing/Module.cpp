@@ -251,7 +251,7 @@ void UpgradeMuxData::muxDataProcessUpgradeRemoval(Object* obj) const
 					it != m_removalUpgradeNames.end();
 					it++)
 		{
-			const UpgradeTemplate* theTemplate = TheUpgradeCenter->findUpgrade( *it );
+			const UpgradeTemplate* theTemplate = TheUpgradeCenter->findUpgrade( it->str() );
 			if( !theTemplate )
 			{
 				DEBUG_CRASH(("An upgrade module references '%s', which is not an Upgrade", it->str()));
@@ -293,7 +293,7 @@ void UpgradeMuxData::getUpgradeActivationMasks(UpgradeMaskType& activation, Upgr
 					it != m_activationUpgradeNames.end();
 					it++)
 		{
-			const UpgradeTemplate* theTemplate = TheUpgradeCenter->findUpgrade( *it );
+			const UpgradeTemplate* theTemplate = TheUpgradeCenter->findUpgrade( it->str() );
 			if( !theTemplate )
 			{
 				DEBUG_CRASH(("An upgrade module references '%s', which is not an Upgrade", it->str()));
@@ -307,7 +307,7 @@ void UpgradeMuxData::getUpgradeActivationMasks(UpgradeMaskType& activation, Upgr
 					it != m_conflictingUpgradeNames.end();
 					it++)
 		{
-			const UpgradeTemplate* theTemplate = TheUpgradeCenter->findUpgrade( *it );
+			const UpgradeTemplate* theTemplate = TheUpgradeCenter->findUpgrade( it->str() );
 			if( !theTemplate )
 			{
 				DEBUG_CRASH(("An upgrade module references '%s', which is not an Upgrade", it->str()));

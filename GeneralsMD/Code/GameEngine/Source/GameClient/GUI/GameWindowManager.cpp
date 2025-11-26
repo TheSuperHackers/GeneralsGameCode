@@ -1633,7 +1633,7 @@ GameWindow *GameWindowManager::gogoMessageBox(Int x, Int y, Int width, Int heigh
 
 	tempName = menuName;
 	tempName.concat("MessageBoxParent");
-	parent = TheWindowManager->winGetWindowFromId(trueParent, TheNameKeyGenerator->nameToKey( tempName ));
+	parent = TheWindowManager->winGetWindowFromId(trueParent, TheNameKeyGenerator->nameToKey( tempName.str() ));
 	TheWindowManager->winSetModal( trueParent );
 	TheWindowManager->winSetFocus( NULL ); // make sure we lose focus from other windows even if we refuse focus ourselves
 	TheWindowManager->winSetFocus( parent	 );
@@ -1679,25 +1679,25 @@ GameWindow *GameWindowManager::gogoMessageBox(Int x, Int y, Int width, Int heigh
 
 	tempName = menuName;
 	tempName.concat("ButtonOk");
-	buttonOkID = TheNameKeyGenerator->nameToKey( tempName );
+	buttonOkID = TheNameKeyGenerator->nameToKey( tempName.str() );
 	GameWindow *buttonOk = TheWindowManager->winGetWindowFromId(parent, buttonOkID);
 	buttonOk->winGetPosition(&buttonX[0], &buttonY[0]);
 
 	tempName = menuName;
 	tempName.concat("ButtonYes");
-	NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey( tempName );
+	NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey( tempName.str() );
 	GameWindow *buttonYes = TheWindowManager->winGetWindowFromId(parent, buttonYesID);
 	//buttonNo in the second position
 	tempName = menuName;
 	tempName.concat("ButtonNo");
-	NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey(tempName);
+	NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey(tempName.str());
 	GameWindow *buttonNo = TheWindowManager->winGetWindowFromId(parent, buttonNoID);
 	buttonNo->winGetPosition(&buttonX[1], &buttonY[1]);
 
 	//and buttonCancel in the third
 	tempName = menuName;
 	tempName.concat("ButtonCancel");
-	NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( tempName );
+	NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( tempName.str() );
 	GameWindow *buttonCancel = TheWindowManager->winGetWindowFromId(parent, buttonCancelID);
 	buttonCancel->winGetPosition(&buttonX[2], &buttonY[2]);
 
@@ -1744,12 +1744,12 @@ GameWindow *GameWindowManager::gogoMessageBox(Int x, Int y, Int width, Int heigh
 	// Fill the text into the text boxes
 	tempName = menuName;
 	tempName.concat("StaticTextTitle");
-	NameKeyType staticTextTitleID = TheNameKeyGenerator->nameToKey( tempName );
+	NameKeyType staticTextTitleID = TheNameKeyGenerator->nameToKey( tempName.str() );
 	GameWindow *staticTextTitle = TheWindowManager->winGetWindowFromId(parent, staticTextTitleID);
 	GadgetStaticTextSetText(staticTextTitle,titleString);
 	tempName = menuName;
 	tempName.concat("StaticTextMessage");
-	NameKeyType staticTextMessageID = TheNameKeyGenerator->nameToKey( tempName );
+	NameKeyType staticTextMessageID = TheNameKeyGenerator->nameToKey( tempName.str() );
 	GameWindow *staticTextMessage = TheWindowManager->winGetWindowFromId(parent, staticTextMessageID);
 	GadgetStaticTextSetText(staticTextMessage,bodyString);
 

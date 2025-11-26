@@ -4842,7 +4842,7 @@ void Drawable::xferDrawableModules( Xfer *xfer )
 
 				// read module identifier
 				xfer->xferAsciiString( &moduleIdentifier );
-				NameKeyType moduleIdentifierKey = TheNameKeyGenerator->nameToKey(moduleIdentifier);
+				NameKeyType moduleIdentifierKey = TheNameKeyGenerator->nameToKey(moduleIdentifier.str());
 
 				// find module in the drawable module list
 				Module* module = NULL;
