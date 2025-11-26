@@ -1880,8 +1880,10 @@ void InGameUI::update( void )
 	if( moneyPlayer)
 	{
 		Money *money = moneyPlayer->getMoney();
-		Bool showIncome = TheGlobalData->m_showMoneyPerMinute;
-		if (!showIncome)
+		Bool wantShowIncome = TheGlobalData->m_showMoneyPerMinute;
+		Bool canShowIncome = TheGlobalData->m_allowMoneyPerMinuteForPlayer || TheControlBar->isObserverControlBarOn();
+		Bool doShowIncome = wantShowIncome && canShowIncome;
+		if (!doShowIncome)
 		{
 			UnsignedInt currentMoney = money->countMoney();
 			if( lastMoney != currentMoney )

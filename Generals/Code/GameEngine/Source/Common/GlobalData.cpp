@@ -442,6 +442,11 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 
 	{	"CameraAudibleRadius",				INI::parseReal,				NULL,			offsetof( GlobalData, m_cameraAudibleRadius ) },
 	{ "GroupMoveClickToGatherAreaFactor", INI::parseReal,	NULL,			offsetof( GlobalData, m_groupMoveClickToGatherFactor ) },
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+	{ "AllowMoneyPerMinuteForPlayer",	INI::parseBool,			NULL,			offsetof( GlobalData, m_allowMoneyPerMinuteForPlayer ) },
+#endif
+
 	{ "ShakeSubtleIntensity",				INI::parseReal,				NULL,			offsetof( GlobalData, m_shakeSubtleIntensity ) },
 	{ "ShakeNormalIntensity",				INI::parseReal,				NULL,			offsetof( GlobalData, m_shakeNormalIntensity ) },
 	{ "ShakeStrongIntensity",				INI::parseReal,				NULL,			offsetof( GlobalData, m_shakeStrongIntensity ) },
@@ -943,6 +948,7 @@ GlobalData::GlobalData()
 	m_gameTimeFontSize = 8;
 
 	m_showMoneyPerMinute = FALSE;
+	m_allowMoneyPerMinuteForPlayer = FALSE;
 
 	m_debugShowGraphicalFramerate = FALSE;
 
