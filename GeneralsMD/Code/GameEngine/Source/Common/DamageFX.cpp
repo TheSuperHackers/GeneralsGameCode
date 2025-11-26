@@ -272,7 +272,7 @@ DamageFXStore::~DamageFXStore()
 }
 
 //-------------------------------------------------------------------------------------------------
-const DamageFX *DamageFXStore::findDamageFX(AsciiString name) const
+const DamageFX *DamageFXStore::findDamageFX(const char* name) const
 {
 	NameKeyType namekey = TheNameKeyGenerator->nameToKey(name);
   DamageFXMap::const_iterator it = m_dfxmap.find(namekey);

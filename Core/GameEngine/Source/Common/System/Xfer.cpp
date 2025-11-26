@@ -791,7 +791,7 @@ void Xfer::xferUpgradeMask( UpgradeMaskType *upgradeMaskData )
 			xferAsciiString( &upgradeName );
 
 			// find this upgrade template
-			upgradeTemplate = TheUpgradeCenter->findUpgrade( upgradeName );
+			upgradeTemplate = TheUpgradeCenter->findUpgrade( upgradeName.str() );
 			if( upgradeTemplate == NULL )
 			{
 

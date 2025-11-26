@@ -476,7 +476,7 @@ AsciiString ConvertFaction(AsciiString name)
 	strlcat(newName, name.str() + offset, ARRAY_SIZE(newName));
 	AsciiString swapName;
 	swapName.set(newName);
-	const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(swapName));
+	const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(swapName.str()));
 	if (pt) {
 		return swapName;
 	}
@@ -502,7 +502,7 @@ void CWorldBuilderDoc::validate(void)
 		if (tmplname.isEmpty()) {
 			continue; // Neutral player has empty template. jba. [8/8/2003]
 		}
-		const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
+		const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname.str()));
 		if (!pt) {
 			DEBUG_LOG(("Player '%s' Faction '%s' could not be found in sides list!", playername.str(), tmplname.str()));
 			if (tmplname.startsWith("FactionFundamentalist")) {
@@ -576,13 +576,13 @@ void CWorldBuilderDoc::validate(void)
 		if (pMapObj->getThingTemplate() == NULL)
 		{
 			Bool exists = false;
-			swapName = swapDict.getAsciiString(NAMEKEY(name), &exists);
+			swapName = swapDict.getAsciiString(NAMEKEY(name.str()), &exists);
 
 			// quick hack to make loading models with "Fundamentalist" switch to "GLA"
 			if (name.startsWith("Fundamentalist")) {
 				swapName = ConvertName(name);
 				if (swapName != AsciiString::TheEmptyString) {
-					swapDict.setAsciiString(NAMEKEY(name), swapName);
+					swapDict.setAsciiString(NAMEKEY(name.str()), swapName);
 					exists = true;
 				}
 			}
@@ -591,7 +591,7 @@ void CWorldBuilderDoc::validate(void)
 			if (name.startsWith("GC_")) {
 				swapName = ConvertToNonGCName(name);
 				if (swapName != AsciiString::TheEmptyString) {
-					swapDict.setAsciiString(NAMEKEY(name), swapName);
+					swapDict.setAsciiString(NAMEKEY(name.str()), swapName);
 					exists = true;
 				}
 			}
@@ -607,11 +607,11 @@ void CWorldBuilderDoc::validate(void)
 					const ThingTemplate* thing = dlg.getPickedThing();
 					if (thing) {
 						swapName = thing->getName();
-						swapDict.setAsciiString(NAMEKEY(name), swapName);
+						swapDict.setAsciiString(NAMEKEY(name.str()), swapName);
 					}
 				}
 			}
-			swapName = swapDict.getAsciiString(NAMEKEY(name), &exists);
+			swapName = swapDict.getAsciiString(NAMEKEY(name.str()), &exists);
 			if (exists)
 			{
 				const ThingTemplate *tt = TheThingFactory->findTemplate(swapName);
@@ -640,7 +640,7 @@ void CWorldBuilderDoc::validate(void)
 					if (tmplname.isEmpty()) {
 						continue; // Neutral player has empty template. jba. [8/8/2003]
 					}
-					const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
+					const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname.str()));
 					if (!pt) {
 						DEBUG_LOG(("Player '%s' Faction '%s' could not be found in sides list!", playername.str(), tmplname.str()));
 						if (tmplname.startsWith("FactionFundamentalist")) {

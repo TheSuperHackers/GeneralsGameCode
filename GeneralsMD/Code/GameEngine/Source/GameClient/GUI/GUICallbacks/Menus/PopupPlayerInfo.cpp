@@ -127,7 +127,7 @@ static const Image* lookupRankImage(AsciiString side, Int rank)
 	fullImageName.format("Rank_%s%s", rankNames[rank], side.str());
 	if(strcmp(fullImageName.str(),"Rank_PrivateElite") == 0)
 		fullImageName = "Rank";//_Private_Elite";
-	const Image *img = TheMappedImageCollection->findImageByName(fullImageName);
+	const Image *img = TheMappedImageCollection->findImageByName(fullImageName.str());
 	DEBUG_ASSERTCRASH( img, ("Could not load rank image: %s", fullImageName.str()));
 	return img;
 }
@@ -800,7 +800,7 @@ static GameWindow* findWindow(GameWindow *parent, AsciiString baseWindow, AsciiS
 {
 	AsciiString fullPath;
 	fullPath.format("%s:%s", baseWindow.str(), gadgetName.str());
-	GameWindow *res = TheWindowManager->winGetWindowFromId(parent, NAMEKEY(fullPath));
+	GameWindow *res = TheWindowManager->winGetWindowFromId(parent, NAMEKEY(fullPath.str()));
 	DEBUG_ASSERTLOG(res, ("Cannot find window %s", fullPath.str()));
 	return res;
 }

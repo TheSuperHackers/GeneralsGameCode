@@ -152,17 +152,17 @@ void setEnabledButtons()
 		const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
 		if (playerTemplate)
 		{
-			const Image *enabledImage = TheMappedImageCollection->findImageByName( playerTemplate->getMedallionNormal() );
+			const Image *enabledImage = TheMappedImageCollection->findImageByName( playerTemplate->getMedallionNormal().str() );
 			GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[i], enabledImage );
 			if (enabledImage)
 				// image size keeps changing, so it'll drive the window size directly
 				buttonGeneralPosition[i]->winSetSize( enabledImage->getImageWidth(), enabledImage->getImageWidth() );
 
-			const Image *selectedImage = TheMappedImageCollection->findImageByName( playerTemplate->getMedallionSelected() );
+			const Image *selectedImage = TheMappedImageCollection->findImageByName( playerTemplate->getMedallionSelected().str() );
 			GadgetCheckBoxSetHiliteUncheckedBoxImage( buttonGeneralPosition[i], selectedImage);
 			GadgetCheckBoxSetDisabledUncheckedBoxImage( buttonGeneralPosition[i], selectedImage);
 
-			const Image *hilitedImage = TheMappedImageCollection->findImageByName( playerTemplate->getMedallionHilite() );
+			const Image *hilitedImage = TheMappedImageCollection->findImageByName( playerTemplate->getMedallionHilite().str() );
 			GadgetCheckBoxSetHiliteImage( buttonGeneralPosition[i], hilitedImage);
 		}
 	}
@@ -243,7 +243,7 @@ void updateButtonSequence(Int stepsPerUpdate)
 			Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[pos].getPlayerTemplateName());
 			const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
 			if (playerTemplate)
-				GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[pos], TheMappedImageCollection->findImageByName( playerTemplate->getMedallionSelected() ) );
+				GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[pos], TheMappedImageCollection->findImageByName( playerTemplate->getMedallionSelected().str() ) );
 		}
 
 		// mouseover look
@@ -252,7 +252,7 @@ void updateButtonSequence(Int stepsPerUpdate)
 			Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[pos].getPlayerTemplateName());
 			const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
 			if (playerTemplate)
-				GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[pos], TheMappedImageCollection->findImageByName( playerTemplate->getMedallionHilite() ) );
+				GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[pos], TheMappedImageCollection->findImageByName( playerTemplate->getMedallionHilite().str() ) );
 		}
 
 		// regular look
@@ -261,7 +261,7 @@ void updateButtonSequence(Int stepsPerUpdate)
 			Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[pos].getPlayerTemplateName());
 			const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
 			if (playerTemplate)
-				GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[pos], TheMappedImageCollection->findImageByName( playerTemplate->getMedallionNormal() ) );
+				GadgetCheckBoxSetEnabledImage( buttonGeneralPosition[pos], TheMappedImageCollection->findImageByName( playerTemplate->getMedallionNormal().str() ) );
 		}
 
 		buttonSequenceStep++;
@@ -363,7 +363,7 @@ void ChallengeMenuInit( WindowLayout *layout, void *userData )
 	for (Int i = 0; i < NUM_GENERALS; i++)
 	{
 		strButtonName.format("ChallengeMenu.wnd:GeneralPosition%d", i);
-		buttonGeneralPositionID[i] = TheNameKeyGenerator->nameToKey( strButtonName );
+		buttonGeneralPositionID[i] = TheNameKeyGenerator->nameToKey( strButtonName.str() );
 		buttonGeneralPosition[i] = TheWindowManager->winGetWindowFromId( parentMenu, buttonGeneralPositionID[i] );
 		DEBUG_ASSERTCRASH(buttonGeneralPosition[i], ("Could not find the ButtonGeneralPosition[%d]",i ));
 

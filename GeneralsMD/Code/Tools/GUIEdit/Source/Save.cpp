@@ -1235,7 +1235,7 @@ Bool GUIEdit::saveData( char *filePathAndFilename, char *filename )
 
 	// update all radio button screen identifiers with the filename
 	updateRadioScreenIdentifiers( TheWindowManager->winGetWindowList(),
-																TheNameKeyGenerator->nameToKey( AsciiString(m_saveFilename) ) );
+																TheNameKeyGenerator->nameToKey( m_saveFilename ) );
 
 	// open the file
 	fp = fopen( filePathAndFilename, "w" );

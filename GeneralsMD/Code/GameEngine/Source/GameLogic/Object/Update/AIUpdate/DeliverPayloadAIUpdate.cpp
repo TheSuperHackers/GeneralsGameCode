@@ -453,7 +453,7 @@ void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 	xfer->xferAsciiString(&weaponTemplateName);
 	if( xfer->getXferMode() == XFER_LOAD && weaponTemplateName.isNotEmpty())
 	{
-		data.m_visiblePayloadWeaponTemplate = TheWeaponStore->findWeaponTemplate(weaponTemplateName);
+		data.m_visiblePayloadWeaponTemplate = TheWeaponStore->findWeaponTemplate(weaponTemplateName.str());
 	}
 	data.m_deliveryDecalTemplate.xferRadiusDecalTemplate(xfer);
 	xfer->xferReal(&data.m_deliveryDecalRadius);

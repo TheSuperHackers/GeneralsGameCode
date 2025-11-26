@@ -661,7 +661,7 @@ void Network::processDestroyPlayerCommand(NetDestroyPlayerCommandMsg *msg)
 
 	AsciiString playerName;
 	playerName.format("player%d", playerIndex);
-	Player *pPlayer = ThePlayerList->findPlayerWithNameKey(NAMEKEY(playerName));
+	Player *pPlayer = ThePlayerList->findPlayerWithNameKey(NAMEKEY(playerName.str()));
 	if (pPlayer)
 	{
 		GameMessage *msg = newInstance(GameMessage)(GameMessage::MSG_SELF_DESTRUCT);

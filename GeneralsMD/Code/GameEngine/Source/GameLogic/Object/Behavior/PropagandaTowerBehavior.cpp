@@ -153,7 +153,7 @@ void PropagandaTowerBehavior::onObjectCreated( void )
 	const PropagandaTowerBehaviorModuleData *modData = getPropagandaTowerBehaviorModuleData();
 
 	// convert module upgrade name to a pointer
-	m_upgradeRequired = TheUpgradeCenter->findUpgrade( modData->m_upgradeRequired );
+	m_upgradeRequired = TheUpgradeCenter->findUpgrade( modData->m_upgradeRequired.str() );
 
 }
 

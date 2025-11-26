@@ -714,10 +714,10 @@ void MapObjectProps::_PrebuiltUpgradesToDict(void)
   do {
     AsciiString keyName;
     keyName.format("%s%d", TheNameKeyGenerator->keyToName(TheKey_objectGrantUpgrade).str(), upgradeNum);
-    upgradeString = newDict.getAsciiString(NAMEKEY(keyName), &exists);
+    upgradeString = newDict.getAsciiString(NAMEKEY(keyName.str()), &exists);
 
     if (exists) {
-      newDict.remove(NAMEKEY(keyName));
+      newDict.remove(NAMEKEY(keyName.str()));
     }
 
     ++upgradeNum;
@@ -734,7 +734,7 @@ void MapObjectProps::_PrebuiltUpgradesToDict(void)
 
       AsciiString keyName;
       keyName.format("%s%d", TheNameKeyGenerator->keyToName(TheKey_objectGrantUpgrade).str(), upgradeNum);
-      newDict.setAsciiString(NAMEKEY(keyName), AsciiString(selTxt.GetBuffer(0)));
+      newDict.setAsciiString(NAMEKEY(keyName.str()), AsciiString(selTxt.GetBuffer(0)));
       ++upgradeNum;
     }
   }
@@ -831,7 +831,7 @@ void MapObjectProps::_DictToPrebuiltUpgrades(void)
   do {
     AsciiString keyName;
     keyName.format("%s%d", TheNameKeyGenerator->keyToName(TheKey_objectGrantUpgrade).str(), upgradeNum);
-    upgradeString = m_dictToEdit->getAsciiString(NAMEKEY(keyName), &exists);
+    upgradeString = m_dictToEdit->getAsciiString(NAMEKEY(keyName.str()), &exists);
 
     if (exists) {
       Int selNdx = pBox->FindStringExact(-1, upgradeString.str());

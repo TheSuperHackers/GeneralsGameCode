@@ -99,17 +99,17 @@ static void grabWindowPointers( void )
 	{
 		AsciiString temp;
 		temp.format("Diplomacy.wnd:StaticTextPlayer%d", i);
-		staticTextPlayerID[i] = NAMEKEY(temp);
+		staticTextPlayerID[i] = NAMEKEY(temp.str());
 		temp.format("Diplomacy.wnd:StaticTextSide%d", i);
-		staticTextSideID[i] = NAMEKEY(temp);
+		staticTextSideID[i] = NAMEKEY(temp.str());
 		temp.format("Diplomacy.wnd:StaticTextTeam%d", i);
-		staticTextTeamID[i] = NAMEKEY(temp);
+		staticTextTeamID[i] = NAMEKEY(temp.str());
 		temp.format("Diplomacy.wnd:StaticTextStatus%d", i);
-		staticTextStatusID[i] = NAMEKEY(temp);
+		staticTextStatusID[i] = NAMEKEY(temp.str());
 		temp.format("Diplomacy.wnd:ButtonMute%d", i);
-		buttonMuteID[i] = NAMEKEY(temp);
+		buttonMuteID[i] = NAMEKEY(temp.str());
 		temp.format("Diplomacy.wnd:ButtonUnMute%d", i);
-		buttonUnMuteID[i] = NAMEKEY(temp);
+		buttonUnMuteID[i] = NAMEKEY(temp.str());
 
 		staticTextPlayer[i] = TheWindowManager->winGetWindowFromId(theWindow, staticTextPlayerID[i]);
 		staticTextSide[i] = TheWindowManager->winGetWindowFromId(theWindow, staticTextSideID[i]);
@@ -477,7 +477,7 @@ void PopulateInGameDiplomacyPopup( void )
 				isInGame = true;
 			AsciiString playerName;
 			playerName.format("player%d", slotNum);
-			Player *player = ThePlayerList->findPlayerWithNameKey(NAMEKEY(playerName));
+			Player *player = ThePlayerList->findPlayerWithNameKey(NAMEKEY(playerName.str()));
 			Bool isAlive = !TheVictoryConditions->hasSinglePlayerBeenDefeated(player);
 			Bool isObserver = player->isPlayerObserver();
 

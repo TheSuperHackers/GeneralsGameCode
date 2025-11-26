@@ -119,7 +119,7 @@ void BunkerBusterBehavior::onObjectCreated( void )
 	const BunkerBusterBehaviorModuleData *modData = getBunkerBusterBehaviorModuleData();
 
 	// convert module upgrade name to a pointer
-	m_upgradeRequired = TheUpgradeCenter->findUpgrade( modData->m_upgradeRequired );
+	m_upgradeRequired = TheUpgradeCenter->findUpgrade( modData->m_upgradeRequired.str() );
 
 }
 

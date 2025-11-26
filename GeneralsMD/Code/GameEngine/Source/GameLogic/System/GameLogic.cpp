@@ -1798,7 +1798,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 
 			AsciiString playerName;
 			playerName.format("player%d", i);
-			Player *player = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(playerName));
+			Player *player = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(playerName.str()));
 
 			if (slot->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER)
 			{
@@ -1988,7 +1988,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 
 			AsciiString playerName;
 			playerName.format("player%d", i);
-			Player *player = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(playerName));
+			Player *player = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(playerName.str()));
 
 			if (slot->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER)
 			{

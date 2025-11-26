@@ -88,7 +88,7 @@ void GrantUpgradeCreate::onCreate( void )
 	{
 		if(	!currentStatus.test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 		{
-			const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( getGrantUpgradeCreateModuleData()->m_upgradeName );
+			const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( getGrantUpgradeCreateModuleData()->m_upgradeName.str() );
 			if( !upgradeTemplate )
 			{
 				DEBUG_ASSERTCRASH( 0, ("GrantUpdateCreate for %s can't find upgrade template %s.", getObject()->getName().str(), getGrantUpgradeCreateModuleData()->m_upgradeName.str() ) );
@@ -121,7 +121,7 @@ void GrantUpgradeCreate::onBuildComplete( void )
 
 	CreateModule::onBuildComplete(); // extend
 
-	const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( getGrantUpgradeCreateModuleData()->m_upgradeName );
+	const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( getGrantUpgradeCreateModuleData()->m_upgradeName.str() );
 	if( !upgradeTemplate )
 	{
 		DEBUG_ASSERTCRASH( 0, ("GrantUpdateCreate for %s can't find upgrade template %s.", getObject()->getName().str(), getGrantUpgradeCreateModuleData()->m_upgradeName.str() ) );

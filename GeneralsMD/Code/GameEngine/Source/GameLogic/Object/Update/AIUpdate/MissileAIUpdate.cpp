@@ -875,7 +875,7 @@ void MissileAIUpdate::xfer( Xfer *xfer )
 	xfer->xferAsciiString(&weaponName);
 	if (weaponName.isNotEmpty() && m_detonationWeaponTmpl == NULL)
 	{
-		m_detonationWeaponTmpl = TheWeaponStore->findWeaponTemplate(weaponName);
+		m_detonationWeaponTmpl = TheWeaponStore->findWeaponTemplate(weaponName.str());
 	}
 
 	AsciiString exhaustName;

@@ -1425,7 +1425,7 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 							playerColor = color;
 						} else {
 							AsciiString tmplname = pSide->getDict()->getAsciiString(TheKey_playerFaction);
-							const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
+							const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname.str()));
 							if (pt) {
 								playerColor = pt->getPreferredColor()->getAsInt();
 							}

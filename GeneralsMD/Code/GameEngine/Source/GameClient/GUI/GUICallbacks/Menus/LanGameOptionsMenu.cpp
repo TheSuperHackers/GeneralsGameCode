@@ -726,7 +726,7 @@ void InitLanGameGadgets( void )
 	{
 		AsciiString tmpString;
 		tmpString.format("LanGameOptionsMenu.wnd:ComboBoxPlayer%d", i);
-		comboBoxPlayerID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		comboBoxPlayerID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		comboBoxPlayer[i] = TheWindowManager->winGetWindowFromId( parentLanGameOptions, comboBoxPlayerID[i] );
 		GadgetComboBoxReset(comboBoxPlayer[i]);
 		GadgetComboBoxGetEditBox(comboBoxPlayer[i])->winSetTooltipFunc(playerTooltip);
@@ -748,14 +748,14 @@ void InitLanGameGadgets( void )
 		*/
 
 		tmpString.format("LanGameOptionsMenu.wnd:ComboBoxColor%d", i);
-		comboBoxColorID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		comboBoxColorID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		comboBoxColor[i] = TheWindowManager->winGetWindowFromId( parentLanGameOptions, comboBoxColorID[i] );
 		DEBUG_ASSERTCRASH(comboBoxColor[i], ("Could not find the comboBoxColor[%d]",i ));
 		PopulateColorComboBox(i, comboBoxColor, TheLAN->GetMyGame());
 		GadgetComboBoxSetSelectedPos(comboBoxColor[i], 0);
 
 		tmpString.format("LanGameOptionsMenu.wnd:ComboBoxPlayerTemplate%d", i);
-		comboBoxPlayerTemplateID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		comboBoxPlayerTemplateID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		comboBoxPlayerTemplate[i] = TheWindowManager->winGetWindowFromId( parentLanGameOptions, comboBoxPlayerTemplateID[i] );
 		DEBUG_ASSERTCRASH(comboBoxPlayerTemplate[i], ("Could not find the comboBoxPlayerTemplate[%d]",i ));
 		PopulatePlayerTemplateComboBox(i, comboBoxPlayerTemplate, TheLAN->GetMyGame(), TRUE);
@@ -765,25 +765,25 @@ void InitLanGameGadgets( void )
 		GadgetComboBoxGetListBox(comboBoxPlayerTemplate[i])->winSetTooltipFunc(playerTemplateListBoxTooltip);
 
 		tmpString.format("LanGameOptionsMenu.wnd:ComboBoxTeam%d", i);
-		comboBoxTeamID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		comboBoxTeamID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		comboBoxTeam[i] = TheWindowManager->winGetWindowFromId( parentLanGameOptions, comboBoxTeamID[i] );
 		DEBUG_ASSERTCRASH(comboBoxTeam[i], ("Could not find the comboBoxTeam[%d]",i ));
 		PopulateTeamComboBox(i, comboBoxTeam, TheLAN->GetMyGame());
 
 		tmpString.clear();
 		tmpString.format("LanGameOptionsMenu.wnd:ButtonAccept%d", i);
-		buttonAcceptID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		buttonAcceptID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		buttonAccept[i] = TheWindowManager->winGetWindowFromId( parentLanGameOptions, buttonAcceptID[i] );
 		DEBUG_ASSERTCRASH(buttonAccept[i], ("Could not find the buttonAccept[%d]",i ));
 		buttonAccept[i]->winSetTooltipFunc(gameAcceptTooltip);
 //
 //		tmpString.format("LanGameOptionsMenu.wnd:ButtonStartPosition%d", i);
-//		buttonStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+//		buttonStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 //		buttonStartPosition[i] = TheWindowManager->winGetWindowFromId( parentLanGameOptions, buttonStartPositionID[i] );
 //		DEBUG_ASSERTCRASH(buttonStartPosition[i], ("Could not find the ButtonStartPosition[%d]",i ));
 
 		tmpString.format("LanGameOptionsMenu.wnd:ButtonMapStartPosition%d", i);
-		buttonMapStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		buttonMapStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		buttonMapStartPosition[i] = TheWindowManager->winGetWindowFromId( parentLanGameOptions, buttonMapStartPositionID[i] );
 		DEBUG_ASSERTCRASH(buttonMapStartPosition[i], ("Could not find the ButtonMapStartPosition[%d]",i ));
 

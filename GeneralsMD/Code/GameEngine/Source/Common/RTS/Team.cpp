@@ -235,7 +235,7 @@ void TeamFactory::initFromSides(SidesList *sides)
 void TeamFactory::initTeam(const AsciiString& name, const AsciiString& owner, Bool isSingleton, Dict *d)
 {
 	DEBUG_ASSERTCRASH(findTeamPrototype(name)==NULL,("team already exists"));
-	Player *pOwner = ThePlayerList->findPlayerWithNameKey(NAMEKEY(owner));
+	Player *pOwner = ThePlayerList->findPlayerWithNameKey(NAMEKEY(owner.str()));
 	DEBUG_ASSERTCRASH(pOwner, ("no owner found for team %s (%s)",name.str(),owner.str()));
 	if (!pOwner)
 		pOwner = ThePlayerList->getNeutralPlayer();
@@ -249,7 +249,7 @@ void TeamFactory::initTeam(const AsciiString& name, const AsciiString& owner, Bo
 //=============================================================================
 void TeamFactory::addTeamPrototypeToList(TeamPrototype* team)
 {
-	NameKeyType nk = NAMEKEY(team->getName());
+	NameKeyType nk = NAMEKEY(team->getName().str());
 	TeamPrototypeMap::iterator it = m_prototypes.find(nk);
 	if (it != m_prototypes.end())
 	{
@@ -263,7 +263,7 @@ void TeamFactory::addTeamPrototypeToList(TeamPrototype* team)
 //=============================================================================
 void TeamFactory::removeTeamPrototypeFromList(TeamPrototype* team)
 {
-	NameKeyType nk = NAMEKEY(team->getName());
+	NameKeyType nk = NAMEKEY(team->getName().str());
 	TeamPrototypeMap::iterator it = m_prototypes.find(nk);
 	if (it != m_prototypes.end())
 		m_prototypes.erase(it);
@@ -272,7 +272,7 @@ void TeamFactory::removeTeamPrototypeFromList(TeamPrototype* team)
 // ------------------------------------------------------------------------
 TeamPrototype *TeamFactory::findTeamPrototype(const AsciiString& name)
 {
-	NameKeyType nk = NAMEKEY(name);
+	NameKeyType nk = NAMEKEY(name.str());
 	TeamPrototypeMap::iterator it = m_prototypes.find(nk);
 	if (it != m_prototypes.end())
 		return it->second;
@@ -745,7 +745,7 @@ TeamTemplateInfo::TeamTemplateInfo(Dict *d) :
 	for (int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
 		AsciiString keyName;
 		keyName.format("%s%d", TheNameKeyGenerator->keyToName(TheKey_teamGenericScriptHook).str(), i);
-		m_teamGenericScripts[i] = d->getAsciiString(NAMEKEY(keyName), &exists);
+		m_teamGenericScripts[i] = d->getAsciiString(NAMEKEY(keyName.str()), &exists);
 		if (!exists) {
 			m_teamGenericScripts[i].clear();
 		}

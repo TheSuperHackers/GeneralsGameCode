@@ -64,7 +64,7 @@ void UpgradeDie::onDie( const DamageInfo *damageInfo )
 	if( producer )
 	{
 		//Okay, we found our parent... now look for the upgrade.
-		const UpgradeTemplate *upgrade = TheUpgradeCenter->findUpgrade( getUpgradeDieModuleData()->m_upgradeName );
+		const UpgradeTemplate *upgrade = TheUpgradeCenter->findUpgrade( getUpgradeDieModuleData()->m_upgradeName.str() );
 
 		if( upgrade )
 		{

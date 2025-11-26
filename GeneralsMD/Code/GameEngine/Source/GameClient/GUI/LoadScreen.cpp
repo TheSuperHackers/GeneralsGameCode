@@ -415,7 +415,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 	for(; i < MAX_OBJECTIVE_LINES; ++i)
 	{
 		lineName.format("SinglePlayerLoadScreen.wnd:StaticTextLine%d",i);
-		m_objectiveLines[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( lineName ));
+		m_objectiveLines[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( lineName.str() ));
 		DEBUG_ASSERTCRASH(m_objectiveLines[i], ("Can't initialize the m_objectiveLines[%d] for the single player loadscreen", i));
 		GadgetStaticTextSetText(m_objectiveLines[i],UnicodeString::TheEmptyString);
 
@@ -427,7 +427,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 	for(i = 0; i < MAX_DISPLAYED_UNITS; ++i)
 	{
 		lineName.format("SinglePlayerLoadScreen.wnd:StaticTextCameoText%d",i);
-		m_unitDesc[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( lineName ));
+		m_unitDesc[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( lineName.str() ));
 		DEBUG_ASSERTCRASH(m_unitDesc[i], ("Can't initialize the m_objectiveLines[%d] for the single player loadscreen", i));
 		GadgetStaticTextSetText(m_unitDesc[i],TheGameText->fetch(mission->m_unitNames[i]));
 		m_unitDesc[i]->winHide(TRUE);
@@ -1352,29 +1352,29 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 		// Load the Progress Bar
 		AsciiString winName;
 		winName.format( "MultiplayerLoadScreen.wnd:ProgressLoad%d",i);
-		m_progressBars[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		m_progressBars[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 		DEBUG_ASSERTCRASH(m_progressBars[i], ("Can't initialize the progressbars for the Multiplayer loadscreen"));
 		// set the progressbar to zero
 		GadgetProgressBarSetProgress(m_progressBars[i], 0 );
 
 		// Load MapStart Positions
 		winName.format( "MultiplayerLoadScreen.wnd:ButtonMapStartPosition%d",i);
-		m_buttonMapStartPosition[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		m_buttonMapStartPosition[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 		DEBUG_ASSERTCRASH(m_buttonMapStartPosition[i], ("Can't initialize the MapStart Positions for the MultiplayerLoadScreen loadscreen"));
 
 
 		// Load the Player's name
 		winName.format( "MultiplayerLoadScreen.wnd:StaticTextPlayer%d",i);
-		m_playerNames[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		m_playerNames[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 		DEBUG_ASSERTCRASH(m_playerNames[i], ("Can't initialize the Names for the Multiplayer loadscreen"));
 
 		// Load the Player's Side
 		winName.format( "MultiplayerLoadScreen.wnd:StaticTextSide%d",i);
-		m_playerSide[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		m_playerSide[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 		DEBUG_ASSERTCRASH(m_playerSide[i], ("Can't initialize the Sides for the Multiplayer loadscreen"));
 
 		winName.format( "MultiplayerLoadScreen.wnd:StaticTextTeam%d",i);
-		teamWin[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		teamWin[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 
 		// get the slot man!
 		GameSlot *slot = game->getSlot(i);
@@ -1386,7 +1386,7 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 		// format the progress bar to house colors
 		AsciiString imageName;
 		imageName.format("LoadingBar_ProgressCenter%d", slot->getApparentColor());
-		const Image *houseImage = TheMappedImageCollection->findImageByName(imageName);
+		const Image *houseImage = TheMappedImageCollection->findImageByName(imageName.str());
 		if (! houseImage)
 			houseImage = TheMappedImageCollection->findImageByName("LoadingBar_Progress");
 		m_progressBars[netSlot]->winSetEnabledImage( 6, houseImage );
@@ -1605,59 +1605,59 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 		// Load the Progress Bar
 		AsciiString winName;
 		winName.format( "GameSpyLoadScreen.wnd:ProgressLoad%d",i);
-		m_progressBars[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		m_progressBars[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 		DEBUG_ASSERTCRASH(m_progressBars[i], ("Can't initialize the progressbars for the GameSpyLoadScreen loadscreen"));
 		// set the progressbar to zero
 		GadgetProgressBarSetProgress(m_progressBars[i], 0 );
 
 		// Load the Player's name
 		winName.format( "GameSpyLoadScreen.wnd:StaticTextPlayer%d",i);
-		m_playerNames[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		m_playerNames[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 		DEBUG_ASSERTCRASH(m_playerNames[i], ("Can't initialize the Names for the GameSpyLoadScreen loadscreen"));
 
 		// Load MapStart Positions
 		winName.format( "GameSpyLoadScreen.wnd:ButtonMapStartPosition%d",i);
-		m_buttonMapStartPosition[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		m_buttonMapStartPosition[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 		DEBUG_ASSERTCRASH(m_buttonMapStartPosition[i], ("Can't initialize the MapStart Positions for the GameSpyLoadScreen loadscreen"));
 
 
 		// Load the Player's Side
 		winName.format( "GameSpyLoadScreen.wnd:StaticTextSide%d",i);
-		m_playerSide[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		m_playerSide[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 		DEBUG_ASSERTCRASH(m_playerSide[i], ("Can't initialize the Sides for the GameSpyLoadScreen loadscreen"));
 
 		// Load the Player's window
 		winName.format( "GameSpyLoadScreen.wnd:WinPlayer%d",i);
-		m_playerWin[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		m_playerWin[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 		DEBUG_ASSERTCRASH(m_playerWin[i], ("Can't initialize the WinPlayer for the GameSpyLoadScreen loadscreen"));
 
 		// Load the Player's m_playerTotalDisconnects
 		winName.format( "GameSpyLoadScreen.wnd:StaticTextTotalDisconnects%d",i);
-		m_playerTotalDisconnects[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		m_playerTotalDisconnects[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 		DEBUG_ASSERTCRASH(m_playerTotalDisconnects[i], ("Can't initialize the m_playerTotalDisconnects for the GameSpyLoadScreen loadscreen"));
 
 //		// Load the Player's m_playerFavoriteFactions
 //		winName.format( "GameSpyLoadScreen.wnd:StaticTextFavoriteFaction%d",i);
-//		m_playerFavoriteFactions[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+//		m_playerFavoriteFactions[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 //		DEBUG_ASSERTCRASH(m_playerFavoriteFactions[i], ("Can't initialize the StaticTextFavoriteFaction for the GameSpyLoadScreen loadscreen"));
 
 		// Load the Player's m_playerWinLosses
 		winName.format( "GameSpyLoadScreen.wnd:StaticTextWinLoss%d",i);
-		m_playerWinLosses[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		m_playerWinLosses[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 		DEBUG_ASSERTCRASH(m_playerWinLosses[i], ("Can't initialize the m_playerWinLosses for the GameSpyLoadScreen loadscreen"));
 
 		// Load the Player's m_playerWinLosses
 		winName.format( "GameSpyLoadScreen.wnd:WinRank%d",i);
-		m_playerRank[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		m_playerRank[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 		DEBUG_ASSERTCRASH(m_playerRank[i], ("Can't initialize the m_playerRank for the GameSpyLoadScreen loadscreen"));
 
 		// Load the Player's m_playerOfficerMedal
 		winName.format( "GameSpyLoadScreen.wnd:WinOfficer%d",i);
-		m_playerOfficerMedal[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		m_playerOfficerMedal[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 		DEBUG_ASSERTCRASH(m_playerOfficerMedal[i], ("Can't initialize the m_playerOfficerMedal for the GameSpyLoadScreen loadscreen"));
 
 		winName.format( "MultiplayerLoadScreen.wnd:StaticTextTeam%d",i);
-		teamWin[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		teamWin[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 
 		// get the slot man!
 		GameSpyGameSlot *slot = (GameSpyGameSlot *)game->getSlot(i);
@@ -1669,7 +1669,7 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 		// format the progress bar to house colors
 		AsciiString imageName;
 		imageName.format("LoadingBar_ProgressCenter%d", slot->getApparentColor());
-		const Image *houseImage = TheMappedImageCollection->findImageByName(imageName);
+		const Image *houseImage = TheMappedImageCollection->findImageByName(imageName.str());
 		if (! houseImage)
 			houseImage = TheMappedImageCollection->findImageByName("LoadingBar_Progress");
 		m_progressBars[netSlot]->winSetEnabledImage( 6, houseImage );
@@ -1903,13 +1903,11 @@ void MapTransferLoadScreen::init( GameInfo *game )
 	Int i;
 
 	// Load the Filename Text
-	winName.format( "MapTransferScreen.wnd:StaticTextCurrentFile");
-	m_fileNameText = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+	m_fileNameText = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( "MapTransferScreen.wnd:StaticTextCurrentFile" ));
 	DEBUG_ASSERTCRASH(m_fileNameText, ("Can't initialize the filename for the map transfer loadscreen"));
 
 	// Load the Timeout Text
-	winName.format( "MapTransferScreen.wnd:StaticTextTimeout");
-	m_timeoutText = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+	m_timeoutText = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( "MapTransferScreen.wnd:StaticTextTimeout" ));
 	DEBUG_ASSERTCRASH(m_timeoutText, ("Can't initialize the timeout for the map transfer loadscreen"));
 
 	Int netSlot = 0;
@@ -1918,19 +1916,19 @@ void MapTransferLoadScreen::init( GameInfo *game )
 	{
 		// Load the Progress Bar
 		winName.format( "MapTransferScreen.wnd:ProgressLoad%d",i);
-		m_progressBars[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		m_progressBars[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 		DEBUG_ASSERTCRASH(m_progressBars[i], ("Can't initialize the progressbars for the map transfer loadscreen"));
 		// set the progressbar to zero
 		GadgetProgressBarSetProgress(m_progressBars[i], 0 );
 
 		// Load the Player's name
 		winName.format( "MapTransferScreen.wnd:StaticTextPlayer%d",i);
-		m_playerNames[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		m_playerNames[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 		DEBUG_ASSERTCRASH(m_playerNames[i], ("Can't initialize the Names for the map transfer loadscreen"));
 
 		// Load the Progress Text
 		winName.format( "MapTransferScreen.wnd:StaticTextProgress%d",i);
-		m_progressText[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+		m_progressText[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName.str() ));
 		DEBUG_ASSERTCRASH(m_progressText[i], ("Can't initialize the progress text for the map transfer loadscreen"));
 
 		// get the slot man!

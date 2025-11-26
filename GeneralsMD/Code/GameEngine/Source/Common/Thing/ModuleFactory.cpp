@@ -586,7 +586,7 @@ ModuleData* ModuleFactory::newModuleDataFromINI(INI* ini, const AsciiString& nam
 	if (moduleTemplate)
 	{
 		ModuleData* md = (*moduleTemplate->m_createDataProc)(ini);
-		md->setModuleTagNameKey( NAMEKEY( moduleTag ) );
+		md->setModuleTagNameKey( NAMEKEY( moduleTag.str() ) );
 		m_moduleDataList.push_back(md);
 		return md;
 	}

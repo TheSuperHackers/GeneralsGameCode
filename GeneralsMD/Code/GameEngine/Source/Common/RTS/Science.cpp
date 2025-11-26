@@ -85,7 +85,7 @@ ScienceType ScienceStore::getScienceFromInternalName(const AsciiString& name) co
 {
 	if (name.isEmpty())
 		return SCIENCE_INVALID;
-	NameKeyType nkt = TheNameKeyGenerator->nameToKey(name);
+	NameKeyType nkt = TheNameKeyGenerator->nameToKey(name.str());
 	ScienceType st = (ScienceType)nkt;
 	return st;
 }

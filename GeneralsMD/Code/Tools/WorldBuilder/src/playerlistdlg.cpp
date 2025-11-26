@@ -506,7 +506,7 @@ void PlayerListDlg::updateTheUI(void)
 			rgb.setFromInt(color);
 		} else {
 			AsciiString tmplname = pdict->getAsciiString(TheKey_playerFaction);
-			const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
+			const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname.str()));
 			if (pt) {
 				rgb = *pt->getPreferredColor();
 			}

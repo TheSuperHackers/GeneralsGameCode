@@ -383,7 +383,7 @@ static void updateOverallStats(void)
 		int percent = REAL_TO_INT(100.0f * (it->second / s_totalWinPercent));
 		percStr.format( TheGameText->fetch("GUI:WinPercent"), percent );
 		wndName.format( "WOLWelcomeMenu.wnd:Percent%s", it->first.str() );
-		pWin = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY(wndName) );
+		pWin = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY(wndName.str()) );
 		GadgetCheckBoxSetText( pWin, percStr );
 //x		DEBUG_LOG(("Initialized win percent: %s -> %s %f=%s", wndName.str(), it->first.str(), it->second, percStr.str() ));
 	}
