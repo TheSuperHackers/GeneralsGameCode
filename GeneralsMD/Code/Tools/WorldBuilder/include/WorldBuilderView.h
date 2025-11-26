@@ -74,10 +74,10 @@ protected:
 	CPoint	m_scrollMax;								///< The maximum scroll bar positions.
 
 	// Brush mode hint flicker reduction
-	Int			m_lastBrushMode;							///< Last brush mode drawn (for flicker reduction)
-	CRect		m_lastHintRect;								///< Last hint rectangle drawn (for flicker reduction)
-	CPoint		m_lastHintPos;								///< Last hint position (for flicker reduction)
-	Bool		m_hintDrawnThisPaint;						///< Flag to prevent double-drawing in same paint cycle
+	Int		m_lastBrushMode;		///< Last brush mode drawn (for flicker reduction)
+	CRect	m_lastHintRect;			///< Last hint rectangle drawn (for flicker reduction)
+	CPoint	m_lastHintPos;			///< Last hint position (for flicker reduction)
+	Bool	m_hintDrawnThisPaint;	///< Flag to prevent double-drawing in same paint cycle
 
 protected:
 

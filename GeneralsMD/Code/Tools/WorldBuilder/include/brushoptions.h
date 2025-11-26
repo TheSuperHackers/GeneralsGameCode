@@ -23,6 +23,7 @@
 
 #include "WBPopupSlider.h"
 #include "OptionsPanel.h"
+#include "BrushTool.h"
 /////////////////////////////////////////////////////////////////////////////
 /// BrushOptions modeless (floating) dialog - allows entry and display of brush width and feather.
 
@@ -36,12 +37,12 @@ public:
 				MIN_FEATHER=0,
 				FREQ_FEATHER_TICKS=4,
 				MAX_FEATHER=20,
-				MIN_RAISE_LOWER=1,
-				MAX_RAISE_LOWER=21,
-				MIN_SMOOTH_RADIUS=1,
-				MAX_SMOOTH_RADIUS=5,
-				MIN_SMOOTH_RATE=1,
-				MAX_SMOOTH_RATE=10};
+				MIN_RAISE_LOWER = BrushTool::MIN_RAISE_LOWER,
+				MAX_RAISE_LOWER = BrushTool::MAX_RAISE_LOWER,
+				MIN_SMOOTH_RADIUS = BrushTool::MIN_SMOOTH_RADIUS,
+				MAX_SMOOTH_RADIUS = BrushTool::MAX_SMOOTH_RADIUS,
+				MIN_SMOOTH_RATE = BrushTool::MIN_SMOOTH_RATE,
+				MAX_SMOOTH_RATE = BrushTool::MAX_SMOOTH_RATE};
 
 	BrushOptions(CWnd* pParent = NULL);   // standard constructor
 

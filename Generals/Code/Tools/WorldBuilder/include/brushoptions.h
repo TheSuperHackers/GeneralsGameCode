@@ -69,8 +69,8 @@ protected:
 
 protected:
 	static BrushOptions *m_staticThis;  ///< Reference to the floating panel so SetWidth and SetFeather can be static.
-	static Int m_currentWidth;					///< current brush width in the ui.
-	static Int m_currentFeather;				///< current feather width in the ui.
+	static Int m_currentWidth;
+	static Int m_currentFeather;
 	static Int m_currentHeight;
 
 	Bool		m_updating; ///<true if the ui is updating itself.

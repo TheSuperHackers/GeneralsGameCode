@@ -315,7 +315,6 @@ void CWorldBuilderView::OnPaint()
 
 
 	CPaintDC dc(this); // device context for painting
-	// Reset hint drawn flag for new paint cycle
 	m_hintDrawnThisPaint = false;
 	// Offset the origin so that we can draw on 0 based coordinates.
 	dc.SetViewportOrg(-mXScrollOffset, -mYScrollOffset);
@@ -416,7 +415,6 @@ void CWorldBuilderView::OnPaint()
 
 	// Draw brush mode hint (only if in update region or needs update)
 	drawBrushModeHint(&dc, &updateRgn);
-
 }
 
 
@@ -1100,10 +1098,8 @@ DEBUG_ASSERTCRASH((abs(curPt.y-curPt2.y)<1),("oops"));
 //=============================================================================
 void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 {
-	// Only show hint if brush tool is active
 	Tool *pCurTool = WbApp()->getCurTool();
-	if (!pCurTool || dynamic_cast<BrushTool*>(pCurTool) == NULL) {
-		// Not brush tool - clear cache (don't invalidate during paint)
+	if (!pCurTool || pCurTool->getToolID() != ID_BRUSH_TOOL) {
 		if (!m_lastHintRect.IsRectEmpty()) {
 			m_lastHintRect.SetRectEmpty();
 			m_lastBrushMode = -1;
@@ -1112,9 +1108,7 @@ void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 		return;
 	}
 
-	// Check if LMB is pressed - if so, hide hint
 	if (::GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
-		// LMB is pressed - clear cache (don't invalidate during paint)
 		if (!m_lastHintRect.IsRectEmpty()) {
 			m_lastHintRect.SetRectEmpty();
 			m_lastBrushMode = -1;
@@ -1123,15 +1117,12 @@ void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 		return;
 	}
 
-	// Get current brush mode from modifier keys
 	BrushTool::EBrushMode currentMode = BrushTool::getPreviewModeFromKeys();
 	Int modeInt = (Int)currentMode;
 
-	// Get brush position from DrawObject
 	Coord3D brushPos = DrawObject::getFeedbackPos();
 	CPoint viewPt;
 	if (!docToViewCoords(brushPos, &viewPt)) {
-		// Can't convert to view coords - clear cache (don't invalidate during paint)
 		if (!m_lastHintRect.IsRectEmpty()) {
 			m_lastHintRect.SetRectEmpty();
 			m_lastBrushMode = -1;
@@ -1140,24 +1131,19 @@ void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 		return;
 	}
 
-	// Adjust for scroll offset
 	viewPt.x += mXScrollOffset;
 	viewPt.y += mYScrollOffset;
 
-	// Calculate hint position (offset from brush cursor)
 	CPoint hintPos = viewPt;
-	hintPos.x += 20; // Offset to the right
-	hintPos.y -= 20; // Offset upward
+	hintPos.x += 20;
+	hintPos.y -= 20;
 
-	// Get mode hint strings showing all modes with active one highlighted
 	char primaryBuf[256];
 	char secondaryBuf[512];
 	BrushTool::getModeHintStrings(primaryBuf, sizeof(primaryBuf), secondaryBuf, sizeof(secondaryBuf));
 	
-	// Build full hint text (modes only, no scroll wheel info)
 	const char* firstLine = secondaryBuf && strlen(secondaryBuf) > 0 ? secondaryBuf : primaryBuf;
 	
-	// Check if we need to update the hint (mode changed or position moved significantly)
 	Bool needUpdate = false;
 	if (modeInt != m_lastBrushMode) {
 		needUpdate = true;
@@ -1172,29 +1158,26 @@ void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 	}
 	
 	if (!firstLine || strlen(firstLine) == 0) {
-		m_lastHintRect.SetRectEmpty();
-		m_lastBrushMode = -1;
-		m_lastHintPos = CPoint(-10000, -10000);
+		if (!m_lastHintRect.IsRectEmpty()) {
+			m_lastHintRect.SetRectEmpty();
+			m_lastBrushMode = -1;
+			m_lastHintPos = CPoint(-10000, -10000);
+		}
 		return;
 	}
 
-	// Calculate hint rectangle first to check if we need to draw
 	CRect hintRect;
 	CSize textSize;
 	
-	// Calculate text size (single line)
 	textSize = pDc->GetTextExtent(firstLine, (Int)strlen(firstLine));
 	
-	// Create hint rectangle with padding
 	Int padding = 6;
 	hintRect.left = hintPos.x - padding;
 	hintRect.top = hintPos.y - textSize.cy - padding;
 	hintRect.right = hintPos.x + textSize.cx + padding;
 	hintRect.bottom = hintPos.y + padding;
 	
-	// If we don't need to update and we have a valid cached hint, use cached position
 	if (!needUpdate && !m_lastHintRect.IsRectEmpty()) {
-		// Use cached position but recalculate rect based on current position
 		hintPos = m_lastHintPos;
 		hintRect.left = hintPos.x - padding;
 		hintRect.top = hintPos.y - textSize.cy - padding;
@@ -1202,29 +1185,22 @@ void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 		hintRect.bottom = hintPos.y + padding;
 	}
 	
-	// Only draw if hint is in update region or we need to update
 	if (pUpdateRgn && !needUpdate && !m_lastHintRect.IsRectEmpty()) {
-		// Check if hint rect intersects with update region
-		// Adjust hint rect for scroll offset to match update region coordinates
 		CRect adjustedHintRect = hintRect;
 		adjustedHintRect.OffsetRect(-mXScrollOffset, -mYScrollOffset);
 		if (!pUpdateRgn->RectInRegion(&adjustedHintRect)) {
-			// Not in update region and doesn't need update - skip drawing
 			return;
 		}
 	}
 
-	// Draw text (white) - single line (no background rectangle to reduce flicker)
 	COLORREF oldColor = pDc->SetTextColor(RGB(255, 255, 255));
 	Int oldBkMode = pDc->SetBkMode(TRANSPARENT);
 	
-	// Draw modes line
 	pDc->TextOut(hintPos.x, hintPos.y - textSize.cy, firstLine, (Int)strlen(firstLine));
 	
 	pDc->SetTextColor(oldColor);
 	pDc->SetBkMode(oldBkMode);
 
-	// Update cache only if we recalculated
 	if (needUpdate) {
 		m_lastHintRect = hintRect;
 		m_lastHintPos = hintPos;
@@ -1239,10 +1215,6 @@ void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 //=============================================================================
 void CWorldBuilderView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	// Call base class first
 	WbView::OnMouseMove(nFlags, point);
-	
-	// Don't invalidate here - let OnPaint handle it naturally
-	// Invalidating here causes flicker due to paint feedback loops
 }
 

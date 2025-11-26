@@ -407,12 +407,12 @@ WbView3d::WbView3d() :
 	m_showWeaponRanges(false),
 	m_highlightTestArt(false),
 	m_showLetterbox(false),
-  m_showSoundCircles(false),
+	m_showSoundCircles(false),
 	m_lastBrushMode(-1),
 	m_lastHintPos(-10000, -10000),
 	m_hintDrawnThisFrame(false)
 {
-	::memset(&m_lastHintRect, 0, sizeof(m_lastHintRect));
+	::SetRectEmpty(&m_lastHintRect);
 	TheTacticalView = &bogusTacticalView;
 	m_actualWinSize.x = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "Width", THREE_D_VIEW_WIDTH);
 	m_actualWinSize.y = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "Height", THREE_D_VIEW_HEIGHT);
@@ -3291,17 +3291,12 @@ void WbView3d::OnMouseMove(UINT nFlags, CPoint point)
 //=============================================================================
 void WbView3d::drawBrushModeHint(HDC hdc)
 {
-	// Prevent double-drawing: only draw once per frame
-	// Prefer D3DXFont path (hdc == NULL) over GDI path (hdc != NULL)
 	if (m_hintDrawnThisFrame) {
-		// Already drawn this frame - skip
 		return;
 	}
 	
-	// Only show hint if brush tool is active
 	Tool *pCurTool = WbApp()->getCurTool();
-	if (!pCurTool || dynamic_cast<BrushTool*>(pCurTool) == NULL) {
-		// Not brush tool - clear cache (don't invalidate during paint)
+	if (!pCurTool || pCurTool->getToolID() != ID_BRUSH_TOOL) {
 		if (!::IsRectEmpty(&m_lastHintRect)) {
 			::SetRectEmpty(&m_lastHintRect);
 			m_lastBrushMode = -1;
@@ -3310,9 +3305,7 @@ void WbView3d::drawBrushModeHint(HDC hdc)
 		return;
 	}
 
-	// Check if LMB is pressed - if so, hide hint
 	if (::GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
-		// LMB is pressed - clear cache (don't invalidate during paint)
 		if (!::IsRectEmpty(&m_lastHintRect)) {
 			::SetRectEmpty(&m_lastHintRect);
 			m_lastBrushMode = -1;
@@ -3321,18 +3314,14 @@ void WbView3d::drawBrushModeHint(HDC hdc)
 		return;
 	}
 
-	// Get current brush mode from modifier keys
 	BrushTool::EBrushMode currentMode = BrushTool::getPreviewModeFromKeys();
 	Int modeInt = (Int)currentMode;
 
-	// Get brush position from DrawObject
 	Coord3D brushPos = DrawObject::getFeedbackPos();
 	
-	// Project world position to screen
 	Vector3 worldPos, screenPos;
 	worldPos.Set(brushPos.x, brushPos.y, brushPos.z);
 	if (CameraClass::INSIDE_FRUSTUM != m_camera->Project(screenPos, worldPos)) {
-		// Not visible - clear cache (don't invalidate during paint)
 		if (!::IsRectEmpty(&m_lastHintRect)) {
 			::SetRectEmpty(&m_lastHintRect);
 			m_lastBrushMode = -1;
@@ -3341,25 +3330,21 @@ void WbView3d::drawBrushModeHint(HDC hdc)
 		return;
 	}
 
-	// Convert to pixel coordinates
 	CRect rClient;
 	GetClientRect(&rClient);
 	Int sx, sy;
 	W3DLogicalScreenToPixelScreen(screenPos.X, screenPos.Y, &sx, &sy,
 		rClient.right - rClient.left, rClient.bottom - rClient.top);
 	CPoint hintPos;
-	hintPos.x = rClient.left + sx + 20; // Offset to the right
-	hintPos.y = rClient.top + sy - 20;  // Offset upward
+	hintPos.x = rClient.left + sx + 20;
+	hintPos.y = rClient.top + sy - 20;
 
-	// Get mode hint strings showing all modes with active one highlighted
 	char primaryBuf[256];
 	char secondaryBuf[512];
 	BrushTool::getModeHintStrings(primaryBuf, sizeof(primaryBuf), secondaryBuf, sizeof(secondaryBuf));
 	
-	// Build full hint text (modes only, no scroll wheel info)
 	const char* firstLine = secondaryBuf && strlen(secondaryBuf) > 0 ? secondaryBuf : primaryBuf;
 	
-	// Check if we need to update the hint (mode changed or position moved significantly)
 	Bool needUpdate = false;
 	if (modeInt != m_lastBrushMode) {
 		needUpdate = true;
@@ -3374,20 +3359,19 @@ void WbView3d::drawBrushModeHint(HDC hdc)
 	}
 	
 	if (!firstLine || strlen(firstLine) == 0) {
-		::SetRectEmpty(&m_lastHintRect);
-		m_lastBrushMode = -1;
-		m_lastHintPos = CPoint(-10000, -10000);
+		if (!::IsRectEmpty(&m_lastHintRect)) {
+			::SetRectEmpty(&m_lastHintRect);
+			m_lastBrushMode = -1;
+			m_lastHintPos = CPoint(-10000, -10000);
+		}
 		return;
 	}
 
-	// If we don't need to update and we have a valid cached hint, use cached values
 	RECT hintRect;
 	SIZE textSize;
 	if (!needUpdate && !::IsRectEmpty(&m_lastHintRect)) {
-		// Use cached position and rect
 		hintPos = m_lastHintPos;
 		hintRect = m_lastHintRect;
-		// Still need to calculate text size for drawing
 		if (m3DFont && !hdc) {
 			textSize.cx = (Int)strlen(firstLine) * 6;
 			textSize.cy = 16;
@@ -3395,17 +3379,13 @@ void WbView3d::drawBrushModeHint(HDC hdc)
 			::GetTextExtentPoint32(hdc, firstLine, (Int)strlen(firstLine), &textSize);
 		}
 	} else {
-		// Calculate text size (single line)
 		if (m3DFont && !hdc) {
-			// Use D3DXFont - estimate size
 			textSize.cx = (Int)strlen(firstLine) * 6;
 			textSize.cy = 16;
 		} else {
-			// Use GDI
 			::GetTextExtentPoint32(hdc, firstLine, (Int)strlen(firstLine), &textSize);
 		}
 
-		// Create hint rectangle with padding
 		Int padding = 6;
 		hintRect.left = hintPos.x - padding;
 		hintRect.top = hintPos.y - textSize.cy - padding;
@@ -3413,32 +3393,23 @@ void WbView3d::drawBrushModeHint(HDC hdc)
 		hintRect.bottom = hintPos.y + padding;
 	}
 
-	// Draw text only (no background rectangle to reduce flicker)
 	if (m3DFont && !hdc) {
-		// Use D3DXFont
-		// Draw modes line
 		RECT textRect = hintRect;
 		textRect.bottom = textRect.top + textSize.cy;
 		m3DFont->DrawText(firstLine, (Int)strlen(firstLine), &textRect,
 			DT_LEFT | DT_NOCLIP | DT_TOP | DT_SINGLELINE, 0xFFFFFFFF);
 	} else if (hdc) {
-		// Use GDI
-		// Draw text (white) - single line (no background)
 		::SetBkMode(hdc, TRANSPARENT);
 		::SetTextColor(hdc, RGB(255, 255, 255));
 		
-		// Draw modes line
 		::TextOut(hdc, hintPos.x, hintPos.y - textSize.cy, firstLine, (Int)strlen(firstLine));
 	}
 
-	// Update cache only if we recalculated
 	if (needUpdate) {
 		m_lastHintRect = hintRect;
 		m_lastHintPos = hintPos;
 		m_lastBrushMode = modeInt;
 	}
 	
-	// Mark as drawn this frame
 	m_hintDrawnThisFrame = true;
 }
-

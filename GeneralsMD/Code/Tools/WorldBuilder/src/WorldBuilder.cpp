@@ -566,16 +566,12 @@ void CWorldBuilderApp::updateCurTool(Bool forceHand)
 	DEBUG_ASSERTCRASH((m_lockCurTool>=0),("oops"));
 	if (!m_lockCurTool) {	 // don't change tools that are doing something.
 		if (forceHand || (0x8000 & ::GetAsyncKeyState(VK_SPACE))) {
-			// Space bar gives scroll hand.
 			m_curTool = &m_handScrollTool;
 		} else if (0x8000 & ::GetAsyncKeyState(VK_MENU)) {
-			// Alt key gives eyedropper.
 			m_curTool = &m_eyedropperTool;
 		} else if (0x8000 & ::GetAsyncKeyState('W')) {
-			// W key gives pointer.
 			m_curTool = &m_pointerTool;
 		} else {
-			// Else the tool selected in the tool palette.
 			m_curTool = m_selTool;
 		}
 	}

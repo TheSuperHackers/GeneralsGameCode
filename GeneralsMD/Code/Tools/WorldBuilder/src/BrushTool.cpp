@@ -79,7 +79,6 @@ void BrushTool::setHeight(Int height)
 {
 	if (m_brushHeight != height) {
 		m_brushHeight = height;
-		// notify height palette options panel
 		BrushOptions::setHeight(height);
 	}
 };
@@ -119,7 +118,6 @@ void BrushTool::setWidth(Int width)
 {
 	if (m_brushWidth != width) {
 		m_brushWidth = width;
-		// notify brush palette options panel
 		BrushOptions::setWidth(width);
 		DrawObject::setBrushFeedbackParms(m_brushSquare, m_brushWidth, m_brushFeather);
 	}
@@ -130,7 +128,6 @@ void BrushTool::setFeather(Int feather)
 {
 	if (m_brushFeather != feather) {
 		m_brushFeather = feather;
-		// notify height palette options panel
 		BrushOptions::setFeather(feather);
 		DrawObject::setBrushFeedbackParms(m_brushSquare, m_brushWidth, m_brushFeather);
 	}
@@ -154,10 +151,11 @@ void BrushTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 	m_activeMode = determineBrushMode();
 
 	REF_PTR_RELEASE(m_htMapEditCopy);
-	m_htMapEditCopy = pDoc->GetHeightMap()->duplicate();
 	REF_PTR_RELEASE(m_htMapFeatherCopy);
-	m_htMapFeatherCopy = m_htMapEditCopy->duplicate();
 	REF_PTR_RELEASE(m_htMapRateCopy);
+
+	m_htMapEditCopy = pDoc->GetHeightMap()->duplicate();
+	m_htMapFeatherCopy = m_htMapEditCopy->duplicate();
 
 	if (m_activeMode == BRUSH_MODE_SMOOTH) {
 		m_htMapRateCopy = m_htMapEditCopy->duplicate();
@@ -184,7 +182,7 @@ void BrushTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBui
 
 	WBDocUndoable *pUndo = new WBDocUndoable(pDoc, m_htMapEditCopy);
 	pDoc->AddAndDoUndoable(pUndo);
-	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
+	REF_PTR_RELEASE(pUndo);
 	REF_PTR_RELEASE(m_htMapEditCopy);
 	REF_PTR_RELEASE(m_htMapFeatherCopy);
 	REF_PTR_RELEASE(m_htMapRateCopy);
