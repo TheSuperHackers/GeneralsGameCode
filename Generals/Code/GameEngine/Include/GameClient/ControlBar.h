@@ -722,6 +722,7 @@ public:
 	void initObserverControls( void );
 	void populateObserverInfoWindow ( void );
 	void populateObserverList( void );
+	void refreshObserverUI();
 	Bool isObserverControlBarOn( void ) { return m_isObserverCommandBar;}
 
 	void setObserverLookAtPlayer (Player *player); ///< Sets the looked at player. Used to present information about the player.
