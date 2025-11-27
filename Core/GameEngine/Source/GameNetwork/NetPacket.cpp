@@ -540,10 +540,12 @@ void NetPacket::FillBufferWithAckCommand(UnsignedByte *buffer, NetCommandRef *ms
 
 	}
 
-	buffer[offset] = NetPacketFieldTypes::CommandType;
-	++offset;
-	buffer[offset] = type;
-	offset += sizeof(UnsignedByte);
+	if (type != 0) {
+		buffer[offset] = NetPacketFieldTypes::CommandType;
+		++offset;
+		buffer[offset] = type;
+		offset += sizeof(UnsignedByte);
+	}
 
 	buffer[offset] = NetPacketFieldTypes::PlayerId;
 	++offset;
@@ -1368,6 +1370,12 @@ void NetPacket::FillBufferWithDisconnectFrameMessage(UnsignedByte *buffer, NetCo
 	buffer[offset] = cmdMsg->getNetCommandType();
 	offset += sizeof(UnsignedByte);
 
+	buffer[offset] = NetPacketFieldTypes::Frame;
+	++offset;
+	UnsignedInt newframe = cmdMsg->getExecutionFrame();
+	memcpy(buffer + offset, &newframe, sizeof(UnsignedInt));
+	offset += sizeof(UnsignedInt);
+
 	// relay
 	buffer[offset] = NetPacketFieldTypes::Relay;
 	++offset;
@@ -1406,6 +1414,12 @@ void NetPacket::FillBufferWithDisconnectScreenOffMessage(UnsignedByte *buffer, N
 	buffer[offset] = cmdMsg->getNetCommandType();
 	offset += sizeof(UnsignedByte);
 
+	buffer[offset] = NetPacketFieldTypes::Frame;
+	++offset;
+	UnsignedInt newframe = cmdMsg->getExecutionFrame();
+	memcpy(buffer + offset, &newframe, sizeof(UnsignedInt));
+	offset += sizeof(UnsignedInt);
+
 	// relay
 	buffer[offset] = NetPacketFieldTypes::Relay;
 	++offset;
@@ -1443,6 +1457,12 @@ void NetPacket::FillBufferWithFrameResendRequestMessage(UnsignedByte *buffer, Ne
 	++offset;
 	buffer[offset] = cmdMsg->getNetCommandType();
 	offset += sizeof(UnsignedByte);
+
+	buffer[offset] = NetPacketFieldTypes::Frame;
+	++offset;
+	UnsignedInt newframe = cmdMsg->getExecutionFrame();
+	memcpy(buffer + offset, &newframe, sizeof(UnsignedInt));
+	offset += sizeof(UnsignedInt);
 
 	// relay
 	buffer[offset] = NetPacketFieldTypes::Relay;
