@@ -363,6 +363,9 @@ void NetPacket::FillBufferWithCommand(UnsignedByte *buffer, NetCommandRef *ref) 
 		case NETCOMMANDTYPE_FRAMERESENDREQUEST:
 			FillBufferWithFrameResendRequestMessage(buffer, ref);
 			break;
+		case NETCOMMANDTYPE_WRAPPER:
+			FillBufferWithWrapperCommand(buffer, ref);
+			break;
 		default:
 			DEBUG_CRASH(("Unknown NETCOMMANDTYPE %d", msg->getNetCommandType()));
 			break;
@@ -1467,6 +1470,75 @@ void NetPacket::FillBufferWithFrameResendRequestMessage(UnsignedByte *buffer, Ne
 	UnsignedInt frameToResend = cmdMsg->getFrameToResend();
 	memcpy(buffer + offset, &frameToResend, sizeof(frameToResend));
 	offset += sizeof(frameToResend);
+}
+
+void NetPacket::FillBufferWithWrapperCommand(UnsignedByte *buffer, NetCommandRef *msg) {
+	NetWrapperCommandMsg *cmdMsg = static_cast<NetWrapperCommandMsg *>(msg->getCommand());
+	UnsignedInt offset = 0;
+
+	// command type
+	buffer[offset] = NetPacketFieldTypes::CommandType;
+	++offset;
+	buffer[offset] = cmdMsg->getNetCommandType();
+	offset += sizeof(UnsignedByte);
+
+	// relay
+	buffer[offset] = NetPacketFieldTypes::Relay;
+	++offset;
+	buffer[offset] = msg->getRelay();
+	offset += sizeof(UnsignedByte);
+
+	// player ID
+	buffer[offset] = NetPacketFieldTypes::PlayerId;
+	++offset;
+	buffer[offset] = cmdMsg->getPlayerID();
+	offset += sizeof(UnsignedByte);
+
+	// command ID
+	buffer[offset] = NetPacketFieldTypes::CommandId;
+	++offset;
+	UnsignedShort newID = cmdMsg->getID();
+	memcpy(buffer + offset, &newID, sizeof(newID));
+	offset += sizeof(newID);
+
+	// data
+	buffer[offset] = NetPacketFieldTypes::Data;
+	++offset;
+
+	// wrapped command ID
+	UnsignedShort wrappedCommandID = cmdMsg->getWrappedCommandID();
+	memcpy(buffer + offset, &wrappedCommandID, sizeof(wrappedCommandID));
+	offset += sizeof(wrappedCommandID);
+
+	// chunk number
+	UnsignedInt chunkNumber = cmdMsg->getChunkNumber();
+	memcpy(buffer + offset, &chunkNumber, sizeof(chunkNumber));
+	offset += sizeof(chunkNumber);
+
+	// number of chunks
+	UnsignedInt numChunks = cmdMsg->getNumChunks();
+	memcpy(buffer + offset, &numChunks, sizeof(numChunks));
+	offset += sizeof(numChunks);
+
+	// total length of data for all chunks
+	UnsignedInt totalDataLength = cmdMsg->getTotalDataLength();
+	memcpy(buffer + offset, &totalDataLength, sizeof(totalDataLength));
+	offset += sizeof(totalDataLength);
+
+	// data length for this chunk
+	UnsignedInt dataLength = cmdMsg->getDataLength();
+	memcpy(buffer + offset, &dataLength, sizeof(dataLength));
+	offset += sizeof(dataLength);
+
+	// the offset into the data of this chunk
+	UnsignedInt dataOffset = cmdMsg->getDataOffset();
+	memcpy(buffer + offset, &dataOffset, sizeof(dataOffset));
+	offset += sizeof(dataOffset);
+
+	// the data for this chunk
+	UnsignedByte *data = cmdMsg->getData();
+	memcpy(buffer + offset, data, dataLength);
+	offset += dataLength;
 }
 
 
