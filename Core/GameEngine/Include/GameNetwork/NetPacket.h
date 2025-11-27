@@ -69,7 +69,6 @@ public:
 	UnsignedInt getAddr();
 	UnsignedShort getPort();
 
-	// Made public for testing purposes
 	static UnsignedInt GetBufferSizeNeededForCommand(NetCommandMsg *msg);
 	static void FillBufferWithCommand(UnsignedByte *buffer, NetCommandRef *msg);
 

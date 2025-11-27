@@ -348,7 +348,7 @@ Int NetAckBothCommandMsg::getSortNumber() {
 }
 
 size_t NetAckBothCommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketAckCommand);
+	return sizeof(NetPacketPlayerIdField) + sizeof(NetPacketDataFieldHeader) + sizeof(UnsignedShort) + sizeof(UnsignedByte);
 }
 
 //-------------------------
@@ -957,7 +957,7 @@ void NetProgressCommandMsg::setPercentage( UnsignedByte percent )
 }
 
 size_t NetProgressCommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketProgressMessage);
+	return sizeof(NetPacketProgressMessage) - sizeof(NetPacketCommandIdField);
 }
 
 //-------------------------
@@ -1036,7 +1036,7 @@ void NetWrapperCommandMsg::setWrappedCommandID(UnsignedShort wrappedCommandID) {
 }
 
 size_t NetWrapperCommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketWrapperCommand);
+	return sizeof(NetPacketWrapperCommand) + m_dataLength;
 }
 
 //-------------------------
@@ -1082,9 +1082,9 @@ void NetFileCommandMsg::setFileData(UnsignedByte *data, UnsignedInt dataLength)
 size_t NetFileCommandMsg::getPackedByteCount() const
 {
 	return sizeof(NetPacketFileCommand)
-		+ m_portableFilename.getLength() + 1  // filename + null terminator
-		+ sizeof(m_dataLength)  // file data length
-		+ m_dataLength;  // the file data
+		+ m_portableFilename.getLength() + 1
+		+ sizeof(m_dataLength)
+		+ m_dataLength;
 }
 
 //-------------------------
@@ -1129,9 +1129,9 @@ void NetFileAnnounceCommandMsg::setPlayerMask(UnsignedByte playerMask) {
 size_t NetFileAnnounceCommandMsg::getPackedByteCount() const
 {
 	return sizeof(NetPacketFileAnnounceCommand)
-		+ m_portableFilename.getLength() + 1  // filename + null terminator
-		+ sizeof(m_fileID)  // file ID
-		+ sizeof(m_playerMask);  // player mask
+		+ m_portableFilename.getLength() + 1
+		+ sizeof(m_fileID)
+		+ sizeof(m_playerMask);
 }
 
 //-------------------------
@@ -1186,7 +1186,7 @@ void NetDisconnectFrameCommandMsg::setDisconnectFrame(UnsignedInt disconnectFram
 }
 
 size_t NetDisconnectFrameCommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketDisconnectFrameCommand);
+	return sizeof(NetPacketDisconnectFrameCommand) + sizeof(UnsignedByte) + sizeof(UnsignedInt);
 }
 
 //-------------------------
@@ -1209,7 +1209,7 @@ void NetDisconnectScreenOffCommandMsg::setNewFrame(UnsignedInt newFrame) {
 }
 
 size_t NetDisconnectScreenOffCommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketDisconnectScreenOffCommand);
+	return sizeof(NetPacketDisconnectScreenOffCommand) + sizeof(UnsignedByte) + sizeof(UnsignedInt);
 }
 
 //-------------------------
@@ -1232,7 +1232,7 @@ void NetFrameResendRequestCommandMsg::setFrameToResend(UnsignedInt frame) {
 }
 
 size_t NetFrameResendRequestCommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketFrameResendRequestCommand);
+	return sizeof(NetPacketFrameResendRequestCommand) + sizeof(UnsignedByte) + sizeof(UnsignedInt);
 }
 
 //-------------------------
