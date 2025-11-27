@@ -69,9 +69,11 @@ public:
 	UnsignedInt getAddr();
 	UnsignedShort getPort();
 
-protected:
+	// Made public for testing purposes
 	static UnsignedInt GetBufferSizeNeededForCommand(NetCommandMsg *msg);
 	static void FillBufferWithCommand(UnsignedByte *buffer, NetCommandRef *msg);
+
+protected:
 
 	// These functions return the size of the command without any compression, repetition, etc.
 	// i.e. All of the required fields are taken into account when returning the size.
@@ -125,6 +127,7 @@ protected:
 	static void FillBufferWithDisconnectFrameMessage(UnsignedByte *buffer, NetCommandRef *msg);
 	static void FillBufferWithDisconnectScreenOffMessage(UnsignedByte *buffer, NetCommandRef *msg);
 	static void FillBufferWithFrameResendRequestMessage(UnsignedByte *buffer, NetCommandRef *msg);
+	static void FillBufferWithWrapperCommand(UnsignedByte *buffer, NetCommandRef *msg);
 
 	Bool addFrameCommand(NetCommandRef *msg);
 	Bool isRoomForFrameMessage(NetCommandRef *msg);
