@@ -224,7 +224,7 @@ set(GAMEENGINE_SRC
     Include/GameClient/TerrainRoads.h
     Include/GameClient/TerrainVisual.h
 #    Include/GameClient/VideoPlayer.h
-    Include/GameClient/View.h
+#    Include/GameClient/View.h
     Include/GameClient/Water.h
     Include/GameClient/WindowLayout.h
 #    Include/GameClient/WindowVideoManager.h
@@ -824,7 +824,7 @@ set(GAMEENGINE_SRC
     Source/GameClient/Terrain/TerrainVisual.cpp
 #    Source/GameClient/VideoPlayer.cpp
 #    Source/GameClient/VideoStream.cpp
-    Source/GameClient/View.cpp
+#    Source/GameClient/View.cpp
     Source/GameClient/Water.cpp
     Source/GameLogic/AI/AI.cpp
     Source/GameLogic/AI/AIDock.cpp

@@ -185,6 +185,11 @@ def main():
     #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/camerashakesystem.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/CameraShakeSystem.h")
     #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/camerashakesystem.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/CameraShakeSystem.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/View.h", Game.CORE, "GameEngine/Include/GameClient/View.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/View.cpp", Game.CORE, "GameEngine/Source/GameClient/View.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DView.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DView.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DView.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DView.cpp")
+
     return
 
 
