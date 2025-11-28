@@ -922,6 +922,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 
 		if (!isVisible																				// if user watching cannot see us
 			&& sourceObj->testStatus(OBJECT_STATUS_STEALTHED)		// if unit is stealthed (like a Pathfinder)
+			&& !sourceObj->isKindOf(KINDOF_DISGUISER)						// and not a disguiser (which should show FX while stealthed)...
 			&& !sourceObj->isKindOf(KINDOF_MINE)								// and not a mine (which always do the FX, even if hidden)...
 			&& !isPlayFXWhenStealthed()													// and not a weapon marked to playwhenstealthed
 			)
