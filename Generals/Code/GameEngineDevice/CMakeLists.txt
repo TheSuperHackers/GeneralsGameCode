@@ -151,6 +151,7 @@ set(GAMEENGINEDEVICE_SRC
     Source/W3DDevice/GameClient/W3DPoly.cpp
     Source/W3DDevice/GameClient/W3DRoadBuffer.cpp
     Source/W3DDevice/GameClient/W3DScene.cpp
+    Source/W3DDevice/GameClient/W3DBrightnessFilter.cpp
     Source/W3DDevice/GameClient/W3DShaderManager.cpp
     Source/W3DDevice/GameClient/W3DShroud.cpp
     Source/W3DDevice/GameClient/W3DStatusCircle.cpp

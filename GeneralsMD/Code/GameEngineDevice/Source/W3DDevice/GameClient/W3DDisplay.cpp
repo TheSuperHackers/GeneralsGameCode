@@ -531,9 +531,9 @@ void W3DDisplay::getDisplayModeDescription(Int modeIndex, Int *xres, Int *yres, 
 
 void W3DDisplay::setGamma(Real gamma, Real bright, Real contrast, Bool calibrate)
 {
-	if (m_windowed)
-		return;	//we don't allow gamma to change in window because it would affect desktop.
-
+	// TheSuperHackers @feature bobtista 11/02/2025 Brightness is now handled by post-processing filter
+	// Keep old gamma ramp code for backward compatibility, but it's no longer the primary method
+	// The windowed mode check is removed since the filter works in all modes
 	DX8Wrapper::Set_Gamma(gamma,bright,contrast,calibrate, false);
 }
 
@@ -805,6 +805,14 @@ void W3DDisplay::init( void )
 		init2DScene();
 		init3DScene();
 		W3DShaderManager::init();
+
+		// TheSuperHackers @feature bobtista 11/02/2025 Enable brightness post-processing filter
+		// The filter will only render when brightness is non-zero (checked in preRender())
+		if (TheTacticalView)
+		{
+			TheTacticalView->setViewFilter(FT_VIEW_BRIGHTNESS_FILTER);
+			TheTacticalView->setViewFilterMode(FM_VIEW_BRIGHTNESS_ADJUST);
+		}
 
 		// Create and initialize the debug display
 		m_nativeDebugDisplay = NEW W3DDebugDisplay();
