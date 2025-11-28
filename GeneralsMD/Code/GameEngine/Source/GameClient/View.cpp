@@ -129,6 +129,11 @@ void View::zoom( Real height )
 	setHeightAboveGround(getHeightAboveGround() + height);
 }
 
+void View::setZoomToMax()
+{
+	setHeightAboveGround(getHeightAboveGround() + m_maxHeightAboveGround);
+}
+
 void View::lockViewUntilFrame(UnsignedInt frame)
 {
 	m_viewLockedUntilFrame = frame;

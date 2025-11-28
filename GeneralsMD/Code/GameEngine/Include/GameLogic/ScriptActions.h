@@ -111,7 +111,7 @@ protected:
 
 	void doCameraTetherNamed(const AsciiString& unit, Bool snapToUnit, Real play);
 	void doCameraStopTetherNamed(void);
-	void doCameraSetDefault(Real pitch, Real angle, Real maxHeight);
+	void doCameraSetDefault(Real pitch, Real angle, Real heighScale);
 
 	void doOversizeTheTerrain(Int amount);
 	void doMoveCameraAlongWaypointPath(const AsciiString& waypoint, Real sec, Real cameraStutterSec, Real easeIn, Real easeOut);
