@@ -222,7 +222,7 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/Shell.h
 #    Include/GameClient/ShellHooks.h
 #    Include/GameClient/ShellMenuScheme.h
-#    Include/GameClient/Smudge.h
+    Include/GameClient/Smudge.h
 #    Include/GameClient/Snow.h
 #    Include/GameClient/Statistics.h
 #    Include/GameClient/TerrainRoads.h
@@ -827,7 +827,7 @@ set(GAMEENGINE_SRC
 #    Source/GameClient/System/Image.cpp
 #    Source/GameClient/System/ParticleSys.cpp
 #    Source/GameClient/System/RayEffect.cpp
-#    Source/GameClient/System/Smudge.cpp
+    Source/GameClient/System/Smudge.cpp
 #    Source/GameClient/Terrain/TerrainRoads.cpp
 #    Source/GameClient/Terrain/TerrainVisual.cpp
     Source/GameClient/VideoPlayer.cpp

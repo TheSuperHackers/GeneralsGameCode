@@ -173,6 +173,11 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/Common/W3DRadar.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/Common/W3DRadar.h")
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/Common/System/W3DRadar.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/Common/System/W3DRadar.cpp")
 
+    #unify_move_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Smudge.h", Game.CORE, "GameEngine/Include/GameClient/Smudge.h")
+    #unify_move_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/System/Smudge.cpp", Game.CORE, "GameEngine/Source/GameClient/System/Smudge.cpp")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DSmudge.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DSmudge.h")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DSmudge.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DSmudge.cpp")
+
     return
 
 
