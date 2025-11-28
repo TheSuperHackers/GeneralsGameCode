@@ -35,7 +35,6 @@
 #include "GameLogic/Damage.h"
 #include "Common/STLTypedefs.h"
 #include "ref_ptr.h"
-#include "Utility/CppMacros.h"
 
 class AIGroup;
 class AttackPriorityInfo;
