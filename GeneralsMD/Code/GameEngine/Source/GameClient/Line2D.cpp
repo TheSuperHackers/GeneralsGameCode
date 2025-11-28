@@ -227,6 +227,179 @@ Bool ClipLine2D( ICoord2D *p1, ICoord2D *p2, ICoord2D *c1, ICoord2D *c2,
 }
 
 
+Bool ClipLine2D(Coord2D* p1, Coord2D* p2, Coord2D* c1, Coord2D* c2,
+	IRegion2D* clipRegion)
+{
+	Real x1, y1, x2, y2;
+	Real clipLeft;
+	Real clipRight;
+	Real clipTop;
+	Real clipBottom;
+	Int clipCode1;
+	Int clipCode2;
+	Real diff;
+
+	// Use clip window that includes bottom right pixel
+	clipLeft = clipRegion->lo.x;
+	clipRight = clipRegion->hi.x;
+	clipTop = clipRegion->lo.y;
+	clipBottom = clipRegion->hi.y;
+	/*
+		clipLeft = gfxCurrentContext->clipRect1.left;
+		clipRight = gfxCurrentContext->clipRect1.right;
+		clipTop = gfxCurrentContext->clipRect1.top;
+		clipBottom = gfxCurrentContext->clipRect1.bottom;
+
+		x1 = *px1;
+		y1 = *py1;
+		x2 = *px2;
+		y2 = *py2;
+	*/
+
+	x1 = p1->x;
+	y1 = p1->y;
+	x2 = p2->x;
+	y2 = p2->y;
+
+	// Test first point
+	clipCode1 = 0;
+
+	if (x1 < clipLeft)
+		clipCode1 = CLIP_LEFT;
+	else
+		if (x1 > clipRight)
+			clipCode1 = CLIP_RIGHT;
+
+	if (y1 < clipTop)
+		clipCode1 |= CLIP_TOP;
+	else
+		if (y1 > clipBottom)
+			clipCode1 |= CLIP_BOTTOM;
+
+
+	// Test second point
+	clipCode2 = 0;
+
+	if (x2 < clipLeft)
+		clipCode2 = CLIP_LEFT;
+	else
+		if (x2 > clipRight)
+			clipCode2 = CLIP_RIGHT;
+
+	if (y2 < clipTop)
+		clipCode2 |= CLIP_TOP;
+	else
+		if (y2 > clipBottom)
+			clipCode2 |= CLIP_BOTTOM;
+
+
+	// Both points inside window?
+	if ((clipCode1 | clipCode2) == 0)
+	{
+
+		*c1 = *p1;
+		*c2 = *p2;
+		return TRUE;
+
+	}
+
+	// Both points outside window?
+	if (clipCode1 & clipCode2)
+		return FALSE;
+
+	// First point outside window?
+	if (clipCode1)
+	{
+		if (clipCode1 & CLIP_TOP)
+		{
+			if ((diff = (y2 - y1)) == 0)
+				return FALSE;
+			x1 += (x2 - x1) * (clipTop - y1) / diff;
+			y1 = clipTop;
+		}
+		else
+			if (clipCode1 & CLIP_BOTTOM)
+			{
+				if ((diff = (y2 - y1)) == 0)
+					return FALSE;
+				x1 += (x2 - x1) * (clipBottom - y1) / diff;
+				y1 = clipBottom;
+			}
+
+		if (x1 > clipRight)
+		{
+			if ((diff = (x2 - x1)) == 0)
+				return FALSE;
+			y1 += (y2 - y1) * (clipRight - x1) / diff;
+			x1 = clipRight;
+		}
+		else
+			if (x1 < clipLeft)
+			{
+				if ((diff = (x2 - x1)) == 0)
+					return FALSE;
+				y1 += (y2 - y1) * (clipLeft - x1) / diff;
+				x1 = clipLeft;
+			}
+	}
+
+	// Second point outside window?
+	if (clipCode2)
+	{
+		if (clipCode2 & CLIP_TOP)
+		{
+			if ((diff = (y2 - y1)) == 0)
+				return FALSE;
+			x2 += (x2 - x1) * (clipTop - y2) / diff;
+			y2 = clipTop;
+		}
+		else
+			if (clipCode2 & CLIP_BOTTOM)
+			{
+				if ((diff = (y2 - y1)) == 0)
+					return FALSE;
+				x2 += (x2 - x1) * (clipBottom - y2) / diff;
+				y2 = clipBottom;
+			}
+
+		if (x2 > clipRight)
+		{
+			if ((diff = (x2 - x1)) == 0)
+				return FALSE;
+			y2 += (y2 - y1) * (clipRight - x2) / diff;
+			x2 = clipRight;
+		}
+		else
+			if (x2 < clipLeft)
+			{
+				if ((diff = (x2 - x1)) == 0)
+					return FALSE;
+				y2 += (y2 - y1) * (clipLeft - x2) / diff;
+				x2 = clipLeft;
+			}
+	}
+
+	c1->x = x1;
+	c1->y = y1;
+	c2->x = x2;
+	c2->y = y2;
+
+	/*
+		*px1 = x1;
+		*py1 = y1;
+		*px2 = x2;
+		*py2 = y2;
+	*/
+
+	// Line is visible
+	return (x1 >= clipLeft && x1 <= clipRight &&
+		y1 >= clipTop && y1 <= clipBottom &&
+		x2 >= clipLeft && x2 <= clipRight &&
+		y2 >= clipTop && y2 <= clipBottom);
+
+}
+
+
 // This solution uses the
 // http://www.faqs.org/faqs/graphics/algorithms-faq/
 // Subject 1.03

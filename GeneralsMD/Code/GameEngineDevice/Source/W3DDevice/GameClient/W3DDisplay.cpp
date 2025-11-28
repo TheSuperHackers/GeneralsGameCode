@@ -1988,8 +1988,8 @@ void W3DDisplay::renderLetterBox(UnsignedInt currentTime)
 			Int height = (Int)(getHeight() * 0.12f * m_letterBoxFadeLevel);
 			TheTacticalView->setOrigin(0, height);
 #else
-			drawFillRect( 0, 0, m_width, (m_height-(9.0f/16.0f * m_width))*0.5f, lbcolor );
-			drawFillRect( 0, m_height-(m_height-(9.0f/16.0f * m_width))*0.5f, m_width, m_height, lbcolor );
+			drawFillRect( 0, 0, m_width, (Int)((m_height-(9.0f/16.0f * m_width))*0.5f), lbcolor );
+			drawFillRect( 0, (Int)(m_height-(m_height-(9.0f/16.0f * m_width))*0.5f), m_width, m_height, lbcolor );
 #endif
 		}
 		else
@@ -2006,7 +2006,7 @@ void W3DDisplay::renderLetterBox(UnsignedInt currentTime)
 				Int height = (Int)(getHeight() * 0.12f * m_letterBoxFadeLevel);
 				TheTacticalView->setOrigin(0, height);
 #else
-				drawFillRect( 0, 0, m_width, (m_height-(9.0f/16.0f * m_width))*0.5f, lbcolor );
+				drawFillRect( 0, 0, m_width, (Int)((m_height-(9.0f/16.0f * m_width))*0.5f), lbcolor );
 				//drawFillRect( 0, m_height-(m_height-(9.0f/16.0f * m_width))*0.5f, m_width, m_height, lbcolor );
 #endif
 			}
@@ -2232,9 +2232,78 @@ void W3DDisplay::drawOpenRect( Int startX, Int startY, Int width, Int height,
 
 }
 
+
+// W3DDisplay::drawOpenRect ===================================================
+//=============================================================================
+void W3DDisplay::drawOpenRect(Real startX, Real startY, Real width, Real height,
+	Real lineWidth, UnsignedInt lineColor)
+{
+
+	if (m_isClippedEnabled)
+	{
+		Coord2D start, end, returnStart, returnEnd;
+		start.x = startX;
+		start.y = startY;
+
+		end.x = start.x;
+		end.y = start.y + height;
+		if (ClipLine2D(&start, &end, &returnStart, &returnEnd, &m_clipRegion))
+			drawLine(returnStart.x, returnStart.y, returnEnd.x, returnEnd.y, lineWidth, lineColor);
+
+		end.x = start.x + width;
+		end.y = start.y;
+		if (ClipLine2D(&start, &end, &returnStart, &returnEnd, &m_clipRegion))
+			drawLine(returnStart.x, returnStart.y, returnEnd.x, returnEnd.y, lineWidth, lineColor);
+
+		start.x = startX + width;
+		start.y = startY;
+		end.x = start.x;
+		end.y = start.y + height;
+		if (ClipLine2D(&start, &end, &returnStart, &returnEnd, &m_clipRegion))
+			drawLine(returnStart.x, returnStart.y, returnEnd.x, returnEnd.y, lineWidth, lineColor);
+
+		start.x = startX;
+		start.y = startY + height;
+		end.x = start.x + width;
+		end.y = start.y;
+		if (ClipLine2D(&start, &end, &returnStart, &returnEnd, &m_clipRegion))
+			drawLine(returnStart.x, returnStart.y, returnEnd.x, returnEnd.y, lineWidth, lineColor);
+	}
+	else
+	{
+		/// @todo we need to consider the efficiency of the 2D renderer
+		m_2DRender->Reset();
+		m_2DRender->Enable_Texturing(FALSE);
+
+		m_2DRender->Add_Outline(RectClass(startX, startY,
+			startX + width, startY + height),
+			lineWidth, lineColor);
+
+		// render it now!
+		m_2DRender->Render();
+	}
+
+}
+
 // W3DDisplay::drawFillRect ===================================================
 //=============================================================================
 void W3DDisplay::drawFillRect( Int startX, Int startY, Int width, Int height,
+															 UnsignedInt color )
+{
+
+	/// @todo we need to consider the efficiency of the 2D renderer
+	m_2DRender->Reset();
+	m_2DRender->Enable_Texturing( FALSE );
+	m_2DRender->Add_Rect( RectClass( startX, startY,
+																	 startX + width, startY + height ),
+												0, 0, color );
+
+	// render it now!
+	m_2DRender->Render();
+
+}
+
+void W3DDisplay::drawFillRect( Real startX, Real startY, Real width, Real height,
 															 UnsignedInt color )
 {
 

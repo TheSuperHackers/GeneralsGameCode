@@ -103,7 +103,8 @@ Render2DClass::Get_Default_Shader( void )
 {
 	ShaderClass shader;
 
-   shader.Set_Depth_Mask( ShaderClass::DEPTH_WRITE_DISABLE );
+	shader.Set_Alpha_Test(ShaderClass::ALPHATEST_ENABLE);
+  shader.Set_Depth_Mask( ShaderClass::DEPTH_WRITE_DISABLE );
 	shader.Set_Depth_Compare( ShaderClass::PASS_ALWAYS );
 	shader.Set_Dst_Blend_Func( ShaderClass::DSTBLEND_ONE_MINUS_SRC_ALPHA );
 	shader.Set_Src_Blend_Func( ShaderClass::SRCBLEND_SRC_ALPHA );

@@ -99,8 +99,16 @@ public:
 	virtual void drawOpenRect( Int startX, Int startY, Int width, Int height,
 														 Real lineWidth, UnsignedInt lineColor );
 
+	/// draw a rect border on the display in pixel coordinates with the specified color
+	virtual void drawOpenRect(Real startX, Real startY, Real width, Real height,
+		Real lineWidth, UnsignedInt lineColor);
+
 	/// draw a filled rect on the display in pixel coords with the specified color
 	virtual void drawFillRect( Int startX, Int startY, Int width, Int height,
+														 UnsignedInt color );
+
+	/// draw a filled rect on the display in pixel coords with the specified color
+	virtual void drawFillRect( Real startX, Real startY, Real width, Real height,
 														 UnsignedInt color );
 
 	/// Draw a percentage of a rectangle, much like a clock (0 to x%)

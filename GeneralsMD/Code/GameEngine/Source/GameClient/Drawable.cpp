@@ -2664,7 +2664,7 @@ void Drawable::draw()
 /** Compute the health bar region based on the health of the object and the
 	* zoom level of the camera */
 // ------------------------------------------------------------------------------------------------
-static Bool computeHealthRegion( const Drawable *draw, IRegion2D& region )
+static Bool computeHealthRegion( const Drawable *draw, Region2D& region )
 {
 
 	// sanity
@@ -2740,8 +2740,8 @@ void Drawable::drawIconUI( void )
 {
 	if( TheGameLogic->getDrawIconUI() && (TheScriptEngine->getFade()==ScriptEngine::FADE_NONE) )
 	{
-		IRegion2D healthBarRegionStorage;
-		const IRegion2D* healthBarRegion = NULL;
+		Region2D healthBarRegionStorage;
+		const Region2D* healthBarRegion = NULL;
 		if (computeHealthRegion(this, healthBarRegionStorage))
 			healthBarRegion = &healthBarRegionStorage; //both data and a PointerAsFlag for logic in the methods below
 
@@ -2824,7 +2824,7 @@ void Drawable::setEmoticon( const AsciiString &name, Int duration )
 }
 
 //------------------------------------------------------------------------------------------------
-void Drawable::drawEmoticon( const IRegion2D *healthBarRegion )
+void Drawable::drawEmoticon( const Region2D *healthBarRegion )
 {
 	if( hasIconInfo() && getIconInfo()->m_icon[ ICON_EMOTICON ] )
 	{
@@ -2859,7 +2859,7 @@ void Drawable::drawEmoticon( const IRegion2D *healthBarRegion )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void Drawable::drawAmmo( const IRegion2D *healthBarRegion )
+void Drawable::drawAmmo( const Region2D *healthBarRegion )
 {
 	const Object *obj = getObject();
 
@@ -2913,7 +2913,7 @@ void Drawable::drawAmmo( const IRegion2D *healthBarRegion )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void Drawable::drawContained( const IRegion2D *healthBarRegion )
+void Drawable::drawContained( const Region2D *healthBarRegion )
 {
 	const Object *obj = getObject();
 
@@ -2987,7 +2987,7 @@ void Drawable::drawContained( const IRegion2D *healthBarRegion )
 }
 
 //-------------------------------------------------------------------------------------------------
-void Drawable::drawBattlePlans( const IRegion2D *healthBarRegion )
+void Drawable::drawBattlePlans( const Region2D *healthBarRegion )
 {
 	Object *obj = getObject();
 	if( !obj || !healthBarRegion )
@@ -3096,8 +3096,8 @@ void Drawable::drawUIText()
 	// GameClient caches a list of us drawables during Drawablepostdraw()
 	// then our group numbers get spit out last, so they draw in front
 
-	const IRegion2D* healthBarRegion = NULL;
-	IRegion2D healthBarRegionStorage;
+	const Region2D* healthBarRegion = NULL;
+	Region2D healthBarRegionStorage;
 	if (computeHealthRegion(this, healthBarRegionStorage))
 		healthBarRegion = &healthBarRegionStorage; //both data and a PointerAsFlag for logic in the methods below
 
@@ -3210,7 +3210,7 @@ void Drawable::drawUIText()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void Drawable::drawHealing(const IRegion2D* healthBarRegion)
+void Drawable::drawHealing(const Region2D* healthBarRegion)
 {
 
 	const Object *obj = getObject();
@@ -3304,7 +3304,7 @@ void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 // ------------------------------------------------------------------------------------------------
 /** This enthusiastic effect is TEMPORARY for the multiplayer test */
 // ------------------------------------------------------------------------------------------------
-void Drawable::drawEnthusiastic(const IRegion2D* healthBarRegion)
+void Drawable::drawEnthusiastic(const Region2D* healthBarRegion)
 {
 
 	const Object *obj = getObject();
@@ -3376,7 +3376,7 @@ void Drawable::drawEnthusiastic(const IRegion2D* healthBarRegion)
 #ifdef ALLOW_DEMORALIZE
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void Drawable::drawDemoralized(const IRegion2D* healthBarRegion)
+void Drawable::drawDemoralized(const Region2D* healthBarRegion)
 {
 
 	const Object *obj = getObject();
@@ -3433,7 +3433,7 @@ enum
 };
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void Drawable::drawBombed(const IRegion2D* healthBarRegion)
+void Drawable::drawBombed(const Region2D* healthBarRegion)
 {
 
 	const Object *obj = getObject();
@@ -3612,7 +3612,7 @@ void Drawable::drawBombed(const IRegion2D* healthBarRegion)
 // ------------------------------------------------------------------------------------------------
 /** Draw any icon information that needs to be drawn */
 // ------------------------------------------------------------------------------------------------
-void Drawable::drawDisabled(const IRegion2D* healthBarRegion)
+void Drawable::drawDisabled(const Region2D* healthBarRegion)
 {
 
 	const Object *obj = getObject();
@@ -3670,7 +3670,7 @@ void Drawable::drawDisabled(const IRegion2D* healthBarRegion)
 //-------------------------------------------------------------------------------------------------
 /** Draw construction percent for drawables that have objects that are "under construction" */
 //-------------------------------------------------------------------------------------------------
-void Drawable::drawConstructPercent( const IRegion2D *healthBarRegion )
+void Drawable::drawConstructPercent( const Region2D *healthBarRegion )
 {
 
 	// this data is in an attached object
@@ -3735,7 +3735,7 @@ void Drawable::drawConstructPercent( const IRegion2D *healthBarRegion )
 //-------------------------------------------------------------------------------------------------
 /** Draw caption */
 //-------------------------------------------------------------------------------------------------
-void Drawable::drawCaption( const IRegion2D *healthBarRegion )
+void Drawable::drawCaption( const Region2D *healthBarRegion )
 {
 	if (!m_captionDisplayString)
 		return;
@@ -3771,7 +3771,7 @@ void Drawable::drawCaption( const IRegion2D *healthBarRegion )
 // ------------------------------------------------------------------------------------------------
 /** Draw any veterency markers that should be displayed */
 // ------------------------------------------------------------------------------------------------
-void Drawable::drawVeterancy( const IRegion2D *healthBarRegion )
+void Drawable::drawVeterancy( const Region2D *healthBarRegion )
 {
 	// get object from drawble
 	Object* obj = getObject();
@@ -3819,7 +3819,7 @@ void Drawable::drawVeterancy( const IRegion2D *healthBarRegion )
 // ------------------------------------------------------------------------------------------------
 /** Draw health bar information for drawable */
 // ------------------------------------------------------------------------------------------------
-void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
+void Drawable::drawHealthBar(const Region2D* healthBarRegion)
 {
 	if (!healthBarRegion)
 		return;
@@ -3918,8 +3918,17 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 		}
 
 		Real healthBoxWidth = healthBarRegion->width();
-		Real healthBoxHeight = max((Int)defaultHealthBoxHeight, healthBarRegion->height());
+		Real healthBoxHeight = max(defaultHealthBoxHeight, healthBarRegion->height());
 		Real healthBoxOutlineSize = floorf(1.0f * TheInGameUI->getUnitHealthbarScaleFactor());
+
+		//TheDisplay->drawFillRect( healthBarRegion->lo.x - 2, healthBarRegion->lo.y - 12,
+		//													healthBoxWidth + 5, healthBoxHeight + 5,
+		//													GameMakeColor(255,0,0,255) );
+
+		//TheDisplay->drawFillRectf( healthBarRegion->lo.x, healthBarRegion->lo.y - 10,
+		//													healthBoxWidth * healthRatio, 4.6,
+		//													color );
+
 
 		// draw a filled bar for the health
 		// TheSuperHackers @info this takes up the whole size of the health rect area, the border is drawn over the top
@@ -3930,12 +3939,12 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 
 		// draw the health blend line but only for intermediate resolutions
 		// TheSuperHackers @info we adjust the line down by the thickness of the border to keep it with one line of exposed pixels
-		if (fmod(healthBoxHeight, defaultHealthBoxHeight) > 0.0f) {
-			Color outlineBlendColor = outlineColor - 0x77000000;
-			TheDisplay->drawLine( healthBarRegion->lo.x, healthBarRegion->lo.y + healthBoxOutlineSize,
-																healthBarRegion->lo.x + healthBoxWidth * healthRatio, healthBarRegion->lo.y + healthBoxOutlineSize,
-																healthBoxOutlineSize + 1.0f, outlineBlendColor);
-		}
+		//if (fmod(healthBoxHeight, defaultHealthBoxHeight) > 0.0f) {
+		//	Color outlineBlendColor = outlineColor - 0x77000000;
+		//	TheDisplay->drawLine( healthBarRegion->lo.x, healthBarRegion->lo.y + healthBoxOutlineSize,
+		//														healthBarRegion->lo.x + healthBoxWidth * healthRatio, healthBarRegion->lo.y + healthBoxOutlineSize,
+		//														healthBoxOutlineSize + 1.0f, outlineBlendColor);
+		//}
 
 		// draw the health box outline
 		// TheSuperHackers @info when drawing the outline, the underlying function grows the outline towards the center of the region

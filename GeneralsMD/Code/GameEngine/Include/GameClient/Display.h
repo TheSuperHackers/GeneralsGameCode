@@ -136,8 +136,14 @@ public:
 	/// draw a rect border on the display in pixel coordinates with the specified color
 	virtual void drawOpenRect( Int startX, Int startY, Int width, Int height,
 														 Real lineWidth, UnsignedInt lineColor ) = 0;
+	/// draw a rect border on the display in pixel coordinates with the specified color
+	virtual void drawOpenRect( Real startX, Real startY, Real width, Real height,
+		Real lineWidth, UnsignedInt lineColor) = 0;
 	/// draw a filled rect on the display in pixel coords with the specified color
 	virtual void drawFillRect( Int startX, Int startY, Int width, Int height,
+														 UnsignedInt color ) = 0;
+	/// draw a filled rect on the display in float pixel coords with the specified color
+	virtual void drawFillRect( Real startX, Real startY, Real width, Real height,
 														 UnsignedInt color ) = 0;
 
 	/// Draw a percentage of a rectange, much like a clock

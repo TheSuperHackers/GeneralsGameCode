@@ -37,6 +37,9 @@ typedef std::vector<ICoord3D> Coord3DVector;
 extern Bool ClipLine2D( ICoord2D *p1, ICoord2D *p2, ICoord2D *c1, ICoord2D *c2,
 												IRegion2D *clipRegion );
 
+extern Bool ClipLine2D(Coord2D* p1, Coord2D* p2, Coord2D* c1, Coord2D* c2,
+	IRegion2D* clipRegion);
+
 ///< IntersectLine2D will take two segments delimited by ab and cd and will return whether
 ///< they intersect within the length of ab. They will also return the intersection point out
 ///< intersection if it is non-NULL.
