@@ -2619,13 +2619,13 @@ void AIUpdateInterface::aiDoCommand(const AICommandParms* parms)
 			privateFollowWaypointPathAsTeamExact(parms->m_waypoint, parms->m_cmdSource);
 			break;
 		case AICMD_FOLLOW_PATH:
-			privateFollowPath(&const_cast<AICommandParms*>(parms)->m_coords, parms->m_obj, parms->m_cmdSource, FALSE);
+			privateFollowPath(&parms->m_coords, parms->m_obj, parms->m_cmdSource, FALSE);
 			break;
 		case AICMD_FOLLOW_PATH_APPEND:
 			privateFollowPathAppend(&parms->m_pos, parms->m_cmdSource);
 			break;
 		case AICMD_FOLLOW_EXITPRODUCTION_PATH:
-			privateFollowPath(&const_cast<AICommandParms*>(parms)->m_coords, parms->m_obj, parms->m_cmdSource, TRUE);
+			privateFollowPath(&parms->m_coords, parms->m_obj, parms->m_cmdSource, TRUE);
 			break;
 		case AICMD_ATTACK_OBJECT:
 			privateAttackObject(parms->m_obj, parms->m_intValue, parms->m_cmdSource);
