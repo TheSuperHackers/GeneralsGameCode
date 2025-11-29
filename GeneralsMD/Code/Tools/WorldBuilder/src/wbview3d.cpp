@@ -3273,15 +3273,23 @@ void WbView3d::OnUpdateViewShowSoundCircles(CCmdUI* pCmdUI)
 //=============================================================================
 // WbView3d::OnMouseMove
 //=============================================================================
-/** Override to invalidate hint area when mouse moves. */
-//=============================================================================
 void WbView3d::OnMouseMove(UINT nFlags, CPoint point)
 {
-	// Call base class first
 	WbView::OnMouseMove(nFlags, point);
-	
-	// Don't invalidate here - let drawLabels handle it naturally
-	// Invalidating here causes flicker due to paint feedback loops
+}
+
+//=============================================================================
+// WbView3d::clearBrushModeHintState
+//=============================================================================
+/** Clears the brush mode hint state. */
+//=============================================================================
+void WbView3d::clearBrushModeHintState()
+{
+	if (!::IsRectEmpty(&m_lastHintRect)) {
+		::SetRectEmpty(&m_lastHintRect);
+		m_lastBrushMode = -1;
+		m_lastHintPos = CPoint(-10000, -10000);
+	}
 }
 
 //=============================================================================
@@ -3294,39 +3302,13 @@ void WbView3d::drawBrushModeHint(HDC hdc)
 	if (m_hintDrawnThisFrame) {
 		return;
 	}
-	
-	Tool *pCurTool = WbApp()->getCurTool();
-	if (!pCurTool || pCurTool->getToolID() != ID_BRUSH_TOOL) {
-		if (!::IsRectEmpty(&m_lastHintRect)) {
-			::SetRectEmpty(&m_lastHintRect);
-			m_lastBrushMode = -1;
-			m_lastHintPos = CPoint(-10000, -10000);
-		}
-		return;
-	}
-
-	if (::GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
-		if (!::IsRectEmpty(&m_lastHintRect)) {
-			::SetRectEmpty(&m_lastHintRect);
-			m_lastBrushMode = -1;
-			m_lastHintPos = CPoint(-10000, -10000);
-		}
-		return;
-	}
-
-	BrushTool::EBrushMode currentMode = BrushTool::getPreviewModeFromKeys();
-	Int modeInt = (Int)currentMode;
 
 	Coord3D brushPos = DrawObject::getFeedbackPos();
 	
 	Vector3 worldPos, screenPos;
 	worldPos.Set(brushPos.x, brushPos.y, brushPos.z);
 	if (CameraClass::INSIDE_FRUSTUM != m_camera->Project(screenPos, worldPos)) {
-		if (!::IsRectEmpty(&m_lastHintRect)) {
-			::SetRectEmpty(&m_lastHintRect);
-			m_lastBrushMode = -1;
-			m_lastHintPos = CPoint(-10000, -10000);
-		}
+		clearBrushModeHintState();
 		return;
 	}
 
@@ -3339,53 +3321,48 @@ void WbView3d::drawBrushModeHint(HDC hdc)
 	hintPos.x = rClient.left + sx + 20;
 	hintPos.y = rClient.top + sy - 20;
 
-	char primaryBuf[256];
-	char secondaryBuf[512];
-	BrushTool::getModeHintStrings(primaryBuf, sizeof(primaryBuf), secondaryBuf, sizeof(secondaryBuf));
-	
-	const char* firstLine = secondaryBuf && strlen(secondaryBuf) > 0 ? secondaryBuf : primaryBuf;
-	
-	Bool needUpdate = false;
-	if (modeInt != m_lastBrushMode) {
-		needUpdate = true;
-	} else if (::IsRectEmpty(&m_lastHintRect)) {
-		needUpdate = true;
-	} else {
-		Int dx = abs(hintPos.x - m_lastHintPos.x);
-		Int dy = abs(hintPos.y - m_lastHintPos.y);
-		if (dx > 15 || dy > 15) {
-			needUpdate = true;
-		}
-	}
-	
-	if (!firstLine || strlen(firstLine) == 0) {
-		if (!::IsRectEmpty(&m_lastHintRect)) {
-			::SetRectEmpty(&m_lastHintRect);
-			m_lastBrushMode = -1;
-			m_lastHintPos = CPoint(-10000, -10000);
+	char hintTextBuf[512];
+	BrushTool::BrushHintInfo info;
+	if (!BrushTool::getBrushHintInfo(info, hintTextBuf, sizeof(hintTextBuf), hintPos, m_lastBrushMode)) {
+		if (info.shouldClear) {
+			clearBrushModeHintState();
 		}
 		return;
 	}
 
+	if (!info.shouldShow || strlen(hintTextBuf) == 0) {
+		clearBrushModeHintState();
+		return;
+	}
+
+	const char* firstLine = hintTextBuf;
+	Int firstLineLen = (Int)strlen(firstLine);
+	Bool needUpdate = (info.modeInt != m_lastBrushMode);
+	if (!needUpdate) {
+		if (::IsRectEmpty(&m_lastHintRect)) {
+			needUpdate = true;
+		} else {
+			Int dx = abs(hintPos.x - m_lastHintPos.x);
+			Int dy = abs(hintPos.y - m_lastHintPos.y);
+			if (dx > 15 || dy > 15) {
+				needUpdate = true;
+			}
+		}
+	}
+
 	RECT hintRect;
 	SIZE textSize;
+	if (m3DFont && !hdc) {
+		textSize.cx = firstLineLen * 6;
+		textSize.cy = 16;
+	} else {
+		::GetTextExtentPoint32(hdc, firstLine, firstLineLen, &textSize);
+	}
+
 	if (!needUpdate && !::IsRectEmpty(&m_lastHintRect)) {
 		hintPos = m_lastHintPos;
 		hintRect = m_lastHintRect;
-		if (m3DFont && !hdc) {
-			textSize.cx = (Int)strlen(firstLine) * 6;
-			textSize.cy = 16;
-		} else {
-			::GetTextExtentPoint32(hdc, firstLine, (Int)strlen(firstLine), &textSize);
-		}
 	} else {
-		if (m3DFont && !hdc) {
-			textSize.cx = (Int)strlen(firstLine) * 6;
-			textSize.cy = 16;
-		} else {
-			::GetTextExtentPoint32(hdc, firstLine, (Int)strlen(firstLine), &textSize);
-		}
-
 		Int padding = 6;
 		hintRect.left = hintPos.x - padding;
 		hintRect.top = hintPos.y - textSize.cy - padding;
@@ -3396,19 +3373,19 @@ void WbView3d::drawBrushModeHint(HDC hdc)
 	if (m3DFont && !hdc) {
 		RECT textRect = hintRect;
 		textRect.bottom = textRect.top + textSize.cy;
-		m3DFont->DrawText(firstLine, (Int)strlen(firstLine), &textRect,
+		m3DFont->DrawText(firstLine, firstLineLen, &textRect,
 			DT_LEFT | DT_NOCLIP | DT_TOP | DT_SINGLELINE, 0xFFFFFFFF);
 	} else if (hdc) {
 		::SetBkMode(hdc, TRANSPARENT);
 		::SetTextColor(hdc, RGB(255, 255, 255));
 		
-		::TextOut(hdc, hintPos.x, hintPos.y - textSize.cy, firstLine, (Int)strlen(firstLine));
+		::TextOut(hdc, hintPos.x, hintPos.y - textSize.cy, firstLine, firstLineLen);
 	}
 
 	if (needUpdate) {
 		m_lastHintRect = hintRect;
 		m_lastHintPos = hintPos;
-		m_lastBrushMode = modeInt;
+		m_lastBrushMode = info.modeInt;
 	}
 	
 	m_hintDrawnThisFrame = true;

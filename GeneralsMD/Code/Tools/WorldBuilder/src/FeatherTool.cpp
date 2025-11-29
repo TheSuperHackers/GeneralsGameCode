@@ -31,6 +31,7 @@
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
 #include "WorldBuilderView.h"
+#include "BrushTool.h"
 //
 // FeatherTool class.
 Int FeatherTool::m_feather = 0;
@@ -182,46 +183,16 @@ void FeatherTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 					redoRate = true;
 				}
 				m_htMapRateCopy->setHeight(i,j,rate);
-				Int total=0;
-				Real numSamples=0;
-				Int ii, jj;
-				Int radius = m_radius;
-				if (radius<1) radius=1;
-				if (radius>FeatherOptions::MAX_RADIUS) radius = FeatherOptions::MAX_RADIUS;
-				for (ii = i-radius; ii < i+radius+1; ii++) {
-					for (jj = j-radius; jj<j+radius+1; jj++) {
-						Real factor;
-						if (i==ii && j==jj) {
-							factor = 1.0f;
-						} else {
-							Real dist = sqrt((ii-i)*(ii-i)+(jj-j)*(jj-j));
-							if (dist<1.0) dist = 1.0;
-							if (dist>radius) {
-								factor = 0;
-							} else {
-								factor = 1.0f - (dist-1)/radius;
-							}
-						}
-						int iNdx = ii;
-						if (iNdx<0) iNdx = 1;
-						if (iNdx >=m_htMapEditCopy->getXExtent()) {
-							iNdx = m_htMapEditCopy->getXExtent()-1;
-						}
-						int jNdx = jj;
-						if (jNdx<0) jNdx = 1;
-						if (jNdx >=m_htMapEditCopy->getYExtent()) {
-							jNdx = m_htMapEditCopy->getYExtent()-1;
-						}
-						total += m_htMapFeatherCopy->getHeight(iNdx, jNdx);
-						numSamples+=1;
-					}
-				}
-				total = floor((total/numSamples));
-				UnsignedByte origHeight =  m_htMapFeatherCopy->getHeight(i, j);
-				float rateF = rate/255.0;
-				total = floor(origHeight*(1.0f-rateF) + total*rateF + 0.5f);
-				m_htMapEditCopy->setHeight(i, j, total);
-				pDoc->invalCell(i, j);
+				
+				BrushTool::applySmoothingAlgorithm(
+					m_htMapEditCopy,
+					m_htMapFeatherCopy,
+					i, j,
+					rate,
+					m_radius,
+					1,
+					FeatherOptions::MAX_RADIUS,
+					pDoc);
 			}
 		}
 	}

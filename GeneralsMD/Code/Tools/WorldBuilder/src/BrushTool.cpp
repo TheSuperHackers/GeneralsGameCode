@@ -31,6 +31,7 @@
 #include "WorldBuilderView.h"
 #include "brushoptions.h"
 #include "DrawObject.h"
+#include "WorldBuilder.h"
 //
 // BrushTool class.
 //
@@ -79,6 +80,7 @@ void BrushTool::setHeight(Int height)
 {
 	if (m_brushHeight != height) {
 		m_brushHeight = height;
+		// notify height palette options panel
 		BrushOptions::setHeight(height);
 	}
 };
@@ -118,6 +120,7 @@ void BrushTool::setWidth(Int width)
 {
 	if (m_brushWidth != width) {
 		m_brushWidth = width;
+		// notify brush palette options panel
 		BrushOptions::setWidth(width);
 		DrawObject::setBrushFeedbackParms(m_brushSquare, m_brushWidth, m_brushFeather);
 	}
@@ -128,6 +131,7 @@ void BrushTool::setFeather(Int feather)
 {
 	if (m_brushFeather != feather) {
 		m_brushFeather = feather;
+		// notify height palette options panel
 		BrushOptions::setFeather(feather);
 		DrawObject::setBrushFeedbackParms(m_brushSquare, m_brushWidth, m_brushFeather);
 	}
@@ -150,6 +154,7 @@ void BrushTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 
 	m_activeMode = determineBrushMode();
 
+	// just in case, release it.
 	REF_PTR_RELEASE(m_htMapEditCopy);
 	REF_PTR_RELEASE(m_htMapFeatherCopy);
 	REF_PTR_RELEASE(m_htMapRateCopy);
@@ -182,7 +187,7 @@ void BrushTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBui
 
 	WBDocUndoable *pUndo = new WBDocUndoable(pDoc, m_htMapEditCopy);
 	pDoc->AddAndDoUndoable(pUndo);
-	REF_PTR_RELEASE(pUndo);
+	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	REF_PTR_RELEASE(m_htMapEditCopy);
 	REF_PTR_RELEASE(m_htMapFeatherCopy);
 	REF_PTR_RELEASE(m_htMapRateCopy);
@@ -378,46 +383,15 @@ void BrushTool::applySmoothBrush(const CPoint &ndx, Int brushWidth, CWorldBuilde
 				}
 				m_htMapRateCopy->setHeight(i,j,rate);
 
-				Int total=0;
-				Real numSamples=0;
-				Int ii, jj;
-				Int radius = m_smoothRadius;
-				if (radius<MIN_SMOOTH_RADIUS) radius=MIN_SMOOTH_RADIUS;
-				if (radius>MAX_SMOOTH_RADIUS) radius = MAX_SMOOTH_RADIUS;
-				for (ii = i-radius; ii < i+radius+1; ii++) {
-					for (jj = j-radius; jj<j+radius+1; jj++) {
-						Real factor;
-						if (i==ii && j==jj) {
-							factor = 1.0f;
-						} else {
-							Real dist = sqrt((ii-i)*(ii-i)+(jj-j)*(jj-j));
-							if (dist<1.0) dist = 1.0f;
-							if (dist>radius) {
-								factor = 0;
-							} else {
-								factor = 1.0f - (dist-1)/radius;
-							}
-						}
-						int iNdx = ii;
-						if (iNdx<0) iNdx = 1;
-						if (iNdx >=m_htMapEditCopy->getXExtent()) {
-							iNdx = m_htMapEditCopy->getXExtent()-1;
-						}
-						int jNdx = jj;
-						if (jNdx<0) jNdx = 1;
-						if (jNdx >=m_htMapEditCopy->getYExtent()) {
-							jNdx = m_htMapEditCopy->getYExtent()-1;
-						}
-						total += m_htMapFeatherCopy->getHeight(iNdx, jNdx);
-						numSamples+=1;
-					}
-				}
-				total = floor((total/numSamples));
-				UnsignedByte origHeight =  m_htMapFeatherCopy->getHeight(i, j);
-				float rateF = rate/255.0f;
-				total = floor(origHeight*(1.0f-rateF) + total*rateF + 0.5f);
-				m_htMapEditCopy->setHeight(i, j, total);
-				pDoc->invalCell(i, j);
+				applySmoothingAlgorithm(
+					m_htMapEditCopy,
+					m_htMapFeatherCopy,
+					i, j,
+					rate,
+					m_smoothRadius,
+					MIN_SMOOTH_RADIUS,
+					MAX_SMOOTH_RADIUS,
+					pDoc);
 			}
 		}
 	}
@@ -515,6 +489,113 @@ void BrushTool::getModeHintStrings(char *primaryBuf, Int primaryBufSize, char *s
 						 defaultPrefix, defaultSuffix,
 						 shiftPrefix, shiftSuffix,
 						 ctrlPrefix, ctrlSuffix,
-						 ctrlShiftPrefix, ctrlShiftSuffix);
+		ctrlShiftPrefix, ctrlShiftSuffix);
 	}
+}
+
+Bool BrushTool::getBrushHintInfo(BrushHintInfo &info, char *hintTextBuf, Int hintTextBufSize, const CPoint &hintPos, Int lastBrushMode)
+{
+	info.shouldShow = false;
+	info.shouldClear = false;
+	info.hintPos = hintPos;
+	
+	if (!hintTextBuf || hintTextBufSize <= 0) {
+		return false;
+	}
+	hintTextBuf[0] = '\0';
+	
+	Tool *pCurTool = WbApp()->getCurTool();
+	if (!pCurTool || pCurTool->getToolID() != ID_BRUSH_TOOL) {
+		info.shouldClear = true;
+		return false;
+	}
+	
+	if (::GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
+		info.shouldClear = true;
+		return false;
+	}
+	
+	info.currentMode = getPreviewModeFromKeys();
+	info.modeInt = (Int)info.currentMode;
+	
+	char primaryBuf[256];
+	char secondaryBuf[512];
+	getModeHintStrings(primaryBuf, sizeof(primaryBuf), secondaryBuf, sizeof(secondaryBuf));
+	
+	// Prefer secondary buffer (full hint) if available, otherwise use primary (current mode)
+	const char* hintText = NULL;
+	if (secondaryBuf && strlen(secondaryBuf) > 0) {
+		hintText = secondaryBuf;
+	} else if (primaryBuf && strlen(primaryBuf) > 0) {
+		hintText = primaryBuf;
+	}
+	
+	if (!hintText || strlen(hintText) == 0) {
+		info.shouldClear = true;
+		return false;
+	}
+	
+	strlcpy(hintTextBuf, hintText, hintTextBufSize);
+	info.shouldShow = true;
+	return true;
+}
+
+void BrushTool::applySmoothingAlgorithm(
+	WorldHeightMapEdit *editMap,
+	WorldHeightMapEdit *featherMap,
+	Int i, Int j,
+	Int rate,
+	Int smoothRadius,
+	Int minRadius,
+	Int maxRadius,
+	CWorldBuilderDoc *pDoc)
+{
+	if (i < 0 || i >= editMap->getXExtent() || j < 0 || j >= editMap->getYExtent()) {
+		return;
+	}
+	
+	Int radius = smoothRadius;
+	if (radius < minRadius) radius = minRadius;
+	if (radius > maxRadius) radius = maxRadius;
+	
+	Int total = 0;
+	Real numSamples = 0;
+	
+	for (Int ii = i - radius; ii < i + radius + 1; ii++) {
+		for (Int jj = j - radius; jj < j + radius + 1; jj++) {
+			Real factor;
+			if (i == ii && j == jj) {
+				factor = 1.0f;
+			} else {
+				Real dist = sqrt((Real)((ii - i) * (ii - i) + (jj - j) * (jj - j)));
+				if (dist < 1.0f) dist = 1.0f;
+				if (dist > radius) {
+					factor = 0;
+				} else {
+					factor = 1.0f - (dist - 1) / radius;
+				}
+			}
+			
+			int iNdx = ii;
+			if (iNdx < 0) iNdx = 1;
+			if (iNdx >= editMap->getXExtent()) {
+				iNdx = editMap->getXExtent() - 1;
+			}
+			int jNdx = jj;
+			if (jNdx < 0) jNdx = 1;
+			if (jNdx >= editMap->getYExtent()) {
+				jNdx = editMap->getYExtent() - 1;
+			}
+			
+			total += featherMap->getHeight(iNdx, jNdx);
+			numSamples += 1;
+		}
+	}
+	
+	total = (Int)floor(total / numSamples);
+	UnsignedByte origHeight = featherMap->getHeight(i, j);
+	float rateF = rate / 255.0f;
+	total = (Int)floor(origHeight * (1.0f - rateF) + total * rateF + 0.5f);
+	editMap->setHeight(i, j, total);
+	pDoc->invalCell(i, j);
 }

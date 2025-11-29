@@ -1092,42 +1092,30 @@ DEBUG_ASSERTCRASH((abs(curPt.y-curPt2.y)<1),("oops"));
 }
 
 //=============================================================================
+// CWorldBuilderView::clearBrushModeHintState
+//=============================================================================
+/** Clears the brush mode hint state. */
+//=============================================================================
+void CWorldBuilderView::clearBrushModeHintState()
+{
+	if (!m_lastHintRect.IsRectEmpty()) {
+		m_lastHintRect.SetRectEmpty();
+		m_lastBrushMode = -1;
+		m_lastHintPos = CPoint(-10000, -10000);
+	}
+}
+
+//=============================================================================
 // CWorldBuilderView::drawBrushModeHint
 //=============================================================================
 /** Draws the brush mode hint on canvas near the brush cursor. */
 //=============================================================================
 void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 {
-	Tool *pCurTool = WbApp()->getCurTool();
-	if (!pCurTool || pCurTool->getToolID() != ID_BRUSH_TOOL) {
-		if (!m_lastHintRect.IsRectEmpty()) {
-			m_lastHintRect.SetRectEmpty();
-			m_lastBrushMode = -1;
-			m_lastHintPos = CPoint(-10000, -10000);
-		}
-		return;
-	}
-
-	if (::GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
-		if (!m_lastHintRect.IsRectEmpty()) {
-			m_lastHintRect.SetRectEmpty();
-			m_lastBrushMode = -1;
-			m_lastHintPos = CPoint(-10000, -10000);
-		}
-		return;
-	}
-
-	BrushTool::EBrushMode currentMode = BrushTool::getPreviewModeFromKeys();
-	Int modeInt = (Int)currentMode;
-
 	Coord3D brushPos = DrawObject::getFeedbackPos();
 	CPoint viewPt;
 	if (!docToViewCoords(brushPos, &viewPt)) {
-		if (!m_lastHintRect.IsRectEmpty()) {
-			m_lastHintRect.SetRectEmpty();
-			m_lastBrushMode = -1;
-			m_lastHintPos = CPoint(-10000, -10000);
-		}
+		clearBrushModeHintState();
 		return;
 	}
 
@@ -1138,52 +1126,47 @@ void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 	hintPos.x += 20;
 	hintPos.y -= 20;
 
-	char primaryBuf[256];
-	char secondaryBuf[512];
-	BrushTool::getModeHintStrings(primaryBuf, sizeof(primaryBuf), secondaryBuf, sizeof(secondaryBuf));
-	
-	const char* firstLine = secondaryBuf && strlen(secondaryBuf) > 0 ? secondaryBuf : primaryBuf;
-	
-	Bool needUpdate = false;
-	if (modeInt != m_lastBrushMode) {
-		needUpdate = true;
-	} else if (m_lastHintRect.IsRectEmpty()) {
-		needUpdate = true;
-	} else {
-		Int dx = abs(hintPos.x - m_lastHintPos.x);
-		Int dy = abs(hintPos.y - m_lastHintPos.y);
-		if (dx > 15 || dy > 15) {
-			needUpdate = true;
-		}
-	}
-	
-	if (!firstLine || strlen(firstLine) == 0) {
-		if (!m_lastHintRect.IsRectEmpty()) {
-			m_lastHintRect.SetRectEmpty();
-			m_lastBrushMode = -1;
-			m_lastHintPos = CPoint(-10000, -10000);
+	char hintTextBuf[512];
+	BrushTool::BrushHintInfo info;
+	if (!BrushTool::getBrushHintInfo(info, hintTextBuf, sizeof(hintTextBuf), hintPos, m_lastBrushMode)) {
+		if (info.shouldClear) {
+			clearBrushModeHintState();
 		}
 		return;
 	}
 
-	CRect hintRect;
-	CSize textSize;
+	if (!info.shouldShow || strlen(hintTextBuf) == 0) {
+		clearBrushModeHintState();
+		return;
+	}
+
+	const char* firstLine = hintTextBuf;
+	Int firstLineLen = (Int)strlen(firstLine);
+	Bool needUpdate = (info.modeInt != m_lastBrushMode);
+	if (!needUpdate) {
+		if (m_lastHintRect.IsRectEmpty()) {
+			needUpdate = true;
+		} else {
+			Int dx = abs(hintPos.x - m_lastHintPos.x);
+			Int dy = abs(hintPos.y - m_lastHintPos.y);
+			if (dx > 15 || dy > 15) {
+				needUpdate = true;
+			}
+		}
+	}
+
+	CSize textSize = pDc->GetTextExtent(firstLine, firstLineLen);
 	
-	textSize = pDc->GetTextExtent(firstLine, (Int)strlen(firstLine));
+	if (!needUpdate && !m_lastHintRect.IsRectEmpty()) {
+		hintPos = m_lastHintPos;
+	}
 	
 	Int padding = 6;
+	CRect hintRect;
 	hintRect.left = hintPos.x - padding;
 	hintRect.top = hintPos.y - textSize.cy - padding;
 	hintRect.right = hintPos.x + textSize.cx + padding;
 	hintRect.bottom = hintPos.y + padding;
-	
-	if (!needUpdate && !m_lastHintRect.IsRectEmpty()) {
-		hintPos = m_lastHintPos;
-		hintRect.left = hintPos.x - padding;
-		hintRect.top = hintPos.y - textSize.cy - padding;
-		hintRect.right = hintPos.x + textSize.cx + padding;
-		hintRect.bottom = hintPos.y + padding;
-	}
 	
 	if (pUpdateRgn && !needUpdate && !m_lastHintRect.IsRectEmpty()) {
 		CRect adjustedHintRect = hintRect;
@@ -1196,7 +1179,7 @@ void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 	COLORREF oldColor = pDc->SetTextColor(RGB(255, 255, 255));
 	Int oldBkMode = pDc->SetBkMode(TRANSPARENT);
 	
-	pDc->TextOut(hintPos.x, hintPos.y - textSize.cy, firstLine, (Int)strlen(firstLine));
+	pDc->TextOut(hintPos.x, hintPos.y - textSize.cy, firstLine, firstLineLen);
 	
 	pDc->SetTextColor(oldColor);
 	pDc->SetBkMode(oldBkMode);
@@ -1204,14 +1187,12 @@ void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 	if (needUpdate) {
 		m_lastHintRect = hintRect;
 		m_lastHintPos = hintPos;
-		m_lastBrushMode = modeInt;
+		m_lastBrushMode = info.modeInt;
 	}
 }
 
 //=============================================================================
 // CWorldBuilderView::OnMouseMove
-//=============================================================================
-/** Override to invalidate hint area when mouse moves. */
 //=============================================================================
 void CWorldBuilderView::OnMouseMove(UINT nFlags, CPoint point)
 {

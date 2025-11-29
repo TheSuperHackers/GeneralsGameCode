@@ -220,7 +220,7 @@ private:
 	// Brush mode hint flicker reduction
 	Int											m_lastBrushMode;		///< Last brush mode drawn (for flicker reduction)
 	RECT										m_lastHintRect;			///< Last hint rectangle drawn (for flicker reduction)
-	CPoint										m_lastHintPos;			///< Last hint position (for flicker reduction)
+	CPoint									m_lastHintPos;			///< Last hint position (for flicker reduction)
 	Bool										m_hintDrawnThisFrame;	///< Flag to prevent double-drawing in same frame
 
 protected:
@@ -233,6 +233,7 @@ protected:
 	void drawLabels(HDC hdc);
 	void drawLabels(void);
 	void drawBrushModeHint(HDC hdc);
+	void clearBrushModeHintState();
 	void shutdownWW3D();
 	void killTheTimer();
 	void render();

@@ -87,6 +87,27 @@ public:
 	static EBrushMode getPreviewModeFromKeys();
 	static const char* getModeDisplayName(EBrushMode mode);
 	static void getModeHintStrings(char *primaryBuf, Int primaryBufSize, char *secondaryBuf, Int secondaryBufSize);
+	
+	// Helper functions for brush hint drawing (shared between 2D and 3D views)
+	struct BrushHintInfo {
+		Bool shouldShow;
+		Bool shouldClear;
+		EBrushMode currentMode;
+		Int modeInt;
+		CPoint hintPos;
+	};
+	static Bool getBrushHintInfo(BrushHintInfo &info, char *hintTextBuf, Int hintTextBufSize, const CPoint &hintPos, Int lastBrushMode);
+	
+	// Shared smoothing algorithm function (processes a single cell)
+	static void applySmoothingAlgorithm(
+		WorldHeightMapEdit *editMap,
+		WorldHeightMapEdit *featherMap,
+		Int i, Int j,
+		Int rate,
+		Int smoothRadius,
+		Int minRadius,
+		Int maxRadius,
+		CWorldBuilderDoc *pDoc);
 
 public:
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);

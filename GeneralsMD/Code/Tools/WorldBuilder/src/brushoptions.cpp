@@ -92,7 +92,7 @@ void BrushOptions::setHeight(Int height)
 
 void BrushOptions::setRaiseLowerAmount(Int amount)
 {
-	char buffer[12];
+	char buffer[_MAX_PATH];
 	snprintf(buffer, ARRAY_SIZE(buffer), "%d", amount);
 	m_currentRaiseLower = amount;
 	if (m_staticThis && !m_staticThis->m_updating) {
