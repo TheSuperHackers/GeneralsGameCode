@@ -49,14 +49,17 @@
 #define nullptr 0
 #endif
 
-// TheSuperHackers @performance bobtista 25/11/2025 Helper to move-assign from reference: uses std::move in C++11, swap in C++98
+// Helper to move-assign from reference: uses std::move in C++11, swap in C++98
 template<typename T>
 inline void move_or_swap(T& dest, T& src)
 {
 #if __cplusplus >= 201103L
 	dest = std::move(src);
 #else
-	// Use swap to emulate move semantics for VC6 compatibility
+	// C++03 fallback: mimic move semantics
+	// dest gets src's value, src becomes empty
+	T empty;
 	dest.swap(src);
+	src.swap(empty);
 #endif
 }
