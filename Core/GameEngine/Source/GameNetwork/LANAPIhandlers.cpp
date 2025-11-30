@@ -47,7 +47,7 @@ void LANAPI::setProductInfoFromLocalData(GameSlot *slot)
 	productInfo.exeCRC = TheGlobalData->m_exeCRC;
 	productInfo.iniCRC = TheGlobalData->m_iniCRC;
 	productInfo.productVersion = TheVersion->getVersionNumber();
-	productInfo.gitTagOrHash = TheVersion->getAsciiGitTagOrHash();
+	productInfo.gitShortHash = TheVersion->getAsciiGitShortHash();
 	productInfo.productName = TheVersion->getUnicodeProductString();
 
 	slot->setProductInfo(productInfo);
@@ -59,7 +59,7 @@ void LANAPI::setProductInfoFromMessage(LANMessage *msg, GameSlot *slot)
 	productInfo.exeCRC = msg->ProductInfo.exeCRC;
 	productInfo.iniCRC = msg->ProductInfo.iniCRC;
 	productInfo.productVersion = msg->ProductInfo.productVersion;
-	productInfo.gitTagOrHash = msg->ProductInfo.gitTagOrHash;
+	productInfo.gitShortHash = msg->ProductInfo.gitShortHash;
 	productInfo.productName = msg->ProductInfo.productName;
 
 	slot->setProductInfo(productInfo);
@@ -74,7 +74,7 @@ void LANAPI::sendProductInfoMessage(Int messageType, UnsignedInt senderIP)
 	msg.ProductInfo.exeCRC = TheGlobalData->m_exeCRC;
 	msg.ProductInfo.iniCRC = TheGlobalData->m_iniCRC;
 	msg.ProductInfo.productVersion = TheVersion->getVersionNumber();
-	strlcpy(msg.ProductInfo.gitTagOrHash, TheVersion->getAsciiGitTagOrHash().str(), ARRAY_SIZE(msg.ProductInfo.gitTagOrHash));
+	strlcpy(msg.ProductInfo.gitShortHash, TheVersion->getAsciiGitShortHash().str(), ARRAY_SIZE(msg.ProductInfo.gitShortHash));
 	wcslcpy(msg.ProductInfo.productName, TheVersion->getUnicodeProductString().str(), ARRAY_SIZE(msg.ProductInfo.productName));
 
 	sendMessage(&msg, senderIP);

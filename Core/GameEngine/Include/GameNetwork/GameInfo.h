@@ -62,7 +62,7 @@ public:
 		UnsignedInt exeCRC;
 		UnsignedInt iniCRC;
 		UnsignedInt productVersion;
-		AsciiString gitTagOrHash;
+		AsciiString gitShortHash;
 		UnicodeString productName;
 	};
 

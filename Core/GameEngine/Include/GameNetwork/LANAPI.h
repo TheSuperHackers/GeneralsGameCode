@@ -431,7 +431,7 @@ struct LANMessage
 			UnsignedInt exeCRC;
 			UnsignedInt iniCRC;
 			UnsignedInt productVersion;
-			Char gitTagOrHash[33];
+			Char gitShortHash[42];
 			WideChar productName[129];
 		} ProductInfo;
 	};

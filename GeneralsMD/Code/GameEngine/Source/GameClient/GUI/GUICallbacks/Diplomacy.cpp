@@ -576,10 +576,10 @@ void PopulateInGameDiplomacyPopup( void )
 				// TheSuperHackers @feature Caball009 06/11/2025 Set special status for players that are using a patched client version.
 				if (slot->isHuman() && slot->getProductInfo().productVersion > 0)
 				{
-					UnicodeString gitTagOrHash;
-					gitTagOrHash.translate(slot->getProductInfo().gitTagOrHash);
+					UnicodeString gitShortHash;
+					gitShortHash.translate(slot->getProductInfo().gitShortHash);
 
-					text.format(L"%s [%s]", text.str(), gitTagOrHash.str());
+					text.format(L"%s [%s]", text.str(), gitShortHash.str());
 				}
 
 				staticTextStatus[rowNum]->winSetEnabledTextColors(frontColor, backColor);
