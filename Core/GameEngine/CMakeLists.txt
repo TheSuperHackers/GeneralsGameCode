@@ -510,7 +510,7 @@ set(GAMEENGINE_SRC
 #    Include/GameNetwork/FrameData.h
 #    Include/GameNetwork/FrameDataManager.h
 #    Include/GameNetwork/FrameMetrics.h
-#    Include/GameNetwork/GameInfo.h
+    Include/GameNetwork/GameInfo.h
 #    Include/GameNetwork/GameMessageParser.h
 #    Include/GameNetwork/GameSpy/BuddyDefs.h
 #    Include/GameNetwork/GameSpy/BuddyThread.h
@@ -534,10 +534,10 @@ set(GAMEENGINE_SRC
 #    Include/GameNetwork/GameSpyThread.h
 #    Include/GameNetwork/GUIUtil.h
 #    Include/GameNetwork/IPEnumeration.h
-#    Include/GameNetwork/LANAPI.h
-#    Include/GameNetwork/LANAPICallbacks.h
+    Include/GameNetwork/LANAPI.h
+    Include/GameNetwork/LANAPICallbacks.h
 #    Include/GameNetwork/LANGameInfo.h
-#    Include/GameNetwork/LANPlayer.h
+    Include/GameNetwork/LANPlayer.h
 #    Include/GameNetwork/NAT.h
 #    Include/GameNetwork/NetCommandList.h
 #    Include/GameNetwork/NetCommandMsg.h
@@ -1100,7 +1100,7 @@ set(GAMEENGINE_SRC
 #    Source/GameNetwork/FrameData.cpp
 #    Source/GameNetwork/FrameDataManager.cpp
 #    Source/GameNetwork/FrameMetrics.cpp
-#    Source/GameNetwork/GameInfo.cpp
+    Source/GameNetwork/GameInfo.cpp
 #    Source/GameNetwork/GameMessageParser.cpp
     #Source/GameNetwork/GameSpyChat.cpp # unused
     #Source/GameNetwork/GameSpyGameInfo.cpp # unused
@@ -1121,10 +1121,10 @@ set(GAMEENGINE_SRC
 #    Source/GameNetwork/GameSpyOverlay.cpp
 #    Source/GameNetwork/GUIUtil.cpp
 #    Source/GameNetwork/IPEnumeration.cpp
-#    Source/GameNetwork/LANAPI.cpp
-#    Source/GameNetwork/LANAPICallbacks.cpp
-#    Source/GameNetwork/LANAPIhandlers.cpp
-#    Source/GameNetwork/LANGameInfo.cpp
+    Source/GameNetwork/LANAPI.cpp
+    Source/GameNetwork/LANAPICallbacks.cpp
+    Source/GameNetwork/LANAPIhandlers.cpp
+    Source/GameNetwork/LANGameInfo.cpp
 #    Source/GameNetwork/NAT.cpp
 #    Source/GameNetwork/NetCommandList.cpp
 #    Source/GameNetwork/NetCommandMsg.cpp
