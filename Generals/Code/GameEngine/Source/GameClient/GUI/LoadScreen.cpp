@@ -66,6 +66,7 @@
 #include "Common/AudioAffect.h"
 
 #include "GameClient/LoadScreen.h"
+#include "GameClient/Keyboard.h"
 #include "GameClient/Shell.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetProgressBar.h"
@@ -490,6 +491,18 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 		Int shiftedPercent = -FRAME_FUDGE_ADD + 1;
 		while (m_videoStream->frameIndex() < m_videoStream->frameCount() - 1 )
 		{
+			// TheSuperHackers @feature User can now skip video by pressing ESC
+			if (TheKeyboard)
+			{
+				TheKeyboard->UPDATE();
+				KeyboardIO *io = TheKeyboard->findKey(KEY_ESC, KeyboardIO::STATUS_UNUSED);
+				if (io && BitIsSet(io->state, KEY_STATE_DOWN))
+				{
+					io->setUsed();
+					break;
+				}
+			}
+
 			TheGameEngine->serviceWindowsOS();
 
 			if(!m_videoStream->isFrameReady())

@@ -82,6 +82,7 @@
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/GameText.h"
+#include "GameClient/Keyboard.h"
 #include "GameClient/MapUtil.h"
 #include "GameClient/Shell.h"
 #include "GameClient/KeyDefs.h"
@@ -734,6 +735,18 @@ void PlayMovieAndBlock(AsciiString movieTitle)
 	TheWritableGlobalData->m_loadScreenRender = TRUE;
 	while (videoStream->frameIndex() < videoStream->frameCount() - 1)
 	{
+		// TheSuperHackers @feature User can now skip video by pressing ESC
+		if (TheKeyboard)
+		{
+			TheKeyboard->UPDATE();
+			KeyboardIO *io = TheKeyboard->findKey(KEY_ESC, KeyboardIO::STATUS_UNUSED);
+			if (io && BitIsSet(io->state, KEY_STATE_DOWN))
+			{
+				io->setUsed();
+				break;
+			}
+		}
+
 		TheGameEngine->serviceWindowsOS();
 
 		if(!videoStream->isFrameReady())
