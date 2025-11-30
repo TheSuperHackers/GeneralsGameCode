@@ -743,7 +743,7 @@ AsciiString DataChunkInput::openDataChunk(DataChunkVersionType *ver )
 	c->next = m_chunkStack;
 	m_chunkStack = c;
 	if (this->atEndOfFile()) {
-		return ("");
+		return AsciiString::TheEmptyString;
 	}
 	return m_contents.getName( c->id );
 }
