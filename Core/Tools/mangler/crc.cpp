@@ -18,7 +18,7 @@
 
 
 #include <signal.h>
-#ifdef _WINDOWS
+#ifdef _WIN32
 #include <process.h> // *MUST* be included before ANY Wnet/Wlib headers if _REENTRANT is defined
 #endif
 

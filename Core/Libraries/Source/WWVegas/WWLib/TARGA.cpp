@@ -713,7 +713,7 @@ long Targa::Save(const char* name, long flags, bool addextension)
 			if (!error) {
 
 				mExtension.ExtSize = 495;
-				strlcpy(mExtension.SoftID, "Denzil's Targa Code", sizeof(mExtension.SoftID));
+				strcpy(mExtension.SoftID, "Denzil's Targa Code");
 				mExtension.SoftVer.Number = (1 * 100);
 				mExtension.SoftVer.Letter = 0;
 

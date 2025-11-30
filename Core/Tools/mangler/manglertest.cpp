@@ -20,7 +20,7 @@
 #include <Utility/iostream_adapter.h>
 
 #include <signal.h>
-#ifdef _WINDOWS
+#ifdef _WIN32
 #include <process.h> // *MUST* be included before ANY Wnet/Wlib headers if _REENTRANT is defined
 #endif
 
@@ -128,7 +128,7 @@ int main(int argc, char **argv)
 
 
 	// ----- Initialize Winsock -----
-#ifdef _WINDOWS
+#ifdef _WIN32
 	WORD verReq = MAKEWORD(2, 2);
 	WSADATA wsadata;
 

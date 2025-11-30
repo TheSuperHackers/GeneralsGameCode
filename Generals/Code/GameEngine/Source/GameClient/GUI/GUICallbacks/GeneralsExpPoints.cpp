@@ -56,7 +56,6 @@
 #include "GameClient/GameWindow.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/KeyDefs.h"
-#include "GameClient/ControlBar.h"
 #include "GameClient/InGameUI.h"
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////

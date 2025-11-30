@@ -125,7 +125,7 @@ char const * WBGameFileClass::Set_Name( char const *filename )
 	}
 
 	if (TheFileSystem->doesFileExist(filename)) {
-		strcpy( m_filePath, filename );
+		strlcpy(m_filePath, filename, ARRAY_SIZE(m_filePath));
 		m_fileExists = true;
 	}
 	return m_filename;
@@ -360,7 +360,7 @@ BOOL CWorldBuilderApp::InitInstance()
 #if 1
 	// srj sez: put INI into our user data folder, not the ap dir
 	free((void*)m_pszProfileName);
-	strcpy(buf, TheGlobalData->getPath_UserData().str());
+	strlcpy(buf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(buf));
 	strlcat(buf, "WorldBuilder.ini", ARRAY_SIZE(buf));
 #else
 	strlcat(buf, "//", ARRAY_SIZE(buf));

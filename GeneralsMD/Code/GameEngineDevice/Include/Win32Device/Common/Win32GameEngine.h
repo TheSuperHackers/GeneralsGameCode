@@ -44,7 +44,6 @@
 #include "W3DDevice/GameClient/W3DWebBrowser.h"
 #include "W3DDevice/Common/W3DFunctionLexicon.h"
 #include "W3DDevice/Common/W3DRadar.h"
-#include "W3DDevice/Common/W3DFunctionLexicon.h"
 #include "W3DDevice/Common/W3DThingFactory.h"
 
 

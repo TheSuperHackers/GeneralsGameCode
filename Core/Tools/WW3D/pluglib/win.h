@@ -65,7 +65,7 @@
 #pragma warning(pop)
 #endif
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 extern HINSTANCE	ProgramInstance;
 extern HWND			MainWindow;
 extern bool GameInFocus;
@@ -80,6 +80,6 @@ void __cdecl Print_Win32Error(unsigned long win32Error);
 
 #endif // RTS_DEBUG
 
-#else // _WINDOWS
+#else // _WIN32
 #include <unistd.h>
-#endif // _WINDOWS
+#endif // _WIN32

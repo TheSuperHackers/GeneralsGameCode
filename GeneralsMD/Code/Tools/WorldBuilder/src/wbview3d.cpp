@@ -1196,7 +1196,7 @@ void WbView3d::invalBuildListItemInView(BuildListInfo *pBuildToInval)
 						Shadow::ShadowTypeInfo shadowInfo;
 						shadowInfo.allowUpdates=FALSE;	//shadow image will never update
 						shadowInfo.allowWorldAlign=TRUE;	//shadow image will wrap around world objects
-						strcpy(shadowInfo.m_ShadowName,tTemplate->getShadowTextureName().str());
+						strlcpy(shadowInfo.m_ShadowName, tTemplate->getShadowTextureName().str(), ARRAY_SIZE(shadowInfo.m_ShadowName));
 						DEBUG_ASSERTCRASH(shadowInfo.m_ShadowName[0] != '\0', ("this should be validated in ThingTemplate now"));
 						shadowInfo.m_type=(ShadowType)tTemplate->getShadowType();
 						shadowInfo.m_sizeX=tTemplate->getShadowSizeX();
@@ -1313,7 +1313,7 @@ AsciiString WbView3d::getModelNameAndScale(MapObject *pMapObj, Real *scale, Body
 	if (strncmp(TEST_STRING, pMapObj->getName().str(), strlen(TEST_STRING)) == 0)
 	{
 		/* Handle test art models here */
-		strcpy(buffer, pMapObj->getName().str());
+		strlcpy(buffer, pMapObj->getName().str(), ARRAY_SIZE(buffer));
 
 		Int i;
 		for (i=0; buffer[i]; i++) {
@@ -1474,7 +1474,7 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 					shadowInfo.allowWorldAlign=TRUE;	//shadow image will wrap around world objects
 					if (tTemplate && tTemplate->getShadowType() != SHADOW_NONE && !(pMapObj->getFlags() & FLAG_DONT_RENDER))
 					{	//add correct type of shadow
-						strcpy(shadowInfo.m_ShadowName,tTemplate->getShadowTextureName().str());
+						strlcpy(shadowInfo.m_ShadowName, tTemplate->getShadowTextureName().str(), ARRAY_SIZE(shadowInfo.m_ShadowName));
 						DEBUG_ASSERTCRASH(shadowInfo.m_ShadowName[0] != '\0', ("this should be validated in ThingTemplate now"));
 						shadowInfo.m_type=(ShadowType)tTemplate->getShadowType();
 						shadowInfo.m_sizeX=tTemplate->getShadowSizeX();
@@ -2467,8 +2467,8 @@ void WbView3d::drawLabels(HDC hdc)
 				switch(i) {
 					case 0 : break;
 					case 1: name = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel1, &exists); break;
-					case 2: name = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel2, &exists);; break;
-					case 3: name = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel3, &exists);; break;
+					case 2: name = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel2, &exists); break;
+					case 3: name = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel3, &exists); break;
 					default: name.clear();
 				}
 				if (!name.isEmpty() && m_showWaypoints) {

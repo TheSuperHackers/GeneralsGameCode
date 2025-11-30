@@ -100,7 +100,7 @@ void
 PlaySoundDialogClass::OnCancel (void)
 {
 	SoundObj->Stop ();
-	MEMBER_RELEASE (SoundObj);
+	REF_PTR_RELEASE (SoundObj);
 
 	CDialog::OnCancel ();
 	return ;

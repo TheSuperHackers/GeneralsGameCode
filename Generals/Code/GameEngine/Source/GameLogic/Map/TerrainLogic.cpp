@@ -2143,7 +2143,12 @@ Bool TerrainLogic::isUnderwater( Real x, Real y, Real *waterZ, Real *terrainZ )
 
 	// if no water here, no height, no nuttin
 	if( waterHandle == NULL )
+  {
+    // but we have to return the terrain Z if requested!
+    if (terrainZ)
+      *terrainZ=getGroundHeight(x,y);
 		return FALSE;
+  }
 
 	//
 	// if this water handle is a grid water use the grid height function, otherwise look into

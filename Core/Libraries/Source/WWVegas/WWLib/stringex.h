@@ -20,6 +20,7 @@
 
 #include "bittype.h"
 #include <string.h>
+#include <ctype.h>
 
 
 // Declaration
@@ -54,6 +55,14 @@ template<size_t Size> size_t strlcat_t(char (&dst)[Size], const char *src);
 template<size_t Size> size_t strlmove_t(char (&dst)[Size], const char *src);
 template<size_t Size> size_t strlmcat_t(char (&dst)[Size], const char *src);
 #endif
+
+template<typename T> int strncmp_t(const T *str1, const T *str2, size_t maxcount);
+template<typename T> int strnicmp_t(const T* str1, const T* str2, size_t maxcount);
+
+template<typename T> bool startsWith(const T *str, const T *prefix);
+template<typename T> bool startsWithNoCase(const T *str, const T *prefix);
+template<typename T> bool endsWithNoCase(const T *str, const T *suffix);
+template<typename T> bool endsWithNoCase(const T *str, const T *suffix);
 
 
 // Implementation
@@ -182,3 +191,112 @@ template<size_t Size> size_t strlcat_t(char (&dst)[Size], const char *src) { ret
 template<size_t Size> size_t strlmove_t(char (&dst)[Size], const char *src) { return strlmove_t(dst, src, Size); }
 template<size_t Size> size_t strlmcat_t(char (&dst)[Size], const char *src) { return strlmcat_t(dst, src, Size); }
 #endif
+
+// Templated strncmp.
+// Compares up to maxcount chars or a null byte is encountered, whichever comes first.
+// Returns < 0 if str1 is less than str2, 0 is str1 and str2 are equal and > 0 if str2 is greater than str1.
+template<typename T> int strncmp_t(const T *str1, const T *str2, const size_t maxcount)
+{
+	for (size_t i = 0; i < maxcount; ++i)
+	{
+		const T c1 = str1[i];
+		const T c2 = str2[i];
+		const int diff = (int)c1 - (int)c2;
+		if (diff != 0)
+		{
+			return diff;
+		}
+		if (c1 == T(0)) // both c1 and c2 are null terminators
+		{
+			return 0;
+		}
+	}
+	return 0;
+}
+
+// Lower case conversion helpers
+inline char tolower_t(char c)
+{
+	// cast to unsigned char for correct behavior of tolower()
+	return (char)tolower((unsigned char)c);
+}
+
+inline wchar_t tolower_t(wchar_t c)
+{
+	return (wchar_t)towlower(c);
+}
+
+// Templated strnicmp.
+// Case insensitively compares up to maxcount chars or a null byte is encountered, whichever comes first.
+// Returns < 0 if str1 is less than str2, 0 is str1 and str2 are equal and > 0 if str2 is greater than str1.
+template<typename T> int strnicmp_t(const T *str1, const T *str2, const size_t maxcount)
+{
+	for (size_t i = 0; i < maxcount; ++i)
+	{
+		const T c1 = tolower_t(str1[i]);
+		const T c2 = tolower_t(str2[i]);
+		const int diff = (int)c1 - (int)c2;
+		if (diff != 0)
+		{
+			return diff;
+		}
+		if (c1 == T(0)) // both c1 and c2 are null terminators
+		{
+			return 0;
+		}
+	}
+	return 0;
+}
+
+template<typename T> inline bool startsWith(const T *str, const T *prefix)
+{
+	if (*prefix == T(0))
+		return true;	// everything starts with the empty string
+
+	const size_t strlen = strlen_t(str);
+	const size_t prefixlen = strlen_t(prefix);
+	if (strlen < prefixlen)
+		return false;	// prefix must be as long or shorter than str
+
+	return strncmp_t(str, prefix, prefixlen) == 0;
+}
+
+template<typename T> inline bool startsWithNoCase(const T *str, const T *prefix)
+{
+	if (*prefix == T(0))
+		return true;	// everything starts with the empty string
+
+	const size_t strlen = strlen_t(str);
+	const size_t prefixlen = strlen_t(prefix);
+	if (strlen < prefixlen)
+		return false;	// prefix must be as long or shorter than str
+
+	return strnicmp_t(str, prefix, prefixlen) == 0;
+}
+
+template<typename T> inline bool endsWith(const T *str, const T *suffix)
+{
+	if (*suffix == T(0))
+		return true;	// everything ends with the empty string
+
+	const size_t strlen = strlen_t(str);
+	const size_t suffixlen = strlen_t(suffix);
+	if (strlen < suffixlen)
+		return false;	// suffix must be as long or shorter than str
+
+	return strncmp_t(str + strlen - suffixlen, suffix, suffixlen) == 0;
+}
+
+template<typename T> inline bool endsWithNoCase(const T *str, const T *suffix)
+{
+	if (*suffix == T(0))
+		return true;	// everything ends with the empty string
+
+	const size_t strlen = strlen_t(str);
+	const size_t suffixlen = strlen_t(suffix);
+	if (strlen < suffixlen)
+		return false;	// suffix must be as long or shorter than str
+
+	return strnicmp_t(str + strlen - suffixlen, suffix, suffixlen) == 0;
+}
+

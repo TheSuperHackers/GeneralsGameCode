@@ -34,7 +34,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include <string.h>
 #include <sys/types.h>
-#ifndef _WINDOWS
+#ifndef _WIN32
 #include <netinet/in.h>
 #else
 #define Win32_Winsock

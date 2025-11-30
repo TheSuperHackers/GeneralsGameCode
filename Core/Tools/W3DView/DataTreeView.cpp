@@ -521,7 +521,7 @@ CDataTreeView::LoadAnimationsIntoTree (void)
                 }
 
                 // Release our hold on this animation...
-					 MEMBER_RELEASE (pHierarchyAnim);
+					 REF_PTR_RELEASE (pHierarchyAnim);
             }
         }
 
@@ -583,7 +583,7 @@ CDataTreeView::LoadAnimationsIntoTree (HTREEITEM hItem)
                 }
 
                 // Release our hold on the animation object
-                MEMBER_RELEASE (pHierarchyAnim);
+                REF_PTR_RELEASE (pHierarchyAnim);
             }
         }
 
@@ -1009,7 +1009,7 @@ CDataTreeView::Display_Asset (HTREEITEM htree_item)
 						RenderObjClass *prender_obj = Create_Render_Obj_To_Display (hParentItem);
 						pdoc->PlayAnimation (prender_obj,
 						asset_info->Get_Name ());
-						MEMBER_RELEASE (prender_obj);
+						REF_PTR_RELEASE (prender_obj);
 					}
 				}
 				break;
@@ -1019,7 +1019,7 @@ CDataTreeView::Display_Asset (HTREEITEM htree_item)
 					// Ask the document to display this object
 					ParticleEmitterClass *emitter = (ParticleEmitterClass *)Create_Render_Obj_To_Display (htree_item);
 					pdoc->Display_Emitter (emitter);
-					MEMBER_RELEASE (emitter);
+					REF_PTR_RELEASE (emitter);
 				}
 				break;
 
@@ -1035,7 +1035,7 @@ CDataTreeView::Display_Asset (HTREEITEM htree_item)
 					// Ask the document to display this object
 					RenderObjClass *prender_obj = Create_Render_Obj_To_Display (htree_item);
 					pdoc->DisplayObject (prender_obj);
-					MEMBER_RELEASE (prender_obj);
+					REF_PTR_RELEASE (prender_obj);
 				}
 				break;
 			}
@@ -1478,7 +1478,7 @@ Set_Highest_LOD (RenderObjClass *render_obj)
 			if (sub_obj != NULL) {
 				Set_Highest_LOD (sub_obj);
 			}
-			MEMBER_RELEASE (sub_obj);
+			REF_PTR_RELEASE (sub_obj);
 		}
 
 		//

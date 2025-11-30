@@ -29,7 +29,6 @@
 #include "Lib/BaseType.h"
 #include "Common/GameType.h"
 #include "Common/SparseMatchFinder.h"
-#include "Common/SparseMatchFinder.h"
 
 //-------------------------------------------------------------------------------------------------
 class ArmorTemplate;

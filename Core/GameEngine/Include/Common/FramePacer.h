@@ -49,6 +49,7 @@ public:
 
 	Real getUpdateTime() const; ///< Get the last update delta time in seconds.
 	Real getUpdateFps() const; ///< Get the last update fps.
+	Real getBaseOverUpdateFpsRatio(Real minUpdateFps = 5.0f); ///< Get the last engine base over update fps ratio. Used to scale user inputs to a frame rate independent speed.
 
 	void setTimeFrozen(Bool frozen); ///< Set time frozen. Allows scripted camera movement.
 	void setGameHalted(Bool halted); ///< Set game halted. Does not allow scripted camera movement.

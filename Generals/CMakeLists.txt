@@ -69,4 +69,8 @@ if(RTS_INSTALL_PREFIX_GENERALS AND NOT "${RTS_INSTALL_PREFIX_GENERALS}" STREQUAL
         install(TARGETS g_w3dview RUNTIME DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}")
         install(FILES $<TARGET_PDB_FILE:g_w3dview> DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}" OPTIONAL)
     endif()
+else()
+    message(STATUS "Generals install path not found. Registry keys for 'Generals' not found. "
+                   "Generals targets will be built, but not installed. "
+                   "You can specify the path manually by setting RTS_INSTALL_PREFIX_GENERALS.")
 endif()

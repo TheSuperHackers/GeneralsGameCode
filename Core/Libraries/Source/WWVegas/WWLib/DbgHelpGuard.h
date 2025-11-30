@@ -40,5 +40,5 @@ public:
 
 private:
 
-	bool m_hasLoaded;
+	bool m_needsUnload;
 };

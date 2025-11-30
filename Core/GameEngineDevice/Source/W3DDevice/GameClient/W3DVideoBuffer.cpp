@@ -120,8 +120,8 @@ Bool W3DVideoBuffer::allocate( UnsignedInt width, UnsignedInt height )
 
 	m_width = width;
 	m_height = height;
-	m_textureWidth = width;;
-	m_textureHeight = height;;
+	m_textureWidth = width;
+	m_textureHeight = height;
 	unsigned int temp_depth=1;
 	TextureLoader::Validate_Texture_Size( m_textureWidth, m_textureHeight, temp_depth);
 

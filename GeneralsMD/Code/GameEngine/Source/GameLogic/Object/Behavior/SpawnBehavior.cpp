@@ -584,7 +584,7 @@ Object *SpawnBehavior::reclaimOrphanSpawn( void )
 	{
 		if (prevName.compare(*tempName)) // the list may have redundancy, this will skip some of it
 			continue;
-		orphanData.m_matchTemplate = TheThingFactory->findTemplate( *tempName );;
+		orphanData.m_matchTemplate = TheThingFactory->findTemplate( *tempName );
 		orphanData.m_source = getObject();
 		orphanData.m_closest = NULL;
 		orphanData.m_closestDistSq = BIG_DISTANCE;
@@ -898,7 +898,7 @@ void SpawnBehavior::computeAggregateStates(void)
 				SlavedUpdateInterface* sdu = (*update)->getSlavedUpdateInterface();
 				if (sdu != NULL)
 				{
-					m_selfTaskingSpawnCount += ( sdu->isSelfTasking());;
+					m_selfTaskingSpawnCount += ( sdu->isSelfTasking());
 					break;
 				}
 			}

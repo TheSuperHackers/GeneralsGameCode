@@ -842,7 +842,7 @@ void ActiveBody::attemptHealing( DamageInfo *damageInfo )
 		//(object pointer loses scope as soon as atteptdamage's caller ends)
 		m_lastDamageInfo = *damageInfo;
 		m_lastDamageCleared = false;
-#if RETAIL_COMPATIBLE_BUG
+#if PRESERVE_RETAIL_BEHAVIOR
 		m_lastDamageTimestamp = TheGameLogic->getFrame();
 #endif
 		m_lastHealingTimestamp = TheGameLogic->getFrame();
@@ -1323,6 +1323,11 @@ Bool ActiveBody::isSubdued() const
 #if RETAIL_COMPATIBLE_CRC
 	return m_maxHealth <= m_currentSubdualDamage;
 #else
+  // TheSuperHackers @info Projectiles don't receive the DISABLED_SUBDUED flag (or any flag for
+	// that matter) when jammed, so we have to check their subdual damage directly.
+	if (getObject()->isKindOf(KINDOF_PROJECTILE))
+		return m_maxHealth <= m_currentSubdualDamage;
+
 	return getObject()->isDisabledByType(DISABLED_SUBDUED);
 #endif
 }

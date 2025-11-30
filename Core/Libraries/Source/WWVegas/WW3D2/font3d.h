@@ -35,7 +35,6 @@
 #pragma once
 
 #include "always.h"
-#include "refcount.h"
 #include "vector4.h"
 #include "widestring.h"
 #include "rect.h"

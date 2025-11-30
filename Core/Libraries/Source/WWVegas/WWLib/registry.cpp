@@ -470,7 +470,7 @@ void RegistryClass::Save_Registry_Tree(char *path, INIClass *ini)
 				** See if there are sub keys.
 				*/
 				char new_key_path[512];
-				strcpy(new_key_path, path);
+				strlcpy(new_key_path, path, ARRAY_SIZE(new_key_path));
 				strlcat(new_key_path, "\\", ARRAY_SIZE(new_key_path));
 				strlcat(new_key_path, name, ARRAY_SIZE(new_key_path));
 
@@ -564,7 +564,7 @@ void RegistryClass::Load_Registry(const char *filename, char *old_path, char *ne
 			** Build the new path to use in the registry.
 			*/
 			char *section_name = section->Section;
-			strcpy(path, new_path);
+			strlcpy(path, new_path, ARRAY_SIZE(path));
 			char *cut = strstr(section_name, old_path);
 			if (cut) {
 				strlcat(path, cut + old_path_len, ARRAY_SIZE(path));
@@ -693,7 +693,7 @@ void RegistryClass::Delete_Registry_Tree(char *path)
 					** See if there are sub keys.
 					*/
 					char new_key_path[512];
-					strcpy(new_key_path, path);
+					strlcpy(new_key_path, path, ARRAY_SIZE(new_key_path));
 					strlcat(new_key_path, "\\", ARRAY_SIZE(new_key_path));
 					strlcat(new_key_path, name, ARRAY_SIZE(new_key_path));
 

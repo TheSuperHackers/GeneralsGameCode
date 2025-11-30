@@ -127,16 +127,14 @@ void Win32LocalFileSystem::getFileListInDirectory(const AsciiString& currentDire
 	HANDLE fileHandle = NULL;
 	WIN32_FIND_DATA findData;
 
-	char search[_MAX_PATH];
 	AsciiString asciisearch;
 	asciisearch = originalDirectory;
 	asciisearch.concat(currentDirectory);
 	asciisearch.concat(searchName);
-	strcpy(search, asciisearch.str());
 
 	Bool done = FALSE;
 
-	fileHandle = FindFirstFile(search, &findData);
+	fileHandle = FindFirstFile(asciisearch.str(), &findData);
 	done = (fileHandle == INVALID_HANDLE_VALUE);
 
 	while (!done)	{

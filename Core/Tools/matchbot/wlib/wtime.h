@@ -28,7 +28,7 @@ wtime                      Neal Kettler
 #include <assert.h>
 #include <sys/types.h>
 
-#ifndef _WINDOWS
+#ifndef _WIN32
 #include <unistd.h>
 #include <netinet/in.h>
 #include <sys/time.h>

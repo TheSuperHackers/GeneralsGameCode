@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // InGameUI.cpp ///////////////////////////////////////////////////////////////////////////////////
-// Implementation of in-game user interface singleton inteface
+// Implementation of in-game user interface singleton
 // Author: Michael S. Booth, March 2001
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -72,7 +72,6 @@
 #include "GameClient/SelectionXlat.h"
 #include "GameClient/Shadow.h"
 #include "GameClient/GlobalLanguage.h"
-#include "GameClient/Display.h"
 
 #include "GameLogic/AIGuard.h"
 #include "GameLogic/Weapon.h"
@@ -1881,8 +1880,10 @@ void InGameUI::update( void )
 	if( moneyPlayer)
 	{
 		Money *money = moneyPlayer->getMoney();
-		Bool showIncome = TheGlobalData->m_showMoneyPerMinute;
-		if (!showIncome)
+		Bool wantShowIncome = TheGlobalData->m_showMoneyPerMinute;
+		Bool canShowIncome = TheGlobalData->m_allowMoneyPerMinuteForPlayer || TheControlBar->isObserverControlBarOn();
+		Bool doShowIncome = wantShowIncome && canShowIncome;
+		if (!doShowIncome)
 		{
 			UnsignedInt currentMoney = money->countMoney();
 			if( lastMoney != currentMoney )
@@ -1939,7 +1940,7 @@ void InGameUI::update( void )
 	if (m_cameraRotatingLeft || m_cameraRotatingRight || m_cameraZoomingIn || m_cameraZoomingOut)
 	{
 		// TheSuperHackers @tweak The camera rotation and zoom are now decoupled from the render update.
-		const Real fpsRatio = (Real)BaseFps / TheFramePacer->getUpdateFps();
+		const Real fpsRatio = TheFramePacer->getBaseOverUpdateFpsRatio();
 		const Real rotateAngle = TheGlobalData->m_keyboardCameraRotateSpeed * fpsRatio;
 		const Real zoomHeight = (Real)View::ZoomHeightPerSecond * fpsRatio;
 
@@ -3618,8 +3619,10 @@ void InGameUI::postDraw( void )
 				m_uiMessages[ i ].displayString->draw( x, y, m_uiMessages[ i ].color, dropColor );
 
 				// increment text spot to next location
-				GameFont *font = m_uiMessages[ i ].displayString->getFont();
-				y += font->height;
+				if (GameFont *font = m_uiMessages[ i ].displayString->getFont())
+				{
+					y += font->height;
+				}
 
 			}
 
@@ -5561,10 +5564,12 @@ void InGameUI::removeIdleWorker( Object *obj, Int playerNumber )
 
 void InGameUI::selectNextIdleWorker( void )
 {
-	Int index = TheControlBar->getCurrentlyViewedPlayer()->getPlayerIndex();
+	Player* player = rts::getObservedOrLocalPlayer();
+	Int index = player->getPlayerIndex();
+
 	if(m_idleWorkers[index].empty())
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("InGameUI::selectNextIdleWorker We're trying to select a worker when our list is empty for player %ls", ThePlayerList->getLocalPlayer()->getPlayerDisplayName().str()));
+		DEBUG_ASSERTCRASH(FALSE, ("InGameUI::selectNextIdleWorker We're trying to select a worker when our list is empty for player %ls", player->getPlayerDisplayName().str()));
 		return;
 	}
 	Object *selectThisObject = NULL;
@@ -5651,13 +5656,9 @@ ObjectPtrVector InGameUI::getUniqueIdleWorkers(const ObjectList& idleWorkers)
 
 Int InGameUI::getIdleWorkerCount( void )
 {
-	if (Player* player = TheControlBar->getCurrentlyViewedPlayer())
-	{
-		Int index = player->getPlayerIndex();
-		return m_idleWorkers[index].size();
-	}
-
-	return 0;
+	Player* player = rts::getObservedOrLocalPlayer();
+	Int index = player->getPlayerIndex();
+	return m_idleWorkers[index].size();
 }
 
 void InGameUI::showIdleWorkerLayout( void )

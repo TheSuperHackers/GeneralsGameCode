@@ -75,9 +75,10 @@ public:
 	AsciiString m_nameLookupTag;
 	Region3D m_extent;
 	Int m_numPlayers;
-	Bool m_isMultiplayer;
 
+	Bool m_isMultiplayer;
 	Bool m_isOfficial;
+	Bool m_doesExist; ///< Flag to indicate whether the map physically exists. Should be true.
 	UnsignedInt m_filesize;
 	UnsignedInt m_CRC;
 
@@ -89,10 +90,20 @@ public:
 	AsciiString m_fileName;
 };
 
+// TheSuperHackers @performance xezon 02/11/2025 Simplifies and improves the implementation of MapCache
+// to prevent expensive reoccurring redundant map cache reads.
+
 class MapCache : public std::map<AsciiString, MapMetaData>
 {
+	typedef std::set<AsciiString> MapNameSet;
+
 public:
-	MapCache() {}
+	MapCache()
+		: m_doCreateStandardMapCacheINI(TRUE)
+		, m_doLoadStandardMapCacheINI(TRUE)
+		, m_doLoadUserMapCacheINI(TRUE)
+	{}
+
 	void updateCache( void );
 
 	AsciiString getMapDir() const;
@@ -105,22 +116,27 @@ public:
 	void addShippingMap(AsciiString mapName) { mapName.toLower(); m_allowedMaps.insert(mapName); }
 
 private:
-	Bool clearUnseenMaps( AsciiString dirName );
-	void loadStandardMaps(void);
-	Bool loadUserMaps(void);				// returns true if we needed to (re)parse a map
-//	Bool addMap( AsciiString dirName, AsciiString fname, WinTimeStamp timestamp,
-//		UnsignedInt filesize, Bool isOfficial );	///< returns true if it had to (re)parse the map
-	Bool addMap( AsciiString dirName, AsciiString fname, FileInfo *fileInfo, Bool isOfficial); ///< returns true if it had to (re)parse the map
-	void writeCacheINI( Bool userDir );
+	void prepareUnseenMaps(const AsciiString &mapDir);
+	Bool clearUnseenMaps(const AsciiString &mapDir);
+	void loadMapsFromMapCacheINI(const AsciiString &mapDir);
+	Bool loadMapsFromDisk(const AsciiString &mapDir, Bool isOfficial, Bool filterByAllowedMaps = FALSE); // returns true if we needed to (re)parse a map
+	Bool addMap(const AsciiString &mapDir, const AsciiString &fname, const AsciiString &lowerFname, FileInfo &fileInfo, Bool isOfficial); ///< returns true if it had to (re)parse the map
+	void writeCacheINI(const AsciiString &mapDir);
 
-	static const char * m_mapCacheName;
-	std::map<AsciiString, Bool> m_seen;
+	static const char *const m_mapCacheName;
 
-	std::set<AsciiString> m_allowedMaps;
+	MapNameSet m_allowedMaps;
+	Bool m_doCreateStandardMapCacheINI;
+	Bool m_doLoadStandardMapCacheINI;
+	Bool m_doLoadUserMapCacheINI;
 };
 
 extern MapCache *TheMapCache;
 extern TechAndSupplyImages TheSupplyAndTechImageLocations;
+
+// TheSuperHackers @refactor xezon 28/11/2025 Refactors the map list population implementation
+// by breaking it into smaller pieces to make it more maintainable.
+
 Int populateMapListbox( GameWindow *listbox, Bool useSystemMaps, Bool isMultiplayer, AsciiString mapToSelect = AsciiString::TheEmptyString );		/// Read a list of maps from the run directory and fill in the listbox.  Return the selected index
 Int populateMapListboxNoReset( GameWindow *listbox, Bool useSystemMaps, Bool isMultiplayer, AsciiString mapToSelect = AsciiString::TheEmptyString );		/// Read a list of maps from the run directory and fill in the listbox.  Return the selected index
 Bool isValidMap( AsciiString mapName, Bool isMultiplayer );						/// Validate a map

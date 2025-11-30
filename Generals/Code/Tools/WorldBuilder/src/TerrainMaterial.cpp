@@ -302,7 +302,7 @@ void TerrainMaterial::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 		}
 
 		// set the name in the tree view to that of the entry
-		strcpy( buffer, terrain->getName().str() );
+		strlcpy(buffer, terrain->getName().str(), ARRAY_SIZE(buffer));
 
 		doAdd = TRUE;
 	}

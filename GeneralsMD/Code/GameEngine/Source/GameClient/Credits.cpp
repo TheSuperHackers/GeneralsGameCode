@@ -166,7 +166,7 @@ void CreditsManager::load(void )
 														TheGlobalLanguageData->adjustFontSize(TheGlobalLanguageData->m_creditsNormalFont.size),
 														TheGlobalLanguageData->m_creditsNormalFont.bold);
 
-	m_normalFontHeight = font->height;
+	m_normalFontHeight = font ? font->height : 0;
 }
 
 void CreditsManager::reset( void )

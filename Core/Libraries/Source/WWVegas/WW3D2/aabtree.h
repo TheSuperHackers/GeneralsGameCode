@@ -40,7 +40,6 @@
 #pragma once
 
 #include "always.h"
-#include "refcount.h"
 #include "simplevec.h"
 #include "vector3.h"
 #include "Vector3i.h"

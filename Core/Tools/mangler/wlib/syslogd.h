@@ -20,7 +20,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#ifndef _WINDOWS
+#ifndef _WIN32
 #include <syslog.h>
 #endif
 #include <string.h>

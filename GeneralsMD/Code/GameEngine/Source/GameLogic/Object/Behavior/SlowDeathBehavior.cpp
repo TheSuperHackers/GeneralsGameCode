@@ -49,7 +49,6 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ObjectCreationList.h"
 #include "GameLogic/Weapon.h"
-#include "GameClient/Drawable.h"
 
 
 const Real BEGIN_MIDPOINT_RATIO = 0.35f;

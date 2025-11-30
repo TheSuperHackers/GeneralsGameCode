@@ -1,0 +1,48 @@
+{
+    "version": 1,
+    "dependencies": [
+        {
+            "name": "ffmpeg",
+            "version-string": "7.1.1",
+            "port-version": 1,
+            "git-tree": "6ff75f1f596ada519241989f44077cda442480b2"
+        },
+        {
+            "name": "pkgconf",
+            "version-string": "2.3.0",
+            "port-version": 0,
+            "git-tree": "ae3886d8a627ec99dd18890389b6d5d331e29799"
+        },
+        {
+            "name": "vcpkg-cmake",
+            "version-string": "2024-04-23",
+            "port-version": 0,
+            "git-tree": "e74aa1e8f93278a8e71372f1fa08c3df420eb840"
+        },
+        {
+            "name": "vcpkg-cmake-get-vars",
+            "version-string": "2024-09-22",
+            "port-version": 0,
+            "git-tree": "f23148add155147f3d95ae622d3b0031beb25acf"
+        },
+        {
+            "name": "vcpkg-pkgconfig-get-modules",
+            "version-string": "2024-04-03",
+            "port-version": 0,
+            "git-tree": "6845369c8cb7d3c318e8e3ae92fd2b7570a756ca"
+        },
+        {
+            "name": "vcpkg-tool-meson",
+            "version-string": "1.6.1",
+            "port-version": 0,
+            "git-tree": "dc948c67d7f1359319f801078422e996b0a89fd0"
+        },
+        {
+            "name": "zlib",
+            "version-string": "1.3.1",
+            "port-version": 0,
+            "git-tree": "3f05e04b9aededb96786a911a16193cdb711f0c9"
+        }
+    ]
+}
+

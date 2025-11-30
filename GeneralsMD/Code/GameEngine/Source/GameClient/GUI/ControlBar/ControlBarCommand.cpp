@@ -48,7 +48,6 @@
 #include "GameLogic/Module/TransportContain.h"
 #include "GameLogic/Module/MobNexusContain.h"
 #include "GameLogic/Module/SpecialAbilityUpdate.h"
-#include "GameLogic/Module/BattlePlanUpdate.h"
 #include "GameLogic/Module/VeterancyGainCreate.h"
 #include "GameLogic/Module/HackInternetAIUpdate.h"
 #include "GameLogic/Weapon.h"
@@ -959,7 +958,7 @@ const Image* ControlBar::calculateVeterancyOverlayForThing( const ThingTemplate 
 		case LEVEL_HEROIC:
 			return m_rankHeroicIcon;
 	}
-	return NULL;;
+	return NULL;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -981,7 +980,7 @@ const Image* ControlBar::calculateVeterancyOverlayForObject( const Object *obj )
 		case LEVEL_HEROIC:
 			return m_rankHeroicIcon;
 	}
-	return NULL;;
+	return NULL;
 }
 
 //-------------------------------------------------------------------------------------------------

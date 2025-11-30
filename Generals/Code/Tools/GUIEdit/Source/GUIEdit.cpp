@@ -251,14 +251,14 @@ void GUIEdit::setSaveFile( const char *fullPathAndFilename )
   const char *ptr;
 
 	// copy over the full path and filename
-	strcpy( m_savePathAndFilename, fullPathAndFilename );
+	strlcpy(m_savePathAndFilename, fullPathAndFilename, ARRAY_SIZE(m_savePathAndFilename));
 
 	//
 	// copy everything after the last '\' from the full path, this will
 	// be just the filename with extension
 	//
 	ptr = strrchr( fullPathAndFilename, '\\' ) + 1;
-	strcpy( m_saveFilename, ptr );
+	strlcpy(m_saveFilename, ptr, ARRAY_SIZE(m_saveFilename));
 
 }
 
@@ -3539,7 +3539,6 @@ void GUIEdit::stripNameDecorations( GameWindow *root )
 
 	if( !instData->m_decoratedNameString.isEmpty() )
 	{
-		char nameOnly[ MAX_WINDOW_NAME_LEN ];
 		const char *c;
 
 		// skip past the "filename.wnd:" to the name only
@@ -3550,11 +3549,8 @@ void GUIEdit::stripNameDecorations( GameWindow *root )
 			// skip beyong the scope resolution colon
 			c++;
 
-			// copy the name
-			strcpy( nameOnly, c );
-
 			// put the name only in the decoration field
-			instData->m_decoratedNameString = nameOnly;
+			instData->m_decoratedNameString = c;
 
 		}
 

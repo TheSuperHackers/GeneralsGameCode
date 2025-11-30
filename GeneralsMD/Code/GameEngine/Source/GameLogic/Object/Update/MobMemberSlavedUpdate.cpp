@@ -35,7 +35,6 @@
 #include "GameClient/Drawable.h"
 #include "Common/RandomValue.h"
 #include "Common/Xfer.h"
-#include "GameClient/Drawable.h"
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/Damage.h"
@@ -48,8 +47,6 @@
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/Module/MobMemberSlavedUpdate.h"
 #include "GameLogic/Module/SpawnBehavior.h"
-#include "GameClient/InGameUI.h"// selection logic
-#include "GameClient/Drawable.h"
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
 

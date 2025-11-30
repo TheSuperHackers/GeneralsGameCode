@@ -41,9 +41,9 @@
 #pragma warning (pop)
 
 //#include <malloc.h>
+#include "always.h"
 #include "vector3.h"
 #include "matrix3d.h"
-#include "refcount.h"
 #include "RAWFILE.h"
 #include "SoundSceneObj.h"
 #include "Vector.h"

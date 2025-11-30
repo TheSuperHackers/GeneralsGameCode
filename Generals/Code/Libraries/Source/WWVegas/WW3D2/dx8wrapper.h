@@ -65,7 +65,7 @@
 #define	VALUE_NAME_RENDER_DEVICE_WINDOWED			"RenderDeviceWindowed"
 #define	VALUE_NAME_RENDER_DEVICE_TEXTURE_DEPTH		"RenderDeviceTextureDepth"
 
-const unsigned MAX_TEXTURE_STAGES=2;
+const unsigned MAX_TEXTURE_STAGES=8;
 const unsigned MAX_VERTEX_STREAMS=2;
 const unsigned MAX_VERTEX_SHADER_CONSTANTS=96;
 const unsigned MAX_PIXEL_SHADER_CONSTANTS=8;
@@ -1235,7 +1235,7 @@ WWINLINE void DX8Wrapper::Get_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4
 
 WWINLINE const D3DLIGHT8& DX8Wrapper::Peek_Light(unsigned index)
 {
-	return render_state.Lights[index];;
+	return render_state.Lights[index];
 }
 
 WWINLINE bool DX8Wrapper::Is_Light_Enabled(unsigned index)

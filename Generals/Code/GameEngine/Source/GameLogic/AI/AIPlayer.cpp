@@ -379,7 +379,7 @@ void AIPlayer::queueSupplyTruck( void )
 			m_player->setCanBuildUnits(true);
 			const ThingTemplate *tTemplate = TheThingFactory->firstTemplate();
 			while (tTemplate) {
-				Bool isSupplyTruck = tTemplate->isKindOf(KINDOF_HARVESTER);;
+				Bool isSupplyTruck = tTemplate->isKindOf(KINDOF_HARVESTER);
 				if (isSupplyTruck) {
 					Object *factory = findFactory(tTemplate, false);
 					if (factory) {
@@ -801,6 +801,7 @@ void AIPlayer::processBaseBuilding( void )
 
 #else
 					// force delay between rebuilds
+					Int framesToBuild = bldgPlan->calcTimeToBuild(m_player);
 					if (TheGameLogic->getFrame() - m_frameLastBuildingBuilt < framesToBuild)
 					{
 						m_buildDelay = framesToBuild - (TheGameLogic->getFrame() - m_frameLastBuildingBuilt);
@@ -815,7 +816,7 @@ void AIPlayer::processBaseBuilding( void )
 							m_player->getMoney()->withdraw( cost );
 
 							// inst-construct the building
-							bldg = buildStructureNow(bldgPlan, info, NULL);
+							bldg = buildStructureNow(bldgPlan, info);
 							// store the object with the build order
 							if (bldg)
 							{
@@ -3284,7 +3285,7 @@ void TeamInQueue::xfer( Xfer *xfer )
 
 	// version
 	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;;
+	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
 	// xfer work order count

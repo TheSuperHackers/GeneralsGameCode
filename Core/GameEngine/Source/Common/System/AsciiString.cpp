@@ -477,57 +477,25 @@ void AsciiString::format_va(const char* format, va_list args)
 // -----------------------------------------------------
 Bool AsciiString::startsWith(const char* p) const
 {
-	if (*p == 0)
-		return true;	// everything starts with the empty string
-
-	int lenThis = getLength();
-	int lenThat = strlen(p);
-	if (lenThis < lenThat)
-		return false;	// that must be smaller than this
-
-	return strncmp(peek(), p, lenThat) == 0;
+	return ::startsWith(peek(), p);
 }
 
 // -----------------------------------------------------
 Bool AsciiString::startsWithNoCase(const char* p) const
 {
-	if (*p == 0)
-		return true;	// everything starts with the empty string
-
-	int lenThis = getLength();
-	int lenThat = strlen(p);
-	if (lenThis < lenThat)
-		return false;	// that must be smaller than this
-
-	return strnicmp(peek(), p, lenThat) == 0;
+	return ::startsWithNoCase(peek(), p);
 }
 
 // -----------------------------------------------------
 Bool AsciiString::endsWith(const char* p) const
 {
-	if (*p == 0)
-		return true;	// everything ends with the empty string
-
-	int lenThis = getLength();
-	int lenThat = strlen(p);
-	if (lenThis < lenThat)
-		return false;	// that must be smaller than this
-
-	return strncmp(peek() + lenThis - lenThat, p, lenThat) == 0;
+	return ::endsWith(peek(), p);
 }
 
 // -----------------------------------------------------
 Bool AsciiString::endsWithNoCase(const char* p) const
 {
-	if (*p == 0)
-		return true;	// everything ends with the empty string
-
-	int lenThis = getLength();
-	int lenThat = strlen(p);
-	if (lenThis < lenThat)
-		return false;	// that must be smaller than this
-
-	return strnicmp(peek() + lenThis - lenThat, p, lenThat) == 0;
+	return ::endsWithNoCase(peek(), p);
 }
 
 //-----------------------------------------------------------------------------

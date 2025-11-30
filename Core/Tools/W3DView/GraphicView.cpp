@@ -329,8 +329,8 @@ CGraphicView::OnDestroy (void)
 	//
 	// Free the camera object
 	//
-	MEMBER_RELEASE (m_pCamera);
-	MEMBER_RELEASE (m_pLightMesh);
+	REF_PTR_RELEASE (m_pCamera);
+	REF_PTR_RELEASE (m_pLightMesh);
 
 	// Is there an update thread running?
 	if (m_TimerID == 0) {
@@ -388,7 +388,7 @@ Set_Lowest_LOD (RenderObjClass *render_obj)
 			if (psub_obj != NULL) {
 				Set_Lowest_LOD (psub_obj);
 			}
-			MEMBER_RELEASE (psub_obj);
+			REF_PTR_RELEASE (psub_obj);
 		}
 
 		//

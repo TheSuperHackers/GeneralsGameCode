@@ -38,8 +38,8 @@
 
 #pragma once
 
+#include "always.h"
 #include "ww3dformat.h"
-#include "refcount.h"
 
 struct IDirect3DSurface8;
 class Vector2i;

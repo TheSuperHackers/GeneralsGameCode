@@ -744,6 +744,7 @@ void StealthUpdate::changeVisualDisguise()
 		FXList::doFXPos( data->m_disguiseFX, self->getPosition() );
 
 		m_disguised = true;
+		self->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DISGUISED ) );
 	}
 	else if( m_disguiseAsPlayerIndex != -1 )
 	{
@@ -809,6 +810,7 @@ void StealthUpdate::changeVisualDisguise()
 
 		FXList::doFXPos( data->m_disguiseRevealFX, self->getPosition() );
 		m_disguised = false;
+		self->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DISGUISED ) );
 	}
 
 	//Reset the radar (determines color on add)

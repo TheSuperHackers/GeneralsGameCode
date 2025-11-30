@@ -381,6 +381,7 @@ void DebugInit(int flags)
 			*(pEnd + 1) = 0;
 		}
 
+		static_assert(ARRAY_SIZE(theLogFileNamePrev) >= ARRAY_SIZE(dirbuf), "Incorrect array size");
 		strcpy(theLogFileNamePrev, dirbuf);
 		strlcat(theLogFileNamePrev, gAppPrefix, ARRAY_SIZE(theLogFileNamePrev));
 		strlcat(theLogFileNamePrev, DEBUG_FILE_NAME_PREV, ARRAY_SIZE(theLogFileNamePrev));
@@ -391,6 +392,7 @@ void DebugInit(int flags)
 		}
 		strlcat(theLogFileNamePrev, ".txt", ARRAY_SIZE(theLogFileNamePrev));
 
+		static_assert(ARRAY_SIZE(theLogFileName) >= ARRAY_SIZE(dirbuf), "Incorrect array size");
 		strcpy(theLogFileName, dirbuf);
 		strlcat(theLogFileName, gAppPrefix, ARRAY_SIZE(theLogFileNamePrev));
 		strlcat(theLogFileName, DEBUG_FILE_NAME, ARRAY_SIZE(theLogFileNamePrev));
@@ -402,7 +404,19 @@ void DebugInit(int flags)
 		strlcat(theLogFileName, ".txt", ARRAY_SIZE(theLogFileNamePrev));
 
 		remove(theLogFileNamePrev);
-		rename(theLogFileName, theLogFileNamePrev);
+		if (rename(theLogFileName, theLogFileNamePrev) != 0)
+		{
+#ifdef DEBUG_LOGGING
+			DebugLog("Warning: Could not rename buffer file '%s' to '%s'. Will remove instead", theLogFileName, theLogFileNamePrev);
+#endif
+			if (remove(theLogFileName) != 0)
+			{
+#ifdef DEBUG_LOGGING
+				DebugLog("Warning: Failed to remove file '%s'", theLogFileName);
+#endif
+			}
+		}
+
 		theLogFile = fopen(theLogFileName, "w");
 		if (theLogFile != NULL)
 		{
@@ -730,13 +744,24 @@ void ReleaseCrash(const char *reason)
 		return; // We are shutting down, and TheGlobalData has been freed.  jba. [4/15/2003]
 	}
 
-	strcpy(prevbuf, TheGlobalData->getPath_UserData().str());
+	strlcpy(prevbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(prevbuf));
 	strlcat(prevbuf, RELEASECRASH_FILE_NAME_PREV, ARRAY_SIZE(prevbuf));
-	strcpy(curbuf, TheGlobalData->getPath_UserData().str());
+	strlcpy(curbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(curbuf));
 	strlcat(curbuf, RELEASECRASH_FILE_NAME, ARRAY_SIZE(curbuf));
 
  	remove(prevbuf);
-	rename(curbuf, prevbuf);
+	if (rename(curbuf, prevbuf) != 0)
+	{
+#ifdef DEBUG_LOGGING
+		DebugLog("Warning: Could not rename buffer file '%s' to '%s'. Will remove instead", curbuf, prevbuf);
+#endif
+		if (remove(curbuf) != 0)
+		{
+#ifdef DEBUG_LOGGING
+			DebugLog("Warning: Failed to remove file '%s'", curbuf);
+#endif
+		}
+	}
 
 	theReleaseCrashLogFile = fopen(curbuf, "w");
 	if (theReleaseCrashLogFile)
@@ -819,13 +844,24 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];
 
-	strcpy(prevbuf, TheGlobalData->getPath_UserData().str());
+	strlcpy(prevbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(prevbuf));
 	strlcat(prevbuf, RELEASECRASH_FILE_NAME_PREV, ARRAY_SIZE(prevbuf));
-	strcpy(curbuf, TheGlobalData->getPath_UserData().str());
+	strlcpy(curbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(curbuf));
 	strlcat(curbuf, RELEASECRASH_FILE_NAME, ARRAY_SIZE(curbuf));
 
  	remove(prevbuf);
-	rename(curbuf, prevbuf);
+	if (rename(curbuf, prevbuf) != 0)
+	{
+#ifdef DEBUG_LOGGING
+		DebugLog("Warning: Could not rename buffer file '%s' to '%s'. Will remove instead", curbuf, prevbuf);
+#endif
+		if (remove(curbuf) != 0)
+		{
+#ifdef DEBUG_LOGGING
+			DebugLog("Warning: Failed to remove file '%s'", curbuf);
+#endif
+		}
+	}
 
 	theReleaseCrashLogFile = fopen(curbuf, "w");
 	if (theReleaseCrashLogFile)

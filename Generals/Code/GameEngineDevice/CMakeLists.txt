@@ -4,7 +4,7 @@ set(GAMEENGINEDEVICE_SRC
     Include/W3DDevice/Common/W3DConvert.h
     Include/W3DDevice/Common/W3DFunctionLexicon.h
     Include/W3DDevice/Common/W3DModuleFactory.h
-    Include/W3DDevice/Common/W3DRadar.h
+#    Include/W3DDevice/Common/W3DRadar.h
     Include/W3DDevice/Common/W3DThingFactory.h
     Include/W3DDevice/GameClient/HeightMap.h
     Include/W3DDevice/GameClient/Module/W3DDebrisDraw.h
@@ -52,7 +52,7 @@ set(GAMEENGINEDEVICE_SRC
     Include/W3DDevice/GameClient/W3DProjectedShadow.h
     Include/W3DDevice/GameClient/W3DRoadBuffer.h
     Include/W3DDevice/GameClient/W3DScene.h
-    Include/W3DDevice/GameClient/W3DShaderManager.h
+#    Include/W3DDevice/GameClient/W3DShaderManager.h
     Include/W3DDevice/GameClient/W3DShadow.h
     Include/W3DDevice/GameClient/W3DShroud.h
     Include/W3DDevice/GameClient/W3DStatusCircle.h
@@ -60,7 +60,7 @@ set(GAMEENGINEDEVICE_SRC
     Include/W3DDevice/GameClient/W3DTerrainVisual.h
     Include/W3DDevice/GameClient/W3DTreeBuffer.h
 #    Include/W3DDevice/GameClient/W3DVideoBuffer.h
-    Include/W3DDevice/GameClient/W3DView.h
+#    Include/W3DDevice/GameClient/W3DView.h
     Include/W3DDevice/GameClient/W3DVolumetricShadow.h
     Include/W3DDevice/GameClient/W3DWater.h
     Include/W3DDevice/GameClient/W3DWaterTracks.h
@@ -81,7 +81,7 @@ set(GAMEENGINEDEVICE_SRC
 #    Source/MilesAudioDevice/MilesAudioManager.cpp
 #    Source/VideoDevice/Bink/BinkVideoPlayer.cpp
     Source/W3DDevice/Common/System/W3DFunctionLexicon.cpp
-    Source/W3DDevice/Common/System/W3DRadar.cpp
+#    Source/W3DDevice/Common/System/W3DRadar.cpp
     Source/W3DDevice/Common/Thing/W3DModuleFactory.cpp
     Source/W3DDevice/Common/Thing/W3DThingFactory.cpp
     Source/W3DDevice/Common/W3DConvert.cpp
@@ -151,14 +151,14 @@ set(GAMEENGINEDEVICE_SRC
     Source/W3DDevice/GameClient/W3DPoly.cpp
     Source/W3DDevice/GameClient/W3DRoadBuffer.cpp
     Source/W3DDevice/GameClient/W3DScene.cpp
-    Source/W3DDevice/GameClient/W3DShaderManager.cpp
+#    Source/W3DDevice/GameClient/W3DShaderManager.cpp
     Source/W3DDevice/GameClient/W3DShroud.cpp
     Source/W3DDevice/GameClient/W3DStatusCircle.cpp
     Source/W3DDevice/GameClient/W3DTerrainTracks.cpp
     Source/W3DDevice/GameClient/W3DTerrainVisual.cpp
     Source/W3DDevice/GameClient/W3DTreeBuffer.cpp
 #    Source/W3DDevice/GameClient/W3DVideoBuffer.cpp
-    Source/W3DDevice/GameClient/W3DView.cpp
+#    Source/W3DDevice/GameClient/W3DView.cpp
     Source/W3DDevice/GameClient/W3dWaypointBuffer.cpp
     Source/W3DDevice/GameClient/W3DWebBrowser.cpp
     Source/W3DDevice/GameClient/Water/W3DWater.cpp

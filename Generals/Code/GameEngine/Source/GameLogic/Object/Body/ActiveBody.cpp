@@ -593,7 +593,7 @@ void ActiveBody::attemptHealing( DamageInfo *damageInfo )
 		//(object pointer loses scope as soon as atteptdamage's caller ends)
 		m_lastDamageInfo = *damageInfo;
 		m_lastDamageCleared = false;
-#if RETAIL_COMPATIBLE_BUG
+#if PRESERVE_RETAIL_BEHAVIOR
 		m_lastDamageTimestamp = TheGameLogic->getFrame();
 #endif
 		m_lastHealingTimestamp = TheGameLogic->getFrame();

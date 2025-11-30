@@ -52,7 +52,6 @@
 #include "GameLogic/ObjectCreationList.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Weapon.h"
-#include "GameClient/Drawable.h"
 
 
 //-------------------------------------------------------------------------------------------------

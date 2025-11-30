@@ -283,7 +283,7 @@ TextureMgrDialogClass::Add_Subobjs_To_List (RenderObjClass *prender_obj)
 
 			// Recursively add subobjs to the list
 			Add_Subobjs_To_List (psubobj);
-			MEMBER_RELEASE (psubobj);
+			REF_PTR_RELEASE (psubobj);
 		}
 	}
 
@@ -336,7 +336,7 @@ TextureMgrDialogClass::Add_Textures_To_Node
 		}
 
 		// Release our hold on this pointer
-		MEMBER_RELEASE (pmat_info);
+		REF_PTR_RELEASE (pmat_info);
 	}
 
 	return ;
@@ -438,7 +438,7 @@ TextureMgrDialogClass::OnDblclkMeshTextureListCtrl
 								SR_RELEASE (poriginal_texture);
 							}
 
-							MEMBER_RELEASE (pmat_info);
+							REF_PTR_RELEASE (pmat_info);
 						}
 					}
 

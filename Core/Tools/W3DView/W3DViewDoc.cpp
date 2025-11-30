@@ -130,7 +130,7 @@ CW3DViewDoc::CW3DViewDoc (void)
 CW3DViewDoc::~CW3DViewDoc (void)
 {
     CleanupResources ();
-	 MEMBER_RELEASE (m_pCursor);
+	 REF_PTR_RELEASE (m_pCursor);
     return ;
 }
 
@@ -172,7 +172,7 @@ CW3DViewDoc::CleanupResources (void)
 	if (m_pCursor != NULL) {
 		m_pCursor->Remove ();
 	}
-	MEMBER_RELEASE (m_pCursorScene);
+	REF_PTR_RELEASE (m_pCursorScene);
 
     if (m_pCScene)
     {
@@ -243,8 +243,8 @@ CW3DViewDoc::CleanupResources (void)
     {
         // Free the currently displayed object
 			SAFE_DELETE (m_pCAnimCombo);
-			MEMBER_RELEASE (m_pCAnimation);
-			MEMBER_RELEASE (m_pCRenderObj);
+			REF_PTR_RELEASE (m_pCAnimation);
+			REF_PTR_RELEASE (m_pCRenderObj);
     }
 
     return ;
@@ -284,8 +284,8 @@ CW3DViewDoc::OnNewDocument (void)
     {
 			// Free the currently displayed object
 			SAFE_DELETE (m_pCAnimCombo);
-			MEMBER_RELEASE (m_pCAnimation);
-			MEMBER_RELEASE (m_pCRenderObj);
+			REF_PTR_RELEASE (m_pCAnimation);
+			REF_PTR_RELEASE (m_pCRenderObj);
     }
 
     CDataTreeView *pCDataTreeView = GetDataTreeView ();
@@ -610,7 +610,7 @@ CW3DViewDoc::Display_Emitter
 
 		// Lose the animation
 		SAFE_DELETE (m_pCAnimCombo);
-		MEMBER_RELEASE (m_pCAnimation);
+		REF_PTR_RELEASE (m_pCAnimation);
 
 			if (m_pCRenderObj != NULL) {
 
@@ -626,7 +626,7 @@ CW3DViewDoc::Display_Emitter
 
 			// Add the emitter to the scene
 			pemitter->Set_Transform (Matrix3D (1));
-			MEMBER_ADD (m_pCRenderObj, pemitter);
+			REF_PTR_SET (m_pCRenderObj, pemitter);
 			m_pCScene->Add_Render_Object (m_pCRenderObj);
 			pemitter->Start ();
 
@@ -669,7 +669,7 @@ CW3DViewDoc::DisplayObject
     {
         // Lose the animation
 		  SAFE_DELETE (m_pCAnimCombo);
-		  MEMBER_RELEASE (m_pCAnimation);
+		  REF_PTR_RELEASE (m_pCAnimation);
 
         // Do we have an old object to remove from the scene?
 		  if (add_ghost == false) {
@@ -874,7 +874,7 @@ CW3DViewDoc::PlayAnimation
 
         // Get an instance of the animation object
 		  SAFE_DELETE (m_pCAnimCombo);
-		  MEMBER_RELEASE (m_pCAnimation);
+		  REF_PTR_RELEASE (m_pCAnimation);
         m_pCAnimation = WW3DAssetManager::Get_Instance()->Get_HAnim (pszAnimationName);
         ASSERT (m_pCAnimation);
 
@@ -966,7 +966,7 @@ CW3DViewDoc::PlayAnimation
 
         // Get an instance of the animation object
 		  SAFE_DELETE (m_pCAnimCombo);
-		  MEMBER_RELEASE (m_pCAnimation);
+		  REF_PTR_RELEASE (m_pCAnimation);
 		  m_pCAnimCombo = pCAnimCombo;
 		  m_pCAnimation = m_pCAnimCombo->Get_Motion(0);	// ref added by get_motion
         ASSERT (m_pCAnimation);
@@ -1026,7 +1026,7 @@ Get_Camera_Transform (RenderObjClass *render_obj, Matrix3D &tm)
 			if (psub_obj != NULL) {
 				retval = Get_Camera_Transform (psub_obj, tm);
 			}
-			MEMBER_RELEASE (psub_obj);
+			REF_PTR_RELEASE (psub_obj);
 		}
 
 		if (!retval) {
@@ -1248,11 +1248,11 @@ CW3DViewDoc::GenerateLOD
 			HLodDefClass *pdefinition = new HLodDefClass (*pnew_lod);
 			plod_prototype = new HLodPrototypeClass (pdefinition);
 
-			MEMBER_RELEASE (pnew_lod);
+			REF_PTR_RELEASE (pnew_lod);
 
 			// Loop through all the LOD definitions and free their names
 			for (lod_index = 0; lod_index < lod_count; lod_index ++) {
-				MEMBER_RELEASE (plod_array[lod_index]);
+				REF_PTR_RELEASE (plod_array[lod_index]);
 			}
 
 			// Free the LOD definition array
@@ -1889,7 +1889,7 @@ CW3DViewDoc::Remove_Object_From_Scene (RenderObjClass *prender_obj)
 		if (psub_obj != NULL) {
 			Remove_Object_From_Scene (psub_obj);
 		}
-		MEMBER_RELEASE (psub_obj);
+		REF_PTR_RELEASE (psub_obj);
 	}
 
 	// If this is an emitter, then remove its buffer
@@ -2254,7 +2254,7 @@ CW3DViewDoc::Auto_Assign_Bones (void)
 				// Add this render object to the bone
 				RenderObjClass *prender_obj = WW3DAssetManager::Get_Instance ()->Create_Render_Obj (pbone_name);
 				m_pCRenderObj->Add_Sub_Object_To_Bone (prender_obj, index);
-				MEMBER_RELEASE (prender_obj);
+				REF_PTR_RELEASE (prender_obj);
 				bupdate_prototype = true;
 			}
 		}
@@ -2536,7 +2536,7 @@ CW3DViewDoc::Build_Emitter_List
 		if (psub_obj != NULL) {
 			Build_Emitter_List (emitter_list, emitter_name, psub_obj);
 		}
-		MEMBER_RELEASE (psub_obj);
+		REF_PTR_RELEASE (psub_obj);
 	}
 
 	//
@@ -2639,7 +2639,7 @@ CW3DViewDoc::Count_Particles (RenderObjClass *render_obj)
 			if (psub_obj != NULL) {
 				count += Count_Particles (psub_obj);
 			}
-			MEMBER_RELEASE (psub_obj);
+			REF_PTR_RELEASE (psub_obj);
 		}
 
 
@@ -2699,7 +2699,7 @@ CW3DViewDoc::Switch_LOD (int increment, RenderObjClass *render_obj)
 			if (psub_obj != NULL) {
 				Switch_LOD (increment, psub_obj);
 			}
-			MEMBER_RELEASE (psub_obj);
+			REF_PTR_RELEASE (psub_obj);
 		}
 
 		//
@@ -2970,7 +2970,7 @@ CW3DViewDoc::Import_Facial_Animation (const CString &heirarchy_name, const CStri
 		// Cleanup
 		//
 		anim_desc_file->Close ();
-		MEMBER_RELEASE (new_anim);
+		REF_PTR_RELEASE (new_anim);
 		SAFE_DELETE (anim_desc_file);
 	}
 

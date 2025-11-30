@@ -222,15 +222,15 @@ BoneMgrDialogClass::Fill_Bone_Item
 
 	// Free our hold on the render objs in the original node list
 	for (index = 0; index < orig_node_list.Count (); index ++) {
-		MEMBER_RELEASE (orig_node_list[index]);
+		REF_PTR_RELEASE (orig_node_list[index]);
 	}
 
 	// Free our hold on the render objs in the node list
 	for (index = 0; index < node_list.Count (); index ++) {
-		MEMBER_RELEASE (node_list[index]);
+		REF_PTR_RELEASE (node_list[index]);
 	}
 
-	MEMBER_RELEASE (porig_model);
+	REF_PTR_RELEASE (porig_model);
 	return ;
 }
 
@@ -405,7 +405,7 @@ void
 BoneMgrDialogClass::OnOK (void)
 {
 	// Simply forget about the backup we made
-	MEMBER_RELEASE (m_pBackupModel);
+	REF_PTR_RELEASE (m_pBackupModel);
 
 	// Update the hierarchy's cached information to reflect the new settings
 	CW3DViewDoc *pdoc = (CW3DViewDoc *)((CMainFrame *)::AfxGetMainWnd())->GetActiveDocument ();
@@ -459,7 +459,7 @@ BoneMgrDialogClass::OnAttachButton (void)
 		if (prender_obj != NULL) {
 			m_pBaseModel->Add_Sub_Object_To_Bone (prender_obj, m_BoneName);
 			m_BoneTree.InsertItem (name, 1, 1, hbone_item);
-			MEMBER_RELEASE (prender_obj);
+			REF_PTR_RELEASE (prender_obj);
 		}
 
 	} else {
@@ -481,7 +481,7 @@ BoneMgrDialogClass::OnAttachButton (void)
 			}
 
 			// Release our hold on this pointer
-			MEMBER_RELEASE (psub_obj);
+			REF_PTR_RELEASE (psub_obj);
 		}
 
 		// Remove the object from our UI

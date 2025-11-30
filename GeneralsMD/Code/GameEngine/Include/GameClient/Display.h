@@ -29,11 +29,9 @@
 #pragma once
 
 #include "Common/SubsystemInterface.h"
-#include "View.h"
 #include "GameClient/Color.h"
 #include "GameClient/GameFont.h"
-
-class View;
+#include "GameClient/View.h"
 
 struct ShroudLevel
 {

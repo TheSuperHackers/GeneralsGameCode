@@ -59,7 +59,7 @@ EmitterInstanceListClass::Free_List (void)
 	//	Release our hold on each of the emitter pointers
 	//
 	for (int index = 0; index < m_List.Count (); index ++) {
-		MEMBER_RELEASE (m_List[index]);
+		REF_PTR_RELEASE (m_List[index]);
 	}
 
 	m_List.Delete_All ();
@@ -93,7 +93,8 @@ EmitterInstanceListClass::Add_Emitter (ParticleEmitterClass *emitter)
 		//
 		//	Add this emitter to the list and put a hold on its reference
 		//
-		SAFE_ADD_REF (emitter);
+		if (emitter)
+			emitter->Add_Ref();
 		m_List.Add (emitter);
 	}
 

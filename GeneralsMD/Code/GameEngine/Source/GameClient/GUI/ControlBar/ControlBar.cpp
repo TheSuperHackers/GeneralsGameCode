@@ -174,14 +174,6 @@ Relationship ControlBar::getCurrentlyViewedPlayerRelationship(const Team* team)
 	return NEUTRAL;
 }
 
-AsciiString ControlBar::getCurrentlyViewedPlayerSide()
-{
-	if (Player* player = getCurrentlyViewedPlayer())
-		return player->getSide();
-
-	return ThePlayerList->getLocalPlayer()->getSide();
-}
-
 void ControlBar::populatePurchaseScience( Player* player )
 {
 //	TheInGameUI->deselectAllDrawables();

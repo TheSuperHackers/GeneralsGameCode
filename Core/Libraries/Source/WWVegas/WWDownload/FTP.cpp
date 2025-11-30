@@ -1719,7 +1719,7 @@ HRESULT  Cftp::FileRecoveryPosition( LPCSTR szLocalFileName, LPCSTR szRegistryRo
 
 	// Concatenate the registry key together
 
-	strcpy( regkey, szRegistryRoot );
+	strlcpy(regkey, szRegistryRoot, ARRAY_SIZE(regkey));
 	if( regkey[ strlen( regkey ) - 1 ] != '\\' )
 	{
 		strlcat(regkey, "\\Download", ARRAY_SIZE(regkey));

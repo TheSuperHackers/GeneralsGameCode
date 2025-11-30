@@ -29,11 +29,9 @@
 #pragma once
 
 #include "Common/SubsystemInterface.h"
-#include "View.h"
 #include "GameClient/Color.h"
 #include "GameClient/GameFont.h"
-
-class View;
+#include "GameClient/View.h"
 
 struct ShroudLevel
 {
@@ -173,6 +171,7 @@ public:
 	virtual void toggleLetterBox(void) = 0;										///< enabled letter-boxed display
 	virtual void enableLetterBox(Bool enable) = 0;						///< forces letter-boxed display on/off
 	virtual Bool isLetterBoxFading( void ) { return FALSE; }	///< returns true while letterbox fades in/out
+	virtual Bool isLetterBoxed( void ) { return FALSE; }	//WST 10/2/2002. Added query interface
 
 	virtual void setCinematicText( AsciiString string ) { m_cinematicText = string; }
 	virtual void setCinematicFont( GameFont *font ) { m_cinematicFont = font; }

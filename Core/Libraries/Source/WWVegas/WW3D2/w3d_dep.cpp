@@ -83,7 +83,7 @@ static void Scan_Emitter (ChunkLoadClass &cload, StringList &files, const char *
 static void Scan_Aggregate (ChunkLoadClass &cload, StringList &files, const char *w3d_name);
 static void Scan_HLOD (ChunkLoadClass &cload, StringList &files, const char *w3d_name);
 
-static void Get_W3D_Name (const char *filename, char *w3d_name);
+static void Get_W3D_Name (const char *filename, char *w3d_name, size_t w3d_name_size);
 static const char * Make_W3D_Filename (const char *w3d_name);
 
 
@@ -118,7 +118,7 @@ bool Get_W3D_Dependencies (const char *w3d_filename, StringList &files)
 
 	// Get the W3D name from the filename.
 	char w3d_name[W3D_NAME_LEN];
-	Get_W3D_Name(w3d_filename, w3d_name);
+	Get_W3D_Name(w3d_filename, w3d_name, ARRAY_SIZE(w3d_name));
 
 	// Create a chunk loader for this file, and scan the file.
 	ChunkLoadClass cload(file);
@@ -511,7 +511,7 @@ static void Scan_HLOD (ChunkLoadClass &cload, StringList &files, const char *w3d
  * HISTORY:                                                                                    *
  *   4/3/00     AJA : Created.                                                                 *
  *=============================================================================================*/
-static void Get_W3D_Name (const char *filename, char *w3d_name)
+static void Get_W3D_Name(const char* filename, char* w3d_name, size_t w3d_name_size)
 {
 	assert(filename);
 	assert(w3d_name);
@@ -532,9 +532,9 @@ static void Get_W3D_Name (const char *filename, char *w3d_name)
 
 	// Copy all characters from start to end (excluding 'end')
 	// into the w3d_name buffer. Then capitalize the string.
-	int num_chars = end - start;
-	WWASSERT(num_chars <= W3D_NAME_LEN);
-	strlcpy(w3d_name, start, min(W3D_NAME_LEN, num_chars));
+	size_t num_chars = end - start;
+	WWASSERT(num_chars < w3d_name_size);
+	strlcpy(w3d_name, start, min(w3d_name_size, num_chars));
 	strupr(w3d_name);
 }
 
@@ -554,7 +554,6 @@ static void Get_W3D_Name (const char *filename, char *w3d_name)
 static const char * Make_W3D_Filename (const char *w3d_name)
 {
 	assert(w3d_name);
-	assert(strlen(w3d_name) < W3D_NAME_LEN);
 
 	// Copy the w3d name into a static buffer, turn it into lowercase
 	// letters, and append a ".w3d" file extension. That's the filename.
@@ -565,7 +564,8 @@ static const char * Make_W3D_Filename (const char *w3d_name)
 		buffer[0] = 0;
 		return buffer;
 	}
-	strcpy(buffer, w3d_name);
+	const size_t bufferLen = strlcpy(buffer, w3d_name, ARRAY_SIZE(buffer));
+	(void)bufferLen; WWASSERT(bufferLen < W3D_NAME_LEN);
 	char *dot = strchr(buffer, '.');
 	if (dot)
 		*dot = 0;

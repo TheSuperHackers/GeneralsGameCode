@@ -36,9 +36,9 @@
 
 #pragma once
 
-#include "always.h"
 #include "LISTNODE.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
+
 
 class RefCountClass;
 
@@ -51,14 +51,6 @@ struct ActiveRefStruct
 	int						Line;
 };
 
-#define	NEW_REF( C, P )						( (C*)RefCountClass::Set_Ref_Owner( W3DNEW C P, __FILE__, __LINE__ ) )
-#define	SET_REF_OWNER( P )				(		RefCountClass::Set_Ref_Owner( P,       __FILE__, __LINE__ ) )
-
-#else
-
-#define	NEW_REF( C, P )					( W3DNEW C P )
-#define	SET_REF_OWNER( P )			P
-
 #endif // RTS_DEBUG
 
 
@@ -69,7 +61,7 @@ struct ActiveRefStruct
 ** point it at the new object, and add-ref the new object (if its not null...)
 */
 #define REF_PTR_SET(dst,src)	{ if (src) (src)->Add_Ref(); if (dst) (dst)->Release_Ref(); (dst) = (src); }
-#define REF_PTR_RELEASE(x)		{ if (x) x->Release_Ref(); x = NULL; }
+#define REF_PTR_RELEASE(x)		{ if (x) x->Release_Ref(); x = nullptr; }
 
 
 /*
@@ -137,14 +129,14 @@ public:
 #ifdef RTS_DEBUG
 	void Add_Ref(void) const;
 #else
-	WWINLINE void Add_Ref(void) const							{ NumRefs++; }
+	void Add_Ref(void) const							{ NumRefs++; }
 #endif
 
 	/*
 	** Release_Ref, call this function when you no longer need the pointer
 	** to this object.
 	*/
-	WWINLINE void		Release_Ref(void) const
+	void Release_Ref(void) const
 	{
 #ifdef RTS_DEBUG
 		Dec_Total_Refs(this);

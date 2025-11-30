@@ -91,9 +91,9 @@ class TextureListNodeClass
 			  m_pParent (NULL),
 			  m_Name (name),
 			  m_TextureIndex (0),
-			  m_IconIndex (ICON_DEF_TEXTURE) { MEMBER_ADD (m_pTexture, ptexture); }
+			  m_IconIndex (ICON_DEF_TEXTURE) { REF_PTR_SET (m_pTexture, ptexture); }
 
-		~TextureListNodeClass (void) { MEMBER_RELEASE (m_pTexture); Free_Subobj_List (); }
+		~TextureListNodeClass (void) { REF_PTR_RELEASE (m_pTexture); Free_Subobj_List (); }
 
 
 		////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ class TextureListNodeClass
 		void									Set_Type (NODE_TYPE type)	{ m_Type = type; }
 
 		TextureClass *						Peek_Texture (void) const	{ return m_pTexture; }
-		void									Set_Texture (TextureClass *ptex) { MEMBER_ADD (m_pTexture, ptex); }
+		void									Set_Texture (TextureClass *ptex) { REF_PTR_SET (m_pTexture, ptex); }
 
 		TEXTURE_NODE_LIST	&				Get_Subobj_List (void)		{ return m_SubObjectList; }
 

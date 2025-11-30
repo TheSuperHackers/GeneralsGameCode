@@ -677,7 +677,7 @@ void Player::update()
 		}
 	}
 
-#if !RETAIL_COMPATIBLE_BUG && !RETAIL_COMPATIBLE_CRC
+#if !PRESERVE_RETAIL_BEHAVIOR && !RETAIL_COMPATIBLE_CRC
 	// TheSuperHackers @bugfix Stubbjax 26/09/2025 The Tunnel System now heals
 	// all units once per frame instead of once per frame per Tunnel Network.
 	TunnelTracker* tunnelSystem = getTunnelSystem();
@@ -1045,12 +1045,12 @@ void Player::becomingLocalPlayer(Bool yes)
 			{
 				// Added support for updating the perceptions of garrisoned buildings containing enemy stealth units.
 				// When changing teams, it is necessary to update this information.
+				Bool requireRadarRefresh = false;
 				ContainModuleInterface *contain = object->getContain();
 				if( contain )
 				{
 					contain->recalcApparentControllingPlayer();
-					TheRadar->removeObject( object );
-					TheRadar->addObject( object );
+					requireRadarRefresh = true;
 				}
 
 				if( object->isKindOf( KINDOF_DISGUISER ) )
@@ -1080,10 +1080,15 @@ void Player::becomingLocalPlayer(Bool yes)
 								else
 									draw->setIndicatorColor( object->getIndicatorColor() );
 							}
-							TheRadar->removeObject( object );
-							TheRadar->addObject( object );
+							requireRadarRefresh = true;
 						}
 					}
+				}
+
+				if (requireRadarRefresh)
+				{
+					TheRadar->removeObject( object );
+					TheRadar->addObject( object );
 				}
 			}
 			deleteInstance(iter);
@@ -2511,7 +2516,7 @@ Upgrade *Player::findUpgrade( const UpgradeTemplate *upgradeTemplate )
 //=================================================================================================
 /** Does the player have this completed upgrade */
 //=================================================================================================
-Bool Player::hasUpgradeComplete( const UpgradeTemplate *upgradeTemplate )
+Bool Player::hasUpgradeComplete( const UpgradeTemplate *upgradeTemplate ) const
 {
 	UpgradeMaskType testMask = upgradeTemplate->getUpgradeMask();
 	return hasUpgradeComplete( testMask );
@@ -2522,7 +2527,7 @@ Bool Player::hasUpgradeComplete( const UpgradeTemplate *upgradeTemplate )
 	Does the player have this completed upgrade.  This form is exposed so Objects can do quick lookups.
 */
 //=================================================================================================
-Bool Player::hasUpgradeComplete( UpgradeMaskType testMask )
+Bool Player::hasUpgradeComplete( UpgradeMaskType testMask ) const
 {
 	return m_upgradesCompleted.testForAll( testMask );
 }
@@ -3724,7 +3729,7 @@ void Player::xfer( Xfer *xfer )
 	{
 
 		DEBUG_CRASH(( "Player::xfer - m_ai present/missing mismatch" ));
-		throw SC_INVALID_DATA;;
+		throw SC_INVALID_DATA;
 
 	}
 	if( m_ai )

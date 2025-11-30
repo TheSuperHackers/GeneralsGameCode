@@ -32,7 +32,6 @@
 #include "TARGA.h"
 #include <d3dx8tex.h>
 #include "wwmemlog.h"
-#include "texture.h"
 #include "formconv.h"
 #include "texturethumbnail.h"
 #include "ddsfile.h"

@@ -29,7 +29,7 @@ long long after you'll be dead.
 
 #include <ctype.h>
 #include <time.h>
-#ifndef _WINDOWS
+#ifndef _WIN32
 #include <sys/time.h>
 #endif
 #include "xtime.h"
@@ -286,13 +286,13 @@ void Xtime::update(void)
   day_=719528;  // day_s from year 0 to Jan1, 1970
   msec_=0;
 
- #ifdef _WINDOWS
+ #ifdef _WIN32
   struct _timeb    wintime;
   _ftime(&wintime);
   addSeconds(wintime.time);
   msec_+=wintime.millitm;
  #endif
- #ifndef _WINDOWS
+ #ifndef _WIN32
   struct timeval   unixtime;
   struct timezone  unixtzone;
   gettimeofday(&unixtime,&unixtzone);

@@ -166,7 +166,7 @@ Bool SabotageInternetCenterCrateCollide::executeCrateBehavior( Object *other )
 
   doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_INTERNET_CENTER );
 
-	if( other->isLocallyControlled() )
+	if( other->isLocallyViewed() )
 	{
 		TheEva->setShouldPlay( EVA_BuildingSabotaged );
 	}

@@ -119,7 +119,7 @@ CEditLODDialog::OnInitDialog (void)
             RenderObjClass *pfirst_subobj = pLOD->Get_Sub_Object (0);
 				if (pfirst_subobj != NULL) {
 					m_spinIncrement = pfirst_subobj->Get_Bounding_Sphere ().Radius / 5.0F;
-					MEMBER_RELEASE (pfirst_subobj);
+					REF_PTR_RELEASE (pfirst_subobj);
 				}
 
             // Loop through all the subobjects
@@ -142,7 +142,7 @@ CEditLODDialog::OnInitDialog (void)
                     m_hierarchyListCtrl.SetItemText (iIndex, COL_SWITCH_DN, stringTemp);
 
                     // Free this object
-						  MEMBER_RELEASE (pCSubObject);
+						  REF_PTR_RELEASE (pCSubObject);
                 }
             }
 

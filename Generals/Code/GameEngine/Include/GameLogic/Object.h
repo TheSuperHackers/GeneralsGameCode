@@ -115,9 +115,6 @@ enum WeaponStatus CPP_11(: Int);
 enum RadarPriorityType CPP_11(: Int);
 enum CanAttackResult CPP_11(: Int);
 
-// For ObjectStatusTypes
-#include "Common/ObjectStatusTypes.h"
-
 // For ObjectScriptStatusBit
 #include "GameLogic/ObjectScriptStatusBits.h"
 
@@ -241,6 +238,7 @@ public:
 	void removeCustomIndicatorColor();
 
 	Bool isLocallyControlled() const;
+	Bool isLocallyViewed() const;
 	Bool isNeutralControlled() const;
 
 	Bool getIsUndetectedDefector(void) const { return BitIsSet(m_privateStatus, UNDETECTED_DEFECTOR); }
@@ -420,7 +418,8 @@ public:
 	void onRemovedFrom( Object *removedFrom );
 	Int getTransportSlotCount() const;
 	void friend_setContainedBy( Object *containedBy ) { m_containedBy = containedBy; }
-	Object* getEnclosingContainedBy(); ///< Find the first enclosing container in the containment chain.
+	const Object* getEnclosingContainedBy() const; ///< Find the first enclosing container in the containment chain.
+	const Object* getOuterObject() const; ///< Get the top-level object
 
 	// Special Powers -------------------------------------------------------------------------------
 	SpecialPowerModuleInterface *getSpecialPowerModule( const SpecialPowerTemplate *specialPowerTemplate ) const;

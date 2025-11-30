@@ -100,7 +100,6 @@ static void drawFramerateBar(void);
 #include "WW3D2/meshmdl.h"
 #include "WW3D2/rddesc.h"
 #include "TARGA.h"
-#include "Lib/BaseType.h"
 
 #include "GameLogic/ScriptEngine.h"		// For TheScriptEngine - jkmcd
 #include "GameLogic/GameLogic.h"
@@ -3012,7 +3011,7 @@ void W3DDisplay::takeScreenShot(void)
 #else
 		sprintf( leafname, "%s%.3d.bmp", "sshot", frame_number++);
 #endif
-		strcpy(pathname, TheGlobalData->getPath_UserData().str());
+		strlcpy(pathname, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(pathname));
 		strlcat(pathname, leafname, ARRAY_SIZE(pathname));
 		if (_access( pathname, 0 ) == -1)
 			done = true;

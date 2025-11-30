@@ -23,8 +23,8 @@
 // Note: Retail compatibility must not be broken before this project officially does.
 // Use RETAIL_COMPATIBLE_CRC and RETAIL_COMPATIBLE_XFER_SAVE to guard breaking changes.
 
-#ifndef RETAIL_COMPATIBLE_BUG
-#define RETAIL_COMPATIBLE_BUG (1) // Retain bugs present in retail Generals 1.08 and Zero Hour 1.04
+#ifndef PRESERVE_RETAIL_BEHAVIOR
+#define PRESERVE_RETAIL_BEHAVIOR (1) // Retain behavior present in retail Generals 1.08 and Zero Hour 1.04
 #endif
 
 #ifndef RETAIL_COMPATIBLE_CRC

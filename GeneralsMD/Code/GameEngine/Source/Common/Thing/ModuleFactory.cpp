@@ -209,7 +209,6 @@
 #include "GameLogic/Module/UnpauseSpecialPowerUpgrade.h"
 #include "GameLogic/Module/WeaponBonusUpgrade.h"
 #include "GameLogic/Module/WeaponSetUpgrade.h"
-#include "GameLogic/Module/WeaponBonusUpgrade.h"
 #include "GameLogic/Module/CostModifierUpgrade.h"
 #include "GameLogic/Module/ExperienceScalarUpgrade.h"
 #include "GameLogic/Module/MaxHealthUpgrade.h"

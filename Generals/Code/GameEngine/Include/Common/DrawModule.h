@@ -38,6 +38,7 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Matrix3D;
 class RenderCost;
+class OBBoxClass;
 
 // TYPES //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -154,6 +155,10 @@ public:
 
 	// this method must ONLY be called from the client, NEVER From the logic, not even indirectly.
 	virtual Bool clientOnly_getRenderObjInfo(Coord3D* pos, Real* boundingSphereRadius, Matrix3D* transform) const = 0;
+
+	// (gth) C&C3 adding these accessors to render object properties
+	virtual Bool clientOnly_getRenderObjBoundBox(OBBoxClass * boundbox) const = 0;
+	virtual Bool clientOnly_getRenderObjBoneTransform(const AsciiString & boneName,Matrix3D * set_tm) const = 0;
 	/**
 		Find the bone(s) with the given name and return their positions and/or transforms in the given arrays.
 		We look for a bone named "boneNamePrefixQQ", where QQ is 01, 02, 03, etc, starting at the

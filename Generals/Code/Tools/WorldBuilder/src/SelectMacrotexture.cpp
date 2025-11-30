@@ -73,21 +73,10 @@ BOOL SelectMacrotexture::OnInitDialog()
 	m_textureTreeView.ShowWindow(SW_SHOW);
 
 	{
-		char				dirBuf[_MAX_PATH];
-		char				findBuf[_MAX_PATH];
 		char				fileBuf[_MAX_PATH];
 
-		strcpy(dirBuf, "..\\Art\\TestModelsHere");
-		int len = strlen(dirBuf);
-
-		if (len > 0 && dirBuf[len - 1] != '\\') {
-			dirBuf[len++] = '\\';
-			dirBuf[len] = 0;
-		}
-		strcpy(findBuf, dirBuf);
-
 		FilenameList filenameList;
-		TheFileSystem->getFileListInDirectory(AsciiString(findBuf), AsciiString("*.tga"), filenameList, FALSE);
+		TheFileSystem->getFileListInDirectory("..\\TestArt\\", "*.tga", filenameList, FALSE);
 
 		if (filenameList.size() > 0) {
 			TVINSERTSTRUCT ins;
@@ -95,9 +84,9 @@ BOOL SelectMacrotexture::OnInitDialog()
 			FilenameList::iterator it = filenameList.begin();
 			do {
 				AsciiString filename = *it;
-				len = filename.getLength();
+				int len = filename.getLength();
 				if (len<5) continue;
-				strcpy(fileBuf, filename.str());
+				strlcpy(fileBuf, filename.str(), ARRAY_SIZE(fileBuf));
 					::memset(&ins, 0, sizeof(ins));
 					ins.hParent = TVI_ROOT;
 					ins.hInsertAfter = TVI_SORT;

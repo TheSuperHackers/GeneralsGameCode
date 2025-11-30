@@ -37,7 +37,6 @@
 #pragma once
 
 #include "always.h"
-#include "refcount.h"
 #include "postloadable.h"
 
 class PersistFactoryClass;

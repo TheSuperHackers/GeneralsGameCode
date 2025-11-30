@@ -256,7 +256,7 @@ void TunnelTracker::destroyObject( Object *obj, void * )
 
 // ------------------------------------------------------------------------
 	// heal all the objects within the tunnel system using the iterateContained function
-#if RETAIL_COMPATIBLE_BUG || RETAIL_COMPATIBLE_CRC
+#if PRESERVE_RETAIL_BEHAVIOR || RETAIL_COMPATIBLE_CRC
 void TunnelTracker::healObjects(Real frames)
 {
 	iterateContained(healObject, &frames, FALSE);
@@ -280,7 +280,7 @@ void TunnelTracker::healObject( Object *obj, void *frames)
 {
 
 	//get the number of frames to heal
-#if RETAIL_COMPATIBLE_BUG || RETAIL_COMPATIBLE_CRC
+#if PRESERVE_RETAIL_BEHAVIOR || RETAIL_COMPATIBLE_CRC
 	Real *framesForFullHeal = (Real*)frames;
 #else
 	UnsignedInt* framesForFullHeal = (UnsignedInt*)frames;

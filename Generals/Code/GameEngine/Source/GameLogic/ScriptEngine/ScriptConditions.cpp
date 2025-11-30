@@ -37,7 +37,6 @@
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"
 #include "Common/Team.h"
-#include "Common/Player.h"
 #include "Common/ObjectStatusTypes.h"
 
 #include "GameClient/ControlBar.h"

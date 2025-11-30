@@ -310,7 +310,7 @@ void WaypointMap::update( void )
 	m_numStartSpots = max(1, m_numStartSpots);
 }
 
-const char * MapCache::m_mapCacheName = "MapCache.ini";
+const char *const MapCache::m_mapCacheName = "MapCache.ini";
 
 AsciiString MapCache::getMapDir() const
 {
@@ -329,18 +329,8 @@ AsciiString MapCache::getMapExtension() const
 	return AsciiString("map");
 }
 
-void MapCache::writeCacheINI( Bool userDir )
+void MapCache::writeCacheINI( const AsciiString &mapDir )
 {
-	AsciiString mapDir;
-	if (!userDir || TheGlobalData->m_buildMapCache)
-	{
-		mapDir = getMapDir();
-	}
-	else
-	{
-		mapDir = getUserMapDir();
-	}
-
 	AsciiString filepath = mapDir;
 	filepath.concat('\\');
 
@@ -352,18 +342,17 @@ void MapCache::writeCacheINI( Bool userDir )
 	if (fp == NULL) {
 		return;
 	}
+
 	fprintf(fp, "; FILE: %s /////////////////////////////////////////////////////////////\n", filepath.str());
 	fprintf(fp, "; This INI file is auto-generated - do not modify\n");
 	fprintf(fp, "; /////////////////////////////////////////////////////////////////////////////\n");
-	mapDir.toLower();
 
 	MapCache::iterator it = begin();
-	MapMetaData md;
 	for (; it != end(); ++it)
 	{
 		if (it->first.startsWithNoCase(mapDir.str()))
 		{
-			md = it->second;
+			const MapMetaData &md = it->second;
 			fprintf(fp, "\nMapCache %s\n", AsciiStringToQuotedPrintable(it->first.str()).str());
 			fprintf(fp, "  fileSize = %u\n", md.m_filesize);
 			fprintf(fp, "  fileCRC = %u\n", md.m_CRC);
@@ -385,13 +374,13 @@ void MapCache::writeCacheINI( Bool userDir )
 #endif
 
 			Coord3D pos;
-			WaypointMap::iterator itw = md.m_waypoints.begin();
+			WaypointMap::const_iterator itw = md.m_waypoints.begin();
 			for (; itw != md.m_waypoints.end(); ++itw)
 			{
 				pos = itw->second;
 				fprintf(fp, "  %s = X:%2.2f Y:%2.2f Z:%2.2f\n", itw->first.str(), pos.x, pos.y, pos.z);
 			}
-			Coord3DList::iterator itc3d = md.m_techPositions.begin();
+			Coord3DList::const_iterator itc3d = md.m_techPositions.begin();
 			for (; itc3d != md.m_techPositions.end(); ++itc3d)
 			{
 				pos = *itc3d;
@@ -419,190 +408,184 @@ void MapCache::updateCache( void )
 {
 	setFPMode();
 
-	TheFileSystem->createDirectory(getUserMapDir());
+	const AsciiString mapDir = getMapDir();
+	const AsciiString userMapDir = getUserMapDir();
 
-	if (loadUserMaps())
+	// Create the standard map cache if required. Is only relevant for Mod developers.
+	// TheSuperHackers @tweak This step is done before loading any other map caches to not poison the cached state.
+	if (m_doCreateStandardMapCacheINI)
 	{
-		writeCacheINI( TRUE );
-	}
-	loadStandardMaps();	// we shall overwrite info from matching user maps to prevent munkees from getting rowdy :)
 #if defined(RTS_DEBUG)
-	if (TheLocalFileSystem->doesFileExist(getMapDir().str()))
-	{
-		// only create the map cache file if "Maps" exist
-		Bool wasBuildMapCache = TheGlobalData->m_buildMapCache;
-		TheWritableGlobalData->m_buildMapCache = true;
-		loadUserMaps();
-		TheWritableGlobalData->m_buildMapCache = wasBuildMapCache;
-		writeCacheINI( FALSE );
-	}
+		// only create the map cache file if "Maps" folder exists
+		const Bool buildMapCache = TheLocalFileSystem->doesFileExist(mapDir.str());
+#else
+		const Bool buildMapCache = TheGlobalData->m_buildMapCache;
 #endif
-}
-
-Bool MapCache::clearUnseenMaps( AsciiString dirName )
-{
-	dirName.toLower();
-	Bool erasedSomething = FALSE;
-
-	std::map<AsciiString, Bool>::iterator it = m_seen.begin();
-
-	for (; it != m_seen.end(); ++it)
-	{
-		AsciiString mapName = it->first;
-		if (it->second == FALSE && mapName.startsWithNoCase(dirName.str()))
+		if (buildMapCache)
 		{
-			// not seen in the dir - clear it out.
-			erase(mapName);
-			erasedSomething = TRUE;
+			const Bool isOfficial = TRUE;
+			const Bool filterByAllowedMaps = !m_allowedMaps.empty();
+
+			if (loadMapsFromDisk(mapDir, isOfficial, filterByAllowedMaps))
+			{
+				writeCacheINI(mapDir);
+			}
 		}
+		m_doCreateStandardMapCacheINI = FALSE;
 	}
-	return erasedSomething;
+
+	// Load user map cache first.
+	if (m_doLoadUserMapCacheINI)
+	{
+		loadMapsFromMapCacheINI(userMapDir);
+		m_doLoadUserMapCacheINI = FALSE;
+	}
+
+	// Load user maps from disk and update any discrepancies from the map cache.
+	if (loadMapsFromDisk(userMapDir, FALSE))
+	{
+		writeCacheINI(userMapDir);
+		m_doLoadStandardMapCacheINI = TRUE;
+	}
+
+	// Load standard maps from map cache last.
+	// This overwrites matching user maps to prevent munkees getting rowdy :)
+	if (m_doLoadStandardMapCacheINI)
+	{
+		loadMapsFromMapCacheINI(mapDir);
+		m_doLoadStandardMapCacheINI = FALSE;
+	}
 }
 
-void MapCache::loadStandardMaps(void)
+void MapCache::prepareUnseenMaps( const AsciiString &mapDir )
 {
-	INI ini;
-	AsciiString fname;
-	fname.format("%s\\%s", getMapDir().str(), m_mapCacheName);
-#if defined(RTS_DEBUG)
-	File *fp = TheFileSystem->openFile(fname.str(), File::READ);
-	if (fp != NULL)
-	{
-		fp->close();
-		fp = NULL;
-#endif
-		ini.load( fname, INI_LOAD_OVERWRITE, NULL );
-#if defined(RTS_DEBUG)
-	}
-#endif
-}
-
-Bool MapCache::loadUserMaps()
-{
-	// Read in map list from disk
-	AsciiString mapDir;
-	if (TheGlobalData->m_buildMapCache)
-	{
-		mapDir = getMapDir();
-	}
-	else
-	{
-		mapDir = getUserMapDir();
-
-		INI ini;
-		AsciiString fname;
-		fname.format("%s\\%s", mapDir.str(), m_mapCacheName);
-		File *fp = TheFileSystem->openFile(fname.str(), File::READ);
-		if (fp)
-		{
-			fp->close();
-			ini.load( fname, INI_LOAD_OVERWRITE, NULL );
-		}
-
-	}
-
-	// mark all as unseen
-	m_seen.clear();
 	MapCache::iterator it = begin();
 	for (; it != end(); ++it)
 	{
-		m_seen[it->first] = FALSE;
+		const AsciiString &mapName = it->first;
+
+		if (mapName.startsWithNoCase(mapDir.str()))
+		{
+			it->second.m_doesExist = FALSE;
+		}
+	}
+}
+
+Bool MapCache::clearUnseenMaps( const AsciiString &mapDir )
+{
+	Bool erasedSomething = FALSE;
+
+	MapCache::iterator it = begin();
+	while (it != end())
+	{
+		MapCache::iterator next = it;
+		++next;
+
+		const AsciiString &mapName = it->first;
+		const MapMetaData &mapData = it->second;
+
+		if (mapName.startsWithNoCase(mapDir.str()) && !mapData.m_doesExist)
+		{
+			erase(it);
+			erasedSomething = TRUE;
+		}
+
+		it = next;
 	}
 
-	FilenameList filenameList;
-	FilenameListIter iter;
+	return erasedSomething;
+}
+
+void MapCache::loadMapsFromMapCacheINI( const AsciiString &mapDir )
+{
+	INI ini;
+	AsciiString fname;
+	fname.format("%s\\%s", mapDir.str(), m_mapCacheName);
+
+	if (TheFileSystem->doesFileExist(fname.str()))
+	{
+		ini.load( fname, INI_LOAD_OVERWRITE, NULL );
+	}
+}
+
+Bool MapCache::loadMapsFromDisk( const AsciiString &mapDir, Bool isOfficial, Bool filterByAllowedMaps )
+{
+	prepareUnseenMaps(mapDir);
+
+	FilenameList filepathList;
+	FilenameListIter filepathIt;
 	AsciiString toplevelPattern;
 	toplevelPattern.format("%s\\", mapDir.str());
-	Bool parsedAMap = FALSE;
+	Bool mapListChanged = FALSE;
 	AsciiString filenamepattern;
 	filenamepattern.format("*.%s", getMapExtension().str());
 
-	TheFileSystem->getFileListInDirectory(toplevelPattern, filenamepattern, filenameList, TRUE);
+	TheFileSystem->getFileListInDirectory(toplevelPattern, filenamepattern, filepathList, TRUE);
 
-	iter = filenameList.begin();
+	filepathIt = filepathList.begin();
 
-	for (; iter != filenameList.end(); ++iter) {
+	for (; filepathIt != filepathList.end(); ++filepathIt)
+	{
 		FileInfo fileInfo;
-		AsciiString tempfilename;
-		tempfilename = (*iter);
-		tempfilename.toLower();
+		AsciiString filepathLower = *filepathIt;
+		filepathLower.toLower();
 
-		const char *s = tempfilename.reverseFind('\\');
-		if (!s)
+		const char *szFilenameLower = filepathLower.reverseFind('\\');
+		if (!szFilenameLower)
 		{
 			DEBUG_CRASH(("Couldn't find \\ in map name!"));
+			continue;
 		}
-		else
+
+		AsciiString endingStr;
+		AsciiString filenameLower = szFilenameLower+1;
+		filenameLower.truncateBy(strlen(mapExtension));
+
+		if (filterByAllowedMaps && m_allowedMaps.find(filenameLower) == m_allowedMaps.end())
 		{
-			AsciiString endingStr;
-			AsciiString fname = s+1;
-			fname.truncateBy(strlen(mapExtension));
-
-			endingStr.format("%s\\%s%s", fname.str(), fname.str(), mapExtension);
-
-			Bool skipMap = FALSE;
-			if (TheGlobalData->m_buildMapCache)
-			{
-				std::set<AsciiString>::const_iterator sit = m_allowedMaps.find(fname);
-				if (m_allowedMaps.size() != 0 && sit == m_allowedMaps.end())
-				{
-					//DEBUG_LOG(("Skipping map: '%s'", fname.str()));
-					skipMap = TRUE;
-				}
-				else
-				{
-					//DEBUG_LOG(("Parsing map: '%s'", fname.str()));
-				}
-			}
-
-			if (!skipMap)
-			{
-				if (!tempfilename.endsWithNoCase(endingStr.str()))
-				{
-					DEBUG_CRASH(("Found map '%s' in wrong spot (%s)", fname.str(), tempfilename.str()));
-				}
-				else
-				{
-					if (TheFileSystem->getFileInfo(tempfilename, &fileInfo)) {
-						m_seen[tempfilename] = TRUE;
-						parsedAMap |= addMap(mapDir, *iter, &fileInfo, TheGlobalData->m_buildMapCache);
-					} else {
-						DEBUG_CRASH(("Could not get file info for map %s", (*iter).str()));
-					}
-				}
-			}
+			DEBUG_CRASH(("Map '%s' has been filtered out", filenameLower.str()));
+			continue;
 		}
+
+		endingStr.format("%s\\%s%s", filenameLower.str(), filenameLower.str(), mapExtension);
+
+		if (!filepathLower.endsWithNoCase(endingStr.str()))
+		{
+			DEBUG_CRASH(("Found map '%s' in wrong spot (%s)", filenameLower.str(), filepathLower.str()));
+			continue;
+		}
+
+		if (!TheFileSystem->getFileInfo(*filepathIt, &fileInfo))
+		{
+			DEBUG_CRASH(("Could not get file info for map %s", filepathIt->str()));
+			continue;
+		}
+
+		mapListChanged |= addMap(mapDir, *filepathIt, filepathLower, fileInfo, isOfficial);
 	}
 
-	// clean out unseen maps
 	if (clearUnseenMaps(mapDir))
-		return TRUE;
+	{
+		mapListChanged = TRUE;
+	}
 
-	return parsedAMap;
+	return mapListChanged;
 }
 
-//Bool MapCache::addMap( AsciiString dirName, AsciiString fname, WinTimeStamp timestamp, UnsignedInt filesize, Bool isOfficial )
-Bool MapCache::addMap( AsciiString dirName, AsciiString fname, FileInfo *fileInfo, Bool isOfficial)
+Bool MapCache::addMap(
+	const AsciiString &mapDir,
+	const AsciiString &fname,
+	const AsciiString &lowerFname,
+	FileInfo &fileInfo,
+	Bool isOfficial)
 {
-	if (fileInfo == NULL) {
-		return FALSE;
-	}
-
-	AsciiString lowerFname;
-	lowerFname = fname;
-	lowerFname.toLower();
 	MapCache::iterator it = find(lowerFname);
-
-	MapMetaData md;
-	UnsignedInt filesize = fileInfo->sizeLow;
-
 	if (it != end())
 	{
-		// Found the map in our cache.  Check to see if it has changed.
-		md = it->second;
+		// Found the map in our cache. Check to see if it has changed.
+		const MapMetaData& md = it->second;
 
-		if ((md.m_filesize == filesize) &&
-				(md.m_CRC != 0))
+		if (md.m_filesize == fileInfo.sizeLow && md.m_CRC != 0)
 		{
 			// Force a lookup so that we don't display the English localization in all builds.
 			if (md.m_nameLookupTag.isEmpty())
@@ -629,13 +612,16 @@ Bool MapCache::addMap( AsciiString dirName, AsciiString fname, FileInfo *fileInf
 					(*this)[lowerFname].m_displayName.concat(extension);
 				}
 			}
+
+			it->second.m_doesExist = TRUE;
+
 //			DEBUG_LOG(("MapCache::addMap - found match for map %s", lowerFname.str()));
 			return FALSE;	// OK, it checks out.
 		}
 		DEBUG_LOG(("%s didn't match file in MapCache", fname.str()));
-		DEBUG_LOG(("size: %d / %d", filesize, md.m_filesize));
-		DEBUG_LOG(("time1: %d / %d", fileInfo->timestampHigh, md.m_timestamp.m_highTimeStamp));
-		DEBUG_LOG(("time2: %d / %d", fileInfo->timestampLow, md.m_timestamp.m_lowTimeStamp));
+		DEBUG_LOG(("size: %d / %d", fileInfo.sizeLow, md.m_filesize));
+		DEBUG_LOG(("time1: %d / %d", fileInfo.timestampHigh, md.m_timestamp.m_highTimeStamp));
+		DEBUG_LOG(("time2: %d / %d", fileInfo.timestampLow, md.m_timestamp.m_lowTimeStamp));
 //		DEBUG_LOG(("size: %d / %d", filesize, md.m_filesize));
 //		DEBUG_LOG(("time1: %d / %d", timestamp.m_highTimeStamp, md.m_timestamp.m_highTimeStamp));
 //		DEBUG_LOG(("time2: %d / %d", timestamp.m_lowTimeStamp, md.m_timestamp.m_lowTimeStamp));
@@ -646,22 +632,25 @@ Bool MapCache::addMap( AsciiString dirName, AsciiString fname, FileInfo *fileInf
 	loadMap(fname); // Just load for querying the data, since we aren't playing this map.
 
 	// The map is now loaded.  Pick out what we need.
+	MapMetaData md;
 	md.m_fileName = lowerFname;
-	md.m_filesize = filesize;
+	md.m_filesize = fileInfo.sizeLow;
 	md.m_isOfficial = isOfficial;
+	md.m_doesExist = TRUE;
 	md.m_waypoints.update();
 	md.m_numPlayers = md.m_waypoints.m_numStartSpots;
 	md.m_isMultiplayer = (md.m_numPlayers >= 2);
-	md.m_timestamp.m_highTimeStamp = fileInfo->timestampHigh;
-	md.m_timestamp.m_lowTimeStamp = fileInfo->timestampLow;
+	md.m_timestamp.m_highTimeStamp = fileInfo.timestampHigh;
+	md.m_timestamp.m_lowTimeStamp = fileInfo.timestampLow;
 	md.m_supplyPositions = m_supplyPositions;
 	md.m_techPositions = m_techPositions;
 	md.m_CRC = calcCRC(fname);
 
 	Bool exists = false;
-	AsciiString munkee = worldDict.getAsciiString(TheKey_mapName, &exists);
-	md.m_nameLookupTag = munkee;
-	if (!exists || munkee.isEmpty())
+	AsciiString nameLookupTag = worldDict.getAsciiString(TheKey_mapName, &exists);
+	md.m_nameLookupTag = nameLookupTag;
+
+	if (!exists || nameLookupTag.isEmpty())
 	{
 		DEBUG_LOG(("Missing TheKey_mapName!"));
 		AsciiString tempdisplayname;
@@ -678,11 +667,11 @@ Bool MapCache::addMap( AsciiString dirName, AsciiString fname, FileInfo *fileInf
 	else
 	{
 		AsciiString stringFileName;
-		stringFileName.format("%s\\%s", dirName.str(), fname.str());
+		stringFileName.format("%s\\%s", mapDir.str(), fname.str());
 		stringFileName.truncateBy(4);
 		stringFileName.concat("\\map.str");
 		TheGameText->initMapStringFile(stringFileName);
-		md.m_displayName = TheGameText->fetch(munkee);
+		md.m_displayName = TheGameText->fetch(nameLookupTag);
 		if (md.m_numPlayers >= 2)
 		{
 			UnicodeString extension;
@@ -733,24 +722,20 @@ Bool WouldMapTransfer( const AsciiString& mapName )
 }
 
 //-------------------------------------------------------------------------------------------------
-// TheSuperHackers @refactor Massively refactors the map list population function by breaking it into smaller pieces.
-
 typedef std::set<UnicodeString, rts::less_than_nocase<UnicodeString> > MapNameList;
 typedef std::map<UnicodeString, AsciiString> MapDisplayToFileNameList;
 
 static void buildMapListForNumPlayers(MapNameList &outMapNames, MapDisplayToFileNameList &outFileNames, Int numPlayers)
 {
-	DEBUG_LOG(("Adding maps with %d players", numPlayers));
 	MapCache::iterator it = TheMapCache->begin();
 
 	for (; it != TheMapCache->end(); ++it)
 	{
-		const MapMetaData &md = it->second;
-		if (md.m_numPlayers == numPlayers)
+		const MapMetaData &mapData = it->second;
+		if (mapData.m_numPlayers == numPlayers)
 		{
 			outMapNames.insert(it->second.m_displayName);
 			outFileNames[it->second.m_displayName] = it->first;
-			DEBUG_LOG(("Adding map '%s' to temp cache.", it->first.str()));
 		}
 	}
 }

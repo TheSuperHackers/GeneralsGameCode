@@ -265,6 +265,7 @@ BOOL PickUnitDialog::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			m_objectTreeView.GetItem(&item);
 			if (item.lParam >= 0) {
 				m_currentObjectIndex = item.lParam;
+				static_assert(ARRAY_SIZE(m_currentObjectName) >= ARRAY_SIZE(buffer), "Incorrect array size");
 				strcpy(m_currentObjectName, buffer);
 			}	else if (m_objectTreeView.ItemHasChildren(item.hItem)) {
 				strcpy(m_currentObjectName, "");
@@ -307,8 +308,7 @@ void PickUnitDialog::addObject( MapObject *mapObject, const char *pPath, Int ind
 		// first sort by side, either create or find the tree item with matching side name
 		AsciiString side = thingTemplate->getDefaultOwningSide();
 		DEBUG_ASSERTCRASH( !side.isEmpty(), ("NULL default side in template") );
-		strcpy( buffer, side.str() );
-		parent = findOrAdd( parent, buffer );
+		parent = findOrAdd( parent, side.str());
 
 		// next tier uses the editor sorting that design can specify in the INI
 		EditorSortingType i = ES_FIRST;

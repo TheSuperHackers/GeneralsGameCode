@@ -53,7 +53,6 @@
 #include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/Module/CreateModule.h"
 #include "GameLogic/Module/ProductionUpdate.h"
-#include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/Module/ParkingPlaceBehavior.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////

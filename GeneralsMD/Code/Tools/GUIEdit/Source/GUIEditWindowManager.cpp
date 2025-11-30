@@ -501,7 +501,7 @@ void GUIEditWindowManager::incrementName( GameWindow *window )
 	// this I will botch it (cuz I'm currently not sure
 	// how to test it)
 	char name[MAX_WINDOW_NAME_LEN];
-	strcpy(name, instData->m_decoratedNameString.str());
+	strlcpy(name, instData->m_decoratedNameString.str(), ARRAY_SIZE(name));
 
 	Int len = strlen( name );
 	char numberBuffer[ MAX_WINDOW_NAME_LEN ];

@@ -30,7 +30,7 @@ TCP                   Neal Kettler        neal@westwood.com
 #include <string.h>
 #include <assert.h>
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 
 #include <winsock.h>
 #include <io.h>

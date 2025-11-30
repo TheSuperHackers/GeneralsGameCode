@@ -269,9 +269,10 @@ void PerfGather::reset()
 {
 	PerfGather::termPerfDump();
 
-	strcpy(s_buf, fname);
+	strlcpy(s_buf, fname, ARRAY_SIZE(s_buf);
 
 	char tmp[256];
+	static_assert(ARRAY_SIZE(tmp) >= ARRAY_SIZE(s_buf), "Incorrect array size");
 	strcpy(tmp, s_buf);
 	strlcat(tmp, ".csv", ARRAY_SIZE(tmp));
 

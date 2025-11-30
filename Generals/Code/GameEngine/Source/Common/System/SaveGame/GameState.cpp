@@ -847,14 +847,13 @@ static AsciiString getMapLeafAndDirName(const AsciiString& in)
 // ------------------------------------------------------------------------------------------------
 static AsciiString removeExtension(const AsciiString& in)
 {
-	char buf[1024];
-	strcpy(buf, in.str());
-	char* p = strrchr(buf, '.');
-	if (p)
+	if (const char* end = in.reverseFind('.'))
 	{
-		*p = 0;
+		const char* begin = in.str();
+		return AsciiString(begin, end - begin);
 	}
-	return AsciiString(buf);
+
+	return in;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1619,22 +1618,16 @@ void GameState::xfer( Xfer *xfer )
 		saveGameInfo->mapLabel = dict->getAsciiString( TheKey_mapName, &exists );
 
 	// if no label was found, we'll use the map name (just filename, no directory info)
-	if( exists == FALSE || saveGameInfo->mapLabel == AsciiString::TheEmptyString )
+	if (exists == FALSE || saveGameInfo->mapLabel == AsciiString::TheEmptyString)
 	{
-		char string[ _MAX_PATH ];
-
-		strcpy( string, TheGlobalData->m_mapName.str() );
-		char *p = strrchr( string, '\\' );
-		if( p == NULL )
+		const char* p = TheGlobalData->m_mapName.reverseFind('\\');
+		if (p == NULL)
 			saveGameInfo->mapLabel = TheGlobalData->m_mapName;
 		else
 		{
-
 			p++;  // skip the '\' we're on
-			saveGameInfo->mapLabel.set( p );
-
+			saveGameInfo->mapLabel.set(p);
 		}
-
 	}
 
 	// xfer map label

@@ -79,8 +79,8 @@ TextureSettingsDialogClass::TextureSettingsDialogClass
 {
 	//{{AFX_DATA_INIT(TextureSettingsDialogClass)
 	//}}AFX_DATA_INIT
-	MEMBER_ADD (m_pTexture, ptexture);
-	MEMBER_ADD (m_pOriginalTexture, poriginal_texture);
+	REF_PTR_SET (m_pTexture, ptexture);
+	REF_PTR_SET (m_pOriginalTexture, poriginal_texture);
 	return ;
 }
 
@@ -528,7 +528,7 @@ TextureSettingsDialogClass::OnRestore (void)
 		// Get the original texture
 		TextureClass *pnew_texture = m_pOriginalTexture->Get_Texture ();
 		m_pTexture->Set_Texture (pnew_texture);
-		MEMBER_RELEASE (pnew_texture);
+		REF_PTR_RELEASE (pnew_texture);
 
 		// Reload the dialog control settings
 		Load_Texture_Settings ();

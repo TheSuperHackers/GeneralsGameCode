@@ -437,8 +437,8 @@ const char * SphereRenderObjClass::Get_Name(void) const
 void SphereRenderObjClass::Set_Name(const char * name)
 {
 	WWASSERT(name != NULL);
-	WWASSERT(strlen(name) < 2*W3D_NAME_LEN);
-	strcpy(Name,name);
+	const size_t nameLen = strlcpy(Name, name, ARRAY_SIZE(Name));
+	(void)nameLen; WWASSERT(nameLen < ARRAY_SIZE(Name));
 }
 
 
@@ -1162,7 +1162,7 @@ SpherePrototypeClass::SpherePrototypeClass (void)
 SpherePrototypeClass::SpherePrototypeClass(SphereRenderObjClass *sphere)
 {
 	::memset (&Definition, 0, sizeof (Definition));
-	::strcpy (Definition.Name, sphere->Get_Name ());
+	strlcpy(Definition.Name, sphere->Get_Name(), ARRAY_SIZE(Definition.Name));
 
 	Definition.DefaultAlpha = sphere->Get_Default_Alpha ();
 	Definition.AnimDuration = sphere->AnimDuration;
@@ -1190,7 +1190,7 @@ SpherePrototypeClass::SpherePrototypeClass(SphereRenderObjClass *sphere)
 			filename = name;
 		}
 
-		::strcpy (Definition.TextureName, filename);
+		strlcpy(Definition.TextureName, filename, ARRAY_SIZE(Definition.TextureName));
 
 	}
 

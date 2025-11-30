@@ -133,7 +133,7 @@ static void removeLeadingAndTrailing ( char *buffer )
 
 	while ( *ptr++ = *first++ );
 
-	ptr -= 2;;
+	ptr -= 2;
 
 	while ( (ptr > buffer) && (ch = *ptr) && iswspace ( ch ) )
 	{
@@ -330,7 +330,7 @@ BOOL CBabylonDlg::OnInitDialog()
 #endif
 
 
-	Ready();;
+	Ready();
 
 	PostMessage ( WM_COMMAND, MAKEWPARAM ( IDC_RELOAD, BN_CLICKED ));
 

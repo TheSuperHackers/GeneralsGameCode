@@ -36,9 +36,8 @@
 
 #pragma once
 
-#include "wwdebug.h"
+#include "always.h"
 #include "stdlib.h"
-#include "refcount.h"
 #include "aabox.h"
 
 class CullableClass;

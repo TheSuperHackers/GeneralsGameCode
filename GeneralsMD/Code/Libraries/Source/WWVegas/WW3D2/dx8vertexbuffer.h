@@ -41,7 +41,6 @@
 
 #include "always.h"
 #include "wwdebug.h"
-#include "refcount.h"
 #include "dx8fvf.h"
 
 const unsigned dynamic_fvf_type=D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX2|D3DFVF_DIFFUSE;

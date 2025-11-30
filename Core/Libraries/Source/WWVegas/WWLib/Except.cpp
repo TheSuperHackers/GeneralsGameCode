@@ -903,7 +903,7 @@ void Register_Thread_ID(unsigned long thread_id, char *thread_name, bool main_th
 
 		ThreadInfoType *thread = new ThreadInfoType;
 		thread->ThreadID = thread_id;
-		strcpy(thread->ThreadName, thread_name);
+		strlcpy(thread->ThreadName, thread_name, ARRAY_SIZE(thread->ThreadName));
 		thread->Main = main_thread;
 		thread->ThreadHandle = INVALID_HANDLE_VALUE;
 		ThreadList.Add(thread);

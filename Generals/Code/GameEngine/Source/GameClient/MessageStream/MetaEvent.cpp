@@ -793,6 +793,24 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 			map->m_displayName = TheGameText->FETCH_OR_SUBSTITUTE("GUI:SelectNextIdleWorker", L"Next Idle Worker");
 		}
 	}
+	{
+		MetaMapRec* map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_ALT_CAMERA_ROTATE_LEFT);
+		if (map->m_key == MK_NONE) {
+			map->m_key = MK_KP4;
+			map->m_transition = DOWN;
+			map->m_modState = CTRL;
+			map->m_usableIn = COMMANDUSABLE_GAME;
+		}
+	}
+	{
+		MetaMapRec* map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_ALT_CAMERA_ROTATE_RIGHT);
+		if (map->m_key == MK_NONE) {
+			map->m_key = MK_KP6;
+			map->m_transition = DOWN;
+			map->m_modState = CTRL;
+			map->m_usableIn = COMMANDUSABLE_GAME;
+		}
+	}
 
 #if defined(RTS_DEBUG)
 	{

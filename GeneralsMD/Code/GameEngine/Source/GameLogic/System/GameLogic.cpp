@@ -2463,20 +2463,18 @@ void GameLogic::loadMapINI( AsciiString mapName )
 		return;
 	}
 
-	char filename[_MAX_PATH];
-	char fullFledgeFilename[_MAX_PATH];
-
-	memset(filename, 0, _MAX_PATH);
-	strcpy(filename, mapName.str());
-
 	//
 	// if map name begins with a "SAVE_DIRECTORY\", then the map refers to a map
 	// that has been extracted from a save game file ... in that case we need to get
 	// the pristine map name string in order to manipulate and load the right map.ini
 	// for that map from it's original location
 	//
-	if (TheGameState->isInSaveDirectory(filename))
-		strcpy( filename, TheGameState->getSaveGameInfo()->pristineMapName.str() );
+	const char* pristineMapName = TheGameState->isInSaveDirectory(mapName.str())
+		? TheGameState->getSaveGameInfo()->pristineMapName.str()
+		: mapName.str();
+
+	char filename[_MAX_PATH];
+	strlcpy(filename, pristineMapName, ARRAY_SIZE(filename));
 
 	// sanity
 	int length = strlen(filename);
@@ -2492,6 +2490,7 @@ void GameLogic::loadMapINI( AsciiString mapName )
 	*extension = 0;
 
 
+	char fullFledgeFilename[_MAX_PATH];
 	sprintf(fullFledgeFilename, "%s\\map.ini", filename);
 	if (TheFileSystem->doesFileExist(fullFledgeFilename)) {
 		DEBUG_LOG(("Loading map.ini"));

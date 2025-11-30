@@ -39,11 +39,9 @@
 
 #include "always.h"
 #include "quat.h"
-#include "refcount.h"
 #include "w3d_file.h"
 #include "hash.h"
 #include "mempool.h"
-#include <refcount.h>
 #include <SLIST.h>
 #include <Vector.h>
 

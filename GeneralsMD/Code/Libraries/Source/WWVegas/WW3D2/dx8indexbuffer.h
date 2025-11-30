@@ -40,7 +40,6 @@
 
 #include "always.h"
 #include "wwdebug.h"
-#include "refcount.h"
 #include "sphere.h"
 
 class DX8Wrapper;

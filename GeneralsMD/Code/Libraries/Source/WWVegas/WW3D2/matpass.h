@@ -39,9 +39,8 @@
 
 #pragma once
 
-#include "refcount.h"
+#include "always.h"
 #include "shader.h"
-#include "wwdebug.h"
 
 class TextureClass;
 class VertexMaterialClass;

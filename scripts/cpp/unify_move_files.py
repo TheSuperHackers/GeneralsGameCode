@@ -166,6 +166,30 @@ def main():
     #unify_move_file(Game.GENERALS, "GameEngine/Source/Common/System/GameMemoryInitPools_Generals.inl", Game.CORE, "GameEngine/Source/Common/System/GameMemoryInitPools_Generals.inl")
     #unify_move_file(Game.ZEROHOUR, "GameEngine/Source/Common/System/GameMemoryInitPools_GeneralsMD.inl", Game.CORE, "GameEngine/Source/Common/System/GameMemoryInitPools_GeneralsMD.inl")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/ObjectStatusTypes.h", Game.CORE, "GameEngine/Include/Common/ObjectStatusTypes.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/Radar.h", Game.CORE, "GameEngine/Include/Common/Radar.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/System/ObjectStatusTypes.cpp", Game.CORE, "GameEngine/Source/Common/System/ObjectStatusTypes.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/System/Radar.cpp", Game.CORE, "GameEngine/Source/Common/System/Radar.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/Common/W3DRadar.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/Common/W3DRadar.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/Common/System/W3DRadar.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/Common/System/W3DRadar.cpp")
+
+    #unify_move_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Smudge.h", Game.CORE, "GameEngine/Include/GameClient/Smudge.h")
+    #unify_move_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/System/Smudge.cpp", Game.CORE, "GameEngine/Source/GameClient/System/Smudge.cpp")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DSmudge.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DSmudge.h")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DSmudge.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DSmudge.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DShaderManager.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DShaderManager.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DShaderManager.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DShaderManager.cpp")
+
+    #unify_move_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/ParabolicEase.h", Game.CORE, "GameEngine/Include/GameClient/ParabolicEase.h")
+    #unify_move_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/ParabolicEase.cpp", Game.CORE, "GameEngine/Source/GameClient/ParabolicEase.cpp")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/camerashakesystem.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/CameraShakeSystem.h")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/camerashakesystem.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/CameraShakeSystem.cpp")
+
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/View.h", Game.CORE, "GameEngine/Include/GameClient/View.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/View.cpp", Game.CORE, "GameEngine/Source/GameClient/View.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DView.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DView.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DView.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DView.cpp")
+
     return
 
 

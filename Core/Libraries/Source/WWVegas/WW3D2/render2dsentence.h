@@ -36,8 +36,8 @@
 
 #pragma once
 
+#include "always.h"
 #include "render2d.h"
-#include "refcount.h"
 #include "Vector.h"
 #include "vector2i.h"
 #include "wwstring.h"
@@ -82,7 +82,7 @@ public:
 	FontCharsClass					*AlternateUnicodeFont;
 
 
-	void	Initialize_GDI_Font( const char *font_name, int point_size, bool is_bold );
+	bool	Initialize_GDI_Font( const char *font_name, int point_size, bool is_bold );
 	bool	Is_Font( const char *font_name, int point_size, bool is_bold );
 	const char * Get_Name( void )			{ return Name; }
 
@@ -99,7 +99,7 @@ private:
 	//
 	//	Private methods
 	//
-	void							Create_GDI_Font( const char *font_name );
+	bool							Create_GDI_Font( const char *font_name );
 	void							Free_GDI_Font( void );
 	const FontCharsClassCharDataStruct *	Store_GDI_Char( WCHAR ch );
 	void							Update_Current_Buffer( int char_width );

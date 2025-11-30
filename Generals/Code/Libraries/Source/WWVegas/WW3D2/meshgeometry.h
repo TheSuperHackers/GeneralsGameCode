@@ -39,7 +39,6 @@
 #pragma once
 
 #include "always.h"
-#include "refcount.h"
 #include "bittype.h"
 #include "simplevec.h"
 #include "sharebuf.h"

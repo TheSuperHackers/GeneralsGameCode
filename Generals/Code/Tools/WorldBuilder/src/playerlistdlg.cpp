@@ -87,7 +87,7 @@ static void ensureValidPlayerName(Dict *d)
 {
 	// ensure there are no illegal chars in it. (in particular, no spaces!)
 	char buf[1024];
-	strcpy(buf, d->getAsciiString(TheKey_playerName).str());
+	strlcpy(buf, d->getAsciiString(TheKey_playerName).str(), ARRAY_SIZE(buf));
 	for (char* p = buf; *p; ++p)
 		if (!islegalplayernamechar(*p))
 			*p = '_';

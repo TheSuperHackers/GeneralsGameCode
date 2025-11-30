@@ -52,17 +52,28 @@
 //-----------------------------------------------------------------------------
 #include "PreRTS.h"
 
+#include "Common/AddonCompat.h"
 #include "Common/INI.h"
 #include "Common/Registry.h"
 #include "Common/FileSystem.h"
 #include "Common/UserPreferences.h"
 
+#include "GameClient/Display.h"
 #include "GameClient/GlobalLanguage.h"
 
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-GlobalLanguage *TheGlobalLanguageData = NULL;				///< The global language singalton
+GlobalLanguage *TheGlobalLanguageData = NULL;				///< The global language singleton
+
+static const LookupListRec ResolutionFontSizeMethodNames[] =
+{
+	{ "CLASSIC", GlobalLanguage::ResolutionFontSizeMethod_Classic },
+	{ "CLASSIC_NO_CEILING", GlobalLanguage::ResolutionFontSizeMethod_ClassicNoCeiling },
+	{ "STRICT", GlobalLanguage::ResolutionFontSizeMethod_Strict },
+	{ "BALANCED", GlobalLanguage::ResolutionFontSizeMethod_Balanced },
+	{ NULL, 0 }
+};
 
 static const FieldParse TheGlobalLanguageDataFieldParseTable[] =
 {
@@ -72,7 +83,7 @@ static const FieldParse TheGlobalLanguageDataFieldParseTable[] =
 	{ "MilitaryCaptionSpeed",						INI::parseInt,					NULL,		offsetof( GlobalLanguage, m_militaryCaptionSpeed ) },
 	{ "UseHardWordWrap",						INI::parseBool,					NULL,		offsetof( GlobalLanguage, m_useHardWrap) },
 	{ "ResolutionFontAdjustment",						INI::parseReal,					NULL,		offsetof( GlobalLanguage, m_resolutionFontSizeAdjustment) },
-
+	{ "ResolutionFontSizeMethod", INI::parseLookupList, ResolutionFontSizeMethodNames, offsetof( GlobalLanguage, m_resolutionFontSizeMethod) },
 	{ "CopyrightFont",					GlobalLanguage::parseFontDesc,	NULL,	offsetof( GlobalLanguage, m_copyrightFont ) },
 	{ "MessageFont",					GlobalLanguage::parseFontDesc,	NULL,	offsetof( GlobalLanguage, m_messageFont) },
 	{ "MilitaryCaptionTitleFont",		GlobalLanguage::parseFontDesc,	NULL,	offsetof( GlobalLanguage, m_militaryCaptionTitleFont) },
@@ -119,6 +130,7 @@ GlobalLanguage::GlobalLanguage()
 	m_militaryCaptionSpeed = 0;
 	m_useHardWrap = FALSE;
 	m_resolutionFontSizeAdjustment = 0.7f;
+	m_resolutionFontSizeMethod = ResolutionFontSizeMethod_Default;
 	m_militaryCaptionDelayMS = 750;
 	//End Add
 
@@ -195,12 +207,86 @@ float GlobalLanguage::getResolutionFontSizeAdjustment( void ) const
 
 Int GlobalLanguage::adjustFontSize(Int theFontSize)
 {
-	Real adjustFactor = TheGlobalData->m_xResolution / (Real)DEFAULT_DISPLAY_WIDTH;
-	adjustFactor = 1.0f + (adjustFactor-1.0f) * getResolutionFontSizeAdjustment();
-	if (adjustFactor<1.0f) adjustFactor = 1.0f;
-	if (adjustFactor>2.0f) adjustFactor = 2.0f;
+	// TheSuperHackers @todo This function is called very often.
+	// Therefore cache the adjustFactor on resolution change to not recompute it on every call.
+	Real adjustFactor;
+
+	switch (m_resolutionFontSizeMethod)
+	{
+	default:
+	case ResolutionFontSizeMethod_Classic:
+	{
+		// TheSuperHackers @info The original font scaling for this game.
+		// Useful for not breaking legacy Addons and Mods. Scales poorly with large resolutions.
+		adjustFactor = TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH;
+		adjustFactor = 1.0f + (adjustFactor - 1.0f) * getResolutionFontSizeAdjustment();
+		if (adjustFactor > 2.0f)
+			adjustFactor = 2.0f;
+		break;
+	}
+	case ResolutionFontSizeMethod_ClassicNoCeiling:
+	{
+		// TheSuperHackers @feature The original font scaling, but without ceiling.
+		// Useful for not changing the original look of the game. Scales alright with large resolutions.
+		adjustFactor = TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH;
+		adjustFactor = 1.0f + (adjustFactor - 1.0f) * getResolutionFontSizeAdjustment();
+		break;
+	}
+	case ResolutionFontSizeMethod_Strict:
+	{
+		// TheSuperHackers @feature The strict method scales fonts based on the smallest screen
+		// dimension so they scale independent of aspect ratio.
+		const Real wScale = TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH;
+		const Real hScale = TheDisplay->getHeight() / (Real)DEFAULT_DISPLAY_HEIGHT;
+		adjustFactor = min(wScale, hScale);
+		adjustFactor = 1.0f + (adjustFactor - 1.0f) * getResolutionFontSizeAdjustment();
+		break;
+	}
+	case ResolutionFontSizeMethod_Balanced:
+	{
+		// TheSuperHackers @feature The balanced method evenly weighs the display width and height
+		// for a balanced rescale on non 4:3 resolutions. The aspect ratio scaling is clamped to
+		// prevent oversizing.
+		constexpr const Real maxAspect = 1.8f;
+		constexpr const Real minAspect = 1.0f;
+		Real w = TheDisplay->getWidth();
+		Real h = TheDisplay->getHeight();
+		const Real aspect = w / h;
+		Real wScale = w / (Real)DEFAULT_DISPLAY_WIDTH;
+		Real hScale = h / (Real)DEFAULT_DISPLAY_HEIGHT;
+
+		if (aspect > maxAspect)
+		{
+			// Recompute width at max aspect
+			w = maxAspect * h;
+			wScale = w / (Real)DEFAULT_DISPLAY_WIDTH;
+		}
+		else if (aspect < minAspect)
+		{
+			// Recompute height at min aspect
+			h = minAspect * w;
+			hScale = h / (Real)DEFAULT_DISPLAY_HEIGHT;
+		}
+		adjustFactor = (wScale + hScale) * 0.5f;
+		adjustFactor = 1.0f + (adjustFactor - 1.0f) * getResolutionFontSizeAdjustment();
+		break;
+	}
+	}
+
+	if (adjustFactor < 1.0f)
+		adjustFactor = 1.0f;
 	Int pointSize = REAL_TO_INT_FLOOR(theFontSize*adjustFactor);
 	return pointSize;
+}
+
+void GlobalLanguage::parseCustomDefinition()
+{
+	if (addon::HasFullviewportDat())
+	{
+		// TheSuperHackers @tweak xezon 19/08/2025 Force the classic font size adjustment for the old
+		// 'Control Bar Pro' Addons because they use manual font upscaling in higher resolution packages.
+		m_resolutionFontSizeMethod = ResolutionFontSizeMethod_Classic;
+	}
 }
 
 FontDesc::FontDesc(void)

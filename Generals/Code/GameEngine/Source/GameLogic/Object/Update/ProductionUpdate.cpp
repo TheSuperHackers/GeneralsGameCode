@@ -903,7 +903,7 @@ UpdateSleepTime ProductionUpdate::update( void )
 				us->getID());
 
 			// print a message to the local player
-			if( us->isLocallyControlled() )
+			if( us->isLocallyViewed() )
 			{
 				UnicodeString msg;
 				UnicodeString format = TheGameText->fetch( "UPGRADE:UpgradeComplete" );

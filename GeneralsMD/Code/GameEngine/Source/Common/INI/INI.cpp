@@ -411,6 +411,7 @@ UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 				if (parse)
 				{
 					#ifdef DEBUG_CRASHING
+					static_assert(ARRAY_SIZE(m_curBlockStart) >= ARRAY_SIZE(m_buffer), "Incorrect array size");
 					strcpy(m_curBlockStart, m_buffer);
 					#endif
 					try {
@@ -768,7 +769,7 @@ AsciiString INI::getNextQuotedAsciiString()
 			Bool done=FALSE;
 			if ((strLen=strlen(token)) > 1)
 			{
-				strcpy(buff, &token[1]);	//skip the starting quote
+				strlcpy(buff, &token[1], ARRAY_SIZE(buff));	//skip the starting quote
 				//Check for end of quoted string.  Checking here fixes cases where quoted string on same line with other data.
 				if (buff[strLen-2]=='"')	//skip ending quote if present
 				{	buff[strLen-2]='\0';
@@ -817,7 +818,7 @@ AsciiString INI::getNextAsciiString()
 			buff[0] = 0;
 			if (strlen(token) > 1)
 			{
-				strcpy(buff, &token[1]);
+				strlcpy(buff, &token[1], ARRAY_SIZE(buff));
 			}
 
 			token = getNextTokenOrNull(getSepsQuote());

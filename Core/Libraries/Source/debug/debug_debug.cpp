@@ -1188,7 +1188,7 @@ void Debug::UpdateFrameStatus(FrameHashEntry &entry)
       entry.frameType==FrameTypeCheck)
     wsprintf(help,"%s(%i)",entry.fileOrGroup,entry.line);
   else
-    strcpy(help,entry.fileOrGroup);
+    strlcpy(help, entry.fileOrGroup, ARRAY_SIZE(help));
 
   // update frame status
   bool active=entry.frameType!=FrameTypeLog;

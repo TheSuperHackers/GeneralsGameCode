@@ -915,10 +915,13 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 
 		Bool handled;
 
-		if(!sourceObj->isLocallyControlled()									// if user watching is not controller and
-			&&  sourceObj->testStatus(OBJECT_STATUS_STEALTHED)	// if unit is stealthed (like a Pathfinder)
-			&& !sourceObj->testStatus(OBJECT_STATUS_DETECTED)		// but not detected...
-			&& !sourceObj->testStatus(OBJECT_STATUS_DISGUISED)  // and not disguised...
+		// TheSuperHackers @todo: Remove hardcoded KINDOF_MINE check and apply PlayFXWhenStealthed = Yes to the mine weapons instead.
+
+		Drawable* outerDrawable = sourceObj->getOuterObject()->getDrawable();
+		const Bool isVisible = outerDrawable && outerDrawable->isVisible();
+
+		if (!isVisible																				// if user watching cannot see us
+			&& sourceObj->testStatus(OBJECT_STATUS_STEALTHED)		// if unit is stealthed (like a Pathfinder)
 			&& !sourceObj->isKindOf(KINDOF_MINE)								// and not a mine (which always do the FX, even if hidden)...
 			&& !isPlayFXWhenStealthed()													// and not a weapon marked to playwhenstealthed
 			)
