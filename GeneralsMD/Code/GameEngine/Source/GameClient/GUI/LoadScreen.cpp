@@ -529,6 +529,9 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 
 	if(TheGameLODManager && TheGameLODManager->didMemPass())
 	{
+		// TheSuperHackers @bugfix Originally this movie render loop stopped rendering when the game window was inactive.
+		// This either skipped the movie or caused decompression artifacts. Now the video just keeps playing until it done.
+
 		Int progressUpdateCount = m_videoStream->frameCount() / FRAME_FUDGE_ADD;
 		Int shiftedPercent = -FRAME_FUDGE_ADD + 1;
 		while (m_videoStream->frameIndex() < m_videoStream->frameCount() - 1 )
@@ -539,15 +542,6 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 			{
 				Sleep(1);
 				continue;
-			}
-
-			if (!TheGameEngine->isActive())
-			{/*	//we are alt-tabbed out, so just increment the frame
-				m_videoStream->frameNext();
-				m_videoStream->frameDecompress();*/
-
-				//Changing for MissionDisk, just skip to end.
-				break;
 			}
 
 			m_videoStream->frameDecompress();
@@ -1049,6 +1043,9 @@ void ChallengeLoadScreen::init( GameInfo *game )
 
 	if(TheGameLODManager && TheGameLODManager->didMemPass())
 	{
+		// TheSuperHackers @bugfix Originally this movie render loop stopped rendering when the game window was inactive.
+		// This either skipped the movie or caused decompression artifacts. Now the video just keeps playing until it done.
+
 		Int progressUpdateCount = m_videoStream->frameCount() / FRAME_FUDGE_ADD;
 		Int shiftedPercent = -FRAME_FUDGE_ADD + 1;
 		while (m_videoStream->frameIndex() < m_videoStream->frameCount() - 1 )
@@ -1058,13 +1055,6 @@ void ChallengeLoadScreen::init( GameInfo *game )
 			if(!m_videoStream->isFrameReady())
 			{
 				Sleep(1);
-				continue;
-			}
-
-			if (!TheGameEngine->isActive())
-			{	//we are alt-tabbed out, so just increment the frame
-				m_videoStream->frameNext();
-				m_videoStream->frameDecompress();
 				continue;
 			}
 

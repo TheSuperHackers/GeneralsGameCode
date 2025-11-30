@@ -727,6 +727,9 @@ void PlayMovieAndBlock(AsciiString movieTitle)
 		return;
 	}
 
+	// TheSuperHackers @bugfix Originally this movie render loop stopped rendering when the game window was inactive.
+	// This either skipped the movie or caused decompression artifacts. Now the video just keeps playing until it done.
+
 	GameWindow *movieWindow = s_blankLayout->getFirstWindow();
 	TheWritableGlobalData->m_loadScreenRender = TRUE;
 	while (videoStream->frameIndex() < videoStream->frameCount() - 1)
@@ -736,13 +739,6 @@ void PlayMovieAndBlock(AsciiString movieTitle)
 		if(!videoStream->isFrameReady())
 		{
 			Sleep(1);
-			continue;
-		}
-
-		if (!TheGameEngine->isActive())
-		{	//we are alt-tabbed out, so just increment the frame
-			videoStream->frameNext();
-			videoStream->frameDecompress();
 			continue;
 		}
 
