@@ -190,8 +190,6 @@ const FieldParse CrateTemplate::TheCrateTemplateFieldParseTable[] =
 
 CrateTemplate::CrateTemplate()
 {
-	m_name = "";
-
 	m_creationChance = 0;
 	CLEAR_KINDOFMASK(m_killedByTypeKindof);
 	m_veterancyLevel = LEVEL_INVALID;

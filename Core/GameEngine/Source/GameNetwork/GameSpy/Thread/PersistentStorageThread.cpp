@@ -1315,7 +1315,7 @@ PSPlayerStats GameSpyPSMessageQueueInterface::parsePlayerKVPairs( std::string kv
 std::string GameSpyPSMessageQueueInterface::formatPlayerKVPairs( PSPlayerStats stats )
 {
 	char kvbuf[256];
-	std::string s = "";
+	std::string s;
 	PerGeneralMap::iterator it;
 
 	ITERATE_OVER(wins);

@@ -638,7 +638,7 @@ void LANAPI::RequestGameJoin( LANGameInfo *game, UnsignedInt ip /* = 0 */ )
 	msg.GameToJoin.exeCRC = TheGlobalData->m_exeCRC;
 	msg.GameToJoin.iniCRC = TheGlobalData->m_iniCRC;
 
-	AsciiString s = "";
+	AsciiString s;
 	GetStringFromRegistry("\\ergc", "", s);
 	strlcpy(msg.GameToJoin.serial, s.str(), ARRAY_SIZE(msg.GameToJoin.serial));
 

@@ -359,7 +359,7 @@ static void queuePatch(bool mandatory, std::string downloadURL)
 	std::string fileStr = filePath;
 	unsigned int slashPos = filePath.find_last_of('/');
 	std::string fileDir = "patches\\";
-	std::string fileName = "";
+	std::string fileName;
 	if (slashPos == filePath.npos)
 	{
 		fileName = filePath;
@@ -816,7 +816,7 @@ char const * Fetch_String(int id)
 	/*
 	**	Determine if the string ID requested is valid. If not then return an empty string pointer.
 	*/
-	if (id == -1 || id == TXT_NONE) return("");
+	if (id == -1 || id == TXT_NONE) return "";
 
 	/*
 	**	Adjust the 'time stamp' tracking value. This is an artificial value used merely to track
@@ -859,7 +859,7 @@ char const * Fetch_String(int id)
 
 
 	if (LoadString(Global_instance, id, stringptr, sizeof(_buffers[oldest].String)) == 0) {
-		return("");
+		return "";
 	}
 
    /******

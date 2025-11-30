@@ -574,7 +574,7 @@ Object *SpawnBehavior::reclaimOrphanSpawn( void )
 	//
 
 	OrphanData orphanData;
-	AsciiString prevName = "";
+	AsciiString prevName;
 	for (std::vector<AsciiString>::const_iterator tempName = md->m_spawnTemplateNameData.begin();
 			tempName != md->m_spawnTemplateNameData.end();
 			++tempName)

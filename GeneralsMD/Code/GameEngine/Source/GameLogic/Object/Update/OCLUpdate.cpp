@@ -46,8 +46,7 @@
 void parseFactionObjectCreationList( INI *ini, void *instance, void *store, const void *userData )
 {
 	OCLUpdateModuleData::FactionOCLInfo info;
-	info.m_factionName = "";
-	info.m_ocl = 0;
+	info.m_ocl = NULL;
 
 	const char *token = ini->getNextToken( ini->getSepsColon() );
 
@@ -199,7 +198,7 @@ UpdateSleepTime OCLUpdate::update( void )
 		// If this is faction triggered, search through the faction specific OCLs to find the match
 		if (data->m_isFactionTriggered)
 		{
-			std::string playerFactionName("");
+			std::string playerFactionName;
 
 			Player *player = getObject()->getControllingPlayer();
 			if (!player) return UPDATE_SLEEP_NONE;

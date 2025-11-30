@@ -1378,7 +1378,7 @@ void W3DDisplay::gatherDebugStats( void )
 			// Network outgoing bandwidth stats
 //			unibuffer.format(L"OUT: 0.0 bytes/sec, 0.0 packets/sec");
 //			m_displayStrings[NetOutgoing]->setText( unibuffer );
-      unibuffer.format(L"");
+			unibuffer.clear();
 //			unibuffer.format(L"Network not present");
 			m_displayStrings[NetOutgoing]->setText(unibuffer);
 			m_displayStrings[NetIncoming]->setText(unibuffer);

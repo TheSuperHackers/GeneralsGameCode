@@ -2155,7 +2155,7 @@ Bool WorldHeightMapEdit::selectInvalidTeam(void)
 		}
 	}
 
-	AsciiString report = "";
+	AsciiString report;
 	AsciiString line;
 
 #if 0

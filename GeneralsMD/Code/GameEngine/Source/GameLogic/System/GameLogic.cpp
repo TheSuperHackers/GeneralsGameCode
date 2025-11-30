@@ -3449,7 +3449,7 @@ static void unitTimings(void)
       {
         if (sides[side] == "*")
         {
-          if ( btt->getDefaultOwningSide() == ("") )// wildcard for unspecified side
+          if ( btt->getDefaultOwningSide().isEmpty() )// wildcard for unspecified side
             unspecified = TRUE;
           else
             continue;

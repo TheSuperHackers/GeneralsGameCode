@@ -84,7 +84,7 @@ void LanguageFilter::filterLine(UnicodeString &line)
 	wcscpy(buf, line.str());
 
 	UnicodeString newLine(line);
-	UnicodeString token(L"");
+	UnicodeString token;
 
 	while (newLine.nextToken(&token, L" ;,.!?:=\\/><`~()&^%#\n\t")) {
 		wchar_t *pos = wcsstr(buf, token.str());
@@ -112,7 +112,7 @@ void LanguageFilter::filterLine(UnicodeString &line)
 
 void LanguageFilter::unHaxor(UnicodeString &word) {
 	Int len = word.getLength();
-	UnicodeString newWord(L"");
+	UnicodeString newWord;
 	for (Int i = 0; i < len; ++i) {
 		wchar_t c = word.getCharAt(i);
 		if ((c == L'p') || (c == L'P')) {

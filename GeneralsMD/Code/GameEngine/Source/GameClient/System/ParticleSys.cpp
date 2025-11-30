@@ -3256,7 +3256,7 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 
 			// ignore destroyed systems and non-saveable systems
 			if( system->isDestroyed() == TRUE || system->isSaveable() == FALSE )	{
-				AsciiString mtString = "";
+				AsciiString mtString;
 				xfer->xferAsciiString(&mtString); // write null string as key for destroyed system.
 				continue;
 			}

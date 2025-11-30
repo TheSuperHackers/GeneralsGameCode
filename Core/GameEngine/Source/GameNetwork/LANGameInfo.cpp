@@ -213,7 +213,6 @@ void LANDisplayGameList( GameWindow *gameListbox, LANGameInfo *gameList )
 		while (gameList)
 		{
 			UnicodeString txtGName;
-			txtGName = L"";
 			if( gameList->isGameInProgress() )
 			{
 				txtGName.concat(L"[");

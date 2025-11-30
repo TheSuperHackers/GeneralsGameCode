@@ -64,8 +64,8 @@ void Win32BIGFileSystem::init() {
     AsciiString installPath;
     GetStringFromGeneralsRegistry("", "InstallPath", installPath );
     //@todo this will need to be ramped up to a crash for release
-    DEBUG_ASSERTCRASH(installPath != "", ("Be 1337! Go install Generals!"));
-    if (installPath!="")
+    DEBUG_ASSERTCRASH(!installPath.isEmpty(), ("Be 1337! Go install Generals!"));
+    if (!installPath.isEmpty())
       loadBigFilesFromDirectory(installPath, "*.big");
 #endif
 }

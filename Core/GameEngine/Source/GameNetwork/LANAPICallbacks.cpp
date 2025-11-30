@@ -686,9 +686,7 @@ void LANAPI::OnChat( UnicodeString player, UnsignedInt ip, UnicodeString message
 	switch (format)
 	{
 		case LANAPIInterface::LANCHAT_SYSTEM:
-			unicodeChat = L"";
-			unicodeChat.concat(message);
-			unicodeChat.concat(L"");
+			unicodeChat = message;
 			index =GadgetListBoxAddEntryText(chatWindow, unicodeChat, chatSystemColor, -1, -1);
 			break;
 		case LANAPIInterface::LANCHAT_EMOTE:

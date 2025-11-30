@@ -85,7 +85,7 @@ void GameSpyInfo::reset( void )
 	m_localStagingRoomID = 0;
 	m_localStagingRoom.reset();
 	m_gotGroupRoomList = false;
-	m_localName = "";
+	m_localName.clear();
 	m_localProfileID = 0;
 	m_maxMessagesPerUpdate = 100;
 	m_disallowAsainText = FALSE;
@@ -186,7 +186,7 @@ void GameSpyInfo::setGameOptions( void )
 	req.gameOptions.numPlayers = 0;
 	req.gameOptions.numObservers = 0;
 	Int numOpenSlots = 0;
-	AsciiString playerInfo = "";
+	AsciiString playerInfo;
 	for (i=0; i<MAX_SLOTS; ++i)
 	{
 		Int wins = 0, losses = 0, profileID = 0;
