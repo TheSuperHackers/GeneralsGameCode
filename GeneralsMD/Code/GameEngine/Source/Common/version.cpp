@@ -409,6 +409,13 @@ AsciiString Version::buildAsciiGitTagOrHash()
 	return str;
 }
 
+UnicodeString Version::buildUnicodeGitTagOrHash()
+{
+	UnicodeString str;
+	str.translate(buildAsciiGitTagOrHash());
+	return str;
+}
+
 AsciiString Version::buildAsciiGitShortHash()
 {
 	AsciiString str;
@@ -422,13 +429,6 @@ UnicodeString Version::buildUnicodeGitShortHash()
 {
 	UnicodeString str;
 	str.translate(buildAsciiGitShortHash());
-	return str;
-}
-
-UnicodeString Version::buildUnicodeGitTagOrHash()
-{
-	UnicodeString str;
-	str.translate(buildAsciiGitTagOrHash());
 	return str;
 }
 
