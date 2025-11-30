@@ -727,7 +727,7 @@ WindowMsgHandledType GadgetListBoxInput( GameWindow *window, UnsignedInt msg,
 									continue;
 								for(j = 0; j < TheKeyboard->MAX_KEY_STATES; ++j)
 								{
-									if(dString->getText().getCharAt(0) == TheKeyboard->getPrintableKey(mData1, j))
+									if(dString->getText().getCharAt(0) == TheKeyboard->getPrintableKey((KeyDefType)mData1, j))
 									{
 										list->selectPos = position;
 										Int prevPos = getListboxTopEntry(list);

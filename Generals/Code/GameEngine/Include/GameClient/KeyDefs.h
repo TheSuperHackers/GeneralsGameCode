@@ -102,7 +102,7 @@
 /** The key tables */
 //=============================================================================
 
-enum KeyDefType CPP_11(: Int)
+enum KeyDefType CPP_11(: UnsignedByte)
 {
 	// keypad keys ----------------------------------------------------------------
 	KEY_KP0 								= DIK_NUMPAD0,
@@ -224,8 +224,13 @@ enum KeyDefType CPP_11(: Int)
 
 	// specials -------------------------------------------------------------------
 	KEY_NONE								= 0x00,		///< to report end of key stream
-	KEY_LOST								= 0xFF		///< to report lost keyboard focus
+	KEY_LOST								= 0xFF,		///< to report lost keyboard focus
 
+};
+
+enum
+{
+	KEY_COUNT = 256
 };
 
 // state for keyboard IO ------------------------------------------------------
