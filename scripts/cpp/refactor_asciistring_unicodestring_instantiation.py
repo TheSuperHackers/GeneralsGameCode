@@ -10,9 +10,9 @@ import re
 
 def fix_string(line: str, typename: str) -> str:
     # Build a regex that allows arbitrary whitespace
-    pattern = rf"""{typename}\s*\(\s*"([^"]*)"\s*\)"""
+    pattern = rf"""{typename}\s*\(\s*(L?)\s*"([^"]*)"\s*\)"""
     # Replace typename( "value" ) -> "value"
-    return re.sub(pattern, r'"\1"', line)
+    return re.sub(pattern, r'\1"\2"', line)
 
 
 def main():
@@ -40,7 +40,7 @@ def main():
         with open(fileName, 'w', encoding="cp1252") as file:
             for line in lines:
                 line = fix_string(line, 'AsciiString')
-                #line = fix_string(line, 'UnicodeString')
+                line = fix_string(line, 'UnicodeString')
                 file.write(line)
 
     return

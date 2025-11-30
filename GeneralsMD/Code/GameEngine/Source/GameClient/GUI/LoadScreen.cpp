@@ -403,7 +403,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 
 	m_percent = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( "SinglePlayerLoadScreen.wnd:Percent" ));
 	DEBUG_ASSERTCRASH(m_percent, ("Can't initialize the m_percent for the single player loadscreen"));
-	GadgetStaticTextSetText(m_percent,UnicodeString(L"0%"));
+	GadgetStaticTextSetText(m_percent,L"0%");
 	m_percent->winHide(TRUE);
 
 	m_objectiveWin = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( "SinglePlayerLoadScreen.wnd:ObjectivesWin" ));

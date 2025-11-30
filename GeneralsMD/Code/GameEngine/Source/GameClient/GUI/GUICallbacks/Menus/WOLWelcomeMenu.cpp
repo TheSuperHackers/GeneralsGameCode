@@ -243,7 +243,7 @@ static void updateNumPlayersOnline(void)
 		//This was a Harvard initiated fix.
 		headingStr.format(TheGameText->fetch("MOTD:NumPlayersHeading"));
 
-		while (headingStr.nextToken(&line, UnicodeString(L"\n")))
+		while (headingStr.nextToken(&line, L"\n"))
 		{
 			if (line.getCharAt(line.getLength()-1) == '\r')
 				line.removeLastChar();	// there is a trailing '\r'
@@ -252,12 +252,12 @@ static void updateNumPlayersOnline(void)
 
 			if (line.isEmpty())
 			{
-				line = UnicodeString(L" ");
+				line = L" ";
 			}
 
 			GadgetListBoxAddEntryText(listboxInfo, line, GameSpyColor[GSCOLOR_MOTD_HEADING], -1, -1);
 		}
-		GadgetListBoxAddEntryText(listboxInfo, UnicodeString(L" "), GameSpyColor[GSCOLOR_MOTD_HEADING], -1, -1);
+		GadgetListBoxAddEntryText(listboxInfo, L" ", GameSpyColor[GSCOLOR_MOTD_HEADING], -1, -1);
 
 		while (aMotd.nextToken(&aLine, "\n"))
 		{
@@ -475,7 +475,7 @@ void WOLWelcomeMenuInit( WindowLayout *layout, void *userData )
 
 	// Clear some defaults
 	/*
-	UnicodeString questionMark = UnicodeString(L"?");
+	UnicodeString questionMark = L"?";
 	GadgetStaticTextSetText(staticTextLastUpdated, questionMark);
 	GadgetStaticTextSetText(staticTextLadderWins, questionMark);
 	GadgetStaticTextSetText(staticTextLadderLosses, questionMark);
@@ -641,7 +641,7 @@ void WOLWelcomeMenuUpdate( WindowLayout * layout, void *userData)
 					room.m_groupID = resp.groupRoom.id;
 					room.m_maxWaiting = resp.groupRoom.maxWaiting;
 					room.m_name = resp.groupRoomName.c_str();
-					room.m_translatedName = UnicodeString(L"TEST");
+					room.m_translatedName = L"TEST";
 					room.m_numGames = resp.groupRoom.numGames;
 					room.m_numPlaying = resp.groupRoom.numPlaying;
 					room.m_numWaiting = resp.groupRoom.numWaiting;
@@ -874,7 +874,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 					else
 					{
 						GameSpyCurrentGroupRoomID = 0;
-						GSMessageBoxOk(UnicodeString(L"Oops"), UnicodeString(L"Unable to join title room"), NULL);
+						GSMessageBoxOk(L"Oops", L"Unable to join title room", NULL);
 					}
 					*/
 				}

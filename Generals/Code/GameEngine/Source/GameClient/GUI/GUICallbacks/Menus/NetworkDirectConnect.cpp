@@ -113,7 +113,7 @@ void UpdateRemoteIPList()
 //	UnicodeString newEntry = prefs.getRemoteIPEntry(0);
 	UnicodeString newEntry = unisel;
 	UnicodeString newIP;
-	newEntry.nextToken(&newIP, UnicodeString(L":"));
+	newEntry.nextToken(&newIP, L":");
 	Int numFields = swscanf(newIP.str(), L"%d.%d.%d.%d", &(n1[0]), &(n1[1]), &(n1[2]), &(n1[3]));
 
 	if (numFields != 4) {
@@ -140,7 +140,7 @@ void UpdateRemoteIPList()
 			{
 				UnicodeString oldEntry = uni;
 				UnicodeString oldIP;
-				oldEntry.nextToken(&oldIP, UnicodeString(L":"));
+				oldEntry.nextToken(&oldIP, L":");
 
 				swscanf(oldIP.str(), L"%d.%d.%d.%d", &(n2[0]), &(n2[1]), &(n2[2]), &(n2[3]));
 

@@ -437,7 +437,7 @@ Bool UnicodeString::nextToken(UnicodeString* tok, UnicodeString delimiters)
 		return false;
 
 	if (delimiters.isEmpty())
-		delimiters = UnicodeString(L" \t\n\r");
+		delimiters = L" \t\n\r";
 
 	Int offset;
 

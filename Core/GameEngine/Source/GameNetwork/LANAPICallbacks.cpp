@@ -124,7 +124,7 @@ void LANAPI::OnAccept( UnsignedInt playerIP, Bool status )
 		{
 			UnicodeString text;
 			text = TheGameText->fetch("GUI:HostWantsToStart");
-			OnChat(UnicodeString(L"SYSTEM"), m_localIP, text, LANCHAT_SYSTEM);
+			OnChat(L"SYSTEM", m_localIP, text, LANCHAT_SYSTEM);
 		}
 	}
 }
@@ -165,7 +165,7 @@ void LANAPI::OnHasMap( UnsignedInt playerIP, Bool status )
 					text.format(TheGameText->fetch("GUI:PlayerNoMapWillTransfer"), m_currentGame->getLANSlot(i)->getName().str(), mapDisplayName.str());
 				else
 					text.format(TheGameText->fetch("GUI:PlayerNoMap"), m_currentGame->getLANSlot(i)->getName().str(), mapDisplayName.str());
-				OnChat(UnicodeString(L"SYSTEM"), m_localIP, text, LANCHAT_SYSTEM);
+				OnChat(L"SYSTEM", m_localIP, text, LANCHAT_SYSTEM);
 			}
 			lanUpdateSlotList();
 		}
@@ -179,7 +179,7 @@ void LANAPI::OnGameStartTimer( Int seconds )
 		text.format(TheGameText->fetch("LAN:GameStartTimerSingular"), seconds);
 	else
 		text.format(TheGameText->fetch("LAN:GameStartTimerPlural"), seconds);
-	OnChat(UnicodeString(L"SYSTEM"), m_localIP, text, LANCHAT_SYSTEM);
+	OnChat(L"SYSTEM", m_localIP, text, LANCHAT_SYSTEM);
 }
 
 void LANAPI::OnGameStart( void )

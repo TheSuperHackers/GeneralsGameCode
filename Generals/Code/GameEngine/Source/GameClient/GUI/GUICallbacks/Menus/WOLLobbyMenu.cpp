@@ -201,13 +201,13 @@ Bool handleLobbySlashCommands(UnicodeString uText)
 	else if (token == "fakecrc")
 	{
 		g_fakeCRC = !g_fakeCRC;
-		TheGameSpyInfo->addText(UnicodeString(L"Toggled CRC fakery"), GameSpyColor[GSCOLOR_DEFAULT], NULL);
+		TheGameSpyInfo->addText(L"Toggled CRC fakery", GameSpyColor[GSCOLOR_DEFAULT], NULL);
 		return TRUE; // was a slash command
 	}
 	else if (token == "slots")
 	{
 		g_debugSlots = !g_debugSlots;
-		TheGameSpyInfo->addText(UnicodeString(L"Toggled SlotList debug"), GameSpyColor[GSCOLOR_DEFAULT], NULL);
+		TheGameSpyInfo->addText(L"Toggled SlotList debug", GameSpyColor[GSCOLOR_DEFAULT], NULL);
 		return TRUE; // was a slash command
 	}
 #endif
@@ -1135,7 +1135,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 					{
 					case PEER_CLEAR:
 						TheGameSpyInfo->clearStagingRoomList();
-						//TheGameSpyInfo->addText( UnicodeString(L"gameList: PEER_CLEAR"), GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
+						//TheGameSpyInfo->addText( L"gameList: PEER_CLEAR", GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
 						break;
 					case PEER_ADD:
 					case PEER_UPDATE:
@@ -1238,29 +1238,29 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 							if (resp.stagingRoom.action == PEER_ADD)
 							{
 								TheGameSpyInfo->addStagingRoom(room);
-								//TheGameSpyInfo->addText( UnicodeString(L"gameList: PEER_ADD"), GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
+								//TheGameSpyInfo->addText( L"gameList: PEER_ADD", GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
 							}
 							else
 							{
 								TheGameSpyInfo->updateStagingRoom(room);
-								//TheGameSpyInfo->addText( UnicodeString(L"gameList: PEER_UPDATE"), GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
+								//TheGameSpyInfo->addText( L"gameList: PEER_UPDATE", GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
 							}
 						}
 						else
 						{
 							room.setID(resp.stagingRoom.id);
 							TheGameSpyInfo->removeStagingRoom(room);
-							//TheGameSpyInfo->addText( UnicodeString(L"gameList: PEER_UPDATE FAILED"), GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
+							//TheGameSpyInfo->addText( L"gameList: PEER_UPDATE FAILED", GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
 						}
 						break;
 					}
 					case PEER_REMOVE:
 						room.setID(resp.stagingRoom.id);
 						TheGameSpyInfo->removeStagingRoom(room);
-						//TheGameSpyInfo->addText( UnicodeString(L"gameList: PEER_REMOVE"), GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
+						//TheGameSpyInfo->addText( L"gameList: PEER_REMOVE", GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
 						break;
 					default:
-						//TheGameSpyInfo->addText( UnicodeString(L"gameList: Unknown"), GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
+						//TheGameSpyInfo->addText( L"gameList: Unknown", GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
 						break;
 					}
 				}

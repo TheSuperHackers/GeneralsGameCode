@@ -1079,7 +1079,7 @@ Bool AcademyStats::calculateAcademyAdvice( AcademyAdviceInfo *info )
 	//Build the header for each string.
 	for( UnsignedInt i = 0; i < maxAdviceTips; i++ )
 	{
-		info->advice[ i ].format( UnicodeString( L"\n\n" ) );
+		info->advice[ i ].format( L"\n\n" );
 	}
 
 	//First look at tier 1 basic advice and pick any advice we could benefit from.

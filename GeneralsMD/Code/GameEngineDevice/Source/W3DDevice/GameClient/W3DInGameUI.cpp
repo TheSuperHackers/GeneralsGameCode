@@ -324,7 +324,7 @@ static void loadText( char *filename, GameWindow *listboxText )
 		line.translate(buffer);
 		line.trim();
 		if (line.isEmpty())
-			line = UnicodeString(L" ");
+			line = L" ";
 		GadgetListBoxAddEntryText(listboxText, line, color, -1, -1);
 	}
 

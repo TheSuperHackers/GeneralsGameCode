@@ -3790,17 +3790,17 @@ Bool GameWindowManager::initTestGUI( void )
 																								100, 100,
 																								&instData,
 																								&listData, NULL, TRUE );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Listbox text"),
+	GadgetListBoxAddEntryText( window, L"Listbox text",
 												 TheWindowManager->winMakeColor( 255, 255, 255, 255 ), -1, 0 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"More text"),
+	GadgetListBoxAddEntryText( window, L"More text",
 												 TheWindowManager->winMakeColor( 105, 105, 255, 255 ), -1, 0 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Nothing"),
+	GadgetListBoxAddEntryText( window, L"Nothing",
 												 TheWindowManager->winMakeColor( 105, 105, 255, 255 ), -1, 0 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Seasons"),
+	GadgetListBoxAddEntryText( window, L"Seasons",
 												 TheWindowManager->winMakeColor( 105, 205, 255, 255 ), -1, 0 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Misery"),
+	GadgetListBoxAddEntryText( window, L"Misery",
 												 TheWindowManager->winMakeColor( 235, 105, 255, 255 ), -1, 0 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Natural"),
+	GadgetListBoxAddEntryText( window, L"Natural",
 												 TheWindowManager->winMakeColor( 105, 205, 45, 255 ), -1, 0 );
 	window->winSetFont( TheFontLibrary->getFont( "Times New Roman", 12, FALSE ) );
 
@@ -3823,17 +3823,17 @@ Bool GameWindowManager::initTestGUI( void )
 																								100, 100,
 																								&instData,
 																								&listData, NULL, TRUE );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Listbox text"),
+	GadgetListBoxAddEntryText( window, L"Listbox text",
 												 TheWindowManager->winMakeColor( 255, 255, 255, 255 ), -1, -1 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"More text"),
+	GadgetListBoxAddEntryText( window, L"More text",
 												 TheWindowManager->winMakeColor( 105, 105, 255, 255 ), -1, -1 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Nothing"),
+	GadgetListBoxAddEntryText( window, L"Nothing",
 												 TheWindowManager->winMakeColor( 105, 105, 255, 255 ), -1, -1 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Seasons"),
+	GadgetListBoxAddEntryText( window, L"Seasons",
 												 TheWindowManager->winMakeColor( 105, 205, 255, 255 ), -1, -1 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Misery"),
+	GadgetListBoxAddEntryText( window, L"Misery",
 												 TheWindowManager->winMakeColor( 235, 105, 255, 255 ), -1, -1 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Natural"),
+	GadgetListBoxAddEntryText( window, L"Natural",
 												 TheWindowManager->winMakeColor( 105, 205, 45, 255 ), -1, -1 );
 
 	// make a vert slider

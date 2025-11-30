@@ -1105,7 +1105,7 @@ void HandlePersistentStorageResponses( void )
 					}
 					DEBUG_LOG(("PopulatePlayerInfoWindows() - lookAtPlayerID is %d, got %d", lookAtPlayerID, resp.player.id));
 					PopulatePlayerInfoWindows("PopupPlayerInfo.wnd");
-					//GadgetListBoxAddEntryText(listboxInfo, UnicodeString(L"Got info!"), GameSpyColor[GSCOLOR_DEFAULT], -1);
+					//GadgetListBoxAddEntryText(listboxInfo, L"Got info!", GameSpyColor[GSCOLOR_DEFAULT], -1);
 
 					// also update info for player list in lobby
 					PlayerInfoMap::iterator it = TheGameSpyInfo->getPlayerInfoMap()->begin();
@@ -1202,7 +1202,7 @@ void GameSpyPlayerInfoOverlayInit( WindowLayout *layout, void *userData )
 
 	isOverlayActive = true;
 
-	//GadgetListBoxAddEntryText(listboxInfo, UnicodeString(L"Working"), GameSpyColor[GSCOLOR_DEFAULT], -1);
+	//GadgetListBoxAddEntryText(listboxInfo, L"Working", GameSpyColor[GSCOLOR_DEFAULT], -1);
 
 	GameSpyCloseOverlay(GSOVERLAY_BUDDY);
 	raiseMessageBox = true;

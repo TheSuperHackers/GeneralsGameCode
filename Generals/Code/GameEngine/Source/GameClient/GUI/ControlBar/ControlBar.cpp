@@ -455,7 +455,7 @@ void ControlBar::populatePurchaseScience( Player* player )
 		u.translate(foo);
 		GadgetListBoxAddEntryText(win, u, color, -1, -1);
 	}
-	GadgetListBoxAddEntryText(win, UnicodeString(L"Cancel"), color, -1, -1);*/
+	GadgetListBoxAddEntryText(win, L"Cancel", color, -1, -1);*/
 
 }
 
@@ -2481,7 +2481,7 @@ void ControlBar::setControlCommand( GameWindow *button, const CommandButton *com
 		button->winSetTooltipFunc(commandButtonTooltip);
 	}
 	else
-		GadgetButtonSetText( button, UnicodeString( L"" ) );
+		GadgetButtonSetText( button, L"" );
 
 	// save the command in the user data of the window
 	GadgetButtonSetData(button, (void*)commandButton);

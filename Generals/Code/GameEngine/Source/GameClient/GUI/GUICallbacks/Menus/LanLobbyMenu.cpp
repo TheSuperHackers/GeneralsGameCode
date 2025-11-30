@@ -771,7 +771,7 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 				}
 				else if ( controlID == buttonHostID )
 				{
-					TheLAN->RequestGameCreate( UnicodeString(L""), FALSE);
+					TheLAN->RequestGameCreate( L"", FALSE);
 
 				}
 				else if ( controlID == buttonClearID )

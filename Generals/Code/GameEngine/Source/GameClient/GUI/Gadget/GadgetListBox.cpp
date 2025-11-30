@@ -2205,7 +2205,7 @@ Int GadgetListBoxAddEntryText( GameWindow *listbox,
 	if (!listbox)
 		return -1;
 	if (text.isEmpty())
-		text = UnicodeString(L" ");
+		text = L" ";
 	Int index;
 	AddMessageStruct addInfo;
 	addInfo.row = row;

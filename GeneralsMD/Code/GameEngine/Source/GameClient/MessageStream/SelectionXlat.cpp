@@ -1284,7 +1284,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			if ( !TheGameLogic->isInMultiplayerGame() )
 			{
 				m_HandOfGodSelectionMode = !m_HandOfGodSelectionMode;
-				TheInGameUI->message( UnicodeString( L"Meta Hand-Of-God Mode is %s" ), m_HandOfGodSelectionMode ? L"ON" : L"OFF" );
+				TheInGameUI->message( L"Meta Hand-Of-God Mode is %s", m_HandOfGodSelectionMode ? L"ON" : L"OFF" );
 				disp = DESTROY_MESSAGE;
 			}
 			break;
@@ -1298,7 +1298,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			if ( !TheGameLogic->isInMultiplayerGame() )
 			{
 				m_HandOfGodSelectionMode = !m_HandOfGodSelectionMode;
-				TheInGameUI->message( UnicodeString( L"Hand-Of-God Mode is %s" ), m_HandOfGodSelectionMode ? L"ON" : L"OFF" );
+				TheInGameUI->message( L"Hand-Of-God Mode is %s", m_HandOfGodSelectionMode ? L"ON" : L"OFF" );
 				disp = DESTROY_MESSAGE;
 			}
 			break;
@@ -1312,7 +1312,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			if ( !TheGameLogic->isInMultiplayerGame() )
 			{
 				TheHurtSelectionMode = !TheHurtSelectionMode;
-				TheInGameUI->message( UnicodeString( L"Hurt-Me Mode is %s" ), TheHurtSelectionMode ? L"ON" : L"OFF" );
+				TheInGameUI->message( L"Hurt-Me Mode is %s", TheHurtSelectionMode ? L"ON" : L"OFF" );
 				disp = DESTROY_MESSAGE;
 			}
 			break;
@@ -1324,7 +1324,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		case GameMessage::MSG_META_DEMO_DEBUG_SELECTION:
 		{
 			TheDebugSelectionMode = !TheDebugSelectionMode;
-			TheInGameUI->message( UnicodeString( L"Debug-Selected-Item Mode is %s" ), TheDebugSelectionMode ? L"ON" : L"OFF" );
+			TheInGameUI->message( L"Debug-Selected-Item Mode is %s", TheDebugSelectionMode ? L"ON" : L"OFF" );
 		#ifdef DEBUG_OBJECT_ID_EXISTS
 			TheObjectIDToDebug = INVALID_ID;
 		#endif
