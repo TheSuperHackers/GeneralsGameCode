@@ -45,7 +45,7 @@ void Expander::expand( const std::string& input,
 		std::string& output,
 		bool stripUnknown )
 {
-	output.clear();
+	output = "";
 	unsigned int pos = input.find(m_left);
 	unsigned int lastpos = input.npos;
 	while (pos != input.npos)

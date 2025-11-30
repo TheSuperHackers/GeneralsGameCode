@@ -151,7 +151,7 @@ void DebugWindowDialog::_RebuildVarsString(void)
 {
 	int cursorPosBeg, cursorPosEnd;
 	((CEdit*)GetDlgItem(IDC_Variables))->GetSel(cursorPosBeg, cursorPosEnd);
-	mVariablesString.clear();
+	mVariablesString = "";
 
 	for (VecPairStringIt it = mVariables.begin(); it != mVariables.end(); it++) {
 		mVariablesString += it->first;
@@ -170,7 +170,7 @@ void DebugWindowDialog::_RebuildVarsString(void)
 
 void DebugWindowDialog::_RebuildMesgString(void)
 {
-	mMessagesString.clear();
+	mMessagesString = "";
 
 	for (VecStringIt it = mMessages.begin(); it != mMessages.end(); it++) {
 		mMessagesString += (*it);
