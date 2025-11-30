@@ -109,7 +109,7 @@ class IMEManager : public IMEManagerInterface
 		virtual Int						getIndexBase( void );						///< Get index base for candidate list
 
 		virtual Int						getCandidateCount();						///< Returns the total number of candidates
-		virtual UnicodeString*getCandidate( Int index );			///< Returns the candidate string
+		virtual const UnicodeString* getCandidate( Int index );	///< Returns the candidate string
 		virtual Int						getSelectedCandidateIndex();		///< Returns the indexed of the currently selected candidate
 		virtual Int						getCandidatePageSize();					///< Returns the page size for the candidates list
 		virtual Int						getCandidatePageStart();				///< Returns the index of the first visibel candidate
@@ -1528,7 +1528,7 @@ Int	IMEManager::getCandidateCount()
 // IMEManager::getCandidate
 //============================================================================
 
-UnicodeString* IMEManager::getCandidate( Int index )
+const UnicodeString* IMEManager::getCandidate( Int index )
 {
 	if ( m_candidateString != NULL && index >=0 && index < m_candidateCount )
 	{

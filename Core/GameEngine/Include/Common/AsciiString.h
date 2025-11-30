@@ -125,7 +125,7 @@ public:
 		string, so we don't need to construct temporaries
 		for such a common thing.
 	*/
-	static AsciiString TheEmptyString;
+	static const AsciiString TheEmptyString;
 
 	/**
 		Default constructor -- construct a new, empty AsciiString.

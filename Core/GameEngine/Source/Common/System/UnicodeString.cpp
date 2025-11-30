@@ -49,7 +49,7 @@
 
 // -----------------------------------------------------
 
-/*static*/ UnicodeString UnicodeString::TheEmptyString;
+/*static*/ const UnicodeString UnicodeString::TheEmptyString;
 
 // -----------------------------------------------------
 #ifdef RTS_DEBUG

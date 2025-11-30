@@ -202,7 +202,7 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 
 	for ( Int i = 0; i < count; i++, y+= height )
 	{
-		UnicodeString *candidate = ime->getCandidate( first + i );
+		const UnicodeString *candidate = ime->getCandidate( first + i );
 		Int tcolor, bcolor;
 
 		if ( i == selected )
