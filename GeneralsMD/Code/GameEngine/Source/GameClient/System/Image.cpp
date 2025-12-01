@@ -204,7 +204,7 @@ ImageCollection::ImageCollection( void )
 //-------------------------------------------------------------------------------------------------
 ImageCollection::~ImageCollection( void )
 {
-  for (std::map<unsigned,Image *>::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
+  for (ImageMap::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
     deleteInstance(i->second);
 }
 
@@ -221,7 +221,7 @@ void ImageCollection::addImage( Image *image )
 //-------------------------------------------------------------------------------------------------
 const Image *ImageCollection::findImageByName( const char* name ) const
 {
-  std::map<unsigned,Image *>::const_iterator i=m_imageMap.find(TheNameKeyGenerator->nameToLowercaseKey(name));
+  ImageMap::const_iterator i=m_imageMap.find(TheNameKeyGenerator->nameToLowercaseKey(name));
   return i==m_imageMap.end()?NULL:i->second;
 }
 
