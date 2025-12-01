@@ -80,7 +80,7 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 		if (msg->getArgument(1)->integer & (KEY_STATE_CONTROL | KEY_STATE_SHIFT | KEY_STATE_ALT))
 			return KEEP_MESSAGE;
 
-		if (!TheHotKeyManager)
+		if (TheHotKeyManager)
 		{
 			WideChar key = TheKeyboard->getPrintableKey(msg->getArgument(0)->integer, 0);
 			UnicodeString uKey;
