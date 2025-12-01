@@ -116,7 +116,7 @@ struct FieldParse
 	const void*					userData;					///< field-specific data
 	Int									offset;						///< offset to data field
 
-	inline void set(const char* t, INIFieldParseProc p, const void* u, Int o)
+	void set(const char* t, INIFieldParseProc p, const void* u, Int o)
 	{
 		token = t;
 		parse = p;
@@ -144,9 +144,9 @@ public:
 
 	void add(const FieldParse* f, UnsignedInt e = 0);
 
-	inline Int getCount() const { return m_count; }
-	inline const FieldParse* getNthFieldParse(Int i) const { return m_fieldParse[i]; }
-	inline UnsignedInt getNthExtraOffset(Int i) const { return m_extraOffset[i]; }
+	Int getCount() const { return m_count; }
+	const FieldParse* getNthFieldParse(Int i) const { return m_fieldParse[i]; }
+	UnsignedInt getNthExtraOffset(Int i) const { return m_extraOffset[i]; }
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -248,14 +248,14 @@ public:
 	static void parseWindowTransitions( INI* ini );
 	static void parseChallengeModeDefinition( INI* ini );
 
-	inline AsciiString getFilename( void ) const { return m_filename; }
-	inline INILoadType getLoadType( void ) const { return m_loadType; }
-	inline UnsignedInt getLineNum( void ) const { return m_lineNum; }
-	inline const char *getSeps( void ) const { return m_seps; }
-	inline const char *getSepsPercent( void ) const { return m_sepsPercent; }
-	inline const char *getSepsColon( void ) const { return m_sepsColon; }
-	inline const char *getSepsQuote( void ) { return m_sepsQuote; }
-	inline Bool isEOF( void ) const { return m_endOfFile; }
+	AsciiString getFilename( void ) const { return m_filename; }
+	INILoadType getLoadType( void ) const { return m_loadType; }
+	UnsignedInt getLineNum( void ) const { return m_lineNum; }
+	const char *getSeps( void ) const { return m_seps; }
+	const char *getSepsPercent( void ) const { return m_sepsPercent; }
+	const char *getSepsColon( void ) const { return m_sepsColon; }
+	const char *getSepsQuote( void ) { return m_sepsQuote; }
+	Bool isEOF( void ) const { return m_endOfFile; }
 
 	void initFromINI( void *what, const FieldParse* parseTable );
 	void initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList );

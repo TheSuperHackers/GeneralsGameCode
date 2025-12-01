@@ -156,40 +156,40 @@ public:
 	// destructor prototype defined by memory pool glue
 
 	/// get the name for this terrain
-	inline AsciiString getName( void ) { return m_name; }
+	AsciiString getName( void ) { return m_name; }
 
 	/// get whether this terrain is blend edge terrain.
-	inline Bool isBlendEdge( void ) { return m_blendEdgeTexture; }
+	Bool isBlendEdge( void ) { return m_blendEdgeTexture; }
 
 	/// get the type of this terrain
-	inline TerrainClass getClass( void ) { return m_class; }
+	TerrainClass getClass( void ) { return m_class; }
 
 	/// get the construction restrictions
-	inline Bool getRestrictConstruction( void ) { return m_restrictConstruction; }
+	Bool getRestrictConstruction( void ) { return m_restrictConstruction; }
 
 	/// get the texture file for this terrain
-	inline AsciiString getTexture( void ) { return m_texture; }
+	AsciiString getTexture( void ) { return m_texture; }
 
 	/// get next terrain in list, only for use by the terrain collection
-	inline TerrainType *friend_getNext( void ) { return m_next; }
+	TerrainType *friend_getNext( void ) { return m_next; }
 
 	/// set the name for this terrain, for use by terrain collection only
-	inline void friend_setName( AsciiString name ) { m_name = name; }
+	void friend_setName( AsciiString name ) { m_name = name; }
 
 	/// set the next pointer for the terrain list, for use by terrain collection only
-	inline void friend_setNext( TerrainType *next ) { m_next = next; }
+	void friend_setNext( TerrainType *next ) { m_next = next; }
 
 	/// set the texture, for use by terrain collection only
-	inline void friend_setTexture( AsciiString texture ) { m_texture = texture; }
+	void friend_setTexture( AsciiString texture ) { m_texture = texture; }
 
 	/// set the class, for use by terrain collection only
-	inline void friend_setClass( TerrainClass terrainClass ) { m_class = terrainClass; }
+	void friend_setClass( TerrainClass terrainClass ) { m_class = terrainClass; }
 
 	/// set the restrict construction flag, for use by terrain collection only
-	inline void friend_setRestrictConstruction( Bool restrict ) { m_restrictConstruction = restrict; }
+	void friend_setRestrictConstruction( Bool restrict ) { m_restrictConstruction = restrict; }
 
 	/// set whether this terrain is blend edge terrain, for use by terrain collection only
-	inline void friend_setBlendEdge( Bool isBlend ) { m_blendEdgeTexture = isBlend; }
+	void friend_setBlendEdge( Bool isBlend ) { m_blendEdgeTexture = isBlend; }
 
 	/// get the parsing table for INI
 	const FieldParse *getFieldParse( void ) { return m_terrainTypeFieldParseTable; }

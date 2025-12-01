@@ -61,7 +61,7 @@ class Money : public Snapshot
 
 public:
 
-	inline Money() : m_playerIndex(0)
+	Money() : m_playerIndex(0)
 	{
 		init();
 	}
@@ -71,7 +71,7 @@ public:
 		setStartingCash(0);
 	}
 
-	inline UnsignedInt countMoney() const
+	UnsignedInt countMoney() const
 	{
 		return m_money;
 	}

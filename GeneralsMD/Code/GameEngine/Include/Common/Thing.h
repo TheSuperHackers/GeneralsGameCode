@@ -84,10 +84,10 @@ class Thing : public MemoryPoolObject
 {
 	// note, it is explicitly OK to pass null for 'thing' here;
 	// they will check for null and return null in these cases.
-	friend inline Object *AsObject(Thing *thing) { return thing ? thing->asObjectMeth() : NULL; }
-	friend inline Drawable *AsDrawable(Thing *thing) { return thing ? thing->asDrawableMeth() : NULL; }
-	friend inline const Object *AsObject(const Thing *thing) { return thing ? thing->asObjectMeth() : NULL; }
-	friend inline const Drawable *AsDrawable(const Thing *thing) { return thing ? thing->asDrawableMeth() : NULL; }
+	friend Object *AsObject(Thing *thing) { return thing ? thing->asObjectMeth() : NULL; }
+	friend Drawable *AsDrawable(Thing *thing) { return thing ? thing->asDrawableMeth() : NULL; }
+	friend const Object *AsObject(const Thing *thing) { return thing ? thing->asObjectMeth() : NULL; }
+	friend const Drawable *AsDrawable(const Thing *thing) { return thing ? thing->asDrawableMeth() : NULL; }
 
 	MEMORY_POOL_GLUE_ABC(Thing)
 
@@ -116,8 +116,8 @@ public:
 	// don't want this behavior? then call setTransformMatrix instead.
 	void setOrientation( Real angle );
 
-	inline const Coord3D *getPosition() const { return &m_cachedPos; }
-	inline Real getOrientation() const { return m_cachedAngle; }
+	const Coord3D *getPosition() const { return &m_cachedPos; }
+	Real getOrientation() const { return m_cachedAngle; }
 
 	Bool isPositioned() const;
 

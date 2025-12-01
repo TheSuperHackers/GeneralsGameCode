@@ -153,5 +153,5 @@ public:
 	StaticNameKey(const char* p) : m_key(NAMEKEY_INVALID), m_name(p) {}
 	NameKeyType key() const;
 	// ugh, this is a little hokey, but lets us pretend that a StaticNameKey == NameKeyType
-	inline operator NameKeyType() const { return key(); }
+	operator NameKeyType() const { return key(); }
 };

@@ -372,7 +372,7 @@ struct RGBColor
 {
 	Real red, green, blue;		// range between 0 and 1
 
-	inline Int getAsInt() const
+	Int getAsInt() const
 	{
 		return
 			((Int)(red * 255.0) << 16) |
@@ -380,7 +380,7 @@ struct RGBColor
 			((Int)(blue * 255.0) << 0);
 	}
 
-	inline void setFromInt(Int c)
+	void setFromInt(Int c)
 	{
 		red = ((c >> 16) & 0xff) / 255.0f;
 		green = ((c >>  8) & 0xff) / 255.0f;
