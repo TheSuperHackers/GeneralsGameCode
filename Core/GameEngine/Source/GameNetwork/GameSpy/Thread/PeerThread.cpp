@@ -193,14 +193,11 @@ public:
 		m_sawCompleteGameList = FALSE;
 		m_isConnecting = m_isConnected = false;
 		m_groupRoomID = m_profileID = 0;
-		m_nextStagingServer = 1; m_stagingServers.clear();
-		m_pingStr = "";
-		m_mapName = "";
-		m_ladderIP = "";
+		m_nextStagingServer = 1;
+		m_stagingServers.clear();
 		m_isHosting = false;
 		for (Int i=0; i<MAX_SLOTS; ++i)
 		{
-			m_playerNames[i] = "";
 			m_playerColors[i] = 0;
 			m_playerFactions[i] = 0;
 			m_playerLosses[i] = 0;
