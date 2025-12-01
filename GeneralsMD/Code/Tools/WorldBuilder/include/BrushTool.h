@@ -108,6 +108,34 @@ public:
 		Int minRadius,
 		Int maxRadius,
 		CWorldBuilderDoc *pDoc);
+	
+	// Shared brush iteration with rate accumulation - returns true if rate buffer overflow occurred
+	static Bool applyBrushWithRateAccumulation(
+		WorldHeightMapEdit *editMap,
+		WorldHeightMapEdit *featherMap,
+		WorldHeightMapEdit *rateMap,
+		const CPoint &ndx,
+		Int brushWidth,
+		Int rateMultiplier,
+		Int smoothRadius,
+		Int minRadius,
+		Int maxRadius,
+		CWorldBuilderDoc *pDoc);
+	
+	// Shared rate buffer reset
+	static void resetSmoothingBuffers(
+		WorldHeightMapEdit *editMap,
+		WorldHeightMapEdit *featherMap,
+		WorldHeightMapEdit *rateMap);
+	
+	// Helper to create a partial range for height map updates
+	static IRegion2D makePartialRange(const CPoint &ndx, Int brushWidth);
+	
+	// Helper to calculate blend factor (square or round)
+	static Real calcBlendFactor(const CPoint &ndx, Int i, Int j, Int width, Int feather, Bool square);
+	
+	// Helper to get effective brush width including feather
+	static Int getEffectiveBrushWidth(Int baseWidth, Int feather);
 
 public:
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);

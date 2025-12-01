@@ -32,6 +32,7 @@
 #include "brushoptions.h"
 #include "DrawObject.h"
 #include "WorldBuilder.h"
+#include "Lib/BaseType.h"
 //
 // BrushTool class.
 //
@@ -87,33 +88,30 @@ void BrushTool::setHeight(Int height)
 
 void BrushTool::setRaiseLowerAmount(Int amount)
 {
-	if (amount < MIN_RAISE_LOWER) amount = MIN_RAISE_LOWER;
-	if (amount > MAX_RAISE_LOWER) amount = MAX_RAISE_LOWER;
+	amount = clamp((Int)MIN_RAISE_LOWER, amount, (Int)MAX_RAISE_LOWER);
 	if (m_raiseLowerAmount != amount) {
 		m_raiseLowerAmount = amount;
 		BrushOptions::setRaiseLowerAmount(amount);
 	}
-};
+}
 
 void BrushTool::setSmoothRadius(Int radius)
 {
-	if (radius < MIN_SMOOTH_RADIUS) radius = MIN_SMOOTH_RADIUS;
-	if (radius > MAX_SMOOTH_RADIUS) radius = MAX_SMOOTH_RADIUS;
+	radius = clamp((Int)MIN_SMOOTH_RADIUS, radius, (Int)MAX_SMOOTH_RADIUS);
 	if (m_smoothRadius != radius) {
 		m_smoothRadius = radius;
 		BrushOptions::setSmoothRadius(radius);
 	}
-};
+}
 
 void BrushTool::setSmoothRate(Int rate)
 {
-	if (rate < MIN_SMOOTH_RATE) rate = MIN_SMOOTH_RATE;
-	if (rate > MAX_SMOOTH_RATE) rate = MAX_SMOOTH_RATE;
+	rate = clamp((Int)MIN_SMOOTH_RATE, rate, (Int)MAX_SMOOTH_RATE);
 	if (m_smoothRate != rate) {
 		m_smoothRate = rate;
 		BrushOptions::setSmoothRate(rate);
 	}
-};
+}
 
 /// Set the brush width and notify the height options panel of the change.
 void BrushTool::setWidth(Int width)
@@ -217,26 +215,17 @@ void BrushTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 	switch (m_activeMode) {
 		case BRUSH_MODE_RAISE:
 		case BRUSH_MODE_LOWER: {
-			Int brushWidth = m_brushWidth;
-			if (m_brushFeather>0) {
-				brushWidth += 2*m_brushFeather;
-			}
-			brushWidth += 2;
+			Int brushWidth = getEffectiveBrushWidth(m_brushWidth, m_brushFeather);
 			applyRaiseLowerBrush(ndx, brushWidth, (m_activeMode == BRUSH_MODE_RAISE), pDoc);
 			break;
 		}
 		case BRUSH_MODE_SET: {
-			Int brushWidth = m_brushWidth;
-			if (m_brushFeather>0) {
-				brushWidth += 2*m_brushFeather;
-			}
-			brushWidth += 2;
+			Int brushWidth = getEffectiveBrushWidth(m_brushWidth, m_brushFeather);
 			applySetHeightBrush(ndx, brushWidth, pDoc);
 			break;
 		}
 		case BRUSH_MODE_SMOOTH: {
-			Int brushWidth = m_brushWidth;
-			if (brushWidth < 1) brushWidth = 1;
+			Int brushWidth = max(1, m_brushWidth);
 			applySmoothBrush(ndx, brushWidth, pDoc);
 			break;
 		}
@@ -245,19 +234,9 @@ void BrushTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 
 BrushTool::EBrushMode BrushTool::determineBrushMode() const
 {
-	Bool ctrl = (0x8000 & ::GetAsyncKeyState(VK_CONTROL)) != 0;
 	Bool shift = (0x8000 & ::GetAsyncKeyState(VK_SHIFT)) != 0;
-
-	if (ctrl) {
-		if (shift) {
-			return BRUSH_MODE_SMOOTH;
-		}
-		return BRUSH_MODE_SET;
-	}
-	if (shift) {
-		return BRUSH_MODE_LOWER;
-	}
-	return BRUSH_MODE_RAISE;
+	Bool ctrl = (0x8000 & ::GetAsyncKeyState(VK_CONTROL)) != 0;
+	return getModeFromModifiers(shift, ctrl);
 }
 
 void BrushTool::applySetHeightBrush(const CPoint &ndx, Int brushWidth, CWorldBuilderDoc *pDoc)
@@ -276,12 +255,7 @@ void BrushTool::applySetHeightBrush(const CPoint &ndx, Int brushWidth, CWorldBui
 			if (j<0 || j>=m_htMapEditCopy->getYExtent()) {
 				continue;
 			}
-			Real blendFactor;
-			if (m_brushSquare) {
-				blendFactor = calcSquareBlendFactor(ndx, i, j, m_brushWidth, m_brushFeather);
-			} else {
-				blendFactor = calcRoundBlendFactor(ndx, i, j, m_brushWidth, m_brushFeather);
-			}
+			Real blendFactor = calcBlendFactor(ndx, i, j, m_brushWidth, m_brushFeather, m_brushSquare);
 			Int curHeight = m_htMapFeatherCopy->getHeight(i,j);
 			float fNewHeight = blendFactor*m_brushHeight+((1.0f-blendFactor)*curHeight);
 			Int newHeight = floor(fNewHeight+0.5f);
@@ -298,12 +272,7 @@ void BrushTool::applySetHeightBrush(const CPoint &ndx, Int brushWidth, CWorldBui
 		}
 	}
 
-	IRegion2D partialRange;
-	partialRange.lo.x = ndx.x - brushWidth;
-	partialRange.hi.x = ndx.x + brushWidth;
-	partialRange.lo.y = ndx.y - brushWidth;
-	partialRange.hi.y = ndx.y + brushWidth;
-	pDoc->updateHeightMap(m_htMapEditCopy, true, partialRange);
+	pDoc->updateHeightMap(m_htMapEditCopy, true, makePartialRange(ndx, brushWidth));
 }
 
 void BrushTool::applyRaiseLowerBrush(const CPoint &ndx, Int brushWidth, Bool raising, CWorldBuilderDoc *pDoc)
@@ -328,80 +297,28 @@ void BrushTool::applyRaiseLowerBrush(const CPoint &ndx, Int brushWidth, Bool rai
 			if (j<0 || j>=m_htMapEditCopy->getYExtent()) {
 				continue;
 			}
-			Real blendFactor;
-			if (m_brushSquare) {
-				blendFactor = calcSquareBlendFactor(ndx, i, j, m_brushWidth, m_brushFeather);
-			} else {
-				blendFactor = calcRoundBlendFactor(ndx, i, j, m_brushWidth, m_brushFeather);
-			}
+			Real blendFactor = calcBlendFactor(ndx, i, j, m_brushWidth, m_brushFeather, m_brushSquare);
 			Int curHeight = m_htMapEditCopy->getHeight(i,j);
 			float fNewHeight = (blendFactor*(htDelta+curHeight))+((1.0f-blendFactor)*curHeight);
 			Int newHeight = floor(fNewHeight+0.5f);
-
-			if (newHeight < m_htMapFeatherCopy->getMinHeightValue()) newHeight = m_htMapFeatherCopy->getMinHeightValue();
-			if (newHeight > m_htMapFeatherCopy->getMaxHeightValue()) newHeight = m_htMapFeatherCopy->getMaxHeightValue();
+			newHeight = clamp(m_htMapFeatherCopy->getMinHeightValue(), newHeight, m_htMapFeatherCopy->getMaxHeightValue());
 
 			m_htMapEditCopy->setHeight(i, j, newHeight);
 			pDoc->invalCell(i, j);
 		}
 	}
 
-	IRegion2D partialRange;
-	partialRange.lo.x = ndx.x - brushWidth;
-	partialRange.hi.x = ndx.x + brushWidth;
-	partialRange.lo.y = ndx.y - brushWidth;
-	partialRange.hi.y = ndx.y + brushWidth;
-	pDoc->updateHeightMap(m_htMapEditCopy, true, partialRange);
+	pDoc->updateHeightMap(m_htMapEditCopy, true, makePartialRange(ndx, brushWidth));
 }
 
 void BrushTool::applySmoothBrush(const CPoint &ndx, Int brushWidth, CWorldBuilderDoc *pDoc)
 {
-	if (!m_htMapEditCopy || !m_htMapFeatherCopy || !m_htMapRateCopy) return;
+	Bool redoRate = applyBrushWithRateAccumulation(
+		m_htMapEditCopy, m_htMapFeatherCopy, m_htMapRateCopy,
+		ndx, brushWidth, m_smoothRate * 5,
+		m_smoothRadius, MIN_SMOOTH_RADIUS, MAX_SMOOTH_RADIUS, pDoc);
 
-	int sub = brushWidth/2;
-	int add = brushWidth-sub;
-
-	Int i, j;
-	Bool redoRate = false;
-
-	for (i= ndx.x-sub; i< ndx.x+add; i++) {
-		if (i<0 || i>=m_htMapEditCopy->getXExtent()) {
-			continue;
-		}
-		for (j=ndx.y-sub; j<ndx.y+add; j++) {
-			if (j<0 || j>=m_htMapEditCopy->getYExtent()) {
-				continue;
-			}
-			Real blendFactor = calcRoundBlendFactor(ndx, i, j, brushWidth, 0);
-
-			if (blendFactor > 0.0f) {
-				Int rate = m_htMapRateCopy->getHeight(i, j);
-				rate += blendFactor * m_smoothRate*5;
-				if (rate>255) {
-					rate = 255;
-					redoRate = true;
-				}
-				m_htMapRateCopy->setHeight(i,j,rate);
-
-				applySmoothingAlgorithm(
-					m_htMapEditCopy,
-					m_htMapFeatherCopy,
-					i, j,
-					rate,
-					m_smoothRadius,
-					MIN_SMOOTH_RADIUS,
-					MAX_SMOOTH_RADIUS,
-					pDoc);
-			}
-		}
-	}
-
-	IRegion2D partialRange;
-	partialRange.lo.x = ndx.x - brushWidth;
-	partialRange.hi.x = ndx.x + brushWidth;
-	partialRange.lo.y = ndx.y - brushWidth;
-	partialRange.hi.y = ndx.y + brushWidth;
-	pDoc->updateHeightMap(m_htMapEditCopy, true, partialRange);
+	pDoc->updateHeightMap(m_htMapEditCopy, true, makePartialRange(ndx, brushWidth));
 
 	if (redoRate) {
 		resetSmoothRateBuffer();
@@ -410,16 +327,7 @@ void BrushTool::applySmoothBrush(const CPoint &ndx, Int brushWidth, CWorldBuilde
 
 void BrushTool::resetSmoothRateBuffer()
 {
-	if (!m_htMapRateCopy || !m_htMapFeatherCopy || !m_htMapEditCopy) return;
-
-	Int size = m_htMapRateCopy->getXExtent() * m_htMapRateCopy->getYExtent();
-	UnsignedByte *pRate = m_htMapRateCopy->getDataPtr();
-	UnsignedByte *pFeather = m_htMapFeatherCopy->getDataPtr();
-	UnsignedByte *pEdit = m_htMapEditCopy->getDataPtr();
-	for (Int idx=0; idx<size; idx++) {
-		*pRate++ = 0;
-		*pFeather++ = *pEdit++;
-	}
+	resetSmoothingBuffers(m_htMapEditCopy, m_htMapFeatherCopy, m_htMapRateCopy);
 }
 
 BrushTool::EBrushMode BrushTool::getModeFromModifiers(Bool shiftDown, Bool ctrlDown)
@@ -554,9 +462,7 @@ void BrushTool::applySmoothingAlgorithm(
 		return;
 	}
 	
-	Int radius = smoothRadius;
-	if (radius < minRadius) radius = minRadius;
-	if (radius > maxRadius) radius = maxRadius;
+	Int radius = clamp(minRadius, smoothRadius, maxRadius);
 	
 	Int total = 0;
 	Real numSamples = 0;
@@ -568,24 +474,12 @@ void BrushTool::applySmoothingAlgorithm(
 				factor = 1.0f;
 			} else {
 				Real dist = sqrt((Real)((ii - i) * (ii - i) + (jj - j) * (jj - j)));
-				if (dist < 1.0f) dist = 1.0f;
-				if (dist > radius) {
-					factor = 0;
-				} else {
-					factor = 1.0f - (dist - 1) / radius;
-				}
+				dist = max(1.0f, dist);
+				factor = (dist > radius) ? 0.0f : 1.0f - (dist - 1) / radius;
 			}
 			
-			int iNdx = ii;
-			if (iNdx < 0) iNdx = 1;
-			if (iNdx >= editMap->getXExtent()) {
-				iNdx = editMap->getXExtent() - 1;
-			}
-			int jNdx = jj;
-			if (jNdx < 0) jNdx = 1;
-			if (jNdx >= editMap->getYExtent()) {
-				jNdx = editMap->getYExtent() - 1;
-			}
+			int iNdx = clamp(0, ii, editMap->getXExtent() - 1);
+			int jNdx = clamp(0, jj, editMap->getYExtent() - 1);
 			
 			total += featherMap->getHeight(iNdx, jNdx);
 			numSamples += 1;
@@ -598,4 +492,94 @@ void BrushTool::applySmoothingAlgorithm(
 	total = (Int)floor(origHeight * (1.0f - rateF) + total * rateF + 0.5f);
 	editMap->setHeight(i, j, total);
 	pDoc->invalCell(i, j);
+}
+
+Bool BrushTool::applyBrushWithRateAccumulation(
+	WorldHeightMapEdit *editMap,
+	WorldHeightMapEdit *featherMap,
+	WorldHeightMapEdit *rateMap,
+	const CPoint &ndx,
+	Int brushWidth,
+	Int rateMultiplier,
+	Int smoothRadius,
+	Int minRadius,
+	Int maxRadius,
+	CWorldBuilderDoc *pDoc)
+{
+	if (!editMap || !featherMap || !rateMap) return false;
+
+	Int sub = brushWidth / 2;
+	Int add = brushWidth - sub;
+	Bool rateOverflow = false;
+	Int xExtent = editMap->getXExtent();
+	Int yExtent = editMap->getYExtent();
+
+	for (Int i = ndx.x - sub; i < ndx.x + add; i++) {
+		if (i < 0 || i >= xExtent) continue;
+		
+		for (Int j = ndx.y - sub; j < ndx.y + add; j++) {
+			if (j < 0 || j >= yExtent) continue;
+			
+			Real blendFactor = calcRoundBlendFactor(ndx, i, j, brushWidth, 0);
+			if (blendFactor <= 0.0f) continue;
+			
+			Int rate = rateMap->getHeight(i, j);
+			rate += (Int)(blendFactor * rateMultiplier);
+			if (rate > 255) {
+				rate = 255;
+				rateOverflow = true;
+			}
+			rateMap->setHeight(i, j, rate);
+			
+			applySmoothingAlgorithm(editMap, featherMap, i, j, rate,
+				smoothRadius, minRadius, maxRadius, pDoc);
+		}
+	}
+	
+	return rateOverflow;
+}
+
+void BrushTool::resetSmoothingBuffers(
+	WorldHeightMapEdit *editMap,
+	WorldHeightMapEdit *featherMap,
+	WorldHeightMapEdit *rateMap)
+{
+	if (!editMap || !featherMap || !rateMap) return;
+
+	Int size = rateMap->getXExtent() * rateMap->getYExtent();
+	UnsignedByte *pRate = rateMap->getDataPtr();
+	UnsignedByte *pFeather = featherMap->getDataPtr();
+	UnsignedByte *pEdit = editMap->getDataPtr();
+	
+	for (Int i = 0; i < size; i++) {
+		*pRate++ = 0;
+		*pFeather++ = *pEdit++;
+	}
+}
+
+IRegion2D BrushTool::makePartialRange(const CPoint &ndx, Int brushWidth)
+{
+	IRegion2D range;
+	range.lo.x = ndx.x - brushWidth;
+	range.hi.x = ndx.x + brushWidth;
+	range.lo.y = ndx.y - brushWidth;
+	range.hi.y = ndx.y + brushWidth;
+	return range;
+}
+
+Real BrushTool::calcBlendFactor(const CPoint &ndx, Int i, Int j, Int width, Int feather, Bool square)
+{
+	if (square) {
+		return calcSquareBlendFactor(ndx, i, j, width, feather);
+	}
+	return calcRoundBlendFactor(ndx, i, j, width, feather);
+}
+
+Int BrushTool::getEffectiveBrushWidth(Int baseWidth, Int feather)
+{
+	Int width = baseWidth;
+	if (feather > 0) {
+		width += 2 * feather;
+	}
+	return width + 2;
 }

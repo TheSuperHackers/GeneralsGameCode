@@ -36,6 +36,7 @@
 #include "teamsdialog.h"
 #include "LayersList.h"
 #include "BrushTool.h"
+#include "Lib/BaseType.h"
 
 Bool WbView::m_snapToGrid = false;
 
@@ -1107,7 +1108,7 @@ Bool WbView::handleBrushMouseWheel(UINT nFlags, short zDelta)
 		if (shiftDown && !ctrlDown) {
 			Int currentWidth = BrushTool::getWidth();
 			Int delta = zDelta > 0 ? 1 : -1;
-			Int newWidth = max(1, min(100, currentWidth + delta));
+			Int newWidth = clamp(1, currentWidth + delta, 100);
 			BrushTool::setWidth(newWidth);
 			
 			CString statusText;
@@ -1118,7 +1119,7 @@ Bool WbView::handleBrushMouseWheel(UINT nFlags, short zDelta)
 		} else if (ctrlDown && !shiftDown) {
 			Int currentFeather = BrushTool::getFeather();
 			Int delta = zDelta > 0 ? 1 : -1;
-			Int newFeather = max(0, min(100, currentFeather + delta));
+			Int newFeather = clamp(0, currentFeather + delta, 100);
 			BrushTool::setFeather(newFeather);
 			
 			CString statusText;

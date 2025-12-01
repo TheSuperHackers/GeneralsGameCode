@@ -145,74 +145,20 @@ void FeatherTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 	DrawObject::setFeedbackPos(cpt);
 	if (m != TRACK_L) return;
 
-	int brushWidth = m_feather;
-
 	CPoint ndx;
 	getCenterIndex(&cpt, m_feather, &ndx, pDoc);
-
-	//if (m_prevXIndex == ndx.x && m_prevYIndex == ndx.y) return;
 
 	m_prevXIndex = ndx.x;
 	m_prevYIndex = ndx.y;
 
-	int sub = brushWidth/2;
-	int add = brushWidth-sub;
+	Bool redoRate = BrushTool::applyBrushWithRateAccumulation(
+		m_htMapEditCopy, m_htMapFeatherCopy, m_htMapRateCopy,
+		ndx, m_feather, m_rate * 5,
+		m_radius, 1, FeatherOptions::MAX_RADIUS, pDoc);
 
-	// round brush
-	Int i, j;
-	Bool redoRate = false;
-
-	for (i= ndx.x-sub; i< ndx.x+add; i++) {
-		if (i<0 || i>=m_htMapEditCopy->getXExtent()) {
-			continue;
-		}
-		for (j=ndx.y-sub; j<ndx.y+add; j++) {
-			if (j<0 || j>=m_htMapEditCopy->getYExtent()) {
-				continue;
-			}
-			Real blendFactor;
-			blendFactor = calcRoundBlendFactor(ndx, i, j, m_feather, 0);
-			// m_htMapEditCopy is the output.
-			// m_htMapFeatherCopy is the original input.
-			// m_htMapRateCopy is how much we use of the feathered data.
-			if (blendFactor > 0.0f) {
-				Int rate = m_htMapRateCopy->getHeight(i, j);
-				rate += blendFactor * m_rate*5;
-				if (rate>255) {
-					rate = 255;
-					redoRate = true;
-				}
-				m_htMapRateCopy->setHeight(i,j,rate);
-				
-				BrushTool::applySmoothingAlgorithm(
-					m_htMapEditCopy,
-					m_htMapFeatherCopy,
-					i, j,
-					rate,
-					m_radius,
-					1,
-					FeatherOptions::MAX_RADIUS,
-					pDoc);
-			}
-		}
-	}
-
-	IRegion2D partialRange;
-	partialRange.lo.x = ndx.x - brushWidth;
-	partialRange.hi.x = ndx.x + brushWidth;
-	partialRange.lo.y = ndx.y - brushWidth;
-	partialRange.hi.y = ndx.y + brushWidth;
-	pDoc->updateHeightMap(m_htMapEditCopy, true, partialRange);
+	pDoc->updateHeightMap(m_htMapEditCopy, true, BrushTool::makePartialRange(ndx, m_feather));
+	
 	if (redoRate) {
-		Int size = m_htMapRateCopy->getXExtent() * m_htMapRateCopy->getYExtent();
-		UnsignedByte *pData = m_htMapRateCopy->getDataPtr();
-		UnsignedByte *pFeather = m_htMapFeatherCopy->getDataPtr();
-		UnsignedByte *pEdit = m_htMapEditCopy->getDataPtr();
-		Int i;
-		for (i=0; i<size; i++) {
-			*pData++ = 0;
-			*pFeather = *pEdit;
-			pFeather++; pEdit++;
-		}
+		BrushTool::resetSmoothingBuffers(m_htMapEditCopy, m_htMapFeatherCopy, m_htMapRateCopy);
 	}
 }
