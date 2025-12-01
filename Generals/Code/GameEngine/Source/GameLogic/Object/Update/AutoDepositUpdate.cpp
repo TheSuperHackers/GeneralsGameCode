@@ -71,7 +71,6 @@
 void parseUpgradePair( INI *ini, void *instance, void *store, const void *userData )
 {
 	upgradePair info;
-	info.type = "";
 	info.amount = 0;
 
 	const char *token = ini->getNextToken( ini->getSepsColon() );
