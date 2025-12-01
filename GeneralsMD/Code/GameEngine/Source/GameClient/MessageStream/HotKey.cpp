@@ -75,29 +75,27 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 		if ((msg->getArgument(1)->integer & KEY_STATE_AUTOREPEAT) == 0)
 			return KEEP_MESSAGE;
 
-		break;
+		FALLTHROUGH;
 	case GameMessage::MSG_RAW_KEY_UP:
 		if (msg->getArgument(1)->integer & (KEY_STATE_CONTROL | KEY_STATE_SHIFT | KEY_STATE_ALT))
 			return KEEP_MESSAGE;
 
-		break;
+		if (!TheHotKeyManager)
+		{
+			WideChar key = TheKeyboard->getPrintableKey(msg->getArgument(0)->integer, 0);
+			UnicodeString uKey;
+			uKey.concat(key);
+			AsciiString aKey;
+			aKey.translate(uKey);
+
+			if (TheHotKeyManager->executeHotKey(aKey))
+				return DESTROY_MESSAGE;
+		}
+
+		return KEEP_MESSAGE;
 	default:
 		return KEEP_MESSAGE;
 	}
-
-	if (!TheHotKeyManager)
-		return KEEP_MESSAGE;
-
-	WideChar key = TheKeyboard->getPrintableKey(msg->getArgument(0)->integer, 0);
-	UnicodeString uKey;
-	uKey.concat(key);
-	AsciiString aKey;
-	aKey.translate(uKey);
-
-	if (TheHotKeyManager->executeHotKey(aKey))
-		return DESTROY_MESSAGE;
-
-	return KEEP_MESSAGE;
 }
 
 //-----------------------------------------------------------------------------
