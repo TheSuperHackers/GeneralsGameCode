@@ -124,8 +124,8 @@ protected:
 	Real m_startDrawTimeConsumed;
 	Real m_curDrawTime;
 #else
-	inline void UPDATE(void) {update();}
-	inline void DRAW(void) {draw();}
+	void UPDATE(void) {update();}
+	void DRAW(void) {draw();}
 #endif
 protected:
 	AsciiString m_name;

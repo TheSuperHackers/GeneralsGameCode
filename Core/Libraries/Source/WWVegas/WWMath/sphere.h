@@ -65,9 +65,9 @@
 class SphereClass
 {
 public:
-	inline SphereClass(void) { };
-	inline SphereClass(const Vector3 & center,float radius) { Init(center,radius); }
-	inline SphereClass(const Matrix3D& mtx,const Vector3 & center,float radius) { Init(mtx,center,radius); }
+	SphereClass(void) { };
+	SphereClass(const Vector3 & center,float radius) { Init(center,radius); }
+	SphereClass(const Matrix3D& mtx,const Vector3 & center,float radius) { Init(mtx,center,radius); }
 	inline SphereClass(const Vector3 & center,const SphereClass & s0);
 	inline SphereClass(const Vector3 *Position, const int VertCount);
 

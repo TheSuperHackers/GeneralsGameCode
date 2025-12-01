@@ -315,17 +315,17 @@ public:
 	void setTerrainDecalSize(Real x, Real y);
 	void setTerrainDecalFadeTarget(Real target, Real rate = 0.1f);
 
-	inline Object *getObject( void ) { return m_object; }								///< return object ID bound to this drawble
-	inline const Object *getObject( void ) const { return m_object; }		///< return object ID bound to this drawble
+	Object *getObject( void ) { return m_object; }								///< return object ID bound to this drawble
+	const Object *getObject( void ) const { return m_object; }		///< return object ID bound to this drawble
 
-	inline DrawableInfo *getDrawableInfo(void) {return &m_drawableInfo;}
+	DrawableInfo *getDrawableInfo(void) {return &m_drawableInfo;}
 
 	void setDrawableHidden( Bool hidden );																		///< hide or unhide drawable
 	//
 	// note that this is not necessarily the 'get' reflection of setDrawableHidden, since drawables
 	// can spontaneously hide via stealth. (srj)
 	//
-	inline Bool isDrawableEffectivelyHidden() const { return m_hidden || m_hiddenByStealth; }
+	Bool isDrawableEffectivelyHidden() const { return m_hidden || m_hiddenByStealth; }
 
 	void setSelectable( Bool selectable );												///< Changes the drawables selectability
 	Bool isSelectable( void ) const;
@@ -364,7 +364,7 @@ public:
 	//---------------------------------------------------------------------------
 	void setDrawableStatus( DrawableStatus bit )  { BitSet( m_status, bit ); }
 	void clearDrawableStatus( DrawableStatus bit ) { BitClear( m_status, bit ); }
-	inline Bool testDrawableStatus( DrawableStatus bit ) const { return (m_status & bit) != 0; }
+	Bool testDrawableStatus( DrawableStatus bit ) const { return (m_status & bit) != 0; }
 
 	void setShroudClearFrame( UnsignedInt frame )  { m_shroudClearFrame = frame; }
 	UnsignedInt getShroudClearFrame( void ) { return m_shroudClearFrame; }
@@ -376,7 +376,7 @@ public:
 	void allocateShadows(void); ///< create shadow resources if not already present. Used by Options screen.
 
 	void setFullyObscuredByShroud(Bool fullyObscured);
-	inline Bool getFullyObscuredByShroud(void) {return m_drawableFullyObscuredByShroud;}
+	Bool getFullyObscuredByShroud(void) {return m_drawableFullyObscuredByShroud;}
 
 	Bool getDrawsInMirror() const { return BitIsSet(m_status, DRAWABLE_STATUS_DRAWS_IN_MIRROR) || isKindOf(KINDOF_CAN_CAST_REFLECTIONS); }
 
@@ -395,9 +395,9 @@ public:
 	// an "instance" matrix defines the local transform of the Drawable, and is concatenated with the global transform
 	void setInstanceMatrix( const Matrix3D *instance );									///< set the Drawable's instance transform
 	const Matrix3D *getInstanceMatrix( void ) const { return &m_instance; }		///< get drawable instance transform
-	inline Bool isInstanceIdentity() const { return m_instanceIsIdentity; }
+	Bool isInstanceIdentity() const { return m_instanceIsIdentity; }
 
-	inline Real getInstanceScale( void ) const { return m_instanceScale; }		///< get scale that will be applied to instance matrix
+	Real getInstanceScale( void ) const { return m_instanceScale; }		///< get scale that will be applied to instance matrix
 	void setInstanceScale(Real value) { m_instanceScale = value;}	///< set scale that will be applied to instance matrix before rendering.
 
 	const Matrix3D *getTransformMatrix( void ) const;	///< return the world transform
@@ -416,7 +416,7 @@ public:
 	void removeFromList(Drawable **pListHead);
 	void setID( DrawableID id );											///< set this drawable's unique ID
 
-	inline const ModelConditionFlags& getModelConditionFlags( void ) const { return m_conditionState; }
+	const ModelConditionFlags& getModelConditionFlags( void ) const { return m_conditionState; }
 
 	//
 	// NOTE: avoid repeated calls to the set and clear for the condition state as they
@@ -516,16 +516,16 @@ public:
 	const Vector3 * getTintColor( void ) const;					///< get FX color value to add to ALL LIGHTS when drawing
 	const Vector3 * getSelectionColor( void ) const;					///< get FX color value to add to ALL LIGHTS when drawing
 
-	inline TerrainDecalType getTerrainDecalType( void ) const { return m_terrainDecalType; }
+	TerrainDecalType getTerrainDecalType( void ) const { return m_terrainDecalType; }
 
-	inline void setDrawableOpacity( Real value ) { m_explicitOpacity = value; }	///< set alpha/opacity value used to override defaults when drawing.
+	void setDrawableOpacity( Real value ) { m_explicitOpacity = value; }	///< set alpha/opacity value used to override defaults when drawing.
 
 	// note that this is not the 'get' inverse of setDrawableOpacity, since stealthing can also affect the effective opacity!
-	inline Real getEffectiveOpacity() const { return m_explicitOpacity * m_effectiveStealthOpacity; }		///< get alpha/opacity value used to override defaults when drawing.
+	Real getEffectiveOpacity() const { return m_explicitOpacity * m_effectiveStealthOpacity; }		///< get alpha/opacity value used to override defaults when drawing.
 	void setEffectiveOpacity( Real pulseFactor, Real explicitOpacity = -1.0f );
 
 	// this is for the heatvision effect which operates completely independently of the stealth opacity effects. Draw() does the fading every frame.
-	inline Real getHeatVisionOpacity() const { return m_heatVisionOpacity; }		///< get alpha/opacity value used to render add'l heatvision rendering pass.
+	Real getHeatVisionOpacity() const { return m_heatVisionOpacity; }		///< get alpha/opacity value used to render add'l heatvision rendering pass.
 	void setHeatVisionOpacity( Real op ) { m_heatVisionOpacity = op; }; ///< set alpha/opacity value used to render add'l heatvision rendering pass.
 
 	// both of these assume that you are starting at one extreme 100% or 0% opacity and are trying to go to the other!! -- amit
@@ -571,13 +571,13 @@ protected:
 	Drawable *asDrawableMeth() { return this; }
 	const Drawable *asDrawableMeth() const { return this; }
 
-	inline Module** getModuleList(ModuleType i)
+	Module** getModuleList(ModuleType i)
 	{
 		Module** m = m_modules[i - FIRST_DRAWABLE_MODULE_TYPE];
 		return m;
 	}
 
-	inline Module* const* getModuleList(ModuleType i) const
+	Module* const* getModuleList(ModuleType i) const
 	{
 		Module** m = m_modules[i - FIRST_DRAWABLE_MODULE_TYPE];
 		return m;

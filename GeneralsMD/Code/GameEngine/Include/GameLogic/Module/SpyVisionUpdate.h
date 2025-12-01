@@ -131,7 +131,7 @@ protected:
 	{
 		return getSpyVisionUpdateModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
 	}
-	inline Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
+	Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 private:

@@ -531,7 +531,7 @@ public:  // ********************************************************************
 	Bool				isDrawableCaptionBold( void )				{ return m_drawableCaptionBold; }
 	Color				getDrawableCaptionColor( void )			{ return m_drawableCaptionColor; }
 
-	inline Bool shouldMoveRMBScrollAnchor( void ) { return m_moveRMBScrollAnchor; }
+	Bool shouldMoveRMBScrollAnchor( void ) { return m_moveRMBScrollAnchor; }
 
 	Bool isClientQuiet( void ) const			{ return m_clientQuiet; }
 	Bool isInWaypointMode( void ) const			{ return m_waypointMode; }

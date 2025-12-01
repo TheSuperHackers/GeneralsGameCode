@@ -743,8 +743,8 @@ protected:
 	virtual ~MemoryPoolObject() { }
 
 protected:
-	void *operator new(size_t s) { DEBUG_CRASH(("This should be impossible")); return 0; }
-	void operator delete(void *p) { DEBUG_CRASH(("This should be impossible")); }
+	inline void *operator new(size_t s) { DEBUG_CRASH(("This should be impossible")); return 0; }
+	inline void operator delete(void *p) { DEBUG_CRASH(("This should be impossible")); }
 
 protected:
 

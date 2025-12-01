@@ -229,20 +229,20 @@ public:  // height map info.
 	Int getXExtent(void) {return m_width;}	///<number of vertices in x
 	Int getYExtent(void) {return m_height;}	///<number of vertices in y
 
-	inline Int getDrawOrgX(void) {return m_drawOriginX;}
-	inline Int getDrawOrgY(void) {return m_drawOriginY;}
+	Int getDrawOrgX(void) {return m_drawOriginX;}
+	Int getDrawOrgY(void) {return m_drawOriginY;}
 
-	inline Int getDrawWidth(void) {return m_drawWidthX;}
-	inline Int getDrawHeight(void) {return m_drawHeightY;}
-	inline void setDrawWidth(Int width) {m_drawWidthX = width; if (m_drawWidthX>m_width) m_drawWidthX = m_width;}
-	inline void setDrawHeight(Int height) {m_drawHeightY = height; if (m_drawHeightY>m_height) m_drawHeightY = m_height;}
+	Int getDrawWidth(void) {return m_drawWidthX;}
+	Int getDrawHeight(void) {return m_drawHeightY;}
+	void setDrawWidth(Int width) {m_drawWidthX = width; if (m_drawWidthX>m_width) m_drawWidthX = m_width;}
+	void setDrawHeight(Int height) {m_drawHeightY = height; if (m_drawHeightY>m_height) m_drawHeightY = m_height;}
 	virtual Int getBorderSize(void) {return m_borderSize;}
-  inline Int getBorderSizeInline(void) const { return m_borderSize; }
+  Int getBorderSizeInline(void) const { return m_borderSize; }
 	/// Get height with the offset that HeightMapRenderObjClass uses built in.
-	inline UnsignedByte getDisplayHeight(Int x, Int y) { return m_data[x+m_drawOriginX+m_width*(y+m_drawOriginY)];}
+	UnsignedByte getDisplayHeight(Int x, Int y) { return m_data[x+m_drawOriginX+m_width*(y+m_drawOriginY)];}
 
 	/// Get height in normal coordinates.
-	inline UnsignedByte getHeight(Int xIndex, Int yIndex)
+	UnsignedByte getHeight(Int xIndex, Int yIndex)
 	{
 		Int ndx = (yIndex*m_width)+xIndex;
 		if ((ndx>=0) && (ndx<m_dataSize) && m_data)
@@ -270,7 +270,7 @@ public:  // tile and texture info.
 	Bool getUVData(Int xIndex, Int yIndex, float U[4], float V[4], Bool fullTile);
 	Bool getFlipState(Int xIndex, Int yIndex) const;
 	///Faster version of above function without all the safety checks - For people that do checks externally.
-	inline Bool getQuickFlipState(Int xIndex, Int yIndex) const
+	Bool getQuickFlipState(Int xIndex, Int yIndex) const
 	{
 		return m_cellFlipState[yIndex*m_flipStateWidth + (xIndex >> 3)] & (1<<(xIndex&0x7));
 	}

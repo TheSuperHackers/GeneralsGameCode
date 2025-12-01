@@ -491,7 +491,7 @@ struct EdgeStruct
 		OOZStep = XStep * grad.DOOZ_DX + grad.DOOZ_DY;
 	}
 
-	inline int Step(void)
+	int Step(void)
 	{
 		X+=XStep;
 		Y++;

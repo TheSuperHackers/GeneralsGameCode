@@ -134,7 +134,7 @@ public:
 
 	// Kris: August 23, 2003
 	// All OCLs return the first object that is created (or NULL if not applicable).
-	inline static Object* create( const ObjectCreationList* ocl, const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 )
+	static Object* create( const ObjectCreationList* ocl, const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 )
 	{
 		if( ocl )
 			return ocl->createInternal( primaryObj, primary, secondary, createOwner, lifetimeFrames );
@@ -144,7 +144,7 @@ public:
 	// Kris: August 23, 2003
 	// All OCLs return the first object that is created (or NULL if not applicable).
 	/// inline convenience method to avoid having to check for null.
-	inline static Object* create(const ObjectCreationList* ocl, const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Real angle, UnsignedInt lifetimeFrames = 0 )
+	static Object* create(const ObjectCreationList* ocl, const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Real angle, UnsignedInt lifetimeFrames = 0 )
 	{
 		if (ocl)
 			return ocl->createInternal( primaryObj, primary, secondary, angle, lifetimeFrames );
@@ -154,7 +154,7 @@ public:
 	// Kris: August 23, 2003
 	// All OCLs return the first object that is created (or NULL if not applicable).
 	/// inline convenience method to avoid having to check for null.
-	inline static Object* create( const ObjectCreationList* ocl, const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 )
+	static Object* create( const ObjectCreationList* ocl, const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 )
 	{
 		if (ocl)
 			return ocl->createInternal( primary, secondary, lifetimeFrames );

@@ -176,16 +176,16 @@ public:
 	void applyForce( const Coord3D *force );		///< add the given acceleration
 	void detachDrawable( void ) { m_drawable = NULL; }	///< detach the Drawable pointer from this particle
 
-	inline const Coord3D *getPosition( void ) { return &m_pos; }
-	inline Real getSize( void ) { return m_size; }
-	inline Real getAngle( void ) { return m_angleZ; }
-	inline Real getAlpha( void ) { return m_alpha; }
-	inline const RGBColor *getColor( void ) { return &m_color; }
-	inline void setColor( RGBColor *color ) { m_color = *color; }
+	const Coord3D *getPosition( void ) { return &m_pos; }
+	Real getSize( void ) { return m_size; }
+	Real getAngle( void ) { return m_angleZ; }
+	Real getAlpha( void ) { return m_alpha; }
+	const RGBColor *getColor( void ) { return &m_color; }
+	void setColor( RGBColor *color ) { m_color = *color; }
 
 	Bool isInvisible( void );										///< return true if this particle is invisible
-	inline Bool isCulled (void) {return m_isCulled;}				///< return true if the particle falls off the edge of the screen
-	inline void setIsCulled (Bool enable) { m_isCulled = enable;}		///< set particle to not visible because it's outside view frustum
+	Bool isCulled (void) {return m_isCulled;}				///< return true if the particle falls off the edge of the screen
+	void setIsCulled (Bool enable) { m_isCulled = enable;}		///< set particle to not visible because it's outside view frustum
 
 	void controlParticleSystem( ParticleSystem *sys ) { m_systemUnderControl = sys; }
 	void detachControlledParticleSystem( void ) { m_systemUnderControl = NULL; }
@@ -551,7 +551,7 @@ public:
 									ParticleSystemID id,
 									Bool createSlaves );			///< create a particle system from a template and assign it this ID
 
-	inline ParticleSystemID getSystemID( void ) const { return m_systemID; }	///< get unique system ID
+	ParticleSystemID getSystemID( void ) const { return m_systemID; }	///< get unique system ID
 
 	void setPosition( const Coord3D *pos );			///< set the position of the particle system
 	void getPosition( Coord3D *pos );				///< get the position of the particle system
@@ -634,8 +634,8 @@ public:
 	void removeParticle( Particle *p );
 	UnsignedInt getParticleCount( void ) const { return m_particleCount; }
 
-	inline ObjectID getAttachedObject( void ) { return m_attachedToObjectID; }
-	inline DrawableID getAttachedDrawable( void ) { return m_attachedToDrawableID; }
+	ObjectID getAttachedObject( void ) { return m_attachedToObjectID; }
+	DrawableID getAttachedDrawable( void ) { return m_attachedToDrawableID; }
 
 	// Access to dynamically changing part of a particle system.
 	void setEmissionVolumeSphereRadius( Real newRadius ) { if (m_emissionVolumeType == SPHERE) m_emissionVolume.sphere.radius = newRadius; }

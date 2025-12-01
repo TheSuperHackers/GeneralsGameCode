@@ -103,7 +103,7 @@ public:
 
 	void xferSelfAndCurLocoPtr(Xfer *xfer, Locomotor** loco);
 
-	inline LocomotorSurfaceTypeMask getValidSurfaces() const { return m_validLocomotorSurfaces; }
-	inline Bool isDownhillOnly( void ) const { return m_downhillOnly; };
+	LocomotorSurfaceTypeMask getValidSurfaces() const { return m_validLocomotorSurfaces; }
+	Bool isDownhillOnly( void ) const { return m_downhillOnly; };
 
 };

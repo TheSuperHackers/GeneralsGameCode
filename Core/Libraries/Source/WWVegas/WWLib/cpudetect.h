@@ -143,30 +143,30 @@ public:
 		RISE_PROCESSOR_DRAGON2_018
 	} RiseProcessorType;
 
-	inline static ProcessorManufacturerType Get_Processor_Manufacturer() {return ProcessorManufacturer;}
+	static ProcessorManufacturerType Get_Processor_Manufacturer() {return ProcessorManufacturer;}
 	static const char* Get_Processor_Manufacturer_Name();
 
-	inline static bool Has_CPUID_Instruction() { return HasCPUIDInstruction; }
-	inline static bool Has_RDTSC_Instruction() { return HasRDTSCInstruction; }
-	inline static bool Has_CMOV_Instruction() { return HasCMOVSupport; }
-	inline static bool Has_MMX_Instruction_Set() { return HasMMXSupport; }
-	inline static bool Has_SSE_Instruction_Set() { return HasSSESupport; }
-	inline static bool Has_SSE2_Instruction_Set() { return HasSSE2Support; }
-	inline static bool Has_3DNow_Instruction_Set() { return Has3DNowSupport; }
-	inline static bool Has_Extended_3DNow_Instruction_Set() { return HasExtended3DNowSupport; }
+	static bool Has_CPUID_Instruction() { return HasCPUIDInstruction; }
+	static bool Has_RDTSC_Instruction() { return HasRDTSCInstruction; }
+	static bool Has_CMOV_Instruction() { return HasCMOVSupport; }
+	static bool Has_MMX_Instruction_Set() { return HasMMXSupport; }
+	static bool Has_SSE_Instruction_Set() { return HasSSESupport; }
+	static bool Has_SSE2_Instruction_Set() { return HasSSE2Support; }
+	static bool Has_3DNow_Instruction_Set() { return Has3DNowSupport; }
+	static bool Has_Extended_3DNow_Instruction_Set() { return HasExtended3DNowSupport; }
 
 	// Call these functions after determining the manufacturer to find out which of the manufacturers processors
 	// the system has.
-	inline static IntelProcessorType Get_Intel_Processor() { return IntelProcessor; }
-	inline static AMDProcessorType Get_AMD_Processor() { return AMDProcessor; }
-	inline static VIAProcessorType Get_VIA_Processor() { return VIAProcessor; }
-	inline static RiseProcessorType Get_Rise_Processor() { return RiseProcessor; }
+	static IntelProcessorType Get_Intel_Processor() { return IntelProcessor; }
+	static AMDProcessorType Get_AMD_Processor() { return AMDProcessor; }
+	static VIAProcessorType Get_VIA_Processor() { return VIAProcessor; }
+	static RiseProcessorType Get_Rise_Processor() { return RiseProcessor; }
 
 	// Note that processor speed is only calculated at start and could change during execution, so
 	// this number is not to be relied on!
-	inline static int Get_Processor_Speed() { return ProcessorSpeed; }
-	inline static sint64 Get_Processor_Ticks_Per_Second() { return ProcessorTicksPerSecond; }	// Ticks per second
-	inline static double Get_Inv_Processor_Ticks_Per_Second() { return InvProcessorTicksPerSecond; }	// 1.0 / Ticks per second
+	static int Get_Processor_Speed() { return ProcessorSpeed; }
+	static sint64 Get_Processor_Ticks_Per_Second() { return ProcessorTicksPerSecond; }	// Ticks per second
+	static double Get_Inv_Processor_Ticks_Per_Second() { return InvProcessorTicksPerSecond; }	// 1.0 / Ticks per second
 
 	static unsigned Get_Feature_Bits() { return FeatureBits; }
 	static unsigned Get_Extended_Feature_Bits() { return ExtendedFeatureBits; }
@@ -200,9 +200,9 @@ public:
 
 	static unsigned Get_Processor_Type() { return ProcessorType; }
 
-	inline static const char* Get_Processor_String() { return ProcessorString; }
-	inline static const StringClass& Get_Processor_Log() { return ProcessorLog; }
-	inline static const StringClass& Get_Compact_Log() { return CompactLog; }
+	static const char* Get_Processor_String() { return ProcessorString; }
+	static const StringClass& Get_Processor_Log() { return ProcessorLog; }
+	static const StringClass& Get_Compact_Log() { return CompactLog; }
 
 	static bool CPUID(
 		unsigned& u_eax_,

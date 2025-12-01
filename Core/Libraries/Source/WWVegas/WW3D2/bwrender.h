@@ -68,7 +68,7 @@ class BWRenderClass
 
 		void Set_H_Line(int start_x, int end_x, int y);
 		void Fill(unsigned char c);
-		inline int Scale() const { return scale; }
+		int Scale() const { return scale; }
 	} pixel_buffer;
 
 	Vector2* vertices;

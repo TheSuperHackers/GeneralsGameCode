@@ -111,13 +111,13 @@ private:
 	//-------------------------------------------------------------------------------------------------
 
 	//-------------------------------------------------------------------------------------------------
-	inline static Int countConditionIntersection(const BITSET& a, const BITSET& b)
+	static Int countConditionIntersection(const BITSET& a, const BITSET& b)
 	{
 		return a.countIntersection(b);
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	inline static Int countConditionInverseIntersection(const BITSET& a, const BITSET& b)
+	static Int countConditionInverseIntersection(const BITSET& a, const BITSET& b)
 	{
 		return a.countInverseIntersection(b);
 	}

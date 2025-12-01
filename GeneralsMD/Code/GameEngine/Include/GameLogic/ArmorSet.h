@@ -66,23 +66,23 @@ private:
 	const DamageFX* m_fx;
 
 public:
-	inline ArmorTemplateSet()
+	ArmorTemplateSet()
 	{
 		clear();
 	}
 
-	inline void clear()
+	void clear()
 	{
 		m_types.clear();
 		m_template = NULL;
 		m_fx = NULL;
 	}
 
-	inline const ArmorTemplate* getArmorTemplate() const { return m_template; }
-	inline const DamageFX* getDamageFX() const { return m_fx; }
+	const ArmorTemplate* getArmorTemplate() const { return m_template; }
+	const DamageFX* getDamageFX() const { return m_fx; }
 
-	inline Int getConditionsYesCount() const { return 1; }
-	inline const ArmorSetFlags& getNthConditionsYes(Int i) const { return m_types; }
+	Int getConditionsYesCount() const { return 1; }
+	const ArmorSetFlags& getNthConditionsYes(Int i) const { return m_types; }
 #if defined(RTS_DEBUG)
 	inline AsciiString getDescription() const { return "ArmorTemplateSet"; }
 #endif

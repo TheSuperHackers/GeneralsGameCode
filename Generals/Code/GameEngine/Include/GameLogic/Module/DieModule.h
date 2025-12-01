@@ -76,7 +76,7 @@ public:
 		p.add(DieMuxData::getFieldParse(), offsetof( DieModuleData, m_dieMuxData ));
 	}
 
-	inline Bool isDieApplicable(const Object* obj, const DamageInfo *damageInfo) const { return m_dieMuxData.isDieApplicable(obj, damageInfo); }
+	Bool isDieApplicable(const Object* obj, const DamageInfo *damageInfo) const { return m_dieMuxData.isDieApplicable(obj, damageInfo); }
 };
 
 //-------------------------------------------------------------------------------------------------

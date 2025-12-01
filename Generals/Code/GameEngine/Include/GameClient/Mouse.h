@@ -303,7 +303,7 @@ public:
 	virtual void setRedrawMode(RedrawMode mode)	{m_currentRedrawMode=mode;} ///<set cursor drawing method.
 	virtual RedrawMode getRedrawMode(void) { return m_currentRedrawMode; } //get cursor drawing method
 	virtual void setVisibility(Bool visible) { m_visible = visible; } // set visibility for load screens, etc
-	inline Bool getVisibility(void) { return m_visible; } // get visibility state
+	Bool getVisibility(void) { return m_visible; } // get visibility state
 
 	void drawTooltip( void );					///< draw the tooltip text
 	void drawCursorText( void );			///< draw the mouse cursor text

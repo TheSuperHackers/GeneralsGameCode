@@ -132,7 +132,7 @@ public:
 	//
 
 	// configures the member data to use the passed pointers
-	inline void Set(Vector3 *location, Vector3 *direction, Vector3 *intersection_normal, bool interpolate_normal, float max_distance, bool convex_test = false)
+	void Set(Vector3 *location, Vector3 *direction, Vector3 *intersection_normal, bool interpolate_normal, float max_distance, bool convex_test = false)
 	{
 		RayLocation = location;
 		RayDirection = direction;
@@ -147,7 +147,7 @@ public:
 	// this constructor uses static variables for the location/direction/normal variables
 	// so can be only used one thread at a time unless the Set() function is used to
 	// set them to private vector3's
-	inline IntersectionClass()
+	IntersectionClass()
 	: ConvexTest(false)
 	{
 		RayLocation = &_RayLocation;
@@ -158,7 +158,7 @@ public:
 
 
 	// This will be the most commonly used constructor
-	inline IntersectionClass(Vector3 *location, Vector3 *direction, Vector3 *intersection_normal, bool interpolate_normal = false, float max_distance = WWMATH_FLOAT_MAX, bool convex_test = false)
+	IntersectionClass(Vector3 *location, Vector3 *direction, Vector3 *intersection_normal, bool interpolate_normal = false, float max_distance = WWMATH_FLOAT_MAX, bool convex_test = false)
 	{
 		Set(location, direction, intersection_normal, interpolate_normal, max_distance, convex_test);
 	}
@@ -168,7 +168,7 @@ public:
 
 
 	// this copy routine is used when the model coords are needed to be copied along with the other information.
-	inline void Copy_Results(IntersectionResultClass *Destination, IntersectionResultClass *Source) {
+	void Copy_Results(IntersectionResultClass *Destination, IntersectionResultClass *Source) {
 		Destination->ModelMatrix = Source->ModelMatrix;
 		Destination->ModelLocation = Source->ModelLocation;
 		Copy_Partial_Results(Destination, Source);
@@ -176,7 +176,7 @@ public:
 	}
 
 
-	inline void Copy_Results(IntersectionResultClass *Source) {
+	void Copy_Results(IntersectionResultClass *Source) {
 		Copy_Results(&Result, Source);
 	}
 
@@ -185,7 +185,7 @@ public:
 	// otherwise the results are copied into the request structure.
 	// This does not copy the matrix or location members; it is intended to be used during poly testing
 	// where these values are identical between results, or as a completion function for Copy_Results()
-	inline void Copy_Partial_Results(IntersectionResultClass *Destination, IntersectionResultClass *Source)
+	void Copy_Partial_Results(IntersectionResultClass *Destination, IntersectionResultClass *Source)
 	{
 		Destination->IntersectedPolygon = Source->IntersectedPolygon;
 		Destination->Intersection = Source->Intersection;
@@ -198,13 +198,13 @@ public:
 
 
 	// used for creating temporary copies
-	inline IntersectionClass(IntersectionClass *source)
+	IntersectionClass(IntersectionClass *source)
 	{
 		*this = source;
 	}
 
 
-	inline IntersectionClass *operator =(IntersectionClass *source)
+	IntersectionClass *operator =(IntersectionClass *source)
 	{
 		Set(source->RayLocation, source->RayDirection, source->IntersectionNormal, source->InterpolateNormal, source->MaxDistance, source->ConvexTest);
 		Copy_Results(&source->Result);
@@ -220,7 +220,7 @@ public:
 	// this will only set the result's range if intersection occurs; it is intended to be used as a first pass intersection test
 	// before intersecting the mesh polygons itself.
 	// Note: Does NOT do Max_Distance testing
-	inline bool Intersect_Sphere_Quick(SphereClass &Sphere, IntersectionResultClass *FinalResult)
+	bool Intersect_Sphere_Quick(SphereClass &Sphere, IntersectionResultClass *FinalResult)
 	{
 		// make a unit vector from the ray origin to the sphere center
 		Vector3 sphere_vector(Sphere.Center - *RayLocation);
@@ -238,7 +238,7 @@ public:
 
 
 	// this will find the intersection with the sphere and the intersection normal if needed.
-	inline bool Intersect_Sphere(SphereClass &Sphere, IntersectionResultClass *FinalResult)
+	bool Intersect_Sphere(SphereClass &Sphere, IntersectionResultClass *FinalResult)
 	{
 		if(!Intersect_Sphere_Quick(Sphere, FinalResult))
 			return false;

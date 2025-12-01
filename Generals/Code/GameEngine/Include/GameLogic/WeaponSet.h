@@ -116,7 +116,7 @@ private:
 	static void parsePreferredAgainst(INI* ini, void *instance, void *store, const void* userData);
 
 public:
-	inline WeaponTemplateSet()
+	WeaponTemplateSet()
 	{
 		clear();
 	}
@@ -131,12 +131,12 @@ public:
 	Bool isWeaponLockSharedAcrossSets() const {return m_isWeaponLockSharedAcrossSets; }
 
 	Bool hasAnyWeapons() const;
-	inline const WeaponTemplate* getNth(WeaponSlotType n) const { return m_template[n]; }
-	inline UnsignedInt getNthCommandSourceMask(WeaponSlotType n) const { return m_autoChooseMask[n]; }
-	inline const KindOfMaskType& getNthPreferredAgainstMask(WeaponSlotType n) const { return m_preferredAgainst[n]; }
+	const WeaponTemplate* getNth(WeaponSlotType n) const { return m_template[n]; }
+	UnsignedInt getNthCommandSourceMask(WeaponSlotType n) const { return m_autoChooseMask[n]; }
+	const KindOfMaskType& getNthPreferredAgainstMask(WeaponSlotType n) const { return m_preferredAgainst[n]; }
 
-	inline Int getConditionsYesCount() const { return 1; }
-	inline const WeaponSetFlags& getNthConditionsYes(Int i) const { return m_types; }
+	Int getConditionsYesCount() const { return 1; }
+	const WeaponSetFlags& getNthConditionsYes(Int i) const { return m_types; }
 #if defined(RTS_DEBUG)
 	inline AsciiString getDescription() const { return "ArmorTemplateSet"; }
 #endif

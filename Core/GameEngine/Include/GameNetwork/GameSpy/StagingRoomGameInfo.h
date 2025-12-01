@@ -52,8 +52,8 @@ public:
 	void setFavoriteSide( Int val ) { m_favoriteSide = val; }
 
 	void setPingString( AsciiString pingStr );
-	inline AsciiString getPingString( void ) const { return m_pingStr; }
-	inline Int getPingAsInt( void ) const { return m_pingInt; }
+	AsciiString getPingString( void ) const { return m_pingStr; }
+	Int getPingAsInt( void ) const { return m_pingInt; }
 
 protected:
 	Int m_profileID;
@@ -99,37 +99,37 @@ public:
 	virtual void reset( void );
 
 	void cleanUpSlotPointers(void);
-	inline void setID(Int id) { m_id = id; }
-	inline Int getID( void ) const { return m_id; }
+	void setID(Int id) { m_id = id; }
+	Int getID( void ) const { return m_id; }
 
-	inline void setHasPassword(Bool val) { m_requiresPassword = val; }
-	inline Bool getHasPassword(void) const { return m_requiresPassword; }
-	inline void setAllowObservers(Bool val) { m_allowObservers = val; }
-	inline Bool getAllowObservers(void) const { return m_allowObservers; }
+	void setHasPassword(Bool val) { m_requiresPassword = val; }
+	Bool getHasPassword(void) const { return m_requiresPassword; }
+	void setAllowObservers(Bool val) { m_allowObservers = val; }
+	Bool getAllowObservers(void) const { return m_allowObservers; }
 
-	inline void setVersion(UnsignedInt val) { m_version = val; }
-	inline UnsignedInt getVersion(void) const { return m_version; }
-	inline void setExeCRC(UnsignedInt val) { m_exeCRC = val; }
-	inline UnsignedInt getExeCRC(void) const { return m_exeCRC; }
-	inline void setIniCRC(UnsignedInt val) { m_iniCRC = val; }
-	inline UnsignedInt getIniCRC(void) const { return m_iniCRC; }
+	void setVersion(UnsignedInt val) { m_version = val; }
+	UnsignedInt getVersion(void) const { return m_version; }
+	void setExeCRC(UnsignedInt val) { m_exeCRC = val; }
+	UnsignedInt getExeCRC(void) const { return m_exeCRC; }
+	void setIniCRC(UnsignedInt val) { m_iniCRC = val; }
+	UnsignedInt getIniCRC(void) const { return m_iniCRC; }
 
-	inline void setReportedNumPlayers(Int val) { m_reportedNumPlayers = val; }
-	inline Int getReportedNumPlayers(void) const { return m_reportedNumPlayers; }
+	void setReportedNumPlayers(Int val) { m_reportedNumPlayers = val; }
+	Int getReportedNumPlayers(void) const { return m_reportedNumPlayers; }
 
-	inline void setReportedMaxPlayers(Int val) { m_reportedMaxPlayers = val; }
-	inline Int getReportedMaxPlayers(void) const { return m_reportedMaxPlayers; }
+	void setReportedMaxPlayers(Int val) { m_reportedMaxPlayers = val; }
+	Int getReportedMaxPlayers(void) const { return m_reportedMaxPlayers; }
 
-	inline void setReportedNumObservers(Int val) { m_reportedNumObservers = val; }
-	inline Int getReportedNumObservers(void) const { return m_reportedNumObservers; }
+	void setReportedNumObservers(Int val) { m_reportedNumObservers = val; }
+	Int getReportedNumObservers(void) const { return m_reportedNumObservers; }
 
-	inline void setLadderIP( AsciiString ladderIP ) { m_ladderIP = ladderIP; }
-	inline AsciiString getLadderIP( void ) const { return m_ladderIP; }
-	inline void setLadderPort( UnsignedShort ladderPort ) { m_ladderPort = ladderPort; }
-	inline UnsignedShort getLadderPort( void ) const { return m_ladderPort; }
+	void setLadderIP( AsciiString ladderIP ) { m_ladderIP = ladderIP; }
+	AsciiString getLadderIP( void ) const { return m_ladderIP; }
+	void setLadderPort( UnsignedShort ladderPort ) { m_ladderPort = ladderPort; }
+	UnsignedShort getLadderPort( void ) const { return m_ladderPort; }
 	void setPingString( AsciiString pingStr );
-	inline AsciiString getPingString( void ) const { return m_pingStr; }
-	inline Int getPingAsInt( void ) const { return m_pingInt; }
+	AsciiString getPingString( void ) const { return m_pingStr; }
+	Int getPingAsInt( void ) const { return m_pingInt; }
 
 	virtual Bool amIHost( void ) const;															///< Convenience function - is the local player the game host?
 
@@ -147,10 +147,10 @@ public:
 	void launchGame( void );																			///< NAT negotiation has finished - really start
 	virtual Int getLocalSlotNum( void ) const;										///< Get the local slot number, or -1 if we're not present
 
-	inline void setGameName( UnicodeString name ) { m_gameName = name; }
-	inline UnicodeString getGameName( void ) const { return m_gameName; }
+	void setGameName( UnicodeString name ) { m_gameName = name; }
+	UnicodeString getGameName( void ) const { return m_gameName; }
 
-	inline void setLocalName( AsciiString name ) { m_localName = name; }
+	void setLocalName( AsciiString name ) { m_localName = name; }
 };
 
 extern GameSpyStagingRoom *TheGameSpyGame;

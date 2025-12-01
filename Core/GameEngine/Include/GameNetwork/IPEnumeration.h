@@ -40,12 +40,12 @@ public:
 	EnumeratedIP() { m_IPstring = ""; m_next = NULL; m_IP = 0; }
 
 	// Access functions
-	inline AsciiString getIPstring( void ) { return m_IPstring; }
-	inline void setIPstring( AsciiString name ) { m_IPstring = name; }
-	inline UnsignedInt getIP( void ) { return m_IP; }
-	inline void setIP( UnsignedInt IP ) { m_IP = IP; }
-	inline EnumeratedIP *getNext( void ) { return m_next; }
-	inline void setNext( EnumeratedIP *next ) { m_next = next; }
+	AsciiString getIPstring( void ) { return m_IPstring; }
+	void setIPstring( AsciiString name ) { m_IPstring = name; }
+	UnsignedInt getIP( void ) { return m_IP; }
+	void setIP( UnsignedInt IP ) { m_IP = IP; }
+	EnumeratedIP *getNext( void ) { return m_next; }
+	void setNext( EnumeratedIP *next ) { m_next = next; }
 
 protected:
 	AsciiString m_IPstring;

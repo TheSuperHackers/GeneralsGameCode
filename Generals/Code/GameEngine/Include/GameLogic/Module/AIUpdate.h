@@ -490,7 +490,7 @@ public:
 
 	const LocomotorSet& getLocomotorSet(void) const {return m_locomotorSet;}
 	void setPathExtraDistance(Real dist) {m_pathExtraDistance = dist;}
-	inline Real getPathExtraDistance() const { return m_pathExtraDistance; }
+	Real getPathExtraDistance() const { return m_pathExtraDistance; }
 
 	virtual Bool chooseLocomotorSet(LocomotorSetType wst);
 
@@ -613,51 +613,51 @@ protected:
 	virtual Bool getTreatAsAircraftForLocoDistToGoal() const;
 
 	// yes, protected, NOT public... try to avoid exposing the state machine directly, please
-	inline AIStateMachine* getStateMachine() { return m_stateMachine; }
-	inline const AIStateMachine* getStateMachine() const { return m_stateMachine; }
+	AIStateMachine* getStateMachine() { return m_stateMachine; }
+	const AIStateMachine* getStateMachine() const { return m_stateMachine; }
 
 	void wakeUpNow();
 
 public:
 
-	inline StateID getCurrentStateID() const { return getStateMachine()->getCurrentStateID(); }	///< return the id of the current state of the machine
+	StateID getCurrentStateID() const { return getStateMachine()->getCurrentStateID(); }	///< return the id of the current state of the machine
 /// @ todo -- srj sez: JBA NUKE THIS CODE, IT IS EVIL
-	inline void friend_addToWaypointGoalPath( const Coord3D *pathPoint ) { getStateMachine()->addToGoalPath(pathPoint); }
+	void friend_addToWaypointGoalPath( const Coord3D *pathPoint ) { getStateMachine()->addToGoalPath(pathPoint); }
 
 	// this is intended for use ONLY by W3dWaypointBuffer and AIFollowPathState.
-	inline const Coord3D* friend_getGoalPathPosition( Int index ) const { return getStateMachine()->getGoalPathPosition( index ); }
+	const Coord3D* friend_getGoalPathPosition( Int index ) const { return getStateMachine()->getGoalPathPosition( index ); }
 
 	// this is intended for use ONLY by W3dWaypointBuffer.
 	Int friend_getWaypointGoalPathSize() const;
 
 	// this is intended for use ONLY by W3dWaypointBuffer.
-	inline Int friend_getCurrentGoalPathIndex() const { return m_nextGoalPathIndex; }
+	Int friend_getCurrentGoalPathIndex() const { return m_nextGoalPathIndex; }
 
 	// this is intended for use ONLY by AIFollowPathState.
-	inline void friend_setCurrentGoalPathIndex( Int index ) { m_nextGoalPathIndex = index; }
+	void friend_setCurrentGoalPathIndex( Int index ) { m_nextGoalPathIndex = index; }
 #ifdef DEBUG_LOGGING
 	inline const Coord3D *friend_getRequestedDestination() const { return &m_requestedDestination; }
 	inline const Coord3D *friend_getRequestedDestination2() const { return &m_requestedDestination2; }
 #endif
 
-	inline Object* getGoalObject() { return getStateMachine()->getGoalObject(); }	///< return the id of the current state of the machine
-	inline const Coord3D* getGoalPosition() const { return getStateMachine()->getGoalPosition(); }	///< return the id of the current state of the machine
+	Object* getGoalObject() { return getStateMachine()->getGoalObject(); }	///< return the id of the current state of the machine
+	const Coord3D* getGoalPosition() const { return getStateMachine()->getGoalPosition(); }	///< return the id of the current state of the machine
 
-	inline WhichTurretType friend_getTurretSync() const { return m_turretSyncFlag; }
-	inline void friend_setTurretSync(WhichTurretType t) { m_turretSyncFlag = t; }
+	WhichTurretType friend_getTurretSync() const { return m_turretSyncFlag; }
+	void friend_setTurretSync(WhichTurretType t) { m_turretSyncFlag = t; }
 
-	inline UnsignedInt getPriorWaypointID ( void ) { return m_priorWaypointID; };
-	inline UnsignedInt getCurrentWaypointID ( void ) { return m_currentWaypointID; };
+	UnsignedInt getPriorWaypointID ( void ) { return m_priorWaypointID; };
+	UnsignedInt getCurrentWaypointID ( void ) { return m_currentWaypointID; };
 
-	inline void clearMoveOutOfWay(void) {m_moveOutOfWay1 = INVALID_ID; m_moveOutOfWay2 = INVALID_ID;}
+	void clearMoveOutOfWay(void) {m_moveOutOfWay1 = INVALID_ID; m_moveOutOfWay2 = INVALID_ID;}
 
-	inline void setTmpValue(Int val) {m_tmpInt = val;}
-	inline Int getTmpValue(void) {return m_tmpInt;}
+	void setTmpValue(Int val) {m_tmpInt = val;}
+	Int getTmpValue(void) {return m_tmpInt;}
 
-	inline Bool getRetryPath(void) {return m_retryPath;}
+	Bool getRetryPath(void) {return m_retryPath;}
 
-	inline void setAllowedToChase( Bool allow ) { m_allowedToChase = allow; }
-	inline Bool isAllowedToChase() const { return m_allowedToChase; }
+	void setAllowedToChase( Bool allow ) { m_allowedToChase = allow; }
+	Bool isAllowedToChase() const { return m_allowedToChase; }
 
 	// only for AIStateMachine.
 	virtual void friend_notifyStateMachineChanged();

@@ -91,13 +91,13 @@ private:
 		unsigned short	m_numCharsAllocated;  // length of data allocated
 		// WideChar m_stringdata[];
 
-		WideChar* peek() { return (WideChar*)(this+1); }
+		inline WideChar* peek() { return (WideChar*)(this+1); }
 	};
 
 	#ifdef RTS_DEBUG
 	void validate() const;
 	#else
-	void validate() const { }
+	inline void validate() const { }
 	#endif
 
 protected:
@@ -310,13 +310,13 @@ public:
 		return true iff self starts with the given string.
 	*/
 	Bool startsWith(const WideChar* p) const;
-	Bool startsWith(const UnicodeString& stringSrc) const { return startsWith(stringSrc.str()); }
+	inline Bool startsWith(const UnicodeString& stringSrc) const { return startsWith(stringSrc.str()); }
 
 	/**
 		return true iff self starts with the given string. (case insensitive)
 	*/
 	Bool startsWithNoCase(const WideChar* p) const;
-	Bool startsWithNoCase(const UnicodeString& stringSrc) const { return startsWithNoCase(stringSrc.str()); }
+	inline Bool startsWithNoCase(const UnicodeString& stringSrc) const { return startsWithNoCase(stringSrc.str()); }
 
 	/**
 		return true iff self ends with the given string.

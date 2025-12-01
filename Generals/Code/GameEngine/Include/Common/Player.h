@@ -219,42 +219,42 @@ public:
 
 	void deletePlayerAI();
 
-	inline UnicodeString getPlayerDisplayName() { return m_playerDisplayName; }
-	inline NameKeyType getPlayerNameKey() const { return m_playerNameKey; }
+	UnicodeString getPlayerDisplayName() { return m_playerDisplayName; }
+	NameKeyType getPlayerNameKey() const { return m_playerNameKey; }
 
-	inline AsciiString getSide() const { return m_side; }
+	AsciiString getSide() const { return m_side; }
 
-	inline const PlayerTemplate* getPlayerTemplate() const { return m_playerTemplate;	}
+	const PlayerTemplate* getPlayerTemplate() const { return m_playerTemplate;	}
 	/// return the Player's Handicap sub-object
-	inline const Handicap *getHandicap() const { return &m_handicap; }
-	inline Handicap *getHandicap() { return &m_handicap; }
+	const Handicap *getHandicap() const { return &m_handicap; }
+	Handicap *getHandicap() { return &m_handicap; }
 
 	/// return the Player's Money sub-object
-	inline Money *getMoney() { return &m_money; }
-	inline const Money *getMoney() const { return &m_money; }
+	Money *getMoney() { return &m_money; }
+	const Money *getMoney() const { return &m_money; }
 
 	UnsignedInt getSupplyBoxValue();///< Many things can affect the alue of a crate, but at heart it is a GlobalData ratio.
 
-	inline Energy *getEnergy() { return &m_energy; }
-	inline const Energy *getEnergy() const { return &m_energy; }
+	Energy *getEnergy() { return &m_energy; }
+	const Energy *getEnergy() const { return &m_energy; }
 
 	// adds a power bonus to this player because of energy upgrade at his power plants
-	inline void addPowerBonus(Object *obj) { m_energy.addPowerBonus(obj); }
-	inline void removePowerBonus(Object *obj) { m_energy.removePowerBonus(obj); }
+	void addPowerBonus(Object *obj) { m_energy.addPowerBonus(obj); }
+	void removePowerBonus(Object *obj) { m_energy.removePowerBonus(obj); }
 
-	inline ResourceGatheringManager *getResourceGatheringManager(){ return m_resourceGatheringManager; }
-	inline TunnelTracker* getTunnelSystem(){ return m_tunnelSystem; }
+	ResourceGatheringManager *getResourceGatheringManager(){ return m_resourceGatheringManager; }
+	TunnelTracker* getTunnelSystem(){ return m_tunnelSystem; }
 
-	inline Color getPlayerColor() const { return m_color; }
-	inline Color getPlayerNightColor() const { return m_nightColor;}
+	Color getPlayerColor() const { return m_color; }
+	Color getPlayerNightColor() const { return m_nightColor;}
 	/// return the type of controller
-	inline PlayerType getPlayerType() const { return m_playerType; }
+	PlayerType getPlayerType() const { return m_playerType; }
 	void setPlayerType(PlayerType t, Bool skirmish);
 
-	inline PlayerIndex getPlayerIndex() const { return m_playerIndex; }
+	PlayerIndex getPlayerIndex() const { return m_playerIndex; }
 
 	/// return a bitmask that is unique to this player.
-	inline PlayerMaskType getPlayerMask() const { return 1 << m_playerIndex; }
+	PlayerMaskType getPlayerMask() const { return 1 << m_playerIndex; }
 
 	/// a convenience function to test the ThingTemplate against the players canBuild flags
 	/// called by canBuild
@@ -528,9 +528,9 @@ public:
 	void removeTeamFromList(TeamPrototype* team);
 
 	typedef std::list<TeamPrototype*> PlayerTeamList;
-	inline const PlayerTeamList* getPlayerTeams() const { return &m_playerTeamPrototypes; }
+	const PlayerTeamList* getPlayerTeams() const { return &m_playerTeamPrototypes; }
 
-	inline Int getMpStartIndex(void) {return m_mpStartIndex;}
+	Int getMpStartIndex(void) {return m_mpStartIndex;}
 
 	/// Set that all units should begin hunting.
 	void setUnitsShouldHunt(Bool unitsShouldHunt, CommandSourceType source);

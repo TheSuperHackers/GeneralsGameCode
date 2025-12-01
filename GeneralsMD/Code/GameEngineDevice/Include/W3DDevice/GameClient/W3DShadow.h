@@ -52,8 +52,8 @@ public:
 	void invalidateCachedLightPositions(void);	///<forces shadow volumes to update regardless of last lightposition
 	Vector3 &getLightPosWorld(Int lightIndex);	///<returns the position of specified light source.
 	Bool	isShadowScene(void)	{return m_isShadowScene;}
-	inline void setStencilShadowMask(int mask) {m_stencilShadowMask=mask;}	///<mask used to mask out stencil bits used for storing occlusion/playerColor
-	inline Int getStencilShadowMask(void)	{return m_stencilShadowMask;}
+	void setStencilShadowMask(int mask) {m_stencilShadowMask=mask;}	///<mask used to mask out stencil bits used for storing occlusion/playerColor
+	Int getStencilShadowMask(void)	{return m_stencilShadowMask;}
 
 	// rendering
 	void RenderShadows( void );

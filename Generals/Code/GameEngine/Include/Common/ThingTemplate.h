@@ -398,18 +398,18 @@ public:
 	EditorSortingType getEditorSorting() const { return (EditorSortingType)m_editorSorting; }
 
 	/// return true iff the template has the specified kindOf flag set.
-	inline Bool isKindOf(KindOfType t) const
+	Bool isKindOf(KindOfType t) const
 	{
 		return TEST_KINDOFMASK(m_kindof, t);
 	}
 
 	/// convenience for doing multiple kindof testing at once.
-	inline Bool isKindOfMulti(const KindOfMaskType& mustBeSet, const KindOfMaskType& mustBeClear) const
+	Bool isKindOfMulti(const KindOfMaskType& mustBeSet, const KindOfMaskType& mustBeClear) const
 	{
 		return TEST_KINDOFMASK_MULTI(m_kindof, mustBeSet, mustBeClear);
 	}
 
-	inline Bool isAnyKindOf( const KindOfMaskType& anyKindOf ) const
+	Bool isAnyKindOf( const KindOfMaskType& anyKindOf ) const
 	{
 		return TEST_KINDOFMASK_ANY(m_kindof, anyKindOf);
 	}
@@ -534,10 +534,10 @@ public:
 	// these are intended ONLY for the private use of ThingFactory and do not use
 	// the m_override pointer, it deals only with templates at the "top" level
 	//
-	inline void friend_setTemplateName( const AsciiString& name ) { m_nameString = name; }
-	inline ThingTemplate *friend_getNextTemplate() const { return m_nextThingTemplate; }
-	inline void friend_setNextTemplate(ThingTemplate *tmplate) { m_nextThingTemplate = tmplate; }
-	inline void friend_setTemplateID(UnsignedShort id) { m_templateID = id; }
+	void friend_setTemplateName( const AsciiString& name ) { m_nameString = name; }
+	ThingTemplate *friend_getNextTemplate() const { return m_nextThingTemplate; }
+	void friend_setNextTemplate(ThingTemplate *tmplate) { m_nextThingTemplate = tmplate; }
+	void friend_setTemplateID(UnsignedShort id) { m_templateID = id; }
 
 	Int getEnergyProduction() const { return m_energyProduction; }
 	Int getEnergyBonus() const { return m_energyBonus; }

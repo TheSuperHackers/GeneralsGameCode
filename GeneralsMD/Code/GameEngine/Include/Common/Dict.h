@@ -125,7 +125,7 @@ public:
 	/**
 		Return there is a pair with the given key and datatype, return true.
 	*/
-	inline Bool known(NameKeyType key, DataType d) const
+	Bool known(NameKeyType key, DataType d) const
 	{
 		return getType(key) == d;
 	}
@@ -278,17 +278,17 @@ private:
 		DictPairKeyType		m_key;
 		void*							m_value;
 
-		inline static DictPairKeyType createKey(NameKeyType keyVal, DataType nt)
+		static DictPairKeyType createKey(NameKeyType keyVal, DataType nt)
 		{
 			return (DictPairKeyType)((((UnsignedInt)(keyVal)) << 8) | ((UnsignedInt)nt));
 		}
 
-		inline static DataType getTypeFromKey(DictPairKeyType nk)
+		static DataType getTypeFromKey(DictPairKeyType nk)
 		{
 			return (DataType)(((UnsignedInt)nk) & 0xff);
 		}
 
-		inline static NameKeyType getNameFromKey(DictPairKeyType nk)
+		static NameKeyType getNameFromKey(DictPairKeyType nk)
 		{
 			return (NameKeyType)(((UnsignedInt)nk) >> 8);
 		}
@@ -298,13 +298,13 @@ private:
 		void clear();
 		void copyFrom(DictPair* that);
 		void setNameAndType(NameKeyType key, DataType type);
-		inline DataType getType() const { return getTypeFromKey(m_key); }
-		inline NameKeyType getName() const { return getNameFromKey(m_key); }
-		inline Bool* asBool() { return (Bool*)&m_value; }
-		inline Int* asInt() { return (Int*)&m_value; }
-		inline Real* asReal() { return (Real*)&m_value; }
-		inline AsciiString* asAsciiString() { return (AsciiString*)&m_value; }
-		inline UnicodeString* asUnicodeString() { return (UnicodeString*)&m_value; }
+		DataType getType() const { return getTypeFromKey(m_key); }
+		NameKeyType getName() const { return getNameFromKey(m_key); }
+		Bool* asBool() { return (Bool*)&m_value; }
+		Int* asInt() { return (Int*)&m_value; }
+		Real* asReal() { return (Real*)&m_value; }
+		AsciiString* asAsciiString() { return (AsciiString*)&m_value; }
+		UnicodeString* asUnicodeString() { return (UnicodeString*)&m_value; }
 	};
 
 	struct DictPairData
@@ -314,13 +314,13 @@ private:
 		unsigned short	m_numPairsUsed;				// length of data allocated
 		//DictPair m_pairs[];
 
-		inline DictPair* peek() { return (DictPair*)(this+1); }
+		DictPair* peek() { return (DictPair*)(this+1); }
 	};
 
 	#ifdef RTS_DEBUG
 	void validate() const;
 	#else
-	inline void validate() const { }
+	void validate() const { }
 	#endif
 
 };

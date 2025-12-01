@@ -91,13 +91,13 @@ private:
 		unsigned short	m_numCharsAllocated;  // length of data allocated
 		// char m_stringdata[];
 
-		char* peek() { return (char*)(this+1); }
+		inline char* peek() { return (char*)(this+1); }
 	};
 
 	#ifdef RTS_DEBUG
 	void validate() const;
 	#else
-	void validate() const { }
+	inline void validate() const { }
 	#endif
 
 protected:
@@ -325,13 +325,13 @@ public:
 		return true iff self starts with the given string.
 	*/
 	Bool startsWith(const char* p) const;
-	Bool startsWith(const AsciiString& stringSrc) const { return startsWith(stringSrc.str()); }
+	inline Bool startsWith(const AsciiString& stringSrc) const { return startsWith(stringSrc.str()); }
 
 	/**
 		return true iff self starts with the given string. (case insensitive)
 	*/
 	Bool startsWithNoCase(const char* p) const;
-	Bool startsWithNoCase(const AsciiString& stringSrc) const { return startsWithNoCase(stringSrc.str()); }
+	inline Bool startsWithNoCase(const AsciiString& stringSrc) const { return startsWithNoCase(stringSrc.str()); }
 
 	/**
 		return true iff self ends with the given string.

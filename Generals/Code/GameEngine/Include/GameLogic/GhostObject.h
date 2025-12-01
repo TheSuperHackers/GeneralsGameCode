@@ -47,13 +47,13 @@ public:
 	virtual void snapShot(int playerIndex)=0;
 	virtual void updateParentObject(Object *object, PartitionData *mod)=0;
 	virtual void freeSnapShot(int playerIndex)=0;
-	inline PartitionData *friend_getPartitionData(void) const {return m_partitionData;}
-	inline GeometryType getGeometryType(void) const {return m_parentGeometryType;}
-	inline Bool getGeometrySmall(void) const {return m_parentGeometryIsSmall;}
-	inline Real getGeometryMajorRadius(void) const {return m_parentGeometryMajorRadius;}
-	inline Real getGeometryMinorRadius(void) const {return m_parentGeometryminorRadius;}
-	inline Real getParentAngle(void) const {return m_parentAngle;}
-	inline const Coord3D *getParentPosition(void) const {return &m_parentPosition;}
+	PartitionData *friend_getPartitionData(void) const {return m_partitionData;}
+	GeometryType getGeometryType(void) const {return m_parentGeometryType;}
+	Bool getGeometrySmall(void) const {return m_parentGeometryIsSmall;}
+	Real getGeometryMajorRadius(void) const {return m_parentGeometryMajorRadius;}
+	Real getGeometryMinorRadius(void) const {return m_parentGeometryminorRadius;}
+	Real getParentAngle(void) const {return m_parentAngle;}
+	const Coord3D *getParentPosition(void) const {return &m_parentPosition;}
 
 protected:
 	virtual void crc( Xfer *xfer );
@@ -80,12 +80,12 @@ public:
 	virtual GhostObject *addGhostObject(Object *object, PartitionData *pd);
 	virtual void removeGhostObject(GhostObject *mod);
 	virtual void setLocalPlayerIndex(int playerIndex) { m_localPlayer = playerIndex; }
-	inline int getLocalPlayerIndex(void)	{ return m_localPlayer; }
+	int getLocalPlayerIndex(void)	{ return m_localPlayer; }
 	virtual void updateOrphanedObjects(int *playerIndexList, int playerIndexCount);
 	virtual void releasePartitionData(void);	///<saves data needed to later rebuild partition manager data.
 	virtual void restorePartitionData(void);	///<restores ghost objects into the partition manager.
-	inline void lockGhostObjects(Bool enableLock) {m_lockGhostObjects=enableLock;}	///<temporary lock on creating new ghost objects. Only used by map border resizing!
-	inline void saveLockGhostObjects(Bool enableLock) {m_saveLockGhostObjects=enableLock;}
+	void lockGhostObjects(Bool enableLock) {m_lockGhostObjects=enableLock;}	///<temporary lock on creating new ghost objects. Only used by map border resizing!
+	void saveLockGhostObjects(Bool enableLock) {m_saveLockGhostObjects=enableLock;}
 	inline Bool trackAllPlayers() const; ///< returns whether the ghost object status is tracked for all players or for the local player only
 
 protected:

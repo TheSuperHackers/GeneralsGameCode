@@ -211,28 +211,28 @@ class FirewallHelperClass {
 		/*
 		** Behavior query functions.
 		*/
-		inline Bool isNAT(void) {
+		Bool isNAT(void) {
 			if (m_behavior == FIREWALL_TYPE_UNKNOWN || (m_behavior & FIREWALL_TYPE_SIMPLE) != 0) {
 				return(FALSE);
 			}
 			return(TRUE);
 		};
 
-		inline Bool isNAT(FirewallBehaviorType behavior) {
+		Bool isNAT(FirewallBehaviorType behavior) {
 			if (behavior == FIREWALL_TYPE_UNKNOWN || (behavior & FIREWALL_TYPE_SIMPLE) != 0) {
 				return(FALSE);
 			}
 			return(TRUE);
 		};
 
-		inline Bool isNetgear(FirewallBehaviorType behavior) {
+		Bool isNetgear(FirewallBehaviorType behavior) {
 			if ((behavior & FIREWALL_TYPE_NETGEAR_BUG) != 0) {
 				return(TRUE);
 			}
 			return(FALSE);
 		};
 
-		inline Bool isNetgear(void) {
+		Bool isNetgear(void) {
 			if ((m_behavior & FIREWALL_TYPE_NETGEAR_BUG) != 0) {
 				return(TRUE);
 			}

@@ -46,11 +46,11 @@ public:
 	static const FieldParse m_colorFieldParseTable[];		///< the parse table for INI definition
 	const FieldParse *getFieldParse( void ) const { return m_colorFieldParseTable; }
 
-	inline AsciiString getTooltipName(void) const { return m_tooltipName; };
-	inline RGBColor getRGBValue(void) const { return m_rgbValue; };
-	inline RGBColor getRGBNightValue(void) const { return m_rgbValueNight; };
-	inline Color getColor(void) const { return m_color; }
-	inline Color getNightColor(void) const { return m_colorNight; }
+	AsciiString getTooltipName(void) const { return m_tooltipName; };
+	RGBColor getRGBValue(void) const { return m_rgbValue; };
+	RGBColor getRGBNightValue(void) const { return m_rgbValueNight; };
+	Color getColor(void) const { return m_color; }
+	Color getNightColor(void) const { return m_colorNight; }
 	void setColor( RGBColor rgb );
 	void setNightColor( RGBColor rgb );
 
@@ -92,14 +92,14 @@ public:
 	MultiplayerColorDefinition * findMultiplayerColorDefinitionByName(AsciiString name);
 	MultiplayerColorDefinition * newMultiplayerColorDefinition(AsciiString name);
 
-	inline Int getStartCountdownTimerSeconds( void ) { return m_startCountdownTimerSeconds; }
-	inline Int getMaxBeaconsPerPlayer( void ) { return m_maxBeaconsPerPlayer; }
-	inline Bool isShroudInMultiplayer( void ) { return m_isShroudInMultiplayer; }
-	inline Bool showRandomPlayerTemplate( void ) { return m_showRandomPlayerTemplate; }
-	inline Bool showRandomStartPos( void ) { return m_showRandomStartPos; }
-	inline Bool showRandomColor( void ) { return m_showRandomColor; }
+	Int getStartCountdownTimerSeconds( void ) { return m_startCountdownTimerSeconds; }
+	Int getMaxBeaconsPerPlayer( void ) { return m_maxBeaconsPerPlayer; }
+	Bool isShroudInMultiplayer( void ) { return m_isShroudInMultiplayer; }
+	Bool showRandomPlayerTemplate( void ) { return m_showRandomPlayerTemplate; }
+	Bool showRandomStartPos( void ) { return m_showRandomStartPos; }
+	Bool showRandomColor( void ) { return m_showRandomColor; }
 
-	inline Int getNumColors( void )
+	Int getNumColors( void )
 	{
 		if (m_numColors == 0) {
 			m_numColors = m_colorList.size();

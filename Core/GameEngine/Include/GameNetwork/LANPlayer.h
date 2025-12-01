@@ -38,20 +38,20 @@ public:
 	LANPlayer() { m_name = m_login = m_host = L""; m_lastHeard = 0; m_next = NULL; m_IP = 0; }
 
 	// Access functions
-	inline UnicodeString getName( void ) { return m_name; }
-	inline void setName( UnicodeString name ) { m_name = name; }
-	inline UnicodeString getLogin( void ) { return m_login; }
-	inline void setLogin( UnicodeString name ) { m_login = name; }
-	inline void setLogin( AsciiString name ) { m_login.translate(name); }
-	inline UnicodeString getHost( void ) { return m_host; }
-	inline void setHost( UnicodeString name ) { m_host = name; }
-	inline void setHost( AsciiString name ) { m_host.translate(name); }
-	inline UnsignedInt getLastHeard( void ) { return m_lastHeard; }
-	inline void setLastHeard( UnsignedInt lastHeard ) { m_lastHeard = lastHeard; }
-	inline LANPlayer *getNext( void ) { return m_next; }
-	inline void setNext( LANPlayer *next ) { m_next = next; }
-	inline UnsignedInt getIP( void ) { return m_IP; }
-	inline void setIP( UnsignedInt IP ) { m_IP = IP; }
+	UnicodeString getName( void ) { return m_name; }
+	void setName( UnicodeString name ) { m_name = name; }
+	UnicodeString getLogin( void ) { return m_login; }
+	void setLogin( UnicodeString name ) { m_login = name; }
+	void setLogin( AsciiString name ) { m_login.translate(name); }
+	UnicodeString getHost( void ) { return m_host; }
+	void setHost( UnicodeString name ) { m_host = name; }
+	void setHost( AsciiString name ) { m_host.translate(name); }
+	UnsignedInt getLastHeard( void ) { return m_lastHeard; }
+	void setLastHeard( UnsignedInt lastHeard ) { m_lastHeard = lastHeard; }
+	LANPlayer *getNext( void ) { return m_next; }
+	void setNext( LANPlayer *next ) { m_next = next; }
+	UnsignedInt getIP( void ) { return m_IP; }
+	void setIP( UnsignedInt IP ) { m_IP = IP; }
 
 protected:
 	UnicodeString m_name;			///< Player name
