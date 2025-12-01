@@ -116,6 +116,7 @@ friend class ImageCollection;
 //-------------------------------------------------------------------------------------------------
 class ImageCollection : public SubsystemInterface
 {
+	typedef std::map<NameKeyType, Image *> ImageMap;
 
 public:
 
@@ -136,14 +137,14 @@ public:
   /// enumerates the list of existing images
   Image *Enum(unsigned index)
   {
-    for (std::map<unsigned,Image *>::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
+    for (ImageMap::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
       if (!index--)
         return i->second;
     return NULL;
   }
 
 protected:
-  std::map<unsigned,Image *> m_imageMap;  ///< maps named keys to images
+  ImageMap m_imageMap;  ///< maps named keys to images
 };
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
