@@ -500,22 +500,6 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 
 				if( keyState & KEY_STATE_AUTOREPEAT )
 				{
-					if (!newModState)
-					{
-						if (const Drawable *selectedDrawable = TheInGameUI->getFirstSelectedDrawable())
-						{
-							if (const Object *tempObject = selectedDrawable->getObject())
-							{
-								if (tempObject->isKindOf(KINDOF_STRUCTURE))
-								{
-									// keep message for hotkey
-									disp = KEEP_MESSAGE;
-									break;
-								}
-							}
-						}
-					}
-
 					// if it's an autorepeat of a "known" key, don't generate the meta-event,
 					// but DO eat the keystroke so no one else can mess with it
 					//DEBUG_LOG(("Frame %d: MetaEventTranslator::translateGameMessage() auto-repeat: %s", TheGameLogic->getFrame(), findGameMessageNameByType(map->m_meta)));
