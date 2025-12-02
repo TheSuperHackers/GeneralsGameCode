@@ -31,16 +31,15 @@
 #include "WBFrameWnd.h"
 #include "wbview3d.h"
 
-//#include <wsys/StdFileSystem.h>
+// #include <wsys/StdFileSystem.h>
 #include "W3DDevice/GameClient/W3DFileSystem.h"
 #include "Common/FramePacer.h"
 #include "Common/GlobalData.h"
 #include "WHeightMapEdit.h"
-//#include "Common/GameFileSystem.h"
+// #include "Common/GameFileSystem.h"
 #include "Common/FileSystem.h"
 #include "Common/ArchiveFileSystem.h"
 #include "Common/LocalFileSystem.h"
-#include "Common/CDManager.h"
 #include "Common/Debug.h"
 #include "Common/StackDump.h"
 #include "Common/GameMemory.h"
@@ -83,16 +82,14 @@
 #include "Win32Device/Common/Win32LocalFileSystem.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
 
-
 static SubsystemInterfaceList TheSubsystemListRecord;
 
-template<class SUBSYSTEM>
-void initSubsystem(SUBSYSTEM*& sysref, SUBSYSTEM* sys, const char* path1 = NULL, const char* path2 = NULL)
+template <class SUBSYSTEM>
+void initSubsystem(SUBSYSTEM *&sysref, SUBSYSTEM *sys, const char *path1 = NULL, const char *path2 = NULL)
 {
 	sysref = sys;
 	TheSubsystemListRecord.initSubsystem(sys, path1, path2, NULL);
 }
-
 
 #define APP_SECTION "WorldbuilderApp"
 #define OPEN_FILE_DIR "OpenDirectory"
@@ -110,51 +107,50 @@ class WBGameFileClass : public GameFileClass
 {
 
 public:
-	WBGameFileClass(char const *filename):GameFileClass(filename){};
-	virtual char const * Set_Name(char const *filename);
+	WBGameFileClass(char const *filename) : GameFileClass(filename) {};
+	virtual char const *Set_Name(char const *filename);
 };
 
 //-------------------------------------------------------------------------------------------------
 /** Sets the file name, and finds the GDI asset if present. */
 //-------------------------------------------------------------------------------------------------
-char const * WBGameFileClass::Set_Name( char const *filename )
+char const *WBGameFileClass::Set_Name(char const *filename)
 {
 	char const *pChar = GameFileClass::Set_Name(filename);
-	if (this->Is_Available()) {
+	if (this->Is_Available())
+	{
 		return pChar; // it was found by the parent class.
 	}
 
-	if (TheFileSystem->doesFileExist(filename)) {
+	if (TheFileSystem->doesFileExist(filename))
+	{
 		strlcpy(m_filePath, filename, ARRAY_SIZE(m_filePath));
 		m_fileExists = true;
 	}
 	return m_filename;
 }
 
-
-
 /////////////////////////////////////////////////////////////////////////////
 // WB_W3DFileSystem - extends the file system a bit so we can get at some
 // wb only data.  jba.
 
-class	WB_W3DFileSystem : public W3DFileSystem {
-	virtual FileClass * Get_File( char const *filename );
+class WB_W3DFileSystem : public W3DFileSystem
+{
+	virtual FileClass *Get_File(char const *filename);
 };
 
 //-------------------------------------------------------------------------------------------------
 /** Gets a file with the specified filename. */
 //-------------------------------------------------------------------------------------------------
-FileClass * WB_W3DFileSystem::Get_File( char const *filename )
+FileClass *WB_W3DFileSystem::Get_File(char const *filename)
 {
-	WBGameFileClass *pFile = new WBGameFileClass( filename );
-	if (!pFile->Is_Available()) {
+	WBGameFileClass *pFile = new WBGameFileClass(filename);
+	if (!pFile->Is_Available())
+	{
 		pFile->Set_Name(filename);
 	}
 	return pFile;
 }
-
-
-
 
 /////////////////////////////////////////////////////////////////////////////
 // The one and only CWorldBuilderApp object
@@ -163,31 +159,31 @@ static CWorldBuilderApp theApp;
 HWND ApplicationHWnd = NULL;
 
 /**
-	* The ApplicationHInstance is needed for the WOL code,
-	* which needs it for the COM initialization of WOLAPI.DLL.
-	* Of course, the WOL code is in gameengine, while the
-	* HINSTANCE is only in the various projects' main files.
-	* So, we need to create the HINSTANCE, even if it always
-	* stays NULL.  Just to make COM happy.  Whee.
-	*/
+ * The ApplicationHInstance is needed for the WOL code,
+ * which needs it for the COM initialization of WOLAPI.DLL.
+ * Of course, the WOL code is in gameengine, while the
+ * HINSTANCE is only in the various projects' main files.
+ * So, we need to create the HINSTANCE, even if it always
+ * stays NULL.  Just to make COM happy.  Whee.
+ */
 HINSTANCE ApplicationHInstance = NULL;
 
 /////////////////////////////////////////////////////////////////////////////
 // CWorldBuilderApp
 
 BEGIN_MESSAGE_MAP(CWorldBuilderApp, CWinApp)
-	//{{AFX_MSG_MAP(CWorldBuilderApp)
-	ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
-	ON_COMMAND(IDM_RESET_WINDOWS, OnResetWindows)
-	ON_COMMAND(ID_FILE_OPEN, OnFileOpen)
-	ON_COMMAND(ID_TEXTURESIZING_MAPCLIFFTEXTURES, OnTexturesizingMapclifftextures)
-	ON_UPDATE_COMMAND_UI(ID_TEXTURESIZING_MAPCLIFFTEXTURES, OnUpdateTexturesizingMapclifftextures)
-	//}}AFX_MSG_MAP
-	// Standard file based document commands
-	ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
-	ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
-	// Standard print setup command
-	ON_COMMAND(ID_FILE_PRINT_SETUP, CWinApp::OnFilePrintSetup)
+//{{AFX_MSG_MAP(CWorldBuilderApp)
+ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
+ON_COMMAND(IDM_RESET_WINDOWS, OnResetWindows)
+ON_COMMAND(ID_FILE_OPEN, OnFileOpen)
+ON_COMMAND(ID_TEXTURESIZING_MAPCLIFFTEXTURES, OnTexturesizingMapclifftextures)
+ON_UPDATE_COMMAND_UI(ID_TEXTURESIZING_MAPCLIFFTEXTURES, OnUpdateTexturesizingMapclifftextures)
+//}}AFX_MSG_MAP
+// Standard file based document commands
+ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
+ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
+// Standard print setup command
+ON_COMMAND(ID_FILE_PRINT_SETUP, CWinApp::OnFilePrintSetup)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -195,17 +191,16 @@ static Int gFirstCP = 0;
 
 // CWorldBuilderApp construction
 
-CWorldBuilderApp::CWorldBuilderApp() :
-	m_curTool(NULL),
-	m_selTool(NULL),
-	m_lockCurTool(0),
-	m_3dtemplate(NULL),
-	m_pasteMapObjList(NULL)
+CWorldBuilderApp::CWorldBuilderApp() : m_curTool(NULL),
+									   m_selTool(NULL),
+									   m_lockCurTool(0),
+									   m_3dtemplate(NULL),
+									   m_pasteMapObjList(NULL)
 {
 
-	for (Int i=0; i<NUM_VIEW_TOOLS; i++) {
+	for (Int i = 0; i < NUM_VIEW_TOOLS; i++)
+	{
 		m_tools[i] = NULL;
-
 	}
 	m_tools[0] = &m_brushTool;
 	m_tools[1] = &m_tileTool;
@@ -253,8 +248,10 @@ CWorldBuilderApp::~CWorldBuilderApp()
 	m_curTool = NULL;
 	m_selTool = NULL;
 
-	for (Int i=0; i<NUM_VIEW_TOOLS; i++) {
-		if (m_tools[i]) {
+	for (Int i = 0; i < NUM_VIEW_TOOLS; i++)
+	{
+		if (m_tools[i])
+		{
 			m_tools[i] = NULL;
 		}
 	}
@@ -264,7 +261,7 @@ CWorldBuilderApp::~CWorldBuilderApp()
 /////////////////////////////////////////////////////////////////////////////
 // Handler for unhandled win32 exceptions.
 
-static LONG WINAPI UnHandledExceptionFilter(struct _EXCEPTION_POINTERS* e_info)
+static LONG WINAPI UnHandledExceptionFilter(struct _EXCEPTION_POINTERS *e_info)
 {
 	DumpExceptionInfo(e_info->ExceptionRecord->ExceptionCode, e_info);
 	return EXCEPTION_EXECUTE_HANDLER;
@@ -275,13 +272,13 @@ static LONG WINAPI UnHandledExceptionFilter(struct _EXCEPTION_POINTERS* e_info)
 
 BOOL CWorldBuilderApp::InitInstance()
 {
-//#ifdef RTS_RELEASE
+	// #ifdef RTS_RELEASE
 	EulaDialog eulaDialog;
-	if( eulaDialog.DoModal() == IDCANCEL )
+	if (eulaDialog.DoModal() == IDCANCEL)
 	{
 		return FALSE;
 	}
-//#endif
+	// #endif
 
 	ApplicationHWnd = GetDesktopWindow();
 
@@ -320,23 +317,24 @@ BOOL CWorldBuilderApp::InitInstance()
 	TheNameKeyGenerator->init();
 
 #ifdef _AFXDLL
-	Enable3dControls();			// Call this when using MFC in a shared DLL
+	Enable3dControls(); // Call this when using MFC in a shared DLL
 #else
-	Enable3dControlsStatic();	// Call this when linking to MFC statically
+	Enable3dControlsStatic(); // Call this when linking to MFC statically
 #endif
 
 	// Set the current directory to the app directory.
 	char buf[_MAX_PATH];
 	GetModuleFileName(NULL, buf, sizeof(buf));
-	if (char *pEnd = strrchr(buf, '\\')) {
+	if (char *pEnd = strrchr(buf, '\\'))
+	{
 		*pEnd = 0;
 	}
 	::SetCurrentDirectory(buf);
 
 	TheFileSystem = new FileSystem;
 
-	initSubsystem(TheLocalFileSystem, (LocalFileSystem*)new Win32LocalFileSystem);
-	initSubsystem(TheArchiveFileSystem, (ArchiveFileSystem*)new Win32BIGFileSystem);
+	initSubsystem(TheLocalFileSystem, (LocalFileSystem *)new Win32LocalFileSystem);
+	initSubsystem(TheArchiveFileSystem, (ArchiveFileSystem *)new Win32BIGFileSystem);
 
 	// Just for kicks, get the HINSTANCE that WOL would need
 	// if we were going to use it, which we aren't.
@@ -349,7 +347,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	TheFramePacer = new FramePacer();
 
 #if defined(RTS_DEBUG)
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\GameDataDebug" ), INI_LOAD_MULTIFILE, NULL );
+	ini.loadFileDirectory(AsciiString("Data\\INI\\GameDataDebug"), INI_LOAD_MULTIFILE, NULL);
 #endif
 
 #ifdef DEBUG_CRASHING
@@ -359,24 +357,24 @@ BOOL CWorldBuilderApp::InitInstance()
 	DEBUG_LOG(("TheWritableGlobalData %x", TheWritableGlobalData));
 #if 1
 	// srj sez: put INI into our user data folder, not the ap dir
-	free((void*)m_pszProfileName);
+	free((void *)m_pszProfileName);
 	strlcpy(buf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(buf));
 	strlcat(buf, "WorldBuilder.ini", ARRAY_SIZE(buf));
 #else
 	strlcat(buf, "//", ARRAY_SIZE(buf));
 	strlcat(buf, m_pszProfileName, ARRAY_SIZE(buf));
-	free((void*)m_pszProfileName);
+	free((void *)m_pszProfileName);
 #endif
-	m_pszProfileName = (const char *)malloc(strlen(buf)+2);
-	strcpy((char*)m_pszProfileName, buf);
+	m_pszProfileName = (const char *)malloc(strlen(buf) + 2);
+	strcpy((char *)m_pszProfileName, buf);
 
 	// ensure the user maps dir exists
 	snprintf(buf, ARRAY_SIZE(buf), "%sMaps\\", TheGlobalData->getPath_UserData().str());
 	CreateDirectory(buf, NULL);
 
 	// read the water settings from INI (must do prior to initing GameClient, apparently)
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\Default\\Water" ), INI_LOAD_OVERWRITE, NULL );
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\Water" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory(AsciiString("Data\\INI\\Default\\Water"), INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory(AsciiString("Data\\INI\\Water"), INI_LOAD_OVERWRITE, NULL);
 
 	initSubsystem(TheGameText, CreateGameTextInterface());
 	initSubsystem(TheScienceStore, new ScienceStore(), "Data\\INI\\Default\\Science", "Data\\INI\\Science");
@@ -386,27 +384,25 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	WorldHeightMapEdit::init();
 
-	initSubsystem(TheScriptEngine, (ScriptEngine*)(new ScriptEngine()));
+	initSubsystem(TheScriptEngine, (ScriptEngine *)(new ScriptEngine()));
 
 	TheScriptEngine->turnBreezeOff(); // stop the tree sway.
 
 	//  [2/11/2003]
-	ini.loadFileDirectory( AsciiString( "Data\\Scripts\\Scripts" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory(AsciiString("Data\\Scripts\\Scripts"), INI_LOAD_OVERWRITE, NULL);
 
-	// need this before TheAudio in case we're running off of CD - TheAudio can try to open Music.big on the CD...
-	initSubsystem(TheCDManager, CreateCDManager(), NULL);
-	initSubsystem(TheAudio, (AudioManager*)new MilesAudioManager());
+	initSubsystem(TheAudio, (AudioManager *)new MilesAudioManager());
 	if (!TheAudio->isMusicAlreadyLoaded())
 		return FALSE;
 
-	initSubsystem(TheVideoPlayer, (VideoPlayerInterface*)(new VideoPlayer()));
-	initSubsystem(TheModuleFactory, (ModuleFactory*)(new W3DModuleFactory()));
+	initSubsystem(TheVideoPlayer, (VideoPlayerInterface *)(new VideoPlayer()));
+	initSubsystem(TheModuleFactory, (ModuleFactory *)(new W3DModuleFactory()));
 	initSubsystem(TheSidesList, new SidesList());
 	initSubsystem(TheCaveSystem, new CaveSystem());
 	initSubsystem(TheRankInfoStore, new RankInfoStore(), NULL, "Data\\INI\\Rank");
 	initSubsystem(ThePlayerTemplateStore, new PlayerTemplateStore(), "Data\\INI\\Default\\PlayerTemplate", "Data\\INI\\PlayerTemplate");
-	initSubsystem(TheSpecialPowerStore, new SpecialPowerStore(), "Data\\INI\\Default\\SpecialPower", "Data\\INI\\SpecialPower" );
-	initSubsystem(TheParticleSystemManager, (ParticleSystemManager*)(new W3DParticleSystemManager()));
+	initSubsystem(TheSpecialPowerStore, new SpecialPowerStore(), "Data\\INI\\Default\\SpecialPower", "Data\\INI\\SpecialPower");
+	initSubsystem(TheParticleSystemManager, (ParticleSystemManager *)(new W3DParticleSystemManager()));
 	initSubsystem(TheFXListStore, new FXListStore(), "Data\\INI\\Default\\FXList", "Data\\INI\\FXList");
 	initSubsystem(TheWeaponStore, new WeaponStore(), NULL, "Data\\INI\\Weapon");
 	initSubsystem(TheObjectCreationListStore, new ObjectCreationListStore(), "Data\\INI\\Default\\ObjectCreationList", "Data\\INI\\ObjectCreationList");
@@ -416,7 +412,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	initSubsystem(TheThingFactory, new ThingFactory(), "Data\\INI\\Default\\Object", "Data\\INI\\Object");
 	initSubsystem(TheCrateSystem, new CrateSystem(), "Data\\INI\\Default\\Crate", "Data\\INI\\Crate");
 	initSubsystem(TheUpgradeCenter, new UpgradeCenter, "Data\\INI\\Default\\Upgrade", "Data\\INI\\Upgrade");
-	initSubsystem(TheAnim2DCollection, new Anim2DCollection ); //Init's itself.
+	initSubsystem(TheAnim2DCollection, new Anim2DCollection); // Init's itself.
 
 	TheSubsystemListRecord.postProcessLoadAll();
 
@@ -436,9 +432,9 @@ BOOL CWorldBuilderApp::InitInstance()
 	// Change the registry key under which our settings are stored.
 	// TODO: You should modify this string to be something appropriate
 	// such as the name of your company or organization.
-	//SetRegistryKey(_T("Local AppWizard-Generated Applications"));
+	// SetRegistryKey(_T("Local AppWizard-Generated Applications"));
 
-	LoadStdProfileSettings();  // Load standard INI file options (including MRU)
+	LoadStdProfileSettings(); // Load standard INI file options (including MRU)
 
 	// Register the application's document templates.  Document templates
 	//  serve as the connection between documents, frame windows and views.
@@ -452,7 +448,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	AddDocTemplate(m_3dtemplate);
 
 #ifdef MDI
-	CMainFrame* pMainFrame = new CMainFrame;
+	CMainFrame *pMainFrame = new CMainFrame;
 	if (!pMainFrame->LoadFrame(IDR_MAPDOC))
 		return FALSE;
 	m_pMainWnd = pMainFrame;
@@ -471,12 +467,12 @@ BOOL CWorldBuilderApp::InitInstance()
 	m_pMainWnd->UpdateWindow();
 
 	// Parse command line for standard shell commands, DDE, file open
-//	CCommandLineInfo cmdInfo;
-//	ParseCommandLine(cmdInfo);
+	//	CCommandLineInfo cmdInfo;
+	//	ParseCommandLine(cmdInfo);
 
 	// Dispatch commands specified on the command line
-//	if (!ProcessShellCommand(cmdInfo))
-//		return FALSE;
+	//	if (!ProcessShellCommand(cmdInfo))
+	//		return FALSE;
 
 	selectPointerTool();
 
@@ -489,16 +485,19 @@ BOOL CWorldBuilderApp::InitInstance()
 /////////////////////////////////////////////////////////////////////////////
 // CWorldBuilderApp message handlers
 
-BOOL CWorldBuilderApp::OnCmdMsg(UINT nID, int nCode, void* pExtra,
-							AFX_CMDHANDLERINFO* pHandlerInfo)
+BOOL CWorldBuilderApp::OnCmdMsg(UINT nID, int nCode, void *pExtra,
+								AFX_CMDHANDLERINFO *pHandlerInfo)
 {
 	// If pHandlerInfo is NULL, then handle the message
 	if (pHandlerInfo == NULL)
 	{
-		for (Int i=0; i<NUM_VIEW_TOOLS; i++) {
+		for (Int i = 0; i < NUM_VIEW_TOOLS; i++)
+		{
 			Tool *pTool = m_tools[i];
-			if (pTool==NULL) continue;
-			if ((Int)nID == pTool->getToolID()) {
+			if (pTool == NULL)
+				continue;
+			if ((Int)nID == pTool->getToolID())
+			{
 				if (nCode == CN_COMMAND)
 				{
 					// Handle WM_COMMAND message
@@ -507,8 +506,8 @@ BOOL CWorldBuilderApp::OnCmdMsg(UINT nID, int nCode, void* pExtra,
 				else if (nCode == CN_UPDATE_COMMAND_UI)
 				{
 					// Update UI element state
-					CCmdUI *pUI = (CCmdUI*)pExtra;
-					pUI->SetCheck(m_curTool == pTool?1:0);
+					CCmdUI *pUI = (CCmdUI *)pExtra;
+					pUI->SetCheck(m_curTool == pTool ? 1 : 0);
 					pUI->Enable(true);
 				}
 				return TRUE;
@@ -540,14 +539,17 @@ void CWorldBuilderApp::selectPointerTool(void)
 //=============================================================================
 void CWorldBuilderApp::setActiveTool(Tool *pNewTool)
 {
-	if (m_curTool == pNewTool) {
+	if (m_curTool == pNewTool)
+	{
 		// same tool
 		return;
 	}
-	if (m_selTool && m_selTool != pNewTool) {
+	if (m_selTool && m_selTool != pNewTool)
+	{
 		m_selTool->deactivate();
 	}
-	if (pNewTool) {
+	if (pNewTool)
+	{
 		pNewTool->activate();
 	}
 	m_curTool = pNewTool;
@@ -563,23 +565,32 @@ selectes the appropriate tool, else uses the normal tool. */
 void CWorldBuilderApp::updateCurTool(Bool forceHand)
 {
 	Tool *curTool = m_curTool;
-	DEBUG_ASSERTCRASH((m_lockCurTool>=0),("oops"));
-	if (!m_lockCurTool) {	 // don't change tools that are doing something.
-		if (forceHand || (0x8000 & ::GetAsyncKeyState(VK_SPACE))) {
+	DEBUG_ASSERTCRASH((m_lockCurTool >= 0), ("oops"));
+	if (!m_lockCurTool)
+	{ // don't change tools that are doing something.
+		if (forceHand || (0x8000 & ::GetAsyncKeyState(VK_SPACE)))
+		{
 			// Space bar gives scroll hand.
 			m_curTool = &m_handScrollTool;
-		} else if (0x8000 & ::GetAsyncKeyState(VK_MENU)) {
+		}
+		else if (0x8000 & ::GetAsyncKeyState(VK_MENU))
+		{
 			// Alt key gives eyedropper.
 			m_curTool = &m_eyedropperTool;
-		} else if (0x8000 & ::GetAsyncKeyState(VK_CONTROL)) {
+		}
+		else if (0x8000 & ::GetAsyncKeyState(VK_CONTROL))
+		{
 			// Control key gives pointer.
 			m_curTool = &m_pointerTool;
-		} else {
+		}
+		else
+		{
 			// Else the tool selected in the tool palette.
 			m_curTool = m_selTool;
 		}
 	}
-	if (curTool != m_curTool) {
+	if (curTool != m_curTool)
+	{
 		m_curTool->activate();
 	}
 }
@@ -592,21 +603,24 @@ class CAboutDlg : public CDialog
 public:
 	CAboutDlg();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CAboutDlg)
-	enum { IDD = IDD_ABOUTBOX };
+	enum
+	{
+		IDD = IDD_ABOUTBOX
+	};
 	//}}AFX_DATA
 
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CAboutDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV support
+													 //}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	//{{AFX_MSG(CAboutDlg)
-		// No message handlers
+	// No message handlers
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
@@ -617,7 +631,7 @@ CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
 	//}}AFX_DATA_INIT
 }
 
-void CAboutDlg::DoDataExchange(CDataExchange* pDX)
+void CAboutDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CAboutDlg)
@@ -625,9 +639,9 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
-	//{{AFX_MSG_MAP(CAboutDlg)
-		// No message handlers
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CAboutDlg)
+// No message handlers
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 // App command to run the dialog
@@ -670,9 +684,9 @@ int CWorldBuilderApp::ExitInstance()
 #ifdef MEMORYPOOL_CHECKPOINTING
 	TheMemoryPoolFactory->debugMemoryReport(REPORT_FACTORYINFO | REPORT_CP_LEAKS | REPORT_CP_STACKTRACE, gFirstCP, lastCP);
 #endif
-	#ifdef MEMORYPOOL_DEBUG
-		TheMemoryPoolFactory->debugMemoryReport(REPORT_POOLINFO | REPORT_POOL_OVERFLOW | REPORT_SIMPLE_LEAKS, 0, 0);
-	#endif
+#ifdef MEMORYPOOL_DEBUG
+	TheMemoryPoolFactory->debugMemoryReport(REPORT_POOLINFO | REPORT_POOL_OVERFLOW | REPORT_SIMPLE_LEAKS, 0, 0);
+#endif
 	shutdownMemoryManager();
 
 	return CWinApp::ExitInstance();
@@ -680,10 +694,10 @@ int CWorldBuilderApp::ExitInstance()
 
 void CWorldBuilderApp::OnResetWindows()
 {
-	if (CMainFrame::GetMainFrame()) {
+	if (CMainFrame::GetMainFrame())
+	{
 		CMainFrame::GetMainFrame()->ResetWindowPositions();
 	}
-
 }
 
 void CWorldBuilderApp::OnFileOpen()
@@ -691,25 +705,36 @@ void CWorldBuilderApp::OnFileOpen()
 #ifdef DO_MAPS_IN_DIRECTORIES
 	TOpenMapInfo info;
 	OpenMap mapDlg(&info);
-	if (mapDlg.DoModal() == IDOK) {
-		if (!info.browse) {
+	if (mapDlg.DoModal() == IDOK)
+	{
+		if (!info.browse)
+		{
 			OpenDocumentFile(info.filename);
 			return;
 		}
-	}	else {
+	}
+	else
+	{
 		// cancelled so return.
 		return;
 	}
 #endif
 
 	CFileStatus status;
-	if (m_currentDirectory != AsciiString("")) try {
-		if (CFile::GetStatus(m_currentDirectory.str(), status)) {
-			if (status.m_attribute & CFile::directory) {
-				::SetCurrentDirectory(m_currentDirectory.str());
+	if (m_currentDirectory != AsciiString(""))
+		try
+		{
+			if (CFile::GetStatus(m_currentDirectory.str(), status))
+			{
+				if (status.m_attribute & CFile::directory)
+				{
+					::SetCurrentDirectory(m_currentDirectory.str());
+				}
 			}
 		}
-	} catch(...) {}
+		catch (...)
+		{
+		}
 
 	CWinApp::OnFileOpen();
 }
@@ -718,11 +743,9 @@ void CWorldBuilderApp::OnTexturesizingMapclifftextures()
 {
 	setActiveTool(&m_floodFillTool);
 	m_floodFillTool.setAdjustCliffs(true);
-
 }
 
-void CWorldBuilderApp::OnUpdateTexturesizingMapclifftextures(CCmdUI* pCmdUI)
+void CWorldBuilderApp::OnUpdateTexturesizingMapclifftextures(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-
 }
