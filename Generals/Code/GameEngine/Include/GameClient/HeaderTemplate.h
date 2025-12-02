@@ -94,7 +94,7 @@ public:
 	HeaderTemplate *getFirstHeader( void );
 	HeaderTemplate *getNextHeader( HeaderTemplate *ht );
 
-	void headerNotifyResolutionChange(void);
+	void onResolutionChanged(void);
 
 private:
 	void populateGameFonts( void );

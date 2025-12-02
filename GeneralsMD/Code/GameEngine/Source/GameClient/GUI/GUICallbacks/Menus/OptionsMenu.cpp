@@ -1600,8 +1600,8 @@ static void saveOptions( void )
 				TheWritableGlobalData->m_xResolution = xres;
 				TheWritableGlobalData->m_yResolution = yres;
 
-				TheHeaderTemplateManager->headerNotifyResolutionChange();
-				TheMouse->mouseNotifyResolutionChange();
+				TheHeaderTemplateManager->onResolutionChanged();
+				TheMouse->onResolutionChanged();
 
 				//Save new settings for a dialog box confirmation after options are accepted
 				newDispSettings.xRes = xres;

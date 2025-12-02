@@ -310,10 +310,10 @@ public:
 	Int getCursorIndex( const AsciiString& name );
 	void resetTooltipDelay( void );
 
-	virtual void loseFocus();
-	virtual void regainFocus();
+	virtual void loseFocus(); ///< called when window has lost focus
+	virtual void regainFocus(); ///< called when window has regained focus
 
-	void mouseNotifyResolutionChange(void);
+	void onResolutionChanged(void);
 	void onGameModeChanged(GameMode prev, GameMode next);
 	void onGamePaused(Bool paused);
 

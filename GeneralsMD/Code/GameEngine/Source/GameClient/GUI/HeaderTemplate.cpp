@@ -206,7 +206,7 @@ HeaderTemplate *HeaderTemplateManager::getNextHeader( HeaderTemplate *ht )
 
 }
 
-void HeaderTemplateManager::headerNotifyResolutionChange( void )
+void HeaderTemplateManager::onResolutionChanged( void )
 {
 	populateGameFonts();
 }
