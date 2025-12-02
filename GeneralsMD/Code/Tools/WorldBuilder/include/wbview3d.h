@@ -217,11 +217,7 @@ private:
 	Int											m_pickPixels;
 	Int											m_partialMapSize;
 
-	// Brush mode hint flicker reduction
-	Int											m_lastBrushMode;		///< Last brush mode drawn (for flicker reduction)
-	RECT										m_lastHintRect;			///< Last hint rectangle drawn (for flicker reduction)
-	CPoint									m_lastHintPos;			///< Last hint position (for flicker reduction)
-	Bool										m_hintDrawnThisFrame;	///< Flag to prevent double-drawing in same frame
+	HintDrawState						m_brushHintState;		///< Flicker reduction state for brush mode hint
 
 protected:
 

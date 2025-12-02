@@ -407,12 +407,8 @@ WbView3d::WbView3d() :
 	m_showWeaponRanges(false),
 	m_highlightTestArt(false),
 	m_showLetterbox(false),
-	m_showSoundCircles(false),
-	m_lastBrushMode(-1),
-	m_lastHintPos(-10000, -10000),
-	m_hintDrawnThisFrame(false)
+	m_showSoundCircles(false)
 {
-	::SetRectEmpty(&m_lastHintRect);
 	TheTacticalView = &bogusTacticalView;
 	m_actualWinSize.x = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "Width", THREE_D_VIEW_WIDTH);
 	m_actualWinSize.y = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "Height", THREE_D_VIEW_HEIGHT);
@@ -2359,7 +2355,7 @@ int WbView3d::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void WbView3d::OnPaint()
 {
 	// Reset hint drawn flag at start of paint cycle to prevent double-drawing
-	m_hintDrawnThisFrame = false;
+	m_brushHintState.beginFrame();
 
 	PAINTSTRUCT ps;
 	HDC hdc = ::BeginPaint(m_hWnd, &ps);
@@ -3285,11 +3281,7 @@ void WbView3d::OnMouseMove(UINT nFlags, CPoint point)
 //=============================================================================
 void WbView3d::clearBrushModeHintState()
 {
-	if (!::IsRectEmpty(&m_lastHintRect)) {
-		::SetRectEmpty(&m_lastHintRect);
-		m_lastBrushMode = -1;
-		m_lastHintPos = CPoint(-10000, -10000);
-	}
+	m_brushHintState.reset();
 }
 
 //=============================================================================
@@ -3299,7 +3291,7 @@ void WbView3d::clearBrushModeHintState()
 //=============================================================================
 void WbView3d::drawBrushModeHint(HDC hdc)
 {
-	if (m_hintDrawnThisFrame) {
+	if (m_brushHintState.drawnThisFrame) {
 		return;
 	}
 
@@ -3323,7 +3315,7 @@ void WbView3d::drawBrushModeHint(HDC hdc)
 
 	char hintTextBuf[512];
 	BrushTool::BrushHintInfo info;
-	if (!BrushTool::getBrushHintInfo(info, hintTextBuf, sizeof(hintTextBuf), hintPos, m_lastBrushMode)) {
+	if (!BrushTool::getBrushHintInfo(info, hintTextBuf, sizeof(hintTextBuf), hintPos, m_brushHintState.lastMode)) {
 		if (info.shouldClear) {
 			clearBrushModeHintState();
 		}
@@ -3337,20 +3329,8 @@ void WbView3d::drawBrushModeHint(HDC hdc)
 
 	const char* firstLine = hintTextBuf;
 	Int firstLineLen = (Int)strlen(firstLine);
-	Bool needUpdate = (info.modeInt != m_lastBrushMode);
-	if (!needUpdate) {
-		if (::IsRectEmpty(&m_lastHintRect)) {
-			needUpdate = true;
-		} else {
-			Int dx = abs(hintPos.x - m_lastHintPos.x);
-			Int dy = abs(hintPos.y - m_lastHintPos.y);
-			if (dx > 15 || dy > 15) {
-				needUpdate = true;
-			}
-		}
-	}
+	Bool needUpdate = m_brushHintState.needsUpdate(hintPos, info.modeInt);
 
-	RECT hintRect;
 	SIZE textSize;
 	if (m3DFont && !hdc) {
 		textSize.cx = firstLineLen * 6;
@@ -3359,9 +3339,10 @@ void WbView3d::drawBrushModeHint(HDC hdc)
 		::GetTextExtentPoint32(hdc, firstLine, firstLineLen, &textSize);
 	}
 
-	if (!needUpdate && !::IsRectEmpty(&m_lastHintRect)) {
-		hintPos = m_lastHintPos;
-		hintRect = m_lastHintRect;
+	CRect hintRect;
+	if (!needUpdate && !m_brushHintState.lastRect.IsRectEmpty()) {
+		hintPos = m_brushHintState.lastPos;
+		hintRect = m_brushHintState.lastRect;
 	} else {
 		Int padding = 6;
 		hintRect.left = hintPos.x - padding;
@@ -3383,10 +3364,8 @@ void WbView3d::drawBrushModeHint(HDC hdc)
 	}
 
 	if (needUpdate) {
-		m_lastHintRect = hintRect;
-		m_lastHintPos = hintPos;
-		m_lastBrushMode = info.modeInt;
+		m_brushHintState.commitUpdate(hintPos, hintRect, info.modeInt);
+	} else {
+		m_brushHintState.drawnThisFrame = true;
 	}
-	
-	m_hintDrawnThisFrame = true;
 }

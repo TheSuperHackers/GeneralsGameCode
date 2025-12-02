@@ -81,11 +81,7 @@ CWorldBuilderView::CWorldBuilderView() :
 	m_scrollMin(0,0),
 	m_scrollMax(0,0),
 	mShowGrid(true),
-	m_showTexture(true),
-	m_lastBrushMode(-1),
-	m_lastHintRect(0,0,0,0),
-	m_lastHintPos(-10000, -10000),
-	m_hintDrawnThisPaint(false)
+	m_showTexture(true)
 {
 	Int show;
 	show = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowContours", 0);
@@ -315,7 +311,7 @@ void CWorldBuilderView::OnPaint()
 
 
 	CPaintDC dc(this); // device context for painting
-	m_hintDrawnThisPaint = false;
+	m_brushHintState.beginFrame();
 	// Offset the origin so that we can draw on 0 based coordinates.
 	dc.SetViewportOrg(-mXScrollOffset, -mYScrollOffset);
 	updateRgn.OffsetRgn(mXScrollOffset, mYScrollOffset);
@@ -1098,11 +1094,7 @@ DEBUG_ASSERTCRASH((abs(curPt.y-curPt2.y)<1),("oops"));
 //=============================================================================
 void CWorldBuilderView::clearBrushModeHintState()
 {
-	if (!m_lastHintRect.IsRectEmpty()) {
-		m_lastHintRect.SetRectEmpty();
-		m_lastBrushMode = -1;
-		m_lastHintPos = CPoint(-10000, -10000);
-	}
+	m_brushHintState.reset();
 }
 
 //=============================================================================
@@ -1128,7 +1120,7 @@ void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 
 	char hintTextBuf[512];
 	BrushTool::BrushHintInfo info;
-	if (!BrushTool::getBrushHintInfo(info, hintTextBuf, sizeof(hintTextBuf), hintPos, m_lastBrushMode)) {
+	if (!BrushTool::getBrushHintInfo(info, hintTextBuf, sizeof(hintTextBuf), hintPos, m_brushHintState.lastMode)) {
 		if (info.shouldClear) {
 			clearBrushModeHintState();
 		}
@@ -1142,23 +1134,12 @@ void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 
 	const char* firstLine = hintTextBuf;
 	Int firstLineLen = (Int)strlen(firstLine);
-	Bool needUpdate = (info.modeInt != m_lastBrushMode);
-	if (!needUpdate) {
-		if (m_lastHintRect.IsRectEmpty()) {
-			needUpdate = true;
-		} else {
-			Int dx = abs(hintPos.x - m_lastHintPos.x);
-			Int dy = abs(hintPos.y - m_lastHintPos.y);
-			if (dx > 15 || dy > 15) {
-				needUpdate = true;
-			}
-		}
-	}
+	Bool needUpdate = m_brushHintState.needsUpdate(hintPos, info.modeInt);
 
 	CSize textSize = pDc->GetTextExtent(firstLine, firstLineLen);
 	
-	if (!needUpdate && !m_lastHintRect.IsRectEmpty()) {
-		hintPos = m_lastHintPos;
+	if (!needUpdate && !m_brushHintState.lastRect.IsRectEmpty()) {
+		hintPos = m_brushHintState.lastPos;
 	}
 	
 	Int padding = 6;
@@ -1168,7 +1149,7 @@ void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 	hintRect.right = hintPos.x + textSize.cx + padding;
 	hintRect.bottom = hintPos.y + padding;
 	
-	if (pUpdateRgn && !needUpdate && !m_lastHintRect.IsRectEmpty()) {
+	if (pUpdateRgn && !needUpdate && !m_brushHintState.lastRect.IsRectEmpty()) {
 		CRect adjustedHintRect = hintRect;
 		adjustedHintRect.OffsetRect(-mXScrollOffset, -mYScrollOffset);
 		if (!pUpdateRgn->RectInRegion(&adjustedHintRect)) {
@@ -1185,9 +1166,7 @@ void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 	pDc->SetBkMode(oldBkMode);
 
 	if (needUpdate) {
-		m_lastHintRect = hintRect;
-		m_lastHintPos = hintPos;
-		m_lastBrushMode = info.modeInt;
+		m_brushHintState.commitUpdate(hintPos, hintRect, info.modeInt);
 	}
 }
 

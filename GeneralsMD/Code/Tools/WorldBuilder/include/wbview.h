@@ -41,6 +41,49 @@ enum RulerTypeEnum {
 };
 
 /////////////////////////////////////////////////////////////////////////////
+// HintDrawState - reusable flicker reduction state for on-screen text hints
+//
+// Usage:
+//   1. Call beginFrame() at start of each paint/render cycle
+//   2. Call needsUpdate() to check if hint position changed significantly
+//   3. Call commitUpdate() after drawing to store the new state
+//   4. Call reset() when hint should be hidden
+
+struct HintDrawState {
+	Int lastMode;
+	CRect lastRect;
+	CPoint lastPos;
+	Bool drawnThisFrame;
+	
+	HintDrawState() : lastMode(-1), lastPos(-10000, -10000), drawnThisFrame(false) {}
+	
+	void reset() {
+		if (!lastRect.IsRectEmpty()) {
+			lastRect.SetRectEmpty();
+			lastMode = -1;
+			lastPos = CPoint(-10000, -10000);
+		}
+	}
+	
+	void beginFrame() { drawnThisFrame = false; }
+	
+	bool needsUpdate(CPoint newPos, Int newMode, Int threshold = 15) const {
+		if (newMode != lastMode) return true;
+		if (lastRect.IsRectEmpty()) return true;
+		Int dx = abs(newPos.x - lastPos.x);
+		Int dy = abs(newPos.y - lastPos.y);
+		return (dx > threshold || dy > threshold);
+	}
+	
+	void commitUpdate(CPoint pos, const CRect& rect, Int mode) {
+		lastPos = pos;
+		lastRect = rect;
+		lastMode = mode;
+		drawnThisFrame = true;
+	}
+};
+
+/////////////////////////////////////////////////////////////////////////////
 // WbView view
 
 class WbView : public CView
