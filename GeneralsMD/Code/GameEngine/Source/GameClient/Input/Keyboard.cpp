@@ -32,6 +32,7 @@
 #include "Common/Language.h"
 #include "Common/GameEngine.h"
 #include "Common/MessageStream.h"
+#include "Common/FramePacer.h"
 #include "GameClient/Keyboard.h"
 #include "GameClient/KeyDefs.h"
 
@@ -218,8 +219,10 @@ Bool Keyboard::checkKeyRepeat( void )
 
 		if( BitIsSet( m_keyStatus[ key ].state, KEY_STATE_DOWN ) )
 		{
-
-			if( (m_inputFrame - m_keyStatus[ key ].sequence) > Keyboard::KEY_REPEAT_DELAY )
+			// Check if key has been pressed down for longer than 125 ms
+			constexpr const Real initialDelayInSec = 0.125125f;
+			UnsignedInt initialDelayInFrames = static_cast<UnsignedInt>(TheFramePacer->getUpdateFps() * initialDelayInSec);
+			if( (m_inputFrame - m_keyStatus[ key ].sequence) > initialDelayInFrames)
 			{
 				// Add key to this frame
 				m_keys[ index ].key = (UnsignedByte)key;
@@ -233,8 +236,10 @@ Bool Keyboard::checkKeyRepeat( void )
 				for( index = 0; index< NUM_KEYS; index++ )
 					m_keyStatus[ index ].sequence = m_inputFrame;
 
-				// Set repeated key so it will repeat again in two frames
-				m_keyStatus[ key ].sequence = m_inputFrame - (Keyboard::KEY_REPEAT_DELAY + 2);
+				// Set repeated key so that the next delay is much shorter than the first
+				constexpr const Real nextDelayMultiplier = 1.0f / 3.0f;
+				UnsignedInt nextDelayInFrames = clamp<UnsignedInt>(initialDelayInFrames * nextDelayMultiplier, 1, 1000);
+				m_keyStatus[ key ].sequence = m_inputFrame - (initialDelayInFrames - nextDelayInFrames);
 
 				retVal = TRUE;
 				break;  // exit for key
