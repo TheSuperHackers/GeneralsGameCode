@@ -426,6 +426,7 @@ struct LANMessage
 			char options[m_lanMaxOptionsLength+1];
 		} GameOptions;
 
+		// ProductInfo is sent with REQUEST_PRODUCT_INFO and RESPONSE_PRODUCT_INFO
 		struct
 		{
 			UnsignedInt exeCRC;
@@ -437,3 +438,5 @@ struct LANMessage
 	};
 };
 #pragma pack(pop)
+
+static_assert(sizeof(LANMessage) <= MAX_PACKET_SIZE);
