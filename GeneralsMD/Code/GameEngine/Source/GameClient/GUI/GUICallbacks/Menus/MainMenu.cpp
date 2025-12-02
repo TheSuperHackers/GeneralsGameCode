@@ -746,7 +746,7 @@ void DeclineResolution()
 		TheWritableGlobalData->m_yResolution = newDispSettings.yRes;
 
 		TheHeaderTemplateManager->headerNotifyResolutionChange();
-		TheMouse->mouseNotifyResolutionChange();
+		TheMouse->onResolutionChanged();
 
 		AsciiString prefString;
 		prefString.format("%d %d", newDispSettings.xRes, newDispSettings.yRes);

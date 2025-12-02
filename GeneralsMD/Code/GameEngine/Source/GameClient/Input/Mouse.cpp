@@ -575,7 +575,7 @@ void Mouse::init( void )
 	m_numButtons = 2;  // by default just have 2 buttons
 	m_numAxes = 2;  // by default a normal mouse moves in a 2d plane
 	m_forceFeedback = FALSE;
-	mouseNotifyResolutionChange();
+	onResolutionChanged();
 	m_tooltipString.clear();	// redundant
 	m_displayTooltip = FALSE;
 
@@ -607,7 +607,7 @@ void Mouse::init( void )
 //-------------------------------------------------------------------------------------------------
 /** Tell mouse system display resolution changed. */
 //-------------------------------------------------------------------------------------------------
-void Mouse::mouseNotifyResolutionChange( void )
+void Mouse::onResolutionChanged( void )
 {
 	if(m_tooltipDisplayString)
 		TheDisplayStringManager->freeDisplayString(m_tooltipDisplayString);
