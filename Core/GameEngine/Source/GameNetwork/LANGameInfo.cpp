@@ -227,9 +227,9 @@ void LANDisplayGameList( GameWindow *gameListbox, LANGameInfo *gameList )
 				txtGName.concat(L"]");
 			}
 
-			// TheSuperHackers @feature Caball009 06/11/2025 Set special color for games that are using a patched client version.
-			const Color color = (gameList->getSlot(0)->getProductInfo().productVersion > 0)
-				? ((gameList->isGameInProgress()) ? gameInProgressColorPatchVersion : gameColorPatchVersion)
+			// TheSuperHackers @feature Caball009 06/11/2025 Set special color for games that are using the community patch.
+			const Color color = (BitIsSet(gameList->getSlot(0)->getProductInfo().flags, GameSlot::ProductInfo::COMMUNITY_PATCH))
+				? ((gameList->isGameInProgress()) ? gameInProgressColorCommunityPatch : gameColorCommunityPatch)
 				: ((gameList->isGameInProgress()) ? gameInProgressColor : gameColor);
 			const Int addedIndex = GadgetListBoxAddEntryText(gameListbox, txtGName, color, -1, -1);
 			GadgetListBoxSetItemData(gameListbox, (void *)gameList, addedIndex, 0 );

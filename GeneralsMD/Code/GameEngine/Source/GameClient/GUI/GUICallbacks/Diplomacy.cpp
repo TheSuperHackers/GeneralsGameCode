@@ -573,13 +573,10 @@ void PopulateInGameDiplomacyPopup( void )
 					}
 				}
 
-				// TheSuperHackers @feature Caball009 06/11/2025 Set special status for players that are using a patched client version.
-				if (slot->isHuman() && slot->getProductInfo().productVersion > 0)
+				// TheSuperHackers @feature Caball009 06/11/2025 Set special status for players that are using the community patch.
+				if (slot->isHuman() && BitIsSet(slot->getProductInfo().flags, GameSlot::ProductInfo::COMMUNITY_PATCH))
 				{
-					UnicodeString gitShortHash;
-					gitShortHash.translate(slot->getProductInfo().gitShortHash);
-
-					text.format(L"%s [%s]", text.str(), gitShortHash.str());
+					text.format(L"%s [%s]", text.str(), slot->getProductInfo().gitShortHash.str());
 				}
 
 				staticTextStatus[rowNum]->winSetEnabledTextColors(frontColor, backColor);

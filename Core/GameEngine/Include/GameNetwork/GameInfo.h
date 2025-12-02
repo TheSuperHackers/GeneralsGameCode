@@ -59,11 +59,18 @@ class GameSlot
 public:
 	struct ProductInfo
 	{
+		enum CPP_11(: UnsignedInt)
+		{
+			COMMUNITY_PATCH = 1 << 0
+		};
+
+		UnsignedInt flags;
 		UnsignedInt exeCRC;
 		UnsignedInt iniCRC;
-		UnsignedInt productVersion;
-		AsciiString gitShortHash;
-		UnicodeString productName;
+		UnicodeString productTitle;
+		UnicodeString productVersion;
+		UnicodeString productAuthor;
+		UnicodeString gitShortHash;
 	};
 
 	GameSlot();

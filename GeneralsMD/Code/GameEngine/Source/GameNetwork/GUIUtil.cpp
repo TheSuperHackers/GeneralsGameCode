@@ -423,11 +423,11 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 			}
 			if(slot->isHuman())
 			{
-				if (myGame->getSlot(i)->getProductInfo().productVersion > 0)
+				if (BitIsSet(myGame->getSlot(i)->getProductInfo().flags, GameSlot::ProductInfo::COMMUNITY_PATCH))
 				{
-					// TheSuperHackers @feature Caball009 06/11/2025 Set special color for players that are using a patched client version.
-					GadgetComboBoxSetEnabledTextColors(comboPlayer[i], playerColorPatchVersion, GameMakeColor(0, 0, 0, 255));
-					GadgetComboBoxSetDisabledTextColors(comboPlayer[i], playerGrayedColorPatchVersion, GameMakeColor(0, 0, 0, 255));
+					// TheSuperHackers @feature Caball009 06/11/2025 Set special color for players that are using the community patch.
+					GadgetComboBoxSetEnabledTextColors(comboPlayer[i], playerColorCommunityPatch, GameMakeColor(0, 0, 0, 255));
+					GadgetComboBoxSetDisabledTextColors(comboPlayer[i], playerGrayedColorCommunityPatch, GameMakeColor(0, 0, 0, 255));
 				}
 
 				UnicodeString newName = slot->getName();

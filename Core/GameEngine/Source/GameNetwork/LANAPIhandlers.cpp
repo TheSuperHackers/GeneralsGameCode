@@ -41,14 +41,56 @@
 #include "GameNetwork/LANAPICallbacks.h"
 #include "GameClient/MapUtil.h"
 
+Bool LANAPI::setProductInfoStrings(const UnicodeString(&input)[4], WideChar(&output)[201])
+{
+	// concatenate strings separated by null terminators
+
+	size_t curSize = 0;
+	for (size_t i = 0; i < ARRAY_SIZE(input); ++i)
+	{
+		curSize += wcslcpy(output + curSize, input[i].str(), ARRAY_SIZE(output) - curSize) + 1;
+		if (curSize >= ARRAY_SIZE(output))
+		{
+			return FALSE;
+		}
+	}
+
+	return curSize <= ARRAY_SIZE(output);
+}
+
+Bool LANAPI::getProductInfoStrings(const WideChar(&input)[201], UnicodeString*(&output)[4])
+{
+	// extract strings separated by null terminators
+
+	for (size_t curSize = 0, i = 0; i < ARRAY_SIZE(output); ++i)
+	{
+		output[i]->set(input + curSize);
+
+		curSize += output[i]->getLength() + 1;
+		if (curSize >= ARRAY_SIZE(input))
+		{
+			for (size_t j = i + 1; j < ARRAY_SIZE(output); ++j)
+			{
+				output[j]->clear();
+			}
+
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
 void LANAPI::setProductInfoFromLocalData(GameSlot *slot)
 {
 	GameSlot::ProductInfo productInfo;
+	productInfo.flags = GameSlot::ProductInfo::COMMUNITY_PATCH;
 	productInfo.exeCRC = TheGlobalData->m_exeCRC;
 	productInfo.iniCRC = TheGlobalData->m_iniCRC;
-	productInfo.productVersion = TheVersion->getVersionNumber();
-	productInfo.gitShortHash = TheVersion->getAsciiGitShortHash();
-	productInfo.productName = TheVersion->getUnicodeProductString();
+	productInfo.productTitle = TheVersion->getUnicodeProductTitle();
+	productInfo.productVersion = TheVersion->getUnicodeProductVersion();
+	productInfo.productAuthor = TheVersion->getUnicodeProductAuthor();
+	productInfo.gitShortHash = TheVersion->getUnicodeGitShortHash();
 
 	slot->setProductInfo(productInfo);
 }
@@ -56,26 +98,40 @@ void LANAPI::setProductInfoFromLocalData(GameSlot *slot)
 void LANAPI::setProductInfoFromMessage(LANMessage *msg, GameSlot *slot)
 {
 	GameSlot::ProductInfo productInfo;
+	productInfo.flags = msg->ProductInfo.flags;
 	productInfo.exeCRC = msg->ProductInfo.exeCRC;
 	productInfo.iniCRC = msg->ProductInfo.iniCRC;
-	productInfo.productVersion = msg->ProductInfo.productVersion;
-	productInfo.gitShortHash = msg->ProductInfo.gitShortHash;
-	productInfo.productName = msg->ProductInfo.productName;
+
+	UnicodeString *strings[]
+	{
+		&productInfo.productTitle,
+		&productInfo.productVersion,
+		&productInfo.productAuthor,
+		&productInfo.gitShortHash
+	};
+	getProductInfoStrings(msg->ProductInfo.data, strings);
 
 	slot->setProductInfo(productInfo);
 }
 
-void LANAPI::sendProductInfoMessage(Int messageType, UnsignedInt senderIP)
+void LANAPI::sendProductInfoMessage(LANMessage::Type messageType, UnsignedInt senderIP)
 {
 	LANMessage msg;
 	fillInLANMessage(&msg);
-	msg.messageType = (LANMessage::Type)messageType;
+	msg.messageType = messageType;
 
+	msg.ProductInfo.flags = GameSlot::ProductInfo::COMMUNITY_PATCH;
 	msg.ProductInfo.exeCRC = TheGlobalData->m_exeCRC;
 	msg.ProductInfo.iniCRC = TheGlobalData->m_iniCRC;
-	msg.ProductInfo.productVersion = TheVersion->getVersionNumber();
-	strlcpy(msg.ProductInfo.gitShortHash, TheVersion->getAsciiGitShortHash().str(), ARRAY_SIZE(msg.ProductInfo.gitShortHash));
-	wcslcpy(msg.ProductInfo.productName, TheVersion->getUnicodeProductString().str(), ARRAY_SIZE(msg.ProductInfo.productName));
+
+	const UnicodeString strings[]
+	{
+		TheVersion->getUnicodeProductTitle(),
+		TheVersion->getUnicodeProductVersion(),
+		TheVersion->getUnicodeProductAuthor(),
+		TheVersion->getUnicodeGitShortHash()
+	};
+	setProductInfoStrings(strings, msg.ProductInfo.data);
 
 	sendMessage(&msg, senderIP);
 }
@@ -124,7 +180,7 @@ void LANAPI::handleLobbyProductInfoResponse(LANMessage *msg, UnsignedInt senderI
 		return;
 
 	// a fellow player in the lobby has acknowledged our request for product information
-	player->setProductVersion(msg->ProductInfo.productVersion);
+	player->setProductInfoFlags(msg->ProductInfo.flags);
 
 	// update player list with colored names
 	OnPlayerList(m_lobbyPlayers);
