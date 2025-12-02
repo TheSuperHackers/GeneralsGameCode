@@ -170,6 +170,7 @@ class Mouse : public SubsystemInterface
 		CursorCaptureBlockReason_NoInit,
 		CursorCaptureBlockReason_Paused,
 		CursorCaptureBlockReason_Unfocused,
+		CursorCaptureBlockReadon_CursorIsOutside,
 
 		CursorCaptureBlockReason_Count
 	};
@@ -312,6 +313,10 @@ public:
 
 	virtual void loseFocus(); ///< called when window has lost focus
 	virtual void regainFocus(); ///< called when window has regained focus
+
+	void onCursorMovedOutside(); ///< called when cursor has left game window
+	void onCursorMovedInside(); ///< called when cursor has entered game window
+	Bool isCursorInside() const; ///< true if the mouse is located inside the game window
 
 	void onResolutionChanged(void);
 	void onGameModeChanged(GameMode prev, GameMode next);
