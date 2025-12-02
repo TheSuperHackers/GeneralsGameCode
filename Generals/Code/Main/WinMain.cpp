@@ -414,7 +414,14 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 					TheKeyboard->resetKeys();
 
 				if (TheMouse)
+				{
 					TheMouse->loseFocus();
+
+					if (TheMouse->isCursorInside())
+					{
+						TheMouse->onCursorMovedOutside();
+					}
+				}
 
 				break;
 			}
@@ -528,6 +535,10 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 				if( TheWin32Mouse == NULL )
 					return 0;
 
+				// ignore when window is not active
+				if( !isWinMainActive )
+					return 0;
+
 				Int x = (Int)LOWORD( lParam );
 				Int y = (Int)HIWORD( lParam );
 				RECT rect;
@@ -535,8 +546,18 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 				// ignore when outside of client area
 				GetClientRect( ApplicationHWnd, &rect );
 				if( x < rect.left || x > rect.right || y < rect.top || y > rect.bottom )
+				{
+					if ( TheMouse->isCursorInside() )
+					{
+						TheMouse->onCursorMovedOutside();
+					}
 					return 0;
+				}
 
+				if( !TheMouse->isCursorInside() )
+				{
+					TheMouse->onCursorMovedInside();
+				}
 
 				TheWin32Mouse->addWin32Event( message, wParam, lParam, TheMessageTime );
 				return 0;

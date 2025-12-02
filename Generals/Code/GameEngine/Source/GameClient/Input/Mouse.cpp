@@ -64,6 +64,7 @@ const char *const Mouse::CursorCaptureBlockReasonNames[] = {
 	"CursorCaptureBlockReason_NoInit",
 	"CursorCaptureBlockReason_Paused",
 	"CursorCaptureBlockReason_Unfocused",
+	"CursorCaptureBlockReason_CursorIsOutside",
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1032,6 +1033,24 @@ void Mouse::regainFocus()
 {
 	// Recapture the cursor when returning from desktop.
 	unblockCapture(CursorCaptureBlockReason_Unfocused);
+}
+
+// ------------------------------------------------------------------------------------------------
+void Mouse::onCursorMovedOutside()
+{
+	blockCapture(CursorCaptureBlockReadon_CursorIsOutside);
+}
+
+// ------------------------------------------------------------------------------------------------
+void Mouse::onCursorMovedInside()
+{
+	unblockCapture(CursorCaptureBlockReadon_CursorIsOutside);
+}
+
+// ------------------------------------------------------------------------------------------------
+Bool Mouse::isCursorInside() const
+{
+	return (m_captureBlockReasonBits & (1 << CursorCaptureBlockReadon_CursorIsOutside)) == 0;
 }
 
 // ------------------------------------------------------------------------------------------------
