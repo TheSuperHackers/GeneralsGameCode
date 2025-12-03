@@ -1114,9 +1114,7 @@ void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 	viewPt.x += mXScrollOffset;
 	viewPt.y += mYScrollOffset;
 
-	CPoint hintPos = viewPt;
-	hintPos.x += 20;
-	hintPos.y -= 20;
+	CPoint hintPos(viewPt.x + HintDrawState::HINT_OFFSET_X, viewPt.y - HintDrawState::HINT_OFFSET_Y);
 
 	char hintTextBuf[512];
 	BrushTool::BrushHintInfo info;
@@ -1127,27 +1125,20 @@ void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 		return;
 	}
 
-	if (!info.shouldShow || strlen(hintTextBuf) == 0) {
+	Int textLen = (Int)strlen(hintTextBuf);
+	if (!info.shouldShow || textLen == 0) {
 		clearBrushModeHintState();
 		return;
 	}
 
-	const char* firstLine = hintTextBuf;
-	Int firstLineLen = (Int)strlen(firstLine);
 	Bool needUpdate = m_brushHintState.needsUpdate(hintPos, info.modeInt);
-
-	CSize textSize = pDc->GetTextExtent(firstLine, firstLineLen);
+	CSize textSize = pDc->GetTextExtent(hintTextBuf, textLen);
 	
 	if (!needUpdate && !m_brushHintState.lastRect.IsRectEmpty()) {
 		hintPos = m_brushHintState.lastPos;
 	}
 	
-	Int padding = 6;
-	CRect hintRect;
-	hintRect.left = hintPos.x - padding;
-	hintRect.top = hintPos.y - textSize.cy - padding;
-	hintRect.right = hintPos.x + textSize.cx + padding;
-	hintRect.bottom = hintPos.y + padding;
+	CRect hintRect = HintDrawState::computeHintRect(hintPos, textSize.cx, textSize.cy);
 	
 	if (pUpdateRgn && !needUpdate && !m_brushHintState.lastRect.IsRectEmpty()) {
 		CRect adjustedHintRect = hintRect;
@@ -1159,9 +1150,7 @@ void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
 
 	COLORREF oldColor = pDc->SetTextColor(RGB(255, 255, 255));
 	Int oldBkMode = pDc->SetBkMode(TRANSPARENT);
-	
-	pDc->TextOut(hintPos.x, hintPos.y - textSize.cy, firstLine, firstLineLen);
-	
+	pDc->TextOut(hintPos.x, hintPos.y - textSize.cy, hintTextBuf, textLen);
 	pDc->SetTextColor(oldColor);
 	pDc->SetBkMode(oldBkMode);
 

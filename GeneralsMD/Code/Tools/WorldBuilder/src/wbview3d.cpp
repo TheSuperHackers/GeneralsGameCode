@@ -3309,9 +3309,8 @@ void WbView3d::drawBrushModeHint(HDC hdc)
 	Int sx, sy;
 	W3DLogicalScreenToPixelScreen(screenPos.X, screenPos.Y, &sx, &sy,
 		rClient.right - rClient.left, rClient.bottom - rClient.top);
-	CPoint hintPos;
-	hintPos.x = rClient.left + sx + 20;
-	hintPos.y = rClient.top + sy - 20;
+	CPoint hintPos(rClient.left + sx + HintDrawState::HINT_OFFSET_X,
+	               rClient.top + sy - HintDrawState::HINT_OFFSET_Y);
 
 	char hintTextBuf[512];
 	BrushTool::BrushHintInfo info;
@@ -3322,21 +3321,20 @@ void WbView3d::drawBrushModeHint(HDC hdc)
 		return;
 	}
 
-	if (!info.shouldShow || strlen(hintTextBuf) == 0) {
+	Int textLen = (Int)strlen(hintTextBuf);
+	if (!info.shouldShow || textLen == 0) {
 		clearBrushModeHintState();
 		return;
 	}
 
-	const char* firstLine = hintTextBuf;
-	Int firstLineLen = (Int)strlen(firstLine);
 	Bool needUpdate = m_brushHintState.needsUpdate(hintPos, info.modeInt);
 
 	SIZE textSize;
 	if (m3DFont && !hdc) {
-		textSize.cx = firstLineLen * 6;
+		textSize.cx = textLen * 6;  // Approximate character width for 3D font
 		textSize.cy = 16;
 	} else {
-		::GetTextExtentPoint32(hdc, firstLine, firstLineLen, &textSize);
+		::GetTextExtentPoint32(hdc, hintTextBuf, textLen, &textSize);
 	}
 
 	CRect hintRect;
@@ -3344,23 +3342,18 @@ void WbView3d::drawBrushModeHint(HDC hdc)
 		hintPos = m_brushHintState.lastPos;
 		hintRect = m_brushHintState.lastRect;
 	} else {
-		Int padding = 6;
-		hintRect.left = hintPos.x - padding;
-		hintRect.top = hintPos.y - textSize.cy - padding;
-		hintRect.right = hintPos.x + textSize.cx + padding;
-		hintRect.bottom = hintPos.y + padding;
+		hintRect = HintDrawState::computeHintRect(hintPos, textSize.cx, textSize.cy);
 	}
 
 	if (m3DFont && !hdc) {
 		RECT textRect = hintRect;
 		textRect.bottom = textRect.top + textSize.cy;
-		m3DFont->DrawText(firstLine, firstLineLen, &textRect,
+		m3DFont->DrawText(hintTextBuf, textLen, &textRect,
 			DT_LEFT | DT_NOCLIP | DT_TOP | DT_SINGLELINE, 0xFFFFFFFF);
 	} else if (hdc) {
 		::SetBkMode(hdc, TRANSPARENT);
 		::SetTextColor(hdc, RGB(255, 255, 255));
-		
-		::TextOut(hdc, hintPos.x, hintPos.y - textSize.cy, firstLine, firstLineLen);
+		::TextOut(hdc, hintPos.x, hintPos.y - textSize.cy, hintTextBuf, textLen);
 	}
 
 	if (needUpdate) {

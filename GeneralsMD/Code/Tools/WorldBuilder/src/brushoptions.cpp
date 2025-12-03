@@ -398,26 +398,8 @@ void BrushOptions::PopSliderChanged(const long sliderID, long theVal)
 
 void BrushOptions::PopSliderFinished(const long sliderID, long theVal)
 {
-	switch (sliderID) {
-		case IDC_SIZE_POPUP:
-			break;
-		case IDC_HEIGHT_POPUP:
-			break;
-		case IDC_FEATHER_POPUP:
-			break;
-	case IDC_RAISELOWER_POPUP:
-			break;
-	case IDC_RADIUS_POPUP:
-			break;
-	case IDC_RATE_POPUP:
-			break;
-
-		default:
-			// uh-oh!
-			DEBUG_CRASH(("Slider message from unknown control"));
-			break;
-	}
-
+	// Required by PopupSliderOwner interface - no action needed on slider release
+	// (all updates happen in PopSliderChanged during drag)
 }
 
 

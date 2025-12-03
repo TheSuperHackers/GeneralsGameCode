@@ -32,6 +32,10 @@
 #include "WorldBuilderDoc.h"
 #include "WorldBuilderView.h"
 #include "BrushTool.h"
+
+/// Feather tool uses a higher rate multiplier than other brush operations
+static const Int FEATHER_RATE_MULTIPLIER = 5;
+
 //
 // FeatherTool class.
 Int FeatherTool::m_feather = 0;
@@ -153,8 +157,8 @@ void FeatherTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 
 	Bool redoRate = BrushTool::applyBrushWithRateAccumulation(
 		m_htMapEditCopy, m_htMapFeatherCopy, m_htMapRateCopy,
-		ndx, m_feather, m_rate * 5,
-		m_radius, 1, FeatherOptions::MAX_RADIUS, pDoc);
+		ndx, m_feather, m_rate * FEATHER_RATE_MULTIPLIER,
+		m_radius, FeatherOptions::MIN_RADIUS, FeatherOptions::MAX_RADIUS, pDoc);
 
 	pDoc->updateHeightMap(m_htMapEditCopy, true, BrushTool::makePartialRange(ndx, m_feather));
 	

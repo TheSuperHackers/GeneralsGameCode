@@ -45,9 +45,9 @@ public:
 	~BrushTool(void);
 
 public:
-	static Int getWidth(void) {return m_brushWidth;};
-	static Int getFeather(void) {return m_brushFeather;};
-	static Int getHeight(void) {return m_brushHeight;};
+	static Int getWidth(void) {return m_brushWidth;};  ///<Returns width.
+	static Int getFeather(void) {return m_brushFeather;}; ///<Returns feather.
+	static Int getHeight(void) {return m_brushHeight;}; ///<Returns height.
 	static void setWidth(Int width);
 	static void setFeather(Int feather);
 	static void setHeight(Int height);

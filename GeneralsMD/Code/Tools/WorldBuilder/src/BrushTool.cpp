@@ -403,6 +403,10 @@ void BrushTool::getModeHintStrings(char *primaryBuf, Int primaryBufSize, char *s
 
 Bool BrushTool::getBrushHintInfo(BrushHintInfo &info, char *hintTextBuf, Int hintTextBufSize, const CPoint &hintPos, Int lastBrushMode)
 {
+	// Static cache for hint text - regenerated only when mode changes
+	static char s_cachedHintText[512] = "";
+	static Int s_cachedMode = -1;
+	
 	info.shouldShow = false;
 	info.shouldClear = false;
 	info.hintPos = hintPos;
@@ -415,6 +419,7 @@ Bool BrushTool::getBrushHintInfo(BrushHintInfo &info, char *hintTextBuf, Int hin
 	Tool *pCurTool = WbApp()->getCurTool();
 	if (!pCurTool || pCurTool->getToolID() != ID_BRUSH_TOOL) {
 		info.shouldClear = true;
+		s_cachedMode = -1;  // Invalidate cache when not brush tool
 		return false;
 	}
 	
@@ -426,24 +431,28 @@ Bool BrushTool::getBrushHintInfo(BrushHintInfo &info, char *hintTextBuf, Int hin
 	info.currentMode = getPreviewModeFromKeys();
 	info.modeInt = (Int)info.currentMode;
 	
-	char primaryBuf[256];
-	char secondaryBuf[512];
-	getModeHintStrings(primaryBuf, sizeof(primaryBuf), secondaryBuf, sizeof(secondaryBuf));
-	
-	// Prefer secondary buffer (full hint) if available, otherwise use primary (current mode)
-	const char* hintText = NULL;
-	if (secondaryBuf && strlen(secondaryBuf) > 0) {
-		hintText = secondaryBuf;
-	} else if (primaryBuf && strlen(primaryBuf) > 0) {
-		hintText = primaryBuf;
+	// Use cached text if mode hasn't changed
+	if (info.modeInt == s_cachedMode && s_cachedHintText[0] != '\0') {
+		strlcpy(hintTextBuf, s_cachedHintText, hintTextBufSize);
+		info.shouldShow = true;
+		return true;
 	}
 	
-	if (!hintText || strlen(hintText) == 0) {
+	// Regenerate hint text
+	char secondaryBuf[512];
+	getModeHintStrings(NULL, 0, secondaryBuf, sizeof(secondaryBuf));
+	
+	if (secondaryBuf[0] == '\0') {
 		info.shouldClear = true;
+		s_cachedMode = -1;
 		return false;
 	}
 	
-	strlcpy(hintTextBuf, hintText, hintTextBufSize);
+	// Update cache
+	strlcpy(s_cachedHintText, secondaryBuf, sizeof(s_cachedHintText));
+	s_cachedMode = info.modeInt;
+	
+	strlcpy(hintTextBuf, s_cachedHintText, hintTextBufSize);
 	info.shouldShow = true;
 	return true;
 }

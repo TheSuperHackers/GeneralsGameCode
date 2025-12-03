@@ -50,6 +50,11 @@ enum RulerTypeEnum {
 //   4. Call reset() when hint should be hidden
 
 struct HintDrawState {
+	static const Int HINT_UPDATE_THRESHOLD = 15;  ///< Pixel threshold for hint position updates
+	static const Int HINT_OFFSET_X = 20;
+	static const Int HINT_OFFSET_Y = 20;
+	static const Int HINT_PADDING = 6;
+	
 	Int lastMode;
 	CRect lastRect;
 	CPoint lastPos;
@@ -67,7 +72,7 @@ struct HintDrawState {
 	
 	void beginFrame() { drawnThisFrame = false; }
 	
-	bool needsUpdate(CPoint newPos, Int newMode, Int threshold = 15) const {
+	bool needsUpdate(CPoint newPos, Int newMode, Int threshold = HINT_UPDATE_THRESHOLD) const {
 		if (newMode != lastMode) return true;
 		if (lastRect.IsRectEmpty()) return true;
 		Int dx = abs(newPos.x - lastPos.x);
@@ -80,6 +85,16 @@ struct HintDrawState {
 		lastRect = rect;
 		lastMode = mode;
 		drawnThisFrame = true;
+	}
+	
+	/// Compute hint rect from position and text size
+	static CRect computeHintRect(CPoint pos, Int textWidth, Int textHeight) {
+		CRect rect;
+		rect.left = pos.x - HINT_PADDING;
+		rect.top = pos.y - textHeight - HINT_PADDING;
+		rect.right = pos.x + textWidth + HINT_PADDING;
+		rect.bottom = pos.y + HINT_PADDING;
+		return rect;
 	}
 };
 
