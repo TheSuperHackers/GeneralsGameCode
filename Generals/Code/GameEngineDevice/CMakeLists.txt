@@ -204,7 +204,6 @@ target_link_libraries(g_gameenginedevice PRIVATE
 )
 
 target_sources(g_gameenginedevice PRIVATE
-    Source/W3DDevice/GameClient/W3DScreenshot.cpp
     Source/W3DDevice/GameClient/stb_image_write_impl.cpp
 )
 
