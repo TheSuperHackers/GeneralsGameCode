@@ -16,6 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "W3DScreenshot.h"
 #include <stb_image_write.h>
 
 struct ScreenshotThreadData
