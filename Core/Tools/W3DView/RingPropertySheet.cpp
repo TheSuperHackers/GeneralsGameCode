@@ -203,7 +203,7 @@ RingPropertySheetClass::Add_Object_To_Viewer (void)
 		m_LastSavedName = m_RenderObj->Get_Name ();
 		m_RenderObj = RefCountPtr<RingRenderObjClass>::Create_AddRef((RingRenderObjClass *)doc->GetDisplayedObject ());
 
-	//
+		//
 		// Pass the object along to the pages
 		//
 		m_GeneralPage.Set_Ring (m_RenderObj.Peek());
