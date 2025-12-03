@@ -9,7 +9,7 @@
         {
             "name": "vc6",
             "displayName": "Windows 32bit VC6 Release",
-            "generator": "Ninja",
+            "generator": "NMake Makefiles",
             "hidden": false,
             "binaryDir": "${sourceDir}/build/${presetName}",
             "cacheVariables": {
