@@ -198,12 +198,12 @@ SpherePropertySheetClass::Add_Object_To_Viewer (void)
 
 		//
 		// Display the object
-	//
-	doc->Reload_Displayed_Object ();
-	m_LastSavedName = m_RenderObj->Get_Name ();
-	m_RenderObj = RefCountPtr<SphereRenderObjClass>::Create_AddRef((SphereRenderObjClass *)doc->GetDisplayedObject ());
+		//
+		doc->Reload_Displayed_Object ();
+		m_LastSavedName = m_RenderObj->Get_Name ();
+		m_RenderObj = RefCountPtr<SphereRenderObjClass>::Create_AddRef((SphereRenderObjClass *)doc->GetDisplayedObject ());
 
-	//
+		//
 		// Pass the object along to the pages
 		//
 		m_GeneralPage.Set_Sphere (m_RenderObj.Peek());

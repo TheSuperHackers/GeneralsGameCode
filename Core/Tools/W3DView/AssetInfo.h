@@ -60,13 +60,13 @@ class AssetInfoClass
 			: m_AssetType (TypeUnknown),
 			  m_dwUserData (0L)			{ Initialize (); }
 
-	AssetInfoClass (LPCTSTR passet_name, ASSET_TYPE type, RenderObjClass *prender_obj = nullptr, DWORD user_data = 0L)
-		: m_Name (passet_name),
-		  m_AssetType (type),
-		  m_dwUserData (user_data),
-		  m_pRenderObj (RefCountPtr<RenderObjClass>::Create_AddRef(prender_obj))			{ Initialize (); }
+		AssetInfoClass (LPCTSTR passet_name, ASSET_TYPE type, RenderObjClass *prender_obj = nullptr, DWORD user_data = 0L)
+			: m_Name (passet_name),
+			  m_AssetType (type),
+			  m_dwUserData (user_data),
+			  m_pRenderObj (RefCountPtr<RenderObjClass>::Create_AddRef(prender_obj))			{ Initialize (); }
 
-	virtual ~AssetInfoClass (void)	{}
+		virtual ~AssetInfoClass (void)	{}
 
 		//////////////////////////////////////////////////////////////
 		//
@@ -80,16 +80,16 @@ class AssetInfoClass
 		const CString &	Get_Hierarchy_Name (void) const			{ return m_HierarchyName; }
 		const CString &	Get_Original_Name (void) const			{ return m_OriginalName; }
 		ASSET_TYPE			Get_Type (void) const						{ return m_AssetType; }
-	DWORD					Get_User_Number (void) const				{ return m_dwUserData; }
-	const CString &	Get_User_String (void) const				{ return m_UserString; }
-	RenderObjClass *	Get_Render_Obj (void) const				{ RenderObjClass *ptr = m_pRenderObj.Peek(); if (ptr) ptr->Add_Ref(); return ptr; }
-	RenderObjClass *	Peek_Render_Obj (void) const				{ return m_pRenderObj.Peek(); }
+		DWORD					Get_User_Number (void) const				{ return m_dwUserData; }
+		const CString &	Get_User_String (void) const				{ return m_UserString; }
+		RenderObjClass *	Get_Render_Obj (void) const				{ RenderObjClass *ptr = m_pRenderObj.Peek(); if (ptr) ptr->Add_Ref(); return ptr; }
+		RenderObjClass *	Peek_Render_Obj (void) const				{ return m_pRenderObj.Peek(); }
 		void					Set_Name (LPCTSTR pname)					{ m_Name = pname; }
 		void					Set_Hierarchy_Name (LPCTSTR pname)		{ m_HierarchyName = pname; }
 		void					Set_Type (ASSET_TYPE type)					{ m_AssetType = type; }
-	void					Set_User_Number (DWORD user_data)		{ m_dwUserData = user_data; }
-	void					Set_User_String (LPCTSTR string)			{ m_UserString = string; }
-	void					Set_Render_Obj (RenderObjClass *pobj)	{ m_pRenderObj = RefCountPtr<RenderObjClass>::Create_AddRef(pobj); }
+		void					Set_User_Number (DWORD user_data)		{ m_dwUserData = user_data; }
+		void					Set_User_String (LPCTSTR string)			{ m_UserString = string; }
+		void					Set_Render_Obj (RenderObjClass *pobj)	{ m_pRenderObj = RefCountPtr<RenderObjClass>::Create_AddRef(pobj); }
 
 		//
 		//	Information methods

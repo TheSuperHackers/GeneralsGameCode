@@ -592,24 +592,24 @@ CW3DViewDoc::Display_Emitter
 	// Data OK?
 	if (m_pCScene != nullptr) {
 
-	// Lose the animation
-	SAFE_DELETE (m_pCAnimCombo);
-	m_pCAnimation.Clear();
+		// Lose the animation
+		SAFE_DELETE (m_pCAnimCombo);
+		m_pCAnimation.Clear();
 
-	if (m_pCRenderObj != nullptr) {
-		// Remove this object from the scene
-		Remove_Object_From_Scene (m_pCRenderObj.Peek());
-		m_pCRenderObj.Clear();
-	}
-	m_pCScene->Clear_Lineup();
+		if (m_pCRenderObj != nullptr) {
+			// Remove this object from the scene
+			Remove_Object_From_Scene (m_pCRenderObj.Peek());
+			m_pCRenderObj.Clear();
+		}
+		m_pCScene->Clear_Lineup();
 
-	// Do we have a new emitter to display?
-	if (pemitter != nullptr) {
+		// Do we have a new emitter to display?
+		if (pemitter != nullptr) {
 
-		// Add the emitter to the scene
-		pemitter->Set_Transform (Matrix3D (1));
-		m_pCRenderObj = RefCountPtr<RenderObjClass>::Create_AddRef(pemitter);
-		m_pCScene->Add_Render_Object (m_pCRenderObj.Peek());
+			// Add the emitter to the scene
+			pemitter->Set_Transform (Matrix3D (1));
+			m_pCRenderObj = RefCountPtr<RenderObjClass>::Create_AddRef(pemitter);
+			m_pCScene->Add_Render_Object (m_pCRenderObj.Peek());
 			pemitter->Start ();
 
 			CGraphicView *pCGraphicView = GetGraphicView ();
@@ -1032,8 +1032,8 @@ CW3DViewDoc::Update_Camera (void)
 	// Should we update the camera's position as well?
 	if (m_bAnimateCamera && m_pCRenderObj != nullptr) {
 
-	Matrix3D transform (1);
-	if (Get_Camera_Transform (m_pCRenderObj.Peek(), transform)) {
+		Matrix3D transform (1);
+		if (Get_Camera_Transform (m_pCRenderObj.Peek(), transform)) {
 
 			// Convert the bone's transform into a camera transform
 			//Matrix3D	transform = m_pCRenderObj->Get_Bone_Transform (index);
