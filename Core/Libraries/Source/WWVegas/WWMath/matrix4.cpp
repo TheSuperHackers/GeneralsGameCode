@@ -195,3 +195,76 @@ int operator != (const Matrix4x4 & a, const Matrix4x4 & b)
 	return (!(a == b));
 }
 
+#ifdef BUILD_WITH_D3D8
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include "d3d8types.h"
+#include "d3dx8.h"
+
+void Build_D3DMATRIX(D3DMATRIX& dxm, const Matrix4x4& m)
+{
+	// Transpose: dxm.m[i][j] = m[j][i]
+	dxm.m[0][0] = m[0][0];
+	dxm.m[0][1] = m[1][0];
+	dxm.m[0][2] = m[2][0];
+	dxm.m[0][3] = m[3][0];
+
+	dxm.m[1][0] = m[0][1];
+	dxm.m[1][1] = m[1][1];
+	dxm.m[1][2] = m[2][1];
+	dxm.m[1][3] = m[3][1];
+
+	dxm.m[2][0] = m[0][2];
+	dxm.m[2][1] = m[1][2];
+	dxm.m[2][2] = m[2][2];
+	dxm.m[2][3] = m[3][2];
+
+	dxm.m[3][0] = m[0][3];
+	dxm.m[3][1] = m[1][3];
+	dxm.m[3][2] = m[2][3];
+	dxm.m[3][3] = m[3][3];
+}
+
+D3DXMATRIX Build_D3DXMATRIX(const Matrix4x4& m)
+{
+	// Transpose: result[i][j] = m[j][i]
+	return D3DXMATRIX(
+		m[0][0], m[1][0], m[2][0], m[3][0],
+		m[0][1], m[1][1], m[2][1], m[3][1],
+		m[0][2], m[1][2], m[2][2], m[3][2],
+		m[0][3], m[1][3], m[2][3], m[3][3]
+	);
+}
+
+void Build_Matrix4(Matrix4x4& m, const D3DMATRIX& dxm)
+{
+	// Transpose: m[i][j] = dxm.m[j][i]
+	m[0][0] = dxm.m[0][0];
+	m[0][1] = dxm.m[1][0];
+	m[0][2] = dxm.m[2][0];
+	m[0][3] = dxm.m[3][0];
+
+	m[1][0] = dxm.m[0][1];
+	m[1][1] = dxm.m[1][1];
+	m[1][2] = dxm.m[2][1];
+	m[1][3] = dxm.m[3][1];
+
+	m[2][0] = dxm.m[0][2];
+	m[2][1] = dxm.m[1][2];
+	m[2][2] = dxm.m[2][2];
+	m[2][3] = dxm.m[3][2];
+
+	m[3][0] = dxm.m[0][3];
+	m[3][1] = dxm.m[1][3];
+	m[3][2] = dxm.m[2][3];
+	m[3][3] = dxm.m[3][3];
+}
+
+Matrix4x4 Build_Matrix4(const D3DMATRIX& dxm)
+{
+	Matrix4x4 m;
+	Build_Matrix4(m, dxm);
+	return m;
+}
+#endif
+
