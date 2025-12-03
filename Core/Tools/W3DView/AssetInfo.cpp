@@ -53,8 +53,9 @@ AssetInfoClass::Initialize (void)
 
 		// Assume we are wrapping an instance as apposed to an asset 'name'.
 		RenderObjClass *prender_obj = m_pRenderObj.Peek();
-		if (prender_obj)
+		if (prender_obj) {
 			prender_obj->Add_Ref();
+		}
 
 		// If we are wrapping an asset name, then create an instance of it.
 		if (prender_obj == nullptr) {
