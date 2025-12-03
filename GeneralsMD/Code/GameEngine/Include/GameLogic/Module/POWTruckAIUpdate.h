@@ -105,7 +105,7 @@ public:
 	// the following methods must be overridden so that if a player issues a command the dozer
 	// can exit the internal state machine and do whatever the player says
 	//
-	virtual void aiDoCommand( const AICommandParms *parms );
+	virtual void aiDoCommand( AICommandParms *parms );
 
 protected:
 

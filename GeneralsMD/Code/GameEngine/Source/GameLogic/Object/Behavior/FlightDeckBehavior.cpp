@@ -1390,7 +1390,7 @@ void FlightDeckBehavior::unreserveDoorForExit( ExitDoorType exitDoor )
 }
 
 //-------------------------------------------------------------------------------------------------
-void FlightDeckBehavior::aiDoCommand(const AICommandParms* parms)
+void FlightDeckBehavior::aiDoCommand(AICommandParms* parms)
 {
 	//Inspect the command and reset everything when necessary.
 	if( parms->m_cmdSource != CMD_FROM_AI )

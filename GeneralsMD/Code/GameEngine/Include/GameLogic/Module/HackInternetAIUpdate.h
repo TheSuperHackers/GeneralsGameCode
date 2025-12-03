@@ -189,7 +189,7 @@ public:
 	HackInternetAIUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
- 	virtual void aiDoCommand(const AICommandParms* parms);
+	virtual void aiDoCommand(AICommandParms* parms);
 
 	Real getPackUnpackVariationFactor() const { return getHackInternetAIUpdateModuleData()->m_packUnpackVariationFactor; }
 	UnsignedInt getUnpackTime()					const;

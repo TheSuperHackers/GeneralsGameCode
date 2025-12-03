@@ -121,7 +121,7 @@ UpdateSleepTime HackInternetAIUpdate::update( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-void HackInternetAIUpdate::aiDoCommand(const AICommandParms* parms)
+void HackInternetAIUpdate::aiDoCommand(AICommandParms* parms)
 {
 	if (!isAllowedToRespondToAiCommands(parms))
 		return;

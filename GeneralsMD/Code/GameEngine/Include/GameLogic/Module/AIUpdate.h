@@ -353,7 +353,7 @@ public:
 	virtual void onObjectCreated();
 	virtual void doQuickExit( const std::vector<Coord3D>* path );			///< get out of this Object
 
-	virtual void aiDoCommand(const AICommandParms* parms);
+	virtual void aiDoCommand(AICommandParms* parms);
 
 	virtual const Coord3D *getGuardLocation( void ) const { return &m_locationToGuard;	}
 	virtual ObjectID getGuardObject( void ) const { return m_objectToGuard; }

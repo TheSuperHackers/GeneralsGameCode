@@ -64,7 +64,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// AIUpdate interface methods
-	virtual void aiDoCommand( const AICommandParms *parms );
+	virtual void aiDoCommand( AICommandParms *parms );
 	virtual UpdateSleepTime update( void );
 
 protected:

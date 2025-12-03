@@ -436,7 +436,7 @@ private:
 	Path*										m_path;
 
 public:
-	void store(const AICommandParms& parms);
+	void store(AICommandParms& parms);
 	void reconstitute(AICommandParms& parms) const;
 	void doXfer(Xfer *xfer);
 };
@@ -452,7 +452,7 @@ class AICommandInterface
 {
 public:
 
-	virtual void aiDoCommand(const AICommandParms* parms) = 0;
+	virtual void aiDoCommand(AICommandParms* parms) = 0;
 
 	inline void aiMoveToPosition( const Coord3D *pos, CommandSourceType cmdSource )
 	{

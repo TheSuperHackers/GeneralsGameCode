@@ -87,7 +87,7 @@ public:
 	virtual JetAIUpdate* getJetAIUpdate() { return this; }
 	virtual const JetAIUpdate* getJetAIUpdate() const { return this; }
 
- 	virtual void aiDoCommand(const AICommandParms* parms);
+	virtual void aiDoCommand(AICommandParms* parms);
 	virtual Bool chooseLocomotorSet(LocomotorSetType wst);
 	virtual void setLocomotorGoalNone();
 	virtual Bool isIdle() const;

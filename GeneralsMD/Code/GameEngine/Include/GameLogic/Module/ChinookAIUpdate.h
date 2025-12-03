@@ -86,7 +86,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual UpdateSleepTime update();
- 	virtual void aiDoCommand(const AICommandParms* parms);
+	virtual void aiDoCommand(AICommandParms* parms);
 	virtual Bool chooseLocomotorSet(LocomotorSetType wst);
 	// this is present solely for some transports to override, so that they can land before
 	// allowing people to exit...

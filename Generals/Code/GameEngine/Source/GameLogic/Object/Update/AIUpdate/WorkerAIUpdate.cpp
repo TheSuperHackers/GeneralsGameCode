@@ -945,7 +945,7 @@ const Coord3D* WorkerAIUpdate::getDockPoint( DozerTask task, DozerDockPoint poin
 // ------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-void WorkerAIUpdate::aiDoCommand(const AICommandParms* parms)
+void WorkerAIUpdate::aiDoCommand(AICommandParms* parms)
 {
 
 	//

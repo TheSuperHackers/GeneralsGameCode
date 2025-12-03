@@ -84,7 +84,7 @@ public:
 	virtual void onObjectCreated();
 	virtual void onDelete();
 
- 	virtual void aiDoCommand(const AICommandParms* parms);
+	virtual void aiDoCommand(AICommandParms* parms);
 	virtual Bool chooseLocomotorSet(LocomotorSetType wst);
 	virtual void setLocomotorGoalNone();
 	virtual Bool isIdle() const;

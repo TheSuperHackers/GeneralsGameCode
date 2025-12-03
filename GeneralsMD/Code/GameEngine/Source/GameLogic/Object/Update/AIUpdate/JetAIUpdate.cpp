@@ -2527,7 +2527,7 @@ Bool JetAIUpdate::isParkedAt(const Object* obj) const
 }
 
 //-------------------------------------------------------------------------------------------------
-void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
+void JetAIUpdate::aiDoCommand(AICommandParms* parms)
 {
 	// call this from aiDoCommand as well as update, because this can
 	// be called before update ever is... if the unit is placed on a map,
