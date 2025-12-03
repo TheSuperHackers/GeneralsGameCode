@@ -457,3 +457,174 @@ Bool FileSystem::isPathInDirectory(const AsciiString& testPath, const AsciiStrin
 
 	return true;
 }
+
+//============================================================================
+// FileSystem::hasValidTransferFileContent
+//============================================================================
+// TheSuperHackers @security bobtista 06/11/2025
+// Validates file content format during map transfer operations.
+// Checks file headers, magic bytes, size limits, and basic structure to prevent
+// malformed or malicious files from being processed.
+//============================================================================
+Bool FileSystem::hasValidTransferFileContent(const AsciiString& filePath)
+{
+	File* file = TheLocalFileSystem->openFile(filePath.str(), File::READ | File::BINARY);
+	if (file == NULL)
+	{
+		DEBUG_LOG(("Cannot open file '%s' for content validation.", filePath.str()));
+		return false;
+	}
+
+	const Int fileSize = file->size();
+	Bool isValid = false;
+
+	const char* lastDot = strrchr(filePath.str(), '.');
+	if (lastDot == NULL)
+	{
+		file->close();
+		return false;
+	}
+
+	const Int MAX_MAP_SIZE = 50 * 1024 * 1024;
+	const Int MAX_INI_SIZE = 10 * 1024 * 1024;
+	const Int MAX_STR_SIZE = 5 * 1024 * 1024;
+	const Int MAX_TGA_SIZE = 20 * 1024 * 1024;
+	const Int MAX_TXT_SIZE = 5 * 1024 * 1024;
+	const Int MAX_WAK_SIZE = 10 * 1024 * 1024;
+
+#ifdef _WIN32
+	if (_stricmp(lastDot, ".map") == 0)
+#else
+	if (strcasecmp(lastDot, ".map") == 0)
+#endif
+	{
+		if (fileSize > MAX_MAP_SIZE)
+		{
+			DEBUG_LOG(("Map file '%s' exceeds maximum size (%d bytes).", filePath.str(), fileSize));
+			isValid = false;
+		}
+		else
+		{
+			UnsignedByte header[4];
+			file->read(header, 4);
+			if (header[0] == 'C' && header[1] == 'k' && header[2] == 'M' && header[3] == 'p')
+			{
+				isValid = true;
+			}
+			else
+			{
+				DEBUG_LOG(("Map file '%s' has invalid magic bytes.", filePath.str()));
+				isValid = false;
+			}
+		}
+	}
+#ifdef _WIN32
+	else if (_stricmp(lastDot, ".ini") == 0)
+#else
+	else if (strcasecmp(lastDot, ".ini") == 0)
+#endif
+	{
+		if (fileSize > MAX_INI_SIZE)
+		{
+			DEBUG_LOG(("INI file '%s' exceeds maximum size (%d bytes).", filePath.str(), fileSize));
+			isValid = false;
+		}
+		else
+		{
+			UnsignedByte sample[512];
+			Int bytesToRead = fileSize < 512 ? fileSize : 512;
+			file->read(sample, bytesToRead);
+
+			Bool hasNullBytes = false;
+			for (Int i = 0; i < bytesToRead; ++i)
+			{
+				if (sample[i] == 0)
+				{
+					hasNullBytes = true;
+					break;
+				}
+			}
+
+			if (hasNullBytes)
+			{
+				DEBUG_LOG(("INI file '%s' contains null bytes (likely binary).", filePath.str()));
+				isValid = false;
+			}
+			else
+			{
+				isValid = true;
+			}
+		}
+	}
+#ifdef _WIN32
+	else if (_stricmp(lastDot, ".str") == 0 || _stricmp(lastDot, ".txt") == 0)
+#else
+	else if (strcasecmp(lastDot, ".str") == 0 || strcasecmp(lastDot, ".txt") == 0)
+#endif
+	{
+		Int maxSize = MAX_STR_SIZE;
+#ifdef _WIN32
+		if (_stricmp(lastDot, ".txt") == 0)
+#else
+		if (strcasecmp(lastDot, ".txt") == 0)
+#endif
+		{
+			maxSize = MAX_TXT_SIZE;
+		}
+
+		if (fileSize > maxSize)
+		{
+			DEBUG_LOG(("Text file '%s' exceeds maximum size (%d bytes).", filePath.str(), fileSize));
+			isValid = false;
+		}
+		else
+		{
+			isValid = true;
+		}
+	}
+#ifdef _WIN32
+	else if (_stricmp(lastDot, ".tga") == 0)
+#else
+	else if (strcasecmp(lastDot, ".tga") == 0)
+#endif
+	{
+		if (fileSize > MAX_TGA_SIZE)
+		{
+			DEBUG_LOG(("TGA file '%s' exceeds maximum size (%d bytes).", filePath.str(), fileSize));
+			isValid = false;
+		}
+		else if (fileSize < 18)
+		{
+			DEBUG_LOG(("TGA file '%s' is too small to be valid (minimum 18 bytes).", filePath.str()));
+			isValid = false;
+		}
+		else
+		{
+			isValid = true;
+		}
+	}
+#ifdef _WIN32
+	else if (_stricmp(lastDot, ".wak") == 0)
+#else
+	else if (strcasecmp(lastDot, ".wak") == 0)
+#endif
+	{
+		if (fileSize > MAX_WAK_SIZE)
+		{
+			DEBUG_LOG(("WAK file '%s' exceeds maximum size (%d bytes).", filePath.str(), fileSize));
+			isValid = false;
+		}
+		else
+		{
+			isValid = true;
+		}
+	}
+	else
+	{
+		DEBUG_LOG(("File '%s' has unrecognized extension for content validation.", filePath.str()));
+		isValid = false;
+	}
+
+	file->close();
+	return isValid;
+}
