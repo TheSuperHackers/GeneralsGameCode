@@ -217,7 +217,6 @@ target_link_libraries(z_gameenginedevice PRIVATE
 )
 
 target_sources(z_gameenginedevice PRIVATE
-    Source/W3DDevice/GameClient/W3DScreenshot.cpp
     Source/W3DDevice/GameClient/stb_image_write_impl.cpp
 )
 
