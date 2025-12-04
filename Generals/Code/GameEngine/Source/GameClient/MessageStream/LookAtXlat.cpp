@@ -139,7 +139,7 @@ LookAtTranslator::LookAtTranslator() :
 	m_isChangingFOV(false),
 	m_middleButtonDownTimeMsec(0),
 	m_lastPlaneID(INVALID_DRAWABLE_ID),
-	m_lastMouseMoveFrame(0),
+	m_lastMouseMoveTimeMsec(0),
 	m_scrollType(SCROLL_NONE)
 {
 	m_anchor.x = m_anchor.y = 0;
@@ -171,10 +171,14 @@ const ICoord2D* LookAtTranslator::getRMBScrollAnchor(void)
 
 Bool LookAtTranslator::hasMouseMovedRecently( void )
 {
-	if (m_lastMouseMoveFrame > TheGameLogic->getFrame())
-		m_lastMouseMoveFrame = 0; // reset for new game
+	const UnsignedInt ONE_SECOND_MSEC = 1000;
+	UnsignedInt now = timeGetTime();
 
-	if (m_lastMouseMoveFrame + LOGICFRAMES_PER_SECOND < TheGameLogic->getFrame())
+	// Handle time wraparound
+	if (now < m_lastMouseMoveTimeMsec)
+		m_lastMouseMoveTimeMsec = now;
+
+	if (now - m_lastMouseMoveTimeMsec > ONE_SECOND_MSEC)
 		return false;
 
 	return true;
@@ -256,7 +260,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_DOWN:
 		{
-			m_lastMouseMoveFrame = TheGameLogic->getFrame();
+			m_lastMouseMoveTimeMsec = timeGetTime();
 
 			m_anchor = msg->getArgument( 0 )->pixel;
 			m_currentPos = msg->getArgument( 0 )->pixel;
@@ -272,7 +276,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_UP:
 		{
-			m_lastMouseMoveFrame = TheGameLogic->getFrame();
+			m_lastMouseMoveTimeMsec = timeGetTime();
 
 			if (m_scrollType == SCROLL_RMB)
 			{
@@ -284,7 +288,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_MIDDLE_BUTTON_DOWN:
 		{
-			m_lastMouseMoveFrame = TheGameLogic->getFrame();
+			m_lastMouseMoveTimeMsec = timeGetTime();
 
 			m_isRotating = true;
 			m_anchor = msg->getArgument( 0 )->pixel;
@@ -298,7 +302,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_MIDDLE_BUTTON_UP:
 		{
-			m_lastMouseMoveFrame = TheGameLogic->getFrame();
+			m_lastMouseMoveTimeMsec = timeGetTime();
 
 			const UnsignedInt CLICK_DURATION_MSEC = 167;
 			const UnsignedInt PIXEL_OFFSET = 5;
@@ -322,7 +326,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		case GameMessage::MSG_RAW_MOUSE_POSITION:
 		{
 			if (m_currentPos.x != msg->getArgument( 0 )->pixel.x || m_currentPos.y != msg->getArgument( 0 )->pixel.y)
-				m_lastMouseMoveFrame = TheGameLogic->getFrame();
+				m_lastMouseMoveTimeMsec = timeGetTime();
 
 			m_currentPos = msg->getArgument( 0 )->pixel;
 
@@ -402,7 +406,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_WHEEL:
 		{
-			m_lastMouseMoveFrame = TheGameLogic->getFrame();
+			m_lastMouseMoveTimeMsec = timeGetTime();
 
 			Int spin = msg->getArgument( 1 )->integer;
 
