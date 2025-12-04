@@ -42,11 +42,11 @@ const char * RESOURCE_FILE_TYPE_NAME = "File";
 
 
 ResourceFileClass::ResourceFileClass(HMODULE hmodule, char const *filename) :
-	ResourceName(NULL),
-	hModule(NULL),
-	FileBytes(NULL),
-	FilePtr(NULL),
-	EndOfFile(NULL)
+	ResourceName(nullptr),
+	hModule(nullptr),
+	FileBytes(nullptr),
+	FilePtr(nullptr),
+	EndOfFile(nullptr)
 {
 	Set_Name(filename);
 	HRSRC hresource = FindResource(hmodule,ResourceName,RESOURCE_FILE_TYPE_NAME);
@@ -71,7 +71,7 @@ ResourceFileClass::~ResourceFileClass(void)
 char const * ResourceFileClass::Set_Name(char const *filename)
 {
 	free(ResourceName);
-	ResourceName = NULL;
+	ResourceName = nullptr;
 
 	if (filename) {
 		ResourceName = strdup(filename);
