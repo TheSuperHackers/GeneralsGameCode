@@ -81,7 +81,7 @@ private:
 	ViewLocation m_viewLocation[ MAX_VIEW_LOCS ];
 	ScrollType m_scrollType;
 	ScreenEdgeScrollMode m_screenEdgeScrollMode;
-	UnsignedInt m_lastMouseMoveFrame;
+	UnsignedInt m_lastMouseMoveTimeMsec;				// real-time in milliseconds when mouse last moved
 
 	void setScrolling( ScrollType scrollType );
 	void stopScrolling( void );
