@@ -130,6 +130,9 @@ void Keyboard::updateKeys( void )
 	}
 	while( m_keys[ index++ ].key != KEY_NONE );
 
+	// Get current time once for all key updates
+	UnsignedInt now = 0;
+
 	// update keyboard status array
 	index = 0;
 	while( m_keys[ index ].key != KEY_NONE )
@@ -145,7 +148,9 @@ void Keyboard::updateKeys( void )
 		// Update key down time for new key presses
 		if( BitIsSet( m_keys[ index ].state, KEY_STATE_DOWN ) )
 		{
-			m_keyStatus[ m_keys[ index ].key ].keyDownTimeMsec = timeGetTime();
+			if( !now )
+				now = timeGetTime();
+			m_keyStatus[ m_keys[ index ].key ].keyDownTimeMsec = now;
 		}
 
 		// prevent ALT-TAB from causing a TAB event
