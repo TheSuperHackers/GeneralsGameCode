@@ -102,7 +102,7 @@ void LANAPI::setProductInfoFromMessage(LANMessage *msg, GameSlot *slot)
 	productInfo.exeCRC = msg->ProductInfo.exeCRC;
 	productInfo.iniCRC = msg->ProductInfo.iniCRC;
 
-	UnicodeString *strings[]
+	UnicodeString *strings[] =
 	{
 		&productInfo.productTitle,
 		&productInfo.productVersion,
@@ -124,7 +124,7 @@ void LANAPI::sendProductInfoMessage(LANMessage::Type messageType, UnsignedInt se
 	msg.ProductInfo.exeCRC = TheGlobalData->m_exeCRC;
 	msg.ProductInfo.iniCRC = TheGlobalData->m_iniCRC;
 
-	const UnicodeString strings[]
+	const UnicodeString strings[] =
 	{
 		TheVersion->getUnicodeProductTitle(),
 		TheVersion->getUnicodeProductVersion(),
