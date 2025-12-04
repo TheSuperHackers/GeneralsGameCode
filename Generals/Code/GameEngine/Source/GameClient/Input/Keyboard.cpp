@@ -220,12 +220,13 @@ Bool Keyboard::checkKeyRepeat( void )
 	// Scan Keyboard status array for first key down
 	// long enough to repeat
 	const UnsignedInt KEY_REPEAT_INTERVAL_MSEC = 67; // ~2 frames at 30 FPS
-	UnsignedInt now = timeGetTime();
 	for( key = 0; key < ARRAY_SIZE(m_keyStatus); key++ )
 	{
 
 		if( BitIsSet( m_keyStatus[ key ].state, KEY_STATE_DOWN ) )
 		{
+
+			UnsignedInt now = timeGetTime();
 
 			if( now - m_keyStatus[ key ].keyDownTimeMsec > Keyboard::KEY_REPEAT_DELAY_MSEC )
 			{
