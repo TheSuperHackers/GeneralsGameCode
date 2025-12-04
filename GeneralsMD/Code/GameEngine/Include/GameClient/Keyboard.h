@@ -76,7 +76,7 @@ struct KeyboardIO
 	UnsignedByte	key;										// KeyDefType, key data
 	UnsignedByte	status;									// StatusType, above
 	UnsignedShort	state;									// KEY_STATE_* in KeyDefs.h
-	UnsignedInt		sequence;								// sequence info from DirectX used for order
+	UnsignedInt		sequence;								// DirectInput sequence number; overwritten with frame number for ordering
 	UnsignedInt		keyDownTimeMsec;				// real-time in milliseconds when key went down
 
 };
