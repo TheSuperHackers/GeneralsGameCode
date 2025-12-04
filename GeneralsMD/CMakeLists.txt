@@ -32,6 +32,14 @@ endif()
 
 if(RTS_INSTALL_PREFIX_ZEROHOUR AND NOT "${RTS_INSTALL_PREFIX_ZEROHOUR}" STREQUAL "/registry")
     install(TARGETS z_generals RUNTIME DESTINATION "${RTS_INSTALL_PREFIX_ZEROHOUR}")
+    # Copy DLLs for Windows builds
+    if("${CMAKE_HOST_SYSTEM}" MATCHES "Windows" AND "${CMAKE_SYSTEM}" MATCHES "Windows")
+        install(TARGETS z_generals RUNTIME_DEPENDENCIES
+            PRE_EXCLUDE_REGEXES "api-ms-win.*" "ext-ms-.*" "mss32\.dll" "binkw32\.dll"
+            POST_EXCLUDE_REGEXES ".*system32.*"
+            DESTINATION "${RTS_INSTALL_PREFIX_ZEROHOUR}"
+        )
+    endif()
     install(FILES $<TARGET_PDB_FILE:z_generals> DESTINATION "${RTS_INSTALL_PREFIX_ZEROHOUR}" OPTIONAL)
 
     if(TARGET z_worldbuilder)

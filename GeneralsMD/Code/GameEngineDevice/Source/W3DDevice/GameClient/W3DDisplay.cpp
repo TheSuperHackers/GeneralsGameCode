@@ -62,6 +62,7 @@ static void drawFramerateBar(void);
 #include "GameClient/Mouse.h"
 #include "GameClient/GlobalLanguage.h"
 #include "GameClient/Water.h"
+#include "GameClient/Keyboard.h"
 
 #include "GameNetwork/NetworkInterface.h"
 #include "Common/ModelState.h"

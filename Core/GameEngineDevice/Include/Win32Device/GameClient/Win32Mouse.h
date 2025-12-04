@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -79,6 +79,8 @@ public:
 
 	/// add an event from a win32 window procedure
 	void addWin32Event( UINT msg, WPARAM wParam, LPARAM lParam, DWORD time );
+
+	static Win32Mouse *getInstance();
 
 protected:
 

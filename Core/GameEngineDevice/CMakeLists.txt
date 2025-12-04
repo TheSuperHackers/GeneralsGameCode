@@ -86,9 +86,6 @@ set(GAMEENGINEDEVICE_SRC
 #    Include/Win32Device/Common/Win32GameEngine.h
     Include/Win32Device/Common/Win32LocalFile.h
     Include/Win32Device/Common/Win32LocalFileSystem.h
-#    Include/Win32Device/GameClient/Win32DIKeyboard.h
-#    Include/Win32Device/GameClient/Win32DIMouse.h
-#    Include/Win32Device/GameClient/Win32Mouse.h
     Source/MilesAudioDevice/MilesAudioManager.cpp
     Source/VideoDevice/Bink/BinkVideoPlayer.cpp
 #    Source/W3DDevice/Common/System/W3DFunctionLexicon.cpp
@@ -187,9 +184,6 @@ set(GAMEENGINEDEVICE_SRC
     Source/Win32Device/Common/Win32LocalFile.cpp
     Source/Win32Device/Common/Win32LocalFileSystem.cpp
 #    Source/Win32Device/Common/Win32OSDisplay.cpp
-#    Source/Win32Device/GameClient/Win32DIKeyboard.cpp
-    #Source/Win32Device/GameClient/Win32DIMouse.cpp
-#    Source/Win32Device/GameClient/Win32Mouse.cpp
 )
 
 # Add C++ 17 FileSystem implementation for non-VS6 builds
@@ -242,4 +236,30 @@ if(RTS_BUILD_OPTION_FFMPEG)
         target_link_libraries(corei_gameenginedevice_private INTERFACE ${FFMPEG_LIBRARIES})
         target_compile_definitions(corei_gameenginedevice_public INTERFACE RTS_HAS_FFMPEG)
     endif()
+endif()
+
+if(RTS_BUILD_OPTION_SDL3)
+    find_package(SDL3 REQUIRED)
+
+    target_link_libraries(corei_gameenginedevice_private INTERFACE SDL3::SDL3)
+    target_compile_definitions(corei_gameenginedevice_public INTERFACE RTS_HAS_SDL3)
+
+    target_sources(corei_gameenginedevice_private INTERFACE
+        Include/SDL3Device/GameClient/SDL3AniReader.h
+        Source/SDL3Device/GameClient/SDL3AniReader.cpp
+        Include/SDL3Device/GameClient/SDL3Keyboard.h
+        Source/SDL3Device/GameClient/SDL3Keyboard.cpp
+        Include/SDL3Device/GameClient/SDL3Mouse.h
+        Source/SDL3Device/GameClient/SDL3Mouse.cpp
+        Include/SDL3Device/Common/SDL3GameEngine.h
+        Source/SDL3Device/Common/SDL3GameEngine.cpp
+        Source/SDL3Device/Common/SDL3OSDisplay.cpp
+    )
+else()
+    target_sources(corei_gameenginedevice_private INTERFACE
+        Include/Win32Device/GameClient/DirectInputKeyboard.h
+        Source/Win32Device/GameClient/DirectInputKeyboard.cpp
+        Include/Win32Device/GameClient/Win32Mouse.h
+        Source/Win32Device/GameClient/Win32Mouse.cpp
+    )
 endif()

@@ -20,7 +20,13 @@ if(MSVC)
     # Create PDB for Release as long as debug info was generated during compile.
     string(APPEND CMAKE_EXE_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF")
     string(APPEND CMAKE_SHARED_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF")
-    
+
+    if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+        # TheSuperHackers @build denys 01/12/2025 Enable LARGEADDRESSAWARE on 32-bit release builds to expand address space.
+        string(APPEND CMAKE_EXE_LINKER_FLAGS_RELEASE " /LARGEADDRESSAWARE")
+        string(APPEND CMAKE_SHARED_LINKER_FLAGS_RELEASE " /LARGEADDRESSAWARE")
+    endif()
+
     # /INCREMENTAL:NO prevents PDB size bloat in Debug configuration(s).
     add_link_options("/INCREMENTAL:NO")
 else()

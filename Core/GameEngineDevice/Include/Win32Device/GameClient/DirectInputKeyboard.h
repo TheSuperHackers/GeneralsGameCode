@@ -16,7 +16,13 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: Win32DIMouse.h ///////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//																																						//
+//  (c) 2001-2003 Electronic Arts Inc.																				//
+//																																						//
+////////////////////////////////////////////////////////////////////////////////
+
+// FILE: Win32DIKeyboard.h ////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 //
 //                       Westwood Studios Pacific.
@@ -28,11 +34,12 @@
 //
 // Project:    RTS3
 //
-// File name:  Win32DIMouse.h
+// File name:  Win32DIKeyboard.h
 //
 // Created:    Colin Day, June 2001
 //
-// Desc:       Win32 direct input implementation for the mouse
+// Desc:       Device implementation of the keyboard interface on Win32
+//						 using Microsoft Direct Input
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -47,50 +54,46 @@
 #include <dinput.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "GameClient/Mouse.h"
+#include "GameClient/Keyboard.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 
-// class DirectInputMouse -----------------------------------------------------
-/** Direct input implementation for the mouse device */
+// class DirectInputKeyboard --------------------------------------------------
+/** Class for interfacing with the keyboard using direct input as the
+	* implementation */
 //-----------------------------------------------------------------------------
-class DirectInputMouse : public Mouse
+class DirectInputKeyboard : public Keyboard
 {
 
 public:
 
-	DirectInputMouse( void );
-	virtual ~DirectInputMouse( void );
+	DirectInputKeyboard( void );
+	virtual ~DirectInputKeyboard( void );
 
-	// extended methods from base class
-	virtual void init( void );		///< initialize the direct input mouse, extending functionality
-	virtual void reset( void );		///< reset system
-	virtual void update( void );  ///< update the mouse data, extending functionality
-	virtual void setPosition( Int x, Int y );  ///< set position for mouse
+	// extend methods from the base class
+	virtual void init( void );		///< initialize the keyboard, extending init functionality
+	virtual void reset( void );		///< Reset the keybaord system
+	virtual void update( void );  ///< update call, extending update functionality
+	virtual Bool getCapsState( void );		///< get state of caps lock key, return TRUE if down
 
-	virtual void setMouseLimits( void );  ///< update the limit extents the mouse can move in
-
-	virtual void setCursor( MouseCursor cursor );  ///< set mouse cursor
-
-	virtual void capture( void );  ///< capture the mouse
-	virtual void releaseCapture( void );  ///< release mouse capture
+	static DirectInputKeyboard *getInstance( void );
 
 protected:
 
-	/// device implementation to get mouse event
-	virtual UnsignedByte getMouseEvent( MouseIO *result, Bool flush );
+	// extended methods from the base class
+	virtual void getKey( KeyboardIO *key );  ///< get a single key event
 
-	// new internal methods for our direct input implemetation
-	void openMouse( void );  ///< create the direct input mouse
-	void closeMouse( void );  ///< close and release mouse resources
-	/// map direct input mouse data to our own format
-	void mapDirectInputMouse( MouseIO *mouse, DIDEVICEOBJECTDATA *mdat );
+	//-----------------------------------------------------------------------------------------------
 
-	// internal data members for our direct input mouse
+	// new methods to this derived class
+	void openKeyboard( void );  ///< create direct input keyboard
+	void closeKeyboard( void );  ///< release direct input keyboard
+
+	// direct input data members
 	LPDIRECTINPUT8 m_pDirectInput;  ///< pointer to direct input interface
-	LPDIRECTINPUTDEVICE8 m_pMouseDevice;  ///< pointer to mouse device
+	LPDIRECTINPUTDEVICE8 m_pKeyboardDevice;  ///< pointer to keyboard device
 
 };
 

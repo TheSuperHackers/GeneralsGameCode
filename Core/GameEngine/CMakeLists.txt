@@ -116,7 +116,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/StatsCollector.h
 #    Include/Common/STLTypedefs.h
     Include/Common/StreamingArchiveFile.h
-#    Include/Common/SubsystemInterface.h
+   Include/Common/SubsystemInterface.h
 #    Include/Common/SystemInfo.h
 #    Include/Common/Team.h
 #    Include/Common/Terrain.h
@@ -195,8 +195,8 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/Image.h
 #    Include/GameClient/IMEManager.h
 #    Include/GameClient/InGameUI.h
-#    Include/GameClient/Keyboard.h
-#    Include/GameClient/KeyDefs.h
+   Include/GameClient/Keyboard.h
+   Include/GameClient/KeyDefs.h
 #    Include/GameClient/LanguageFilter.h
 #    Include/GameClient/Line2D.h
 #    Include/GameClient/LoadScreen.h
@@ -207,7 +207,7 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/Module/AnimatedParticleSysBoneClientUpdate.h
 #    Include/GameClient/Module/BeaconClientUpdate.h
 #    Include/GameClient/Module/SwayClientUpdate.h
-#    Include/GameClient/Mouse.h
+   Include/GameClient/Mouse.h
     Include/GameClient/ParabolicEase.h
 #    Include/GameClient/ParticleSys.h
 #    Include/GameClient/PlaceEventTranslator.h
@@ -667,7 +667,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/System/Snapshot.cpp
 #    Source/Common/System/StackDump.cpp
     Source/Common/System/StreamingArchiveFile.cpp
-#    Source/Common/System/SubsystemInterface.cpp
+   Source/Common/System/SubsystemInterface.cpp
 #    Source/Common/System/Trig.cpp
     Source/Common/System/UnicodeString.cpp
 #    Source/Common/System/Upgrade.cpp
@@ -798,8 +798,8 @@ set(GAMEENGINE_SRC
     Source/GameClient/GUI/WindowVideoManager.cpp
 #    Source/GameClient/GUI/WinInstanceData.cpp
 #    Source/GameClient/InGameUI.cpp
-#    Source/GameClient/Input/Keyboard.cpp
-#    Source/GameClient/Input/Mouse.cpp
+   Source/GameClient/Input/Keyboard.cpp
+   Source/GameClient/Input/Mouse.cpp
 #    Source/GameClient/LanguageFilter.cpp
 #    Source/GameClient/Line2D.cpp
 #    Source/GameClient/MapUtil.cpp

@@ -45,6 +45,12 @@ Int GameMain()
 	TheGameEngine = CreateGameEngine();
 	TheGameEngine->init();
 
+#if defined(RTS_HAS_SDL3)
+	// Show the main window now that engine is initialized
+	extern void showMainWindow();
+	showMainWindow();
+#endif
+
 	if (!TheGlobalData->m_simulateReplays.empty())
 	{
 		exitcode = ReplaySimulation::simulateReplays(TheGlobalData->m_simulateReplays, TheGlobalData->m_simulateReplayJobs);

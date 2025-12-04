@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -254,9 +254,8 @@ public:
 	{
 
 		RM_WINDOWS=0,	//default Windows cursor - very fast.
-		RM_W3D,				//W3D model tied to frame rate.
+		RM_W3D,			//W3D model tied to frame rate.
 		RM_POLYGON,		//alpha blended polygon tied to frame rate.
-		RM_DX8,			//hardware cursor independent of frame rate.
 
 		RM_MAX
 	};
@@ -318,6 +317,7 @@ public:
 	void onGamePaused(Bool paused);
 
 	Bool isClick(const ICoord2D *anchor, const ICoord2D *dest, UnsignedInt previousMouseClick, UnsignedInt currentMouseClick);
+
 
 	AsciiString m_tooltipFontName;		///< tooltip font
 	Int m_tooltipFontSize;						///< tooltip font

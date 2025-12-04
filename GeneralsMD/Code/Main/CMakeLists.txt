@@ -50,12 +50,28 @@ target_link_options(z_generals PRIVATE "/NODEFAULTLIB:libci.lib")
 target_include_directories(z_generals PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_BINARY_DIR}/Code/Libraries
 )
 
 target_sources(z_generals PRIVATE
-    WinMain.cpp
-    WinMain.h
+    AppGlobals.cpp
+    AppGlobals.h
 )
+
+if(RTS_BUILD_OPTION_SDL3)
+    find_package(SDL3 REQUIRED)
+    find_package(SDL3_image REQUIRED)
+    target_link_libraries(z_generals PRIVATE SDL3::SDL3 $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image-shared>,SDL3_image::SDL3_image-shared,SDL3_image::SDL3_image-static>)
+    target_compile_definitions(z_generals PRIVATE RTS_HAS_SDL3)
+    target_sources(z_generals PRIVATE
+        main.cpp
+    )
+else()
+    target_sources(z_generals PRIVATE
+        WinMain.cpp
+        WinMain.h
+    )
+endif()
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     # VS2005 and later adds default manifest, we need to turn it off to prevent conflict with custom manifest
