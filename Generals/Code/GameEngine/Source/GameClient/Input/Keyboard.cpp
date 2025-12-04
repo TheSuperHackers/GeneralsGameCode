@@ -248,7 +248,7 @@ Bool Keyboard::checkKeyRepeat( void )
 					m_keyStatus[ index ].sequence = m_inputFrame;
 
 				// Set repeated key so it will repeat again after the interval
-				m_keyStatus[ key ].keyDownTimeMsec = now - (Keyboard::KEY_REPEAT_DELAY_MSEC - KEY_REPEAT_INTERVAL_MSEC);
+				m_keyStatus[ key ].keyDownTimeMsec = now - (Keyboard::KEY_REPEAT_DELAY_MSEC + KEY_REPEAT_INTERVAL_MSEC);
 
 				retVal = TRUE;
 				break;  // exit for key
