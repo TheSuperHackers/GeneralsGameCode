@@ -76,7 +76,7 @@ struct KeyboardIO
 	UnsignedByte	key;										// KeyDefType, key data
 	UnsignedByte	status;									// StatusType, above
 	UnsignedShort	state;									// KEY_STATE_* in KeyDefs.h
-	UnsignedInt		sequence;								// sequence info from DirectX used for order
+	UnsignedInt		keyDownTimeMsec;				// real-time in milliseconds when key went down
 
 };
 
@@ -86,7 +86,7 @@ struct KeyboardIO
 class Keyboard : public SubsystemInterface
 {
 
-	enum { KEY_REPEAT_DELAY = 10 };
+	enum { KEY_REPEAT_DELAY_MSEC = 333 };
 
 public:
 
@@ -131,7 +131,6 @@ protected:
 	Bool checkKeyRepeat( void );  ///< check for repeating keys
 	UnsignedByte getKeyStatusData( KeyDefType key );  ///< get key status
 	Bool getKeyStateBit( KeyDefType key, Int bit );  ///< get key state bit
-	UnsignedInt getKeySequenceData( KeyDefType key );  ///< get key sequence
 	void setKeyStateData( KeyDefType key, UnsignedByte data );  ///< get key state
 
 	UnsignedShort m_modifiers;
