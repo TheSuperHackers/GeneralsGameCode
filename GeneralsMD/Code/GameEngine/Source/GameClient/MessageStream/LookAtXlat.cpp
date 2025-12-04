@@ -281,8 +281,8 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			{
 				stopScrolling();
 			}
-		break;
-	}
+			break;
+		}
 
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_MIDDLE_BUTTON_DOWN:
