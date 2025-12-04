@@ -440,6 +440,11 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 		return AHSV_NoSound;
 	}
 
+	if (!eventToAdd->getUninterruptable()) {
+		if (!shouldPlayLocally(eventToAdd)) {
+			return AHSV_NotForLocal;
+		}
+	}
 
 	AudioEventRTS *audioEvent = MSGNEW("AudioEventRTS") AudioEventRTS(*eventToAdd);		// poolify
 	audioEvent->setPlayingHandle( allocateNewHandle() );
@@ -452,13 +457,6 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 		if (it->first == audioEvent->getEventName()) {
 			audioEvent->setVolume(it->second);
 			break;
-		}
-	}
-
-	if (!audioEvent->getUninterruptable()) {
-		if (!shouldPlayLocally(audioEvent)) {
-			releaseAudioEventRTS(audioEvent);
-			return AHSV_NotForLocal;
 		}
 	}
 
