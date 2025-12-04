@@ -286,7 +286,7 @@ struct LANMessage
 };
 #pragma pack(pop)
 
-static_assert(sizeof(LANMessage) <= MAX_PACKET_SIZE);
+static_assert(sizeof(LANMessage) <= MAX_PACKET_SIZE, "LANMessage struct cannot be larger than the max packet size");
 
 
 /**
