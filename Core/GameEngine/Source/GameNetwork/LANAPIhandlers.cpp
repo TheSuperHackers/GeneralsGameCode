@@ -36,9 +36,187 @@
 #include "Common/GlobalData.h"
 #include "Common/QuotedPrintable.h"
 #include "Common/UserPreferences.h"
+#include "Common/version.h"
 #include "GameNetwork/LANAPI.h"
 #include "GameNetwork/LANAPICallbacks.h"
 #include "GameClient/MapUtil.h"
+
+Bool LANAPI::setProductInfoStrings(const UnicodeString(&input)[4], WideChar(&output)[201])
+{
+	// concatenate strings separated by null terminators
+
+	size_t curSize = 0;
+	for (size_t i = 0; i < ARRAY_SIZE(input); ++i)
+	{
+		curSize += wcslcpy(output + curSize, input[i].str(), ARRAY_SIZE(output) - curSize) + 1;
+		if (curSize >= ARRAY_SIZE(output))
+		{
+			return FALSE;
+		}
+	}
+
+	return curSize <= ARRAY_SIZE(output);
+}
+
+Bool LANAPI::getProductInfoStrings(const WideChar(&input)[201], UnicodeString*(&output)[4])
+{
+	// extract strings separated by null terminators
+
+	for (size_t curSize = 0, i = 0; i < ARRAY_SIZE(output); ++i)
+	{
+		output[i]->set(input + curSize);
+
+		curSize += output[i]->getLength() + 1;
+		if (curSize >= ARRAY_SIZE(input))
+		{
+			for (size_t j = i + 1; j < ARRAY_SIZE(output); ++j)
+			{
+				output[j]->clear();
+			}
+
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
+void LANAPI::setProductInfoFromLocalData(GameSlot *slot)
+{
+	GameSlot::ProductInfo productInfo;
+	productInfo.flags = GameSlot::ProductInfo::COMMUNITY_PATCH;
+	productInfo.exeCRC = TheGlobalData->m_exeCRC;
+	productInfo.iniCRC = TheGlobalData->m_iniCRC;
+	productInfo.productTitle = TheVersion->getUnicodeProductTitle();
+	productInfo.productVersion = TheVersion->getUnicodeProductVersion();
+	productInfo.productAuthor = TheVersion->getUnicodeProductAuthor();
+	productInfo.gitShortHash = TheVersion->getUnicodeGitShortHash();
+
+	slot->setProductInfo(productInfo);
+}
+
+void LANAPI::setProductInfoFromMessage(LANMessage *msg, GameSlot *slot)
+{
+	GameSlot::ProductInfo productInfo;
+	productInfo.flags = msg->ProductInfo.flags;
+	productInfo.exeCRC = msg->ProductInfo.exeCRC;
+	productInfo.iniCRC = msg->ProductInfo.iniCRC;
+
+	UnicodeString *strings[] =
+	{
+		&productInfo.productTitle,
+		&productInfo.productVersion,
+		&productInfo.productAuthor,
+		&productInfo.gitShortHash
+	};
+	getProductInfoStrings(msg->ProductInfo.data, strings);
+
+	slot->setProductInfo(productInfo);
+}
+
+void LANAPI::sendProductInfoMessage(LANMessage::Type messageType, UnsignedInt senderIP)
+{
+	LANMessage msg;
+	fillInLANMessage(&msg);
+	msg.messageType = messageType;
+
+	msg.ProductInfo.flags = GameSlot::ProductInfo::COMMUNITY_PATCH;
+	msg.ProductInfo.exeCRC = TheGlobalData->m_exeCRC;
+	msg.ProductInfo.iniCRC = TheGlobalData->m_iniCRC;
+
+	const UnicodeString strings[] =
+	{
+		TheVersion->getUnicodeProductTitle(),
+		TheVersion->getUnicodeProductVersion(),
+		TheVersion->getUnicodeProductAuthor(),
+		TheVersion->getUnicodeGitShortHash()
+	};
+	setProductInfoStrings(strings, msg.ProductInfo.data);
+
+	sendMessage(&msg, senderIP);
+}
+
+void LANAPI::handleGameProductInfoRequest(LANMessage *msg, UnsignedInt senderIP)
+{
+	if (!AmIHost())
+		return;
+
+	// acknowledge as game host a request for product information by a player in the lobby
+	sendProductInfoMessage(LANMessage::MSG_GAME_RESPONSE_PRODUCT_INFO, senderIP);
+}
+
+void LANAPI::handleGameProductInfoResponse(LANMessage *msg, UnsignedInt senderIP)
+{
+	if (!m_inLobby)
+		return;
+
+	LANGameInfo *game = LookupGameByHost(senderIP);
+	if (!game)
+		return;
+
+	// a game host has acknowledged our request for product information
+	setProductInfoFromMessage(msg, game->getSlot(0));
+
+	// update game list with colored names
+	OnGameList(m_games);
+}
+
+void LANAPI::handleLobbyProductInfoRequest(LANMessage *msg, UnsignedInt senderIP)
+{
+	if (!m_inLobby)
+		return;
+
+	// acknowledge a request for product information by a fellow player in the lobby
+	sendProductInfoMessage(LANMessage::MSG_LOBBY_RESPONSE_PRODUCT_INFO, senderIP);
+}
+
+void LANAPI::handleLobbyProductInfoResponse(LANMessage *msg, UnsignedInt senderIP)
+{
+	if (!m_inLobby)
+		return;
+
+	LANPlayer *player = LookupPlayer(senderIP);
+	if (!player)
+		return;
+
+	// a fellow player in the lobby has acknowledged our request for product information
+	player->setProductInfoFlags(msg->ProductInfo.flags);
+
+	// update player list with colored names
+	OnPlayerList(m_lobbyPlayers);
+}
+
+void LANAPI::handleMatchProductInfoRequest(LANMessage *msg, UnsignedInt senderIP)
+{
+	if (!m_currentGame)
+		return;
+
+	// acknowledge a request for product information by a fellow player in the game
+	sendProductInfoMessage(LANMessage::MSG_MATCH_RESPONSE_PRODUCT_INFO, senderIP);
+
+	// treat request for product information as acknowledgement
+	handleMatchProductInfoResponse(msg, senderIP);
+}
+
+void LANAPI::handleMatchProductInfoResponse(LANMessage *msg, UnsignedInt senderIP)
+{
+	if (!m_currentGame)
+		return;
+
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if (!m_currentGame->getConstSlot(i)->isHuman() || m_currentGame->getIP(i) != senderIP)
+			continue;
+
+		// a fellow player in the game has acknowledged our request for product information
+		setProductInfoFromMessage(msg, m_currentGame->getSlot(i));
+
+		// update player list with colored names
+		lanUpdateSlotList();
+
+		break;
+	}
+}
 
 void LANAPI::handleRequestLocations( LANMessage *msg, UnsignedInt senderIP )
 {
@@ -139,6 +317,9 @@ void LANAPI::handleGameAnnounce( LANMessage *msg, UnsignedInt senderIP )
 			game = NEW LANGameInfo;
 			game->setName(UnicodeString(msg->GameInfo.gameName));
 			addGame(game);
+
+			// TheSuperHackers @feature Caball009 06/11/2025 Request a game host to send product information.
+			sendProductInfoMessage(LANMessage::MSG_GAME_REQUEST_PRODUCT_INFO, senderIP);
 		}
 		Bool success = ParseGameOptionsString(game,AsciiString(msg->GameInfo.options));
 		game->setGameInProgress(msg->GameInfo.inProgress);
@@ -165,6 +346,9 @@ void LANAPI::handleLobbyAnnounce( LANMessage *msg, UnsignedInt senderIP )
 	{
 		player = NEW LANPlayer;
 		player->setIP(senderIP);
+
+		// TheSuperHackers @feature Caball009 06/11/2025 Request a player in the lobby to send product information.
+		sendProductInfoMessage(LANMessage::MSG_LOBBY_REQUEST_PRODUCT_INFO, senderIP);
 	}
 	else
 	{
@@ -450,6 +634,10 @@ void LANAPI::handleJoinAccept( LANMessage *msg, UnsignedInt senderIP )
 				slot.setLastHeard(0);
 				slot.setLogin(m_userName);
 				slot.setHost(m_hostName);
+
+				// set product information for local game slot
+				setProductInfoFromLocalData(&slot);
+
 				m_currentGame->setSlot(pos, slot);
 
 				m_currentGame->getLANSlot(0)->setHost(msg->hostName);
@@ -464,6 +652,9 @@ void LANAPI::handleJoinAccept( LANMessage *msg, UnsignedInt senderIP )
 				OnGameJoin(RET_OK, m_currentGame);
 				//DEBUG_ASSERTCRASH(false, ("setting host to %ls@%ls", m_currentGame->getLANSlot(0)->getUser()->getLogin().str(),
 				//	m_currentGame->getLANSlot(0)->getUser()->getHost().str()));
+
+				// TheSuperHackers @feature Caball009 06/11/2025 Request players in the match to send product information.
+				sendProductInfoMessage(LANMessage::MSG_MATCH_REQUEST_PRODUCT_INFO, 0);
 			}
 			m_pendingAction = ACT_NONE;
 			m_expiration = 0;

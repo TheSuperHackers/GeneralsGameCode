@@ -423,6 +423,13 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 			}
 			if(slot->isHuman())
 			{
+				if (BitIsSet(myGame->getSlot(i)->getProductInfo().flags, GameSlot::ProductInfo::COMMUNITY_PATCH))
+				{
+					// TheSuperHackers @feature Caball009 06/11/2025 Set special color for players that are using the community patch.
+					GadgetComboBoxSetEnabledTextColors(comboPlayer[i], playerColorCommunityPatch, GameMakeColor(0, 0, 0, 255));
+					GadgetComboBoxSetDisabledTextColors(comboPlayer[i], playerGrayedColorCommunityPatch, GameMakeColor(0, 0, 0, 255));
+				}
+
 				UnicodeString newName = slot->getName();
 				UnicodeString oldName = GadgetComboBoxGetText(comboPlayer[i]);
 				if (comboPlayer[i] && newName.compare(oldName))

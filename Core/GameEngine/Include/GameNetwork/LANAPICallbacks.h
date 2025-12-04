@@ -68,6 +68,10 @@ extern const Color chatSystemColor;
 extern const Color chatSystemColor;
 extern const Color acceptTrueColor;
 extern const Color acceptFalseColor;
+extern const Color gameColorCommunityPatch;
+extern const Color gameInProgressColorCommunityPatch;
+extern const Color playerColorCommunityPatch;
+extern const Color playerGrayedColorCommunityPatch;
 
 
 void lanUpdateSlotList( void );
