@@ -54,7 +54,7 @@
  *========================================================================*/
 char * nstrdup(const char *str)
 {
-	if(str == 0) return 0;
+	if(str == nullptr) return nullptr;
 
 	// eventually should be replaced with NEW when we go to the wwnew stuff.
 	char *retval = W3DNEWARRAY char [strlen(str) + 1];

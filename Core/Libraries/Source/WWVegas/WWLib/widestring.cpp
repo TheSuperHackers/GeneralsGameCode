@@ -67,10 +67,10 @@ WCHAR *	WideStringClass::m_FreeTempPtr[MAX_TEMP_STRING] = {
 };
 
 WCHAR *	WideStringClass::m_ResTempPtr[MAX_TEMP_STRING] = {
-	NULL,
-	NULL,
-	NULL,
-	NULL
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr
 };
 
 
@@ -86,7 +86,7 @@ WideStringClass::Get_String (int length, bool is_temp)
 		m_Buffer = m_EmptyString;
 	} else {
 
-		WCHAR *string = NULL;
+		WCHAR *string = nullptr;
 
 		//
 		//	Should we attempt to use a temp buffer for this string?
@@ -103,14 +103,14 @@ WideStringClass::Get_String (int length, bool is_temp)
 			//	Try to find an available temporary buffer
 			//
 			for (int index = 0; index < MAX_TEMP_STRING; index ++) {
-				if (m_FreeTempPtr[index] != NULL) {
+				if (m_FreeTempPtr[index] != nullptr) {
 
 					//
 					//	Grab this unused buffer for our string
 					//
 					string					= m_FreeTempPtr[index];
 					m_ResTempPtr[index]	= m_FreeTempPtr[index];
-					m_FreeTempPtr[index]	= NULL;
+					m_FreeTempPtr[index]	= nullptr;
 					Set_Buffer_And_Allocated_Length (string, MAX_TEMP_LEN);
 
 					//
@@ -122,7 +122,7 @@ WideStringClass::Get_String (int length, bool is_temp)
 			}
 		}
 
-		if (string == NULL) {
+		if (string == nullptr) {
 			Set_Buffer_And_Allocated_Length (Allocate_Buffer (length), length);
 		}
 	}
@@ -212,7 +212,7 @@ WideStringClass::Free_String (void)
 				//
 				m_Buffer[0]				= 0;
 				m_FreeTempPtr[index]	= m_Buffer;
-				m_ResTempPtr[index]	= 0;
+				m_ResTempPtr[index]	= nullptr;
 				m_UsedTempStringCount --;
 				found = true;
 				break;
@@ -245,7 +245,7 @@ WideStringClass::Free_String (void)
 int _cdecl
 WideStringClass::Format_Args (const WCHAR *format, va_list arg_list )
 {
-	if (format == NULL) {
+	if (format == nullptr) {
 		return 0;
 	}
 
@@ -276,7 +276,7 @@ WideStringClass::Format_Args (const WCHAR *format, va_list arg_list )
 int _cdecl
 WideStringClass::Format (const WCHAR *format, ...)
 {
-	if (format == NULL) {
+	if (format == nullptr) {
 		return 0;
 	}
 
@@ -319,11 +319,11 @@ WideStringClass::Release_Resources (void)
 ///////////////////////////////////////////////////////////////////
 bool WideStringClass::Convert_From (const char *text)
 {
-	if (text != NULL) {
+	if (text != nullptr) {
 
 		int length;
 
-		length = MultiByteToWideChar (CP_ACP, 0, text, -1, NULL, 0);
+		length = MultiByteToWideChar (CP_ACP, 0, text, -1, nullptr, 0);
 		if (length > 0) {
 
 			Uninitialised_Grow (length);

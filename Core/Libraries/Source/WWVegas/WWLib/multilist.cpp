@@ -168,7 +168,7 @@ bool GenericMultiListClass::Internal_Add_After(MultiListObjectClass * obj,const 
 		existing_node = existing_node->NextList;
 	}
 
-	if (existing_node == NULL) {
+	if (existing_node == nullptr) {
 		return false;	// he's not in this list!
 	}
 
@@ -194,14 +194,14 @@ bool GenericMultiListClass::Internal_Remove(MultiListObjectClass *obj)
 {
 	// find the list node in this object that belongs to this list
 	MultiListNodeClass * lnode = obj->Get_List_Node();
-	MultiListNodeClass * prevlnode = 0;
+	MultiListNodeClass * prevlnode = nullptr;
 
 	while ((lnode) && (lnode->List != this)) {
 		prevlnode = lnode;
 		lnode = lnode->NextList;
 	}
 
-	if (lnode == 0) {
+	if (lnode == nullptr) {
 		return false;
 	}
 
@@ -227,7 +227,7 @@ bool GenericMultiListClass::Internal_Remove(MultiListObjectClass *obj)
 MultiListObjectClass * GenericMultiListClass::Internal_Remove_List_Head(void)
 {
 	if (Head.Next == &Head) {
-		return 0;					// no more objects
+		return nullptr;					// no more objects
 	}
 
 	MultiListNodeClass * node = Head.Next;

@@ -57,7 +57,7 @@ void __cdecl ThreadClass::Internal_Thread_Function(void* params)
 #ifdef _WIN32
 	Register_Thread_ID(tc->ThreadID, tc->ThreadName);
 
-	if (tc->ExceptionHandler != NULL) {
+	if (tc->ExceptionHandler != nullptr) {
 		__try {
 			tc->Thread_Function();
 		} __except(tc->ExceptionHandler(GetExceptionCode(), GetExceptionInformation())) {};
@@ -126,7 +126,7 @@ void ThreadClass::Sleep_Ms(unsigned ms)
 }
 
 #ifndef _UNIX
-HANDLE test_event = ::CreateEvent (NULL, FALSE, FALSE, "");
+HANDLE test_event = ::CreateEvent (nullptr, FALSE, FALSE, "");
 #endif
 
 void ThreadClass::Switch_Thread()
