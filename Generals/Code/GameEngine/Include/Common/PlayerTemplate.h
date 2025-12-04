@@ -74,35 +74,35 @@ public:
 
 	PlayerTemplate();
 
-	inline void setNameKey(NameKeyType namekey) { m_nameKey = namekey; }
+	void setNameKey(NameKeyType namekey) { m_nameKey = namekey; }
 
-	inline NameKeyType getNameKey() const { DEBUG_ASSERTCRASH(m_nameKey != NAMEKEY_INVALID, ("bad namekey")); return m_nameKey; }
-	inline AsciiString getName() const { return KEYNAME(m_nameKey); }
+	NameKeyType getNameKey() const { DEBUG_ASSERTCRASH(m_nameKey != NAMEKEY_INVALID, ("bad namekey")); return m_nameKey; }
+	AsciiString getName() const { return KEYNAME(m_nameKey); }
 
-	inline UnicodeString getDisplayName() const { return m_displayName; }
+	UnicodeString getDisplayName() const { return m_displayName; }
 
-	inline AsciiString getSide() const { return m_side; }
+	AsciiString getSide() const { return m_side; }
 
 	/// return the tech tree for the player.
-	inline const Handicap *getHandicap() const { return &m_handicap; }
+	const Handicap *getHandicap() const { return &m_handicap; }
 
 	/// return the money for the player.
-	inline const Money *getMoney() const { return &m_money; }
+	const Money *getMoney() const { return &m_money; }
 
-	inline const RGBColor* getPreferredColor() const { return &m_preferredColor; }
+	const RGBColor* getPreferredColor() const { return &m_preferredColor; }
 
-	inline AsciiString getStartingBuilding( void ) const { return m_startingBuilding; }
+	AsciiString getStartingBuilding( void ) const { return m_startingBuilding; }
 	AsciiString getStartingUnit( Int i ) const;
 
-	inline const ProductionChangeMap& getProductionCostChanges() const { return m_productionCostChanges; }
-	inline const ProductionChangeMap& getProductionTimeChanges() const { return m_productionTimeChanges; }
-	inline const ProductionVeterancyMap& getProductionVeterancyLevels() const { return m_productionVeterancyLevels; }
-	inline Bool isObserver() const { return m_observer; }
-	inline Bool isPlayableSide() const { return m_playableSide; }
+	const ProductionChangeMap& getProductionCostChanges() const { return m_productionCostChanges; }
+	const ProductionChangeMap& getProductionTimeChanges() const { return m_productionTimeChanges; }
+	const ProductionVeterancyMap& getProductionVeterancyLevels() const { return m_productionVeterancyLevels; }
+	Bool isObserver() const { return m_observer; }
+	Bool isPlayableSide() const { return m_playableSide; }
 
-	inline AsciiString getScoreScreen (void ) const { return m_scoreScreenImage;	}
-	inline AsciiString getLoadScreen (void ) const { return m_loadScreenImage;	}
-	inline AsciiString getBeaconTemplate( void ) const { return m_beaconTemplate; }
+	AsciiString getScoreScreen (void ) const { return m_scoreScreenImage;	}
+	AsciiString getLoadScreen (void ) const { return m_loadScreenImage;	}
+	AsciiString getBeaconTemplate( void ) const { return m_beaconTemplate; }
 
 	const Image *getHeadWaterMarkImage( void ) const;
 	const Image *getFlagWaterMarkImage( void ) const;
@@ -111,7 +111,7 @@ public:
 	//const Image *getHiliteImage( void ) const;
 	//const Image *getPushedImage( void ) const;
 	const Image *getSideIconImage( void ) const;
-	inline const AsciiString getTooltip() const { return m_tooltip; }
+	const AsciiString getTooltip() const { return m_tooltip; }
 
 	const ScienceVec& getIntrinsicSciences() const { return m_intrinsicSciences; }
 	Int getIntrinsicSciencePurchasePoints() const { return m_intrinsicSPP; }
@@ -198,7 +198,7 @@ public:
 
 	const PlayerTemplate* getNthPlayerTemplate(Int i) const;
 	const PlayerTemplate* findPlayerTemplate(NameKeyType namekey) const;
-	inline Int getPlayerTemplateCount() const { return m_playerTemplates.size(); }
+	Int getPlayerTemplateCount() const { return m_playerTemplates.size(); }
 
 
 	// This function will fill outStringList with all the sides found in all the templates

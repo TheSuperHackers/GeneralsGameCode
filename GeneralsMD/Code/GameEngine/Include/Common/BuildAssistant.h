@@ -174,7 +174,7 @@ public:
 																							Object *builderObject );
 
 	/// return the "scratch pad" array that can be used to create a line of build locations
-	virtual inline Coord3D *getBuildLocations( void ) { return m_buildPositions; }
+	virtual Coord3D *getBuildLocations( void ) { return m_buildPositions; }
 
 	/// is the template a line build object, like a wall
 	virtual Bool isLineBuildTemplate( const ThingTemplate *tTemplate );

@@ -139,7 +139,7 @@ public:
 	void shutdownComplete( WindowLayout *layout, Bool impendingPush = FALSE );	///< layout has completed shutdown
 
 	WindowLayout *findScreenByFilename( AsciiString filename );		///< find screen
-	inline Bool isShellActive( void ) { return m_isShellActive; }  ///<	Returns true if the shell is active
+	Bool isShellActive( void ) { return m_isShellActive; }  ///<	Returns true if the shell is active
 
 	void registerWithAnimateManager( GameWindow *win, AnimTypes animType, Bool needsToFinish, UnsignedInt delayMS = 0);
 	Bool isAnimFinished( void );

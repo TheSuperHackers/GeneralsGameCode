@@ -69,63 +69,63 @@ public:
 	TerrainRoadType( void );
 	// destructor prototypes defined by memory pool object
 
-	inline AsciiString getName( void ) { return m_name; }
-	inline AsciiString getTexture( void ) { return m_texture; }
-	inline Bool isBridge( void ) { return m_isBridge; }
-	inline UnsignedInt getID( void ) { return m_id; }
+	AsciiString getName( void ) { return m_name; }
+	AsciiString getTexture( void ) { return m_texture; }
+	Bool isBridge( void ) { return m_isBridge; }
+	UnsignedInt getID( void ) { return m_id; }
 
-	inline Real getRoadWidth( void ) { return m_roadWidth; }
-	inline Real getRoadWidthInTexture( void ) { return m_roadWidthInTexture; }
+	Real getRoadWidth( void ) { return m_roadWidth; }
+	Real getRoadWidthInTexture( void ) { return m_roadWidthInTexture; }
 
-	inline Real getBridgeScale( void ) { return m_bridgeScale; }
-	inline AsciiString getScaffoldObjectName( void ) { return m_scaffoldObjectName; }
-	inline AsciiString getScaffoldSupportObjectName( void ) { return m_scaffoldSupportObjectName; }
-	inline RGBColor getRadarColor( void ) { return m_radarColor; }
-	inline AsciiString getBridgeModel( void ) { return m_bridgeModelName; }
-	inline AsciiString getBridgeModelNameDamaged( void ) { return m_bridgeModelNameDamaged; }
-	inline AsciiString getBridgeModelNameReallyDamaged( void ) { return m_bridgeModelNameReallyDamaged; }
-	inline AsciiString getBridgeModelNameBroken( void ) { return m_bridgeModelNameBroken; }
-	inline AsciiString getTextureDamaged( void ) { return m_textureDamaged; }
-	inline AsciiString getTextureReallyDamaged( void ) { return m_textureReallyDamaged; }
-	inline AsciiString getTextureBroken( void ) { return m_textureBroken; }
-	inline AsciiString getTowerObjectName( BridgeTowerType tower ) { return m_towerObjectName[ tower ]; }
-	inline AsciiString getDamageToSoundString( BodyDamageType state ) { return m_damageToSoundString[ state ]; }
-	inline AsciiString getDamageToOCLString( BodyDamageType state, Int index ) { return m_damageToOCLString[ state ][ index ]; }
-	inline AsciiString getDamageToFXString( BodyDamageType state, Int index ) { return m_damageToFXString[ state ][ index ]; }
-	inline AsciiString getRepairedToSoundString( BodyDamageType state ) { return m_repairedToSoundString[ state ]; }
-	inline AsciiString getRepairedToOCLString( BodyDamageType state, Int index ) { return m_repairedToOCLString[ state ][ index ]; }
-	inline AsciiString getRepairedToFXString( BodyDamageType state, Int index ) { return m_repairedToFXString[ state ][ index ]; }
-	inline Real getTransitionEffectsHeight( void ) { return m_transitionEffectsHeight; }
-	inline Int getNumFXPerType( void ) { return m_numFXPerType; }
+	Real getBridgeScale( void ) { return m_bridgeScale; }
+	AsciiString getScaffoldObjectName( void ) { return m_scaffoldObjectName; }
+	AsciiString getScaffoldSupportObjectName( void ) { return m_scaffoldSupportObjectName; }
+	RGBColor getRadarColor( void ) { return m_radarColor; }
+	AsciiString getBridgeModel( void ) { return m_bridgeModelName; }
+	AsciiString getBridgeModelNameDamaged( void ) { return m_bridgeModelNameDamaged; }
+	AsciiString getBridgeModelNameReallyDamaged( void ) { return m_bridgeModelNameReallyDamaged; }
+	AsciiString getBridgeModelNameBroken( void ) { return m_bridgeModelNameBroken; }
+	AsciiString getTextureDamaged( void ) { return m_textureDamaged; }
+	AsciiString getTextureReallyDamaged( void ) { return m_textureReallyDamaged; }
+	AsciiString getTextureBroken( void ) { return m_textureBroken; }
+	AsciiString getTowerObjectName( BridgeTowerType tower ) { return m_towerObjectName[ tower ]; }
+	AsciiString getDamageToSoundString( BodyDamageType state ) { return m_damageToSoundString[ state ]; }
+	AsciiString getDamageToOCLString( BodyDamageType state, Int index ) { return m_damageToOCLString[ state ][ index ]; }
+	AsciiString getDamageToFXString( BodyDamageType state, Int index ) { return m_damageToFXString[ state ][ index ]; }
+	AsciiString getRepairedToSoundString( BodyDamageType state ) { return m_repairedToSoundString[ state ]; }
+	AsciiString getRepairedToOCLString( BodyDamageType state, Int index ) { return m_repairedToOCLString[ state ][ index ]; }
+	AsciiString getRepairedToFXString( BodyDamageType state, Int index ) { return m_repairedToFXString[ state ][ index ]; }
+	Real getTransitionEffectsHeight( void ) { return m_transitionEffectsHeight; }
+	Int getNumFXPerType( void ) { return m_numFXPerType; }
 
 	// friend access methods to be used by the road collection only!
-	inline void friend_setName( AsciiString name ) { m_name = name; }
-	inline void friend_setTexture( AsciiString texture ) { m_texture = texture; }
-	inline void friend_setBridge( Bool isBridge ) { m_isBridge = isBridge; }
-	inline void friend_setID( UnsignedInt id ) { m_id = id; }
-	inline void friend_setNext( TerrainRoadType *next ) { m_next = next; }
-	inline TerrainRoadType *friend_getNext( void ) { return m_next; }
-	inline void friend_setRoadWidth( Real width ) { m_roadWidth = width; }
-	inline void friend_setRoadWidthInTexture( Real width ) { m_roadWidthInTexture = width; }
-	inline void friend_setBridgeScale( Real scale ) { m_bridgeScale = scale; }
-	inline void friend_setScaffoldObjectName( AsciiString name ) { m_scaffoldObjectName = name; }
-	inline void friend_setScaffoldSupportObjectName( AsciiString name ) { m_scaffoldSupportObjectName = name; }
-	inline void friend_setBridgeModelName( AsciiString name ) { m_bridgeModelName = name; }
-	inline void friend_setBridgeModelNameDamaged( AsciiString name ) { m_bridgeModelNameDamaged = name; }
-	inline void friend_setBridgeModelNameReallyDamaged( AsciiString name ) { m_bridgeModelNameReallyDamaged = name; }
-	inline void friend_setBridgeModelNameBroken( AsciiString name ) { m_bridgeModelNameBroken = name; }
-	inline void friend_setTextureDamaged( AsciiString texture ) { m_textureDamaged = texture; }
-	inline void friend_setTextureReallyDamaged( AsciiString texture ) { m_textureReallyDamaged = texture; }
-	inline void friend_setTextureBroken( AsciiString texture ) { m_textureBroken = texture; }
-	inline void friend_setTowerObjectName( BridgeTowerType tower, AsciiString name ) { m_towerObjectName[ tower ] = name; }
-	inline void friend_setDamageToSoundString( BodyDamageType state, AsciiString s ) { m_damageToSoundString[ state ] = s; }
-	inline void friend_setDamageToOCLString( BodyDamageType state, Int index, AsciiString s ) { m_damageToOCLString[ state ][ index ] = s; }
-	inline void friend_setDamageToFXString( BodyDamageType state, Int index, AsciiString s ) { m_damageToFXString[ state ][ index ] = s; }
-	inline void friend_setRepairedToSoundString( BodyDamageType state, AsciiString s ) { m_repairedToSoundString[ state ] = s; }
-	inline void friend_setRepairedToOCLString( BodyDamageType state, Int index, AsciiString s ) { m_repairedToOCLString[ state ][ index ] = s; }
-	inline void friend_setRepairedToFXString( BodyDamageType state, Int index, AsciiString s ) { m_repairedToFXString[ state ][ index ] = s; }
-	inline void friend_setTransitionEffectsHeight( Real height ) { m_transitionEffectsHeight = height; }
-	inline void friend_setNumFXPerType( Int num ) { m_numFXPerType = num; }
+	void friend_setName( AsciiString name ) { m_name = name; }
+	void friend_setTexture( AsciiString texture ) { m_texture = texture; }
+	void friend_setBridge( Bool isBridge ) { m_isBridge = isBridge; }
+	void friend_setID( UnsignedInt id ) { m_id = id; }
+	void friend_setNext( TerrainRoadType *next ) { m_next = next; }
+	TerrainRoadType *friend_getNext( void ) { return m_next; }
+	void friend_setRoadWidth( Real width ) { m_roadWidth = width; }
+	void friend_setRoadWidthInTexture( Real width ) { m_roadWidthInTexture = width; }
+	void friend_setBridgeScale( Real scale ) { m_bridgeScale = scale; }
+	void friend_setScaffoldObjectName( AsciiString name ) { m_scaffoldObjectName = name; }
+	void friend_setScaffoldSupportObjectName( AsciiString name ) { m_scaffoldSupportObjectName = name; }
+	void friend_setBridgeModelName( AsciiString name ) { m_bridgeModelName = name; }
+	void friend_setBridgeModelNameDamaged( AsciiString name ) { m_bridgeModelNameDamaged = name; }
+	void friend_setBridgeModelNameReallyDamaged( AsciiString name ) { m_bridgeModelNameReallyDamaged = name; }
+	void friend_setBridgeModelNameBroken( AsciiString name ) { m_bridgeModelNameBroken = name; }
+	void friend_setTextureDamaged( AsciiString texture ) { m_textureDamaged = texture; }
+	void friend_setTextureReallyDamaged( AsciiString texture ) { m_textureReallyDamaged = texture; }
+	void friend_setTextureBroken( AsciiString texture ) { m_textureBroken = texture; }
+	void friend_setTowerObjectName( BridgeTowerType tower, AsciiString name ) { m_towerObjectName[ tower ] = name; }
+	void friend_setDamageToSoundString( BodyDamageType state, AsciiString s ) { m_damageToSoundString[ state ] = s; }
+	void friend_setDamageToOCLString( BodyDamageType state, Int index, AsciiString s ) { m_damageToOCLString[ state ][ index ] = s; }
+	void friend_setDamageToFXString( BodyDamageType state, Int index, AsciiString s ) { m_damageToFXString[ state ][ index ] = s; }
+	void friend_setRepairedToSoundString( BodyDamageType state, AsciiString s ) { m_repairedToSoundString[ state ] = s; }
+	void friend_setRepairedToOCLString( BodyDamageType state, Int index, AsciiString s ) { m_repairedToOCLString[ state ][ index ] = s; }
+	void friend_setRepairedToFXString( BodyDamageType state, Int index, AsciiString s ) { m_repairedToFXString[ state ][ index ] = s; }
+	void friend_setTransitionEffectsHeight( Real height ) { m_transitionEffectsHeight = height; }
+	void friend_setNumFXPerType( Int num ) { m_numFXPerType = num; }
 
 	/// get the parsing table for INI
 	const FieldParse *getRoadFieldParse( void ) { return m_terrainRoadFieldParseTable; }

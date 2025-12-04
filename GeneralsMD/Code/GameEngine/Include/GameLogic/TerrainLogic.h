@@ -194,16 +194,16 @@ public:
 	Bool isPointOnBridge(const Coord3D *pLoc);
 	Drawable *pickBridge(const Vector3 &from, const Vector3 &to, Vector3 *pos);
 	void updateDamageState(void); ///< Updates a bridge's damage info.
-	inline const BridgeInfo *peekBridgeInfo(void) const {return &m_bridgeInfo;}
-	inline PathfindLayerEnum getLayer(void) const {return m_layer;}
-	inline void setLayer(PathfindLayerEnum layer) {m_layer = layer;}
+	const BridgeInfo *peekBridgeInfo(void) const {return &m_bridgeInfo;}
+	PathfindLayerEnum getLayer(void) const {return m_layer;}
+	void setLayer(PathfindLayerEnum layer) {m_layer = layer;}
 	const Region2D *getBounds(void) const {return &m_bounds;}
 	Bool isCellOnEnd(const Region2D *cell);	 // Is pathfind cell on the sides of the bridge
 	Bool isCellOnSide(const Region2D *cell); // Is pathfind cell on the end of the bridge
 	Bool isCellEntryPoint(const Region2D *cell); // Is pathfind cell an entry point to the bridge
 
-	inline void setBridgeObjectID( ObjectID id ) { m_bridgeInfo.bridgeObjectID = id; }
-	inline void setTowerObjectID( ObjectID id, BridgeTowerType which ) { m_bridgeInfo.towerObjectID[ which ] = id; }
+	void setBridgeObjectID( ObjectID id ) { m_bridgeInfo.bridgeObjectID = id; }
+	void setTowerObjectID( ObjectID id, BridgeTowerType which ) { m_bridgeInfo.towerObjectID[ which ] = id; }
 
 };
 

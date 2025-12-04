@@ -189,7 +189,7 @@ public:
 
 	virtual NameKeyType getModuleNameKey() const = 0;
 
-	inline NameKeyType getModuleTagNameKey() const { return getModuleData()->getModuleTagNameKey(); }
+	NameKeyType getModuleTagNameKey() const { return getModuleData()->getModuleTagNameKey(); }
 
 	/** this is called after all the Modules for a given Thing are created; it
 		allows Modules to resolve any inter-Module dependencies.
@@ -211,7 +211,7 @@ public:
 
 protected:
 
-	inline const ModuleData* getModuleData() const { return m_moduleData; }
+	const ModuleData* getModuleData() const { return m_moduleData; }
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
@@ -248,8 +248,8 @@ public:
 
 protected:
 
-	inline Object *getObject() { return m_object; }
-	inline const Object *getObject() const { return m_object; }
+	Object *getObject() { return m_object; }
+	const Object *getObject() const { return m_object; }
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
@@ -291,8 +291,8 @@ public:
 
 protected:
 
-	inline Drawable *getDrawable() { return m_drawable; }
-	inline const Drawable *getDrawable() const { return m_drawable; }
+	Drawable *getDrawable() { return m_drawable; }
+	const Drawable *getDrawable() const { return m_drawable; }
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );

@@ -88,7 +88,7 @@ static sint32 Get_Day(int month, int day, int year)
 static bit8 Get_Date_From_Day(sint32 days, OUT sint32 &year, OUT sint32 &yday)
 {
   //register long int rem;
-  register long int y;
+  long int y;
   //register const unsigned short int *ip;
 
   if (days <= 365)

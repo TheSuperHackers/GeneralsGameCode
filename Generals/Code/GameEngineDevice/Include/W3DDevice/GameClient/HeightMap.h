@@ -134,7 +134,7 @@ public:
 	///allocate resources needed to render heightmap
 	int initHeightData(Int width, Int height, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator);
 	Int freeMapResources(void);	///< free resources used to render heightmap
-	inline UnsignedByte getClipHeight(Int x, Int y) const
+	UnsignedByte getClipHeight(Int x, Int y) const
 	{
 		Int xextent = m_map->getXExtent() - 1;
 		Int yextent = m_map->getYExtent() - 1;

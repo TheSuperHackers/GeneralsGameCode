@@ -205,7 +205,7 @@ public:
 	/*
 	** CRC, used by the loading code to build a list of the unique materials
 	*/
-	inline unsigned long Get_CRC(void) const
+	unsigned long Get_CRC(void) const
 	{
 		if (CRCDirty) {
 			CRC=Compute_CRC();

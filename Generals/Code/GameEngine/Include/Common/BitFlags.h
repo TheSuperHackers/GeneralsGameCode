@@ -63,29 +63,29 @@ public:
 		kInit = 0
 	};
 
-	inline BitFlags()
+	BitFlags()
 	{
 	}
 
-	inline BitFlags(BogusInitType k, Int idx1)
+	BitFlags(BogusInitType k, Int idx1)
 	{
 		m_bits.set(idx1);
 	}
 
-	inline BitFlags(BogusInitType k, Int idx1, Int idx2)
+	BitFlags(BogusInitType k, Int idx1, Int idx2)
 	{
 		m_bits.set(idx1);
 		m_bits.set(idx2);
 	}
 
-	inline BitFlags(BogusInitType k, Int idx1, Int idx2, Int idx3)
+	BitFlags(BogusInitType k, Int idx1, Int idx2, Int idx3)
 	{
 		m_bits.set(idx1);
 		m_bits.set(idx2);
 		m_bits.set(idx3);
 	}
 
-	inline BitFlags(BogusInitType k, Int idx1, Int idx2, Int idx3, Int idx4)
+	BitFlags(BogusInitType k, Int idx1, Int idx2, Int idx3, Int idx4)
 	{
 		m_bits.set(idx1);
 		m_bits.set(idx2);
@@ -93,7 +93,7 @@ public:
 		m_bits.set(idx4);
 	}
 
-	inline BitFlags(BogusInitType k, Int idx1, Int idx2, Int idx3, Int idx4, Int idx5)
+	BitFlags(BogusInitType k, Int idx1, Int idx2, Int idx3, Int idx4, Int idx5)
 	{
 		m_bits.set(idx1);
 		m_bits.set(idx2);
@@ -102,7 +102,7 @@ public:
 		m_bits.set(idx5);
 	}
 
-	inline BitFlags(BogusInitType k,
+	BitFlags(BogusInitType k,
 										Int idx1,
 										Int idx2,
 										Int idx3,
@@ -131,28 +131,28 @@ public:
 		m_bits.set(idx12);
 	}
 
-	inline Bool operator==(const BitFlags& that) const
+	Bool operator==(const BitFlags& that) const
 	{
 		return this->m_bits == that.m_bits;
 	}
 
-	inline Bool operator!=(const BitFlags& that) const
+	Bool operator!=(const BitFlags& that) const
 	{
 		return this->m_bits != that.m_bits;
 	}
 
-	inline void set(Int i, Int val = 1)
+	void set(Int i, Int val = 1)
 	{
 		m_bits.set(i, val);
 	}
 
-	inline Bool test(Int i) const
+	Bool test(Int i) const
 	{
 		return m_bits.test(i);
 	}
 
 	//Tests for any bits that are set in both.
-	inline Bool testForAny( const BitFlags& that ) const
+	Bool testForAny( const BitFlags& that ) const
 	{
 		BitFlags tmp = *this;
 		tmp.m_bits &= that.m_bits;
@@ -160,7 +160,7 @@ public:
 	}
 
 	//All argument bits must be set in our bits too in order to return TRUE
-	inline Bool testForAll( const BitFlags& that ) const
+	Bool testForAll( const BitFlags& that ) const
 	{
 		DEBUG_ASSERTCRASH( that.any(), ("BitFlags::testForAll is always true if you ask about zero flags.  Did you mean that?") );
 
@@ -171,46 +171,46 @@ public:
 	}
 
 	//None of the argument bits must be set in our bits in order to return TRUE
-	inline Bool testForNone( const BitFlags& that ) const
+	Bool testForNone( const BitFlags& that ) const
 	{
 		BitFlags tmp = *this;
 		tmp.m_bits &= that.m_bits;
 		return !tmp.m_bits.any();
 	}
 
-	inline Int size() const
+	Int size() const
 	{
 		return m_bits.size();
 	}
 
-	inline Int count() const
+	Int count() const
 	{
 		return m_bits.count();
 	}
 
-	inline Bool any() const
+	Bool any() const
 	{
 		return m_bits.any();
 	}
 
-	inline void flip()
+	void flip()
 	{
 		m_bits.flip();
 	}
 
-	inline void clear()
+	void clear()
 	{
 		m_bits.reset();
 	}
 
-	inline Int countIntersection(const BitFlags& that) const
+	Int countIntersection(const BitFlags& that) const
 	{
 		BitFlags tmp = *this;
 		tmp.m_bits &= that.m_bits;
 		return tmp.m_bits.count();
 	}
 
-	inline Int countInverseIntersection(const BitFlags& that) const
+	Int countInverseIntersection(const BitFlags& that) const
 	{
 		BitFlags tmp = *this;
 		tmp.m_bits.flip();
@@ -218,7 +218,7 @@ public:
 		return tmp.m_bits.count();
 	}
 
-	inline Bool anyIntersectionWith(const BitFlags& that) const
+	Bool anyIntersectionWith(const BitFlags& that) const
 	{
 		/// @todo srj -- improve me.
 		BitFlags tmp = that;
@@ -226,23 +226,23 @@ public:
 		return tmp.m_bits.any();
 	}
 
-	inline void clear(const BitFlags& clr)
+	void clear(const BitFlags& clr)
 	{
 		m_bits &= ~clr.m_bits;
 	}
 
-	inline void set(const BitFlags& set)
+	void set(const BitFlags& set)
 	{
 		m_bits |= set.m_bits;
 	}
 
-	inline void clearAndSet(const BitFlags& clr, const BitFlags& set)
+	void clearAndSet(const BitFlags& clr, const BitFlags& set)
 	{
 		m_bits &= ~clr.m_bits;
 		m_bits |= set.m_bits;
 	}
 
-	inline Bool testSetAndClear(const BitFlags& mustBeSet, const BitFlags& mustBeClear) const
+	Bool testSetAndClear(const BitFlags& mustBeSet, const BitFlags& mustBeClear) const
 	{
 		/// @todo srj -- improve me.
 		BitFlags tmp = *this;

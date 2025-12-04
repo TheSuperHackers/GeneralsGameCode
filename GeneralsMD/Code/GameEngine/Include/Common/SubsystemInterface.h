@@ -128,8 +128,8 @@ protected:
 	Bool m_dumpUpdate;
 	Bool m_dumpDraw;
 #else
-	inline void UPDATE(void) {update();}
-	inline void DRAW(void) {draw();}
+	void UPDATE(void) {update();}
+	void DRAW(void) {draw();}
 #endif
 protected:
 	AsciiString m_name;

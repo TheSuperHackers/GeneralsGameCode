@@ -84,7 +84,7 @@ public:
 
 	unsigned							Get_Vertex_Offset(void)	{ return vertex_offset; }
 	unsigned							Get_Index_Offset(void)	{ return index_offset; }
-	inline unsigned						Get_Pass(void)	{ return pass; }
+	unsigned						Get_Pass(void)	{ return pass; }
 
 	MeshModelClass*				Get_Mesh_Model_Class() { return mmc; }
 	DX8TextureCategoryClass*	Get_Texture_Category() { return texture_category; }

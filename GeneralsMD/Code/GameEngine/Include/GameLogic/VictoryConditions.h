@@ -55,8 +55,8 @@ public:
 	virtual void reset( void ) = 0;
 	virtual void update( void ) = 0;
 
-	inline void setVictoryConditions( Int victoryConditions ) { m_victoryConditions = victoryConditions; }
-	inline Int getVictoryConditions( void ) { return m_victoryConditions; }
+	void setVictoryConditions( Int victoryConditions ) { m_victoryConditions = victoryConditions; }
+	Int getVictoryConditions( void ) { return m_victoryConditions; }
 
 	virtual Bool hasAchievedVictory(Player *player) = 0;					///< has a specific player and his allies won?
 	virtual Bool hasBeenDefeated(Player *player) = 0;							///< has a specific player and his allies lost?

@@ -202,9 +202,9 @@ public:
 	virtual Bool SetLocalIP( UnsignedInt localIP );																		///< For multiple NIC machines
 	virtual void SetLocalIP( AsciiString localIP );																		///< For multiple NIC machines
 	virtual Bool AmIHost( void );																											///< Am I hosting a game?
-	virtual inline UnicodeString GetMyName( void ) { return m_name; }                 ///< What's my name?
-	virtual inline LANGameInfo* GetMyGame( void ) { return m_currentGame; }					      ///< What's my Game?
-	virtual inline UnsignedInt GetLocalIP( void ) { return m_localIP; }								///< What's my IP?
+	virtual UnicodeString GetMyName( void ) { return m_name; }                 ///< What's my name?
+	virtual LANGameInfo* GetMyGame( void ) { return m_currentGame; }					      ///< What's my Game?
+	virtual UnsignedInt GetLocalIP( void ) { return m_localIP; }								///< What's my IP?
 	virtual void fillInLANMessage( LANMessage *msg );																	///< Fill in default params
 	virtual void checkMOTD( void );
 protected:

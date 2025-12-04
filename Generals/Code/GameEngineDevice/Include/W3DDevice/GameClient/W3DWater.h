@@ -118,7 +118,7 @@ public:
 	void setGridResolution(Real gridCellsX, Real gridCellsY, Real cellSize);	///<grid resolution and spacing
 	void getGridResolution(Real *gridCellsX, Real *gridCellsY, Real *cellSize);  ///<get grid resolution params
 	inline void setGridVertexHeight(Int x, Int y, Real value);
-	inline void getGridVertexHeight(Int x, Int y, Real *value)
+	void getGridVertexHeight(Int x, Int y, Real *value)
 	{	if (m_meshData)	*value=m_meshData[(y+1)*(m_gridCellsX+1+2)+x+1].height+ Get_Position().Z;}
 	inline Bool worldToGridSpace(Real worldX, Real worldY, Real &gridX, Real &gridY);	///<convert from world coordinates to grid's local coordinate system.
 

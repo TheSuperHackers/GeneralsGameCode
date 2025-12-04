@@ -85,7 +85,7 @@ protected:
 	void drawContours(CDC *pDc, CRgn *pRgn, Int minX, Int maxX, Int minY, Int maxY);
 
 	/// Compound boolean expression.
-	static inline Bool isBetween(Int cur, Int first, Int second) {
+	static Bool isBetween(Int cur, Int first, Int second) {
 		Bool is = false;
 		if (cur>=first && cur<=second) is = true;
 		if (cur<=first && cur>=second) is = true;

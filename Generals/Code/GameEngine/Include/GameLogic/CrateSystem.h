@@ -60,7 +60,7 @@ public:
 	void setName( AsciiString name ) { m_name = name; }
 	AsciiString getName(){ return m_name; }
 
-	inline const FieldParse *getFieldParse() const { return TheCrateTemplateFieldParseTable; }
+	const FieldParse *getFieldParse() const { return TheCrateTemplateFieldParseTable; }
 	static const FieldParse TheCrateTemplateFieldParseTable[];		///< the parse table for INI definition
 
 	static void parseCrateCreationEntry( INI* ini, void *instance, void *store, const void* /*userData*/ );

@@ -206,7 +206,7 @@ public:
 	void setIgnoreCollisionsWith(const Object* obj);
 	Bool isIgnoringCollisionsWith(ObjectID id) const;
 
-	inline Bool getAllowCollideForce() const { return getFlag(ALLOW_COLLIDE_FORCE); }
+	Bool getAllowCollideForce() const { return getFlag(ALLOW_COLLIDE_FORCE); }
 
 protected:
 
@@ -282,8 +282,8 @@ private:
 
 	Bool												m_originalAllowBounce;		///< orignal state of allow bounce
 
-	inline void setFlag(PhysicsFlagsType f, Bool set) { if (set) m_flags |= f; else m_flags &= ~f; }
-	inline Bool getFlag(PhysicsFlagsType f) const { return (m_flags & f) != 0; }
+	void setFlag(PhysicsFlagsType f, Bool set) { if (set) m_flags |= f; else m_flags &= ~f; }
+	Bool getFlag(PhysicsFlagsType f) const { return (m_flags & f) != 0; }
 
 
 };

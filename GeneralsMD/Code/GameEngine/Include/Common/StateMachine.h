@@ -153,8 +153,8 @@ public:
 	//Definition of busy -- when explicitly in the busy state. Moving or attacking is not considered busy!
 	virtual Bool isBusy() const { return false; }
 
-	inline StateMachine* getMachine() { return m_machine; }		///< return the machine this state is part of
-	inline StateID getID() const { return m_ID; }			///< get this state's id
+	StateMachine* getMachine() { return m_machine; }		///< return the machine this state is part of
+	StateID getID() const { return m_ID; }			///< get this state's id
 
 	Object* getMachineOwner();
 	const Object* getMachineOwner() const;
@@ -168,7 +168,7 @@ public:
 #endif
 
 	// for internal use by the StateMachine class ---------------------------------------------------------
-	inline void friend_setID( StateID id ) { m_ID = id; }			///< define this state's id (for use only by StateMachine class)
+	void friend_setID( StateID id ) { m_ID = id; }			///< define this state's id (for use only by StateMachine class)
 	void friend_onSuccess( StateID toStateID ) { m_successStateID = toStateID; }	///< define which state to move to after successful completion
 	void friend_onFailure( StateID toStateID ) { m_failureStateID = toStateID; }	///< define which state to move to after failure
 	void friend_onCondition( StateTransFuncPtr test, StateID toStateID, void* userData, const char* description = NULL );	///< define when to change state
@@ -330,8 +330,8 @@ public:
 	inline AsciiString getName() const {return m_name;}
 	virtual AsciiString getCurrentStateName() const { return m_currentState ? m_currentState->getName() : AsciiString::TheEmptyString;}
 #else
-	inline Bool getWantsDebugOutput() const { return false; }
-	inline AsciiString getCurrentStateName() const { return AsciiString::TheEmptyString;}
+	Bool getWantsDebugOutput() const { return false; }
+	AsciiString getCurrentStateName() const { return AsciiString::TheEmptyString;}
 #endif
 
 protected:

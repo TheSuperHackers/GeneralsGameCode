@@ -88,22 +88,22 @@ public:
 	void setTeamNumber( Int teamNumber ) { m_teamNumber = teamNumber; }
 	Int getTeamNumber( void ) const { return m_teamNumber; }
 
-	inline void setName( UnicodeString name ) { m_name = name; }
-	inline UnicodeString getName( void ) const { return m_name; }
+	void setName( UnicodeString name ) { m_name = name; }
+	UnicodeString getName( void ) const { return m_name; }
 
-	inline void setIP( UnsignedInt IP ) { m_IP = IP; }
-	inline UnsignedInt getIP( void ) const { return m_IP; }
+	void setIP( UnsignedInt IP ) { m_IP = IP; }
+	UnsignedInt getIP( void ) const { return m_IP; }
 
-	inline void setPort( UnsignedShort port ) { m_port = port; }
-	inline UnsignedShort getPort( void ) const { return m_port; }
+	void setPort( UnsignedShort port ) { m_port = port; }
+	UnsignedShort getPort( void ) const { return m_port; }
 
-	inline void setNATBehavior( FirewallHelperClass::FirewallBehaviorType NATBehavior) { m_NATBehavior = NATBehavior; }
-	inline FirewallHelperClass::FirewallBehaviorType getNATBehavior() const { return m_NATBehavior; }
+	void setNATBehavior( FirewallHelperClass::FirewallBehaviorType NATBehavior) { m_NATBehavior = NATBehavior; }
+	FirewallHelperClass::FirewallBehaviorType getNATBehavior() const { return m_NATBehavior; }
 
 	void saveOffOriginalInfo( void );
-	inline Int getOriginalPlayerTemplate( void ) const	{ return m_origPlayerTemplate; }
-	inline Int getOriginalColor( void ) const						{ return m_origColor; }
-	inline Int getOriginalStartPos( void ) const				{ return m_origStartPos; }
+	Int getOriginalPlayerTemplate( void ) const	{ return m_origPlayerTemplate; }
+	Int getOriginalColor( void ) const						{ return m_origColor; }
+	Int getOriginalStartPos( void ) const				{ return m_origStartPos; }
 	Int getApparentPlayerTemplate( void ) const;
 	Int getApparentColor( void ) const;
 	Int getApparentStartPos( void ) const;
@@ -215,7 +215,7 @@ public:
 
 	// CRC checking hack
 	void setCRCInterval( Int val ) { m_crcInterval = (val<100)?val:100; }
-	inline Int getCRCInterval( void ) const { return m_crcInterval; }
+	Int getCRCInterval( void ) const { return m_crcInterval; }
 
 	Bool haveWeSurrendered(void) { return m_surrendered; }
 	void markAsSurrendered(void) { m_surrendered = TRUE; }

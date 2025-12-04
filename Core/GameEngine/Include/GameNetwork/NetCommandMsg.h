@@ -39,16 +39,16 @@ class NetCommandMsg : public MemoryPoolObject
 public:
 	NetCommandMsg();
 	//virtual ~NetCommandMsg();
-	inline UnsignedInt GetTimestamp() { return m_timestamp; }
-	inline void SetTimestamp(UnsignedInt timestamp) { m_timestamp = timestamp; }
-	inline void setExecutionFrame(UnsignedInt frame) { m_executionFrame = frame; }
-	inline void setPlayerID(UnsignedInt playerID) { m_playerID = playerID; }
-	inline void setID(UnsignedShort id) { m_id = id; }
-	inline UnsignedInt getExecutionFrame() { return m_executionFrame; }
-	inline UnsignedInt getPlayerID() { return m_playerID; }
-	inline UnsignedShort getID() { return m_id; }
-	inline void setNetCommandType(NetCommandType type) { m_commandType = type; }
-	inline NetCommandType getNetCommandType() { return m_commandType; }
+	UnsignedInt GetTimestamp() { return m_timestamp; }
+	void SetTimestamp(UnsignedInt timestamp) { m_timestamp = timestamp; }
+	void setExecutionFrame(UnsignedInt frame) { m_executionFrame = frame; }
+	void setPlayerID(UnsignedInt playerID) { m_playerID = playerID; }
+	void setID(UnsignedShort id) { m_id = id; }
+	UnsignedInt getExecutionFrame() { return m_executionFrame; }
+	UnsignedInt getPlayerID() { return m_playerID; }
+	UnsignedShort getID() { return m_id; }
+	void setNetCommandType(NetCommandType type) { m_commandType = type; }
+	NetCommandType getNetCommandType() { return m_commandType; }
 	virtual Int getSortNumber();
 	void attach();
 	void detach();

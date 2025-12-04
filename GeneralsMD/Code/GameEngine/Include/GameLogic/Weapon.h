@@ -276,14 +276,14 @@ public:
 		clear();
 	}
 
-	inline void clear()
+	void clear()
 	{
 		for (int i = 0; i < FIELD_COUNT; ++i)
 			m_field[i] = 1.0f;
 	}
 
-	inline Real getField(Field f) const { return m_field[f]; }
-	inline void setField(Field f, Real v) { m_field[f] = v; }
+	Real getField(Field f) const { return m_field[f]; }
+	void setField(Field f, Real v) { m_field[f] = v; }
 
 	void appendBonuses(WeaponBonus& bonus) const;
 
@@ -357,7 +357,7 @@ public:
 	Bool isOverride( void ) { return m_nextTemplate != NULL; }
 
 	/// field table for loading the values from an INI
-	inline const FieldParse *getFieldParse() const { return TheWeaponTemplateFieldParseTable; }
+	const FieldParse *getFieldParse() const { return TheWeaponTemplateFieldParseTable; }
 
 	/**
 		fire the weapon. return the logic-frame in which the damage will be dealt.
@@ -407,62 +407,62 @@ public:
 	Int getPreAttackDelay(const WeaponBonus& bonus) const;
 	Bool isContactWeapon() const;
 
-	inline Real getShockWaveAmount() const { return m_shockWaveAmount; }
-	inline Real getShockWaveRadius() const { return m_shockWaveRadius; }
-	inline Real getShockWaveTaperOff() const { return m_shockWaveTaperOff; }
+	Real getShockWaveAmount() const { return m_shockWaveAmount; }
+	Real getShockWaveRadius() const { return m_shockWaveRadius; }
+	Real getShockWaveTaperOff() const { return m_shockWaveTaperOff; }
 
-	inline Real getRequestAssistRange() const {return m_requestAssistRange;}
-	inline AsciiString getName() const { return m_name; }
-	inline AsciiString getProjectileStreamName() const { return m_projectileStreamName; }
-	inline AsciiString getLaserName() const { return m_laserName; }
-	inline const AsciiString& getLaserBoneName() const { return m_laserBoneName; }
-	inline NameKeyType getNameKey() const { return m_nameKey; }
-	inline Real getWeaponSpeed() const { return m_weaponSpeed; }
-	inline Real getMinWeaponSpeed() const { return m_minWeaponSpeed; }
-	inline Bool isScaleWeaponSpeed() const { return m_isScaleWeaponSpeed; }
-	inline Real getWeaponRecoilAmount() const { return m_weaponRecoil; }
-	inline Real getMinTargetPitch() const { return m_minTargetPitch; }
-	inline Real getMaxTargetPitch() const { return m_maxTargetPitch; }
-	inline Real getRadiusDamageAngle() const { return m_radiusDamageAngle; }
-	inline DamageType getDamageType() const { return m_damageType; }
-	inline ObjectStatusTypes getDamageStatusType() const { return m_damageStatusType; }
-	inline DeathType getDeathType() const { return m_deathType; }
-	inline Real getContinueAttackRange() const { return m_continueAttackRange; }
-	inline Real getInfantryInaccuracyDist() const { return m_infantryInaccuracyDist; }
-	inline Real getAimDelta() const { return m_aimDelta; }
-	inline Real getScatterRadius() const { return m_scatterRadius; }
-	inline Real getScatterTargetScalar() const { return m_scatterTargetScalar; }
-	inline const ThingTemplate* getProjectileTemplate() const { return m_projectileTmpl; }
-	inline Bool getDamageDealtAtSelfPosition() const { return m_damageDealtAtSelfPosition; }
-	inline Int getAffectsMask() const { return m_affectsMask; }
-	inline Int getProjectileCollideMask() const { return m_collideMask; }
-	inline WeaponReloadType getReloadType() const { return m_reloadType; }
-	inline WeaponPrefireType getPrefireType() const { return m_prefireType; }
-	inline Bool getAutoReloadsClip() const { return m_reloadType == AUTO_RELOAD; }
-	inline Int getClipSize() const { return m_clipSize; }
-	inline Int getContinuousFireOneShotsNeeded() const { return m_continuousFireOneShotsNeeded; }
-	inline Int getContinuousFireTwoShotsNeeded() const { return m_continuousFireTwoShotsNeeded; }
-	inline UnsignedInt getContinuousFireCoastFrames() const { return m_continuousFireCoastFrames; }
- 	inline UnsignedInt getAutoReloadWhenIdleFrames() const { return m_autoReloadWhenIdleFrames; }
-	inline UnsignedInt getSuspendFXDelay() const { return m_suspendFXDelay; }
+	Real getRequestAssistRange() const {return m_requestAssistRange;}
+	AsciiString getName() const { return m_name; }
+	AsciiString getProjectileStreamName() const { return m_projectileStreamName; }
+	AsciiString getLaserName() const { return m_laserName; }
+	const AsciiString& getLaserBoneName() const { return m_laserBoneName; }
+	NameKeyType getNameKey() const { return m_nameKey; }
+	Real getWeaponSpeed() const { return m_weaponSpeed; }
+	Real getMinWeaponSpeed() const { return m_minWeaponSpeed; }
+	Bool isScaleWeaponSpeed() const { return m_isScaleWeaponSpeed; }
+	Real getWeaponRecoilAmount() const { return m_weaponRecoil; }
+	Real getMinTargetPitch() const { return m_minTargetPitch; }
+	Real getMaxTargetPitch() const { return m_maxTargetPitch; }
+	Real getRadiusDamageAngle() const { return m_radiusDamageAngle; }
+	DamageType getDamageType() const { return m_damageType; }
+	ObjectStatusTypes getDamageStatusType() const { return m_damageStatusType; }
+	DeathType getDeathType() const { return m_deathType; }
+	Real getContinueAttackRange() const { return m_continueAttackRange; }
+	Real getInfantryInaccuracyDist() const { return m_infantryInaccuracyDist; }
+	Real getAimDelta() const { return m_aimDelta; }
+	Real getScatterRadius() const { return m_scatterRadius; }
+	Real getScatterTargetScalar() const { return m_scatterTargetScalar; }
+	const ThingTemplate* getProjectileTemplate() const { return m_projectileTmpl; }
+	Bool getDamageDealtAtSelfPosition() const { return m_damageDealtAtSelfPosition; }
+	Int getAffectsMask() const { return m_affectsMask; }
+	Int getProjectileCollideMask() const { return m_collideMask; }
+	WeaponReloadType getReloadType() const { return m_reloadType; }
+	WeaponPrefireType getPrefireType() const { return m_prefireType; }
+	Bool getAutoReloadsClip() const { return m_reloadType == AUTO_RELOAD; }
+	Int getClipSize() const { return m_clipSize; }
+	Int getContinuousFireOneShotsNeeded() const { return m_continuousFireOneShotsNeeded; }
+	Int getContinuousFireTwoShotsNeeded() const { return m_continuousFireTwoShotsNeeded; }
+	UnsignedInt getContinuousFireCoastFrames() const { return m_continuousFireCoastFrames; }
+ 	UnsignedInt getAutoReloadWhenIdleFrames() const { return m_autoReloadWhenIdleFrames; }
+	UnsignedInt getSuspendFXDelay() const { return m_suspendFXDelay; }
 
-	inline const FXList* getFireFX(VeterancyLevel v) const { return m_fireFXs[v]; }
-	inline const FXList* getProjectileDetonateFX(VeterancyLevel v) const { return m_projectileDetonateFXs[v]; }
-	inline const ObjectCreationList* getFireOCL(VeterancyLevel v) const { return m_fireOCLs[v]; }
-	inline const ObjectCreationList* getProjectileDetonationOCL(VeterancyLevel v) const { return m_projectileDetonationOCLs[v]; }
-	inline const ParticleSystemTemplate* getProjectileExhaust(VeterancyLevel v) const { return m_projectileExhausts[v]; }
+	const FXList* getFireFX(VeterancyLevel v) const { return m_fireFXs[v]; }
+	const FXList* getProjectileDetonateFX(VeterancyLevel v) const { return m_projectileDetonateFXs[v]; }
+	const ObjectCreationList* getFireOCL(VeterancyLevel v) const { return m_fireOCLs[v]; }
+	const ObjectCreationList* getProjectileDetonationOCL(VeterancyLevel v) const { return m_projectileDetonationOCLs[v]; }
+	const ParticleSystemTemplate* getProjectileExhaust(VeterancyLevel v) const { return m_projectileExhausts[v]; }
 
-	inline const AudioEventRTS& getFireSound() const { return m_fireSound; }
-	inline UnsignedInt getFireSoundLoopTime() const { return m_fireSoundLoopTime; }
-	inline const std::vector<Coord2D>& getScatterTargetsVector() const { return m_scatterTargets; }
-	inline const WeaponBonusSet* getExtraBonus() const { return m_extraBonus; }
-	inline Int getShotsPerBarrel() const { return m_shotsPerBarrel; }
-	inline Int getAntiMask() const { return m_antiMask; }
-	inline Bool isLeechRangeWeapon() const { return m_leechRangeWeapon; }
-	inline Bool isCapableOfFollowingWaypoint() const { return m_capableOfFollowingWaypoint; }
-	inline Bool isShowsAmmoPips() const { return m_isShowsAmmoPips; }
-	inline Bool isPlayFXWhenStealthed() const { return m_playFXWhenStealthed; }
-	inline Bool getDieOnDetonate() const { return m_dieOnDetonate; }
+	const AudioEventRTS& getFireSound() const { return m_fireSound; }
+	UnsignedInt getFireSoundLoopTime() const { return m_fireSoundLoopTime; }
+	const std::vector<Coord2D>& getScatterTargetsVector() const { return m_scatterTargets; }
+	const WeaponBonusSet* getExtraBonus() const { return m_extraBonus; }
+	Int getShotsPerBarrel() const { return m_shotsPerBarrel; }
+	Int getAntiMask() const { return m_antiMask; }
+	Bool isLeechRangeWeapon() const { return m_leechRangeWeapon; }
+	Bool isCapableOfFollowingWaypoint() const { return m_capableOfFollowingWaypoint; }
+	Bool isShowsAmmoPips() const { return m_isShowsAmmoPips; }
+	Bool isPlayFXWhenStealthed() const { return m_playFXWhenStealthed; }
+	Bool getDieOnDetonate() const { return m_dieOnDetonate; }
 
 	Bool shouldProjectileCollideWith(
 		const Object* projectileLauncher,
@@ -689,32 +689,32 @@ public:
 	Bool isLaser() const { return m_template->getLaserName().isNotEmpty(); }
 	void createLaser( const Object *sourceObj, const Object *victimObj, const Coord3D *victimPos );
 
-	inline const WeaponTemplate* getTemplate() const { return m_template; }
-	inline WeaponSlotType getWeaponSlot() const { return m_wslot; }
-	inline AsciiString getName() const { return m_template->getName(); }
-	inline UnsignedInt getLastShotFrame() const { return m_lastFireFrame; }						///< frame a shot was last fired on
+	const WeaponTemplate* getTemplate() const { return m_template; }
+	WeaponSlotType getWeaponSlot() const { return m_wslot; }
+	AsciiString getName() const { return m_template->getName(); }
+	UnsignedInt getLastShotFrame() const { return m_lastFireFrame; }						///< frame a shot was last fired on
 	// If we are "reloading", then m_ammoInClip is a lie.  It will say full.
-	inline UnsignedInt getRemainingAmmo() const { return (getStatus() == RELOADING_CLIP) ? 0 : m_ammoInClip; }
-	inline WeaponReloadType getReloadType() const { return m_template->getReloadType(); }
-	inline Bool getAutoReloadsClip() const { return m_template->getAutoReloadsClip(); }
-	inline Real getAimDelta() const { return m_template->getAimDelta(); }
-	inline Real getScatterRadius() const { return m_template->getScatterRadius(); }
-	inline Real getScatterTargetScalar() const { return m_template->getScatterTargetScalar(); }
-	inline Int getAntiMask() const { return m_template->getAntiMask(); }
-	inline Bool isCapableOfFollowingWaypoint() const { return m_template->isCapableOfFollowingWaypoint(); }
-	inline Int getContinuousFireOneShotsNeeded() const { return m_template->getContinuousFireOneShotsNeeded(); }
-	inline Int getContinuousFireTwoShotsNeeded() const { return m_template->getContinuousFireTwoShotsNeeded(); }
-	inline UnsignedInt getContinuousFireCoastFrames() const { return m_template->getContinuousFireCoastFrames(); }
- 	inline UnsignedInt getAutoReloadWhenIdleFrames() const { return m_template->getAutoReloadWhenIdleFrames(); }
-	inline const AudioEventRTS& getFireSound() const { return m_template->getFireSound(); }
-	inline UnsignedInt getFireSoundLoopTime() const { return m_template->getFireSoundLoopTime(); }
-	inline DamageType getDamageType() const { return m_template->getDamageType(); }
-	inline DeathType getDeathType() const { return m_template->getDeathType(); }
-	inline Real getContinueAttackRange() const { return m_template->getContinueAttackRange(); }
-	inline Bool isShowsAmmoPips() const { return m_template->isShowsAmmoPips(); }
-	inline Int getClipSize() const { return m_template->getClipSize(); }
+	UnsignedInt getRemainingAmmo() const { return (getStatus() == RELOADING_CLIP) ? 0 : m_ammoInClip; }
+	WeaponReloadType getReloadType() const { return m_template->getReloadType(); }
+	Bool getAutoReloadsClip() const { return m_template->getAutoReloadsClip(); }
+	Real getAimDelta() const { return m_template->getAimDelta(); }
+	Real getScatterRadius() const { return m_template->getScatterRadius(); }
+	Real getScatterTargetScalar() const { return m_template->getScatterTargetScalar(); }
+	Int getAntiMask() const { return m_template->getAntiMask(); }
+	Bool isCapableOfFollowingWaypoint() const { return m_template->isCapableOfFollowingWaypoint(); }
+	Int getContinuousFireOneShotsNeeded() const { return m_template->getContinuousFireOneShotsNeeded(); }
+	Int getContinuousFireTwoShotsNeeded() const { return m_template->getContinuousFireTwoShotsNeeded(); }
+	UnsignedInt getContinuousFireCoastFrames() const { return m_template->getContinuousFireCoastFrames(); }
+ 	UnsignedInt getAutoReloadWhenIdleFrames() const { return m_template->getAutoReloadWhenIdleFrames(); }
+	const AudioEventRTS& getFireSound() const { return m_template->getFireSound(); }
+	UnsignedInt getFireSoundLoopTime() const { return m_template->getFireSoundLoopTime(); }
+	DamageType getDamageType() const { return m_template->getDamageType(); }
+	DeathType getDeathType() const { return m_template->getDeathType(); }
+	Real getContinueAttackRange() const { return m_template->getContinueAttackRange(); }
+	Bool isShowsAmmoPips() const { return m_template->isShowsAmmoPips(); }
+	Int getClipSize() const { return m_template->getClipSize(); }
 	// Contact weapons (like car bombs) need to basically collide with their target.
-	inline Bool isContactWeapon() const { return m_template->isContactWeapon(); }
+	Bool isContactWeapon() const { return m_template->isContactWeapon(); }
 
 	Int getClipReloadTime(const Object *source) const;
 
@@ -843,7 +843,7 @@ public:
 	const WeaponTemplate *findWeaponTemplateByNameKey( NameKeyType key ) const { return findWeaponTemplatePrivate( key ); }
 
 	// this dynamically allocates a new Weapon, which is owned (and must be freed!) by the caller.
-	inline Weapon* allocateNewWeapon(const WeaponTemplate *tmpl, WeaponSlotType wslot) const
+	Weapon* allocateNewWeapon(const WeaponTemplate *tmpl, WeaponSlotType wslot) const
 	{
 		return newInstance(Weapon)(tmpl, wslot);	// my, that was easy
 	}

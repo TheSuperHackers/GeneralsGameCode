@@ -119,30 +119,30 @@ public:
 	void set(GeometryType type, Bool isSmall, Real height, Real majorRadius, Real minorRadius);
 
 	// bleah, icky but needed for legacy code
-	inline void setMajorRadius(Real majorRadius)
+	void setMajorRadius(Real majorRadius)
 	{
 		m_majorRadius = majorRadius;
 		calcBoundingStuff();
 	}
 
 	// bleah, icky but needed for legacy code
-	inline void setMinorRadius(Real minorRadius)
+	void setMinorRadius(Real minorRadius)
 	{
 		m_minorRadius = minorRadius;
 		calcBoundingStuff();
 	}
 
-	inline GeometryType getGeomType() const { return m_type; }
-	inline Bool getIsSmall() const { return m_isSmall; }
-	inline Real getMajorRadius() const { return m_majorRadius; }	// x-axis
-	inline Real getMinorRadius() const { return m_minorRadius; }	// y-axis
+	GeometryType getGeomType() const { return m_type; }
+	Bool getIsSmall() const { return m_isSmall; }
+	Real getMajorRadius() const { return m_majorRadius; }	// x-axis
+	Real getMinorRadius() const { return m_minorRadius; }	// y-axis
 
 	// this has been removed and should never need to be called...
 	// you should generally call getMaxHeightAbovePosition() instead. (srj)
 	//inline Real getGeomHeight() const { return m_height; }				// z-axis
 
-	inline Real getBoundingCircleRadius() const { return m_boundingCircleRadius; }
-	inline Real getBoundingSphereRadius() const { return m_boundingSphereRadius; }
+	Real getBoundingCircleRadius() const { return m_boundingCircleRadius; }
+	Real getBoundingSphereRadius() const { return m_boundingSphereRadius; }
 
 	Bool isIntersectedByLineSegment(const Coord3D& loc, const Coord3D& from, const Coord3D& to) const;
 

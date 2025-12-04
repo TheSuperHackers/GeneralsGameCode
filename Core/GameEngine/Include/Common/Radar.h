@@ -95,15 +95,15 @@ public:
 
 	// color management
 	void setColor( Color c ) { m_color = c; }
-	inline Color getColor( void ) const { return m_color; }
+	Color getColor( void ) const { return m_color; }
 
-	inline void friend_setObject( Object *obj ) { m_object = obj; }
-	inline Object *friend_getObject( void ) { return m_object; }
-	inline const Object *friend_getObject( void ) const { return m_object; }
+	void friend_setObject( Object *obj ) { m_object = obj; }
+	Object *friend_getObject( void ) { return m_object; }
+	const Object *friend_getObject( void ) const { return m_object; }
 
-	inline void friend_setNext( RadarObject *next ) { m_next = next; }
-	inline RadarObject *friend_getNext( void ) { return m_next; }
-	inline const RadarObject *friend_getNext( void ) const { return m_next; }
+	void friend_setNext( RadarObject *next ) { m_next = next; }
+	RadarObject *friend_getNext( void ) { return m_next; }
+	const RadarObject *friend_getNext( void ) const { return m_next; }
 
 	Bool isTemporarilyHidden() const;
 	static Bool isTemporarilyHidden(const Object* obj);
@@ -236,8 +236,8 @@ protected:
 	void deleteListResources( void );			///< delete list radar resources used
 	Bool deleteFromList( Object *obj, RadarObject **list );	///< try to remove object from specific list
 
-	inline Real getTerrainAverageZ() const { return m_terrainAverageZ; }
-	inline Real getWaterAverageZ() const { return m_waterAverageZ; }
+	Real getTerrainAverageZ() const { return m_terrainAverageZ; }
+	Real getWaterAverageZ() const { return m_waterAverageZ; }
 
 	void clearAllEvents( void );					///< remove all radar events in progress
 

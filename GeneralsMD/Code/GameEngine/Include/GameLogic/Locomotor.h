@@ -250,76 +250,76 @@ public:
 	Real getMaxLift(BodyDamageType condition) const;  ///< get acceleration given condition
 	Real getBraking() const;  ///< get braking given condition
 
-	inline Real getPreferredHeight() const { return m_preferredHeight;} ///< Just return preferredheight, no damage consideration
-	inline void restorePreferredHeightFromTemplate() { m_preferredHeight = m_template->m_preferredHeight; };
-	inline Real getPreferredHeightDamping() const { return m_preferredHeightDamping;}
-	inline LocomotorAppearance getAppearance() const { return m_template->m_appearance; }
-	inline LocomotorPriority getMovePriority() const { return m_template->m_movePriority; }
-	inline LocomotorSurfaceTypeMask getLegalSurfaces() const { return m_template->m_surfaces; }
+	Real getPreferredHeight() const { return m_preferredHeight;} ///< Just return preferredheight, no damage consideration
+	void restorePreferredHeightFromTemplate() { m_preferredHeight = m_template->m_preferredHeight; };
+	Real getPreferredHeightDamping() const { return m_preferredHeightDamping;}
+	LocomotorAppearance getAppearance() const { return m_template->m_appearance; }
+	LocomotorPriority getMovePriority() const { return m_template->m_movePriority; }
+	LocomotorSurfaceTypeMask getLegalSurfaces() const { return m_template->m_surfaces; }
 
-	inline AsciiString getTemplateName() const { return m_template->m_name;}
-	inline Real getMinSpeed() const { return m_template->m_minSpeed;}
-	inline Real getAccelPitchLimit() const { return m_template->m_accelPitchLimit;}	///< Maximum amount we will pitch up or down under acceleration (including recoil.)
-	inline Real getDecelPitchLimit() const { return m_template->m_decelPitchLimit;}	///< Maximum amount we will pitch down under deceleration (including recoil.)
-	inline Real getBounceKick() const { return m_template->m_bounceKick;}						///< How much simulating rough terrain "bounces" a wheel up.
-	inline Real getPitchStiffness() const { return m_template->m_pitchStiffness;}			///< How stiff the springs are forward & back.
-	inline Real getRollStiffness() const { return m_template->m_rollStiffness;}				///< How stiff the springs are side to side.
-	inline Real getPitchDamping() const { return m_template->m_pitchDamping;}	///< How good the shock absorbers are.
-	inline Real getRollDamping() const { return m_template->m_rollDamping;}	///< How good the shock absorbers are.
-	inline Real getPitchByZVelCoef() const { return m_template->m_pitchByZVelCoef;}		///< How much we pitch in response to speed.
-	inline Real getThrustRoll() const { return m_template->m_thrustRoll; }  ///< Thrust roll
-	inline Real getWobbleRate() const { return m_template->m_wobbleRate; }  ///< how fast thrust things "wobble"
-	inline Real getMaxWobble() const { return m_template->m_maxWobble; }  ///< how much thrust things "wobble"
-	inline Real getMinWobble() const { return m_template->m_minWobble; }  ///< how much thrust things "wobble"
+	AsciiString getTemplateName() const { return m_template->m_name;}
+	Real getMinSpeed() const { return m_template->m_minSpeed;}
+	Real getAccelPitchLimit() const { return m_template->m_accelPitchLimit;}	///< Maximum amount we will pitch up or down under acceleration (including recoil.)
+	Real getDecelPitchLimit() const { return m_template->m_decelPitchLimit;}	///< Maximum amount we will pitch down under deceleration (including recoil.)
+	Real getBounceKick() const { return m_template->m_bounceKick;}						///< How much simulating rough terrain "bounces" a wheel up.
+	Real getPitchStiffness() const { return m_template->m_pitchStiffness;}			///< How stiff the springs are forward & back.
+	Real getRollStiffness() const { return m_template->m_rollStiffness;}				///< How stiff the springs are side to side.
+	Real getPitchDamping() const { return m_template->m_pitchDamping;}	///< How good the shock absorbers are.
+	Real getRollDamping() const { return m_template->m_rollDamping;}	///< How good the shock absorbers are.
+	Real getPitchByZVelCoef() const { return m_template->m_pitchByZVelCoef;}		///< How much we pitch in response to speed.
+	Real getThrustRoll() const { return m_template->m_thrustRoll; }  ///< Thrust roll
+	Real getWobbleRate() const { return m_template->m_wobbleRate; }  ///< how fast thrust things "wobble"
+	Real getMaxWobble() const { return m_template->m_maxWobble; }  ///< how much thrust things "wobble"
+	Real getMinWobble() const { return m_template->m_minWobble; }  ///< how much thrust things "wobble"
 
-	inline Real getForwardVelCoef() const { return m_template->m_forwardVelCoef;}		///< How much we pitch in response to speed.
-	inline Real getLateralVelCoef() const { return m_template->m_lateralVelCoef;}			///< How much we roll in response to speed.
-	inline Real getForwardAccelCoef() const { return m_template->m_forwardAccelCoef;}		///< How much we pitch in response to acceleration.
-	inline Real getLateralAccelCoef() const { return m_template->m_lateralAccelCoef;}			///< How much we roll in response to acceleration.
-	inline Real getUniformAxialDamping() const { return m_template->m_uniformAxialDamping;}			///< How much we roll in response to acceleration.
-	inline Real getTurnPivotOffset() const { return m_template->m_turnPivotOffset;}
-	inline Bool getApply2DFrictionWhenAirborne() const { return m_template->m_apply2DFrictionWhenAirborne; }
-	inline Bool getIsDownhillOnly() const { return m_template->m_downhillOnly; }
-	inline Bool getAllowMotiveForceWhileAirborne() const { return m_template->m_allowMotiveForceWhileAirborne; }
-	inline Int getAirborneTargetingHeight() const { return m_template->m_airborneTargetingHeight; }
-	inline Bool getLocomotorWorksWhenDead() const { return m_template->m_locomotorWorksWhenDead; }
-	inline Bool getStickToGround() const { return m_template->m_stickToGround; }
-	inline Real getCloseEnoughDist() const { return m_closeEnoughDist; }
-	inline Bool isCloseEnoughDist3D() const { return getFlag(IS_CLOSE_ENOUGH_DIST_3D); }
-	inline Bool hasSuspension() const {return m_template->m_hasSuspension;}
-	inline Bool canMoveBackwards() const {return m_template->m_canMoveBackward;}
-	inline Real getMaxWheelExtension() const {return m_template->m_maximumWheelExtension;}
-	inline Real getMaxWheelCompression() const {return m_template->m_maximumWheelCompression;}
-	inline Real getWheelTurnAngle() const {return m_template->m_wheelTurnAngle;}
-
-
-	inline Real getRudderCorrectionDegree()	  const { return m_template->m_rudderCorrectionDegree;}			///< How much we roll in response to acceleration.
-	inline Real getRudderCorrectionRate()	    const { return m_template->m_rudderCorrectionRate;}			///< How much we roll in response to acceleration.
-	inline Real getElevatorCorrectionDegree() const { return m_template->m_elevatorCorrectionDegree;}			///< How much we roll in response to acceleration.
-	inline Real getElevatorCorrectionRate()	  const { return m_template->m_elevatorCorrectionRate;}			///< How much we roll in response to acceleration.
+	Real getForwardVelCoef() const { return m_template->m_forwardVelCoef;}		///< How much we pitch in response to speed.
+	Real getLateralVelCoef() const { return m_template->m_lateralVelCoef;}			///< How much we roll in response to speed.
+	Real getForwardAccelCoef() const { return m_template->m_forwardAccelCoef;}		///< How much we pitch in response to acceleration.
+	Real getLateralAccelCoef() const { return m_template->m_lateralAccelCoef;}			///< How much we roll in response to acceleration.
+	Real getUniformAxialDamping() const { return m_template->m_uniformAxialDamping;}			///< How much we roll in response to acceleration.
+	Real getTurnPivotOffset() const { return m_template->m_turnPivotOffset;}
+	Bool getApply2DFrictionWhenAirborne() const { return m_template->m_apply2DFrictionWhenAirborne; }
+	Bool getIsDownhillOnly() const { return m_template->m_downhillOnly; }
+	Bool getAllowMotiveForceWhileAirborne() const { return m_template->m_allowMotiveForceWhileAirborne; }
+	Int getAirborneTargetingHeight() const { return m_template->m_airborneTargetingHeight; }
+	Bool getLocomotorWorksWhenDead() const { return m_template->m_locomotorWorksWhenDead; }
+	Bool getStickToGround() const { return m_template->m_stickToGround; }
+	Real getCloseEnoughDist() const { return m_closeEnoughDist; }
+	Bool isCloseEnoughDist3D() const { return getFlag(IS_CLOSE_ENOUGH_DIST_3D); }
+	Bool hasSuspension() const {return m_template->m_hasSuspension;}
+	Bool canMoveBackwards() const {return m_template->m_canMoveBackward;}
+	Real getMaxWheelExtension() const {return m_template->m_maximumWheelExtension;}
+	Real getMaxWheelCompression() const {return m_template->m_maximumWheelCompression;}
+	Real getWheelTurnAngle() const {return m_template->m_wheelTurnAngle;}
 
 
-	inline Real getWanderWidthFactor() const {return m_template->m_wanderWidthFactor;}
-	inline Real getWanderAboutPointRadius() const {return m_template->m_wanderAboutPointRadius;}
+	Real getRudderCorrectionDegree()	  const { return m_template->m_rudderCorrectionDegree;}			///< How much we roll in response to acceleration.
+	Real getRudderCorrectionRate()	    const { return m_template->m_rudderCorrectionRate;}			///< How much we roll in response to acceleration.
+	Real getElevatorCorrectionDegree() const { return m_template->m_elevatorCorrectionDegree;}			///< How much we roll in response to acceleration.
+	Real getElevatorCorrectionRate()	  const { return m_template->m_elevatorCorrectionRate;}			///< How much we roll in response to acceleration.
+
+
+	Real getWanderWidthFactor() const {return m_template->m_wanderWidthFactor;}
+	Real getWanderAboutPointRadius() const {return m_template->m_wanderAboutPointRadius;}
 
 	Real calcMinTurnRadius(BodyDamageType condition, Real* timeToTravelThatDist) const;
 
 	/// this is handy for doing things like forcing helicopters to crash realistically: cut their lift.
-	inline void setMaxLift(Real lift) { m_maxLift = lift; }
-	inline void setMaxSpeed(Real speed)
+	void setMaxLift(Real lift) { m_maxLift = lift; }
+	void setMaxSpeed(Real speed)
 	{
 		DEBUG_ASSERTCRASH(!(speed <= 0.0f && m_template->m_appearance == LOCO_THRUST), ("THRUST locos may not have zero speeds!"));
 		m_maxSpeed = speed;
 	}
-	inline void setMaxAcceleration(Real accel) { m_maxAccel = accel; }
-	inline void setMaxBraking(Real braking) { m_maxBraking = braking; }
-	inline void setMaxTurnRate(Real turn) { m_maxTurnRate = turn; }
-	inline void setAllowInvalidPosition(Bool allow) { setFlag(ALLOW_INVALID_POSITION, allow); }
-	inline void setCloseEnoughDist( Real dist ) { m_closeEnoughDist = dist; }
-	inline void setCloseEnoughDist3D( Bool setting ) { setFlag(IS_CLOSE_ENOUGH_DIST_3D, setting); }
-	inline Bool isInvalidPositionAllowed() const { return getFlag( ALLOW_INVALID_POSITION ); }
+	void setMaxAcceleration(Real accel) { m_maxAccel = accel; }
+	void setMaxBraking(Real braking) { m_maxBraking = braking; }
+	void setMaxTurnRate(Real turn) { m_maxTurnRate = turn; }
+	void setAllowInvalidPosition(Bool allow) { setFlag(ALLOW_INVALID_POSITION, allow); }
+	void setCloseEnoughDist( Real dist ) { m_closeEnoughDist = dist; }
+	void setCloseEnoughDist3D( Bool setting ) { setFlag(IS_CLOSE_ENOUGH_DIST_3D, setting); }
+	Bool isInvalidPositionAllowed() const { return getFlag( ALLOW_INVALID_POSITION ); }
 
-	inline void setPreferredHeight( Real height ) { m_preferredHeight = height; }
+	void setPreferredHeight( Real height ) { m_preferredHeight = height; }
 
 #ifdef CIRCLE_FOR_LANDING
 	/**
@@ -337,7 +337,7 @@ public:
 		this is used mainly for force missiles to swoop in on their target, and to force airplane takeoff/landing
 		to go smoothly.
 	*/
-	inline void setUsePreciseZPos(Bool u) { setFlag(PRECISE_Z_POS, u); }
+	void setUsePreciseZPos(Bool u) { setFlag(PRECISE_Z_POS, u); }
 
 	/**
     when off (the default), units slow down as they approach their target.
@@ -346,7 +346,7 @@ public:
     this is useful mainly in some weird, temporary situations where we know we are
     going to follow this move with another one...	or for carbombs.
 	*/
-	inline void setNoSlowDownAsApproachingDest(Bool u) { setFlag(NO_SLOW_DOWN_AS_APPROACHING_DEST, u); }
+	void setNoSlowDownAsApproachingDest(Bool u) { setFlag(NO_SLOW_DOWN_AS_APPROACHING_DEST, u); }
 
 	/**
     when off (the default), units do their normal stuff.
@@ -359,10 +359,10 @@ public:
 		For ground units, it also allows units to have a destination off of a pathfing grid.
 
 	*/
-	inline void setUltraAccurate(Bool u) { setFlag(ULTRA_ACCURATE, u); }
-	inline Bool isUltraAccurate() const { return getFlag(ULTRA_ACCURATE); }
+	void setUltraAccurate(Bool u) { setFlag(ULTRA_ACCURATE, u); }
+	Bool isUltraAccurate() const { return getFlag(ULTRA_ACCURATE); }
 
-	inline Bool isMovingBackwards(void) const {return getFlag(MOVING_BACKWARDS);}
+	Bool isMovingBackwards(void) const {return getFlag(MOVING_BACKWARDS);}
 
 	void startMove(void); ///< Indicates that a move is starting, primarily to reset the donut timer. jba.
 
@@ -437,8 +437,8 @@ private:
 		OFFSET_INCREASING
 	};
 
-	inline Bool getFlag(LocoFlag f) const { return (m_flags & (1 << f)) != 0; }
-	inline void setFlag(LocoFlag f, Bool b) { if (b) m_flags |= (1<<f); else m_flags &= ~(1<<f); }
+	Bool getFlag(LocoFlag f) const { return (m_flags & (1 << f)) != 0; }
+	void setFlag(LocoFlag f, Bool b) { if (b) m_flags |= (1<<f); else m_flags &= ~(1<<f); }
 
 	LocomotorTemplateOverride m_template;		///< the kind of Locomotor this is
 	Coord3D			m_maintainPos;
@@ -487,7 +487,7 @@ public:
 	const LocomotorTemplate* findLocomotorTemplate(NameKeyType namekey) const;
 	LocomotorTemplate* findLocomotorTemplate(NameKeyType namekey);
 
-	inline Locomotor* newLocomotor(const LocomotorTemplate *tmpl) const
+	Locomotor* newLocomotor(const LocomotorTemplate *tmpl) const
 	{
 		return newInstance(Locomotor)(tmpl);	// my, that was easy
 	}

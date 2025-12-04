@@ -897,7 +897,7 @@ struct W3dShaderStruct
 	uint8						pad[1];
 
 	// Required by DynamicVectorClass...
-	inline bool			operator == (const W3dShaderStruct & that)
+	bool			operator == (const W3dShaderStruct & that)
 	{
 		return (
 			(DepthCompare == that.DepthCompare) &&
@@ -915,7 +915,7 @@ struct W3dShaderStruct
 			(AlphaTest == that.AlphaTest) );
 	}
 
-	inline bool			operator != (const W3dShaderStruct & that)
+	bool			operator != (const W3dShaderStruct & that)
 	{
 		return !(*this == that);
 	}

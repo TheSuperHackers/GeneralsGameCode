@@ -267,7 +267,7 @@ public:
 #define GET_CONTAINER_INLINE
 #ifdef GET_CONTAINER_INLINE
 	// srj sez: this is called a ton and never overridden, so inline it
-	inline RenderObjClass *	Get_Container(void) const { return Container; }
+	RenderObjClass *	Get_Container(void) const { return Container; }
 #else
 	virtual RenderObjClass *	Get_Container(void) const;
 #endif

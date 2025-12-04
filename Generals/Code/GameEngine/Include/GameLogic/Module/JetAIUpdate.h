@@ -164,6 +164,6 @@ private:
 	void getProducerLocation();
 	void buildLockonDrawableIfNecessary();
 	void doLandingCommand(Object *airfield, CommandSourceType cmdSource);
-	inline Bool getFlag(FlagType f) const { return (m_flags & (1<<f)) != 0; }
-	inline void setFlag(FlagType f, Bool v) { if (v) m_flags |= (1<<f); else m_flags &= ~(1<<f); }
+	Bool getFlag(FlagType f) const { return (m_flags & (1<<f)) != 0; }
+	void setFlag(FlagType f, Bool v) { if (v) m_flags |= (1<<f); else m_flags &= ~(1<<f); }
 };
