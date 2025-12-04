@@ -200,7 +200,18 @@ target_precompile_headers(g_gameenginedevice PRIVATE
 target_link_libraries(g_gameenginedevice PRIVATE
     corei_gameenginedevice_private
     gi_always    
-    gi_main  
+    gi_main
+    stb
+)
+
+target_sources(g_gameenginedevice PRIVATE
+#    Source/W3DDevice/GameClient/stb_image_write_impl.cpp
+)
+
+set_source_files_properties(
+#    Source/W3DDevice/GameClient/stb_image_write_impl.cpp
+    PROPERTIES
+    SKIP_PRECOMPILE_HEADERS ON
 )
 
 target_link_libraries(g_gameenginedevice PUBLIC
