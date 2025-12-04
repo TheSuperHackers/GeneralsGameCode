@@ -756,22 +756,22 @@ public:
 	void drawUIText( void );				///< draw the group number of this unit // public so gameclient can call
 private:
 	// "icon" drawing methods **************
-	void drawConstructPercent( const IRegion2D *healthBarRegion );  ///< display % construction complete
-	void drawCaption( const IRegion2D *healthBarRegion );						///< draw caption
-	void drawAmmo( const IRegion2D *healthBarRegion );							///< draw icons
-	void drawContained( const IRegion2D *healthBarRegion );					///< draw icons
-	void drawVeterancy( const IRegion2D *healthBarRegion );					///< draw veterency information
+	void drawConstructPercent( const Region2D *healthBarRegion );  ///< display % construction complete
+	void drawCaption( const Region2D *healthBarRegion );						///< draw caption
+	void drawAmmo( const Region2D *healthBarRegion );							///< draw icons
+	void drawContained( const Region2D *healthBarRegion );					///< draw icons
+	void drawVeterancy( const Region2D *healthBarRegion );					///< draw veterency information
 
-	void drawEmoticon( const IRegion2D* healthBarRegion );
-	void drawHealthBar( const IRegion2D* healthBarRegion );					///< draw heath bar
-	void drawHealing( const IRegion2D* healthBarRegion );						///< draw icons
-	void drawEnthusiastic( const IRegion2D* healthBarRegin );				///< draw icons
+	void drawEmoticon( const Region2D* healthBarRegion );
+	void drawHealthBar( const Region2D* healthBarRegion );					///< draw heath bar
+	void drawHealing( const Region2D* healthBarRegion );						///< draw icons
+	void drawEnthusiastic( const Region2D* healthBarRegin );				///< draw icons
 #ifdef ALLOW_DEMORALIZE
-	void drawDemoralized( const IRegion2D* healthBarRegion );				///< draw icons
+	void drawDemoralized( const Region2D* healthBarRegion );				///< draw icons
 #endif
-	void drawBombed( const IRegion2D* healthBarRegion );						///< draw icons
-	void drawDisabled( const IRegion2D* healthBarRegion );					///< draw icons
-	void drawBattlePlans( const IRegion2D* healthBarRegion );				///< Icons rendering for active battle plan statii
+	void drawBombed( const Region2D* healthBarRegion );						///< draw icons
+	void drawDisabled( const Region2D* healthBarRegion );					///< draw icons
+	void drawBattlePlans( const Region2D* healthBarRegion );				///< Icons rendering for active battle plan statii
 
 	Bool drawsAnyUIText( void );
 
