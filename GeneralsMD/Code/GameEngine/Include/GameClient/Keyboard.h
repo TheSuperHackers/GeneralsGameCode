@@ -76,7 +76,6 @@ struct KeyboardIO
 	UnsignedByte	key;										// KeyDefType, key data
 	UnsignedByte	status;									// StatusType, above
 	UnsignedShort	state;									// KEY_STATE_* in KeyDefs.h
-	UnsignedInt		sequence;								// DirectInput sequence number; overwritten with frame number for ordering
 	UnsignedInt		keyDownTimeMsec;				// real-time in milliseconds when key went down
 
 };
@@ -132,7 +131,6 @@ protected:
 	Bool checkKeyRepeat( void );  ///< check for repeating keys
 	UnsignedByte getKeyStatusData( KeyDefType key );  ///< get key status
 	Bool getKeyStateBit( KeyDefType key, Int bit );  ///< get key state bit
-	UnsignedInt getKeySequenceData( KeyDefType key );  ///< get key sequence
 	void setKeyStateData( KeyDefType key, UnsignedByte data );  ///< get key state
 
 	UnsignedShort m_modifiers;
