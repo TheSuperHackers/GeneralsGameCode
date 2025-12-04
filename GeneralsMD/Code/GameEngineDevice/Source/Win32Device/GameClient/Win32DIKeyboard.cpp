@@ -251,7 +251,6 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 	HRESULT hr;
 
 	assert( key );
-	key->sequence = 0;
 	key->key = KEY_NONE;
 
 	if( m_pKeyboardDevice )
@@ -314,9 +313,6 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 
 		// set the key
 		key->key = (UnsignedByte)(kbdat.dwOfs & 0xFF);
-
-		// sequence
-		key->sequence = kbdat.dwSequence;
 
 		//
 		// state of key, note we are setting the key state here with an assignment

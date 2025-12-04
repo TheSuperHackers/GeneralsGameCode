@@ -143,7 +143,6 @@ void Keyboard::updateKeys( void )
 
 		m_keyStatus[ m_keys[ index ].key ].state = m_keys[ index ].state;
 		m_keyStatus[ m_keys[ index ].key ].status = m_keys[ index ].status;
-		m_keyStatus[ m_keys[ index ].key ].sequence = m_inputFrame;
 
 		// Update key down time for new key presses
 		if( BitIsSet( m_keys[ index ].state, KEY_STATE_DOWN ) )
@@ -242,10 +241,6 @@ Bool Keyboard::checkKeyRepeat( void )
 
 				// Set End Flag
 				m_keys[ ++index ].key = KEY_NONE;
-
-				// Set all keys as new to prevent multiple keys repeating
-				for( index = 0; index< NUM_KEYS; index++ )
-					m_keyStatus[ index ].sequence = m_inputFrame;
 
 				// Set repeated key so it will repeat again after the interval
 				m_keyStatus[ key ].keyDownTimeMsec = now - (Keyboard::KEY_REPEAT_DELAY_MSEC + KEY_REPEAT_INTERVAL_MSEC);
@@ -807,14 +802,6 @@ UnsignedByte Keyboard::getKeyStatusData( KeyDefType key )
 Bool Keyboard::getKeyStateBit( KeyDefType key, Int bit )
 {
 	return (m_keyStatus[ key ].state & bit) ? 1 : 0;
-}
-
-//-------------------------------------------------------------------------------------------------
-/** return the sequence data for the given key */
-//-------------------------------------------------------------------------------------------------
-UnsignedInt Keyboard::getKeySequenceData( KeyDefType key )
-{
-	return m_keyStatus[ key ].sequence;
 }
 
 //-------------------------------------------------------------------------------------------------
