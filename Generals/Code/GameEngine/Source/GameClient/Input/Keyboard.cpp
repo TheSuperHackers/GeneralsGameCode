@@ -220,13 +220,14 @@ Bool Keyboard::checkKeyRepeat( void )
 	// Scan Keyboard status array for first key down
 	// long enough to repeat
 	const UnsignedInt KEY_REPEAT_INTERVAL_MSEC = 67; // ~2 frames at 30 FPS
+	UnsignedInt now = timeGetTime();
 	for( key = 0; key < ARRAY_SIZE(m_keyStatus); key++ )
 	{
 
 		if( BitIsSet( m_keyStatus[ key ].state, KEY_STATE_DOWN ) )
 		{
 
-			if( timeGetTime() - m_keyStatus[ key ].keyDownTimeMsec > Keyboard::KEY_REPEAT_DELAY_MSEC )
+			if( now - m_keyStatus[ key ].keyDownTimeMsec > Keyboard::KEY_REPEAT_DELAY_MSEC )
 			{
 				// Add key to this frame
 				m_keys[ index ].key = (UnsignedByte)key;
@@ -236,8 +237,12 @@ Bool Keyboard::checkKeyRepeat( void )
 				// Set End Flag
 				m_keys[ ++index ].key = KEY_NONE;
 
+				// Set all keys as new to prevent multiple keys repeating
+				for( index = 0; index< NUM_KEYS; index++ )
+					m_keyStatus[ index ].keyDownTimeMsec = now;
+
 				// Set repeated key so it will repeat again after the interval
-				m_keyStatus[ key ].keyDownTimeMsec = timeGetTime() - (Keyboard::KEY_REPEAT_DELAY_MSEC + KEY_REPEAT_INTERVAL_MSEC);
+				m_keyStatus[ key ].keyDownTimeMsec = now - (Keyboard::KEY_REPEAT_DELAY_MSEC + KEY_REPEAT_INTERVAL_MSEC);
 
 				retVal = TRUE;
 				break;  // exit for key
