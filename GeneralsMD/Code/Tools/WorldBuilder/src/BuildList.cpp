@@ -755,7 +755,7 @@ void BuildList::OnExport()
 			throw;
 
 		AsciiString tmplname = d->getAsciiString(TheKey_playerFaction);
-		const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
+		const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname.str()));
 		DEBUG_ASSERTCRASH(pt != NULL, ("PlayerTemplate %s not found -- this is an obsolete map (please open and resave in WB)",tmplname.str()));
 
 		fprintf(theLogFile, ";Skirmish AI Build List\n");

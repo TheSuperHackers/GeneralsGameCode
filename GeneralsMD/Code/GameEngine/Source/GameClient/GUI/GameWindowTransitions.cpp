@@ -164,7 +164,7 @@ TransitionWindow::~TransitionWindow( void )
 
 Bool TransitionWindow::init( void )
 {
-	m_winID = TheNameKeyGenerator->nameToKey(m_winName);
+	m_winID = TheNameKeyGenerator->nameToKey(m_winName.str());
 	m_win		= TheWindowManager->winGetWindowFromId(NULL, m_winID);
 	m_currentFrameDelay = m_frameDelay;
 //	DEBUG_ASSERTCRASH( m_win, ("TransitionWindow::init Failed to find window %s", m_winName.str()));

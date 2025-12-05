@@ -92,7 +92,7 @@ static Int findSideListEntryWithPlayerOfSide(AsciiString side)
 	for (int i = 0; i < TheSidesList->getNumSides(); i++)
 	{
 		AsciiString ptname = TheSidesList->getSideInfo(i)->getDict()->getAsciiString(TheKey_playerFaction);
-		const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(ptname));
+		const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(ptname.str()));
 		if (pt && pt->getSide() == side)
 		{
 			return i;

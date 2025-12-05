@@ -177,7 +177,7 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
 
 						// save group
 						Int group = GetDlgItemInt( hWndDialog, COMBO_GROUP, NULL, FALSE );
-						Int screen = TheNameKeyGenerator->nameToKey( AsciiString(TheEditor->getSaveFilename()) );
+						Int screen = TheNameKeyGenerator->nameToKey( TheEditor->getSaveFilename() );
 						GadgetRadioSetGroup( window, group, screen );
 
 					}

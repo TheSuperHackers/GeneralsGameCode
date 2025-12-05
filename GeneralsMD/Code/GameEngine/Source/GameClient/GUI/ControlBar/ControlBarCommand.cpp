@@ -565,7 +565,7 @@ void ControlBar::populateBuildQueue( Object *producer )
 		{
 
 			buttonName.format( "ControlBar.wnd:ButtonQueue%02d", i + 1 );
-			buildQueueIDs[ i ] = TheNameKeyGenerator->nameToKey( buttonName );
+			buildQueueIDs[ i ] = TheNameKeyGenerator->nameToKey( buttonName.str() );
 
 		}
 

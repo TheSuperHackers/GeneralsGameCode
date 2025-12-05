@@ -5241,14 +5241,14 @@ void ScriptEngine::init( void )
 		AsciiString str;
 		str.format("[%d]", i);
 		m_conditionTemplates[i].m_uiName.concat(str);
-		m_conditionTemplates[i].m_internalNameKey = NAMEKEY(m_conditionTemplates[i].m_internalName);
+		m_conditionTemplates[i].m_internalNameKey = NAMEKEY(m_conditionTemplates[i].m_internalName.str());
 	}
 
 	for (i=0; i<ScriptAction::NUM_ITEMS; i++) {
 		AsciiString str;
 		str.format("[%d]", i);
 		m_actionTemplates[i].m_uiName.concat(str);
-		m_actionTemplates[i].m_internalNameKey = NAMEKEY(m_actionTemplates[i].m_internalName);
+		m_actionTemplates[i].m_internalNameKey = NAMEKEY(m_actionTemplates[i].m_internalName.str());
 	}
 
 
@@ -5836,7 +5836,7 @@ Player *ScriptEngine::getPlayerFromAsciiString(const AsciiString& playerString)
 		return getSkirmishEnemyPlayer();
 	}
 	else {
-		NameKeyType key = NAMEKEY(playerString);
+		NameKeyType key = NAMEKEY(playerString.str());
 		Player *pPlayer = ThePlayerList->findPlayerWithNameKey(key);
 		if (pPlayer!=NULL) {
 			return pPlayer;

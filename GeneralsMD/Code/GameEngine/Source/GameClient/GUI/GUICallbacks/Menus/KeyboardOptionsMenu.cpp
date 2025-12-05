@@ -499,8 +499,7 @@ WindowMsgHandledType KeyboardOptionsMenuInput( GameWindow *window, UnsignedInt m
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						AsciiString buttonName( "KeyboardOptionsMenu.wnd:ButtonBack" );
-						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
+						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( "KeyboardOptionsMenu.wnd:ButtonBack" );
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,

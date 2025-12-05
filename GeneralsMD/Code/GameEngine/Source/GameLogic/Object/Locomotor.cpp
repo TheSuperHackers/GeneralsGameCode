@@ -2686,7 +2686,7 @@ void LocomotorSet::xfer( Xfer *xfer )
 			AsciiString name;
 			xfer->xferAsciiString(&name);
 
-			const LocomotorTemplate* lt = TheLocomotorStore->findLocomotorTemplate(NAMEKEY(name));
+			const LocomotorTemplate* lt = TheLocomotorStore->findLocomotorTemplate(NAMEKEY(name.str()));
 			if (lt == NULL)
 			{
 				DEBUG_CRASH(( "LocomotorSet::xfer - template %s not found", name.str() ));

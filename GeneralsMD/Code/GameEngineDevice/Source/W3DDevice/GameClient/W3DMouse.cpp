@@ -139,7 +139,7 @@ void W3DMouse::initPolygonAssets(void)
 		{
 			m_currentPolygonCursor = m_currentCursor;
 			if (!m_cursorInfo[i].imageName.isEmpty())
-				cursorImages[i]=TheMappedImageCollection->findImageByName(m_cursorInfo[i].imageName);
+				cursorImages[i]=TheMappedImageCollection->findImageByName(m_cursorInfo[i].imageName.str());
 		}
 	}
 }

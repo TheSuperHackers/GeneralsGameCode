@@ -1169,7 +1169,7 @@ Image *getMapPreviewImage( AsciiString mapName )
 	// copy file over
 	// copy source tgaName, to name
 
-	Image *image = (Image *)TheMappedImageCollection->findImageByName(tempName);
+	Image *image = (Image *)TheMappedImageCollection->findImageByName(tempName.str());
 	if(!image)
 	{
 
