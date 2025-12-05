@@ -37,7 +37,7 @@
 
 SimpleObjectIterator::ClumpCompareProc SimpleObjectIterator::theClumpCompareProcs[] =
 {
-	NULL,						// "fastest" gets no proc
+	nullptr,						// "fastest" gets no proc
 	SimpleObjectIterator::sortNearToFar,
 	SimpleObjectIterator::sortFarToNear,
 	SimpleObjectIterator::sortCheapToExpensive,
@@ -47,7 +47,7 @@ SimpleObjectIterator::ClumpCompareProc SimpleObjectIterator::theClumpCompareProc
 //=============================================================================
 SimpleObjectIterator::Clump::Clump()
 {
-	m_nextClump = NULL;
+	m_nextClump = nullptr;
 }
 
 //=============================================================================
@@ -58,8 +58,8 @@ SimpleObjectIterator::Clump::~Clump()
 //=============================================================================
 SimpleObjectIterator::SimpleObjectIterator()
 {
-	m_firstClump = NULL;
-	m_curClump = NULL;
+	m_firstClump = nullptr;
+	m_curClump = nullptr;
 	m_clumpCount = 0;
 }
 
@@ -88,7 +88,7 @@ void SimpleObjectIterator::insert(Object *obj, Real numeric)
 //=============================================================================
 Object *SimpleObjectIterator::nextWithNumeric(Real *num)
 {
-	Object *obj = NULL;
+	Object *obj = nullptr;
 	if (num)
 		*num = 0.0f;
 
@@ -121,8 +121,8 @@ void SimpleObjectIterator::makeEmpty()
 	}
 	DEBUG_ASSERTCRASH(m_clumpCount == 0, ("hmm"));
 
-	m_firstClump = NULL;
-	m_curClump = NULL;
+	m_firstClump = nullptr;
+	m_curClump = nullptr;
 	m_clumpCount = 0;
 }
 
@@ -153,8 +153,8 @@ void SimpleObjectIterator::sort(IterOrderType order)
   for ( Int n = 1 ; ; n *= 2 )
 	{
 		Clump *to_do = m_firstClump;
-		Clump *tail = NULL;
-		m_firstClump = NULL;
+		Clump *tail = nullptr;
+		m_firstClump = nullptr;
 
 		Int mergeCount = 0;
 
@@ -225,7 +225,7 @@ void SimpleObjectIterator::sort(IterOrderType order)
 			to_do = sub;
 		}
 		if (tail)
-			tail->m_nextClump = NULL;
+			tail->m_nextClump = nullptr;
 
 		if (mergeCount <= 1)	// when we have done just one (or none) swap, we're done
 			break;
