@@ -127,11 +127,8 @@ OpenContain::OpenContain( Thing *thing, const ModuleData* moduleData ) : UpdateM
 	m_stealthUnitsContained = 0;
 	m_doorCloseCountdown = 0;
 
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_rallyPoint.zero();
 	m_rallyPointExists = FALSE;
-	//
 	m_conditionState.clear();
 	m_firePointStart = -1;
 	m_firePointNext = 0;
@@ -521,7 +518,7 @@ void OpenContain::removeFromContainViaIterator( ContainedItemsList::iterator it,
 
 /*
 	#ifdef RTS_DEBUG
-		TheInGameUI->message( UnicodeString( L"'%S(%d)' no longer contains '%S(%d)'" ),
+		TheInGameUI->message( L"'%S(%d)' no longer contains '%S(%d)'",
 													getObject()->getTemplate()->getName().str(),
 													getObject()->getID(),
 													itemToRemove->m_object->getTemplate()->getName().str(),

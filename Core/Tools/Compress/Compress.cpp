@@ -52,8 +52,8 @@ void dumpHelp(const char *exe)
 
 int main(int argc, char **argv)
 {
-	std::string inFile = "";
-	std::string outFile = "";
+	std::string inFile;
+	std::string outFile;
 	CompressionType compressType = CompressionManager::getPreferredCompression();
 
 	for (int i=1; i<argc; ++i)

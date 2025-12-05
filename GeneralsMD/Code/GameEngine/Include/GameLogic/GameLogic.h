@@ -312,9 +312,6 @@ private:
 	std::map<Int, UnsignedInt> m_cachedCRCs;								///< CRCs we've seen this frame
 	Bool m_shouldValidateCRCs;															///< Should we validate CRCs this frame?
 	//-----------------------------------------------------------------------------------------------
-
-	//Added By Sadullah Nader
-	//Used to for load scene
 	//Bool m_loadingScene;
 	Bool m_loadingMap;
 	Bool m_loadingSave;

@@ -179,7 +179,7 @@ Object *CreateCrateDie::createCrate( CrateTemplate const *currentCrateData )
 	// CreationChance is used for the success of this block, but this block can have any number of potential actual crates
 	Real multipleCratePick = GameLogicRandomValueReal( 0, 1 );
 	Real multipleCrateRunningTotal = 0;
-	AsciiString crateName = "";
+	AsciiString crateName;
 
 	for( crateCreationEntryConstIterator iter = currentCrateData->m_possibleCrates.begin();
 				iter != currentCrateData->m_possibleCrates.end();

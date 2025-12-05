@@ -376,7 +376,7 @@ void MapObjectProps::_DictToTeam(void)
 
 void MapObjectProps::_DictToName(void)
 {
-	AsciiString name = "";
+	AsciiString name;
 	Bool exists;
 	if (m_dictToEdit) {
 		name = m_dictToEdit->getAsciiString(TheKey_objectName, &exists);

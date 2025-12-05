@@ -52,13 +52,7 @@ CrateCollideModuleData::CrateCollideModuleData()
 	m_isHumanOnlyPickup = FALSE;
 	m_executeFX = NULL;
 	m_pickupScience = SCIENCE_INVALID;
-
-	// Added By Sadullah Nader
-	// Initializations missing and needed
-
 	m_executionAnimationTemplate = AsciiString::TheEmptyString;
-
-	// End Add
 }
 
 //-------------------------------------------------------------------------------------------------

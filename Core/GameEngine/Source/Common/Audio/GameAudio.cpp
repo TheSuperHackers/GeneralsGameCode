@@ -147,7 +147,6 @@ AudioManager::AudioManager() : m_soundOn(TRUE),
 							   m_surroundSpeakers(FALSE),
 							   m_hardwareAccel(FALSE)
 {
-	// Added by Sadullah Nader
 	m_adjustedVolumes.clear();
 	m_audioRequests.clear();
 	m_listenerPosition.zero();
@@ -158,11 +157,9 @@ AudioManager::AudioManager() : m_soundOn(TRUE),
 	m_speechVolume = 0.0f;
 	m_systemMusicVolume = 0.0f;
 	m_systemSound3DVolume = 0.0f;
-	m_systemSoundVolume = 0.0f;
-	m_systemSpeechVolume = 0.0f;
-	m_volumeHasChanged = FALSE;
-	//
-
+	m_systemSoundVolume   = 0.0f;
+	m_systemSpeechVolume  = 0.0f;
+	m_volumeHasChanged			= FALSE;
 	m_listenerOrientation.set(0.0, 1.0, 0.0);
 	theAudioHandlePool = AHSV_FirstHandle;
 	m_audioSettings = NEW AudioSettings;
@@ -206,22 +203,51 @@ AudioManager::~AudioManager()
 void AudioManager::init()
 {
 	INI ini;
-	ini.loadFileDirectory(AsciiString("Data\\INI\\AudioSettings"), INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory( "Data\\INI\\AudioSettings", INI_LOAD_OVERWRITE, NULL);
 
-	ini.loadFileDirectory(AsciiString("Data\\INI\\Default\\Music"), INI_LOAD_OVERWRITE, NULL);
-	ini.loadFileDirectory(AsciiString("Data\\INI\\Music"), INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory( "Data\\INI\\Default\\Music", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Music", INI_LOAD_OVERWRITE, NULL );
 
-	ini.loadFileDirectory(AsciiString("Data\\INI\\Default\\SoundEffects"), INI_LOAD_OVERWRITE, NULL);
-	ini.loadFileDirectory(AsciiString("Data\\INI\\SoundEffects"), INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory( "Data\\INI\\Default\\SoundEffects", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\SoundEffects", INI_LOAD_OVERWRITE, NULL );
 
-	ini.loadFileDirectory(AsciiString("Data\\INI\\Default\\Speech"), INI_LOAD_OVERWRITE, NULL);
-	ini.loadFileDirectory(AsciiString("Data\\INI\\Speech"), INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory( "Data\\INI\\Default\\Speech", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Speech", INI_LOAD_OVERWRITE, NULL );
 
-	ini.loadFileDirectory(AsciiString("Data\\INI\\Default\\Voice"), INI_LOAD_OVERWRITE, NULL);
-	ini.loadFileDirectory(AsciiString("Data\\INI\\Voice"), INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory( "Data\\INI\\Default\\Voice", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Voice", INI_LOAD_OVERWRITE, NULL );
 
 	// do the miscellaneous sound files last so that we find the AudioEventRTS associated with the events.
-	ini.loadFileDirectory(AsciiString("Data\\INI\\MiscAudio"), INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory( "Data\\INI\\MiscAudio", INI_LOAD_OVERWRITE, NULL);
+
+	// determine if one of the music tracks exists. Since their now BIGd, one implies all.
+	// If they don't exist, then attempt to load them from the CD.
+	if (!TheGlobalData->m_headless && !isMusicAlreadyLoaded())
+	{
+		m_musicPlayingFromCD = TRUE;
+		while (TRUE)
+		{
+			// @todo Unload any files from CD first. - jkmcd
+
+			TheFileSystem->loadMusicFilesFromCD();
+			if (isMusicAlreadyLoaded())
+			{
+				break;
+			}
+			// We loop infinitely on the splash screen if we don't allow breaking out of this loop.
+//#if !defined( RTS_DEBUG )
+			else
+			{
+				// Display the warning.
+
+				if (OSDisplayWarningBox("GUI:InsertCDPrompt", "GUI:InsertCDMessage", OSDBT_OK | OSDBT_CANCEL, OSDOF_SYSTEMMODAL | OSDOF_EXCLAMATIONICON) == OSDBT_CANCEL) {
+					//TheGameEngine->setQuitting(TRUE);  // Can't do this to WorldBuilder
+					break;
+				}
+			}
+//#endif
+		}
+	}
 
 	m_music = NEW MusicManager;
 	m_sound = NEW SoundManager;
@@ -373,8 +399,7 @@ void AudioManager::getInfoForAudioEvent(const AudioEventRTS *eventToFindAndFill)
 //-------------------------------------------------------------------------------------------------
 AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 {
-	if (eventToAdd->getEventName().isEmpty() || eventToAdd->getEventName() == AsciiString("NoSound"))
-	{
+	if (eventToAdd->getEventName().isEmpty() || eventToAdd->getEventName() == "NoSound") {
 		return AHSV_NoSound;
 	}
 

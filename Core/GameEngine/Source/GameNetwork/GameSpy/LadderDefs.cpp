@@ -444,7 +444,7 @@ void LadderList::loadLocalLadders( void )
 	AsciiString dirname;
 	dirname.format("%sGeneralsOnline\\Ladders\\", TheGlobalData->getPath_UserData().str());
 	FilenameList filenameList;
-	TheFileSystem->getFileListInDirectory(dirname, AsciiString("*.ini"), filenameList, TRUE);
+	TheFileSystem->getFileListInDirectory(dirname, "*.ini", filenameList, TRUE);
 
 	Int index = -1;
 

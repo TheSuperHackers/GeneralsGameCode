@@ -131,7 +131,7 @@ DisplayString *W3DDisplayStringManager::newDisplayString( void )
 			TheGlobalLanguageData->m_defaultDisplayStringFont.bold) );
 	}
 	else
-		newString->setFont( TheFontLibrary->getFont( AsciiString("Times New Roman"), 12, FALSE ) );
+		newString->setFont( TheFontLibrary->getFont( "Times New Roman", 12, FALSE ) );
 
 	// link string to list
 	link( newString );

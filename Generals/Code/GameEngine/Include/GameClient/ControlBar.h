@@ -434,8 +434,6 @@ class SideSelectWindowData
 public:
 	SideSelectWindowData(void)
 	{
-		//Added By Sadullah Nader
-		//Initializations
 		generalSpeak = NULL;
 		m_currColor = 0;
 		m_gereralsNameWin = NULL;
@@ -459,7 +457,6 @@ public:
 		m_upgradeLabel3Win = NULL;
 		m_upgradeLabel4Win = NULL;
 		sideWindow = NULL;
-		//
 	}
 	~SideSelectWindowData(void);
 

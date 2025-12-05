@@ -579,13 +579,13 @@ GlobalData::GlobalData()
 	m_debugVisibilityTileDuration = LOGICFRAMES_PER_SECOND;
 	m_debugProjectilePath = FALSE;
 	m_debugProjectileTileWidth = 10;
-	m_debugProjectileTileDuration = LOGICFRAMES_PER_SECOND;  // Changed By Sadullah Nader
+	m_debugProjectileTileDuration = LOGICFRAMES_PER_SECOND;
 	m_debugThreatMap = FALSE;
 	m_maxDebugThreat = 5000;
-	m_debugThreatMapTileDuration = LOGICFRAMES_PER_SECOND;  // Changed By Sadullah Nader
+	m_debugThreatMapTileDuration = LOGICFRAMES_PER_SECOND;
 	m_debugCashValueMap = FALSE;
 	m_maxDebugValue = 10000;
-	m_debugCashValueMapTileDuration = LOGICFRAMES_PER_SECOND; // Changed By Sadullah Nader
+	m_debugCashValueMapTileDuration = LOGICFRAMES_PER_SECOND;
 	m_vTune = false;
 	m_checkForLeaks = TRUE;
 	m_benchmarkTimer = -1;
@@ -689,8 +689,6 @@ GlobalData::GlobalData()
 		m_vertexWaterAttenuationB[ i ] = 0.0f;
 		m_vertexWaterAttenuationC[ i ] = 0.0f;
 		m_vertexWaterAttenuationRange[ i ] = 0.0f;
-		//Added By Sadullah Nader
-		//Initializations missing and needed
 		m_vertexWaterAvailableMaps[i].clear();
 	}
 
@@ -802,8 +800,6 @@ GlobalData::GlobalData()
 	m_autoSmokeParticleLargeMax = 0;
 	m_autoAflameParticleMax = 0;
 
-	// Added By Sadullah Nader
-	// Initializations missing and needed
 	m_autoFireParticleSmallPrefix.clear();
 	m_autoFireParticleMediumPrefix.clear();
 	m_autoFireParticleLargePrefix.clear();
@@ -826,8 +822,6 @@ GlobalData::GlobalData()
 	m_drawEntireTerrain = FALSE;
 	m_maxParticleCount = 0;
 	m_maxFieldParticleCount = 30;
-
-	// End Add
 
 	m_debugAI = AI_DEBUG_NONE;
 	m_debugSupplyCenterPlacement = FALSE;

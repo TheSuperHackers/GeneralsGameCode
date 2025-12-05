@@ -67,10 +67,7 @@ SpawnBehavior::SpawnBehavior( Thing *thing, const ModuleData* moduleData )
 	//looping back to the beginning
 
 	m_framesToWait = 0;
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_firstBatchCount = 0;
-	//
 	if( md->m_isOneShotData )
 		m_oneShotCountdown = md->m_spawnNumberData;
 	else
@@ -533,7 +530,7 @@ Object *SpawnBehavior::reclaimOrphanSpawn( void )
 	//
 
 	OrphanData orphanData;
-	AsciiString prevName = "";
+	AsciiString prevName;
 	for (std::vector<AsciiString>::const_iterator tempName = md->m_spawnTemplateNameData.begin();
 			tempName != md->m_spawnTemplateNameData.end();
 			++tempName)

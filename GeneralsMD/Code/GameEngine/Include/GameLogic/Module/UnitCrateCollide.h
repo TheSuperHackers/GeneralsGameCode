@@ -46,7 +46,6 @@ public:
 	UnitCrateCollideModuleData()
 	{
 		m_unitCount = 0;
-		m_unitType = "";
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)

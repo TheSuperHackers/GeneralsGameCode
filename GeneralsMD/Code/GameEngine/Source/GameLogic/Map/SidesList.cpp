@@ -296,7 +296,7 @@ Bool SidesList::ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, v
 		}
 	}
 
-	file.registerParser( AsciiString("PlayerScriptsList"), info->label, ScriptList::ParseScriptsDataChunk );
+	file.registerParser( "PlayerScriptsList", info->label, ScriptList::ParseScriptsDataChunk );
 	if (!file.parse(NULL)) {
 		throw(ERROR_CORRUPT_FILE_FORMAT);
 	}
@@ -524,9 +524,9 @@ void SidesList::prepareForMP_or_Skirmish(void)
 		if (theInputStream.open(path)) {
 				ChunkInputStream *pStrm = &theInputStream;
 				DataChunkInput file( pStrm );
-				file.registerParser( AsciiString("PlayerScriptsList"), AsciiString::TheEmptyString, ScriptList::ParseScriptsDataChunk );
-				file.registerParser( AsciiString("ScriptsPlayers"), AsciiString::TheEmptyString, ParsePlayersDataChunk );
-				file.registerParser( AsciiString("ScriptTeams"), AsciiString::TheEmptyString, ParseTeamsDataChunk );
+				file.registerParser( "PlayerScriptsList", AsciiString::TheEmptyString, ScriptList::ParseScriptsDataChunk );
+				file.registerParser( "ScriptsPlayers", AsciiString::TheEmptyString, ParsePlayersDataChunk );
+				file.registerParser( "ScriptTeams", AsciiString::TheEmptyString, ParseTeamsDataChunk );
 				if (!file.parse(this)) {
 					DEBUG_LOG(("ERROR - Unable to read in skirmish scripts."));
 					return;
@@ -826,10 +826,10 @@ validate_team_names:
 			tdict->setAsciiString(TheKey_teamOwner, AsciiString::TheEmptyString);
 			modified = true;
 		}
-//		if (tdict->getType(NAMEKEY(AsciiString("teamAllies"))) != Dict::DICT_NONE)
-//			tdict->remove(NAMEKEY(AsciiString("teamAllies")));
-//		if (tdict->getType(NAMEKEY(AsciiString("teamEnemies"))) != Dict::DICT_NONE)
-//			tdict->remove(NAMEKEY(AsciiString("teamEnemies")));
+//		if (tdict->getType(NAMEKEY("teamAllies")) != Dict::DICT_NONE)
+//			tdict->remove(NAMEKEY("teamAllies"));
+//		if (tdict->getType(NAMEKEY("teamEnemies")) != Dict::DICT_NONE)
+//			tdict->remove(NAMEKEY("teamEnemies"));
 
 	}
 
@@ -927,8 +927,6 @@ m_automaticallyBuild(true),
 m_priorityBuild(false),
 m_buildingName(AsciiString::TheEmptyString)
 {
-	// Added by Sadullah Nader
-	// these initialized values are necessary!!!
 	m_location.zero();
 	m_rallyPointOffset.x = 0.0f;
 	m_rallyPointOffset.y = 0.0f;

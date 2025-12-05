@@ -425,7 +425,7 @@ void WorldHeightMapEdit::loadDirectoryOfImages(const char *pFilePath)
 	}
 
 	FilenameList filenameList;
-	TheFileSystem->getFileListInDirectory(AsciiString(dirBuf), AsciiString("*.*"), filenameList, TRUE);
+	TheFileSystem->getFileListInDirectory(AsciiString(dirBuf), "*.*", filenameList, TRUE);
 
 	if (filenameList.size() == 0) {
 		return;
@@ -2183,7 +2183,7 @@ Bool WorldHeightMapEdit::selectInvalidTeam(void)
 		}
 	}
 
-	AsciiString report = "";
+	AsciiString report;
 	AsciiString line;
 
 #if 0

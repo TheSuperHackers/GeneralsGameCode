@@ -109,7 +109,7 @@ class IMEManager : public IMEManagerInterface
 		virtual Int						getIndexBase( void );						///< Get index base for candidate list
 
 		virtual Int						getCandidateCount();						///< Returns the total number of candidates
-		virtual UnicodeString*getCandidate( Int index );			///< Returns the candidate string
+		virtual const UnicodeString* getCandidate( Int index );	///< Returns the candidate string
 		virtual Int						getSelectedCandidateIndex();		///< Returns the indexed of the currently selected candidate
 		virtual Int						getCandidatePageSize();					///< Returns the page size for the candidates list
 		virtual Int						getCandidatePageStart();				///< Returns the index of the first visibel candidate
@@ -506,8 +506,6 @@ IMEManager::IMEManager()
 	m_result(0),
 	m_indexBase(1),
 
-	//Added By Sadullah Nader
-	//Initializations missing and needed
 	m_compositionCharsDisplayed(0),
 	m_candidateDownArrow(NULL),
 	m_candidateTextArea(NULL),
@@ -517,7 +515,6 @@ IMEManager::IMEManager()
 	m_pageStart(0),
 	m_selectedIndex(0),
 	m_unicodeIME(FALSE)
-	//
 {
 }
 
@@ -566,7 +563,7 @@ void IMEManager::init( void )
 	m_context = ImmCreateContext();
 	m_oldContext = ImmGetContext( ApplicationHWnd );
 	m_disabled = 0;
-	m_candidateWindow = TheWindowManager->winCreateFromScript( AsciiString("IMECandidateWindow.wnd"));
+	m_candidateWindow = TheWindowManager->winCreateFromScript( "IMECandidateWindow.wnd");
 	m_candidateWindow->winSetStatus(WIN_STATUS_ABOVE);
 
 	if ( m_candidateWindow )
@@ -574,14 +571,14 @@ void IMEManager::init( void )
 		m_candidateWindow->winHide( TRUE );
 
 		// find text area window
-		NameKeyType id = TheNameKeyGenerator->nameToKey( AsciiString( "IMECandidateWindow.wnd:TextArea" ) );
+		NameKeyType id = TheNameKeyGenerator->nameToKey( "IMECandidateWindow.wnd:TextArea" );
 		m_candidateTextArea = TheWindowManager->winGetWindowFromId(m_candidateWindow, id);
 
 		// find arrows
-		id = TheNameKeyGenerator->nameToKey( AsciiString( "IMECandidateWindow.wnd:UpArrow" ) );
+		id = TheNameKeyGenerator->nameToKey( "IMECandidateWindow.wnd:UpArrow" );
 		m_candidateUpArrow = TheWindowManager->winGetWindowFromId(m_candidateWindow, id);
 
-		id = TheNameKeyGenerator->nameToKey( AsciiString( "IMECandidateWindow.wnd:DownArrow" ) );
+		id = TheNameKeyGenerator->nameToKey( "IMECandidateWindow.wnd:DownArrow" );
 		m_candidateDownArrow = TheWindowManager->winGetWindowFromId(m_candidateWindow, id);
 
 
@@ -593,7 +590,7 @@ void IMEManager::init( void )
 		}
 	}
 
-	m_statusWindow = TheWindowManager->winCreateFromScript( AsciiString("IMEStatusWindow.wnd"));
+	m_statusWindow = TheWindowManager->winCreateFromScript( "IMEStatusWindow.wnd");
 
 	if ( m_statusWindow )
 	{
@@ -1528,7 +1525,7 @@ Int	IMEManager::getCandidateCount()
 // IMEManager::getCandidate
 //============================================================================
 
-UnicodeString* IMEManager::getCandidate( Int index )
+const UnicodeString* IMEManager::getCandidate( Int index )
 {
 	if ( m_candidateString != NULL && index >=0 && index < m_candidateCount )
 	{

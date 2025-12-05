@@ -1857,10 +1857,7 @@ JetAIUpdate::JetAIUpdate( Thing *thing, const ModuleData* moduleData ) : AIUpdat
 	m_lockonDrawable = NULL;
 	m_landingPosForHelipadStuff.zero();
 
-	//Added By Sadullah Nader
-	//Initializations missing and needed
 	m_producerLocation.zero();
-	//
 	m_enginesOn = TRUE;
 }
 

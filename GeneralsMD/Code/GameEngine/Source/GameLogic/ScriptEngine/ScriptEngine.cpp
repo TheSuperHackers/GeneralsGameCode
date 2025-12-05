@@ -445,8 +445,6 @@ m_skirmishHumanPlayer(NULL),
 m_fade(FADE_NONE),
 m_freezeByScript(FALSE),
 m_frameObjectCountChanged(0),
-//Added By Sadullah Nader
-//Initializations inserted
 m_closeWindowTimer(0),
 m_curFadeFrame(0),
 m_curFadeValue(0.0f),
@@ -461,7 +459,6 @@ m_numAttackInfo(0),
 m_shownMPLocalDefeatWindow(FALSE),
 m_objectsShouldReceiveDifficultyBonus(TRUE),
 m_ChooseVictimAlwaysUsesNormal(false)
-//
 {
 	st_CanAppCont = true;
 	st_LastCurrentFrame = st_CurrentFrame = 0;
@@ -9806,7 +9803,7 @@ void _writeSingleParticleSystem( File *out, ParticleSystemTemplate *templ )
 	// these were all originally << (feed-operator for streams)
 	// I might come back and re-write this later, if there are enough complaints. ;-) jkmcd
 	// in the meantime, move along...
-	std::string thisEntry = "";
+	std::string thisEntry;
 	thisEntry.append(HEADER).append(SEP_SPACE).append(templ->getName().str()).append(SEP_EOL);
 	thisEntry.append(SEP_HEAD).append(F_PRIORITY).append(EQ_WITH_SPACES).append(ParticlePriorityNames[templ->m_priority]).append(SEP_EOL);
 	thisEntry.append(SEP_HEAD).append(F_ISONESHOT).append(EQ_WITH_SPACES).append((templ->m_isOneShot ? STR_TRUE : STR_FALSE)).append(SEP_EOL);

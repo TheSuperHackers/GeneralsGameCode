@@ -85,12 +85,9 @@ LaserRadiusUpdate::LaserRadiusUpdate()
 //-------------------------------------------------------------------------------------------------
 LaserUpdate::LaserUpdate( Thing *thing, const ModuleData* moduleData ) : ClientUpdateModule( thing, moduleData )
 {
-	//Added By Sadullah Nader
-	//Initialization missing and needed
 	m_dirty = FALSE;
 	m_endPos.zero();
 	m_startPos.zero();
-	//
 	m_particleSystemID = INVALID_PARTICLE_SYSTEM_ID;
 	m_targetParticleSystemID = INVALID_PARTICLE_SYSTEM_ID;
 	m_parentID = INVALID_DRAWABLE_ID;

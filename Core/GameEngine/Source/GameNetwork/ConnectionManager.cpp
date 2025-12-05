@@ -651,7 +651,7 @@ void ConnectionManager::processChat(NetChatCommandMsg *msg)
 	const Player *player = ThePlayerList->findPlayerWithNameKey( TheNameKeyGenerator->nameToKey( playerName ) );
 	if (!player)
 	{
-		TheInGameUI->message(UnicodeString(L"%ls"), unitext.str());
+		TheInGameUI->message(L"%ls", unitext.str());
 		return;
 	}
 
@@ -663,7 +663,7 @@ void ConnectionManager::processChat(NetChatCommandMsg *msg)
 	{
 		RGBColor rgb;
 		rgb.setFromInt(player->getPlayerColor());
-		TheInGameUI->messageColor(&rgb, UnicodeString(L"%ls"), unitext.str());
+		TheInGameUI->messageColor(&rgb, L"%ls", unitext.str());
 
 		// feedback for received chat messages in-game
 		AudioEventRTS audioEvent("GUICommunicatorIncoming");
@@ -2120,7 +2120,7 @@ UnsignedShort ConnectionManager::sendFileAnnounce(AsciiString path, UnsignedByte
 		log.format(L"Not sending file '%hs' to %X", path.str(), playerMask);
 		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("%ls", log.str()));
 		if (TheLAN)
-			TheLAN->OnChat(UnicodeString(L"sendFile"), 0, log, LANAPI::LANCHAT_SYSTEM);
+			TheLAN->OnChat(L"sendFile", 0, log, LANAPI::LANCHAT_SYSTEM);
 		return 0;
 	}
 
@@ -2158,7 +2158,7 @@ void ConnectionManager::sendFile(AsciiString path, UnsignedByte playerMask, Unsi
 		log.format(L"Not sending file '%hs' to %X", path.str(), playerMask);
 		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("%ls", log.str()));
 		if (TheLAN)
-			TheLAN->OnChat(UnicodeString(L"sendFile"), 0, log, LANAPI::LANCHAT_SYSTEM);
+			TheLAN->OnChat(L"sendFile", 0, log, LANAPI::LANCHAT_SYSTEM);
 		return;
 	}
 

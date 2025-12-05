@@ -305,8 +305,8 @@ void PlayerListDlg::OnNewplayer()
 	newPlayerDict.setBool(TheKey_playerIsHuman, true);
 	newPlayerDict.setUnicodeString(TheKey_playerDisplayName, pnameu);
 	newPlayerDict.setAsciiString(TheKey_playerFaction, addedPTName);
-	newPlayerDict.setAsciiString(TheKey_playerEnemies, AsciiString(""));
-	newPlayerDict.setAsciiString(TheKey_playerAllies, AsciiString(""));
+	newPlayerDict.setAsciiString(TheKey_playerEnemies, "");
+	newPlayerDict.setAsciiString(TheKey_playerAllies, "");
 
 #ifdef NOT_IN_USE
 	// auto-open the advanced prop editor
@@ -859,8 +859,8 @@ void PlayerListDlg::OnAddskirmishplayers()
 		newPlayerDict.setBool(TheKey_playerIsHuman, false);
 		newPlayerDict.setUnicodeString(TheKey_playerDisplayName, pnameu);
 		newPlayerDict.setAsciiString(TheKey_playerFaction, addedPTName);
-		newPlayerDict.setAsciiString(TheKey_playerEnemies, AsciiString(""));
-		newPlayerDict.setAsciiString(TheKey_playerAllies, AsciiString(""));
+		newPlayerDict.setAsciiString(TheKey_playerEnemies, "");
+		newPlayerDict.setAsciiString(TheKey_playerAllies, "");
 
 		ensureValidPlayerName(&newPlayerDict);
 		m_sides.addSide(&newPlayerDict);
@@ -881,8 +881,8 @@ void PlayerListDlg::OnAddskirmishplayers()
 		newPlayerDict.setBool(TheKey_playerIsHuman, false);
 		newPlayerDict.setUnicodeString(TheKey_playerDisplayName, pnameu);
 		newPlayerDict.setAsciiString(TheKey_playerFaction, addedPTName);
-		newPlayerDict.setAsciiString(TheKey_playerEnemies, AsciiString(""));
-		newPlayerDict.setAsciiString(TheKey_playerAllies, AsciiString(""));
+		newPlayerDict.setAsciiString(TheKey_playerEnemies, "");
+		newPlayerDict.setAsciiString(TheKey_playerAllies, "");
 
 		ensureValidPlayerName(&newPlayerDict);
 		m_sides.addSide(&newPlayerDict);
@@ -903,8 +903,8 @@ void PlayerListDlg::OnAddskirmishplayers()
 		newPlayerDict.setBool(TheKey_playerIsHuman, false);
 		newPlayerDict.setUnicodeString(TheKey_playerDisplayName, pnameu);
 		newPlayerDict.setAsciiString(TheKey_playerFaction, addedPTName);
-		newPlayerDict.setAsciiString(TheKey_playerEnemies, AsciiString(""));
-		newPlayerDict.setAsciiString(TheKey_playerAllies, AsciiString(""));
+		newPlayerDict.setAsciiString(TheKey_playerEnemies, "");
+		newPlayerDict.setAsciiString(TheKey_playerAllies, "");
 
 		ensureValidPlayerName(&newPlayerDict);
 		m_sides.addSide(&newPlayerDict);
@@ -925,8 +925,8 @@ void PlayerListDlg::OnAddskirmishplayers()
 		newPlayerDict.setBool(TheKey_playerIsHuman, false);
 		newPlayerDict.setUnicodeString(TheKey_playerDisplayName, pnameu);
 		newPlayerDict.setAsciiString(TheKey_playerFaction, addedPTName);
-		newPlayerDict.setAsciiString(TheKey_playerEnemies, AsciiString(""));
-		newPlayerDict.setAsciiString(TheKey_playerAllies, AsciiString(""));
+		newPlayerDict.setAsciiString(TheKey_playerEnemies, "");
+		newPlayerDict.setAsciiString(TheKey_playerAllies, "");
 
 		ensureValidPlayerName(&newPlayerDict);
 		m_sides.addSide(&newPlayerDict);

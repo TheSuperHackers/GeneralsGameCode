@@ -324,7 +324,7 @@ static void loadText( char *filename, GameWindow *listboxText )
 		line.translate(buffer);
 		line.trim();
 		if (line.isEmpty())
-			line = UnicodeString(L" ");
+			line = L" ";
 		GadgetListBoxAddEntryText(listboxText, line, color, -1, -1);
 	}
 
@@ -344,7 +344,7 @@ void W3DInGameUI::init( void )
 	// comment because we'll probably want to add this back in.
 /*
 		// create the MOTD
-		GameWindow *motd = TheWindowManager->winCreateFromScript( AsciiString("MOTD.wnd") );
+		GameWindow *motd = TheWindowManager->winCreateFromScript( "MOTD.wnd" );
 		if( motd )
 		{
 			NameKeyType listboxTextID = TheNameKeyGenerator->nameToKey( "MOTD.wnd:ListboxMOTD" );

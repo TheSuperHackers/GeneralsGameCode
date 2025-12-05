@@ -1386,7 +1386,7 @@ GameWindow *GameWindowManager::winCreate( GameWindow *parent,
 			TheGlobalLanguageData->m_defaultWindowFont.bold) );
 	}
 	else
-		window->winSetFont( winFindFont( AsciiString("Times New Roman"), 14, FALSE ) );
+		window->winSetFont( winFindFont( "Times New Roman", 14, FALSE ) );
 
 	return window;
 
@@ -1618,9 +1618,9 @@ GameWindow *GameWindowManager::gogoMessageBox(Int x, Int y, Int width, Int heigh
 	GameWindow *trueParent = NULL;
 	//Changed by Chris
 	if(useLogo)
-		trueParent = winCreateFromScript( AsciiString("Menus/QuitMessageBox.wnd") );
+		trueParent = winCreateFromScript( "Menus/QuitMessageBox.wnd" );
 	else
-		trueParent = winCreateFromScript( AsciiString("Menus/MessageBox.wnd") );
+		trueParent = winCreateFromScript( "Menus/MessageBox.wnd" );
 	//Added By Chris
 	AsciiString menuName;
 	if(useLogo)
@@ -2854,7 +2854,7 @@ void GameWindowManager::assignDefaultGadgetLook( GameWindow *gadget,
 				TheGlobalLanguageData->m_defaultWindowFont.bold) );
 		}
 		else
-			gadget->winSetFont( TheWindowManager->winFindFont( AsciiString("Times New Roman"), 14, FALSE ) );
+			gadget->winSetFont( TheWindowManager->winFindFont( "Times New Roman", 14, FALSE ) );
 	}
 
 	// if we don't want to assign default colors/images get out of here
@@ -3790,19 +3790,19 @@ Bool GameWindowManager::initTestGUI( void )
 																								100, 100,
 																								&instData,
 																								&listData, NULL, TRUE );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Listbox text"),
+	GadgetListBoxAddEntryText( window, L"Listbox text",
 												 TheWindowManager->winMakeColor( 255, 255, 255, 255 ), -1, 0 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"More text"),
+	GadgetListBoxAddEntryText( window, L"More text",
 												 TheWindowManager->winMakeColor( 105, 105, 255, 255 ), -1, 0 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Nothing"),
+	GadgetListBoxAddEntryText( window, L"Nothing",
 												 TheWindowManager->winMakeColor( 105, 105, 255, 255 ), -1, 0 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Seasons"),
+	GadgetListBoxAddEntryText( window, L"Seasons",
 												 TheWindowManager->winMakeColor( 105, 205, 255, 255 ), -1, 0 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Misery"),
+	GadgetListBoxAddEntryText( window, L"Misery",
 												 TheWindowManager->winMakeColor( 235, 105, 255, 255 ), -1, 0 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Natural"),
+	GadgetListBoxAddEntryText( window, L"Natural",
 												 TheWindowManager->winMakeColor( 105, 205, 45, 255 ), -1, 0 );
-	window->winSetFont( TheFontLibrary->getFont( AsciiString("Times New Roman"), 12, FALSE ) );
+	window->winSetFont( TheFontLibrary->getFont( "Times New Roman", 12, FALSE ) );
 
 	// make a listbox
 	memset( &listData, 0, sizeof( ListboxData ) );
@@ -3823,17 +3823,17 @@ Bool GameWindowManager::initTestGUI( void )
 																								100, 100,
 																								&instData,
 																								&listData, NULL, TRUE );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Listbox text"),
+	GadgetListBoxAddEntryText( window, L"Listbox text",
 												 TheWindowManager->winMakeColor( 255, 255, 255, 255 ), -1, -1 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"More text"),
+	GadgetListBoxAddEntryText( window, L"More text",
 												 TheWindowManager->winMakeColor( 105, 105, 255, 255 ), -1, -1 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Nothing"),
+	GadgetListBoxAddEntryText( window, L"Nothing",
 												 TheWindowManager->winMakeColor( 105, 105, 255, 255 ), -1, -1 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Seasons"),
+	GadgetListBoxAddEntryText( window, L"Seasons",
 												 TheWindowManager->winMakeColor( 105, 205, 255, 255 ), -1, -1 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Misery"),
+	GadgetListBoxAddEntryText( window, L"Misery",
 												 TheWindowManager->winMakeColor( 235, 105, 255, 255 ), -1, -1 );
-	GadgetListBoxAddEntryText( window, UnicodeString(L"Natural"),
+	GadgetListBoxAddEntryText( window, L"Natural",
 												 TheWindowManager->winMakeColor( 105, 205, 45, 255 ), -1, -1 );
 
 	// make a vert slider

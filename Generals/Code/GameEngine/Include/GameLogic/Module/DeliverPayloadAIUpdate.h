@@ -202,11 +202,7 @@ public:
 		m_dropOffset.zero();
 		m_dropVariance.zero();
 		m_deliveryDecalRadius = 0;
-		// Added By Sadullah Nader
-		// Initialization missing and needed
-
 		m_putInContainerName.clear();
-		// End Add
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
@@ -293,14 +289,9 @@ public:
 		m_visiblePayloadWeaponTemplate = NULL;
 		m_selfDestructObject = FALSE;
 		m_deliveryDecalRadius = 0;
-		// Added By Sadullah Nader
-		// Initialization missing and needed
-
 		m_visibleDropBoneName.clear();
 		m_visiblePayloadTemplateName.clear();
 		m_visibleSubObjectName.clear();
-
-		// End Add
 	}
 
 	static const FieldParse* getFieldParse();

@@ -98,7 +98,7 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 		}
 		if(newModState != 0)
 			return disp;
-		WideChar key = TheKeyboard->getPrintableKey(msg->getArgument(0)->integer, 0);
+		WideChar key = TheKeyboard->getPrintableKey((KeyDefType)msg->getArgument(0)->integer, 0);
 		UnicodeString uKey;
 		uKey.concat(key);
 		AsciiString aKey;
@@ -113,10 +113,7 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 HotKey::HotKey()
 {
 	m_win = NULL;
-	//Added By Sadullah Nader
-	//Initializations missing and needed
 	m_key.clear();
-	//
 }
 
 //-----------------------------------------------------------------------------

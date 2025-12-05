@@ -615,7 +615,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 	if(win)
 	{
 
-		static NameKeyType winNamekey	= TheNameKeyGenerator->nameToKey( AsciiString( "ControlBar.wnd:BackgroundMarker" ) );
+		static NameKeyType winNamekey	= TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" );
 		static ICoord2D lastOffset = { 0, 0 };
 
 		ICoord2D size, newSize, pos;

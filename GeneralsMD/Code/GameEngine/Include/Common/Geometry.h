@@ -111,12 +111,8 @@ public:
 
 	GeometryInfo(GeometryType type, Bool isSmall, Real height, Real majorRadius, Real minorRadius)
 	{
-		// Added by Sadullah Nader
-		// Initializations missing and needed
 		m_boundingCircleRadius = 0.0f;
 		m_boundingSphereRadius = 0.0f;
-		//
-
 		set(type, isSmall, height, majorRadius, minorRadius);
 	}
 

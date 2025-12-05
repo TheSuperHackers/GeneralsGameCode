@@ -116,23 +116,15 @@ DeliverPayloadAIUpdate::DeliverPayloadAIUpdate( Thing *thing, const ModuleData* 
 	m_visibleItemsDelivered = 0;
 	m_deliveryDecal.clear();
 	m_previousDistanceSqr = 0;
-
 	m_freeToExit = FALSE;
 	m_acceptingCommands = TRUE;
-
-	// Added By Sadullah Nader
-	// Initialization missing and needed
-
 	m_diveState = DIVESTATE_PREDIVE;
-
-	// End Add
 }
 
 //-------------------------------------------------------------------------------------------------
 DeliverPayloadAIUpdate::~DeliverPayloadAIUpdate( void )
 {
 	m_deliveryDecal.clear();
-
 	deleteInstance(m_deliverPayloadStateMachine);
 }
 

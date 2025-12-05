@@ -224,7 +224,7 @@ WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt m
 		//	if( controlID == buttonCommunicator && TheGameLogic->getGameMode() == GAME_INTERNET )
 	/*
 		{
-				popupCommunicatorLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/PopupCommunicator.wnd" ) );
+				popupCommunicatorLayout = TheWindowManager->winCreateLayout( "Menus/PopupCommunicator.wnd" );
 				popupCommunicatorLayout->runInit();
 				popupCommunicatorLayout->hide( FALSE );
 				popupCommunicatorLayout->bringForward();

@@ -262,7 +262,7 @@ void WOLPositionStartSpots( void )
 		win = TheWindowManager->winGetWindowFromId(NULL, windowMapSelectMapID);
 
 		// get the controls.
-		NameKeyType listboxMapID = TheNameKeyGenerator->nameToKey( AsciiString("WOLMapSelectMenu.wnd:ListboxMap") );
+		NameKeyType listboxMapID = TheNameKeyGenerator->nameToKey( "WOLMapSelectMenu.wnd:ListboxMap" );
 		GameWindow *listboxMap = TheWindowManager->winGetWindowFromId( NULL, listboxMapID );
 
 		if (listboxMap != NULL) {
@@ -999,16 +999,16 @@ void InitWOLGameGadgets( void )
 	DEBUG_ASSERTCRASH(pingImages[2], ("Can't find ping image!"));
 
 	//Initialize the gadget IDs
-	parentWOLGameSetupID = TheNameKeyGenerator->nameToKey( AsciiString( "GameSpyGameOptionsMenu.wnd:GameSpyGameOptionsMenuParent" ) );
-	buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString( "GameSpyGameOptionsMenu.wnd:ButtonBack" ) );
-	buttonStartID = TheNameKeyGenerator->nameToKey( AsciiString( "GameSpyGameOptionsMenu.wnd:ButtonStart" ) );
-	textEntryChatID = TheNameKeyGenerator->nameToKey( AsciiString( "GameSpyGameOptionsMenu.wnd:TextEntryChat" ) );
-	textEntryMapDisplayID = TheNameKeyGenerator->nameToKey( AsciiString( "GameSpyGameOptionsMenu.wnd:TextEntryMapDisplay" ) );
-	listboxGameSetupChatID = TheNameKeyGenerator->nameToKey( AsciiString( "GameSpyGameOptionsMenu.wnd:ListboxChatWindowGameSpyGameSetup" ) );
-	buttonEmoteID = TheNameKeyGenerator->nameToKey( AsciiString( "GameSpyGameOptionsMenu.wnd:ButtonEmote" ) );
-	buttonSelectMapID = TheNameKeyGenerator->nameToKey( AsciiString( "GameSpyGameOptionsMenu.wnd:ButtonSelectMap" ) );
-	windowMapID = TheNameKeyGenerator->nameToKey( AsciiString( "GameSpyGameOptionsMenu.wnd:MapWindow" ) );
-	windowMapSelectMapID = TheNameKeyGenerator->nameToKey(AsciiString("WOLMapSelectMenu.wnd:WinMapPreview"));
+	parentWOLGameSetupID = TheNameKeyGenerator->nameToKey( "GameSpyGameOptionsMenu.wnd:GameSpyGameOptionsMenuParent" );
+	buttonBackID = TheNameKeyGenerator->nameToKey( "GameSpyGameOptionsMenu.wnd:ButtonBack" );
+	buttonStartID = TheNameKeyGenerator->nameToKey( "GameSpyGameOptionsMenu.wnd:ButtonStart" );
+	textEntryChatID = TheNameKeyGenerator->nameToKey( "GameSpyGameOptionsMenu.wnd:TextEntryChat" );
+	textEntryMapDisplayID = TheNameKeyGenerator->nameToKey( "GameSpyGameOptionsMenu.wnd:TextEntryMapDisplay" );
+	listboxGameSetupChatID = TheNameKeyGenerator->nameToKey( "GameSpyGameOptionsMenu.wnd:ListboxChatWindowGameSpyGameSetup" );
+	buttonEmoteID = TheNameKeyGenerator->nameToKey( "GameSpyGameOptionsMenu.wnd:ButtonEmote" );
+	buttonSelectMapID = TheNameKeyGenerator->nameToKey( "GameSpyGameOptionsMenu.wnd:ButtonSelectMap" );
+	windowMapID = TheNameKeyGenerator->nameToKey( "GameSpyGameOptionsMenu.wnd:MapWindow" );
+	windowMapSelectMapID = TheNameKeyGenerator->nameToKey("WOLMapSelectMenu.wnd:WinMapPreview");
 
 	NameKeyType staticTextTitleID = NAMEKEY("GameSpyGameOptionsMenu.wnd:StaticTextGameName");
 
@@ -1024,10 +1024,7 @@ void InitWOLGameGadgets( void )
 	windowMap = TheWindowManager->winGetWindowFromId( parentWOLGameSetup,windowMapID  );
 	DEBUG_ASSERTCRASH(windowMap, ("Could not find the parentWOLGameSetup.wnd:MapWindow" ));
 
-	//Added By Sadullah Nader
-	//Tooltip Function set
 	windowMap->winSetTooltipFunc(MapSelectorTooltip);
-	//
 
 	GameWindow *staticTextTitle = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, staticTextTitleID );
 	if (staticTextTitle)
@@ -2333,7 +2330,7 @@ Bool handleGameSetupSlashCommands(UnicodeString uText)
 	else if (token == "slots")
 	{
 		g_debugSlots = !g_debugSlots;
-		TheGameSpyInfo->addText(UnicodeString(L"Toggled SlotList debug"), GameSpyColor[GSCOLOR_DEFAULT], NULL);
+		TheGameSpyInfo->addText(L"Toggled SlotList debug", GameSpyColor[GSCOLOR_DEFAULT], NULL);
 		return TRUE; // was a slash command
 	}
 	else if (token == "discon")

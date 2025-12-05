@@ -131,7 +131,7 @@ BOOL SelectMacrotexture::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult
 			item.cchTextMax = sizeof(buffer)-2;
 			m_textureTreeView.GetItem(&item);
 			if (0==strcmp(buffer, DEFAULT)) {
-				TheTerrainRenderObject->updateMacroTexture(AsciiString(""));
+				TheTerrainRenderObject->updateMacroTexture("");
 			} else {
 				TheTerrainRenderObject->updateMacroTexture(AsciiString(buffer));
 			}

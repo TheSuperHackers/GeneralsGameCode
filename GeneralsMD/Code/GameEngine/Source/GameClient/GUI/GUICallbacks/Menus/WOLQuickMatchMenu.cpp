@@ -1187,11 +1187,11 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 				/*
 				if (resp.joinGroupRoom.ok)
 				{
-					TheGameSpyInfo->addText(UnicodeString(L"Joined group room"), GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
+					TheGameSpyInfo->addText(L"Joined group room", GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
 				}
 				else
 				{
-					TheGameSpyInfo->addText(UnicodeString(L"Didn't join group room"), GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
+					TheGameSpyInfo->addText(L"Didn't join group room", GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
 				}
 				*/
 				break;
@@ -1284,7 +1284,7 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 					switch( resp.qmStatus.status )
 					{
 					case QM_IDLE:
-						//TheGameSpyInfo->addText(UnicodeString(L"Status: QM_IDLE"), GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
+						//TheGameSpyInfo->addText(L"Status: QM_IDLE", GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
 						break;
 					case QM_JOININGQMCHANNEL:
 						TheGameSpyInfo->addText(TheGameText->fetch("QM:JOININGQMCHANNEL"), GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);

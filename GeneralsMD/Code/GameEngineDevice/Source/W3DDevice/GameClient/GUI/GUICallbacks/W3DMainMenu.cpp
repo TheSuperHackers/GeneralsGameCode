@@ -916,9 +916,9 @@ void W3DMainMenuInit( WindowLayout *layout, void *userData )
 	NameKeyType buttonUSAID = TheNameKeyGenerator->nameToKey( "MainMenu.wnd:ButtonUSA" );
 	NameKeyType buttonGLAID = TheNameKeyGenerator->nameToKey( "MainMenu.wnd:ButtonGLA" );
 	NameKeyType buttonChinaID = TheNameKeyGenerator->nameToKey( "MainMenu.wnd:ButtonChina" );
-	NameKeyType skirmishID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonSkirmish") );
-	NameKeyType onlineID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonOnline") );
-	NameKeyType networkID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonNetwork") );
+	NameKeyType skirmishID = TheNameKeyGenerator->nameToKey( "MainMenu.wnd:ButtonSkirmish" );
+	NameKeyType onlineID = TheNameKeyGenerator->nameToKey( "MainMenu.wnd:ButtonOnline" );
+	NameKeyType networkID = TheNameKeyGenerator->nameToKey( "MainMenu.wnd:ButtonNetwork" );
 
 	GameWindow *button = TheWindowManager->winGetWindowFromId( parent, skirmishID );
 	if (button)
@@ -984,7 +984,7 @@ void W3DMainMenuInit( WindowLayout *layout, void *userData )
 	if(win)
 		win->winSetDrawFunc(W3DMainMenuButtonDropShadowDraw);
 
-	GameWindow *clipRegionWin = TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:MapBorder") ));
+	GameWindow *clipRegionWin = TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( "MainMenu.wnd:MapBorder" ));
 	Int x,y,width,height;
 	clipRegionWin->winGetScreenPosition(&x, &y);
 	clipRegionWin->winGetSize(&width, &height);

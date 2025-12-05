@@ -69,8 +69,8 @@ static GameWindow *buttonVotePlayer6Window = NULL;
 static GameWindow *buttonVotePlayer7Window = NULL;
 
 static void InitDisconnectWindow( void ) {
-	textEntryID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:TextEntry"));
-	textDisplayID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ListboxTextDisplay"));
+	textEntryID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:TextEntry");
+	textDisplayID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ListboxTextDisplay");
 
 	textEntryWindow = TheWindowManager->winGetWindowFromId(NULL, textEntryID);
 	textDisplayWindow = TheWindowManager->winGetWindowFromId(NULL, textDisplayID);
@@ -80,16 +80,16 @@ static void InitDisconnectWindow( void ) {
 		TheWindowManager->winSetFocus(textEntryWindow);
 	}
 
-	buttonQuitID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ButtonQuitGame"));
+	buttonQuitID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ButtonQuitGame");
 	buttonQuitWindow = TheWindowManager->winGetWindowFromId(NULL, buttonQuitID);
 
-	buttonVotePlayer1ID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ButtonKickPlayer1"));
-	buttonVotePlayer2ID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ButtonKickPlayer2"));
-	buttonVotePlayer3ID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ButtonKickPlayer3"));
-	buttonVotePlayer4ID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ButtonKickPlayer4"));
-	buttonVotePlayer5ID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ButtonKickPlayer5"));
-	buttonVotePlayer6ID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ButtonKickPlayer6"));
-	buttonVotePlayer7ID = TheNameKeyGenerator->nameToKey( AsciiString("DisconnectScreen.wnd:ButtonKickPlayer7"));
+	buttonVotePlayer1ID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ButtonKickPlayer1");
+	buttonVotePlayer2ID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ButtonKickPlayer2");
+	buttonVotePlayer3ID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ButtonKickPlayer3");
+	buttonVotePlayer4ID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ButtonKickPlayer4");
+	buttonVotePlayer5ID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ButtonKickPlayer5");
+	buttonVotePlayer6ID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ButtonKickPlayer6");
+	buttonVotePlayer7ID = TheNameKeyGenerator->nameToKey( "DisconnectScreen.wnd:ButtonKickPlayer7");
 
 	buttonVotePlayer1Window = TheWindowManager->winGetWindowFromId(NULL, buttonVotePlayer1ID);
 	buttonVotePlayer2Window = TheWindowManager->winGetWindowFromId(NULL, buttonVotePlayer2ID);

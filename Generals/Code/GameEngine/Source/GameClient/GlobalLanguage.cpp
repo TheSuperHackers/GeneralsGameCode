@@ -122,15 +122,12 @@ void INI::parseLanguageDefinition( INI *ini )
 GlobalLanguage::GlobalLanguage()
 {
 	m_unicodeFontName.clear();
-	//Added By Sadullah Nader
-	//Initializations missing and needed
 	m_unicodeFontFileName.clear();
 	m_unicodeFontName.clear();
 	m_militaryCaptionSpeed = 0;
 	m_useHardWrap = FALSE;
 	m_resolutionFontSizeAdjustment = 0.7f;
 	m_resolutionFontSizeMethod = ResolutionFontSizeMethod_Default;
-	//End Add
 
 	m_userResolutionFontSizeAdjustment = -1.0f;
 }

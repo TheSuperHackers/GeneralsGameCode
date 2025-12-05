@@ -1095,7 +1095,7 @@ void TextureLoadTaskClass::Init(TextureBaseClass* tc, TaskType type, PriorityTyp
 	REF_PTR_SET(Texture, tc);
 
 	// Make sure texture has a filename.
-	WWASSERT(Texture->Get_Full_Path() != "");
+	WWASSERT(!Texture->Get_Full_Path().Is_Empty());
 
 	Type				= type;
 	Priority			= priority;
@@ -2065,7 +2065,7 @@ void CubeTextureLoadTaskClass::Init(TextureBaseClass* tc, TaskType type, Priorit
 	REF_PTR_SET(Texture, tc);
 
 	// Make sure texture has a filename.
-	WWASSERT(Texture->Get_Full_Path() != "");
+	WWASSERT(!Texture->Get_Full_Path().Is_Empty());
 
 	Type				= type;
 	Priority			= priority;
@@ -2476,7 +2476,7 @@ void VolumeTextureLoadTaskClass::Init(TextureBaseClass* tc, TaskType type, Prior
 	REF_PTR_SET(Texture, tc);
 
 	// Make sure texture has a filename.
-	WWASSERT(Texture->Get_Full_Path() != "");
+	WWASSERT(!Texture->Get_Full_Path().Is_Empty());
 
 	Type				= type;
 	Priority			= priority;

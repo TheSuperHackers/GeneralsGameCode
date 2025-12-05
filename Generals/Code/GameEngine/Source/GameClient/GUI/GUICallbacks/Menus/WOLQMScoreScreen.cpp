@@ -60,9 +60,9 @@ static GameWindow *buttonQuickmatch = NULL;
 //-------------------------------------------------------------------------------------------------
 void WOLQMScoreScreenInit( WindowLayout *layout, void *userData )
 {
-	parentWOLQMScoreID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLQMScoreScreen.wnd:WOLQMScoreScreenParent" ) );
-	buttonDisconnectID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLQMScoreScreen.wnd:ButtonDisconnect" ) );
-	buttonQuickmatchID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLQMScoreScreen.wnd:ButtonQuickMatch" ) );
+	parentWOLQMScoreID = TheNameKeyGenerator->nameToKey( "WOLQMScoreScreen.wnd:WOLQMScoreScreenParent" );
+	buttonDisconnectID = TheNameKeyGenerator->nameToKey( "WOLQMScoreScreen.wnd:ButtonDisconnect" );
+	buttonQuickmatchID = TheNameKeyGenerator->nameToKey( "WOLQMScoreScreen.wnd:ButtonQuickMatch" );
 	parentWOLQMScore = TheWindowManager->winGetWindowFromId( NULL, parentWOLQMScoreID );
 	buttonDisconnect = TheWindowManager->winGetWindowFromId( NULL,  buttonDisconnectID);
 	buttonQuickmatch = TheWindowManager->winGetWindowFromId( NULL,  buttonQuickmatchID);

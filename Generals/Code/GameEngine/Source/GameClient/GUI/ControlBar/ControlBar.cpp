@@ -455,7 +455,7 @@ void ControlBar::populatePurchaseScience( Player* player )
 		u.translate(foo);
 		GadgetListBoxAddEntryText(win, u, color, -1, -1);
 	}
-	GadgetListBoxAddEntryText(win, UnicodeString(L"Cancel"), color, -1, -1);*/
+	GadgetListBoxAddEntryText(win, L"Cancel", color, -1, -1);*/
 
 }
 
@@ -561,10 +561,6 @@ CommandButton::CommandButton( void )
 	//m_pushedImage = NULL;
 
 	m_flashCount = 0;
-
-	// Added by Sadullah Nader
-	// The purpose is to initialize these variable to values that are zero or empty
-
 	m_conflictingLabel.clear();
 	m_cursorName.clear();
 	m_descriptionLabel.clear();
@@ -573,9 +569,6 @@ CommandButton::CommandButton( void )
 	m_options = 0;
 	m_purchasedLabel.clear();
 	m_textLabel.clear();
-
-	// End Add
-
 	m_window = NULL;
 	m_commandButtonBorder = COMMAND_BUTTON_BORDER_NONE;
 	//m_prev = NULL;
@@ -860,14 +853,10 @@ ControlBar::ControlBar( void )
 	m_observedPlayer = NULL;
 	m_buildToolTipLayout = NULL;
 	m_showBuildToolTipLayout = FALSE;
-
-	// Added By Sadullah Nader
-	// initializing vars to zero
 	m_animateDownWin1Pos.x = m_animateDownWin1Pos.y = 0;
 	m_animateDownWin1Size.x = m_animateDownWin1Size.y = 0;
 	m_animateDownWin2Pos.x = m_animateDownWin2Pos.y = 0;
 	m_animateDownWin2Size.x = m_animateDownWin2Size.y = 0;
-
 	m_animateDownWindow = NULL;
 	m_animTime = 0;
 
@@ -879,11 +868,10 @@ ControlBar::ControlBar( void )
 	m_currContext = CB_CONTEXT_NONE;
 	m_defaultControlBarPosition.x = m_defaultControlBarPosition.y = 0;
 	m_genStarFlash = FALSE;
-  m_genStarOff = NULL;
+	m_genStarOff = NULL;
 	m_genStarOn  = NULL;
 	m_UIDirty    = FALSE;
-	//
-//	m_controlBarResizer = NULL;
+	//	m_controlBarResizer = NULL;
 	m_buildUpClockColor = GameMakeColor(0,0,0,100);
 	m_commandBarBorderColor = GameMakeColor(0,0,0,100);
 	for( i = 0; i < NUM_CONTEXT_PARENTS; i++ )
@@ -1039,11 +1027,11 @@ void ControlBar::init( void )
 	INI ini;
 	m_sideSelectAnimateDown = FALSE;
 	// load the command buttons
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\Default\\CommandButton" ), INI_LOAD_OVERWRITE, NULL );
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\CommandButton" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\CommandButton", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\CommandButton", INI_LOAD_OVERWRITE, NULL );
 
 	// load the command sets
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\CommandSet" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\CommandSet", INI_LOAD_OVERWRITE, NULL );
 
 	// post process step after loading the command buttons and command sets
 	postProcessCommands();
@@ -1230,9 +1218,9 @@ void ControlBar::init( void )
 		m_radarAttackGlowWindow = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:WinUAttack"));
 
 
-		win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( AsciiString( "ControlBar.wnd:BackgroundMarker" ) ));
+		win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" ));
 		win->winGetScreenPosition(&m_controlBarForegroundMarkerPos.x, &m_controlBarForegroundMarkerPos.y);
-		win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( AsciiString( "ControlBar.wnd:BackgroundMarker" ) ));
+		win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" ));
 		win->winGetScreenPosition(&m_controlBarBackgroundMarkerPos.x,&m_controlBarBackgroundMarkerPos.y);
 
 		if(!m_videoManager)
@@ -1388,7 +1376,7 @@ void ControlBar::update( void )
 		{
 			if (m_animateWindowManager->isFinished() && m_animateWindowManager->isReversed())
 			{
-				Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
+				Int id = (Int)TheNameKeyGenerator->nameToKey("ControlBar.wnd:ControlBarParent");
 				GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
 				if (window && !window->winIsHidden())
 					window->winHide(TRUE);
@@ -2481,7 +2469,7 @@ void ControlBar::setControlCommand( GameWindow *button, const CommandButton *com
 		button->winSetTooltipFunc(commandButtonTooltip);
 	}
 	else
-		GadgetButtonSetText( button, UnicodeString( L"" ) );
+		GadgetButtonSetText( button, L"" );
 
 	// save the command in the user data of the window
 	GadgetButtonSetData(button, (void*)commandButton);

@@ -108,7 +108,7 @@ void GroveTool::activate()
 void GroveTool::plantShrub( Coord3D *pos )
 {
 // TODO: Determine when we can tell something is a shurubbery, and plant it here - jkmcd
-//	addObj(pos, AsciiString("Shrub"));
+//	addObj(pos, "Shrub");
 }
 
 void GroveTool::_plantGroveInBox(CPoint tl, CPoint br, WbView* pView)

@@ -254,7 +254,7 @@ void StartPressed(void)
 		{
 			UnicodeString text;
 			text.format(TheGameText->fetch("LAN:TooManyPlayers"), (md)?md->m_numPlayers:0);
-			TheLAN->OnChat(UnicodeString(L"SYSTEM"), TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
+			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 		}
 		return;
 	}
@@ -265,7 +265,7 @@ void StartPressed(void)
 		if (TheLAN->AmIHost())
 		{
 			UnicodeString text = TheGameText->fetch("GUI:NeedHumanPlayers");
-			TheLAN->OnChat(UnicodeString(L"SYSTEM"), TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
+			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 		}
 		return;
 	}
@@ -277,7 +277,7 @@ void StartPressed(void)
 		{
 			UnicodeString text;
 			text.format(TheGameText->fetch("LAN:NeedMorePlayers"),numUsers);
-			TheLAN->OnChat(UnicodeString(L"SYSTEM"), TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
+			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 		}
 		return;
 	}
@@ -306,7 +306,7 @@ void StartPressed(void)
 		{
 			UnicodeString text;
 			text.format(TheGameText->fetch("LAN:NeedMoreTeams"));
-			TheLAN->OnChat(UnicodeString(L"SYSTEM"), TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
+			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 		}
 		return;
 	}
@@ -315,7 +315,7 @@ void StartPressed(void)
 	{
 		UnicodeString text;
 		text.format(TheGameText->fetch("GUI:SandboxMode"));
-			TheLAN->OnChat(UnicodeString(L"SYSTEM"), TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
+			TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), text, LANAPI::LANCHAT_SYSTEM);
 	}
 
 	// see if everyone's accepted and count the number of players in the game
@@ -615,15 +615,15 @@ void lanUpdateSlotList( void )
 void InitLanGameGadgets( void )
 {
 	//Initialize the gadget IDs
-	parentLanGameOptionsID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:LanGameOptionsMenuParent" ) );
-	buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:ButtonBack" ) );
-	buttonStartID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:ButtonStart" ) );
-	textEntryChatID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:TextEntryChat" ) );
-	textEntryMapDisplayID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:TextEntryMapDisplay" ) );
-	listboxChatWindowLanGameID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:ListboxChatWindowLanGame" ) );
-	buttonEmoteID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:ButtonEmote" ) );
-	buttonSelectMapID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:ButtonSelectMap" ) );
-	windowMapID = TheNameKeyGenerator->nameToKey( AsciiString( "LanGameOptionsMenu.wnd:MapWindow" ) );
+	parentLanGameOptionsID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:LanGameOptionsMenuParent" );
+	buttonBackID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ButtonBack" );
+	buttonStartID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ButtonStart" );
+	textEntryChatID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:TextEntryChat" );
+	textEntryMapDisplayID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:TextEntryMapDisplay" );
+	listboxChatWindowLanGameID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ListboxChatWindowLanGame" );
+	buttonEmoteID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ButtonEmote" );
+	buttonSelectMapID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ButtonSelectMap" );
+	windowMapID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:MapWindow" );
 
 	// Initialize the pointers to our gadgets
 	parentLanGameOptions = TheWindowManager->winGetWindowFromId( NULL, parentLanGameOptionsID );
@@ -649,11 +649,8 @@ void InitLanGameGadgets( void )
 	Int localSlotNum = TheLAN->GetMyGame()->getLocalSlotNum();
 	DEBUG_ASSERTCRASH(localSlotNum >= 0, ("Bad slot number!"));
 
-	//Added By Sadullah Nader
 	//Tooltip function is being set for techBuildings, and supplyDocks
-
 	windowMap->winSetTooltipFunc(MapSelectorTooltip);
-	//End Add
 
 	for (Int i = 0; i < MAX_SLOTS; i++)
 	{
@@ -704,7 +701,6 @@ void InitLanGameGadgets( void )
 		buttonAcceptID[i] = TheNameKeyGenerator->nameToKey( tmpString );
 		buttonAccept[i] = TheWindowManager->winGetWindowFromId( parentLanGameOptions, buttonAcceptID[i] );
 		DEBUG_ASSERTCRASH(buttonAccept[i], ("Could not find the buttonAccept[%d]",i ));
-		//Added by Saad for the tooltips on the MultiPlayer icons
 		buttonAccept[i]->winSetTooltipFunc(gameAcceptTooltip);
 //
 //		tmpString.format("LanGameOptionsMenu.wnd:ButtonStartPosition%d", i);
@@ -1159,7 +1155,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 				{
 					//buttonBack->winEnable( false );
 
-					mapSelectLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/LanMapSelectMenu.wnd" ) );
+					mapSelectLayout = TheWindowManager->winCreateLayout( "Menus/LanMapSelectMenu.wnd" );
 					mapSelectLayout->runInit();
 					mapSelectLayout->hide( FALSE );
 					mapSelectLayout->bringForward();

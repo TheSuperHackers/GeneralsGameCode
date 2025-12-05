@@ -1207,7 +1207,7 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 					switch( resp.qmStatus.status )
 					{
 					case QM_IDLE:
-						//TheGameSpyInfo->addText(UnicodeString(L"Status: QM_IDLE"), GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
+						//TheGameSpyInfo->addText(L"Status: QM_IDLE", GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
 						break;
 					case QM_JOININGQMCHANNEL:
 						TheGameSpyInfo->addText(TheGameText->fetch("QM:JOININGQMCHANNEL"), GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);

@@ -977,8 +977,6 @@ InGameUI::InGameUI()
 	m_mouseModeCursor = Mouse::ARROW;
 	m_mousedOverDrawableID = INVALID_DRAWABLE_ID;
 
-	//Added By Sadullah Nader
-	//Initializations missing and needed
 	m_currentlyPlayingMovie.clear();
 	m_militarySubtitle = NULL;
 	m_popupMessageData = NULL;
@@ -1213,7 +1211,7 @@ InGameUI::~InGameUI()
 void InGameUI::init( void )
 {
 	INI ini;
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\InGameUI" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\InGameUI", INI_LOAD_OVERWRITE, NULL );
 
 	//override INI values with language localized values:
 	if (TheGlobalLanguageData)
@@ -4103,7 +4101,7 @@ void InGameUI::expireHint( HintType type, UnsignedInt hintIndex )
 void InGameUI::createControlBar( void )
 {
 
-	TheWindowManager->winCreateFromScript( AsciiString("ControlBar.wnd") );
+	TheWindowManager->winCreateFromScript( "ControlBar.wnd" );
 	HideControlBar();
 /*
 	// hide all windows created from this layout
@@ -4120,7 +4118,7 @@ void InGameUI::createControlBar( void )
 void InGameUI::createReplayControl( void )
 {
 
-	m_replayWindow = TheWindowManager->winCreateFromScript( AsciiString("ReplayControl.wnd") );
+	m_replayWindow = TheWindowManager->winCreateFromScript( "ReplayControl.wnd" );
 
 /*
 	// hide all windows created from this layout
@@ -4211,7 +4209,7 @@ void InGameUI::playCameoMovie( const AsciiString& movieName )
 		stopCameoMovie();
 		return;
 	}
-	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( AsciiString("ControlBar.wnd:RightHUD") ));
+	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:RightHUD" ));
 	WinInstanceData *winData = window->winGetInstanceData();
 	winData->setVideoBuffer(m_cameoVideoBuffer);
 //	window->winHide(FALSE);
@@ -4222,8 +4220,8 @@ void InGameUI::playCameoMovie( const AsciiString& movieName )
 void InGameUI::stopCameoMovie( void )
 {
 //RightHUD
-	//GameWindow *window = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( AsciiString("ControlBar.wnd:CameoMovieWindow") ));
-	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( AsciiString("ControlBar.wnd:RightHUD") ));
+	//GameWindow *window = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:CameoMovieWindow" ));
+	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:RightHUD" ));
 //	window->winHide(FALSE);
 	WinInstanceData *winData = window->winGetInstanceData();
 	winData->setVideoBuffer(NULL);
@@ -5274,7 +5272,7 @@ try_again:
 	translate.translate(text);
 	newFTD->m_text = translate;
 	newFTD->m_dString->setText(translate);
-	newFTD->m_dString->setFont(TheWindowManager->winFindFont( AsciiString("Arial"), POINTSIZE, FALSE ));
+	newFTD->m_dString->setFont(TheWindowManager->winFindFont( "Arial", POINTSIZE, FALSE ));
 
 	if(m_floatingTextTimeOut <= 0)
 		newFTD->m_frameTimeOut = TheGameLogic->getFrame() +  DEFAULT_FLOATING_TEXT_TIMEOUT;
@@ -5439,7 +5437,7 @@ void InGameUI::popupMessage( const AsciiString& identifier, Int x, Int y, Int wi
 	if( pause )
 		TheGameLogic->setGamePaused(TRUE, pauseMusic);
 
-	m_popupMessageData->layout = TheWindowManager->winCreateLayout(AsciiString("InGamePopupMessage.wnd"));
+	m_popupMessageData->layout = TheWindowManager->winCreateLayout("InGamePopupMessage.wnd");
 	m_popupMessageData->layout->runInit();
 }
 
@@ -5473,14 +5471,11 @@ void InGameUI::clearPopupMessageData( void )
 //-------------------------------------------------------------------------------------------------
 FloatingTextData::FloatingTextData(void)
 {
-	// Added By Sadullah Nader
-	// Initializations missing and needed
 	m_color = 0;
 	m_frameCount = 0;
 	m_frameTimeOut = 0;
 	m_pos3D.zero();
 	m_text.clear();
-	//
 	m_dString = TheDisplayStringManager->newDisplayString();
 }
 
@@ -5892,7 +5887,7 @@ void InGameUI::resetIdleWorker( void )
 
 void InGameUI::recreateControlBar( void )
 {
-	GameWindow *win = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd")));
+	GameWindow *win = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd"));
 	deleteInstance(win);
 
 	m_idleWorkerWin = NULL;

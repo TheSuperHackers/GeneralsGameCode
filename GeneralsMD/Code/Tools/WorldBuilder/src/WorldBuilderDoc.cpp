@@ -334,7 +334,7 @@ void CWorldBuilderDoc::Serialize(CArchive& ar)
 				DataChunkInput file( pStrm );
 				if (file.isValidFileType()) {	// Backwards compatible files aren't valid data chunk files.
 					// Read the waypoints.
-					file.registerParser( AsciiString("WaypointsList"), AsciiString::TheEmptyString, ParseWaypointDataChunk );
+					file.registerParser( "WaypointsList", AsciiString::TheEmptyString, ParseWaypointDataChunk );
 					if (!file.parse(this)) {
 						throw(ERROR_CORRUPT_FILE_FORMAT);
 					}
@@ -1291,7 +1291,7 @@ BOOL CWorldBuilderDoc::OnNewDocument()
 	PolygonTrigger *pTrig = newInstance(PolygonTrigger)(4);
 	ICoord3D loc;
 	pTrig->setWaterArea(true);
-	pTrig->setTriggerName(AsciiString("Default Water"));
+	pTrig->setTriggerName("Default Water");
 	loc.x = -hi.borderWidth*MAP_XY_FACTOR;
 	loc.y = -hi.borderWidth*MAP_XY_FACTOR;
 	loc.z = TheGlobalData->m_waterPositionZ;

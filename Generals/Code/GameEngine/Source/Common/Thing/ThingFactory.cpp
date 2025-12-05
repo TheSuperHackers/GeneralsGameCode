@@ -134,7 +134,7 @@ ThingTemplate *ThingFactory::newTemplate( const AsciiString& name )
 	newTemplate = newInstance(ThingTemplate);
 
 	// if the default template is present, get it and copy over any data to the new template
-	const ThingTemplate *defaultT = findTemplate( AsciiString( "DefaultThingTemplate" ) );
+	const ThingTemplate *defaultT = findTemplate( "DefaultThingTemplate" );
 	if( defaultT )
 	{
 
@@ -276,7 +276,7 @@ ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name )
 #ifdef LOAD_TEST_ASSETS
 	if (!strncmp(name.str(), TEST_STRING, strlen(TEST_STRING)))
 	{
-		ThingTemplate *tmplate = newTemplate( AsciiString( "Un-namedTemplate" ) );
+		ThingTemplate *tmplate = newTemplate( "Un-namedTemplate" );
 
 		// load the values
 		tmplate->initForLTA( name );

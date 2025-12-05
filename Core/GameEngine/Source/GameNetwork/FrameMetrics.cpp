@@ -32,8 +32,6 @@
 
 FrameMetrics::FrameMetrics()
 {
-	//Added By Sadullah Nader
-	//Initializations missing and needed
 	m_averageFps = 0.0f;
 	m_averageLatency = 0.0f;
 	m_cushionIndex = 0;
@@ -44,7 +42,6 @@ FrameMetrics::FrameMetrics()
 	m_pendingLatencies = NEW time_t[MAX_FRAMES_AHEAD];
 	for(Int i = 0; i < MAX_FRAMES_AHEAD; i++)
 		m_pendingLatencies[i] = 0;
-	//
 	m_fpsList = NEW Real[TheGlobalData->m_networkFPSHistoryLength];
 	m_latencyList = NEW Real[TheGlobalData->m_networkLatencyHistoryLength];
 }

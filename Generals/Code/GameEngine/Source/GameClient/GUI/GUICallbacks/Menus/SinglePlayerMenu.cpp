@@ -74,15 +74,15 @@ void SinglePlayerMenuInit( WindowLayout *layout, void *userData )
 	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
 	TheWindowManager->winSetFocus( parent );
 
-	NameKeyType buttonNewID = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonNew") );
+	NameKeyType buttonNewID = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonNew" );
 	GameWindow *buttonNew = TheWindowManager->winGetWindowFromId( NULL, buttonNewID );
 	TheShell->registerWithAnimateManager(buttonNew, WIN_ANIMATION_SLIDE_LEFT, TRUE,1);
 
-	NameKeyType buttonLoadID = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonLoad") );
+	NameKeyType buttonLoadID = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonLoad" );
 	GameWindow *buttonLoad = TheWindowManager->winGetWindowFromId( NULL, buttonLoadID );
 	TheShell->registerWithAnimateManager(buttonLoad, WIN_ANIMATION_SLIDE_LEFT, TRUE,200);
 
-	NameKeyType buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonBack") );
+	NameKeyType buttonBackID = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonBack" );
 	GameWindow *buttonBack = TheWindowManager->winGetWindowFromId( NULL, buttonBackID );
 	TheShell->registerWithAnimateManager(buttonBack, WIN_ANIMATION_SLIDE_RIGHT, TRUE,1);
 
@@ -197,9 +197,9 @@ WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg
 		{
 
 			// get ids for our children controls
-			buttonNew = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonNew") );
-			buttonLoad = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonLoad") );
-			buttonBack = TheNameKeyGenerator->nameToKey( AsciiString("SinglePlayerMenu.wnd:ButtonBack") );
+			buttonNew = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonNew" );
+			buttonLoad = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonLoad" );
+			buttonBack = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonBack" );
 
 			break;
 
@@ -237,7 +237,7 @@ WindowMsgHandledType SinglePlayerMenuSystem( GameWindow *window, UnsignedInt msg
 			{
 
 				// open up the map select menu
-				TheShell->push( AsciiString( "Menus/MapSelectMenu.wnd" ) );
+				TheShell->push( "Menus/MapSelectMenu.wnd" );
 				buttonPushed = true;
 
 			}

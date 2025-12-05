@@ -58,10 +58,7 @@ public:
 		m_packTime = 0;
 		m_resetTurretBeforePacking = false;
 		m_turretsFunctionOnlyWhenDeployed = false;
-		// Added By Sadullah Nader
-		// Initialization necessary
 		m_turretsMustCenterBeforePacking = FALSE;
-		// End Add
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)

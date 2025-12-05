@@ -95,7 +95,7 @@ void StartDownloadingPatches( void )
 	}
 
 	WindowLayout *layout;
-	layout = TheWindowManager->winCreateLayout( AsciiString( "Menus/DownloadMenu.wnd" ) );
+	layout = TheWindowManager->winCreateLayout( "Menus/DownloadMenu.wnd" );
 	layout->runInit();
 	layout->hide( FALSE );
 	layout->bringForward();
@@ -233,10 +233,10 @@ static void startOnline( void )
 	UserPreferences::const_iterator it = pref.find("useProfiles");
 	if (it != pref.end() && it->second.compareNoCase("yes") == 0)
 #endif // ALLOW_NON_PROFILED_LOGIN
-		TheShell->push( AsciiString("Menus/GameSpyLoginProfile.wnd") );
+		TheShell->push( "Menus/GameSpyLoginProfile.wnd" );
 #ifdef ALLOW_NON_PROFILED_LOGIN
 	else
-		TheShell->push( AsciiString("Menus/GameSpyLoginQuick.wnd") );
+		TheShell->push( "Menus/GameSpyLoginQuick.wnd" );
 #endif // ALLOW_NON_PROFILED_LOGIN
 }
 

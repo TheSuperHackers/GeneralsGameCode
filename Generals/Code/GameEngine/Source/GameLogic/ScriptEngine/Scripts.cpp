@@ -522,7 +522,7 @@ void ScriptList::deleteGroup(ScriptGroup *pGrp)
 Bool ScriptList::ParseScriptsDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
 	Int i;
-	file.registerParser( AsciiString("ScriptList"), info->label, ScriptList::ParseScriptListDataChunk );
+	file.registerParser( "ScriptList", info->label, ScriptList::ParseScriptListDataChunk );
 	DEBUG_ASSERTCRASH(s_numInReadList==0, ("Leftover scripts floating aroung."));
 	for (i=0; i<s_numInReadList; i++) {
 		deleteInstance(s_readLists[i]);
@@ -613,8 +613,8 @@ Bool ScriptList::ParseScriptListDataChunk(DataChunkInput &file, DataChunkInfo *i
 	pInfo->readLists[pInfo->numLists] = newInstance(ScriptList);
 	Int cur = pInfo->numLists;
 	pInfo->numLists++;
-	file.registerParser( AsciiString("Script"), info->label, Script::ParseScriptFromListDataChunk );
-	file.registerParser( AsciiString("ScriptGroup"), info->label, ScriptGroup::ParseGroupDataChunk );
+	file.registerParser( "Script", info->label, Script::ParseScriptFromListDataChunk );
+	file.registerParser( "ScriptGroup", info->label, ScriptGroup::ParseGroupDataChunk );
 	return file.parse(pInfo->readLists[cur]);
 
 }
@@ -632,10 +632,7 @@ m_firstScript(NULL),
 m_hasWarnings(false),
 m_isGroupActive(true),
 m_isGroupSubroutine(false),
-//Added By Sadullah Nader
-//Initializations inserted
 m_nextGroup(NULL)
-//
 {
 	m_groupName.format("Script Group %d", ScriptList::getNextID());
 }
@@ -880,7 +877,7 @@ Bool ScriptGroup::ParseGroupDataChunk(DataChunkInput &file, DataChunkInfo *info,
 		pGroup->m_isGroupSubroutine= file.readByte();
 	}
 	pList->addGroup(pGroup, AT_END);
-	file.registerParser( AsciiString("Script"), info->label, Script::ParseScriptFromGroupDataChunk );
+	file.registerParser( "Script", info->label, Script::ParseScriptFromGroupDataChunk );
 	return file.parse(pGroup);
 
 }
@@ -906,11 +903,8 @@ m_hasWarnings(false),
 m_nextScript(NULL),
 m_condition(NULL),
 m_action(NULL),
-//Added By Sadullah Nader
-//Initializations inserted
 m_actionFalse(NULL),
 m_curTime(0.0f)
-//
 {
 }
 
@@ -1245,9 +1239,9 @@ Script *Script::ParseScript(DataChunkInput &file, unsigned short version)
 	if (version>=K_SCRIPT_DATA_VERSION_2) {
 		pScript->m_delayEvaluationSeconds = file.readInt();
 	}
-	file.registerParser( AsciiString("OrCondition"), AsciiString("Script"), OrCondition::ParseOrConditionDataChunk );
-	file.registerParser( AsciiString("ScriptAction"),  AsciiString("Script"), ScriptAction::ParseActionDataChunk );
-	file.registerParser( AsciiString("ScriptActionFalse"),  AsciiString("Script"), ScriptAction::ParseActionFalseDataChunk );
+	file.registerParser( "OrCondition", "Script", OrCondition::ParseOrConditionDataChunk );
+	file.registerParser( "ScriptAction",  "Script", ScriptAction::ParseActionDataChunk );
+	file.registerParser( "ScriptActionFalse",  "Script", ScriptAction::ParseActionFalseDataChunk );
 	if (! file.parse(pScript) )
 	{
 		return NULL;
@@ -1441,7 +1435,7 @@ Bool OrCondition::ParseOrConditionDataChunk(DataChunkInput &file, DataChunkInfo 
 	} else {
 		pScript->setOrCondition(pOrCondition);
 	}
-	file.registerParser( AsciiString("Condition"), info->label, Condition::ParseConditionDataChunk );
+	file.registerParser( "Condition", info->label, Condition::ParseConditionDataChunk );
 	return file.parse(pOrCondition);
 
 }
@@ -2172,10 +2166,7 @@ ScriptAction::ScriptAction():
 m_actionType(NO_OP),
 m_hasWarnings(false),
 m_numParms(0),
-//Added By Sadullah Nader
-//Initializations inserted
 m_nextAction(NULL)
-//
 {
 }
 

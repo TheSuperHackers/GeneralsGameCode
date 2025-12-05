@@ -373,12 +373,12 @@ void ReplayMenuInit( WindowLayout *layout, void *userData )
 	TheShell->showShellMap(TRUE);
 
 	// get ids for our children controls
-	parentReplayMenuID = TheNameKeyGenerator->nameToKey( AsciiString("ReplayMenu.wnd:ParentReplayMenu") );
-	buttonLoadID = TheNameKeyGenerator->nameToKey( AsciiString("ReplayMenu.wnd:ButtonLoadReplay") );
-	buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString("ReplayMenu.wnd:ButtonBack") );
-	listboxReplayFilesID = TheNameKeyGenerator->nameToKey( AsciiString("ReplayMenu.wnd:ListboxReplayFiles") );
-	buttonDeleteID = TheNameKeyGenerator->nameToKey( AsciiString("ReplayMenu.wnd:ButtonDeleteReplay") );
-	buttonCopyID = TheNameKeyGenerator->nameToKey( AsciiString("ReplayMenu.wnd:ButtonCopyReplay") );
+	parentReplayMenuID = TheNameKeyGenerator->nameToKey( "ReplayMenu.wnd:ParentReplayMenu" );
+	buttonLoadID = TheNameKeyGenerator->nameToKey( "ReplayMenu.wnd:ButtonLoadReplay" );
+	buttonBackID = TheNameKeyGenerator->nameToKey( "ReplayMenu.wnd:ButtonBack" );
+	listboxReplayFilesID = TheNameKeyGenerator->nameToKey( "ReplayMenu.wnd:ListboxReplayFiles" );
+	buttonDeleteID = TheNameKeyGenerator->nameToKey( "ReplayMenu.wnd:ButtonDeleteReplay" );
+	buttonCopyID = TheNameKeyGenerator->nameToKey( "ReplayMenu.wnd:ButtonCopyReplay" );
 
 	parentReplayMenu = TheWindowManager->winGetWindowFromId( NULL, parentReplayMenuID );
 	buttonLoad = TheWindowManager->winGetWindowFromId( parentReplayMenu, buttonLoadID );
@@ -397,7 +397,7 @@ void ReplayMenuInit( WindowLayout *layout, void *userData )
 	instData.init();
 	BitSet( instData.m_style, GWS_PUSH_BUTTON | GWS_MOUSE_TRACK );
 	instData.m_textLabelString = "Debug: Analyze Replay";
-	instData.setTooltipText(UnicodeString(L"Only Used in Debug and Internal!"));
+	instData.setTooltipText(L"Only Used in Debug and Internal!");
 	buttonAnalyzeReplay = TheWindowManager->gogoGadgetPushButton( parentReplayMenu,
 																									 WIN_STATUS_ENABLED | WIN_STATUS_IMAGE,
 																									 4, 4,
@@ -657,7 +657,7 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 					GadgetListBoxGetSelected( listboxReplayFiles,  &selected );
 					if(selected < 0)
 					{
-						MessageBoxOk(UnicodeString(L"Blah Blah"),UnicodeString(L"Please select something munkee boy"), NULL);
+						MessageBoxOk(L"Blah Blah",L"Please select something munkee boy", NULL);
 						break;
 					}
 

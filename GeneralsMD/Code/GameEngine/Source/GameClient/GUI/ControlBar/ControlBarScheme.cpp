@@ -189,13 +189,8 @@ ControlBarSchemeImage::~ControlBarSchemeImage( void )
 
 ControlBarSchemeAnimation::ControlBarSchemeAnimation( void )
 {
-	// Added by Sadullah Nader
-	// Initializations missing and needed
-
 	m_animDuration = 0;
 	m_finalPos.x = m_finalPos.y = 0;
-
-	// End Add
 	m_name.clear();
 	m_animType = 0;
 	m_animImage = NULL;
@@ -304,12 +299,8 @@ ControlBarScheme::ControlBarScheme(void)
 	m_optionsButtonPushed = NULL;
 	m_optionsButtonDisabled = NULL;
 
-	// Added By Sadullah Nader
-	// Initializations needed
-
 	m_commandBarBorderColor = 0;
 
-	//
 	m_idleWorkerButtonEnable = NULL;
 	m_idleWorkerButtonHightlited = NULL;
 	m_idleWorkerButtonPushed = NULL;
@@ -354,7 +345,6 @@ ControlBarScheme::ControlBarScheme(void)
 	m_minMaxButtonEnable = NULL;
 	m_minMaxButtonHightlited = NULL;
 	m_minMaxButtonPushed = NULL;
-
 	m_minMaxUL.x = 0;
 	m_minMaxLR.x = 0;
 
@@ -1020,8 +1010,8 @@ void ControlBarSchemeManager::init( void )
 
 	INI ini;
 	// Read from INI all the ControlBarSchemes
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\Default\\ControlBarScheme" ), INI_LOAD_OVERWRITE, NULL );
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\ControlBarScheme" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\ControlBarScheme", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\ControlBarScheme", INI_LOAD_OVERWRITE, NULL );
 
 //	//Load the user modified control bar schemes
 //	WIN32_FIND_DATA findData;

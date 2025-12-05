@@ -83,11 +83,8 @@ void Shell::construct( void )
 	m_schemeManager = NEW ShellMenuSchemeManager;
 	m_saveLoadMenuLayout = NULL;
 	m_popupReplayLayout = NULL;
-	//Added By Sadullah Nader
-	//Initializations
 	m_optionsLayout = NULL;
 	m_screenCount = 0;
-	//
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -148,8 +145,8 @@ void Shell::init( void )
 {
 	INI ini;
 	// Read from INI all the ShellMenuScheme
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\Default\\ShellMenuScheme" ), INI_LOAD_OVERWRITE, NULL );
-	ini.loadFileDirectory( AsciiString( "Data\\INI\\ShellMenuScheme" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\ShellMenuScheme", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\ShellMenuScheme", INI_LOAD_OVERWRITE, NULL );
 
 	if( m_schemeManager )
 		m_schemeManager->init();
@@ -519,7 +516,7 @@ void Shell::showShell( Bool runInit )
 
 	if (!TheGlobalData->m_shellMapOn && m_screenCount == 0)
 	//else
-		push( AsciiString("Menus/MainMenu.wnd") );
+		push( "Menus/MainMenu.wnd" );
 	m_isShellActive = TRUE;
 }
 
@@ -842,7 +839,7 @@ WindowLayout *Shell::getSaveLoadMenuLayout( void )
 
 	// if layout has not been created, create it now
 	if( m_saveLoadMenuLayout == NULL )
-   m_saveLoadMenuLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/PopupSaveLoad.wnd" ) );
+   m_saveLoadMenuLayout = TheWindowManager->winCreateLayout( "Menus/PopupSaveLoad.wnd" );
 
 	// sanity
 	DEBUG_ASSERTCRASH( m_saveLoadMenuLayout, ("Unable to create save/load menu layout") );
@@ -859,7 +856,7 @@ WindowLayout *Shell::getPopupReplayLayout( void )
 
 	// if layout has not been created, create it now
 	if( m_popupReplayLayout == NULL )
-   m_popupReplayLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/PopupReplay.wnd" ) );
+   m_popupReplayLayout = TheWindowManager->winCreateLayout( "Menus/PopupReplay.wnd" );
 
 	// sanity
 	DEBUG_ASSERTCRASH( m_popupReplayLayout, ("Unable to create replay save menu layout") );
@@ -876,7 +873,7 @@ WindowLayout *Shell::getOptionsLayout( Bool create )
 	// if layout has not been created, create it now
 	if ((m_optionsLayout == NULL) && (create == TRUE))
 	{
-		m_optionsLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/OptionsMenu.wnd" ) );
+		m_optionsLayout = TheWindowManager->winCreateLayout( "Menus/OptionsMenu.wnd" );
 
 		// sanity
 		DEBUG_ASSERTCRASH( m_optionsLayout, ("Unable to create options menu layout") );

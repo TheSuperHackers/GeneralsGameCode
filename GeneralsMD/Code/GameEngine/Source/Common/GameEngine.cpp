@@ -391,12 +391,6 @@ void GameEngine::init()
 		// Create the low-level file system interface
 		TheFileSystem = createFileSystem();
 
-		// Kris: Patch 1.01 - November 17, 2003
-		// I was unable to resolve the RTPatch method of deleting a shipped file. English, Chinese, and Korean
-		// SKU's shipped with two INIZH.big files. One properly in the Run directory and the other in Run\INI\Data.
-		// We need to toast the latter in order for the game to patch properly.
-		DeleteFile("Data\\INI\\INIZH.big");
-
 		// not part of the subsystem list, because it should normally never be reset!
 		TheNameKeyGenerator = MSGNEW("GameEngineSubsystem") NameKeyGenerator;
 		TheNameKeyGenerator->init();
@@ -451,10 +445,10 @@ void GameEngine::init()
 		DEBUG_LOG(("%s", Buf));	 ////////////////////////////////////////////////////////////////////////////
 #endif							 /////////////////////////////////////////////////////////////////////////////////////////////
 
-#if defined(RTS_DEBUG)
-								// If we're in Debug, load the Debug settings as well.
-		ini.loadFileDirectory(AsciiString("Data\\INI\\GameDataDebug"), INI_LOAD_OVERWRITE, NULL);
-#endif
+	#if defined(RTS_DEBUG)
+		// If we're in Debug, load the Debug settings as well.
+		ini.loadFileDirectory( "Data\\INI\\GameDataDebug", INI_LOAD_OVERWRITE, NULL );
+	#endif
 
 		// special-case: parse command-line parameters after loading global data
 		CommandLine::parseCommandLineForEngineInit();
@@ -473,10 +467,10 @@ void GameEngine::init()
 		}
 
 		// read the water settings from INI (must do prior to initing GameClient, apparently)
-		ini.loadFileDirectory(AsciiString("Data\\INI\\Default\\Water"), INI_LOAD_OVERWRITE, &xferCRC);
-		ini.loadFileDirectory(AsciiString("Data\\INI\\Water"), INI_LOAD_OVERWRITE, &xferCRC);
-		ini.loadFileDirectory(AsciiString("Data\\INI\\Default\\Weather"), INI_LOAD_OVERWRITE, &xferCRC);
-		ini.loadFileDirectory(AsciiString("Data\\INI\\Weather"), INI_LOAD_OVERWRITE, &xferCRC);
+		ini.loadFileDirectory( "Data\\INI\\Default\\Water", INI_LOAD_OVERWRITE, &xferCRC );
+		ini.loadFileDirectory( "Data\\INI\\Water", INI_LOAD_OVERWRITE, &xferCRC );
+		ini.loadFileDirectory( "Data\\INI\\Default\\Weather", INI_LOAD_OVERWRITE, &xferCRC );
+		ini.loadFileDirectory( "Data\\INI\\Weather", INI_LOAD_OVERWRITE, &xferCRC );
 
 #ifdef DUMP_PERF_STATS				   ///////////////////////////////////////////////////////////////////////////
 		GetPrecisionTimer(&endTime64); //////////////////////////////////////////////////////////////////
@@ -656,7 +650,7 @@ void GameEngine::init()
 		}
 
 		// load the initial shell screen
-		// TheShell->push( AsciiString("Menus/MainMenu.wnd") );
+		//TheShell->push( "Menus/MainMenu.wnd" );
 
 		// This allows us to run a map from the command line
 		if (TheGlobalData->m_initialFile.isEmpty() == FALSE)

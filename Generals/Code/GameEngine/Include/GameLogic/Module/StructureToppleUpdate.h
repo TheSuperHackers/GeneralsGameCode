@@ -118,7 +118,6 @@ public:
 		m_toppleDoneFXList = NULL;
 		m_toppleFXList = NULL;
 		m_crushingFXList = NULL;
-		m_crushingWeaponName.set("");
 
 		for (int i = 0; i < ST_PHASE_COUNT; ++i)
 		{

@@ -166,20 +166,20 @@ void InitBuddyControls(Int type)
 		buddyControls.isInit = FALSE;
 	break;
 	case BUDDY_WINDOW_BUDDIES:
-		buddyControls.textEntryEditID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:TextEntryChat" ) );
+		buddyControls.textEntryEditID = TheNameKeyGenerator->nameToKey( "WOLBuddyOverlay.wnd:TextEntryChat" );
 		buddyControls.textEntryEdit = TheWindowManager->winGetWindowFromId(NULL,  buddyControls.textEntryEditID);
-		buddyControls.listboxBuddiesID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:ListboxBuddies" ) );
-		buddyControls.listboxChatID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:ListboxBuddyChat" ) );
+		buddyControls.listboxBuddiesID = TheNameKeyGenerator->nameToKey( "WOLBuddyOverlay.wnd:ListboxBuddies" );
+		buddyControls.listboxChatID = TheNameKeyGenerator->nameToKey( "WOLBuddyOverlay.wnd:ListboxBuddyChat" );
 		buddyControls.listboxBuddies = TheWindowManager->winGetWindowFromId( NULL,  buddyControls.listboxBuddiesID );
 		buddyControls.listboxChat = TheWindowManager->winGetWindowFromId( NULL,  buddyControls.listboxChatID);
 		GadgetTextEntrySetText(buddyControls.textEntryEdit, UnicodeString::TheEmptyString);
 		buddyControls.isInit = TRUE;
 		break;
 	case BUDDY_WINDOW_DIPLOMACY:
-		buddyControls.textEntryEditID = TheNameKeyGenerator->nameToKey( AsciiString( "Diplomacy.wnd:TextEntryChat" ) );
+		buddyControls.textEntryEditID = TheNameKeyGenerator->nameToKey( "Diplomacy.wnd:TextEntryChat" );
 		buddyControls.textEntryEdit = TheWindowManager->winGetWindowFromId(NULL,  buddyControls.textEntryEditID);
-		buddyControls.listboxBuddiesID = TheNameKeyGenerator->nameToKey( AsciiString( "Diplomacy.wnd:ListboxBuddies" ) );
-		buddyControls.listboxChatID = TheNameKeyGenerator->nameToKey( AsciiString( "Diplomacy.wnd:ListboxBuddyChat" ) );
+		buddyControls.listboxBuddiesID = TheNameKeyGenerator->nameToKey( "Diplomacy.wnd:ListboxBuddies" );
+		buddyControls.listboxChatID = TheNameKeyGenerator->nameToKey( "Diplomacy.wnd:ListboxBuddyChat" );
 		buddyControls.listboxBuddies = TheWindowManager->winGetWindowFromId( NULL,  buddyControls.listboxBuddiesID );
 		buddyControls.listboxChat = TheWindowManager->winGetWindowFromId( NULL,  buddyControls.listboxChatID);
 		GadgetTextEntrySetText(buddyControls.textEntryEdit, UnicodeString::TheEmptyString);
@@ -221,11 +221,11 @@ WindowMsgHandledType BuddyControlSystem( GameWindow *window, UnsignedInt msg,
 
 					GadgetListBoxSetSelected(control, rc->pos);
 					if (itemType == ITEM_BUDDY)
-						rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCBuddiesMenu.wnd"));
+						rcLayout = TheWindowManager->winCreateLayout("Menus/RCBuddiesMenu.wnd");
 					else if (itemType == ITEM_REQUEST)
-						rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCBuddyRequestMenu.wnd"));
+						rcLayout = TheWindowManager->winCreateLayout("Menus/RCBuddyRequestMenu.wnd");
 					else
-						rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCNonBuddiesMenu.wnd"));
+						rcLayout = TheWindowManager->winCreateLayout("Menus/RCNonBuddiesMenu.wnd");
 					rcMenu = rcLayout->getFirstWindow();
 					rcMenu->winGetLayout()->runInit();
 					rcMenu->winBringToTop();
@@ -708,20 +708,20 @@ void PopulateOldBuddyMessages(void)
 //-------------------------------------------------------------------------------------------------
 void WOLBuddyOverlayInit( WindowLayout *layout, void *userData )
 {
-	parentID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:BuddyMenuParent" ) );
-	buttonHideID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:ButtonHide" ) );
-	buttonAddBuddyID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:ButtonAdd" ) );
-	buttonDeleteBuddyID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:ButtonDelete" ) );
-	//textEntryID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:TextEntryChat" ) );
-	//listboxBuddyID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:ListboxBuddies" ) );
-	//listboxChatID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:ListboxBuddyChat" ) );
-	buttonAcceptBuddyID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:ButtonYes" ) );
-	buttonDenyBuddyID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:ButtonNo" ) );
-	radioButtonBuddiesID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:RadioButtonBuddies" ) );
-	radioButtonIgnoreID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:RadioButtonIgnore" ) );
-	parentBuddiesID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:BuddiesParent" ) );
-	parentIgnoreID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:IgnoreParent" ) );
-	listboxIgnoreID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:ListboxIgnore" ) );
+	parentID = TheNameKeyGenerator->nameToKey( "WOLBuddyOverlay.wnd:BuddyMenuParent" );
+	buttonHideID = TheNameKeyGenerator->nameToKey( "WOLBuddyOverlay.wnd:ButtonHide" );
+	buttonAddBuddyID = TheNameKeyGenerator->nameToKey( "WOLBuddyOverlay.wnd:ButtonAdd" );
+	buttonDeleteBuddyID = TheNameKeyGenerator->nameToKey( "WOLBuddyOverlay.wnd:ButtonDelete" );
+	//textEntryID = TheNameKeyGenerator->nameToKey( "WOLBuddyOverlay.wnd:TextEntryChat" );
+	//listboxBuddyID = TheNameKeyGenerator->nameToKey( "WOLBuddyOverlay.wnd:ListboxBuddies" );
+	//listboxChatID = TheNameKeyGenerator->nameToKey( "WOLBuddyOverlay.wnd:ListboxBuddyChat" );
+	buttonAcceptBuddyID = TheNameKeyGenerator->nameToKey( "WOLBuddyOverlay.wnd:ButtonYes" );
+	buttonDenyBuddyID = TheNameKeyGenerator->nameToKey( "WOLBuddyOverlay.wnd:ButtonNo" );
+	radioButtonBuddiesID = TheNameKeyGenerator->nameToKey( "WOLBuddyOverlay.wnd:RadioButtonBuddies" );
+	radioButtonIgnoreID = TheNameKeyGenerator->nameToKey( "WOLBuddyOverlay.wnd:RadioButtonIgnore" );
+	parentBuddiesID = TheNameKeyGenerator->nameToKey( "WOLBuddyOverlay.wnd:BuddiesParent" );
+	parentIgnoreID = TheNameKeyGenerator->nameToKey( "WOLBuddyOverlay.wnd:IgnoreParent" );
+	listboxIgnoreID = TheNameKeyGenerator->nameToKey( "WOLBuddyOverlay.wnd:ListboxIgnore" );
 
 
 	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
@@ -909,11 +909,11 @@ WindowMsgHandledType WOLBuddyOverlaySystem( GameWindow *window, UnsignedInt msg,
 
 					GadgetListBoxSetSelected(control, rc->pos);
 					if (isBuddy)
-						rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCBuddiesMenu.wnd"));
+						rcLayout = TheWindowManager->winCreateLayout("Menus/RCBuddiesMenu.wnd");
 					else if (isRequest)
-						rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCBuddyRequestMenu.wnd"));
+						rcLayout = TheWindowManager->winCreateLayout("Menus/RCBuddyRequestMenu.wnd");
 					else
-						rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCNonBuddiesMenu.wnd"));
+						rcLayout = TheWindowManager->winCreateLayout("Menus/RCNonBuddiesMenu.wnd");
 					rcMenu = rcLayout->getFirstWindow();
 					rcMenu->winGetLayout()->runInit();
 					rcMenu->winBringToTop();

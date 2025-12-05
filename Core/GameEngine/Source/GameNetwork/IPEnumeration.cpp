@@ -172,12 +172,12 @@ AsciiString IPEnumeration::getMachineName( void )
 
 		int err = WSAStartup(verReq, &wsadata);
 		if (err != 0) {
-			return NULL;
+			return "";
 		}
 
 		if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) !=2)) {
 			WSACleanup();
-			return NULL;
+			return "";
 		}
 		m_isWinsockInitialized = true;
 	}
@@ -187,7 +187,7 @@ AsciiString IPEnumeration::getMachineName( void )
 	if (gethostname(hostname, sizeof(hostname)))
 	{
 		DEBUG_LOG(("Failed call to gethostname; WSAGetLastError returned %d", WSAGetLastError()));
-		return NULL;
+		return "";
 	}
 
 	return AsciiString(hostname);

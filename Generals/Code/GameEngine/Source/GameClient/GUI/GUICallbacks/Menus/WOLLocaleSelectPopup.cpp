@@ -65,9 +65,9 @@ static GameWindow *listboxLocale = NULL;
 //-------------------------------------------------------------------------------------------------
 void WOLLocaleSelectInit( WindowLayout *layout, void *userData )
 {
-	parentLocaleSelectID = TheNameKeyGenerator->nameToKey( AsciiString( "PopupLocaleSelect.wnd:ParentLocaleSelect" ) );
-	buttonOkID = TheNameKeyGenerator->nameToKey( AsciiString( "PopupLocaleSelect.wnd:ButtonOk" ) );
-	listboxLocaleID = TheNameKeyGenerator->nameToKey( AsciiString( "PopupLocaleSelect.wnd:ListBoxLocaleSelect" ) );
+	parentLocaleSelectID = TheNameKeyGenerator->nameToKey( "PopupLocaleSelect.wnd:ParentLocaleSelect" );
+	buttonOkID = TheNameKeyGenerator->nameToKey( "PopupLocaleSelect.wnd:ButtonOk" );
+	listboxLocaleID = TheNameKeyGenerator->nameToKey( "PopupLocaleSelect.wnd:ListBoxLocaleSelect" );
 	parentLocaleSelect = TheWindowManager->winGetWindowFromId( NULL, parentLocaleSelectID );
 	buttonOk = TheWindowManager->winGetWindowFromId( NULL,  buttonOkID);
 	listboxLocale = TheWindowManager->winGetWindowFromId( NULL,  listboxLocaleID);

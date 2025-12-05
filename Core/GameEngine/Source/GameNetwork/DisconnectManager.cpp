@@ -38,8 +38,6 @@
 
 DisconnectManager::DisconnectManager()
 {
-	// Added By Sadullah Nader
-	// Initializations missing and needed
 	Int i;
 	m_currentPacketRouterIndex = 0;
 	m_lastFrame = 0;

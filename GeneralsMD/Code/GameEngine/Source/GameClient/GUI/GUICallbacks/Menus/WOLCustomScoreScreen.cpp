@@ -63,9 +63,9 @@ static GameWindow *buttonLobby = NULL;
 //-------------------------------------------------------------------------------------------------
 void WOLCustomScoreScreenInit( WindowLayout *layout, void *userData )
 {
-	parentWOLCustomScoreID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLCustomScoreScreen.wnd:WOLCustomScoreScreenParent" ) );
-	buttonDisconnectID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLCustomScoreScreen.wnd:ButtonDisconnect" ) );
-	buttonLobbyID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLCustomScoreScreen.wnd:ButtonLobby" ) );
+	parentWOLCustomScoreID = TheNameKeyGenerator->nameToKey( "WOLCustomScoreScreen.wnd:WOLCustomScoreScreenParent" );
+	buttonDisconnectID = TheNameKeyGenerator->nameToKey( "WOLCustomScoreScreen.wnd:ButtonDisconnect" );
+	buttonLobbyID = TheNameKeyGenerator->nameToKey( "WOLCustomScoreScreen.wnd:ButtonLobby" );
 	parentWOLCustomScore = TheWindowManager->winGetWindowFromId( NULL, parentWOLCustomScoreID );
 	buttonDisconnect = TheWindowManager->winGetWindowFromId( NULL,  buttonDisconnectID);
 	buttonLobby = TheWindowManager->winGetWindowFromId( NULL,  buttonLobbyID);

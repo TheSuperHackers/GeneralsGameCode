@@ -1107,11 +1107,8 @@ void PSPlayerStats::reset( void )
 	desyncsInARow = 0;
 	maxDesyncsInARow = 0;
 	lastLadderPort = 0;
-
-	//Added By Sadullah Nader
 	maxQMwinsInARow = 0;
 	QMwinsInARow = 0;
-	//
 }
 
 //-------------------------------------------------------------------------
@@ -1318,7 +1315,7 @@ PSPlayerStats GameSpyPSMessageQueueInterface::parsePlayerKVPairs( std::string kv
 std::string GameSpyPSMessageQueueInterface::formatPlayerKVPairs( PSPlayerStats stats )
 {
 	char kvbuf[256];
-	std::string s = "";
+	std::string s;
 	PerGeneralMap::iterator it;
 
 	ITERATE_OVER(wins);

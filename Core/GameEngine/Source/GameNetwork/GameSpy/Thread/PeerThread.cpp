@@ -179,10 +179,8 @@ class PeerThreadClass : public ThreadClass
 public:
 	PeerThreadClass() : ThreadClass()
 	{
-		//Added By Sadullah Nader
-		//Initializations inserted
 		m_roomJoined = m_allowObservers = m_hasPassword = FALSE;
-    m_useStats = TRUE;
+		m_useStats = TRUE;
 		m_exeCRC = m_iniCRC = 0;
 		m_gameVersion = 0;
 		m_ladderPort = 0;
@@ -193,24 +191,18 @@ public:
 		m_qmGroupRoom = 0;
 		m_sawEndOfEnumPlayers = m_sawMatchbot = FALSE;
 		m_sawCompleteGameList = FALSE;
-		//
 		m_isConnecting = m_isConnected = false;
 		m_groupRoomID = m_profileID = 0;
-		m_nextStagingServer = 1; m_stagingServers.clear();
-		m_pingStr = ""; m_mapName = ""; m_ladderIP = ""; m_isHosting = false;
+		m_nextStagingServer = 1;
+		m_stagingServers.clear();
+		m_isHosting = false;
 		for (Int i=0; i<MAX_SLOTS; ++i)
 		{
-			m_playerNames[i] = "";
-
-			//Added by Sadullah Nader
-			//Initializations
 			m_playerColors[i] = 0;
 			m_playerFactions[i] = 0;
 			m_playerLosses[i] = 0;
 			m_playerProfileID[i] = 0;
 			m_playerWins[i] = 0;
-
-			//
 		}
 	}
 
@@ -766,7 +758,7 @@ static void QRServerKeyCallback
 		t->stopHostingAlready(peer);
 
 #ifdef DEBUG_LOGGING
-	AsciiString val = "";
+	AsciiString val;
 #define ADD(x) { qr2_buffer_add(buffer, x); val = x; }
 #define ADDINT(x) { qr2_buffer_add_int(buffer, x); val.format("%d",x); }
 #else
@@ -860,7 +852,7 @@ static void QRPlayerKeyCallback
 #undef ADD
 #undef ADDINT
 #ifdef DEBUG_LOGGING
-	AsciiString val = "";
+	AsciiString val;
 #define ADD(x) { qr2_buffer_add(buffer, x); val = x; }
 #define ADDINT(x) { qr2_buffer_add_int(buffer, x); val.format("%d",x); }
 #else
@@ -1103,7 +1095,7 @@ static SerialAuthResult doCDKeyAuthentication( PEER peer )
 	if (!peer)
 		return retval;
 
-	AsciiString s = "";
+	AsciiString s;
 	if (GetStringFromRegistry("\\ergc", "", s) && s.isNotEmpty())
 	{
 #ifdef SERVER_DEBUGGING

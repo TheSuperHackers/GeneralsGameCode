@@ -265,11 +265,8 @@ SelectionTranslator::SelectionTranslator()
 	m_deselectFeedbackAnchor.x = 0;
 	m_deselectFeedbackAnchor.y = 0;
 	m_lastClick = 0;
-	//Added By Sadullah Nader
-	//Initializtion(s) inserted
 	m_deselectDownCameraPosition.zero();
 	m_displayedMaxWarning = FALSE;
-	//
 	m_selectCountMap.clear();
 
 	TheSelectionTranslator = this;
@@ -1206,7 +1203,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		case GameMessage::MSG_META_DEMO_TOGGLE_HAND_OF_GOD_MODE:
 		{
 			TheHandOfGodSelectionMode = !TheHandOfGodSelectionMode;
-			TheInGameUI->message( UnicodeString( L"Hand-Of-God Mode is %s" ), TheHandOfGodSelectionMode ? L"ON" : L"OFF" );
+			TheInGameUI->message( L"Hand-Of-God Mode is %s", TheHandOfGodSelectionMode ? L"ON" : L"OFF" );
 			disp = DESTROY_MESSAGE;
 			break;
 		}
@@ -1217,7 +1214,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		case GameMessage::MSG_META_DEMO_TOGGLE_HURT_ME_MODE:
 		{
 			TheHurtSelectionMode = !TheHurtSelectionMode;
-			TheInGameUI->message( UnicodeString( L"Hurt-Me Mode is %s" ), TheHurtSelectionMode ? L"ON" : L"OFF" );
+			TheInGameUI->message( L"Hurt-Me Mode is %s", TheHurtSelectionMode ? L"ON" : L"OFF" );
 			disp = DESTROY_MESSAGE;
 			break;
 		}
@@ -1228,7 +1225,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		case GameMessage::MSG_META_DEMO_DEBUG_SELECTION:
 		{
 			TheDebugSelectionMode = !TheDebugSelectionMode;
-			TheInGameUI->message( UnicodeString( L"Debug-Selected-Item Mode is %s" ), TheDebugSelectionMode ? L"ON" : L"OFF" );
+			TheInGameUI->message( L"Debug-Selected-Item Mode is %s", TheDebugSelectionMode ? L"ON" : L"OFF" );
 		#ifdef DEBUG_OBJECT_ID_EXISTS
 			TheObjectIDToDebug = INVALID_ID;
 		#endif
@@ -1241,8 +1238,6 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 	return disp;
 }
 
-
-//Added By Sadullah Nader
 
 //setDragSelecting(Bool dragSelect)
 //Added to fix the drag selection problem in control bar

@@ -158,7 +158,7 @@ static Bool ParseObjectDataChunk(DataChunkInput &file, DataChunkInfo *info, void
 static Bool ParseObjectsDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
 	file.m_currentObject = NULL;
-	file.registerParser( AsciiString("Object"), info->label, ParseObjectDataChunk );
+	file.registerParser( "Object", info->label, ParseObjectDataChunk );
 	return (file.parse(userData));
 }
 
@@ -230,9 +230,9 @@ static Bool loadMap( AsciiString filename )
 
 	m_waypoints = NEW WaypointMap;
 
-	file.registerParser( AsciiString("HeightMapData"), AsciiString::TheEmptyString, ParseSizeOnlyInChunk );
-	file.registerParser( AsciiString("WorldInfo"), AsciiString::TheEmptyString, ParseWorldDictDataChunk );
-	file.registerParser( AsciiString("ObjectsList"), AsciiString::TheEmptyString, ParseObjectsDataChunk );
+	file.registerParser( "HeightMapData", AsciiString::TheEmptyString, ParseSizeOnlyInChunk );
+	file.registerParser( "WorldInfo", AsciiString::TheEmptyString, ParseWorldDictDataChunk );
+	file.registerParser( "ObjectsList", AsciiString::TheEmptyString, ParseObjectsDataChunk );
 	if (!file.parse(NULL)) {
 		throw(ERROR_CORRUPT_FILE_FORMAT);
 	}
@@ -314,7 +314,7 @@ const char *const MapCache::m_mapCacheName = "MapCache.ini";
 
 AsciiString MapCache::getMapDir() const
 {
-	return AsciiString("Maps");
+	return "Maps";
 }
 
 AsciiString MapCache::getUserMapDir() const
@@ -326,7 +326,7 @@ AsciiString MapCache::getUserMapDir() const
 
 AsciiString MapCache::getMapExtension() const
 {
-	return AsciiString("map");
+	return "map";
 }
 
 void MapCache::writeCacheINI( const AsciiString &mapDir )
@@ -1254,7 +1254,7 @@ Image *getMapPreviewImage( AsciiString mapName )
 		DataChunkInput file( pStrm );
 		if (file.isValidFileType()) {	// Backwards compatible files aren't valid data chunk files.
 			// Read the waypoints.
-			file.registerParser( AsciiString("MapPreview"), AsciiString::TheEmptyString, parseMapPreviewChunk );
+			file.registerParser( "MapPreview", AsciiString::TheEmptyString, parseMapPreviewChunk );
 			if (!file.parse(NULL)) {
 				DEBUG_ASSERTCRASH(false,("Unable to read MapPreview info."));
 				deleteInstance(mapPreviewImage);

@@ -19,6 +19,11 @@ if("${CMAKE_HOST_SYSTEM}" MATCHES "Windows" AND "${CMAKE_SYSTEM}" MATCHES "Windo
         get_filename_component(RTS_INSTALL_PREFIX_ZEROHOUR  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour;InstallPath]" ABSOLUTE CACHE)
     endif()
 
+    # Check the WOW6432Node registry path (for EA App on 64-bit Windows)
+    if(NOT RTS_INSTALL_PREFIX_ZEROHOUR OR "${RTS_INSTALL_PREFIX_ZEROHOUR}" STREQUAL "/registry")
+        get_filename_component(RTS_INSTALL_PREFIX_ZEROHOUR  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour;InstallPath]" ABSOLUTE CACHE)
+    endif()
+
     # Check the "First Decade" registry path
     if(NOT RTS_INSTALL_PREFIX_ZEROHOUR OR "${RTS_INSTALL_PREFIX_ZEROHOUR}" STREQUAL "/registry")
         get_filename_component(RTS_INSTALL_PREFIX_ZEROHOUR  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer The First Decade;zh_folder]" ABSOLUTE CACHE)

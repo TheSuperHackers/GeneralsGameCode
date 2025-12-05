@@ -59,10 +59,7 @@ public:
 		m_packTime = 0;
 		m_resetTurretBeforePacking = false;
 		m_turretsFunctionOnlyWhenDeployed = false;
-		// Added By Sadullah Nader
-		// Initialization necessary
 		m_turretsMustCenterBeforePacking = FALSE;
-		// End Add
 		m_manualDeployAnimations = FALSE;
 	}
 

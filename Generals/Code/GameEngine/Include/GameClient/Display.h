@@ -218,10 +218,8 @@ extern Display *TheDisplay;
 
 extern void StatDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp = NULL );
 
-//Added By Saad
 //Necessary for display resolution confirmation dialog box
 //Holds the previous and current display settings
-
 typedef struct _DisplaySettings
 {
 	Int xRes;  //Resolution width

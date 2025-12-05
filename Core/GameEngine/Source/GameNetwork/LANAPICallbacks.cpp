@@ -124,7 +124,7 @@ void LANAPI::OnAccept( UnsignedInt playerIP, Bool status )
 		{
 			UnicodeString text;
 			text = TheGameText->fetch("GUI:HostWantsToStart");
-			OnChat(UnicodeString(L"SYSTEM"), m_localIP, text, LANCHAT_SYSTEM);
+			OnChat(L"SYSTEM", m_localIP, text, LANCHAT_SYSTEM);
 		}
 	}
 }
@@ -165,7 +165,7 @@ void LANAPI::OnHasMap( UnsignedInt playerIP, Bool status )
 					text.format(TheGameText->fetch("GUI:PlayerNoMapWillTransfer"), m_currentGame->getLANSlot(i)->getName().str(), mapDisplayName.str());
 				else
 					text.format(TheGameText->fetch("GUI:PlayerNoMap"), m_currentGame->getLANSlot(i)->getName().str(), mapDisplayName.str());
-				OnChat(UnicodeString(L"SYSTEM"), m_localIP, text, LANCHAT_SYSTEM);
+				OnChat(L"SYSTEM", m_localIP, text, LANCHAT_SYSTEM);
 			}
 			lanUpdateSlotList();
 		}
@@ -179,7 +179,7 @@ void LANAPI::OnGameStartTimer( Int seconds )
 		text.format(TheGameText->fetch("LAN:GameStartTimerSingular"), seconds);
 	else
 		text.format(TheGameText->fetch("LAN:GameStartTimerPlural"), seconds);
-	OnChat(UnicodeString(L"SYSTEM"), m_localIP, text, LANCHAT_SYSTEM);
+	OnChat(L"SYSTEM", m_localIP, text, LANCHAT_SYSTEM);
 }
 
 void LANAPI::OnGameStart( void )
@@ -506,7 +506,7 @@ void LANAPI::OnGameJoin( ReturnType ret, LANGameInfo *theGame )
 	if (ret == RET_OK)
 	{
 		LANbuttonPushed = true;
-		TheShell->push( AsciiString("Menus/LanGameOptionsMenu.wnd") );
+		TheShell->push( "Menus/LanGameOptionsMenu.wnd" );
 		//lanUpdateSlotList();
 
 		LANPreferences pref;
@@ -597,7 +597,7 @@ void LANAPI::OnGameCreate( ReturnType ret )
 	{
 
 		LANbuttonPushed = true;
-		TheShell->push( AsciiString("Menus/LanGameOptionsMenu.wnd") );
+		TheShell->push( "Menus/LanGameOptionsMenu.wnd" );
 
 		RequestLobbyLeave( false );
 		//RequestGameAnnounce( ); // can't do this here, since we don't have a map set
@@ -686,9 +686,7 @@ void LANAPI::OnChat( UnicodeString player, UnsignedInt ip, UnicodeString message
 	switch (format)
 	{
 		case LANAPIInterface::LANCHAT_SYSTEM:
-			unicodeChat = L"";
-			unicodeChat.concat(message);
-			unicodeChat.concat(L"");
+			unicodeChat = message;
 			index =GadgetListBoxAddEntryText(chatWindow, unicodeChat, chatSystemColor, -1, -1);
 			break;
 		case LANAPIInterface::LANCHAT_EMOTE:

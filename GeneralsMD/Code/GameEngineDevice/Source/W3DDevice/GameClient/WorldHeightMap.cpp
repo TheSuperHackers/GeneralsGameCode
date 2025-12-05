@@ -495,21 +495,21 @@ WorldHeightMap::WorldHeightMap(ChunkInputStream *pStrm, Bool logicalDataOnly):
 	DataChunkInput file( pStrm );
 
 	if (logicalDataOnly) {
-		file.registerParser( AsciiString("HeightMapData"), AsciiString::TheEmptyString, ParseSizeOnlyInChunk );
-		file.registerParser( AsciiString("WorldInfo"), AsciiString::TheEmptyString, ParseWorldDictDataChunk );
-		file.registerParser( AsciiString("ObjectsList"), AsciiString::TheEmptyString, ParseObjectsDataChunk );
+		file.registerParser( "HeightMapData", AsciiString::TheEmptyString, ParseSizeOnlyInChunk );
+		file.registerParser( "WorldInfo", AsciiString::TheEmptyString, ParseWorldDictDataChunk );
+		file.registerParser( "ObjectsList", AsciiString::TheEmptyString, ParseObjectsDataChunk );
 		freeListOfMapObjects(); // just in case.
-		file.registerParser( AsciiString("PolygonTriggers"), AsciiString::TheEmptyString, PolygonTrigger::ParsePolygonTriggersDataChunk );
+		file.registerParser( "PolygonTriggers", AsciiString::TheEmptyString, PolygonTrigger::ParsePolygonTriggersDataChunk );
 		PolygonTrigger::deleteTriggers(); // just in case.
 		TheSidesList->emptySides();
-		file.registerParser(AsciiString("SidesList"), AsciiString::TheEmptyString,	SidesList::ParseSidesDataChunk );
+		file.registerParser("SidesList", AsciiString::TheEmptyString,	SidesList::ParseSidesDataChunk );
 	}	else {
-		file.registerParser( AsciiString("HeightMapData"), AsciiString::TheEmptyString, ParseHeightMapDataChunk );
-		file.registerParser( AsciiString("BlendTileData"), AsciiString::TheEmptyString, ParseBlendTileDataChunk );
+		file.registerParser( "HeightMapData", AsciiString::TheEmptyString, ParseHeightMapDataChunk );
+		file.registerParser( "BlendTileData", AsciiString::TheEmptyString, ParseBlendTileDataChunk );
 #ifdef EVAL_TILING_MODES
-		file.registerParser( AsciiString("FUNKY_TILING"), AsciiString::TheEmptyString, ParseFunkyTilingDataChunk );
+		file.registerParser( "FUNKY_TILING", AsciiString::TheEmptyString, ParseFunkyTilingDataChunk );
 #endif
-		file.registerParser( AsciiString("GlobalLighting"), AsciiString::TheEmptyString, ParseLightingDataChunk );
+		file.registerParser( "GlobalLighting", AsciiString::TheEmptyString, ParseLightingDataChunk );
 	}
 	if (!file.parse(this)) {
 
@@ -848,7 +848,7 @@ Bool WorldHeightMap::ParseLightingDataChunk(DataChunkInput &file, DataChunkInfo 
 Bool WorldHeightMap::ParseObjectsDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
 	file.m_currentObject = NULL;
-	file.registerParser( AsciiString("Object"), info->label, ParseObjectDataChunk );
+	file.registerParser( "Object", info->label, ParseObjectDataChunk );
 	return (file.parse(userData));
 }
 

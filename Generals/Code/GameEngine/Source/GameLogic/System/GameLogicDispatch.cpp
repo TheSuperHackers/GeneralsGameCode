@@ -299,10 +299,7 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 // ------------------------------------------------------------------------------------------------
 void GameLogic::prepareNewGame( GameMode gameMode, GameDifficulty diff, Int rankPoints )
 {
-	//Added By Sadullah Nader
-	//Fix for loading game scene
 	setGameLoading(TRUE);
-	//
 
 	TheScriptEngine->setGlobalDifficulty(diff);
 
@@ -1442,7 +1439,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			// place the sound for putting a building down
 
-			static AudioEventRTS placeBuilding(AsciiString("PlaceBuilding"));
+			static AudioEventRTS placeBuilding("PlaceBuilding");
 			placeBuilding.setObjectID(constructorObject->getID());
 			TheAudio->addAudioEvent( &placeBuilding );
 

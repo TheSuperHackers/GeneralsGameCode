@@ -104,10 +104,7 @@
 RAMFile::RAMFile()
 : m_size(0),
 	m_data(NULL),
-//Added By Sadullah Nader
-//Initializtion(s) inserted
 	m_pos(0)
-//
 {
 
 }

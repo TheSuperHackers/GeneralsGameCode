@@ -46,13 +46,7 @@ DefaultProductionExitUpdate::DefaultProductionExitUpdate( Thing *thing, const Mo
 {
 	// no rally point has been set
 	m_rallyPointExists = false;
-	// Added By Sadullah Nader
-	// Initialization missing and needed
-
 	m_rallyPoint.zero();
-
-	//
-
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 }
 

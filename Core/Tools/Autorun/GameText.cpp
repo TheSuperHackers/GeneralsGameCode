@@ -227,7 +227,7 @@ GameTextManager::GameTextManager()
 	m_munkee(FALSE),
 	m_noStringList(NULL),
 	m_useStringFile(TRUE),
-	m_failed(L"***FATAL*** String Manager failed to initilaized properly")
+	m_failed(L"***FATAL*** String Manager failed to initialized properly")
 {
 }
 

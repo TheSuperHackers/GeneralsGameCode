@@ -221,7 +221,7 @@ void MapObjectProps::_DictToTeam(void)
 /// Move data from object to dialog controls
 void MapObjectProps::_DictToName(void)
 {
-  AsciiString name = "";
+  AsciiString name;
   Bool exists;
   if (m_dictToEdit)
   {

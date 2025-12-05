@@ -309,7 +309,7 @@ UnicodeString Version::getUnicodeBuildUserOrGitCommitAuthorName() const
 UnicodeString Version::getUnicodeProductTitle() const
 {
 	// @todo Make configurable
-	return UnicodeString(L"Community Patch");
+	return L"Community Patch";
 }
 
 UnicodeString Version::getUnicodeProductVersion() const

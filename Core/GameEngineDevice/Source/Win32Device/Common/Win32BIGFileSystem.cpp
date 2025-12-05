@@ -64,8 +64,8 @@ void Win32BIGFileSystem::init() {
     AsciiString installPath;
     GetStringFromGeneralsRegistry("", "InstallPath", installPath );
     //@todo this will need to be ramped up to a crash for release
-    DEBUG_ASSERTCRASH(installPath != "", ("Be 1337! Go install Generals!"));
-    if (installPath!="")
+    DEBUG_ASSERTCRASH(!installPath.isEmpty(), ("Be 1337! Go install Generals!"));
+    if (!installPath.isEmpty())
       loadBigFilesFromDirectory(installPath, "*.big");
 #endif
 }
@@ -211,11 +211,21 @@ void Win32BIGFileSystem::closeAllFiles() {
 Bool Win32BIGFileSystem::loadBigFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite) {
 
 	FilenameList filenameList;
-	TheLocalFileSystem->getFileListInDirectory(dir, AsciiString(""), fileMask, filenameList, TRUE);
+	TheLocalFileSystem->getFileListInDirectory(dir, "", fileMask, filenameList, TRUE);
 
 	Bool actuallyAdded = FALSE;
 	FilenameListIter it = filenameList.begin();
 	while (it != filenameList.end()) {
+#if RTS_ZEROHOUR
+		// TheSuperHackers @bugfix bobtista 18/11/2025 Skip duplicate INIZH.big in Data\INI to prevent CRC mismatches.
+		// English, Chinese, and Korean SKUs shipped with two INIZH.big files (one in Run directory, one in Run\Data\INI).
+		// The DeleteFile cleanup doesn't work on EA App/Origin installs because the folder is not writable, so we skip loading it instead.
+		if (it->endsWithNoCase("Data\\INI\\INIZH.big") || it->endsWithNoCase("Data/INI/INIZH.big")) {
+			it++;
+			continue;
+		}
+#endif
+
 		ArchiveFile *archiveFile = openArchiveFile((*it).str());
 
 		if (archiveFile != NULL) {

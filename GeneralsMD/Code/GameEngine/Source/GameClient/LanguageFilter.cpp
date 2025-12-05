@@ -35,9 +35,6 @@ LanguageFilter *TheLanguageFilter = NULL;
 
 LanguageFilter::LanguageFilter()
 {
-	//Modified by Saad
-	//Unnecessary
-	//m_wordList.clear();
 }
 
 LanguageFilter::~LanguageFilter() {
@@ -87,9 +84,9 @@ void LanguageFilter::filterLine(UnicodeString &line)
 	wcscpy(buf, line.str());
 
 	UnicodeString newLine(line);
-	UnicodeString token(L"");
+	UnicodeString token;
 
-	while (newLine.nextToken(&token, UnicodeString(L" ;,.!?:=\\/><`~()&^%#\n\t"))) {
+	while (newLine.nextToken(&token, L" ;,.!?:=\\/><`~()&^%#\n\t")) {
 		wchar_t *pos = wcsstr(buf, token.str());
 		if (pos == NULL) {
 			DEBUG_CRASH(("Couldn't find the token in its own string."));
@@ -115,7 +112,7 @@ void LanguageFilter::filterLine(UnicodeString &line)
 
 void LanguageFilter::unHaxor(UnicodeString &word) {
 	Int len = word.getLength();
-	UnicodeString newWord(L"");
+	UnicodeString newWord;
 	for (Int i = 0; i < len; ++i) {
 		wchar_t c = word.getCharAt(i);
 		if ((c == L'p') || (c == L'P')) {

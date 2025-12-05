@@ -99,10 +99,7 @@ StealthUpdate::StealthUpdate( Thing *thing, const ModuleData* moduleData ) : Upd
 	//Must be enabled manually if using disguise system (bomb truck uses)
 	m_enabled = !data->m_teamDisguised;
 
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_detectionExpiresFrame = 0;
-	//
 	m_pulsePhaseRate		= 0.2f;
 	m_pulsePhase				= GameClientRandomValueReal(0, PI);
 

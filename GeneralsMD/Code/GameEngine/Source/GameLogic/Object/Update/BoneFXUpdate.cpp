@@ -91,7 +91,6 @@ BoneFXUpdate::BoneFXUpdate( Thing *thing, const ModuleData* moduleData ) : Updat
 	m_particleSystemIDs.clear();
 	m_active = FALSE;
 
-	//Added By Sadullah Nader
 	m_curBodyState = BODY_PRISTINE;
 }
 
