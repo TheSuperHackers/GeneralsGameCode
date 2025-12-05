@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals Zero Hour(tm)
+**	Command & Conquer Generals(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -35,7 +35,9 @@
 #include "GameClient/Keyboard.h"
 #include "GameClient/KeyDefs.h"
 
-Keyboard *TheKeyboard = nullptr;
+// PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
+Keyboard *TheKeyboard = NULL;
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE PROTOTYPES /////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +49,7 @@ Keyboard *TheKeyboard = nullptr;
 void Keyboard::createStreamMessages(void)
 {
 
-	// santiy
+	// sanity
 	if (TheMessageStream == NULL)
 		return;
 
@@ -83,6 +85,7 @@ void Keyboard::createStreamMessages(void)
 		}
 
 		// next key please
+		key->setUsed();
 		key++;
 	}
 }
@@ -197,7 +200,7 @@ Bool Keyboard::checkKeyRepeat(void)
 
 	// Scan Keyboard status array for first key down
 	// long enough to repeat
-	for (key = 0; key < 256; key++)
+	for (key = 0; key < ARRAY_SIZE(m_keyStatus); key++)
 	{
 
 		if (BitIsSet(m_keyStatus[key].state, KEY_STATE_DOWN))
@@ -241,7 +244,7 @@ void Keyboard::initKeyNames(void)
 	/*
 	 * Initialize the keyboard key-names array.
 	 */
-	for (i = 0; i < KEY_NAMES_COUNT; i++)
+	for (i = 0; i < ARRAY_SIZE(m_keyNames); i++)
 	{
 
 		m_keyNames[i].stdKey = L'\0';
@@ -501,11 +504,11 @@ void Keyboard::initKeyNames(void)
 		_set_keyname_(L'.', L':', L'\0', KEY_PERIOD);
 		_set_keyname_(L'-', L'_', L'\0', KEY_SLASH);
 
-		_set_keyname_(0x00FC, 0x00DC, L'\0', KEY_LBRACKET); // üÜ (umlaut)
+		_set_keyname_(0x00FC, 0x00DC, L'\0', KEY_LBRACKET); // üÜ (umlaut u)
 		_set_keyname_(L'+', L'*', L'~', KEY_RBRACKET);
 
-		_set_keyname_(0x00F6, 0x00D6, L'\0', KEY_SEMICOLON);	// öÖ (umlaut)
-		_set_keyname_(0x00E4, 0x00C4, L'\0', KEY_APOSTROPHE); // äÄ (umlaut)
+		_set_keyname_(0x00F6, 0x00D6, L'\0', KEY_SEMICOLON);	// öÖ (umlaut o)
+		_set_keyname_(0x00E4, 0x00C4, L'\0', KEY_APOSTROPHE); // äÄ (umlaut a)
 		_set_keyname_(L'^', 0x00B0, L'\0', KEY_TICK);					// ° (degree)
 		_set_keyname_(L'#', L'\'', L'\0', KEY_BACKSLASH);
 
@@ -733,9 +736,23 @@ KeyboardIO *Keyboard::getFirstKey(void)
 }
 
 //-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+KeyboardIO *Keyboard::findKey(KeyDefType key, KeyboardIO::StatusType status)
+{
+	for (KeyboardIO *io = getFirstKey(); io->key != KEY_NONE; ++io)
+	{
+		if (io->key == key && io->status == status)
+		{
+			return io;
+		}
+	}
+	return NULL;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** return the key status for the specified key */
 //-------------------------------------------------------------------------------------------------
-UnsignedByte Keyboard::getKeyStatusData(UnsignedByte key)
+UnsignedByte Keyboard::getKeyStatusData(KeyDefType key)
 {
 	return m_keyStatus[key].status;
 }
@@ -743,7 +760,7 @@ UnsignedByte Keyboard::getKeyStatusData(UnsignedByte key)
 //-------------------------------------------------------------------------------------------------
 /** Get the key state data as a Bool for the specified key */
 //-------------------------------------------------------------------------------------------------
-Bool Keyboard::getKeyStateBit(UnsignedByte key, Int bit)
+Bool Keyboard::getKeyStateBit(KeyDefType key, Int bit)
 {
 	return (m_keyStatus[key].state & bit) ? 1 : 0;
 }
@@ -751,7 +768,7 @@ Bool Keyboard::getKeyStateBit(UnsignedByte key, Int bit)
 //-------------------------------------------------------------------------------------------------
 /** return the sequence data for the given key */
 //-------------------------------------------------------------------------------------------------
-UnsignedInt Keyboard::getKeySequenceData(UnsignedByte key)
+UnsignedInt Keyboard::getKeySequenceData(KeyDefType key)
 {
 	return m_keyStatus[key].sequence;
 }
@@ -759,7 +776,7 @@ UnsignedInt Keyboard::getKeySequenceData(UnsignedByte key)
 //-------------------------------------------------------------------------------------------------
 /** set the key status data */
 //-------------------------------------------------------------------------------------------------
-void Keyboard::setKeyStatusData(UnsignedByte key, KeyboardIO::StatusType data)
+void Keyboard::setKeyStatusData(KeyDefType key, KeyboardIO::StatusType data)
 {
 	m_keyStatus[key].status = data;
 }
@@ -767,7 +784,7 @@ void Keyboard::setKeyStatusData(UnsignedByte key, KeyboardIO::StatusType data)
 //-------------------------------------------------------------------------------------------------
 /** set the key state data */
 //-------------------------------------------------------------------------------------------------
-void Keyboard::setKeyStateData(UnsignedByte key, UnsignedByte data)
+void Keyboard::setKeyStateData(KeyDefType key, UnsignedByte data)
 {
 	m_keyStatus[key].state = data;
 }
@@ -939,9 +956,9 @@ Bool Keyboard::isAlt()
 	return FALSE;
 }
 
-WideChar Keyboard::getPrintableKey(UnsignedByte key, Int state)
+WideChar Keyboard::getPrintableKey(KeyDefType key, Int state)
 {
-	if ((key < 0 || key >= KEY_NAMES_COUNT) || (state < 0 || state >= MAX_KEY_STATES))
+	if ((key < 0 || key >= ARRAY_SIZE(m_keyNames)) || (state < 0 || state >= MAX_KEY_STATES))
 		return L'\0';
 	if (state == 0)
 		return m_keyNames[key].stdKey;
