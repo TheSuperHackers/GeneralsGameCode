@@ -45,6 +45,7 @@
 //         Includes
 //----------------------------------------------------------------------------
 
+#include <Utility/CppMacros.h>
 #include "Common/GameMemory.h"
 #include "WW3D2/texture.h"
 #include "WW3D2/textureloader.h"

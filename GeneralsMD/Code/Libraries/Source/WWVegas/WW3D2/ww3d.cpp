@@ -81,6 +81,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "ww3d.h"
 #include "rinfo.h"
 #include "assetmgr.h"

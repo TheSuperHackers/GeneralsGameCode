@@ -45,6 +45,8 @@
 //-----------------------------------------------------------------------------
 //         Includes
 //-----------------------------------------------------------------------------
+
+#include <Utility/CppMacros.h>
 #include "W3DDevice/GameClient/W3DRoadBuffer.h"
 
 #include <assetmgr.h>

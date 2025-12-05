@@ -57,6 +57,7 @@
  *   AABTreeBuilderClass::Build_W3D_AABTree_Recursive -- Build array of indices and W3dMeshAAB *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "aabtreebuilder.h"
 #include "chunkio.h"
 #include "w3d_file.h"

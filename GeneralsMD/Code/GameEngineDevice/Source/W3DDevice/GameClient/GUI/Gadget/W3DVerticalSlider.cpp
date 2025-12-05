@@ -46,6 +46,8 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
 
+#include <Utility/CppMacros.h>
+
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "GameClient/GadgetSlider.h"
 #include "GameClient/GameWindowGlobal.h"

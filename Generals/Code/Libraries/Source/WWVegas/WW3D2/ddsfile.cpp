@@ -17,6 +17,8 @@
 */
 
 // 08/06/02 KM Added cube map and volume texture support
+
+#include <Utility/CppMacros.h>
 #include "ddsfile.h"
 #include "ffactory.h"
 #include "bufffile.h"

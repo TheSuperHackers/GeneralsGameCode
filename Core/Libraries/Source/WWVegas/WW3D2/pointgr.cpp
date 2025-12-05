@@ -70,6 +70,8 @@
  *   PointGroupClass::Update_Arrays -- Update all arrays used in rendering *
  *   PointGroupClass::Peek_Texture -- Peeks texture                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+#include <Utility/CppMacros.h>
 #include "pointgr.h"
 #include "vertmaterial.h"
 #include "ww3d.h"

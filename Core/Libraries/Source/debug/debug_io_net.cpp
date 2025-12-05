@@ -26,6 +26,8 @@
 //
 // Debug I/O class net (Network destination via named pipe)
 //////////////////////////////////////////////////////////////////////////////
+
+#include <Utility/CppMacros.h>
 #include "debug.h"
 #include "internal.h"
 #include "internal_io.h"

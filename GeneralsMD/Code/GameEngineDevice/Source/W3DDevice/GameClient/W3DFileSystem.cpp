@@ -40,6 +40,7 @@
 // for now we maintain old legacy files
 // #define MAINTAIN_LEGACY_FILES
 
+#include <Utility/CppMacros.h>
 #include "Common/ArchiveFile.h"
 #include "Common/Debug.h"
 #include "Common/file.h"

@@ -30,6 +30,8 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+#include <Utility/CppMacros.h>
+
 #include "Common/Debug.h"
 #include "Common/GlobalData.h"
 #include "Common/LocalFileSystem.h"

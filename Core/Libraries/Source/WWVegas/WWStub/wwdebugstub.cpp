@@ -17,6 +17,8 @@
 */
 
 // TheSuperHackers @build feliwir 15/04/2025 Simple debug implementation useful for tools
+
+#include <Utility/CppMacros.h>
 #include "wwdebug.h"
 #include <stdarg.h>
 #include <stdlib.h>

@@ -19,6 +19,7 @@
 // ScorchTool.cpp
 // Author: Dennis Griffin, April 2002
 
+#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "resource.h"
 

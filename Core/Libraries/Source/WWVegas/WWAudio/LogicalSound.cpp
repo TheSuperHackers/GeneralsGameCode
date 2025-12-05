@@ -30,6 +30,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "LogicalSound.h"
 #include "WWAudio.h"
 #include "SoundScene.h"

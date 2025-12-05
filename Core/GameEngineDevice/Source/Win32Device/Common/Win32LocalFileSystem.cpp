@@ -27,6 +27,8 @@
 ////////////////////////////////////////////////////////////
 
 #include <windows.h>
+
+#include <Utility/CppMacros.h>
 #include "Common/AsciiString.h"
 #include "Common/GameMemory.h"
 #include "Common/PerfTimer.h"

@@ -20,6 +20,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <Utility/CppMacros.h>
 #include "framgrab.h"
 #include <io.h>
 //#include <errno.h>

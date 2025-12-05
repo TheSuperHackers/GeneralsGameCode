@@ -17,6 +17,8 @@
 */
 
 // TheSuperHackers @build feliwir 15/04/2025 Simple allocator implementation useful for tools
+
+#include <Utility/CppMacros.h>
 #include "always.h"
 #include <stdlib.h>
 

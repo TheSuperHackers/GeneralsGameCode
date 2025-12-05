@@ -51,6 +51,8 @@
 //-----------------------------------------------------------------------------
 //         Includes
 //-----------------------------------------------------------------------------
+
+#include <Utility/CppMacros.h>
 #include "W3DDevice/GameClient/W3DWaypointBuffer.h"
 
 #include <assetmgr.h>

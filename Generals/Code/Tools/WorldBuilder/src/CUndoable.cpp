@@ -20,6 +20,7 @@
 // Class to handle undo/redo.
 // Author: John Ahlquist, April 2001
 
+#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "resource.h"
 

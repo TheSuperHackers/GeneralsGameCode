@@ -19,6 +19,7 @@
 // ScorchOptions.cpp : implementation file
 //
 
+#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "resource.h"
 #include "ScorchOptions.h"

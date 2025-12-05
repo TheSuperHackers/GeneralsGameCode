@@ -31,6 +31,8 @@
 #include <windows.h>
 #include <assert.h>
 
+#include <Utility/CppMacros.h>
+
 #include "Common/Debug.h"
 #include "Common/Language.h"
 #include "GameClient/KeyDefs.h"

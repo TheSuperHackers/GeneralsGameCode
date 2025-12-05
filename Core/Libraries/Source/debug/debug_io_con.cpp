@@ -26,6 +26,8 @@
 //
 // Debug I/O class con (console window)
 //////////////////////////////////////////////////////////////////////////////
+
+#include <Utility/CppMacros.h>
 #include "debug.h"
 #include "internal.h"
 #include "internal_io.h"

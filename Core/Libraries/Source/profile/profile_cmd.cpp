@@ -26,6 +26,8 @@
 //
 // Profile module command interface
 //////////////////////////////////////////////////////////////////////////////
+
+#include <Utility/CppMacros.h>
 #include "profile.h"
 #include "internal.h"
 
