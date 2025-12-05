@@ -37,6 +37,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "seglinerenderer.h"
 #include "ww3d.h"
 #include "rinfo.h"

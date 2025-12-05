@@ -26,6 +26,8 @@
 //
 // Debug I/O class flat (flat or split log file)
 //////////////////////////////////////////////////////////////////////////////
+
+#include <Utility/CppMacros.h>
 #include "debug.h"
 #include "debug_io.h"
 #include "internal.h"

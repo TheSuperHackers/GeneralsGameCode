@@ -43,6 +43,7 @@
 //			  moves.
 //-----------------------------------------------------------------------------
 
+#include <Utility/CppMacros.h>
 #include "W3DDevice/GameClient/W3DTerrainTracks.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "Common/PerfTimer.h"

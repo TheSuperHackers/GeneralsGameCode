@@ -19,6 +19,7 @@
 // wdump.cpp : Defines the class behaviors for the application.
 //
 
+#include <Utility/CppMacros.h>
 #include "stdafx.h"
 #include "wdump.h"
 

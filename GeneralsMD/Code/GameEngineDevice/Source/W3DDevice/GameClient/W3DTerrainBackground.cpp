@@ -45,6 +45,8 @@
 //-----------------------------------------------------------------------------
 //         Includes
 //-----------------------------------------------------------------------------
+
+#include <Utility/CppMacros.h>
 #include "W3DDevice/GameClient/W3DTerrainBackground.h"
 
 #include <assetmgr.h>

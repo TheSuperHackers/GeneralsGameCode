@@ -29,6 +29,8 @@
 
 #include <stdlib.h>
 
+#include <Utility/CppMacros.h>
+
 #include "Common/Debug.h"
 #include "GameClient/GameClient.h"
 #include "GameClient/GameText.h"

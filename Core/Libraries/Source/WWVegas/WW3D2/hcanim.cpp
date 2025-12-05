@@ -49,6 +49,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "hcanim.h"
 #include "assetmgr.h"
 #include "htree.h"

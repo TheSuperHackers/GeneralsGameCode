@@ -19,6 +19,7 @@
 // wbview3d.cpp : implementation file
 //
 
+#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "resource.h"
 #include "wwmath.h"

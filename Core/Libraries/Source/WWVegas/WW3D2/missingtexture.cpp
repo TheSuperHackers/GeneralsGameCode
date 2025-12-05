@@ -17,6 +17,8 @@
 */
 
 // 08/05/02 KM Texture class redesign
+
+#include <Utility/CppMacros.h>
 #include "missingtexture.h"
 #include "texture.h"
 #include "dx8wrapper.h"

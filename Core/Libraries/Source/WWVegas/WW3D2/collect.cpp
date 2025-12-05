@@ -71,6 +71,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "collect.h"
 #include "chunkio.h"
 #include "camera.h"

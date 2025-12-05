@@ -26,6 +26,7 @@
 // Stephan Vedder, April 2025
 /////////////////////////////////////////////////////
 
+#include <Utility/CppMacros.h>
 #include "Common/LocalFile.h"
 #include "Common/LocalFileSystem.h"
 #include "Common/RAMFile.h"

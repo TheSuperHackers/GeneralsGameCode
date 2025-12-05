@@ -48,6 +48,7 @@
  *   SurfaceClass::Is_Monochrome -- Checks if surface is monochrome or not                     *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "surfaceclass.h"
 #include "formconv.h"
 #include "dx8wrapper.h"

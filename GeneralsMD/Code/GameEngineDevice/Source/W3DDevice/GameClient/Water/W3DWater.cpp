@@ -31,6 +31,8 @@
 #define SCROLL_UV
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
+
+#include <Utility/CppMacros.h>
 #include "W3DDevice/GameClient/W3DWater.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DShroud.h"

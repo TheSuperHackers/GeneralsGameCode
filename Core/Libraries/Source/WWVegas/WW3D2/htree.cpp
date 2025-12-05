@@ -51,6 +51,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "htree.h"
 #include "hanim.h"
 #include "hcanim.h"

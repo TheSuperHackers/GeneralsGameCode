@@ -46,6 +46,8 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
 
+#include <Utility/CppMacros.h>
+
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/NameKeyGenerator.h"
 #include "GameClient/GameWindowManager.h"

@@ -47,6 +47,8 @@
 #include <windows.h>
 #include <commctrl.h>
 
+#include <Utility/CppMacros.h>
+
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"
 #include "GameClient/Gadget.h"

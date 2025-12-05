@@ -26,6 +26,8 @@
 //
 // High level profiling
 //////////////////////////////////////////////////////////////////////////////
+
+#include <Utility/CppMacros.h>
 #include "profile.h"
 #include "internal.h"
 #include <new>

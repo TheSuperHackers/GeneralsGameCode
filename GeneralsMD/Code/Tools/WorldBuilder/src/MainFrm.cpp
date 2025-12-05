@@ -19,6 +19,7 @@
 // MainFrm.cpp : implementation of the CMainFrame class
 //
 
+#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "MainFrm.h"
 

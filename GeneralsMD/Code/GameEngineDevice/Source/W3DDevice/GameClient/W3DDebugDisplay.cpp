@@ -45,6 +45,7 @@
 //         Includes
 //----------------------------------------------------------------------------
 
+#include <Utility/CppMacros.h>
 #include "W3DDevice/GameClient/W3DDebugDisplay.h"
 #include "GameClient/GameFont.h"
 #include "GameClient/DisplayStringManager.h"

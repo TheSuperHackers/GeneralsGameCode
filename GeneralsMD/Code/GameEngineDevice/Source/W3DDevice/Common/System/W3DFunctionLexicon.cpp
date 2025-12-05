@@ -29,6 +29,8 @@
 
 #include <stdlib.h>
 
+#include <Utility/CppMacros.h>
+
 #include "GameClient/GameWindow.h"
 #include "W3DDevice/Common/W3DFunctionLexicon.h"
 #include "W3DDevice/GameClient/W3DGUICallbacks.h"

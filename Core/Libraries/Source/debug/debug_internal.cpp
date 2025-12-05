@@ -26,6 +26,8 @@
 //
 // Implementation of internal code
 //////////////////////////////////////////////////////////////////////////////
+
+#include <Utility/CppMacros.h>
 #include "debug.h"
 #include <windows.h>
 
