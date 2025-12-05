@@ -45,7 +45,7 @@ protected:
 	struct ActiveCursorState
 	{
 		ActiveCursorState()
-			: cursor(NONE), direction(0), frameIndex(0), nextFrameChangeMs(0) {}
+				: cursor(NONE), direction(0), frameIndex(0), nextFrameChangeMs(0) {}
 
 		MouseCursor cursor;
 		Int direction;
@@ -73,7 +73,6 @@ protected:
 	SDL3MouseEvent m_eventBuffer[Mouse::NUM_MOUSE_EVENTS];
 	UnsignedInt m_nextFreeIndex;
 	UnsignedInt m_nextGetIndex;
-	MouseCursor m_currentSDL3Cursor;
 	Int m_directionFrame;
 	Bool m_lostFocus;
 	SDL_WindowID m_windowID;

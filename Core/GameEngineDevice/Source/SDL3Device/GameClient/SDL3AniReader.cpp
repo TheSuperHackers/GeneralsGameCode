@@ -1,17 +1,10 @@
 #include "SDL3Device/GameClient/SDL3AniReader.h"
 
-#include "Common/Debug.h"
-
 #include <SDL3/SDL_endian.h>
 #include <SDL3/SDL_mouse.h>
 #include <SDL3/SDL_surface.h>
 
-#include <algorithm>
-#include <cstddef>
-#include <cstdint>
-#include <cstring>
-
-// TheSuperHackers @refactor denysmitin 04/12/2025 Reimplemented SDL3 ANI loader with SDL cursor generation.
+// TheSuperHackers @feature denysmitin 05/12/2025 Implemented SDL3 ANI loader with SDL cursor generation.
 
 namespace
 {
@@ -20,16 +13,16 @@ namespace
 	static const Uint32 _FOURCC_FRAM = SDL_FOURCC('f', 'r', 'a', 'm');
 	static const Uint32 _FOURCC_ICON = SDL_FOURCC('i', 'c', 'o', 'n');
 	static const Uint32 _FOURCC_RATE = SDL_FOURCC('r', 'a', 't', 'e');
-	static const Uint32 _FOURCC_SEQ  = SDL_FOURCC('s', 'e', 'q', ' ');
+	static const Uint32 _FOURCC_SEQ = SDL_FOURCC('s', 'e', 'q', ' ');
 
 	static Uint16 readLE16(const Byte *ptr)
 	{
-		return static_cast<Uint16>(ptr[0] | (ptr[1] << 8));
+		return static_cast<Uint16>((Uint16(ptr[0]) & 0xff) | (Uint16(ptr[1] << 8) & 0xff00));
 	}
 
 	static Uint32 readLE32(const Byte *ptr)
 	{
-		return static_cast<Uint32>(ptr[0] | (ptr[1] << 8) | (ptr[2] << 16) | (ptr[3] << 24));
+		return static_cast<Uint32>((Uint32(ptr[0]) & 0xff) | ((Uint32(ptr[1]) << 8) & 0xff00) | ((Uint32(ptr[2]) << 16) & 0xff0000) | ((Uint32(ptr[3]) << 24) & 0xff000000));
 	}
 
 	static size_t paddedSize(size_t value)
@@ -41,37 +34,34 @@ namespace
 	{
 		const Byte *payload;
 		size_t payloadSize;
-		Int hotspotX;
-		Int hotspotY;
-		Int score;
+		int hotspotX;
+		int hotspotY;
 	};
 
 	struct CursorImage
 	{
 		SDL_Surface *surface;
-		Int hotspotX;
-		Int hotspotY;
+		int hotspotX;
+		int hotspotY;
 
 		CursorImage() : surface(NULL), hotspotX(0), hotspotY(0) {}
 	};
 
-	static Bool decodeCursorBitmap(const Byte *payload, size_t payloadSize, Int hotspotX, Int hotspotY, CursorImage &outImage)
+	static bool decodeCursorBitmap(const Byte *payload, size_t payloadSize, int hotspotX, int hotspotY, CursorImage &outImage)
 	{
 		if (payloadSize < 40)
 		{
-			DEBUG_CRASH(("SDL3AniReader: Icon image header truncated"));
-			return FALSE;
+			return SDL_SetError("Invalid bitmap payload size: %d", payloadSize);
 		}
 
 		Uint32 biSize = readLE32(payload + 0);
 		if (biSize < 40 || biSize > payloadSize)
 		{
-			DEBUG_CRASH(("SDL3AniReader: Unsupported icon header size"));
-			return FALSE;
+			return SDL_SetError("Invalid bitmap size: %d", biSize);
 		}
 
-		Int width = static_cast<Int>(readLE32(payload + 4));
-		Int heightField = static_cast<Int>(readLE32(payload + 8));
+		int width = static_cast<int>(readLE32(payload + 4));
+		int heightField = static_cast<int>(readLE32(payload + 8));
 		Uint16 planes = readLE16(payload + 12);
 		Uint16 bitCount = readLE16(payload + 14);
 		Uint32 compression = readLE32(payload + 16);
@@ -79,22 +69,19 @@ namespace
 
 		if (planes != 1 || compression != 0)
 		{
-			DEBUG_CRASH(("SDL3AniReader: Unsupported cursor planes/compression"));
-			return FALSE;
+			return SDL_SetError("Unsupported number of planes or compression");
 		}
 
 		if (width <= 0)
 		{
-			DEBUG_CRASH(("SDL3AniReader: Invalid cursor width"));
-			return FALSE;
+			return SDL_SetError("Invalid image width");
 		}
 
-		Int reportedHeight = (heightField < 0) ? -heightField : heightField;
-		Int imageHeight = (heightField < 0) ? reportedHeight : (reportedHeight / 2);
+		int reportedHeight = (heightField < 0) ? -heightField : heightField;
+		int imageHeight = (heightField < 0) ? reportedHeight : (reportedHeight / 2);
 		if (imageHeight <= 0)
 		{
-			DEBUG_CRASH(("SDL3AniReader: Invalid cursor height"));
-			return FALSE;
+			return SDL_SetError("Invalid image height");
 		}
 
 		const Byte *palette = payload + biSize;
@@ -106,8 +93,7 @@ namespace
 		size_t paletteBytes = paletteEntries * 4;
 		if (biSize + paletteBytes > payloadSize)
 		{
-			DEBUG_CRASH(("SDL3AniReader: Palette exceeds icon payload"));
-			return FALSE;
+			return SDL_SetError("Bitmap is missing palette");
 		}
 
 		const Byte *xorData = palette + paletteBytes;
@@ -116,14 +102,13 @@ namespace
 		size_t xorBytes = xorStride * static_cast<size_t>(imageHeight);
 		if (xorBytes == 0 || xorData + xorBytes > payload + payloadSize)
 		{
-			DEBUG_CRASH(("SDL3AniReader: XOR bitmap truncated"));
-			return FALSE;
+			return SDL_SetError("Missing XOR map");
 		}
 
 		const Byte *maskData = xorData + xorBytes;
 		size_t maskStride = ((static_cast<size_t>(width) + 31) / 32) * 4;
 		size_t maskBytes = maskStride * static_cast<size_t>(imageHeight);
-		Bool hasMask = TRUE;
+		bool hasMask = TRUE;
 		if (maskBytes == 0 || maskData + maskBytes > payload + payloadSize)
 		{
 			hasMask = FALSE;
@@ -133,28 +118,26 @@ namespace
 		SDL_Surface *surface = SDL_CreateSurface(width, imageHeight, SDL_PIXELFORMAT_ARGB8888);
 		if (!surface)
 		{
-			DEBUG_CRASH(("SDL3AniReader: Failed to allocate surface: %s", SDL_GetError()));
-			return FALSE;
+			return SDL_SetError("Failed to crate SDL_Surface: %s", SDL_GetError());
 		}
 
-		if (SDL_LockSurface(surface) != 0)
+		if (!SDL_LockSurface(surface))
 		{
-			DEBUG_CRASH(("SDL3AniReader: Failed to lock surface: %s", SDL_GetError()));
 			SDL_DestroySurface(surface);
-			return FALSE;
+			return SDL_SetError("Failed to lock SDL_Surface: %s", SDL_GetError());
 		}
 
 		Uint8 *dstPixels = static_cast<Uint8 *>(surface->pixels);
-		Int dstPitch = surface->pitch;
+		int dstPitch = surface->pitch;
 
-		for (Int y = 0; y < imageHeight; ++y)
+		for (int y = 0; y < imageHeight; ++y)
 		{
-			Int srcY = imageHeight - 1 - y;
+			int srcY = imageHeight - 1 - y;
 			const Byte *xorRow = xorData + static_cast<size_t>(srcY) * xorStride;
 			const Byte *maskRow = hasMask ? (maskData + static_cast<size_t>(srcY) * maskStride) : NULL;
 			Uint32 *dstRow = reinterpret_cast<Uint32 *>(dstPixels + static_cast<size_t>(y) * dstPitch);
 
-			for (Int x = 0; x < width; ++x)
+			for (int x = 0; x < width; ++x)
 			{
 				Uint8 r = 0;
 				Uint8 g = 0;
@@ -178,7 +161,7 @@ namespace
 				}
 				else if (bitCount <= 8)
 				{
-					Int paletteIndex = 0;
+					int paletteIndex = 0;
 					if (bitCount == 8)
 					{
 						paletteIndex = xorRow[x];
@@ -193,7 +176,7 @@ namespace
 						Uint8 byteVal = xorRow[x / 8];
 						paletteIndex = (byteVal >> (7 - (x & 7))) & 0x01;
 					}
-					paletteIndex = std::min<Int>(paletteIndex, static_cast<Int>(paletteEntries) - 1);
+					paletteIndex = std::min<int>(paletteIndex, static_cast<int>(paletteEntries) - 1);
 					const Byte *entry = palette + static_cast<size_t>(paletteIndex) * 4;
 					b = entry[0];
 					g = entry[1];
@@ -203,14 +186,14 @@ namespace
 				{
 					SDL_UnlockSurface(surface);
 					SDL_DestroySurface(surface);
-					DEBUG_CRASH(("SDL3AniReader: Unsupported cursor bit depth %u", bitCount));
-					return FALSE;
+					return SDL_SetError("Unsupported bit count: %d", bitCount);
+					;
 				}
 
 				if (hasMask && maskRow)
 				{
 					Uint8 maskByte = maskRow[x / 8];
-					Bool masked = ((maskByte >> (7 - (x & 7))) & 0x01) != 0;
+					bool masked = ((maskByte >> (7 - (x & 7))) & 0x01) != 0;
 					if (masked)
 					{
 						a = 0;
@@ -233,80 +216,66 @@ namespace
 		return TRUE;
 	}
 
-	static Bool createCursorFromIcon(const Byte *chunkData, size_t chunkSize, SDL3AniReader::Frame &outFrame)
+	static bool createCursorFromIcon(const Byte *chunkData, size_t chunkSize, SDL3AniReader::Frame &outFrame)
 	{
 		if (chunkSize < 6)
 		{
-			DEBUG_CRASH(("SDL3AniReader: Icon chunk too small"));
-			return FALSE;
+			return SDL_SetError("Invalid icon chunk size: %d", chunkSize);
 		}
 
 		const Byte *data = chunkData;
-		Uint16 idReserved = readLE16(data + 0);
-		Uint16 idType = readLE16(data + 2);
-		Uint16 idCount = readLE16(data + 4);
+		Uint16 idReserved = readLE16(data + 0); // must be = 0
+		Uint16 idType = readLE16(data + 2);			// either 1 or 2
+		Uint16 idCount = readLE16(data + 4);		// must be > 0
 
 		if (idReserved != 0 || idCount == 0)
 		{
-			DEBUG_CRASH(("SDL3AniReader: Invalid icon header"));
-			return FALSE;
+			return SDL_SetError("Invalid icon chunk structure");
 		}
 
-		const size_t entrySize = 16;
+		const size_t entrySize = idType == 1 ? 16 : 24; // 16 bytes for ICO, 24 bytes for CUR
 		size_t directorySize = 6 + entrySize * static_cast<size_t>(idCount);
 		if (chunkSize < directorySize)
 		{
-			DEBUG_CRASH(("SDL3AniReader: Icon directory truncated"));
-			return FALSE;
+			return SDL_SetError("Invalid icon chunk structure");
 		}
 
 		const Byte *entryData = data + 6;
-		IconCandidate best = {NULL, 0, 0, 0, -1};
+		IconCandidate best = {NULL, 0, 0, 0};
 
 		for (Uint16 i = 0; i < idCount; ++i)
 		{
 			const Byte *entry = entryData + entrySize * i;
-			Int width = entry[0] ? entry[0] : 256;
-			Int height = entry[1] ? entry[1] : 256;
-			Uint16 bitCount = readLE16(entry + 6);
-			Int score = width + height + static_cast<Int>(bitCount);
+			// int width = entry[0] ? entry[0] : 32;
+			// int height = entry[1] ? entry[1] : 32;
+			entry += 2;
+			// ColorCount is skipped
+			entry++;
+			// Reserved = 0
+			entry++;
+			best.hotspotX = readLE16(entry);
+			best.hotspotY = readLE16(entry + 2);
+			best.payloadSize = readLE32(entry + 4);
+			// FileOffset is ignored
+			uint32_t imageDataOffset = readLE32(entry + 8);
+			best.payload = chunkData + imageDataOffset;
 
-			Uint32 bytesInRes = readLE32(entry + 8);
-			Uint32 imageOffset = readLE32(entry + 12);
-
-			if (imageOffset + bytesInRes > chunkSize)
-			{
-				continue;
-			}
-
-			Int hotspotX = 0;
-			Int hotspotY = 0;
-			if (idType == 2)
-			{
-				hotspotX = static_cast<Int>(readLE16(entry + 4));
-				hotspotY = static_cast<Int>(readLE16(entry + 6));
-			}
-
-			if (score > best.score)
-			{
-				best.payload = data + imageOffset;
-				best.payloadSize = bytesInRes;
-				best.hotspotX = hotspotX;
-				best.hotspotY = hotspotY;
-				best.score = score;
-			}
-		}
-
-		if (!best.payload)
-		{
-			DEBUG_CRASH(("SDL3AniReader: No valid icon payload"));
-			return FALSE;
+			// usually there's only one cursor in idCount
+			break;
 		}
 
 		CursorImage cursorImage;
 		if (!decodeCursorBitmap(best.payload, best.payloadSize, best.hotspotX, best.hotspotY, cursorImage))
 		{
-			return FALSE;
+			return SDL_SetError("Failed to decode cursor bitmap: %s", SDL_GetError());
+		}
+
+		// Scale cursor 2 times for better size
+		SDL_Surface *scaledCursorSurface = SDL_ScaleSurface(cursorImage.surface, cursorImage.surface->w << 1, cursorImage.surface->h << 1, SDL_SCALEMODE_NEAREST);
+		if (scaledCursorSurface != NULL)
+		{
+			SDL_DestroySurface(cursorImage.surface);
+			cursorImage.surface = scaledCursorSurface;
 		}
 
 		SDL_Cursor *cursor = SDL_CreateColorCursor(cursorImage.surface, cursorImage.hotspotX, cursorImage.hotspotY);
@@ -314,8 +283,7 @@ namespace
 
 		if (!cursor)
 		{
-			DEBUG_CRASH(("SDL3AniReader: SDL_CreateColorCursor failed: %s", SDL_GetError()));
-			return FALSE;
+			return SDL_SetError("SDL_Cursor is NULL");
 		}
 
 		outFrame.cursor = cursor;
@@ -347,7 +315,7 @@ SDL3AniReader::~SDL3AniReader()
 {
 }
 
-Bool SDL3AniReader::load(const char *path, std::vector<Frame> &outFrames)
+bool SDL3AniReader::load(const Byte *path, std::vector<Frame> &outFrames)
 {
 	outFrames.clear();
 
@@ -355,209 +323,208 @@ Bool SDL3AniReader::load(const char *path, std::vector<Frame> &outFrames)
 	void *fileMemory = SDL_LoadFile(path, &fileSize);
 	if (!fileMemory)
 	{
-		DEBUG_CRASH(("SDL3AniReader: Failed to load %s: %s", path ? path : "<null>", SDL_GetError()));
+		SDL_SetError("File '%s' doesn't exist", path);
 		return FALSE;
 	}
 
 	const Byte *bytes = static_cast<const Byte *>(fileMemory);
-	Bool success = FALSE;
+	bool success = FALSE;
 
 	if (fileSize < 12 || std::memcmp(bytes, "RIFF", 4) != 0 || std::memcmp(bytes + 8, "ACON", 4) != 0)
 	{
-		DEBUG_CRASH(("SDL3AniReader: %s is not an animated cursor", path ? path : "<null>"));
+		SDL_free(fileMemory);
+		return SDL_SetError("Invalid RIFF signature");
 	}
-	else
+
+	std::vector<Frame> rawFrames;
+	std::vector<Uint32> rates;
+	std::vector<Uint32> sequence;
+
+	struct AniHeader
 	{
-		std::vector<Frame> rawFrames;
-		std::vector<Uint32> rates;
-		std::vector<Uint32> sequence;
+		Uint32 cbSizeOf;
+		Uint32 cFrames;
+		Uint32 cSteps;
+		Uint32 cx;
+		Uint32 cy;
+		Uint32 cBitCount;
+		Uint32 cPlanes;
+		Uint32 jifRate;
+		Uint32 flags;
+	} header = {};
 
-		struct AniHeader
+	bool parseOk = TRUE;
+	size_t offset = 12;
+	while (offset + 8 <= fileSize)
+	{
+		Uint32 chunkId = readLE32(bytes + offset);
+		Uint32 chunkSize = readLE32(bytes + offset + 4);
+		size_t chunkDataOffset = offset + 8;
+		size_t padded = paddedSize(chunkSize);
+		if (chunkDataOffset + padded > fileSize)
 		{
-			Uint32 cbSizeOf;
-			Uint32 cFrames;
-			Uint32 cSteps;
-			Uint32 cx;
-			Uint32 cy;
-			Uint32 cBitCount;
-			Uint32 cPlanes;
-			Uint32 jifRate;
-			Uint32 flags;
-		} header = {};
+			break;
+		}
 
-		Bool parseOk = TRUE;
-		size_t offset = 12;
-		while (offset + 8 <= fileSize)
+		const Byte *chunkData = bytes + chunkDataOffset;
+
+		if (chunkId == _FOURCC_ANIH)
 		{
-			Uint32 chunkId = readLE32(bytes + offset);
-			Uint32 chunkSize = readLE32(bytes + offset + 4);
-			size_t chunkDataOffset = offset + 8;
-			size_t padded = paddedSize(chunkSize);
-			if (chunkDataOffset + padded > fileSize)
+			if (chunkSize >= 36)
 			{
-				break;
+				header.cbSizeOf = readLE32(chunkData + 0);
+				header.cFrames = readLE32(chunkData + 4);
+				header.cSteps = readLE32(chunkData + 8);
+				header.cx = readLE32(chunkData + 12);
+				header.cy = readLE32(chunkData + 16);
+				header.cBitCount = readLE32(chunkData + 20);
+				header.cPlanes = readLE32(chunkData + 24);
+				header.jifRate = readLE32(chunkData + 28);
+				header.flags = readLE32(chunkData + 32);
 			}
-
-			const Byte *chunkData = bytes + chunkDataOffset;
-
-			if (chunkId == _FOURCC_ANIH)
+		}
+		else if (chunkId == _FOURCC_RATE)
+		{
+			Uint32 count = chunkSize / 4;
+			rates.resize(count);
+			for (Uint32 i = 0; i < count; ++i)
 			{
-				if (chunkSize >= 36)
-				{
-					header.cbSizeOf = readLE32(chunkData + 0);
-					header.cFrames = readLE32(chunkData + 4);
-					header.cSteps = readLE32(chunkData + 8);
-					header.cx = readLE32(chunkData + 12);
-					header.cy = readLE32(chunkData + 16);
-					header.cBitCount = readLE32(chunkData + 20);
-					header.cPlanes = readLE32(chunkData + 24);
-					header.jifRate = readLE32(chunkData + 28);
-					header.flags = readLE32(chunkData + 32);
-				}
+				rates[i] = readLE32(chunkData + i * 4);
 			}
-			else if (chunkId == _FOURCC_RATE)
+		}
+		else if (chunkId == _FOURCC_SEQ)
+		{
+			Uint32 count = chunkSize / 4;
+			sequence.resize(count);
+			for (Uint32 i = 0; i < count; ++i)
 			{
-				Uint32 count = chunkSize / 4;
-				rates.resize(count);
-				for (Uint32 i = 0; i < count; ++i)
-				{
-					rates[i] = readLE32(chunkData + i * 4);
-				}
+				sequence[i] = readLE32(chunkData + i * 4);
 			}
-			else if (chunkId == _FOURCC_SEQ)
+		}
+		else if (chunkId == _FOURCC_LIST && chunkSize >= 4)
+		{
+			Uint32 listType = readLE32(chunkData);
+			if (listType == _FOURCC_FRAM)
 			{
-				Uint32 count = chunkSize / 4;
-				sequence.resize(count);
-				for (Uint32 i = 0; i < count; ++i)
+				size_t listOffset = chunkDataOffset + 4;
+				size_t listEnd = chunkDataOffset + chunkSize;
+				while (listOffset + 8 <= listEnd)
 				{
-					sequence[i] = readLE32(chunkData + i * 4);
-				}
-			}
-			else if (chunkId == _FOURCC_LIST && chunkSize >= 4)
-			{
-				Uint32 listType = readLE32(chunkData);
-				if (listType == _FOURCC_FRAM)
-				{
-					size_t listOffset = chunkDataOffset + 4;
-					size_t listEnd = chunkDataOffset + chunkSize;
-					while (listOffset + 8 <= listEnd)
-					{
-						Uint32 subId = readLE32(bytes + listOffset);
-						Uint32 subSize = readLE32(bytes + listOffset + 4);
-						size_t subDataOffset = listOffset + 8;
-						size_t subPadded = paddedSize(subSize);
-						if (subDataOffset + subPadded > listEnd)
-						{
-							break;
-						}
-
-						if (subId == _FOURCC_ICON)
-						{
-							Frame frame = {};
-							if (!createCursorFromIcon(bytes + subDataOffset, subSize, frame))
-							{
-								destroyFrames(rawFrames);
-								parseOk = FALSE;
-								break;
-							}
-							rawFrames.push_back(frame);
-						}
-
-						listOffset = subDataOffset + subPadded;
-					}
-					if (!parseOk)
+					Uint32 subId = readLE32(bytes + listOffset);
+					Uint32 subSize = readLE32(bytes + listOffset + 4);
+					size_t subDataOffset = listOffset + 8;
+					size_t subPadded = paddedSize(subSize);
+					if (subDataOffset + subPadded > listEnd)
 					{
 						break;
 					}
-				}
-			}
 
-			offset = chunkDataOffset + padded;
-			if (!parseOk)
-			{
-				break;
+					if (subId == _FOURCC_ICON)
+					{
+						Frame frame = {};
+						if (!createCursorFromIcon(bytes + subDataOffset, subSize, frame))
+						{
+							destroyFrames(rawFrames);
+							parseOk = FALSE;
+							break;
+						}
+						rawFrames.push_back(frame);
+					}
+
+					listOffset = subDataOffset + subPadded;
+				}
+				if (!parseOk)
+				{
+					break;
+				}
 			}
 		}
 
-		if (parseOk && !rawFrames.empty())
+		offset = chunkDataOffset + padded;
+		if (!parseOk)
 		{
-			std::vector<Uint32> frameOrder;
-			if (!sequence.empty())
+			break;
+		}
+	}
+
+	if (parseOk && !rawFrames.empty())
+	{
+		std::vector<Uint32> frameOrder;
+		if (!sequence.empty())
+		{
+			frameOrder = sequence;
+		}
+		else
+		{
+			Uint32 steps = header.cSteps ? header.cSteps : header.cFrames;
+			if (steps == 0)
 			{
-				frameOrder = sequence;
+				steps = static_cast<Uint32>(rawFrames.size());
 			}
-			else
+			for (Uint32 i = 0; i < steps && i < rawFrames.size(); ++i)
 			{
-				Uint32 steps = header.cSteps ? header.cSteps : header.cFrames;
-				if (steps == 0)
-				{
-					steps = static_cast<Uint32>(rawFrames.size());
-				}
-				for (Uint32 i = 0; i < steps && i < rawFrames.size(); ++i)
+				frameOrder.push_back(i);
+			}
+			if (frameOrder.empty())
+			{
+				for (Uint32 i = 0; i < rawFrames.size(); ++i)
 				{
 					frameOrder.push_back(i);
 				}
-				if (frameOrder.empty())
-				{
-					for (Uint32 i = 0; i < rawFrames.size(); ++i)
-					{
-						frameOrder.push_back(i);
-					}
-				}
-			}
-
-			if (!frameOrder.empty())
-			{
-				Uint32 defaultRate = header.jifRate ? header.jifRate : 10;
-				std::vector<Frame> finalFrames;
-				finalFrames.reserve(frameOrder.size());
-
-				for (size_t i = 0; i < frameOrder.size(); ++i)
-				{
-					Uint32 idx = frameOrder[i];
-					if (idx >= rawFrames.size())
-					{
-						continue;
-					}
-
-					Uint32 rate = defaultRate;
-					if (!rates.empty())
-					{
-						Uint32 rateIndex = (i < rates.size()) ? static_cast<Uint32>(i) : static_cast<Uint32>(rates.size() - 1);
-						rate = rates[rateIndex];
-					}
-					if (rate == 0)
-					{
-						rate = defaultRate;
-					}
-
-					Uint32 durationMs = static_cast<Uint32>((1000ULL * rate) / 60ULL);
-					if (durationMs == 0)
-					{
-						durationMs = 16;
-					}
-
-					Frame frame = rawFrames[idx];
-					frame.durationMs = durationMs;
-					finalFrames.push_back(frame);
-				}
-
-				if (!finalFrames.empty())
-				{
-					outFrames.swap(finalFrames);
-					success = TRUE;
-				}
-			}
-
-			if (!success)
-			{
-				destroyFrames(rawFrames);
 			}
 		}
-		else if (!parseOk)
+
+		if (!frameOrder.empty())
 		{
-			success = FALSE;
+			Uint32 defaultRate = header.jifRate ? header.jifRate : 10;
+			std::vector<Frame> finalFrames;
+			finalFrames.reserve(frameOrder.size());
+
+			for (size_t i = 0; i < frameOrder.size(); ++i)
+			{
+				Uint32 idx = frameOrder[i];
+				if (idx >= rawFrames.size())
+				{
+					continue;
+				}
+
+				Uint32 rate = defaultRate;
+				if (!rates.empty())
+				{
+					Uint32 rateIndex = (i < rates.size()) ? static_cast<Uint32>(i) : static_cast<Uint32>(rates.size() - 1);
+					rate = rates[rateIndex];
+				}
+				if (rate == 0)
+				{
+					rate = defaultRate;
+				}
+
+				Uint32 durationMs = static_cast<Uint32>((1000ULL * rate) / 60ULL);
+				if (durationMs == 0)
+				{
+					durationMs = 16;
+				}
+
+				Frame frame = rawFrames[idx];
+				frame.durationMs = durationMs;
+				finalFrames.push_back(frame);
+			}
+
+			if (!finalFrames.empty())
+			{
+				outFrames.swap(finalFrames);
+				success = TRUE;
+			}
 		}
+
+		if (!success)
+		{
+			destroyFrames(rawFrames);
+		}
+	}
+	else if (!parseOk)
+	{
+		success = FALSE;
 	}
 
 	SDL_free(fileMemory);

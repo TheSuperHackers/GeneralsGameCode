@@ -59,10 +59,6 @@ target_sources(z_generals PRIVATE
 )
 
 if(RTS_BUILD_OPTION_SDL3)
-    find_package(SDL3 REQUIRED)
-    find_package(SDL3_image REQUIRED)
-    target_link_libraries(z_generals PRIVATE SDL3::SDL3 $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image-shared>,SDL3_image::SDL3_image-shared,SDL3_image::SDL3_image-static>)
-    target_compile_definitions(z_generals PRIVATE RTS_HAS_SDL3)
     target_sources(z_generals PRIVATE
         main.cpp
     )

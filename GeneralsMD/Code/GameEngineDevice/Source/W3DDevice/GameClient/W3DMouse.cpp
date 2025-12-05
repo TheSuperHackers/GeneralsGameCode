@@ -50,8 +50,6 @@ static const Image *cursorImages[Mouse::NUM_MOUSE_CURSORS];		 ///< Images for us
 static RenderObjClass *cursorModels[Mouse::NUM_MOUSE_CURSORS]; ///< W3D models for each cursor type
 static HAnimClass *cursorAnims[Mouse::NUM_MOUSE_CURSORS];			 ///< W3D animations for each cursor type
 
-/// Mouse polling/update thread function
-
 W3DMouse::W3DMouse(void)
 {
 	// zero our event list
@@ -205,27 +203,19 @@ void W3DMouse::setCursor(MouseCursor cursor)
 		m_currentCursor = cursor;
 		return;
 	}
-	else
-	{
-		// extend
-		Mouse::setCursor(cursor);
-	}
 
 	// if we're already on this cursor ignore the rest of code to stop cursor flickering.
 	if (m_currentCursor == cursor)
 		return;
 
-	// TheSuperHackers @refactor denysmitin 04/12/2025 OS cursor management moved to platform-specific mouse classes
 	if (m_currentRedrawMode == RM_POLYGON)
 	{
-		// TheSuperHackers @refactor denysmitin 04/12/2025 OS cursor management moved to platform-specific mouse classes
 		m_currentW3DCursor = NONE;
 		m_currentPolygonCursor = cursor;
 		m_currentHotSpot = m_cursorInfo[cursor].hotSpotPosition;
 	}
 	else if (m_currentRedrawMode == RM_W3D)
 	{
-		// TheSuperHackers @refactor denysmitin 04/12/2025 OS cursor management moved to platform-specific mouse classes
 		m_currentPolygonCursor = NONE;
 		if (cursor != m_currentW3DCursor)
 		{
@@ -402,7 +392,7 @@ void W3DMouse::setCursorDirection(MouseCursor cursor)
 			offset.normalize();
 			Real theta = atan2(offset.y, offset.x);
 			theta = fmod(theta + M_PI * 2, M_PI * 2);
-			Int numDirections = m_cursorInfo[m_currentCursor].numDirections;
+			Int numDirections = m_cursorInfo[cursor].numDirections;
 			// Figure out which of our predrawn cursor orientations best matches the
 			// actual cursor direction.  Frame 0 is assumed to point right and continue
 			// clockwise.

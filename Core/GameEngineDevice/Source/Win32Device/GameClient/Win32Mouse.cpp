@@ -256,7 +256,6 @@ Win32Mouse::Win32Mouse(void)
 
 	m_nextFreeIndex = 0;
 	m_nextGetIndex = 0;
-	m_currentWin32Cursor = NONE;
 	for (Int i = 0; i < NUM_MOUSE_CURSORS; i++)
 		for (Int j = 0; j < MAX_2D_CURSOR_DIRECTIONS; j++)
 			cursorResources[i][j] = NULL;
@@ -333,8 +332,6 @@ void Win32Mouse::addWin32Event(UINT msg, WPARAM wParam, LPARAM lParam, DWORD tim
 	if (m_nextFreeIndex >= Mouse::NUM_MOUSE_EVENTS)
 		m_nextFreeIndex = 0;
 }
-
-extern HINSTANCE ApplicationHInstance;
 
 void Win32Mouse::setVisibility(Bool visible)
 {
@@ -420,7 +417,7 @@ void Win32Mouse::setCursor(MouseCursor cursor)
 	}
 
 	// save current cursor
-	m_currentWin32Cursor = m_currentCursor = cursor;
+	m_currentCursor = cursor;
 }
 
 //-------------------------------------------------------------------------------------------------

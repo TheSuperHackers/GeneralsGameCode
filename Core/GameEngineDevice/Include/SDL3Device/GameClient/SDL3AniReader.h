@@ -6,7 +6,7 @@
 
 #include <vector>
 
-// TheSuperHackers @refactor denysmitin 04/12/2025 SDL3 ANI reader interface for animated cursors.
+// TheSuperHackers @feature denysmitin 05/12/2025 SDL3 ANI reader interface for portable animated cursors.
 class SDL3AniReader
 {
 public:

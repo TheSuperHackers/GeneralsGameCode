@@ -159,7 +159,7 @@ void Mouse::updateMouseData( )
 
 		busy = TRUE;
 
-		// Get latest mouse events from DirectX
+		// Get latest mouse events from MouseImpl (win32 or sdl3 mouse)
 		do
 		{
 			do

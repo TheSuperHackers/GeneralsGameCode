@@ -37,7 +37,6 @@ namespace
 SDL3Mouse::SDL3Mouse(void)
 		: m_nextFreeIndex(0),
 			m_nextGetIndex(0),
-			m_currentSDL3Cursor(NONE),
 			m_directionFrame(0),
 			m_lostFocus(FALSE),
 			m_windowID(0),
@@ -85,7 +84,7 @@ void SDL3Mouse::init(void)
 	Mouse::init();
 	m_inputMovesAbsolute = TRUE;
 	m_animationState = ActiveCursorState();
-	m_currentSDL3Cursor = NONE;
+	m_currentCursor = NONE;
 	m_activeCursor = NULL;
 	SDL_ShowCursor();
 }
@@ -97,7 +96,7 @@ void SDL3Mouse::reset(void)
 	m_nextGetIndex = 0;
 	memset(&m_eventBuffer, 0, sizeof(m_eventBuffer));
 	m_animationState = ActiveCursorState();
-	m_currentSDL3Cursor = NONE;
+	m_currentCursor = NONE;
 	m_activeCursor = NULL;
 }
 
@@ -105,13 +104,13 @@ void SDL3Mouse::update(void)
 {
 	Mouse::update();
 
-	if (!m_lostFocus && m_visible && m_currentSDL3Cursor >= FIRST_CURSOR && m_currentSDL3Cursor < Mouse::NUM_MOUSE_CURSORS)
+	if (!m_lostFocus && m_visible && m_currentCursor >= FIRST_CURSOR && m_currentCursor < Mouse::NUM_MOUSE_CURSORS)
 	{
-		Int newDirection = computeDirection(m_currentSDL3Cursor);
+		Int newDirection = computeDirection(m_currentCursor);
 		if (newDirection != m_directionFrame)
 		{
 			m_directionFrame = newDirection;
-			applyCursor(m_currentSDL3Cursor, m_directionFrame, TRUE);
+			applyCursor(m_currentCursor, m_directionFrame, TRUE);
 		}
 
 		updateCursorAnimation();
@@ -331,15 +330,13 @@ void SDL3Mouse::setCursor(MouseCursor cursor)
 		SDL_HideCursor();
 		m_activeCursor = NULL;
 		m_animationState = ActiveCursorState();
-		m_currentSDL3Cursor = cursor;
 		m_currentCursor = cursor;
 		return;
 	}
 
 	m_directionFrame = computeDirection(cursor);
-	applyCursor(cursor, m_directionFrame, TRUE);
+	applyCursor(cursor, m_directionFrame, FALSE);
 	SDL_ShowCursor();
-	m_currentSDL3Cursor = cursor;
 	m_currentCursor = cursor;
 }
 
@@ -436,6 +433,9 @@ void SDL3Mouse::applyCursor(MouseCursor cursor, Int direction, Bool resetFrame)
 			clampedDirection += numDirections;
 	}
 
+	if (m_animationState.cursor == cursor && m_animationState.direction == clampedDirection)
+		return;
+
 	m_directionFrame = clampedDirection;
 	const std::vector<SDL3AniReader::Frame> *frames = getCursorFrames(cursor, clampedDirection);
 	Uint64 now = SDL_GetTicks();
@@ -453,27 +453,8 @@ void SDL3Mouse::applyCursor(MouseCursor cursor, Int direction, Bool resetFrame)
 	}
 
 	SDL_Cursor *defaultCursor = SDL_GetDefaultCursor();
-	if (defaultCursor != NULL)
-	{
-		if (defaultCursor != m_activeCursor)
-		{
-			if (SDL_SetCursor(defaultCursor) < 0)
-			{
-				WWDEBUG_ERROR(("SDL_SetCursor failed: %s", SDL_GetError()));
-			}
-			else
-			{
-				m_activeCursor = defaultCursor;
-			}
-		}
-		else
-		{
-			if (SDL_SetCursor(defaultCursor) < 0)
-			{
-				WWDEBUG_ERROR(("SDL_SetCursor failed: %s", SDL_GetError()));
-			}
-		}
-	}
+	SDL_SetCursor(defaultCursor);
+	m_activeCursor = defaultCursor;
 	m_animationState = ActiveCursorState();
 }
 
@@ -491,7 +472,7 @@ void SDL3Mouse::applyCursorFrame(const std::vector<SDL3AniReader::Frame> &frames
 		Bool needsApply = forceApply || cursorHandle != m_activeCursor;
 		if (needsApply)
 		{
-			if (SDL_SetCursor(cursorHandle) < 0)
+			if (!SDL_SetCursor(cursorHandle))
 			{
 				WWDEBUG_ERROR(("SDL_SetCursor failed: %s", SDL_GetError()));
 			}
@@ -504,7 +485,7 @@ void SDL3Mouse::applyCursorFrame(const std::vector<SDL3AniReader::Frame> &frames
 
 	UnsignedInt duration = frames[frameIndex].durationMs;
 	if (duration == 0)
-		duration = 16;
+		duration = 100;
 
 	m_animationState.frameIndex = frameIndex;
 	m_animationState.nextFrameChangeMs = (frames.size() > 1) ? (now + static_cast<Uint64>(duration)) : 0;

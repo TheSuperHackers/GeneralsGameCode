@@ -106,7 +106,6 @@ protected:
 	UnsignedInt m_nextGetIndex;  /** events retrieved through getMouseEvent
 															 will come from this index, then it will be
 															 incremented to the next index */
-	MouseCursor m_currentWin32Cursor;	///< keep track of last cursor image sent to D3D.
 	Int m_directionFrame;	///< current frame of directional cursor (from 0 points up).
 	Bool m_lostFocus;		///< flag if window has lost focus and mouse should stop being updated.
 };
