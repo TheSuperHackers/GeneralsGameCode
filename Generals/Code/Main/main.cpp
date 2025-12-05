@@ -93,7 +93,7 @@ static LONG WINAPI unhandledExceptionFilter(struct _EXCEPTION_POINTERS *info)
 static void setWorkingDirectoryToExecutable()
 {
 	Char buffer[_MAX_PATH] = {0};
-	if (GetModuleFileName(nullptr, buffer, sizeof(buffer)) == 0)
+	if (GetModuleFileName(nullptr, (LPWSTR)buffer, sizeof(buffer)) == 0)
 	{
 		return;
 	}
@@ -101,7 +101,7 @@ static void setWorkingDirectoryToExecutable()
 	if (Char *lastSlash = strrchr(buffer, '\\'))
 	{
 		*lastSlash = 0;
-		SetCurrentDirectory(buffer);
+		SetCurrentDirectory((LPCWSTR)buffer);
 	}
 }
 
@@ -167,21 +167,21 @@ static int runGameLoop()
 	Version *version = NEW Version;
 	TheVersion = version;
 	version->setVersion(
-		VERSION_MAJOR,
-		VERSION_MINOR,
-		VERSION_BUILDNUM,
-		VERSION_LOCALBUILDNUM,
-		AsciiString(VERSION_BUILDUSER),
-		AsciiString(VERSION_BUILDLOC),
-		AsciiString(__TIME__),
-		AsciiString(__DATE__));
+			VERSION_MAJOR,
+			VERSION_MINOR,
+			VERSION_BUILDNUM,
+			VERSION_LOCALBUILDNUM,
+			AsciiString(VERSION_BUILDUSER),
+			AsciiString(VERSION_BUILDLOC),
+			AsciiString(__TIME__),
+			AsciiString(__DATE__));
 
 	int exitCode = 1;
 
 	if (!rts::ClientInstance::initialize())
 	{
 #if defined(_WIN32)
-		HWND existingWindow = FindWindow(rts::ClientInstance::getFirstInstanceName(), nullptr);
+		HWND existingWindow = FindWindow((LPCWSTR)rts::ClientInstance::getFirstInstanceName(), nullptr);
 		if (existingWindow)
 		{
 			SetForegroundWindow(existingWindow);

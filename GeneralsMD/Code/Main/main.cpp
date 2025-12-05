@@ -93,7 +93,7 @@ static LONG WINAPI unhandledExceptionFilter(struct _EXCEPTION_POINTERS *info)
 static void setWorkingDirectoryToExecutable()
 {
 	Char buffer[_MAX_PATH] = {0};
-	if (GetModuleFileName(nullptr, buffer, sizeof(buffer)) == 0)
+	if (GetModuleFileName(nullptr, (LPWSTR)buffer, sizeof(buffer)) == 0)
 	{
 		return;
 	}
@@ -101,7 +101,7 @@ static void setWorkingDirectoryToExecutable()
 	if (Char *lastSlash = strrchr(buffer, '\\'))
 	{
 		*lastSlash = 0;
-		SetCurrentDirectory(buffer);
+		SetCurrentDirectory((LPCWSTR)buffer);
 	}
 }
 
@@ -181,7 +181,7 @@ static int runGameLoop()
 	if (!rts::ClientInstance::initialize())
 	{
 #if defined(_WIN32)
-		HWND existingWindow = FindWindow(rts::ClientInstance::getFirstInstanceName(), nullptr);
+		HWND existingWindow = FindWindow((LPCWSTR)rts::ClientInstance::getFirstInstanceName(), nullptr);
 		if (existingWindow)
 		{
 			SetForegroundWindow(existingWindow);
