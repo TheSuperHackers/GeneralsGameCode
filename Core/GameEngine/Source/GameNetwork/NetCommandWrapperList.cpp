@@ -45,8 +45,8 @@ NetCommandWrapperListNode::NetCommandWrapperListNode(NetWrapperCommandMsg *msg)
 		m_chunksPresent[i] = FALSE;
 	}
 
-	m_dataLength = msg->getTotalDataLength();
-	m_data = NEW UnsignedByte[m_dataLength];	// pool[]ify
+	m_totalDataLength = msg->getTotalDataLength();
+	m_data = NEW UnsignedByte[m_totalDataLength];	// pool[]ify
 
 	m_commandID = msg->getWrappedCommandID();
 }
@@ -75,7 +75,7 @@ UnsignedShort NetCommandWrapperListNode::getCommandID() {
 }
 
 UnsignedInt NetCommandWrapperListNode::getRawDataLength() {
-	return m_dataLength;
+	return m_totalDataLength;
 }
 
 void NetCommandWrapperListNode::copyChunkData(NetWrapperCommandMsg *msg) {
@@ -84,22 +84,42 @@ void NetCommandWrapperListNode::copyChunkData(NetWrapperCommandMsg *msg) {
 		return;
 	}
 
-	DEBUG_ASSERTCRASH(msg->getChunkNumber() < m_numChunks, ("MunkeeChunk %d of %d",
-		msg->getChunkNumber(), m_numChunks));
-	if (msg->getChunkNumber() >= m_numChunks)
-		return;
+	UnsignedInt chunkNumber = msg->getChunkNumber();
 
-	DEBUG_LOG(("NetCommandWrapperListNode::copyChunkData() - copying chunk %d",
-		msg->getChunkNumber()));
-
-	if (m_chunksPresent[msg->getChunkNumber()] == TRUE) {
-		// we already received this chunk, no need to recopy it.
+	if (chunkNumber >= m_numChunks) {
+		DEBUG_CRASH(("Data chunk %u exceeds the expected maximum of %u chunks", chunkNumber, m_numChunks));
 		return;
 	}
 
-	m_chunksPresent[msg->getChunkNumber()] = TRUE;
-	UnsignedInt offset = msg->getDataOffset();
-	memcpy(m_data + offset, msg->getData(), msg->getDataLength());
+	// we already received this chunk, no need to recopy it.
+	if (m_chunksPresent[chunkNumber] == TRUE) {
+		return;
+	}
+
+	UnsignedInt chunkDataOffset = msg->getDataOffset();
+	UnsignedInt chunkDataLength = msg->getDataLength();
+
+	// TheSuperHackers @security Mauller 04/12/2025 Prevent out of bounds memory access
+	if (chunkDataOffset >= m_totalDataLength) {
+		DEBUG_CRASH(("Data chunk offset %u exceeds the total data length %u", chunkDataOffset, m_totalDataLength));
+		return;
+	}
+
+	if (chunkDataLength > MAX_PACKET_SIZE ) {
+		DEBUG_CRASH(("Data Chunk size %u greater than max packet size %u", chunkDataLength, MAX_PACKET_SIZE));
+		return;
+	}
+
+	if (chunkDataOffset + chunkDataLength > m_totalDataLength) {
+		DEBUG_CRASH(("Data chunk exceeds data array size"));
+		return;
+	}
+
+	DEBUG_LOG(("NetCommandWrapperListNode::copyChunkData() - copying chunk %u", chunkNumber));
+
+	memcpy(m_data + chunkDataOffset, msg->getData(), chunkDataLength);
+
+	m_chunksPresent[chunkNumber] = TRUE;
 	++m_numChunksPresent;
 }
 

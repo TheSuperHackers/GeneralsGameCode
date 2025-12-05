@@ -49,7 +49,7 @@ public:
 protected:
 	UnsignedShort m_commandID;
 	UnsignedByte *m_data;
-	UnsignedInt m_dataLength;
+	UnsignedInt m_totalDataLength;
 	Bool *m_chunksPresent;
 	UnsignedInt m_numChunks;
 	UnsignedInt m_numChunksPresent;
