@@ -182,7 +182,7 @@ UpdateSleepTime SlavedUpdate::update( void )
 
 	//Get my master's AI. If he is attacking something, grant him a range bonus,
 	//and I'll fly over the target.
-	Object *target = NULL;
+	Object *target = nullptr;
 	AIUpdateInterface *masterAI = master->getAIUpdateInterface();
 	if( masterAI )
 	{
@@ -628,7 +628,7 @@ void SlavedUpdate::setRepairState( RepairStates repairState )
 						{
 							Coord3D pos;
 							//Get the bone position
-							if( draw->getPristineBonePositions( data->m_weldingFXBone.str(), 0, &pos, NULL, 1 ) )
+							if( draw->getPristineBonePositions( data->m_weldingFXBone.str(), 0, &pos, nullptr, 1 ) )
 							{
 								pos.add( obj->getPosition() );
 							}
@@ -704,7 +704,7 @@ void SlavedUpdate::moveToNewRepairSpot()
 //-------------------------------------------------------------------------------------------------
 void SlavedUpdate::startSlavedEffects( const Object *slaver )
 {
-	if( slaver == NULL )
+	if( slaver == nullptr )
 		return;
 
 	m_slaver = slaver->getID();

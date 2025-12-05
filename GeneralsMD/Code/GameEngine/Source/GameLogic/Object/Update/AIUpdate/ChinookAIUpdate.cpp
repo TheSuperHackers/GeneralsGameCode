@@ -93,7 +93,7 @@ static Real calcDistSqr(const Coord3D& a, const Coord3D& b)
 //-------------------------------------------------------------------------------------------------
 static Object* getPotentialRappeller(Object* obj)
 {
-	const ContainedItemsList* items = obj->getContain() ? obj->getContain()->getContainedItemsList() : NULL;
+	const ContainedItemsList* items = obj->getContain() ? obj->getContain()->getContainedItemsList() : nullptr;
 	if (items)
 	{
 		for (ContainedItemsList::const_iterator it = items->begin(); it != items->end(); ++it )
@@ -105,7 +105,7 @@ static Object* getPotentialRappeller(Object* obj)
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -363,7 +363,7 @@ private:
 			{
 				Object* rappeller = TheGameLogic->findObjectByID(*oit);
 #if RETAIL_COMPATIBLE_CRC
-				if (rappeller == NULL || rappeller->isEffectivelyDead() || !rappeller->isAboveTerrain())
+				if (rappeller == nullptr || rappeller->isEffectivelyDead() || !rappeller->isAboveTerrain())
 #else
 				if (rappeller == NULL || rappeller->isEffectivelyDead() || !rappeller->isAboveTerrain() || rappeller->isContained())
 #endif
@@ -380,10 +380,10 @@ private:
 
 	static void initRopeParms(Drawable* rope, Real length, Real width, const RGBColor& color, Real wobbleLen, Real wobbleAmp, Real wobbleRate)
 	{
-		RopeDrawInterface* tdi = NULL;
+		RopeDrawInterface* tdi = nullptr;
 		for (DrawModule** d = rope->getDrawModules(); *d; ++d)
 		{
-			if ((tdi = (*d)->getRopeDrawInterface()) != NULL)
+			if ((tdi = (*d)->getRopeDrawInterface()) != nullptr)
 			{
 				tdi->initRopeParms(length, width, color, wobbleLen, wobbleAmp, wobbleRate);
 			}
@@ -392,10 +392,10 @@ private:
 
 	static void setRopeCurLen(Drawable* rope, Real length)
 	{
-		RopeDrawInterface* tdi = NULL;
+		RopeDrawInterface* tdi = nullptr;
 		for (DrawModule** d = rope->getDrawModules(); *d; ++d)
 		{
-			if ((tdi = (*d)->getRopeDrawInterface()) != NULL)
+			if ((tdi = (*d)->getRopeDrawInterface()) != nullptr)
 			{
 				tdi->setRopeCurLen(length);
 			}
@@ -404,10 +404,10 @@ private:
 
 	static void setRopeSpeed(Drawable* rope, Real curSpeed, Real maxSpeed, Real accel)
 	{
-		RopeDrawInterface* tdi = NULL;
+		RopeDrawInterface* tdi = nullptr;
 		for (DrawModule** d = rope->getDrawModules(); *d; ++d)
 		{
-			if ((tdi = (*d)->getRopeDrawInterface()) != NULL)
+			if ((tdi = (*d)->getRopeDrawInterface()) != nullptr)
 			{
 				tdi->setRopeSpeed(curSpeed, maxSpeed, accel);
 			}
@@ -461,7 +461,7 @@ protected:
 				xfer->xferSTLObjectIDList(&info.rappellerIDs);
 				if (xfer->getXferMode() == XFER_LOAD)
 				{
-					info.ropeDrawable = NULL;	// filled in via loadPostProcess
+					info.ropeDrawable = nullptr;	// filled in via loadPostProcess
 					m_ropes[i] = info;
 				}
 			}
@@ -486,7 +486,7 @@ public:
 	{
 		Object* obj = getMachineOwner();
 		Drawable* draw = obj->getDrawable();
-		if (draw == NULL)
+		if (draw == nullptr)
 			return STATE_FAILURE;
 
 		ChinookAIUpdate* ai = (ChinookAIUpdate*)obj->getAIUpdateInterface();
@@ -506,8 +506,8 @@ public:
     Coord3D ropePos[MAX_BONES];
     Matrix3D dropMtx[MAX_BONES];
 
-		Int ropeCount = draw->getPristineBonePositions("RopeStart", 1, ropePos, NULL, MAX_BONES);
-		Int dropCount = draw->getPristineBonePositions("RopeEnd", 1, NULL, dropMtx, MAX_BONES);
+		Int ropeCount = draw->getPristineBonePositions("RopeStart", 1, ropePos, nullptr, MAX_BONES);
+		Int dropCount = draw->getPristineBonePositions("RopeEnd", 1, nullptr, dropMtx, MAX_BONES);
 
 		Int numRopes = d->m_numRopes;
 		if (numRopes > ropeCount) numRopes = ropeCount;
@@ -520,12 +520,12 @@ public:
 		{
 			RopeInfo info;
 
-			obj->convertBonePosToWorldPos( NULL, &dropMtx[i], NULL, &info.dropStartMtx );
+			obj->convertBonePosToWorldPos( nullptr, &dropMtx[i], nullptr, &info.dropStartMtx );
 
-			info.ropeDrawable = ropeTmpl ? TheThingFactory->newDrawable(ropeTmpl) : NULL;
+			info.ropeDrawable = ropeTmpl ? TheThingFactory->newDrawable(ropeTmpl) : nullptr;
 			if (info.ropeDrawable)
 			{
-				obj->convertBonePosToWorldPos( &ropePos[i], NULL, &ropePos[i], NULL );
+				obj->convertBonePosToWorldPos( &ropePos[i], nullptr, &ropePos[i], nullptr );
 				info.ropeDrawable->setPosition(&ropePos[i]);
 				info.ropeSpeed = 0.0f;
 				info.ropeLen = 1.0f;
@@ -586,7 +586,7 @@ public:
 			if (now >= it->nextDropTime)
 			{
 				Object* rappeller = getPotentialRappeller(obj);
-				if (rappeller != NULL)
+				if (rappeller != nullptr)
 				{
 					ExitInterface *exitInterface = obj->getObjectExitInterface();
 					ExitDoorType exitDoor = exitInterface ? exitInterface->reserveDoorForExit(rappeller->getTemplate(), rappeller) : DOOR_NONE_AVAILABLE;
@@ -601,7 +601,7 @@ public:
 
 					rappeller->setTransformMatrix(&it->dropStartMtx);
 
-					AIUpdateInterface* rappellerAI = rappeller ? rappeller->getAIUpdateInterface() : NULL;
+					AIUpdateInterface* rappellerAI = rappeller ? rappeller->getAIUpdateInterface() : nullptr;
 					if (rappellerAI)
 					{
 						rappellerAI->setDesiredSpeed(d->m_rappelSpeed);
@@ -620,7 +620,7 @@ public:
 			}
 		}
 
-		if (numRopesInUse == 0 && getPotentialRappeller(obj) == NULL)
+		if (numRopesInUse == 0 && getPotentialRappeller(obj) == nullptr)
 		{
 			// we're done!
 			return STATE_SUCCESS;
@@ -647,8 +647,8 @@ public:
 				for (std::list<ObjectID>::iterator oit = it->rappellerIDs.begin(); oit != it->rappellerIDs.end(); ++oit)
 				{
 					Object* rappeller = TheGameLogic->findObjectByID(*oit);
-					AIUpdateInterface* rappellerAI = rappeller ? rappeller->getAIUpdateInterface() : NULL;
-					if (rappellerAI != NULL)
+					AIUpdateInterface* rappellerAI = rappeller ? rappeller->getAIUpdateInterface() : nullptr;
+					if (rappellerAI != nullptr)
 					{
 						rappellerAI->aiIdle(CMD_FROM_AI);
 					}
@@ -665,7 +665,7 @@ public:
 				const Real initialSpeed = TheGlobalData->m_gravity * 30;	// give it a little kick
 				setRopeSpeed(m_ropes[i].ropeDrawable, initialSpeed, d->m_ropeDropSpeed, TheGlobalData->m_gravity);
 				m_ropes[i].ropeDrawable->setExpirationDate(now + ROPE_EXPIRATION_TIME);
-				m_ropes[i].ropeDrawable = NULL; // we're done with it, so null it so we won't save it
+				m_ropes[i].ropeDrawable = nullptr; // we're done with it, so null it so we won't save it
 			}
 		}
 
@@ -725,7 +725,7 @@ public:
 
 		const Coord3D* destPos;
 		Object* bldg = getMachineGoalObject();
-		if (bldg != NULL && !bldg->isEffectivelyDead() && bldg->isKindOf(KINDOF_STRUCTURE))
+		if (bldg != nullptr && !bldg->isEffectivelyDead() && bldg->isKindOf(KINDOF_STRUCTURE))
 		{
 			destPos = bldg->getPosition();
 			m_newPreferredHeight = bldg->getGeometryInfo().getMaxHeightAbovePosition() + d->m_minDropHeight;
@@ -896,24 +896,24 @@ ChinookAIUpdateModuleData::ChinookAIUpdateModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "RappelSpeed", INI::parseVelocityReal, 0, offsetof(ChinookAIUpdateModuleData, m_rappelSpeed) },
-		{ "RopeDropSpeed", INI::parseVelocityReal, 0, offsetof(ChinookAIUpdateModuleData, m_ropeDropSpeed) },
-		{ "RopeName", INI::parseAsciiString, 0, offsetof(ChinookAIUpdateModuleData, m_ropeName) },
-		{ "RopeFinalHeight", INI::parseReal, 0, offsetof(ChinookAIUpdateModuleData, m_ropeFinalHeight) },
-		{ "RopeWidth", INI::parseReal, 0, offsetof(ChinookAIUpdateModuleData, m_ropeWidth) },
-		{ "RopeWobbleLen", INI::parseReal, 0, offsetof(ChinookAIUpdateModuleData, m_ropeWobbleLen) },
-		{ "RopeWobbleAmplitude", INI::parseReal, 0, offsetof(ChinookAIUpdateModuleData, m_ropeWobbleAmp) },
-		{ "RopeWobbleRate", INI::parseAngularVelocityReal, 0, offsetof(ChinookAIUpdateModuleData, m_ropeWobbleRate) },
-		{ "RopeColor", INI::parseRGBColor, 0, offsetof(ChinookAIUpdateModuleData, m_ropeColor) },
-		{ "NumRopes", INI::parseUnsignedInt, 0, offsetof(ChinookAIUpdateModuleData, m_numRopes) },
-		{ "PerRopeDelayMin", INI::parseDurationUnsignedInt, 0, offsetof(ChinookAIUpdateModuleData, m_perRopeDelayMin) },
-		{ "PerRopeDelayMax", INI::parseDurationUnsignedInt, 0, offsetof(ChinookAIUpdateModuleData, m_perRopeDelayMax) },
-		{ "MinDropHeight", INI::parseReal, 0, offsetof(ChinookAIUpdateModuleData, m_minDropHeight) },
-		{ "WaitForRopesToDrop", INI::parseBool, 0, offsetof(ChinookAIUpdateModuleData, m_waitForRopesToDrop) },
-		{ "RotorWashParticleSystem", INI::parseAsciiString,	NULL, offsetof( ChinookAIUpdateModuleData, m_rotorWashParticleSystem ) },
-		{ "UpgradedSupplyBoost", INI::parseInt, NULL, offsetof( ChinookAIUpdateModuleData, m_upgradedSupplyBoost) },
+		{ "RappelSpeed", INI::parseVelocityReal, nullptr, offsetof(ChinookAIUpdateModuleData, m_rappelSpeed) },
+		{ "RopeDropSpeed", INI::parseVelocityReal, nullptr, offsetof(ChinookAIUpdateModuleData, m_ropeDropSpeed) },
+		{ "RopeName", INI::parseAsciiString, nullptr, offsetof(ChinookAIUpdateModuleData, m_ropeName) },
+		{ "RopeFinalHeight", INI::parseReal, nullptr, offsetof(ChinookAIUpdateModuleData, m_ropeFinalHeight) },
+		{ "RopeWidth", INI::parseReal, nullptr, offsetof(ChinookAIUpdateModuleData, m_ropeWidth) },
+		{ "RopeWobbleLen", INI::parseReal, nullptr, offsetof(ChinookAIUpdateModuleData, m_ropeWobbleLen) },
+		{ "RopeWobbleAmplitude", INI::parseReal, nullptr, offsetof(ChinookAIUpdateModuleData, m_ropeWobbleAmp) },
+		{ "RopeWobbleRate", INI::parseAngularVelocityReal, nullptr, offsetof(ChinookAIUpdateModuleData, m_ropeWobbleRate) },
+		{ "RopeColor", INI::parseRGBColor, nullptr, offsetof(ChinookAIUpdateModuleData, m_ropeColor) },
+		{ "NumRopes", INI::parseUnsignedInt, nullptr, offsetof(ChinookAIUpdateModuleData, m_numRopes) },
+		{ "PerRopeDelayMin", INI::parseDurationUnsignedInt, nullptr, offsetof(ChinookAIUpdateModuleData, m_perRopeDelayMin) },
+		{ "PerRopeDelayMax", INI::parseDurationUnsignedInt, nullptr, offsetof(ChinookAIUpdateModuleData, m_perRopeDelayMax) },
+		{ "MinDropHeight", INI::parseReal, nullptr, offsetof(ChinookAIUpdateModuleData, m_minDropHeight) },
+		{ "WaitForRopesToDrop", INI::parseBool, nullptr, offsetof(ChinookAIUpdateModuleData, m_waitForRopesToDrop) },
+		{ "RotorWashParticleSystem", INI::parseAsciiString,	nullptr, offsetof( ChinookAIUpdateModuleData, m_rotorWashParticleSystem ) },
+		{ "UpgradedSupplyBoost", INI::parseInt, nullptr, offsetof( ChinookAIUpdateModuleData, m_upgradedSupplyBoost) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -947,13 +947,13 @@ ChinookAIUpdate::~ChinookAIUpdate()
 static ParkingPlaceBehaviorInterface* getPP(ObjectID id)
 {
 	Object* airfield = TheGameLogic->findObjectByID( id );
-	if (airfield == NULL || airfield->isEffectivelyDead() || !airfield->isKindOf(KINDOF_FS_AIRFIELD))
-		return NULL;
+	if (airfield == nullptr || airfield->isEffectivelyDead() || !airfield->isKindOf(KINDOF_FS_AIRFIELD))
+		return nullptr;
 
-	ParkingPlaceBehaviorInterface* pp = NULL;
+	ParkingPlaceBehaviorInterface* pp = nullptr;
 	for (BehaviorModule** i = airfield->getBehaviorModules(); *i; ++i)
 	{
-		if ((pp = (*i)->getParkingPlaceBehaviorInterface()) != NULL)
+		if ((pp = (*i)->getParkingPlaceBehaviorInterface()) != nullptr)
 			break;
 	}
 
@@ -967,7 +967,7 @@ void ChinookAIUpdate::setAirfieldForHealing(ObjectID id)
 	if (m_airfieldForHealing != INVALID_ID && m_airfieldForHealing != id)
 	{
 		ParkingPlaceBehaviorInterface* pp = getPP(m_airfieldForHealing);
-		if (pp != NULL)
+		if (pp != nullptr)
 		{
 			pp->setHealee(getObject(), false);
 		}
@@ -1064,7 +1064,7 @@ Bool ChinookAIUpdate::chooseLocomotorSet(LocomotorSetType wst)
 UpdateSleepTime ChinookAIUpdate::update()
 {
 	ParkingPlaceBehaviorInterface* pp = getPP(m_airfieldForHealing);
-	if (pp != NULL)
+	if (pp != nullptr)
 	{
 		if (m_flightStatus == CHINOOK_LANDED &&
 				!m_hasPendingCommand &&
@@ -1072,7 +1072,7 @@ UpdateSleepTime ChinookAIUpdate::update()
 		{
 			// we're completely healed, so take off again
 			pp->setHealee(getObject(), false);
-			setMyState(TAKING_OFF, NULL, NULL, CMD_FROM_AI);
+			setMyState(TAKING_OFF, nullptr, nullptr, CMD_FROM_AI);
 		}
 		else
 		{
@@ -1103,11 +1103,11 @@ UpdateSleepTime ChinookAIUpdate::update()
 			}
 			else if (waitingToEnterOrExit && m_flightStatus != CHINOOK_LANDED)
 			{
-				setMyState(LANDING, NULL, NULL, CMD_FROM_AI);
+				setMyState(LANDING, nullptr, nullptr, CMD_FROM_AI);
 			}
 			else if (!waitingToEnterOrExit && m_flightStatus == CHINOOK_LANDED && m_airfieldForHealing == INVALID_ID)
 			{
-				setMyState(TAKING_OFF, NULL, NULL, CMD_FROM_AI);
+				setMyState(TAKING_OFF, nullptr, nullptr, CMD_FROM_AI);
 			}
 		}
 
@@ -1133,7 +1133,7 @@ UpdateSleepTime ChinookAIUpdate::update()
 				    passengerIterator++;
 
 				    AIUpdateInterface *passengerAI = passenger->getAIUpdateInterface();
-				    if( passengerAI && (passengerAI->getCurrentVictim() == NULL) )
+				    if( passengerAI && (passengerAI->getCurrentVictim() == nullptr) )
 				    {
 					    passengerAI->aiAttackObject( victim, 999, CMD_FROM_AI );
 				    }
@@ -1219,7 +1219,7 @@ void ChinookAIUpdate::privateGetRepaired( Object *repairDepot, CommandSourceType
 	if (ThePartitionManager->findPositionAround(&pos, &options, &tmp))
 		pos = tmp;
 
-	setMyState(MOVE_TO_AND_LAND, NULL, &pos, cmdSource);
+	setMyState(MOVE_TO_AND_LAND, nullptr, &pos, cmdSource);
 
 }
 
@@ -1231,12 +1231,12 @@ void ChinookAIUpdate::privateCombatDrop( Object* target, const Coord3D& pos, Com
 	// when there is a target present, we must verify that we can logically do the action when
 	// we get commands from players (we'll assume AI knows what its doing)
 	//
-	if( target != NULL && cmdSource == CMD_FROM_PLAYER &&
+	if( target != nullptr && cmdSource == CMD_FROM_PLAYER &&
 			TheActionManager->canEnterObject( getObject(), target, cmdSource, COMBATDROP_INTO ) == FALSE )
 		return;
 
 	Coord3D localPos = pos;
-	if (target == NULL)
+	if (target == nullptr)
 	{
 		// if target is null, we are dropping at a pos, not into a bldg.
 		// in this case, ensure there is no structure at the pos... this can happen
@@ -1298,7 +1298,7 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 				m_pendingCommand.store(*parms);
 				m_hasPendingCommand = true;
 
-				setMyState(TAKING_OFF, NULL, NULL, CMD_FROM_AI);
+				setMyState(TAKING_OFF, nullptr, nullptr, CMD_FROM_AI);
 				passItThru = false;
 			}
 			else
@@ -1306,7 +1306,7 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 				// do this INSTEAD of the standard stuff
 				setMyState(
 					(parms->m_cmd == AICMD_MOVE_TO_POSITION_AND_EVACUATE) ? MOVE_TO_AND_EVAC : MOVE_TO_AND_EVAC_AND_EXIT_INIT,
-					NULL, &parms->m_pos, CMD_FROM_AI);
+					nullptr, &parms->m_pos, CMD_FROM_AI);
 				passItThru = false;
 			}
 		}
@@ -1321,7 +1321,7 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 				m_pendingCommand.store(*parms);
 				m_hasPendingCommand = true;
 
-				setMyState(LANDING, NULL, NULL, CMD_FROM_AI);
+				setMyState(LANDING, nullptr, nullptr, CMD_FROM_AI);
 				passItThru = false;
 			}
 		}
@@ -1335,7 +1335,7 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 				m_pendingCommand.store(*parms);
 				m_hasPendingCommand = true;
 
-				setMyState(TAKING_OFF, NULL, NULL, CMD_FROM_AI);
+				setMyState(TAKING_OFF, nullptr, nullptr, CMD_FROM_AI);
 				passItThru = false;
 			}
 		}
@@ -1408,7 +1408,7 @@ void ChinookAIUpdate::privateIdle(CommandSourceType cmdSource)
   // Just an extra step, here, before extending idle to parent classes.
   // Living in you own privateIdle-ho.
   ContainModuleInterface* contain = getObject()->getContain();
-	if( contain != NULL )
+	if( contain != nullptr )
 	{
     Object *rider = (Object*)contain->friend_getRider();
     if ( rider )
@@ -1435,7 +1435,7 @@ void ChinookAIUpdate::privateAttackObject( Object *victim, Int maxShotsToFire, C
     return;
 
   ContainModuleInterface* contain = getObject()->getContain();
-	if( contain != NULL )
+	if( contain != nullptr )
 	{
 		// As an extension of the normal attack, I may want to tell my passengers to attack
 		// too, but only if this is a direct command.  (As opposed to a passive aquire)
@@ -1492,7 +1492,7 @@ void ChinookAIUpdate::privateAttackObject( Object *victim, Int maxShotsToFire, C
 void ChinookAIUpdate::private___TellPortableStructureToAttackWithMe( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource )
 {
   ContainModuleInterface* contain = getObject()->getContain();
-	if( contain != NULL )
+	if( contain != nullptr )
 	{
     //--------- THE GATTLING UPGRADE OR THE GUYS IN THE BUNKER_NOT_A_BUNKER-------------
     Object *rider = (Object*)contain->friend_getRider();
@@ -1524,7 +1524,7 @@ void ChinookAIUpdate::privateForceAttackObject( Object *victim, Int maxShotsToFi
     return;
 
   ContainModuleInterface* contain = getObject()->getContain();
-	if( contain != NULL )
+	if( contain != nullptr )
 	{
 		// As an extension of the normal attack, I may want to tell my passengers to attack
 		// too, but only if this is a direct command.  (As opposed to a passive aquire)
@@ -1601,7 +1601,7 @@ void ChinookAIUpdate::privateAttackPosition( const Coord3D *pos, Int maxShotsToF
     return;
 
 	ContainModuleInterface* contain = getObject()->getContain();
-	if( contain != NULL )
+	if( contain != nullptr )
 	{
 		// As an extension of the normal attack, I may want to tell my passengers to attack
 		// too, but only if this is a direct command.  (As opposed to a passive aquire)

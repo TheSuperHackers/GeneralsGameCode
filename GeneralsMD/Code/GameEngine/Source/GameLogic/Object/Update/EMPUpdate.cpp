@@ -181,7 +181,7 @@ void EMPUpdate::doDisableAttack( void )
 	//If the EMP hits an airborne target, then don't allow the EMP
 	//blast to effect anything on the ground.
 	Object *producer = TheGameLogic->findObjectByID( object->getProducerID() );
-	Object *intendedVictim = NULL;
+	Object *intendedVictim = nullptr;
 	Bool onlyEffectAirborne = FALSE;
 	Bool intendedVictimProcessed = FALSE;
 	if( producer && producer->getAI() )
@@ -193,8 +193,8 @@ void EMPUpdate::doDisableAttack( void )
 		}
 	}
 
-	SimpleObjectIterator *iter = NULL;
-	Object *curVictim = NULL;
+	SimpleObjectIterator *iter = nullptr;
+	Object *curVictim = nullptr;
 
 	if (radius > 0.0f)
 	{
@@ -206,7 +206,7 @@ void EMPUpdate::doDisableAttack( void )
 
 	MemoryPoolObjectHolder hold(iter);
 
-	for ( ; curVictim != NULL; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : NULL)
+	for ( ; curVictim != nullptr; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : nullptr)
 	{
 		if ( curVictim != object)
 		{
@@ -494,8 +494,8 @@ void LeafletDropBehavior::doDisableAttack( void )
 	Real curVictimDistSqr;
 	const Coord3D *pos = object->getPosition();
 
-	SimpleObjectIterator *iter = NULL;
-	Object *curVictim = NULL;
+	SimpleObjectIterator *iter = nullptr;
+	Object *curVictim = nullptr;
 
 	if (radius > 0.0f)
 	{
@@ -507,7 +507,7 @@ void LeafletDropBehavior::doDisableAttack( void )
 
 	MemoryPoolObjectHolder hold(iter);
 
-	for ( ; curVictim != NULL; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : NULL)
+	for ( ; curVictim != nullptr; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : nullptr)
 	{
 		if ( curVictim != object)
 		{
