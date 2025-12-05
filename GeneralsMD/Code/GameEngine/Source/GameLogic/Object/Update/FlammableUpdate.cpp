@@ -59,14 +59,14 @@ FlammableUpdateModuleData::FlammableUpdateModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "BurnedDelay",						INI::parseDurationUnsignedInt,	NULL, offsetof( FlammableUpdateModuleData, m_burnedDelay ) },
-		{ "AflameDuration",					INI::parseDurationUnsignedInt,	NULL, offsetof( FlammableUpdateModuleData, m_aflameDuration ) },
-		{ "AflameDamageDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( FlammableUpdateModuleData, m_aflameDamageDelay ) },
-		{ "AflameDamageAmount",			INI::parseInt,									NULL, offsetof( FlammableUpdateModuleData, m_aflameDamageAmount ) },
-		{ "BurningSoundName",				INI::parseAsciiString,					NULL,	offsetof( FlammableUpdateModuleData, m_burningSoundName) },
-		{ "FlameDamageLimit",				INI::parseReal,									NULL,	offsetof( FlammableUpdateModuleData, m_flameDamageLimitData ) },
-		{ "FlameDamageExpiration",	INI::parseDurationUnsignedInt,	NULL,	offsetof( FlammableUpdateModuleData, m_flameDamageExpirationDelay ) },
-		{ 0, 0, 0, 0 }
+		{ "BurnedDelay",						INI::parseDurationUnsignedInt,	nullptr, offsetof( FlammableUpdateModuleData, m_burnedDelay ) },
+		{ "AflameDuration",					INI::parseDurationUnsignedInt,	nullptr, offsetof( FlammableUpdateModuleData, m_aflameDuration ) },
+		{ "AflameDamageDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof( FlammableUpdateModuleData, m_aflameDamageDelay ) },
+		{ "AflameDamageAmount",			INI::parseInt,									nullptr, offsetof( FlammableUpdateModuleData, m_aflameDamageAmount ) },
+		{ "BurningSoundName",				INI::parseAsciiString,					nullptr,	offsetof( FlammableUpdateModuleData, m_burningSoundName) },
+		{ "FlameDamageLimit",				INI::parseReal,									nullptr,	offsetof( FlammableUpdateModuleData, m_flameDamageLimitData ) },
+		{ "FlameDamageExpiration",	INI::parseDurationUnsignedInt,	nullptr,	offsetof( FlammableUpdateModuleData, m_flameDamageExpirationDelay ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -208,7 +208,7 @@ void FlammableUpdate::tryToIgnite()
 		// bleah. this sucks. (srj)
 		static const NameKeyType key_FireSpreadUpdate = NAMEKEY("FireSpreadUpdate");
 		FireSpreadUpdate* fu = (FireSpreadUpdate*)getObject()->findUpdateModule(key_FireSpreadUpdate);
-		if (fu != NULL)
+		if (fu != nullptr)
 		{
 			fu->startFireSpreading();
 		}

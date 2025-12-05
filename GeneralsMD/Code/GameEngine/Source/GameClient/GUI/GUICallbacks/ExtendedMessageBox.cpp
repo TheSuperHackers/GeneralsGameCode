@@ -59,12 +59,12 @@ static GameWindow *gogoExMessageBox(Int x, Int y, Int width, Int height, Unsigne
 	// first check to make sure we have some buttons to display
 	if(buttonFlags == 0 )
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	GameWindow *parent = TheWindowManager->winCreateFromScript( "Menus/MessageBox.wnd" );
 	TheWindowManager->winSetModal( parent );
-	TheWindowManager->winSetFocus( NULL ); // make sure we lose focus from other windows even if we refuse focus ourselves
+	TheWindowManager->winSetFocus( nullptr ); // make sure we lose focus from other windows even if we refuse focus ourselves
 	TheWindowManager->winSetFocus( parent	 );
 
 	// If the user wants the size to be different then the default
@@ -191,31 +191,31 @@ static GameWindow *gogoExMessageBox(Int x, Int y, Int width, Int height, Unsigne
 GameWindow *ExMessageBoxYesNo				(UnicodeString titleString,UnicodeString bodyString, void *userData,
 																		 MessageBoxFunc yesCallback, MessageBoxFunc noCallback)
 {
-	return gogoExMessageBox(-1,-1,-1,-1,MSG_BOX_NO | MSG_BOX_YES , titleString, bodyString, userData, yesCallback, noCallback, NULL, NULL);
+	return gogoExMessageBox(-1,-1,-1,-1,MSG_BOX_NO | MSG_BOX_YES , titleString, bodyString, userData, yesCallback, noCallback, nullptr, nullptr);
 }
 
 GameWindow *ExMessageBoxYesNoCancel	(UnicodeString titleString,UnicodeString bodyString, void *userData,
 																		 MessageBoxFunc yesCallback, MessageBoxFunc noCallback, MessageBoxFunc cancelCallback)
 {
-	return gogoExMessageBox(-1,-1,-1,-1,MSG_BOX_NO | MSG_BOX_YES | MSG_BOX_CANCEL , titleString, bodyString, userData, yesCallback, noCallback, NULL, cancelCallback);
+	return gogoExMessageBox(-1,-1,-1,-1,MSG_BOX_NO | MSG_BOX_YES | MSG_BOX_CANCEL , titleString, bodyString, userData, yesCallback, noCallback, nullptr, cancelCallback);
 }
 
 GameWindow *ExMessageBoxOkCancel		(UnicodeString titleString,UnicodeString bodyString, void *userData,
 																		 MessageBoxFunc okCallback, MessageBoxFunc cancelCallback)
 {
-	return gogoExMessageBox(-1,-1,-1,-1,MSG_BOX_OK | MSG_BOX_CANCEL , titleString, bodyString, userData, NULL, NULL, okCallback, cancelCallback);
+	return gogoExMessageBox(-1,-1,-1,-1,MSG_BOX_OK | MSG_BOX_CANCEL , titleString, bodyString, userData, nullptr, nullptr, okCallback, cancelCallback);
 }
 
 GameWindow *ExMessageBoxOk					(UnicodeString titleString,UnicodeString bodyString, void *userData,
 																		 MessageBoxFunc okCallback)
 {
-	return gogoExMessageBox(-1,-1,-1,-1,MSG_BOX_OK, titleString, bodyString, userData, NULL, NULL, okCallback, NULL);
+	return gogoExMessageBox(-1,-1,-1,-1,MSG_BOX_OK, titleString, bodyString, userData, nullptr, nullptr, okCallback, nullptr);
 }
 
 GameWindow *ExMessageBoxCancel			(UnicodeString titleString,UnicodeString bodyString, void *userData,
 																		 MessageBoxFunc cancelCallback)
 {
-	return gogoExMessageBox(-1,-1,-1,-1, MSG_BOX_CANCEL, titleString, bodyString, userData, NULL, NULL, NULL, cancelCallback);
+	return gogoExMessageBox(-1,-1,-1,-1, MSG_BOX_CANCEL, titleString, bodyString, userData, nullptr, nullptr, nullptr, cancelCallback);
 }
 
 
@@ -239,7 +239,7 @@ WindowMsgHandledType ExtendedMessageBoxSystem( GameWindow *window, UnsignedInt m
 		case GWM_DESTROY:
 		{
 			delete (WindowExMessageBoxData *)window->winGetUserData();
-			window->winSetUserData( NULL );
+			window->winSetUserData( nullptr );
 			break;
 
 		}

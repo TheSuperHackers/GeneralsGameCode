@@ -56,7 +56,7 @@
 #include "GameLogic/ScriptEngine.h"
 
 
-SkirmishGameInfo *TheChallengeGameInfo = NULL;
+SkirmishGameInfo *TheChallengeGameInfo = nullptr;
 
 // defines
 static const Int DEFAULT_GENERAL = 0;
@@ -76,21 +76,21 @@ static NameKeyType backdropID = NAMEKEY_INVALID;
 static NameKeyType bioParentID = NAMEKEY_INVALID;
 
 // window pointers --------------------------------------------------------------------------------
-static GameWindow *parentMenu = NULL;
-static GameWindow *buttonPlay = NULL;
-static GameWindow *buttonBack = NULL;
-static GameWindow *bioPortrait = NULL;
-static GameWindow *bioLine1Entry = NULL;
-static GameWindow *bioLine2Entry = NULL;
-static GameWindow *bioLine3Entry = NULL;
-static GameWindow *bioLine4Entry = NULL;
-static GameWindow *buttonGeneralPosition[NUM_GENERALS] = {NULL};
-static GameWindow *backdrop = NULL;
-static GameWindow *bioParent = NULL;
+static GameWindow *parentMenu = nullptr;
+static GameWindow *buttonPlay = nullptr;
+static GameWindow *buttonBack = nullptr;
+static GameWindow *bioPortrait = nullptr;
+static GameWindow *bioLine1Entry = nullptr;
+static GameWindow *bioLine2Entry = nullptr;
+static GameWindow *bioLine3Entry = nullptr;
+static GameWindow *bioLine4Entry = nullptr;
+static GameWindow *buttonGeneralPosition[NUM_GENERALS] = {nullptr};
+static GameWindow *backdrop = nullptr;
+static GameWindow *bioParent = nullptr;
 
 //static NameKeyType testWinID = NAMEKEY_INVALID;
 //static GameWindow *testWin = NULL;
-static WindowVideoManager *wndVideoManager = NULL;
+static WindowVideoManager *wndVideoManager = nullptr;
 
 //
 static Int	initialGadgetDelay = 2;
@@ -339,7 +339,7 @@ void ChallengeMenuInit( WindowLayout *layout, void *userData )
 
 	// init window ids and pointers
 	parentID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:ParentChallengeMenu" );
-	parentMenu = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	parentMenu = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 	buttonPlayID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:ButtonPlay" );
 	buttonPlay = TheWindowManager->winGetWindowFromId( parentMenu, buttonPlayID );
 	buttonBackID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:ButtonBack" );
@@ -385,7 +385,7 @@ void ChallengeMenuInit( WindowLayout *layout, void *userData )
 	TheWindowManager->winSetFocus( parentMenu );
 	justEntered = TRUE;
 	initialGadgetDelay = 2;
-	GameWindow *winGadgetParent = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ChallengeMenu.wnd:GadgetParent"));
+	GameWindow *winGadgetParent = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ChallengeMenu.wnd:GadgetParent"));
 	if(winGadgetParent)
 		winGadgetParent->winHide(TRUE);
 	isShuttingDown = FALSE;
@@ -455,7 +455,7 @@ void ChallengeMenuUpdate( WindowLayout *layout, void *userData )
 void ChallengeMenuShutdown( WindowLayout *layout, void *userData )
 {
 	delete wndVideoManager;
-	wndVideoManager = NULL;
+	wndVideoManager = nullptr;
 
 	lastButtonIndex = -1;
 
@@ -473,7 +473,7 @@ void ChallengeMenuShutdown( WindowLayout *layout, void *userData )
 	isShuttingDown = TRUE;
 
 	delete TheChallengeGameInfo;
-	TheChallengeGameInfo = NULL;
+	TheChallengeGameInfo = nullptr;
 
 	TheAudio->removeAudioEvent( lastSelectionSound );
 	TheAudio->removeAudioEvent( lastPreviewSound );
@@ -616,7 +616,7 @@ WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, W
 				if (lastButtonIndex != -1)
 				{
 					isAutoSelecting = TRUE;
-					GameWindow *lastControl = TheWindowManager->winGetWindowFromId( NULL, buttonGeneralPositionID[lastButtonIndex]);
+					GameWindow *lastControl = TheWindowManager->winGetWindowFromId( nullptr, buttonGeneralPositionID[lastButtonIndex]);
 					GadgetCheckBoxToggle(lastControl);
 				}
 
@@ -644,7 +644,7 @@ WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, W
 			}
 			else if( controlID == buttonPlayID )
  			{
-				if( TheChallengeGameInfo == NULL )
+				if( TheChallengeGameInfo == nullptr )
 				{
 					// If this is NULL, then we must be on the way back out of this menu.
 					// Don't crash, just eat the button click message.
@@ -657,7 +657,7 @@ WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, W
 
 				// turn off the last button so the screen will be pristine when the user returns
 				isAutoSelecting = TRUE;
-				GameWindow *lastControl = TheWindowManager->winGetWindowFromId( NULL, buttonGeneralPositionID[lastButtonIndex]);
+				GameWindow *lastControl = TheWindowManager->winGetWindowFromId( nullptr, buttonGeneralPositionID[lastButtonIndex]);
 				GadgetCheckBoxSetChecked(lastControl, FALSE);
 				lastButtonIndex = -1;
 //				introAudioHasPlayed = FALSE;

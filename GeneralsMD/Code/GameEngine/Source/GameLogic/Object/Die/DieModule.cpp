@@ -53,11 +53,11 @@ const FieldParse* DieMuxData::getFieldParse()
 {
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "DeathTypes",				INI::parseDeathTypeFlags,						NULL, offsetof( DieMuxData, m_deathTypes ) },
-		{ "VeterancyLevels",	INI::parseVeterancyLevelFlags,			NULL, offsetof( DieMuxData, m_veterancyLevels ) },
-		{ "ExemptStatus",			ObjectStatusMaskType::parseFromINI,	NULL,	offsetof( DieMuxData, m_exemptStatus ) },
-		{ "RequiredStatus",		ObjectStatusMaskType::parseFromINI, NULL,	offsetof( DieMuxData, m_requiredStatus ) },
-		{ 0, 0, 0, 0 }
+		{ "DeathTypes",				INI::parseDeathTypeFlags,						nullptr, offsetof( DieMuxData, m_deathTypes ) },
+		{ "VeterancyLevels",	INI::parseVeterancyLevelFlags,			nullptr, offsetof( DieMuxData, m_veterancyLevels ) },
+		{ "ExemptStatus",			ObjectStatusMaskType::parseFromINI,	nullptr,	offsetof( DieMuxData, m_exemptStatus ) },
+		{ "RequiredStatus",		ObjectStatusMaskType::parseFromINI, nullptr,	offsetof( DieMuxData, m_requiredStatus ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   return dataFieldParse;
 }

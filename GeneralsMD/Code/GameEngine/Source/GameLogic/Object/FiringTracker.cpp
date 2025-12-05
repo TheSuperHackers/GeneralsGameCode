@@ -66,7 +66,7 @@ FiringTracker::~FiringTracker()
 //-------------------------------------------------------------------------------------------------
 Int FiringTracker::getNumConsecutiveShotsAtVictim( const Object *victim ) const
 {
-	if( victim == NULL )
+	if( victim == nullptr )
 		return 0;// safety, this function is for asking about shots at a victim
 
 	if( victim->getID() != m_victimID )

@@ -56,7 +56,7 @@ void BoneFXDamage::onObjectCreated()
 {
 	static NameKeyType key_BoneFXUpdate = NAMEKEY("BoneFXUpdate");
 	BoneFXUpdate* bfxu = (BoneFXUpdate*)getObject()->findUpdateModule(key_BoneFXUpdate);
-	if (bfxu == NULL)
+	if (bfxu == nullptr)
 	{
 		DEBUG_ASSERTCRASH(bfxu != NULL, ("BoneFXDamage requires BoneFXUpdate"));
 		throw INI_INVALID_DATA;

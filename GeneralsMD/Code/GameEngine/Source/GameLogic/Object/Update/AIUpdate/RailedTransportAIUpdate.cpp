@@ -55,8 +55,8 @@ void RailedTransportAIUpdateModuleData::buildFieldParse( MultiIniFieldParse &p )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "PathPrefixName",		INI::parseAsciiString, NULL,	offsetof( RailedTransportAIUpdateModuleData, m_pathPrefixName ) },
-		{ 0, 0, 0, 0 }
+		{ "PathPrefixName",		INI::parseAsciiString, nullptr,	offsetof( RailedTransportAIUpdateModuleData, m_pathPrefixName ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add( dataFieldParse );
@@ -135,7 +135,7 @@ void RailedTransportAIUpdate::pickAndMoveToInitialLocation( void )
 	const Coord3D *ourPos = us->getPosition();
 
 	// select the path with the closest ending waypoint to our location
-	Waypoint *waypoint, *closestEndWaypoint = NULL;
+	Waypoint *waypoint, *closestEndWaypoint = nullptr;
 	Int closestPath = INVALID_PATH;
 	Real closestDist = 99999999.9f;
 	for( Int i = 0; i < m_numPaths; ++i )
@@ -309,13 +309,13 @@ void RailedTransportAIUpdate::privateExecuteRailedTransport( CommandSourceType c
 	// if we just call the method getReailedTransportDockUpdateInterface, it will execute
 	// the method for *THIS AI UPDATE MODULE* which of course is not our dock update
 	//
-	RailedTransportDockUpdateInterface *rtdui = NULL;
+	RailedTransportDockUpdateInterface *rtdui = nullptr;
 	for( BehaviorModule **u = us->getBehaviorModules(); *u; ++u )
-		if( (rtdui = (*u)->getRailedTransportDockUpdateInterface()) != NULL )
+		if( (rtdui = (*u)->getRailedTransportDockUpdateInterface()) != nullptr )
 			break;
 
 	// if we've in the process of loading or unloading anything we can't do a transport sequence
-	if( rtdui == NULL || rtdui->isLoadingOrUnloading() )
+	if( rtdui == nullptr || rtdui->isLoadingOrUnloading() )
 		return;
 
 	// pick the next path
@@ -345,13 +345,13 @@ void RailedTransportAIUpdate::privateEvacuate( Int exposeStealthUnits, CommandSo
 	// if we just call the method getReailedTransportDockUpdateInterface, it will execute
 	// the method for *THIS AI UPDATE MODULE* which of course is not our dock update
 	//
-	RailedTransportDockUpdateInterface *rtdui = NULL;
+	RailedTransportDockUpdateInterface *rtdui = nullptr;
 	for( BehaviorModule **u = us->getBehaviorModules(); *u; ++u )
-		if( (rtdui = (*u)->getRailedTransportDockUpdateInterface()) != NULL )
+		if( (rtdui = (*u)->getRailedTransportDockUpdateInterface()) != nullptr )
 			break;
 
 	// sanity
-	if( rtdui == NULL )
+	if( rtdui == nullptr )
 		return;
 
 	// can't unload when in transit
