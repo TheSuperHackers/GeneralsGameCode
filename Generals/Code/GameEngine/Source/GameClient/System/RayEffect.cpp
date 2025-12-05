@@ -34,7 +34,7 @@
 #include "GameClient/Drawable.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-class RayEffectSystem *TheRayEffects = NULL;
+class RayEffectSystem *TheRayEffects = nullptr;
 
 // PRIVATE METHODS ////////////////////////////////////////////////////////////////////////////////
 
@@ -44,7 +44,7 @@ class RayEffectSystem *TheRayEffects = NULL;
 RayEffectData *RayEffectSystem::findEntry( const Drawable *draw )
 {
 	Int i;
-	RayEffectData *effectData = NULL;
+	RayEffectData *effectData = nullptr;
 
 	// find the matching effect data entry
 	for( i = 0; i < MAX_RAY_EFFECTS; i++ )
@@ -92,7 +92,7 @@ void RayEffectSystem::init( void )
 	for( i = 0; i < MAX_RAY_EFFECTS; i++ )
 	{
 
-		m_effectData[ i ].draw = NULL;
+		m_effectData[ i ].draw = nullptr;
 		m_effectData[ i ].startLoc.zero();
 		m_effectData[ i ].endLoc.zero();
 
@@ -119,10 +119,10 @@ void RayEffectSystem::addRayEffect( const Drawable *draw,
 																	  const Coord3D *endLoc )
 {
 	Int i;
-	RayEffectData *effectData = NULL;
+	RayEffectData *effectData = nullptr;
 
 	// sanity
-	if( draw == NULL || startLoc == NULL || endLoc == NULL )
+	if( draw == nullptr || startLoc == nullptr || endLoc == nullptr )
 		return;
 
 	/** @todo this should be more intelligent and should not be limited
@@ -133,7 +133,7 @@ void RayEffectSystem::addRayEffect( const Drawable *draw,
 	for( i = 0; i < MAX_RAY_EFFECTS; i++ )
 	{
 
-		if( m_effectData[ i ].draw == NULL )
+		if( m_effectData[ i ].draw == nullptr )
 		{
 
 			effectData = &m_effectData[ i ];
@@ -144,7 +144,7 @@ void RayEffectSystem::addRayEffect( const Drawable *draw,
 	}
 
 	// if no free slots we can't do it
-	if( effectData == NULL )
+	if( effectData == nullptr )
 		return;
 
 	// add the data to the entry
@@ -159,10 +159,10 @@ void RayEffectSystem::addRayEffect( const Drawable *draw,
 //-------------------------------------------------------------------------------------------------
 void RayEffectSystem::deleteRayEffect( const Drawable *draw )
 {
-	RayEffectData *effectData = NULL;
+	RayEffectData *effectData = nullptr;
 
 	// sanity
-	if( draw == NULL )
+	if( draw == nullptr )
 		return;
 
 	// find the effect entry
@@ -171,7 +171,7 @@ void RayEffectSystem::deleteRayEffect( const Drawable *draw )
 	{
 
 		// remove the data for this entry
-		effectData->draw = NULL;
+		effectData->draw = nullptr;
 
 	}
 
@@ -184,10 +184,10 @@ void RayEffectSystem::deleteRayEffect( const Drawable *draw )
 void RayEffectSystem::getRayEffectData( const Drawable *draw,
 																			  RayEffectData *effectData )
 {
-	RayEffectData *entry = NULL;
+	RayEffectData *entry = nullptr;
 
 	// sanity
-	if( draw == NULL || effectData == NULL )
+	if( draw == nullptr || effectData == nullptr )
 		return;
 
 	// find the effect data entry

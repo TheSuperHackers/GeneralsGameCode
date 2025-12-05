@@ -126,7 +126,7 @@ Bool UserPreferences::load(AsciiString fname)
 	if (fp)
 	{
 		char buf[LINE_LEN];
-		while( fgets( buf, LINE_LEN, fp ) != NULL )
+		while( fgets( buf, LINE_LEN, fp ) != nullptr )
 		{
 			AsciiString line = buf;
 			line.trim();
@@ -700,7 +700,7 @@ Money CustomMatchPreferences::getStartingCash(void) const
   }
 
   Money money;
-  money.deposit( strtoul( it->second.str(), NULL, 10 ), FALSE, FALSE );
+  money.deposit( strtoul( it->second.str(), nullptr, 10 ), FALSE, FALSE );
 
   return money;
 }

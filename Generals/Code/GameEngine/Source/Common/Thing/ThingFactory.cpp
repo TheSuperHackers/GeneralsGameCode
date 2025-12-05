@@ -52,7 +52,7 @@
 enum { TEMPLATE_HASH_SIZE = 12288 };
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-ThingFactory *TheThingFactory = NULL;  ///< Thing manager singleton declaration
+ThingFactory *TheThingFactory = nullptr;  ///< Thing manager singleton declaration
 
 // STATIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
@@ -103,7 +103,7 @@ void ThingFactory::addTemplate( ThingTemplate *tmplate )
 //-------------------------------------------------------------------------------------------------
 ThingFactory::ThingFactory()
 {
-	m_firstTemplate = NULL;
+	m_firstTemplate = nullptr;
 	m_nextTemplateID = 1;	// not zero!
 
 #ifdef USING_STLPORT
@@ -227,11 +227,11 @@ void ThingFactory::reset( void )
 		AsciiString templateName = t->getName();
 
 		Overridable *stillValid = t->deleteOverrides();
-		if (stillValid == NULL && possibleAdjustment) {
+		if (stillValid == nullptr && possibleAdjustment) {
 			m_firstTemplate = nextT;
 		}
 
-		if (stillValid == NULL) {
+		if (stillValid == nullptr) {
 			// Also needs to be removed from the Hash map.
 			m_templateHashMap.erase(templateName);
 		}
@@ -259,7 +259,7 @@ const ThingTemplate *ThingFactory::findByTemplateID( UnsignedShort id )
 			return tmpl;
 	}
 	DEBUG_CRASH(("template %d not found",(Int)id));
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -293,14 +293,14 @@ ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name )
 #endif
 
 	//DEBUG_LOG(("*** Object template %s not found",name.str()));
-	return NULL;
+	return nullptr;
 
 }
 
 //=============================================================================
 Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, ObjectStatusMaskType statusBits )
 {
-	if (tmplate == NULL)
+	if (tmplate == nullptr)
 		throw ERROR_BAD_ARG;
 
 	const std::vector<AsciiString>& asv = tmplate->getBuildVariations();
@@ -308,7 +308,7 @@ Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, Objec
 	{
 		Int which = GameLogicRandomValue(0, asv.size()-1);
 		const ThingTemplate* tmp = findTemplate( asv[which] );
-		if (tmp != NULL)
+		if (tmp != nullptr)
 			tmplate = tmp;
 	}
 
@@ -345,7 +345,7 @@ Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, Objec
 //=============================================================================
 Drawable *ThingFactory::newDrawable(const ThingTemplate *tmplate, DrawableStatusBits statusBits)
 {
-	if (tmplate == NULL)
+	if (tmplate == nullptr)
 		throw ERROR_BAD_ARG;
 
 	Drawable *draw = TheGameClient->friend_createDrawable( tmplate, statusBits );

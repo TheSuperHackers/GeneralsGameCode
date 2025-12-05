@@ -39,7 +39,7 @@
 //-------------------------------------------------------------------------------------------------
 FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
 {
-	m_weaponTemplate = NULL;
+	m_weaponTemplate = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -49,8 +49,8 @@ FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "Weapon",	INI::parseWeaponTemplate,	NULL, offsetof( FireWeaponUpdateModuleData, m_weaponTemplate ) },
-		{ 0, 0, 0, 0 }
+		{ "Weapon",	INI::parseWeaponTemplate,	nullptr, offsetof( FireWeaponUpdateModuleData, m_weaponTemplate ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -59,7 +59,7 @@ FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
 //-------------------------------------------------------------------------------------------------
 FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData ) :
 	UpdateModule( thing, moduleData ),
-	m_weapon(NULL)
+	m_weapon(nullptr)
 {
 	const WeaponTemplate *tmpl = getFireWeaponUpdateModuleData()->m_weaponTemplate;
 	if (tmpl)
@@ -92,7 +92,7 @@ UpdateSleepTime FireWeaponUpdate::update( void )
 //-------------------------------------------------------------------------------------------------
 Bool FireWeaponUpdate::isOkayToFire()
 {
-	if( m_weapon == NULL )
+	if( m_weapon == nullptr )
 		return FALSE;
 
 	// Weapon is reloading
