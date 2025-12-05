@@ -531,8 +531,8 @@ public:
 	/**
 		return this player's "default" team.
 	*/
-	Team *getDefaultTeam() { DEBUG_ASSERTCRASH(m_defaultTeam!=NULL,("default team is null")); return m_defaultTeam; }
-	const Team *getDefaultTeam() const { DEBUG_ASSERTCRASH(m_defaultTeam!=NULL,("default team is null")); return m_defaultTeam; }
+	Team *getDefaultTeam() { DEBUG_ASSERTCRASH(m_defaultTeam!=nullptr,("default team is null")); return m_defaultTeam; }
+	const Team *getDefaultTeam() const { DEBUG_ASSERTCRASH(m_defaultTeam!=nullptr,("default team is null")); return m_defaultTeam; }
 
 	void setBuildList(BuildListInfo *pBuildList);			///< sets the build list.
 	BuildListInfo *getBuildList( void ) { return m_pBuildList; }		///< returns the build list. (build list might be modified by the solo AI)

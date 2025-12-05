@@ -118,7 +118,7 @@ LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 							prevPen = (HPEN)SelectObject( hdc, pen );
 
 							// draw ... what is the Win32 put pixel function???
-							MoveToEx( hdc, x, y, NULL );
+							MoveToEx( hdc, x, y, nullptr );
 							LineTo( hdc, x + 1, y );
 
 							// put the old pen back
@@ -182,12 +182,12 @@ HWND MakePreviewDisplay( void )
 	wcex.cbClsExtra			= 0;
 	wcex.cbWndExtra			= 0;
 	wcex.hInstance			= ApplicationHInstance;
-	wcex.hIcon					= NULL;
-	wcex.hCursor				= LoadCursor( NULL, IDC_ARROW );
+	wcex.hIcon					= nullptr;
+	wcex.hCursor				= LoadCursor( nullptr, IDC_ARROW );
 	wcex.hbrBackground	= (HBRUSH)GetStockObject( BLACK_BRUSH );
-	wcex.lpszMenuName		=	NULL;
+	wcex.lpszMenuName		=	nullptr;
 	wcex.lpszClassName	= className;
-	wcex.hIconSm				= NULL;
+	wcex.hIconSm				= nullptr;
 
 	RegisterClassEx( &wcex );
 
@@ -200,13 +200,13 @@ HWND MakePreviewDisplay( void )
 												 30,											// y position
 												 TheImagePacker->getTargetWidth(),
 												 TheImagePacker->getTargetHeight(),
-												 NULL,									// parent
-												 NULL,									// menu
+												 nullptr,									// parent
+												 nullptr,									// menu
 												 ApplicationHInstance,	// instance
-												 NULL );								// creation data
+												 nullptr );								// creation data
 
-	if( hWnd == NULL )
-		return NULL;
+	if( hWnd == nullptr )
+		return nullptr;
 
 	// display the window
 	ShowWindow( hWnd, SW_SHOW );
@@ -223,14 +223,14 @@ void UpdatePreviewWindow( void )
 	HWND preview;
 
 	// sanity
-	if( TheImagePacker == NULL )
+	if( TheImagePacker == nullptr )
 		return;
 
 	// get preview window
 	preview = TheImagePacker->getPreviewWindow();
 
 	// if window not here don't bother
-	if( preview == NULL )
+	if( preview == nullptr )
 		return;
 
 	// make the title
@@ -262,6 +262,6 @@ void UpdatePreviewWindow( void )
 							TRUE );
 
 	// invalidate the client area for redraw
-	InvalidateRect( preview, NULL, TRUE );
+	InvalidateRect( preview, nullptr, TRUE );
 
 }

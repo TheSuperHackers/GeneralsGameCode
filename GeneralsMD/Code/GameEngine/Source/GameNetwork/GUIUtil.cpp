@@ -73,7 +73,7 @@ void EnableAcceptControls(Bool Enabled, GameInfo *myGame, GameWindow *comboPlaye
 
 	Bool isObserver = myGame->getConstSlot(slotNum)->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER;
 
-	if( !myGame->amIHost() && (buttonStart != NULL) )
+	if( !myGame->amIHost() && (buttonStart != nullptr) )
 		buttonStart->winEnable(Enabled);
 	if(comboColor[slotNum])
 	{
@@ -134,7 +134,7 @@ void ShowUnderlyingGUIElements( Bool show, const char *layoutFilename, const cha
 	AsciiString parentNameStr;
 	parentNameStr.format("%s:%s", layoutFilename, parentName);
 	NameKeyType parentID = NAMEKEY(parentNameStr);
-	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	GameWindow *parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 	if (!parent)
 	{
 		DEBUG_CRASH(("Window %s not found", parentNameStr.str()));
@@ -467,10 +467,10 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 					comboPlayer[i]->winEnable( FALSE );
 			}
 			//if( i == myGame->getLocalSlotNum())
-      if((comboColor[i] != NULL) && BitIsSet(comboColor[i]->winGetStatus(), WIN_STATUS_ENABLED))
+      if((comboColor[i] != nullptr) && BitIsSet(comboColor[i]->winGetStatus(), WIN_STATUS_ENABLED))
 				PopulateColorComboBox(i, comboColor, myGame, myGame->getConstSlot(i)->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER);
 			Int max, idx;
-			if (comboColor[i] != NULL) {
+			if (comboColor[i] != nullptr) {
 				max = GadgetComboBoxGetLength(comboColor[i]);
 				for (idx=0; idx<max; ++idx)
 				{
@@ -483,7 +483,7 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 				}
 			}
 
-			if (comboTeam[i] != NULL) {
+			if (comboTeam[i] != nullptr) {
 				max = GadgetComboBoxGetLength(comboTeam[i]);
 				for (idx=0; idx<max; ++idx)
 				{
@@ -496,7 +496,7 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 				}
 			}
 
-			if (comboPlayerTemplate[i] != NULL) {
+			if (comboPlayerTemplate[i] != nullptr) {
 				max = GadgetComboBoxGetLength(comboPlayerTemplate[i]);
 				for (idx=0; idx<max; ++idx)
 				{

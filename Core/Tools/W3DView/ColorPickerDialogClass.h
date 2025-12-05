@@ -39,7 +39,7 @@ class ColorPickerDialogClass : public CDialog
 {
 // Construction
 public:
-	ColorPickerDialogClass (int red, int green, int blue, CWnd* pParent = NULL, UINT res_id = ColorPickerDialogClass::IDD);
+	ColorPickerDialogClass (int red, int green, int blue, CWnd* pParent = nullptr, UINT res_id = ColorPickerDialogClass::IDD);
 
 // Dialog Data
 	//{{AFX_DATA(ColorPickerDialogClass)

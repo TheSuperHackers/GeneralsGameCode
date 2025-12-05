@@ -55,7 +55,7 @@ public:
 	virtual GameWindow *winCreate( GameWindow *parent, UnsignedInt status,
 																 Int x, Int y, Int width, Int height,
 																 GameWinSystemFunc system,
-																 WinInstanceData *instData = NULL );
+																 WinInstanceData *instData = nullptr );
 
 	// **************************************************************************
 	// GUIEdit specific methods *************************************************

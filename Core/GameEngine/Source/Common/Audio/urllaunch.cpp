@@ -127,8 +127,8 @@ HRESULT GetShellOpenCommand( LPTSTR ptszShellOpenCommand, DWORD cbShellOpenComma
 {
     LONG lResult;
 
-    HKEY hKey = NULL;
-    HKEY hFileKey = NULL;
+    HKEY hKey = nullptr;
+    HKEY hFileKey = nullptr;
 
     BOOL fFoundExtensionCommand = FALSE;
 
@@ -148,7 +148,7 @@ HRESULT GetShellOpenCommand( LPTSTR ptszShellOpenCommand, DWORD cbShellOpenComma
 
         DWORD dwLength = sizeof( szFileType );
 
-        lResult = RegQueryValueEx( hKey, NULL, 0, NULL, (BYTE *)szFileType, &dwLength );
+        lResult = RegQueryValueEx( hKey, nullptr, 0, nullptr, (BYTE *)szFileType, &dwLength );
 
         if( ERROR_SUCCESS != lResult )
         {
@@ -171,7 +171,7 @@ HRESULT GetShellOpenCommand( LPTSTR ptszShellOpenCommand, DWORD cbShellOpenComma
 
         dwLength = cbShellOpenCommand;
 
-        lResult = RegQueryValueEx( hFileKey, NULL, 0, NULL, (BYTE *)ptszShellOpenCommand, &dwLength );
+        lResult = RegQueryValueEx( hFileKey, nullptr, 0, nullptr, (BYTE *)ptszShellOpenCommand, &dwLength );
 
         if( 0 == lResult )
         {
@@ -205,7 +205,7 @@ HRESULT GetShellOpenCommand( LPTSTR ptszShellOpenCommand, DWORD cbShellOpenComma
 
             DWORD dwLength = cbShellOpenCommand;
 
-            lResult = RegQueryValueEx( hKey, NULL, 0, NULL, (BYTE *)ptszShellOpenCommand, &dwLength );
+            lResult = RegQueryValueEx( hKey, nullptr, 0, nullptr, (BYTE *)ptszShellOpenCommand, &dwLength );
         }
         while( FALSE );
     }
@@ -269,7 +269,7 @@ HRESULT LaunchURL( LPCWSTR pszURL )
     //
     TCHAR szExe[ MAX_PATH * 2 ];
     LPTSTR pchFirst = szShellOpenCommand;
-    LPTSTR pchNext = NULL;
+    LPTSTR pchNext = nullptr;
 
     while( _T( ' ' ) == *pchFirst )
     {
@@ -312,8 +312,8 @@ HRESULT LaunchURL( LPCWSTR pszURL )
 
     StartUp.cb = sizeof(STARTUPINFO);
 
-    if( !CreateProcess( szExe, szLaunchCommand, NULL, NULL,
-                        FALSE, 0, NULL, NULL, &StartUp, &ProcInfo) )
+    if( !CreateProcess( szExe, szLaunchCommand, nullptr, NULL,
+                        FALSE, 0, nullptr, NULL, &StartUp, &ProcInfo) )
     {
         hr = HRESULT_FROM_WIN32( GetLastError() );
     }

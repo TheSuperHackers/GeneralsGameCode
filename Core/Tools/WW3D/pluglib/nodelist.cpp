@@ -84,10 +84,10 @@ public:
 INodeListClass::INodeListClass(TimeValue time,INodeFilterClass * inodefilter) :
 	NumNodes(0),
 	Time(time),
-	ListHead(NULL),
+	ListHead(nullptr),
 	INodeFilter(inodefilter)
 {
-	if (INodeFilter == NULL) {
+	if (INodeFilter == nullptr) {
 		INodeFilter = &_AnyFilter;
 	}
 }
@@ -110,10 +110,10 @@ INodeListClass::INodeListClass(TimeValue time,INodeFilterClass * inodefilter) :
 INodeListClass::INodeListClass(IScene * scene,TimeValue time,INodeFilterClass * inodefilter) :
 	NumNodes(0),
 	Time(time),
-	ListHead(NULL),
+	ListHead(nullptr),
 	INodeFilter(inodefilter)
 {
-	if (INodeFilter == NULL) {
+	if (INodeFilter == nullptr) {
 		INodeFilter = &_AnyFilter;
 	}
 	scene->EnumTree(this);
@@ -135,10 +135,10 @@ INodeListClass::INodeListClass(IScene * scene,TimeValue time,INodeFilterClass * 
 INodeListClass::INodeListClass(INode * root,TimeValue time,INodeFilterClass * nodefilter) :
 	NumNodes(0),
 	Time(time),
-	ListHead(NULL),
+	ListHead(nullptr),
 	INodeFilter(nodefilter)
 {
-	if (INodeFilter == NULL) {
+	if (INodeFilter == nullptr) {
 		INodeFilter = &_AnyFilter;
 	}
 	Add_Tree(root);
@@ -160,10 +160,10 @@ INodeListClass::INodeListClass(INode * root,TimeValue time,INodeFilterClass * no
 INodeListClass::INodeListClass(INodeListClass & copyfrom,TimeValue time,INodeFilterClass * inodefilter) :
 	NumNodes(0),
 	Time(time),
-	ListHead(NULL),
+	ListHead(nullptr),
 	INodeFilter(inodefilter)
 {
-	if (INodeFilter == NULL) {
+	if (INodeFilter == nullptr) {
 		INodeFilter = &_AnyFilter;
 	}
 	for (unsigned i=0; i<copyfrom.Num_Nodes(); i++) {
@@ -193,7 +193,7 @@ INodeListClass::~INodeListClass(void)
 	}
 
 	NumNodes = 0;
-	ListHead = NULL;
+	ListHead = nullptr;
 }
 
 
@@ -214,7 +214,7 @@ INodeListClass::~INodeListClass(void)
 INode * INodeListClass::operator[] ( int index ) const
 {
 	INodeListEntryClass * entry = ListHead;
-	while (index > 0 && entry != NULL )
+	while (index > 0 && entry != nullptr )
 	{
 		entry = entry->Next;
 		index--;
@@ -290,7 +290,7 @@ void INodeListClass::Remove(int i)
 	}
 
 	INodeListEntryClass * deleteme = prev->Next;
-	if (deleteme != NULL) {
+	if (deleteme != nullptr) {
 		prev->Next = prev->Next->Next;
 		delete deleteme;
 	}
@@ -311,7 +311,7 @@ void INodeListClass::Remove(int i)
  *=============================================================================================*/
 void INodeListClass::Add_Tree(INode * root)
 {
-	if (root == NULL) return;
+	if (root == nullptr) return;
 
 	Insert(root);
 	for (int i=0; i<root->NumberOfChildren(); i++) {
@@ -363,7 +363,7 @@ void INodeListClass::Sort(const INodeCompareClass & node_compare)
 INodeListEntryClass * INodeListClass::get_nth_item(int index)
 {
 	INodeListEntryClass * entry = ListHead;
-	while (index > 0 && entry != NULL )
+	while (index > 0 && entry != nullptr )
 	{
 		entry = entry->Next;
 		index--;

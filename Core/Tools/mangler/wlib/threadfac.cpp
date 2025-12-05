@@ -74,7 +74,7 @@ bit8 ThreadFactory::startThread(Runnable &runable, void *data, bit8 destroy)
     uint32 handle;
 	uint32 stup1d;
     handle=_beginthreadex(NULL,0,  threadClassLauncher, tInfo, 0, &stup1d);
-    if (handle!=NULL)
+    if (handle!=nullptr)
       return(TRUE);
     else
     {
@@ -127,7 +127,7 @@ bit8 ThreadFactory::startThread(void (*start_func)(void *), void *data)
     uint32 handle;
 	unsigned temp;
     handle=_beginthreadex(NULL,0,  threadFuncLauncher, tInfo, 0, &temp);
-    if (handle!=NULL)
+    if (handle!=nullptr)
       return(TRUE);
     return(FALSE);
   #else // UNIX

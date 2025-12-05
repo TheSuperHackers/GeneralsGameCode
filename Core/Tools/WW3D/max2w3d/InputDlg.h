@@ -50,7 +50,7 @@ class InputDlg
 public:
 
 	// Construction
-	InputDlg (HWND hWndParent=NULL);
+	InputDlg (HWND hWndParent=nullptr);
 
 	// Methods
 	int DoModal (void);		// returns IDOK or IDCANCEL

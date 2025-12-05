@@ -535,7 +535,7 @@ WWINLINE Vector3 Lerp(const Vector3 & a, const Vector3 & b, float alpha)
  *=============================================================================================*/
 WWINLINE void Lerp(const Vector3 & a, const Vector3 & b, float alpha,Vector3 * set_result)
 {
-	assert(set_result != NULL);
+	assert(set_result != nullptr);
 	set_result->X = (a.X + (b.X - a.X)*alpha);
    set_result->Y = (a.Y + (b.Y - a.Y)*alpha);
    set_result->Z = (a.Z + (b.Z - a.Z)*alpha);
@@ -543,7 +543,7 @@ WWINLINE void Lerp(const Vector3 & a, const Vector3 & b, float alpha,Vector3 * s
 
 WWINLINE void Vector3::Lerp(const Vector3 & a, const Vector3 & b, float alpha,Vector3 * set_result)
 {
-	assert(set_result != NULL);
+	assert(set_result != nullptr);
 	set_result->X = (a.X + (b.X - a.X)*alpha);
    set_result->Y = (a.Y + (b.Y - a.Y)*alpha);
    set_result->Z = (a.Z + (b.Z - a.Z)*alpha);
@@ -563,7 +563,7 @@ WWINLINE void Vector3::Lerp(const Vector3 & a, const Vector3 & b, float alpha,Ve
  *=============================================================================================*/
 WWINLINE void Vector3::Add(const Vector3 &a,const Vector3 &b,Vector3 * set_result)
 {
-	assert(set_result != NULL);
+	assert(set_result != nullptr);
 	set_result->X = a.X + b.X;
 	set_result->Y = a.Y + b.Y;
 	set_result->Z = a.Z + b.Z;
@@ -584,7 +584,7 @@ WWINLINE void Vector3::Add(const Vector3 &a,const Vector3 &b,Vector3 * set_resul
  *=============================================================================================*/
 WWINLINE void Vector3::Subtract(const Vector3 &a,const Vector3 &b,Vector3 * set_result)
 {
-	assert(set_result != NULL);
+	assert(set_result != nullptr);
 	set_result->X = a.X - b.X;
 	set_result->Y = a.Y - b.Y;
 	set_result->Z = a.Z - b.Z;

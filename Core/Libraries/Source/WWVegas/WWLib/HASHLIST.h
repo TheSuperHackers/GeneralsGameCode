@@ -156,14 +156,14 @@ class HashNodeClass : public DataNode<HashNodeClass<T,U> *>, public U
 			if (next && next->Is_Valid()) {
 				return(next);
 			}
-			return(NULL);
+			return(nullptr);
 		}
 		HashNodeClass<T,U> *Prev_Valid()  {
 			HashNodeClass<T,U> *prev = Prev();
 			if (prev && prev->Is_Valid()) {
 				return(prev);
 			}
-			return(NULL);
+			return(nullptr);
 		}
 
 		// Get record that is in hash table.
@@ -496,7 +496,7 @@ HashNodeClass<T,U> *HashListClass<T, U, NumHashValues>::Find(unsigned key)
 		assert(cur);
 		assert(cur->Is_Valid());
 	}
-	return(NULL);
+	return(nullptr);
 
 }
 
@@ -534,7 +534,7 @@ void HashListClass<T, U, NumHashValues>::Remove(HashNodeClass<T,U> *node)
 		if (Is_Last(node)) {
 			// SKB: 2/20/01 - clear incase inserted in new list later.
 			Clear_Last(node);
-			HashTable[hashidx] = NULL;
+			HashTable[hashidx] = nullptr;
 			UsedValues--;
 		} else {
 			HashTable[hashidx] = node->Next_Valid();

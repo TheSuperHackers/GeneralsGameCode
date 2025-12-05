@@ -114,7 +114,7 @@ CBackgroundObjectDialog::OnInitDialog (void)
 
         // Free the enumerator object we created earlier
         delete pObjEnum;
-        pObjEnum = NULL;
+        pObjEnum = nullptr;
     }
 
     // Get a pointer to the doc
@@ -174,7 +174,7 @@ CBackgroundObjectDialog::OnOK (void)
         else
         {
             // Ask the doc to clear the background object
-            pCDoc->SetBackgroundObject (NULL);
+            pCDoc->SetBackgroundObject (nullptr);
         }
 
 	    // Allow the base class to process this message

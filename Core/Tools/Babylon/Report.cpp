@@ -170,7 +170,7 @@ void CReport::OnOK()
 	}
 
 // get the filename
-	CFileDialog fd ( FALSE , NULL, "*.txt",  OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR );
+	CFileDialog fd ( FALSE , nullptr, "*.txt",  OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR );
 
 	if ( fd.DoModal () != IDOK )
 	{

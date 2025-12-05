@@ -56,8 +56,8 @@ static const char *Program_Usage = "A config filename can be given on the comman
 void logMonitor(void *);
 void paranoidLogMonitor(void *);
 
-OutputDevice * output_device = NULL;
-OutputDevice * paranoid_output_device = NULL;
+OutputDevice * output_device = nullptr;
+OutputDevice * paranoid_output_device = nullptr;
 
 
 void Signal_Quit(int)
@@ -111,8 +111,8 @@ int VerifyFileDescriptors(int requested)
 
 
 
-GeneralsMatcher *s_generalsMatcher = NULL;
-GeneralsClientMatcher *s_generalsClientMatcher = NULL;
+GeneralsMatcher *s_generalsMatcher = nullptr;
+GeneralsClientMatcher *s_generalsClientMatcher = nullptr;
 
 int main(int argc, char ** argv)
 {
@@ -124,7 +124,7 @@ int main(int argc, char ** argv)
 
 	// Read the config file
 	FILE *fp;
-	if ((fp = fopen(config_fname.get(), "r")) == NULL)
+	if ((fp = fopen(config_fname.get(), "r")) == nullptr)
 	{
 		cerr << "\nCan't open the config file '" << config_fname.get() << "'\n\n";
 		cerr << Program_Usage << endl;
@@ -241,10 +241,10 @@ int main(int argc, char ** argv)
 	}
 
 	delete s_generalsMatcher;
-	s_generalsMatcher = NULL;
+	s_generalsMatcher = nullptr;
 
 	delete s_generalsClientMatcher;
-	s_generalsClientMatcher = NULL;
+	s_generalsClientMatcher = nullptr;
 
 	return 0;
 }
@@ -269,7 +269,7 @@ void logMonitor(void *)
 		return ;
 	while (1)
 	{
-		curtime = time(NULL);
+		curtime = time(nullptr);
 		// get the number of seconds that have passed since midnight
 		// of the current day.
 		curtime -= TimezoneOffset();
@@ -345,7 +345,7 @@ void paranoidLogMonitor(void *)
 		return ;
 	while (1)
 	{
-		curtime = time(NULL);
+		curtime = time(nullptr);
 		// get the number of seconds that have passed since midnight
 		// of the current day.
 		curtime -= TimezoneOffset();

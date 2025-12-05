@@ -71,7 +71,7 @@ RefCountListClass			RefCountClass::ActiveRefList;
 RefCountClass *	RefCountClass::Add_Active_Ref(RefCountClass *obj)
 {
 	ActiveRefList.Add_Head(&(obj->ActiveRefNode));
-	obj->ActiveRefInfo.File = NULL;	// default to no debug information added.
+	obj->ActiveRefInfo.File = nullptr;	// default to no debug information added.
 	obj->ActiveRefInfo.Line = 0;
 	return obj;
 }

@@ -148,7 +148,7 @@ protected:
  *   23/8/00    GTH : Created.                                                                 *
  *=============================================================================================*/
 CollectionClass::CollectionClass(void) :
-	SnapPoints(NULL)
+	SnapPoints(nullptr)
 {
 	Update_Obj_Space_Bounding_Volumes();
 }
@@ -168,7 +168,7 @@ CollectionClass::CollectionClass(void) :
  *=============================================================================================*/
 CollectionClass::CollectionClass(const CollectionDefClass & def) :
 	SubObjects(def.ObjectNames.Count()),
-	SnapPoints(NULL)
+	SnapPoints(nullptr)
 {
 	// Set our name
 	Set_Name (def.Get_Name ());
@@ -211,7 +211,7 @@ CollectionClass::CollectionClass(const CollectionDefClass & def) :
 CollectionClass::CollectionClass(const CollectionClass & src) :
 	CompositeRenderObjClass(src),
 	SubObjects(src.SubObjects.Count()),
-	SnapPoints(NULL)
+	SnapPoints(nullptr)
 {
 	*this = src;
 }
@@ -306,9 +306,9 @@ RenderObjClass * CollectionClass::Clone(void) const
 void CollectionClass::Free(void)
 {
 	for (int i=0; i<SubObjects.Count(); i++) {
-		SubObjects[i]->Set_Container(NULL);
+		SubObjects[i]->Set_Container(nullptr);
 		SubObjects[i]->Release_Ref();
-		SubObjects[i] = NULL;
+		SubObjects[i] = nullptr;
 	}
 	SubObjects.Delete_All();
 	ProxyList.Delete_All ();
@@ -531,7 +531,7 @@ int CollectionClass::Add_Sub_Object(RenderObjClass * subobj)
  *=============================================================================================*/
 int CollectionClass::Remove_Sub_Object(RenderObjClass * robj)
 {
-	if (robj == NULL) return 0;
+	if (robj == nullptr) return 0;
 
 	int res = 0;
 
@@ -543,7 +543,7 @@ int CollectionClass::Remove_Sub_Object(RenderObjClass * robj)
 			if (Is_In_Scene()) {
 				SubObjects[i]->Notify_Removed(Scene);
 			}
-			SubObjects[i]->Set_Container(NULL);
+			SubObjects[i]->Set_Container(nullptr);
 			SubObjects[i]->Set_Transform(tm);
 			SubObjects[i]->Release_Ref();
 			res = SubObjects.Delete(i);
@@ -744,7 +744,7 @@ int CollectionClass::Snap_Point_Count(void)
  *=============================================================================================*/
 void CollectionClass::Get_Snap_Point(int index,Vector3 * set)
 {
-	WWASSERT(set != NULL);
+	WWASSERT(set != nullptr);
 	if (SnapPoints) {
 		*set = (*SnapPoints)[index];
 	} else {
@@ -929,7 +929,7 @@ int CollectionClass::Get_Proxy_Count (void) const
  *=============================================================================================*/
 CollectionDefClass::CollectionDefClass(void)
 {
-	SnapPoints = NULL;
+	SnapPoints = nullptr;
 }
 
 
@@ -1088,15 +1088,15 @@ PrototypeClass * CollectionLoaderClass::Load_W3D(ChunkLoadClass & cload)
 {
 	CollectionDefClass * def = W3DNEW CollectionDefClass;
 
-	if (def == NULL) {
-		return NULL;
+	if (def == nullptr) {
+		return nullptr;
 	}
 
 	if (def->Load(cload) != WW3D_ERROR_OK) {
 
 		// load failed, delete the model and return an error
 		delete def;
-		return NULL;
+		return nullptr;
 
 	} else {
 

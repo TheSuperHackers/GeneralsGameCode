@@ -35,7 +35,7 @@ public:
 	Real m_len; ///< Length of texture coord on this node.
 	CProcessNode *m_next;
 public:
-	CProcessNode(Int x, Int y):m_x(x),m_y(y),m_next(NULL),m_len(0) {};
+	CProcessNode(Int x, Int y):m_x(x),m_y(y),m_next(nullptr),m_len(0) {};
 	~CProcessNode(void) { };
 };
 
@@ -90,7 +90,7 @@ protected:
 								UnsignedByte *pProcessed, TCliffInfo &cliffInfo);
 	Bool adjustForTiling(TCliffInfo &cliffInfo, Real textureWidth);
 	void updateFlatCellForAdjacentCliffs(Int xIndex, Int yIndex,
-								Int curTileClass, UnsignedByte *pProcessed=NULL);
+								Int curTileClass, UnsignedByte *pProcessed=nullptr);
 
 public: // construction
 	WorldHeightMapEdit(Int xExtent, Int yExtent, UnsignedByte initialHeight, Int border); ///< create.

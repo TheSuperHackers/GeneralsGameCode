@@ -56,7 +56,7 @@ static constexpr const Real InitialThingPosY = 0.0f;
 Thing::Thing( const ThingTemplate *thingTemplate )
 {
 	// sanity
-	if( thingTemplate == NULL )
+	if( thingTemplate == nullptr )
 	{
 
 		// cannot create thing without template
@@ -374,7 +374,7 @@ void Thing::transformPoint( const Coord3D *in, Coord3D *out )
 {
 
 	// santiy
-	if( in == NULL || out == NULL )
+	if( in == nullptr || out == nullptr )
 		return;
 
 	// for conversion

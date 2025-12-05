@@ -33,7 +33,7 @@ class ObjectOptions : public COptionsPanel
 {
 // Construction
 public:
-	ObjectOptions(CWnd* pParent = NULL);   ///< standard constructor
+	ObjectOptions(CWnd* pParent = nullptr);   ///< standard constructor
 
 	~ObjectOptions(void);   ///< standard destructor
 	enum { NAME_MAX_LEN = 64 };

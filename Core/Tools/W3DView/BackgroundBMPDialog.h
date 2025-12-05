@@ -28,7 +28,7 @@ class CBackgroundBMPDialog : public CDialog
 {
 // Construction
 public:
-	CBackgroundBMPDialog(CWnd* pParent = NULL);   // standard constructor
+	CBackgroundBMPDialog(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CBackgroundBMPDialog)

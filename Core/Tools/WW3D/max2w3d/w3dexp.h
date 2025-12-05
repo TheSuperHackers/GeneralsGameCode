@@ -108,7 +108,7 @@ private:
 	bool Export_Hierarchy(char * name,ChunkSaveClass & csave,Progress_Meter_Class & meter,INode *root);
 	bool Export_Animation(char * name,ChunkSaveClass & csave,Progress_Meter_Class & meter,INode *root);
 	bool Export_Damage_Animations(char * name,ChunkSaveClass & csave,Progress_Meter_Class &meter,INode *damage_root);
-	bool Export_Geometry(char * name,ChunkSaveClass & csave,Progress_Meter_Class & meter,INode *root=NULL, MeshConnectionsClass **out_connection=NULL);
+	bool Export_Geometry(char * name,ChunkSaveClass & csave,Progress_Meter_Class & meter,INode *root=nullptr, MeshConnectionsClass **out_connection=nullptr);
 	bool Export_HLod (char *name, const char *htree_name, ChunkSaveClass &csave, Progress_Meter_Class &meter, MeshConnectionsClass **connections, int lod_count);
 	bool Export_Collection(const char * name,ChunkSaveClass & csave,DynamicVectorClass<GeometryExportTaskClass *> & objlist,INodeListClass & placeholder_list,INodeListClass & transform_node_list);
 

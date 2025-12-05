@@ -69,7 +69,7 @@ void INI::parseMultiplayerColorDefinition( INI* ini )
 	// find existing item if present, but this type does not allow overrides,
 	//so if it exists just overwrite it.
 	multiplayerColorDefinition = TheMultiplayerSettings->findMultiplayerColorDefinitionByName( name );
-	if( multiplayerColorDefinition == NULL )
+	if( multiplayerColorDefinition == nullptr )
 		multiplayerColorDefinition = TheMultiplayerSettings->newMultiplayerColorDefinition( name );
 
 	ini->initFromINI( multiplayerColorDefinition, multiplayerColorDefinition->getFieldParse() );

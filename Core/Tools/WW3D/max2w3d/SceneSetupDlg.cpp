@@ -60,7 +60,7 @@ SceneSetupDlg::SceneSetupDlg(Interface *max_interface)
 	m_LodProc = 3;
 	m_hWnd = NULL;
 	m_MaxInterface = max_interface;
-	assert(max_interface != NULL);
+	assert(max_interface != nullptr);
 }
 
 
@@ -72,7 +72,7 @@ void SceneSetupDlg::SetEditInt (int control_id, int value)
 	char buf[64];
 	sprintf(buf, "%d", value);
 	HWND edit = GetDlgItem(m_hWnd, control_id);
-	assert(edit != NULL);
+	assert(edit != nullptr);
 	SetWindowText(edit, buf);
 }
 
@@ -81,7 +81,7 @@ void SceneSetupDlg::SetEditFloat (int control_id, float value)
 	char buf[64];
 	sprintf(buf, "%.0f", value);
 	HWND edit = GetDlgItem(m_hWnd, control_id);
-	assert(edit != NULL);
+	assert(edit != nullptr);
 	SetWindowText(edit, buf);
 }
 
@@ -89,7 +89,7 @@ int SceneSetupDlg::GetEditInt (int control_id)
 {
 	char buf[64];
 	HWND edit = GetDlgItem(m_hWnd, control_id);
-	assert(edit != NULL);
+	assert(edit != nullptr);
 	GetWindowText(edit, buf, sizeof(buf));
 	int value = 0;
 	sscanf(buf, "%d", &value);
@@ -100,7 +100,7 @@ float SceneSetupDlg::GetEditFloat (int control_id)
 {
 	char buf[64];
 	HWND edit = GetDlgItem(m_hWnd, control_id);
-	assert(edit != NULL);
+	assert(edit != nullptr);
 	GetWindowText(edit, buf, sizeof(buf));
 	float value = 0;
 	sscanf(buf, "%f", &value);
@@ -111,7 +111,7 @@ bool SceneSetupDlg::ValidateEditFloat (int control_id)
 {
 	char buf[64];
 	HWND edit = GetDlgItem(m_hWnd, control_id);
-	assert(edit != NULL);
+	assert(edit != nullptr);
 	GetWindowText(edit, buf, sizeof(buf));
 	float value = 0;
 	if (sscanf(buf, "%f", &value) == 1)
@@ -139,7 +139,7 @@ int SceneSetupDlg::DoModal (void)
 
 BOOL CALLBACK _thunk_dialog_proc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	static SceneSetupDlg *dialog = NULL;
+	static SceneSetupDlg *dialog = nullptr;
 
 	if (uMsg == WM_INITDIALOG)
 	{

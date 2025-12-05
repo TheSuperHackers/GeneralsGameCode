@@ -66,7 +66,7 @@ void __cdecl DebugPrint(const char* string, ...)
 	static char _buffer[1024];
 	static char _filename[512] = "";
 
-	if (string != NULL)
+	if (string != nullptr)
 		{
 		// Format string
 		va_list	va;
@@ -84,7 +84,7 @@ void __cdecl DebugPrint(const char* string, ...)
 			char dir[_MAX_DIR];
 
 			GetModuleFileName(GetModuleHandle(NULL), &path[0], sizeof(path));
-			_splitpath(path, drive, dir, NULL, NULL);
+			_splitpath(path, drive, dir, nullptr, NULL);
 			_makepath(_filename, drive, dir, debugLogName, "txt");
 
 			OutputDebugString("Creating ");
@@ -92,12 +92,12 @@ void __cdecl DebugPrint(const char* string, ...)
 			OutputDebugString("\n");
 
 			file = CreateFile(_filename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
-				FILE_ATTRIBUTE_NORMAL, NULL);
+				FILE_ATTRIBUTE_NORMAL, nullptr);
 			}
 		else
 			{
 			file = CreateFile(_filename, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS,
-				FILE_ATTRIBUTE_NORMAL, NULL);
+				FILE_ATTRIBUTE_NORMAL, nullptr);
 			}
 
 		// Send string to debugger
@@ -131,10 +131,10 @@ void __cdecl DebugPrint(const char* string, ...)
 
 		if (file != INVALID_HANDLE_VALUE)
 			{
-			SetFilePointer(file, 0, NULL, FILE_END);
+			SetFilePointer(file, 0, nullptr, FILE_END);
 
 			DWORD written;
-			WriteFile(file, &_buffer[0], strlen(_buffer), &written, NULL);
+			WriteFile(file, &_buffer[0], strlen(_buffer), &written, nullptr);
 
 			CloseHandle(file);
 			}
@@ -162,7 +162,7 @@ void __cdecl PrintWin32Error(const char* string, ...)
 	{
 	static char _buffer[1024];
 
-	if (string != NULL)
+	if (string != nullptr)
 		{
 		// Format string
 		va_list	va;
@@ -172,8 +172,8 @@ void __cdecl PrintWin32Error(const char* string, ...)
 
 		LPVOID lpMsgBuf;
 		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-			FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(),
-			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&lpMsgBuf, 0, NULL);
+			FORMAT_MESSAGE_IGNORE_INSERTS, nullptr, GetLastError(),
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&lpMsgBuf, 0, nullptr);
 
 		DebugPrint("***** Win32 Error: %s\n", _buffer);
 		DebugPrint("      Reason: %s\n", (char*)lpMsgBuf);

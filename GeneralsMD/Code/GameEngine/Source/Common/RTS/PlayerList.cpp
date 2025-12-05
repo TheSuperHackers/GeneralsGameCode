@@ -62,11 +62,11 @@
 
 
 //-----------------------------------------------------------------------------
-/*extern*/ PlayerList *ThePlayerList = NULL;
+/*extern*/ PlayerList *ThePlayerList = nullptr;
 
 //-----------------------------------------------------------------------------
 PlayerList::PlayerList() :
-	m_local(NULL),
+	m_local(nullptr),
 	m_playerCount(0)
 {
 	// we only allocate a few of these, so don't bother pooling 'em
@@ -92,7 +92,7 @@ Player *PlayerList::getNthPlayer(Int i)
 	if( i < 0 || i >= MAX_PLAYER_COUNT )
 	{
 //		DEBUG_CRASH( ("Illegal player index") );
-		return NULL;
+		return nullptr;
 	}
 	return m_players[i];
 }
@@ -107,7 +107,7 @@ Player *PlayerList::findPlayerWithNameKey(NameKeyType key)
 			return m_players[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -126,7 +126,7 @@ void PlayerList::newGame()
 {
 	Int i;
 
-	DEBUG_ASSERTCRASH(this != NULL, ("null this"));
+	DEBUG_ASSERTCRASH(this != nullptr, ("null this"));
 
 	reset();
 
@@ -232,10 +232,10 @@ void PlayerList::newGame()
 void PlayerList::init()
 {
 	m_playerCount = 1;
-	m_players[0]->init(NULL);
+	m_players[0]->init(nullptr);
 
 	for (int i = 1; i < MAX_PLAYER_COUNT; i++)
-		m_players[i]->init(NULL);
+		m_players[i]->init(nullptr);
 
 	// call setLocalPlayer so that becomingLocalPlayer() gets called appropriately
 	setLocalPlayer(m_players[0]);
@@ -304,7 +304,7 @@ Team *PlayerList::validateTeam( AsciiString owner )
 void PlayerList::setLocalPlayer(Player *player)
 {
 	// can't set local player to null -- if you try, you get neutral.
-	if (player == NULL)
+	if (player == nullptr)
 	{
 		DEBUG_CRASH(("local player may not be null"));
 		player = getNeutralPlayer();
@@ -344,7 +344,7 @@ void PlayerList::setLocalPlayer(Player *player)
 //-----------------------------------------------------------------------------
 Player *PlayerList::getPlayerFromMask( PlayerMaskType mask )
 {
-	Player *player = NULL;
+	Player *player = nullptr;
 	Int i;
 
 	for( i = 0; i < MAX_PLAYER_COUNT; i++ )
@@ -357,14 +357,14 @@ Player *PlayerList::getPlayerFromMask( PlayerMaskType mask )
 	}
 
 	DEBUG_CRASH( ("Player does not exist for mask") );
-	return NULL; // mask not found
+	return nullptr; // mask not found
 
 }
 
 //-----------------------------------------------------------------------------
 Player *PlayerList::getEachPlayerFromMask( PlayerMaskType& maskToAdjust )
 {
-	Player *player = NULL;
+	Player *player = nullptr;
 	Int i;
 
 	for( i = 0; i < MAX_PLAYER_COUNT; i++ )
@@ -380,7 +380,7 @@ Player *PlayerList::getEachPlayerFromMask( PlayerMaskType& maskToAdjust )
 
 	DEBUG_CRASH( ("No players found that contain any matching masks.") );
 	maskToAdjust = 0;
-	return NULL; // mask not found
+	return nullptr; // mask not found
 }
 
 

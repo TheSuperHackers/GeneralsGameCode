@@ -37,7 +37,7 @@ class EnumeratedIP : public MemoryPoolObject
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(EnumeratedIP, "EnumeratedIP")
 public:
-	EnumeratedIP() { m_IPstring = ""; m_next = NULL; m_IP = 0; }
+	EnumeratedIP() { m_IPstring = ""; m_next = nullptr; m_IP = 0; }
 
 	// Access functions
 	AsciiString getIPstring( void ) { return m_IPstring; }

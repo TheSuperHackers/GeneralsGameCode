@@ -135,7 +135,7 @@ void GPErrorCallback(GPConnection * pconnection, GPErrorArg * arg, void * param)
 		GameSpyCloseOverlay(GSOVERLAY_BUDDY);
 		if (TheGameSpyChat->isConnected())
 		{
-			GSMessageBoxYesNo(TheGameText->fetch("GUI:GPErrorTitle"), TheGameText->fetch("GUI:GPDisconnected"), buddyTryReconnect, NULL);
+			GSMessageBoxYesNo(TheGameText->fetch("GUI:GPErrorTitle"), TheGameText->fetch("GUI:GPDisconnected"), buddyTryReconnect, nullptr);
 		}
 	}
 	else

@@ -90,7 +90,7 @@ class StreamingArchiveFile : public RAMFile
 		virtual Int		seek( Int new_pos, seekMode mode = CURRENT );				///< Set file position: See File::seek
 
 		// Ini's should not be parsed with streaming files, that's just dumb.
-		virtual void	nextLine(Char *buf = NULL, Int bufSize = 0) { DEBUG_CRASH(("Should not call nextLine on a streaming file.")); }
+		virtual void	nextLine(Char *buf = nullptr, Int bufSize = 0) { DEBUG_CRASH(("Should not call nextLine on a streaming file.")); }
 		virtual Bool	scanInt(Int &newInt) { DEBUG_CRASH(("Should not call scanInt on a streaming file."));  return FALSE; }
 		virtual Bool	scanReal(Real &newReal) { DEBUG_CRASH(("Should not call scanReal on a streaming file.")); return FALSE; }
 		virtual Bool	scanString(AsciiString &newString) { DEBUG_CRASH(("Should not call scanString on a streaming file.")); return FALSE; }

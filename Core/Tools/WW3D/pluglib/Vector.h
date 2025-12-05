@@ -417,7 +417,7 @@ bool VectorClass<T>::Resize(int newsize, T const * array)
 		**	If there is an old vector, then it must be copied (as much as is feasible)
 		**	to the new vector.
 		*/
-		if (Vector != NULL) {
+		if (Vector != nullptr) {
 
 			/*
 			**	Copy as much of the old vector into the new vector as possible. This
@@ -827,7 +827,7 @@ T * DynamicVectorClass<T>::Uninitialized_Add(void)
 				**	Failure to increase the size of the vector is an error condition.
 				**	Return with the error value.
 				*/
-				return(NULL);
+				return(nullptr);
 			}
 		} else {
 
@@ -835,7 +835,7 @@ T * DynamicVectorClass<T>::Uninitialized_Add(void)
 			**	Increasing the size of this vector is not allowed! Bail this
 			**	routine with the error value.
 			*/
-			return(NULL);
+			return(nullptr);
 		}
 	}
 
@@ -972,7 +972,7 @@ int Pointer_Vector_Add(T * ptr, VectorClass<T *> & vec)
 	int id = 0;
 	bool foundspot = false;
 	for (int index = 0; index < vec.Length(); index++) {
-		if (vec[index] == NULL) {
+		if (vec[index] == nullptr) {
 			id = index;
 			foundspot = true;
 			break;
@@ -982,7 +982,7 @@ int Pointer_Vector_Add(T * ptr, VectorClass<T *> & vec)
 		id = vec.Length();
 		vec.Resize((vec.Length()+1) * 2);
 		for (int index = id; index < vec.Length(); index++) {
-			vec[index] = NULL;
+			vec[index] = nullptr;
 		}
 	}
 	vec[id] = ptr;
@@ -995,7 +995,7 @@ bool Pointer_Vector_Remove(T const * ptr, VectorClass<T *> & vec)
 {
 	int id = vec.ID((T *)ptr);
 	if (id != -1) {
-		vec[id] = NULL;
+		vec[id] = nullptr;
 		return(true);
 	}
 	return(false);

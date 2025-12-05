@@ -130,7 +130,7 @@ class DebugIOFlat: public DebugIOInterface
 
       \param path optional path to a destination directory
     */
-    void Delete(const char *path=NULL);
+    void Delete(const char *path=nullptr);
 
     /**
       \brief Determines name of output stream.

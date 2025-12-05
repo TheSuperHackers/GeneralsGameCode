@@ -268,7 +268,7 @@ void CWorldBuilderView::OnPaint()
 	WorldHeightMapEdit *pMap = getTrackingHeightMap();
 
 	// If no map yet, there is nothing to draw.
-	if (pMap==NULL) return;
+	if (pMap==nullptr) return;
 
 	Int minJ = 0;
 	Int minI = 0;
@@ -358,11 +358,11 @@ void CWorldBuilderView::OnPaint()
 				::Sleep(5);
 #endif
 			Int width = m_cellSize;
-			UnsignedByte *pData = NULL;
+			UnsignedByte *pData = nullptr;
 			if (m_showTexture) {
 			}
 			// Draw the texture if we have one, else the height color.
-			if ((pData!=NULL)) {
+			if ((pData!=nullptr)) {
 				drawMyTexture(&dc, &rect, width, pData);
 			} else {
 				dc.FillSolidRect(&rect, getColorForHeight(ht));
@@ -416,7 +416,7 @@ void CWorldBuilderView::OnPaint()
 //=============================================================================
 void CWorldBuilderView::invalObjectInView(MapObject *pMapObj)
 {
-	if (pMapObj == NULL) {
+	if (pMapObj == nullptr) {
 		Invalidate(false);
 		return;
 	}
@@ -938,7 +938,7 @@ void CWorldBuilderView::scrollInView(Real xScroll, Real yScroll, Bool end)
 		CPoint pt((client.left+client.right)/2+mXScrollOffset, (client.bottom+client.top)/2+mYScrollOffset);
 		CWorldBuilderDoc* pDoc = WbDoc();
 		WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
-		if (pMap==NULL) return;
+		if (pMap==nullptr) return;
 		m_centerPt.X = (Real)(pt.x)/m_cellSize;
 		m_centerPt.Y = pMap->getYExtent() - (Real)(pt.y)/m_cellSize;
 		constrainCenterPt();

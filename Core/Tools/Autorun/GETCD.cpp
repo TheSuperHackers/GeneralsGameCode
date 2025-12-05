@@ -270,8 +270,8 @@ const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *v
 	unsigned		filename_length;
 	static char		volume_label[ MAX_PATH ] = "";	// [OYO] add static
 
-	if ( path == NULL || volume_name == NULL ) {
-		return( NULL );
+	if ( path == NULL || volume_name == nullptr ) {
+		return( nullptr );
 	}
 
 	memset( volume_name, '\0', sizeof( volume_name ));
@@ -381,7 +381,7 @@ bool CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_
 				volume_name[11] = '\0';
 			}
 
-			if ( volume_label != NULL ) {
+			if ( volume_label != nullptr ) {
 				strncpy( volume_label, volume_name, 128 );
 			}
 

@@ -28,7 +28,7 @@ class PropEdit : public CDialog
 {
 // Construction
 public:
-	PropEdit(AsciiString* key, Dict::DataType* type, AsciiString* value, Bool valueOnly, CWnd *parent = NULL);
+	PropEdit(AsciiString* key, Dict::DataType* type, AsciiString* value, Bool valueOnly, CWnd *parent = nullptr);
 
 // Dialog Data
 	//{{AFX_DATA(PropEdit)

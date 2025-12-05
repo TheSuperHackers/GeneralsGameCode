@@ -31,7 +31,7 @@ class CMatchDlg : public CDialog
 {
 // Construction
 public:
-	CMatchDlg(CWnd* pParent = NULL);   // standard constructor
+	CMatchDlg(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CMatchDlg)

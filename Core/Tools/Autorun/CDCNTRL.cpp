@@ -911,7 +911,7 @@ bool CDControlClass::Auto_Eject_Volume_95 (HANDLE vwin32, char drive)
 HANDLE WINAPI CDControlClass::Open_VWin32 (void)
 {
 	assert (WinVersion.Is_Win9x());
-	HANDLE result = CreateFile ( TEXT("\\\\.\\vwin32"), 0, 0, NULL, 0, FILE_FLAG_DELETE_ON_CLOSE, NULL);
+	HANDLE result = CreateFile ( TEXT("\\\\.\\vwin32"), 0, 0, nullptr, 0, FILE_FLAG_DELETE_ON_CLOSE, nullptr);
 	assert (result != INVALID_HANDLE_VALUE);
 	return (result);
 }

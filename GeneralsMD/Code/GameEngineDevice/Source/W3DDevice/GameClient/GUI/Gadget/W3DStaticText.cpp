@@ -83,7 +83,7 @@ static void drawStaticTextText( GameWindow *window, WinInstanceData *instData,
 	ICoord2D origin, size, textPos;
 	IRegion2D clipRegion;
 	// sanity
-	if( text == NULL || text->getTextLength() == 0 )
+	if( text == nullptr || text->getTextLength() == 0 )
 		return;
 
 	// get window position and size

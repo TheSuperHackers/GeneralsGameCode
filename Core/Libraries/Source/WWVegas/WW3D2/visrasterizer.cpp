@@ -145,7 +145,7 @@ static VisPolyClass _VisPoly1;
 
 VisRasterizerClass::VisRasterizerClass(void) :
 	ModelTransform(1),
-	Camera(NULL),
+	Camera(nullptr),
 	MVTransform(1)
 {
 }
@@ -179,7 +179,7 @@ void	VisRasterizerClass::Set_Camera(CameraClass * camera)
 
 CameraClass * VisRasterizerClass::Get_Camera(void)
 {
-	if (Camera != NULL) {
+	if (Camera != nullptr) {
 		Camera->Add_Ref();
 	}
 	return Camera;
@@ -228,8 +228,8 @@ bool VisRasterizerClass::Render_Triangles
 	AABoxClass & bounds
 )
 {
-	WWASSERT(verts != NULL);
-	WWASSERT(tris != NULL);
+	WWASSERT(verts != nullptr);
+	WWASSERT(tris != nullptr);
 	WWASSERT(vcount > 0);
 	WWASSERT(tcount > 0);
 
@@ -375,8 +375,8 @@ IDBufferClass::IDBufferClass(void) :
 	PixelCounter(0),
 	ResWidth(0),
 	ResHeight(0),
-	IDBuffer(NULL),
-	ZBuffer(NULL)
+	IDBuffer(nullptr),
+	ZBuffer(nullptr)
 {
 }
 
@@ -399,17 +399,17 @@ void IDBufferClass::Set_Resolution(int w,int h)
 
 void IDBufferClass::Get_Resolution(int * get_w,int * get_h)
 {
-	if (get_w != NULL) { *get_w = ResWidth; }
-	if (get_h != NULL) { *get_h = ResHeight; }
+	if (get_w != nullptr) { *get_w = ResWidth; }
+	if (get_h != nullptr) { *get_h = ResHeight; }
 }
 
 void IDBufferClass::Reset(void)
 {
 	delete[] IDBuffer;
-	IDBuffer = NULL;
+	IDBuffer = nullptr;
 
 	delete[] ZBuffer;
-	ZBuffer = NULL;
+	ZBuffer = nullptr;
 
 	PixelCounter = 0;
 }
@@ -431,8 +431,8 @@ void IDBufferClass::Clear(void)
 	if ((ResWidth > 0) && (ResHeight > 0)) {
 		int byte_count = ResWidth * ResWidth * sizeof(uint32);
 
-		WWASSERT(IDBuffer != NULL);
-		WWASSERT(ZBuffer != NULL);
+		WWASSERT(IDBuffer != nullptr);
+		WWASSERT(ZBuffer != nullptr);
 		memset(IDBuffer,0,byte_count);
 		memset(ZBuffer,0,byte_count);
 	}
@@ -511,7 +511,7 @@ struct EdgeStruct
 
 bool IDBufferClass::Render_Triangle(const Vector3 & p0,const Vector3 & p1,const Vector3 & p2)
 {
-	if ((ZBuffer == NULL) || (IDBuffer == NULL)) {
+	if ((ZBuffer == nullptr) || (IDBuffer == nullptr)) {
 		return false;
 	}
 
@@ -593,8 +593,8 @@ bool IDBufferClass::Render_Triangle(const Vector3 & p0,const Vector3 & p1,const 
 	EdgeStruct top_to_middle_edge(grads,points,top,middle);
 	EdgeStruct middle_to_bottom_edge(grads,points,middle,bottom);
 
-	EdgeStruct * left_edge = NULL;
-	EdgeStruct * right_edge = NULL;
+	EdgeStruct * left_edge = nullptr;
+	EdgeStruct * right_edge = nullptr;
 
 	bool middle_is_left = false;
 	if (bottom_for_compare > middle_for_compare) {

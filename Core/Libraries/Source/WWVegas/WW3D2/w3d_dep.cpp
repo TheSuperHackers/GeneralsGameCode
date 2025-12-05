@@ -109,7 +109,7 @@ bool Get_W3D_Dependencies (const char *w3d_filename, StringList &files)
 		file->Open();
 		if ( ! file->Is_Open()) {
 			_TheFileFactory->Return_File(file);
-			file=NULL;
+			file=nullptr;
 			return false;
 		}
 	} else {
@@ -131,7 +131,7 @@ bool Get_W3D_Dependencies (const char *w3d_filename, StringList &files)
 	// Close the file.
 	file->Close();
 	_TheFileFactory->Return_File(file);
-	file=NULL;
+	file=nullptr;
 
 	// Sort the set of filenames, and remove any duplicates.
 	files.sort();

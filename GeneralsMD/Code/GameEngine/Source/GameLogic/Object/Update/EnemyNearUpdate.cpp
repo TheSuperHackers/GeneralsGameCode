@@ -71,7 +71,7 @@ void EnemyNearUpdate::checkForEnemies( void )
 
 		Real visionRange = getObject()->getVisionRange();
 		Object* enemy = TheAI->findClosestEnemy( getObject(), visionRange, AI::CAN_SEE );
-		m_enemyNear = (enemy != NULL);
+		m_enemyNear = (enemy != nullptr);
 	}
 	else
 	{

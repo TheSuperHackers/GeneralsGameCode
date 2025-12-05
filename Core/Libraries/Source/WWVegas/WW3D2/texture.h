@@ -285,7 +285,7 @@ public:
 	TextureClass
 	(
 		const char *name,
-		const char *full_path=NULL,
+		const char *full_path=nullptr,
 		MipCountType mip_level_count=MIP_LEVELS_ALL,
 		WW3DFormat texture_format=WW3D_FORMAT_UNKNOWN,
 		bool allow_compression=true,
@@ -397,7 +397,7 @@ public:
 	CubeTextureClass
 	(
 		const char *name,
-		const char *full_path=NULL,
+		const char *full_path=nullptr,
 		MipCountType mip_level_count=MIP_LEVELS_ALL,
 		WW3DFormat texture_format=WW3D_FORMAT_UNKNOWN,
 		bool allow_compression=true,
@@ -443,7 +443,7 @@ public:
 	VolumeTextureClass
 	(
 		const char *name,
-		const char *full_path=NULL,
+		const char *full_path=nullptr,
 		MipCountType mip_level_count=MIP_LEVELS_ALL,
 		WW3DFormat texture_format=WW3D_FORMAT_UNKNOWN,
 		bool allow_compression=true,

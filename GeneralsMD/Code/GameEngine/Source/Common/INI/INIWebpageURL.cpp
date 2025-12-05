@@ -84,11 +84,11 @@ void INI::parseWebpageURLDefinition( INI* ini )
 	const char* c = ini->getNextToken();
 	tag.set( c );
 
-	if (TheWebBrowser != NULL)
+	if (TheWebBrowser != nullptr)
 	{
 		url = TheWebBrowser->findURL(tag);
 
-		if (url == NULL)
+		if (url == nullptr)
 		{
 			url = TheWebBrowser->makeNewURL(tag);
 		}

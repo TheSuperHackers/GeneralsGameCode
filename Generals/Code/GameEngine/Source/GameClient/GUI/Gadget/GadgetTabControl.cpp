@@ -143,7 +143,7 @@ WindowMsgHandledType GadgetTabControlSystem( GameWindow *tabControl, UnsignedInt
 		{
 			// free tab control user data
 			delete (TabControlData *)tabControl->winGetUserData();
-			tabControl->winSetUserData( NULL );
+			tabControl->winSetUserData( nullptr );
 
 			break;
 
@@ -282,7 +282,7 @@ void GadgetTabControlShowSubPane( GameWindow *tabControl, Int whichPane)
 
 	for( Int paneIndex = 0; paneIndex < NUM_TAB_PANES; paneIndex++ )
 	{
-		if( tabData->subPanes[paneIndex] != NULL )
+		if( tabData->subPanes[paneIndex] != nullptr )
 			tabData->subPanes[paneIndex]->winHide( true );
 	}
 	if( tabData->subPanes[whichPane] )
@@ -303,13 +303,13 @@ void GadgetTabControlCreateSubPanes( GameWindow *tabControl )///< Create User Wi
 
 	for( Int paneIndex = 0; paneIndex < NUM_TAB_PANES; paneIndex++ )
 	{
-		if( tabData->subPanes[paneIndex] == NULL )//This one is blank
+		if( tabData->subPanes[paneIndex] == nullptr )//This one is blank
 		{
 			tabData->subPanes[paneIndex] = TheWindowManager->winCreate( tabControl,
 																																	WIN_STATUS_NONE, x, y,
 																																	width, height,
 																																	PassSelectedButtonsToParentSystem,
-																																	NULL);
+																																	nullptr);
 			WinInstanceData *instData = tabData->subPanes[paneIndex]->winGetInstanceData();
 			BitSet( instData->m_style, GWS_TAB_PANE  );
 			char buffer[20];
@@ -351,7 +351,7 @@ void GadgetTabControlFixupSubPaneList( GameWindow *tabControl )
 	GameWindow *child = tabControl->winGetChild();
 	if( child )
 	{//need to write down children, and they are reversed from our array
-		while( child->winGetNext() != NULL )
+		while( child->winGetNext() != nullptr )
 		{
 			child = child->winGetNext();
 		}

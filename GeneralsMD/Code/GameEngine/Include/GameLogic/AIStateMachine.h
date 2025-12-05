@@ -655,7 +655,7 @@ class AIFollowWaypointPathExactState : public AIInternalMoveToState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIFollowWaypointPathExactState, "AIFollowWaypointPathExactState")
 public:
 	AIFollowWaypointPathExactState( StateMachine *machine, Bool asGroup ) : m_moveAsGroup(asGroup),
-		m_lastWaypoint(NULL),
+		m_lastWaypoint(nullptr),
 		AIInternalMoveToState( machine, "AIFollowWaypointPathExactState" ) { }
 	virtual StateReturnType onEnter();
 	virtual void onExit( StateExitType status );
@@ -1023,7 +1023,7 @@ class AIAttackSquadState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackSquadState, "AIAttackSquadState")
 public:
-	AIAttackSquadState( StateMachine *machine, AttackExitConditionsInterface *attackParameters = NULL) :
+	AIAttackSquadState( StateMachine *machine, AttackExitConditionsInterface *attackParameters = nullptr) :
 			State( machine , "AIAttackSquadState") {	}
 	//~AIAttackSquadState();
 
@@ -1069,7 +1069,7 @@ class AIDockState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockState, "AIDockState")
 public:
-	AIDockState( StateMachine *machine ) : State( machine, "AIDockState" ), m_dockMachine(NULL), m_usingPrecisionMovement(FALSE) { }
+	AIDockState( StateMachine *machine ) : State( machine, "AIDockState" ), m_dockMachine(nullptr), m_usingPrecisionMovement(FALSE) { }
 	//~AIDockState();
 	virtual Bool isAttack() const { return m_dockMachine ? m_dockMachine->isInAttackState() : FALSE; }
 	virtual StateReturnType onEnter();
@@ -1160,7 +1160,7 @@ class AIGuardState : public State
 public:
 	AIGuardState( StateMachine *machine ) : State( machine, "AIGuardState" ), m_guardMachine(NULL)
 	{
-		m_guardMachine = NULL;
+		m_guardMachine = nullptr;
 	}
 	//~AIGuardState();
 	virtual Bool isAttack() const;
@@ -1189,7 +1189,7 @@ class AIGuardRetaliateState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardRetaliateState, "AIGuardRetaliateState")
 public:
-	AIGuardRetaliateState( StateMachine *machine ) : State( machine, "AIGuardRetaliateState" ), m_guardRetaliateMachine(NULL) {}
+	AIGuardRetaliateState( StateMachine *machine ) : State( machine, "AIGuardRetaliateState" ), m_guardRetaliateMachine(nullptr) {}
 	//~AIGuardRetaliateState();
 	virtual Bool isAttack() const;
 	virtual StateReturnType onEnter();
@@ -1218,7 +1218,7 @@ class AITunnelNetworkGuardState : public State
 public:
 	AITunnelNetworkGuardState( StateMachine *machine ) : State( machine, "AITunnelNetworkGuardState" ), m_guardMachine(NULL)
 	{
-		m_guardMachine = NULL;
+		m_guardMachine = nullptr;
 	}
 	//~AIGuardState();
 	virtual Bool isAttack() const;
@@ -1279,7 +1279,7 @@ class AIAttackAreaState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackAreaState, "AIAttackAreaState")
 public:
-	AIAttackAreaState( StateMachine *machine ) : State( machine, "AIAttackAreaState" ), m_attackMachine(NULL),
+	AIAttackAreaState( StateMachine *machine ) : State( machine, "AIAttackAreaState" ), m_attackMachine(nullptr),
 		m_nextEnemyScanTime(0) { }
 	//~AIAttackAreaState();
 	virtual Bool isAttack() const { return m_attackMachine ? m_attackMachine->isInAttackState() : FALSE; }

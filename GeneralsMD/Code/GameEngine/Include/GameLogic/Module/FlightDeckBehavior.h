@@ -49,7 +49,7 @@ struct RunwayDefinition
 {
 	RunwayDefinition()
 	{
-		m_catapultParticleSystem = NULL;
+		m_catapultParticleSystem = nullptr;
 	}
 
 	std::vector<AsciiString> m_spacesBoneNames;
@@ -145,7 +145,7 @@ public:
 	virtual void setHealee(Object* healee, Bool add);
 	virtual void killAllParkedUnits();
 	virtual void defectAllParkedUnits(Team* newTeam, UnsignedInt detectionTime);
-	virtual Bool calcBestParkingAssignment( ObjectID id, Coord3D *pos, Int *oldIndex = NULL, Int *newIndex = NULL );
+	virtual Bool calcBestParkingAssignment( ObjectID id, Coord3D *pos, Int *oldIndex = nullptr, Int *newIndex = nullptr );
 
 	// AIUpdateInterface
 	virtual void aiDoCommand(const AICommandParms* parms);

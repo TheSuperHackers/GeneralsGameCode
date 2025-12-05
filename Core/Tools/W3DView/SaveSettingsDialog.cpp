@@ -100,7 +100,7 @@ void
 CSaveSettingsDialog::OnBrowseButton (void)
 {
 	 TCHAR szFileName[MAX_PATH];
-	 ::GetModuleFileName (NULL, szFileName, sizeof (szFileName));
+	 ::GetModuleFileName (nullptr, szFileName, sizeof (szFileName));
 	 LPTSTR pszPath = ::strrchr (szFileName, '\\');
 	 if (pszPath)
 	 {

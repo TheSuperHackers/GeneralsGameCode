@@ -27,13 +27,13 @@ CSimplePlayer::CSimplePlayer( HRESULT* phr )
     m_cRef = 1;
     m_cBuffersOutstanding = 0;
 
-    m_pReader = NULL;
+    m_pReader = nullptr;
 
-    m_pHeader = NULL;
-    m_hwo = NULL;
+    m_pHeader = nullptr;
+    m_hwo = nullptr;
 
     m_fEof = FALSE;
-    m_pszUrl = NULL;
+    m_pszUrl = nullptr;
 
 	*phr = S_OK;
 
@@ -50,10 +50,10 @@ CSimplePlayer::CSimplePlayer( HRESULT* phr )
 
     m_hrOpen = S_OK;
 
-	m_hCompletionEvent = NULL;
+	m_hCompletionEvent = nullptr;
 
     InitializeCriticalSection( &m_CriSec );
-    m_whdrHead = NULL;
+    m_whdrHead = nullptr;
 }
 
 
@@ -70,19 +70,19 @@ CSimplePlayer::~CSimplePlayer()
     RemoveWaveHeaders();
     DeleteCriticalSection( &m_CriSec );
 
-    if( m_pHeader != NULL )
+    if( m_pHeader != nullptr )
     {
         m_pHeader->Release();
-        m_pHeader = NULL;
+        m_pHeader = nullptr;
     }
 
-    if( m_pReader != NULL )
+    if( m_pReader != nullptr )
     {
         m_pReader->Release();
-        m_pReader = NULL;
+        m_pReader = nullptr;
     }
 
-    if( m_hwo != NULL )
+    if( m_hwo != nullptr )
     {
         waveOutClose( m_hwo );
     }
@@ -283,7 +283,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
     //
     // Open the file
     //
-    hr = m_pReader->Open( m_pszUrl, this, NULL );
+    hr = m_pReader->Open( m_pszUrl, this, nullptr );
     if ( SUCCEEDED( hr ) )
     {
         WaitForSingleObject( m_hOpenEvent, INFINITE );
@@ -321,8 +321,8 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
         return( hr );
     }
 
-    WCHAR *pwszName = NULL;
-    BYTE *pValue = NULL;
+    WCHAR *pwszName = nullptr;
+    BYTE *pValue = nullptr;
 
     for ( i = 0; i < wAttrCnt ; i++ )
     {
@@ -331,7 +331,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
         WMT_ATTR_DATATYPE type;
         WORD cbLength = 0;
 
-        hr = m_pHeader->GetAttributeByIndex( i, &wStream, NULL, &cchNamelen, &type, NULL, &cbLength );
+        hr = m_pHeader->GetAttributeByIndex( i, &wStream, nullptr, &cchNamelen, &type, nullptr, &cbLength );
         if ( FAILED( hr ) )
         {
             DEBUG_LOG(( "GetAttributeByIndex Failed (hr=0x%08x)" , hr ));
@@ -383,17 +383,17 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
         }
 
         delete pwszName;
-        pwszName = NULL;
+        pwszName = nullptr;
 
         delete pValue;
-        pValue = NULL;
+        pValue = nullptr;
     }
 
     delete pwszName;
-    pwszName = NULL;
+    pwszName = nullptr;
 
     delete pValue;
-    pValue = NULL;
+    pValue = nullptr;
 
     if ( FAILED( hr ) )
     {
@@ -462,7 +462,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
     memcpy( &m_wfx, pwfx, sizeof( WAVEFORMATEX ) + pwfx->cbSize );
 
     delete[] (BYTE *)pMediaType ;
-	pMediaType = NULL ;
+	pMediaType = nullptr ;
 
     MMRESULT mmr;
 
@@ -485,7 +485,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
     // Start reading the data (and rendering the audio)
     //
     QWORD cnsDuration = ( QWORD ) dwSecDuration * 10000000;
-    hr = m_pReader->Start( 0, cnsDuration, 1.0, NULL );
+    hr = m_pReader->Start( 0, cnsDuration, 1.0, nullptr );
 
     if( FAILED( hr ) )
     {
@@ -581,7 +581,7 @@ HRESULT STDMETHODCALLTYPE CSimplePlayer::OnStatus(
 
     case WMT_NO_RIGHTS:
         {
-            LPWSTR pwszEscapedURL = NULL;
+            LPWSTR pwszEscapedURL = nullptr;
 
             hr = MakeEscapedURL( m_pszUrl, &pwszEscapedURL );
 
@@ -599,7 +599,7 @@ HRESULT STDMETHODCALLTYPE CSimplePlayer::OnStatus(
                 }
 
                 delete [] pwszEscapedURL;
-				pwszEscapedURL = NULL ;
+				pwszEscapedURL = nullptr ;
             }
         }
         break;

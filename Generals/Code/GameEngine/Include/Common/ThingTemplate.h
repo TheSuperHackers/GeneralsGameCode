@@ -149,7 +149,7 @@ public:
 	AudioArray()
 	{
 		for (Int i = 0; i < TTAUDIO_COUNT; ++i)
-			m_audio[i] = NULL;
+			m_audio[i] = nullptr;
 	}
 
 	~AudioArray()
@@ -165,7 +165,7 @@ public:
 			if (that.m_audio[i])
 				m_audio[i] = newInstance(DynamicAudioEventRTS)(*that.m_audio[i]);
 			else
-				m_audio[i] = NULL;
+				m_audio[i] = nullptr;
 		}
 	}
 
@@ -184,7 +184,7 @@ public:
 				}
 				else
 				{
-					m_audio[i] = NULL;
+					m_audio[i] = nullptr;
 				}
 			}
 		}
@@ -288,7 +288,7 @@ public:
 	Bool containsPartialName(const char* n) const
 	{
 		for (size_t i = 0; i < m_info.size(); i++)
-			if (strstr(m_info[i].first.str(), n) != NULL)
+			if (strstr(m_info[i].first.str(), n) != nullptr)
 				return true;
 		return false;
 	}
@@ -592,7 +592,7 @@ public:
 
 	void setCopiedFromDefault();
 
-	void setReskinnedFrom(const ThingTemplate* tt) { DEBUG_ASSERTCRASH(m_reskinnedFrom == NULL, ("should be null")); m_reskinnedFrom = tt; }
+	void setReskinnedFrom(const ThingTemplate* tt) { DEBUG_ASSERTCRASH(m_reskinnedFrom == nullptr, ("should be null")); m_reskinnedFrom = tt; }
 
 	Bool isPrerequisite() const { return m_isPrerequisite; }
 

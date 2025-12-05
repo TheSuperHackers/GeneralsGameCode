@@ -334,7 +334,7 @@ CompositeMatrixMapperClass::CompositeMatrixMapperClass(TextureMapperClass *inter
  *=============================================================================================*/
 CompositeMatrixMapperClass::CompositeMatrixMapperClass(const CompositeMatrixMapperClass & src) :
 	MatrixMapperClass(src),
-	InternalMapper(src.InternalMapper ? src.InternalMapper->Clone() : NULL)
+	InternalMapper(src.InternalMapper ? src.InternalMapper->Clone() : nullptr)
 {
 	if (InternalMapper) {
 		InternalMapper->Add_Ref();
@@ -357,7 +357,7 @@ CompositeMatrixMapperClass::~CompositeMatrixMapperClass(void)
 {
 	if (InternalMapper) {
 		InternalMapper->Release_Ref();
-		InternalMapper = NULL;
+		InternalMapper = nullptr;
 	}
 }
 

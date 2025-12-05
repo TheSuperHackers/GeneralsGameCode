@@ -31,7 +31,7 @@ class CameraOptions : public CDialog, public PopupSliderOwner
 {
 // Construction
 public:
-	CameraOptions(CWnd* pParent = NULL);   // standard constructor
+	CameraOptions(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CameraOptions)

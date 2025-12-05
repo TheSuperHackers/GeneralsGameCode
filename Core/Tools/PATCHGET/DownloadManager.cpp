@@ -28,7 +28,7 @@
 namespace patchget
 {
 
-DownloadManager *TheDownloadManager = NULL;
+DownloadManager *TheDownloadManager = nullptr;
 
 DownloadManager::DownloadManager()
 {

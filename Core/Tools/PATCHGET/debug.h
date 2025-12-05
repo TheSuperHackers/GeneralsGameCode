@@ -55,7 +55,7 @@ void DebugLog( const char *fmt, ... );
 				if (!ignoreCrash) { \
 					TheCurrentIgnoreCrashPtr = &ignoreCrash; \
 					DebugCrash m ; \
-					TheCurrentIgnoreCrashPtr = NULL; \
+					TheCurrentIgnoreCrashPtr = nullptr; \
 				} \
 			} \
 		} while (0)

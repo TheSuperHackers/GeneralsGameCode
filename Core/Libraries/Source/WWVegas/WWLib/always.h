@@ -158,7 +158,7 @@ private:
 	static void* getClassMemoryPool()
 	{
 		assert(0);	// must replace this via W3DMPO_GLUE
-		return 0;
+		return nullptr;
 	}
 protected:
 	// we never call this; it is present to cause compile errors in descendent classes

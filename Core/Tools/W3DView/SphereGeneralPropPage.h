@@ -36,7 +36,7 @@ class SphereGeneralPropPageClass : public CPropertyPage
 
 // Construction
 public:
-	SphereGeneralPropPageClass (SphereRenderObjClass *sphere = NULL);
+	SphereGeneralPropPageClass (SphereRenderObjClass *sphere = nullptr);
 	~SphereGeneralPropPageClass ();
 
 // Dialog Data

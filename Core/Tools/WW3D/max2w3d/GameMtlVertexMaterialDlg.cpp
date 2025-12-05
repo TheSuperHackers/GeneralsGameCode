@@ -67,17 +67,17 @@ GameMtlVertexMaterialDlg::GameMtlVertexMaterialDlg
 ) :
 	GameMtlFormClass(imp,mtl,pass)
 {
-	AmbientSwatch = NULL;
-	DiffuseSwatch = NULL;
-	SpecularSwatch = NULL;
-	EmissiveSwatch = NULL;
+	AmbientSwatch = nullptr;
+	DiffuseSwatch = nullptr;
+	SpecularSwatch = nullptr;
+	EmissiveSwatch = nullptr;
 
-	OpacitySpin = NULL;
-	TranslucencySpin = NULL;
-	ShininessSpin = NULL;
+	OpacitySpin = nullptr;
+	TranslucencySpin = nullptr;
+	ShininessSpin = nullptr;
 
 	for (int i=0; i<MAX_STAGES; i++) {
-		UVChannelSpin[i] = NULL;
+		UVChannelSpin[i] = nullptr;
 	}
 
 	Create_Form(parent,IDD_GAMEMTL_VERTEX_MATERIAL);
@@ -120,7 +120,7 @@ GameMtlVertexMaterialDlg::~GameMtlVertexMaterialDlg()
 		ReleaseISpinner(ShininessSpin);
 	}
 	for (int i=0; i<MAX_STAGES; i++) {
-		if (UVChannelSpin[i] != NULL) {
+		if (UVChannelSpin[i] != nullptr) {
 			ReleaseISpinner(UVChannelSpin[i]);
 		}
 	}

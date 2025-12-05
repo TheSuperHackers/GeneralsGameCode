@@ -81,7 +81,7 @@ class LayersList : public CDialog
 
 	public:
 		enum { IDD = IDD_LAYERSLIST };
-		LayersList(UINT nIDTemplate = LayersList::IDD, CWnd *parentWnd = NULL);
+		LayersList(UINT nIDTemplate = LayersList::IDD, CWnd *parentWnd = nullptr);
 		virtual ~LayersList();
 
 		void resetLayers();
@@ -127,16 +127,16 @@ class LayersList : public CDialog
 		//    layerIt points to a valid layer iterator in which the MapObject was found
 		//    MapObjectIt points to a valid MapObject iterator on the layerIts MapObjectsInLayer member
 		// 2) Returns false if the MapObject cannot be found.
-		Bool findMapObjectAndList(IN MapObject *MapObjectToFind, OUT ListLayerIt *layerIt = NULL, OUT ListMapObjectPtrIt *MapObjectIt = NULL);
+		Bool findMapObjectAndList(IN MapObject *MapObjectToFind, OUT ListLayerIt *layerIt = nullptr, OUT ListMapObjectPtrIt *MapObjectIt = nullptr);
 
 		// This function takes a layer name, and does one of the following:
 		// 1) Return true if the layer can be found, and
 		//		layerIt points to a valid layer iterator named layerName
 		// 2) Returns false if the layer cannot be found.
-		Bool findLayerNamed(IN AsciiString layerName, OUT ListLayerIt *layerIt = NULL);
+		Bool findLayerNamed(IN AsciiString layerName, OUT ListLayerIt *layerIt = nullptr);
 
 		void addMapObjectToLayer(IN MapObject *objToAdd, IN ListLayerIt *layerIt);
-		void removeMapObjectFromLayer(IN MapObject *objToRemove, IN ListLayerIt *layerIt = NULL, IN ListMapObjectPtrIt *MapObjectIt = NULL);
+		void removeMapObjectFromLayer(IN MapObject *objToRemove, IN ListLayerIt *layerIt = nullptr, IN ListMapObjectPtrIt *MapObjectIt = nullptr);
 
 	protected:
 		virtual void OnOK();

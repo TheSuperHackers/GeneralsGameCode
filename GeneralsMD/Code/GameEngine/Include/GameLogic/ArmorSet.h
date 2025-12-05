@@ -74,8 +74,8 @@ public:
 	void clear()
 	{
 		m_types.clear();
-		m_template = NULL;
-		m_fx = NULL;
+		m_template = nullptr;
+		m_fx = nullptr;
 	}
 
 	const ArmorTemplate* getArmorTemplate() const { return m_template; }

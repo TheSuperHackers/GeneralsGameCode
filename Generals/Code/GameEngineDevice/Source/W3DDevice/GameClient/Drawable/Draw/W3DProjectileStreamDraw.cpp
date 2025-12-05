@@ -59,12 +59,12 @@ void W3DProjectileStreamDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "Texture",			INI::parseAsciiString,	NULL, offsetof(W3DProjectileStreamDrawModuleData, m_textureName) },
-		{ "Width",				INI::parseReal,					NULL, offsetof(W3DProjectileStreamDrawModuleData, m_width) },
-		{ "TileFactor",		INI::parseReal,					NULL, offsetof(W3DProjectileStreamDrawModuleData, m_tileFactor) },
-		{ "ScrollRate",		INI::parseReal,					NULL, offsetof(W3DProjectileStreamDrawModuleData, m_scrollRate) },
-		{ "MaxSegments",	INI::parseInt,					NULL, offsetof(W3DProjectileStreamDrawModuleData, m_maxSegments) },
-		{ 0, 0, 0, 0 }
+		{ "Texture",			INI::parseAsciiString,	nullptr, offsetof(W3DProjectileStreamDrawModuleData, m_textureName) },
+		{ "Width",				INI::parseReal,					nullptr, offsetof(W3DProjectileStreamDrawModuleData, m_width) },
+		{ "TileFactor",		INI::parseReal,					nullptr, offsetof(W3DProjectileStreamDrawModuleData, m_tileFactor) },
+		{ "ScrollRate",		INI::parseReal,					nullptr, offsetof(W3DProjectileStreamDrawModuleData, m_scrollRate) },
+		{ "MaxSegments",	INI::parseInt,					nullptr, offsetof(W3DProjectileStreamDrawModuleData, m_maxSegments) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -93,7 +93,7 @@ W3DProjectileStreamDraw::W3DProjectileStreamDraw( Thing *thing, const ModuleData
 	const W3DProjectileStreamDrawModuleData* d = getW3DProjectileStreamDrawModuleData();
 	m_texture = WW3DAssetManager::Get_Instance()->Get_Texture( d->m_textureName.str() );
 	for( Int index = 0; index < MAX_PROJECTILE_STREAM; index++ )
-		m_allLines[index] = NULL;
+		m_allLines[index] = nullptr;
 	m_linesValid = 0;
 }
 
@@ -126,7 +126,7 @@ void W3DProjectileStreamDraw::doDrawModule(const Matrix3D* )
 {
 	// get object from logic
 	Object *me = getDrawable()->getObject();
-	if (me == NULL)
+	if (me == nullptr)
 		return;
 
 	static NameKeyType key_ProjectileStreamUpdate = NAMEKEY("ProjectileStreamUpdate");
@@ -186,7 +186,7 @@ void W3DProjectileStreamDraw::doDrawModule(const Matrix3D* )
 			W3DDisplay::m_3DScene->Remove_Render_Object( deadLine );
 		REF_PTR_RELEASE( deadLine );
 
-		m_allLines[lineIndex] = NULL;
+		m_allLines[lineIndex] = nullptr;
 		m_linesValid--;
 	}
 }
@@ -195,7 +195,7 @@ void W3DProjectileStreamDraw::makeOrUpdateLine( Vector3 *points, UnsignedInt poi
 {
 	Bool newLine = FALSE;
 
-	if( m_allLines[lineIndex] == NULL )
+	if( m_allLines[lineIndex] == nullptr )
 	{
 		//Need a new one if this is blank, otherwise I'll reset the existing one
 		m_allLines[lineIndex] = NEW SegmentedLineClass;

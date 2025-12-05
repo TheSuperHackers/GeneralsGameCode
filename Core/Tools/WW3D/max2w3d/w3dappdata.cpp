@@ -213,7 +213,7 @@ W3DAppData2Struct * W3DAppData2Struct::Get_App_Data
 	/*
 	** Try to get our AppData which has the export flags
 	*/
-	W3DAppData2Struct * wdata = NULL;
+	W3DAppData2Struct * wdata = nullptr;
 	AppDataChunk * appdata = node->GetAppDataChunk(W3DUtilityClassID,UTILITY_CLASS_ID,W3D_APPDATA_2);
 
 	/*
@@ -294,7 +294,7 @@ W3DDazzleAppDataStruct * W3DDazzleAppDataStruct::Get_App_Data(INode * node,bool 
 	/*
 	** Try to get the existing AppData chunk
 	*/
-	W3DDazzleAppDataStruct * dazzledata = NULL;
+	W3DDazzleAppDataStruct * dazzledata = nullptr;
 	AppDataChunk * appdata = node->GetAppDataChunk(W3DUtilityClassID,UTILITY_CLASS_ID,W3D_DAZZLE_APPDATA);
 
 	if (appdata) {
@@ -330,7 +330,7 @@ W3DDazzleAppDataStruct * W3DDazzleAppDataStruct::Get_App_Data(INode * node,bool 
 
 static int get_geometry_type(INode * node)
 {
-	assert(node != NULL);
+	assert(node != nullptr);
 	return W3DAppData2Struct::Get_App_Data(node)->Get_Geometry_Type();
 }
 

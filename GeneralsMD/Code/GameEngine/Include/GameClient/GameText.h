@@ -72,8 +72,8 @@ class GameTextInterface : public SubsystemInterface
 
 		virtual ~GameTextInterface() {};
 
-		virtual UnicodeString fetch( const Char *label, Bool *exists = NULL ) = 0;		///< Returns the associated labeled unicode text
-		virtual UnicodeString fetch( AsciiString label, Bool *exists = NULL ) = 0;		///< Returns the associated labeled unicode text ; TheSuperHackers @todo Remove
+		virtual UnicodeString fetch( const Char *label, Bool *exists = nullptr ) = 0;		///< Returns the associated labeled unicode text
+		virtual UnicodeString fetch( AsciiString label, Bool *exists = nullptr ) = 0;		///< Returns the associated labeled unicode text ; TheSuperHackers @todo Remove
 		virtual UnicodeString fetchFormat( const Char *label, ... ) = 0;
 
 		// Do not call this directly, but use the FETCH_OR_SUBSTITUTE macro

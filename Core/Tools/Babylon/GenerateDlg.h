@@ -43,7 +43,7 @@ class CGenerateDlg : public CDialog
 
 // Construction
 public:
-	CGenerateDlg(CWnd* pParent = NULL);   // standard constructor
+	CGenerateDlg(CWnd* pParent = nullptr);   // standard constructor
 
 	char*					FilePrefix	( void )		{ return filename; };
 	GNOPTIONS*		Options			( void )		{ return &options; };

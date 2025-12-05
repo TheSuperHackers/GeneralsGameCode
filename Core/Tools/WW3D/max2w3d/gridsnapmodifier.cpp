@@ -177,7 +177,7 @@ static ParamBlockDesc2 _GridSnapParamBlockDesc
 	GSM_PARAMS,_T("GridSnap Parameters"), 0, &_GridSnapModifierDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, SIMPMOD_PBLOCKREF,
 
 	// dialog box
-	IDD_GRIDSNAP_PARAMS, IDS_GRIDSNAP_TITLE, 0, 0, NULL,
+	IDD_GRIDSNAP_PARAMS, IDS_GRIDSNAP_TITLE, 0, 0, nullptr,
 
 	// parameters
 	GSM_PARAM_GRIDDIMENSION, _T("Grid Dimension"), TYPE_FLOAT, P_RESET_DEFAULT, IDS_GRID_DIMENSION,
@@ -216,7 +216,7 @@ void GridSnapModifierClass::EndEditParams( IObjParam *ip,ULONG flags,Animatable 
 	SimpleMod2::EndEditParams(ip,flags,next);
 	_GridSnapModifierDesc.EndEditParams(ip, this, flags, next);
 
-	this->ip = NULL;
+	this->ip = nullptr;
 }
 
 RefTargetHandle GridSnapModifierClass::Clone(RemapDir& remap)

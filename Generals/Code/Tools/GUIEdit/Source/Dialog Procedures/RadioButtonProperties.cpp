@@ -175,9 +175,9 @@ static LRESULT CALLBACK radioButtonPropertiesCallback( HWND hWndDialog,
 						GadgetRadioSetHiliteCheckedBoxColor( window, info->color );
 						GadgetRadioSetHiliteCheckedBoxBorderColor( window, info->borderColor );
 
-						// save group
-						Int group = GetDlgItemInt( hWndDialog, COMBO_GROUP, NULL, FALSE );
-						Int screen = TheNameKeyGenerator->nameToKey( TheEditor->getSaveFilename() );
+					// save group
+					Int group = GetDlgItemInt( hWndDialog, COMBO_GROUP, nullptr, FALSE );
+					Int screen = TheNameKeyGenerator->nameToKey( TheEditor->getSaveFilename() );
 						GadgetRadioSetGroup( window, group, screen );
 
 					}
@@ -231,11 +231,11 @@ static void loadExistingGroupsCombo( HWND combo, GameWindow *window )
 {
 
 	// sanity
-	if( combo == NULL )
+	if( combo == nullptr )
 		return;
 
 	// end of recursion
-	if( window == NULL )
+	if( window == nullptr )
 		return;
 
 	// if this is a radio button get the group
@@ -275,8 +275,8 @@ HWND InitRadioButtonPropertiesDialog( GameWindow *window )
 												 (LPCTSTR)RADIO_BUTTON_PROPERTIES_DIALOG,
 												 TheEditor->getWindowHandle(),
 												 (DLGPROC)radioButtonPropertiesCallback );
-	if( dialog == NULL )
-		return NULL;
+	if( dialog == nullptr )
+		return nullptr;
 
 	// do the common initialization
 	CommonDialogInitialize( window, dialog );

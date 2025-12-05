@@ -48,9 +48,9 @@ void W3DSupplyDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "SupplyBonePrefix", INI::parseAsciiString, NULL, offsetof(W3DSupplyDrawModuleData, m_supplyBonePrefix) },
+		{ "SupplyBonePrefix", INI::parseAsciiString, nullptr, offsetof(W3DSupplyDrawModuleData, m_supplyBonePrefix) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -75,7 +75,7 @@ void W3DSupplyDraw::updateDrawModuleSupplyStatus( Int maxSupply, Int currentSupp
 	AsciiString boneName = getW3DSupplyDrawModuleData()->m_supplyBonePrefix;
 	if( m_totalBones == -1 )
 	{
-		m_totalBones = getDrawable()->getPristineBonePositions( boneName.str(), 1, NULL, NULL, INT_MAX );// The last arg is to guard the size of the arrays.  I am not passing any in, I am just counting bones.
+		m_totalBones = getDrawable()->getPristineBonePositions( boneName.str(), 1, nullptr, nullptr, INT_MAX );// The last arg is to guard the size of the arrays.  I am not passing any in, I am just counting bones.
 		m_lastNumberShown = m_totalBones;
 	}
 

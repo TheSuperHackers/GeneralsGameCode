@@ -118,7 +118,7 @@ bool	Is_NPatchable(INode * node);
 */
 inline bool Is_Proxy(INode &node)
 {
-	return (::strchr (node.GetName (), '~') != NULL);
+	return (::strchr (node.GetName (), '~') != nullptr);
 }
 
 

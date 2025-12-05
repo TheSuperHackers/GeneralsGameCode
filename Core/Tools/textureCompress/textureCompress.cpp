@@ -70,12 +70,12 @@ class DebugMunkee
 {
 public:
 	DebugMunkee(const char *fname = "debugLog.txt") { m_fp = fopen(fname, "w"); }
-	~DebugMunkee() { if (m_fp) fclose(m_fp); m_fp = NULL; }
+	~DebugMunkee() { if (m_fp) fclose(m_fp); m_fp = nullptr; }
 
 	FILE *m_fp;
 };
 
-static DebugMunkee *theDebugMunkee = NULL;
+static DebugMunkee *theDebugMunkee = nullptr;
 
 #define DEBUG_LOG(x) debugLog x
 static void debugLog(const char *fmt, ...)
@@ -332,7 +332,7 @@ void compressOrigFiles(const std::string& sourceDirName, const std::string& targ
 		tmp.append("\n");
 		DEBUG_LOG(("Compressing file: %s", tmp.c_str()));
 		DWORD len;
-		WriteFile(h, tmp.c_str(), tmp.length(), &len, NULL);
+		WriteFile(h, tmp.c_str(), tmp.length(), &len, nullptr);
 	}
 	CloseHandle(h);
 
@@ -596,10 +596,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	*/
 	int argc = 1;
 	char * argv[20];
-	argv[0] = NULL;
+	argv[0] = nullptr;
 
 	char * token = strtok(lpCmdLine, " ");
-	while (argc < 20 && token != NULL)
+	while (argc < 20 && token != nullptr)
 	{
 		argv[argc++] = strtrim(token);
 		token = strtok(NULL, " ");
@@ -633,7 +633,7 @@ int main(int argc, const char **argv)
 
 #ifdef RTS_DEBUG
 		delete theDebugMunkee;
-		theDebugMunkee = NULL;
+		theDebugMunkee = nullptr;
 #endif
 	}
 

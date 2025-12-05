@@ -59,13 +59,13 @@ class AssetInfoClass
 		AssetInfoClass (void)
 			: m_AssetType (TypeUnknown),
 			  m_dwUserData (0L),
-			  m_pRenderObj (NULL)			{ Initialize (); }
+			  m_pRenderObj (nullptr)			{ Initialize (); }
 
-		AssetInfoClass (LPCTSTR passet_name, ASSET_TYPE type, RenderObjClass *prender_obj = NULL, DWORD user_data = 0L)
+		AssetInfoClass (LPCTSTR passet_name, ASSET_TYPE type, RenderObjClass *prender_obj = nullptr, DWORD user_data = 0L)
 			: m_Name (passet_name),
 			  m_AssetType (type),
 			  m_dwUserData (user_data),
-			  m_pRenderObj (NULL)			{ REF_PTR_SET (m_pRenderObj, prender_obj); Initialize (); }
+			  m_pRenderObj (nullptr)			{ REF_PTR_SET (m_pRenderObj, prender_obj); Initialize (); }
 
 		virtual ~AssetInfoClass (void)	{ REF_PTR_RELEASE (m_pRenderObj); }
 

@@ -64,7 +64,7 @@ static DWORD WINAPI		_logdata_thread_function(LPVOID log_obj_ptr);
  *   02/09/2000 JGA  : Created.                                                                *
  *=============================================================================================*/
 LogDataDialogClass::LogDataDialogClass(HWND parent):
- Hwnd(NULL),
+ Hwnd(nullptr),
  ParentHwnd(parent),
  buffer_index(0),
  last_buffer_index(0),

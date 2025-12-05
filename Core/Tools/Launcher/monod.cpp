@@ -23,7 +23,7 @@ MonoD::MonoD(void)
 #ifdef _WIN32
   unsigned long retval;
   handle = CreateFile("\\\\.\\MONO", GENERIC_READ|GENERIC_WRITE, 0, NULL,
-                        OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+                        OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 
   if (handle != INVALID_HANDLE_VALUE)
   {
@@ -45,7 +45,7 @@ int MonoD::print(const char *str, int len)
 {
   #ifdef _WIN32
     unsigned long retval;
-    WriteFile(handle, str, len, &retval, NULL);
+    WriteFile(handle, str, len, &retval, nullptr);
     //DeviceIoControl(handle, (DWORD)IOCTL_MONO_PRINT_RAW, (void *)str, len, NULL, 0,
     //                 &retval,0);
     return(len);

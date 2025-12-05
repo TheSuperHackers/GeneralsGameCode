@@ -87,9 +87,9 @@ public:
     UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "DepositTiming",					INI::parseDurationUnsignedInt,		NULL, offsetof( AutoDepositUpdateModuleData, m_depositFrame ) },
-			{ "DepositAmount",					INI::parseInt,		NULL, offsetof( AutoDepositUpdateModuleData, m_depositAmount ) },
-			{ "InitialCaptureBonus",		INI::parseInt,		NULL, offsetof( AutoDepositUpdateModuleData, m_initialCaptureBonus ) },
+			{ "DepositTiming",					INI::parseDurationUnsignedInt,		nullptr, offsetof( AutoDepositUpdateModuleData, m_depositFrame ) },
+			{ "DepositAmount",					INI::parseInt,		nullptr, offsetof( AutoDepositUpdateModuleData, m_depositAmount ) },
+			{ "InitialCaptureBonus",		INI::parseInt,		nullptr, offsetof( AutoDepositUpdateModuleData, m_initialCaptureBonus ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);

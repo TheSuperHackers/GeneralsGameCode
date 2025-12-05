@@ -26,7 +26,7 @@
 #include "WorldBuilderView.h"
 #include "FeatherTool.h"
 
-FeatherOptions *FeatherOptions::m_staticThis = NULL;
+FeatherOptions *FeatherOptions::m_staticThis = nullptr;
 Int FeatherOptions::m_currentFeather = 0;
 Int FeatherOptions::m_currentRate = 3;
 Int FeatherOptions::m_currentRadius = 1;

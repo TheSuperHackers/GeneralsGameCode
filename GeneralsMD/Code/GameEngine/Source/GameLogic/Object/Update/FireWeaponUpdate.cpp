@@ -41,7 +41,7 @@
 //-------------------------------------------------------------------------------------------------
 FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
 {
-	m_weaponTemplate = NULL;
+	m_weaponTemplate = nullptr;
   m_initialDelayFrames = 0;
 	m_exclusiveWeaponDelay = 0;
 }
@@ -53,10 +53,10 @@ FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "Weapon",								INI::parseWeaponTemplate,	      NULL, offsetof( FireWeaponUpdateModuleData, m_weaponTemplate ) },
-		{ "InitialDelay",					INI::parseDurationUnsignedInt,	NULL, offsetof( FireWeaponUpdateModuleData, m_initialDelayFrames ) },
-		{ "ExclusiveWeaponDelay",	INI::parseDurationUnsignedInt,	NULL, offsetof( FireWeaponUpdateModuleData, m_exclusiveWeaponDelay ) },
-		{ 0, 0, 0, 0 }
+		{ "Weapon",								INI::parseWeaponTemplate,	      nullptr, offsetof( FireWeaponUpdateModuleData, m_weaponTemplate ) },
+		{ "InitialDelay",					INI::parseDurationUnsignedInt,	nullptr, offsetof( FireWeaponUpdateModuleData, m_initialDelayFrames ) },
+		{ "ExclusiveWeaponDelay",	INI::parseDurationUnsignedInt,	nullptr, offsetof( FireWeaponUpdateModuleData, m_exclusiveWeaponDelay ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -65,7 +65,7 @@ FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
 //-------------------------------------------------------------------------------------------------
 FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData ) :
 	UpdateModule( thing, moduleData ),
-	m_weapon(NULL)
+	m_weapon(nullptr)
 {
 	const WeaponTemplate *tmpl = getFireWeaponUpdateModuleData()->m_weaponTemplate;
 	if (tmpl)
@@ -110,7 +110,7 @@ Bool FireWeaponUpdate::isOkayToFire()
 	const Object *me = getObject();
 	const FireWeaponUpdateModuleData *data = getFireWeaponUpdateModuleData();
 
-	if( m_weapon == NULL )
+	if( m_weapon == nullptr )
 		return FALSE;
 
 	// Weapon is reloading

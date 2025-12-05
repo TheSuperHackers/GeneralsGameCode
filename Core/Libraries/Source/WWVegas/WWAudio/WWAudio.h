@@ -195,7 +195,7 @@ public:
 	//////////////////////////////////////////////////////////////////////
 	//	2D Hardware/driver selection methods
 	//////////////////////////////////////////////////////////////////////
-	DRIVER_TYPE_2D		Open_2D_Device (LPWAVEFORMAT format = NULL);
+	DRIVER_TYPE_2D		Open_2D_Device (LPWAVEFORMAT format = nullptr);
 	DRIVER_TYPE_2D		Open_2D_Device (bool stereo, int bits, int hertz);
 	bool					Close_2D_Device (void);
 	int					Get_Playback_Rate (void) const		{ return m_PlaybackRate; }
@@ -356,12 +356,12 @@ public:
 	//
 	//	Sound creation methods
 	//
-	int						Create_Instant_Sound (int definition_id, const Matrix3D &tm, RefCountClass *user_obj = NULL, uint32 user_data = 0, int classid_hint = CLASSID_3D);
-	int						Create_Instant_Sound (const char *def_name, const Matrix3D &tm, RefCountClass *user_obj = NULL, uint32 user_data = 0, int classid_hint = CLASSID_3D);
-	AudibleSoundClass *	Create_Continuous_Sound (int definition_id, RefCountClass *user_obj = NULL, uint32 user_data = 0, int classid_hint = CLASSID_3D);
-	AudibleSoundClass *	Create_Continuous_Sound (const char *def_name, RefCountClass *user_obj = NULL, uint32 user_data = 0, int classid_hint = CLASSID_3D);
-	AudibleSoundClass *	Create_Sound (int definition_id, RefCountClass *user_obj = NULL, uint32 user_data = 0, int classid_hint = CLASSID_3D);
-	AudibleSoundClass *	Create_Sound (const char *def_name, RefCountClass *user_obj = NULL, uint32 user_data = 0, int classid_hint = CLASSID_3D);
+	int						Create_Instant_Sound (int definition_id, const Matrix3D &tm, RefCountClass *user_obj = nullptr, uint32 user_data = 0, int classid_hint = CLASSID_3D);
+	int						Create_Instant_Sound (const char *def_name, const Matrix3D &tm, RefCountClass *user_obj = nullptr, uint32 user_data = 0, int classid_hint = CLASSID_3D);
+	AudibleSoundClass *	Create_Continuous_Sound (int definition_id, RefCountClass *user_obj = nullptr, uint32 user_data = 0, int classid_hint = CLASSID_3D);
+	AudibleSoundClass *	Create_Continuous_Sound (const char *def_name, RefCountClass *user_obj = nullptr, uint32 user_data = 0, int classid_hint = CLASSID_3D);
+	AudibleSoundClass *	Create_Sound (int definition_id, RefCountClass *user_obj = nullptr, uint32 user_data = 0, int classid_hint = CLASSID_3D);
+	AudibleSoundClass *	Create_Sound (const char *def_name, RefCountClass *user_obj = nullptr, uint32 user_data = 0, int classid_hint = CLASSID_3D);
 
 	//////////////////////////////////////////////////////////////////////
 	//	Sound object lookup
@@ -502,7 +502,7 @@ private:
 		SoundBufferClass *	buffer;
 
 		_CACHE_ENTRY_STRUCT (void)
-			: string_id (0), buffer (NULL) {}
+			: string_id (0), buffer (nullptr) {}
 
 		_CACHE_ENTRY_STRUCT &operator= (const _CACHE_ENTRY_STRUCT &src) { string_id = ::strdup (src.string_id); REF_PTR_SET (buffer, src.buffer); return *this; }
 		bool operator== (const _CACHE_ENTRY_STRUCT &src) { return false; }

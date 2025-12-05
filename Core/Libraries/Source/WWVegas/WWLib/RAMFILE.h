@@ -60,7 +60,7 @@ class RAMFileClass : public FileClass
 		virtual void Close(void);
 		virtual unsigned long Get_Date_Time(void) {return(0);}
 		virtual bool Set_Date_Time(unsigned long ) {return(true);}
-		virtual void Error(int , int = false, char const * =NULL) {}
+		virtual void Error(int , int = false, char const * =nullptr) {}
 		virtual void Bias(int start, int length=-1);
 
 		operator char const * () {return File_Name();}

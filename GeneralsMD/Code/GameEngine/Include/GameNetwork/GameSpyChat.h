@@ -33,7 +33,7 @@
 class GameWindow;
 class WindowLayout;
 
-Bool GameSpySendChat(UnicodeString message, Bool isEmote, GameWindow *playerListbox = NULL);
+Bool GameSpySendChat(UnicodeString message, Bool isEmote, GameWindow *playerListbox = nullptr);
 void GameSpyAddText( UnicodeString message, GameSpyColors color = GSCOLOR_DEFAULT );
 
 extern GameWindow *progressTextWindow;				///< Text box on the progress screen

@@ -71,7 +71,7 @@ void WBHeightMap::setFlattenHeights(Bool flat)
 #ifndef USE_FLAT_HEIGHT_MAP
 		m_originX = 0;
 		m_originY = 0;
- 		updateBlock(0, 0, m_x-1, m_y-1, m_map, NULL);
+ 		updateBlock(0, 0, m_x-1, m_y-1, m_map, nullptr);
 #endif
 	}
 }

@@ -145,7 +145,7 @@ public:
 	Bool ReAcquireResources(void);	///<reaquire D3D/W3D resources.
 	///allows iterating over vertex buffers used by manager.  Input of NULL to get first.
 	W3DVertexBuffer *getNextVertexBuffer(W3DVertexBuffer *pVb, VBM_FVF_TYPES type)
-	{	if (pVb == NULL)
+	{	if (pVb == nullptr)
 			return m_W3DVertexBuffers[type];
 		return pVb->m_nextVB;
 	};

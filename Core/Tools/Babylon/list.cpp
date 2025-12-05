@@ -29,7 +29,7 @@ ListNode::ListNode	( void )
 {
 	prev = next = this;
 	pri = NORMAL_PRIORITY;
-	item = NULL;
+	item = nullptr;
 }
 
 void				ListNode::Append			( ListNode *new_node )

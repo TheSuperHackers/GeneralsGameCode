@@ -76,7 +76,7 @@ Get_Filename_From_Path (LPCTSTR path)
 {
 	// Find the last occurance of the directory deliminator
 	LPCTSTR filename = ::strrchr (path, '\\');
-	if (filename != NULL) {
+	if (filename != nullptr) {
 		// Increment past the directory deliminator
 		filename ++;
 	} else {

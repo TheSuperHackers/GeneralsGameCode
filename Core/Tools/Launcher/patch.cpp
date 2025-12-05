@@ -49,7 +49,7 @@ BOOL CALLBACK Update_Info_Proc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
     case WM_INITDIALOG:
     {
       FILE *in = fopen("launcher.txt","r");
-      if (in==NULL)
+      if (in==nullptr)
       {
         EndDialog(hwnd,-1);
         return(1);
@@ -57,7 +57,7 @@ BOOL CALLBACK Update_Info_Proc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 
       char   line[270];
       int    lastsel=0;
-      char  *cptr=NULL;
+      char  *cptr=nullptr;
       while(fgets(line,255,in))
       {
         //Get rid of any trailing junk
@@ -191,13 +191,13 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
   {
     MSG msg;
     HWND dialog=Create_Patch_Dialog();
-    while(PeekMessage(&msg,NULL,0,0, PM_REMOVE))
+    while(PeekMessage(&msg,nullptr,0,0, PM_REMOVE))
     {
       TranslateMessage(&msg);
       DispatchMessage(&msg);
     }
     HINSTANCE hInst=LoadLibrary("patchw32.dll");
-    if (hInst==NULL)
+    if (hInst==nullptr)
     {
       char message[256];
       LoadString(NULL,IDS_ERR_MISSING_FILE,message,256);
@@ -215,7 +215,7 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
 
     PATCHFUNC patchFunc;
     patchFunc=(PATCHFUNC)GetProcAddress(hInst,"RTPatchApply32@12");
-    if (patchFunc==NULL)
+    if (patchFunc==nullptr)
     {
       char message[256];
       LoadString(NULL,IDS_BAD_LIBRARY,message,256);
@@ -248,7 +248,7 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
     char   *cptr=patchfile;
     char   *tempPtr;
     DWORD   version;
-    while( (tempPtr=strchr(cptr,'\\')) !=NULL)
+    while( (tempPtr=strchr(cptr,'\\')) !=nullptr)
       cptr=tempPtr+1;
     if (cptr)
       version=atol(cptr);
@@ -300,7 +300,7 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
 			Wait_Process(notepad);
 		}
 #else
-    DialogBox(Global_instance,MAKEINTRESOURCE(IDD_CHANGELOG),NULL,(DLGPROC)Update_Info_Proc);
+    DialogBox(Global_instance,MAKEINTRESOURCE(IDD_CHANGELOG),nullptr,(DLGPROC)Update_Info_Proc);
 #endif
   }
   //
@@ -329,12 +329,12 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
     MessageBox(NULL,message,title,MB_OK);
 
     FILE *in=fopen(patchfile,"r");
-    if (in!=NULL)
+    if (in!=nullptr)
     {
       char URL[256];
       fgets(URL,255,in);
       fclose(in);
-      ShellExecute(NULL,NULL,URL,NULL,".",SW_SHOW);
+      ShellExecute(NULL,nullptr,URL,nullptr,".",SW_SHOW);
       _unlink(patchfile);
       //// This is somewhat skanky, but we can't wait
       //// for the viewer to exit (I tried).
@@ -389,7 +389,7 @@ void Shutdown_Computer_Now(void)
   }
 
   MSG     msg;
-  while (GetMessage(&msg, NULL, 0, 0))
+  while (GetMessage(&msg, nullptr, 0, 0))
   {
     TranslateMessage( &msg );
     DispatchMessage( &msg );
@@ -410,7 +410,7 @@ __declspec(dllexport) LPVOID CALLBACK PatchCallBack(UINT Id, LPVOID Param)
   // Make sure our windows get updated
   MSG     msg;
   int     counter=0;
-  while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE ))
+  while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE ))
   {
     TranslateMessage( &msg );
     DispatchMessage( &msg );
@@ -449,7 +449,7 @@ __declspec(dllexport) LPVOID CALLBACK PatchCallBack(UINT Id, LPVOID Param)
       MessageBox(NULL,(char *)Param,errmsg,MB_OK);
       {
         FILE *out=fopen("patch.err","a");
-        time_t  timet=time(NULL);
+        time_t  timet=time(nullptr);
         fprintf(out,"\n\nPatch Error: %s\n",ctime(&timet));
         fprintf(out,"%s\n",(char *)Param);
         fclose(out);
@@ -575,7 +575,7 @@ __declspec(dllexport) LPVOID CALLBACK PatchCallBack(UINT Id, LPVOID Param)
   }
 
   if(Abort)
-    return (NULL);
+    return (nullptr);
   else
 	return (RetVal);
 }

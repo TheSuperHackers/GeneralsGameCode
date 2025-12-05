@@ -29,7 +29,7 @@ class ScaleDialogClass : public CDialog
 {
 // Construction
 public:
-	ScaleDialogClass (float scale, CWnd* pParent=NULL, const char *prompt_string="");
+	ScaleDialogClass (float scale, CWnd* pParent=nullptr, const char *prompt_string="");
 
 // Dialog Data
 	//{{AFX_DATA(ScaleDialogClass)

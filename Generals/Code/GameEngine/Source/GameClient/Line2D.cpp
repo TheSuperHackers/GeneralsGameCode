@@ -274,12 +274,12 @@ Bool PointInsideRect2D(const Coord2D *bl, const Coord2D *tl, const Coord2D *br, 
 
 	Real uVal;
 	// we're actually only interested in if the U value is (0,1)
-	ShortestDistancePointToSegment2D(bl, tl, inputPoint, NULL, NULL, &uVal);
+	ShortestDistancePointToSegment2D(bl, tl, inputPoint, nullptr, nullptr, &uVal);
 	if (uVal <= 0.0f || uVal >= 1.0f) {
 		return false;
 	}
 
-	ShortestDistancePointToSegment2D(bl, br, inputPoint, NULL, NULL, &uVal);
+	ShortestDistancePointToSegment2D(bl, br, inputPoint, nullptr, nullptr, &uVal);
 
 	return (uVal > 0.0f && uVal < 1.0f);
 }

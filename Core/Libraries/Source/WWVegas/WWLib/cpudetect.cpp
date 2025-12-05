@@ -942,7 +942,7 @@ void CPUDetectClass::Init_OS()
    OSVersionExtraInfo   = os.szCSDVersion;
 #else
 	typedef LONG(WINAPI * RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
-    HMODULE ntdll = LoadLibraryExA("ntdll", NULL, 0);
+    HMODULE ntdll = LoadLibraryExA("ntdll", nullptr, 0);
     if (ntdll != nullptr) {
         RtlGetVersionPtr RtlGetVersion = (RtlGetVersionPtr)::GetProcAddress(ntdll, "RtlGetVersion");
 
@@ -1104,7 +1104,7 @@ void CPUDetectClass::Init_Compact_Log()
    GetTimeZoneInformation(&time_zone);
    COMPACTLOG(("%d\t", time_zone.Bias));  // get diff between local time and UTC
 #elif defined(_UNIX)
-   time_t t = time(NULL);
+   time_t t = time(nullptr);
    localtime(&t);
    COMPACTLOG(("%d\t", timezone));
 #endif

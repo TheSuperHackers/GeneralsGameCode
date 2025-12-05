@@ -270,7 +270,7 @@ public:
 	void			First(void)							{ CurObj = Head; }
 	void			Next(void)							{ if (CurObj) { CurObj = ((GridLinkClass *)CurObj->Get_Cull_Link())->Next; } }
 	void			Prev(void)							{ if (CurObj) { CurObj = ((GridLinkClass *)CurObj->Get_Cull_Link())->Prev; } }
-	bool			Is_Done(void)						{ return (CurObj == NULL); }
+	bool			Is_Done(void)						{ return (CurObj == nullptr); }
 
 	CullableClass *	Get_Obj(void)				{ if (CurObj) { CurObj->Add_Ref(); } return CurObj; }
 	CullableClass *	Peek_Obj(void)				{ return CurObj; }
@@ -412,7 +412,7 @@ WWINLINE int GridCullSystemClass::total_cell_count(void)
  *=============================================================================================*/
 WWINLINE void	GridCullSystemClass::compute_box(int i,int j,int k,AABoxClass * set_box)
 {
-	WWASSERT(set_box != NULL);
+	WWASSERT(set_box != nullptr);
 	WWASSERT((i >= 0) && (j >= 0) && (k >= 0));
 	WWASSERT((i < CellCount[0]) && (j < CellCount[1]) && (k < CellCount[2]));
 
@@ -444,7 +444,7 @@ WWINLINE void	GridCullSystemClass::compute_box(int i,int j,int k,AABoxClass * se
  *=============================================================================================*/
 WWINLINE void	GridCullSystemClass::compute_box(const GridCullSystemClass::VolumeStruct & vol, AABoxClass * set_box)
 {
-	WWASSERT(set_box != NULL);
+	WWASSERT(set_box != nullptr);
 	WWASSERT((vol.Min[0] >= 0) && (vol.Min[1] >= 0) && (vol.Min[2] >= 0));
 	WWASSERT((vol.Max[0] <= CellCount[0]) && (vol.Max[1] <= CellCount[1]) && (vol.Max[2] <= CellCount[2]));
 

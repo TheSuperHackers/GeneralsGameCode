@@ -162,31 +162,31 @@ static void parseFrictionPerSec( INI* ini, void * /*instance*/, void *store, con
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "Mass",								INI::parsePositiveNonZeroReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_mass ) },
+		{ "Mass",								INI::parsePositiveNonZeroReal,		nullptr, offsetof( PhysicsBehaviorModuleData, m_mass ) },
 
-		{ "ShockResistance",		INI::parsePositiveNonZeroReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_shockResistance ) },
-		{ "ShockMaxYaw",				INI::parsePositiveNonZeroReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_shockMaxYaw ) },
-		{ "ShockMaxPitch",			INI::parsePositiveNonZeroReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_shockMaxPitch ) },
-		{ "ShockMaxRoll",				INI::parsePositiveNonZeroReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_shockMaxRoll ) },
+		{ "ShockResistance",		INI::parsePositiveNonZeroReal,		nullptr, offsetof( PhysicsBehaviorModuleData, m_shockResistance ) },
+		{ "ShockMaxYaw",				INI::parsePositiveNonZeroReal,		nullptr, offsetof( PhysicsBehaviorModuleData, m_shockMaxYaw ) },
+		{ "ShockMaxPitch",			INI::parsePositiveNonZeroReal,		nullptr, offsetof( PhysicsBehaviorModuleData, m_shockMaxPitch ) },
+		{ "ShockMaxRoll",				INI::parsePositiveNonZeroReal,		nullptr, offsetof( PhysicsBehaviorModuleData, m_shockMaxRoll ) },
 
-		{ "ForwardFriction",			parseFrictionPerSec,		NULL, offsetof( PhysicsBehaviorModuleData, m_forwardFriction ) },
-		{ "LateralFriction",			parseFrictionPerSec,		NULL, offsetof( PhysicsBehaviorModuleData, m_lateralFriction ) },
-		{ "ZFriction",						parseFrictionPerSec,		NULL, offsetof( PhysicsBehaviorModuleData, m_ZFriction ) },
-		{ "AerodynamicFriction",	parseFrictionPerSec,		NULL, offsetof( PhysicsBehaviorModuleData, m_aerodynamicFriction ) },
+		{ "ForwardFriction",			parseFrictionPerSec,		nullptr, offsetof( PhysicsBehaviorModuleData, m_forwardFriction ) },
+		{ "LateralFriction",			parseFrictionPerSec,		nullptr, offsetof( PhysicsBehaviorModuleData, m_lateralFriction ) },
+		{ "ZFriction",						parseFrictionPerSec,		nullptr, offsetof( PhysicsBehaviorModuleData, m_ZFriction ) },
+		{ "AerodynamicFriction",	parseFrictionPerSec,		nullptr, offsetof( PhysicsBehaviorModuleData, m_aerodynamicFriction ) },
 
-		{ "CenterOfMassOffset",	INI::parseReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_centerOfMassOffset ) },
-		{ "AllowBouncing",			INI::parseBool,		NULL, offsetof( PhysicsBehaviorModuleData, m_allowBouncing ) },
-		{ "AllowCollideForce",	INI::parseBool,		NULL, offsetof( PhysicsBehaviorModuleData, m_allowCollideForce ) },
-		{ "KillWhenRestingOnGround", INI::parseBool, NULL, offsetof( PhysicsBehaviorModuleData, m_killWhenRestingOnGround) },
+		{ "CenterOfMassOffset",	INI::parseReal,		nullptr, offsetof( PhysicsBehaviorModuleData, m_centerOfMassOffset ) },
+		{ "AllowBouncing",			INI::parseBool,		nullptr, offsetof( PhysicsBehaviorModuleData, m_allowBouncing ) },
+		{ "AllowCollideForce",	INI::parseBool,		nullptr, offsetof( PhysicsBehaviorModuleData, m_allowCollideForce ) },
+		{ "KillWhenRestingOnGround", INI::parseBool, nullptr, offsetof( PhysicsBehaviorModuleData, m_killWhenRestingOnGround) },
 
-		{ "MinFallHeightForDamage",			parseHeightToSpeed,		NULL, offsetof( PhysicsBehaviorModuleData, m_minFallSpeedForDamage) },
-		{ "FallHeightDamageFactor",			INI::parseReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_fallHeightDamageFactor) },
-		{ "PitchRollYawFactor",			INI::parseReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_pitchRollYawFactor) },
+		{ "MinFallHeightForDamage",			parseHeightToSpeed,		nullptr, offsetof( PhysicsBehaviorModuleData, m_minFallSpeedForDamage) },
+		{ "FallHeightDamageFactor",			INI::parseReal,		nullptr, offsetof( PhysicsBehaviorModuleData, m_fallHeightDamageFactor) },
+		{ "PitchRollYawFactor",			INI::parseReal,		nullptr, offsetof( PhysicsBehaviorModuleData, m_pitchRollYawFactor) },
 
-		{ "VehicleCrashesIntoBuildingWeaponTemplate", INI::parseWeaponTemplate, NULL, offsetof(PhysicsBehaviorModuleData, m_vehicleCrashesIntoBuildingWeaponTemplate) },
-		{ "VehicleCrashesIntoNonBuildingWeaponTemplate", INI::parseWeaponTemplate, NULL, offsetof(PhysicsBehaviorModuleData, m_vehicleCrashesIntoNonBuildingWeaponTemplate) },
+		{ "VehicleCrashesIntoBuildingWeaponTemplate", INI::parseWeaponTemplate, nullptr, offsetof(PhysicsBehaviorModuleData, m_vehicleCrashesIntoBuildingWeaponTemplate) },
+		{ "VehicleCrashesIntoNonBuildingWeaponTemplate", INI::parseWeaponTemplate, nullptr, offsetof(PhysicsBehaviorModuleData, m_vehicleCrashesIntoNonBuildingWeaponTemplate) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -223,8 +223,8 @@ PhysicsBehavior::PhysicsBehavior( Thing *thing, const ModuleData* moduleData ) :
 	setAllowBouncing(getPhysicsBehaviorModuleData()->m_allowBouncing);
 	setAllowCollideForce(getPhysicsBehaviorModuleData()->m_allowCollideForce);
 
-	m_pui = NULL;
-	m_bounceSound = NULL;
+	m_pui = nullptr;
+	m_bounceSound = nullptr;
 
 #ifdef SLEEPY_PHYSICS
 	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
@@ -235,15 +235,15 @@ PhysicsBehavior::PhysicsBehavior( Thing *thing, const ModuleData* moduleData ) :
 static ProjectileUpdateInterface* getPui(Object* obj)
 {
 	if (!obj->isKindOf(KINDOF_PROJECTILE))
-		return NULL;
+		return nullptr;
 
-	ProjectileUpdateInterface* objPui = NULL;
+	ProjectileUpdateInterface* objPui = nullptr;
 	for (BehaviorModule** u = obj->getBehaviorModules(); *u; ++u)
 	{
-		if ((objPui = (*u)->getProjectileUpdateInterface()) != NULL)
+		if ((objPui = (*u)->getProjectileUpdateInterface()) != nullptr)
 			return objPui;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -256,7 +256,7 @@ void PhysicsBehavior::onObjectCreated()
 PhysicsBehavior::~PhysicsBehavior()
 {
 	deleteInstance(m_bounceSound);
-	m_bounceSound = NULL;
+	m_bounceSound = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -597,7 +597,7 @@ void PhysicsBehavior::setBounceSound(const AudioEventRTS* bounceSound)
 {
 	if (bounceSound)
 	{
-		if (m_bounceSound == NULL)
+		if (m_bounceSound == nullptr)
 			m_bounceSound = newInstance(DynamicAudioEventRTS);
 
 		m_bounceSound->m_event = *bounceSound;
@@ -605,7 +605,7 @@ void PhysicsBehavior::setBounceSound(const AudioEventRTS* bounceSound)
 	else
 	{
 		deleteInstance(m_bounceSound);
-		m_bounceSound = NULL;
+		m_bounceSound = nullptr;
 	}
 }
 
@@ -844,7 +844,7 @@ UpdateSleepTime PhysicsBehavior::update()
 		Coord3D normal;
 		normal.x = normal.y = 0.0f;
 		normal.z = -1.0f;
-		obj->onCollide(NULL, obj->getPosition(), &normal);
+		obj->onCollide(nullptr, obj->getPosition(), &normal);
 
 		//
 		// don't bother trying to remember how far we've fallen; instead,
@@ -856,7 +856,7 @@ UpdateSleepTime PhysicsBehavior::update()
 		//
 		Real netSpeed = -activeVelZ - d->m_minFallSpeedForDamage;
 
-		if (netSpeed > 0.0f && m_pui == NULL)
+		if (netSpeed > 0.0f && m_pui == nullptr)
 		{
 			// only apply force if it's a pretty steep fall, so that things
 			// going down hills don't injure themselves (unless the hill is really steep)
@@ -998,13 +998,13 @@ Real PhysicsBehavior::getForwardSpeed3D() const
 //-------------------------------------------------------------------------------------------------
 Bool PhysicsBehavior::isCurrentlyOverlapped(Object *obj) const
 {
-	return obj != NULL && obj->getID() == m_currentOverlap;
+	return obj != nullptr && obj->getID() == m_currentOverlap;
 }
 
 //-------------------------------------------------------------------------------------------------
 Bool PhysicsBehavior::wasPreviouslyOverlapped(Object *obj) const
 {
-	return obj != NULL && obj->getID() == m_previousOverlap;
+	return obj != nullptr && obj->getID() == m_previousOverlap;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1058,7 +1058,7 @@ void PhysicsBehavior::addOverlap(Object *obj)
 //-------------------------------------------------------------------------------------------------
 void PhysicsBehavior::transferVelocityTo(PhysicsBehavior* that) const
 {
-	if (that != NULL)
+	if (that != nullptr)
 	{
 		that->m_vel.add(&m_vel);
 		that->m_velMag = INVALID_VEL_MAG;
@@ -1068,7 +1068,7 @@ void PhysicsBehavior::transferVelocityTo(PhysicsBehavior* that) const
 //-------------------------------------------------------------------------------------------------
 void PhysicsBehavior::addVelocityTo( const Coord3D *vel)
 {
-	if (vel != NULL)
+	if (vel != nullptr)
 		m_vel.add( vel );
 }
 
@@ -1159,7 +1159,7 @@ void PhysicsBehavior::doBounceSound(const Coord3D& prevPos)
 void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3D *normal )
 {
 	//USE_PERF_TIMER(PhysicsBehavioronCollide)
-	if (m_pui != NULL)
+	if (m_pui != nullptr)
 	{
 		// projectiles always get a chance to handle their own collisions, and not go thru here
 		if (m_pui->projectileHandleCollision(other))
@@ -1171,7 +1171,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 	Object* objContainedBy = obj->getContainedBy();
 
 	// Note that other == null means "collide with ground"
-	if (other == NULL)
+	if (other == nullptr)
 	{
 		// if we are in a container, tell the container we collided with the ground.
 		// (handy for parachutes.)
@@ -1198,7 +1198,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 
 	// ignore collisions with our "ignore" thingie, if any (and vice versa)
 	AIUpdateInterface* ai = obj->getAIUpdateInterface();
-	if (ai != NULL  && ai->getIgnoredObstacleID() == other->getID())
+	if (ai != nullptr  && ai->getIgnoredObstacleID() == other->getID())
 	{
 /// @todo srj -- what the hell is this code doing here? ack!
 		//Before we return, check for a very special case of an infantry colliding with an unmanned vehicle.
@@ -1226,7 +1226,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 	}
 
 	AIUpdateInterface* aiOther = other->getAIUpdateInterface();
-	if (aiOther != NULL  && aiOther->getIgnoredObstacleID() == obj->getID())
+	if (aiOther != nullptr  && aiOther->getIgnoredObstacleID() == obj->getID())
 	{
 		return;
 	}
@@ -1338,7 +1338,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 				// don't let us intersect buildings. cheat. applying a force won't work
 				// cuz we are usually braking. jam it.
 				Object* objToBounce = obj;
-				while (objToBounce->getContainedBy() != NULL)
+				while (objToBounce->getContainedBy() != nullptr)
 					objToBounce = objToBounce->getContainedBy();
 
 				Real bounceOutDist = usRadius * 0.1f;
@@ -1471,7 +1471,7 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 
 	// grab physics modules if there
 	PhysicsBehavior *crusherPhysics = this;
-	if( crusherPhysics == NULL )
+	if( crusherPhysics == nullptr )
 	{
 		return false;
 	}

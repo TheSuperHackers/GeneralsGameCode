@@ -77,8 +77,8 @@ void Copy_Emitter_Property_Struct
 	dest.Start			= src.Start;
 	dest.Rand			= src.Rand;
 	dest.NumKeyFrames = src.NumKeyFrames;
-	dest.KeyTimes		= NULL;
-	dest.Values			= NULL;
+	dest.KeyTimes		= nullptr;
+	dest.Values			= nullptr;
 
 	if (dest.NumKeyFrames > 0) {
 		dest.KeyTimes	=  W3DNEWARRAY float[dest.NumKeyFrames];
@@ -117,7 +117,7 @@ class ParticleEmitterClass : public RenderObjClass
 			int max_particles = 0, int max_buffer_size = -1, bool pingpong = false,
 			int render_mode = W3D_EMITTER_RENDER_MODE_TRI_PARTICLES,
 			int frame_mode = W3D_EMITTER_FRAME_MODE_1x1,
-			const W3dEmitterLinePropertiesStruct * line_props = NULL);
+			const W3dEmitterLinePropertiesStruct * line_props = nullptr);
 
 		ParticleEmitterClass(const ParticleEmitterClass & src);
 		ParticleEmitterClass & operator = (const ParticleEmitterClass &);
@@ -179,7 +179,7 @@ class ParticleEmitterClass : public RenderObjClass
 		void Set_Base_Velocity(const Vector3& base_vel);
 		void Set_Outwards_Velocity(float out_vel);
 		void Set_Velocity_Inheritance_Factor(float inh_factor);
-		void Set_Acceleration (const Vector3 &acceleration)	{ if (Buffer != NULL) Buffer->Set_Acceleration (acceleration/1000000.0f); }
+		void Set_Acceleration (const Vector3 &acceleration)	{ if (Buffer != nullptr) Buffer->Set_Acceleration (acceleration/1000000.0f); }
 
 		// Change visual properties of emitter / buffer:
 		void Reset_Colors(ParticlePropertyStruct<Vector3> &new_props)							{ if (Buffer) Buffer->Reset_Colors(new_props); }

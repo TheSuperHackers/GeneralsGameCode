@@ -94,9 +94,9 @@
 // static data members
 Vector3 PointGroupClass::_TriVertexLocationOrientationTable[256][3];
 Vector3 PointGroupClass::_QuadVertexLocationOrientationTable[256][4];
-Vector2 *PointGroupClass::_TriVertexUVFrameTable[5] = { NULL, NULL, NULL, NULL, NULL};
-Vector2 *PointGroupClass::_QuadVertexUVFrameTable[5] = { NULL, NULL, NULL, NULL, NULL};
-VertexMaterialClass *PointGroupClass::PointMaterial=NULL;
+Vector2 *PointGroupClass::_TriVertexUVFrameTable[5] = { nullptr, nullptr, nullptr, nullptr, nullptr};
+Vector2 *PointGroupClass::_QuadVertexUVFrameTable[5] = { nullptr, nullptr, nullptr, nullptr, nullptr};
+VertexMaterialClass *PointGroupClass::PointMaterial=nullptr;
 
 // Static arrays for intermediate calcs (never resized down, just up):
 VectorClass<Vector3>		PointGroupClass::compressed_loc;		// point locations 'compressed' by APT
@@ -149,15 +149,15 @@ SortingIndexBufferClass		*SortingTris, *SortingQuads;	// Sorting index buffers.
  *   11/17/1998 NH  : Created.                                            *
  *========================================================================*/
 PointGroupClass::PointGroupClass(void) :
-	PointLoc(NULL),
-	PointDiffuse(NULL),
-	APT(NULL),
-	PointSize(NULL),
-	PointOrientation(NULL),
-	PointFrame(NULL),
+	PointLoc(nullptr),
+	PointDiffuse(nullptr),
+	APT(nullptr),
+	PointSize(nullptr),
+	PointOrientation(nullptr),
+	PointFrame(nullptr),
 	PointCount(0),
 	FrameRowColumnCountLog2(0),
-	Texture(NULL),
+	Texture(nullptr),
 	Flags(0),
 	Shader(ShaderClass::_PresetAdditiveSpriteShader),
 	PointMode(TRIS),
@@ -189,31 +189,31 @@ PointGroupClass::~PointGroupClass(void)
 {
 	if (PointLoc) {
 		PointLoc->Release_Ref();
-		PointLoc = NULL;
+		PointLoc = nullptr;
 	}
 	if (PointDiffuse) {
 		PointDiffuse->Release_Ref();
-		PointDiffuse=NULL;
+		PointDiffuse=nullptr;
 	}
 	if (APT) {
 		APT->Release_Ref();
-		APT = NULL;
+		APT = nullptr;
 	}
 	if (PointSize) {
 		PointSize->Release_Ref();
-		PointSize = NULL;
+		PointSize = nullptr;
 	}
 	if (PointOrientation) {
 		PointOrientation->Release_Ref();
-		PointOrientation = NULL;
+		PointOrientation = nullptr;
 	}
 	if (PointFrame) {
 		PointFrame->Release_Ref();
-		PointFrame = NULL;
+		PointFrame = nullptr;
 	}
 	if (Texture) {
 		REF_PTR_RELEASE(Texture);
-		Texture = NULL;
+		Texture = nullptr;
 	}
 }
 
@@ -788,11 +788,11 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 //	if (Texture) Texture->Process_Reduction();
 
 	// Pointers which point into existing buffers (member or static):
-	Vector3 *current_loc = NULL;
-	Vector4 *current_diffuse = NULL;
-	float *current_size = NULL;
-	unsigned char *current_orient = NULL;
-	unsigned char *current_frame = NULL;
+	Vector3 *current_loc = nullptr;
+	Vector4 *current_diffuse = nullptr;
+	float *current_size = nullptr;
+	unsigned char *current_orient = nullptr;
+	unsigned char *current_frame = nullptr;
 
 	// If there is a color or alpha array enable gradient in shader - otherwise disable.
    float value_255 = 0.9961f;	//254 / 255
@@ -1041,9 +1041,9 @@ void PointGroupClass::Update_Arrays(
 
 	if (VertexLoc.Length() < total_vnum) {
 		// Resize arrays (2x guardband to prevent frequent reallocations).
-		VertexLoc.Resize(total_vnum * 2, NULL);
-		VertexUV.Resize(total_vnum * 2, NULL);
-		VertexDiffuse.Resize(total_vnum * 2, NULL);
+		VertexLoc.Resize(total_vnum * 2, nullptr);
+		VertexUV.Resize(total_vnum * 2, nullptr);
+		VertexDiffuse.Resize(total_vnum * 2, nullptr);
 	}
 
 	int vert, i, j;
@@ -1660,11 +1660,11 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 	WWASSERT(PointLoc && PointLoc->Get_Array());
 
 	// Pointers which point into existing buffers (member or static):
-	Vector3 *current_loc = NULL;
-	Vector4 *current_diffuse = NULL;
-	float *current_size = NULL;
-	unsigned char *current_orient = NULL;
-	unsigned char *current_frame = NULL;
+	Vector3 *current_loc = nullptr;
+	Vector4 *current_diffuse = nullptr;
+	float *current_size = nullptr;
+	unsigned char *current_orient = nullptr;
+	unsigned char *current_frame = nullptr;
 
 	// If there is a color or alpha array enable gradient in shader - otherwise disable.
   float value_255 = 0.9961f;	//254 / 255

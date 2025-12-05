@@ -50,8 +50,8 @@ static NameKeyType parentWOLMessageWindowID = NAMEKEY_INVALID;
 static NameKeyType buttonCancelID = NAMEKEY_INVALID;
 
 // Window Pointers ------------------------------------------------------------------------
-static GameWindow *parentWOLMessageWindow = NULL;
-static GameWindow *buttonCancel = NULL;
+static GameWindow *parentWOLMessageWindow = nullptr;
+static GameWindow *buttonCancel = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -61,8 +61,8 @@ void WOLMessageWindowInit( WindowLayout *layout, void *userData )
 {
 	parentWOLMessageWindowID = TheNameKeyGenerator->nameToKey( "WOLMessageWindow.wnd:WOLMessageWindowParent" );
 	buttonCancelID = TheNameKeyGenerator->nameToKey( "WOLMessageWindow.wnd:ButtonCancel" );
-	parentWOLMessageWindow = TheWindowManager->winGetWindowFromId( NULL, parentWOLMessageWindowID );
-	buttonCancel = TheWindowManager->winGetWindowFromId( NULL,  buttonCancelID);
+	parentWOLMessageWindow = TheWindowManager->winGetWindowFromId( nullptr, parentWOLMessageWindowID );
+	buttonCancel = TheWindowManager->winGetWindowFromId( nullptr,  buttonCancelID);
 
 
 	// Show Menu

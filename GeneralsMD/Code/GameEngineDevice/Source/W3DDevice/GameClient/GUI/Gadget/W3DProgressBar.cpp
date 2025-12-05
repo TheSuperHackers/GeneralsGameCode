@@ -283,9 +283,9 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 	}
 
 	// sanity
-	if( backLeft == NULL || backRight == NULL ||
-			backCenter == NULL ||
-			barRight == NULL)
+	if( backLeft == nullptr || backRight == nullptr ||
+			backCenter == nullptr ||
+			barRight == nullptr)
 			// backSmallCenter == NULL ||barLeft == NULL ||barCenter == NULL || barSmallCenter == NULL )
 		return;
 

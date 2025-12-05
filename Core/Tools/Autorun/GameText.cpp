@@ -185,7 +185,7 @@ static int _cdecl			compareLUT ( const void *,  const void*);
 //         Public Data
 //----------------------------------------------------------------------------
 
-GameTextInterface *TheGameText = NULL;
+GameTextInterface *TheGameText = nullptr;
 
 //----------------------------------------------------------------------------
 //         Private Prototypes
@@ -220,12 +220,12 @@ GameTextInterface* CreateGameTextInterface( void )
 GameTextManager::GameTextManager()
 :	m_textCount(0),
 	m_maxLabelLen(0),
-	m_stringInfo(NULL),
-	m_stringLUT(NULL),
+	m_stringInfo(nullptr),
+	m_stringLUT(nullptr),
 	m_initialized(FALSE),
 	m_jabberWockie(FALSE),
 	m_munkee(FALSE),
-	m_noStringList(NULL),
+	m_noStringList(nullptr),
 	m_useStringFile(TRUE),
 	m_failed(L"***FATAL*** String Manager failed to initialized properly")
 {
@@ -294,7 +294,7 @@ void GameTextManager::init( void )
 
 	m_stringInfo = new StringInfo[m_textCount];
 
-	if( m_stringInfo == NULL )
+	if( m_stringInfo == nullptr )
 	{
 		deinit();
 		return;
@@ -341,10 +341,10 @@ void GameTextManager::init( void )
 void GameTextManager::deinit( void )
 {
 	delete [] m_stringInfo;
-	m_stringInfo = NULL;
+	m_stringInfo = nullptr;
 
 	delete [] m_stringLUT;
-	m_stringLUT = NULL;
+	m_stringLUT = nullptr;
 
 	m_textCount = 0;
 
@@ -362,7 +362,7 @@ void GameTextManager::deinit( void )
 	DEBUG_LOG(("*** End missing strings ***"));
 	DEBUG_LOG((""));
 
-	m_noStringList = NULL;
+	m_noStringList = nullptr;
 
 	m_initialized = FALSE;
 }
@@ -474,7 +474,7 @@ void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *w
 		{
 			if ( (ch = *in++) == 0 )
 			{
-				in = NULL; // have exhausted the input m_buffer
+				in = nullptr; // have exhausted the input m_buffer
 				ch = readChar ( file );
 			}
 		}
@@ -531,7 +531,7 @@ void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *w
 		{
 			if ( (ch = *in++) == 0 )
 			{
-				in = NULL; // have exhausted the input m_buffer
+				in = nullptr; // have exhausted the input m_buffer
 				ch = readChar ( file );
 			}
 		}
@@ -634,7 +634,7 @@ void GameTextManager::translateCopy( WideChar *outbuf, Char *inbuf )
 	if ( m_jabberWockie )
 	{
 		static Char buffer[MAX_UITEXT_LENGTH*2];
-		Char *firstLetter = NULL, *lastLetter;
+		Char *firstLetter = nullptr, *lastLetter;
 		Char *b = buffer;
 		Int formatWord = FALSE;
 		Char ch;
@@ -650,7 +650,7 @@ void GameTextManager::translateCopy( WideChar *outbuf, Char *inbuf )
 						lastLetter = b-1;
 						reverseWord ( firstLetter, lastLetter );
 					}
-					firstLetter = NULL;
+					firstLetter = nullptr;
 					formatWord = FALSE;
 				}
 				*b++ = ch;
@@ -1049,7 +1049,7 @@ const wchar_t * GameTextManager::fetch( const Char *label )
 {
 	DEBUG_ASSERTCRASH ( m_initialized, ("String Manager has not been m_initialized") );
 
-	if( m_stringInfo == NULL )
+	if( m_stringInfo == nullptr )
 	{
 		return m_failed.c_str();
 	}
@@ -1058,12 +1058,12 @@ const wchar_t * GameTextManager::fetch( const Char *label )
 	StringLookUp key;
 	std::string lb;
 	lb = label;
-	key.info = NULL;
+	key.info = nullptr;
 	key.label = &lb;
 
 	lookUp = (StringLookUp *) bsearch( &key, (void*) m_stringLUT, m_textCount, sizeof(StringLookUp), compareLUT );
 
-	if( lookUp == NULL )
+	if( lookUp == nullptr )
 	{
 		// See if we already have the missing string
 		wchar_t tmp[256];

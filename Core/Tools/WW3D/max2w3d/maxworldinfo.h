@@ -58,7 +58,7 @@ class MaxWorldInfoClass : public WorldInfoClass
 		MaxWorldInfoClass(DynamicVectorClass<GeometryExportTaskClass *> & mesh_list)
 			:	MeshList (mesh_list),
 				SmoothBetweenMeshes (true),
-				CurrentTask(NULL),
+				CurrentTask(nullptr),
 				CurrentTime(0)					{ }
 		virtual ~MaxWorldInfoClass(void)	{ }
 

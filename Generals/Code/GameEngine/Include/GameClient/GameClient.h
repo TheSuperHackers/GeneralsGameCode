@@ -215,7 +215,7 @@ private:
 	do \
 	{ \
 		Drawable* _xq_nextDrawable; \
-		for (Drawable* DRAW = TheGameClient->firstDrawable(); DRAW != NULL; DRAW = _xq_nextDrawable ) \
+		for (Drawable* DRAW = TheGameClient->firstDrawable(); DRAW != nullptr; DRAW = _xq_nextDrawable ) \
 		{ \
 			_xq_nextDrawable = DRAW->getNextDrawable(); \
 			if (DRAW->getStatusFlags() & (STATUS)) \

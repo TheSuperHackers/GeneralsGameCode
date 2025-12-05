@@ -35,7 +35,7 @@ class EmitterUserPropPageClass : public CPropertyPage
 
 // Construction
 public:
-	EmitterUserPropPageClass (EmitterInstanceListClass *pemitter_list = NULL);
+	EmitterUserPropPageClass (EmitterInstanceListClass *pemitter_list = nullptr);
 	~EmitterUserPropPageClass ();
 
 // Dialog Data

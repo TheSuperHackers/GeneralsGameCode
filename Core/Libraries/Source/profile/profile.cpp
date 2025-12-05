@@ -26,6 +26,8 @@
 //
 // Profile module main code
 //////////////////////////////////////////////////////////////////////////////
+
+#include <Utility/CppMacros.h>
 #include "profile.h"
 #include "internal.h"
 #include <new>
@@ -52,13 +54,13 @@ void *ProfileReAllocMemory(void *oldPtr, unsigned newSize)
 {
   // Windows doesn't like ReAlloc with NULL handle/ptr...
   if (!oldPtr)
-    return newSize?ProfileAllocMemory(newSize):0;
+    return newSize?ProfileAllocMemory(newSize):nullptr;
 
   // Shrinking to 0 size is basically freeing memory
   if (!newSize)
   {
     GlobalFree((HGLOBAL)oldPtr);
-    return 0;
+    return nullptr;
   }
 
   // now try GlobalReAlloc first
@@ -323,7 +325,7 @@ unsigned Profile::GetFrameCount(void)
 
 const char *Profile::GetFrameName(unsigned frame)
 {
-  return frame>=m_rec?NULL:m_recNames[frame];
+  return frame>=m_rec?nullptr:m_recNames[frame];
 }
 
 void Profile::ClearTotals(void)

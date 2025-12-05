@@ -59,7 +59,7 @@ void INI::parseMappedImageDefinition( INI* ini )
 	if(image)
 		DEBUG_ASSERTCRASH(!image->getRawTextureData(), ("We are trying to parse over an existing image that contains a non-null rawTextureData, you should fix that"));
 
-	if( image == NULL )
+	if( image == nullptr )
 	{
 
 		// image not found, create a new one

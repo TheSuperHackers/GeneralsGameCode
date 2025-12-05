@@ -29,6 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
+
 #include "Common/Xfer.h"
 #include "GameClient/Drawable.h"
 #include "GameLogic/Object.h"
@@ -52,7 +53,7 @@ void W3DOverlordTruckDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }

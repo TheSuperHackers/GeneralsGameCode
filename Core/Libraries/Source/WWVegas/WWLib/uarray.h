@@ -146,7 +146,7 @@ template <class T>
 UniqueArrayClass<T>::~UniqueArrayClass(void)
 {
 	delete[] HashTable;
-	HashTable = NULL;
+	HashTable = nullptr;
 }
 
 

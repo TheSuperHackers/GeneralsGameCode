@@ -74,9 +74,9 @@ WinInstanceData::WinInstanceData( void )
 {
 
 	// we don't allocate strings unless we need them
-	m_text = NULL;
-	m_tooltip = NULL;
-	m_videoBuffer = NULL;
+	m_text = nullptr;
+	m_tooltip = nullptr;
+	m_videoBuffer = nullptr;
 	init();
 
 }
@@ -92,7 +92,7 @@ WinInstanceData::~WinInstanceData( void )
 	if( m_tooltip )
 		TheDisplayStringManager->freeDisplayString( m_tooltip );
 
-	m_videoBuffer = NULL; //Video Buffer needs to be clean up by the control that is in charge of the video.
+	m_videoBuffer = nullptr; //Video Buffer needs to be clean up by the control that is in charge of the video.
 
 }
 
@@ -107,15 +107,15 @@ void WinInstanceData::init( void )
 	for( i = 0; i < MAX_DRAW_DATA; i++ )
 	{
 
-		m_enabledDrawData[ i ].image = NULL;
+		m_enabledDrawData[ i ].image = nullptr;
 		m_enabledDrawData[ i ].color = WIN_COLOR_UNDEFINED;
 		m_enabledDrawData[ i ].borderColor = WIN_COLOR_UNDEFINED;
 
-		m_disabledDrawData[ i ].image = NULL;
+		m_disabledDrawData[ i ].image = nullptr;
 		m_disabledDrawData[ i ].color = WIN_COLOR_UNDEFINED;
 		m_disabledDrawData[ i ].borderColor = WIN_COLOR_UNDEFINED;
 
-		m_hiliteDrawData[ i ].image = NULL;
+		m_hiliteDrawData[ i ].image = nullptr;
 		m_hiliteDrawData[ i ].color = WIN_COLOR_UNDEFINED;
 		m_hiliteDrawData[ i ].borderColor = WIN_COLOR_UNDEFINED;
 
@@ -133,7 +133,7 @@ void WinInstanceData::init( void )
 	m_state = 0;
 	m_style = 0;
 	m_status = WIN_STATUS_NONE;
-	m_owner = NULL;
+	m_owner = nullptr;
 	m_textLabelString.clear();
 	m_tooltipString.clear();
   m_tooltipDelay = -1; ///< default value
@@ -143,23 +143,23 @@ void WinInstanceData::init( void )
 	m_imageOffset.y = 0;
 
 	// reset all data for the text display strings and font for window
-	m_font = NULL;
+	m_font = nullptr;
 	if( m_text )
 	{
 
 		TheDisplayStringManager->freeDisplayString( m_text );
-		m_text = NULL;
+		m_text = nullptr;
 
 	}
 	if( m_tooltip )
 	{
 
 		TheDisplayStringManager->freeDisplayString( m_tooltip );
-		m_tooltip = NULL;
+		m_tooltip = nullptr;
 
 	}
 
-	m_videoBuffer = NULL;
+	m_videoBuffer = nullptr;
 
 
 }
@@ -170,7 +170,7 @@ void WinInstanceData::setTooltipText( UnicodeString tip )
 {
 
 	// allocate a text tooltip string if needed
-	if( m_tooltip == NULL )
+	if( m_tooltip == nullptr )
 		m_tooltip = TheDisplayStringManager->newDisplayString();
 	DEBUG_ASSERTCRASH( m_tooltip, ("no tooltip") );
 
@@ -186,7 +186,7 @@ void WinInstanceData::setText( UnicodeString text )
 {
 
 	// allocate a text instance if needed
-	if( m_text == NULL )
+	if( m_text == nullptr )
 		m_text = TheDisplayStringManager->newDisplayString();
 	DEBUG_ASSERTCRASH( m_text, ("no text") );
 

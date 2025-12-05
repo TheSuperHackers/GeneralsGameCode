@@ -52,7 +52,7 @@ public:
     UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "SpawnPointBoneName",		INI::parseAsciiString,		NULL, offsetof( SpawnPointProductionExitUpdateModuleData, m_spawnPointBoneNameData ) },
+			{ "SpawnPointBoneName",		INI::parseAsciiString,		nullptr, offsetof( SpawnPointProductionExitUpdateModuleData, m_spawnPointBoneNameData ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);

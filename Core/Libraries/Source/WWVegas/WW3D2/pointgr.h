@@ -78,11 +78,11 @@ public:
 
 	// PointGroupClass interface:
 	void						Set_Arrays(ShareBufferClass<Vector3> *locs,
-									ShareBufferClass<Vector4> *diffuse = NULL,
-									ShareBufferClass<unsigned int> *apt = NULL,
-									ShareBufferClass<float> *sizes = NULL,
-									ShareBufferClass<unsigned char> *orientations = NULL,
-									ShareBufferClass<unsigned char> *frames = NULL,
+									ShareBufferClass<Vector4> *diffuse = nullptr,
+									ShareBufferClass<unsigned int> *apt = nullptr,
+									ShareBufferClass<float> *sizes = nullptr,
+									ShareBufferClass<unsigned char> *orientations = nullptr,
+									ShareBufferClass<unsigned char> *frames = nullptr,
 									int active_point_count = -1,
 									float vpxmin = 0.0f, float vpymin = 0.0f,
 									float vpxmax = 0.0f, float vpymax = 0.0f);

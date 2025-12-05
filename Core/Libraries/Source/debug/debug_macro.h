@@ -328,7 +328,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be NULL") return;
     (Debug::SkipNext(),(Debug::CrashBegin(__FILE__,__LINE__) << msg).CrashDone(true))
 
   #define DFAIL() \
-    Debug::AssertBegin(__FILE__,__LINE__,NULL).AssertDone()
+    Debug::AssertBegin(__FILE__,__LINE__,nullptr).AssertDone()
 
   #define D_ISLOG() \
     Debug::IsLogEnabled(__FILE__)

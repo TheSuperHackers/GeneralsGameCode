@@ -131,7 +131,7 @@ bit8 Get_App_Dir(OUT char *filename,int maxlen, ConfigFile &config,int index)
   }
   DWORD  type;
   DWORD  length=MAX_PATH;
-  regRetval=RegQueryValueEx(regKey,"InstallPath",NULL,&type,(uint8 *)gamePath,
+  regRetval=RegQueryValueEx(regKey,"InstallPath",nullptr,&type,(uint8 *)gamePath,
       &length);
   DBGMSG("GAME PATH = "<<gamePath);
   if ((regRetval!=ERROR_SUCCESS)||(type!=REG_SZ))
@@ -145,7 +145,7 @@ bit8 Get_App_Dir(OUT char *filename,int maxlen, ConfigFile &config,int index)
   //  path to a file, you better end the directory with a trailing '\\'!!!
   char *cptr=gamePath;
   char *tempPtr;
-  while( (tempPtr=strchr(cptr,'\\')) !=NULL)
+  while( (tempPtr=strchr(cptr,'\\')) !=nullptr)
     cptr=tempPtr+1;
   if (cptr)
     *cptr=0;

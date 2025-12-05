@@ -46,10 +46,10 @@ W3DDisplayStringManager::W3DDisplayStringManager( void )
 {
 	for (Int i = 0; i < MAX_GROUPS; ++i)
 	{
-		m_groupNumeralStrings[i] = NULL;
+		m_groupNumeralStrings[i] = nullptr;
 	}
 
-	m_formationLetterDisplayString = NULL;
+	m_formationLetterDisplayString = nullptr;
 
 }
 
@@ -60,12 +60,12 @@ W3DDisplayStringManager::~W3DDisplayStringManager( void )
 	{
 		if (m_groupNumeralStrings[i])
 			freeDisplayString(m_groupNumeralStrings[i]);
-		m_groupNumeralStrings[i] = NULL;
+		m_groupNumeralStrings[i] = nullptr;
 	}
 
 	if (m_formationLetterDisplayString)
 		freeDisplayString( m_formationLetterDisplayString );
-	m_formationLetterDisplayString = NULL;
+	m_formationLetterDisplayString = nullptr;
 
 
 }
@@ -113,12 +113,12 @@ DisplayString *W3DDisplayStringManager::newDisplayString( void )
 	DisplayString *newString = newInstance(W3DDisplayString);
 
 	// sanity
-	if( newString == NULL )
+	if( newString == nullptr )
 	{
 
 		DEBUG_LOG(( "newDisplayString: Could not allcoate new W3D display string" ));
 		assert( 0 );
-		return NULL;
+		return nullptr;
 
 	}
 
@@ -148,7 +148,7 @@ void W3DDisplayStringManager::freeDisplayString( DisplayString *string )
 {
 
 	// sanity
-	if( string == NULL )
+	if( string == nullptr )
 		return;
 
 	// unlink
@@ -156,7 +156,7 @@ void W3DDisplayStringManager::freeDisplayString( DisplayString *string )
 
 	// if the string happens to fall where our current checkpoint was, set the checkpoint to null
 	if ( m_currentCheckpoint == string) {
-		m_currentCheckpoint = NULL;
+		m_currentCheckpoint = nullptr;
 	}
 
 	// free data

@@ -59,7 +59,7 @@ class TRect
 		TRect<T> const operator + (TPoint2D<T> const & point) {return(TRect<T>(X + point.X, Y + point.Y, Width, Height));}
 		TRect<T> const operator - (TPoint2D<T> const & point) {return(TRect<T>(X - point.X, Y - point.Y, Width, Height));}
 
-		TRect<T> const Intersect(TRect<T> const & rectangle, T * x=NULL, T * y=NULL) const;
+		TRect<T> const Intersect(TRect<T> const & rectangle, T * x=nullptr, T * y=nullptr) const;
 		TRect<T> const Union(TRect<T> const & rect2) const;
 
 		/*
@@ -163,10 +163,10 @@ TRect<T> const TRect<T>::Intersect(TRect<T> const & rectangle, T * x, T * y) con
 	**	Adjust Height relative draw position according to Height new rectangle
 	**	union.
 	*/
-	if (x != NULL) {
+	if (x != nullptr) {
 		*x -= (r.X-X);
 	}
-	if (y != NULL) {
+	if (y != nullptr) {
 		*y -= (r.Y-Y);
 	}
 

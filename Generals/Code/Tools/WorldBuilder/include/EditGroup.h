@@ -29,7 +29,7 @@ class EditGroup : public CDialog
 {
 // Construction
 public:
-	EditGroup(ScriptGroup *pGroup, CWnd* pParent = NULL);   // standard constructor
+	EditGroup(ScriptGroup *pGroup, CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(EditGroup)

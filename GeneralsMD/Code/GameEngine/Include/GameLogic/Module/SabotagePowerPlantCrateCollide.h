@@ -56,7 +56,7 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "SabotagePowerDuration", INI::parseDurationUnsignedInt, NULL, offsetof( SabotagePowerPlantCrateCollideModuleData, m_powerSabotageFrames ) },
+			{ "SabotagePowerDuration", INI::parseDurationUnsignedInt, nullptr, offsetof( SabotagePowerPlantCrateCollideModuleData, m_powerSabotageFrames ) },
 			{ 0, 0, 0, 0 }
 		};
 		p.add( dataFieldParse );

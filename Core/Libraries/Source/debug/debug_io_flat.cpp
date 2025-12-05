@@ -26,6 +26,7 @@
 //
 // Debug I/O class flat (flat or split log file)
 //////////////////////////////////////////////////////////////////////////////
+
 #include "debug.h"
 #include "debug_io.h"
 #include "internal.h"
@@ -46,9 +47,9 @@ DebugIOFlat::OutputStream::OutputStream(const char *filename, unsigned maxSize):
   m_buffer=(char *)DebugAllocMemory(m_bufferSize);
 
   if (!m_limitedFileSize)
-    m_fileHandle=CreateFile(m_fileName,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,
+    m_fileHandle=CreateFile(m_fileName,GENERIC_WRITE,0,nullptr,CREATE_ALWAYS,
                             FILE_ATTRIBUTE_NORMAL|FILE_FLAG_WRITE_THROUGH,
-                            NULL);
+                            nullptr);
 }
 
 DebugIOFlat::OutputStream::~OutputStream()
@@ -173,22 +174,22 @@ void DebugIOFlat::OutputStream::Flush(void)
   {
     // simple flush to file
     DWORD written;
-    WriteFile(m_fileHandle,m_buffer,m_bufferUsed,&written,NULL);
+    WriteFile(m_fileHandle,m_buffer,m_bufferUsed,&written,nullptr);
     m_bufferUsed=0;
   }
   else
   {
     // create file, write ring buffer
-    m_fileHandle=CreateFile(m_fileName,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,
+    m_fileHandle=CreateFile(m_fileName,GENERIC_WRITE,0,nullptr,CREATE_ALWAYS,
                             FILE_ATTRIBUTE_NORMAL|FILE_FLAG_WRITE_THROUGH,
-                            NULL);
+                            nullptr);
     DWORD written;
     if (m_bufferUsed<m_bufferSize)
-      WriteFile(m_fileHandle,m_buffer,m_bufferUsed,&written,NULL);
+      WriteFile(m_fileHandle,m_buffer,m_bufferUsed,&written,nullptr);
     else
     {
-      WriteFile(m_fileHandle,m_buffer+m_nextChar,m_bufferUsed-m_nextChar,&written,NULL);
-      WriteFile(m_fileHandle,m_buffer,m_nextChar,&written,NULL);
+      WriteFile(m_fileHandle,m_buffer+m_nextChar,m_bufferUsed-m_nextChar,&written,nullptr);
+      WriteFile(m_fileHandle,m_buffer,m_nextChar,&written,nullptr);
     }
     CloseHandle(m_fileHandle);
   }
@@ -242,7 +243,7 @@ void DebugIOFlat::ExpandMagic(const char *src, const char *splitName, char *buf)
     {
       case 'e':
       case 'E':
-        GetModuleFileName(NULL,help,sizeof(help));
+        GetModuleFileName(nullptr,help,sizeof(help));
         break;
       case 'm':
       case 'M':
@@ -282,7 +283,7 @@ void DebugIOFlat::ExpandMagic(const char *src, const char *splitName, char *buf)
 }
 
 DebugIOFlat::DebugIOFlat(void):
-  m_firstStream(NULL), m_firstSplit(NULL),
+  m_firstStream(nullptr), m_firstSplit(nullptr),
   m_lastStreamPtr(&m_firstStream), m_lastSplitPtr(&m_firstSplit)
 {
   *m_copyDir=0;
@@ -296,7 +297,7 @@ DebugIOFlat::~DebugIOFlat()
     cur=cur->next;
     DebugFreeMemory(kill);
   }
-  m_firstSplit=NULL;
+  m_firstSplit=nullptr;
 
   for (StreamListEntry *stream=m_firstStream;stream;)
   {
@@ -414,15 +415,15 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
   else if (strcmp(cmd,"add") == 0)
   {
     // add [ <filename> [ <size in kb> ] ]
-    __ASSERT(m_firstStream==NULL);
+    __ASSERT(m_firstStream==nullptr);
 
     strlcpy(m_baseFilename, argn?argv[0]:"*eMN", ARRAY_SIZE(m_baseFilename));
 
     char fn[256];
-    ExpandMagic(m_baseFilename,NULL,fn);
+    ExpandMagic(m_baseFilename,nullptr,fn);
 
     m_firstStream=(StreamListEntry *)DebugAllocMemory(sizeof(StreamListEntry));
-    m_firstStream->next=NULL;
+    m_firstStream->next=nullptr;
     m_firstStream->stream=OutputStream::Create(fn,argn>1?atoi(argv[1])*1024:0);
     m_lastStreamPtr=&m_firstStream->next;
   }
@@ -476,7 +477,7 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
       {
         // must create new stream
         stream=(StreamListEntry *)DebugAllocMemory(sizeof(StreamListEntry));
-        stream->next=NULL;
+        stream->next=nullptr;
         *m_lastStreamPtr=stream;
         m_lastStreamPtr=&stream->next;
         stream->stream=OutputStream::Create(fn,argn>3?atoi(argv[3])*1024:0);
@@ -532,7 +533,7 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
       m_firstSplit=cur;
     }
     else
-      m_firstSplit=NULL;
+      m_firstSplit=nullptr;
   }
 }
 

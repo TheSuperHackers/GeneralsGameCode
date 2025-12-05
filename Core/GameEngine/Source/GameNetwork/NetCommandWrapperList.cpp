@@ -36,7 +36,7 @@
 
 NetCommandWrapperListNode::NetCommandWrapperListNode(NetWrapperCommandMsg *msg)
 {
-	m_next = NULL;
+	m_next = nullptr;
 	m_numChunks = msg->getNumChunks();
 	m_chunksPresent = NEW Bool[m_numChunks];	// pool[]ify
 	m_numChunksPresent = 0;
@@ -53,10 +53,10 @@ NetCommandWrapperListNode::NetCommandWrapperListNode(NetWrapperCommandMsg *msg)
 
 NetCommandWrapperListNode::~NetCommandWrapperListNode() {
 	delete[] m_chunksPresent;
-	m_chunksPresent = NULL;
+	m_chunksPresent = nullptr;
 
 	delete[] m_data;
-	m_data = NULL;
+	m_data = nullptr;
 }
 
 Bool NetCommandWrapperListNode::isComplete() {
@@ -79,7 +79,7 @@ UnsignedInt NetCommandWrapperListNode::getRawDataLength() {
 }
 
 void NetCommandWrapperListNode::copyChunkData(NetWrapperCommandMsg *msg) {
-	if (msg == NULL) {
+	if (msg == nullptr) {
 		DEBUG_CRASH(("Trying to copy data from a non-existent wrapper command message"));
 		return;
 	}
@@ -132,12 +132,12 @@ UnsignedByte * NetCommandWrapperListNode::getRawData() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 NetCommandWrapperList::NetCommandWrapperList() {
-	m_list = NULL;
+	m_list = nullptr;
 }
 
 NetCommandWrapperList::~NetCommandWrapperList() {
 	NetCommandWrapperListNode *temp;
-	while (m_list != NULL) {
+	while (m_list != nullptr) {
 		temp = m_list->m_next;
 		deleteInstance(m_list);
 		m_list = temp;
@@ -145,12 +145,12 @@ NetCommandWrapperList::~NetCommandWrapperList() {
 }
 
 void NetCommandWrapperList::init() {
-	m_list = NULL;
+	m_list = nullptr;
 }
 
 void NetCommandWrapperList::reset() {
 	NetCommandWrapperListNode *temp;
-	while (m_list != NULL) {
+	while (m_list != nullptr) {
 		temp = m_list->m_next;
 		deleteInstance(m_list);
 		m_list = temp;
@@ -161,7 +161,7 @@ Int NetCommandWrapperList::getPercentComplete(UnsignedShort wrappedCommandID)
 {
 	NetCommandWrapperListNode *temp = m_list;
 
-	while ((temp != NULL) && (temp->getCommandID() != wrappedCommandID)) {
+	while ((temp != nullptr) && (temp->getCommandID() != wrappedCommandID)) {
 		temp = temp->m_next;
 	}
 
@@ -175,11 +175,11 @@ void NetCommandWrapperList::processWrapper(NetCommandRef *ref) {
 	NetCommandWrapperListNode *temp = m_list;
 	NetWrapperCommandMsg *msg = (NetWrapperCommandMsg *)(ref->getCommand());
 
-	while ((temp != NULL) && (temp->getCommandID() != msg->getWrappedCommandID())) {
+	while ((temp != nullptr) && (temp->getCommandID() != msg->getWrappedCommandID())) {
 		temp = temp->m_next;
 	}
 
-	if (temp == NULL) {
+	if (temp == nullptr) {
 		temp = newInstance(NetCommandWrapperListNode)(msg);
 		temp->m_next = m_list;
 		m_list = temp;
@@ -194,9 +194,9 @@ NetCommandList * NetCommandWrapperList::getReadyCommands()
 	retlist->init();
 
 	NetCommandWrapperListNode *temp = m_list;
-	NetCommandWrapperListNode *next = NULL;
+	NetCommandWrapperListNode *next = nullptr;
 
-	while (temp != NULL) {
+	while (temp != nullptr) {
 		next = temp->m_next;
 		if (temp->isComplete()) {
 			NetCommandRef *msg = NetPacket::ConstructNetCommandMsgFromRawData(temp->getRawData(), temp->getRawDataLength());
@@ -204,10 +204,10 @@ NetCommandList * NetCommandWrapperList::getReadyCommands()
 			ret->setRelay(msg->getRelay());
 
 			deleteInstance(msg);
-			msg = NULL;
+			msg = nullptr;
 
 			removeFromList(temp);
-			temp = NULL;
+			temp = nullptr;
 		}
 		temp = next;
 	}
@@ -216,29 +216,29 @@ NetCommandList * NetCommandWrapperList::getReadyCommands()
 }
 
 void NetCommandWrapperList::removeFromList(NetCommandWrapperListNode *node) {
-	if (node == NULL) {
+	if (node == nullptr) {
 		return;
 	}
 
 	NetCommandWrapperListNode *temp = m_list;
-	NetCommandWrapperListNode *prev = NULL;
+	NetCommandWrapperListNode *prev = nullptr;
 
-	while ((temp != NULL) && (temp->getCommandID() != node->getCommandID())) {
+	while ((temp != nullptr) && (temp->getCommandID() != node->getCommandID())) {
 		prev = temp;
 		temp = temp->m_next;
 	}
 
-	if (temp == NULL) {
+	if (temp == nullptr) {
 		return;
 	}
 
-	if (prev == NULL) {
+	if (prev == nullptr) {
 		m_list = temp->m_next;
 		deleteInstance(temp);
-		temp = NULL;
+		temp = nullptr;
 	} else {
 		prev->m_next = temp->m_next;
 		deleteInstance(temp);
-		temp = NULL;
+		temp = nullptr;
 	}
 }

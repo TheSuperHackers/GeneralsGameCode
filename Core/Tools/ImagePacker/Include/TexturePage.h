@@ -97,7 +97,7 @@ public:
 	Int getHeight( void );  ///< get height of texture page
 
 	// get rgb from final generated texture (putting this in for quick preview)
-	void getPixel( Int x, Int y, Byte *r, Byte *g, Byte *b, Byte *a = NULL );
+	void getPixel( Int x, Int y, Byte *r, Byte *g, Byte *b, Byte *a = nullptr );
 
 	TexturePage *m_next;
 	TexturePage *m_prev;

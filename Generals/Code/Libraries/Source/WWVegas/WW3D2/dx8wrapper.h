@@ -459,7 +459,7 @@ public:
 	**	WW3D::Render (scene, camera, FALSE, FALSE);
 	**	WW3D::End_Render ();
 	**
-	**	swap_chain_ptr->Present (NULL, NULL, NULL, NULL);
+	**	swap_chain_ptr->Present (NULL, nullptr, NULL, nullptr);
 	**
 	**	DX8Wrapper::Set_Render_Target ((IDirect3DSurface8 *)NULL);
 	**

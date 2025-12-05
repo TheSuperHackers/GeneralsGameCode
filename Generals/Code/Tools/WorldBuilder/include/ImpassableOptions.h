@@ -24,7 +24,7 @@ class ImpassableOptions : public CDialog
 		enum { IDD = IDD_IMPASSABLEOPTIONS };
 
 	public:
-		ImpassableOptions(CWnd* pParent = NULL, Real defaultSlope = 45.0f);
+		ImpassableOptions(CWnd* pParent = nullptr, Real defaultSlope = 45.0f);
 		virtual ~ImpassableOptions();
 		Real GetSlopeToShow() const { return m_slopeToShow; }
 		Real GetDefaultSlope() const { return m_defaultSlopeToShow; }

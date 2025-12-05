@@ -122,7 +122,7 @@ Bool SalvageCrateCollide::executeCrateBehavior( Object *other )
 // ------------------------------------------------------------------------------------------------
 Bool SalvageCrateCollide::eligibleForWeaponSet( Object *other )
 {
-	if( other == NULL )
+	if( other == nullptr )
 		return FALSE;
 
 	// A kindof marks eligibility, and you must not be fully upgraded
@@ -137,7 +137,7 @@ Bool SalvageCrateCollide::eligibleForWeaponSet( Object *other )
 // ------------------------------------------------------------------------------------------------
 Bool SalvageCrateCollide::eligibleForArmorSet( Object *other )
 {
-	if( other == NULL )
+	if( other == nullptr )
 		return FALSE;
 
 	// A kindof marks eligibility, and you must not be fully upgraded
@@ -152,7 +152,7 @@ Bool SalvageCrateCollide::eligibleForArmorSet( Object *other )
 // ------------------------------------------------------------------------------------------------
 Bool SalvageCrateCollide::eligibleForLevel( Object *other )
 {
-	if( other == NULL )
+	if( other == nullptr )
 		return FALSE;
 
 	// Sorry, you are max level

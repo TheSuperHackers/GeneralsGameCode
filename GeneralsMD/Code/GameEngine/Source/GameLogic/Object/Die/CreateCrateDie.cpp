@@ -72,7 +72,7 @@ void CreateCrateDie::onDie( const DamageInfo * damageInfo )
 	if (!isDieApplicable(damageInfo))
 		return;
 
-	CrateTemplate const *currentCrateData = NULL;
+	CrateTemplate const *currentCrateData = nullptr;
 	Object *killer = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
 	Object *me = getObject();
 
@@ -144,7 +144,7 @@ Bool CreateCrateDie::testVeterancyLevel( CrateTemplate const *currentCrateData )
 
 Bool CreateCrateDie::testKillerType( CrateTemplate const *currentCrateData, Object *killer )
 {
-	if( killer == NULL )
+	if( killer == nullptr )
 		return FALSE;
 
 	// Must match the whole group of bits set in the KilledBy description (most likely One).
@@ -156,13 +156,13 @@ Bool CreateCrateDie::testKillerType( CrateTemplate const *currentCrateData, Obje
 
 Bool CreateCrateDie::testKillerScience( CrateTemplate const *currentCrateData, Object *killer )
 {
-	if( killer == NULL )
+	if( killer == nullptr )
 		return FALSE;
 
 	// killer's player must have the listed science
 	Player *killerPlayer = killer->getControllingPlayer();
 
-	if( killerPlayer == NULL )
+	if( killerPlayer == nullptr )
 		return FALSE;
 
 	if( ! killerPlayer->hasScience( currentCrateData->m_killerScience ) )
@@ -198,8 +198,8 @@ Object *CreateCrateDie::createCrate( CrateTemplate const *currentCrateData )
 	// At this point, I could very well have a "" for the type, if the Designer didn't make the sum of chances 1
 
 	ThingTemplate const *crateType = TheThingFactory->findTemplate( crateName );
-	if( crateType == NULL )
-		return NULL;
+	if( crateType == nullptr )
+		return nullptr;
 
 	Bool spotFound = FALSE;
 	Coord3D creationPoint;
@@ -222,7 +222,7 @@ Object *CreateCrateDie::createCrate( CrateTemplate const *currentCrateData )
 		// of the large dead thing (building rubble)
 		fpOptions.minRadius = 0.0f;
 		fpOptions.maxRadius = 125.0f;
-		fpOptions.relationshipObject = NULL;
+		fpOptions.relationshipObject = nullptr;
 		fpOptions.flags = FPF_NONE;
 		if( ThePartitionManager->findPositionAround( &centerPoint, &fpOptions, &creationPoint ) )
 		{
@@ -232,7 +232,7 @@ Object *CreateCrateDie::createCrate( CrateTemplate const *currentCrateData )
 
 	if( spotFound )
 	{
-		Object *newCrate = TheThingFactory->newObject( crateType, NULL );
+		Object *newCrate = TheThingFactory->newObject( crateType, nullptr );
 		newCrate->setPosition( &creationPoint );
 		newCrate->setOrientation( GameLogicRandomValueReal( 0, 2*PI ) );
 		newCrate->setLayer(layer);
@@ -249,7 +249,7 @@ Object *CreateCrateDie::createCrate( CrateTemplate const *currentCrateData )
 
 		return newCrate;
 	}
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------

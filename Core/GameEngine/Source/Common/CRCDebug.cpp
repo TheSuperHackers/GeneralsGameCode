@@ -120,7 +120,7 @@ void CRCDebugStartNewGame()
 	if (g_saveDebugCRCPerFrame)
 	{
 		// Create folder for frame data, if it doesn't exist yet.
-		CreateDirectory(g_saveDebugCRCPerFrameDir.str(), NULL);
+		CreateDirectory(g_saveDebugCRCPerFrameDir.str(), nullptr);
 
 		// Delete existing files
 		FilenameList files;

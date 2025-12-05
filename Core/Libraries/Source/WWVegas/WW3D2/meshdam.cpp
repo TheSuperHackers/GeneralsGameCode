@@ -62,7 +62,7 @@ DamageClass::DamageClass(void):
 	NumMaterials(0),
 	NumVerts(0),
 	NumColors(0),
-	Verts(NULL),
+	Verts(nullptr),
 	Colors(NULL)
 {
 }
@@ -83,10 +83,10 @@ DamageClass::DamageClass(void):
 DamageClass::~DamageClass(void)
 {
 	delete [] Verts;
-	Verts = NULL;
+	Verts = nullptr;
 
 	delete[] Colors;
-	Colors = NULL;
+	Colors = nullptr;
 }
 
 /***********************************************************************************************

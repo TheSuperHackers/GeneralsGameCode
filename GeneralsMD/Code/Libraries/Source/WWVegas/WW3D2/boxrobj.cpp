@@ -158,7 +158,7 @@ static Vector3						_BoxVertexNormals[NUM_BOX_VERTS] =
 
 bool										BoxRenderObjClass::IsInitted			= false;
 int										BoxRenderObjClass::DisplayMask		= 0;
-static VertexMaterialClass *		_BoxMaterial								= NULL;
+static VertexMaterialClass *		_BoxMaterial								= nullptr;
 static ShaderClass					_BoxShader;
 
 
@@ -306,7 +306,7 @@ const char * BoxRenderObjClass::Get_Name(void) const
  *=============================================================================================*/
 void BoxRenderObjClass::Set_Name(const char * name)
 {
-	WWASSERT(name != NULL);
+	WWASSERT(name != nullptr);
 	size_t nameLen = strlcpy(Name, name, ARRAY_SIZE(Name));
 	(void)nameLen; WWASSERT(nameLen < ARRAY_SIZE(Name));
 }
@@ -351,7 +351,7 @@ void BoxRenderObjClass::Init(void)
 	/*
 	** Set up the materials
 	*/
-	WWASSERT(_BoxMaterial == NULL);
+	WWASSERT(_BoxMaterial == nullptr);
 	_BoxMaterial = NEW_REF(VertexMaterialClass,());
 	_BoxMaterial->Set_Ambient(0,0,0);
 	_BoxMaterial->Set_Diffuse(0,0,0);
@@ -506,7 +506,7 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 		*/
 		DX8Wrapper::Set_Material(_BoxMaterial);
 		DX8Wrapper::Set_Shader(_BoxShader);
-		DX8Wrapper::Set_Texture(0,NULL);
+		DX8Wrapper::Set_Texture(0,nullptr);
 
 		DX8Wrapper::Set_Index_Buffer(ibaccess,0);
 		DX8Wrapper::Set_Vertex_Buffer(vbaccess);
@@ -724,7 +724,7 @@ void AABoxRenderObjClass::Render(RenderInfoClass & rinfo)
 void AABoxRenderObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
 	if (rinfo.RenderType == SpecialRenderInfoClass::RENDER_VIS) {
-		WWASSERT(rinfo.VisRasterizer != NULL);
+		WWASSERT(rinfo.VisRasterizer != nullptr);
 		Matrix3D temp(1);
 		temp.Translate(Transform.Get_Translation());
 		rinfo.VisRasterizer->Set_Model_Transform(temp);
@@ -1108,7 +1108,7 @@ void OBBoxRenderObjClass::Render(RenderInfoClass & rinfo)
 void OBBoxRenderObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 {
 	if (rinfo.RenderType == SpecialRenderInfoClass::RENDER_VIS) {
-		WWASSERT(rinfo.VisRasterizer != NULL);
+		WWASSERT(rinfo.VisRasterizer != nullptr);
 		rinfo.VisRasterizer->Set_Model_Transform(Transform);
 		vis_render_box(rinfo,ObjSpaceCenter,ObjSpaceExtent);
 	}

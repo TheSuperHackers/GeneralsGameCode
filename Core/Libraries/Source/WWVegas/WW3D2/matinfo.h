@@ -219,7 +219,7 @@ protected:
 
 inline int MaterialInfoClass::Add_Vertex_Material(VertexMaterialClass * vmat)
 {
-	if (vmat != NULL) {
+	if (vmat != nullptr) {
 		vmat->Add_Ref();
 	}
 	int index = VertexMaterials.Count();

@@ -289,7 +289,7 @@ public:
 	virtual RenderObjClass *	Get_Sub_Object(int index) const											{ return NULL; }
 	virtual int						Add_Sub_Object(RenderObjClass * subobj)								{ return 0; }
 	virtual int						Remove_Sub_Object(RenderObjClass * robj)								{ return 0; }
-	virtual RenderObjClass *	Get_Sub_Object_By_Name(const char * name, int *index=NULL) const;
+	virtual RenderObjClass *	Get_Sub_Object_By_Name(const char * name, int *index=nullptr) const;
 
 	virtual int						Get_Num_Sub_Objects_On_Bone(int boneindex) const					{ return 0; }
 	virtual RenderObjClass *	Get_Sub_Object_On_Bone(int index,int boneindex)	const				{ return NULL; }
@@ -465,7 +465,7 @@ public:
 	virtual int						Get_Collision_Type(void) const											{ return (Bits & COLL_TYPE_MASK); }
 	virtual void					Set_Collision_Type(int type)												{ Bits &= ~COLL_TYPE_MASK; Bits |= (type & COLL_TYPE_MASK) | COLL_TYPE_ALL; }
    virtual bool					Is_Complete(void)																{ return false; }
-	virtual bool					Is_In_Scene(void)																{ return Scene != NULL; }
+	virtual bool					Is_In_Scene(void)																{ return Scene != nullptr; }
 	virtual float					Get_Native_Screen_Size(void) const										{ return NativeScreenSize; }
 	virtual void					Set_Native_Screen_Size(float screensize)								{ NativeScreenSize = screensize; }
 

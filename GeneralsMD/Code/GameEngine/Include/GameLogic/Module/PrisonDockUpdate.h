@@ -49,7 +49,7 @@ public:
 	// virtual destructor prototype provided by MemoryPoolObject base class
 	virtual DockUpdateInterface* getDockUpdateInterface() { return this; }
 
-	virtual Bool action( Object *docker, Object *drone = NULL );	///< for me this means do some Prison
+	virtual Bool action( Object *docker, Object *drone = nullptr );	///< for me this means do some Prison
 
 protected:
 

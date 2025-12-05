@@ -56,14 +56,14 @@ class Bin
 	~Bin ();
 
 	void				Clear				( void );
-	void*				Get					( OLECHAR *text1, OLECHAR *text2 = NULL );
+	void*				Get					( OLECHAR *text1, OLECHAR *text2 = nullptr );
 	void*				GetNext			( void );
-	void				Add					( void *item, OLECHAR *text1, OLECHAR *text2 = NULL );
-	BinItem*		GetBinItem	( OLECHAR *text1, OLECHAR *text2 = NULL );
+	void				Add					( void *item, OLECHAR *text1, OLECHAR *text2 = nullptr );
+	BinItem*		GetBinItem	( OLECHAR *text1, OLECHAR *text2 = nullptr );
 	BinItem*		GetBinItem	( void *item );
 	BinItem*		GetNextBinItem	( void );
 	void				Remove			( void *item );
-	void				Remove			( OLECHAR *text1, OLECHAR *text2 = NULL );
+	void				Remove			( OLECHAR *text1, OLECHAR *text2 = nullptr );
 	void				Remove			( BinItem *item );
 
 

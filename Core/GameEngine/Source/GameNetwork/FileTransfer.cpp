@@ -276,7 +276,7 @@ Bool DoAnyMapTransfers(GameInfo *game)
 	if (ok)
 		ok = doFileTransfer(game->getMap(), ls, mask);
 	delete ls;
-	ls = NULL;
+	ls = nullptr;
 	if (!ok)
 		TheShell->showShell();
 	return ok;

@@ -86,7 +86,7 @@ public:
 
 	// dock methods
 	virtual DockUpdateInterface* getDockUpdateInterface() { return this; }
-	virtual Bool action( Object* docker, Object *drone = NULL );
+	virtual Bool action( Object* docker, Object *drone = nullptr );
 	virtual Bool isClearToEnter( Object const* docker ) const;
 
 	// our own methods

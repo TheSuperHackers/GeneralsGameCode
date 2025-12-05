@@ -28,7 +28,7 @@ class CellWidth : public CDialog
 {
 // Construction
 public:
-	CellWidth(int cellWidth, CWnd* pParent = NULL);   // standard constructor
+	CellWidth(int cellWidth, CWnd* pParent = nullptr);   // standard constructor
 
 	int GetCellWidth(void) {return mCellWidth;};
 // Dialog Data

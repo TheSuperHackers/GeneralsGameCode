@@ -49,7 +49,7 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "MinTransitionTime", INI::parseDurationUnsignedInt, NULL, offsetof( AnimationSteeringUpdateModuleData, m_transitionFrames ) },
+			{ "MinTransitionTime", INI::parseDurationUnsignedInt, nullptr, offsetof( AnimationSteeringUpdateModuleData, m_transitionFrames ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);

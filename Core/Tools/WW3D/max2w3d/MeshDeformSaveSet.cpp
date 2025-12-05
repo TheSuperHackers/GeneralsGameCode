@@ -55,7 +55,7 @@ MeshDeformSaveSetClass::Reset (void)
 	}
 
 	m_DeformData.Delete_All ();
-	m_CurrentKeyFrame = NULL;
+	m_CurrentKeyFrame = nullptr;
 	return ;
 }
 
@@ -90,7 +90,7 @@ MeshDeformSaveSetClass::Begin_Keyframe (float state)
 void
 MeshDeformSaveSetClass::End_Keyframe (void)
 {
-	m_CurrentKeyFrame = NULL;
+	m_CurrentKeyFrame = nullptr;
 	return ;
 }
 
@@ -109,8 +109,8 @@ MeshDeformSaveSetClass::Add_Vert
 )
 {
 	// State OK?
-	assert (m_CurrentKeyFrame != NULL);
-	if (m_CurrentKeyFrame != NULL) {
+	assert (m_CurrentKeyFrame != nullptr);
+	if (m_CurrentKeyFrame != nullptr) {
 
 		//
 		//	Create a structure that will hold the
@@ -144,7 +144,7 @@ MeshDeformSaveSetClass::Replace_Deform_Data
 )
 {
 	KEYFRAME *key_frame = m_DeformData[keyframe_index];
-	if (key_frame != NULL) {
+	if (key_frame != nullptr) {
 
 		//
 		//	Replace the vertex deformation list for the keyframe
@@ -171,7 +171,7 @@ MeshDeformSaveSetClass::Get_Deform_Count (void) const
 	int count = 0;
 	for (int index = 0; index < m_DeformData.Count (); index ++) {
 		KEYFRAME *key_frame = m_DeformData[index];
-		if (key_frame != NULL) {
+		if (key_frame != nullptr) {
 			count += key_frame->deform_list.Count ();
 		}
 	}

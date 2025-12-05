@@ -28,7 +28,7 @@ class GammaDialogClass : public CDialog
 {
 // Construction
 public:
-	GammaDialogClass(CWnd* pParent = NULL);   // standard constructor
+	GammaDialogClass(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(GammaDialogClass)

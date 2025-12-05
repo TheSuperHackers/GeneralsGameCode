@@ -64,10 +64,10 @@ class MeshDeformSetClass
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
 		MeshDeformSetClass (void)
-			:	m_pMesh (NULL),
-				m_pVertexArray (NULL),
-				m_pVertexOPStartArray (NULL),
-				m_pVertexColors (NULL),
+			:	m_pMesh (nullptr),
+				m_pVertexArray (nullptr),
+				m_pVertexOPStartArray (nullptr),
+				m_pVertexColors (nullptr),
 				m_VertexColorCount (0),
 				m_State (0),
 				m_CurrentKeyFrame (0),
@@ -123,7 +123,7 @@ class MeshDeformSetClass
 		IOResult				Save (ISave *save_obj);
 		IOResult				Load (ILoad *load_obj);
 
-		void					Save (MeshBuilderClass &builder, Mesh &mesh, MeshDeformSaveSetClass &save_set, Matrix3 *transform = NULL);
+		void					Save (MeshBuilderClass &builder, Mesh &mesh, MeshDeformSaveSetClass &save_set, Matrix3 *transform = nullptr);
 
 	protected:
 
@@ -139,7 +139,7 @@ class MeshDeformSetClass
 		void					Determine_Interpolation_Indicies (int key_frame, bool position, int &from, int &to, float &state);
 
 		// Deformation application methods
-		void					Apply_Position_Changes (UINT vert, int frame_to_check, Point3 &position, Matrix3 *transform = NULL);
+		void					Apply_Position_Changes (UINT vert, int frame_to_check, Point3 &position, Matrix3 *transform = nullptr);
 		void					Apply_Color_Changes (UINT vert, int frame_to_check, Mesh &mesh);
 		void					Apply_Color_Changes (UINT vert_index, UINT vert_color_index, int frame_to_check, VertColor &color);
 

@@ -83,10 +83,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	*/
 	int argc = 1;
 	char * argv[20];
-	argv[0] = NULL;
+	argv[0] = nullptr;
 
 	char * token = strtok(lpCmdLine, " ");
-	while (argc < 20 && token != NULL)
+	while (argc < 20 && token != nullptr)
 	{
 		argv[argc++] = strtrim(token);
 		token = strtok(NULL, " ");
@@ -110,12 +110,12 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 			if (filePtr)
 			{
 				char buffer[256];
-				char *stringPtr = NULL;
+				char *stringPtr = nullptr;
 
 				while (!feof(filePtr))
 				{
 					fread(buffer, 256, 1, filePtr);
-					if ((stringPtr = strstr(buffer, VERSION_STRING)) != NULL)
+					if ((stringPtr = strstr(buffer, VERSION_STRING)) != nullptr)
 					{
 						char *ptr;
 

@@ -216,7 +216,7 @@ int WriteMainDB(TransDB *db, const char *filename, CBabylonDlg *dlg )
 	ListSearch sh_label;
 	ListSearch sh_text;
 	int count = 0;
-	IFF_FILE	*iff = NULL;
+	IFF_FILE	*iff = nullptr;
 	DBINFO		dbinfo;
 	int ok = FALSE;
 
@@ -339,11 +339,11 @@ error:
 
 int LoadMainDB(TransDB *db, const char *filename, void (*cb) (void) )
 {
-	BabylonLabel	*label = NULL;
-	BabylonText		*text = NULL;
-	Translation *trans = NULL;
+	BabylonLabel	*label = nullptr;
+	BabylonText		*text = nullptr;
+	Translation *trans = nullptr;
 	int count = 0;
-	IFF_FILE	*iff = NULL;
+	IFF_FILE	*iff = nullptr;
 	DBINFO		dbinfo;
 	int ok = FALSE;
 
@@ -393,14 +393,14 @@ int LoadMainDB(TransDB *db, const char *filename, void (*cb) (void) )
 						db->AddObsolete ( text );
 					}
 
-					text = NULL;
+					text = nullptr;
 				}
 
 				if ( label )
 				{
 					count++;
 					db->AddLabel ( label );
-					label = NULL;
+					label = nullptr;
 					if ( cb )
 					{
 						cb ();
@@ -459,7 +459,7 @@ int LoadMainDB(TransDB *db, const char *filename, void (*cb) (void) )
 						db->AddObsolete ( text );
 					}
 
-					text = NULL;
+					text = nullptr;
 				}
 
 				if ( ! (text = new BabylonText ()))
@@ -547,7 +547,7 @@ int LoadMainDB(TransDB *db, const char *filename, void (*cb) (void) )
 				{
 					delete trans;
 				}
-				trans = NULL;
+				trans = nullptr;
 
 				break;
 			}
@@ -565,14 +565,14 @@ int LoadMainDB(TransDB *db, const char *filename, void (*cb) (void) )
 			db->AddObsolete ( text );
 		}
 
-		text = NULL;
+		text = nullptr;
 	}
 
 	if ( label )
 	{
 		count++;
 		db->AddLabel ( label );
-		label = NULL;
+		label = nullptr;
 		if ( cb )
 		{
 			cb ();
@@ -605,7 +605,7 @@ error:
 
 int	GetLabelCountDB ( char *filename )
 {
-	IFF_FILE	*iff = NULL;
+	IFF_FILE	*iff = nullptr;
 	DBINFO		dbinfo;
 	int count = 0;
 

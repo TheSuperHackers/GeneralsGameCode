@@ -48,7 +48,7 @@ class ParticlePanelParticle : public ISwapablePanel
 	public:
 		enum {IDD = IDD_PSEd_ParticlePanelParticle};
 		virtual DWORD GetIDD( void ) { return IDD; }
-		ParticlePanelParticle(UINT nIDTemplate = ParticlePanelParticle::IDD, CWnd* pParentWnd = NULL);
+		ParticlePanelParticle(UINT nIDTemplate = ParticlePanelParticle::IDD, CWnd* pParentWnd = nullptr);
 
 		void InitPanel( void );
 
@@ -66,7 +66,7 @@ class ParticlePanelDrawable : public ISwapablePanel
 	public:
 		enum {IDD = IDD_PSEd_ParticlePanelDrawable};
 		virtual DWORD GetIDD( void ) { return IDD; }
-		ParticlePanelDrawable(UINT nIDTemplate = ParticlePanelDrawable::IDD, CWnd* pParentWnd = NULL);
+		ParticlePanelDrawable(UINT nIDTemplate = ParticlePanelDrawable::IDD, CWnd* pParentWnd = nullptr);
 
 		void InitPanel( void );
 		void clearAllThingTemplates( void );
@@ -85,7 +85,7 @@ class ParticlePanelStreak : public ParticlePanelParticle
 	public:
 		enum {IDD = IDD_PSEd_ParticlePanelStreak};
 		virtual DWORD GetIDD( void ) { return IDD; }
-		ParticlePanelStreak(UINT nIDTemplate = ParticlePanelStreak::IDD, CWnd* pParentWnd = NULL);
+		ParticlePanelStreak(UINT nIDTemplate = ParticlePanelStreak::IDD, CWnd* pParentWnd = nullptr);
 
 		void InitPanel( void );
 

@@ -160,7 +160,7 @@ WindowMsgHandledType GadgetStaticTextSystem( GameWindow *window, UnsignedInt msg
 
 			// free text data
 			delete (TextData *)window->winGetUserData();
-			window->winSetUserData( NULL );
+			window->winSetUserData( nullptr );
 
       break;
 

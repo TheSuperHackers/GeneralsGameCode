@@ -326,7 +326,7 @@ public:
 class AABTreeLinkClass : public CullLinkClass, public AutoPoolClass<AABTreeLinkClass,256>
 {
 public:
-	AABTreeLinkClass(AABTreeCullSystemClass * system) : CullLinkClass(system),Node(NULL), NextObject(NULL) { }
+	AABTreeLinkClass(AABTreeCullSystemClass * system) : CullLinkClass(system),Node(nullptr), NextObject(nullptr) { }
 
 	AABTreeNodeClass *				Node;					// partition node containing this object
 	CullableClass *					NextObject;			// next object in the node

@@ -21,8 +21,8 @@
 
 LoadBmp::LoadBmp()
 {
-  BitmapHandle_=NULL;
-  PalHandle_=NULL;
+  BitmapHandle_=nullptr;
+  PalHandle_=nullptr;
 }
 
 LoadBmp::~LoadBmp()
@@ -65,7 +65,7 @@ bit8 LoadBmp::init(const char *filename,HWND hwnd)
     FILE_ATTRIBUTE_READONLY,
     (HANDLE) NULL);
 
-  if (hBitmapFile==NULL)
+  if (hBitmapFile==nullptr)
     return(FALSE);
 
   // Retrieve the BITMAPFILEHEADER structure.
@@ -136,7 +136,7 @@ bit8 LoadBmp::init(const char *filename,HWND hwnd)
   // Create a bitmap from the data stored in the .BMP file.
   hdc=GetDC(hwnd);
   select=SelectPalette(hdc,PalHandle_,0);
-  if (select==NULL)
+  if (select==nullptr)
     return(FALSE);
   realize=RealizePalette(hdc);
   if (realize==GDI_ERROR)
@@ -145,7 +145,7 @@ bit8 LoadBmp::init(const char *filename,HWND hwnd)
   ReleaseDC(hwnd,hdc);
 
 
-  if (BitmapHandle_==NULL)
+  if (BitmapHandle_==nullptr)
     return(FALSE);
 
   // Unlock the global memory objects and close the .BMP file.
@@ -153,7 +153,7 @@ bit8 LoadBmp::init(const char *filename,HWND hwnd)
   GlobalUnlock(hmem2);
   CloseHandle(hBitmapFile);
 
-  if (BitmapHandle_==NULL)
+  if (BitmapHandle_==nullptr)
     return(FALSE);
 
   // Inform windows the window needs to be repainted
@@ -173,16 +173,16 @@ bit8 LoadBmp::drawBmp(void)
   HDC         hdc;
   char        string[128];
 
-  if (BitmapHandle_ == NULL)    // NAK - new
+  if (BitmapHandle_ == nullptr)    // NAK - new
     return(FALSE);
 
-  InvalidateRect(WindowHandle_,NULL,FALSE); // keep windows from screwing up the
+  InvalidateRect(WindowHandle_,nullptr,FALSE); // keep windows from screwing up the
                                            //  redrawing (as much).
   hdc=BeginPaint(WindowHandle_,&ps);
 
   //Do palette stuff
   HPALETTE select=SelectPalette(ps.hdc,PalHandle_,0);
-  if (select==NULL)
+  if (select==nullptr)
   {
     sprintf(string,"Select Pal Fail: %d",GetLastError());
     MessageBox(NULL,string,"OK",MB_OK);

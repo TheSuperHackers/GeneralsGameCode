@@ -114,7 +114,7 @@ PacketClass::PacketClass(char *curbuf)
   ID   = *((short *)curbuf);
   curbuf += sizeof(unsigned short);
   ID   = ntohs(ID);
-  Head = NULL;
+  Head = nullptr;
 
   //
   // Calculate the remaining size so that we can loop through the

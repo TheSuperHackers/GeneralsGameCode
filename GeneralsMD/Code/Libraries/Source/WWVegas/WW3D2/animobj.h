@@ -123,7 +123,7 @@ public:
 protected:
 
 	// internally used to compute the current frame if the object is in ANIM_MODE_MANUAL
-	float								Compute_Current_Frame(float *newDirection=NULL) const;
+	float								Compute_Current_Frame(float *newDirection=nullptr) const;
 
 	// Update the sub-object transforms according to the current anim state and root transform.
 	virtual	void					Update_Sub_Object_Transforms(void);

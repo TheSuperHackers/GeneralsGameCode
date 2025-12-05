@@ -70,14 +70,14 @@ ImageInfo::ImageInfo( void )
 	m_colorDepth = 0;
 	m_size.x = 0;
 	m_size.y = 0;
-	m_path = NULL;
-	m_filenameOnly = NULL;
-	m_filenameOnlyNoExt = NULL;
+	m_path = nullptr;
+	m_filenameOnly = nullptr;
+	m_filenameOnlyNoExt = nullptr;
 	m_status = UNPACKED;
 
-	m_page = NULL;
-	m_nextPageImage = NULL;
-	m_prevPageImage = NULL;
+	m_page = nullptr;
+	m_nextPageImage = nullptr;
+	m_prevPageImage = nullptr;
 	m_pagePos.lo.x = 0;
 	m_pagePos.lo.y = 0;
 	m_pagePos.hi.x = 0;

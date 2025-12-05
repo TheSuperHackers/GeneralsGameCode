@@ -118,9 +118,9 @@ public:
 	** out_inode - mesh INode is passed by setting the INode* pointed to by this value. If this
 	**		parameter is NULL, the value is not passed back.
 	*/
-	bool Get_Sub_Object_Data(int index, char **out_name, int *out_boneindex, INode **out_inode = NULL);
-	bool Get_Aggregate_Data(int index, char **out_name, int *out_boneindex, INode **out_inode = NULL);
-	bool Get_Proxy_Data(int index, char **out_name, int *out_boneindex, INode **out_inode = NULL);
+	bool Get_Sub_Object_Data(int index, char **out_name, int *out_boneindex, INode **out_inode = nullptr);
+	bool Get_Aggregate_Data(int index, char **out_name, int *out_boneindex, INode **out_inode = nullptr);
+	bool Get_Proxy_Data(int index, char **out_name, int *out_boneindex, INode **out_inode = nullptr);
 
 	/*
 	** Returns the origin node used by this model.

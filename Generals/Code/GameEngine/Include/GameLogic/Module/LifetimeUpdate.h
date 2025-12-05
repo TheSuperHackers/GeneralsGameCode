@@ -50,8 +50,8 @@ public:
     UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "MinLifetime",					INI::parseDurationUnsignedInt,		NULL, offsetof( LifetimeUpdateModuleData, m_minFrames ) },
-			{ "MaxLifetime",					INI::parseDurationUnsignedInt,		NULL, offsetof( LifetimeUpdateModuleData, m_maxFrames ) },
+			{ "MinLifetime",					INI::parseDurationUnsignedInt,		nullptr, offsetof( LifetimeUpdateModuleData, m_minFrames ) },
+			{ "MaxLifetime",					INI::parseDurationUnsignedInt,		nullptr, offsetof( LifetimeUpdateModuleData, m_maxFrames ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);

@@ -72,11 +72,11 @@ public:
 	void						Set_Arrays(
 									ShareBufferClass<Vector3> *startlocs,
 									ShareBufferClass<Vector3> *endlocs,
-									ShareBufferClass<Vector4> *diffuse = NULL,
-									ShareBufferClass<Vector4> *taildiffuse = NULL,
-									ShareBufferClass<unsigned int> *alt = NULL,
-									ShareBufferClass<float> *sizes = NULL,
-									ShareBufferClass<float> *ucoords = NULL,
+									ShareBufferClass<Vector4> *diffuse = nullptr,
+									ShareBufferClass<Vector4> *taildiffuse = nullptr,
+									ShareBufferClass<unsigned int> *alt = nullptr,
+									ShareBufferClass<float> *sizes = nullptr,
+									ShareBufferClass<float> *ucoords = nullptr,
 									int active_line_count = -1
 									);
 	void						Set_Line_Size(float size);

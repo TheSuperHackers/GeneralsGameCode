@@ -252,7 +252,7 @@ public:
 	virtual void setHealee(Object* healee, Bool add) = 0;
 	virtual void killAllParkedUnits() = 0;
 	virtual void defectAllParkedUnits(Team* newTeam, UnsignedInt detectionTime) = 0;
-	virtual Bool calcBestParkingAssignment( ObjectID id, Coord3D *pos, Int *oldIndex = NULL, Int *newIndex = NULL ) = 0;
+	virtual Bool calcBestParkingAssignment( ObjectID id, Coord3D *pos, Int *oldIndex = nullptr, Int *newIndex = nullptr ) = 0;
 
 	virtual const std::vector<Coord3D>* getTaxiLocations( ObjectID id ) const = 0;
 	virtual const std::vector<Coord3D>* getCreationLocations( ObjectID id ) const = 0;

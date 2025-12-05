@@ -28,7 +28,7 @@ class AnimatedSoundOptionsDialogClass : public CDialog
 {
 // Construction
 public:
-	AnimatedSoundOptionsDialogClass(CWnd* pParent = NULL);   // standard constructor
+	AnimatedSoundOptionsDialogClass(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(AnimatedSoundOptionsDialogClass)

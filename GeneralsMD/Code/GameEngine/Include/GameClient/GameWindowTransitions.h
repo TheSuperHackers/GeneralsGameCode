@@ -122,7 +122,7 @@ public:
 
 	virtual void skip( void ) = 0;
 
-	void unlinkGameWindow(GameWindow* win) { if ( m_win == win ) m_win = NULL; }
+	void unlinkGameWindow(GameWindow* win) { if ( m_win == win ) m_win = nullptr; }
 	Bool isFinished( void ) { return m_isFinished;	}
 	Int getFrameLength( void ){ return m_frameLength;	}
 protected:

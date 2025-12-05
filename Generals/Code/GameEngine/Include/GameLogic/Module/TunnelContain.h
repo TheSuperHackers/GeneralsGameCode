@@ -65,7 +65,7 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "TimeForFullHeal", INI::parseDurationReal, NULL, offsetof( TunnelContainModuleData, m_framesForFullHeal ) },
+			{ "TimeForFullHeal", INI::parseDurationReal, nullptr, offsetof( TunnelContainModuleData, m_framesForFullHeal ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);

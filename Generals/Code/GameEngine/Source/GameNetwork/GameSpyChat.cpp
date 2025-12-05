@@ -439,7 +439,7 @@ static handleUnicodeMessage( const char *nick, UnicodeString msg, Bool isPublic,
 
 void GameSpyAddText( UnicodeString message, GameSpyColors color )
 {
-	GameWindow *textWindow = NULL;
+	GameWindow *textWindow = nullptr;
 
 	if (!textWindow)
 		textWindow = listboxLobbyChat;

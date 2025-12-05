@@ -28,8 +28,8 @@ class AggregateNameDialogClass : public CDialog
 {
 // Construction
 public:
-	AggregateNameDialogClass(CWnd* pParent = NULL);
-	AggregateNameDialogClass(UINT resource_id, const CString &def_name, CWnd* pParent = NULL);
+	AggregateNameDialogClass(CWnd* pParent = nullptr);
+	AggregateNameDialogClass(UINT resource_id, const CString &def_name, CWnd* pParent = nullptr);
 
 // Dialog Data
 	//{{AFX_DATA(AggregateNameDialogClass)

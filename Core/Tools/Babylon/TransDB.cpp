@@ -44,7 +44,7 @@ static LANGINFO langinfo[] =
 		{ LANGID_KOREAN, "Korean", "ko", "k" },
 		{ LANGID_CHINESE, "Chinese", "ch", "c" },
 		{ LANGID_JABBER, "Jabberwockie", "jb", "e" },
-		{ LANGID_UNKNOWN, "Unknown", NULL, NULL }
+		{ LANGID_UNKNOWN, "Unknown", nullptr, NULL }
 	};
 
 LANGINFO *GetLangInfo ( int index )
@@ -199,7 +199,7 @@ void					TransDB::RemoveLabel ( BabylonLabel *label )
 	if ( (node = labels.Find ( label )) )
 	{
 		node->Remove ();
-		label->SetDB ( NULL );
+		label->SetDB ( nullptr );
 		label_bin->Remove ( label );
 		delete node;
 		Changed ();
@@ -543,11 +543,11 @@ TransDB*			TransDB::Next				( void )
 
 void BabylonLabel::init ( void )
 {
-	db = NULL;
-	comment = NULL;
+	db = nullptr;
+	comment = nullptr;
 	line_number = -1;
 	max_len = 0;
-	name = NULL;
+	name = nullptr;
 }
 
 BabylonLabel::BabylonLabel ( void )
@@ -587,9 +587,9 @@ void					BabylonLabel::RemoveText ( BabylonText *txt )
 	if ( (node = text.Find ( txt )) )
 	{
 		node->Remove ();
-		txt->SetDB ( NULL );
-		txt->SetLabel ( NULL );
-		txt->SetParent ( NULL );
+		txt->SetDB ( nullptr );
+		txt->SetLabel ( nullptr );
+		txt->SetParent ( nullptr );
 		delete node;
 		Changed ();
 	}
@@ -876,12 +876,12 @@ void					BabylonLabel::AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes
 
 void BabylonText::init ( void )
 {
-	db = NULL;
-	label = NULL;
+	db = nullptr;
+	label = nullptr;
 	line_number = -1;
 	revision = 1;
-	text = NULL;
-	wavefile = NULL;
+	text = nullptr;
+	wavefile = nullptr;
 	id = -1;
 	retranslate = FALSE;
 	sent = FALSE;

@@ -197,9 +197,9 @@ public:
 
 	// register a parser function for data chunks with labels matching "label", whose parent
 	// chunks labels match "parentLabel" (or NULL for global scope)
-	void registerParser( const AsciiString& label, const AsciiString& parentLabel, DataChunkParserPtr parser, void *userData = NULL );
+	void registerParser( const AsciiString& label, const AsciiString& parentLabel, DataChunkParserPtr parser, void *userData = nullptr );
 
-	Bool parse( void *userData = NULL );						// parse the chunk stream using registered parsers
+	Bool parse( void *userData = nullptr );						// parse the chunk stream using registered parsers
 																									// assumed to be at the start of chunk when called
 																									// can be called recursively
 

@@ -36,7 +36,7 @@ const char *const TheVeterancyNames[] =
 	"VETERAN",
 	"ELITE",
 	"HEROIC",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheVeterancyNames) == LEVEL_COUNT + 1, "Incorrect array size");
 
@@ -45,7 +45,7 @@ const char *const TheRelationshipNames[] =
 	"ENEMIES",
 	"NEUTRAL",
 	"ALLIES",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheRelationshipNames) == RELATIONSHIP_COUNT + 1, "Incorrect array size");
 

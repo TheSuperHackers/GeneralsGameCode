@@ -93,14 +93,14 @@ struct DebugIcon {
 	Int			endFrame; // Frame when this disappears.
 };
 
-DebugIcon	*W3DDebugIcons::m_debugIcons = NULL;
+DebugIcon	*W3DDebugIcons::m_debugIcons = nullptr;
 Int				 W3DDebugIcons::m_numDebugIcons = 0;
 
 W3DDebugIcons::~W3DDebugIcons(void)
 {
 	REF_PTR_RELEASE(m_vertexMaterialClass);
 	delete m_debugIcons;
-	m_debugIcons = NULL;
+	m_debugIcons = nullptr;
 	m_numDebugIcons = 0;
 }
 
@@ -185,7 +185,7 @@ static Int maxIcons = 0;
 
 void W3DDebugIcons::addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color)
 {
-	if (pos==NULL) {
+	if (pos==nullptr) {
 		if (m_numDebugIcons > maxIcons) {
 			DEBUG_LOG(("Max icons %d", m_numDebugIcons));
 			maxIcons = m_numDebugIcons;
@@ -194,7 +194,7 @@ void W3DDebugIcons::addIcon(const Coord3D *pos, Real width, Int numFramesDuratio
 		return;
 	}
 	if (m_numDebugIcons>= MAX_ICONS) return;
-	if (m_debugIcons==NULL) return;
+	if (m_debugIcons==nullptr) return;
 	m_debugIcons[m_numDebugIcons].position = *pos;
 	m_debugIcons[m_numDebugIcons].width = width;
 	m_debugIcons[m_numDebugIcons].color = color;
@@ -216,7 +216,7 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 	DX8Wrapper::Apply_Render_State_Changes();
 
 	DX8Wrapper::Set_Material(m_vertexMaterialClass);
-	DX8Wrapper::Set_Texture(0, NULL);
+	DX8Wrapper::Set_Texture(0, nullptr);
 	DX8Wrapper::Apply_Render_State_Changes();
 
 	Matrix3D tm(Transform);

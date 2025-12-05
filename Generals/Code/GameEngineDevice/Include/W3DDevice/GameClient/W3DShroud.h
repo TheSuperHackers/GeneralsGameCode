@@ -59,7 +59,7 @@ protected:
 class W3DMaskMaterialPassClass : public MaterialPassClass
 {
 public:
-	W3DMaskMaterialPassClass(void) : m_texture(NULL), m_allowUninstall(TRUE) {}
+	W3DMaskMaterialPassClass(void) : m_texture(nullptr), m_allowUninstall(TRUE) {}
 	virtual void	Install_Materials(void) const;
 	virtual void	UnInstall_Materials(void) const;
 	void	setTexture(TextureClass *texture)	{m_texture=texture;}

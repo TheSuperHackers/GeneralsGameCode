@@ -315,7 +315,7 @@ public:
 	virtual void onDockReached( Object* docker ) = 0;				///< I have reached the Dock point
 	virtual void onExitReached( Object* docker ) = 0;				///< I have reached the exit.  You are no longer busy
 
-	virtual Bool action( Object* docker, Object *drone = NULL ) = 0;			///< Perform your specific action on me.  Returning FALSE means there is nothing for you to do so I should leave
+	virtual Bool action( Object* docker, Object *drone = nullptr ) = 0;			///< Perform your specific action on me.  Returning FALSE means there is nothing for you to do so I should leave
 
 	virtual void cancelDock( Object* docker ) = 0;	///< Clear me from any reserved points, and if I was the reason you were Busy, you aren't anymore.
 

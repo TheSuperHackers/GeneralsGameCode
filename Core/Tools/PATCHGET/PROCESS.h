@@ -38,6 +38,6 @@ class Process
 
 //bit8 Read_Process_Info(ConfigFile &config,OUT Process &info);
 bit8 Create_Process(Process &process);
-bit8 Wait_Process(Process &process, DWORD *exit_code=NULL);
+bit8 Wait_Process(Process &process, DWORD *exit_code=nullptr);
 
 } // namespace patchget

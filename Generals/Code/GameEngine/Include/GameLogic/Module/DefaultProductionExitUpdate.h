@@ -54,8 +54,8 @@ public:
     UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "UnitCreatePoint",		INI::parseCoord3D,		NULL, offsetof( DefaultProductionExitUpdateModuleData, m_unitCreatePoint ) },
-			{ "NaturalRallyPoint",  INI::parseCoord3D,		NULL, offsetof( DefaultProductionExitUpdateModuleData, m_naturalRallyPoint ) },
+			{ "UnitCreatePoint",		INI::parseCoord3D,		nullptr, offsetof( DefaultProductionExitUpdateModuleData, m_unitCreatePoint ) },
+			{ "NaturalRallyPoint",  INI::parseCoord3D,		nullptr, offsetof( DefaultProductionExitUpdateModuleData, m_naturalRallyPoint ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);

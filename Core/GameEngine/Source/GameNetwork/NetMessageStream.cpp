@@ -75,7 +75,7 @@ static Bool AddToNetCommandList(GameMessage *msg, UnsignedInt timestamp, Command
 		return false;
 	}
 
-	if (CommandTail == NULL)
+	if (CommandTail == nullptr)
 	{
 		CommandHead = cmdMsg;
 		CommandTail = cmdMsg;
@@ -124,12 +124,12 @@ static GameMessage * GetCommandMsg(UnsignedInt timestamp, CommandMsg *& CommandH
 
 	if (CommandHead->GetNextCommandMsg())
 	{
-		CommandHead->GetNextCommandMsg()->SetPrevCommandMsg(NULL);
+		CommandHead->GetNextCommandMsg()->SetPrevCommandMsg(nullptr);
 		CommandHead = CommandHead->GetNextCommandMsg();
 	}
 	else
 	{
-		CommandHead = CommandTail = NULL;
+		CommandHead = CommandTail = nullptr;
 	}
 
 	GameMessage *msg = theMsg->GetGameMessage();

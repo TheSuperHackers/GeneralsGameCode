@@ -50,7 +50,7 @@ class WorkOrder : public MemoryPoolObject,
 
 public:
 
-	WorkOrder():m_thing(NULL), m_factoryID(INVALID_ID), m_isResourceGatherer(false), m_numCompleted(0), m_numRequired(1), m_next(NULL) {};
+	WorkOrder():m_thing(nullptr), m_factoryID(INVALID_ID), m_isResourceGatherer(false), m_numCompleted(0), m_numRequired(1), m_next(nullptr) {};
 
 	Bool isWaitingToBuild( void );		///< return true if nothing is yet building this unit
 	void validateFactory( Player *thisPlayer );			///< verify factoryID still refers to an active object
@@ -106,9 +106,9 @@ protected:
 public:
 
 	TeamInQueue() :
-		m_workOrders(NULL),
-		m_team(NULL),
-		m_nextTeamInQueue(NULL),
+		m_workOrders(nullptr),
+		m_team(nullptr),
+		m_nextTeamInQueue(nullptr),
 		m_sentToStartLocation(false),
 		m_reinforcement(false),
 		m_stopQueueing(false),

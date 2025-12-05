@@ -93,7 +93,7 @@ void POWTruckBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 	Object *us = getObject();
 
 	// sanity
-	if( other == NULL )
+	if( other == nullptr )
 		return;
 
 	// if other isn't slated to be picked up by us, ignore

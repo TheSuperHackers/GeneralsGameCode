@@ -25,7 +25,7 @@
 CritSec::CritSec()
 {
 #ifdef _UNIX
-  pthread_mutex_init(&Mutex_, NULL);
+  pthread_mutex_init(&Mutex_, nullptr);
   RefCount_ = 0;
 #elif defined(_WIN32)
   InitializeCriticalSection(&CritSec_);

@@ -176,7 +176,7 @@ public:
       glob.tracer=tr;
       for (int k=0;k<MAX_FRAME_RECORDS;k++)
         cur[k].tracer=tr;
-      funcSource=funcName=NULL;
+      funcSource=funcName=nullptr;
       funcLine=0;
     }
   };

@@ -225,7 +225,7 @@ HLodSaveClass::~HLodSaveClass (void)
 	if (lod_array)
 	{
 		delete []lod_array;
-		lod_array = NULL;
+		lod_array = nullptr;
 	}
 }
 

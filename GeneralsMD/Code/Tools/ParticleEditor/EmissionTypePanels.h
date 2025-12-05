@@ -49,7 +49,7 @@ class EmissionPanelPoint : public ISwapablePanel
 	public:
 		enum {IDD = IDD_PSEd_EmissionPanelPoint};
 		virtual DWORD GetIDD( void ) { return IDD; }
-		EmissionPanelPoint(UINT nIDTemplate = EmissionPanelPoint::IDD, CWnd* pParentWnd = NULL);
+		EmissionPanelPoint(UINT nIDTemplate = EmissionPanelPoint::IDD, CWnd* pParentWnd = nullptr);
 
 		void InitPanel( void );
 
@@ -67,7 +67,7 @@ class EmissionPanelLine : public ISwapablePanel
 	public:
 		enum {IDD = IDD_PSEd_EmissionPanelLine};
 		virtual DWORD GetIDD( void ) { return IDD; }
-		EmissionPanelLine(UINT nIDTemplate = EmissionPanelLine::IDD, CWnd* pParentWnd = NULL);
+		EmissionPanelLine(UINT nIDTemplate = EmissionPanelLine::IDD, CWnd* pParentWnd = nullptr);
 
 		void InitPanel( void );
 
@@ -85,7 +85,7 @@ class EmissionPanelBox : public ISwapablePanel
 	public:
 		enum {IDD = IDD_PSEd_EmissionPanelBox};
 		virtual DWORD GetIDD( void ) { return IDD; }
-		EmissionPanelBox(UINT nIDTemplate = EmissionPanelBox::IDD, CWnd* pParentWnd = NULL);
+		EmissionPanelBox(UINT nIDTemplate = EmissionPanelBox::IDD, CWnd* pParentWnd = nullptr);
 
 		void InitPanel( void );
 
@@ -103,7 +103,7 @@ class EmissionPanelSphere : public ISwapablePanel
 	public:
 		enum {IDD = IDD_PSEd_EmissionPanelSphere};
 		virtual DWORD GetIDD( void ) { return IDD; }
-		EmissionPanelSphere(UINT nIDTemplate = EmissionPanelSphere::IDD, CWnd* pParentWnd = NULL);
+		EmissionPanelSphere(UINT nIDTemplate = EmissionPanelSphere::IDD, CWnd* pParentWnd = nullptr);
 
 		void InitPanel( void );
 
@@ -121,7 +121,7 @@ class EmissionPanelCylinder : public ISwapablePanel
 	public:
 		enum {IDD = IDD_PSEd_EmissionPanelCylinder};
 		virtual DWORD GetIDD( void ) { return IDD; }
-		EmissionPanelCylinder(UINT nIDTemplate = EmissionPanelCylinder::IDD, CWnd* pParentWnd = NULL);
+		EmissionPanelCylinder(UINT nIDTemplate = EmissionPanelCylinder::IDD, CWnd* pParentWnd = nullptr);
 
 		void InitPanel( void );
 

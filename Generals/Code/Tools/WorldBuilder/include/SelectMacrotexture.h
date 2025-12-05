@@ -28,7 +28,7 @@ class SelectMacrotexture : public CDialog
 {
 // Construction
 public:
-	SelectMacrotexture(CWnd* pParent = NULL);   // standard constructor
+	SelectMacrotexture(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(SelectMacrotexture)

@@ -309,14 +309,14 @@ public:
 
 	void buildDescription( AsciiString* str ) const
 	{
-		if ( str == NULL )
+		if ( str == nullptr )
 			return;//sanity
 
 		for( Int i = 0; i < size(); ++i )
 		{
 			const char* bitName = getBitNameIfSet(i);
 
-			if (bitName != NULL)
+			if (bitName != nullptr)
 			{
 				str->concat( bitName );
 				str->concat( ",\n");

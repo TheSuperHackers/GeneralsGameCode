@@ -80,7 +80,7 @@ BOOL SelectMacrotexture::OnInitDialog()
 
 		if (!filenameList.empty()) {
 			TVINSERTSTRUCT ins;
-			HTREEITEM child = NULL;
+			HTREEITEM child = nullptr;
 			FilenameList::iterator it = filenameList.begin();
 			do {
 				AsciiString filename = *it;

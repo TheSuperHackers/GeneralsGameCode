@@ -211,7 +211,7 @@ void W3DMainMenuDraw( GameWindow *window, WinInstanceData *instData )
 
 
 
-	advancePosition(NULL, TheMappedImageCollection->findImageByName("MainMenuPulse"),pos.x,pos.y,size.x, size.y);
+	advancePosition(nullptr, TheMappedImageCollection->findImageByName("MainMenuPulse"),pos.x,pos.y,size.x, size.y);
 
 	//TheDisplay->drawLine();
 
@@ -275,7 +275,7 @@ void W3DMainMenuFourDraw( GameWindow *window, WinInstanceData *instData )
 
 
 
-	advancePosition(NULL, TheMappedImageCollection->findImageByName("MainMenuPulse"),pos.x,pos.y,size.x, size.y);
+	advancePosition(nullptr, TheMappedImageCollection->findImageByName("MainMenuPulse"),pos.x,pos.y,size.x, size.y);
 
 	//TheDisplay->drawLine();
 
@@ -419,7 +419,7 @@ void W3DMainMenuMapBorder( GameWindow *window, WinInstanceData *instData )
 	Int size = 20;
 	Int halfSize = size / 2;
 
-	const Image *image = NULL;
+	const Image *image = nullptr;
 
 	// Draw Horizontal Lines
 	// All border pieces are based on a 10 pixel offset from the centerline
@@ -635,8 +635,8 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 	}
 
 	// sanity, we need to have these images to make it look right
-	if( leftImage == NULL || rightImage == NULL ||
-			centerImage == NULL )
+	if( leftImage == nullptr || rightImage == nullptr ||
+			centerImage == nullptr )
 		return;
 
 	// get image sizes for the ends
@@ -786,7 +786,7 @@ static void drawText( GameWindow *window, WinInstanceData *instData )
 	DisplayString *text = instData->getTextDisplayString();
 
 	// sanity
-	if( text == NULL || text->getTextLength() == 0 )
+	if( text == nullptr || text->getTextLength() == 0 )
 		return;
 
 	// get window position and size
@@ -944,7 +944,7 @@ void W3DMainMenuInit( WindowLayout *layout, void *userData )
 	if (buttonChina)
 		buttonChina->winSetDrawFunc(W3DMainMenuButtonDropShadowDraw);
 
-	GameWindow *win = NULL;
+	GameWindow *win = nullptr;
 	win = TheWindowManager->winGetWindowFromId(parent, TheNameKeyGenerator->nameToKey("MainMenu.wnd:ButtonMultiBack"));
 	if(win)
 		win->winSetDrawFunc(W3DMainMenuButtonDropShadowDraw);

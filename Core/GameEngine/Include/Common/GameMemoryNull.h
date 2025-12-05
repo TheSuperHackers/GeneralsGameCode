@@ -64,11 +64,11 @@ class MemoryPoolFactory
 {
 public:
 
-	void memoryPoolUsageReport( const char* filename, FILE *appendToFileInstead = NULL );
+	void memoryPoolUsageReport( const char* filename, FILE *appendToFileInstead = nullptr );
 
 #ifdef MEMORYPOOL_DEBUG
 
-	void debugMemoryReport(Int flags, Int startCheckpoint, Int endCheckpoint, FILE *fp = NULL );
+	void debugMemoryReport(Int flags, Int startCheckpoint, Int endCheckpoint, FILE *fp = nullptr );
 	void debugSetInitFillerIndex(Int index);
 
 #endif

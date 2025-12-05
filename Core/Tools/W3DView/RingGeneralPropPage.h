@@ -36,7 +36,7 @@ class RingGeneralPropPageClass : public CPropertyPage
 
 // Construction
 public:
-	RingGeneralPropPageClass (RingRenderObjClass *ring = NULL);
+	RingGeneralPropPageClass (RingRenderObjClass *ring = nullptr);
 	~RingGeneralPropPageClass ();
 
 // Dialog Data

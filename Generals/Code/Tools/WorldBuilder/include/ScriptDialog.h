@@ -61,7 +61,7 @@ class ScriptDialog : public CDialog
 {
 // Construction
 public:
-	ScriptDialog(CWnd* pParent = NULL);   // standard constructor
+	ScriptDialog(CWnd* pParent = nullptr);   // standard constructor
 	~ScriptDialog();   //  destructor
 
 // Dialog Data

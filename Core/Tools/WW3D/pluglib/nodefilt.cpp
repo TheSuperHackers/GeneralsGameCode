@@ -245,14 +245,14 @@ BOOL AnimatedINodeFilter::Accept_Node(INode * node, TimeValue time)
 	Control			* rotcon = node->GetTMController()->GetRotationController();
 
 	int numkeys = 0;
-	if (poscon != NULL) {
+	if (poscon != nullptr) {
 		IKeyControl	* poskeys = GetKeyControlInterface(poscon);
-		if (poskeys != NULL) numkeys += poskeys->GetNumKeys();
+		if (poskeys != nullptr) numkeys += poskeys->GetNumKeys();
 	}
 
-	if (rotcon != NULL) {
+	if (rotcon != nullptr) {
 		IKeyControl	* rotkeys = GetKeyControlInterface(rotcon);
-		if (rotkeys != NULL) numkeys += rotkeys->GetNumKeys();
+		if (rotkeys != nullptr) numkeys += rotkeys->GetNumKeys();
 	}
 
 	if (obj && !node->IsHidden() && numkeys > 0) {

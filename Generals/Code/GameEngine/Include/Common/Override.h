@@ -50,7 +50,7 @@ template <class T> class OVERRIDE
 {
 	public:
 		// Provide useful constructores to go from a T* to an OVERRIDE<T>
-		OVERRIDE(const T *overridable = NULL);
+		OVERRIDE(const T *overridable = nullptr);
 		// Copy constructor
 		OVERRIDE(OVERRIDE<T> &overridable);
 		// Operator= for copying from another OVERRIDE and T*

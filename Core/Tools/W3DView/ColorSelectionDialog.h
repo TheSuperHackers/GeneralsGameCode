@@ -33,7 +33,7 @@ class ColorSelectionDialogClass : public CDialog
 {
 // Construction
 public:
-	ColorSelectionDialogClass (const Vector3 &def_color, CWnd *pParent = NULL);   // standard constructor
+	ColorSelectionDialogClass (const Vector3 &def_color, CWnd *pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(ColorSelectionDialogClass)

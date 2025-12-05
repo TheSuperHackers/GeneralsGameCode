@@ -143,8 +143,8 @@ public:
 
 	static void					Load_Table_Desc(		ChunkLoadClass &	cload,
 																Curve1DClass **	curve_ptr,
-																Vector2 *			set_min = NULL,
-																Vector2 *			set_max = NULL	);
+																Vector2 *			set_min = nullptr,
+																Vector2 *			set_max = nullptr	);
 
 	static void					Reset(void);
 

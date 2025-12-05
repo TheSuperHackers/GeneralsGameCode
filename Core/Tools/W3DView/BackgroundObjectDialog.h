@@ -28,7 +28,7 @@ class CBackgroundObjectDialog : public CDialog
 {
 // Construction
 public:
-	CBackgroundObjectDialog(CWnd* pParent = NULL);   // standard constructor
+	CBackgroundObjectDialog(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CBackgroundObjectDialog)

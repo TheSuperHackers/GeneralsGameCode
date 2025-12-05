@@ -128,7 +128,7 @@ W3DPrototypeClass::~W3DPrototypeClass(void)
 {
 	if (Proto) {
 		Proto->Release_Ref();
-		Proto = NULL;
+		Proto = nullptr;
 	}
 }
 
@@ -226,7 +226,7 @@ TextureClass *W3DAssetManager::Get_Texture(
 	*/
 	if (!tex)
 	{
-		tex = NEW_REF(TextureClass, (lower_case_name, NULL, mip_level_count, texture_format, allow_compression));
+		tex = NEW_REF(TextureClass, (lower_case_name, nullptr, mip_level_count, texture_format, allow_compression));
 		TextureHash.Insert(tex->Get_Texture_Name(),tex);
 //		if (TheGlobalData->m_preloadAssets)
 //		{
@@ -653,7 +653,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 	const char *name=texture->Get_Texture_Name();
 
 	// if texture is procedural return NULL
-	if (name && name[0]=='!') return NULL;
+	if (name && name[0]=='!') return nullptr;
 
 	// make sure texture is loaded
 	if (!texture->Is_Initialized())
@@ -720,7 +720,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 
 	Bool reallyscale = (WWMath::Fabs(scale - ident_scale) > scale_epsilon);
 	Bool reallycolor = (color & 0xFFFFFF) != 0;	//black is not a valid color and assumes no custom coloring.
-	Bool reallytexture = (oldTexture != NULL && newTexture != NULL);
+	Bool reallytexture = (oldTexture != nullptr && newTexture != nullptr);
 
 	// base case, no scale or color
 	if (!reallyscale && !reallycolor && !reallytexture)
@@ -737,7 +737,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	Munge_Render_Obj_Name(newname, name, scale, color, newTexture);
 
 	// see if we got a cached version
-	RenderObjClass *rendobj = NULL;
+	RenderObjClass *rendobj = nullptr;
 
 	Set_WW3D_Load_On_Demand(false); // munged name will never be found in a file.
 	rendobj = WW3DAssetManager::Create_Render_Obj(newname);
@@ -764,12 +764,12 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	PrototypeClass * proto = Find_Prototype(name);
 
 	Set_WW3D_Load_On_Demand(true); // Auto Load.
-	if (WW3D_Load_On_Demand && proto == NULL)
+	if (WW3D_Load_On_Demand && proto == nullptr)
 	{
 		// If we didn't find one, try to load on demand
 		char filename [MAX_PATH];
 		const char *mesh_name = strchr (name, '.');
-		if (mesh_name != NULL)
+		if (mesh_name != nullptr)
 		{
 			lstrcpyn(filename, name, ((int)mesh_name) - ((int)name) + 1);
 			lstrcat(filename, ".w3d");
@@ -787,7 +787,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 		proto = Find_Prototype(name);		// try again
 	}
 
-	if (proto == NULL)
+	if (proto == nullptr)
 	{
 		static int warning_count = 0;
 		if (++warning_count <= 20)
@@ -798,7 +798,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 		GetPrecisionTimer(&endTime64);
 		Total_Create_Render_Obj_Time += endTime64-startTime64;
 	#endif
-		return NULL;		// Failed to find a prototype
+		return nullptr;		// Failed to find a prototype
 	}
 
 	rendobj = proto->Create();
@@ -809,7 +809,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 		GetPrecisionTimer(&endTime64);
 		Total_Create_Render_Obj_Time += endTime64-startTime64;
 	#endif
-		return NULL;
+		return nullptr;
 	}
 
 	if (reallyscale)
@@ -880,7 +880,7 @@ int W3DAssetManager::Recolor_Mesh(RenderObjClass *robj, const int color)
 	MaterialInfoClass	*material = mesh->Get_Material_Info();
 
 	// recolor vertex material (assuming mesh is housecolor)
-	if ( (( (meshName=strchr(mesh->Get_Name(),'.') ) != 0 && *(meshName++)) || ( (meshName=mesh->Get_Name()) != NULL)) &&
+	if ( (( (meshName=strchr(mesh->Get_Name(),'.') ) != nullptr && *(meshName++)) || ( (meshName=mesh->Get_Name()) != nullptr)) &&
 		_strnicmp(meshName,"HOUSECOLOR", 10) == 0)
 	{	for (i=0; i<material->Vertex_Material_Count(); i++)
 			Recolor_Vertex_Material(material->Peek_Vertex_Material(i),color);
@@ -1101,7 +1101,7 @@ static Bool getMeshColorMethods(MeshClass *mesh, Bool &vertexColor, Bool &textur
 	//Meshes which are part of another model have names in the form "name.name" while
 	//isolated meshes are just "name".  We check for both starting with "HOUSECOLOR".
 	const char *meshName;
-	if ( ( (meshName=strchr(mesh->Get_Name(),'.') ) != 0 && *(meshName++)) || ( (meshName=mesh->Get_Name()) != NULL) )
+	if ( ( (meshName=strchr(mesh->Get_Name(),'.') ) != nullptr && *(meshName++)) || ( (meshName=mesh->Get_Name()) != nullptr) )
 	{	//Check if this object has housecolors on mesh
 		if ( _strnicmp(meshName,"HOUSECOLOR", 10) == 0)
 			vertexColor = true;
@@ -1341,7 +1341,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scal
 	Munge_Render_Obj_Name(newname, name, scale, hsv_shift);
 
 	// see if we got a cached version
-	RenderObjClass *rendobj=NULL;
+	RenderObjClass *rendobj=nullptr;
 
 	if (isGranny)
 	{	//Granny objects share the same prototype since they allow instance scaling.
@@ -1367,10 +1367,10 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scal
 	PrototypeClass * proto = Find_Prototype(name);
 
 	Set_WW3D_Load_On_Demand(true); // Auto Load.
-	if (WW3D_Load_On_Demand && proto == NULL) {	// If we didn't find one, try to load on demand
+	if (WW3D_Load_On_Demand && proto == nullptr) {	// If we didn't find one, try to load on demand
 		char filename [MAX_PATH];
 		char *mesh_name = ::strchr (name, '.');
-		if (mesh_name != NULL) {
+		if (mesh_name != nullptr) {
 			::lstrcpyn (filename, name, ((int)mesh_name) - ((int)name) + 1);
 			if (isGranny)
 				::lstrcat (filename, ".gr2");
@@ -1395,7 +1395,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scal
 		proto = Find_Prototype(name);		// try again
 	}
 
-	if (proto == NULL) {
+	if (proto == nullptr) {
 		static int warning_count = 0;
 		if (++warning_count <= 20) {
 			WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s",name));
@@ -1441,7 +1441,7 @@ TextureClass * W3DAssetManager::Get_Texture_With_HSV_Shift(const char * filename
 		//
 		// Bail if the user isn't really asking for anything
 		//
-		if ((filename == NULL) || (strlen(filename) == 0)) {
+		if ((filename == nullptr) || (strlen(filename) == 0)) {
 			return NULL;
 		}
 
@@ -1455,7 +1455,7 @@ TextureClass * W3DAssetManager::Get_Texture_With_HSV_Shift(const char * filename
 			_strlwr(lower_case_name);
 			TextureClass *oldtex = TextureHash.Get(lower_case_name);
 			if (!oldtex) {
-				oldtex = NEW_REF(TextureClass,(lower_case_name, NULL, mip_level_count));
+				oldtex = NEW_REF(TextureClass,(lower_case_name, nullptr, mip_level_count));
 				TextureHash.Insert(oldtex->Get_Texture_Name(), oldtex);
 			}
 

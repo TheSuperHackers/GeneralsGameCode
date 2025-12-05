@@ -64,7 +64,7 @@
 *	Globals
 *****************************************************************************/
 
-HINSTANCE					AppInstance = NULL;
+HINSTANCE					AppInstance = nullptr;
 static int					ControlsInit = FALSE;
 static W3dClassDesc		W3d_Export_Class_Descriptor;
 

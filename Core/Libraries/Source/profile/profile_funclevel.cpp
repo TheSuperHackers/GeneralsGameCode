@@ -26,6 +26,8 @@
 //
 // Function level profiling
 //////////////////////////////////////////////////////////////////////////////
+
+#include <Utility/CppMacros.h>
 #include "profile.h"
 #include "internal.h"
 #include "../debug/debug.h"
@@ -127,14 +129,14 @@ extern "C" void __declspec(naked) _cdecl _penter(void)
   }
 }
 
-ProfileFuncLevelTracer *ProfileFuncLevelTracer::head=NULL;
+ProfileFuncLevelTracer *ProfileFuncLevelTracer::head=nullptr;
 bool ProfileFuncLevelTracer::shuttingDown=false;
 int ProfileFuncLevelTracer::curFrame=0;
 unsigned ProfileFuncLevelTracer::frameRecordMask;
 bool ProfileFuncLevelTracer::recordCaller=false;
 
 ProfileFuncLevelTracer::ProfileFuncLevelTracer(void):
-  stack(NULL), usedStack(0), totalStack(0), maxDepth(0)
+  stack(nullptr), usedStack(0), totalStack(0), maxDepth(0)
 {
   ProfileFastCS::Lock lock(cs);
 
@@ -297,7 +299,7 @@ int ProfileFuncLevelTracer::FrameStart(void)
   for (ProfileFuncLevelTracer *p=head;p;p=p->next)
   {
     Function *f;
-    for (int k=0;(f=p->func.Enumerate(k))!=NULL;k++)
+    for (int k=0;(f=p->func.Enumerate(k))!=nullptr;k++)
     {
       Profile &p=f->cur[i];
       p.caller.Clear();
@@ -326,7 +328,7 @@ void ProfileFuncLevelTracer::FrameEnd(int which, int mixIndex)
   for (ProfileFuncLevelTracer *p=head;p;p=p->next)
   {
     Function *f;
-    for (int k=0;(f=p->func.Enumerate(k))!=NULL;k++)
+    for (int k=0;(f=p->func.Enumerate(k))!=nullptr;k++)
     {
       Profile &p=f->cur[which];
       if (p.callCount)
@@ -349,7 +351,7 @@ void ProfileFuncLevelTracer::ClearTotals(void)
   for (ProfileFuncLevelTracer *p=head;p;p=p->next)
   {
     Function *f;
-    for (int k=0;(f=p->func.Enumerate(k))!=NULL;k++)
+    for (int k=0;(f=p->func.Enumerate(k))!=nullptr;k++)
     {
       f->glob.caller.Clear();
       f->glob.callCount=0;
@@ -360,7 +362,7 @@ void ProfileFuncLevelTracer::ClearTotals(void)
 }
 
 ProfileFuncLevelTracer::UnsignedMap::UnsignedMap(void):
-  e(NULL), alloc(0), used(0), writeLock(false)
+  e(nullptr), alloc(0), used(0), writeLock(false)
 {
   memset(hash,0,sizeof(hash));
 }
@@ -373,7 +375,7 @@ ProfileFuncLevelTracer::UnsignedMap::~UnsignedMap()
 void ProfileFuncLevelTracer::UnsignedMap::Clear(void)
 {
   ProfileFreeMemory(e);
-  e=NULL;
+  e=nullptr;
   alloc=used=0;
   memset(hash,0,sizeof(hash));
 }
@@ -443,7 +445,7 @@ void ProfileFuncLevelTracer::UnsignedMap::MixIn(const UnsignedMap &src)
 }
 
 ProfileFuncLevelTracer::ProfileMap::ProfileMap(void):
-  root(NULL), tail(&root)
+  root(nullptr), tail(&root)
 {
 }
 
@@ -471,7 +473,7 @@ void ProfileFuncLevelTracer::ProfileMap::Append(int frame, const Profile &p)
   new (newEntry) List;
   newEntry->frame=frame;
   newEntry->p.Copy(p);
-  newEntry->next=NULL;
+  newEntry->next=nullptr;
   *tail=newEntry;
   tail=&newEntry->next;
 }
@@ -490,7 +492,7 @@ void ProfileFuncLevelTracer::ProfileMap::MixIn(int frame, const Profile &p)
 }
 
 ProfileFuncLevelTracer::FunctionMap::FunctionMap(void):
-  e(NULL), alloc(0), used(0)
+  e(nullptr), alloc(0), used(0)
 {
   memset(hash,0,sizeof(hash));
 }
@@ -573,9 +575,9 @@ const char *ProfileFuncLevel::Id::GetSource(void) const
     char helpFunc[256],helpFile[256];
     unsigned ofsFunc;
     DebugStackwalk::Signature::GetSymbol(func->addr,
-                                         NULL,0,NULL,
+                                         NULL,0,nullptr,
                                          helpFunc,sizeof(helpFunc),&ofsFunc,
-                                         helpFile,sizeof(helpFile),&func->funcLine,NULL);
+                                         helpFile,sizeof(helpFile),&func->funcLine,nullptr);
 
     char help[300];
     wsprintf(help,ofsFunc?"%s+0x%x":"%s",helpFunc,ofsFunc);
@@ -736,12 +738,12 @@ bool ProfileFuncLevel::IdList::Enum(unsigned index, Id &id, unsigned *) const
 
 const char *ProfileFuncLevel::Id::GetSource(void) const
 {
-  return NULL;
+  return nullptr;
 }
 
 const char *ProfileFuncLevel::Id::GetFunction(void) const
 {
-  return NULL;
+  return nullptr;
 }
 
 unsigned ProfileFuncLevel::Id::GetAddress(void) const
@@ -791,4 +793,4 @@ ProfileFuncLevel::ProfileFuncLevel(void)
 #endif // !defined HAS_PROFILE
 
 ProfileFuncLevel ProfileFuncLevel::Instance;
-HANDLE ProfileFastCS::testEvent=::CreateEvent(NULL,FALSE,FALSE,"");
+HANDLE ProfileFastCS::testEvent=::CreateEvent(nullptr,FALSE,FALSE,"");

@@ -411,9 +411,9 @@ GeometryExportTaskClass::GeometryExportTaskClass(INode * node,GeometryExportCont
 	/*
 	** Set up the bone index and export coordinate system.
 	*/
-	if (context.HTree != NULL) {
+	if (context.HTree != nullptr) {
 		if (!Is_Skin(node)) {
-			context.HTree->Get_Export_Coordinate_System(Node,&BoneIndex,NULL,&ExportSpace);
+			context.HTree->Get_Export_Coordinate_System(Node,&BoneIndex,nullptr,&ExportSpace);
 		} else {
 			BoneIndex = 0;
 			ExportSpace = context.OriginTransform;
@@ -703,9 +703,9 @@ void GeometryExportTaskClass::Generate_Name(char * root,int index,GeometryExport
 	char * exterior_prefix = strchr(prefix,'#');
 
 	memset(Name,0,sizeof(Name));
-	if (interior_prefix != NULL) {
+	if (interior_prefix != nullptr) {
 		strncpy(Name,prefix,(int)(interior_prefix - prefix) + 1);
-	} else if (exterior_prefix != NULL) {
+	} else if (exterior_prefix != nullptr) {
 		strncpy(Name,prefix,(int)(exterior_prefix - prefix) + 1);
 	}
 
@@ -741,15 +741,15 @@ void GeometryExportTaskClass::Generate_Name(char * root,int index,GeometryExport
  *=============================================================================================*/
 void	MeshGeometryExportTaskClass::Update_Cached_Data(void)
 {
-	SingleMtl = NULL;
+	SingleMtl = nullptr;
 	Mtl *	nodemtl = Node->GetMtl();
 
 	/*
 	** Set the SingleMtl pointer if this mesh uses only one material (again, even if its in a Multi-Sub)
 	*/
-	if (nodemtl == NULL) {
+	if (nodemtl == nullptr) {
 
-		SingleMtl = NULL;
+		SingleMtl = nullptr;
 
 	} else if (nodemtl->NumSubMtls() <= 1) {
 
@@ -790,7 +790,7 @@ void	MeshGeometryExportTaskClass::Update_Cached_Data(void)
 		}
 
 		if (mat_count > 1) {
-			SingleMtl = NULL;
+			SingleMtl = nullptr;
 		}
 	}
 
@@ -838,7 +838,7 @@ void	MeshGeometryExportTaskClass::Update_Cached_Data(void)
  *=============================================================================================*/
 bool MeshGeometryExportTaskClass::Is_Single_Material(void)
 {
-	return ((SingleMtl != NULL) || (Node->GetMtl() == NULL));
+	return ((SingleMtl != nullptr) || (Node->GetMtl() == nullptr));
 }
 
 
@@ -1016,7 +1016,7 @@ bool MeshGeometryExportTaskClass::Can_Combine_With(MeshGeometryExportTaskClass *
 	** Does the mesh use the same (single) material that we do?
 	*/
 	Mtl * other_mtl = other_mesh->Get_Single_Material();
-	if (other_mtl == NULL) {
+	if (other_mtl == nullptr) {
 		return false;
 	}
 

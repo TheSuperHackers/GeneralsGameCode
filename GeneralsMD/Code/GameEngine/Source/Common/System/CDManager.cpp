@@ -77,7 +77,7 @@
 //         Public Data
 //----------------------------------------------------------------------------
 
-CDManagerInterface* TheCDManager = NULL;
+CDManagerInterface* TheCDManager = nullptr;
 
 //----------------------------------------------------------------------------
 //         Private Prototypes
@@ -222,7 +222,7 @@ Int CDManager::driveCount( void )
 
 CDDriveInterface* CDManager::getDrive( Int index )
 {
-	CDDriveInterface *cd = NULL;
+	CDDriveInterface *cd = nullptr;
 	LListNode *node = m_drives.getNode( index );
 
 	if ( node )
@@ -280,7 +280,7 @@ void CDManager::destroyAllDrives( void )
 {
 	LListNode *node;
 
-	while ( (node = m_drives.firstNode() ) != NULL )
+	while ( (node = m_drives.firstNode() ) != nullptr )
 	{
 		node->remove();
 		CDDriveInterface *drive = (CDDriveInterface *) node->item();

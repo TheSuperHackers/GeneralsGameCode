@@ -35,11 +35,11 @@ m_colorAlphaDialog(CColorAlphaDialog::IDD, this),
 m_switchesDialog(CSwitchesDialog::IDD, this),
 m_moreParmsDialog(MoreParmsDialog::IDD, this)
 {
-	mMainWndHWND = ::FindWindow(NULL, "Command & Conquer: Generals");
+	mMainWndHWND = ::FindWindow(nullptr, "Command & Conquer: Generals");
 	m_activeEmissionPage = 0;
 	m_activeVelocityPage = 0;
 	m_activeParticlePage = 0;
-	m_particleSystem = NULL;
+	m_particleSystem = nullptr;
 
 
 	m_changeHasOcurred = false;
@@ -157,7 +157,7 @@ void DebugWindowDialog::InitPanel( void )
 			m_emissionTypePanels[j]->Create(m_emissionTypePanels[j]->GetIDD(), this);
 			m_emissionTypePanels[j]->InitPanel();
 			m_emissionTypePanels[j]->ShowWindow(SW_HIDE);
-			m_emissionTypePanels[j]->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER);
+			m_emissionTypePanels[j]->SetWindowPos(nullptr, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER);
 		}
 		pWnd->ShowWindow(SW_HIDE);
 		m_emissionTypePanels[0]->ShowWindow(SW_SHOW);
@@ -172,7 +172,7 @@ void DebugWindowDialog::InitPanel( void )
 			m_velocityTypePanels[j]->Create(m_velocityTypePanels[j]->GetIDD(), this);
 			m_velocityTypePanels[j]->InitPanel();
 			m_velocityTypePanels[j]->ShowWindow(SW_HIDE);
-			m_velocityTypePanels[j]->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER);
+			m_velocityTypePanels[j]->SetWindowPos(nullptr, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER);
 		}
 		pWnd->ShowWindow(SW_HIDE);
 		m_velocityTypePanels[0]->ShowWindow(SW_SHOW);
@@ -187,7 +187,7 @@ void DebugWindowDialog::InitPanel( void )
 			m_particleTypePanels[j]->Create(m_particleTypePanels[j]->GetIDD(), this);
 			m_particleTypePanels[j]->InitPanel();
 			m_particleTypePanels[j]->ShowWindow(SW_HIDE);
-			m_particleTypePanels[j]->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER);
+			m_particleTypePanels[j]->SetWindowPos(nullptr, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER);
 		}
 		pWnd->ShowWindow(SW_HIDE);
 		m_particleTypePanels[0]->ShowWindow(SW_SHOW);

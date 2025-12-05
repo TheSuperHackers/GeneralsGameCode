@@ -81,10 +81,10 @@ void GadgetButtonSetBorder( GameWindow *g, Color color, Bool drawBorder = TRUE )
 void GadgetButtonSetData(GameWindow *g, void *data);
 void *GadgetButtonGetData(GameWindow *g);
 void GadgetButtonSetAltSound( GameWindow *g, AsciiString altSound );
-inline void GadgetButtonSetEnabledImage( GameWindow *g, const Image *image )					{ g->winSetEnabledImage( 0, image ); g->winSetEnabledImage( 5, NULL );g->winSetEnabledImage( 6, NULL );}
+inline void GadgetButtonSetEnabledImage( GameWindow *g, const Image *image )					{ g->winSetEnabledImage( 0, image ); g->winSetEnabledImage( 5, nullptr );g->winSetEnabledImage( 6, nullptr );}
 inline void GadgetButtonSetEnabledColor( GameWindow *g, Color color )							{ g->winSetEnabledColor( 0, color ); }
 inline void GadgetButtonSetEnabledBorderColor( GameWindow *g, Color color )				{ g->winSetEnabledBorderColor( 0, color ); }
-inline void GadgetButtonSetEnabledSelectedImage( GameWindow *g, const Image *image )			{ g->winSetEnabledImage( 1, image ); g->winSetEnabledImage( 2, NULL );g->winSetEnabledImage( 3, NULL );}
+inline void GadgetButtonSetEnabledSelectedImage( GameWindow *g, const Image *image )			{ g->winSetEnabledImage( 1, image ); g->winSetEnabledImage( 2, nullptr );g->winSetEnabledImage( 3, nullptr );}
 inline void GadgetButtonSetEnabledSelectedColor( GameWindow *g, Color color )					{ g->winSetEnabledColor( 1, color ); }
 inline void GadgetButtonSetEnabledSelectedBorderColor( GameWindow *g, Color color )		{ g->winSetEnabledBorderColor( 1, color ); }
 inline const Image *GadgetButtonGetEnabledImage( GameWindow *g )							{ return g->winGetEnabledImage( 0 ); }
@@ -94,10 +94,10 @@ inline const Image *GadgetButtonGetEnabledSelectedImage( GameWindow *g )					{ r
 inline Color		 GadgetButtonGetEnabledSelectedColor( GameWindow *g )					{ return g->winGetEnabledColor( 1 ); }
 inline Color		 GadgetButtonGetEnabledSelectedBorderColor( GameWindow *g )		{ return g->winGetEnabledBorderColor( 1 ); }
 
-inline void GadgetButtonSetDisabledImage( GameWindow *g, const Image *image )					{ g->winSetDisabledImage( 0, image ); g->winSetEnabledImage( 5, NULL );g->winSetEnabledImage( 6, NULL );}
+inline void GadgetButtonSetDisabledImage( GameWindow *g, const Image *image )					{ g->winSetDisabledImage( 0, image ); g->winSetEnabledImage( 5, nullptr );g->winSetEnabledImage( 6, nullptr );}
 inline void GadgetButtonSetDisabledColor( GameWindow *g, Color color )							{ g->winSetDisabledColor( 0, color ); }
 inline void GadgetButtonSetDisabledBorderColor( GameWindow *g, Color color )				{ g->winSetDisabledBorderColor( 0, color ); }
-inline void GadgetButtonSetDisabledSelectedImage( GameWindow *g, const Image *image )			{ g->winSetDisabledImage( 1, image ); g->winSetEnabledImage( 2, NULL );g->winSetEnabledImage( 3, NULL );}
+inline void GadgetButtonSetDisabledSelectedImage( GameWindow *g, const Image *image )			{ g->winSetDisabledImage( 1, image ); g->winSetEnabledImage( 2, nullptr );g->winSetEnabledImage( 3, nullptr );}
 inline void GadgetButtonSetDisabledSelectedColor( GameWindow *g, Color color )					{ g->winSetDisabledColor( 1, color ); }
 inline void GadgetButtonSetDisabledSelectedBorderColor( GameWindow *g, Color color )		{ g->winSetDisabledBorderColor( 1, color ); }
 inline const Image *GadgetButtonGetDisabledImage( GameWindow *g )							{ return g->winGetDisabledImage( 0 ); }
@@ -107,10 +107,10 @@ inline const Image *GadgetButtonGetDisabledSelectedImage( GameWindow *g )					{ 
 inline Color		 GadgetButtonGetDisabledSelectedColor( GameWindow *g )					{ return g->winGetDisabledColor( 1 ); }
 inline Color		 GadgetButtonGetDisabledSelectedBorderColor( GameWindow *g )		{ return g->winGetDisabledBorderColor( 1 ); }
 
-inline void GadgetButtonSetHiliteImage( GameWindow *g, const Image *image )					{ g->winSetHiliteImage( 0, image ); g->winSetEnabledImage( 5, NULL );g->winSetEnabledImage( 6, NULL );}
+inline void GadgetButtonSetHiliteImage( GameWindow *g, const Image *image )					{ g->winSetHiliteImage( 0, image ); g->winSetEnabledImage( 5, nullptr );g->winSetEnabledImage( 6, nullptr );}
 inline void GadgetButtonSetHiliteColor( GameWindow *g, Color color )							{ g->winSetHiliteColor( 0, color ); }
 inline void GadgetButtonSetHiliteBorderColor( GameWindow *g, Color color )				{ g->winSetHiliteBorderColor( 0, color ); }
-inline void GadgetButtonSetHiliteSelectedImage( GameWindow *g, const Image *image )			{ g->winSetHiliteImage( 1, image ); g->winSetEnabledImage( 2, NULL );g->winSetEnabledImage( 3, NULL );}
+inline void GadgetButtonSetHiliteSelectedImage( GameWindow *g, const Image *image )			{ g->winSetHiliteImage( 1, image ); g->winSetEnabledImage( 2, nullptr );g->winSetEnabledImage( 3, nullptr );}
 inline void GadgetButtonSetHiliteSelectedColor( GameWindow *g, Color color )					{ g->winSetHiliteColor( 1, color ); }
 inline void GadgetButtonSetHiliteSelectedBorderColor( GameWindow *g, Color color )		{ g->winSetHiliteBorderColor( 1, color ); }
 inline const Image *GadgetButtonGetHiliteImage( GameWindow *g )							{ return g->winGetHiliteImage( 0 ); }

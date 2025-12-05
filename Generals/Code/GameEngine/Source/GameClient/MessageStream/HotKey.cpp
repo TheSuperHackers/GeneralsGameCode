@@ -112,7 +112,7 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 //-----------------------------------------------------------------------------
 HotKey::HotKey()
 {
-	m_win = NULL;
+	m_win = nullptr;
 	m_key.clear();
 }
 
@@ -223,7 +223,7 @@ AsciiString HotKeyManager::searchHotKey( const UnicodeString& uStr )
 }
 
 //-----------------------------------------------------------------------------
-HotKeyManager *TheHotKeyManager = NULL;
+HotKeyManager *TheHotKeyManager = nullptr;
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////

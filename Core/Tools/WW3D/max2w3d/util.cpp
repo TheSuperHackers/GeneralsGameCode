@@ -57,7 +57,7 @@ static char _string[256];
 
 static int get_geometry_type(INode * node)
 {
-	assert(node != NULL);
+	assert(node != nullptr);
 	return W3DAppData2Struct::Get_App_Data(node)->Get_Geometry_Type();
 
 	//return (get_w3d_bits(node) & GEO_TYPE_MASK);
@@ -151,9 +151,9 @@ void Split_Node_Name(const char * name,char * set_base,char * set_exten,int * se
 	assert(strlen(name) < MAX_NODE_NAME_LEN);
 
 	// Initialize
-	if (set_base != NULL) set_base[0] = 0;
-	if (set_exten != NULL) set_exten[0] = 0;
-	if (set_exten_index != NULL) *set_exten_index = 0;
+	if (set_base != nullptr) set_base[0] = 0;
+	if (set_exten != nullptr) set_exten[0] = 0;
+	if (set_exten_index != nullptr) *set_exten_index = 0;
 
 	// Get the base name
 	strncpy(buf,name,MAX_NODE_NAME_LEN);
@@ -166,20 +166,20 @@ void Split_Node_Name(const char * name,char * set_base,char * set_exten,int * se
 
 		// copy what we have so far into set_base
 		*ptr = 0;
-		if (set_base != NULL) strncpy(set_base,buf,MAX_NODE_NAME_LEN);
+		if (set_base != nullptr) strncpy(set_base,buf,MAX_NODE_NAME_LEN);
 
 		// copy the rest back into the extension
 		ptr++;
-		if (set_exten != NULL) strncpy(set_exten,ptr,MAX_NODE_NAME_LEN);
+		if (set_exten != nullptr) strncpy(set_exten,ptr,MAX_NODE_NAME_LEN);
 
 		// now get the extension index
 		ptr++;
-		if (set_exten_index != NULL) *set_exten_index = atoi(ptr);
+		if (set_exten_index != nullptr) *set_exten_index = atoi(ptr);
 
 	} else {
 
 		// no extension, just copy the base name
-		if (set_base != NULL) strncpy(set_base,buf,MAX_NODE_NAME_LEN);
+		if (set_base != nullptr) strncpy(set_base,buf,MAX_NODE_NAME_LEN);
 		return;
 	}
 }
@@ -200,7 +200,7 @@ bool Append_Lod_Character (char *meshname, int lod_level, INodeListClass *origin
 	** If there is, we will append the current LOD level digit to the name.
 	** If there is not, the name will not be modified.
 	*/
-	INode *conflict = NULL, *cur_origin = NULL;
+	INode *conflict = nullptr, *cur_origin = nullptr;
 	int i, lod;
 	for (i = 0; i < num_lods; i++)
 	{
@@ -410,7 +410,7 @@ end:
 bool Is_Full_Path(char * path)
 {
 	// first scan for a drive letter (scan for a colon)
-	if (strchr(path,':') != NULL) {
+	if (strchr(path,':') != nullptr) {
 		return true;
 	}
 
@@ -452,7 +452,7 @@ bool Is_Max_Tri_Mesh(INode * node)
 
 bool Is_Damage_Root(INode *node)
 {
-	if (node == NULL)
+	if (node == nullptr)
 		return false;
 
 	// Is the node's parent the scene root?
@@ -588,7 +588,7 @@ INode *Find_Named_Node(char *nodename, INode *root)
 
 	// Perform a breadth-first search of the tree for a node
 	// of the given name.
-	INode	*child = NULL;
+	INode	*child = nullptr;
 	int	i;
 	char	cur_name[W3D_NAME_LEN];
 

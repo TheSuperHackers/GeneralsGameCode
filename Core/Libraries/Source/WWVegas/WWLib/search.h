@@ -291,7 +291,7 @@ bool IndexClass<T>::Increase_Table_Size(int amount)
 	if (amount < 0) return(false);
 
 	NodeElement * table = W3DNEWARRAY NodeElement[IndexSize + amount];
-	if (table != NULL) {
+	if (table != nullptr) {
 
 		/*
 		**	Copy all valid nodes into the new table.

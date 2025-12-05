@@ -41,8 +41,8 @@ public:
 	public:
 	virtual BOOL LoadFrame(UINT nIDResource,
 				DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
-				CWnd* pParentWnd = NULL,
-				CCreateContext* pContext = NULL);
+				CWnd* pParentWnd = nullptr,
+				CCreateContext* pContext = nullptr);
 	// ClassWizard generated virtual function overrides
 	//}}AFX_VIRTUAL
 
@@ -70,8 +70,8 @@ public:
 // Overrides
 	virtual BOOL LoadFrame(UINT nIDResource,
 				DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
-				CWnd* pParentWnd = NULL,
-				CCreateContext* pContext = NULL);
+				CWnd* pParentWnd = nullptr,
+				CCreateContext* pContext = nullptr);
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWB3dFrameWnd)
 	public:

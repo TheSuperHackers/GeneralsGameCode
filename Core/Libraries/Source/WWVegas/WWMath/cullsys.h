@@ -55,7 +55,7 @@ class CullLinkClass
 {
 public:
 	WWINLINE CullLinkClass(CullSystemClass * system)								{ System = system; WWASSERT(System); }
-	virtual ~CullLinkClass(void)												{ WWASSERT(System == NULL); }
+	virtual ~CullLinkClass(void)												{ WWASSERT(System == nullptr); }
 
 	WWINLINE void					Set_Culling_System(CullSystemClass * sys)		{ System = sys; }
 	WWINLINE CullSystemClass * Get_Culling_System(void)							{ return System; }

@@ -227,8 +227,8 @@ public:
 	virtual Bool loadMap( AsciiString filename, Bool query );
 	virtual void newMap( Bool saveGame );	///< Initialize the logic for new map.
 
-	virtual Real getGroundHeight( Real x, Real y, Coord3D* normal = NULL )  const;
-	virtual Real getLayerHeight(Real x, Real y, PathfindLayerEnum layer, Coord3D* normal = NULL, Bool clip = true) const;
+	virtual Real getGroundHeight( Real x, Real y, Coord3D* normal = nullptr )  const;
+	virtual Real getLayerHeight(Real x, Real y, PathfindLayerEnum layer, Coord3D* normal = nullptr, Bool clip = true) const;
 	virtual void getExtent( Region3D *extent ) const { DEBUG_CRASH(("not implemented"));  }		///< @todo This should not be a stub - this should own this functionality
 	virtual void getExtentIncludingBorder( Region3D *extent ) const { DEBUG_CRASH(("not implemented"));  }		///< @todo This should not be a stub - this should own this functionality
 	virtual void getMaximumPathfindExtent( Region3D *extent ) const { DEBUG_CRASH(("not implemented"));  }		///< @todo This should not be a stub - this should own this functionality
@@ -240,7 +240,7 @@ public:
 
 	virtual PathfindLayerEnum alignOnTerrain( Real angle, const Coord3D& pos, Bool stickToGround, Matrix3D& mtx);
 
-	virtual Bool isUnderwater( Real x, Real y, Real *waterZ = NULL, Real *terrainZ = NULL );			///< is point under water
+	virtual Bool isUnderwater( Real x, Real y, Real *waterZ = nullptr, Real *terrainZ = nullptr );			///< is point under water
 	virtual Bool isCliffCell( Real x, Real y) const;			///< is point cliff cell
 	virtual const WaterHandle* getWaterHandle( Real x, Real y );					///< get water handle at this location
 	virtual const WaterHandle* getWaterHandleByName( AsciiString name );	///< get water handle by name

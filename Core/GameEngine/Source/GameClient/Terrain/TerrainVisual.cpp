@@ -36,7 +36,7 @@
 
 
 // GLOBALS ////////////////////////////////////////////////////////////////////////////////////////
-TerrainVisual *TheTerrainVisual = NULL;
+TerrainVisual *TheTerrainVisual = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // DEFINITIONS
@@ -135,7 +135,7 @@ SeismicSimulationFilterBase::SeismicSimStatusCode DomeStyleSeismicFilter::filter
 
   Int life = node->m_life;
 
-  if ( heightMap == NULL )
+  if ( heightMap == nullptr )
     return SEISMIC_STATUS_INVALID;
 
 

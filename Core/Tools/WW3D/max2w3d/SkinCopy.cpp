@@ -138,13 +138,13 @@ Value * copy_skin_info_cf (Value **arg_list, int count)
 	// Get the INode pointers that were passed in.
 	INode *src_node = arg_list[0]->to_node();
 	INode *dest_node = arg_list[1]->to_node();
-	INode *wsm_node = NULL;
+	INode *wsm_node = nullptr;
 	INode *tree_root = arg_list[3]->to_node();
 	if (arg_list[2] == &undefined)
 	{
 		// Duplicate the WSM used by src_node.
 		wsm_node = duplicate_wsm(find_skin_wsm(src_node), tree_root);
-		if (wsm_node == NULL)
+		if (wsm_node == nullptr)
 			return &undefined;
 	}
 	else
@@ -193,7 +193,7 @@ Value * dupe_skin_wsm_cf (Value **arg_list, int count)
 
 Value *find_skin_node_in_tree (INode *root)
 {
-	if (root == NULL)
+	if (root == nullptr)
 		return &undefined;
 
 	// Is this the node we're looking for?
@@ -234,7 +234,7 @@ SkinModifierClass *find_skin_binding (INode *skinned_obj)
 	// WWSkin Binding ties us to a space warp, so search the node's
 	// WSM Derived Object for the WWSkin Binding modifier.
 	IDerivedObject *dobj = skinned_obj->GetWSMDerivedObject();
-	if (dobj == NULL)
+	if (dobj == nullptr)
 		return NULL;	// not bound to a space warp
 
 	// Search for the WWSkin Binding modifier on this derived object.
@@ -269,12 +269,12 @@ INode *find_skin_wsm (INode *skinned_obj)
 {
 	// Find the skin modifier on this object.
 	SkinModifierClass *skin_mod = find_skin_binding(skinned_obj);
-	if (skin_mod == NULL)
+	if (skin_mod == nullptr)
 		return NULL;
 
 	// Using the skin modifer, find the WSM's INode.
 	INode *wsm = (INode*)( skin_mod->GetReference(SkinModifierClass::NODE_REF) );
-	if (wsm == NULL)
+	if (wsm == nullptr)
 	{
 		char buf[256];
 		sprintf(buf, "%s has a WWSkin Binding, but I can't find its WWSkin WSM!",
@@ -416,7 +416,7 @@ INode *find_equivalent_node (INode *source, INode *tree, bool name_is_valid)
 	for (int i = 0; i < tree->NumberOfChildren(); i++)
 	{
 		INode *retval = find_equivalent_node(source, tree->GetChildNode(i), true);
-		if (retval != NULL)
+		if (retval != nullptr)
 			return retval;	// we found the node in our children
 	}
 
@@ -429,7 +429,7 @@ Value *copy_skin_info (INode *source, INode *target, INode *wsm)
 {
 	// Get the "WWSkin Binding" modifier on the source object.
 	SkinModifierClass *source_modifier = find_skin_binding(source);
-	if (source_modifier == NULL)
+	if (source_modifier == nullptr)
 		return &undefined;
 
 	// Get the WSMDerivedObject we can add our skin binding modifier to.
@@ -437,7 +437,7 @@ Value *copy_skin_info (INode *source, INode *target, INode *wsm)
 
 	// Create a new skin modifier and copy the source modifier's settings to it.
 	SkinModifierClass *new_modifier = new SkinModifierClass(wsm, get_skin_wsm_obj(wsm));
-	if (new_modifier == NULL)
+	if (new_modifier == nullptr)
 		throw RuntimeError("Out of memory - Unable to allocate a new SkinModifierClass object!");
 	new_modifier->SubObjSelLevel = source_modifier->SubObjSelLevel;
 
@@ -445,7 +445,7 @@ Value *copy_skin_info (INode *source, INode *target, INode *wsm)
 	ModContext *source_context = find_skin_mod_context(source);
 	ModContext *new_context = new ModContext(source_context->tm, source_context->box,
 		source_context->localData);
-	if (new_context == NULL)
+	if (new_context == nullptr)
 		throw RuntimeError("Out of memory - Unable to allocate a new ModContext object!");
 
 	// Add a new "WWSkin Binding" modifier to the target object to associate
@@ -464,7 +464,7 @@ IDerivedObject *setup_wsm_derived_obj (INode *node)
 {
 	// Check if the target object is already bound to a space warp.
 	IDerivedObject *dobj = node->GetWSMDerivedObject();
-	if (dobj != NULL)
+	if (dobj != nullptr)
 	{
 		// It's bound to a space warp. Check if WWSkin is one of the
 		// space warp bindings. If so, remove it (we don't want to
@@ -485,7 +485,7 @@ IDerivedObject *setup_wsm_derived_obj (INode *node)
 		// This object isn't bound to a space warp. Create a
 		// WSMDerivedObject for the node to play with.
 		dobj = CreateWSDerivedObject(node->GetObjectRef());
-		if (dobj == NULL)
+		if (dobj == nullptr)
 		{
 			char msg[128];
 			sprintf(msg, "Error setting up the WSMDerivedObject for %s", node->GetName());
@@ -501,13 +501,13 @@ IDerivedObject *setup_wsm_derived_obj (INode *node)
 ModContext *find_skin_mod_context (INode *node)
 {
 	// We need a valid node
-	if (node == NULL)
+	if (node == nullptr)
 		return NULL;
 
 	// The node needs to be bound to a space warp (ie. must have
 	// a WSMDerivedObject).
 	IDerivedObject *dobj = node->GetWSMDerivedObject();
-	if (dobj == NULL)
+	if (dobj == nullptr)
 		return NULL;
 
 	// It's bound to a space warp. Find the WWSkin modifier.

@@ -121,8 +121,8 @@ BOOL VerifyDlg::OnInitDialog()
 		stream = AIL_open_stream ( dig, wavefile, 0 );
 		if ( stream )
 		{
-			timer = SetTimer( TIMERID, 300, NULL );
-			AIL_stream_ms_position ( stream, &total, NULL );
+			timer = SetTimer( TIMERID, 300, nullptr );
+			AIL_stream_ms_position ( stream, &total, nullptr );
 			slider->SetRange ( 0, total );
 		}
 #endif
@@ -211,7 +211,7 @@ void VerifyDlg::CloseAudio ( void )
 	if ( stream )
 	{
 		AIL_close_stream ( stream );
-		stream = NULL;
+		stream = nullptr;
 	}
 	#endif
 }
@@ -225,7 +225,7 @@ void VerifyDlg::OnTimer(UINT nIDEvent)
 		if ( stream )
 		{
 			long current;
-			AIL_stream_ms_position ( stream, NULL, &current );
+			AIL_stream_ms_position ( stream, nullptr, &current );
 			slider->SetPos ( current );
 		}
 	#endif

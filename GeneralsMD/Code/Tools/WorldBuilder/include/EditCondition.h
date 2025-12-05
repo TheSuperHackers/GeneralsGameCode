@@ -38,7 +38,7 @@ class EditCondition : public CDialog
 {
 // Construction
 public:
-	EditCondition(CWnd* pParent = NULL);   // standard constructor
+	EditCondition(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(EditCondition)

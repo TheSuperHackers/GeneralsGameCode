@@ -99,11 +99,11 @@ ParticleEmitterClass::ParticleEmitterClass(float emit_rate, unsigned int burst_s
 	MaxParticles(max_particles),
 	IsComplete(false),
 	NameString(::_strdup ("ParticleEmitter")),
-	UserString(NULL),
+	UserString(nullptr),
 	RemoveOnComplete(DefaultRemoveOnComplete),
 	IsInScene(false),
 	GroupID(0),
-	Buffer(NULL),
+	Buffer(nullptr),
 	IsInvisible(false)
 {
 	max_age		= max_age	> 	0.0f ? max_age : 1.0f;
@@ -130,9 +130,9 @@ ParticleEmitterClass::ParticleEmitterClass(const ParticleEmitterClass & src) :
 	BurstSize(src.BurstSize),
 	OneTimeBurstSize(src.OneTimeBurstSize),
 	OneTimeBurst(src.OneTimeBurst),
-	PosRand(src.PosRand ? src.PosRand->Clone() : NULL),
+	PosRand(src.PosRand ? src.PosRand->Clone() : nullptr),
 	BaseVel(src.BaseVel),
-	VelRand(src.VelRand ? src.VelRand->Clone() : NULL),
+	VelRand(src.VelRand ? src.VelRand->Clone() : nullptr),
 	OutwardVel(src.OutwardVel),
 	VelInheritFactor(src.VelInheritFactor),
 	EmitRemain(src.EmitRemain),
@@ -149,7 +149,7 @@ ParticleEmitterClass::ParticleEmitterClass(const ParticleEmitterClass & src) :
 	RemoveOnComplete(src.RemoveOnComplete),
 	IsInScene(false),
 	GroupID(0),
-	Buffer(NULL),
+	Buffer(nullptr),
 	IsInvisible(src.IsInvisible)
 {
 	Buffer = (ParticleBufferClass *) src.Buffer->Clone();
@@ -176,19 +176,19 @@ ParticleEmitterClass::~ParticleEmitterClass(void)
 	Buffer->Release_Ref();
 
 	delete PosRand;
-	PosRand = NULL;
+	PosRand = nullptr;
 
 	delete VelRand;
-	VelRand = NULL;
+	VelRand = nullptr;
 
-	if (NameString != NULL) {
+	if (NameString != nullptr) {
 		::free (NameString);
-		NameString = NULL;
+		NameString = nullptr;
 	}
 
-	if (UserString != NULL) {
+	if (UserString != nullptr) {
 		::free (UserString);
-		UserString = NULL;
+		UserString = nullptr;
 	}
 
 	return ;
@@ -199,11 +199,11 @@ ParticleEmitterClass *
 ParticleEmitterClass::Create_From_Definition (const ParticleEmitterDefClass &definition)
 {
 	// Assume failure
-	ParticleEmitterClass *pemitter = NULL;
+	ParticleEmitterClass *pemitter = nullptr;
 
 	// Attempt to load the texture for this emitter
 	const char *ptexture_filename = definition.Get_Texture_Filename ();
-	TextureClass *ptexture = NULL;
+	TextureClass *ptexture = nullptr;
 	if (ptexture_filename && ptexture_filename[0]) {
 		ptexture = WW3DAssetManager::Get_Instance()->Get_Texture
 		(
@@ -460,8 +460,8 @@ void ParticleEmitterClass::Set_Velocity_Randomizer(Vector3Randomizer *rand)
 
 Vector3Randomizer *ParticleEmitterClass::Get_Creation_Volume (void) const
 {
-	Vector3Randomizer *randomizer = NULL;
-	if (PosRand != NULL) {
+	Vector3Randomizer *randomizer = nullptr;
+	if (PosRand != nullptr) {
 		randomizer = PosRand->Clone ();
 		//randomizer->Scale (1000.0F);
 	}
@@ -471,8 +471,8 @@ Vector3Randomizer *ParticleEmitterClass::Get_Creation_Volume (void) const
 
 Vector3Randomizer *ParticleEmitterClass::Get_Velocity_Random (void) const
 {
-	Vector3Randomizer *randomizer = NULL;
-	if (VelRand != NULL) {
+	Vector3Randomizer *randomizer = nullptr;
+	if (VelRand != nullptr) {
 		randomizer = VelRand->Clone ();
 		randomizer->Scale (1000.0F);
 	}
@@ -698,12 +698,12 @@ ParticleEmitterClass::Build_Definition (void) const
 {
 	// Allocate a new emitter definition object
 	ParticleEmitterDefClass *pdefinition = W3DNEW ParticleEmitterDefClass;
-	WWASSERT (pdefinition != NULL);
-	if (pdefinition != NULL) {
+	WWASSERT (pdefinition != nullptr);
+	if (pdefinition != nullptr) {
 
 		// Set the texture's filename
 		TextureClass *ptexture = Get_Texture ();
-		if (ptexture != NULL) {
+		if (ptexture != nullptr) {
 			pdefinition->Set_Texture_Filename (ptexture->Get_Texture_Name());
 			REF_PTR_RELEASE(ptexture);
 		}
@@ -823,7 +823,7 @@ ParticleEmitterClass::Save (ChunkSaveClass &chunk_save) const
 	// Build a definition from this emitter instance, and save it
 	// to the chunk.
 	ParticleEmitterDefClass *pdefinition = Build_Definition ();
-	if (pdefinition != NULL) {
+	if (pdefinition != nullptr) {
 		ret_val = pdefinition->Save_W3D (chunk_save);
 	}
 
@@ -836,9 +836,9 @@ void
 ParticleEmitterClass::Set_Name (const char *pname)
 {
 	// Free the old name if necessary
-	if (NameString != NULL) {
+	if (NameString != nullptr) {
 		::free (NameString);
-		NameString = NULL;
+		NameString = nullptr;
 	}
 
 	// Copy the provided name
@@ -873,7 +873,7 @@ ParticleEmitterClass::Add_Dependencies_To_List
 	// Get the texture the emitter is using and add it to our list
 	//
 	TextureClass *texture = Get_Texture ();
-	if (texture != NULL) {
+	if (texture != nullptr) {
 		file_list.Add (texture->Get_Full_Path ());
 		REF_PTR_RELEASE(texture);
 	}

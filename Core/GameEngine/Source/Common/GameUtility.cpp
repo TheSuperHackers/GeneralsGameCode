@@ -78,11 +78,11 @@ bool localPlayerHasRadar()
 
 Player* getObservedOrLocalPlayer()
 {
-	DEBUG_ASSERTCRASH(TheControlBar != NULL, ("TheControlBar is NULL"));
+	DEBUG_ASSERTCRASH(TheControlBar != nullptr, ("TheControlBar is NULL"));
 	Player* player = TheControlBar->getObservedPlayer();
-	if (player == NULL)
+	if (player == nullptr)
 	{
-		DEBUG_ASSERTCRASH(ThePlayerList != NULL, ("ThePlayerList is NULL"));
+		DEBUG_ASSERTCRASH(ThePlayerList != nullptr, ("ThePlayerList is NULL"));
 		player = ThePlayerList->getLocalPlayer();
 	}
 	return player;
@@ -90,13 +90,13 @@ Player* getObservedOrLocalPlayer()
 
 Player* getObservedOrLocalPlayer_Safe()
 {
-	Player* player = NULL;
+	Player* player = nullptr;
 
-	if (TheControlBar != NULL)
+	if (TheControlBar != nullptr)
 		player = TheControlBar->getObservedPlayer();
 
-	if (player == NULL)
-		if (ThePlayerList != NULL)
+	if (player == nullptr)
+		if (ThePlayerList != nullptr)
 			player = ThePlayerList->getLocalPlayer();
 
 	return player;
@@ -112,11 +112,11 @@ PlayerIndex getObservedOrLocalPlayerIndex_Safe()
 
 void changeLocalPlayer(Player* player)
 {
-	DEBUG_ASSERTCRASH(player != NULL, ("Player is NULL"));
+	DEBUG_ASSERTCRASH(player != nullptr, ("Player is NULL"));
 
 	ThePlayerList->setLocalPlayer(player);
-	TheControlBar->setObserverLookAtPlayer(NULL);
-	TheControlBar->setObservedPlayer(NULL);
+	TheControlBar->setObserverLookAtPlayer(nullptr);
+	TheControlBar->setObservedPlayer(nullptr);
 	TheControlBar->setControlBarSchemeByPlayer(player);
 	TheControlBar->initSpecialPowershortcutBar(player);
 
@@ -128,14 +128,14 @@ void changeObservedPlayer(Player* player)
 	TheControlBar->setObserverLookAtPlayer(player);
 
 	const Bool canBeginObservePlayer = TheGlobalData->m_enablePlayerObserver && TheGhostObjectManager->trackAllPlayers();
-	const Bool canEndObservePlayer = TheControlBar->getObservedPlayer() != NULL && TheControlBar->getObserverLookAtPlayer() == NULL;
+	const Bool canEndObservePlayer = TheControlBar->getObservedPlayer() != nullptr && TheControlBar->getObserverLookAtPlayer() == nullptr;
 
 	if (canBeginObservePlayer || canEndObservePlayer)
 	{
 		TheControlBar->setObservedPlayer(player);
 
 		Player *becomePlayer = player;
-		if (becomePlayer == NULL)
+		if (becomePlayer == nullptr)
 			becomePlayer = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver"));
 		detail::changePlayerCommon(becomePlayer);
 	}

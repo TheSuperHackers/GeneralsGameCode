@@ -151,7 +151,7 @@ public:
 	void							Get_Bounding_Sphere(SphereClass * set_sphere);
 
 	// exposed culling support
-	bool							Has_Cull_Tree(void)											{ return CullTree != NULL; }
+	bool							Has_Cull_Tree(void)											{ return CullTree != nullptr; }
 
 	void							Generate_Rigid_APT(const Vector3 & view_dir, SimpleDynVecClass<uint32> & apt);
 	void							Generate_Rigid_APT(const OBBoxClass & local_box, SimpleDynVecClass<uint32> & apt);

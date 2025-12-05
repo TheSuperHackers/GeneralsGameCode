@@ -415,7 +415,7 @@ public:
 	Bool hasLocomotorForSurface(LocomotorSurfaceType surfaceType);
 
 	// turret stuff.
-	WhichTurretType getWhichTurretForWeaponSlot(WeaponSlotType wslot, Real* turretAngle, Real* turretPitch = NULL) const;
+	WhichTurretType getWhichTurretForWeaponSlot(WeaponSlotType wslot, Real* turretAngle, Real* turretPitch = nullptr) const;
 	WhichTurretType getWhichTurretForCurWeapon() const;
 	/**
 		return true iff the weapon is on a turret, that turret is trying to aim at the victim,

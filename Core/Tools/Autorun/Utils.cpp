@@ -254,7 +254,7 @@ void Fix_Double_Ampersands ( LPSTR pszString, bool upper_case )
 void * Load_Alloc_Data( char *filename, long *filesize )
 {
 	int					size, bytes_read;
-	void				*ptr = NULL;
+	void				*ptr = nullptr;
 	StandardFileClass	file;
 
 	//-------------------------------------------------------------------------
@@ -262,7 +262,7 @@ void * Load_Alloc_Data( char *filename, long *filesize )
 	//-------------------------------------------------------------------------
 	file.Open( filename, MODE_READ_ONLY );
 	if ( !file.Query_Open()) {
-		return( NULL );
+		return( nullptr );
 	}
 
 	//-------------------------------------------------------------------------
@@ -271,7 +271,7 @@ void * Load_Alloc_Data( char *filename, long *filesize )
   	size = file.Query_Size();
 	ptr = (void*)malloc(size + 1);
 	if ( !ptr ) {
-		return( NULL );
+		return( nullptr );
 	}
 
 	//-------------------------------------------------------------------------
@@ -287,10 +287,10 @@ void * Load_Alloc_Data( char *filename, long *filesize )
 	assert( bytes_read == size );
 	if ( bytes_read != size ) {
 		free(ptr);
-		return( NULL );
+		return( nullptr );
 	}
 
-	if ( filesize != NULL ) {
+	if ( filesize != nullptr ) {
 		*filesize = (long)size;
 	}
 	return( ptr );
@@ -312,10 +312,10 @@ void * Load_Alloc_Data( char *filename, long *filesize )
 
 void *Load_File ( char *filename, long *filesize )
 {
-	void *ptr = NULL;
+	void *ptr = nullptr;
 
 	if ( filename == NULL || filename[0] == '\0' ) {
-		return( NULL );
+		return( nullptr );
 	}
 
 	//-------------------------------------------------------------------------
@@ -347,12 +347,12 @@ char *Make_Current_Path_To ( const char *filename, char *path )
 	char	dir	 	[ _MAX_DIR  ];
 
 	strcpy( szPath, Args->Get_argv(0));
-	_splitpath( szPath, drive, dir, NULL, NULL );
-	_makepath( szPath, drive, dir, NULL, NULL );
+	_splitpath( szPath, drive, dir, nullptr, NULL );
+	_makepath( szPath, drive, dir, nullptr, NULL );
 	Path_Add_Back_Slash( szPath );
 	strcat( szPath, filename );
 
-	if( path != NULL ) {
+	if( path != nullptr ) {
 		strcpy( path, szPath );
 	}
 	return( path );
@@ -365,12 +365,12 @@ wchar_t *Make_Current_Path_To ( const wchar_t *filename, wchar_t *path )
 	wchar_t	dir	 	[ _MAX_DIR  ];
 
 	wcscpy( szPath, (wchar_t *)Args->Get_argv(0));
-	_wsplitpath( szPath, drive, dir, NULL, NULL );
-	_wmakepath( szPath, drive, dir, NULL, NULL );
+	_wsplitpath( szPath, drive, dir, nullptr, NULL );
+	_wmakepath( szPath, drive, dir, nullptr, NULL );
 	Path_Add_Back_Slash( szPath );
 	wcscat( szPath, filename );
 
-	if( path != NULL ) {
+	if( path != nullptr ) {
 		wcscpy( path, szPath );
 	}
 	return( path );
@@ -460,8 +460,8 @@ void PlugInProductName ( char *szString, char *szName )
 	char	szTextBuf[ MAX_PATH ];
 	char	szOut[ MAX_PATH ];
 	char	szProduct[ MAX_PATH ];
-	char *	temp = NULL;
-	char *	next = NULL;
+	char *	temp = nullptr;
+	char *	next = nullptr;
 
 	if ( szName == NULL || szName[0] == '\0' ) {
 		return;
@@ -533,8 +533,8 @@ void PlugInProductName( char *szString, int nName )
 	char	szTextBuf[ MAX_PATH ];
 	char	szOut[ MAX_PATH ];
 	char	szProduct[ MAX_PATH ];
-	char *	temp = NULL;
-	char *	next = NULL;
+	char *	temp = nullptr;
+	char *	next = nullptr;
 
 	if ( nName <= STRNONE ) {
 		nName = STRNONE;
@@ -608,8 +608,8 @@ void PlugInProductName ( wchar_t *szString, const wchar_t *szName )
 	wchar_t	szTextBuf[ MAX_PATH ];
 	wchar_t	szOut[ MAX_PATH ];
 	wchar_t	szProduct[ MAX_PATH ];
-	wchar_t *temp = NULL;
-	wchar_t *next = NULL;
+	wchar_t *temp = nullptr;
+	wchar_t *next = nullptr;
 
 	if ( szName == NULL || szName[0] == '\0' ) {
 		return;

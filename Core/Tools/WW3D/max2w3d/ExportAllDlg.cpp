@@ -57,7 +57,7 @@ ExportAllDlg::ExportAllDlg (Interface *max_interface)
 	m_Directory[0] = '\0';
 	m_Recursive = TRUE;
 	m_hWnd = NULL;
-	assert(max_interface != NULL);
+	assert(max_interface != nullptr);
 	m_MaxInterface = max_interface;
 }
 
@@ -81,7 +81,7 @@ int ExportAllDlg::DoModal (void)
 
 BOOL CALLBACK _thunk_dialog_proc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	static ExportAllDlg *dialog = NULL;
+	static ExportAllDlg *dialog = nullptr;
 
 	if (uMsg == WM_INITDIALOG)
 	{
@@ -161,7 +161,7 @@ void ExportAllDlg::OnInitDialog (void)
 
 	// Set the default directory.
 	HWND edit = GetDlgItem(m_hWnd, IDC_DIRECTORY);
-	assert(edit != NULL);
+	assert(edit != nullptr);
 	SetWindowText(edit, m_Directory);
 }
 
@@ -183,7 +183,7 @@ void ExportAllDlg::OnBrowse()
 		if (SHGetPathFromIDList(il, folder_name))
 		{
 			HWND edit = GetDlgItem(m_hWnd, IDC_DIRECTORY);
-			assert(edit != NULL);
+			assert(edit != nullptr);
 			SetWindowText(edit, folder_name);
 		}
 		else
@@ -198,7 +198,7 @@ BOOL ExportAllDlg::OnOK (void)
 	// freak on the user.
 	char	dir[_MAX_PATH];
 	HWND	edit = GetDlgItem(m_hWnd, IDC_DIRECTORY);
-	assert(edit != NULL);
+	assert(edit != nullptr);
 	if (GetWindowText(edit, dir, sizeof(dir)) == 0)
 	{
 		// The edit box is empty, that's not a valid choice.

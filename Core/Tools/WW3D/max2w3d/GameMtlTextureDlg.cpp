@@ -75,23 +75,23 @@ GameMtlTextureDlg::GameMtlTextureDlg
 ) :
 	GameMtlFormClass(imp,mtl,pass)
 {
-	Stage0FramesSpin = NULL;
-	Stage1FramesSpin = NULL;
-	Stage0RateSpin = NULL;
-	Stage1RateSpin = NULL;
+	Stage0FramesSpin = nullptr;
+	Stage1FramesSpin = nullptr;
+	Stage0RateSpin = nullptr;
+	Stage1RateSpin = nullptr;
 
-	Stage0PublishButton = NULL;
-	Stage1PublishButton = NULL;
-	Stage0ClampUButton = NULL;
-	Stage1ClampUButton = NULL;
-	Stage0ClampVButton = NULL;
-	Stage1ClampVButton = NULL;
-	Stage0NoLODButton = NULL;
-	Stage1NoLODButton = NULL;
-	Stage0AlphaBitmapButton = NULL;
-	Stage1AlphaBitmapButton = NULL;
-	Stage0DisplayButton = NULL;
-	Stage1DisplayButton = NULL;
+	Stage0PublishButton = nullptr;
+	Stage1PublishButton = nullptr;
+	Stage0ClampUButton = nullptr;
+	Stage1ClampUButton = nullptr;
+	Stage0ClampVButton = nullptr;
+	Stage1ClampVButton = nullptr;
+	Stage0NoLODButton = nullptr;
+	Stage1NoLODButton = nullptr;
+	Stage0AlphaBitmapButton = nullptr;
+	Stage1AlphaBitmapButton = nullptr;
+	Stage0DisplayButton = nullptr;
+	Stage1DisplayButton = nullptr;
 
 	if (mtl->Get_Shader_Type() == GameMtl::STE_PC_SHADER) {
 		Create_Form(parent,IDD_GAMEMTL_TEXTURES);
@@ -651,7 +651,7 @@ void GameMtlTextureDlg::Update_Texture_Buttons(void)
 	TSTR filename;
 
 	if (texmap) {
-		SplitPathFile(texmap->GetFullName(),NULL,&filename);
+		SplitPathFile(texmap->GetFullName(),nullptr,&filename);
 		SetDlgItemText(m_hWnd, IDC_STAGE0_BUTTON,filename);
 	} else {
 		SetDlgItemText(m_hWnd, IDC_STAGE0_BUTTON,Get_String(IDS_NONE));
@@ -659,7 +659,7 @@ void GameMtlTextureDlg::Update_Texture_Buttons(void)
 
 	texmap = TheMtl->Get_Texture(PassIndex,1);
 	if (texmap) {
-		SplitPathFile(texmap->GetFullName(),NULL,&filename);
+		SplitPathFile(texmap->GetFullName(),nullptr,&filename);
 		SetDlgItemText(m_hWnd, IDC_STAGE1_BUTTON,filename);
 	} else {
 		SetDlgItemText(m_hWnd, IDC_STAGE1_BUTTON,Get_String(IDS_NONE));

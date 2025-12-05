@@ -83,7 +83,7 @@ Dictionary(uint32 (*hashFn)(const K &key)) :
 
   //Table is a pointer to a list of pointers (the hash table)
   table=(DNode<K,V> **)new DNode<K,V>* [size];
-  assert(table!=NULL);
+  assert(table!=nullptr);
 
   memset((void *)table,0,size*sizeof(void *));
   hashFunc=hashFn;
@@ -151,13 +151,13 @@ void Dictionary<K,V>::clear()
   for (i=0; i<size; i++)
   {
     temp=table[i];
-    while(temp!=NULL)
+    while(temp!=nullptr)
     {
       del=temp;
       temp=temp->hashNext;
       delete(del);
     }
-    table[i]=NULL;
+    table[i]=nullptr;
   }
   entries=0;
 
@@ -189,7 +189,7 @@ void Dictionary<K,V>::print(FILE *out) RO
     fprintf(out," |\n");
     fprintf(out,"[ ]");
 
-    while (temp!=NULL)
+    while (temp!=nullptr)
     {
       fprintf(out,"--[ ]");
       temp=temp->hashNext;
@@ -223,27 +223,27 @@ bit8 Dictionary<K,V>::iterate(INOUT int &index,INOUT int &offset,
     return(FALSE);
 
   temp=table[index];
-  while ((temp==NULL)&&((++index) < (int)getSize()))
+  while ((temp==nullptr)&&((++index) < (int)getSize()))
   {
     temp=table[index];
     offset=0;
   }
 
-  if (temp==NULL)   // no more slots with data
+  if (temp==nullptr)   // no more slots with data
     return(FALSE);
 
   uint32 i=0;
-  while ((temp!=NULL) && ((int)i < offset))
+  while ((temp!=nullptr) && ((int)i < offset))
   {
     temp=temp->hashNext;
     i++;
   }
 
-  if (temp==NULL)  // should never happen
+  if (temp==nullptr)  // should never happen
     return(FALSE);
 
   value=temp->value;
-  if (temp->hashNext==NULL)
+  if (temp->hashNext==nullptr)
   {
     index++;
     offset=0;
@@ -272,28 +272,28 @@ bit8 Dictionary<K,V>::iterate(INOUT int &index,INOUT int &offset,
     return(FALSE);
 
   temp=table[index];
-  while ((temp==NULL)&&((++index) < (int)getSize()))
+  while ((temp==nullptr)&&((++index) < (int)getSize()))
   {
     temp=table[index];
     offset=0;
   }
 
-  if (temp==NULL)   // no more slots with data
+  if (temp==nullptr)   // no more slots with data
     return(FALSE);
 
   uint32 i=0;
-  while ((temp!=NULL) && ((int)i < offset))
+  while ((temp!=nullptr) && ((int)i < offset))
   {
     temp=temp->hashNext;
     i++;
   }
 
-  if (temp==NULL)  // should never happen
+  if (temp==nullptr)  // should never happen
     return(FALSE);
 
   value=temp->value;
   key=temp->key;
-  if (temp->hashNext==NULL)
+  if (temp->hashNext==nullptr)
   {
     index++;
     offset=0;
@@ -330,10 +330,10 @@ bit8 Dictionary<K,V>::contains(IN K &key) RO
 
   node=table[offset];
 
-  if (node==NULL)
+  if (node==nullptr)
   { return(FALSE); }  // can't find it
 
-  while(node!=NULL)
+  while(node!=nullptr)
   {
     if ((node->key)==key)
     { return(TRUE); }
@@ -367,7 +367,7 @@ bit8 Dictionary<K,V>::add(IN K &key,IN V &value)
   float percent;
 
   item=(DNode<K,V> *)new DNode<K,V>;
-  assert(item!=NULL);
+  assert(item!=nullptr);
 
   #ifdef KEY_MEM_OPS
     memcpy(&(item->key),&key,sizeof(K));
@@ -381,7 +381,7 @@ bit8 Dictionary<K,V>::add(IN K &key,IN V &value)
     item->value=value;
   #endif
 
-  item->hashNext=NULL;
+  item->hashNext=nullptr;
 
   //If key already exists, it will be overwritten
   remove(key);   // Hopefully this will be false...
@@ -390,7 +390,7 @@ bit8 Dictionary<K,V>::add(IN K &key,IN V &value)
 
   node=table[offset];
 
-  if (node==NULL)
+  if (node==nullptr)
   { table[offset]=item; }
   else
   {
@@ -425,7 +425,7 @@ bit8 Dictionary<K,V>::remove(IN K &key,OUT V &value)
   node=table[offset];
 
   last=node;
-  if (node==NULL)
+  if (node==nullptr)
     return(FALSE);
 
   //special case table points to thing to delete
@@ -454,7 +454,7 @@ bit8 Dictionary<K,V>::remove(IN K &key,OUT V &value)
   bit8 retval=FALSE;  // wow, didn't add this for years... (DOH!)
 
   //Now the case if the thing to delete is not the first
-  while (node!=NULL)
+  while (node!=nullptr)
   {
     #ifdef KEY_MEM_OPS
       if (0==memcmp(&(node->key),&key,sizeof(K)))
@@ -508,7 +508,7 @@ bit8 Dictionary<K,V>::removeAny(OUT K &key,OUT V &value)
   int i;
   offset=-1;
   for (i=0; i<(int)getSize(); i++)
-    if (table[i]!=NULL)
+    if (table[i]!=nullptr)
     {
       offset=i;
       break;
@@ -544,7 +544,7 @@ bit8 Dictionary<K,V>::removeAny(OUT K &key,OUT V &value)
 template <class K,class V>
 bool Dictionary<K,V>::getValue(IN K &key,OUT V &value) RO
 {
-  V *valptr=NULL;
+  V *valptr=nullptr;
   bool retval=getPointer(key,&valptr);
   if (retval && valptr)
   {
@@ -572,17 +572,17 @@ bool Dictionary<K,V>::getPointer(IN K &key,OUT V **valptr) RO
 
   node=table[offset];
 
-  if (node==NULL)
+  if (node==nullptr)
     return(FALSE);
 
   #ifdef KEY_MEM_OPS
-    while ((node!=NULL)&&(memcmp(&(node->key),&key,sizeof(K))))
+    while ((node!=nullptr)&&(memcmp(&(node->key),&key,sizeof(K))))
   #else
-    while ((node!=NULL)&&( ! ((node->key)==key)) )  // odd syntax so you don't
+    while ((node!=nullptr)&&( ! ((node->key)==key)) )  // odd syntax so you don't
   #endif                                            // have to do oper !=
   { node=node->hashNext; }
 
-  if (node==NULL)
+  if (node==nullptr)
   { return(FALSE); }
 
   *valptr=&(node->value);
@@ -615,13 +615,13 @@ void Dictionary<K,V>::shrink(void)
   tableBits--;
 
   table=(DNode<K,V> **)new DNode<K,V>*[size];
-  assert(table!=NULL);
+  assert(table!=nullptr);
   memset((void *)table,0,size*sizeof(void *));
 
   for (i=0; i<oldsize; i++)
   {
     temp=oldtable[i];
-    while (temp!=NULL)
+    while (temp!=nullptr)
     {
       offset=keyHash(temp->key);
       first=table[offset];
@@ -654,13 +654,13 @@ void Dictionary<K,V>::expand(void)
   tableBits++;
 
   table=(DNode<K,V> **)new DNode<K,V>* [size];
-  assert(table!=NULL);
+  assert(table!=nullptr);
   memset((void *)table,0,size*sizeof(void *));
 
   for (i=0; i<oldsize; i++)
   {
     temp=oldtable[i];
-    while (temp!=NULL)
+    while (temp!=nullptr)
     {
       offset=keyHash(temp->key);
       first=table[offset];

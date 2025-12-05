@@ -35,7 +35,7 @@ class TeamObjectProperties : public CPropertyPage
 {
 // Construction
 public:
-	TeamObjectProperties(Dict* dictToEdit = NULL);
+	TeamObjectProperties(Dict* dictToEdit = nullptr);
 	~TeamObjectProperties();
 
 // Dialog Data

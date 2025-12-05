@@ -37,7 +37,7 @@ class CAdvancedAnimSheet : public CPropertySheet
 
 // Construction
 public:
-	CAdvancedAnimSheet(CWnd *pParentWnd = NULL, UINT iSelectPage = 0);
+	CAdvancedAnimSheet(CWnd *pParentWnd = nullptr, UINT iSelectPage = 0);
 
 // Attributes
 public:

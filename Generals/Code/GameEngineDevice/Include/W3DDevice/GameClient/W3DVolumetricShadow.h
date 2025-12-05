@@ -115,7 +115,7 @@ class W3DVolumetricShadow	: public Shadow
 		void setOptimalExtrusionPadding(Real value)	{m_extraExtrusionPadding=value;}
 		const W3DShadowGeometry *getGeometry(void) {return m_geometry;}
 
-		void setRenderObject( RenderObjClass	*robj) {assert(m_robj==NULL); m_robj=robj;}
+		void setRenderObject( RenderObjClass	*robj) {assert(m_robj==nullptr); m_robj=robj;}
  		void setRenderObjExtent ( Real extent) { m_robjExtent = extent; }
 
 		// called once per frame, updates shadow volume when necessary

@@ -54,7 +54,7 @@ public:
     UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "ScanDelayTime",		INI::parseDurationUnsignedInt,		NULL, offsetof( CheckpointUpdateModuleData, m_enemyScanDelayTime ) },
+			{ "ScanDelayTime",		INI::parseDurationUnsignedInt,		nullptr, offsetof( CheckpointUpdateModuleData, m_enemyScanDelayTime ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);

@@ -171,7 +171,7 @@ void DirectInputMouse::closeMouse( void )
 
 		m_pMouseDevice->Unacquire();
 		m_pMouseDevice->Release();
-		m_pMouseDevice = NULL;
+		m_pMouseDevice = nullptr;
 		DEBUG_LOG(( "OK - Mouse device closed" ));
 
 	}
@@ -181,7 +181,7 @@ void DirectInputMouse::closeMouse( void )
 	{
 
 		m_pDirectInput->Release();
-		m_pDirectInput = NULL;
+		m_pDirectInput = nullptr;
 		DEBUG_LOG(( "OK - Mouse direct input interface closed" ));
 
 	}
@@ -323,8 +323,8 @@ void DirectInputMouse::mapDirectInputMouse( MouseIO *mouse,
 DirectInputMouse::DirectInputMouse( void )
 {
 
-	m_pDirectInput = NULL;
-	m_pMouseDevice = NULL;
+	m_pDirectInput = nullptr;
+	m_pMouseDevice = nullptr;
 
 }
 
@@ -469,7 +469,7 @@ void DirectInputMouse::setCursor( MouseCursor cursor )
 	{
 
 		case NONE:
-			SetCursor( NULL );
+			SetCursor( nullptr );
 			break;
 
 		case NORMAL:

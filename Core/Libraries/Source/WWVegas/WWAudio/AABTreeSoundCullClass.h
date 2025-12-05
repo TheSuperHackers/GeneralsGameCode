@@ -53,7 +53,7 @@ class AABTreeSoundCullClass : public AABTreeCullClass
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
 		AABTreeSoundCullClass (void)
-			:	AABTreeCullClass (NULL)		{ }
+			:	AABTreeCullClass (nullptr)		{ }
 
 		virtual ~AABTreeSoundCullClass (void)	{ }
 

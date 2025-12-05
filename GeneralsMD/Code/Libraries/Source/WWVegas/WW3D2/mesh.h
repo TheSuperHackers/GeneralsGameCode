@@ -136,7 +136,7 @@ public:
 	void								Get_Deformed_Vertices(Vector3 *dst_vert, Vector3 *dst_norm);
 	void								Get_Deformed_Vertices(Vector3 *dst_vert);
 
-	void								Set_Lighting_Environment(LightEnvironmentClass * light_env) { if (light_env) {m_localLightEnv=*light_env;LightEnvironment = &m_localLightEnv;} else {LightEnvironment = NULL;} }
+	void								Set_Lighting_Environment(LightEnvironmentClass * light_env) { if (light_env) {m_localLightEnv=*light_env;LightEnvironment = &m_localLightEnv;} else {LightEnvironment = nullptr;} }
 	LightEnvironmentClass *		Get_Lighting_Environment(void) { return LightEnvironment; }
 	float	Get_Alpha_Override(void) { return m_alphaOverride;}
 

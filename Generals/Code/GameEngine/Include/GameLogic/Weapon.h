@@ -353,8 +353,8 @@ public:
 	void reset( void );
 
 	void friend_setNextTemplate(WeaponTemplate *nextTemplate) { m_nextTemplate = nextTemplate; }
-	WeaponTemplate *friend_clearNextTemplate( void ) {	WeaponTemplate *ret = m_nextTemplate; m_nextTemplate = NULL; return ret; }
-	Bool isOverride( void ) { return m_nextTemplate != NULL; }
+	WeaponTemplate *friend_clearNextTemplate( void ) {	WeaponTemplate *ret = m_nextTemplate; m_nextTemplate = nullptr; return ret; }
+	Bool isOverride( void ) { return m_nextTemplate != nullptr; }
 
 	/// field table for loading the values from an INI
 	const FieldParse *getFieldParse() const { return TheWeaponTemplateFieldParseTable; }
@@ -577,10 +577,10 @@ public:
 //~Weapon();
 
 	// return true if we auto-reloaded our clip after firing.
-	Bool fireWeapon(const Object *source, Object *target, ObjectID* projectileID = NULL);
+	Bool fireWeapon(const Object *source, Object *target, ObjectID* projectileID = nullptr);
 
 	// return true if we auto-reloaded our clip after firing.
-	Bool fireWeapon(const Object *source, const Coord3D* pos, ObjectID* projectileID = NULL);
+	Bool fireWeapon(const Object *source, const Coord3D* pos, ObjectID* projectileID = nullptr);
 
 	void fireProjectileDetonationWeapon(const Object *source, Object *target, WeaponBonusConditionFlags extraBonusFlags);
 
@@ -600,12 +600,12 @@ public:
 	*/
 	Real estimateWeaponDamage(const Object *source, const Object *target)
 	{
-		return estimateWeaponDamage(source, target, NULL);
+		return estimateWeaponDamage(source, target, nullptr);
 	}
 
 	Real estimateWeaponDamage(const Object *source, const Coord3D* pos)
 	{
-		return estimateWeaponDamage(source, NULL, pos);
+		return estimateWeaponDamage(source, nullptr, pos);
 	}
 
 	/** return true if the target is within attack range, false otherwise.

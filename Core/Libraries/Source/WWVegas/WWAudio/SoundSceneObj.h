@@ -145,7 +145,7 @@ class SoundSceneObjClass : public MultiListObjectClass, public PersistClass, pub
 		//////////////////////////////////////////////////////////////////////
 		//	User data methods
 		//////////////////////////////////////////////////////////////////////
-		virtual void			Set_User_Data (RefCountClass *user_obj = NULL, uint32 user = 0)	{ REF_PTR_SET (m_UserObj, user_obj); m_UserData = user; }
+		virtual void			Set_User_Data (RefCountClass *user_obj = nullptr, uint32 user = 0)	{ REF_PTR_SET (m_UserObj, user_obj); m_UserData = user; }
 		virtual uint32			Get_User_Data (void) const														{ return m_UserData; }
 		virtual RefCountClass *Peek_User_Obj (void) const													{ return m_UserObj; }
 
@@ -163,7 +163,7 @@ class SoundSceneObjClass : public MultiListObjectClass, public PersistClass, pub
 		//////////////////////////////////////////////////////////////////////
 		virtual void			Add_To_Scene (bool start_playing = true) = 0;
 		virtual void			Remove_From_Scene (void) = 0;
-		virtual bool			Is_In_Scene (void) const			{ return m_Scene != NULL; }
+		virtual bool			Is_In_Scene (void) const			{ return m_Scene != nullptr; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Attenuation settings
@@ -229,7 +229,7 @@ SoundSceneObjClass::On_Event
 	uint32							param2
 )
 {
-	if ((m_pCallback != NULL) && (m_RegisteredEvents & event)) {
+	if ((m_pCallback != nullptr) && (m_RegisteredEvents & event)) {
 
 		switch (event)
 		{

@@ -87,7 +87,7 @@ class ArgvClass
 		void Update_Value(const char *attrib, const char *value);
 
 		// Add a new attrib value pair (or just an option)
-		void Add_Value(const char *attrib, const char *value=NULL);
+		void Add_Value(const char *attrib, const char *value=nullptr);
 
 		// Remove an option (and its value)
 		bool Remove_Value(const char *attrib);

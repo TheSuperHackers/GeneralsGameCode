@@ -34,7 +34,7 @@ class BuildList : public COptionsPanel, public PopupSliderOwner
 {
 // Construction
 public:
- 	BuildList(CWnd* pParent = NULL);   ///< standard constructor
+ 	BuildList(CWnd* pParent = nullptr);   ///< standard constructor
 
 	~BuildList(void);   ///< standard destructor
 	enum { NAME_MAX_LEN = 64 };

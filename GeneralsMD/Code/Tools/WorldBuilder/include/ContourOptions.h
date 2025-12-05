@@ -35,7 +35,7 @@ public:
 				MIN_WIDTH=1,
 				MAX_WIDTH=6};
 
-	ContourOptions(CWnd* pParent = NULL);   // standard constructor
+	ContourOptions(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(ContourOptions)

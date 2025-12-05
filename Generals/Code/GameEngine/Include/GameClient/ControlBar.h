@@ -434,29 +434,29 @@ class SideSelectWindowData
 public:
 	SideSelectWindowData(void)
 	{
-		generalSpeak = NULL;
+		generalSpeak = nullptr;
 		m_currColor = 0;
-		m_gereralsNameWin = NULL;
+		m_gereralsNameWin = nullptr;
 		m_lastTime = 0;
-		m_pTemplate = NULL;
-		m_sideNameWin = NULL;
+		m_pTemplate = nullptr;
+		m_sideNameWin = nullptr;
 		m_startTime = 0;
 		m_state = 0;
-		m_upgradeImage1 = NULL;
-		m_upgradeImage1Win = NULL;
-		m_upgradeImage2 = NULL;
-		m_upgradeImage2Win = NULL;
-		m_upgradeImage3 = NULL;
-		m_upgradeImage3Win = NULL;
-		m_upgradeImage4 = NULL;
-		m_upgradeImage4Win = NULL;
+		m_upgradeImage1 = nullptr;
+		m_upgradeImage1Win = nullptr;
+		m_upgradeImage2 = nullptr;
+		m_upgradeImage2Win = nullptr;
+		m_upgradeImage3 = nullptr;
+		m_upgradeImage3Win = nullptr;
+		m_upgradeImage4 = nullptr;
+		m_upgradeImage4Win = nullptr;
 		m_upgradeImageSize.x = m_upgradeImageSize.y = 0;
 
-		m_upgradeLabel1Win = NULL;
-		m_upgradeLabel2Win = NULL;
-		m_upgradeLabel3Win = NULL;
-		m_upgradeLabel4Win = NULL;
-		sideWindow = NULL;
+		m_upgradeLabel1Win = nullptr;
+		m_upgradeLabel2Win = nullptr;
+		m_upgradeLabel3Win = nullptr;
+		m_upgradeLabel4Win = nullptr;
+		sideWindow = nullptr;
 	}
 	~SideSelectWindowData(void);
 
@@ -958,7 +958,7 @@ public:
 	void hideBuildTooltipLayout( void );
 	void deleteBuildTooltipLayout( void );
 	Bool getShowBuildTooltipLayout( void ){return m_showBuildToolTipLayout;	}
-	void populateBuildTooltipLayout( const CommandButton *commandButton, GameWindow *tooltipWin = NULL );
+	void populateBuildTooltipLayout( const CommandButton *commandButton, GameWindow *tooltipWin = nullptr );
 	void repopulateBuildTooltipLayout( void );
 private:
 

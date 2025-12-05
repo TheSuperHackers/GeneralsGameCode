@@ -86,7 +86,7 @@
 	*/
 //===============================
 
-FileSystem	*TheFileSystem = NULL;
+FileSystem	*TheFileSystem = nullptr;
 
 //----------------------------------------------------------------------------
 //         Private Prototypes

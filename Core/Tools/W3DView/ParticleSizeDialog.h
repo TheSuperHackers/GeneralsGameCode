@@ -28,7 +28,7 @@ class ParticleSizeDialogClass : public CDialog
 {
 // Construction
 public:
-	ParticleSizeDialogClass (float size, CWnd* pParent = NULL);   // standard constructor
+	ParticleSizeDialogClass (float size, CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(ParticleSizeDialogClass)

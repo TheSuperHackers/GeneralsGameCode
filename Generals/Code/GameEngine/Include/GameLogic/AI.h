@@ -257,7 +257,7 @@ public:
 		UNFOGGED													= 1 << 5
 	};
 	Object *findClosestEnemy( const Object *me, Real range, UnsignedInt qualifiers,
-		const AttackPriorityInfo *info=NULL, PartitionFilter *optionalFilter=NULL);
+		const AttackPriorityInfo *info=nullptr, PartitionFilter *optionalFilter=nullptr);
 
 	Object *findClosestRepulsor( const Object *me, Real range);
 

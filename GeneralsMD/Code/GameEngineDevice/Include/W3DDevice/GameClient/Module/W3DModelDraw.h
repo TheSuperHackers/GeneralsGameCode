@@ -375,7 +375,7 @@ public:
 	virtual Int getPristineBonePositionsForConditionState(const ModelConditionFlags& condition, const char* boneNamePrefix, Int startIndex, Coord3D* positions, Matrix3D* transforms, Int maxBones) const;
 	virtual Int getCurrentBonePositions(const char* boneNamePrefix, Int startIndex, Coord3D* positions, Matrix3D* transforms, Int maxBones) const;
 	virtual Bool getCurrentWorldspaceClientBonePositions(const char* boneName, Matrix3D& transform) const;
-	virtual Bool getProjectileLaunchOffset(const ModelConditionFlags& condition, WeaponSlotType wslot, Int specificBarrelToUse, Matrix3D* launchPos, WhichTurretType tur, Coord3D* turretRotPos, Coord3D* turretPitchPos = NULL) const;
+	virtual Bool getProjectileLaunchOffset(const ModelConditionFlags& condition, WeaponSlotType wslot, Int specificBarrelToUse, Matrix3D* launchPos, WhichTurretType tur, Coord3D* turretRotPos, Coord3D* turretPitchPos = nullptr) const;
 	virtual void updateProjectileClipStatus( UnsignedInt shotsRemaining, UnsignedInt maxShots, WeaponSlotType slot ); ///< This will do the show/hide work if ProjectileBoneFeedbackEnabled is set.
 	virtual void updateDrawModuleSupplyStatus( Int maxSupply, Int currentSupply ); ///< This will do visual feedback on Supplies carried
 	virtual void notifyDrawModuleDependencyCleared( ){}///< if you were waiting for something before you drew, it's ready now

@@ -171,7 +171,7 @@ public:
 	void friend_setID( StateID id ) { m_ID = id; }			///< define this state's id (for use only by StateMachine class)
 	void friend_onSuccess( StateID toStateID ) { m_successStateID = toStateID; }	///< define which state to move to after successful completion
 	void friend_onFailure( StateID toStateID ) { m_failureStateID = toStateID; }	///< define which state to move to after failure
-	void friend_onCondition( StateTransFuncPtr test, StateID toStateID, void* userData, const char* description = NULL );	///< define when to change state
+	void friend_onCondition( StateTransFuncPtr test, StateID toStateID, void* userData, const char* description = nullptr );	///< define when to change state
 	StateReturnType friend_checkForTransitions( StateReturnType status );	///< given a return code, handle state transitions
 	StateReturnType friend_checkForSleepTransitions( StateReturnType status );	///< given a return code, handle state transitions
 
@@ -290,7 +290,7 @@ public:
 	{
 		m_locked = false;
 #ifdef STATE_MACHINE_DEBUG
-		m_lockedby = NULL;
+		m_lockedby = nullptr;
 #endif
 	}
 
@@ -351,7 +351,7 @@ protected:
 	void defineState( StateID id, State *state,
 										StateID successID,
 										StateID failureID,
-										const StateConditionInfo* conditions = NULL);
+										const StateConditionInfo* conditions = nullptr);
 
 	State* internalGetState( StateID id );
 
@@ -480,6 +480,6 @@ EMPTY_DTOR(SleepState)
 // @todo Replace calls to deleteInstance with RefCountPtr<StateMachine> when so appropriate.
 inline void deleteInstance(StateMachine* machine)
 {
-	if (machine != NULL)
+	if (machine != nullptr)
 		machine->Release_Ref();
 }

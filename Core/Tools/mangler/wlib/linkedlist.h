@@ -63,9 +63,9 @@ class LinkedList
   void             clear(void);
 
   // Add a node after the zero based 'pos'
-  bit8             add(IN T &node,sint32 pos, OUT T **newnodeptr=NULL);
-  bit8             addTail(IN T &node, OUT T **newnodeptr=NULL);
-  bit8             addHead(IN T &node, OUT T **newnodeptr=NULL);
+  bit8             add(IN T &node,sint32 pos, OUT T **newnodeptr=nullptr);
+  bit8             addTail(IN T &node, OUT T **newnodeptr=nullptr);
+  bit8             addHead(IN T &node, OUT T **newnodeptr=nullptr);
 
   // Remove a node
   bit8             remove(OUT T &node,sint32 pos);
@@ -106,7 +106,7 @@ template <class T>
 LinkedList<T>::LinkedList()
 {
   Entries=0;
-  Head=Tail=Current=NULL;
+  Head=Tail=Current=nullptr;
   CurIndex=-1;  // Not valid when 0 entries
 }
 
@@ -115,7 +115,7 @@ template <class T>
 LinkedList<T>::LinkedList(LinkedList<T> &other)
 {
   Entries=0;
-  Head=Tail=Current=NULL;
+  Head=Tail=Current=nullptr;
   CurIndex=-1;  // Not valid when 0 entries
   (*this)=other;
 }
@@ -156,7 +156,7 @@ void LinkedList<T>::clear()
   }
   Entries=0;
   CurIndex=-1;
-  Head=Tail=Current=NULL;
+  Head=Tail=Current=nullptr;
 }
 
 // When adding into a position, the new node goes at the zero based slot
@@ -173,10 +173,10 @@ bit8 LinkedList<T>::add(IN T &node,sint32 pos, OUT T **newnodeptr)
     pos=Entries;
 
   item=(LNode<T> *)new LNode<T>;
-  assert(item!=NULL);
+  assert(item!=nullptr);
   item->Node=node;  // copy the passed in object
-  item->Prev=NULL;
-  item->Next=NULL;
+  item->Prev=nullptr;
+  item->Next=nullptr;
 
   if (newnodeptr)
     *newnodeptr=&(item->Node);
@@ -228,7 +228,7 @@ bit8 LinkedList<T>::add(IN T &node,sint32 pos, OUT T **newnodeptr)
   temp=Head->Next;  // Can start at node '1' because head was special cased
   for (int i=1; i<pos; i++) {
     temp=temp->Next;
-    assert(temp!=NULL);
+    assert(temp!=nullptr);
   }
   item->Next=temp;
   item->Prev=temp->Prev;
@@ -278,7 +278,7 @@ bit8 LinkedList<T>::remove(OUT T &node, sint32 pos)
     if (pos==0) {
       item=Head;
       if (item->Next)
-        item->Next->Prev=NULL;
+        item->Next->Prev=nullptr;
       Head=item->Next;
       node=item->Node;
       Current=Head;
@@ -287,7 +287,7 @@ bit8 LinkedList<T>::remove(OUT T &node, sint32 pos)
     if (pos==Entries-1) {
       item=Tail;
       if (item->Prev)
-        item->Prev->Next=NULL;
+        item->Prev->Next=nullptr;
       Tail=item->Prev;
       node=item->Node;
       Current=Tail;
@@ -297,10 +297,10 @@ bit8 LinkedList<T>::remove(OUT T &node, sint32 pos)
     Entries--;
 
     if (Entries==0) { // Super paranoia check
-      assert(Current==NULL);
+      assert(Current==nullptr);
       assert(CurIndex==-1);
-      assert(Head==NULL);
-      assert(Tail==NULL);
+      assert(Head==nullptr);
+      assert(Tail==nullptr);
     }
     return(TRUE);
   }
@@ -337,7 +337,7 @@ bit8 LinkedList<T>::remove(OUT T &node, sint32 pos)
   item=Head->Next;  // Can start at node '1' because head was special cased
   for (int i=1; i<pos; i++) {
     item=item->Next;
-    assert(item!=NULL);
+    assert(item!=nullptr);
   }
 
   item->Prev->Next=item->Next;
@@ -441,7 +441,7 @@ bit8 LinkedList<T>::getPointer(OUT T **node,sint32 pos)
   item=Head->Next;  // Can start at node '1' because head was special cased
   for (int i=1; i<pos; i++) {
     item=item->Next;
-    assert(item!=NULL);
+    assert(item!=nullptr);
   }
   *node=&(item->Node);
   CurIndex=pos;

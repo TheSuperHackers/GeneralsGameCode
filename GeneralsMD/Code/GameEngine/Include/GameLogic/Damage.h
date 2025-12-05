@@ -260,7 +260,7 @@ public:
 	DamageInfoInput( void )
 	{
 		m_sourceID = INVALID_ID;
-		m_sourceTemplate = NULL;
+		m_sourceTemplate = nullptr;
 		m_sourcePlayerMask = 0;
 		m_damageType = DAMAGE_EXPLOSION;
 		m_damageStatusType = OBJECT_STATUS_NONE;

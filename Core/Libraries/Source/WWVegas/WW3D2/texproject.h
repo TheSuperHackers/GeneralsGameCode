@@ -158,8 +158,8 @@ public:
 	bool						Compute_Ortho_Projection(const AABoxClass & obj_box,const Matrix3D & tm,const Vector3 & lightdir,float znear=-1.0f,float zfar=-1.0f);
 
 	bool						Needs_Render_Target(void);
-	void						Set_Render_Target(TextureClass* render_target, ZTextureClass* ztarget=NULL);
-	TextureClass*			Peek_Render_Target(TextureClass** rtarget=NULL, ZTextureClass** ztarget=NULL);
+	void						Set_Render_Target(TextureClass* render_target, ZTextureClass* ztarget=nullptr);
+	TextureClass*			Peek_Render_Target(TextureClass** rtarget=nullptr, ZTextureClass** ztarget=nullptr);
 
 	bool						Compute_Texture(RenderObjClass * model,SpecialRenderInfoClass * context);
 

@@ -49,7 +49,7 @@ static PaletteClass _VoxelPalette;
 
 VoxelDebugWindowClass::VoxelDebugWindowClass(VoxelClass * vxl) :
 	CurLayer(0),
-	Bitmap(NULL),
+	Bitmap(nullptr),
 	Voxel(vxl),
 	WindowHWND(0),
 	ViewportHWND(0),
@@ -187,7 +187,7 @@ void VoxelDebugWindowClass::update_display(void)
 	/*
 	** Bail out if everything isn't right
 	*/
-	if ((Bitmap == NULL) || (Voxel == NULL)) {
+	if ((Bitmap == nullptr) || (Voxel == nullptr)) {
 		return;
 	}
 
@@ -241,7 +241,7 @@ BOOL CALLBACK _dialog_proc
 	LPARAM lParam
 )
 {
-	static VoxelDebugWindowClass * window = NULL;
+	static VoxelDebugWindowClass * window = nullptr;
 
 	if (message == WM_INITDIALOG) {
 		window = (VoxelDebugWindowClass *) lParam;

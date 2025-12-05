@@ -31,7 +31,7 @@ class PlaySoundDialogClass : public CDialog
 {
 // Construction
 public:
-	PlaySoundDialogClass(LPCTSTR filename, CWnd* pParent = NULL);   // standard constructor
+	PlaySoundDialogClass(LPCTSTR filename, CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(PlaySoundDialogClass)

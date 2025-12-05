@@ -30,7 +30,7 @@ namespace patchget
 
 ComInit::ComInit()
 {
-  HRESULT hRes = CoInitialize(NULL);
+  HRESULT hRes = CoInitialize(nullptr);
   if (SUCCEEDED(hRes)==FALSE)
   {
     MessageBox(NULL,"Can't initialize COM?!?!","Error:",MB_OK);

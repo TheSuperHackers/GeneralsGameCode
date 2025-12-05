@@ -321,7 +321,7 @@ public:
 	void addToList(MemoryPool **pHead);				///< add this pool to head of the linked list
 	void removeFromList(MemoryPool **pHead);	///< remove this pool from the linked list
 	#ifdef MEMORYPOOL_DEBUG
-		static void debugPoolInfoReport( MemoryPool *pool, FILE *fp = NULL );	///< dump a report about this pool to the logfile
+		static void debugPoolInfoReport( MemoryPool *pool, FILE *fp = nullptr );	///< dump a report about this pool to the logfile
 		const char *debugGetBlockTagString(void *pBlock);		///< return the tagstring for the given block (assumed to belong to this pool)
 		void debugMemoryVerifyPool();												///< perform internal consistency check on this pool.
 		Int debugPoolReportLeaks( const char* owner );
@@ -421,7 +421,7 @@ public:
 		Int debugCalcRawBlockBytes(Int *numBlocks);												///< calculate the number of bytes in "raw" (non-subpool) blocks
 		void debugMemoryVerifyDma();												///< perform internal consistency check
 		const char *debugGetBlockTagString(void *pBlock);		///< return the tagstring for the given block (assumed to belong to this dma)
-		void debugDmaInfoReport( FILE *fp = NULL );					///< dump a report about this pool to the logfile
+		void debugDmaInfoReport( FILE *fp = nullptr );					///< dump a report about this pool to the logfile
 		Int debugDmaReportLeaks();
 	#endif
 	#ifdef MEMORYPOOL_CHECKPOINTING
@@ -545,7 +545,7 @@ public:
 	/// destroy the contents of all pools and dmas. (the pools and dma's are not destroyed, just reset)
 	void reset();
 
-	void memoryPoolUsageReport( const char* filename, FILE *appendToFileInstead = NULL );
+	void memoryPoolUsageReport( const char* filename, FILE *appendToFileInstead = nullptr );
 
 	#ifdef MEMORYPOOL_DEBUG
 
@@ -559,7 +559,7 @@ public:
 		const char *debugGetBlockTagString(void *pBlock);
 
 		/// dump a report with the given options to the logfile.
-		void debugMemoryReport(Int flags, Int startCheckpoint, Int endCheckpoint, FILE *fp = NULL );
+		void debugMemoryReport(Int flags, Int startCheckpoint, Int endCheckpoint, FILE *fp = nullptr );
 
 		void debugSetInitFillerIndex(Int index);
 
@@ -902,9 +902,9 @@ class MemoryPoolObjectHolder
 private:
 	MemoryPoolObject *m_mpo;
 public:
-	MemoryPoolObjectHolder(MemoryPoolObject *mpo = NULL) : m_mpo(mpo) { }
+	MemoryPoolObjectHolder(MemoryPoolObject *mpo = nullptr) : m_mpo(mpo) { }
 	void hold(MemoryPoolObject *mpo) { DEBUG_ASSERTCRASH(!m_mpo, ("already holding")); m_mpo = mpo; }
-	void release() { m_mpo = NULL; }
+	void release() { m_mpo = nullptr; }
 	~MemoryPoolObjectHolder() { deleteInstance(m_mpo); }
 };
 

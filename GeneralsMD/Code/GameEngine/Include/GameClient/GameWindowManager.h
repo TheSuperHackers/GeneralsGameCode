@@ -197,7 +197,7 @@ public:
 	//---------------------------------------------------------------------------
 	// Creating windows
 	/// create new window(s) from .wnd file ... see definition for what is returned
-	virtual GameWindow *winCreateFromScript( AsciiString filename, WindowLayoutInfo *info = NULL );
+	virtual GameWindow *winCreateFromScript( AsciiString filename, WindowLayoutInfo *info = nullptr );
 
 	/// create new window(s) from .wnd file and wrap in a WindowLayout
 	virtual WindowLayout *winCreateLayout( AsciiString filename );
@@ -209,7 +209,7 @@ public:
 	virtual GameWindow *winCreate( GameWindow *parent, UnsignedInt status,
 																 Int x, Int y, Int width, Int height,
 																 GameWinSystemFunc system,
-																 WinInstanceData *instData = NULL );
+																 WinInstanceData *instData = nullptr );
 
 	//---------------------------------------------------------------------------
 	// Manipulating windows in the system

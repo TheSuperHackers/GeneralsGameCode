@@ -130,7 +130,7 @@ struct TTriggerInfo
 	Byte									isInside;	///< True if the object is inside this trigger area this frame.
 	Byte									padding;	///< unused.
 
-	TTriggerInfo() : entered(false), exited(false), isInside(false), padding(false), pTrigger(NULL) { }
+	TTriggerInfo() : entered(false), exited(false), isInside(false), padding(false), pTrigger(nullptr) { }
 
 };
 
@@ -415,7 +415,7 @@ public:
 	inline Object *getContainedBy() { return m_containedBy; }
 	inline const Object *getContainedBy() const { return m_containedBy; }
 	inline UnsignedInt getContainedByFrame() const { return m_containedByFrame; }
-	inline Bool isContained() const { return m_containedBy != NULL; }
+	inline Bool isContained() const { return m_containedBy != nullptr; }
 	void onContainedBy( Object *containedBy );
 	void onRemovedFrom( Object *removedFrom );
 	Int getTransportSlotCount() const;
@@ -456,8 +456,8 @@ public:
 	// see if this current weapon set's weapons has shared reload times
 	Bool isReloadTimeShared() const { return m_weaponSet.isSharedReloadTime(); }
 
-	Weapon* getCurrentWeapon(WeaponSlotType* wslot = NULL);
-	const Weapon* getCurrentWeapon(WeaponSlotType* wslot = NULL) const;
+	Weapon* getCurrentWeapon(WeaponSlotType* wslot = nullptr);
+	const Weapon* getCurrentWeapon(WeaponSlotType* wslot = nullptr) const;
 	void setFiringConditionForCurrentWeapon() const;
 	void adjustModelConditionForWeaponStatus();	///< Check to see if I should change my model condition.
 	void fireCurrentWeapon(Object *target);

@@ -46,7 +46,7 @@
 // GLOBALS
 //-----------------------------------------------------------------------------
 
-Command_Line_Arguments *Args = NULL;
+Command_Line_Arguments *Args = nullptr;
 
 //*****************************************************************************
 // COMMAND_LINE_ARGUMENTS::COMMAND_LINE_ARGUMENTS -- Constructor.
@@ -69,7 +69,7 @@ Command_Line_Arguments::Command_Line_Arguments (
 	//--------------------------------------------------------------------------
 	// debug checks...
 	//--------------------------------------------------------------------------
-	assert( windows_command_line_string != NULL );
+	assert( windows_command_line_string != nullptr );
 
 	//--------------------------------------------------------------------------
 	// reset all class data
@@ -172,7 +172,7 @@ Command_Line_Arguments::Command_Line_Arguments ( HINSTANCE current_instance_hand
 	//--------------------------------------------------------------------------
 	// debug checks...
 	//--------------------------------------------------------------------------
-	assert( windows_command_line_string != NULL );
+	assert( windows_command_line_string != nullptr );
 
 	//--------------------------------------------------------------------------
 	// reset all class data

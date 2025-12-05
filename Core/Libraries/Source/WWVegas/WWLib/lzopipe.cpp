@@ -67,8 +67,8 @@
 LZOPipe::LZOPipe(CompControl control, int blocksize) :
 		Control(control),
 		Counter(0),
-		Buffer(NULL),
-		Buffer2(NULL),
+		Buffer(nullptr),
+		Buffer2(nullptr),
 		BlockSize(blocksize)
 {
 	SafetyMargin = BlockSize;
@@ -95,10 +95,10 @@ LZOPipe::LZOPipe(CompControl control, int blocksize) :
 LZOPipe::~LZOPipe(void)
 {
 	delete [] Buffer;
-	Buffer = NULL;
+	Buffer = nullptr;
 
 	delete [] Buffer2;
-	Buffer2 = NULL;
+	Buffer2 = nullptr;
 }
 
 
@@ -127,7 +127,7 @@ int LZOPipe::Put(void const * source, int slen)
 		return(Pipe::Put(source, slen));
 	}
 
-	assert(Buffer != NULL);
+	assert(Buffer != nullptr);
 
 	int total = 0;
 
@@ -177,7 +177,7 @@ int LZOPipe::Put(void const * source, int slen)
 				*/
 				if (Counter == BlockHeader.CompCount) {
 					unsigned int length = sizeof (Buffer2);
-					lzo1x_decompress ((unsigned char*)Buffer, BlockHeader.CompCount, (unsigned char*)Buffer2, &length, NULL);
+					lzo1x_decompress ((unsigned char*)Buffer, BlockHeader.CompCount, (unsigned char*)Buffer2, &length, nullptr);
 					total += Pipe::Put(Buffer2, BlockHeader.UncompCount);
 					Counter = 0;
 					BlockHeader.CompCount = 0xFFFF;
@@ -264,7 +264,7 @@ int LZOPipe::Put(void const * source, int slen)
  *=============================================================================================*/
 int LZOPipe::Flush(void)
 {
-	assert(Buffer != NULL);
+	assert(Buffer != nullptr);
 
 	int total = 0;
 

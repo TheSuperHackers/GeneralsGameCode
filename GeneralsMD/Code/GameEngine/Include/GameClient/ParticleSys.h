@@ -183,7 +183,7 @@ public:
 	void setIsCulled (Bool enable) { m_isCulled = enable;}		///< set particle to not visible because it's outside view frustum
 
 	void controlParticleSystem( ParticleSystem *sys ) { m_systemUnderControl = sys; }
-	void detachControlledParticleSystem( void ) { m_systemUnderControl = NULL; }
+	void detachControlledParticleSystem( void ) { m_systemUnderControl = nullptr; }
 
 	// get priority of this particle ... which is the priority of the system it belongs to
 	ParticlePriorityType getPriority( void );
@@ -609,7 +609,7 @@ public:
 	Bool isSaveable( void ) const { return m_isSaveable; }
 
 	/// called when the particle this system is controlled by dies
-	void detachControlParticle( Particle *p ) { m_controlParticle = NULL; }
+	void detachControlParticle( Particle *p ) { m_controlParticle = nullptr; }
 
 	/// called to merge two systems info. If slaveNeedsFullPromotion is true, then the slave needs to be aware of how many particles
 	/// to generate as well.
@@ -817,4 +817,4 @@ private:
 extern ParticleSystemManager *TheParticleSystemManager;
 
 class DebugDisplayInterface;
-extern void ParticleSystemDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp = NULL );
+extern void ParticleSystemDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp = nullptr );
