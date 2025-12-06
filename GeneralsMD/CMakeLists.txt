@@ -15,27 +15,28 @@ add_subdirectory(Code)
 
 # If we are building on windows for windows, try and get the game install path from the registry.
 if("${CMAKE_HOST_SYSTEM}" MATCHES "Windows" AND "${CMAKE_SYSTEM}" MATCHES "Windows")
-    if(NOT RTS_INSTALL_PREFIX_ZEROHOUR)
-        get_filename_component(RTS_INSTALL_PREFIX_ZEROHOUR  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour;InstallPath]" ABSOLUTE CACHE)
-    endif()
+    include(${CMAKE_SOURCE_DIR}/cmake/registry.cmake)
 
-    # Check the WOW6432Node registry path (for EA App on 64-bit Windows)
-    if(NOT RTS_INSTALL_PREFIX_ZEROHOUR OR "${RTS_INSTALL_PREFIX_ZEROHOUR}" STREQUAL "/registry")
-        get_filename_component(RTS_INSTALL_PREFIX_ZEROHOUR  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour;InstallPath]" ABSOLUTE CACHE)
-    endif()
+    # Check the EA App/CD registry path
+    try_set_install_prefix_from_registry(RTS_INSTALL_PREFIX_ZEROHOUR
+        "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/Command and Conquer Generals Zero Hour"
+        InstallPath
+        "Zero Hour install path from registry")
 
     # Check the "First Decade" registry path
-    if(NOT RTS_INSTALL_PREFIX_ZEROHOUR OR "${RTS_INSTALL_PREFIX_ZEROHOUR}" STREQUAL "/registry")
-        get_filename_component(RTS_INSTALL_PREFIX_ZEROHOUR  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer The First Decade;zh_folder]" ABSOLUTE CACHE)
-    endif()
+    try_set_install_prefix_from_registry(RTS_INSTALL_PREFIX_ZEROHOUR
+        "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/Command and Conquer The First Decade"
+        zh_folder
+        "Zero Hour install path from registry")
 
     # Check the Steam registry path
-    if(NOT RTS_INSTALL_PREFIX_ZEROHOUR OR "${RTS_INSTALL_PREFIX_ZEROHOUR}" STREQUAL "/registry")
-        get_filename_component(RTS_INSTALL_PREFIX_ZEROHOUR  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\EA Games\\ZeroHour;installPath]" ABSOLUTE CACHE)
-    endif()
+    try_set_install_prefix_from_registry(RTS_INSTALL_PREFIX_ZEROHOUR
+        "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/ZeroHour"
+        installPath
+        "Zero Hour install path from registry")
 endif()
 
-if(RTS_INSTALL_PREFIX_ZEROHOUR AND NOT "${RTS_INSTALL_PREFIX_ZEROHOUR}" STREQUAL "/registry")
+if(RTS_INSTALL_PREFIX_ZEROHOUR)
     install(TARGETS z_generals RUNTIME DESTINATION "${RTS_INSTALL_PREFIX_ZEROHOUR}")
     install(FILES $<TARGET_PDB_FILE:z_generals> DESTINATION "${RTS_INSTALL_PREFIX_ZEROHOUR}" OPTIONAL)
 
