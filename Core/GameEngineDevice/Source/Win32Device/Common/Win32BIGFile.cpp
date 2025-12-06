@@ -26,7 +26,6 @@
 // Bryan Cleveland, August 2002
 /////////////////////////////////////////////////////
 
-#include <Utility/CppMacros.h>
 #include "Common/LocalFile.h"
 #include "Common/LocalFileSystem.h"
 #include "Common/RAMFile.h"

@@ -34,7 +34,6 @@
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "dynamesh.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"

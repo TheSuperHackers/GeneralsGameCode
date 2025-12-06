@@ -38,7 +38,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include <Utility/CppMacros.h>
 #include "dazzle.h"
 #include "simplevec.h"
 #include "vector2.h"

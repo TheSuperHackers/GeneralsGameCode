@@ -19,7 +19,6 @@
 // WorldBuilder.cpp : Defines the class behaviors for the application.
 //
 
-#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "WorldBuilder.h"
 #include "euladialog.h"

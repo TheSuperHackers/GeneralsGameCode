@@ -46,7 +46,6 @@
 //         Includes
 //-----------------------------------------------------------------------------
 
-#include <Utility/CppMacros.h>
 #include "W3DDevice/GameClient/HeightMap.h"
 
 #include <stdlib.h>

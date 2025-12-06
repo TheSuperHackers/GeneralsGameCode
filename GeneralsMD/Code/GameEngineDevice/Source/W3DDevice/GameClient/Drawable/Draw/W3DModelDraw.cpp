@@ -36,8 +36,6 @@
 
 #include <windows.h>
 
-#include <Utility/CppMacros.h>
-
 #include "Common/crc.h"
 #include "Common/CRCDebug.h"
 #include "Common/GameState.h"

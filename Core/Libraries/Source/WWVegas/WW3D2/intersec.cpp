@@ -36,7 +36,6 @@
 
 
 
-#include <Utility/CppMacros.h>
 #include "intersec.h"
 #include "camera.h"
 #include "scene.h"

@@ -22,8 +22,6 @@
 #define __HUFWRITE 1
 
 #include <string.h>
-
-#include <Utility/CppMacros.h>
 #include "codex.h"
 #include "huffcodex.h"
 

@@ -38,7 +38,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "always.h"
 #include "render2d.h"
 #include "mutex.h"

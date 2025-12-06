@@ -38,7 +38,6 @@
  *   LineSegClass::Find_Intersection -- Finds the closest points on the two lines				  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "lineseg.h"
 //#include <stdlib.h>
 

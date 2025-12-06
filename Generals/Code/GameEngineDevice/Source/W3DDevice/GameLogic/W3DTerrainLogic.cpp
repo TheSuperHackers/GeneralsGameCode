@@ -27,7 +27,6 @@
 // Author: Colin Day, April 2001
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include <Utility/CppMacros.h>
 #include "Common/GameMemory.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameLogic/W3DTerrainLogic.h"

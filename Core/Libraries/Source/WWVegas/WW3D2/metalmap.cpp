@@ -46,7 +46,6 @@
  *   MMMC::initialize_metal_params -- Utility function (shared CTor code)                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "metalmap.h"
 #include "texture.h"
 #include "ww3dformat.h"

@@ -30,7 +30,6 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include <stdlib.h>
 
-#include <Utility/CppMacros.h>
 #include "Common/STLTypedefs.h"
 #include "Common/Thing.h"
 #include "Common/Xfer.h"

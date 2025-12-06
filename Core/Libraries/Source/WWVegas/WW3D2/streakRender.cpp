@@ -25,7 +25,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include <Utility/CppMacros.h>
 #include "streakRender.h"
 #include "ww3d.h"
 #include "rinfo.h"

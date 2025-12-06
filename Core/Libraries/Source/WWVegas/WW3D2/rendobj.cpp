@@ -72,7 +72,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include <Utility/CppMacros.h>
 #include "rendobj.h"
 #include "assetmgr.h"
 #include "win.h"

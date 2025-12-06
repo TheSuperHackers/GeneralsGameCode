@@ -44,7 +44,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include <Utility/CppMacros.h>
 #include "motchan.h"
 #include "w3d_file.h"
 #include "chunkio.h"

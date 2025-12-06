@@ -26,7 +26,6 @@
 // W3D Particle System implementation
 // Author: Michael S. Booth, November 2001
 
-#include <Utility/CppMacros.h>
 #include "Common/GlobalData.h"
 #include "GameClient/Color.h"
 #include "W3DDevice/GameClient/W3DParticleSys.h"

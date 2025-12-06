@@ -37,7 +37,6 @@
 // MBL Update for CNC3 INCURSION - 10.23.2002 - Expanded param handling, Added STOP command
 //
 
-#include <Utility/CppMacros.h>
 #include "animatedsoundmgr.h"
 #include "INI.h"
 #include "inisup.h"

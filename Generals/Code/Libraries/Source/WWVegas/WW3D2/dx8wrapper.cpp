@@ -46,7 +46,6 @@
 #define WINVER 0x0500 // Required to access GetMonitorInfo in VC6.
 #endif
 
-#include <Utility/CppMacros.h>
 #include "dx8wrapper.h"
 #include "dx8webbrowser.h"
 #include "dx8fvf.h"

@@ -38,7 +38,6 @@
  *   PredictiveLODOptimizerClass::Free -- releases all memory used.        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "predlod.h"
 #include <memory.h>
 

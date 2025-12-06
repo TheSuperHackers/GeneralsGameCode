@@ -26,7 +26,6 @@
 // Stephan Vedder, April 2025
 /////////////////////////////////////////////////////////////
 
-#include <Utility/CppMacros.h>
 #include "Common/AudioAffect.h"
 #include "Common/ArchiveFile.h"
 #include "Common/ArchiveFileSystem.h"

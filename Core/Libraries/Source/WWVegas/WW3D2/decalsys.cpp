@@ -47,7 +47,6 @@
  *   DecalGeneratorClass::Set_Mesh_Transform -- sets the current mesh coordinate system        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "decalsys.h"
 #include "rendobj.h"
 #include "mesh.h"

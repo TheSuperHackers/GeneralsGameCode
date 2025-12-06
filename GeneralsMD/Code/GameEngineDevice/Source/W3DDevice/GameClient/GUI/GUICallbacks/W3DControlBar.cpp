@@ -27,7 +27,6 @@
 // Desc: Control bar callbacks
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include <Utility/CppMacros.h>
 #include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/Radar.h"

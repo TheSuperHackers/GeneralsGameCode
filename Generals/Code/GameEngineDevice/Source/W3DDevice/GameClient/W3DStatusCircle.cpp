@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <Utility/CppMacros.h>
 #include "W3DDevice/GameClient/W3DStatusCircle.h"
 
 #include <stdlib.h>

@@ -50,7 +50,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include <Utility/CppMacros.h>
 #include "matrixmapper.h"
 #include "dx8wrapper.h"
 

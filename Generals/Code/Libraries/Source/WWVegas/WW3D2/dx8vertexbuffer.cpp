@@ -38,7 +38,6 @@
 
 //#define VERTEX_BUFFER_LOG
 
-#include <Utility/CppMacros.h>
 #include "dx8vertexbuffer.h"
 #include "dx8wrapper.h"
 #include "dx8fvf.h"

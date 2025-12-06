@@ -50,7 +50,6 @@
  *   HRawAnimClass::Get_Visibility -- return visibility state for given pivot/frame               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "hrawanim.h"
 #include "motchan.h"
 #include "chunkio.h"

@@ -43,7 +43,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include <always.h>
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "proto.h"

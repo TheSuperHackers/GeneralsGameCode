@@ -26,7 +26,6 @@
 // Bryan Cleveland, August 2002
 /////////////////////////////////////////////////////////////
 
-#include <Utility/CppMacros.h>
 #include "Common/AudioAffect.h"
 #include "Common/ArchiveFile.h"
 #include "Common/ArchiveFileSystem.h"

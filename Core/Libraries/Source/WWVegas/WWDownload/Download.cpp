@@ -17,8 +17,6 @@
 */
 
 // Download.cpp : Implementation of CDownload
-
-#include <Utility/CppMacros.h>
 #include "DownloadDebug.h"
 #include "Download.h"
 #include "stringex.h"

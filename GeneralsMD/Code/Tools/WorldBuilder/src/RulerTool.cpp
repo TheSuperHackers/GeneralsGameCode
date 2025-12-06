@@ -19,7 +19,6 @@
 // RulerTool.cpp
 // Author: Mike Lytle, January 2003
 
-#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "resource.h"
 
