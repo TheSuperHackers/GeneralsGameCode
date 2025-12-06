@@ -1130,6 +1130,24 @@ Bool WeaponSet::isOutOfAmmo() const
 	}
 	return true;
 }
+//-------------------------------------------------------------------------------------------------
+Bool WeaponSet::isFullAmmo() const
+{
+	for (Int i = 0; i < WEAPONSLOT_COUNT; i++)
+	{
+		const Weapon* weapon = m_weapons[i];
+		if (weapon == NULL)
+			continue;
+		if (weapon->getStatus() == RELOADING_CLIP)
+		{
+			return false;
+		}
+		if (weapon->getRemainingAmmo() < weapon->getClipSize()) {
+			return false;
+		}
+	}
+	return true;
+}
 
 //-------------------------------------------------------------------------------------------------
 const Weapon* WeaponSet::findAmmoPipShowingWeapon() const

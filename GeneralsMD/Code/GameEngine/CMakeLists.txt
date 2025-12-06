@@ -335,6 +335,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/DelayedUpgradeBehavior.h
     Include/GameLogic/Module/FlammableUpdate.h
     Include/GameLogic/Module/FlightDeckBehavior.h
+    Include/GameLogic/Module/DroneCarrierAIUpdate.h
     Include/GameLogic/Module/FloatUpdate.h
     Include/GameLogic/Module/FXListDie.h
     Include/GameLogic/Module/GarrisonContain.h
@@ -497,6 +498,9 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/WorkerAIUpdate.h
     Include/GameLogic/Module/KodiakDeploymentUpdate.h
     Include/GameLogic/Module/KodiakUpdate.h
+    Include/GameLogic/Module/DroneCarrierSlavedUpdate.h
+    Include/GameLogic/Module/DroneCarrierContain.h
+    Include/GameLogic/Module/CarrierDroneAIUpdate.h
     Include/GameLogic/Object.h
     Include/GameLogic/ObjectCreationList.h
     Include/GameLogic/ObjectIter.h
@@ -946,6 +950,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Contain/RiderChangeContain.cpp
     Source/GameLogic/Object/Contain/TransportContain.cpp
     Source/GameLogic/Object/Contain/TunnelContain.cpp
+    Source/GameLogic/Object/Contain/DroneCarrierContain.cpp
     Source/GameLogic/Object/Create/CreateModule.cpp
     Source/GameLogic/Object/Create/GrantUpgradeCreate.cpp
     Source/GameLogic/Object/Create/LockWeaponCreate.cpp
@@ -1017,6 +1022,8 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Update/AIUpdate/WanderAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/TeleporterAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/WorkerAIUpdate.cpp
+    Source/GameLogic/Object/Update/AIUpdate/DroneCarrierAIUpdate.cpp
+    Source/GameLogic/Object/Update/AIUpdate/CarrierDroneAIUpdate.cpp
     Source/GameLogic/Object/Update/AnimationSteeringUpdate.cpp
     Source/GameLogic/Object/Update/AssistedTargetingUpdate.cpp
     Source/GameLogic/Object/Update/AutoDepositUpdate.cpp
@@ -1094,6 +1101,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Update/ArmorDamageScalarUpdate.cpp
     Source/GameLogic/Object/Update/KodiakDeploymentUpdate.cpp
     Source/GameLogic/Object/Update/KodiakUpdate.cpp
+    Source/GameLogic/Object/Update/DroneCarrierSlavedUpdate.cpp
     Source/GameLogic/Object/Upgrade/ActiveShroudUpgrade.cpp
     Source/GameLogic/Object/Upgrade/ArmorUpgrade.cpp
     Source/GameLogic/Object/Upgrade/CommandSetUpgrade.cpp

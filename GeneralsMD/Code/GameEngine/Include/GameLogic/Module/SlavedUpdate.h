@@ -167,7 +167,7 @@ public:
 
 	virtual UpdateSleepTime update();	///< Deciding whether or not to make new guys
 
-private:
+protected:
 	void startSlavedEffects( const Object *slaver );	///< We have been marked as Slaved, so we can't be selected or move too far or other stuff
 	void stopSlavedEffects();		///< We are no longer slaved.
 

@@ -478,6 +478,7 @@ public:
 	// Weapons & Damage -------------------------------------------------------------------------------------------------
 	void reloadAllAmmo(Bool now);
 	Bool isOutOfAmmo() const;
+	Bool isFullAmmo() const; //added by OFS
 	Bool hasAnyWeapon() const;
 	Bool hasAnyDamageWeapon() const; //Kris: a should be used for real weapons that directly inflict damage... not deploy, hack, etc.
 	Bool hasWeaponToDealDamageType(DamageType typeToDeal) const;

@@ -29,6 +29,7 @@ set(GAMEENGINEDEVICE_SRC
     Include/W3DDevice/GameClient/Module/W3DTracerDraw.h
     Include/W3DDevice/GameClient/Module/W3DTreeDraw.h
     Include/W3DDevice/GameClient/Module/W3DTruckDraw.h
+    Include/W3DDevice/GameClient/Module/W3DDependencyCarrierDraw.h
     Include/W3DDevice/GameClient/TerrainTex.h
     Include/W3DDevice/GameClient/TileData.h
     Include/W3DDevice/GameClient/W3DAssetManager.h
@@ -118,6 +119,7 @@ set(GAMEENGINEDEVICE_SRC
     Source/W3DDevice/GameClient/Drawable/Draw/W3DTracerDraw.cpp
     Source/W3DDevice/GameClient/Drawable/Draw/W3DTreeDraw.cpp
     Source/W3DDevice/GameClient/Drawable/Draw/W3DTruckDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DDependencyCarrierDraw.cpp
     Source/W3DDevice/GameClient/FlatHeightMap.cpp
     Source/W3DDevice/GameClient/GUI/Gadget/W3DCheckBox.cpp
     Source/W3DDevice/GameClient/GUI/Gadget/W3DComboBox.cpp

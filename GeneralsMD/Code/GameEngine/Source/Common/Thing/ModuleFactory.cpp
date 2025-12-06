@@ -204,6 +204,10 @@
 #include "GameLogic/Module/CheckpointUpdate.h"
 #include "GameLogic/Module/EMPUpdate.h"
 #include "GameLogic/Module/ResetSpecialPowerTimerWhileAliveUpdate.h"
+#include "GameLogic/Module/DroneCarrierAIUpdate.h"
+#include "GameLogic/Module/DroneCarrierSlavedUpdate.h"
+#include "GameLogic/Module/DroneCarrierContain.h"
+#include "GameLogic/Module/CarrierDroneAIUpdate.h"
 
 // upgrade includes
 #include "GameLogic/Module/ActiveShroudUpgrade.h"
@@ -395,6 +399,7 @@ void ModuleFactory::init( void )
 	addModule( JetSlowDeathBehavior );
 	addModule( RailroadBehavior );
 	addModule( SpawnBehavior );
+	addModule( DroneCarrierContain );
 
 	// die modules
 	addModule( DestroyDie );
@@ -503,6 +508,9 @@ void ModuleFactory::init( void )
 	addModule( PowerPlantUpdate );
 	addModule( CheckpointUpdate );
 	addModule( ResetSpecialPowerTimerWhileAliveUpdate );
+	addModule( DroneCarrierAIUpdate );
+	addModule( DroneCarrierSlavedUpdate );
+	addModule( CarrierDroneAIUpdate );
 
 	// upgrade modules
 	addModule( CostModifierUpgrade );
