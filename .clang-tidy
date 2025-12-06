@@ -1,0 +1,167 @@
+﻿# TheSuperHackers @build JohnsterID 15/09/2025 Add clang-tidy configuration for code quality analysis
+---
+# Clang-tidy configuration for GeneralsGameCode project
+# This configuration is tailored for a legacy C++98/C++20 hybrid codebase
+# with Windows-specific code and COM interfaces
+
+# Enable specific checks that are appropriate for this codebase
+Checks: >
+  -*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-implicit-widening-of-multiplication-result,
+  -bugprone-narrowing-conversions,
+  -bugprone-signed-char-misuse,
+  cert-*,
+  -cert-dcl21-cpp,
+  -cert-dcl50-cpp,
+  -cert-dcl58-cpp,
+  -cert-env33-c,
+  -cert-err58-cpp,
+  clang-analyzer-*,
+  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
+  cppcoreguidelines-*,
+  -cppcoreguidelines-avoid-c-arrays,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-init-variables,
+  -cppcoreguidelines-macro-usage,
+  -cppcoreguidelines-no-malloc,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-pro-type-cstyle-cast,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-type-union-access,
+  -cppcoreguidelines-pro-type-vararg,
+  -cppcoreguidelines-special-member-functions,
+  google-*,
+  -google-build-using-namespace,
+  -google-explicit-constructor,
+  -google-readability-casting,
+  -google-readability-todo,
+  -google-runtime-int,
+  -google-runtime-references,
+  hicpp-*,
+  -hicpp-avoid-c-arrays,
+  -hicpp-explicit-conversions,
+  -hicpp-no-array-decay,
+  -hicpp-signed-bitwise,
+  -hicpp-special-member-functions,
+  -hicpp-uppercase-literal-suffix,
+  -hicpp-use-auto,
+  -hicpp-vararg,
+  misc-*,
+  -misc-const-correctness,
+  -misc-include-cleaner,
+  -misc-non-private-member-variables-in-classes,
+  -misc-use-anonymous-namespace,
+  modernize-*,
+  -modernize-avoid-c-arrays,
+  -modernize-concat-nested-namespaces,
+  -modernize-loop-convert,
+  -modernize-pass-by-value,
+  -modernize-raw-string-literal,
+  -modernize-return-braced-init-list,
+  -modernize-use-auto,
+  -modernize-use-default-member-init,
+  -modernize-use-nodiscard,
+  -modernize-use-trailing-return-type,
+  performance-*,
+  -performance-avoid-endl,
+  portability-*,
+  readability-*,
+  -readability-avoid-const-params-in-decls,
+  -readability-braces-around-statements,
+  -readability-convert-member-functions-to-static,
+  -readability-function-cognitive-complexity,
+  -readability-identifier-length,
+  -readability-implicit-bool-conversion,
+  -readability-isolate-declaration,
+  -readability-magic-numbers,
+  -readability-named-parameter,
+  -readability-redundant-access-specifiers,
+  -readability-uppercase-literal-suffix
+
+# Treat warnings as errors for CI/CD
+WarningsAsErrors: false
+
+# Header filter to include project headers
+HeaderFilterRegex: '(Core|Generals|GeneralsMD|Dependencies)/.*\.(h|hpp)$'
+
+# Check options for specific rules
+CheckOptions:
+  # Naming conventions - adapted for the existing codebase style
+  - key: readability-identifier-naming.ClassCase
+    value: CamelCase
+  - key: readability-identifier-naming.StructCase
+    value: CamelCase
+  - key: readability-identifier-naming.FunctionCase
+    value: CamelCase
+  - key: readability-identifier-naming.MethodCase
+    value: CamelCase
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+  - key: readability-identifier-naming.ParameterCase
+    value: lower_case
+  - key: readability-identifier-naming.MemberCase
+    value: lower_case
+  - key: readability-identifier-naming.MemberPrefix
+    value: m_
+  - key: readability-identifier-naming.ConstantCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.EnumConstantCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.MacroDefinitionCase
+    value: UPPER_CASE
+
+  # Performance settings
+  - key: performance-for-range-copy.WarnOnAllAutoCopies
+    value: true
+  - key: performance-unnecessary-value-param.AllowedTypes
+    value: 'AsciiString;UnicodeString;Utf8String;Utf16String'
+
+  # Modernize settings - be conservative for legacy code
+  - key: modernize-use-nullptr.NullMacros
+    value: 'NULL'
+  - key: modernize-replace-auto-ptr.IncludeStyle
+    value: llvm
+
+  # Readability settings
+  - key: readability-function-size.LineThreshold
+    value: 150
+  - key: readability-function-size.StatementThreshold
+    value: 100
+  - key: readability-function-size.BranchThreshold
+    value: 25
+  - key: readability-function-size.ParameterThreshold
+    value: 8
+  - key: readability-function-size.NestingThreshold
+    value: 6
+
+  # Bugprone settings
+  - key: bugprone-argument-comment.StrictMode
+    value: false
+  - key: bugprone-suspicious-string-compare.WarnOnImplicitComparison
+    value: true
+  - key: bugprone-suspicious-string-compare.WarnOnLogicalNotComparison
+    value: true
+
+  # Google style settings
+  - key: google-readability-braces-around-statements.ShortStatementLines
+    value: 2
+  - key: google-readability-function-size.StatementThreshold
+    value: 100
+
+  # CERT settings
+  - key: cert-dcl16-c.NewSuffixes
+    value: 'L;LL;LU;LLU'
+  - key: cert-oop54-cpp.WarnOnlyIfThisHasSuspiciousField
+    value: false
+
+# Use .clang-format for formatting suggestions
+FormatStyle: file
+
+# Exclude certain directories and files
+# Note: This is handled by HeaderFilterRegex above, but can be extended

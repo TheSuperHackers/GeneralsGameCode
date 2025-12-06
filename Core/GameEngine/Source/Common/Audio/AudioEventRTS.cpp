@@ -329,7 +329,7 @@ void AudioEventRTS::generateFilename( void )
 		adjustForLocalization(m_filenameToLoad);
 		return;
 	} else {
-		if (m_eventInfo->m_sounds.size() == 0) {
+		if (m_eventInfo->m_sounds.empty()) {
 			m_filenameToLoad = AsciiString::TheEmptyString;
 			return;
 		}

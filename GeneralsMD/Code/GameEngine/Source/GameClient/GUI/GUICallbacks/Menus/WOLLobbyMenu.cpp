@@ -580,7 +580,7 @@ void PopulateLobbyPlayerListbox(void)
 		}
 
 		// restore selection
-		if (indicesToSelect.size())
+		if (!indicesToSelect.empty())
 		{
 			std::set<Int>::const_iterator indexIt = indicesToSelect.begin();
 			const size_t count = indicesToSelect.size();
@@ -1166,7 +1166,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 						//if (ParseAsciiStringToGameInfo(&room, resp.stagingRoomMapName.c_str()))
 						//if (ParseAsciiStringToGameInfo(&room, resp.stagingServerGameOptions.c_str()))
 						Bool serverOk = TRUE;
-						if (!resp.stagingRoomMapName.length())
+						if (resp.stagingRoomMapName.empty())
 						{
 							serverOk = FALSE;
 						}
@@ -1238,7 +1238,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 										slot->setState(SLOT_BRUTAL_AI);
 										++numPlayers;
 									}
-									else if (resp.stagingRoomPlayerNames[i].length())
+									else if (!resp.stagingRoomPlayerNames[i].empty())
 									{
 										UnicodeString nameUStr;
 										nameUStr.translate(resp.stagingRoomPlayerNames[i].c_str());

@@ -229,7 +229,7 @@ namespace wnd
 
 	inline Bool AnimateWindowManager::isFinished( void )					{ return !m_needsUpdate;	};
 	inline Bool AnimateWindowManager::isReversed( void )						{ return m_reverse;	};
-	inline Bool AnimateWindowManager::isEmpty( void ){return (m_winList.size() == 0 && m_winMustFinishList.size() == 0);	}
+	inline Bool AnimateWindowManager::isEmpty( void ){return (m_winList.empty() && m_winMustFinishList.empty());	}
 //-----------------------------------------------------------------------------
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------

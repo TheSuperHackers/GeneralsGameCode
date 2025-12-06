@@ -414,7 +414,7 @@ void TunnelTracker::loadPostProcess( void )
 {
 
 	// sanity, the contain list should be empty until we post process the id list
-	if( m_containList.size() != 0 )
+	if( !m_containList.empty() )
 	{
 
 		DEBUG_CRASH(( "TunnelTracker::loadPostProcess - m_containList should be empty but is not" ));

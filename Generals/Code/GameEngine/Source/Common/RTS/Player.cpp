@@ -3913,7 +3913,7 @@ void Player::xfer( Xfer *xfer )
 	{
 
 		// sanity, list must be empty right now
-		if( m_kindOfPercentProductionChangeList.size() != 0 )
+		if( !m_kindOfPercentProductionChangeList.empty() )
 		{
 
 			DEBUG_CRASH(( "Player::xfer - m_kindOfPercentProductionChangeList should be empty but is not" ));
@@ -3966,7 +3966,7 @@ void Player::xfer( Xfer *xfer )
 		}
 		else
 		{
-			if( m_specialPowerReadyTimerList.size() != 0 ) // sanity, list must be empty right now
+			if( !m_specialPowerReadyTimerList.empty() ) // sanity, list must be empty right now
 			{
 				DEBUG_CRASH(( "Player::xfer - m_specialPowerReadyTimerList should be empty but is not" ));
 				throw SC_INVALID_DATA;

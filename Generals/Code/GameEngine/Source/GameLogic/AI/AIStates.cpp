@@ -966,7 +966,7 @@ StateReturnType AIStateMachine::setTemporaryState( StateID newStateID, Int frame
  */
 void AIStateMachine::addToGoalPath( const Coord3D *pathPoint)
 {
-	if (m_goalPath.size()==0) {
+	if (m_goalPath.empty()) {
 		m_goalPath.push_back(*pathPoint);
 	}	else {
 		Coord3D *finalPoint = &m_goalPath[ m_goalPath.size() - 1 ];
@@ -5793,7 +5793,7 @@ Object *AIAttackSquadState::chooseVictim(void)
 		{
 			// everyone picks the same unit
 			VecObjectPtr objects = victimSquad->getLiveObjects();
-			if (objects.size() > 0)
+			if (!objects.empty())
 			{
 				return objects[0];
 			}

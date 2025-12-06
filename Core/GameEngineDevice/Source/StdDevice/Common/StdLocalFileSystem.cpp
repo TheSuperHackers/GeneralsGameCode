@@ -323,7 +323,7 @@ Bool StdLocalFileSystem::createDirectory(AsciiString directory)
 	std::replace(fixedDirectory.begin(), fixedDirectory.end(), '\\', '/');
 #endif
 
-	if ((fixedDirectory.length() > 0) && (fixedDirectory.length() < _MAX_DIR)) {
+	if ((!fixedDirectory.empty()) && (fixedDirectory.length() < _MAX_DIR)) {
 		// Convert to host path
 		std::filesystem::path path(std::move(fixedDirectory));
 

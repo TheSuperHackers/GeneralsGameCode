@@ -647,7 +647,7 @@ Bool InGameUI::removeSuperweapon(Int playerIndex, const AsciiString& powerName, 
 				SuperweaponInfo *info = *listIt;
 				swList.erase(listIt);
 				deleteInstance(info);
-				if (swList.size() == 0)
+				if (swList.empty())
 				{
 					m_superweapons[playerIndex].erase(mapIt);
 				}
@@ -4695,7 +4695,7 @@ Bool InGameUI::canSelectedObjectsDoSpecialPower( const CommandButton *command, c
 	if (ignoreSelDraw)
 		tmpList.push_back(ignoreSelDraw);
 
-	const DrawableList* selected = (tmpList.size() > 0) ? &tmpList : TheInGameUI->getAllSelectedDrawables();
+	const DrawableList* selected = (!tmpList.empty()) ? &tmpList : TheInGameUI->getAllSelectedDrawables();
 
 	// set up counters for rule checking
 	Int count = 0;
@@ -4958,7 +4958,7 @@ Int InGameUI::selectMatchingAcrossRegion( IRegion2D *region )
 		}
 	}
 
-	if (drawableList.size() == 0)
+	if (drawableList.empty())
 		return -1; // nothing useful selected to begin with - don't bother iterating
 
 	std::set<const ThingTemplate*>::iterator iter;
