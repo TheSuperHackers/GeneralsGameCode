@@ -37,7 +37,6 @@
  *   Get_Preset -- retrieve presets                                                            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "vertmaterial.h"
 #include "realcrc.h"
 #include "wwdebug.h"

@@ -61,7 +61,6 @@
 ****************************************************************************/
 
 #include "TARGA.h"
-#include <Utility/CppMacros.h>
 #ifndef TGA_USES_WWLIB_FILE_CLASSES
 #include "WWDebug/wwdebug.h"
 #endif

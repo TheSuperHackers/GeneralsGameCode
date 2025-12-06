@@ -47,8 +47,6 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include <Utility/CppMacros.h>
-
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"
 #include "GameClient/Gadget.h"

@@ -38,7 +38,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "textureloader.h"
 #include "mutex.h"
 #include "thread.h"

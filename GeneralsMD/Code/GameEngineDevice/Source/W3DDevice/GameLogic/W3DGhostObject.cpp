@@ -30,7 +30,6 @@
 // Author: Mark Wilczynski, August 2002
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <Utility/CppMacros.h>
 #include "Common/Debug.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"

@@ -23,7 +23,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#include <Utility/CppMacros.h>
 #include "Common/Debug.h"
 #include "W3DDevice/GameClient/W3DBufferManager.h"
 

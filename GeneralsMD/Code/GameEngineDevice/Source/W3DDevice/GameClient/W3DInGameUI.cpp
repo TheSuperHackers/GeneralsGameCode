@@ -29,8 +29,6 @@
 
 #include <stdlib.h>
 
-#include <Utility/CppMacros.h>
-
 #include "Common/GlobalData.h"
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"

@@ -47,7 +47,6 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "resource.h"
 #include "WHeightMapEdit.h"

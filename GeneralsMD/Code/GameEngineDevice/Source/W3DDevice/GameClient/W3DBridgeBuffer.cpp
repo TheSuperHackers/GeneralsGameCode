@@ -46,7 +46,6 @@
 //         Includes
 //-----------------------------------------------------------------------------
 
-#include <Utility/CppMacros.h>
 #include "W3DDevice/GameClient/W3DBridgeBuffer.h"
 
 #include "W3DDevice/GameClient/W3DAssetManager.h"

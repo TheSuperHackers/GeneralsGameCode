@@ -31,7 +31,6 @@
 
 #include <windows.h>
 
-#include <Utility/CppMacros.h>
 #include "Win32Device/Common/Win32GameEngine.h"
 #include "Common/PerfTimer.h"
 

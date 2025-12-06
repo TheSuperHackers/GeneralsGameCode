@@ -47,7 +47,6 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 
-#include <Utility/CppMacros.h>
 #include "GUIEdit.h"
 #include "Properties.h"
 #include "LayoutScheme.h"

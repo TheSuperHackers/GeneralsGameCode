@@ -47,8 +47,6 @@
 //-----------------------------------------------------------------------------
 #include <stdlib.h>
 
-#include <Utility/CppMacros.h>
-
 #include "W3DDevice/GameClient/TerrainTex.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "W3DDevice/GameClient/TileData.h"

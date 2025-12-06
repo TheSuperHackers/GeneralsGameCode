@@ -39,7 +39,6 @@
  *   Runge_Kutta5_Integrate -- 5th order Runge-Kutta                                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "ode.h"
 #include <assert.h>
 

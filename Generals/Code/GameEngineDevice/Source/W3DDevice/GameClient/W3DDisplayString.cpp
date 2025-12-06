@@ -48,8 +48,6 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
 
-#include <Utility/CppMacros.h>
-
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "GameClient/GameClient.h"
 #include "W3DDevice/GameClient/W3DDisplayString.h"

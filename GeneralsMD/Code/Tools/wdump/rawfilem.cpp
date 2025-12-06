@@ -51,7 +51,6 @@
  *   RawFileMClass::Write -- Writes the specified data to the buffer specified.                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include	"always.h"
 #include	"rawfilem.h"
 #include	<direct.h>

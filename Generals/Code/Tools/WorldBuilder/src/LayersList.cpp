@@ -31,7 +31,6 @@
 /*		5/10/2002 : Initial creation                                           */
 /*---------------------------------------------------------------------------*/
 
-#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "Common/STLTypedefs.h"
 #include "resource.h"

@@ -34,8 +34,6 @@
 
 #include <stdlib.h>
 
-#include <Utility/CppMacros.h>
-
 #include "Common/Debug.h"
 #include "GameClient/GadgetSlider.h"
 

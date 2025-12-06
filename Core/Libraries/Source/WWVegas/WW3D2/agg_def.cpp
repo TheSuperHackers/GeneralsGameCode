@@ -33,7 +33,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include <Utility/CppMacros.h>
 #include "agg_def.h"
 #include "htree.h"
 #include "w3derr.h"

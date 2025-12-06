@@ -42,7 +42,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include <Utility/CppMacros.h>
 #include "wwdebug.h"
 //#include "win.h" can use this if allowed to see wwlib
 #include <stdlib.h>

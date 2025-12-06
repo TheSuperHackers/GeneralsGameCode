@@ -25,7 +25,6 @@
 ////// W3DWebBrowser.cpp ///////////////
 // July 2002 Bryan Cleveland
 
-#include <Utility/CppMacros.h>
 #include "W3DDevice/GameClient/W3DWebBrowser.h"
 #include "WW3D2/texture.h"
 #include "WW3D2/textureloader.h"

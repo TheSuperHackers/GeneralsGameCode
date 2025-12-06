@@ -30,8 +30,6 @@
 #include <stdlib.h>
 #include <windows.h>
 
-#include <Utility/CppMacros.h>
-
 #include "Common/GameState.h"
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"

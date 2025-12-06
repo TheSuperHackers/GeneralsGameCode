@@ -19,7 +19,6 @@
 // WorldBuilderDoc.cpp : implementation of the CWorldBuilderDoc class
 //
 
-#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "WorldBuilder.h"
 

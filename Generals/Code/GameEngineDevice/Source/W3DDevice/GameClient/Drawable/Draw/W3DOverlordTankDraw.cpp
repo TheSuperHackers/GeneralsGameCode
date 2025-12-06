@@ -30,7 +30,6 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 
-#include <Utility/CppMacros.h>
 #include "Common/Xfer.h"
 #include "GameClient/Drawable.h"
 #include "GameLogic/Object.h"

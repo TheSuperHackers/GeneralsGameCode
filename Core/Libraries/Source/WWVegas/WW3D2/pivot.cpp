@@ -38,7 +38,6 @@
  *   PivotClass::Compute_Transform -- Update the pivot's transformation matrix                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "pivot.h"
 #include "wwmath.h"
 

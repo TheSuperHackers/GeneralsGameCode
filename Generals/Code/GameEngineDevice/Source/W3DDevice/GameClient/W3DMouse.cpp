@@ -28,7 +28,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#include <Utility/CppMacros.h>
 #include "Common/GameMemory.h"
 #include "WW3D2/dx8wrapper.h"
 #include "WW3D2/rendobj.h"

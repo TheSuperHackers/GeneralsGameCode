@@ -41,7 +41,6 @@
 //         Includes
 //-----------------------------------------------------------------------------
 
-#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "WorldBuilder.h"
 
