@@ -53,7 +53,7 @@
 
 #include "Common/GlobalData.h"			// for camera pitch angle only
 
-LookAtTranslator *TheLookAtTranslator = NULL;
+LookAtTranslator *TheLookAtTranslator = nullptr;
 
 enum
 {
@@ -157,7 +157,7 @@ LookAtTranslator::LookAtTranslator() :
 LookAtTranslator::~LookAtTranslator()
 {
 	if (TheLookAtTranslator == this)
-		TheLookAtTranslator = NULL;
+		TheLookAtTranslator = nullptr;
 }
 
 const ICoord2D* LookAtTranslator::getRMBScrollAnchor(void)
@@ -166,7 +166,7 @@ const ICoord2D* LookAtTranslator::getRMBScrollAnchor(void)
 	{
 		return &m_anchor;
 	}
-	return NULL;
+	return nullptr;
 }
 
 Bool LookAtTranslator::hasMouseMovedRecently( void )

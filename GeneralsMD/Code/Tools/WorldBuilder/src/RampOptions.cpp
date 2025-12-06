@@ -31,6 +31,7 @@
 /*		4/23/2002 : Initial creation                                           */
 /*---------------------------------------------------------------------------*/
 
+#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "RampOptions.h"
 

@@ -26,6 +26,7 @@
 // Author: Colin Day
 // Desc: Control bar callbacks
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/Radar.h"

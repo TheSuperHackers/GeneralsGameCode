@@ -34,7 +34,7 @@
 #include "GameLogic/GhostObject.h"
 #include "GameLogic/Object.h"
 
-GhostObjectManager *TheGhostObjectManager = NULL;
+GhostObjectManager *TheGhostObjectManager = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -46,8 +46,8 @@ m_parentAngle(0.0f),
 m_parentGeometryIsSmall(true),
 m_parentGeometryMajorRadius(0.0f),
 m_parentGeometryminorRadius(0.0f),
-m_parentObject(NULL),
-m_partitionData(NULL)
+m_parentObject(nullptr),
+m_partitionData(nullptr)
 {
 	m_parentPosition.zero();
 }
@@ -88,7 +88,7 @@ void GhostObject::xfer( Xfer *xfer )
 		m_parentObject = TheGameLogic->findObjectByID( parentObjectID );
 
 		// sanity
-		if( parentObjectID != INVALID_ID && m_parentObject == NULL )
+		if( parentObjectID != INVALID_ID && m_parentObject == nullptr )
 		{
 			DEBUG_CRASH(( "GhostObject::xfer - Unable to connect m_parentObject" ));
 			throw INI_INVALID_DATA;
@@ -152,7 +152,7 @@ void GhostObjectManager::reset(void)
 // ------------------------------------------------------------------------------------------------
 GhostObject *GhostObjectManager::addGhostObject(Object *object, PartitionData *pd)
 {
-	return 0;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------

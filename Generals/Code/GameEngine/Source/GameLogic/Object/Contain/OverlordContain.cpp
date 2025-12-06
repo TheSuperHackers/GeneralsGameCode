@@ -60,7 +60,7 @@ void OverlordContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -106,17 +106,17 @@ ContainModuleInterface *OverlordContain::getRedirectedContain() const
 
 	// If I am empty, say no.
 	if( m_containListSize < 1 )
-		return NULL;
+		return nullptr;
 
 	if( !m_redirectionActivated )
-		return NULL;// Shut off early to allow death to happen without my bunker having
+		return nullptr;// Shut off early to allow death to happen without my bunker having
 	// trouble finding me to say goodbye as messages get sucked up the pipe to him.
 
 	Object *myGuy = m_containList.front();
 	if( myGuy )
 		return myGuy->getContain();
 
-	return NULL;// Or say no if they have no contain.
+	return nullptr;// Or say no if they have no contain.
 }
 
 
@@ -130,7 +130,7 @@ ContainModuleInterface *OverlordContain::getRedirectedContain() const
 void OverlordContain::onDie( const DamageInfo *damageInfo )
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
+	if( getRedirectedContain() == nullptr )
 	{
 		TransportContain::onDie( damageInfo );
 		return;
@@ -153,7 +153,7 @@ void OverlordContain::onDie( const DamageInfo *damageInfo )
 void OverlordContain::onDelete( void )
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
+	if( getRedirectedContain() == nullptr )
 	{
 		TransportContain::onDelete( );
 		return;
@@ -182,7 +182,7 @@ void OverlordContain::onCapture( Player *oldOwner, Player *newOwner )
 //-------------------------------------------------------------------------------------------------
 Bool OverlordContain::isGarrisonable() const
 {
-	if( getRedirectedContain() == NULL )
+	if( getRedirectedContain() == nullptr )
 		return FALSE;
 
 	return getRedirectedContain()->isGarrisonable();
@@ -191,7 +191,7 @@ Bool OverlordContain::isGarrisonable() const
 //-------------------------------------------------------------------------------------------------
 Bool OverlordContain::isKickOutOnCapture()
 {
-	if( getRedirectedContain() == NULL )
+	if( getRedirectedContain() == nullptr )
 		return FALSE;// Me the Overlord doesn't want to
 
 	return getRedirectedContain()->isKickOutOnCapture();
@@ -201,7 +201,7 @@ Bool OverlordContain::isKickOutOnCapture()
 void OverlordContain::addToContainList( Object *obj )
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
+	if( getRedirectedContain() == nullptr )
 	{
 		TransportContain::addToContainList( obj );
 		return;
@@ -214,7 +214,7 @@ void OverlordContain::addToContainList( Object *obj )
 void OverlordContain::addToContain( Object *obj )
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
+	if( getRedirectedContain() == nullptr )
 	{
 		TransportContain::addToContain( obj );
 		return;
@@ -232,7 +232,7 @@ void OverlordContain::addToContain( Object *obj )
 void OverlordContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
+	if( getRedirectedContain() == nullptr )
 	{
 		TransportContain::removeFromContain( obj, exposeStealthUnits );
 		return;
@@ -248,7 +248,7 @@ void OverlordContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
 void OverlordContain::removeAllContained( Bool exposeStealthUnits )
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
+	if( getRedirectedContain() == nullptr )
 	{
 		TransportContain::removeAllContained( exposeStealthUnits );
 		return;
@@ -273,7 +273,7 @@ void OverlordContain::removeAllContained( Bool exposeStealthUnits )
 void OverlordContain::iterateContained( ContainIterateFunc func, void *userData, Bool reverse )
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
+	if( getRedirectedContain() == nullptr )
 	{
 		TransportContain::iterateContained( func, userData, reverse );
 		return;
@@ -286,7 +286,7 @@ void OverlordContain::iterateContained( ContainIterateFunc func, void *userData,
 void OverlordContain::onContaining( Object *obj )
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
+	if( getRedirectedContain() == nullptr )
 	{
 		TransportContain::onContaining( obj );
 		activateRedirectedContain();//Am now carrying something
@@ -303,7 +303,7 @@ void OverlordContain::onContaining( Object *obj )
 void OverlordContain::onRemoving( Object *obj )
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
+	if( getRedirectedContain() == nullptr )
 	{
 		TransportContain::onRemoving( obj );
 		return;
@@ -319,7 +319,7 @@ void OverlordContain::onRemoving( Object *obj )
 Bool OverlordContain::isValidContainerFor(const Object* obj, Bool checkCapacity) const
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
+	if( getRedirectedContain() == nullptr )
 		return TransportContain::isValidContainerFor( obj, checkCapacity );
 
 	return getRedirectedContain()->isValidContainerFor( obj, checkCapacity );
@@ -331,7 +331,7 @@ UnsignedInt OverlordContain::getContainCount() const
 	ContainModuleInterface* redir = getRedirectedContain();
 
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( redir == NULL )
+	if( redir == nullptr )
 		return TransportContain::getContainCount( );
 
 	return redir->getContainCount();
@@ -341,7 +341,7 @@ UnsignedInt OverlordContain::getContainCount() const
 Bool OverlordContain::getContainerPipsToShow(Int& numTotal, Int& numFull)
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
+	if( getRedirectedContain() == nullptr )
 	{
 		numTotal = 0;
 		numFull = 0;
@@ -357,7 +357,7 @@ Bool OverlordContain::getContainerPipsToShow(Int& numTotal, Int& numFull)
 Int OverlordContain::getContainMax( ) const
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
+	if( getRedirectedContain() == nullptr )
 		return TransportContain::getContainMax( );
 
 	return getRedirectedContain()->getContainMax();
@@ -367,7 +367,7 @@ Int OverlordContain::getContainMax( ) const
 const ContainedItemsList* OverlordContain::getContainedItemsList() const
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
+	if( getRedirectedContain() == nullptr )
 		return TransportContain::getContainedItemsList( );
 
 	return getRedirectedContain()->getContainedItemsList();
@@ -390,7 +390,7 @@ Bool OverlordContain::isEnclosingContainerFor( const Object *obj ) const
 Bool OverlordContain::isDisplayedOnControlBar() const
 {
 	// Do you mean me the Overlord, or my behavior of passing stuff on to my passengers?
-	if( getRedirectedContain() == NULL )
+	if( getRedirectedContain() == nullptr )
 		return FALSE;//No need to call up inheritance, this is a module based question, and I say no.
 
 	return getRedirectedContain()->isDisplayedOnControlBar();
@@ -407,7 +407,7 @@ const Object *OverlordContain::friend_getRider() const
  		return m_containList.front();
 
 
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------

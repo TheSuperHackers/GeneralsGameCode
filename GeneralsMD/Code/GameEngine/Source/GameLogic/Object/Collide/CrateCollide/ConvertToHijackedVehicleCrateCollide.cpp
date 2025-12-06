@@ -197,7 +197,7 @@ Bool ConvertToHijackedVehicleCrateCollide::executeCrateBehavior( Object *other )
 
 
 	Bool targetCanEject = FALSE;
-	BehaviorModule **dmi = NULL;
+	BehaviorModule **dmi = nullptr;
 	for( dmi = other->getBehaviorModules(); *dmi; ++dmi )
 	{
 		if( (*dmi)->getEjectPilotDieInterface() )

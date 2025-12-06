@@ -46,7 +46,7 @@ class MutexClass
 
 public:
 	// Name can (and usually should) be NULL. Use name only if you wish to create a globally unique mutex
-	MutexClass(const char* name = NULL);
+	MutexClass(const char* name = nullptr);
 	~MutexClass();
 
 	enum {

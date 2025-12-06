@@ -40,7 +40,7 @@
 
 
 // GLOBAL /////////////////////////////////////////////////////////////////////////////////////////
-Anim2DCollection *TheAnim2DCollection = NULL;
+Anim2DCollection *TheAnim2DCollection = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,12 +52,12 @@ Anim2DTemplate::Anim2DTemplate( AsciiString name )
 {
 
 	m_name = name;
-	m_images = NULL;
+	m_images = nullptr;
 	m_numFrames = NUM_FRAMES_INVALID;
 	m_framesBetweenUpdates = 0;
 	m_animMode = ANIM_2D_LOOP;
 	m_randomizeStartFrame = FALSE;
-	m_nextTemplate = NULL;
+	m_nextTemplate = nullptr;
 
 }
 
@@ -76,13 +76,13 @@ Anim2DTemplate::~Anim2DTemplate( void )
 const FieldParse Anim2DTemplate::s_anim2DFieldParseTable[] =
 {
 
-	{ "NumberImages",					Anim2DTemplate::parseNumImages,			NULL,							0 },
-	{ "Image",								Anim2DTemplate::parseImage,					NULL,							0 },
-	{ "ImageSequence",				Anim2DTemplate::parseImageSequence, NULL,							0 },
+	{ "NumberImages",					Anim2DTemplate::parseNumImages,			nullptr,							0 },
+	{ "Image",								Anim2DTemplate::parseImage,					nullptr,							0 },
+	{ "ImageSequence",				Anim2DTemplate::parseImageSequence, nullptr,							0 },
 	{ "AnimationMode",				INI::parseIndexList,								Anim2DModeNames,	offsetof( Anim2DTemplate, m_animMode ) },
-	{ "AnimationDelay",				INI::parseDurationUnsignedShort,		NULL,							offsetof( Anim2DTemplate, m_framesBetweenUpdates ) },
-	{ "RandomizeStartFrame",	INI::parseBool,											NULL,							offsetof( Anim2DTemplate, m_randomizeStartFrame ) },
-	{ NULL,										NULL,																NULL,							0 }
+	{ "AnimationDelay",				INI::parseDurationUnsignedShort,		nullptr,							offsetof( Anim2DTemplate, m_framesBetweenUpdates ) },
+	{ "RandomizeStartFrame",	INI::parseBool,											nullptr,							offsetof( Anim2DTemplate, m_randomizeStartFrame ) },
+	{ nullptr,										nullptr,																nullptr,							0 }
 
 };
 
@@ -129,7 +129,7 @@ void Anim2DTemplate::allocateImages( UnsignedShort numFrames )
 
 	// set all the images to NULL;
 	for( Int i = 0; i < m_numFrames; ++i )
-		m_images[ i ] = NULL;
+		m_images[ i ] = nullptr;
 
 }
 
@@ -144,7 +144,7 @@ void Anim2DTemplate::parseImage( INI *ini, void *instance, void *store, const vo
 	ini->parseMappedImage( ini, instance, &image, userData );
 
 	// sanity
-	if( image == NULL )
+	if( image == nullptr )
 	{
 
 		//We don't care if we're in the builder
@@ -210,7 +210,7 @@ void Anim2DTemplate::parseImage( INI *ini, void *instance, void *store, const vo
 		image = TheMappedImageCollection->findImageByName( imageName );
 
 		// sanity
-		if( image == NULL )
+		if( image == nullptr )
 		{
 
 			DEBUG_CRASH(( "Anim2DTemplate::parseImageSequence - Image '%s' not found for animation '%s'.  Check the number of images specified in INI and also make sure all the actual images exist.",
@@ -233,14 +233,14 @@ void Anim2DTemplate::storeImage( const Image *image )
 {
 
 	// sanity
-	if( image == NULL )
+	if( image == nullptr )
 		return;
 
 	// search through the image list and store at the next free spot
 	for( Int i = 0; i < m_numFrames; ++i )
 	{
 
-		if( m_images[ i ] == NULL )
+		if( m_images[ i ] == nullptr )
 		{
 
 			m_images[ i ] = image;
@@ -274,7 +274,7 @@ const Image* Anim2DTemplate::getFrame( UnsignedShort frameNumber ) const
 
 		DEBUG_CRASH(( "Anim2DTemplate::getFrame - Illegal frame number '%d' for animation '%s'",
 									frameNumber, getName().str() ));
-		return NULL;
+		return nullptr;
 
 	}
 	else
@@ -317,8 +317,8 @@ Anim2D::Anim2D( Anim2DTemplate *animTemplate, Anim2DCollection *collectionSystem
 	m_framesBetweenUpdates = m_template->getNumFramesBetweenUpdates();
 
 	// we register ourselves to the System
-	m_collectionSystemNext = NULL;
-	m_collectionSystemPrev = NULL;
+	m_collectionSystemNext = nullptr;
+	m_collectionSystemPrev = nullptr;
 
 	m_lastUpdateFrame = 0;
 
@@ -627,7 +627,7 @@ void Anim2D::draw( Int x, Int y )
 	// frame numbers for animation instances that are registered with a system as the
 	// system will update them during its update phase
 	//
- 	if( m_collectionSystem == NULL && BitIsSet( m_status, ANIM_2D_STATUS_FROZEN ) == FALSE )
+ 	if( m_collectionSystem == nullptr && BitIsSet( m_status, ANIM_2D_STATUS_FROZEN ) == FALSE )
 		tryNextFrame();
 
 }
@@ -655,7 +655,7 @@ void Anim2D::draw( Int x, Int y, Int width, Int height )
 	// frame numbers for animation instances that are registered with a system as the
 	// system will update them during its update phase
 	//
- 	if( m_collectionSystem == NULL && BitIsSet( m_status, ANIM_2D_STATUS_FROZEN ) == FALSE )
+ 	if( m_collectionSystem == nullptr && BitIsSet( m_status, ANIM_2D_STATUS_FROZEN ) == FALSE )
 		tryNextFrame();
 
 }
@@ -705,8 +705,8 @@ void Anim2D::xfer( Xfer *xfer )
 Anim2DCollection::Anim2DCollection( void )
 {
 
-	m_templateList = NULL;
-	m_instanceList = NULL;
+	m_templateList = nullptr;
+	m_instanceList = nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -742,7 +742,7 @@ void Anim2DCollection::init( void )
 {
 	INI ini;
 
-	ini.loadFileDirectory( "Data\\INI\\Animation2D", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Animation2D", INI_LOAD_OVERWRITE, nullptr );
 
 }
 
@@ -782,7 +782,7 @@ Anim2DTemplate *Anim2DCollection::findTemplate( const AsciiString& name )
 
 	}
 
-	return NULL;  // template not found
+	return nullptr;  // template not found
 
 }
 
@@ -793,7 +793,7 @@ Anim2DTemplate* Anim2DCollection::getNextTemplate( Anim2DTemplate *animTemplate 
 	{
 		return animTemplate->friend_getNextTemplate();
 	}
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -822,7 +822,7 @@ void Anim2DCollection::registerAnimation( Anim2D *anim )
 {
 
 	// sanity
-	if( anim == NULL )
+	if( anim == nullptr )
 		return;
 
 	// sanity
@@ -832,7 +832,7 @@ void Anim2DCollection::registerAnimation( Anim2D *anim )
 										 anim->getAnimTemplate()->getName().str()) );
 
 	// tie to our list
-	anim->m_collectionSystemPrev = NULL;
+	anim->m_collectionSystemPrev = nullptr;
 	anim->m_collectionSystemNext = m_instanceList;
 	if( m_instanceList )
 		m_instanceList->m_collectionSystemPrev = anim;
@@ -846,7 +846,7 @@ void Anim2DCollection::unRegisterAnimation( Anim2D *anim )
 {
 
 	// sanity
-	if( anim == NULL )
+	if( anim == nullptr )
 		return;
 
 	// if animation is not registered with us do nothing

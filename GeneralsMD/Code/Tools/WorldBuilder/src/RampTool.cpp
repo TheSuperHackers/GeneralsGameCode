@@ -30,6 +30,7 @@
 /* Revision History:                                                         */
 /*		4/19/2002 : Initial creation                                           */
 /*---------------------------------------------------------------------------*/
+
 #include "StdAfx.h"
 #include "RampTool.h"
 

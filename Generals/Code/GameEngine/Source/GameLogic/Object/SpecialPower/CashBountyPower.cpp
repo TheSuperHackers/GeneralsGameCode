@@ -105,8 +105,8 @@ static void parseBountyUpgradePair( INI* ini, void * /*instance*/, void *store, 
 #ifdef NOT_IN_USE
 		{ "UpgradeBounty", parseBountyUpgradePair, NULL, offsetof( CashBountyPowerModuleData, m_upgrades ) },
 #endif
-		{ "Bounty",			INI::parsePercentToReal, NULL, offsetof( CashBountyPowerModuleData, m_defaultBounty ) },
-		{ 0, 0, 0, 0 }
+		{ "Bounty",			INI::parsePercentToReal, nullptr, offsetof( CashBountyPowerModuleData, m_defaultBounty ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 

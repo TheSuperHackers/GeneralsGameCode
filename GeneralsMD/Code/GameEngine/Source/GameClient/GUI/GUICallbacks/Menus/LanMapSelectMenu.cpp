@@ -50,14 +50,14 @@ static NameKeyType buttonBack = NAMEKEY_INVALID;
 static NameKeyType buttonOK = NAMEKEY_INVALID;
 static NameKeyType listboxMap = NAMEKEY_INVALID;
 static NameKeyType winMapPreviewID = NAMEKEY_INVALID;
-static GameWindow *parent = NULL;
-static GameWindow *mapList = NULL;
-static GameWindow *winMapPreview = NULL;
+static GameWindow *parent = nullptr;
+static GameWindow *mapList = nullptr;
+static GameWindow *winMapPreview = nullptr;
 static NameKeyType radioButtonSystemMapsID = NAMEKEY_INVALID;
 static NameKeyType radioButtonUserMapsID = NAMEKEY_INVALID;
 
-static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {nullptr,nullptr,nullptr,nullptr,
+																								nullptr,nullptr,nullptr,nullptr };
 static NameKeyType buttonMapStartPositionID[MAX_SLOTS] = { NAMEKEY_INVALID,NAMEKEY_INVALID,
 																									NAMEKEY_INVALID,NAMEKEY_INVALID,
 																										NAMEKEY_INVALID,NAMEKEY_INVALID,
@@ -80,20 +80,20 @@ static const char *gadgetsToHide[] =
 	"ButtonStart",
 	"StaticTextMapPreview",
 
-	NULL
+	nullptr
 };
 static const char *perPlayerGadgetsToHide[] =
 {
 	"ComboBoxTeam",
 	"ComboBoxColor",
 	"ComboBoxPlayerTemplate",
-	NULL
+	nullptr
 };
 
 static void showLANGameOptionsUnderlyingGUIElements( Bool show )
 {
 	ShowUnderlyingGUIElements( show, layoutFilename, parentName, gadgetsToHide, perPlayerGadgetsToHide );
-	GameWindow *win	= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey("LanGameOptionsMenu.wnd:ButtonBack") );
+	GameWindow *win	= TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey("LanGameOptionsMenu.wnd:ButtonBack") );
 	if(win)
 		win->winEnable( show );
 
@@ -101,16 +101,16 @@ static void showLANGameOptionsUnderlyingGUIElements( Bool show )
 
 static void NullifyControls()
 {
-	parent = NULL;
-	mapList = NULL;
+	parent = nullptr;
+	mapList = nullptr;
 	if (winMapPreview)
 	{
-		winMapPreview->winSetUserData(NULL);
-		winMapPreview = NULL;
+		winMapPreview->winSetUserData(nullptr);
+		winMapPreview = nullptr;
 	}
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
-		buttonMapStartPosition[i] = NULL;
+		buttonMapStartPosition[i] = nullptr;
 	}
 }
 
@@ -124,7 +124,7 @@ void LanMapSelectMenuInit( WindowLayout *layout, void *userData )
 	// set keyboard focus to main parent
 	AsciiString parentName( "LanMapSelectMenu.wnd:LanMapSelectMenuParent" );
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey( parentName );
-	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 
 	TheWindowManager->winSetFocus( parent );
 
@@ -258,7 +258,7 @@ WindowMsgHandledType LanMapSelectMenuInput( GameWindow *window, UnsignedInt msg,
 WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg,
 																				  WindowMsgData mData1, WindowMsgData mData2 )
 {
-	GameWindow *mapWindow = NULL;
+	GameWindow *mapWindow = nullptr;
 	if (listboxMap != NULL)
 	{
 		mapWindow = TheWindowManager->winGetWindowFromId( parent, listboxMap );
@@ -347,7 +347,7 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 				{
 					mapSelectLayout->destroyWindows();
 					deleteInstance(mapSelectLayout);
-					mapSelectLayout = NULL;
+					mapSelectLayout = nullptr;
 				}
 
 				// set the controls to NULL since they've been destroyed.
@@ -361,7 +361,7 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 				UnicodeString map;
 
 				// get the selected index
-				if (mapWindow != NULL)
+				if (mapWindow != nullptr)
 				{
 					GadgetListBoxGetSelected( mapWindow, &selected );
 				}
@@ -397,7 +397,7 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 					{
 						mapSelectLayout->destroyWindows();
 						deleteInstance(mapSelectLayout);
-						mapSelectLayout = NULL;
+						mapSelectLayout = nullptr;
 					}
 
 					// set the controls to NULL since they've been destroyed.

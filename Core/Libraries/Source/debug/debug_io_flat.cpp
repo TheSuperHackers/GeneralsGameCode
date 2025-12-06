@@ -26,6 +26,7 @@
 //
 // Debug I/O class flat (flat or split log file)
 //////////////////////////////////////////////////////////////////////////////
+
 #include "debug.h"
 #include "debug_io.h"
 #include "internal.h"

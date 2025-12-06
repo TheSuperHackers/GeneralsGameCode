@@ -81,7 +81,7 @@ static void parseFX( INI* ini, void *instance, void * /*store*/, const void* /*u
 {
 	SlowDeathBehaviorModuleData* self = (SlowDeathBehaviorModuleData*)instance;
 	SlowDeathPhaseType sdphase = (SlowDeathPhaseType)INI::scanIndexList(ini->getNextToken(), TheSlowDeathPhaseNames);
-	for (const char* token = ini->getNextToken(); token != NULL; token = ini->getNextTokenOrNull())
+	for (const char* token = ini->getNextToken(); token != nullptr; token = ini->getNextTokenOrNull())
 	{
 		const FXList *fxl = TheFXListStore->findFXList((token));	// could be null! this is OK!
 		self->m_fx[sdphase].push_back(fxl);
@@ -95,7 +95,7 @@ static void parseOCL( INI* ini, void *instance, void * /*store*/, const void* /*
 {
 	SlowDeathBehaviorModuleData* self = (SlowDeathBehaviorModuleData*)instance;
 	SlowDeathPhaseType sdphase = (SlowDeathPhaseType)INI::scanIndexList(ini->getNextToken(), TheSlowDeathPhaseNames);
-	for (const char* token = ini->getNextToken(); token != NULL; token = ini->getNextTokenOrNull())
+	for (const char* token = ini->getNextToken(); token != nullptr; token = ini->getNextTokenOrNull())
 	{
 		const ObjectCreationList *ocl = TheObjectCreationListStore->findObjectCreationList(token);	// could be null! this is OK!
 		self->m_ocls[sdphase].push_back(ocl);
@@ -109,7 +109,7 @@ static void parseWeapon( INI* ini, void *instance, void * /*store*/, const void*
 {
 	SlowDeathBehaviorModuleData* self = (SlowDeathBehaviorModuleData*)instance;
 	SlowDeathPhaseType sdphase = (SlowDeathPhaseType)INI::scanIndexList(ini->getNextToken(), TheSlowDeathPhaseNames);
-	for (const char* token = ini->getNextToken(); token != NULL; token = ini->getNextTokenOrNull())
+	for (const char* token = ini->getNextToken(); token != nullptr; token = ini->getNextTokenOrNull())
 	{
 		const WeaponTemplate *wt = TheWeaponStore->findWeaponTemplate(token);	// could be null! this is OK!
 		self->m_weapons[sdphase].push_back(wt);
@@ -125,22 +125,22 @@ static void parseWeapon( INI* ini, void *instance, void * /*store*/, const void*
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "SinkRate",													INI::parseVelocityReal,						NULL, offsetof( SlowDeathBehaviorModuleData, m_sinkRate ) },
-		{ "ProbabilityModifier",							INI::parseInt,										NULL, offsetof( SlowDeathBehaviorModuleData, m_probabilityModifier ) },
-		{ "ModifierBonusPerOverkillPercent",	INI::parsePercentToReal,					NULL, offsetof( SlowDeathBehaviorModuleData, m_modifierBonusPerOverkillPercent ) },
-		{ "SinkDelay",												INI::parseDurationUnsignedInt,		NULL, offsetof( SlowDeathBehaviorModuleData, m_sinkDelay ) },
-		{ "SinkDelayVariance",								INI::parseDurationUnsignedInt,		NULL, offsetof( SlowDeathBehaviorModuleData, m_sinkDelayVariance ) },
-		{ "DestructionDelay",									INI::parseDurationUnsignedInt,		NULL, offsetof( SlowDeathBehaviorModuleData, m_destructionDelay ) },
-		{ "DestructionDelayVariance",					INI::parseDurationUnsignedInt,		NULL, offsetof( SlowDeathBehaviorModuleData, m_destructionDelayVariance ) },
-		{ "DestructionAltitude",							INI::parseReal,										NULL, offsetof( SlowDeathBehaviorModuleData, m_destructionAltitude ) },
-		{ "FX",																parseFX,													NULL, 0 },
-		{ "OCL",															parseOCL,													NULL, 0 },
-		{ "Weapon",														parseWeapon,											NULL, 0 },
-		{ "FlingForce",												INI::parseReal,										NULL, offsetof( SlowDeathBehaviorModuleData, m_flingForce) },
-		{ "FlingForceVariance",								INI::parseReal,										NULL, offsetof( SlowDeathBehaviorModuleData, m_flingForceVariance) },
-		{ "FlingPitch",												INI::parseAngleReal,							NULL, offsetof( SlowDeathBehaviorModuleData, m_flingPitch) },
-		{ "FlingPitchVariance",								INI::parseAngleReal,							NULL, offsetof( SlowDeathBehaviorModuleData, m_flingPitchVariance) },
-		{ 0, 0, 0, 0 }
+		{ "SinkRate",													INI::parseVelocityReal,						nullptr, offsetof( SlowDeathBehaviorModuleData, m_sinkRate ) },
+		{ "ProbabilityModifier",							INI::parseInt,										nullptr, offsetof( SlowDeathBehaviorModuleData, m_probabilityModifier ) },
+		{ "ModifierBonusPerOverkillPercent",	INI::parsePercentToReal,					nullptr, offsetof( SlowDeathBehaviorModuleData, m_modifierBonusPerOverkillPercent ) },
+		{ "SinkDelay",												INI::parseDurationUnsignedInt,		nullptr, offsetof( SlowDeathBehaviorModuleData, m_sinkDelay ) },
+		{ "SinkDelayVariance",								INI::parseDurationUnsignedInt,		nullptr, offsetof( SlowDeathBehaviorModuleData, m_sinkDelayVariance ) },
+		{ "DestructionDelay",									INI::parseDurationUnsignedInt,		nullptr, offsetof( SlowDeathBehaviorModuleData, m_destructionDelay ) },
+		{ "DestructionDelayVariance",					INI::parseDurationUnsignedInt,		nullptr, offsetof( SlowDeathBehaviorModuleData, m_destructionDelayVariance ) },
+		{ "DestructionAltitude",							INI::parseReal,										nullptr, offsetof( SlowDeathBehaviorModuleData, m_destructionAltitude ) },
+		{ "FX",																parseFX,													nullptr, 0 },
+		{ "OCL",															parseOCL,													nullptr, 0 },
+		{ "Weapon",														parseWeapon,											nullptr, 0 },
+		{ "FlingForce",												INI::parseReal,										nullptr, offsetof( SlowDeathBehaviorModuleData, m_flingForce) },
+		{ "FlingForceVariance",								INI::parseReal,										nullptr, offsetof( SlowDeathBehaviorModuleData, m_flingForceVariance) },
+		{ "FlingPitch",												INI::parseAngleReal,							nullptr, offsetof( SlowDeathBehaviorModuleData, m_flingPitch) },
+		{ "FlingPitchVariance",								INI::parseAngleReal,							nullptr, offsetof( SlowDeathBehaviorModuleData, m_flingPitchVariance) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 	p.add(DieMuxData::getFieldParse(), offsetof( SlowDeathBehaviorModuleData, m_dieMuxData ));
@@ -274,7 +274,7 @@ void SlowDeathBehavior::beginSlowDeath(const DamageInfo *damageInfo)
 				SlavedUpdate* slave = (SlavedUpdate*)obj->findUpdateModule( key_SlavedUpdate );
 				if( slave )
 				{
-					slave->onSlaverDie( NULL );
+					slave->onSlaverDie( nullptr );
 				}
 			}
 
@@ -345,7 +345,7 @@ void SlowDeathBehavior::doPhaseStuff(SlowDeathPhaseType sdphase)
 		const FXListVec& v = d->m_fx[sdphase];
 		DEBUG_ASSERTCRASH(idx>=0&&idx<v.size(),("bad idx"));
 		const FXList* fxl = v[idx];
-		FXList::doFXObj(fxl, getObject(), NULL);
+		FXList::doFXObj(fxl, getObject(), nullptr);
 	}
 
 	listSize = d->m_ocls[sdphase].size();
@@ -355,7 +355,7 @@ void SlowDeathBehavior::doPhaseStuff(SlowDeathPhaseType sdphase)
 		const OCLVec& v = d->m_ocls[sdphase];
 		DEBUG_ASSERTCRASH(idx>=0&&idx<v.size(),("bad idx"));
 		const ObjectCreationList* ocl = v[idx];
-		ObjectCreationList::create(ocl, getObject(), NULL);
+		ObjectCreationList::create(ocl, getObject(), nullptr);
 	}
 
 	listSize = d->m_weapons[sdphase].size();
@@ -495,7 +495,7 @@ void SlowDeathBehavior::onDie( const DamageInfo *damageInfo )
 	for (; *update; ++update)
 	{
 		SlowDeathBehaviorInterface* sdu = (*update)->getSlowDeathBehaviorInterface();
-		if (sdu != NULL && sdu->isDieApplicable(damageInfo))
+		if (sdu != nullptr && sdu->isDieApplicable(damageInfo))
 		{
 			total += sdu->getProbabilityModifier( damageInfo );
 		}
@@ -509,7 +509,7 @@ void SlowDeathBehavior::onDie( const DamageInfo *damageInfo )
 	for (/* UpdateModuleInterface** */ update = obj->getBehaviorModules(); *update; ++update)
 	{
 		SlowDeathBehaviorInterface* sdu = (*update)->getSlowDeathBehaviorInterface();
-		if (sdu != NULL && sdu->isDieApplicable(damageInfo))
+		if (sdu != nullptr && sdu->isDieApplicable(damageInfo))
 		{
 			roll -= sdu->getProbabilityModifier( damageInfo );
 			if (roll <= 0)

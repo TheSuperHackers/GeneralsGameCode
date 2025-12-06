@@ -90,22 +90,22 @@ OpenContainModuleData::OpenContainModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "ContainMax",								INI::parseInt, NULL, offsetof( OpenContainModuleData, m_containMax ) },
-		{ "EnterSound",								INI::parseAudioEventRTS,		NULL, offsetof( OpenContainModuleData, m_enterSound ) },
-		{ "ExitSound",								INI::parseAudioEventRTS,		NULL, offsetof( OpenContainModuleData, m_exitSound ) },
-		{ "DamagePercentToUnits",			INI::parsePercentToReal,		NULL, offsetof( OpenContainModuleData, m_damagePercentageToUnits ) },
-		{ "BurnedDeathToUnits",				INI::parseBool,							NULL, offsetof( OpenContainModuleData, m_isBurnedDeathToUnits ) },
-		{ "AllowInsideKindOf",				KindOfMaskType::parseFromINI, NULL, offsetof( OpenContainModuleData, m_allowInsideKindOf ) },
-		{ "ForbidInsideKindOf",				KindOfMaskType::parseFromINI, NULL, offsetof( OpenContainModuleData, m_forbidInsideKindOf ) },
-		{ "PassengersAllowedToFire",	INI::parseBool, NULL, offsetof( OpenContainModuleData, m_passengersAllowedToFire ) },
-		{ "PassengersInTurret",				INI::parseBool, NULL, offsetof( OpenContainModuleData, m_passengersInTurret ) },
-		{ "NumberOfExitPaths",				INI::parseInt, NULL, offsetof( OpenContainModuleData, m_numberOfExitPaths ) },
-		{ "DoorOpenTime",							INI::parseDurationUnsignedInt, NULL, offsetof( OpenContainModuleData, m_doorOpenTime ) },
- 		{ "WeaponBonusPassedToPassengers", INI::parseBool,	NULL, offsetof( OpenContainModuleData, m_weaponBonusPassedToPassengers ) },
- 		{ "AllowAlliesInside",				INI::parseBool,	NULL, offsetof( OpenContainModuleData, m_allowAlliesInside ) },
- 		{ "AllowEnemiesInside",				INI::parseBool,	NULL, offsetof( OpenContainModuleData, m_allowEnemiesInside ) },
- 		{ "AllowNeutralInside",				INI::parseBool,	NULL, offsetof( OpenContainModuleData, m_allowNeutralInside ) },
-		{ 0, 0, 0, 0 }
+		{ "ContainMax",								INI::parseInt, nullptr, offsetof( OpenContainModuleData, m_containMax ) },
+		{ "EnterSound",								INI::parseAudioEventRTS,		nullptr, offsetof( OpenContainModuleData, m_enterSound ) },
+		{ "ExitSound",								INI::parseAudioEventRTS,		nullptr, offsetof( OpenContainModuleData, m_exitSound ) },
+		{ "DamagePercentToUnits",			INI::parsePercentToReal,		nullptr, offsetof( OpenContainModuleData, m_damagePercentageToUnits ) },
+		{ "BurnedDeathToUnits",				INI::parseBool,							nullptr, offsetof( OpenContainModuleData, m_isBurnedDeathToUnits ) },
+		{ "AllowInsideKindOf",				KindOfMaskType::parseFromINI, nullptr, offsetof( OpenContainModuleData, m_allowInsideKindOf ) },
+		{ "ForbidInsideKindOf",				KindOfMaskType::parseFromINI, nullptr, offsetof( OpenContainModuleData, m_forbidInsideKindOf ) },
+		{ "PassengersAllowedToFire",	INI::parseBool, nullptr, offsetof( OpenContainModuleData, m_passengersAllowedToFire ) },
+		{ "PassengersInTurret",				INI::parseBool, nullptr, offsetof( OpenContainModuleData, m_passengersInTurret ) },
+		{ "NumberOfExitPaths",				INI::parseInt, nullptr, offsetof( OpenContainModuleData, m_numberOfExitPaths ) },
+		{ "DoorOpenTime",							INI::parseDurationUnsignedInt, nullptr, offsetof( OpenContainModuleData, m_doorOpenTime ) },
+ 		{ "WeaponBonusPassedToPassengers", INI::parseBool,	nullptr, offsetof( OpenContainModuleData, m_weaponBonusPassedToPassengers ) },
+ 		{ "AllowAlliesInside",				INI::parseBool,	nullptr, offsetof( OpenContainModuleData, m_allowAlliesInside ) },
+ 		{ "AllowEnemiesInside",				INI::parseBool,	nullptr, offsetof( OpenContainModuleData, m_allowEnemiesInside ) },
+ 		{ "AllowNeutralInside",				INI::parseBool,	nullptr, offsetof( OpenContainModuleData, m_allowNeutralInside ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 	p.add(DieMuxData::getFieldParse(), offsetof( OpenContainModuleData, m_dieMuxData ));
@@ -288,7 +288,7 @@ void OpenContain::addToContain( Object *rider )
 	}
 
 	// sanity
-	if( rider == NULL )
+	if( rider == nullptr )
 		return;
 
 	Drawable *riderDraw = rider->getDrawable();
@@ -316,7 +316,7 @@ void OpenContain::addToContain( Object *rider )
 #endif
 
 	// this object cannot be contained by this module if it is already contained in something
-	if( rider->getContainedBy() != NULL )
+	if( rider->getContainedBy() != nullptr )
 	{
 
 		DEBUG_LOG(( "'%s' is trying to contain '%s', but '%s' is already contained by '%s'",
@@ -385,7 +385,7 @@ void OpenContain::removeFromContain( Object *rider, Bool exposeStealthUnits )
 {
 
 	// sanity
-	if( rider == NULL )
+	if( rider == nullptr )
 		return;
 
 	//
@@ -589,7 +589,7 @@ void OpenContain::iterateContained( ContainIterateFunc func, void *userData, Boo
 // ------------------------------------------------------------------------------------------------
 Object* OpenContain::getClosestRider( const Coord3D *pos )
 {
-	Object *closest = NULL;
+	Object *closest = nullptr;
 	Real closestDistance;
 
 	for(ContainedItemsList::const_iterator it = m_containList.begin(); it != m_containList.end(); ++it)
@@ -786,7 +786,7 @@ Real OpenContain::getContainedItemsMass() const
 void OpenContain::onCollide( Object *other, const Coord3D *loc, const Coord3D *normal )
 {
 	// colliding with nothing? we don't care.
-	if( other == NULL )
+	if( other == nullptr )
 		return;
 
 	// ok, step two: only contain stuff that wants us to contain it.
@@ -794,7 +794,7 @@ void OpenContain::onCollide( Object *other, const Coord3D *loc, const Coord3D *n
 
 	// must be an AI object....
 	AIUpdateInterface *ai = other->getAI();
-	if (ai == NULL)
+	if (ai == nullptr)
 		return;
 
 	// ...and must be trying to enter our object.
@@ -982,8 +982,8 @@ void OpenContain::exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor )
 			startBone.concat(suffix);
 			endBone.concat(suffix);
 		}
-		me->getSingleLogicalBonePosition( startBone.str(), &startPosition, NULL );
-		me->getSingleLogicalBonePosition( endBone.str(), &endPosition, NULL );
+		me->getSingleLogicalBonePosition( startBone.str(), &startPosition, nullptr );
+		me->getSingleLogicalBonePosition( endBone.str(), &endPosition, nullptr );
 
 		//startPosition.x = startPosition.y = 0;
 		Real exitAngle = me->getOrientation();
@@ -1019,7 +1019,7 @@ void OpenContain::exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor )
 				TheAI->pathfinder()->updatePos(me, me->getPosition());
 				TheAI->pathfinder()->updateGoal(me, me->getPosition(), TheTerrainLogic->getLayerForDestination(me->getPosition()));
 			}
-			ai->ignoreObstacle(NULL);
+			ai->ignoreObstacle(nullptr);
 			// The units often come out at the same position, and need to ignore collisions briefly
 			// as they move out.  jba.
 			ai->setIgnoreCollisionTime(LOGICFRAMES_PER_SECOND);
@@ -1101,8 +1101,8 @@ void OpenContain::exitObjectInAHurry( Object *exitObj )
 			startBone.concat(suffix);
 			endBone.concat(suffix);
 		}
-		me->getSingleLogicalBonePosition( startBone.str(), &startPosition, NULL );
-		me->getSingleLogicalBonePosition( endBone.str(), &endPosition, NULL );
+		me->getSingleLogicalBonePosition( startBone.str(), &startPosition, nullptr );
+		me->getSingleLogicalBonePosition( endBone.str(), &endPosition, nullptr );
 
 		//startPosition.x = startPosition.y = 0;
 		Real exitAngle = me->getOrientation();
@@ -1124,7 +1124,7 @@ void OpenContain::exitObjectInAHurry( Object *exitObj )
 				TheAI->pathfinder()->updatePos(me, me->getPosition());
 				TheAI->pathfinder()->updateGoal(me, me->getPosition(), TheTerrainLogic->getLayerForDestination(me->getPosition()));
 			}
-			ai->ignoreObstacle(NULL);
+			ai->ignoreObstacle(nullptr);
 			// The units often come out at the same position, and need to ignore collisions briefly
 			// as they move out.  jba.
 			ai->setIgnoreCollisionTime(LOGICFRAMES_PER_SECOND);
@@ -1161,7 +1161,7 @@ Bool OpenContain::isPassengerAllowedToFire( ObjectID id ) const
 		return FALSE;// Just no, no matter what.
 
 	// If we are ourselves contained, our passengers need to check with them if they get past us
-	if( getObject()->getContainedBy() != NULL )
+	if( getObject()->getContainedBy() != nullptr )
 		return getObject()->getContainedBy()->getContain()->isPassengerAllowedToFire();
 
 	return TRUE;// We say yes, and we are not inside something.
@@ -1239,7 +1239,7 @@ void OpenContain::putObjAtNextFirePoint( Object *obj )
 	if( m_firePointSize == 0 && m_noFirePointsInArt == false )
 	{
 
-		m_firePointSize = getObject()->getMultiLogicalBonePosition("FIREPOINT", MAX_FIRE_POINTS, NULL, m_firePoints, TRUE );
+		m_firePointSize = getObject()->getMultiLogicalBonePosition("FIREPOINT", MAX_FIRE_POINTS, nullptr, m_firePoints, TRUE );
 
 		//
 		// if there is still no firepoints in the art, we'll set a flag so that we don't
@@ -1277,7 +1277,7 @@ void OpenContain::putObjAtNextFirePoint( Object *obj )
 		}
 		firepoint.concat(suffix);
 
-		getObject()->getSingleLogicalBonePositionOnTurret(TURRET_MAIN, firepoint.str(), NULL, &matrix );
+		getObject()->getSingleLogicalBonePositionOnTurret(TURRET_MAIN, firepoint.str(), nullptr, &matrix );
 	}
 	else
 	{
@@ -1310,7 +1310,7 @@ void OpenContain::putObjAtNextFirePoint( Object *obj )
 */
 void OpenContain::onObjectWantsToEnterOrExit(Object* obj, ObjectEnterExitType wants)
 {
-	if (obj == NULL)
+	if (obj == nullptr)
 		return;
 
 	ObjectID id = obj->getID();
@@ -1333,7 +1333,7 @@ void OpenContain::pruneDeadWanters()
 	{
 		ObjectID id = (*it).first;
 		Object* obj = TheGameLogic->findObjectByID(id);
-		if (obj == NULL || obj->isEffectivelyDead())
+		if (obj == nullptr || obj->isEffectivelyDead())
 		{
 			ObjectEnterExitMap::iterator tmp = it;
 			++it;
@@ -1592,7 +1592,7 @@ const Coord3D *OpenContain::getRallyPoint( void ) const
 	if (m_rallyPointExists)
 		return &m_rallyPoint;
 
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1606,7 +1606,7 @@ Bool OpenContain::getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset )  cons
 		{
 				endBone.concat("01");
 		}
-		getObject()->getSingleLogicalBonePosition( endBone.str(), &rallyPoint, NULL );
+		getObject()->getSingleLogicalBonePosition( endBone.str(), &rallyPoint, nullptr );
 	}
 	else
 	{
@@ -1870,7 +1870,7 @@ void OpenContain::loadPostProcess( void )
 		obj = TheGameLogic->findObjectByID( *idIt );
 
 		// sanity
-		if( obj == NULL )
+		if( obj == nullptr )
 		{
 
 			DEBUG_CRASH(( "OpenContain::loadPostProcess - Unable to find object to put on contain list" ));

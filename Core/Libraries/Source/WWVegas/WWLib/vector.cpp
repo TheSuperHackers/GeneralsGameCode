@@ -85,7 +85,7 @@ BooleanVectorClass::BooleanVectorClass(unsigned size, unsigned char * array) :
 	BitCount(size),
 	Copy(false),
 	LastIndex(-1),
-	BitArray(0, 0)
+	BitArray(0, nullptr)
 {
 	BitArray.Resize(((size + (8-1)) / 8), array);
 //	LastIndex = -1;
