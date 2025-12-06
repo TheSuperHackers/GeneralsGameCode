@@ -179,7 +179,7 @@ const LocomotorTemplateVector* AIUpdateModuleData::findLocomotorTemplateVector(L
 	self->m_locomotorTemplates[set].clear();
 	for (const char* locoName = ini->getNextToken(); locoName; locoName = ini->getNextTokenOrNull())
 	{
-		if (!*locoName || !stricmp(locoName, "None"))
+		if (!*locoName || stricmp(locoName, "None") == 0)
 			continue;
 
 		NameKeyType locoKey = NAMEKEY(locoName);
@@ -3391,7 +3391,7 @@ void AIUpdateInterface::privateFollowPath( const std::vector<Coord3D>* path, Obj
 	// clear current state machine
 	getStateMachine()->clear();
 
-	if (path->size()>0) {
+	if (!path->empty()) {
 		const Coord3D goal = (*path)[path->size()-1];
 		getStateMachine()->setGoalPosition(&goal);
 	}

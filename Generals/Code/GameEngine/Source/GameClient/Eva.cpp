@@ -436,7 +436,7 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 	for (Int i = 0; i < numSides; ++i) {
 		if (side.compareNoCase(storedIt->m_evaInfo->m_evaSideSounds[i].m_side) == 0) {
 			// Its this one.
-			if (storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames.size() > 0) {
+			if (!storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames.empty()) {
 				Int soundToPlay = GameClientRandomValue(0, storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames.size() - 1);
 				m_evaSpeech.setEventName(storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames[soundToPlay]);
 			} else {

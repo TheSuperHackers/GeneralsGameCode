@@ -241,7 +241,7 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 	while (!done)	{
 		std::string filenameStr = iter->path().filename().string();
 		if (!iter->is_directory() && iter->path().extension() == searchExt &&
-			(strcmp(filenameStr.c_str(), ".") && strcmp(filenameStr.c_str(), ".."))) {
+			(strcmp(filenameStr.c_str(), ".") != 0 && strcmp(filenameStr.c_str(), ".."))) {
 			// if we haven't already, add this filename to the list.
 			// a stl set should only allow one copy of each filename
 			AsciiString newFilename = iter->path().string().c_str();
@@ -268,7 +268,7 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 		while (!done) {
 			std::string filenameStr = iter->path().filename().string();
 			if(iter->is_directory() &&
-				(strcmp(filenameStr.c_str(), ".") && strcmp(filenameStr.c_str(), ".."))) {
+				(strcmp(filenameStr.c_str(), ".") != 0 && strcmp(filenameStr.c_str(), ".."))) {
 				AsciiString tempsearchstr(filenameStr.c_str());
 
 				// recursively add files in subdirectories if required.
@@ -323,7 +323,7 @@ Bool StdLocalFileSystem::createDirectory(AsciiString directory)
 	std::replace(fixedDirectory.begin(), fixedDirectory.end(), '\\', '/');
 #endif
 
-	if ((fixedDirectory.length() > 0) && (fixedDirectory.length() < _MAX_DIR)) {
+	if ((!fixedDirectory.empty()) && (fixedDirectory.length() < _MAX_DIR)) {
 		// Convert to host path
 		std::filesystem::path path(std::move(fixedDirectory));
 

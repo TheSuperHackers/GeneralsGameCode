@@ -208,7 +208,7 @@ static Bool parseBitFlag( const char *flagString, UnsignedInt *bits,
 	for( i = 0, c = flagList; *c; i++, c++ )
 	{
 
-		if( !stricmp( *c, flagString ) )
+		if( stricmp( *c, flagString ) == 0 )
 		{
 			*bits |= (1 << i);
 			return TRUE;
@@ -234,7 +234,7 @@ static void parseBitString( const char *inBuffer, UnsignedInt *bits, ConstCharPt
 	// do not modify the inBuffer argument
 	strlcpy(buffer, inBuffer, ARRAY_SIZE(buffer));
 
-	if( strncmp( buffer, "NULL", 4 ) )
+	if( strncmp( buffer, "NULL", 4 ) != 0 )
 	{
 		for( tok = strtok( buffer, "+" ); tok; tok = strtok( NULL, "+" ) )
 		{
@@ -437,7 +437,7 @@ static Bool parseDefaultColor( Color *color, File *inFile, char *buffer )
   // Read the rest of the color definition
 	readUntilSemicolon( inFile, buffer, WIN_BUFFER_LENGTH );
 
-  if (!strcmp( buffer, "TRANSPARENT" ))
+  if (strcmp( buffer, "TRANSPARENT" ) == 0)
 	{
 
 		*color = WIN_COLOR_UNDEFINED;
@@ -839,7 +839,7 @@ static Bool parseListboxData( const char *token, WinInstanceData *instData,
 
 	// "SCROLLIFATEND" (optional)
 	c = strtok( NULL, seps );  // label
-	if ( !stricmp(c, "ScrollIfAtEnd") )
+	if ( stricmp(c, "ScrollIfAtEnd") == 0 )
 	{
 		c = strtok( NULL, seps );  // value
 		scanBool( c, listData->scrollIfAtEnd );
@@ -1322,7 +1322,7 @@ static Bool parseDrawData( const char *token, WinInstanceData *instData,
 		first = FALSE;
 
 		c = strtok( NULL, seps );  // value
-		if( strcmp( c, "NoImage" ) )
+		if( strcmp( c, "NoImage" ) != 0 )
 			drawData->image = TheMappedImageCollection->findImageByName( AsciiString( c ) );
 		else
 			drawData->image = NULL;
@@ -1372,46 +1372,46 @@ void *getDataTemplate( char *type )
 	static ComboBoxData	cData;
 	void *data;
 
-  if( !strcmp( type, "VERTSLIDER" ) || !strcmp( type, "HORZSLIDER" ) )
+  if( strcmp( type, "VERTSLIDER" ) == 0 || strcmp( type, "HORZSLIDER" ) == 0 )
 	{
 
     memset( &sData, 0, sizeof( SliderData ) );
     data = &sData;
 
   }
-	else if( !strcmp( type, "SCROLLLISTBOX" ) )
+	else if( strcmp( type, "SCROLLLISTBOX" ) == 0 )
 	{
 
     memset( &lData, 0, sizeof( ListboxData ) );
     data = &lData;
 
   }
-	else if( !strcmp( type, "TABCONTROL" ) )
+	else if( strcmp( type, "TABCONTROL" ) == 0 )
 	{
     memset( &tcData, 0, sizeof( TabControlData ) );
     data = &tcData;
   }
-	else if( !strcmp( type, "ENTRYFIELD" ) )
+	else if( strcmp( type, "ENTRYFIELD" ) == 0 )
 	{
 
     memset( &eData, 0, sizeof( EntryData ) );
     data = &eData;
 
   }
-	else if( !strcmp( type, "STATICTEXT" ) )
+	else if( strcmp( type, "STATICTEXT" ) == 0 )
 	{
 
 		memset( &tData, 0, sizeof( TextData ) );
 		data = &tData;
 
   }
-	else if( !strcmp( type, "RADIOBUTTON" ) )
+	else if( strcmp( type, "RADIOBUTTON" ) == 0 )
 	{
 
 		memset( &rData, 0, sizeof( RadioButtonData ) );
 		data = &rData;
 	}
-	else if( !strcmp( type, "COMBOBOX" ) )
+	else if( strcmp( type, "COMBOBOX" ) == 0 )
 	{
 
 		memset( &cData, 0, sizeof( ComboBoxData ) );
@@ -1454,7 +1454,7 @@ static Bool parseData( void **data, char *type, char *buffer )
 	static RadioButtonData rData;
 	static ComboBoxData cData;
 
-  if( !strcmp( type, "VERTSLIDER" ) || !strcmp( type, "HORZSLIDER" ) )
+  if( strcmp( type, "VERTSLIDER" ) == 0 || strcmp( type, "HORZSLIDER" ) == 0 )
 	{
 
     memset( &sData, 0, sizeof( SliderData ) );
@@ -1468,7 +1468,7 @@ static Bool parseData( void **data, char *type, char *buffer )
     *data = &sData;
 
   }
-	else if( !strcmp( type, "SCROLLLISTBOX" ) )
+	else if( strcmp( type, "SCROLLLISTBOX" ) == 0 )
 	{
 
     memset( &lData, 0, sizeof( ListboxData ) );
@@ -1497,7 +1497,7 @@ static Bool parseData( void **data, char *type, char *buffer )
     *data = &lData;
 
   }
-	else if( !strcmp( type, "ENTRYFIELD" ) )
+	else if( strcmp( type, "ENTRYFIELD" ) == 0 )
 	{
 
     memset( &eData, 0, sizeof( EntryData ) );
@@ -1538,7 +1538,7 @@ static Bool parseData( void **data, char *type, char *buffer )
     *data = &eData;
 
   }
-	else if( !strcmp( type, "STATICTEXT" ) )
+	else if( strcmp( type, "STATICTEXT" ) == 0 )
 	{
 
 	  c = strtok( buffer, " \t\n\r" );
@@ -1559,7 +1559,7 @@ static Bool parseData( void **data, char *type, char *buffer )
 		*data = &tData;
 
   }
-	else if( !strcmp( type, "RADIOBUTTON" ) )
+	else if( strcmp( type, "RADIOBUTTON" ) == 0 )
 	{
 
 		c = strtok( buffer, " \t\n\r" );
@@ -1625,7 +1625,7 @@ static GameWindow *createGadget( char *type,
 
   instData->m_owner = parent;
 
-  if( !strcmp( type, "PUSHBUTTON" ) )
+  if( strcmp( type, "PUSHBUTTON" ) == 0 )
 	{
 
     instData->m_style |= GWS_PUSH_BUTTON;
@@ -1635,7 +1635,7 @@ static GameWindow *createGadget( char *type,
 																										 instData->m_font, FALSE );
 
   }
-	else if( !strcmp( type, "RADIOBUTTON" ) )
+	else if( strcmp( type, "RADIOBUTTON" ) == 0 )
 	{
 		RadioButtonData *rData = (RadioButtonData *)data;
 		char filename[ MAX_WINDOW_NAME_LEN ];
@@ -1661,7 +1661,7 @@ static GameWindow *createGadget( char *type,
 																											instData->m_font, FALSE );
 
   }
-	else if( !strcmp( type, "CHECKBOX" ) )
+	else if( strcmp( type, "CHECKBOX" ) == 0 )
 	{
 
     instData->m_style |= GWS_CHECK_BOX;
@@ -1671,7 +1671,7 @@ static GameWindow *createGadget( char *type,
 																									 instData->m_font, FALSE );
 
   }
-	else if( !strcmp( type, "TABCONTROL" ) )
+	else if( strcmp( type, "TABCONTROL" ) == 0 )
 	{
 		TabControlData *tcData = (TabControlData *)data;
     instData->m_style |= GWS_TAB_CONTROL;
@@ -1680,7 +1680,7 @@ static GameWindow *createGadget( char *type,
 																										instData, tcData,
 																										instData->m_font, FALSE );
 	}
-	else if( !strcmp( type, "VERTSLIDER" ) )
+	else if( strcmp( type, "VERTSLIDER" ) == 0 )
 	{
     SliderData *sData = (SliderData *)data;
 
@@ -1712,7 +1712,7 @@ static GameWindow *createGadget( char *type,
 		}
 
   }
-	else if( !strcmp( type, "HORZSLIDER" ) )
+	else if( strcmp( type, "HORZSLIDER" ) == 0 )
 	{
     SliderData *sData = (SliderData *)data;
 
@@ -1744,7 +1744,7 @@ static GameWindow *createGadget( char *type,
 		}
 
   }
-	else if( !strcmp( type, "SCROLLLISTBOX" ) )
+	else if( strcmp( type, "SCROLLLISTBOX" ) == 0 )
 	{
 
     ListboxData *lData = (ListboxData *)data;
@@ -1826,7 +1826,7 @@ static GameWindow *createGadget( char *type,
 		}
 
   }
-	else if( !strcmp( type, "COMBOBOX" ) )
+	else if( strcmp( type, "COMBOBOX" ) == 0 )
 	{
 		ComboBoxData *cData = (ComboBoxData *)data;
 		cData->entryData = NEW EntryData;
@@ -1974,7 +1974,7 @@ static GameWindow *createGadget( char *type,
 			}
 		}
   }
-	else if( !strcmp( type, "ENTRYFIELD" ) )
+	else if( strcmp( type, "ENTRYFIELD" ) == 0 )
 	{
     EntryData *eData = (EntryData *)data;
 
@@ -1985,7 +1985,7 @@ static GameWindow *createGadget( char *type,
 																										instData->m_font, FALSE );
 
   }
-	else if( !strcmp( type, "STATICTEXT" ) )
+	else if( strcmp( type, "STATICTEXT" ) == 0 )
 	{
     TextData *tData = (TextData *)data;
 
@@ -1997,7 +1997,7 @@ static GameWindow *createGadget( char *type,
 
 
   }
-	else if( !strcmp( type, "PROGRESSBAR" ) )
+	else if( strcmp( type, "PROGRESSBAR" ) == 0 )
 	{
 
     instData->m_style |= GWS_PROGRESS_BAR;
@@ -2033,7 +2033,7 @@ static GameWindow *createWindow( char *type,
   parent = peekWindow();
 
   // If this is a regular window just create it
-  if( !strcmp( type, "USER" ) )
+  if( strcmp( type, "USER" ) == 0 )
 	{
 
     window = TheWindowManager->winCreate( parent,
@@ -2050,7 +2050,7 @@ static GameWindow *createWindow( char *type,
 		}
 
   }
-	else if( !strcmp( type, "TABPANE" ) )
+	else if( strcmp( type, "TABPANE" ) == 0 )
 	{
 
     window = TheWindowManager->winCreate( parent,

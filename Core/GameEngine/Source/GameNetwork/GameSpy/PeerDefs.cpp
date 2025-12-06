@@ -340,7 +340,7 @@ void GameSpyInfo::addGroupRoom( GameSpyGroupRoom room )
 		groupLabel.format("GUI:%s", room.m_name.str());
 		room.m_translatedName = TheGameText->fetch(groupLabel);
 		m_groupRooms[room.m_groupID] = room;
-		if ( !stricmp("quickmatch", room.m_name.str()) )
+		if ( stricmp("quickmatch", room.m_name.str()) == 0 )
 		{
 			DEBUG_LOG(("Group room %d (%s) is the QuickMatch room", room.m_groupID, room.m_name.str()));
 			TheGameSpyConfig->setQMChannel(room.m_groupID);
@@ -378,7 +378,7 @@ void GameSpyInfo::joinBestGroupRoom( void )
 		return;
 	}
 
-	if (m_groupRooms.size())
+	if (!m_groupRooms.empty())
 	{
 		int minID = -1;
 		int minPlayers = 1000;

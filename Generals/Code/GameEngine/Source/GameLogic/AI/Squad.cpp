@@ -233,7 +233,7 @@ void Squad::xfer( Xfer *xfer )
 	{
 
 		// the cached objects list should be empty
-		if( m_objectsCached.size() != 0 )
+		if( !m_objectsCached.empty() )
 		{
 
 			DEBUG_CRASH(( "Squad::xfer - m_objectsCached should be emtpy, but is not" ));

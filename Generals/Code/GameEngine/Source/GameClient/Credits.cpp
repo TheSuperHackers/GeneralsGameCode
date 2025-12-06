@@ -221,7 +221,7 @@ void CreditsManager::update( void )
 	if(!((m_scrollDown && (yTest >= start)) || (!m_scrollDown && (yTest  <= start))))
 		return;
 
-	if(m_displayedCreditLineList.size() == 0 && m_creditLineListIt == m_creditLineList.end())
+	if(m_displayedCreditLineList.empty() && m_creditLineListIt == m_creditLineList.end())
 		m_isFinished = TRUE;
 
 	if(m_creditLineListIt == m_creditLineList.end())

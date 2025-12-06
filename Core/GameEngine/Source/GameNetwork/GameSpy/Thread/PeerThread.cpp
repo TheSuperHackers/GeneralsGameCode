@@ -471,7 +471,7 @@ Int PeerThreadClass::findServer( SBServer server )
 			UnsignedInt oldPrivateIP = SBServerGetPrivateInetAddress(it->second);
 			UnsignedShort oldPrivatePort = SBServerGetPrivateQueryPort(it->second);
 			UnsignedInt oldPublicIP = SBServerGetPublicInetAddress(it->second);
-			if (!strcmp(oldName, newName) &&
+			if (strcmp(oldName, newName) == 0 &&
 				oldPrivateIP == newPrivateIP &&
 				oldPublicIP == newPublicIP &&
 				oldPrivatePort == newPrivatePort)
@@ -1663,7 +1663,7 @@ void PeerThreadClass::Thread_Function()
 							m_playerFactions[i] = 0;
 							m_playerColors[i] = 0;
 						}
-						if (incomingRequest.password.length() > 0)
+						if (!incomingRequest.password.empty())
 							m_hasPassword = true;
 						else
 							m_hasPassword = false;
@@ -1714,7 +1714,7 @@ void PeerThreadClass::Thread_Function()
 
 			case PeerRequest::PEERREQUEST_UTMPLAYER:
 				{
-					if (incomingRequest.nick.length() > 0)
+					if (!incomingRequest.nick.empty())
 					{
 						peerUTMPlayer( peer, incomingRequest.nick.c_str(), incomingRequest.id.c_str(), incomingRequest.options.c_str(), PEERFalse );
 					}
@@ -1842,7 +1842,7 @@ void PeerThreadClass::handleQMMatch(PEER peer, Int mapIndex, Int seed,
 		Int i=0;
 		for (; i<MAX_SLOTS; ++i)
 		{
-			if (playerName[i] && stricmp(playerName[i], m_loginName.c_str()))
+			if (playerName[i] && stricmp(playerName[i], m_loginName.c_str()) != 0)
 			{
 				peerMessagePlayer( peer, playerName[i], "We're matched!", NormalMessage );
 			}
@@ -2705,7 +2705,7 @@ void playerLeftCallback(PEER peer, RoomType roomType, const char * nick, const c
 
 	if (t->getQMStatus() != QM_IDLE && t->getQMStatus() != QM_STOPPED)
 	{
-		if (!stricmp(t->getQMBotName().c_str(), nick))
+		if (stricmp(t->getQMBotName().c_str(), nick) == 0)
 		{
 			// matchbot left - bail
 			PeerResponse resp;
@@ -2845,9 +2845,9 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 		DEBUG_LOG(("Game name is '%s'", name));
 		const char *newname = SBServerGetStringValue(server, "gamename", (char *)name);
 #if RTS_GENERALS
-		if (strcmp(newname, "ccgenerals"))
+		if (strcmp(newname, "ccgenerals") != 0)
 #elif RTS_ZEROHOUR
-		if (strcmp(newname, "ccgenzh"))
+		if (strcmp(newname, "ccgenzh") != 0)
 #endif
 			name = newname;
 		DEBUG_LOG(("Game name is now '%s'", name));

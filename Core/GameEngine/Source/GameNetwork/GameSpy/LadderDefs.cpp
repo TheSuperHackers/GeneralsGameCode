@@ -163,7 +163,7 @@ static LadderInfo *parseLadder(AsciiString raw)
 			// end of a ladder
 			if (lad->playersPerTeam >= 1 && lad->playersPerTeam <= MAX_SLOTS/2)
 			{
-				if (lad->validFactions.size() == 0)
+				if (lad->validFactions.empty())
 				{
 					DEBUG_LOG(("No factions specified.  Using all."));
 					lad->validFactions.clear();
@@ -190,7 +190,7 @@ static LadderInfo *parseLadder(AsciiString raw)
 					}
 				}
 
-				if (lad->validMaps.size() == 0)
+				if (lad->validMaps.empty())
 				{
 					DEBUG_LOG(("No maps specified.  Using all."));
 					std::list<AsciiString> qmMaps = TheGameSpyConfig->getQMMaps();
@@ -503,7 +503,7 @@ void LadderList::checkLadder( AsciiString fname, Int index )
 		return;
 	}
 
-	if (li->validMaps.size() == 0)
+	if (li->validMaps.empty())
 	{
 		DEBUG_LOG(("Bailing because of li->validMaps.size() == 0"));
 		delete li;

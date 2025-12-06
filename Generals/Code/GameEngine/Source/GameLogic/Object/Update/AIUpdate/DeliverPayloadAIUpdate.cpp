@@ -681,7 +681,7 @@ StateReturnType DeliveringState::update() // Kick a dude out every so often
 		return STATE_FAILURE;
 
 	const ContainedItemsList* items = owner->getContain() ? owner->getContain()->getContainedItemsList() : NULL;
-	if( (!items || !items->size()) && ai->getVisibleItemsDelivered() == ai->getData()->m_visibleNumBones )
+	if( (!items || items->empty()) && ai->getVisibleItemsDelivered() == ai->getData()->m_visibleNumBones )
 	{
 		//We are out of payload to drop AND our visible payload is empty. It's possible for deliverers to
 		//have one or the other or even both.
