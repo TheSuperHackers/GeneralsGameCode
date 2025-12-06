@@ -508,7 +508,7 @@ void HandleBuddyResponses( void )
 				break;
 			case BuddyResponse::BUDDYRESPONSE_MESSAGE:
 				{
-					if ( !wcscmp(resp.arg.message.text, L"I have authorized your request to add me to your list") )
+					if ( wcscmp(resp.arg.message.text, L"I have authorized your request to add me to your list") == 0 )
 						break;
 
 					if (TheGameSpyInfo->isSavedIgnored(resp.profile))

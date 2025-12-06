@@ -103,7 +103,7 @@ const char *ArgvClass::Find_Again(const char *arg)
 			if (Is_Exact_Size()) {
 				// Case Sensitive, Exact Size.
 				for (; CurrentPos < Argc; CurrentPos++) {
-					if (!strcmp(arg, Argv[CurrentPos])) {
+					if (strcmp(arg, Argv[CurrentPos]) == 0) {
 						return Argv[CurrentPos];
 					}
 				}
@@ -111,7 +111,7 @@ const char *ArgvClass::Find_Again(const char *arg)
 				// Case Sensitive, Match first strlen(arg).
 				int len = strlen(arg);
 				for (; CurrentPos < Argc; CurrentPos++) {
-					if (!strncmp(arg, Argv[CurrentPos], len)) {
+					if (strncmp(arg, Argv[CurrentPos], len) == 0) {
 						return Argv[CurrentPos];
 					}
 				}
@@ -120,7 +120,7 @@ const char *ArgvClass::Find_Again(const char *arg)
 			if (Is_Exact_Size()) {
 				// Note case sensitive, Exact Size.
 				for (; CurrentPos < Argc; CurrentPos++) {
-					if (!stricmp(arg, Argv[CurrentPos])) {
+					if (stricmp(arg, Argv[CurrentPos]) == 0) {
 						return Argv[CurrentPos];
 					}
 				}
@@ -128,7 +128,7 @@ const char *ArgvClass::Find_Again(const char *arg)
 				// Note case sensitive, Match first strlen(arg).
 				int len = strlen(arg);
 				for (; CurrentPos < Argc; CurrentPos++) {
-					if (!strnicmp(arg, Argv[CurrentPos], len)) {
+					if (strnicmp(arg, Argv[CurrentPos], len) == 0) {
 						return Argv[CurrentPos];
 					}
 				}
@@ -201,7 +201,7 @@ int ArgvClass::Init(char *lpCmdLine, const char *fileprefix)
 		bool was_file = false;
 
 		// See if we are to load a file with parameters in it.
-		if (fp_cmp_len && !strncmp(fileprefix, ptr, fp_cmp_len)) {
+		if (fp_cmp_len && strncmp(fileprefix, ptr, fp_cmp_len) == 0) {
 			ptr += fp_cmp_len;
 			if (*ptr) {
 				was_file = Load_File(ptr);

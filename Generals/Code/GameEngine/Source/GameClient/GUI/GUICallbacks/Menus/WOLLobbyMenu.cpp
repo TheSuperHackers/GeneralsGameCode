@@ -1067,7 +1067,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 								AsciiString hostName;
 								hostName.translate(room->getConstSlot(0)->getName());
 								const char *firstPlayer = resp.stagingRoomPlayerNames[i].c_str();
-								if (!strcmp(hostName.str(), firstPlayer))
+								if (strcmp(hostName.str(), firstPlayer) == 0)
 								{
 									DEBUG_LOG(("Saw host %s == %s in slot %d", hostName.str(), firstPlayer, i));
 									isHostPresent = TRUE;

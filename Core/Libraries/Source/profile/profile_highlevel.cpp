@@ -324,7 +324,7 @@ bool ProfileHighLevel::FindProfile(const char *name, Id &id)
 
   ProfileFastCS::Lock lock(cs);
   for (ProfileId *cur=ProfileId::GetFirst();cur;cur=cur->GetNext())
-    if (!strcmp(name,cur->GetName()))
+    if (strcmp(name,cur->GetName()) == 0)
     {
       id.m_idPtr=cur;
       return true;

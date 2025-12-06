@@ -526,7 +526,7 @@ Debug& Debug::LogBegin(const char *fileOrGroup)
     // we're doing all this extra work so that DLOGs can be spread across
     // multiple calls
     if (Instance.curType==DebugIOInterface::StringType::Log&&
-        strcmp(Instance.curSource,Instance.curFrameEntry->fileOrGroup))
+        strcmp(Instance.curSource,Instance.curFrameEntry->fileOrGroup) != 0)
       Instance.FlushOutput();
 
     if (Instance.curType!=DebugIOInterface::StringType::Log)
@@ -1227,7 +1227,7 @@ const char *Debug::AddLogGroup(const char *fileOrGroup, const char *descr)
   KnownLogGroupList *cur=firstLogGroup;
   for (;cur;cur=cur->next)
   {
-    if (!strcmp(cur->nameGroup,fileOrGroup))
+    if (strcmp(cur->nameGroup,fileOrGroup) == 0)
     {
       // yes, return translated name
       return cur->nameGroup;
@@ -1547,7 +1547,7 @@ void Debug::ExecCommand(const char *cmdstart, const char *cmdend)
 
     // command group known?
     for (CmdInterfaceListEntry *cur=firstCmdGroup;cur;cur=cur->next)
-      if (!strcmp(curCommandGroup,cur->group))
+      if (strcmp(curCommandGroup,cur->group) == 0)
         break;
     if (!cur)
     {
@@ -1563,18 +1563,18 @@ void Debug::ExecCommand(const char *cmdstart, const char *cmdend)
       // search for a matching command handler
       for (CmdInterfaceListEntry *cur=firstCmdGroup;cur;cur=cur->next)
       {
-        if (strcmp(curCommandGroup,cur->group))
+        if (strcmp(curCommandGroup,cur->group) != 0)
           continue;
 
         bool doneCommand=cur->cmdif->Execute(*this,p,mode,numParts-1,parts+1);
-        if (doneCommand&&(strcmp(p,"help")||numParts>1))
+        if (doneCommand&&(strcmp(p,"help") != 0||numParts>1))
           break;
       }
 
       // display error message if command not found, break away
       if (!cur&&mode==DebugCmdInterface::CommandMode::Normal)
       {
-        if (strcmp(p,"help"))
+        if (strcmp(p,"help") != 0)
           operator<<("Unknown command");
         else if (numParts>1)
           operator<<("Unknown command, help not available");

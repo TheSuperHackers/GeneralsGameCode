@@ -894,7 +894,7 @@ Bool RecorderClass::readReplayHeader(ReplayHeader& header)
 	// Read the GENREP header.
 	char genrep[sizeof(s_genrep) - 1] = {0};
 	m_file->read( &genrep, sizeof(s_genrep) - 1 );
-	if ( strncmp(genrep, s_genrep, sizeof(s_genrep) - 1 ) ) {
+	if ( strncmp(genrep, s_genrep, sizeof(s_genrep) - 1 ) != 0 ) {
 		DEBUG_LOG(("RecorderClass::readReplayHeader - replay file did not have GENREP at the start."));
 		m_file->close();
 		m_file = NULL;
