@@ -15,44 +15,25 @@ add_subdirectory(Code)
 
 # If we are building on windows for windows, try and get the game install path from the registry.
 if("${CMAKE_HOST_SYSTEM}" MATCHES "Windows" AND "${CMAKE_SYSTEM}" MATCHES "Windows")
-    # Check the EA App/CD registry path (checks both 32-bit and 64-bit registry views)
-    if(NOT RTS_INSTALL_PREFIX_GENERALS)
-        cmake_host_system_information(RESULT _generals_path
-            QUERY WINDOWS_REGISTRY
-            "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/Generals"
-            VALUE InstallPath
-            VIEW 32_64
-            ERROR_VARIABLE _reg_error)
-        if(NOT _reg_error AND _generals_path)
-            set(RTS_INSTALL_PREFIX_GENERALS "${_generals_path}" CACHE PATH "Generals install path from registry")
-        endif()
-    endif()
+    include(${CMAKE_SOURCE_DIR}/cmake/registry.cmake)
+
+    # Check the EA App/CD registry path
+    try_set_install_prefix_from_registry(RTS_INSTALL_PREFIX_GENERALS
+        "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/Generals"
+        InstallPath
+        "Generals install path from registry")
 
     # Check the "First Decade" registry path
-    if(NOT RTS_INSTALL_PREFIX_GENERALS)
-        cmake_host_system_information(RESULT _generals_path
-            QUERY WINDOWS_REGISTRY
-            "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/Command and Conquer The First Decade"
-            VALUE gr_folder
-            VIEW 32_64
-            ERROR_VARIABLE _reg_error)
-        if(NOT _reg_error AND _generals_path)
-            set(RTS_INSTALL_PREFIX_GENERALS "${_generals_path}" CACHE PATH "Generals install path from registry")
-        endif()
-    endif()
+    try_set_install_prefix_from_registry(RTS_INSTALL_PREFIX_GENERALS
+        "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/Command and Conquer The First Decade"
+        gr_folder
+        "Generals install path from registry")
 
-    # Check alternate capitalization (installPath vs InstallPath)
-    if(NOT RTS_INSTALL_PREFIX_GENERALS)
-        cmake_host_system_information(RESULT _generals_path
-            QUERY WINDOWS_REGISTRY
-            "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/Generals"
-            VALUE installPath
-            VIEW 32_64
-            ERROR_VARIABLE _reg_error)
-        if(NOT _reg_error AND _generals_path)
-            set(RTS_INSTALL_PREFIX_GENERALS "${_generals_path}" CACHE PATH "Generals install path from registry")
-        endif()
-    endif()
+    # Check the Steam registry path
+    try_set_install_prefix_from_registry(RTS_INSTALL_PREFIX_GENERALS
+        "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/Generals"
+        installPath
+        "Generals install path from registry")
 endif()
 
 if(RTS_INSTALL_PREFIX_GENERALS)

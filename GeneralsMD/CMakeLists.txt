@@ -15,44 +15,25 @@ add_subdirectory(Code)
 
 # If we are building on windows for windows, try and get the game install path from the registry.
 if("${CMAKE_HOST_SYSTEM}" MATCHES "Windows" AND "${CMAKE_SYSTEM}" MATCHES "Windows")
-    # Check the EA App/CD registry path (checks both 32-bit and 64-bit registry views)
-    if(NOT RTS_INSTALL_PREFIX_ZEROHOUR)
-        cmake_host_system_information(RESULT _zerohour_path
-            QUERY WINDOWS_REGISTRY
-            "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/Command and Conquer Generals Zero Hour"
-            VALUE InstallPath
-            VIEW 32_64
-            ERROR_VARIABLE _reg_error)
-        if(NOT _reg_error AND _zerohour_path)
-            set(RTS_INSTALL_PREFIX_ZEROHOUR "${_zerohour_path}" CACHE PATH "Zero Hour install path from registry")
-        endif()
-    endif()
+    include(${CMAKE_SOURCE_DIR}/cmake/registry.cmake)
+
+    # Check the EA App/CD registry path
+    try_set_install_prefix_from_registry(RTS_INSTALL_PREFIX_ZEROHOUR
+        "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/Command and Conquer Generals Zero Hour"
+        InstallPath
+        "Zero Hour install path from registry")
 
     # Check the "First Decade" registry path
-    if(NOT RTS_INSTALL_PREFIX_ZEROHOUR)
-        cmake_host_system_information(RESULT _zerohour_path
-            QUERY WINDOWS_REGISTRY
-            "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/Command and Conquer The First Decade"
-            VALUE zh_folder
-            VIEW 32_64
-            ERROR_VARIABLE _reg_error)
-        if(NOT _reg_error AND _zerohour_path)
-            set(RTS_INSTALL_PREFIX_ZEROHOUR "${_zerohour_path}" CACHE PATH "Zero Hour install path from registry")
-        endif()
-    endif()
+    try_set_install_prefix_from_registry(RTS_INSTALL_PREFIX_ZEROHOUR
+        "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/Command and Conquer The First Decade"
+        zh_folder
+        "Zero Hour install path from registry")
 
-    # Check alternate registry location (ZeroHour vs full name)
-    if(NOT RTS_INSTALL_PREFIX_ZEROHOUR)
-        cmake_host_system_information(RESULT _zerohour_path
-            QUERY WINDOWS_REGISTRY
-            "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/ZeroHour"
-            VALUE installPath
-            VIEW 32_64
-            ERROR_VARIABLE _reg_error)
-        if(NOT _reg_error AND _zerohour_path)
-            set(RTS_INSTALL_PREFIX_ZEROHOUR "${_zerohour_path}" CACHE PATH "Zero Hour install path from registry")
-        endif()
-    endif()
+    # Check the Steam registry path
+    try_set_install_prefix_from_registry(RTS_INSTALL_PREFIX_ZEROHOUR
+        "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/ZeroHour"
+        installPath
+        "Zero Hour install path from registry")
 endif()
 
 if(RTS_INSTALL_PREFIX_ZEROHOUR)
