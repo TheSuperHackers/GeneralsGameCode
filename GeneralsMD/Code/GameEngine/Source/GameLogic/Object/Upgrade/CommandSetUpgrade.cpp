@@ -68,7 +68,7 @@ void CommandSetUpgrade::upgradeImplementation( )
 {
 	Object *obj = getObject();
 
-	AsciiString upgradeAlt = getCommandSetUpgradeModuleData()->m_triggerAlt;
+	const AsciiString& upgradeAlt = getCommandSetUpgradeModuleData()->m_triggerAlt;
 	const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( upgradeAlt.str() );
 
 	if (upgradeTemplate)
