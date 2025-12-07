@@ -107,7 +107,7 @@ void TeamGeneric::_dictToScripts()
 		AsciiString scriptString;
 		AsciiString keyName;
 		keyName.format("%s%d", TheNameKeyGenerator->keyToName(TheKey_teamGenericScriptHook).str(), i);
-		scriptString = m_teamDict->getAsciiString(NAMEKEY(keyName), &exists);
+		scriptString = m_teamDict->getAsciiString(NAMEKEY(keyName.str()), &exists);
 
 		pText->ShowWindow(SW_SHOW);
 		pCombo->ShowWindow(SW_SHOW);
@@ -188,9 +188,9 @@ void TeamGeneric::_scriptsToDict()
 
 		int curSel = pCombo->GetCurSel();
 		if (curSel == CB_ERR || curSel == 0) {
-			if (m_teamDict->known(NAMEKEY(keyName), Dict::DICT_ASCIISTRING)) {
+			if (m_teamDict->known(NAMEKEY(keyName.str()), Dict::DICT_ASCIISTRING)) {
 				// remove it if we know it.
-				m_teamDict->remove(NAMEKEY(keyName));
+				m_teamDict->remove(NAMEKEY(keyName.str()));
 			}
 
 			continue;
@@ -200,7 +200,7 @@ void TeamGeneric::_scriptsToDict()
 		pCombo->GetLBText(curSel, cstr);
 
 		AsciiString scriptString = static_cast<LPCSTR>(cstr);
-		m_teamDict->setAsciiString(NAMEKEY(keyName), scriptString);
+		m_teamDict->setAsciiString(NAMEKEY(keyName.str()), scriptString);
 		++scriptNum;
 	}
 
@@ -208,8 +208,8 @@ void TeamGeneric::_scriptsToDict()
 		AsciiString keyName;
 		keyName.format("%s%d", TheNameKeyGenerator->keyToName(TheKey_teamGenericScriptHook).str(), scriptNum);
 
-		if (m_teamDict->known(NAMEKEY(keyName), Dict::DICT_ASCIISTRING))  {
-			m_teamDict->remove(NAMEKEY(keyName));
+		if (m_teamDict->known(NAMEKEY(keyName.str()), Dict::DICT_ASCIISTRING))  {
+			m_teamDict->remove(NAMEKEY(keyName.str()));
 		}
 	}
 }

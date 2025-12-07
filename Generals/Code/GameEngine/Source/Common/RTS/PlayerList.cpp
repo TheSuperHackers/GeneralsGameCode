@@ -186,14 +186,14 @@ void PlayerList::newGame()
 	for( i = 0; i < TheSidesList->getNumSides(); i++)
 	{
 		Dict *d = TheSidesList->getSideInfo(i)->getDict();
-		Player* p = findPlayerWithNameKey(NAMEKEY(d->getAsciiString(TheKey_playerName)));
+		Player* p = findPlayerWithNameKey(NAMEKEY(d->getAsciiString(TheKey_playerName).str()));
 
 		AsciiString tok;
 
 		AsciiString enemies = d->getAsciiString(TheKey_playerEnemies);
 		while (enemies.nextToken(&tok))
 		{
-			Player *p2 = findPlayerWithNameKey(NAMEKEY(tok));
+			Player *p2 = findPlayerWithNameKey(NAMEKEY(tok.str()));
 			if (p2)
 			{
 				p->setPlayerRelationship(p2, ENEMIES);
@@ -207,7 +207,7 @@ void PlayerList::newGame()
 		AsciiString allies = d->getAsciiString(TheKey_playerAllies);
 		while (allies.nextToken(&tok))
 		{
-			Player *p2 = findPlayerWithNameKey(NAMEKEY(tok));
+			Player *p2 = findPlayerWithNameKey(NAMEKEY(tok.str()));
 			if (p2)
 			{
 				p->setPlayerRelationship(p2, ALLIES);

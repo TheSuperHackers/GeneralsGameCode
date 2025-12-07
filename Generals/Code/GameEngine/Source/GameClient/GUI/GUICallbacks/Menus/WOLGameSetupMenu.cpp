@@ -1042,13 +1042,13 @@ void InitWOLGameGadgets( void )
 	{
 		AsciiString tmpString;
 		tmpString.format("GameSpyGameOptionsMenu.wnd:ComboBoxPlayer%d", i);
-		comboBoxPlayerID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		comboBoxPlayerID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		comboBoxPlayer[i] = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, comboBoxPlayerID[i] );
 		GadgetComboBoxReset(comboBoxPlayer[i]);
 		comboBoxPlayer[i]->winSetTooltipFunc(playerTooltip);
 
 		tmpString.format("GameSpyGameOptionsMenu.wnd:StaticTextPlayer%d", i);
-		staticTextPlayerID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		staticTextPlayerID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		staticTextPlayer[i] = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, staticTextPlayerID[i] );
 		staticTextPlayer[i]->winSetTooltipFunc(playerTooltip);
 		if (TheGameSpyInfo->amIHost())
@@ -1065,43 +1065,43 @@ void InitWOLGameGadgets( void )
 		}
 
 		tmpString.format("GameSpyGameOptionsMenu.wnd:ComboBoxColor%d", i);
-		comboBoxColorID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		comboBoxColorID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		comboBoxColor[i] = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, comboBoxColorID[i] );
 		DEBUG_ASSERTCRASH(comboBoxColor[i], ("Could not find the comboBoxColor[%d]",i ));
 		PopulateColorComboBox(i, comboBoxColor, theGameInfo);
 		GadgetComboBoxSetSelectedPos(comboBoxColor[i], 0);
 
 		tmpString.format("GameSpyGameOptionsMenu.wnd:ComboBoxPlayerTemplate%d", i);
-		comboBoxPlayerTemplateID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		comboBoxPlayerTemplateID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		comboBoxPlayerTemplate[i] = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, comboBoxPlayerTemplateID[i] );
 		DEBUG_ASSERTCRASH(comboBoxPlayerTemplate[i], ("Could not find the comboBoxPlayerTemplate[%d]",i ));
 		PopulatePlayerTemplateComboBox(i, comboBoxPlayerTemplate, theGameInfo, theGameInfo->getAllowObservers());
 
 		tmpString.format("GameSpyGameOptionsMenu.wnd:ComboBoxTeam%d", i);
-		comboBoxTeamID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		comboBoxTeamID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		comboBoxTeam[i] = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, comboBoxTeamID[i] );
 		DEBUG_ASSERTCRASH(comboBoxTeam[i], ("Could not find the comboBoxTeam[%d]",i ));
 		PopulateTeamComboBox(i, comboBoxTeam, theGameInfo);
 
 		tmpString.format("GameSpyGameOptionsMenu.wnd:ButtonAccept%d", i);
-		buttonAcceptID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		buttonAcceptID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		buttonAccept[i] = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, buttonAcceptID[i] );
 		DEBUG_ASSERTCRASH(buttonAccept[i], ("Could not find the buttonAccept[%d]",i ));
 		buttonAccept[i]->winSetTooltipFunc(gameAcceptTooltip);
 
 		tmpString.format("GameSpyGameOptionsMenu.wnd:GenericPing%d", i);
-		genericPingWindowID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		genericPingWindowID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		genericPingWindow[i] = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, genericPingWindowID[i] );
 		DEBUG_ASSERTCRASH(genericPingWindow[i], ("Could not find the genericPingWindow[%d]",i ));
 		genericPingWindow[i]->winSetTooltipFunc(pingTooltip);
 
 //		tmpString.format("GameSpyGameOptionsMenu.wnd:ButtonStartPosition%d", i);
-//		buttonStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+//		buttonStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 //		buttonStartPosition[i] = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, buttonStartPositionID[i] );
 //		DEBUG_ASSERTCRASH(buttonStartPosition[i], ("Could not find the ButtonStartPosition[%d]",i ));
 
 		tmpString.format("GameSpyGameOptionsMenu.wnd:ButtonMapStartPosition%d", i);
-		buttonMapStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		buttonMapStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		buttonMapStartPosition[i] = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, buttonMapStartPositionID[i] );
 		DEBUG_ASSERTCRASH(buttonMapStartPosition[i], ("Could not find the ButtonMapStartPosition[%d]",i ));
 

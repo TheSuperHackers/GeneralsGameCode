@@ -952,7 +952,7 @@ UpdateSleepTime ProductionUpdate::update( void )
 				for( Int i = 0; i < MAX_UPGRADE_CAMEO_UPGRADES; i++ )
 				{
 					AsciiString upgradeName = thing->getUpgradeCameoName( i );
-					const UpgradeTemplate *testUpgrade = TheUpgradeCenter->findUpgrade( upgradeName );
+					const UpgradeTemplate *testUpgrade = TheUpgradeCenter->findUpgrade( upgradeName.str() );
 					if( testUpgrade == upgrade )
 					{
 						//Our selected object has the upgrade
@@ -1329,7 +1329,7 @@ void ProductionUpdate::xfer( Xfer *xfer )
 			else
 			{
 
-				production->m_upgradeToResearch = TheUpgradeCenter->findUpgrade( name );
+				production->m_upgradeToResearch = TheUpgradeCenter->findUpgrade( name.str() );
 				if( production->m_upgradeToResearch == NULL )
 				{
 

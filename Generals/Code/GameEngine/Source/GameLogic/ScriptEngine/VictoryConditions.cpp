@@ -199,7 +199,7 @@ void VictoryConditions::update( void )
 			{
 				AsciiString pName;
 				pName.format("player%d", idx);
-				if (p->getPlayerNameKey() == NAMEKEY(pName))
+				if (p->getPlayerNameKey() == NAMEKEY(pName.str()))
 				{
 					GameSlot *slot = (TheGameInfo)?TheGameInfo->getSlot(idx):NULL;
 					if (slot && slot->isAI())

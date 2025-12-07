@@ -1134,7 +1134,7 @@ void MainMenuMediumScaleUpTransition::init( GameWindow *win )
 	AsciiString growWinName;
 	growWinName = m_win->winGetInstanceData()->m_decoratedNameString;
 	growWinName.concat("Medium");
-	m_growWin = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(growWinName));
+	m_growWin = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(growWinName.str()));
 	if(!m_growWin)
 		return;
 
@@ -1253,7 +1253,7 @@ void MainMenuSmallScaleDownTransition::init( GameWindow *win )
 	AsciiString growWinName;
 	growWinName = m_win->winGetInstanceData()->m_decoratedNameString;
 	growWinName.concat("Small");
-	m_growWin = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(growWinName));
+	m_growWin = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(growWinName.str()));
 	if(!m_growWin)
 		return;
 

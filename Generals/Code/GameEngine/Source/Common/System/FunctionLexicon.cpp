@@ -389,7 +389,7 @@ void FunctionLexicon::loadTable( TableEntry *table,
 	{
 
 		// assign key from name key based on name provided in table
-		entry->key = TheNameKeyGenerator->nameToKey( AsciiString(entry->name) );
+		entry->key = TheNameKeyGenerator->nameToKey( entry->name );
 
 		// next table entry please
 		entry++;

@@ -648,7 +648,7 @@ static Bool parseName( const char *token, WinInstanceData *instData,
 	// given the name assign a window ID from the
 	assert( TheNameKeyGenerator );
 	if( TheNameKeyGenerator )
-		instData->m_id = (Int)TheNameKeyGenerator->nameToKey( instData->m_decoratedNameString );
+		instData->m_id = (Int)TheNameKeyGenerator->nameToKey( instData->m_decoratedNameString.str() );
 
 	return TRUE;
 
@@ -702,7 +702,7 @@ static Bool parseSystemCallback( const char *token, WinInstanceData *instData,
 	// save a pointer of the function address
 	DEBUG_ASSERTCRASH( TheNameKeyGenerator && TheFunctionLexicon, ("Invalid singletons") );
 	theSystemString = c;
-	NameKeyType key = TheNameKeyGenerator->nameToKey( theSystemString );
+	NameKeyType key = TheNameKeyGenerator->nameToKey( theSystemString.str() );
 	systemFunc = TheFunctionLexicon->gameWinSystemFunc( key );
 
 	return TRUE;
@@ -729,7 +729,7 @@ static Bool parseInputCallback( const char *token, WinInstanceData *instData,
 	// save a pointer of the function address
 	DEBUG_ASSERTCRASH( TheNameKeyGenerator && TheFunctionLexicon, ("Invalid singletons") );
 	theInputString = c;
-	NameKeyType key = TheNameKeyGenerator->nameToKey( theInputString );
+	NameKeyType key = TheNameKeyGenerator->nameToKey( theInputString.str() );
 	inputFunc = TheFunctionLexicon->gameWinInputFunc( key );
 
 	return TRUE;
@@ -756,7 +756,7 @@ static Bool parseTooltipCallback( const char *token, WinInstanceData *instData,
 	// save a pointer of the function address
 	DEBUG_ASSERTCRASH( TheNameKeyGenerator && TheFunctionLexicon, ("Invalid singletons") );
 	theTooltipString = c;
-	NameKeyType key = TheNameKeyGenerator->nameToKey( theTooltipString );
+	NameKeyType key = TheNameKeyGenerator->nameToKey( theTooltipString.str() );
 	tooltipFunc = TheFunctionLexicon->gameWinTooltipFunc( key );
 
 	return TRUE;
@@ -783,7 +783,7 @@ static Bool parseDrawCallback( const char *token, WinInstanceData *instData,
 	// save a pointer of the function address
 	DEBUG_ASSERTCRASH( TheNameKeyGenerator && TheFunctionLexicon, ("Invalid singletons") );
 	theDrawString = c;
-	NameKeyType key = TheNameKeyGenerator->nameToKey( theDrawString );
+	NameKeyType key = TheNameKeyGenerator->nameToKey( theDrawString.str() );
 	drawFunc = TheFunctionLexicon->gameWinDrawFunc( key );
 
 	return TRUE;
@@ -1315,7 +1315,7 @@ static Bool parseDrawData( const char *token, WinInstanceData *instData,
 
 		c = strtok( NULL, seps );  // value
 		if( strcmp( c, "NoImage" ) )
-			drawData->image = TheMappedImageCollection->findImageByName( AsciiString( c ) );
+			drawData->image = TheMappedImageCollection->findImageByName( c );
 		else
 			drawData->image = NULL;
 		// COLOR: R G B A
@@ -1644,7 +1644,7 @@ static GameWindow *createGadget( char *type,
 			*c = 0;  // terminate after filename (format is filename:gadgetname)
 		assert( TheNameKeyGenerator );
 		if( TheNameKeyGenerator )
-			rData->screen = (Int)(TheNameKeyGenerator->nameToKey( AsciiString(filename) ));
+			rData->screen = (Int)(TheNameKeyGenerator->nameToKey( filename ));
 
     instData->m_style |= GWS_RADIO_BUTTON;
     window = TheWindowManager->gogoGadgetRadioButton( parent, status, x, y,
@@ -2510,7 +2510,7 @@ Bool parseInit( const char *token, char *buffer, UnsignedInt version, WindowLayo
 
 	// translate string to function address
 	info->initNameString = c;
-	info->init = TheFunctionLexicon->winLayoutInitFunc( TheNameKeyGenerator->nameToKey( info->initNameString ) );
+	info->init = TheFunctionLexicon->winLayoutInitFunc( TheNameKeyGenerator->nameToKey( info->initNameString.str() ) );
 
 	return TRUE;  // success
 
@@ -2529,7 +2529,7 @@ Bool parseUpdate( const char *token, char *buffer, UnsignedInt version, WindowLa
 
 	// translate string to function address
 	info->updateNameString = c;
-	info->update = TheFunctionLexicon->winLayoutUpdateFunc( TheNameKeyGenerator->nameToKey( info->updateNameString ) );
+	info->update = TheFunctionLexicon->winLayoutUpdateFunc( TheNameKeyGenerator->nameToKey( info->updateNameString.str() ) );
 
 	return TRUE;  // success
 
@@ -2548,7 +2548,7 @@ Bool parseShutdown( const char *token, char *buffer, UnsignedInt version, Window
 
 	// translate string to function address
 	info->shutdownNameString = c;
-	info->shutdown = TheFunctionLexicon->winLayoutShutdownFunc( TheNameKeyGenerator->nameToKey( info->shutdownNameString ) );
+	info->shutdown = TheFunctionLexicon->winLayoutShutdownFunc( TheNameKeyGenerator->nameToKey( info->shutdownNameString.str() ) );
 
 	return TRUE;  // success
 

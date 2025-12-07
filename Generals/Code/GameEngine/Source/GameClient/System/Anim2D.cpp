@@ -207,7 +207,7 @@ void Anim2DTemplate::parseImage( INI *ini, void *instance, void *store, const vo
 		imageName.format( "%s%03d", imageBaseName.str(), i );
 
 		// search for this image
-		image = TheMappedImageCollection->findImageByName( imageName );
+		image = TheMappedImageCollection->findImageByName( imageName.str() );
 
 		// sanity
 		if( image == NULL )

@@ -192,7 +192,7 @@ void UpgradeTemplate::friend_makeVeterancyUpgrade(VeterancyLevel v)
 {
 	m_type = UPGRADE_TYPE_OBJECT;	// veterancy "upgrades" are always per-object, not per-player
 	m_name = getVetUpgradeName(v);
-	m_nameKey = TheNameKeyGenerator->nameToKey( m_name );
+	m_nameKey = TheNameKeyGenerator->nameToKey( m_name.str() );
 	m_displayNameLabel.clear();	// should never be displayed
 	m_buildTime = 0.0f;
 	m_cost = 0.0f;
@@ -206,7 +206,7 @@ void UpgradeTemplate::cacheButtonImage()
 {
 	if( m_buttonImageName.isNotEmpty() )
 	{
-		m_buttonImage = TheMappedImageCollection->findImageByName( m_buttonImageName );
+		m_buttonImage = TheMappedImageCollection->findImageByName( m_buttonImageName.str() );
 		DEBUG_ASSERTCRASH( m_buttonImage, ("UpgradeTemplate: %s is looking for button image %s but can't find it. Skipping...", m_name.str(), m_buttonImageName.str() ) );
 		m_buttonImageName.clear();	// we're done with this, so nuke it
 	}
@@ -297,7 +297,7 @@ void UpgradeCenter::reset( void )
 const UpgradeTemplate *UpgradeCenter::findVeterancyUpgrade( VeterancyLevel level ) const
 {
 	AsciiString tmp = getVetUpgradeName(level);
-	return findUpgrade(tmp);
+	return findUpgrade(tmp.str());
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -346,7 +346,7 @@ const UpgradeTemplate *UpgradeCenter::findUpgradeByKey( NameKeyType key ) const
 //-------------------------------------------------------------------------------------------------
 /** Find upgrade matching name */
 //-------------------------------------------------------------------------------------------------
-const UpgradeTemplate *UpgradeCenter::findUpgrade( const AsciiString& name ) const
+const UpgradeTemplate *UpgradeCenter::findUpgrade( const char* name ) const
 {
 
 	return findUpgradeByKey( TheNameKeyGenerator->nameToKey( name ) );
@@ -367,7 +367,7 @@ UpgradeTemplate *UpgradeCenter::newUpgrade( const AsciiString& name )
 
 	// assign name and starting data
 	newUpgrade->setUpgradeName( name );
-	newUpgrade->setUpgradeNameKey( TheNameKeyGenerator->nameToKey( name ) );
+	newUpgrade->setUpgradeNameKey( TheNameKeyGenerator->nameToKey( name.str() ) );
 
 	// Make a unique bitmask for this new template by keeping track of what bits have been assigned
 	// damn MSFT! proper ANSI syntax for a proper 64-bit constant is "1LL", but MSVC doesn't recognize it
@@ -472,8 +472,7 @@ std::vector<AsciiString> UpgradeCenter::getUpgradeNames( void ) const
 void UpgradeCenter::parseUpgradeDefinition( INI *ini )
 {
 	// read the name
-	const char* c = ini->getNextToken();
-	AsciiString name = c;
+	const char* name = ini->getNextToken();
 
 	// find existing item if present
 	UpgradeTemplate* upgrade = TheUpgradeCenter->findNonConstUpgradeByKey( NAMEKEY(name) );
@@ -486,7 +485,7 @@ void UpgradeCenter::parseUpgradeDefinition( INI *ini )
 	}
 
 	// sanity
-	DEBUG_ASSERTCRASH( upgrade, ("parseUpgradeDefinition: Unable to allocate upgrade '%s'", name.str()) );
+	DEBUG_ASSERTCRASH( upgrade, ("parseUpgradeDefinition: Unable to allocate upgrade '%s'", name) );
 
 	// parse the ini definition
 	ini->initFromINI( upgrade, upgrade->getFieldParse() );

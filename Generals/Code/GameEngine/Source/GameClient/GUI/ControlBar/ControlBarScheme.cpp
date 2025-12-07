@@ -978,7 +978,7 @@ void ControlBarSchemeManager::preloadAssets( TimeOfDay timeOfDay )
 				ControlBarSchemeImage *cbImage = *listIt;
 				if (cbImage)
 				{
-					const Image *image = TheMappedImageCollection->findImageByName( cbImage->m_name );
+					const Image *image = TheMappedImageCollection->findImageByName( cbImage->m_name.str() );
 					if (image)
 					{
 						TheDisplay->preloadTextureAssets(image->getFilename());

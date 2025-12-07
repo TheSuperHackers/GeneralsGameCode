@@ -1064,7 +1064,7 @@ void InitSkirmishGameGadgets( void )
 		tmpString.format("SkirmishGameOptionsMenu.wnd:ComboBoxPlayer%d", i);
 		if(i != 0)
     {
-      comboBoxPlayerID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+      comboBoxPlayerID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		  comboBoxPlayer[i] = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, comboBoxPlayerID[i] );
 		  GadgetComboBoxReset(comboBoxPlayer[i]);
 		  //GadgetComboBoxGetEditBox(comboBoxPlayer[i])->winSetTooltipFunc(playerTooltip);
@@ -1094,28 +1094,28 @@ void InitSkirmishGameGadgets( void )
 		}
 
 		tmpString.format("SkirmishGameOptionsMenu.wnd:ComboBoxColor%d", i);
-		comboBoxColorID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		comboBoxColorID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		comboBoxColor[i] = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, comboBoxColorID[i] );
 		DEBUG_ASSERTCRASH(comboBoxColor[i], ("Could not find the comboBoxColor[%d]",i ));
 
 		tmpString.format("SkirmishGameOptionsMenu.wnd:ComboBoxPlayerTemplate%d", i);
-		comboBoxPlayerTemplateID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		comboBoxPlayerTemplateID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		comboBoxPlayerTemplate[i] = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, comboBoxPlayerTemplateID[i] );
 		DEBUG_ASSERTCRASH(comboBoxPlayerTemplate[i], ("Could not find the comboBoxPlayerTemplate[%d]",i ));
 
 
 		tmpString.format("SkirmishGameOptionsMenu.wnd:ComboBoxTeam%d", i);
-		comboBoxTeamID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		comboBoxTeamID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		comboBoxTeam[i] = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, comboBoxTeamID[i] );
 		DEBUG_ASSERTCRASH(comboBoxTeam[i], ("Could not find the comboBoxTeam[%d]",i ));
 
 //		tmpString.format("SkirmishGameOptionsMenu.wnd:ButtonStartPosition%d", i);
-//		buttonStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+//		buttonStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 //		buttonStartPosition[i] = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, buttonStartPositionID[i] );
 //		DEBUG_ASSERTCRASH(buttonStartPosition[i], ("Could not find the ButtonStartPosition[%d]",i ));
 //
 		tmpString.format("SkirmishGameOptionsMenu.wnd:ButtonMapStartPosition%d", i);
-		buttonMapStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString );
+		buttonMapStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString.str() );
 		buttonMapStartPosition[i] = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, buttonMapStartPositionID[i] );
 		DEBUG_ASSERTCRASH(buttonMapStartPosition[i], ("Could not find the ButtonMapStartPosition[%d]",i ));
 	}

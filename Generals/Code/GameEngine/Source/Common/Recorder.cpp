@@ -1097,7 +1097,7 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 	AsciiString playerName;
 	playerName.format("player%d", localPlayerIndex);
 	const Player *p = ThePlayerList->getNthPlayer(playerIndex);
-	if (!p || (p->getPlayerNameKey() == NAMEKEY(playerName)))
+	if (!p || (p->getPlayerNameKey() == NAMEKEY(playerName.str())))
 		samePlayer = TRUE;
 	if (samePlayer || (localPlayerIndex < 0))
 	{

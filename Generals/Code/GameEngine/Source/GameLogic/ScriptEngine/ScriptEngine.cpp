@@ -5120,7 +5120,7 @@ Player *ScriptEngine::getPlayerFromAsciiString(const AsciiString& playerString)
 		return getSkirmishEnemyPlayer();
 	}
 	else {
-		NameKeyType key = NAMEKEY(playerString);
+		NameKeyType key = NAMEKEY(playerString.str());
 		Player *pPlayer = ThePlayerList->findPlayerWithNameKey(key);
 		if (pPlayer!=NULL) {
 			return pPlayer;

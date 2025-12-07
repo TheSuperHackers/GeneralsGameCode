@@ -3280,11 +3280,11 @@ void Object::updateObjValuesFromMapProperties(Dict* properties)
 	{
 		AsciiString keyName;
 		keyName.format("%s%d", TheNameKeyGenerator->keyToName(TheKey_objectGrantUpgrade).str(), upgradeNum);
-		valStr = properties->getAsciiString(NAMEKEY(keyName), &exists);
+		valStr = properties->getAsciiString(NAMEKEY(keyName.str()), &exists);
 
 		if (exists)
 		{
-			const UpgradeTemplate *ut = TheUpgradeCenter->findUpgrade(valStr);
+			const UpgradeTemplate *ut = TheUpgradeCenter->findUpgrade(valStr.str());
 			if (ut)
 				giveUpgrade(ut);
 		}
@@ -3803,7 +3803,7 @@ void Object::xfer( Xfer *xfer )
 
 			// read module name
 			xfer->xferAsciiString( &moduleIdentifier );
-			NameKeyType moduleIdentifierKey = TheNameKeyGenerator->nameToKey(moduleIdentifier);
+			NameKeyType moduleIdentifierKey = TheNameKeyGenerator->nameToKey(moduleIdentifier.str());
 
 			// find the module with this identifier in the module list
 			module = NULL;

@@ -1150,15 +1150,15 @@ void WOLBuddyOverlayRCMenuInit( WindowLayout *layout, void *userData )
 {
 	AsciiString controlName;
 	controlName.format("%s:ButtonAdd",layout->getFilename().str()+6);
-	buttonAddID =  TheNameKeyGenerator->nameToKey( controlName );
+	buttonAddID =  TheNameKeyGenerator->nameToKey( controlName.str() );
 	controlName.format("%s:ButtonDelete",layout->getFilename().str()+6);
-	buttonDeleteID =  TheNameKeyGenerator->nameToKey( controlName );
+	buttonDeleteID =  TheNameKeyGenerator->nameToKey( controlName.str() );
 	controlName.format("%s:ButtonPlay",layout->getFilename().str()+6);
-	buttonPlayID =  TheNameKeyGenerator->nameToKey( controlName );
+	buttonPlayID =  TheNameKeyGenerator->nameToKey( controlName.str() );
 	controlName.format("%s:ButtonIgnore",layout->getFilename().str()+6);
-	buttonIgnoreID =  TheNameKeyGenerator->nameToKey( controlName );
+	buttonIgnoreID =  TheNameKeyGenerator->nameToKey( controlName.str() );
 	controlName.format("%s:ButtonStats",layout->getFilename().str()+6);
-	buttonStatsID =  TheNameKeyGenerator->nameToKey( controlName );
+	buttonStatsID =  TheNameKeyGenerator->nameToKey( controlName.str() );
 }
 static void closeRightClickMenu(GameWindow *win)
 {
@@ -1391,7 +1391,7 @@ void setUnignoreText( WindowLayout *layout, AsciiString nick, GPProfile id)
 {
 	AsciiString controlName;
 	controlName.format("%s:ButtonIgnore",layout->getFilename().str()+6);
-	NameKeyType ID =  TheNameKeyGenerator->nameToKey( controlName );
+	NameKeyType ID =  TheNameKeyGenerator->nameToKey( controlName.str() );
 	GameWindow *win = TheWindowManager->winGetWindowFromId(layout->getFirstWindow(), ID);
 	if(win)
 	{

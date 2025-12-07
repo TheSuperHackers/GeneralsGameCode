@@ -872,7 +872,7 @@ void INI::parseMappedImage( INI *ini, void * /*instance*/, void *store, const vo
 	if( TheMappedImageCollection )
 	{
 		typedef const Image* ConstImagePtr;
-		*(ConstImagePtr*)store = TheMappedImageCollection->findImageByName( AsciiString( token ) );
+		*(ConstImagePtr*)store = TheMappedImageCollection->findImageByName( token );
 	}
 
 	//KM: If we are in the worldbuilder, we want to parse commandbuttons for informational purposes,
@@ -1377,7 +1377,7 @@ void INI::parseUpgradeTemplate( INI* ini, void * /*instance*/, void *store, cons
 		throw ERROR_BUG;
 	}
 
-	const UpgradeTemplate *uu = TheUpgradeCenter->findUpgrade( AsciiString( token ) );
+	const UpgradeTemplate *uu = TheUpgradeCenter->findUpgrade( token );
 	DEBUG_ASSERTCRASH( uu || stricmp( token, "None" ) == 0, ("Upgrade %s not found!",token) );
 
 	typedef const UpgradeTemplate* ConstUpgradeTemplatePtr;

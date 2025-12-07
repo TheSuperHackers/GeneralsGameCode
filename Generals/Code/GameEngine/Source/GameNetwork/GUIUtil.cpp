@@ -131,7 +131,7 @@ void ShowUnderlyingGUIElements( Bool show, const char *layoutFilename, const cha
 {
 	AsciiString parentNameStr;
 	parentNameStr.format("%s:%s", layoutFilename, parentName);
-	NameKeyType parentID = NAMEKEY(parentNameStr);
+	NameKeyType parentID = NAMEKEY(parentNameStr.str());
 	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
 	if (!parent)
 	{
@@ -150,7 +150,7 @@ void ShowUnderlyingGUIElements( Bool show, const char *layoutFilename, const cha
 	{
 		AsciiString gadgetName;
 		gadgetName.format("%s:%s", layoutFilename, *text);
-		win	= TheWindowManager->winGetWindowFromId( parent, NAMEKEY(gadgetName) );
+		win	= TheWindowManager->winGetWindowFromId( parent, NAMEKEY(gadgetName.str()) );
 		//DEBUG_ASSERTCRASH(win, ("Cannot find %s to show/hide it", gadgetName.str()));
 		if (win)
 		{
@@ -166,7 +166,7 @@ void ShowUnderlyingGUIElements( Bool show, const char *layoutFilename, const cha
 		{
 			AsciiString gadgetName;
 			gadgetName.format("%s:%s%d", layoutFilename, *text, player);
-			win	= TheWindowManager->winGetWindowFromId( parent, NAMEKEY(gadgetName) );
+			win	= TheWindowManager->winGetWindowFromId( parent, NAMEKEY(gadgetName.str()) );
 			//DEBUG_ASSERTCRASH(win, ("Cannot find %s to show/hide it", gadgetName.str()));
 			if (win)
 			{

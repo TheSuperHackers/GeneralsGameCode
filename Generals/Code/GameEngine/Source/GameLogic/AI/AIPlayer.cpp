@@ -1637,7 +1637,7 @@ void AIPlayer::buildSpecificAIBuilding(const AsciiString &thingName)
 // ------------------------------------------------------------------------------------------------
 void AIPlayer::buildUpgrade(const AsciiString &upgrade)
 {
-	const UpgradeTemplate *curUpgrade = TheUpgradeCenter->findUpgrade(upgrade);
+	const UpgradeTemplate *curUpgrade = TheUpgradeCenter->findUpgrade(upgrade.str());
 	if (curUpgrade==NULL) {
 		AsciiString msg = "Upgrade ";
 		msg.concat(upgrade);

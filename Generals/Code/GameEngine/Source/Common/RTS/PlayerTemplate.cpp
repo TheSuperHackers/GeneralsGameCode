@@ -193,43 +193,43 @@ PlayerTemplate::PlayerTemplate() :
 //-----------------------------------------------------------------------------
 const Image *PlayerTemplate::getHeadWaterMarkImage( void ) const
 {
-	return TheMappedImageCollection->findImageByName(m_headWaterMark);
+	return TheMappedImageCollection->findImageByName(m_headWaterMark.str());
 }
 
 //-----------------------------------------------------------------------------
 const Image *PlayerTemplate::getFlagWaterMarkImage( void ) const
 {
-	return TheMappedImageCollection->findImageByName(m_flagWaterMark);
+	return TheMappedImageCollection->findImageByName(m_flagWaterMark.str());
 }
 
 //-----------------------------------------------------------------------------
 const Image *PlayerTemplate::getSideIconImage( void ) const
 {
-	return TheMappedImageCollection->findImageByName(m_sideIconImage);
+	return TheMappedImageCollection->findImageByName(m_sideIconImage.str());
 }
 
 //-----------------------------------------------------------------------------
 const Image *PlayerTemplate::getEnabledImage( void ) const
 {
-	return TheMappedImageCollection->findImageByName(m_enabledImage);
+	return TheMappedImageCollection->findImageByName(m_enabledImage.str());
 }
 
 //-----------------------------------------------------------------------------
 //const Image *PlayerTemplate::getDisabledImage( void ) const
 //{
-//	return TheMappedImageCollection->findImageByName(m_disabledImage);
+//	return TheMappedImageCollection->findImageByName(m_disabledImage.str());
 //}
 
 //-----------------------------------------------------------------------------
 //const Image *PlayerTemplate::getHiliteImage( void ) const
 //{
-//	return TheMappedImageCollection->findImageByName(m_hiliteImage);
+//	return TheMappedImageCollection->findImageByName(m_hiliteImage.str());
 //}
 
 //-----------------------------------------------------------------------------
 //const Image *PlayerTemplate::getPushedImage( void ) const
 //{
-//	return TheMappedImageCollection->findImageByName(m_pushedImage);
+//	return TheMappedImageCollection->findImageByName(m_pushedImage.str());
 //}
 
 //-----------------------------------------------------------------------------

@@ -2495,7 +2495,7 @@ void CommandButton::cacheButtonImage()
 	}
 	if( m_buttonImageName.isNotEmpty() )
 	{
-		m_buttonImage = TheMappedImageCollection->findImageByName( m_buttonImageName );
+		m_buttonImage = TheMappedImageCollection->findImageByName( m_buttonImageName.str() );
 		DEBUG_ASSERTCRASH( m_buttonImage, ("CommandButton: %s is looking for button image %s but can't find it. Skipping...", m_name.str(), m_buttonImageName.str() ) );
 		m_buttonImageName.clear();	// we're done with this, so nuke it
 	}
@@ -2520,7 +2520,7 @@ void ControlBar::postProcessCommands( void )
 void ControlBar::setControlCommand( const AsciiString& buttonWindowName, GameWindow *parent,
 																		const CommandButton *commandButton )
 {
-	UnsignedInt winID = TheNameKeyGenerator->nameToKey( buttonWindowName );
+	UnsignedInt winID = TheNameKeyGenerator->nameToKey( buttonWindowName.str() );
 	GameWindow *win = TheWindowManager->winGetWindowFromId( parent, winID );
 
 	if( win == NULL )
@@ -2628,7 +2628,7 @@ void ControlBar::setPortraitByObject( Object *obj )
 				m_rightHUDUpgradeCameos[i]->winHide(TRUE);
 				continue;
 			}
-			const UpgradeTemplate *ut =  TheUpgradeCenter->findUpgrade(upgradeName);
+			const UpgradeTemplate *ut =  TheUpgradeCenter->findUpgrade(upgradeName.str());
 			if(!ut)
 			{
 				m_rightHUDUpgradeCameos[i]->winHide(TRUE);
@@ -2850,7 +2850,7 @@ void ControlBar::updateBuildQueueDisabledImages( const Image *image )
 		{
 
 			buttonName.format( "ControlBar.wnd:ButtonQueue%02d", i + 1 );
-			buildQueueIDs[ i ] = TheNameKeyGenerator->nameToKey( buttonName );
+			buildQueueIDs[ i ] = TheNameKeyGenerator->nameToKey( buttonName.str() );
 
 		}
 
@@ -3210,7 +3210,7 @@ void ControlBar::initSpecialPowershortcutBar( Player *player)
 
 	tempName = layoutName;
 	tempName.concat(":GenPowersShortcutBarParent");
-	NameKeyType id = TheNameKeyGenerator->nameToKey( tempName );
+	NameKeyType id = TheNameKeyGenerator->nameToKey( tempName.str() );
 	m_specialPowerShortcutParent = TheWindowManager->winGetWindowFromId( NULL, id );//m_scienceLayout->getFirstWindow();
 
 	tempName = layoutName;

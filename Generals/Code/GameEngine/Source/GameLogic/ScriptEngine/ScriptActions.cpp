@@ -4368,7 +4368,7 @@ void ScriptActions::doTeamRemoveOverrideRelationToTeam(const AsciiString& teamNa
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doPlayerSetOverrideRelationToTeam(const AsciiString& playerName, const AsciiString& otherTeam, Int relation)
 {
-	Player *thePlayer = ThePlayerList->findPlayerWithNameKey(NAMEKEY(playerName));
+	Player *thePlayer = ThePlayerList->findPlayerWithNameKey(NAMEKEY(playerName.str()));
 	Team *theOtherTeam = TheScriptEngine->getTeamNamed( otherTeam );
 	if (thePlayer && theOtherTeam) {
 		thePlayer->setTeamRelationship(theOtherTeam, (Relationship)relation);
@@ -4380,7 +4380,7 @@ void ScriptActions::doPlayerSetOverrideRelationToTeam(const AsciiString& playerN
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doPlayerRemoveOverrideRelationToTeam(const AsciiString& playerName, const AsciiString& otherTeam)
 {
-	Player *thePlayer = ThePlayerList->findPlayerWithNameKey(NAMEKEY(playerName));
+	Player *thePlayer = ThePlayerList->findPlayerWithNameKey(NAMEKEY(playerName.str()));
 	Team *theOtherTeam = TheScriptEngine->getTeamNamed( otherTeam );
 	if (thePlayer && theOtherTeam) {
 		thePlayer->removeTeamRelationship(theOtherTeam);
@@ -4393,7 +4393,7 @@ void ScriptActions::doPlayerRemoveOverrideRelationToTeam(const AsciiString& play
 void ScriptActions::doTeamSetOverrideRelationToPlayer(const AsciiString& teamName, const AsciiString& otherPlayer, Int relation)
 {
 	Team *theTeam = TheScriptEngine->getTeamNamed( teamName );
-	Player *theOtherPlayer = ThePlayerList->findPlayerWithNameKey(NAMEKEY(otherPlayer));
+	Player *theOtherPlayer = ThePlayerList->findPlayerWithNameKey(NAMEKEY(otherPlayer.str()));
 	if (theTeam && theOtherPlayer) {
 		theTeam->setOverridePlayerRelationship(theOtherPlayer->getPlayerIndex(), (Relationship)relation);
 	}
@@ -4405,7 +4405,7 @@ void ScriptActions::doTeamSetOverrideRelationToPlayer(const AsciiString& teamNam
 void ScriptActions::doTeamRemoveOverrideRelationToPlayer(const AsciiString& teamName, const AsciiString& otherPlayer)
 {
 	Team *theTeam = TheScriptEngine->getTeamNamed( teamName );
-	Player *theOtherPlayer = ThePlayerList->findPlayerWithNameKey(NAMEKEY(otherPlayer));
+	Player *theOtherPlayer = ThePlayerList->findPlayerWithNameKey(NAMEKEY(otherPlayer.str()));
 	if (theTeam && theOtherPlayer) {
 		theTeam->removeOverridePlayerRelationship(theOtherPlayer->getPlayerIndex());
 	}
@@ -5005,7 +5005,7 @@ void ScriptActions::doUnitReceiveUpgrade( const AsciiString& unitName, const Asc
 		return;
 	}
 
-	const UpgradeTemplate *templ = TheUpgradeCenter->findUpgrade(upgradeName);
+	const UpgradeTemplate *templ = TheUpgradeCenter->findUpgrade(upgradeName.str());
 	if (!templ) {
 		return;
 	}

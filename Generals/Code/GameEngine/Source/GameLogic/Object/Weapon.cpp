@@ -1477,12 +1477,12 @@ void WeaponStore::createAndFireTempWeapon(const WeaponTemplate* wt, const Object
 }
 
 //-------------------------------------------------------------------------------------------------
-const WeaponTemplate *WeaponStore::findWeaponTemplate( AsciiString name ) const
+const WeaponTemplate *WeaponStore::findWeaponTemplate( const char* name ) const
 {
-	if (stricmp(name.str(), "None") == 0)
+	if (stricmp(name, "None") == 0)
 		return NULL;
 	const WeaponTemplate * wt = findWeaponTemplatePrivate( TheNameKeyGenerator->nameToKey( name ) );
-	DEBUG_ASSERTCRASH(wt != NULL, ("Weapon %s not found!",name.str()));
+	DEBUG_ASSERTCRASH(wt != NULL, ("Weapon %s not found!",name));
 	return wt;
 }
 
@@ -1509,7 +1509,7 @@ WeaponTemplate *WeaponStore::newWeaponTemplate(AsciiString name)
 	// allocate a new weapon
 	WeaponTemplate *wt = newInstance(WeaponTemplate);
 	wt->m_name = name;
-	wt->m_nameKey = TheNameKeyGenerator->nameToKey( name );
+	wt->m_nameKey = TheNameKeyGenerator->nameToKey( name.str() );
 	m_weaponTemplateVector.push_back(wt);
 
 	return wt;
@@ -1627,7 +1627,7 @@ void WeaponStore::postProcessLoad()
 	name.set(c);
 
 	// find existing item if present
-	WeaponTemplate *weapon = TheWeaponStore->findWeaponTemplatePrivate( TheNameKeyGenerator->nameToKey( name ) );
+	WeaponTemplate *weapon = TheWeaponStore->findWeaponTemplatePrivate( TheNameKeyGenerator->nameToKey( name.str() ) );
 	if (weapon)
 	{
 		if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
@@ -3213,7 +3213,7 @@ void Weapon::xfer( Xfer *xfer )
 		xfer->xferAsciiString(&tmplName);
 		if (xfer->getXferMode() == XFER_LOAD)
 		{
-			m_template = TheWeaponStore->findWeaponTemplate(tmplName);
+			m_template = TheWeaponStore->findWeaponTemplate(tmplName.str());
 			if (m_template == NULL)
 				throw INI_INVALID_DATA;
 		}
