@@ -108,6 +108,8 @@ extern Bool outOfWeaponRangeObject( State *thisState, void* userData );
 extern Bool outOfWeaponRangePosition( State *thisState, void* userData );
 extern Bool wantToSquishTarget( State *thisState, void* userData );
 
+#include "Utility/CppMacros.h"
+
 //-----------------------------------------------------------------------------------------------------------
 /**
   The AI state machine.  This is used by AIUpdate to implement all of the
@@ -138,7 +140,7 @@ public:
 	virtual StateReturnType setState( StateID newStateID );
 
 	/// @todo Rethink state parameter passing. Continuing in this fashion will have a pile of params in the machine (MSB)
-	void setGoalPath( const std::vector<Coord3D>* path );
+	void setGoalPath( std::vector<Coord3D>* path );
 	void addToGoalPath( const Coord3D *pathPoint );
 	const Coord3D *getGoalPathPosition( Int i ) const;		///< return path position at index "i"
 	Int getGoalPathSize() const { return m_goalPath.size(); }

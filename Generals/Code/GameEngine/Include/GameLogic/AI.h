@@ -407,7 +407,7 @@ struct AICommandParms
   Object*									m_obj;
   Object*									m_otherObj;
   const Team*							m_team;
-	std::vector<Coord3D>		m_coords;
+	mutable std::vector<Coord3D>		m_coords;
   const Waypoint*         m_waypoint;
   const PolygonTrigger*   m_polygon;
   Int											m_intValue;       /// misc usage
@@ -536,18 +536,18 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	inline void aiFollowExitProductionPath( const std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource )
+	inline void aiFollowExitProductionPath( std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_FOLLOW_EXITPRODUCTION_PATH, cmdSource);
-		parms.m_coords = *path;
+		move_or_swap(parms.m_coords, *path);
 		parms.m_obj = ignoreObject;
 		aiDoCommand(&parms);
 	}
 
-	inline void aiFollowPath( const std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource )
+	inline void aiFollowPath( std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_FOLLOW_PATH, cmdSource);
-		parms.m_coords = *path;
+		move_or_swap(parms.m_coords, *path);
 		parms.m_obj = ignoreObject;
 		aiDoCommand(&parms);
 	}
