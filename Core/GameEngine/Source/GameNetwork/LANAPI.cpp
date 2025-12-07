@@ -1137,14 +1137,23 @@ LANGameInfo * LANAPI::LookupGameByListOffset( Int offset )
 
 LANGameInfo * LANAPI::LookupGameByHost( UnsignedInt hostIP )
 {
-	LANGameInfo* theGame = m_games;
+	LANGameInfo *latestGame = m_games;
+	LANGameInfo *theGame = m_games;
 
-	while (theGame && theGame->getHostIP() != hostIP)
+	// search through games to find the last game from the host in case there are multiple
+	while (theGame)
 	{
+		if (theGame->getHostIP() == hostIP && theGame->getLastHeard() > latestGame->getLastHeard())
+			latestGame = theGame;
+
 		theGame = theGame->getNext();
 	}
 
-	return theGame; // NULL means we didn't find anything.
+	// sanity check to verify if latest game actually exists and belongs to the host
+	if (latestGame && latestGame->getHostIP() == hostIP)
+		return latestGame;
+
+	return NULL;
 }
 
 void LANAPI::removeGame( LANGameInfo *game )
