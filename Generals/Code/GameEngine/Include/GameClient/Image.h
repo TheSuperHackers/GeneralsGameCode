@@ -128,7 +128,7 @@ public:
 
 	void load( Int textureSize );												 ///< load images
 
-	const Image *findImageByName( const AsciiString& name );					 ///< find image based on name
+	const Image *findImageByName( const AsciiString& name ) const; ///< find image based on name
 
   /// adds the given image to the collection, transfers ownership to this object
   void addImage(Image *image);

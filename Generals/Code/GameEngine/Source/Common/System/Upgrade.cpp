@@ -292,7 +292,7 @@ void UpgradeCenter::reset( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Find upgrade matching name key */
+/** Find upgrade by veterancy level */
 //-------------------------------------------------------------------------------------------------
 const UpgradeTemplate *UpgradeCenter::findVeterancyUpgrade( VeterancyLevel level ) const
 {
@@ -301,7 +301,7 @@ const UpgradeTemplate *UpgradeCenter::findVeterancyUpgrade( VeterancyLevel level
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Find upgrade matching name key */
+/** Find upgrade by name key */
 //-------------------------------------------------------------------------------------------------
 UpgradeTemplate *UpgradeCenter::findNonConstUpgradeByKey( NameKeyType key )
 {
@@ -328,7 +328,7 @@ UpgradeTemplate *UpgradeCenter::firstUpgradeTemplate( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Find upgrade matching name key */
+/** Find upgrade by name key */
 //-------------------------------------------------------------------------------------------------
 const UpgradeTemplate *UpgradeCenter::findUpgradeByKey( NameKeyType key ) const
 {
@@ -344,13 +344,11 @@ const UpgradeTemplate *UpgradeCenter::findUpgradeByKey( NameKeyType key ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Find upgrade matching name */
+/** Find upgrade by name */
 //-------------------------------------------------------------------------------------------------
 const UpgradeTemplate *UpgradeCenter::findUpgrade( const AsciiString& name ) const
 {
-
 	return findUpgradeByKey( TheNameKeyGenerator->nameToKey( name ) );
-
 }
 
 //-------------------------------------------------------------------------------------------------
