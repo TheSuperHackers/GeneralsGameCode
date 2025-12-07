@@ -87,7 +87,15 @@ PoisonedBehavior::~PoisonedBehavior( void )
 void PoisonedBehavior::onDamage( DamageInfo *damageInfo )
 {
 	if( damageInfo->in.m_damageType == DAMAGE_POISON )
+	{
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix bobtista 11/17/2025 Ignore damage with INVALID_ID source to prevent infinite loop from DoT
+		if( damageInfo->in.m_sourceID != INVALID_ID )
+			startPoisonedEffects( damageInfo );
+#else
 		startPoisonedEffects( damageInfo );
+#endif
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -118,8 +126,14 @@ UpdateSleepTime PoisonedBehavior::update()
 		// If it is time to do damage, then do it and reset the damage timer
 		DamageInfo damage;
 		damage.in.m_amount = m_poisonDamageAmount;
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix bobtista 11/17/2025 Use INVALID_ID to prevent infinite loop while allowing poison resistance to work
+		damage.in.m_sourceID = INVALID_ID;
+		damage.in.m_damageType = DAMAGE_POISON;
+#else
 		damage.in.m_sourceID = m_poisonSource;
 		damage.in.m_damageType = DAMAGE_UNRESISTABLE; // Not poison, as that will infect us again
+#endif
 		damage.in.m_deathType = m_deathType;
 		getObject()->attemptDamage( &damage );
 
