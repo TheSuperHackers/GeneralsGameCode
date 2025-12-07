@@ -215,8 +215,8 @@ HWND InitCheckBoxPropertiesDialog( GameWindow *window )
 												 (LPCTSTR)CHECK_BOX_PROPERTIES_DIALOG,
 												 TheEditor->getWindowHandle(),
 												 (DLGPROC)checkBoxPropertiesCallback );
-	if( dialog == NULL )
-		return NULL;
+	if( dialog == nullptr )
+		return nullptr;
 
 	// do the common initialization
 	CommonDialogInitialize( window, dialog );

@@ -117,11 +117,11 @@ void W3DGameClient::reset( void )
 Drawable *W3DGameClient::friend_createDrawable( const ThingTemplate *tmplate,
 																								DrawableStatusBits statusBits )
 {
-	Drawable *draw = NULL;
+	Drawable *draw = nullptr;
 
 	// sanity
-	if( tmplate == NULL )
-		return NULL;
+	if( tmplate == nullptr )
+		return nullptr;
 
 	draw = newInstance(Drawable)( tmplate, statusBits );
 

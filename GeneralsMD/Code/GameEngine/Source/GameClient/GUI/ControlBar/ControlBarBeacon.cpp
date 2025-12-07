@@ -51,9 +51,9 @@ void ControlBar::populateBeacon( Object *beacon )
 	static NameKeyType staticTextID = NAMEKEY("ControlBar.wnd:StaticTextBeaconLabel");
 	static NameKeyType clearButtonID = NAMEKEY("ControlBar.wnd:ButtonClearBeaconText");
 
-	GameWindow *textEntryWin = TheWindowManager->winGetWindowFromId(NULL, textID);
-	GameWindow *staticTextWin = TheWindowManager->winGetWindowFromId(NULL, staticTextID);
-	GameWindow *buttonWin = TheWindowManager->winGetWindowFromId(NULL, clearButtonID);
+	GameWindow *textEntryWin = TheWindowManager->winGetWindowFromId(nullptr, textID);
+	GameWindow *staticTextWin = TheWindowManager->winGetWindowFromId(nullptr, staticTextID);
+	GameWindow *buttonWin = TheWindowManager->winGetWindowFromId(nullptr, clearButtonID);
 
 	if (beacon->isLocallyControlled())
 	{

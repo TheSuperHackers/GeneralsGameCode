@@ -40,7 +40,7 @@
 TileTool::TileTool(void) :
 	Tool(ID_TILE_TOOL, IDC_TILE_CURSOR)
 {
-	m_htMapEditCopy = NULL;
+	m_htMapEditCopy = nullptr;
 }
 
 /// Destructor

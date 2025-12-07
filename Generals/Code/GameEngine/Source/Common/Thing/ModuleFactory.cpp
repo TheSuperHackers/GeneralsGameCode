@@ -254,7 +254,7 @@
 #include "GameClient/Module/BeaconClientUpdate.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-ModuleFactory *TheModuleFactory = NULL;  ///< the module factory singleton
+ModuleFactory *TheModuleFactory = nullptr;  ///< the module factory singleton
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
@@ -525,7 +525,7 @@ ModuleData* ModuleFactory::newModuleDataFromINI(INI* ini, const AsciiString& nam
 																								const AsciiString& moduleTag)
 {
 	if (name.isEmpty())
-		return NULL;
+		return nullptr;
 
 	const ModuleTemplate* moduleTemplate = findModuleTemplate(name, type);
 	if (moduleTemplate)
@@ -536,7 +536,7 @@ ModuleData* ModuleFactory::newModuleDataFromINI(INI* ini, const AsciiString& nam
 		return md;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
@@ -559,7 +559,7 @@ const ModuleFactory::ModuleTemplate* ModuleFactory::findModuleTemplate(const Asc
   if (it == m_moduleTemplateMap.end())
 	{
 		DEBUG_CRASH(( "Module name '%s' not found", name.str() ));
-		return NULL;
+		return nullptr;
 	}
 	else
 	{
@@ -576,7 +576,7 @@ Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const M
 	if( name.isEmpty() )
 	{
 		DEBUG_CRASH(("attempting to create module with empty name"));
-		return NULL;
+		return nullptr;
 	}
 	const ModuleTemplate* mt = findModuleTemplate(name, type);
 	if (mt)
@@ -624,7 +624,7 @@ Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const M
 		return mod;
 	}
 
-	return NULL;
+	return nullptr;
 
 }
 

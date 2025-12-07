@@ -73,7 +73,7 @@ CDebugWindowApp::CDebugWindowApp()
 {
 	AfxInitialize(true);
 	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
-	m_DialogWindow = NULL;
+	m_DialogWindow = nullptr;
 }
 
 DebugWindowDialog* CDebugWindowApp::GetDialogWindow(void)
@@ -103,7 +103,7 @@ void __declspec(dllexport) CreateDebugDialog(void)
 	DebugWindowDialog* tmpWnd;
 	tmpWnd = new DebugWindowDialog;
 	tmpWnd->Create(DebugWindowDialog::IDD);
-	tmpWnd->SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+	tmpWnd->SetWindowPos(nullptr, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 	tmpWnd->ShowWindow(SW_SHOW);
 	if (tmpWnd->GetMainWndHWND()) {
 		SetFocus(tmpWnd->GetMainWndHWND());
@@ -120,7 +120,7 @@ void __declspec(dllexport) DestroyDebugDialog(void)
 	if (tmpWnd) {
 		tmpWnd->DestroyWindow();
 		delete tmpWnd;
-		theApp.SetDialogWindow(NULL);
+		theApp.SetDialogWindow(nullptr);
 	}
 
 }

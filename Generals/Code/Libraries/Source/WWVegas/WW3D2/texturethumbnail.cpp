@@ -53,7 +53,7 @@ ThumbnailClass::ThumbnailClass(const char* name, unsigned char* bitmap, unsigned
 
 ThumbnailClass::ThumbnailClass(const StringClass& filename)
 	:
-	Bitmap(0),
+	Bitmap(nullptr),
 	Name(filename),
 	Allocated(false),
 	Width(0),
@@ -287,5 +287,5 @@ void ThumbnailClass::Deinit()
 	}
 
 	delete [] _ThumbnailMemory;
-	_ThumbnailMemory=NULL;
+	_ThumbnailMemory=nullptr;
 }

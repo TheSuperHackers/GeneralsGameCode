@@ -157,7 +157,7 @@ void InitRandom( void )
 	seedRandom(0, theGameLogicSeed);
 	theGameLogicBaseSeed = 0;
 #else
-	time_t seconds = time( NULL );
+	time_t seconds = time( nullptr );
 
 	seedRandom(seconds, theGameAudioSeed);
 	seedRandom(seconds, theGameClientSeed);
@@ -352,7 +352,7 @@ DEBUG_LOG(( "%d: GetGameAudioRandomValueReal = %f, %s line %d",
 
 const char *const GameClientRandomVariable::DistributionTypeNames[] =
 {
-	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", NULL
+	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", nullptr
 };
 static_assert(ARRAY_SIZE(GameClientRandomVariable::DistributionTypeNames) == GameClientRandomVariable::DISTRIBUTION_COUNT + 1, "Incorrect array size");
 
@@ -398,7 +398,7 @@ Real GameClientRandomVariable::getValue( void ) const
 
 const char *const GameLogicRandomVariable::DistributionTypeNames[] =
 {
-	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", NULL
+	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", nullptr
 };
 static_assert(ARRAY_SIZE(GameLogicRandomVariable::DistributionTypeNames) == GameLogicRandomVariable::DISTRIBUTION_COUNT + 1, "Incorrect array size");
 

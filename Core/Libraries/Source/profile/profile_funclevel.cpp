@@ -738,12 +738,12 @@ bool ProfileFuncLevel::IdList::Enum(unsigned index, Id &id, unsigned *) const
 
 const char *ProfileFuncLevel::Id::GetSource(void) const
 {
-  return NULL;
+  return nullptr;
 }
 
 const char *ProfileFuncLevel::Id::GetFunction(void) const
 {
-  return NULL;
+  return nullptr;
 }
 
 unsigned ProfileFuncLevel::Id::GetAddress(void) const
@@ -793,4 +793,4 @@ ProfileFuncLevel::ProfileFuncLevel(void)
 #endif // !defined HAS_PROFILE
 
 ProfileFuncLevel ProfileFuncLevel::Instance;
-HANDLE ProfileFastCS::testEvent=::CreateEvent(NULL,FALSE,FALSE,"");
+HANDLE ProfileFastCS::testEvent=::CreateEvent(nullptr,FALSE,FALSE,"");

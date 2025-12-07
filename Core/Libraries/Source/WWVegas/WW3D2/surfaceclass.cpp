@@ -213,7 +213,7 @@ void Convert_Pixel(unsigned char * pixel,const SurfaceClass::SurfaceDescription 
 **                             SurfaceClass
 *************************************************************************/
 SurfaceClass::SurfaceClass(unsigned width, unsigned height, WW3DFormat format):
-	D3DSurface(NULL),
+	D3DSurface(nullptr),
 	SurfaceFormat(format)
 {
 	WWASSERT(width);
@@ -222,7 +222,7 @@ SurfaceClass::SurfaceClass(unsigned width, unsigned height, WW3DFormat format):
 }
 
 SurfaceClass::SurfaceClass(const char *filename):
-	D3DSurface(NULL)
+	D3DSurface(nullptr)
 {
 	D3DSurface = DX8Wrapper::_Create_DX8_Surface(filename);
 	SurfaceDescription desc;
@@ -231,7 +231,7 @@ SurfaceClass::SurfaceClass(const char *filename):
 }
 
 SurfaceClass::SurfaceClass(IDirect3DSurface8 *d3d_surface)	:
-	D3DSurface (NULL)
+	D3DSurface (nullptr)
 {
 	Attach (d3d_surface);
 	SurfaceDescription desc;
@@ -243,7 +243,7 @@ SurfaceClass::~SurfaceClass(void)
 {
 	if (D3DSurface) {
 		D3DSurface->Release();
-		D3DSurface = NULL;
+		D3DSurface = nullptr;
 	}
 }
 
@@ -261,7 +261,7 @@ void * SurfaceClass::Lock(int * pitch)
 {
 	D3DLOCKED_RECT lock_rect;
 	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
-	DX8_ErrorCode(D3DSurface->LockRect(&lock_rect, 0, 0));
+	DX8_ErrorCode(D3DSurface->LockRect(&lock_rect, nullptr, 0));
 	*pitch = lock_rect.Pitch;
 	return (void *)lock_rect.pBits;
 }
@@ -296,7 +296,7 @@ void SurfaceClass::Clear()
 
 	D3DLOCKED_RECT lock_rect;
 	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
-	DX8_ErrorCode(D3DSurface->LockRect(&lock_rect,0,0));
+	DX8_ErrorCode(D3DSurface->LockRect(&lock_rect,nullptr,0));
 	unsigned int i;
 	unsigned char *mem=(unsigned char *) lock_rect.pBits;
 
@@ -335,7 +335,7 @@ void SurfaceClass::Copy(const unsigned char *other)
 
 	D3DLOCKED_RECT lock_rect;
 	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
-	DX8_ErrorCode(D3DSurface->LockRect(&lock_rect,0,0));
+	DX8_ErrorCode(D3DSurface->LockRect(&lock_rect,nullptr,0));
 	unsigned int i;
 	unsigned char *mem=(unsigned char *) lock_rect.pBits;
 
@@ -425,7 +425,7 @@ unsigned char *SurfaceClass::CreateCopy(int *width,int *height,int*size,bool fli
 
 	D3DLOCKED_RECT lock_rect;
 	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
-	DX8_ErrorCode(D3DSurface->LockRect(&lock_rect,0,D3DLOCK_READONLY));
+	DX8_ErrorCode(D3DSurface->LockRect(&lock_rect,nullptr,D3DLOCK_READONLY));
 	unsigned int i;
 	unsigned char *mem=(unsigned char *) lock_rect.pBits;
 
@@ -503,7 +503,7 @@ void SurfaceClass::Copy(
 		if (dest.right>int(sd.Width)) dest.right=int(sd.Width);
 		if (dest.bottom>int(sd.Height)) dest.bottom=int(sd.Height);
 
-		DX8_ErrorCode(D3DXLoadSurfaceFromSurface(D3DSurface,NULL,&dest,other->D3DSurface,NULL,&src,D3DX_FILTER_NONE,0));
+		DX8_ErrorCode(D3DXLoadSurfaceFromSurface(D3DSurface,nullptr,&dest,other->D3DSurface,nullptr,&src,D3DX_FILTER_NONE,0));
 	}
 }
 
@@ -545,7 +545,7 @@ void SurfaceClass::Stretch_Copy(
 	dest.top=dsty;
 	dest.bottom=dsty+dstheight;
 
-	DX8_ErrorCode(D3DXLoadSurfaceFromSurface(D3DSurface,NULL,&dest,other->D3DSurface,NULL,&src,D3DX_FILTER_TRIANGLE ,0));
+	DX8_ErrorCode(D3DXLoadSurfaceFromSurface(D3DSurface,nullptr,&dest,other->D3DSurface,nullptr,&src,D3DX_FILTER_TRIANGLE ,0));
 }
 
 /***********************************************************************************************
@@ -752,7 +752,7 @@ void SurfaceClass::Attach (IDirect3DSurface8 *surface)
 	//
 	//	Lock a reference onto the object
 	//
-	if (D3DSurface != NULL) {
+	if (D3DSurface != nullptr) {
 		D3DSurface->AddRef ();
 	}
 
@@ -780,11 +780,11 @@ void SurfaceClass::Detach (void)
 	//
 	//	Release the hold we have on the D3D object
 	//
-	if (D3DSurface != NULL) {
+	if (D3DSurface != nullptr) {
 		D3DSurface->Release ();
 	}
 
-	D3DSurface = NULL;
+	D3DSurface = nullptr;
 	return ;
 }
 

@@ -114,7 +114,7 @@ void PointerRemapClass::Process_Request_Table(DynamicVectorClass<PtrRemapStruct>
 			// warn the user, set pointer to NULL, reset index to the pre_search_index.
 			// If this happens, things could be going very wrong.  (find out why its happening!)
 			pair_index = pre_search_index;
-			*request_table[pointer_index].PointerToRemap = NULL;
+			*request_table[pointer_index].PointerToRemap = nullptr;
 #ifdef WWDEBUG
 			const char * file = request_table[pointer_index].File;
 			int line = request_table[pointer_index].Line;

@@ -99,7 +99,7 @@
 
 const Bool HALF_RES_MESH = false;
 
-HeightMapRenderObjClass *TheHeightMap = NULL;
+HeightMapRenderObjClass *TheHeightMap = nullptr;
 //-----------------------------------------------------------------------------
 //         Private Data
 //-----------------------------------------------------------------------------
@@ -133,13 +133,13 @@ void HeightMapRenderObjClass::freeIndexVertexBuffers(void)
 		for (int i=0; i<m_numVertexBufferTiles; i++)
 			REF_PTR_RELEASE(m_vertexBufferTiles[i]);
 		delete[] m_vertexBufferTiles;
-		m_vertexBufferTiles = NULL;
+		m_vertexBufferTiles = nullptr;
 	}
 	if (m_vertexBufferBackup) {
 		for (int i=0; i<m_numVertexBufferTiles; i++)
 			delete[] m_vertexBufferBackup[i];
 		delete[] m_vertexBufferBackup;
-		m_vertexBufferBackup = NULL;
+		m_vertexBufferBackup = nullptr;
 	}
 	m_numVertexBufferTiles = 0;
 
@@ -1018,7 +1018,7 @@ Int HeightMapRenderObjClass::updateBlock(Int x0, Int y0, Int x1, Int y1,  WorldH
 	DEBUG_ASSERTCRASH(y0<=y1, ("HeightMapRenderObjClass::UpdateBlock parameters have inside-out rectangle (on Y)."));
 #endif
 	Invalidate_Cached_Bounding_Volumes();
-	if (pMap && m_treeBuffer != NULL) {
+	if (pMap && m_treeBuffer != nullptr) {
 		REF_PTR_SET(m_stageZeroTexture, pMap->getTerrainTexture());
 		REF_PTR_SET(m_stageOneTexture, pMap->getAlphaTerrainTexture());
 	}
@@ -1073,7 +1073,7 @@ HeightMapRenderObjClass::~HeightMapRenderObjClass(void)
 	freeMapResources();
 
 	delete [] m_extraBlendTilePositions;
-	m_extraBlendTilePositions = NULL;
+	m_extraBlendTilePositions = nullptr;
 }
 
 //=============================================================================
@@ -1082,15 +1082,15 @@ HeightMapRenderObjClass::~HeightMapRenderObjClass(void)
 /** Constructor. Mostly nulls out the member variables. */
 //=============================================================================
 HeightMapRenderObjClass::HeightMapRenderObjClass(void):
-m_extraBlendTilePositions(NULL),
+m_extraBlendTilePositions(nullptr),
 m_numExtraBlendTiles(0),
 m_numVisibleExtraBlendTiles(0),
 m_extraBlendTilePositionsSize(0),
-m_vertexBufferTiles(NULL),
-m_vertexBufferBackup(NULL),
+m_vertexBufferTiles(nullptr),
+m_vertexBufferBackup(nullptr),
 m_originX(0),
 m_originY(0),
-m_indexBuffer(NULL),
+m_indexBuffer(nullptr),
 m_numVBTilesX(0),
 m_numVBTilesY(0),
 m_numVertexBufferTiles(0),
@@ -1241,7 +1241,7 @@ void HeightMapRenderObjClass::oversizeTerrain(Int tilesToOversize)
 		m_shroud->reset();
 	//delete m_shroud;
 	//m_shroud = NULL;
-	initHeightData(m_map->getDrawWidth(), m_map->getDrawHeight(), m_map, NULL, FALSE);
+	initHeightData(m_map->getDrawWidth(), m_map->getDrawHeight(), m_map, nullptr, FALSE);
 	m_needFullUpdate = true;
 }
 
@@ -1262,7 +1262,7 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 //	Int	vertsPerRow=x*2-2;
 //	Int	vertsPerColumn=y*2-2;
 
-	HeightSampleType *data = NULL;
+	HeightSampleType *data = nullptr;
 	if (pMap) {
 		data = pMap->getDataPtr();
 	}
@@ -1314,10 +1314,10 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 	// If the size changed, we need to allocate.
 	Bool needToAllocate = (x != m_x || y != m_y);
 	// If the textures aren't allocated (usually because of a hardware reset) need to allocate.
-	if (m_stageOneTexture == NULL) {
+	if (m_stageOneTexture == nullptr) {
 		needToAllocate = true;
 	}
-	if (data && needToAllocate && m_treeBuffer != NULL)
+	if (data && needToAllocate && m_treeBuffer != nullptr)
 	{	//requested heightmap different from old one.
 		freeIndexVertexBuffers();
 		//Create static index buffers.  These will index the vertex buffers holding the map.
@@ -1397,12 +1397,12 @@ void HeightMapRenderObjClass::On_Frame_Update(void)
 	Int i,j,k;
 	DX8VertexBufferClass	**pVB;
 	Int originX,originY;
-	if (Scene==NULL) return;
+	if (Scene==nullptr) return;
 	RTS3DScene *pMyScene = (RTS3DScene *)Scene;
 
 
 	RefRenderObjListIterator pDynamicLightsIterator(pMyScene->getDynamicLights());
-	if (m_map == NULL) {
+	if (m_map == nullptr) {
 		return;
 	}
 
@@ -1677,13 +1677,13 @@ is rendered. */
 //=============================================================================
 void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjListIterator *pLightsIterator)
 {
-	if (m_map==NULL) {
+	if (m_map==nullptr) {
 		return;
 	}
 	if (m_updating) {
 		return;
 	}
-	if (m_vertexBufferTiles ==NULL)
+	if (m_vertexBufferTiles ==nullptr)
 		return;		//did not initialize resources yet.
 
 	BaseHeightMapRenderObjClass::updateCenter(camera, pLightsIterator);
@@ -1956,8 +1956,8 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 
 	// Force shaders to update.
 	m_stageTwoTexture->restore();
-	DX8Wrapper::Set_Texture(0,NULL);
-	DX8Wrapper::Set_Texture(1,NULL);
+	DX8Wrapper::Set_Texture(0,nullptr);
+	DX8Wrapper::Set_Texture(1,nullptr);
 	ShaderClass::Invalidate();
 
 	//	tm.Scale(ObjSpaceExtent);
@@ -2055,7 +2055,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 		{
  			if (m_disableTextures ) {
  				DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaque2DShader);
- 				DX8Wrapper::Set_Texture(0,NULL);
+ 				DX8Wrapper::Set_Texture(0,nullptr);
    			} else {
  				W3DShaderManager::setShader(st, pass);
 			}
@@ -2122,8 +2122,8 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 			m_stageZeroTexture, doCloud?m_stageTwoTexture:NULL, TheGlobalData->m_useLightMap?m_stageThreeTexture:NULL);
 	#endif
 	#ifdef DO_ROADS
-		DX8Wrapper::Set_Texture(0,NULL);
-		DX8Wrapper::Set_Texture(1,NULL);
+		DX8Wrapper::Set_Texture(0,nullptr);
+		DX8Wrapper::Set_Texture(1,nullptr);
 		m_stageTwoTexture->restore();
 
 		ShaderClass::Invalidate();
@@ -2132,7 +2132,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 			if (Scene) {
 				RTS3DScene *pMyScene = (RTS3DScene *)Scene;
 				RefRenderObjListIterator pDynamicLightsIterator(pMyScene->getDynamicLights());
-				m_roadBuffer->drawRoads(&rinfo.Camera, doCloud?m_stageTwoTexture:NULL, TheGlobalData->m_useLightMap?m_stageThreeTexture:NULL,
+				m_roadBuffer->drawRoads(&rinfo.Camera, doCloud?m_stageTwoTexture:nullptr, TheGlobalData->m_useLightMap?m_stageThreeTexture:nullptr,
 					m_disableTextures,xCoordMin-m_map->getBorderSizeInline(), xCoordMax-m_map->getBorderSizeInline(), yCoordMin-m_map->getBorderSizeInline(), yCoordMax-m_map->getBorderSizeInline(), &pDynamicLightsIterator);
 			}
 		}
@@ -2141,8 +2141,8 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 		m_propBuffer->drawProps(rinfo);
 	}
 	#ifdef DO_SCORCH
-		DX8Wrapper::Set_Texture(0,NULL);
-		DX8Wrapper::Set_Texture(1,NULL);
+		DX8Wrapper::Set_Texture(0,nullptr);
+		DX8Wrapper::Set_Texture(1,nullptr);
 		m_stageTwoTexture->restore();
 
 		ShaderClass::Invalidate();
@@ -2150,13 +2150,13 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 			drawScorches();
 		}
 	#endif
-		DX8Wrapper::Set_Texture(0,NULL);
-		DX8Wrapper::Set_Texture(1,NULL);
+		DX8Wrapper::Set_Texture(0,nullptr);
+		DX8Wrapper::Set_Texture(1,nullptr);
 		m_stageTwoTexture->restore();
 		ShaderClass::Invalidate();
 		DX8Wrapper::Apply_Render_State_Changes();
 
-		m_bridgeBuffer->drawBridges(&rinfo.Camera, m_disableTextures, doCloud?m_stageTwoTexture:NULL);
+		m_bridgeBuffer->drawBridges(&rinfo.Camera, m_disableTextures, doCloud?m_stageTwoTexture:nullptr);
 
 		if (TheTerrainTracksRenderObjClassSystem)
 			TheTerrainTracksRenderObjClassSystem->flush();
@@ -2180,11 +2180,11 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	m_bibBuffer->renderBibs();
 
 	// We do some custom blending, so tell the shader class to reset everything.
-	DX8Wrapper::Set_Texture(0,NULL);
-	DX8Wrapper::Set_Texture(1,NULL);
+	DX8Wrapper::Set_Texture(0,nullptr);
+	DX8Wrapper::Set_Texture(1,nullptr);
 	m_stageTwoTexture->restore();
 	ShaderClass::Invalidate();
-	DX8Wrapper::Set_Material(NULL);
+	DX8Wrapper::Set_Material(nullptr);
 
 }
 
@@ -2401,7 +2401,7 @@ void HeightMapRenderObjClass::renderExtraBlendTiles(void)
 			shader.Set_Primary_Gradient(ShaderClass::GRADIENT_DISABLE);	//disable lighting.
 			shader.Set_Texturing(ShaderClass::TEXTURING_DISABLE);		//disable texturing.
 			DX8Wrapper::Set_Shader(shader);
-			DX8Wrapper::Set_Texture(0,NULL);	//debug mode which draws terrain tiles in white.
+			DX8Wrapper::Set_Texture(0,nullptr);	//debug mode which draws terrain tiles in white.
 			if (Is_Hidden() == 0) {
 				DX8Wrapper::Draw_Triangles(	0,indexCount/3, 0,	vertexCount);	//draw a quad, 2 triangles, 4 verts
 				m_numVisibleExtraBlendTiles += indexCount/6;

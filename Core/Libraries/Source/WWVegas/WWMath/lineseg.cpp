@@ -215,11 +215,11 @@ LineSegClass::Find_Intersection
 		//
 		//	Return the fractions if they caller wants them
 		//
-		if (fraction1 != NULL) {
+		if (fraction1 != nullptr) {
 			(*fraction1) = length1 / Length;
 		}
 
-		if (fraction2 != NULL) {
+		if (fraction2 != nullptr) {
 			(*fraction2) = length2 / Length;
 		}
 

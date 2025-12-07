@@ -59,7 +59,7 @@ static char THIS_FILE[] = __FILE__;
 //
 /////////////////////////////////////////////////////////////////////////////
 SoundEditDialogClass::SoundEditDialogClass (CWnd *parent)
-	:	SoundRObj (NULL),
+	:	SoundRObj (nullptr),
 		CDialog (SoundEditDialogClass::IDD, parent)
 {
 	//{{AFX_DATA_INIT(SoundEditDialogClass)
@@ -139,7 +139,7 @@ SoundEditDialogClass::OnInitDialog (void)
 	//
 	//	Create the reneder object if we don't already have one
 	//
-	if (SoundRObj == NULL) {
+	if (SoundRObj == nullptr) {
 		SoundRObj = new SoundRenderObjClass;
 	}
 
@@ -161,18 +161,18 @@ SoundEditDialogClass::OnInitDialog (void)
 	// Get the real settings from the sound object (if we have one)
 	//
 	AudibleSoundClass *sound = SoundRObj->Peek_Sound ();
-	if (sound != NULL) {
+	if (sound != nullptr) {
 
 		Sound3DClass *sound_3d = sound->As_Sound3DClass ();
 		filename				= sound->Get_Filename ();
 		drop_off_radius	= sound->Get_DropOff_Radius ();
 		priority				= sound->Peek_Priority ();
-		is_3d					= (sound_3d != NULL);
+		is_3d					= (sound_3d != nullptr);
 		is_music				= (sound->Get_Type () == AudibleSoundClass::TYPE_MUSIC);
 		loop_count			= sound->Get_Loop_Count ();
 		volume				= sound->Get_Volume ();
 
-		if (sound_3d != NULL) {
+		if (sound_3d != nullptr) {
 			max_vol_radius	= sound_3d->Get_Max_Vol_Radius ();
 		}
 	}
@@ -267,7 +267,7 @@ SoundEditDialogClass::OnOK (void)
 	//	Add this sound object to the viewer
 	//
 	CW3DViewDoc *doc = ::GetCurrentDocument ();
-	if (doc != NULL) {
+	if (doc != nullptr) {
 
 		//
 		// Create a new prototype for this emitter and add it to the asset manager
@@ -309,7 +309,7 @@ SoundEditDialogClass::OnOK (void)
 AudibleSoundClass *
 SoundEditDialogClass::Create_Sound_Object (void)
 {
-	AudibleSoundClass *sound = NULL;
+	AudibleSoundClass *sound = nullptr;
 
 	//
 	// Get the filename
@@ -328,7 +328,7 @@ SoundEditDialogClass::Create_Sound_Object (void)
 		sound = WWAudioClass::Get_Instance ()->Create_Sound_Effect (filename);
 	}
 
-	if (sound != NULL) {
+	if (sound != nullptr) {
 
 		//
 		// Pass the new volume and priority onto the sound

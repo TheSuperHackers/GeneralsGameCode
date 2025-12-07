@@ -74,7 +74,7 @@ static void drawRadioButtonText( GameWindow *window, WinInstanceData *instData )
 	DisplayString *text = instData->getTextDisplayString();
 
 	// sanity
-	if( text == NULL || text->getTextLength() == 0 )
+	if( text == nullptr || text->getTextLength() == 0 )
 		return;
 
 	// get window position and size
@@ -314,8 +314,8 @@ void W3DGadgetRadioButtonImageDraw( GameWindow *window,
 	}
 
 	// sanity, we need to have these images to make it look right
-	if( leftImage == NULL || centerImage == NULL ||
-			rightImage == NULL )
+	if( leftImage == nullptr || centerImage == nullptr ||
+			rightImage == nullptr )
 		return;
 
 	// get image sizes for the ends

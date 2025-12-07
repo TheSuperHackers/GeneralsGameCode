@@ -50,11 +50,11 @@ RenderInfoClass::RenderInfoClass(CameraClass & cam) :
 	fog_start(0.0f),
 	fog_end(0.0f),
 	fog_scale(0.0f),
-	light_environment(0),
+	light_environment(nullptr),
 	AdditionalMaterialPassCount(0),
 	RejectedMaterialPasses(0),
 	OverrideFlagLevel(0),
-	Texture_Projector(NULL),
+	Texture_Projector(nullptr),
 	alphaOverride(1.0f),
 	materialPassAlphaOverride(1.0f),
 	materialPassEmissiveOverride(1.0f)
@@ -83,7 +83,7 @@ void RenderInfoClass::Pop_Material_Pass(void)
 	WWASSERT(AdditionalMaterialPassCount>0);
 	AdditionalMaterialPassCount--;
 	MaterialPassClass * mpass = AdditionalMaterialPassArray[AdditionalMaterialPassCount];
-	if (mpass != NULL) {
+	if (mpass != nullptr) {
 		mpass->Release_Ref();
 	}
 }
@@ -128,8 +128,8 @@ RenderInfoClass::RINFO_OVERRIDE_FLAGS & RenderInfoClass::Current_Override_Flags(
 SpecialRenderInfoClass::SpecialRenderInfoClass(CameraClass & cam,int render_type) :
 	RenderInfoClass(cam),
 	RenderType(render_type),
-	VisRasterizer(NULL),
-	BWRenderer(NULL)
+	VisRasterizer(nullptr),
+	BWRenderer(nullptr)
 {
 }
 

@@ -48,13 +48,13 @@ FrameMetrics::FrameMetrics()
 
 FrameMetrics::~FrameMetrics() {
 	delete m_fpsList;
-	m_fpsList = NULL;
+	m_fpsList = nullptr;
 
 	delete m_latencyList;
-	m_latencyList = NULL;
+	m_latencyList = nullptr;
 
 	delete[] m_pendingLatencies;
-	m_pendingLatencies = NULL;
+	m_pendingLatencies = nullptr;
 }
 
 void FrameMetrics::init() {

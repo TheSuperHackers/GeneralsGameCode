@@ -48,7 +48,7 @@ W3DTerrainLogic::W3DTerrainLogic():
 m_mapMinZ(0),
 m_mapMaxZ(1)
 {
-	m_mapData = NULL;
+	m_mapData = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -318,7 +318,7 @@ Real W3DTerrainLogic::getLayerHeight( Real x, Real y, PathfindLayerEnum layer, C
 			}
 		}
 		Bridge* pBridge;
-		if ((pBridge = findBridgeLayerAt(&loc, layer, clip)) != 0)
+		if ((pBridge = findBridgeLayerAt(&loc, layer, clip)) != nullptr)
 		{
 			Real bridgeHeight = pBridge->getBridgeHeight(&loc, normal);
 			if (bridgeHeight > height)

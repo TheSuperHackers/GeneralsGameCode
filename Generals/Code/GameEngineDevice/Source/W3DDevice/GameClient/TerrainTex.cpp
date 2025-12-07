@@ -98,7 +98,7 @@ int TerrainTextureClass::update(WorldHeightMap *htMap)
 		return false;
 	}
 
-	DX8_ErrorCode(surface_level->LockRect(&locked_rect, NULL, 0));
+	DX8_ErrorCode(surface_level->LockRect(&locked_rect, nullptr, 0));
 
 	Int tilePixelExtent = TILE_PIXEL_EXTENT;
 	Int tilesPerRow = surface_desc.Width/(2*TILE_PIXEL_EXTENT+TILE_OFFSET);
@@ -186,7 +186,7 @@ int TerrainTextureClass::update(WorldHeightMap *htMap)
 	}
 	surface_level->UnlockRect();
 	surface_level->Release();
-	DX8_ErrorCode(D3DXFilterTexture(Peek_D3D_Texture(), NULL, 0, D3DX_FILTER_BOX));
+	DX8_ErrorCode(D3DXFilterTexture(Peek_D3D_Texture(), nullptr, 0, D3DX_FILTER_BOX));
 	if (WW3D::Get_Texture_Reduction()) {
 		Peek_D3D_Texture()->SetLOD(WW3D::Get_Texture_Reduction());
 	}
@@ -369,7 +369,7 @@ int TerrainTextureClass::update256(WorldHeightMap *htMap)
 		return surface_desc.Height;
 	}
 
-	DX8_ErrorCode(surface_level->LockRect(&locked_rect, NULL, 0));
+	DX8_ErrorCode(surface_level->LockRect(&locked_rect, nullptr, 0));
 
 	Int tilePixelExtent = TILE_PIXEL_EXTENT/4;  // We are going from 1024 to 256, so need to divide all the constants by 4.
 	Int tileOffset = TILE_OFFSET/4;
@@ -499,7 +499,7 @@ int TerrainTextureClass::update256(WorldHeightMap *htMap)
 	}
 	surface_level->UnlockRect();
 	surface_level->Release();
-	DX8_ErrorCode(D3DXFilterTexture(Peek_D3D_Texture(), NULL, 0, D3DX_FILTER_BOX));
+	DX8_ErrorCode(D3DXFilterTexture(Peek_D3D_Texture(), nullptr, 0, D3DX_FILTER_BOX));
 	// Note - normal width for the terrain texture is 1024.  We are at 256
 	// probably running on a voodoo.  The height we return is scaled up
 	// to match the expected width of 1024.  jba.
@@ -640,7 +640,7 @@ void AlphaTerrainTextureClass::Apply(unsigned int stage)
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_ALPHAARG1, D3DTA_TFACTOR | D3DTA_COMPLEMENT);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_ALPHAARG2, D3DTA_TFACTOR);
 
-			DX8Wrapper::Set_DX8_Texture(2, NULL);
+			DX8Wrapper::Set_DX8_Texture(2, nullptr);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 2, D3DTSS_COLOROP, D3DTOP_MODULATE);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 2, D3DTSS_TEXCOORDINDEX, 2);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 2, D3DTSS_COLORARG1, D3DTA_TEXTURE);
@@ -649,7 +649,7 @@ void AlphaTerrainTextureClass::Apply(unsigned int stage)
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 2, D3DTSS_ALPHAARG1, D3DTA_TFACTOR);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 2, D3DTSS_ALPHAARG2, D3DTA_TFACTOR);
 
-			DX8Wrapper::Set_DX8_Texture(3, NULL);
+			DX8Wrapper::Set_DX8_Texture(3, nullptr);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 3, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 3, D3DTSS_TEXCOORDINDEX, 3);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 3, D3DTSS_COLORARG1, D3DTA_DIFFUSE | 0 | D3DTA_ALPHAREPLICATE);
@@ -658,7 +658,7 @@ void AlphaTerrainTextureClass::Apply(unsigned int stage)
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 3, D3DTSS_ALPHAARG1, D3DTA_TFACTOR);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 3, D3DTSS_ALPHAARG2, D3DTA_TFACTOR);
 
-			DX8Wrapper::Set_DX8_Texture(4, NULL);
+			DX8Wrapper::Set_DX8_Texture(4, nullptr);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 4, D3DTSS_COLOROP, D3DTOP_MODULATE);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 4, D3DTSS_TEXCOORDINDEX, 4);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 4, D3DTSS_COLORARG1, D3DTA_CURRENT);
@@ -667,7 +667,7 @@ void AlphaTerrainTextureClass::Apply(unsigned int stage)
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 4, D3DTSS_ALPHAARG1, D3DTA_CURRENT);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 4, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 
-			DX8Wrapper::Set_DX8_Texture(5, NULL);
+			DX8Wrapper::Set_DX8_Texture(5, nullptr);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 5, D3DTSS_COLOROP, D3DTOP_ADD);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 5, D3DTSS_TEXCOORDINDEX, 5);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 5, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
@@ -676,7 +676,7 @@ void AlphaTerrainTextureClass::Apply(unsigned int stage)
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 5, D3DTSS_ALPHAARG1, D3DTA_TFACTOR | D3DTA_COMPLEMENT);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 5, D3DTSS_ALPHAARG2, D3DTA_TFACTOR);
 
-			DX8Wrapper::Set_DX8_Texture(6, NULL);
+			DX8Wrapper::Set_DX8_Texture(6, nullptr);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 6, D3DTSS_COLOROP, D3DTOP_MODULATE);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 6, D3DTSS_TEXCOORDINDEX, 6);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 6, D3DTSS_COLORARG1, D3DTA_TFACTOR);
@@ -685,7 +685,7 @@ void AlphaTerrainTextureClass::Apply(unsigned int stage)
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 6, D3DTSS_ALPHAARG1, D3DTA_TFACTOR);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 6, D3DTSS_ALPHAARG2, D3DTA_TFACTOR);
 
-			DX8Wrapper::Set_DX8_Texture(7, NULL);
+			DX8Wrapper::Set_DX8_Texture(7, nullptr);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 7, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 7, D3DTSS_TEXCOORDINDEX, 7);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 7, D3DTSS_COLORARG1, D3DTA_TFACTOR);
@@ -845,7 +845,7 @@ int AlphaEdgeTextureClass::update(WorldHeightMap *htMap)
 	D3DSURFACE_DESC surface_desc;
 	D3DLOCKED_RECT locked_rect;
 	DX8_ErrorCode(Peek_D3D_Texture()->GetSurfaceLevel(0, &surface_level));
-	DX8_ErrorCode(surface_level->LockRect(&locked_rect, NULL, 0));
+	DX8_ErrorCode(surface_level->LockRect(&locked_rect, nullptr, 0));
 	DX8_ErrorCode(surface_level->GetDesc(&surface_desc));
 
 	Int tilePixelExtent = TILE_PIXEL_EXTENT; // blend tiles are 1/4 tiles.
@@ -907,7 +907,7 @@ int AlphaEdgeTextureClass::update(WorldHeightMap *htMap)
 	}
 	surface_level->UnlockRect();
 	surface_level->Release();
-	DX8_ErrorCode(D3DXFilterTexture(Peek_D3D_Texture(), NULL, 0, D3DX_FILTER_BOX));
+	DX8_ErrorCode(D3DXFilterTexture(Peek_D3D_Texture(), nullptr, 0, D3DX_FILTER_BOX));
 	return(surface_desc.Height);
 }
 
@@ -1136,7 +1136,7 @@ void CloudMapTerrainTextureClass::restore(void)
 			DX8Wrapper::Set_DX8_Texture_Stage_State( i, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( i, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 
-			DX8Wrapper::Set_DX8_Texture(i, NULL);
+			DX8Wrapper::Set_DX8_Texture(i, nullptr);
 		}
 	}
 }

@@ -81,7 +81,7 @@ static int Calculate_Texture_Memory_Usage(const TextureClass* texture,int red_fa
 
 TextureClass::TextureClass(unsigned width, unsigned height, WW3DFormat format, MipCountType mip_level_count, PoolType pool,bool rendertarget)
 	:
-	D3DTexture(NULL),
+	D3DTexture(nullptr),
 	texture_id(unused_texture_id++),
 	Initialized(true),
 	Filter(mip_level_count),
@@ -93,7 +93,7 @@ TextureClass::TextureClass(unsigned width, unsigned height, WW3DFormat format, M
 	Name(""),
 	TextureFormat(format),
 	IsCompressionAllowed(false),
-	TextureLoadTask(NULL),
+	TextureLoadTask(nullptr),
 	Width(width),
 	Height(height)
 {
@@ -145,7 +145,7 @@ TextureClass::TextureClass
 	WW3DFormat texture_format,
 	bool allow_compression)
 	:
-	D3DTexture(NULL),
+	D3DTexture(nullptr),
 	texture_id(unused_texture_id++),
 	Initialized(false),
 	Filter(mip_level_count),
@@ -156,7 +156,7 @@ TextureClass::TextureClass
 	IsProcedural(false),
 	TextureFormat(texture_format),
 	IsCompressionAllowed(allow_compression),
-	TextureLoadTask(NULL),
+	TextureLoadTask(nullptr),
 	Width(0),
 	Height(0)
 {
@@ -213,12 +213,12 @@ TextureClass::TextureClass
 	if (!WW3D::Is_Texturing_Enabled())
 	{
 		Initialized=true;
-		D3DTexture=0;
+		D3DTexture=nullptr;
 	}
 	else if (WW3D::Get_Thumbnail_Enabled()==false || mip_level_count==MIP_LEVELS_1)
 	{
 		Initialized=true;
-		D3DTexture=0;
+		D3DTexture=nullptr;
 		TextureLoader::Request_High_Priority_Loading(this,mip_level_count);
 	}
 	else {
@@ -232,7 +232,7 @@ TextureClass::TextureClass
 
 TextureClass::TextureClass(SurfaceClass *surface, MipCountType mip_level_count)
 	:
-	D3DTexture(NULL),
+	D3DTexture(nullptr),
 	texture_id(unused_texture_id++),
 	Initialized(true),
 	Filter(mip_level_count),
@@ -244,7 +244,7 @@ TextureClass::TextureClass(SurfaceClass *surface, MipCountType mip_level_count)
 	IsProcedural(true),
 	TextureFormat(surface->Get_Surface_Format()),
 	IsCompressionAllowed(false),
-	TextureLoadTask(NULL),
+	TextureLoadTask(nullptr),
 	Width(0),
 	Height(0)
 {
@@ -283,7 +283,7 @@ TextureClass::TextureClass(IDirect3DTexture8* d3d_texture)
 	Name(""),
 	IsProcedural(true),
 	IsCompressionAllowed(false),
-	TextureLoadTask(NULL),
+	TextureLoadTask(nullptr),
 	Width(0),
 	Height(0)
 {
@@ -316,7 +316,7 @@ TextureClass::TextureClass(IDirect3DTexture8* d3d_texture)
 TextureClass::~TextureClass(void)
 {
 	TextureLoadTaskClass::Release_Instance(TextureLoadTask);
-	TextureLoadTask=NULL;
+	TextureLoadTask=nullptr;
 
 	if (!Initialized) {
 		WWDEBUG_SAY(("Warning: Texture %s was loaded but never used",Get_Texture_Name().str()));
@@ -324,7 +324,7 @@ TextureClass::~TextureClass(void)
 
 	if (D3DTexture) {
 		D3DTexture->Release();
-		D3DTexture = NULL;
+		D3DTexture = nullptr;
 	}
 	DX8TextureManagerClass::Remove(this);
 }
@@ -350,17 +350,17 @@ void TextureClass::Invalidate()
 
 	if (D3DTexture) {
 		D3DTexture->Release();
-		D3DTexture = NULL;
+		D3DTexture = nullptr;
 	}
 
 	if (!WW3D::Is_Texturing_Enabled()) {
 		Initialized=true;
-		D3DTexture=0;
+		D3DTexture=nullptr;
 	}
 	else if (WW3D::Get_Thumbnail_Enabled()==false || MipLevelCount==MIP_LEVELS_1)
 	{
 		Initialized=true;
-		D3DTexture=0;
+		D3DTexture=nullptr;
 		TextureLoader::Request_High_Priority_Loading(this,MipLevelCount);
 	}
 	else {
@@ -389,11 +389,11 @@ void TextureClass::Set_D3D_Base_Texture(IDirect3DBaseTexture8* tex)
 	// reset the access timer whenever someon messes with this pointer.
 	LastAccessed=WW3D::Get_Sync_Time();
 
-	if (D3DTexture != NULL) {
+	if (D3DTexture != nullptr) {
 		D3DTexture->Release();
 	}
 	D3DTexture = tex;
-	if (D3DTexture != NULL) {
+	if (D3DTexture != nullptr) {
 		D3DTexture->AddRef();
 	}
 }
@@ -403,7 +403,7 @@ void TextureClass::Set_D3D_Base_Texture(IDirect3DBaseTexture8* tex)
 void TextureClass::Load_Locked_Surface()
 {
 	if (D3DTexture) D3DTexture->Release();
-	D3DTexture=0;
+	D3DTexture=nullptr;
 	TextureLoader::Request_Thumbnail(this);
 	Initialized=false;
 }
@@ -462,7 +462,7 @@ void TextureClass::Get_Level_Description(SurfaceClass::SurfaceDescription &surfa
 
 SurfaceClass *TextureClass::Get_Surface_Level(unsigned int level)
 {
-	IDirect3DSurface8 *d3d_surface = NULL;
+	IDirect3DSurface8 *d3d_surface = nullptr;
 	DX8_ErrorCode(Peek_D3D_Texture()->GetSurfaceLevel(level, &d3d_surface));
 	SurfaceClass *surface = W3DNEW SurfaceClass(d3d_surface);
 	d3d_surface->Release();
@@ -523,7 +523,7 @@ void TextureClass::Apply(unsigned int stage)
 	}
 	else
 	{
-		DX8Wrapper::Set_DX8_Texture(stage, NULL);
+		DX8Wrapper::Set_DX8_Texture(stage, nullptr);
 	}
 
 	Filter.Apply(stage);
@@ -534,7 +534,7 @@ void TextureClass::Apply(unsigned int stage)
 void TextureClass::Apply_Null(unsigned int stage)
 {
 	// This function sets the render states for a "NULL" texture
-	DX8Wrapper::Set_DX8_Texture(stage, NULL);
+	DX8Wrapper::Set_DX8_Texture(stage, nullptr);
 }
 
 // ----------------------------------------------------------------------------
@@ -732,7 +732,7 @@ bool Validate_Filters(unsigned type)
 TextureClass* Load_Texture(ChunkLoadClass & cload)
 {
 	// Assume failure
-	TextureClass *newtex = NULL;
+	TextureClass *newtex = nullptr;
 
 	char name[256];
 	if (cload.Open_Chunk () && (cload.Cur_Chunk_ID () == W3D_CHUNK_TEXTURE))

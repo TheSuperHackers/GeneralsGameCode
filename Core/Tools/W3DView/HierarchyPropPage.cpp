@@ -135,7 +135,7 @@ CHierarchyPropPage::OnInitDialog (void)
 
                     // Free this object
                     pCSubObject->Release_Ref ();
-                    pCSubObject = NULL;
+                    pCSubObject = nullptr;
                 }
             }
 
@@ -144,7 +144,7 @@ CHierarchyPropPage::OnInitDialog (void)
 
             // Free the object
             pCHierarchy->Release_Ref ();
-            pCHierarchy = NULL;
+            pCHierarchy = nullptr;
         }
 	}
 

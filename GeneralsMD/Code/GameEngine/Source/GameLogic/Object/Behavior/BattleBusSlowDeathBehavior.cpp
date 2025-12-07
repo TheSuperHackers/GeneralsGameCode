@@ -60,11 +60,11 @@ enum
 BattleBusSlowDeathBehaviorModuleData::BattleBusSlowDeathBehaviorModuleData( void )
 {
 
-	m_fxStartUndeath = NULL;
-	m_oclStartUndeath = NULL;
+	m_fxStartUndeath = nullptr;
+	m_oclStartUndeath = nullptr;
 
-	m_fxHitGround = NULL;
-	m_oclHitGround = NULL;
+	m_fxHitGround = nullptr;
+	m_oclHitGround = nullptr;
 
 	m_throwForce = 1.0f;
 	m_percentDamageToPassengers = 0.0f;
@@ -81,17 +81,17 @@ BattleBusSlowDeathBehaviorModuleData::BattleBusSlowDeathBehaviorModuleData( void
 	static const FieldParse dataFieldParse[] =
 	{
 
-		{ "FXStartUndeath",	INI::parseFXList,	NULL, offsetof( BattleBusSlowDeathBehaviorModuleData, m_fxStartUndeath ) },
-		{ "OCLStartUndeath", INI::parseObjectCreationList, NULL, offsetof( BattleBusSlowDeathBehaviorModuleData, m_oclStartUndeath ) },
+		{ "FXStartUndeath",	INI::parseFXList,	nullptr, offsetof( BattleBusSlowDeathBehaviorModuleData, m_fxStartUndeath ) },
+		{ "OCLStartUndeath", INI::parseObjectCreationList, nullptr, offsetof( BattleBusSlowDeathBehaviorModuleData, m_oclStartUndeath ) },
 
-		{ "FXHitGround",	INI::parseFXList,	NULL, offsetof( BattleBusSlowDeathBehaviorModuleData, m_fxHitGround ) },
-		{ "OCLHitGround", INI::parseObjectCreationList, NULL, offsetof( BattleBusSlowDeathBehaviorModuleData, m_oclHitGround ) },
+		{ "FXHitGround",	INI::parseFXList,	nullptr, offsetof( BattleBusSlowDeathBehaviorModuleData, m_fxHitGround ) },
+		{ "OCLHitGround", INI::parseObjectCreationList, nullptr, offsetof( BattleBusSlowDeathBehaviorModuleData, m_oclHitGround ) },
 
-		{ "ThrowForce", INI::parseReal, NULL, offsetof( BattleBusSlowDeathBehaviorModuleData, m_throwForce ) },
-		{ "PercentDamageToPassengers", INI::parsePercentToReal, NULL, offsetof( BattleBusSlowDeathBehaviorModuleData, m_percentDamageToPassengers ) },
-		{ "EmptyHulkDestructionDelay", INI::parseDurationUnsignedInt, NULL, offsetof( BattleBusSlowDeathBehaviorModuleData, m_emptyHulkDestructionDelay ) },
+		{ "ThrowForce", INI::parseReal, nullptr, offsetof( BattleBusSlowDeathBehaviorModuleData, m_throwForce ) },
+		{ "PercentDamageToPassengers", INI::parsePercentToReal, nullptr, offsetof( BattleBusSlowDeathBehaviorModuleData, m_percentDamageToPassengers ) },
+		{ "EmptyHulkDestructionDelay", INI::parseDurationUnsignedInt, nullptr, offsetof( BattleBusSlowDeathBehaviorModuleData, m_emptyHulkDestructionDelay ) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 
 	};
 
@@ -146,7 +146,7 @@ void BattleBusSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 
 		// First do the special effects
 		FXList::doFXObj(data->m_fxStartUndeath, me );
-		ObjectCreationList::create(data->m_oclStartUndeath, me, NULL );
+		ObjectCreationList::create(data->m_oclStartUndeath, me, nullptr );
 
 		if( me->getAI() )
 		{
@@ -200,7 +200,7 @@ UpdateSleepTime BattleBusSlowDeathBehavior::update( void )
 
 			// Do the special FX
 			FXList::doFXObj(data->m_fxHitGround, me );
-			ObjectCreationList::create(data->m_oclHitGround, me, NULL );
+			ObjectCreationList::create(data->m_oclHitGround, me, nullptr );
 			me->setModelConditionState(MODELCONDITION_SECOND_LIFE);
 
 			// And stop us forever
@@ -237,7 +237,7 @@ UpdateSleepTime BattleBusSlowDeathBehavior::update( void )
 
 		const ContainModuleInterface *contain = me->getContain();
 		// Safety, no need to be awake if no special case to wait for
-		if( contain == NULL )
+		if( contain == nullptr )
 			return UPDATE_SLEEP_FOREVER;
 
 		if( m_penaltyDeathFrame != 0 )

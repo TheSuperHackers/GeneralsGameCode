@@ -41,7 +41,7 @@
 
 Bool PolygonTool::m_poly_isActive = false;
 Bool PolygonTool::m_poly_isAdding = false;
-PolygonTrigger *PolygonTool::m_poly_curSelectedPolygon = NULL;
+PolygonTrigger *PolygonTool::m_poly_curSelectedPolygon = nullptr;
 Int	PolygonTool::m_poly_dragPointNdx = -1;
 
 enum {SNAP_DISTANCE = 5};
@@ -49,8 +49,8 @@ enum {SNAP_DISTANCE = 5};
 /// Constructor
 PolygonTool::PolygonTool(void) :
 	Tool(ID_POLYGON_TOOL, IDC_POLYGON),
-	m_poly_plusCursor(NULL),
-	m_poly_moveCursor(NULL)
+	m_poly_plusCursor(nullptr),
+	m_poly_moveCursor(nullptr)
 {
 }
 
@@ -78,7 +78,7 @@ void PolygonTool::deactivate()
 		}
 	}
 	m_poly_isActive = false;
-	m_poly_curSelectedPolygon = NULL;
+	m_poly_curSelectedPolygon = nullptr;
 }
 
 /// Shows the terrain materials options panel.
@@ -150,7 +150,7 @@ PolygonTrigger *PolygonTool::pickPolygon(Coord3D loc, CPoint viewPt, WbView* pVi
 			return pTrig;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 // Snap to other polys.
@@ -177,7 +177,7 @@ Bool PolygonTool::poly_snapToPoly(Coord3D *pLoc) {
 
 // Pick a point.
 Int PolygonTool::poly_pickPoint(PolygonTrigger *pTrig, CPoint viewPt, WbView* pView) {
-	if (pTrig==NULL) return -1;
+	if (pTrig==nullptr) return -1;
 	Int i;
 	const Int PICK_PIXELS = pView->getPickPixels();
 	for (i=0; i<pTrig->getNumPoints(); i++) {
@@ -202,7 +202,7 @@ Int PolygonTool::poly_pickPoint(PolygonTrigger *pTrig, CPoint viewPt, WbView* pV
 
 // Get the point to insert closest to loc.
 Int PolygonTool::poly_getInsertIndex(PolygonTrigger *pTrig, Coord3D loc) {
-	if (pTrig==NULL) return 0;
+	if (pTrig==nullptr) return 0;
 	static Int tolerance = SNAP_DISTANCE;
 
 	Int i;
@@ -254,11 +254,11 @@ void PolygonTool::poly_pickOnMouseDown(CPoint viewPt, WbView* pView)
 			}
 		}
 		if (!found) {
-			m_poly_curSelectedPolygon = NULL; // Undo probably made it go away.
+			m_poly_curSelectedPolygon = nullptr; // Undo probably made it go away.
 		}
 	}
 	m_poly_justPicked = false;	 // Always false here.  Pointer tool sets to true.
-	if (m_poly_curSelectedPolygon == NULL || !m_poly_isAdding) {
+	if (m_poly_curSelectedPolygon == nullptr || !m_poly_isAdding) {
 		PolygonTrigger *pSel;
 		Coord3D docPt = m_poly_unsnappedMouseDownPt;
 		if (m_poly_curSelectedPolygon && poly_pickPoly(m_poly_curSelectedPolygon, docPt, SNAP_DISTANCE)) {
@@ -302,8 +302,8 @@ void PolygonTool::startMouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, 
 		iDocPt.z = m_poly_curSelectedPolygon->getPoint(0)->z;
 	}
 	m_poly_dragPointNdx = -1;
-	m_poly_moveUndoable = NULL;
-	if (m_poly_curSelectedPolygon==NULL) {
+	m_poly_moveUndoable = nullptr;
+	if (m_poly_curSelectedPolygon==nullptr) {
 		// adding a new polygon.
 		m_poly_curSelectedPolygon = newInstance(PolygonTrigger)(32);
 		AsciiString name;
@@ -364,10 +364,10 @@ Bool PolygonTool::deleteSelectedPolygon(void)
 			}
 		}
 		if (!found) {
-			m_poly_curSelectedPolygon = NULL; // Undo probably made it go away.
+			m_poly_curSelectedPolygon = nullptr; // Undo probably made it go away.
 		}
 	}
-	if (m_poly_curSelectedPolygon == NULL) {
+	if (m_poly_curSelectedPolygon == nullptr) {
 		return false;
 	}
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
@@ -383,7 +383,7 @@ Bool PolygonTool::deleteSelectedPolygon(void)
 		DeletePolygonUndoable *pUndo = new DeletePolygonUndoable(m_poly_curSelectedPolygon);
 		pDoc->AddAndDoUndoable(pUndo);
 		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-		m_poly_curSelectedPolygon = NULL;
+		m_poly_curSelectedPolygon = nullptr;
 		m_poly_dragPointNdx = -1;
 	}
 	WaypointOptions::update();
@@ -394,12 +394,12 @@ Bool PolygonTool::deleteSelectedPolygon(void)
 void PolygonTool::setCursor(void)
 {
 	if (m_poly_mouseUpPlus || (m_poly_isAdding && m_poly_curSelectedPolygon)) {
-		if (m_poly_plusCursor == NULL) {
+		if (m_poly_plusCursor == nullptr) {
 			m_poly_plusCursor = AfxGetApp()->LoadCursor(MAKEINTRESOURCE(IDC_POLYGON_PLUS));
 		}
 		::SetCursor(m_poly_plusCursor);
 	} else 	if (m_poly_mouseUpMove) {
-		if (m_poly_moveCursor == NULL) {
+		if (m_poly_moveCursor == nullptr) {
 			m_poly_moveCursor = AfxGetApp()->LoadCursor(MAKEINTRESOURCE(IDC_POLYGON_MOVE));
 		}
 		::SetCursor(m_poly_moveCursor);

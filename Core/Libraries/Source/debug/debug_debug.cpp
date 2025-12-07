@@ -85,21 +85,21 @@ void Debug::PreStaticInit(void)
   atexit(StaticExit);
 
   // init vars
-  Instance.hrTranslators=NULL;
+  Instance.hrTranslators=nullptr;
   Instance.numHrTranslators=0;
-  Instance.firstIOFactory=NULL;
-  Instance.firstCmdGroup=NULL;
+  Instance.firstIOFactory=nullptr;
+  Instance.firstCmdGroup=nullptr;
   memset(Instance.frameHash,0,sizeof(Instance.frameHash));
-  Instance.nextUnusedFrameHash=NULL;
+  Instance.nextUnusedFrameHash=nullptr;
   Instance.numAvailableFrameHash=0;
-  Instance.firstLogGroup=NULL;
+  Instance.firstLogGroup=nullptr;
   memset(Instance.ioBuffer,0,sizeof(Instance.ioBuffer));
   Instance.curType=DebugIOInterface::StringType::MAX;
   *Instance.curSource=0;
   Instance.disableAssertsEtc=0;
-  Instance.curFrameEntry=NULL;
-  Instance.firstPatternEntry=NULL;
-  Instance.lastPatternEntry=NULL;
+  Instance.curFrameEntry=nullptr;
+  Instance.firstPatternEntry=nullptr;
+  Instance.lastPatternEntry=nullptr;
   *Instance.curCommandGroup=0;
   Instance.alwaysFlush=false;
   Instance.timeStamp=false;
@@ -125,25 +125,25 @@ void Debug::PostStaticInit(void)
 
   /// exec dbgcmd file
   char ioBuffer[2048];
-  GetModuleFileName(NULL,ioBuffer,sizeof(ioBuffer));
+  GetModuleFileName(nullptr,ioBuffer,sizeof(ioBuffer));
   char *q=strrchr(ioBuffer,'.');
   if (q)
     strcpy(q,".dbgcmd");
-  HANDLE h=CreateFile(ioBuffer,GENERIC_READ,0,NULL,OPEN_EXISTING,
-                      FILE_ATTRIBUTE_NORMAL,NULL);
+  HANDLE h=CreateFile(ioBuffer,GENERIC_READ,0,nullptr,OPEN_EXISTING,
+                      FILE_ATTRIBUTE_NORMAL,nullptr);
   if (h==INVALID_HANDLE_VALUE)
-    h=CreateFile("default.dbgcmd",GENERIC_READ,0,NULL,OPEN_EXISTING,
-                      FILE_ATTRIBUTE_NORMAL,NULL);
+    h=CreateFile("default.dbgcmd",GENERIC_READ,0,nullptr,OPEN_EXISTING,
+                      FILE_ATTRIBUTE_NORMAL,nullptr);
   if (h!=INVALID_HANDLE_VALUE)
   {
     char cmdBuffer[512];
     unsigned long ioCur=0,ioUsed=0,cmdCur=0;
-    ReadFile(h,ioBuffer,sizeof(ioBuffer),&ioUsed,NULL);
+    ReadFile(h,ioBuffer,sizeof(ioBuffer),&ioUsed,nullptr);
     for (;;)
     {
       if (ioCur==ioUsed)
       {
-        ReadFile(h,ioBuffer,sizeof(ioBuffer),&ioUsed,NULL);
+        ReadFile(h,ioBuffer,sizeof(ioBuffer),&ioUsed,nullptr);
         ioCur=0;
       }
       if (ioCur==ioUsed||ioBuffer[ioCur]=='\n'||ioBuffer[ioCur]=='\r')
@@ -178,7 +178,7 @@ void Debug::PostStaticInit(void)
       if (p!=q)
       {
         Instance.ExecCommand(p,q);
-        p=*q?q+1:NULL;
+        p=*q?q+1:nullptr;
       }
     }
   }
@@ -214,7 +214,7 @@ void Debug::StaticExit(void)
     if (io->io)
     {
       io->io->Delete();
-      io->io=NULL;
+      io->io=nullptr;
     }
 
   // and command group interfaces...
@@ -222,7 +222,7 @@ void Debug::StaticExit(void)
     if (cmd->cmdif)
     {
       cmd->cmdif->Delete();
-      cmd->cmdif=NULL;
+      cmd->cmdif=nullptr;
     }
 }
 
@@ -305,7 +305,7 @@ Debug& Debug::AssertBegin(const char *file, int line, const char *expr)
     Instance.FlushOutput();
 
   // set new output
-  __ASSERT(Instance.curFrameEntry==NULL);
+  __ASSERT(Instance.curFrameEntry==nullptr);
   Instance.curFrameEntry=Instance.GetFrameEntry(curStackFrame,FrameTypeAssert,file,line);
   if (Instance.curFrameEntry->status==NoSkip)
   {
@@ -333,7 +333,7 @@ bool Debug::AssertDone(void)
   // did we have an active assertion?
   if (curType==DebugIOInterface::StringType::Assert)
   {
-    __ASSERT(curFrameEntry!=NULL);
+    __ASSERT(curFrameEntry!=nullptr);
 
     // hit info?
     if (curFrameEntry->hits>1)
@@ -370,12 +370,12 @@ bool Debug::AssertDone(void)
       /// @todo replace MessageBox with custom dialog w/ 4 options: abort, skip 1, skip all, break
 
       // now display message, wait for user input
-      int result=MessageBox(NULL,help,"Assertion failed",
+      int result=MessageBox(nullptr,help,"Assertion failed",
                             MB_ABORTRETRYIGNORE|MB_ICONSTOP|MB_TASKMODAL|MB_SETFOREGROUND);
       switch(result)
       {
         case IDABORT:
-          curFrameEntry=NULL;
+          curFrameEntry=nullptr;
           exit(1);
           break;
         case IDIGNORE:
@@ -420,7 +420,7 @@ bool Debug::AssertDone(void)
     }
   }
 
-  curFrameEntry=NULL;
+  curFrameEntry=nullptr;
   return false;
 }
 
@@ -434,7 +434,7 @@ Debug& Debug::CheckBegin(const char *file, int line, const char *expr)
     Instance.FlushOutput();
 
   // set new output
-  __ASSERT(Instance.curFrameEntry==NULL);
+  __ASSERT(Instance.curFrameEntry==nullptr);
   Instance.curFrameEntry=Instance.GetFrameEntry(curStackFrame,FrameTypeCheck,file,line);
   if (Instance.curFrameEntry->status==NoSkip)
   {
@@ -462,7 +462,7 @@ bool Debug::CheckDone(void)
   // did we have an active check?
   if (curType==DebugIOInterface::StringType::Check)
   {
-    __ASSERT(curFrameEntry!=NULL);
+    __ASSERT(curFrameEntry!=nullptr);
 
     // hit info?
     if (curFrameEntry->hits>1)
@@ -503,7 +503,7 @@ bool Debug::CheckDone(void)
     }
   }
 
-  curFrameEntry=NULL;
+  curFrameEntry=nullptr;
   return false;
 }
 
@@ -518,7 +518,7 @@ Debug& Debug::LogBegin(const char *fileOrGroup)
     Instance.FlushOutput();
 
   // set new output
-  __ASSERT(Instance.curFrameEntry==NULL);
+  __ASSERT(Instance.curFrameEntry==nullptr);
   Instance.curFrameEntry=Instance.GetFrameEntry(curStackFrame,FrameTypeLog,fileOrGroup,0);
   if (Instance.curFrameEntry->status==NoSkip)
   {
@@ -546,7 +546,7 @@ bool Debug::LogDone(void)
 
   // we're not flushing here on intention!
 
-  curFrameEntry=NULL;
+  curFrameEntry=nullptr;
   return false;
 }
 
@@ -560,7 +560,7 @@ Debug& Debug::CrashBegin(const char *file, int line)
     Instance.FlushOutput();
 
   // set new output
-  __ASSERT(Instance.curFrameEntry==NULL);
+  __ASSERT(Instance.curFrameEntry==nullptr);
   Instance.curFrameEntry=Instance.GetFrameEntry(curStackFrame,FrameTypeAssert,file,line);
   if (Instance.curFrameEntry->status==NoSkip)
   {
@@ -590,7 +590,7 @@ bool Debug::CrashDone(bool die)
   // did we have an active assertion?
   if (curType==DebugIOInterface::StringType::Crash)
   {
-    __ASSERT(curFrameEntry!=NULL);
+    __ASSERT(curFrameEntry!=nullptr);
 
     // hit info?
     if (curFrameEntry->hits>1)
@@ -690,14 +690,14 @@ bool Debug::CrashDone(bool die)
     else
 #endif
     {
-      MessageBox(NULL,help,"Game crash",
+      MessageBox(nullptr,help,"Game crash",
                           MB_OK|MB_ICONSTOP|MB_TASKMODAL|MB_SETFOREGROUND);
-      curFrameEntry=NULL;
+      curFrameEntry=nullptr;
       _exit(1);
     }
   }
 
-  curFrameEntry=NULL;
+  curFrameEntry=nullptr;
   return false;
 }
 
@@ -1025,8 +1025,8 @@ bool Debug::AddIOFactory(const char *io_id, const char *descr, DebugIOInterface*
   entry->ioID=io_id;
   entry->descr=descr;
   entry->factory=func;
-  entry->io=NULL;
-  entry->input=NULL;
+  entry->io=nullptr;
+  entry->input=nullptr;
   entry->inputAlloc=0;
   entry->inputUsed=0;
 
@@ -1055,7 +1055,7 @@ bool Debug::AddCommands(const char *cmdgroup, DebugCmdInterface *cmdif)
   // allocate & init new list entry
   CmdInterfaceListEntry *entry=(CmdInterfaceListEntry *)
                       DebugAllocMemory(sizeof(CmdInterfaceListEntry));
-  entry->next=NULL;
+  entry->next=nullptr;
   entry->group=cmdgroup;
   entry->cmdif=cmdif;
 
@@ -1142,7 +1142,7 @@ void Debug::Update(void)
 Debug::FrameHashEntry* Debug::AddFrameEntry(unsigned addr, unsigned type,
                                             const char *fileOrGroup, int line)
 {
-  __ASSERT(LookupFrame(addr)==NULL);
+  __ASSERT(LookupFrame(addr)==nullptr);
 
   // get new entry
   if (!numAvailableFrameHash)
@@ -1167,12 +1167,12 @@ Debug::FrameHashEntry* Debug::AddFrameEntry(unsigned addr, unsigned type,
   {
     // must add to list of known logs,
     // store translated name
-    e->fileOrGroup=AddLogGroup(fileOrGroup,NULL);
+    e->fileOrGroup=AddLogGroup(fileOrGroup,nullptr);
   }
   else
   {
     // no, just add file name (without path though)
-    e->fileOrGroup=fileOrGroup?strrchr(fileOrGroup,'\\'):NULL;
+    e->fileOrGroup=fileOrGroup?strrchr(fileOrGroup,'\\'):nullptr;
     e->fileOrGroup=e->fileOrGroup?e->fileOrGroup+1:fileOrGroup;
   }
 
@@ -1349,7 +1349,7 @@ void Debug::FlushOutput(bool defaultLog)
     cur->io->Write(curType,curSource,ioBuffer[curType].buffer);
 
     if (alwaysFlush)
-      cur->io->Write(curType,curSource,NULL);
+      cur->io->Write(curType,curSource,nullptr);
   }
 
   // written nowhere?
@@ -1383,7 +1383,7 @@ void Debug::AddPatternEntry(unsigned types, bool isActive, const char *pattern)
       DebugAllocMemory(sizeof(PatternListEntry));
 
   // init
-  cur->next=NULL;
+  cur->next=nullptr;
   cur->frameTypes=types;
   cur->isActive=isActive;
   cur->pattern=(char *)DebugAllocMemory(strlen(pattern)+1);
@@ -1465,7 +1465,7 @@ void Debug::ExecCommand(const char *cmdstart, const char *cmdend)
   // just dropping the excess arguments
   char *parts[100];
   int numParts=0;
-  char *lastNonWhitespace=NULL;
+  char *lastNonWhitespace=nullptr;
   char *cur=strbuf;
 
   // regular reply or structured reply?
@@ -1505,7 +1505,7 @@ void Debug::ExecCommand(const char *cmdstart, const char *cmdend)
       {
         if (numParts<sizeof(parts)/sizeof(*parts))
           parts[numParts++]=lastNonWhitespace;
-        lastNonWhitespace=NULL;
+        lastNonWhitespace=nullptr;
         if (*cur)
           *cur++=0;
       }
@@ -1604,7 +1604,7 @@ bool Debug::IsWindowed(void)
     return m_isWindowed>0;
 
   // find main app window
-  HWND appHWnd=NULL;
+  HWND appHWnd=nullptr;
   EnumThreadWindows(GetCurrentThreadId(),EnumThreadWndProc,(LPARAM)&appHWnd);
   if (!appHWnd)
   {

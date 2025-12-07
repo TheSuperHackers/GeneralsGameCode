@@ -50,8 +50,8 @@
 #include "systimer.h"
 
 
-SaveLoadSubSystemClass *		SaveLoadSystemClass::SubSystemListHead = NULL;
-PersistFactoryClass *			SaveLoadSystemClass::FactoryListHead = NULL;
+SaveLoadSubSystemClass *		SaveLoadSystemClass::SubSystemListHead = nullptr;
+PersistFactoryClass *			SaveLoadSystemClass::FactoryListHead = nullptr;
 SList<PostLoadableClass>		SaveLoadSystemClass::PostLoadList;
 PointerRemapClass					SaveLoadSystemClass::PointerRemapper;
 
@@ -82,7 +82,7 @@ bool SaveLoadSystemClass::Load (ChunkLoadClass &cload,bool auto_post_load)
 		SaveLoadStatus::Inc_Status_Count();		// Count the sub systems loaded
 		SaveLoadSubSystemClass *sys = Find_Sub_System(cload.Cur_Chunk_ID ());
 		WWLOG_INTERMEDIATE("Find_Sub_System");
-		if (sys != NULL) {
+		if (sys != nullptr) {
 //WWRELEASE_SAY(("			Name: %s",sys->Name()));
 			INIT_SUB_STATUS(sys->Name());
 			ok &= sys->Load(cload);
@@ -99,7 +99,7 @@ bool SaveLoadSystemClass::Load (ChunkLoadClass &cload,bool auto_post_load)
 
 	// Call PostLoad on each PersistClass that wanted post-load
 	if (auto_post_load) {
-		Post_Load_Processing(NULL);
+		Post_Load_Processing(nullptr);
 	}
 	WWLOG_INTERMEDIATE("PostLoadProcessing");
 
@@ -150,7 +150,7 @@ SaveLoadSubSystemClass * SaveLoadSystemClass::Find_Sub_System (uint32 chunk_id)
 {
 	// TODO: need a d-s that gives fast searching based on chunk_id!!
 	SaveLoadSubSystemClass * sys;
-	for ( sys = SubSystemListHead; sys != NULL; sys = sys->NextSubSystem ) {
+	for ( sys = SubSystemListHead; sys != nullptr; sys = sys->NextSubSystem ) {
 		if ( sys->Chunk_ID() == chunk_id ) {
 			break;
 		}
@@ -174,7 +174,7 @@ PersistFactoryClass * SaveLoadSystemClass::Find_Persist_Factory(uint32 chunk_id)
 {
 	// TODO: need a d-s that gives fast searching based on chunk_id!!
 	PersistFactoryClass * fact;
-	for ( fact = FactoryListHead; fact != NULL; fact = fact->NextFactory ) {
+	for ( fact = FactoryListHead; fact != nullptr; fact = fact->NextFactory ) {
 		if ( fact->Chunk_ID() == chunk_id ) {
 			break;
 		}
@@ -187,9 +187,9 @@ bool SaveLoadSystemClass::Is_Post_Load_Callback_Registered(PostLoadableClass * o
 	// obsolete!
 	bool retval = false;
 
-	SLNode<PostLoadableClass> *list_node = NULL;
+	SLNode<PostLoadableClass> *list_node = nullptr;
 	for (	list_node = PostLoadList.Head();
-			retval == false && list_node != NULL;
+			retval == false && list_node != nullptr;
 			list_node = list_node->Next())
 	{
 		retval = (list_node->Data() == obj);
@@ -241,7 +241,7 @@ void SaveLoadSystemClass::Request_Ref_Counted_Pointer_Remap (RefCountClass **poi
 void SaveLoadSystemClass::Link_Sub_System(SaveLoadSubSystemClass * sys)
 {
 	WWASSERT(sys != NULL);
-	if (sys != NULL) {
+	if (sys != nullptr) {
 		WWASSERT(sys->NextSubSystem == NULL);			// sys should never be registered twice!
 		sys->NextSubSystem = SubSystemListHead;
 		SubSystemListHead = sys;
@@ -252,27 +252,27 @@ void SaveLoadSystemClass::Unlink_Sub_System(SaveLoadSubSystemClass * sys)
 {
 	WWASSERT(sys != NULL);
 	SaveLoadSubSystemClass * cursys = SubSystemListHead;
-	SaveLoadSubSystemClass * prev = NULL;
+	SaveLoadSubSystemClass * prev = nullptr;
 
 	while (cursys != sys) {
 		prev = cursys;
 		cursys = cursys->NextSubSystem;
 	}
 
-	if (prev == NULL) {
+	if (prev == nullptr) {
 		SubSystemListHead = sys->NextSubSystem;
 	} else {
 		prev->NextSubSystem = sys->NextSubSystem;
 	}
 
-	sys->NextSubSystem = NULL;
+	sys->NextSubSystem = nullptr;
 }
 
 
 void SaveLoadSystemClass::Link_Factory(PersistFactoryClass * fact)
 {
 	WWASSERT(fact != NULL);
-	if (fact != NULL) {
+	if (fact != nullptr) {
 		WWASSERT(fact->NextFactory == NULL);			// factories should never be registered twice!
 		fact->NextFactory = FactoryListHead;
 		FactoryListHead = fact;
@@ -284,20 +284,20 @@ void SaveLoadSystemClass::Unlink_Factory(PersistFactoryClass * fact)
 	WWASSERT(fact != NULL);
 
 	PersistFactoryClass * curfact = FactoryListHead;
-	PersistFactoryClass * prev = NULL;
+	PersistFactoryClass * prev = nullptr;
 
 	while (curfact != fact) {
 		prev = curfact;
 		curfact = curfact->NextFactory;
 	}
 
-	if (prev == NULL) {
+	if (prev == nullptr) {
 		FactoryListHead = fact->NextFactory;
 	} else {
 		prev->NextFactory = fact->NextFactory;
 	}
 
-	fact->NextFactory = NULL;
+	fact->NextFactory = nullptr;
 }
 
 void Force_Link_WWSaveLoad (void)

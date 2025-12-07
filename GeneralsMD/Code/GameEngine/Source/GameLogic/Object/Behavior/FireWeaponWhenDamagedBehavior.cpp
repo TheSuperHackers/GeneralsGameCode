@@ -57,14 +57,14 @@ const Real END_MIDPOINT_RATIO = 0.65f;
 //-------------------------------------------------------------------------------------------------
 FireWeaponWhenDamagedBehavior::FireWeaponWhenDamagedBehavior( Thing *thing, const ModuleData* moduleData ) :
 	UpdateModule( thing, moduleData ),
-	m_reactionWeaponPristine( NULL ),
-	m_reactionWeaponDamaged( NULL ),
-	m_reactionWeaponReallyDamaged( NULL ),
-	m_reactionWeaponRubble( NULL ),
-	m_continuousWeaponPristine( NULL ),
-	m_continuousWeaponDamaged( NULL ),
-	m_continuousWeaponReallyDamaged( NULL ),
-	m_continuousWeaponRubble( NULL )
+	m_reactionWeaponPristine( nullptr ),
+	m_reactionWeaponDamaged( nullptr ),
+	m_reactionWeaponReallyDamaged( nullptr ),
+	m_reactionWeaponRubble( nullptr ),
+	m_continuousWeaponPristine( nullptr ),
+	m_continuousWeaponDamaged( nullptr ),
+	m_continuousWeaponReallyDamaged( nullptr ),
+	m_continuousWeaponRubble( nullptr )
 {
 
 	const FireWeaponWhenDamagedBehaviorModuleData *d = getFireWeaponWhenDamagedBehaviorModuleData();
@@ -127,10 +127,10 @@ FireWeaponWhenDamagedBehavior::FireWeaponWhenDamagedBehavior( Thing *thing, cons
 	}
 
 	if (isUpgradeActive() &&
-			(d->m_continuousWeaponPristine != NULL ||
-			d->m_continuousWeaponDamaged != NULL ||
-			d->m_continuousWeaponReallyDamaged != NULL ||
-			d->m_continuousWeaponRubble != NULL))
+			(d->m_continuousWeaponPristine != nullptr ||
+			d->m_continuousWeaponDamaged != nullptr ||
+			d->m_continuousWeaponReallyDamaged != nullptr ||
+			d->m_continuousWeaponRubble != nullptr))
 	{
 		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 	}

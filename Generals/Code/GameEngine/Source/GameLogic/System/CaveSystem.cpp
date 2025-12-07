@@ -34,7 +34,7 @@
 #include "Common/Xfer.h"
 #include "GameLogic/CaveSystem.h"
 
-CaveSystem *TheCaveSystem = NULL;
+CaveSystem *TheCaveSystem = nullptr;
 
 CaveSystem::CaveSystem()
 {
@@ -65,8 +65,8 @@ void CaveSystem::update()
 Bool CaveSystem::canSwitchIndexToIndex( Int oldIndex, Int newIndex )
 {
 	// When I grant permission, you need to do it.  ie call Unregister and then re-register with the new number
-	TunnelTracker *oldTracker = NULL;
-	TunnelTracker *newTracker = NULL;
+	TunnelTracker *oldTracker = nullptr;
+	TunnelTracker *newTracker = nullptr;
 	if( m_tunnelTrackerVector.size() > oldIndex )
 	{
 		oldTracker = m_tunnelTrackerVector[oldIndex];
@@ -117,7 +117,7 @@ void CaveSystem::unregisterCave( Int theIndex )
 
 TunnelTracker *CaveSystem::getTunnelTrackerForCaveIndex( Int theIndex )
 {
-	TunnelTracker *theTracker = NULL;
+	TunnelTracker *theTracker = nullptr;
 	if( theIndex < m_tunnelTrackerVector.size() )
 	{
 		theTracker = m_tunnelTrackerVector[theIndex];

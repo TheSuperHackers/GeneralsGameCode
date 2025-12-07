@@ -31,15 +31,15 @@
 
 DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	:
-	DDSMemory(NULL),
+	DDSMemory(nullptr),
 	Width(0),
 	Height(0),
 	Depth(0),
 	FullWidth(0),
 	FullHeight(0),
 	FullDepth(0),
-	LevelSizes(NULL),
-	LevelOffsets(NULL),
+	LevelSizes(nullptr),
+	LevelOffsets(nullptr),
 	MipLevels(0),
 	ReductionFactor(reduction_factor),
 	Format(WW3D_FORMAT_UNKNOWN),
@@ -343,7 +343,7 @@ void DDSFileClass::Copy_Level_To_Surface(unsigned level,IDirect3DSurface8* d3d_s
 
 	// First lock the surface
 	D3DLOCKED_RECT locked_rect;
-	DX8_ErrorCode(d3d_surface->LockRect(&locked_rect,NULL,0));
+	DX8_ErrorCode(d3d_surface->LockRect(&locked_rect,nullptr,0));
 
 	Copy_Level_To_Surface(
 		level,
@@ -684,7 +684,7 @@ void DDSFileClass::Copy_CubeMap_Level_To_Surface
 // volume texture copy
 const unsigned char* DDSFileClass::Get_Volume_Memory_Pointer(unsigned int level)  const
 {
-	return NULL;//DDSMemory[
+	return nullptr;//DDSMemory[
 }
 
 void DDSFileClass::Copy_Volume_Level_To_Surface

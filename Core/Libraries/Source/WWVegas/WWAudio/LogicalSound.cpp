@@ -104,7 +104,7 @@ void
 LogicalSoundClass::Add_To_Scene (bool /*start_playing*/)
 {
 	SoundSceneClass *scene = WWAudioClass::Get_Instance ()->Get_Sound_Scene ();
-	if ((scene != NULL) && (m_Scene == NULL)) {
+	if ((scene != nullptr) && (m_Scene == nullptr)) {
 
 		//
 		//	Add this sound to the culling system
@@ -125,14 +125,14 @@ LogicalSoundClass::Add_To_Scene (bool /*start_playing*/)
 void
 LogicalSoundClass::Remove_From_Scene (void)
 {
-	if (m_Scene != NULL) {
+	if (m_Scene != nullptr) {
 
 		//
 		//	Remove this sound from the culling system
 		//
 		m_Scene->Remove_Logical_Sound (this, m_IsSingleShot);
-		m_Scene					= NULL;
-		m_PhysWrapper			= NULL;
+		m_Scene					= nullptr;
+		m_PhysWrapper			= nullptr;
 		m_LastNotification	= 0;
 	}
 

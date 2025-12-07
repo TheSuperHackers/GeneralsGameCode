@@ -31,7 +31,7 @@
 
 Scorches ScorchOptions::m_scorchtype = SCORCH_1;
 Real ScorchOptions::m_scorchsize = DEFAULT_SCORCHMARK_RADIUS;
-ScorchOptions *ScorchOptions::m_staticThis = NULL;
+ScorchOptions *ScorchOptions::m_staticThis = nullptr;
 
 /////////////////////////////////////////////////////////////////////////////
 // ScorchOptions dialog
@@ -63,7 +63,7 @@ END_MESSAGE_MAP()
 
 MapObject *ScorchOptions::getSingleSelectedScorch(void)
 {
-	MapObject *theMapObj = NULL;
+	MapObject *theMapObj = nullptr;
 //	Bool found = false;
 	Int selCount=0;
 	MapObject *pMapObj;
@@ -79,7 +79,7 @@ MapObject *ScorchOptions::getSingleSelectedScorch(void)
 		return theMapObj;
 	}
 
-	return(NULL);
+	return(nullptr);
 }
 
 void ScorchOptions::updateTheUI(void)

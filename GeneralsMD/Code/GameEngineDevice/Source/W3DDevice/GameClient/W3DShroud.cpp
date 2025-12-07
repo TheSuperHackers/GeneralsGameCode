@@ -70,11 +70,11 @@
 //-----------------------------------------------------------------------------
 W3DShroud::W3DShroud(void)
 {
-	m_finalFogData=NULL;
-	m_currentFogData=NULL;
-	m_pSrcTexture=NULL;
-	m_pDstTexture=NULL;
-	m_srcTextureData=NULL;
+	m_finalFogData=nullptr;
+	m_currentFogData=nullptr;
+	m_pSrcTexture=nullptr;
+	m_pDstTexture=nullptr;
+	m_srcTextureData=nullptr;
 	m_srcTexturePitch=NULL;
 	m_dstTextureWidth=m_numMaxVisibleCellsX=0;
 	m_dstTextureHeight=m_numMaxVisibleCellsY=0;
@@ -167,7 +167,7 @@ void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSi
 	D3DLOCKED_RECT rect;
 
 	//Get a pointer to source surface pixels.
-	HRESULT res = m_pSrcTexture->LockRect(&rect,NULL,D3DLOCK_NO_DIRTY_UPDATE);
+	HRESULT res = m_pSrcTexture->LockRect(&rect,nullptr,D3DLOCK_NO_DIRTY_UPDATE);
 	m_pSrcTexture->UnlockRect();
 
 	DEBUG_ASSERTCRASH( res == D3D_OK, ("Failed to lock shroud src surface"));
@@ -206,14 +206,14 @@ void W3DShroud::reset()
 	if (m_pSrcTexture)
 	{
 		m_pSrcTexture->Release();
-		m_pSrcTexture=NULL;
+		m_pSrcTexture=nullptr;
 	}
 
 	delete [] m_finalFogData;
-	m_finalFogData=NULL;
+	m_finalFogData=nullptr;
 
 	delete [] m_currentFogData;
-	m_currentFogData=NULL;
+	m_currentFogData=nullptr;
 
 	m_clearDstTexture = TRUE;	//always refill the destination texture after a reset
 }
@@ -512,7 +512,7 @@ void W3DShroud::setBorderShroudLevel(W3DShroudLevel level)
 
 //-----------------------------------------------------------------------------
 ///@todo: remove this
-TextureClass *DummyTexture=NULL;
+TextureClass *DummyTexture=nullptr;
 
 //#define LOAD_DUMMY_SHROUD
 

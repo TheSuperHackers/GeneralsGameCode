@@ -55,7 +55,7 @@
 
 
 StreakRendererClass::StreakRendererClass(void) :
-		Texture(NULL),
+		Texture(nullptr),
 		Shader(ShaderClass::_PresetAdditiveSpriteShader),
 		Width(0.0f),
 		Color(Vector3(1,1,1)),
@@ -69,13 +69,13 @@ StreakRendererClass::StreakRendererClass(void) :
 		// UVOffsetDeltaPerMS(0.0f, 0.0f),
 		Bits(DEFAULT_BITS),
 		m_vertexBufferSize(0),
-		m_vertexBuffer(NULL)
+		m_vertexBuffer(nullptr)
 {
   // EMPTY
 }
 
 StreakRendererClass::StreakRendererClass(const StreakRendererClass & that) :
-		Texture(NULL),
+		Texture(nullptr),
 		Shader(ShaderClass::_PresetAdditiveSpriteShader),
 		Width(0.0f),
 		Color(Vector3(1,1,1)),
@@ -89,7 +89,7 @@ StreakRendererClass::StreakRendererClass(const StreakRendererClass & that) :
 		// UVOffsetDeltaPerMS(0.0f, 0.0f),
 		Bits(DEFAULT_BITS),
 		m_vertexBufferSize(0),
-		m_vertexBuffer(NULL)
+		m_vertexBuffer(nullptr)
 {
 	*this = that;
 }
@@ -159,7 +159,7 @@ void StreakRendererClass::Set_Texture(TextureClass *texture)
 
 TextureClass * StreakRendererClass::Get_Texture(void) const
 {
-	if (Texture != NULL) {
+	if (Texture != nullptr) {
 		Texture->Add_Ref();
 	}
 	return Texture;

@@ -83,14 +83,14 @@ static Bool SearchStringMatches(AsciiString str, AsciiString searchString)
 
 ArchiveFile::~ArchiveFile()
 {
-	if (m_file != NULL) {
+	if (m_file != nullptr) {
 		m_file->close();
-		m_file = NULL;
+		m_file = nullptr;
 	}
 }
 
 ArchiveFile::ArchiveFile()
-	: m_file(NULL)
+	: m_file(nullptr)
 {
 }
 
@@ -185,9 +185,9 @@ void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *di
 
 void ArchiveFile::attachFile(File *file)
 {
-	if (m_file != NULL) {
+	if (m_file != nullptr) {
 		m_file->close();
-		m_file = NULL;
+		m_file = nullptr;
 	}
 	m_file = file;
 }
@@ -210,7 +210,7 @@ const ArchivedFileInfo * ArchiveFile::getArchivedFileInfo(const AsciiString& fil
 		}
 		else
 		{
-			return NULL;
+			return nullptr;
 		}
 
 		tokenizer.nextToken(&token, "\\/");
@@ -223,7 +223,7 @@ const ArchivedFileInfo * ArchiveFile::getArchivedFileInfo(const AsciiString& fil
 	}
 	else
 	{
-		return NULL;
+		return nullptr;
 	}
 
 }

@@ -116,7 +116,7 @@
 /*
 ** Static member variable which keeps track of the single instanced asset manager
 */
-WW3DAssetManager *		WW3DAssetManager::TheInstance = NULL;
+WW3DAssetManager *		WW3DAssetManager::TheInstance = nullptr;
 
 /*
 ** Static instance of the Null prototype.  This render object is special cased
@@ -172,7 +172,7 @@ public:
 
 	virtual void					First(void) { Node = WW3DAssetManager::Get_Instance()->Font3DDatas.Head(); }
 	virtual void					Next(void)	{ Node = Node->Next(); }
-	virtual bool					Is_Done(void) { return Node==NULL; }
+	virtual bool					Is_Done(void) { return Node==nullptr; }
 	virtual const char *			Current_Item_Name(void) { return Node->Data()->Name; }
 
 protected:
@@ -201,7 +201,7 @@ WW3DAssetManager::WW3DAssetManager(void) :
 
 	WW3D_Load_On_Demand		(false),
 	Activate_Fog_On_Load		(false),
-	MetalManager(0)
+	MetalManager(nullptr)
 {
 	assert(TheInstance == NULL);
 	TheInstance = this;
@@ -249,10 +249,10 @@ WW3DAssetManager::~WW3DAssetManager(void)
 	delete MetalManager;
 
 	Free();
-	TheInstance = NULL;
+	TheInstance = nullptr;
 
 	delete [] PrototypeHashTable;
-	PrototypeHashTable = NULL;
+	PrototypeHashTable = nullptr;
 }
 
 static void Create_Number_String(StringClass& number, unsigned value)
@@ -444,7 +444,7 @@ void WW3DAssetManager::Free_Assets(void)
 		PrototypeClass * proto = Prototypes[count];
 		Prototypes.Delete(count);
 
-		if (proto != NULL) {
+		if (proto != nullptr) {
 			proto->DeleteSelf();
 		}
 	}
@@ -523,7 +523,7 @@ void WW3DAssetManager::Free_Assets_With_Exclusion_List(const DynamicVectorClass<
 	for (; i<Prototypes.Count(); i++) {
 
 		PrototypeClass * proto = Prototypes[i];
-		if (proto != NULL) {
+		if (proto != nullptr) {
 
 			// If this prototype is excluded, copy the pointer, otherwise delete it.
 			if (exclusion_list.Is_Excluded(proto)) {
@@ -585,7 +585,7 @@ void WW3DAssetManager::Create_Asset_List(DynamicVectorClass<StringClass> & model
 		if (proto) {
 			const char * name = proto->Get_Name();
 
-			if ((strchr(name,'#') == NULL) && (strchr(name,'.') == NULL)) {
+			if ((strchr(name,'#') == nullptr) && (strchr(name,'.') == nullptr)) {
 				model_list.Add(StringClass(name));
 			}
 		}
@@ -703,9 +703,9 @@ bool WW3DAssetManager::Load_Prototype(ChunkLoadClass & cload)
 	** Find a loader that handles that type of chunk
 	*/
 	PrototypeLoaderClass * loader = Find_Prototype_Loader(chunk_id);
-	PrototypeClass * newproto = NULL;
+	PrototypeClass * newproto = nullptr;
 
-	if (loader != NULL) {
+	if (loader != nullptr) {
 
 		/*
 		** Ask it to create a prototype from the contents of the
@@ -726,7 +726,7 @@ bool WW3DAssetManager::Load_Prototype(ChunkLoadClass & cload)
 	** Now, see if the prototype that we loaded has a duplicate
 	** name with any of our currently loaded prototypes (can't have that!)
 	*/
-	if (newproto != NULL) {
+	if (newproto != nullptr) {
 
 		if (!Render_Obj_Exists(newproto->Get_Name())) {
 
@@ -743,7 +743,7 @@ bool WW3DAssetManager::Load_Prototype(ChunkLoadClass & cload)
 			*/
 			WWDEBUG_SAY(("Render Object Name Collision: %s",newproto->Get_Name()));
 			newproto->DeleteSelf();
-			newproto = NULL;
+			newproto = nullptr;
 			return false;
 		}
 
@@ -784,12 +784,12 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 	// Try to find a prototype
 	PrototypeClass * proto = Find_Prototype(name);
 
-	if (WW3D_Load_On_Demand && proto == NULL) {	// If we didn't find one, try to load on demand
+	if (WW3D_Load_On_Demand && proto == nullptr) {	// If we didn't find one, try to load on demand
 		AssetStatusClass::Peek_Instance()->Report_Load_On_Demand_RObj(name);
 
 		char filename [MAX_PATH];
 		const char *mesh_name = ::strchr (name, '.');
-		if (mesh_name != NULL) {
+		if (mesh_name != nullptr) {
 			::lstrcpyn (filename, name, ((int)mesh_name) - ((int)name) + 1);
 			::lstrcat (filename, ".w3d");
 		} else {
@@ -806,7 +806,7 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 		proto = Find_Prototype(name);		// try again
 	}
 
-	if (proto == NULL) {
+	if (proto == nullptr) {
 		static int warning_count = 0;
 		// Note - objects named "#..." are scaled cached objects, so don't warn...
 		if (name[0] != '#') {
@@ -815,7 +815,7 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 			}
 			AssetStatusClass::Peek_Instance()->Report_Missing_RObj(name);
 		}
-		return NULL;		// Failed to find a prototype
+		return nullptr;		// Failed to find a prototype
 	}
 
 	return proto->Create();
@@ -836,7 +836,7 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
  *=============================================================================================*/
 bool WW3DAssetManager::Render_Obj_Exists(const char * name)
 {
-	if (Find_Prototype(name) == NULL) return false;
+	if (Find_Prototype(name) == nullptr) return false;
 	else return true;
 }
 
@@ -962,7 +962,7 @@ HAnimClass *	WW3DAssetManager::Get_HAnim(const char * name)
 	// Try to find the hanim
 	HAnimClass * anim = HAnimManager.Get_Anim(name);
 
-	if (WW3D_Load_On_Demand && anim == NULL) {	// If we didn't find it, try to load on demand
+	if (WW3D_Load_On_Demand && anim == nullptr) {	// If we didn't find it, try to load on demand
 
 		if ( !HAnimManager.Is_Missing( name ) ) {	// if this is NOT a known missing anim
 
@@ -970,12 +970,12 @@ HAnimClass *	WW3DAssetManager::Get_HAnim(const char * name)
 
 			char filename[ MAX_PATH ];
 			const char *animname = strchr( name, '.');
-			if (animname != NULL) {
+			if (animname != nullptr) {
 				sprintf( filename, "%s.w3d", animname+1);
 			} else {
 				WWDEBUG_SAY(( "Animation %s has no . in the name", name ));
 				WWASSERT( 0 );
-				return NULL;
+				return nullptr;
 			}
 
 			// If we can't find it, try the parent directory
@@ -985,7 +985,7 @@ HAnimClass *	WW3DAssetManager::Get_HAnim(const char * name)
 			}
 
 			anim = HAnimManager.Get_Anim(name);		// Try agai
-			if (anim == NULL) {
+			if (anim == nullptr) {
 				HAnimManager.Register_Missing( name );		// This is now a KNOWN missing anim
 				AssetStatusClass::Peek_Instance()->Report_Missing_HAnim(name);
 			}
@@ -1016,7 +1016,7 @@ HTreeClass *	WW3DAssetManager::Get_HTree(const char * name)
 	// Try to find the htree
 	HTreeClass * htree = HTreeManager.Get_Tree(name);
 
-	if (WW3D_Load_On_Demand && htree == NULL) {	// If we didn't find it, try to load on demand
+	if (WW3D_Load_On_Demand && htree == nullptr) {	// If we didn't find it, try to load on demand
 
 		AssetStatusClass::Peek_Instance()->Report_Load_On_Demand_HTree(name);
 
@@ -1032,7 +1032,7 @@ HTreeClass *	WW3DAssetManager::Get_HTree(const char * name)
 
 		htree = HTreeManager.Get_Tree(name);	// Try again
 
-		if (htree == NULL) {
+		if (htree == nullptr) {
 			AssetStatusClass::Peek_Instance()->Report_Missing_HTree(name);
 		}
 	}
@@ -1115,9 +1115,9 @@ TextureClass * WW3DAssetManager::Get_Texture
 	/*
 	** Bail if the user isn't really asking for anything
 	*/
-	if ((filename == NULL) || (strlen(filename) == 0))
+	if ((filename == nullptr) || (strlen(filename) == 0))
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	StringClass lower_case_name(filename,true);
@@ -1139,12 +1139,12 @@ TextureClass * WW3DAssetManager::Get_Texture
 	{
 		if (type==TextureBaseClass::TEX_REGULAR)
 		{
-			tex = NEW_REF (TextureClass, (lower_case_name, NULL, mip_level_count, texture_format, allow_compression));
+			tex = NEW_REF (TextureClass, (lower_case_name, nullptr, mip_level_count, texture_format, allow_compression));
 		}
 		else
 		{
 			WWASSERT_PRINT(false, ("Unhandled case"));
-			return NULL;
+			return nullptr;
 		}
 
 		TextureHash.Insert(tex->Get_Texture_Name(),tex);
@@ -1426,7 +1426,7 @@ void	WW3DAssetManager::Release_All_Font3DDatas( void )
 {
 	// for each mat in the list, get it and release ref it
 	Font3DDataClass *head;
-	while ((head = Font3DDatas.Remove_Head()) != NULL )	{
+	while ((head = Font3DDatas.Remove_Head()) != nullptr )	{
 		head->Release_Ref();
 	}
 }
@@ -1494,7 +1494,7 @@ FontCharsClass *	WW3DAssetManager::Get_FontChars( const char * name, int point_s
 	}
 
 	font->Release_Ref();
-	return NULL;
+	return nullptr;
 }
 
 
@@ -1566,7 +1566,7 @@ PrototypeLoaderClass * WW3DAssetManager::Find_Prototype_Loader(int chunk_id)
 			return loader;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -1609,24 +1609,24 @@ void WW3DAssetManager::Add_Prototype(PrototypeClass * newproto)
 void WW3DAssetManager::Remove_Prototype(PrototypeClass *proto)
 {
 	WWASSERT(proto != NULL);
-	if (proto != NULL) {
+	if (proto != nullptr) {
 
 		//
 		// Find the prototype in the hash table.
 		//
 		const char *pname = proto->Get_Name ();
 		bool bfound = false;
-		PrototypeClass *prev = NULL;
+		PrototypeClass *prev = nullptr;
 		int hash = CRC_Stringi(pname) & PROTOTYPE_HASH_MASK;
 		for (PrototypeClass *test = PrototypeHashTable[hash];
-			  (test != NULL) && (bfound == false);
+			  (test != nullptr) && (bfound == false);
 			  test = test->friend_getNextHash()) {
 
 			// Is this the prototype?
 			if (::stricmp (test->Get_Name(), pname) == 0) {
 
 				// Remove this prototype from the linked list for this hash index.
-				if (prev == NULL) {
+				if (prev == nullptr) {
 					PrototypeHashTable[hash] = test->friend_getNextHash();
 				} else {
 					prev->friend_setNextHash(test->friend_getNextHash());
@@ -1663,11 +1663,11 @@ void WW3DAssetManager::Remove_Prototype(PrototypeClass *proto)
 void WW3DAssetManager::Remove_Prototype(const char *name)
 {
 	WWASSERT(name != NULL);
-	if (name != NULL) {
+	if (name != nullptr) {
 
 		// Lookup the prototype by name
 		PrototypeClass *proto = Find_Prototype (name);
-		if (proto != NULL) {
+		if (proto != nullptr) {
 
 			// Remove the prototype from our lists, and free its memory
 			Remove_Prototype (proto);
@@ -1703,13 +1703,13 @@ PrototypeClass * WW3DAssetManager::Find_Prototype(const char * name)
 	int hash = CRC_Stringi(name) & PROTOTYPE_HASH_MASK;
 	PrototypeClass * test = PrototypeHashTable[hash];
 
-	while (test != NULL) {
+	while (test != nullptr) {
 		if (stricmp(test->Get_Name(),name) == 0) {
 			return test;
 		}
 		test = test->friend_getNextHash();
 	}
-	return NULL;
+	return nullptr;
 }
 
 /*
@@ -1729,7 +1729,7 @@ const char * RObjIterator::Current_Item_Name(void)
 	if (Index < WW3DAssetManager::Get_Instance()->Prototypes.Count()) {
 		return WW3DAssetManager::Get_Instance()->Prototypes[Index]->Get_Name();
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 

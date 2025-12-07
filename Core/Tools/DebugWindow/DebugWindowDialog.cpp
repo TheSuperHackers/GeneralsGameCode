@@ -25,7 +25,7 @@ DebugWindowDialog::DebugWindowDialog(UINT nIDTemplate, CWnd* pParentWnd) :
 	mStepping = false;
 	mRunFast = false;
 	mNumberOfStepsAllowed = -1;
-	mMainWndHWND = ::FindWindow(NULL, "Command & Conquer: Generals");
+	mMainWndHWND = ::FindWindow(nullptr, "Command & Conquer: Generals");
 }
 
 int DebugWindowDialog::OnCreate(LPCREATESTRUCT lpCreateStruct)

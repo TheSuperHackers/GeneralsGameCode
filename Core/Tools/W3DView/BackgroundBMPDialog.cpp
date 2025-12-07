@@ -121,7 +121,7 @@ CBackgroundBMPDialog::OnOK (void)
         else
         {
             // Ask the doc to clear any existing background BMP
-            pCDoc->SetBackgroundBMP (NULL);
+            pCDoc->SetBackgroundBMP (nullptr);
         }
     }
 

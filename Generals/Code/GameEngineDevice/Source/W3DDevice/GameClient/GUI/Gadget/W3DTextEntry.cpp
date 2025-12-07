@@ -196,7 +196,7 @@ static void drawTextEntryText( GameWindow *window, WinInstanceData *instData,
 	GameWindow *parent;
 	parent = window->winGetParent();
 	if(parent && !BitIsSet(parent->winGetStyle(), GWS_COMBO_BOX))
-		parent = NULL;
+		parent = nullptr;
 
 	if( (window == TheWindowManager->winGetFocus() || (parent && parent == TheWindowManager->winGetFocus())) && ((drawCnt++ >> 3) & 0x1) )
 		TheWindowManager->winFillRect( textColor, WIN_DRAW_LINE_WIDTH,

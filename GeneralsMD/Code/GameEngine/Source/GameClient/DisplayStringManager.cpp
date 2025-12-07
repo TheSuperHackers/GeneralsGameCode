@@ -32,7 +32,7 @@
 #include "GameClient/DisplayStringManager.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-DisplayStringManager *TheDisplayStringManager = NULL;
+DisplayStringManager *TheDisplayStringManager = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS
@@ -43,8 +43,8 @@ DisplayStringManager *TheDisplayStringManager = NULL;
 DisplayStringManager::DisplayStringManager( void )
 {
 
-	m_stringList = NULL;
-	m_currentCheckpoint = NULL;
+	m_stringList = nullptr;
+	m_currentCheckpoint = nullptr;
 
 }
 

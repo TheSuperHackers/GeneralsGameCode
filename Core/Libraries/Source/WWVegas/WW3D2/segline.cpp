@@ -561,7 +561,7 @@ bool SegmentedLineClass::Cast_Ray(RayCollisionTestClass & raytest)
 
 		Vector3 p0;
 		Vector3 p1;
-		if (raytest.Ray.Find_Intersection (line_seg, &p0, &fraction, &p1, NULL)) {
+		if (raytest.Ray.Find_Intersection (line_seg, &p0, &fraction, &p1, nullptr)) {
 
 			//
 			//	Determine if the ray was close enough to this line to be

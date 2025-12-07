@@ -39,7 +39,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-GameSpyConfigInterface *TheGameSpyConfig = NULL;
+GameSpyConfigInterface *TheGameSpyConfig = nullptr;
 
 class GameSpyConfig : public GameSpyConfigInterface
 {

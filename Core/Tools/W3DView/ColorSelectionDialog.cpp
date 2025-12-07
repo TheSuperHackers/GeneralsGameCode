@@ -202,7 +202,7 @@ ColorSelectionDialogClass::Paint_Color_Window (void)
 	m_ColorWindow.ReleaseDC (pdc);
 
 	// Let the window know it doesn't need to be repainted
-	m_ColorWindow.ValidateRect (NULL);
+	m_ColorWindow.ValidateRect (nullptr);
 	return;
 }
 

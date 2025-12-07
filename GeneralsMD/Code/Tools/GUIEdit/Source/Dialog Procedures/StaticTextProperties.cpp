@@ -207,8 +207,8 @@ HWND InitStaticTextPropertiesDialog( GameWindow *window )
 												 (LPCTSTR)STATIC_TEXT_PROPERTIES_DIALOG,
 												 TheEditor->getWindowHandle(),
 												 (DLGPROC)staticTextPropertiesCallback );
-	if( dialog == NULL )
-		return NULL;
+	if( dialog == nullptr )
+		return nullptr;
 
 	// do the common initialization
 	CommonDialogInitialize( window, dialog );

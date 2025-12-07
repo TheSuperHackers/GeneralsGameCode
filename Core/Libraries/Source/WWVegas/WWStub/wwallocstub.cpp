@@ -67,7 +67,7 @@ void operator delete[](void * p, const char *, int)
 
 void* createW3DMemPool(const char *poolName, int allocationSize)
 {
-	return NULL;
+	return nullptr;
 }
 
 void* allocateFromW3DMemPool(void* pool, int allocationSize)

@@ -46,7 +46,7 @@ CW3DViewDoc *
 GetCurrentDocument (void)
 {
     // Assume failure
-    CW3DViewDoc *pCDoc = NULL;
+    CW3DViewDoc *pCDoc = nullptr;
 
     // Get a pointer to the main window
     CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd ();
@@ -96,7 +96,7 @@ CenterDialogAroundTreeView (HWND hDlg)
 
                 // Move the dialog so its centered in the data tree view
                 ::SetWindowPos (hDlg,
-                                NULL,
+                                nullptr,
                                 rect.left + ((rect.right-rect.left) >> 1) - ((dialogRect.right-dialogRect.left) >> 1),
                                 rect.top + ((rect.bottom-rect.top) >> 1) - ((dialogRect.bottom-dialogRect.top) >> 1),
                                 0,
@@ -156,7 +156,7 @@ Paint_Gradient
     ::ReleaseDC (hWnd, hDC);
 
     // Validate the contents of the window so the control won't paint itself
-    ::ValidateRect (hWnd, NULL);
+    ::ValidateRect (hWnd, nullptr);
     return ;
 }
 
@@ -226,7 +226,7 @@ Initialize_Spinner
 	//	Set the buddy's text accordingly
 	//
 	CWnd *buddy = ctrl.GetBuddy ();
-	if (buddy != NULL) {
+	if (buddy != nullptr) {
 		::SetWindowFloat (*buddy, pos);
 	}
 
@@ -246,7 +246,7 @@ Update_Spinner_Buddy (CSpinButtonCtrl &ctrl, int delta)
 	//
 	if ((::GetWindowLong (ctrl, GWL_STYLE) & UDS_SETBUDDYINT) == 0) {
 		CWnd *buddy = ctrl.GetBuddy ();
-		if (buddy != NULL) {
+		if (buddy != nullptr) {
 
 			// Get the current value, increment it, and put it back into the control
 			float value = ::GetWindowFloat (*buddy);
@@ -321,7 +321,7 @@ Enable_Dialog_Controls (HWND dlg,bool onoff)
 	// Loop over all sub-windows enable/disabling everything except for
 	// the static text controls
 	//
-	for (HWND child = ::GetWindow(dlg,GW_CHILD) ; child != NULL ; child = ::GetWindow(child,GW_HWNDNEXT)) {
+	for (HWND child = ::GetWindow(dlg,GW_CHILD) ; child != nullptr ; child = ::GetWindow(child,GW_HWNDNEXT)) {
 		char buf[64];
 		::GetClassName(child,buf,sizeof(buf));
 		if (stricmp(buf,"STATIC") != 0) {
@@ -416,7 +416,7 @@ Get_Filename_From_Path (LPCTSTR path)
 {
 	// Find the last occurance of the directory deliminator
 	LPCTSTR filename = ::strrchr (path, '\\');
-	if (filename != NULL) {
+	if (filename != nullptr) {
 		// Increment past the directory deliminator
 		filename ++;
 	} else {
@@ -441,7 +441,7 @@ Strip_Filename_From_Path (LPCTSTR path)
 
 	// Find the last occurance of the directory deliminator
 	LPTSTR filename = ::strrchr (temp_path, '\\');
-	if (filename != NULL) {
+	if (filename != nullptr) {
 		// Strip off the filename
 		filename[0] = 0;
 	}
@@ -478,18 +478,18 @@ Create_DIB_Section
 	bitmap_info.biClrImportant = 0;
 
 	// Get a temporary screen DC
-	HDC hscreen_dc = ::GetDC (NULL);
+	HDC hscreen_dc = ::GetDC (nullptr);
 
 	// Create a bitmap that we can access the bits directly of
 	HBITMAP hbitmap = ::CreateDIBSection (hscreen_dc,
 													  (const BITMAPINFO *)&bitmap_info,
 													  DIB_RGB_COLORS,
 													  (void **)pbits,
-													  NULL,
+													  nullptr,
 													  0L);
 
 	// Release our temporary screen DC
-	::ReleaseDC (NULL, hscreen_dc);
+	::ReleaseDC (nullptr, hscreen_dc);
 	return hbitmap;
 }
 
@@ -502,7 +502,7 @@ HBITMAP
 Make_Bitmap_From_Texture (TextureClass &texture, int width, int height)
 {
 	// TheSuperHackers @info Not implemented
-	HBITMAP hbitmap = NULL;
+	HBITMAP hbitmap = nullptr;
 	// Return a handle to the bitmap
 	return hbitmap;
 }
@@ -538,7 +538,7 @@ Build_Emitter_List
 	// Loop through all this render obj's sub-obj's
 	for (int index = 0; index < render_obj.Get_Num_Sub_Objects (); index ++) {
 		RenderObjClass *psub_obj = render_obj.Get_Sub_Object (index);
-		if (psub_obj != NULL) {
+		if (psub_obj != nullptr) {
 
 			// Is this sub-obj an emitter?
 			if (psub_obj->Class_ID () == RenderObjClass::CLASSID_PARTICLEEMITTER) {
@@ -579,8 +579,8 @@ Is_Aggregate (const char *asset_name)
 
 	// Check to see if this object is an aggregate
 	RenderObjClass *prender_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj (asset_name);
-	if ((prender_obj != NULL) &&
-		 (prender_obj->Get_Base_Model_Name () != NULL))
+	if ((prender_obj != nullptr) &&
+		 (prender_obj->Get_Base_Model_Name () != nullptr))
 	{
 		retval = true;
 	}
@@ -605,14 +605,14 @@ Rename_Aggregate_Prototype
 )
 {
 	// Params valid?
-	if ((old_name != NULL) &&
-		 (new_name != NULL) &&
+	if ((old_name != nullptr) &&
+		 (new_name != nullptr) &&
 		 (::lstrcmpi (old_name, new_name) != 0)) {
 
 		// Get the prototype from the asset manager
-		AggregatePrototypeClass *proto = NULL;
+		AggregatePrototypeClass *proto = nullptr;
 		proto = (AggregatePrototypeClass *)WW3DAssetManager::Get_Instance ()->Find_Prototype (old_name);
-		if (proto != NULL) {
+		if (proto != nullptr) {
 
 			// Copy the definition from the prototype and remove the prototype
 			AggregateDefClass *pdefinition = proto->Get_Definition ();
@@ -642,7 +642,7 @@ Is_Real_LOD (const char *asset_name)
 
 	// Check to see if this object is an aggregate
 	RenderObjClass *prender_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj (asset_name);
-	if ((prender_obj != NULL) &&
+	if ((prender_obj != nullptr) &&
 		 (prender_obj->Class_ID () == RenderObjClass::CLASSID_HLOD) &&
 		 (((HLodClass *)prender_obj)->Get_LOD_Count () > 1)) {
 		retval = true;
@@ -676,10 +676,10 @@ Get_File_Time
 	HANDLE hfile = ::CreateFile (path,
 										  0,
 										  0,
-										  NULL,
+										  nullptr,
 										  OPEN_EXISTING,
 										  0L,
-										  NULL);
+										  nullptr);
 
 	ASSERT (hfile != INVALID_HANDLE_VALUE);
 	if (hfile != INVALID_HANDLE_VALUE) {
@@ -724,13 +724,13 @@ Are_Glide_Drivers_Acceptable (void)
 
 		// Get the creation time of the glide2x driver
 		FILETIME file_time = { 0 };
-		if (::Get_File_Time (glide2x, NULL, NULL, &file_time)) {
+		if (::Get_File_Time (glide2x, nullptr, nullptr, &file_time)) {
 			CTime time_obj (file_time);
 			retval = ((time_obj.GetYear () == 1998) && (time_obj.GetMonth () == 12)) || (time_obj.GetYear () > 1998);
 		}
 
 		// Get the creation time of the glide3x driver
-		if (::Get_File_Time (glide3x, NULL, NULL, &file_time)) {
+		if (::Get_File_Time (glide3x, nullptr, nullptr, &file_time)) {
 			CTime time_obj (file_time);
 			retval = ((time_obj.GetYear () == 1998) && (time_obj.GetMonth () == 12)) || (time_obj.GetYear () > 1998);
 		}
@@ -748,7 +748,7 @@ Are_Glide_Drivers_Acceptable (void)
 TextureClass *
 Load_RC_Texture (LPCTSTR resource_name)
 {
-	TextureClass *texture = NULL;
+	TextureClass *texture = nullptr;
 
 	//
 	//	Load the cursor file image from this binaries resources
@@ -826,7 +826,7 @@ Copy_File
 	bool		force_copy
 )
 {
-	SANITY_CHECK ((existing_filename != NULL && new_filename != NULL)) {
+	SANITY_CHECK ((existing_filename != nullptr && new_filename != nullptr)) {
 		return false;
 	}
 
@@ -867,13 +867,13 @@ Copy_File
 CGraphicView *
 Get_Graphic_View (void)
 {
-	CGraphicView *view = NULL;
+	CGraphicView *view = nullptr;
 
 	//
 	//	Get the view from the current document
 	//
 	CW3DViewDoc *doc = GetCurrentDocument ();
-	if (doc != NULL) {
+	if (doc != nullptr) {
 		view = doc->GetGraphicView ();
 	}
 
