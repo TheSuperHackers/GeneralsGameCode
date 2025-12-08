@@ -1,7 +1,11 @@
 #!/bin/bash
-
 #!/usr/bin/env bash
+
 set -euo pipefail
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+RESOURCES_DIR=$SCRIPT_DIR/../resources
+
 
 usage() {
   cat <<EOF
@@ -59,7 +63,8 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g)  dockerbuild -t zerohour-build
+
+docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g)  $RESOURCES_DIR/dockerbuild -t zerohour-build
 if [[ "$INTERACTIVE" == "true" ]]; then
     FLAGS="  -it --entrypoint bash"
 else
