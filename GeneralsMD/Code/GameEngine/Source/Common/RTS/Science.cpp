@@ -33,7 +33,7 @@
 #include "Common/Player.h"
 #include "Common/Science.h"
 
-ScienceStore* TheScienceStore = NULL;
+ScienceStore* TheScienceStore = nullptr;
 
 
 //-----------------------------------------------------------------------------
@@ -148,7 +148,7 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 			return si;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -163,15 +163,15 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 
 		static const FieldParse myFieldParse[] =
 		{
-			{ "PrerequisiteSciences", INI::parseScienceVector, NULL, offsetof( ScienceInfo, m_prereqSciences ) },
-			{ "SciencePurchasePointCost", INI::parseInt, NULL, offsetof( ScienceInfo, m_sciencePurchasePointCost ) },
-			{ "IsGrantable", INI::parseBool, NULL, offsetof( ScienceInfo, m_grantable ) },
-			{ "DisplayName", INI::parseAndTranslateLabel, NULL, offsetof( ScienceInfo, m_name) },
-			{ "Description", INI::parseAndTranslateLabel, NULL, offsetof( ScienceInfo, m_description) },
-			{ 0, 0, 0, 0 }
+			{ "PrerequisiteSciences", INI::parseScienceVector, nullptr, offsetof( ScienceInfo, m_prereqSciences ) },
+			{ "SciencePurchasePointCost", INI::parseInt, nullptr, offsetof( ScienceInfo, m_sciencePurchasePointCost ) },
+			{ "IsGrantable", INI::parseBool, nullptr, offsetof( ScienceInfo, m_grantable ) },
+			{ "DisplayName", INI::parseAndTranslateLabel, nullptr, offsetof( ScienceInfo, m_name) },
+			{ "Description", INI::parseAndTranslateLabel, nullptr, offsetof( ScienceInfo, m_description) },
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 
-		ScienceInfo* info = NULL;
+		ScienceInfo* info = nullptr;
 
 		// see if the science already exists. (can't use findScienceInfo() since it is const and should remain so.)
 		for (ScienceInfoVec::iterator it = TheScienceStore->m_sciences.begin(); it != TheScienceStore->m_sciences.end(); ++it)
@@ -188,7 +188,7 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 		{
 			ScienceInfo* newInfo = newInstance(ScienceInfo);
 
-			if (info == NULL)
+			if (info == nullptr)
 			{
 				// only add if it's not overriding an existing one.
 				info = newInfo;
@@ -211,7 +211,7 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 		}
 		else
 		{
-			if (info != NULL)
+			if (info != nullptr)
 			{
 				DEBUG_CRASH(("duplicate science %s!",c));
 				throw INI_INVALID_DATA;
@@ -365,7 +365,7 @@ ScienceType ScienceStore::friend_lookupScience(const char* scienceName) const
 Bool ScienceStore::isValidScience(ScienceType st) const
 {
 	const ScienceInfo* si = findScienceInfo(st);
-	return si != NULL;
+	return si != nullptr;
 }
 
 //-----------------------------------------------------------------------------

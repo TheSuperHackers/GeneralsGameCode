@@ -153,7 +153,7 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
         DeleteObject( hBrushNew );
 
         // validate this new area
-        ValidateRect( hWndControl, NULL );
+        ValidateRect( hWndControl, nullptr );
 
 				// we have taken care of it
 				return TRUE;
@@ -194,7 +194,7 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 						{
 
 							gridColor = *newColor;
-							InvalidateRect( hWndControl, NULL, TRUE );
+							InvalidateRect( hWndControl, nullptr, TRUE );
 
 						}
 
@@ -210,7 +210,7 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 					Int value;
 
 					// get the pixels between marks
-					value = GetDlgItemInt( hWndDialog, EDIT_RESOLUTION, NULL, FALSE );
+					value = GetDlgItemInt( hWndDialog, EDIT_RESOLUTION, nullptr, FALSE );
 					TheEditor->setGridResolution( value );
 
 					// get grid on/off flag

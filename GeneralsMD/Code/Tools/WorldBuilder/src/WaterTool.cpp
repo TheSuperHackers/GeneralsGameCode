@@ -124,12 +124,12 @@ void WaterTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 void WaterTool::setCursor(void)
 {
 	if (m_poly_mouseUpPlus || (m_poly_isAdding && m_poly_curSelectedPolygon)) {
-		if (m_poly_plusCursor == NULL) {
+		if (m_poly_plusCursor == nullptr) {
 			m_poly_plusCursor = AfxGetApp()->LoadCursor(MAKEINTRESOURCE(IDC_WATER_PLUS));
 		}
 		::SetCursor(m_poly_plusCursor);
 	} else 	if (m_poly_mouseUpMove) {
-		if (m_poly_moveCursor == NULL) {
+		if (m_poly_moveCursor == nullptr) {
 			m_poly_moveCursor = AfxGetApp()->LoadCursor(MAKEINTRESOURCE(IDC_WATER_MOVE));
 		}
 		::SetCursor(m_poly_moveCursor);

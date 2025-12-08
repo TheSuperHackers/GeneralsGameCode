@@ -50,7 +50,7 @@ BOOL CWBFrameWnd::LoadFrame(UINT nIDResource,
 	if (ret) {
 		Int top = ::AfxGetApp()->GetProfileInt(TWO_D_WINDOW_SECTION, "Top", 10);
 		Int left =::AfxGetApp()->GetProfileInt(TWO_D_WINDOW_SECTION, "Left", 10);
-		this->SetWindowPos(NULL, left,
+		this->SetWindowPos(nullptr, left,
 			top, 0, 0,
 			SWP_NOZORDER|SWP_NOSIZE);
 		if (!m_cellSizeToolBar.Create(this, IDD_CELL_SLIDER, CBRS_LEFT, IDD_CELL_SLIDER))

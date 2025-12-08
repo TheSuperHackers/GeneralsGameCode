@@ -96,7 +96,7 @@ Int GarrisonContain::findClosestFreeGarrisonPointIndex( Int conditionIndex,
 #endif
 
 	// sanity
-	if( targetPos == NULL || m_garrisonPointsInUse == MAX_GARRISON_POINTS )
+	if( targetPos == nullptr || m_garrisonPointsInUse == MAX_GARRISON_POINTS )
 		return GARRISON_INDEX_INVALID;
 
 	Int closestIndex = GARRISON_INDEX_INVALID;
@@ -106,7 +106,7 @@ Int GarrisonContain::findClosestFreeGarrisonPointIndex( Int conditionIndex,
 	{
 
 		// only consider free garrison points
-		if( m_garrisonPointData[ i ].object == NULL )
+		if( m_garrisonPointData[ i ].object == nullptr )
 		{
 
 			// compute the squared distance between these two points
@@ -135,7 +135,7 @@ Int GarrisonContain::getObjectGarrisonPointIndex( Object *obj )
 {
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return GARRISON_INDEX_INVALID;
 
 	for( Int i = 0; i < MAX_GARRISON_POINTS; ++i )
@@ -157,7 +157,7 @@ void GarrisonContain::putObjectAtGarrisonPoint( Object *obj,
 	DEBUG_ASSERTCRASH(m_garrisonPointsInitialized, ("garrisonPoints are not inited"));
 
 	// sanity
-	if( obj == NULL || pointIndex < 0 || pointIndex >= MAX_GARRISON_POINTS ||
+	if( obj == nullptr || pointIndex < 0 || pointIndex >= MAX_GARRISON_POINTS ||
 			conditionIndex < 0 || conditionIndex >= MAX_GARRISON_POINT_CONDITIONS )
 	{
 
@@ -167,7 +167,7 @@ void GarrisonContain::putObjectAtGarrisonPoint( Object *obj,
 	}
 
 	// make sure this point is empty
-	if( m_garrisonPointData[ pointIndex ].object != NULL )
+	if( m_garrisonPointData[ pointIndex ].object != nullptr )
 	{
 
 		DEBUG_CRASH(( "GarrisonContain::putObjectAtGarrisonPoint - Garrison Point '%d' is not empty",
@@ -327,7 +327,7 @@ Bool GarrisonContain::attemptBestFirePointPosition( Object *source, Weapon *weap
 		removeObjectFromGarrisonPoint( source, existingIndex );
 	}
 
-	putObjectAtBestGarrisonPoint( source, victim, NULL );
+	putObjectAtBestGarrisonPoint( source, victim, nullptr );
 
 	//Okay, now we have positioned the object in the best position for the victim.
 	//Now check if we are able to fire on our victim.
@@ -368,7 +368,7 @@ Bool GarrisonContain::attemptBestFirePointPosition( Object *source, Weapon *weap
 		removeObjectFromGarrisonPoint( source, existingIndex );
 	}
 
-	putObjectAtBestGarrisonPoint( source, NULL, targetPos );
+	putObjectAtBestGarrisonPoint( source, nullptr, targetPos );
 
 	//Okay, now we have positioned the object in the best position for the targetPos.
 	//Now check if we are able to fire on our targetPos.
@@ -394,7 +394,7 @@ void GarrisonContain::putObjectAtBestGarrisonPoint( Object *obj, Object *target,
 {
 
 	// sanity
-	if( obj == NULL || (target == NULL && targetPos == NULL) )
+	if( obj == nullptr || (target == nullptr && targetPos == nullptr) )
 		return;
 
 #ifdef DEBUG_CRASHING
@@ -402,7 +402,7 @@ void GarrisonContain::putObjectAtBestGarrisonPoint( Object *obj, Object *target,
   DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("calcBestGarrisonPosition... SHOULD NOT GET HERE, since this container is non-enclosing") );
 #endif
 	// if obj target, override pos
-	if (target != NULL)
+	if (target != nullptr)
 		targetPos = target->getPosition();
 
 	// if this object is already at a garrison point do nothing
@@ -438,7 +438,7 @@ void GarrisonContain::removeObjectFromGarrisonPoint( Object *obj, Int index )
 #endif
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return;
 
 	// search for the object in the garrison point data, if found, remove it
@@ -474,7 +474,7 @@ void GarrisonContain::removeObjectFromGarrisonPoint( Object *obj, Int index )
 	}
 
 	// remove from this spot
-	m_garrisonPointData[ removeIndex ].object = NULL;
+	m_garrisonPointData[ removeIndex ].object = nullptr;
 	m_garrisonPointData[ removeIndex ].targetID = INVALID_ID;
 	m_garrisonPointData[ removeIndex ].placeFrame = 0;
 	m_garrisonPointData[ removeIndex ].lastEffectFrame = 0;
@@ -483,7 +483,7 @@ void GarrisonContain::removeObjectFromGarrisonPoint( Object *obj, Int index )
 	// destroy drawable for gun barrel and effects if present
 	if( m_garrisonPointData[ removeIndex ].effect )
 		TheGameClient->destroyDrawable( m_garrisonPointData[ removeIndex ].effect );
-	m_garrisonPointData[ removeIndex ].effect = NULL;
+	m_garrisonPointData[ removeIndex ].effect = nullptr;
 
 	// set the position of the object to back to the center of the garrisoned building
 	obj->setPosition( getObject()->getPosition() );
@@ -506,7 +506,7 @@ GarrisonContain::GarrisonContain( Thing *thing, const ModuleData *moduleData ) :
 {
 	Int i, j;
 
-	m_originalTeam = NULL;
+	m_originalTeam = nullptr;
 	m_hideGarrisonedStateFromNonallies = FALSE;
 	m_garrisonPointsInUse = 0;
 	m_garrisonPointsInitialized = FALSE;
@@ -515,11 +515,11 @@ GarrisonContain::GarrisonContain( Thing *thing, const ModuleData *moduleData ) :
 	for( i = 0; i < MAX_GARRISON_POINTS; i++ )
 	{
 
-		m_garrisonPointData[ i ].object = NULL;
+		m_garrisonPointData[ i ].object = nullptr;
 		m_garrisonPointData[ i ].targetID = INVALID_ID;
 		m_garrisonPointData[ i ].placeFrame = 0;
 		m_garrisonPointData[ i ].lastEffectFrame = 0;
-		m_garrisonPointData[ i ].effect = NULL;
+		m_garrisonPointData[ i ].effect = nullptr;
 
 		for( j = 0; j < MAX_GARRISON_POINT_CONDITIONS; ++j )
 			m_garrisonPoint[ j ][ i ].zero();
@@ -662,9 +662,9 @@ void GarrisonContain::addValidObjectsToGarrisonPoints( void )
 			// already in there
 			//
 			if( victim )
-				putObjectAtBestGarrisonPoint( obj, victim, NULL );
+				putObjectAtBestGarrisonPoint( obj, victim, nullptr );
 			else if( victimPos )
-				putObjectAtBestGarrisonPoint( obj, NULL, victimPos );
+				putObjectAtBestGarrisonPoint( obj, nullptr, victimPos );
 
 		}
 
@@ -682,7 +682,7 @@ void GarrisonContain::trackTargets( void )
 {
 
 
-  if ( ! isEnclosingContainerFor( 0 ) )
+  if ( ! isEnclosingContainerFor( nullptr ) )
     return; // since ina non-enclosing container, objects fire from their station points, instead of being juggled around between garrison firepoints
 
 
@@ -974,7 +974,7 @@ UpdateSleepTime GarrisonContain::update( void )
 // ------------------------------------------------------------------------------------------------
 void GarrisonContain::matchObjectsToGarrisonPoints( void )
 {
-  if ( isEnclosingContainerFor( NULL ) == FALSE )
+  if ( isEnclosingContainerFor( nullptr ) == FALSE )
   {
     // enforce that everybody stays at their pre-assigned space
     positionObjectsAtStationGarrisonPoints();
@@ -1070,7 +1070,7 @@ void GarrisonContain::removeObjectFromStationPoint( const Object *obj )
 {
 
   //sanity
-  if ( obj == NULL )
+  if ( obj == nullptr )
     return;
 
   Bool foundOccupant = FALSE;
@@ -1204,7 +1204,7 @@ const Player* GarrisonContain::getApparentControllingPlayer( const Player* obser
 void GarrisonContain::recalcApparentControllingPlayer( void )
 {
 	//Record original team first time through.
-	if( m_originalTeam == NULL )
+	if( m_originalTeam == nullptr )
 	{
 		m_originalTeam = getObject()->getTeam();
 	}
@@ -1212,8 +1212,8 @@ void GarrisonContain::recalcApparentControllingPlayer( void )
 	// (hokey trick: if our team is null, nuke originalTeam -- this
 	// usually means we are being called during game-teardown and
 	// the teams are no longer valid...)
-	if (getObject()->getTeam() == NULL)
-		m_originalTeam = NULL;
+	if (getObject()->getTeam() == nullptr)
+		m_originalTeam = nullptr;
 	// Check to see if we have any units contained in our object
 	if( getContainCount() > 0 )
 	{
@@ -1226,7 +1226,7 @@ void GarrisonContain::recalcApparentControllingPlayer( void )
 		m_hideGarrisonedStateFromNonallies = ( !detected && ( getStealthUnitsContained() == getContainCount() ) );
 
 		Player* controller = rider->getControllingPlayer();
-		Team *team = controller ? controller->getDefaultTeam() : NULL;
+		Team *team = controller ? controller->getDefaultTeam() : nullptr;
 		if( team )
 		{
 			getObject()->setTeam( team );
@@ -1280,7 +1280,7 @@ void GarrisonContain::recalcApparentControllingPlayer( void )
 		// if we don't already have them.
 		if( getContainCount() > 0 )
     {
-      if ( isEnclosingContainerFor( 0 ) )
+      if ( isEnclosingContainerFor( nullptr ) )
       {
         if ( m_garrisonPointsInitialized == FALSE )
 		    {
@@ -1351,7 +1351,7 @@ void GarrisonContain::loadGarrisonPoints( void )
 		structure->clearAndSetModelConditionFlags( clearFlags, setFlags );
 		conditionIndex = GARRISON_POINT_PRISTINE;
 
-		count = structure->getMultiLogicalBonePosition("FIREPOINT", MAX_GARRISON_POINTS, m_garrisonPoint[ conditionIndex ], NULL);
+		count = structure->getMultiLogicalBonePosition("FIREPOINT", MAX_GARRISON_POINTS, m_garrisonPoint[ conditionIndex ], nullptr);
 
 		if ( count > 0) gBonesFound = TRUE;
 
@@ -1365,7 +1365,7 @@ void GarrisonContain::loadGarrisonPoints( void )
 		structure->clearAndSetModelConditionFlags( clearFlags, setFlags );
 		conditionIndex = GARRISON_POINT_DAMAGED;
 
-		count = structure->getMultiLogicalBonePosition("FIREPOINT", MAX_GARRISON_POINTS, m_garrisonPoint[ conditionIndex ], NULL);
+		count = structure->getMultiLogicalBonePosition("FIREPOINT", MAX_GARRISON_POINTS, m_garrisonPoint[ conditionIndex ], nullptr);
 
 		if ( count > 0) gBonesFound = TRUE;
 
@@ -1379,7 +1379,7 @@ void GarrisonContain::loadGarrisonPoints( void )
 		structure->clearAndSetModelConditionFlags( clearFlags, setFlags );
 		conditionIndex = GARRISON_POINT_REALLY_DAMAGED;
 
-		count = structure->getMultiLogicalBonePosition("FIREPOINT", MAX_GARRISON_POINTS, m_garrisonPoint[ conditionIndex ], NULL);
+		count = structure->getMultiLogicalBonePosition("FIREPOINT", MAX_GARRISON_POINTS, m_garrisonPoint[ conditionIndex ], nullptr);
 
 		if ( count > 0) gBonesFound = TRUE;
 
@@ -1677,10 +1677,10 @@ void GarrisonContain::onRemoving( Object *obj )
 		// (hokey exception: if our team is null, don't bother -- this
 		// usually means we are being called during game-teardown and
 		// the teams are no longer valid...)
-		if (getObject()->getTeam() != NULL)
+		if (getObject()->getTeam() != nullptr)
 		{
 			getObject()->setTeam( m_originalTeam );
-			m_originalTeam = NULL;
+			m_originalTeam = nullptr;
 		}
 
 		// we also lose our transient attack ability
@@ -1818,7 +1818,7 @@ void GarrisonContain::xfer( Xfer *xfer )
 		{
 
 			m_originalTeam = TheTeamFactory->findTeamByID( teamID );
-			if( m_originalTeam == NULL )
+			if( m_originalTeam == nullptr )
 			{
 
 				DEBUG_CRASH(( "GarrisonContain::xfer - Unable to find original team by id" ));
@@ -1828,7 +1828,7 @@ void GarrisonContain::xfer( Xfer *xfer )
 
 		}
 		else
-			m_originalTeam = NULL;
+			m_originalTeam = nullptr;
 
 	}
 
@@ -1937,7 +1937,7 @@ void GarrisonContain::loadPostProcess( void )
 		{
 
 			m_garrisonPointData[ i ].object = TheGameLogic->findObjectByID( m_garrisonPointData[ i ].objectID );
-			if( m_garrisonPointData[ i ].object == NULL )
+			if( m_garrisonPointData[ i ].object == nullptr )
 			{
 
 				DEBUG_CRASH(( "GarrisonContain::loadPostProcess - Unable to find object for point data" ));
@@ -1947,14 +1947,14 @@ void GarrisonContain::loadPostProcess( void )
 
 		}
 		else
-			m_garrisonPointData[ i ].object = NULL;
+			m_garrisonPointData[ i ].object = nullptr;
 
 		// drawable effect pointer
 		if( m_garrisonPointData[ i ].effectID != INVALID_ID )
 		{
 
 			m_garrisonPointData[ i ].effect = TheGameClient->findDrawableByID( m_garrisonPointData[ i ].effectID );
-			if( m_garrisonPointData[ i ].effect == NULL )
+			if( m_garrisonPointData[ i ].effect == nullptr )
 			{
 
 				DEBUG_CRASH(( "GarrisonContain::loadPostProcess - Unable to find effect for point data" ));
@@ -1964,7 +1964,7 @@ void GarrisonContain::loadPostProcess( void )
 
 		}
 		else
-			m_garrisonPointData[ i ].effect = NULL;
+			m_garrisonPointData[ i ].effect = nullptr;
 
 	}
 
@@ -2015,7 +2015,7 @@ void GarrisonContain::loadStationGarrisonPoints( void )
 		for( ; t < MAX_GARRISON_POINTS; ++t )
 		  tempBuffer[ t ] = *(structure->getPosition());
 
-		count = structure->getMultiLogicalBonePosition("STATION", modData->m_containMax, tempBuffer, NULL);
+		count = structure->getMultiLogicalBonePosition("STATION", modData->m_containMax, tempBuffer, nullptr);
 		if ( count > 0) stationBonesFound = TRUE;
 
 

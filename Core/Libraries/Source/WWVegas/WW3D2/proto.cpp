@@ -121,8 +121,8 @@ PrototypeClass * MeshLoaderClass::Load_W3D(ChunkLoadClass & cload)
 {
 	MeshClass * mesh = NEW_REF( MeshClass, () );
 
-	if (mesh == NULL) {
-		return NULL;
+	if (mesh == nullptr) {
+		return nullptr;
 	}
 
 	if (mesh->Load_W3D(cload) != WW3D_ERROR_OK) {
@@ -130,7 +130,7 @@ PrototypeClass * MeshLoaderClass::Load_W3D(ChunkLoadClass & cload)
 		// if the load failed, delete the mesh
 		assert(mesh->Num_Refs() == 1);
 		mesh->Release_Ref();
-		return NULL;
+		return nullptr;
 
 	} else {
 
@@ -159,15 +159,15 @@ PrototypeClass * HModelLoaderClass::Load_W3D(ChunkLoadClass & cload)
 {
 	HModelDefClass * hdef = W3DNEW HModelDefClass;
 
-	if (hdef == NULL) {
-		return NULL;
+	if (hdef == nullptr) {
+		return nullptr;
 	}
 
 	if (hdef->Load_W3D(cload) != HModelDefClass::OK) {
 
 		// load failed, delete the model and return an error
 		delete hdef;
-		return NULL;
+		return nullptr;
 
 	} else {
 

@@ -45,6 +45,7 @@
 //-----------------------------------------------------------------------------
 //         Includes
 //-----------------------------------------------------------------------------
+
 #include "W3DDevice/GameClient/W3DTerrainBackground.h"
 
 #include <assetmgr.h>
@@ -83,7 +84,7 @@ const Int PIXELS_PER_GRID = 8; // default tex resolution allocated for each tile
 //=============================================================================
 void W3DTerrainBackground::setFlip(WorldHeightMap *htMap)
 {
-	if (m_map==NULL) return;
+	if (m_map==nullptr) return;
 	if (htMap) {
 		REF_PTR_SET(m_map, htMap);
 	}
@@ -107,7 +108,7 @@ The vertex coordinates and texture coordinates, as well as static lighting are u
 */
 void W3DTerrainBackground::doPartialUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, Bool doTextures )
 {
-	if (m_map==NULL) return;
+	if (m_map==nullptr) return;
 	if (htMap) {
 		REF_PTR_SET(m_map, htMap);
 	}
@@ -120,7 +121,7 @@ void W3DTerrainBackground::doPartialUpdate(const IRegion2D &partialRange, WorldH
 	return;
 
 	Int requiredVertexSize = (m_width+1) * (m_width+1) + 6;
-	if (m_vertexTerrainSize<requiredVertexSize || m_vertexTerrain==NULL) {
+	if (m_vertexTerrainSize<requiredVertexSize || m_vertexTerrain==nullptr) {
 		m_vertexTerrainSize = requiredVertexSize;
 		REF_PTR_RELEASE(m_vertexTerrain);
 		REF_PTR_RELEASE(m_indexTerrain);
@@ -128,7 +129,7 @@ void W3DTerrainBackground::doPartialUpdate(const IRegion2D &partialRange, WorldH
 	}
 
 	Int requiredIndexSize = (m_width+1) * (m_width+1) + 6;
-	if (m_indexTerrainSize<requiredIndexSize || m_indexTerrain==NULL) {
+	if (m_indexTerrainSize<requiredIndexSize || m_indexTerrain==nullptr) {
 		m_indexTerrainSize = requiredIndexSize;
 		REF_PTR_RELEASE(m_indexTerrain);
 		m_indexTerrain=NEW_REF(DX8IndexBufferClass,(m_indexTerrainSize+4,DX8IndexBufferClass::USAGE_DEFAULT));
@@ -181,7 +182,7 @@ void W3DTerrainBackground::doPartialUpdate(const IRegion2D &partialRange, WorldH
 	}
 	m_bounds.Init(bounds);
 
-	if (m_terrainTexture == NULL || doTextures) {
+	if (m_terrainTexture == nullptr || doTextures) {
 		REF_PTR_RELEASE(m_terrainTexture);
 		REF_PTR_RELEASE(m_terrainTexture2X);
 		REF_PTR_RELEASE(m_terrainTexture4X);
@@ -464,7 +465,7 @@ The vertex coordinates and texture coordinates, as well as static lighting are u
 */
 void W3DTerrainBackground::doTesselatedUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, Bool doTextures )
 {
-	if (m_map==NULL) return;
+	if (m_map==nullptr) return;
 	if (htMap) {
 		REF_PTR_SET(m_map, htMap);
 	}
@@ -502,7 +503,7 @@ void W3DTerrainBackground::doTesselatedUpdate(const IRegion2D &partialRange, Wor
 		}
 	}
 
-	if (m_vertexTerrainSize<requiredVertex || m_vertexTerrain==NULL) {
+	if (m_vertexTerrainSize<requiredVertex || m_vertexTerrain==nullptr) {
 		m_vertexTerrainSize = requiredVertex;
 		REF_PTR_RELEASE(m_vertexTerrain);
 		m_vertexTerrain=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZDUV2,m_vertexTerrainSize+4,DX8VertexBufferClass::USAGE_DEFAULT));
@@ -541,9 +542,9 @@ void W3DTerrainBackground::doTesselatedUpdate(const IRegion2D &partialRange, Wor
 
 	Int requiredIndex = 0;
 
-	fillVBRecursive(NULL, 0, 0, m_width, ndx, requiredIndex);
+	fillVBRecursive(nullptr, 0, 0, m_width, ndx, requiredIndex);
 
-	if (m_indexTerrainSize<requiredIndex || m_indexTerrain==NULL) {
+	if (m_indexTerrainSize<requiredIndex || m_indexTerrain==nullptr) {
 		m_indexTerrainSize = requiredIndex;
 		REF_PTR_RELEASE(m_indexTerrain);
 		m_indexTerrain=NEW_REF(DX8IndexBufferClass,(m_indexTerrainSize+4,DX8IndexBufferClass::USAGE_DEFAULT));
@@ -556,7 +557,7 @@ void W3DTerrainBackground::doTesselatedUpdate(const IRegion2D &partialRange, Wor
 	ib = lockIdxBuffer.Get_Index_Array();
 	fillVBRecursive(ib, 0, 0, m_width, ndx, m_curNumTerrainIndices);
 	delete[] ndx;
-	ndx = NULL;
+	ndx = nullptr;
 
 	MinMaxAABoxClass bounds;
 	bounds.Init_Empty();
@@ -574,7 +575,7 @@ void W3DTerrainBackground::doTesselatedUpdate(const IRegion2D &partialRange, Wor
 	}
 	m_bounds.Init(bounds);
 
-	if (m_terrainTexture == NULL || doTextures) {
+	if (m_terrainTexture == nullptr || doTextures) {
 		REF_PTR_RELEASE(m_terrainTexture);
 		REF_PTR_RELEASE(m_terrainTexture2X);
 		REF_PTR_RELEASE(m_terrainTexture4X);
@@ -610,14 +611,14 @@ W3DTerrainBackground::~W3DTerrainBackground(void)
 for the bibs. */
 //=============================================================================
 W3DTerrainBackground::W3DTerrainBackground(void):
-m_vertexTerrain(NULL),
+m_vertexTerrain(nullptr),
 m_vertexTerrainSize(0),
 m_initialized(FALSE),
-m_indexTerrain(NULL),
+m_indexTerrain(nullptr),
 m_indexTerrainSize(0),
-m_terrainTexture(NULL),
-m_terrainTexture2X(NULL),
-m_terrainTexture4X(NULL),
+m_terrainTexture(nullptr),
+m_terrainTexture2X(nullptr),
+m_terrainTexture4X(nullptr),
 m_cullStatus(CULL_STATUS_UNKNOWN),
 m_texMultiplier(TEX1X)
 {
@@ -646,7 +647,7 @@ void W3DTerrainBackground::freeTerrainBuffers(void)
 //=============================================================================
 void W3DTerrainBackground::allocateTerrainBuffers(WorldHeightMap *htMap, Int xOrigin, Int yOrigin, Int width)
 {
-	if (htMap==NULL) return;
+	if (htMap==nullptr) return;
 	freeTerrainBuffers(); // in case already allocated. jba [3/24/2003]
 	m_curNumTerrainVertices=0;
 	m_curNumTerrainIndices=0;
@@ -729,14 +730,14 @@ void W3DTerrainBackground::updateTexture(void)
 
 	if (m_texMultiplier == TEX4X) {
 		REF_PTR_RELEASE(m_terrainTexture2X);
-		if (m_terrainTexture4X == NULL) {
+		if (m_terrainTexture4X == nullptr) {
 			m_terrainTexture4X = m_map->getFlatTexture(m_xOrigin, m_yOrigin, m_width, 4*PIXELS_PER_GRID);
 			m_terrainTexture4X->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			m_terrainTexture4X->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		}
 	} else if (m_texMultiplier == TEX2X) {
 		REF_PTR_RELEASE(m_terrainTexture4X);
-		if (m_terrainTexture2X == NULL) {
+		if (m_terrainTexture2X == nullptr) {
 			m_terrainTexture2X = m_map->getFlatTexture(m_xOrigin, m_yOrigin, m_width, 2*PIXELS_PER_GRID);
 			m_terrainTexture2X->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			m_terrainTexture2X->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);

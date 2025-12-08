@@ -84,7 +84,7 @@ void Dict::DictPair::clear()
 		case DICT_BOOL:
 		case DICT_INT:
 		case DICT_REAL:
-			m_value = 0;
+			m_value = nullptr;
 			break;
 		case DICT_ASCIISTRING:
 			asAsciiString()->clear();
@@ -126,7 +126,7 @@ Dict::DictPair* Dict::findPairByKey(NameKeyType key) const
 	DEBUG_ASSERTCRASH(key != NAMEKEY_INVALID, ("invalid namekey!"));
 	DEBUG_ASSERTCRASH((UnsignedInt)key < (1L<<23), ("namekey too large!"));
 	if (!m_data)
-		return NULL;
+		return nullptr;
 	DictPair* base = m_data->peek();
 	Int minIdx = 0;
 	Int maxIdx = m_data->m_numPairsUsed;
@@ -143,7 +143,7 @@ Dict::DictPair* Dict::findPairByKey(NameKeyType key) const
 			return mid;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // -----------------------------------------------------
@@ -157,7 +157,7 @@ Dict::DictPair *Dict::ensureUnique(int numPairsNeeded, Bool preserveData, DictPa
 		return pairToTranslate;
 	}
 
-	Dict::DictPairData* newData = NULL;
+	Dict::DictPairData* newData = nullptr;
 	if (numPairsNeeded > 0)
 	{
 		DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("Cannot use dynamic memory allocator before its initialization. Check static initialization order."));
@@ -200,7 +200,7 @@ Dict::DictPair *Dict::ensureUnique(int numPairsNeeded, Bool preserveData, DictPa
 void Dict::clear()
 {
 	releaseData();
-	m_data = NULL;
+	m_data = nullptr;
 }
 
 // -----------------------------------------------------
@@ -215,12 +215,12 @@ void Dict::releaseData()
 				src->clear();
 			TheDynamicMemoryAllocator->freeBytes(m_data);
 		}
-		m_data = 0;
+		m_data = nullptr;
 	}
 }
 
 // -----------------------------------------------------
-Dict::Dict(Int numPairsToPreAllocate) : m_data(0)
+Dict::Dict(Int numPairsToPreAllocate) : m_data(nullptr)
 {
 
 	/*
@@ -236,7 +236,7 @@ Dict::Dict(Int numPairsToPreAllocate) : m_data(0)
 										sizeof(UnicodeString) <= sizeof(void*), ("oops, this code needs attention"));
 
 	if (numPairsToPreAllocate)
-		ensureUnique(numPairsToPreAllocate, false, NULL);	// will throw on error
+		ensureUnique(numPairsToPreAllocate, false, nullptr);	// will throw on error
 }
 
 // -----------------------------------------------------

@@ -37,6 +37,7 @@
 
 #include "strtok_r.h"
 #include "stringex.h"
+#include <Utility/CppMacros.h>
 
 //
 // Replacement for strtok() that doesn't use a static to
@@ -55,7 +56,7 @@ char *strtok_r(char *strptr, const char *delimiters, char **lasts)
 		*lasts=strptr;
 
 	if ((*lasts)[0]==0)  // 0 length string?
-		return(NULL);
+		return(nullptr);
 
 	//
 	// Note: strcspn & strspn are both called, they're opposites
@@ -68,7 +69,7 @@ char *strtok_r(char *strptr, const char *delimiters, char **lasts)
 		*lasts+=dend;
 
 		if ((*lasts)[0]==0)  // 0 length string?
-			return(NULL);
+			return(nullptr);
 
 		dstart=strcspn(*lasts, delimiters);
 	}

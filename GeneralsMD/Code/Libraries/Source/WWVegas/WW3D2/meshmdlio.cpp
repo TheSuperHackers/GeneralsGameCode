@@ -236,7 +236,7 @@ public:
  *=============================================================================================*/
 WW3DErrorType MeshModelClass::Load_W3D(ChunkLoadClass & cload)
 {
-	MeshLoadContextClass * context = NULL;
+	MeshLoadContextClass * context = nullptr;
 
 	/*
 	**	Open the first chunk, it should be the mesh header
@@ -280,7 +280,7 @@ WW3DErrorType MeshModelClass::Load_W3D(ChunkLoadClass & cload)
 	Set_Name(tmpname);
 
 	delete[] tmpname;
-	tmpname = NULL;
+	tmpname = nullptr;
 
 	context->AlternateMatDesc.Set_Vertex_Count(VertexCount);
 	context->AlternateMatDesc.Set_Polygon_Count(PolyCount);
@@ -398,7 +398,7 @@ WW3DErrorType MeshModelClass::Load_W3D(ChunkLoadClass & cload)
 	** If this mesh is collideable and no AABTree was in the file, generate one now
 	*/
 	if (	(((W3dAttributes & W3D_MESH_FLAG_COLLISION_TYPE_MASK) >> W3D_MESH_FLAG_COLLISION_TYPE_SHIFT) != 0) &&
-			(CullTree == NULL))
+			(CullTree == nullptr))
 	{
 		Generate_Culling_Tree();
 	}
@@ -584,12 +584,12 @@ WW3DErrorType MeshModelClass::read_chunks(ChunkLoadClass & cload,MeshLoadContext
 WW3DErrorType MeshModelClass::read_texcoords(ChunkLoadClass & cload,MeshLoadContextClass * context)
 {
 	W3dTexCoordStruct texcoord;
-	Vector2 * uvarray = 0;
+	Vector2 * uvarray = nullptr;
 	int elementcount = cload.Cur_Chunk_Length() / sizeof (W3dTexCoordStruct);
 
 	uvarray = context->Get_Temporary_UV_Array(elementcount);
 
-	if (uvarray != NULL) {
+	if (uvarray != nullptr) {
 		/*
 		** Read the uv's into the first u-v pass array
 		** NOTE: this is an obsolete function.  Texture coordinates are now
@@ -643,9 +643,9 @@ WW3DErrorType MeshModelClass::read_v3_materials(ChunkLoadClass & cload,MeshLoadC
 		** W3D_MATERIAL3_SC_MAP - specular color map
 		** W3D_MATERIAL3_SI_MAP - specular illumination map
 		*/
-		VertexMaterialClass *		vmat = NULL;
+		VertexMaterialClass *		vmat = nullptr;
 		ShaderClass						shader;
-		TextureClass *					tex = NULL;
+		TextureClass *					tex = nullptr;
 		char								name[256];
 
 		/*
@@ -765,8 +765,8 @@ WW3DErrorType MeshModelClass::read_v3_materials(ChunkLoadClass & cload,MeshLoadC
 
 		vmat->Release_Ref();
 		if (tex) tex->Release_Ref();
-		vmat = NULL;
-		tex = NULL;
+		vmat = nullptr;
+		tex = nullptr;
 
 		/*
 		** Close the W3D_CHUNK_MATERIAL3
@@ -1005,7 +1005,7 @@ WW3DErrorType MeshModelClass::read_textures(ChunkLoadClass & cload,MeshLoadConte
 {
 	// Keep reading textures until there are no more...
 	for (TextureClass *newtex = ::Load_Texture (cload);
-		  newtex != NULL;
+		  newtex != nullptr;
 		  newtex = ::Load_Texture (cload)) {
 
 		// Add this texture to our contex and release our local hold on it
@@ -1504,7 +1504,7 @@ WW3DErrorType MeshModelClass::read_stage_texcoords(ChunkLoadClass & cload,MeshLo
 	elementcount = cload.Cur_Chunk_Length() / sizeof (W3dTexCoordStruct);
 	uvs = context->Get_Temporary_UV_Array(elementcount);
 
-	if (uvs != NULL) {
+	if (uvs != nullptr) {
 		for (unsigned i = 0; i < elementcount; i++) {
 			cload.Read (&texcoord, sizeof (texcoord));
 			uvs[i].X = texcoord.U;
@@ -1660,7 +1660,7 @@ void MeshModelClass::post_process()
 	if (Get_Flag(MeshGeometryClass::TWO_SIDED)) {
 
 		DefMatDesc->Disable_Backface_Culling();
-		if (AlternateMatDesc != NULL) {
+		if (AlternateMatDesc != nullptr) {
 			AlternateMatDesc->Disable_Backface_Culling();
 		}
 
@@ -1879,7 +1879,7 @@ void MeshModelClass::install_materials(MeshLoadContextClass * context)
 		lighting_enabled=false;
 	}
 	DefMatDesc->Post_Load_Process (lighting_enabled,this);
-	if (AlternateMatDesc != NULL) {
+	if (AlternateMatDesc != nullptr) {
 		AlternateMatDesc->Post_Load_Process (lighting_enabled,this);
 	}
 
@@ -1943,7 +1943,7 @@ MeshLoadContextClass::MeshLoadContextClass(void)
 	PrelitChunkID = 0xffffffff;
 	CurPass = 0;
 	CurTexStage = 0;
-	TexCoords = NULL;
+	TexCoords = nullptr;
 	LoadedDIG = false;
 }
 
@@ -1965,7 +1965,7 @@ MeshLoadContextClass::~MeshLoadContextClass(void)
 	int i;
 
 	delete TexCoords;
-	TexCoords = NULL;
+	TexCoords = nullptr;
 
 	for (i=0; i<Textures.Count(); i++) {
 		Textures[i]->Release_Ref();
@@ -1995,7 +1995,7 @@ MeshLoadContextClass::~MeshLoadContextClass(void)
  *=============================================================================================*/
 W3dTexCoordStruct * MeshLoadContextClass::Get_Texcoord_Array(void)
 {
-	if (TexCoords == NULL) {
+	if (TexCoords == nullptr) {
 		TexCoords = W3DNEWARRAY W3dTexCoordStruct[Header.NumVertices];
 	}
 	return TexCoords;
@@ -2098,7 +2098,7 @@ void MeshLoadContextClass::Add_Legacy_Material(ShaderClass shader,VertexMaterial
 	}
 
 	// add the vertex material if it is unique
-	if (vmat == NULL) {
+	if (vmat == nullptr) {
 		mat->VertexMaterialIdx = -1;
 	} else {
 		unsigned long crc = vmat->Get_CRC();
@@ -2116,7 +2116,7 @@ void MeshLoadContextClass::Add_Legacy_Material(ShaderClass shader,VertexMaterial
 	}
 
 	// add the texture if it is unique
-	if (tex == NULL) {
+	if (tex == nullptr) {
 		mat->TextureIdx = -1;
 	} else {
 		int ti=0;
@@ -2179,7 +2179,7 @@ VertexMaterialClass * MeshLoadContextClass::Peek_Legacy_Vertex_Material(int lega
 	if (vi != -1) {
 		return Peek_Vertex_Material(vi);
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -2204,7 +2204,7 @@ TextureClass * MeshLoadContextClass::Peek_Legacy_Texture(int legacy_material_ind
 	if (ti != -1) {
 		return Peek_Texture(ti);
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 

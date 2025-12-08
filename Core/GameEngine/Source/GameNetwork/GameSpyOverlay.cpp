@@ -44,9 +44,9 @@ void deleteNotificationBox( void );
 static void raiseOverlays( void );
 
 // Message boxes -------------------------------------
-static GameWindow *messageBoxWindow = NULL;
-static GameWinMsgBoxFunc okFunc = NULL;
-static GameWinMsgBoxFunc cancelFunc = NULL;
+static GameWindow *messageBoxWindow = nullptr;
+static GameWinMsgBoxFunc okFunc = nullptr;
+static GameWinMsgBoxFunc cancelFunc = nullptr;
 static Bool reOpenPlayerInfoFlag = FALSE;
 /**
 	* messageBoxOK is called when a message box is destroyed
@@ -55,11 +55,11 @@ static Bool reOpenPlayerInfoFlag = FALSE;
 static void messageBoxOK( void )
 {
 	DEBUG_ASSERTCRASH(messageBoxWindow, ("Message box window went away without being there in the first place!"));
-	messageBoxWindow = NULL;
+	messageBoxWindow = nullptr;
 	if (okFunc)
 	{
 		okFunc();
-		okFunc = NULL;
+		okFunc = nullptr;
 	}
 }
 
@@ -70,11 +70,11 @@ static void messageBoxOK( void )
 static void messageBoxCancel( void )
 {
 	DEBUG_ASSERTCRASH(messageBoxWindow, ("Message box window went away without being there in the first place!"));
-	messageBoxWindow = NULL;
+	messageBoxWindow = nullptr;
 	if (cancelFunc)
 	{
 		cancelFunc();
-		cancelFunc = NULL;
+		cancelFunc = nullptr;
 	}
 }
 
@@ -88,17 +88,17 @@ void ClearGSMessageBoxes( void )
 	if (messageBoxWindow)
 	{
 		TheWindowManager->winDestroy(messageBoxWindow);
-		messageBoxWindow = NULL;
+		messageBoxWindow = nullptr;
 	}
 
 	if (okFunc)
 	{
-		okFunc = NULL;
+		okFunc = nullptr;
 	}
 
 	if (cancelFunc)
 	{
-		cancelFunc = NULL;
+		cancelFunc = nullptr;
 	}
 }
 
@@ -172,15 +172,15 @@ static const char * gsOverlays[GSOVERLAY_MAX] =
 
 static WindowLayout *overlayLayouts[GSOVERLAY_MAX] =
 {
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
 };
 
 static void buddyTryReconnect( void )
@@ -200,12 +200,12 @@ void GameSpyOpenOverlay( GSOverlayType overlay )
 			if (TheGameSpyBuddyMessageQueue->getLocalProfileID())
 			{
 				// used to be connected
-				GSMessageBoxYesNo(TheGameText->fetch("GUI:GPErrorTitle"), TheGameText->fetch("GUI:GPDisconnected"), buddyTryReconnect, NULL);
+				GSMessageBoxYesNo(TheGameText->fetch("GUI:GPErrorTitle"), TheGameText->fetch("GUI:GPDisconnected"), buddyTryReconnect, nullptr);
 			}
 			else
 			{
 				// no profile
-				GSMessageBoxOk(TheGameText->fetch("GUI:GPErrorTitle"), TheGameText->fetch("GUI:GPNoProfile"), NULL);
+				GSMessageBoxOk(TheGameText->fetch("GUI:GPErrorTitle"), TheGameText->fetch("GUI:GPNoProfile"), nullptr);
 			}
 			return;
 		}
@@ -268,13 +268,13 @@ void GameSpyCloseOverlay( GSOverlayType overlay )
 		overlayLayouts[overlay]->runShutdown();
 		overlayLayouts[overlay]->destroyWindows();
 		deleteInstance(overlayLayouts[overlay]);
-		overlayLayouts[overlay] = NULL;
+		overlayLayouts[overlay] = nullptr;
 	}
 }
 
 Bool GameSpyIsOverlayOpen( GSOverlayType overlay )
 {
-	return (overlayLayouts[overlay] != NULL);
+	return (overlayLayouts[overlay] != nullptr);
 }
 
 void GameSpyToggleOverlay( GSOverlayType overlay )

@@ -26,7 +26,7 @@
 #include "WorldBuilderView.h"
 #include "BrushTool.h"
 
-BrushOptions *BrushOptions::m_staticThis = NULL;
+BrushOptions *BrushOptions::m_staticThis = nullptr;
 Int BrushOptions::m_currentWidth = 0;
 Int BrushOptions::m_currentHeight = 0;
 Int BrushOptions::m_currentFeather = 0;

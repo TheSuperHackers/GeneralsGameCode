@@ -195,9 +195,9 @@ HMorphAnimClass::HMorphAnimClass(void) :
 	FrameRate(0.0f),
 	ChannelCount(0),
 	NumNodes(0),
-	PoseData(NULL),
-	MorphKeyData(NULL),
-	PivotChannel(NULL)
+	PoseData(nullptr),
+	MorphKeyData(nullptr),
+	PivotChannel(nullptr)
 {
 	memset(Name,0,sizeof(Name));
 	memset(AnimName,0,sizeof(AnimName));
@@ -211,19 +211,19 @@ HMorphAnimClass::~HMorphAnimClass(void)
 
 void HMorphAnimClass::Free(void)
 {
-	if (PoseData != NULL) {
+	if (PoseData != nullptr) {
 		for (int i=0; i<ChannelCount; i++) {
 			REF_PTR_RELEASE(PoseData[i]);
 		}
 		delete[] PoseData;
-		PoseData = NULL;
+		PoseData = nullptr;
 	}
 
 	delete[] MorphKeyData;
-	MorphKeyData = NULL;
+	MorphKeyData = nullptr;
 
 	delete[] PivotChannel;
-	PivotChannel = NULL;
+	PivotChannel = nullptr;
 }
 
 
@@ -239,9 +239,9 @@ static int Build_List_From_String
 	WWASSERT (buffer != NULL);
 	WWASSERT (delimiter != NULL);
 	WWASSERT (string_list != NULL);
-	if ((buffer != NULL) &&
-		 (delimiter != NULL) &&
-		 (string_list != NULL))
+	if ((buffer != nullptr) &&
+		 (delimiter != nullptr) &&
+		 (string_list != nullptr))
 	{
 		int delim_len = ::strlen (delimiter);
 
@@ -250,7 +250,7 @@ static int Build_List_From_String
 		//
 		const char *entry = buffer;
 		for (;
-			  (entry != NULL) && (entry[1] != 0);
+			  (entry != nullptr) && (entry[1] != 0);
 			  entry = ::strstr (entry, delimiter))
 		{
 
@@ -277,7 +277,7 @@ static int Build_List_From_String
 			//
 			count = 0;
 			for (entry = buffer;
-				  (entry != NULL) && (entry[1] != 0);
+				  (entry != nullptr) && (entry[1] != 0);
 				  entry = ::strstr (entry, delimiter))
 			{
 
@@ -293,7 +293,7 @@ static int Build_List_From_String
 				//
 				StringClass entry_string = entry;
 				char *delim_start = ::strstr (entry_string.Peek_Buffer(), delimiter);
-				if (delim_start != NULL) {
+				if (delim_start != nullptr) {
 					delim_start[0] = 0;
 				}
 
@@ -362,7 +362,7 @@ bool HMorphAnimClass::Import(const char *hierarchy_name, TextFileClass &text_des
 		//
 		// Get the list of comma-delimited strings from the header
 		//
-		StringClass *column_list = NULL;
+		StringClass *column_list = nullptr;
 		int column_count = Build_List_From_String (header, ",", &column_list);
 
 		//
@@ -394,7 +394,7 @@ bool HMorphAnimClass::Import(const char *hierarchy_name, TextFileClass &text_des
 				//
 				// Get the frame descriptions from this line
 				//
-				StringClass *channel_list = NULL;
+				StringClass *channel_list = nullptr;
 				int list_count = Build_List_From_String (frame_desc, ",", &channel_list);
 
 				WWASSERT (list_count > 0);
@@ -427,7 +427,7 @@ bool HMorphAnimClass::Import(const char *hierarchy_name, TextFileClass &text_des
 				// Cleanup
 				//
 				delete [] channel_list;
-				channel_list = NULL;
+				channel_list = nullptr;
 			}
 
 			//
@@ -441,7 +441,7 @@ bool HMorphAnimClass::Import(const char *hierarchy_name, TextFileClass &text_des
 		// Cleanup
 		//
 		delete [] column_list;
-		column_list = NULL;
+		column_list = nullptr;
 	}
 
 	return retval;
@@ -482,7 +482,7 @@ void HMorphAnimClass::Set_Name(const char * name)
 	//
 	StringClass full_name	= name;
 	char *separator			= ::strchr (full_name.Peek_Buffer(), '.');
-	if (separator != NULL) {
+	if (separator != nullptr) {
 
 		//
 		// Null out the separator and copy the two names
@@ -510,7 +510,7 @@ int HMorphAnimClass::Create_New_Morph(const int channels, HAnimClass *anim[])
 	ChannelCount = channels;
 
 	// read in the animation header
-	if (anim == NULL) {
+	if (anim == nullptr) {
 		return LOAD_ERROR;
 	}
 
@@ -559,7 +559,7 @@ int HMorphAnimClass::Load_W3D(ChunkLoadClass & cload)
 	strlcat(Name, AnimName, ARRAY_SIZE(Name));
 
 	HTreeClass * base_pose = WW3DAssetManager::Get_Instance()->Get_HTree(HierarchyName);
-	if (base_pose == NULL) {
+	if (base_pose == nullptr) {
 		return LOAD_ERROR;
 	}
 	NumNodes = base_pose->Num_Pivots();

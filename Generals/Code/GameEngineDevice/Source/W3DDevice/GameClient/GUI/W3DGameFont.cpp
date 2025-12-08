@@ -74,7 +74,7 @@
 Bool W3DFontLibrary::loadFontData( GameFont *font )
 {
 	// sanity
-	if( font == NULL )
+	if( font == nullptr )
 		return FALSE;
 
 	const char* name = font->nameString.str();
@@ -84,7 +84,7 @@ Bool W3DFontLibrary::loadFontData( GameFont *font )
 	// get the font data from the asset manager
 	FontCharsClass *fontChar = WW3DAssetManager::Get_Instance()->Get_FontChars( name, size, bold );
 
-	if( fontChar == NULL )
+	if( fontChar == nullptr )
 	{
 		DEBUG_CRASH(( "Unable to find font '%s' in Asset Manager", name ));
 		return FALSE;
@@ -115,7 +115,7 @@ void W3DFontLibrary::releaseFontData( GameFont *font )
 			((FontCharsClass *)(font->fontData))->AlternateUnicodeFont->Release_Ref();
 		((FontCharsClass *)(font->fontData))->Release_Ref();
 
-		font->fontData = NULL;
+		font->fontData = nullptr;
 	}
 
 }

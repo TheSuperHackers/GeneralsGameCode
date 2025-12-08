@@ -16,6 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <Utility/CppMacros.h>
+
 #include "StdAfx.h"
 #include "SplashScreen.h"
 
@@ -65,7 +67,7 @@ void SplashScreen::outputText(UINT nIDString)
 
 	m_loadString = str;
 
-	RedrawWindow(&m_rect, NULL);
+	RedrawWindow(&m_rect, nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------

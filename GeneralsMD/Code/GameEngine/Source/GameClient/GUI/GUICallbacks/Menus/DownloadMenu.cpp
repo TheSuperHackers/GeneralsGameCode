@@ -68,13 +68,13 @@ static NameKeyType staticTextFileID = NAMEKEY_INVALID;
 static NameKeyType staticTextStatusID = NAMEKEY_INVALID;
 static NameKeyType progressBarMunkeeID = NAMEKEY_INVALID;
 
-static GameWindow * staticTextSize = NULL;
-static GameWindow * staticTextTime = NULL;
-static GameWindow * staticTextFile = NULL;
-static GameWindow * staticTextStatus = NULL;
-static GameWindow * progressBarMunkee = NULL;
+static GameWindow * staticTextSize = nullptr;
+static GameWindow * staticTextTime = nullptr;
+static GameWindow * staticTextFile = nullptr;
+static GameWindow * staticTextStatus = nullptr;
+static GameWindow * progressBarMunkee = nullptr;
 
-static GameWindow *parent = NULL;
+static GameWindow *parent = nullptr;
 
 static void closeDownloadWindow( void )
 {
@@ -88,10 +88,10 @@ static void closeDownloadWindow( void )
 		menuLayout->runShutdown();
 		menuLayout->destroyWindows();
 		deleteInstance(menuLayout);
-		menuLayout = NULL;
+		menuLayout = nullptr;
 	}
 
-	GameWindow *mainWin = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY("MainMenu.wnd:MainMenuParent") );
+	GameWindow *mainWin = TheWindowManager->winGetWindowFromId( nullptr, NAMEKEY("MainMenu.wnd:MainMenuParent") );
 	if (mainWin)
 		TheWindowManager->winSetFocus( mainWin );
 }
@@ -135,7 +135,7 @@ private:
 HRESULT DownloadManagerMunkee::downloadFile( AsciiString server, AsciiString username, AsciiString password, AsciiString file, AsciiString localfile, AsciiString regkey, Bool tryResume )
 {
 	// see if we'll need to restart
-	if (strstr(localfile.str(), "patches\\") != NULL)
+	if (strstr(localfile.str(), "patches\\") != nullptr)
 	{
 		m_shouldQuitOnSuccess = true;
 	}
@@ -203,7 +203,7 @@ HRESULT DownloadManagerMunkee::OnProgressUpdate( Int bytesread, Int totalsize, I
 	timeLeft = timeleft;
 	if (staticTextTime && GadgetStaticTextGetText(staticTextTime).isEmpty()) // only update immediately the first time
 	{
-		lastUpdate = time(NULL);
+		lastUpdate = time(nullptr);
 		UnicodeString timeString;
 		if (timeleft)
 		{
@@ -245,7 +245,7 @@ void DownloadMenuInit( WindowLayout *layout, void *userData )
 
 	//set keyboard focus to main parent and set modal
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey("DownloadMenu.wnd:ParentDownload");
-	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 
   // get ids for our children controls
 	buttonCancelID = TheNameKeyGenerator->nameToKey( "DownloadMenu.wnd:ButtonCancel" );
@@ -276,14 +276,14 @@ void DownloadMenuShutdown( WindowLayout *layout, void *userData )
 	DEBUG_ASSERTCRASH(TheDownloadManager, ("No download manager"));
 
 	delete TheDownloadManager;
-	TheDownloadManager = NULL;
+	TheDownloadManager = nullptr;
 
-	staticTextSize = NULL;
-	staticTextTime = NULL;
-	staticTextFile = NULL;
-	staticTextStatus = NULL;
-	progressBarMunkee = NULL;
-	parent = NULL;
+	staticTextSize = nullptr;
+	staticTextTime = nullptr;
+	staticTextFile = nullptr;
+	staticTextStatus = nullptr;
+	progressBarMunkee = nullptr;
+	parent = nullptr;
 
 }
 
@@ -294,7 +294,7 @@ void DownloadMenuUpdate( WindowLayout *layout, void *userData )
 {
 	if (staticTextTime && !GadgetStaticTextGetText(staticTextTime).isEmpty())
 	{
-		time_t now = time(NULL);
+		time_t now = time(nullptr);
 		if (now <= lastUpdate)
 			return;
 

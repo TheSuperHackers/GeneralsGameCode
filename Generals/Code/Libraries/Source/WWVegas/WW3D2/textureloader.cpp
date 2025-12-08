@@ -221,7 +221,7 @@ IDirect3DTexture8* TextureLoader::Load_Thumbnail(const StringClass& filename,WW3
 			d3d_texture->LockRect(
 				level,
 				&locked_rects[level],
-				NULL,
+				nullptr,
 				0));
 	}
 
@@ -282,8 +282,8 @@ IDirect3DTexture8* Load_Compressed_Texture(
 	// If DDS file isn't available, use TGA file to convert to DDS.
 
 	DDSFileClass dds_file(filename,reduction_factor);
-	if (!dds_file.Is_Available()) return NULL;
-	if (!dds_file.Load()) return NULL;
+	if (!dds_file.Is_Available()) return nullptr;
+	if (!dds_file.Load()) return nullptr;
 
 	unsigned width=dds_file.Get_Width(0);
 	unsigned height=dds_file.Get_Height(0);
@@ -300,7 +300,7 @@ IDirect3DTexture8* Load_Compressed_Texture(
 		(MipCountType)mips);
 
 	for (unsigned level=0;level<mips;++level) {
-		IDirect3DSurface8* d3d_surface=NULL;
+		IDirect3DSurface8* d3d_surface=nullptr;
 		WWASSERT(d3d_texture);
 		DX8_ErrorCode(d3d_texture->GetSurfaceLevel(level/*-reduction_factor*/,&d3d_surface));
 		dds_file.Copy_Level_To_Surface(level,d3d_surface);
@@ -326,7 +326,7 @@ IDirect3DSurface8* TextureLoader::Load_Surface_Immediate(
 	if (compressed) {
 		IDirect3DTexture8* comp_tex=Load_Compressed_Texture(filename,0,MIP_LEVELS_1,WW3D_FORMAT_UNKNOWN);
 		if (comp_tex) {
-			IDirect3DSurface8* d3d_surface=NULL;
+			IDirect3DSurface8* d3d_surface=nullptr;
 			DX8_ErrorCode(comp_tex->GetSurfaceLevel(0,&d3d_surface));
 			comp_tex->Release();
 			return d3d_surface;
@@ -363,7 +363,7 @@ IDirect3DSurface8* TextureLoader::Load_Surface_Immediate(
 	unsigned char* src_surface=(unsigned char*)targa.GetImage();
 
 	// No paletted destination format allowed
-	unsigned char* converted_surface=NULL;
+	unsigned char* converted_surface=nullptr;
 	if (src_format==WW3D_FORMAT_A1R5G5B5 || src_format==WW3D_FORMAT_R5G6B5 || src_format==WW3D_FORMAT_A4R4G4B4 ||
 		src_format==WW3D_FORMAT_P8 || src_format==WW3D_FORMAT_L8 || src_width!=width || src_height!=height) {
 		converted_surface=W3DNEWARRAY unsigned char[width*height*4];
@@ -397,7 +397,7 @@ IDirect3DSurface8* TextureLoader::Load_Surface_Immediate(
 	DX8_ErrorCode(
 		d3d_surface->LockRect(
 			&locked_rect,
-			NULL,
+			nullptr,
 			0));
 
 	BitmapHandlerClass::Copy_Image(
@@ -501,7 +501,7 @@ bool TextureLoader::Load_Uncompressed_Mipmap_Levels_From_TGA(TextureLoadTaskClas
 	unsigned char* src_surface=(unsigned char*)targa.GetImage();
 
 	// No paletted format allowed when generating mipmaps
-	unsigned char* converted_surface=NULL;
+	unsigned char* converted_surface=nullptr;
 	if (src_format==WW3D_FORMAT_A1R5G5B5 || src_format==WW3D_FORMAT_R5G6B5 || src_format==WW3D_FORMAT_A4R4G4B4 ||
 		src_format==WW3D_FORMAT_P8 || src_format==WW3D_FORMAT_L8 || src_width!=width || src_height!=height) {
 		converted_surface=W3DNEWARRAY unsigned char[width*height*4];
@@ -542,7 +542,7 @@ bool TextureLoader::Load_Uncompressed_Mipmap_Levels_From_TGA(TextureLoadTaskClas
 			src_height,
 			src_pitch,
 			src_format,
-			NULL,
+			nullptr,
 			0,
 			true);
 
@@ -572,7 +572,7 @@ TextureLoadTaskClass* LoaderThreadClass::Get_Task_From_Load_List()
 	TextureLoadTaskClass* task=LoadListHead;
 	if (task) {
 		LoadListHead=task->Peek_Succ();
-		task->Set_Succ(NULL);
+		task->Set_Succ(nullptr);
 	}
 	return task;
 }
@@ -659,7 +659,7 @@ TextureLoadTaskClass* Get_Finished_Task()
 	TextureLoadTaskClass* task=FinishedListHead;
 	if (task) {
 		FinishedListHead=task->Peek_Succ();
-		task->Set_Succ(NULL);
+		task->Set_Succ(nullptr);
 	}
 	return task;
 }
@@ -671,7 +671,7 @@ TextureLoadTaskClass* Get_Thumbnail_Task()
 	TextureLoadTaskClass* task=ThumbnailListHead;
 	if (task) {
 		ThumbnailListHead=task->Peek_Succ();
-		task->Set_Succ(NULL);
+		task->Set_Succ(nullptr);
 	}
 	return task;
 }
@@ -701,7 +701,7 @@ TextureLoadTaskClass* Get_Task_From_Delete_List()
 	TextureLoadTaskClass* task=DeleteTaskListHead;
 	if (task) {
 		DeleteTaskListHead=task->Peek_Succ();
-		task->Set_Succ(NULL);
+		task->Set_Succ(nullptr);
 	}
 	return task;
 }
@@ -730,7 +730,7 @@ TextureLoadTaskClass* Get_Deferred_Task()
 	TextureLoadTaskClass* task=DeferredListHead;
 	if (task) {
 		DeferredListHead=task->Peek_Succ();
-		task->Set_Succ(NULL);
+		task->Set_Succ(nullptr);
 	}
 	return task;
 }
@@ -813,7 +813,7 @@ IDirect3DTexture8* TextureLoader::Generate_Bumpmap(TextureBaseClass* texture)
 		texture->Peek_D3D_Texture()->LockRect(
 			0,
 			&src_locked_rect,
-			NULL,
+			nullptr,
 			D3DLOCK_READONLY));
 
 	D3DLOCKED_RECT dest_locked_rect;
@@ -821,7 +821,7 @@ IDirect3DTexture8* TextureLoader::Generate_Bumpmap(TextureBaseClass* texture)
 		d3d_texture->LockRect(
 			0,
 			&dest_locked_rect,
-			NULL,
+			nullptr,
 			0));
 
 	WW3DFormat format=D3DFormat_To_WW3DFormat(desc.Format);
@@ -849,11 +849,11 @@ IDirect3DTexture8* TextureLoader::Generate_Bumpmap(TextureBaseClass* texture)
 			unsigned pixel10;
 			unsigned pixel1M;
 
-			BitmapHandlerClass::Read_B8G8R8A8(pixel00,src_ptr_mid,format,NULL,0);
-			BitmapHandlerClass::Read_B8G8R8A8(pixel01,src_ptr_mid+bpp,format,NULL,0);
-			BitmapHandlerClass::Read_B8G8R8A8(pixelM1,src_ptr_mid-bpp,format,NULL,0);
-			BitmapHandlerClass::Read_B8G8R8A8(pixel10,src_ptr_prev_line,format,NULL,0);
-			BitmapHandlerClass::Read_B8G8R8A8(pixel1M,src_ptr_next_line,format,NULL,0);
+			BitmapHandlerClass::Read_B8G8R8A8(pixel00,src_ptr_mid,format,nullptr,0);
+			BitmapHandlerClass::Read_B8G8R8A8(pixel01,src_ptr_mid+bpp,format,nullptr,0);
+			BitmapHandlerClass::Read_B8G8R8A8(pixelM1,src_ptr_mid-bpp,format,nullptr,0);
+			BitmapHandlerClass::Read_B8G8R8A8(pixel10,src_ptr_prev_line,format,nullptr,0);
+			BitmapHandlerClass::Read_B8G8R8A8(pixel1M,src_ptr_next_line,format,nullptr,0);
 
 			// Convert to luminance
 			unsigned char bv00;
@@ -960,9 +960,9 @@ void TextureLoader::Request_Thumbnail(TextureBaseClass* tc)
 
 TextureLoadTaskClass::TextureLoadTaskClass()
 	:
-	Texture(0),
-	Succ(0),
-	D3DTexture(0),
+	Texture(nullptr),
+	Succ(nullptr),
+	D3DTexture(nullptr),
 	Width(0),
 	Height(0),
 	Format(WW3D_FORMAT_UNKNOWN),
@@ -999,14 +999,14 @@ void TextureLoadTaskClass::Init(TextureBaseClass* tc,bool high_priority)
 	IsLoading=false;
 	HasFailed=false;
 	MipLevelCount=tc->MipLevelCount;
-	D3DTexture=0;
+	D3DTexture=nullptr;
 	Width=0;
 	Height=0;
 	Format=Texture->Get_Texture_Format();
 
 	Texture->TextureLoadTask=this;
 	for (int i=0;i<MIP_LEVELS_MAX;++i) {
-		LockedSurfacePtr[i]=NULL;
+		LockedSurfacePtr[i]=nullptr;
 		LockedSurfacePitch[i]=0;
 	}
 }
@@ -1021,7 +1021,7 @@ void TextureLoadTaskClass::Deinit()
 	}
 	if (Texture) {
 		WWASSERT(Texture->TextureLoadTask==this);
-		Texture->TextureLoadTask=NULL;
+		Texture->TextureLoadTask=nullptr;
 	}
 
 	REF_PTR_RELEASE(Texture);
@@ -1165,7 +1165,7 @@ void TextureLoadTaskClass::Begin_Texture_Load()
 				D3DTexture->LockRect(
 					i,
 					&locked_rect,
-					NULL,
+					nullptr,
 					0));
 			LockedSurfacePtr[i]=(unsigned char*)locked_rect.pBits;
 			LockedSurfacePitch[i]=locked_rect.Pitch;
@@ -1257,7 +1257,7 @@ void TextureLoadTaskClass::End_Load()
 			WWASSERT(ThreadClass::_Get_Current_Thread_ID()==DX8Wrapper::_Get_Main_Thread_ID());
 			DX8_ErrorCode(D3DTexture->UnlockRect(i));
 		}
-		LockedSurfacePtr[i]=NULL;
+		LockedSurfacePtr[i]=nullptr;
 	}
 	IsLoading=false;
 
@@ -1310,7 +1310,7 @@ void TextureLoadTaskClass::Apply(bool initialize)
 	Texture->Apply_New_Surface(initialize);
 
 	D3DTexture->Release();
-	D3DTexture=NULL;
+	D3DTexture=nullptr;
 }
 
 // ----------------------------------------------------------------------------
@@ -1357,7 +1357,7 @@ TextureLoadTaskClass* TextureLoadTaskClass::Get_Instance(TextureBaseClass* tc, b
 	TextureLoadTaskClass* task=FreeTaskListHead;
 	if (task) {
 		FreeTaskListHead=task->Peek_Succ();
-		task->Set_Succ(NULL);
+		task->Set_Succ(nullptr);
 	}
 	else {
 		task=W3DNEW TextureLoadTaskClass();

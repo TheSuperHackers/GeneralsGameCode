@@ -105,7 +105,7 @@ GameResultsQueue::GameResultsQueue() : m_requestCount(0), m_responseCount(0)
 {
 	for (Int i=0; i<NumWorkerThreads; ++i)
 	{
-		m_workerThreads[i] = NULL;
+		m_workerThreads[i] = nullptr;
 	}
 
 	startThreads();
@@ -131,7 +131,7 @@ void GameResultsQueue::endThreads( void )
 	for (Int i=0; i<NumWorkerThreads; ++i)
 	{
 		delete m_workerThreads[i];
-		m_workerThreads[i] = NULL;
+		m_workerThreads[i] = nullptr;
 	}
 }
 
@@ -234,7 +234,7 @@ void GameResultsThreadClass::Thread_Function()
 				HOSTENT *hostStruct;
 				in_addr *hostNode;
 				hostStruct = gethostbyname(hostnameBuffer);
-				if (hostStruct == NULL)
+				if (hostStruct == nullptr)
 				{
 					DEBUG_LOG(("sending game results to %s - host lookup failed", hostnameBuffer));
 

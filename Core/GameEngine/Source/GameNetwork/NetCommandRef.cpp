@@ -41,8 +41,8 @@ NetCommandRef::NetCommandRef(NetCommandMsg *msg)
 #endif
 {
 	m_msg = msg;
-	m_next = NULL;
-	m_prev = NULL;
+	m_next = nullptr;
+	m_prev = nullptr;
 	m_msg->attach();
 	m_timeLastSent = -1;
 
@@ -57,7 +57,7 @@ NetCommandRef::NetCommandRef(NetCommandMsg *msg)
  */
 NetCommandRef::~NetCommandRef()
 {
-	if (m_msg != NULL)
+	if (m_msg != nullptr)
 	{
 		m_msg->detach();
 	}

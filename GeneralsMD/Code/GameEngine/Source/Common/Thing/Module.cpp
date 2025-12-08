@@ -60,7 +60,7 @@
 {
 	ModuleData* data = MSGNEW("Module::friend_newModuleData") ModuleData;	// no need to memorypool these since we never allocate more than one of each
 	if (ini)
-		ini->initFromINI(data, 0);	// this is just so that an "end" token is required
+		ini->initFromINI(data, nullptr);	// this is just so that an "end" token is required
 	return data;
 }
 

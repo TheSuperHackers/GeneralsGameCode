@@ -44,9 +44,9 @@ IMPLEMENT_DYNCREATE(EmitterSizePropPageClass, CPropertyPage)
 //
 /////////////////////////////////////////////////////////////
 EmitterSizePropPageClass::EmitterSizePropPageClass (EmitterInstanceListClass *pemitter)
-	:	m_pEmitterList (NULL),
+	:	m_pEmitterList (nullptr),
 		m_bValid (true),
-		m_SizeBar (NULL),
+		m_SizeBar (nullptr),
 		m_Lifetime (0),
 		CPropertyPage(EmitterSizePropPageClass::IDD)
 {
@@ -114,7 +114,7 @@ EmitterSizePropPageClass::Initialize (void)
 	SAFE_DELETE_ARRAY (m_CurrentSizes.KeyTimes);
 	SAFE_DELETE_ARRAY (m_CurrentSizes.Values);
 
-	if (m_pEmitterList != NULL) {
+	if (m_pEmitterList != nullptr) {
 		m_Lifetime = m_pEmitterList->Get_Lifetime ();
 		m_pEmitterList->Get_Size_Keyframes (m_OrigSizes);
 		m_pEmitterList->Get_Size_Keyframes (m_CurrentSizes);
@@ -217,7 +217,7 @@ EmitterSizePropPageClass::OnNotify
 	//	Update the spinner controls if necessary
 	//
 	NMHDR *pheader = (NMHDR *)lParam;
-	if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
+	if ((pheader != nullptr) && (pheader->code == UDN_DELTAPOS)) {
 		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
 	}

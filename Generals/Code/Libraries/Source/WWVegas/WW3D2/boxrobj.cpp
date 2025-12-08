@@ -158,7 +158,7 @@ static Vector3						_BoxVertexNormals[NUM_BOX_VERTS] =
 
 bool										BoxRenderObjClass::IsInitted			= false;
 int										BoxRenderObjClass::DisplayMask		= 0;
-static VertexMaterialClass *		_BoxMaterial								= NULL;
+static VertexMaterialClass *		_BoxMaterial								= nullptr;
 static ShaderClass					_BoxShader;
 
 
@@ -506,7 +506,7 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 		*/
 		DX8Wrapper::Set_Material(_BoxMaterial);
 		DX8Wrapper::Set_Shader(_BoxShader);
-		DX8Wrapper::Set_Texture(0,NULL);
+		DX8Wrapper::Set_Texture(0,nullptr);
 
 		DX8Wrapper::Set_Index_Buffer(ibaccess,0);
 		DX8Wrapper::Set_Vertex_Buffer(vbaccess);

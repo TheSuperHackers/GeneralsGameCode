@@ -57,7 +57,7 @@ static	SurfaceClass	*_surface;
  ***********************************************************************************************/
 Font3DDataClass::Font3DDataClass( const char *filename )
 {
-	Texture = NULL;
+	Texture = nullptr;
 	Load_Font_Image( filename);
 	Name = strdup( filename);
 	Name = strupr( Name);
@@ -72,7 +72,7 @@ Font3DDataClass::Font3DDataClass( const char *filename )
 Font3DDataClass::~Font3DDataClass(void)
 {
 	free(Name);
-	Name = NULL;
+	Name = nullptr;
 
 	REF_PTR_RELEASE(Texture);
 }
@@ -232,7 +232,7 @@ SurfaceClass *Font3DDataClass::Make_Proportional( SurfaceClass	*surface )
 	// now shink the image given the minimum char sizes
 //	surface = Minimize_Font_Image( surface );
 	Minimize_Font_Image( _surface );
-	return NULL;
+	return nullptr;
 }
 
 /***********************************************************************************************
@@ -302,7 +302,7 @@ bool	Font3DDataClass::Load_Font_Image( const char *filename )
 		// convert the just created mon-spaced font to proportional (optional)
 //		surface = Make_Proportional( surface );
 		_surface = surface;
-		surface = NULL;
+		surface = nullptr;
 		Minimize_Font_Image( _surface );
 
 	} else {
@@ -328,7 +328,7 @@ bool	Font3DDataClass::Load_Font_Image( const char *filename )
 		// convert the just created mon-spaced font to proportional (optional)
 
 		_surface = surface;
-		surface = NULL;
+		surface = nullptr;
 		Make_Proportional( _surface );
 	}
 

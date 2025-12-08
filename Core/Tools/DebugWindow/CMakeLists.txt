@@ -14,6 +14,7 @@ target_sources(core_debugwindow PRIVATE ${DEBUGWINDOW_SRC})
 
 target_link_libraries(core_debugwindow PRIVATE
     core_config
+    core_utility
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

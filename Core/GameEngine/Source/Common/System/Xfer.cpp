@@ -496,7 +496,7 @@ void Xfer::xferSTLIntList( std::list< Int > *intListData )
 {
 
 	// sanity
-	if( intListData == NULL )
+	if( intListData == nullptr )
 		return;
 
 	// version
@@ -792,7 +792,7 @@ void Xfer::xferUpgradeMask( UpgradeMaskType *upgradeMaskData )
 
 			// find this upgrade template
 			upgradeTemplate = TheUpgradeCenter->findUpgrade( upgradeName );
-			if( upgradeTemplate == NULL )
+			if( upgradeTemplate == nullptr )
 			{
 
 				DEBUG_CRASH(( "Xfer::xferUpgradeMask - Unknown upgrade '%s'", upgradeName.str() ));

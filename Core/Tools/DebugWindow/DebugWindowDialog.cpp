@@ -16,6 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <Utility/CppMacros.h>
+
 #include "StdAfx.h"
 #include "DebugWindowDialog.h"
 
@@ -25,7 +27,7 @@ DebugWindowDialog::DebugWindowDialog(UINT nIDTemplate, CWnd* pParentWnd) :
 	mStepping = false;
 	mRunFast = false;
 	mNumberOfStepsAllowed = -1;
-	mMainWndHWND = ::FindWindow(NULL, "Command & Conquer: Generals");
+	mMainWndHWND = ::FindWindow(nullptr, "Command & Conquer: Generals");
 }
 
 int DebugWindowDialog::OnCreate(LPCREATESTRUCT lpCreateStruct)

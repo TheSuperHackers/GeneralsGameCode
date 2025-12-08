@@ -203,7 +203,7 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 			ICoord2D mousePos = TheMouse->getMouseStatus()->pos;
 
 			if( TheWindowManager )
-				TheWindowManager->winProcessMouseEvent( GWM_NONE, &mousePos, NULL );
+				TheWindowManager->winProcessMouseEvent( GWM_NONE, &mousePos, nullptr );
 
 			// Force it to keep the message, regardless of what the window thinks it did with the input.
 			return KEEP_MESSAGE;
@@ -239,7 +239,7 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 			// process the mouse event position
 			GameWindowMessage gwm = rawMouseToWindowMessage( msg );
 			if( TheWindowManager )
-				returnCode = TheWindowManager->winProcessMouseEvent( gwm, &mousePos, NULL );
+				returnCode = TheWindowManager->winProcessMouseEvent( gwm, &mousePos, nullptr );
 
 			if( TheShell && TheShell->isShellActive() )
 				returnCode = WIN_INPUT_USED;

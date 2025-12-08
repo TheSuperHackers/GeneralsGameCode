@@ -26,6 +26,8 @@
 //
 // Result function interface and result functions
 //////////////////////////////////////////////////////////////////////////////
+
+#include <Utility/CppMacros.h>
 #include "profile.h"
 #include "internal.h"
 #include <new>
@@ -145,8 +147,8 @@ void ProfileResultFileCSV::Delete(void)
 ProfileResultInterface *ProfileResultFileDOT::Create(int argn, const char * const *argv)
 {
   return new (ProfileAllocMemory(sizeof(ProfileResultFileDOT)))
-    ProfileResultFileDOT(argn>0?argv[0]:NULL,
-                         argn>1?argv[1]:NULL,
+    ProfileResultFileDOT(argn>0?argv[0]:nullptr,
+                         argn>1?argv[1]:nullptr,
                          argn>2?atoi(argv[2]):NULL);
 }
 
@@ -162,7 +164,7 @@ ProfileResultFileDOT::ProfileResultFileDOT(const char *fileName, const char *fra
     strcpy(m_frameName,frameName);
   }
   else
-    m_frameName=NULL;
+    m_frameName=nullptr;
   m_foldThreshold=foldThreshold;
 }
 
@@ -226,7 +228,7 @@ void ProfileResultFileDOT::WriteResults(void)
     // folding version
 
     // build source code clusters first
-    FoldHelper *fold=NULL;
+    FoldHelper *fold=nullptr;
     for (k=0;tMax.EnumProfile(k,id);k++)
     {
       const char *source=id.GetSource();

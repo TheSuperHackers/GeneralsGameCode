@@ -93,9 +93,9 @@ static void parseSideSoundsList( INI *ini, void *instance, void *store, const vo
 //----------------------------------------------------------------------------------- EvaSideSounds
 const FieldParse EvaSideSounds::s_evaSideSounds[] =
 {
-	{ "Side",									INI::parseAsciiString,					NULL,			offsetof( EvaSideSounds, m_side) },
-	{ "Sounds",								INI::parseSoundsList,						NULL,			offsetof( EvaSideSounds, m_soundNames) },
-	{ 0, 0, 0, 0 },
+	{ "Side",									INI::parseAsciiString,					nullptr,			offsetof( EvaSideSounds, m_side) },
+	{ "Sounds",								INI::parseSoundsList,						nullptr,			offsetof( EvaSideSounds, m_soundNames) },
+	{ nullptr, nullptr, nullptr, 0 },
 };
 
 //------------------------------------------------------------------------------------ EvaCheckInfo
@@ -112,11 +112,11 @@ EvaCheckInfo::EvaCheckInfo() :
 //-------------------------------------------------------------------------------------------------
 const FieldParse EvaCheckInfo::s_evaEventInfo[] =
 {
-	{ "Priority",							INI::parseUnsignedInt,					NULL,			offsetof( EvaCheckInfo, m_priority ) },
-	{ "TimeBetweenChecksMS",	INI::parseDurationUnsignedInt,	NULL,			offsetof( EvaCheckInfo, m_framesBetweenChecks ) },
-	{ "ExpirationTimeMS",			INI::parseDurationUnsignedInt,	NULL,			offsetof( EvaCheckInfo, m_framesToExpire) },
-	{ "SideSounds",						parseSideSoundsList,						NULL,			offsetof( EvaCheckInfo, m_evaSideSounds ) },
-	{ 0, 0, 0, 0 },
+	{ "Priority",							INI::parseUnsignedInt,					nullptr,			offsetof( EvaCheckInfo, m_priority ) },
+	{ "TimeBetweenChecksMS",	INI::parseDurationUnsignedInt,	nullptr,			offsetof( EvaCheckInfo, m_framesBetweenChecks ) },
+	{ "ExpirationTimeMS",			INI::parseDurationUnsignedInt,	nullptr,			offsetof( EvaCheckInfo, m_framesToExpire) },
+	{ "SideSounds",						parseSideSoundsList,						nullptr,			offsetof( EvaCheckInfo, m_evaSideSounds ) },
+	{ nullptr, nullptr, nullptr, 0 },
 
 };
 
@@ -147,7 +147,7 @@ const ShouldPlayFunc Eva::s_shouldPlayFuncs[] =
 
 //-------------------------------------------------------------------------------------------------
 EvaCheck::EvaCheck() :
-	m_evaInfo(NULL),
+	m_evaInfo(nullptr),
 	m_triggeredOnFrame(TRIGGEREDON_NOT),
 	m_timeForNextCheck(NEXT_CHECK_NOW),
 	m_alreadyPlayed(FALSE)
@@ -157,7 +157,7 @@ EvaCheck::EvaCheck() :
 
 //-------------------------------------------------------------------------------------------------
 Eva::Eva() :
-	m_localPlayer(NULL),
+	m_localPlayer(nullptr),
 	m_previousBuildingCount(0),
 	m_previousUnitCount(0),
 	m_enabled(TRUE)
@@ -182,7 +182,7 @@ void Eva::init()
 {
 	// parse the INI here, etc.
 	INI ini;
-	ini.loadFileDirectory( "Data\\INI\\Eva", INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory( "Data\\INI\\Eva", INI_LOAD_OVERWRITE, nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -231,7 +231,7 @@ void Eva::update()
 	}
 
 	processPlayingMessages(frame);
-	m_localPlayer = NULL;
+	m_localPlayer = nullptr;
 
 	// Reset all of the flags that have been set to true that haven't actually been probed, because
 	// they will need to trigger again to be valid messages.
@@ -272,7 +272,7 @@ EvaCheckInfo *Eva::newEvaCheckInfo(AsciiString name)
 	EvaCheckInfoPtrVecIt it;
 	for (it = m_allCheckInfos.begin(); it != m_allCheckInfos.end(); ++it) {
 		if (*it && (*it)->m_message == mesg)
-			return NULL;
+			return nullptr;
 	}
 
 	EvaCheckInfo *checkInfo = newInstance(EvaCheckInfo);
@@ -293,7 +293,7 @@ const EvaCheckInfo *Eva::getEvaCheckInfo(AsciiString name)
 			return *it;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -328,7 +328,7 @@ Bool Eva::isTimeForCheck(EvaMessage messageToTest, UnsignedInt currentFrame) con
 //-------------------------------------------------------------------------------------------------
 Bool Eva::messageShouldPlay(EvaMessage messageToTest, UnsignedInt currentFrame) const
 {
-	if (m_localPlayer == NULL) {
+	if (m_localPlayer == nullptr) {
 		return FALSE;
 	}
 
@@ -458,5 +458,5 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 }
 
 //-------------------------------------------------------------------------------------------------
-Eva *TheEva = NULL;
+Eva *TheEva = nullptr;
 

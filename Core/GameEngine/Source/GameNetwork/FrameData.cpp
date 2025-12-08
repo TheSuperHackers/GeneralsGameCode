@@ -34,7 +34,7 @@
 FrameData::FrameData()
 {
 	m_frame = 0;
-	m_commandList = NULL;
+	m_commandList = nullptr;
 	m_commandCount = 0;
 	m_frameCommandCount = -1;
 	m_lastFailedCC = 0;
@@ -47,7 +47,7 @@ FrameData::FrameData()
 FrameData::~FrameData()
 {
 	deleteInstance(m_commandList);
-	m_commandList = NULL;
+	m_commandList = nullptr;
 }
 
 /**
@@ -56,7 +56,7 @@ FrameData::~FrameData()
 void FrameData::init()
 {
 	m_frame = 0;
-	if (m_commandList == NULL) {
+	if (m_commandList == nullptr) {
 		m_commandList = newInstance(NetCommandList);
 		m_commandList->init();
 	}
@@ -117,7 +117,7 @@ FrameDataReturnType FrameData::allCommandsReady(Bool debugSpewage) {
 	if (m_commandCount > m_frameCommandCount) {
 		DEBUG_LOG(("FrameData::allCommandsReady - There are more commands than there should be (%d, should be %d).  Commands in command list are...", m_commandCount, m_frameCommandCount));
 		NetCommandRef *ref = m_commandList->getFirstMessage();
-		while (ref != NULL) {
+		while (ref != nullptr) {
 			DEBUG_LOG(("%s, frame = %d, id = %d", GetNetCommandTypeAsString(ref->getCommand()->getNetCommandType()), ref->getCommand()->getExecutionFrame(), ref->getCommand()->getID()));
 			ref = ref->getNext();
 		}
@@ -157,12 +157,12 @@ UnsignedInt FrameData::getCommandCount() {
  */
 void FrameData::addCommand(NetCommandMsg *msg) {
 	// need to add the message in order of command ID
-	if (m_commandList == NULL) {
+	if (m_commandList == nullptr) {
 		init();
 	}
 
 	// We don't need to worry about setting the relay since its not getting sent anywhere.
-	if (m_commandList->findMessage(msg) != NULL) {
+	if (m_commandList->findMessage(msg) != nullptr) {
 		// We don't want to add the same command twice.
 		return;
 	}
@@ -191,7 +191,7 @@ void FrameData::zeroFrame() {
  * destroy all the commands in this frame.
  */
 void FrameData::destroyGameMessages() {
-	if (m_commandList == NULL) {
+	if (m_commandList == nullptr) {
 		return;
 	}
 

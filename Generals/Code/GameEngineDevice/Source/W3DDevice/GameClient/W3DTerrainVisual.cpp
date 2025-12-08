@@ -61,10 +61,10 @@
 W3DTerrainVisual::W3DTerrainVisual()
 {
 
-	m_terrainRenderObject = NULL;
-	m_terrainHeightMap = NULL;
-	m_waterRenderObject = NULL;
-	TheWaterRenderObj = NULL;
+	m_terrainRenderObject = nullptr;
+	m_terrainHeightMap = nullptr;
+	m_waterRenderObject = nullptr;
+	TheWaterRenderObj = nullptr;
 
 }
 
@@ -74,17 +74,17 @@ W3DTerrainVisual::~W3DTerrainVisual()
 {
 	// release our render object
 	if (TheTerrainRenderObject == m_terrainRenderObject) {
-		TheTerrainRenderObject = NULL;
+		TheTerrainRenderObject = nullptr;
 	}
 
 	delete TheTerrainTracksRenderObjClassSystem;
-	TheTerrainTracksRenderObjClassSystem=NULL;
+	TheTerrainTracksRenderObjClassSystem=nullptr;
 
 	delete TheW3DShadowManager;
-	TheW3DShadowManager=NULL;
+	TheW3DShadowManager=nullptr;
 
 	REF_PTR_RELEASE( m_waterRenderObject );
-	TheWaterRenderObj=NULL;
+	TheWaterRenderObj=nullptr;
 	REF_PTR_RELEASE( m_terrainRenderObject );
 	REF_PTR_RELEASE( m_terrainHeightMap );
 }
@@ -137,19 +137,19 @@ void W3DTerrainVisual::init( void )
 
 	// set the vertex animated water properties
 	Int waterSettingIndex = 0;  // use index 0 settings by default
-	TheTerrainVisual->setWaterGridHeightClamps( NULL,
+	TheTerrainVisual->setWaterGridHeightClamps( nullptr,
 																							TheGlobalData->m_vertexWaterHeightClampLow[ waterSettingIndex ],
 																							TheGlobalData->m_vertexWaterHeightClampHi[ waterSettingIndex ] );
-	TheTerrainVisual->setWaterTransform( NULL,
+	TheTerrainVisual->setWaterTransform( nullptr,
 																			 TheGlobalData->m_vertexWaterAngle[ waterSettingIndex ],
 																			 TheGlobalData->m_vertexWaterXPosition[ waterSettingIndex ],
 																			 TheGlobalData->m_vertexWaterYPosition[ waterSettingIndex ],
 																			 TheGlobalData->m_vertexWaterZPosition[ waterSettingIndex ] );
-	TheTerrainVisual->setWaterGridResolution( NULL,
+	TheTerrainVisual->setWaterGridResolution( nullptr,
 																						TheGlobalData->m_vertexWaterXGridCells[ waterSettingIndex ],
 																						TheGlobalData->m_vertexWaterYGridCells[ waterSettingIndex ],
 																						TheGlobalData->m_vertexWaterGridSize[ waterSettingIndex ] );
-	TheTerrainVisual->setWaterAttenuationFactors( NULL,
+	TheTerrainVisual->setWaterAttenuationFactors( nullptr,
 																								TheGlobalData->m_vertexWaterAttenuationA[ waterSettingIndex ],
 																								TheGlobalData->m_vertexWaterAttenuationB[ waterSettingIndex ],
 																								TheGlobalData->m_vertexWaterAttenuationC[ waterSettingIndex ],
@@ -248,7 +248,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 
 	}
 
-	if( m_terrainRenderObject == NULL )
+	if( m_terrainRenderObject == nullptr )
 		return FALSE;
 
 	REF_PTR_RELEASE( m_terrainHeightMap );
@@ -266,7 +266,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 			Coord3D loc = *pMapObj->getLocation();
 			if (loc.z < 0) {
 				Vector3 vec;
-				loc.z = m_terrainRenderObject->getHeightMapHeight(loc.x, loc.y, NULL);
+				loc.z = m_terrainRenderObject->getHeightMapHeight(loc.x, loc.y, nullptr);
 				loc.z += d->getReal(TheKey_lightHeightAboveTerrain);
 			}
 			// It is a light, and handled at the device level.  jba.
@@ -289,7 +289,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 	}
 
 
-	RefRenderObjListIterator *it = W3DDisplay::m_3DScene ? W3DDisplay::m_3DScene->createLightsIterator() : NULL;
+	RefRenderObjListIterator *it = W3DDisplay::m_3DScene ? W3DDisplay::m_3DScene->createLightsIterator() : nullptr;
 	// apply the heightmap to the terrain render object
 	m_terrainRenderObject->initHeightData( m_terrainHeightMap->getDrawWidth(),
 																				 m_terrainHeightMap->getDrawHeight(),
@@ -297,10 +297,10 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 																				 it);
 	if (it) {
 	 W3DDisplay::m_3DScene->destroyLightsIterator(it);
-	 it = NULL;
+	 it = nullptr;
 	}
 	// add our terrain render object to the scene
-	if (W3DDisplay::m_3DScene != NULL)
+	if (W3DDisplay::m_3DScene != nullptr)
 		W3DDisplay::m_3DScene->Add_Render_Object( m_terrainRenderObject );
 
 #if defined(RTS_DEBUG)
@@ -372,7 +372,7 @@ Bool W3DTerrainVisual::intersectTerrain( Coord3D *rayStart,
 	Bool hit = FALSE;
 
 	// sanity
-	if( rayStart == NULL || rayEnd == NULL )
+	if( rayStart == nullptr || rayEnd == nullptr )
 		return hit;
 
 	if( m_terrainRenderObject )
@@ -414,7 +414,7 @@ void W3DTerrainVisual::getTerrainColorAt( Real x, Real y, RGBColor *pColor )
 //-------------------------------------------------------------------------------------------------
 TerrainType *W3DTerrainVisual::getTerrainTile( Real x, Real y )
 {
-	TerrainType *tile = NULL;
+	TerrainType *tile = nullptr;
 
 	if( m_terrainHeightMap )
 	{

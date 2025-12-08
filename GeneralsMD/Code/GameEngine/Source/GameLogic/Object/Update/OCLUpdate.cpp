@@ -46,7 +46,7 @@
 void parseFactionObjectCreationList( INI *ini, void *instance, void *store, const void *userData )
 {
 	OCLUpdateModuleData::FactionOCLInfo info;
-	info.m_ocl = NULL;
+	info.m_ocl = nullptr;
 
 	const char *token = ini->getNextToken( ini->getSepsColon() );
 
@@ -63,7 +63,7 @@ void parseFactionObjectCreationList( INI *ini, void *instance, void *store, cons
 
 	token = ini->getNextTokenOrNull( ini->getSepsColon() );
 	if ( stricmp(token, "OCL") == 0 )
-		ini->parseObjectCreationList( ini, instance, &info.m_ocl, NULL );
+		ini->parseObjectCreationList( ini, instance, &info.m_ocl, nullptr );
 	else
 		throw INI_INVALID_DATA;
 
@@ -78,7 +78,7 @@ OCLUpdateModuleData::OCLUpdateModuleData()
 {
 	m_minDelay = 0;
 	m_maxDelay = 0;
-	m_ocl = NULL;
+	m_ocl = nullptr;
 	m_factionOCL.clear();
 	m_isCreateAtEdge = FALSE;
 	m_isFactionTriggered = FALSE;
@@ -91,13 +91,13 @@ OCLUpdateModuleData::OCLUpdateModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "OCL",					INI::parseObjectCreationList,		NULL, offsetof( OCLUpdateModuleData, m_ocl ) },
-		{ "FactionOCL",		parseFactionObjectCreationList,	NULL, offsetof( OCLUpdateModuleData, m_factionOCL ) },
-		{ "MinDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( OCLUpdateModuleData, m_minDelay ) },
-		{ "MaxDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( OCLUpdateModuleData, m_maxDelay ) },
-		{ "CreateAtEdge",	INI::parseBool,									NULL, offsetof( OCLUpdateModuleData, m_isCreateAtEdge ) },
-		{ "FactionTriggered",	INI::parseBool,							NULL, offsetof( OCLUpdateModuleData, m_isFactionTriggered ) },
-		{ 0, 0, 0, 0 }
+		{ "OCL",					INI::parseObjectCreationList,		nullptr, offsetof( OCLUpdateModuleData, m_ocl ) },
+		{ "FactionOCL",		parseFactionObjectCreationList,	nullptr, offsetof( OCLUpdateModuleData, m_factionOCL ) },
+		{ "MinDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof( OCLUpdateModuleData, m_minDelay ) },
+		{ "MaxDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof( OCLUpdateModuleData, m_maxDelay ) },
+		{ "CreateAtEdge",	INI::parseBool,									nullptr, offsetof( OCLUpdateModuleData, m_isCreateAtEdge ) },
+		{ "FactionTriggered",	INI::parseBool,							nullptr, offsetof( OCLUpdateModuleData, m_isFactionTriggered ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }

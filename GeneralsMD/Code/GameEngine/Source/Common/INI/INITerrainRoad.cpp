@@ -59,7 +59,7 @@ void INI::parseTerrainRoadDefinition( INI* ini )
 
 	}
 
-	if( road == NULL )
+	if( road == nullptr )
 		road = TheTerrainRoads->newRoad( name );
 
 	DEBUG_ASSERTCRASH( road, ("Unable to allocate road '%s'", name.str()) );

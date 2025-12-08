@@ -58,7 +58,7 @@
 #define ISSET(x) (m_victoryConditions & VICTORY_##x)
 
 //-------------------------------------------------------------------------------------------------
-VictoryConditionsInterface *TheVictoryConditions = NULL;
+VictoryConditionsInterface *TheVictoryConditions = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 inline static Bool areAllies(const Player *p1, const Player *p2)
@@ -126,7 +126,7 @@ void VictoryConditions::reset( void )
 {
 	for (Int i=0; i<MAX_PLAYER_COUNT; ++i)
 	{
-		m_players[i] = NULL;
+		m_players[i] = nullptr;
 		m_isDefeated[i] = false;
 	}
 	m_localSlotNum = -1;
@@ -149,7 +149,7 @@ void VictoryConditions::update( void )
 	if (!m_singleAllianceRemaining)
 	{
 		Bool multipleAlliances = false;
-		Player *alive = NULL;
+		Player *alive = nullptr;
 		Player *player;
 		for (Int i=0; i<MAX_PLAYER_COUNT; ++i)
 		{
@@ -203,7 +203,7 @@ void VictoryConditions::update( void )
 				pName.format("player%d", idx);
 				if (p->getPlayerNameKey() == NAMEKEY(pName))
 				{
-					GameSlot *slot = (TheGameInfo)?TheGameInfo->getSlot(idx):NULL;
+					GameSlot *slot = (TheGameInfo)?TheGameInfo->getSlot(idx):nullptr;
 					if (slot && slot->isAI())
 					{
 						DEBUG_LOG(("Marking AI player %s as defeated", pName.str()));
@@ -323,7 +323,7 @@ void VictoryConditions::cachePlayerPtrs( void )
 	}
 	while (playerCount < MAX_PLAYER_COUNT)
 	{
-		m_players[playerCount++] = NULL;
+		m_players[playerCount++] = nullptr;
 	}
 
 	if (m_localSlotNum < 0)

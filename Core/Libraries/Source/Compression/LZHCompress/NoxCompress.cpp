@@ -35,17 +35,17 @@
 Bool DecompressFile		(char *infile, char *outfile)
 {
 	UnsignedInt	rawSize = 0, compressedSize = 0;
-	FILE *inFilePtr = NULL;
-	FILE *outFilePtr= NULL;
-	char *inBlock		= NULL;
-	char *outBlock	= NULL;
+	FILE *inFilePtr = nullptr;
+	FILE *outFilePtr= nullptr;
+	char *inBlock		= nullptr;
+	char *outBlock	= nullptr;
 	LZHL_DHANDLE decompress;
 	Int ok = 0;
 	size_t srcSz, dstSz;
 
 	// Parameter checking
 
-	if (( infile == NULL ) || ( outfile == NULL ))
+	if (( infile == nullptr ) || ( outfile == nullptr ))
 		return FALSE;
 
 	inFilePtr = fopen( infile, "rb" );
@@ -67,7 +67,7 @@ Bool DecompressFile		(char *infile, char *outfile)
 		inBlock = (char *) DbgMalloc( compressedSize );
 		outBlock= (char *) DbgMalloc( rawSize );
 
-		if (( inBlock == NULL ) || ( outBlock == NULL ))
+		if (( inBlock == nullptr ) || ( outBlock == nullptr ))
 		{
 			if (inBlock) DbgFree(inBlock);
 			if (outBlock) DbgFree(outBlock);
@@ -123,16 +123,16 @@ Bool CompressFile			(char *infile, char *outfile)
 {
 	UnsignedInt	rawSize = 0;
 	UnsignedInt compressedSize = 0, compressed = 0, i = 0;
-	FILE *inFilePtr = NULL;
-	FILE *outFilePtr= NULL;
-	char *inBlock		= NULL;
-	char *outBlock	= NULL;
+	FILE *inFilePtr = nullptr;
+	FILE *outFilePtr= nullptr;
+	char *inBlock		= nullptr;
+	char *outBlock	= nullptr;
 	LZHL_CHANDLE compressor;
 	UnsignedInt blocklen;
 
 	// Parameter checking
 
-	if (( infile == NULL ) || ( outfile == NULL ))
+	if (( infile == nullptr ) || ( outfile == nullptr ))
 		return FALSE;
 
 	// Allocate the appropriate amount of memory
@@ -148,7 +148,7 @@ Bool CompressFile			(char *infile, char *outfile)
 		inBlock = (char *) DbgMalloc(rawSize);
 		outBlock= (char *) DbgMalloc( LZHLCompressorCalcMaxBuf( rawSize ));
 
-		if (( inBlock == NULL ) || ( outBlock == NULL ))
+		if (( inBlock == nullptr ) || ( outBlock == nullptr ))
 		{
 			DbgFree(inBlock);
 			DbgFree(outBlock);
@@ -193,7 +193,7 @@ Bool CompressPacket		(char *inPacket, char *outPacket)
 {
 	// Parameter checking
 
-	if (( inPacket == NULL ) || ( outPacket == NULL ))
+	if (( inPacket == nullptr ) || ( outPacket == nullptr ))
 		return FALSE;
 
 	return TRUE;
@@ -204,7 +204,7 @@ Bool DecompressPacket	(char *inPacket, char *outPacket)
 {
 	// Parameter checking
 
-	if (( inPacket == NULL ) || ( outPacket == NULL ))
+	if (( inPacket == nullptr ) || ( outPacket == nullptr ))
 		return FALSE;
 	return TRUE;
 }
@@ -226,7 +226,7 @@ Bool DecompressMemory		(void *inBufferVoid, Int inSize, void *outBufferVoid, Int
 
 	// Parameter checking
 
-	if (( inBuffer == NULL ) || ( outBuffer == NULL ) || ( inSize < 4 ) || ( outSize == 0 ))
+	if (( inBuffer == nullptr ) || ( outBuffer == nullptr ) || ( inSize < 4 ) || ( outSize == 0 ))
 		return FALSE;
 
 	// Get compressed size of file.
@@ -273,7 +273,7 @@ Bool CompressMemory			(void *inBufferVoid, Int inSize, void *outBufferVoid, Int&
 
 	// Parameter checking
 
-	if (( inBuffer == NULL ) || ( outBuffer == NULL ) || ( inSize < 4 ) || ( outSize == 0 ))
+	if (( inBuffer == nullptr ) || ( outBuffer == nullptr ) || ( inSize < 4 ) || ( outSize == 0 ))
 		return FALSE;
 
 	rawSize = inSize;

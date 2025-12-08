@@ -26,7 +26,7 @@
 #include "Common/Debug.h"
 #include "W3DDevice/GameClient/W3DBufferManager.h"
 
-W3DBufferManager *TheW3DBufferManager=NULL;	//singleton
+W3DBufferManager *TheW3DBufferManager=nullptr;	//singleton
 
 static int FVFTypeIndexList[W3DBufferManager::MAX_FVF]=
 {
@@ -64,14 +64,14 @@ W3DBufferManager::W3DBufferManager(void)
 
 	Int i=0;
 	for (; i<MAX_FVF; i++)
-		m_W3DVertexBuffers[i]=NULL;
+		m_W3DVertexBuffers[i]=nullptr;
 	for (i=0; i<MAX_FVF; i++)
 		for (Int j=0; j<MAX_VB_SIZES; j++)
-			m_W3DVertexBufferSlots[i][j]=NULL;
+			m_W3DVertexBufferSlots[i][j]=nullptr;
 
-	m_W3DIndexBuffers=NULL;
+	m_W3DIndexBuffers=nullptr;
 	for (Int j=0; j<MAX_IB_SIZES; j++)
-		m_W3DIndexBufferSlots[j]=NULL;
+		m_W3DIndexBufferSlots[j]=nullptr;
 }
 
 W3DBufferManager::~W3DBufferManager(void)
@@ -95,14 +95,14 @@ void W3DBufferManager::freeAllSlots(void)
 				if (vbSlot->m_prevSameVB)
 					vbSlot->m_prevSameVB->m_nextSameVB=vbSlot->m_nextSameVB;
 				else
-					vbSlot->m_VB->m_usedSlots=NULL;
+					vbSlot->m_VB->m_usedSlots=nullptr;
 
 				if (vbSlot->m_nextSameVB)
 					vbSlot->m_nextSameVB->m_prevSameVB=vbSlot->m_prevSameVB;
 				vbSlot=vbSlot->m_nextSameSize;
 				m_numEmptySlotsAllocated--;
 			}
-			m_W3DVertexBufferSlots[i][j]=NULL;
+			m_W3DVertexBufferSlots[i][j]=nullptr;
 		}
 	}
 
@@ -115,14 +115,14 @@ void W3DBufferManager::freeAllSlots(void)
 			if (ibSlot->m_prevSameIB)
 				ibSlot->m_prevSameIB->m_nextSameIB=ibSlot->m_nextSameIB;
 			else
-				ibSlot->m_IB->m_usedSlots=NULL;
+				ibSlot->m_IB->m_usedSlots=nullptr;
 
 			if (ibSlot->m_nextSameIB)
 				ibSlot->m_nextSameIB->m_prevSameIB=ibSlot->m_prevSameIB;
 			ibSlot=ibSlot->m_nextSameSize;
 			m_numEmptyIndexSlotsAllocated--;
 		}
-		m_W3DIndexBufferSlots[j]=NULL;
+		m_W3DIndexBufferSlots[j]=nullptr;
 	}
 
 	DEBUG_ASSERTCRASH(m_numEmptySlotsAllocated==0, ("Failed to free all empty vertex buffer slots"));
@@ -145,7 +145,7 @@ void W3DBufferManager::freeAllBuffers(void)
 			m_numEmptyVertexBuffersAllocated--;
 			vb=vb->m_nextVB;	//get next vertex buffer of this type
 		}
-		m_W3DVertexBuffers[i]=NULL;
+		m_W3DVertexBuffers[i]=nullptr;
 	}
 
 	W3DIndexBuffer *ib = m_W3DIndexBuffers;
@@ -155,7 +155,7 @@ void W3DBufferManager::freeAllBuffers(void)
 		m_numEmptyIndexBuffersAllocated--;
 		ib=ib->m_nextIB;	//get next vertex buffer of this type
 	}
-	m_W3DIndexBuffers=NULL;
+	m_W3DIndexBuffers=nullptr;
 
 	DEBUG_ASSERTCRASH(m_numEmptyVertexBuffersAllocated==0, ("Failed to free all empty vertex buffers"));
 	DEBUG_ASSERTCRASH(m_numEmptyIndexBuffersAllocated==0, ("Failed to free all empty index buffers"));
@@ -215,7 +215,7 @@ Bool W3DBufferManager::ReAcquireResources(void)
 */
 W3DBufferManager::W3DVertexBufferSlot *W3DBufferManager::getSlot(VBM_FVF_TYPES fvfType, Int size)
 {
-	W3DVertexBufferSlot *vbSlot=NULL;
+	W3DVertexBufferSlot *vbSlot=nullptr;
 
 	//round size to next multiple of minimum slot size.
 	//should help avoid fragmentation.
@@ -226,14 +226,14 @@ W3DBufferManager::W3DVertexBufferSlot *W3DBufferManager::getSlot(VBM_FVF_TYPES f
 	// TheSuperHackers @bugfix xezon 18/05/2025 Protect against indexing slots beyond the max size.
 	// This will happen when a mesh is too complex to draw shadows with.
 	if (sizeIndex >= MAX_VB_SIZES || size <= 0) {
-		return NULL;
+		return nullptr;
 	}
 
-	if ((vbSlot=m_W3DVertexBufferSlots[fvfType][sizeIndex]) != NULL)
+	if ((vbSlot=m_W3DVertexBufferSlots[fvfType][sizeIndex]) != nullptr)
 	{	//found a previously allocated slot matching required size
 		m_W3DVertexBufferSlots[fvfType][sizeIndex]=vbSlot->m_nextSameSize;
 		if (vbSlot->m_nextSameSize)
-			vbSlot->m_nextSameSize->m_prevSameSize=NULL;
+			vbSlot->m_nextSameSize->m_prevSameSize=nullptr;
 		return vbSlot;
 	}
 	else
@@ -241,7 +241,7 @@ W3DBufferManager::W3DVertexBufferSlot *W3DBufferManager::getSlot(VBM_FVF_TYPES f
 		return allocateSlotStorage(fvfType, size);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**Returns vertex buffer space back to pool so it can be reused later*/
@@ -269,7 +269,7 @@ W3DBufferManager::W3DVertexBufferSlot * W3DBufferManager::allocateSlotStorage(VB
 	// TheSuperHackers @bugfix xezon 18/05/2025 Protect against allocating slot storage beyond the max size.
 	// This will happen when there are too many meshes in the scene to draw shadows with.
 	if (m_numEmptySlotsAllocated >= MAX_NUMBER_SLOTS) {
-		return NULL;
+		return nullptr;
 	}
 
 	pVB=m_W3DVertexBuffers[fvfType];
@@ -283,10 +283,10 @@ W3DBufferManager::W3DVertexBufferSlot * W3DBufferManager::allocateSlotStorage(VB
 			vbSlot->m_VB=pVB;
 			//Link to VB list of slots
 			vbSlot->m_nextSameVB=pVB->m_usedSlots;
-			vbSlot->m_prevSameVB=NULL;	//this will be the new head
+			vbSlot->m_prevSameVB=nullptr;	//this will be the new head
 			if (pVB->m_usedSlots)
 				pVB->m_usedSlots->m_prevSameVB=vbSlot;
-			vbSlot->m_prevSameSize=vbSlot->m_nextSameSize=NULL;
+			vbSlot->m_prevSameSize=vbSlot->m_nextSameSize=nullptr;
 			pVB->m_usedSlots=vbSlot;
 			pVB->m_startFreeIndex += size;
 			m_numEmptySlotsAllocated++;
@@ -320,12 +320,12 @@ W3DBufferManager::W3DVertexBufferSlot * W3DBufferManager::allocateSlotStorage(VB
 		vbSlot->m_size=size;
 		vbSlot->m_start=0;
 		vbSlot->m_VB=pVB;
-		vbSlot->m_prevSameVB=vbSlot->m_nextSameVB=NULL;
-		vbSlot->m_prevSameSize=vbSlot->m_nextSameSize=NULL;
+		vbSlot->m_prevSameVB=vbSlot->m_nextSameVB=nullptr;
+		vbSlot->m_prevSameSize=vbSlot->m_nextSameSize=nullptr;
 		return vbSlot;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //******************************** Index Buffer code ******************************************************
@@ -335,7 +335,7 @@ W3DBufferManager::W3DVertexBufferSlot * W3DBufferManager::allocateSlotStorage(VB
 */
 W3DBufferManager::W3DIndexBufferSlot *W3DBufferManager::getSlot(Int size)
 {
-	W3DIndexBufferSlot *ibSlot=NULL;
+	W3DIndexBufferSlot *ibSlot=nullptr;
 
 	//round size to next multiple of minimum slot size.
 	//should help avoid fragmentation.
@@ -346,14 +346,14 @@ W3DBufferManager::W3DIndexBufferSlot *W3DBufferManager::getSlot(Int size)
 	// TheSuperHackers @bugfix xezon 18/05/2025 Protect against indexing slots beyond the max size.
 	// This will happen when a mesh is too complex to draw shadows with.
 	if (sizeIndex >= MAX_IB_SIZES || size <= 0) {
-		return NULL;
+		return nullptr;
 	}
 
-	if ((ibSlot=m_W3DIndexBufferSlots[sizeIndex]) != NULL)
+	if ((ibSlot=m_W3DIndexBufferSlots[sizeIndex]) != nullptr)
 	{	//found a previously allocated slot matching required size
 		m_W3DIndexBufferSlots[sizeIndex]=ibSlot->m_nextSameSize;
 		if (ibSlot->m_nextSameSize)
-			ibSlot->m_nextSameSize->m_prevSameSize=NULL;
+			ibSlot->m_nextSameSize->m_prevSameSize=nullptr;
 		return ibSlot;
 	}
 	else
@@ -361,7 +361,7 @@ W3DBufferManager::W3DIndexBufferSlot *W3DBufferManager::getSlot(Int size)
 		return allocateSlotStorage(size);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**Returns index buffer space back to pool so it can be reused later*/
@@ -389,7 +389,7 @@ W3DBufferManager::W3DIndexBufferSlot * W3DBufferManager::allocateSlotStorage(Int
 	// TheSuperHackers @bugfix xezon 18/05/2025 Protect against allocating slot storage beyond the max size.
 	// This will happen when there are too many meshes in the scene to draw shadows with.
 	if (m_numEmptyIndexSlotsAllocated >= MAX_NUMBER_SLOTS) {
-		return NULL;
+		return nullptr;
 	}
 
 	pIB=m_W3DIndexBuffers;
@@ -403,10 +403,10 @@ W3DBufferManager::W3DIndexBufferSlot * W3DBufferManager::allocateSlotStorage(Int
 			ibSlot->m_IB=pIB;
 			//Link to IB list of slots
 			ibSlot->m_nextSameIB=pIB->m_usedSlots;
-			ibSlot->m_prevSameIB=NULL;	//this will be the new head
+			ibSlot->m_prevSameIB=nullptr;	//this will be the new head
 			if (pIB->m_usedSlots)
 				pIB->m_usedSlots->m_prevSameIB=ibSlot;
-			ibSlot->m_prevSameSize=ibSlot->m_nextSameSize=NULL;
+			ibSlot->m_prevSameSize=ibSlot->m_nextSameSize=nullptr;
 			pIB->m_usedSlots=ibSlot;
 			pIB->m_startFreeIndex += size;
 			m_numEmptyIndexSlotsAllocated++;
@@ -439,10 +439,10 @@ W3DBufferManager::W3DIndexBufferSlot * W3DBufferManager::allocateSlotStorage(Int
 		ibSlot->m_size=size;
 		ibSlot->m_start=0;
 		ibSlot->m_IB=pIB;
-		ibSlot->m_prevSameIB=ibSlot->m_nextSameIB=NULL;
-		ibSlot->m_prevSameSize=ibSlot->m_nextSameSize=NULL;
+		ibSlot->m_prevSameIB=ibSlot->m_nextSameIB=nullptr;
+		ibSlot->m_prevSameSize=ibSlot->m_nextSameSize=nullptr;
 		return ibSlot;
 	}
 
-	return NULL;
+	return nullptr;
 }

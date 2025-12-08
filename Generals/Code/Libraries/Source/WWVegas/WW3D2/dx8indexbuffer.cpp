@@ -52,7 +52,7 @@ static unsigned short _DynamicSortingIndexArraySize=0;
 static unsigned short _DynamicSortingIndexArrayOffset=0;
 
 static bool _DynamicDX8IndexBufferInUse=false;
-static DX8IndexBufferClass* _DynamicDX8IndexBuffer=NULL;
+static DX8IndexBufferClass* _DynamicDX8IndexBuffer=nullptr;
 static unsigned short _DynamicDX8IndexBufferSize=DEFAULT_IB_SIZE;
 static unsigned short _DynamicDX8IndexBufferOffset=0;
 
@@ -339,7 +339,7 @@ SortingIndexBufferClass::~SortingIndexBufferClass()
 DynamicIBAccessClass::DynamicIBAccessClass(unsigned short type_, unsigned short index_count_)
 	:
 	IndexCount(index_count_),
-	IndexBuffer(0),
+	IndexBuffer(nullptr),
 	Type(type_)
 {
 	WWASSERT(Type==BUFFER_TYPE_DYNAMIC_DX8 || Type==BUFFER_TYPE_DYNAMIC_SORTING);

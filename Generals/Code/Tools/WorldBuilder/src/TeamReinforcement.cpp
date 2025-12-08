@@ -31,7 +31,7 @@
 
 TeamReinforcement::TeamReinforcement()
 	: CPropertyPage(TeamReinforcement::IDD)	,
-	m_teamDict(NULL)
+	m_teamDict(nullptr)
 {
 	//{{AFX_DATA_INIT(TeamReinforcement)
 		// NOTE: the ClassWizard will add member initialization here

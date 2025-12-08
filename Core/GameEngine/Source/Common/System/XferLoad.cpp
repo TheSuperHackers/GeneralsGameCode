@@ -40,7 +40,7 @@ XferLoad::XferLoad( void )
 {
 
 	m_xferMode = XFER_LOAD;
-	m_fileFP = NULL;
+	m_fileFP = nullptr;
 
 }
 
@@ -50,7 +50,7 @@ XferLoad::~XferLoad( void )
 {
 
 	// warn the user if a file was left open
-	if( m_fileFP != NULL )
+	if( m_fileFP != nullptr )
 	{
 
 		DEBUG_CRASH(( "Warning: Xfer file '%s' was left open", m_identifier.str() ));
@@ -67,7 +67,7 @@ void XferLoad::open( AsciiString identifier )
 {
 
 	// sanity, check to see if we're already open
-	if( m_fileFP != NULL )
+	if( m_fileFP != nullptr )
 	{
 
 		DEBUG_CRASH(( "Cannot open file '%s' cause we've already got '%s' open",
@@ -81,7 +81,7 @@ void XferLoad::open( AsciiString identifier )
 
 	// open the file
 	m_fileFP = fopen( identifier.str(), "rb" );
-	if( m_fileFP == NULL )
+	if( m_fileFP == nullptr )
 	{
 
 		DEBUG_CRASH(( "File '%s' not found", identifier.str() ));
@@ -98,7 +98,7 @@ void XferLoad::close( void )
 {
 
 	// sanity, if we don't have an open file we can do nothing
-	if( m_fileFP == NULL )
+	if( m_fileFP == nullptr )
 	{
 
 		DEBUG_CRASH(( "Xfer close called, but no file was open" ));
@@ -108,7 +108,7 @@ void XferLoad::close( void )
 
 	// close the file
 	fclose( m_fileFP );
-	m_fileFP = NULL;
+	m_fileFP = nullptr;
 
 	// erase the filename
 	m_identifier.clear();
@@ -174,7 +174,7 @@ void XferLoad::skip( Int dataSize )
 void XferLoad::xferSnapshot( Snapshot *snapshot )
 {
 
-	if( snapshot == NULL )
+	if( snapshot == nullptr )
 	{
 
 		DEBUG_CRASH(( "XferLoad::xferSnapshot - Invalid parameters" ));

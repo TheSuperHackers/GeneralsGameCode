@@ -38,7 +38,7 @@
 #include "GameNetwork/GameInfo.h" // for PLAYERTEMPLATE_*
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-MultiplayerSettings *TheMultiplayerSettings = NULL;				///< The MultiplayerSettings singleton
+MultiplayerSettings *TheMultiplayerSettings = nullptr;				///< The MultiplayerSettings singleton
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -46,26 +46,26 @@ MultiplayerSettings *TheMultiplayerSettings = NULL;				///< The MultiplayerSetti
 const FieldParse MultiplayerColorDefinition::m_colorFieldParseTable[] =
 {
 
-	{ "TooltipName",	INI::parseAsciiString,	NULL,	offsetof( MultiplayerColorDefinition, m_tooltipName ) },
-	{ "RGBColor",			INI::parseRGBColor,			NULL,	offsetof( MultiplayerColorDefinition, m_rgbValue ) },
-	{ "RGBNightColor",			INI::parseRGBColor,		NULL,	offsetof( MultiplayerColorDefinition, m_rgbValueNight ) },
-	{ NULL,					NULL,						NULL,						0 }
+	{ "TooltipName",	INI::parseAsciiString,	nullptr,	offsetof( MultiplayerColorDefinition, m_tooltipName ) },
+	{ "RGBColor",			INI::parseRGBColor,			nullptr,	offsetof( MultiplayerColorDefinition, m_rgbValue ) },
+	{ "RGBNightColor",			INI::parseRGBColor,		nullptr,	offsetof( MultiplayerColorDefinition, m_rgbValueNight ) },
+	{ nullptr,					nullptr,						nullptr,						0 }
 
 };
 
 const FieldParse MultiplayerSettings::m_multiplayerSettingsFieldParseTable[] =
 {
 
-	{ "InitialCreditsMin",				INI::parseInt,	NULL,	offsetof( MultiplayerSettings, m_initialCreditsMin ) },
-	{ "InitialCreditsMax",				INI::parseInt,	NULL,	offsetof( MultiplayerSettings, m_initialCreditsMax ) },
-	{ "StartCountdownTimer",			INI::parseInt,	NULL,	offsetof( MultiplayerSettings, m_startCountdownTimerSeconds ) },
-	{ "MaxBeaconsPerPlayer",			INI::parseInt,	NULL,	offsetof( MultiplayerSettings, m_maxBeaconsPerPlayer ) },
-	{ "UseShroud",								INI::parseBool,	NULL,	offsetof( MultiplayerSettings, m_isShroudInMultiplayer ) },
-	{ "ShowRandomPlayerTemplate",	INI::parseBool,	NULL,	offsetof( MultiplayerSettings, m_showRandomPlayerTemplate ) },
-	{ "ShowRandomStartPos",				INI::parseBool,	NULL,	offsetof( MultiplayerSettings, m_showRandomStartPos ) },
-	{ "ShowRandomColor",					INI::parseBool,	NULL,	offsetof( MultiplayerSettings, m_showRandomColor ) },
+	{ "InitialCreditsMin",				INI::parseInt,	nullptr,	offsetof( MultiplayerSettings, m_initialCreditsMin ) },
+	{ "InitialCreditsMax",				INI::parseInt,	nullptr,	offsetof( MultiplayerSettings, m_initialCreditsMax ) },
+	{ "StartCountdownTimer",			INI::parseInt,	nullptr,	offsetof( MultiplayerSettings, m_startCountdownTimerSeconds ) },
+	{ "MaxBeaconsPerPlayer",			INI::parseInt,	nullptr,	offsetof( MultiplayerSettings, m_maxBeaconsPerPlayer ) },
+	{ "UseShroud",								INI::parseBool,	nullptr,	offsetof( MultiplayerSettings, m_isShroudInMultiplayer ) },
+	{ "ShowRandomPlayerTemplate",	INI::parseBool,	nullptr,	offsetof( MultiplayerSettings, m_showRandomPlayerTemplate ) },
+	{ "ShowRandomStartPos",				INI::parseBool,	nullptr,	offsetof( MultiplayerSettings, m_showRandomStartPos ) },
+	{ "ShowRandomColor",					INI::parseBool,	nullptr,	offsetof( MultiplayerSettings, m_showRandomColor ) },
 
-	{ NULL,					NULL,						NULL,						0 }
+	{ nullptr,					nullptr,						nullptr,						0 }
 
 };
 
@@ -107,7 +107,7 @@ MultiplayerColorDefinition * MultiplayerSettings::getColor(Int which)
 	}
 	else if (which < 0 || which >= getNumColors())
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	return &m_colorList[which];
@@ -125,7 +125,7 @@ MultiplayerColorDefinition * MultiplayerSettings::findMultiplayerColorDefinition
 		++iter;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 MultiplayerColorDefinition * MultiplayerSettings::newMultiplayerColorDefinition(AsciiString name)

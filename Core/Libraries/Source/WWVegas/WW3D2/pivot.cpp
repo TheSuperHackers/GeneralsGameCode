@@ -55,7 +55,7 @@
  *   07/24/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 PivotClass::PivotClass(void) :
-	Parent(NULL),
+	Parent(nullptr),
 	BaseTransform(1),
 	Transform(1),
 #ifdef LAZY_CAP_MTX_ALLOC

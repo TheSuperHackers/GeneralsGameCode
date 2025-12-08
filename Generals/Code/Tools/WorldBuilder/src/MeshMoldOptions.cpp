@@ -31,7 +31,7 @@
 Real MeshMoldOptions::m_currentHeight=0;
 Real MeshMoldOptions::m_currentScale=1.0f;
 Int MeshMoldOptions::m_currentAngle=0;
-MeshMoldOptions * MeshMoldOptions::m_staticThis=NULL;
+MeshMoldOptions * MeshMoldOptions::m_staticThis=nullptr;
 Bool MeshMoldOptions::m_doingPreview=false;
 Bool MeshMoldOptions::m_raiseOnly=false;
 Bool MeshMoldOptions::m_lowerOnly=false;
@@ -87,7 +87,7 @@ BOOL MeshMoldOptions::OnInitDialog()
 		TheFileSystem->getFileListInDirectory(".\\data\\Editor\\Molds\\", "*.w3d", filenameList, FALSE);
 
 		if (filenameList.size() > 0) {
-			HTREEITEM child = NULL;
+			HTREEITEM child = nullptr;
 			FilenameList::iterator it = filenameList.begin();
 			do {
 				AsciiString filename = *it;

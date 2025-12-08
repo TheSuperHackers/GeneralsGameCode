@@ -102,7 +102,7 @@ ThumbnailClass::ThumbnailClass(
 ThumbnailClass::ThumbnailClass(ThumbnailManagerClass* manager, const StringClass& filename)
 	:
 	Manager(manager),
-	Bitmap(0),
+	Bitmap(nullptr),
 	Name(filename),
 	Allocated(false),
 	Width(0),
@@ -259,7 +259,7 @@ ThumbnailClass::~ThumbnailClass()
 // ----------------------------------------------------------------------------
 ThumbnailManagerClass::ThumbnailManagerClass(const char* thumbnail_filename)
 	:
-	ThumbnailMemory(NULL),
+	ThumbnailMemory(nullptr),
 	ThumbnailFileName(thumbnail_filename),
 	PerTextureTimeStampUsed(false),
 	Changed(false),
@@ -279,7 +279,7 @@ ThumbnailManagerClass::~ThumbnailManagerClass()
 	}
 
 	delete[] ThumbnailMemory;
-	ThumbnailMemory=NULL;
+	ThumbnailMemory=nullptr;
 }
 
 // ----------------------------------------------------------------------------
@@ -292,7 +292,7 @@ ThumbnailManagerClass* ThumbnailManagerClass::Peek_Thumbnail_Manager(const char*
 	}
 	if (GlobalThumbnailManager &&
 		GlobalThumbnailManager->ThumbnailFileName==thumbnail_filename) return GlobalThumbnailManager;
-	return NULL;
+	return nullptr;
 }
 
 // ----------------------------------------------------------------------------
@@ -326,7 +326,7 @@ void ThumbnailManagerClass::Remove_Thumbnail_Manager(const char* thumbnail_filen
 	if (GlobalThumbnailManager &&
 		GlobalThumbnailManager->ThumbnailFileName==thumbnail_filename) {
 		delete GlobalThumbnailManager;
-		GlobalThumbnailManager=NULL;
+		GlobalThumbnailManager=nullptr;
 	}
 }
 // ----------------------------------------------------------------------------
@@ -359,13 +359,13 @@ ThumbnailClass* ThumbnailManagerClass::Peek_Thumbnail_Instance_From_Any_Manager(
 			ThumbnailClass* thumb=new ThumbnailClass(GlobalThumbnailManager,filename);
 			if (!thumb->Peek_Bitmap()) {
 				delete thumb;
-				thumb=NULL;
+				thumb=nullptr;
 			}
 			return thumb;
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -406,5 +406,5 @@ void ThumbnailManagerClass::Deinit()
 	}
 
 	delete GlobalThumbnailManager;
-	GlobalThumbnailManager=NULL;
+	GlobalThumbnailManager=nullptr;
 }

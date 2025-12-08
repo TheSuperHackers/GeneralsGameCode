@@ -45,6 +45,7 @@
 //-----------------------------------------------------------------------------
 //         Includes
 //-----------------------------------------------------------------------------
+
 #include "W3DDevice/GameClient/W3DTreeBuffer.h"
 
 #include <assetmgr.h>
@@ -199,7 +200,7 @@ void W3DTreeBuffer::sort(Int numIterations)
 //=============================================================================
 Int W3DTreeBuffer::doLighting(Vector3 *loc, Real r, Real g, Real b, SphereClass &bounds, RefRenderObjListIterator *pDynamicLightsIterator)
 {
-	if (pDynamicLightsIterator == NULL) {
+	if (pDynamicLightsIterator == nullptr) {
 		return(REAL_TO_INT(b) | (REAL_TO_INT(g) << 8) | (REAL_TO_INT(r) << 16) | (255 << 24));
 	}
 	Real shadeR, shadeG, shadeB;
@@ -323,7 +324,7 @@ void W3DTreeBuffer::loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *p
 		Int type = m_trees[curTree].treeType;
 		Real theSin = m_trees[curTree].sin;
 		Real theCos = m_trees[curTree].cos;
-		if (type<0 || m_typeMesh[type] == 0) {
+		if (type<0 || m_typeMesh[type] == nullptr) {
 			type = 0;
 		}
 		Bool doVertexLighting = false;
@@ -344,7 +345,7 @@ void W3DTreeBuffer::loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *p
 
 		Int diffuse = 0;
 		if (!doVertexLighting) {
-			diffuse = doLighting(&loc, shadeR, shadeG, shadeB, m_trees[curTree].bounds, NULL);
+			diffuse = doLighting(&loc, shadeR, shadeG, shadeB, m_trees[curTree].bounds, nullptr);
 		}
 
 		Real typeOffset = type*0.5;
@@ -513,18 +514,18 @@ W3DTreeBuffer::W3DTreeBuffer(void)
 	m_initialized = false;
 	///@toto - reactivate this optimization if useful.  jba.
 	return;
-	m_vertexTree = NULL;
-	m_indexTree = NULL;
-	m_treeTexture = NULL;
+	m_vertexTree = nullptr;
+	m_indexTree = nullptr;
+	m_treeTexture = nullptr;
 	m_curNumTreeVertices=0;
 	m_curNumTreeIndices=0;
 	clearAllTrees();
 	allocateTreeBuffers();
 	Int i;
 	for (i=0; i<MAX_TYPES; i++) {
-		m_typeMesh[i] = 0;
+		m_typeMesh[i] = nullptr;
 	}
-	if (WW3DAssetManager::Get_Instance()==NULL)
+	if (WW3DAssetManager::Get_Instance()==nullptr)
 		return;  // WorldBuilderTool doesn't initialize the asset manager.  jba.
 
 	m_treeTexture = NEW_REF(TextureClass, ("trees.tga"));
@@ -545,7 +546,7 @@ W3DTreeBuffer::W3DTreeBuffer(void)
 			m_typeMesh[i] = (MeshClass*)WW3DAssetManager::Get_Instance()->Create_Render_Obj("FENCE.PLANE09" );
 			break;
 		}
-		if (m_typeMesh[i] == NULL) continue;
+		if (m_typeMesh[i] == nullptr) continue;
 		Int numVertex = m_typeMesh[i]->Peek_Model()->Get_Vertex_Count();
 		Vector3 *pVert = m_typeMesh[i]->Peek_Model()->Get_Vertex_Array();
 
@@ -558,7 +559,7 @@ W3DTreeBuffer::W3DTreeBuffer(void)
 		bounds.Center.Z = tmp;
 		m_typeBounds[i] = bounds;
 	}
-	if (m_typeMesh[0] == NULL) {
+	if (m_typeMesh[0] == nullptr) {
 
 		//DEBUG_LOG("!!!!!!!!!!!!*************** W3DTreeBuffer failed to initialize.");
 		return;  // didn't initialize.

@@ -26,7 +26,7 @@
 #include "WorldBuilderView.h"
 #include "MoundTool.h"
 
-MoundOptions *MoundOptions::m_staticThis = NULL;
+MoundOptions *MoundOptions::m_staticThis = nullptr;
 Int MoundOptions::m_currentWidth = 0;
 Int MoundOptions::m_currentHeight = 0;
 Int MoundOptions::m_currentFeather = 0;

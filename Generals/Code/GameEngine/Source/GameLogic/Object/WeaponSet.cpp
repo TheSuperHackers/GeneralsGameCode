@@ -71,7 +71,7 @@ const char* const WeaponSetFlags::s_bitNameList[] =
 	"CARBOMB",
 	"MINE_CLEARING_DETAIL",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(WeaponSetFlags::s_bitNameList) == WeaponSetFlags::NumBits + 1, "Incorrect array size");
 
@@ -95,7 +95,7 @@ void WeaponTemplateSet::clear()
 	m_types.clear();
 	for (int i = 0; i < WEAPONSLOT_COUNT; ++i)
 	{
-		m_template[i] = NULL;
+		m_template[i] = nullptr;
 		m_autoChooseMask[i] = 0xffffffff;					// by default, allow autochoosing from any CommandSource
 		CLEAR_KINDOFMASK(m_preferredAgainst[i]);	// by default, weapon isn't preferred against anything in particular
 	}
@@ -117,7 +117,7 @@ void WeaponTemplateSet::parseWeapon(INI* ini, void *instance, void * /*store*/, 
 {
 	WeaponTemplateSet* self = (WeaponTemplateSet*)instance;
 	WeaponSlotType wslot = (WeaponSlotType)INI::scanIndexList(ini->getNextToken(), TheWeaponSlotTypeNames);
-	INI::parseWeaponTemplate(ini, instance, &self->m_template[wslot], NULL);
+	INI::parseWeaponTemplate(ini, instance, &self->m_template[wslot], nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -133,7 +133,7 @@ void WeaponTemplateSet::parsePreferredAgainst(INI* ini, void *instance, void * /
 {
 	WeaponTemplateSet* self = (WeaponTemplateSet*)instance;
 	WeaponSlotType wslot = (WeaponSlotType)INI::scanIndexList(ini->getNextToken(), TheWeaponSlotTypeNames);
-	KindOfMaskType::parseFromINI(ini, instance, &self->m_preferredAgainst[wslot], NULL);
+	KindOfMaskType::parseFromINI(ini, instance, &self->m_preferredAgainst[wslot], nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -141,13 +141,13 @@ void WeaponTemplateSet::parseWeaponTemplateSet( INI* ini, const ThingTemplate* t
 {
 	static const FieldParse myFieldParse[] =
 	{
-		{ "Conditions", WeaponSetFlags::parseFromINI, NULL, offsetof( WeaponTemplateSet, m_types ) },
-		{ "Weapon",	WeaponTemplateSet::parseWeapon,	NULL, 0 },
-		{ "AutoChooseSources",	WeaponTemplateSet::parseAutoChoose, NULL, 0 },
-		{ "PreferredAgainst", WeaponTemplateSet::parsePreferredAgainst, NULL, 0 },
-		{ "ShareWeaponReloadTime", INI::parseBool, NULL, offsetof( WeaponTemplateSet, m_isReloadTimeShared ) },
-		{ "WeaponLockSharedAcrossSets", INI::parseBool, NULL, offsetof( WeaponTemplateSet, m_isWeaponLockSharedAcrossSets ) },
-		{ 0, 0, 0, 0 }
+		{ "Conditions", WeaponSetFlags::parseFromINI, nullptr, offsetof( WeaponTemplateSet, m_types ) },
+		{ "Weapon",	WeaponTemplateSet::parseWeapon,	nullptr, 0 },
+		{ "AutoChooseSources",	WeaponTemplateSet::parseAutoChoose, nullptr, 0 },
+		{ "PreferredAgainst", WeaponTemplateSet::parsePreferredAgainst, nullptr, 0 },
+		{ "ShareWeaponReloadTime", INI::parseBool, nullptr, offsetof( WeaponTemplateSet, m_isReloadTimeShared ) },
+		{ "WeaponLockSharedAcrossSets", INI::parseBool, nullptr, offsetof( WeaponTemplateSet, m_isWeaponLockSharedAcrossSets ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
 	ini->initFromINI(this, myFieldParse);
@@ -169,7 +169,7 @@ WeaponSet::WeaponSet()
 {
 	m_curWeapon = PRIMARY_WEAPON;
 	m_curWeaponLockedStatus = NOT_LOCKED;
-	m_curWeaponTemplateSet = NULL;
+	m_curWeaponTemplateSet = nullptr;
 	m_filledWeaponSlotMask = 0;
 	m_totalAntiMask = 0;
 	m_totalDamageTypeMask = 0;
@@ -177,7 +177,7 @@ WeaponSet::WeaponSet()
 	m_hasPitchLimit = false;
 	m_hasDamageWeapon = false;
 	for (Int i = 0; i < WEAPONSLOT_COUNT; ++i)
-		m_weapons[i] = NULL;
+		m_weapons[i] = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -217,16 +217,16 @@ void WeaponSet::xfer( Xfer *xfer )
 
 		if (ttName.isEmpty())
 		{
-			m_curWeaponTemplateSet = NULL;
+			m_curWeaponTemplateSet = nullptr;
 		}
 		else
 		{
 			const ThingTemplate* tt = TheThingFactory->findTemplate(ttName);
-			if (tt == NULL)
+			if (tt == nullptr)
 				throw INI_INVALID_DATA;
 
 			m_curWeaponTemplateSet = tt->findWeaponTemplateSet(wsFlags);
-			if (m_curWeaponTemplateSet == NULL)
+			if (m_curWeaponTemplateSet == nullptr)
 				throw INI_INVALID_DATA;
 		}
 	}
@@ -234,10 +234,10 @@ void WeaponSet::xfer( Xfer *xfer )
 	{
 		AsciiString ttName;				// leave 'em empty in case we're null
 		WeaponSetFlags wsFlags;
-		if (m_curWeaponTemplateSet != NULL)
+		if (m_curWeaponTemplateSet != nullptr)
 		{
 			const ThingTemplate* tt = m_curWeaponTemplateSet->friend_getThingTemplate();
-			if (tt == NULL)
+			if (tt == nullptr)
 				throw INI_INVALID_DATA;
 
 			ttName = tt->getName();
@@ -249,14 +249,14 @@ void WeaponSet::xfer( Xfer *xfer )
 
 	for (Int i = 0; i < WEAPONSLOT_COUNT; ++i)
 	{
-		Bool hasWeaponInSlot = (m_weapons[i] != NULL);
+		Bool hasWeaponInSlot = (m_weapons[i] != nullptr);
 		xfer->xferBool(&hasWeaponInSlot);
 		if (hasWeaponInSlot)
 		{
-			if (xfer->getXferMode() == XFER_LOAD && m_weapons[i] == NULL)
+			if (xfer->getXferMode() == XFER_LOAD && m_weapons[i] == nullptr)
 			{
 				const WeaponTemplate* wt = m_curWeaponTemplateSet->getNth((WeaponSlotType)i);
-				if (wt==NULL) {
+				if (wt==nullptr) {
 					DEBUG_CRASH(("xfer backwards compatibility code - old save file??? jba."));
 					wt = m_curWeaponTemplateSet->getNth((WeaponSlotType)0);
 				}
@@ -304,7 +304,7 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 		for (Int i = WEAPONSLOT_COUNT - 1; i >= PRIMARY_WEAPON ; --i)
 		{
 			deleteInstance(m_weapons[i]);
-			m_weapons[i] = NULL;
+			m_weapons[i] = nullptr;
 
 			if (set->getNth((WeaponSlotType)i))
 			{
@@ -541,7 +541,7 @@ CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attac
 
 	// if the victim is contained within an enclosing container, it cannot be attacked directly
 	const Object* victimsContainer = victim->getContainedBy();
-	if (victimsContainer != NULL && victimsContainer->getContain()->isEnclosingContainerFor(victim) == TRUE)
+	if (victimsContainer != nullptr && victimsContainer->getContain()->isEnclosingContainerFor(victim) == TRUE)
 	{
 		return ATTACKRESULT_NOT_POSSIBLE;
 	}
@@ -625,7 +625,7 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 				continue;
 
 			Bool handled = FALSE;
-			ContainModuleInterface *contain = containedBy ? containedBy->getContain() : NULL;
+			ContainModuleInterface *contain = containedBy ? containedBy->getContain() : nullptr;
 			if( contain && contain->isGarrisonable() )
 			{
 				//For contained things, we need to fake-move objects to the best garrison point in order
@@ -764,7 +764,7 @@ Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victi
 		then choose the gun and go back to wanting to choose the missile, etc
 	*/
 
-	if (victim == NULL)
+	if (victim == nullptr)
 		return false; // Usually cause victim just got killed.  jba.
 
 	if( isCurWeaponLocked() )
@@ -798,7 +798,7 @@ Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victi
 			continue;
 
 		Weapon* weapon = m_weapons[i];
-		if (weapon == NULL)
+		if (weapon == nullptr)
 			continue;
 
 		// weapon out of range.
@@ -928,7 +928,7 @@ void WeaponSet::reloadAllAmmo(const Object *obj, Bool now)
 	for( Int i = 0; i < WEAPONSLOT_COUNT;	i++ )
 	{
 		Weapon* weapon = m_weapons[i];
-		if (weapon != NULL)
+		if (weapon != nullptr)
 		{
 			if (now)
 				weapon->loadAmmoNow(obj);
@@ -944,7 +944,7 @@ Bool WeaponSet::isOutOfAmmo() const
 	for( Int i = 0; i < WEAPONSLOT_COUNT;	i++ )
 	{
 		const Weapon* weapon = m_weapons[i];
-		if (weapon == NULL)
+		if (weapon == nullptr)
 			continue;
 		if (weapon->getStatus() != OUT_OF_AMMO)
 		{
@@ -965,7 +965,7 @@ const Weapon* WeaponSet::findAmmoPipShowingWeapon() const
 			return weapon;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -978,7 +978,7 @@ Weapon* WeaponSet::findWaypointFollowingCapableWeapon()
 			return m_weapons[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -994,7 +994,7 @@ Bool WeaponSet::setWeaponLock( WeaponSlotType weaponSlot, WeaponLockType lockTyp
 
 	// Verify the asked for weapon exists , choose it, and then lock it as choosen until unlocked
 	// the old code was just plain wrong. (look at it in perforce and you'll see...)
-	if (m_weapons[weaponSlot] != NULL)
+	if (m_weapons[weaponSlot] != nullptr)
 	{
 		if( lockType == LOCKED_PERMANENTLY )
 		{

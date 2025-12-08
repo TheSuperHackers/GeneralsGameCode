@@ -45,6 +45,7 @@
 //-----------------------------------------------------------------------------
 //         Includes
 //-----------------------------------------------------------------------------
+
 #include "W3DDevice/GameClient/W3DPropBuffer.h"
 
 #include <assetmgr.h>
@@ -157,7 +158,7 @@ Int W3DPropBuffer::addPropType(const AsciiString &modelName)
 	}
 
 	m_propTypes[m_numPropTypes].m_robj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(modelName.str());
-	if (m_propTypes[m_numPropTypes].m_robj==NULL) {
+	if (m_propTypes[m_numPropTypes].m_robj==nullptr) {
 		DEBUG_CRASH(("Unable to find model for prop %s", modelName.str()));
 		return -1;
 	}
@@ -277,7 +278,7 @@ void W3DPropBuffer::removePropsForConstruction(const Coord3D* pos, const Geometr
 	// Just iterate all trees, as even non-collidable ones get removed. jba. [7/11/2003]
 	Int i;
 	for (i=0; i<m_numProps; i++) {
-		if (m_props[i].m_robj == NULL) {
+		if (m_props[i].m_robj == nullptr) {
 			continue; // already deleted.
 		}
 		Real radius = m_props[i].bounds.Radius;
@@ -355,7 +356,7 @@ void W3DPropBuffer::drawProps(RenderInfoClass &rinfo)
 		if (!m_props[i].visible) {
 			continue;
 		}
-		if (m_props[i].m_robj==NULL) {
+		if (m_props[i].m_robj==nullptr) {
 			continue;
 		}
 		if (!ThePlayerList || !ThePartitionManager) {
@@ -380,7 +381,7 @@ void W3DPropBuffer::drawProps(RenderInfoClass &rinfo)
 			m_props[i].m_robj->Render(rinfo);
 		}
 	}
-	rinfo.light_environment = NULL;
+	rinfo.light_environment = nullptr;
 
 }
 

@@ -149,10 +149,10 @@ void DeepCRCSanityCheck::reset(void)
 
 //-------------------------------------------------------------------------------------------------
 /// The GameEngine singleton instance
-GameEngine *TheGameEngine = NULL;
+GameEngine *TheGameEngine = nullptr;
 
 //-------------------------------------------------------------------------------------------------
-SubsystemInterfaceList* TheSubsystemList = NULL;
+SubsystemInterfaceList* TheSubsystemList = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 template<class SUBSYSTEM>
@@ -161,8 +161,8 @@ void initSubsystem(
 	AsciiString name,
 	SUBSYSTEM* sys,
 	Xfer *pXfer,
-	const char* path1 = NULL,
-	const char* path2 = NULL)
+	const char* path1 = nullptr,
+	const char* path2 = nullptr)
 {
 	sysref = sys;
 	TheSubsystemList->initSubsystem(sys, path1, path2, pXfer, name);
@@ -252,7 +252,7 @@ GameEngine::GameEngine( void )
 	m_quitting = FALSE;
 	m_isActive = FALSE;
 
-	_Module.Init(NULL, ApplicationHInstance, NULL);
+	_Module.Init(nullptr, ApplicationHInstance, nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -262,7 +262,7 @@ GameEngine::~GameEngine()
 	//preloadTextureNamesGlobalHack.clear();
 
 	delete TheMapCache;
-	TheMapCache = NULL;
+	TheMapCache = nullptr;
 
 //	delete TheShell;
 //	TheShell = NULL;
@@ -275,22 +275,22 @@ GameEngine::~GameEngine()
 
 	TheSubsystemList->shutdownAll();
 	delete TheSubsystemList;
-	TheSubsystemList = NULL;
+	TheSubsystemList = nullptr;
 
 	delete TheNetwork;
-	TheNetwork = NULL;
+	TheNetwork = nullptr;
 
 	delete TheCommandList;
-	TheCommandList = NULL;
+	TheCommandList = nullptr;
 
 	delete TheNameKeyGenerator;
-	TheNameKeyGenerator = NULL;
+	TheNameKeyGenerator = nullptr;
 
 	delete TheFileSystem;
-	TheFileSystem = NULL;
+	TheFileSystem = nullptr;
 
 	delete TheGameLODManager;
-	TheGameLODManager = NULL;
+	TheGameLODManager = nullptr;
 
 	Drawable::killStaticImages();
 
@@ -305,16 +305,16 @@ GameEngine::~GameEngine()
 Bool GameEngine::isTimeFrozen()
 {
 	// TheSuperHackers @fix The time can no longer be frozen in Network games. It would disconnect the player.
-	if (TheNetwork != NULL)
+	if (TheNetwork != nullptr)
 		return false;
 
-	if (TheTacticalView != NULL)
+	if (TheTacticalView != nullptr)
 	{
 		if (TheTacticalView->isTimeFrozen() && !TheTacticalView->isCameraMovementFinished())
 			return true;
 	}
 
-	if (TheScriptEngine != NULL)
+	if (TheScriptEngine != nullptr)
 	{
 		if (TheScriptEngine->isTimeFrozenDebug() || TheScriptEngine->isTimeFrozenScript())
 			return true;
@@ -326,14 +326,14 @@ Bool GameEngine::isTimeFrozen()
 //-------------------------------------------------------------------------------------------------
 Bool GameEngine::isGameHalted()
 {
-	if (TheNetwork != NULL)
+	if (TheNetwork != nullptr)
 	{
 		if (TheNetwork->isStalling())
 			return true;
 	}
 	else
 	{
-		if (TheGameLogic != NULL && TheGameLogic->isGamePaused())
+		if (TheGameLogic != nullptr && TheGameLogic->isGamePaused())
 			return true;
 	}
 
@@ -657,7 +657,7 @@ void GameEngine::init()
 		TheAudio->setOn(TheGlobalData->m_audioOn && TheGlobalData->m_speechOn, AudioAffect_Speech);
 
 		// We're not in a network game yet, so set the network singleton to NULL.
-		TheNetwork = NULL;
+		TheNetwork = nullptr;
 
 		//Create a default ini file for options if it doesn't already exist.
 		//OptionPreferences prefs( TRUE );
@@ -787,13 +787,13 @@ void GameEngine::reset( void )
 	{
 		DEBUG_ASSERTCRASH(TheNetwork, ("Deleting NULL TheNetwork!"));
 		delete TheNetwork;
-		TheNetwork = NULL;
+		TheNetwork = nullptr;
 	}
 	if(background)
 	{
 		background->destroyWindows();
 		deleteInstance(background);
-		background = NULL;
+		background = nullptr;
 	}
 }
 
@@ -816,7 +816,7 @@ Bool GameEngine::canUpdateGameLogic()
 	TheFramePacer->setTimeFrozen(isTimeFrozen());
 	TheFramePacer->setGameHalted(isGameHalted());
 
-	if (TheNetwork != NULL)
+	if (TheNetwork != nullptr)
 	{
 		return canUpdateNetworkGameLogic();
 	}
@@ -899,7 +899,7 @@ void GameEngine::update( void )
 			TheGameClient->UPDATE();
 			TheMessageStream->propagateMessages();
 
-			if (TheNetwork != NULL)
+			if (TheNetwork != nullptr)
 			{
 				TheNetwork->UPDATE();
 			}

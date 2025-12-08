@@ -69,7 +69,7 @@ Buffer::Buffer(void * buffer, long size) :
 	Size(size),
 	IsAllocated(false)
 {
-	if (buffer == NULL && size > 0) {
+	if (buffer == nullptr && size > 0) {
 		BufferPtr = W3DNEWARRAY char[size];
 		IsAllocated = true;
 	}
@@ -82,7 +82,7 @@ Buffer::Buffer(char * buffer, long size) :
 	Size(size),
 	IsAllocated(false)
 {
-	if (buffer == NULL && size > 0) {
+	if (buffer == nullptr && size > 0) {
 		BufferPtr = W3DNEWARRAY char[size];
 		IsAllocated = true;
 	}
@@ -95,7 +95,7 @@ Buffer::Buffer(void const * buffer, long size) :
 	Size(size),
 	IsAllocated(false)
 {
-	if (buffer == NULL && size > 0) {
+	if (buffer == nullptr && size > 0) {
 		BufferPtr = W3DNEWARRAY char[size];
 		IsAllocated = true;
 	}
@@ -120,7 +120,7 @@ Buffer::Buffer(void const * buffer, long size) :
  *   07/29/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 Buffer::Buffer(long size) :
-	BufferPtr(NULL),
+	BufferPtr(nullptr),
 	Size(size),
 	IsAllocated(false)
 {
@@ -225,7 +225,7 @@ void Buffer::Reset(void)
 	if (IsAllocated) {
 		delete [] BufferPtr;
 	}
-	BufferPtr = NULL;
+	BufferPtr = nullptr;
 	Size = 0;
 	IsAllocated = false;
 }

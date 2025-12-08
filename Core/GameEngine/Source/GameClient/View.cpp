@@ -36,7 +36,7 @@
 UnsignedInt View::m_idNext = 1;
 
 // the tactical view singleton
-View *TheTacticalView = NULL;
+View *TheTacticalView = nullptr;
 
 
 View::View( void )
@@ -49,7 +49,7 @@ View::View( void )
 	m_lockDist = 0.0f;
 	m_maxHeightAboveGround = 0.0f;
 	m_minHeightAboveGround = 0.0f;
-	m_next = NULL;
+	m_next = nullptr;
 	m_okToAdjustHeight = TRUE;
 	m_originX = 0;
 	m_originY = 0;
@@ -63,7 +63,7 @@ View::View( void )
 	m_angle = 0.0f;
 	m_pitchAngle = 0.0f;
 	m_cameraLock = INVALID_ID;
-	m_cameraLockDrawable = NULL;
+	m_cameraLockDrawable = nullptr;
 	m_zoomLimited = TRUE;
 
 	// create unique view ID
@@ -92,7 +92,7 @@ void View::init( void )
 	m_pos.y = 0;
 	m_angle = 0.0f;
 	m_cameraLock = INVALID_ID;
-	m_cameraLockDrawable = NULL;
+	m_cameraLockDrawable = nullptr;
 	m_zoomLimited = TRUE;
 
 	m_zoom = 1.0f;
@@ -235,7 +235,7 @@ void View::getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
 	Int viewHeight = getHeight();
 
 	// sanity
-	if( topLeft == NULL || topRight == NULL || bottomLeft == NULL || bottomRight == NULL )
+	if( topLeft == nullptr || topRight == nullptr || bottomLeft == nullptr || bottomRight == nullptr )
 		return;
 
 	// setup the screen coords for the 4 corners of the viewable display

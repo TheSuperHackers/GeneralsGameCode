@@ -45,7 +45,7 @@ int		BufferedFileClass::_DesiredBufferSize	=	1024*16;
  *=============================================================================================*/
 BufferedFileClass::BufferedFileClass(void) :
 	RawFileClass(),
-	Buffer( NULL ),
+	Buffer( nullptr ),
 	BufferSize( 0 ),
 	BufferAvailable( 0 ),
 	BufferOffset( 0 )
@@ -57,7 +57,7 @@ BufferedFileClass::BufferedFileClass(void) :
  *=============================================================================================*/
 BufferedFileClass::BufferedFileClass(char const * filename) :
 	RawFileClass( filename ),
-	Buffer( NULL ),
+	Buffer( nullptr ),
 	BufferSize( 0 ),
 	BufferAvailable( 0 ),
 	BufferOffset( 0 )
@@ -242,7 +242,7 @@ int BufferedFileClass::Seek(int pos, int dir)
 void	BufferedFileClass::Reset_Buffer( void )
 {
 	delete [] Buffer;
-	Buffer = NULL;
+	Buffer = nullptr;
 	BufferSize = 0;
 	BufferAvailable = 0;
 	BufferOffset = 0;

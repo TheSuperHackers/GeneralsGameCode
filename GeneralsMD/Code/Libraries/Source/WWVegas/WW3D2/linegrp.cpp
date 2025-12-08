@@ -57,15 +57,15 @@
 // the V coordinate is always 0 at the flat end of the tetrahedron
 // and 1 at the apex
 LineGroupClass::LineGroupClass(void) :
-	StartLineLoc(NULL),
-	EndLineLoc(NULL),
-	LineDiffuse(NULL),
-	TailDiffuse(NULL),
-	ALT(NULL),
-	LineSize(NULL),
-	LineUCoord(NULL),
+	StartLineLoc(nullptr),
+	EndLineLoc(nullptr),
+	LineDiffuse(nullptr),
+	TailDiffuse(nullptr),
+	ALT(nullptr),
+	LineSize(nullptr),
+	LineUCoord(nullptr),
 	LineCount(0),
-	Texture(NULL),
+	Texture(nullptr),
 	Flags(0),
 	Shader(ShaderClass::_PresetAdditiveSpriteShader),
 	DefaultLineSize(0.0f),

@@ -173,7 +173,7 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 			m_textRenderer.Build_Sentence( getText().str(), &m_hotKeyPos.x, &m_hotKeyPos.y );
 			m_hotkey.translate(TheHotKeyManager->searchHotKey(getText()));
 			if(!m_hotkey.isEmpty())
-				m_textRendererHotKey.Build_Sentence(m_hotkey.str(), NULL, NULL);
+				m_textRendererHotKey.Build_Sentence(m_hotkey.str(), nullptr, nullptr);
 			else
 			{
 				m_useHotKey = FALSE;
@@ -181,7 +181,7 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 			}
 		}
 		else
-			m_textRenderer.Build_Sentence( getText().str(), NULL, NULL );
+			m_textRenderer.Build_Sentence( getText().str(), nullptr, nullptr );
 		m_fontChanged = FALSE;
 		m_textChanged = FALSE;
 		needNewPolys = TRUE;
@@ -287,7 +287,7 @@ void W3DDisplayString::setFont( GameFont *font )
 {
 
 	// sanity
-	if( font == NULL )
+	if( font == nullptr )
 		return;
 
 	// if the new font is the same as our existing font do nothing
@@ -349,7 +349,7 @@ void W3DDisplayString::computeExtents( void )
 	UnsignedInt len = getTextLength();
 
 	// if we have no string, or no font we don't have a size yet
-	if( len == 0 || m_font == NULL )
+	if( len == 0 || m_font == nullptr )
 	{
 
 		m_size.x = 0;

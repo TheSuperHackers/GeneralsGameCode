@@ -154,7 +154,7 @@ void ControlBar::populateStructureInventory( Object *building )
 		setControlCommand( m_commandWindows[ i ], exitCommand );
 
 		// Clear any veterancy icon incase the unit leaves!
-		GadgetButtonDrawOverlayImage( m_commandWindows[ i ], NULL );
+		GadgetButtonDrawOverlayImage( m_commandWindows[ i ], nullptr );
 		//
 		// if the structure can hold a lesser amount inside it than what the GUI displays
 		// we will completely hide the buttons that can't contain anything

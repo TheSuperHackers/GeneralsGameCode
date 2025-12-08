@@ -153,7 +153,7 @@ class VectorClass
  *=============================================================================================*/
 template<class T>
 VectorClass<T>::VectorClass(int size, T const * array) :
-	Vector(0),
+	Vector(nullptr),
 	VectorMax(size),
 	IsValid(true),
 	IsAllocated(false)
@@ -367,7 +367,7 @@ void VectorClass<T>::Clear(void)
 {
 	if (IsAllocated) {
 		delete[] Vector;
-		Vector = 0;
+		Vector = nullptr;
 	}
 	IsAllocated = false;
 	VectorMax = 0;
@@ -426,7 +426,7 @@ bool VectorClass<T>::Resize(int newsize, T const * array)
 		**	If there is an old vector, then it must be copied (as much as is feasible)
 		**	to the new vector.
 		*/
-		if (Vector != NULL) {
+		if (Vector != nullptr) {
 
 			/*
 			**	Copy as much of the old vector into the new vector as possible. This
@@ -446,7 +446,7 @@ bool VectorClass<T>::Resize(int newsize, T const * array)
 			*/
 			if (IsAllocated) {
 				delete[] Vector;
-				Vector = 0;
+				Vector = nullptr;
 			}
 		}
 
@@ -489,14 +489,14 @@ class DynamicVectorClass : public VectorClass<T>
 		using VectorClass<T>::Length;
 
 	public:
-		DynamicVectorClass(unsigned size=0, T const * array=0);
+		DynamicVectorClass(unsigned size=0, T const * array=nullptr);
 
 		// Stubbed equality operators so you can have dynamic vectors of dynamic vectors
 		bool operator== (const DynamicVectorClass &src)	{ return false; }
 		bool operator!= (const DynamicVectorClass &src)	{ return true; }
 
 		// Change maximum size of vector.
-		virtual bool Resize(int newsize, T const * array=0);
+		virtual bool Resize(int newsize, T const * array=nullptr);
 
 		// Resets and frees the vector array.
 		virtual void Clear(void) {ActiveCount = 0;VectorClass<T>::Clear();};
@@ -969,7 +969,7 @@ int First_False_Bit(void const * array);
 class BooleanVectorClass
 {
 	public:
-		BooleanVectorClass(unsigned size=0, unsigned char * array=0);
+		BooleanVectorClass(unsigned size=0, unsigned char * array=nullptr);
 		BooleanVectorClass(BooleanVectorClass const & vector);
 
 		// Assignment operator.

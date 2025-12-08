@@ -176,7 +176,7 @@ void EditObjectParameter::addObjectLists( )
 	parent = findOrAdd(parent, "Object Lists");
 
 	std::vector<AsciiString> strings;
-	EditParameter::loadObjectTypeList(NULL, &strings);
+	EditParameter::loadObjectTypeList(nullptr, &strings);
 
 	Int numItems = strings.size();
 
@@ -209,7 +209,7 @@ HTREEITEM EditObjectParameter::findOrAdd(HTREEITEM parent, const char *pLabel)
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = m_objectTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;

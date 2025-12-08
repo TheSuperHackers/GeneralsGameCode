@@ -53,7 +53,7 @@ DelayedUpgrade::~DelayedUpgrade( void )
 void DelayedUpgrade::upgradeImplementation( )
 {
 	UnsignedInt delay = getDelayedUpgradeModuleData()->m_delayTime;
-	DelayedUpgradeUpdateInterface *upgradeUpdate = NULL;
+	DelayedUpgradeUpdateInterface *upgradeUpdate = nullptr;
 	Object *me = getObject();
 
 	UpgradeMaskType activation, conflicting;
@@ -62,7 +62,7 @@ void DelayedUpgrade::upgradeImplementation( )
 	for (BehaviorModule** u = me->getBehaviorModules(); *u; ++u)
 	{
 		// Check all Upgradeupdate modules for firing
-		if ((upgradeUpdate = (*u)->getDelayedUpgradeUpdateInterface()) != NULL)
+		if ((upgradeUpdate = (*u)->getDelayedUpgradeUpdateInterface()) != nullptr)
 		{
 			if( upgradeUpdate->isTriggeredBy( activation ) )
 			{

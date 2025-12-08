@@ -70,7 +70,7 @@
 //#define DEFAULT_FINAL_WAVE_HEIGHT	18.0f
 //#define DEFAULT_SECOND_WAVE_TIME_OFFSET 6267	//should always be half of totalMs
 
-WaterTracksRenderSystem *TheWaterTracksRenderSystem=NULL;	///< singleton for track drawing system.
+WaterTracksRenderSystem *TheWaterTracksRenderSystem=nullptr;	///< singleton for track drawing system.
 
 static Bool pauseWaves=FALSE;
 
@@ -128,7 +128,7 @@ WaterTracksObj::~WaterTracksObj(void)
 //=============================================================================
 WaterTracksObj::WaterTracksObj(void)
 {
-	m_stageZeroTexture=NULL;
+	m_stageZeroTexture=nullptr;
 	m_bound=false;
 	m_initTimeOffset=0;
 }
@@ -503,7 +503,7 @@ WaterTracksObj *WaterTracksRenderSystem::bindTrack(waveType type)
 		mod->m_type=type;
 
 		// put module on the used list (sorted next to similar types)
-		nextmod=NULL,prevmod=NULL;
+		nextmod=nullptr,prevmod=nullptr;
 		for( nextmod = m_usedModules; nextmod; prevmod=nextmod,nextmod = nextmod->m_nextSystem )
 		{
 			if (nextmod->m_type==type)
@@ -520,7 +520,7 @@ WaterTracksObj *WaterTracksRenderSystem::bindTrack(waveType type)
 			}
 		}
 
-		if (nextmod==NULL)
+		if (nextmod==nullptr)
 		{	//shadow with new texture. Add to top of list.
 			mod->m_nextSystem = m_usedModules;
 			if (m_usedModules)
@@ -567,7 +567,7 @@ void WaterTracksRenderSystem::unbindTrack( WaterTracksObj *mod )
 */
 void WaterTracksRenderSystem::releaseTrack( WaterTracksObj *mod )
 {
-	if (mod==NULL)
+	if (mod==nullptr)
 		return;
 
 	assert(mod->m_bound == false);
@@ -581,7 +581,7 @@ void WaterTracksRenderSystem::releaseTrack( WaterTracksObj *mod )
 		m_usedModules = mod->m_nextSystem;
 
 	// add module to free list
-	mod->m_prevSystem = NULL;
+	mod->m_prevSystem = nullptr;
 	mod->m_nextSystem = m_freeModules;
 	if( m_freeModules )
 		m_freeModules->m_prevSystem = mod;
@@ -596,11 +596,11 @@ void WaterTracksRenderSystem::releaseTrack( WaterTracksObj *mod )
 //=============================================================================
 WaterTracksRenderSystem::WaterTracksRenderSystem()
 {
-	m_usedModules = NULL;
-	m_freeModules = NULL;
-	m_indexBuffer = NULL;
-	m_vertexMaterialClass = NULL;
-	m_vertexBuffer = NULL;
+	m_usedModules = nullptr;
+	m_freeModules = nullptr;
+	m_indexBuffer = nullptr;
+	m_vertexMaterialClass = nullptr;
+	m_vertexBuffer = nullptr;
 	m_stripSizeX=WATER_STRIP_X;
 	m_stripSizeY=WATER_STRIP_Y;
 	m_batchStart=0;
@@ -618,7 +618,7 @@ WaterTracksRenderSystem::~WaterTracksRenderSystem( void )
 	// free all data
 	shutdown();
 
-	m_vertexMaterialClass=NULL;
+	m_vertexMaterialClass=nullptr;
 
 }
 
@@ -724,7 +724,7 @@ void WaterTracksRenderSystem::init(void)
 
 		mod = NEW WaterTracksObj;
 
-		if( mod == NULL )
+		if( mod == nullptr )
 		{
 
 			// unable to allocate modules needed
@@ -733,7 +733,7 @@ void WaterTracksRenderSystem::init(void)
 
 		}
 
-		mod->m_prevSystem = NULL;
+		mod->m_prevSystem = nullptr;
 		mod->m_nextSystem = m_freeModules;
 		if( m_freeModules )
 			m_freeModules->m_prevSystem = mod;
@@ -919,7 +919,7 @@ WaterTracksObj *WaterTracksRenderSystem::findTrack(Vector2 &start, Vector2 &end,
 			return mod;
 		mod = mod->m_nextSystem;
 	}
-	return NULL;
+	return nullptr;
 }
 void WaterTracksRenderSystem::saveTracks(void)
 {
@@ -1056,7 +1056,7 @@ extern HWND ApplicationHWnd;
 static void TestWaterUpdate(void)
 {
 	static Int doInit=1;
-	static WaterTracksObj *track=NULL,*track2=NULL;
+	static WaterTracksObj *track=nullptr,*track2=nullptr;
 	static Int trackEditMode=0;
 	static waveType currentWaveType = WaveTypeOcean;
 	POINT	screenPoint;
@@ -1195,8 +1195,8 @@ static void TestWaterUpdate(void)
 						TheWaterTracksRenderSystem->unbindTrack(track2);
 					haveStart=0;	//reset for next segment
 					haveEnd=0;
-					track=NULL;
-					track2=NULL;
+					track=nullptr;
+					track2=nullptr;
 				}
 			}
 			else
@@ -1225,8 +1225,8 @@ static void TestWaterUpdate(void)
 					TheWaterTracksRenderSystem->saveTracks();
 					haveStart=0;	//reset for next segment
 					haveEnd=0;
-					track=NULL;
-					track2=NULL;
+					track=nullptr;
+					track2=nullptr;
 					UnicodeString string;
 					string.format(L"Saved Tracks");
 					TheInGameUI->message(string);
@@ -1243,8 +1243,8 @@ static void TestWaterUpdate(void)
 					TheWaterTracksRenderSystem->loadTracks();
 					haveStart=0;	//reset for next segment
 					haveEnd=0;
-					track=NULL;
-					track2=NULL;
+					track=nullptr;
+					track2=nullptr;
 					UnicodeString string;
 					string.format(L"Loaded Tracks");
 					TheInGameUI->message(string);

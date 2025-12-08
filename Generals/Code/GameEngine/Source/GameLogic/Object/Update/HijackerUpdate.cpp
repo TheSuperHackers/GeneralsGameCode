@@ -148,7 +148,7 @@ UpdateSleepTime HijackerUpdate::update( void )
 
 			}
 
-			setTargetObject( NULL );
+			setTargetObject( nullptr );
 			setIsInVehicle( FALSE );
 			setUpdate( FALSE );
 			m_wasTargetAirborne = false;
@@ -198,7 +198,7 @@ Object* HijackerUpdate::getTargetObject() const
   {
     return TheGameLogic->findObjectByID( m_targetID );
   }
-  return NULL;
+  return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------

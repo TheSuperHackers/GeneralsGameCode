@@ -26,6 +26,8 @@
 //
 // Unhandled exception handler
 //////////////////////////////////////////////////////////////////////////////
+#include <Utility/CppMacros.h>
+
 #include "debug.h"
 #include "internal_except.h"
 #include <windows.h>
@@ -235,7 +237,7 @@ static BOOL CALLBACK ExceptionDlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
   SendDlgItemMessage(hWnd,105,WM_SETFONT,(WPARAM)CreateFont(13,0,0,0,FW_NORMAL,
                 FALSE,FALSE,FALSE,ANSI_CHARSET,
                 OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,
-                DEFAULT_QUALITY,FIXED_PITCH|FF_MODERN,NULL),MAKELPARAM(TRUE,0));
+                DEFAULT_QUALITY,FIXED_PITCH|FF_MODERN,nullptr),MAKELPARAM(TRUE,0));
 
   // exception type
   SendDlgItemMessage(hWnd,100,WM_SETTEXT,0,(LPARAM)
@@ -324,19 +326,19 @@ static BOOL CALLBACK ExceptionDlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
       ListView_SetItem(list,&item);
 
       item.iSubItem++;
-      item.pszText=strtok(NULL,",");
+      item.pszText=strtok(nullptr,",");
       ListView_SetItem(list,&item);
 
       item.iSubItem++;
-      item.pszText=strtok(NULL,",");
+      item.pszText=strtok(nullptr,",");
       ListView_SetItem(list,&item);
 
       item.iSubItem++;
-      item.pszText=strtok(NULL,":");
+      item.pszText=strtok(nullptr,":");
       ListView_SetItem(list,&item);
 
       item.iSubItem++;
-      item.pszText=strtok(NULL,"");
+      item.pszText=strtok(nullptr,"");
       ListView_SetItem(list,&item);
     }
   }
@@ -350,7 +352,7 @@ LONG __stdcall DebugExceptionhandler::ExceptionFilter(struct _EXCEPTION_POINTERS
   static bool inExceptionFilter;
   if (inExceptionFilter)
   {
-    MessageBox(NULL,"Exception in exception handler","Fatal error",MB_OK);
+    MessageBox(nullptr,"Exception in exception handler","Fatal error",MB_OK);
     return EXCEPTION_CONTINUE_SEARCH;
   }
   inExceptionFilter=true;

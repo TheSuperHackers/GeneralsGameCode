@@ -135,16 +135,16 @@ PrototypeClass *DistLODLoaderClass::Load_W3D( ChunkLoadClass &cload )
 {
 	DistLODDefClass * pCDistLODClass = W3DNEW DistLODDefClass;
 
-	if (pCDistLODClass == NULL)
+	if (pCDistLODClass == nullptr)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	if (pCDistLODClass->Load_W3D(cload) != WW3D_ERROR_OK)
 	{
 		// load failed, delete the model and return an error
 		delete pCDistLODClass;
-		return NULL;
+		return nullptr;
 
 	} else {
 
@@ -169,9 +169,9 @@ PrototypeClass *DistLODLoaderClass::Load_W3D( ChunkLoadClass &cload )
  * HISTORY:                                                                                    *
  *=============================================================================================*/
 DistLODDefClass::DistLODDefClass(void) :
-	Name(NULL),
+	Name(nullptr),
 	LodCount(0),
-	Lods(NULL)
+	Lods(nullptr)
 {
 }
 
@@ -193,9 +193,9 @@ DistLODDefClass::DistLODDefClass(void) :
  *   7/15/98    GTH : Created.                                                                 *
  *=============================================================================================*/
 DistLODDefClass::DistLODDefClass(const char * name,int lodcount,DistLODNodeDefStruct * modeldefs) :
-	Name(NULL),
+	Name(nullptr),
 	LodCount(0),
-	Lods(NULL)
+	Lods(nullptr)
 {
 	assert(name != NULL);
 	Name = nstrdup(name);
@@ -243,14 +243,14 @@ DistLODDefClass::~DistLODDefClass(void)
 void DistLODDefClass::Free(void)
 {
 	delete[] Name;
-	Name = NULL;
+	Name = nullptr;
 
-	if (Lods != NULL) {
+	if (Lods != nullptr) {
 		for (int i=0; i<LodCount; i++) {
 			delete[] Lods[i].Name;
 		}
 		delete[] Lods;
-		Lods = NULL;
+		Lods = nullptr;
 	}
 	LodCount = 0;
 }
@@ -472,16 +472,16 @@ DistLODClass::~DistLODClass(void)
  *=============================================================================================*/
 void DistLODClass::Free(void)
 {
-	if (Lods != NULL) {
+	if (Lods != nullptr) {
 		for (int i=0; i<LodCount; i++) {
-			if (Lods[i].Model != NULL) {
-				Lods[i].Model->Set_Container(NULL);
+			if (Lods[i].Model != nullptr) {
+				Lods[i].Model->Set_Container(nullptr);
 				Lods[i].Model->Release_Ref();
-				Lods[i].Model = NULL;
+				Lods[i].Model = nullptr;
 			}
 		}
 		delete[] Lods;
-		Lods = NULL;
+		Lods = nullptr;
 	}
 	CurLod = 0;
 	LodCount = 0;
@@ -584,8 +584,8 @@ RenderObjClass * DistLODClass::Get_Sub_Object(int index) const
 	assert(index >= 0);
 	assert(index < LodCount);
 
-	if (Lods[index].Model == NULL) {
-		return NULL;
+	if (Lods[index].Model == nullptr) {
+		return nullptr;
 	} else {
 		Lods[index].Model->Add_Ref();
 		return Lods[index].Model;

@@ -117,7 +117,7 @@ CEditLODDialog::OnInitDialog (void)
             m_hierarchyListCtrl.InsertColumn (COL_SWITCH_DN, "Switch Down");
 
             RenderObjClass *pfirst_subobj = pLOD->Get_Sub_Object (0);
-				if (pfirst_subobj != NULL) {
+				if (pfirst_subobj != nullptr) {
 					m_spinIncrement = pfirst_subobj->Get_Bounding_Sphere ().Radius / 5.0F;
 					REF_PTR_RELEASE (pfirst_subobj);
 				}
