@@ -42,6 +42,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "genlodextensiondialog.h"
 #include "dllmain.h"
 #include "resource.h"

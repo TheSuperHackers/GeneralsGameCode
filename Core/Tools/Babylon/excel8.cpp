@@ -18,6 +18,7 @@
 
 // Machine generated IDispatch wrapper class(es) created with ClassWizard
 
+#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 
 #ifdef RTS_DEBUG

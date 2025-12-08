@@ -40,6 +40,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include "always.h"
 #include "dllist.h"

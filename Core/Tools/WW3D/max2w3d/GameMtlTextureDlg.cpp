@@ -45,6 +45,7 @@
 
 
 
+#include <Utility/CppMacros.h>
 #include "GameMtlTextureDlg.h"
 #include "gamemtl.h"
 #include "dllmain.h"

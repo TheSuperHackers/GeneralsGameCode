@@ -30,6 +30,7 @@
  *		CD_Volume_Verification	--	Check label of the CDRom.				*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+#include <Utility/CppMacros.h>
 #include	<windows.h>
 #include	<string.h>
 //#include	"always.h"

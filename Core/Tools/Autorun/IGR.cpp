@@ -22,6 +22,7 @@
 // JeffB 7/5/00
 //
 
+#include <Utility/CppMacros.h>
 #include <assert.h>
 #include <windows.h>
 #include <winreg.h>

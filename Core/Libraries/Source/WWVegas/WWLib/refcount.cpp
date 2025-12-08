@@ -39,6 +39,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "refcount.h"
 
 // TheSuperHackers @build feliwir 17/04/2025 include __debugbreak macros

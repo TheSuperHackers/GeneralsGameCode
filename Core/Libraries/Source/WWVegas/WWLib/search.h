@@ -50,6 +50,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 /*
 **	The "bool" integral type was defined by the C++ comittee in

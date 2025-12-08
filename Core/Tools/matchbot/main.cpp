@@ -17,6 +17,7 @@
 */
 
 #ifdef _WIN32
+#include <Utility/CppMacros.h>
 #include <process.h>
 #endif
 #include <cstdlib>

@@ -34,6 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "cullsys.h"
 #include "wwdebug.h"
 #include "wwprofile.h"

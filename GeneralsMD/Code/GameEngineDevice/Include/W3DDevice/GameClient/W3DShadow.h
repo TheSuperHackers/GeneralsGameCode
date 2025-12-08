@@ -23,6 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include "matrix4.h"
 #include "GameClient/Shadow.h"

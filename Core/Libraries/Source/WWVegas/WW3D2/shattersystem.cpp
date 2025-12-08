@@ -36,6 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "shattersystem.h"
 #include "assetmgr.h"
 #include "mesh.h"

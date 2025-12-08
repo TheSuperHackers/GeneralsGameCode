@@ -34,6 +34,7 @@ If you want to store pointers then the template should be of a pointer type.
 \****************************************************************************/
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include <stdio.h>
 #include <stdlib.h>

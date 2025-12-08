@@ -35,6 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "MeshDeform.h"
 #include "MeshDeformSave.h"
 #include "MeshDeformData.h"

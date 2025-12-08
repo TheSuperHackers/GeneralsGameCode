@@ -47,6 +47,7 @@
 
 
 #define  STRICT
+#include <Utility/CppMacros.h>
 #include <windows.h>
 #include <windowsx.h>
 #include <assert.h>

@@ -28,6 +28,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #define STRICT
 #define WIN32_LEAN_AND_MEAN
+#include <Utility/CppMacros.h>
 #include <windows.h>
 #include <malloc.h>
 

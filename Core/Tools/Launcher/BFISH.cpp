@@ -41,6 +41,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma warning(disable : 4514)
+#include	<Utility/CppMacros.h>
 #include	"BFISH.h"
 #include	<string.h>
 #include	<assert.h>

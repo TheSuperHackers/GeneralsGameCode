@@ -43,6 +43,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "hlodsave.h"
 #include "meshcon.h"
 #include "errclass.h"

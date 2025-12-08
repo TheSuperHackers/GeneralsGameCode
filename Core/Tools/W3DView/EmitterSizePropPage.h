@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // EmitterSizePropPage.h : header file
 //

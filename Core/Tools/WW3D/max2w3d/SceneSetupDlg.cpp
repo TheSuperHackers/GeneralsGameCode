@@ -38,6 +38,7 @@
 // SceneSetupDlg.cpp : implementation file
 //
 
+#include <Utility/CppMacros.h>
 #include "SceneSetupDlg.h"
 #include <max.h>
 #include <assert.h>

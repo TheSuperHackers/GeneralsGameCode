@@ -40,6 +40,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "rcmenu.h"
 #include "w3dutil.h"
 #include "util.h"

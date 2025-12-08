@@ -96,6 +96,7 @@ while (1)
 \****************************************************************************/
 
 
+#include <Utility/CppMacros.h>
 #include "tcp.h"
 #include <stdarg.h>
 

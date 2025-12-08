@@ -36,6 +36,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "namedsel.h"
 
 

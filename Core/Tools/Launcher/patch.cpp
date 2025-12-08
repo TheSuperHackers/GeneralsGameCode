@@ -31,6 +31,7 @@ This is where all the code is for applying various types of patches.
 \*****************************************************************************/
 
 
+#include <Utility/CppMacros.h>
 #include "patch.h"
 #include <shellapi.h>
 #include <direct.h>

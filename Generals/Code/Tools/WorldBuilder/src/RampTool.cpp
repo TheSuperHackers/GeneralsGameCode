@@ -31,6 +31,8 @@
 /*		4/19/2002 : Initial creation                                           */
 /*---------------------------------------------------------------------------*/
 
+#include <Utility/CppMacros.h>
+
 #include "StdAfx.h"
 #include "RampTool.h"
 

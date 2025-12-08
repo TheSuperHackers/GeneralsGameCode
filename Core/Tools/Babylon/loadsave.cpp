@@ -20,6 +20,7 @@
 // loadsave.cpp
 //
 
+#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "iff.h"
 #include "TransDB.h"

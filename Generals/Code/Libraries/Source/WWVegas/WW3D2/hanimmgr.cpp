@@ -46,6 +46,7 @@
  *	  HAnimManagerClass::Add_Anim -- Adds an externally created animation to the manager		  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "hanimmgr.h"
 #include "hanim.h"
 #include "hrawanim.h"

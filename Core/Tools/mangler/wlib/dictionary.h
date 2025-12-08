@@ -36,6 +36,7 @@ your hashing function is good.
 \****************************************************************************/
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include <stdio.h>
 #include <stdlib.h>

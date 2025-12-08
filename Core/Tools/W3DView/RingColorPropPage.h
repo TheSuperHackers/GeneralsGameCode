@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // RingColorPropPage.h : header file
 //

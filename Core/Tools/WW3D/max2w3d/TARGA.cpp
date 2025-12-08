@@ -60,6 +60,7 @@
 *
 ****************************************************************************/
 
+#include <Utility/CppMacros.h>
 #include "TARGA.h"
 #ifndef TGA_USES_WWLIB_FILE_CLASSES
 #include <stdio.h>

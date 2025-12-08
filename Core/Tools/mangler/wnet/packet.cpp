@@ -35,6 +35,7 @@
  *   PacketClass::~PacketClass -- destroys a packet class be freeing list  *
  *   PacketClass::Add_Field -- Adds a FieldClass entry to head of packet li*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+#include <Utility/CppMacros.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

@@ -24,6 +24,7 @@
 //
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include "Vector.h"
 

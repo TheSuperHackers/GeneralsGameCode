@@ -33,6 +33,7 @@
 ******************************************************************************/
 
 #pragma warning(disable : 4201 4310)
+#include <Utility/CppMacros.h>
 #include	<windows.h>
 
 #include "ViewHTML.h"

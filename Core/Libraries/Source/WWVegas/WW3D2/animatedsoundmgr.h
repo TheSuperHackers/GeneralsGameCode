@@ -38,6 +38,7 @@
 //
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include "simplevec.h"
 #include "Vector.h"

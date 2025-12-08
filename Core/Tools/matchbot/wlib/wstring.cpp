@@ -29,6 +29,7 @@ A fairly typical string class.  This string class always copies any input
 string to it's own memory (for assignment or construction).
 \***************************************************************************/
 
+#include <Utility/CppMacros.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>

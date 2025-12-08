@@ -37,6 +37,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include	<stddef.h>
 #include	"POINT.h"

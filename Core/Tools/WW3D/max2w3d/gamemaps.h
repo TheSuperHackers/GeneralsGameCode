@@ -36,6 +36,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include <max.h>
 #include "stdmat.h"

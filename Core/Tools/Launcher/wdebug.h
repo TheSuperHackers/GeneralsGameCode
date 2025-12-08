@@ -51,6 +51,7 @@ will you be ready to leave grasshopper.
 \*****************************************************************************/
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include <Utility/iostream_adapter.h>
 #include "odevice.h"

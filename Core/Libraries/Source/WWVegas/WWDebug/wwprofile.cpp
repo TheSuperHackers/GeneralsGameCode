@@ -49,6 +49,7 @@
  *   WWProfileManager::Release_In_Order_Iterator -- Return an "in-order" iterator              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "always.h"
 #include "wwprofile.h"
 #include "FastAllocator.h"

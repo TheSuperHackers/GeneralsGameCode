@@ -75,6 +75,7 @@
  *   MeshSaveContextClass::~MeshSaveContextClass -- destructor                                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "meshmdl.h"
 #include "aabtree.h"
 #include "matinfo.h"

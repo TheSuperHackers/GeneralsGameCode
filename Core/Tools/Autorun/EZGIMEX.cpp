@@ -53,6 +53,7 @@
 */
 
 #define __NOINLINE__ 1
+#include <Utility/CppMacros.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>

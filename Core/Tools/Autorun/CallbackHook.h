@@ -34,6 +34,7 @@
 ******************************************************************************/
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 class CallbackHook
 	{

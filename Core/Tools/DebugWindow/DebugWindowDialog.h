@@ -17,6 +17,7 @@
 */
 
 
+#include <Utility/CppMacros.h>
 #include "Resource.h"
 #include <map>			// for std::pair
 #include <string>		// for std::string

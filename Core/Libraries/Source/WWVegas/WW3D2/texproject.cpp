@@ -74,6 +74,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "texproject.h"
 #include "vertmaterial.h"
 #include "shader.h"

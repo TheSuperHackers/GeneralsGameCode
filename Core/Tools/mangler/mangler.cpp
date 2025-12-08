@@ -17,6 +17,7 @@
 */
 
 
+#include <Utility/CppMacros.h>
 #include <Utility/iostream_adapter.h>
 
 #include <signal.h>

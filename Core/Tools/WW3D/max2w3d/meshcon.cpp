@@ -40,6 +40,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "meshcon.h"
 #include "util.h"
 #include "SnapPoints.h"

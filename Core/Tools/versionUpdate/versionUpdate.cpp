@@ -22,6 +22,7 @@
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #define WIN32_LEAN_AND_MEAN  // only bare bones windows stuff wanted
+#include <Utility/CppMacros.h>
 #include <windows.h>
 #include <lmcons.h>
 #include <stdlib.h>

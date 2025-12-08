@@ -71,6 +71,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "camera.h"
 #include "ww3d.h"
 #include "matrix4.h"

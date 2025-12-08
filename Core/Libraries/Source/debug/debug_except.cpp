@@ -26,6 +26,8 @@
 //
 // Unhandled exception handler
 //////////////////////////////////////////////////////////////////////////////
+#include <Utility/CppMacros.h>
+
 #include "debug.h"
 #include "internal_except.h"
 #include <windows.h>

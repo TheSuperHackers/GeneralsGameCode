@@ -71,6 +71,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "ringobj.h"
 #include "w3d_util.h"
 #include "wwdebug.h"

@@ -18,6 +18,7 @@
 
 /* Copyright (C) Electronic Arts Canada Inc. 1998-1999.  All rights reserved. */
 
+#include <Utility/CppMacros.h>
 #include <string.h>
 #include <assert.h>
 #include "gimex.h"      /* for file and memory IO only */

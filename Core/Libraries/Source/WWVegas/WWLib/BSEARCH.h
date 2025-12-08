@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 /*
 **	Binary searching template. It can be faster than the built in C library

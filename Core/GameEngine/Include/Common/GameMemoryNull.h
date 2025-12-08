@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #define allocateBytes(ARGCOUNT,ARGLITERAL)          allocateBytesImplementation(ARGCOUNT)
 #define allocateBytesDoNotZero(ARGCOUNT,ARGLITERAL) allocateBytesDoNotZeroImplementation(ARGCOUNT)

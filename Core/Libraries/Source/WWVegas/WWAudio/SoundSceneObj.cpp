@@ -33,6 +33,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "SoundSceneObj.h"
 #include "camera.h"
 #include "rendobj.h"

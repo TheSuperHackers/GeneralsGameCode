@@ -22,6 +22,7 @@
 // (c) Electronic Arts 2003
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include "resource.h"
 

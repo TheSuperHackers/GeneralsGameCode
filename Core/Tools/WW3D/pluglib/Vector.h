@@ -51,6 +51,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include	"noinit.h"
 #include	<assert.h>

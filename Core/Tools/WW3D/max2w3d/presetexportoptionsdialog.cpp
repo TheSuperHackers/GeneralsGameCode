@@ -37,6 +37,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "presetexportoptionsdialog.h"
 #include "dllmain.h"
 #include "resource.h"

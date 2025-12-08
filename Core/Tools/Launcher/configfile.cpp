@@ -38,6 +38,7 @@ the left is used for retrieval and it must be specified in uppercase
 for the 'get' functions. E.g. getString("KEY",valWstring);
 \***************************************************************************/
 
+#include <Utility/CppMacros.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>

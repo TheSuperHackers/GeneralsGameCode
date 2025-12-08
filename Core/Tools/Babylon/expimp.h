@@ -21,6 +21,7 @@
 //
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include "TransDB.h"
 #include "BabylonDlg.h"

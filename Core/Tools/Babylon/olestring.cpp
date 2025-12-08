@@ -21,6 +21,7 @@
 //
 
 
+#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include <assert.h>
 #include "olestring.h"

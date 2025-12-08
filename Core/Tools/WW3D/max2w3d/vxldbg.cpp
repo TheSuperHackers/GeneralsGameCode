@@ -36,6 +36,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "vxldbg.h"
 #include "resource.h"
 #include "dllmain.h"

@@ -60,6 +60,7 @@
  *  CDControlClass::~CDControlClass -- Class destructor                                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include	"assert.h"
 #include	"CDCNTRL.h"
 #include	"WinFix.h"

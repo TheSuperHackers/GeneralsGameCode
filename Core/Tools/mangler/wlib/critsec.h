@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include "wstypes.h"
 #ifdef _WIN32

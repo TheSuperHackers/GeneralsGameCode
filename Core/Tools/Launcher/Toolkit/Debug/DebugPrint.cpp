@@ -36,6 +36,7 @@
 
 #ifdef RTS_DEBUG
 
+#include <Utility/CppMacros.h>
 #include "DebugPrint.h"
 #include <windows.h>
 #include <stdio.h>

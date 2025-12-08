@@ -28,6 +28,7 @@
 //
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include <atlbase.h>
 extern CComModule _Module;

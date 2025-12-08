@@ -20,6 +20,7 @@
 // Simple interface for storing/retreiving registry values
 // Author: Matthew D. Campbell, December 2001
 
+#include <Utility/CppMacros.h>
 #include <string>
 
 #define WIN32_LEAN_AND_MEAN

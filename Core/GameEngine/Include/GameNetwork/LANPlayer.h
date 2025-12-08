@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, October 2001 (Pulled out of LANAPI.h by CLH on 12/21/01
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 /**
  * LAN player class.  This is for players sitting in the lobby.  Players are

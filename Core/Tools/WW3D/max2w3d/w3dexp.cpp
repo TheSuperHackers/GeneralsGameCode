@@ -49,6 +49,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "rawfile.h"
 #include "chunkio.h"
 #include "w3dexp.h"

@@ -21,6 +21,7 @@
 // Author: Matthew D. Campbell, Sept 2002
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 namespace patchget
 {

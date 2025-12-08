@@ -45,6 +45,7 @@ that don't belong to them, etc...
 \****************************************************************************/
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include <stdio.h>
 #include <stdlib.h>

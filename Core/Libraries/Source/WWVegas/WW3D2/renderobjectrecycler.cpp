@@ -41,6 +41,7 @@
  *   RenderObjectRecyclerClass::Reset_Model -- resets a render object so it can be re-used     *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "renderobjectrecycler.h"
 #include "rendobj.h"
 #include "assetmgr.h"

@@ -34,6 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "MeshDeformUndo.h"
 #include "util.h"
 #include "MeshDeformData.h"

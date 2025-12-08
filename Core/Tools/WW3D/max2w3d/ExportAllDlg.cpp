@@ -39,6 +39,7 @@
 // ExportAllDlg.cpp : implementation file
 //
 
+#include <Utility/CppMacros.h>
 #include "ExportAllDlg.h"
 #include <max.h>
 #include <assert.h>

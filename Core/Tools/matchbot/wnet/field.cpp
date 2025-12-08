@@ -32,6 +32,7 @@
  *-------------------------------------------------------------------------*
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+#include <Utility/CppMacros.h>
 #include <string.h>
 #include <sys/types.h>
 #ifndef _WIN32

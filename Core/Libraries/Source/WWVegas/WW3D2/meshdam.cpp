@@ -38,6 +38,7 @@
 #if 0
 
 
+#include <Utility/CppMacros.h>
 #include "meshdam.h"
 #include "w3d_file.h"
 #include "w3derr.h"

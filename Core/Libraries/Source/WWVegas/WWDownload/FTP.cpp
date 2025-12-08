@@ -23,6 +23,7 @@
 /*************************************************************************/
 
 
+#include <Utility/CppMacros.h>
 #include <sys/types.h>
 #include <sys/timeb.h>
 #include <stdlib.h>

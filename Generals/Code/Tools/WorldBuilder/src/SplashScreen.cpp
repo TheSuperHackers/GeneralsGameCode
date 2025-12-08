@@ -16,6 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <Utility/CppMacros.h>
+
 #include "StdAfx.h"
 #include "SplashScreen.h"
 

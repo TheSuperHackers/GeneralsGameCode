@@ -55,6 +55,7 @@
  *   Matrix3D::Solve_Linear_System -- 3x3 Gauss-Jordan elimination                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "matrix3d.h"
 
 #include <math.h>

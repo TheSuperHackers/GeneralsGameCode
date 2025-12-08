@@ -40,6 +40,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "GameMtlVertexMaterialDlg.h"
 #include "gamemtl.h"
 #include "dllmain.h"

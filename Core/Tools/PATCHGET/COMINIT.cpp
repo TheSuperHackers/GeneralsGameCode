@@ -19,6 +19,7 @@
 //
 // If you link with this it will automatically call the COM initialization stuff
 //
+#include <Utility/CppMacros.h>
 #include "COMINIT.h"
 #include <stdlib.h>
 #include <stdio.h>

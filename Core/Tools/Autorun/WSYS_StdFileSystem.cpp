@@ -39,6 +39,7 @@
 //         Includes
 //----------------------------------------------------------------------------
 
+#include <Utility/CppMacros.h>
 #include "WSYS_StdFileSystem.h"
 #include "WSYS_StdFile.h"
 

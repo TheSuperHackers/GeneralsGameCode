@@ -42,6 +42,7 @@
  *   _gen_mtl_names_dialog_proc -- windows dialog proc for GenMtlNamesDialog                   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "genmtlnamesdialog.h"
 #include "dllmain.h"
 #include "resource.h"

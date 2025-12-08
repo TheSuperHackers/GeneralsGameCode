@@ -41,6 +41,7 @@
  *   ExportLog::updatebar -- Set the position of the progress bar                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "exportlog.h"
 #include "logdlg.h"
 #include <assert.h>

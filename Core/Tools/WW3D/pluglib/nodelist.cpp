@@ -46,6 +46,7 @@
  *   INodeListClass::Remove -- Remove the i'th element of the list                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "nodelist.h"
 
 

@@ -28,6 +28,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // I'm putting the documentation for the following macros
 // here because Doxygen otherwise includes the values of each macro

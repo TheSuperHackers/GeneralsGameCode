@@ -20,6 +20,7 @@
 // Minmal debug info
 // Author: Matthew D. Campbell, Sept 2002
 
+#include <Utility/CppMacros.h>
 #include <windows.h>
 #include "debug.h"
 #include <cstdarg>

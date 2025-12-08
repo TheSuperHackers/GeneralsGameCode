@@ -38,6 +38,7 @@
 
 
 
+#include <Utility/CppMacros.h>
 #include "max.h"
 #include "resource.h"
 #include "simpmod.h"

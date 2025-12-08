@@ -126,6 +126,7 @@
 
 
 
+#include <Utility/CppMacros.h>
 #include "hlod.h"
 #include "assetmgr.h"
 #include "hmdldef.h"

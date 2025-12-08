@@ -66,6 +66,7 @@
 ******************************************************************************/
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include "Visualc.h"
 #include "RefCounted.h"

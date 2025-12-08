@@ -19,6 +19,7 @@
 // W3DView.cpp : Defines the class behaviors for the application.
 //
 
+#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "W3DView.h"
 

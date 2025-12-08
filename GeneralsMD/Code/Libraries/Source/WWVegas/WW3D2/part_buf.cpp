@@ -34,6 +34,7 @@
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "part_buf.h"
 #include "part_emt.h"
 #include "ww3d.h"

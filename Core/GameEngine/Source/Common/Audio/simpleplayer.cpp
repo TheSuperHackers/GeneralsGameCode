@@ -17,6 +17,7 @@
 */
 
 
+#include <Utility/CppMacros.h>
 #include "Common/simpleplayer.h"
 #include "Common/urllaunch.h"
 

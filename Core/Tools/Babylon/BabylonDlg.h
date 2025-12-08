@@ -20,6 +20,7 @@
 //
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include "resource.h"
 #include "TransDB.h"

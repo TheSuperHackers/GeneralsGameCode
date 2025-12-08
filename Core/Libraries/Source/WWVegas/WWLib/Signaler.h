@@ -38,6 +38,7 @@
 ******************************************************************************/
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 template<typename T> class Signaler
 	{

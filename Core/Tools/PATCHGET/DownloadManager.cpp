@@ -20,6 +20,7 @@
 // Generals download manager code
 // Author: Matthew D. Campbell, July 2002
 
+#include <Utility/CppMacros.h>
 #include "debug.h"
 #include "CHATAPI.h"
 #include "DownloadManager.h"

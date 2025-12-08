@@ -25,6 +25,7 @@ This is useful because the constructor will automatically call sem_init
   libraries if you don't have posix.
 \******************************************************************************/
 
+#include <Utility/CppMacros.h>
 #include "sem4.h"
 
 #ifdef _REENTRANT

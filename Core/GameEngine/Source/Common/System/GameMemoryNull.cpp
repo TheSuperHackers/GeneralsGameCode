@@ -16,6 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <Utility/CppMacros.h>
 #include "PreRTS.h"
 
 #include <malloc.h>

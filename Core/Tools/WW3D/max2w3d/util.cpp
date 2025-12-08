@@ -41,6 +41,7 @@
  *    -- Checks if the node is the origin for the base obect (non-LOD'd).                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "util.h"
 #include "w3dutil.h"
 #include "skin.h"

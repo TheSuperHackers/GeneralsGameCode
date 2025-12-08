@@ -41,6 +41,7 @@
  *   FloaterDialogClass::Dialog_Proc -- Dialog Proc for the floater                            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "floaterdialog.h"
 #include "dllmain.h"
 #include "resource.h"

@@ -18,6 +18,7 @@
 
 #define THREADFAC_CODE
 
+#include <Utility/CppMacros.h>
 #include "threadfac.h"
 
 int       Runnable::ThreadCount_ = 0;

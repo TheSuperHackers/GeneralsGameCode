@@ -51,6 +51,7 @@
  *   MeshGeometryExportTaskClass::Combine_Mesh -- Add the given mesh into this mesh            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "geometryexporttask.h"
 #include "geometryexportcontext.h"
 #include "util.h"

@@ -49,6 +49,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include <Utility/CppMacros.h>
 #include "quat.h"
 #include "matrix3d.h"
 #include "matrix4.h"

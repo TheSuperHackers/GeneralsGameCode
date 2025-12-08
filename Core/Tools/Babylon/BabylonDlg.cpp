@@ -20,6 +20,7 @@
 // BabylonDlg.cpp : implementation file
 //
 
+#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "Babylon.h"
 #include "BabylonDlg.h"

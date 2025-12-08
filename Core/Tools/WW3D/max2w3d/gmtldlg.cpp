@@ -55,6 +55,7 @@
  *   PsxDlgProc -- Dialog proc which thunks into GameMtlDlg::PsxProc                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include <max.h>
 #include <gport.h>
 #include <hsv.h>

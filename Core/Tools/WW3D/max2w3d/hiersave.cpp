@@ -59,6 +59,7 @@
  *   HierarchySaveClass::load_fixups -- reads the fixup transforms from a W3D file             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <Utility/CppMacros.h>
 #include "hiersave.h"
 #include "w3d_file.h"
 #include "nodefilt.h"

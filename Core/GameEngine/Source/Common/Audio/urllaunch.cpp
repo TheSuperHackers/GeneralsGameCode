@@ -17,6 +17,7 @@
 */
 
 
+#include <Utility/CppMacros.h>
 #include "Common/urllaunch.h"
 
 #define FILE_PREFIX     L"file://"
