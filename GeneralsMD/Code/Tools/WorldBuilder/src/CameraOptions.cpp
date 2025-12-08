@@ -19,6 +19,8 @@
 // CameraOptions.cpp : implementation file
 //
 
+#include <Utility/CppMacros.h>
+
 #include "StdAfx.h"
 #include "resource.h"
 #include "WorldBuilder.h"
