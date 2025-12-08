@@ -433,6 +433,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatusBits statu
 	m_hidden = false;
 	m_hiddenByStealth = false;
 	m_secondMaterialPassOpacity = 0.0f;
+	m_secondMaterialPassOpacityScalar = MATERIAL_PASS_OPACITY_FADE_SCALAR;
 	m_drawableFullyObscuredByShroud = false;
 
   m_receivesDynamicLights = TRUE; // a good default... overridden by one of my draw modules if at all
@@ -2612,7 +2613,8 @@ void Drawable::draw()
     if ( getObject() && getObject()->isEffectivelyDead() )
 		  m_secondMaterialPassOpacity = 0.0f;//dead folks don't stealth anyway
 	  else if ( m_secondMaterialPassOpacity > VERY_TRANSPARENT_MATERIAL_PASS_OPACITY )// keep fading any add'l material unless something has set it to zero
-		  m_secondMaterialPassOpacity *= MATERIAL_PASS_OPACITY_FADE_SCALAR;
+		  // TheSuperHackers @tweak The opacity step is now decoupled from the render update.
+		  m_secondMaterialPassOpacity *= m_secondMaterialPassOpacityScalar;
 	  else
 		  m_secondMaterialPassOpacity = 0.0f;
   }
