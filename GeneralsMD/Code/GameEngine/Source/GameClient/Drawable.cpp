@@ -88,7 +88,6 @@
 
 
 #define VERY_TRANSPARENT_MATERIAL_PASS_OPACITY (0.001f)
-#define MATERIAL_PASS_OPACITY_FADE_SCALAR (0.8f)
 
 static const char *const TheDrawableIconNames[] =
 {
@@ -433,7 +432,6 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatusBits statu
 	m_hidden = false;
 	m_hiddenByStealth = false;
 	m_secondMaterialPassOpacity = 0.0f;
-	m_secondMaterialPassOpacityScalar = MATERIAL_PASS_OPACITY_FADE_SCALAR;
 	m_drawableFullyObscuredByShroud = false;
 
   m_receivesDynamicLights = TRUE; // a good default... overridden by one of my draw modules if at all
@@ -2613,8 +2611,14 @@ void Drawable::draw()
     if ( getObject() && getObject()->isEffectivelyDead() )
 		  m_secondMaterialPassOpacity = 0.0f;//dead folks don't stealth anyway
 	  else if ( m_secondMaterialPassOpacity > VERY_TRANSPARENT_MATERIAL_PASS_OPACITY )// keep fading any add'l material unless something has set it to zero
-		  // TheSuperHackers @tweak The opacity step is now decoupled from the render update.
-		  m_secondMaterialPassOpacity *= m_secondMaterialPassOpacityScalar;
+		{
+			// TheSuperHackers @tweak The opacity step is now decoupled from the render update.
+			// minOpacity = (X ^ (framerate / updatesPerSec)) -> e.g. [ 0.05 = X ^ (100 / 2) ] -> [ X = 0.941845 ] -> [ 0.941845 ^ 50 = 0.05 ]
+			constexpr const Real minOpacity = 0.05f;
+			constexpr const Real updatesPerSec = 2.0f; // (LOGICFRAMES_PER_MSEC_REAL / data->m_updateRate (15))
+			const Real scalar = pow(minOpacity, updatesPerSec / TheFramePacer->getUpdateFps());
+			m_secondMaterialPassOpacity *= scalar;
+		}
 	  else
 		  m_secondMaterialPassOpacity = 0.0f;
   }

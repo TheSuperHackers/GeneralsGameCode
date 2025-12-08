@@ -51,7 +51,6 @@
 #include "Common/BitFlagsIO.h"
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
-#include "Common/FramePacer.h"
 
 
 //-------------------------------------------------------------------------------------------------
@@ -309,17 +308,10 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 			{
 				constexpr const Real minOpacity = 0.05f;
 				constexpr const Real resetThreshold = 2 * minOpacity;
-				constexpr const Real updatesPerSec = 2.0f; // (LOGICFRAMES_PER_MSEC_REAL / data->m_updateRate (15))
 
 				// TheSuperHackers @tweak Reset opacity only below threshold to prevent models flickering from multiple detections or special powers.
 				if (theirDraw->getSecondMaterialPassOpacity() < resetThreshold)
-				{
-					// calculate opacity scalar to get smooth pulsating effect decoupled from the render update
-					// minOpacity = (X ^ (framerate / updatesPerSec)) -> e.g. [ 0.05 = X ^ (100 / 2) ] -> [ X = 0.941845 ] -> [ 0.941845 ^ 50 = 0.05 ]
-					const Real scalar = pow(minOpacity, updatesPerSec / TheFramePacer->getUpdateFps());
-					theirDraw->setSecondMaterialPassOpacityScalar(scalar);
 					theirDraw->setSecondMaterialPassOpacity(1.0f);
-				}
 			}
 
 			if (data->m_IRGridParticleSysTmpl)
