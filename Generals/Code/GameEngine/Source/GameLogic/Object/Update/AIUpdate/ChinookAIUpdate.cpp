@@ -1127,7 +1127,7 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 	// this gets reset every time a command is issued.
 	setAirfieldForHealing(INVALID_ID);
 #else
-	// Don't leave healing state for evacuation commands
+	// TheSuperHackers @bugfix Stubbjax 31/10/2025 Don't leave healing state for evacuation commands.
 	if (parms->m_cmd != AICMD_EVACUATE && parms->m_cmd != AICMD_EXIT)
 		setAirfieldForHealing(INVALID_ID);
 #endif
