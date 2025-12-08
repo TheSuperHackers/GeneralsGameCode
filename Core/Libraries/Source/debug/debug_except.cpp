@@ -150,7 +150,7 @@ void DebugExceptionhandler::LogFPURegisters(Debug &dbg, struct _EXCEPTION_POINTE
     return;
   }
 
-  WOW64_FLOATING_SAVE_AREA &flt=ctx.FloatSave;
+  FLOATING_SAVE_AREA &flt=ctx.FloatSave;
   dbg << Debug::Bin() << Debug::FillChar('0')
       << "CW:" << Debug::Width(16) << (flt.ControlWord&0xffff) << "\n"
       << "SW:" << Debug::Width(16) << (flt.StatusWord&0xffff) << "\n"
