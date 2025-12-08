@@ -66,7 +66,7 @@ void SplashScreen::outputText(UINT nIDString)
 
 	m_loadString = str;
 
-	RedrawWindow(&m_rect, NULL);
+	RedrawWindow(&m_rect, nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
