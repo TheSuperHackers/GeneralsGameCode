@@ -445,6 +445,7 @@ public:
 	void friend_setContainedBy( Object *containedBy ) { m_containedBy = containedBy; }
 	const Object* getEnclosingContainedBy() const; ///< Find the first enclosing container in the containment chain.
 	const Object* getOuterObject() const; ///< Get the top-level object
+	Bool isLogicallyVisible() const; ///< Returns whether the object is logically visible to the player.
 
 	// Special Powers -------------------------------------------------------------------------------
 	SpecialPowerModuleInterface *getSpecialPowerModule( const SpecialPowerTemplate *specialPowerTemplate ) const;

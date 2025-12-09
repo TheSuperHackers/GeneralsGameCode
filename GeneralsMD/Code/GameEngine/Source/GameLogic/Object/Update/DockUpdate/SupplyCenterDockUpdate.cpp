@@ -129,8 +129,7 @@ Bool SupplyCenterDockUpdate::action( Object* docker, Object *drone )
 		}
 	}
 
-	Drawable* outerDrawable = getObject()->getOuterObject()->getDrawable();
-	if (value > 0 && outerDrawable && outerDrawable->isVisible())
+	if (value > 0 && getObject()->isLogicallyVisible())
 	{
 		// OY LOOK!  I AM USING LOCAL PLAYER.  Do not put anything other than TheInGameUI->addFloatingText in the block this controls!!!
 		// Setup info for adding a floating text
