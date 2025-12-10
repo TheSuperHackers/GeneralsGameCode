@@ -4513,22 +4513,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				if (!pObject)
 					continue;
 
-				ExperienceTracker* et;
-				Bool isRiderTrainable = true;
-
-				// TheSuperHackers @bugfix Stubbjax 10/12/2025 Do not allow ranking if the rider is not trainable.
-				const ContainModuleInterface* contain = pObject->getContain();
-				if (contain && contain->isRiderChangeContain())
-				{
-					if (Object* rider = (Object*)contain->friend_getRider())
-					{
-						et = rider->getExperienceTracker();
-						isRiderTrainable = et && et->isTrainable();
-					}
-				}
-
-				et = pObject->getExperienceTracker();
-				if (!et || !isRiderTrainable || !et->isTrainable())
+				ExperienceTracker *et = pObject->getExperienceTracker();
+				if (!et || !pObject->isTrainable())
 					continue;
 
 				VeterancyLevel oldVet = et->getVeterancyLevel();
