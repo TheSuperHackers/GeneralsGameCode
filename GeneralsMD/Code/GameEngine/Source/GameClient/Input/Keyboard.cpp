@@ -219,7 +219,6 @@ Bool Keyboard::checkKeyRepeat( void )
 
 	// Scan Keyboard status array for first key down
 	// long enough to repeat
-	const UnsignedInt KEY_REPEAT_INTERVAL_MSEC = 67; // ~2 frames at 30 FPS
 	for( key = 0; key < ARRAY_SIZE(m_keyStatus); key++ )
 	{
 
@@ -243,7 +242,7 @@ Bool Keyboard::checkKeyRepeat( void )
 					m_keyStatus[ index ].keyDownTimeMsec = now;
 
 				// Set repeated key so it will repeat again after the interval
-				m_keyStatus[ key ].keyDownTimeMsec = now - (Keyboard::KEY_REPEAT_DELAY_MSEC + KEY_REPEAT_INTERVAL_MSEC);
+				m_keyStatus[ key ].keyDownTimeMsec = now - (Keyboard::KEY_REPEAT_DELAY_MSEC + Keyboard::KEY_REPEAT_INTERVAL_MSEC);
 
 				retVal = TRUE;
 				break;  // exit for key
