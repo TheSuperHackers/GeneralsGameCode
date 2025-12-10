@@ -197,7 +197,7 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 	}
 	// set render object, or create if we need to
 	if( modelName.isEmpty() == FALSE &&
-			strncmp( modelName.str(), "No ", 3 ) )
+			strncmp( modelName.str(), "No ", 3 ) != 0 )
 	{
 	 	WW3DAssetManager *pMgr = W3DAssetManager::Get_Instance();
 		model = pMgr->Create_Render_Obj(modelName.str());

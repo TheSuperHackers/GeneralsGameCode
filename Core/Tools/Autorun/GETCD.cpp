@@ -200,7 +200,7 @@ int	GetCDClass::Get_CD_Drive_For_This_Volume ( const char *volume_label )
 				volume_name[11] = '\0';
 			}
 
-			if ( !_stricmp( volume_label, volume_name )) {
+			if ( _stricmp( volume_label, volume_name ) == 0) {
 				return( cd_drive );
 			}
 
@@ -385,7 +385,7 @@ bool CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_
 				strncpy( volume_label, volume_name, 128 );
 			}
 
-			if ( !_stricmp( volume_to_find, volume_name )) {
+			if ( _stricmp( volume_to_find, volume_name ) == 0) {
 				return TRUE;
 			}
 

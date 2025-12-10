@@ -58,13 +58,13 @@ int main(int argc, char **argv)
 
 	for (int i=1; i<argc; ++i)
 	{
-		if ( !stricmp(argv[i], "-help") )
+		if ( stricmp(argv[i], "-help") == 0 )
 		{
 			dumpHelp(argv[0]);
 			return EXIT_SUCCESS;
 		}
 
-		if ( !strcmp(argv[i], "-in") )
+		if ( strcmp(argv[i], "-in") == 0 )
 		{
 			++i;
 			if (i<argc)
@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 			}
 		}
 
-		if ( !strcmp(argv[i], "-out") )
+		if ( strcmp(argv[i], "-out") == 0 )
 		{
 			++i;
 			if (i<argc)
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 			}
 		}
 
-		if ( !strcmp(argv[i], "-type") )
+		if ( strcmp(argv[i], "-type") == 0 )
 		{
 			++i;
 			if (i<argc)

@@ -1004,7 +1004,7 @@ void WbView3d::updateFenceListObjects(MapObject *pObject)
 			AsciiString modelName = getModelNameAndScale(pMapObj, &scale, BODY_PRISTINE);
 			// set render object, or create if we need to
 			if( renderObj == NULL && modelName.isEmpty() == FALSE &&
-					strncmp( modelName.str(), "No ", 3 ) )
+					strncmp( modelName.str(), "No ", 3 ) != 0 )
 			{
 
 				renderObj = m_assetManager->Create_Render_Obj( modelName.str(), scale, 0);
@@ -1130,7 +1130,7 @@ void WbView3d::invalBuildListItemInView(BuildListInfo *pBuildToInval)
 				}
 				// set render object, or create if we need to
 				if( renderObj == NULL && modelName.isEmpty() == FALSE &&
-						strncmp( modelName.str(), "No ", 3 ) )
+						strncmp( modelName.str(), "No ", 3 ) != 0 )
 				{
 
 					renderObj = m_assetManager->Create_Render_Obj( modelName.str(), scale, playerColor);
@@ -1395,7 +1395,7 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 			AsciiString modelName = getModelNameAndScale(pMapObj, &scale, curDamageState);
 			// set render object, or create if we need to
 			if( renderObj == NULL && modelName.isEmpty() == FALSE &&
-					strncmp( modelName.str(), "No ", 3 ) )
+					strncmp( modelName.str(), "No ", 3 ) != 0 )
 			{
 
 				if (!getShowModels()) {
