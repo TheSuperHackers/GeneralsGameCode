@@ -4516,6 +4516,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				ExperienceTracker* et;
 				Bool isRiderTrainable = true;
 
+				// TheSuperHackers @bugfix Stubbjax 10/12/2025 Do not allow ranking if the rider is not trainable.
 				const ContainModuleInterface* contain = pObject->getContain();
 				if (contain && contain->isRiderChangeContain())
 				{

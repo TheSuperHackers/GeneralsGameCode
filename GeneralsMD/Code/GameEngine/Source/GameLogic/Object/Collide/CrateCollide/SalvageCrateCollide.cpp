@@ -165,6 +165,7 @@ Bool SalvageCrateCollide::eligibleForLevel( Object *other )
 		return FALSE;
 
 #if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Stubbjax 10/12/2025 Do not allow ranking if the rider is not trainable.
 	const ContainModuleInterface* contain = other->getContain();
 	if (contain && contain->isRiderChangeContain())
 	{
