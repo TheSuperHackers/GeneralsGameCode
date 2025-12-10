@@ -266,5 +266,15 @@ Matrix4x4 Build_Matrix4(const D3DMATRIX& dxm)
 	Build_Matrix4(m, dxm);
 	return m;
 }
+
+void Build_Matrix4(Matrix4x4& m, const D3DXMATRIX& dxm)
+{
+	Build_Matrix4(m, (const D3DMATRIX&)dxm);
+}
+
+Matrix4x4 Build_Matrix4(const D3DXMATRIX& dxm)
+{
+	return Build_Matrix4((const D3DMATRIX&)dxm);
+}
 #endif
 

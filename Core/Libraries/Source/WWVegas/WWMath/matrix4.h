@@ -199,6 +199,8 @@ D3DXMATRIX Build_D3DXMATRIX(const Matrix4x4& m);
 
 void Build_Matrix4(Matrix4x4& m, const D3DMATRIX& dxm);
 Matrix4x4 Build_Matrix4(const D3DMATRIX& dxm);
+void Build_Matrix4(Matrix4x4& m, const D3DXMATRIX& dxm);
+Matrix4x4 Build_Matrix4(const D3DXMATRIX& dxm);
 #endif
 
 
@@ -865,5 +867,7 @@ D3DXMATRIX Build_D3DXMATRIX(const Matrix4x4& m);
 
 void Build_Matrix4(Matrix4x4& m, const D3DMATRIX& dxm);
 Matrix4x4 Build_Matrix4(const D3DMATRIX& dxm);
+void Build_Matrix4(Matrix4x4& m, const D3DXMATRIX& dxm);
+Matrix4x4 Build_Matrix4(const D3DXMATRIX& dxm);
 #endif
 
