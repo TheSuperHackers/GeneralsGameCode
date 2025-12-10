@@ -826,7 +826,7 @@ void LayersList::OnMergeViewSelection(UINT commandID)
 		mapObject = mapObject->getNext();
 	}
 
-	while (allSelectedObjects.size() > 0) {
+	while (!allSelectedObjects.empty()) {
 		changeMapObjectLayer(allSelectedObjects.top(), layerIt->layerName);
 		allSelectedObjects.pop();
 	}

@@ -427,7 +427,7 @@ void WorldHeightMapEdit::loadDirectoryOfImages(const char *pFilePath)
 	FilenameList filenameList;
 	TheFileSystem->getFileListInDirectory(AsciiString(dirBuf), "*.*", filenameList, TRUE);
 
-	if (filenameList.size() == 0) {
+	if (filenameList.empty()) {
 		return;
 	}
 	FilenameList::iterator it = filenameList.begin();
@@ -3378,7 +3378,7 @@ void WorldHeightMapEdit::changeBoundary(Int ndx, ICoord2D *border)
 
 void WorldHeightMapEdit::removeLastBoundary(void)
 {
-	if (m_boundaries.size() == 0) {
+	if (m_boundaries.empty()) {
 		DEBUG_CRASH(("Invalid border remove request. jkmcd"));
 		return;
 	}

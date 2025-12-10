@@ -183,7 +183,7 @@ void W3DTerrainLogic::getExtent( Region3D *extent ) const
 
 	// Note - m_boundaries are stored in height map grids wide, so we have to
 	// multiply by the grid width.
-	if (m_boundaries.size() > 0) {
+	if (!m_boundaries.empty()) {
 		extent->hi.x = m_boundaries[m_activeBoundary].x*MAP_XY_FACTOR;
 		extent->hi.y = m_boundaries[m_activeBoundary].y*MAP_XY_FACTOR;
 	} else {

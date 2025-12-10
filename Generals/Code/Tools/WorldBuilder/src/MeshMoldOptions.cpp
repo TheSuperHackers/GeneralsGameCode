@@ -86,7 +86,7 @@ BOOL MeshMoldOptions::OnInitDialog()
 		FilenameList filenameList;
 		TheFileSystem->getFileListInDirectory(".\\data\\Editor\\Molds\\", "*.w3d", filenameList, FALSE);
 
-		if (filenameList.size() > 0) {
+		if (!filenameList.empty()) {
 			HTREEITEM child = NULL;
 			FilenameList::iterator it = filenameList.begin();
 			do {

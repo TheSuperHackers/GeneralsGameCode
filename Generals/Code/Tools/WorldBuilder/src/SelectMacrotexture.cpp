@@ -78,7 +78,7 @@ BOOL SelectMacrotexture::OnInitDialog()
 		FilenameList filenameList;
 		TheFileSystem->getFileListInDirectory("..\\TestArt\\", "*.tga", filenameList, FALSE);
 
-		if (filenameList.size() > 0) {
+		if (!filenameList.empty()) {
 			TVINSERTSTRUCT ins;
 			HTREEITEM child = NULL;
 			FilenameList::iterator it = filenameList.begin();
