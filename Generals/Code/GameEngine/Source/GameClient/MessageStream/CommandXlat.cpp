@@ -4113,6 +4113,9 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEBUG_GIVE_VETERANCY:
 		case GameMessage::MSG_META_DEBUG_TAKE_VETERANCY:
 		{
+			if (TheGameLogic->isInMultiplayerGame())
+				break;
+
 			const DrawableList *list = TheInGameUI->getAllSelectedDrawables();
 			for (DrawableListCIt it = list->begin(); it != list->end(); ++it)
 			{
@@ -4149,6 +4152,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 					}
 				}
 			}
+
 			disp = DESTROY_MESSAGE;
 			break;
 		}
