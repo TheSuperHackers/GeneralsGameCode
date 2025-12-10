@@ -42,6 +42,7 @@
 #include "GameClient/GameText.h"
 #include "GameClient/InGameUI.h"
 #include "GameLogic/ExperienceTracker.h"
+#include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/Object.h"
 
 //-------------------------------------------------------------------------------------------------
@@ -162,6 +163,19 @@ Bool SalvageCrateCollide::eligibleForLevel( Object *other )
 	// Sorry, you can't gain levels
 	if( !other->getExperienceTracker()->isTrainable() )
 		return FALSE;
+
+#if !RETAIL_COMPATIBLE_CRC
+	const ContainModuleInterface* contain = other->getContain();
+	if (contain && contain->isRiderChangeContain())
+	{
+		if (Object* rider = (Object*)contain->friend_getRider())
+		{
+			const ExperienceTracker* et = rider->getExperienceTracker();
+			if (!et || !et->isTrainable())
+				return FALSE;
+		}
+	}
+#endif
 
 	return TRUE;
 }

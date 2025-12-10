@@ -4513,8 +4513,21 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				if (!pObject)
 					continue;
 
-				ExperienceTracker *et = pObject->getExperienceTracker();
-				if (!et || !et->isTrainable())
+				ExperienceTracker* et;
+				Bool isRiderTrainable = true;
+
+				const ContainModuleInterface* contain = pObject->getContain();
+				if (contain && contain->isRiderChangeContain())
+				{
+					if (Object* rider = (Object*)contain->friend_getRider())
+					{
+						et = rider->getExperienceTracker();
+						isRiderTrainable = et && et->isTrainable();
+					}
+				}
+
+				et = pObject->getExperienceTracker();
+				if (!et || !isRiderTrainable || !et->isTrainable())
 					continue;
 
 				VeterancyLevel oldVet = et->getVeterancyLevel();
