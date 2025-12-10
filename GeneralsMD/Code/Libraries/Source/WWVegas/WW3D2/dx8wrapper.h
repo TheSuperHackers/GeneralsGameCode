@@ -313,6 +313,7 @@ public:
 	static void _Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix3D& m);
 	static void _Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,const D3DXMATRIX& m);
 	static void _Get_DX8_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4x4& m);
+	static void _Get_DX8_Transform(D3DTRANSFORMSTATETYPE transform, D3DXMATRIX& m);
 
 	static void Set_DX8_Light(int index,D3DLIGHT8* light);
 	static void Set_DX8_Render_State(D3DRENDERSTATETYPE state, unsigned value);
@@ -798,7 +799,12 @@ WWINLINE void DX8Wrapper::_Get_DX8_Transform(D3DTRANSFORMSTATETYPE transform, Ma
 {
 	D3DXMATRIX d3dMat;
 	DX8CALL(GetTransform(transform,&d3dMat));
-	Build_Matrix4(m, (D3DMATRIX&)d3dMat);
+	Build_Matrix4(m, d3dMat);
+}
+
+WWINLINE void DX8Wrapper::_Get_DX8_Transform(D3DTRANSFORMSTATETYPE transform, D3DXMATRIX& m)
+{
+	DX8CALL(GetTransform(transform, &m));
 }
 
 // ----------------------------------------------------------------------------
