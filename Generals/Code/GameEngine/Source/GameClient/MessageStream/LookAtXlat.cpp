@@ -288,21 +288,23 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_MIDDLE_BUTTON_DOWN:
 		{
-			m_lastMouseMoveTimeMsec = timeGetTime();
+			UnsignedInt now = timeGetTime();
+			m_lastMouseMoveTimeMsec = now;
 
 			m_isRotating = true;
 			m_anchor = msg->getArgument( 0 )->pixel;
 			m_anchorAngle = TheTacticalView->getAngle();
 			m_originalAnchor = msg->getArgument( 0 )->pixel;
 			m_currentPos = msg->getArgument( 0 )->pixel;
-			m_middleButtonDownTimeMsec = timeGetTime();
+			m_middleButtonDownTimeMsec = now;
 			break;
 		}
 
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_MIDDLE_BUTTON_UP:
 		{
-			m_lastMouseMoveTimeMsec = timeGetTime();
+			UnsignedInt now = timeGetTime();
+			m_lastMouseMoveTimeMsec = now;
 
 			const UnsignedInt CLICK_DURATION_MSEC = 167;
 			const UnsignedInt PIXEL_OFFSET = 5;
@@ -313,7 +315,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			Int dy = m_currentPos.y-m_originalAnchor.y;
 			Bool didMove = dx>PIXEL_OFFSET || dy>PIXEL_OFFSET;
 			// if middle button is "clicked", reset to "home" orientation
-			if (!didMove && timeGetTime() - m_middleButtonDownTimeMsec < CLICK_DURATION_MSEC)
+			if (!didMove && now - m_middleButtonDownTimeMsec < CLICK_DURATION_MSEC)
 			{
 				TheTacticalView->setAngleAndPitchToDefault();
 				TheTacticalView->setZoomToDefault();
