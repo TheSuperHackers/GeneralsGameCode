@@ -2554,7 +2554,7 @@ Bool AIUpdateInterface::isAllowedToRespondToAiCommands(const AICommandParms* par
 }
 
 //-------------------------------------------------------------------------------------------------
-void AIUpdateInterface::aiDoCommand(const AICommandParms* parms)
+void AIUpdateInterface::aiDoCommand(AICommandParms* parms)
 {
 	// TheSuperHackers @info The AiCommandParms for m_obj, m_otherObj and m_team should be null tested before use.
 	// These variables could relate to a deleted object when a pending command is reconstituted.

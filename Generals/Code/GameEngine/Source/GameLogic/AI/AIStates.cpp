@@ -87,7 +87,7 @@ AICommandParms::AICommandParms(AICommandType cmd, CommandSourceType cmdSource) :
 }
 
 //----------------------------------------------------------------------------------------------------------
-void AICommandParmsStorage::store(const AICommandParms& parms)
+void AICommandParmsStorage::store(AICommandParms& parms)
 {
 	m_cmd = parms.m_cmd;
   m_cmdSource = parms.m_cmdSource;

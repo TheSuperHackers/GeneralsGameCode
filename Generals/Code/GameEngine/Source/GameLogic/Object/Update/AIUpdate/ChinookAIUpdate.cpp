@@ -1121,7 +1121,7 @@ void ChinookAIUpdate::privateCombatDrop( Object* target, const Coord3D& pos, Com
 }
 
 //-------------------------------------------------------------------------------------------------
-void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
+void ChinookAIUpdate::aiDoCommand(AICommandParms* parms)
 {
 	// this gets reset every time a command is issued.
 	setAirfieldForHealing(INVALID_ID);

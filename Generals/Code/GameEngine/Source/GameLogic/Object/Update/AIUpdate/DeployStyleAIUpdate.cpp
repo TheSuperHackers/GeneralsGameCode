@@ -90,7 +90,7 @@ void DeployStyleAIUpdate::reset()
 }
 
 //-------------------------------------------------------------------------------------------------
-void DeployStyleAIUpdate::aiDoCommand( const AICommandParms* parms )
+void DeployStyleAIUpdate::aiDoCommand( AICommandParms* parms )
 {
 	if (!isAllowedToRespondToAiCommands(parms))
 		return;

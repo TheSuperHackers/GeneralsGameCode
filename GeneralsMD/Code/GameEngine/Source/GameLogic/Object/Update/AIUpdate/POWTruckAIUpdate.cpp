@@ -111,7 +111,7 @@ void POWTruckAIUpdate::onDelete( void )
 
 // ------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void POWTruckAIUpdate::aiDoCommand( const AICommandParms *parms )
+void POWTruckAIUpdate::aiDoCommand( AICommandParms *parms )
 {
 
 	if (!isAllowedToRespondToAiCommands(parms))

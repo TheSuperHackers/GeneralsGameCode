@@ -260,7 +260,7 @@ UpdateSleepTime RailedTransportAIUpdate::update( void )
 
 // ------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void RailedTransportAIUpdate::aiDoCommand( const AICommandParms *parms )
+void RailedTransportAIUpdate::aiDoCommand( AICommandParms *parms )
 {
 
 	// if not allowed to respond to any command get out of here

@@ -90,7 +90,7 @@ public:
 	AssaultTransportAIUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
- 	virtual void aiDoCommand(const AICommandParms* parms);
+	virtual void aiDoCommand(AICommandParms* parms);
 	virtual Bool isIdle() const;
 	virtual UpdateSleepTime update();
 	virtual AssaultTransportAIInterface* getAssaultTransportAIInterface() { return this; }

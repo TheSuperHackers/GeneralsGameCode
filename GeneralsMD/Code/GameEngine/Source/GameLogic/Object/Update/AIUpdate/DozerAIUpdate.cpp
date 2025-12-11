@@ -2332,7 +2332,7 @@ Real DozerAIUpdate::getBoredRange( void ) const
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
-void DozerAIUpdate::aiDoCommand(const AICommandParms* parms)
+void DozerAIUpdate::aiDoCommand(AICommandParms* parms)
 {
 
 	//

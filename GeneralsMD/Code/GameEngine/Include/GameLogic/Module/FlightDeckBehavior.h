@@ -148,7 +148,7 @@ public:
 	virtual Bool calcBestParkingAssignment( ObjectID id, Coord3D *pos, Int *oldIndex = NULL, Int *newIndex = NULL );
 
 	// AIUpdateInterface
-	virtual void aiDoCommand(const AICommandParms* parms);
+	virtual void aiDoCommand(AICommandParms* parms);
 
 	virtual const std::vector<Coord3D>* getTaxiLocations( ObjectID id ) const;
 	virtual const std::vector<Coord3D>* getCreationLocations( ObjectID id ) const;
