@@ -5,6 +5,8 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
+#define DEFINE_DEATH_NAMES
+
 #include "Common/Player.h"
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"
@@ -19,6 +21,7 @@
 #include "GameLogic/Module/StealthUpdate.h"
 #include "GameLogic/Module/TransportContain.h"
 #include "GameLogic/Module/DroneCarrierContain.h"
+#include "GameLogic/Damage.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Weapon.h"
 #include "GameLogic/WeaponSetType.h"
@@ -27,6 +30,7 @@
 DroneCarrierContainModuleData::DroneCarrierContainModuleData() : TransportContainModuleData()
 {
 	m_launchVelocityBoost = 0.0f;
+	m_deathTypeToContained = DEATH_DETONATED;
 }
 
 void DroneCarrierContainModuleData::buildFieldParse(MultiIniFieldParse& p)
@@ -35,6 +39,7 @@ void DroneCarrierContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
+		{ "ContainedUnitsDeathType", INI::parseIndexList, TheDeathNames, offsetof(DroneCarrierContainModuleData, m_deathTypeToContained) },
 		{ "LaunchVelocityBoost", INI::parseReal, NULL, offsetof(DroneCarrierContainModuleData, m_launchVelocityBoost) },
 		{ 0, 0, 0, 0 }
 	};
@@ -244,6 +249,9 @@ void DroneCarrierContain::onRemoving(Object* rider)
 	m_frameExitNotBusy = TheGameLogic->getFrame() + d->m_exitDelay;
 }
 
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+
 void DroneCarrierContain::onContaining(Object* obj, Bool wasSelected)
 {
 	TransportContain::onContaining(obj, wasSelected);
@@ -261,6 +269,57 @@ void DroneCarrierContain::onContaining(Object* obj, Bool wasSelected)
 		}
 	}
 }
+
+//-------------------------------------------------------------------------------------------------
+/** Custom Die callback to apply specific death type. */
+//-------------------------------------------------------------------------------------------------
+void DroneCarrierContain::onDie(const DamageInfo* damageInfo)
+{
+	const DroneCarrierContainModuleData* data = getDroneCarrierContainModuleData();
+
+	if (!data->m_dieMuxData.isDieApplicable(getObject(), damageInfo))
+		return;
+
+	// Note: Using SH fix from OpenContain::processDamageToContained
+
+	ContainedItemsList list;
+	m_containList.swap(list);
+	m_containListSize = 0;
+
+	ContainedItemsList::iterator it = list.begin();
+
+	while (it != list.end())
+	{
+		Object* object = *it;
+
+		DEBUG_ASSERTCRASH(object, ("Contain list must not contain NULL element"));
+
+		if (!object->isEffectivelyDead())
+			object->kill(DAMAGE_UNRESISTABLE, data->m_deathTypeToContained);
+
+		if (object->isEffectivelyDead())
+		{
+			onRemoving(object);
+			object->onRemovedFrom(getObject());
+			it = list.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+
+	// Swap the list back where it belongs.
+	m_containList.swap(list);
+	m_containListSize = (UnsignedInt)m_containList.size();
+
+	killRidersWhoAreNotFreeToExit();
+	removeAllContained();
+}
+
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+
 
 short DroneCarrierContain::getRiderSlot(ObjectID riderID) const
 {

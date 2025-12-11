@@ -91,6 +91,8 @@ UpdateSleepTime DroneCarrierSlavedUpdate::update(void)
 	{
 		stopSlavedEffects();
 
+		//TODO: Make the drone crash properly (JetSlowDeath) instead of just dropping
+
 		//Let's disable the drone so it crashes instead!
 		//Added special case code in physics falling to ensure death.
 		me->setDisabled(DISABLED_UNMANNED);
