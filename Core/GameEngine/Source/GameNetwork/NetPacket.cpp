@@ -5807,15 +5807,10 @@ NetCommandMsg * NetPacket::readWrapperMessage(UnsignedByte *data, Int &i) {
 NetCommandMsg * NetPacket::readFileMessage(UnsignedByte *data, Int &i) {
 	NetFileCommandMsg *msg = newInstance(NetFileCommandMsg);
 	char filename[_MAX_PATH];
-	char *c = filename;
 
-	while (data[i] != 0) {
-		*c = data[i];
-		++c;
-		++i;
-	}
-	*c = 0;
-	++i;
+	// TheSuperHackers @security Mauller/Jbremer/SkyAero 11/12/2025 Prevent buffer overflow when copying filepath string
+	i += strlcpy(filename, reinterpret_cast<const char*>(data), ARRAY_SIZE(filename));
+	++i; //Increment for null terminator
 	msg->setPortableFilename(AsciiString(filename));	// it's transferred as a portable filename
 
 	UnsignedInt dataLength = 0;
@@ -5834,15 +5829,10 @@ NetCommandMsg * NetPacket::readFileMessage(UnsignedByte *data, Int &i) {
 NetCommandMsg * NetPacket::readFileAnnounceMessage(UnsignedByte *data, Int &i) {
 	NetFileAnnounceCommandMsg *msg = newInstance(NetFileAnnounceCommandMsg);
 	char filename[_MAX_PATH];
-	char *c = filename;
 
-	while (data[i] != 0) {
-		*c = data[i];
-		++c;
-		++i;
-	}
-	*c = 0;
-	++i;
+	// TheSuperHackers @security Mauller/Jbremer/SkyAero 11/12/2025 Prevent buffer overflow when copying filepath string
+	i += strlcpy(filename, reinterpret_cast<const char*>(data), ARRAY_SIZE(filename));
+	++i; //Increment for null terminator
 	msg->setPortableFilename(AsciiString(filename));	// it's transferred as a portable filename
 
 	UnsignedShort fileID = 0;
