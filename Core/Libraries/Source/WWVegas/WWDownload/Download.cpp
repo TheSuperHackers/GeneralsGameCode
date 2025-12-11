@@ -47,7 +47,7 @@ HRESULT CDownload::DownloadFile(LPCSTR server, LPCSTR username, LPCSTR password,
 	// If we're still connected, make sure we're on the right server
 	if (m_Status == DOWNLOADSTATUS_FINDINGFILE)
 	{
-		if ((strcmp(m_Server, server)) || (strcmp(m_Login, username)))
+		if ((strcmp(m_Server, server) != 0) || (strcmp(m_Login, username) != 0))
 		{
 			// Damn, a server switch.  Close conn & fix state
 			m_Ftp->DisconnectFromServer();

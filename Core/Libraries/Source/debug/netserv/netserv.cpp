@@ -297,7 +297,7 @@ int CALLBACK WinMain(HINSTANCE,HINSTANCE,LPSTR,int)
     char *input=InputConsole();
     if (input)
     {
-      if (!strcmp(input,"quit"))
+      if (strcmp(input,"quit") == 0)
         break;
     }
 

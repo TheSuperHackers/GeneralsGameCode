@@ -2681,7 +2681,7 @@ MemoryPool *MemoryPoolFactory::findMemoryPool(const char *poolName)
 {
 	for (MemoryPool *pool = m_firstPoolInFactory; pool; pool = pool->getNextPoolInList())
 	{
-		if (!strcmp(poolName, pool->getPoolName()))
+		if (strcmp(poolName, pool->getPoolName()) == 0)
 		{
 			DEBUG_ASSERTCRASH(poolName == pool->getPoolName(), ("hmm, ptrs should probably match here"));
 			return pool;

@@ -220,7 +220,7 @@ BOOL CALLBACK EnumAllWindowsProcExact(HWND hWnd, LPARAM lParam)
 
 	GetWindowText(hWnd, szText, sizeof(szText));
 
-	if ( !strncmp (szText, szSearchTitle, strlen ( szSearchTitle)))
+	if ( strncmp (szText, szSearchTitle, strlen ( szSearchTitle)) == 0)
 	{
 		* (BOOL *) lParam = TRUE;
 		 FoundWindow = hWnd;

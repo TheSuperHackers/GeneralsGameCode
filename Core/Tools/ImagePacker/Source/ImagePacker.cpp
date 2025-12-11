@@ -385,8 +385,8 @@ void ImagePacker::addImagesInDirectory( char *dir )
 
 		// if this is a file count it
 		if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-				strcmp( item.cFileName, "." ) &&
-				strcmp( item.cFileName, ".." ) )
+				strcmp( item.cFileName, "." ) != 0 &&
+				strcmp( item.cFileName, ".." ) != 0 )
 		{
 
 			len = strlen( item.cFileName );
@@ -410,8 +410,8 @@ void ImagePacker::addImagesInDirectory( char *dir )
 
 			// if this is a file count it
 			if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-					strcmp( item.cFileName, "." ) &&
-					strcmp( item.cFileName, ".." ) )
+					strcmp( item.cFileName, "." ) != 0 &&
+					strcmp( item.cFileName, ".." ) != 0 )
 			{
 
 				len = strlen( item.cFileName );
@@ -473,8 +473,8 @@ Bool ImagePacker::checkOutputDirectory( void )
 
 		// if this is a file count it
 		if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-				 strcmp( item.cFileName, "." ) &&
-				 strcmp( item.cFileName, ".." ) )
+				 strcmp( item.cFileName, "." ) != 0 &&
+				 strcmp( item.cFileName, ".." ) != 0 )
 			fileCount++;
 
 		// find the rest of the files
@@ -483,8 +483,8 @@ Bool ImagePacker::checkOutputDirectory( void )
 
 			// if this is a file count it
 			if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-					 strcmp( item.cFileName, "." ) &&
-					 strcmp( item.cFileName, ".." ) )
+					 strcmp( item.cFileName, "." ) != 0 &&
+					 strcmp( item.cFileName, ".." ) != 0 )
 				fileCount++;
 
 		}
@@ -526,8 +526,8 @@ Bool ImagePacker::checkOutputDirectory( void )
 
 			// if this is a file count it
 			if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-					 strcmp( item.cFileName, "." ) &&
-					 strcmp( item.cFileName, ".." ) )
+					 strcmp( item.cFileName, "." ) != 0 &&
+					 strcmp( item.cFileName, ".." ) != 0 )
 				DeleteFile( item.cFileName );
 
 			// find the rest of the files
@@ -536,8 +536,8 @@ Bool ImagePacker::checkOutputDirectory( void )
 
 				// if this is a file count it
 				if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-						 strcmp( item.cFileName, "." ) &&
-						 strcmp( item.cFileName, ".." ) )
+						 strcmp( item.cFileName, "." ) != 0 &&
+						 strcmp( item.cFileName, ".." ) != 0 )
 					DeleteFile( item.cFileName );
 
 			}
@@ -687,8 +687,8 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 
 		// if this is a file count it
 		if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-				strcmp( item.cFileName, "." ) &&
-				strcmp( item.cFileName, ".." ) )
+				strcmp( item.cFileName, "." ) != 0 &&
+				strcmp( item.cFileName, ".." ) != 0 )
 		{
 
 			len = strlen( item.cFileName );
@@ -707,8 +707,8 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 
 			// if this is a file count it
 			if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-					strcmp( item.cFileName, "." ) &&
-					strcmp( item.cFileName, ".." ) )
+					strcmp( item.cFileName, "." ) != 0 &&
+					strcmp( item.cFileName, ".." ) != 0 )
 			{
 
 				len = strlen( item.cFileName );
@@ -743,8 +743,8 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 
 			// if this is a file count it
 			if( (item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-					strcmp( item.cFileName, "." ) &&
-					strcmp( item.cFileName, ".." ) )
+					strcmp( item.cFileName, "." ) != 0 &&
+					strcmp( item.cFileName, ".." ) != 0 )
 			{
 
 				sprintf( subDir, "%s%s\\", path, item.cFileName );
@@ -758,8 +758,8 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 
 				// if this is a file count it
 				if( (item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-						strcmp( item.cFileName, "." ) &&
-						strcmp( item.cFileName, ".." ) )
+						strcmp( item.cFileName, "." ) != 0 &&
+						strcmp( item.cFileName, ".." ) != 0 )
 				{
 
 					sprintf( subDir, "%s%s\\", path, item.cFileName );

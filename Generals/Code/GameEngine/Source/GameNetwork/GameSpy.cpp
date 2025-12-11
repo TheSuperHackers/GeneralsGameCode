@@ -645,14 +645,14 @@ static void RoomUTMCallback(PEER peer, RoomType roomType, const char * nick,
 		Int slotNum = TheGameSpyGame->getSlotNum(nick);
 		if (slotNum == 0 && !TheGameSpyGame->amIHost())
 		{
-			if (!strcmp(command, "SL"))
+			if (strcmp(command, "SL") == 0)
 			{
 				AsciiString options = parameters;
 				options.trim();
 				ParseAsciiStringToGameInfo(TheGameSpyGame, options.str());
 				WOLDisplaySlotList();
 			}
-			else if (!strcmp(command, "HWS")) // HostWantsStart
+			else if (strcmp(command, "HWS") == 0) // HostWantsStart
 			{
 				Int slotNum = TheGameSpyGame->getLocalSlotNum();
 				GameSlot *slot = TheGameSpyGame->getSlot(slotNum);
@@ -675,7 +675,7 @@ static void PlayerUTMCallback(PEER peer, const char * nick,
 		Int slotNum = TheGameSpyGame->getSlotNum(nick);
 		if (slotNum != 0 && TheGameSpyGame->amIHost())
 		{
-			if (!strcmp(command, "REQ"))
+			if (strcmp(command, "REQ") == 0)
 			{
 				AsciiString options = parameters;
 				options.trim();

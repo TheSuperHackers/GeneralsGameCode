@@ -231,7 +231,7 @@ Directory::Directory( const std::string& dirPath ) : m_dirPath(dirPath)
 		// if this is a subdirectory keep the name around till the end
 		if( item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
 		{
-			if ( strcmp( item.cFileName, "." ) && strcmp( item.cFileName, ".." ) )
+			if ( strcmp( item.cFileName, "." ) != 0 && strcmp( item.cFileName, ".." ) )
 			{
 				info.set(item);
 				m_subdirs.insert( info );

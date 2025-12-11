@@ -241,7 +241,7 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 	while (!done)	{
 		std::string filenameStr = iter->path().filename().string();
 		if (!iter->is_directory() && iter->path().extension() == searchExt &&
-			(strcmp(filenameStr.c_str(), ".") && strcmp(filenameStr.c_str(), ".."))) {
+			(strcmp(filenameStr.c_str(), ".") != 0 && strcmp(filenameStr.c_str(), "..") != 0)) {
 			// if we haven't already, add this filename to the list.
 			// a stl set should only allow one copy of each filename
 			AsciiString newFilename = iter->path().string().c_str();
@@ -268,7 +268,7 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 		while (!done) {
 			std::string filenameStr = iter->path().filename().string();
 			if(iter->is_directory() &&
-				(strcmp(filenameStr.c_str(), ".") && strcmp(filenameStr.c_str(), ".."))) {
+				(strcmp(filenameStr.c_str(), ".") != 0 && strcmp(filenameStr.c_str(), "..") != 0)) {
 				AsciiString tempsearchstr(filenameStr.c_str());
 
 				// recursively add files in subdirectories if required.

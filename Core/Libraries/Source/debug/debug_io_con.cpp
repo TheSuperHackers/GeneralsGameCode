@@ -194,13 +194,13 @@ void DebugIOCon::Write(StringType type, const char *src, const char *str)
 void DebugIOCon::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
                          unsigned argn, const char * const * argv)
 {
-  if (!cmd||!strcmp(cmd,"help"))
+  if (!cmd||strcmp(cmd,"help") == 0)
   {
     dbg << "con I/O help:\n"
            "  add [ <width> [ <height> ] ]\n"
            "    create con I/O (optionally specifying the window size)\n";
   }
-  else if (!strcmp(cmd,"add"))
+  else if (strcmp(cmd,"add") == 0)
   {
     if (argn>0&&m_allocatedConsole)
     {
