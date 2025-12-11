@@ -26,12 +26,13 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Greg_h                                                      $*
+ *                       Author : Kenny Mitchell                                               *
  *                                                                                             *
- *                     $Modtime:: 5/13/01 11:25a                                              $*
+ *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
- *                    $Revision:: 5                                                           $*
+ *                    $Revision:: 6                                                           $*
  *                                                                                             *
+ * 06/27/02 KM Texture class abstraction																			*
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -40,7 +41,6 @@
 
 #include "always.h"
 #include "shader.h"
-
 
 class TextureClass;
 class VertexMaterialClass;
@@ -93,7 +93,7 @@ public:
 
 protected:
 
-	enum { MAX_TEX_STAGES = 2 };
+	enum { MAX_TEX_STAGES = 8 };
 
 	TextureClass *				Texture[MAX_TEX_STAGES];
 	ShaderClass					Shader;
