@@ -352,6 +352,14 @@ const UpgradeTemplate *UpgradeCenter::findUpgrade( const AsciiString& name ) con
 }
 
 //-------------------------------------------------------------------------------------------------
+/** Find upgrade by name */
+//-------------------------------------------------------------------------------------------------
+const UpgradeTemplate *UpgradeCenter::findUpgrade( const char* name ) const
+{
+	return findUpgradeByKey( TheNameKeyGenerator->nameToKey( name ) );
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Allocate a new upgrade template */
 //-------------------------------------------------------------------------------------------------
 UpgradeTemplate *UpgradeCenter::newUpgrade( const AsciiString& name )
@@ -470,8 +478,7 @@ std::vector<AsciiString> UpgradeCenter::getUpgradeNames( void ) const
 void UpgradeCenter::parseUpgradeDefinition( INI *ini )
 {
 	// read the name
-	const char* c = ini->getNextToken();
-	AsciiString name = c;
+	const char* name = ini->getNextToken();
 
 	// find existing item if present
 	UpgradeTemplate* upgrade = TheUpgradeCenter->findNonConstUpgradeByKey( NAMEKEY(name) );
@@ -484,7 +491,7 @@ void UpgradeCenter::parseUpgradeDefinition( INI *ini )
 	}
 
 	// sanity
-	DEBUG_ASSERTCRASH( upgrade, ("parseUpgradeDefinition: Unable to allocate upgrade '%s'", name.str()) );
+	DEBUG_ASSERTCRASH( upgrade, ("parseUpgradeDefinition: Unable to allocate upgrade '%s'", name) );
 
 	// parse the ini definition
 	ini->initFromINI( upgrade, upgrade->getFieldParse() );

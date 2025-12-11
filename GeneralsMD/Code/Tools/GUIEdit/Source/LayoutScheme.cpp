@@ -2433,7 +2433,7 @@ Bool LayoutScheme::loadScheme( char *filename )
 
 				// store the info
 				storeImageAndColor( (StateIdentifier)state,
-														TheMappedImageCollection->findImageByName( AsciiString(  imageBuffer ) ),
+														TheMappedImageCollection->findImageByName( imageBuffer ),
 														GameMakeColor( colorR, colorG, colorB, colorA ),
 														GameMakeColor( bColorR, bColorG, bColorB, bColorA ) );
 			}

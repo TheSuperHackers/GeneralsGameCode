@@ -1490,8 +1490,10 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 
 		case PARSE_TRANSITION:
 		{
-		  AsciiString firstNm = ini->getNextToken(); firstNm.toLower();
-		  AsciiString secondNm = ini->getNextToken(); secondNm.toLower();
+			AsciiString firstNm = ini->getNextToken();
+			AsciiString secondNm = ini->getNextToken();
+			firstNm.toLower();
+			secondNm.toLower();
 			NameKeyType firstKey = NAMEKEY(firstNm);
 			NameKeyType secondKey = NAMEKEY(secondNm);
 

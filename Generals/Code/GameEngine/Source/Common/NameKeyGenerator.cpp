@@ -140,6 +140,30 @@ Bool NameKeyGenerator::addReservedKey()
 #endif
 
 //-------------------------------------------------------------------------------------------------
+NameKeyType NameKeyGenerator::nameToKey(const AsciiString& name)
+{
+	const NameKeyType key = nameToKeyImpl(name);
+
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+	while (addReservedKey());
+#endif
+
+	return key;
+}
+
+//-------------------------------------------------------------------------------------------------
+NameKeyType NameKeyGenerator::nameToLowercaseKey(const AsciiString& name)
+{
+	const NameKeyType key = nameToLowercaseKeyImpl(name);
+
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+	while (addReservedKey());
+#endif
+
+	return key;
+}
+
+//-------------------------------------------------------------------------------------------------
 NameKeyType NameKeyGenerator::nameToKey(const char* name)
 {
 	const NameKeyType key = nameToKeyImpl(name);
@@ -161,6 +185,40 @@ NameKeyType NameKeyGenerator::nameToLowercaseKey(const char *name)
 #endif
 
 	return key;
+}
+
+//-------------------------------------------------------------------------------------------------
+NameKeyType NameKeyGenerator::nameToKeyImpl(const AsciiString& name)
+{
+	const UnsignedInt hash = calcHashForString(name.str()) % SOCKET_COUNT;
+
+	// do we have it already?
+	const Bucket *b;
+	for (b = m_sockets[hash]; b; b = b->m_nextInSocket)
+	{
+		if (name.compare(b->m_nameString) == 0)
+			return b->m_key;
+	}
+
+	// nope, guess not. let's allocate it.
+	return createNameKey(hash, name);
+}
+
+//-------------------------------------------------------------------------------------------------
+NameKeyType NameKeyGenerator::nameToLowercaseKeyImpl(const AsciiString& name)
+{
+	const UnsignedInt hash = calcHashForLowercaseString(name.str()) % SOCKET_COUNT;
+
+	// do we have it already?
+	const Bucket *b;
+	for (b = m_sockets[hash]; b; b = b->m_nextInSocket)
+	{
+		if (name.compareNoCase(b->m_nameString) == 0)
+			return b->m_key;
+	}
+
+	// nope, guess not. let's allocate it.
+	return createNameKey(hash, name);
 }
 
 //-------------------------------------------------------------------------------------------------

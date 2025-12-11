@@ -147,7 +147,9 @@ public:
 	/**
 		Find the DamageFX with the given name. If no such DamageFX exists, return null.
 	*/
-	const DamageFX *findDamageFX( AsciiString name ) const;
+	const DamageFX *findDamageFX( NameKeyType namekey ) const;
+	const DamageFX *findDamageFX( const AsciiString& name ) const;
+	const DamageFX *findDamageFX( const char* name ) const;
 
 	static void parseDamageFXDefinition(INI* ini);
 

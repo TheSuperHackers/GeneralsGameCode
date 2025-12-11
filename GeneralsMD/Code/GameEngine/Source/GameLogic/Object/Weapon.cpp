@@ -1622,12 +1622,22 @@ void WeaponStore::createAndFireTempWeapon(const WeaponTemplate* wt, const Object
 }
 
 //-------------------------------------------------------------------------------------------------
-const WeaponTemplate *WeaponStore::findWeaponTemplate( AsciiString name ) const
+const WeaponTemplate *WeaponStore::findWeaponTemplate( const AsciiString& name ) const
 {
-	if (stricmp(name.str(), "None") == 0)
+	if (name.compareNoCase("None") == 0)
 		return NULL;
 	const WeaponTemplate * wt = findWeaponTemplatePrivate( TheNameKeyGenerator->nameToKey( name ) );
-	DEBUG_ASSERTCRASH(wt != NULL, ("Weapon %s not found!",name.str()));
+	DEBUG_ASSERTCRASH(wt != NULL, ("Weapon %s not found!",name));
+	return wt;
+}
+
+//-------------------------------------------------------------------------------------------------
+const WeaponTemplate *WeaponStore::findWeaponTemplate( const char* name ) const
+{
+	if (stricmp(name, "None") == 0)
+		return NULL;
+	const WeaponTemplate * wt = findWeaponTemplatePrivate( TheNameKeyGenerator->nameToKey( name ) );
+	DEBUG_ASSERTCRASH(wt != NULL, ("Weapon %s not found!",name));
 	return wt;
 }
 

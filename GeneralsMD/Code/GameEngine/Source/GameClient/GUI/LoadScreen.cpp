@@ -1903,13 +1903,11 @@ void MapTransferLoadScreen::init( GameInfo *game )
 	Int i;
 
 	// Load the Filename Text
-	winName.format( "MapTransferScreen.wnd:StaticTextCurrentFile");
-	m_fileNameText = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+	m_fileNameText = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( "MapTransferScreen.wnd:StaticTextCurrentFile" ));
 	DEBUG_ASSERTCRASH(m_fileNameText, ("Can't initialize the filename for the map transfer loadscreen"));
 
 	// Load the Timeout Text
-	winName.format( "MapTransferScreen.wnd:StaticTextTimeout");
-	m_timeoutText = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( winName ));
+	m_timeoutText = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( "MapTransferScreen.wnd:StaticTextTimeout" ));
 	DEBUG_ASSERTCRASH(m_timeoutText, ("Can't initialize the timeout for the map transfer loadscreen"));
 
 	Int netSlot = 0;

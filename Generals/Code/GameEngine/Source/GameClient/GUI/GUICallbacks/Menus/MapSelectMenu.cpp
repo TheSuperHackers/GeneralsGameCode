@@ -108,8 +108,7 @@ static void shutdownComplete( WindowLayout *layout )
 
 void SetDifficultyRadioButton( void )
 {
-	AsciiString parentName( "MapSelectMenu.wnd:MapSelectMenuParent" );
-	NameKeyType parentID = TheNameKeyGenerator->nameToKey( parentName );
+	NameKeyType parentID = TheNameKeyGenerator->nameToKey( "MapSelectMenu.wnd:MapSelectMenuParent" );
 	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
 
 	if (!TheScriptEngine)
@@ -171,8 +170,7 @@ void MapSelectMenuInit( WindowLayout *layout, void *userData )
 	Bool usesSystemMapDir = pref.usesSystemMapDir();
 
 	// get the listbox window
-	AsciiString listString( "MapSelectMenu.wnd:ListboxMap" );
-	NameKeyType mapListID = TheNameKeyGenerator->nameToKey( listString );
+	NameKeyType mapListID = TheNameKeyGenerator->nameToKey( "MapSelectMenu.wnd:ListboxMap" );
 	mapList = TheWindowManager->winGetWindowFromId( NULL, mapListID );
 	if( mapList )
 	{
@@ -183,8 +181,7 @@ void MapSelectMenuInit( WindowLayout *layout, void *userData )
 
 
 	// set keyboard focus to main parent
-	AsciiString parentName( "MapSelectMenu.wnd:MapSelectMenuParent" );
-	NameKeyType parentID = TheNameKeyGenerator->nameToKey( parentName );
+	NameKeyType parentID = TheNameKeyGenerator->nameToKey( "MapSelectMenu.wnd:MapSelectMenuParent" );
 	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
 	TheWindowManager->winSetFocus( parent );
 
@@ -280,8 +277,7 @@ WindowMsgHandledType MapSelectMenuInput( GameWindow *window, UnsignedInt msg,
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						AsciiString buttonName( "MapSelectMenu.wnd:ButtonBack" );
-						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
+						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( "MapSelectMenu.wnd:ButtonBack" );
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,

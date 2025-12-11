@@ -90,8 +90,8 @@ public:
 	virtual void update() { }
 
 	/// Given a string, convert into a unique integer key.
-	NameKeyType nameToKey(const AsciiString& name) { return nameToKey(name.str()); }
-	NameKeyType nameToLowercaseKey(const AsciiString& name) { return nameToLowercaseKey(name.str()); }
+	NameKeyType nameToKey(const AsciiString& name);
+	NameKeyType nameToLowercaseKey(const AsciiString& name);
 
 	/// Given a string, convert into a unique integer key.
 	NameKeyType nameToKey(const char* name);
@@ -120,6 +120,8 @@ private:
 	Bool addReservedKey();
 #endif
 
+	NameKeyType nameToKeyImpl(const AsciiString& name);
+	NameKeyType nameToLowercaseKeyImpl(const AsciiString& name);
 	NameKeyType nameToKeyImpl(const char* name);
 	NameKeyType nameToLowercaseKeyImpl(const char *name);
 	NameKeyType createNameKey(UnsignedInt hash, const AsciiString& name);

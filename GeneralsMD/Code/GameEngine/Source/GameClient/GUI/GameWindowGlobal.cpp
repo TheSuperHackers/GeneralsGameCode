@@ -131,7 +131,7 @@ const Image *GameWindowManager::winFindImage( const char *name )
 
 	assert( TheMappedImageCollection );
 	if( TheMappedImageCollection )
-		return TheMappedImageCollection->findImageByName( AsciiString( name ) );
+		return TheMappedImageCollection->findImageByName( name );
 
 	return NULL;
 

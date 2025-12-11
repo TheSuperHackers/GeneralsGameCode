@@ -238,6 +238,7 @@ public:
 	UpgradeTemplate *firstUpgradeTemplate( void ); ///< return the first upgrade template
 	const UpgradeTemplate *findUpgradeByKey( NameKeyType key ) const; ///< find upgrade by name key
 	const UpgradeTemplate *findUpgrade( const AsciiString& name ) const; ///< find and return upgrade by name
+	const UpgradeTemplate *findUpgrade( const char* name ) const; ///< find and return upgrade by name
 	const UpgradeTemplate *findVeterancyUpgrade(VeterancyLevel level) const; ///< find and return upgrade by veterancy level
 
 	UpgradeTemplate *newUpgrade( const AsciiString& name );				///< allocate, link, and return new upgrade

@@ -814,7 +814,8 @@ public:
 	/**
 		Find the WeaponTemplate with the given name. If no such WeaponTemplate exists, return null.
 	*/
-	const WeaponTemplate *findWeaponTemplate(AsciiString name) const;
+	const WeaponTemplate *findWeaponTemplate(const AsciiString& name) const;
+	const WeaponTemplate *findWeaponTemplate(const char* name) const;
 	const WeaponTemplate *findWeaponTemplateByNameKey( NameKeyType key ) const { return findWeaponTemplatePrivate( key ); }
 
 	// this dynamically allocates a new Weapon, which is owned (and must be freed!) by the caller.

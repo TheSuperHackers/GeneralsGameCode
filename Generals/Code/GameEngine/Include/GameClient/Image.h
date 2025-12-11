@@ -116,6 +116,7 @@ friend class ImageCollection;
 //-------------------------------------------------------------------------------------------------
 class ImageCollection : public SubsystemInterface
 {
+	typedef std::map<NameKeyType, Image *> ImageMap;
 
 public:
 
@@ -128,7 +129,9 @@ public:
 
 	void load( Int textureSize );												 ///< load images
 
+	const Image *findImage( NameKeyType namekey ) const; ///< find image based on name key
 	const Image *findImageByName( const AsciiString& name ) const; ///< find image based on name
+	const Image *findImageByName( const char* name ) const; ///< find image based on name
 
   /// adds the given image to the collection, transfers ownership to this object
   void addImage(Image *image);
@@ -136,14 +139,14 @@ public:
   /// enumerates the list of existing images
   Image *Enum(unsigned index)
   {
-    for (std::map<unsigned,Image *>::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
+    for (ImageMap::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
       if (!index--)
         return i->second;
     return NULL;
   }
 
 protected:
-  std::map<unsigned,Image *> m_imageMap;  ///< maps named keys to images
+  ImageMap m_imageMap;  ///< maps named keys to images
 };
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////

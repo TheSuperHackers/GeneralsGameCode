@@ -122,8 +122,7 @@ void LanMapSelectMenuInit( WindowLayout *layout, void *userData )
 	showLANGameOptionsUnderlyingGUIElements(FALSE);
 
 	// set keyboard focus to main parent
-	AsciiString parentName( "LanMapSelectMenu.wnd:LanMapSelectMenuParent" );
-	NameKeyType parentID = TheNameKeyGenerator->nameToKey( parentName );
+	NameKeyType parentID = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:LanMapSelectMenuParent" );
 	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
 
 	TheWindowManager->winSetFocus( parent );
@@ -165,8 +164,7 @@ void LanMapSelectMenuInit( WindowLayout *layout, void *userData )
 	}
 
 	// get the listbox window
-	AsciiString listString( "LanMapSelectMenu.wnd:ListboxMap" );
-	NameKeyType mapListID = TheNameKeyGenerator->nameToKey( listString );
+	NameKeyType mapListID = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:ListboxMap" );
 	mapList = TheWindowManager->winGetWindowFromId( parent, mapListID );
 	if( mapList )
 	{
@@ -228,8 +226,7 @@ WindowMsgHandledType LanMapSelectMenuInput( GameWindow *window, UnsignedInt msg,
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						AsciiString buttonName( "LanMapSelectMenu.wnd:ButtonBack" );
-						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
+						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:ButtonBack" );
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
