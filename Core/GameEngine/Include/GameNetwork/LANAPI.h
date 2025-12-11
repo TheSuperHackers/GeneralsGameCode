@@ -141,147 +141,6 @@ public:
 
 
 /**
- * The LANAPI class is used to instantiate a singleton which
- * implements the interface to all LAN broadcast communications.
- */
-class LANAPI : public LANAPIInterface
-{
-public:
-
-	LANAPI();
-	virtual ~LANAPI();
-
-	virtual void init( void );															///< Initialize or re-initialize the instance
-	virtual void reset( void );															///< reset the logic system
-	virtual void update( void );														///< update the world
-
-	virtual void setIsActive(Bool isActive);								///< tell TheLAN whether or not
-
-	// Request functions generate network traffic
-	virtual void RequestLocations( void );																				///< Request everybody to respond with where they are
-	virtual void RequestGameJoin( LANGameInfo *game, UnsignedInt ip = 0 );				///< Request to join a game
-	virtual void RequestGameJoinDirectConnect( UnsignedInt ipaddress );						///< Request to join a game at an IP address
-	virtual void RequestGameLeave( void );																				///< Tell everyone we're leaving
-	virtual void RequestAccept( void );																						///< Indicate we're OK with the game options
-	virtual void RequestHasMap( void );																						///< Send our map status
-	virtual void RequestChat( UnicodeString message, ChatType format );						///< Send a chat message
-	virtual void RequestGameStart( void );																				///< Tell everyone the game is starting
-	virtual void RequestGameStartTimer( Int seconds );
-	virtual void RequestGameOptions( AsciiString gameOptions, Bool isPublic, UnsignedInt ip = 0 );		///< Change the game options
-	virtual void RequestGameCreate( UnicodeString gameName, Bool isDirectConnect );	///< Try to host a game
-	virtual void RequestGameAnnounce( void );																			///< Send out game info if host
-	virtual void RequestSetName( UnicodeString newName );													///< Pick a new name
-//	virtual void RequestSlotList( void );																					///< Pump out the Slot info.
-	virtual void RequestLobbyLeave( Bool forced );																///< Announce that we're leaving the lobby
-	virtual void ResetGameStartTimer( void );
-
-	// On functions are (generally) the result of network traffic
-	virtual void OnGameList( LANGameInfo *gameList );																							///< List of games
-	virtual void OnPlayerList( LANPlayer *playerList );																				///< List of players in the Lobby
-	virtual void OnGameJoin( ReturnType ret, LANGameInfo *theGame );															///< Did we get in the game?
-	virtual void OnPlayerJoin( Int slot, UnicodeString playerName );													///< Someone else joined our game (host only; joiners get a slotlist)
-	virtual void OnHostLeave( void );																													///< Host left the game
-	virtual void OnPlayerLeave( UnicodeString player );																				///< Someone left the game
-	virtual void OnAccept( UnsignedInt playerIP, Bool status );																///< Someone's accept status changed
-	virtual void OnHasMap( UnsignedInt playerIP, Bool status );																///< Someone's map status changed
-	virtual void OnChat( UnicodeString player, UnsignedInt ip,
-											 UnicodeString message, ChatType format );														///< Chat message from someone
-	virtual void OnGameStart( void );																													///< The game is starting
-	virtual void OnGameStartTimer( Int seconds );
-	virtual void OnGameOptions( UnsignedInt playerIP, Int playerSlot, AsciiString options );	///< Someone sent game options
-	virtual void OnGameCreate( ReturnType ret );																							///< Your game is created
-	//virtual void OnSlotList( ReturnType ret, LANGameInfo *theGame );															///< Slotlist for a game in setup
-	virtual void OnNameChange( UnsignedInt IP, UnicodeString newName );												///< Someone has morphed
-	virtual void OnInActive( UnsignedInt IP );																								///< Someone has alt-tabbed out.
-
-
-	// Misc utility functions
-	virtual LANGameInfo * LookupGame( UnicodeString gameName );														///< return a pointer to a game we know about
-	virtual LANGameInfo * LookupGameByListOffset( Int offset );														///< return a pointer to a game we know about
-	virtual LANPlayer * LookupPlayer( UnsignedInt playerIP );													///< return a pointer to a player we know about
-	virtual Bool SetLocalIP( UnsignedInt localIP );																		///< For multiple NIC machines
-	virtual void SetLocalIP( AsciiString localIP );																		///< For multiple NIC machines
-	virtual Bool AmIHost( void );																											///< Am I hosting a game?
-	virtual inline UnicodeString GetMyName( void ) { return m_name; }                 ///< What's my name?
-	virtual inline LANGameInfo* GetMyGame( void ) { return m_currentGame; }					      ///< What's my Game?
-	virtual inline UnsignedInt GetLocalIP( void ) { return m_localIP; }								///< What's my IP?
-	virtual void fillInLANMessage( LANMessage *msg );																	///< Fill in default params
-	virtual void checkMOTD( void );
-protected:
-
-	enum PendingActionType
-	{
-		ACT_NONE = 0,
-		ACT_JOIN,
-		ACT_JOINDIRECTCONNECT,
-		ACT_LEAVE,
-	};
-
-	static const UnsignedInt s_resendDelta; // in ms
-
-protected:
-	LANPlayer *					m_lobbyPlayers;			///< List of players in the lobby
-	LANGameInfo *				m_games;								///< List of games
-	UnicodeString				m_name;							///< Who do we think we are?
-	AsciiString					m_userName;						///< login name
-	AsciiString					m_hostName;						///< machine name
-	UnsignedInt					m_gameStartTime;
-	Int									m_gameStartSeconds;
-
-	PendingActionType		m_pendingAction;	///< What action are we performing?
-	UnsignedInt					m_expiration;						///< When should we give up on our action?
-	UnsignedInt					m_actionTimeout;
-	UnsignedInt					m_directConnectRemoteIP;///< The IP address of the game we are direct connecting to.
-
-	// Resend timer ---------------------------------------------------------------------------
-	UnsignedInt					m_lastResendTime; // in ms
-
-	Bool								m_isInLANMenu;		///< true while we are in a LAN menu (lobby, game options, direct connect)
-	Bool								m_inLobby;											///< Are we in the lobby (not in a game)?
-	LANGameInfo *				m_currentGame;							///< Pointer to game (setup screen) we are currently in (NULL for lobby)
-	//LANGameInfo *m_currentGameInfo;			///< Pointer to game setup info we are currently in.
-
-	UnsignedInt					m_localIP;
-	Transport*					m_transport;
-
-	UnsignedInt					m_broadcastAddr;
-
-	UnsignedInt					m_lastUpdate;
-	AsciiString					m_lastGameopt; /// @todo: hack for demo - remove this
-
-	Bool								m_isActive;			///< is the game currently active?
-
-protected:
-	void sendMessage(LANMessage *msg, UnsignedInt ip = 0); // Convenience function
-	void removePlayer(LANPlayer *player);
-	void removeGame(LANGameInfo *game);
-	void addPlayer(LANPlayer *player);
-	void addGame(LANGameInfo *game);
-	AsciiString createSlotString( void );
-
-	// Functions to handle incoming messages -----------------------------------
-	void handleRequestLocations( LANMessage *msg, UnsignedInt senderIP );
-	void handleGameAnnounce( LANMessage *msg, UnsignedInt senderIP );
-	void handleLobbyAnnounce( LANMessage *msg, UnsignedInt senderIP );
-	void handleRequestGameInfo( LANMessage *msg, UnsignedInt senderIP );
-	void handleRequestJoin( LANMessage *msg, UnsignedInt senderIP );
-	void handleJoinAccept( LANMessage *msg, UnsignedInt senderIP );
-	void handleJoinDeny( LANMessage *msg, UnsignedInt senderIP );
-	void handleRequestGameLeave( LANMessage *msg, UnsignedInt senderIP );
-	void handleRequestLobbyLeave( LANMessage *msg, UnsignedInt senderIP );
-	void handleSetAccept( LANMessage *msg, UnsignedInt senderIP );
-	void handleHasMap( LANMessage *msg, UnsignedInt senderIP );
-	void handleChat( LANMessage *msg, UnsignedInt senderIP );
-	void handleGameStart( LANMessage *msg, UnsignedInt senderIP );
-	void handleGameStartTimer( LANMessage *msg, UnsignedInt senderIP );
-	void handleGameOptions( LANMessage *msg, UnsignedInt senderIP );
-	void handleInActive( LANMessage *msg, UnsignedInt senderIP );
-
-};
-
-
-
-/**
  * LAN message class
  */
 #pragma pack(push, 1)
@@ -313,6 +172,14 @@ struct LANMessage
 		MSG_INACTIVE,						///< I've alt-tabbed out.  Unaccept me cause I'm a poo-flinging monkey.
 
 		MSG_REQUEST_GAME_INFO,	///< For direct connect, get the game info from a specific IP Address
+
+		// Community Product
+		MSG_GAME_REQUEST_PRODUCT_INFO = 1000,
+		MSG_GAME_RESPONSE_PRODUCT_INFO,
+		MSG_LOBBY_REQUEST_PRODUCT_INFO,
+		MSG_LOBBY_RESPONSE_PRODUCT_INFO,
+		MSG_MATCH_REQUEST_PRODUCT_INFO,
+		MSG_MATCH_RESPONSE_PRODUCT_INFO,
 	} messageType;
 
 	WideChar name[g_lanPlayerNameLength+1]; ///< My name, for convenience
@@ -407,6 +274,169 @@ struct LANMessage
 			char options[m_lanMaxOptionsLength+1];
 		} GameOptions;
 
+		// ProductInfo is sent with REQUEST_PRODUCT_INFO and RESPONSE_PRODUCT_INFO
+		struct
+		{
+			UnsignedInt flags;
+			UnsignedInt exeCRC;
+			UnsignedInt iniCRC;
+			WideChar data[201];
+		} ProductInfo;
 	};
 };
 #pragma pack(pop)
+
+static_assert(sizeof(LANMessage) <= MAX_PACKET_SIZE, "LANMessage struct cannot be larger than the max packet size");
+
+
+/**
+ * The LANAPI class is used to instantiate a singleton which
+ * implements the interface to all LAN broadcast communications.
+ */
+class LANAPI : public LANAPIInterface
+{
+public:
+
+	LANAPI();
+	virtual ~LANAPI();
+
+	virtual void init( void );															///< Initialize or re-initialize the instance
+	virtual void reset( void );															///< reset the logic system
+	virtual void update( void );														///< update the world
+
+	virtual void setIsActive(Bool isActive);								///< tell TheLAN whether or not
+
+	// Request functions generate network traffic
+	virtual void RequestLocations( void );																				///< Request everybody to respond with where they are
+	virtual void RequestGameJoin( LANGameInfo *game, UnsignedInt ip = 0 );				///< Request to join a game
+	virtual void RequestGameJoinDirectConnect( UnsignedInt ipaddress );						///< Request to join a game at an IP address
+	virtual void RequestGameLeave( void );																				///< Tell everyone we're leaving
+	virtual void RequestAccept( void );																						///< Indicate we're OK with the game options
+	virtual void RequestHasMap( void );																						///< Send our map status
+	virtual void RequestChat( UnicodeString message, ChatType format );						///< Send a chat message
+	virtual void RequestGameStart( void );																				///< Tell everyone the game is starting
+	virtual void RequestGameStartTimer( Int seconds );
+	virtual void RequestGameOptions( AsciiString gameOptions, Bool isPublic, UnsignedInt ip = 0 );		///< Change the game options
+	virtual void RequestGameCreate( UnicodeString gameName, Bool isDirectConnect );	///< Try to host a game
+	virtual void RequestGameAnnounce( void );																			///< Send out game info if host
+	virtual void RequestSetName( UnicodeString newName );													///< Pick a new name
+//	virtual void RequestSlotList( void );																					///< Pump out the Slot info.
+	virtual void RequestLobbyLeave( Bool forced );																///< Announce that we're leaving the lobby
+	virtual void ResetGameStartTimer( void );
+
+	// On functions are (generally) the result of network traffic
+	virtual void OnGameList( LANGameInfo *gameList );																							///< List of games
+	virtual void OnPlayerList( LANPlayer *playerList );																				///< List of players in the Lobby
+	virtual void OnGameJoin( ReturnType ret, LANGameInfo *theGame );															///< Did we get in the game?
+	virtual void OnPlayerJoin( Int slot, UnicodeString playerName );													///< Someone else joined our game (host only; joiners get a slotlist)
+	virtual void OnHostLeave( void );																													///< Host left the game
+	virtual void OnPlayerLeave( UnicodeString player );																				///< Someone left the game
+	virtual void OnAccept( UnsignedInt playerIP, Bool status );																///< Someone's accept status changed
+	virtual void OnHasMap( UnsignedInt playerIP, Bool status );																///< Someone's map status changed
+	virtual void OnChat( UnicodeString player, UnsignedInt ip,
+											 UnicodeString message, ChatType format );														///< Chat message from someone
+	virtual void OnGameStart( void );																													///< The game is starting
+	virtual void OnGameStartTimer( Int seconds );
+	virtual void OnGameOptions( UnsignedInt playerIP, Int playerSlot, AsciiString options );	///< Someone sent game options
+	virtual void OnGameCreate( ReturnType ret );																							///< Your game is created
+	//virtual void OnSlotList( ReturnType ret, LANGameInfo *theGame );															///< Slotlist for a game in setup
+	virtual void OnNameChange( UnsignedInt IP, UnicodeString newName );												///< Someone has morphed
+	virtual void OnInActive( UnsignedInt IP );																								///< Someone has alt-tabbed out.
+
+
+	// Misc utility functions
+	virtual LANGameInfo * LookupGame( UnicodeString gameName );														///< return a pointer to a game we know about
+	virtual LANGameInfo * LookupGameByListOffset( Int offset );														///< return a pointer to a game we know about
+	virtual LANGameInfo * LookupGameByHost( UnsignedInt hostIP );                     ///< return a pointer to a game we know about
+	virtual LANPlayer * LookupPlayer( UnsignedInt playerIP );													///< return a pointer to a player we know about
+	virtual Bool SetLocalIP( UnsignedInt localIP );																		///< For multiple NIC machines
+	virtual void SetLocalIP( AsciiString localIP );																		///< For multiple NIC machines
+	virtual Bool AmIHost( void );																											///< Am I hosting a game?
+	virtual inline UnicodeString GetMyName( void ) { return m_name; }                 ///< What's my name?
+	virtual inline LANGameInfo* GetMyGame( void ) { return m_currentGame; }					      ///< What's my Game?
+	virtual inline UnsignedInt GetLocalIP( void ) { return m_localIP; }								///< What's my IP?
+	virtual void fillInLANMessage( LANMessage *msg );																	///< Fill in default params
+	virtual void checkMOTD( void );
+protected:
+
+	enum PendingActionType
+	{
+		ACT_NONE = 0,
+		ACT_JOIN,
+		ACT_JOINDIRECTCONNECT,
+		ACT_LEAVE,
+	};
+
+	static const UnsignedInt s_resendDelta; // in ms
+
+protected:
+	LANPlayer *					m_lobbyPlayers;			///< List of players in the lobby
+	LANGameInfo *				m_games;								///< List of games
+	UnicodeString				m_name;							///< Who do we think we are?
+	AsciiString					m_userName;						///< login name
+	AsciiString					m_hostName;						///< machine name
+	UnsignedInt					m_gameStartTime;
+	Int									m_gameStartSeconds;
+
+	PendingActionType		m_pendingAction;	///< What action are we performing?
+	UnsignedInt					m_expiration;						///< When should we give up on our action?
+	UnsignedInt					m_actionTimeout;
+	UnsignedInt					m_directConnectRemoteIP;///< The IP address of the game we are direct connecting to.
+
+	// Resend timer ---------------------------------------------------------------------------
+	UnsignedInt					m_lastResendTime; // in ms
+
+	Bool								m_isInLANMenu;		///< true while we are in a LAN menu (lobby, game options, direct connect)
+	Bool								m_inLobby;											///< Are we in the lobby (not in a game)?
+	LANGameInfo *				m_currentGame;							///< Pointer to game (setup screen) we are currently in (NULL for lobby)
+	//LANGameInfo *m_currentGameInfo;			///< Pointer to game setup info we are currently in.
+
+	UnsignedInt					m_localIP;
+	Transport*					m_transport;
+
+	UnsignedInt					m_broadcastAddr;
+
+	UnsignedInt					m_lastUpdate;
+	AsciiString					m_lastGameopt; /// @todo: hack for demo - remove this
+
+	Bool								m_isActive;			///< is the game currently active?
+
+protected:
+	void sendMessage(LANMessage *msg, UnsignedInt ip = 0); // Convenience function
+	void removePlayer(LANPlayer *player);
+	void removeGame(LANGameInfo *game);
+	void addPlayer(LANPlayer *player);
+	void addGame(LANGameInfo *game);
+	AsciiString createSlotString( void );
+
+	static void setProductInfoFromLocalData(GameSlot *slot);
+	static void setProductInfoFromMessage(LANMessage *msg, GameSlot *slot);
+	static Bool setProductInfoStrings(const UnicodeString(&input)[4], WideChar(&output)[201]);
+	static Bool getProductInfoStrings(const WideChar(&input)[201], UnicodeString*(&output)[4]);
+
+	// Functions to handle incoming messages -----------------------------------
+	void handleRequestLocations( LANMessage *msg, UnsignedInt senderIP );
+	void handleGameAnnounce( LANMessage *msg, UnsignedInt senderIP );
+	void handleLobbyAnnounce( LANMessage *msg, UnsignedInt senderIP );
+	void handleRequestGameInfo( LANMessage *msg, UnsignedInt senderIP );
+	void handleRequestJoin( LANMessage *msg, UnsignedInt senderIP );
+	void handleJoinAccept( LANMessage *msg, UnsignedInt senderIP );
+	void handleJoinDeny( LANMessage *msg, UnsignedInt senderIP );
+	void handleRequestGameLeave( LANMessage *msg, UnsignedInt senderIP );
+	void handleRequestLobbyLeave( LANMessage *msg, UnsignedInt senderIP );
+	void handleSetAccept( LANMessage *msg, UnsignedInt senderIP );
+	void handleHasMap( LANMessage *msg, UnsignedInt senderIP );
+	void handleChat( LANMessage *msg, UnsignedInt senderIP );
+	void handleGameStart( LANMessage *msg, UnsignedInt senderIP );
+	void handleGameStartTimer( LANMessage *msg, UnsignedInt senderIP );
+	void handleGameOptions( LANMessage *msg, UnsignedInt senderIP );
+	void handleInActive( LANMessage *msg, UnsignedInt senderIP );
+
+	void sendProductInfoMessage(LANMessage::Type messageType, UnsignedInt senderIP);
+	void handleGameProductInfoRequest(LANMessage *msg, UnsignedInt senderIP);
+	void handleGameProductInfoResponse(LANMessage *msg, UnsignedInt senderIP);
+	void handleLobbyProductInfoRequest(LANMessage *msg, UnsignedInt senderIP);
+	void handleLobbyProductInfoResponse(LANMessage *msg, UnsignedInt senderIP);
+	void handleMatchProductInfoRequest(LANMessage *msg, UnsignedInt senderIP);
+	void handleMatchProductInfoResponse(LANMessage *msg, UnsignedInt senderIP);
+};

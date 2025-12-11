@@ -66,6 +66,9 @@ public:
 	AsciiString getAsciiGitTagOrHash() const;          ///< Returns the git head commit tag or hash. Is prefixed with ~ if there were uncommitted changes.
 	UnicodeString getUnicodeGitTagOrHash() const;      ///< Returns the git head commit tag or hash. Is prefixed with ~ if there were uncommitted changes.
 
+	AsciiString getAsciiGitShortHash() const;          ///< Returns the git head commit short hash. Is prefixed with ~ if there were uncommitted changes.
+	UnicodeString getUnicodeGitShortHash() const;      ///< Returns the git head commit short hash. Is prefixed with ~ if there were uncommitted changes.
+
 	AsciiString getAsciiGitCommitTime() const;         ///< Returns the git head commit time in YYYY-mm-dd HH:MM:SS format
 	UnicodeString getUnicodeGitCommitTime() const;     ///< Returns the git head commit time in YYYY-mm-dd HH:MM:SS format
 
@@ -95,6 +98,9 @@ private:
 	static AsciiString buildAsciiGitTagOrHash();
 	static UnicodeString buildUnicodeGitTagOrHash();
 
+	static AsciiString buildAsciiGitShortHash();
+	static UnicodeString buildUnicodeGitShortHash();
+
 	static AsciiString buildAsciiGitCommitTime();
 	static UnicodeString buildUnicodeGitCommitTime();
 
@@ -109,9 +115,11 @@ private:
 	AsciiString m_buildDate;
 	AsciiString m_asciiGitCommitCount;
 	AsciiString m_asciiGitTagOrHash;
+	AsciiString m_asciiGitShortHash;
 	AsciiString m_asciiGitCommitTime;
 	UnicodeString m_unicodeGitCommitCount;
 	UnicodeString m_unicodeGitTagOrHash;
+	UnicodeString m_unicodeGitShortHash;
 	UnicodeString m_unicodeGitCommitTime;
 	Bool m_showFullVersion;
 };
