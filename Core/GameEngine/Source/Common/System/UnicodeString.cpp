@@ -409,25 +409,25 @@ void UnicodeString::format_va(const WideChar* format, va_list args)
 // -----------------------------------------------------
 Bool UnicodeString::startsWith(const WideChar* p) const
 {
-	return ::startsWith(peek(), p);
+	return m_data && ::startsWith(peek(), p);
 }
 
 // -----------------------------------------------------
 Bool UnicodeString::startsWithNoCase(const WideChar* p) const
 {
-	return ::startsWithNoCase(peek(), p);
+	return m_data && ::startsWithNoCase(peek(), p);
 }
 
 // -----------------------------------------------------
 Bool UnicodeString::endsWith(const WideChar* p) const
 {
-	return ::endsWith(peek(), p);
+	return m_data && ::endsWith(peek(), p);
 }
 
 // -----------------------------------------------------
 Bool UnicodeString::endsWithNoCase(const WideChar* p) const
 {
-	return ::endsWithNoCase(peek(), p);
+	return m_data && ::endsWithNoCase(peek(), p);
 }
 
 //-----------------------------------------------------------------------------
