@@ -1549,7 +1549,7 @@ Bool Object::isLogicallyVisible() const
 	if (isLocallyViewed())
 		return true;
 
-	if (TheControlBar->isObserverControlBarOn())
+	if (rts::localPlayerIsObserving())
 	{
 		const Player* observedPlayer = TheControlBar->getObserverLookAtPlayer();
 		if (!observedPlayer || !observedPlayer->isPlayerActive())
