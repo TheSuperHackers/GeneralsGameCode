@@ -686,36 +686,6 @@ const Object* Object::getOuterObject() const
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool Object::isLogicallyVisible() const
-{
-	if (isLocallyViewed())
-		return true;
-
-	if (TheControlBar->isObserverControlBarOn())
-	{
-		const Player* observedPlayer = TheControlBar->getObserverLookAtPlayer();
-		if (!observedPlayer || !observedPlayer->isPlayerActive())
-			return true;
-	}
-
-	const Object* obj = getOuterObject();
-
-	if (obj->isKindOf(KINDOF_DISGUISER))
-		return true;
-
-	if (obj->testStatus(OBJECT_STATUS_STEALTHED) && !obj->testStatus(OBJECT_STATUS_DETECTED))
-	{
-		const Player* player = rts::getObservedOrLocalPlayer();
-		const Relationship relationship = player->getRelationship(getTeam());
-
-		if (relationship != ALLIES)
-			return false;
-	}
-
-	return true;
-}
-
-//-------------------------------------------------------------------------------------------------
 /** Run from GameLogic::destroyObject */
 //-------------------------------------------------------------------------------------------------
 void Object::onDestroy()
@@ -1569,6 +1539,38 @@ Color Object::getNightIndicatorColor() const
 	{
 		return m_indicatorColor;
 	}
+}
+
+//=============================================================================
+// Object::isLogicallyVisible
+//=============================================================================
+Bool Object::isLogicallyVisible() const
+{
+	if (isLocallyViewed())
+		return true;
+
+	if (TheControlBar->isObserverControlBarOn())
+	{
+		const Player* observedPlayer = TheControlBar->getObserverLookAtPlayer();
+		if (!observedPlayer || !observedPlayer->isPlayerActive())
+			return true;
+	}
+
+	const Object* obj = getOuterObject();
+
+	if (obj->isKindOf(KINDOF_DISGUISER))
+		return true;
+
+	if (obj->testStatus(OBJECT_STATUS_STEALTHED) && !obj->testStatus(OBJECT_STATUS_DETECTED))
+	{
+		const Player* player = rts::getObservedOrLocalPlayer();
+		const Relationship relationship = player->getRelationship(getTeam());
+
+		if (relationship != ALLIES)
+			return false;
+	}
+
+	return true;
 }
 
 //=============================================================================
