@@ -406,6 +406,16 @@ Bool SpecialPowerModule::initiateIntentToDoSpecialPower( const Object *targetObj
 		}
 	}
 
+	// TheSuperHackers @bugfix bobtista 01/11/2025 Prevents AI from consuming special power timer when MissileLauncherBuildingUpdate is not ready.
+#if RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @info we need to leave early if we are in the MissileLauncherBuildingUpdate crash fix codepath
+	if (m_availableOnFrame == 0xFFFFFFFF)
+	{
+		DEBUG_ASSERTCRASH(!valid, ("Using MissileLauncherBuildingUpdate escape path when valid is set to true"));
+		return false;
+	}
+#endif
+
 	//If we depend on our update module to trigger the special power, make sure we have the
 	//appropriate update module!
 	if( !valid && getSpecialPowerModuleData()->m_updateModuleStartsAttack )

@@ -200,6 +200,20 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 //-------------------------------------------------------------------------------------------------
 Bool MissileLauncherBuildingUpdate::initiateIntentToDoSpecialPower( const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions )
 {
+	// TheSuperHackers @bugfix bobtista 01/11/2025 Prevents crash when AI fires China Nuclear Missile while another is under construction.
+	if (!m_specialPowerModule) {
+#if RETAIL_COMPATIBLE_CRC
+		Object* us = getObject();
+		us->getSpecialPowerModule(specialPowerTemplate)->setReadyFrame(0xFFFFFFFF);
+#endif
+		return FALSE;
+	}
+
+	if( m_specialPowerModule->getSpecialPowerTemplate() != specialPowerTemplate )
+	{
+		return FALSE;
+	}
+
 #if defined(RTS_DEBUG)
 	DEBUG_ASSERTCRASH(!TheGlobalData->m_specialPowerUsesDelay || m_doorState == DOOR_OPEN, ("door is not fully open when specialpower is fired!"));
 #endif
