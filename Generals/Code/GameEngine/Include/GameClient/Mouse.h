@@ -107,15 +107,15 @@ struct MouseIO
 
 	MouseButtonState leftState;					// button state: Up, Down, DoubleClick (Which is also down)
 	Int leftEvent;											// Most important event this frame
-	Bool leftButtonStateChanged;					// TRUE if button state changed in this event
+	Bool leftButtonStateChanged;					// TRUE if button state changed for a given mouse event
 
 	MouseButtonState rightState;
 	Int rightEvent;
-	Bool rightButtonStateChanged;					// TRUE if button state changed in this event
+	Bool rightButtonStateChanged;					// TRUE if button state changed for a given mouse event
 
 	MouseButtonState middleState;
 	Int middleEvent;
-	Bool middleButtonStateChanged;					// TRUE if button state changed in this event
+	Bool middleButtonStateChanged;					// TRUE if button state changed for a given mouse event
 };
 
 class CursorInfo
