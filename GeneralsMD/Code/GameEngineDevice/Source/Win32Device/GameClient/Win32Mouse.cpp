@@ -85,21 +85,10 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 	UINT msg = m_eventBuffer[ eventIndex ].msg;
 	WPARAM wParam = m_eventBuffer[ eventIndex ].wParam;
 	LPARAM lParam = m_eventBuffer[ eventIndex ].lParam;
-	UnsignedInt frame;
-
-	//
-	// get the current input frame from the client, if we don't have
-	// a client (like in the GUI editor) we just use frame 1 so it
-	// registers with the system
-	//
-	if( TheGameClient )
-		frame = TheGameClient->getFrame();
-	else
-		frame = 1;
 
 	// set these to defaults
 	result->leftState = result->middleState = result->rightState = MBS_Up;
-	result->leftFrame = result->middleFrame = result->rightFrame = 0;
+	result->leftButtonStateChanged = result->middleButtonStateChanged = result->rightButtonStateChanged = FALSE;
 	result->pos.x = result->pos.y = result->wheelPos = 0;
 
 	// Time is the same for all events
@@ -113,7 +102,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->leftState = MBS_Down;
-			result->leftFrame = frame;
+			result->leftButtonStateChanged = TRUE;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
@@ -125,7 +114,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->leftState = MBS_Up;
-			result->leftFrame = frame;
+			result->leftButtonStateChanged = TRUE;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
@@ -137,7 +126,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->leftState = MBS_DoubleClick;
-			result->leftFrame = frame;
+			result->leftButtonStateChanged = TRUE;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
@@ -149,7 +138,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->middleState = MBS_Down;
-			result->middleFrame = frame;
+			result->middleButtonStateChanged = TRUE;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
@@ -161,7 +150,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->middleState = MBS_Up;
-			result->middleFrame = frame;
+			result->middleButtonStateChanged = TRUE;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
@@ -173,7 +162,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->middleState = MBS_DoubleClick;
-			result->middleFrame = frame;
+			result->middleButtonStateChanged = TRUE;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
@@ -185,7 +174,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->rightState = MBS_Down;
-			result->rightFrame = frame;
+			result->rightButtonStateChanged = TRUE;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
@@ -197,7 +186,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->rightState = MBS_Up;
-			result->rightFrame = frame;
+			result->rightButtonStateChanged = TRUE;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;
@@ -209,7 +198,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		{
 
 			result->rightState = MBS_DoubleClick;
-			result->rightFrame = frame;
+			result->rightButtonStateChanged = TRUE;
 			result->pos.x = LOWORD( lParam );
 			result->pos.y = HIWORD( lParam );
 			break;

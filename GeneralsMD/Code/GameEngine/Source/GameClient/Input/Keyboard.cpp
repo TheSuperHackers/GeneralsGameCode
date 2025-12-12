@@ -701,7 +701,6 @@ Keyboard::Keyboard( void )
 	m_shift2Key = KEY_NONE;
 
 	memset( m_keyNames, 0, sizeof( m_keyNames ) );
-	m_inputFrame = 0;
 
 }
 
@@ -721,9 +720,6 @@ void Keyboard::init( void )
 	// initialize the key names
 	initKeyNames();
 
-	// first input frame
-	m_inputFrame = 0;
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -739,9 +735,6 @@ void Keyboard::reset( void )
 //-------------------------------------------------------------------------------------------------
 void Keyboard::update( void )
 {
-
-	// increment input frame
-	m_inputFrame++;
 
 	// update the key data
 	updateKeys();

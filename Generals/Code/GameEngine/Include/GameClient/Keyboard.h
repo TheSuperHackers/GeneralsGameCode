@@ -158,7 +158,6 @@ protected:
 		WideChar shifted2;
 
 	} m_keyNames[ KEY_COUNT ];
-	UnsignedInt m_inputFrame;  ///< frame input was gathered on
 
 };
 

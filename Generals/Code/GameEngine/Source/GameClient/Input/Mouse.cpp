@@ -183,9 +183,6 @@ void Mouse::updateMouseData( )
 	else
 		m_eventsThisFrame = 0;
 
-	if( index != 0 )
-		m_deadInputFrame = m_inputFrame;
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -221,7 +218,7 @@ void Mouse::processMouseEvent( Int index )
 	m_currMouse.wheelPos += m_mouseEvents[ index ].wheelPos;
 
 	// Check Left Mouse State
-	if( m_mouseEvents[ index ].leftFrame )
+	if( m_mouseEvents[ index ].leftButtonStateChanged )
 	{
 		if( m_currMouse.leftState != m_mouseEvents[ index ].leftState )
 		{
@@ -231,21 +228,21 @@ void Mouse::processMouseEvent( Int index )
 				// Mouse Down
 				m_currMouse.leftEvent = GWM_LEFT_DOWN;
 				m_currMouse.leftState = MBS_Down;
-				m_currMouse.leftFrame = m_inputFrame;
+				m_currMouse.leftButtonStateChanged = TRUE;
 			}
 			else if ( m_mouseEvents[ index ].leftState == MBS_DoubleClick )
 			{
 				// Mouse Double Click
 				m_currMouse.leftEvent = GWM_LEFT_DOUBLE_CLICK;
 				m_currMouse.leftState = MBS_DoubleClick;
-				m_currMouse.leftFrame = m_inputFrame;
+				m_currMouse.leftButtonStateChanged = TRUE;
 			}
 			else
 			{
 				// Mouse Up
 				m_currMouse.leftEvent = GWM_LEFT_UP;
 				m_currMouse.leftState = MBS_Up;
-				m_currMouse.leftFrame = m_inputFrame;
+				m_currMouse.leftButtonStateChanged = TRUE;
 			}
 		}
 	}
@@ -257,7 +254,7 @@ void Mouse::processMouseEvent( Int index )
 	}
 
 	// Check Right Mouse State
-	if( m_mouseEvents[ index ].rightFrame )
+	if( m_mouseEvents[ index ].rightButtonStateChanged )
 	{
 		if( m_currMouse.rightState != m_mouseEvents[ index ].rightState )
 		{
@@ -267,21 +264,21 @@ void Mouse::processMouseEvent( Int index )
 				// Mouse Down
 				m_currMouse.rightEvent = GWM_RIGHT_DOWN;
 				m_currMouse.rightState = MBS_Down;
-				m_currMouse.rightFrame = m_inputFrame;
+				m_currMouse.rightButtonStateChanged = TRUE;
 			}
 			else if( m_mouseEvents[ index ].rightState == MBS_DoubleClick )
 			{
 				// Mouse Double Click
 				m_currMouse.rightEvent = GWM_RIGHT_DOUBLE_CLICK;
 				m_currMouse.rightState = MBS_DoubleClick;
-				m_currMouse.rightFrame = m_inputFrame;
+				m_currMouse.rightButtonStateChanged = TRUE;
 			}
 			else
 			{
 				// Mouse Up
 				m_currMouse.rightEvent = GWM_RIGHT_UP;
 				m_currMouse.rightState = MBS_Up;
-				m_currMouse.rightFrame = m_inputFrame;
+				m_currMouse.rightButtonStateChanged = TRUE;
 			}
 		}
 	}
@@ -293,7 +290,7 @@ void Mouse::processMouseEvent( Int index )
 	}
 
 	// Check Middle Mouse State
-	if( m_mouseEvents[ index ].middleFrame )
+	if( m_mouseEvents[ index ].middleButtonStateChanged )
 	{
 		if( m_currMouse.middleState != m_mouseEvents[index].middleState )
 		{
@@ -302,20 +299,20 @@ void Mouse::processMouseEvent( Int index )
 			{
 				m_currMouse.middleEvent = GWM_MIDDLE_DOWN;
 				m_currMouse.middleState = MBS_Down;
-				m_currMouse.middleFrame = m_inputFrame;
+				m_currMouse.middleButtonStateChanged = TRUE;
 			}
 			else if( m_mouseEvents[index].middleState == MBS_DoubleClick )
 			{
 				m_currMouse.middleEvent = GWM_MIDDLE_DOUBLE_CLICK;
 				m_currMouse.middleState = MBS_DoubleClick;
-				m_currMouse.middleFrame = m_inputFrame;
+				m_currMouse.middleButtonStateChanged = TRUE;
 			}
 			else
 			{
 				// Mouse Up
 				m_currMouse.middleEvent = GWM_MIDDLE_UP;
 				m_currMouse.middleState = MBS_Up;
-				m_currMouse.middleFrame = m_inputFrame;
+				m_currMouse.middleButtonStateChanged = TRUE;
 			}
 		}
 	}
@@ -328,7 +325,7 @@ void Mouse::processMouseEvent( Int index )
 
 	m_currMouse.deltaPos.x = m_currMouse.pos.x - m_prevMouse.pos.x;
 	m_currMouse.deltaPos.y = m_currMouse.pos.y - m_prevMouse.pos.y;
-//	DEBUG_LOG(("Mouse dx %d, dy %d, index %d, frame %d", m_currMouse.deltaPos.x, m_currMouse.deltaPos.y, index, m_inputFrame));
+//	DEBUG_LOG(("Mouse dx %d, dy %d, index %d", m_currMouse.deltaPos.x, m_currMouse.deltaPos.y, index));
 //	// check if mouse is still and flag tooltip
 //	if( ((dx*dx) + (dy*dy)) < CURSOR_MOVE_TOL_SQ )
 //	{
@@ -474,9 +471,6 @@ Mouse::Mouse( void )
 	m_maxY = 0;
 	m_eventsThisFrame = 0;
 
-	m_inputFrame = 0;
-	m_deadInputFrame =0;
-
 	m_inputMovesAbsolute = FALSE;
 
 	m_currentCursor = ARROW;
@@ -590,8 +584,6 @@ void Mouse::init( void )
 	m_minY = 0;
 	m_maxY = 599;
 
-	m_inputFrame = 0;
-	m_deadInputFrame =0;
 
 	m_inputMovesAbsolute = FALSE;
 	m_eventsThisFrame = 0;
@@ -675,9 +667,6 @@ void Mouse::reset( void )
 //-------------------------------------------------------------------------------------------------
 void Mouse::update( void )
 {
-
-	// increment input frame
-	m_inputFrame++;
 
 	// update the mouse data
 	updateMouseData( );

@@ -107,15 +107,15 @@ struct MouseIO
 
 	MouseButtonState leftState;					// button state: Up, Down, DoubleClick (Which is also down)
 	Int leftEvent;											// Most important event this frame
-	Int leftFrame;											// last frame button state changed
+	Bool leftButtonStateChanged;					// TRUE if button state changed in this event
 
 	MouseButtonState rightState;
 	Int rightEvent;
-	Int rightFrame;
+	Bool rightButtonStateChanged;					// TRUE if button state changed in this event
 
 	MouseButtonState middleState;
 	Int middleEvent;
-	Int middleFrame;
+	Bool middleButtonStateChanged;					// TRUE if button state changed in this event
 };
 
 class CursorInfo
@@ -392,9 +392,6 @@ protected:
 	Int m_maxX;							///< mouse is locked to this region
 	Int m_minY;							///< mouse is locked to this region
 	Int m_maxY;							///< mouse is locked to this region
-
-	UnsignedInt m_inputFrame;				///< frame input was gathered on
-	UnsignedInt m_deadInputFrame;		///< Frame which last input occured
 
 	Bool m_inputMovesAbsolute;			/**< if TRUE, when processing mouse position
 																	chanages the movement will be done treating
