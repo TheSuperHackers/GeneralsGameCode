@@ -89,13 +89,13 @@ Bool VeterancyCrateCollide::isValidToExecute( const Object *other ) const
 	if (levelsToGain <= 0)
 		return false;
 
-	const ExperienceTracker *et = other->getExperienceTracker();
-	if (!et || !other->isTrainable())
+	if (!other->isTrainable())
 	{
 		//If the other unit can't gain experience, then we can't help promote it!
 		return false;
 	}
 
+	const ExperienceTracker* et = other->getExperienceTracker();
 	if (!et || !et->canGainExpForLevel(levelsToGain))
 		return false;
 
