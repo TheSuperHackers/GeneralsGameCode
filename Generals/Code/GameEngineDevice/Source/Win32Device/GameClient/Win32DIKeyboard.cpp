@@ -251,7 +251,6 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 	HRESULT hr;
 
 	assert( key );
-	key->sequence = 0;
 	key->key = KEY_NONE;
 
 	if( m_pKeyboardDevice )
@@ -315,15 +314,20 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 		// set the key
 		key->key = (UnsignedByte)(kbdat.dwOfs & 0xFF);
 
-		// sequence
-		key->sequence = kbdat.dwSequence;
-
 		//
 		// state of key, note we are setting the key state here with an assignment
 		// and not a bit set of the up/down state, this is the "start"
 		// of building this "key"
 		//
-		key->state = (( kbdat.dwData & 0x0080 ) ? KEY_STATE_DOWN : KEY_STATE_UP);
+		if( kbdat.dwData & 0x0080 )
+		{
+			key->state = KEY_STATE_DOWN;
+			key->keyDownTimeMsec = kbdat.dwTimeStamp;
+		}
+		else
+		{
+			key->state = KEY_STATE_UP;
+		}
 
 		// set status as unused (unprocessed)
 		key->status = KeyboardIO::STATUS_UNUSED;

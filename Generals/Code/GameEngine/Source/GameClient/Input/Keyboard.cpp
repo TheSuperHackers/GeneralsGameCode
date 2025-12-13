@@ -140,7 +140,12 @@ void Keyboard::updateKeys( void )
 
 		m_keyStatus[ m_keys[ index ].key ].state = m_keys[ index ].state;
 		m_keyStatus[ m_keys[ index ].key ].status = m_keys[ index ].status;
-		m_keyStatus[ m_keys[ index ].key ].sequence = m_inputFrame;
+
+		// Update key down time for new key presses
+		if( BitIsSet( m_keys[ index ].state, KEY_STATE_DOWN ) )
+		{
+			m_keyStatus[ m_keys[ index ].key ].keyDownTimeMsec = m_keys[ index ].keyDownTimeMsec;
+		}
 
 		// prevent ALT-TAB from causing a TAB event
 		if( m_keys[ index ].key == KEY_TAB )
@@ -195,7 +200,7 @@ void Keyboard::updateKeys( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** check key repeat sequences, TRUE is returned if repeat is occurring */
+/** check key repeat timing, TRUE is returned if repeat is occurring */
 //-------------------------------------------------------------------------------------------------
 Bool Keyboard::checkKeyRepeat( void )
 {
@@ -220,7 +225,9 @@ Bool Keyboard::checkKeyRepeat( void )
 		if( BitIsSet( m_keyStatus[ key ].state, KEY_STATE_DOWN ) )
 		{
 
-			if( (m_inputFrame - m_keyStatus[ key ].sequence) > Keyboard::KEY_REPEAT_DELAY )
+			UnsignedInt now = timeGetTime();
+
+			if( now - m_keyStatus[ key ].keyDownTimeMsec > Keyboard::KEY_REPEAT_DELAY_MSEC )
 			{
 				// Add key to this frame
 				m_keys[ index ].key = (UnsignedByte)key;
@@ -232,10 +239,10 @@ Bool Keyboard::checkKeyRepeat( void )
 
 				// Set all keys as new to prevent multiple keys repeating
 				for( index = 0; index< NUM_KEYS; index++ )
-					m_keyStatus[ index ].sequence = m_inputFrame;
+					m_keyStatus[ index ].keyDownTimeMsec = now;
 
-				// Set repeated key so it will repeat again in two frames
-				m_keyStatus[ key ].sequence = m_inputFrame - (Keyboard::KEY_REPEAT_DELAY + 2);
+				// Set repeated key so it will repeat again after the interval
+				m_keyStatus[ key ].keyDownTimeMsec = now - (Keyboard::KEY_REPEAT_DELAY_MSEC + Keyboard::KEY_REPEAT_INTERVAL_MSEC);
 
 				retVal = TRUE;
 				break;  // exit for key
@@ -694,7 +701,6 @@ Keyboard::Keyboard( void )
 	m_shift2Key = KEY_NONE;
 
 	memset( m_keyNames, 0, sizeof( m_keyNames ) );
-	m_inputFrame = 0;
 
 }
 
@@ -714,9 +720,6 @@ void Keyboard::init( void )
 	// initialize the key names
 	initKeyNames();
 
-	// first input frame
-	m_inputFrame = 0;
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -732,9 +735,6 @@ void Keyboard::reset( void )
 //-------------------------------------------------------------------------------------------------
 void Keyboard::update( void )
 {
-
-	// increment input frame
-	m_inputFrame++;
 
 	// update the key data
 	updateKeys();
@@ -794,14 +794,6 @@ UnsignedByte Keyboard::getKeyStatusData( KeyDefType key )
 Bool Keyboard::getKeyStateBit( KeyDefType key, Int bit )
 {
 	return (m_keyStatus[ key ].state & bit) ? 1 : 0;
-}
-
-//-------------------------------------------------------------------------------------------------
-/** return the sequence data for the given key */
-//-------------------------------------------------------------------------------------------------
-UnsignedInt Keyboard::getKeySequenceData( KeyDefType key )
-{
-	return m_keyStatus[ key ].sequence;
 }
 
 //-------------------------------------------------------------------------------------------------
