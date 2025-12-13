@@ -304,9 +304,14 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 			/** @todo srj -- evil hack here... this whole heat-vision thing is fucked.
 				don't want it on mines but no good way to do that. hack for now. */
 			Drawable *theirDraw = them->getDrawable();
-			if ( theirDraw && !them->isKindOf(KINDOF_MINE))
+			if (theirDraw && !them->isKindOf(KINDOF_MINE))
 			{
-				theirDraw->setSecondMaterialPassOpacity( 1.0f );
+				constexpr const Real minOpacity = 0.05f;
+				constexpr const Real resetThreshold = 2 * minOpacity;
+
+				// TheSuperHackers @tweak Reset opacity only below threshold to prevent models flickering from multiple detections or special powers.
+				if (theirDraw->getSecondMaterialPassOpacity() < resetThreshold)
+					theirDraw->setSecondMaterialPassOpacity(1.0f);
 			}
 
 			if (data->m_IRGridParticleSysTmpl)
