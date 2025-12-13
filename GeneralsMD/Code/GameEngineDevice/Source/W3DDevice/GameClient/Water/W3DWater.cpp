@@ -240,16 +240,16 @@ void WaterRenderObjClass::setupJbaWaterShader(void)
 		D3DXMATRIX inv;
 		float det;
 
-		Matrix4x4 curView;
-		DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, curView);
-		D3DXMatrixInverse(&inv, &det, (D3DXMATRIX*)&curView);
+		D3DXMATRIX d3dCurView;
+		DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, d3dCurView);
+		D3DXMatrixInverse(&inv, &det, &d3dCurView);
 		D3DXMATRIX scale;
 
 		D3DXMatrixScaling(&scale, NOISE_REPEAT_FACTOR, NOISE_REPEAT_FACTOR,1);
 		D3DXMATRIX destMatrix = inv * scale;
 		D3DXMatrixTranslation(&scale, m_riverVOrigin, m_riverVOrigin,0);
 		destMatrix = destMatrix*scale;
-		DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE2, *(Matrix4x4*)&destMatrix);
+		DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE2, destMatrix);
 
 	}
 	m_pDev->SetTextureStageState( 0, D3DTSS_MINFILTER, D3DTEXF_LINEAR );
@@ -1596,13 +1596,13 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 				D3DXMATRIX inv;
 				D3DXMATRIX clipMatrix;
 				Real det;
-				Matrix4x4 curView;
 
 				//get current view matrix
-				DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, curView);
+				D3DXMATRIX d3dCurView;
+				DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, d3dCurView);
 
 				//get inverse of view matrix(= view to world matrix)
-				D3DXMatrixInverse(&inv, &det, (D3DXMATRIX*)&curView);
+				D3DXMatrixInverse(&inv, &det, &d3dCurView);
 
 				//create clipping matrix by inserting our plane equation into the 1st column
 				D3DXMatrixIdentity(&clipMatrix);
@@ -2996,16 +2996,16 @@ void WaterRenderObjClass::setupFlatWaterShader(void)
 		D3DXMATRIX inv;
 		float det;
 
-		Matrix4x4 curView;
-		DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, curView);
-		D3DXMatrixInverse(&inv, &det, (D3DXMATRIX*)&curView);
+		D3DXMATRIX d3dCurView;
+		DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, d3dCurView);
+		D3DXMatrixInverse(&inv, &det, &d3dCurView);
 		D3DXMATRIX scale;
 
 		D3DXMatrixScaling(&scale, NOISE_REPEAT_FACTOR, NOISE_REPEAT_FACTOR,1);
 		D3DXMATRIX destMatrix = inv * scale;
 		D3DXMatrixTranslation(&scale, m_riverVOrigin, m_riverVOrigin,0);
 		destMatrix = destMatrix*scale;
-		DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE2, *(Matrix4x4*)&destMatrix);
+		DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE2, destMatrix);
 
 	}
 	m_pDev->SetTextureStageState( 0, D3DTSS_MINFILTER, D3DTEXF_LINEAR );
