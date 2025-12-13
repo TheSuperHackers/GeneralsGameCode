@@ -144,7 +144,7 @@ void Keyboard::updateKeys( void )
 		// Update key down time for new key presses
 		if( BitIsSet( m_keys[ index ].state, KEY_STATE_DOWN ) )
 		{
-			m_keyStatus[ m_keys[ index ].key ].keyDownTimeMsec = timeGetTime();
+			m_keyStatus[ m_keys[ index ].key ].keyDownTimeMsec = m_keys[ index ].keyDownTimeMsec;
 		}
 
 		// prevent ALT-TAB from causing a TAB event
@@ -200,7 +200,7 @@ void Keyboard::updateKeys( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** check key repeat sequences, TRUE is returned if repeat is occurring */
+/** check key repeat timing, TRUE is returned if repeat is occurring */
 //-------------------------------------------------------------------------------------------------
 Bool Keyboard::checkKeyRepeat( void )
 {
