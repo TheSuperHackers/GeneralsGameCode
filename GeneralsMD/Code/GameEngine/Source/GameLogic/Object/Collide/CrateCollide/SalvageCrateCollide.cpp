@@ -160,7 +160,7 @@ Bool SalvageCrateCollide::eligibleForLevel( Object *other )
 		return FALSE;
 
 	// Sorry, you can't gain levels
-	if( !other->getExperienceTracker()->isTrainable() )
+	if (!other->isTrainable())
 		return FALSE;
 
 	return TRUE;
