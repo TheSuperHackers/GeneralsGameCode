@@ -2789,6 +2789,11 @@ Bool Object::hasSpecialPower( SpecialPowerType type ) const
 //-------------------------------------------------------------------------------------------------
 void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback )
 {
+#if !RETAIL_COMPATIBLE_CRC
+	if (isEffectivelyDead())
+		return;
+#endif
+
 	updateUpgradeModules();
 
 	const UpgradeTemplate* up = TheUpgradeCenter->findVeterancyUpgrade(newLevel);
@@ -2842,6 +2847,11 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 		&& !isKindOf(KINDOF_IGNORED_IN_GUI)
 		&& outerDrawable
 		&& outerDrawable->isVisible();
+
+#if RETAIL_COMPATIBLE_CRC
+	if (isEffectivelyDead())
+		return;
+#endif
 
 	if( doAnimation && TheGameLogic->getDrawIconUI() )
 	{
