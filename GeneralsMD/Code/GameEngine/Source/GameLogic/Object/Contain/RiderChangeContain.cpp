@@ -246,6 +246,9 @@ void RiderChangeContain::onContaining( Object *rider, Bool wasSelected )
 			//Transfer experience from the rider to the bike.
 			ExperienceTracker *riderTracker = rider->getExperienceTracker();
 			ExperienceTracker *bikeTracker = obj->getExperienceTracker();
+#if !RETAIL_COMPATIBLE_CRC
+			bikeTracker->setTrainable(riderTracker->isTrainable());
+#endif
 			bikeTracker->setVeterancyLevel( riderTracker->getVeterancyLevel(), FALSE );
 			riderTracker->setExperienceAndLevel( 0, FALSE );
 
@@ -301,6 +304,7 @@ void RiderChangeContain::onRemoving( Object *rider )
 				//Transfer experience from the bike to the rider.
 				ExperienceTracker *riderTracker = rider->getExperienceTracker();
 				ExperienceTracker *bikeTracker = bike->getExperienceTracker();
+				bikeTracker->resetTrainable();
 				riderTracker->setVeterancyLevel( bikeTracker->getVeterancyLevel(), FALSE );
 				bikeTracker->setExperienceAndLevel( 0, FALSE );
 			}

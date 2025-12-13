@@ -46,6 +46,8 @@ public:
 	Int getExperienceValue( const Object* killer ) const;										///< How much do give for being killed
 	Int getCurrentExperience( void ) const { return m_currentExperience; };	///< How much experience do I have at the moment?
 	Bool isTrainable() const;																						///< Can I gain experience?
+	void setTrainable(Bool trainable);																	///< Set whether I can gain experience
+	void resetTrainable();																							///< Set to default trainable state from template
 	Bool isAcceptingExperiencePoints() const;														///< Either I am trainable, or I have a Sink set up
 
 	void setVeterancyLevel( VeterancyLevel newLevel, Bool provideFeedback = TRUE );						///< Set Level to this
@@ -71,4 +73,5 @@ private:
 	Int								m_currentExperience;								///< Number of experience points
 	ObjectID					m_experienceSink;										///< ID of object I have pledged my experience point gains to
 	Real							m_experienceScalar;									///< Scales any experience gained by this multiplier.
+	Bool							m_isTrainable;											///< Can I gain experience?
 };

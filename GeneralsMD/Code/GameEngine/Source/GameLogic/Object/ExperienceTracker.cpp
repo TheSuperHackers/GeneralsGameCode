@@ -45,6 +45,7 @@ ExperienceTracker::ExperienceTracker(Object *parent) :
 	m_experienceScalar( 1.0f ),
 	m_currentExperience(0)
 {
+	resetTrainable();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -65,7 +66,19 @@ Int ExperienceTracker::getExperienceValue( const Object* killer ) const
 //-------------------------------------------------------------------------------------------------
 Bool ExperienceTracker::isTrainable() const
 {
-	return m_parent->getTemplate()->isTrainable();
+	return m_isTrainable;
+}
+
+//-------------------------------------------------------------------------------------------------
+void ExperienceTracker::setTrainable(Bool trainable)
+{
+	m_isTrainable = trainable;
+}
+
+//-------------------------------------------------------------------------------------------------
+void ExperienceTracker::resetTrainable()
+{
+	m_isTrainable = m_parent->getTemplate()->isTrainable();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -236,6 +249,9 @@ void ExperienceTracker::crc( Xfer *xfer )
 {
 	xfer->xferInt( &m_currentExperience );
 	xfer->xferUser( &m_currentLevel, sizeof( VeterancyLevel ) );
+#if !RETAIL_COMPATIBLE_CRC
+	xfer->xferBool(&m_isTrainable);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -248,7 +264,11 @@ void ExperienceTracker::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
+#else
+	XferVersion currentVersion = 2;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -267,6 +287,8 @@ void ExperienceTracker::xfer( Xfer *xfer )
 	// experience scalar
 	xfer->xferReal( &m_experienceScalar );
 
+	if (version >= 2)
+		xfer->xferBool(&m_isTrainable);
 }
 
 //-----------------------------------------------------------------------------
