@@ -34,7 +34,7 @@
 #include "vertmaterial.h"
 #include "Lib/BaseType.h"
 #include "Common/GameType.h"
-#include "WorldHeightMap.h"
+#include "W3DDevice/GameClient/WorldHeightMap.h"
 
 #define MAX_ENABLED_DYNAMIC_LIGHTS 20
 typedef UnsignedByte HeightSampleType;	//type of data to store in heightmap

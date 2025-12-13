@@ -34,8 +34,8 @@
 #include "vertmaterial.h"
 #include "Lib/BaseType.h"
 #include "Common/GameType.h"
-#include "WorldHeightMap.h"
-#include "BaseHeightMap.h"
+#include "W3DDevice/GameClient/WorldHeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
 
 class W3DTerrainBackground;
 /// Custom render object that draws the heightmap and handles intersection tests.

@@ -34,8 +34,8 @@
 #include "vertmaterial.h"
 #include "Lib/BaseType.h"
 #include "Common/GameType.h"
-#include "WorldHeightMap.h"
-#include "BaseHeightMap.h"
+#include "W3DDevice/GameClient/WorldHeightMap.h"
+#include "W3DDevice/GameClient/BaseHeightMap.h"
 
 #define VERTEX_BUFFER_TILE_LENGTH	32		//tiles of side length 32 (grid of 33x33 vertices).
 

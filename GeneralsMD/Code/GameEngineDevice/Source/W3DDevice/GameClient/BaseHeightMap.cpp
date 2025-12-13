@@ -57,6 +57,7 @@
 #include <d3dx8core.h>
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"
+#include "Common/Xfer.h"
 
 #include "GameClient/TerrainVisual.h"
 #include "GameClient/View.h"
