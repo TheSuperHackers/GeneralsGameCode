@@ -587,6 +587,11 @@ public:
 				Object* rappeller = getPotentialRappeller(obj);
 				if (rappeller != NULL)
 				{
+#if !RETAIL_COMPATIBLE_CRC
+					// ChinookAIUpdate::getAiFreeToExit is dependent on this status.
+					rappeller->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_IS_USING_ABILITY));
+#endif
+
 					ExitInterface *exitInterface = obj->getObjectExitInterface();
 					ExitDoorType exitDoor = exitInterface ? exitInterface->reserveDoorForExit(rappeller->getTemplate(), rappeller) : DOOR_NONE_AVAILABLE;
 					if(exitDoor != DOOR_NONE_AVAILABLE)
@@ -598,6 +603,9 @@ public:
 						DEBUG_CRASH(("rappeller is not free to exit... what?"));
 					}
 
+#if !RETAIL_COMPATIBLE_CRC
+					rappeller->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_IS_USING_ABILITY));
+#endif
 					rappeller->setTransformMatrix(&it->dropStartMtx);
 
 					AIUpdateInterface* rappellerAI = rappeller ? rappeller->getAIUpdateInterface() : NULL;
@@ -983,8 +991,17 @@ ObjectID ChinookAIUpdate::getBuildingToNotPathAround() const
 //-------------------------------------------------------------------------------------------------
 AIFreeToExitType ChinookAIUpdate::getAiFreeToExit(const Object* exiter) const
 {
-	 if (m_flightStatus == CHINOOK_LANDED
-				|| (m_flightStatus == CHINOOK_DOING_COMBAT_DROP && exiter->isKindOf(KINDOF_CAN_RAPPEL)))
+	if (m_flightStatus == CHINOOK_DOING_COMBAT_DROP && exiter->isKindOf(KINDOF_CAN_RAPPEL))
+	{
+#if !RETAIL_COMPATIBLE_CRC
+		if (!exiter->testStatus(OBJECT_STATUS_IS_USING_ABILITY))
+			return WAIT_TO_EXIT;
+#endif
+
+		return FREE_TO_EXIT;
+	}
+
+	if (m_flightStatus == CHINOOK_LANDED)
 		return FREE_TO_EXIT;
 
 	return WAIT_TO_EXIT;
