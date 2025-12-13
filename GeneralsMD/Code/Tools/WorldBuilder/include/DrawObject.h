@@ -96,6 +96,7 @@ public:
 	static void enableFeedback(void) {m_disableFeedback = false;};
 	static Bool isFeedbackEnabled(void) { return !m_disableFeedback;};
 	static void setFeedbackPos(Coord3D pos);
+	static Coord3D getFeedbackPos() { return m_feedbackPoint; }
 
 	static void setWaypointDragFeedback(const Coord3D &start, const Coord3D &end);
 	static void setRampFeedbackParms(const Coord3D *start, const Coord3D *end, Real rampWidth);

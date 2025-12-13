@@ -55,6 +55,8 @@
 #include "MainFrm.h"
 #include "CUndoable.h"
 #include "Common/Debug.h"
+#include "BrushTool.h"
+#include "DrawObject.h"
 
 //-----------------------------------------------------------------------------
 //         Private Data
@@ -309,6 +311,7 @@ void CWorldBuilderView::OnPaint()
 
 
 	CPaintDC dc(this); // device context for painting
+	m_brushHintState.beginFrame();
 	// Offset the origin so that we can draw on 0 based coordinates.
 	dc.SetViewportOrg(-mXScrollOffset, -mYScrollOffset);
 	updateRgn.OffsetRgn(mXScrollOffset, mYScrollOffset);
@@ -406,6 +409,8 @@ void CWorldBuilderView::OnPaint()
 		}
 	}
 
+	// Draw brush mode hint (only if in update region or needs update)
+	drawBrushModeHint(&dc, &updateRgn);
 }
 
 
@@ -1015,6 +1020,7 @@ BEGIN_MESSAGE_MAP(CWorldBuilderView, WbView)
 	ON_WM_CREATE()
 	ON_COMMAND(ID_VIEW_SHOWTEXTURE, OnViewShowtexture)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWTEXTURE, OnUpdateViewShowtexture)
+	ON_WM_MOUSEMOVE()
 //	ON_COMMAND(ID_VIEW_SHOWCONTOURS, OnViewShowcontours)
 //	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWCONTOURS, OnUpdateViewShowcontours)
 	//}}AFX_MSG_MAP
@@ -1079,5 +1085,85 @@ DEBUG_ASSERTCRASH((abs(curPt.x-curPt2.x)<1),("oops"));
 DEBUG_ASSERTCRASH((abs(curPt.y-curPt2.y)<1),("oops"));
 #endif
 	return true;
+}
+
+//=============================================================================
+// CWorldBuilderView::clearBrushModeHintState
+//=============================================================================
+/** Clears the brush mode hint state. */
+//=============================================================================
+void CWorldBuilderView::clearBrushModeHintState()
+{
+	m_brushHintState.reset();
+}
+
+//=============================================================================
+// CWorldBuilderView::drawBrushModeHint
+//=============================================================================
+/** Draws the brush mode hint on canvas near the brush cursor. */
+//=============================================================================
+void CWorldBuilderView::drawBrushModeHint(CDC *pDc, CRgn *pUpdateRgn)
+{
+	Coord3D brushPos = DrawObject::getFeedbackPos();
+	CPoint viewPt;
+	if (!docToViewCoords(brushPos, &viewPt)) {
+		clearBrushModeHintState();
+		return;
+	}
+
+	viewPt.x += mXScrollOffset;
+	viewPt.y += mYScrollOffset;
+
+	CPoint hintPos(viewPt.x + HintDrawState::HINT_OFFSET_X, viewPt.y - HintDrawState::HINT_OFFSET_Y);
+
+	char hintTextBuf[512];
+	BrushTool::BrushHintInfo info;
+	if (!BrushTool::getBrushHintInfo(info, hintTextBuf, sizeof(hintTextBuf), hintPos, m_brushHintState.lastMode)) {
+		if (info.shouldClear) {
+			clearBrushModeHintState();
+		}
+		return;
+	}
+
+	Int textLen = (Int)strlen(hintTextBuf);
+	if (!info.shouldShow || textLen == 0) {
+		clearBrushModeHintState();
+		return;
+	}
+
+	Bool needUpdate = m_brushHintState.needsUpdate(hintPos, info.modeInt);
+	CSize textSize = pDc->GetTextExtent(hintTextBuf, textLen);
+	
+	if (!needUpdate && !m_brushHintState.lastRect.IsRectEmpty()) {
+		hintPos = m_brushHintState.lastPos;
+	}
+	
+	CRect hintRect = HintDrawState::computeHintRect(hintPos, textSize.cx, textSize.cy);
+	
+	if (pUpdateRgn && !needUpdate && !m_brushHintState.lastRect.IsRectEmpty()) {
+		CRect adjustedHintRect = hintRect;
+		adjustedHintRect.OffsetRect(-mXScrollOffset, -mYScrollOffset);
+		if (!pUpdateRgn->RectInRegion(&adjustedHintRect)) {
+			return;
+		}
+	}
+
+	COLORREF oldColor = pDc->SetTextColor(RGB(255, 255, 255));
+	Int oldBkMode = pDc->SetBkMode(TRANSPARENT);
+	pDc->TextOut(hintPos.x, hintPos.y - textSize.cy, hintTextBuf, textLen);
+	pDc->SetTextColor(oldColor);
+	pDc->SetBkMode(oldBkMode);
+
+	if (needUpdate) {
+		m_brushHintState.commitUpdate(hintPos, hintRect, info.modeInt);
+	}
+}
+
+//=============================================================================
+// CWorldBuilderView::OnMouseMove
+//=============================================================================
+void CWorldBuilderView::OnMouseMove(UINT nFlags, CPoint point)
+{
+	WbView::OnMouseMove(nFlags, point);
 }
 
