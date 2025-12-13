@@ -1103,7 +1103,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 void WeaponTemplate::trimOldHistoricDamage() const
 {
 	UnsignedInt expirationDate = TheGameLogic->getFrame() - TheGlobalData->m_historicDamageLimit;
-	while (m_historicDamage.size() > 0)
+	while (!m_historicDamage.empty())
 	{
 		HistoricWeaponDamageInfo& h = m_historicDamage.front();
 		if (h.frame <= expirationDate)
@@ -2471,7 +2471,7 @@ Bool Weapon::privateFireWeapon(
 			m_numShotsForCurBarrel = m_template->getShotsPerBarrel();
 		}
 
-		if( m_scatterTargetsUnused.size() )
+		if( !m_scatterTargetsUnused.empty() )
 		{
 			// If I have a set scatter pattern, I need to offset the target by a random pick from that pattern
 			if( victimObj )

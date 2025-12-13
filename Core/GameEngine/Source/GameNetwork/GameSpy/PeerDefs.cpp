@@ -378,7 +378,7 @@ void GameSpyInfo::joinBestGroupRoom( void )
 		return;
 	}
 
-	if (m_groupRooms.size())
+	if (!m_groupRooms.empty())
 	{
 		int minID = -1;
 		int minPlayers = 1000;

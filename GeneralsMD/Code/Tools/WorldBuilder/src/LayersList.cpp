@@ -1160,7 +1160,7 @@ void LayersList::OnMergeViewSelection(UINT commandID)
 		mapObject = mapObject->getNext();
 	}
 
-	while (allSelectedObjects.size() > 0) {
+	while (!allSelectedObjects.empty()) {
 		changeMapObjectLayer(allSelectedObjects.top(), layerIt->layerName);
 		allSelectedObjects.pop();
 	}
@@ -1177,7 +1177,7 @@ void LayersList::OnMergeViewSelection(UINT commandID)
 		polygonTrigger = polygonTrigger->getNext();
 	}
 
-	while (allSelectedTriggers.size() > 0) {
+	while (!allSelectedTriggers.empty()) {
 		changePolygonTriggerLayer(allSelectedTriggers.top(), layerIt->layerName);
 		allSelectedTriggers.pop();
 	}

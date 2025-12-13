@@ -395,7 +395,7 @@ void Xfer::xferSTLObjectIDVector( std::vector<ObjectID> *objectIDVectorData )
 	{
 
 		// sanity, the list should be empty before we transfer more data into it
-		if( objectIDVectorData->size() != 0 )
+		if( !objectIDVectorData->empty() )
 		{
 
 			DEBUG_CRASH(( "Xfer::xferSTLObjectIDList - object vector should be empty before loading" ));
@@ -462,7 +462,7 @@ void Xfer::xferSTLObjectIDList( std::list< ObjectID > *objectIDListData )
 	{
 
 		// sanity, the list should be empty before we transfer more data into it
-		if( objectIDListData->size() != 0 )
+		if( !objectIDListData->empty() )
 		{
 
 			DEBUG_CRASH(( "Xfer::xferSTLObjectIDList - object list should be empty before loading" ));
@@ -528,7 +528,7 @@ void Xfer::xferSTLIntList( std::list< Int > *intListData )
 	{
 
 		// sanity, the list should be empty before we transfer more data into it
-		if( intListData->size() != 0 )
+		if( !intListData->empty() )
 		{
 
 			DEBUG_CRASH(( "Xfer::xferSTLIntList - int list should be empty before loading" ));

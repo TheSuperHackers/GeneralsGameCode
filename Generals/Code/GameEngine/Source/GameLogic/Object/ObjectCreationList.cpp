@@ -938,7 +938,7 @@ protected:
 				if (di)
 				{
 					di->setModelName(modelName, m_okToChangeModelColor ? obj->getIndicatorColor() : 0, m_shadowType);
-					if (m_animSets.size() > 0)
+					if (!m_animSets.empty())
 					{
 						Int which = GameLogicRandomValue(0, m_animSets.size()-1);
 						di->setAnimNames(m_animSets[which].m_animInitial, m_animSets[which].m_animFlying, m_animSets[which].m_animFinal, m_fxFinal);
@@ -1217,7 +1217,7 @@ protected:
 	{
 		static const ThingTemplate* debrisTemplate = TheThingFactory->findTemplate("GenericDebris");
 
-		if (m_names.size() <= 0)
+		if (m_names.empty())
 			return NULL;
 
 		if (m_requiresLivePlayer && (!sourceObj || !sourceObj->getControllingPlayer()->isPlayerActive()))

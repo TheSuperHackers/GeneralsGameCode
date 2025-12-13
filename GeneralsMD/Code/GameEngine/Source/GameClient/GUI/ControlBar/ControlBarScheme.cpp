@@ -1022,7 +1022,7 @@ void ControlBarSchemeManager::init( void )
 //		if	(FindFirstFile(userDataPath.str(), &findData) !=INVALID_HANDLE_VALUE)
 //			ini.loadFileDirectory(userDataPath,  INI_LOAD_OVERWRITE, NULL );
 //	}
-	if( m_schemeList.size() <= 0 )
+	if( m_schemeList.empty() )
 	{
 		DEBUG_ASSERTCRASH(FALSE,("There's no ControlBarScheme in the ControlBarSchemeList:m_schemeList that was just read from the INI file"));
 		return;

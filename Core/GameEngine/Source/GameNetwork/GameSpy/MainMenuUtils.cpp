@@ -191,7 +191,7 @@ static void startOnline( void )
 			noPatchBeforeOnlineCallback);
 		return;
 	}
-	if (queuedDownloads.size())
+	if (!queuedDownloads.empty())
 	{
 		if (!hasWriteAccess())
 		{

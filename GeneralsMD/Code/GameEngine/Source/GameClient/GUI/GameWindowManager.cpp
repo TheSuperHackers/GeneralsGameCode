@@ -3976,7 +3976,7 @@ Bool GameWindowManager::initTestGUI( void )
 
 void GameWindowManager::winNextTab( GameWindow *window )
 {
-	if(m_tabList.size() == 0|| m_modalHead)
+	if(m_tabList.empty()|| m_modalHead)
 		return;
 
 	GameWindowList::iterator it = m_tabList.begin();
@@ -4000,7 +4000,7 @@ void GameWindowManager::winNextTab( GameWindow *window )
 
 void GameWindowManager::winPrevTab( GameWindow *window )
 {
-	if(m_tabList.size() == 0 || m_modalHead)
+	if(m_tabList.empty() || m_modalHead)
 		return;
 
 	GameWindowList::reverse_iterator it = m_tabList.rbegin();

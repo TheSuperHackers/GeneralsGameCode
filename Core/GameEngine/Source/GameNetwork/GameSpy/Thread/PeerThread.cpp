@@ -1663,7 +1663,7 @@ void PeerThreadClass::Thread_Function()
 							m_playerFactions[i] = 0;
 							m_playerColors[i] = 0;
 						}
-						if (incomingRequest.password.length() > 0)
+						if (!incomingRequest.password.empty())
 							m_hasPassword = true;
 						else
 							m_hasPassword = false;
@@ -1714,7 +1714,7 @@ void PeerThreadClass::Thread_Function()
 
 			case PeerRequest::PEERREQUEST_UTMPLAYER:
 				{
-					if (incomingRequest.nick.length() > 0)
+					if (!incomingRequest.nick.empty())
 					{
 						peerUTMPlayer( peer, incomingRequest.nick.c_str(), incomingRequest.id.c_str(), incomingRequest.options.c_str(), PEERFalse );
 					}

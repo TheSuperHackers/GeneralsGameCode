@@ -327,7 +327,7 @@ void AI::reset( void )
 	}
 
 #if RETAIL_COMPATIBLE_AIGROUP
-	while (m_groupList.size())
+	while (!m_groupList.empty())
 	{
 		AIGroup *groupToRemove = m_groupList.front();
 		if (groupToRemove)
