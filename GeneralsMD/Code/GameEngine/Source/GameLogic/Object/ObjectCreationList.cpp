@@ -1386,8 +1386,25 @@ protected:
 				FindPositionOptions fpOptions;
 				fpOptions.minRadius = GameLogicRandomValueReal(m_minDistanceAFormation, m_minDistanceBFormation);
 				fpOptions.maxRadius = m_maxDistanceFormation;
+#if !RETAIL_COMPATIBLE_CRC
+				// TheSuperHackers @bugfix bobtista 18/11/2025 Use FPF_CLEAR_CELLS_ONLY when DiesOnBadLand to prevent spawning in water/cliffs
+				if (m_diesOnBadLand)
+				{
+					fpOptions.flags = static_cast<FindPositionFlags>(FPF_USE_HIGHEST_LAYER | FPF_CLEAR_CELLS_ONLY);
+				}
+				else
+				{
+					fpOptions.flags = FPF_USE_HIGHEST_LAYER;
+				}
+				// TheSuperHackers @bugfix bobtista 18/11/2025 Fall back to center if no passable position found in spread formation
+				if (!ThePartitionManager->findPositionAround(pos, &fpOptions, &resultPos))
+				{
+					resultPos = *pos;
+				}
+#else
 				fpOptions.flags = FPF_USE_HIGHEST_LAYER;
 				ThePartitionManager->findPositionAround(pos, &fpOptions, &resultPos);
+#endif
 				doStuffToObj( debris, m_names[pick], &resultPos, mtx, orientation, sourceObj, lifetimeFrames );
 			}
 			else
