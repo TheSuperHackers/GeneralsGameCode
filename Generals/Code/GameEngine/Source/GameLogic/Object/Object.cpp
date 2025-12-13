@@ -2695,22 +2695,6 @@ VeterancyLevel Object::getVeterancyLevel() const
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool Object::isTrainable() const
-{
-	const ExperienceTracker* expTracker = m_experienceTracker;
-
-#if !RETAIL_COMPATIBLE_CRC
-	if (m_contain)
-	{
-		if (const Object* rider = m_contain->friend_getRider())
-			expTracker = rider->getExperienceTracker();
-	}
-#endif
-
-	return expTracker && expTracker->isTrainable();
-}
-
-//-------------------------------------------------------------------------------------------------
 void Object::friend_bindToDrawable( Drawable *draw )
 {
 	m_drawable = draw;

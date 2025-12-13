@@ -4128,7 +4128,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 					continue;
 
 				ExperienceTracker *et = pObject->getExperienceTracker();
-				if (!et || !pObject->isTrainable())
+				if (!et || !et->isTrainable())
 					continue;
 
 				VeterancyLevel oldVet = et->getVeterancyLevel();
