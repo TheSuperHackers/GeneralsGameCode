@@ -1258,8 +1258,14 @@ void ChinookAIUpdate::privateCombatDrop( Object* target, const Coord3D& pos, Com
 //-------------------------------------------------------------------------------------------------
 void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 {
+#if RETAIL_COMPATIBLE_CRC
 	// this gets reset every time a command is issued.
 	setAirfieldForHealing(INVALID_ID);
+#else
+	// TheSuperHackers @bugfix Stubbjax 31/10/2025 Don't leave healing state for evacuation commands.
+	if (parms->m_cmd != AICMD_EVACUATE && parms->m_cmd != AICMD_EXIT)
+		setAirfieldForHealing(INVALID_ID);
+#endif
 
 	if (!isAllowedToRespondToAiCommands(parms))
 		return;
