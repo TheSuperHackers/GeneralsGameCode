@@ -139,6 +139,7 @@ public:
 	Int m_terrainLODTargetTimeMS;
 	Bool m_useAlternateMouse;
 	Bool m_rightMouseAlwaysScrolls;
+	Int m_jpegQuality;
 	Bool m_useWaterPlane;
 	Bool m_useCloudPlane;
 	Bool m_useShadowVolumes;
