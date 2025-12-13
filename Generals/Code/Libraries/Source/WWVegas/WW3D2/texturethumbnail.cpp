@@ -25,21 +25,69 @@
 #include "textureloader.h"
 #include "bitmaphandler.h"
 #include "ffactory.h"
+#include "RAWFILE.h"
+#include "wwprofile.h"
+#include <windows.h>
 
-static HashTemplateClass<StringClass,ThumbnailClass*> thumbnail_hash;
-static bool _ThumbHashModified;
-static unsigned char* _ThumbnailMemory;
-static const char *THUMBNAIL_FILENAME = "thumbnails.dat";
+static DLListClass<ThumbnailManagerClass> ThumbnailManagerList;
+static ThumbnailManagerClass* GlobalThumbnailManager;
+bool ThumbnailManagerClass::CreateThumbnailIfNotFound=false;
 
-ThumbnailClass::ThumbnailClass(const char* name, unsigned char* bitmap, unsigned w, unsigned h, bool allocated)
+static void Create_Hash_Name(StringClass& name, const StringClass& thumb_name)
+{
+	name=thumb_name;
+	int len=name.Get_Length();
+	WWASSERT(!stricmp(&name[len-4],".tga") || !stricmp(&name[len-4],".dds"));
+	name[len-4]='\0';
+	_strlwr(name.Peek_Buffer());
+}
+
+	/*	file_auto_ptr my_tga_file(_TheFileFactory,filename);
+	if (my_tga_file->Is_Available()) {
+		my_tga_file->Open();
+		unsigned size=my_tga_file->Size();
+		char* tga_memory=new char[size];
+		my_tga_file->Read(tga_memory,size);
+		my_tga_file->Close();
+
+		StringClass pth("data\\");
+		pth+=filename;
+		RawFileClass tmp_tga_file(pth);
+		tmp_tga_file.Create();
+		tmp_tga_file.Write(tga_memory,size);
+		tmp_tga_file.Close();
+		delete[] tga_memory;
+
+	}
+*/
+
+
+ThumbnailClass::ThumbnailClass(
+	ThumbnailManagerClass* manager,
+	const char* name,
+	unsigned char* bitmap,
+	unsigned w,
+	unsigned h,
+	unsigned original_w,
+	unsigned original_h,
+	unsigned original_mip_level_count,
+	WW3DFormat original_format,
+	bool allocated,
+	unsigned long date_time)
 	:
+	Manager(manager),
 	Name(name),
 	Bitmap(bitmap),
 	Allocated(allocated),
 	Width(w),
-	Height(h)
+	Height(h),
+	OriginalTextureWidth(original_w),
+	OriginalTextureHeight(original_h),
+	OriginalTextureMipLevelCount(original_mip_level_count),
+	OriginalTextureFormat(original_format),
+	DateTime(date_time)
 {
-	thumbnail_hash.Insert(Name,this);
+	Manager->Insert_To_Hash(this);
 }
 
 // ----------------------------------------------------------------------------
@@ -51,30 +99,56 @@ ThumbnailClass::ThumbnailClass(const char* name, unsigned char* bitmap, unsigned
 //
 // ----------------------------------------------------------------------------
 
-ThumbnailClass::ThumbnailClass(const StringClass& filename)
+ThumbnailClass::ThumbnailClass(ThumbnailManagerClass* manager, const StringClass& filename)
 	:
+	Manager(manager),
 	Bitmap(0),
 	Name(filename),
 	Allocated(false),
 	Width(0),
-	Height(0)
+	Height(0),
+	OriginalTextureWidth(0),
+	OriginalTextureHeight(0),
+	OriginalTextureMipLevelCount(0),
+	OriginalTextureFormat(WW3D_FORMAT_UNKNOWN),
+	DateTime(0)
 {
+	WWPROFILE(("ThumbnailClass::ThumbnailClass"));
 	unsigned reduction_factor=3;
 
 	// First, try loading image from a DDS file
 	DDSFileClass dds_file(filename,reduction_factor);
 	if (dds_file.Is_Available() && dds_file.Load()) {
+		DateTime=dds_file.Get_Date_Time();
+
+		int len=Name.Get_Length();
+		WWASSERT(len>4);
+		Name[len-3]='d';
+		Name[len-2]='d';
+		Name[len-1]='s';
+
+		unsigned level=0;
+		while (dds_file.Get_Width(level)>32 || dds_file.Get_Height(level)>32) {
+			if (level>=dds_file.Get_Mip_Level_Count()) break;
+			level++;
+		}
+
+		OriginalTextureWidth=dds_file.Get_Full_Width();
+		OriginalTextureHeight=dds_file.Get_Full_Height();
+		OriginalTextureFormat=dds_file.Get_Format();
+		OriginalTextureMipLevelCount=dds_file.Get_Mip_Level_Count();
 		Width=dds_file.Get_Width(0);
 		Height=dds_file.Get_Height(0);
-		Bitmap=W3DNEWARRAY unsigned char[Width*Height*4];
+		Bitmap=W3DNEWARRAY unsigned char[Width*Height*2];
 		Allocated=true;
 		dds_file.Copy_Level_To_Surface(
 			0,			// Level
-			WW3D_FORMAT_A8R8G8B8,
+			WW3D_FORMAT_A4R4G4B4,
 			Width,
 			Height,
 			Bitmap,
-			Width*4);
+			Width*2,
+			Vector3(0.0f,0.0f,0.0f));// We don't want to HSV-shift here
 	}
 	// If DDS file can't be used try loading from TGA
 	else {
@@ -87,13 +161,46 @@ ThumbnailClass::ThumbnailClass(const StringClass& filename)
 
 		WW3DFormat src_format,dest_format;
 		unsigned src_bpp=0;
-		Get_WW3D_Format(dest_format,src_format,src_bpp,targa);
+		Get_WW3D_Format(src_format,src_bpp,targa);
+		if (src_format==WW3D_FORMAT_UNKNOWN) {
+			WWDEBUG_SAY(("Unknown texture format for %s",filename.str()));
+			return;
+		}
 
 		// Destination size will be the next power of two square from the larger width and height...
+		OriginalTextureWidth=targa.Header.Width;
+		OriginalTextureHeight=targa.Header.Height;
+		OriginalTextureFormat=src_format;
 		Width=targa.Header.Width>>reduction_factor;
 		Height=targa.Header.Height>>reduction_factor;
-		unsigned depth=1;
-		TextureLoader::Validate_Texture_Size(Width,Height,depth);
+		OriginalTextureMipLevelCount=1;
+		unsigned iw=1;
+		unsigned ih=1;
+		while (iw<OriginalTextureWidth && ih<OriginalTextureHeight) {
+			iw+=iw;
+			ih+=ih;
+			OriginalTextureMipLevelCount++;
+		}
+
+		while (Width>32 || Height>32) {
+			reduction_factor++;
+			Width>>=2;
+			Height>>=2;
+		}
+
+		unsigned poweroftwowidth = 1;
+		while (poweroftwowidth < Width) {
+			poweroftwowidth <<= 1;
+		}
+
+		unsigned poweroftwoheight = 1;
+		while (poweroftwoheight < Height) {
+			poweroftwoheight <<= 1;
+		}
+
+		Width=poweroftwowidth;
+		Height=poweroftwoheight;
+
 		unsigned src_width=targa.Header.Width;
 		unsigned src_height=targa.Header.Height;
 
@@ -102,9 +209,24 @@ ThumbnailClass::ThumbnailClass(const StringClass& filename)
 		targa.SetPalette(palette);
 		if (TARGA_ERROR_HANDLER(targa.Load(filename, TGAF_IMAGE, false),filename)) return;
 
+		// Get time stamp from the tga file
+		{
+			file_auto_ptr my_tga_file(_TheFileFactory,filename);
+			WWASSERT(my_tga_file->Is_Available());
+			my_tga_file->Open();
+			DateTime=my_tga_file->Get_Date_Time();
+			my_tga_file->Close();
+		}
+
 		unsigned char* src_surface=(unsigned char*)targa.GetImage();
 
-		Bitmap=W3DNEWARRAY unsigned char[Width*Height*4];
+		int len=Name.Get_Length();
+		WWASSERT(len>4);
+		Name[len-3]='t';
+		Name[len-2]='g';
+		Name[len-1]='a';
+
+		Bitmap=W3DNEWARRAY unsigned char[Width*Height*2];
 		Allocated=true;
 
 		dest_format=WW3D_FORMAT_A8R8G8B8;
@@ -112,8 +234,8 @@ ThumbnailClass::ThumbnailClass(const StringClass& filename)
 			Bitmap,
 			Width,
 			Height,
-			Width*4,
-			WW3D_FORMAT_A8R8G8B8,
+			Width*2,
+			WW3D_FORMAT_A4R4G4B4,
 			src_surface,
 			src_width,
 			src_height,
@@ -124,161 +246,31 @@ ThumbnailClass::ThumbnailClass(const StringClass& filename)
 			false);
 	}
 
-	_ThumbHashModified=true;
-	thumbnail_hash.Insert(Name,this);
+	Manager->Insert_To_Hash(this);
 }
 
 ThumbnailClass::~ThumbnailClass()
 {
 	if (Allocated) delete[] Bitmap;
-	thumbnail_hash.Remove(Name);
+	Manager->Remove_From_Hash(this);
 }
 
-ThumbnailClass* ThumbnailClass::Peek_Instance(const StringClass& name)
+
+// ----------------------------------------------------------------------------
+ThumbnailManagerClass::ThumbnailManagerClass(const char* thumbnail_filename)
+	:
+	ThumbnailMemory(NULL),
+	ThumbnailFileName(thumbnail_filename),
+	PerTextureTimeStampUsed(false),
+	Changed(false),
+	DateTime(0)
 {
-	return thumbnail_hash.Get(name);
 }
 
-void ThumbnailClass::Init()
+// ----------------------------------------------------------------------------
+ThumbnailManagerClass::~ThumbnailManagerClass()
 {
-	WWASSERT(!_ThumbnailMemory);
-
-	// If the thumbnail hash table file is available, init hash table
-#if 0 // don't do thumbnail file.
-	file_auto_ptr thumb_file(_TheFileFactory, THUMBNAIL_FILENAME);
-	if (thumb_file->Is_Available()) {
-		thumb_file->Open(FileClass::READ);
-
-		char tmp[4];
-		thumb_file->Read(tmp,4);
-		if (tmp[0]=='T' && tmp[1]=='M' && tmp[2]=='B' && tmp[3]=='1') {
-
-			int total_thumb_count;
-			int total_header_length;
-			int total_data_length;
-			thumb_file->Read(&total_thumb_count,sizeof(int));
-			thumb_file->Read(&total_header_length,sizeof(int));
-			thumb_file->Read(&total_data_length,sizeof(int));
-			if (total_thumb_count) {
-				WWASSERT(total_data_length && total_header_length);
-				_ThumbnailMemory=W3DNEWARRAY unsigned char[total_data_length];
-				// Load thumbs
-				for (int i=0;i<total_thumb_count;++i) {
-					char name[256];
-					int offset;
-					int width;
-					int height;
-					unsigned long date_time;
-					int name_len;
-					thumb_file->Read(&offset,sizeof(int));
-					thumb_file->Read(&width,sizeof(int));
-					thumb_file->Read(&height,sizeof(int));
-					thumb_file->Read(&date_time,sizeof(unsigned long));
-					thumb_file->Read(&name_len,sizeof(int));
-					WWASSERT(name_len<255);
-					thumb_file->Read(name,name_len);
-					name[name_len]='\0';
-
-
-					// Make sure the file is available and the timestamp matches
-					file_auto_ptr myfile(_TheFileFactory,name);
-					if (myfile->Is_Available()) {
-						myfile->Open(FileClass::READ);
-						if (date_time==myfile->Get_Date_Time()) {
-							W3DNEW ThumbnailClass(
-								name,
-								_ThumbnailMemory+offset-total_header_length,
-								width,
-								height,
-								false);
-						}
-						myfile->Close();
-					}
-				}
-				thumb_file->Read(_ThumbnailMemory,total_data_length);
-			}
-		}
-		thumb_file->Close();
-	}
-#endif
-}
-
-void ThumbnailClass::Deinit()
-{
-	// If the thumbnail hash table was modified, save it to disk
-	HashTemplateIterator<StringClass,ThumbnailClass*> ite(thumbnail_hash);
-	if (_ThumbHashModified) {
-#if 0 // don't write thumbnails.  jba.
-		int total_header_length=0;
-		int total_data_length=0;
-		int total_thumb_count=0;
-		total_header_length+=4;	// header 'TMB1'
-		total_header_length+=4;	// thumb count
-		total_header_length+=4;	// header size
-		total_header_length+=4;	// data length
-
-		for (ite.First();!ite.Is_Done();ite.Next()) {
-			total_header_length+=4;	// int bitmap offset
-			total_header_length+=4;	// int bitmap width
-			total_header_length+=4;	// int bitmap height
-			total_header_length+=4;	// unsigned long date_time
-			total_header_length+=4;	// int name string length
-			ThumbnailClass* thumb=ite.Peek_Value();
-			total_header_length+=strlen(thumb->Get_Name());
-			total_data_length+=thumb->Get_Width()*thumb->Get_Height()*4;
-			total_thumb_count++;
-		}
-		int offset=total_header_length;
-
-		file_auto_ptr thumb_file(_TheWritingFileFactory, THUMBNAIL_FILENAME);
-		if (thumb_file->Is_Available()) {
-			thumb_file->Delete();
-		}
-		thumb_file->Create();
-		thumb_file->Open(FileClass::WRITE);
-
-		char* header="TMB1";
-		thumb_file->Write(header,4);
-		thumb_file->Write(&total_thumb_count,sizeof(int));
-		thumb_file->Write(&total_header_length,sizeof(int));
-		thumb_file->Write(&total_data_length,sizeof(int));
-
-		// Save names and offsets
-		for (ite.First();!ite.Is_Done();ite.Next()) {
-			ThumbnailClass* thumb=ite.Peek_Value();
-			const char* name=thumb->Get_Name();
-			int name_len=strlen(name);
-			int width=thumb->Get_Width();
-			int height=thumb->Get_Height();
-			unsigned long date_time=0;
-			file_auto_ptr myfile(_TheFileFactory,name);
-			if (myfile->Is_Available()) {
-				myfile->Open(FileClass::READ);
-				date_time=myfile->Get_Date_Time();
-				myfile->Close();
-			}
-			thumb_file->Write(&offset,sizeof(int));
-			thumb_file->Write(&width,sizeof(int));
-			thumb_file->Write(&height,sizeof(int));
-			thumb_file->Write(&date_time,sizeof(unsigned long));
-			thumb_file->Write(&name_len,sizeof(int));
-			thumb_file->Write(name,name_len);
-			offset+=width*height*4;
-		}
-
-		// Save bitmaps
-		offset=total_header_length;
-		for (ite.First();!ite.Is_Done();ite.Next()) {
-			ThumbnailClass* thumb=ite.Peek_Value();
-			int width=thumb->Get_Width();
-			int height=thumb->Get_Height();
-			thumb_file->Write(thumb->Peek_Bitmap(),width*height*4);
-		}
-
-		thumb_file->Close();
-#endif
-	}
-
+	HashTemplateIterator<StringClass,ThumbnailClass*> ite(ThumbnailHash);
 	ite.First();
 	while (!ite.Is_Done()) {
 		ThumbnailClass* thumb=ite.Peek_Value();
@@ -286,6 +278,133 @@ void ThumbnailClass::Deinit()
 		ite.First();
 	}
 
-	delete [] _ThumbnailMemory;
-	_ThumbnailMemory=NULL;
+	delete[] ThumbnailMemory;
+	ThumbnailMemory=NULL;
+}
+
+// ----------------------------------------------------------------------------
+ThumbnailManagerClass* ThumbnailManagerClass::Peek_Thumbnail_Manager(const char* thumbnail_filename)
+{
+	ThumbnailManagerClass* man=ThumbnailManagerList.Head();
+	while (man) {
+		if (man->ThumbnailFileName==thumbnail_filename) return man;
+		man=man->Succ();
+	}
+	if (GlobalThumbnailManager &&
+		GlobalThumbnailManager->ThumbnailFileName==thumbnail_filename) return GlobalThumbnailManager;
+	return NULL;
+}
+
+// ----------------------------------------------------------------------------
+void ThumbnailManagerClass::Add_Thumbnail_Manager(const char* thumbnail_filename)
+{
+	// First loop over all thumbnail managers to see if we already have this one created. This isn't
+	// supposed to be called often at all and there are usually just couple managers alive,
+	// so we'll do pure string compares here...
+
+	// Must NOT add global manager with this function
+	WWASSERT(stricmp(thumbnail_filename,GLOBAL_THUMBNAIL_MANAGER_FILENAME));
+
+	ThumbnailManagerClass* man=Peek_Thumbnail_Manager(thumbnail_filename);
+	if (man) return;
+
+	// Not found, create and add to the list.
+	man=new ThumbnailManagerClass(thumbnail_filename);
+	ThumbnailManagerList.Add_Tail(man);
+}
+// ----------------------------------------------------------------------------
+void ThumbnailManagerClass::Remove_Thumbnail_Manager(const char* thumbnail_filename)
+{
+	ThumbnailManagerClass* man=ThumbnailManagerList.Head();
+	while (man) {
+		if (man->ThumbnailFileName==thumbnail_filename) {
+			delete man;
+			return;
+		}
+		man=man->Succ();
+	}
+	if (GlobalThumbnailManager &&
+		GlobalThumbnailManager->ThumbnailFileName==thumbnail_filename) {
+		delete GlobalThumbnailManager;
+		GlobalThumbnailManager=NULL;
+	}
+}
+// ----------------------------------------------------------------------------
+ThumbnailClass* ThumbnailManagerClass::Peek_Thumbnail_Instance(const StringClass& name)
+{
+
+	return Get_From_Hash(name);
+}
+
+ThumbnailClass* ThumbnailManagerClass::Peek_Thumbnail_Instance_From_Any_Manager(const StringClass& filename)
+{
+	WWPROFILE(("Peek_Thumbnail_Instance_From_Any_Manager"));
+	ThumbnailManagerClass* thumb_man=ThumbnailManagerList.Head();
+	while (thumb_man) {
+		ThumbnailClass* thumb=thumb_man->Peek_Thumbnail_Instance(filename);
+		if (thumb) return thumb;
+		thumb_man=thumb_man->Succ();
+	}
+
+	if (GlobalThumbnailManager) {
+		ThumbnailClass* thumb=GlobalThumbnailManager->Peek_Thumbnail_Instance(filename);
+		if (thumb) return thumb;
+	}
+
+// If thumbnail is not found, see if we can find a texture. It is possible that the texture is outside of
+// a mix file and didn't get included in any thumbnail database based on a mixfile. If so, we'll add it to
+// our global thumbnail database.
+	if (Is_Thumbnail_Created_If_Not_Found()) {
+		if (GlobalThumbnailManager) {
+			ThumbnailClass* thumb=new ThumbnailClass(GlobalThumbnailManager,filename);
+			if (!thumb->Peek_Bitmap()) {
+				delete thumb;
+				thumb=NULL;
+			}
+			return thumb;
+		}
+	}
+
+	return NULL;
+}
+
+
+void ThumbnailManagerClass::Insert_To_Hash(ThumbnailClass* thumb)
+{
+	Changed=true;
+	StringClass hash_name(0,true);
+	Create_Hash_Name(hash_name,thumb->Get_Name());
+	ThumbnailHash.Insert(hash_name,thumb);
+}
+
+ThumbnailClass* ThumbnailManagerClass::Get_From_Hash(const StringClass& name)
+{
+	StringClass hash_name(0,true);
+	Create_Hash_Name(hash_name,name);
+	return ThumbnailHash.Get(hash_name);
+}
+
+void ThumbnailManagerClass::Remove_From_Hash(ThumbnailClass* thumb)
+{
+	Changed=true;
+	StringClass hash_name(0,true);
+	Create_Hash_Name(hash_name,thumb->Get_Name());
+	ThumbnailHash.Remove(hash_name);
+}
+
+void ThumbnailManagerClass::Init()
+{
+	WWASSERT(GlobalThumbnailManager == NULL);
+	GlobalThumbnailManager=new ThumbnailManagerClass(GLOBAL_THUMBNAIL_MANAGER_FILENAME);
+	GlobalThumbnailManager->Enable_Per_Texture_Time_Stamp(true);
+}
+
+void ThumbnailManagerClass::Deinit()
+{
+	while (ThumbnailManagerClass* man=ThumbnailManagerList.Head()) {
+		delete man;
+	}
+
+	delete GlobalThumbnailManager;
+	GlobalThumbnailManager=NULL;
 }

@@ -867,9 +867,9 @@ Try improving the fit to vertical surfaces like cliffs.
 	if (!m_usedModules || ShaderClass::Is_Backface_Culling_Inverted())
 		return;	//don't render track marks in reflections.
 
- 	//According to Nvidia there's a D3D bug that happens if you don't start with a
- 	//new dynamic VB each frame - so we force a DISCARD by overflowing the counter.
- 	m_batchStart = 0xffff;
+	//According to Nvidia there's a D3D bug that happens if you don't start with a
+	//new dynamic VB each frame - so we force a DISCARD by overflowing the counter.
+	m_batchStart = 0xffff;
 
 	// adjust shading for time of day.
 	Real shadeR, shadeG, shadeB;

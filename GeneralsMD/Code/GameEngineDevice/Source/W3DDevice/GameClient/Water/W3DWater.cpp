@@ -619,8 +619,8 @@ HRESULT WaterRenderObjClass::generateVertexBuffer( Int sizeX, Int sizeY, Int ver
 {
 	m_numVertices=sizeX*sizeY;
 	//Assuming dynamic vertex buffer, allocate maximum multiple of required size to allow rendering from
- 	//different parts of the buffer. 5-15-03: Disabled this since we use DISCARD mode instead to avoid Nvidia Runtime bug. -MW
- 	//m_numVertices=(65536 / (sizeX*sizeY))*sizeX*sizeY;
+	//different parts of the buffer. 5-15-03: Disabled this since we use DISCARD mode instead to avoid Nvidia Runtime bug. -MW
+	//m_numVertices=(65536 / (sizeX*sizeY))*sizeX*sizeY;
 
 	SEA_PATCH_VERTEX* pVertices;
 
@@ -2229,9 +2229,9 @@ void WaterRenderObjClass::renderWaterMesh(void)
 	if (!m_doWaterGrid)
 		return;	//the water grid is disabled.
 
- 	//According to Nvidia there's a D3D bug that happens if you don't start with a
- 	//new dynamic VB each frame - so we force a DISCARD by overflowing the counter.
- 	m_vertexBufferD3DOffset = 0xffff;
+	//According to Nvidia there's a D3D bug that happens if you don't start with a
+	//new dynamic VB each frame - so we force a DISCARD by overflowing the counter.
+	m_vertexBufferD3DOffset = 0xffff;
 
 	Setting *setting=&m_settings[m_tod];
 

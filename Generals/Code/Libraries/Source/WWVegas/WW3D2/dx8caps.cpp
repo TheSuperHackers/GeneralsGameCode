@@ -539,6 +539,8 @@ void DX8Caps::Compute_Caps(WW3DFormat display_format, const D3DADAPTER_IDENTIFIE
 	MaxTexturesPerPass=MAX_TEXTURE_STAGES;
 
 	Check_Texture_Format_Support(display_format,caps);
+	Check_Render_To_Texture_Support(display_format,caps);
+	Check_Depth_Stencil_Support(display_format,caps);
 	Check_Texture_Compression_Support(caps);
 	Check_Bumpmap_Support(caps);
 	Check_Shader_Support(caps);

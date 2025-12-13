@@ -24,12 +24,15 @@
  *                                                                         *
  *                     $Archive:: /Commando/Code/ww3d2/bmp2d.cpp          $*
  *                                                                         *
- *                      $Author:: Naty_h                                  $*
+ *                  $Org Author:: Jani_p                                  $*
  *                                                                         *
- *                     $Modtime:: 4/13/01 1:37p                           $*
+ *                      $Author:: Kenny_m                                  $*
  *                                                                         *
- *                    $Revision:: 10                                      $*
+ *                     $Modtime:: 08/05/02 10:44a                          $*
  *                                                                         *
+ *                    $Revision:: 12                                      $*
+ *                                                                         *
+ * 08/05/02 KM Texture class redesign
  *-------------------------------------------------------------------------*
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -39,6 +42,9 @@
 #include "ww3d.h"
 #include "texture.h"
 #include "surfaceclass.h"
+#include "assetmgr.h"
+#include "textureloader.h"
+#include "ww3dformat.h"
 
 Bitmap2DObjClass::Bitmap2DObjClass
 (
@@ -67,7 +73,15 @@ Bitmap2DObjClass::Bitmap2DObjClass
 
 
 	// load up the surfaces file name
-	SurfaceClass *surface=NEW_REF(SurfaceClass,(filename));
+	TextureClass *tex = WW3DAssetManager::Get_Instance()->Get_Texture(filename, MIP_LEVELS_1);
+	if (!tex->Is_Initialized())
+		TextureLoader::Request_Foreground_Loading(tex);
+
+	SurfaceClass *surface = tex->Get_Surface_Level(0);
+
+	if (!surface) {
+		surface = NEW_REF(SurfaceClass, (32, 32, Get_Valid_Texture_Format(WW3D_FORMAT_R8G8B8,true)));
+	}
 
 	SurfaceClass::SurfaceDescription sd;
 	surface->Get_Description(sd);
@@ -185,6 +199,7 @@ Bitmap2DObjClass::Bitmap2DObjClass
 			REF_PTR_RELEASE(piece_texture);
 		}
 	}
+	REF_PTR_RELEASE(tex);
 	REF_PTR_RELEASE(surface);
 
 	Set_Dirty();
@@ -215,6 +230,9 @@ Bitmap2DObjClass::Bitmap2DObjClass
 	// Find the dimensions of the texture:
 //	SurfaceClass::SurfaceDescription sd;
 //	texture->Get_Level_Description(sd);
+
+	if (!texture->Is_Initialized())
+		TextureLoader::Request_Foreground_Loading(texture);
 
 	// convert image width and image height to normalized values
 	float vw = (float) texture->Get_Width() / (float)resw;

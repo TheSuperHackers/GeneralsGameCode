@@ -402,7 +402,6 @@ W3DDisplay::~W3DDisplay()
 
 	// shutdown
 	Debug_Statistics::Shutdown_Statistics();
-	TextureLoadTaskClass::shutdown();
 	if (!TheGlobalData->m_headless)
 		W3DShaderManager::shutdown();
 	m_assetManager->Free_Assets();

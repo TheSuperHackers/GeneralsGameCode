@@ -248,14 +248,6 @@ void WW3D::Set_NPatches_Level(unsigned level)
 	NPatchesLevel = level;
 }
 
-void WW3D::Set_Thumbnail_Enabled (bool b)
-{
-	if (ThumbnailEnabled!=b) {
-		ThumbnailEnabled = b;
-		_Invalidate_Textures();
-	}
-}
-
 /***********************************************************************************************
  * WW3D::Init -- Initialize the WW3D Library                                                   *
  *                                                                                             *
@@ -775,7 +767,7 @@ void WW3D::Set_Texture_Filter(int texture_filter)
 	if (texture_filter<0) texture_filter=0;
 	if (texture_filter>TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC) texture_filter=TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC;
 	TextureFilter=texture_filter;
-	TextureFilterClass::_Init_Filters();
+	TextureFilterClass::_Init_Filters((TextureFilterClass::TextureFilterMode)TextureFilter);
 }
 
 
@@ -826,7 +818,7 @@ WW3DErrorType WW3D::Begin_Render(bool clear,bool clearz,const Vector3 & color, f
 	LastFrameMemoryFrees=WWMemoryLogClass::Get_Free_Count();
 	WWMemoryLogClass::Reset_Counters();
 
-	TextureLoader::Update();
+	TextureLoader::Update(network_callback);
 //	TextureClass::_Reset_Time_Stamp();
 	DynamicVBAccessClass::_Reset(true);
 	DynamicIBAccessClass::_Reset(true);

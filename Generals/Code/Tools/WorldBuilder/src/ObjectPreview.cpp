@@ -218,7 +218,7 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 			}
 
 			// Set the render target
-			DX8Wrapper::Set_Render_Target(objectTexture);
+			DX8Wrapper::Set_Render_Target_With_Z(objectTexture);
 
 			// create the camera
 			Bool orthoCamera = false;

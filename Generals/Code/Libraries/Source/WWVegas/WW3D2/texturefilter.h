@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals Zero Hour(tm)
+**	Command & Conquer Generals(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -114,7 +114,7 @@ public:
 	void Set_V_Addr_Mode(TxtAddrMode mode) { VAddressMode=mode; }
 
 	// This needs to be called after device has been created
-	static void _Init_Filters(void);
+	static void _Init_Filters(TextureFilterMode texture_filter);
 
 	static void _Set_Default_Min_Filter(FilterType filter);
 	static void _Set_Default_Mag_Filter(FilterType filter);

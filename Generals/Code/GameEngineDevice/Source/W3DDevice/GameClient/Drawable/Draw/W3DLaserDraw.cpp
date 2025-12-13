@@ -124,6 +124,9 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 	m_texture = WW3DAssetManager::Get_Instance()->Get_Texture( data->m_textureName.str() );
 	if (m_texture)
 	{
+		if (!m_texture->Is_Initialized())
+			m_texture->Init();	//make sure texture is actually loaded before accessing surface.
+
 		SurfaceClass::SurfaceDescription surfaceDesc;
 		m_texture->Get_Level_Description(surfaceDesc);
 		m_textureAspectRatio = (Real)surfaceDesc.Width/(Real)surfaceDesc.Height;

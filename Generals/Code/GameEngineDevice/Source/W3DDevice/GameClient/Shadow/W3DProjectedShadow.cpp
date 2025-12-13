@@ -261,7 +261,7 @@ Bool W3DProjectedShadowManager::ReAcquireResources(void)
 	DEBUG_ASSERTCRASH(m_dynamicRenderTarget == NULL, ("Acquire of existing shadow render target"));
 
 	m_renderTargetHasAlpha=TRUE;
-	if ((m_dynamicRenderTarget=DX8Wrapper::Create_Render_Target (DEFAULT_RENDER_TARGET_WIDTH, DEFAULT_RENDER_TARGET_HEIGHT, true)) == NULL)
+	if ((m_dynamicRenderTarget=DX8Wrapper::Create_Render_Target (DEFAULT_RENDER_TARGET_WIDTH, DEFAULT_RENDER_TARGET_HEIGHT, WW3D_FORMAT_A8R8G8B8)) == NULL)
 	{
 			m_renderTargetHasAlpha=FALSE;
 

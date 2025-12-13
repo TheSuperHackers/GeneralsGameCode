@@ -637,7 +637,6 @@ int CWorldBuilderApp::ExitInstance()
 
 	delete TheFileSystem;
 	TheFileSystem = NULL;
-	TextureLoadTaskClass::shutdown();
 
 	delete TheW3DFileSystem;
 	TheW3DFileSystem = NULL;

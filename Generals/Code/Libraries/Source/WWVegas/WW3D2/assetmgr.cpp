@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* $Header: /Commando/Code/ww3d2/assetmgr.cpp 36    8/24/01 3:23p Jani_p $ */
+/* $Header: /Commando/Code/ww3d2/assetmgr.cpp 43    11/01/01 1:11a Jani_p $ */
 /***********************************************************************************************
  ***                            Confidential - Westwood Studios                              ***
  ***********************************************************************************************
@@ -25,12 +25,16 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/ww3d2/assetmgr.cpp                           $*
  *                                                                                             *
- *                       Author:: Greg_h                                                       *
+ *                   Org Author:: Greg_h                                                       *
  *                                                                                             *
- *                     $Modtime:: 8/22/01 6:54p                                               $*
+ *                       Author : Kenny Mitchell                                               *
  *                                                                                             *
- *                    $Revision:: 36                                                          $*
+ *                     $Modtime:: 08/05/02 10:14a                                              $*
  *                                                                                             *
+ *                    $Revision:: 46                                                          $*
+ *                                                                                             *
+ * 06/27/02 KM Texture class abstraction																			*
+ * 08/05/02 KM Texture class redesign (revisited)
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  *   WW3DAssetManager::WW3DAssetManager -- Constructor                                         *
@@ -1041,46 +1045,6 @@ HTreeClass *	WW3DAssetManager::Get_HTree(const char * name)
 }
 
 /***********************************************************************************************
- * WW3DAssetManager::Get_Bumpmap_Based_On_Texture -- Generate a bumpmap from texture. The      *
- * resulting texture is stored to the hash table so that any further requests will share it.   *
- *                                                                                             *
- * INPUT:                                                                                      *
- *                                                                                             *
- * OUTPUT:                                                                                     *
- *                                                                                             *
- * WARNINGS:                                                                                   *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   1/31/2001  NH : Created.                                                                  *
- *=============================================================================================*/
-
-TextureClass* WW3DAssetManager::Get_Bumpmap_Based_On_Texture(TextureClass* texture)
-{
-	WWASSERT(texture->Get_Texture_Name() && strlen(texture->Get_Texture_Name()));
-	StringClass bump_name="__Bumpmap-";
-	bump_name+=texture->Get_Texture_Name();
-	_strlwr(bump_name.Peek_Buffer());	// lower case
-
-	/*
-	** See if the texture has already been generated.
-	*/
-
-	TextureClass* tex = TextureHash.Get(bump_name);
-
-	/*
-	** Didn't have it so we have to create a new texture
-	*/
-	if (!tex) {
-		tex = NEW_REF(BumpmapTextureClass,(texture));
-		tex->Set_Texture_Name(bump_name);
-		TextureHash.Insert(tex->Get_Texture_Name(),tex);
-	}
-
-	tex->Add_Ref();
-	return tex;
-}
-
-/***********************************************************************************************
  * WW3DAssetManager::Get_Texture -- get a TextureClass from the specified file                 *
  *                                                                                             *
  * INPUT:                                                                                      *
@@ -1127,7 +1091,7 @@ TextureClass * WW3DAssetManager::Get_Texture
 	** See if the texture has already been loaded.
 	*/
 	TextureClass* tex = TextureHash.Get(lower_case_name);
-	if (tex && texture_format!=WW3D_FORMAT_UNKNOWN)
+	if (tex && (tex->Is_Initialized() == true) && (texture_format!=WW3D_FORMAT_UNKNOWN))
 	{
 		WWASSERT_PRINT(tex->Get_Texture_Format()==texture_format,("Texture %s has already been loaded with different format",filename));
 	}
@@ -1139,7 +1103,15 @@ TextureClass * WW3DAssetManager::Get_Texture
 	{
 		if (type==TextureBaseClass::TEX_REGULAR)
 		{
-			tex = NEW_REF (TextureClass, (lower_case_name, NULL, mip_level_count, texture_format, allow_compression));
+			tex = NEW_REF (TextureClass, (lower_case_name, NULL, mip_level_count, texture_format, allow_compression, allow_reduction));
+		}
+		else if (type==TextureBaseClass::TEX_CUBEMAP)
+		{
+			tex = NEW_REF (CubeTextureClass, (lower_case_name, NULL, mip_level_count, texture_format, allow_compression, allow_reduction));
+		}
+		else if (type==TextureBaseClass::TEX_VOLUME)
+		{
+			tex = NEW_REF (VolumeTextureClass, (lower_case_name, NULL, mip_level_count, texture_format, allow_compression, allow_reduction));
 		}
 		else
 		{

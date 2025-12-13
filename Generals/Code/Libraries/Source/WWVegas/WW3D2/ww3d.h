@@ -228,7 +228,7 @@ public:
 	static void					_Invalidate_Mesh_Cache();
 	static void					_Invalidate_Textures();
 
-	static void					Set_Thumbnail_Enabled(bool b);// { ThumbnailEnabled=b; }
+	static void					Set_Thumbnail_Enabled(bool b) { ThumbnailEnabled=b; }
 	static bool					Get_Thumbnail_Enabled() { return ThumbnailEnabled; }
 
 	static void					Enable_Sorting(bool onoff);

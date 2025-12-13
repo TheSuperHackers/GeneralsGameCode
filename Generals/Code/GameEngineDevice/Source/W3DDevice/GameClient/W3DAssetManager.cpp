@@ -627,7 +627,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 
 	// make sure texture is loaded
 	if (!texture->Is_Initialized())
-		TextureLoader::Request_High_Priority_Loading(texture, (MipCountType)texture->Get_Mip_Level_Count());
+		TextureLoader::Request_Foreground_Loading(texture);
 
 	SurfaceClass::SurfaceDescription desc;
 	SurfaceClass *newsurf, *oldsurf;
