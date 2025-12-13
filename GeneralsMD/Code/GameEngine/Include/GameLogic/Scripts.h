@@ -75,6 +75,9 @@ class Condition;
 class DataChunkInput;
 struct DataChunkInfo;
 class DataChunkOutput;
+class JSONChunkInput;
+struct JSONChunkInfo;
+class JSONChunkOutput;
 
 #define NO_MORE_COMPLEX_SKIRMISH_SCRIPTS
 #ifndef NO_MORE_COMPLEX_SKIRMISH_SCRIPTS
@@ -146,6 +149,10 @@ public:
 	void deleteScript(Script *pScr);
 
 	static void WriteGroupDataChunk(DataChunkOutput &chunkWriter, ScriptGroup *pGroup);
+#ifdef RTS_HAS_JSON_CHUNK
+	static void WriteGroupDataChunkJSON(JSONChunkOutput &chunkWriter, ScriptGroup *pGroup);
+	static Bool ParseGroupDataChunkJSON(JSONChunkInput &file, JSONChunkInfo *info, void *userData);
+#endif
 	static Bool ParseGroupDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
 };
 
@@ -178,6 +185,10 @@ public:
 	Condition *removeCondition(Condition *pCond);
 	void deleteCondition(Condition *pCond);
 	static void WriteOrConditionDataChunk(DataChunkOutput &chunkWriter, OrCondition *pCondition);
+#ifdef RTS_HAS_JSON_CHUNK
+	static void WriteOrConditionDataChunkJSON(JSONChunkOutput &chunkWriter, OrCondition *pCondition);
+	static Bool ParseOrConditionDataChunkJSON(JSONChunkInput &file, JSONChunkInfo *info, void *userData);
+#endif
 	static Bool ParseOrConditionDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
 
 	// Utility for moving scripts upwards
@@ -584,12 +595,17 @@ public:
 	Int getUiStrings(AsciiString strings[MAX_PARMS]);
 
 	static void WriteActionDataChunk(DataChunkOutput &chunkWriter, ScriptAction *pAct);
+#ifdef RTS_HAS_JSON_CHUNK
+	static void WriteActionDataChunkJSON(JSONChunkOutput &chunkWriter, ScriptAction *pAct);
+	static ScriptAction *ParseActionJSON(JSONChunkInput &file, JSONChunkInfo *info, void *userData);
+	static Bool ParseActionDataChunkJSON(JSONChunkInput &file, JSONChunkInfo *info, void *userData);
+	static void WriteActionFalseDataChunkJSON(JSONChunkOutput &chunkWriter, ScriptAction *pAct);
+	static Bool ParseActionFalseDataChunkJSON(JSONChunkInput &file, JSONChunkInfo *info, void *userData);
+#endif
+	static ScriptAction *ParseAction(DataChunkInput &file, DataChunkInfo *info, void *userData);
 	static Bool ParseActionDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
 	static void WriteActionFalseDataChunk(DataChunkOutput &chunkWriter, ScriptAction *pAct);
 	static Bool ParseActionFalseDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
-
-protected:
-	static ScriptAction *ParseAction(DataChunkInput &file, DataChunkInfo *info, void *userData);
 
 };
 
@@ -691,6 +707,12 @@ public:
 	void deleteFalseAction(ScriptAction *pAct);
 
 	static void WriteScriptDataChunk(DataChunkOutput &chunkWriter, Script *pScript);
+#ifdef RTS_HAS_JSON_CHUNK
+	static void WriteScriptDataChunkJSON(JSONChunkOutput &chunkWriter, Script *pScript);
+	static Script *ParseScriptJSON(JSONChunkInput &file, unsigned short version);
+	static Bool ParseScriptFromListDataChunkJSON(JSONChunkInput &file, JSONChunkInfo *info, void *userData);
+	static Bool ParseScriptFromGroupDataChunkJSON(JSONChunkInput &file, JSONChunkInfo *info, void *userData);
+#endif
 	static Script *ParseScript(DataChunkInput &file, unsigned short version);
 	static Bool ParseScriptFromListDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
 	static Bool ParseScriptFromGroupDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
@@ -834,6 +856,10 @@ public:
 	AsciiString getUiText(void) const;
 
 	void WriteParameter(DataChunkOutput &chunkWriter);
+#ifdef RTS_HAS_JSON_CHUNK
+	void WriteParameterJSON(JSONChunkOutput &chunkWriter);
+	static Parameter *ReadParameterJSON(JSONChunkInput &file);
+#endif
 	static Parameter *ReadParameter(DataChunkInput &file);
 
 };
@@ -1021,6 +1047,10 @@ public:
 	void setCustomFrame(Int val) { m_customFrame = val;}
 
 	static void WriteConditionDataChunk(DataChunkOutput &chunkWriter, Condition *pCond);
+#ifdef RTS_HAS_JSON_CHUNK
+	static void WriteConditionDataChunkJSON(JSONChunkOutput &chunkWriter, Condition *pCond);
+	static Bool ParseConditionDataChunkJSON(JSONChunkInput &file, JSONChunkInfo *info, void *userData);
+#endif
 	static Bool ParseConditionDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
 
 };
@@ -1112,6 +1142,10 @@ public:
 	ScriptGroup *getScriptGroup(void) {return m_firstGroup;};
 	Script *getScript(void) {return m_firstScript;};
 	void WriteScriptListDataChunk(DataChunkOutput &chunkWriter);
+#ifdef RTS_HAS_JSON_CHUNK
+	void WriteScriptListDataChunkJSON(JSONChunkOutput &chunkWriter);
+	static Bool ParseScriptListDataChunkJSON(JSONChunkInput &file, JSONChunkInfo *info, void *userData);
+#endif
 	static Bool ParseScriptListDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
 
 	void addGroup(ScriptGroup *pGrp, Int ndx);
@@ -1126,8 +1160,14 @@ public:
 			const AsciiString& playerTemplateName, const AsciiString& newPlayerName ) const;
 	/// Reads a set of scripts into m_readScripts.  Use getReadScripts to access.
 	static Bool ParseScriptsDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
+#ifdef RTS_HAS_JSON_CHUNK
+	static Bool ParseScriptsDataChunkJSON(JSONChunkInput &file, JSONChunkInfo *info, void *userData);
+#endif
 	/// Writes sides (including build list info.)
 	static void WriteScriptsDataChunk(DataChunkOutput &chunkWriter, ScriptList *scriptLists[], Int numLists);
+#ifdef RTS_HAS_JSON_CHUNK
+	static void WriteScriptsDataChunkJSON(JSONChunkOutput &chunkWriter, ScriptList *scriptLists[], Int numLists);
+#endif
 
 	/// Returns array of script list pointers.  This can only be called once after scripts
 	/// are read, and the caller is responsible for deleting the scripts.

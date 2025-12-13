@@ -113,6 +113,7 @@ jobs:
           arch: x86
 
       - name: Setup vcpkg
+        if: startsWith(inputs.preset, 'win32')
         uses: lukka/run-vcpkg@v11
 
       - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset

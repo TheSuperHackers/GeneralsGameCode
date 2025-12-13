@@ -57,6 +57,8 @@ set(GAMEENGINE_SRC
 #    Include/Common/GameType.h
     Include/Common/GameUtility.h
 #    Include/Common/Geometry.h
+#    Include/Common/JSONChunkInput.h
+#    Include/Common/JSONChunkOutput.h
 #    Include/Common/GlobalData.h
 #    Include/Common/Handicap.h
 #    Include/Common/IgnorePreferences.h
@@ -646,6 +648,8 @@ set(GAMEENGINE_SRC
 #    Source/Common/System/CriticalSection.cpp
 #    Source/Common/System/DataChunk.cpp
     Source/Common/System/Debug.cpp
+#    Source/Common/System/JSONChunkInput.cpp
+#    Source/Common/System/JSONChunkOutput.cpp
 #    Source/Common/System/Directory.cpp
 #    Source/Common/System/DisabledTypes.cpp
 #    Source/Common/System/encrypt.cpp
@@ -1145,6 +1149,15 @@ set(GAMEENGINE_SRC
 #    Source/Precompiled/PreRTS.cpp
 )
 
+if(NOT IS_VS6_BUILD)
+    list(APPEND GAMEENGINE_SRC
+        ${CMAKE_CURRENT_SOURCE_DIR}/Include/Common/JSONChunkInput.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/Include/Common/JSONChunkOutput.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/Source/Common/System/JSONChunkInput.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Source/Common/System/JSONChunkOutput.cpp
+    )
+endif()
+
 if(RTS_GAMEMEMORY_ENABLE)
     # Uses the original Game Memory implementation.
     list(APPEND GAMEENGINE_SRC
@@ -1164,6 +1177,21 @@ else()
 endif()
 
 
+if (NOT IS_VS6_BUILD)
+    find_package(nlohmann_json CONFIG)
+    if (TARGET nlohmann_json::nlohmann_json)
+        # Uses nlohmann-json from vcpkg
+        set(NLOHMANN_JSON_TARGET nlohmann_json::nlohmann_json)
+    else()
+        # Uses nlohmann-json from github repository
+        include(${CMAKE_SOURCE_DIR}/cmake/nlohmann-json.cmake)
+        set(NLOHMANN_JSON_TARGET nlohmann_json)
+    endif()
+else()
+    # VC6 doesn't support C++11, so nlohmann-json is not available
+    set(NLOHMANN_JSON_TARGET "")
+endif()
+
 add_library(corei_gameengine_private INTERFACE)
 add_library(corei_gameengine_public INTERFACE)
 
@@ -1179,6 +1207,7 @@ target_link_libraries(corei_gameengine_private INTERFACE
 
 target_compile_definitions(corei_gameengine_private INTERFACE
     IG_DEBUG_STACKTRACE
+    $<$<NOT:$<BOOL:${IS_VS6_BUILD}>>:RTS_HAS_JSON_CHUNK>
 )
 
 target_precompile_headers(corei_gameengine_private INTERFACE
@@ -1198,4 +1227,5 @@ target_link_libraries(corei_gameengine_public INTERFACE
     d3d8lib
     gamespy::gamespy
     stlport
+    $<$<NOT:$<BOOL:${IS_VS6_BUILD}>>:${NLOHMANN_JSON_TARGET}>
 )
