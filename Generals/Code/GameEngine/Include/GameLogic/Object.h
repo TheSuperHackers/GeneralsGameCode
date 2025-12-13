@@ -237,6 +237,8 @@ public:
 	void setCustomIndicatorColor(Color c);
 	void removeCustomIndicatorColor();
 
+	Bool isLogicallyVisible() const; ///< Returns whether the object is logically visible to the player.
+
 	Bool isLocallyControlled() const;
 	Bool isLocallyViewed() const;
 	Bool isNeutralControlled() const;

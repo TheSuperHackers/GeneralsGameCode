@@ -54,7 +54,7 @@ bool localPlayerIsObserving()
 	if (TheGameLogic->isInReplayGame() || TheGameLogic->isInShellGame())
 		return true;
 
-	if (ThePlayerList->getLocalPlayer()->isPlayerObserver())
+	if (!ThePlayerList->getLocalPlayer()->isPlayerActive())
 		return true;
 
 	return false;
