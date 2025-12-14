@@ -476,7 +476,7 @@ const char *FunctionLexicon::funcToName( void *func, TableEntry *table )
 
 	// sanity
 	if( func == nullptr )
-		return NULL;
+		return nullptr;
 
 	// search the table
 	TableEntry *entry = table;
@@ -492,7 +492,7 @@ const char *FunctionLexicon::funcToName( void *func, TableEntry *table )
 
 	}
 
-	return NULL;  // not found
+	return nullptr;  // not found
 
 }
 #endif
@@ -578,7 +578,7 @@ char *FunctionLexicon::functionToName( void *func )
 
 	// sanity
 	if( func == nullptr )
-		return NULL;
+		return nullptr;
 
 	// search ALL the tables
 	Int i;
@@ -592,7 +592,7 @@ char *FunctionLexicon::functionToName( void *func )
 
 	}
 
-	return NULL;  // not found
+	return nullptr;  // not found
 
 }
 */

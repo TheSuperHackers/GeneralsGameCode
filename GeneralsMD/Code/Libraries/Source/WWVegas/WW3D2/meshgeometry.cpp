@@ -1478,7 +1478,7 @@ Vector4 * MeshGeometryClass::get_planes(bool create)
 	if (PlaneEq) {
 		return PlaneEq->Get_Array();
 	}
-	return NULL;
+	return nullptr;
 #endif
 }
 

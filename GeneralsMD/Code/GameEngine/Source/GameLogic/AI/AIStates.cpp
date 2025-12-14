@@ -3784,7 +3784,7 @@ const Waypoint * AIFollowWaypointPathState::getNextWaypoint(void)
 #else
 	if (!hasNextWaypoint()) {
 		m_priorWaypoint = m_currentWaypoint;
-		return NULL;
+		return nullptr;
 	}
 	Int skip = -1;
 	Int i;

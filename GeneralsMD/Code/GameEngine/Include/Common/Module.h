@@ -109,9 +109,9 @@ public:
 	virtual Bool isAiModuleData() const { return false; }
 
 	// ugh, hack
-	virtual const W3DModelDrawModuleData* getAsW3DModelDrawModuleData() const { return NULL; }
+	virtual const W3DModelDrawModuleData* getAsW3DModelDrawModuleData() const { return nullptr; }
 	// ugh, hack
-	virtual const W3DTreeDrawModuleData* getAsW3DTreeDrawModuleData() const { return NULL; }
+	virtual const W3DTreeDrawModuleData* getAsW3DTreeDrawModuleData() const { return nullptr; }
 	virtual StaticGameLODLevel getMinimumRequiredGameLOD() const { return (StaticGameLODLevel)0;}
 
 	static void buildFieldParse(MultiIniFieldParse& p)

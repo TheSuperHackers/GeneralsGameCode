@@ -155,7 +155,7 @@ Bool RAMFile::open( File *file )
 {
 	if ( file == nullptr )
 	{
-		return NULL;
+		return FALSE;
 	}
 
 	Int access = file->getAccess();

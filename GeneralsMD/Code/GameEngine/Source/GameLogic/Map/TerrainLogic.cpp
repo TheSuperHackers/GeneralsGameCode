@@ -1814,7 +1814,7 @@ Bool TerrainLogic::objectInteractsWithBridgeLayer(Object *obj, Int layer, Bool c
 //-------------------------------------------------------------------------------------------------
 Bool TerrainLogic::objectInteractsWithBridgeEnd(Object *obj, Int layer) const
 {
-	if (layer == LAYER_GROUND) return NULL;
+	if (layer == LAYER_GROUND) return false;
 	Bridge *pBridge = getFirstBridge();
 
 	while (pBridge ) {

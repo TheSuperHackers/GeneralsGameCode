@@ -99,7 +99,7 @@ class StreamingArchiveFile : public RAMFile
 		virtual Bool	openFromArchive(File *archiveFile, const AsciiString& filename, Int offset, Int size); ///< copy file data from the given file at the given offset for the given size.
 		virtual Bool	copyDataToFile(File *localFile) { DEBUG_CRASH(("Are you sure you meant to copyDataToFile on a streaming file?")); return FALSE; }
 
-		virtual char* readEntireAndClose() { DEBUG_CRASH(("Are you sure you meant to readEntireAndClose on a streaming file?")); return NULL; }
+		virtual char* readEntireAndClose() { DEBUG_CRASH(("Are you sure you meant to readEntireAndClose on a streaming file?")); return nullptr; }
 		virtual File* convertToRAMFile() { DEBUG_CRASH(("Are you sure you meant to readEntireAndClose on a streaming file?")); return this; }
 };
 

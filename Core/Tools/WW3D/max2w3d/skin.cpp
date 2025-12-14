@@ -313,7 +313,7 @@ CreateMouseCallBack * SkinWSMObjectClass::GetCreateMouseCallBack(void)
 	/*
 	** The "CreateMouseCallback" is used when creating the
 	** object.  Since our object doesn't need an interactive
-	** creation phase, we return NULL.
+	** creation phase, we return nullptr.
 	*/
 	return &_SkinCreateCB;
 }
@@ -733,7 +733,7 @@ RefTargetHandle SkinModifierClass::GetReference(int i)
 	switch (i) {
 		case OBJ_REF:			return WSMObjectRef;
 		case NODE_REF:			return WSMNodeRef;
-		default:					return NULL;
+		default:					return nullptr;
 	}
 }
 
@@ -1871,7 +1871,7 @@ static TriObject * Get_Tri_Object(TimeValue t,ObjectState & os,Interval & valid,
 			return tobj;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 

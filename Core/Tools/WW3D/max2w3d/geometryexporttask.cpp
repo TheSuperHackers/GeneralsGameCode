@@ -507,7 +507,7 @@ GeometryExportTaskClass *
 GeometryExportTaskClass::Create_Task(INode * node,GeometryExportContextClass & context)
 {
 	if (!::Is_Geometry(node)) {
-		return NULL;
+		return nullptr;
 	}
 
 	// NOTE: we *have* to check Is_Proxy first because it is tied to a naming convention
@@ -536,7 +536,7 @@ GeometryExportTaskClass::Create_Task(INode * node,GeometryExportContextClass & c
 		return new AggregateGeometryExportTaskClass(node,context);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 

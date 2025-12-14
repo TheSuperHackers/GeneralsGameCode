@@ -207,7 +207,7 @@ class BinaryHeapClass
 			HeapNodeClass<Key_Type>* 	min_element;
 
 			if (Number_Of_Elements == 0) {
-				return NULL;
+				return nullptr;
 			}
 
 			assert(Number_Of_Elements > 0);

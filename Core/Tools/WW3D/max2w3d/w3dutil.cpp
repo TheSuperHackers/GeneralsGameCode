@@ -1289,7 +1289,7 @@ W3DAppData0Struct * W3DUtilityClass::get_app_data_0(INode * node)
 	AppDataChunk * appdata = node->GetAppDataChunk(W3DUtilityClassID,UTILITY_CLASS_ID,0);
 
 	/*
-	** If there wasn't one, return NULL since this app data chunk is obsolete now.
+	** If there wasn't one, return nullptr since this app data chunk is obsolete now.
 	** If there was one, get the data from it
 	*/
 	if (appdata) {

@@ -151,42 +151,42 @@ public:
 	static Int getInterfaceMask() { return 0; }
 	static ModuleType getModuleType() { return MODULETYPE_BEHAVIOR; }
 
-	virtual BodyModuleInterface* getBody() { return NULL; }
-	virtual CollideModuleInterface* getCollide() { return NULL; }
-	virtual ContainModuleInterface* getContain() { return NULL; }
-	virtual CreateModuleInterface* getCreate() { return NULL; }
-	virtual DamageModuleInterface* getDamage() { return NULL; }
-	virtual DestroyModuleInterface* getDestroy() { return NULL; }
-	virtual DieModuleInterface* getDie() { return NULL; }
-	virtual SpecialPowerModuleInterface* getSpecialPower() { return NULL; }
-	virtual UpdateModuleInterface* getUpdate() { return NULL; }
-	virtual UpgradeModuleInterface* getUpgrade() { return NULL; }
-	virtual StealthUpdate* getStealth() { return NULL; }
+	virtual BodyModuleInterface* getBody() { return nullptr; }
+	virtual CollideModuleInterface* getCollide() { return nullptr; }
+	virtual ContainModuleInterface* getContain() { return nullptr; }
+	virtual CreateModuleInterface* getCreate() { return nullptr; }
+	virtual DamageModuleInterface* getDamage() { return nullptr; }
+	virtual DestroyModuleInterface* getDestroy() { return nullptr; }
+	virtual DieModuleInterface* getDie() { return nullptr; }
+	virtual SpecialPowerModuleInterface* getSpecialPower() { return nullptr; }
+	virtual UpdateModuleInterface* getUpdate() { return nullptr; }
+	virtual UpgradeModuleInterface* getUpgrade() { return nullptr; }
+	virtual StealthUpdate* getStealth() { return nullptr; }
 
-	virtual ParkingPlaceBehaviorInterface* getParkingPlaceBehaviorInterface() { return NULL; }
-	virtual RebuildHoleBehaviorInterface* getRebuildHoleBehaviorInterface() { return NULL; }
-	virtual BridgeBehaviorInterface* getBridgeBehaviorInterface() { return NULL; }
-	virtual BridgeTowerBehaviorInterface* getBridgeTowerBehaviorInterface() { return NULL; }
-	virtual BridgeScaffoldBehaviorInterface* getBridgeScaffoldBehaviorInterface() { return NULL; }
-	virtual OverchargeBehaviorInterface* getOverchargeBehaviorInterface() { return NULL; }
-	virtual TransportPassengerInterface* getTransportPassengerInterface() { return NULL; }
-	virtual CaveInterface* getCaveInterface() { return NULL; }
-	virtual LandMineInterface* getLandMineInterface() { return NULL; }
-	virtual DieModuleInterface* getEjectPilotDieInterface() { return NULL; }
+	virtual ParkingPlaceBehaviorInterface* getParkingPlaceBehaviorInterface() { return nullptr; }
+	virtual RebuildHoleBehaviorInterface* getRebuildHoleBehaviorInterface() { return nullptr; }
+	virtual BridgeBehaviorInterface* getBridgeBehaviorInterface() { return nullptr; }
+	virtual BridgeTowerBehaviorInterface* getBridgeTowerBehaviorInterface() { return nullptr; }
+	virtual BridgeScaffoldBehaviorInterface* getBridgeScaffoldBehaviorInterface() { return nullptr; }
+	virtual OverchargeBehaviorInterface* getOverchargeBehaviorInterface() { return nullptr; }
+	virtual TransportPassengerInterface* getTransportPassengerInterface() { return nullptr; }
+	virtual CaveInterface* getCaveInterface() { return nullptr; }
+	virtual LandMineInterface* getLandMineInterface() { return nullptr; }
+	virtual DieModuleInterface* getEjectPilotDieInterface() { return nullptr; }
 	// interface acquisition (moved from UpdateModule)
-	virtual ProjectileUpdateInterface* getProjectileUpdateInterface() { return NULL; }
-	virtual AIUpdateInterface* getAIUpdateInterface() { return NULL; }
-	virtual ExitInterface* getUpdateExitInterface() { return NULL; }
-	virtual DelayedUpgradeUpdateInterface* getDelayedUpgradeUpdateInterface() { return NULL; }
-	virtual DockUpdateInterface* getDockUpdateInterface() { return NULL; }
-	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface( void ) { return NULL; }
-	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() { return NULL; }
-	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return NULL; }
-	virtual SlavedUpdateInterface* getSlavedUpdateInterface() { return NULL; }
-	virtual ProductionUpdateInterface* getProductionUpdateInterface() { return NULL; }
-	virtual HordeUpdateInterface* getHordeUpdateInterface() { return NULL; }
-	virtual PowerPlantUpdateInterface* getPowerPlantUpdateInterface() { return NULL; }
-	virtual SpawnBehaviorInterface* getSpawnBehaviorInterface() { return NULL; }
+	virtual ProjectileUpdateInterface* getProjectileUpdateInterface() { return nullptr; }
+	virtual AIUpdateInterface* getAIUpdateInterface() { return nullptr; }
+	virtual ExitInterface* getUpdateExitInterface() { return nullptr; }
+	virtual DelayedUpgradeUpdateInterface* getDelayedUpgradeUpdateInterface() { return nullptr; }
+	virtual DockUpdateInterface* getDockUpdateInterface() { return nullptr; }
+	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface( void ) { return nullptr; }
+	virtual SlowDeathBehaviorInterface* getSlowDeathBehaviorInterface() { return nullptr; }
+	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return nullptr; }
+	virtual SlavedUpdateInterface* getSlavedUpdateInterface() { return nullptr; }
+	virtual ProductionUpdateInterface* getProductionUpdateInterface() { return nullptr; }
+	virtual HordeUpdateInterface* getHordeUpdateInterface() { return nullptr; }
+	virtual PowerPlantUpdateInterface* getPowerPlantUpdateInterface() { return nullptr; }
+	virtual SpawnBehaviorInterface* getSpawnBehaviorInterface() { return nullptr; }
 
 protected:
 

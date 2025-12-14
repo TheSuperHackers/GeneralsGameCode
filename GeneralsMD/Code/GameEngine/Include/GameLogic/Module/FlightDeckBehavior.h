@@ -118,7 +118,7 @@ public:
 	virtual Bool getExitPosition( Coord3D& rallyPoint ) const { return FALSE; }
 	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) { return FALSE; }
 	virtual void setRallyPoint( const Coord3D *pos ) {}
-	virtual const Coord3D *getRallyPoint( void ) const { return NULL;}
+	virtual const Coord3D *getRallyPoint( void ) const { return nullptr;}
 
 	// UpdateModule
 	virtual UpdateSleepTime update();

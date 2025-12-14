@@ -259,7 +259,7 @@ RefTargetHandle SimpleMod2::GetReference(int i)
 		case 0: return tmControl;
 		case 1: return posControl;
 		case 2: return pblock2;
-		default: return NULL;
+		default: return nullptr;
 	}
 }
 
@@ -278,6 +278,6 @@ Animatable * SimpleMod2::SubAnim(int i)
 		case 0: return posControl;
 		case 1: return tmControl;
 		case 2: return pblock2;
-		default: return NULL;
+		default: return nullptr;
 	}
 }

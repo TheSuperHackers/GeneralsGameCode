@@ -7518,7 +7518,7 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 		PathfindLayerEnum layer, const Coord3D *groupDest)
 {
 	//CRCDEBUG_LOG(("Pathfinder::pathDestination()"));
-	if (m_isMapReady == false) return NULL;
+	if (m_isMapReady == false) return false;
 
 	if (!obj) return false;
 
@@ -7812,7 +7812,7 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 		const Coord3D *rawTo)
 {
 	//CRCDEBUG_LOG(("Pathfinder::checkPathCost()"));
-	if (m_isMapReady == false) return NULL;
+	if (m_isMapReady == false) return 0;
 	enum {MAX_COST = 0x7fff0000};
 	if (!obj) return MAX_COST;
 

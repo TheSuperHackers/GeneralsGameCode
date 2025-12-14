@@ -1114,7 +1114,7 @@ try_again:
 		goto try_again;
 	}
 
-	return NULL;
+	return nullptr;
 }
 #endif
 

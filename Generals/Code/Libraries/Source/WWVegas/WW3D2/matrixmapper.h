@@ -94,7 +94,7 @@ public:
 
 	void						Compute_Texture_Coordinate(const Vector3 & point,Vector3 * set_stq);
 
-	TextureMapperClass*	Clone(void) const { 	WWASSERT(0);	return NULL; }
+	TextureMapperClass*	Clone(void) const { 	WWASSERT(0);	return nullptr; }
 
 	virtual void			Apply(int uv_array_index);
 

@@ -107,5 +107,5 @@ inline const Coord3D *SupplyCenterProductionExitUpdate::getRallyPoint( void ) co
 	if (m_rallyPointExists)
 		return &m_rallyPoint;
 
-	return NULL;
+	return nullptr;
 }

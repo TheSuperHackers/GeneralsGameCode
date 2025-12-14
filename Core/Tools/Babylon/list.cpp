@@ -72,7 +72,7 @@ ListNode*		ListNode::Next				( void )
 {
 	if ( next->IsHead ( ) )
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	return next;
@@ -82,7 +82,7 @@ ListNode*		ListNode::Prev				( void )
 {
 	if ( prev->IsHead () )
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	return prev;
@@ -98,7 +98,7 @@ ListNode*		ListNode::NextLoop		( void )
 		next_node = next_node->next;
 		if ( next_node->IsHead ( ))
 		{
-			return NULL;	/* it is an empty list */
+			return nullptr;	/* it is an empty list */
 		}
 	}
 
@@ -116,7 +116,7 @@ ListNode*		ListNode::PrevLoop		( void )
 		prev_node = prev_node->prev;
 		if ( prev_node->IsHead ( ))
 		{
-			return NULL;	/* it is an empty list */
+			return nullptr;	/* it is an empty list */
 		}
 	}
 
@@ -266,7 +266,7 @@ void*				List::Item			( int list_index )
 		return node->Item();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 ListNode*		List::FirstNode ( void )
@@ -313,5 +313,5 @@ ListNode*		List::Find			( void *item )
 
 		node = node->Next ();
 	}
-	return NULL;
+	return nullptr;
 }

@@ -161,7 +161,7 @@ DLLEXPORT ClassDesc * LibClassDesc(int i)
 		//case 6:	return Get_Mesh_Deform_Desc(); break;
 		//Moumine 7/24/2001    4:33:52 PM Removed #6 and shifted up instead of returning NULL
 		// NULL causes a crash in "File->Summary info->Plug-in ifo..."
-		default: return NULL; break;
+		default: return nullptr; break;
 	}
 }
 
@@ -201,7 +201,7 @@ TCHAR * Get_String( int id )
 	static TCHAR buf[256];
 	if (AppInstance)
 		return LoadString(AppInstance, id, buf, sizeof(buf)) ? buf : NULL;
-	return NULL;
+	return nullptr;
 }
 
 

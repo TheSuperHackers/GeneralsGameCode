@@ -1222,7 +1222,7 @@ Image *getMapPreviewImage( AsciiString mapName )
 /*
 	// sanity
 	if( mapName.isEmpty() )
-		return NULL;
+		return nullptr;
 	Region2D uv;
 	mapPreviewImage = TheMappedImageCollection->findImageByName("MapPreview");
 	if(mapPreviewImage)
@@ -1258,7 +1258,7 @@ Image *getMapPreviewImage( AsciiString mapName )
 			if (!file.parse(nullptr)) {
 				DEBUG_ASSERTCRASH(false,("Unable to read MapPreview info."));
 				deleteInstance(mapPreviewImage);
-				return NULL;
+				return nullptr;
 			}
 		}
 		theInputStream.close();
@@ -1266,7 +1266,7 @@ Image *getMapPreviewImage( AsciiString mapName )
 	else
 	{
 		deleteInstance(mapPreviewImage);
-		return NULL;
+		return nullptr;
 	}
 
 

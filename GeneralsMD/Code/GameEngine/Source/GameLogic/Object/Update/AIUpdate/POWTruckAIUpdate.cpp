@@ -634,7 +634,7 @@ Object *POWTruckAIUpdate::findBestPrison( void )
 
 	ObjectID prisonID = getObject()->getProducerID();
 	if( prisonID == INVALID_ID )
-		return NULL;
+		return nullptr;
 
 	// find prison object
 	Object *prison = TheGameLogic->findObjectByID( prisonID );
@@ -653,7 +653,7 @@ Object *POWTruckAIUpdate::findBestTarget( void )
 
 	// sanity
 	if( player == nullptr )
-		return NULL;
+		return nullptr;
 
 	// get our info
 	const AIUpdateInterface *ai = us->getAIUpdateInterface();

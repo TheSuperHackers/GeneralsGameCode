@@ -221,7 +221,7 @@ class ParticleEmitterClass : public RenderObjClass
 		//	Virtual accessors (used for type specific information)
 		//
 		virtual int				Get_User_Type (void) const			{ return EMITTER_TYPEID_DEFAULT; }
-		virtual const char *	Get_User_String (void) const		{ return NULL; }
+		virtual const char *	Get_User_String (void) const		{ return nullptr; }
 
 		//
 		// Inline accessors.

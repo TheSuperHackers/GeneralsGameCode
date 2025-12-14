@@ -304,12 +304,12 @@ private:
 inline Vector2 * MeshMatDescClass::Get_UV_Array(int pass,int stage)
 {
 	if (UVSource[pass][stage] == -1) {
-		return NULL;
+		return nullptr;
 	}
 	if (UV[UVSource[pass][stage]] != nullptr) {
 		return UV[UVSource[pass][stage]]->Get_Array();
 	}
-	return NULL;
+	return nullptr;
 }
 
 inline void MeshMatDescClass::Set_UV_Source(int pass,int stage,int sourceindex)
@@ -349,7 +349,7 @@ inline Vector2 * MeshMatDescClass::Get_UV_Array_By_Index(int index, bool create)
 	if (UV[index] != nullptr) {
 		return UV[index]->Get_Array();
 	}
-	return NULL;
+	return nullptr;
 }
 
 inline unsigned* MeshMatDescClass::Get_DCG_Array(int pass)
@@ -358,20 +358,20 @@ inline unsigned* MeshMatDescClass::Get_DCG_Array(int pass)
 	WWASSERT(pass < MAX_PASSES);
 	switch (DCGSource[pass]) {
 		case VertexMaterialClass::MATERIAL:
-			return NULL;
+			return nullptr;
 			break;
 		case VertexMaterialClass::COLOR1:
 			if (ColorArray[0]) {
 				return ColorArray[0]->Get_Array();
 			} else {
-				return NULL;
+				return nullptr;
 			}
 			break;
 		case VertexMaterialClass::COLOR2:
 			if (ColorArray[1]) {
 				return ColorArray[1]->Get_Array();
 			} else {
-				return NULL;
+				return nullptr;
 			}
 			break;
 		default:
@@ -387,20 +387,20 @@ inline unsigned * MeshMatDescClass::Get_DIG_Array(int pass)
 	WWASSERT(pass < MAX_PASSES);
 	switch (DIGSource[pass]) {
 		case VertexMaterialClass::MATERIAL:
-			return NULL;
+			return nullptr;
 			break;
 		case VertexMaterialClass::COLOR1:
 			if (ColorArray[0]) {
 				return ColorArray[0]->Get_Array();
 			} else {
-				return NULL;
+				return nullptr;
 			}
 			break;
 		case VertexMaterialClass::COLOR2:
 			if (ColorArray[1]) {
 				return ColorArray[1]->Get_Array();
 			} else {
-				return NULL;
+				return nullptr;
 			}
 			break;
 		default:
@@ -438,7 +438,7 @@ inline unsigned * MeshMatDescClass::Get_Color_Array(int index,bool create)
 	if (ColorArray[index]) {
 		return ColorArray[index]->Get_Array();
 	}
-	return NULL;
+	return nullptr;
 }
 
 inline VertexMaterialClass * MeshMatDescClass::Get_Single_Material(int pass) const

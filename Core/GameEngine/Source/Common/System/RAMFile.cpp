@@ -164,7 +164,7 @@ Bool RAMFile::open( File *file )
 	//USE_PERF_TIMER(RAMFile)
 	if ( file == nullptr )
 	{
-		return NULL;
+		return FALSE;
 	}
 
 	const Int access = file->getAccess();

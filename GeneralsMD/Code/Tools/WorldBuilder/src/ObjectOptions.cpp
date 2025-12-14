@@ -205,7 +205,7 @@ void ObjectOptions::updateLabel()
 static const PlayerTemplate* findFirstPlayerTemplateOnSide(AsciiString side)
 {
 	if (side.isEmpty())
-		return NULL;	// neutral, this is ok
+		return nullptr;	// neutral, this is ok
 
 	for (int i = 0; i < ThePlayerTemplateStore->getPlayerTemplateCount(); i++)
 	{
@@ -217,7 +217,7 @@ static const PlayerTemplate* findFirstPlayerTemplateOnSide(AsciiString side)
 	}
 
 	DEBUG_CRASH(("no player found for %s!",side.str()));
-	return NULL;
+	return nullptr;
 }
 #endif
 

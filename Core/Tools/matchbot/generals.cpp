@@ -980,7 +980,7 @@ GeneralsUser* GeneralsMatcher::findUser(const std::string& who)
 	if (user)
 		return user;
 
-	return NULL;
+	return nullptr;
 }
 
 GeneralsUser* GeneralsMatcher::findUserInAnyLadder(const std::string& who)
@@ -991,18 +991,18 @@ GeneralsUser* GeneralsMatcher::findUserInAnyLadder(const std::string& who)
 		if (uIt != lIt->second.end())
 			return uIt->second;
 	}
-	return NULL;
+	return nullptr;
 }
 
 GeneralsUser* GeneralsMatcher::findUserInLadder(const std::string& who, int ladderID)
 {
 	LadderMap::iterator lIt = m_ladders.find(ladderID);
 	if (lIt == m_ladders.end())
-		return NULL;
+		return nullptr;
 
 	UserMap::iterator uIt = lIt->second.find(who);
 	if (uIt == lIt->second.end())
-		return NULL;
+		return nullptr;
 
 	return uIt->second;
 }
@@ -1025,14 +1025,14 @@ GeneralsUser* GeneralsMatcher::findNonLadderUser(const std::string& who)
 	if (it != m_nonLadderUsers4v4.end())
 		return it->second;
 
-	return NULL;
+	return nullptr;
 }
 
 GeneralsUser* GeneralsMatcher::findNonMatchingUser(const std::string& who)
 {
 	UserMap::iterator it = m_nonMatchingUsers.find(who);
 	if (it == m_nonMatchingUsers.end())
-		return NULL;
+		return nullptr;
 
 	return it->second;
 }
@@ -1107,11 +1107,11 @@ GeneralsUser* GeneralsMatcher::removeUserInLadder(const std::string& who, int la
 {
 	LadderMap::iterator lIt = m_ladders.find(ladderID);
 	if (lIt == m_ladders.end())
-		return NULL;
+		return nullptr;
 
 	UserMap::iterator uIt = lIt->second.find(who);
 	if (uIt == lIt->second.end())
-		return NULL;
+		return nullptr;
 
 	GeneralsUser *user = uIt->second;
 	lIt->second.erase(uIt);
@@ -1130,7 +1130,7 @@ GeneralsUser* GeneralsMatcher::removeUserInAnyLadder(const std::string& who)
 			return user;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 GeneralsUser* GeneralsMatcher::removeNonLadderUser(const std::string& who)
@@ -1167,14 +1167,14 @@ GeneralsUser* GeneralsMatcher::removeNonLadderUser(const std::string& who)
 		return user;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 GeneralsUser* GeneralsMatcher::removeNonMatchingUser(const std::string& who)
 {
 	UserMap::iterator it = m_nonMatchingUsers.find(who);
 	if (it == m_nonMatchingUsers.end())
-		return NULL;
+		return nullptr;
 
 	GeneralsUser *user = it->second;
 	m_nonMatchingUsers.erase(it);

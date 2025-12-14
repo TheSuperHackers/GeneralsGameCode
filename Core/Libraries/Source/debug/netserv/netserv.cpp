@@ -224,7 +224,7 @@ public:
           break;
         if (read==1)
           m_state++;
-        return NULL;
+        return nullptr;
       case 1:
       case 3:
         if (!ReadFile(m_pipe,&m_len,4,&read,nullptr))
@@ -237,7 +237,7 @@ public:
             m_str=(char *)realloc(m_str,m_len+1);
           m_state++;
         }
-        return NULL;
+        return nullptr;
       case 2:
         if (!ReadFile(m_pipe,m_src,m_len,&read,nullptr))
           break;
@@ -246,7 +246,7 @@ public:
           m_src[m_len]=0;
           m_state++;
         }
-        return NULL;
+        return nullptr;
       case 4:
         if (!ReadFile(m_pipe,m_str,m_len,&read,nullptr))
           break;
@@ -256,7 +256,7 @@ public:
           m_state=0;
           return m_str;
         }
-        return NULL;
+        return nullptr;
     }
 
     if (GetLastError()==ERROR_BROKEN_PIPE)
@@ -268,7 +268,7 @@ public:
       m_connected=false;
     }
 
-    return NULL;
+    return nullptr;
   }
 };
 

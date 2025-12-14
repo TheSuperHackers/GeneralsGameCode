@@ -399,7 +399,7 @@ Animatable* AlphaModifierClass::SubAnim(int i)
 	switch (i)
 	{
 		case 0: return pblock;
-		default: return NULL;
+		default: return nullptr;
 	}
 }
 
@@ -419,7 +419,7 @@ RefTargetHandle AlphaModifierClass::GetReference(int i)
 		case 0: return pblock;
 		default:
 			assert(TRUE);
-			return NULL;
+			return nullptr;
 	}
 }
 

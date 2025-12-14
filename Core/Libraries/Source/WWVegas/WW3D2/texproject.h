@@ -176,7 +176,7 @@ public:
 	** the projection...
 	** (gth) feels kludgy, this got a little messy when I moved this code into WW3D from WWPhys
 	*/
-	virtual void *			Get_Projection_Object_ID(void) const { return NULL; }
+	virtual void *			Get_Projection_Object_ID(void) const { return nullptr; }
 
 protected:
 

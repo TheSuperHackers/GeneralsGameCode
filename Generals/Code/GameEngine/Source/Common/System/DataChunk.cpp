@@ -788,7 +788,7 @@ DataChunkVersionType DataChunkInput::getChunkVersion( void )
 	{
 		// TODO: Throw exception
 		DEBUG_CRASH(("Bad."));
-		return NULL;
+		return 0;
 	}
 
 	return m_chunkStack->version;
@@ -801,7 +801,7 @@ UnsignedInt DataChunkInput::getChunkDataSize( void )
 	{
 		// TODO: Throw exception
 		DEBUG_CRASH(("Bad."));
-		return NULL;
+		return 0;
 	}
 
 	return m_chunkStack->dataSize;
@@ -815,7 +815,7 @@ UnsignedInt DataChunkInput::getChunkDataSizeLeft( void )
 	{
 		// TODO: Throw exception
 		DEBUG_CRASH(("Bad."));
-		return NULL;
+		return 0;
 	}
 
 	return m_chunkStack->dataLeft;

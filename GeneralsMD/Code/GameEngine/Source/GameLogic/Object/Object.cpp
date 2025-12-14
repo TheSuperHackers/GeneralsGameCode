@@ -3701,7 +3701,7 @@ void Object::updateObjValuesFromMapProperties(Dict* properties)
         if ( audioToModify == nullptr )
         {
           const AudioEventInfo * baseInfo = drawable->getBaseSoundAmbientInfo( );
-          DEBUG_ASSERTCRASH( baseInfo != nullptr, ("getBaseSoundAmbientInfo() return NULL" ) );
+          DEBUG_ASSERTCRASH( baseInfo != nullptr, ("getBaseSoundAmbientInfo() return nullptr" ) );
           if ( baseInfo != nullptr )
           {
             audioToModify = newInstance( DynamicAudioEventInfo )( *baseInfo );

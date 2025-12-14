@@ -508,7 +508,7 @@ WWINLINE void* FastAllocatorGeneral::Realloc(void* pAlloc, unsigned int n){
       return pNewAlloc;
    }
    Free(pAlloc);
-   return NULL;
+   return nullptr;
 }
 
 

@@ -93,20 +93,20 @@ public:
 	virtual Bool isLaser() const { return false; }
 
 	// interface acquisition
-	virtual ObjectDrawInterface* getObjectDrawInterface() { return NULL; }
-	virtual const ObjectDrawInterface* getObjectDrawInterface() const { return NULL; }
+	virtual ObjectDrawInterface* getObjectDrawInterface() { return nullptr; }
+	virtual const ObjectDrawInterface* getObjectDrawInterface() const { return nullptr; }
 
-	virtual DebrisDrawInterface* getDebrisDrawInterface() { return NULL; }
-	virtual const DebrisDrawInterface* getDebrisDrawInterface() const { return NULL; }
+	virtual DebrisDrawInterface* getDebrisDrawInterface() { return nullptr; }
+	virtual const DebrisDrawInterface* getDebrisDrawInterface() const { return nullptr; }
 
-	virtual TracerDrawInterface* getTracerDrawInterface() { return NULL; }
-	virtual const TracerDrawInterface* getTracerDrawInterface() const { return NULL; }
+	virtual TracerDrawInterface* getTracerDrawInterface() { return nullptr; }
+	virtual const TracerDrawInterface* getTracerDrawInterface() const { return nullptr; }
 
-	virtual RopeDrawInterface* getRopeDrawInterface() { return NULL; }
-	virtual const RopeDrawInterface* getRopeDrawInterface() const { return NULL; }
+	virtual RopeDrawInterface* getRopeDrawInterface() { return nullptr; }
+	virtual const RopeDrawInterface* getRopeDrawInterface() const { return nullptr; }
 
-	virtual LaserDrawInterface* getLaserDrawInterface() { return NULL; }
-	virtual const LaserDrawInterface* getLaserDrawInterface() const { return NULL; }
+	virtual LaserDrawInterface* getLaserDrawInterface() { return nullptr; }
+	virtual const LaserDrawInterface* getLaserDrawInterface() const { return nullptr; }
 
 };
 inline DrawModule::DrawModule( Thing *thing, const ModuleData* moduleData ) : DrawableModule( thing, moduleData ) { }

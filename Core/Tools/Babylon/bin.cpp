@@ -72,7 +72,7 @@ void*				Bin::Get					( OLECHAR *text1, OLECHAR *text2 )
 		return item->Item();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void*				Bin::GetNext			( void )
@@ -84,7 +84,7 @@ void*				Bin::GetNext			( void )
 		return item->Item();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void				Bin::Add					( void *data, OLECHAR *text1, OLECHAR *text2 )
@@ -304,7 +304,7 @@ void*				BinID::Get					( int id)
 		return item->Item();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void				BinID::Add					( void *data, int id )

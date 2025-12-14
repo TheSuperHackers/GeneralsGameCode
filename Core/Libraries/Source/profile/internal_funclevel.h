@@ -356,5 +356,5 @@ inline ProfileFuncLevelTracer::Function *ProfileFuncLevelTracer::FunctionMap::Fi
   for (Entry *e=hash[(addr/16)%HASH_SIZE];e;e=e->next)
     if (e->funcPtr->addr==addr)
       return e->funcPtr;
-  return NULL;
+  return nullptr;
 }

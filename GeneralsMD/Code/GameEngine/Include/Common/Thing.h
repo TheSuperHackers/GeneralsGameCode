@@ -148,10 +148,10 @@ protected:
 	// Virtual method since objects can be on bridges and need to calculate heigh above terrain differently.
 	virtual Real calculateHeightAboveTerrain(void) const;		// Calculates the actual height above terrain.  Doesn't use cache.
 
-	virtual Object *asObjectMeth() { return NULL; }
-	virtual Drawable *asDrawableMeth() { return NULL; }
-	virtual const Object *asObjectMeth() const { return NULL; }
-	virtual const Drawable *asDrawableMeth() const { return NULL; }
+	virtual Object *asObjectMeth() { return nullptr; }
+	virtual Drawable *asDrawableMeth() { return nullptr; }
+	virtual const Object *asObjectMeth() const { return nullptr; }
+	virtual const Drawable *asDrawableMeth() const { return nullptr; }
 
 	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) = 0;
 

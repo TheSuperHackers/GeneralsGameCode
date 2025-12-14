@@ -5086,7 +5086,7 @@ Player *ScriptEngine::getSkirmishEnemyPlayer(void)
 Player *ScriptEngine::getSkirmishPlayerFromParm(Parameter *pSkirmishPlayerParm)
 {
 	if (!pSkirmishPlayerParm)
-		return NULL;
+		return nullptr;
 
 	return getSkirmishPlayerFromAsciiString(pSkirmishPlayerParm->getString());
 }
@@ -5103,7 +5103,7 @@ Player *ScriptEngine::getSkirmishPlayerFromAsciiString(const AsciiString& skirmi
 
 	AppendDebugMessage("***Invalid Skirmish Player name:***", false);
 
-	return NULL;
+	return nullptr;
 }
 #endif
 

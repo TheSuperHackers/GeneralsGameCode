@@ -113,7 +113,7 @@ inline const Coord3D *DefaultProductionExitUpdate::getRallyPoint( void ) const
 	if (m_rallyPointExists)
 		return &m_rallyPoint;
 
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------

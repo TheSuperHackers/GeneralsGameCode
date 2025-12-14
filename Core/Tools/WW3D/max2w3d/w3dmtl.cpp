@@ -971,7 +971,7 @@ W3dVertexMaterialStruct * W3dMaterialDescClass::Get_Vertex_Material(int mat_inde
 {
 	int index = Get_Vertex_Material_Index(mat_index,pass);
 	if (index == -1) {
-		return NULL;
+		return nullptr;
 	} else {
 		return Get_Vertex_Material(index);
 	}
@@ -981,7 +981,7 @@ const char * W3dMaterialDescClass::Get_Mapper_Args(int mat_index,int pass,int st
 {
 	int index = Get_Vertex_Material_Index(mat_index,pass);
 	if (index == -1) {
-		return NULL;
+		return nullptr;
 	} else {
 		return Get_Mapper_Args(index,stage);
 	}
@@ -991,7 +991,7 @@ W3dShaderStruct * W3dMaterialDescClass::Get_Shader(int mat_index,int pass)
 {
 	int index = Get_Shader_Index(mat_index,pass);
 	if (index == -1) {
-		return NULL;
+		return nullptr;
 	} else {
 		return Get_Shader(index);
 	}
@@ -1001,7 +1001,7 @@ W3dMapClass * W3dMaterialDescClass::Get_Texture(int mat_index,int pass,int stage
 {
 	int index = Get_Texture_Index(mat_index,pass,stage);
 	if (index == -1) {
-		return NULL;
+		return nullptr;
 	} else {
 		return Get_Texture(index);
 	}
@@ -1016,7 +1016,7 @@ const char * W3dMaterialDescClass::Get_Vertex_Material_Name(int mat_index,int pa
 {
 	int index = Get_Vertex_Material_Index(mat_index,pass);
 	if (index == -1) {
-		return NULL;
+		return nullptr;
 	} else {
 		return VertexMaterials[index].Name;
 	}

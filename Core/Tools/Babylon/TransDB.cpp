@@ -56,7 +56,7 @@ LANGINFO *GetLangInfo ( int index )
 		return &langinfo[index];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 LANGINFO *GetLangInfo ( LangID langid )
@@ -74,7 +74,7 @@ LANGINFO *GetLangInfo ( LangID langid )
 		item++;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 const char *GetLangName ( LangID langid )
@@ -104,7 +104,7 @@ LANGINFO *GetLangInfo ( char *language )
 		item++;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 TransDB* FirstTransDB ( void )
@@ -116,7 +116,7 @@ TransDB* FirstTransDB ( void )
 	{
 		return (TransDB *) first->Item ();
 	}
-	return NULL;
+	return nullptr;
 }
 
 TransDB::TransDB ( const char *cname )
@@ -264,7 +264,7 @@ BabylonLabel*			TransDB::FirstLabel	( ListSearch& sh )
 		return (BabylonLabel *) node->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 BabylonLabel*			TransDB::NextLabel		( ListSearch& sh)
@@ -276,7 +276,7 @@ BabylonLabel*			TransDB::NextLabel		( ListSearch& sh)
 		return (BabylonLabel *) node->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 BabylonText*			TransDB::FirstObsolete	( ListSearch& sh )
@@ -288,7 +288,7 @@ BabylonText*			TransDB::FirstObsolete	( ListSearch& sh )
 		return (BabylonText *) node->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 BabylonText*			TransDB::NextObsolete		( ListSearch& sh)
@@ -300,7 +300,7 @@ BabylonText*			TransDB::NextObsolete		( ListSearch& sh)
 		return (BabylonText *) node->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 BabylonLabel*			TransDB::FindLabel		( OLECHAR *name )
@@ -347,7 +347,7 @@ BabylonText*			TransDB::FindSubText		( OLECHAR *pattern, int item )
 		label = NextLabel ( sh );
 	}
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -538,7 +538,7 @@ TransDB*			TransDB::Next				( void )
 		return (TransDB *) next->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -668,7 +668,7 @@ BabylonText*			BabylonLabel::FirstText		( ListSearch& sh )
 		return (BabylonText *) node->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 BabylonText*			BabylonLabel::NextText		( ListSearch& sh)
@@ -680,7 +680,7 @@ BabylonText*			BabylonLabel::NextText		( ListSearch& sh)
 		return (BabylonText *) node->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -700,7 +700,7 @@ BabylonText*			BabylonLabel::FindText ( OLECHAR *find_text )
 		txt = NextText ( sh );
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -1088,7 +1088,7 @@ Translation*			BabylonText::FirstTranslation		( ListSearch& sh )
 		return (Translation *) node->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Translation*			BabylonText::NextTranslation		( ListSearch& sh)
@@ -1100,7 +1100,7 @@ Translation*			BabylonText::NextTranslation		( ListSearch& sh)
 		return (Translation *) node->Item ();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Translation*			BabylonText::GetTranslation		( LangID langid )

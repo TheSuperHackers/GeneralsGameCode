@@ -236,7 +236,7 @@ SkinModifierClass *find_skin_binding (INode *skinned_obj)
 	// WSM Derived Object for the WWSkin Binding modifier.
 	IDerivedObject *dobj = skinned_obj->GetWSMDerivedObject();
 	if (dobj == nullptr)
-		return NULL;	// not bound to a space warp
+		return nullptr;	// not bound to a space warp
 
 	// Search for the WWSkin Binding modifier on this derived object.
 	for (int i = 0; i < dobj->NumModifiers(); i++)
@@ -250,7 +250,7 @@ SkinModifierClass *find_skin_binding (INode *skinned_obj)
 	}
 
 	// Skin modifier not found.
-	return NULL;
+	return nullptr;
 }
 
 
@@ -271,7 +271,7 @@ INode *find_skin_wsm (INode *skinned_obj)
 	// Find the skin modifier on this object.
 	SkinModifierClass *skin_mod = find_skin_binding(skinned_obj);
 	if (skin_mod == nullptr)
-		return NULL;
+		return nullptr;
 
 	// Using the skin modifer, find the WSM's INode.
 	INode *wsm = (INode*)( skin_mod->GetReference(SkinModifierClass::NODE_REF) );
@@ -303,12 +303,12 @@ SkinWSMObjectClass *get_skin_wsm_obj (INode *wsm_node)
 {
 	// We need a valid node.
 	if (!wsm_node)
-		return NULL;
+		return nullptr;
 
 	// The node must reference an object.
 	Object *obj = wsm_node->GetObjectRef();
 	if (!obj)
-		return NULL;
+		return nullptr;
 
 	// That BASE object must be a SkinWSMObject
 	while (obj)
@@ -321,7 +321,7 @@ SkinWSMObjectClass *get_skin_wsm_obj (INode *wsm_node)
 			break;
 	}
 	if (obj->ClassID() != SKIN_OBJ_CLASS_ID)
-		return NULL;
+		return nullptr;
 
 	// Return it.
 	return (SkinWSMObjectClass*)obj;
@@ -349,7 +349,7 @@ INode *duplicate_wsm (INode *wsm_node, INode *tree)
 	SkinWSMObjectClass *wsm_obj = get_skin_wsm_obj(wsm_node);
 
 	if (!wsm_node || !wsm_obj)
-		return NULL;
+		return nullptr;
 
 	/*
 	** Duplicate the WSM.
@@ -358,12 +358,12 @@ INode *duplicate_wsm (INode *wsm_node, INode *tree)
 	SkinWSMObjectClass *new_wsm_obj =
 		(SkinWSMObjectClass*)CreateInstance(WSM_OBJECT_CLASS_ID, SKIN_OBJ_CLASS_ID);
 	if (!new_wsm_obj)
-		return NULL;
+		return nullptr;
 
 	// Create a new node in the scene that points to the new WSM object.
 	INode *new_wsm_node = MAXScript_interface->CreateObjectNode(new_wsm_obj);
 	if (!new_wsm_node)
-		return NULL;
+		return nullptr;
 
 	// Copy the bones from one to the other.
 	for (int i = 0; i < wsm_obj->Num_Bones(); i++)
@@ -371,7 +371,7 @@ INode *duplicate_wsm (INode *wsm_node, INode *tree)
 		INode *src_bone = wsm_obj->Get_Bone(i);
 		INode *dst_bone = find_equivalent_node(src_bone, tree);
 		if (!src_bone || !dst_bone)
-			return NULL;
+			return nullptr;
 
 		new_wsm_obj->Add_Bone(dst_bone);
 	}
@@ -398,7 +398,7 @@ INode *find_equivalent_node (INode *source, INode *tree, bool name_is_valid)
 {
 	// We need a valid source and tree.
 	if (!source || !tree)
-		return NULL;
+		return nullptr;
 
 	// The name of the source object. We'll only evaluate this once as an easy optimization.
 	static char src_name[W3D_NAME_LEN];
@@ -422,7 +422,7 @@ INode *find_equivalent_node (INode *source, INode *tree, bool name_is_valid)
 	}
 
 	// No equivalent node was found.
-	return NULL;
+	return nullptr;
 }
 
 
@@ -503,13 +503,13 @@ ModContext *find_skin_mod_context (INode *node)
 {
 	// We need a valid node
 	if (node == nullptr)
-		return NULL;
+		return nullptr;
 
 	// The node needs to be bound to a space warp (ie. must have
 	// a WSMDerivedObject).
 	IDerivedObject *dobj = node->GetWSMDerivedObject();
 	if (dobj == nullptr)
-		return NULL;
+		return nullptr;
 
 	// It's bound to a space warp. Find the WWSkin modifier.
 	for (int i = 0; i < dobj->NumModifiers(); i++)
@@ -523,5 +523,5 @@ ModContext *find_skin_mod_context (INode *node)
 	}
 
 	// We didn't find a WWSkin binding.
-	return NULL;
+	return nullptr;
 }

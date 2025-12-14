@@ -107,7 +107,7 @@ template <class T>
 const T *OVERRIDE<T>::operator->() const
 {
 	if (!m_overridable)
-		return NULL;
+		return nullptr;
 	return (T*) m_overridable->getFinalOverride();
 }
 
@@ -116,7 +116,7 @@ template <class T>
 const T *OVERRIDE<T>::operator*() const
 {
 	if (!m_overridable)
-		return NULL;
+		return nullptr;
 	return (T*) m_overridable->getFinalOverride();
 }
 

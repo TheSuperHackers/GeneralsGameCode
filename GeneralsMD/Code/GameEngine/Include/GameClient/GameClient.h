@@ -241,12 +241,12 @@ private:
 inline Drawable* GameClient::findDrawableByID( const DrawableID id )
 {
 	if( id == INVALID_DRAWABLE_ID )
-		return NULL;
+		return nullptr;
 
 //	DrawablePtrHashIt it = m_drawableHash.find(id);
 //	if (it == m_drawableHash.end()) {
 //		// no such drawable
-//		return NULL;
+//		return nullptr;
 //	}
 //
 //	return (*it).second;
@@ -254,7 +254,7 @@ inline Drawable* GameClient::findDrawableByID( const DrawableID id )
 	if( (size_t)id < m_drawableVector.size() )
 		return m_drawableVector[(size_t)id];
 
-	return NULL;
+	return nullptr;
 }
 
 

@@ -167,7 +167,7 @@ inline GameWindow *GadgetComboBoxGetDropDownButton( GameWindow *g )
 
 	if( comboBoxData && comboBoxData->dropDownButton )
 		return comboBoxData->dropDownButton;
-	return NULL;
+	return nullptr;
 }
 inline GameWindow *GadgetComboBoxGetListBox( GameWindow *g )
 {
@@ -175,7 +175,7 @@ inline GameWindow *GadgetComboBoxGetListBox( GameWindow *g )
 
 	if( comboBoxData && comboBoxData->listBox)
 		return comboBoxData->listBox;
-	return NULL;
+	return nullptr;
 
 }
 
@@ -185,7 +185,7 @@ inline GameWindow *GadgetComboBoxGetEditBox( GameWindow *g )
 
 	if( comboBoxData && comboBoxData->editBox)
 		return comboBoxData->editBox;
-	return NULL;
+	return nullptr;
 
 }
 

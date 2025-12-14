@@ -138,7 +138,7 @@ public:
 	{
 		if( ocl )
 			return ocl->createInternal( primaryObj, primary, secondary, createOwner, lifetimeFrames );
-		return NULL;
+		return nullptr;
 	}
 
 	// Kris: August 23, 2003
@@ -148,7 +148,7 @@ public:
 	{
 		if (ocl)
 			return ocl->createInternal( primaryObj, primary, secondary, angle, lifetimeFrames );
-		return NULL;
+		return nullptr;
 	}
 
 	// Kris: August 23, 2003
@@ -158,7 +158,7 @@ public:
 	{
 		if (ocl)
 			return ocl->createInternal( primary, secondary, lifetimeFrames );
-		return NULL;
+		return nullptr;
 	}
 
 protected:
@@ -195,7 +195,7 @@ public:
 
 	/**
 		return the ObjectCreationList with the given namekey.
-		return NULL if no such ObjectCreationList exists.
+		return nullptr if no such ObjectCreationList exists.
 	*/
 	const ObjectCreationList *findObjectCreationList(const char* name) const;
 

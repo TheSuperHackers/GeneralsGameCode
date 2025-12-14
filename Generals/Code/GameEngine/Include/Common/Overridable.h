@@ -99,14 +99,14 @@ class Overridable : public MemoryPoolObject
 			m_isOverride = true;
 		}
 
-		// used in factory reset() calls at the end of a game to clean up overrides.  Can return NULL
+		// used in factory reset() calls at the end of a game to clean up overrides.  Can return nullptr
 		// if the first Overridable is itself an override
 		Overridable *deleteOverrides( void )
 		{
 			if ( m_isOverride )
 			{
 				deleteInstance(this);
-				return NULL;
+				return nullptr;
 			}
 			else if ( m_nextOverride )
 			{

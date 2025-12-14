@@ -185,7 +185,7 @@ inline GameWindow *GadgetListBoxGetSlider( GameWindow *g )
 
 	if( listData && listData->slider )
 		return listData->slider;
-	return NULL;
+	return nullptr;
 }
 inline GameWindow *GadgetListBoxGetUpButton( GameWindow *g )
 {
@@ -193,7 +193,7 @@ inline GameWindow *GadgetListBoxGetUpButton( GameWindow *g )
 
 	if( listData && listData->upButton )
 		return listData->upButton;
-	return NULL;
+	return nullptr;
 }
 inline GameWindow *GadgetListBoxGetDownButton( GameWindow *g )
 {
@@ -201,7 +201,7 @@ inline GameWindow *GadgetListBoxGetDownButton( GameWindow *g )
 
 	if( listData && listData->downButton )
 		return listData->downButton;
-	return NULL;
+	return nullptr;
 
 }
 

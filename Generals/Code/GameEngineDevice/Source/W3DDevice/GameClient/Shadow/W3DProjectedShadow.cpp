@@ -2389,7 +2389,7 @@ private:
 ** Missing Textures
 **
 ** The idea here, allow the system to register which textures are determined to be missing
-** so that if they are asked for again, we can quickly return NULL, without searching again.
+** so that if they are asked for again, we can quickly return nullptr, without searching again.
 */
 void	W3DShadowTextureManager::registerMissing( const char * name )
 {

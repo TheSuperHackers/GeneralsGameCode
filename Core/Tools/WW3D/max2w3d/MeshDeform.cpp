@@ -83,7 +83,7 @@ class MeshDeformClassDesc : public ClassDesc
 static MeshDeformClassDesc _MeshDeformCD;
 ClassDesc * Get_Mesh_Deform_Desc (void) { return &_MeshDeformCD; }
 #else
-ClassDesc * Get_Mesh_Deform_Desc (void) { return NULL; }
+ClassDesc * Get_Mesh_Deform_Desc (void) { return nullptr; }
 #endif
 
 
@@ -195,7 +195,7 @@ MeshDeformClass::NotifyRefChanged
 CreateMouseCallBack *
 MeshDeformClass::GetCreateMouseCallBack (void)
 {
-	return NULL;
+	return nullptr;
 }
 
 

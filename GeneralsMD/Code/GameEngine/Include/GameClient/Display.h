@@ -98,7 +98,7 @@ public:
 	{
 		if( view )
 			return view->getNextView();
-		return NULL;
+		return nullptr;
 	}
 
 	virtual void drawViews( void );																///< Render all views of the world

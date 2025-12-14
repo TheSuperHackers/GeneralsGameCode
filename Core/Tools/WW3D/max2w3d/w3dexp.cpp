@@ -956,7 +956,7 @@ HierarchySaveClass * W3dExportClass::get_hierarchy_tree(void)
 			char buf[256];
 			sprintf(buf,"Unable to load hierarchy file: %s\nIf this Max file has been moved, please re-select the hierarchy file.",HierarchyFilename);
 			MessageBox(MaxInterface->GetMAXHWnd(),buf,"Error",MB_OK | MB_SETFOREGROUND);
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -966,7 +966,7 @@ HierarchySaveClass * W3dExportClass::get_hierarchy_tree(void)
 	** function failed to create a hierarchy tree for us.
 	*/
 	assert(0);
-	return NULL;
+	return nullptr;
 }
 
 
@@ -1271,7 +1271,7 @@ static HierarchySaveClass * load_hierarchy_file(char * filename)
 	RawFileClass file(filename);
 
 	if (!file.Open()) {
-		return NULL;
+		return nullptr;
 	}
 	ChunkLoadClass cload(&file);
 
@@ -1282,7 +1282,7 @@ static HierarchySaveClass * load_hierarchy_file(char * filename)
 	} else {
 		hier = nullptr;
 		file.Close();
-		return NULL;
+		return nullptr;
 	}
 
 	cload.Close_Chunk();

@@ -420,7 +420,7 @@ bool HAnimManagerClass::Add_Anim(HAnimClass *new_anim)
 ** Missing Anims
 **
 ** The idea here, allow the system to register which anims are determined to be missing
-** so that if they are asked for again, we can quickly return NULL, without searching the
+** so that if they are asked for again, we can quickly return nullptr, without searching the
 ** disk again.
 */
 void	HAnimManagerClass::Register_Missing( const char * name )

@@ -585,7 +585,7 @@ int Get_Damage_State(INode *node)
 INode *Find_Named_Node(char *nodename, INode *root)
 {
 	if (!root || !nodename)
-		return NULL;
+		return nullptr;
 
 	// Perform a breadth-first search of the tree for a node
 	// of the given name.
@@ -618,6 +618,6 @@ INode *Find_Named_Node(char *nodename, INode *root)
 	}
 
 	// Didn't find the node anywhere.
-	return NULL;
+	return nullptr;
 }
 

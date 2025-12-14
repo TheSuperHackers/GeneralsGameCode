@@ -87,7 +87,7 @@ Char* UnicodeToANSI(const WChar* string, Char* buffer, UInt bufferLength)
 	{
 	if ((string == nullptr) || (buffer == nullptr))
 		{
-		return NULL;
+		return nullptr;
 		}
 
 	#ifdef RTS_DEBUG

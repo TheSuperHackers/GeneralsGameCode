@@ -271,7 +271,7 @@ inline uint32 * MeshGeometryClass::get_shade_indices(bool create)
 	if (VertexShadeIdx) {
 		return VertexShadeIdx->Get_Array();
 	}
-	return NULL;
+	return nullptr;
 }
 
 inline uint16 * MeshGeometryClass::get_bone_links(bool create)
@@ -282,7 +282,7 @@ inline uint16 * MeshGeometryClass::get_bone_links(bool create)
 	if (VertexBoneLink) {
 		return VertexBoneLink->Get_Array();
 	}
-	return NULL;
+	return nullptr;
 }
 
 inline uint8 MeshGeometryClass::Get_Poly_Surface_Type(int poly_index) const

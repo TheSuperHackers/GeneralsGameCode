@@ -622,7 +622,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 {
 	const char *name=texture->Get_Texture_Name();
 
-	// if texture is procedural return NULL
+	// if texture is procedural return nullptr
 	if (name && name[0]=='!') return nullptr;
 
 	// make sure texture is loaded
@@ -1373,12 +1373,12 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scal
 		if (++warning_count <= 20) {
 			WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s",name));
 		}
-		return NULL;		// Failed to find a prototype
+		return nullptr;		// Failed to find a prototype
 	}
 
 	rendobj=proto->Create();
 
-	if (!rendobj) return NULL;
+	if (!rendobj) return nullptr;
 
 	if (!isGranny)
 	{	Make_Unique(rendobj,reallyscale,reallyhsv_shift);
@@ -1415,7 +1415,7 @@ TextureClass * W3DAssetManager::Get_Texture_With_HSV_Shift(const char * filename
 		// Bail if the user isn't really asking for anything
 		//
 		if ((filename == nullptr) || (strlen(filename) == 0)) {
-			return NULL;
+			return nullptr;
 		}
 
 		TextureClass *newtex = Find_Texture(filename, hsv_shift);
@@ -1497,8 +1497,8 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 {
 	const char *name=texture->Get_Texture_Name();
 
-	// if texture is procedural return NULL
-	if (name && name[0]=='!') return NULL;
+	// if texture is procedural return nullptr
+	if (name && name[0]=='!') return nullptr;
 
 	// make sure texture is loaded
 	if (!texture->Is_Initialized())
@@ -1509,12 +1509,12 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 	texture->Get_Level_Description(desc);
 
 	// if texture is monochrome and no value shifting
-	// return NULL
+	// return nullptr
 	smallsurf=texture->Get_Surface_Level((MipCountType)texture->Get_Mip_Level_Count()-1);
 	if (hsv_shift.Z==0.0f && smallsurf->Is_Monochrome())
 	{
 		REF_PTR_RELEASE(smallsurf);
-		return NULL;
+		return nullptr;
 	}
 	REF_PTR_RELEASE(smallsurf);
 

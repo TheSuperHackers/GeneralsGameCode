@@ -285,8 +285,8 @@ public:
   virtual void updateSeismicSimulations( void ) = 0; /// walk the SeismicSimulationList and, well, do it.
   virtual void addSeismicSimulation( const SeismicSimulationNode& sim ) = 0;
 #endif
-  virtual WorldHeightMap* getLogicHeightMap( void ) {return NULL;};
-  virtual WorldHeightMap* getClientHeightMap( void ) {return NULL;};
+  virtual WorldHeightMap* getLogicHeightMap( void ) {return nullptr;};
+  virtual WorldHeightMap* getClientHeightMap( void ) {return nullptr;};
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////

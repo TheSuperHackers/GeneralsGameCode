@@ -121,5 +121,5 @@ inline const Coord3D *QueueProductionExitUpdate::getRallyPoint( void )  const
 	if (m_rallyPointExists)
 		return &m_rallyPoint;
 
-	return NULL;
+	return nullptr;
 }

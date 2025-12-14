@@ -318,7 +318,7 @@ public:
 		{
 			return m_info[i].second;
 		}
-		return NULL;
+		return nullptr;
 	}
 
 	// for use only by ThingTemplate::friend_getAIModuleInfo

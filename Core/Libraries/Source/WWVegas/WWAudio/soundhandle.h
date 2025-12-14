@@ -70,17 +70,17 @@ public:
 	//
 	//	RTTI
 	//
-	virtual Sound3DHandleClass *		As_Sound3DHandleClass (void)		{ return NULL; }
-	virtual Sound2DHandleClass *		As_Sound2DHandleClass (void)		{ return NULL; }
-	virtual SoundStreamHandleClass *	As_SoundStreamHandleClass (void)	{ return NULL; }
-	virtual ListenerHandleClass *		As_ListenerHandleClass (void)		{ return NULL; }
+	virtual Sound3DHandleClass *		As_Sound3DHandleClass (void)		{ return nullptr; }
+	virtual Sound2DHandleClass *		As_Sound2DHandleClass (void)		{ return nullptr; }
+	virtual SoundStreamHandleClass *	As_SoundStreamHandleClass (void)	{ return nullptr; }
+	virtual ListenerHandleClass *		As_ListenerHandleClass (void)		{ return nullptr; }
 
 	//
 	//	Handle access
 	//
-	virtual H3DSAMPLE		Get_H3DSAMPLE (void)		{ return NULL; }
-	virtual HSAMPLE		Get_HSAMPLE (void)		{ return NULL; }
-	virtual HSTREAM		Get_HSTREAM (void)		{ return NULL; }
+	virtual H3DSAMPLE		Get_H3DSAMPLE (void)		{ return nullptr; }
+	virtual HSAMPLE		Get_HSAMPLE (void)		{ return nullptr; }
+	virtual HSTREAM		Get_HSTREAM (void)		{ return nullptr; }
 
 	//
 	//	Initialization

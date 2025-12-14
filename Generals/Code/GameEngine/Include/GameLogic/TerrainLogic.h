@@ -104,7 +104,7 @@ public:
 	/// Enumerate the directed links from a waypoint using this,a nd getLink.
 	Int getNumLinks(void) const {return m_numLinks; }
 	/// Get the n'th directed link.  (May be NULL).
-	Waypoint *getLink(Int ndx) const {if (ndx>=0 && ndx <= MAX_LINKS) return m_links[ndx]; return NULL; }
+	Waypoint *getLink(Int ndx) const {if (ndx>=0 && ndx <= MAX_LINKS) return m_links[ndx]; return nullptr; }
 	/// Get the waypoint's name.
 	AsciiString getName(void) const {return m_name; }
 	/// Get the integer id.

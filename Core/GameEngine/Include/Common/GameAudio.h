@@ -395,7 +395,7 @@ class AudioManagerDummy : public AudioManager
 	virtual AsciiString getMusicTrackName() const { return ""; }
 	virtual void openDevice() {}
 	virtual void closeDevice() {}
-	virtual void* getDevice() { return NULL; }
+	virtual void* getDevice() { return nullptr; }
 	virtual void notifyOfAudioCompletion(UnsignedInt audioCompleted, UnsignedInt flags) {}
 	virtual UnsignedInt getProviderCount(void) const { return 0; };
 	virtual AsciiString getProviderName(UnsignedInt providerNum) const { return ""; }
@@ -416,7 +416,7 @@ class AudioManagerDummy : public AudioManager
 	virtual void removePlayingAudio(AsciiString eventName) {}
 	virtual void removeAllDisabledAudio() {}
 	virtual Bool has3DSensitiveStreamsPlaying(void) const { return false; }
-	virtual void* getHandleForBink(void) { return NULL; }
+	virtual void* getHandleForBink(void) { return nullptr; }
 	virtual void releaseHandleForBink(void) {}
 	virtual void friend_forcePlayAudioEventRTS(const AudioEventRTS* eventToPlay) {}
 	virtual void setPreferredProvider(AsciiString providerNdx) {}

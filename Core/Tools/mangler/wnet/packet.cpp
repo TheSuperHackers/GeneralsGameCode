@@ -269,7 +269,7 @@ FieldClass *PacketClass::Find_Field(char *id)
     if ( strncmp(id, current->ID, 4) == 0)
       return current;
   }
-  return NULL;
+  return nullptr;
 }
 
 // gks 9/25/2000
@@ -281,7 +281,7 @@ FieldClass *PacketClass::Get_Field_At(int position)
 	}
 
 	if (current) return current;
-	else return NULL;
+	else return nullptr;
 }
 
 // gks 9/25/2000

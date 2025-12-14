@@ -933,7 +933,7 @@ inline PathfindCell *Pathfinder::getCell( PathfindLayerEnum layer, Int x, Int y 
 	}
 	else
 	{
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -941,7 +941,7 @@ inline PathfindCell *Pathfinder::getCell( PathfindLayerEnum layer, const Coord3D
 {
 	ICoord2D cell;
 	Bool overflow = worldToCell( pos, &cell );
-	if (overflow) return NULL;
+	if (overflow) return nullptr;
 	return getCell( layer, cell.x, cell.y );
 }
 

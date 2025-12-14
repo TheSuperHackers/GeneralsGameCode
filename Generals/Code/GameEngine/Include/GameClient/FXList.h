@@ -200,7 +200,7 @@ public:
 
 	/**
 		return the FXList with the given namekey.
-		return NULL if no such FXList exists.
+		return nullptr if no such FXList exists.
 	*/
 	const FXList *findFXList( const char* name ) const;
 

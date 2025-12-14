@@ -425,7 +425,7 @@ Vector3 *W3DShadowGeometryHeightmapMesh::GetVertex (int dwVertId, Vector3 *pvVer
 		map=TheTerrainRenderObject->getMap();
 
 	if (!map)
-		return NULL;
+		return nullptr;
 
 	Int row=dwVertId/m_width;
 	Int column=dwVertId-row*m_width;
@@ -451,7 +451,7 @@ Bool isPatchShadowed(W3DShadowGeometryHeightmapMesh	*hm_mesh)
 		map=TheTerrainRenderObject->getMap();
 
 	if (!map)
-		return NULL;
+		return nullptr;
 
 	hm_mesh->GetPolygonNormal( 0, &normal );
 
@@ -3836,7 +3836,7 @@ private:
 ** Missing Geoms
 **
 ** The idea here, allow the system to register which anims are determined to be missing
-** so that if they are asked for again, we can quickly return NULL, without searching the
+** so that if they are asked for again, we can quickly return nullptr, without searching the
 ** disk again.
 */
 void	W3DShadowGeometryManager::Register_Missing( const char * name )

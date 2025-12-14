@@ -115,7 +115,7 @@ public:
 		}
 		DEBUG_CRASH(("Out of range."));
 		throw ERROR_BAD_ARG;
-		return NULL;
+		return nullptr;
 	}
 };
 
@@ -221,7 +221,7 @@ inline SidesInfo * SidesList::getSideInfo(Int side)
 	}
 	DEBUG_CRASH(("Out of range."));
 	throw ERROR_BAD_ARG;
-	return NULL;
+	return nullptr;
 }
 
 inline SidesInfo * SidesList::getSkirmishSideInfo(Int side)
@@ -232,7 +232,7 @@ inline SidesInfo * SidesList::getSkirmishSideInfo(Int side)
 	}
 	DEBUG_CRASH(("Out of range."));
 	throw ERROR_BAD_ARG;
-	return NULL;
+	return nullptr;
 }
 
 

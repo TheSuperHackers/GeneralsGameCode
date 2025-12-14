@@ -1486,7 +1486,7 @@ const WeaponTemplate *WeaponStore::findWeaponTemplate( const AsciiString& name )
 const WeaponTemplate *WeaponStore::findWeaponTemplate( const char* name ) const
 {
 	if (stricmp(name, "None") == 0)
-		return NULL;
+		return nullptr;
 	const WeaponTemplate * wt = findWeaponTemplatePrivate( TheNameKeyGenerator->nameToKey( name ) );
 	DEBUG_ASSERTCRASH(wt != nullptr, ("Weapon %s not found!",name));
 	return wt;

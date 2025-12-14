@@ -116,7 +116,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////////
 
 	// RTTI
-	virtual DefParameterClass *	As_DefParameterClass (void)	{ return NULL; }
+	virtual DefParameterClass *	As_DefParameterClass (void)	{ return nullptr; }
 
 	// Type identification (see paramtypes.h in wwsaveload)
 	virtual Type				Get_Type (void) const = 0;

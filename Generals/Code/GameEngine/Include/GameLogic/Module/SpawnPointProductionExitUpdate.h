@@ -79,7 +79,7 @@ public:
 	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor );
 	virtual void unreserveDoorForExit( ExitDoorType exitDoor );
 	virtual void setRallyPoint( const Coord3D * ){}
-	virtual const Coord3D *getRallyPoint() const { return NULL; }
+	virtual const Coord3D *getRallyPoint() const { return nullptr; }
 	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) { return; }
 
 	virtual UpdateSleepTime update()										{ return UPDATE_SLEEP_FOREVER; }

@@ -104,11 +104,11 @@ class SoundSceneObjClass : public MultiListObjectClass, public PersistClass, pub
 		//////////////////////////////////////////////////////////////////////
 		//	Conversion methods
 		//////////////////////////////////////////////////////////////////////
-		virtual Sound3DClass *			As_Sound3DClass (void) 			{ return NULL; }
-		virtual SoundPseudo3DClass *	As_SoundPseudo3DClass (void) 	{ return NULL; }
-		virtual FilteredSoundClass *	As_FilteredSoundClass (void) 	{ return NULL; }
-		virtual Listener3DClass *		As_Listener3DClass (void) 		{ return NULL; }
-		virtual AudibleSoundClass *	As_AudibleSoundClass(void) 	{ return NULL; }
+		virtual Sound3DClass *			As_Sound3DClass (void) 			{ return nullptr; }
+		virtual SoundPseudo3DClass *	As_SoundPseudo3DClass (void) 	{ return nullptr; }
+		virtual FilteredSoundClass *	As_FilteredSoundClass (void) 	{ return nullptr; }
+		virtual Listener3DClass *		As_Listener3DClass (void) 		{ return nullptr; }
+		virtual AudibleSoundClass *	As_AudibleSoundClass(void) 	{ return nullptr; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Identification methods

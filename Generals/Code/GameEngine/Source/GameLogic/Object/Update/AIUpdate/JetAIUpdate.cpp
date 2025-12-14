@@ -1159,7 +1159,7 @@ private:
 				return otherJet;
 			}
 		}
-		return NULL;
+		return nullptr;
 	}
 #endif
 

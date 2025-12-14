@@ -455,7 +455,7 @@ static Real computeTrackSpacing(RenderObjClass *renderObj)
 //=============================================================================
 //TerrainTracksRenderObjClassSystem::bindTrack
 //=============================================================================
-/** Grab a track from the free store. If no free tracks exist, return NULL.
+/** Grab a track from the free store. If no free tracks exist, return nullptr.
 	As long as a track is bound to an object (like a tank) it is ready to accept
 	updates with additional edges.  Once it is unbound, it will expire and return
 	to the free store once all tracks have faded out.
