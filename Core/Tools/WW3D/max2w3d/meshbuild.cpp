@@ -570,7 +570,7 @@ MeshBuilderClass::MeshBuilderClass(int pass_count,int face_count_guess,int face_
 	AllocFaceGrowth(0),
 	PolyOrderPass(0),
 	PolyOrderStage(0),
-	WorldInfo (NULL)
+	WorldInfo ()
 {
 	Reset(pass_count,face_count_guess,face_count_growth_rate);
 }
@@ -826,7 +826,7 @@ void MeshBuilderClass::Compute_Vertex_Normals(void)
 	/*
 	** Smooth this mesh with neighboring meshes!
 	*/
-	if (WorldInfo != NULL && WorldInfo->Are_Meshes_Smoothed ()) {
+	if (WorldInfo != nullptr && WorldInfo->Are_Meshes_Smoothed ()) {
 		for (vertidx = 0; vertidx < VertCount; vertidx++) {
 			if (Verts[vertidx].ShadeIndex == vertidx) {
 				Verts[vertidx].Normal += WorldInfo->Get_Shared_Vertex_Normal(Verts[vertidx].Position, Verts[vertidx].SharedSmGroup);

@@ -273,7 +273,7 @@ bool File::IsAvailable(bool force)
 
 	// Attempt to open the file
 	mHandle = CreateFile(name, GENERIC_READ, FILE_SHARE_READ,
-		NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+		nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 
 	// If the open failed then the file is not available.
 	if (mHandle == INVALID_HANDLE)
@@ -352,19 +352,18 @@ File::EFileError File::Open(ERights rights)
 			// Read only access
 			case Rights_ReadOnly:
 				mHandle = CreateFile(name, GENERIC_READ, FILE_SHARE_READ,
-						NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+						nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 			break;
 
 			// Write only access
 			case Rights_WriteOnly:
-				mHandle = CreateFile(name, GENERIC_WRITE, 0,
-						NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+				mHandle = CreateFile(name, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 			break;
 
 			// Read and Write access
 			case Rights_ReadWrite:
 				mHandle = CreateFile(name, GENERIC_READ | GENERIC_WRITE, 0,
-						NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+						nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 			break;
 
 			// Unknown rights access violation

@@ -313,7 +313,7 @@ void WWDebug_Assert_Fail(const char * expr,const char * file, int line)
       char assertbuf[4096];
 		sprintf(assertbuf, "Assert failed\n\n. File %s Line %d", file, line);
 
-      int code = MessageBoxA(NULL, assertbuf, "WWDebug_Assert_Fail", MB_ABORTRETRYIGNORE|MB_ICONHAND|MB_SETFOREGROUND|MB_TASKMODAL);
+      int code = MessageBoxA(nullptr, assertbuf, "WWDebug_Assert_Fail", MB_ABORTRETRYIGNORE|MB_ICONHAND|MB_SETFOREGROUND|MB_TASKMODAL);
 
       if (code == IDABORT) {
       	raise(SIGABRT);

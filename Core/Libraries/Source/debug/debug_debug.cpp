@@ -639,7 +639,7 @@ bool Debug::CrashDone(bool die)
         /// @todo replace MessageBox with custom dialog w/ 4 options: abort, skip 1, skip all, break
 
         // now display message, wait for user input
-        int result=MessageBox(NULL,help,"Crash hit",
+        int result=MessageBox(nullptr,help,"Crash hit",
                               MB_ABORTRETRYIGNORE|MB_ICONSTOP|MB_TASKMODAL|MB_SETFOREGROUND);
         switch(result)
         {
@@ -1359,7 +1359,7 @@ void Debug::FlushOutput(bool defaultLog)
 #ifdef HAS_LOGS
     // then force output to a very simple default log file
     // (non-Release builds only)
-    HANDLE h=CreateFile("default.log",GENERIC_WRITE,0,NULL,
+    HANDLE h=CreateFile("default.log",GENERIC_WRITE,0,nullptr,
                         OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,nullptr);
     SetFilePointer(h,0,nullptr,FILE_END);
     DWORD dwDummy;

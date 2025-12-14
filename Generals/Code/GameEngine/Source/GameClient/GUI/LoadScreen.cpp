@@ -187,7 +187,7 @@ SinglePlayerLoadScreen::~SinglePlayerLoadScreen( void )
 	}
 
 	TheAudio->removeAudioEvent( m_ambientLoopHandle );
-	m_ambientLoopHandle = NULL;
+	m_ambientLoopHandle = 0;
 
 }
 

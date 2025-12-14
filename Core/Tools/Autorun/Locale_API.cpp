@@ -145,7 +145,7 @@ int Locale_Init	( int language, char *file )
 	//-------------------------------------------------------------------------
 	// Check for a file passed in.
 	//-------------------------------------------------------------------------
-	if( file == NULL || file[0] == '/0' ) {
+	if( file == nullptr || file[0] == '/0' ) {
 		return 0;
 	}
 	strcpy( LanguageFile, file );
@@ -322,7 +322,7 @@ const char* Locale_GetString( int StringID, char *String )
 	#endif
 
 	Remove_Quotes_Around_String( wide_buffer );
-	WideCharToMultiByte( CodePage, 0, wide_buffer, _MAX_PATH, buffer, _MAX_PATH, nullptr, NULL );
+	WideCharToMultiByte( CodePage, 0, wide_buffer, _MAX_PATH, buffer, _MAX_PATH, nullptr, nullptr );
 
 	if( String != nullptr ) {
 		strncpy( String, buffer, _MAX_PATH );

@@ -336,7 +336,7 @@ int TTFontClass::Char_Pixel_Width ( HDC hdc, char const * string, int *num_bytes
 	//--------------------------------------------------------------------------
 	// These values must be passed in.
 	//--------------------------------------------------------------------------
-	if ( string == NULL || *string == '\0' || hdc == nullptr ) {
+	if ( string == nullptr || *string == '\0' || hdc == nullptr ) {
 		return( 0 );
 	}
 
@@ -502,7 +502,7 @@ void TTFontClass::String_Pixel_Bounds( HDC hdc, const char* string, Rect& bounds
 //
 UINT TTFontClass::Get_Double_Byte_Char	( const char *string, int *num_bytes ) const
 {
-	if ( string == NULL || *string == '\0' ) {
+	if ( string == nullptr || *string == '\0' ) {
 		return( 0 );
 	}
 
@@ -678,7 +678,7 @@ Point2D TTFontClass::Print(
 	int length = wcslen( string );
 
 	memset( buffer, '\0', _MAX_PATH );
-	WideCharToMultiByte( CodePage, 0, string, length, buffer, _MAX_PATH, nullptr, NULL );
+	WideCharToMultiByte( CodePage, 0, string, length, buffer, _MAX_PATH, nullptr, nullptr );
 
 	return( Print( hdc, buffer, cliprect, forecolor, backcolor, flag, shadow ));
 }
@@ -1224,7 +1224,7 @@ FontManagerClass::FontManagerClass ( HDC hdc )
 		strcpy( szFacename, "Arial" );
 
 		strcpy( szPath, Args->Get_argv(0));
-		_splitpath( szPath, drive, dir, nullptr, NULL );
+		_splitpath( szPath, drive, dir, nullptr, nullptr );
 		_makepath( szPath, drive, dir, "Setup\\Setup", ".ini" );
 
 		GetPrivateProfileString( "Fonts", "Font", "Arial.tff", szFile, MAX_PATH, szPath );
@@ -1352,7 +1352,7 @@ FontManagerClass::FontManagerClass ( HDC hdc )
 		//----------------------------------------------------------------------
 		// If we fell through...
 		//----------------------------------------------------------------------
-		if( TTButtonFontPtr == NULL || TTTextFontPtr == nullptr ) {
+		if( TTButtonFontPtr == nullptr || TTTextFontPtr == nullptr ) {
 
 			strcpy( szFile, "Arial.tff" );
 			strcpy( szFacename, "Arial" );

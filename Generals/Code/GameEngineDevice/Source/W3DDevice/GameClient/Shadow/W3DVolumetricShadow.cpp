@@ -3137,7 +3137,7 @@ Bool W3DVolumetricShadow::allocateSilhouette(Int meshIndex, Int numVertices )
 	Int numEntries = numVertices * 5;	///@todo: HACK, HACK... Should be 2!
 
 	// sanity
-	assert( m_silhouetteIndex[meshIndex] == NULL &&
+	assert( m_silhouetteIndex[meshIndex] == nullptr &&
 					m_numSilhouetteIndices[meshIndex] == 0 &&
 					numEntries > 0 );
 

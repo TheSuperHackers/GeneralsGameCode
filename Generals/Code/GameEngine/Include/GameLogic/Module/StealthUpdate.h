@@ -57,7 +57,7 @@ static const char *const TheStealthLevelNames[] =
 	"FIRING_PRIMARY",
 	"FIRING_SECONDARY",
 	"FIRING_TERTIARY",
-	NULL
+	nullptr
 };
 #endif
 

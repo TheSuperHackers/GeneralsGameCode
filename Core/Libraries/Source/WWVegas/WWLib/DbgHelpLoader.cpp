@@ -35,7 +35,7 @@ DbgHelpLoader::DbgHelpLoader()
 	, m_symFunctionTableAccess(nullptr)
 	, m_stackWalk(nullptr)
 #ifdef RTS_ENABLE_CRASHDUMP
-	, m_miniDumpWriteDump(NULL)
+	, m_miniDumpWriteDump(nullptr)
 #endif
 	, m_dllModule(HMODULE(nullptr))
 	, m_referenceCount(0)
@@ -355,7 +355,7 @@ BOOL DbgHelpLoader::miniDumpWriteDump(
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
-	if (Inst != NULL && Inst->m_miniDumpWriteDump)
+	if (Inst != nullptr && Inst->m_miniDumpWriteDump)
 		return Inst->m_miniDumpWriteDump(hProcess, ProcessId, hFile, DumpType, ExceptionParam, UserStreamParam, CallbackParam);
 
 	return FALSE;

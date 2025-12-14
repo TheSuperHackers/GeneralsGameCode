@@ -35,7 +35,7 @@
 	*/
 bool GetVersionInfo(char* filename, VS_FIXEDFILEINFO* fileInfo)
 {
-   if (filename == NULL || fileInfo == nullptr)
+   if (filename == nullptr || fileInfo == nullptr)
    {
       return false;
    }

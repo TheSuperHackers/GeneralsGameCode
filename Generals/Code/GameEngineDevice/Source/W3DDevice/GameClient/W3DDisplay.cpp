@@ -145,7 +145,7 @@ protected:
 StatDumpClass::StatDumpClass( const char *fname )
 {
 	char buffer[ _MAX_PATH ];
-	GetModuleFileName( NULL, buffer, sizeof( buffer ) );
+	GetModuleFileName( nullptr, buffer, sizeof( buffer ) );
 	if (char *pEnd = strrchr(buffer, '\\'))
 	{
 		*pEnd = 0;
@@ -268,7 +268,7 @@ void StatDumpClass::dumpStats()
 	fprintf( m_fp, "\n" );
 
 #if defined(RTS_DEBUG)
-	TheAudio->audioDebugDisplay( NULL, nullptr, m_fp );
+	TheAudio->audioDebugDisplay( nullptr, nullptr, m_fp );
 	fprintf( m_fp, "\n" );
 #endif
 

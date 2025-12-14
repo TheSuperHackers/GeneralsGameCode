@@ -268,7 +268,7 @@ int RawFileMClass::Open(int rights)
 		**	For the case of the file cannot be found, then allow a retry. All other cases
 		**	are fatal.
 		*/
-		if (Handle == NULL_HANDLE) {
+		if (Handle == nullptr) {
 
 			return(false);
 //			Error(GetLastError(), false, Filename);
@@ -327,7 +327,7 @@ bool RawFileMClass::Is_Available(int forced)
 
 		Handle = CreateFileA(Filename, GENERIC_READ, FILE_SHARE_READ,
 											nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-		if (Handle == NULL_HANDLE) {
+		if (Handle == nullptr) {
 			return(false);
 		}
 		break;

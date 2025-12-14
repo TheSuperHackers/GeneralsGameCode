@@ -784,7 +784,7 @@ PresetExportOptionsDialogClass::Update_Controls (void)
 		//
 		HWND low_spin_wnd		= ::GetDlgItem (pane_wnd, IDC_RANGE_LOW_SPIN);
 		HWND high_spin_wnd	= ::GetDlgItem (pane_wnd, IDC_RANGE_HIGH_SPIN);
-		if (low_spin_wnd != NULL && high_spin_wnd != nullptr) {
+		if (low_spin_wnd != nullptr && high_spin_wnd != nullptr) {
 
 			//
 			//	Peek at the spinner control objects

@@ -564,7 +564,7 @@ void CTeamsDialog::OnMoveDownTeam()
 	m_curTeam++;
 
 	// rebuild user interface to reflect changes
-/*	LVITEM *pItem = NULL;
+/*	LVITEM *pItem = nullptr;
 	CListCtrl* pList = (CListCtrl*) GetDlgItem(IDC_TEAMS_LIST);
 	Bool result = pList->GetItem(pItem);
 	pList->DeleteItem(m_curTeam);

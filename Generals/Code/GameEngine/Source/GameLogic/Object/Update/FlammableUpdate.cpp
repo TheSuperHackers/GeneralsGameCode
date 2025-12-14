@@ -79,7 +79,7 @@ FlammableUpdate::FlammableUpdate( Thing *thing, const ModuleData* moduleData ) :
 	m_aflameEndFrame = 0;
 	m_burnedEndFrame = 0;
 	m_damageEndFrame = 0;
-	m_audioHandle = NULL;
+	m_audioHandle = 0;
 	m_flameDamageLimit = getFlammableUpdateModuleData()->m_flameDamageLimitData;
 	m_flameSource = INVALID_ID;
 	m_lastFlameDamageDealt = 0;
@@ -257,7 +257,7 @@ void FlammableUpdate::stopBurningSound()
 	if (m_audioHandle)
 	{
 		TheAudio->removeAudioEvent( m_audioHandle );
-		m_audioHandle = NULL;
+		m_audioHandle = 0;
 	}
 }
 

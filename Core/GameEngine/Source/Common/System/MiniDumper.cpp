@@ -54,7 +54,7 @@ void MiniDumper::shutdownMiniDumper()
 	{
 		TheMiniDumper->ShutDown();
 		TheMiniDumper->~MiniDumper();
-		::HeapFree(::GetProcessHeap(), nullptr, TheMiniDumper);
+		::HeapFree(::GetProcessHeap(), 0, TheMiniDumper);
 		TheMiniDumper = nullptr;
 	}
 }
@@ -146,7 +146,7 @@ void MiniDumper::Initialize(const AsciiString& userDirPath)
 		return;
 	}
 
-	DWORD executableSize = ::GetModuleFileNameW(NULL, m_executablePath, ARRAY_SIZE(m_executablePath));
+	DWORD executableSize = ::GetModuleFileNameW(nullptr, m_executablePath, ARRAY_SIZE(m_executablePath));
 	if (executableSize == 0 || executableSize == ARRAY_SIZE(m_executablePath))
 	{
 		DEBUG_LOG(("MiniDumper::Initialize: Could not get executable file name. Returned value=%u", executableSize));
@@ -159,9 +159,9 @@ void MiniDumper::Initialize(const AsciiString& userDirPath)
 		return;
 	}
 
-	m_dumpRequested = CreateEvent(NULL, TRUE, FALSE, nullptr);
-	m_dumpComplete = CreateEvent(NULL, TRUE, FALSE, nullptr);
-	m_quitting = CreateEvent(NULL, TRUE, FALSE, nullptr);
+	m_dumpRequested = CreateEvent(nullptr, TRUE, FALSE, nullptr);
+	m_dumpComplete = CreateEvent(nullptr, TRUE, FALSE, nullptr);
+	m_quitting = CreateEvent(nullptr, TRUE, FALSE, nullptr);
 
 	if (m_dumpRequested == NULL || m_dumpComplete == NULL || m_quitting == nullptr)
 	{
@@ -170,7 +170,7 @@ void MiniDumper::Initialize(const AsciiString& userDirPath)
 		return;
 	}
 
-	m_dumpThread = ::CreateThread(NULL, 0, MiniDumpThreadProc, this, CREATE_SUSPENDED, &m_dumpThreadId);
+	m_dumpThread = ::CreateThread(nullptr, 0, MiniDumpThreadProc, this, CREATE_SUSPENDED, &m_dumpThreadId);
 	if (!m_dumpThread)
 	{
 		DEBUG_LOG(("MiniDumper::Initialize: Unable to create thread: error=%u", ::GetLastError()));
@@ -351,7 +351,7 @@ void MiniDumper::CreateMiniDump(DumpType dumpType)
 		sysTime.wDay, sysTime.wHour, sysTime.wMinute, sysTime.wSecond,
 		GitShortSHA1, currentProcessId);
 
-	HANDLE dumpFile = ::CreateFile(m_dumpFile, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE dumpFile = ::CreateFile(m_dumpFile, GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (dumpFile == NULL || dumpFile == INVALID_HANDLE_VALUE)
 	{
 		DEBUG_LOG(("MiniDumper::CreateMiniDump: Unable to create dump file '%s': error=%u", m_dumpFile, ::GetLastError()));
@@ -387,8 +387,8 @@ void MiniDumper::CreateMiniDump(DumpType dumpType)
 		dumpFile,
 		miniDumpType,
 		exceptionInfoPtr,
-		NULL,
-		NULL);
+		nullptr,
+		nullptr);
 
 	if (!success)
 	{

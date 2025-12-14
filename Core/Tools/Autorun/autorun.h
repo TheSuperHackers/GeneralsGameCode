@@ -229,7 +229,7 @@ class MainWindow : public Window
 		static void		Register		  		( void );
 		static void	  	Reset_Class_Name		( char *string )
 			{
-				if ( string != NULL && string[0] != '\0' ) {
+				if ( string != nullptr && string[0] != '\0' ) {
 					strcpy( szClassName, string );
 				}
 			};

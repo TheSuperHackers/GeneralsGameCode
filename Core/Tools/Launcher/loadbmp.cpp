@@ -61,22 +61,22 @@ bit8 LoadBmp::init(const char *filename,HWND hwnd)
     filename,
     GENERIC_READ,
     FILE_SHARE_READ,
-    (LPSECURITY_ATTRIBUTES) NULL,
+    (LPSECURITY_ATTRIBUTES) nullptr,
     OPEN_EXISTING,
     FILE_ATTRIBUTE_READONLY,
-    (HANDLE) NULL);
+    (HANDLE) nullptr);
 
   if (hBitmapFile==nullptr)
     return(FALSE);
 
   // Retrieve the BITMAPFILEHEADER structure.
   ReadFile(hBitmapFile, &bitmapHeader, sizeof(BITMAPFILEHEADER), &dwRead,
-    (LPOVERLAPPED)NULL);
+    (LPOVERLAPPED)nullptr);
 
 
   // Retrieve the BITMAPFILEHEADER structure.
   ReadFile(hBitmapFile, &bitmapInfoHeader, sizeof(BITMAPINFOHEADER),
-    &dwRead, (LPOVERLAPPED)NULL);
+    &dwRead, (LPOVERLAPPED)nullptr);
 
 
   // Allocate memory for the BITMAPINFO structure.
@@ -103,7 +103,7 @@ bit8 LoadBmp::init(const char *filename,HWND hwnd)
   // 1 << bitmapInfoHeader.biBitCount == 2 ^ bitmapInfoHeader.biBitCount
   ReadFile(hBitmapFile, lpHeaderMem->bmiColors,
     ((1<<bitmapInfoHeader.biBitCount) * sizeof(RGBQUAD)),
-    &dwRead, (LPOVERLAPPED) NULL);
+    &dwRead, (LPOVERLAPPED) nullptr);
 
 
   lpLogPalette=(LPLOGPALETTE)new char[(sizeof(LOGPALETTE)+
@@ -131,7 +131,7 @@ bit8 LoadBmp::init(const char *filename,HWND hwnd)
 
   // Retrieve the bitmap data.
   ReadFile(hBitmapFile, lpvBits, (bitmapHeader.bfSize - bitmapHeader.bfOffBits),
-    &dwRead, (LPOVERLAPPED) NULL);
+    &dwRead, (LPOVERLAPPED) nullptr);
 
 
   // Create a bitmap from the data stored in the .BMP file.
@@ -186,13 +186,13 @@ bit8 LoadBmp::drawBmp(void)
   if (select==nullptr)
   {
     sprintf(string,"Select Pal Fail: %d",GetLastError());
-    MessageBox(NULL,string,"OK",MB_OK);
+    MessageBox(nullptr,string,"OK",MB_OK);
   }
   UINT realize=RealizePalette(ps.hdc);
   if (realize==GDI_ERROR)
   {
     sprintf(string,"Realize Pal Fail: %d",GetLastError());
-    MessageBox(NULL,string,"OK",MB_OK);
+    MessageBox(nullptr,string,"OK",MB_OK);
   }
 
   HDC hdcMem = CreateCompatibleDC(ps.hdc);

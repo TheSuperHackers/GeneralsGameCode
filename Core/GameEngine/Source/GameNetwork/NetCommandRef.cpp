@@ -61,8 +61,8 @@ NetCommandRef::~NetCommandRef()
 	{
 		m_msg->detach();
 	}
- 	DEBUG_ASSERTCRASH(m_next == nullptr, ("NetCommandRef::~NetCommandRef - m_next != NULL"));
-	DEBUG_ASSERTCRASH(m_prev == nullptr, ("NetCommandRef::~NetCommandRef - m_prev != NULL"));
+ 	DEBUG_ASSERTCRASH(m_next == nullptr, ("NetCommandRef::~NetCommandRef - m_next != nullptr"));
+	DEBUG_ASSERTCRASH(m_prev == nullptr, ("NetCommandRef::~NetCommandRef - m_prev != nullptr"));
 
 #ifdef DEBUG_NETCOMMANDREF
 	DEBUG_LOG(("NetCommandRef %d deleted", m_id));

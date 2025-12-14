@@ -60,7 +60,7 @@ public:
 		HRESULT TypeLibraryLoadResult;
 		char filename[256];
 
-		GetModuleFileName(NULL, filename, sizeof(filename));
+		GetModuleFileName(nullptr, filename, sizeof(filename));
 		_bstr_t bstr(filename);
 
 		TypeLibraryLoadResult = LoadTypeLib(bstr, &ptlib);

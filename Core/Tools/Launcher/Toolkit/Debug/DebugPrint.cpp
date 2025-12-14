@@ -84,20 +84,20 @@ void __cdecl DebugPrint(const char* string, ...)
 			char drive[_MAX_DRIVE];
 			char dir[_MAX_DIR];
 
-			GetModuleFileName(GetModuleHandle(NULL), &path[0], sizeof(path));
-			_splitpath(path, drive, dir, nullptr, NULL);
+			GetModuleFileName(GetModuleHandle(nullptr), &path[0], sizeof(path));
+			_splitpath(path, drive, dir, nullptr, nullptr);
 			_makepath(_filename, drive, dir, debugLogName, "txt");
 
 			OutputDebugString("Creating ");
 			OutputDebugString(_filename);
 			OutputDebugString("\n");
 
-			file = CreateFile(_filename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
+			file = CreateFile(_filename, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
 				FILE_ATTRIBUTE_NORMAL, nullptr);
 			}
 		else
 			{
-			file = CreateFile(_filename, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS,
+			file = CreateFile(_filename, GENERIC_WRITE, 0, nullptr, OPEN_ALWAYS,
 				FILE_ATTRIBUTE_NORMAL, nullptr);
 			}
 

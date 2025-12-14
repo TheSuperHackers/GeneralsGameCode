@@ -505,7 +505,7 @@ public:
 
 		//	Check to ensure we don't wrap around the list (stop after iterating
 		// the list once).
-		if (CurNode != NULL && CurNode->Object != NULL && OriginalHead != CurNode) {
+		if (CurNode != nullptr && CurNode->Object != nullptr && OriginalHead != CurNode) {
 			OriginalHead		= (OriginalHead == nullptr) ? CurNode : OriginalHead;
 			(*object)			= (ObjectType *)CurNode->Object;
 

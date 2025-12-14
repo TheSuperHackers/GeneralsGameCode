@@ -226,7 +226,7 @@ TextureMgrDialogClass::OnInitDialog (void)
 	CRect rect;
 	::GetWindowRect (::GetDlgItem (m_hWnd, IDC_TOOLBAR_SLOT), &rect);
 	ScreenToClient (&rect);
-	m_Toolbar.SetWindowPos (NULL, rect.left, rect.top, rect.Width (), rect.Height (), SWP_NOZORDER);
+	m_Toolbar.SetWindowPos (nullptr, rect.left, rect.top, rect.Width (), rect.Height (), SWP_NOZORDER);
 
 	ASSERT (m_pBaseModel != nullptr);
 
@@ -507,8 +507,8 @@ void
 TextureMgrDialogClass::OnDestroy (void)
 {
 	// Free the state image list we associated with the control
-	m_ListCtrl.SetImageList (NULL, LVSIL_NORMAL);
-	m_ListCtrl.SetImageList (NULL, LVSIL_SMALL);
+	m_ListCtrl.SetImageList (nullptr, LVSIL_NORMAL);
+	m_ListCtrl.SetImageList (nullptr, LVSIL_SMALL);
 	SAFE_DELETE (m_pImageList);
 	SAFE_DELETE (m_pImageListSmall);
 	SAFE_DELETE (m_pTextureImageList);
@@ -618,13 +618,13 @@ TextureMgrDialogClass::Get_Thumbnail (srTextureIFace *ptexture)
 			// Insert this bitmap into our imagelist
 			CBitmap temp_obj;
 			temp_obj.Attach (hbmp);
-			icon_index = m_pTextureImageList->Add (&temp_obj, (CBitmap *)NULL);
+			icon_index = m_pTextureImageList->Add (&temp_obj, (CBitmap *)nullptr);
 
 			// Create a smaller bitmap and insert it into the other imagelist
 			HBITMAP hsmall_bitmap = (HBITMAP)::CopyImage (hbmp, IMAGE_BITMAP, TEXTURE_THUMBSMALL_X, TEXTURE_THUMBSMALL_Y, 0);
 			CBitmap small_obj;
 			small_obj.Attach (hsmall_bitmap);
-			m_pTextureImageListSmall->Add (&small_obj, (CBitmap *)NULL);
+			m_pTextureImageListSmall->Add (&small_obj, (CBitmap *)nullptr);
 
 			// Add a name to our list to represent this texture
 			m_TextureNames.Add (::Get_Texture_Name (*ptexture));
@@ -755,7 +755,7 @@ TextureMgrDialogClass::OnPropagate (void)
 
 				TextureListNodeClass *curr_texture_node	= curr_texture_list[texture_counter];
 				TextureListNodeClass *src_texture_node		= src_texture_list[texture_counter];
-				if (curr_texture_node != NULL && src_texture_node != nullptr) {
+				if (curr_texture_node != nullptr && src_texture_node != nullptr) {
 
 					TextureClass *curr_texture	= curr_texture_node->Peek_Texture ();
 					TextureClass *src_texture	= src_texture_node->Peek_Texture ();
@@ -763,7 +763,7 @@ TextureMgrDialogClass::OnPropagate (void)
 					//
 					//	Are the textures both indirect textures?
 					//
-					if (	curr_texture != NULL && src_texture != NULL &&
+					if (	curr_texture != nullptr && src_texture != nullptr &&
 							curr_texture->getClassID () == ID_INDIRECT_TEXTURE_CLASS &&
 							src_texture->getClassID () == ID_INDIRECT_TEXTURE_CLASS)
 					{

@@ -63,7 +63,7 @@ Wstring::~Wstring()
 
 bool Wstring::operator<(const Wstring &other) const
 {
-	if (str == NULL && other.str == nullptr)
+	if (str == nullptr && other.str == nullptr)
 		return false;
 
 	if (str == nullptr)
@@ -446,7 +446,7 @@ char Wstring::set(uint32 size, const char *string)
 // work in all cases, but this should be good enough for 99% of Wstring usage.
 char Wstring::setFormatted(const char *msg, ...)
 {
-	if( msg == NULL || strlen(msg) <= 0 )  return FALSE;
+	if( msg == nullptr || strlen(msg) <= 0 )  return FALSE;
 
 	char*  string;
         va_list args;

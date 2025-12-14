@@ -77,7 +77,7 @@ BOOL CALLBACK Update_Info_Proc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 
 	     SendDlgItemMessage(hwnd, IDC_TEXT, EM_SETSEL, (WPARAM)lastsel, (LPARAM)lastsel );
 	     SendDlgItemMessage(hwnd, IDC_TEXT, EM_REPLACESEL, 0, (LPARAM)(line) );
-	     SendDlgItemMessage(hwnd, IDC_TEXT, EM_GETSEL, (WPARAM)NULL, (LPARAM)&lastsel );
+	     SendDlgItemMessage(hwnd, IDC_TEXT, EM_GETSEL, (WPARAM)nullptr, (LPARAM)&lastsel );
       }
       unselectText=1;
       fclose(in);
@@ -159,7 +159,7 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
       lpClass,
       REG_OPTION_NON_VOLATILE,
       KEY_ALL_ACCESS,
-      NULL,
+      nullptr,
       &regKey,
       &regPrevious);
 
@@ -168,21 +168,21 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
       RegSetValueEx(regKey,"EXEPatch",0,REG_SZ,(const uint8*)patchfile,strlen(patchfile)+1);
 
       char message[256];
-      LoadString(NULL,IDS_SYS_RESTART,message,256);
+      LoadString(nullptr,IDS_SYS_RESTART,message,256);
       char title[128];
-      LoadString(NULL,IDS_SYS_RESTART_TITLE,title,128);
+      LoadString(nullptr,IDS_SYS_RESTART_TITLE,title,128);
 
-      MessageBox(NULL,message,title,MB_OK);
+      MessageBox(nullptr,message,title,MB_OK);
 
       Shutdown_Computer_Now();
     }
     else
     {
       char message[256];
-      LoadString(NULL,IDS_RUNONCE_ERR,message,256);
+      LoadString(nullptr,IDS_RUNONCE_ERR,message,256);
       char string[256];
       sprintf(string,message,patchfile);
-      MessageBox(NULL,string,"ERROR",MB_OK);
+      MessageBox(nullptr,string,"ERROR",MB_OK);
     }
   }
   //
@@ -201,12 +201,12 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
     if (hInst==nullptr)
     {
       char message[256];
-      LoadString(NULL,IDS_ERR_MISSING_FILE,message,256);
+      LoadString(nullptr,IDS_ERR_MISSING_FILE,message,256);
       char string[256];
       sprintf(string,message,"patchw32.dll");
       char title[128];
-      LoadString(NULL,IDS_ERROR,title,128);
-      MessageBox(NULL,string,title,MB_OK);
+      LoadString(nullptr,IDS_ERROR,title,128);
+      MessageBox(nullptr,string,title,MB_OK);
       exit(-1);
       return;
     }
@@ -219,10 +219,10 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
     if (patchFunc==nullptr)
     {
       char message[256];
-      LoadString(NULL,IDS_BAD_LIBRARY,message,256);
+      LoadString(nullptr,IDS_BAD_LIBRARY,message,256);
       char title[128];
-      LoadString(NULL,IDS_ERROR,title,128);
-      MessageBox(NULL,message,title,MB_OK);
+      LoadString(nullptr,IDS_ERROR,title,128);
+      MessageBox(nullptr,message,title,MB_OK);
       return;
     }
 
@@ -324,10 +324,10 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
   else if (strcasecmp(patchfile+strlen(patchfile)-strlen(".web"),".web")==0)
   {
     char message[256];
-    LoadString(NULL,IDS_WEBPATCH,message,256);
+    LoadString(nullptr,IDS_WEBPATCH,message,256);
     char title[128];
-    LoadString(NULL,IDS_WEBPATCH_TITLE,title,128);
-    MessageBox(NULL,message,title,MB_OK);
+    LoadString(nullptr,IDS_WEBPATCH_TITLE,title,128);
+    MessageBox(nullptr,message,title,MB_OK);
 
     FILE *in=fopen(patchfile,"r");
     if (in!=nullptr)
@@ -335,7 +335,7 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
       char URL[256];
       fgets(URL,255,in);
       fclose(in);
-      ShellExecute(NULL,nullptr,URL,nullptr,".",SW_SHOW);
+      ShellExecute(nullptr,nullptr,URL,nullptr,".",SW_SHOW);
       _unlink(patchfile);
       //// This is somewhat skanky, but we can't wait
       //// for the viewer to exit (I tried).
@@ -343,7 +343,7 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
     }
     else
     {
-      MessageBox(NULL,patchfile,"Patchfile vanished?",MB_OK);
+      MessageBox(nullptr,patchfile,"Patchfile vanished?",MB_OK);
     }
   }
 }
@@ -363,7 +363,7 @@ void Shutdown_Computer_Now(void)
   }
 
   // Get the LUID for the shutdown privilege.
-  LookupPrivilegeValue(NULL, SE_SHUTDOWN_NAME,
+  LookupPrivilegeValue(nullptr, SE_SHUTDOWN_NAME, &tkp.Privileges[0].Luid);
         &tkp.Privileges[0].Luid);
 
   tkp.PrivilegeCount = 1;  // one privilege to set
@@ -371,7 +371,7 @@ void Shutdown_Computer_Now(void)
 
   // Get the shutdown privilege for this process.
   AdjustTokenPrivileges(hToken, FALSE, &tkp, 0,
-        (PTOKEN_PRIVILEGES)NULL, 0);
+        (PTOKEN_PRIVILEGES)nullptr, 0);
 
   // Cannot test the return value of AdjustTokenPrivileges.
   if (GetLastError() != ERROR_SUCCESS)
@@ -384,8 +384,8 @@ void Shutdown_Computer_Now(void)
   {
     // Should never happen
     char restart[128];
-    LoadString(NULL,IDS_MUST_RESTART,restart,128);
-    MessageBox(NULL,restart,"OK",MB_OK);
+    LoadString(nullptr,IDS_MUST_RESTART,restart,128);
+    MessageBox(nullptr,restart,"OK",MB_OK);
     exit(0);
   }
 
@@ -446,8 +446,8 @@ __declspec(dllexport) LPVOID CALLBACK PatchCallBack(UINT Id, LPVOID Param)
 	  // Error message header/text
       ///////*g_LogFile << (char *)Parm << endl;
       char errmsg[256];
-      LoadString(NULL,IDS_ERR_PATCH,errmsg,256);
-      MessageBox(NULL,(char *)Param,errmsg,MB_OK);
+      LoadString(nullptr,IDS_ERR_PATCH,errmsg,256);
+      MessageBox(nullptr,(char *)Param,errmsg,MB_OK);
       {
         FILE *out=fopen("patch.err","a");
         time_t  timet=time(nullptr);
@@ -508,7 +508,7 @@ __declspec(dllexport) LPVOID CALLBACK PatchCallBack(UINT Id, LPVOID Param)
 
       currFile++;
       char xofy[64];
-      LoadString(NULL,IDS_FILE_X_OF_Y,xofy,64);
+      LoadString(nullptr,IDS_FILE_X_OF_Y,xofy,64);
       sprintf(string,xofy,currFile,fileCount);
       SetWindowText(GetDlgItem(PatchDialog,IDC_CAPTION),string);
 

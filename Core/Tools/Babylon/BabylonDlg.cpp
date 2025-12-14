@@ -197,7 +197,7 @@ END_MESSAGE_MAP()
 
 IMPLEMENT_DYNAMIC(CBabylonDlg, CDialog);
 
-CBabylonDlg::CBabylonDlg(CWnd* pParent /*=NULL*/)
+CBabylonDlg::CBabylonDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CBabylonDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CBabylonDlg)
@@ -2176,15 +2176,14 @@ int CBabylonDlg::ValidateStrFile( const char *filename)
 
 	sprintf ( buffer, "strcheck %s %s", filename, results );
 
-	if (!CreateProcess(
-			NULL,
+	if (!CreateProcess( nullptr,
 			buffer,
-			NULL,
-			NULL,
+			nullptr,
+			nullptr,
 			FALSE,
 			0,
-			NULL,
-			NULL,
+			nullptr,
+			nullptr,
 			&StartupInfo,
 			&ProcessInfo))
 	{

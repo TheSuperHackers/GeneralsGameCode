@@ -90,7 +90,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	while (argc < 20 && token != nullptr)
 	{
 		argv[argc++] = strtrim(token);
-		token = strtok(NULL, " ");
+		token = strtok(nullptr, " ");
 	}
 
 	int major = 1;
@@ -122,16 +122,16 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 						// Looking for '#define VERSION "x.y.z"'
 						ptr = strtok(stringPtr, " ");	// The VERSION
-						ptr = strtok(NULL, "\n");			// The remainder
+						ptr = strtok(nullptr, "\n");			// The remainder
 
 						if (*ptr == '\"')
 						{
 							ptr++; // Inc past the first "
 							ptr = strtok(ptr, ".");	// The first number
 							major = atoi(ptr);
-							ptr = strtok(NULL, ".");  // The second number
+							ptr = strtok(nullptr, ".");  // The second number
 							minor = atoi(ptr);
-							ptr = strtok(NULL, "\""); // The final number
+							ptr = strtok(nullptr, "\""); // The final number
 							build = atoi(ptr);
 							fclose(filePtr);
 

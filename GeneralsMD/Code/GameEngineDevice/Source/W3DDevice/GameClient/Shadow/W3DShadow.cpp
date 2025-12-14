@@ -101,7 +101,7 @@ void DoShadows(RenderInfoClass & rinfo, Bool stencilPass)
 
 W3DShadowManager::W3DShadowManager( void )
 {
-	DEBUG_ASSERTCRASH(TheW3DVolumetricShadowManager == NULL && TheW3DProjectedShadowManager == nullptr,
+	DEBUG_ASSERTCRASH(TheW3DVolumetricShadowManager == nullptr && TheW3DProjectedShadowManager == nullptr,
 		("Creating new shadow managers without deleting old ones"));
 
 	m_shadowColor = 0x7fa0a0a0;

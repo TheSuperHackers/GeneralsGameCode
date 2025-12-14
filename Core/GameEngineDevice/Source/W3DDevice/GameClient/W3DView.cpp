@@ -899,7 +899,7 @@ static void drawAudioLocations( Drawable *draw, void *userData )
 
   const ThingTemplate * thingTemplate = draw->getTemplate();
 
-  if ( thingTemplate == NULL || thingTemplate->getEditorSorting() != ES_AUDIO )
+  if ( thingTemplate == nullptr || thingTemplate->getEditorSorting() != ES_AUDIO )
   {
     return; // All done
   }

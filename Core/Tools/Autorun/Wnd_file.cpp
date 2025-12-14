@@ -133,7 +133,7 @@ void __cdecl Msg( int line, const char *filename, const char *fmt, ... )
 	// Make filename.
 	//----------------------------------------------------------------------
 	const char *temp = strrchr( filename, '\\' );
-	if ( temp != NULL || temp[0] != '\0' ) {
+	if ( temp != nullptr || temp[0] != '\0' ) {
 		temp++;
 		strcpy( szFile, temp );
 	}
@@ -215,7 +215,7 @@ void __cdecl Msg( int line, const char *filename, const wchar_t *fmt, UINT codep
 	// Make filename.
 	//----------------------------------------------------------------------
 	const char *temp = strrchr( filename, '\\' );
-	if ( temp != NULL || temp[0] != '\0' ) {
+	if ( temp != nullptr || temp[0] != '\0' ) {
 		temp++;
 		length = strlen( temp );
 		mbstowcs( szFile, temp, length );
@@ -241,7 +241,7 @@ void __cdecl Msg( int line, const char *filename, const wchar_t *fmt, UINT codep
 		//	950				Chinese (Taiwan; Hong Kong SAR, PRC)
 		//	1252			Windows 3.1 Latin 1 (US, Western Europe)
 		//---------------------------------------------------------------------
-		WideCharToMultiByte( codepage, 0, szBuffer1, -1, szBuffer3, MAX_PATH*3, nullptr, NULL );
+		WideCharToMultiByte( codepage, 0, szBuffer1, -1, szBuffer3, MAX_PATH*3, nullptr, nullptr );
 
 		length = strlen( szBuffer3 );
    		nBytes = file.Write( szBuffer3, length );
@@ -575,7 +575,7 @@ bool StandardFileClass::Close( void )
    	//
    	// error?
    	//
-   	if ( File_Stream_Ptr == NULL || Currently_Open == FALSE ) {
+   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
        		//
          	// no success
          	//
@@ -649,7 +649,7 @@ int StandardFileClass::Read( void *buffer, unsigned long int bytes_to_read )
 	//
 	// error?
 	//
-	if ( File_Stream_Ptr == NULL || Currently_Open == FALSE ) {
+	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
    		//
 		// nothing read
 		//
@@ -729,7 +729,7 @@ int StandardFileClass::Write( void *buffer, unsigned long int bytes_to_write )
    	//
    	// error?
    	//
-   	if ( File_Stream_Ptr == NULL || Currently_Open == FALSE ) {
+   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
        		//
          	// nothing written
          	//
@@ -794,7 +794,7 @@ bool StandardFileClass::Seek( int distance, int seek_file_position )
    	//
    	// error?
    	//
-   	if ( File_Stream_Ptr == NULL || Currently_Open == FALSE ) {
+   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
        		//
          	// error
          	//
@@ -858,7 +858,7 @@ int StandardFileClass::Tell( void )
    	//
    	// error?
    	//
-   	if ( File_Stream_Ptr == NULL || Currently_Open == FALSE ) {
+   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
        		//
          	// error
          	//
@@ -911,7 +911,7 @@ int StandardFileClass::Query_Size( void )
    	//
    	// error?
    	//
-   	if ( File_Stream_Ptr == NULL || Currently_Open == FALSE ) {
+   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
        		//
          	// error
          	//
@@ -990,7 +990,7 @@ int StandardFileClass::End_Of_File	( void )
 
 	#if( SUPPORT_STREAMS )
 	ASSERT( File_Stream_Ptr != nullptr );
-   	if ( File_Stream_Ptr == NULL || Currently_Open == FALSE ) {
+   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
     	return( -1 );
 	}
    	return( feof( File_Stream_Ptr ));
@@ -1001,7 +1001,7 @@ int StandardFileClass::Flush ( void )
 {
 	#if( SUPPORT_STREAMS )
 	ASSERT( File_Stream_Ptr != nullptr );
-   	if ( File_Stream_Ptr == NULL || Currently_Open == FALSE ) {
+   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
     	return( -1 );
 	}
    	return( fflush( File_Stream_Ptr ));
@@ -1083,10 +1083,10 @@ HANDLE Open_File( char const *file_name, int mode )
 	windows_file_handle = CreateFile( file_name,
                                      access,
                                      share,
-                                     NULL,
+                                     nullptr,
                                      creation,
                                      FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN,
-                                     NULL );
+                                     nullptr );
 	//
     // error?
     //
@@ -1200,7 +1200,7 @@ int Read_File( HANDLE handle, void *buffer, unsigned long int bytes_to_read )
                        (void *) buffer,
                        (DWORD) bytes_to_read,
                        (DWORD *) &bytes_actually_read,
-                       NULL );
+                       nullptr );
 
 	ASSERT( success == TRUE );
 
@@ -1246,7 +1246,7 @@ int Write_File( HANDLE handle, void const *buffer, unsigned long int bytes_to_wr
                         buffer,
                         (DWORD) bytes_to_write,
                         (DWORD *) &bytes_actually_written,
-                        NULL );
+                        nullptr );
 
 	ASSERT( success == TRUE );
 	ASSERT( bytes_actually_written == bytes_to_write );
@@ -1303,7 +1303,7 @@ bool Seek_File( HANDLE handle, int distance, int seek_file_location )
 	//
 	success = SetFilePointer( (HANDLE) handle,
                              distance,
-                             NULL,
+                             nullptr,
                              move_method );
 
 	if ( success == 0xFFFFFFFF ) {

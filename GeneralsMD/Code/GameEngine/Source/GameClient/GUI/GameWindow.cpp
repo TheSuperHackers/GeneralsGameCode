@@ -379,7 +379,7 @@ Int GameWindow::winNextTab( void )
 	do
 	{
 
-		if( m_parent == NULL && firstTry )
+		if( m_parent == nullptr && firstTry )
 		{
 
 			newTab = findLastLeaf( newTab );
@@ -414,7 +414,7 @@ Int GameWindow::winPrevTab( void )
 	do
 	{
 
-		if( m_parent == NULL && firstTry )
+		if( m_parent == nullptr && firstTry )
 		{
 
 			newTab = findFirstLeaf( newTab );

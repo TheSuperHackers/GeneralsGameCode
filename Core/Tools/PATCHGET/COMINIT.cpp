@@ -34,7 +34,7 @@ ComInit::ComInit()
   HRESULT hRes = CoInitialize(nullptr);
   if (SUCCEEDED(hRes)==FALSE)
   {
-    MessageBox(NULL,"Can't initialize COM?!?!","Error:",MB_OK);
+    MessageBox(nullptr,"Can't initialize COM?!?!","Error:",MB_OK);
     exit(0);
   }
 }

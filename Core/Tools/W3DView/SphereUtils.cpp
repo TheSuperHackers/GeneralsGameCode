@@ -178,7 +178,7 @@ Key_Compare (const void *arg1, const void *arg2)
 void
 SphereKeysClass::Sort (void)
 {
-	if (m_Keys != NULL && m_KeyCount > 0) {
+	if (m_Keys != nullptr && m_KeyCount > 0) {
 		::qsort (m_Keys, m_KeyCount, sizeof (W3dSphereKeyFrameStruct), Key_Compare);
 	}
 

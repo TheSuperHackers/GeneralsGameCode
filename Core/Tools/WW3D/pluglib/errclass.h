@@ -65,7 +65,7 @@ inline ErrorClass::ErrorClass(char * format,...)
 }
 
 inline ErrorClass::ErrorClass(const ErrorClass & that)	:
-	error_message(NULL)
+	error_message()
 {
 	*this = that;
 }

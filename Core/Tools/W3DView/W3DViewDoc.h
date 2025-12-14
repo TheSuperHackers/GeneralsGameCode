@@ -269,7 +269,7 @@ public:
 	//
 	void					Copy_Assets_To_Dir (LPCTSTR directory);
 	bool					Lookup_Path (LPCTSTR asset_name, CString &path);
-	const char *		Get_Last_Path (void) const { return (m_LastPath.IsEmpty () ? NULL : (const char *)m_LastPath); }
+	const char *		Get_Last_Path (void) const { return (m_LastPath.IsEmpty () ? nullptr : (const char *)m_LastPath); }
 
 	//
 	//	Texture search paths

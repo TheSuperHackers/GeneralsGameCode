@@ -194,14 +194,14 @@ stack_frame.AddrFrame.Offset = myebp;
 			while (b_ret&&skip)
 			{
 					b_ret = DbgHelpLoader::stackWalk(      IMAGE_FILE_MACHINE_I386,
-											process,
-											thread,
-											&stack_frame,
-											NULL, //&gsContext,
-											NULL,
-											DbgHelpLoader::symFunctionTableAccess,
-											DbgHelpLoader::symGetModuleBase,
-											NULL);
+										process,
+										thread,
+										&stack_frame,
+										nullptr, //&gsContext,
+										nullptr,
+										DbgHelpLoader::symFunctionTableAccess,
+										DbgHelpLoader::symGetModuleBase,
+										nullptr);
 					skip--;
 			}
 
@@ -210,14 +210,14 @@ stack_frame.AddrFrame.Offset = myebp;
 			{
 
 					b_ret = DbgHelpLoader::stackWalk(      IMAGE_FILE_MACHINE_I386,
-											process,
-											thread,
-											&stack_frame,
-											NULL, //&gsContext,
-											NULL,
-											DbgHelpLoader::symFunctionTableAccess,
-											DbgHelpLoader::symGetModuleBase,
-											NULL);
+										process,
+										thread,
+										&stack_frame,
+										nullptr, //&gsContext,
+										nullptr,
+										DbgHelpLoader::symFunctionTableAccess,
+										DbgHelpLoader::symGetModuleBase,
+										nullptr);
 
 
 
@@ -356,11 +356,11 @@ stack_frame.AddrFrame.Offset = myebp;
 								process,
 								thread,
 								&stack_frame,
-								NULL,	//&gsContext,
-								NULL,
+								nullptr,	//&gsContext,
+								nullptr,
 								DbgHelpLoader::symFunctionTableAccess,
 								DbgHelpLoader::symGetModuleBase,
-								NULL) != 0;
+								nullptr) != 0;
 			skip--;
 		}
 

@@ -193,7 +193,7 @@ IChat *g_pChat = nullptr;
 void checkInstalledWolapiVersion( void )
 {
 	// Initialize this instance
-	_Module.Init(NULL, g_hInst);
+	_Module.Init(, g_hInst);
 
 	// Create the WOLAPI instance
 	CoCreateInstance(CLSID_Chat, nullptr, CLSCTX_INPROC_SERVER, \

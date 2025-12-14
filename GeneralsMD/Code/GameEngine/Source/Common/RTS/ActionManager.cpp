@@ -1178,7 +1178,7 @@ Bool ActionManager::canPickUpPrisoner( const Object *obj, const Object *prisoner
 {
 
 	// sanity
-	if( obj == NULL || prisoner == nullptr )
+	if( obj == nullptr || prisoner == nullptr )
 		return FALSE;
 
 	// only pow trucks can pick up anything
@@ -1195,14 +1195,14 @@ Bool ActionManager::canPickUpPrisoner( const Object *obj, const Object *prisoner
 
 	// prisoner must be in a surrendered state
 	const AIUpdateInterface *ai = prisoner->getAI();
-	if( ai == NULL || ai->isSurrendered() == FALSE )
+	if( ai == nullptr || ai->isSurrendered() == FALSE )
 		return FALSE;
 
 	// prisoner must have been put in a surrendered state by our own player
 	// (or be surrendered to "everyone")
 	Int idx = ai->getSurrenderedPlayerIndex();
 	Player* surrenderedToPlayer = (idx >= 0) ? ThePlayerList->getNthPlayer(idx) : NULL;
-	if (surrenderedToPlayer != NULL && surrenderedToPlayer != obj->getControllingPlayer())
+	if (surrenderedToPlayer != nullptr && surrenderedToPlayer != obj->getControllingPlayer())
 		return FALSE;
 
 	// we must be enemies

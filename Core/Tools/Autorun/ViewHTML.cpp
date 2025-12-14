@@ -112,10 +112,10 @@ bool ViewHTML(const char* url, bool wait, const CallbackHook& callback)
 					filename2,
 					GENERIC_WRITE,
 					0,
-					NULL,
+					nullptr,
 					CREATE_ALWAYS,
 					FILE_ATTRIBUTE_NORMAL,
-					NULL);
+					nullptr);
 
 	if (file == INVALID_HANDLE_VALUE)
 		{

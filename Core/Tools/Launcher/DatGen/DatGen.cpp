@@ -70,7 +70,7 @@ static void doIt(void)
 
 	// Retrieve Hard drive S/N
 	char drive[8];
-	_splitpath((const char*)installPath, drive, nullptr, NULL, nullptr);
+	_splitpath((const char*)installPath, drive, nullptr, nullptr, nullptr);
 	strcat(drive, "\\");
 
 	DWORD volumeSerialNumber = 0;

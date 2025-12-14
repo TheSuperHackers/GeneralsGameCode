@@ -620,7 +620,7 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 									{
 										// match 4 players
 										sendMatchInfo(i1->first, i2->first, i3->first, i4->first, "", "", "", "",
-										              u1, u2, u3, u4, nullptr, NULL, nullptr, NULL, 4, ladderID);
+										              u1, u2, u3, u4, nullptr, nullptr, nullptr, nullptr, 4, ladderID);
 										break;
 									}
 									else
@@ -666,7 +666,7 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 														{
 															// match 6 players
 															sendMatchInfo(i1->first, i2->first, i3->first, i4->first, i5->first, i6->first, "", "",
-															              u1, u2, u3, u4, u5, u6, nullptr, NULL, 6, ladderID);
+															              u1, u2, u3, u4, u5, u6, nullptr, nullptr, 6, ladderID);
 															break;
 														}
 														else
@@ -750,7 +750,7 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 			       "\tping in ms: " << sqrt(1000000 * calcPingDelta(u1, bestUser) / (255*255*2)) << "\n"
 			       "\tprevious attempts: " << u1->widened << ", " << bestUser->widened);
 			sendMatchInfo(i1->first, bestName, "", "", "", "", "", "",
-			              u1, bestUser, nullptr, NULL, nullptr, NULL, nullptr, NULL, 2, ladderID);
+			              u1, bestUser, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, 2, ladderID);
 			break;
 		}
 	}
@@ -815,7 +815,7 @@ bool GeneralsMatcher::handleUserInfo(const char *nick, const std::string& msg)
 		{
 			int val = atoi(v.c_str());
 			if (val > 0)
-				userInfo->timeToWiden = time(NULL) + val;
+				userInfo->timeToWiden = time(nullptr) + val;
 			else
 				userInfo->timeToWiden = 0;
 		}

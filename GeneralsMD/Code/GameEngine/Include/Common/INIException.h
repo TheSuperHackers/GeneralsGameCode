@@ -35,7 +35,7 @@ class INIException
 public:
 	char *mFailureMessage;
 
-	INIException(const char* errorMessage) : mFailureMessage(NULL)
+	INIException(const char* errorMessage) : mFailureMessage(nullptr)
 	{
 		if (errorMessage) {
 			mFailureMessage = new char[strlen(errorMessage) + 1];

@@ -793,7 +793,7 @@ AsciiString GameState::getMapLeafName(const AsciiString& in) const
 		// at the name only
 		//
 		++p;
-		DEBUG_ASSERTCRASH( p != NULL && *p != 0, ("GameState::xfer - Illegal map name encountered") );
+		DEBUG_ASSERTCRASH( p != nullptr && *p != 0, ("GameState::xfer - Illegal map name encountered") );
 		return p;
 	}
 	else

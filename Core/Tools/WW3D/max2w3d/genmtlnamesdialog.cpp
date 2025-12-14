@@ -74,7 +74,7 @@ GenMtlNamesDialogClass::GenMtlNamesDialogClass(Interface * maxinterface) :
 	Hwnd(nullptr),
 	Options(nullptr),
 	MaxInterface(maxinterface),
-	NameIndexSpin(NULL)
+	NameIndexSpin(nullptr)
 {
 }
 
@@ -193,7 +193,7 @@ bool GenMtlNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LP
 
 			// set initial name to root of the filename
 			char buf[_MAX_FNAME];
-			_splitpath(MaxInterface->GetCurFileName(),nullptr,NULL,buf,nullptr);
+			_splitpath(MaxInterface->GetCurFileName(),nullptr,nullptr,buf,nullptr);
 			buf[MAX_ROOT_NAME_LEN+1] = 0;
 			SetWindowText(GetDlgItem(Hwnd,IDC_BASE_NAME_EDIT),buf);
 

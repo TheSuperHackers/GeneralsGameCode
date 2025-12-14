@@ -81,7 +81,7 @@ TextureLoadTaskListClass::TextureLoadTaskListClass(void)
 void TextureLoadTaskListClass::Push_Front	(TextureLoadTaskClass *task)
 {
 	// task should non-null and not on any list
-	WWASSERT(task != NULL && task->Next == NULL && task->Prev == nullptr);
+	WWASSERT(task != nullptr && task->Next == nullptr && task->Prev == nullptr);
 
 	// update inserted task to point to list
 	task->Next			= Root.Next;
@@ -96,7 +96,7 @@ void TextureLoadTaskListClass::Push_Front	(TextureLoadTaskClass *task)
 void TextureLoadTaskListClass::Push_Back(TextureLoadTaskClass *task)
 {
 	// task should be non-null and not on any list
-	WWASSERT(task != NULL && task->Next == NULL && task->Prev == nullptr);
+	WWASSERT(task != nullptr && task->Next == nullptr && task->Prev == nullptr);
 
 	// update inserted task to point to list
 	task->Next			= &Root;

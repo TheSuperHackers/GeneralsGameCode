@@ -170,7 +170,7 @@ BOOL FormClass::ExecuteDlgInit(LPCTSTR lpszResourceName)
 	BOOL bResult = ExecuteDlgInit(lpResource);
 
 	// cleanup
-	if (lpResource != NULL && hResource != nullptr)
+	if (lpResource != nullptr && hResource != nullptr)
 	{
 		UnlockResource(hResource);
 		FreeResource(hResource);

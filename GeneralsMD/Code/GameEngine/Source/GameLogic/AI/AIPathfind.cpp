@@ -364,7 +364,7 @@ void Path::xfer( Xfer *xfer )
 		color.blue = 0;
 		color.red = color.green = 1;
 		Coord3D pos;
-		addIcon(NULL, 0, 0, color); // erase feedback.
+		addIcon(nullptr, 0, 0, color); // erase feedback.
 		for( PathNode *node = getFirstNode(); node; node = node->getNext() )
 		{
 
@@ -1353,8 +1353,8 @@ void PathfindCell::releaseInfo(void)
 		return;
 	}
 
-	DEBUG_ASSERTCRASH(m_info->m_prevOpen==NULL && m_info->m_nextOpen==nullptr, ("Shouldn't be linked."));
-	DEBUG_ASSERTCRASH(m_info->m_open==NULL && m_info->m_closed==nullptr, ("Shouldn't be linked."));
+	DEBUG_ASSERTCRASH(m_info->m_prevOpen== nullptr && m_info->m_nextOpen==0, ("Shouldn't be linked."));
+	DEBUG_ASSERTCRASH(m_info->m_open== nullptr && m_info->m_closed==0, ("Shouldn't be linked."));
 	DEBUG_ASSERTCRASH(m_info->m_goalUnitID==INVALID_ID && m_info->m_posUnitID==INVALID_ID, ("Shouldn't be occupied."));
 	DEBUG_ASSERTCRASH(m_info->m_goalAircraftID==INVALID_ID , ("Shouldn't be occupied by aircraft."));
 	if (m_info->m_prevOpen || m_info->m_nextOpen || m_info->m_open || m_info->m_closed) {
@@ -2665,7 +2665,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 		RGBColor color;
 		memset(&color, 0, sizeof(Color));
-		addIcon(NULL, 0, 0, color);
+		addIcon(nullptr, 0, 0, color);
 		for( j=0; j<globalBounds.hi.y; j++ )	{
 			for( i=0; i<globalBounds.hi.x; i++ )	{
 				Int zone = map[i][j].getZone();
@@ -2804,7 +2804,7 @@ void PathfindZoneManager::updateZonesForModify(PathfindCell **map, PathfindLayer
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 		RGBColor color;
 		memset(&color, 0, sizeof(Color));
-		addIcon(NULL, 0, 0, color);
+		addIcon(nullptr, 0, 0, color);
 		Int i, j;
 		for( j=0; j<globalBounds.hi.y; j++ )	{
 			for( i=0; i<globalBounds.hi.x; i++ )	{
@@ -4443,7 +4443,7 @@ void Pathfinder::debugShowSearch(  Bool pathFound  )
 	RGBColor color;
 	color.red = color.blue = color.green = 1;
 	if (!pathFound) {
-		addIcon(NULL, 0, 0, color);	 // erase.
+		addIcon(nullptr, 0, 0, color);	 // erase.
 	}
 
 	for( s = m_openList; s; s=s->getNextOpen() )
@@ -5403,7 +5403,7 @@ void Pathfinder::doDebugIcons(void) {
 
 		RGBColor color;
 		color.red = color.green = color.blue = 0;
-		addIcon(NULL, 0, 0, color);	 // clear.
+		addIcon(nullptr, 0, 0, color);	 // clear.
 		Coord3D topLeftCorner;
 		Bool showCells = TheGlobalData->m_debugAI==AI_DEBUG_CELLS;
 		Int i;
@@ -6096,7 +6096,7 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 		DEBUG_LOG(("Attempting pathfind to 0,0, generally a bug."));
 		return nullptr;
 	}
-	DEBUG_ASSERTCRASH(m_openList==NULL && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
 	if (m_isMapReady == false) {
 		return nullptr;
 	}
@@ -6286,7 +6286,7 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
  		RGBColor color;
 		color.blue = 0;
 		color.red = color.green = 1;
-		addIcon(NULL, 0, 0, color);
+		addIcon(nullptr, 0, 0, color);
 		debugShowSearch(false);
 		Coord3D pos;
 		pos = *from;
@@ -6424,7 +6424,7 @@ Int Pathfinder::clearCellForDiameter(Bool crusher, Int cellX, Int cellY, Pathfin
  */
 Path *Pathfinder::buildGroundPath(Bool isCrusher, const Coord3D *fromPos, PathfindCell *goalCell, Bool center, Int pathDiameter )
 {
-	DEBUG_ASSERTCRASH( goalCell, ("Pathfinder::buildActualPath: goalCell == NULL") );
+	DEBUG_ASSERTCRASH( goalCell, ("Pathfinder::buildActualPath: goalCell == nullptr") );
 
 	Path *path = newInstance(Path);
 
@@ -6473,7 +6473,7 @@ Path *Pathfinder::buildGroundPath(Bool isCrusher, const Coord3D *fromPos, Pathfi
  */
 Path *Pathfinder::buildHierachicalPath( const Coord3D *fromPos, PathfindCell *goalCell )
 {
-	DEBUG_ASSERTCRASH( goalCell, ("Pathfinder::buildHierachicalPath: goalCell == NULL") );
+	DEBUG_ASSERTCRASH( goalCell, ("Pathfinder::buildHierachicalPath: goalCell == nullptr") );
 
 	Path *path = newInstance(Path);
 
@@ -6664,7 +6664,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 		DEBUG_LOG(("Attempting pathfind to 0,0, generally a bug."));
 		return nullptr;
 	}
-	DEBUG_ASSERTCRASH(m_openList==NULL && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
 	if (m_isMapReady == false) {
 		return nullptr;
 	}
@@ -6965,7 +6965,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
  		RGBColor color;
 		color.blue = 0;
 		color.red = color.green = 1;
-		addIcon(NULL, 0, 0, color);
+		addIcon(nullptr, 0, 0, color);
 		debugShowSearch(false);
 		Coord3D pos;
 		pos = *from;
@@ -7154,7 +7154,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 		DEBUG_LOG(("Attempting pathfind to 0,0, generally a bug."));
 		return nullptr;
 	}
-	DEBUG_ASSERTCRASH(m_openList==NULL && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
 	if (m_isMapReady == false) {
 		return nullptr;
 	}
@@ -7654,7 +7654,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
  		RGBColor color;
 		color.blue = 0;
 		color.red = color.green = 1;
-		addIcon(NULL, 0, 0, color);
+		addIcon(nullptr, 0, 0, color);
 		debugShowSearch(false);
 		Coord3D pos;
 		pos = *from;
@@ -7924,7 +7924,7 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 
 	Coord3D adjustTo = *groupDest;
 	Coord3D *to = &adjustTo;
-	DEBUG_ASSERTCRASH(m_openList==NULL && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
 	// create unique "mark" values for open and closed cells for this pathfind invocation
 
 	Bool isCrusher = obj ? obj->getCrusherLevel() > 0 : false;
@@ -8218,7 +8218,7 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 
 	Coord3D adjustTo = *rawTo;
 	Coord3D *to = &adjustTo;
-	DEBUG_ASSERTCRASH(m_openList==NULL && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
 	// create unique "mark" values for open and closed cells for this pathfind invocation
 
 	Bool isCrusher = obj ? obj->getCrusherLevel() > 0 : false;
@@ -8487,7 +8487,7 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 		adjustTo.x += PATHFIND_CELL_SIZE_F/2;
 		adjustTo.y += PATHFIND_CELL_SIZE_F/2;
 	}
-	DEBUG_ASSERTCRASH(m_openList==NULL && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
 	// create unique "mark" values for open and closed cells for this pathfind invocation
 
 	Bool isCrusher = obj ? obj->getCrusherLevel() > 0 : false;
@@ -8805,7 +8805,7 @@ void Pathfinder::adjustCoordToCell(Int cellX, Int cellY, Bool centerInCell, Coor
 Path *Pathfinder::buildActualPath( const Object *obj, LocomotorSurfaceTypeMask acceptableSurfaces, const Coord3D *fromPos,
 																	PathfindCell *goalCell, Bool center, Bool blocked )
 {
-	DEBUG_ASSERTCRASH( goalCell, ("Pathfinder::buildActualPath: goalCell == NULL") );
+	DEBUG_ASSERTCRASH( goalCell, ("Pathfinder::buildActualPath: goalCell == nullptr") );
 
 	Path *path = newInstance(Path);
 
@@ -10083,7 +10083,7 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 	Int radius;
 	getRadiusAndCenter(obj, radius, centerInCell);
 
-	DEBUG_ASSERTCRASH(m_openList==NULL && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
 
 	// determine start cell
 	ICoord2D startCellNdx;
@@ -10260,7 +10260,7 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 
 	m_zoneManager.setAllPassable();
 
-	DEBUG_ASSERTCRASH(m_openList==NULL && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
 
 	enum {CELL_LIMIT = 2000}; // max cells to examine.
 	Int cellCount = 0;
@@ -10307,7 +10307,7 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 	{
 		RGBColor color;
 		color.setFromInt(0);
-		addIcon(NULL, 0,0,color);
+		addIcon(nullptr, 0,0,color);
 	}
 #endif
 
@@ -10534,7 +10534,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 
 	Int cellCount = 0;
 
-	DEBUG_ASSERTCRASH(m_openList==NULL && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
 
 	Int attackDistance = weapon->getAttackDistance(obj, victim, victimPos);
 	attackDistance += 3*PATHFIND_CELL_SIZE;
@@ -10826,7 +10826,7 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 		isHuman = false; // computer gets to cheat.
 	}
 
-	DEBUG_ASSERTCRASH(m_openList==NULL && m_closedList == nullptr, ("Dangling lists."));
+	DEBUG_ASSERTCRASH(m_openList== nullptr && m_closedList == nullptr, ("Dangling lists."));
 	// create unique "mark" values for open and closed cells for this pathfind invocation
 
 	m_zoneManager.setAllPassable();

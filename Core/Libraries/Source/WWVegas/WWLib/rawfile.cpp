@@ -168,7 +168,7 @@ RawFileClass::RawFileClass(void) :
  *=============================================================================================*/
 bool RawFileClass::Is_Open(void) const
 {
-	return(Handle != NULL_HANDLE);
+	return(Handle != nullptr);
 }
 
 /***********************************************************************************************
@@ -442,7 +442,7 @@ int RawFileClass::Open(int rights)
 				// First try to open an existing file in read/write mode.
 				Handle = fopen(Filename, "rb+");
 				// If that fails, try to create a new file in read/write mode.
-				if(Handle == NULL_HANDLE) {
+				if(Handle == nullptr) {
 					Handle = fopen(Filename, "wb+");
 				}
 				break;
@@ -460,7 +460,7 @@ int RawFileClass::Open(int rights)
 		**	For the case of the file cannot be found, then allow a retry. All other cases
 		**	are fatal.
 		*/
-		if (Handle == NULL_HANDLE) {
+		if (Handle == nullptr) {
 			return(false);
 
 //			Error(errno, false, Filename);
@@ -519,7 +519,7 @@ bool RawFileClass::Is_Available(int forced)
 
 		Handle=fopen(Filename,"r");
 
-		if (Handle == NULL_HANDLE) {
+		if (Handle == nullptr) {
 			return(false);
 		}
 		break;

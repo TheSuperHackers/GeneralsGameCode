@@ -71,7 +71,7 @@ LogDataDialogClass::LogDataDialogClass(HWND parent):
  last_buffer_index(0),
  status(0)
 {
-	ThreadHandle = CreateThread(NULL, 0, _logdata_thread_function, (LPVOID)this, 0, &ThreadID);
+	ThreadHandle = CreateThread(nullptr, 0, _logdata_thread_function, (LPVOID)this, 0, &ThreadID);
 
 	if (ThreadHandle) {
 		while (status == 0) {
@@ -273,7 +273,7 @@ bool LogDataDialogClass::Dialog_Proc
 					status = 2;
 
 					EndDialog(Hwnd, 1);
-					Hwnd = NULL;
+					Hwnd = nullptr;
 					return TRUE;
 					break;
 
@@ -288,7 +288,7 @@ bool LogDataDialogClass::Dialog_Proc
 
 			if (status >= 2) {
 				EndDialog(Hwnd, 1);
-				Hwnd = NULL;
+				Hwnd = nullptr;
 			}
 
 			return TRUE;
@@ -302,7 +302,7 @@ bool LogDataDialogClass::Dialog_Proc
 void LogDataDialogClass::Dialog_Init()
 {
 
-	SetCursor(LoadCursor (NULL, IDC_ARROW));
+	SetCursor(LoadCursor (nullptr, IDC_ARROW));
 
 	RECT desktop;
 	RECT ourwin;

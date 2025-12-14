@@ -35,7 +35,7 @@ Sem4::Sem4()
 #ifndef _WIN32
   sem_init(&sem,1,1);
 #else
-  sem = CreateSemaphore(NULL, 1, 1, nullptr);
+  sem = CreateSemaphore(nullptr, 1, 1, nullptr);
 #endif
 }
 
@@ -44,7 +44,7 @@ Sem4::Sem4(uint32 value)
 #ifndef _WIN32
   sem_init(&sem,1,value);
 #else
-  sem = CreateSemaphore(NULL, value, value, nullptr);
+  sem = CreateSemaphore(nullptr, value, value, nullptr);
 #endif
 }
 

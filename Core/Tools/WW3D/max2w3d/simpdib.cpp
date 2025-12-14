@@ -46,7 +46,7 @@ SimpleDIBClass::SimpleDIBClass(HWND hwnd,int width,int height,PaletteClass & pal
 	Width(width),
 	Height(height),
 	PixelBase(nullptr),
-	Pitch(NULL)
+	Pitch()
 {
 	// Allocate a BITMAPINFO structure
 	Info = (BITMAPINFO *) new char [sizeof(BITMAPINFO) + 256*sizeof(RGBQUAD)];

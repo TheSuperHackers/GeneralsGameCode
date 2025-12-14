@@ -291,7 +291,7 @@ TRect<T> const Intersect(TRect<T> const & bounding_rect, TRect<T> const & draw_r
 template<class T>
 TRect<T> const Intersect(TRect<T> const & rect1, TRect<T> const & rect2)
 {
-	return(Intersect(rect1, rect2, (T*)NULL, (T*)NULL));
+	return(Intersect(rect1, rect2, (T*)nullptr, (T*)nullptr));
 }
 
 

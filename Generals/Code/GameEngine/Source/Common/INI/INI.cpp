@@ -1301,7 +1301,7 @@ void INI::parseFXList( INI* ini, void * /*instance*/, void *store, const void* /
 	ConstFXListPtr* theFXList = (ConstFXListPtr*)store;
 
 	const FXList *fxl = TheFXListStore->findFXList(token);	// could be null!
-	DEBUG_ASSERTCRASH(fxl != NULL || stricmp(token, "None") == 0, ("FXList %s not found!",token));
+	DEBUG_ASSERTCRASH(fxl != nullptr || stricmp(token, "None") == 0, ("FXList %s not found!",token));
 	// assign it, even if null!
 	*theFXList = fxl;
 

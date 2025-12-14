@@ -367,7 +367,7 @@ void NTreeLeafClass<T>::Remove (void)
 	//
 	//	Fixup the parent's child leaf object
 	//
-	if (m_Parent != NULL && m_Parent->Peek_Child () == this) {
+	if (m_Parent != nullptr && m_Parent->Peek_Child () == this) {
 		m_Parent->Set_Child (m_NextSibling);
 	}
 
@@ -524,7 +524,7 @@ void SortedNTreeLeafClass<T>::Insertion_Sort (SortedNTreeLeafClass<T> *start, So
 	//
 	bool inserted = false;
 	for (	SortedNTreeLeafClass<T> *leaf = start;
-			leaf != NULL && !inserted;
+			leaf != nullptr && !inserted;
 			leaf = (SortedNTreeLeafClass<T> *)leaf->Peek_Next ())
 	{
 		//

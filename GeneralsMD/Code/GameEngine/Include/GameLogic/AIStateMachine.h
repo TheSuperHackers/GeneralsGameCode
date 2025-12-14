@@ -1158,7 +1158,7 @@ class AIGuardState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardState, "AIGuardState")
 public:
-	AIGuardState( StateMachine *machine ) : State( machine, "AIGuardState" ), m_guardMachine(NULL)
+	AIGuardState( StateMachine *machine ) : State( machine, "AIGuardState" ), m_guardMachine(nullptr)
 	{
 		m_guardMachine = nullptr;
 	}
@@ -1216,7 +1216,7 @@ class AITunnelNetworkGuardState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AITunnelNetworkGuardState, "AITunnelNetworkGuardState")
 public:
-	AITunnelNetworkGuardState( StateMachine *machine ) : State( machine, "AITunnelNetworkGuardState" ), m_guardMachine(NULL)
+	AITunnelNetworkGuardState( StateMachine *machine ) : State( machine, "AITunnelNetworkGuardState" ), m_guardMachine()
 	{
 		m_guardMachine = nullptr;
 	}
@@ -1246,7 +1246,7 @@ class AIHuntState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIHuntState, "AIHuntState")
 public:
-	AIHuntState( StateMachine *machine ) : State( machine, "AIHuntState" ), m_huntMachine(NULL)
+	AIHuntState( StateMachine *machine ) : State( machine, "AIHuntState" ), m_huntMachine(nullptr)
 	{
 		m_nextEnemyScanTime = 0;
 	}

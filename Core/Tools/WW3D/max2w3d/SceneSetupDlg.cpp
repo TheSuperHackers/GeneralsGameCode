@@ -59,7 +59,7 @@ SceneSetupDlg::SceneSetupDlg(Interface *max_interface)
 	m_LodOffset = -100.0f;
 	m_DamageProc = 3;
 	m_LodProc = 3;
-	m_hWnd = NULL;
+	m_hWnd = nullptr;
 	m_MaxInterface = max_interface;
 	assert(max_interface != nullptr);
 }
@@ -187,7 +187,7 @@ BOOL CALLBACK SceneSetupDlg::DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LP
 					if (OnOK() == FALSE)
 						return TRUE;
 
-					SetCursor(LoadCursor(NULL, IDC_WAIT));
+					SetCursor(LoadCursor(nullptr, IDC_WAIT));
 					EndDialog(m_hWnd, 1);
 					break;
 
@@ -210,7 +210,7 @@ BOOL CALLBACK SceneSetupDlg::DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LP
 void SceneSetupDlg::OnInitDialog()
 {
 	CenterWindow(m_hWnd, m_MaxInterface->GetMAXHWnd());
-	SetCursor(LoadCursor(NULL, IDC_ARROW));
+	SetCursor(LoadCursor(nullptr, IDC_ARROW));
 
 	// Select the appropriate radio buttons.
 	switch (m_LodProc)

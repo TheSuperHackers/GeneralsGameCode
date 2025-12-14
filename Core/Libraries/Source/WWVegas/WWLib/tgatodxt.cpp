@@ -208,7 +208,7 @@ void TGAToDXTClass::Write (const char *outputpathname)
 	HANDLE hfile;
 	DWORD  bytecountwritten;
 
-	hfile = ::CreateFile (outputpathname, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, 0L, NULL);
+	hfile = ::CreateFile (outputpathname, GENERIC_WRITE, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, 0L, nullptr);
 	if (hfile != INVALID_HANDLE_VALUE) {
       LockFile (hfile, 0, 0, BufferCount, 0);
       WriteFile (hfile, Buffer, BufferCount, &bytecountwritten, nullptr);
@@ -216,7 +216,7 @@ void TGAToDXTClass::Write (const char *outputpathname)
 
 		// Stamp the write time (if one has been supplied).
 		if (WriteTimePtr != nullptr) {
-			SetFileTime (hfile, nullptr, NULL, WriteTimePtr);
+			SetFileTime (hfile, nullptr, nullptr, WriteTimePtr);
 		}
 
 		CloseHandle (hfile);

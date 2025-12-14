@@ -1484,7 +1484,7 @@ void W3DRadar::refreshObjects()
 {
 
 	// sanity
-	if( listHead == NULL || texture == nullptr )
+	if( listHead == nullptr || texture == nullptr )
 		return;
 
 	// get surface for texture to render into

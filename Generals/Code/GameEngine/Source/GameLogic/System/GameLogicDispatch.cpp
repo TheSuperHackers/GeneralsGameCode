@@ -337,7 +337,7 @@ void GameLogic::prepareNewGame( GameMode gameMode, GameDifficulty diff, Int rank
 void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 {
 #ifdef RTS_DEBUG
-	DEBUG_ASSERTCRASH(msg != NULL && msg != (GameMessage*)0xdeadbeef, ("bad msg"));
+	DEBUG_ASSERTCRASH(msg != nullptr && msg != (GameMessage*)0xdeadbeef, ("bad msg"));
 #endif
 
 	Player *thisPlayer = ThePlayerList->getNthPlayer( msg->getPlayerIndex() );
@@ -566,7 +566,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				AIUpdateInterface* sourceAI = sourceObject->getAIUpdateInterface();
 				if (sourceAI)
 				{
-					sourceAI->aiCombatDrop( NULL, targetLoc, CMD_FROM_PLAYER );
+					sourceAI->aiCombatDrop( nullptr, targetLoc, CMD_FROM_PLAYER );
 				}
 			}
 */
@@ -1542,7 +1542,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			// use selected group
 			if( currentlySelectedGroup )
-				currentlySelectedGroup->groupReturnToPrison( NULL, CMD_FROM_PLAYER );
+				currentlySelectedGroup->groupReturnToPrison( nullptr, CMD_FROM_PLAYER );
 
 			break;
 

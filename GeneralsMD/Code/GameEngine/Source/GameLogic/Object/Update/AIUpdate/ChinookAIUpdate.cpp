@@ -365,7 +365,7 @@ private:
 #if RETAIL_COMPATIBLE_CRC
 				if (rappeller == nullptr || rappeller->isEffectivelyDead() || !rappeller->isAboveTerrain())
 #else
-				if (rappeller == NULL || rappeller->isEffectivelyDead() || !rappeller->isAboveTerrain() || rappeller->isContained())
+				if (rappeller == nullptr || rappeller->isEffectivelyDead() || !rappeller->isAboveTerrain() || rappeller->isContained())
 #endif
 				{
 					oit = it->rappellerIDs.erase(oit);

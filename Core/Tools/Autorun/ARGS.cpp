@@ -330,7 +330,7 @@ const char *Command_Line_Arguments::Get_argv ( int argument_index )
 
 void Command_Line_Arguments::Set_argv( int argument_index, char *arg )
 {
-	if( arg == NULL || *arg == '\0' ) {
+	if( arg == nullptr || *arg == '\0' ) {
 		return;
 	}
 

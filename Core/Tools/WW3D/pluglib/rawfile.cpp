@@ -177,7 +177,7 @@ RawFileClass::RawFileClass(void) :
  *=============================================================================================*/
 bool RawFileClass::Is_Open(void) const
 {
-	return(Handle != NULL_HANDLE);
+	return(Handle != nullptr);
 }
 
 /***********************************************************************************************
@@ -322,7 +322,7 @@ void RawFileClass::Reset(void)
  *=============================================================================================*/
 char const * RawFileClass::Set_Name(char const * filename)
 {
-	if (Filename != NULL && Allocated) {
+	if (Filename != nullptr && Allocated) {
 		free((char *)Filename);
 		Filename = nullptr;
 		Allocated = false;
@@ -443,7 +443,7 @@ int RawFileClass::Open(int rights)
 					Handle = fopen(Filename, "r");
 				#else
 					Handle = CreateFileA(Filename, GENERIC_READ, FILE_SHARE_READ,
-												NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+												nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 				#endif
 				break;
 
@@ -452,7 +452,7 @@ int RawFileClass::Open(int rights)
 					Handle = fopen(Filename, "w");
 				#else
 					Handle = CreateFileA(Filename, GENERIC_WRITE, 0,
-												NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+												nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 				#endif
 				break;
 
@@ -463,7 +463,7 @@ int RawFileClass::Open(int rights)
 					// SKB 5/13/99 use OPEN_ALWAYS instead of CREATE_ALWAYS so that files
 					//					does not get destroyed.
 					Handle = CreateFileA(Filename, GENERIC_READ | GENERIC_WRITE, 0,
-												NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+												nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 				#endif
 				break;
 		}
@@ -480,7 +480,7 @@ int RawFileClass::Open(int rights)
 		**	For the case of the file cannot be found, then allow a retry. All other cases
 		**	are fatal.
 		*/
-		if (Handle == NULL_HANDLE) {
+		if (Handle == nullptr) {
 			return(false);
 
 //			Error(GetLastError(), false, Filename);
@@ -544,7 +544,7 @@ bool RawFileClass::Is_Available(int forced)
 											NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 		#endif
 
-		if (Handle == NULL_HANDLE) {
+		if (Handle == nullptr) {
 			return(false);
 		}
 		break;

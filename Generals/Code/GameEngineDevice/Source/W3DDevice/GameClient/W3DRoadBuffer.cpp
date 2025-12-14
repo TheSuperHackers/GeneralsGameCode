@@ -3282,7 +3282,7 @@ void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, 
 
 #if 0
 	// Need to use a separate set of index & vertex buffers for this.  jba.
-	DX8Wrapper::Set_Index_Buffer(NULL,0);
+	DX8Wrapper::Set_Index_Buffer(nullptr,0);
 	DX8Wrapper::Set_Vertex_Buffer(nullptr);
 	if (pDynamicLightsIterator) {
 		for (i=0; i<m_maxRoadTypes; i++) {

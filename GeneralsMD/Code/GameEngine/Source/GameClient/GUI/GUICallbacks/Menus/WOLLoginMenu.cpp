@@ -353,7 +353,7 @@ static void shutdownComplete( WindowLayout *layout )
 	}
 	else
 	{
-		DEBUG_ASSERTCRASH(loginPref != nullptr, ("loginPref == NULL"));
+		DEBUG_ASSERTCRASH(loginPref != nullptr, ("loginPref == nullptr"));
 		if (loginPref)
 		{
 			loginPref->write();
@@ -569,20 +569,20 @@ void WOLLoginMenuInit( WindowLayout *layout, void *userData )
 		textEntryPasswordID =					TheNameKeyGenerator->nameToKey( "GameSpyLoginQuick.wnd:TextEntryPassword" );
 		checkBoxRememberPasswordID =	TheNameKeyGenerator->nameToKey( "GameSpyLoginQuick.wnd:CheckBoxRememberPassword" );
 
-		parentWOLLogin =							TheWindowManager->winGetWindowFromId( NULL,  parentWOLLoginID );
-		buttonBack =									TheWindowManager->winGetWindowFromId( NULL,  buttonBackID);
-		buttonLogin =									TheWindowManager->winGetWindowFromId( NULL,  buttonLoginID);
-		buttonCreateAccount =					TheWindowManager->winGetWindowFromId( NULL,  buttonCreateAccountID);
-		buttonUseAccount =						TheWindowManager->winGetWindowFromId( NULL,  buttonUseAccountID);
-		buttonDontUseAccount =				TheWindowManager->winGetWindowFromId( NULL,  buttonDontUseAccountID);
-		comboBoxEmail =								TheWindowManager->winGetWindowFromId( NULL,  comboBoxEmailID);
-		buttonTOS =										TheWindowManager->winGetWindowFromId( NULL,  buttonTOSID);
-		parentTOS =										TheWindowManager->winGetWindowFromId( NULL,  parentTOSID);
-		buttonTOSOK =									TheWindowManager->winGetWindowFromId( NULL,  buttonTOSOKID);
-		listboxTOS =									TheWindowManager->winGetWindowFromId( NULL,  listboxTOSID);
-		textEntryLoginName =					TheWindowManager->winGetWindowFromId( NULL,  textEntryLoginNameID);
-		textEntryPassword =						TheWindowManager->winGetWindowFromId( NULL,  textEntryPasswordID);
-		checkBoxRememberPassword =		TheWindowManager->winGetWindowFromId( NULL,  checkBoxRememberPasswordID);
+		parentWOLLogin =							TheWindowManager->winGetWindowFromId( nullptr,  parentWOLLoginID );
+		buttonBack =									TheWindowManager->winGetWindowFromId( nullptr,  buttonBackID);
+		buttonLogin =									TheWindowManager->winGetWindowFromId( nullptr,  buttonLoginID);
+		buttonCreateAccount =					TheWindowManager->winGetWindowFromId( nullptr,  buttonCreateAccountID);
+		buttonUseAccount =						TheWindowManager->winGetWindowFromId( nullptr,  buttonUseAccountID);
+		buttonDontUseAccount =				TheWindowManager->winGetWindowFromId( nullptr,  buttonDontUseAccountID);
+		comboBoxEmail =								TheWindowManager->winGetWindowFromId( nullptr,  comboBoxEmailID);
+		buttonTOS =										TheWindowManager->winGetWindowFromId( nullptr,  buttonTOSID);
+		parentTOS =										TheWindowManager->winGetWindowFromId( nullptr,  parentTOSID);
+		buttonTOSOK =									TheWindowManager->winGetWindowFromId( nullptr,  buttonTOSOKID);
+		listboxTOS =									TheWindowManager->winGetWindowFromId( nullptr,  listboxTOSID);
+		textEntryLoginName =					TheWindowManager->winGetWindowFromId( nullptr,  textEntryLoginNameID);
+		textEntryPassword =						TheWindowManager->winGetWindowFromId( nullptr,  textEntryPasswordID);
+		checkBoxRememberPassword =		TheWindowManager->winGetWindowFromId( nullptr,  checkBoxRememberPasswordID);
 
 		DEBUG_ASSERTCRASH(buttonBack,						("buttonBack missing!"));
 		DEBUG_ASSERTCRASH(buttonLogin,					("buttonLogin missing!"));

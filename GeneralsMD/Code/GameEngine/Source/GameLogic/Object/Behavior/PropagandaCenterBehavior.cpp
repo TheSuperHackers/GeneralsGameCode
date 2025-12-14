@@ -164,7 +164,7 @@ UpdateSleepTime PropagandaCenterBehavior::update( void )
 					// remove any surrender status from this object
 					AIUpdateInterface *ai = brainwashingSubject->getAIUpdateInterface();
 					if( ai )
-						ai->setSurrendered( NULL, FALSE );
+						ai->setSurrendered( nullptr, FALSE );
 
 					// add this object to our brainwashed list if we're not already in it
 					for( BrainwashedIDListIterator it = m_brainwashedList.begin();

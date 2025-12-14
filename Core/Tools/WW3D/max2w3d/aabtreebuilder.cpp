@@ -86,7 +86,7 @@ AABTreeBuilderClass::AABTreeBuilderClass(void) :
 	PolyCount(0),
 	Polys(nullptr),
 	VertCount(0),
-	Verts(NULL)
+	Verts()
 {
 }
 

@@ -315,7 +315,7 @@ void *Load_File ( char *filename, long *filesize )
 {
 	void *ptr = nullptr;
 
-	if ( filename == NULL || filename[0] == '\0' ) {
+	if ( filename == nullptr || filename[0] == '\0' ) {
 		return( nullptr );
 	}
 
@@ -348,8 +348,8 @@ char *Make_Current_Path_To ( const char *filename, char *path )
 	char	dir	 	[ _MAX_DIR  ];
 
 	strcpy( szPath, Args->Get_argv(0));
-	_splitpath( szPath, drive, dir, nullptr, NULL );
-	_makepath( szPath, drive, dir, nullptr, NULL );
+	_splitpath( szPath, drive, dir, nullptr, nullptr );
+	_makepath( szPath, drive, dir, nullptr, nullptr );
 	Path_Add_Back_Slash( szPath );
 	strcat( szPath, filename );
 
@@ -366,8 +366,8 @@ wchar_t *Make_Current_Path_To ( const wchar_t *filename, wchar_t *path )
 	wchar_t	dir	 	[ _MAX_DIR  ];
 
 	wcscpy( szPath, (wchar_t *)Args->Get_argv(0));
-	_wsplitpath( szPath, drive, dir, nullptr, NULL );
-	_wmakepath( szPath, drive, dir, nullptr, NULL );
+	_wsplitpath( szPath, drive, dir, nullptr, nullptr );
+	_wmakepath( szPath, drive, dir, nullptr, nullptr );
 	Path_Add_Back_Slash( szPath );
 	wcscat( szPath, filename );
 
@@ -393,7 +393,7 @@ wchar_t *Make_Current_Path_To ( const wchar_t *filename, wchar_t *path )
 
 char *Path_Add_Back_Slash ( char *path )
 {
-	if ( path != NULL && *path != '\0' ) {
+	if ( path != nullptr && *path != '\0' ) {
 		if ( path[ strlen( path )-1 ] != '\\' ) {
 			 strcat( path, "\\" );
 		}
@@ -403,7 +403,7 @@ char *Path_Add_Back_Slash ( char *path )
 
 wchar_t *Path_Add_Back_Slash ( wchar_t *path )
 {
-	if ( path != NULL && *path != '\0' ) {
+	if ( path != nullptr && *path != '\0' ) {
 		if ( path[ wcslen( path )-1 ] != '\\' ) {
 			 wcscat( path, L"\\" );
 		}
@@ -427,7 +427,7 @@ wchar_t *Path_Add_Back_Slash ( wchar_t *path )
 
 char *Path_Remove_Back_Slash ( char *path )
 {
-	if ( path != NULL && *path != '\0' ) {
+	if ( path != nullptr && *path != '\0' ) {
 		if ( path[ strlen( path )-1 ] == '\\' ) {
 			 path[ strlen( path )-1 ] = '\0';
 		}
@@ -437,7 +437,7 @@ char *Path_Remove_Back_Slash ( char *path )
 
 wchar_t *Path_Remove_Back_Slash ( wchar_t *path )
 {
-	if ( path != NULL && *path != '\0' ) {
+	if ( path != nullptr && *path != '\0' ) {
 		if ( path[ wcslen( path )-1 ] == L'\\' ) {
 			 path[ wcslen( path )-1 ] = L'\0';
 		}
@@ -464,7 +464,7 @@ void PlugInProductName ( char *szString, char *szName )
 	char *	temp = nullptr;
 	char *	next = nullptr;
 
-	if ( szName == NULL || szName[0] == '\0' ) {
+	if ( szName == nullptr || szName[0] == '\0' ) {
 		return;
 	}
 
@@ -481,7 +481,7 @@ void PlugInProductName ( char *szString, char *szName )
 	// Substitute each "%P" with "%s".  nStrReturn is the index
 	// into the buffer where "%P" was found.
 	//-------------------------------------------------------------
-	while ( temp != NULL && nCount < 6) {
+	while ( temp != nullptr && nCount < 6) {
 		next	= temp+1;
 		nCount	= nCount + 1;
 		temp	= strstr( next, "%s" );
@@ -556,7 +556,7 @@ void PlugInProductName( char *szString, int nName )
 	// Substitute each "%P" with "%s".  nStrReturn is the index
 	// into the buffer where "%P" was found.
 	//-------------------------------------------------------------
-	while ( temp != NULL && nCount < 6) {
+	while ( temp != nullptr && nCount < 6) {
 		next	= temp+1;
 		nCount	= nCount + 1;
 		temp	= strstr( next, "%s" );
@@ -612,7 +612,7 @@ void PlugInProductName ( wchar_t *szString, const wchar_t *szName )
 	wchar_t *temp = nullptr;
 	wchar_t *next = nullptr;
 
-	if ( szName == NULL || szName[0] == '\0' ) {
+	if ( szName == nullptr || szName[0] == '\0' ) {
 		return;
 	}
 
@@ -629,7 +629,7 @@ void PlugInProductName ( wchar_t *szString, const wchar_t *szName )
 	// Substitute each "%P" with "%s".  nStrReturn is the index
 	// into the buffer where "%P" was found.
 	//-------------------------------------------------------------
-	while ( temp != NULL && nCount < 6) {
+	while ( temp != nullptr && nCount < 6) {
 		next	= temp+1;
 		nCount	= nCount + 1;
 		temp	= wcsstr( next, L"%s" );

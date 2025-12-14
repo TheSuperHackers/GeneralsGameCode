@@ -1138,14 +1138,14 @@ CellAndObjectIntersection::CellAndObjectIntersection()
 //-----------------------------------------------------------------------------
 CellAndObjectIntersection::~CellAndObjectIntersection()
 {
-	DEBUG_ASSERTCRASH(m_prevCoi == NULL && m_nextCoi == nullptr, ("destroying a linked COI"));
+	DEBUG_ASSERTCRASH(m_prevCoi == nullptr && m_nextCoi == nullptr, ("destroying a linked COI"));
 	DEBUG_ASSERTCRASH(!getModule(), ("destroying an in-use COI"));
 }
 
 //-----------------------------------------------------------------------------
 void CellAndObjectIntersection::friend_addToCellList(CellAndObjectIntersection **pListHead)
 {
-	DEBUG_ASSERTCRASH(m_prevCoi == NULL && m_nextCoi == NULL && *pListHead != this, ("trying to add a cell to list, but it appears to already be in a list"));
+	DEBUG_ASSERTCRASH(m_prevCoi == nullptr && m_nextCoi == nullptr && *pListHead != this, ("trying to add a cell to list, but it appears to already be in a list"));
 
 	this->m_nextCoi = *pListHead;
 	if (*pListHead)
@@ -1157,7 +1157,7 @@ void CellAndObjectIntersection::friend_addToCellList(CellAndObjectIntersection *
 void CellAndObjectIntersection::friend_removeFromCellList(CellAndObjectIntersection **pListHead)
 {
 #define DEBUG_ASSERTINLIST(c) \
-	DEBUG_ASSERTCRASH((c)->m_prevCoi != NULL || (c)->m_nextCoi != NULL || *pListHead == (c), ("cell is not in list"));
+	DEBUG_ASSERTCRASH((c)->m_prevCoi != nullptr || (c)->m_nextCoi != nullptr || *pListHead == (c), ("cell is not in list"));
 
 	DEBUG_ASSERTINLIST(this);
 
@@ -1188,8 +1188,8 @@ void CellAndObjectIntersection::friend_removeFromCellList(CellAndObjectIntersect
 //-----------------------------------------------------------------------------
 void CellAndObjectIntersection::addCoverage(PartitionCell *cell, PartitionData *module)
 {
-	DEBUG_ASSERTCRASH(m_cell == NULL || m_cell == cell, ("mismatch"));
-	DEBUG_ASSERTCRASH(m_module == NULL || m_module == module, ("mismatch"));
+	DEBUG_ASSERTCRASH(m_cell == nullptr || m_cell == cell, ("mismatch"));
+	DEBUG_ASSERTCRASH(m_module == nullptr || m_module == module, ("mismatch"));
 
 	if (m_module != nullptr && m_module != module)
 	{
@@ -1255,7 +1255,7 @@ PartitionCell::PartitionCell()
 //-----------------------------------------------------------------------------
 PartitionCell::~PartitionCell()
 {
-	DEBUG_ASSERTCRASH(m_firstCoiInCell == NULL && m_coiCount == 0, ("destroying a nonempty PartitionCell"));
+	DEBUG_ASSERTCRASH(m_firstCoiInCell == nullptr && m_coiCount == 0, ("destroying a nonempty PartitionCell"));
 	// but don't destroy the Cois; they don't belong to us
 }
 
@@ -1492,9 +1492,9 @@ void PartitionCell::validateCoiList()
 	{
 		nextCoi = coi->getNextCoi();
 		DEBUG_ASSERTCRASH(coi->getPrevCoi() == prevCoi, ("coi link mismatch"));
-		DEBUG_ASSERTCRASH(prevCoi == NULL || prevCoi->getNextCoi() == coi, ("coi link mismatch"));
+		DEBUG_ASSERTCRASH(prevCoi == nullptr || prevCoi->getNextCoi() == coi, ("coi link mismatch"));
 		DEBUG_ASSERTCRASH((coi == getFirstCoiInCell()) == (prevCoi == nullptr) , ("coi link mismatch"));
-		DEBUG_ASSERTCRASH(nextCoi == NULL || nextCoi->getPrevCoi() == coi, ("coi link mismatch"));
+		DEBUG_ASSERTCRASH(nextCoi == nullptr || nextCoi->getPrevCoi() == coi, ("coi link mismatch"));
 	}
 }
 #endif
@@ -1754,7 +1754,7 @@ void PartitionData::addSubPixToCoverage(PartitionCell *cell)
 				break;
 			}
 		}
-		DEBUG_ASSERTCRASH(coiToUse != NULL || m_coiInUseCount < m_coiArrayCount, ("not enough cois allocated for this object"));
+		DEBUG_ASSERTCRASH(coiToUse != nullptr || m_coiInUseCount < m_coiArrayCount, ("not enough cois allocated for this object"));
 		if (coiToUse == nullptr && m_coiInUseCount < m_coiArrayCount)
 		{
 			// nope, no coi for this cell, allocate a new one
@@ -2761,7 +2761,7 @@ void PartitionManager::update()
 
 			// save it.
 			PartitionData *dirty = m_dirtyModules;
-			DEBUG_ASSERTCRASH(dirty->getObject() != NULL || dirty->getGhostObject() != nullptr,
+			DEBUG_ASSERTCRASH(dirty->getObject() != nullptr || dirty->getGhostObject() != nullptr,
 												("must be attached to an Object here %08lx",dirty));
 
 			// get this BEFORE removing from dirty list, since that clears the

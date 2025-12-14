@@ -188,7 +188,7 @@ static AsciiString getFname(AsciiString path)
 
 static void addCRCDebugLineInternal(bool count, const char *fmt, va_list args)
 {
-	if (TheGameLogic == NULL || !(IS_FRAME_OK_TO_LOG))
+	if (TheGameLogic == nullptr || !(IS_FRAME_OK_TO_LOG))
 		return;
 
 	if (lastCRCDebugFrame != TheGameLogic->getFrame())

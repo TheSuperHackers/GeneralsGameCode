@@ -1715,7 +1715,7 @@ Bool ScriptDialog::ParseObjectDataChunk(DataChunkInput &file, DataChunkInfo *inf
 	}
 
 	if (pPrevious) {
-		DEBUG_ASSERTCRASH(pThis->m_firstReadObject != NULL && pPrevious->getNext() == nullptr, ("Bad linkage."));
+		DEBUG_ASSERTCRASH(pThis->m_firstReadObject != nullptr && pPrevious->getNext() == nullptr, ("Bad linkage."));
 		pPrevious->setNextMap(pThisOne);
 	}	else {
 		DEBUG_ASSERTCRASH(pThis->m_firstReadObject == nullptr, ("Bad linkage."));

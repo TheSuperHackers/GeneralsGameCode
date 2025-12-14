@@ -42,11 +42,11 @@
 #include "texture.h"
 
 #ifndef SAFE_DELETE
-#define SAFE_DELETE(pointer) { delete pointer; pointer = NULL; }
+#define SAFE_DELETE(pointer) { delete pointer; pointer = nullptr; }
 #endif
 
 #ifndef SAFE_DELETE_ARRAY
-#define SAFE_DELETE_ARRAY(pointer) { delete [] pointer; pointer = NULL; }
+#define SAFE_DELETE_ARRAY(pointer) { delete [] pointer; pointer = nullptr; }
 #endif
 
 

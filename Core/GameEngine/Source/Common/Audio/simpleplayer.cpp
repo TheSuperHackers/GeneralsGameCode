@@ -38,12 +38,12 @@ CSimplePlayer::CSimplePlayer( HRESULT* phr )
 
 	*phr = S_OK;
 
-    m_hOpenEvent = CreateEvent( NULL, FALSE, FALSE, SIMPLE_PLAYER_OPEN_EVENT );
+    m_hOpenEvent = CreateEvent( nullptr, FALSE, FALSE, SIMPLE_PLAYER_OPEN_EVENT );
 	if ( NULL == m_hOpenEvent )
 	{
 		*phr = E_OUTOFMEMORY;
 	}
-    m_hCloseEvent = CreateEvent( NULL, FALSE, FALSE, SIMPLE_PLAYER_CLOSE_EVENT );
+    m_hCloseEvent = CreateEvent( nullptr, FALSE, FALSE, SIMPLE_PLAYER_CLOSE_EVENT );
 	if ( NULL == m_hCloseEvent )
 	{
 		*phr = E_OUTOFMEMORY;
@@ -267,11 +267,11 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
 
 #ifdef SUPPORT_DRM
 
-    hr = WMCreateReader( NULL, WMT_RIGHT_PLAYBACK, &m_pReader );
+    hr = WMCreateReader( nullptr, WMT_RIGHT_PLAYBACK, &m_pReader );
 
 #else
 
-    hr = WMCreateReader( NULL, 0, &m_pReader );
+    hr = WMCreateReader( nullptr, 0, &m_pReader );
 
 #endif
 
@@ -429,7 +429,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
 
     DWORD cbBuffer = 0;
 
-    hr = pProps->GetMediaType( NULL, &cbBuffer );
+    hr = pProps->GetMediaType( nullptr, &cbBuffer );
     if ( FAILED( hr ) )
     {
         pProps->Release( );

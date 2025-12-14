@@ -208,7 +208,7 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	SnmpExtensionQueryPtr = (int (__stdcall *)(unsigned char,SnmpVarBindList *,long *,long *)) GetProcAddress(mib_ii_dll, "SnmpExtensionQuery");
 	SnmpUtilMemAllocPtr = (void *(__stdcall *)(unsigned long)) GetProcAddress(snmpapi_dll, "SnmpUtilMemAlloc");
 	SnmpUtilMemFreePtr = (void (__stdcall *)(void *)) GetProcAddress(snmpapi_dll, "SnmpUtilMemFree");
-	if (SnmpExtensionInitPtr == NULL || SnmpExtensionQueryPtr == NULL || SnmpUtilMemAllocPtr == NULL || SnmpUtilMemFreePtr == nullptr) {
+	if (SnmpExtensionInitPtr == nullptr || SnmpExtensionQueryPtr == nullptr || SnmpUtilMemAllocPtr == nullptr || SnmpUtilMemFreePtr == nullptr) {
 		DEBUG_LOG(("Failed to get proc addresses for linked functions"));
 		FreeLibrary(snmpapi_dll);
 		FreeLibrary(mib_ii_dll);

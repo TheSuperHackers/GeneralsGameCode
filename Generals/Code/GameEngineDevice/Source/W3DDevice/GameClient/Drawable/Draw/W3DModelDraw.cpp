@@ -98,7 +98,7 @@ protected:
 LogClass::LogClass(const char *fname)
 {
 	char buffer[ _MAX_PATH ];
-	GetModuleFileName( NULL, buffer, sizeof( buffer ) );
+	GetModuleFileName( nullptr, buffer, sizeof( buffer ) );
 	if (char *pEnd = strrchr(buffer, '\\'))
 	{
 		*pEnd = 0;
@@ -379,7 +379,7 @@ W3DAnimationInfo::~W3DAnimationInfo()
 {
 #ifdef RETAIN_ANIM_HANDLES
 	REF_PTR_RELEASE(m_handle);
-	m_handle = NULL;
+	m_handle = nullptr;
 #endif
 }
 
@@ -476,7 +476,7 @@ static Bool findSingleSubObj(RenderObjClass* robj, const AsciiString& boneName, 
 #if defined(RTS_DEBUG)
 				test->Release_Ref();
 				test = robj->Get_Sub_Object_On_Bone(0, boneIndex);
-				DEBUG_ASSERTCRASH(test != NULL && test == childObject, ("*** ASSET ERROR: Hmm, bone problem"));
+				DEBUG_ASSERTCRASH(test != nullptr && test == childObject, ("*** ASSET ERROR: Hmm, bone problem"));
 #endif
 			}
 			if (test) test->Release_Ref();
@@ -3725,8 +3725,8 @@ void W3DModelDraw::setAnimationLoopDuration(UnsignedInt numFrames)
 {
 // this is never defined -- srj
 #ifdef NO_DURATIONS_ON_TRANSITIONS
-	if (m_curState != NULL && m_curState->m_transition != NO_TRANSITION &&
-			m_nextState != NULL && m_nextState->m_transition == NO_TRANSITION)
+	if (m_curState != nullptr && m_curState->m_transition != NO_TRANSITION &&
+			m_nextState != nullptr && m_nextState->m_transition == NO_TRANSITION)
 	{
 		DEBUG_LOG(("deferring pending duration of %d frames",numFrames));
 		m_nextStateAnimLoopDuration = numFrames;
@@ -3734,7 +3734,7 @@ void W3DModelDraw::setAnimationLoopDuration(UnsignedInt numFrames)
 	}
 
 	m_nextStateAnimLoopDuration = NO_NEXT_DURATION;
-	DEBUG_ASSERTCRASH(m_curState != NULL && m_curState->m_transition == NO_TRANSITION, ("Hmm, setAnimationLoopDuration on a transition state is probably not right... see srj"));
+	DEBUG_ASSERTCRASH(m_curState != nullptr && m_curState->m_transition == NO_TRANSITION, ("Hmm, setAnimationLoopDuration on a transition state is probably not right... see srj"));
 #else
 	m_nextStateAnimLoopDuration = NO_NEXT_DURATION;
 #endif

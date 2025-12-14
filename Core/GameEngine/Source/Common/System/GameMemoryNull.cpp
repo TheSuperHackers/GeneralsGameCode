@@ -108,7 +108,7 @@ void MemoryPoolFactory::debugSetInitFillerIndex(Int index)
 */
 void initMemoryManager()
 {
-	if (TheMemoryPoolFactory == NULL && TheDynamicMemoryAllocator == nullptr)
+	if (TheMemoryPoolFactory == nullptr && TheDynamicMemoryAllocator == nullptr)
 	{
 		TheMemoryPoolFactory = new (malloc(sizeof MemoryPoolFactory)) MemoryPoolFactory;
 		TheDynamicMemoryAllocator = new (malloc(sizeof DynamicMemoryAllocator)) DynamicMemoryAllocator;

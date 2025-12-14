@@ -155,7 +155,7 @@ void objectUnderConstruction(Object* obj, void *underConstruction)
 	}
 
 	ProductionUpdateInterface *pui = ProductionUpdate::getProductionUpdateInterfaceFromObject(obj);
-	if(pui != NULL && pui->getProductionCount() > 0)
+	if(pui != nullptr && pui->getProductionCount() > 0)
 	{
 		*(Bool*)underConstruction = true;
 		return;
@@ -3824,7 +3824,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 /*
 			if (TheWindowManager && TheNameKeyGenerator)
 			{
-				GameWindow *motd = TheWindowManager->winGetWindowFromId(NULL, (Int)TheNameKeyGenerator->nameToKey("MOTD.wnd:MOTD"));
+				GameWindow *motd = TheWindowManager->winGetWindowFromId(nullptr, (Int)TheNameKeyGenerator->nameToKey("MOTD.wnd:MOTD"));
 				if (motd)
 					motd->winHide(!motd->winIsHidden());
 			}*/
@@ -3874,7 +3874,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				if (TheWindowManager)
 				{
 					Int id = (Int)TheNameKeyGenerator->nameToKey("ControlBar.wnd:ControlBarParent");
-					GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
+					GameWindow *window = TheWindowManager->winGetWindowFromId(nullptr, id);
 
 					if (window)
 						hide = !window->winIsHidden();

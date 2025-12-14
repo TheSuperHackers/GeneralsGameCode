@@ -490,7 +490,7 @@ bool Is_Skin(INode * node)
 
 		ReferenceTarget *refTarg = node->GetReference(i);
 
-		if (refTarg != NULL && refTarg->ClassID() == Class_ID(WSM_DERIVOB_CLASS_ID,0)) {
+		if (refTarg != nullptr && refTarg->ClassID() == Class_ID(WSM_DERIVOB_CLASS_ID,0)) {
 
 			IDerivedObject * wsm_der_obj = (IDerivedObject *)refTarg;
 			//MessageBox(NULL, "WSM found", _T("WSM"), MB_OK);

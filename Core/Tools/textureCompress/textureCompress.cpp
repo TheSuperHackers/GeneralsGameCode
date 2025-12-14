@@ -42,14 +42,14 @@
 static const char *nodxtPrefix[] = {
 	"zhca",
 	"caust",
-	NULL,
+	nullptr,
 };
 
 static const char *nodxtAnywhere[] = {
 	"userinterface",
 	"controlbar",
 	"commandbar",
-	NULL,
+	nullptr,
 };
 
 #define LOG(x) logStuff x
@@ -62,7 +62,7 @@ static void logStuff(const char *fmt, ...)
 	va_end( va );
 
 	puts(buffer);
-	::MessageBox(NULL, buffer, "textureCompress", MB_OK);
+	::MessageBox(nullptr, buffer, "textureCompress", MB_OK);
 }
 
 #ifdef RTS_DEBUG
@@ -318,7 +318,7 @@ void compressOrigFiles(const std::string& sourceDirName, const std::string& targ
 	char tmpFname[_MAX_PATH] = "C:\\temp\\tmp.txt";
 	GetTempPath(_MAX_PATH, tmpPath);
 	GetTempFileName(tmpPath, "tex", 0, tmpFname);
-	HANDLE h = CreateFile(tmpFname, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_TEMPORARY, NULL);
+	HANDLE h = CreateFile(tmpFname, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_TEMPORARY, nullptr);
 	if (!h)
 	{
 		DEBUG_LOG(("Could not create temp file '%s'!  Unable to compress textures!", tmpFname));
@@ -603,7 +603,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	while (argc < 20 && token != nullptr)
 	{
 		argv[argc++] = strtrim(token);
-		token = strtok(NULL, " ");
+		token = strtok(nullptr, " ");
 	}
 #else
 int main(int argc, const char **argv)

@@ -96,7 +96,7 @@
 
 RAMFile::RAMFile()
 : m_size(0),
-	m_data(NULL)
+	m_data()
 {
 
 }

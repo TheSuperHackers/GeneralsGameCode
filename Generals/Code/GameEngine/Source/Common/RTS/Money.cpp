@@ -58,7 +58,7 @@ UnsignedInt Money::withdraw(UnsignedInt amountToWithdraw, Bool playSound)
 {
 #if defined(RTS_DEBUG)
 	Player* player = ThePlayerList->getNthPlayer(m_playerIndex);
-	if (player != NULL && player->buildsForFree())
+	if (player != nullptr && player->buildsForFree())
 		return 0;
 #endif
 

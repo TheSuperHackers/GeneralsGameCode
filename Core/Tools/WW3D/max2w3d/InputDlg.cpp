@@ -53,7 +53,7 @@ static BOOL CALLBACK _thunk_dialog_proc (HWND hWnd, UINT uMsg, WPARAM wParam, LP
 
 InputDlg::InputDlg (HWND hWndParent)
 :	m_hWndParent(hWndParent),
-	m_hWnd(NULL)
+	m_hWnd()
 {
 	// Set the strings to default values.
 	SetCaption("Input Value...");
@@ -160,7 +160,7 @@ BOOL CALLBACK InputDlg::DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 					if (!OnOK())
 						return TRUE;
 
-					SetCursor(LoadCursor(NULL, IDC_WAIT));
+					SetCursor(LoadCursor(, IDC_WAIT));
 					EndDialog(m_hWnd, 1);
 					break;
 
@@ -180,7 +180,7 @@ BOOL CALLBACK InputDlg::DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 LRESULT InputDlg::OnInitDialog (WPARAM wParam, LPARAM lParam)
 {
 	// Set the cursor to the normal arrow.
-	SetCursor(LoadCursor(NULL, IDC_ARROW));
+	SetCursor(LoadCursor(, IDC_ARROW));
 
 	// Set the dialog box caption.
 	SetWindowText(m_hWnd, m_Caption);

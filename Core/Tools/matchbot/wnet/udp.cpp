@@ -169,7 +169,7 @@ sint32 UDP::Read(uint8 *msg,uint32 len,sockaddr_in *from)
   }
   else
   {
-    retval=recvfrom(fd,(char *)msg,len,0,nullptr,NULL);
+    retval=recvfrom(fd,(char *)msg,len,0,nullptr,nullptr);
     #ifdef _WIN32
     if (retval==SOCKET_ERROR)
       retval=-1;

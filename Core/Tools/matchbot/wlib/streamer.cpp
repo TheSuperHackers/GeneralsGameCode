@@ -29,7 +29,7 @@
 #define STREAMER_UNBUFFERED 0
 #endif
 
-Streamer::Streamer() : streambuf(), Output_Device(nullptr), Buf(NULL)
+Streamer::Streamer() : streambuf(), Output_Device(nullptr), Buf(nullptr)
 {
 #if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
   int state=unbuffered();

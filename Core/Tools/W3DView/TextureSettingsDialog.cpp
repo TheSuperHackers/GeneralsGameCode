@@ -218,7 +218,7 @@ TextureSettingsDialogClass::Fill_Controls (TextureClass *ptexture)
 			psource = ((ResizeableTextureInstanceClass *)ptexture)->Peek_Source();
 
 			// Fill the 'filename' edit control
-			if (psource != NULL && (psource->getClassID () == ID_FILE_LIST_TEXTURE_CLASS)) {
+			if (psource != nullptr && (psource->getClassID () == ID_FILE_LIST_TEXTURE_CLASS)) {
 				FileListTextureClass *pfile_list = static_cast<FileListTextureClass *>(psource);
 				SetDlgItemText (IDC_FILENAME_EDIT, pfile_list->Get_Filename (0));
 			}

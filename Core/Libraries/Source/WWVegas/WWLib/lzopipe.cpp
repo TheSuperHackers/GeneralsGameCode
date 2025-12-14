@@ -124,7 +124,7 @@ LZOPipe::~LZOPipe(void)
  *=============================================================================================*/
 int LZOPipe::Put(void const * source, int slen)
 {
-	if (source == NULL || slen < 1) {
+	if (source == nullptr || slen < 1) {
 		return(Pipe::Put(source, slen));
 	}
 

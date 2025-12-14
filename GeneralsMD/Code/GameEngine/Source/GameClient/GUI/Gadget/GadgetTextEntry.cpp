@@ -443,7 +443,7 @@ void InformEntry( WideChar c )
 	Int i, listCount = 0;
 	EntryData *e;
 
-	if( ourIME == NULL || curWindow == nullptr )
+	if( ourIME == nullptr || curWindow == nullptr )
 		return;
 
 	e = (EntryData *)curWindow->winGetUserData();

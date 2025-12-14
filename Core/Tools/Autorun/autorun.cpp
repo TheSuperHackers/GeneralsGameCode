@@ -304,7 +304,7 @@ extern ArchiveFileSystem *TheArchiveFileSystem;
 #endif
 
 // stuff needed to compile.
-HWND		ApplicationHWnd = NULL;
+HWND		ApplicationHWnd = nullptr;
 HINSTANCE ApplicationHInstance;				///< main application instance
 
 const char *g_strFile = "Autorun.str";
@@ -539,8 +539,8 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	// Save off the Current path for use by other stuff.
 	//-------------------------------------------------------------------------
 	_tcscpy( szArgvPath, Args->Get_argv(0));
-	_tsplitpath( szArgvPath, drive, dir, nullptr, NULL );
-	_tmakepath ( szArgvPath, drive, dir, nullptr, NULL );
+	_tsplitpath( szArgvPath, drive, dir, nullptr, nullptr );
+	_tmakepath ( szArgvPath, drive, dir, nullptr, nullptr );
 	Path_Add_Back_Slash( szArgvPath );
 	Msg( __LINE__, TEXT(__FILE__), TEXT("szArgvPath = %s."), szArgvPath );
 
@@ -558,7 +558,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 		LoadString( Main::hInstance, IDS_CANT_FIND_FILE, szBuffer1, _MAX_PATH );
 		MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szPath, _MAX_PATH, szWideBuffer0, _MAX_PATH );
 		sprintf( szBuffer2, szBuffer1, szWideBuffer0 );
-		MessageBox( NULL, szBuffer2, "Autorun", MB_APPLMODAL | MB_OK );
+		MessageBox( nullptr, szBuffer2, "Autorun", MB_APPLMODAL | MB_OK );
 		return 0;
 	}
 	*/
@@ -583,7 +583,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	//Fix_Single_Ampersands( &szProductName[0], false );
 	//Fix_Single_Ampersands( &szFullProductName[0], false );
 	Msg( __LINE__, __FILE__, "szProductName		= %s.", szProductName		);
-	WideCharToMultiByte( CodePage, 0, szProductName, _MAX_PATH, szProduct_Name, _MAX_PATH, nullptr, NULL );
+	WideCharToMultiByte( CodePage, 0, szProductName, _MAX_PATH, szProduct_Name, _MAX_PATH, nullptr, nullptr );
 
 #else
 
@@ -593,7 +593,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	Msg( __LINE__, __FILE__, "Full Product Name = %ls.", fullProductName.str()	);
 	Msg( __LINE__, __FILE__, "szRegistryKey		= %s.", szRegistryKey		);
 	Msg( __LINE__, __FILE__, "szGameWindow		= %s.", szGameWindow		);
-	WideCharToMultiByte( CodePage, 0, productName.str(), productName.getLength()+1, szProduct_Name, _MAX_PATH, nullptr, NULL );
+	WideCharToMultiByte( CodePage, 0, productName.str(), productName.getLength()+1, szProduct_Name, _MAX_PATH, nullptr, nullptr );
 
 #endif
 
@@ -623,9 +623,9 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	} else {
 		strcpy( szBuffer, AUTORUN_MUTEX_OBJECT );
 	}
-	AppMutex = CreateMutex( NULL, FALSE, szBuffer );
+	AppMutex = CreateMutex( nullptr, FALSE, szBuffer );
 
-	if ( AppMutex != NULL && ( GetLastError() == ERROR_ALREADY_EXISTS )) {
+	if ( AppMutex != nullptr && ( GetLastError() == ERROR_ALREADY_EXISTS )) {
 
 		Msg( __LINE__, __FILE__, "AppMutex of %s already exists. Exit here.", szBuffer );
 
@@ -735,7 +735,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	// because we ask the user to insert CD-1 again at the end of the install
 	// to prevent a crash on Windows ME where it tries to access CD-1 again.
 	//---------------------------------------------------------------------
-	prev = FindWindow( NULL,"InstallShield Wizard");
+	prev = FindWindow( nullptr,"InstallShield Wizard");
 	if( prev ){
 		return 0;
 	}
@@ -1013,12 +1013,12 @@ void MainWindow::Register( void )
 
 		FormatMessage(
 			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-			NULL,
+			nullptr,
 			GetLastError(),
 			MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),
 			(LPTSTR)&szMessage,
 			0,
-			NULL );
+			nullptr );
 
 		_stprintf( szBuffer, TEXT( "%s(%lx)" ), szMessage, GetLastError());
 		Msg( __LINE__, TEXT(__FILE__), TEXT("GetLastError: %s"), szBuffer );
@@ -1048,11 +1048,11 @@ MainWindow::MainWindow( void )
 
 #ifdef LEAN_AND_MEAN
 
-	WideCharToMultiByte( CodePage, 0, szFullProductName, _MAX_PATH, szBuffer, _MAX_PATH, nullptr, NULL );
+	WideCharToMultiByte( CodePage, 0, szFullProductName, _MAX_PATH, szBuffer, _MAX_PATH, nullptr, nullptr );
 
 #else
 
-	WideCharToMultiByte( CodePage, 0, fullProductName.str(), fullProductName.getLength()+1, szBuffer, _MAX_PATH, nullptr, NULL );
+	WideCharToMultiByte( CodePage, 0, fullProductName.str(), fullProductName.getLength()+1, szBuffer, _MAX_PATH, nullptr, nullptr );
 
 #endif
 
@@ -1072,8 +1072,8 @@ MainWindow::MainWindow( void )
 		 		0,
 				640,
 				480,
-		 		NULL,
-		 		NULL,
+		 		nullptr,
+		 		nullptr,
 		 		Main::hInstance,
 		 		(LPTSTR) this );
 
@@ -1313,9 +1313,9 @@ BOOL MainWindow::Is_Product_Registered( void )
 			{
 				char	*sp;
 
-				strcpy( szUninstallPath, aName );
-				sp = strchr(szUninstallPath,'/');
-				if(*sp != nullptr)
+			strcpy( szUninstallPath, aName );
+			sp = strchr(szUninstallPath,'/');
+			if(sp != nullptr && *sp != '\0')
 				{
 					strcpy( szUninstallCommandLine, sp );
 					strcpy( szUninstallPath, aName );
@@ -1458,8 +1458,8 @@ BOOL MainWindow::Run_Explorer( const char *szString, HWND hWnd, RECT *rect )
 	// Get current drive/directory from _argv[0].
 	//--------------------------------------------------------------------------
 	_tcscpy( szPath, szArgvPath );
-	_tsplitpath( szPath, drive, dir, nullptr, NULL );
-	_tmakepath ( szPath, drive, dir, nullptr, NULL );
+	_tsplitpath( szPath, drive, dir, nullptr, nullptr );
+	_tmakepath ( szPath, drive, dir, nullptr, nullptr );
 
 	//--------------------------------------------------------------------------
 	// Get Windows directory and build path to Explorer.  Pas in szPath as
@@ -1484,11 +1484,11 @@ BOOL MainWindow::Run_Explorer( const char *szString, HWND hWnd, RECT *rect )
 	result = CreateProcess(
 				szWindowsPath, 				// address of module name
 				lpszComLine,				// address of command line
-				NULL,						// address of process security attributes
-				NULL,						// address of thread security attributes
+				nullptr,						// address of process security attributes
+				nullptr,						// address of thread security attributes
 				FALSE,						// new process inherits handles
 				0,							// creation flags
-				NULL,						// address of new environment block
+				nullptr,						// address of new environment block
 				szCurDir,					// address of current directory name
 				&startupinfo,				// address of STARTUPINFO
 				&processinfo );				// address of PROCESS_INFORMATION
@@ -2059,8 +2059,8 @@ unsigned int MainWindow::Run_Uninstall( HWND hWnd, RECT *rect )
 
 	FindClose( handle );
 
-	_splitpath( szUninstallPath, drive, dir, nullptr, NULL );
-	_makepath ( szCurDir, drive, dir, nullptr, NULL );
+	_splitpath( szUninstallPath, drive, dir, nullptr, nullptr );
+	_makepath ( szCurDir, drive, dir, nullptr, nullptr );
 
 	//=======================================================================
 	// Setup the call
@@ -2071,11 +2071,11 @@ unsigned int MainWindow::Run_Uninstall( HWND hWnd, RECT *rect )
 	result = CreateProcess(
 					szUninstallPath,			// address of module name
 					szUninstallCommandLine,		// address of command line
-					NULL,						// address of process security attributes
-					NULL,						// address of thread security attributes
+					nullptr,						// address of process security attributes
+					nullptr,						// address of thread security attributes
 					0,							// new process inherits handles
 					0,
-					NULL,						// address of new environment block
+					nullptr,						// address of new environment block
 					szCurDir,
 					&startupinfo,				// address of STARTUPINFO
 					&processinfo );				// address of PROCESS_INFORMATION
@@ -2085,8 +2085,8 @@ unsigned int MainWindow::Run_Uninstall( HWND hWnd, RECT *rect )
 	//--------------------------------------------------------------------------
 	if ( !result ) {
 
-		_tsplitpath( szUninstallPath, nullptr, NULL, file, ext );
-		_tmakepath ( szPath, nullptr, NULL, file, ext );
+		_tsplitpath( szUninstallPath, nullptr, nullptr, file, ext );
+		_tmakepath ( szPath, nullptr, nullptr, file, ext );
 		Cant_Find_MessageBox ( Main::hInstance, szPath );
 
 //	#if(BACKGROUND_BITMAP)
@@ -2657,7 +2657,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 				wideBuffer = TheGameText->fetch("Autorun:Title");
 				wideBuffer2.format(wideBuffer, fullProductName.str());
-				WideCharToMultiByte( CodePage, 0, wideBuffer2.str(), wideBuffer2.getLength()+1, szBuffer, _MAX_PATH, nullptr, NULL );
+				WideCharToMultiByte( CodePage, 0, wideBuffer2.str(), wideBuffer2.getLength()+1, szBuffer, _MAX_PATH, nullptr, nullptr );
 
 #endif
 
@@ -2983,7 +2983,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 					//-------------------------------------------------------------------
 					// Make areas between the buttons.
 					//-------------------------------------------------------------------
-					if ( ButtonList[index] != NULL && ButtonList[index+1] != nullptr ) {
+					if ( ButtonList[index] != nullptr && ButtonList[index+1] != nullptr ) {
 
 						// Area between buttons.
 						BackgroundRect[j].top		= ButtonList[index]->Return_Y_Pos() + ButtonList[index]->Return_Height();
@@ -3462,7 +3462,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 									MoveToEx( hDC,					// handle to device context
 										outline_rect.left,			// x-coordinate of new current position
 										outline_rect.top,			// y-coordinate of new current position
-										NULL );						// pointer to old current position
+										nullptr );						// pointer to old current position
 
 									LineTo( hDC,					// device context handle
 										outline_rect.right,			// x-coordinate of line's ending point
@@ -3736,10 +3736,10 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 							std::wstring wideBuffer = TheGameText->fetch("Autorun:CantRunAVIs");
 							std::wstring wideBuffer2 = TheGameText->fetch("Autorun:Error");
 							int length = wideBuffer.length();
-							WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, nullptr, NULL );
+							WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, nullptr, nullptr );
 							length = wideBuffer2.length();
-							WideCharToMultiByte( CodePage, 0, wideBuffer2.c_str(), length+1, szBuffer2, _MAX_PATH, nullptr, NULL );
-							MessageBox( NULL, szBuffer, szBuffer2, MB_APPLMODAL | MB_OK );
+							WideCharToMultiByte( CodePage, 0, wideBuffer2.c_str(), length+1, szBuffer2, _MAX_PATH, nullptr, nullptr );
+							MessageBox( nullptr, szBuffer, szBuffer2, MB_APPLMODAL | MB_OK );
 						}
 */
 					}
@@ -3781,10 +3781,10 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 							std::wstring wideBuffer = TheGameText->fetch("Autorun:CantRunHelp");
 							std::wstring wideBuffer2 = TheGameText->fetch("Autorun:Error");
 							int length = wideBuffer.length();
-							WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, nullptr, NULL );
+							WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, nullptr, nullptr );
 							length = wideBuffer2.length();
-							WideCharToMultiByte( CodePage, 0, wideBuffer2.c_str(), length+1, szBuffer2, _MAX_PATH, nullptr, NULL );
-							MessageBox( NULL, szBuffer, szBuffer2, MB_APPLMODAL | MB_OK );
+							WideCharToMultiByte( CodePage, 0, wideBuffer2.c_str(), length+1, szBuffer2, _MAX_PATH, nullptr, nullptr );
+							MessageBox( nullptr, szBuffer, szBuffer2, MB_APPLMODAL | MB_OK );
 						}
 */
 					}
@@ -4590,7 +4590,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 void Stop_Sound_Playing ( void )
 {
-	PlaySound( NULL, nullptr, SND_ASYNC | SND_FILENAME );
+	PlaySound( nullptr, nullptr, SND_ASYNC | SND_FILENAME );
 }
 
 //*****************************************************************************
@@ -4650,7 +4650,7 @@ BOOL Options( Command_Line_Arguments *Orgs )
 						sprintf( szBuffer3, szBuffer, szVersion );
 //						strcpy( szBuffer, szRegistryKey );
 
-						MessageBox( NULL, szBuffer3, "Autorun", MB_TASKMODAL | MB_OK );
+						MessageBox( nullptr, szBuffer3, "Autorun", MB_TASKMODAL | MB_OK );
 						result = FALSE;
 					}
 					break;
@@ -4807,10 +4807,10 @@ BOOL Valid_Environment ( void )
 		std::wstring wideBuffer = TheGameText->fetch("GUI:WindowsVersionText");
 		std::wstring wideBuffer2 = TheGameText->fetch("GUI:WindowsVersionTitle");
 		length = wideBuffer.length();
-		WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, nullptr, NULL );
+		WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, nullptr, nullptr );
 		length = wideBuffer2.length();
-		WideCharToMultiByte( CodePage, 0, wideBuffer2.c_str(), length+1, szBuffer2, _MAX_PATH, nullptr, NULL );
-		MessageBox( NULL, szBuffer, szBuffer2, MB_APPLMODAL | MB_OK );
+		WideCharToMultiByte( CodePage, 0, wideBuffer2.c_str(), length+1, szBuffer2, _MAX_PATH, nullptr, nullptr );
+		MessageBox( nullptr, szBuffer, szBuffer2, MB_APPLMODAL | MB_OK );
 	}
 
 	return( result );
@@ -5025,7 +5025,7 @@ HBITMAP LoadResourceButton( HINSTANCE hInstance, LPCTSTR lpString, HPALETTE FAR 
 		//-----------------------------------------------------------------------
 		// Free DS and memory used.
 		//-----------------------------------------------------------------------
-		ReleaseDC( NULL, hdc );
+		ReleaseDC( nullptr, hdc );
 		UnlockResource( hGlobal );
 		FreeResource( hGlobal );
 	}
@@ -5063,7 +5063,7 @@ void Cant_Find_MessageBox ( HINSTANCE hInstance, const char *szPath )
 		MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szPath, _MAX_PATH, szWideBuffer0, _MAX_PATH );
 		swprintf( szWideBuffer2, szWideBuffer, szWideBuffer0 );
 
-		MessageBoxW( NULL,  szWideBuffer2, szWideBuffer3, MB_APPLMODAL | MB_OK );
+		MessageBoxW( nullptr,  szWideBuffer2, szWideBuffer3, MB_APPLMODAL | MB_OK );
 	}
 
 #else
@@ -5072,8 +5072,8 @@ void Cant_Find_MessageBox ( HINSTANCE hInstance, const char *szPath )
 	std::wstring wideBuffer2.format( wideBuffer.str(), productName.str() );
 	std::wstring wideBuffer3 = TheGameText->fetch("Autorun:CantFind");
 
-	WideCharToMultiByte( CodePage, 0, wideBuffer3.str(), wideBuffer3.getLength()+1, szBuffer3, _MAX_PATH, nullptr, NULL );
-	WideCharToMultiByte( CodePage, 0, wideBuffer2.str(), wideBuffer2.getLength()+1, szBuffer2, _MAX_PATH, nullptr, NULL );
+	WideCharToMultiByte( CodePage, 0, wideBuffer3.str(), wideBuffer3.getLength()+1, szBuffer3, _MAX_PATH, nullptr, nullptr );
+	WideCharToMultiByte( CodePage, 0, wideBuffer2.str(), wideBuffer2.getLength()+1, szBuffer2, _MAX_PATH, nullptr, nullptr );
 
 
 	sprintf( szBuffer1, szBuffer3, szPath );
@@ -5081,29 +5081,29 @@ void Cant_Find_MessageBox ( HINSTANCE hInstance, const char *szPath )
 
 	if ( strlen( szPath ) < 3 )
 	{
-		MessageBox( NULL, "The path specified in Cant_Find_MessageBox was blank", "Autorun", MB_APPLMODAL | MB_OK );
+		MessageBox( nullptr, "The path specified in Cant_Find_MessageBox was blank", "Autorun", MB_APPLMODAL | MB_OK );
 		return;
 	}
 	if ( strlen( szBuffer1 ) < 3 && strlen( szBuffer3 ) < 3 )
 	{
-		MessageBox( NULL, "***MISSING MESSAGES***... IDS_AUTORUN_TITLE and IDS_CANT_FIND", "Autorun", MB_APPLMODAL | MB_OK );
+		MessageBox( nullptr, "***MISSING MESSAGES***... IDS_AUTORUN_TITLE and IDS_CANT_FIND", "Autorun", MB_APPLMODAL | MB_OK );
 		return;
 	}
 	if ( strlen( szBuffer1 ) < 3 )
 	{
-		MessageBox( NULL, "***MISSING MESSAGE***... IDS_AUTORUN_TITLE", "Autorun", MB_APPLMODAL | MB_OK );
+		MessageBox( nullptr, "***MISSING MESSAGE***... IDS_AUTORUN_TITLE", "Autorun", MB_APPLMODAL | MB_OK );
 		return;
 	}
 	if ( strlen( szBuffer3 ) < 3 )
 	{
-		MessageBox( NULL, "***MISSING MESSAGE***... IDS_CANT_FIND", "Autorun", MB_APPLMODAL | MB_OK );
+		MessageBox( nullptr, "***MISSING MESSAGE***... IDS_CANT_FIND", "Autorun", MB_APPLMODAL | MB_OK );
 		return;
 	}
 
 
 
 
-	MessageBox( NULL, szBuffer1, szBuffer2, MB_APPLMODAL | MB_OK );
+	MessageBox( nullptr, szBuffer1, szBuffer2, MB_APPLMODAL | MB_OK );
 #endif
 
 }
@@ -5139,14 +5139,14 @@ void Error_Message ( HINSTANCE hInstance, const char * title, const char * strin
 		wideBuffer3 = wideBuffer;					// insert not provided
 	}
 
-	WideCharToMultiByte( CodePage, 0, wideBuffer2.str(), wideBuffer2.getLength()+1, szBuffer2, _MAX_PATH, nullptr, NULL );
-	WideCharToMultiByte( CodePage, 0, wideBuffer3.str(), wideBuffer3.getLength()+1, szBuffer3, _MAX_PATH, nullptr, NULL );
+	WideCharToMultiByte( CodePage, 0, wideBuffer2.str(), wideBuffer2.getLength()+1, szBuffer2, _MAX_PATH, nullptr, nullptr );
+	WideCharToMultiByte( CodePage, 0, wideBuffer3.str(), wideBuffer3.getLength()+1, szBuffer3, _MAX_PATH, nullptr, nullptr );
 
-	MessageBox( NULL, szBuffer3, szBuffer2, MB_APPLMODAL | MB_OK );
+	MessageBox( nullptr, szBuffer3, szBuffer2, MB_APPLMODAL | MB_OK );
 
 #endif
 
-	MessageBox( NULL, "ERROR_UNDEFINED", "ERROR_UNDEFINED", MB_APPLMODAL | MB_OK );
+	MessageBox( nullptr, "ERROR_UNDEFINED", "ERROR_UNDEFINED", MB_APPLMODAL | MB_OK );
 
 
 }
@@ -5161,17 +5161,17 @@ LaunchObjectClass::LaunchObjectClass ( char *path, char *args )
 	memset( szPath, '\0', _MAX_PATH );
 	memset( szArgs, '\0', _MAX_PATH );
 
-	if( path != NULL && path[0] != '\0' ) {
+	if( path != nullptr && path[0] != '\0' ) {
 		strcpy( szPath, path );
 	}
-	if( args != NULL && args[0] != '\0' ) {
+	if( args != nullptr && args[0] != '\0' ) {
 		strcpy( szArgs, args );
 	}
 }
 
 void LaunchObjectClass::SetPath ( char *path )
 {
-	if( path != NULL && path[0] != '\0' ) {
+	if( path != nullptr && path[0] != '\0' ) {
 		memset( szPath, '\0', _MAX_PATH );
 		strcpy( szPath, path );
 	}
@@ -5179,7 +5179,7 @@ void LaunchObjectClass::SetPath ( char *path )
 
 void LaunchObjectClass::SetArgs ( char *args )
 {
-	if( args != NULL && args[0] != '\0' ) {
+	if( args != nullptr && args[0] != '\0' ) {
 		memset( szArgs, '\0', _MAX_PATH );
 		strcpy( szArgs, args );
 	}
@@ -5214,7 +5214,7 @@ unsigned int LaunchObjectClass::Launch ( void )
 	// new working drive (1=A, 2=B, and so forth). This function changes only
 	// the working drive; _chdir changes the working directory.
 	//--------------------------------------------------------------------------
-	_makepath( filepath, drive, dir, nullptr, NULL );
+	_makepath( filepath, drive, dir, nullptr, nullptr );
 	Path_Remove_Back_Slash( filepath );
 
 	abc = (unsigned)( toupper( filepath[0] ) - 'A' + 1 );
@@ -5250,12 +5250,12 @@ unsigned int LaunchObjectClass::Launch ( void )
 	result = CreateProcess(
 				szPath,												// address of module name
 				lpszComLine, 										// address of command line
-				NULL,												// address of process security attributes
-				NULL,												// address of thread security attributes
+				nullptr,												// address of process security attributes
+				nullptr,												// address of thread security attributes
 				FALSE,												// new process inherits handles
 				FALSE,
-				NULL,												// address of new environment block
-				NULL,												// address of current directory name
+				nullptr,												// address of new environment block
+				nullptr,												// address of current directory name
 				&startupinfo,										// address of STARTUPINFO
 				&processinfo );										// address of PROCESS_INFORMATION
 
@@ -5265,7 +5265,7 @@ unsigned int LaunchObjectClass::Launch ( void )
 	if ( !result ) {
 
 		Msg( __LINE__, TEXT(__FILE__), TEXT("Launch of %s failed." ), lpszComLine );
-		_makepath ( filepath, nullptr, NULL, file, ext );
+		_makepath ( filepath, nullptr, nullptr, file, ext );
 		Cant_Find_MessageBox ( Main::hInstance, filepath );
 	}
 	Msg( __LINE__, TEXT(__FILE__), TEXT("Launch of %s succeeded." ), lpszComLine );
@@ -5428,7 +5428,7 @@ int Show_Message ( HWND window_handle, const char * message1, const char * messa
 	wcscat( szString3, L" " );
 	wcscat( szString3, string2.str() );
 
-	WideCharToMultiByte( CodePage, 0, szString3, _MAX_PATH, szBuffer, _MAX_PATH, nullptr, NULL );
+	WideCharToMultiByte( CodePage, 0, szString3, _MAX_PATH, szBuffer, _MAX_PATH, nullptr, nullptr );
 	result = MessageBox( window_handle, szBuffer, "Autorun", MB_RETRYCANCEL|MB_APPLMODAL|MB_SETFOREGROUND );
 
 	return( result );

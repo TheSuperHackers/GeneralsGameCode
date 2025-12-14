@@ -1369,7 +1369,7 @@ public:
 		DistanceCalculationType dc,
 		PartitionFilter **filters = nullptr,
 		Real *closestDist = nullptr,
-		Coord3D *closestDistVec = NULL
+		Coord3D *closestDistVec = nullptr
 	);
 	Object *getClosestObject(
 		const Coord3D *pos,
@@ -1377,7 +1377,7 @@ public:
 		DistanceCalculationType dc,
 		PartitionFilter **filters = nullptr,
 		Real *closestDist = nullptr,
-		Coord3D *closestDistVec = NULL
+		Coord3D *closestDistVec = nullptr
 	);
 
 	Real getRelativeAngle2D( const Object *obj, const Object *otherObj );

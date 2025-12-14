@@ -188,7 +188,7 @@ void Split_Node_Name(const char * name,char * set_base,char * set_exten,int * se
 
 bool Append_Lod_Character (char *meshname, int lod_level, INodeListClass *origin_list)
 {
-	if (meshname == NULL || lod_level < 0)
+	if (meshname == nullptr || lod_level < 0)
 		return false;
 
 	if (!origin_list)

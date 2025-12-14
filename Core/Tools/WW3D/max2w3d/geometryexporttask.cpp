@@ -80,7 +80,7 @@ public:
 	MeshGeometryExportTaskClass(INode * node,GeometryExportContextClass & context) :
 		GeometryExportTaskClass(node,context),
 		NameDirty(false),
-		SingleMtl(NULL)
+		SingleMtl()
 	{
 		/*
 		** Copy the export options

@@ -124,7 +124,7 @@ void PopupReplayInit( WindowLayout *layout, void *userData )
 	NameKeyType replaySavedParentID = TheNameKeyGenerator->nameToKey("PopupReplay.wnd:PopupReplaySaved");
 	replaySavedParent = TheWindowManager->winGetWindowFromId( nullptr, replaySavedParentID);
 	if (replaySavedParent == nullptr) {
-		DEBUG_CRASH(("replaySavedParent == NULL"));
+		DEBUG_CRASH(("replaySavedParent == nullptr"));
 	}
 
 	ShowReplaySavedPopup(FALSE);

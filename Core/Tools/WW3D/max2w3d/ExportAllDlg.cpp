@@ -57,7 +57,7 @@ ExportAllDlg::ExportAllDlg (Interface *max_interface)
 {
 	m_Directory[0] = '\0';
 	m_Recursive = TRUE;
-	m_hWnd = NULL;
+	m_hWnd = nullptr;
 	assert(max_interface != nullptr);
 	m_MaxInterface = max_interface;
 }
@@ -129,7 +129,7 @@ BOOL CALLBACK ExportAllDlg::DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 					if (OnOK() == FALSE)
 						return TRUE;
 
-					SetCursor(LoadCursor(NULL, IDC_WAIT));
+					SetCursor(LoadCursor(nullptr, IDC_WAIT));
 					EndDialog(m_hWnd, 1);
 					break;
 
@@ -155,7 +155,7 @@ BOOL CALLBACK ExportAllDlg::DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 void ExportAllDlg::OnInitDialog (void)
 {
 	CenterWindow(m_hWnd, m_MaxInterface->GetMAXHWnd());
-	SetCursor(LoadCursor(NULL, IDC_ARROW));
+	SetCursor(LoadCursor(nullptr, IDC_ARROW));
 
 	// Set the check box state.
 	CheckDlgButton(m_hWnd, IDC_RECURSIVE, m_Recursive);

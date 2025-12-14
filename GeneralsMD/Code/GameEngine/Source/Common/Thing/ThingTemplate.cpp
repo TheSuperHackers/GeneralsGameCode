@@ -677,7 +677,7 @@ static void parseArbitraryFXIntoMap( INI* ini, void *instance, void* /* store */
 	const char* name = (const char*)userData;
 	const char* token = ini->getNextToken();
 	const FXList* fxl = TheFXListStore->findFXList(token);	// could be null!
-	DEBUG_ASSERTCRASH(fxl != NULL || stricmp(token, "None") == 0, ("FXList %s not found!",token));
+	DEBUG_ASSERTCRASH(fxl != nullptr || stricmp(token, "None") == 0, ("FXList %s not found!",token));
 	mapFX->insert(std::make_pair(AsciiString(name), fxl));
 }
 
@@ -1333,13 +1333,13 @@ void ThingTemplate::initForLTA(const AsciiString& name)
 	AsciiString moduleTag;
 
 	moduleTag.format( "LTA_%sDestroyDie", m_LTAName.str() );
-	m_behaviorModuleInfo.addModuleInfo(this, "DestroyDie", moduleTag, TheModuleFactory->newModuleDataFromINI(NULL, "DestroyDie", MODULETYPE_BEHAVIOR, moduleTag), (MODULEINTERFACE_DIE), false);
+	m_behaviorModuleInfo.addModuleInfo(this, "DestroyDie", moduleTag, TheModuleFactory->newModuleDataFromINI(, "DestroyDie", MODULETYPE_BEHAVIOR, moduleTag), (MODULEINTERFACE_DIE), false);
 
 	moduleTag.format( "LTA_%sInactiveBody", m_LTAName.str() );
-	m_behaviorModuleInfo.addModuleInfo(this, "InactiveBody", moduleTag, TheModuleFactory->newModuleDataFromINI(NULL, "InactiveBody", MODULETYPE_BEHAVIOR, moduleTag), (MODULEINTERFACE_BODY), false);
+	m_behaviorModuleInfo.addModuleInfo(this, "InactiveBody", moduleTag, TheModuleFactory->newModuleDataFromINI(, "InactiveBody", MODULETYPE_BEHAVIOR, moduleTag), (MODULEINTERFACE_BODY), false);
 
 	moduleTag.format( "LTA_%sW3DDefaultDraw", m_LTAName.str() );
-	m_drawModuleInfo.addModuleInfo(this, "W3DDefaultDraw", moduleTag, TheModuleFactory->newModuleDataFromINI(NULL, "W3DDefaultDraw", MODULETYPE_DRAW, moduleTag), (MODULEINTERFACE_DRAW), false);
+	m_drawModuleInfo.addModuleInfo(this, "W3DDefaultDraw", moduleTag, TheModuleFactory->newModuleDataFromINI(, "W3DDefaultDraw", MODULETYPE_DRAW, moduleTag), (MODULEINTERFACE_DRAW), false);
 
 	m_armorCopiedFromDefault = false;
 	m_weaponsCopiedFromDefault = false;

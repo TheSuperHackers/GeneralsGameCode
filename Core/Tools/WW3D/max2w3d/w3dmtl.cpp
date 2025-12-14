@@ -102,8 +102,8 @@ void W3dMapClass::Set_Filename(const char * fullpath)
 		char exten[_MAX_EXT];
 		char fname[_MAX_FNAME+_MAX_EXT+2];
 
-		_splitpath(fullpath,nullptr,NULL,name,exten);
-		_makepath(fname,nullptr,NULL,name,exten);
+		_splitpath(fullpath,nullptr,nullptr,name,exten);
+		_makepath(fname,nullptr,nullptr,name,exten);
 		//strupr(fname);						(gth) need to preserve case since unix/PS2 is case sensitive...
 		Filename = strdup(fname);
 	} else {
@@ -680,7 +680,7 @@ bool W3dMaterialClass::Is_Multi_Pass_Transparent(void) const
 W3dMaterialDescClass::VertMatClass::VertMatClass(void) :
 	PassIndex(-1),
 	Crc(0),
-	Name(NULL)
+	Name()
 {
 	for (int stage=0; stage < W3dMaterialClass::MAX_STAGES; ++stage) {
 		MapperArgs[stage] = nullptr;

@@ -68,7 +68,7 @@ LPDISPATCH Workbooks::Add(const VARIANT& Template)
 
 void Workbooks::Close()
 {
-	InvokeHelper(0x115, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x115, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 long Workbooks::GetCount()
@@ -219,7 +219,7 @@ LPDISPATCH _Application::GetAssistant()
 
 void _Application::Calculate()
 {
-	InvokeHelper(0x117, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x117, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 LPDISPATCH _Application::GetCells()
@@ -996,7 +996,7 @@ void _Application::SetDisplayStatusBar(BOOL bNewValue)
 
 void _Application::DoubleClick()
 {
-	InvokeHelper(0x15d, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x15d, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 BOOL _Application::GetEditDirectlyInCell()
@@ -1085,7 +1085,7 @@ LPDISPATCH _Application::GetFileFind()
 
 void _Application::FindFile()
 {
-	InvokeHelper(0x42c, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x42c, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 BOOL _Application::GetFixedDecimal()
@@ -1297,7 +1297,7 @@ void _Application::MacroOptions(const VARIANT& Macro, const VARIANT& Description
 
 void _Application::MailLogoff()
 {
-	InvokeHelper(0x3b1, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x3b1, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void _Application::MailLogon(const VARIANT& Name, const VARIANT& Password, const VARIANT& DownloadNewMail)
@@ -1584,7 +1584,7 @@ void _Application::SetPromptForSummaryInfo(BOOL bNewValue)
 
 void _Application::Quit()
 {
-	InvokeHelper(0x12e, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x12e, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void _Application::RecordMacro(const VARIANT& BasicCode, const VARIANT& XlmCode)
@@ -1639,7 +1639,7 @@ BOOL _Application::RegisterXLL(LPCTSTR Filename)
 
 void _Application::Repeat()
 {
-	InvokeHelper(0x12d, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x12d, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 BOOL _Application::GetRollZoom()
@@ -1884,7 +1884,7 @@ void _Application::SetTransitionNavigKeys(BOOL bNewValue)
 
 void _Application::Undo()
 {
-	InvokeHelper(0x12f, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x12f, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 double _Application::GetUsableHeight()
@@ -2140,7 +2140,7 @@ void _Workbook::SetAcceptLabelsInFormulas(BOOL bNewValue)
 
 void _Workbook::Activate()
 {
-	InvokeHelper(0x130, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x130, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 LPDISPATCH _Workbook::GetActiveChart()
@@ -2377,7 +2377,7 @@ long _Workbook::GetFileFormat()
 
 void _Workbook::ForwardMailer()
 {
-	InvokeHelper(0x3cd, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x3cd, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 CString _Workbook::GetFullName()
@@ -2624,17 +2624,17 @@ BOOL _Workbook::GetReadOnlyRecommended()
 
 void _Workbook::RefreshAll()
 {
-	InvokeHelper(0x5ac, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x5ac, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void _Workbook::Reply()
 {
-	InvokeHelper(0x3d1, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x3d1, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void _Workbook::ReplyAll()
 {
-	InvokeHelper(0x3d2, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x3d2, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void _Workbook::RemoveUser(long Index)
@@ -2654,7 +2654,7 @@ long _Workbook::GetRevisionNumber()
 
 void _Workbook::Route()
 {
-	InvokeHelper(0x3b2, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x3b2, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 BOOL _Workbook::GetRouted()
@@ -2681,7 +2681,7 @@ void _Workbook::RunAutoMacros(long Which)
 
 void _Workbook::Save()
 {
-	InvokeHelper(0x11b, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x11b, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void _Workbook::SaveAs(const VARIANT& Filename, const VARIANT& FileFormat, const VARIANT& Password, const VARIANT& WriteResPassword, const VARIANT& ReadOnlyRecommended, const VARIANT& CreateBackup, long AccessMode, const VARIANT& ConflictResolution,
@@ -2802,7 +2802,7 @@ void _Workbook::UnprotectSharing(const VARIANT& SharingPassword)
 
 void _Workbook::UpdateFromFile()
 {
-	InvokeHelper(0x3e3, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x3e3, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void _Workbook::UpdateLink(const VARIANT& Name, const VARIANT& Type)
@@ -2978,7 +2978,7 @@ void _Workbook::RejectAllChanges(const VARIANT& When, const VARIANT& Who, const 
 
 void _Workbook::ResetColors()
 {
-	InvokeHelper(0x5bc, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x5bc, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 LPDISPATCH _Workbook::GetVBProject()
@@ -2998,7 +2998,7 @@ void _Workbook::FollowHyperlink(LPCTSTR Address, const VARIANT& SubAddress, cons
 
 void _Workbook::AddToFavorites()
 {
-	InvokeHelper(0x5c4, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x5c4, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 BOOL _Workbook::GetIsInplace()
@@ -3038,7 +3038,7 @@ LPDISPATCH _Worksheet::GetParent()
 
 void _Worksheet::Activate()
 {
-	InvokeHelper(0x130, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x130, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void _Worksheet::Copy(const VARIANT& Before, const VARIANT& After)
@@ -3051,7 +3051,7 @@ void _Worksheet::Copy(const VARIANT& Before, const VARIANT& After)
 
 void _Worksheet::Delete()
 {
-	InvokeHelper(0x75, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x75, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 CString _Worksheet::GetCodeName()
@@ -3266,7 +3266,7 @@ void _Worksheet::SetBackgroundPicture(LPCTSTR Filename)
 
 void _Worksheet::Calculate()
 {
-	InvokeHelper(0x117, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x117, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 BOOL _Worksheet::GetEnableCalculation()
@@ -3318,7 +3318,7 @@ LPDISPATCH _Worksheet::GetCircularReference()
 
 void _Worksheet::ClearArrows()
 {
-	InvokeHelper(0x3ca, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x3ca, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 LPDISPATCH _Worksheet::GetColumns()
@@ -3438,7 +3438,7 @@ BOOL _Worksheet::GetFilterMode()
 
 void _Worksheet::ResetAllPageBreaks()
 {
-	InvokeHelper(0x592, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x592, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 LPDISPATCH _Worksheet::GetNames()
@@ -3547,12 +3547,12 @@ void _Worksheet::SetScrollArea(LPCTSTR lpszNewValue)
 
 void _Worksheet::ShowAllData()
 {
-	InvokeHelper(0x31a, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x31a, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void _Worksheet::ShowDataForm()
 {
-	InvokeHelper(0x199, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x199, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 double _Worksheet::GetStandardHeight()
@@ -3658,12 +3658,12 @@ LPDISPATCH _Worksheet::GetHyperlinks()
 
 void _Worksheet::ClearCircles()
 {
-	InvokeHelper(0x59c, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x59c, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void _Worksheet::CircleInvalid()
 {
-	InvokeHelper(0x59d, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x59d, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 LPDISPATCH _Worksheet::GetAutoFilter()
@@ -3703,7 +3703,7 @@ LPDISPATCH Range::GetParent()
 
 void Range::Activate()
 {
-	InvokeHelper(0x130, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x130, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 VARIANT Range::GetAddIndent()
@@ -3759,7 +3759,7 @@ void Range::ApplyNames(const VARIANT& Names, const VARIANT& IgnoreRelativeAbsolu
 
 void Range::ApplyOutlineStyles()
 {
-	InvokeHelper(0x1c0, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x1c0, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 LPDISPATCH Range::GetAreas()
@@ -3797,7 +3797,7 @@ void Range::AutoFilter(const VARIANT& Field, const VARIANT& Criteria1, long Oper
 
 void Range::AutoFit()
 {
-	InvokeHelper(0xed, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0xed, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void Range::AutoFormat(long Format, const VARIANT& Number, const VARIANT& Font, const VARIANT& Alignment, const VARIANT& Border, const VARIANT& Pattern, const VARIANT& Width)
@@ -3810,7 +3810,7 @@ void Range::AutoFormat(long Format, const VARIANT& Number, const VARIANT& Font, 
 
 void Range::AutoOutline()
 {
-	InvokeHelper(0x40c, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x40c, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void Range::BorderAround(const VARIANT& LineStyle, long Weight, long ColorIndex, const VARIANT& Color)
@@ -3830,7 +3830,7 @@ LPDISPATCH Range::GetBorders()
 
 void Range::Calculate()
 {
-	InvokeHelper(0x117, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x117, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 LPDISPATCH Range::GetCells()
@@ -3860,27 +3860,27 @@ void Range::CheckSpelling(const VARIANT& CustomDictionary, const VARIANT& Ignore
 
 void Range::Clear()
 {
-	InvokeHelper(0x6f, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x6f, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void Range::ClearContents()
 {
-	InvokeHelper(0x71, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x71, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void Range::ClearFormats()
 {
-	InvokeHelper(0x70, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x70, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void Range::ClearNotes()
 {
-	InvokeHelper(0xef, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0xef, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void Range::ClearOutline()
 {
-	InvokeHelper(0x40d, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x40d, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 long Range::GetColumn()
@@ -4099,22 +4099,22 @@ LPDISPATCH Range::GetEntireRow()
 
 void Range::FillDown()
 {
-	InvokeHelper(0xf8, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0xf8, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void Range::FillLeft()
 {
-	InvokeHelper(0xf9, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0xf9, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void Range::FillRight()
 {
-	InvokeHelper(0xfa, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0xfa, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void Range::FillUp()
 {
-	InvokeHelper(0xfb, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0xfb, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 LPDISPATCH Range::Find(const VARIANT& What, const VARIANT& After, const VARIANT& LookIn, const VARIANT& LookAt, const VARIANT& SearchOrder, long SearchDirection, const VARIANT& MatchCase, const VARIANT& MatchByte,
@@ -4262,7 +4262,7 @@ void Range::SetFormulaR1C1Local(const VARIANT& newValue)
 
 void Range::FunctionWizard()
 {
-	InvokeHelper(0x23b, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x23b, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 BOOL Range::GoalSeek(const VARIANT& Goal, LPDISPATCH ChangingCell)
@@ -4394,7 +4394,7 @@ void Range::SetItem(const VARIANT& RowIndex, const VARIANT& ColumnIndex, const V
 
 void Range::Justify()
 {
-	InvokeHelper(0x1ef, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x1ef, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 VARIANT Range::GetLeft()
@@ -4413,7 +4413,7 @@ long Range::GetListHeaderRows()
 
 void Range::ListNames()
 {
-	InvokeHelper(0xfd, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0xfd, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 long Range::GetLocationInTable()
@@ -4448,7 +4448,7 @@ void Range::Merge(const VARIANT& Across)
 
 void Range::UnMerge()
 {
-	InvokeHelper(0x568, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x568, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 LPDISPATCH Range::GetMergeArea()
@@ -4698,7 +4698,7 @@ LPDISPATCH Range::GetRange(const VARIANT& Cell1, const VARIANT& Cell2)
 
 void Range::RemoveSubtotal()
 {
-	InvokeHelper(0x373, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x373, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 BOOL Range::Replace(const VARIANT& What, const VARIANT& Replacement, const VARIANT& LookAt, const VARIANT& SearchOrder, const VARIANT& MatchCase, const VARIANT& MatchByte, const VARIANT& MatchControlCharacters, const VARIANT& MatchDiacritics,
@@ -4776,12 +4776,12 @@ VARIANT Range::Run(const VARIANT& Arg1, const VARIANT& Arg2, const VARIANT& Arg3
 
 void Range::Select()
 {
-	InvokeHelper(0xeb, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0xeb, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void Range::Show()
 {
-	InvokeHelper(0x1f0, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x1f0, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void Range::ShowDependents(const VARIANT& Remove)
@@ -4809,7 +4809,7 @@ void Range::SetShowDetail(const VARIANT& newValue)
 
 void Range::ShowErrors()
 {
-	InvokeHelper(0x36e, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x36e, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 void Range::ShowPrecedents(const VARIANT& Remove)
@@ -4940,7 +4940,7 @@ VARIANT Range::GetTop()
 
 void Range::Ungroup()
 {
-	InvokeHelper(0xf4, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0xf4, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 VARIANT Range::GetUseStandardHeight()
@@ -5073,7 +5073,7 @@ LPDISPATCH Range::GetComment()
 
 void Range::ClearComments()
 {
-	InvokeHelper(0x56e, DISPATCH_METHOD, VT_EMPTY, nullptr, NULL);
+	InvokeHelper(0x56e, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
 }
 
 LPDISPATCH Range::GetPhonetic()

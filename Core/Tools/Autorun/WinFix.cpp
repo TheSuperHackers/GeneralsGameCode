@@ -192,7 +192,7 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
             DWORD dwBufLen;
 
             RegOpenKeyEx( HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\ProductOptions", 0, KEY_QUERY_VALUE, &hKey );
-            RegQueryValueEx( hKey, "ProductType", nullptr, NULL, (LPBYTE) szProductType, &dwBufLen);
+            RegQueryValueEx( hKey, "ProductType", nullptr, nullptr, (LPBYTE) szProductType, &dwBufLen);
             RegCloseKey( hKey );
 
             if ( lstrcmpi( "WINNT", szProductType) == 0 )

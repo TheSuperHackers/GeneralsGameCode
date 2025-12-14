@@ -1952,8 +1952,8 @@ void ConnectionManager::parseUserList(const GameInfo *game)
 		char *pos = nullptr;
 
 		nameStr = strtok_r(userStr, "@", &pos);
-		addrStr = strtok_r(NULL, "@:", &pos);
-		portStr = strtok_r(NULL, ": ", &pos);
+		addrStr = strtok_r(nullptr, "@:", &pos);
+		portStr = strtok_r(nullptr, ": ", &pos);
 
 		if (!portStr || numUsers >= MAX_SLOTS)
 		{

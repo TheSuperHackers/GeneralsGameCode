@@ -1364,9 +1364,9 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 		m_vertexBufferTiles = NEW DX8VertexBufferClass*[m_numVertexBufferTiles];
 		m_vertexBufferBackup = NEW char *[m_numVertexBufferTiles];
 
-		Int numVertex = VERTEX_BUFFER_TILE_LENGTH*2*VERTEX_BUFFER_TILE_LENGTH*2;
+	Int numVertex = VERTEX_BUFFER_TILE_LENGTH*2*VERTEX_BUFFER_TILE_LENGTH*2;
 
-		for (i=0; i<m_numVertexBufferTiles; i++) {
+	for (i=0; i<m_numVertexBufferTiles; i++) {
 #ifdef USE_NORMALS
 			m_vertexBufferTiles[i]=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZNUV2,numVertex,DX8VertexBufferClass::USAGE_DEFAULT));
 #else

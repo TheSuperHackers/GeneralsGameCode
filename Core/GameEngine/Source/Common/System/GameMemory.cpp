@@ -616,7 +616,7 @@ inline MemoryPoolSingleBlock *MemoryPoolSingleBlock::getNextRawBlock()
 */
 inline void MemoryPoolSingleBlock::setNextRawBlock(MemoryPoolSingleBlock *b)
 {
-	DEBUG_ASSERTCRASH(m_owningBlob == NULL && (!b || b->m_owningBlob == nullptr), ("must be called on raw block"));
+	DEBUG_ASSERTCRASH(m_owningBlob == nullptr && (!b || b->m_owningBlob == nullptr), ("must be called on raw block"));
 	m_nextBlock = b;
 #ifdef MPSB_DLINK
 	if (b)
@@ -942,7 +942,7 @@ void MemoryPoolSingleBlock::removeBlockFromList(MemoryPoolSingleBlock **pHead)
 {
 	DEBUG_ASSERTCRASH(this->m_owningBlob == nullptr, ("this function should only be used on raw blocks"));
 #ifdef MPSB_DLINK
-	DEBUG_ASSERTCRASH(this->m_nextBlock == NULL || this->m_nextBlock->m_owningBlob == nullptr, ("this function should only be used on raw blocks"));
+	DEBUG_ASSERTCRASH(this->m_nextBlock == nullptr || this->m_nextBlock->m_owningBlob == nullptr, ("this function should only be used on raw blocks"));
 	if (this->m_prevBlock)
 	{
 		DEBUG_ASSERTCRASH(this->m_prevBlock->m_owningBlob == nullptr, ("this function should only be used on raw blocks"));
@@ -1038,11 +1038,11 @@ void MemoryPoolSingleBlock::debugVerifyBlock()
 	DEBUG_ASSERTCRASH(m_debugLiteralTagString != nullptr, ("bad tagstring"));
 	/// @todo Put this check back in after the AI memory usage is under control (MSB)
 	//DEBUG_ASSERTCRASH(m_logicalSize>0 && m_logicalSize < 0x00ffffff, ("unlikely value for m_logicalSize"));
-	DEBUG_ASSERTCRASH(m_nextBlock == NULL
+	DEBUG_ASSERTCRASH(m_nextBlock == nullptr
 		|| memcmp(&m_nextBlock->m_owningBlob, &s_initFillerValue, sizeof(s_initFillerValue)) == 0
 		|| m_nextBlock->m_owningBlob == m_owningBlob, ("owning blob mismatch..."));
 #ifdef MPSB_DLINK
-	DEBUG_ASSERTCRASH(m_prevBlock == NULL
+	DEBUG_ASSERTCRASH(m_prevBlock == nullptr
 		|| memcmp(&m_prevBlock->m_owningBlob, &s_initFillerValue, sizeof(s_initFillerValue)) == 0
 		|| m_prevBlock->m_owningBlob == m_owningBlob, ("owning blob mismatch..."));
 #endif
@@ -3118,7 +3118,7 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 			fprintf( fp, "Begin Pool Info Report\n" );
 			fprintf( fp, "------------------------------------------\n" );
 		}
-		MemoryPool::debugPoolInfoReport( NULL, fp );
+		MemoryPool::debugPoolInfoReport( nullptr, fp );
 		for (MemoryPool *pool = m_firstPoolInFactory; pool; pool = pool->getNextPoolInList())
 		{
 			MemoryPool::debugPoolInfoReport( pool, fp );
@@ -3210,7 +3210,7 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 		DEBUG_LOG(("Options: Between checkpoints %d and %d, report on (%s)",startCheckpoint,endCheckpoint,buf));
 		DEBUG_LOG(("------------------------------------------"));
 
-		BlockCheckpointInfo::doBlockCheckpointReport( NULL, "", 0, 0, 0 );
+		BlockCheckpointInfo::doBlockCheckpointReport( nullptr, "", 0, 0, 0 );
 		for (MemoryPool *pool = m_firstPoolInFactory; pool; pool = pool->getNextPoolInList())
 		{
 			pool->debugCheckpointReport(flags, startCheckpoint, endCheckpoint, pool->getPoolName());

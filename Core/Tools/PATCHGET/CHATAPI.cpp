@@ -181,12 +181,12 @@ static void startOnline( void )
 
 	if (cantConnect)
 	{
-		MessageBox(NULL, "Can't Connect", GAME_NAME, MB_OK);
+		MessageBox(nullptr, "Can't Connect", GAME_NAME, MB_OK);
 		exit(0);
 	}
 	else if (queuedDownloads.size())
 	{
-		if (MessageBox(NULL, "Patches Available.  Download?", GAME_NAME, MB_YESNO) == IDYES)
+		if (MessageBox(nullptr, "Patches Available.  Download?", GAME_NAME, MB_YESNO) == IDYES)
 		{
 			DEBUG_LOG(("Downloading patches"));
 			while (queuedDownloads.size())
@@ -230,7 +230,7 @@ static void startOnline( void )
 	}
 	else
 	{
-		MessageBox(NULL, "No Patches Available", GAME_NAME, MB_OK);
+		MessageBox(nullptr, "No Patches Available", GAME_NAME, MB_OK);
 		exit(0);
 	}
 }
@@ -293,7 +293,7 @@ inline const char* skipNonSeps(const char* p, const char* seps)
 }
 
 //-----------------------------------------------------------------------------
-bool nextToken(std::string& base, std::string& tok, const char* seps = NULL)
+bool nextToken(std::string& base, std::string& tok, const char* seps = nullptr)
 {
 	if (base.empty())
 		return false;
@@ -646,10 +646,10 @@ HWND CreatePrimaryWin(void)
       //GetSystemMetrics( SM_CYSCREEN ),
       0,0,
 
-      NULL,
-      NULL,
+      nullptr,
+      nullptr,
       Global_instance,
-      NULL );
+      nullptr );
 
   SendMessage(hwnd,WM_SETICON,(WPARAM)ICON_SMALL,
       (LPARAM)LoadIcon(Global_instance, MAKEINTRESOURCE(IDI_ICON1)));
@@ -712,7 +712,7 @@ int main(int argc, char *argv[])
 
   if (!have_registered)
   {
-    if (MessageBox(NULL,Fetch_String(TXT_REGNOW),Fetch_String(TXT_TITLE),MB_YESNO)==IDNO)
+    if (MessageBox(nullptr,Fetch_String(TXT_REGNOW),Fetch_String(TXT_TITLE),MB_YESNO)==IDNO)
       have_registered=true;  // pretend they've alredy registered
   }
 
@@ -874,7 +874,7 @@ char const * Fetch_String(int id)
 	  FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &message_buffer[0], 256, nullptr );
 
    }
-   HGLOBAL resdata=LoadResource(NULL,hrsrc);
+   HGLOBAL resdata=LoadResource(,hrsrc);
    LPVOID vdata=LockResource(resdata);
    strcpy(stringptr,(char *)vdata);
    *********/
@@ -977,7 +977,7 @@ void Update_If_Required(void)
   int   i;
   // Create the events
   for (i=0; i<NUM_EVENTS; i++)
-    Events[i]=CreateEvent(NULL,FALSE,FALSE,nullptr);
+    Events[i]=CreateEvent(nullptr,FALSE,FALSE,nullptr);
 
 	StartPatchCheck();
 
@@ -1023,7 +1023,7 @@ void Update_If_Required(void)
 
   // Create the events
   for (i=0; i<NUM_EVENTS; i++)
-    Events[i]=CreateEvent(NULL,FALSE,FALSE,nullptr);
+    Events[i]=CreateEvent(nullptr,FALSE,FALSE,nullptr);
 
   /// For Testing....
   ///pChat->RequestServerList(1000,262364,"register","regpas98",15);

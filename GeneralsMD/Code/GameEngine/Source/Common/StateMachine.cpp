@@ -311,7 +311,7 @@ Bool StateMachine::getWantsDebugOutput() const
 	}
 
 #ifdef DEBUG_OBJECT_ID_EXISTS
-	if (TheObjectIDToDebug != 0 && getOwner() != NULL && getOwner()->getID() == TheObjectIDToDebug)
+	if (TheObjectIDToDebug != 0 && getOwner() != nullptr && getOwner()->getID() == TheObjectIDToDebug)
 	{
 		return true;
 	}

@@ -23,12 +23,12 @@ MonoD::MonoD(void)
 {
 #ifdef _WIN32
   unsigned long retval;
-  handle = CreateFile("\\\\.\\MONO", GENERIC_READ|GENERIC_WRITE, 0, NULL,
+  handle = CreateFile("\\\\.\\MONO", GENERIC_READ|GENERIC_WRITE, 0, nullptr,
                         OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 
   if (handle != INVALID_HANDLE_VALUE)
   {
-    DeviceIoControl(handle, (DWORD)IOCTL_MONO_CLEAR_SCREEN, NULL, 0, NULL, 0,
+    DeviceIoControl(handle, (DWORD)IOCTL_MONO_CLEAR_SCREEN, nullptr, 0, nullptr, 0,
                      &retval,0);
   }
 #endif
@@ -38,7 +38,7 @@ MonoD::~MonoD()
 {
   #ifdef _WIN32
     CloseHandle(handle);
-    handle=NULL;
+    handle = nullptr;
   #endif
 }
 

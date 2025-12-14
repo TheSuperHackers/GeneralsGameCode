@@ -106,7 +106,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	while (argc < 20 && token != nullptr)
 	{
 		argv[argc++] = strtrim(token);
-		token = strtok(NULL, " ");
+		token = strtok(nullptr, " ");
 	}
 
 	int build = 0;
@@ -136,7 +136,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 						// Looking for '#define VERSION "x.y.z"'
 						ptr = strtok(stringPtr, " ");	// The VERSION
-						ptr = strtok(NULL, "\n");			// The remainder
+						ptr = strtok(nullptr, "\n");			// The remainder
 
 						if (*ptr == '\"')
 						{

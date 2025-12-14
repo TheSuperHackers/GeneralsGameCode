@@ -1485,7 +1485,7 @@ Bool AIUpdateInterface::processCollision(PhysicsBehavior *physics, Object *other
 				}
 #define dont_MOVE_AROUND // It just causes more problems than it fixes. jba.
 #ifdef MOVE_AROUND
-				if (m_curLocomotor!=NULL && (other->isKindOf(KINDOF_INFANTRY)==getObject()->isKindOf(KINDOF_INFANTRY))) {
+				if (m_curLocomotor!= nullptr && (other->isKindOf(KINDOF_INFANTRY)==getObject()->isKindOf(KINDOF_INFANTRY))) {
 					Real myMaxSpeed = m_curLocomotor->getMaxSpeedForCondition(getObject()->getBodyModule()->getDamageState());
 					Locomotor *hisLoco = aiOther->getCurLocomotor();
 					if (hisLoco) {
@@ -4651,7 +4651,7 @@ DEBUG_LOG(("GNMT frame %d: %s %08lx (con %s %08lx) uses range %f, flags %08lx, %
 	container,
 	rangeToFindWithin,
 	flags,
-	getAttackInfo() != NULL && getAttackInfo() != TheScriptEngine->getDefaultAttackInfo() ? "ATTACKINFO," : "",
+	getAttackInfo() != nullptr && getAttackInfo() != TheScriptEngine->getDefaultAttackInfo() ? "ATTACKINFO," : "",
 	newVictim ? newVictim->getTemplate()->getName().str() : "",
 	newVictim
 ));

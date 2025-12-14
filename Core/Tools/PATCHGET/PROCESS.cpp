@@ -45,7 +45,7 @@ bit8 Create_Process(Process &process)
     strcpy(cmdargs,process.command);
     strcat(cmdargs,process.args);
 
-    retval=CreateProcess(NULL,cmdargs,nullptr,NULL,FALSE, 0  ,nullptr, NULL/*process.directory*/,&si,&piProcess);
+    retval=CreateProcess(nullptr,cmdargs,nullptr,nullptr,FALSE, 0  ,nullptr, nullptr/*process.directory*/,&si,&piProcess);
 
     process.hProcess=piProcess.hProcess;
     process.hThread=piProcess.hThread;

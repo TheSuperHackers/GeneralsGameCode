@@ -77,7 +77,7 @@ private:
 public:
 	GeneralPersona( void ) :
 		m_imageBioPortraitSmall(nullptr),
-		m_imageBioPortraitLarge(NULL)
+		m_imageBioPortraitLarge()
 	{
 	}
 //	~GeneralPersona( void );

@@ -50,7 +50,7 @@ void DirectInputMouse::openMouse( void )
 													 DIRECTINPUT_VERSION,
 													 IID_IDirectInput8,
 													 (void **)&m_pDirectInput,
-													 NULL );
+													 nullptr );
 	if( FAILED( hr ) )
 	{
 
@@ -62,9 +62,7 @@ void DirectInputMouse::openMouse( void )
 	}
 
 	// create a device for the system mouse
-	hr = m_pDirectInput->CreateDevice( GUID_SysMouse,
-																		 &m_pMouseDevice,
-																		 NULL );
+	hr = m_pDirectInput->CreateDevice( GUID_SysMouse, &m_pMouseDevice, nullptr );
 	if( FAILED( hr ) )
 	{
 
@@ -474,15 +472,15 @@ void DirectInputMouse::setCursor( MouseCursor cursor )
 
 		case NORMAL:
 		case ARROW:
-			SetCursor( LoadCursor( NULL, IDC_ARROW ) );
+			SetCursor( LoadCursor( nullptr, IDC_ARROW ) );
 			break;
 
 		case SCROLL:
-			SetCursor( LoadCursor( NULL, IDC_SIZEALL ) );
+			SetCursor( LoadCursor( nullptr, IDC_SIZEALL ) );
 			break;
 
 		case CROSS:
-			SetCursor( LoadCursor( NULL, IDC_CROSS ) );
+			SetCursor( LoadCursor( nullptr, IDC_CROSS ) );
 			break;
 
 	}

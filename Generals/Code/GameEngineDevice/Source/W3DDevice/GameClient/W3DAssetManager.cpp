@@ -673,7 +673,7 @@ __int64 Total_Create_Render_Obj_Time=0;
 #endif
 //---------------------------------------------------------------------
 /** Generals specific code to generate customized render objects for each team color
-	Scale==1.0, color==0x00000000, and oldTexure==NULL are defaults that do nothing.
+	Scale==1.0, color==0x00000000, and oldTexure== nullptr are defaults that do nothing.
 */
 RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	const char * name,

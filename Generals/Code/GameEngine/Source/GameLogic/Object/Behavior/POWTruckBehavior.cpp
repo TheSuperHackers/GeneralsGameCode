@@ -98,7 +98,7 @@ void POWTruckBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 
 	// if other isn't slated to be picked up by us, ignore
 	AIUpdateInterface *otherAi = other->getAIUpdateInterface();
-	if( otherAi == NULL || otherAi->isSurrendered() == FALSE )
+	if( otherAi == nullptr || otherAi->isSurrendered() == FALSE )
 		return;
 
 	// get our AI info

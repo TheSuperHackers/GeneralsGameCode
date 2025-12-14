@@ -49,7 +49,7 @@
 
 /* And increase stream buffer */
 /*
- setvbuf(f, NULL, _IOFBF, FILE_BUFFER_SIZE);
+ setvbuf(f, nullptr, _IOFBF, FILE_BUFFER_SIZE);
 */
 
 #define __NOINLINE__ 1

@@ -133,7 +133,7 @@ int LZOStraw::Get(void * destbuf, int slen)
 	/*
 	**	Verify parameters for legality.
 	*/
-	if (destbuf == NULL || slen < 1) {
+	if (destbuf == nullptr || slen < 1) {
 		return(0);
 	}
 

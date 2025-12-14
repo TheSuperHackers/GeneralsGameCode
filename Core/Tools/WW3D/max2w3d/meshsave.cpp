@@ -255,7 +255,7 @@ MeshSaveClass::MeshSaveClass
 	HTree(htree),
 	UserText(nullptr),
 	VertInfluences(nullptr),
-	MaterialRemapTable(NULL)
+	MaterialRemapTable(nullptr)
 {
 	Mesh			mesh = *input_mesh;		// copy the mesh so we can modify it
 	Mtl *		   nodemtl = inode->GetMtl();
@@ -795,7 +795,7 @@ void MeshSaveClass::get_skin_modifier_objects(SkinDataClass ** skin_data_ptr,Ski
 		ReferenceTarget *refTarg = MaxINode->GetReference(i);
 
 		// if the reference is a WSM Derived Object.
-		if (refTarg != NULL && refTarg->ClassID() == Class_ID(WSM_DERIVOB_CLASS_ID,0)) {
+		if (refTarg != nullptr && refTarg->ClassID() == Class_ID(WSM_DERIVOB_CLASS_ID,0)) {
 
 			IDerivedObject * wsm_der_obj = (IDerivedObject *)refTarg;
 

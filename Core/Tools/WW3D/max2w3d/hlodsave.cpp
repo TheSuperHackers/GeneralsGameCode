@@ -100,7 +100,7 @@ struct W3dHLodSubObjectStruct
 HLodSaveClass::HLodSaveClass (MeshConnectionsClass **connections, int lod_count, TimeValue CurTime,
 										char *name, const char *htree_name, Progress_Meter_Class &meter,
 										INodeListClass *origin_list)
-:	lod_array(NULL)
+:	lod_array()
 {
 	/*
 	** Fill in the W3dHLodHeaderStruct

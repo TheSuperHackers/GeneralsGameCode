@@ -350,7 +350,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be NULL") return;
   #define DLOG_GROUP(group,what)  ((void)0)
   #define DLOG_GROUP_DESCR(g,d)
   #define DCRASH(msg)             ((void)0)
-  #define DCRASH_RELEASE(msg)     (Debug::SkipNext(),(Debug::CrashBegin(NULL,0) << msg).CrashDone(true))
+  #define DCRASH_RELEASE(msg)     (Debug::SkipNext(),(Debug::CrashBegin(nullptr,0) << msg).CrashDone(true))
   #define DFAIL()                 ((void)0)
   #define D_ISLOG()               false
   #define D_ISLOG_GROUP(group)    false

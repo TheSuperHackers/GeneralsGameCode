@@ -71,7 +71,7 @@ GenLodExtensionDialogClass::GenLodExtensionDialogClass(Interface * maxinterface)
 	Hwnd(nullptr),
 	Options(nullptr),
 	MaxInterface(maxinterface),
-	LodIndexSpin(NULL)
+	LodIndexSpin()
 {
 }
 

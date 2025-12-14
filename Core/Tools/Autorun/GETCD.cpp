@@ -185,10 +185,10 @@ int	GetCDClass::Get_CD_Drive_For_This_Volume ( const char *volume_label )
 				(char const *)buffer,
 				&volume_name[0],
 				(unsigned long)sizeof(volume_name)-1,
-				(unsigned long *)NULL,
+				(unsigned long *)nullptr,
 				(unsigned long *)&filename_length,
 				(unsigned long *)&misc_dword,
-				(char *)NULL,
+				(char *)nullptr,
 				(unsigned long)0 )) {
 
 			//---------------------------------------------------------------------
@@ -271,7 +271,7 @@ const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *v
 	unsigned		filename_length;
 	static char		volume_label[ MAX_PATH ] = "";	// [OYO] add static
 
-	if ( path == NULL || volume_name == nullptr ) {
+	if ( path == nullptr || volume_name == nullptr ) {
 		return( nullptr );
 	}
 
@@ -297,7 +297,7 @@ const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *v
 		    FORMAT_MESSAGE_ALLOCATE_BUFFER |
 		    FORMAT_MESSAGE_FROM_SYSTEM |
 		    FORMAT_MESSAGE_IGNORE_INSERTS,
-		    NULL,
+		    nullptr,
 		    GetLastError(),
 		    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 		    (LPTSTR) &lpMsgBuf,
@@ -362,10 +362,10 @@ bool CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_
 				(char const *)buffer,
 				&volume_name[0],
 				(unsigned long)sizeof(volume_name)-1,
-				(unsigned long *)NULL,
+				(unsigned long *)nullptr,
 				(unsigned long *)&filename_length,
 				(unsigned long *)&misc_dword,
-				(char *)NULL,
+				(char *)nullptr,
 				(unsigned long)0 )) {
 
 			/******************************************************************

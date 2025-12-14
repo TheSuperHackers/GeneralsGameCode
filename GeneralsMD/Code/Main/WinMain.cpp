@@ -699,7 +699,7 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 
   WNDCLASS wndClass = { CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, WndProc, 0, 0, hInstance,
                        LoadIcon (hInstance, MAKEINTRESOURCE(IDI_ApplicationIcon)),
-                       nullptr/*LoadCursor(NULL, IDC_ARROW)*/,
+                       nullptr/*LoadCursor(nullptr, IDC_ARROW)*/,
                        (HBRUSH)GetStockObject(BLACK_BRUSH), nullptr,
 	                     TEXT("Game Window") };
   RegisterClass( &wndClass );

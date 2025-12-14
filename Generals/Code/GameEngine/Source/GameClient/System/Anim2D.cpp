@@ -826,7 +826,7 @@ void Anim2DCollection::registerAnimation( Anim2D *anim )
 		return;
 
 	// sanity
-	DEBUG_ASSERTCRASH( anim->m_collectionSystemNext == NULL &&
+	DEBUG_ASSERTCRASH( anim->m_collectionSystemNext == nullptr &&
 										 anim->m_collectionSystemPrev == nullptr,
 										 ("Registering animation instance, instance '%s' is already in a system",
 										 anim->getAnimTemplate()->getName().str()) );

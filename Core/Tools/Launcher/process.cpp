@@ -44,7 +44,7 @@ bit8 Create_Process(Process &process)
 
     DBGMSG("PROCESS CMD="<<cmdargs<<"  DIR="<<process.directory);
 
-    retval=CreateProcess(NULL,cmdargs,nullptr,NULL,FALSE, 0  ,nullptr, NULL/*process.directory*/,&si,&piProcess);
+    retval=CreateProcess(nullptr,cmdargs,nullptr,nullptr,FALSE, 0  ,nullptr, nullptr/*process.directory*/,&si,&piProcess);
 
     DBGMSG("("<<retval<<") New process:  HANDLE " << (void *)piProcess.hProcess << "   ID "
       << (DWORD)piProcess.dwProcessId);

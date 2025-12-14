@@ -163,7 +163,7 @@ bool IGROptionsClass::Set_Options( IGROptionsType options )
 
 		// If not, make the WOLAPI key
 		if( RegCreateKeyEx( HKEY_LOCAL_MACHINE, key, 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS,
-			NULL, &handle, (unsigned long *)&disp ) != ERROR_SUCCESS )
+			nullptr, &handle, (unsigned long *)&disp ) != ERROR_SUCCESS )
 			return false;
 	}
 

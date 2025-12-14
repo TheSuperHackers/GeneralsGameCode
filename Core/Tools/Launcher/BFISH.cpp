@@ -82,7 +82,7 @@ typedef union {
 BlowfishEngine::~BlowfishEngine(void)
 {
 	if (IsKeyed) {
-		Submit_Key(NULL, 0);
+		Submit_Key(, 0);
 	}
 }
 

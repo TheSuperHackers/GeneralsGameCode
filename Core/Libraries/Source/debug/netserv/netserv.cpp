@@ -289,7 +289,7 @@ int CALLBACK WinMain(HINSTANCE,HINSTANCE,LPSTR,int)
     {
       char msg[200];
       wsprintf(msg,"Can't create named pipe (Code %i).",GetLastError());
-      MessageBox(NULL,msg,"Error",MB_OK);
+      MessageBox(nullptr,msg,"Error",MB_OK);
       return 1;
     }
 

@@ -9592,7 +9592,7 @@ static void _initVTune()
 	{
 		VTPause = (VTProc)::GetProcAddress(st_vTuneDLL, "VTPause");
 		VTResume = (VTProc)::GetProcAddress(st_vTuneDLL, "VTResume");
-		DEBUG_ASSERTCRASH(VTPause != NULL && VTResume != nullptr, ("VTuneAPI procs not found!"));
+		DEBUG_ASSERTCRASH(VTPause != nullptr && VTResume != nullptr, ("VTuneAPI procs not found!"));
 	}
 	else
 	{

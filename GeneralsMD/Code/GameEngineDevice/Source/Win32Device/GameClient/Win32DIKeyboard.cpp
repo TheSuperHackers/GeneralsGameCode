@@ -407,7 +407,7 @@ void DirectInputKeyboard::update( void )
 		DWORD items = INFINITE;
 
 		m_pKeyboardDevice->GetDeviceData( sizeof( DIDEVICEOBJECTDATA ),
-																			NULL, &items, 0 );
+																			nullptr, &items, 0 );
 
 	}
 */
