@@ -4923,7 +4923,7 @@ void ScriptActions::doMoveUnitTowardsNearest( const AsciiString& unitName, const
 		return;
 	}
 
-	const ThingTemplate *templ = TheThingFactory->findTemplate(objectType);
+	const ThingTemplate *templ = TheThingFactory->findTemplate(objectType, FALSE);
 	if (!templ) {
 		return;
 	}
@@ -4958,7 +4958,7 @@ void ScriptActions::doMoveTeamTowardsNearest( const AsciiString& teamName, const
 		return;
 	}
 
-	const ThingTemplate *templ = TheThingFactory->findTemplate(objectType);
+	const ThingTemplate *templ = TheThingFactory->findTemplate(objectType, FALSE);
 	if (!templ) {
 		return;
 	}
@@ -5447,7 +5447,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 		return;
 	}
 
-	const ThingTemplate *thingTemplate = TheThingFactory->findTemplate(objectType);
+	const ThingTemplate *thingTemplate = TheThingFactory->findTemplate(objectType, FALSE);
 	if (!thingTemplate) {
 		return;
 	}

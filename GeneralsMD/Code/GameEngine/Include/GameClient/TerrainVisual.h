@@ -47,8 +47,6 @@ struct SeismicSimulationNode;
 class SeismicSimulationFilterBase;
 
 
-
-
 #define DEFAULT_SEISMIC_SIMULATION_MAGNITUDE (20.0f)
 struct SeismicSimulationNode; // just a forward declaration folks, no cause for alarm
 class SeismicSimulationFilterBase
@@ -64,10 +62,6 @@ public:
   virtual SeismicSimStatusCode filterCallback( WorldHeightMapInterfaceClass *heightMap, const SeismicSimulationNode *node ) = 0;
   virtual Real applyGravityCallback( Real velocityIn ) = 0;
 };
-
-
-
-
 
 struct SeismicSimulationNode
 {
@@ -157,11 +151,6 @@ class DomeStyleSeismicFilter : public SeismicSimulationFilterBase
   virtual SeismicSimStatusCode filterCallback( WorldHeightMapInterfaceClass *heightMap, const SeismicSimulationNode *node );
   virtual Real applyGravityCallback( Real velocityIn );
 };
-
-
-
-
-
 
 
 //-------------------------------------------------------------------------------------------------
@@ -301,7 +290,6 @@ public:
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////
-
 
 
 	/// Replace the skybox texture

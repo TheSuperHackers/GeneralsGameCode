@@ -3080,6 +3080,32 @@ CellShroudStatus PartitionManager::getShroudStatusForPlayer(Int playerIndex, con
 }
 
 
+//-----------------------------------------------------------------------------
+ObjectShroudStatus PartitionManager::getPropShroudStatusForPlayer(Int playerIndex, const Coord3D *loc ) const
+{
+	Int x, y;
+
+	ThePartitionManager->worldToCell( loc->x - m_cellSize*0.5f, loc->y - m_cellSize*0.5f, &x, &y );
+
+	CellShroudStatus cellStat = getShroudStatusForPlayer( playerIndex, x, y );
+	if (cellStat != getShroudStatusForPlayer( playerIndex, x+1, y )) {
+		return OBJECTSHROUD_PARTIAL_CLEAR;
+	}
+	if (cellStat != getShroudStatusForPlayer( playerIndex, x+1, y+1 )) {
+		return OBJECTSHROUD_PARTIAL_CLEAR;
+	}
+	if (cellStat != getShroudStatusForPlayer( playerIndex, x, y+1 )) {
+		return OBJECTSHROUD_PARTIAL_CLEAR;
+	}
+	if (cellStat == CELLSHROUD_SHROUDED) {
+		return OBJECTSHROUD_SHROUDED;
+	}
+	if (cellStat == CELLSHROUD_CLEAR) {
+		return OBJECTSHROUD_CLEAR;
+	}
+	return OBJECTSHROUD_FOGGED;
+}
+
 
 
 #ifdef FASTER_GCO

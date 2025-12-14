@@ -127,6 +127,7 @@ static const BlockParse theTypeTable[] =
 	{ "Video",							INI::parseVideoDefinition },
 	{ "WaterSet",						INI::parseWaterSettingDefinition },
 	{ "WaterTransparency",	INI::parseWaterTransparencyDefinition},
+	{ "Weather",	INI::parseWeatherDefinition},
 	{ "Weapon",							INI::parseWeaponTemplateDefinition },
 	{ "WebpageURL",					INI::parseWebpageURLDefinition },
 	{ "HeaderTemplate",			INI::parseHeaderTemplateDefinition },

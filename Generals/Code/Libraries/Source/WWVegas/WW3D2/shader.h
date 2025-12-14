@@ -166,12 +166,12 @@ public:
 
  	enum PriGradientType
  	{
- 		GRADIENT_DISABLE=0,  //	000	disable primary gradient (same as OpenGL 'decal' texture blend)
-		GRADIENT_MODULATE,   //	001	modulate fragment ARGB by gradient ARGB (default)
-		GRADIENT_ADD,        //	010	add gradient RGB to fragment RGB, copy gradient A to fragment A
-		GRADIENT_BUMPENVMAP,	// 011
-		GRADIENT_BUMPENVMAPLUMINANCE,	// 100
-		GRADIENT_DOTPRODUCT3,	// 101
+ 		GRADIENT_DISABLE=0,				//	000	disable primary gradient (same as OpenGL 'decal' texture blend)
+		GRADIENT_MODULATE,				//	001	modulate fragment ARGB by gradient ARGB (default)
+		GRADIENT_ADD,						//	010	add gradient RGB to fragment RGB, copy gradient A to fragment A
+		GRADIENT_BUMPENVMAP,				// 011	environment-mapped bump mapping
+		GRADIENT_BUMPENVMAPLUMINANCE,	// 100	environment-mapped bump mapping with luminance control
+		GRADIENT_MODULATE2X,				// 101	modulate fragment ARGB by gradient ARGB and multiply RGB by 2
  	};
 
 	enum SecGradientType

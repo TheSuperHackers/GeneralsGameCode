@@ -130,11 +130,6 @@ void TerrainVisual::loadPostProcess( void )
 }
 
 
-
-
-
-
-
 SeismicSimulationFilterBase::SeismicSimStatusCode DomeStyleSeismicFilter::filterCallback( WorldHeightMapInterfaceClass *heightMap, const SeismicSimulationNode *node )
 {
 

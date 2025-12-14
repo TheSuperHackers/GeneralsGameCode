@@ -169,16 +169,6 @@ W3DTerrainVisual::W3DTerrainVisual()
   m_clientHeightMap = NULL;
 #endif
 
-
-
-
-
-
-
-
-
-
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -344,7 +334,6 @@ void W3DTerrainVisual::update( void )
 	if( m_waterRenderObject )
 		m_waterRenderObject->update();
 
-
 }
 
 
@@ -447,10 +436,6 @@ void W3DTerrainVisual::handleSeismicSimulations( void )
 
 	  }
   }
-
-
-
-
 
 }
 
@@ -573,9 +558,6 @@ Bool W3DTerrainVisual::load( AsciiString filename )
   REF_PTR_RELEASE( m_logicHeightMap );
 	m_logicHeightMap = NEW WorldHeightMap(pStrm);
 
-
-
-
 #ifdef DO_SEISMIC_SIMULATIONS
 
   fileStrm.close();
@@ -586,13 +568,6 @@ Bool W3DTerrainVisual::load( AsciiString filename )
   m_clientHeightMap = NEW WorldHeightMap( pStrm );
 
 #endif
-
-
-
-
-
-
-
 
 	// Add any lights loaded by map.
 	MapObject *pMapObj = MapObject::getFirstMapObject();
@@ -656,7 +631,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 	if (W3DDisplay::m_3DScene != NULL)
 	{
 		W3DDebugIcons *icons = NEW W3DDebugIcons;
- 		W3DDisplay::m_3DScene->Add_Render_Object( icons );
+		W3DDisplay::m_3DScene->Add_Render_Object( icons );
 		icons->Release_Ref(); // belongs to scene.
 	}
 #endif
@@ -770,7 +745,6 @@ TerrainType *W3DTerrainVisual::getTerrainTile( Real x, Real y )
 {
 	TerrainType *tile = NULL;
 
-
 #ifdef DO_SEISMIC_SIMULATIONS
 	if( m_clientHeightMap )
 	{
@@ -785,11 +759,7 @@ TerrainType *W3DTerrainVisual::getTerrainTile( Real x, Real y )
 	}
 #endif
 
-
-
-
 	return tile;
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1175,14 +1145,18 @@ void W3DTerrainVisual::crc( Xfer *xfer )
 	* Version Info:
 	* 1: Initial version
 	* 2: Add height map heights.
-	* 3: Add client side trees & props. jba.
+	* 3: Add client side trees & props. jba. (Added for Zero Hour)
 */
 // ------------------------------------------------------------------------------------------------
 void W3DTerrainVisual::xfer( Xfer *xfer )
 {
 
 	// version
+#if RTS_GENERALS && RETAIL_COMPATIBLE_XFER_SAVE
+	XferVersion currentVersion = 2;
+#else
 	XferVersion currentVersion = 3;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -1258,8 +1232,6 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
 		xfer->xferSnapshot(m_terrainRenderObject);
 	}
 
-
-
          // XFER //
          // X  R //
          // X  R //
@@ -1273,10 +1245,6 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
          // X  R //
          // X  R //
          // XFER //
-
-
-
-
 
 }
 

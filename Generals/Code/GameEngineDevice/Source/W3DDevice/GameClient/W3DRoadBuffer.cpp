@@ -3177,6 +3177,7 @@ void W3DRoadBuffer::loadRoads()
 	insertCurveSegments();
 	insertCrossTypeJoins();
 	preloadRoadsInVertexAndIndexBuffers();
+	m_updateBuffers = true;
 	//ticks = ::GetTickCount() - ticks;
 	//char buf[256];
 	//sprintf(buf, "%d road segs, %d milisec.\n", m_numRoads, ticks);
@@ -3195,6 +3196,16 @@ void W3DRoadBuffer::updateLighting(void)
 	for (curRoad=0; curRoad<m_numRoads; curRoad++) {
 		m_roads[curRoad].updateSegLighting();
 	}
+}
+
+//=============================================================================
+// W3DRoadBuffer::updateCenter
+//=============================================================================
+/** Sets the flag to reload the vertex buffer. */
+//=============================================================================
+void W3DRoadBuffer::updateCenter(void)
+{
+	m_updateBuffers = true;
 }
 
 //=============================================================================

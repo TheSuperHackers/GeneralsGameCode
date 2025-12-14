@@ -580,9 +580,6 @@ void WorldHeightMap::clearFlipStates(void) {
 	}
 }
 
-
-
-
 //////////////////////////////////////////////////////////////////////////////m_SeismicUpdateFlag
 Bool WorldHeightMap::getSeismicUpdateFlag(Int xIndex, Int yIndex) const
 {
@@ -697,21 +694,6 @@ Real WorldHeightMap::getBilinearSampleSeismicZVelocity( Int x, Int y)
   return collector;
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /** Get whether the cell is a cliff cell (impassable to ground vehicles).
 */

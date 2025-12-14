@@ -1161,8 +1161,10 @@ void W3DDisplay::gatherDebugStats( void )
 		s_sortedPolysSinceLastUpdate = 0;
 
 		// terrain stats
-		unibuffer.format( L"3-Way Blends: %d, Shoreline Blends: %d", TheTerrainRenderObject->getNumExtraBlendTiles(),
-			TheTerrainRenderObject->getNumShoreLineTiles());
+		unibuffer.format( L"3-Way Blends: %d/%d, Shoreline Blends: %d/%d", TheTerrainRenderObject->getNumExtraBlendTiles(TRUE),
+			TheTerrainRenderObject->getNumExtraBlendTiles(FALSE),
+			TheTerrainRenderObject->getNumShoreLineTiles(TRUE),
+			TheTerrainRenderObject->getNumShoreLineTiles(FALSE));
 		m_displayStrings[TerrainStats]->setText( unibuffer );
 
 		// misc debug info

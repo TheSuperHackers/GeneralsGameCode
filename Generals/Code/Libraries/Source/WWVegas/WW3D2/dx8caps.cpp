@@ -535,6 +535,7 @@ void DX8Caps::Compute_Caps(WW3DFormat display_format, const D3DADAPTER_IDENTIFIE
 	}
 
 	supportGamma=((swVPCaps.Caps2&D3DCAPS2_FULLSCREENGAMMA)==D3DCAPS2_FULLSCREENGAMMA);
+	SupportPointSprites = (caps.MaxPointSize > 1.0f);
 
 	MaxTexturesPerPass=MAX_TEXTURE_STAGES;
 

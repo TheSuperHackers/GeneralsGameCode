@@ -6,9 +6,9 @@ set(GAMEENGINEDEVICE_SRC
 #    Include/W3DDevice/Common/W3DModuleFactory.h
     Include/W3DDevice/Common/W3DRadar.h
 #    Include/W3DDevice/Common/W3DThingFactory.h
-#    Include/W3DDevice/GameClient/BaseHeightMap.h
+    Include/W3DDevice/GameClient/BaseHeightMap.h
 #    Include/W3DDevice/GameClient/camerashakesystem.h
-#    Include/W3DDevice/GameClient/FlatHeightMap.h
+    Include/W3DDevice/GameClient/FlatHeightMap.h
 #    Include/W3DDevice/GameClient/HeightMap.h
 #    Include/W3DDevice/GameClient/Module/W3DDebrisDraw.h
 #    Include/W3DDevice/GameClient/Module/W3DDefaultDraw.h
@@ -20,14 +20,14 @@ set(GAMEENGINEDEVICE_SRC
 #    Include/W3DDevice/GameClient/Module/W3DOverlordTruckDraw.h
 #    Include/W3DDevice/GameClient/Module/W3DPoliceCarDraw.h
 #    Include/W3DDevice/GameClient/Module/W3DProjectileStreamDraw.h
-#    Include/W3DDevice/GameClient/Module/W3DPropDraw.h
+    Include/W3DDevice/GameClient/Module/W3DPropDraw.h
 #    Include/W3DDevice/GameClient/Module/W3DRopeDraw.h
 #    Include/W3DDevice/GameClient/Module/W3DScienceModelDraw.h
 #    Include/W3DDevice/GameClient/Module/W3DSupplyDraw.h
 #    Include/W3DDevice/GameClient/Module/W3DTankDraw.h
 #    Include/W3DDevice/GameClient/Module/W3DTankTruckDraw.h
 #    Include/W3DDevice/GameClient/Module/W3DTracerDraw.h
-#    Include/W3DDevice/GameClient/Module/W3DTreeDraw.h
+    Include/W3DDevice/GameClient/Module/W3DTreeDraw.h
 #    Include/W3DDevice/GameClient/Module/W3DTruckDraw.h
 #    Include/W3DDevice/GameClient/TerrainTex.h
 #    Include/W3DDevice/GameClient/TileData.h
@@ -57,16 +57,16 @@ set(GAMEENGINEDEVICE_SRC
 #    Include/W3DDevice/GameClient/W3DParticleSys.h
 #    Include/W3DDevice/GameClient/W3DPoly.h
 #    Include/W3DDevice/GameClient/W3DProjectedShadow.h
-#    Include/W3DDevice/GameClient/W3DPropBuffer.h
+    Include/W3DDevice/GameClient/W3DPropBuffer.h
 #    Include/W3DDevice/GameClient/W3DRoadBuffer.h
 #    Include/W3DDevice/GameClient/W3DScene.h
     Include/W3DDevice/GameClient/W3DShaderManager.h
 #    Include/W3DDevice/GameClient/W3DShadow.h
 #    Include/W3DDevice/GameClient/W3DShroud.h
     Include/W3DDevice/GameClient/W3DSmudge.h
-#    Include/W3DDevice/GameClient/W3DSnow.h
+    Include/W3DDevice/GameClient/W3DSnow.h
 #    Include/W3DDevice/GameClient/W3DStatusCircle.h
-#    Include/W3DDevice/GameClient/W3DTerrainBackground.h
+    Include/W3DDevice/GameClient/W3DTerrainBackground.h
 #    Include/W3DDevice/GameClient/W3DTerrainTracks.h
 #    Include/W3DDevice/GameClient/W3DTerrainVisual.h
 #    Include/W3DDevice/GameClient/W3DTreeBuffer.h
@@ -97,7 +97,7 @@ set(GAMEENGINEDEVICE_SRC
 #    Source/W3DDevice/Common/Thing/W3DModuleFactory.cpp
 #    Source/W3DDevice/Common/Thing/W3DThingFactory.cpp
 #    Source/W3DDevice/Common/W3DConvert.cpp
-#    Source/W3DDevice/GameClient/BaseHeightMap.cpp
+    Source/W3DDevice/GameClient/BaseHeightMap.cpp
     Source/W3DDevice/GameClient/CameraShakeSystem.cpp
 #    Source/W3DDevice/GameClient/Drawable/Draw/W3DDebrisDraw.cpp
 #    Source/W3DDevice/GameClient/Drawable/Draw/W3DDefaultDraw.cpp
@@ -109,16 +109,16 @@ set(GAMEENGINEDEVICE_SRC
 #    Source/W3DDevice/GameClient/Drawable/Draw/W3DOverlordTruckDraw.cpp
 #    Source/W3DDevice/GameClient/Drawable/Draw/W3DPoliceCarDraw.cpp
 #    Source/W3DDevice/GameClient/Drawable/Draw/W3DProjectileStreamDraw.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DPropDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DPropDraw.cpp
 #    Source/W3DDevice/GameClient/Drawable/Draw/W3DRopeDraw.cpp
 #    Source/W3DDevice/GameClient/Drawable/Draw/W3DScienceModelDraw.cpp
 #    Source/W3DDevice/GameClient/Drawable/Draw/W3DSupplyDraw.cpp
 #    Source/W3DDevice/GameClient/Drawable/Draw/W3DTankDraw.cpp
 #    Source/W3DDevice/GameClient/Drawable/Draw/W3DTankTruckDraw.cpp
 #    Source/W3DDevice/GameClient/Drawable/Draw/W3DTracerDraw.cpp
-#    Source/W3DDevice/GameClient/Drawable/Draw/W3DTreeDraw.cpp
+    Source/W3DDevice/GameClient/Drawable/Draw/W3DTreeDraw.cpp
 #    Source/W3DDevice/GameClient/Drawable/Draw/W3DTruckDraw.cpp
-#    Source/W3DDevice/GameClient/FlatHeightMap.cpp
+    Source/W3DDevice/GameClient/FlatHeightMap.cpp
 #    Source/W3DDevice/GameClient/GUI/Gadget/W3DCheckBox.cpp
 #    Source/W3DDevice/GameClient/GUI/Gadget/W3DComboBox.cpp
 #    Source/W3DDevice/GameClient/GUI/Gadget/W3DHorizontalSlider.cpp
@@ -160,15 +160,15 @@ set(GAMEENGINEDEVICE_SRC
 #    Source/W3DDevice/GameClient/W3DMouse.cpp
 #    Source/W3DDevice/GameClient/W3DParticleSys.cpp
 #    Source/W3DDevice/GameClient/W3DPoly.cpp
-#    Source/W3DDevice/GameClient/W3DPropBuffer.cpp
+    Source/W3DDevice/GameClient/W3DPropBuffer.cpp
 #    Source/W3DDevice/GameClient/W3DRoadBuffer.cpp
 #    Source/W3DDevice/GameClient/W3DScene.cpp
     Source/W3DDevice/GameClient/W3DShaderManager.cpp
 #    Source/W3DDevice/GameClient/W3DShroud.cpp
     Source/W3DDevice/GameClient/W3DSmudge.cpp
-#    Source/W3DDevice/GameClient/W3DSnow.cpp
+    Source/W3DDevice/GameClient/W3DSnow.cpp
 #    Source/W3DDevice/GameClient/W3DStatusCircle.cpp
-#    Source/W3DDevice/GameClient/W3DTerrainBackground.cpp
+    Source/W3DDevice/GameClient/W3DTerrainBackground.cpp
 #    Source/W3DDevice/GameClient/W3DTerrainTracks.cpp
 #    Source/W3DDevice/GameClient/W3DTerrainVisual.cpp
 #    Source/W3DDevice/GameClient/W3DTreeBuffer.cpp

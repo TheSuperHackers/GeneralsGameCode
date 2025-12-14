@@ -31,6 +31,7 @@
 
 #include "Common/Terrain.h"
 #include "Common/Snapshot.h"
+#include "Common/MapObject.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class TerrainType;
@@ -38,6 +39,119 @@ class WaterHandle;
 class Matrix3D;
 class Object;
 class Drawable;
+class GeometryInfo;
+
+
+class WorldHeightMap;
+struct SeismicSimulationNode;
+class SeismicSimulationFilterBase;
+
+
+#define DEFAULT_SEISMIC_SIMULATION_MAGNITUDE (20.0f)
+struct SeismicSimulationNode; // just a forward declaration folks, no cause for alarm
+class SeismicSimulationFilterBase
+{
+public:
+  enum SeismicSimStatusCode CPP_11(: Int)
+  {
+    SEISMIC_STATUS_INVALID,
+    SEISMIC_STATUS_ACTIVE,
+    SEISMIC_STATUS_ZERO_ENERGY,
+  };
+
+  virtual SeismicSimStatusCode filterCallback( WorldHeightMapInterfaceClass *heightMap, const SeismicSimulationNode *node ) = 0;
+  virtual Real applyGravityCallback( Real velocityIn ) = 0;
+};
+
+struct SeismicSimulationNode
+{
+  SeismicSimulationNode()
+  {
+    m_center.x    = 0;
+    m_center.y    = 0;
+    m_radius      = 0;
+    m_region.lo.x = 0;
+    m_region.lo.y = 0;
+    m_region.hi.x = 0;
+    m_region.hi.y = 0;
+    m_clean = FALSE;
+    callbackFilter = NULL;
+    m_life = 0;
+    m_magnitude = DEFAULT_SEISMIC_SIMULATION_MAGNITUDE;
+
+  }
+  SeismicSimulationNode( const SeismicSimulationNode &ssn )
+  {
+    m_center.x    = ssn.m_center.x;
+    m_center.y    = ssn.m_center.y;
+    m_radius      = ssn.m_radius;
+    m_region.lo.x = ssn.m_region.lo.x;
+    m_region.lo.y = ssn.m_region.lo.y;
+    m_region.hi.x = ssn.m_region.hi.x;
+    m_region.hi.y = ssn.m_region.hi.y;
+    m_clean       = ssn.m_clean;
+    callbackFilter= ssn.callbackFilter;
+    m_life        = ssn.m_life;
+    m_magnitude   = ssn.m_magnitude;
+
+  }
+  SeismicSimulationNode( const Coord3D* ctr, Real rad, Real mag, SeismicSimulationFilterBase *cbf = NULL )
+  {
+    m_center.x    = REAL_TO_INT_FLOOR(ctr->x/MAP_XY_FACTOR);
+    m_center.y    = REAL_TO_INT_FLOOR(ctr->y/MAP_XY_FACTOR);
+    m_radius      = (rad-1)/MAP_XY_FACTOR;
+    UnsignedInt regionSize = rad/MAP_XY_FACTOR;
+    m_region.lo.x = m_center.x - regionSize;
+    m_region.lo.y = m_center.y - regionSize;
+    m_region.hi.x = m_center.x + regionSize;
+    m_region.hi.y = m_center.y + regionSize;
+    m_clean       = false;
+    callbackFilter= cbf;
+    m_life        = 0;
+    m_magnitude   = mag;
+
+  }
+
+  SeismicSimulationFilterBase::SeismicSimStatusCode handleFilterCallback( WorldHeightMapInterfaceClass *heightMap )
+  {
+    if ( callbackFilter == NULL )
+      return SeismicSimulationFilterBase::SEISMIC_STATUS_INVALID;
+
+    ++m_life;
+
+    return callbackFilter->filterCallback( heightMap, this );
+  }
+
+  Real applyGravity( Real velocityIn )
+  {
+    DEBUG_ASSERTCRASH( callbackFilter, ("SeismicSimulationNode::applyGravity() has no callback filter!") );
+
+    if ( callbackFilter == NULL )
+      return velocityIn;//oops, we have no callback!
+
+    return callbackFilter->applyGravityCallback( velocityIn );
+
+  }
+
+  IRegion2D   m_region;
+  ICoord2D    m_center;
+  Bool        m_clean;
+  Real        m_magnitude;
+  UnsignedInt m_radius;
+  UnsignedInt m_life;
+
+  SeismicSimulationFilterBase *callbackFilter;
+
+};
+typedef std::list<SeismicSimulationNode> SeismicSimulationList;
+typedef SeismicSimulationList::iterator SeismicSimulationListIt;
+
+class DomeStyleSeismicFilter : public SeismicSimulationFilterBase
+{
+  virtual SeismicSimStatusCode filterCallback( WorldHeightMapInterfaceClass *heightMap, const SeismicSimulationNode *node );
+  virtual Real applyGravityCallback( Real velocityIn );
+};
+
 
 //-------------------------------------------------------------------------------------------------
 /** LOD values for terrain, keep this in sync with TerrainLODNames[] */
@@ -149,11 +263,34 @@ public:
 	virtual void removeAllBibs(void)=0;
 	virtual void removeBibHighlighting(void)=0;
 
+	virtual void removeTreesAndPropsForConstruction(
+		const Coord3D* pos,
+		const GeometryInfo& geom,
+		Real angle
+	) = 0;
+
+	virtual void addProp(const ThingTemplate *tt, const Coord3D *pos, Real angle) = 0;
 
 	//
 	// Modify height.
 	//
 	virtual void setRawMapHeight(const ICoord2D *gridPos, Int height)=0;
+	virtual Int getRawMapHeight(const ICoord2D *gridPos)=0;
+
+
+  ////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////
+#ifdef DO_SEISMIC_SIMULATIONS
+  virtual void updateSeismicSimulations( void ) = 0; /// walk the SeismicSimulationList and, well, do it.
+  virtual void addSeismicSimulation( const SeismicSimulationNode& sim ) = 0;
+#endif
+  virtual WorldHeightMap* getLogicHeightMap( void ) {return NULL;};
+  virtual WorldHeightMap* getClientHeightMap( void ) {return NULL;};
+  ////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////
+
 
 	/// Replace the skybox texture
 	virtual void replaceSkyboxTextures(const AsciiString *oldTexName[NumSkyboxTextures], const AsciiString *newTexName[NumSkyboxTextures])=0;

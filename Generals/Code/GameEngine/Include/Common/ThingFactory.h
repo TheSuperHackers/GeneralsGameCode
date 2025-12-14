@@ -73,7 +73,7 @@ public:
 		get a template given template database name. return null if not found.
 		note, this is now substantially faster (does a hash-table lookup)
 	*/
-	const ThingTemplate *findTemplate( const AsciiString& name ) { return findTemplateInternal(name); }
+	const ThingTemplate *findTemplate( const AsciiString& name, Bool check = TRUE ) { return findTemplateInternal( name, check ); }
 
 	/**
 		get a template given ID. return null if not found.
@@ -120,7 +120,7 @@ private:
 		NOTE: this is protected since it returns a NON-CONST template, and
 		folks outside of the template system itself shouldn't get access...
 	*/
-	ThingTemplate *findTemplateInternal( const AsciiString& name );
+	ThingTemplate *findTemplateInternal( const AsciiString& name, Bool check = TRUE );
 
 	ThingTemplate					*m_firstTemplate;			///< head of linked list
 	UnsignedShort					m_nextTemplateID;			///< next available ID for templates

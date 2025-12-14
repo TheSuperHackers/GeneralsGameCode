@@ -218,6 +218,23 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/Water/wave.nvp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/Water/wave.nvp")
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/Water/wave.nvv", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/Water/wave.nvv")
 
+    #unify_move_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Snow.h", Game.CORE, "GameEngine/Include/GameClient/Snow.h")
+    #unify_move_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/Snow.cpp", Game.CORE, "GameEngine/Source/GameClient/Snow.cpp")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/BaseHeightMap.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/BaseHeightMap.h")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/FlatHeightMap.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/FlatHeightMap.h")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DPropBuffer.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DPropBuffer.h")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DSnow.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DSnow.h")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DTerrainBackground.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DTerrainBackground.h")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/Module/W3DPropDraw.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/Module/W3DPropDraw.h")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/Module/W3DTreeDraw.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/Module/W3DTreeDraw.h")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/BaseHeightMap.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/BaseHeightMap.cpp")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/FlatHeightMap.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/FlatHeightMap.cpp")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DPropBuffer.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DPropBuffer.cpp")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DSnow.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DSnow.cpp")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DTerrainBackground.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DTerrainBackground.cpp")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DPropDraw.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DPropDraw.cpp")
+    #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DTreeDraw.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DTreeDraw.cpp")
+
     return
 
 

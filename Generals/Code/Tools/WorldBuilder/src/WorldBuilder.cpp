@@ -413,6 +413,8 @@ BOOL CWorldBuilderApp::InitInstance()
 	TheWritableGlobalData->m_shroudOn = FALSE;
 #endif
 
+	TheWritableGlobalData->m_isWorldBuilder = TRUE;
+
 	// Change the registry key under which our settings are stored.
 	// TODO: You should modify this string to be something appropriate
 	// such as the name of your company or organization.

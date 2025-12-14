@@ -35,7 +35,7 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Matrix3D;
 class WaterHandle;
-class HeightMapRenderObjClass;
+class BaseHeightMapRenderObjClass;
 class WorldHeightMap;
 
 //-------------------------------------------------------------------------------------------------
@@ -107,14 +107,42 @@ public:
 	virtual void removeAllBibs(void);
 	virtual void removeBibHighlighting(void);
 
+	virtual void addProp(const ThingTemplate *tt, const Coord3D *pos, Real angle);
+
+	virtual void removeTreesAndPropsForConstruction(
+		const Coord3D* pos,
+		const GeometryInfo& geom,
+		Real angle
+	);
+
+
 	//
 	// Modify height.
 	//
 	virtual void setRawMapHeight(const ICoord2D *gridPos, Int height);
+	virtual Int getRawMapHeight(const ICoord2D *gridPos);
 
 	/// Replace the skybox texture
 	virtual void replaceSkyboxTextures(const AsciiString *oldTexName[NumSkyboxTextures], const AsciiString *newTexName[NumSkyboxTextures]);
 
+  ////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////
+#ifdef DO_SEISMIC_SIMULATIONS
+  virtual void addSeismicSimulation( const SeismicSimulationNode& sim );
+#endif
+  WorldHeightMap* getLogicHeightMap( void ) {return m_logicHeightMap;};
+  WorldHeightMap* getClientHeightMap( void )
+  {
+#ifdef DO_SEISMIC_SIMULATIONS
+    return m_clientHeightMap;
+#else
+    return m_logicHeightMap;
+#endif
+  }
+  ////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////
 
 protected:
 
@@ -123,11 +151,31 @@ protected:
 	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess( void );
 
-	HeightMapRenderObjClass *m_terrainRenderObject;  ///< W3D render object for terrain
+#ifdef DO_SEISMIC_SIMULATIONS
+  ////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////
+  virtual void handleSeismicSimulations( void );
+  SeismicSimulationList m_seismicSimulationList;
+  virtual void updateSeismicSimulations( void ); /// walk the SeismicSimulationList and, well, do it.
+
+  ////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////
+#endif
+
+	BaseHeightMapRenderObjClass *m_terrainRenderObject;  ///< W3D render object for terrain
 	WaterRenderObjClass	*m_waterRenderObject;	///< W3D render object for water plane
-	WorldHeightMap *m_terrainHeightMap;  ///< height map used for render obj building
+
+  WorldHeightMap *m_logicHeightMap;  ///< height map used for render obj building
+
+#ifdef DO_SEISMIC_SIMULATIONS
+  WorldHeightMap *m_clientHeightMap; ///< this is a workspace for animating the terrain elevations
+#endif
+
 	Bool m_isWaterGridRenderingEnabled;
-	AsciiString	m_currentSkyboxTexNames[NumSkyboxTextures];	///<store current texture names applied to skybox.
+
+  AsciiString	m_currentSkyboxTexNames[NumSkyboxTextures];	///<store current texture names applied to skybox.
 	AsciiString m_initialSkyboxTexNames[NumSkyboxTextures];	///<store starting texture/default skybox textures.
 
 };

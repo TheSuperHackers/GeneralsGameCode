@@ -103,6 +103,7 @@ int TerrainTextureClass::update(WorldHeightMap *htMap)
 	DX8_ErrorCode(Peek_D3D_Texture()->GetSurfaceLevel(0, &surface_level));
 	DX8_ErrorCode(surface_level->GetDesc(&surface_desc));
 	if (surface_desc.Width < TEXTURE_WIDTH) {
+		surface_level->Release();
 		return 0;
 	}
 
@@ -944,7 +945,6 @@ void CloudMapTerrainTextureClass::Apply(unsigned int stage)
 
 	// Do the base apply.
 	TextureClass::Apply(stage);
-	return;
 #if 0   // obsolete
 	/* previous setup */
 	if (TheGlobalData && TheGlobalData->m_trilinearTerrainTex) {

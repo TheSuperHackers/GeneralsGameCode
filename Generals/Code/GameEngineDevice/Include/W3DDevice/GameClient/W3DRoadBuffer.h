@@ -190,7 +190,7 @@ class WorldHeightMap;
 //
 class W3DRoadBuffer
 {
-friend class HeightMapRenderObjClass;
+friend class BaseHeightMapRenderObjClass;
 public:
 
 	W3DRoadBuffer(void);
@@ -206,6 +206,8 @@ public:
 	void setMap(WorldHeightMap *pMap);
 	/// Updates the diffuse lighting in the buffers.
 	void updateLighting(void);
+	/// Notifies that the camera moved.
+	void updateCenter(void);
 
 protected:
 	RoadType *m_roadTypes;	///<Roads texture
@@ -228,6 +230,8 @@ protected:
 	Int m_maxRoadTypes;			///< Size of m_roadTypes.
 	Int			m_curNumRoadVertices; ///<Number of vertices used in current road type.
 	Int			m_curNumRoadIndices;	///<Number of indices used in current road type;
+
+	Bool m_updateBuffers; ///< If true, update the vertex buffers.
 
 	void addMapObjects(void);
 	void addMapObject(RoadSegment *pRoad, Bool updateTheCounts);
