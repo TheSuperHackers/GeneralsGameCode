@@ -748,6 +748,37 @@ void Keyboard::update( void )
 void Keyboard::resetKeys( void )
 {
 
+	memset( m_keys, 0, sizeof( m_keys ) );
+	memset( m_keyStatus, 0, sizeof( m_keyStatus ) );
+	m_modifiers = KEY_STATE_NONE;
+	if( getCapsState() )
+	{
+		m_modifiers |= KEY_STATE_CAPSLOCK;
+	}
+
+}
+
+//-------------------------------------------------------------------------------------------------
+// called when window has lost focus
+//-------------------------------------------------------------------------------------------------
+void Keyboard::loseFocus()
+{
+	changeFocus();
+}
+
+//-------------------------------------------------------------------------------------------------
+// called when window has regained focus
+//-------------------------------------------------------------------------------------------------
+void Keyboard::regainFocus()
+{
+	changeFocus();
+}
+
+//-------------------------------------------------------------------------------------------------
+// called internally when window lost focus and regained focus
+//-------------------------------------------------------------------------------------------------
+void Keyboard::changeFocus()
+{
 	// TheSuperHackers @fix Caball009 13/12/2025 Fix bug where game remains in waypoint mode
 	// because the key up state for the alt key is not detected after alt tab.
 	if (BitIsSet(m_keyStatus[KEY_LALT].state, KEY_STATE_DOWN))
@@ -763,14 +794,7 @@ void Keyboard::resetKeys( void )
 		msg->appendIntegerArgument(KEY_STATE_UP);
 	}
 
-	memset( m_keys, 0, sizeof( m_keys ) );
-	memset( m_keyStatus, 0, sizeof( m_keyStatus ) );
-	m_modifiers = KEY_STATE_NONE;
-	if( getCapsState() )
-	{
-		m_modifiers |= KEY_STATE_CAPSLOCK;
-	}
-
+	resetKeys();
 }
 
 //-------------------------------------------------------------------------------------------------
