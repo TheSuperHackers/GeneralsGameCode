@@ -20,7 +20,8 @@
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
 //#include "GameLogic/TerrainLogic.h"
-//#include "GameLogic/Weapon.h"
+#include "GameLogic/Weapon.h"
+#include "Common/ObjectStatusTypes.h"
 
 #include "GameLogic/Module/CarrierDroneAIUpdate.h"
 // #include "GameLogic/Module/JetAIUpdate.h"
@@ -106,6 +107,9 @@ UpdateSleepTime CarrierDroneAIUpdate::update()
 			m_launchingSound.setObjectID(obj->getID());
 			m_launchingSound.setPlayingHandle(TheAudio->addAudioEvent(&m_launchingSound));
 		}
+
+		// obj->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_NO_ATTACK));
+		//obj->getCurrentWeapon()->setPossibleNextShotFrame(m_launchFrame + data->m_launchTime);
 	}
 	m_isContained = obj->isContained();
 
@@ -122,7 +126,14 @@ UpdateSleepTime CarrierDroneAIUpdate::update()
 			{
 				TheAudio->removeAudioEvent(m_launchingSound.getPlayingHandle());
 			}
+
+			// obj->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_NO_ATTACK));
 		}
+		//else { // We are still launching
+		//	if (isAttacking()) {
+		//		return UPDATE_SLEEP_NONE;
+		//	}
+		//}
 	}
 
 	
