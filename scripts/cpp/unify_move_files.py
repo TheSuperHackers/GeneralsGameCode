@@ -235,6 +235,28 @@ def main():
     #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DPropDraw.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DPropDraw.cpp")
     #unify_move_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DTreeDraw.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DTreeDraw.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/MapObject.h", Game.CORE, "GameEngine/Include/Common/MapObject.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/MapUtil.h", Game.CORE, "GameEngine/Include/GameClient/MapUtil.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/TerrainRoads.h", Game.CORE, "GameEngine/Include/GameClient/TerrainRoads.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/TerrainVisual.h", Game.CORE, "GameEngine/Include/GameClient/TerrainVisual.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/MapUtil.cpp", Game.CORE, "GameEngine/Source/GameClient/MapUtil.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/Terrain/TerrainRoads.cpp", Game.CORE, "GameEngine/Source/GameClient/Terrain/TerrainRoads.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/Terrain/TerrainVisual.cpp", Game.CORE, "GameEngine/Source/GameClient/Terrain/TerrainVisual.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/HeightMap.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/HeightMap.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/TerrainTex.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/TerrainTex.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/TileData.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/TileData.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DTerrainTracks.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DTerrainTracks.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DTerrainVisual.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DTerrainVisual.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DTreeBuffer.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DTreeBuffer.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/WorldHeightMap.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/WorldHeightMap.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/HeightMap.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/HeightMap.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/TerrainTex.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/TerrainTex.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/TileData.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/TileData.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DTerrainTracks.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DTerrainTracks.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DTerrainVisual.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DTerrainVisual.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DTreeBuffer.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DTreeBuffer.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/WorldHeightMap.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/WorldHeightMap.cpp")
+
     return
 
 

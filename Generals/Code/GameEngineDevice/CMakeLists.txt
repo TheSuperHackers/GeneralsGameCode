@@ -6,7 +6,7 @@ set(GAMEENGINEDEVICE_SRC
     Include/W3DDevice/Common/W3DModuleFactory.h
 #    Include/W3DDevice/Common/W3DRadar.h
     Include/W3DDevice/Common/W3DThingFactory.h
-    Include/W3DDevice/GameClient/HeightMap.h
+#    Include/W3DDevice/GameClient/HeightMap.h
     Include/W3DDevice/GameClient/Module/W3DDebrisDraw.h
     Include/W3DDevice/GameClient/Module/W3DDefaultDraw.h
     Include/W3DDevice/GameClient/Module/W3DDependencyModelDraw.h
@@ -22,8 +22,8 @@ set(GAMEENGINEDEVICE_SRC
     Include/W3DDevice/GameClient/Module/W3DTankTruckDraw.h
     Include/W3DDevice/GameClient/Module/W3DTracerDraw.h
     Include/W3DDevice/GameClient/Module/W3DTruckDraw.h
-    Include/W3DDevice/GameClient/TerrainTex.h
-    Include/W3DDevice/GameClient/TileData.h
+#    Include/W3DDevice/GameClient/TerrainTex.h
+#    Include/W3DDevice/GameClient/TileData.h
     Include/W3DDevice/GameClient/W3DAssetManager.h
     Include/W3DDevice/GameClient/W3DAssetManagerExposed.h
     Include/W3DDevice/GameClient/W3DBibBuffer.h
@@ -56,9 +56,9 @@ set(GAMEENGINEDEVICE_SRC
     Include/W3DDevice/GameClient/W3DShadow.h
     Include/W3DDevice/GameClient/W3DShroud.h
     Include/W3DDevice/GameClient/W3DStatusCircle.h
-    Include/W3DDevice/GameClient/W3DTerrainTracks.h
-    Include/W3DDevice/GameClient/W3DTerrainVisual.h
-    Include/W3DDevice/GameClient/W3DTreeBuffer.h
+#    Include/W3DDevice/GameClient/W3DTerrainTracks.h
+#    Include/W3DDevice/GameClient/W3DTerrainVisual.h
+#    Include/W3DDevice/GameClient/W3DTreeBuffer.h
 #    Include/W3DDevice/GameClient/W3DVideoBuffer.h
 #    Include/W3DDevice/GameClient/W3DView.h
     Include/W3DDevice/GameClient/W3DVolumetricShadow.h
@@ -66,7 +66,7 @@ set(GAMEENGINEDEVICE_SRC
 #    Include/W3DDevice/GameClient/W3DWaterTracks.h
     Include/W3DDevice/GameClient/W3DWaypointBuffer.h
     Include/W3DDevice/GameClient/W3DWebBrowser.h
-    Include/W3DDevice/GameClient/WorldHeightMap.h
+#    Include/W3DDevice/GameClient/WorldHeightMap.h
     Include/W3DDevice/GameLogic/W3DGameLogic.h
     Include/W3DDevice/GameLogic/W3DGhostObject.h
     Include/W3DDevice/GameLogic/W3DTerrainLogic.h
@@ -117,7 +117,7 @@ set(GAMEENGINEDEVICE_SRC
     Source/W3DDevice/GameClient/GUI/W3DGameFont.cpp
     Source/W3DDevice/GameClient/GUI/W3DGameWindow.cpp
     Source/W3DDevice/GameClient/GUI/W3DGameWindowManager.cpp
-    Source/W3DDevice/GameClient/HeightMap.cpp
+#    Source/W3DDevice/GameClient/HeightMap.cpp
     Source/W3DDevice/GameClient/Shaders/invmonochrome.nvp
     Source/W3DDevice/GameClient/Shaders/monochrome.nvp
     Source/W3DDevice/GameClient/Shaders/motionblur.nvp
@@ -130,8 +130,8 @@ set(GAMEENGINEDEVICE_SRC
     Source/W3DDevice/GameClient/Shadow/W3DProjectedShadow.cpp
     Source/W3DDevice/GameClient/Shadow/W3DShadow.cpp
     Source/W3DDevice/GameClient/Shadow/W3DVolumetricShadow.cpp
-    Source/W3DDevice/GameClient/TerrainTex.cpp
-    Source/W3DDevice/GameClient/TileData.cpp
+#    Source/W3DDevice/GameClient/TerrainTex.cpp
+#    Source/W3DDevice/GameClient/TileData.cpp
     Source/W3DDevice/GameClient/W3DAssetManager.cpp
     Source/W3DDevice/GameClient/W3DAssetManagerExposed.cpp
     Source/W3DDevice/GameClient/W3DBibBuffer.cpp
@@ -154,9 +154,9 @@ set(GAMEENGINEDEVICE_SRC
 #    Source/W3DDevice/GameClient/W3DShaderManager.cpp
     Source/W3DDevice/GameClient/W3DShroud.cpp
     Source/W3DDevice/GameClient/W3DStatusCircle.cpp
-    Source/W3DDevice/GameClient/W3DTerrainTracks.cpp
-    Source/W3DDevice/GameClient/W3DTerrainVisual.cpp
-    Source/W3DDevice/GameClient/W3DTreeBuffer.cpp
+#    Source/W3DDevice/GameClient/W3DTerrainTracks.cpp
+#    Source/W3DDevice/GameClient/W3DTerrainVisual.cpp
+#    Source/W3DDevice/GameClient/W3DTreeBuffer.cpp
 #    Source/W3DDevice/GameClient/W3DVideoBuffer.cpp
 #    Source/W3DDevice/GameClient/W3DView.cpp
     Source/W3DDevice/GameClient/W3dWaypointBuffer.cpp
@@ -165,7 +165,7 @@ set(GAMEENGINEDEVICE_SRC
 #    Source/W3DDevice/GameClient/Water/W3DWaterTracks.cpp
 #    Source/W3DDevice/GameClient/Water/wave.nvp
 #    Source/W3DDevice/GameClient/Water/wave.nvv
-    Source/W3DDevice/GameClient/WorldHeightMap.cpp
+#    Source/W3DDevice/GameClient/WorldHeightMap.cpp
     Source/W3DDevice/GameLogic/W3DGameLogic.cpp
     Source/W3DDevice/GameLogic/W3DGhostObject.cpp
     Source/W3DDevice/GameLogic/W3DTerrainLogic.cpp

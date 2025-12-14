@@ -65,7 +65,7 @@ set(GAMEENGINE_SRC
     Include/Common/List.h
 #    Include/Common/LocalFile.h
 #    Include/Common/LocalFileSystem.h
-    Include/Common/MapObject.h
+#    Include/Common/MapObject.h
     Include/Common/MapReaderWriterInfo.h
     Include/Common/MessageStream.h
     Include/Common/MiniLog.h
@@ -199,7 +199,7 @@ set(GAMEENGINE_SRC
     Include/GameClient/Line2D.h
     Include/GameClient/LoadScreen.h
     Include/GameClient/LookAtXlat.h
-    Include/GameClient/MapUtil.h
+#    Include/GameClient/MapUtil.h
     Include/GameClient/MessageBox.h
     Include/GameClient/MetaEvent.h
     Include/GameClient/Module/AnimatedParticleSysBoneClientUpdate.h
@@ -221,8 +221,8 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/Smudge.h
 #    Include/GameClient/Snow.h
     Include/GameClient/Statistics.h
-    Include/GameClient/TerrainRoads.h
-    Include/GameClient/TerrainVisual.h
+#    Include/GameClient/TerrainRoads.h
+#    Include/GameClient/TerrainVisual.h
 #    Include/GameClient/VideoPlayer.h
 #    Include/GameClient/View.h
 #    Include/GameClient/Water.h
@@ -797,7 +797,7 @@ set(GAMEENGINE_SRC
     Source/GameClient/Input/Mouse.cpp
     Source/GameClient/LanguageFilter.cpp
     Source/GameClient/Line2D.cpp
-    Source/GameClient/MapUtil.cpp
+#    Source/GameClient/MapUtil.cpp
     Source/GameClient/MessageStream/CommandXlat.cpp
     Source/GameClient/MessageStream/GUICommandTranslator.cpp
     Source/GameClient/MessageStream/HintSpy.cpp
@@ -820,8 +820,8 @@ set(GAMEENGINE_SRC
     Source/GameClient/System/ParticleSys.cpp
     Source/GameClient/System/RayEffect.cpp
 #    Source/GameClient/System/Smudge.cpp
-    Source/GameClient/Terrain/TerrainRoads.cpp
-    Source/GameClient/Terrain/TerrainVisual.cpp
+#    Source/GameClient/Terrain/TerrainRoads.cpp
+#    Source/GameClient/Terrain/TerrainVisual.cpp
 #    Source/GameClient/VideoPlayer.cpp
 #    Source/GameClient/VideoStream.cpp
 #    Source/GameClient/View.cpp
