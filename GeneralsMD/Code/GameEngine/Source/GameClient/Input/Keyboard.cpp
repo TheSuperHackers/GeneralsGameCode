@@ -775,7 +775,7 @@ void Keyboard::regainFocus()
 }
 
 //-------------------------------------------------------------------------------------------------
-// called internally when window lost focus and regained focus
+// called internally when window has lost focus and has regained focus
 //-------------------------------------------------------------------------------------------------
 void Keyboard::changeFocus()
 {

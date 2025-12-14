@@ -123,7 +123,7 @@ public:
 	WideChar getPrintableKey( KeyDefType key, Int state );
 	enum { MAX_KEY_STATES = 3};
 private:
-	void changeFocus();													///< called internally when window lost focus and regained focus
+	void changeFocus();													///< called internally when window has lost focus and has regained focus
 protected:
 
 	/** get the key data for a single key, KEY_NONE should be returned when
