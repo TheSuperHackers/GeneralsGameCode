@@ -10,7 +10,7 @@ set(GAMEENGINEDEVICE_SRC
     Include/W3DDevice/GameClient/Module/W3DDebrisDraw.h
     Include/W3DDevice/GameClient/Module/W3DDefaultDraw.h
     Include/W3DDevice/GameClient/Module/W3DDependencyModelDraw.h
-    Include/W3DDevice/GameClient/Module/W3DLaserDraw.h
+#    Include/W3DDevice/GameClient/Module/W3DLaserDraw.h
     Include/W3DDevice/GameClient/Module/W3DModelDraw.h
     Include/W3DDevice/GameClient/Module/W3DOverlordTankDraw.h
     Include/W3DDevice/GameClient/Module/W3DPoliceCarDraw.h
@@ -62,8 +62,8 @@ set(GAMEENGINEDEVICE_SRC
 #    Include/W3DDevice/GameClient/W3DVideoBuffer.h
 #    Include/W3DDevice/GameClient/W3DView.h
     Include/W3DDevice/GameClient/W3DVolumetricShadow.h
-    Include/W3DDevice/GameClient/W3DWater.h
-    Include/W3DDevice/GameClient/W3DWaterTracks.h
+#    Include/W3DDevice/GameClient/W3DWater.h
+#    Include/W3DDevice/GameClient/W3DWaterTracks.h
     Include/W3DDevice/GameClient/W3DWaypointBuffer.h
     Include/W3DDevice/GameClient/W3DWebBrowser.h
     Include/W3DDevice/GameClient/WorldHeightMap.h
@@ -88,7 +88,7 @@ set(GAMEENGINEDEVICE_SRC
     Source/W3DDevice/GameClient/Drawable/Draw/W3DDebrisDraw.cpp
     Source/W3DDevice/GameClient/Drawable/Draw/W3DDefaultDraw.cpp
     Source/W3DDevice/GameClient/Drawable/Draw/W3DDependencyModelDraw.cpp
-    Source/W3DDevice/GameClient/Drawable/Draw/W3DLaserDraw.cpp
+#    Source/W3DDevice/GameClient/Drawable/Draw/W3DLaserDraw.cpp
     Source/W3DDevice/GameClient/Drawable/Draw/W3DModelDraw.cpp
     Source/W3DDevice/GameClient/Drawable/Draw/W3DOverlordTankDraw.cpp
     Source/W3DDevice/GameClient/Drawable/Draw/W3DPoliceCarDraw.cpp
@@ -161,10 +161,10 @@ set(GAMEENGINEDEVICE_SRC
 #    Source/W3DDevice/GameClient/W3DView.cpp
     Source/W3DDevice/GameClient/W3dWaypointBuffer.cpp
     Source/W3DDevice/GameClient/W3DWebBrowser.cpp
-    Source/W3DDevice/GameClient/Water/W3DWater.cpp
-    Source/W3DDevice/GameClient/Water/W3DWaterTracks.cpp
-    Source/W3DDevice/GameClient/Water/wave.nvp
-    Source/W3DDevice/GameClient/Water/wave.nvv
+#    Source/W3DDevice/GameClient/Water/W3DWater.cpp
+#    Source/W3DDevice/GameClient/Water/W3DWaterTracks.cpp
+#    Source/W3DDevice/GameClient/Water/wave.nvp
+#    Source/W3DDevice/GameClient/Water/wave.nvv
     Source/W3DDevice/GameClient/WorldHeightMap.cpp
     Source/W3DDevice/GameLogic/W3DGameLogic.cpp
     Source/W3DDevice/GameLogic/W3DGhostObject.cpp

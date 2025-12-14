@@ -190,6 +190,34 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DView.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DView.h")
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/W3DView.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/W3DView.cpp")
 
+    #unify_file(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/bmp2d.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/bmp2d.cpp")
+    #unify_file(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/bmp2d.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/bmp2d.h")
+    #unify_file(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8texman.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8texman.cpp")
+    #unify_file(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8texman.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8texman.h")
+    #unify_file(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/matpass.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/matpass.cpp")
+    #unify_file(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/matpass.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/matpass.h")
+    #unify_file(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/texproject.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/texproject.cpp")
+    #unify_file(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/texproject.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/texproject.h")
+    #unify_file(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/texture.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/texture.cpp")
+    #unify_file(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/texture.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/texture.h")
+    #unify_file(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/texturefilter.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/texturefilter.cpp")
+    #unify_file(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/texturefilter.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/texturefilter.h")
+    #unify_file(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/textureloader.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/textureloader.cpp")
+    #unify_file(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/textureloader.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/textureloader.h")
+    #unify_file(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/texturethumbnail.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/texturethumbnail.cpp")
+    #unify_file(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/texturethumbnail.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/texturethumbnail.h")
+
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Water.h", Game.CORE, "GameEngine/Include/GameClient/Water.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/Water.cpp", Game.CORE, "GameEngine/Source/GameClient/Water.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/Module/W3DLaserDraw.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/Module/W3DLaserDraw.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DWater.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DWater.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/W3DDevice/GameClient/W3DWaterTracks.h", Game.CORE, "GameEngineDevice/Include/W3DDevice/GameClient/W3DWaterTracks.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DLaserDraw.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DLaserDraw.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/Water/W3DWater.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/Water/W3DWater.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/Water/W3DWaterTracks.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/Water/W3DWaterTracks.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/Water/wave.nvp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/Water/wave.nvp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/Water/wave.nvv", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/Water/wave.nvv")
+
     return
 
 
