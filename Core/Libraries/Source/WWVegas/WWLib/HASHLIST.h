@@ -52,7 +52,8 @@
 #include <memory.h>
 
 #ifndef NULL
-#define NULL (0L)
+//#define NULL (0L)
+// NULL is now deprecated - use nullptr instead
 #endif
 
 #define A_LARGE_PRIME_NUMBER	257

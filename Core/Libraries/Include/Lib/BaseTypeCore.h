@@ -90,7 +90,8 @@
 
 #ifndef NULL
 //#define NULL ((void *)0)
-#define NULL 0						// C++ doesn't like casting void *'s into other pointers
+//#define NULL 0						// C++ doesn't like casting void *'s into other pointers
+// NULL is now deprecated - use nullptr instead
 #endif
 
 // MSVC math.h defines overloaded functions with this name...

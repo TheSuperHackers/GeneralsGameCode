@@ -65,7 +65,8 @@ template<class T> class List;
 template<class T, class U> class IndexClass;
 
 #ifndef NULL
-#define NULL 0L
+//#define NULL 0L
+// NULL is now deprecated - use nullptr instead
 #endif
 
 /*

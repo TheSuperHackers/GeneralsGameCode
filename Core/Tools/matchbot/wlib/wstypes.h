@@ -73,7 +73,8 @@ Standard type definitions for the sake of portability and readability.
 #endif
 
 #ifndef NULL
-#define NULL 0
+//#define NULL 0
+// NULL is now deprecated - use nullptr instead
 #endif
 
 //These are used for readability purposes mostly, when a method takes a

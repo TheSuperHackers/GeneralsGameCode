@@ -256,7 +256,8 @@ template <class T> T max(T a,T b)
 
 
 #ifndef	NULL
-	#define	NULL		0
+	//#define	NULL		0
+	// NULL is now deprecated - use nullptr instead
 #endif
 
 
