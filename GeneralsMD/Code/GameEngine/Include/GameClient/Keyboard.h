@@ -105,8 +105,7 @@ public:
 																							messages and put them on the
 																							stream for the raw state. */
 
-	virtual void loseFocus();										///< called when window has lost focus
-	virtual void regainFocus();									///< called when window has regained focus
+	virtual void toggleFocus();									///< called when window has lost focus and has regained focus
 	// simplified versions where the caller doesn't care which key type was pressed.
 	Bool isShift();
 	Bool isCtrl();
@@ -122,8 +121,6 @@ public:
 	WideChar translateKey( WideChar keyCode );		///< translate key code to printable UNICODE char
 	WideChar getPrintableKey( KeyDefType key, Int state );
 	enum { MAX_KEY_STATES = 3};
-private:
-	void changeFocus();													///< called internally when window has lost focus and has regained focus
 protected:
 
 	/** get the key data for a single key, KEY_NONE should be returned when

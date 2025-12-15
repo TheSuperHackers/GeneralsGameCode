@@ -759,25 +759,9 @@ void Keyboard::resetKeys( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-// called when window has lost focus
+// called when window has lost focus and has regained focus
 //-------------------------------------------------------------------------------------------------
-void Keyboard::loseFocus()
-{
-	changeFocus();
-}
-
-//-------------------------------------------------------------------------------------------------
-// called when window has regained focus
-//-------------------------------------------------------------------------------------------------
-void Keyboard::regainFocus()
-{
-	changeFocus();
-}
-
-//-------------------------------------------------------------------------------------------------
-// called internally when window has lost focus and has regained focus
-//-------------------------------------------------------------------------------------------------
-void Keyboard::changeFocus()
+void Keyboard::toggleFocus()
 {
 	// TheSuperHackers @fix Caball009 13/12/2025 Fix bug where game remains in waypoint mode
 	// because the key up state for the alt key is not detected after alt tab.
