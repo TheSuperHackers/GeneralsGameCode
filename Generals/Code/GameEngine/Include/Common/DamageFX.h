@@ -29,6 +29,9 @@
 
 #pragma once
 
+#ifndef _DamageFX_H_
+#define _DamageFX_H_
+
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameCommon.h"
 #include "Common/NameKeyGenerator.h"
@@ -163,3 +166,6 @@ private:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern DamageFXStore *TheDamageFXStore;
+
+#endif // _DamageFX_H_
+
