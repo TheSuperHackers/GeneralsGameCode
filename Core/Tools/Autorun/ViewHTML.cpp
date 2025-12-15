@@ -158,12 +158,12 @@ bool ViewHTML(const char* url, bool wait, const CallbackHook& callback)
 	BOOL createSuccess = CreateProcess(
 			exeName,
 			commandLine,
-			NULL,
-			NULL,
+			nullptr,
+			nullptr,
 			FALSE,
 			0,
-			NULL,
-			NULL,
+			nullptr,
+			nullptr,
 			&startupInfo,
 			&processInfo);
 

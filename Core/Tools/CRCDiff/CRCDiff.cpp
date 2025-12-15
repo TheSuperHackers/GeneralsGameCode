@@ -264,8 +264,8 @@ int main(int argc, char *argv[])
 				//seenLeft = true;
 				if (seenRight && seenLeft)
 				{
-					outputLine(lastFrame[0], lastIndex[0], linkNum++, "leftOnly", lastLine[0], nullptr, nullptr);
-						"leftOnly", lastLine[0], nullptr, NULL);
+					outputLine(lastFrame[0], lastIndex[0], linkNum++,
+						"leftOnly", lastLine[0], nullptr, nullptr);
 					++numDiffs;
 				}
 				lastFrame[0] = -1;
@@ -278,8 +278,8 @@ int main(int argc, char *argv[])
 				//seenRight = true;
 				if (seenRight && seenLeft)
 				{
-					outputLine(lastFrame[1], lastIndex[1], linkNum++, nullptr, nullptr, "rightOnly", lastLine[1]);
-						NULL, nullptr, "rightOnly", lastLine[1]);
+					outputLine(lastFrame[1], lastIndex[1], linkNum++,
+						nullptr, nullptr, "rightOnly", lastLine[1]);
 					++numDiffs;
 				}
 				lastFrame[1] = -1;
@@ -329,8 +329,8 @@ int main(int argc, char *argv[])
 			//seenLeft = true;
 			if (seenRight && seenLeft)
 			{
-				outputLine(lastFrame[0], lastIndex[0], linkNum++, "leftOnly", lastLine[0], nullptr, nullptr);
-					"leftOnly", lastLine[0], nullptr, NULL);
+				outputLine(lastFrame[0], lastIndex[0], linkNum++,
+					"leftOnly", lastLine[0], nullptr, nullptr);
 				++numDiffs;
 			}
 			lastFrame[0] = -1;
@@ -342,8 +342,8 @@ int main(int argc, char *argv[])
 			//seenRight = true;
 			if (seenRight && seenLeft)
 			{
-				outputLine(lastFrame[1], lastIndex[1], linkNum++, nullptr, nullptr, "rightOnly", lastLine[1]);
-					NULL, nullptr, "rightOnly", lastLine[1]);
+				outputLine(lastFrame[1], lastIndex[1], linkNum++,
+					nullptr, nullptr, "rightOnly", lastLine[1]);
 				++numDiffs;
 			}
 			lastFrame[1] = -1;

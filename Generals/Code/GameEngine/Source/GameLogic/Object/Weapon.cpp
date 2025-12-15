@@ -2614,7 +2614,7 @@ Object* Weapon::forceFireWeapon( const Object *source, const Coord3D *pos)
 	//Fire the weapon at the position. Internally, it'll store the weapon projectile ID if so created.
 	ObjectID projectileID = INVALID_ID;
 	const Bool ignoreRange = true;
-	privateFireWeapon(source, nullptr, pos, false, ignoreRange, nullptr, &projectileID);
+	privateFireWeapon(source, nullptr, pos, false, ignoreRange, 0, &projectileID);
 	return TheGameLogic->findObjectByID( projectileID );
 }
 

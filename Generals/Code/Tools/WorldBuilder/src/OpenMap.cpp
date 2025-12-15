@@ -28,7 +28,7 @@
 // OpenMap dialog
 
 
-OpenMap::OpenMap(TOpenMapInfo *pInfo, CWnd* pParent /*=NULL*/)
+OpenMap::OpenMap(TOpenMapInfo *pInfo, CWnd* pParent /*=nullptr*/)
 	: CDialog(OpenMap::IDD, pParent),
 	m_pInfo(pInfo)
 {

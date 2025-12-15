@@ -94,7 +94,6 @@ Char* UnicodeToANSI(const WChar* string, Char* buffer, UInt bufferLength)
 	int result =
 	#endif
 		WideCharToMultiByte(CP_ACP, 0, string, -1, buffer, bufferLength, nullptr, nullptr);
-			NULL, nullptr);
 
 	#ifdef RTS_DEBUG
 	if (result == 0)

@@ -37,7 +37,7 @@ int ViewChanges = FALSE;
 // CViewDBsDlg dialog
 
 
-VIEWDBSII::VIEWDBSII(CWnd* pParent /*=NULL*/)
+VIEWDBSII::VIEWDBSII(CWnd* pParent /*=nullptr*/)
 	: CDialog(VIEWDBSII::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CViewDBsDlg)

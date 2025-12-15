@@ -1354,7 +1354,7 @@ void PathfindCell::releaseInfo(void)
 	}
 
 	DEBUG_ASSERTCRASH(m_info->m_prevOpen== nullptr && m_info->m_nextOpen==0, ("Shouldn't be linked."));
-	DEBUG_ASSERTCRASH(m_info->m_open== nullptr && m_info->m_closed==0, ("Shouldn't be linked."));
+	DEBUG_ASSERTCRASH(m_info->m_open==0 && m_info->m_closed==0, ("Shouldn't be linked."));
 	DEBUG_ASSERTCRASH(m_info->m_goalUnitID==INVALID_ID && m_info->m_posUnitID==INVALID_ID, ("Shouldn't be occupied."));
 	DEBUG_ASSERTCRASH(m_info->m_goalAircraftID==INVALID_ID , ("Shouldn't be occupied by aircraft."));
 	if (m_info->m_prevOpen || m_info->m_nextOpen || m_info->m_open || m_info->m_closed) {

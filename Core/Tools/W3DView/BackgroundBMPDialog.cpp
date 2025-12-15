@@ -39,7 +39,7 @@ static char THIS_FILE[] = __FILE__;
 //
 //  CBackgroundBMPDialog
 //
-CBackgroundBMPDialog::CBackgroundBMPDialog (CWnd* pParent /*=NULL*/)
+CBackgroundBMPDialog::CBackgroundBMPDialog (CWnd* pParent /*=nullptr*/)
 	: CDialog(CBackgroundBMPDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CBackgroundBMPDialog)

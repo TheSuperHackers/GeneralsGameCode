@@ -271,7 +271,7 @@ AttackStateMachine::AttackStateMachine( Object *obj, AIAttackState* att, AsciiSt
 		StateConditionInfo(outOfWeaponRangeObject, AttackStateMachine::CHASE_TARGET, nullptr),
 		StateConditionInfo(wantToSquishTarget, AttackStateMachine::CHASE_TARGET, nullptr),
 		StateConditionInfo(cannotPossiblyAttackObject, EXIT_MACHINE_WITH_FAILURE, (void*)ATTACK_CONTINUED_TARGET),
-		StateConditionInfo(nullptr, nullptr, nullptr)
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
 	// we want to use the CONTINUE mode (not NEW) since we already have acquired the target.
@@ -280,7 +280,7 @@ AttackStateMachine::AttackStateMachine( Object *obj, AIAttackState* att, AsciiSt
 		StateConditionInfo(outOfWeaponRangeObject, AttackStateMachine::CHASE_TARGET, nullptr),
 		StateConditionInfo(cannotPossiblyAttackObject, EXIT_MACHINE_WITH_FAILURE, (void*)ATTACK_CONTINUED_TARGET_FORCED),
 		StateConditionInfo(wantToSquishTarget, AttackStateMachine::CHASE_TARGET, nullptr),
-		StateConditionInfo(nullptr, nullptr, nullptr)
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
 	const StateConditionInfo* objectConditions = forceAttacking ? objectConditionsForced : objectConditionsNormal;
@@ -288,7 +288,7 @@ AttackStateMachine::AttackStateMachine( Object *obj, AIAttackState* att, AsciiSt
 	static const StateConditionInfo positionConditions[] =
 	{
 		StateConditionInfo(outOfWeaponRangePosition, AttackStateMachine::CHASE_TARGET, nullptr),
-		StateConditionInfo(nullptr, nullptr, nullptr)
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
 #ifdef STATE_MACHINE_DEBUG
@@ -332,7 +332,7 @@ AttackStateMachine::AttackStateMachine( Object *obj, AIAttackState* att, AsciiSt
 			static const StateConditionInfo portableStructureChaseConditions[] =
 			{
 				StateConditionInfo(inWeaponRangeObject, AttackStateMachine::AIM_AT_TARGET, nullptr),
-				StateConditionInfo(nullptr, nullptr, nullptr)
+				StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 			};
 
 			/* we're a rider on a mobile object, so we can't control our motion.
@@ -5718,7 +5718,7 @@ void AIAttackState::onExit( StateExitType status )
 		//ai->notifyVictimIsDead();	no, do NOT do this here.
 		ai->setCurrentVictim(nullptr);
 		for (int i = 0; i < MAX_TURRETS; ++i)
-			ai->setTurretTargetObject((WhichTurretType)i, nullptr, nullptr);
+			ai->setTurretTargetObject((WhichTurretType)i, nullptr, FALSE);
 		ai->friend_setGoalObject(nullptr);
 	}
 }

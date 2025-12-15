@@ -574,8 +574,8 @@ const char *ProfileFuncLevel::Id::GetSource(void) const
   {
     char helpFunc[256],helpFile[256];
     unsigned ofsFunc;
-    DebugStackwalk::Signature::GetSymbol(func->addr, nullptr,0,nullptr, helpFunc,sizeof(helpFunc),&ofsFunc, helpFile,sizeof(helpFile),&func->funcLine,nullptr);
-                                         NULL,0,nullptr,
+    DebugStackwalk::Signature::GetSymbol(func->addr,
+                                         nullptr,0,nullptr,
                                          helpFunc,sizeof(helpFunc),&ofsFunc,
                                          helpFile,sizeof(helpFile),&func->funcLine,nullptr);
 

@@ -35,7 +35,7 @@
 // PickUnitDialog dialog
 
 
-ReplaceUnitDialog::ReplaceUnitDialog(CWnd* pParent /*=NULL*/)
+ReplaceUnitDialog::ReplaceUnitDialog(CWnd* pParent /*=nullptr*/)
 	: PickUnitDialog(IDD, pParent)
 {
 	m_objectsList = nullptr;
@@ -64,7 +64,7 @@ BEGIN_MESSAGE_MAP(ReplaceUnitDialog, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-PickUnitDialog::PickUnitDialog(CWnd* pParent /*=NULL*/)
+PickUnitDialog::PickUnitDialog(CWnd* pParent /*=nullptr*/)
 	: CDialog(IDD, pParent)
 {
 	m_objectsList = nullptr;
@@ -78,7 +78,7 @@ PickUnitDialog::PickUnitDialog(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
-PickUnitDialog::PickUnitDialog(UINT id, CWnd* pParent /*=NULL*/)
+PickUnitDialog::PickUnitDialog(UINT id, CWnd* pParent /*=nullptr*/)
 	: CDialog(id, pParent)
 {
 	m_objectsList = nullptr;

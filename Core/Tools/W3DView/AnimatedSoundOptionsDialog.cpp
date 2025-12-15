@@ -44,7 +44,7 @@ static char THIS_FILE[] = __FILE__;
 // AnimatedSoundOptionsDialogClass dialog
 
 
-AnimatedSoundOptionsDialogClass::AnimatedSoundOptionsDialogClass(CWnd* pParent /*=NULL*/)
+AnimatedSoundOptionsDialogClass::AnimatedSoundOptionsDialogClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(AnimatedSoundOptionsDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(AnimatedSoundOptionsDialogClass)

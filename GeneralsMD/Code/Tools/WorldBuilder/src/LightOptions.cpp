@@ -33,7 +33,7 @@ LightOptions *LightOptions::m_staticThis = nullptr;
 /// LightOptions dialog trivial construstor - Create does the real work.
 
 
-LightOptions::LightOptions(CWnd* pParent /*=NULL*/)
+LightOptions::LightOptions(CWnd* pParent /*=nullptr*/)
 {
 	//{{AFX_DATA_INIT(LightOptions)
 		// NOTE: the ClassWizard will add member initialization here

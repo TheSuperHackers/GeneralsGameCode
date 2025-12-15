@@ -38,7 +38,7 @@ static char THIS_FILE[] = __FILE__;
 //
 //  CBackgroundObjectDialog
 //
-CBackgroundObjectDialog::CBackgroundObjectDialog (CWnd* pParent /*=NULL*/)
+CBackgroundObjectDialog::CBackgroundObjectDialog (CWnd* pParent /*=nullptr*/)
 	: CDialog(CBackgroundObjectDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CBackgroundObjectDialog)

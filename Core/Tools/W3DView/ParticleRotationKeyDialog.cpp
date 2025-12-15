@@ -35,7 +35,7 @@ static char THIS_FILE[] = __FILE__;
 // ParticleRotationKeyDialogClass constructor
 //
 /////////////////////////////////////////////////////////////////////////////
-ParticleRotationKeyDialogClass::ParticleRotationKeyDialogClass(float rotation,CWnd* pParent /*=NULL*/) :
+ParticleRotationKeyDialogClass::ParticleRotationKeyDialogClass(float rotation,CWnd* pParent /*=nullptr*/) :
 	CDialog(ParticleRotationKeyDialogClass::IDD, pParent),
 	m_Rotation(rotation)
 {

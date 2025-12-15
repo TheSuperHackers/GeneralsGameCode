@@ -46,7 +46,7 @@ Int TerrainMaterial::m_currentBgTexture(6);
 Bool TerrainMaterial::m_paintingPathingInfo;
 Bool TerrainMaterial::m_paintingPassable;
 
-TerrainMaterial::TerrainMaterial(CWnd* pParent /*=NULL*/) :
+TerrainMaterial::TerrainMaterial(CWnd* pParent /*=nullptr*/) :
 	m_updating(false),
 	m_currentWidth(3)
 {

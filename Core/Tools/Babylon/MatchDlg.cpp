@@ -41,7 +41,7 @@ static BabylonText *current_match = nullptr;
 // CMatchDlg dialog
 
 
-CMatchDlg::CMatchDlg(CWnd* pParent /*=NULL*/)
+CMatchDlg::CMatchDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CMatchDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CMatchDlg)

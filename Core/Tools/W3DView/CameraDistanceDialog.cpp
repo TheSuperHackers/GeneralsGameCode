@@ -38,7 +38,7 @@ static char THIS_FILE[] = __FILE__;
 // CameraDistanceDialogClass
 //
 /////////////////////////////////////////////////////////////////////////////
-CameraDistanceDialogClass::CameraDistanceDialogClass(CWnd* pParent /*=NULL*/)
+CameraDistanceDialogClass::CameraDistanceDialogClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(CameraDistanceDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CameraDistanceDialogClass)

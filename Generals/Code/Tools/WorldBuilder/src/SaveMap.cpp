@@ -28,7 +28,7 @@
 // SaveMap dialog
 
 
-SaveMap::SaveMap(TSaveMapInfo *pInfo, CWnd* pParent /*=NULL*/)
+SaveMap::SaveMap(TSaveMapInfo *pInfo, CWnd* pParent /*=nullptr*/)
 	: CDialog(SaveMap::IDD, pParent),
 	m_pInfo(pInfo)
 {

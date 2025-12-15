@@ -75,7 +75,7 @@ W3DShroud::W3DShroud(void)
 	m_pSrcTexture=nullptr;
 	m_pDstTexture=nullptr;
 	m_srcTextureData=nullptr;
-	m_srcTexturePitch=nullptr;
+	m_srcTexturePitch=0;
 	m_dstTextureWidth=m_numMaxVisibleCellsX=0;
 	m_dstTextureHeight=m_numMaxVisibleCellsY=0;
 	m_boderShroudLevel = (W3DShroudLevel)TheGlobalData->m_shroudAlpha;	//assume border is black

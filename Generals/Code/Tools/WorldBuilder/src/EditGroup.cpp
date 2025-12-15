@@ -28,7 +28,7 @@
 // EditGroup dialog
 
 
-EditGroup::EditGroup(ScriptGroup *pGroup, CWnd* pParent /*=NULL*/)
+EditGroup::EditGroup(ScriptGroup *pGroup, CWnd* pParent /*=nullptr*/)
 	: CDialog(EditGroup::IDD, pParent),
 	m_scriptGroup(pGroup)
 {

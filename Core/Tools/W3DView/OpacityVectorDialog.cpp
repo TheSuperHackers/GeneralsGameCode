@@ -42,7 +42,7 @@ static char THIS_FILE[] = __FILE__;
 // OpacityVectorDialogClass
 //
 /////////////////////////////////////////////////////////////////////////////
-OpacityVectorDialogClass::OpacityVectorDialogClass(CWnd* pParent /*=NULL*/)
+OpacityVectorDialogClass::OpacityVectorDialogClass(CWnd* pParent /*=nullptr*/)
 	:	m_OpacityBar (nullptr),
 		m_RenderObj (nullptr),
 		m_KeyIndex (0),

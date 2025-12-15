@@ -38,7 +38,7 @@ static char THIS_FILE[] = __FILE__;
 // CAddToLineupDialog dialog
 
 
-CAddToLineupDialog::CAddToLineupDialog(ViewerSceneClass *scene, CWnd* pParent /*=NULL*/)
+CAddToLineupDialog::CAddToLineupDialog(ViewerSceneClass *scene, CWnd* pParent /*=nullptr*/)
 :	CDialog(CAddToLineupDialog::IDD, pParent),
 	m_pCScene(scene)
 {

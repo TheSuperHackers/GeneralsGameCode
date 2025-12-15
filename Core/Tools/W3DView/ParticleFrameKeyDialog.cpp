@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 // ParticleFrameKeyDialogClass dialog
 
 
-ParticleFrameKeyDialogClass::ParticleFrameKeyDialogClass(float frame,CWnd* pParent /*=NULL*/) :
+ParticleFrameKeyDialogClass::ParticleFrameKeyDialogClass(float frame,CWnd* pParent /*=nullptr*/) :
 	CDialog(ParticleFrameKeyDialogClass::IDD, pParent),
 	m_Frame(frame)
 {

@@ -42,7 +42,7 @@ Bool WaterOptions::m_creatingWaterAreas = false;
 /// WaterOptions dialog trivial construstor - Create does the real work.
 
 
-WaterOptions::WaterOptions(CWnd* pParent /*=NULL*/):
+WaterOptions::WaterOptions(CWnd* pParent /*=nullptr*/):
 m_moveUndoable(nullptr)
 {
 	//{{AFX_DATA_INIT(WaterOptions)

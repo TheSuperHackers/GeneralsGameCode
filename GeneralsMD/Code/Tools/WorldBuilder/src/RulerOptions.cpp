@@ -30,7 +30,7 @@
 RulerOptions*	RulerOptions::m_staticThis = nullptr;
 
 /////////////////////////////////////////////////////////////////////////////
-RulerOptions::RulerOptions(CWnd* pParent /*=NULL*/)
+RulerOptions::RulerOptions(CWnd* pParent /*=nullptr*/)
 {
 	//{{AFX_DATA_INIT(RulerOptions)
 		// NOTE: the ClassWizard will add member initialization here

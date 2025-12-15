@@ -698,7 +698,7 @@ void Particle::loadPostProcess( void )
 		controlParticleSystem( system );
 
 		// sanity
-		if( m_systemUnderControlID == nullptr )
+		if( m_systemUnderControlID == INVALID_PARTICLE_SYSTEM_ID )
 		{
 
 			DEBUG_CRASH(( "Particle::loadPostProcess - Unable to find system under control pointer" ));

@@ -38,7 +38,7 @@
 // EditObjectParameter dialog
 
 
-EditObjectParameter::EditObjectParameter(CWnd* pParent /*=NULL*/)
+EditObjectParameter::EditObjectParameter(CWnd* pParent /*=nullptr*/)
 	: CDialog(EditObjectParameter::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(EditObjectParameter)

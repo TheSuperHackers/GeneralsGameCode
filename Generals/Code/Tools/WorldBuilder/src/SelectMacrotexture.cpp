@@ -30,7 +30,7 @@
 // SelectMacrotexture dialog
 
 
-SelectMacrotexture::SelectMacrotexture(CWnd* pParent /*=NULL*/)
+SelectMacrotexture::SelectMacrotexture(CWnd* pParent /*=nullptr*/)
 	: CDialog(SelectMacrotexture::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SelectMacrotexture)

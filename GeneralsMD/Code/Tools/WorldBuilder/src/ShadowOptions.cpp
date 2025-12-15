@@ -31,7 +31,7 @@
 // ShadowOptions dialog
 
 
-ShadowOptions::ShadowOptions(CWnd* pParent /*=NULL*/)
+ShadowOptions::ShadowOptions(CWnd* pParent /*=nullptr*/)
 	: CDialog(ShadowOptions::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(ShadowOptions)

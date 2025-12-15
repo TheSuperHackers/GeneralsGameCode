@@ -278,7 +278,7 @@ Int ScreenBWFilter::init(void)
 	Int res;
 	HRESULT hr;
 
-	m_dwBWPixelShader = nullptr;
+	m_dwBWPixelShader = 0;
 	m_curFadeFrame = 0;
 
 	if (!W3DShaderManager::canRenderToTexture()) {
@@ -478,7 +478,7 @@ Int ScreenBWFilter::shutdown(void)
 	if (m_dwBWPixelShader)
 		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_dwBWPixelShader);
 
-	m_dwBWPixelShader=nullptr;
+	m_dwBWPixelShader=0;
 
 	return TRUE;
 }
@@ -1940,9 +1940,9 @@ Int TerrainShaderPixelShader::shutdown(void)
 	if (m_dwBaseNoise2PixelShader)
 		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_dwBaseNoise2PixelShader);
 
-	m_dwBasePixelShader=nullptr;
-	m_dwBaseNoise1PixelShader=nullptr;
-	m_dwBaseNoise2PixelShader=nullptr;
+	m_dwBasePixelShader=0;
+	m_dwBaseNoise1PixelShader=0;
+	m_dwBaseNoise2PixelShader=0;
 
 	return TRUE;
 }
@@ -2236,7 +2236,7 @@ Int RoadShaderPixelShader::shutdown(void)
 	if (m_dwBaseNoise2PixelShader)
 		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_dwBaseNoise2PixelShader);
 
-	m_dwBaseNoise2PixelShader=nullptr;
+	m_dwBaseNoise2PixelShader=0;
 
 	return TRUE;
 }
@@ -3476,10 +3476,10 @@ Int FlatTerrainShaderPixelShader::shutdown(void)
 	if (m_dwBaseNoise2PixelShader)
 		DX8Wrapper::_Get_D3D_Device8()->DeletePixelShader(m_dwBaseNoise2PixelShader);
 
-	m_dwBasePixelShader=nullptr;
-	m_dwBase0PixelShader=nullptr;
-	m_dwBaseNoise1PixelShader=nullptr;
-	m_dwBaseNoise2PixelShader=nullptr;
+	m_dwBasePixelShader=0;
+	m_dwBase0PixelShader=0;
+	m_dwBaseNoise1PixelShader=0;
+	m_dwBaseNoise2PixelShader=0;
 
 	return TRUE;
 }

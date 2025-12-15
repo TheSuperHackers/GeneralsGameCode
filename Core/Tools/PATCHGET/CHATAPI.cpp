@@ -874,7 +874,7 @@ char const * Fetch_String(int id)
 	  FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &message_buffer[0], 256, nullptr );
 
    }
-   HGLOBAL resdata=LoadResource(,hrsrc);
+   HGLOBAL resdata=LoadResource(nullptr,hrsrc);
    LPVOID vdata=LockResource(resdata);
    strcpy(stringptr,(char *)vdata);
    *********/

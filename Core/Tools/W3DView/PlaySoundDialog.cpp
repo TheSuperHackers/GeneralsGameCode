@@ -37,7 +37,7 @@ static char THIS_FILE[] = __FILE__;
 // PlaySoundDialogClass
 //
 /////////////////////////////////////////////////////////////////////////////
-PlaySoundDialogClass::PlaySoundDialogClass(LPCTSTR filename, CWnd* pParent /*=NULL*/)
+PlaySoundDialogClass::PlaySoundDialogClass(LPCTSTR filename, CWnd* pParent /*=nullptr*/)
 	:	Filename (filename),
 		SoundObj (nullptr),
 		CDialog(PlaySoundDialogClass::IDD, pParent)

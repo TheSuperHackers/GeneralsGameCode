@@ -719,7 +719,7 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 
 		if (symload) {
 			if (_SymUnloadModule != nullptr) {
-				_SymUnloadModule(GetCurrentProcess(), nullptr);
+				_SymUnloadModule(GetCurrentProcess(), 0);
 			}
 		}
 
@@ -1263,7 +1263,7 @@ here:
 	** Walk the stack by the requested number of return address iterations.
 	*/
 	for (int i = 0; i < num_addresses + 1; i++) {
-		if (_StackWalk(IMAGE_FILE_MACHINE_I386, GetCurrentProcess(), GetCurrentThread(), &stack_frame, nullptr, NULL, _SymFunctionTableAccess, _SymGetModuleBase, nullptr)) {
+		if (_StackWalk(IMAGE_FILE_MACHINE_I386, GetCurrentProcess(), GetCurrentThread(), &stack_frame, nullptr, nullptr, _SymFunctionTableAccess, _SymGetModuleBase, nullptr)) {
 
 			/*
 			** First result will always be the return address we were called from.

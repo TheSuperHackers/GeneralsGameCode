@@ -1237,7 +1237,7 @@ WWAudioClass::Remove_From_Playlist (AudibleSoundClass *sound_obj)
 		//
 		if (sound_obj->Get_Loop_Count () != INFINITE_LOOPS) {
 			for (index = 0; index < m_EOSCallbackList.Count (); index ++) {
-				uint32 user_data				= nullptr;
+				uint32 user_data				= 0;
 				LPFNEOSCALLBACK callback	= m_EOSCallbackList.Get_Callback (index, &user_data);
 				if (callback != nullptr) {
 					(*callback) (sound_obj, user_data);

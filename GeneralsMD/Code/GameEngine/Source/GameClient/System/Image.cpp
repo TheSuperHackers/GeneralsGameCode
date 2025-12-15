@@ -220,7 +220,7 @@ void ImageCollection::addImage( Image *image )
 const Image *ImageCollection::findImage( NameKeyType namekey ) const
 {
 	ImageMap::const_iterator i = m_imageMap.find(namekey);
-	return i == m_imageMap.end() ? NULL : i->second;
+	return i == m_imageMap.end() ? nullptr : i->second;
 }
 
 //-------------------------------------------------------------------------------------------------

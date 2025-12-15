@@ -40,7 +40,7 @@ static char THIS_FILE[] = __FILE__;
 //
 //  CSaveSettingsDialog
 //
-CSaveSettingsDialog::CSaveSettingsDialog (CWnd* pParent /*=NULL*/)
+CSaveSettingsDialog::CSaveSettingsDialog (CWnd* pParent /*=nullptr*/)
 	: CDialog(CSaveSettingsDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CSaveSettingsDialog)

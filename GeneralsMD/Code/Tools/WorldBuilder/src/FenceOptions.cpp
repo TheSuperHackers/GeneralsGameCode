@@ -56,7 +56,7 @@ Real FenceOptions::m_fenceOffset=0;
 // FenceOptions dialog
 
 
-FenceOptions::FenceOptions(CWnd* pParent /*=NULL*/)
+FenceOptions::FenceOptions(CWnd* pParent /*=nullptr*/)
 {
 	m_objectsList = nullptr;
 	m_customSpacing = false;

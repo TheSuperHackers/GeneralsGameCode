@@ -51,7 +51,7 @@ AsciiString ObjectOptions::m_curOwnerName;
 // ObjectOptions dialog
 
 
-ObjectOptions::ObjectOptions(CWnd* pParent /*=NULL*/)
+ObjectOptions::ObjectOptions(CWnd* pParent /*=nullptr*/)
 {
 	m_objectsList = nullptr;
 	strcpy(m_currentObjectName, "No Selection");
@@ -776,7 +776,7 @@ Int ObjectOptions::getObjectNamedIndex(const AsciiString& name)
 			pObj = pObj->getNext();
 		}
 	}
-	return(nullptr);
+	return(0);
 }
 
 

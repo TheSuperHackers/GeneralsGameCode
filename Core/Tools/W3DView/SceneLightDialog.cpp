@@ -40,7 +40,7 @@ static char THIS_FILE[] = __FILE__;
 //
 //  CSceneLightDialog
 //
-CSceneLightDialog::CSceneLightDialog(CWnd* pParent /*=NULL*/)
+CSceneLightDialog::CSceneLightDialog(CWnd* pParent /*=nullptr*/)
 	: m_CurrentChannel (DIFFUSE),
 	  m_InitialStartAtten (0),
 	  m_InitialEndAtten (0),

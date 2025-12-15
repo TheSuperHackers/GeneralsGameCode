@@ -69,7 +69,7 @@ CMainFrame::CMainFrame()
 {
 	TheMainFrame = this;
 	m_curOptions = nullptr;
-	m_hAutoSaveTimer = nullptr;
+	m_hAutoSaveTimer = 0;
 	m_autoSaving = false;
 	m_layersList = nullptr;
 	m_scriptDialog = nullptr;
@@ -498,7 +498,7 @@ void CMainFrame::OnDestroy()
 	if (m_hAutoSaveTimer) {
 		KillTimer(m_hAutoSaveTimer);
 	}
-	m_hAutoSaveTimer = nullptr;
+	m_hAutoSaveTimer = 0;
 	CFrameWnd::OnDestroy();
 }
 

@@ -34,7 +34,7 @@ Int FeatherOptions::m_currentRadius = 1;
 /// FeatherOptions dialog trivial construstor - Create does the real work.
 
 
-FeatherOptions::FeatherOptions(CWnd* pParent /*=NULL*/)
+FeatherOptions::FeatherOptions(CWnd* pParent /*=nullptr*/)
 {
 	//{{AFX_DATA_INIT(FeatherOptions)
 		// NOTE: the ClassWizard will add member initialization here

@@ -46,7 +46,7 @@ AIDockMachine::AIDockMachine( Object *obj ) : StateMachine( obj, "AIDockMachine"
 	static const StateConditionInfo waitForClearanceConditions[] =
 	{
 		StateConditionInfo(ableToAdvance, AI_DOCK_ADVANCE_POSITION, nullptr),
-		StateConditionInfo(nullptr, nullptr, nullptr)
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
 	// order matters: first state is the default state.

@@ -40,7 +40,7 @@ static Int defaultMaterialIndex = -1;
 
 Int BlendMaterial::m_currentBlendTexture(-1);
 
-BlendMaterial::BlendMaterial(CWnd* pParent /*=NULL*/) :
+BlendMaterial::BlendMaterial(CWnd* pParent /*=nullptr*/) :
 	m_updating(false)
 {
 	//{{AFX_DATA_INIT(BlendMaterial)

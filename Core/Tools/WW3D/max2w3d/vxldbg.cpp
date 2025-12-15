@@ -71,7 +71,7 @@ void VoxelDebugWindowClass::Display_Window(void)
 						(
 							AppInstance,
 							MAKEINTRESOURCE (IDD_VOXEL_DEBUG_DIALOG),
-							NULL,
+							nullptr,
 							(DLGPROC) _dialog_proc,
 							(LPARAM) this
 						);

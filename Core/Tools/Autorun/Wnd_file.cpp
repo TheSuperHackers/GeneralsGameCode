@@ -307,9 +307,9 @@ void Delete_Msg_File ( void )
 		wsprintf( buff, "===========================================================\r\n" );
 		nBytes = file.Write( buff, strlen( buff ));
 
-		GetDateFormat( LOCALE_USER_DEFAULT, DATE_SHORTDATE, nullptr, NULL, date, 50 );
+		GetDateFormat( LOCALE_USER_DEFAULT, DATE_SHORTDATE, nullptr, nullptr, date, 50 );
 //		GetTimeFormat( LOCALE_USER_DEFAULT, TIME_NOSECONDS, NULL, NULL, time, 30 );
-		GetTimeFormat( LOCALE_USER_DEFAULT, nullptr, NULL, "hh':'mm':'ss tt", time, 30 );
+		GetTimeFormat( LOCALE_USER_DEFAULT, 0, nullptr, "hh':'mm':'ss tt", time, 30 );
 		wsprintf( buff, "SETUP:  File: %s  Date: %s  Time: %s.\r\n", DebugFile, date, time );
 		nBytes = file.Write( buff, strlen( buff ));
 
@@ -1337,7 +1337,7 @@ int Tell_File( HANDLE handle )
 	//
 	pos = SetFilePointer( handle,
                          0, // distance to move
-                         NULL,
+                         nullptr,
                          move_method );
 
 	if ( pos == 0xFFFFFFFF ) {

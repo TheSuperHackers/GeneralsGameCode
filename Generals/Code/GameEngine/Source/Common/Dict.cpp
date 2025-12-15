@@ -265,7 +265,7 @@ Dict::DataType Dict::getType(NameKeyType key) const
 }
 
 // -----------------------------------------------------
-Bool Dict::getBool(NameKeyType key, Bool *exists/*=NULL*/) const
+Bool Dict::getBool(NameKeyType key, Bool *exists/*=nullptr*/) const
 {
 	validate();
 	DictPair* pair = findPairByKey(key);
@@ -280,7 +280,7 @@ Bool Dict::getBool(NameKeyType key, Bool *exists/*=NULL*/) const
 }
 
 // -----------------------------------------------------
-Int Dict::getInt(NameKeyType key, Bool *exists/*=NULL*/) const
+Int Dict::getInt(NameKeyType key, Bool *exists/*=nullptr*/) const
 {
 	validate();
 	DictPair* pair = findPairByKey(key);
@@ -295,7 +295,7 @@ Int Dict::getInt(NameKeyType key, Bool *exists/*=NULL*/) const
 }
 
 // -----------------------------------------------------
-Real Dict::getReal(NameKeyType key, Bool *exists/*=NULL*/) const
+Real Dict::getReal(NameKeyType key, Bool *exists/*=nullptr*/) const
 {
 	validate();
 	DictPair* pair = findPairByKey(key);
@@ -310,7 +310,7 @@ Real Dict::getReal(NameKeyType key, Bool *exists/*=NULL*/) const
 }
 
 // -----------------------------------------------------
-AsciiString Dict::getAsciiString(NameKeyType key, Bool *exists/*=NULL*/) const
+AsciiString Dict::getAsciiString(NameKeyType key, Bool *exists/*=nullptr*/) const
 {
 	validate();
 	DictPair* pair = findPairByKey(key);
@@ -325,7 +325,7 @@ AsciiString Dict::getAsciiString(NameKeyType key, Bool *exists/*=NULL*/) const
 }
 
 // -----------------------------------------------------
-UnicodeString Dict::getUnicodeString(NameKeyType key, Bool *exists/*=NULL*/) const
+UnicodeString Dict::getUnicodeString(NameKeyType key, Bool *exists/*=nullptr*/) const
 {
 	validate();
 	DictPair* pair = findPairByKey(key);

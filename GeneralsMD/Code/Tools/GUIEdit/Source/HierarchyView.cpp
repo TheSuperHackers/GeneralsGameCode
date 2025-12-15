@@ -225,7 +225,7 @@ LRESULT CALLBACK HierarchyView::dialogProc( HWND hWndDialog, UINT message,
 
 					// get the node info from the tree item we're over
 					overItemInfo.hItem = overItem;
-					overItemInfo.lParam = nullptr;
+					overItemInfo.lParam = 0;
 					overItemInfo.mask = TVIF_HANDLE | TVIF_PARAM;
 					TreeView_GetItem( TheHierarchyView->getTreeHandle(), &overItemInfo );
 					overWindow = (GameWindow *)overItemInfo.lParam;
@@ -1251,7 +1251,7 @@ GameWindow *HierarchyView::getWindowFromItem( HTREEITEM treeItem )
 	GameWindow *window;
 
 	itemInfo.hItem = treeItem;
-	itemInfo.lParam = nullptr;
+	itemInfo.lParam = 0;
 	itemInfo.mask = TVIF_HANDLE | TVIF_PARAM;
 	TreeView_GetItem( m_tree, &itemInfo );
 	window = (GameWindow *)itemInfo.lParam;

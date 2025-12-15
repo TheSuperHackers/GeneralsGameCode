@@ -48,7 +48,7 @@ Bool RoadOptions::m_doJoin = false;		///< Is a join to different road type.
 // RoadOptions dialog
 
 
-RoadOptions::RoadOptions(CWnd* pParent /*=NULL*/)
+RoadOptions::RoadOptions(CWnd* pParent /*=nullptr*/)
 {
 	m_currentRoadName = "Road";
 	//{{AFX_DATA_INIT(RoadOptions)

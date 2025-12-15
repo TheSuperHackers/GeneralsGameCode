@@ -886,7 +886,7 @@ WW3DErrorType MeshModelClass::read_vertex_colors(ChunkLoadClass & cload,MeshLoad
 	**
 	** A side effect is that if two DCG chunks are encountered, only the first is used...
 	*/
-	if (CurMatDesc->Has_Color_Array(0) == nullptr) {
+	if (CurMatDesc->Has_Color_Array(0) == false) {
 		W3dRGBStruct color;
 		unsigned * dcg = Get_Color_Array(0,true);
 		assert(dcg != nullptr);

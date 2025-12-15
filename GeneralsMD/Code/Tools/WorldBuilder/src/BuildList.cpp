@@ -45,7 +45,7 @@ Bool BuildList::m_updating = false;
 // BuildList dialog
 
 
-BuildList::BuildList(CWnd* pParent /*=NULL*/)
+BuildList::BuildList(CWnd* pParent /*=nullptr*/)
 {
 	//{{AFX_DATA_INIT(BuildList)
 		// NOTE: the ClassWizard will add member initialization here

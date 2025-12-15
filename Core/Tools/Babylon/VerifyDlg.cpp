@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 // VerifyDlg dialog
 
 
-VerifyDlg::VerifyDlg( BabylonText *ntext, LangID langid,  const char *path, CWnd* pParent /*=NULL*/)
+VerifyDlg::VerifyDlg( BabylonText *ntext, LangID langid,  const char *path, CWnd* pParent /*=nullptr*/)
 	: CDialog(VerifyDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(VerifyDlg)

@@ -157,7 +157,7 @@ SinglePlayerLoadScreen::SinglePlayerLoadScreen( void )
 {
 	m_currentObjectiveLine = 0;
 	m_currentObjectiveLineCharacter = 0;
-	m_finishedObjectiveText = nullptr;
+	m_finishedObjectiveText = FALSE;
 	m_currentObjectiveWidthOffset = 0;
 	m_progressBar = nullptr;
 	m_percent = nullptr;

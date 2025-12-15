@@ -34,7 +34,7 @@
 // TerrainModal dialog
 
 
-TerrainModal::TerrainModal(AsciiString path, WorldHeightMapEdit *pMap, CWnd* pParent  /*=NULL*/)
+TerrainModal::TerrainModal(AsciiString path, WorldHeightMapEdit *pMap, CWnd* pParent  /*=nullptr*/)
 	: CDialog(TerrainModal::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(TerrainModal)

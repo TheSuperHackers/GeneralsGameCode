@@ -385,7 +385,7 @@ WbView3d::WbView3d() :
 	m_time(0),
 	m_updateCount(0),
 	m_needToLoadRoads(0),
-	m_timer(nullptr),
+	m_timer(0),
 	m_drawObject(nullptr),
 	m_layer(nullptr),
 	m_buildLayer(nullptr),
@@ -555,9 +555,9 @@ void WbView3d::ReAcquireResources(void)
 // ----------------------------------------------------------------------------
 void WbView3d::killTheTimer(void)
 {
-	if (m_timer != nullptr) {
+	if (m_timer != 0) {
 		KillTimer(m_timer);
-		m_timer = nullptr;
+		m_timer = 0;
 	}
 }
 

@@ -27,7 +27,7 @@
 // CNewHeightMap dialog
 
 
-CNewHeightMap::CNewHeightMap(TNewHeightInfo *hiP,  const char *label, CWnd* pParent /*=NULL*/)
+CNewHeightMap::CNewHeightMap(TNewHeightInfo *hiP,  const char *label, CWnd* pParent /*=nullptr*/)
 	: CDialog(CNewHeightMap::IDD, pParent)
 {
 	mHeightInfo = *hiP;

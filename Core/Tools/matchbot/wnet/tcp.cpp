@@ -552,8 +552,8 @@ sint32 TCP::TimedRead(uint8 *msg,uint32 len,int seconds,sint32 whichFD)
   sint32    bytes_read=0;
   sint32    retval;
 
-  time_t stop_time=time()+seconds;
-  while ((time()<=stop_time)&&((uint32)bytes_read<len))
+  time_t stop_time=time(nullptr)+seconds;
+  while ((time(nullptr)<=stop_time)&&((uint32)bytes_read<len))
   {
     Wait(1,0,set,whichFD);
     //DBGMSG("Calling read");

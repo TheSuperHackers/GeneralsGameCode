@@ -74,7 +74,7 @@
 AsciiString EditParameter::m_selectedLocalizedString = AsciiString::TheEmptyString;
 AsciiString EditParameter::m_unitName = AsciiString::TheEmptyString;
 
-EditParameter::EditParameter(CWnd* pParent /*=NULL*/)
+EditParameter::EditParameter(CWnd* pParent /*=nullptr*/)
 	: CDialog(EditParameter::IDD, pParent),
 	m_int(0),
 	m_real(0)

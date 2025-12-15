@@ -227,7 +227,7 @@ bool FloaterDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM
 
 		case WM_DESTROY:
 			::GetCOREInterface()->UnRegisterDlgWnd(Hwnd);
-			Hwnd = NULL;
+			Hwnd = nullptr;
 			break;
 	}
 	return 0;

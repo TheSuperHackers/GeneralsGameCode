@@ -160,7 +160,7 @@ BOOL CALLBACK InputDlg::DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 					if (!OnOK())
 						return TRUE;
 
-					SetCursor(LoadCursor(, IDC_WAIT));
+					SetCursor(LoadCursor(nullptr, IDC_WAIT));
 					EndDialog(m_hWnd, 1);
 					break;
 
@@ -180,7 +180,7 @@ BOOL CALLBACK InputDlg::DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 LRESULT InputDlg::OnInitDialog (WPARAM wParam, LPARAM lParam)
 {
 	// Set the cursor to the normal arrow.
-	SetCursor(LoadCursor(, IDC_ARROW));
+	SetCursor(LoadCursor(nullptr, IDC_ARROW));
 
 	// Set the dialog box caption.
 	SetWindowText(m_hWnd, m_Caption);

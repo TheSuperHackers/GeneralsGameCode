@@ -209,7 +209,7 @@ BOOL GameMtlPassDlg::DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 				// Loop through all the tabs in the property sheet
 				// Get a pointer to this tab
 				SetWindowPos(	hwnd,
-									NULL,
+									nullptr,
 									rect.left, rect.top,
 									rect.right - rect.left, rect.bottom - rect.top,
 									SWP_NOZORDER);

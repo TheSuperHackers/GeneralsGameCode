@@ -34,7 +34,7 @@ Int MoundOptions::m_currentFeather = 0;
 /// MoundOptions dialog trivial construstor - Create does the real work.
 
 
-MoundOptions::MoundOptions(CWnd* pParent /*=NULL*/)
+MoundOptions::MoundOptions(CWnd* pParent /*=nullptr*/)
 {
 	//{{AFX_DATA_INIT(MoundOptions)
 		// NOTE: the ClassWizard will add member initialization here

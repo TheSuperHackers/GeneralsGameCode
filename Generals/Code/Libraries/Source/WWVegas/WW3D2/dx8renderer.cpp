@@ -241,7 +241,7 @@ void DX8TextureCategoryClass::Add_Polygon_Renderer(DX8PolygonRendererClass* p_re
 
 	if (add_after_this != nullptr) {
 		bool res = PolygonRendererList.Add_After(p_renderer,add_after_this,false);
-		WWASSERT(res != nullptr);
+		WWASSERT(res);
 	} else {
 		PolygonRendererList.Add(p_renderer);
 	}

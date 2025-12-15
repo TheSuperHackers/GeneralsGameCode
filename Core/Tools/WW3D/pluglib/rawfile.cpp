@@ -541,7 +541,7 @@ bool RawFileClass::Is_Available(int forced)
 			Handle=fopen(Filename,"r");
 		#else
 			Handle = CreateFileA(Filename, GENERIC_READ, FILE_SHARE_READ,
-											NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+											nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 		#endif
 
 		if (Handle == nullptr) {

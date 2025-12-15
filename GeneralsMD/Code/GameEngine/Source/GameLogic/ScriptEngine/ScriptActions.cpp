@@ -4750,8 +4750,8 @@ void ScriptActions::doTeamRemoveAllOverrideRelations(const AsciiString& teamName
 	Team *theTeam = TheScriptEngine->getTeamNamed( teamName );
 	if (theTeam) {
 		// invalid ID is OK -- it removes all relationships
-		theTeam->removeOverrideTeamRelationship( nullptr );
-		theTeam->removeOverridePlayerRelationship( nullptr );
+		theTeam->removeOverrideTeamRelationship( TEAM_ID_INVALID );
+		theTeam->removeOverridePlayerRelationship( PLAYER_INDEX_INVALID );
 	}
 }
 //-------------------------------------------------------------------------------------------------

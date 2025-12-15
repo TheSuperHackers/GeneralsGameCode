@@ -48,7 +48,7 @@ static char THIS_FILE[] = __FILE__;
 //
 //	AggregateNameDialogClass
 //
-AggregateNameDialogClass::AggregateNameDialogClass (CWnd* pParent /*=NULL*/)
+AggregateNameDialogClass::AggregateNameDialogClass (CWnd* pParent /*=nullptr*/)
 	: CDialog(AggregateNameDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(AggregateNameDialogClass)

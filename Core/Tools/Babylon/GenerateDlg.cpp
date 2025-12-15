@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 // CGenerateDlg dialog
 
 
-CGenerateDlg::CGenerateDlg(CWnd* pParent /*=NULL*/)
+CGenerateDlg::CGenerateDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CGenerateDlg::IDD, pParent)
 {
 	options.format = GN_UNICODE;

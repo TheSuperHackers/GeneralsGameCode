@@ -102,7 +102,7 @@ static void InitDbghelp(void)
   {
     // not all functions found -> clear them all
     while (funcptr!=gDbg.funcPtr)
-      *--funcptr=nullptr;
+      *--funcptr=0;
   }
   else
   {

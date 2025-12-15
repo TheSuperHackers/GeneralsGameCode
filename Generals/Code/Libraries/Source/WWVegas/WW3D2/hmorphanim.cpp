@@ -325,7 +325,7 @@ bool Is_Number (const char *str)
 {
 	bool retval = true;
 
-	while (retval && str[0] != nullptr){
+	while (retval && str[0] != '\0'){
 		retval = ((str[0] >= '0' && str[0] <= '9') || str[0] == '-' || str[0] == '.');
 		str ++;
 	}

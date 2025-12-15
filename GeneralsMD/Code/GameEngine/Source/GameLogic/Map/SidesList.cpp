@@ -388,12 +388,12 @@ void SidesList::WriteSidesDataChunk(DataChunkOutput &chunkWriter)
 
 }
 
-TeamsInfo *SidesList::findTeamInfo(AsciiString name, Int* index /*= NULL*/)
+TeamsInfo *SidesList::findTeamInfo(AsciiString name, Int* index /*= nullptr*/)
 {
 	return m_teamrec.findTeamInfo(name, index);
 }
 
-SidesInfo *SidesList::findSideInfo(AsciiString name, Int* index /*= NULL*/)
+SidesInfo *SidesList::findSideInfo(AsciiString name, Int* index /*= nullptr*/)
 {
 	for (int i = 0; i < m_numSides; i++)
 	{
@@ -407,7 +407,7 @@ SidesInfo *SidesList::findSideInfo(AsciiString name, Int* index /*= NULL*/)
 	return nullptr;
 }
 
-SidesInfo *SidesList::findSkirmishSideInfo(AsciiString name, Int* index /*= NULL*/)
+SidesInfo *SidesList::findSkirmishSideInfo(AsciiString name, Int* index /*= nullptr*/)
 {
 	for (int i = 0; i < m_numSkirmishSides; i++)
 	{
@@ -1105,7 +1105,7 @@ void TeamsInfoRec::clear()
 	m_teams = nullptr;
 }
 
-TeamsInfo *TeamsInfoRec::findTeamInfo(AsciiString name, Int* index /*= NULL*/)
+TeamsInfo *TeamsInfoRec::findTeamInfo(AsciiString name, Int* index /*= nullptr*/)
 {
 	for (int i = 0; i < m_numTeams; ++i)
 	{

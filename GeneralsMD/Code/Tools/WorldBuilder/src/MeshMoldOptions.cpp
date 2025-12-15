@@ -36,7 +36,7 @@ Bool MeshMoldOptions::m_doingPreview=false;
 Bool MeshMoldOptions::m_raiseOnly=false;
 Bool MeshMoldOptions::m_lowerOnly=false;
 
-MeshMoldOptions::MeshMoldOptions(CWnd* pParent /*=NULL*/)
+MeshMoldOptions::MeshMoldOptions(CWnd* pParent /*=nullptr*/)
 {
 	//{{AFX_DATA_INIT(MeshMoldOptions)
 		// NOTE: the ClassWizard will add member initialization here

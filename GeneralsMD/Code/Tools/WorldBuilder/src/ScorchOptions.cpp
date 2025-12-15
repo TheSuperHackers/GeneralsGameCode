@@ -37,7 +37,7 @@ ScorchOptions *ScorchOptions::m_staticThis = nullptr;
 // ScorchOptions dialog
 
 
-ScorchOptions::ScorchOptions(CWnd* pParent /*=NULL*/)
+ScorchOptions::ScorchOptions(CWnd* pParent /*=nullptr*/)
 {
 	//{{AFX_DATA_INIT(ScorchOptions)
 		// NOTE: the ClassWizard will add member initialization here

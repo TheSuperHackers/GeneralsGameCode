@@ -47,7 +47,7 @@ const int COL_SWITCH_DN     = 2;
 //
 //  CEditLODDialog
 //
-CEditLODDialog::CEditLODDialog(CWnd* pParent /*=NULL*/)
+CEditLODDialog::CEditLODDialog(CWnd* pParent /*=nullptr*/)
 	: m_spinIncrement (0.5F),
       CDialog(CEditLODDialog::IDD, pParent)
 {

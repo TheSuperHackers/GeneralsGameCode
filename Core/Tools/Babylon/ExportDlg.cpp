@@ -37,7 +37,7 @@ static int max_index;
 // CExportDlg dialog
 
 
-CExportDlg::CExportDlg(CWnd* pParent /*=NULL*/)
+CExportDlg::CExportDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CExportDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CExportDlg)

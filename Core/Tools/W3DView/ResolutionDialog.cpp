@@ -42,7 +42,7 @@ static char THIS_FILE[] = __FILE__;
 // ResolutionDialogClass
 //
 /////////////////////////////////////////////////////////////////////////////
-ResolutionDialogClass::ResolutionDialogClass(CWnd* pParent /*=NULL*/)
+ResolutionDialogClass::ResolutionDialogClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(ResolutionDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(ResolutionDialogClass)

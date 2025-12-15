@@ -27,7 +27,7 @@
 // CellWidth dialog
 
 /// Constructor and set initial cell width.
-CellWidth::CellWidth(int cellWidth, CWnd* pParent /*=NULL*/)
+CellWidth::CellWidth(int cellWidth, CWnd* pParent /*=nullptr*/)
 	: CDialog(CellWidth::IDD, pParent),
 	mCellWidth(cellWidth)
 {

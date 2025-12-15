@@ -41,7 +41,7 @@ static char THIS_FILE[] = __FILE__;
 // CameraSettingsDialogClass
 //
 /////////////////////////////////////////////////////////////////////////////
-CameraSettingsDialogClass::CameraSettingsDialogClass(CWnd* pParent /*=NULL*/)
+CameraSettingsDialogClass::CameraSettingsDialogClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(CameraSettingsDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CameraSettingsDialogClass)

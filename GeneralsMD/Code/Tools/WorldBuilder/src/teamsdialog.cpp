@@ -43,7 +43,7 @@ static const char* NEUTRAL_NAME_STR = "(neutral)";
 // CTeamsDialog dialog
 
 
-CTeamsDialog::CTeamsDialog(CWnd* pParent /*=NULL*/)
+CTeamsDialog::CTeamsDialog(CWnd* pParent /*=nullptr*/)
 	: CDialog(CTeamsDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CTeamsDialog)

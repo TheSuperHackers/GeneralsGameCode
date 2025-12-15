@@ -256,7 +256,7 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 																				  WindowMsgData mData1, WindowMsgData mData2 )
 {
 	GameWindow *mapWindow = nullptr;
-	if (listboxMap != nullptr)
+	if (listboxMap != NAMEKEY_INVALID)
 	{
 		mapWindow = TheWindowManager->winGetWindowFromId( parent, listboxMap );
 	}

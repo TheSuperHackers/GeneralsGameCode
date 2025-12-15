@@ -379,7 +379,7 @@ W3DAnimationInfo::~W3DAnimationInfo()
 {
 #ifdef RETAIN_ANIM_HANDLES
 	REF_PTR_RELEASE(m_handle);
-	m_handle = NULL;
+	m_handle = nullptr;
 #endif
 }
 

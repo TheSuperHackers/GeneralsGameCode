@@ -39,7 +39,7 @@ WaypointOptions *WaypointOptions::m_staticThis = nullptr;
 /// WaypointOptions dialog trivial construstor - Create does the real work.
 
 
-WaypointOptions::WaypointOptions(CWnd* pParent /*=NULL*/):
+WaypointOptions::WaypointOptions(CWnd* pParent /*=nullptr*/):
 m_moveUndoable(nullptr)
 {
 	//{{AFX_DATA_INIT(WaypointOptions)
