@@ -650,8 +650,8 @@ CW3DViewDoc::DisplayObject
     if (m_pCScene)
     {
         // Lose the animation
-		  SAFE_DELETE (m_pCAnimCombo);
-		  m_pCAnimation.Clear();
+        SAFE_DELETE (m_pCAnimCombo);
+        m_pCAnimation.Clear();
 
         // Do we have an old object to remove from the scene?
 		  if (add_ghost == false) {
@@ -751,7 +751,7 @@ CW3DViewDoc::DisplayObject
 void
 CW3DViewDoc::ResetAnimation (void)
 {
-	if (m_pCAnimation != nullptr) {
+	if (m_pCAnimation) {
 
 		//
 		// Reset the frame counter
@@ -854,7 +854,7 @@ CW3DViewDoc::PlayAnimation
         DisplayObject (pCModel);
 
         // Get an instance of the animation object
-		  SAFE_DELETE (m_pCAnimCombo);
+        SAFE_DELETE (m_pCAnimCombo);
         m_pCAnimation = RefCountPtr<HAnimClass>::Create_NoAddRef(WW3DAssetManager::Get_Instance()->Get_HAnim (pszAnimationName));
         ASSERT (m_pCAnimation.Peek());
 
@@ -899,7 +899,7 @@ CW3DViewDoc::PlayAnimation
 void
 CW3DViewDoc::Play_Animation_Sound (void)
 {
-	if (m_pCAnimation != nullptr) {
+	if (m_pCAnimation) {
 	  CString animation_name = m_pCAnimation->Get_Name ();
 
 	  //
@@ -945,9 +945,9 @@ CW3DViewDoc::PlayAnimation
         DisplayObject (pCModel);
 
         // Get an instance of the animation object
-		  SAFE_DELETE (m_pCAnimCombo);
-		  m_pCAnimCombo = pCAnimCombo;
-		  m_pCAnimation = RefCountPtr<HAnimClass>::Create_NoAddRef(m_pCAnimCombo->Get_Motion(0));	// ref added by get_motion
+        SAFE_DELETE (m_pCAnimCombo);
+        m_pCAnimCombo = pCAnimCombo;
+        m_pCAnimation = RefCountPtr<HAnimClass>::Create_NoAddRef(m_pCAnimCombo->Get_Motion(0));	// ref added by get_motion
         ASSERT (m_pCAnimation.Peek());
 
 		  // It will be assumed that every animation in the m_pCAnimCombo
