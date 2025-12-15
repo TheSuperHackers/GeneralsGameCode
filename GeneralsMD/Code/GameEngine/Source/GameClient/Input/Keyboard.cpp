@@ -787,7 +787,7 @@ void Keyboard::changeFocus()
 		msg->appendIntegerArgument(KEY_LALT);
 		msg->appendIntegerArgument(KEY_STATE_UP);
 	}
-	else if (BitIsSet(m_keyStatus[KEY_RALT].state, KEY_STATE_DOWN))
+	if (BitIsSet(m_keyStatus[KEY_RALT].state, KEY_STATE_DOWN))
 	{
 		GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
 		msg->appendIntegerArgument(KEY_RALT);
