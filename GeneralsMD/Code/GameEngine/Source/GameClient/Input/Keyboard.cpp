@@ -763,7 +763,7 @@ void Keyboard::resetKeys( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-// Refresh the state of the alt keys after alt tab
+// Refresh the state of the alt keys, necessary after alt tab
 //-------------------------------------------------------------------------------------------------
 void Keyboard::refreshAltKeys() const
 {
