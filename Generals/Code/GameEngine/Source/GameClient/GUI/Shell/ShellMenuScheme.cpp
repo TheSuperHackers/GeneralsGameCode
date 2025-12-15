@@ -63,8 +63,8 @@
 const FieldParse ShellMenuSchemeManager::m_shellMenuSchemeFieldParseTable[] =
 {
 
-	{ "ImagePart",						ShellMenuSchemeManager::parseImagePart,			nullptr, NULL },
-	{ "LinePart",							ShellMenuSchemeManager::parseLinePart,	nullptr, NULL },
+	{ "ImagePart",						ShellMenuSchemeManager::parseImagePart,			nullptr, 0 },
+	{ "LinePart",							ShellMenuSchemeManager::parseLinePart,	nullptr, 0 },
 	{ nullptr,										nullptr,													nullptr, 0 }
 
 };

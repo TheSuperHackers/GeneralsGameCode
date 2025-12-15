@@ -220,7 +220,7 @@ static const char *const TheDeathNames[] =
 	"EXTRA_8",
 	"POISONED_GAMMA",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheDeathNames) == DEATH_NUM_TYPES + 1, "Incorrect array size");
 #endif // end DEFINE_DEATH_NAMES

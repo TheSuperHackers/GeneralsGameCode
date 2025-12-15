@@ -76,7 +76,7 @@ static const char *const TheStructureTopplePhaseNames[] =
 	"DELAY",
 	"FINAL",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheStructureTopplePhaseNames) == ST_PHASE_COUNT + 1, "Incorrect array size");
 

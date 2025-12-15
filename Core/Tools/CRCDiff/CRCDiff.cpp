@@ -191,7 +191,7 @@ int main(int argc, char *argv[])
 	atexit(exitWait);
 	const char *inFname[2];
 	const char *outFname = "out.html";
-	FILE *ifp[2] = {NULL, NULL};
+	FILE *ifp[2] = { nullptr, nullptr};
 	std::string header, footer;
 
 	if (argc != 7)

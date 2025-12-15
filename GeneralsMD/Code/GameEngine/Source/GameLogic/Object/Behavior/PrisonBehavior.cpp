@@ -226,7 +226,7 @@ void PrisonBehavior::pickVisualLocation( Coord3D *pos )
 	Int yardBones = us->getMultiLogicalBonePosition( modData->m_prisonYardBonePrefix.str(),
 																									 MAX_YARD_BONES,
 																									 yardPositions,
-																									 NULL );
+																									 nullptr );
 
 	//
 	// we must have at least 3 bone locations to make a yard polygon, otherwise we'll

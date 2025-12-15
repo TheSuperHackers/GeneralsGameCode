@@ -2791,7 +2791,7 @@ static const char* s_specialPrefixes[MAX_SPECIAL_USED] =
 	"W3A_",
 	"STL_",
 	"STR_",
-	NULL
+	nullptr
 };
 
 #endif

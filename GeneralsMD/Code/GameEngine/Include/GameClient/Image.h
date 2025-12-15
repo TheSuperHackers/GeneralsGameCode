@@ -53,7 +53,7 @@ static const char *const imageStatusNames[] =
 {
 	"ROTATED_90_CLOCKWISE",
 	"RAW_TEXTURE",
-	NULL
+	nullptr
 };
 #endif  // end DEFINE_IMAGE_STATUS_NAMES
 

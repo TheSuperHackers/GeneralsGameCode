@@ -103,7 +103,7 @@ static const LookupListRec TransitionStyleNames[] =
 	{ "CONTROLBARARROW",			CONTROL_BAR_ARROW_TRANSITION },
 	{ "SCORESCALEUP",			SCORE_SCALE_UP_TRANSITION },
 	{ "REVERSESOUND",			REVERSE_SOUND_TRANSITION },
-	{ NULL, 0	}
+	{ nullptr, 0	}
 };
 static_assert(ARRAY_SIZE(TransitionStyleNames) == MAX_TRANSITION_WINDOW_STYLES + 1, "Incorrect array size");
 

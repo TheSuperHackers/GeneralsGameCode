@@ -102,7 +102,7 @@ static const char *const ScienceAvailabilityNames[] =
 	"Available",
 	"Disabled",
 	"Hidden",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(ScienceAvailabilityNames) == SCIENCE_AVAILABILITY_COUNT + 1, "Incorrect array size");
 #endif	// end DEFINE_SCIENCE_AVAILABILITY_NAMES

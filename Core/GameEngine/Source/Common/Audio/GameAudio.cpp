@@ -133,7 +133,7 @@ static const FieldParse audioSettingsFieldParseTable[] =
   { "ZoomMaxDistance",		INI::parseReal,									nullptr,							offsetof( AudioSettings, m_zoomMaxDistance ) },
   { "ZoomSoundVolumePercentageAmount",		INI::parsePercentToReal,	nullptr,		offsetof( AudioSettings, m_zoomSoundVolumePercentageAmount ) },
 
-	{ nullptr, nullptr, nullptr, NULL }
+	{ nullptr, nullptr, nullptr, 0 }
 };
 
 // Singleton TheAudio /////////////////////////////////////////////////////////////////////////////

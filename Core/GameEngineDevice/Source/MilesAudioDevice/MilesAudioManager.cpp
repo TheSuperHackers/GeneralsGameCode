@@ -222,7 +222,7 @@ void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FIL
 	AsciiString filenameNoSlashes;
 
 	const Int maxChannels = 64;
-	PlayingAudio *playingArray[maxChannels] = { NULL };
+	PlayingAudio *playingArray[maxChannels] = { nullptr };
 
 	// 2-D Sounds
 	if( dd )

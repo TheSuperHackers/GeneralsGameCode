@@ -173,7 +173,7 @@ struct TrainTrack
 
 	// To protect the track form ever going out of sync between cars on the same train...
 	// I restrict write access to the first referencer, before a second one is added (the locomotive)
-	TrackPointList* getWritablePointList( void ) { return m_refCount == 1 ? &m_pointList : NULL; };
+	TrackPointList* getWritablePointList( void ) { return m_refCount == 1 ? &m_pointList : nullptr; };
 	const TrackPointList* getPointList( void ) { return &m_pointList; };
 
 private:

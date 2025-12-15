@@ -96,8 +96,8 @@ const FieldParse MapMetaDataReader::m_mapFieldParseTable[] =
 	{ "displayName",						INI::parseAsciiString,	nullptr,	offsetof( MapMetaDataReader, m_asciiDisplayName ) },
 	{ "nameLookupTag",					INI::parseAsciiString,	nullptr,	offsetof( MapMetaDataReader, m_asciiNameLookupTag ) },
 
-	{ "supplyPosition",					parseSupplyPositionCoord3D,	nullptr, NULL },
-	{ "techPosition",						parseTechPositionsCoord3D,	nullptr, NULL },
+	{ "supplyPosition",					parseSupplyPositionCoord3D,	nullptr, 0 },
+	{ "techPosition",						parseTechPositionsCoord3D,	nullptr, 0 },
 
 	{ "Player_1_Start",					INI::parseCoord3D,	nullptr,	offsetof( MapMetaDataReader, m_waypoints ) },
 	{ "Player_2_Start",					INI::parseCoord3D,	nullptr,	offsetof( MapMetaDataReader, m_waypoints ) + sizeof(Coord3D) * 1 },

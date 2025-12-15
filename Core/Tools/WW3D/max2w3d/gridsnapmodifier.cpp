@@ -88,7 +88,7 @@ public:
 	// Direct paramblock access
 	int	NumParamBlocks()																	{ return 1; }
 	IParamBlock2* GetParamBlock(int i)													{ return pblock2; }
-	IParamBlock2* GetParamBlockByID(BlockID id)										{ return (pblock2->ID() == id) ? pblock2 : NULL; }
+	IParamBlock2* GetParamBlockByID(BlockID id)										{ return (pblock2->ID() == id) ? pblock2 : nullptr; }
 
 	// From simple mod
 	Deformer& GetDeformer(TimeValue t,ModContext &mc,Matrix3& mat,Matrix3& invmat);

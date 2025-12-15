@@ -186,7 +186,7 @@ static const char *const TerrainLODNames[] =
 	"AUTOMATIC",
 	"DISABLE",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TerrainLODNames) == TERRAIN_LOD_NUM_TYPES + 1, "Incorrect array size");
 #endif  // end DEFINE_TERRAIN_LOD_NAMES

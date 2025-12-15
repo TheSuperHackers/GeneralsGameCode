@@ -644,7 +644,7 @@ static const char* const TheAnimModeNames[] =
 	"LOOP_PINGPONG",
 	"LOOP_BACKWARDS",
 	"ONCE_BACKWARDS",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheAnimModeNames) == RenderObjClass::ANIM_MODE_COUNT + 1, "Incorrect array size");
 #endif

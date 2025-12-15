@@ -2382,7 +2382,7 @@ WW3DErrorType MeshModelClass::write_triangles(ChunkSaveClass & csave,MeshSaveCon
 	}
 
 	TriIndex	* poly_verts = Poly->Get_Array();
-	Vector4 * poly_eq = (PlaneEq ? PlaneEq->Get_Array() : NULL);
+	Vector4 * poly_eq = (PlaneEq ? PlaneEq->Get_Array() : nullptr);
 
 	for (int i=0; i<Get_Polygon_Count(); i++) {
 

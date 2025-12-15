@@ -1201,7 +1201,7 @@ Bool ActionManager::canPickUpPrisoner( const Object *obj, const Object *prisoner
 	// prisoner must have been put in a surrendered state by our own player
 	// (or be surrendered to "everyone")
 	Int idx = ai->getSurrenderedPlayerIndex();
-	Player* surrenderedToPlayer = (idx >= 0) ? ThePlayerList->getNthPlayer(idx) : NULL;
+	Player* surrenderedToPlayer = (idx >= 0) ? ThePlayerList->getNthPlayer(idx) : nullptr;
 	if (surrenderedToPlayer != nullptr && surrenderedToPlayer != obj->getControllingPlayer())
 		return FALSE;
 

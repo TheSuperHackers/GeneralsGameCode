@@ -73,8 +73,8 @@ enum{
 const FieldParse ControlBarSchemeManager::m_controlBarSchemeFieldParseTable[] =
 {
 
-	{ "ImagePart",						ControlBarSchemeManager::parseImagePart,			nullptr, NULL },
-	{ "AnimatingPart",				ControlBarSchemeManager::parseAnimatingPart,	nullptr, NULL },
+	{ "ImagePart",						ControlBarSchemeManager::parseImagePart,			nullptr, 0 },
+	{ "AnimatingPart",				ControlBarSchemeManager::parseAnimatingPart,	nullptr, 0 },
 	{ "ScreenCreationRes",		INI::parseICoord2D,						nullptr, offsetof( ControlBarScheme, m_ScreenCreationRes ) },
 	{ "Side",									INI::parseAsciiString,				nullptr, offsetof( ControlBarScheme, m_side ) },
 	{ "QueueButtonImage",			INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_buttonQueueImage ) },
@@ -893,7 +893,7 @@ void ControlBarSchemeManager::parseAnimatingPart(INI *ini, void *instance, void*
       { "Animation",			INI::parseLookupList,			AnimTypeNames, offsetof( ControlBarSchemeAnimation, m_animType ) },
 			{ "Duration",				INI::parseDurationUnsignedInt,			nullptr, offsetof( ControlBarSchemeAnimation, m_animDuration ) },
 			{ "FinalPos",				INI::parseICoord2D,			nullptr, offsetof( ControlBarSchemeAnimation, m_finalPos ) },
-			{ "ImagePart",			ControlBarSchemeManager::parseAnimatingPartImage,	nullptr, NULL },
+			{ "ImagePart",			ControlBarSchemeManager::parseAnimatingPartImage,	nullptr, 0 },
 			{ nullptr,							nullptr,											nullptr, 0 }
 		};
 

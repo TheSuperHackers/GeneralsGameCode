@@ -149,7 +149,7 @@ ProfileResultInterface *ProfileResultFileDOT::Create(int argn, const char * cons
   return new (ProfileAllocMemory(sizeof(ProfileResultFileDOT)))
     ProfileResultFileDOT(argn>0?argv[0]:nullptr,
                          argn>1?argv[1]:nullptr,
-                         argn>2?atoi(argv[2]):NULL);
+                         argn>2?atoi(argv[2]): nullptr);
 }
 
 ProfileResultFileDOT::ProfileResultFileDOT(const char *fileName, const char *frameName, int foldThreshold)

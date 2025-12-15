@@ -82,8 +82,8 @@ const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 
 	{ "DamagedToSound",								INI::parseAsciiString,				nullptr, offsetof( TerrainRoadType, m_damageToSoundString[ BODY_DAMAGED ] ) },
 	{ "RepairedToSound",							INI::parseAsciiString,				nullptr, offsetof( TerrainRoadType, m_repairedToSoundString[ BODY_DAMAGED ] ) },
-	{ "TransitionToOCL",							parseTransitionToOCL,					nullptr,	NULL },
-	{ "TransitionToFX",								parseTransitionToFX,					nullptr, NULL },
+	{ "TransitionToOCL",							parseTransitionToOCL,					nullptr, 0 },
+	{ "TransitionToFX",								parseTransitionToFX,					nullptr, 0 },
 
 
 	{ nullptr,									nullptr,													nullptr, 0 },

@@ -65,7 +65,7 @@ static const char *const TheStealthLevelNames[] =
 	"NO_BLACK_MARKET",
 	"TAKING_DAMAGE",
   "RIDERS_ATTACKING",
-	NULL
+	nullptr
 };
 #endif
 

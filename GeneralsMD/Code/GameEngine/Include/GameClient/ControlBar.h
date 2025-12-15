@@ -133,7 +133,7 @@ static const char *const TheCommandOptionNames[] =
 	"CAN_USE_WAYPOINTS",
 	"MUST_BE_STOPPED",
 
-	NULL
+	nullptr
 };
 #endif  // end DEFINE_COMMAND_OPTION_NAMES
 
@@ -261,7 +261,7 @@ static const char *const TheGuiCommandNames[] =
 	"SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT",
 	"SELECT_ALL_UNITS_OF_TYPE",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheGuiCommandNames) == GUI_COMMAND_NUM_COMMANDS + 1, "Incorrect array size");
 #endif  // end DEFINE_GUI_COMMAND_NAMES
@@ -285,7 +285,7 @@ static const LookupListRec CommandButtonMappedBorderTypeNames[] =
 	{ "ACTION",				COMMAND_BUTTON_BORDER_ACTION },
 	{ "SYSTEM",				COMMAND_BUTTON_BORDER_SYSTEM },
 
-	{ NULL, 0	}
+	{ nullptr, 0	}
 };
 static_assert(ARRAY_SIZE(CommandButtonMappedBorderTypeNames) == COMMAND_BUTTON_BORDER_COUNT + 1, "Incorrect array size");
 //-------------------------------------------------------------------------------------------------

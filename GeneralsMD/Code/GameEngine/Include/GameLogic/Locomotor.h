@@ -85,7 +85,7 @@ static const char *const TheLocomotorAppearanceNames[] =
 	"OTHER",
 	"MOTORCYCLE",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheLocomotorAppearanceNames) == LOCOMOTOR_APPEARANCE_COUNT + 1, "Array size");
 #endif
@@ -117,7 +117,7 @@ static const char *const TheLocomotorBehaviorZNames[] =
 	"FIXED_RELATIVE_TO_GROUND_AND_BUILDINGS",
 	"RELATIVE_TO_HIGHEST_LAYER",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheLocomotorBehaviorZNames) == LOCOMOTOR_BEHAVIOR_Z_COUNT + 1, "Array size");
 #endif

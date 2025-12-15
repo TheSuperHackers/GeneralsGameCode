@@ -266,7 +266,7 @@ public:
 
   static const char* getNameFromSingleBit(Int i)
   {
-    return (i >= 0 && i < NUMBITS) ? s_bitNameList[i] : NULL;
+    return (i >= 0 && i < NUMBITS) ? s_bitNameList[i] : nullptr;
   }
 
   static Int getSingleBitFromName(const char* token)
@@ -284,7 +284,7 @@ public:
 
   const char* getBitNameIfSet(Int i) const
   {
-    return test(i) ? s_bitNameList[i] : NULL;
+    return test(i) ? s_bitNameList[i] : nullptr;
   }
 
   Bool setBitByName(const char* token)

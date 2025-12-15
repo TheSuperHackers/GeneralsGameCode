@@ -65,7 +65,7 @@ static const char* const TheBodyDamageTypeNames[] =
 	"REALLYDAMAGED",
 	"RUBBLE",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheBodyDamageTypeNames) == BODYDAMAGETYPE_COUNT + 1, "Incorrect array size");
 #endif
@@ -87,7 +87,7 @@ static const char* const TheMaxHealthChangeTypeNames[] =
 	"PRESERVE_RATIO",
 	"ADD_CURRENT_HEALTH_TOO",
 	"FULLY_HEAL",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheMaxHealthChangeTypeNames) == MAX_HEALTH_CHANGE_COUNT + 1, "Incorrect array size");
 #endif

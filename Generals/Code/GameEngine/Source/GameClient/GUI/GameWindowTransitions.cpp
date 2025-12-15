@@ -62,7 +62,7 @@ GameWindowTransitionsHandler *TheTransitionHandler = nullptr;
 const FieldParse GameWindowTransitionsHandler::m_gameWindowTransitionsFieldParseTable[] =
 {
 
-	{ "Window",		GameWindowTransitionsHandler::parseWindow,	nullptr, NULL	},
+	{ "Window",		GameWindowTransitionsHandler::parseWindow,	nullptr, 0	},
 	{ "FireOnce",	INI::parseBool,															nullptr, offsetof( TransitionGroup, m_fireOnce) 	},
 
 	{ nullptr,										nullptr,													nullptr, 0 }

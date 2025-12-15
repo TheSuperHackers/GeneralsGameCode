@@ -67,7 +67,7 @@ CampaignManager *TheCampaignManager = nullptr;
 const FieldParse CampaignManager::m_campaignFieldParseTable[] =
 {
 
-	{ "Mission",						CampaignManager::parseMissionPart,	nullptr, NULL },
+	{ "Mission",						CampaignManager::parseMissionPart,	nullptr, 0 },
 	{ "FirstMission",				INI::parseAsciiString,							nullptr,	offsetof( Campaign, m_firstMission )  },
 	{ "CampaignNameLabel",	INI::parseAsciiString,							nullptr, offsetof( Campaign, m_campaignNameLabel ) },
 	{ "FinalVictoryMovie",	INI::parseAsciiString,							nullptr, offsetof( Campaign, m_finalMovieName ) },

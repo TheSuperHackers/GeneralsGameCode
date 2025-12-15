@@ -239,8 +239,8 @@ void TurretAIData::buildFieldParse(MultiIniFieldParse& p)
 		{ "FirePitch",							INI::parseAngleReal,									nullptr, offsetof( TurretAIData, m_firePitch ) },
 		{ "MinPhysicalPitch",				INI::parseAngleReal,									nullptr, offsetof( TurretAIData, m_minPitch ) },
 		{ "GroundUnitPitch",				INI::parseAngleReal,									nullptr, offsetof( TurretAIData, m_groundUnitPitch ) },
-		{ "TurretFireAngleSweep",		TurretAIData::parseTurretSweep,				nullptr, NULL },
-		{ "TurretSweepSpeedModifier",TurretAIData::parseTurretSweepSpeed,	nullptr, NULL },
+		{ "TurretFireAngleSweep",		TurretAIData::parseTurretSweep,				nullptr, 0 },
+		{ "TurretSweepSpeedModifier",TurretAIData::parseTurretSweepSpeed,	nullptr, 0 },
 		{ "ControlledWeaponSlots",	parseTWS,															nullptr, offsetof( TurretAIData, m_turretWeaponSlots ) },
 		{ "AllowsPitch",						INI::parseBool,												nullptr, offsetof( TurretAIData, m_isAllowsPitch ) },
 #ifdef INTER_TURRET_DELAY

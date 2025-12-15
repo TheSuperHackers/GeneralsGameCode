@@ -341,7 +341,7 @@ static const char *const TheCommandSourceMaskNames[] =
 	"FROM_DOZER", //don't use this
 	"DEFAULT_SWITCH_WEAPON", //unit will pick this weapon when normal logic fails.
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheCommandSourceMaskNames) == COMMAND_SOURCE_TYPE_COUNT + 1, "Incorrect array size");
 #endif

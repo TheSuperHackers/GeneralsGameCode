@@ -370,11 +370,11 @@ stack_frame.AddrFrame.Offset = myebp;
 								process,
 								thread,
 								&stack_frame,
-								NULL, //&gsContext,
-								NULL,
+								nullptr, //&gsContext,
+								nullptr,
 								DbgHelpLoader::symFunctionTableAccess,
 								DbgHelpLoader::symGetModuleBase,
-								NULL) != 0;
+								nullptr) != 0;
 			if (stillgoing)
 			{
 				*addresses  = (void*)stack_frame.AddrPC.Offset;

@@ -220,7 +220,7 @@ IMEManager::MessageInfo IMEManager::m_mainMessageInfo[] =
 	{ "WM_IME_ENDCOMPOSITION"		, WM_IME_ENDCOMPOSITION  },
 	{ "WM_IME_COMPOSITION"			, WM_IME_COMPOSITION     },
 	{ "WM_IME_KEYLAST"					, WM_IME_KEYLAST         },
-	{ NULL, 0 }
+	{ nullptr, 0 }
 };
 
 IMEManager::MessageInfo IMEManager::m_notifyInfo[] =
@@ -239,7 +239,7 @@ IMEManager::MessageInfo IMEManager::m_notifyInfo[] =
 	{ "IMN_SETSTATUSWINDOWPOS"		, IMN_SETSTATUSWINDOWPOS  },
 	{ "IMN_GUIDELINE"							, IMN_GUIDELINE           },
 	{ "IMN_PRIVATE"								, IMN_PRIVATE             },
-	{ NULL, 0 }
+	{ nullptr, 0 }
 };
 
 IMEManager::MessageInfo IMEManager::m_requestInfo[] =
@@ -251,7 +251,7 @@ IMEManager::MessageInfo IMEManager::m_requestInfo[] =
 	{ "IMR_RECONVERTSTRING"					, IMR_RECONVERTSTRING       },
 	{ "IMR_CONFIRMRECONVERTSTRING"	, IMR_CONFIRMRECONVERTSTRING},
 #endif
-	{ NULL, 0 }
+	{ nullptr, 0 }
 };
 
 
@@ -267,7 +267,7 @@ IMEManager::MessageInfo IMEManager::m_controlInfo[] =
 	{ "IMC_SETSTATUSWINDOWPOS"		, IMC_SETSTATUSWINDOWPOS  },
 	{ "IMC_CLOSESTATUSWINDOW"			, IMC_CLOSESTATUSWINDOW   },
 	{ "IMC_OPENSTATUSWINDOW"			, IMC_OPENSTATUSWINDOW    },
- 	{ NULL, 0 }
+ 	{ nullptr, 0 }
 };
 
 IMEManager::MessageInfo IMEManager::m_setContextInfo[] =
@@ -278,7 +278,7 @@ IMEManager::MessageInfo IMEManager::m_setContextInfo[] =
 	{ "CANDIDATEWINDOW4"			, ISC_SHOWUICANDIDATEWINDOW<<3	},
 	{ "COMPOSITIONWINDOW"			,	ISC_SHOWUICOMPOSITIONWINDOW		},
 	{ "GUIDELINE"							, ISC_SHOWUIGUIDELINE						},
-	{ NULL, 0 }
+	{ nullptr, 0 }
 };
 
 IMEManager::MessageInfo IMEManager::m_setCmodeInfo[] =
@@ -296,7 +296,7 @@ IMEManager::MessageInfo IMEManager::m_setCmodeInfo[] =
 	{ "EUDC"					, IME_CMODE_EUDC        },
 	{ "SYMBOL"				, IME_CMODE_SYMBOL      },
 	{ "FIXED"					, IME_CMODE_FIXED       },
-	{ NULL, 0 }
+	{ nullptr, 0 }
 };
 
 IMEManager::MessageInfo IMEManager::m_setSmodeInfo[] =
@@ -307,7 +307,7 @@ IMEManager::MessageInfo IMEManager::m_setSmodeInfo[] =
 	{ "AUTOMATIC"			, IME_SMODE_AUTOMATIC    },
 	{ "PHRASEPREDICT"	, IME_SMODE_PHRASEPREDICT},
 	{ "CONVERSATION"	, IME_SMODE_CONVERSATION },
-	{ NULL, 0 }
+	{ nullptr, 0 }
 };
 
 #endif

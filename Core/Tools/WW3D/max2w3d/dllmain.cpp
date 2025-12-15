@@ -200,7 +200,7 @@ TCHAR * Get_String( int id )
 {
 	static TCHAR buf[256];
 	if (AppInstance)
-		return LoadString(AppInstance, id, buf, sizeof(buf)) ? buf : NULL;
+		return LoadString(AppInstance, id, buf, sizeof(buf)) ? buf : nullptr;
 	return nullptr;
 }
 

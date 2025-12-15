@@ -36,7 +36,7 @@ int Find_Patch(OUT char *filename,int maxlen, ConfigFile &config)
   WIN32_FIND_DATA     findData;
   char                string[128];
   HANDLE              hFile;
-  const char         *extensions[]={"web","exe","exn","rtp",NULL};
+  const char         *extensions[]={"web","exe","exn","rtp", nullptr};
   int                 i;
   int                 skuIndex=0;
   Wstring             key;

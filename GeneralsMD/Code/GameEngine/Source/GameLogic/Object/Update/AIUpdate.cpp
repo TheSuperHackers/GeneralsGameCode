@@ -315,7 +315,7 @@ void AIUpdateInterface::setSurrendered( const Object *objWeSurrenderedTo, Bool s
 		if (m_surrenderedFramesLeft < d->m_surrenderDuration)
 			m_surrenderedFramesLeft = d->m_surrenderDuration;
 
-		const Player* playerWeSurrenderedTo = objWeSurrenderedTo ? objWeSurrenderedTo->getControllingPlayer() : NULL;
+		const Player* playerWeSurrenderedTo = objWeSurrenderedTo ? objWeSurrenderedTo->getControllingPlayer() : nullptr;
 		m_surrenderedPlayerIndex = playerWeSurrenderedTo ? playerWeSurrenderedTo->getPlayerIndex() : -1;
 
 		if (!wasSurrendered)

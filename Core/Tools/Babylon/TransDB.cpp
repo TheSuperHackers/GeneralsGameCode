@@ -45,7 +45,7 @@ static LANGINFO langinfo[] =
 		{ LANGID_KOREAN, "Korean", "ko", "k" },
 		{ LANGID_CHINESE, "Chinese", "ch", "c" },
 		{ LANGID_JABBER, "Jabberwockie", "jb", "e" },
-		{ LANGID_UNKNOWN, "Unknown", nullptr, NULL }
+		{ LANGID_UNKNOWN, "Unknown", nullptr, nullptr }
 	};
 
 LANGINFO *GetLangInfo ( int index )

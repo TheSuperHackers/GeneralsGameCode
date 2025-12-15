@@ -128,7 +128,7 @@ static const char *const TheCommandOptionNames[] =
 	"IGNORES_UNDERPOWERED",
 	"USES_MINE_CLEARING_WEAPONSET",
 
-	NULL
+	nullptr
 };
 #endif  // end DEFINE_COMMAND_OPTION_NAMES
 
@@ -247,7 +247,7 @@ static const char *const TheGuiCommandNames[] =
 	"PLACE_BEACON",
 	"SPECIAL_POWER_FROM_COMMAND_CENTER",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheGuiCommandNames) == GUI_COMMAND_NUM_COMMANDS + 1, "Incorrect array size");
 #endif  // end DEFINE_GUI_COMMAND_NAMES
@@ -271,7 +271,7 @@ static const LookupListRec CommandButtonMappedBorderTypeNames[] =
 	{ "ACTION",				COMMAND_BUTTON_BORDER_ACTION },
 	{ "SYSTEM",				COMMAND_BUTTON_BORDER_SYSTEM },
 
-	{ NULL, 0	}
+	{ nullptr, 0	}
 };
 static_assert(ARRAY_SIZE(CommandButtonMappedBorderTypeNames) == COMMAND_BUTTON_BORDER_COUNT + 1, "Incorrect array size");
 //-------------------------------------------------------------------------------------------------

@@ -73,8 +73,8 @@ const FieldParse CreditsManager::m_creditsFieldParseTable[] =
 	{ "MinorTitleColor",		INI::parseColorInt,									nullptr,	offsetof( CreditsManager, m_positionColor )  },
 	{ "NormalColor",				INI::parseColorInt,									nullptr,	offsetof( CreditsManager, m_normalColor )  },
 	{ "Style",							INI::parseLookupList,								CreditStyleNames,	offsetof( CreditsManager, m_currentStyle )  },
-	{ "Blank",							CreditsManager::parseBlank,					nullptr,	NULL  },
-	{ "Text",								CreditsManager::parseText,					nullptr,	NULL  },
+	{ "Blank",							CreditsManager::parseBlank,					nullptr, 0  },
+	{ "Text",								CreditsManager::parseText,					nullptr, 0  },
 
 	{ nullptr,										nullptr,													nullptr, 0 }
 

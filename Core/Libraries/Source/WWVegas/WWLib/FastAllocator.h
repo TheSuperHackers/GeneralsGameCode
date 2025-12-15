@@ -587,7 +587,7 @@ WWINLINE void* FastAllocatorGeneral::Realloc(void* pAlloc, unsigned int n){
      pointer address(reference x) const             { return &x; }
      const_pointer address(const_reference x) const { return &x; }
 
-     T* allocate(size_type n, const void* = nullptr) { return n != 0 ? static_cast<T*>(FastAllocatorGeneral::Get_Allocator()->Alloc(n*sizeof(T))) : NULL; }
+     T* allocate(size_type n, const void* = nullptr) { return n != 0 ? static_cast<T*>(FastAllocatorGeneral::Get_Allocator()->Alloc(n*sizeof(T))) : nullptr; }
      void deallocate(pointer p, size_type n)      { FastAllocatorGeneral::Get_Allocator()->Free(p); }
      size_type max_size() const                   { return size_t(-1) / sizeof(T); }
      void construct(pointer p, const T& val)      { new(p) T(val); }

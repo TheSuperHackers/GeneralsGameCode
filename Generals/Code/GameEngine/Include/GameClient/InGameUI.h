@@ -130,7 +130,7 @@ static const char *const TheRadiusCursorNames[] =
 	"RADAR",
 	"SPYDRONE",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheRadiusCursorNames) == RADIUSCURSOR_COUNT + 1, "Incorrect array size");
 #endif

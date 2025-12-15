@@ -465,7 +465,7 @@ public:
 	// that the team is nonnull.
 	void changedTeam();
 
-	const TWheelInfo *getWheelInfo(void) const { return m_locoInfo ? &m_locoInfo->m_wheelInfo : NULL; }
+	const TWheelInfo *getWheelInfo(void) const { return m_locoInfo ? &m_locoInfo->m_wheelInfo : nullptr; }
 
 	const DrawableLocoInfo *getLocoInfo() const { return m_locoInfo; }
 

@@ -318,7 +318,7 @@ public:
 	/// remove all cells from closed list.
 	static Int releaseOpenList( PathfindCell *list );
 
-	inline PathfindCell *getNextOpen(void) {return m_info->m_nextOpen?m_info->m_nextOpen->m_cell:NULL;}
+	inline PathfindCell *getNextOpen(void) {return m_info->m_nextOpen?m_info->m_nextOpen->m_cell: nullptr;}
 
 	inline UnsignedShort getXIndex(void) const {return m_info->m_pos.x;}
 	inline UnsignedShort getYIndex(void) const {return m_info->m_pos.y;}
@@ -337,7 +337,7 @@ public:
 	void setParentCell(PathfindCell* parent);
 	void clearParentCell(void);
 	void setParentCellHierarchical(PathfindCell* parent);
-	inline PathfindCell* getParentCell(void) const {return m_info ? m_info->m_pathParent ? m_info->m_pathParent->m_cell : NULL : NULL;}
+	inline PathfindCell* getParentCell(void) const {return m_info ? m_info->m_pathParent ? m_info->m_pathParent->m_cell : nullptr : nullptr;}
 
 	Bool startPathfind( PathfindCell *goalCell );
 	Bool getPinched(void) const {return m_pinched;}

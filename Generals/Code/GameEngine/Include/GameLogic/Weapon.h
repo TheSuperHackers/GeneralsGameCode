@@ -68,7 +68,7 @@ static const char *const TheWeaponReloadNames[] =
 	"YES",
 	"NO",
 	"RETURN_TO_BASE",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheWeaponReloadNames) == WEAPON_RELOAD_COUNT + 1, "Incorrect array size");
 #endif
@@ -89,7 +89,7 @@ static const char *const TheWeaponPrefireNames[] =
 	"PER_SHOT",
 	"PER_ATTACK",
 	"PER_CLIP",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheWeaponPrefireNames) == PREFIRE_COUNT + 1, "Incorrect array size");
 #endif
@@ -129,7 +129,7 @@ static const char *const TheWeaponAffectsMaskNames[] =
 	"SUICIDE",
 	"NOT_SIMILAR",
 	"NOT_AIRBORNE",
-	NULL
+	nullptr
 };
 #endif
 
@@ -161,7 +161,7 @@ static const char *const TheWeaponCollideMaskNames[] =
 	"SMALL_MISSILES",			//All missiles are also projectiles!
 	"BALLISTIC_MISSILES", //All missiles are also projectiles!
 	"CONTROLLED_STRUCTURES",
-	NULL
+	nullptr
 };
 #endif
 
@@ -245,7 +245,7 @@ static const char *const TheWeaponBonusNames[] =
 	"FRENZY_TWO",
 	"FRENZY_THREE",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheWeaponBonusNames) == WEAPONBONUSCONDITION_COUNT + 1, "Incorrect array size");
 #endif
@@ -300,7 +300,7 @@ static const char *const TheWeaponBonusFieldNames[] =
 	"RANGE",
 	"RATE_OF_FIRE",
 	"PRE_ATTACK",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheWeaponBonusFieldNames) == WeaponBonus::FIELD_COUNT + 1, "Incorrect array size");
 #endif

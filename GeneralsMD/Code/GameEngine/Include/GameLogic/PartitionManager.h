@@ -1546,13 +1546,13 @@ inline Int PartitionManager::worldToCellDist(Real w)
 //-----------------------------------------------------------------------------
 inline PartitionCell *PartitionManager::getCellAt(Int x, Int y)
 {
-	return (x < 0 || y < 0 || x >= m_cellCountX || y >= m_cellCountY) ? NULL : &m_cells[y * m_cellCountX + x];
+	return (x < 0 || y < 0 || x >= m_cellCountX || y >= m_cellCountY) ? nullptr : &m_cells[y * m_cellCountX + x];
 }
 
 //-----------------------------------------------------------------------------
 inline const PartitionCell *PartitionManager::getCellAt(Int x, Int y) const
 {
-	return (x < 0 || y < 0 || x >= m_cellCountX || y >= m_cellCountY) ? NULL : &m_cells[y * m_cellCountX + x];
+	return (x < 0 || y < 0 || x >= m_cellCountX || y >= m_cellCountY) ? nullptr : &m_cells[y * m_cellCountX + x];
 }
 
 //-----------------------------------------------------------------------------

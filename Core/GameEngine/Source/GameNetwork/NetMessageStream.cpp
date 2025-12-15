@@ -43,24 +43,24 @@
 
 // The per-player pointers for the list of commands
 static CommandMsg *CommandHead[MAX_SLOTS] = {  /// @todo: remove static initialization
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr
 };
 static CommandMsg *CommandTail[MAX_SLOTS] = {
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr
 };
 
 /**

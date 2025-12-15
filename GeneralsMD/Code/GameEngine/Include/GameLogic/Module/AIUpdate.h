@@ -106,7 +106,7 @@ static const char *const TheLocomotorSetNames[] =
 	"SET_SUPERSONIC",
 	"SET_SLUGGISH",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheLocomotorSetNames) == LOCOMOTORSET_COUNT + 1, "Incorrect array size");
 #endif
@@ -129,7 +129,7 @@ static const char *const TheAutoAcquireEnemiesNames[] =
 	"NOTWHILEATTACKING",
 	"ATTACK_BUILDINGS",
 
-	NULL
+	nullptr
 };
 #endif
 

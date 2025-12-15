@@ -332,7 +332,7 @@ static const char *const TheCommandSourceMaskNames[] =
 	"FROM_AI",
 	"FROM_DOZER", //don't use this
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheCommandSourceMaskNames) == COMMAND_SOURCE_TYPE_COUNT + 1, "Incorrect array size");
 #endif

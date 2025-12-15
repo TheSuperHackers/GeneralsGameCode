@@ -148,7 +148,7 @@ void DemoralizeSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real 
 	PartitionFilterAcceptByKindOf filter2( MAKE_KINDOF_MASK( KINDOF_INFANTRY ),
 																				 KINDOFMASK_NONE );
 	PartitionFilterSameMapStatus filterMapStatus(source);
-	PartitionFilter *filters[] = { &filter1, &filter2, &filterMapStatus, NULL };
+	PartitionFilter *filters[] = { &filter1, &filter2, &filterMapStatus, nullptr };
 	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( loc,
 																																		 range,
 																																		 FROM_CENTER_2D,

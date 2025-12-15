@@ -464,7 +464,7 @@ ProfileFuncLevelTracer::Profile *ProfileFuncLevelTracer::ProfileMap::Find(int fr
 {
   List *p=root;
   for (;p&&p->frame<frame;p=p->next);
-  return p&&p->frame==frame?&p->p:NULL;
+  return p&&p->frame==frame?&p->p: nullptr;
 }
 
 void ProfileFuncLevelTracer::ProfileMap::Append(int frame, const Profile &p)

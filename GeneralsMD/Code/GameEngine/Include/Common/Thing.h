@@ -84,10 +84,10 @@ class Thing : public MemoryPoolObject
 {
 	// note, it is explicitly OK to pass null for 'thing' here;
 	// they will check for null and return null in these cases.
-	friend Object *AsObject(Thing *thing) { return thing ? thing->asObjectMeth() : NULL; }
-	friend Drawable *AsDrawable(Thing *thing) { return thing ? thing->asDrawableMeth() : NULL; }
-	friend const Object *AsObject(const Thing *thing) { return thing ? thing->asObjectMeth() : NULL; }
-	friend const Drawable *AsDrawable(const Thing *thing) { return thing ? thing->asDrawableMeth() : NULL; }
+	friend Object *AsObject(Thing *thing) { return thing ? thing->asObjectMeth() : nullptr; }
+	friend Drawable *AsDrawable(Thing *thing) { return thing ? thing->asDrawableMeth() : nullptr; }
+	friend const Object *AsObject(const Thing *thing) { return thing ? thing->asObjectMeth() : nullptr; }
+	friend const Drawable *AsDrawable(const Thing *thing) { return thing ? thing->asDrawableMeth() : nullptr; }
 
 	MEMORY_POOL_GLUE_ABC(Thing)
 

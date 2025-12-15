@@ -206,7 +206,7 @@ static const char *const BuildCompletionNames[] =
 	"APPEARS_AT_RALLY_POINT",
 	"PLACED_BY_PLAYER",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(BuildCompletionNames) == BC_NUM_TYPES + 1, "Incorrect array size");
 #endif  // end DEFINE_BUILD_COMPLETION_NAMES
@@ -229,7 +229,7 @@ static const char *const BuildableStatusNames[] =
 	"Ignore_Prerequisites",
 	"No",
 	"Only_By_AI",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(BuildableStatusNames) == BSTATUS_NUM_TYPES + 1, "Incorrect array size");
 #endif	// end DEFINE_BUILDABLE_STATUS_NAMES

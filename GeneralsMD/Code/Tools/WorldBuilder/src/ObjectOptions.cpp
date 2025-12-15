@@ -258,7 +258,7 @@ BOOL ObjectOptions::OnInitDialog()
 	{
 		Coord3D pt = {0,0,0};
 		char base[1024] = "*Lights/Light";
-		MapObject *pMap = newInstance(MapObject)(pt, AsciiString(base), 0.0f, 0, nullptr, NULL );
+		MapObject *pMap = newInstance(MapObject)(pt, AsciiString(base), 0.0f, 0, nullptr, nullptr );
 		pMap->setIsLight();
 
 		Dict *props = pMap->getProperties();
@@ -308,7 +308,7 @@ BOOL ObjectOptions::OnInitDialog()
 					}
 				}
 				Coord3D pt = {0,0,0};
-				MapObject *pMap = newInstance(MapObject)(pt, AsciiString(fileBuf), 0.0f, 0, nullptr, NULL );
+				MapObject *pMap = newInstance(MapObject)(pt, AsciiString(fileBuf), 0.0f, 0, nullptr, nullptr );
 				pMap->setNextMap(m_objectsList);
 				m_objectsList = pMap;
 

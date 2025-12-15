@@ -3358,7 +3358,7 @@ static void unitTimings(void)
 			if (mi.getCount() > 0)
 			{
 				const ModuleData* mdd = mi.getNthData(0);
-				const W3DModelDrawModuleData* md = mdd ? mdd->getAsW3DModelDrawModuleData() : NULL;
+				const W3DModelDrawModuleData* md = mdd ? mdd->getAsW3DModelDrawModuleData() : nullptr;
 				if (md)
 				{
 					modelName = md->getBestModelNameForWB(state);
@@ -3500,7 +3500,7 @@ static void unitTimings(void)
         "Ambient",
         "GC_",
 		"SpecialEffectsTrainCrashObject",
-	      NULL
+	      nullptr
       };
 
       Bool skip = FALSE;
