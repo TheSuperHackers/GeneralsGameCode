@@ -419,7 +419,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			// ------------------------------------------------------------------------
 			case WM_SETFOCUS:
 			{
-				if( TheKeyboard )
+				if (TheKeyboard)
 					TheKeyboard->regainFocus();
 
 				if (TheMouse)
@@ -431,7 +431,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			//-------------------------------------------------------------------------
 			case WM_KILLFOCUS:
 			{
-				if (TheKeyboard )
+				if (TheKeyboard)
 					TheKeyboard->loseFocus();
 
 				if (TheMouse)
