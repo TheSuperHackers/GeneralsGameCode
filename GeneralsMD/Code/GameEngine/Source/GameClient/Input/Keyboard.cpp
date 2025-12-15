@@ -748,6 +748,10 @@ void Keyboard::update( void )
 void Keyboard::resetKeys( void )
 {
 
+	// TheSuperHackers @fix Caball009 13/12/2025 Fix bug where game remains in waypoint mode
+	// because the key up state for the alt key is not detected after alt tab.
+	refreshAltKeys();
+
 	memset( m_keys, 0, sizeof( m_keys ) );
 	memset( m_keyStatus, 0, sizeof( m_keyStatus ) );
 	m_modifiers = KEY_STATE_NONE;
@@ -759,12 +763,10 @@ void Keyboard::resetKeys( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-// called when window has lost focus and has regained focus
+// Refresh the state of the alt keys after alt tab
 //-------------------------------------------------------------------------------------------------
-void Keyboard::toggleFocus()
+void Keyboard::refreshAltKeys() const
 {
-	// TheSuperHackers @fix Caball009 13/12/2025 Fix bug where game remains in waypoint mode
-	// because the key up state for the alt key is not detected after alt tab.
 	if (BitIsSet(m_keyStatus[KEY_LALT].state, KEY_STATE_DOWN))
 	{
 		GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
@@ -777,8 +779,6 @@ void Keyboard::toggleFocus()
 		msg->appendIntegerArgument(KEY_RALT);
 		msg->appendIntegerArgument(KEY_STATE_UP);
 	}
-
-	resetKeys();
 }
 
 //-------------------------------------------------------------------------------------------------
