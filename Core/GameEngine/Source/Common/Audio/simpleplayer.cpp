@@ -39,12 +39,12 @@ CSimplePlayer::CSimplePlayer( HRESULT* phr )
 	*phr = S_OK;
 
     m_hOpenEvent = CreateEvent( nullptr, FALSE, FALSE, SIMPLE_PLAYER_OPEN_EVENT );
-	if ( NULL == m_hOpenEvent )
+	if ( nullptr == m_hOpenEvent )
 	{
 		*phr = E_OUTOFMEMORY;
 	}
     m_hCloseEvent = CreateEvent( nullptr, FALSE, FALSE, SIMPLE_PLAYER_CLOSE_EVENT );
-	if ( NULL == m_hCloseEvent )
+	if ( nullptr == m_hCloseEvent )
 	{
 		*phr = E_OUTOFMEMORY;
 	}
@@ -165,7 +165,7 @@ HRESULT STDMETHODCALLTYPE CSimplePlayer::OnSample(
 
     LPWAVEHDR pwh = (LPWAVEHDR) new BYTE[ sizeof( WAVEHDR ) + cbData ];
 
-    if( NULL == pwh )
+    if( nullptr == pwh )
     {
         DEBUG_LOG(( "OnSample OUT OF MEMORY! "));
 
@@ -234,7 +234,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
         //
         LPWSTR pszCheck = _wfullpath( wszFullUrl, pszUrl, MAX_PATH );
 
-        if( NULL == pszCheck )
+        if( nullptr == pszCheck )
         {
            DEBUG_LOG(( "internal error %lu" , GetLastError() ));
            return E_UNEXPECTED ;
@@ -250,7 +250,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
 
     m_pszUrl = new WCHAR[ wcslen( pszUrl ) + 1 ];
 
-    if( NULL == m_pszUrl )
+    if( nullptr == m_pszUrl )
     {
         DEBUG_LOG(( "insufficient Memory"  )) ;
         return( E_OUTOFMEMORY );
@@ -342,7 +342,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
         pwszName = new WCHAR[ cchNamelen ];
         pValue = new BYTE[ cbLength ];
 
-        if( NULL == pwszName || NULL == pValue )
+        if( nullptr == pwszName || nullptr == pValue )
         {
             hr = E_OUTOFMEMORY;
             break;
@@ -625,7 +625,7 @@ HRESULT CSimplePlayer::Close()
 {
     HRESULT hr = S_OK;
 
-    if( NULL != m_pReader )
+    if( nullptr != m_pReader )
     {
         hr = m_pReader->Close();
 
@@ -677,7 +677,7 @@ void CALLBACK CSimplePlayer::WaveProc(
 HRESULT CSimplePlayer::AddWaveHeader( LPWAVEHDR pwh )
 {
     WAVEHDR_LIST *tmp = new WAVEHDR_LIST;
-    if( NULL == tmp )
+    if( nullptr == tmp )
     {
         return( E_OUTOFMEMORY );
     }
@@ -696,7 +696,7 @@ void CSimplePlayer::RemoveWaveHeaders( )
     WAVEHDR_LIST *tmp;
 
     EnterCriticalSection( &m_CriSec );
-    while( NULL != m_whdrHead )
+    while( nullptr != m_whdrHead )
     {
         tmp = m_whdrHead->next;
         DEBUG_ASSERTCRASH( m_whdrHead->pwh->dwFlags & WHDR_DONE, ("RemoveWaveHeaders!") );
