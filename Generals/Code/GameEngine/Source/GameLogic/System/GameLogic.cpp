@@ -451,6 +451,8 @@ void GameLogic::reset( void )
 	TheWaterTransparency = (WaterTransparencySetting*) wt->deleteOverrides();
 
 	m_rankPointsToAddAtGameStart = 0;
+
+	TheMouse->onGamePaused(FALSE);
 }
 
 static Object * placeObjectAtPosition(Int slotNum, AsciiString objectTemplateName, Coord3D& pos, Player *pPlayer,

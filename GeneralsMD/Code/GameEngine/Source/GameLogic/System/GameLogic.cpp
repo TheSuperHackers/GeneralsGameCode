@@ -467,6 +467,8 @@ void GameLogic::reset( void )
 	TheWeatherSetting = (WeatherSetting*) ws->deleteOverrides();
 
 	m_rankPointsToAddAtGameStart = 0;
+
+	TheMouse->onGamePaused(FALSE);
 }
 
 static Object * placeObjectAtPosition(Int slotNum, AsciiString objectTemplateName, Coord3D& pos, Player *pPlayer,
