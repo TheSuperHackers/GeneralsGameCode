@@ -366,7 +366,7 @@ const ThingTemplate *MapObject::getThingTemplate( void ) const
 
 /* ********* WorldHeightMap class ****************************/
 
-TileData *WorldHeightMap::m_alphaTiles[NUM_ALPHA_TILES]={nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr};
+TileData *WorldHeightMap::m_alphaTiles[NUM_ALPHA_TILES]={};
 
 //
 // WorldHeightMap destructor .
