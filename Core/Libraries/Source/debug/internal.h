@@ -29,6 +29,8 @@
 
 #pragma once
 
+#include <Utility/CppMacros.h>
+
 // make sure we're not omitting the frame pointer
 #pragma optimize("y",off)
 
