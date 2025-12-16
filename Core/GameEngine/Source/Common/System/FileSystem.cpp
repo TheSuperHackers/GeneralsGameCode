@@ -421,8 +421,8 @@ AsciiString FileSystem::normalizePath(const AsciiString& path)
 //============================================================================
 Bool FileSystem::isPathInDirectory(const AsciiString& testPath, const AsciiString& basePath)
 {
-	AsciiString testPathNormalized = TheFileSystem->normalizePath(testPath);
-	AsciiString basePathNormalized = TheFileSystem->normalizePath(basePath);
+	AsciiString testPathNormalized = normalizePath(testPath);
+	AsciiString basePathNormalized = normalizePath(basePath);
 
 	if (basePathNormalized.isEmpty())
 	{

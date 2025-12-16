@@ -1702,8 +1702,8 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	Region3D extent;
 	TheTerrainLogic->getExtent( &extent );
 
-	TheGameLogic->setWidth( extent.hi.x - extent.lo.x );
-	TheGameLogic->setHeight( extent.hi.y - extent.lo.y );
+	setWidth( extent.hi.x - extent.lo.x );
+	setHeight( extent.hi.y - extent.lo.y );
 
 	// anytime the world's size changes, must reset the partition mgr
 	ThePartitionManager->init();
@@ -3060,7 +3060,7 @@ void GameLogic::popSleepyUpdate()
 void GameLogic::friend_awakenUpdateModule(Object* obj, UpdateModulePtr u, UnsignedInt whenToWakeUp)
 {
 	//USE_PERF_TIMER(friend_awakenUpdateModule)
-	UnsignedInt now = TheGameLogic->getFrame();
+	UnsignedInt now = getFrame();
 	DEBUG_ASSERTCRASH(whenToWakeUp >= now, ("setWakeFrame frame is in the past... are you sure this is what you want?"));
 
 	if (u == m_curUpdateModule)
@@ -3692,7 +3692,7 @@ void GameLogic::update( void )
 	}
 
 	// send the current time to the GameClient
-	UnsignedInt now = TheGameLogic->getFrame();
+	UnsignedInt now = getFrame();
 	TheGameClient->setFrame(now);
 
 	// update (execute) scripts
@@ -3888,7 +3888,7 @@ void GameLogic::preUpdate()
 		Bool pause = TRUE;
 		Bool pauseMusic = FALSE;
 		Bool pauseInput = FALSE;
-		TheGameLogic->setGamePaused(pause, pauseMusic, pauseInput);
+		setGamePaused(pause, pauseMusic, pauseInput);
 	}
 }
 
@@ -3960,7 +3960,7 @@ void GameLogic::registerObject( Object *obj )
 	// add object to lookup table
 	addObjectToLookupTable( obj );
 
-	UnsignedInt now = TheGameLogic->getFrame();
+	UnsignedInt now = getFrame();
 	if (now == 0)
 		now = 1;
 	for (BehaviorModule** b = obj->getBehaviorModules(); *b; ++b)
@@ -5206,7 +5206,7 @@ void GameLogic::loadPostProcess( void )
 #ifdef ALLOW_NONSLEEPY_UPDATES
 	m_normalUpdates.clear();
 #else
-	UnsignedInt now = TheGameLogic->getFrame();
+	UnsignedInt now = getFrame();
 	if (now == 0)
 		now = 1;
 #endif

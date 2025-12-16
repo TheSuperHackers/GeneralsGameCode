@@ -636,7 +636,7 @@ SaveCode GameState::missionSave( void )
 	desc.format( format, TheGameText->fetch( campaign->m_campaignNameLabel ).str(), missionNumber );
 
 	// do an automatic mission save
-	return TheGameState->saveGame( "", desc, SAVE_FILE_TYPE_MISSION );
+	return saveGame( "", desc, SAVE_FILE_TYPE_MISSION );
 
 }
 
