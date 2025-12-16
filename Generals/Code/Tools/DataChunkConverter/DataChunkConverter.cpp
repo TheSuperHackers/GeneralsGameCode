@@ -670,10 +670,22 @@ static Bool convertJSONToSCB(const char* inputPath, const char* outputPath)
 	return true;
 }
 
+/**
+ * DataChunkConverter - Converts SCB (script binary) files to JSON and vice versa.
+ *
+ * This tool is used to convert script chunk files between binary SCB format and human-readable JSON format.
+ * The game directory is required to load INI files needed for parsing script data (thing templates, etc).
+ *
+ * Usage examples:
+ *   datachunkconverter -in script.scb -out script.json
+ *   datachunkconverter -in script.json -out script.scb -gamedir "C:\\Games\\Generals"
+ */
 int main(int argc, char* argv[])
 {
 	initMemoryManager();
 
+	// Find game directory: required to load INI files for parsing script data (thing templates, etc).
+	// Try current directory first, then command-line arg, then registry.
 	char gameDir[MAX_PATH] = "";
 	char currentDir[MAX_PATH];
 	if (!GetCurrentDirectoryA(MAX_PATH, currentDir)) {
