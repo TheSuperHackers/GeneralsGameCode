@@ -47,6 +47,7 @@
 #include "Common/LocalFileSystem.h"
 #include "Common/ArchiveFileSystem.h"
 #include "Common/INI.h"
+#include "Common/Registry.h"
 #include "Win32Device/Common/Win32LocalFileSystem.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
 
@@ -257,11 +258,25 @@ static void extractChunkIDsFromRawData(const unsigned char* data, size_t dataSiz
 	}
 }
 
+static bool getGameDirectoryFromRegistry(char* gameDir, size_t maxLen)
+{
+	AsciiString installPath;
+	if (GetStringFromRegistry("", "InstallPath", installPath)) {
+		if (installPath.getLength() > 0 && installPath.getLength() < (Int)maxLen) {
+			strncpy(gameDir, installPath.str(), maxLen - 1);
+			gameDir[maxLen - 1] = '\0';
+			return true;
+		}
+	}
+	return false;
+}
+
 static void printUsage(const char* exeName)
 {
-	printf("Usage: %s -in <input_file> -out <output_file>\n", exeName);
+	printf("Usage: %s -in <input_file> -out <output_file> [-gamedir <game_directory>]\n", exeName);
 	printf("Converts SCB files to JSON and vice versa.\n");
 	printf("File format is auto-detected based on extension (.scb or .json)\n");
+	printf("If -gamedir is not specified, attempts to find game directory from registry or current directory.\n");
 }
 
 
@@ -661,8 +676,7 @@ int main(int argc, char* argv[])
 {
 	initMemoryManager();
 
-	const char* gameDir = "C:\\Program Files\\EA Games\\Command and Conquer Generals Zero Hour\\Command and Conquer Generals Zero Hour";
-
+	char gameDir[MAX_PATH] = "";
 	char currentDir[MAX_PATH];
 	if (!GetCurrentDirectoryA(MAX_PATH, currentDir)) {
 		printf("Error: Could not get current directory. Error code: %d\n", GetLastError());
@@ -673,6 +687,24 @@ int main(int argc, char* argv[])
 	bool inGameDir = (dataAttrs != INVALID_FILE_ATTRIBUTES && (dataAttrs & FILE_ATTRIBUTE_DIRECTORY));
 
 	if (!inGameDir) {
+		const char* specifiedGameDir = NULL;
+
+		for (int i = 1; i < argc; i++) {
+			if (strcmp(argv[i], "-gamedir") == 0 && i + 1 < argc) {
+				specifiedGameDir = argv[++i];
+				break;
+			}
+		}
+
+		if (specifiedGameDir) {
+			strncpy(gameDir, specifiedGameDir, MAX_PATH - 1);
+			gameDir[MAX_PATH - 1] = '\0';
+		} else if (!getGameDirectoryFromRegistry(gameDir, MAX_PATH)) {
+			printf("Error: Could not find game directory.\n");
+			printf("Please specify the game directory using -gamedir <path> or ensure the game is installed and registered.\n");
+			return 1;
+		}
+
 		if (!SetCurrentDirectoryA(gameDir)) {
 			printf("Error: Could not set working directory to game directory: %s\n", gameDir);
 			return 1;
@@ -686,7 +718,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	if (argc != 5) {
+	if (argc < 5) {
 		printUsage(argv[0]);
 		return 1;
 	}
@@ -699,6 +731,8 @@ int main(int argc, char* argv[])
 			inputPath = argv[++i];
 		} else if (strcmp(argv[i], "-out") == 0 && i + 1 < argc) {
 			outputPath = argv[++i];
+		} else if (strcmp(argv[i], "-gamedir") == 0 && i + 1 < argc) {
+			i++;
 		}
 	}
 
