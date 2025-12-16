@@ -163,7 +163,7 @@ void MiniDumper::Initialize(const AsciiString& userDirPath)
 	m_dumpComplete = CreateEvent(nullptr, TRUE, FALSE, nullptr);
 	m_quitting = CreateEvent(nullptr, TRUE, FALSE, nullptr);
 
-	if (m_dumpRequested == NULL || m_dumpComplete == NULL || m_quitting == nullptr)
+	if (m_dumpRequested == nullptr || m_dumpComplete == nullptr || m_quitting == nullptr)
 	{
 		// Something went wrong with the creation of the events..
 		DEBUG_LOG(("MiniDumper::Initialize: Unable to create events: error=%u", ::GetLastError()));
@@ -195,7 +195,7 @@ Bool MiniDumper::IsInitialized() const
 Bool MiniDumper::IsDumpThreadStillRunning() const
 {
 	DWORD exitCode;
-	if (m_dumpThread != NULL && ::GetExitCodeThread(m_dumpThread, &exitCode) && exitCode == STILL_ACTIVE)
+	if (m_dumpThread != nullptr && ::GetExitCodeThread(m_dumpThread, &exitCode) && exitCode == STILL_ACTIVE)
 	{
 		return true;
 	}
@@ -352,7 +352,7 @@ void MiniDumper::CreateMiniDump(DumpType dumpType)
 		GitShortSHA1, currentProcessId);
 
 	HANDLE dumpFile = ::CreateFile(m_dumpFile, GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-	if (dumpFile == NULL || dumpFile == INVALID_HANDLE_VALUE)
+	if (dumpFile == nullptr || dumpFile == INVALID_HANDLE_VALUE)
 	{
 		DEBUG_LOG(("MiniDumper::CreateMiniDump: Unable to create dump file '%s': error=%u", m_dumpFile, ::GetLastError()));
 		return;
