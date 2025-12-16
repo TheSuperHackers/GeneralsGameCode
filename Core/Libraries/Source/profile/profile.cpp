@@ -27,7 +27,6 @@
 // Profile module main code
 //////////////////////////////////////////////////////////////////////////////
 
-#include <Utility/CppMacros.h>
 #include "profile.h"
 #include "internal.h"
 #include <new>
