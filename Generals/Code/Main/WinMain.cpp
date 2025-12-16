@@ -401,7 +401,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 				// reset the state of our keyboard cause we haven't been paying
 				// attention to the keys while focus was away
 				//
-				if( TheKeyboard )
+				if (TheKeyboard)
 					TheKeyboard->resetKeys();
 
 				if (TheMouse)
@@ -413,7 +413,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			//-------------------------------------------------------------------------
 			case WM_KILLFOCUS:
 			{
-				if (TheKeyboard )
+				if (TheKeyboard)
 					TheKeyboard->resetKeys();
 
 				if (TheMouse)

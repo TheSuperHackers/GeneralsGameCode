@@ -119,6 +119,8 @@ public:
 	WideChar translateKey( WideChar keyCode );		///< translate key code to printable UNICODE char
 	WideChar getPrintableKey( KeyDefType key, Int state );
 	enum { MAX_KEY_STATES = 3};
+private:
+	void refreshAltKeys() const;									///< refresh the state of the alt keys, necessary after alt tab
 protected:
 
 	/** get the key data for a single key, KEY_NONE should be returned when
