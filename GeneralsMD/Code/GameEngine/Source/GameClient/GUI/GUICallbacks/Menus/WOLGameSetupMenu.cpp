@@ -212,30 +212,22 @@ static GameWindow *checkBoxLimitSuperweapons = nullptr;
 static GameWindow *comboBoxStartingCash = nullptr;
 static GameWindow *checkBoxLimitArmies = nullptr;
 
-static GameWindow *comboBoxPlayer[MAX_SLOTS] = {nullptr,nullptr,nullptr,nullptr,
-																									 nullptr,nullptr,nullptr,nullptr };
-static GameWindow *staticTextPlayer[MAX_SLOTS] = {nullptr,nullptr,nullptr,nullptr,
-																									 nullptr,nullptr,nullptr,nullptr };
-static GameWindow *buttonAccept[MAX_SLOTS] = {nullptr,nullptr,nullptr,nullptr,
-																								nullptr,nullptr,nullptr,nullptr };
+static GameWindow *comboBoxPlayer[MAX_SLOTS] = {};
+static GameWindow *staticTextPlayer[MAX_SLOTS] = {};
+static GameWindow *buttonAccept[MAX_SLOTS] = {};
 
-static GameWindow *comboBoxColor[MAX_SLOTS] = {nullptr,nullptr,nullptr,nullptr,
-																								nullptr,nullptr,nullptr,nullptr };
+static GameWindow *comboBoxColor[MAX_SLOTS] = {};
 
-static GameWindow *comboBoxPlayerTemplate[MAX_SLOTS] = {nullptr,nullptr,nullptr,nullptr,
-																								nullptr,nullptr,nullptr,nullptr };
+static GameWindow *comboBoxPlayerTemplate[MAX_SLOTS] = {};
 
-static GameWindow *comboBoxTeam[MAX_SLOTS] = {nullptr,nullptr,nullptr,nullptr,
-																								nullptr,nullptr,nullptr,nullptr };
+static GameWindow *comboBoxTeam[MAX_SLOTS] = {};
 
 //static GameWindow *buttonStartPosition[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
 //																								NULL,NULL,NULL,NULL };
 //
-static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {nullptr,nullptr,nullptr,nullptr,
-																								nullptr,nullptr,nullptr,nullptr };
+static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {};
 
-static GameWindow *genericPingWindow[MAX_SLOTS] = {nullptr,nullptr,nullptr,nullptr,
-																								nullptr,nullptr,nullptr,nullptr };
+static GameWindow *genericPingWindow[MAX_SLOTS] = {};
 
 static const Image *pingImages[3] = { nullptr, nullptr, nullptr };
 

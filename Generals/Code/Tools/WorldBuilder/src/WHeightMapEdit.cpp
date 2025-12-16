@@ -2456,7 +2456,7 @@ Bool WorldHeightMapEdit::doCliffAdjustment(Int xIndex, Int yIndex)
 			if (uvRange.hi.y<cliffInfo.v2) uvRange.hi.y=cliffInfo.v2;
 			if (uvRange.hi.y<cliffInfo.v3) uvRange.hi.y=cliffInfo.v3;
 
-			CProcessNode *pNodes[4] = {nullptr,nullptr,nullptr,nullptr};
+			CProcessNode *pNodes[4] = {};
 			Int k = 0;
 			for (i=pCurNode->m_x-1; i<pCurNode->m_x+2; i++) {
 				if (i<0) continue;
