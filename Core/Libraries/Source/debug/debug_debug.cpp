@@ -27,7 +27,6 @@
 // Debug class implementation
 //////////////////////////////////////////////////////////////////////////////
 
-#include <Utility/CppMacros.h>
 #include "debug.h"
 #include "internal.h"
 #include "internal_except.h"

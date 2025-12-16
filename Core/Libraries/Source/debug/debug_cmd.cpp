@@ -26,8 +26,6 @@
 //
 // Debug command group 'debug'
 //////////////////////////////////////////////////////////////////////////////
-#include <Utility/CppMacros.h>
-
 #include "debug.h"
 #include "debug_cmd.h"
 #include "internal.h"
