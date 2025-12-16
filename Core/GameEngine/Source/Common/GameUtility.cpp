@@ -49,17 +49,6 @@ static void changePlayerCommon(Player* player)
 
 } // namespace detail
 
-bool localPlayerIsObserving()
-{
-	if (TheGameLogic->isInReplayGame() || TheGameLogic->isInShellGame())
-		return true;
-
-	if (ThePlayerList->getLocalPlayer()->isPlayerObserver())
-		return true;
-
-	return false;
-}
-
 bool localPlayerHasRadar()
 {
 	// Using "local" instead of "observed or local" player because as an observer we prefer

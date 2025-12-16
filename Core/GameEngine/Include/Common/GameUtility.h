@@ -28,7 +28,6 @@ typedef Int PlayerIndex;
 namespace rts
 {
 
-bool localPlayerIsObserving();
 bool localPlayerHasRadar();
 Player* getObservedOrLocalPlayer(); ///< Get the current observed or local player. Is never null.
 Player* getObservedOrLocalPlayer_Safe(); ///< Get the current observed or local player. Is never null, except when the application does not have players.

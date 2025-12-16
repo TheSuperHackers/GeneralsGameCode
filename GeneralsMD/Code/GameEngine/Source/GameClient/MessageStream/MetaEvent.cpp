@@ -418,14 +418,16 @@ static Bool isMessageUsable(CommandUsableInType usableIn)
 	const Bool usableInShell = (usableIn & COMMANDUSABLE_SHELL);
 	const Bool usableInGame = (usableIn & COMMANDUSABLE_GAME);
 	const Bool usableAsObserver = (usableIn & COMMANDUSABLE_OBSERVER);
+	const Bool isShellActive = TheShell && TheShell->isShellActive();
+	const Bool isObserving = !ThePlayerList->getLocalPlayer()->isPlayerActive();
 
-	if (usableInShell && TheShell && TheShell->isShellActive())
+	if (usableInShell && isShellActive)
 		return true;
 
-	if (usableInGame && (!TheShell || !TheShell->isShellActive()))
+	if (usableInGame && !isShellActive)
 		return true;
 
-	if (usableAsObserver && rts::localPlayerIsObserving())
+	if (usableAsObserver && isObserving)
 		return true;
 
 	return false;
