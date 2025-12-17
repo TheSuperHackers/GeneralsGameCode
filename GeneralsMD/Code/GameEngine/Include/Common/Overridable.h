@@ -49,7 +49,7 @@ class Overridable : public MemoryPoolObject
 	public:
 		Overridable() : m_nextOverride(nullptr), m_isOverride(false) {}
 
-		// return a constant version of m_nextOverride, which can be NULL if there is no
+		// return a constant version of m_nextOverride, which can be nullptr if there is no
 		// override
 		const Overridable *getNextOverride( void ) const
 		{

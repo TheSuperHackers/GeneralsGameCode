@@ -78,7 +78,7 @@ static const LookupListRec ResolutionFontSizeMethodNames[] =
 static const FieldParse TheGlobalLanguageDataFieldParseTable[] =
 {
 	{ "UnicodeFontName",									INI::parseAsciiString,nullptr,									offsetof( GlobalLanguage, m_unicodeFontName ) },
-	//{	"UnicodeFontFileName",							INI::parseAsciiString,NULL,									offsetof( GlobalLanguage, m_unicodeFontFileName ) },
+	//{	"UnicodeFontFileName",							INI::parseAsciiString,nullptr,									offsetof( GlobalLanguage, m_unicodeFontFileName ) },
 	{ "LocalFontFile",										GlobalLanguage::parseFontFileName,					nullptr,			0},
 	{ "MilitaryCaptionSpeed",						INI::parseInt,					nullptr,		offsetof( GlobalLanguage, m_militaryCaptionSpeed ) },
 	{ "UseHardWordWrap",						INI::parseBool,					nullptr,		offsetof( GlobalLanguage, m_useHardWrap) },

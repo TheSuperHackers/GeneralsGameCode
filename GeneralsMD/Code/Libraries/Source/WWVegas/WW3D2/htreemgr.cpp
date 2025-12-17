@@ -304,7 +304,7 @@ HTreeClass * HTreeManagerClass::Get_Tree(const char * name)
 //			return TreePtr[i];
 //		}
 //	}
-//	return NULL;
+//	return nullptr;
 }
 
 

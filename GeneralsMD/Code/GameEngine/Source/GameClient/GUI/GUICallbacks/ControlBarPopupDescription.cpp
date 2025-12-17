@@ -159,7 +159,7 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 		{
 //			m_buildToolTipLayout->destroyWindows();
 //			deleteInstance(m_buildToolTipLayout);
-//			m_buildToolTipLayout = NULL;
+//			m_buildToolTipLayout = nullptr;
 			m_buildToolTipLayout->hide(TRUE);
 			prevWindow = nullptr;
 		}
@@ -699,7 +699,7 @@ void ControlBar::deleteBuildTooltipLayout( void )
 //
 //	m_buildToolTipLayout->destroyWindows();
 //	deleteInstance(m_buildToolTipLayout);
-//	m_buildToolTipLayout = NULL;
+//	m_buildToolTipLayout = nullptr;
 
 	delete theAnimateWindowManager;
 	theAnimateWindowManager = nullptr;

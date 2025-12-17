@@ -259,7 +259,7 @@ public:
 	Player *getControllingPlayer() const;
 
 	/**
-		set the team's owner. (NULL is not allowed)
+		set the team's owner. (nullptr is not allowed)
 	*/
 	void setControllingPlayer(Player *newController);
 
@@ -540,7 +540,7 @@ public:
 	Team *findTeamByID( TeamID teamID );
 
 	/**
-		set the team's owner. (NULL is not allowed)
+		set the team's owner. (nullptr is not allowed)
 	*/
 	void setControllingPlayer(Player *newController);
 

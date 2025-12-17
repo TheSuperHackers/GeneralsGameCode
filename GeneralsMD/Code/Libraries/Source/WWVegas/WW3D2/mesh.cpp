@@ -784,7 +784,7 @@ void MeshClass::Render(RenderInfoClass & rinfo)
 			** to tell the mesh rendering system to process this skin
 			*/
 			if (rendered_something && Model->Get_Flag(MeshGeometryClass::SKIN)) {
-				//WWASSERT(dynamic_cast<DX8SkinFVFCategoryContainer *>(fvf_container) != NULL);
+				//WWASSERT(dynamic_cast<DX8SkinFVFCategoryContainer *>(fvf_container) != nullptr);
 				static_cast<DX8SkinFVFCategoryContainer*>(fvf_container)->Add_Visible_Skin(this);
 			}
 

@@ -270,7 +270,7 @@ public:
 																WindowMsgData mData1, WindowMsgData mData2 );
 
 	/** get the window pointer from id, starting at 'window' and searching
-	down the heirarchy.  If 'window' is NULL then all windows will
+	down the heirarchy.  If 'window' is nullptr then all windows will
 	be searched */
 	virtual GameWindow *winGetWindowFromId( GameWindow *window, Int id );
 	virtual Int winCapture( GameWindow *window );  ///< captures the mouse

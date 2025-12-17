@@ -87,7 +87,7 @@ public:
 			{ "StartFadeTime",	INI::parseDurationUnsignedInt,		nullptr, offsetof( EMPUpdateModuleData, m_startFadeFrame ) },
 			{ "StartScale",	INI::parseReal,										nullptr, offsetof( EMPUpdateModuleData, m_startScale ) },
 			{ "DisabledDuration",	INI::parseDurationUnsignedInt,	nullptr, offsetof( EMPUpdateModuleData, m_disabledDuration ) },
-			//{ "SpinRateMax",	INI::parseReal,										NULL, offsetof( EMPUpdateModuleData, m_spinRateMax ) },
+			//{ "SpinRateMax",	INI::parseReal,										nullptr, offsetof( EMPUpdateModuleData, m_spinRateMax ) },
 			{ "TargetScaleMax",	INI::parseReal,										nullptr, offsetof( EMPUpdateModuleData, m_targetScaleMax ) },
 			{ "TargetScaleMin",	INI::parseReal,										nullptr, offsetof( EMPUpdateModuleData, m_targetScaleMin ) },
 			{ "StartColor",	INI::parseRGBColor,			nullptr, offsetof( EMPUpdateModuleData, m_startColor ) },
