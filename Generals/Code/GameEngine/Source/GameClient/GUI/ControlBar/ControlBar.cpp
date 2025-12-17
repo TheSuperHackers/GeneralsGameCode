@@ -2424,7 +2424,7 @@ void ControlBar::setControlCommand( GameWindow *button, const CommandButton *com
 	if( commandButton == nullptr )
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("setControlCommand: NULL commandButton passed in") );
+		DEBUG_ASSERTCRASH( 0, ("setControlCommand: nullptr commandButton passed in") );
 		return;
 
 	}
@@ -2514,7 +2514,7 @@ void ControlBar::postProcessCommands( void )
 
 //-------------------------------------------------------------------------------------------------
 /** set the command for the button identified by the window name
-	* NOTE that parent may be NULL, it only helps to speed up the search for a particular
+	* NOTE that parent may be nullptr, it only helps to speed up the search for a particular
 	* window ID */
 //-------------------------------------------------------------------------------------------------
 void ControlBar::setControlCommand( const AsciiString& buttonWindowName, GameWindow *parent,
@@ -2676,7 +2676,7 @@ void ControlBar::setPortraitByObject( Object *obj )
 // ------------------------------------------------------------------------------------------------
 void ControlBar::showRallyPoint(const Coord3D* loc)
 {
-	// if loc is NULL, destroy any rally point drawble we have shown
+	// if loc is nullptr, destroy any rally point drawble we have shown
 	if (loc == nullptr)
 	{
 		// destroy rally point drawable if present

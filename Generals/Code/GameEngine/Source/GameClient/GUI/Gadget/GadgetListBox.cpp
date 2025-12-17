@@ -2037,7 +2037,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 			pos = (ICoord2D *)mData1;
 			void **data = (void **)mData2;
 
-			*data = nullptr;  // initialize to NULL
+			*data = nullptr;  // initialize to nullptr
 			if (pos->y >= 0 && pos->y < list->endPos && list->listData[pos->y].cell)
 				*data = list->listData[pos->y].cell[pos->x].userData;
 
@@ -2424,7 +2424,7 @@ void GadgetListBoxAddMultiSelect( GameWindow *listbox )
 {
 	ListboxData *listboxData = (ListboxData *)listbox->winGetUserData();
 
-	DEBUG_ASSERTCRASH(listboxData && listboxData->selections == nullptr, ("selections is not NULL"));
+	DEBUG_ASSERTCRASH(listboxData && listboxData->selections == nullptr, ("selections is not nullptr"));
 	listboxData->selections = NEW Int [listboxData->listLength];
 	DEBUG_LOG(( "Enable list box multi select: listLength (select) = %d * %d = %d bytes;",
 					 listboxData->listLength, sizeof(Int),

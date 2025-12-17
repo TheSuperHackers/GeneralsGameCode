@@ -56,7 +56,7 @@ void RadiusDecalTemplate::createRadiusDecal(const Coord3D& pos, Real radius, con
 
 	if (owningPlayer == nullptr)
 	{
-		DEBUG_CRASH(("You MUST specify a non-NULL owningPlayer to createRadiusDecal. (srj)"));
+		DEBUG_CRASH(("You MUST specify a non-nullptr owningPlayer to createRadiusDecal. (srj)"));
 		return;
 	}
 

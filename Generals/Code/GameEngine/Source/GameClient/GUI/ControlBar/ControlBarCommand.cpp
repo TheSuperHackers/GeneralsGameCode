@@ -864,7 +864,7 @@ const Image* ControlBar::calculateVeterancyOverlayForThing( const ThingTemplate 
 		level = data->m_startingLevel;
 	}
 
-	//Return the appropriate image (including NULL if no veterancy levels)
+	//Return the appropriate image (including nullptr if no veterancy levels)
 	switch( level )
 	{
 		case LEVEL_VETERAN:
@@ -886,7 +886,7 @@ const Image* ControlBar::calculateVeterancyOverlayForObject( const Object *obj )
 	}
 	VeterancyLevel level = obj->getVeterancyLevel();
 
-	//Return the appropriate image (including NULL if no veterancy levels)
+	//Return the appropriate image (including nullptr if no veterancy levels)
 	switch( level )
 	{
 		case LEVEL_VETERAN:
@@ -1264,7 +1264,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 		{
 			// sanity
 			DEBUG_ASSERTCRASH( command->getSpecialPowerTemplate() != nullptr,
-												 ("The special power in the command '%s' is NULL", command->getName().str()) );
+												 ("The special power in the command '%s' is nullptr", command->getName().str()) );
 			// get special power module from the object to execute it
 			SpecialPowerModuleInterface *mod = obj->getSpecialPowerModule( command->getSpecialPowerTemplate() );
 

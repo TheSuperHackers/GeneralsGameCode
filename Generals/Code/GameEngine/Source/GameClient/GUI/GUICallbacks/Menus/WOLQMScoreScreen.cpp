@@ -99,7 +99,7 @@ void WOLQMScoreScreenShutdown( WindowLayout *layout, void *userData )
 	// our shutdown is complete
 	TheShell->shutdownComplete( layout );
 
-	//progressLayout = NULL;
+	//progressLayout = nullptr;
 
 }
 

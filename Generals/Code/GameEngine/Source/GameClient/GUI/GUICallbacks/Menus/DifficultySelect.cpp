@@ -144,7 +144,7 @@ void DifficultySelectInit( WindowLayout *layout, void *userData )
 	// set keyboard focus to main parent
 //	AsciiString parentName( "SkirmishMapSelectMenu.wnd:SkrimishMapSelectMenuParent" );
 //	NameKeyType parentID = TheNameKeyGenerator->nameToKey( parentName );
-//	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+//	parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 //
 //	TheWindowManager->winSetFocus( parent );
 //

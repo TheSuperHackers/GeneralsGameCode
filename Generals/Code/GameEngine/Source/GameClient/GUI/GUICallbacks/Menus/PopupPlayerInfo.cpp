@@ -78,7 +78,7 @@ static GameWindow *parent = nullptr;
 static GameWindow *listboxInfo = nullptr;
 static GameWindow *buttonClose = nullptr;
 static GameWindow *buttonBuddies = nullptr;
-//static GameWindow *buttonbuttonOptions = NULL;
+//static GameWindow *buttonbuttonOptions = nullptr;
 static GameWindow *buttonSetLocale = nullptr;
 static GameWindow *buttonDeleteAccount = nullptr;
 static GameWindow *checkBoxAsianFont = nullptr;
@@ -392,7 +392,7 @@ void BattleHonorTooltip(GameWindow *window,
 		else if(BitIsSet(battleHonor, BATTLE_HONOR_STREAK_3))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorStreak3"), -1, nullptr, tooltipWidth );
 		//else if(BitIsSet(battleHonor, BATTLE_HONOR_STREAK_5))
-			//TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorStreak5"), -1, NULL, tooltipWidth );
+			//TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorStreak5"), -1, nullptr, tooltipWidth );
 		else if(BitIsSet(battleHonor, BATTLE_HONOR_STREAK_10))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorStreak10"), -1, nullptr, tooltipWidth );
 		else if(BitIsSet(battleHonor, BATTLE_HONOR_STREAK_25))

@@ -574,7 +574,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 			DEBUG_LOG(("Looking for a patch for productID=%d, versionStr=%s, distribution=%d",
 				gameProductID, gameVersionUniqueIDStr, gameDistributionID));
 			ptCheckForPatch( gameProductID, gameVersionUniqueIDStr, gameDistributionID, patchAvailableCallback, PTFalse, nullptr );
-			//ptCheckForPatch( productID, versionUniqueIDStr, distributionID, mapPackAvailableCallback, PTFalse, NULL );
+			//ptCheckForPatch( productID, versionUniqueIDStr, distributionID, mapPackAvailableCallback, PTFalse, nullptr );
 		}
 	}
 	if (getUpdate != nullptr)
@@ -651,7 +651,7 @@ void MainMenuShutdown( WindowLayout *layout, void *userData )
 
 //	if(winVidManager)
 	//		delete winVidManager;
-	//	winVidManager = NULL;
+	//	winVidManager = nullptr;
 
 
 	if( popImmediate )
@@ -659,7 +659,7 @@ void MainMenuShutdown( WindowLayout *layout, void *userData )
 //		if(localAnimateWindowManager)
 //		{
 //			delete localAnimateWindowManager;
-//			localAnimateWindowManager = NULL;
+//			localAnimateWindowManager = nullptr;
 //		}
 		shutdownComplete( layout );
 		return;
@@ -1472,7 +1472,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				logoIsShown = FALSE;
 				showLogo = FALSE;
 				showSide = SHOW_USA;
-//				WindowLayout *layout = NULL;
+//				WindowLayout *layout = nullptr;
 //				layout = TheWindowManager->winCreateLayout( "Menus/DifficultySelect.wnd" );
 //				layout->runInit();
 //				layout->hide( FALSE );
@@ -1496,7 +1496,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				logoIsShown = FALSE;
 				showLogo = FALSE;
 				showSide = SHOW_GLA;
-//				WindowLayout *layout = NULL;
+//				WindowLayout *layout = nullptr;
 //				layout = TheWindowManager->winCreateLayout( "Menus/DifficultySelect.wnd" );
 //				layout->runInit();
 //				layout->hide( FALSE );
@@ -1521,7 +1521,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				showLogo = FALSE;
 				showSide = SHOW_CHINA;
 
-//				WindowLayout *layout = NULL;
+//				WindowLayout *layout = nullptr;
 //				layout = TheWindowManager->winCreateLayout( "Menus/DifficultySelect.wnd" );
 //				layout->runInit();
 //				layout->hide( FALSE );

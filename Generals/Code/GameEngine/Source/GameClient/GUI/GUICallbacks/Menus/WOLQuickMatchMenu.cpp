@@ -109,9 +109,9 @@ static GameWindow *buttonStop = nullptr;
 static GameWindow *buttonWiden = nullptr;
 GameWindow *quickmatchTextWindow = nullptr;
 static GameWindow *listboxMapSelect = nullptr;
-//static GameWindow *textEntryMaxDisconnects = NULL;
-//static GameWindow *textEntryMaxPoints = NULL;
-//static GameWindow *textEntryMinPoints = NULL;
+//static GameWindow *textEntryMaxDisconnects = nullptr;
+//static GameWindow *textEntryMaxPoints = nullptr;
+//static GameWindow *textEntryMinPoints = nullptr;
 static GameWindow *textEntryWaitTime = nullptr;
 static GameWindow *comboBoxNumPlayers = nullptr;
 static GameWindow *comboBoxMaxPing = nullptr;
@@ -567,7 +567,7 @@ static void populateQuickMatchMapSelectListbox( QuickMatchPreferences& pref )
 	GadgetComboBoxGetSelectedPos( comboBoxLadder, &selected );
 	index = (Int)GadgetComboBoxGetItemData( comboBoxLadder, selected );
 	const LadderInfo *li = TheLadderList->findLadderByIndex( index );
-	//listboxMapSelect->winEnable( li == NULL || li->randomMaps == FALSE );
+	//listboxMapSelect->winEnable( li == nullptr || li->randomMaps == FALSE );
 
 	Int numPlayers = 0;
 	if (li)

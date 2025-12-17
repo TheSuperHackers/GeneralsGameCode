@@ -1140,7 +1140,7 @@ static NameKeyType buttonPlayID = NAMEKEY_INVALID;
 static NameKeyType buttonIgnoreID = NAMEKEY_INVALID;
 static NameKeyType buttonStatsID = NAMEKEY_INVALID;
 // Window Pointers ------------------------------------------------------------------------
-//static GameWindow *rCparent = NULL;
+//static GameWindow *rCparent = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -1246,7 +1246,7 @@ WindowMsgHandledType WOLBuddyOverlayRCMenuSystem( GameWindow *window, UnsignedIn
 		case GGM_CLOSE:
 			{
 				closeRightClickMenu(window);
-				//rcMenu = NULL;
+				//rcMenu = nullptr;
 				break;
 			}
 

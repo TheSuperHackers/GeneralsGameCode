@@ -74,7 +74,7 @@ public:
 			{ "HasRunways",					     INI::parseBool, nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_hasRunways ) },
 			{ "ParkInHangars",			     INI::parseBool, nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_parkInHangars ) },
 			{ "HealAmountPerSecond",     INI::parseReal, nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_healAmount ) },
-//			{ "ExtraHealAmount4Helicopters",  INI::parseReal, NULL, offsetof( ParkingPlaceBehaviorModuleData, m_extraHealAmount4Helicopters ) },
+//			{ "ExtraHealAmount4Helicopters",  INI::parseReal, nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_extraHealAmount4Helicopters ) },
 
 
 

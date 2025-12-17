@@ -187,8 +187,9 @@ public:
 																									// to create an object, and a subsequent chunk to
 																									// parse values into that object.  However, the second
 																									// chunk parser could also create and parse an object
-																									// of its own if this pointer is NULL.
-																									// The parser of the base class should NULL this pointer.
+<<<<<<< HEAD
+																									// of its own if this pointer is nullptr.
+																									// The parser of the base class should set this pointer to nullptr.
 	void *m_userData;																	// user data hook
 
 public:
@@ -196,7 +197,7 @@ public:
 	~DataChunkInput();
 
 	// register a parser function for data chunks with labels matching "label", whose parent
-	// chunks labels match "parentLabel" (or NULL for global scope)
+	// chunks labels match "parentLabel" (or nullptr for global scope)
 	void registerParser( const AsciiString& label, const AsciiString& parentLabel, DataChunkParserPtr parser, void *userData = nullptr );
 
 	Bool parse( void *userData = nullptr );						// parse the chunk stream using registered parsers

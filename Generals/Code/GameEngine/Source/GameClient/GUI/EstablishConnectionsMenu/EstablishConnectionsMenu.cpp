@@ -110,7 +110,7 @@ void EstablishConnectionsMenu::setPlayerName(Int slot, UnicodeString name) {
 	GameWindow *control = TheWindowManager->winGetWindowFromId(nullptr, controlID);
 
 	if (control == nullptr) {
-		DEBUG_ASSERTCRASH(control != nullptr, ("player name control for slot %d is NULL", slot));
+		DEBUG_ASSERTCRASH(control != nullptr, ("player name control for slot %d is nullptr", slot));
 		return;
 	}
 	GadgetStaticTextSetText(control, name);
@@ -121,7 +121,7 @@ void EstablishConnectionsMenu::setPlayerStatus(Int slot, NATConnectionState stat
 	GameWindow *control = TheWindowManager->winGetWindowFromId(nullptr, controlID);
 
 	if (control == nullptr) {
-		DEBUG_ASSERTCRASH(control != nullptr, ("player status control for slot %d is NULL", slot));
+		DEBUG_ASSERTCRASH(control != nullptr, ("player status control for slot %d is nullptr", slot));
 		return;
 	}
 //	if (state == NATCONNECTIONSTATE_NETGEARDELAY) {

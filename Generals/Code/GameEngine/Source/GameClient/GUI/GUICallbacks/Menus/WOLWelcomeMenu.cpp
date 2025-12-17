@@ -515,9 +515,9 @@ void WOLWelcomeMenuInit( WindowLayout *layout, void *userData )
 //	// animate controls
 //	TheShell->registerWithAnimateManager(buttonQuickMatch, WIN_ANIMATION_SLIDE_LEFT, TRUE, 800);
 //	TheShell->registerWithAnimateManager(buttonLobby, WIN_ANIMATION_SLIDE_LEFT, TRUE, 600);
-//	//TheShell->registerWithAnimateManager(NULL, WIN_ANIMATION_SLIDE_LEFT, TRUE, 400);
+//	//TheShell->registerWithAnimateManager(nullptr, WIN_ANIMATION_SLIDE_LEFT, TRUE, 400);
 //	TheShell->registerWithAnimateManager(buttonBuddies, WIN_ANIMATION_SLIDE_LEFT, TRUE, 200);
-//	//TheShell->registerWithAnimateManager(NULL, WIN_ANIMATION_SLIDE_LEFT, TRUE, 1);
+//	//TheShell->registerWithAnimateManager(nullptr, WIN_ANIMATION_SLIDE_LEFT, TRUE, 1);
 //	TheShell->registerWithAnimateManager(buttonBack, WIN_ANIMATION_SLIDE_BOTTOM, TRUE, 1);
 
 	// Show Menu
@@ -828,7 +828,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 				else if (controlID == buttonLobbyID)
 				{
 					//TheGameSpyChat->clearGroupRoomList();
-					//peerListGroupRooms(TheGameSpyChat->getPeer(), ListGroupRoomsCallback, NULL, PEERTrue);
+					//peerListGroupRooms(TheGameSpyChat->getPeer(), ListGroupRoomsCallback, nullptr, PEERTrue);
 					TheGameSpyInfo->joinBestGroupRoom();
 					enableControls( FALSE );
 

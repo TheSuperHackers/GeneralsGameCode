@@ -483,7 +483,7 @@ protected:
 
 private:
 
-	// NOTE: m_nextTemplate will be cleaned up if it is NON-NULL.
+	// NOTE: m_nextTemplate will be cleaned up if it is NON-nullptr.
 	WeaponTemplate *m_nextTemplate;
 
 	static void parseWeaponBonusSet( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );
@@ -638,7 +638,7 @@ public:
 	Bool isGoalPosWithinAttackRange(const Object *source, const Coord3D* goalPos, const Object *target, const Coord3D* targetPos) const;
 
 	//Used only by garrison contains that move objects around before doing the range check.
-	//If target object is specified, we'll use his position, but if it's NULL we will use the
+	//If target object is specified, we'll use his position, but if it's nullptr we will use the
 	//target position passed in.
 	//NOTE: This is not a user friendly function -- use with caution if at all! -- Kris
 	Bool isSourceObjectWithGoalPositionWithinAttackRange(const Object *source, const Coord3D *goalPos, const Object *target, const Coord3D *targetPos) const;

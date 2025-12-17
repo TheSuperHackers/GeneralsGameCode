@@ -512,7 +512,7 @@ Drawable::~Drawable()
 	// remove any entries that might be present from the ray effect system
 	TheGameClient->removeFromRayEffects( this );
 
-	// reset object to NULL so we never mistaken grab "dead" objects
+	// reset object to nullptr so we never mistaken grab "dead" objects
 	m_object = nullptr;
 	m_particle = nullptr;
 
@@ -3475,7 +3475,7 @@ DrawModule** Drawable::getDrawModules()
 	}
 #endif
 
-	DEBUG_ASSERTCRASH(dm != nullptr, ("Draw Module List is not expected NULL"));
+	DEBUG_ASSERTCRASH(dm != nullptr, ("Draw Module List is not expected nullptr"));
 	return dm;
 }
 
@@ -3501,7 +3501,7 @@ DrawModule const** Drawable::getDrawModules() const
 	}
 #endif
 
-	DEBUG_ASSERTCRASH(dm != nullptr, ("Draw Module List is not expected NULL"));
+	DEBUG_ASSERTCRASH(dm != nullptr, ("Draw Module List is not expected nullptr"));
 	return dm;
 }
 
@@ -3651,7 +3651,7 @@ void Drawable::friend_bindToObject( Object *obj ) ///< bind this drawable to an 
 	PhysicsXformInfo physicsXform;
 	if (calcPhysicsXform(physicsXform))
 	{
-		DEBUG_ASSERTCRASH(m_physicsXform == nullptr, ("m_physicsXform is not NULL"));
+		DEBUG_ASSERTCRASH(m_physicsXform == nullptr, ("m_physicsXform is not nullptr"));
 		m_physicsXform = new PhysicsXformInfo;
 		*m_physicsXform = physicsXform;
 	}

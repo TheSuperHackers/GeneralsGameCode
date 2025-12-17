@@ -69,7 +69,7 @@ public:
 			{ "HasRunways",					INI::parseBool,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_hasRunways ) },
 			{ "ParkInHangars",			INI::parseBool,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_parkInHangars ) },
 			{ "HealAmountPerSecond",INI::parseReal,									nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_healAmount ) },
-			//{ "TimeForFullHeal",	INI::parseDurationUnsignedInt,	NULL, offsetof( ParkingPlaceBehaviorModuleData, m_framesForFullHeal ) },
+			//{ "TimeForFullHeal",	INI::parseDurationUnsignedInt,	nullptr, offsetof( ParkingPlaceBehaviorModuleData, m_framesForFullHeal ) },
 			{ 0, 0, 0, 0 }
 		};
 		p.add(dataFieldParse);

@@ -238,7 +238,7 @@ void AnimateWindowManager::registerGameWindow(GameWindow *win, AnimTypes animTyp
 {
 	if(!win)
 	{
-		DEBUG_CRASH(("Win was NULL as it was passed into registerGameWindow... not good indeed"));
+		DEBUG_CRASH(("Win was nullptr as it was passed into registerGameWindow... not good indeed"));
 		return;
 	}
 	if(animType <= WIN_ANIMATION_NONE || animType >= WIN_ANIMATION_COUNT )

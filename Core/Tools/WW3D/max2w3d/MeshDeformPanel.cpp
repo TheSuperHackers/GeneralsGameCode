@@ -155,8 +155,8 @@ MeshDeformPanelClass::On_Message
 			//
 			//	Ensure the sliders are repainted
 			//
-			//::InvalidateRect (::GetDlgItem (m_hWnd, IDC_STATE_SLIDER), NULL, TRUE);
-			//::InvalidateRect (::GetDlgItem (m_hWnd, IDC_CURRENT_SET_SLIDER), NULL, TRUE);
+			//::InvalidateRect (::GetDlgItem (m_hWnd, IDC_STATE_SLIDER), nullptr, TRUE);
+			//::InvalidateRect (::GetDlgItem (m_hWnd, IDC_CURRENT_SET_SLIDER), nullptr, TRUE);
 			break;
 
 		case WM_DESTROY:
@@ -167,7 +167,7 @@ MeshDeformPanelClass::On_Message
 			m_pColorSwatch = nullptr;
 			m_pMaxSetsEdit = nullptr;
 			m_pMaxSetsSpin = nullptr;
-			//m_pEditButton = NULL;
+			//m_pEditButton = nullptr;
 			break;
 
 		case WM_COMMAND:

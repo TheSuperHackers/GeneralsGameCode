@@ -109,7 +109,7 @@ static void updateMenuActions( void )
 		saveButton->winEnable( TRUE );
 
 	// get the games listbox
-	//GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY( "PopupSaveLoad.wnd:ListboxGames" ) );
+	//GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( nullptr, NAMEKEY( "PopupSaveLoad.wnd:ListboxGames" ) );
 
 	// if something with a game file is selected we can use load and delete
 	Int selected;

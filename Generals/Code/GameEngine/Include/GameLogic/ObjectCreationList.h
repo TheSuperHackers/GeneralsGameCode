@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Kris: August 23, 2003
-// All OCLs return the first object that is created (or NULL if not applicable).
+	// All OCLs return the first object that is created (or nullptr if not applicable).
 
 #pragma once
 
