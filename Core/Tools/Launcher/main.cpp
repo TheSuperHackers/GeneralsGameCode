@@ -316,7 +316,7 @@ void CreatePrimaryWin(const char *prefix)
 	wc.cbWndExtra = 0;            // No extra win data
 	wc.hInstance = Global_instance;
 	wc.hIcon=LoadIcon(Global_instance, MAKEINTRESOURCE(IDI_GENERALS));
-	wc.hCursor = nullptr;  /////////LoadCursor( NULL, IDC_ARROW );
+	wc.hCursor = nullptr;  /////////LoadCursor( nullptr, IDC_ARROW );
 	wc.hbrBackground = nullptr;
 	wc.lpszMenuName = name;
 	wc.lpszClassName = name;

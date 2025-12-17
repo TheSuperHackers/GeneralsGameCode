@@ -470,7 +470,7 @@ public:
 	void cancelPath(void); ///< Called if we no longer need the path.
 	Path* getPath( void ) { return m_path; }				///< return the agent's current path
 	const Path* getPath( void ) const { return m_path; }				///< return the agent's current path
-	void destroyPath( void );												///< destroy the current path, setting it to NULL
+	void destroyPath( void );												///< destroy the current path, setting it to nullptr
 	UnsignedInt getPathAge( void ) const { return TheGameLogic->getFrame() - m_pathTimestamp; }	///< return the "age" of the path
 	Bool isPathAvailable( const Coord3D *destination ) const; ///< does a path exist between us and the destination
 	Bool isQuickPathAvailable( const Coord3D *destination ) const;  ///< does a path (using quick pathfind) exist between us and the destination

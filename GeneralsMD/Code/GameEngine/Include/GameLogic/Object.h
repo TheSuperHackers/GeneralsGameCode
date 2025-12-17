@@ -705,9 +705,9 @@ private:
 	GeometryInfo	m_geometryInfo;
 
 #if RETAIL_COMPATIBLE_AIGROUP
-	AIGroup*			m_group;								///< if non-NULL, we are part of this group of agents
+	AIGroup*			m_group;								///< if non-nullptr, we are part of this group of agents
 #else
-	RefCountPtr<AIGroup> m_group; ///< if non-NULL, we are part of this group of agents
+	RefCountPtr<AIGroup> m_group; ///< if non-nullptr, we are part of this group of agents
 #endif
 
 	// These will last for my lifetime.  I will reuse them and reset them.  The truly dynamic ones are in PartitionManager

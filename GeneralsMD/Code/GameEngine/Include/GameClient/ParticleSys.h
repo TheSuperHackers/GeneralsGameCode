@@ -494,7 +494,7 @@ public:
 	AsciiString getName( void ) const { return m_name; }
 
 	// This function was made const because of update modules' module data being all const.
-	ParticleSystem *createSlaveSystem( Bool createSlaves = TRUE ) const ;					///< if returns non-NULL, it is a slave system for use
+	ParticleSystem *createSlaveSystem( Bool createSlaves = TRUE ) const ;					///< if returns non-nullptr, it is a slave system for use
 
 	const FieldParse *getFieldParse( void ) const { return m_fieldParseTable; }	///< Parsing from INI access
 	static void parseRGBColorKeyframe( INI* ini, void *instance, void *store, const void* /*userData*/ );
@@ -518,7 +518,7 @@ protected:
 	AsciiString								m_name;													///< the name of this template
 
 	// This has to be mutable because of the delayed initialization thing in createSlaveSystem
-	mutable const ParticleSystemTemplate *m_slaveTemplate;		///< if non-NULL, use this to create a slave system
+	mutable const ParticleSystemTemplate *m_slaveTemplate;		///< if non-nullptr, use this to create a slave system
 
 	// template attribute data inherited from ParticleSystemInfo class
 };
@@ -687,14 +687,14 @@ protected:
 	Coord3D						m_pos;													///< this is the position to emit at.
 	Coord3D						m_lastPos;											///< this is the previous position we emitted at.
 
-	ParticleSystem *	m_slaveSystem;									///< if non-NULL, another system this one has control of
+	ParticleSystem *	m_slaveSystem;									///< if non-nullptr, another system this one has control of
 	ParticleSystemID	m_slaveSystemID;								///< id of slave system (if present)
 
-	ParticleSystem *	m_masterSystem;									///< if non-NULL, the system that controls this one
+	ParticleSystem *	m_masterSystem;									///< if non-nullptr, the system that controls this one
 	ParticleSystemID	m_masterSystemID;								///< master system id (if present);
 
 	const ParticleSystemTemplate *	m_template;						///< the template this system was constructed from
-	Particle *											m_controlParticle;		///< if non-NULL, this system is controlled by this particle
+	Particle *											m_controlParticle;		///< if non-nullptr, this system is controlled by this particle
 
 	Bool							m_isLocalIdentity;										///< if true, the matrix can be ignored
 	Bool							m_isIdentity;													///< if true, the matrix can be ignored

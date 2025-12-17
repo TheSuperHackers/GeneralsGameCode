@@ -55,7 +55,7 @@ public:
 	WaterHandle( void ) { m_polygon = nullptr; }
 
 	///@todo we need to formalize the water systems
-	PolygonTrigger *m_polygon;	///< valid when water is a polygon area, NULL if water is a grid
+	PolygonTrigger *m_polygon;	///< valid when water is a polygon area, nullptr if water is a grid
 
 };
 
