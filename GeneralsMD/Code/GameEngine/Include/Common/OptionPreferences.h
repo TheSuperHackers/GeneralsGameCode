@@ -26,7 +26,6 @@
 // FILE: OptionPreferences.h
 // Author: Matthew D. Campbell, April 2002
 // Description: Options menu preferences class
-// @refactor bobtista 13/11/2025 Moved OptionPreferences to separate files.
 ///////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once

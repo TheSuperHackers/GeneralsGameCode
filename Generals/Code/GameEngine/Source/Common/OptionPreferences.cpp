@@ -26,7 +26,6 @@
 // FILE: OptionPreferences.cpp
 // Author: Matthew D. Campbell, April 2002
 // Description: Options menu preferences implementation
-// @refactor bobtista 13/11/2025 Moved OptionPreferences to separate files.
 ///////////////////////////////////////////////////////////////////////////////////////
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
