@@ -82,10 +82,13 @@ static GameWindow *buttonAnalyzeReplay = NULL;
 
 void deleteReplay( void );
 void copyReplay( void );
+void showReplayNotFoundError( void );
 static Bool callCopy = FALSE;
 static Bool callDelete = FALSE;
+static Bool callShowReplayNotFound = FALSE;
 void deleteReplayFlag( void ) { callDelete = TRUE;}
 void copyReplayFlag( void ) { callCopy = TRUE;}
+void showReplayNotFoundFlag( void ) { callShowReplayNotFound = TRUE;}
 
 UnicodeString GetReplayFilenameFromListbox(GameWindow *listbox, Int index)
 {
@@ -462,6 +465,8 @@ void ReplayMenuUpdate( WindowLayout *layout, void *userData )
 		copyReplay();
 	if(callDelete)
 		deleteReplay();
+	if(callShowReplayNotFound)
+		showReplayNotFoundError();
 		// We'll only be successful if we've requested to
 	if(isShuttingDown && TheShell->isAnimFinished()&& TheTransitionHandler->isFinished())
 		TheShell->shutdownComplete( layout );
@@ -534,7 +539,22 @@ void reallyLoadReplay(void)
 	AsciiString asciiFilename;
 	asciiFilename.translate(filename);
 
-	TheRecorder->playbackFile(asciiFilename);
+	// TheSuperHackers @bugfix bobtista Validate file exists before playback to prevent crash when deleted during version mismatch prompt
+	AsciiString filepath = TheRecorder->getReplayDir();
+	filepath.concat(asciiFilename.str());
+	
+	File *testFile = TheFileSystem->openFile(filepath.str(), File::READ | File::BINARY);
+	if (testFile == NULL)
+	{
+		showReplayNotFoundFlag();
+		return;
+	}
+	testFile->close();
+
+	if(!TheRecorder->playbackFile(asciiFilename))
+	{
+		return;
+	}
 
 	if(parentReplayMenu != NULL)
 	{
@@ -795,5 +815,13 @@ void copyReplay( void )
 		MessageBoxOk(TheGameText->fetch("GUI:Error"),errorStr, NULL);
 	}
 
+}
+
+void showReplayNotFoundError( void )
+{
+	callShowReplayNotFound = FALSE;
+	UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFoundTitle", L"REPLAY NOT FOUND");
+	UnicodeString body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFound", L"This replay cannot be loaded because the file no longer exists on this device.");
+	MessageBoxOk(title, body, NULL);
 }
 
