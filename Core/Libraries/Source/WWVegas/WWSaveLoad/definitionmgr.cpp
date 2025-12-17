@@ -227,7 +227,7 @@ DefinitionMgrClass::Find_Typed_Definition (const char *name, uint32 class_id, bo
 	//	Sanity check
 	//
 	if (DefinitionHash == nullptr) {
-		WWDEBUG_SAY (("DefinitionMgrClass::Find_Typed_Definition () failed due to a NULL DefinitionHash."));
+		WWDEBUG_SAY (("DefinitionMgrClass::Find_Typed_Definition () failed due to a nullptr DefinitionHash."));
 		return nullptr;
 	}
 

@@ -1120,7 +1120,7 @@ void SegLineRendererClass::Render
 			mat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_NODIFFUSE);
 		}
 
-		// If Texture is non-NULL enable texturing in shader - otherwise disable.
+		// If Texture is non-nullptr enable texturing in shader - otherwise disable.
 		if (Texture) {
 			shader.Set_Texturing(ShaderClass::TEXTURING_ENABLE);
 		} else {

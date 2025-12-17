@@ -294,7 +294,7 @@ void RawFileClass::Reset(void)
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *
- * OUTPUT:  Returns with a pointer to the file name associated with this file object or NULL   *
+ * OUTPUT:  Returns with a pointer to the file name associated with this file object or nullptr   *
  *          if one doesn't exist.                                                              *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
@@ -587,10 +587,10 @@ void RawFileClass::Close(void)
  *    the file. This condition can result in fewer bytes being read than requested. Determine  *
  *    this by examining the return value.                                                      *
  *                                                                                             *
- * INPUT:   buffer   -- Pointer to the buffer to read data into. If NULL is passed, no read    *
+ * INPUT:   buffer   -- Pointer to the buffer to read data into. If nullptr is passed, no read    *
  *                      is performed.                                                          *
  *                                                                                             *
- *          size     -- The number of bytes to read. If NULL is passed, then no read is        *
+ *          size     -- The number of bytes to read. If nullptr is passed, then no read is        *
  *                      performed.                                                             *
  *                                                                                             *
  * OUTPUT:  Returns with the number of bytes read into the buffer. If this number is less      *

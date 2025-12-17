@@ -301,7 +301,7 @@ void SphereRenderObjClass::Generate_Shared_Mesh_Arrays (const AlphaVectorStruct 
 		float step = (SPHERE_HIGHEST_LOD - SPHERE_LOWEST_LOD);
 		step /= SPHERE_NUM_LOD;
 
-		// For NULL LOD set Cost to a small nonzero amount to avoid divisions by zero.
+		// For nullptr LOD set Cost to a small nonzero amount to avoid divisions by zero.
 		SphereLODCosts[0] = 0.000001f;
 		for(int i=0; i < SPHERE_NUM_LOD; i++) {
 
@@ -458,7 +458,7 @@ void SphereRenderObjClass::Set_Name(const char * name)
  *=============================================================================================*/
 void SphereRenderObjClass::render_sphere()
 {
-	// Should never get here with NULL LOD
+	// Should never get here with nullptr LOD
 	if (CurrentLOD == 0) {
 		WWASSERT(0);
 		return;
@@ -601,7 +601,7 @@ int SphereRenderObjClass::Class_ID(void) const
  *=============================================================================================*/
 void SphereRenderObjClass::Render(RenderInfoClass & rinfo)
 {
-	// NULL LOD
+	// nullptr LOD
 	if (CurrentLOD == 0) return;
 
 	if (Is_Not_Hidden_At_All() == false) {

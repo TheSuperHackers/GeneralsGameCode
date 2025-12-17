@@ -51,7 +51,7 @@ void *ProfileAllocMemory(unsigned numBytes)
 
 void *ProfileReAllocMemory(void *oldPtr, unsigned newSize)
 {
-  // Windows doesn't like ReAlloc with NULL handle/ptr...
+  // Windows doesn't like ReAlloc with nullptr handle/ptr...
   if (!oldPtr)
     return newSize?ProfileAllocMemory(newSize):nullptr;
 

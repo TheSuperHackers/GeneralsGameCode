@@ -111,7 +111,7 @@ void PointerRemapClass::Process_Request_Table(DynamicVectorClass<PtrRemapStruct>
 		} else {
 
 			// Failed to re-map the pointer.
-			// warn the user, set pointer to NULL, reset index to the pre_search_index.
+			// warn the user, set pointer to nullptr, reset index to the pre_search_index.
 			// If this happens, things could be going very wrong.  (find out why its happening!)
 			pair_index = pre_search_index;
 			*request_table[pointer_index].PointerToRemap = nullptr;

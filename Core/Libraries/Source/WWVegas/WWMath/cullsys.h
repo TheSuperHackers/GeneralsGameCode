@@ -107,7 +107,7 @@ private:
 	** Each object can be linked into various types of culling systems.
 	** Each culling system can use its own linkage data structure (derived
 	** from CullLinkClass) to keep track of the object.  The CullData pointer
-	** will point to one of the culling link objects and NULL
+	** will point to one of the culling link objects and nullptr
 	** if its not in any system.
 	*/
 	CullLinkClass *				CullLink;

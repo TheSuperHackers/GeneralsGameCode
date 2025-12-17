@@ -57,7 +57,7 @@ public:
   /**
     Retrieves next profile ID.
 
-    \return next profile ID, NULL if none
+    \return next profile ID, nullptr if none
   */
   ProfileId *GetNext(void) const { return m_next; }
 

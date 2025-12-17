@@ -54,7 +54,7 @@ void *DebugAllocMemory(unsigned numBytes)
 
 void *DebugReAllocMemory(void *oldPtr, unsigned newSize)
 {
-  // Windows doesn't like ReAlloc with NULL handle/ptr...
+  // Windows doesn't like ReAlloc with nullptr handle/ptr...
   if (!oldPtr)
     return newSize?DebugAllocMemory(newSize):nullptr;
 

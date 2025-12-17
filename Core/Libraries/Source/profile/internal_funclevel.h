@@ -237,7 +237,7 @@ public:
   /**
     Retrieves next function level tracer.
 
-    \return next function level tracer, NULL if none
+    \return next function level tracer, nullptr if none
   */
   ProfileFuncLevelTracer *GetNext(void)
   {

@@ -374,7 +374,7 @@ void RingRenderObjClass::Generate_Shared_Mesh_Arrays (void)
 		float step = (RING_HIGHEST_LOD - RING_LOWEST_LOD);
 		step /= RING_NUM_LOD;
 
-		// For NULL LOD set Cost to a small nonzero amount to avoid divisions by zero.
+		// For nullptr LOD set Cost to a small nonzero amount to avoid divisions by zero.
 		RingLODCosts[0] = 0.000001f;
 		for(int i=0; i < RING_NUM_LOD; i++) {
 
@@ -521,7 +521,7 @@ void RingRenderObjClass::Set_Name(const char * name)
  *=============================================================================================*/
 void RingRenderObjClass::render_ring(RenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent)
 {
-	// Should never get here with NULL LOD
+	// Should never get here with nullptr LOD
 	if (CurrentLOD == 0) {
 		WWASSERT(0);
 		return;
@@ -671,7 +671,7 @@ int RingRenderObjClass::Class_ID(void) const
  *=============================================================================================*/
 void RingRenderObjClass::Render(RenderInfoClass & rinfo)
 {
-	// NULL LOD
+	// nullptr LOD
 	if (CurrentLOD == 0) return;
 
 	if (Is_Not_Hidden_At_All() == false) {

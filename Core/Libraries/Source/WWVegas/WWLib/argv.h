@@ -69,7 +69,7 @@ class ArgvClass
 			CurrentPos = -1;
 			return(Find_Again(arg));
 		}
-		// If NULL passed, original string will be used.
+		// If nullptr passed, original string will be used.
 		const char *Find_Again(const char *arg = 0L);
 
 		// Return pointer to data after 'arg'.

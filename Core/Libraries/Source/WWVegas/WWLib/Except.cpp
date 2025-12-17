@@ -1197,7 +1197,7 @@ bool Lookup_Symbol(void *code_ptr, char *symbol, int &displacement)
  *                                                                                             *
  * INPUT:    Ptr to return address list                                                        *
  *           Number of return addresses to fetch                                               *
- *           Ptr to optional context. NULL means use current                                   *
+ *           Ptr to optional context. nullptr means use current                                   *
  *                                                                                             *
  * OUTPUT:   Number of return addresses found                                                  *
  *                                                                                             *

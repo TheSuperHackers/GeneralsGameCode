@@ -114,7 +114,7 @@ Buffer::Buffer(void const * buffer, long size) :
  * OUTPUT:  none                                                                               *
  *                                                                                             *
  * WARNINGS:   There is no way to tell if the allocation failed. To verify, call Get_Buffer    *
- *             and compare with NULL.                                                          *
+ *             and compare with nullptr.                                                          *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   07/29/1996 JLB : Created.                                                                 *

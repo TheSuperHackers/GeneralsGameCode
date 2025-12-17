@@ -76,7 +76,7 @@ ArgvClass::ArgvClass(bool case_sensitive, bool exact_size):
  * *ArgvClass::Find_Again -- Search for a string given the flags.                              *
  *                                                                                             *
  * INPUT:                                                                                      *
- *      const char *arg - String to search for. If NULL, LastArg will be used.                 *
+ *      const char *arg - String to search for. If nullptr, LastArg will be used.                 *
  *                                                                                             *
  * OUTPUT:                                                                                     *
  *      const char *string found (null if not found)														  *

@@ -99,12 +99,12 @@ class SList {
 		virtual bool Remove(T *element);          // remove an individual element
 		virtual void Remove_All(void);            // Remove all  nodes from list
 
-		// Insert before oldnode, if oldnode is NULL then before head node
+		// Insert before oldnode, if oldnode is nullptr then before head node
 		virtual bool Insert_Before(T *newnode, T *oldnode =   nullptr);
 
 		// Could possibly implement an InsertBefore that operates on a whole list
 
-		// Insert after oldnode, if oldnode is NULL then insert at head
+		// Insert after oldnode, if oldnode is nullptr then insert at head
 		virtual bool Insert_After(T   *newnode, T *oldnode = nullptr);
 
 		// Could possibly implement an InsertAfter that operates on a whole list

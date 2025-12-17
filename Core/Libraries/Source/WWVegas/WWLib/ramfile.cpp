@@ -62,7 +62,7 @@
  *                                                                                             *
  * INPUT:   buffer   -- Pointer to the buffer to use for this file. The buffer will already    *
  *                      contain data if the file is opened for READ. It will be considered     *
- *                      a scratch buffer if opened for WRITE. If the buffer pointer is NULL    *
+ *                      a scratch buffer if opened for WRITE. If the buffer pointer is nullptr    *
  *                      but the length parameter is not, then a buffer will be allocated       *
  *                      of the specified length. This case is only useful for opening the      *
  *                      file for WRITE.                                                        *

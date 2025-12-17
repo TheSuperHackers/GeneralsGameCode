@@ -137,7 +137,7 @@ class VectorClass
  *                                                                                             *
  *    This constructor for the vector class is passed the initial size of the vector and an    *
  *    optional pointer to a preallocated block of memory that the vector will be placed in.    *
- *    If this optional pointer is NULL (or not provided), then the vector is allocated out     *
+ *    If this optional pointer is nullptr (or not provided), then the vector is allocated out     *
  *    of free store (with the "new" operator).                                                 *
  *                                                                                             *
  * INPUT:   size  -- The number of elements to initialize this vector to.                      *
@@ -542,7 +542,7 @@ class DynamicVectorClass : public VectorClass<T>
 
       // Uninitialized Add - does everything an Add does, except copying an
       // object into the 'new' spot in the array. It returns a pointer to
-      // the 'new' spot. (NULL if the Add failed). NOTE - you must then fill
+      // the 'new' spot. (nullptr if the Add failed). NOTE - you must then fill
       // this memory area with a valid object (e.g. by using placement new),
       // or chaos will result!
       T * Uninitialized_Add(void);
@@ -912,7 +912,7 @@ void DynamicVectorClass<T>::Delete_All(void)
  * INPUT:   none.                                                                              *
  *                                                                                             *
  * OUTPUT:  T *; Points to the empty space where the new object is to be created. (If the      *
- *               space was not added successfully, returns NULL).                              *
+ *               space was not added successfully, returns nullptr).                              *
  *                                                                                             *
  * WARNINGS:   If memory area is left uninitialized, Very Bad Things will happen.              *
  *                                                                                             *

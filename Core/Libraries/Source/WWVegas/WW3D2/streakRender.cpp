@@ -1307,7 +1307,7 @@ void StreakRendererClass::RenderStreak
 		DX8Wrapper::Set_Material(mat);
 		REF_PTR_RELEASE(mat);
 
-		// If Texture is non-NULL enable texturing in shader - otherwise disable.
+		// If Texture is non-nullptr enable texturing in shader - otherwise disable.
 		if (Texture)
 		{
 			shader.Set_Texturing(ShaderClass::TEXTURING_ENABLE);

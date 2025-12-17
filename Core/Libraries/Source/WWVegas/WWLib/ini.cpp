@@ -250,7 +250,7 @@ INIClass::~INIClass(void)
  *    then the entire INI data is cleared out. Optionally, this routine can be used to clear   *
  *    out just an individual entry in the specified section.                                   *
  *                                                                                             *
- * INPUT:   section  -- Pointer to the section to clear out [pass NULL to clear all].          *
+ * INPUT:   section  -- Pointer to the section to clear out [pass nullptr to clear all].          *
  *                                                                                             *
  *          entry    -- Pointer to optional entry specifier. If this parameter is specified,   *
  *                      then only this specific entry (if found) will be cleared. Otherwise,   *
@@ -708,7 +708,7 @@ int INIClass::Save(Pipe & pipe) const
  *                      brackets. Case is NOT sensitive in the search.                         *
  *                                                                                             *
  * OUTPUT:  Returns with a pointer to the INI section control structure if the section was     *
- *          found. Otherwise, NULL is returned.                                                *
+ *          found. Otherwise, nullptr is returned.                                                *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *
@@ -790,7 +790,7 @@ int INIClass::Entry_Count(char const * section) const
  *          entry    -- Pointer to the entry name to search for.                               *
  *                                                                                             *
  * OUTPUT:  If the entry was found, then a pointer to the entry control structure will be      *
- *          returned. Otherwise, NULL will be returned.                                        *
+ *          returned. Otherwise, nullptr will be returned.                                        *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *
@@ -2188,7 +2188,7 @@ TPoint2D<float> const INIClass::Get_Point(char const * section, char const * ent
  * INPUT:   entry -- The entry to scan for.                                                    *
  *                                                                                             *
  * OUTPUT:  Returns with a pointer to the entry control structure if the entry was found.      *
- *          Otherwise it returns NULL.                                                         *
+ *          Otherwise it returns nullptr.                                                         *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *
