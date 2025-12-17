@@ -401,14 +401,11 @@ void GameLogic::init( void )
 	//ThePlayerList->setLocalPlayer(0);
 
 	m_CRC = 0;
-	m_pauseFrame = 0;
-	m_gamePaused = FALSE;
-	m_pauseSound = FALSE;
-	m_pauseMusic = FALSE;
-	m_pauseInput = FALSE;
+	m_logicTimeScaleEnabledMemory = FALSE;
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
-	m_logicTimeScaleEnabledMemory = FALSE;
+	setGamePaused(FALSE);
+	m_pauseFrame = 0;
 
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
@@ -444,14 +441,11 @@ void GameLogic::reset( void )
 	m_objHash.reserve(OBJ_HASH_SIZE);
 #endif
 
-	m_pauseFrame = 0;
-	m_gamePaused = FALSE;
-	m_pauseSound = FALSE;
-	m_pauseMusic = FALSE;
-	m_pauseInput = FALSE;
+	m_logicTimeScaleEnabledMemory = FALSE;
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
-	m_logicTimeScaleEnabledMemory = FALSE;
+	setGamePaused(FALSE);
+	m_pauseFrame = 0;
 
 	setFPMode();
 
@@ -495,8 +489,6 @@ void GameLogic::reset( void )
 	TheWaterTransparency = (WaterTransparencySetting*) wt->deleteOverrides();
 
 	m_rankPointsToAddAtGameStart = 0;
-
-	TheMouse->onGamePaused(FALSE);
 }
 
 static Object * placeObjectAtPosition(Int slotNum, AsciiString objectTemplateName, Coord3D& pos, Player *pPlayer,
