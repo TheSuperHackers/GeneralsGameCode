@@ -551,7 +551,7 @@ void RailroadBehavior::loadTrackData( void )
 	m_track = NEW( TrainTrack );// this constructor inc's the refcount to 1
 
 	// From now until the next carriage is added, this track is writable using getWritablePointList();
-	// This method will return NULL when refcount is 2 or more
+	// This method will return nullptr when refcount is 2 or more
 	// getPointList returns the list as const to any caller
 	// each carriage must increment the reference when this pointer is passed to it,
 	// any subsequent carriage (destructor) will delete this memory here if it releases refcount to zero

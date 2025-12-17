@@ -2578,7 +2578,7 @@ void AIPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadiu
 		teamName.concat(" - Recruiting.");
 		TheScriptEngine->AppendDebugMessage(teamName, false);
 		const TCreateUnitsInfo *unitInfo = &teamProto->getTemplateInfo()->m_unitsInfo[0];
-//		WorkOrder *orders = NULL;
+//		WorkOrder *orders = nullptr;
 		Int i;
 		Int unitsRecruited = 0;
 		// Recruit.

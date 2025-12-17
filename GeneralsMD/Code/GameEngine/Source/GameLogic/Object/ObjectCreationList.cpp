@@ -109,7 +109,7 @@ Object* ObjectCreationNugget::create( const Object* primary, const Object* secon
 //-------------------------------------------------------------------------------------------------
 //void ObjectCreationNugget::create( const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Real angle, UnsignedInt lifetimeFrames ) const
 //{
-//	create( primaryObj, primary ? primary->getPosition() : NULL, secondary ? secondary->getPosition() : NULL, angle, lifetimeFrames );
+//	create( primaryObj, primary ? primary->getPosition() : nullptr, secondary ? secondary->getPosition() : nullptr, angle, lifetimeFrames );
 //}
 
 //-------------------------------------------------------------------------------------------------

@@ -375,7 +375,7 @@ StateReturnType AIGuardRetaliateInnerState::onEnter( void )
 		Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
 		if (nemesis == nullptr)
 		{
-			DEBUG_LOG(("Unexpected NULL nemesis in AIGuardRetaliateInnerState."));
+			DEBUG_LOG(("Unexpected nullptr nemesis in AIGuardRetaliateInnerState."));
 			return STATE_SUCCESS;
 		}
 		m_enterState = newInstance(AIEnterState)(getMachine());
@@ -394,7 +394,7 @@ StateReturnType AIGuardRetaliateInnerState::onEnter( void )
 		Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
 		if (nemesis == nullptr)
 		{
-			DEBUG_LOG(("Unexpected NULL nemesis in AIGuardRetaliateInnerState."));
+			DEBUG_LOG(("Unexpected nullptr nemesis in AIGuardRetaliateInnerState."));
 			return STATE_SUCCESS;
 		}
 		m_exitConditions.m_center = pos;
@@ -764,7 +764,7 @@ AsciiString AIGuardRetaliateAttackAggressorState::getName(  ) const
 	AsciiString name = m_name;
 	name.concat("/ ");
 	if (m_attackState) name.concat(m_attackState->getName());
-	else name.concat("*NULL m_attackState");
+	else name.concat("*nullptr m_attackState");
 	return name;
 }
 #endif
@@ -798,7 +798,7 @@ StateReturnType AIGuardRetaliateAttackAggressorState::onEnter( void )
 
 	if( !nemesis )
 	{
-		DEBUG_LOG(("Unexpected NULL nemesis in AIGuardRetaliateAttackAggressorState."));
+		DEBUG_LOG(("Unexpected nullptr nemesis in AIGuardRetaliateAttackAggressorState."));
 		return STATE_SUCCESS;
 	}
 

@@ -226,7 +226,7 @@ void VictoryConditions::update( void )
 		{
 			if (!m_singleAllianceRemaining)
 			{
-				//MessageBoxOk(TheGameText->fetch("GUI:Defeat"), TheGameText->fetch("GUI:LocalDefeat"), NULL);
+				//MessageBoxOk(TheGameText->fetch("GUI:Defeat"), TheGameText->fetch("GUI:LocalDefeat"), nullptr);
 			}
 			m_localPlayerDefeated = true;	// don't check again
 			TheRadar->forceOn(localPlayer->getPlayerIndex(), TRUE);

@@ -86,7 +86,7 @@ EMPUpdate::EMPUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModul
 	if ( data )
 	{
 		//SANITY
-		DEBUG_ASSERTCRASH( TheGameLogic, ("EMPUpdate::EMPUpdate - TheGameLogic is NULL" ) );
+		DEBUG_ASSERTCRASH( TheGameLogic, ("EMPUpdate::EMPUpdate - TheGameLogic is nullptr" ) );
 		UnsignedInt now = TheGameLogic->getFrame();
 
 		m_currentScale = data->m_startScale;
@@ -108,7 +108,7 @@ EMPUpdate::EMPUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModul
 	}
 
 	//SANITY
-	DEBUG_ASSERTCRASH( data, ("EMPUpdate::EMPUpdate - getEMPUpdateModuleData is NULL" ) );
+	DEBUG_ASSERTCRASH( data, ("EMPUpdate::EMPUpdate - getEMPUpdateModuleData is nullptr" ) );
 	m_currentScale = 1.0f;
 	m_dieFrame = 0;
 	m_tintEnvFadeFrames = 0;
@@ -420,7 +420,7 @@ LeafletDropBehavior::LeafletDropBehavior( Thing *thing, const ModuleData* module
 	if ( data )
 	{
 		//SANITY
-		DEBUG_ASSERTCRASH( TheGameLogic, ("LeafletDropBehavior::LeafletDropBehavior - TheGameLogic is NULL" ) );
+		DEBUG_ASSERTCRASH( TheGameLogic, ("LeafletDropBehavior::LeafletDropBehavior - TheGameLogic is nullptr" ) );
 		UnsignedInt now = TheGameLogic->getFrame();
     m_startFrame = now + data->m_delayFrames;
 
@@ -428,7 +428,7 @@ LeafletDropBehavior::LeafletDropBehavior( Thing *thing, const ModuleData* module
 	}
 
 	//SANITY
-	DEBUG_ASSERTCRASH( data, ("LeafletDropBehavior::LeafletDropBehavior - getLeafletDropBehaviorModuleData is NULL" ) );
+	DEBUG_ASSERTCRASH( data, ("LeafletDropBehavior::LeafletDropBehavior - getLeafletDropBehaviorModuleData is nullptr" ) );
 	m_startFrame = TheGameLogic->getFrame() + 1;
 }
 

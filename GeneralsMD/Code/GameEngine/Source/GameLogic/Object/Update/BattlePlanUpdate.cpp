@@ -196,7 +196,7 @@ void BattlePlanUpdate::onDelete()
 	Player* player = getObject()->getControllingPlayer();
 	// however, player CAN legitimately be null during game reset cycles
 	// (and which point it doesn't really matter if we can remove the bonus or not)
-	//DEBUG_ASSERTCRASH(player != NULL, ("Hmm, controller is null"));
+	//DEBUG_ASSERTCRASH(player != nullptr, ("Hmm, controller is null"));
 	if( player && m_planAffectingArmy != PLANSTATUS_NONE )
 	{
 		player->changeBattlePlan( m_planAffectingArmy, -1, m_bonuses );

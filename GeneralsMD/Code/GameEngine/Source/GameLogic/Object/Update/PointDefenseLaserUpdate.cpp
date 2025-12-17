@@ -185,7 +185,7 @@ void PointDefenseLaserUpdate::fireWhenReady()
 				{
 					scanClosestTarget();
 					m_nextScanFrames = data->m_scanFrames;
-					target = nullptr; //Set target to NULL so we don't shoot at it (might be out of range)
+					target = nullptr; //Set target to nullptr so we don't shoot at it (might be out of range)
 				}
 			}
 			else

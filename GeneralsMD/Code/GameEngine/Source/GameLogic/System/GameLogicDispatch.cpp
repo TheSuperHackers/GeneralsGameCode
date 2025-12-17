@@ -93,7 +93,7 @@
 static Bool theBuildPlan = false;
 static Object *thePlanSubject[ MAX_PATH_SUBJECTS ];
 static int thePlanSubjectCount = 0;
-//static WindowLayout *background = NULL;
+//static WindowLayout *background = nullptr;
 
 // ------------------------------------------------------------------------------------------------
 /** Issue the movement command to the object */

@@ -344,7 +344,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 	}
 
 	// Create special particle systems
-	//PLEASE NOTE You cannot check an ID for NULL.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
+	//PLEASE NOTE You cannot check an ID for nullptr.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
 	if( !m_particleSystemID )
 	{
 		const Player *localPlayer = rts::getObservedOrLocalPlayer();
@@ -384,7 +384,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 	}
 
 	//Adjust the position of any existing particle system.
-	//PLEASE NOTE You cannot check an ID for NULL.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
+	//PLEASE NOTE You cannot check an ID for nullptr.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
 	if( m_particleSystemID )
 	{
 		system = TheParticleSystemManager->findParticleSystem( m_particleSystemID );
@@ -394,7 +394,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 		}
 	}
 
-	//PLEASE NOTE You cannot check an ID for NULL.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
+	//PLEASE NOTE You cannot check an ID for nullptr.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
 	if( m_targetParticleSystemID )
 	{
 		system = TheParticleSystemManager->findParticleSystem( m_targetParticleSystemID );

@@ -130,7 +130,7 @@ UpdateSleepTime FireSpreadUpdate::update( void )
 			PartitionFilterFlammable fFilter;
 			PartitionFilter *filters[] = { &fFilter, nullptr };
 
-//			SimpleObjectIterator *iter = NULL;
+//			SimpleObjectIterator *iter = nullptr;
 //			iter = ThePartitionManager->iterateObjectsInRange(getObject(),
 //																									d->m_spreadTryRange,
 //																									FROM_CENTER_3D,

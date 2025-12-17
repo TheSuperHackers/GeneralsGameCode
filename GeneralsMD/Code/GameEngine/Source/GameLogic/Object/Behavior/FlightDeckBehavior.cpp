@@ -1353,7 +1353,7 @@ void FlightDeckBehavior::exitObjectViaDoor( Object *newObj, ExitDoorType exitDoo
 	DUMPCOORD3D(getObject()->getPosition());
 	CRCDEBUG_LOG(("Produced at hangar (door = %d)", exitDoor));
 	DEBUG_ASSERTCRASH(exitDoor != DOOR_NONE_NEEDED, ("Hmm, unlikely"));
-	if (!reserveSpace(newObj->getID(), parkingOffset, &ppinfo)) //&loc, &orient, NULL, NULL, NULL, NULL, &hangarInternal, &hangOrient))
+	if (!reserveSpace(newObj->getID(), parkingOffset, &ppinfo)) //&loc, &orient, nullptr, nullptr, nullptr, nullptr, &hangarInternal, &hangOrient))
 	{
 		DEBUG_CRASH(("no spaces available, how did we get here?"));
 		ppinfo.parkingSpace = *getObject()->getPosition();

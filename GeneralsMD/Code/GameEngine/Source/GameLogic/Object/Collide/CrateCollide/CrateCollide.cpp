@@ -99,7 +99,7 @@ CrateCollide::~CrateCollide( void )
 
 //-------------------------------------------------------------------------------------------------
 /** The collide event.
-	* Note that when other is NULL it means "collide with ground" */
+	* Note that when other is nullptr it means "collide with ground" */
 //-------------------------------------------------------------------------------------------------
 void CrateCollide::onCollide( Object *other, const Coord3D *, const Coord3D * )
 {

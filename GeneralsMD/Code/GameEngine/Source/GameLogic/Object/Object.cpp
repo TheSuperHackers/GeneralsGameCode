@@ -1396,7 +1396,7 @@ void Object::clearSpecialModelConditionStates()
 //	}
 //	else
 //	{
-//		DEBUG_CRASH(("NULL Drawable at this point, you can't get modelconditionflags now."));
+//		DEBUG_CRASH(("nullptr Drawable at this point, you can't get modelconditionflags now."));
 //		static ModelConditionFlags noFlags;
 //		return noFlags;
 //	}
@@ -4646,7 +4646,7 @@ void Object::onDie( DamageInfo *damageInfo )
 	}
 
 	// This call won't do anything if we aren't actually in the list.
-	//Kris: Added NULL check to prevent crash with combat bikes & their riders getting deleted on exit.
+	//Kris: Added nullptr check to prevent crash with combat bikes & their riders getting deleted on exit.
 	if( getControllingPlayer() )
 	{
 		TheInGameUI->removeIdleWorker( this, getControllingPlayer()->getPlayerIndex() );
