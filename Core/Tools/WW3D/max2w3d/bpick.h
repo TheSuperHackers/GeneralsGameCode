@@ -112,7 +112,7 @@ protected:
 
 	/*
 	** List of bones that the user is being allowed to pick from.
-	** If this is NULL, then the user can pick any bone
+	** If this is nullptr, then the user can pick any bone
 	*/
 	INodeTab * BoneList;
 

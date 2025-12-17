@@ -159,7 +159,7 @@ fnColorPickerProc
 	LPARAM lparam
 )
 {
-	//static ColorPickerClass *pwnd = NULL;
+	//static ColorPickerClass *pwnd = nullptr;
 	//static bool bcreated = false;
 
 	switch (message)

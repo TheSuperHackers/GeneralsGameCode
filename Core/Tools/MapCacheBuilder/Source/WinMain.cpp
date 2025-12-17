@@ -298,7 +298,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	// load the dialog box
 	//DialogBox( hInstance, (LPCTSTR)IMAGE_PACKER_DIALOG,
-	//					 NULL, (DLGPROC)ImagePackerProc );
+	//					 nullptr, (DLGPROC)ImagePackerProc );
 
 	// delete TheGlobalData
 	//delete TheGlobalData;

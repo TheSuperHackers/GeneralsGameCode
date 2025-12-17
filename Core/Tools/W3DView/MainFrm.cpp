@@ -3069,7 +3069,7 @@ CMainFrame::OnLODIncludeNull (void)
 	if ((prender_obj != nullptr) &&
 		 (prender_obj->Class_ID () == RenderObjClass::CLASSID_HLOD)) {
 
-		// Toggle the NULL lod
+		// Toggle the nullptr lod
 		bool include = ((HLodClass *)prender_obj)->Is_NULL_Lod_Included ();
 		((HLodClass *)prender_obj)->Include_NULL_Lod (!include);
 

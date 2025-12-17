@@ -1087,7 +1087,7 @@ void Last_Error_Text ( LPCTSTR szPrefix, HRESULT hr )
 
 	if ( hr == S_OK ) {
 		_stprintf( szDisplay, TEXT("%s"), szPrefix );
-//		MessageBox( NULL, szDisplay, TEXT("Msg"),0 );
+//		MessageBox( nullptr, szDisplay, TEXT("Msg"),0 );
 		return;
 	}
 
@@ -1106,7 +1106,7 @@ void Last_Error_Text ( LPCTSTR szPrefix, HRESULT hr )
 	_stprintf( szDisplay, TEXT( "%s: %s(%lx)" ), szPrefix, szMessage, hr );
 
 	Msg( __LINE__, TEXT(__FILE__), TEXT("GetLastError: %s"), szDisplay );
-//	MessageBox( NULL, szDisplay, TEXT( "GetLastError" ), MB_OK );
+//	MessageBox( nullptr, szDisplay, TEXT( "GetLastError" ), MB_OK );
 
 	LocalFree( szMessage );
 

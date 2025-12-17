@@ -117,7 +117,7 @@ HAnimClass ** CAdvancedAnimSheet::GetAnims (void)
 	LoadAnims();
 
 	// Return the array regardless of validity. If the entries are
-	// invalid, they'll all be NULL, but the array itself is cool.
+	// invalid, they'll all be nullptr, but the array itself is cool.
 	return Anims;
 }
 

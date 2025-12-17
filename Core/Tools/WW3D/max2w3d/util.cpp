@@ -254,10 +254,10 @@ void Create_Full_Path(char *full_path, const char *curr, const char *rel_path)
 	// Copy current dir to full path. If it doesn't end with a slash, add one.
 	strcpy(full_path, curr);
 	int curr_len = strlen(curr);
-	char *full_p = full_path + curr_len;	// Point at the terminating NULL
+	char *full_p = full_path + curr_len;	// Point at the terminating nullptr
 	if (curr_len == 0 ||(*(full_p - 1) != '/' && *(full_p - 1) != '\\')) {
 		*full_p = '\\';
-		*(++full_p) = '\000';	// Point at the terminating NULL
+		*(++full_p) = '\000';	// Point at the terminating nullptr
 	}
 
 	// Scan "..\"s at the beginning of the rel path, scan backwards on the
@@ -313,7 +313,7 @@ void Create_Relative_Path(char *rel_path,	const char *curr, const char *full_pat
 		goto end;
 	}
 
-	// The first different character for each string can be: a NULL, a slash,
+	// The first different character for each string can be: a nullptr, a slash,
 	// or an ordinary character.
 	PathCharType full_type, curr_type;
 	if (*full_p == '\000') {
@@ -334,14 +334,14 @@ void Create_Relative_Path(char *rel_path,	const char *curr, const char *full_pat
 			curr_type = PLAIN_CHAR;
 		}
 	}
-	// If the last fullpath char is a NULL or both are slashes, we have an
+	// If the last fullpath char is a nullptr or both are slashes, we have an
 	// error - return full path
 	if (full_type == NULL_CHAR || (full_type == SLASH_CHAR && curr_type == SLASH_CHAR)) {
 		strcpy(rel_path, up_full);
 		goto end;
 	}
 
-	// If the current path has ended (last char is a NULL) and the full path's
+	// If the current path has ended (last char is a nullptr) and the full path's
 	// last char is a slash, then just copy the remainder of the full path
 	// (w/o the slash) to the relative path, and exit.
 	if (curr_type == NULL_CHAR && full_type == SLASH_CHAR) {
@@ -352,7 +352,7 @@ void Create_Relative_Path(char *rel_path,	const char *curr, const char *full_pat
 
 	// If one of following holds:
 	// 1) One of the last chars is a slash and the other is a plain char
-	// 2) The current path has ended (last char is NULL) and the last char
+	// 2) The current path has ended (last char is nullptr) and the last char
 	//    of the full path is a plain char
 	// 3) The last char of both are plain chars and the previous char is not a
 	//    slash

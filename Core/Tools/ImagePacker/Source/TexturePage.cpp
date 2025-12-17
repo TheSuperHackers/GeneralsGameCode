@@ -896,7 +896,7 @@ Bool TexturePage::addImage( ImageInfo *image )
 	if( image == nullptr )
 	{
 
-		DEBUG_ASSERTCRASH( image, ("TexturePage::addImage: NULL image!") );
+		DEBUG_ASSERTCRASH( image, ("TexturePage::addImage: nullptr image!") );
 		return TRUE;  // say it was added
 
 	}
@@ -1178,8 +1178,8 @@ Bool TexturePage::generateTexture( void )
 		return FALSE;
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_packedImage == nullptr, ("The packed image list must be NULL before generating texture") );
-	DEBUG_ASSERTCRASH( m_targa == nullptr, ("The targa must be NULL before generating a new texture") );
+	DEBUG_ASSERTCRASH( m_packedImage == nullptr, ("The packed image list must be nullptr before generating texture") );
+	DEBUG_ASSERTCRASH( m_targa == nullptr, ("The targa must be nullptr before generating a new texture") );
 
 	// allocate targa to help us generate the final texture
 	m_targa = new Targa;

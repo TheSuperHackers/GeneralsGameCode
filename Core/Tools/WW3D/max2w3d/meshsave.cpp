@@ -501,7 +501,7 @@ void MeshSaveClass::Build_Mesh(Mesh & mesh, Mtl *node_mtl, unsigned int *materia
 	Builder.Reset(true,mesh.getNumFaces(),mesh.getNumFaces()/3);
 
 	// Get a pointer to the channel that has alpha values entered by the artist.
-	// This pointer will be NULL if they didn't use the channel.
+	// This pointer will be nullptr if they didn't use the channel.
 	vdata = mesh.vertexFloat(ALPHA_VERTEX_CHANNEL);
 
 	/*

@@ -1877,7 +1877,7 @@ CW3DViewDoc::SetBackgroundObject (LPCTSTR pszBackgroundObjectName)
 void
 CW3DViewDoc::Remove_Object_From_Scene (RenderObjClass *prender_obj)
 {
-	// If the render object is NULL, then remove the current render object
+	// If the render object is nullptr, then remove the current render object
 	if (prender_obj == nullptr) {
 		prender_obj = m_pCRenderObj;
 	}
@@ -2522,7 +2522,7 @@ CW3DViewDoc::Build_Emitter_List
 )
 {
 	//
-	// If the render object is NULL, then start from the current render object
+	// If the render object is nullptr, then start from the current render object
 	//
 	if (render_obj == nullptr) {
 		render_obj = m_pCRenderObj;
@@ -2624,7 +2624,7 @@ CW3DViewDoc::Count_Particles (RenderObjClass *render_obj)
 	int count = 0;
 
 	//
-	// If the render object is NULL, then start from the current render object
+	// If the render object is nullptr, then start from the current render object
 	//
 	if (render_obj == nullptr) {
 		render_obj = m_pCRenderObj;
@@ -2684,7 +2684,7 @@ void
 CW3DViewDoc::Switch_LOD (int increment, RenderObjClass *render_obj)
 {
 	//
-	// If the render object is NULL, then start from the current render object
+	// If the render object is nullptr, then start from the current render object
 	//
 	if (render_obj == nullptr) {
 		render_obj = m_pCRenderObj;
@@ -2724,7 +2724,7 @@ void
 CW3DViewDoc::Toggle_Alternate_Materials(RenderObjClass * render_obj)
 {
 	//
-	// If the render object is NULL, start from the current render object
+	// If the render object is nullptr, start from the current render object
 	//
 	if (render_obj == nullptr) {
 		render_obj = m_pCRenderObj;

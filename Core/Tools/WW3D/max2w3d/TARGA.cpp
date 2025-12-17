@@ -339,7 +339,7 @@ void Targa::Close(void)
 *
 * FUNCTION
 *     Open and load the Targa into the specified buffers. If either buffer
-*     pointer is NULL then that field will not be processed.
+*     pointer is nullptr then that field will not be processed.
 *
 * INPUTS
 *     Name        - Name of Targa image file to load.
@@ -964,13 +964,13 @@ bool Targa::IsCompressed(void)
 *
 * FUNCTION
 *     Retrieve a pointer to the Targa 2.0 extension data area. If the file
-*     version is 1.0 OR there is no extensio area then a NULL will be returned.
+*     version is 1.0 OR there is no extensio area then a nullptr will be returned.
 *
 * INPUTS
 *     NONE
 *
 * RESULT
-*     Ext - Pointer to Extension data, NULL if not available.
+*     Ext - Pointer to Extension data, nullptr if not available.
 *
 ****************************************************************************/
 

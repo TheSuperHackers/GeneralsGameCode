@@ -662,7 +662,7 @@ EmitterColorPropPageClass::On_Lifetime_Changed (float lifetime)
 		m_pEmitterList->Set_Color_Keyframes (m_CurrentColors);
 		m_pEmitterList->Set_Opacity_Keyframes (m_CurrentOpacities);
 		m_Lifetime = lifetime;
-		/*if (m_hWnd != NULL) {
+		/*if (m_hWnd != nullptr) {
 			Update_Colors ();
 			Update_Opacities ();
 		}*/

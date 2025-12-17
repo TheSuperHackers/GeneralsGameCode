@@ -1076,7 +1076,7 @@ UInt32 File::PutBytes(const void* ptr, UInt32 bytes)
 
 UInt32 File::PeekBytes(void* ptr, UInt32 bytes)
 	{
-	// Parameter check; NULL pointers are bad!
+	// Parameter check; nullptr pointers are bad!
 	assert(ptr != nullptr);
 
 	// Get current position

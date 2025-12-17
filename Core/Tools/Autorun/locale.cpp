@@ -732,7 +732,7 @@ static int getstringbyindex( unsigned short key, const INDEX* pIndex )
 
 const char* LOCALE_getstring( int StringID )
 {
-    const char* p;							/* pointer to string, NULL if string cannot be found */
+    const char* p;							/* pointer to string, nullptr if string cannot be found */
 
 	Msg( __LINE__, __FILE__, "Locale_getstring::( %d ).", StringID );
 
@@ -824,7 +824,7 @@ int LOCALElanguageid = 0;
 
 const char* LOCALE_getstr( const void* pLocFile, int StringID )
 {
-	const char* p; /* pointer to string, NULL if string cannot be found */
+	const char* p; /* pointer to string, nullptr if string cannot be found */
 
     HEADER* pHeader;
     BANK*   pBank;

@@ -36,7 +36,7 @@
 *
 *     IsValid() replaces (x != nullptr)
 *
-*     Member function Attach() or assigning RefPtr<X>() will NULL a pointer.
+*     Member function Attach() or assigning RefPtr<X>() will nullptr a pointer.
 *
 *     Generally, RefPtr<> and RefPtrConst<> behave like their raw pointer
 *     counterparts, except of course they are reference counted and will delete

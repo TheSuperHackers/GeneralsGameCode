@@ -393,7 +393,7 @@ wchar_t *Remove_Quotes_Around_String ( wchar_t *old_string )
 	int		length;
 
 	//----------------------------------------------------------------------
-	// If string is not NULL...
+	// If string is not nullptr...
 	//----------------------------------------------------------------------
 	if ( *letter == '"' ) {
 

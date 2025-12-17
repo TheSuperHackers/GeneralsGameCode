@@ -272,7 +272,7 @@ protected:
 
 /**
 ** NullGeometryExportTaskClass
-** Export task for INodes which are to generate W3D NULL objects.  Note that this
+** Export task for INodes which are to generate W3D nullptr objects.  Note that this
 ** does not do anything in the Export_Geometry call, these only create entries in
 ** any Hierarhcical model or collection object being exported.
 */

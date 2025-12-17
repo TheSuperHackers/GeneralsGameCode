@@ -417,7 +417,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	//-------------------------------------------------------------------------
 	Args = new Command_Line_Arguments( hInstance, GetCommandLine());
 	if ( Args == nullptr ) {
-//		Error_Message( hInstance, IDS_ERROR, IDS_COMMAND_LINE_ERR, NULL );
+//		Error_Message( hInstance, IDS_ERROR, IDS_COMMAND_LINE_ERR, nullptr );
 		Error_Message( hInstance, "Autorun:Error", "Autorun:CommandLineError", nullptr );
 		return( 0 );
 	}
@@ -613,7 +613,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	//	If the named mutex object existed before the function call, the function returns
 	//	a handle to the existing object and GetLastError returns ERROR_ALREADY_EXISTS.
 	//	Otherwise, the caller created the mutex.
-	//	If the function fails, the return value is NULL. To get extended error
+	//	If the function fails, the return value is nullptr. To get extended error
 	//	information, call GetLastError.
 	//
 	// WARNING: DO NOT use this number for any other application except Autorun
@@ -648,7 +648,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	Msg( __LINE__, __FILE__, "AppMutex of %s created.", szBuffer );
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// if AppMutex was NULL, let through. Perhaps in future we want to trap it?
+	// if AppMutex was nullptr, let through. Perhaps in future we want to trap it?
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	if ( AppMutex == nullptr ) {
 	}
@@ -659,7 +659,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	//
 	//	Return Values
 	//	If the function succeeds, the return value is a handle to the mutex object.
-	//	If the function fails, the return value is NULL. To get extended error
+	//	If the function fails, the return value is nullptr. To get extended error
 	//	information, call GetLastError.
 	//
 	// WARNING: DO NOT use this number for any other application except Game/Setup.
@@ -998,7 +998,7 @@ void MainWindow::Register( void )
 	wndclass.hIcon	  		= LoadIcon( Main::hInstance, MAKEINTRESOURCE(1));
 
 //	strcpy( szBuffer, "C&C2.ICO" );
-//	wndclass.hIcon	= (HICON)LoadImage( NULL, szBuffer, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE );
+//	wndclass.hIcon	= (HICON)LoadImage( nullptr, szBuffer, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE );
 
 	wndclass.hCursor		= LoadCursor( Main::hInstance, MAKEINTRESOURCE(2) );
 	wndclass.hbrBackground	= (HBRUSH)(COLOR_WINDOW + 1);
@@ -2556,7 +2556,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 	HDC 	   		hDC, memDC, buttonDC, licenseDC;
 	BITMAP     		bm, fm, lm;
-//	LOGPALETTE 	  *	plgpl = NULL;
+//	LOGPALETTE 	  *	plgpl = nullptr;
 	PAINTSTRUCT		ps;
 	static int 		bits_pixel = 0;
 	static int 		idCtl = 0;
@@ -3044,7 +3044,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				//=======================================================================
 				// Set dialog's timer!  1000 = 1 second.
 				//=======================================================================
-//				timer_id = SetTimer( window_handle, 1000, 250L, NULL );
+//				timer_id = SetTimer( window_handle, 1000, 250L, nullptr );
 				timer_id = SetTimer( window_handle, 1000, 500L, nullptr );
 			}
 			return( TRUE );

@@ -1472,7 +1472,7 @@ int TransDB::Warnings ( CBabylonDlg *dlg )
 			{
 				if ( dlg )
 				{
-					sprintf ( buffer, "Warning:: text at line %5d is NULL",
+					sprintf ( buffer, "Warning:: text at line %5d is nullptr",
 								text->LineNumber());
 					dlg->Log ( buffer );
 				}

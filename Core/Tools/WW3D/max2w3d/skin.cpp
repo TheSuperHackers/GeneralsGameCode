@@ -441,7 +441,7 @@ int SkinWSMObjectClass::Add_Bone(INode * node)
 	}
 
 	/*
-	** Otherwise, look for a NULL bone and we'll re-use
+	** Otherwise, look for a nullptr bone and we'll re-use
 	** its slot.  This happens when a user removes a bone or
 	** a bone in the scene is deleted.
 	*/
@@ -814,8 +814,8 @@ void SkinModifierClass::ModifyObject(TimeValue t, ModContext & mc, ObjectState *
 
 		// TODO: Allow multiple bone influences here...
 		// issues - UI to set the weights, rebalance weights whenever
-		// a bone is deleted, should also then never get NULL bones
-		// and remove the need to check for NULL bones in this routine...
+		// a bone is deleted, should also then never get nullptr bones
+		// and remove the need to check for nullptr bones in this routine...
 
 		/*
 		** Get a pointer to the bone that this vertex is attached to

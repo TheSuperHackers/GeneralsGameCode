@@ -223,7 +223,7 @@ Value *find_skin_node_in_tree (INode *root)
  *                                                                                             *
  * INPUT: The skinned object.                                                                  *
  *                                                                                             *
- * OUTPUT: The skin modifier, or NULL if one doesn't exist.                                    *
+ * OUTPUT: The skin modifier, or nullptr if one doesn't exist.                                    *
  *                                                                                             *
  * WARNINGS:                                                                                   *
  *                                                                                             *
@@ -387,7 +387,7 @@ INode *duplicate_wsm (INode *wsm_node, INode *tree)
  * INPUT: source - The node to search for an equivalent of.                                    *
  *        tree - The hierarchy to search in.                                                   *
  *                                                                                             *
- * OUTPUT: The equivalent node, or NULL if none was found.                                     *
+ * OUTPUT: The equivalent node, or nullptr if none was found.                                     *
  *                                                                                             *
  * WARNINGS:                                                                                   *
  *                                                                                             *

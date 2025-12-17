@@ -308,7 +308,7 @@ void Delete_Msg_File ( void )
 		nBytes = file.Write( buff, strlen( buff ));
 
 		GetDateFormat( LOCALE_USER_DEFAULT, DATE_SHORTDATE, nullptr, nullptr, date, 50 );
-//		GetTimeFormat( LOCALE_USER_DEFAULT, TIME_NOSECONDS, NULL, NULL, time, 30 );
+//		GetTimeFormat( LOCALE_USER_DEFAULT, TIME_NOSECONDS, nullptr, nullptr, time, 30 );
 		GetTimeFormat( LOCALE_USER_DEFAULT, 0, nullptr, "hh':'mm':'ss tt", time, 30 );
 		wsprintf( buff, "SETUP:  File: %s  Date: %s  Time: %s.\r\n", DebugFile, date, time );
 		nBytes = file.Write( buff, strlen( buff ));
@@ -1132,7 +1132,7 @@ bool Close_File( HANDLE handle )
 	// debug checks...
 	//
 	// ASSERT( handle > INVALID_FILE_HANDLE );
-	// ASSERT( Windows_File_Handles[ handle ] != NULL );
+	// ASSERT( Windows_File_Handles[ handle ] != nullptr );
 	ASSERT( handle != INVALID_FILE_HANDLE );
 
 	//
@@ -1150,7 +1150,7 @@ bool Close_File( HANDLE handle )
 	//
 	// free the entry
 	//
-	// Windows_File_Handles[ handle ] = NULL;
+	// Windows_File_Handles[ handle ] = nullptr;
 
 	//
 	// return success or not
@@ -1183,7 +1183,7 @@ int Read_File( HANDLE handle, void *buffer, unsigned long int bytes_to_read )
 	ASSERT( handle > INVALID_FILE_HANDLE );
 	ASSERT( buffer != nullptr );
 	// ASSERT( bytes_to_read > 0 );
-	// ASSERT( Windows_File_Handles[ handle ] != NULL );
+	// ASSERT( Windows_File_Handles[ handle ] != nullptr );
 
 	// Debug_Printf( "Reading file %d\r\n", handle );
 
@@ -1191,7 +1191,7 @@ int Read_File( HANDLE handle, void *buffer, unsigned long int bytes_to_read )
 	//                     (void *) buffer,
 	//                     (DWORD) bytes_to_read,
 	//                     (DWORD *) &bytes_actually_read,
-	//                     NULL );
+	//                     nullptr );
 
 	//
 	// &&& use real HANDLE
@@ -1229,7 +1229,7 @@ int Write_File( HANDLE handle, void const *buffer, unsigned long int bytes_to_wr
 	ASSERT( handle != INVALID_FILE_HANDLE );
 	ASSERT( buffer != nullptr );
 	// ASSERT( bytes_to_write > 0 );
-	// ASSERT( Windows_File_Handles[ handle ] != NULL );
+	// ASSERT( Windows_File_Handles[ handle ] != nullptr );
 
 	// Debug_Printf( "Writing file %d\r\n", handle );
 
@@ -1237,7 +1237,7 @@ int Write_File( HANDLE handle, void const *buffer, unsigned long int bytes_to_wr
 	//                      buffer,
 	//                      (DWORD) bytes_to_write,
 	//                      (DWORD *) &bytes_actually_written,
-	//                      NULL );
+	//                      nullptr );
 
 	//
 	// &&& make this a real handle
@@ -1278,7 +1278,7 @@ bool Seek_File( HANDLE handle, int distance, int seek_file_location )
 	ASSERT( seek_file_location == SEEK_SET ||
    			seek_file_location == SEEK_CUR ||
 			seek_file_location == SEEK_END );
-	// ASSERT( Windows_File_Handles[ handle ] != NULL );
+	// ASSERT( Windows_File_Handles[ handle ] != nullptr );
 
 	//
 	// set the seek movement method
@@ -1295,7 +1295,7 @@ bool Seek_File( HANDLE handle, int distance, int seek_file_location )
 
 	// success = SetFilePointer( Windows_File_Handles[ handle ],
 	//                          distance,
-	//                          NULL,
+	//                          nullptr,
 	//                          move_method );
 
 	//
@@ -1325,7 +1325,7 @@ int Tell_File( HANDLE handle )
 	// debug checks...
 	//
 	ASSERT( handle != INVALID_FILE_HANDLE );
-	// ASSERT( Windows_File_Handles[ handle ] != NULL );
+	// ASSERT( Windows_File_Handles[ handle ] != nullptr );
 
 	//
 	// set the seek movement method
@@ -1358,7 +1358,7 @@ int File_Size( HANDLE handle )
 	// debug checks...
 	//
 	ASSERT( handle != INVALID_FILE_HANDLE );
-	// ASSERT( Windows_File_Handles[ handle ] != NULL );
+	// ASSERT( Windows_File_Handles[ handle ] != nullptr );
 
 	file_size = GetFileSize( handle, nullptr );
 	ASSERT( file_size != 0xFFFFFFFF );

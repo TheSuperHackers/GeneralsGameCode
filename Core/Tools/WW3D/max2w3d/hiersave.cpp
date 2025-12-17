@@ -679,7 +679,7 @@ int HierarchySaveClass::add_node(INode * node,int pidx)
 	** types of transforms and we want to apply the same
 	** changes to this tree.
 	**
-	** Note that if FixupType is not "NONE", FixupTree must be NULL,
+	** Note that if FixupType is not "NONE", FixupTree must be nullptr,
 	*/
 	assert(!((FixupTree != nullptr) && (FixupType != MATRIX_FIXUP_NONE)));
 

@@ -54,7 +54,7 @@
 * INPUTS
 *     URL      - Website address
 *     Wait     - Wait for user to close browser (default = false)
-*     Callback - User callback to invoke during wait (default = NULL callback)
+*     Callback - User callback to invoke during wait (default = nullptr callback)
 *
 * RESULT
 *     Success - True if successful; otherwise false

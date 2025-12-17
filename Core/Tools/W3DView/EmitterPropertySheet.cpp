@@ -306,7 +306,7 @@ EmitterPropertySheetClass::Initialize (void)
 	m_LineGroupPage.Set_Emitter (m_pEmitterList);
 
 	// Initialize the user page with data from the prototype
-	/*if (m_pEmitter != NULL) {
+	/*if (m_pEmitter != nullptr) {
 		ParticleEmitterPrototypeClass *proto = nullptr;
 		proto = (ParticleEmitterPrototypeClass *)WW3DAssetManager::Get_Instance ()->Find_Prototype (m_pEmitter->Get_Name ());
 		if (proto != nullptr) {

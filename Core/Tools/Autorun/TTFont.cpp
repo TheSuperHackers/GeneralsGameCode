@@ -748,7 +748,7 @@ Point2D TTFontClass::Print(
 //			&rect,				// optional dimensions
 //			string,				// string
 //			length,				// number of characters in string
-//			NULL				// array of spacing values
+//			nullptr				// array of spacing values
 //		);
 
 // 		result = TextOutW(

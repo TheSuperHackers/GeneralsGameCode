@@ -693,7 +693,7 @@ bit8 ArrayList<T>::shrinkVector(void)
   //
   T *newVector=(T *)(new uint8[newSlots * sizeof(T)]);
 
-  if (Vector_ != nullptr)    // Vector_ better not be NULL!
+  if (Vector_ != nullptr)    // Vector_ better not be nullptr!
     memcpy(newVector,Vector_,Entries_*sizeof(T));
 
   delete[]((uint8 *)Vector_);  // Get rid of the old vector without calling

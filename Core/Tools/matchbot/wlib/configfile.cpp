@@ -138,7 +138,7 @@ bit8 ConfigFile::readFile(FILE *in)
 // Enum through the config strings.  To start, index & offset should be 0
 // If retval is false you're done, ignore whatever's in key & value.
 //
-// Section specifies the configfile section.  Set to NULL if you don't care.
+// Section specifies the configfile section.  Set to nullptr if you don't care.
 //
 bit8 ConfigFile::enumerate(int &index, int &offset, Wstring &key, Wstring &value, IN char *section) const
 {

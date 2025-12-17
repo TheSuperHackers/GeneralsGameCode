@@ -113,7 +113,7 @@ DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const cha
 	// Set the string variables.
 	//--------------------------------------------------------------------------
 	memset( String, '\0', MAX_PATH );
-//	if ( string != NULL ) {
+//	if ( string != nullptr ) {
 //		wcscpy( String, Locale_GetString( string_num, String ));
 
 
