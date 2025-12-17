@@ -85,7 +85,7 @@ WorkerAIUpdate::WorkerAIUpdate( Thing *thing, const ModuleData* moduleData ) :
 {
 
 	//
-	// initialize the dozer machine to NULL, we want to do this and create it during the update
+	// initialize the dozer machine to nullptr, we want to do this and create it during the update
 	// implementation because at this point we don't have the object all setup
 	m_isRebuild = FALSE;
 	m_dozerMachine = nullptr;
@@ -814,7 +814,7 @@ void WorkerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 
 			///@todo This would be correct except that we don't have idle crane animations and it is December.
 //			Object* goalObject = TheGameLogic->findObjectByID(m_task[task].m_targetObjectID);
-//			if (goalObject != NULL)
+//			if (goalObject != nullptr)
 //			{
 //				goalObject->clearModelConditionState(MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED);
 //			}

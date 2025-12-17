@@ -667,7 +667,7 @@ Bool SpawnBehavior::createSpawn()
 						}
 					}
 				}
-				exitInterface->exitObjectByBudding( newSpawn, budHost );// also handles the NULL pointer okay
+				exitInterface->exitObjectByBudding( newSpawn, budHost );// also handles the nullptr pointer okay
 
 			}
 

@@ -175,7 +175,7 @@ void SidesInfo::reorderInBuildList(BuildListInfo *pBuildList, Int newPosition)
 */
 Int SidesInfo::removeFromBuildList(BuildListInfo *pBuildList)
 {
-	DEBUG_ASSERTCRASH(pBuildList, ("Removing NULL list."));
+	DEBUG_ASSERTCRASH(pBuildList, ("Removing nullptr list."));
 	if (pBuildList==nullptr) return 0;
 
 	Int position = 0;

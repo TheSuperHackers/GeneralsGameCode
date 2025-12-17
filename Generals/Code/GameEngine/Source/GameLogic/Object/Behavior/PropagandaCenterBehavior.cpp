@@ -216,7 +216,7 @@ UpdateSleepTime PropagandaCenterBehavior::update( void )
 void PropagandaCenterBehavior::onRemoving( Object *obj )
 {
 
-	// if we're removing the brainwashing subject, NULL the pointer
+	// if we're removing the brainwashing subject, nullptr the pointer
 	if( m_brainwashingSubjectID == obj->getID() )
 	{
 

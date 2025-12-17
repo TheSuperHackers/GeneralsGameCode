@@ -125,7 +125,7 @@ void TunnelContain::removeAllContained( Bool exposeStealthUnits )
 	while ( it != list.end() )
 	{
 		Object *obj = *it++;
-		DEBUG_ASSERTCRASH( obj, ("Contain list must not contain NULL element"));
+		DEBUG_ASSERTCRASH( obj, ("Contain list must not contain nullptr element"));
 
 		removeFromContain( obj, exposeStealthUnits );
 	}

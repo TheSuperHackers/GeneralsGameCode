@@ -192,7 +192,7 @@ UpdateSleepTime DeployStyleAIUpdate::update( void )
 			}
 			else
 			{
-				//Get the current goal object (NULL if we have a turret).
+				//Get the current goal object (nullptr if we have a turret).
 				designatedTarget = getGoalObject();
 			}
 			if( !designatedTarget )

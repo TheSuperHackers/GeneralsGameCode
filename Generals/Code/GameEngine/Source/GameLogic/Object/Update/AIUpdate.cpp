@@ -642,7 +642,7 @@ AIUpdateInterface::~AIUpdateInterface( void )
 	}
 	m_stateMachine = nullptr;
 
-	// destroy the current path. (destroyPath is NULL savvy)
+	// destroy the current path. (destroyPath is nullptr savvy)
 	destroyPath();
 
 }
@@ -1786,7 +1786,7 @@ Bool AIUpdateInterface::computeAttackPath( PathfindServicesInterface *pathServic
 	Object* source = getObject();
 	if (!victim && !victimPos)
 	{
-		//CRCDEBUG_LOG(("AIUpdateInterface::computeAttackPath() - victim is NULL"));
+		//CRCDEBUG_LOG(("AIUpdateInterface::computeAttackPath() - victim is nullptr"));
 		return FALSE;
 	}
 
@@ -1906,7 +1906,7 @@ Bool AIUpdateInterface::computeAttackPath( PathfindServicesInterface *pathServic
 		// build a trivial one-node path containing destination
 
 		weapon->computeApproachTarget(getObject(), victim, &localVictimPos, 0, localVictimPos);
-		//DEBUG_ASSERTCRASH(weapon->isGoalPosWithinAttackRange(getObject(), &localVictimPos, victim, victimPos, NULL),
+		//DEBUG_ASSERTCRASH(weapon->isGoalPosWithinAttackRange(getObject(), &localVictimPos, victim, victimPos, nullptr),
 		//	("position we just calced is not acceptable"));
 
 		// First, see if our path already goes to the destination.
@@ -1971,7 +1971,7 @@ Bool AIUpdateInterface::computeAttackPath( PathfindServicesInterface *pathServic
 
 //-------------------------------------------------------------------------------------------------
 /**
- * Destroy the current path, and set it to NULL
+ * Destroy the current path, and set it to nullptr
  */
 void AIUpdateInterface::destroyPath( void )
 {
@@ -3407,7 +3407,7 @@ void AIUpdateInterface::privateAttackPosition( const Coord3D *pos, Int maxShotsT
 	getStateMachine()->setState( AI_ATTACK_POSITION );
 
 
-	//Set the goal object to NULL because if we are attacking a location, we need to be able to move up to it properly.
+	//Set the goal object to nullptr because if we are attacking a location, we need to be able to move up to it properly.
 	//When this isn't set, the move aborts before getting into firing range, thus deadlocks.
 	getStateMachine()->setGoalObject( nullptr );
 

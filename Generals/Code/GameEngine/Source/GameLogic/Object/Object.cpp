@@ -1249,7 +1249,7 @@ void Object::clearSpecialModelConditionStates()
 //	}
 //	else
 //	{
-//		DEBUG_CRASH(("NULL Drawable at this point, you can't get modelconditionflags now."));
+//		DEBUG_CRASH(("nullptr Drawable at this point, you can't get modelconditionflags now."));
 //		static ModelConditionFlags noFlags;
 //		return noFlags;
 //	}

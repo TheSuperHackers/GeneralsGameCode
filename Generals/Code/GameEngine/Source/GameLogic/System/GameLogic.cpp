@@ -2449,7 +2449,7 @@ void GameLogic::deselectObject(Object *obj, PlayerMaskType playerMask, Bool affe
 				group->removeAll();
 #endif
 			} else {
-				// NULL will clear the group.
+				// nullptr will clear the group.
 				player->setCurrentlySelectedAIGroup(nullptr);
 			}
 

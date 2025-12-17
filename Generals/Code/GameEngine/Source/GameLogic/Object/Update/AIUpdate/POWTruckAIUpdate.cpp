@@ -727,7 +727,7 @@ static void putPrisonersInPrison( Object *obj, void *userData )
 	Object *prison = prisonUnloadData->destPrison;
 
 	// sanity
-	DEBUG_ASSERTCRASH( prison, ("putPrisonersInPrison: NULL user data") );
+	DEBUG_ASSERTCRASH( prison, ("putPrisonersInPrison: nullptr user data") );
 	DEBUG_ASSERTCRASH( obj->getContainedBy() != nullptr,
 										 ("putPrisonersInPrison: Prisoner '%s' is not contained by anything, it should be contained by a POW truck",
 										 obj->getTemplate()->getName().str()) );

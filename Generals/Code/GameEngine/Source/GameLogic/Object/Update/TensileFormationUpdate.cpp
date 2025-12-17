@@ -405,7 +405,7 @@ void TensileFormationUpdate::propagateDislodgement ( Bool enabled )
 
 
 		//TensileFormationUpdate* tfu = getTFU(other);
-		//if ( tfu != NULL )
+		//if ( tfu != nullptr )
 		//{
 		//	tfu->setEnabled( enabled );
 		//}
