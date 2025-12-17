@@ -336,7 +336,7 @@ void AI::reset( void )
 		}
 		else
 		{
-			m_groupList.pop_front(); // NULL group, just kill from list.  Shouldn't really happen, but just in case.
+			m_groupList.pop_front(); // nullptr group, just kill from list.  Shouldn't really happen, but just in case.
 		}
 	}
 #else
@@ -473,7 +473,7 @@ void AI::destroyGroup( AIGroup *group )
 	if (i == m_groupList.end())
 		return;
 
-	DEBUG_ASSERTCRASH(group != nullptr, ("A NULL group made its way into the AIGroup list.. jkmcd"));
+	DEBUG_ASSERTCRASH(group != nullptr, ("A nullptr group made its way into the AIGroup list.. jkmcd"));
 
 	// remove it
 //	DEBUG_LOG(("***AIGROUP %x is being removed from m_groupList.", group ));

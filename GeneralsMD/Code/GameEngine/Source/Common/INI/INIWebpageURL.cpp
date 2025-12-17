@@ -96,7 +96,7 @@ void INI::parseWebpageURLDefinition( INI* ini )
 
 	// find existing item if present
 //	track = TheAudio->Music->getTrack( name );
-//	if( track == NULL )
+//	if( track == nullptr )
 //	{
 
 		// allocate a new track

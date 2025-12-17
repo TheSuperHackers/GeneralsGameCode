@@ -4616,7 +4616,7 @@ Bool Pathfinder::validMovementPosition( Bool isCrusher, LocomotorSurfaceTypeMask
  */
 Bool Pathfinder::checkDestination(const Object *obj, Int cellX, Int cellY, PathfindLayerEnum layer, Int iRadius, Bool centerInCell)
 {
-	// If obj==NULL, means we are checking for any ground units present.  jba.
+	// If obj==nullptr, means we are checking for any ground units present.  jba.
 	Int numCellsAbove = iRadius;
 	if (centerInCell) numCellsAbove++;
 	Bool checkForAircraft = false;

@@ -1348,7 +1348,7 @@ Team::Team(TeamPrototype *proto, TeamID id ) :
 // ------------------------------------------------------------------------
 Team::~Team()
 {
-//	DEBUG_ASSERTCRASH(getFirstItemIn_TeamMemberList() == NULL, ("Team still has members in existence"));
+//	DEBUG_ASSERTCRASH(getFirstItemIn_TeamMemberList() == nullptr, ("Team still has members in existence"));
 
 	TheScriptEngine->notifyOfTeamDestruction(this);
 

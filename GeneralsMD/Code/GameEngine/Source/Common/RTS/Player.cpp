@@ -2144,7 +2144,7 @@ void Player::transferAssetsFromThat(Player *that)
 			for (DLINK_ITERATOR<Object> iterObj = team->iterate_TeamMemberList(); !iterObj.done(); iterObj.advance())
 			{
 				Object *obj = iterObj.cur();
-				if (!obj || obj->getTemplate()->isEquivalentTo(beaconTemplate))  // don't transfer NULL objs or beacons
+				if (!obj || obj->getTemplate()->isEquivalentTo(beaconTemplate))  // don't transfer nullptr objs or beacons
 				{
 					continue;
 				}
@@ -4471,7 +4471,7 @@ void Player::xfer( Xfer *xfer )
 		if( m_squads[ i ] == nullptr )
 		{
 
-			DEBUG_CRASH(( "Player::xfer - NULL squad at index '%d'", i ));
+			DEBUG_CRASH(( "Player::xfer - nullptr squad at index '%d'", i ));
 			throw SC_INVALID_DATA;
 
 		}

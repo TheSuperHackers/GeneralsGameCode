@@ -2545,7 +2545,7 @@ void ParticleSystem::loadPostProcess( void )
 		if( m_slaveSystem == nullptr || m_slaveSystem->isDestroyed() == TRUE )
 		{
 
-			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_slaveSystem is NULL or destroyed" ));
+			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_slaveSystem is nullptr or destroyed" ));
 			throw SC_INVALID_DATA;
 
 		}
@@ -2572,7 +2572,7 @@ void ParticleSystem::loadPostProcess( void )
 		if( m_masterSystem == nullptr || m_masterSystem->isDestroyed() == TRUE )
 		{
 
-			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_masterSystem is NULL or destroyed" ));
+			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_masterSystem is nullptr or destroyed" ));
 			throw SC_INVALID_DATA;
 
 		}
