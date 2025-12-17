@@ -913,7 +913,7 @@ void HierarchyView::addWindow( GameWindow *window, HierarchyOption option )
 	if( findTreeEntry( window ) != nullptr )
 		return;
 
-	// get the parent tree entry to this window, NULL if no parent
+	// get the parent tree entry to this window, nullptr if no parent
 	GameWindow *parent = window->winGetParent();
 	HTREEITEM parentItem = findTreeEntry( parent );
 
@@ -1108,7 +1108,7 @@ void HierarchyView::moveWindowAheadOf( GameWindow *window,
 	// get the window hierarchy entry
 	removeWindow( window );
 
-	// we'll say and aheadOf of NULL means put at the top
+	// we'll say and aheadOf of nullptr means put at the top
 	if( aheadOf == nullptr )
 	{
 
@@ -1130,13 +1130,13 @@ void HierarchyView::moveWindowAheadOf( GameWindow *window,
 
 	//
 	// get the parent item we will be inserting the new entry at, a parent
-	// of NULL is OK and will put it at the root of the tree
+	// of nullptr is OK and will put it at the root of the tree
 	//
 	HTREEITEM parentItem = TreeView_GetNextItem( m_tree, aheadOfItem, TVGN_PARENT );
 
 	//
 	// get the item that we will be inserting after (just previous to
-	// 'aheadOfItem' ... this can also be NULL for putting at the head
+	// 'aheadOfItem' ... this can also be nullptr for putting at the head
 	//
 	HTREEITEM prevItem = TreeView_GetNextItem( m_tree, aheadOfItem, TVGN_PREVIOUS );
 
@@ -1192,7 +1192,7 @@ void HierarchyView::moveWindowChildOf( GameWindow *window, GameWindow *parent )
 	// remvoe the window from the hierarchy
 	removeWindow( window );
 
-	// if parent is NULL we'll put at top of list
+	// if parent is nullptr we'll put at top of list
 	if( parent == nullptr )
 	{
 
@@ -1272,7 +1272,7 @@ void HierarchyView::selectWindow( GameWindow *window )
 	if( window )
 		item = findTreeEntry( window );
 
-	// select the item, or no item NULL will select nothing
+	// select the item, or no item nullptr will select nothing
 	TreeView_SelectItem( m_tree, item );
 	TreeView_Expand( m_tree, item, 0 );
 

@@ -96,7 +96,7 @@ void CameraOptions::OnDropWaypointButton()
 	//
 	// MBL CNC3 INCURSION 10.29.2002 - Fix compile error w/ 10-15-2002 Drop
 	//
-	// MapObject *pNew = new MapObject(docPt, "*Waypoints/Waypoint", 0, 0, NULL, NULL );
+	// MapObject *pNew = new MapObject(docPt, "*Waypoints/Waypoint", 0, 0, nullptr, nullptr );
 	MapObject *pNew = newInstance(MapObject)(docPt, "*Waypoints/Waypoint", 0, 0, nullptr, nullptr );
 
 	Int id = pDoc->getNextWaypointID();

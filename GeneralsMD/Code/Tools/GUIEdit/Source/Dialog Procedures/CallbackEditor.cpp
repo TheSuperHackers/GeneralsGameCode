@@ -337,7 +337,7 @@ BOOL CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message,
 
 
 							// sanity
-							DEBUG_ASSERTCRASH( win, ("NULL window set in listbox item data") );
+							DEBUG_ASSERTCRASH( win, ("nullptr window set in listbox item data") );
 
 							// save the callbacks for the curent window selected
 							SaveCallbacks( currentWindow, hWndDialog );

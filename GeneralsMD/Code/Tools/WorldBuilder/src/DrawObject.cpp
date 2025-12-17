@@ -1849,7 +1849,7 @@ void DrawObject::updateVBWithSoundRanges(MapObject *pMapObj, CameraClass* camera
     {
       if ( TheAudio == nullptr )
       {
-        DEBUG_CRASH( ("TheAudio is NULL! Can't draw sound circles") );
+        DEBUG_CRASH( ("TheAudio is nullptr! Can't draw sound circles") );
         return;
       }
 
@@ -1890,7 +1890,7 @@ void DrawObject::updateVBWithSoundRanges(MapObject *pMapObj, CameraClass* camera
       // May just not be set up yet
       if ( TheAudio == nullptr )
       {
-        DEBUG_CRASH( ("TheAudio is NULL! Can't draw sound circles") );
+        DEBUG_CRASH( ("TheAudio is nullptr! Can't draw sound circles") );
         return;
       }
 
@@ -2042,7 +2042,7 @@ void DrawObject::setFeedbackPos(Coord3D pos)
 
 void DrawObject::setRampFeedbackParms(const Coord3D *start, const Coord3D *end, Real rampWidth)
 {
-	DEBUG_ASSERTCRASH(start && end, ("Parameter passed into setRampFeedbackParms was NULL. Not allowed"));
+	DEBUG_ASSERTCRASH(start && end, ("Parameter passed into setRampFeedbackParms was nullptr. Not allowed"));
 	if (!(start && end)) {
 		return;
 	}

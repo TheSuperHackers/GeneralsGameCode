@@ -324,7 +324,7 @@ void EditWindow::registerEditWindowClass( void )
 	wcex.cbWndExtra			= 0;
 	wcex.hInstance			= hInst;
 	wcex.hIcon					= LoadIcon( hInst, (LPCTSTR)IDI_GUIEDIT );
-	wcex.hCursor				= nullptr;  //LoadCursor(NULL, IDC_ARROW);
+	wcex.hCursor				= nullptr;  //LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)GetStockObject( BLACK_BRUSH );
 	wcex.lpszMenuName		=	nullptr;
 	wcex.lpszClassName	= m_className;
@@ -1429,7 +1429,7 @@ void EditWindow::drawGrid( void )
 	{
 
 		TheDisplay->drawLine( 0, y, m_size.x, y, 1, color );
-//		MoveToEx( hdc, 0, y, NULL );
+//		MoveToEx( hdc, 0, y, nullptr );
 //		LineTo( hdc, m_size.x, y );
 
 	}
@@ -1438,7 +1438,7 @@ void EditWindow::drawGrid( void )
 	{
 
 		TheDisplay->drawLine( x, 0, x, m_size.y, 1, color );
-//		MoveToEx( hdc, x, 0, NULL );
+//		MoveToEx( hdc, x, 0, nullptr );
 //		LineTo( hdc, x, m_size.y );
 
 	}

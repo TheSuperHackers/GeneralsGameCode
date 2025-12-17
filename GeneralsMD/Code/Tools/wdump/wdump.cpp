@@ -180,7 +180,7 @@ BOOL CWdumpApp::InitInstance()
 
 			CWdumpDoc *doc = (CWdumpDoc *) pDocTemplate->OpenDocumentFile(cmdInfo.m_strFileName, FALSE);
 
-/*			if(info.hStdOutput == NULL) {
+/*			if(info.hStdOutput == nullptr) {
 				printf("Press return to close this window..");
 				getchar();
 				FreeConsole();

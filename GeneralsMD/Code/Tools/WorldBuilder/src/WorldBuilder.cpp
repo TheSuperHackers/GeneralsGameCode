@@ -168,7 +168,7 @@ HWND ApplicationHWnd = nullptr;
 	* Of course, the WOL code is in gameengine, while the
 	* HINSTANCE is only in the various projects' main files.
 	* So, we need to create the HINSTANCE, even if it always
-	* stays NULL.  Just to make COM happy.  Whee.
+	* stays nullptr.  Just to make COM happy.  Whee.
 	*/
 HINSTANCE ApplicationHInstance = nullptr;
 
@@ -492,7 +492,7 @@ BOOL CWorldBuilderApp::InitInstance()
 BOOL CWorldBuilderApp::OnCmdMsg(UINT nID, int nCode, void* pExtra,
 							AFX_CMDHANDLERINFO* pHandlerInfo)
 {
-	// If pHandlerInfo is NULL, then handle the message
+	// If pHandlerInfo is nullptr, then handle the message
 	if (pHandlerInfo == nullptr)
 	{
 		for (Int i=0; i<NUM_VIEW_TOOLS; i++) {

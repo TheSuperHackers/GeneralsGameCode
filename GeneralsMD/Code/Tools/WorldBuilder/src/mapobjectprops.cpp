@@ -2086,7 +2086,7 @@ void MapObjectProps::dictToAttachedSound()
 
     const AudioEventRTS * defaultAudioEvent;
 
-    // Note: getSoundAmbient will return a non-NULL pointer even if there is no real sound attached to the object
+    // Note: getSoundAmbient will return a non-nullptr pointer even if there is no real sound attached to the object
     if ( thingTemplate->hasSoundAmbient() )
     {
       defaultAudioEvent = thingTemplate->getSoundAmbient();

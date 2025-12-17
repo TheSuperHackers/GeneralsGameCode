@@ -226,7 +226,7 @@ void PopupSlider::New(CWnd *pParentWnd, long kind,
 	DEBUG_ASSERTCRASH(((SB_HORZ == kind) || (SB_VERT == kind)),
 					("PopupSlider - unexpected kind of slider!"));
 
-	DEBUG_ASSERTCRASH(pSliderOwner, ("slider owner is NULL!"));
+	DEBUG_ASSERTCRASH(pSliderOwner, ("slider owner is nullptr!"));
 
 	try {
 		CRect rect;

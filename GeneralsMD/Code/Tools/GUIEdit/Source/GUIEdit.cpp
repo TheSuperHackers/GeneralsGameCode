@@ -453,7 +453,7 @@ GUIEdit::~GUIEdit( void )
 
 	// delete the IME Manager
 //	delete TheIMEManager;
-//	TheIMEManager = NULL;
+//	TheIMEManager = nullptr;
 
 	// all the shutdown routine
 	shutdown();

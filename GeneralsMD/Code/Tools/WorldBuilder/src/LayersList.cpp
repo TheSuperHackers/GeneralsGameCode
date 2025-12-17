@@ -203,7 +203,7 @@ void LayersList::resetLayers(void)
 void LayersList::addMapObjectToLayersList(MapObject *objToAdd, AsciiString layerToAddTo)
 {
 	if (!objToAdd || findMapObjectAndList(objToAdd)) {
-		DEBUG_CRASH(("MapObject added was NULL or object already in Layers List. jkmcd"));
+		DEBUG_CRASH(("MapObject added was nullptr or object already in Layers List. jkmcd"));
 		return;
 	}
 	ListLayerIt layerIt;
@@ -228,7 +228,7 @@ void LayersList::addMapObjectToLayersList(MapObject *objToAdd, AsciiString layer
 void LayersList::addPolygonTriggerToLayersList(PolygonTrigger *triggerToAdd, AsciiString layerToAddTo)
 {
 	if (!triggerToAdd || findPolygonTriggerAndList(triggerToAdd)) {
-		DEBUG_CRASH(("PolygonTrigger added was NULL or object already in Layers List. jkmcd"));
+		DEBUG_CRASH(("PolygonTrigger added was nullptr or object already in Layers List. jkmcd"));
 		return;
 	}
 	ListLayerIt layerIt;
@@ -671,7 +671,7 @@ void LayersList::removeMapObjectFromLayer(IN MapObject *objectToRemove, IN ListL
 void LayersList::removePolygonTriggerFromLayer(IN PolygonTrigger *triggerToRemove, IN ListLayerIt *layerIt, IN ListPolygonTriggerPtrIt *triggerIt)
 {
 	if (!triggerToRemove) {
-		DEBUG_CRASH(("Attempted to remove NULL trigger from layers list. jkmcd"));
+		DEBUG_CRASH(("Attempted to remove nullptr trigger from layers list. jkmcd"));
 		return;
 	}
 

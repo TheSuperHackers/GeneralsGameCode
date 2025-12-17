@@ -271,7 +271,7 @@ Int GUIEditWindowManager::winDestroy( GameWindow *window )
 		// delete it
 		delete editData;
 
-		// set the edit data to NULL in the window
+		// set the edit data to nullptr in the window
 		window->winSetEditData( nullptr );
 
 	}

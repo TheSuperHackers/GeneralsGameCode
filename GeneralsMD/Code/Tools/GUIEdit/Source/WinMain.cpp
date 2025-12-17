@@ -221,7 +221,7 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 	TheFramePacer = new FramePacer();
 
 	//
-	// see if we have any messages to process, a NULL window handle tells the
+	// see if we have any messages to process, a nullptr window handle tells the
 	// OS to look at the main window associated with the calling thread, us!
 	//
 	while( quit == FALSE )
