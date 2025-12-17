@@ -1554,7 +1554,7 @@ WW3DErrorType MeshModelClass::read_per_face_texcoord_ids (ChunkLoadClass &cload,
 //		Vector3i *uvindices;
 //
 //		uvindices = matdesc->Get_UVIndex_Array (context->CurPass, true);
-//		WWASSERT (uvindices != NULL);
+//		WWASSERT (uvindices != nullptr);
 
 //uvindices=W3DNEWARRAY Vector3i[Get_Polygon_Count()];
 //		cload.Read (uvindices, size);

@@ -1701,7 +1701,7 @@ int INIClass::Get_String(char const * section, char const * entry, char const * 
 	/*
 	**	Verify that the parameters are nominally legal.
 	*/
-//	if (buffer != NULL && size > 0) {
+//	if (buffer != nullptr && size > 0) {
 //		buffer[0] = '\0';
 //	}
 	if (buffer == nullptr || size < 2 || section == nullptr || entry == nullptr) return(0);

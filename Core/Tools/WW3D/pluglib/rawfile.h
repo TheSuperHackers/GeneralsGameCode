@@ -146,7 +146,7 @@ class RawFileClass : public FileClass
 		#endif
 
 		/*
-		**	This points to the filename as a NULL terminated string. It may point to either a
+		**	This points to the filename as a null-terminated string. It may point to either a
 		**	constant or an allocated string as indicated by the "Allocated" flag.
 		*/
 		char const * Filename;

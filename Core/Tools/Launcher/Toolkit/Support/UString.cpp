@@ -186,7 +186,7 @@ UString::UString(UInt capacity)
 *     Create a new UString from an ANSI string literal
 *
 * INPUTS
-*     String - Pointer to a NULL terminated ANSI string
+*     String - Pointer to a null-terminated ANSI string
 *
 * RESULT
 *     NONE
@@ -210,7 +210,7 @@ UString::UString(const Char* s)
 *     Create a new UString from a UNICODE string literal
 *
 * INPUTS
-*     String - Pointer to a NULL terminated UNICODE string
+*     String - Pointer to a null-terminated UNICODE string
 *
 * RESULT
 *     NONE

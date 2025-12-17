@@ -1525,7 +1525,7 @@ void SettingsFormClass::Init(void)
 	SendMessage(dazzle_combo,CB_RESETCONTENT,0,0);
 
 	// Load the section of Dazzle.INI that defines all of the types.  The windows function
-	// that I'm using here, reads in a NULL-terminated string for each entry in the section.  Each
+	// that I'm using here, reads in a null-terminated string for each entry in the section.  Each
 	// string is of the form 'key=value'.  Based on my testing, it appears that windows removes any white
 	// space before or after the equal sign as well.
 	char dllpath[_MAX_PATH];

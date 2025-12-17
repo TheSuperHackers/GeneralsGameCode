@@ -661,7 +661,7 @@ static void saveTooltipDelayTextLabel(HWND dialog, HWND edit, GameWindow *window
 		return;
 //  WinInstanceData *instData = window->winGetInstanceData();
 
-//  instData->m_tooltipDelay = GetDlgItemInt( dialog, edit, NULL, TRUE );
+//  instData->m_tooltipDelay = GetDlgItemInt( dialog, edit, nullptr, TRUE );
 
 }
 

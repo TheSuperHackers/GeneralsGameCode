@@ -1415,7 +1415,7 @@ void EditWindow::drawGrid( void )
 	{
 
 		TheDisplay->drawLine( 0, y, m_size.x, y, 1, color );
-//		MoveToEx( hdc, 0, y, NULL );
+//		MoveToEx( hdc, 0, y, nullptr );
 //		LineTo( hdc, m_size.x, y );
 
 	}
@@ -1424,7 +1424,7 @@ void EditWindow::drawGrid( void )
 	{
 
 		TheDisplay->drawLine( x, 0, x, m_size.y, 1, color );
-//		MoveToEx( hdc, x, 0, NULL );
+//		MoveToEx( hdc, x, 0, nullptr );
 //		LineTo( hdc, x, m_size.y );
 
 	}

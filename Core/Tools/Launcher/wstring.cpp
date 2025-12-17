@@ -494,7 +494,7 @@ char Wstring::set(uint32 size, const char *string)
    return(FALSE);
  }
 
- // Copy the bytes in the string, and NULL-terminate it.
+ // Copy the bytes in the string, and null-terminate it.
  strncpy(str, string, size);
  str[size] = 0;
 

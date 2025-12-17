@@ -155,7 +155,7 @@ uint32 setup_mesh_attributes(INode * node)
 	** And, a mesh may have one or more types of collision detection enabled.
 	** W3D_MESH_FLAG_COLLISION_TYPE_PHYSICAL
 	** W3D_MESH_FLAG_COLLISION_TYPE_PROJECTILE
-	** However, if the mesh is SKIN, SHADOW, ALIGNED, ORIENTED or NULL, don't let
+	** However, if the mesh is SKIN, SHADOW, ALIGNED, ORIENTED or nullptr, don't let
 	** the collision bits get set...
 	*/
 	if (	attributes != W3D_MESH_FLAG_GEOMETRY_TYPE_SKIN &&
@@ -1069,7 +1069,7 @@ int MeshSaveClass::write_user_text(ChunkSaveClass & csave)
 		return 1;
 	}
 
-	// write the user text buffer (writing one extra byte to include the NULL)
+	// write the user text buffer (writing one extra byte to include the null terminator)
 	if (csave.Write(UserText,strlen(UserText) + 1) != strlen(UserText) + 1) {
 		return 1;
 	}

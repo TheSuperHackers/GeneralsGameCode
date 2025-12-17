@@ -3471,7 +3471,7 @@ DX8Wrapper::Set_Render_Target(IDirect3DSurface8 *render_target, bool use_default
 		//
 		if (DefaultDepthBuffer == nullptr)
 		{
-//		IDirect3DSurface8 *depth_buffer = NULL;
+//		IDirect3DSurface8 *depth_buffer = nullptr;
 			DX8CALL(GetDepthStencilSurface (&DefaultDepthBuffer));
 		}
 
@@ -3524,9 +3524,9 @@ DX8Wrapper::Set_Render_Target(IDirect3DSurface8 *render_target, bool use_default
 	//
 	//	Free our hold on the depth buffer
 	//
-//	if (depth_buffer != NULL) {
+//	if (depth_buffer != nullptr) {
 //		depth_buffer->Release ();
-//		depth_buffer = NULL;
+//		depth_buffer = nullptr;
 //	}
 
 	IsRenderToTexture = false;
@@ -3599,7 +3599,7 @@ void DX8Wrapper::Set_Render_Target
 		//
 		if (DefaultDepthBuffer == nullptr)
 		{
-//		IDirect3DSurface8 *depth_buffer = NULL;
+//		IDirect3DSurface8 *depth_buffer = nullptr;
 			DX8CALL(GetDepthStencilSurface (&DefaultDepthBuffer));
 		}
 
@@ -3872,7 +3872,7 @@ void DX8Wrapper::Apply_Default_State()
 		Set_Texture(i,nullptr);
 	}
 
-//	DX8Wrapper::Set_Material(NULL);
+//	DX8Wrapper::Set_Material(nullptr);
 	VertexMaterialClass::Apply_Null();
 
 	for (unsigned index=0;index<4;++index) {

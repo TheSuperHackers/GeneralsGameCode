@@ -2024,7 +2024,7 @@ Bool WorldHeightMapEdit::selectDuplicates(void)
 	const float DELTA =  0.05f;
 	MapObject *firstObj = MapObject::TheMapObjectListPtr;
 	MapObject *pObj;
-//	MapObject *pPrevRoad = NULL;
+//	MapObject *pPrevRoad = nullptr;
 	Bool anySelected = false;
 	for (pObj=firstObj; pObj; pObj=pObj->getNext()) {
 		pObj->setSelected(false);

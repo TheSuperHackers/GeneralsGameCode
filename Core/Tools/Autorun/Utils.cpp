@@ -90,7 +90,7 @@
 //  Purpose: To replace each "&" with "&&" for display in a dialog.
 //			 Some dialogs mistake a single "&" for an accelerator key.
 //
-//    Input: pszString - any NULL terminated string.
+//    Input: pszString - any null-terminated string.
 //
 //  Returns: VOID (returns nothing)
 //
@@ -193,7 +193,7 @@ void Fix_Single_Ampersands ( wchar_t *pszString, bool upper_case )
 //  Purpose: To replace each "&&" with "&" for display in a dialog.
 //			 Some dialogs mistake a single "&" for an accelerator key.
 //
-//    Input: pszString - any NULL terminated string.
+//    Input: pszString - any null-terminated string.
 //
 //  Returns: VOID (returns nothing)
 //

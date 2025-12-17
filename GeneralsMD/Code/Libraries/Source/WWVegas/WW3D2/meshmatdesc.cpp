@@ -453,7 +453,7 @@ bool MeshMatDescClass::Is_Empty(void)
 			if (TextureArray[pass][stage] != nullptr) return false;
 		}
 
-//		if (UVIndex[pass] != NULL) return false;
+//		if (UVIndex[pass] != nullptr) return false;
 		if (Material[pass] != nullptr) return false;
 		if (MaterialArray[pass] != nullptr) return false;
 
