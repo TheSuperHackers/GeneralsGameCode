@@ -170,7 +170,7 @@ void LayersList::resetLayers(void)
 void LayersList::addMapObjectToLayersList(MapObject *objToAdd, AsciiString layerToAddTo)
 {
 	if (!objToAdd || findMapObjectAndList(objToAdd)) {
-		DEBUG_CRASH(("MapObject added was NULL or object already in Layers List. jkmcd"));
+		DEBUG_CRASH(("MapObject added was nullptr or object already in Layers List. jkmcd"));
 		return;
 	}
 	ListLayerIt layerIt;
@@ -205,7 +205,7 @@ AsciiString LayersList::removeMapObjectFromLayersList(MapObject *objToRemove)
 void LayersList::changeMapObjectLayer(MapObject *objToChange, AsciiString layerToPlaceOn)
 {
 	if (!objToChange) {
-		DEBUG_CRASH(("Attempted to change location of NULL object. jkmcd"));
+		DEBUG_CRASH(("Attempted to change location of nullptr object. jkmcd"));
 		return;
 	}
 
@@ -441,7 +441,7 @@ void LayersList::addMapObjectToLayer(IN MapObject *objectToAdd, IN ListLayerIt *
 void LayersList::removeMapObjectFromLayer(IN MapObject *objectToRemove, IN ListLayerIt *layerIt, IN ListMapObjectPtrIt *objectIt)
 {
 	if (!objectToRemove) {
-		DEBUG_CRASH(("Attempted to remove NULL object from layers list. jkmcd"));
+		DEBUG_CRASH(("Attempted to remove nullptr object from layers list. jkmcd"));
 		return;
 	}
 

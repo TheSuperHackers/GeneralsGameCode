@@ -660,7 +660,7 @@ BOOL CWorldBuilderDoc::DoFileSave()
 BOOL CWorldBuilderDoc::DoSave(LPCTSTR lpszPathName, BOOL bReplace)
 	// Save the document data to a file
 	// lpszPathName = path name where to save document file
-	// if lpszPathName is NULL then the user will be prompted (SaveAs)
+	// if lpszPathName is nullptr then the user will be prompted (SaveAs)
 	// note: lpszPathName can be different than 'm_strPathName'
 	// if 'bReplace' is TRUE will change file name if successful (SaveAs)
 	// if 'bReplace' is FALSE will not change path name (SaveCopyAs)

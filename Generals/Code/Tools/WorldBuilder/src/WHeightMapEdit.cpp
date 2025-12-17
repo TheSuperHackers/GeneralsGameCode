@@ -820,7 +820,7 @@ void WorldHeightMapEdit::saveToFile(DataChunkOutput &chunkWriter)
 
 //
 // duplicate - Makes a copy.
-// Returns NULL if allocation failed.
+// Returns nullptr if allocation failed.
 
 WorldHeightMapEdit *WorldHeightMapEdit::duplicate(void)
 {
