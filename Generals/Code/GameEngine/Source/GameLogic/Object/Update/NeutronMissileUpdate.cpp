@@ -610,7 +610,7 @@ void NeutronMissileUpdate::xfer( Xfer *xfer )
 	if( xfer->getXferMode() == XFER_LOAD )
 	{
 
-		// make system template NULL to be safe
+		// make system template nullptr to be safe
 		m_exhaustSysTmpl = nullptr;
 		if( name.isEmpty() == FALSE )
 		{

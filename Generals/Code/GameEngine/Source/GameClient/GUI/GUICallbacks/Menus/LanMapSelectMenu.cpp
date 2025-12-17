@@ -346,7 +346,7 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 					mapSelectLayout = nullptr;
 				}
 
-				// set the controls to NULL since they've been destroyed.
+				// set the controls to nullptr since they've been destroyed.
 				NullifyControls();
 				showLANGameOptionsUnderlyingGUIElements(TRUE);
 				PostToLanGameOptions( MAP_BACK );
@@ -396,7 +396,7 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 						mapSelectLayout = nullptr;
 					}
 
-					// set the controls to NULL since they've been destroyed.
+					// set the controls to nullptr since they've been destroyed.
 					NullifyControls();
 
 					showLANGameOptionsUnderlyingGUIElements(TRUE);

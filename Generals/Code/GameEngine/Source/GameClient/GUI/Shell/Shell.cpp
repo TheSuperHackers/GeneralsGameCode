@@ -192,7 +192,7 @@ void Shell::update( void )
 		for( Int i = m_screenCount - 1; i >= 0; i-- )
 		{
 
-			DEBUG_ASSERTCRASH( m_screenStack[ i ], ("Top of shell stack is NULL!") );
+			DEBUG_ASSERTCRASH( m_screenStack[ i ], ("Top of shell stack is nullptr!") );
 			m_screenStack[ i ]->runUpdate( nullptr );
 
 		}

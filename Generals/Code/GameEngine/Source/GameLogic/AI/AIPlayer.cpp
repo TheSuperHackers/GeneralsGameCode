@@ -1049,7 +1049,7 @@ void AIPlayer::onUnitProduced( Object *factory, Object *unit )
 	Bool supplyTruck = false;
 #endif
 
-	// factory could be NULL at the start of the game.
+	// factory could be nullptr at the start of the game.
 	if (factory == nullptr) {
 		return;
 	}
@@ -3018,7 +3018,7 @@ void AIPlayer::xfer( Xfer *xfer )
 		if( getFirstItemIn_TeamBuildQueue() != nullptr )
 		{
 
-			DEBUG_CRASH(( "AIPlayer::xfer - TeamBuildQueue head is not NULL, you should delete it or something before loading a new list" ));
+			DEBUG_CRASH(( "AIPlayer::xfer - TeamBuildQueue head is not nullptr, you should delete it or something before loading a new list" ));
 			throw SC_INVALID_DATA;
 
 		}
@@ -3077,7 +3077,7 @@ void AIPlayer::xfer( Xfer *xfer )
 		if( getFirstItemIn_TeamReadyQueue() != nullptr )
 		{
 
-			DEBUG_CRASH(( "AIPlayer::xfer - TeamReadyQueue head is not NULL, you should delete it or something before loading a new list" ));
+			DEBUG_CRASH(( "AIPlayer::xfer - TeamReadyQueue head is not nullptr, you should delete it or something before loading a new list" ));
 			throw SC_INVALID_DATA;
 
 		}
@@ -3316,7 +3316,7 @@ void TeamInQueue::xfer( Xfer *xfer )
 		if( m_workOrders != nullptr )
 		{
 
-			DEBUG_CRASH(( "TeamInQueue::xfer - m_workOrders should be NULL but isn't.  Perhaps you should blow it away before loading" ));
+			DEBUG_CRASH(( "TeamInQueue::xfer - m_workOrders should be nullptr but isn't.  Perhaps you should blow it away before loading" ));
 			throw SC_INVALID_DATA;
 
 		}

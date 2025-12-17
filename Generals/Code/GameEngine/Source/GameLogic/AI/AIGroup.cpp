@@ -2208,7 +2208,7 @@ void AIGroup::groupAttackPosition( const Coord3D *pos, Int maxShotsToFire, Comma
 	{
 		if( !pos )
 		{
-			//If you specify a NULL position, it means you are attacking your own location.
+			//If you specify a nullptr position, it means you are attacking your own location.
 			attackPos.set( (*i)->getPosition() );
 		}
 

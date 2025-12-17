@@ -273,7 +273,7 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 
 	if( !BitIsSet( commandOptions, COMMAND_FIRED_BY_SCRIPT ) )
 	{
-		DEBUG_ASSERTCRASH(targetPos, ("Particle Cannon target data must not be NULL"));
+		DEBUG_ASSERTCRASH(targetPos, ("Particle Cannon target data must not be nullptr"));
 
 		//All human players have manual control and must "drive" the beam around!
 		m_startAttackFrame = TheGameLogic->getFrame();
@@ -285,7 +285,7 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 	}
 	else
 	{
-		DEBUG_ASSERTCRASH(targetPos, ("Particle Cannon target data must not be NULL"));
+		DEBUG_ASSERTCRASH(targetPos, ("Particle Cannon target data must not be nullptr"));
 
 		//All computer controlled players have automatic control -- the "S" curve.
 		UnsignedInt now = TheGameLogic->getFrame();

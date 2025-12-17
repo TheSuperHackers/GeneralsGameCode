@@ -2276,7 +2276,7 @@ Real TerrainLogic::getWaterHeight( const WaterHandle *water )
 	}
 
 	// sanity
-	DEBUG_ASSERTCRASH( water->m_polygon != nullptr, ("getWaterHeight: polygon trigger in water handle is NULL") );
+	DEBUG_ASSERTCRASH( water->m_polygon != nullptr, ("getWaterHeight: polygon trigger in water handle is nullptr") );
 
 	// return the height of the water using the polygon trigger
 	return water->m_polygon->getPoint( 0 )->z;

@@ -5017,7 +5017,7 @@ void ScriptEngine::updateFades( void )
 Player *ScriptEngine::getCurrentPlayer(void)
 {
 	if (m_currentPlayer==nullptr)
-		AppendDebugMessage("***Unexpected NULL player:***", false);
+		AppendDebugMessage("***Unexpected nullptr player:***", false);
 	return m_currentPlayer;
 }
 
@@ -5141,7 +5141,7 @@ ObjectTypes *ScriptEngine::getObjectTypes(const AsciiString& objectTypeList)
 
 	for (it = m_allObjectTypeLists.begin(); it != m_allObjectTypeLists.end(); ++it) {
 		if ((*it) == nullptr) {
-			DEBUG_CRASH(("NULL object type list was unexpected. jkmcd"));
+			DEBUG_CRASH(("nullptr object type list was unexpected. jkmcd"));
 			continue;
 		}
 
@@ -7484,7 +7484,7 @@ void SequentialScript::xfer( Xfer *xfer )
 
 		// sanity
 		DEBUG_ASSERTCRASH( m_scriptToExecuteSequentially != nullptr,
-											 ("SequentialScript::xfer - m_scriptToExecuteSequentially is NULL but should not be") );
+											 ("SequentialScript::xfer - m_scriptToExecuteSequentially is nullptr but should not be") );
 
 	}
 

@@ -5186,7 +5186,7 @@ AIAttackState::~AIAttackState()
 {
 	// nope, don't do this, since we may well still have it targeted
 	// even though we're leaving this state.
-	// turn it off when we do setCurrentVictim(NULL).
+	// turn it off when we do setCurrentVictim(nullptr).
 	//addSelfAsTargeter(false);
 
 	if (m_attackMachine)
@@ -5484,7 +5484,7 @@ void AIAttackState::onExit( StateExitType status )
 	USE_PERF_TIMER(AIAttackState)
 	// nope, don't do this, since we may well still have it targeted
 	// even though we're leaving this state. turn it off when we
-	// turn it off when we do setCurrentVictim(NULL).
+	// turn it off when we do setCurrentVictim(nullptr).
 	//addSelfAsTargeter(false);
 
 	// destroy the attack machine

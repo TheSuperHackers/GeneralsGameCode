@@ -1345,7 +1345,7 @@ void OpenContain::processDamageToContained()
 	{
 		Object *object = *it;
 
-		DEBUG_ASSERTCRASH( object, ("Contain list must not contain NULL element") );
+		DEBUG_ASSERTCRASH( object, ("Contain list must not contain nullptr element") );
 
 		// Calculate the damage to be inflicted on each unit.
 		Real damage = object->getBodyModule()->getMaxHealth() * data->m_damagePercentageToUnits;

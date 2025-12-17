@@ -478,7 +478,7 @@ void GameEngine::init()
 #endif
 
 		initSubsystem(TheActionManager,"TheActionManager", MSGNEW("GameEngineSubsystem") ActionManager(), nullptr);
-		//initSubsystem((CComObject<WebBrowser> *)TheWebBrowser,"(CComObject<WebBrowser> *)TheWebBrowser", (CComObject<WebBrowser> *)createWebBrowser(), NULL);
+		//initSubsystem((CComObject<WebBrowser> *)TheWebBrowser,"(CComObject<WebBrowser> *)TheWebBrowser", (CComObject<WebBrowser> *)createWebBrowser(), nullptr);
 		initSubsystem(TheGameStateMap,"TheGameStateMap", MSGNEW("GameEngineSubsystem") GameStateMap, nullptr );
 		initSubsystem(TheGameState,"TheGameState", MSGNEW("GameEngineSubsystem") GameState, nullptr );
 
@@ -517,7 +517,7 @@ void GameEngine::init()
 		if (TheGlobalData->m_buildMapCache)
 		{
 			// just quit, since the map cache has already updated
-			//populateMapListbox(NULL, true, true);
+			//populateMapListbox(nullptr, true, true);
 			m_quitting = TRUE;
 		}
 

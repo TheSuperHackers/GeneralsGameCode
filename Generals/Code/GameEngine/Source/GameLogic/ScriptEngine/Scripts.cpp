@@ -723,7 +723,7 @@ void ScriptGroup::loadPostProcess( void )
 
 /**
   ScriptGroup::duplicate - Creates a full, "deep" copy of ScriptGroup.
-	m_nextGroup is NULL on the copy.
+	m_nextGroup is nullptr on the copy.
 */
 ScriptGroup *ScriptGroup::duplicate(void) const
 {
@@ -757,7 +757,7 @@ ScriptGroup *ScriptGroup::duplicate(void) const
 /**
   ScriptGroup::duplicateAndQualify - Creates a full, "deep" copy of ScriptGroup,
 	adding qualifier to names.
-	m_nextGroup is NULL on the copy.
+	m_nextGroup is nullptr on the copy.
 */
 ScriptGroup *ScriptGroup::duplicateAndQualify(const AsciiString& qualifier,
 			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const
@@ -969,7 +969,7 @@ void Script::loadPostProcess( void )
 /**
   Script::duplicate - Creates a full, "deep" copy of script. Condition list and action
   list is duplicated as well.  Note - just the script, doesn't
-	duplicate a list of scripts.  m_nextScript is NULL on the copy.
+	duplicate a list of scripts.  m_nextScript is nullptr on the copy.
 */
 Script *Script::duplicate(void) const
 {
@@ -1003,7 +1003,7 @@ Script *Script::duplicate(void) const
   Script::duplicate - Creates a full, "deep" copy of script, with qualifier
   added to names. Condition list and action
   list is duplicated as well.  Note - just the script, doesn't
-	duplicate a list of scripts.  m_nextScript is NULL on the copy.
+	duplicate a list of scripts.  m_nextScript is nullptr on the copy.
 */
 Script *Script::duplicateAndQualify(const AsciiString& qualifier,
 			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const
