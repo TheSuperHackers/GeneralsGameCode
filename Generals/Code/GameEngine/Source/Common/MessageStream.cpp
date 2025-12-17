@@ -858,7 +858,7 @@ GameMessage *MessageStream::appendMessage( GameMessage::Type type )
 
 /**
  * Create a new message of the given message type and insert it
- * in the stream after messageToInsertAfter, which must not be NULL.
+ * in the stream after messageToInsertAfter, which must not be nullptr.
  */
 GameMessage *MessageStream::insertMessage( GameMessage::Type type, GameMessage *messageToInsertAfter )
 {

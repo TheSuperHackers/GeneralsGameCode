@@ -112,7 +112,7 @@ ObjectModule::ObjectModule( Thing *thing, const ModuleData* moduleData ) : Modul
 		throw INI_INVALID_DATA;
 	}
 
-	DEBUG_ASSERTCRASH( thing, ("Thing passed to ObjectModule is NULL!") );
+	DEBUG_ASSERTCRASH( thing, ("Thing passed to ObjectModule is nullptr!") );
 	m_object = AsObject(thing);
 	DEBUG_ASSERTCRASH( m_object, ("Thing passed to ObjectModule is not an Object!") );
 
@@ -175,7 +175,7 @@ DrawableModule::DrawableModule( Thing *thing, const ModuleData* moduleData ) : M
 		throw INI_INVALID_DATA;
 	}
 
-	DEBUG_ASSERTCRASH( thing, ("Thing passed to DrawableModule is NULL!") );
+	DEBUG_ASSERTCRASH( thing, ("Thing passed to DrawableModule is nullptr!") );
 	m_drawable = AsDrawable(thing);
 	DEBUG_ASSERTCRASH( m_drawable, ("Thing passed to DrawableModule is not a Drawable!") );
 

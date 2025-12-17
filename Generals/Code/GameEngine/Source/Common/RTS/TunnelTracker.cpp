@@ -332,7 +332,7 @@ void TunnelTracker::updateFullHealTime()
 			continue;
 
 		const ContainModuleInterface* contain = tunnelObj->getContain();
-		DEBUG_ASSERTCRASH(contain != nullptr, ("Contain module is NULL"));
+		DEBUG_ASSERTCRASH(contain != nullptr, ("Contain module is nullptr"));
 
 		if (!contain->isTunnelContain())
 			continue;

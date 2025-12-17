@@ -879,7 +879,7 @@ Team *TeamPrototype::findTeamByID( TeamID teamID )
 // ------------------------------------------------------------------------
 void TeamPrototype::setControllingPlayer(Player *newController)
 {
-	DEBUG_ASSERTCRASH(newController, ("Attempted to set NULL player as team-owner, illegal."));
+	DEBUG_ASSERTCRASH(newController, ("Attempted to set nullptr player as team-owner, illegal."));
 	if (!newController) {
 		return;
 	}
@@ -889,7 +889,7 @@ void TeamPrototype::setControllingPlayer(Player *newController)
 
 	m_owningPlayer = newController;
 
-	// impossible to get here with a NULL pointer.
+	// impossible to get here with a nullptr pointer.
 	m_owningPlayer->addTeamToList(this);
 }
 
@@ -1390,7 +1390,7 @@ Player *Team::getControllingPlayer() const
 // ------------------------------------------------------------------------
 void Team::setControllingPlayer(Player *newController)
 {
-	// NULL is not allowed, but is caught by TeamPrototype::setControllingPlayer()
+	// nullptr is not allowed, but is caught by TeamPrototype::setControllingPlayer()
 	m_proto->setControllingPlayer(newController);
 
 	// This function is used by one script, and it is kind of odd.  The actual units
