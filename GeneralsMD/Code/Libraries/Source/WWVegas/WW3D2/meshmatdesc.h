@@ -226,7 +226,7 @@ protected:
 /**
 ** MatBufferClass
 ** This is a ShareBufferClass of pointers to vertex materials.  Should be written as a template...
-** Get and Peek work like normal, and all non-NULL pointers will be released when the buffer
+** Get and Peek work like normal, and all non-nullptr pointers will be released when the buffer
 ** is destroyed.
 */
 class MatBufferClass : public ShareBufferClass < VertexMaterialClass * >

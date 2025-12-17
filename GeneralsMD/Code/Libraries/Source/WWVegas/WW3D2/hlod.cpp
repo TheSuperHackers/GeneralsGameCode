@@ -71,8 +71,8 @@
  *   HLodClass::Peek_Additional_Model -- returns pointer to an additional model                *
  *   HLodClass::Get_Additional_Model -- returns pointer to an additional model                 *
  *   HLodClass::Get_Additional_Model_Bone -- returns the bone index of an additional model     *
- *   HLodClass::Is_NULL_Lod_Included -- does this HLod have NULL as its lowest LOD             *
- *   HLodClass::Include_NULL_Lod -- Add NULL as the lowest LOD                                 *
+ *   HLodClass::Is_NULL_Lod_Included -- does this HLod have nullptr as its lowest LOD             *
+ *   HLodClass::Include_NULL_Lod -- Add nullptr as the lowest LOD                                 *
  *   HLodClass::Get_Num_Polys -- returns polycount of the current LOD                          *
  *   HLodClass::Render -- render this HLod                                                     *
  *   HLodClass::Special_Render -- Special_Render for HLod                                      *
@@ -1908,7 +1908,7 @@ int HLodClass::Get_Additional_Model_Bone (int model_index) const
 
 
 /***********************************************************************************************
- * HLodClass::Is_NULL_Lod_Included -- does this HLod have NULL as its lowest LOD               *
+ * HLodClass::Is_NULL_Lod_Included -- does this HLod have nullptr as its lowest LOD               *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -1934,7 +1934,7 @@ bool HLodClass::Is_NULL_Lod_Included(void) const
 
 
 /***********************************************************************************************
- * HLodClass::Include_NULL_Lod -- Add NULL as the lowest LOD                                   *
+ * HLodClass::Include_NULL_Lod -- Add nullptr as the lowest LOD                                   *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -1949,7 +1949,7 @@ void HLodClass::Include_NULL_Lod(bool include)
 {
 	if ((include == false) && Is_NULL_Lod_Included ()) {
 
-		// Free the 'NULL' object's stored information
+		// Free the 'nullptr' object's stored information
 		int index = 0;
 		for (int model = 0; model < Lod[index].Count (); model++) {
 
@@ -1985,7 +1985,7 @@ void HLodClass::Include_NULL_Lod(bool include)
 
 	} else if (include && (Is_NULL_Lod_Included () == false)) {
 
-		// Tag the NULL render object onto the end
+		// Tag the nullptr render object onto the end
 		RenderObjClass *null_object = WW3DAssetManager::Get_Instance ()->Create_Render_Obj ("NULL");
 		WWASSERT (null_object != nullptr);
 		if (null_object != nullptr) {
@@ -2010,7 +2010,7 @@ void HLodClass::Include_NULL_Lod(bool include)
 			Cost = temp_cost;
 			LodCount ++;
 
-			// Add this NULL object to the start of the lod list
+			// Add this nullptr object to the start of the lod list
 			Add_Lod_Model (0, null_object, 0);
 			null_object->Release_Ref ();
 		}

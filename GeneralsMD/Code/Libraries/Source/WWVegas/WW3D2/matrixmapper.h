@@ -117,7 +117,7 @@ protected:
 ** it with it's own matrix, then applies that. It sets the texture source to camera space
 ** position. The idea is to use some transformation of the camera space position (like a planar
 ** projection) as the 'input coordinates' to some other mapper like a linear offset mapper
-** which usually uses actual texture coordinates as input. If the internal mapper is NULL, it
+** which usually uses actual texture coordinates as input. If the internal mapper is nullptr, it
 ** simply applies it's own matrix.
 */
 class CompositeMatrixMapperClass : public MatrixMapperClass

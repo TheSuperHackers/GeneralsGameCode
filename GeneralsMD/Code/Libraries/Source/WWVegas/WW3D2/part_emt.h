@@ -303,7 +303,7 @@ class ParticleEmitterClass : public RenderObjClass
 
 		// Initialize one new particle at the given NewParticleStruct
 		// address, with the given age and emitter transform (expressed as a
-		// quaternion and origin vector). (must check if address is NULL).
+		// quaternion and origin vector). (must check if address is nullptr).
 		void Initialize_Particle(NewParticleStruct * newpart, unsigned int age,
 			const Quaternion & quat, const Vector3 & orig);
 
@@ -311,9 +311,9 @@ class ParticleEmitterClass : public RenderObjClass
 		unsigned int				BurstSize;			// Burst size (how many particles in each emission).
 		unsigned int				OneTimeBurstSize;	// Burst size for a one-time burst.
 		bool							OneTimeBurst;		// Do we need to do a one-time burst?
-		Vector3Randomizer *		PosRand;				// Position randomizer pointer (may be NULL).
+		Vector3Randomizer *		PosRand;				// Position randomizer pointer (may be nullptr).
 		Vector3						BaseVel;				// Base initial emission velocity.
-		Vector3Randomizer *		VelRand;				// Velocity randomizer pointer (may be NULL).
+		Vector3Randomizer *		VelRand;				// Velocity randomizer pointer (may be nullptr).
 		float							OutwardVel;			// Size of outwards velocity.
 		float							VelInheritFactor;	// Affects emitter vel. inherited by particles.
 		unsigned int				EmitRemain;			// Millisecond emitter remainder.

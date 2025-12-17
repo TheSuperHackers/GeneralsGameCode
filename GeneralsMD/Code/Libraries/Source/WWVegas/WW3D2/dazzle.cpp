@@ -1303,11 +1303,11 @@ const char * DazzleRenderObjClass::Get_Type_Name(unsigned id)
 //
 // Return pointer to DazzleTypeClass object with given id. If the id is out
 // of range (usually UINT_MAX, in can the id was obtained with invalid name
-// string) return NULL.
+// string) return nullptr.
 //
 // ----------------------------------------------------------------------------
 
-DazzleTypeClass* DazzleRenderObjClass::Get_Type_Class(unsigned id) // Return dazzle type class pointer, or NULL if not found
+DazzleTypeClass* DazzleRenderObjClass::Get_Type_Class(unsigned id) // Return dazzle type class pointer, or nullptr if not found
 {
 	if (id>=type_count) return nullptr;
 	return types[id];
@@ -1332,11 +1332,11 @@ unsigned DazzleRenderObjClass::Get_Lensflare_ID(const char* name)
 //
 // Return pointer to LensflareTypeClass object with given id. If the id is out
 // of range (usually UINT_MAX, in can the id was obtained with invalid name
-// string) return NULL.
+// string) return nullptr.
 //
 // ----------------------------------------------------------------------------
 
-LensflareTypeClass* DazzleRenderObjClass::Get_Lensflare_Class(unsigned id) // Return lensflare type class pointer, or NULL if not found
+LensflareTypeClass* DazzleRenderObjClass::Get_Lensflare_Class(unsigned id) // Return lensflare type class pointer, or nullptr if not found
 {
 	if (id>=lensflare_count) return nullptr;
 	return lensflares[id];
@@ -1494,13 +1494,13 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 	RenderObjClass * new_obj = NEW_REF(DazzleRenderObjClass,(dazzle_type));
 
 	/*
-	** If we failed to create it, replace it with a NULL
+	** If we failed to create it, replace it with a nullptr
 	*/
 	if (new_obj == nullptr) {
 		static int count = 0;
 		if ( count++ < 10 ) {
 			WWDEBUG_SAY(("DazzlePersistFactory failed to create dazzle of type: %s!!",dazzle_type));
-			WWDEBUG_SAY(("Replacing it with a NULL render object!"));
+			WWDEBUG_SAY(("Replacing it with a nullptr render object!"));
 		}
 		new_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj("NULL");
 	}

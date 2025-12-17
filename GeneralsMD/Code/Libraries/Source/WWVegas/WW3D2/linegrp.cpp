@@ -249,7 +249,7 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 		Shader.Set_Primary_Gradient(ShaderClass::GRADIENT_DISABLE);
 	}
 
-	// If Texture is non-NULL enable texturing in shader - otherwise disable.
+	// If Texture is non-nullptr enable texturing in shader - otherwise disable.
 	if (Texture) {
 		Shader.Set_Texturing(ShaderClass::TEXTURING_ENABLE);
 	} else {
