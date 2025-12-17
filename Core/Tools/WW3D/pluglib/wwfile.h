@@ -55,7 +55,8 @@
 #endif
 
 #ifndef NULL
-	#define	NULL	0
+	//#define	NULL	0
+	// NULL is now deprecated - use nullptr instead
 #endif
 
 
