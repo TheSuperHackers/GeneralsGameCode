@@ -61,7 +61,7 @@
 // PRIVATE DATA ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 static Byte drawCnt = 0;
-// static TbIME *ourIME = NULL;  ///< @todo need this for IME kanji support
+// static TbIME *ourIME = nullptr;  ///< @todo need this for IME kanji support
 static GameWindow *curWindow = nullptr;  /**< so we can keep track of the input
 																					 window when using IME */
 

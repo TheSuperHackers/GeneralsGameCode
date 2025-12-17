@@ -2631,7 +2631,7 @@ const FieldParse ParticleSystemTemplate::m_fieldParseTable[] =
 	{ "Color7",									ParticleSystemTemplate::parseRGBColorKeyframe,nullptr,		offsetof( ParticleSystemTemplate, m_colorKey[6] ) },
 	{ "Color8",									ParticleSystemTemplate::parseRGBColorKeyframe,nullptr,		offsetof( ParticleSystemTemplate, m_colorKey[7] ) },
 
-//	{ "COLOR",									ParticleSystemTemplate::parseRandomRGBColor,	NULL,		offsetof( ParticleSystemTemplate, m_color ) },
+//	{ "COLOR",									ParticleSystemTemplate::parseRandomRGBColor,	nullptr,		offsetof( ParticleSystemTemplate, m_color ) },
 	{ "ColorScale",							INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_colorScale ) },
 
 	{ "BurstDelay",							INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_burstDelay ) },
@@ -2782,7 +2782,7 @@ ParticleSystemTemplate::~ParticleSystemTemplate()
 }
 
 // ------------------------------------------------------------------------------------------------
-/** If returns non-NULL, it is a slave system for use ... the create slaves parameter
+/** If returns non-nullptr, it is a slave system for use ... the create slaves parameter
  * tells *this* slave system whether or not it should create any slaves itself
  * automatically during its own constructor */
 // ------------------------------------------------------------------------------------------------
@@ -2857,7 +2857,7 @@ void ParticleSystemManager::init( void )
 		DEBUG_ASSERTCRASH( m_allParticlesHead[ i ] == nullptr, ("INIT: ParticleSystem all particles head[%d] is not NULL!", i) );
 		DEBUG_ASSERTCRASH( m_allParticlesTail[ i ] == nullptr, ("INIT: ParticleSystem all particles tail[%d] is not NULL!", i) );
 
-		// just to be clean set them to NULL
+		// just to be clean set them to nullptr
 		m_allParticlesHead[ i ] = nullptr;
 		m_allParticlesTail[ i ] = nullptr;
 
@@ -2885,7 +2885,7 @@ void ParticleSystemManager::reset( void )
 		DEBUG_ASSERTCRASH( m_allParticlesHead[ i ] == nullptr, ("RESET: ParticleSystem all particles head[%d] is not NULL!", i) );
 		DEBUG_ASSERTCRASH( m_allParticlesTail[ i ] == nullptr, ("RESET: ParticleSystem all particles tail[%d] is not NULL!", i) );
 
-		// just to be clean set them to NULL
+		// just to be clean set them to nullptr
 		m_allParticlesHead[ i ] = nullptr;
 		m_allParticlesTail[ i ] = nullptr;
 

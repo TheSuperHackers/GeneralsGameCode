@@ -47,7 +47,7 @@ int MonoD::print(const char *str, int len)
   #ifdef _WIN32
     unsigned long retval;
     WriteFile(handle, str, len, &retval, nullptr);
-    ////DeviceIoControl(handle, (DWORD)IOCTL_MONO_PRINT_RAW, (void *)str, len, NULL, 0,
+    ////DeviceIoControl(handle, (DWORD)IOCTL_MONO_PRINT_RAW, (void *)str, len, nullptr, 0,
     ////                 &retval,0);
     return(len);
   #else

@@ -103,7 +103,7 @@ public:
 	Waypoint *getNext(void) const {return m_pNext; }
 	/// Enumerate the directed links from a waypoint using this,a nd getLink.
 	Int getNumLinks(void) const {return m_numLinks; }
-	/// Get the n'th directed link.  (May be NULL).
+	/// Get the n'th directed link.  (May be nullptr).
 	Waypoint *getLink(Int ndx) const {if (ndx>=0 && ndx <= MAX_LINKS) return m_links[ndx]; return nullptr; }
 	/// Get the waypoint's name.
 	AsciiString getName(void) const {return m_name; }
@@ -274,10 +274,10 @@ public:
 	///Gets the first bridge.  Traverse all bridges using bridge->getNext();
 	virtual Bridge *getFirstBridge(void) const { return m_bridgeListHead; }
 
-	/// Find the bridge at a location.  NULL means no bridge.
+	/// Find the bridge at a location.  nullptr means no bridge.
 	virtual Bridge *findBridgeAt(const Coord3D *pLoc) const;
 
-	/// Find the bridge at a location.  NULL means no bridge. Note that the layer value will be used to resolve crossing bridges.
+	/// Find the bridge at a location.  nullptr means no bridge. Note that the layer value will be used to resolve crossing bridges.
 	virtual Bridge *findBridgeLayerAt(const Coord3D *pLoc, PathfindLayerEnum layer, Bool clip = true) const;
 
 	///  Returns true if the object is close enough to interact with the bridge for pathfinding.

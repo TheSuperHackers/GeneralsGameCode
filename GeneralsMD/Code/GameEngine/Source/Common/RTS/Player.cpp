@@ -1166,7 +1166,7 @@ Bool Player::computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Get this player's current enemy. NOTE - Can be NULL. */
+/** Get this player's current enemy. NOTE - Can be nullptr. */
 //-------------------------------------------------------------------------------------------------
 Player  *Player::getCurrentEnemy( void )
 {

@@ -123,7 +123,7 @@
 #define CHAT_E_NOTIMPLEMENTED  MAKE_HRESULT( SEVERITY_ERROR, FACILITY_ITF, 502)
 // The request was made while while a conflicting request was still pending
 #define CHAT_E_PENDINGREQUEST  MAKE_HRESULT( SEVERITY_ERROR, FACILITY_ITF, 503)
-// Invalid parameter passed - usually a NULL pointer
+// Invalid parameter passed - usually a nullptr pointer
 #define CHAT_E_PARAMERROR	   MAKE_HRESULT( SEVERITY_ERROR, FACILITY_ITF, 504)
 // Tried to create or join a channel before leaving the previous one
 #define CHAT_E_LEAVECHANNEL		MAKE_HRESULT( SEVERITY_ERROR, FACILITY_ITF, 508)

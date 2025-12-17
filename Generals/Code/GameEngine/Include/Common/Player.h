@@ -419,7 +419,7 @@ public:
 
 	virtual void computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius); ///< Calculates best pos for weapon given radius.
 
-	/// Get the enemy an ai player is currently focused on.  NOTE - Can be NULL.
+	/// Get the enemy an ai player is currently focused on.  NOTE - Can be nullptr.
 	Player  *getCurrentEnemy( void );
 
 	/// Is this player a skirmish ai player?

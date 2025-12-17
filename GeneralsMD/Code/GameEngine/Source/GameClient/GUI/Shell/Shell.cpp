@@ -726,7 +726,7 @@ void Shell::doPop( Bool impendingPush )
 	* popping the current screen off the top of the stack.  It is here that we
 	* can look for any pending push or pop operations and actually do them
 	*
-	* NOTE: It is possible for the screen parameter to be NULL when we are
+	* NOTE: It is possible for the screen parameter to be nullptr when we are
 	*       short circuiting the shutdown logic because there is no layout
 	*				to actually shutdown (ie, the stack is empty and we push) */
 //-------------------------------------------------------------------------------------------------

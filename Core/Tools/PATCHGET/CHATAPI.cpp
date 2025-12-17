@@ -527,7 +527,7 @@ BOOL CALLBACK downloadDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 			//sprintf(localfile,"%s\\%s",g_Update->localpath,g_Update->patchfile);
 
 			// Create the directory
-			//CreateDirectory((char *)g_Update->localpath, NULL );
+			//CreateDirectory((char *)g_Update->localpath, nullptr );
 
 			TheDownloadManager->downloadFile(TheDownload.server, TheDownload.userName, TheDownload.password,
 				TheDownload.file, TheDownload.localFile, TheDownload.regKey, TheDownload.tryResume);

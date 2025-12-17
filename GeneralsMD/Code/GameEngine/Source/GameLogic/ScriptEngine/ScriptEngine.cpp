@@ -5900,7 +5900,7 @@ void ScriptEngine::doObjectTypeListMaintenance(const AsciiString& objectTypeList
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Given a name, return the associated trigger area, or NULL if one doesn't exist.
+/** Given a name, return the associated trigger area, or nullptr if one doesn't exist.
 Handles skirmish name qualification.  */
 //-------------------------------------------------------------------------------------------------
 PolygonTrigger *ScriptEngine::getQualifiedTriggerAreaByName( AsciiString name )
@@ -7734,7 +7734,7 @@ void ScriptEngine::appendSequentialScript(const SequentialScript *scriptToSequen
 	SequentialScript *newSequentialScript = newInstance( SequentialScript );
 	(*newSequentialScript) = (*scriptToSequence);
 
-	// Must set this to NULL, as we don't want an infinite loop.
+	// Must set this to nullptr, as we don't want an infinite loop.
 	newSequentialScript->m_nextScriptInSequence = nullptr;
 
 	// reset the instruction pointer
@@ -8989,7 +8989,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 			namedObjectName = it->first;
 			xfer->xferAsciiString( &namedObjectName );
 
-			// write object id (note that object may be NULL)
+			// write object id (note that object may be nullptr)
 			obj = it->second;
 			objectID = obj ? obj->getID() : INVALID_ID;
 			xfer->xferObjectID( &objectID );
@@ -10293,7 +10293,7 @@ static void _initVTune()
 	// always try loading it, even if -vtune wasn't specified.
 	st_vTuneDLL = ::LoadLibrary("vtuneapi.dll");
 // nope, not here...
-//DEBUG_ASSERTCRASH(st_vTuneDLL != NULL, "VTuneAPI DLL not found!"));
+//DEBUG_ASSERTCRASH(st_vTuneDLL != nullptr, "VTuneAPI DLL not found!"));
 
 	if (st_vTuneDLL)
 	{

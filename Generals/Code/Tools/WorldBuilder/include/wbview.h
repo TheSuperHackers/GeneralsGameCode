@@ -108,7 +108,7 @@ public:
 	/// Scrolls the window by this amount.
 	virtual void scrollInView(Real x, Real y, Bool end) { DEBUG_CRASH(("should not call"));  }
 
-	/// Invalidates an object. Pass NULL to inval all objects.
+	/// Invalidates an object. Pass nullptr to inval all objects.
 	virtual void invalObjectInView(MapObject *pObj) { }
 
 	/// Invalidates the area of one height map cell in the 2d view.

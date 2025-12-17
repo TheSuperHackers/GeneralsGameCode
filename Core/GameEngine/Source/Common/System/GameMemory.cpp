@@ -397,7 +397,7 @@ class MemoryPoolSingleBlock
 {
 private:
 
-	MemoryPoolBlob				*m_owningBlob;			///< will be NULL if the single block was allocated via sysAllocate()
+	MemoryPoolBlob				*m_owningBlob;			///< will be nullptr if the single block was allocated via sysAllocate()
 	MemoryPoolSingleBlock	*m_nextBlock;				///< if m_owningBlob is nonnull, this points to next free (unallocated) block in the blob; if m_owningBlob is null, this points to the next used (allocated) raw block in the pool.
 #ifdef MPSB_DLINK
 	MemoryPoolSingleBlock	*m_prevBlock;				///< if m_owningBlob is nonnull, this points to prev free (unallocated) block in the blob; if m_owningBlob is null, this points to the prev used (allocated) raw block in the pool.
@@ -589,7 +589,7 @@ inline MemoryPoolSingleBlock *MemoryPoolSingleBlock::getNextFreeBlock()
 */
 inline void MemoryPoolSingleBlock::setNextFreeBlock(MemoryPoolSingleBlock *b)
 {
-	//DEBUG_ASSERTCRASH(m_owningBlob != NULL && b->m_owningBlob != NULL, ("must be called on blob block"));
+	//DEBUG_ASSERTCRASH(m_owningBlob != nullptr && b->m_owningBlob != nullptr, ("must be called on blob block"));
 	// don't check the 'b' block -- we need to call this before 'b' is fully initialized.
 	DEBUG_ASSERTCRASH(m_owningBlob != nullptr, ("must be called on blob block"));
 	this->m_nextBlock = b;
@@ -885,7 +885,7 @@ void MemoryPoolSingleBlock::initBlock(Int logicalSize, MemoryPoolBlob *owningBlo
 #ifdef MPSB_DLINK
 	m_prevBlock = nullptr;
 #endif
-	m_owningBlob = owningBlob;	// could be NULL
+	m_owningBlob = owningBlob;	// could be nullptr
 
 #ifdef MEMORYPOOL_BOUNDINGWALL
 	m_wallPattern = theBoundingWallPattern++;

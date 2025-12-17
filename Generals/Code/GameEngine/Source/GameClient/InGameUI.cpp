@@ -1407,7 +1407,7 @@ void InGameUI::evaluateSoloNexus( Drawable *newlyAddedDrawable )
 
 	m_soloNexusSelectedDrawableID = INVALID_DRAWABLE_ID;//failsafe...
 
-	// short test: If the thing just added is a nonmobster, bail with NULL
+	// short test: If the thing just added is a nonmobster, bail with nullptr
 	if ( newlyAddedDrawable )
 	{
 		const Object *newObj = newlyAddedDrawable->getObject();
@@ -1867,11 +1867,11 @@ void InGameUI::update( void )
 
 	GameWindow *moneyWin = TheWindowManager->winGetWindowFromId( nullptr, moneyWindowKey );
 	GameWindow *powerWin = TheWindowManager->winGetWindowFromId( nullptr, powerWindowKey );
-//	if( moneyWin == NULL )
+//	if( moneyWin == nullptr )
 //	{
 //		NameKeyType moneyWindowKey = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:MoneyDisplay" );
 //
-//		moneyWin = TheWindowManager->winGetWindowFromId( NULL, moneyWindowKey );
+//		moneyWin = TheWindowManager->winGetWindowFromId( nullptr, moneyWindowKey );
 //
 //	}  // end if
 	Player* moneyPlayer = TheControlBar->getCurrentlyViewedPlayer();
@@ -2716,7 +2716,7 @@ void InGameUI::createCommandHint( const GameMessage *msg )
 		drawSelectable = false;
 	}
 
-	// Note: These are only non-NULL if there is exactly one thing selected.
+	// Note: These are only non-nullptr if there is exactly one thing selected.
 	const Drawable *srcDraw = nullptr;
 	const Object *srcObj = nullptr;
 	if (getSelectCount() == 1) {
@@ -3066,7 +3066,7 @@ const CommandButton *InGameUI::getGUICommand( void ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Destroy any drawables we have in our placement icon array and set to NULL */
+/** Destroy any drawables we have in our placement icon array and set to nullptr */
 //-------------------------------------------------------------------------------------------------
 void InGameUI::destroyPlacementIcons( void )
 {
@@ -4066,7 +4066,7 @@ void InGameUI::playCameoMovie( const AsciiString& movieName )
 void InGameUI::stopCameoMovie( void )
 {
 //RightHUD
-	//GameWindow *window = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:CameoMovieWindow" ));
+	//GameWindow *window = TheWindowManager->winGetWindowFromId(nullptr,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:CameoMovieWindow" ));
 	GameWindow *window = TheWindowManager->winGetWindowFromId(nullptr,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:RightHUD" ));
 //	window->winHide(FALSE);
 	WinInstanceData *winData = window->winGetInstanceData();

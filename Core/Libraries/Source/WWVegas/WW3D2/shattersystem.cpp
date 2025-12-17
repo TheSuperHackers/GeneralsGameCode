@@ -1013,7 +1013,7 @@ void ShatterSystem::Shatter_Mesh(MeshClass * mesh,const Vector3 & point,const Ve
 					}
 				}
 
-/*				if (mtl_params.UVIndexArray[ipass] != NULL) {
+/*				if (mtl_params.UVIndexArray[ipass] != nullptr) {
 					int uv_index = mtl_params.UVIndexArray[ipass][ipoly][ivert];
 					polygon.Verts[ivert].TexCoord[ipass][0] = mtl_params.UV[ipass][0][uv_index];
 					SHATTER_DEBUG_SAY(("Per-Face UV pass: %d: %f %f",ipass,polygon.Verts[ivert].TexCoord[ipass][0].X,polygon.Verts[ivert].TexCoord[ipass][0].Y));
