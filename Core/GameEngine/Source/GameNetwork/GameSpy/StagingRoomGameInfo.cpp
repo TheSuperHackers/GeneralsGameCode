@@ -527,8 +527,8 @@ void GameSpyStagingRoom::startGame(Int gameID)
 {
 	DEBUG_ASSERTCRASH(m_inGame, ("Starting a game while not in game"));
 	DEBUG_LOG(("GameSpyStagingRoom::startGame - game id = %d", gameID));
-	DEBUG_ASSERTCRASH(m_transport == nullptr, ("m_transport is not NULL when it should be"));
-	DEBUG_ASSERTCRASH(TheNAT == nullptr, ("TheNAT is not NULL when it should be"));
+	DEBUG_ASSERTCRASH(m_transport == nullptr, ("m_transport is not nullptr when it should be"));
+	DEBUG_ASSERTCRASH(TheNAT == nullptr, ("TheNAT is not nullptr when it should be"));
 
 	UnsignedInt localIP = TheGameSpyInfo->getInternalIP();
 	setLocalIP(localIP);
@@ -800,7 +800,7 @@ void GameSpyStagingRoom::launchGame( void )
 	// Set up the game network
 	AsciiString user;
 	AsciiString userList;
-	DEBUG_ASSERTCRASH(TheNetwork == nullptr, ("For some reason TheNetwork isn't NULL at the start of this game.  Better look into that."));
+	DEBUG_ASSERTCRASH(TheNetwork == nullptr, ("For some reason TheNetwork isn't nullptr at the start of this game.  Better look into that."));
 
 	delete TheNetwork;
 	TheNetwork = nullptr;

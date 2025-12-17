@@ -226,7 +226,7 @@ static Bool IsSpaceCharacter(const WideChar c)
 
 static Bool ContainsInvalidChars(const WideChar* playerName)
 {
-	DEBUG_ASSERTCRASH(playerName != nullptr, ("playerName is NULL"));
+	DEBUG_ASSERTCRASH(playerName != nullptr, ("playerName is nullptr"));
 	while (*playerName)
 	{
 		if (IsInvalidCharForPlayerName(*playerName++))
@@ -238,7 +238,7 @@ static Bool ContainsInvalidChars(const WideChar* playerName)
 
 static Bool ContainsAnyReadableChars(const WideChar* playerName)
 {
-	DEBUG_ASSERTCRASH(playerName != nullptr, ("playerName is NULL"));
+	DEBUG_ASSERTCRASH(playerName != nullptr, ("playerName is nullptr"));
 	while (*playerName)
 	{
 		if (!IsSpaceCharacter(*playerName++))

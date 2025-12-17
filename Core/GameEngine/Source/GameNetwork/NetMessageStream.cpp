@@ -104,7 +104,7 @@ Bool AddToNetCommandList(Int playerNum, GameMessage *msg, UnsignedInt timestamp)
 
 /**
  * GetCommandMsg returns a GameMessage (deleting its CommandMsg wrapper) that is valid
- * for the current frame, or NULL.
+ * for the current frame, or nullptr.
  *
 static GameMessage * GetCommandMsg(UnsignedInt timestamp, CommandMsg *& CommandHead, CommandMsg *& CommandTail)
 {

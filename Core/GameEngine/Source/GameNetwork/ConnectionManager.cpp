@@ -1079,7 +1079,7 @@ void ConnectionManager::ackCommand(NetCommandRef *ref, UnsignedInt localSlot) {
 			}
 		}
 	} else {
-		// The local connection may be the packet router, in that case, the connection would be NULL.  So do something about it!
+		// The local connection may be the packet router, in that case, the connection would be nullptr.  So do something about it!
 		if ((m_packetRouterSlot >= 0) && (m_packetRouterSlot < MAX_SLOTS)) {
 			if (m_connections[m_packetRouterSlot] != nullptr) {
 //				DEBUG_LOG(("ConnectionManager::ackCommand - acking command %d from player %d to packet router.", commandID, m_packetRouterSlot));

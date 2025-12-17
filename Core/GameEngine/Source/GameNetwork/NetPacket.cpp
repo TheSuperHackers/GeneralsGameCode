@@ -5187,7 +5187,7 @@ NetCommandList * NetPacket::getCommandList() {
 
 			msg->detach();  // Need to detach from new NetCommandMsg created by the "readXMessage" above.
 
-			// since the message is part of the list now, we don't have to keep track of it.  So we'll just set it to NULL.
+			// since the message is part of the list now, we don't have to keep track of it.  So we'll just set it to nullptr.
 			msg = nullptr;
 			break;
 		}
@@ -5262,7 +5262,7 @@ NetCommandList * NetPacket::getCommandList() {
 
 			msg->detach();  // Need to detach from new NetCommandMsg created by the "readXMessage" above.
 
-			// since the message is part of the list now, we don't have to keep track of it.  So we'll just set it to NULL.
+			// since the message is part of the list now, we don't have to keep track of it.  So we'll just set it to nullptr.
 			msg = nullptr;
 			break;
 		}
@@ -5334,13 +5334,13 @@ NetCommandMsg * NetPacket::readGameMessage(UnsignedByte *data, Int &i)
 
 		--argsLeftForType;
 		if (argsLeftForType == 0) {
-			DEBUG_ASSERTCRASH(parserArgType != nullptr, ("parserArgType was NULL when it shouldn't have been."));
+			DEBUG_ASSERTCRASH(parserArgType != nullptr, ("parserArgType was nullptr when it shouldn't have been."));
 			if (parserArgType == nullptr) {
 				return nullptr;
 			}
 
 			parserArgType = parserArgType->getNext();
-			// parserArgType is allowed to be NULL here
+			// parserArgType is allowed to be nullptr here
 			if (parserArgType != nullptr) {
 				argsLeftForType = parserArgType->getArgCount();
 				lasttype = parserArgType->getType();

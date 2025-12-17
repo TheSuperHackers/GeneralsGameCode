@@ -417,7 +417,7 @@ void GameInfo::setSlot( Int slotNum, GameSlot slotInfo )
 	if (slotNum < 0 || slotNum >= MAX_SLOTS)
 		return;
 
-	DEBUG_ASSERTCRASH( m_slot[slotNum], ("NULL slot pointer"));
+	DEBUG_ASSERTCRASH( m_slot[slotNum], ("nullptr slot pointer"));
 	if (!m_slot[slotNum])
 		return;
 
@@ -445,7 +445,7 @@ GameSlot* GameInfo::getSlot( Int slotNum )
 	if (slotNum < 0 || slotNum >= MAX_SLOTS)
 		return nullptr;
 
-	DEBUG_ASSERTCRASH( m_slot[slotNum], ("NULL slot pointer") );
+	DEBUG_ASSERTCRASH( m_slot[slotNum], ("nullptr slot pointer") );
 	return m_slot[slotNum];
 }
 
@@ -455,7 +455,7 @@ const GameSlot* GameInfo::getConstSlot( Int slotNum ) const
 	if (slotNum < 0 || slotNum >= MAX_SLOTS)
 		return nullptr;
 
-	DEBUG_ASSERTCRASH( m_slot[slotNum], ("NULL slot pointer") );
+	DEBUG_ASSERTCRASH( m_slot[slotNum], ("nullptr slot pointer") );
 	return m_slot[slotNum];
 }
 

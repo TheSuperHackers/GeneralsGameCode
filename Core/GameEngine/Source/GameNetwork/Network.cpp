@@ -403,7 +403,7 @@ void Network::parseUserList( const GameInfo *game )
 {
 	if (!game)
 	{
-		DEBUG_LOG(("FAILED parseUserList with a NULL game"));
+		DEBUG_LOG(("FAILED parseUserList with a nullptr game"));
 		return;
 	}
 

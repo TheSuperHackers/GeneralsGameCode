@@ -1094,7 +1094,7 @@ LANGameInfo * LANAPI::LookupGame( UnicodeString gameName )
 		theGame = theGame->getNext();
 	}
 
-	return theGame; // NULL means we didn't find anything.
+	return theGame; // nullptr means we didn't find anything.
 }
 
 LANGameInfo * LANAPI::LookupGameByListOffset( Int offset )
@@ -1109,7 +1109,7 @@ LANGameInfo * LANAPI::LookupGameByListOffset( Int offset )
 		theGame = theGame->getNext();
 	}
 
-	return theGame; // NULL means we didn't find anything.
+	return theGame; // nullptr means we didn't find anything.
 }
 
 void LANAPI::removeGame( LANGameInfo *game )
@@ -1150,7 +1150,7 @@ LANPlayer * LANAPI::LookupPlayer( UnsignedInt playerIP )
 		thePlayer = thePlayer->getNext();
 	}
 
-	return thePlayer; // NULL means we didn't find anything.
+	return thePlayer; // nullptr means we didn't find anything.
 }
 
 void LANAPI::removePlayer( LANPlayer *player )

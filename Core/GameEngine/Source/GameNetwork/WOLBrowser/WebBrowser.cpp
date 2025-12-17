@@ -114,7 +114,7 @@ WebBrowser::~WebBrowser()
 {
 	DEBUG_LOG(("Destructing embedded WebBrowser"));
 	if (this == TheWebBrowser) {
-		DEBUG_LOG(("WebBrowser::~WebBrowser - setting TheWebBrowser to NULL"));
+		DEBUG_LOG(("WebBrowser::~WebBrowser - setting TheWebBrowser to nullptr"));
 		TheWebBrowser = nullptr;
 	}
 	WebBrowserURL *url = m_urlList;

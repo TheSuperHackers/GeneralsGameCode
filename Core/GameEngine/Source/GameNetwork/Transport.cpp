@@ -190,7 +190,7 @@ Bool Transport::update( void )
 Bool Transport::doSend() {
 	if (!m_udpsock)
 	{
-		DEBUG_LOG(("Transport::doSend() - m_udpSock is NULL!"));
+		DEBUG_LOG(("Transport::doSend() - m_udpSock is nullptr!"));
 		return FALSE;
 	}
 
@@ -270,7 +270,7 @@ Bool Transport::doRecv()
 {
 	if (!m_udpsock)
 	{
-		DEBUG_LOG(("Transport::doRecv() - m_udpSock is NULL!"));
+		DEBUG_LOG(("Transport::doRecv() - m_udpSock is nullptr!"));
 		return FALSE;
 	}
 

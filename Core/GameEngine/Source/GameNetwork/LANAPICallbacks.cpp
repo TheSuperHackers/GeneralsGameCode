@@ -208,7 +208,7 @@ void LANAPI::OnGameStart( void )
 		//m_currentGame->startGame(0);
 
 		// Set up the game network
-		DEBUG_ASSERTCRASH(TheNetwork == nullptr, ("For some reason TheNetwork isn't NULL at the start of this game.  Better look into that."));
+		DEBUG_ASSERTCRASH(TheNetwork == nullptr, ("For some reason TheNetwork isn't nullptr at the start of this game.  Better look into that."));
 
 		delete TheNetwork;
 		TheNetwork = nullptr;

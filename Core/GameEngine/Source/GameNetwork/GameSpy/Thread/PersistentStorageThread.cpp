@@ -976,7 +976,7 @@ void PSThreadClass::Thread_Function()
 					}
 					if (!req.player.id)
 					{
-						DEBUG_LOG(("Bailing because ID is NULL!"));
+						DEBUG_LOG(("Bailing because ID is nullptr!"));
 						return;
 					}
 					req.player.desyncs[2] += addedInDesyncs2;

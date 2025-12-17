@@ -150,7 +150,7 @@ bool WorkerProcess::fetchStdOutput()
 	{
 		// Call PeekNamedPipe to make sure ReadFile won't block
 		DWORD bytesAvailable = 0;
-		DEBUG_ASSERTCRASH(m_readHandle != nullptr, ("Is not expected NULL"));
+		DEBUG_ASSERTCRASH(m_readHandle != nullptr, ("Is not expected nullptr"));
 		BOOL success = PeekNamedPipe(m_readHandle, nullptr, 0, nullptr, &bytesAvailable, nullptr);
 		if (!success)
 			return true;
