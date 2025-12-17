@@ -48,7 +48,7 @@
 #ifdef _UNIX
 #include <stdio.h>
 #include "osdep.h"
-  #define	NULL_HANDLE	 	NULL
+  #define	NULL_HANDLE	 	nullptr
   #define	HANDLE_TYPE		FILE*
 #else
   #define	NULL_HANDLE		INVALID_HANDLE_VALUE

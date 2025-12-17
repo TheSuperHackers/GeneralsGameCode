@@ -45,7 +45,7 @@
 
 // #include	"win.h"
 
-#define	NULL_HANDLE	 	NULL
+#define	NULL_HANDLE	 	nullptr
 #define	HANDLE_TYPE		FILE*
 #include "WWFILE.h"
 #include "wwstring.h"
