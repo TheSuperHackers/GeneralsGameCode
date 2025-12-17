@@ -628,7 +628,7 @@ Bool FunctionLexicon::validate( void )
 
 			//
 			// scan all tables looking for the function in sourceEntry, do not bother
-			// of source entry is NULL (a valid entry in the table, but not a function)
+			// of source entry is nullptr (a valid entry in the table, but not a function)
 			//
 			if( sourceEntry->func )
 			{

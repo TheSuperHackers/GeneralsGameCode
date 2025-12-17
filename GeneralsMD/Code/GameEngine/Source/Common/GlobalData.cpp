@@ -548,7 +548,7 @@ GlobalData::GlobalData()
 	Int i, j;
 
 	//
-	// we have now instanced a global data instance, if theOriginal is NULL, this is
+	// we have now instanced a global data instance, if theOriginal is nullptr, this is
 	// *the* very first instance and it shall be recorded.  This way, when we load
 	// overrides of the global data, we can revert to the common, original data
 	// in m_theOriginal
@@ -1258,7 +1258,7 @@ void GlobalData::parseCustomDefinition()
 
 UnsignedInt GlobalData::generateExeCRC()
 {
-	DEBUG_ASSERTCRASH(TheFileSystem != nullptr, ("TheFileSystem is NULL"));
+	DEBUG_ASSERTCRASH(TheFileSystem != nullptr, ("TheFileSystem is nullptr"));
 
 	// lets CRC the executable!  Whee!
 	const Int blockSize = 65536;

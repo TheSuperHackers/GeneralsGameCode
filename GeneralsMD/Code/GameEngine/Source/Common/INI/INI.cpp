@@ -459,7 +459,7 @@ UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 void INI::readLine( void )
 {
 	// sanity
-	DEBUG_ASSERTCRASH( m_file, ("readLine(), file pointer is NULL") );
+	DEBUG_ASSERTCRASH( m_file, ("readLine(), file pointer is nullptr") );
 
   if (m_endOfFile)
     *m_buffer=0;
@@ -898,7 +898,7 @@ void INI::parseMappedImage( INI *ini, void * /*instance*/, void *store, const vo
 	else
 	{
 
-		DEBUG_CRASH(( "INI::parseAnim2DTemplate - TheAnim2DCollection is NULL" ));
+		DEBUG_CRASH(( "INI::parseAnim2DTemplate - TheAnim2DCollection is nullptr" ));
 		throw INI_UNKNOWN_ERROR;
 
 	}

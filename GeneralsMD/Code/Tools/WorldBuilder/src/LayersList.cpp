@@ -281,7 +281,7 @@ AsciiString LayersList::removePolygonTriggerFromLayersList(PolygonTrigger *trigg
 void LayersList::changeMapObjectLayer(MapObject *objToChange, AsciiString layerToPlaceOn)
 {
 	if (!objToChange) {
-		DEBUG_CRASH(("Attempted to change location of NULL object. jkmcd"));
+		DEBUG_CRASH(("Attempted to change location of nullptr object. jkmcd"));
 		return;
 	}
 
@@ -292,7 +292,7 @@ void LayersList::changeMapObjectLayer(MapObject *objToChange, AsciiString layerT
 void LayersList::changePolygonTriggerLayer(PolygonTrigger *triggerToChange, AsciiString layerToPlaceOn)
 {
 	if (!triggerToChange) {
-		DEBUG_CRASH(("Attempted to change location of NULL object. jkmcd"));
+		DEBUG_CRASH(("Attempted to change location of nullptr object. jkmcd"));
 		return;
 	}
 
@@ -631,7 +631,7 @@ void LayersList::addPolygonTriggerToLayer(IN PolygonTrigger *triggerToAdd, IN Li
 void LayersList::removeMapObjectFromLayer(IN MapObject *objectToRemove, IN ListLayerIt *layerIt, IN ListMapObjectPtrIt *objectIt)
 {
 	if (!objectToRemove) {
-		DEBUG_CRASH(("Attempted to remove NULL object from layers list. jkmcd"));
+		DEBUG_CRASH(("Attempted to remove nullptr object from layers list. jkmcd"));
 		return;
 	}
 

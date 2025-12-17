@@ -169,7 +169,7 @@ ThingTemplate* ThingFactory::newOverride( ThingTemplate *thingTemplate )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( thingTemplate, ("newOverride(): NULL 'parent' thing template") );
+	DEBUG_ASSERTCRASH( thingTemplate, ("newOverride(): nullptr 'parent' thing template") );
 
 	// sanity just for debuging, the weapon must be in the master list to do overrides
 	DEBUG_ASSERTCRASH( findTemplate( thingTemplate->getName() ) != nullptr,
@@ -219,7 +219,7 @@ void ThingFactory::reset( void )
 			possibleAdjustment = TRUE;
 		}
 
-		// if stillValid is NULL after we delete the overrides, then this template was created for
+		// if stillValid is nullptr after we delete the overrides, then this template was created for
 		// this map only. If it also happens to be m_firstTemplate, then we need to update m_firstTemplate
 		// as well. Finally, if it was only created for this map, we need to remove the name from the
 		// hash map, to prevent any crashes.

@@ -338,7 +338,7 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 	}
 
 	// Need to validate that we can make this in case someone fakes their CommandSet
-	// A NULL constructor Object means a script built building so let it slide.
+	// A nullptr constructor Object means a script built building so let it slide.
 	if( (constructorObject != nullptr) && !isPossibleToMakeUnit(constructorObject, what) )
 		return nullptr;
 
@@ -907,7 +907,7 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 //-------------------------------------------------------------------------------------------------
 /** Query if we can build at this location.  Note that 'build' may be null and is NOT required
 	* to be valid to know if a location is legal to build at.  'builderObject' is used
-	* for queries that require a pathfind check and should be NULL if not required */
+	* for queries that require a pathfind check and should be nullptr if not required */
 //-------------------------------------------------------------------------------------------------
 LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 																											 const ThingTemplate *build,

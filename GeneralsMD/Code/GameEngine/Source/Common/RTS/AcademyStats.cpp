@@ -1069,7 +1069,7 @@ Bool AcademyStats::calculateAcademyAdvice( AcademyAdviceInfo *info )
 	//Sanity
 	if( !info )
 	{
-		DEBUG_CRASH( ("AcademyStats::calculateAcademyAdvice() was passed in NULL AcademyAdviceInfo.") );
+		DEBUG_CRASH( ("AcademyStats::calculateAcademyAdvice() was passed in nullptr AcademyAdviceInfo.") );
 		return FALSE;
 	}
 
