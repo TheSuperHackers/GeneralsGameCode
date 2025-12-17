@@ -1701,16 +1701,6 @@ Color Object::getNightIndicatorColor() const
 //=============================================================================
 Bool Object::isLogicallyVisible() const
 {
-	if (isLocallyViewed())
-		return true;
-
-	if (rts::localPlayerIsObserving())
-	{
-		const Player* observedPlayer = TheControlBar->getObserverLookAtPlayer();
-		if (!observedPlayer || !observedPlayer->isPlayerActive())
-			return true;
-	}
-
 	const Object* obj = getOuterObject();
 
 	// Disguisers are always visible to all players, irrespective of any stealth
@@ -1724,7 +1714,7 @@ Bool Object::isLogicallyVisible() const
 		const Player* player = rts::getObservedOrLocalPlayer();
 		const Relationship relationship = player->getRelationship(getTeam());
 
-		if (relationship != ALLIES)
+		if (player->isPlayerActive() && relationship != ALLIES)
 			return false;
 	}
 
