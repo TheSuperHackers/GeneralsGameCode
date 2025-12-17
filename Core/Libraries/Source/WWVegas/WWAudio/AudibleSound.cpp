@@ -666,7 +666,7 @@ AudibleSoundClass::Free_Miles_Handle (void)
 		//
 		// Remove the association between file handle and AudibleSoundClass object
 		//
-		//m_SoundHandle->Set_Sample_User_Data (INFO_OBJECT_PTR, NULL);
+		//m_SoundHandle->Set_Sample_User_Data (INFO_OBJECT_PTR, nullptr);
 
 		//
 		//	Free the sound handle object

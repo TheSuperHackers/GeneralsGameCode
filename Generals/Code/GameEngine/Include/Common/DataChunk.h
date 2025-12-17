@@ -187,7 +187,6 @@ public:
 																									// to create an object, and a subsequent chunk to
 																									// parse values into that object.  However, the second
 																									// chunk parser could also create and parse an object
-<<<<<<< HEAD
 																									// of its own if this pointer is nullptr.
 																									// The parser of the base class should set this pointer to nullptr.
 	void *m_userData;																	// user data hook

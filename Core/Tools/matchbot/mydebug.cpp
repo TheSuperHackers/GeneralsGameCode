@@ -23,7 +23,7 @@
 #include "odevice.h"
 
 
-// static MyMsgManager         *msg_manager=NULL;
+// static MyMsgManager         *msg_manager=nullptr;
 
 // static int                paranoid_enabled=0;
 static ostream           *paranoid_ostream=nullptr;

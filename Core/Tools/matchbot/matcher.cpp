@@ -273,7 +273,7 @@ void MatcherClass::handleConnect( bool success )
 	m_connectSuccess = success;
 
 	//DEBUG_LOG(("Enumerating chat channels"));
-	//chatEnumChannels( peerGetChat(m_peer), "", callbackEach, callbackAll, NULL, CHATTrue );
+	//chatEnumChannels( peerGetChat(m_peer), "", callbackEach, callbackAll, nullptr, CHATTrue );
 	//DEBUG_LOG(("Done enumerating chat channels"));
 }
 

@@ -618,7 +618,7 @@ WindowMsgHandledType RCGameDetailsMenuSystem( GameWindow *window, UnsignedInt ms
 		case GGM_CLOSE:
 			{
 				closeRightClickMenu(window);
-				//rcMenu = NULL;
+				//rcMenu = nullptr;
 				break;
 			}
 

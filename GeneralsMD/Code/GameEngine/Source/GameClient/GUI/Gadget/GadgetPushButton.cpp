@@ -135,7 +135,7 @@ WindowMsgHandledType GadgetPushButtonInput( GameWindow *window,
 			if( BitIsSet( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) == FALSE )
 				if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 					BitClear( instData->m_state, WIN_STATE_SELECTED );
-			//TheWindowManager->winSetFocus( NULL );
+			//TheWindowManager->winSetFocus( nullptr );
 			if(window->winGetParent() && BitIsSet(window->winGetParent()->winGetStyle(),GWS_HORZ_SLIDER) )
 			{
 				WinInstanceData *instDataParent = window->winGetParent()->winGetInstanceData();

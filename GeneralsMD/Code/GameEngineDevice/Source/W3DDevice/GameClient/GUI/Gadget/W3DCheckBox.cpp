@@ -251,7 +251,7 @@ void W3DGadgetCheckBoxDraw( GameWindow *window, WinInstanceData *instData )
 void W3DGadgetCheckBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 {
 	Int checkOffsetFromLeft;
-	const Image  *boxImage = nullptr;//*backgroundImage = NULL,
+	const Image  *boxImage = nullptr;//*backgroundImage = nullptr,
 	ICoord2D origin, start, end, size;
 
 	// get window position and size

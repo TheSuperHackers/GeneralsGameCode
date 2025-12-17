@@ -811,7 +811,7 @@ void RenderObjClass::Add(SceneClass * scene)
 bool RenderObjClass::Remove(void)
 {
 	// All render objects have their scene pointers set.  To check if this is a "top level"
-	// object, (i.e. directly in the scene) you see if its Container pointer is NULL.
+	// object, (i.e. directly in the scene) you see if its Container pointer is nullptr.
 #if 1
 	if (Container == nullptr) {
 		if (Scene != nullptr) {
@@ -1249,7 +1249,7 @@ PersistClass *	RenderObjPersistFactoryClass::Load(ChunkLoadClass & cload) const
 		static int count = 0;
 		if ( count++ < 10 ) {
 			WWDEBUG_SAY(("RenderObjPersistFactory attempted to load an un-named render object!"));
-			WWDEBUG_SAY(("Replacing it with a NULL render object!"));
+			WWDEBUG_SAY(("Replacing it with a nullptr render object!"));
 		}
 		strcpy(name,"NULL");
 	}
@@ -1261,7 +1261,7 @@ PersistClass *	RenderObjPersistFactoryClass::Load(ChunkLoadClass & cload) const
 		if ( count++ < 10 ) {
 			WWDEBUG_SAY(("RenderObjPersistFactory failed to create object: %s!!",name));
 			WWDEBUG_SAY(("Either the asset for this object is gone or you tried to save a procedural object."));
-			WWDEBUG_SAY(("Replacing it with a NULL render object!"));
+			WWDEBUG_SAY(("Replacing it with a nullptr render object!"));
 		}
 		strcpy(name,"NULL");
 		new_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(name);

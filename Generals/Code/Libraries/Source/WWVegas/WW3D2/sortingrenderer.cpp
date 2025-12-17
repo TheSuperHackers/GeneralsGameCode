@@ -848,7 +848,7 @@ void SortingRendererClass::Insert_VolumeParticle(
 	if (!node) sorted_list.Add_Tail(state);
 
 //#ifdef WWDEBUG
-//	unsigned short* indices=NULL;
+//	unsigned short* indices=nullptr;
 //	SortingIndexBufferClass* index_buffer=static_cast<SortingIndexBufferClass*>(state->sorting_state.index_buffer);
 //	WWASSERT(index_buffer);
 //	indices=index_buffer->index_buffer;

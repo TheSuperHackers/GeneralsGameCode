@@ -474,7 +474,7 @@ protected:
 
 private:
 
-	// NOTE: m_nextTemplate will be cleaned up if it is NON-NULL.
+	// NOTE: m_nextTemplate will be cleaned up if it is NON-nullptr.
 	WeaponTemplate *m_nextTemplate;
 
 	static void parseWeaponBonusSet( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );

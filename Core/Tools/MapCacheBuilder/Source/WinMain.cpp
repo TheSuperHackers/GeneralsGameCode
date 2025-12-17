@@ -302,7 +302,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	// delete TheGlobalData
 	//delete TheGlobalData;
-	//TheGlobalData = NULL;
+	//TheGlobalData = nullptr;
 
 	_TheSubsystemList.shutdownAll();
 

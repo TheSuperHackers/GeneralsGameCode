@@ -133,7 +133,7 @@ public:
 	void addObjectCreationNugget(ObjectCreationNugget* nugget);
 
 	// Kris: August 23, 2003
-	// All OCLs return the first object that is created (or NULL if not applicable).
+	// All OCLs return the first object that is created (or nullptr if not applicable).
 	static Object* create( const ObjectCreationList* ocl, const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 )
 	{
 		if( ocl )
@@ -142,7 +142,7 @@ public:
 	}
 
 	// Kris: August 23, 2003
-	// All OCLs return the first object that is created (or NULL if not applicable).
+	// All OCLs return the first object that is created (or nullptr if not applicable).
 	/// inline convenience method to avoid having to check for null.
 	static Object* create(const ObjectCreationList* ocl, const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, UnsignedInt lifetimeFrames = 0 )
 	{
@@ -152,7 +152,7 @@ public:
 	}
 
 	// Kris: August 23, 2003
-	// All OCLs return the first object that is created (or NULL if not applicable).
+	// All OCLs return the first object that is created (or nullptr if not applicable).
 	/// inline convenience method to avoid having to check for null.
 	static Object* create( const ObjectCreationList* ocl, const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 )
 	{
@@ -166,7 +166,7 @@ protected:
 private:
 
 	// Kris: August 23, 2003
-	// All OCLs return the first object that is created (or NULL if not applicable).
+	// All OCLs return the first object that is created (or nullptr if not applicable).
 	Object* createInternal(const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 ) const;
 	Object* createInternal(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const;
 	Object* createInternal(const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const;

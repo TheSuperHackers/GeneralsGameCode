@@ -1039,7 +1039,7 @@ void PopulatePlayerInfoWindows( AsciiString parentWindowName )
 
 //		//favorite side  (ex: Toxin, Tank, Stealth, etc.)
 //		AsciiString side;
-//		if( mostGames > 0  &&  pPlayerTemplate != NULL )
+//		if( mostGames > 0  &&  pPlayerTemplate != nullptr )
 //		{
 //			if( stats.gamesAsRandom >= mostGames )
 //				side = "GUI:Random";

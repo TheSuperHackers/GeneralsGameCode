@@ -248,7 +248,7 @@ PointGroupClass & PointGroupClass::operator = (const PointGroupClass & that)
  * WARNINGS:                                                              *
  *                                                                        *
  * NOTES:	colors, alphas, APT, sizes, orientations and frames are       *
- *          optional. active_point_count can also be used with a NULL apt.*
+ *          optional. active_point_count can also be used with a nullptr apt.*
  *          In this case active_point_count is ignored if it is -1        *
  *          (default value) and otherwise it indicates the first N active *
  *          points in the arrays.                                         *
@@ -626,7 +626,7 @@ TextureClass * PointGroupClass::Peek_Texture(void)
  * WARNINGS:	the primary gradient will be set to MODULATE/DISABLE in    *
  * 				the shader depending on whether a color or alpha array was *
  * 				passed in Set_Point_Arrays. also, texturing will be        *
- * 				enabled or disabled dependent on whether a non-NULL        *
+ * 				enabled or disabled dependent on whether a non-nullptr        *
  * 				texture was set.                                           *
  *					these will override the primary gradient/texturing         *
  *					settings in the given shader.                              *
@@ -809,7 +809,7 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 		Shader.Set_Primary_Gradient(ShaderClass::GRADIENT_DISABLE);
 	}
 
-	// If Texture is non-NULL enable texturing in shader - otherwise disable.
+	// If Texture is non-nullptr enable texturing in shader - otherwise disable.
 	if (Texture) {
 		Shader.Set_Texturing(ShaderClass::TEXTURING_ENABLE);
 	} else {
@@ -1681,7 +1681,7 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 		Shader.Set_Primary_Gradient(ShaderClass::GRADIENT_DISABLE);
 	}
 
-	// If Texture is non-NULL enable texturing in shader - otherwise disable.
+	// If Texture is non-nullptr enable texturing in shader - otherwise disable.
 	if (Texture) {
 		Shader.Set_Texturing(ShaderClass::TEXTURING_ENABLE);
 	} else {

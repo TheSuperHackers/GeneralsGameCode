@@ -119,8 +119,8 @@ void W3DPowerDraw( GameWindow *window, WinInstanceData *instData )
 	//static const Image *endBarGreen = TheMappedImageCollection->findImageByName("PowerBarGreenEndR");
 	//static const Image *beginBarGreen = TheMappedImageCollection->findImageByName("PowerBarGreenEndL");
 	static const Image *centerBarGreen = TheMappedImageCollection->findImageByName("PowerPointG");
-	//const Image *endBar = NULL;
-	//const Image *beginBar = NULL;
+	//const Image *endBar = nullptr;
+	//const Image *beginBar = nullptr;
 	const Image *centerBar = nullptr;
 	static const Image *slider = TheMappedImageCollection->findImageByName("PowerBarSlider");
 	Player* player = TheControlBar->getCurrentlyViewedPlayer();
@@ -631,7 +631,7 @@ void W3DCommandBarBackgroundDraw( GameWindow *window, WinInstanceData *instData 
 	if(!win)
 	{
 		return;
-		//win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" ));
+		//win = TheWindowManager->winGetWindowFromId(nullptr,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" ));
 	}
 	TheControlBar->getBackgroundMarkerPos(&basePos.x, &basePos.y);
 	ICoord2D pos, offset;
@@ -656,7 +656,7 @@ void W3DCommandBarForegroundDraw( GameWindow *window, WinInstanceData *instData 
 	if(!win)
 	{
 		return;
-		//win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" ));
+		//win = TheWindowManager->winGetWindowFromId(nullptr,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" ));
 	}
 	TheControlBar->getForegroundMarkerPos(&basePos.x, &basePos.y);
 	ICoord2D pos, offset;

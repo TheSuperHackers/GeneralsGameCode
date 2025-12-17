@@ -326,7 +326,7 @@ bool HTreeClass::read_pivots(ChunkLoadClass & cload,bool pre30)
 
 		/*
 		** Set the parent pointer.  The first pivot will have a parent index
-		** of -1 (in post-3.0 files) so set its parent to NULL.
+		** of -1 (in post-3.0 files) so set its parent to nullptr.
 		*/
 		if (piv.ParentIdx == -1) {
 			Pivot[pidx].Parent = nullptr;

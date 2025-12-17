@@ -1169,13 +1169,13 @@ void Drawable::updateDrawable( void )
 		}
 //		else if ( testTintStatus( TINT_STATUS_POISONED) )
 //		{
-//			if (m_colorTintEnvelope == NULL)
+//			if (m_colorTintEnvelope == nullptr)
 //				m_colorTintEnvelope = newInstance(TintEnvelope);
 //			m_colorTintEnvelope->play( &SICKLY_GREEN_POISONED_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
 //		}
 //		else if ( testTintStatus( TINT_STATUS_IRRADIATED) )
 //		{
-//			if (m_colorTintEnvelope == NULL)
+//			if (m_colorTintEnvelope == nullptr)
 //				m_colorTintEnvelope = newInstance(TintEnvelope);
 //			m_colorTintEnvelope->play( &RED_IRRADIATED_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
 //		}
@@ -2734,7 +2734,7 @@ void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 	if( body->getHealth() != body->getMaxHealth() )
 	{
 //		const DamageInfo* lastDamage = body->getLastDamageInfo();
-//		if( lastDamage != NULL && lastDamage->in.m_damageType == DAMAGE_HEALING
+//		if( lastDamage != nullptr && lastDamage->in.m_damageType == DAMAGE_HEALING
 //			&&(TheGameLogic->getFrame() - body->getLastHealingTimestamp()) <= HEALING_ICON_DISPLAY_TIME
 //			)
 		if ( TheGameLogic->getFrame() > HEALING_ICON_DISPLAY_TIME && // because so many things init health early in game

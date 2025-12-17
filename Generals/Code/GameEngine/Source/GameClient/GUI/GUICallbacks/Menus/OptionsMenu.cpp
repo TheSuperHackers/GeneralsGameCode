@@ -124,10 +124,10 @@ static NameKeyType		buttonFirewallRefreshID	= NAMEKEY_INVALID;
 static GameWindow *		buttonFirewallRefresh		= nullptr;
 //
 //static NameKeyType    checkAudioHardwareID = NAMEKEY_INVALID;
-//static GameWindow *   checkAudioHardware   = NULL;
+//static GameWindow *   checkAudioHardware   = nullptr;
 //
 //static NameKeyType    checkAudioSurroundID = NAMEKEY_INVALID;
-//static GameWindow *   checkAudioSurround   = NULL;
+//static GameWindow *   checkAudioSurround   = nullptr;
 ////volume controls
 //
 static NameKeyType    sliderMusicVolumeID = NAMEKEY_INVALID;
@@ -1660,9 +1660,9 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 
 //	// Speakers and 3-D Audio
 //	checkAudioSurroundID   = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckAudioSurround" );
-//	checkAudioSurround     = TheWindowManager->winGetWindowFromId( NULL, checkAudioSurroundID );
+//	checkAudioSurround     = TheWindowManager->winGetWindowFromId( nullptr, checkAudioSurroundID );
 //	checkAudioHardwareID   = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckAudioHardware" );
-//	checkAudioHardware     = TheWindowManager->winGetWindowFromId( NULL, checkAudioHardwareID );
+//	checkAudioHardware     = TheWindowManager->winGetWindowFromId( nullptr, checkAudioHardwareID );
 //
 	// Volume Controls
 	sliderMusicVolumeID    = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:SliderMusicVolume" );

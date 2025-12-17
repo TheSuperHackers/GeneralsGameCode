@@ -393,8 +393,8 @@ void ModelConditionInfo::preloadAssets( TimeOfDay timeOfDay, Real scale )
 	}
 
 	// this can be called from the client, which is problematic
-//	validateStuff(NULL, getDrawable()->getScale());
-	//validateCachedBones(NULL, scale);
+//	validateStuff(nullptr, getDrawable()->getScale());
+	//validateCachedBones(nullptr, scale);
 	//validateTurretInfo();
 	//validateWeaponBarrelInfo();
 }
@@ -3373,7 +3373,7 @@ Int W3DModelDraw::getPristineBonePositionsForConditionState(
 //	{
 //		CRCDEBUG_LOG(("W3DModelDraw::getPristineBonePositionsForConditionState() - state = '%s'",
 //			stateToUse->getDescription().str()));
-//		//CRCDEBUG_LOG(("renderObject == NULL: %d", (stateToUse==m_curState)?(m_renderObject == NULL):1));
+//		//CRCDEBUG_LOG(("renderObject == nullptr: %d", (stateToUse==m_curState)?(m_renderObject == nullptr):1));
 //	}
 
 	//BONEPOS_LOG(("validateStuff() from within W3DModelDraw::getPristineBonePositionsForConditionState()"));

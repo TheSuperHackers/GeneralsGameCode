@@ -130,7 +130,7 @@ void MaterialPassClass::Install_Materials(void) const
  * MaterialPassClass::Set_Texture -- Set texture to use                                        *
  *                                                                                             *
  * INPUT:                                                                                      *
- * tex - pointer to the texture for this material pass (or NULL)                               *
+ * tex - pointer to the texture for this material pass (or nullptr)                               *
  *                                                                                             *
  * OUTPUT:                                                                                     *
  *                                                                                             *

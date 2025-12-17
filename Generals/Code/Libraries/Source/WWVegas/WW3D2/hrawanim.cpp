@@ -574,7 +574,7 @@ void HRawAnimClass::Get_Transform(Matrix3D& mtx, int pividx, float frame ) const
 {
 	struct NodeMotionStruct * motion = &NodeMotion[pividx];
 
-//	if ( (motion->X == NULL) && (motion->Y == NULL) && (motion->Z == NULL) ) {
+//	if ( (motion->X == nullptr) && (motion->Y == nullptr) && (motion->Z == nullptr) ) {
 //		 trans.Set(0.0f,0.0f,0.0f);
 //		return;
 //	}

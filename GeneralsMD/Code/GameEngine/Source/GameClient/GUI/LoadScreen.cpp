@@ -675,9 +675,9 @@ ChallengeLoadScreen::ChallengeLoadScreen( void )
 	m_portraitMovieLeft = nullptr;
 	m_portraitMovieRight = nullptr;
 
-//	m_overlayReticleCrosshairs = NULL;
-//	m_overlayReticleCircleLineOuter = NULL;
-//	m_overlayReticleCircleLineInner = NULL;
+//	m_overlayReticleCrosshairs = nullptr;
+//	m_overlayReticleCircleLineOuter = nullptr;
+//	m_overlayReticleCircleLineInner = nullptr;
 	m_overlayReticleCircleAlphaOuter = nullptr;
 	m_overlayReticleCircleAlphaInner = nullptr;
 	m_overlayVsBackdrop = nullptr;
@@ -722,9 +722,9 @@ ChallengeLoadScreen::~ChallengeLoadScreen( void )
 	m_portraitMovieLeft = nullptr;
 	m_portraitMovieRight = nullptr;
 
-//	m_overlayReticleCrosshairs = NULL;
-//	m_overlayReticleCircleLineOuter = NULL;
-//	m_overlayReticleCircleLineInner = NULL;
+//	m_overlayReticleCrosshairs = nullptr;
+//	m_overlayReticleCircleLineOuter = nullptr;
+//	m_overlayReticleCircleLineInner = nullptr;
 	m_overlayReticleCircleAlphaOuter = nullptr;
 	m_overlayReticleCircleAlphaInner = nullptr;
 	m_overlayVsBackdrop = nullptr;

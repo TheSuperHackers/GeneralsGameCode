@@ -135,10 +135,10 @@ class TextureLoadTaskListClass
 		// Add a task to end of list
 		void									Push_Back	(TextureLoadTaskClass *task);
 
-		// Remove and return a task from beginning of list, or NULL if list is empty.
+		// Remove and return a task from beginning of list, or nullptr if list is empty.
 		TextureLoadTaskClass *			Pop_Front	(void);
 
-		// Remove and return a task from end of list, or NULL if list is empty
+		// Remove and return a task from end of list, or nullptr if list is empty
 		TextureLoadTaskClass *			Pop_Back		(void);
 
 		// Remove specified task from list, if present

@@ -424,7 +424,7 @@ UnsignedShort FirewallHelperClass::getManglerResponse(UnsignedShort packetID, In
 {
 	ManglerMessage *msg = nullptr;
 
-//	SpareSocketStruct *spareSocket = NULL;
+//	SpareSocketStruct *spareSocket = nullptr;
 
 	sockaddr_in addr;
 

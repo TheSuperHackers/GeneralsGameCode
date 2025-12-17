@@ -502,7 +502,7 @@ StateReturnType AIGuardRetaliateOuterState::onEnter( void )
 	Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
 	if (nemesis == nullptr)
 	{
-		DEBUG_LOG(("Unexpected NULL nemesis in AIGuardRetaliateOuterState."));
+		DEBUG_LOG(("Unexpected nullptr nemesis in AIGuardRetaliateOuterState."));
 		return STATE_SUCCESS;
 	}
 	Object *obj = getMachineOwner();

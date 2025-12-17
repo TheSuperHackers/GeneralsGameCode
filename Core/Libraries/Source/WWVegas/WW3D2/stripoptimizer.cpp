@@ -497,7 +497,7 @@ namespace Strip
  *
  * Description:		Returns pointer to triangle with smallest connectivity
  *
- * Returns:			pointer to triangle with smallest connectivity or NULL
+ * Returns:			pointer to triangle with smallest connectivity or nullptr
  *					if the queue is empty
  *
  *****************************************************************************/
@@ -548,7 +548,7 @@ inline TriangleQueue::~TriangleQueue ()
  * Description:		Internal function for recalculating a triangle's
  *					connectivity
  *
- * Parameters:		t = pointer to triangle (non-NULL)
+ * Parameters:		t = pointer to triangle (non-nullptr)
  *
  *****************************************************************************/
 
@@ -585,7 +585,7 @@ inline void TriangleQueue::reinsert (Triangle* t)
  *
  * Description:		Removes a triangle from the queue
  *
- * Parameters:		t = pointer to triangle (non-NULL)
+ * Parameters:		t = pointer to triangle (non-nullptr)
  *
  *****************************************************************************/
 

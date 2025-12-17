@@ -841,7 +841,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 		// BGC - initialize COM
-	//	OleInitialize(NULL);
+	//	OleInitialize(nullptr);
 
 
 

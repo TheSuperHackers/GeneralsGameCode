@@ -278,7 +278,7 @@ public:
 	virtual Bool isClearToApproach( Object const* docker ) const = 0;
 
 	/** Give me a Queue point to drive to, and record that that point is taken.
-			Returning NULL means there are none free
+			Returning nullptr means there are none free
 	*/
 	virtual Bool reserveApproachPosition( Object* docker, Coord3D *position, Int *index ) = 0;
 
@@ -298,7 +298,7 @@ public:
 	virtual Bool isClearToAdvance( Object const* docker, Int dockerIndex ) const = 0;
 
 	/** Give me the point that is the start of your docking path
-			Returning NULL means there is none free
+			Returning nullptr means there is none free
 			All functions take docker as arg so we could have multiple docks on a building.
 			Docker is not assumed, it is recorded and checked.
 	*/

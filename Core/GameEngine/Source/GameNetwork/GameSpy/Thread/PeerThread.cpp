@@ -2975,7 +2975,7 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 			resp.stagingServerName = MultiByteToWideCharSingleLine( gameName.str() );
 			DEBUG_LOG(("Server had basic=%d, full=%d", SBServerHasBasicKeys(server), SBServerHasFullKeys(server)));
 #ifdef DEBUG_LOGGING
-			//SBServerEnumKeys(server, enumFunc, NULL);
+			//SBServerEnumKeys(server, enumFunc, nullptr);
 #endif
 			break;
 		case PEER_REMOVE:

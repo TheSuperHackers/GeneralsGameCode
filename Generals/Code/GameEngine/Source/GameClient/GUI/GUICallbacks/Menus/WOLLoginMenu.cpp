@@ -772,7 +772,7 @@ static void checkLogin( void )
 		DEBUG_LOG(("Ping string is %s", pingStr.str()));
 		TheGameSpyInfo->setPingString(pingStr);
 		//delete ThePinger;
-		//ThePinger = NULL;
+		//ThePinger = nullptr;
 
 		buttonPushed = true;
 		loggedInOK = false; // don't try this again

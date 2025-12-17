@@ -493,7 +493,7 @@ bool Is_Skin(INode * node)
 		if (refTarg != nullptr && refTarg->ClassID() == Class_ID(WSM_DERIVOB_CLASS_ID,0)) {
 
 			IDerivedObject * wsm_der_obj = (IDerivedObject *)refTarg;
-			//MessageBox(NULL, "WSM found", _T("WSM"), MB_OK);
+			//MessageBox(nullptr, "WSM found", _T("WSM"), MB_OK);
 
 			for (int j = 0; j < wsm_der_obj->NumModifiers(); j++) {
 				Modifier * mod = wsm_der_obj->GetModifier(j);

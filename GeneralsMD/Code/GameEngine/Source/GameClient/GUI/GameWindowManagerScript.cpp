@@ -466,7 +466,7 @@ static Bool parseDefaultFont( GameFont *font, File *inFile, char *buffer )
 
 	/// @todo font parsing for window files work needed here
 //	*font = GetFont( buffer );
-//	if( *font == NULL )
+//	if( *font == nullptr )
 //		return FALSE;
 
 	return TRUE;
@@ -1476,7 +1476,7 @@ static Bool parseData( void **data, char *type, char *buffer )
 	  c = strtok( buffer, " \t\n\r" );
     lData.listLength = atoi(c);
 
-//	  c = strtok( NULL, " \t\n\r" );
+//	  c = strtok( nullptr, " \t\n\r" );
 //    lData.entryHeight = atoi(c);
 
 	  c = strtok( nullptr, " \t\n\r" );
@@ -2089,7 +2089,7 @@ static GameWindow *createWindow( char *type,
 
   }
 
-	// assign the callbacks if they are not empty/NULL, that means they were read
+	// assign the callbacks if they are not empty/nullptr, that means they were read
 	// in and parsed from the window definition file
 	if( window )
 	{
@@ -2495,7 +2495,7 @@ cleanupAndExit:
 	//
 	// I am commenting this out to get tooltips working, If for
 	// some reason we start having displayString problems... CLH
-//	assert( instData.m_text == NULL && instData.m_tooltip == NULL );
+//	assert( instData.m_text == nullptr && instData.m_tooltip == nullptr );
 
 	return window;
 

@@ -296,8 +296,8 @@ void PredictiveLODOptimizerClass::Optimize_LODs(float max_cost)
 	LODHeap min_current_value_queue(NumObjects, VisibleObjArray1);
 	LODHeap max_post_increment_value_queue(NumObjects, VisibleObjArray2);
 	// These memory areas now are pointed to within the heaps:
-//	visible_obj_array1 = NULL;
-//	visible_obj_array2 = NULL;
+//	visible_obj_array1 = nullptr;
+//	visible_obj_array2 = nullptr;
 
 	// Main loop: iteratively increment/decrement tuples.
 	bool done = false;

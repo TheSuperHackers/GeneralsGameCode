@@ -119,7 +119,7 @@ static NameKeyType backdropID = NAMEKEY_INVALID;
 
 static GameWindow *parent = nullptr;
 static GameWindow *buttonOk = nullptr;
-//static GameWindow *buttonRehost = NULL;
+//static GameWindow *buttonRehost = nullptr;
 static GameWindow *buttonContinue = nullptr;
 static GameWindow *textEntryChat = nullptr;
 static GameWindow *buttonEmote = nullptr;

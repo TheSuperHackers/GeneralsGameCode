@@ -49,7 +49,7 @@
 #define DEFAULT_VB_SIZE 5000
 
 static bool _DynamicSortingVertexArrayInUse=false;
-//static VertexFormatXYZNDUV2* _DynamicSortingVertexArray=NULL;
+//static VertexFormatXYZNDUV2* _DynamicSortingVertexArray=nullptr;
 static SortingVertexBufferClass* _DynamicSortingVertexArray=nullptr;
 static unsigned short _DynamicSortingVertexArraySize=0;
 static unsigned short _DynamicSortingVertexArrayOffset=0;

@@ -233,7 +233,7 @@ char *RegistryClass::Get_String( const char * name, char *value, int value_size,
 void	RegistryClass::Set_String( const char * name, const char *value )
 {
 	assert( IsValid );
-   int size = strlen( value ) + 1; // must include NULL
+   int size = strlen( value ) + 1; // must include null terminator
 	if (IsLocked) {
 		return;
 	}

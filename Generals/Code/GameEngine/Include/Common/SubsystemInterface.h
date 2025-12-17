@@ -52,7 +52,7 @@ public:
 	/** - Constructors should initialize any data to a valid state.  That DOES NOT mean
 		*		the data has default values (something done in the init() method), only that
 		*		nothing is left pointing to garbage, un-initialized memory.  In most cases
-		*		this probably means just setting members to zero or NULL.
+		*		this probably means just setting members to zero or nullptr.
 		*/
 	SubsystemInterface();
 

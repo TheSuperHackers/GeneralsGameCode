@@ -1108,7 +1108,7 @@ Int WaterRenderObjClass::init(Real waterLevel, Real dx, Real dy, SceneClass *par
 
 	m_riverTexture=WW3DAssetManager::Get_Instance()->Get_Texture(TheWaterTransparency->m_standingWaterTexture.str());
 
-	//For some reason setting a NULL texture does not result in 0xffffffff for pixel shaders so using explicit "white" texture.
+	//For some reason setting a nullptr texture does not result in 0xffffffff for pixel shaders so using explicit "white" texture.
 	m_whiteTexture=MSGNEW("TextureClass") TextureClass(1,1,WW3D_FORMAT_A4R4G4B4,MIP_LEVELS_1);
 	SurfaceClass *surface=m_whiteTexture->Get_Surface_Level();
 	surface->DrawPixel(0,0,0xffffffff);
@@ -1349,7 +1349,7 @@ void WaterRenderObjClass::loadSetting( Setting *setting, TimeOfDay timeOfDay )
 	SurfaceClass::SurfaceDescription surfaceDesc;
 
 	// sanity
-	DEBUG_ASSERTCRASH( setting, ("WaterRenderObjClass::loadSetting, NULL setting") );
+	DEBUG_ASSERTCRASH( setting, ("WaterRenderObjClass::loadSetting, nullptr setting") );
 
 	// textures
 	setting->skyTexture = WW3DAssetManager::Get_Instance()->Get_Texture( WaterSettings[ timeOfDay ].m_skyTextureFile.str() );
@@ -1717,7 +1717,7 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 	}
 
 	//Clean up after any pixel shaders.
-	//Force render state apply so that the "nullptr" texture gets applied to D3D, thus releasing shroud reference count.
+	//Force render state apply so that the "NULL" texture gets applied to D3D, thus releasing shroud reference count.
 	DX8Wrapper::Apply_Render_State_Changes();
 	DX8Wrapper::Invalidate_Cached_Render_States();
 
@@ -2625,7 +2625,7 @@ void WaterRenderObjClass::setGridResolution(Real gridCellsX, Real gridCellsY, Re
 		{
 
 			delete [] m_meshData;//free previously allocated grid and allocate new size
-			m_meshData = nullptr;	 // must set to NULL so that we properly re-allocate
+			m_meshData = nullptr;	 // must set to nullptr so that we properly re-allocate
 			m_meshDataSize = 0;
 
 			Bool enable = m_doWaterGrid;
@@ -2956,7 +2956,7 @@ void WaterRenderObjClass::setupFlatWaterShader(void)
 			DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 		}
 		else
-		{	//Assume no shroud, so stage 3 will be "nullptr" texture but using actual white because
+		{	//Assume no shroud, so stage 3 will be "NULL" texture but using actual white because
 			//pixel shader on GF4 generates random colors with SetTexture(3,nullptr).
 			if (!m_whiteTexture->Is_Initialized())
 			{	m_whiteTexture->Init();

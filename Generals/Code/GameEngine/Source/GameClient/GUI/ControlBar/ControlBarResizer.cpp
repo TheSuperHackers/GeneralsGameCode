@@ -210,7 +210,7 @@ void ControlBarResizer::sizeWindowsAlt( void )
 void INI::parseControlBarResizerDefinition( INI* ini )
 {
 //	AsciiString name;
-//	ResizerWindow *rWin = NULL;
+//	ResizerWindow *rWin = nullptr;
 //
 //	// read the name
 //	const char* c = ini->getNextToken();
@@ -223,7 +223,7 @@ void INI::parseControlBarResizerDefinition( INI* ini )
 //		return;
 //	}
 //	rWin = resizer->findResizerWindow( name );
-//	if( rWin == NULL )
+//	if( rWin == nullptr )
 //	{
 //
 //		// image not found, create a new one

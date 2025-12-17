@@ -335,7 +335,7 @@ void ToggleQuitMenu()
 			//else
 			//{
 			//	TheTransitionHandler->remove("QuitFull");
-			//	quitMenuLayout = NULL;
+			//	quitMenuLayout = nullptr;
 			//	isVisible = TRUE;
 			//	HideQuitMenu();
 			//}

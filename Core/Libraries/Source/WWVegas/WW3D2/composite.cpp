@@ -206,9 +206,9 @@ void CompositeRenderObjClass::Set_Name(const char * name)
  *=============================================================================================*/
 void CompositeRenderObjClass::Set_Base_Model_Name(const char *name)
 {
-	// NULL is a legal value for BaseModelName. Unfortunately,
+	// nullptr is a legal value for BaseModelName. Unfortunately,
 	// StringClass::operator= does not modify the string when
-	// assigning NULL, so we explicitly handle that case here.
+	// assigning nullptr, so we explicitly handle that case here.
 	if (name != nullptr) {
 		BaseModelName = name;
 	} else {

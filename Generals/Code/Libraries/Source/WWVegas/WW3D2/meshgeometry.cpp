@@ -1893,7 +1893,7 @@ WW3DErrorType MeshGeometryClass::read_user_text(ChunkLoadClass & cload)
 	** This shouldn't happen but if there are more than one
 	** USER_TEXT chunks in the mesh file, store only the first
 	** one.  I am assuming that if the UserText buffer is not
-	** NULL, then a previous user text chunk has been read in...
+	** nullptr, then a previous user text chunk has been read in...
 	*/
 	if (UserText != nullptr) {
 		return WW3D_ERROR_OK;

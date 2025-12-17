@@ -1086,7 +1086,7 @@ void createRoomCallback(PEER peer, PEERBool success, PEERJoinResult result, Room
 
 // Gets called once for each group room when listing group rooms.
 // After this has been called for each group room, it will be
-// called one more time with groupID==0 and name==NULL.
+// called one more time with groupID==0 and name==nullptr.
 /////////////////////////////////////////////////////////////////
 void ListGroupRoomsCallback(PEER peer, PEERBool success,
 														int groupID, GServer server,

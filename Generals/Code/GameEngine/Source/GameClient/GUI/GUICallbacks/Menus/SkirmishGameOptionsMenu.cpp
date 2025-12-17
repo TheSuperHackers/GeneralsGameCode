@@ -1359,14 +1359,14 @@ static void shutdownComplete( WindowLayout *layout )
 	// our shutdown is complete
 	// what the munkees does this do?
 
-	//TheShell->shutdownComplete( layout, (LANnextScreen != NULL) );
+	//TheShell->shutdownComplete( layout, (LANnextScreen != nullptr) );
 
-	//if (LANnextScreen != NULL)
+	//if (LANnextScreen != nullptr)
 	//{
 	//	TheShell->push(LANnextScreen);
 	//}
 
-	//LANnextScreen = NULL;
+	//LANnextScreen = nullptr;
 
 }
 

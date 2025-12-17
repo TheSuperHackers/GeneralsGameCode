@@ -55,7 +55,7 @@
 struct INIEntry : public Node<INIEntry *> {
 	INIEntry(char * entry = nullptr, char * value = nullptr) : Entry(entry), Value(value) {}
 	~INIEntry(void);
-//	~INIEntry(void) {free(Entry);Entry = NULL;free(Value);Value = NULL;}
+//	~INIEntry(void) {free(Entry);Entry = nullptr;free(Value);Value = nullptr;}
 //	int Index_ID(void) const {return(CRCEngine()(Entry, strlen(Entry)));};
 	int Index_ID(void) const { return CRC::String(Entry);};
 

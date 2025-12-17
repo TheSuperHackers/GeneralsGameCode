@@ -152,11 +152,11 @@ protected:
 	// number of possible frames must be a power of two - for this reason the number of frame rows
 	// and columns, orientations, etc. are represented as the log base 2 of the actual number.
 	ShareBufferClass<Vector3> *			PointLoc;	// World/cameraspace point locs
-	ShareBufferClass<Vector4> *			PointDiffuse; // (NULL if not used) RGBA values
-	ShareBufferClass<unsigned int> *		APT;			// (NULL if not used) active point table
-	ShareBufferClass<float> *				PointSize;	// (NULL if not used) size override table
-	ShareBufferClass<unsigned char> *	PointOrientation; // (NULL if not used) orientation indices
-	ShareBufferClass<unsigned char> *	PointFrame; // (NULL if not used) frame indices
+	ShareBufferClass<Vector4> *			PointDiffuse; // (nullptr if not used) RGBA values
+	ShareBufferClass<unsigned int> *		APT;			// (nullptr if not used) active point table
+	ShareBufferClass<float> *				PointSize;	// (nullptr if not used) size override table
+	ShareBufferClass<unsigned char> *	PointOrientation; // (nullptr if not used) orientation indices
+	ShareBufferClass<unsigned char> *	PointFrame; // (nullptr if not used) frame indices
 	int											PointCount;	// Active (if APT) or total point count
 
 	// See comments for Get/Set_Frame_Row_Column_Count_Log2 above

@@ -651,7 +651,7 @@ void IMEManager::attach( GameWindow *window )
 
 void IMEManager::detatch( void )
 {
-	//ImmAssociateContext( ApplicationHWnd, NULL );
+	//ImmAssociateContext( ApplicationHWnd, nullptr );
 	m_window = nullptr;
 
 }

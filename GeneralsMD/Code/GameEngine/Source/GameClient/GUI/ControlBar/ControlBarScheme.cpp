@@ -1020,7 +1020,7 @@ void ControlBarSchemeManager::init( void )
 //	{
 //		userDataPath.format("%sINI\\ControlBarScheme",TheGlobalData->getPath_UserData().str());
 //		if	(FindFirstFile(userDataPath.str(), &findData) !=INVALID_HANDLE_VALUE)
-//			ini.loadFileDirectory(userDataPath,  INI_LOAD_OVERWRITE, NULL );
+//			ini.loadFileDirectory(userDataPath,  INI_LOAD_OVERWRITE, nullptr );
 //	}
 	if( m_schemeList.empty() )
 	{
@@ -1131,7 +1131,7 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayerTemplate( const PlayerT
 		// well, we couldn't find
 		m_currentScheme = findControlBarScheme("Default");
 		DEBUG_LOG(("There's no ControlBarScheme with a side of %s", side.str()));
-//		m_currentScheme = NULL;
+//		m_currentScheme = nullptr;
 	}
 	if(m_currentScheme)
 		m_currentScheme->init();
@@ -1199,7 +1199,7 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 		// well, we couldn't find
 		m_currentScheme = findControlBarScheme("Default");
 		DEBUG_LOG(("There's no ControlBarScheme with a side of %s", side.str()));
-//		m_currentScheme = NULL;
+//		m_currentScheme = nullptr;
 	}
 	if(m_currentScheme)
 		m_currentScheme->init();
