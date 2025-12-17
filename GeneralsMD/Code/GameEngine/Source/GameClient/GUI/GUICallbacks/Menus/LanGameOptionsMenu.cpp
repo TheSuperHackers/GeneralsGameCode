@@ -127,19 +127,19 @@ static GameWindow *checkboxLimitSuperweapons = nullptr;
 static GameWindow *comboBoxStartingCash = nullptr;
 static GameWindow *windowMap = nullptr;
 
-static GameWindow *comboBoxPlayer[MAX_SLOTS] = {};
-static GameWindow *buttonAccept[MAX_SLOTS] = {};
+static GameWindow *comboBoxPlayer[MAX_SLOTS] = {0};
+static GameWindow *buttonAccept[MAX_SLOTS] = {0};
 
-static GameWindow *comboBoxColor[MAX_SLOTS] = {};
+static GameWindow *comboBoxColor[MAX_SLOTS] = {0};
 
-static GameWindow *comboBoxPlayerTemplate[MAX_SLOTS] = {};
+static GameWindow *comboBoxPlayerTemplate[MAX_SLOTS] = {0};
 
-static GameWindow *comboBoxTeam[MAX_SLOTS] = {};
+static GameWindow *comboBoxTeam[MAX_SLOTS] = {0};
 
 //static GameWindow *buttonStartPosition[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
 //																								NULL,NULL,NULL,NULL };
 //
-static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {};
+static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {0};
 
 //external declarations of the Gadgets the callbacks can use
 GameWindow *listboxChatWindowLanGame = nullptr;

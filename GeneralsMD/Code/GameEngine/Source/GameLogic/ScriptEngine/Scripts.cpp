@@ -166,7 +166,7 @@ enum { AT_END = 0x00FFFFFF };
 // ******************************** class  ScriptList *********************************************
 //-------------------------------------------------------------------------------------------------
 // Statics ///////////////////////////////////////////////////////////////////////////////////////
-ScriptList *ScriptList::s_readLists[MAX_PLAYER_COUNT] = {};
+ScriptList *ScriptList::s_readLists[MAX_PLAYER_COUNT] = {0};
 Int					ScriptList::s_numInReadList = 0;
 
 Int ScriptList::m_curId = 0;

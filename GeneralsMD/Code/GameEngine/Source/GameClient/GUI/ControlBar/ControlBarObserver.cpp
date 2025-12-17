@@ -80,8 +80,8 @@ static NameKeyType staticTextPlayerID[MAX_BUTTONS] = { NAMEKEY_INVALID,NAMEKEY_I
 static GameWindow *ObserverPlayerInfoWindow = nullptr;
 static GameWindow *ObserverPlayerListWindow = nullptr;
 
-static GameWindow *buttonPlayer[MAX_BUTTONS] = {};
-static GameWindow *staticTextPlayer[MAX_BUTTONS] = {};
+static GameWindow *buttonPlayer[MAX_BUTTONS] = {0};
+static GameWindow *staticTextPlayer[MAX_BUTTONS] = {0};
 
 
 static NameKeyType buttonCancelID = NAMEKEY_INVALID;

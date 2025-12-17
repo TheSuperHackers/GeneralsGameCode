@@ -60,7 +60,7 @@ static NameKeyType radioButtonUserMapsID = NAMEKEY_INVALID;
 extern WindowLayout *WOLMapSelectLayout;			///< Map selection overlay
 static GameWindow *mapList = nullptr;
 
-static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {};
+static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {0};
 static NameKeyType buttonMapStartPositionID[MAX_SLOTS] = { NAMEKEY_INVALID,NAMEKEY_INVALID,
 																									NAMEKEY_INVALID,NAMEKEY_INVALID,
 																										NAMEKEY_INVALID,NAMEKEY_INVALID,
