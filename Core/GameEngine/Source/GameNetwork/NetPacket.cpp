@@ -5809,7 +5809,7 @@ NetCommandMsg * NetPacket::readFileMessage(UnsignedByte *data, Int &i) {
 	char filename[_MAX_PATH];
 
 	// TheSuperHackers @security Mauller/Jbremer/SkyAero 11/12/2025 Prevent buffer overflow when copying filepath string
-	i += strlcpy(filename, reinterpret_cast<const char*>(data), ARRAY_SIZE(filename));
+	i += strlcpy(filename, reinterpret_cast<const char*>(data + i), ARRAY_SIZE(filename));
 	++i; //Increment for null terminator
 	msg->setPortableFilename(AsciiString(filename));	// it's transferred as a portable filename
 
@@ -5831,7 +5831,7 @@ NetCommandMsg * NetPacket::readFileAnnounceMessage(UnsignedByte *data, Int &i) {
 	char filename[_MAX_PATH];
 
 	// TheSuperHackers @security Mauller/Jbremer/SkyAero 11/12/2025 Prevent buffer overflow when copying filepath string
-	i += strlcpy(filename, reinterpret_cast<const char*>(data), ARRAY_SIZE(filename));
+	i += strlcpy(filename, reinterpret_cast<const char*>(data + i), ARRAY_SIZE(filename));
 	++i; //Increment for null terminator
 	msg->setPortableFilename(AsciiString(filename));	// it's transferred as a portable filename
 
