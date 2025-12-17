@@ -185,11 +185,11 @@ static NameKeyType listboxLobbyGamesLargeID = NAMEKEY_INVALID;
 
 // Window Pointers ------------------------------------------------------------------------
 static GameWindow *parent = nullptr;
-//static GameWindow *parentGameListSmall = NULL;
+//static GameWindow *parentGameListSmall = nullptr;
 static GameWindow *parentGameListLarge = nullptr;
-       //GameWindow *listboxLobbyGamesSmall = NULL;
+       //GameWindow *listboxLobbyGamesSmall = nullptr;
        GameWindow *listboxLobbyGamesLarge = nullptr;
-       //GameWindow *listboxLobbyGameInfo = NULL;
+       //GameWindow *listboxLobbyGameInfo = nullptr;
 
 static const Image *pingImages[3] = { nullptr, nullptr, nullptr };
 
@@ -381,13 +381,13 @@ void GrabWindowInfo( void )
 	DEBUG_ASSERTCRASH(pingImages[2], ("Can't find ping image!"));
 
 //	parentGameListSmallID = NAMEKEY( "WOLCustomLobby.wnd:ParentGameListSmall" );
-//	parentGameListSmall = TheWindowManager->winGetWindowFromId(NULL, parentGameListSmallID);
+//	parentGameListSmall = TheWindowManager->winGetWindowFromId(nullptr, parentGameListSmallID);
 
 	parentGameListLargeID = NAMEKEY( "WOLCustomLobby.wnd:ParentGameListLarge" );
 	parentGameListLarge = TheWindowManager->winGetWindowFromId(nullptr, parentGameListLargeID);
 
 	listboxLobbyGamesSmallID = NAMEKEY( "WOLCustomLobby.wnd:ListboxGames" );
-//	listboxLobbyGamesSmall = TheWindowManager->winGetWindowFromId(NULL, listboxLobbyGamesSmallID);
+//	listboxLobbyGamesSmall = TheWindowManager->winGetWindowFromId(nullptr, listboxLobbyGamesSmallID);
 //	listboxLobbyGamesSmall->winSetTooltipFunc(gameTooltip);
 
 	listboxLobbyGamesLargeID = NAMEKEY( "WOLCustomLobby.wnd:ListboxGamesLarge" );
@@ -395,7 +395,7 @@ void GrabWindowInfo( void )
 	listboxLobbyGamesLarge->winSetTooltipFunc(gameTooltip);
 //
 //	listboxLobbyGameInfoID = NAMEKEY( "WOLCustomLobby.wnd:ListboxGameInfo" );
-//	listboxLobbyGameInfo = TheWindowManager->winGetWindowFromId(NULL, listboxLobbyGameInfoID);
+//	listboxLobbyGameInfo = TheWindowManager->winGetWindowFromId(nullptr, listboxLobbyGameInfoID);
 
 	buttonSortAlphaID = NAMEKEY("WOLCustomLobby.wnd:ButtonSortAlpha");
 	buttonSortPingID = NAMEKEY("WOLCustomLobby.wnd:ButtonSortPing");
@@ -418,11 +418,11 @@ void ReleaseWindowInfo( void )
 {
 	isSmall = TRUE;
 	parent = nullptr;
-//	parentGameListSmall = NULL;
+//	parentGameListSmall = nullptr;
 	parentGameListLarge = nullptr;
-//	listboxLobbyGamesSmall = NULL;
+//	listboxLobbyGamesSmall = nullptr;
 	listboxLobbyGamesLarge = nullptr;
-//	listboxLobbyGameInfo = NULL;
+//	listboxLobbyGameInfo = nullptr;
 
 	buttonSortAlpha = nullptr;
 	buttonSortPing = nullptr;

@@ -309,7 +309,7 @@ NATConnectionState NAT::connectionUpdate() {
 				// we've made this connection, send a keepalive.
 				Int slotIndex = m_connectionNodes[node].m_slotIndex;
 				GameSlot *slot = m_slotList[slotIndex];
-				DEBUG_ASSERTCRASH(slot != nullptr, ("Trying to send keepalive to a NULL slot"));
+				DEBUG_ASSERTCRASH(slot != nullptr, ("Trying to send keepalive to a nullptr slot"));
 				if (slot != nullptr) {
 					UnsignedInt ip = slot->getIP();
 					DEBUG_LOG(("NAT::connectionUpdate - sending keep alive to node %d at %d.%d.%d.%d:%d", node,
@@ -666,8 +666,8 @@ void NAT::doThisConnectionRound() {
 				GameSlot *targetSlot = m_slotList[targetSlotIndex];
 				GameSlot *localSlot = m_slotList[m_connectionNodes[m_localNodeNumber].m_slotIndex];
 
-				DEBUG_ASSERTCRASH(localSlot != nullptr, ("local slot is NULL"));
-				DEBUG_ASSERTCRASH(targetSlot != nullptr, ("trying to negotiate with a NULL target slot, slot is %d", m_connectionPairs[m_connectionPairIndex][m_connectionRound][i]));
+				DEBUG_ASSERTCRASH(localSlot != nullptr, ("local slot is nullptr"));
+				DEBUG_ASSERTCRASH(targetSlot != nullptr, ("trying to negotiate with a nullptr target slot, slot is %d", m_connectionPairs[m_connectionPairIndex][m_connectionRound][i]));
 				DEBUG_LOG(("NAT::doThisConnectionRound - Target slot index = %d (%ls)", targetSlotIndex, m_slotList[targetSlotIndex]->getName().str()));
 				DEBUG_LOG(("NAT::doThisConnectionRound - Target slot has NAT behavior 0x%8X, local slot has NAT behavior 0x%8X", targetSlot->getNATBehavior(), localSlot->getNATBehavior()));
 
@@ -729,17 +729,17 @@ void NAT::sendMangledSourcePort() {
 
 	FirewallHelperClass::tFirewallBehaviorType fwType = m_slotList[m_connectionNodes[m_localNodeNumber].m_slotIndex]->getNATBehavior();
 	GameSlot *targetSlot = m_slotList[m_connectionNodes[m_targetNodeNumber].m_slotIndex];
-	DEBUG_ASSERTCRASH(targetSlot != nullptr, ("NAT::sendMangledSourcePort - targetSlot is NULL"));
+	DEBUG_ASSERTCRASH(targetSlot != nullptr, ("NAT::sendMangledSourcePort - targetSlot is nullptr"));
 	if (targetSlot == nullptr) {
-		DEBUG_LOG(("NAT::sendMangledSourcePort - targetSlot is NULL, failed this connection"));
+		DEBUG_LOG(("NAT::sendMangledSourcePort - targetSlot is nullptr, failed this connection"));
 		setConnectionState(m_localNodeNumber, NATCONNECTIONSTATE_FAILED);
 		return;
 	}
 
 	GameSlot *localSlot = m_slotList[m_connectionNodes[m_localNodeNumber].m_slotIndex];
-	DEBUG_ASSERTCRASH(localSlot != nullptr, ("NAT::sendMangledSourcePort - localSlot is NULL, WTF?"));
+	DEBUG_ASSERTCRASH(localSlot != nullptr, ("NAT::sendMangledSourcePort - localSlot is nullptr, WTF?"));
 	if (localSlot == nullptr) {
-		DEBUG_LOG(("NAT::sendMangledSourcePort - localSlot is NULL, failed this connection"));
+		DEBUG_LOG(("NAT::sendMangledSourcePort - localSlot is nullptr, failed this connection"));
 		setConnectionState(m_localNodeNumber, NATCONNECTIONSTATE_FAILED);
 		return;
 	}
@@ -838,9 +838,9 @@ void NAT::processManglerResponse(UnsignedShort mangledPort) {
 	DEBUG_LOG(("NAT::processManglerResponse - Work out what my NAT'd port will be"));
 
 	GameSlot *targetSlot = m_slotList[m_connectionNodes[m_targetNodeNumber].m_slotIndex];
-	DEBUG_ASSERTCRASH(targetSlot != nullptr, ("NAT::processManglerResponse - targetSlot is NULL"));
+	DEBUG_ASSERTCRASH(targetSlot != nullptr, ("NAT::processManglerResponse - targetSlot is nullptr"));
 	if (targetSlot == nullptr) {
-		DEBUG_LOG(("NAT::processManglerResponse - targetSlot is NULL, failed this connection"));
+		DEBUG_LOG(("NAT::processManglerResponse - targetSlot is nullptr, failed this connection"));
 		setConnectionState(m_localNodeNumber, NATCONNECTIONSTATE_FAILED);
 		return;
 	}
@@ -931,9 +931,9 @@ void NAT::connectionFailed(Int slotIndex) {
 // I have been probed by the target.
 void NAT::probed(Int nodeNumber) {
 	GameSlot *localSlot = m_slotList[m_connectionNodes[m_localNodeNumber].m_slotIndex];
-	DEBUG_ASSERTCRASH(localSlot != nullptr, ("NAT::probed - localSlot is NULL, WTF?"));
+	DEBUG_ASSERTCRASH(localSlot != nullptr, ("NAT::probed - localSlot is nullptr, WTF?"));
 	if (localSlot == nullptr) {
-		DEBUG_LOG(("NAT::probed - localSlot is NULL, failed this connection"));
+		DEBUG_LOG(("NAT::probed - localSlot is nullptr, failed this connection"));
 		setConnectionState(m_localNodeNumber, NATCONNECTIONSTATE_FAILED);
 		return;
 	}
@@ -944,9 +944,9 @@ void NAT::probed(Int nodeNumber) {
 		if ((localSlot->getNATBehavior() & FirewallHelperClass::FIREWALL_TYPE_NETGEAR_BUG) != 0) {
 			DEBUG_LOG(("NAT::probed - we have a NETGEAR and we were just probed for the first time"));
 			GameSlot *targetSlot = m_slotList[m_connectionNodes[m_targetNodeNumber].m_slotIndex];
-			DEBUG_ASSERTCRASH(targetSlot != nullptr, ("NAT::probed - targetSlot is NULL"));
+			DEBUG_ASSERTCRASH(targetSlot != nullptr, ("NAT::probed - targetSlot is nullptr"));
 			if (targetSlot == nullptr) {
-				DEBUG_LOG(("NAT::probed - targetSlot is NULL, failed this connection"));
+				DEBUG_LOG(("NAT::probed - targetSlot is nullptr, failed this connection"));
 				setConnectionState(m_localNodeNumber, NATCONNECTIONSTATE_FAILED);
 				return;
 			}
@@ -974,17 +974,17 @@ void NAT::gotMangledPort(Int nodeNumber, UnsignedShort mangledPort) {
 	}
 
 	GameSlot *targetSlot = m_slotList[m_connectionNodes[m_targetNodeNumber].m_slotIndex];
-	DEBUG_ASSERTCRASH(targetSlot != nullptr, ("NAT::gotMangledPort - targetSlot is NULL"));
+	DEBUG_ASSERTCRASH(targetSlot != nullptr, ("NAT::gotMangledPort - targetSlot is nullptr"));
 	if (targetSlot == nullptr) {
-		DEBUG_LOG(("NAT::gotMangledPort - targetSlot is NULL, failed this connection"));
+		DEBUG_LOG(("NAT::gotMangledPort - targetSlot is nullptr, failed this connection"));
 		setConnectionState(m_localNodeNumber, NATCONNECTIONSTATE_FAILED);
 		return;
 	}
 
 	GameSlot *localSlot = m_slotList[m_connectionNodes[m_localNodeNumber].m_slotIndex];
-	DEBUG_ASSERTCRASH(localSlot != nullptr, ("NAT::gotMangledPort - localSlot is NULL, WTF?"));
+	DEBUG_ASSERTCRASH(localSlot != nullptr, ("NAT::gotMangledPort - localSlot is nullptr, WTF?"));
 	if (localSlot == nullptr) {
-		DEBUG_LOG(("NAT::gotMangledPort - localSlot is NULL, failed this connection"));
+		DEBUG_LOG(("NAT::gotMangledPort - localSlot is nullptr, failed this connection"));
 		setConnectionState(m_localNodeNumber, NATCONNECTIONSTATE_FAILED);
 		return;
 	}
@@ -1014,13 +1014,13 @@ void NAT::gotMangledPort(Int nodeNumber, UnsignedShort mangledPort) {
 
 void NAT::gotInternalAddress(Int nodeNumber, UnsignedInt address) {
 	GameSlot *targetSlot = m_slotList[m_connectionNodes[nodeNumber].m_slotIndex];
-	DEBUG_ASSERTCRASH(targetSlot != nullptr, ("NAT::gotInternalAddress - targetSlot is NULL"));
+	DEBUG_ASSERTCRASH(targetSlot != nullptr, ("NAT::gotInternalAddress - targetSlot is nullptr"));
 	if (targetSlot == nullptr) {
 		return;
 	}
 
 	GameSlot *localSlot = m_slotList[m_connectionNodes[m_localNodeNumber].m_slotIndex];
-	DEBUG_ASSERTCRASH(localSlot != nullptr, ("NAT::gotInternalAddress - localSlot is NULL, WTF?"));
+	DEBUG_ASSERTCRASH(localSlot != nullptr, ("NAT::gotInternalAddress - localSlot is nullptr, WTF?"));
 	if (localSlot == nullptr) {
 		return;
 	}
@@ -1055,9 +1055,9 @@ void NAT::notifyTargetOfProbe(GameSlot *targetSlot) {
 
 void NAT::notifyUsersOfConnectionDone(Int nodeIndex) {
 	GameSlot *localSlot = m_slotList[m_connectionNodes[m_localNodeNumber].m_slotIndex];
-	DEBUG_ASSERTCRASH(localSlot != nullptr, ("NAT::notifyUsersOfConnectionDone - localSlot is NULL, WTF?"));
+	DEBUG_ASSERTCRASH(localSlot != nullptr, ("NAT::notifyUsersOfConnectionDone - localSlot is nullptr, WTF?"));
 	if (localSlot == nullptr) {
-		DEBUG_LOG(("NAT::notifyUsersOfConnectionDone - localSlot is NULL, failed this connection"));
+		DEBUG_LOG(("NAT::notifyUsersOfConnectionDone - localSlot is nullptr, failed this connection"));
 		setConnectionState(m_localNodeNumber, NATCONNECTIONSTATE_FAILED);
 		return;
 	}
@@ -1097,9 +1097,9 @@ void NAT::notifyUsersOfConnectionDone(Int nodeIndex) {
 
 void NAT::notifyUsersOfConnectionFailed(Int nodeIndex) {
 	GameSlot *localSlot = m_slotList[m_connectionNodes[m_localNodeNumber].m_slotIndex];
-	DEBUG_ASSERTCRASH(localSlot != nullptr, ("NAT::notifyUsersOfConnectionFailed - localSlot is NULL, WTF?"));
+	DEBUG_ASSERTCRASH(localSlot != nullptr, ("NAT::notifyUsersOfConnectionFailed - localSlot is nullptr, WTF?"));
 	if (localSlot == nullptr) {
-		DEBUG_LOG(("NAT::notifyUsersOfConnectionFailed - localSlot is NULL, failed this connection"));
+		DEBUG_LOG(("NAT::notifyUsersOfConnectionFailed - localSlot is nullptr, failed this connection"));
 		setConnectionState(m_localNodeNumber, NATCONNECTIONSTATE_FAILED);
 		return;
 	}

@@ -1193,7 +1193,7 @@ WWINLINE void DX8Wrapper::Set_Material(const VertexMaterialClass* material)
 //	}
 	REF_PTR_SET(render_state.material,const_cast<VertexMaterialClass*>(material));
 	render_state_changed|=MATERIAL_CHANGED;
-	SNAPSHOT_SAY(("DX8Wrapper::Set_Material(%s)",material ? material->Get_Name() : "NULL"));
+	SNAPSHOT_SAY(("DX8Wrapper::Set_Material(%s)",material ? material->Get_Name() : "nullptr"));
 }
 
 WWINLINE void DX8Wrapper::Set_Shader(const ShaderClass& shader)

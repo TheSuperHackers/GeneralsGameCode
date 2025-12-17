@@ -289,7 +289,7 @@ void OpenContain::addToContain( Object *rider )
 				reportObject = *items->begin();
 			}
 		}
-		DEBUG_CRASH( ("OpenContain::addToContain() - Object %s not valid for container %s!", reportObject?reportObject->getTemplate()->getName().str():"NULL", getObject()->getTemplate()->getName().str() ) );
+		DEBUG_CRASH( ("OpenContain::addToContain() - Object %s not valid for container %s!", reportObject?reportObject->getTemplate()->getName().str():"nullptr", getObject()->getTemplate()->getName().str() ) );
 	}
 #endif
 
