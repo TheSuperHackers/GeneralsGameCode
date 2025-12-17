@@ -1777,7 +1777,7 @@ void W3DModelDraw::doStartOrStopParticleSys()
 	{
 		ParticleSystem *sys = TheParticleSystemManager->findParticleSystem((*it).id);
 		if (sys != nullptr) {
-			// this can be NULL
+			// this can be nullptr
 			if (hidden) {
 				sys->stop();
 			} else {
@@ -2352,7 +2352,7 @@ void W3DModelDraw::stopClientParticleSystems()
 		ParticleSystem *sys = TheParticleSystemManager->findParticleSystem((*it).id);
 		if (sys != nullptr)
 		{
-			// this can be NULL
+			// this can be nullptr
 			sys->destroy();
 		}
 	}
@@ -3026,7 +3026,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 			shadowInfo.m_offsetX				= tmplate->getShadowOffsetX();
 			shadowInfo.m_offsetY				= tmplate->getShadowOffsetY();
 
-			DEBUG_ASSERTCRASH(m_shadow == nullptr, ("m_shadow is not NULL"));
+			DEBUG_ASSERTCRASH(m_shadow == nullptr, ("m_shadow is not nullptr"));
 			m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo, draw);
 			if (m_shadow)
 			{	m_shadow->enableShadowInvisible(m_fullyObscuredByShroud);
@@ -3171,7 +3171,7 @@ void W3DModelDraw::replaceIndicatorColor(Color color)
 		{
 			m_hexColor = newColor;
 
-			// set these to NULL to force a regen of everything in setModelState.
+			// set these to nullptr to force a regen of everything in setModelState.
 			const ModelConditionInfo* tmp = m_curState;
 			m_curState = nullptr;
 			m_nextState = nullptr;

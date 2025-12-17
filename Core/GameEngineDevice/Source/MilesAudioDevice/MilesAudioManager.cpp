@@ -887,8 +887,8 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 		}
 	}
 
-	// If we were able to successfully play audio, then we set it to NULL above. (And it will be freed
-	// later. However, if audio is non-NULL at this point, then it must be freed.
+	// If we were able to successfully play audio, then we set it to nullptr above. (And it will be freed
+	// later. However, if audio is non-nullptr at this point, then it must be freed.
 	if (audio) {
 		releasePlayingAudio(audio);
 	}

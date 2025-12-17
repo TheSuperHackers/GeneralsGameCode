@@ -1238,7 +1238,7 @@ void HeightMapRenderObjClass::oversizeTerrain(Int tilesToOversize)
 	if (m_shroud)
 		m_shroud->reset();
 	//delete m_shroud;
-	//m_shroud = NULL;
+	//m_shroud = nullptr;
 	initHeightData(m_map->getDrawWidth(), m_map->getDrawHeight(), m_map, nullptr, FALSE);
 	m_needFullUpdate = true;
 }

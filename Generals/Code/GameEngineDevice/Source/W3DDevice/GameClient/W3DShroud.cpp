@@ -110,7 +110,7 @@ W3DShroud::~W3DShroud(void)
 void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSizeY)
 {
 	DEBUG_ASSERTCRASH( m_pSrcTexture == nullptr, ("ReAcquire of existing shroud textures"));
-	DEBUG_ASSERTCRASH( pMap != nullptr, ("Shroud init with NULL WorldHeightMap"));
+	DEBUG_ASSERTCRASH( pMap != nullptr, ("Shroud init with nullptr WorldHeightMap"));
 
 	Int dstTextureWidth=0;
 	Int dstTextureHeight=0;

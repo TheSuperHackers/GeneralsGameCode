@@ -960,7 +960,7 @@ static void drawAudioRadii( const Drawable * drawable )
     if ( ambientInfo == nullptr )
     {
       // I don't think that's right...
-      OutputDebugString( ("Playing sound has NULL AudioEventInfo?\n" ) );
+      OutputDebugString( ("Playing sound has nullptr AudioEventInfo?\n" ) );
 
       if ( TheAudio != nullptr )
       {
@@ -2254,7 +2254,7 @@ Drawable *W3DView::pickDrawable( const ICoord2D *screen, Bool forceAttack, PickT
 
 	// for right now there is no drawable data in a render object which is			 	// if we've found a render object, return our drawable associated with it,
 
-	// the terrain, therefore the userdata is NULL
+	// the terrain, therefore the userdata is nullptr
 	/// @todo terrain and picking!
 	if( renderObj )
 		drawInfo = (DrawableInfo *)renderObj->Get_User_Data();

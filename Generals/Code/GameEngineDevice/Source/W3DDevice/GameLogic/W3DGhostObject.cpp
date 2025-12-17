@@ -1180,7 +1180,7 @@ void W3DGhostObjectManager::xfer( Xfer *xfer )
 	{
 		// sanity, there should be no ghost objects loaded at this time
 		DEBUG_ASSERTCRASH( m_usedModules == nullptr,
-			("W3DGhostObjectManager::xfer - The used module list is not NULL upon load, but should be!") );
+			("W3DGhostObjectManager::xfer - The used module list is not nullptr upon load, but should be!") );
 
 		// now it's time to unlock the ghost objects for loading
 		DEBUG_ASSERTCRASH( m_saveLockGhostObjects == TRUE,

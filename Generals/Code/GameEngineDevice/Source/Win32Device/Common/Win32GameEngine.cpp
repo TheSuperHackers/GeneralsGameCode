@@ -131,7 +131,7 @@ void Win32GameEngine::serviceWindowsOS( void )
   Int returnValue;
 
 	//
-	// see if we have any messages to process, a NULL window handle tells the
+	// see if we have any messages to process, a nullptr window handle tells the
 	// OS to look at the main window associated with the calling thread, us!
 	//
 	while( PeekMessage( &msg, nullptr, 0, 0, PM_NOREMOVE ) )

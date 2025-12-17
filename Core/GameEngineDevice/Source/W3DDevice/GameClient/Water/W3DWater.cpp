@@ -1717,7 +1717,7 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 	}
 
 	//Clean up after any pixel shaders.
-	//Force render state apply so that the "NULL" texture gets applied to D3D, thus releasing shroud reference count.
+	//Force render state apply so that the "nullptr" texture gets applied to D3D, thus releasing shroud reference count.
 	DX8Wrapper::Apply_Render_State_Changes();
 	DX8Wrapper::Invalidate_Cached_Render_States();
 
@@ -2956,8 +2956,8 @@ void WaterRenderObjClass::setupFlatWaterShader(void)
 			DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 		}
 		else
-		{	//Assume no shroud, so stage 3 will be "NULL" texture but using actual white because
-			//pixel shader on GF4 generates random colors with SetTexture(3,NULL).
+		{	//Assume no shroud, so stage 3 will be "nullptr" texture but using actual white because
+			//pixel shader on GF4 generates random colors with SetTexture(3,nullptr).
 			if (!m_whiteTexture->Is_Initialized())
 			{	m_whiteTexture->Init();
 				SurfaceClass *surface=m_whiteTexture->Get_Surface_Level();

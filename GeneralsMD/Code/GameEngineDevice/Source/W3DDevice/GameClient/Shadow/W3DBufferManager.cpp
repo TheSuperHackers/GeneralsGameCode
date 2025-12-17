@@ -211,7 +211,7 @@ Bool W3DBufferManager::ReAcquireResources(void)
 
 /**Searches through previously allocated vertex buffer slots and returns a matching type.  If none found,
    creates a new slot and adds it to the pool.  Returns a pointer to the VB slot.
-   Returns NULL in case of failure.
+   Returns nullptr in case of failure.
 */
 W3DBufferManager::W3DVertexBufferSlot *W3DBufferManager::getSlot(VBM_FVF_TYPES fvfType, Int size)
 {
@@ -331,7 +331,7 @@ W3DBufferManager::W3DVertexBufferSlot * W3DBufferManager::allocateSlotStorage(VB
 //******************************** Index Buffer code ******************************************************
 /**Searches through previously allocated index buffer slots and returns a matching type.  If none found,
    creates a new slot and adds it to the pool.  Returns a pointer to the IB slot.
-   Returns NULL in case of failure.
+   Returns nullptr in case of failure.
 */
 W3DBufferManager::W3DIndexBufferSlot *W3DBufferManager::getSlot(Int size)
 {

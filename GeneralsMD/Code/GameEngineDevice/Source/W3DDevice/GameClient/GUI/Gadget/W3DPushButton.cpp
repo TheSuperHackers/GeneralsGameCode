@@ -282,7 +282,7 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 void W3DGadgetPushButtonImageDraw( GameWindow *window,
 																	 WinInstanceData *instData )
 {
-	// if we return NULL then we'll call the one picture drawing code, if we return a value
+	// if we return nullptr then we'll call the one picture drawing code, if we return a value
 	// then we'll call the 3 picture drawing code
 	if( GadgetButtonGetMiddleEnabledImage( window ) )
 	{
