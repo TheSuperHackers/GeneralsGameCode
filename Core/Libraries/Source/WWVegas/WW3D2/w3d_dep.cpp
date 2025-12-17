@@ -275,7 +275,7 @@ static void Scan_Mesh_Textures (ChunkLoadClass &cload, StringList &files, const 
 				// We're interested in the TEXTURE_NAME sub-chunk.
 				if (cload.Cur_Chunk_ID() == W3D_CHUNK_TEXTURE_NAME)
 				{
-					// This chunk's data is a NULL-terminated string
+					// This chunk's data is a null-terminated string
 					// which is the texture filename. Read it and
 					// add it to the list of files referred to.
 					char texture[_MAX_PATH];

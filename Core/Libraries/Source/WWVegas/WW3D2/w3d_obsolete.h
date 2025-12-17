@@ -80,9 +80,9 @@ enum
 /////////////////////////////////////////////////////////////////////////////////////////////
 struct W3dMaterialStruct
 {
-	char		  	MaterialName[W3D_NAME_LEN];	// name of the material (NULL terminated)
-	char	 		PrimaryName[W3D_NAME_LEN];		// primary texture name (NULL terminated)
-	char	 		SecondaryName[W3D_NAME_LEN];	// secondary texture name (NULL terminated)
+	char		  	MaterialName[W3D_NAME_LEN];	// name of the material (null-terminated)
+	char	 		PrimaryName[W3D_NAME_LEN];		// primary texture name (null-terminated)
+	char	 		SecondaryName[W3D_NAME_LEN];	// secondary texture name (null-terminated)
 	uint32		RenderFlags;						// Rendering flags
 	uint8	 		Red;									// Rgb colors
 	uint8	 		Green;
@@ -94,9 +94,9 @@ struct W3dMaterialStruct
 /////////////////////////////////////////////////////////////////////////////////////////////
 struct W3dMaterial2Struct
 {
-	char		  	MaterialName[W3D_NAME_LEN];	// name of the material (NULL terminated)
-	char	 		PrimaryName[W3D_NAME_LEN];		// primary texture name (NULL terminated)
-	char	 		SecondaryName[W3D_NAME_LEN];	// secondary texture name (NULL terminated)
+	char		  	MaterialName[W3D_NAME_LEN];	// name of the material (null-terminated)
+	char	 		PrimaryName[W3D_NAME_LEN];		// primary texture name (null-terminated)
+	char	 		SecondaryName[W3D_NAME_LEN];	// secondary texture name (null-terminated)
 	uint32		RenderFlags;						// Rendering flags
 	uint8	 		Red;									// Rgb colors
 	uint8	 		Green;
