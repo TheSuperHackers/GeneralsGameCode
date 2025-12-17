@@ -204,7 +204,7 @@ class DebugIOFlat: public DebugIOInterface
     \brief Expands a magic filename into a real filename.
 
     \param src magic filename or real filename
-    \param splitName split name, NULL for default stream
+    \param splitName split name, nullptr for default stream
     \param buf output buffer, must have a size of at least 256 char's
   */
   static void ExpandMagic(const char *src, const char *splitName, char *buf);
