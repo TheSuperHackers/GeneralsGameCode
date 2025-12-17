@@ -100,9 +100,9 @@ void WindowLayout::addWindow( GameWindow *window )
 	{
 
 		DEBUG_ASSERTCRASH( window->winGetNextInLayout() == nullptr,
-											 ("NextInLayout should be NULL before adding") );
+											 ("NextInLayout should be nullptr before adding") );
 		DEBUG_ASSERTCRASH( window->winGetPrevInLayout() == nullptr,
-											 ("PrevInLayout should be NULL before adding") );
+											 ("PrevInLayout should be nullptr before adding") );
 
 		window->winSetPrevInLayout( nullptr );
 		window->winSetNextInLayout( m_windowList );

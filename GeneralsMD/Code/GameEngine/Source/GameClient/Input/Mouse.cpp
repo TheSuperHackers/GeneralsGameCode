@@ -1068,7 +1068,7 @@ Bool Mouse::canCapture() const
 	if (m_captureBlockReasonBits != 0)
 		return false;
 
-	DEBUG_ASSERTCRASH(TheDisplay != nullptr, ("The Display is NULL"));
+	DEBUG_ASSERTCRASH(TheDisplay != nullptr, ("The Display is nullptr"));
 	const Bool inInteractiveGame = TheGameLogic && TheGameLogic->isInInteractiveGame();
 
 	if (TheDisplay->getWindowed())

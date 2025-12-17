@@ -560,9 +560,9 @@ CommandButton::CommandButton( void )
 	m_buttonImage = nullptr;
 
 	//Code renderer handles these states now.
-	//m_disabledImage = NULL;
-	//m_hiliteImage = NULL;
-	//m_pushedImage = NULL;
+	//m_disabledImage = nullptr;
+	//m_hiliteImage = nullptr;
+	//m_pushedImage = nullptr;
 
 	m_flashCount = 0;
 	m_conflictingLabel.clear();
@@ -575,7 +575,7 @@ CommandButton::CommandButton( void )
 	m_textLabel.clear();
 	m_window = nullptr;
 	m_commandButtonBorder = COMMAND_BUTTON_BORDER_NONE;
-	//m_prev = NULL;
+	//m_prev = nullptr;
 	m_next = nullptr;
 	m_radiusCursor = RADIUSCURSOR_NONE;
 
@@ -896,7 +896,7 @@ ControlBar::ControlBar( void )
 	m_genStarOff = nullptr;
 	m_genStarOn  = nullptr;
 	m_UIDirty    = FALSE;
-	//	m_controlBarResizer = NULL;
+	//	m_controlBarResizer = nullptr;
 	m_buildUpClockColor = GameMakeColor(0,0,0,100);
 	m_commandBarBorderColor = GameMakeColor(0,0,0,100);
 	for( i = 0; i < NUM_CONTEXT_PARENTS; i++ )
@@ -905,7 +905,7 @@ ControlBar::ControlBar( void )
 	{
 		m_commandWindows[ i ] = nullptr;
 	// removed from multiplayer branch
-		//m_commandMarkers[ i ] = NULL;
+		//m_commandMarkers[ i ] = nullptr;
 	}
 
 	for( i = 0; i < MAX_PURCHASE_SCIENCE_RANK_1; i++ )
@@ -998,7 +998,7 @@ ControlBar::~ControlBar( void )
 	m_controlBarSchemeManager = nullptr;
 
 //	delete m_controlBarResizer;
-//	m_controlBarResizer = NULL;
+//	m_controlBarResizer = nullptr;
 
 	// destroy all the command set definitions
 	CommandSet *set;
@@ -1848,7 +1848,7 @@ void ControlBar::evaluateContextUI( void )
 		//Drawable *draw = selectedDrawables->front();
 
 		// sanity
-		//if( draw == NULL )
+		//if( draw == nullptr )
 		//	return;
 
 		// get object
@@ -2449,7 +2449,7 @@ void ControlBar::setControlCommand( GameWindow *button, const CommandButton *com
 	if( commandButton == nullptr )
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("setControlCommand: NULL commandButton passed in") );
+		DEBUG_ASSERTCRASH( 0, ("setControlCommand: nullptr commandButton passed in") );
 		return;
 
 	}
@@ -2539,7 +2539,7 @@ void ControlBar::postProcessCommands( void )
 
 //-------------------------------------------------------------------------------------------------
 /** set the command for the button identified by the window name
-	* NOTE that parent may be NULL, it only helps to speed up the search for a particular
+	* NOTE that parent may be nullptr, it only helps to speed up the search for a particular
 	* window ID */
 //-------------------------------------------------------------------------------------------------
 void ControlBar::setControlCommand( const AsciiString& buttonWindowName, GameWindow *parent,
@@ -2701,7 +2701,7 @@ void ControlBar::setPortraitByObject( Object *obj )
 // ------------------------------------------------------------------------------------------------
 void ControlBar::showRallyPoint(const Coord3D* loc)
 {
-	// if loc is NULL, destroy any rally point drawble we have shown
+	// if loc is nullptr, destroy any rally point drawble we have shown
 	if (loc == nullptr)
 	{
 		// destroy rally point drawable if present
@@ -2952,7 +2952,7 @@ void ControlBar::showPurchaseScience( void )
 	m_genStarFlash = FALSE;
 	if(!m_contextParent[ CP_PURCHASE_SCIENCE ]->winIsHidden())
 		return;
-	//switchToContext(CB_CONTEXT_PURCHASE_SCIENCE, NULL);
+	//switchToContext(CB_CONTEXT_PURCHASE_SCIENCE, nullptr);
 	m_contextParent[ CP_PURCHASE_SCIENCE ]->winHide(FALSE);
 	if (TheGlobalData->m_animateWindows)
 		TheTransitionHandler->setGroup("GenExpFade");
@@ -3709,7 +3709,7 @@ void ControlBar::drawSpecialPowerShortcutMultiplierText()
 				UnicodeString unibuffer;
 				GadgetButtonSetText( win, unibuffer );
 				//TheDisplayStringManager->freeDisplayString( m_shortcutDisplayStrings[ i ] );
-				//m_shortcutDisplayStrings[ i ] = NULL;
+				//m_shortcutDisplayStrings[ i ] = nullptr;
 			}
 		}
 	}

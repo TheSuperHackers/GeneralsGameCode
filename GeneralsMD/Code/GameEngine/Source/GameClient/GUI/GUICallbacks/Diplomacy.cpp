@@ -466,7 +466,7 @@ void PopulateInGameDiplomacyPopup( void )
 		if (slot && slot->isOccupied())
 		{
 			Bool isInGame = false;
-			// Note - for skirmish, TheNetwork == NULL.  jba.
+			// Note - for skirmish, TheNetwork == nullptr.  jba.
 			if (TheNetwork &&	TheNetwork->isPlayerConnected(slotNum)) {
 				isInGame = true;
 			} else if ((TheNetwork == nullptr) && slot->isHuman()) {

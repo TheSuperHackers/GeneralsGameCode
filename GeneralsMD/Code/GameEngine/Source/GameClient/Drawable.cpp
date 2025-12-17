@@ -564,7 +564,7 @@ Drawable::~Drawable()
 	// remove any entries that might be present from the ray effect system
 	TheGameClient->removeFromRayEffects( this );
 
-	// reset object to NULL so we never mistaken grab "dead" objects
+	// reset object to nullptr so we never mistaken grab "dead" objects
 	m_object = nullptr;
 
 	// delete any icons present
@@ -1260,13 +1260,13 @@ void Drawable::updateDrawable( void )
     }
 //		else if ( testTintStatus( TINT_STATUS_POISONED) )
 //		{
-//			if (m_colorTintEnvelope == NULL)
+//			if (m_colorTintEnvelope == nullptr)
 //				m_colorTintEnvelope = newInstance(TintEnvelope);
 //			m_colorTintEnvelope->play( &SICKLY_GREEN_POISONED_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
 //		}
 //		else if ( testTintStatus( TINT_STATUS_IRRADIATED) )
 //		{
-//			if (m_colorTintEnvelope == NULL)
+//			if (m_colorTintEnvelope == nullptr)
 //				m_colorTintEnvelope = newInstance(TintEnvelope);
 //			m_colorTintEnvelope->play( &RED_IRRADIATED_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
 //		}
@@ -3223,7 +3223,7 @@ void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 	if( body->getHealth() != body->getMaxHealth() )
 	{
 //		const DamageInfo* lastDamage = body->getLastDamageInfo();
-//		if( lastDamage != NULL && lastDamage->in.m_damageType == DAMAGE_HEALING
+//		if( lastDamage != nullptr && lastDamage->in.m_damageType == DAMAGE_HEALING
 //			&&(TheGameLogic->getFrame() - body->getLastHealingTimestamp()) <= HEALING_ICON_DISPLAY_TIME
 //			)
 		if ( TheGameLogic->getFrame() > HEALING_ICON_DISPLAY_TIME && // because so many things init health early in game
@@ -3955,7 +3955,7 @@ void Drawable::clearAndSetModelConditionState( ModelConditionFlagType clr, Model
 DrawModule** Drawable::getDrawModulesNonDirty()
 {
 	DrawModule** dm = (DrawModule**)getModuleList(MODULETYPE_DRAW);
-	DEBUG_ASSERTCRASH(dm != nullptr, ("Draw Module List is not expected NULL"));
+	DEBUG_ASSERTCRASH(dm != nullptr, ("Draw Module List is not expected nullptr"));
 	return dm;
 }
 
@@ -3981,7 +3981,7 @@ DrawModule** Drawable::getDrawModules()
 	}
 #endif
 
-	DEBUG_ASSERTCRASH(dm != nullptr, ("Draw Module List is not expected NULL"));
+	DEBUG_ASSERTCRASH(dm != nullptr, ("Draw Module List is not expected nullptr"));
 	return dm;
 }
 
@@ -4007,7 +4007,7 @@ DrawModule const** Drawable::getDrawModules() const
 	}
 #endif
 
-	DEBUG_ASSERTCRASH(dm != nullptr, ("Draw Module List is not expected NULL"));
+	DEBUG_ASSERTCRASH(dm != nullptr, ("Draw Module List is not expected nullptr"));
 	return dm;
 }
 
@@ -4166,7 +4166,7 @@ void Drawable::friend_bindToObject( Object *obj ) ///< bind this drawable to an 
 	PhysicsXformInfo physicsXform;
 	if (calcPhysicsXform(physicsXform))
 	{
-		DEBUG_ASSERTCRASH(m_physicsXform == nullptr, ("m_physicsXform is not NULL"));
+		DEBUG_ASSERTCRASH(m_physicsXform == nullptr, ("m_physicsXform is not nullptr"));
 		m_physicsXform = new PhysicsXformInfo;
 		*m_physicsXform = physicsXform;
 	}

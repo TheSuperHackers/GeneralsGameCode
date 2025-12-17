@@ -222,8 +222,8 @@ static GameWindow *comboBoxPlayerTemplate[MAX_SLOTS] = {0};
 
 static GameWindow *comboBoxTeam[MAX_SLOTS] = {0};
 
-//static GameWindow *buttonStartPosition[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-//																								NULL,NULL,NULL,NULL };
+//static GameWindow *buttonStartPosition[MAX_SLOTS] = {nullptr,nullptr,nullptr,nullptr,
+//																								nullptr,nullptr,nullptr,nullptr };
 //
 static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {0};
 
@@ -1286,7 +1286,7 @@ void DeinitWOLGameGadgets( void )
   checkBoxLimitSuperweapons = nullptr;
   comboBoxStartingCash = nullptr;
 
-//	GameWindow *staticTextTitle = NULL;
+//	GameWindow *staticTextTitle = nullptr;
 	for (Int i = 0; i < MAX_SLOTS; i++)
 	{
 		comboBoxPlayer[i] = nullptr;
@@ -1295,7 +1295,7 @@ void DeinitWOLGameGadgets( void )
 		comboBoxPlayerTemplate[i] = nullptr;
 		comboBoxTeam[i] = nullptr;
 		buttonAccept[i] = nullptr;
-//		buttonStartPosition[i] = NULL;
+//		buttonStartPosition[i] = nullptr;
 		buttonMapStartPosition[i] = nullptr;
 		genericPingWindow[i] = nullptr;
 	}
@@ -2689,7 +2689,7 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 					}
 
 					TheGameSpyInfo->getCurrentStagingRoom()->reset();
-					//peerLeaveRoom(TheGameSpyChat->getPeer(), StagingRoom, NULL);
+					//peerLeaveRoom(TheGameSpyChat->getPeer(), StagingRoom, nullptr);
 					TheGameSpyInfo->leaveStagingRoom();
 					buttonPushed = true;
 					nextScreen = "Menus/WOLCustomLobby.wnd";

@@ -180,7 +180,7 @@ void UpdateRemoteIPList()
 void HostDirectConnectGame()
 {
 	// Init LAN API Singleton
-	DEBUG_ASSERTCRASH(TheLAN != nullptr, ("TheLAN is NULL!"));
+	DEBUG_ASSERTCRASH(TheLAN != nullptr, ("TheLAN is nullptr!"));
 	if (!TheLAN)
 	{
 		TheLAN = NEW LANAPI();
@@ -300,7 +300,7 @@ void NetworkDirectConnectInit( WindowLayout *layout, void *userData )
 	TheLAN = nullptr;
 
 	if (TheLAN == nullptr) {
-//		DEBUG_ASSERTCRASH(TheLAN != NULL, ("TheLAN is null initializing the direct connect screen."));
+//		DEBUG_ASSERTCRASH(TheLAN != nullptr, ("TheLAN is null initializing the direct connect screen."));
 		TheLAN = NEW LANAPI();
 
 		OptionPreferences prefs;

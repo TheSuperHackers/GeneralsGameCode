@@ -245,7 +245,7 @@ static void restartMissionMenu()
 		//	InitGameLogicRandom(GameClientRandomValue(0, INT_MAX - 1));
 	}
 	//TheTransitionHandler->remove("QuitFull"); //KRISMORNESS ADD
-	//quitMenuLayout = NULL; //KRISMORNESS ADD
+	//quitMenuLayout = nullptr; //KRISMORNESS ADD
 	//isVisible = TRUE; //KRISMORNESS ADD
 	//HideQuitMenu();	//KRISMORNESS ADD
 	TheInGameUI->setClientQuiet( TRUE );
@@ -511,7 +511,7 @@ WindowMsgHandledType QuitMenuSystem( GameWindow *window, UnsignedInt msg,
 			else if( buttonOptions == controlID )
 			{
 				WindowLayout *optLayout = TheShell->getOptionsLayout(TRUE);
-				DEBUG_ASSERTCRASH(optLayout != nullptr, ("options menu layout is NULL"));
+				DEBUG_ASSERTCRASH(optLayout != nullptr, ("options menu layout is nullptr"));
 				optLayout->runInit();
 				optLayout->hide(FALSE);
 				optLayout->bringForward();

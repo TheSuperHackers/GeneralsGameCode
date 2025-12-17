@@ -136,8 +136,8 @@ static GameWindow *comboBoxPlayerTemplate[MAX_SLOTS] = {0};
 
 static GameWindow *comboBoxTeam[MAX_SLOTS] = {0};
 
-//static GameWindow *buttonStartPosition[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-//																								NULL,NULL,NULL,NULL };
+//static GameWindow *buttonStartPosition[MAX_SLOTS] = {nullptr,nullptr,nullptr,nullptr,
+//																								nullptr,nullptr,nullptr,nullptr };
 //
 static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {0};
 
@@ -813,7 +813,7 @@ void DeinitLanGameGadgets( void )
 		comboBoxPlayerTemplate[i] = nullptr;
 		comboBoxTeam[i] = nullptr;
 		buttonAccept[i] = nullptr;
-//		buttonStartPosition[i] = NULL;
+//		buttonStartPosition[i] = nullptr;
 		buttonMapStartPosition[i] = nullptr;
 	}
 }

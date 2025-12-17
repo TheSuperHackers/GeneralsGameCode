@@ -89,7 +89,7 @@ static GameWindow *backdrop = nullptr;
 static GameWindow *bioParent = nullptr;
 
 //static NameKeyType testWinID = NAMEKEY_INVALID;
-//static GameWindow *testWin = NULL;
+//static GameWindow *testWin = nullptr;
 static WindowVideoManager *wndVideoManager = nullptr;
 
 //
@@ -646,7 +646,7 @@ WindowMsgHandledType ChallengeMenuSystem( GameWindow *window, UnsignedInt msg, W
  			{
 				if( TheChallengeGameInfo == nullptr )
 				{
-					// If this is NULL, then we must be on the way back out of this menu.
+					// If this is nullptr, then we must be on the way back out of this menu.
 					// Don't crash, just eat the button click message.
 					return MSG_HANDLED;
 				}
