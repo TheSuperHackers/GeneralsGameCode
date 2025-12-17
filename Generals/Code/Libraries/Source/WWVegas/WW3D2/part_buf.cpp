@@ -474,7 +474,7 @@ ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass & src) :
 		}
 
 	} else {
-		// Unlike other properties, if there is no Orientation array then all the arrays are NULL
+		// Unlike other properties, if there is no Orientation array then all the arrays are nullptr
 		// (including the Values array) - there is an implicit starting value of 0.
 	}
 
@@ -1580,7 +1580,7 @@ void ParticleBufferClass::Reset_Rotations(ParticlePropertyStruct<float> &new_pro
 	RotationRandom = new_props.Rand * 0.001f;
 	InitialOrientationRandom = orient_rnd;
 
-	// If both randomizers are effectively zero and rotation is constant zero, then all arrays are NULL.
+	// If both randomizers are effectively zero and rotation is constant zero, then all arrays are nullptr.
 	static const float eps_orientation = 2.77777778e-4f;	// Epsilon is equivalent to 0.1 degree
 	static const float eps_rotation = 2.77777778e-4f;	// Epsilon is equivalent to one rotation per hour (in rotations / second)
 	bool orientation_rand_zero = fabs(orient_rnd) < eps_orientation;

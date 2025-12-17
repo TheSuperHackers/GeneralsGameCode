@@ -43,7 +43,7 @@ class Null3DObjClass : public RenderObjClass
 {
 public:
 
-	Null3DObjClass(const char * name = "NULL");
+	Null3DObjClass(const char * name = "NULL");  // Note: "NULL" is a string literal for the object name, not a pointer
 	Null3DObjClass(const Null3DObjClass & src);
 	Null3DObjClass & operator = (const Null3DObjClass & that);
 

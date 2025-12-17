@@ -213,7 +213,7 @@ MeshMatDescClass::MeshMatDescClass(const MeshMatDescClass & that) :
 	int stage;
 	int array;
 
-	// init everything to NULL
+	// init everything to nullptr
 	for (array=0;array < MAX_COLOR_ARRAYS; array++) {
 		ColorArray[array] = nullptr;
 	}

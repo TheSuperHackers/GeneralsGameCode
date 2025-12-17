@@ -462,7 +462,7 @@ public:
 	**
 	**	swap_chain_ptr->Present (nullptr, nullptr, nullptr, nullptr);
 	**
-	**	DX8Wrapper::Set_Render_Target ((IDirect3DSurface8 *)NULL);
+	**	DX8Wrapper::Set_Render_Target ((IDirect3DSurface8 *)nullptr);
 	**
 	*/
 	static IDirect3DSwapChain8 *	Create_Additional_Swap_Chain (HWND render_window);
@@ -829,7 +829,7 @@ WWINLINE void DX8Wrapper::Set_Ambient(const Vector3& color)
 //
 // Set vertex buffer to be used in the subsequent render calls. If there was
 // a vertex buffer being used earlier, release the reference to it. Passing
-// NULL just will release the vertex buffer.
+// nullptr just will release the vertex buffer.
 //
 // ----------------------------------------------------------------------------
 

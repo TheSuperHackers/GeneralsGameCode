@@ -350,7 +350,7 @@ void ParticleEmitterClass::On_Frame_Update(void)
 
 			// The particle buffer doesn't have a valid Scene yet - the emitter
 			// finds out what scene it belongs to (goes up the container tree
-			// until it finds a non-NULL Scene), and then adds the particle
+			// until it finds a non-nullptr Scene), and then adds the particle
 			// buffer to it.
 			if ( BufferSceneNeeded ) {
 
@@ -631,7 +631,7 @@ void ParticleEmitterClass::Create_New_Particles(const Quaternion & curr_quat, co
 
 // Initialize one new particle at the given NewParticleStruct address, with
 // the given age and emitter transform (expressed as a quaternion and origin
-// vector). (must check if address is NULL).
+// vector). (must check if address is nullptr).
 void ParticleEmitterClass::Initialize_Particle(NewParticleStruct * newpart,
    unsigned int timestamp, const Quaternion & quat, const Vector3 & orig)
 {
