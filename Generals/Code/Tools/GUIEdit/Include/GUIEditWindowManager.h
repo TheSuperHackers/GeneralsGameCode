@@ -90,7 +90,7 @@ protected:
 	also in the select list */
 	void removeSupervisedChildSelections( void );
 	/** selected windows that are children will cut loose their parents
-	and become adults (their parent will be NULL, otherwise the screen) */
+	and become adults (their parent will be nullptr, otherwise the screen) */
 //	void orphanSelectedChildren( void );
 
   /// dupe a window and its children

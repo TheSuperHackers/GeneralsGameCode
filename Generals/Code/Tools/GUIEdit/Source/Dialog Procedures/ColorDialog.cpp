@@ -257,7 +257,7 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWnd, UINT uMsg,
 	*
 	* Returns:
 	* Pointer to selected color
-	* NULL for canceled request
+	* nullptr for canceled request
 	*/
 // ============================================================================
 RGBColorInt *SelectColor( Int red, Int green, Int blue, Int alpha,

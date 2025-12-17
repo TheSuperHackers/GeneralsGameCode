@@ -1235,7 +1235,7 @@ void LoadHeaderTemplateListComboBox( HWND comboBox, AsciiString selected )
 	* image Loc from the GUI collection
 	*
 	* NOTE: The image list combo boxes have a [NONE] at index 0, if that
-	* is selected NULL will be returned
+	* is selected nullptr will be returned
 	*/
 //=============================================================================
 const Image *ComboBoxSelectionToImage( HWND comboBox )

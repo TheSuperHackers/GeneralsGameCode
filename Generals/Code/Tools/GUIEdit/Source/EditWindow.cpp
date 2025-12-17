@@ -324,7 +324,7 @@ void EditWindow::registerEditWindowClass( void )
 	wcex.cbWndExtra			= 0;
 	wcex.hInstance			= hInst;
 	wcex.hIcon					= LoadIcon( hInst, (LPCTSTR)IDI_GUIEDIT );
-	wcex.hCursor				= nullptr;  //LoadCursor(NULL, IDC_ARROW);
+	wcex.hCursor				= nullptr;  //LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)GetStockObject( BLACK_BRUSH );
 	wcex.lpszMenuName		=	nullptr;
 	wcex.lpszClassName	= m_className;
