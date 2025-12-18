@@ -87,8 +87,8 @@
 #endif
 
 
-#define VERY_TRANSPARENT_MATERIAL_PASS_OPACITY (0.001f)
-#define MATERIAL_PASS_OPACITY_FADE_SCALAR (0.8f)
+#define MATERIAL_PASS_OPACITY_MIN (0.001f)
+#define MATERIAL_PASS_OPACITY_DEFAULT_FADE_SCALAR (0.8f)
 
 static const char *const TheDrawableIconNames[] =
 {
@@ -433,6 +433,8 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatusBits statu
 	m_hidden = false;
 	m_hiddenByStealth = false;
 	m_secondMaterialPassOpacity = 0.0f;
+	m_secondMaterialPassOpacityScalar = MATERIAL_PASS_OPACITY_DEFAULT_FADE_SCALAR;
+	m_secondMaterialPassOpacityAllowRefill = false;
 	m_drawableFullyObscuredByShroud = false;
 
   m_receivesDynamicLights = TRUE; // a good default... overridden by one of my draw modules if at all
@@ -2607,16 +2609,36 @@ void Drawable::setStealthLook(StealthLookType look)
 //-------------------------------------------------------------------------------------------------
 void Drawable::draw()
 {
-  if ( testTintStatus( TINT_STATUS_FRENZY ) == FALSE )
+  if (testTintStatus(TINT_STATUS_FRENZY) == FALSE)
   {
-    if ( getObject() && getObject()->isEffectivelyDead() )
-		  m_secondMaterialPassOpacity = 0.0f;//dead folks don't stealth anyway
-	  else if ( m_secondMaterialPassOpacity > VERY_TRANSPARENT_MATERIAL_PASS_OPACITY )// keep fading any add'l material unless something has set it to zero
-		  m_secondMaterialPassOpacity *= MATERIAL_PASS_OPACITY_FADE_SCALAR;
-	  else
-		  m_secondMaterialPassOpacity = 0.0f;
-  }
+		if (getObject() && getObject()->isEffectivelyDead())
+		{
+			m_secondMaterialPassOpacity = 0.0f;//dead folks don't stealth anyway
+		}
+		else if (!TheFramePacer->isGameHalted())
+		{
+			// TheSuperHackers @tweak The opacity step is now decoupled from the render update.
+			if (m_secondMaterialPassOpacity > MATERIAL_PASS_OPACITY_MIN)
+			{
+				m_secondMaterialPassOpacity *= m_secondMaterialPassOpacityScalar;
+			}
+			else if (m_secondMaterialPassOpacityAllowRefill)
+			{
+				// min opacity = (X ^ (framerate / updatesPerSec)) -> e.g. [ 0.05 = X ^ (100 / 2) ] -> [ X = 0.941845 ] -> [ 0.941845 ^ 50 = 0.05 ]
+				// changes to the updates per second value need to be tested with a single stealth detector, max 30 logic frames and unlimited render frames
+				const Real updatesPerSec = 2.0f;
+				const Real scalar = pow(MATERIAL_PASS_OPACITY_MIN, updatesPerSec / TheFramePacer->getUpdateFps());
 
+				m_secondMaterialPassOpacity = scalar;
+				m_secondMaterialPassOpacityScalar = scalar;
+				m_secondMaterialPassOpacityAllowRefill = FALSE;
+			}
+			else
+			{
+				m_secondMaterialPassOpacity = 0.0f;
+			}
+		}
+  }
 
 	if (m_hidden || m_hiddenByStealth || getFullyObscuredByShroud())
 		return;	// my, that was easy

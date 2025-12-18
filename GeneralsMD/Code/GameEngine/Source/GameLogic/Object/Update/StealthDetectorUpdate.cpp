@@ -306,7 +306,8 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 			Drawable *theirDraw = them->getDrawable();
 			if ( theirDraw && !them->isKindOf(KINDOF_MINE))
 			{
-				theirDraw->setSecondMaterialPassOpacity( 1.0f );
+				// TheSuperHackers @tweak Don't set opacity here as it should be decoupled from the logic frame rate and not be set for every stealth detector.
+				theirDraw->allowRefillSecondMaterialPassOpacity();
 			}
 
 			if (data->m_IRGridParticleSysTmpl)

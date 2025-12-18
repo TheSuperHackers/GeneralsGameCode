@@ -431,7 +431,8 @@ void StealthUpdate::hintDetectableWhileUnstealthed()
 		{
 			Drawable *selfDraw = self->getDrawable();
 			if ( selfDraw )
-				selfDraw->setSecondMaterialPassOpacity( 1.0f );
+				// TheSuperHackers @tweak Don't set opacity here as it should be decoupled from the logic frame rate.
+				selfDraw->allowRefillSecondMaterialPassOpacity();
 		}
 	}
 }

@@ -542,8 +542,9 @@ public:
 	void setEffectiveOpacity( Real pulseFactor, Real explicitOpacity = -1.0f );
 
 	// this is for the add'l pass fx which operates completely independently of the stealth opacity effects. Draw() does the fading every frame.
-	Real getSecondMaterialPassOpacity() const { return m_secondMaterialPassOpacity; }		///< get alpha/opacity value used to render add'l  rendering pass.
-	void setSecondMaterialPassOpacity( Real op ) { m_secondMaterialPassOpacity = op; }; ///< set alpha/opacity value used to render add'l  rendering pass.
+	Real getSecondMaterialPassOpacity() const { return m_secondMaterialPassOpacity; }								///< get alpha/opacity value used to render add'l  rendering pass.
+	void setSecondMaterialPassOpacity( Real op ) { m_secondMaterialPassOpacity = op; };							///< set alpha/opacity value used to render add'l  rendering pass.
+	void allowRefillSecondMaterialPassOpacity() { m_secondMaterialPassOpacityAllowRefill = TRUE; }	///< allow the second material opacity to be set to 1.0f
 
 	// both of these assume that you are starting at one extreme 100% or 0% opacity and are trying to go to the other!! -- amit
 	void fadeOut( UnsignedInt frames );		///< fade object out...how gradually this is done is determined by frames
@@ -723,7 +724,9 @@ private:
 	UnsignedInt					m_expirationDate;		///< if nonzero, Drawable should destroy itself at this frame
 	DrawableIconInfo*		m_iconInfo;					///< lazily allocated!
 
-	Real m_secondMaterialPassOpacity;			///< drawable gets rendered again in hardware with an extra material layer
+	Real m_secondMaterialPassOpacity;							///< drawable gets rendered again in hardware with an extra material layer
+	Real m_secondMaterialPassOpacityScalar;				///< multiply opacity by scalar value; useful for non-default render framerates
+	Bool m_secondMaterialPassOpacityAllowRefill;	///< allow the second material opacity to be set to 1.0f
 	// --------- BYTE-SIZED THINGS GO HERE
 	Byte m_selected;						///< drawable is selected or not
 	Bool m_hidden;							///< drawable is "hidden" or not (overrides stealth effects)
