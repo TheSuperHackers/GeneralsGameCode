@@ -725,7 +725,6 @@ private:
 	DrawableIconInfo*		m_iconInfo;					///< lazily allocated!
 
 	Real m_secondMaterialPassOpacity;							///< drawable gets rendered again in hardware with an extra material layer
-	Real m_secondMaterialPassOpacityScalar;				///< multiply opacity by scalar value; useful for non-default render framerates
 	Bool m_secondMaterialPassOpacityAllowRefill;	///< allow the second material opacity to be set to 1.0f
 	// --------- BYTE-SIZED THINGS GO HERE
 	Byte m_selected;						///< drawable is selected or not
