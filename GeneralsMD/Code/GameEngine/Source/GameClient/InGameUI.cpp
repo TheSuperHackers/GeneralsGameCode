@@ -2869,7 +2869,11 @@ void InGameUI::createCommandHint( const GameMessage *msg )
 					case GameMessage::MSG_CONVERT_TO_CARBOMB_HINT:
 					case GameMessage::MSG_HIJACK_HINT:
 					case GameMessage::MSG_SABOTAGE_HINT:
-						setMouseCursor( Mouse::ENTER_AGGRESSIVELY );
+						// TheSuperHackers @bugfix soleimanyben 12/18/2025 Fixes an issue where the hijack hint was shown instead of the attack hint when multiple units are selected.
+						if ( getSelectCount() == 1 ) 
+							setMouseCursor( Mouse::ENTER_AGGRESSIVELY );
+						else 
+							setMouseCursor( Mouse::ATTACK_OBJECT );
 						break;
 					case GameMessage::MSG_DEFECTOR_HINT:
 						setMouseCursor( Mouse::DEFECTOR );
