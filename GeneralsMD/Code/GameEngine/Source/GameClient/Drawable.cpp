@@ -2601,6 +2601,15 @@ void Drawable::setStealthLook(StealthLookType look)
 	}
 }
 
+void Drawable::updateSecondMaterialPassOpacityScalar()
+{
+	// TheSuperHackers @tweak The opacity step is no longer a fixed value.
+	// min opacity = (X ^ (frame rate / updates per second)) -> e.g. [ 0.05 = X ^ (100 / 2) ] -> [ X = 0.941845 ] -> [ 0.941845 ^ 50 = 0.05 ]
+	const Real updatesPerSec = 2.0f;
+	const Real scalar = pow(MATERIAL_PASS_OPACITY_MIN, updatesPerSec / TheFramePacer->getUpdateFps());
+
+	m_secondMaterialPassOpacityScalar = scalar;
+}
 
 //-------------------------------------------------------------------------------------------------
 /** default draw is to just call the database defined draw */
@@ -2615,24 +2624,19 @@ void Drawable::draw()
 		}
 		else if (!TheFramePacer->isGameHalted())
 		{
-			// TheSuperHackers @tweak The opacity step is no longer a fixed value.
-			const Bool shouldFade = (m_secondMaterialPassOpacity > MATERIAL_PASS_OPACITY_MIN);
+			const Bool shouldFade = m_secondMaterialPassOpacity > MATERIAL_PASS_OPACITY_MIN;
 			const Bool allowRefill = m_secondMaterialPassOpacityAllowRefill;
 
 			if (shouldFade || allowRefill)
 			{
-				// min opacity = (X ^ (frame rate / updates per second)) -> e.g. [ 0.05 = X ^ (100 / 2) ] -> [ X = 0.941845 ] -> [ 0.941845 ^ 50 = 0.05 ]
-				const Real updatesPerSec = 2.0f;
-				const Real scalar = pow(MATERIAL_PASS_OPACITY_MIN, updatesPerSec / TheFramePacer->getUpdateFps());
-
 				if (!shouldFade && allowRefill)
 				{
-					m_secondMaterialPassOpacity = scalar;
+					m_secondMaterialPassOpacity = m_secondMaterialPassOpacityScalar;
 					m_secondMaterialPassOpacityAllowRefill = FALSE;
 				}
 				else
 				{
-					m_secondMaterialPassOpacity *= scalar;
+					m_secondMaterialPassOpacity *= m_secondMaterialPassOpacityScalar;
 				}
 			}
 			else
