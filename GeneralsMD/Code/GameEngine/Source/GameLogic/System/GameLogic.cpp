@@ -385,9 +385,6 @@ void GameLogic::init( void )
 
 	setFPMode();
 
-	/// @todo Clear object and destroy lists
-	setDefaults( FALSE );
-
 	// create the partition manager
 	ThePartitionManager = NEW PartitionManager;
 	ThePartitionManager->init();
@@ -414,33 +411,8 @@ void GameLogic::init( void )
 	// create a team for the player
 	//DEBUG_ASSERTCRASH(ThePlayerList, ("null ThePlayerList"));
 	//ThePlayerList->setLocalPlayer(0);
-
-	m_CRC = 0;
-	m_pauseFrame = 0;
-	m_gamePaused = FALSE;
-	m_pauseSound = FALSE;
-	m_pauseMusic = FALSE;
-	m_pauseInput = FALSE;
-	m_inputEnabledMemory = TRUE;
-	m_mouseVisibleMemory = TRUE;
-	m_logicTimeScaleEnabledMemory = FALSE;
-
-	for(Int i = 0; i < MAX_SLOTS; ++i)
-	{
-		m_progressComplete[i] = FALSE;
-		m_progressCompleteTimeout[i] = 0;
-	}
-	m_forceGameStartByTimeOut = FALSE;
-
-	m_isScoringEnabled = TRUE;
-	m_showBehindBuildingMarkers = TRUE;
-	m_drawIconUI = TRUE;
-	m_showDynamicLOD = TRUE;
-	m_scriptHulkMaxLifetimeOverride = -1;
-
+	reset();
 	m_isInUpdate = FALSE;
-
-	m_rankPointsToAddAtGameStart = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
