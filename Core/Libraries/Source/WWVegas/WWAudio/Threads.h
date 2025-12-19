@@ -31,7 +31,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-#include <Utility/CppMacros.h>
 
 #include "windows.h"
 #include "Vector.h"

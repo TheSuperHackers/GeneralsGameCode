@@ -29,6 +29,8 @@
 
 #pragma once
 
+#include <Utility/CppMacros.h>
+
 // include all our public header files (use double quotes here)
 #include "profile_doc.h"
 #include "profile_highlevel.h"

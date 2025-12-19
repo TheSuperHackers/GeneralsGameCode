@@ -37,7 +37,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-#include <Utility/CppMacros.h>
 
 #include "shader.h"
 #include "vector4.h"

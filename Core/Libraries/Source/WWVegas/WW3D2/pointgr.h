@@ -35,7 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-#include <Utility/CppMacros.h>
 
 #include "sharebuf.h"
 #include "shader.h"

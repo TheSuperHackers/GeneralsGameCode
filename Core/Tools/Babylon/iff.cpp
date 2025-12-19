@@ -17,7 +17,6 @@
 */
 
 
-#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "sys/stat.h"
 #include "iff.h"

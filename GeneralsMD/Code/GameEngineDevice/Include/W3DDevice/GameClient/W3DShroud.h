@@ -23,7 +23,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-#include <Utility/CppMacros.h>
 
 #include "WW3D2/matpass.h"
 #include "WW3D2/dx8wrapper.h"

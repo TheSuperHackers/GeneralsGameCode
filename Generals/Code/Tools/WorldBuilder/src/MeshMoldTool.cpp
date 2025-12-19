@@ -20,7 +20,6 @@
 // Terrain shaping tool for worldbuilder.
 // Author: John Ahlquist, Oct 2001
 
-#include <Utility/CppMacros.h>
 
 #include "StdAfx.h"
 #include "resource.h"

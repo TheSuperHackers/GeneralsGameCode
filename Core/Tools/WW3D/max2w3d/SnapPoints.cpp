@@ -37,7 +37,6 @@
 
 #if defined(_MSC_VER)
 #pragma once
-#include <Utility/CppMacros.h>
 #endif
 
 #include "SnapPoints.h"
