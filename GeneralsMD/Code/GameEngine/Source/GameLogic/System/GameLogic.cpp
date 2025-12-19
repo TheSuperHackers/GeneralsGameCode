@@ -1219,11 +1219,6 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	TheWritableGlobalData->m_loadScreenRender = TRUE;	///< mark it so only a few select things are rendered during load
 	TheWritableGlobalData->m_TiVOFastMode = FALSE;	//always disable the TIVO fast-forward mode at the start of a new game.
 
-	m_showBehindBuildingMarkers = TRUE;
-	m_drawIconUI = TRUE;
-	m_showDynamicLOD = TRUE;
-	m_scriptHulkMaxLifetimeOverride = -1;
-
 	Campaign* currentCampaign = TheCampaignManager->getCurrentCampaign();
 	Bool isChallengeCampaign = m_gameMode == GAME_SINGLE_PLAYER && currentCampaign && currentCampaign->m_isChallengeCampaign;
 
