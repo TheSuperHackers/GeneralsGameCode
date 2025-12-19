@@ -4160,7 +4160,7 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 void GameLogic::exitGame()
 {
 	// TheSuperHackers @fix The logic update must not be halted to process the game exit message.
-	setGamePaused(FALSE, TRUE, TRUE, FALSE);
+	setGamePaused(FALSE);
 	TheScriptEngine->forceUnfreezeTime();
 	TheScriptEngine->doUnfreezeTime();
 
