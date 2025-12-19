@@ -27,15 +27,16 @@
 // Author: Matthew D. Campbell, July 2002
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "utf8.h"
 
 //-------------------------------------------------------------------------
 
 std::wstring MultiByteToWideCharSingleLine( const char *orig )
 {
-	Int len = strlen(orig);
-	WideChar *dest = NEW WideChar[len+1];
+	const size_t size = get_size_as_widechar( orig );
+	WideChar *dest = NEW WideChar[size / sizeof(WideChar)];
 
-	MultiByteToWideChar(CP_UTF8, 0, orig, -1, dest, len);
+	convert_utf8_to_widechar( orig, dest, size );
 	WideChar *c = NULL;
 	do
 	{
@@ -56,7 +57,6 @@ std::wstring MultiByteToWideCharSingleLine( const char *orig )
 	}
 	while ( c != NULL );
 
-	dest[len] = 0;
 	std::wstring ret = dest;
 	delete[] dest;
 	return ret;
@@ -65,12 +65,11 @@ std::wstring MultiByteToWideCharSingleLine( const char *orig )
 std::string WideCharStringToMultiByte( const WideChar *orig )
 {
 	std::string ret;
-	Int len = WideCharToMultiByte( CP_UTF8, 0, orig, wcslen(orig), NULL, 0, NULL, NULL ) + 1;
-	if (len > 0)
+	const size_t size = get_size_as_utf8( orig );
+	if (size > 0)
 	{
-		char *dest = NEW char[len];
-		WideCharToMultiByte( CP_UTF8, 0, orig, -1, dest, len, NULL, NULL );
-		dest[len-1] = 0;
+		char *dest = NEW char[size];
+		convert_widechar_to_utf8( orig, dest, size );
 		ret = dest;
 		delete[] dest;
 	}
