@@ -592,7 +592,7 @@ public:
 
 	Bool isPlayerObserver( void ) const; // Favor !isPlayerActive() - this is used for Observer GUI mostly, not in-game stuff
 	Bool isPlayerDead(void) const; // Favor !isPlayerActive() - this is used so OCLs don't give us stuff after death.
-	Bool isPlayerActive(void) const; // Player is alive and no observer. !isPlayerActive() is synonymous for observing.
+	Bool isPlayerActive(void) const; // Player is alive and not observer. !isPlayerActive() is synonymous with observing.
 
 	Bool didPlayerPreorder( void ) const { return m_isPreorder; }
 
