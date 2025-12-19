@@ -56,7 +56,6 @@
  *   Is_Aggregate -- check if a node is an aggregate object                                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "w3dappdata.h"
 #include "w3dutil.h"
 #include "util.h"

@@ -20,7 +20,6 @@
 // This module takes care of all the Chat API stuff
 //
 
-#include <Utility/CppMacros.h>
 #include <list>
 #include "gamespy/ghttp/ghttp.h"
 #include "DownloadManager.h"

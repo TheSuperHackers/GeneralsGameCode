@@ -31,7 +31,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "Texture.h"
 #include "W3DView.h"

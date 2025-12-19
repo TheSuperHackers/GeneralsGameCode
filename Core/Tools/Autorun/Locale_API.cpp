@@ -34,7 +34,6 @@
 *
 *****************************************************************************/
 
-#include <Utility/CppMacros.h>
 #include "locale.h"
 #include "Locale_API.h"
 #include "Utils.h"

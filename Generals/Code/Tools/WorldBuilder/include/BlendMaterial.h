@@ -17,7 +17,6 @@
 */
 
 #pragma once
-#include <Utility/CppMacros.h>
 
 // BlendMaterial.h : header file
 //

@@ -39,7 +39,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-#include <Utility/CppMacros.h>
 
 //#include	<errno.h>
 

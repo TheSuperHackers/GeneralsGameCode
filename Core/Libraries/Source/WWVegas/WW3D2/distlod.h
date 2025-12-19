@@ -35,7 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-#include <Utility/CppMacros.h>
 
 #include "proto.h"
 #include "rendobj.h"

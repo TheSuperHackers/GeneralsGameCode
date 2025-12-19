@@ -17,7 +17,6 @@
 */
 
 #pragma once
-#include <Utility/CppMacros.h>
 
 // MatchDlg.h : header file
 //

@@ -68,7 +68,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include <Utility/CppMacros.h>
 #include "sphereobj.h"
 #include "w3d_util.h"
 #include "wwdebug.h"

@@ -51,7 +51,6 @@
  *   SkinDecalMeshClass::Process_Material_Run -- scans the mesh for material runs              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "decalmsh.h"
 #include "decalsys.h"
 #include "rinfo.h"

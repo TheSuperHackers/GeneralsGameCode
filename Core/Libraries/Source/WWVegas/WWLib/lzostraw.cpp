@@ -37,7 +37,6 @@
  *   LZOStraw::~LZOStraw -- Destructor for the LZO straw.                                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include	"always.h"
 #include	"lzo.h"
 #include	"lzostraw.h"

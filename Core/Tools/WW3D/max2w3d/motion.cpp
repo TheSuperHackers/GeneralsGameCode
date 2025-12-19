@@ -49,7 +49,6 @@
  *   MotionClass::get_visibility -- retrieve the visibility bit for this node:frame            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "motion.h"
 #include "w3d_file.h"
 #include "vchannel.h"

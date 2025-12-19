@@ -58,7 +58,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include <Utility/CppMacros.h>
 #include "meshsave.h"
 #include <max.h>
 #include <stdmat.h>

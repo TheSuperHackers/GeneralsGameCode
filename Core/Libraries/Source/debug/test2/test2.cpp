@@ -27,7 +27,6 @@
 // Debug module - Test 2 (Checking commands, CON I/O, cmddbg file)
 //////////////////////////////////////////////////////////////////////////////
 
-#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "resource.h"
 #include "../debug.h"

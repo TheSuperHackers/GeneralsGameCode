@@ -34,7 +34,6 @@
 *
 ******************************************************************************/
 
-#include <Utility/CppMacros.h>
 #include "Visualc.h"
 #include "UString.h"
 #include "StringConvert.h"

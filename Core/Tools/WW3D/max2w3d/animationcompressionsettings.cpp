@@ -37,7 +37,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include <Utility/CppMacros.h>
 #include "animationcompressionsettings.h"
 #include "dllmain.h"
 #include "resource.h"

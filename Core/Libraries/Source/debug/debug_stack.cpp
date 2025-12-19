@@ -27,7 +27,6 @@
 // Stack walker
 //////////////////////////////////////////////////////////////////////////////
 
-#include <Utility/CppMacros.h>
 #include "debug.h"
 #include "debug_stack.h"
 #include <windows.h>

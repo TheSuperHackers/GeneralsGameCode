@@ -68,7 +68,6 @@
  *	Remove_Spaces				--	Remove spaces from string passed in.    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-#include <Utility/CppMacros.h>
 #include <io.h>
 #include "ARGS.h"
 #include "assert.h"

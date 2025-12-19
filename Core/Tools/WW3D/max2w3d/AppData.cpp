@@ -40,7 +40,6 @@
 ** extensions to the MAXScript language.
 */
 
-#include <Utility/CppMacros.h>
 #include <maxscrpt.h>	// Main MAXScript header
 #include <maxobj.h>		// MAX* Wrapper objects
 #include <strings.h>		// MAX String class

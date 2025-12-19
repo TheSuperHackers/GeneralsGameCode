@@ -20,7 +20,6 @@
 //	XLStuff.cpp
 //
 //
-#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "Babylon.h"
 #include "resource.h"

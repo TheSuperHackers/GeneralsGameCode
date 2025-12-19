@@ -20,7 +20,6 @@
 // Bin.cpp
 //
 
-#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "bin.h"
 #include "assert.h"

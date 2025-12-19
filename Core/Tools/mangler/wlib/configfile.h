@@ -27,7 +27,6 @@ Last Update : May 13, 1999
 \***************************************************************************/
 
 #pragma once
-#include <Utility/CppMacros.h>
 
 #include "wstypes.h"
 #include "dictionary.h"

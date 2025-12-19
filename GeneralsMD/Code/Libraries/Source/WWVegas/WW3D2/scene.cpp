@@ -61,7 +61,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include <Utility/CppMacros.h>
 #include "scene.h"
 #include "plane.h"
 #include "camera.h"

@@ -45,7 +45,6 @@
 new_wsm = wwCopySkinInfo source_root target_root new_wsm
 */
 
-#include <Utility/CppMacros.h>
 #include <maxscrpt.h>	// Main MAXScript header
 #include <maxobj.h>		// MAX* Wrapper objects
 #include <definsfn.h>	// def_* functions to create static function headers

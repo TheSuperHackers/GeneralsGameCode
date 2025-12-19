@@ -22,7 +22,6 @@
 //
 
 #pragma once
-#include <Utility/CppMacros.h>
 
 #include "olestring.h"
 #include "list.h"

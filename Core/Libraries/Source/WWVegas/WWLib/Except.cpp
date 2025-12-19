@@ -49,7 +49,6 @@
 
 #ifdef _MSC_VER
 
-#include <Utility/CppMacros.h>
 #include	"always.h"
 #include <windows.h>
 #include	"assert.h"

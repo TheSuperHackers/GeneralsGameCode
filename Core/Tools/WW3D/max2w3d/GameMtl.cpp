@@ -62,7 +62,6 @@
  *   GameMtl::Compute_PS2_Shader_From_PC_Shader -- Change a W3D material to a PS2 W3D material.*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "gamemtl.h"
 #include <max.h>
 #include <gport.h>

@@ -51,7 +51,6 @@
  *   Lerp - linearly interpolate matrices (orientation is slerped)                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "matrix3d.h"
 
 #include <math.h>

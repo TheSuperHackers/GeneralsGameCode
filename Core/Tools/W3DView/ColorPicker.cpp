@@ -22,7 +22,6 @@
 //
 //
 
-#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "ColorPicker.h"
 #include "ColorPickerDialogClass.h"

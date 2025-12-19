@@ -86,7 +86,6 @@
  *   MeshClass::Make_Unique -- Makes mesh unique in the renderer, but still shares system ram  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "mesh.h"
 #include <assert.h>
 #include "w3d_file.h"

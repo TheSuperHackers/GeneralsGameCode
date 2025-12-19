@@ -36,7 +36,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include <Utility/CppMacros.h>
 #include "w3dutil.h"
 #include "w3ddesc.h"
 #include "rcmenu.h"

@@ -33,7 +33,6 @@
  *-------------------------------------------------------------------------*/
 
 #pragma once
-#include <Utility/CppMacros.h>
 
 #include "meshgeometry.h"
 #include "meshmatdesc.h"

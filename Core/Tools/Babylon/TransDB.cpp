@@ -20,7 +20,6 @@
 // TransDB.cpp
 //
 
-#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "TransDB.h"
 #include "BabylonDlg.h"

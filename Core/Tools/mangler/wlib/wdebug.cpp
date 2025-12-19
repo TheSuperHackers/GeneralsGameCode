@@ -16,7 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <Utility/CppMacros.h>
 #include <stdlib.h>
 #include "wdebug.h"
 #include "streamer.h"

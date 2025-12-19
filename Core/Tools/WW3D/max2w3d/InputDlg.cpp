@@ -39,7 +39,6 @@
 // InputDlg.cpp : implementation file
 //
 
-#include <Utility/CppMacros.h>
 #include "InputDlg.h"
 #include <assert.h>
 

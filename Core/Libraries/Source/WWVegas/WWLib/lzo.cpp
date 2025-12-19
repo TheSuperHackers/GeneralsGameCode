@@ -36,7 +36,6 @@
  *   LZOCompressor::Decompress -- decompress a buffer using LZO                                *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <Utility/CppMacros.h>
 #include "lzo.h"
 #include "mutex.h"
 #include "wwdebug.h"

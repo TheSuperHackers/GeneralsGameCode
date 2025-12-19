@@ -51,7 +51,6 @@
  SKU2 = 1234 SOFTWARE\Westwood\FakeGame
 
 \*****************************************************************************/
-#include <Utility/CppMacros.h>
 #include "dialog.h"
 #include "patch.h"
 #include "findpatch.h"

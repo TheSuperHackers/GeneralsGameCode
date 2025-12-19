@@ -20,7 +20,6 @@
 // expimp.cpp
 //
 
-#include <Utility/CppMacros.h>
 #include "StdAfx.h"
 #include "TransDB.h"
 #include "XLStuff.h"

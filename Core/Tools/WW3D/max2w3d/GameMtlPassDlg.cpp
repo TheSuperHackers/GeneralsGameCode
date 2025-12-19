@@ -45,7 +45,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include <Utility/CppMacros.h>
 #include "GameMtlPassDlg.h"
 #include "dllmain.h"
 #include "resource.h"
