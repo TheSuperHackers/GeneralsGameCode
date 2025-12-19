@@ -256,6 +256,8 @@ const Int MAX_ENABLED_MODULES								= 16;
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 
+/*static*/ Real							Drawable::s_secondMaterialPassOpacityScalar = 1.0f;
+
 /*static*/ Bool							Drawable::s_staticImagesInited = false;
 /*static*/ const Image*			Drawable::s_veterancyImage[LEVEL_COUNT]	= { NULL };
 /*static*/ const Image*			Drawable::s_fullAmmo = NULL;
@@ -2608,7 +2610,7 @@ void Drawable::updateSecondMaterialPassOpacityScalar()
 	const Real updatesPerSec = 2.0f;
 	const Real scalar = pow(MATERIAL_PASS_OPACITY_MIN, updatesPerSec / TheFramePacer->getUpdateFps());
 
-	m_secondMaterialPassOpacityScalar = scalar;
+	s_secondMaterialPassOpacityScalar = scalar;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2631,12 +2633,12 @@ void Drawable::draw()
 			{
 				if (!shouldFade && allowRefill)
 				{
-					m_secondMaterialPassOpacity = m_secondMaterialPassOpacityScalar;
+					m_secondMaterialPassOpacity = s_secondMaterialPassOpacityScalar;
 					m_secondMaterialPassOpacityAllowRefill = FALSE;
 				}
 				else
 				{
-					m_secondMaterialPassOpacity *= m_secondMaterialPassOpacityScalar;
+					m_secondMaterialPassOpacity *= s_secondMaterialPassOpacityScalar;
 				}
 			}
 			else
