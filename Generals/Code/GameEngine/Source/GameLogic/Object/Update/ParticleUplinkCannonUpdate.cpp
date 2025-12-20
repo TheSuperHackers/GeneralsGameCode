@@ -517,7 +517,8 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 			else
 			{
 				Real speed = data->m_manualDrivingSpeed;
-				if( m_lastDrivingClickFrame - m_2ndLastDrivingClickFrame < data->m_doubleClickToFastDriveDelay )
+				const Bool useFasterSpeed = m_lastDrivingClickFrame - m_2ndLastDrivingClickFrame < data->m_doubleClickToFastDriveDelay;
+				if( useFasterSpeed )
 				{
 					//Because we double clicked, use the faster driving speed.
 					speed = data->m_manualFastDrivingSpeed;

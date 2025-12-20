@@ -576,10 +576,11 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 			{
 				Real speed = data->m_manualDrivingSpeed;
 #if !RETAIL_COMPATIBLE_CRC
-				if( m_scriptedWaypointMode || (m_lastDrivingClickTimeMsec != 0 && m_2ndLastDrivingClickTimeMsec != 0 && m_lastDrivingClickTimeMsec - m_2ndLastDrivingClickTimeMsec < data->m_doubleClickToFastDriveDelay) )
+				const Bool useFasterSpeed = m_scriptedWaypointMode || (m_lastDrivingClickTimeMsec != 0 && m_2ndLastDrivingClickTimeMsec != 0 && m_lastDrivingClickTimeMsec - m_2ndLastDrivingClickTimeMsec < data->m_doubleClickToFastDriveDelay);
 #else
-				if( m_scriptedWaypointMode || (m_lastDrivingClickFrame - m_2ndLastDrivingClickFrame < data->m_doubleClickToFastDriveDelay) )
+				const Bool useFasterSpeed = m_scriptedWaypointMode || (m_lastDrivingClickFrame - m_2ndLastDrivingClickFrame < data->m_doubleClickToFastDriveDelay);
 #endif
+				if( useFasterSpeed )
 				{
 					//Because we double clicked, use the faster driving speed.
 					speed = data->m_manualFastDrivingSpeed;
