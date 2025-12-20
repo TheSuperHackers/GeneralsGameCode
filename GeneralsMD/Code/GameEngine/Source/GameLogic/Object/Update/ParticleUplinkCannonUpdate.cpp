@@ -1519,7 +1519,7 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 	// the time of last manual target click (milliseconds)
 #if RETAIL_COMPATIBLE_XFER_SAVE
 	// Retail builds stay at version 3 for compatibility, so always use old frame format
-	xfer->xferUnsignedInt( & m_lastDrivingClickFrame );
+	xfer->xferUnsignedInt( &m_lastDrivingClickFrame );
 	xfer->xferUnsignedInt( &m_2ndLastDrivingClickFrame );
 #if !RETAIL_COMPATIBLE_CRC
 	if( xfer->getXferMode() == XFER_LOAD )
@@ -1532,7 +1532,7 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 #else
 	if( version >= 5 )
 	{
-		xfer->xferUnsignedInt( & m_lastDrivingClickTimeMsec );
+		xfer->xferUnsignedInt( &m_lastDrivingClickTimeMsec );
 		xfer->xferUnsignedInt( &m_2ndLastDrivingClickTimeMsec );
 	}
 	else
