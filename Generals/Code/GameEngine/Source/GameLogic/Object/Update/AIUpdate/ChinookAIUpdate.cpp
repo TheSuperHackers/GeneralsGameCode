@@ -1009,7 +1009,7 @@ UpdateSleepTime ChinookAIUpdate::update()
 	{
 		if (m_flightStatus == CHINOOK_LANDED &&
 #if !RETAIL_COMPATIBLE_CRC
-			!waitingToEnterOrExit &&
+				!waitingToEnterOrExit &&
 #endif
 				!m_hasPendingCommand &&
 				getObject()->getBodyModule()->getHealth() == getObject()->getBodyModule()->getMaxHealth())
