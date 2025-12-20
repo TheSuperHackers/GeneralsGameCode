@@ -144,6 +144,9 @@ void setEnabledButtons()
 {
 	for (Int i = 0; i < NUM_GENERALS; i++)
 	{
+		if (!buttonGeneralPosition[i])
+			continue;
+	
 		const GeneralPersona* generals = TheChallengeGenerals->getChallengeGenerals();
 		buttonGeneralPosition[i]->winEnable(generals[i].isStartingEnabled());
 		buttonGeneralPosition[i]->winHide(! generals[i].isStartingEnabled());
@@ -238,7 +241,7 @@ void updateButtonSequence(Int stepsPerUpdate)
 	{
 		// selected look
 		Int pos = buttonSequenceStep;
-		if (pos < NUM_GENERALS && !buttonGeneralPosition[pos]->winIsHidden())
+		if (pos < NUM_GENERALS && buttonGeneralPosition[pos] && !buttonGeneralPosition[pos]->winIsHidden())
 		{
 			Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[pos].getPlayerTemplateName());
 			const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
@@ -247,7 +250,7 @@ void updateButtonSequence(Int stepsPerUpdate)
 		}
 
 		// mouseover look
-		if (--pos > 0 && pos < NUM_GENERALS && !buttonGeneralPosition[pos]->winIsHidden())
+		if (--pos > 0 && pos < NUM_GENERALS && buttonGeneralPosition[pos] && !buttonGeneralPosition[pos]->winIsHidden())
 		{
 			Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[pos].getPlayerTemplateName());
 			const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
@@ -256,7 +259,7 @@ void updateButtonSequence(Int stepsPerUpdate)
 		}
 
 		// regular look
-		if (--pos > 0 && pos < NUM_GENERALS && !buttonGeneralPosition[pos]->winIsHidden())
+		if (--pos > 0 && pos < NUM_GENERALS && buttonGeneralPosition[pos] && !buttonGeneralPosition[pos]->winIsHidden())
 		{
 			Int templateNum = ThePlayerTemplateStore->getTemplateNumByName(generals[pos].getPlayerTemplateName());
 			const PlayerTemplate *playerTemplate = ThePlayerTemplateStore->getNthPlayerTemplate(templateNum);
@@ -365,10 +368,11 @@ void ChallengeMenuInit( WindowLayout *layout, void *userData )
 		strButtonName.format("ChallengeMenu.wnd:GeneralPosition%d", i);
 		buttonGeneralPositionID[i] = TheNameKeyGenerator->nameToKey( strButtonName );
 		buttonGeneralPosition[i] = TheWindowManager->winGetWindowFromId( parentMenu, buttonGeneralPositionID[i] );
-		DEBUG_ASSERTCRASH(buttonGeneralPosition[i], ("Could not find the ButtonGeneralPosition[%d]",i ));
-
-		// start all buttons hidden, then expose them later if there is a general for this spot
-		buttonGeneralPosition[i]->winHide( TRUE );
+		if (buttonGeneralPosition[i])
+		{
+			// start all buttons hidden, then expose them later if there is a general for this spot
+			buttonGeneralPosition[i]->winHide( TRUE );
+		}
 	}
 
 	// set defaults
