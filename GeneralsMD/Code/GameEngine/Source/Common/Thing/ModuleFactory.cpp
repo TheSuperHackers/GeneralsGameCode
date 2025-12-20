@@ -198,6 +198,7 @@
 #include "GameLogic/Module/TeleporterAIUpdate.h"
 #include "GameLogic/Module/WaveGuideUpdate.h"
 #include "GameLogic/Module/WeaponBonusUpdate.h"
+#include "GameLogic/Module/BuffUpdate.h"
 #include "GameLogic/Module/ArmorDamageScalarUpdate.h"
 #include "GameLogic/Module/WorkerAIUpdate.h"
 #include "GameLogic/Module/PowerPlantUpdate.h"
@@ -435,6 +436,7 @@ void ModuleFactory::init( void )
   addModule( LeafletDropBehavior );
 	addModule( AutoDepositUpdate );
 	addModule( WeaponBonusUpdate );
+	addModule( BuffUpdate );
 	addModule( ArmorDamageScalarUpdate );
 	addModule( MissileAIUpdate );
 	addModule( NeutronMissileUpdate );

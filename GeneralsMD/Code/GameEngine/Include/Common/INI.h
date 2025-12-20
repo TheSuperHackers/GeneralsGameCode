@@ -176,7 +176,7 @@ public:
 	~INI();
 
 	void loadDirectory( AsciiString dirName, Bool subdirs, INILoadType loadType, Xfer *pXfer );  ///< load directory of INI files
-	void load( AsciiString filename, INILoadType loadType, Xfer *pXfer );		///< load INI file
+	void load( AsciiString filename, INILoadType loadType, Xfer *pXfer, Bool optional=FALSE);		///< load INI file
 
 	static Bool isDeclarationOfType( AsciiString blockType, AsciiString blockName, char *bufferToCheck );
 	static Bool isEndOfBlock( char *bufferToCheck );
@@ -214,6 +214,7 @@ public:
 	static void parseTerrainBridgeDefinition( INI *ini );
 	static void parseMetaMapDefinition( INI *ini );
 	static void parseFXListDefinition( INI *ini );
+	static void parseBuffTemplateDefinition( INI* ini );
 	static void parseObjectCreationListDefinition( INI* ini );
 	static void parseMultiplayerSettingsDefinition( INI* ini );
 	static void parseMultiplayerColorDefinition( INI* ini );
@@ -395,7 +396,7 @@ protected:
 
 	static Bool isValidINIFilename( const char *filename ); ///< is this a valid .ini filename
 
-	void prepFile( AsciiString filename, INILoadType loadType );
+	void prepFile( AsciiString filename, INILoadType loadType, Bool optional=FALSE );
 	void unPrepFile();
 
 	void readLine( void );

@@ -36,6 +36,7 @@
 #include "Common/GameMemory.h"
 #include "Common/AudioEventRTS.h"
 #include "GameLogic/Module/UpdateModule.h"
+#include "GameLogic/WeaponBonusConditionFlags.h"
 
 class Object;
 class Weapon;
@@ -90,6 +91,8 @@ private:
 
 	UnsignedInt			m_frameToStopLoopingSound;	///< if sound is looping, frame to stop looping it (or zero if not looping)
 	AudioHandle			m_audioHandle;
+
+	WeaponBonusConditionFlags m_prevTargetWeaponBonus;  ///< weaponBonus against previous target
 };
 
 #endif

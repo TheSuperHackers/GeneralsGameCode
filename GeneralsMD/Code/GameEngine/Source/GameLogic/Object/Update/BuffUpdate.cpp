@@ -22,7 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: WeaponBonusUpdate.cpp /////////////////////////////////////////////////
+// FILE: BuffUpdate.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 //
 //                       Electronic Arts Pacific.
@@ -32,14 +32,13 @@
 //
 //-----------------------------------------------------------------------------
 //
-//	created:	July 2003
+//	created:	Oct 25
 //
-//	Filename: 	WeaponBonusUpdate.cpp
+//	Filename: 	BuffUpdate.cpp
 //
-//	author:		Graham Smallwood
+//	author:		Andi W
 //
-//	purpose:	Like healing in that it can affect just me or people around,
-//						except this gives a Weapon Bonus instead of health
+//	purpose:	apply a buff/debuff effect to units in an area
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -53,45 +52,40 @@
 //-----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "GameLogic/Module/WeaponBonusUpdate.h"
-
-#define DEFINE_WEAPONBONUSCONDITION_NAMES
-
-#include "GameLogic/Module/ContainModule.h"
+#include "GameLogic/Module/BuffUpdate.h"
+#include "GameLogic/BuffSystem.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Weapon.h"
-#include "GameClient/TintStatus.h"
+#include "GameLogic/Module/ContainModule.h"
 
 //-----------------------------------------------------------------------------
-WeaponBonusUpdateModuleData::WeaponBonusUpdateModuleData()
+BuffUpdateModuleData::BuffUpdateModuleData()
 {
 	m_requiredAffectKindOf.clear();
 	m_forbiddenAffectKindOf.clear();
 	m_targetsMask = WEAPON_AFFECTS_ALLIES;
 	m_isAffectAirborne = true;
-	m_bonusDuration = 0;
-	m_bonusDelay = 0;
-	m_bonusRange = 0;
-	m_bonusConditionType = WEAPONBONUSCONDITION_INVALID;
-	m_tintStatus = TINT_STATUS_FRENZY;
+	m_buffDuration = 0;
+	m_buffDelay = 0;
+	m_buffRange = 0;
+	m_buffTemplateName.clear();
 }
 
 //-----------------------------------------------------------------------------
-void WeaponBonusUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
+void BuffUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "RequiredAffectKindOf",		KindOfMaskType::parseFromINI,		NULL, offsetof( WeaponBonusUpdateModuleData, m_requiredAffectKindOf ) },
-		{ "ForbiddenAffectKindOf",	KindOfMaskType::parseFromINI,		NULL, offsetof( WeaponBonusUpdateModuleData, m_forbiddenAffectKindOf ) },
-		{ "AffectsTargets", INI::parseBitString32,	TheWeaponAffectsMaskNames, offsetof(WeaponBonusUpdateModuleData, m_targetsMask) },
-		{ "AffectAirborne", INI::parseBool, NULL, offsetof(WeaponBonusUpdateModuleData, m_isAffectAirborne) },
-		{ "BonusDuration",					INI::parseDurationUnsignedInt,	NULL, offsetof( WeaponBonusUpdateModuleData, m_bonusDuration ) },
-		{ "BonusDelay",							INI::parseDurationUnsignedInt,	NULL, offsetof( WeaponBonusUpdateModuleData, m_bonusDelay ) },
-		{ "BonusRange",							INI::parseReal,									NULL, offsetof( WeaponBonusUpdateModuleData, m_bonusRange ) },
-		{ "BonusConditionType",			INI::parseIndexList,	TheWeaponBonusNames, offsetof( WeaponBonusUpdateModuleData, m_bonusConditionType ) },
-		{ "TintStatusType",			TintStatusFlags::parseSingleBitFromINI,	NULL, offsetof( WeaponBonusUpdateModuleData, m_tintStatus ) },
+		{ "RequiredAffectKindOf",		KindOfMaskType::parseFromINI,		NULL, offsetof( BuffUpdateModuleData, m_requiredAffectKindOf ) },
+		{ "ForbiddenAffectKindOf",	KindOfMaskType::parseFromINI,		NULL, offsetof( BuffUpdateModuleData, m_forbiddenAffectKindOf ) },
+		{ "AffectsTargets", INI::parseBitString32,	TheWeaponAffectsMaskNames, offsetof(BuffUpdateModuleData, m_targetsMask) },
+		{ "AffectAirborne", INI::parseBool, NULL, offsetof(BuffUpdateModuleData, m_isAffectAirborne) },
+		{ "BuffDuration",					INI::parseDurationUnsignedInt,	NULL, offsetof( BuffUpdateModuleData, m_buffDuration) },
+		{ "BuffDelay",							INI::parseDurationUnsignedInt,	NULL, offsetof( BuffUpdateModuleData, m_buffDelay) },
+		{ "BuffRange",							INI::parseReal,									NULL, offsetof( BuffUpdateModuleData, m_buffRange) },
+		{ "BuffTemplateName",			INI::parseAsciiString,	NULL, offsetof( BuffUpdateModuleData, m_buffTemplateName) },
 		{ 0, 0, 0, 0 }
 	};
   p.add(dataFieldParse);
@@ -100,44 +94,53 @@ void WeaponBonusUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-WeaponBonusUpdate::WeaponBonusUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+BuffUpdate::BuffUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
 	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WeaponBonusUpdate::~WeaponBonusUpdate( void )
+BuffUpdate::~BuffUpdate( void )
 {
 
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-struct tempWeaponBonusData // Hey Steven, bite me!  hahahaha  _Lowercase_ since Local to the file.
+struct tempBuffData // This is used for iterator to apply buff to contained objects
 {
-	WeaponBonusConditionType m_type;
+	const BuffTemplate* m_template;
+	Object* m_sourceObj;
 	UnsignedInt m_duration;
 	KindOfMaskType m_requiredMask;
 	KindOfMaskType m_forbiddenMask;
-	TintStatus m_tintStatus;
 	Bool m_isAffectAirborne;
 };
-void containIteratingDoTempWeaponBonus( Object *passenger, void *voidData)
+void containIteratingDoBuff( Object *passenger, void *voidData)
 {
-	tempWeaponBonusData *data = (tempWeaponBonusData *)voidData;
+	tempBuffData *data = (tempBuffData *)voidData;
 
 	if (passenger->isKindOfMulti(data->m_requiredMask, data->m_forbiddenMask)) {
 		if (data->m_isAffectAirborne || !passenger->isAirborneTarget()) {
-			passenger->doTempWeaponBonus(data->m_type, data->m_duration, data->m_tintStatus);
+			passenger->applyBuff(data->m_template, data->m_duration, data->m_sourceObj); // TODO: create function in object
 		}
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime WeaponBonusUpdate::update( void )
+UpdateSleepTime BuffUpdate::update( void )
 {
-	const WeaponBonusUpdateModuleData * data = getWeaponBonusUpdateModuleData();
+	DEBUG_LOG(("BuffUpdate::update 0"));
+
+	const BuffUpdateModuleData * data = getBuffUpdateModuleData();
+	const BuffTemplate* buffTemp = TheBuffTemplateStore->findBuffTemplate(data->m_buffTemplateName);
+
+	if (!buffTemp) {
+		DEBUG_LOG(("BuffUpdate::update -- Could not find BuffTemplate '%s'", data->m_buffTemplateName.str()));
+		return UPDATE_SLEEP_FOREVER;
+	}
+
 	Object *me = getObject();
 
 	Int targetFlags = 0;
@@ -156,17 +159,19 @@ UpdateSleepTime WeaponBonusUpdate::update( void )
 
 	// scan objects in our region
 	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( me->getPosition(),
-																																			data->m_bonusRange,
+																																			data->m_buffRange,
 																																			FROM_CENTER_2D,
 																																			filters );
+
+
 	MemoryPoolObjectHolder hold( iter );
-	tempWeaponBonusData weaponBonusData;
-	weaponBonusData.m_type = data->m_bonusConditionType;
-	weaponBonusData.m_duration = data->m_bonusDuration;
-	weaponBonusData.m_requiredMask = data->m_requiredAffectKindOf;
-	weaponBonusData.m_forbiddenMask = data->m_forbiddenAffectKindOf;
-	weaponBonusData.m_tintStatus = data->m_tintStatus;
-	weaponBonusData.m_isAffectAirborne = data->m_isAffectAirborne;
+	tempBuffData buffData;
+	buffData.m_template = buffTemp;
+	buffData.m_duration = data->m_buffDuration;
+	buffData.m_requiredMask = data->m_requiredAffectKindOf;
+	buffData.m_forbiddenMask = data->m_forbiddenAffectKindOf;
+	buffData.m_isAffectAirborne = data->m_isAffectAirborne;
+	buffData.m_sourceObj = me; // TODO: Support for projectiles
 
 	
 	for( Object *currentObj = iter->first(); currentObj != NULL; currentObj = iter->next() )
@@ -174,23 +179,23 @@ UpdateSleepTime WeaponBonusUpdate::update( void )
 		if( currentObj->isKindOfMulti(data->m_requiredAffectKindOf, data->m_forbiddenAffectKindOf) )
 		{
 			if (data->m_isAffectAirborne || !currentObj->isAirborneTarget()) {
-				currentObj->doTempWeaponBonus(data->m_bonusConditionType, data->m_bonusDuration, data->m_tintStatus);
+				currentObj->applyBuff(buffTemp, data->m_buffDuration, me);  // TODO
 			}
 		}
 
 		if( currentObj->getContain() )
 		{
-			currentObj->getContain()->iterateContained(containIteratingDoTempWeaponBonus, &weaponBonusData, FALSE);
+			currentObj->getContain()->iterateContained(containIteratingDoBuff, &buffData, FALSE);
 		}
 	}
 
-	return UPDATE_SLEEP(data->m_bonusDelay); // Only need an internal timer if there are external hooks for wakning us up, or a second thing we can do
+	return UPDATE_SLEEP(data->m_buffDelay); // Only need an internal timer if there are external hooks for wakning us up, or a second thing we can do
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void WeaponBonusUpdate::crc( Xfer *xfer )
+void BuffUpdate::crc( Xfer *xfer )
 {
 
 	// extend base class
@@ -203,7 +208,7 @@ void WeaponBonusUpdate::crc( Xfer *xfer )
 	* Version Info:
 	* 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void WeaponBonusUpdate::xfer( Xfer *xfer )
+void BuffUpdate::xfer( Xfer *xfer )
 {
 
 	// version
@@ -219,7 +224,7 @@ void WeaponBonusUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void WeaponBonusUpdate::loadPostProcess( void )
+void BuffUpdate::loadPostProcess( void )
 {
 
 	// extend base class

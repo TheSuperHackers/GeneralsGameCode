@@ -82,6 +82,7 @@ void FiringTracker::shotFired(const Weapon* weaponFired, ObjectID victimID)
 	Object *me = getObject();
 	const Object *victim = TheGameLogic->findObjectByID(victimID); // May be null for ground shot
 
+	// Old Target Designator Logic
 	if( victim && victim->testStatus(OBJECT_STATUS_FAERIE_FIRE) )
 	{
 		if( !me->testWeaponBonusCondition(WEAPONBONUSCONDITION_TARGET_FAERIE_FIRE) )
@@ -97,6 +98,26 @@ void FiringTracker::shotFired(const Weapon* weaponFired, ObjectID victimID)
 		{
 			me->clearWeaponBonusCondition(WEAPONBONUSCONDITION_TARGET_FAERIE_FIRE);
 		}
+	}
+
+	// New Buff based 'WeaponBonusAgainst' Logic
+	{
+		WeaponBonusConditionFlags targetBonusFlags = 0;  // if we attack the ground, this stays empty
+		if (victim)
+			targetBonusFlags = victim->getWeaponBonusConditionAgainst();
+
+		// If new bonus is different from previous, remove it.
+		if (targetBonusFlags != m_prevTargetWeaponBonus) {
+			me->removeWeaponBonusConditionFlags(m_prevTargetWeaponBonus);
+		}
+
+		// If we have a new bonus, apply it
+		if (targetBonusFlags != 0) {
+			me->applyWeaponBonusConditionFlags(targetBonusFlags);
+		}
+
+		m_prevTargetWeaponBonus = targetBonusFlags;
+
 	}
 
 	if( victimID == m_victimID )
@@ -375,6 +396,9 @@ void FiringTracker::xfer( Xfer *xfer )
 
 	// frame to start cooldown
 	xfer->xferUnsignedInt( &m_frameToStartCooldown );
+
+	// currenly applied weaponBonus against the prev target
+	xfer->xferUnsignedInt(&m_prevTargetWeaponBonus);
 
 }  // end xfer
 
