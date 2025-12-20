@@ -1071,6 +1071,7 @@ UpdateSleepTime ChinookAIUpdate::update()
 	{
 		if (m_flightStatus == CHINOOK_LANDED &&
 #if !RETAIL_COMPATIBLE_CRC
+				// TheSuperHackers @bugfix Stubbjax 03/11/2025 Prevent Chinooks from taking off while there are still units wanting to enter or exit.
 				!waitingToEnterOrExit &&
 #endif
 				!m_hasPendingCommand &&
