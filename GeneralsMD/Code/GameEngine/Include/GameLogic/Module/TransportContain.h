@@ -109,10 +109,8 @@ protected:
 	void letRidersUpgradeWeaponSet( void );
 
 	Bool m_payloadCreated;
-
-private:
-
 	Int m_extraSlotsInUse;
+
 	UnsignedInt m_frameExitNotBusy;
 
 };

@@ -2155,11 +2155,14 @@ JetAIUpdate::JetAIUpdate( Thing *thing, const ModuleData* moduleData ) : AIUpdat
 	m_afterburnerSound = *(getObject()->getTemplate()->getPerUnitSound("Afterburner"));
 	m_afterburnerSound.setObjectID(getObject()->getID());
 
-	m_takeOffSound = *(getObject()->getTemplate()->getPerUnitSound("TakeOff"));
-	m_takeOffSound.setObjectID(getObject()->getID());
+	// TODO: only initialize this if needed?
+	if (!getJetAIUpdateModuleData()->m_needsRunway) {
+		m_takeOffSound = *(getObject()->getTemplate()->getPerUnitSound("TakeOff"));
+		m_takeOffSound.setObjectID(getObject()->getID());
 
-	m_landingSound = *(getObject()->getTemplate()->getPerUnitSound("Landing"));
-	m_landingSound.setObjectID(getObject()->getID());
+		m_landingSound = *(getObject()->getTemplate()->getPerUnitSound("Landing"));
+		m_landingSound.setObjectID(getObject()->getID());
+	}
 
 	m_attackLocoExpireFrame = 0;
 	m_attackersMissExpireFrame = 0;

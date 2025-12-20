@@ -1292,6 +1292,12 @@ Bool Object::isOutOfAmmo() const
 }
 
 //=============================================================================
+Bool Object::isFullAmmo() const
+{
+	return m_weaponSet.isFullAmmo();
+}
+
+//=============================================================================
 Bool Object::hasAnyWeapon() const
 {
 	return m_weaponSet.hasAnyWeapon();

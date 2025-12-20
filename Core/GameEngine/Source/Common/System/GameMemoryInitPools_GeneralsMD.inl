@@ -684,5 +684,10 @@ static PoolSizeRec PoolSizes[] =
 	{ "SmudgeSet", 32, 32},
 	{ "Smudge", 128, 32},
 	{ "ResetSpecialPowerTimerWhileAliveUpdate", 8, 8 },
+	{ "DroneCarrierAIUpdate", 8, 8 },
+	{ "DroneCarrierSlavedUpdate", 8, 8 },
+	{ "DroneCarrierContain", 8, 8 },
+	{ "W3DDependencyCarrierDraw", 16, 16 },
+	{ "CarrierDroneAIUpdate", 16, 16 },
 	{ 0, 0, 0 }
 };
