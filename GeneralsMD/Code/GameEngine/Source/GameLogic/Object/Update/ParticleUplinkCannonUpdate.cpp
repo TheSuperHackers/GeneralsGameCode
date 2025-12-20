@@ -184,12 +184,13 @@ ParticleUplinkCannonUpdate::ParticleUplinkCannonUpdate( Thing *thing, const Modu
 	m_nextDamagePulseFrame = 0;
 	m_startAttackFrame = 0;
 	m_startDecayFrame = 0;
-#if RETAIL_COMPATIBLE_XFER_SAVE
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
 	m_lastDrivingClickFrame = 0;
 	m_2ndLastDrivingClickFrame = 0;
-#endif
+#else
 	m_lastDrivingClickTimeMsec = 0;
 	m_2ndLastDrivingClickTimeMsec = 0;
+#endif
 	m_clientShroudedLastFrame = FALSE;
 
 	for( Int i = 0; i < MAX_OUTER_NODES; i++ )
@@ -378,12 +379,13 @@ void ParticleUplinkCannonUpdate::setSpecialPowerOverridableDestination( const Co
 	{
 		m_overrideTargetDestination = *loc;
 		m_manualTargetMode = TRUE;
-#if RETAIL_COMPATIBLE_XFER_SAVE
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
 		m_2ndLastDrivingClickFrame = m_lastDrivingClickFrame;
 		m_lastDrivingClickFrame = TheGameLogic->getFrame();
-#endif
+#else
 		m_2ndLastDrivingClickTimeMsec = m_lastDrivingClickTimeMsec;
 		m_lastDrivingClickTimeMsec = timeGetTime();
+#endif
 	}
 }
 
@@ -1516,19 +1518,11 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 		m_startDecayFrame = m_startAttackFrame + data->m_totalFiringFrames;
 	}
 
-	// the time of last manual target click (milliseconds)
-#if RETAIL_COMPATIBLE_XFER_SAVE
+	// the time of last manual target click
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
 	// Retail builds stay at version 3 for compatibility, so always use old frame format
 	xfer->xferUnsignedInt( &m_lastDrivingClickFrame );
 	xfer->xferUnsignedInt( &m_2ndLastDrivingClickFrame );
-#if !RETAIL_COMPATIBLE_CRC
-	if( xfer->getXferMode() == XFER_LOAD )
-	{
-		// Can't convert frames to milliseconds accurately, so set to 0
-		m_lastDrivingClickTimeMsec = 0;
-		m_2ndLastDrivingClickTimeMsec = 0;
-	}
-#endif
 #else
 	if( version >= 5 )
 	{
