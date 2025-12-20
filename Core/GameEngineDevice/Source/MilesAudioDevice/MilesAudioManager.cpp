@@ -2109,7 +2109,7 @@ void MilesAudioManager::adjustVolumeOfPlayingAudio(AsciiString eventName, Real n
 			playing->m_audioEventRTS->setVolume(newVolume);
 			Real desiredVolume = playing->m_audioEventRTS->getVolume() * playing->m_audioEventRTS->getVolumeShift();
 			AIL_sample_volume_pan(playing->m_sample, NULL, &pan);
-			AIL_set_sample_volume_pan(playing->m_sample, desiredVolume, pan);
+			AIL_set_sample_volume_pan(playing->m_sample, m_soundVolume * desiredVolume, pan);
 		}
 	}
 
@@ -2119,7 +2119,7 @@ void MilesAudioManager::adjustVolumeOfPlayingAudio(AsciiString eventName, Real n
 			// Adjust it
 			playing->m_audioEventRTS->setVolume(newVolume);
 			Real desiredVolume = playing->m_audioEventRTS->getVolume() * playing->m_audioEventRTS->getVolumeShift();
-			AIL_set_3D_sample_volume(playing->m_3DSample, desiredVolume);
+			AIL_set_3D_sample_volume(playing->m_3DSample, m_sound3DVolume * desiredVolume);
 		}
 	}
 
@@ -2129,8 +2129,12 @@ void MilesAudioManager::adjustVolumeOfPlayingAudio(AsciiString eventName, Real n
 			// Adjust it
 			playing->m_audioEventRTS->setVolume(newVolume);
 			Real desiredVolume = playing->m_audioEventRTS->getVolume() * playing->m_audioEventRTS->getVolumeShift();
+			Real streamVolume = (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music)
+				? m_musicVolume
+				: m_speechVolume;
+
 			AIL_stream_volume_pan(playing->m_stream, NULL, &pan);
-			AIL_set_stream_volume_pan(playing->m_stream, desiredVolume, pan);
+			AIL_set_stream_volume_pan(playing->m_stream, streamVolume * desiredVolume, pan);
 		}
 	}
 }
