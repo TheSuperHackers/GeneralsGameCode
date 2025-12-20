@@ -29,7 +29,7 @@
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Thing.h"
 #include "Common/ThingTemplate.h"
 #include "Common/INI.h"
@@ -268,7 +268,7 @@ UpdateSleepTime AutoHealBehavior::update( void )
 				}
 
 			}
-		}  // end for obj
+		}
 
 		return UPDATE_SLEEP( d->m_singleBurst ? UPDATE_SLEEP_FOREVER : d->m_healingDelay );
 	}
@@ -314,7 +314,7 @@ void AutoHealBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpgradeMux::upgradeMuxCRC( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -344,7 +344,7 @@ void AutoHealBehavior::xfer( Xfer *xfer )
 	// stopped
 	xfer->xferBool( &m_stopped );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -358,4 +358,4 @@ void AutoHealBehavior::loadPostProcess( void )
 	// extend base class
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
-}  // end loadPostProcess
+}

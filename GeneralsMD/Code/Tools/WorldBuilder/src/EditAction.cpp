@@ -140,8 +140,7 @@ BOOL EditAction::OnInitDialog()
 				count = 0;
 			}
 			if (count>0) {
-				strncpy(prefix, nameStart, count);
-				prefix[count-1] = 0;
+				strlcpy(prefix, nameStart, count);
 				parent = findOrAdd(&m_actionTreeView, parent, prefix);
 			}
 		} while (count>0);
@@ -178,8 +177,7 @@ BOOL EditAction::OnInitDialog()
 				count = 0;
 			}
 			if (count>0) {
-				strncpy(prefix, nameStart, count);
-				prefix[count-1] = 0;
+				strlcpy(prefix, nameStart, count);
 				parent = findOrAdd(&m_actionTreeView, parent, prefix);
 			}
 		} while (count>0);

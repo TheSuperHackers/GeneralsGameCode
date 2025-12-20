@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/BitFlagsIO.h"
 #include "Common/CRCDebug.h"
 #include "Common/DamageFX.h"
@@ -89,7 +89,7 @@ public:
 BodyParticleSystem::~BodyParticleSystem( void )
 {
 
-}  // end ~BodyParticleSystem
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
@@ -197,7 +197,7 @@ void ActiveBody::onDelete( void )
 	// delete all particle systems
 	deleteAllParticleSystems();
 
-}  // end onDelete
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -413,14 +413,19 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 					}
 					else
 					{
-						//Removing the rider will scuttle the bike.
-						Object *rider = *(contain->getContainedItemsList()->begin());
-						ai->aiEvacuateInstantly( TRUE, CMD_FROM_AI );
+						// TheSuperHackers @bugfix Caball009 04/09/2025 Check whether a bike still has a rider.
+						// A rider may dismount or be sniped off a bike when it's disabled, resulting in a bike object with an empty contain list.
+						if ( !contain->getContainedItemsList()->empty() )
+						{
+							//Removing the rider will scuttle the bike.
+							Object* rider = *(contain->getContainedItemsList()->begin());
+							ai->aiEvacuateInstantly(TRUE, CMD_FROM_AI);
 
-						//Kill the rider.
-						if (damager)
-							damager->scoreTheKill( rider );
-						rider->kill();
+							//Kill the rider.
+							if (damager)
+								damager->scoreTheKill(rider);
+							rider->kill();
+						}
 					}
 				}
 				else
@@ -475,10 +480,10 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 							++numKilled;
 							thingToKill->getControllingPlayer()->getAcademyStats()->recordClearedGarrisonedBuilding();
 						}
-					} // next contained item
+					}
 
-				} // if items
-			}	// if a garrisonable thing
+				}
+			}
 			alreadyHandled = TRUE;
 			allowModifier = FALSE;
 			break;
@@ -540,9 +545,11 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 		if( !canBeSubdued() )
 			return;
 
+		// TheSuperHackers @bugfix Stubbjax 20/09/2025 The isSubdued() function now directly checks status instead
+		// of health to prevent indefinite subdue status when internally shifting health across the threshold.
 		Bool wasSubdued = isSubdued();
 		internalAddSubdualDamage(amount);
-		Bool nowSubdued = isSubdued();
+		Bool nowSubdued = m_maxHealth <= m_currentSubdualDamage;
 		alreadyHandled = TRUE;
 		allowModifier = FALSE;
 
@@ -883,7 +890,9 @@ void ActiveBody::attemptHealing( DamageInfo *damageInfo )
 		//(object pointer loses scope as soon as atteptdamage's caller ends)
 		m_lastDamageInfo = *damageInfo;
 		m_lastDamageCleared = false;
+#if PRESERVE_RETAIL_BEHAVIOR
 		m_lastDamageTimestamp = TheGameLogic->getFrame();
+#endif
 		m_lastHealingTimestamp = TheGameLogic->getFrame();
 
 		// if our health has gone UP then do run the damage module callback
@@ -1082,16 +1091,16 @@ void ActiveBody::createParticleSystems( const AsciiString &boneBaseName,
 				usedBoneIndices[ j ] = TRUE;
 				break;  // exit for j
 
-			}  // end if
+			}
 			else
 			{
 
 				// we won't use this index, increment count until we find a suitable index to use
 				++count;
 
-			}  // end else
+			}
 
-		}  // end for, j
+		}
 
 		// sanity
 		DEBUG_ASSERTCRASH( j != numBones,
@@ -1114,11 +1123,11 @@ void ActiveBody::createParticleSystems( const AsciiString &boneBaseName,
 			newEntry->m_next = m_particleSystems;
 			m_particleSystems = newEntry;
 
-		}  // end if
+		}
 
-	}  // end for, i
+	}
 
-}  // end createParticleSystems
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Delete all the body particle systems */
@@ -1145,9 +1154,9 @@ void ActiveBody::deleteAllParticleSystems( void )
 		// set the body systems head to the next
 		m_particleSystems = nextBodySystem;
 
-	}  // end while
+	}
 
-}  // end deleteAllParticleSystems
+}
 
 // ------------------------------------------------------------------------------------------------
 /* 	This function is called on state changes only.  Body Type or Aflameness. */
@@ -1186,7 +1195,7 @@ void ActiveBody::updateBodyParticleSystems( void )
 		// we get to make more of them all too
 		countModifier = 2;
 
-	}  // end if
+	}
 	else
 	{
 
@@ -1201,7 +1210,7 @@ void ActiveBody::updateBodyParticleSystems( void )
 		// we make just the normal amount of these
 		countModifier = 1;
 
-	}  // end else
+	}
 
 	//
 	// remove any particle systems we have currently in the list in favor of any new ones
@@ -1242,7 +1251,7 @@ void ActiveBody::updateBodyParticleSystems( void )
 		createParticleSystems( TheGlobalData->m_autoAflameParticlePrefix,
 													 aflameTemplate, TheGlobalData->m_autoAflameParticleMax * countModifier );
 
-}  // end updatebodyParticleSystems
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Simple changing of the health value, it does *NOT* track any transition
@@ -1489,7 +1498,16 @@ Bool ActiveBody::isSubduedChrono() const
 //-------------------------------------------------------------------------------------------------
 Bool ActiveBody::isSubdued() const
 {
+#if RETAIL_COMPATIBLE_CRC
 	return m_maxHealth <= m_currentSubdualDamage;
+#else
+  // TheSuperHackers @info Projectiles don't receive the DISABLED_SUBDUED flag (or any flag for
+	// that matter) when jammed, so we have to check their subdual damage directly.
+	if (getObject()->isKindOf(KINDOF_PROJECTILE))
+		return m_maxHealth <= m_currentSubdualDamage;
+
+	return getObject()->isDisabledByType(DISABLED_SUBDUED);
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1511,7 +1529,7 @@ BodyDamageType ActiveBody::getDamageState() const
 Real ActiveBody::getMaxHealth() const
 {
 	return m_maxHealth;
-}  ///< return max health
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -1561,7 +1579,7 @@ Bool ActiveBody::hasAnyChronoDamage() const
 Real ActiveBody::getInitialHealth() const 
 { 
 	return m_initialHealth;
-}  // return initial health
+}
 
 
 // ------------------------------------------------------------------------------------------------
@@ -1593,15 +1611,15 @@ void ActiveBody::setIndestructible( Bool indestructible )
 					if( body )
 						body->setIndestructible( indestructible );
 
-				}  // end if
+				}
 
-			}  // end for, i
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
-}  // end setIndestructible
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -1741,7 +1759,7 @@ void ActiveBody::crc( Xfer *xfer )
   // extend base class
 	BodyModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1821,9 +1839,9 @@ void ActiveBody::xfer( Xfer *xfer )
 			// write particle system ID
 			xfer->xferUser( &system->m_particleSystemID, sizeof( ParticleSystemID ) );
 
-		}  // end for, system
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 		ParticleSystemID particleSystemID;
@@ -1835,7 +1853,7 @@ void ActiveBody::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "ActiveBody::xfer - m_particleSystems should be empty, but is not" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// read all data elements
 		BodyParticleSystem *newEntry;
@@ -1851,14 +1869,14 @@ void ActiveBody::xfer( Xfer *xfer )
 			newEntry->m_next = m_particleSystems;  // the list will be reversed, but we don't care
 			m_particleSystems = newEntry;
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
 	// armor set flags
 	m_curArmorSetFlags.xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1869,4 +1887,4 @@ void ActiveBody::loadPostProcess( void )
 	// extend base class
 	BodyModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

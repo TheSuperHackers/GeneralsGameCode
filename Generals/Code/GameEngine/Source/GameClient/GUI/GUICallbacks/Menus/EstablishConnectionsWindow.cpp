@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///// EstablishConnectionsWindow.cpp /////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 
 #include "GameClient/GameWindowManager.h"
@@ -82,7 +82,7 @@ static const char *gadgetsToHide[] =
 	"ButtonSelectMap",
 	"ButtonStart",
 	"StaticTextMapPreview",
-	NULL // keep this last
+	NULL
 };
 static const char *perPlayerGadgetsToHide[] =
 {
@@ -93,7 +93,7 @@ static const char *perPlayerGadgetsToHide[] =
 	"ButtonAccept",
 	"GenericPing",
 	//"ButtonStartPosition",
-	NULL // keep this last
+	NULL
 };
 
 static const char *qmlayoutFilename = "WOLQuickMatchMenu.wnd";
@@ -107,12 +107,12 @@ static const char *qmgadgetsToHide[] =
 	"ButtonWiden",
 	"ButtonStop",
 	"ButtonStart",
-	NULL // keep this last
+	NULL
 };
 static const char *qmperPlayerGadgetsToHide[] =
 {
 	//"ButtonStartPosition",
-	NULL // keep this last
+	NULL
 };
 
 static void showGameSpyGameOptionsUnderlyingGUIElements( Bool show )
@@ -126,7 +126,7 @@ static void showGameSpyQMUnderlyingGUIElements( Bool show )
 }
 
 static void InitEstablishConnectionsDialog( void ) {
-	buttonQuitID = TheNameKeyGenerator->nameToKey( AsciiString("EstablishConnectionsScreen.wnd:ButtonQuit") );
+	buttonQuitID = TheNameKeyGenerator->nameToKey( "EstablishConnectionsScreen.wnd:ButtonQuit" );
 	buttonQuitWindow = TheWindowManager->winGetWindowFromId(NULL, buttonQuitID);
 }
 
@@ -189,6 +189,6 @@ WindowMsgHandledType EstablishConnectionsControlSystem(GameWindow *window, Unsig
 				}
 				break;
 			}
-	} // end switch
+	}
 	return MSG_HANDLED;
 }

@@ -32,12 +32,15 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/GlobalData.h"
+
 #define DEFINE_TERRAIN_LOD_NAMES
 #define DEFINE_TIME_OF_DAY_NAMES
 #define DEFINE_WEATHER_NAMES
 #define DEFINE_BODYDAMAGETYPE_NAMES
 #define DEFINE_PANNING_NAMES
 
+#include "Common/AddonCompat.h"
 #include "Common/crc.h"
 #include "Common/file.h"
 #include "Common/FileSystem.h"
@@ -398,6 +401,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "EnforceMaxCameraHeight",			INI::parseBool,				NULL,			offsetof( GlobalData, m_enforceMaxCameraHeight ) },
 	{ "KeyboardScrollSpeedFactor",	INI::parseReal,				NULL,			offsetof( GlobalData, m_keyboardScrollFactor ) },
 	{ "KeyboardDefaultScrollSpeedFactor",	INI::parseReal,				NULL,			offsetof( GlobalData, m_keyboardDefaultScrollFactor ) },
+	{ "KeyboardCameraRotateSpeed", INI::parseReal, NULL, offsetof( GlobalData, m_keyboardCameraRotateSpeed ) },
 	{ "MovementPenaltyDamageState",	INI::parseIndexList,	TheBodyDamageTypeNames,	 offsetof( GlobalData, m_movementPenaltyDamageState ) },
 
 // you cannot set this; it always has a value of 100%.
@@ -438,6 +442,11 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 
 	{	"CameraAudibleRadius",				INI::parseReal,				NULL,			offsetof( GlobalData, m_cameraAudibleRadius ) },
 	{ "GroupMoveClickToGatherAreaFactor", INI::parseReal,	NULL,			offsetof( GlobalData, m_groupMoveClickToGatherFactor ) },
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+	{ "AllowMoneyPerMinuteForPlayer",	INI::parseBool,			NULL,			offsetof( GlobalData, m_allowMoneyPerMinuteForPlayer ) },
+#endif
+
 	{ "ShakeSubtleIntensity",				INI::parseReal,				NULL,			offsetof( GlobalData, m_shakeSubtleIntensity ) },
 	{ "ShakeNormalIntensity",				INI::parseReal,				NULL,			offsetof( GlobalData, m_shakeNormalIntensity ) },
 	{ "ShakeStrongIntensity",				INI::parseReal,				NULL,			offsetof( GlobalData, m_shakeStrongIntensity ) },
@@ -457,9 +466,14 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 
 	{ "SpecialPowerViewObject",			INI::parseAsciiString,	NULL,			offsetof( GlobalData, m_specialPowerViewObjectName ) },
 
+	// TheSuperHackers @feature Customize the opacity (0..1) and shadows of build preview objects. Shadows are enabled by default.
+	// Note that disabling shadows loses a fair bit of contrast visually and warrants raising the opacity.
+	{ "ObjectPlacementOpacity", INI::parseReal, NULL, offsetof( GlobalData, m_objectPlacementOpacity ) },
+	{ "ObjectPlacementShadows", INI::parseBool, NULL, offsetof( GlobalData, m_objectPlacementShadows ) },
+
 	{ "StandardPublicBone", INI::parseAsciiStringVectorAppend, NULL, offsetof(GlobalData, m_standardPublicBones) },
-	{ "ShowMetrics",								INI::parseBool,				NULL,			offsetof( GlobalData, m_showMetrics ) },
-	{ "DefaultStartingCash",				INI::parseUnsignedInt, NULL,		offsetof( GlobalData, m_defaultStartingCash ) },
+	{ "ShowMetrics",								INI::parseBool,				   NULL,		offsetof( GlobalData, m_showMetrics ) },
+  { "DefaultStartingCash",				Money::parseMoneyAmount, NULL,		offsetof( GlobalData, m_defaultStartingCash ) },
 
 // NOTE: m_doubleClickTimeMS is still in use, but we disallow setting it from the GameData.ini file. It is now set in the constructor according to the windows parameter.
 //	{ "DoubleClickTimeMS",									INI::parseUnsignedInt,			NULL, offsetof( GlobalData, m_doubleClickTimeMS ) },
@@ -486,7 +500,6 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "NetworkPlayerTimeoutTime", INI::parseInt, NULL, offsetof(GlobalData, m_networkPlayerTimeoutTime) },
 	{ "NetworkDisconnectScreenNotifyTime", INI::parseInt, NULL, offsetof(GlobalData, m_networkDisconnectScreenNotifyTime) },
 
-	{ "KeyboardCameraRotateSpeed", INI::parseReal, NULL, offsetof( GlobalData, m_keyboardCameraRotateSpeed ) },
 	{ "PlayStats",									INI::parseInt,				NULL,			offsetof( GlobalData, m_playStats ) },
 
 #if defined(RTS_DEBUG)
@@ -523,7 +536,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "ExtraLogging",								INI::parseBool,				NULL,			offsetof( GlobalData, m_extraLogging ) },
 #endif
 
-	{ NULL,					NULL,						NULL,						0 }  // keep this last
+	{ NULL,					NULL,						NULL,						0 }
 
 };
 
@@ -566,13 +579,13 @@ GlobalData::GlobalData()
 	m_debugVisibilityTileDuration = LOGICFRAMES_PER_SECOND;
 	m_debugProjectilePath = FALSE;
 	m_debugProjectileTileWidth = 10;
-	m_debugProjectileTileDuration = LOGICFRAMES_PER_SECOND;  // Changed By Sadullah Nader
+	m_debugProjectileTileDuration = LOGICFRAMES_PER_SECOND;
 	m_debugThreatMap = FALSE;
 	m_maxDebugThreat = 5000;
-	m_debugThreatMapTileDuration = LOGICFRAMES_PER_SECOND;  // Changed By Sadullah Nader
+	m_debugThreatMapTileDuration = LOGICFRAMES_PER_SECOND;
 	m_debugCashValueMap = FALSE;
 	m_maxDebugValue = 10000;
-	m_debugCashValueMapTileDuration = LOGICFRAMES_PER_SECOND; // Changed By Sadullah Nader
+	m_debugCashValueMapTileDuration = LOGICFRAMES_PER_SECOND;
 	m_vTune = false;
 	m_checkForLeaks = TRUE;
 	m_benchmarkTimer = -1;
@@ -614,8 +627,8 @@ GlobalData::GlobalData()
 	m_chipSetType = 0;
 	m_headless = FALSE;
 	m_windowed = 0;
-	m_xResolution = 800;
-	m_yResolution = 600;
+	m_xResolution = DEFAULT_DISPLAY_WIDTH;
+	m_yResolution = DEFAULT_DISPLAY_HEIGHT;
 	m_maxShellScreens = 0;
 	m_useCloudMap = FALSE;
 	m_use3WayTerrainBlends = 1;
@@ -657,6 +670,7 @@ GlobalData::GlobalData()
 	m_featherWater = FALSE;
 	m_showSoftWaterEdge = TRUE;	//display soft water edge
 	m_usingWaterTrackEditor = FALSE;
+	m_isWorldBuilder = FALSE;
 
 	m_showMetrics = false;
 
@@ -676,10 +690,8 @@ GlobalData::GlobalData()
 		m_vertexWaterAttenuationB[ i ] = 0.0f;
 		m_vertexWaterAttenuationC[ i ] = 0.0f;
 		m_vertexWaterAttenuationRange[ i ] = 0.0f;
-		//Added By Sadullah Nader
-		//Initializations missing and needed
 		m_vertexWaterAvailableMaps[i].clear();
-	}  // end for i
+	}
 
 	m_skyBoxPositionZ = 0.0f;
 	m_drawSkyBox = FALSE;
@@ -789,8 +801,6 @@ GlobalData::GlobalData()
 	m_autoSmokeParticleLargeMax = 0;
 	m_autoAflameParticleMax = 0;
 
-	// Added By Sadullah Nader
-	// Initializations missing and needed
 	m_autoFireParticleSmallPrefix.clear();
 	m_autoFireParticleMediumPrefix.clear();
 	m_autoFireParticleLargePrefix.clear();
@@ -813,8 +823,6 @@ GlobalData::GlobalData()
 	m_drawEntireTerrain = FALSE;
 	m_maxParticleCount = 0;
 	m_maxFieldParticleCount = 30;
-
-	// End Add
 
 	m_debugAI = AI_DEBUG_NONE;
 	m_debugSupplyCenterPlacement = FALSE;
@@ -867,6 +875,9 @@ GlobalData::GlobalData()
 
 	m_standardMinefieldDensity = 0.01f;
 	m_standardMinefieldDistance = 40.0f;
+
+	m_objectPlacementOpacity = 0.45f;
+	m_objectPlacementShadows = TRUE;
 
 	m_groupSelectMinSelectSize = 5;
 	m_groupSelectVolumeBase = 0.5f;
@@ -924,9 +935,15 @@ GlobalData::GlobalData()
 
 	m_saveCameraInReplay = FALSE;
 	m_useCameraInReplay = FALSE;
+	m_enablePlayerObserver = FALSE;
 
+	m_networkLatencyFontSize = 8;
+	m_renderFpsFontSize = 8;
 	m_systemTimeFontSize = 8;
 	m_gameTimeFontSize = 8;
+
+	m_showMoneyPerMinute = FALSE;
+	m_allowMoneyPerMinuteForPlayer = FALSE;
 
 	m_debugShowGraphicalFramerate = FALSE;
 
@@ -982,6 +999,8 @@ GlobalData::GlobalData()
 	m_loadScreenRender = FALSE;
 
 	m_keyboardDefaultScrollFactor = m_keyboardScrollFactor = 0.5f;
+	m_drawScrollAnchor = FALSE;
+	m_moveScrollAnchor = FALSE;
 	m_scrollAmountCutoff = 10.0f;
 	m_cameraAdjustSpeed = 0.1f;
 	m_enforceMaxCameraHeight = TRUE;
@@ -1006,7 +1025,7 @@ GlobalData::GlobalData()
 
 	m_keyboardCameraRotateSpeed = 0.1f;
 
-}  // end GlobalData
+}
 
 //-------------------------------------------------------------------------------------------------
 AsciiString GlobalData::getPath_UserData() const
@@ -1020,15 +1039,14 @@ GlobalData::~GlobalData( void )
 {
 	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("~GlobalData: theOriginal is not original") );
 
-	if (m_weaponBonusSet)
-		deleteInstance(m_weaponBonusSet);
+	deleteInstance(m_weaponBonusSet);
 
 	if( m_theOriginal == this )	{
 		m_theOriginal = NULL;
 		TheWritableGlobalData = NULL;
 	}
 
-}  // end ~GlobalData
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -1076,7 +1094,7 @@ GlobalData *GlobalData::newOverride( void )
 
 	return override;
 
-}  // end newOveride
+}
 
 //-------------------------------------------------------------------------------------------------
 void GlobalData::init( void )
@@ -1108,7 +1126,7 @@ void GlobalData::reset( void )
 		// set next as top
 		TheWritableGlobalData = next;
 
-	}  // end while
+	}
 
 	//
 	// we now have the one single global data in TheWritableGlobalData singleton, lets sanity check
@@ -1117,7 +1135,7 @@ void GlobalData::reset( void )
 	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("ResetGlobalData: theOriginal is not original") );
 	DEBUG_ASSERTCRASH( TheWritableGlobalData == GlobalData::m_theOriginal, ("ResetGlobalData: oops") );
 
-}  // end ResetGlobalData
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse GameData entry */
@@ -1134,14 +1152,14 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 		if( ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES )
 			TheWritableGlobalData->newOverride();
 
-	}  // end if
+	}
 	else if (!TheWritableGlobalData)
 	{
 
 		// we don't have any global data instance at all yet, create one
 		TheWritableGlobalData = NEW GlobalData;
 
-	}  // end else
+	}
 	// If we're multifile, then continue loading stuff into the Global Data as normal.
 
 	// parse the ini weapon definition
@@ -1164,6 +1182,8 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	OptionPreferences optionPref;
  	TheWritableGlobalData->m_useAlternateMouse = optionPref.getAlternateMouseModeEnabled();
 	TheWritableGlobalData->m_keyboardScrollFactor = optionPref.getScrollFactor();
+	TheWritableGlobalData->m_drawScrollAnchor = optionPref.getDrawScrollAnchor();
+	TheWritableGlobalData->m_moveScrollAnchor = optionPref.getMoveScrollAnchor();
 	TheWritableGlobalData->m_defaultIP = optionPref.getLANIPAddress();
 	TheWritableGlobalData->m_firewallSendDelay = optionPref.getSendDelay();
 	TheWritableGlobalData->m_firewallBehavior = optionPref.getFirewallBehavior();
@@ -1172,9 +1192,13 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 
 	TheWritableGlobalData->m_saveCameraInReplay = optionPref.saveCameraInReplays();
 	TheWritableGlobalData->m_useCameraInReplay = optionPref.useCameraInReplays();
+	TheWritableGlobalData->m_enablePlayerObserver = optionPref.getPlayerObserverEnabled();
 
+	TheWritableGlobalData->m_networkLatencyFontSize = optionPref.getNetworkLatencyFontSize();
+	TheWritableGlobalData->m_renderFpsFontSize = optionPref.getRenderFpsFontSize();
 	TheWritableGlobalData->m_systemTimeFontSize = optionPref.getSystemTimeFontSize();
 	TheWritableGlobalData->m_gameTimeFontSize = optionPref.getGameTimeFontSize();
+	TheWritableGlobalData->m_showMoneyPerMinute = optionPref.getShowMoneyPerMinute();
 
 	Int val=optionPref.getGammaValue();
 	//generate a value between 0.6 and 2.0.
@@ -1198,18 +1222,10 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 
 void GlobalData::parseCustomDefinition()
 {
+	if (addon::HasFullviewportDat())
 	{
-		// TheSuperHackers @feature xezon 03/08/2025 Force full viewport for 'Control Bar Pro' Addons like GenTool did it.
-		File* file = TheFileSystem->openFile("GenTool/fullviewport.dat", File::READ | File::BINARY);
-		if (file != NULL)
-		{
-			Char value = '0';
-			file->read(&value, 1);
-			if (value != '0')
-			{
-				m_viewportHeightScale = 1.0f;
-			}
-		}
+		// TheSuperHackers @tweak xezon 03/08/2025 Force full viewport for 'Control Bar Pro' Addons like GenTool did it.
+		m_viewportHeightScale = 1.0f;
 	}
 }
 

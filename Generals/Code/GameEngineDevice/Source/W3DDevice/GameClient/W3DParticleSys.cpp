@@ -324,7 +324,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 	*/
 
 
-	}// next system
+	}
 
 		/// @todo lorenzen sez: this should be debug only:
 	TheParticleSystemManager->setOnScreenParticleCount(m_onScreenParticleCount);

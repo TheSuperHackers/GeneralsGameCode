@@ -31,9 +31,6 @@
 
 #pragma once
 
-#ifndef __W3DGAMEWINDOWMANAGER_H_
-#define __W3DGAMEWINDOWMANAGER_H_
-
 #include "GameClient/GameWindowManager.h"
 #include "W3DDevice/GameClient/W3DGameWindow.h"
 #include "W3DDevice/GameClient/W3DGadget.h"
@@ -80,7 +77,7 @@ public:
 
 protected:
 
-};  // end class W3DGameWindowManager
+};
 
 // INLINE //////////////////////////////////////////////////////////////////////////////////////////
 inline GameWindow *W3DGameWindowManager::allocateNewWindow( void ) { return newInstance(W3DGameWindow); }
@@ -107,6 +104,3 @@ inline GameWinDrawFunc W3DGameWindowManager::getStaticTextImageDrawFunc( void ) 
 inline GameWinDrawFunc W3DGameWindowManager::getStaticTextDrawFunc( void ) { return W3DGadgetStaticTextDraw; }
 inline GameWinDrawFunc W3DGameWindowManager::getTextEntryImageDrawFunc( void ) { return W3DGadgetTextEntryImageDraw; }
 inline GameWinDrawFunc W3DGameWindowManager::getTextEntryDrawFunc( void ) { return W3DGadgetTextEntryDraw; }
-
-#endif // __W3DGAMEWINDOWMANAGER_H_
-

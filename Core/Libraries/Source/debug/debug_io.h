@@ -26,11 +26,8 @@
 //
 // Debug I/O interface
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef DEBUG_IO_H // Include guard
-#define DEBUG_IO_H
+
+#pragma once
 
 /**
   \interface DebugIOInterface debug.h <rts/debug.h>
@@ -198,5 +195,3 @@ public:
 #endif
 
 ///@}
-
-#endif // DEBUG_IO_H

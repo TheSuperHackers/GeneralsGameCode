@@ -36,7 +36,7 @@
 
 #include "StdAfx.h"
 #include "DialogToolbar.h"
-#include "AfxPriv.H"
+#include "AfxPriv.h"
 
 
 BEGIN_MESSAGE_MAP(DialogToolbarClass, CToolBar)

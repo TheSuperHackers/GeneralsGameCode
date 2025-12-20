@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Library/CRCSTRAW.CPP                              $*
+ *                     $Archive:: /Commando/Library/CRCSTRAW.cpp                              $*
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *

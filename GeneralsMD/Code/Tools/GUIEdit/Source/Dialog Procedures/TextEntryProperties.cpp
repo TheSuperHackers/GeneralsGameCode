@@ -160,28 +160,28 @@ static LRESULT CALLBACK textEntryPropertiesCallback( HWND hWndDialog,
 							entryData->alphaNumericalOnly = TRUE;
 							entryData->numericalOnly = FALSE;
 
-						}  // end if
+						}
 						else if( IsDlgButtonChecked( hWndDialog, RADIO_NUMBERS ) )
 						{
 
 							entryData->alphaNumericalOnly = FALSE;
 							entryData->numericalOnly = TRUE;
 
-						}  // end else if
+						}
 						else
 						{
 
 							entryData->alphaNumericalOnly = FALSE;
 							entryData->numericalOnly = FALSE;
 
-						}  // end else
+						}
 
-					}  // end if
+					}
 
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end OK
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -190,13 +190,13 @@ static LRESULT CALLBACK textEntryPropertiesCallback( HWND hWndDialog,
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -205,15 +205,15 @@ static LRESULT CALLBACK textEntryPropertiesCallback( HWND hWndDialog,
       DestroyWindow( hWndDialog );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end textEntryPropertiesCallback
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -304,7 +304,7 @@ HWND InitTextEntryPropertiesDialog( GameWindow *window )
 
 	return dialog;
 
-}  // end InitTextEntryPropertiesDialog
+}
 
 
 

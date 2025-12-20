@@ -39,9 +39,7 @@
  *   CollisionMath::Overlap_Test -- Tests overlap between a plane and an AABox                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef COLMATHPLANE_H
-#define COLMATHPLANE_H
+#pragma once
 
 #include "always.h"
 #include "plane.h"
@@ -49,7 +47,7 @@
 
 /*
 ** Inline collision functions dealing with planes
-** This module is meant to be included only in .CPP files after you include colmath.h
+** This module is meant to be included only in .cpp files after you include colmath.h
 ** It is not automatically included in order to reduce file dependencies...
 */
 
@@ -148,7 +146,3 @@ CollisionMath::Overlap_Test(const PlaneClass & plane,const AABoxClass & box)
 	}
 	return BOTH;
 }
-
-
-#endif
-

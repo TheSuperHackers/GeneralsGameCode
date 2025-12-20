@@ -35,12 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef PIVOT_H
-#define PIVOT_H
 
 #include "always.h"
 #include "vector3.h"
@@ -71,8 +66,7 @@ public:
 	~PivotClass(void)
 	{
 #ifdef LAZY_CAP_MTX_ALLOC
-		if (CapTransformPtr)
-			delete CapTransformPtr;
+		delete CapTransformPtr;
 #endif
 	}
 
@@ -108,7 +102,3 @@ public:
 #endif
 
 };
-
-
-
-#endif

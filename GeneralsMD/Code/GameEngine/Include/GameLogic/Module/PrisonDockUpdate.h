@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __PRISON_DOCK_UPDATE_H_
-#define __PRISON_DOCK_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
 #include "GameLogic/Module/DockUpdate.h"
@@ -59,5 +56,3 @@ protected:
 };
 
 #endif
-
-#endif  // end __PRISON_DOCK_UPDATE_H_

@@ -31,9 +31,6 @@
 
 #pragma once
 
-#ifndef __MODULE_H_
-#define __MODULE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "Common/GameMemory.h"
@@ -70,7 +67,7 @@ enum ModuleType CPP_11(: Int)
 	MODULETYPE_CLIENT_UPDATE = 2,
 	// put new drawable module types here
 
-	NUM_MODULE_TYPES,  // keep this last!
+	NUM_MODULE_TYPES,
 
 	FIRST_DRAWABLE_MODULE_TYPE = MODULETYPE_DRAW,
 	LAST_DRAWABLE_MODULE_TYPE = MODULETYPE_CLIENT_UPDATE,
@@ -195,7 +192,7 @@ public:
 
 	virtual NameKeyType getModuleNameKey() const = 0;
 
-	inline NameKeyType getModuleTagNameKey() const { return getModuleData()->getModuleTagNameKey(); }
+	NameKeyType getModuleTagNameKey() const { return getModuleData()->getModuleTagNameKey(); }
 
 	/** this is called after all the Modules for a given Thing are created; it
 		allows Modules to resolve any inter-Module dependencies.
@@ -217,7 +214,7 @@ public:
 
 protected:
 
-	inline const ModuleData* getModuleData() const { return m_moduleData; }
+	const ModuleData* getModuleData() const { return m_moduleData; }
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
@@ -226,7 +223,7 @@ protected:
 private:
 	const ModuleData* m_moduleData;
 
-};  // end Module
+};
 //-------------------------------------------------------------------------------------------------
 
 
@@ -255,8 +252,8 @@ public:
 
 protected:
 
-	inline Object *getObject() { return m_object; }
-	inline const Object *getObject() const { return m_object; }
+	Object *getObject() { return m_object; }
+	const Object *getObject() const { return m_object; }
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
@@ -298,8 +295,8 @@ public:
 
 protected:
 
-	inline Drawable *getDrawable() { return m_drawable; }
-	inline const Drawable *getDrawable() const { return m_drawable; }
+	Drawable *getDrawable() { return m_drawable; }
+	const Drawable *getDrawable() const { return m_drawable; }
 
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
@@ -318,7 +315,3 @@ private:
 //-------------------------------------------------------------------------------------------------
 /** VARIOUS MODULE INTERFACES */
 //-------------------------------------------------------------------------------------------------
-
-
-#endif // __MODULE_H_
-

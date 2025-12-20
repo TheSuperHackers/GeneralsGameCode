@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingTemplate.h"
@@ -262,7 +262,7 @@ void TransportContain::letRidersUpgradeWeaponSet( void )
             }
           }
         }
-      }//end if rider
+      }
 
     }
   }
@@ -302,7 +302,7 @@ void TransportContain::onContaining( Object *rider, Bool wasSelected )
 		if( draw )
 			draw->setModelConditionState( MODELCONDITION_LOADED );
 
-	}  // end if
+	}
 
 
 	// give the object a contained version of its weapon
@@ -394,7 +394,7 @@ void TransportContain::onRemoving( Object *rider )
 		if( draw )
 			draw->clearModelConditionState( MODELCONDITION_LOADED );
 
-	}  // end if
+	}
 
 	if (getObject()->isAboveTerrain())
 	{
@@ -671,7 +671,7 @@ void TransportContain::crc( Xfer *xfer )
 	// extend base class
 	OpenContain::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -698,7 +698,7 @@ void TransportContain::xfer( Xfer *xfer )
 	// frame exit not busy
 	xfer->xferUnsignedInt( &m_frameExitNotBusy );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -709,4 +709,4 @@ void TransportContain::loadPostProcess( void )
 	// extend base class
 	OpenContain::loadPostProcess();
 
-}  // end loadPostProcess
+}

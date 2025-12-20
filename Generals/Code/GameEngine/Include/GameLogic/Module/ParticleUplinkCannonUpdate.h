@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __PARTICLE_UPLINK_CANNON_UPDATE_H_
-#define __PARTICLE_UPLINK_CANNON_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/LaserUpdate.h"
@@ -237,7 +234,3 @@ protected:
 	Bool						m_manualTargetMode;
 	Bool						m_clientShroudedLastFrame;
 };
-
-
-#endif
-

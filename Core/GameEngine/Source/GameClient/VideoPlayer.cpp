@@ -45,7 +45,7 @@
 //         Includes
 //----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Lib/BaseType.h"
 #include "GameClient/VideoPlayer.h"
@@ -182,8 +182,8 @@ void	VideoPlayer::init( void )
 	// Load this here so that WB doesn't have to link to BinkLib, costing us (potentially)
 	// an extra license.
 	INI ini;
-	ini.load( AsciiString( "Data\\INI\\Default\\Video.ini" ), INI_LOAD_OVERWRITE, NULL );
-	ini.load( AsciiString( "Data\\INI\\Video.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\Video", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Video", INI_LOAD_OVERWRITE, NULL );
 }
 
 //============================================================================

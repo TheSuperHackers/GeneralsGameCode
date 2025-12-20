@@ -381,14 +381,12 @@ void PredictiveLODOptimizerClass::Free(void)
 {
 	Clear();
 
-	if (ObjectArray) {
-		delete [] ObjectArray;
-		ObjectArray = NULL;
-		ArraySize = 0;
-	}
+	delete [] ObjectArray;
+	ObjectArray = NULL;
+	ArraySize = 0;
 
 	// Only the array number one has been allocated...
-	if (VisibleObjArray1) delete[] VisibleObjArray1;
+	delete[] VisibleObjArray1;
 	VisibleObjArray1=NULL;
 	VisibleObjArray2=NULL;
 	VisibleObjArraySize = 0;
@@ -398,7 +396,7 @@ void PredictiveLODOptimizerClass::AllocVisibleObjArrays(int num_objects)
 {
 	if (VisibleObjArraySize<num_objects) {
 		VisibleObjArraySize=num_objects;
-		if (VisibleObjArray1) delete[] VisibleObjArray1;	// Only the first array is actually allocated
+		delete[] VisibleObjArray1;	// Only the first array is actually allocated
 		VisibleObjArray1=W3DNEWARRAY LODHeapNode[2*(num_objects + 1)];
 		VisibleObjArray2=VisibleObjArray1+(num_objects + 1);
 	}

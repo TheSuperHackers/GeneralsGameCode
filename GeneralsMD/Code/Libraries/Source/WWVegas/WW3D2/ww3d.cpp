@@ -100,7 +100,7 @@
 #include "statistics.h"
 #include "pointgr.h"
 #include "ffactory.h"
-#include "INI.H"
+#include "INI.h"
 #include "dazzle.h"
 #include "meshmdl.h"
 #include "dx8renderer.h"
@@ -108,9 +108,8 @@
 #include "bound.h"
 #include "rddesc.h"
 #include "Vector3i.h"
-#include <cstdio>
 #include "dx8wrapper.h"
-#include "TARGA.H"
+#include "TARGA.h"
 #include "sortingrenderer.h"
 #include "thread.h"
 #include "cpudetect.h"
@@ -118,12 +117,8 @@
 #include "formconv.h"
 #include "animatedsoundmgr.h"
 #include "static_sort_list.h"
-
 #include "shdlib.h"
-
-#ifndef _UNIX
 #include "framgrab.h"
-#endif
 
 
 const char* DAZZLE_INI_FILENAME="DAZZLE.INI";
@@ -166,6 +161,8 @@ const char* DAZZLE_INI_FILENAME="DAZZLE.INI";
 **
 ***********************************************************************************/
 
+float														WW3D::LogicFrameTimeMs = 1000.0f / WWSyncPerSecond; // initialized to something to avoid division by zero on first use
+float															WW3D::FractionalSyncMs = 0.0f;
 unsigned int											WW3D::SyncTime = 0;
 unsigned int											WW3D::PreviousSyncTime = 0;
 bool														WW3D::IsSortingEnabled = true;
@@ -847,7 +844,7 @@ WW3DErrorType WW3D::Begin_Render(bool clear,bool clearz,const Vector3 & color, f
 		vp.Y = 0;
 		vp.Width = width;
 		vp.Height = height;
-		vp.MinZ = 0.0f;;
+		vp.MinZ = 0.0f;
 		vp.MaxZ = 1.0f;
 		DX8Wrapper::Set_Viewport(&vp);
 		DX8Wrapper::Clear(clear, clearz, color, dest_alpha);
@@ -1162,6 +1159,12 @@ unsigned int WW3D::Get_Last_Frame_Vertex_Count(void)
 	return Debug_Statistics::Get_DX8_Vertices();
 }
 
+void WW3D::Update_Logic_Frame_Time(float milliseconds)
+{
+	LogicFrameTimeMs = milliseconds;
+	FractionalSyncMs += milliseconds;
+}
+
 
 /***********************************************************************************************
  * WW3D::Sync -- Time sychronization                                                           *
@@ -1175,12 +1178,17 @@ unsigned int WW3D::Get_Last_Frame_Vertex_Count(void)
  * HISTORY:                                                                                    *
  *   3/24/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void WW3D::Sync(unsigned int sync_time)
+void WW3D::Sync(bool step)
 {
 	PreviousSyncTime = SyncTime;
-   SyncTime = sync_time;
-}
 
+	if (step)
+	{
+		unsigned int integralSyncMs = (unsigned int)FractionalSyncMs;
+		FractionalSyncMs -= integralSyncMs;
+		SyncTime += integralSyncMs;
+	}
+}
 
 /***********************************************************************************************
  * WW3D::Set_Ext_Swap_Interval -- Sets the swap interval the device should aim sync for.       *
@@ -1486,7 +1494,7 @@ void WW3D::Make_Screen_Shot( const char * filename_base , const float gamma, con
  *=============================================================================================*/
 void WW3D::Start_Movie_Capture( const char * filename_base, float frame_rate )
 {
-#ifdef _WINDOWS
+#ifdef _WIN32
 	if (IsCapturing) {
 		Stop_Movie_Capture();
 	}
@@ -1529,7 +1537,7 @@ void WW3D::Start_Movie_Capture( const char * filename_base, float frame_rate )
  *=============================================================================================*/
 void WW3D::Stop_Movie_Capture( void )
 {
-#ifdef _WINDOWS
+#ifdef _WIN32
 	if (IsCapturing) {
 		IsCapturing = false;
 		WWDEBUG_SAY(( "Stoping Movie" ));
@@ -1687,7 +1695,7 @@ bool WW3D::Is_Movie_Ready()
  *=============================================================================================*/
 void WW3D::Update_Movie_Capture( void )
 {
-#ifdef _WINDOWS
+#ifdef _WIN32
 	WWASSERT( IsCapturing);
 	WWPROFILE("WW3D::Update_Movie_Capture");
 	WWDEBUG_SAY(( "Updating"));
@@ -1764,7 +1772,7 @@ void WW3D::Update_Movie_Capture( void )
  *=============================================================================================*/
 float	WW3D::Get_Movie_Capture_Frame_Rate( void )
 {
-#ifdef _WINDOWS
+#ifdef _WIN32
 	if (IsCapturing) {
 		return Movie->GetFrameRate();
 	}

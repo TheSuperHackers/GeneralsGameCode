@@ -29,7 +29,7 @@ long long after you'll be dead.
 
 #include <ctype.h>
 #include <time.h>
-#ifndef _WINDOWS
+#ifndef _WIN32
 #include <sys/time.h>
 #endif
 #include "xtime.h"
@@ -88,7 +88,7 @@ static sint32 Get_Day(int month, int day, int year)
 static bit8 Get_Date_From_Day(sint32 days, OUT sint32 &year, OUT sint32 &yday)
 {
   //register long int rem;
-  register long int y;
+  long int y;
   //register const unsigned short int *ip;
 
   if (days <= 365)
@@ -286,13 +286,13 @@ void Xtime::update(void)
   day_=719528;  // day_s from year 0 to Jan1, 1970
   msec_=0;
 
- #ifdef _WINDOWS
+ #ifdef _WIN32
   struct _timeb    wintime;
   _ftime(&wintime);
   addSeconds(wintime.time);
   msec_+=wintime.millitm;
  #endif
- #ifndef _WINDOWS
+ #ifndef _WIN32
   struct timeval   unixtime;
   struct timezone  unixtzone;
   gettimeofday(&unixtime,&unixtzone);

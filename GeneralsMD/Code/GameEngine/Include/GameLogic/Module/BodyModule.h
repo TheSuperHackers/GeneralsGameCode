@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BODYMODULE_H_
-#define __BODYMODULE_H_
-
 #include "Common/Module.h"
 #include "GameLogic/Damage.h"
 #include "GameLogic/ArmorSet.h"
@@ -61,7 +58,7 @@ enum BodyDamageType CPP_11(: Int)
 };
 
 #ifdef DEFINE_BODYDAMAGETYPE_NAMES
-static const char* TheBodyDamageTypeNames[] =
+static const char* const TheBodyDamageTypeNames[] =
 {
 	"PRISTINE",
 	"DAMAGED",
@@ -70,6 +67,7 @@ static const char* TheBodyDamageTypeNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheBodyDamageTypeNames) == BODYDAMAGETYPE_COUNT + 1, "Incorrect array size");
 #endif
 
 enum MaxHealthChangeType CPP_11(: Int)
@@ -78,15 +76,20 @@ enum MaxHealthChangeType CPP_11(: Int)
 	PRESERVE_RATIO,
 	ADD_CURRENT_HEALTH_TOO,
 	FULLY_HEAL,
+
+	MAX_HEALTH_CHANGE_COUNT
 };
 
 #ifdef DEFINE_MAXHEALTHCHANGETYPE_NAMES
-static const char* TheMaxHealthChangeTypeNames[] =
+static const char* const TheMaxHealthChangeTypeNames[] =
 {
 	"SAME_CURRENTHEALTH",
 	"PRESERVE_RATIO",
 	"ADD_CURRENT_HEALTH_TOO",
+	"FULLY_HEAL",
+	NULL
 };
+static_assert(ARRAY_SIZE(TheMaxHealthChangeTypeNames) == MAX_HEALTH_CHANGE_COUNT + 1, "Incorrect array size");
 #endif
 
 
@@ -316,5 +319,3 @@ protected:
 };
 inline BodyModule::BodyModule( Thing *thing, const ModuleData* moduleData ) : BehaviorModule( thing, moduleData ), m_damageScalar(1.0f) { }
 inline BodyModule::~BodyModule() { }
-
-#endif

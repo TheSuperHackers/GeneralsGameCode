@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __RIDER_CHANGE_CONTAIN_H
-#define __RIDER_CHANGE_CONTAIN_H
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/TransportContain.h"
 
@@ -116,6 +113,3 @@ private:
 	Bool m_containing; //doesn't require xfer.
 
 };
-
-#endif // __RIDER_CHANGE_CONTAIN_H
-

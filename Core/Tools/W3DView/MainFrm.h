@@ -20,12 +20,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_MAINFRM_H__2BB39E2F_5D3A_11D2_9FC6_00104B791122__INCLUDED_)
-#define AFX_MAINFRM_H__2BB39E2F_5D3A_11D2_9FC6_00104B791122__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #include "DataTreeView.h"
 #include "Toolbar.h"
@@ -296,5 +291,3 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_MAINFRM_H__2BB39E2F_5D3A_11D2_9FC6_00104B791122__INCLUDED_)

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _W3D_SCIENCE_MODEL_DRAW_H_
-#define _W3D_SCIENCE_MODEL_DRAW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 
@@ -63,6 +60,3 @@ public:
 
 protected:
 };
-
-#endif
-

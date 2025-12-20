@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef __COMPRESSION_H__
-#define __COMPRESSION_H__
-
 #include "Lib/BaseTypeCore.h"
 
 enum CompressionType
@@ -67,5 +64,3 @@ public:
 
 	static CompressionType getPreferredCompression( void );
 };
-
-#endif // __COMPRESSION_H__

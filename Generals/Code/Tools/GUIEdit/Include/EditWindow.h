@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __EDITWINDOW_H_
-#define __EDITWINDOW_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
 #include <windows.h>
@@ -186,7 +183,7 @@ protected:
 	IRegion2D m_clipRegion;		///< the clipping region for images
 	Bool m_isClippedEnabled;	///<used by 2D drawing operations to define clip re
 
-};  // end EditWindow
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 // INLINING ///////////////////////////////////////////////////////////////////
@@ -203,6 +200,3 @@ inline ICoord2D EditWindow::getDragMoveOrigin( void ) { return m_dragMoveOrigin;
 // EXTERNALS //////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 extern EditWindow *TheEditWindow;  ///< edit window singleton extern
-
-#endif // __EDITWINDOW_H_
-

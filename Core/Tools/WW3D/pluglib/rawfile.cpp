@@ -74,7 +74,7 @@
 	**	This is a duplicate of the error numbers. The error handler for the RawFileClass handles
 	**	these errors. If the error routine is overridden and additional errors are defined, then
 	**	use numbers starting with 100. Note that these errors here are listed in numerical order.
-	**	These errors are defined in the standard header file "ERRNO.H".
+	**	These errors are defined in the standard header file "ERRNO.h".
 	*/
 	EZERO,				// Non-error.
 	EINVFNC,				// Invalid function number.
@@ -185,7 +185,7 @@ bool RawFileClass::Is_Open(void) const
  *    Display an error message as indicated. If it is allowed to retry, then pressing a key    *
  *    will return from this function. Otherwise, it will exit the program with "exit()".       *
  *                                                                                             *
- * INPUT:   error    -- The error number (same as the DOSERR.H error numbers).                 *
+ * INPUT:   error    -- The error number (same as the DOSERR.h error numbers).                 *
  *                                                                                             *
  *          canretry -- Can this routine exit normally so that retrying can occur? If this is  *
  *                      false, then the program WILL exit in this routine.                     *

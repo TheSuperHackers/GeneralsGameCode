@@ -55,9 +55,6 @@
 
 #pragma once
 
-#ifndef __GADGETSTATICTEXT_H_
-#define __GADGETSTATICTEXT_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -101,6 +98,3 @@ inline Color		 GadgetStaticTextGetHiliteColor( GameWindow *g )								{ return g
 inline Color		 GadgetStaticTextGetHiliteBorderColor( GameWindow *g )					{ return g->winGetHiliteBorderColor( 0 ); }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GADGETSTATICTEXT_H_
-

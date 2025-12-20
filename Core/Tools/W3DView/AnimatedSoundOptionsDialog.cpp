@@ -27,7 +27,7 @@
 #include "animatedsoundmgr.h"
 #include "wwsaveload.h"
 #include "definitionmgr.h"
-#include "WWFILE.H"
+#include "WWFILE.h"
 #include "chunkio.h"
 #include "wwdebug.h"
 #include "RestrictedFileDialog.h"

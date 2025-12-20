@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __GLOBAL_H__
-#define __GLOBAL_H__
+#pragma once
 
 #ifdef _WIN32
 #include <process.h>
@@ -52,6 +51,3 @@ extern GlobalClass Global;
 // Log rotation functions
 void rotateOutput(void);
 void rotateParanoid(void);
-
-#endif
-

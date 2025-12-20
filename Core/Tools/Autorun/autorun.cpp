@@ -22,7 +22,7 @@
  *																			*
  *                  Project Name : Autorun									*
  *																			*
- *                     File Name : AUTORUN.CPP								*
+ *                     File Name : AUTORUN.cpp								*
  *																			*
  *                    Programmers: Maria del Mar McCready Legg				*
  *																			*
@@ -90,14 +90,14 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <winuser.h>
-#include "ARGS.H"
+#include "ARGS.h"
 #include "autorun.h"
 #include "DrawButton.h"
 #include "resource.h"
 #include "Wnd_File.h"
 //#include "visualc.h"
-#include "WinFix.H"
-#include "CDCNTRL.H"
+#include "WinFix.h"
+#include "CDCNTRL.h"
 #include "IGR.h"
 #include "ViewHTML.h"
 
@@ -252,7 +252,7 @@ enum
 	IDS_MAIN_WINDOW,
 
 
-	IDS_COUNT // keep this last
+	IDS_COUNT
 };
 */
 
@@ -1138,10 +1138,9 @@ LRESULT MainWindow::Window_Proc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM
 
 			decision = DialogBox( Main::hInstance, _TEXT( "BitmapDialog" ), hWnd, Dialog_Box_Proc );
 
-			if ( Args ) {
-				delete( Args );
-				Args = NULL;
-			}
+			delete( Args );
+			Args = NULL;
+
 			Stop_Sound_Playing();
 
 			MoveWindow(	hWnd, 0, 0, 0, 0, TRUE );
@@ -1760,7 +1759,7 @@ unsigned int MainWindow::Run_OpenFile(int cd_drive, const char *filename, bool w
 				TranslateMessage( &msg );
 				DispatchMessage( &msg );
 
-			}  // end while
+			}
 
 			DWORD exitCode;
 			GetExitCodeProcess(hProcess, &exitCode);
@@ -2216,11 +2215,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 
 	for ( i = 0; i < NUM_BUTTONS; i++ ) {
 
-		if ( ButtonList[i] )
-		{
-			delete( ButtonList[i] );
-		}
-
+		delete( ButtonList[i] );
 		ButtonList[i]			= NULL;
 		ButtonSizes[i].left		= x_pos; 				// X position.
 		ButtonSizes[i].top 		= y_pos;				// Y position.
@@ -2281,7 +2276,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
 			Locale_GetString( "Autorun:Install" ),
 #else
-			AsciiString("Autorun:Install"),
+			"Autorun:Install",
 #endif
 			TTButtonFontPtr );
 
@@ -2300,7 +2295,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
 			Locale_GetString( "Autorun:Play" ),
 #else
-			AsciiString("Autorun:Play"),
+			"Autorun:Play",
 #endif
 			TTButtonFontPtr );
 /*
@@ -2319,7 +2314,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
 			Locale_GetString( "Autorun:Worldbuilder" ),
 #else
-			AsciiString("Autorun:Worldbuilder"),
+			"Autorun:Worldbuilder",
 #endif
 			TTButtonFontPtr );
 */
@@ -2338,7 +2333,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
 			Locale_GetString( "Autorun:CheckForUpdates" ),
 #else
-			AsciiString("Autorun:CheckForUpdates"),
+			"Autorun:CheckForUpdates",
 #endif
 			TTButtonFontPtr );
 	}
@@ -2356,7 +2351,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
 		Locale_GetString( "Autorun:ExploreCD" ),
 #else
-		AsciiString("Autorun:ExploreCD"),
+		"Autorun:ExploreCD",
 #endif
 		TTButtonFontPtr );
 //	strcpy( next_button_name, ButtonImages[button_index] );
@@ -2377,7 +2372,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
 			Locale_GetString( "Autorun:Website" ),
 #else
-			AsciiString("Autorun:Website"),
+			"Autorun:Website",
 #endif
 			TTButtonFontPtr );
 
@@ -2400,7 +2395,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
 			Locale_GetString( "Autorun:Uninstall" ),
 #else
-			AsciiString("Autorun:Uninstall"),
+			"Autorun:Uninstall",
 #endif
 			TTButtonFontPtr );
 
@@ -2422,7 +2417,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
     Locale_GetString( "Autorun:Previews" ),
 #else
-		AsciiString("Autorun:Previews"),
+		"Autorun:Previews",
 #endif
 		TTButtonFontPtr );
 
@@ -2439,7 +2434,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
     Locale_GetString( "Autorun:Help" ),
 #else
-		AsciiString("Autorun:Help"),
+		"Autorun:Help",
 #endif
 		TTButtonFontPtr );
 
@@ -2456,7 +2451,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
 		Locale_GetString( "Autorun:Cancel" ),
 #else
-		AsciiString("Autorun:Cancel"),
+		"Autorun:Cancel",
 #endif
 		TTButtonFontPtr );
 
@@ -3410,7 +3405,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 										hButtonBitmap = 0;
 									}
 
-								} // END OF DRAW BITMAPS
+								}
 
 #if(0)
 								TTFontClass *fontptr = ButtonList[i]->Return_Font_Ptr();
@@ -3495,9 +3490,9 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 
 
-							} // end of if button
+							}
 
-						}	// For each button...
+						}
 
 						//---------------------------------------------------------------
 						// Used in debugging -- draw rect around where buttons are.
@@ -3553,7 +3548,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						DeleteDC( buttonDC );
 						DeleteDC( licenseDC );
 
-					} // end of bitmaps
+					}
 
 					//===================================================================
 					// Draw a solid colored background.
@@ -3861,7 +3856,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 							Reformat_Volume_Name( PRODUCT_VOLUME_CD2, volume_to_match );
 //							result = Prompt_For_CD( window_handle, volume_to_match, IDS_INSERT_CDROM_WITH_VOLUME2, IDS_EXIT_MESSAGE2, &cd_drive );
-							result = Prompt_For_CD( window_handle, volume_to_match, AsciiString("Autorun:InsertCDROMWithVolume2"), AsciiString("Autorun:ExitMessage2"), &cd_drive );
+							result = Prompt_For_CD( window_handle, volume_to_match, "Autorun:InsertCDROMWithVolume2", "Autorun:ExitMessage2", &cd_drive );
 						}
 
 						if ( result ) {
@@ -3888,7 +3883,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						}
 						else
 						{
-							Error_Message( Main::hInstance, AsciiString("Autorun:Generals"), AsciiString("Autorun:CantFindExplorer"), GAME_WEBSITE );
+							Error_Message( Main::hInstance, "Autorun:Generals", "Autorun:CantFindExplorer", GAME_WEBSITE );
 						}
 						break;
 				#endif
@@ -3976,10 +3971,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				if( end_dialog ) {
 
 					for ( i = 0; i < NUM_BUTTONS; i++ ) {
-						if ( ButtonList[i] ) {
-							delete( ButtonList[i] );
-							ButtonList[i] = NULL;
-						}
+						delete( ButtonList[i] );
+						ButtonList[i] = NULL;
 					}
 					if ( hpal ) {
 						DeleteObject( hpal );
@@ -4018,10 +4011,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				#if(BACKGROUND_BITMAP)
 
 					for ( i = 0; i < NUM_BUTTONS; i++ ) {
-						if ( ButtonList[i] ) {
-							delete( ButtonList[i] );
-							ButtonList[i] = NULL;
-						}
+						delete( ButtonList[i] );
+						ButtonList[i] = NULL;
 					}
 					if ( hpal ) {
 						DeleteObject( hpal );
@@ -4049,10 +4040,9 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				//-----------------------------------------------------------------------
 				// Delete the arguments.
 				//-----------------------------------------------------------------------
-				if ( Args ) {
-					delete( Args );
-					Args = NULL;
-				}
+				delete( Args );
+				Args = NULL;
+
 				KillTimer( window_handle, timer_id );
 				EndDialog( window_handle, w_param );
 			}
@@ -4360,7 +4350,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 									ButtonList[i]->Set_State( DrawButton::FOCUS_STATE );
 //									Msg( __LINE__, TEXT(__FILE__), TEXT("WM_MOUSEMOVE -- %s[FOCUS_STATE]."), ButtonList[i]->Return_Normal_Bitmap());
 								}
-							}	// end of if
+							}
 
 							//-----------------------------------------------------------
 							// Get the area of the button, and post it for updating.
@@ -4380,10 +4370,10 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 							done = 1;
 						}
 
-					}	// end of if
+					}
 					i++;
 
-				}	// end of for
+				}
 
 
 			#if( USE_MOUSE_MOVES )

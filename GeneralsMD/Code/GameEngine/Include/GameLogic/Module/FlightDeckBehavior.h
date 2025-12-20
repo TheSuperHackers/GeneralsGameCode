@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FLIGHT_DECK_BEHAVIOR_H
-#define __FLIGHT_DECK_BEHAVIOR_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -139,6 +136,7 @@ public:
 	virtual Bool reserveRunway(ObjectID id, Bool forLanding);
 	virtual void releaseRunway(ObjectID id);
 	virtual void calcPPInfo( ObjectID id, PPInfo *info );
+	virtual Int getRunwayIndex(ObjectID id);
 	virtual Int getRunwayCount() const { return m_runways.size(); }
 	virtual ObjectID getRunwayReservation( Int r, RunwayReservationType type );
 	virtual void transferRunwayReservationToNextInLineForTakeoff(ObjectID id);
@@ -228,6 +226,3 @@ private:
 	Bool													m_rampUp[ MAX_RUNWAYS ];
 
 };
-
-#endif // __FLIGHT_DECK_BEHAVIOR_H
-

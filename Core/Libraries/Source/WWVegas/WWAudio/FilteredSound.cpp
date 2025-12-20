@@ -57,7 +57,7 @@ SimplePersistFactoryClass<FilteredSoundClass, CHUNKID_FILTERED_SOUND> _FilteredS
 //
 /////////////////////////////////////////////////////////////////////////////////
 FilteredSoundClass::FilteredSoundClass (void)
-	:	m_hFilter (INVALID_MILES_HANDLE)
+	:	m_hFilter ((HPROVIDER)INVALID_MILES_HANDLE)
 {
 	return ;
 }
@@ -69,7 +69,7 @@ FilteredSoundClass::FilteredSoundClass (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 FilteredSoundClass::FilteredSoundClass (const FilteredSoundClass &src)
-	:	m_hFilter (INVALID_MILES_HANDLE),
+	:	m_hFilter ((HPROVIDER)INVALID_MILES_HANDLE),
 		SoundPseudo3DClass (src)
 {
 	(*this) = src;
@@ -113,7 +113,7 @@ FilteredSoundClass::Initialize_Miles_Handle (void)
 	SoundPseudo3DClass::Initialize_Miles_Handle ();
 	m_hFilter = WWAudioClass::Get_Instance ()->Get_Reverb_Filter ();
 	if ((m_SoundHandle != NULL) &&
-		 (m_hFilter != INVALID_MILES_HANDLE)) {
+		 (m_hFilter != (HPROVIDER)INVALID_MILES_HANDLE)) {
 
 		//
 		//	Pass the filter onto the sample

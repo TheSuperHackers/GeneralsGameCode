@@ -26,7 +26,9 @@
 //
 // Unhandled exception handler
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+#include "debug.h"
+#include "internal_except.h"
+#include <windows.h>
 #include <commctrl.h>
 
 DebugExceptionhandler::DebugExceptionhandler(void)
@@ -341,8 +343,6 @@ static BOOL CALLBACK ExceptionDlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 
   return TRUE;
 }
-
-#include <stdio.h>
 
 LONG __stdcall DebugExceptionhandler::ExceptionFilter(struct _EXCEPTION_POINTERS* pExPtrs)
 {

@@ -60,7 +60,7 @@
 #include "meshcon.h"
 #include "SnapPoints.h"
 #include "w3ddlg.h"
-#include "PROGRESS.H"
+#include "PROGRESS.h"
 #include "errclass.h"
 #include "motion.h"
 #include "util.h"
@@ -75,7 +75,7 @@
 #include "geometryexportcontext.h"
 
 #include <direct.h>
-#include "TARGA.H"
+#include "TARGA.h"
 
 // Used to communicate from the exporter to the dialog.
 char W3dExportClass::CurrentExportPath[_MAX_DRIVE + _MAX_DIR + 1] = { '\000' };

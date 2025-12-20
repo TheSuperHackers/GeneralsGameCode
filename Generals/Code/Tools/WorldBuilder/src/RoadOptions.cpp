@@ -237,24 +237,17 @@ BOOL RoadOptions::OnInitDialog()
 		index++;
 		m_numberOfRoads++;
 
-	}  // end for raod
+	}
 
 	// load roads from test assets
 #ifdef LOAD_TEST_ASSETS
 	{
-		char				dirBuf[_MAX_PATH];
-		char				findBuf[_MAX_PATH];
 		char				fileBuf[_MAX_PATH];
 
-		strcpy(dirBuf, ROAD_DIRECTORY);
-		int len = strlen(dirBuf);
-
-		strcpy(findBuf, dirBuf);
-
 		FilenameList filenameList;
-		TheFileSystem->getFileListInDirectory(AsciiString(findBuf), AsciiString("*.tga"), filenameList, FALSE);
+		TheFileSystem->getFileListInDirectory(ROAD_DIRECTORY, "*.tga", filenameList, FALSE);
 
-		if (filenameList.size() > 0) {
+		if (!filenameList.empty()) {
 			FilenameList::iterator it = filenameList.begin();
 			do {
 				AsciiString	filename = *it;
@@ -263,7 +256,7 @@ BOOL RoadOptions::OnInitDialog()
 					++it;
 					continue;
 				}
-				len = filename.getLength();
+				int len = filename.getLength();
 				if (len<5) {
 					++it;
 					continue;
@@ -273,9 +266,10 @@ BOOL RoadOptions::OnInitDialog()
 					++it;
 					continue;
 				}
+				static_assert(ARRAY_SIZE(fileBuf) >= ARRAY_SIZE(TEST_STRING), "Incorrect array size");
 				strcpy(fileBuf, TEST_STRING);
-				strcat(fileBuf, "\\");
-				strcat(fileBuf, filename.str());
+				strlcat(fileBuf, "\\", ARRAY_SIZE(fileBuf));
+				strlcat(fileBuf, filename.str(), ARRAY_SIZE(fileBuf));
 				addRoad(fileBuf, index, TVI_ROOT);
 				index++;
 				m_numberOfRoads++;
@@ -298,7 +292,7 @@ BOOL RoadOptions::OnInitDialog()
 		index++;
 		m_numberOfBridges++;
 
-	}  // end for bridge
+	}
 
 	m_currentRoadIndex = 1;
 	setRoadTreeViewSelection(TVI_ROOT, m_currentRoadIndex);
@@ -387,17 +381,17 @@ void RoadOptions::addRoad(char *pPath, Int terrainNdx, HTREEITEM parent)
 			parent = findOrAdd( parent, "Roads" );
 
 		// set the name to place as the name of the road entry in INI
-		strcpy( buffer, road->getName().str() );
+		strlcpy(buffer, road->getName().str(), ARRAY_SIZE(buffer));
 
 		// do the add
 		doAdd = TRUE;
 
-	}  // end if
+	}
 
 #ifdef LOAD_TEST_ASSETS
 	if (!doAdd && !strncmp(TEST_STRING, pPath, strlen(TEST_STRING))) {
 		parent = findOrAdd(parent, TEST_STRING);
-		strcpy(buffer, pPath + strlen(TEST_STRING) + 1);
+		strlcpy(buffer, pPath + strlen(TEST_STRING) + 1, ARRAY_SIZE(buffer));
 		doAdd = true;
 	}
 #endif

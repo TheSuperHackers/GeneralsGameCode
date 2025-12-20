@@ -141,9 +141,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 						{
 							printf ("Build 0. Oops, didn't find a string of the format: '#define VERSION \"x.y.z\"'");
 						}
-					} // End if if (strstr
-				} // End of while
-			} // End of if filePtr
+					}
+				}
+			}
 			else
 			{
 				// Didn't find the file, write a new one

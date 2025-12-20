@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __HelicopterSlowDeathBehavior_H_
-#define __HelicopterSlowDeathBehavior_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "GameLogic/Module/SlowDeathBehavior.h"
@@ -113,5 +110,3 @@ protected:
 	AudioEventRTS m_deathSound;						///< Sound played during death sequence.
 
 };
-
-#endif  // end __HelicopterSlowDeathBehavior_H_

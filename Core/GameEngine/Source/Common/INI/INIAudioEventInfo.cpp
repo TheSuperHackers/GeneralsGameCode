@@ -27,7 +27,7 @@
 // Desc:   Parsing AudioEvent, MusicTrack and DialogEvent INI entries
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "Common/GameAudio.h"
@@ -65,7 +65,7 @@ void INI::parseMusicTrackDefinition( INI* ini )
 
 	// parse the ini definition
 	ini->initFromINI( track, track->getFieldParse() );
-}  // end parseMusicTrackDefinition
+}
 
 //-------------------------------------------------------------------------------------------------
 void INI::parseAudioEventDefinition( INI* ini )
@@ -92,7 +92,7 @@ void INI::parseAudioEventDefinition( INI* ini )
 
 	// parse the ini definition
 	ini->initFromINI( track, track->getFieldParse() );
-}  // end parseAudioEventDefinition
+}
 
 //-------------------------------------------------------------------------------------------------
 void INI::parseDialogDefinition( INI* ini )
@@ -119,7 +119,7 @@ void INI::parseDialogDefinition( INI* ini )
 
 	// parse the ini definition
 	ini->initFromINI( track, track->getFieldParse() );
-}  // end parseAudioEventDefinition
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -179,7 +179,7 @@ static void parsePitchShift( INI* ini, void *instance, void *store, const void* 
 
 // STATIC DEFINIITIONS ////////////////////////////////////////////////////////////////////////////
 
-const char *theAudioPriorityNames[] =
+const char *const theAudioPriorityNames[] =
 {
 	"LOWEST",
 	"LOW",
@@ -188,8 +188,9 @@ const char *theAudioPriorityNames[] =
 	"CRITICAL",
 	NULL
 };
+static_assert(ARRAY_SIZE(theAudioPriorityNames) == AP_COUNT + 1, "Incorrect array size");
 
-const char *theSoundTypeNames[] =
+const char *const theSoundTypeNames[] =
 {
 	"UI",
 	"WORLD",
@@ -203,7 +204,7 @@ const char *theSoundTypeNames[] =
 	NULL
 };
 
-const char *theAudioControlNames[] =
+const char *const theAudioControlNames[] =
 {
 	"LOOP",
 	"RANDOM",

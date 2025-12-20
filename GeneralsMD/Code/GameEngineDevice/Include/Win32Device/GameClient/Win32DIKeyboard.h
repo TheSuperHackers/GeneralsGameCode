@@ -46,9 +46,6 @@
 
 #pragma once
 
-#ifndef __WIN32DIKEYBOARD_H_
-#define __WIN32DIKEYBOARD_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #ifndef DIRECTINPUT_VERSION
 #	define DIRECTINPUT_VERSION	0x800
@@ -96,11 +93,8 @@ protected:
 	LPDIRECTINPUT8 m_pDirectInput;  ///< pointer to direct input interface
 	LPDIRECTINPUTDEVICE8 m_pKeyboardDevice;  ///< pointer to keyboard device
 
-};  // end class DirectInputKeyboard
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __WIN32DIKEYBOARD_H_
-

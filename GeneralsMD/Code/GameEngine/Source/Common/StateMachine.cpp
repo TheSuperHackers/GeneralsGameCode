@@ -26,7 +26,7 @@
 // Implementation of basic state machine
 // Author: Michael S. Booth, January 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Errors.h"
 #include "Common/StateMachine.h"
@@ -292,8 +292,7 @@ StateMachine::~StateMachine()
 	// delete all states in the mapping
 	for( i = m_stateMap.begin(); i != m_stateMap.end(); ++i )
 	{
-		if ((*i).second)
-			deleteInstance((*i).second);
+		deleteInstance((*i).second);
 	}
 }
 
@@ -813,7 +812,7 @@ void StateMachine::internalSetGoalPosition( const Coord3D *pos )
 void StateMachine::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method
@@ -894,7 +893,7 @@ void StateMachine::xfer( Xfer *xfer )
 	xfer->xferCoord3D(&m_goalPosition);
 	xfer->xferBool(&m_locked);
 	xfer->xferBool(&m_defaultStateInited);
-}  // end xfer
+}
 
 
 // ------------------------------------------------------------------------------------------------
@@ -903,5 +902,5 @@ void StateMachine::xfer( Xfer *xfer )
 void StateMachine::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 

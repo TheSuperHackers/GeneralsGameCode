@@ -95,7 +95,7 @@ W3DDisplayString::W3DDisplayString( void )
 	m_hotKeyPos.y = 0;
 	m_hotKeyColor = GameMakeColor(255,255,255,255);
 
-}  // end W3DDisplayString
+}
 
 // W3DDisplayString::~W3DDisplayString ========================================
 /** */
@@ -103,7 +103,7 @@ W3DDisplayString::W3DDisplayString( void )
 W3DDisplayString::~W3DDisplayString( void )
 {
 
-}  // end ~W3DDisplayString
+}
 
 // W3DDisplayString::textChanged ==============================================
 /** This method automatically gets called from some methods in the display
@@ -142,7 +142,7 @@ void W3DDisplayString::notifyTextChanged( void )
 	m_textRenderer.Reset();
 	m_textRendererHotKey.Reset();
 
-}  // end notifyTextChanged
+}
 
 // W3DDisplayString::Draw =====================================================
 /** Draw the text at the specified location in in the specified colors
@@ -186,7 +186,7 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 		m_textChanged = FALSE;
 		needNewPolys = TRUE;
 
-	}  // end if
+	}
 
 	//
 	// if our position has changed, or our colors have chagned, or our
@@ -224,7 +224,7 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 			m_textRendererHotKey.Render();
 		}
 
-	}  // end if
+	}
 
 	// render the text
 	m_textRenderer.Render();
@@ -233,7 +233,7 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 	if( TheGameClient )
 		usingResources( TheGameClient->getFrame() );
 
-}  // end draw
+}
 
 // W3DDisplayString::getSize ==================================================
 /** Get the render size width and height of the string in this instance
@@ -248,7 +248,7 @@ void W3DDisplayString::getSize( Int *width, Int *height )
 	if( height )
 		*height = m_size.y;
 
-}  // end getSize
+}
 
 // DisplayString::appendChar ==================================================
 /** Get text with up to charPos characters, -1 = all characters */
@@ -307,7 +307,7 @@ void W3DDisplayString::setFont( GameFont *font )
 	// set flag telling us the font has changed since last render
 	m_fontChanged = TRUE;
 
-}  // end setFont
+}
 
 // W3DDisplayString::setClipRegion ============================================
 /** Set the clipping region for the text */
@@ -337,9 +337,9 @@ void W3DDisplayString::setClipRegion( IRegion2D *region )
 																								 m_clipRegion.lo.y,
 																								 m_clipRegion.hi.x,
 																								 m_clipRegion.hi.y ) );
-	}  // end if
+	}
 
-}  // end setClipRegion
+}
 
 // W3DDisplayString::computeExtents ===========================================
 /** Update the width and height of our string */
@@ -355,7 +355,7 @@ void W3DDisplayString::computeExtents( void )
 		m_size.x = 0;
 		m_size.y = 0;
 
-	}  // end if
+	}
 	else
 	{
 
@@ -363,9 +363,9 @@ void W3DDisplayString::computeExtents( void )
 		m_size.x = extents.X;
 		m_size.y = extents.Y;
 
-	}  // end else
+	}
 
-}  // end computeExtents
+}
 
 // W3DDisplayString::setWordWrap ===========================================
 /** Set the wordwrap of the m_textRenderer */
@@ -375,7 +375,7 @@ void W3DDisplayString::setWordWrap( Int wordWrap )
 	// set the Word Wrap
 	if(m_textRenderer.Set_Wrapping_Width(wordWrap))
 		notifyTextChanged();
-}// void setWordWrap( Int wordWrap )
+}
 
 void W3DDisplayString::setUseHotkey( Bool useHotkey, Color hotKeyColor )
 {
@@ -393,4 +393,4 @@ void W3DDisplayString::setWordWrapCentered( Bool isCentered )
 	// set the Word Wrap
 	 if( m_textRenderer.Set_Word_Wrap_Centered(isCentered) )
 		notifyTextChanged();
-}// void setWordWrap( Int wordWrap )
+}

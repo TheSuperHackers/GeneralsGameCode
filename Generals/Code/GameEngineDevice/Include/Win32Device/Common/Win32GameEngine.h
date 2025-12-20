@@ -32,9 +32,6 @@
 
 #pragma once
 
-#ifndef __WIN32GAMEENGINE_H_
-#define __WIN32GAMEENGINE_H_
-
 #include "Common/GameEngine.h"
 #include "GameLogic/GameLogic.h"
 #include "GameNetwork/NetworkInterface.h"
@@ -47,7 +44,6 @@
 #include "W3DDevice/GameClient/W3DWebBrowser.h"
 #include "W3DDevice/Common/W3DFunctionLexicon.h"
 #include "W3DDevice/Common/W3DRadar.h"
-#include "W3DDevice/Common/W3DFunctionLexicon.h"
 #include "W3DDevice/Common/W3DThingFactory.h"
 
 
@@ -87,7 +83,7 @@ protected:
 
 protected:
 	UINT m_previousErrorMode;
-};  // end Win32GameEngine
+};
 
 // INLINE -----------------------------------------------------------------------------------------
 inline GameLogic *Win32GameEngine::createGameLogic( void ) { return NEW W3DGameLogic; }
@@ -103,5 +99,3 @@ inline NetworkInterface *Win32GameEngine::createNetwork( void ) { return Network
 inline Radar *Win32GameEngine::createRadar( void ) { return NEW W3DRadar; }
 inline WebBrowser *Win32GameEngine::createWebBrowser( void ) { return NEW CComObject<W3DWebBrowser>; }
 inline AudioManager *Win32GameEngine::createAudioManager( void ) { return NEW MilesAudioManager; }
-
-#endif  // end __WIN32GAMEENGINE_H_

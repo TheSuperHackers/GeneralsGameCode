@@ -38,9 +38,6 @@
 #include "nullrobj.h"
 #include "chunkio.h"
 
-#include <string.h>
-
-
 NullLoaderClass _NullLoader;
 
 
@@ -48,7 +45,7 @@ NullLoaderClass _NullLoader;
 
 Null3DObjClass::Null3DObjClass(const char * name)
 {
-	strcpy(Name, name);
+	strlcpy(Name, name, ARRAY_SIZE(Name));
 }
 
 Null3DObjClass::Null3DObjClass(const Null3DObjClass & src)

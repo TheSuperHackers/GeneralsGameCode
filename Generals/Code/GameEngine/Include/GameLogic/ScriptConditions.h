@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SCRIPTCONDITIONS_H_
-#define __SCRIPTCONDITIONS_H_
-
 class Condition;
 class ObjectTypes;
 class Parameter;
@@ -57,7 +54,7 @@ public:
 	virtual Bool evaluateSkirmishCommandButtonIsReady( Parameter *pSkirmishPlayerParm, Parameter *pTeamParm, Parameter *pCommandButtonParm, Bool allReady ) = 0;
 	virtual Bool evaluateTeamIsContained(Parameter *pTeamParm, Bool allContained) = 0;
 
-};  // end class ScriptConditionsInterface
+};
 extern ScriptConditionsInterface *TheScriptConditions;   ///< singleton definition
 
 
@@ -186,7 +183,4 @@ protected:
 	Bool evaluateMissionAttempts(Parameter *pPlayerParm, Parameter *pComparisonParm, Parameter *pAttemptsParm);
 
 
-};  // end class ScriptConditions
-
-
-#endif  // end __SCRIPTCONDITIONS_H_
+};

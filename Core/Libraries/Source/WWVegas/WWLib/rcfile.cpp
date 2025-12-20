@@ -65,16 +65,14 @@ ResourceFileClass::ResourceFileClass(HMODULE hmodule, char const *filename) :
 
 ResourceFileClass::~ResourceFileClass(void)
 {
-	if (ResourceName)
-		free(ResourceName);
+	free(ResourceName);
 }
 
 char const * ResourceFileClass::Set_Name(char const *filename)
 {
-	if (ResourceName) {
-		free(ResourceName);
-		ResourceName = NULL;
-	}
+	free(ResourceName);
+	ResourceName = NULL;
+
 	if (filename) {
 		ResourceName = strdup(filename);
 	}

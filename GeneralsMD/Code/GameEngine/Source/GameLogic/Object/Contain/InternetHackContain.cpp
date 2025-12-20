@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameLogic/Module/InternetHackContain.h"
 
@@ -94,7 +94,7 @@ void InternetHackContain::crc( Xfer *xfer )
 	// extend base class
 	TransportContain::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -112,7 +112,7 @@ void InternetHackContain::xfer( Xfer *xfer )
 	// extend base class
 	TransportContain::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -123,4 +123,4 @@ void InternetHackContain::loadPostProcess( void )
 	// extend base class
 	TransportContain::loadPostProcess();
 
-}  // end loadPostProcess
+}

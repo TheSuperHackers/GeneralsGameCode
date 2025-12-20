@@ -33,27 +33,17 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
+
 #pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef REFCOUNT_H
-#define REFCOUNT_H
+#include "LISTNODE.h"
+#include "WWDebug/wwdebug.h"
 
-#ifndef ALWAYS_H
-#include "always.h"
-#endif
-
-#ifndef LISTNODE_H
-#include "LISTNODE.H"
-#endif
-
-#include "wwdebug.h"
 
 class RefCountClass;
 
 
-#ifndef NDEBUG
+#ifdef RTS_DEBUG
 
 struct ActiveRefStruct
 {
@@ -61,15 +51,7 @@ struct ActiveRefStruct
 	int						Line;
 };
 
-#define	NEW_REF( C, P )						( (C*)RefCountClass::Set_Ref_Owner( W3DNEW C P, __FILE__, __LINE__ ) )
-#define	SET_REF_OWNER( P )				(		RefCountClass::Set_Ref_Owner( P,       __FILE__, __LINE__ ) )
-
-#else
-
-#define	NEW_REF( C, P )					( W3DNEW C P )
-#define	SET_REF_OWNER( P )			P
-
-#endif
+#endif // RTS_DEBUG
 
 
 /*
@@ -79,7 +61,7 @@ struct ActiveRefStruct
 ** point it at the new object, and add-ref the new object (if its not null...)
 */
 #define REF_PTR_SET(dst,src)	{ if (src) (src)->Add_Ref(); if (dst) (dst)->Release_Ref(); (dst) = (src); }
-#define REF_PTR_RELEASE(x)		{ if (x) x->Release_Ref(); x = NULL; }
+#define REF_PTR_RELEASE(x)		{ if (x) x->Release_Ref(); x = nullptr; }
 
 
 /*
@@ -111,31 +93,31 @@ class RefCountClass
 {
 public:
 
-	RefCountClass(void) :
-		NumRefs(1)
-		#ifndef NDEBUG
-		,ActiveRefNode(this)
-		#endif
+	RefCountClass(void)
+		: NumRefs(1)
+#ifdef RTS_DEBUG
+		, ActiveRefNode(this)
+#endif
 	{
-		#ifndef NDEBUG
+#ifdef RTS_DEBUG
 		Add_Active_Ref(this);
 		Inc_Total_Refs(this);
-		#endif
+#endif
 	}
 
 	/*
 	** The reference counter value cannot be copied.
 	*/
-	RefCountClass(const RefCountClass & ) :
-		NumRefs(1)
-		#ifndef NDEBUG
-		,ActiveRefNode(this)
-		#endif
+	RefCountClass(const RefCountClass & )
+		: NumRefs(1)
+#ifdef RTS_DEBUG
+		, ActiveRefNode(this)
+#endif
 	{
-		#ifndef NDEBUG
+#ifdef RTS_DEBUG
 		Add_Active_Ref(this);
 		Inc_Total_Refs(this);
-		#endif
+#endif
 	}
 
 	RefCountClass& operator=(const RefCountClass&) { return *this; }
@@ -144,24 +126,26 @@ public:
 	** Add_Ref, call this function if you are going to keep a pointer
 	** to this object.
 	*/
-#ifdef NDEBUG
-	WWINLINE void Add_Ref(void) const							{ NumRefs++; }
-#else
+#ifdef RTS_DEBUG
 	void Add_Ref(void) const;
+#else
+	void Add_Ref(void) const							{ NumRefs++; }
 #endif
 
 	/*
 	** Release_Ref, call this function when you no longer need the pointer
 	** to this object.
 	*/
-	WWINLINE void		Release_Ref(void) const					{
-																				#ifndef NDEBUG
-																				Dec_Total_Refs(this);
-																				#endif
-																				NumRefs--;
-																				WWASSERT(NumRefs >= 0);
-																				if (NumRefs == 0) const_cast<RefCountClass*>(this)->Delete_This();
-																			}
+	void Release_Ref(void) const
+	{
+#ifdef RTS_DEBUG
+		Dec_Total_Refs(this);
+#endif
+		NumRefs--;
+		WWASSERT(NumRefs >= 0);
+		if (NumRefs == 0)
+			const_cast<RefCountClass*>(this)->Delete_This();
+	}
 
 
 	/*
@@ -190,9 +174,9 @@ protected:
 	*/
 	virtual ~RefCountClass(void)
 	{
-		#ifndef NDEBUG
+#ifdef RTS_DEBUG
 		Remove_Active_Ref(this);
-		#endif
+#endif
 		WWASSERT(NumRefs == 0);
 	}
 
@@ -221,7 +205,7 @@ private:
 
 public:
 
-#ifndef NDEBUG // Debugging stuff
+#ifdef RTS_DEBUG // Debugging stuff
 
 	/*
 	** Node in the Active Refs List
@@ -258,7 +242,7 @@ public:
 	*/
 	static bool							Validate_Active_Ref(RefCountClass * obj);
 
-#endif // NDEBUG
+#endif // RTS_DEBUG
 
 };
 
@@ -329,6 +313,3 @@ private:
 
 	mutable IntegerType NumRefs;
 };
-
-
-#endif // REFCOUNT_H

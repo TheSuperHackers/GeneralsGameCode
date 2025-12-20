@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GlobalData.h"
 #include "Common/encrypt.h"
@@ -301,18 +301,18 @@ WindowMsgHandledType PopupLadderSelectInput( GameWindow *window, UnsignedInt msg
 							break;
 						}
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
 
@@ -341,7 +341,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 		case GWM_CREATE:
 		{
 			break;
-		}  // end create
+		}
     //---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
@@ -350,7 +350,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 			listboxLadderDetails = NULL;
 			CustomMatchHideHostPopup(FALSE);
 			break;
-		}  // end case
+		}
 
     //----------------------------------------------------------------------------------------------
     case GWM_INPUT_FOCUS:
@@ -359,7 +359,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 			if( mData1 == TRUE )
 				*(Bool *)mData2 = TRUE;
 			break;
-		}  // end input
+		}
     //----------------------------------------------------------------------------------------------
     case GBM_SELECTED:
 		{
@@ -429,7 +429,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 				setPasswordMode(PASS_NONE);
 			}
 			break;
-		}  // end input
+		}
 
     //---------------------------------------------------------------------------------------------
 		case GLM_SELECTED:
@@ -445,7 +445,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 
 			updateLadderDetails(selID, staticTextLadderName, listboxLadderDetails);
 			break;
-		}  // end GLM_DOUBLE_CLICKED
+		}
 
     //---------------------------------------------------------------------------------------------
 		case GLM_DOUBLE_CLICKED:
@@ -479,7 +479,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
@@ -613,7 +613,7 @@ WindowMsgHandledType RCGameDetailsMenuSystem( GameWindow *window, UnsignedInt ms
 				ladderInfoID = NAMEKEY("RCGameDetailsMenu.wnd:ButtonLadderDetails");
 				buttonOkID = NAMEKEY("PopupLadderDetails.wnd:ButtonOk");
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GGM_CLOSE:
 			{
@@ -625,7 +625,7 @@ WindowMsgHandledType RCGameDetailsMenuSystem( GameWindow *window, UnsignedInt ms
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GBM_SELECTED:
 			{
@@ -648,7 +648,7 @@ WindowMsgHandledType RCGameDetailsMenuSystem( GameWindow *window, UnsignedInt ms
 						const LadderInfo *linfo = TheLadderList->findLadder(theRoom->getLadderIP(), theRoom->getLadderPort());
 						if (linfo)
 						{
-							WindowLayout *rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/PopupLadderDetails.wnd"));
+							WindowLayout *rcLayout = TheWindowManager->winCreateLayout("Menus/PopupLadderDetails.wnd");
 							if (!rcLayout)
 								break;
 
@@ -673,6 +673,6 @@ WindowMsgHandledType RCGameDetailsMenuSystem( GameWindow *window, UnsignedInt ms
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 	return MSG_HANDLED;
 }

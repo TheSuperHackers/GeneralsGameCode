@@ -28,7 +28,7 @@
 // Description: General's Challenge Mode Menu
 ///////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/FileSystem.h"
 #include "Common/GameEngine.h"
@@ -338,25 +338,25 @@ void ChallengeMenuInit( WindowLayout *layout, void *userData )
 	TheShell->showShellMap(TRUE);
 
 	// init window ids and pointers
-	parentID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:ParentChallengeMenu") );
+	parentID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:ParentChallengeMenu" );
 	parentMenu = TheWindowManager->winGetWindowFromId( NULL, parentID );
-	buttonPlayID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:ButtonPlay") );
+	buttonPlayID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:ButtonPlay" );
 	buttonPlay = TheWindowManager->winGetWindowFromId( parentMenu, buttonPlayID );
-	buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:ButtonBack") );
+	buttonBackID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:ButtonBack" );
 	buttonBack = TheWindowManager->winGetWindowFromId( parentMenu, buttonBackID );
-	bioPortraitID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:BioPortrait") );
+	bioPortraitID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:BioPortrait" );
 	bioPortrait = TheWindowManager->winGetWindowFromId( parentMenu, bioPortraitID );
-	bioNameEntryID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:BioNameEntry") );
+	bioNameEntryID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:BioNameEntry" );
 	bioLine1Entry = TheWindowManager->winGetWindowFromId( parentMenu, bioNameEntryID ); // this window has been repurposed
-	bioDOBEntryID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:BioDOBEntry") );
+	bioDOBEntryID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:BioDOBEntry" );
 	bioLine2Entry = TheWindowManager->winGetWindowFromId( parentMenu, bioDOBEntryID ); // this window has been repurposed
-	bioBirthplaceEntryID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:BioBirthplaceEntry") );
+	bioBirthplaceEntryID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:BioBirthplaceEntry" );
 	bioLine3Entry = TheWindowManager->winGetWindowFromId( parentMenu, bioBirthplaceEntryID ); // this window has been repurposed
-	bioStrategyEntryID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:BioStrategyEntry") );
+	bioStrategyEntryID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:BioStrategyEntry" );
 	bioLine4Entry = TheWindowManager->winGetWindowFromId( parentMenu, bioStrategyEntryID ); // this window has been repurposed
-	backdropID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:MainBackdrop") );
+	backdropID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:MainBackdrop" );
 	backdrop = TheWindowManager->winGetWindowFromId( parentMenu, backdropID);
-	bioParentID = TheNameKeyGenerator->nameToKey( AsciiString("ChallengeMenu.wnd:GeneralsBioParent") );
+	bioParentID = TheNameKeyGenerator->nameToKey( "ChallengeMenu.wnd:GeneralsBioParent" );
 	bioParent = TheWindowManager->winGetWindowFromId( parentMenu, bioParentID);
 
 	AsciiString strButtonName;
@@ -454,8 +454,7 @@ void ChallengeMenuUpdate( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 void ChallengeMenuShutdown( WindowLayout *layout, void *userData )
 {
-	if(wndVideoManager)
-		delete wndVideoManager;
+	delete wndVideoManager;
 	wndVideoManager = NULL;
 
 	lastButtonIndex = -1;
@@ -473,8 +472,7 @@ void ChallengeMenuShutdown( WindowLayout *layout, void *userData )
 	TheTransitionHandler->reverse("ChallengeMenuFade");
 	isShuttingDown = TRUE;
 
-	if(TheChallengeGameInfo)
-		delete TheChallengeGameInfo;
+	delete TheChallengeGameInfo;
 	TheChallengeGameInfo = NULL;
 
 	TheAudio->removeAudioEvent( lastSelectionSound );
@@ -515,18 +513,18 @@ WindowMsgHandledType ChallengeMenuInput( GameWindow *window, UnsignedInt msg, Wi
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, (WindowMsgData)buttonBack, buttonBackID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
 

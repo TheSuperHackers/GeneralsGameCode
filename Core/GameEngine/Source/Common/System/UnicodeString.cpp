@@ -42,14 +42,14 @@
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/CriticalSection.h"
 
 
 // -----------------------------------------------------
 
-/*static*/ UnicodeString UnicodeString::TheEmptyString;
+/*static*/ const UnicodeString UnicodeString::TheEmptyString;
 
 // -----------------------------------------------------
 #ifdef RTS_DEBUG
@@ -76,14 +76,20 @@ void UnicodeString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveDa
 {
 	validate();
 
+	const int usableNumChars = numCharsNeeded - 1;
+
 	if (m_data &&
 			m_data->m_refCount == 1 &&
 			m_data->m_numCharsAllocated >= numCharsNeeded)
 	{
 		// no buffer manhandling is needed (it's already large enough, and unique to us)
 		if (strToCopy)
+		{
 			// TheSuperHackers @fix Mauller 04/04/2025 Replace wcscpy with safer memmove as memory regions can overlap when part of string is copied to itself
-			memmove(m_data->peek(), strToCopy, (wcslen(strToCopy) + 1) * sizeof(WideChar));
+			DEBUG_ASSERTCRASH(usableNumChars <= wcslen(strToCopy), ("strToCopy is too small"));
+			memmove(m_data->peek(), strToCopy, usableNumChars * sizeof(WideChar));
+			m_data->peek()[usableNumChars] = 0;
+		}
 		if (strToCat)
 			wcscat(m_data->peek(), strToCat);
 		return;
@@ -108,7 +114,11 @@ void UnicodeString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveDa
 	// do these BEFORE releasing the old buffer, so that self-copies
 	// or self-cats will work correctly.
 	if (strToCopy)
-		wcscpy(newData->peek(), strToCopy);
+	{
+		DEBUG_ASSERTCRASH(usableNumChars <= wcslen(strToCopy), ("strToCopy is too small"));
+		wcsncpy(newData->peek(), strToCopy, usableNumChars);
+		newData->peek()[usableNumChars] = 0;
+	}
 	if (strToCat)
 		wcscat(newData->peek(), strToCat);
 
@@ -136,10 +146,20 @@ void UnicodeString::releaseBuffer()
 }
 
 // -----------------------------------------------------
-UnicodeString::UnicodeString(const WideChar* s) : m_data(0)
+UnicodeString::UnicodeString(const WideChar* s) : m_data(NULL)
 {
-	int len = wcslen(s);
-	if (len)
+	int len = s ? (int)wcslen(s) : 0;
+	if (len > 0)
+	{
+		ensureUniqueBufferOfSize(len + 1, false, s, NULL);
+	}
+	validate();
+}
+
+// -----------------------------------------------------
+UnicodeString::UnicodeString(const WideChar* s, int len) : m_data(NULL)
+{
+	if (len > 0)
 	{
 		ensureUniqueBufferOfSize(len + 1, false, s, NULL);
 	}
@@ -165,11 +185,17 @@ void UnicodeString::set(const UnicodeString& stringSrc)
 // -----------------------------------------------------
 void UnicodeString::set(const WideChar* s)
 {
+	int len = s ? wcslen(s) : 0;
+	set(s, len);
+}
+
+// -----------------------------------------------------
+void UnicodeString::set(const WideChar* s, int len)
+{
 	validate();
 	if (!m_data || s != peek())
 	{
-		int len = s ? wcslen(s) : 0;
-		if (len)
+		if (len > 0)
 		{
 			ensureUniqueBufferOfSize(len + 1, false, s, NULL);
 		}
@@ -307,7 +333,7 @@ void UnicodeString::truncateBy(const Int charCount)
 		const size_t len = wcslen(peek());
 		if (len > 0)
 		{
-			ensureUniqueBufferOfSize(len+1, true, NULL, NULL);
+			ensureUniqueBufferOfSize(len + 1, true, NULL, NULL);
 			size_t count = charCount;
 			if (charCount > len)
 			{
@@ -380,6 +406,30 @@ void UnicodeString::format_va(const WideChar* format, va_list args)
 	}
 }
 
+// -----------------------------------------------------
+Bool UnicodeString::startsWith(const WideChar* p) const
+{
+	return m_data && ::startsWith(peek(), p);
+}
+
+// -----------------------------------------------------
+Bool UnicodeString::startsWithNoCase(const WideChar* p) const
+{
+	return m_data && ::startsWithNoCase(peek(), p);
+}
+
+// -----------------------------------------------------
+Bool UnicodeString::endsWith(const WideChar* p) const
+{
+	return m_data && ::endsWith(peek(), p);
+}
+
+// -----------------------------------------------------
+Bool UnicodeString::endsWithNoCase(const WideChar* p) const
+{
+	return m_data && ::endsWithNoCase(peek(), p);
+}
+
 //-----------------------------------------------------------------------------
 Bool UnicodeString::nextToken(UnicodeString* tok, UnicodeString delimiters)
 {
@@ -387,7 +437,7 @@ Bool UnicodeString::nextToken(UnicodeString* tok, UnicodeString delimiters)
 		return false;
 
 	if (delimiters.isEmpty())
-		delimiters = UnicodeString(L" \t\n\r");
+		delimiters = L" \t\n\r";
 
 	Int offset;
 

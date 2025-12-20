@@ -33,7 +33,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Player.h"
 #include "Common/Xfer.h"
 #include "GameClient/ControlBar.h"
@@ -466,7 +466,7 @@ void OverlordContain::crc( Xfer *xfer )
 	// extend base class
 	TransportContain::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -487,7 +487,7 @@ void OverlordContain::xfer( Xfer *xfer )
 	// redirection activated
 	xfer->xferBool( &m_redirectionActivated );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -498,4 +498,4 @@ void OverlordContain::loadPostProcess( void )
 	// extend base class
 	TransportContain::loadPostProcess();
 
-}  // end loadPostProcess
+}

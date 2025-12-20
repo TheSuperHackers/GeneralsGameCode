@@ -42,7 +42,7 @@
 //         Includes
 //----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/GameAudio.h"
 
 #include "Common/AudioAffect.h"
@@ -152,7 +152,6 @@ AudioManager::AudioManager() :
 	m_hardwareAccel(FALSE),
 	m_musicPlayingFromCD(FALSE)
 {
-	// Added by Sadullah Nader
 	m_adjustedVolumes.clear();
 	m_audioRequests.clear();
 	m_listenerPosition.zero();
@@ -166,8 +165,6 @@ AudioManager::AudioManager() :
 	m_systemSoundVolume   = 0.0f;
 	m_systemSpeechVolume  = 0.0f;
 	m_volumeHasChanged			= FALSE;
-	//
-
 	m_listenerOrientation.set(0.0, 1.0, 0.0);
 	theAudioHandlePool = AHSV_FirstHandle;
 	m_audioSettings = NEW AudioSettings;
@@ -184,11 +181,9 @@ AudioManager::~AudioManager()
 	AudioEventInfoHashIt it;
 	for (it = m_allAudioEventInfo.begin(); it != m_allAudioEventInfo.end(); ++it) {
 		AudioEventInfo *eventInfo = (*it).second;
-		if (eventInfo) {
-			deleteInstance(eventInfo);
-			eventInfo = NULL;
-		}
+		deleteInstance(eventInfo);
 	}
+	m_allAudioEventInfo.clear();
 
 	delete m_silentAudioEvent;
 	m_silentAudioEvent = NULL;
@@ -205,30 +200,29 @@ AudioManager::~AudioManager()
 	delete m_audioSettings;
 	m_audioSettings = NULL;
 
-	if (m_savedValues)
-		delete [] m_savedValues;
+	delete [] m_savedValues;
 }
 
 //-------------------------------------------------------------------------------------------------
 void AudioManager::init()
 {
 	INI ini;
-	ini.load( AsciiString( "Data\\INI\\AudioSettings.ini" ), INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory( "Data\\INI\\AudioSettings", INI_LOAD_OVERWRITE, NULL);
 
-	ini.load( AsciiString( "Data\\INI\\Default\\Music.ini" ), INI_LOAD_OVERWRITE, NULL );
-	ini.load( AsciiString( "Data\\INI\\Music.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\Music", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Music", INI_LOAD_OVERWRITE, NULL );
 
-	ini.load( AsciiString( "Data\\INI\\Default\\SoundEffects.ini" ), INI_LOAD_OVERWRITE, NULL );
-	ini.load( AsciiString( "Data\\INI\\SoundEffects.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\SoundEffects", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\SoundEffects", INI_LOAD_OVERWRITE, NULL );
 
-	ini.load( AsciiString( "Data\\INI\\Default\\Speech.ini" ), INI_LOAD_OVERWRITE, NULL );
-	ini.load( AsciiString( "Data\\INI\\Speech.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\Speech", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Speech", INI_LOAD_OVERWRITE, NULL );
 
-	ini.load( AsciiString( "Data\\INI\\Default\\Voice.ini" ), INI_LOAD_OVERWRITE, NULL );
-	ini.load( AsciiString( "Data\\INI\\Voice.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\Voice", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Voice", INI_LOAD_OVERWRITE, NULL );
 
-	// do the miscellaneous sound files last so that we find the audioeventrts associated with the events.
-	ini.load( AsciiString( "Data\\INI\\MiscAudio.ini" ), INI_LOAD_OVERWRITE, NULL);
+	// do the miscellaneous sound files last so that we find the AudioEventRTS associated with the events.
+	ini.loadFileDirectory( "Data\\INI\\MiscAudio", INI_LOAD_OVERWRITE, NULL);
 
 	// determine if one of the music tracks exists. Since their now BIGd, one implies all.
 	// If they don't exist, then attempt to load them from the CD.
@@ -410,7 +404,7 @@ void AudioManager::getInfoForAudioEvent( const AudioEventRTS *eventToFindAndFill
 //-------------------------------------------------------------------------------------------------
 AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 {
-	if (eventToAdd->getEventName().isEmpty() || eventToAdd->getEventName() == AsciiString("NoSound")) {
+	if (eventToAdd->getEventName().isEmpty() || eventToAdd->getEventName() == "NoSound") {
 		return AHSV_NoSound;
 	}
 
@@ -807,9 +801,7 @@ AudioRequest *AudioManager::allocateAudioRequest( Bool useAudioEvent )
 //-------------------------------------------------------------------------------------------------
 void AudioManager::releaseAudioRequest( AudioRequest *requestToRelease )
 {
-	if (requestToRelease) {
-		deleteInstance(requestToRelease);
-	}
+	deleteInstance(requestToRelease);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1089,11 +1081,8 @@ AudioHandle AudioManager::allocateNewHandle( void )
 //-------------------------------------------------------------------------------------------------
 void AudioManager::releaseAudioEventRTS( AudioEventRTS *&eventToRelease )
 {
-	if( eventToRelease )
-	{
-		delete eventToRelease;
-		eventToRelease = NULL;
-	}
+	delete eventToRelease;
+	eventToRelease = NULL;
 }
 
 //-------------------------------------------------------------------------------------------------

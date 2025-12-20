@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __PRODUCTIONUPDATE_H_
-#define __PRODUCTIONUPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/ModelState.h"
 #include "GameLogic/Module/DieModule.h"
@@ -257,5 +254,3 @@ protected:
 	Bool								m_flagsDirty;										///< clearFlags/setFlags needs to be set into the model
 
 };
-
-#endif  // end __PRODUCTIONUPDATE_H_

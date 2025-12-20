@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _EjectPilotDie_H_
-#define _EjectPilotDie_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/DieModule.h"
 #include "Common/INI.h"
@@ -72,6 +69,3 @@ public:
 	virtual DieModuleInterface* getEjectPilotDieInterface( void ) {return this; }
 
 };
-
-#endif // _EjectPilotDie_H_
-

@@ -13,9 +13,9 @@ set(WWLIB_SRC
     binheap.h
     bittype.h
     bound.h
-    BSEARCH.H
+    BSEARCH.h
     buff.cpp
-    BUFF.H
+    BUFF.h
     bufffile.cpp
     bufffile.h
     CallbackHook.h
@@ -25,13 +25,18 @@ set(WWLIB_SRC
     cpudetect.h
     #crandom.h
     crc.cpp
-    CRC.H
+    CRC.h
     #crcpipe.cpp
     #crcpipe.h
     #crcstraw.cpp
     #crcstraw.h
     cstraw.cpp
     cstraw.h
+    DbgHelpGuard.cpp
+    DbgHelpGuard.h
+    DbgHelpLoader.cpp
+    DbgHelpLoader.h
+    DbgHelpLoader_minidump.h
     Except.cpp
     Except.h
     FastAllocator.cpp
@@ -44,17 +49,17 @@ set(WWLIB_SRC
     hash.cpp
     hash.h
     hashcalc.h
-    HASHLIST.H
+    HASHLIST.h
     #hashtab.h
     hashtemplate.h
     #incdec.h
-    INDEX.H
+    INDEX.h
     ini.cpp
-    INI.H
+    INI.h
     inisup.h
     iostruct.h
     jshell.cpp
-    LISTNODE.H
+    LISTNODE.h
     #lzo.cpp
     #lzo.h
     #lzo1x.h
@@ -80,14 +85,14 @@ set(WWLIB_SRC
     nstrdup.h
     ntree.h
     pipe.cpp
-    PIPE.H
+    PIPE.h
     Point.h
     ramfile.cpp
-    RAMFILE.H
+    RAMFILE.h
     random.cpp
-    RANDOM.H
+    RANDOM.h
     rawfile.cpp
-    RAWFILE.H
+    RAWFILE.h
     readline.cpp
     readline.h
     realcrc.cpp
@@ -101,20 +106,23 @@ set(WWLIB_SRC
     sharebuf.h
     Signaler.h
     simplevec.h
-    SLIST.H
+    SLIST.h
     slnode.cpp
-    SLNODE.H
+    SLNODE.h
     stimer.cpp
     stimer.h
+    STLUtils.h
     straw.cpp
-    STRAW.H
+    STRAW.h
+    stringex.h
     strtok_r.cpp
     strtok_r.h
     #swap.h
+    SystemAllocator.h
     systimer.cpp
     systimer.h
-    TARGA.CPP
-    TARGA.H
+    TARGA.cpp
+    TARGA.h
     textfile.cpp
     textfile.h
     tgatodxt.cpp
@@ -126,26 +134,27 @@ set(WWLIB_SRC
     trim.h
     uarray.h
     vector.cpp
-    Vector.H
+    Vector.h
     visualc.h
     widestring.cpp
     widestring.h
     win.h
     WWCommon.h
+    WWDefines.h
     wwfile.cpp
-    WWFILE.H
+    WWFILE.h
     wwstring.cpp
     wwstring.h
     xpipe.cpp
-    XPIPE.H
+    XPIPE.h
     xstraw.cpp
-    XSTRAW.H
+    XSTRAW.h
 )
 
 if(WIN32)
     list(APPEND WWLIB_SRC
         mpu.cpp
-        MPU.H
+        MPU.h
         rcfile.cpp
         rcfile.h
         registry.cpp
@@ -164,6 +173,15 @@ target_sources(core_wwlib PRIVATE ${WWLIB_SRC})
 
 target_include_directories(core_wwlib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_precompile_headers(core_wwlib PRIVATE
+    always.h
+    STLUtils.h
+    win.h
+    WWCommon.h
+    wwstring.h
+    <windows.h>
 )
 
 target_link_libraries(core_wwlib PRIVATE

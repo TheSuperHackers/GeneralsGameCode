@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __COMMAND_BUTTON_HUNT_UPDATE_H_
-#define __COMMAND_BUTTON_HUNT_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -86,7 +83,3 @@ protected:
 	AsciiString		m_commandButtonName;
 	const CommandButton *m_commandButton;
 };
-
-
-#endif
-

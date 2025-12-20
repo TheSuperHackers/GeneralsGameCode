@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SCIENCE_H_
-#define __SCIENCE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Overridable.h"
 #include "Common/NameKeyGenerator.h"
@@ -137,7 +134,3 @@ private:
 };
 
 extern ScienceStore* TheScienceStore;
-
-
-#endif // __SCIENCE_H_
-

@@ -26,7 +26,10 @@
 //
 // Stack walker
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+#include "debug.h"
+#include "debug_stack.h"
+#include <windows.h>
+#include "stringex.h"
 #include <imagehlp.h>
 
 // Definitions to allow run-time linking to the dbghelp.dll functions.
@@ -47,7 +50,7 @@ static union
 #undef DBGHELP
 
 #define DBGHELP(name,ret,par) #name,
-static char const *DebughelpFunctionNames[] =
+static char const *const DebughelpFunctionNames[] =
 {
 #include "debug_stack.inl"
 	NULL
@@ -250,8 +253,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
 
     char *p=strrchr(symbolBuffer,'\\'); // use filename only, strip off path
     p=p?p+1:symbolBuffer;
-    strncpy(bufMod,p,sizeMod);
-    bufMod[sizeMod-1]=0;
+    strlcpy(bufMod,p,sizeMod);
   }
   if (relMod)
     *relMod=addr-modBase;
@@ -266,8 +268,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
     DWORD displacement;
     if (gDbg._SymGetSymFromAddr((HANDLE)GetCurrentProcessId(),addr,&displacement,symPtr))
     {
-      strncpy(bufSym,symPtr->Name,sizeSym);
-      bufSym[sizeSym-1]=0;
+      strlcpy(bufSym,symPtr->Name,sizeSym);
       if (relSym)
         *relSym=displacement;
     }
@@ -288,8 +289,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
     {
       char *p=strrchr(line.FileName,'\\'); // use filename only, strip off path
       p=p?p+1:line.FileName;
-      strncpy(bufFile,p,sizeFile);
-      bufFile[sizeFile-1]=0;
+      strlcpy(bufFile,p,sizeFile);
       if (linePtr)
         *linePtr=line.LineNumber;
       if (relLine)

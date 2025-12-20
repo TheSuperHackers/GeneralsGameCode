@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __RAILROADGUIDE_AI_UPDATE_H_
-#define __RAILROADGUIDE_AI_UPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
@@ -77,7 +74,7 @@ public:
 
 		p.add( dataFieldParse );
 
-	}  // end buildFieldParse
+	}
 
 	TemplateNameList m_carriageTemplateNameData;
 	AsciiString m_pathPrefixName;		///< prefix to use for waypont start and end points we'll look for
@@ -214,7 +211,7 @@ public:
 	};
 
 	typedef std::vector<AsciiString> TemplateNameVector;
-	typedef TemplateNameVector::const_iterator TemplateNameIterator;;
+	typedef TemplateNameVector::const_iterator TemplateNameIterator;
 
 
 
@@ -302,7 +299,3 @@ protected:
 
 
 };
-
-
-#endif  // end __RAILROAD_GUIDE_AI_UPDATE_H_
-

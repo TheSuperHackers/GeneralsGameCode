@@ -35,8 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef W3DEXP_H
-#define W3DEXP_H
+#pragma once
 
 #include "always.h"
 #include <max.h>
@@ -117,6 +116,3 @@ private:
 	void End_Progress_Bar(void);
 
 };
-
-
-#endif

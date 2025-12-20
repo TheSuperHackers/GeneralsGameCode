@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_ScriptConditionsDlg_H__EEFDFF65_2440_4AFE_B5D6_9E887C8C2DED__INCLUDED_)
-#define AFX_ScriptConditionsDlg_H__EEFDFF65_2440_4AFE_B5D6_9E887C8C2DED__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // ScriptConditionsDlg.h : header file
 //
 class Script;
@@ -93,5 +89,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_ScriptConditionsDlg_H__EEFDFF65_2440_4AFE_B5D6_9E887C8C2DED__INCLUDED_)

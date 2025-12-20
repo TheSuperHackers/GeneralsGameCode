@@ -39,7 +39,7 @@
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <windows.h>
-#include <stdio.h>
+#include <WWCommon.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "ImagePacker.h"
@@ -90,7 +90,7 @@ static void selectDrive( HWND dialog )
 	if( index != CB_ERR )
 		SendDlgItemMessage( dialog, COMBO_DRIVE, CB_SETCURSEL, index, 0 );
 
-}  // end selectDrive
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -127,7 +127,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 			// set the current directory in the top label
 			GetCurrentDirectory( _MAX_PATH, buffer );
 			if( buffer[ strlen( buffer ) - 1 ] != '\\' )
-				strcat( buffer, "\\" );
+				strlcat(buffer, "\\", ARRAY_SIZE(buffer));
 			SetDlgItemText( hWndDialog, STATIC_CURRENT_DIR, buffer );
 
 			// load the drive box
@@ -141,7 +141,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 
 			return TRUE;
 
-		}  // end init
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_COMMAND:
@@ -203,22 +203,22 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 														MB_OK | MB_ICONINFORMATION );
 								continue;
 
-							}  // end if
+							}
 
 							// add path to the listbox
 							SendDlgItemMessage( TheImagePacker->getWindowHandle(),
 																	LIST_FOLDERS,
 																	LB_INSERTSTRING, -1, (LPARAM)toAdd );
 
-						}  // end if
+						}
 
-					}  // end if
+					}
 
 					SetCurrentDirectory( startDir );
 					EndDialog( hWndDialog, TRUE );
 					break;
 
-				}  // end proceed
+				}
 
 				// --------------------------------------------------------------------
 				case BUTTON_CANCEL:
@@ -228,7 +228,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 					EndDialog( hWndDialog, FALSE );
 					break;
 
-				}  // end cancel
+				}
 
 				// --------------------------------------------------------------------
 				case COMBO_DRIVE:
@@ -262,7 +262,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 							// construct new direcotry name and update status text
 							GetCurrentDirectory( _MAX_PATH, buffer );
 							if( buffer[ strlen( buffer ) - 1 ] != '\\' )
-								strcat( buffer, "\\" );
+								strlcat(buffer, "\\", ARRAY_SIZE(buffer));
 							SetDlgItemText( hWndDialog, STATIC_CURRENT_DIR, buffer );
 							EnableWindow( GetDlgItem( hWndDialog, BUTTON_ADD ), FALSE );
 
@@ -275,13 +275,13 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 																	(LPARAM)"*.*" );
 
 
-						}  // end if
+						}
 
-					}  // end if
+					}
 
 					break;
 
-				}  // end drive
+				}
 
 				// --------------------------------------------------------------------
 				case LIST_DIR:
@@ -318,16 +318,16 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 								if( strcmp( text, "[..]" ) == 0 )
 									enable = FALSE;
 
-							}  // end if
+							}
 
-						}  // end if
+						}
 						else
 							enable = FALSE;
 
 						// do the enable
 						EnableWindow( GetDlgItem( hWndDialog, BUTTON_ADD ), enable );
 
-					}  // end if
+					}
 					if( notifyCode == LBN_DBLCLK )
 					{
 						Int selected;
@@ -353,7 +353,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 						// construct new direcotry name and update status text
 						GetCurrentDirectory( _MAX_PATH, buffer );
 						if( buffer[ strlen( buffer ) - 1 ] != '\\' )
-							strcat( buffer, "\\" );
+							strlcat(buffer, "\\", ARRAY_SIZE(buffer));
 						SetDlgItemText( hWndDialog, STATIC_CURRENT_DIR, buffer );
 						EnableWindow( GetDlgItem( hWndDialog, BUTTON_ADD ), FALSE );
 
@@ -365,23 +365,23 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 																DDL_DIRECTORY | DDL_EXCLUSIVE,
 																(LPARAM)"*.*" );
 
-					}  // end if
+					}
 
 					break;
 
-				}  // end list command
+				}
 
-			}  // end switch
+			}
 
 			break;
 
-		}  // end command
+		}
 
-	}  // end switch message
+	}
 
 	return 0;
 
-}  // end DirectorySelectProc
+}
 
 
 

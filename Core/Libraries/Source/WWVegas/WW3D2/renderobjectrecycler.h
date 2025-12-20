@@ -36,9 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef RENDEROBJECTRECYCLER_H
-#define RENDEROBJECTRECYCLER_H
+#pragma once
 
 #include "always.h"
 #include "robjlist.h"
@@ -77,8 +75,3 @@ private:
 	RefRenderObjListClass	InactiveModels;
 
 };
-
-
-
-
-#endif //RENDEROBJECTRECYCLER_H

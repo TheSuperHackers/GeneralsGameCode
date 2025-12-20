@@ -33,7 +33,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ActionManager.h"
 #include "Common/GlobalData.h"
@@ -127,14 +127,14 @@ static Bool isObjectShroudedForAction ( const Object *source, const Object *targ
 ActionManager::ActionManager( void )
 {
 
-}  // end ActionManager
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 ActionManager::~ActionManager( void )
 {
 
-}  // end ~ActionManager
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -201,7 +201,7 @@ Bool ActionManager::canGetRepairedAt( const Object *obj, const Object *repairDes
 	// all is well, we can be repaired here
 	return TRUE;
 
-}  // end canGetRepairedAt
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -323,12 +323,12 @@ Bool ActionManager::canDockAt( const Object *obj, const Object *dockDest, Comman
 		if( obj->isKindOf( KINDOF_VEHICLE ) || obj->isKindOf( KINDOF_INFANTRY ) )
 			return TRUE;
 
-	}  // end if
+	}
 
 	// cannot dock
 	return FALSE;
 
-}  // end canDockAt
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -383,7 +383,7 @@ Bool ActionManager::canGetHealedAt( const Object *obj, const Object *healDest, C
 	// all is well, we can be healed here
 	return TRUE;
 
-}  // end canGetHealedAt
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -455,7 +455,7 @@ Bool ActionManager::canRepairObject( const Object *obj, const Object *objectToRe
 
 	return TRUE;
 
-}  // end canRepair
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Can 'obj' resume the construction of 'objectBeingConstructed' */
@@ -515,11 +515,11 @@ Bool ActionManager::canResumeConstructionOf( const Object *obj,
 						dozerAI->getTaskTarget( DOZER_TASK_BUILD ) == objectBeingConstructed->getID() )
 					return FALSE;
 
-			}  // end if
+			}
 
-		}  // en dif
+		}
 
-	}  //end if
+	}
 
 	// if the target is in the shroud, we can't do anything
 	if (isObjectShroudedForAction(obj, objectBeingConstructed, commandSource))
@@ -532,7 +532,7 @@ Bool ActionManager::canResumeConstructionOf( const Object *obj,
 
 	return TRUE;
 
-}  // end canResumeConstructionOf
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -1258,7 +1258,7 @@ Bool ActionManager::canPickUpPrisoner( const Object *obj, const Object *prisoner
 
 	return TRUE;
 
-}  // end canPickUpPrisoner
+}
 #endif
 
 // ------------------------------------------------------------------------------------------------
@@ -1483,6 +1483,13 @@ Bool ActionManager::canSnipeVehicle( const Object *obj, const Object *objectToSn
 
 		//Make sure the vehicle is manned!
 		if( objectToSnipe->isDisabledByType( DISABLED_UNMANNED ) )
+		{
+			return FALSE;
+		}
+
+		// TheSuperHackers @bugfix Caball009 04/09/2025 Disabled bikes may not have a rider to snipe.
+		ContainModuleInterface* contain = objectToSnipe->getContain();
+		if ( contain && contain->isRiderChangeContain() && contain->getContainedItemsList()->empty() )
 		{
 			return FALSE;
 		}

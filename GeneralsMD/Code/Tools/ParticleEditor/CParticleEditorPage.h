@@ -18,7 +18,6 @@
 
 #pragma once
 
-
 struct CParticleEditorPage : public CDialog
 {
 	UINT m_templateID;

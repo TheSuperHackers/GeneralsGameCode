@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "GameClient/WindowLayout.h"
@@ -59,13 +59,13 @@ GameWindow *progressTextWindow = NULL;
 //-------------------------------------------------------------------------------------------------
 void WOLStatusMenuInit( WindowLayout *layout, void *userData )
 {
-	parentWOLStatusID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLStatusMenu.wnd:WOLStatusMenuParent" ) );
-	buttonDisconnectID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLStatusMenu.wnd:ButtonDisconnect" ) );
+	parentWOLStatusID = TheNameKeyGenerator->nameToKey( "WOLStatusMenu.wnd:WOLStatusMenuParent" );
+	buttonDisconnectID = TheNameKeyGenerator->nameToKey( "WOLStatusMenu.wnd:ButtonDisconnect" );
 	parentWOLStatus = TheWindowManager->winGetWindowFromId( NULL, parentWOLStatusID );
 	buttonDisconnect = TheWindowManager->winGetWindowFromId( NULL,  buttonDisconnectID);
 
 	progressTextWindow = TheWindowManager->winGetWindowFromId( NULL,
-		TheNameKeyGenerator->nameToKey( AsciiString( "WOLStatusMenu.wnd:ListboxStatus" ) ) );
+		TheNameKeyGenerator->nameToKey( "WOLStatusMenu.wnd:ListboxStatus" ) );
 
 	// Show Menu
 	layout->hide( FALSE );
@@ -76,7 +76,7 @@ void WOLStatusMenuInit( WindowLayout *layout, void *userData )
 	//progressLayout = TheShell->top();
 
 	//WOL::raiseWOLMessageBox();
-} // WOLStatusMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu shutdown method */
@@ -93,7 +93,7 @@ void WOLStatusMenuShutdown( WindowLayout *layout, void *userData )
 	//progressLayout = NULL;
 
 	//WOL::raiseWOLMessageBox();
-}  // WOLStatusMenuShutdown
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -103,7 +103,7 @@ void WOLStatusMenuUpdate( WindowLayout * layout, void *userData)
 {
 	//if (WOL::TheWOL)
 		//WOL::TheWOL->update();
-}// WOLStatusMenuUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu input callback */
@@ -136,21 +136,21 @@ WindowMsgHandledType WOLStatusMenuInput( GameWindow *window, UnsignedInt msg,
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonDisconnect, buttonDisconnectID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// WOLStatusMenuInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu window system callback */
@@ -168,12 +168,12 @@ WindowMsgHandledType WOLStatusMenuSystem( GameWindow *window, UnsignedInt msg,
 			{
 
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
 			{
@@ -182,7 +182,7 @@ WindowMsgHandledType WOLStatusMenuSystem( GameWindow *window, UnsignedInt msg,
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 
 		case GBM_SELECTED:
 			{
@@ -198,10 +198,10 @@ WindowMsgHandledType WOLStatusMenuSystem( GameWindow *window, UnsignedInt msg,
 						WOL::TheWOL->addCommand( WOL::WOLCOMMAND_RESET );  // don't display an error, log out, or anything
 					}
 
-				} //if ( controlID == buttonDisconnect )
+				}
 				*/
 				break;
-			}// case GBM_SELECTED:
+			}
 
 		case GEM_EDIT_DONE:
 			{
@@ -210,7 +210,7 @@ WindowMsgHandledType WOLStatusMenuSystem( GameWindow *window, UnsignedInt msg,
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// WOLStatusMenuSystem
+}

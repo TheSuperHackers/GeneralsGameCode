@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __SHADOW_H_
-#define __SHADOW_H_
-
 //
 // skeleton definition of shadow types
 //
@@ -50,7 +47,7 @@ enum ShadowType CPP_11(: Int)
 	SHADOW_ADDITIVE_DECAL						= 0x00000040		//not really for shadows but for other decal uses. Additive blended.
 };
 #ifdef DEFINE_SHADOW_NAMES
-static const char* TheShadowNames[] =
+static const char* const TheShadowNames[] =
 {
 	"SHADOW_DECAL",
 	"SHADOW_VOLUME",
@@ -213,6 +210,3 @@ public:
 };
 
 extern ProjectedShadowManager *TheProjectedShadowManager;
-
-#endif // __SHADOW_H_
-

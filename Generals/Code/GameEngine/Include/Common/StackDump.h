@@ -24,9 +24,6 @@
 
 #pragma once
 
-#ifndef __STACKDUMP_H_
-#define __STACKDUMP_H_
-
 #ifndef IG_DEGBUG_STACKTRACE
 #define IG_DEBUG_STACKTRACE	1
 #endif
@@ -70,6 +67,3 @@ __inline void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info ) {}
 #endif
 
 extern AsciiString g_LastErrorDump;
-
-
-#endif // __STACKDUMP_H_

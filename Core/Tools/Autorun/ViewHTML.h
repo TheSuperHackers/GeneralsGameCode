@@ -32,11 +32,8 @@
 *
 ******************************************************************************/
 
-#ifndef VIEWHTML_H
-#define VIEWHTML_H
+#pragma once
 
 #include "CallbackHook.h"
 
 bool ViewHTML(const char* url, bool wait = false, const CallbackHook& callback = CallbackHook());
-
-#endif // VIEWHTML_H

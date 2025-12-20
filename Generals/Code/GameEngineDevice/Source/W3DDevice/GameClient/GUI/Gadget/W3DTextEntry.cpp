@@ -204,7 +204,7 @@ static void drawTextEntryText( GameWindow *window, WinInstanceData *instData,
 																	 cursorPos + 2, origin.y + size.y - 3 );
 	window->winSetCursorPosition( cursorPos + 2 - origin.x, 0 );
 
-}  // end drawTextEntryText
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -238,7 +238,7 @@ void W3DGadgetTextEntryDraw( GameWindow *window, WinInstanceData *instData )
 		backColor		= GadgetTextEntryGetDisabledColor( window );
 		backBorder	= GadgetTextEntryGetDisabledBorderColor( window );
 
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
@@ -249,7 +249,7 @@ void W3DGadgetTextEntryDraw( GameWindow *window, WinInstanceData *instData )
 		backColor		= GadgetTextEntryGetHiliteColor( window );
 		backBorder	= GadgetTextEntryGetHiliteBorderColor( window );
 
-	}  // end else if, hilited
+	}
 	else
 	{
 
@@ -260,7 +260,7 @@ void W3DGadgetTextEntryDraw( GameWindow *window, WinInstanceData *instData )
 		backColor		= GadgetTextEntryGetEnabledColor( window );
 		backBorder	= GadgetTextEntryGetEnabledBorderColor( window );
 
-	}  // end else, just enabled
+	}
 
 	// draw the back border
 	if( backBorder != WIN_COLOR_UNDEFINED )
@@ -273,7 +273,7 @@ void W3DGadgetTextEntryDraw( GameWindow *window, WinInstanceData *instData )
 		TheWindowManager->winOpenRect( backBorder, WIN_DRAW_LINE_WIDTH,
 																	 start.x, start.y, end.x, end.y );
 
-	}  // end if
+	}
 
 	// draw the filled back
 	if( backColor != WIN_COLOR_UNDEFINED )
@@ -286,7 +286,7 @@ void W3DGadgetTextEntryDraw( GameWindow *window, WinInstanceData *instData )
 		TheWindowManager->winFillRect( backColor, WIN_DRAW_LINE_WIDTH,
 																	 start.x, start.y, end.x, end.y );
 
-	}  // end if
+	}
 
 	// draw the text
 	Int fontHeight = TheWindowManager->winFontHeight( instData->getFont() );
@@ -306,7 +306,7 @@ void W3DGadgetTextEntryDraw( GameWindow *window, WinInstanceData *instData )
 
 
 
-}  // end W3DGadgetTextEntryDraw
+}
 
 // W3DGadgetTextEntryImageDraw ================================================
 /** Draw horizontal slider with user supplied images */
@@ -345,7 +345,7 @@ void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData 
 		centerImage				= GadgetTextEntryGetDisabledImageCenter( window );
 		smallCenterImage	= GadgetTextEntryGetDisabledImageSmallCenter( window );
 
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
@@ -358,7 +358,7 @@ void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData 
 		centerImage				= GadgetTextEntryGetHiliteImageCenter( window );
 		smallCenterImage	= GadgetTextEntryGetHiliteImageSmallCenter( window );
 
-	}  // end else if, hilited
+	}
 	else
 	{
 
@@ -371,7 +371,7 @@ void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData 
 		centerImage				= GadgetTextEntryGetEnabledImageCenter( window );
 		smallCenterImage	= GadgetTextEntryGetEnabledImageSmallCenter( window );
 
-	}  // end else, just enabled
+	}
 
 	// get image sizes for the ends
 	ICoord2D leftSize, rightSize;
@@ -409,7 +409,7 @@ void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData 
 																		end.x, end.y );
 		start.x += centerImage->getImageWidth();
 
-	}  // end for i
+	}
 
 	//
 	// how many small repeating pieces will fit in the gap from where the
@@ -428,7 +428,7 @@ void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData 
 																		end.x, end.y );
 		start.x += smallCenterImage->getImageWidth();
 
-	}  // end for i
+	}
 
 	// draw left end
 	start.x = origin.x + xOffset;
@@ -460,4 +460,4 @@ void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData 
 
 
 
-}  // end W3DGadgetTextEntryImageDraw
+}

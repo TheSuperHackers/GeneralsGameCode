@@ -45,7 +45,6 @@
 
 
 #include "htreemgr.h"
-#include <string.h>
 #include "htree.h"
 #include "chunkio.h"
 #include "wwmemlog.h"
@@ -124,10 +123,8 @@ void HTreeManagerClass::Free_All_Trees(void)
 	TreeHash.Remove_All();
 
 	for (int treeidx=0; treeidx < MAX_TREES; treeidx++) {
-		if (TreePtr[treeidx] != NULL) {
-			delete TreePtr[treeidx];
-			TreePtr[treeidx] = NULL;
-		}
+		delete TreePtr[treeidx];
+		TreePtr[treeidx] = NULL;
 	}
 	NumTrees = 0;
 }

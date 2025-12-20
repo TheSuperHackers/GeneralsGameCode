@@ -28,8 +28,6 @@
 
 #pragma once
 
-#ifndef __WIN32LOCALFILESYSTEM_H
-#define __WIN32LOCALFILESYSTEM_H
 #include "Common/LocalFileSystem.h"
 
 class Win32LocalFileSystem : public LocalFileSystem
@@ -53,5 +51,3 @@ public:
 
 protected:
 };
-
-#endif // __WIN32LOCALFILESYSTEM_H

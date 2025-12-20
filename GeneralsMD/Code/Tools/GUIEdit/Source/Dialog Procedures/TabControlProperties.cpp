@@ -44,7 +44,6 @@
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
-#include <stdio.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/NameKeyGenerator.h"
@@ -343,12 +342,12 @@ static LRESULT CALLBACK tabControlPropertiesCallback( HWND hWndDialog,
 						GadgetTabControlShowSubPane( tabControl, tabData->activeTab );
 						GadgetTabControlUpdatePaneNames( tabControl );
 
-					}  // end if
+					}
 
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end OK
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -357,13 +356,13 @@ static LRESULT CALLBACK tabControlPropertiesCallback( HWND hWndDialog,
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -372,15 +371,15 @@ static LRESULT CALLBACK tabControlPropertiesCallback( HWND hWndDialog,
       DestroyWindow( hWndDialog );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end tabControlPropertiesCallback
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -616,7 +615,7 @@ HWND InitTabControlPropertiesDialog( GameWindow *tabControl )
 
 	return dialog;
 
-}  // end InitTabControlPropertiesDialog
+}
 
 
 

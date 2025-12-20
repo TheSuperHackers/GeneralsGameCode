@@ -209,11 +209,17 @@ target_include_directories(z_worldbuilder PRIVATE
     res
 )
 
+target_precompile_headers(z_worldbuilder PRIVATE
+    [["always.h"]]
+    [["Common/STLTypedefs.h"]]
+    [["StdAfx.h"]]
+    [["WWCommon.h"]]
+)
+
 target_link_libraries(z_worldbuilder PRIVATE
     core_debug
     core_profile
     d3d8lib
-    dbghelplib
     imm32
     vfw32
     winmm

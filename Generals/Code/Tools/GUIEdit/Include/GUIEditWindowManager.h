@@ -34,9 +34,6 @@
 
 #pragma once
 
-#ifndef __GUIEDITWINDOWMANAGER_H_
-#define __GUIEDITWINDOWMANAGER_H_
-
 #include <stdlib.h>
 #include "W3DDevice/GameClient/W3DGameWindowManager.h"
 
@@ -114,6 +111,3 @@ inline GameWindow *GUIEditWindowManager::getClipboardDupeList( void ) { return m
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
 extern GUIEditWindowManager *TheGUIEditWindowManager;  ///< editor use only
-
-#endif // __GUIEDITWINDOWMANAGER_H_
-

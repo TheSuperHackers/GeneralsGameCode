@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef AAPLANE_H
-#define AAPLANE_H
 
 #include "always.h"
 #include "vector3.h"
@@ -79,5 +74,3 @@ inline void AAPlaneClass::Get_Normal(Vector3 * normal) const
 	normal->Set(0,0,0);
 	(*normal)[Normal] = 1.0f;
 }
-
-#endif

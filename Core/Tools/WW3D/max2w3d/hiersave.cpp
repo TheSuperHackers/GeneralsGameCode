@@ -62,7 +62,7 @@
 #include "hiersave.h"
 #include "w3d_file.h"
 #include "nodefilt.h"
-#include "EULER.H"
+#include "EULER.h"
 #include "util.h"
 #include "w3dappdata.h"
 #include "errclass.h"

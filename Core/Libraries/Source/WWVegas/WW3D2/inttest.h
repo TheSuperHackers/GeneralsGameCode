@@ -36,12 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef INTTEST_H
-#define INTTEST_H
 
 #include "always.h"
 #include "aabox.h"
@@ -250,7 +245,3 @@ inline void OBBoxIntersectionTestClass::update_bounding_box(void)
 	BoundingBox.Center = Box.Center;
 	Box.Basis.Rotate_AABox_Extent(Box.Extent,&BoundingBox.Extent);
 }
-
-
-
-#endif

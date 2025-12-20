@@ -32,9 +32,6 @@
 
 #pragma once
 
-#ifndef __OPENCONTAIN_H_
-#define __OPENCONTAIN_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/CollideModule.h"
@@ -191,6 +188,7 @@ public:
 
 	virtual Bool isGarrisonable() const { return false; }		///< can this unit be Garrisoned? (ick)
 	virtual Bool isHealContain() const { return false; } ///< true when container only contains units while healing (not a transport!)
+	virtual Bool isTunnelContain() const { return FALSE; }
 	virtual Bool isSpecialZeroSlotContainer() const { return false; }
 	virtual Bool isImmuneToClearBuildingAttacks() const { return true; }
 
@@ -262,5 +260,3 @@ private:
 	Bool								m_loadSoundsEnabled;								///< Don't serialize -- used for disabling sounds during payload creation.
 
 };
-
-#endif  // end __OPENCONTAIN_H_

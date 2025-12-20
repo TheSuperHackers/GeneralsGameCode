@@ -40,7 +40,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<>
-const char* DamageTypeFlags::s_bitNameList[] =
+const char* const DamageTypeFlags::s_bitNameList[] =
 {
 	"EXPLOSION",
 	"CRUSH",
@@ -99,6 +99,7 @@ const char* DamageTypeFlags::s_bitNameList[] =
 	//"MIND_CONTROL",  // TODO
 	NULL
 };
+static_assert(ARRAY_SIZE(DamageTypeFlags::s_bitNameList) == DamageTypeFlags::NumBits + 1, "Incorrect array size");
 
 DamageTypeFlags DAMAGE_TYPE_FLAGS_NONE; 	// inits to all zeroes
 DamageTypeFlags DAMAGE_TYPE_FLAGS_ALL;
@@ -127,7 +128,7 @@ void DamageInfo::xfer( Xfer *xfer )
 	// xfer output
 	xfer->xferSnapshot( &out );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -186,7 +187,7 @@ void DamageInfoInput::xfer( Xfer *xfer )
 		}
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -210,5 +211,5 @@ void DamageInfoOutput::xfer( Xfer *xfer )
 	// no effect
 	xfer->xferBool( &m_noEffect );
 
-}  // end xfer
+}
 

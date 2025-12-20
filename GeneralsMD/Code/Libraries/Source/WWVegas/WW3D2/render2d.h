@@ -34,17 +34,11 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef RENDER2D_H
-#define RENDER2D_H
 
 #include "always.h"
 //#include "simplevec.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "vector2.h"
 
 #include "shader.h"
@@ -243,5 +237,3 @@ private:
 
 	void	Draw_Char( WCHAR ch, unsigned long color );
 };
-
-#endif	// RENDER2D_H

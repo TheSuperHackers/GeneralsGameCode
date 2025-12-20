@@ -26,11 +26,8 @@
 //
 // Unhandled exception handler
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef INTERNAL_EXCEPT_H // Include guard
-#define INTERNAL_EXCEPT_H
+
+#pragma once
 
 /// \internal exception handler
 class DebugExceptionhandler
@@ -86,5 +83,3 @@ public:
   */
   static long __stdcall ExceptionFilter(struct _EXCEPTION_POINTERS* pExPtrs);
 };
-
-#endif // INTERNAL_EXCEPT_H

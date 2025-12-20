@@ -30,12 +30,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __LOGICAL_SOUND_H
-#define __LOGICAL_SOUND_H
 
 #include "SoundSceneObj.h"
 #include "bittype.h"
@@ -147,7 +142,3 @@ class LogicalSoundClass : public SoundSceneObjClass
 		uint32					m_NotifyDelayInMS;
 		uint32					m_LastNotification;
 };
-
-
-#endif //__LOGICAL_SOUND_H
-

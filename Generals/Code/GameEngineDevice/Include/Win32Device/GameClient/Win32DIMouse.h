@@ -39,9 +39,6 @@
 
 #pragma once
 
-#ifndef __WIN32DIMOUSE_H_
-#define __WIN32DIMOUSE_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #ifndef DIRECTINPUT_VERSION
 #	define DIRECTINPUT_VERSION	0x800
@@ -95,11 +92,8 @@ protected:
 	LPDIRECTINPUT8 m_pDirectInput;  ///< pointer to direct input interface
 	LPDIRECTINPUTDEVICE8 m_pMouseDevice;  ///< pointer to mouse device
 
-};  // end class DirectInputMouse
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __WIN32DIMOUSE_H_
-

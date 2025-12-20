@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __DEFINITION_H
-#define __DEFINITION_H
 
 #include "always.h"
 // SKB Remove because of G conflicts with CLASSID_??
@@ -189,6 +184,3 @@ DefinitionClass::Is_Valid_Config (StringClass &message)
 {
 	return true;
 }
-
-
-#endif //__DEFINITION_H

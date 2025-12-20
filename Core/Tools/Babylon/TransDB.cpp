@@ -96,7 +96,7 @@ LANGINFO *GetLangInfo ( char *language )
 
 	while ( item->langid != LANGID_UNKNOWN )
 	{
-		if ( !stricmp ( language, item->name ) )
+		if ( stricmp ( language, item->name ) == 0 )
 		{
 			return item;
 		}
@@ -330,7 +330,7 @@ BabylonText*			TransDB::FindSubText		( OLECHAR *pattern, int item )
 		while ( text )
 		{
 
-			if ( !wcsnicmp ( text->Get (), pattern, 15 ))
+			if ( wcsnicmp ( text->Get (), pattern, 15 ) == 0)
 			{
 				if ( !item )
 				{
@@ -692,7 +692,7 @@ BabylonText*			BabylonLabel::FindText ( OLECHAR *find_text )
 
 	while ( txt )
 	{
-		if ( !wcscmp ( txt->Get(), find_text ))
+		if ( wcscmp ( txt->Get(), find_text ) == 0)
 		{
 			return txt;
 		}
@@ -836,25 +836,25 @@ void					BabylonLabel::AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes
 		txt = NextText ( sh );
 	}
 
-	if ( strcmp ( CommentSB(), "" ) )
+	if ( strcmp ( CommentSB(), "" ) != 0 )
 	{
 		sprintf ( buffer, "COMMENT : %s", CommentSB() );
 		tc->InsertItem ( buffer, litem );
 	}
 
-	if ( strcmp ( ContextSB(), "" ) )
+	if ( strcmp ( ContextSB(), "" ) != 0 )
 	{
 		sprintf ( buffer, "CONTEXT : %s", ContextSB() );
 		tc->InsertItem ( buffer, litem );
 	}
 
-	if ( strcmp ( SpeakerSB(), "" ) )
+	if ( strcmp ( SpeakerSB(), "" ) != 0 )
 	{
 		sprintf ( buffer, "SPEAKER : %s", SpeakerSB() );
 		tc->InsertItem ( buffer, litem );
 	}
 
-	if ( strcmp ( ListenerSB(), "" ) )
+	if ( strcmp ( ListenerSB(), "" ) != 0 )
 	{
 		sprintf ( buffer, "LISTENER: %s", ListenerSB() );
 		tc->InsertItem ( buffer, litem );
@@ -1341,7 +1341,7 @@ void					BabylonText::AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes 
 		tc->InsertItem ( buffer, item );
 	}
 
-	if ( strcmp ( WaveSB(), "" ) )
+	if ( strcmp ( WaveSB(), "" ) != 0 )
 	{
 		sprintf ( buffer, "WAVE   : %s", WaveSB() );
 		tc->InsertItem ( buffer, item );
@@ -1411,7 +1411,7 @@ void					Translation::AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes 
 
 	item = tc->InsertItem ( buffer, parent );
 
-	if ( strcmp ( CommentSB(), "" ) )
+	if ( strcmp ( CommentSB(), "" ) != 0 )
 	{
 		sprintf ( buffer, "COMMENT: %s", CommentSB() );
 		tc->InsertItem ( buffer, item );

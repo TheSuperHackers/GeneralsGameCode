@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _ASSISTED_TARGETING_UPDATE_H
-#define _ASSISTED_TARGETING_UPDATE_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -76,6 +73,3 @@ public:
 private:
 	void makeFeedbackLaser( const ThingTemplate *laserTemplate, const Object *from, const Object *to );
 };
-
-#endif
-

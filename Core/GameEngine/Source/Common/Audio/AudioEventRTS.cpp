@@ -36,7 +36,7 @@
 /* Revision History:                                                         */
 /*		3/21/2002 : Initial creation                                           */
 /*---------------------------------------------------------------------------*/
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AudioEventRTS.h"
 
@@ -329,7 +329,7 @@ void AudioEventRTS::generateFilename( void )
 		adjustForLocalization(m_filenameToLoad);
 		return;
 	} else {
-		if (m_eventInfo->m_sounds.size() == 0) {
+		if (m_eventInfo->m_sounds.empty()) {
 			m_filenameToLoad = AsciiString::TheEmptyString;
 			return;
 		}

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef CRATE_SYSTEM_H
-#define CRATE_SYSTEM_H
-
 #include "Common/INI.h"
 #include "Common/Overridable.h"
 #include "Common/Override.h"
@@ -63,7 +60,7 @@ public:
 	void setName( AsciiString name ) { m_name = name; }
 	AsciiString getName(){ return m_name; }
 
-	inline const FieldParse *getFieldParse() const { return TheCrateTemplateFieldParseTable; }
+	const FieldParse *getFieldParse() const { return TheCrateTemplateFieldParseTable; }
 	static const FieldParse TheCrateTemplateFieldParseTable[];		///< the parse table for INI definition
 
 	static void parseCrateCreationEntry( INI* ini, void *instance, void *store, const void* /*userData*/ );
@@ -113,4 +110,3 @@ private:
 };
 
 extern CrateSystem *TheCrateSystem;
-#endif

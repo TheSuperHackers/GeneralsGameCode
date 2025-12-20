@@ -775,7 +775,7 @@ void GlobalLightOptions::GetPopSliderInfo(const long sliderID, long *pMin, long 
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 void GlobalLightOptions::PopSliderChanged(const long sliderID, long theVal)
@@ -822,7 +822,7 @@ void GlobalLightOptions::PopSliderChanged(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 void GlobalLightOptions::PopSliderFinished(const long sliderID, long theVal)
@@ -845,7 +845,7 @@ void GlobalLightOptions::PopSliderFinished(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 
 }
 

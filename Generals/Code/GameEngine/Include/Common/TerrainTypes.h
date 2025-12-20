@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __TERRAINTYPE_H_
-#define __TERRAINTYPE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
 #include "Common/SubsystemInterface.h"
@@ -70,11 +67,11 @@ typedef enum
 	TERRAIN_WOOD,
 	TERRAIN_BLEND_EDGES,
 
-	TERRAIN_NUM_CLASSES  // keep this last
+	TERRAIN_NUM_CLASSES
 
 } TerrainClass;
 #ifdef DEFINE_TERRAIN_TYPE_NAMES
-static const char *terrainTypeNames[] =
+static const char *const terrainTypeNames[] =
 {
 	"NONE",
 	"DESERT_1",
@@ -104,6 +101,7 @@ static const char *terrainTypeNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(terrainTypeNames) == TERRAIN_NUM_CLASSES + 1, "Incorrect array size");
 #endif  // end DEFINE_TERRAIN_TYPE_NAMES
 
 //-------------------------------------------------------------------------------------------------
@@ -120,40 +118,40 @@ public:
 	// destructor prototype defined by memory pool glue
 
 	/// get the name for this terrain
-	inline AsciiString getName( void ) { return m_name; }
+	AsciiString getName( void ) { return m_name; }
 
 	/// get whether this terrain is blend edge terrain.
-	inline Bool isBlendEdge( void ) { return m_blendEdgeTexture; }
+	Bool isBlendEdge( void ) { return m_blendEdgeTexture; }
 
 	/// get the type of this terrain
-	inline TerrainClass getClass( void ) { return m_class; }
+	TerrainClass getClass( void ) { return m_class; }
 
 	/// get the construction restrictions
-	inline Bool getRestrictConstruction( void ) { return m_restrictConstruction; }
+	Bool getRestrictConstruction( void ) { return m_restrictConstruction; }
 
 	/// get the texture file for this terrain
-	inline AsciiString getTexture( void ) { return m_texture; }
+	AsciiString getTexture( void ) { return m_texture; }
 
 	/// get next terrain in list, only for use by the terrain collection
-	inline TerrainType *friend_getNext( void ) { return m_next; }
+	TerrainType *friend_getNext( void ) { return m_next; }
 
 	/// set the name for this terrain, for use by terrain collection only
-	inline void friend_setName( AsciiString name ) { m_name = name; }
+	void friend_setName( AsciiString name ) { m_name = name; }
 
 	/// set the next pointer for the terrain list, for use by terrain collection only
-	inline void friend_setNext( TerrainType *next ) { m_next = next; }
+	void friend_setNext( TerrainType *next ) { m_next = next; }
 
 	/// set the texture, for use by terrain collection only
-	inline void friend_setTexture( AsciiString texture ) { m_texture = texture; }
+	void friend_setTexture( AsciiString texture ) { m_texture = texture; }
 
 	/// set the class, for use by terrain collection only
-	inline void friend_setClass( TerrainClass terrainClass ) { m_class = terrainClass; }
+	void friend_setClass( TerrainClass terrainClass ) { m_class = terrainClass; }
 
 	/// set the restrict construction flag, for use by terrain collection only
-	inline void friend_setRestrictConstruction( Bool restrict ) { m_restrictConstruction = restrict; }
+	void friend_setRestrictConstruction( Bool restrict ) { m_restrictConstruction = restrict; }
 
 	/// set whether this terrain is blend edge terrain, for use by terrain collection only
-	inline void friend_setBlendEdge( Bool isBlend ) { m_blendEdgeTexture = isBlend; }
+	void friend_setBlendEdge( Bool isBlend ) { m_blendEdgeTexture = isBlend; }
 
 	/// get the parsing table for INI
 	const FieldParse *getFieldParse( void ) { return m_terrainTypeFieldParseTable; }
@@ -204,6 +202,3 @@ protected:
 
 // EXTERNAL ///////////////////////////////////////////////////////////////////////////////////////
 extern TerrainTypeCollection *TheTerrainTypes;
-
-#endif // __TERRAINTYPE_H_
-

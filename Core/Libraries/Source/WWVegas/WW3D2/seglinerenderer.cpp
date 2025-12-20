@@ -44,7 +44,7 @@
 #include "sortingrenderer.h"
 #include "vp.h"
 #include "Vector3i.h"
-#include "RANDOM.H"
+#include "RANDOM.h"
 #include "v3_rnd.h"
 #include "meshgeometry.h"
 
@@ -78,7 +78,7 @@ SegLineRendererClass::SegLineRendererClass(void) :
 		NoiseAmplitude(0.0f),
 		MergeAbortFactor(1.5f),
 		TextureTileFactor(1.0f),
-		LastUsedSyncTime(WW3D::Get_Sync_Time()),
+		LastUsedSyncTime(WW3D::Get_Logic_Time_Milliseconds()),
 		CurrentUVOffset(0.0f,0.0f),
 		UScale(1.0f),
 		UVOffsetDeltaPerMS(0.0f, 0.0f),
@@ -209,7 +209,7 @@ void SegLineRendererClass::Set_Texture_Tile_Factor(float factor)
 
 void SegLineRendererClass::Reset_Line(void)
 {
-	LastUsedSyncTime = WW3D::Get_Sync_Time();
+	LastUsedSyncTime = WW3D::Get_Logic_Time_Milliseconds();
 	CurrentUVOffset.Set(0.0f,0.0f);
 }
 
@@ -235,9 +235,9 @@ void SegLineRendererClass::Render
 	/*
 	** Handle texture UV offset animation (done once for entire line).
 	*/
-	unsigned int delta = WW3D::Get_Sync_Time() - LastUsedSyncTime;
-	float del = (float)delta;
-	Vector2 uv_offset = CurrentUVOffset + UVOffsetDeltaPerMS * del;
+	// TheSuperHackers @tweak The render update is now decoupled from the logic step.
+	const unsigned int delta = WW3D::Get_Logic_Time_Milliseconds() - LastUsedSyncTime;
+	Vector2 uv_offset = CurrentUVOffset + UVOffsetDeltaPerMS * (float)delta;
 
 	// ensure offsets are in [0, 1] range:
 	uv_offset.X = uv_offset.X - floorf(uv_offset.X);
@@ -245,7 +245,7 @@ void SegLineRendererClass::Render
 
 	// Update state
 	CurrentUVOffset = uv_offset;
-	LastUsedSyncTime = WW3D::Get_Sync_Time();
+	LastUsedSyncTime = WW3D::Get_Logic_Time_Milliseconds();
 
 	// Used later
 	TextureMapMode map_mode = Get_Texture_Mapping_Mode();
@@ -731,7 +731,7 @@ void SegLineRendererClass::Render
 				segment[iidx].StartPlane = -start_pl;
 			}
 
-		}	// for iidx
+		}
 
 
 		/*
@@ -892,7 +892,7 @@ void SegLineRendererClass::Render
 							next_int = &(intersection[iidx_r + 1][edge]);
 							next_seg = &(segment[next_int->NextSegmentID]);
 
-						}	// while <merging needed>
+						}
 
 						// Copy from "read index" to "write index"
 						write_int->PointCount		= curr_int->PointCount;
@@ -903,7 +903,7 @@ void SegLineRendererClass::Render
 						write_int->Direction			= curr_int->Direction;
 						write_int->Fold				= curr_int->Fold;
 
-					}	// for iidx
+					}
 
 					// If iidx_r is exactly equal to num_isects (rather than being larger by one) at this
 					// point, this means that the last intersection was not merged with the previous one. In
@@ -929,9 +929,9 @@ void SegLineRendererClass::Render
 					assert(total_cnt == point_cnt);
 #endif
 
-				}	// for edge
-			}	// while (merged)
-		}	// if (Is_Merge_Intersections())
+				}
+			}
+		}
 
 		/*
 		** Find vertex positions, generate vertices and triangles:
@@ -1175,7 +1175,7 @@ void SegLineRendererClass::Render
 				texture->V = vArray[i].v1;
 				vb += vbSize;
 			}
-		} // copy
+		}
 
 		DynamicIBAccessClass ib_access((sorting?BUFFER_TYPE_DYNAMIC_SORTING:BUFFER_TYPE_DYNAMIC_DX8),tidx*3);
 		{
@@ -1205,7 +1205,7 @@ void SegLineRendererClass::Render
 
 		REF_PTR_RELEASE(mat);
 
-	}	// Chunking loop
+	}
 
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
 

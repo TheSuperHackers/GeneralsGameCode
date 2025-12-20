@@ -223,15 +223,8 @@ error:
 
 	range->ReleaseDispatch ( );
 
-	if ( borders )
-	{
-		delete borders ;
-	}
-
-	if ( border )
-	{
-		delete border ;
-	}
+	delete borders;
+	delete border;
 
 	VariantClear ( &cell1 );
 	VariantClear ( &cell2 );
@@ -364,15 +357,8 @@ error:
 
 	range->ReleaseDispatch ( );
 
-	if ( borders )
-	{
-		delete borders ;
-	}
-
-	if ( border )
-	{
-		delete border ;
-	}
+	delete borders;
+	delete border;
 
 	VariantClear ( &cell1 );
 	VariantClear ( &cell2 );
@@ -475,17 +461,11 @@ void CloseExcel ( void )
 {
 	CloseWorkBook ();
 
-	if ( range )
-	{
-		delete range;
-		range = NULL;
-	}
+	delete range;
+	range = NULL;
 
-	if ( ws )
-	{
-		delete ws;
-		ws = NULL;
-	}
+	delete ws;
+	ws = NULL;
 
 	if ( wbs )
 	{

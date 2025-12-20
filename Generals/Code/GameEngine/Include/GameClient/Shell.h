@@ -94,9 +94,6 @@
 
 #pragma once
 
-#ifndef __SHELL_H_
-#define __SHELL_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
@@ -142,7 +139,7 @@ public:
 	void shutdownComplete( WindowLayout *layout, Bool impendingPush = FALSE );	///< layout has completed shutdown
 
 	WindowLayout *findScreenByFilename( AsciiString filename );		///< find screen
-	inline Bool isShellActive( void ) { return m_isShellActive; }  ///<	Returns true if the shell is active
+	Bool isShellActive( void ) { return m_isShellActive; }  ///<	Returns true if the shell is active
 
 	void registerWithAnimateManager( GameWindow *win, AnimTypes animType, Bool needsToFinish, UnsignedInt delayMS = 0);
 	Bool isAnimFinished( void );
@@ -200,12 +197,9 @@ protected:
 	WindowLayout *m_popupReplayLayout;											///< replay save menu layout
 	WindowLayout *m_optionsLayout;													///< options menu layout
 
-};  // end class Shell
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern Shell *TheShell;  ///< the shell external interface
-
-#endif // __SHELL_H_
-

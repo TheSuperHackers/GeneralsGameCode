@@ -58,9 +58,6 @@
 
 #pragma once
 
-#ifndef __GADGETPUSHBUTTON_H_
-#define __GADGETPUSHBUTTON_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -172,6 +169,3 @@ inline void GadgetButtonSetLeftEnabledImage( GameWindow *g, const Image *image )
 inline void GadgetButtonSetMiddleEnabledImage( GameWindow *g, const Image *image )					{ g->winSetEnabledImage( 5, image ); }
 inline void GadgetButtonSetRightEnabledImage( GameWindow *g, const Image *image )					{ g->winSetEnabledImage( 6, image ); }
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GADGETPUSHBUTTON_H_
-

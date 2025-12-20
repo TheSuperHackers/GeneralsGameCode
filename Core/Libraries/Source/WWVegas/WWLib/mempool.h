@@ -42,13 +42,7 @@
  *   AutoPoolClass::operator delete -- overriden delete which calls the internal ObjectPool    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef MEMPOOL_H
-#define MEMPOOL_H
 
 #include "bittype.h"
 #include "wwdebug.h"
@@ -373,7 +367,3 @@ void AutoPoolClass<T,BLOCK_SIZE>::operator delete( void * memory )
 	if ( memory == 0 ) return;
 	Allocator.Free_Object_Memory((T*)memory);
 }
-
-
-
-#endif // MEMPOOL_H

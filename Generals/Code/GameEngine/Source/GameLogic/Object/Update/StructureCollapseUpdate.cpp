@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Thing.h"
 #include "Common/ThingTemplate.h"
@@ -50,7 +50,7 @@ const Int MAX_IDX = 32;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-static const char *TheStructureCollapsePhaseNames[] =
+static const char *const TheStructureCollapsePhaseNames[] =
 {
 	"INITIAL",
 	"DELAY",
@@ -59,6 +59,7 @@ static const char *TheStructureCollapsePhaseNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheStructureCollapsePhaseNames) == SC_PHASE_COUNT + 1, "Wrong array size");
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -67,11 +68,8 @@ StructureCollapseUpdate::StructureCollapseUpdate( Thing *thing, const ModuleData
 	m_collapseFrame = 0;
 	m_collapseState = COLLAPSESTATE_STANDING;
 	m_collapseVelocity = 0.0f;
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_burstFrame = 0;
 	m_currentHeight = 0.0f;
-	//
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 }
 
@@ -361,7 +359,7 @@ void StructureCollapseUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -394,7 +392,7 @@ void StructureCollapseUpdate::xfer( Xfer *xfer )
 	// current height
 	xfer->xferReal( &m_currentHeight );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -405,4 +403,4 @@ void StructureCollapseUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

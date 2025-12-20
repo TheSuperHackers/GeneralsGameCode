@@ -27,12 +27,13 @@
 // Desc:   Update module to handle weapon firing of the SpectreGunship Generals special power.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_DEATH_NAMES
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameAudio.h"
+#include "Common/GameUtility.h"
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"
 #include "Common/Player.h"
@@ -45,7 +46,6 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/ParticleSys.h"
 #include "GameClient/FXList.h"
-#include "GameClient/ParticleSys.h"
 
 #include "GameLogic/Locomotor.h"
 #include "GameLogic/GameLogic.h"
@@ -487,7 +487,7 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 
         }
 
-      } // endif status == ORBITING || INSERTING
+      }
 
 
       if ( m_status == GUNSHIP_STATUS_ORBITING )
@@ -504,7 +504,7 @@ UpdateSleepTime SpectreGunshipUpdate::update()
           disengageAndDepartAO( gunship );
 
 
-        }//endif escapeframe
+        }
         else
         {
 
@@ -608,7 +608,7 @@ UpdateSleepTime SpectreGunshipUpdate::update()
             }
 
 
-          }//endif frame modulator
+          }
 
 
 
@@ -642,7 +642,7 @@ UpdateSleepTime SpectreGunshipUpdate::update()
             }
 
 
-			const Player *localPlayer = ThePlayerList->getLocalPlayer();
+			const Player *localPlayer = rts::getObservedOrLocalPlayer();
 
 			//Make sure the gunship is visible to the player before drawing effects.
 			if ( gunship->getShroudedStatus( localPlayer->getPlayerIndex() ) <= OBJECTSHROUD_PARTIAL_CLEAR )
@@ -662,10 +662,10 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 			}
 
           }
-        }// end else
+        }
 
 
-      }//not orbiting
+      }
       else if ( m_status == GUNSHIP_STATUS_DEPARTING )
       {
         if ( isPointOffMap( *gunship->getPosition() ) )
@@ -681,7 +681,7 @@ UpdateSleepTime SpectreGunshipUpdate::update()
         }
       }
 
-   } // endif gunship
+   }
    else if ( m_status != GUNSHIP_STATUS_IDLE )
    {
      //OH MY GOODNESS, THE GUNSHIP MUST HAVE GOTTEN SHOT DOWN!
@@ -845,7 +845,7 @@ void SpectreGunshipUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -899,7 +899,7 @@ void SpectreGunshipUpdate::xfer( Xfer *xfer )
 		xfer->xferObjectID( &m_gattlingID );
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -910,4 +910,4 @@ void SpectreGunshipUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

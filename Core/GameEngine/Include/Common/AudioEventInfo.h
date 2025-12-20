@@ -27,8 +27,6 @@
 // Author: John K. McDonald, March 2002
 
 #pragma once
-#ifndef _H_AUDIOEVENTINFO_
-#define _H_AUDIOEVENTINFO_
 
 #include "Common/AsciiString.h"
 #include "Common/GameMemory.h"
@@ -48,17 +46,19 @@ enum AudioType CPP_11(: Int)
 	AT_SoundEffect
 };
 
-extern const char *theAudioPriorityNames[];
+extern const char* const theAudioPriorityNames[];
 enum AudioPriority CPP_11(: Int)
 {
 	AP_LOWEST,
 	AP_LOW,
 	AP_NORMAL,
 	AP_HIGH,
-	AP_CRITICAL
+	AP_CRITICAL,
+
+	AP_COUNT
 };
 
-extern const char *theSoundTypeNames[];
+extern const char *const theSoundTypeNames[];
 enum SoundType CPP_11(: Int)
 {
 	ST_UI										= 0x0001,
@@ -72,7 +72,7 @@ enum SoundType CPP_11(: Int)
 	ST_EVERYONE							= 0x0100,
 };
 
-extern const char *theAudioControlNames[];
+extern const char *const theAudioControlNames[];
 enum AudioControl CPP_11(: Int)
 {
 	AC_LOOP									= 0x0001,
@@ -134,5 +134,3 @@ public:
 	static const FieldParse m_audioEventInfo[];		///< the parse table for INI definition
 	const FieldParse *getFieldParse( void ) const { return m_audioEventInfo; }
 };
-
-#endif /* _H_AUDIOEVENTINFO_ */

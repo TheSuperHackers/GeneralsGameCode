@@ -34,13 +34,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-
-
-#ifndef GAMEMTLDLG_H
-#define GAMEMTLDLG_H
+#pragma once
 
 class GameMtl;
+
 class GameMtlPassDlg;
 
 
@@ -114,6 +111,3 @@ protected:
 	friend BOOL CALLBACK PassCountPanelDlgProc(HWND, UINT, WPARAM,LPARAM);
 	friend class GameMtl;
 };
-
-
-#endif

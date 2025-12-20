@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef SPHEREOBJ_H
-#define SPHEREOBJ_H
 
 #include "always.h"
 #include "rendobj.h"
@@ -472,8 +467,4 @@ private:
 */
 extern SphereLoaderClass			_SphereLoader;
 
-#endif // SPHEREOBJ_H
-
 // EOF - sphereobj,h
-
-

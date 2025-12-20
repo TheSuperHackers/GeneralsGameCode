@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __W3DGAMEWINDOW_H_
-#define __W3DGAMEWINDOW_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -93,13 +90,10 @@ protected:
 	Bool m_needPolyDraw;  ///< TRUE need to redo the text polys
 	Bool m_newTextPos;  ///< TRUE when our window has moved and we need a new text pos
 
-};  // end class W3DGameWindow
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
 extern void W3DGameWinDefaultDraw( GameWindow *window,
 																	 WinInstanceData *instData );
-
-#endif // __W3DGAMEWINDOW_H_
-

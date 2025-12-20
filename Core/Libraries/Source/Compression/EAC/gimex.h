@@ -63,11 +63,9 @@ gimex.h - Primary header file for the GIMEX API.
 /*                                                                  */
 /*------------------------------------------------------------------*/
 
-#ifndef __GIMEX_H
-#define __GIMEX_H 1
+#pragma once
 
 #if defined(_MSC_VER)
-#pragma once
 #pragma warning(disable : 4100)
 /* warning C4100: unreferenced parameter */
 #endif
@@ -491,7 +489,5 @@ static __inline void gputi(void *dst, unsigned int data, int bytes)
         ((unsigned char *) dst)[2] = (unsigned char) (data>>16);
     }
 }
-
-#endif /* __GIMEX_H */
 
 /* END ABSTRACT */

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GARRISONCONTAIN_H_
-#define __GARRISONCONTAIN_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/OpenContain.h"
 #include "Common/ModelState.h"
@@ -197,7 +194,7 @@ private:
 		GARRISON_POINT_DAMAGED,
 		GARRISON_POINT_REALLY_DAMAGED,
 
-		MAX_GARRISON_POINT_CONDITIONS				///< leave this last
+		MAX_GARRISON_POINT_CONDITIONS
 	};
 
 	Team *							m_originalTeam;																///< our original team before we were garrisoned
@@ -211,6 +208,3 @@ private:
 	Bool		m_rallyValid;															///< TRUE when m_exitRallyPoint is valid
 
 };
-
-#endif // __GARRISONCONTAIN_H_
-

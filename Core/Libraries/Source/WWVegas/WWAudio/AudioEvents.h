@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __AUDIO_EVENTS_H
-#define __AUDIO_EVENTS_H
 
 #include "simplevec.h"
 #include "bittype.h"
@@ -209,7 +204,3 @@ AudioCallbackListClass<T>::Remove_Callback (T pointer)
 
 	return ;
 }
-
-
-#endif //__AUDIO_EVENTS_H
-

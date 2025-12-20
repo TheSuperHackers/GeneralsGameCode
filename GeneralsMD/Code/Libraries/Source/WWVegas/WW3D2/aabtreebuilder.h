@@ -36,13 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef AABTREEBUILDER_H
-#define AABTREEBUILDER_H
 
 #include "always.h"
 #include "vector3.h"
@@ -95,9 +89,9 @@ private:
 		CullNodeStruct(void) : Index(0),Min(0,0,0),Max(0,0,0),Front(NULL),Back(NULL),PolyCount(0),PolyIndices(NULL) {}
 		~CullNodeStruct(void)
 		{
-			if (Front) { delete Front; }
-			if (Back) { delete Back; }
-			if (PolyIndices) { delete[] PolyIndices; }
+			delete Front;
+			delete Back;
+			delete[] PolyIndices;
 		}
 
 		int						Index;
@@ -203,9 +197,3 @@ private:
 
 	friend class AABTreeClass;
 };
-
-
-
-
-#endif //AABTREEBUILDER_H
-

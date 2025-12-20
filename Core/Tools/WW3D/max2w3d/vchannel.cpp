@@ -250,7 +250,7 @@ bool VectorChannelClass::SaveTimeCoded(ChunkSaveClass & csave, BitChannelClass *
 
 	return true;
 
-} // SaveTimeCoded
+}
 
 
 /*
@@ -349,7 +349,7 @@ float VectorChannelClass::test_compress(int filter_index, float scale, float val
 
    return( sqrt(error) );
 
-} // test_compress
+}
 
 //
 //	compress Adaptive Delta packet
@@ -425,7 +425,7 @@ float VectorChannelClass::compress(int filter_index, float scale, float value1, 
 
    return( error );
 
-} // compress
+}
 
 
 bool VectorChannelClass::SaveAdaptiveDelta(ChunkSaveClass & csave, BitChannelClass *binmov)
@@ -504,7 +504,7 @@ bool VectorChannelClass::SaveAdaptiveDelta(ChunkSaveClass & csave, BitChannelCla
 
 				temp_frame++;
 
-			} // for gi
+			}
 
          // Brute Force Filter
 
@@ -541,9 +541,9 @@ bool VectorChannelClass::SaveAdaptiveDelta(ChunkSaveClass & csave, BitChannelCla
 			// update work[vi];
 			work[vi] = decompressed_packet[15];
 
-		}	// for vi
+		}
 		frame+=16;
-	}  // for numpackets
+	}
 
 
 	// print how big we are vs non-compressed
@@ -573,7 +573,7 @@ bool VectorChannelClass::SaveAdaptiveDelta(ChunkSaveClass & csave, BitChannelCla
 
 	return true;
 
-} // SaveAdaptiveDelta
+}
 
 
 bool VectorChannelClass::Save(ChunkSaveClass & csave, BitChannelClass *binmov)
@@ -675,7 +675,7 @@ void VectorChannelClass::SetSaveOptions(bool compress, int flavor, float Terr, f
 	CompressAnimationTranslationError = Terr;
 	CompressAnimationRotationError = DEG_TO_RAD(Rerr);
 
-} // SetSaveOptions
+}
 
 //
 //  Set data in motion channel to identity vector
@@ -706,7 +706,7 @@ void VectorChannelClass::ClearInvisibleData(BitChannelClass *vis)
 			Set_Vector( idx, tvec );
 		}
 	}
-} // ClearInvisibleData
+}
 
 
 void VectorChannelClass::set_value(int framenum,int vindex,float32 val)
@@ -757,7 +757,7 @@ void VectorChannelClass::compute_range(void)
 	while ((End >= 0) && (is_identity(Get_Vector(End)))) {
 		End--;
 	}
-}	// compute_range
+}
 
 
 //
@@ -787,7 +787,7 @@ void VectorChannelClass::remove_packet(W3dTimeCodedAnimChannelStruct * c, uint32
 	// Decrement Packet Count
 	c->NumTimeCodes--;
 
-} // remove_packet
+}
 
 //
 //  Take a non-compressed TimeCoded Motion Channel
@@ -923,11 +923,11 @@ void VectorChannelClass::compress(W3dTimeCodedAnimChannelStruct * c)
 					assert(0);
 					break;
 			}
-		} // if ReducePercent
+		}
 
-	} // if Reduce
+	}
 
-} // compress
+}
 
 
 
@@ -1022,7 +1022,7 @@ static  float32 tempvec[MAX_VECTOR_SIZE];
 
         // else continue
 
-      }	// for
+      }
 
   	}
     else  {
@@ -1058,7 +1058,7 @@ static  float32 tempvec[MAX_VECTOR_SIZE];
 
 	return( PACKETS_ALL_USEFUL );
 
-} // find_useless_packet
+}
 
 
 //
@@ -1137,7 +1137,7 @@ uint32 VectorChannelClass::find_useless_packetQ(W3dTimeCodedAnimChannelStruct * 
 
 			// else continue
 
-		}	// for
+		}
 
 	}
 
@@ -1171,7 +1171,7 @@ uint32 VectorChannelClass::find_useless_packetQ(W3dTimeCodedAnimChannelStruct * 
 
 	return( PACKETS_ALL_USEFUL );
 
-} // find_useless_packetQ
+}
 
 
 //
@@ -1268,7 +1268,7 @@ static  float32 tempvec[MAX_VECTOR_SIZE];
 
 				// else continue
 
-			}	// for
+			}
 
 			return( ret_idx );
 
@@ -1285,7 +1285,7 @@ static  float32 tempvec[MAX_VECTOR_SIZE];
   return( PACKETS_ALL_USEFUL );
 
 
-}  // Find Least useful packet
+}
 
 
 //
@@ -1370,7 +1370,7 @@ uint32 VectorChannelClass::find_least_useful_packetQ(W3dTimeCodedAnimChannelStru
 
 			// else continue
 
-		}	// for
+		}
 
 		return( ret_idx );
 
@@ -1390,7 +1390,7 @@ uint32 VectorChannelClass::find_least_useful_packetQ(W3dTimeCodedAnimChannelStru
 
   return( PACKETS_ALL_USEFUL );
 
-} // find_least_useful_packetQ
+}
 
 
 // EOF - vchannel.cpp

@@ -42,7 +42,7 @@ void DrawModule::crc( Xfer *xfer )
 	// extend base class
 	DrawableModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -60,7 +60,7 @@ void DrawModule::xfer( Xfer *xfer )
 	// extend base class
 	DrawableModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -71,5 +71,5 @@ void DrawModule::loadPostProcess( void )
 	// extend base class
 	DrawableModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDE FILES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -72,7 +72,7 @@ RebuildHoleExposeDieModuleData::RebuildHoleExposeDieModuleData()
 
 	p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,14 +84,14 @@ RebuildHoleExposeDie::RebuildHoleExposeDie( Thing *thing, const ModuleData* modu
 										: DieModule( thing, moduleData )
 {
 
-}  // end RebuildHoleExposeDie
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 RebuildHoleExposeDie::~RebuildHoleExposeDie( void )
 {
 
-}  // end ~RebuildHoleExposeDie
+}
 
 //-------------------------------------------------------------------------------------------------
 /** The die callback. */
@@ -181,9 +181,9 @@ void RebuildHoleExposeDie::onDie( const DamageInfo *damageInfo )
 			}
 		}
 
-	}  // end if
+	}
 
-}  // end onDie
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -194,7 +194,7 @@ void RebuildHoleExposeDie::crc( Xfer *xfer )
 	// extend base class
 	DieModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -212,7 +212,7 @@ void RebuildHoleExposeDie::xfer( Xfer *xfer )
 	// extend base class
 	DieModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -223,4 +223,4 @@ void RebuildHoleExposeDie::loadPostProcess( void )
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

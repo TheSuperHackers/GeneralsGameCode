@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __CONTROLBAR_H_
-#define __CONTROLBAR_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/GameType.h"
@@ -99,12 +96,10 @@ enum CommandOption CPP_11(: Int)
 	SCRIPT_ONLY									= 0x00080000, // Only a script can use this command (not by users)
 	IGNORES_UNDERPOWERED				= 0x00100000, // this button isn't disabled if its object is merely underpowered
 	USES_MINE_CLEARING_WEAPONSET= 0x00200000,	// uses the special mine-clearing weaponset, even if not current
-
-	NUM_COMMAND_OPTIONS						// keep this last
 };
 
 #ifdef DEFINE_COMMAND_OPTION_NAMES
-static const char *TheCommandOptionNames[] =
+static const char *const TheCommandOptionNames[] =
 {
 	"NEED_TARGET_ENEMY_OBJECT",
 	"NEED_TARGET_NEUTRAL_OBJECT",
@@ -208,11 +203,11 @@ enum GUICommandType CPP_11(: Int)
 
 	// add more commands here, don't forget to update the string command list below too ...
 
-	GUI_COMMAND_NUM_COMMANDS							// keep this last
+	GUI_COMMAND_NUM_COMMANDS
 };
 
 #ifdef DEFINE_GUI_COMMMAND_NAMES
-static const char *TheGuiCommandNames[] =
+static const char *const TheGuiCommandNames[] =
 {
 	"NONE",
 	"DOZER_CONSTRUCT",
@@ -254,6 +249,7 @@ static const char *TheGuiCommandNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheGuiCommandNames) == GUI_COMMAND_NUM_COMMANDS + 1, "Incorrect array size");
 #endif  // end DEFINE_GUI_COMMAND_NAMES
 
 enum CommandButtonMappedBorderType CPP_11(: Int)
@@ -264,7 +260,7 @@ enum CommandButtonMappedBorderType CPP_11(: Int)
 	COMMAND_BUTTON_BORDER_ACTION,
 	COMMAND_BUTTON_BORDER_SYSTEM,
 
-	COMMAND_BUTTON_BORDER_COUNT // keep this last
+	COMMAND_BUTTON_BORDER_COUNT
 };
 
 static const LookupListRec CommandButtonMappedBorderTypeNames[] =
@@ -275,8 +271,9 @@ static const LookupListRec CommandButtonMappedBorderTypeNames[] =
 	{ "ACTION",				COMMAND_BUTTON_BORDER_ACTION },
 	{ "SYSTEM",				COMMAND_BUTTON_BORDER_SYSTEM },
 
-	{ NULL, 0	}// keep this last!
+	{ NULL, 0	}
 };
+static_assert(ARRAY_SIZE(CommandButtonMappedBorderTypeNames) == COMMAND_BUTTON_BORDER_COUNT + 1, "Incorrect array size");
 //-------------------------------------------------------------------------------------------------
 /** Command buttons are used to load the buttons we place on throughout the command bar
 	* interface in different context sensitive windows depending on the situation and
@@ -437,8 +434,6 @@ class SideSelectWindowData
 public:
 	SideSelectWindowData(void)
 	{
-		//Added By Sadullah Nader
-		//Initializations
 		generalSpeak = NULL;
 		m_currColor = 0;
 		m_gereralsNameWin = NULL;
@@ -462,7 +457,6 @@ public:
 		m_upgradeLabel3Win = NULL;
 		m_upgradeLabel4Win = NULL;
 		sideWindow = NULL;
-		//
 	}
 	~SideSelectWindowData(void);
 
@@ -574,8 +568,6 @@ enum ControlBarContext CPP_11(: Int)
 	CB_CONTEXT_OBSERVER_INFO,					///< for when we want to populate the player info
 	CB_CONTEXT_OBSERVER_LIST,					///< for when we want to update the observer list
 	CB_CONTEXT_OCL_TIMER,							///< Countdown for OCL spewers
-
-	NUM_CB_CONTEXTS
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -725,11 +717,20 @@ public:
 
 	// Initialize the Observer controls Must be called after we've already loaded the window
 	void initObserverControls( void );
-	void setObserverLookAtPlayer (Player *p) { m_observerLookAtPlayer = p;}
-	Player *getObserverLookAtPlayer (void ) { return m_observerLookAtPlayer;}
 	void populateObserverInfoWindow ( void );
 	void populateObserverList( void );
 	Bool isObserverControlBarOn( void ) { return m_isObserverCommandBar;}
+
+	void setObserverLookAtPlayer (Player *player); ///< Sets the looked at player. Used to present information about the player.
+	Player *getObserverLookAtPlayer (void ) const { return m_observerLookAtPlayer; } ///< Returns the looked at player. Can return null.
+
+	void setObservedPlayer(Player *player); ///< Sets the observed player. Used to present the game world as if that player was the local player.
+	Player *getObservedPlayer() const { return m_observedPlayer; } ///< Return the observed player. Can return null.
+
+	/// Returns the currently viewed player. May return NULL if no player is selected while observing.
+	Player* getCurrentlyViewedPlayer();
+	/// Returns the relationship with the currently viewed player. May return NEUTRAL if no player is selected while observing.
+	Relationship getCurrentlyViewedPlayerRelationship(const Team* team);
 
 //	ControlBarResizer *getControlBarResizer( void ) {return m_controlBarResizer;}
 
@@ -946,11 +947,12 @@ protected:
 
 	Color m_buildUpClockColor;
 
-	Bool m_isObserverCommandBar;												///< If this is true, the command bar behaves greatly differnt
+	Bool m_isObserverCommandBar;												///< If this is true, the command bar behaves greatly different
 	Player *m_observerLookAtPlayer;											///< The current player we're looking at, Null if we're not looking at anyone.
+	Player *m_observedPlayer;														///< The current player we're observing, Null if we're not observing anyone.
 
 	WindowLayout *m_buildToolTipLayout;										///< The window that will slide on/display tooltips
-	Bool m_showBuildToolTipLayout;											///< every frame we test to see if we aregoing to continue showing this or not.
+	Bool m_showBuildToolTipLayout;											///< every frame we test to see if we are going to continue showing this or not.
 public:
 	void showBuildTooltipLayout( GameWindow *cmdButton );
 	void hideBuildTooltipLayout( void );
@@ -1019,6 +1021,3 @@ private:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern ControlBar *TheControlBar;
-
-#endif  // end __CONTROLBAR_H_
-

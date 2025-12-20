@@ -449,16 +449,16 @@ void BuildList::OnSelchangeBuildList()
 	PointerTool::clearSelection(); // unselect other stuff.
 	if (pBuildInfo) {
 		CWnd *edit;
-		static char buff[12];
+		static char buff[32];
 		pBuildInfo->setSelected(true);
 
 		m_angle = pBuildInfo->getAngle() * 180/PI;
-		sprintf(buff, "%0.2f", m_angle);
+		snprintf(buff, ARRAY_SIZE(buff), "%0.2f", m_angle);
 		edit = GetDlgItem(IDC_MAPOBJECT_Angle);
 		edit->SetWindowText(buff);
 
 		m_height = pBuildInfo->getLocation()->z;
-		sprintf(buff, "%0.2f", m_height);
+		snprintf(buff, ARRAY_SIZE(buff), "%0.2f", m_height);
 		edit = GetDlgItem(IDC_MAPOBJECT_ZOffset);
 		edit->SetWindowText(buff);
 
@@ -631,18 +631,18 @@ void BuildList::GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, lo
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 void BuildList::PopSliderChanged(const long sliderID, long theVal)
 {
 //	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	CWnd* edit;
-	static char buff[12];
+	static char buff[32];
 	switch (sliderID) {
 		case IDC_HEIGHT_POPUP:
 			m_height = theVal;
-			sprintf(buff, "%0.2f", m_height);
+			snprintf(buff, ARRAY_SIZE(buff), "%0.2f", m_height);
 			edit = GetDlgItem(IDC_MAPOBJECT_ZOffset);
 			edit->SetWindowText(buff);
 			OnChangeZOffset();
@@ -650,7 +650,7 @@ void BuildList::PopSliderChanged(const long sliderID, long theVal)
 
 		case IDC_ANGLE_POPUP:
 			m_angle = theVal;
-			sprintf(buff, "%0.2f", m_angle);
+			snprintf(buff, ARRAY_SIZE(buff), "%0.2f", m_angle);
 			edit = GetDlgItem(IDC_MAPOBJECT_Angle);
 			edit->SetWindowText(buff);
 			break;
@@ -659,7 +659,7 @@ void BuildList::PopSliderChanged(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 void BuildList::PopSliderFinished(const long sliderID, long theVal)
@@ -673,7 +673,7 @@ void BuildList::PopSliderFinished(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 
 }
 
@@ -737,30 +737,20 @@ void BuildList::OnExport()
 	static FILE *theLogFile = NULL;
 	Bool open = false;
 	try {
-		char dirbuf[ _MAX_PATH ];
-		::GetModuleFileName( NULL, dirbuf, sizeof( dirbuf ) );
-		char *pEnd = dirbuf + strlen( dirbuf );
-		while( pEnd != dirbuf )
+		char buffer[ _MAX_PATH ];
+		::GetModuleFileName( NULL, buffer, sizeof( buffer ) );
+		if (char *pEnd = strrchr(buffer, '\\'))
 		{
-			if( *pEnd == '\\' )
-			{
-				*(pEnd + 1) = 0;
-				break;
-			}
-			pEnd--;
+			*(pEnd + 1) = 0;
 		}
 
-		char curbuf[ _MAX_PATH ];
-
-		strcpy(curbuf, dirbuf);
 		SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide);
 		Dict *d = TheSidesList->getSideInfo(m_curSide)->getDict();
 		AsciiString name = d->getAsciiString(TheKey_playerName);
-		strcat(curbuf, name.str());
-		strcat(curbuf, "_BuildList");
-		strcat(curbuf, ".ini");
+		strlcat(buffer, name.str(), ARRAY_SIZE(buffer));
+		strlcat(buffer, "_BuildList.ini", ARRAY_SIZE(buffer));
 
-		theLogFile = fopen(curbuf, "w");
+		theLogFile = fopen(buffer, "w");
 		if (theLogFile == NULL)
 			throw;
 

@@ -600,35 +600,35 @@ ParticleBufferClass & ParticleBufferClass::operator = (const ParticleBufferClass
 
 ParticleBufferClass::~ParticleBufferClass(void)
 {
-	if (NewParticleQueue)				delete [] NewParticleQueue;
-	if (ColorKeyFrameTimes)				delete [] ColorKeyFrameTimes;
-	if (ColorKeyFrameValues)			delete [] ColorKeyFrameValues;
-	if (ColorKeyFrameDeltas)			delete [] ColorKeyFrameDeltas;
-	if (AlphaKeyFrameTimes)				delete [] AlphaKeyFrameTimes;
-	if (AlphaKeyFrameValues)			delete [] AlphaKeyFrameValues;
-	if (AlphaKeyFrameDeltas)			delete [] AlphaKeyFrameDeltas;
-	if (SizeKeyFrameTimes)				delete [] SizeKeyFrameTimes;
-	if (SizeKeyFrameValues)				delete [] SizeKeyFrameValues;
-	if (SizeKeyFrameDeltas)				delete [] SizeKeyFrameDeltas;
-	if (RotationKeyFrameTimes)			delete [] RotationKeyFrameTimes;
-	if (RotationKeyFrameValues)		delete [] RotationKeyFrameValues;
-	if (HalfRotationKeyFrameDeltas)	delete [] HalfRotationKeyFrameDeltas;
-	if (OrientationKeyFrameValues)	delete [] OrientationKeyFrameValues;
-	if (FrameKeyFrameTimes)				delete [] FrameKeyFrameTimes;
-	if (FrameKeyFrameValues)			delete [] FrameKeyFrameValues;
-	if (FrameKeyFrameDeltas)			delete [] FrameKeyFrameDeltas;
-	if (BlurTimeKeyFrameTimes)			delete [] BlurTimeKeyFrameTimes;
-	if (BlurTimeKeyFrameValues)		delete [] BlurTimeKeyFrameValues;
-	if (BlurTimeKeyFrameDeltas)		delete [] BlurTimeKeyFrameDeltas;
-	if (RandomColorEntries)				delete [] RandomColorEntries;
-	if (RandomAlphaEntries)				delete [] RandomAlphaEntries;
-	if (RandomSizeEntries)				delete [] RandomSizeEntries;
-	if (RandomRotationEntries)			delete [] RandomRotationEntries;
-	if (RandomOrientationEntries)		delete [] RandomOrientationEntries;
-	if (RandomFrameEntries)				delete [] RandomFrameEntries;
-	if (RandomBlurTimeEntries)			delete [] RandomBlurTimeEntries;
+	delete [] NewParticleQueue;
+	delete [] ColorKeyFrameTimes;
+	delete [] ColorKeyFrameValues;
+	delete [] ColorKeyFrameDeltas;
+	delete [] AlphaKeyFrameTimes;
+	delete [] AlphaKeyFrameValues;
+	delete [] AlphaKeyFrameDeltas;
+	delete [] SizeKeyFrameTimes;
+	delete [] SizeKeyFrameValues;
+	delete [] SizeKeyFrameDeltas;
+	delete [] RotationKeyFrameTimes;
+	delete [] RotationKeyFrameValues;
+	delete [] HalfRotationKeyFrameDeltas;
+	delete [] OrientationKeyFrameValues;
+	delete [] FrameKeyFrameTimes;
+	delete [] FrameKeyFrameValues;
+	delete [] FrameKeyFrameDeltas;
+	delete [] BlurTimeKeyFrameTimes;
+	delete [] BlurTimeKeyFrameValues;
+	delete [] BlurTimeKeyFrameDeltas;
+	delete [] RandomColorEntries;
+	delete [] RandomAlphaEntries;
+	delete [] RandomSizeEntries;
+	delete [] RandomRotationEntries;
+	delete [] RandomOrientationEntries;
+	delete [] RandomFrameEntries;
+	delete [] RandomBlurTimeEntries;
 
-	if (PointGroup) delete PointGroup;
+	delete PointGroup;
 
 	REF_PTR_RELEASE(Position[0]);
 	REF_PTR_RELEASE(Position[1]);
@@ -640,8 +640,9 @@ ParticleBufferClass::~ParticleBufferClass(void)
 	REF_PTR_RELEASE(Frame);
 	REF_PTR_RELEASE(APT);
 
-	if (Velocity)	delete [] Velocity;
-	if (TimeStamp)	delete [] TimeStamp;
+	delete [] Velocity;
+	delete [] TimeStamp;
+
 	if (Emitter) {
 		// We should not have an emitter at this point, since the emitter
 		// should still have a live ref to us if it still exists which would
@@ -656,9 +657,7 @@ ParticleBufferClass::~ParticleBufferClass(void)
 		Emitter = NULL;
 	}
 
-	if (LineRenderer) {
-		delete LineRenderer;
-	}
+	delete LineRenderer;
 
 	// Update Global Count
 	TotalActiveCount--;
@@ -1137,14 +1136,13 @@ void ParticleBufferClass::Reset_Colors(ParticlePropertyStruct<Vector3> &new_prop
 			Color->Release_Ref();
 			Color = NULL;
 		}
-		if (ColorKeyFrameTimes) {
-			delete [] ColorKeyFrameTimes;
-			ColorKeyFrameTimes = NULL;
-		}
-		if (ColorKeyFrameDeltas) {
-			delete [] ColorKeyFrameDeltas;
-			ColorKeyFrameDeltas = NULL;
-		}
+
+		delete [] ColorKeyFrameTimes;
+		ColorKeyFrameTimes = NULL;
+
+		delete [] ColorKeyFrameDeltas;
+		ColorKeyFrameDeltas = NULL;
+
 		if (ColorKeyFrameValues) {
 			if (NumColorKeyFrames > 1) {
 				delete [] ColorKeyFrameValues;
@@ -1183,21 +1181,10 @@ void ParticleBufferClass::Reset_Colors(ParticlePropertyStruct<Vector3> &new_prop
 		// otherwise release and reallocate.
 		unsigned int new_num_color_key_frames = ckey + 1;// Includes start keyframe (keytime == 0).
 		if (new_num_color_key_frames != NumColorKeyFrames) {
-
-			if (ColorKeyFrameTimes) {
-				delete [] ColorKeyFrameTimes;
-				ColorKeyFrameTimes = NULL;
-			}
-			if (ColorKeyFrameValues) {
-				delete [] ColorKeyFrameValues;
-				ColorKeyFrameValues = NULL;
-			}
-			if (ColorKeyFrameDeltas) {
-				delete [] ColorKeyFrameDeltas;
-				ColorKeyFrameDeltas = NULL;
-			}
-
 			NumColorKeyFrames = new_num_color_key_frames;
+			delete [] ColorKeyFrameTimes;
+			delete [] ColorKeyFrameValues;
+			delete [] ColorKeyFrameDeltas;
 			ColorKeyFrameTimes = W3DNEWARRAY unsigned int [NumColorKeyFrames];
 			ColorKeyFrameValues = W3DNEWARRAY Vector3 [NumColorKeyFrames];
 			ColorKeyFrameDeltas = W3DNEWARRAY Vector3 [NumColorKeyFrames];
@@ -1297,14 +1284,13 @@ void ParticleBufferClass::Reset_Opacity(ParticlePropertyStruct<float> &new_props
 			Alpha->Release_Ref();
 			Alpha = NULL;
 		}
-		if (AlphaKeyFrameTimes) {
-			delete [] AlphaKeyFrameTimes;
-			AlphaKeyFrameTimes = NULL;
-		}
-		if (AlphaKeyFrameDeltas) {
-			delete [] AlphaKeyFrameDeltas;
-			AlphaKeyFrameDeltas = NULL;
-		}
+
+		delete [] AlphaKeyFrameTimes;
+		AlphaKeyFrameTimes = NULL;
+
+		delete [] AlphaKeyFrameDeltas;
+		AlphaKeyFrameDeltas = NULL;
+
 		if (AlphaKeyFrameValues) {
 			if (NumAlphaKeyFrames > 1) {
 				delete [] AlphaKeyFrameValues;
@@ -1343,21 +1329,10 @@ void ParticleBufferClass::Reset_Opacity(ParticlePropertyStruct<float> &new_props
 		// otherwise release and reallocate.
 		unsigned int new_num_alpha_key_frames = akey + 1;// Includes start keyframe (keytime == 0).
 		if (new_num_alpha_key_frames != NumAlphaKeyFrames) {
-
-			if (AlphaKeyFrameTimes) {
-				delete [] AlphaKeyFrameTimes;
-				AlphaKeyFrameTimes = NULL;
-			}
-			if (AlphaKeyFrameValues) {
-				delete [] AlphaKeyFrameValues;
-				AlphaKeyFrameValues = NULL;
-			}
-			if (AlphaKeyFrameDeltas) {
-				delete [] AlphaKeyFrameDeltas;
-				AlphaKeyFrameDeltas = NULL;
-			}
-
 			NumAlphaKeyFrames = new_num_alpha_key_frames;
+			delete [] AlphaKeyFrameValues;
+			delete [] AlphaKeyFrameTimes;
+			delete [] AlphaKeyFrameDeltas;
 			AlphaKeyFrameTimes = W3DNEWARRAY unsigned int [NumAlphaKeyFrames];
 			AlphaKeyFrameValues = W3DNEWARRAY float [NumAlphaKeyFrames];
 			AlphaKeyFrameDeltas = W3DNEWARRAY float [NumAlphaKeyFrames];
@@ -1454,14 +1429,13 @@ void ParticleBufferClass::Reset_Size(ParticlePropertyStruct<float> &new_props)
 			Size->Release_Ref();
 			Size = NULL;
 		}
-		if (SizeKeyFrameTimes) {
-			delete [] SizeKeyFrameTimes;
-			SizeKeyFrameTimes = NULL;
-		}
-		if (SizeKeyFrameDeltas) {
-			delete [] SizeKeyFrameDeltas;
-			SizeKeyFrameDeltas = NULL;
-		}
+
+		delete [] SizeKeyFrameTimes;
+		SizeKeyFrameTimes = NULL;
+
+		delete [] SizeKeyFrameDeltas;
+		SizeKeyFrameDeltas = NULL;
+
 		if (SizeKeyFrameValues) {
 			if (NumSizeKeyFrames > 1) {
 				delete [] SizeKeyFrameValues;
@@ -1500,21 +1474,10 @@ void ParticleBufferClass::Reset_Size(ParticlePropertyStruct<float> &new_props)
 		// otherwise release and reallocate.
 		unsigned int new_num_size_key_frames = skey + 1;// Includes start keyframe (keytime == 0).
 		if (new_num_size_key_frames != NumSizeKeyFrames) {
-
-			if (SizeKeyFrameTimes) {
-				delete [] SizeKeyFrameTimes;
-				SizeKeyFrameTimes = NULL;
-			}
-			if (SizeKeyFrameValues) {
-				delete [] SizeKeyFrameValues;
-				SizeKeyFrameValues = NULL;
-			}
-			if (SizeKeyFrameDeltas) {
-				delete [] SizeKeyFrameDeltas;
-				SizeKeyFrameDeltas = NULL;
-			}
-
 			NumSizeKeyFrames = new_num_size_key_frames;
+			delete [] SizeKeyFrameTimes;
+			delete [] SizeKeyFrameValues;
+			delete [] SizeKeyFrameDeltas;
 			SizeKeyFrameTimes = W3DNEWARRAY unsigned int [NumSizeKeyFrames];
 			SizeKeyFrameValues = W3DNEWARRAY float [NumSizeKeyFrames];
 			SizeKeyFrameDeltas = W3DNEWARRAY float [NumSizeKeyFrames];
@@ -1625,22 +1588,18 @@ void ParticleBufferClass::Reset_Rotations(ParticlePropertyStruct<float> &new_pro
 
 		// Release Arrays,
 		REF_PTR_RELEASE(Orientation);
-		if (RotationKeyFrameTimes) {
-			delete [] RotationKeyFrameTimes;
-			RotationKeyFrameTimes = NULL;
-		}
-		if (HalfRotationKeyFrameDeltas) {
-			delete [] HalfRotationKeyFrameDeltas;
-			HalfRotationKeyFrameDeltas = NULL;
-		}
-		if (RotationKeyFrameValues) {
-			delete [] RotationKeyFrameValues;
-			RotationKeyFrameValues = NULL;
-		}
-		if (OrientationKeyFrameValues) {
-			delete [] OrientationKeyFrameValues;
-			OrientationKeyFrameValues = NULL;
-		}
+
+		delete [] RotationKeyFrameTimes;
+		RotationKeyFrameTimes = NULL;
+
+		delete [] HalfRotationKeyFrameDeltas;
+		HalfRotationKeyFrameDeltas = NULL;
+
+		delete [] RotationKeyFrameValues;
+		RotationKeyFrameValues = NULL;
+
+		delete [] OrientationKeyFrameValues;
+		OrientationKeyFrameValues = NULL;
 
 		NumRotationKeyFrames = 0;
 		NumRandomRotationEntriesMinus1 = 0;
@@ -1671,25 +1630,11 @@ void ParticleBufferClass::Reset_Rotations(ParticlePropertyStruct<float> &new_pro
 		// OrientationKeyFrameValues if the right size, otherwise release and reallocate.
 		unsigned int new_num_key_frames = key + 1;// Includes start keyframe (keytime == 0).
 		if (new_num_key_frames != NumRotationKeyFrames) {
-
-			if (RotationKeyFrameTimes) {
-				delete [] RotationKeyFrameTimes;
-				RotationKeyFrameTimes = NULL;
-			}
-			if (RotationKeyFrameValues) {
-				delete [] RotationKeyFrameValues;
-				RotationKeyFrameValues = NULL;
-			}
-			if (HalfRotationKeyFrameDeltas) {
-				delete [] HalfRotationKeyFrameDeltas;
-				HalfRotationKeyFrameDeltas = NULL;
-			}
-			if (OrientationKeyFrameValues) {
-				delete [] OrientationKeyFrameValues;
-				OrientationKeyFrameValues = NULL;
-			}
-
 			NumRotationKeyFrames = new_num_key_frames;
+			delete [] RotationKeyFrameTimes;
+			delete [] RotationKeyFrameValues;
+			delete [] HalfRotationKeyFrameDeltas;
+			delete [] OrientationKeyFrameValues;
 			RotationKeyFrameTimes = W3DNEWARRAY unsigned int [NumRotationKeyFrames];
 			RotationKeyFrameValues = W3DNEWARRAY float [NumRotationKeyFrames];
 			HalfRotationKeyFrameDeltas = W3DNEWARRAY float [NumRotationKeyFrames];
@@ -1879,21 +1824,10 @@ void ParticleBufferClass::Reset_Frames(ParticlePropertyStruct<float> &new_props)
 		// otherwise release and reallocate.
 		unsigned int new_num_key_frames = key + 1;// Includes start keyframe (keytime == 0).
 		if (new_num_key_frames != NumFrameKeyFrames) {
-
-			if (FrameKeyFrameTimes) {
-				delete [] FrameKeyFrameTimes;
-				FrameKeyFrameTimes = NULL;
-			}
-			if (FrameKeyFrameValues) {
-				delete [] FrameKeyFrameValues;
-				FrameKeyFrameValues = NULL;
-			}
-			if (FrameKeyFrameDeltas) {
-				delete [] FrameKeyFrameDeltas;
-				FrameKeyFrameDeltas = NULL;
-			}
-
 			NumFrameKeyFrames = new_num_key_frames;
+			delete [] FrameKeyFrameTimes;
+			delete [] FrameKeyFrameValues;
+			delete [] FrameKeyFrameDeltas;
 			FrameKeyFrameTimes = W3DNEWARRAY unsigned int [NumFrameKeyFrames];
 			FrameKeyFrameValues = W3DNEWARRAY float [NumFrameKeyFrames];
 			FrameKeyFrameDeltas = W3DNEWARRAY float [NumFrameKeyFrames];
@@ -1986,14 +1920,13 @@ void ParticleBufferClass::Reset_Blur_Times(ParticlePropertyStruct<float> &new_bl
 
 		// Release Arrays, Reuse KeyFrameValues if the right size,
 		// otherwise release and reallocate.
-		if (BlurTimeKeyFrameTimes) {
-			delete [] BlurTimeKeyFrameTimes;
-			BlurTimeKeyFrameTimes = NULL;
-		}
-		if (BlurTimeKeyFrameDeltas) {
-			delete [] BlurTimeKeyFrameDeltas;
-			BlurTimeKeyFrameDeltas = NULL;
-		}
+
+		delete [] BlurTimeKeyFrameTimes;
+		BlurTimeKeyFrameTimes = NULL;
+
+		delete [] BlurTimeKeyFrameDeltas;
+		BlurTimeKeyFrameDeltas = NULL;
+
 		if (BlurTimeKeyFrameValues) {
 			if (NumBlurTimeKeyFrames > 1) {
 				delete [] BlurTimeKeyFrameValues;
@@ -2027,21 +1960,10 @@ void ParticleBufferClass::Reset_Blur_Times(ParticlePropertyStruct<float> &new_bl
 		// otherwise release and reallocate.
 		unsigned int new_num_key_frames = key + 1;// Includes start keyframe (keytime == 0).
 		if (new_num_key_frames != NumBlurTimeKeyFrames) {
-
-			if (BlurTimeKeyFrameTimes) {
-				delete [] BlurTimeKeyFrameTimes;
-				BlurTimeKeyFrameTimes = NULL;
-			}
-			if (BlurTimeKeyFrameValues) {
-				delete [] BlurTimeKeyFrameValues;
-				BlurTimeKeyFrameValues = NULL;
-			}
-			if (BlurTimeKeyFrameDeltas) {
-				delete [] BlurTimeKeyFrameDeltas;
-				BlurTimeKeyFrameDeltas = NULL;
-			}
-
 			NumBlurTimeKeyFrames = new_num_key_frames;
+			delete [] BlurTimeKeyFrameTimes;
+			delete [] BlurTimeKeyFrameValues;
+			delete [] BlurTimeKeyFrameDeltas;
 			BlurTimeKeyFrameTimes = new unsigned int [NumBlurTimeKeyFrames];
 			BlurTimeKeyFrameValues = new float [NumBlurTimeKeyFrames];
 			BlurTimeKeyFrameDeltas = new float [NumBlurTimeKeyFrames];

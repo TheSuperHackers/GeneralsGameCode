@@ -27,7 +27,7 @@
 // Desc:   System responsible for Crates as code objects - ini, new/delete etc
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_VETERANCY_NAMES				// for TheVeterancyNames[]
 
@@ -47,10 +47,7 @@ CrateSystem::~CrateSystem()
 	for( Int templateIndex = 0; templateIndex < count; templateIndex ++ )
 	{
 		CrateTemplate *currentTemplate = m_crateTemplateVector[templateIndex];
-		if( currentTemplate )
-		{
-			deleteInstance(currentTemplate);
-		}
+		deleteInstance(currentTemplate);
 	}
 	m_crateTemplateVector.clear();
 }
@@ -122,7 +119,7 @@ CrateTemplate *CrateSystem::newCrateTemplate( AsciiString name )
 	CrateTemplate *ct = newInstance(CrateTemplate);
 
 	// if the default template is present, get it and copy over any data to the new template
-	const CrateTemplate *defaultCT = findCrateTemplate(AsciiString("DefaultCrate"));
+	const CrateTemplate *defaultCT = findCrateTemplate("DefaultCrate");
 	if(defaultCT)
 	{
 		*ct = *defaultCT;
@@ -188,13 +185,11 @@ const FieldParse CrateTemplate::TheCrateTemplateFieldParseTable[] =
 	{ "CrateObject",			CrateTemplate::parseCrateCreationEntry,	NULL,									NULL },
 	{ "KillerScience",		INI::parseScience,											NULL,									offsetof( CrateTemplate, m_killerScience) },
 	{ "OwnedByMaker",			INI::parseBool,													NULL,									offsetof( CrateTemplate, m_isOwnedByMaker) },
-	{ NULL,								NULL,																		NULL,									NULL },		// keep this last!
+	{ NULL,								NULL,																		NULL,									NULL },
 };
 
 CrateTemplate::CrateTemplate()
 {
-	m_name = "";
-
 	m_creationChance = 0;
 	CLEAR_KINDOFMASK(m_killedByTypeKindof);
 	m_veterancyLevel = LEVEL_INVALID;

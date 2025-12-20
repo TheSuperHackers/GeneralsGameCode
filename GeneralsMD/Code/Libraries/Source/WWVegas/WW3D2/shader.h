@@ -34,19 +34,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef SHADER_H
-#define SHADER_H
 
 #include "always.h"
-
-#if defined (SR_OS_SOLARIS)
-#undef PASS_MAX
-#endif
 
 class DX8Wrapper;
 struct W3dMaterial3Struct;
@@ -95,7 +85,6 @@ public:
 	{
 		ALPHATEST_DISABLE= 0,// disable alpha testing (default)
 		ALPHATEST_ENABLE,		// enable alpha testing
-		ALPHATEST_MAX			// end of enumeration
 	};
 
 	enum DepthCompareType
@@ -108,21 +97,18 @@ public:
 		PASS_NOTEQUAL,       // pass if incoming not equal to stored
 		PASS_GEQUAL,			// pass if incoming greater than or equal to stored
 		PASS_ALWAYS,			// pass always
-		PASS_MAX					// end of enumeration
 	};
 
 	enum DepthMaskType
 	{
 		DEPTH_WRITE_DISABLE=0,	// disable depth buffer writes
 		DEPTH_WRITE_ENABLE,		// enable depth buffer writes		(default)
-		DEPTH_WRITE_MAX			// end of enumeration
 	};
 
 	enum ColorMaskType
 	{
 		COLOR_WRITE_DISABLE=0,	// disable color buffer writes
 		COLOR_WRITE_ENABLE,		// enable color buffer writes		(default)
-		COLOR_WRITE_MAX			// end of enumeration
 	};
 
  	enum DetailAlphaFuncType
@@ -131,7 +117,6 @@ public:
 		DETAILALPHA_DETAIL,		// other
 		DETAILALPHA_SCALE,		// local * other
 		DETAILALPHA_INVSCALE,	// ~(~local * ~other) = local + (1-local)*other
-		DETAILALPHA_MAX			// end of enumeration
 	};
 
 	enum DetailColorFuncType
@@ -149,22 +134,18 @@ public:
 		DETAILCOLOR_ADDSIGNED2X,	// 1010	(local + other - 0.5) * 2
 		DETAILCOLOR_SCALE2X,			// 1011	local * other * 2
 		DETAILCOLOR_MODALPHAADDCOLOR,	// 1100 local + localAlpha * other
-
-		DETAILCOLOR_MAX				//			end of enumeration
 	};
 
 	enum CullModeType
 	{
 		CULL_MODE_DISABLE=0,
 		CULL_MODE_ENABLE,
-		CULL_MODE_MAX
 	};
 
 	enum NPatchEnableType
 	{
 		NPATCH_DISABLE=0,
 		NPATCH_ENABLE,
-		NPATCH_TYPE_MAX
 	};
 
   	enum DstBlendFuncType
@@ -175,7 +156,8 @@ public:
  		DSTBLEND_ONE_MINUS_SRC_COLOR,	// destination pixel multiplied by one minus (i.e. inverse) fragment RGB components
  		DSTBLEND_SRC_ALPHA,        	// destination pixel multiplied by fragment alpha component
  		DSTBLEND_ONE_MINUS_SRC_ALPHA, // destination pixel multiplied by fragment inverse alpha
-		DSTBLEND_MAX						// end of enumeration
+
+		DSTBLEND_MAX
   	};
 
 	enum FogFuncType
@@ -184,7 +166,6 @@ public:
  		FOG_ENABLE,        	// apply fog, f*fogColor + (1-f)*fragment
  		FOG_SCALE_FRAGMENT,  // fog scalar value multiplies fragment, (1-f)*fragment
  		FOG_WHITE,				// fog scalar value replaces fragment, f*fogColor
-		FOG_MAX					// end of enumeration
  	};
 
  	enum PriGradientType
@@ -195,14 +176,12 @@ public:
 		GRADIENT_BUMPENVMAP,				// 011	environment-mapped bump mapping
 		GRADIENT_BUMPENVMAPLUMINANCE,	// 100	environment-mapped bump mapping with luminance control
 		GRADIENT_MODULATE2X,				// 101	modulate fragment ARGB by gradient ARGB and multiply RGB by 2
-		GRADIENT_MAX						// end of enumeration
  	};
 
 	enum SecGradientType
 	{
 		SECONDARY_GRADIENT_DISABLE=0,	// don't draw secondary gradient (default)
 		SECONDARY_GRADIENT_ENABLE,    // add secondary gradient RGB to fragment RGB
-		SECONDARY_GRADIENT_MAX			// end of enumeration
 	};
 
 	enum SrcBlendFuncType
@@ -211,14 +190,14 @@ public:
   		SRCBLEND_ONE,							// fragment added unmodified to color buffer (default)
  		SRCBLEND_SRC_ALPHA,					// fragment RGB components multiplied by fragment A
  		SRCBLEND_ONE_MINUS_SRC_ALPHA,		// fragment RGB components multiplied by fragment inverse (one minus) A
-		SRCBLEND_MAX							// end of enumeration
+
+		SRCBLEND_MAX
   	};
 
 	enum TexturingType
 	{
 		TEXTURING_DISABLE=0, // no texturing (treat fragment initial color as 1,1,1,1)
 		TEXTURING_ENABLE,    // enable texturing
-		TEXTURING_MAX			// end of enumeration
 	};
 
 	enum StaticSortCategoryType
@@ -260,10 +239,10 @@ public:
 	bool operator == (const ShaderClass & s) { return ShaderBits == s.ShaderBits; }
 	bool operator != (const ShaderClass & s) { return ShaderBits != s.ShaderBits; }
 
-	inline unsigned int Get_Bits(void) const
+	unsigned int Get_Bits(void) const
 	{	return ShaderBits; }
 
-	inline int Uses_Alpha(void) const
+	int Uses_Alpha(void) const
 	{
 		// check if alpha test is enabled
 		if (Get_Alpha_Test() != ALPHATEST_DISABLE)
@@ -278,25 +257,25 @@ public:
 		return (src == SRCBLEND_SRC_ALPHA || src == SRCBLEND_ONE_MINUS_SRC_ALPHA);
 	}
 
-	inline int	Uses_Fog(void) const
+	int	Uses_Fog(void) const
 	{
 		return (Get_Fog_Func() != FOG_DISABLE);
 	}
 
-	inline int	Uses_Primary_Gradient(void) const
+	int	Uses_Primary_Gradient(void) const
 	{
 		return (Get_Primary_Gradient() != GRADIENT_DISABLE);
 	}
 
-	inline int	Uses_Secondary_Gradient(void) const
+	int	Uses_Secondary_Gradient(void) const
 	{
 		return (Get_Secondary_Gradient() != SECONDARY_GRADIENT_DISABLE);
 	}
 
-	inline int	Uses_Texture(void) const
+	int	Uses_Texture(void) const
 	{ return (Get_Texturing() != TEXTURING_DISABLE); }
 
-	inline int	Uses_Post_Detail_Texture(void) const
+	int	Uses_Post_Detail_Texture(void) const
 	{
 		if (Get_Texturing() == TEXTURING_DISABLE)
 		return false;
@@ -305,35 +284,35 @@ public:
 
 	inline void	Reset(void);
 
-	inline DepthCompareType		Get_Depth_Compare(void)	const								{ return (DepthCompareType)(ShaderBits&MASK_DEPTHCOMPARE>>SHIFT_DEPTHCOMPARE); }
-	inline DepthMaskType			Get_Depth_Mask(void) const									{ return (DepthMaskType)((ShaderBits&MASK_DEPTHMASK)>>SHIFT_DEPTHMASK); }
-	inline ColorMaskType			Get_Color_Mask(void) const									{ return (ColorMaskType)((ShaderBits&MASK_COLORMASK)>>SHIFT_COLORMASK); }
-	inline DetailAlphaFuncType	Get_Post_Detail_Alpha_Func(void) const					{ return (DetailAlphaFuncType)((ShaderBits&MASK_POSTDETAILALPHAFUNC)>>SHIFT_POSTDETAILALPHAFUNC); }
-	inline DetailColorFuncType	Get_Post_Detail_Color_Func(void) const					{ return (DetailColorFuncType)((ShaderBits&MASK_POSTDETAILCOLORFUNC)>>SHIFT_POSTDETAILCOLORFUNC); }
-	inline AlphaTestType			Get_Alpha_Test(void) const									{ return (AlphaTestType)((ShaderBits&MASK_ALPHATEST)>>SHIFT_ALPHATEST); }
-	inline CullModeType			Get_Cull_Mode(void) const									{ return (CullModeType)((ShaderBits&MASK_CULLMODE)>>SHIFT_CULLMODE); }
-	inline DstBlendFuncType		Get_Dst_Blend_Func(void) const							{ return (DstBlendFuncType)((ShaderBits&MASK_DSTBLEND)>>SHIFT_DSTBLEND); }
-	inline FogFuncType			Get_Fog_Func(void) const									{ return (FogFuncType)((ShaderBits&MASK_FOG)>>SHIFT_FOG); }
-	inline PriGradientType		Get_Primary_Gradient(void) const							{ return (PriGradientType)((ShaderBits&MASK_PRIGRADIENT)>>SHIFT_PRIGRADIENT); }
-	inline SecGradientType		Get_Secondary_Gradient(void) const						{ return (SecGradientType)((ShaderBits&MASK_SECGRADIENT)>>SHIFT_SECGRADIENT); }
-	inline SrcBlendFuncType		Get_Src_Blend_Func(void) const							{ return (SrcBlendFuncType)((ShaderBits&MASK_SRCBLEND)>>SHIFT_SRCBLEND); }
-	inline TexturingType			Get_Texturing(void) const									{ return (TexturingType)((ShaderBits&MASK_TEXTURING)>>SHIFT_TEXTURING); }
-	inline NPatchEnableType		Get_NPatch_Enable(void) const								{ return (NPatchEnableType)((ShaderBits&MASK_NPATCHENABLE)>>SHIFT_NPATCHENABLE); }
+	DepthCompareType		Get_Depth_Compare(void)	const								{ return (DepthCompareType)(ShaderBits&MASK_DEPTHCOMPARE>>SHIFT_DEPTHCOMPARE); }
+	DepthMaskType			Get_Depth_Mask(void) const									{ return (DepthMaskType)((ShaderBits&MASK_DEPTHMASK)>>SHIFT_DEPTHMASK); }
+	ColorMaskType			Get_Color_Mask(void) const									{ return (ColorMaskType)((ShaderBits&MASK_COLORMASK)>>SHIFT_COLORMASK); }
+	DetailAlphaFuncType	Get_Post_Detail_Alpha_Func(void) const					{ return (DetailAlphaFuncType)((ShaderBits&MASK_POSTDETAILALPHAFUNC)>>SHIFT_POSTDETAILALPHAFUNC); }
+	DetailColorFuncType	Get_Post_Detail_Color_Func(void) const					{ return (DetailColorFuncType)((ShaderBits&MASK_POSTDETAILCOLORFUNC)>>SHIFT_POSTDETAILCOLORFUNC); }
+	AlphaTestType			Get_Alpha_Test(void) const									{ return (AlphaTestType)((ShaderBits&MASK_ALPHATEST)>>SHIFT_ALPHATEST); }
+	CullModeType			Get_Cull_Mode(void) const									{ return (CullModeType)((ShaderBits&MASK_CULLMODE)>>SHIFT_CULLMODE); }
+	DstBlendFuncType		Get_Dst_Blend_Func(void) const							{ return (DstBlendFuncType)((ShaderBits&MASK_DSTBLEND)>>SHIFT_DSTBLEND); }
+	FogFuncType			Get_Fog_Func(void) const									{ return (FogFuncType)((ShaderBits&MASK_FOG)>>SHIFT_FOG); }
+	PriGradientType		Get_Primary_Gradient(void) const							{ return (PriGradientType)((ShaderBits&MASK_PRIGRADIENT)>>SHIFT_PRIGRADIENT); }
+	SecGradientType		Get_Secondary_Gradient(void) const						{ return (SecGradientType)((ShaderBits&MASK_SECGRADIENT)>>SHIFT_SECGRADIENT); }
+	SrcBlendFuncType		Get_Src_Blend_Func(void) const							{ return (SrcBlendFuncType)((ShaderBits&MASK_SRCBLEND)>>SHIFT_SRCBLEND); }
+	TexturingType			Get_Texturing(void) const									{ return (TexturingType)((ShaderBits&MASK_TEXTURING)>>SHIFT_TEXTURING); }
+	NPatchEnableType		Get_NPatch_Enable(void) const								{ return (NPatchEnableType)((ShaderBits&MASK_NPATCHENABLE)>>SHIFT_NPATCHENABLE); }
 
-	inline	void	Set_Depth_Compare(DepthCompareType x)					{ ShaderBits&=~MASK_DEPTHCOMPARE;ShaderBits|=(x<<SHIFT_DEPTHCOMPARE);	}
-	inline	void	Set_Depth_Mask(DepthMaskType x)							{ ShaderBits&=~MASK_DEPTHMASK; ShaderBits|=(x<<SHIFT_DEPTHMASK);	}
-	inline	void	Set_Color_Mask(ColorMaskType x)							{ ShaderBits&=~MASK_COLORMASK; ShaderBits|=(x<<SHIFT_COLORMASK);	}
-	inline	void	Set_Post_Detail_Alpha_Func(DetailAlphaFuncType x)	{ ShaderBits&=~MASK_POSTDETAILALPHAFUNC;ShaderBits|=(x<<SHIFT_POSTDETAILALPHAFUNC);	}
-	inline	void	Set_Post_Detail_Color_Func(DetailColorFuncType x)	{ ShaderBits&=~MASK_POSTDETAILCOLORFUNC;ShaderBits|=(x<<SHIFT_POSTDETAILCOLORFUNC);	}
-	inline	void	Set_Alpha_Test(AlphaTestType x)							{ ShaderBits&=~MASK_ALPHATEST; ShaderBits|=(x<<SHIFT_ALPHATEST);		}
-	inline	void	Set_Cull_Mode(CullModeType x)								{ ShaderBits&=~MASK_CULLMODE; ShaderBits|=(x<<SHIFT_CULLMODE);		}
-	inline	void	Set_Dst_Blend_Func(DstBlendFuncType x)					{ ShaderBits&=~MASK_DSTBLEND; ShaderBits|=(x<<SHIFT_DSTBLEND);		}
-	inline	void	Set_Fog_Func(FogFuncType x)								{ ShaderBits&=~MASK_FOG; ShaderBits|=(x<<SHIFT_FOG);			}
-	inline	void	Set_Primary_Gradient(PriGradientType x)				{ ShaderBits&=~MASK_PRIGRADIENT;ShaderBits|=(x<<SHIFT_PRIGRADIENT);	}
-	inline	void	Set_Secondary_Gradient(SecGradientType x)				{ ShaderBits&=~MASK_SECGRADIENT;ShaderBits|=(x<<SHIFT_SECGRADIENT);	}
-	inline	void	Set_Src_Blend_Func(SrcBlendFuncType x)					{ ShaderBits&=~MASK_SRCBLEND;ShaderBits|=(x<<SHIFT_SRCBLEND);		}
-	inline	void	Set_Texturing(TexturingType x)							{ ShaderBits&=~MASK_TEXTURING; ShaderBits|=(x<<SHIFT_TEXTURING);	}
-	inline	void	Set_NPatch_Enable(NPatchEnableType x)					{ ShaderBits&=~MASK_NPATCHENABLE; ShaderBits|=(x<<SHIFT_NPATCHENABLE);	}
+	void	Set_Depth_Compare(DepthCompareType x)					{ ShaderBits&=~MASK_DEPTHCOMPARE;ShaderBits|=(x<<SHIFT_DEPTHCOMPARE);	}
+	void	Set_Depth_Mask(DepthMaskType x)							{ ShaderBits&=~MASK_DEPTHMASK; ShaderBits|=(x<<SHIFT_DEPTHMASK);	}
+	void	Set_Color_Mask(ColorMaskType x)							{ ShaderBits&=~MASK_COLORMASK; ShaderBits|=(x<<SHIFT_COLORMASK);	}
+	void	Set_Post_Detail_Alpha_Func(DetailAlphaFuncType x)	{ ShaderBits&=~MASK_POSTDETAILALPHAFUNC;ShaderBits|=(x<<SHIFT_POSTDETAILALPHAFUNC);	}
+	void	Set_Post_Detail_Color_Func(DetailColorFuncType x)	{ ShaderBits&=~MASK_POSTDETAILCOLORFUNC;ShaderBits|=(x<<SHIFT_POSTDETAILCOLORFUNC);	}
+	void	Set_Alpha_Test(AlphaTestType x)							{ ShaderBits&=~MASK_ALPHATEST; ShaderBits|=(x<<SHIFT_ALPHATEST);		}
+	void	Set_Cull_Mode(CullModeType x)								{ ShaderBits&=~MASK_CULLMODE; ShaderBits|=(x<<SHIFT_CULLMODE);		}
+	void	Set_Dst_Blend_Func(DstBlendFuncType x)					{ ShaderBits&=~MASK_DSTBLEND; ShaderBits|=(x<<SHIFT_DSTBLEND);		}
+	void	Set_Fog_Func(FogFuncType x)								{ ShaderBits&=~MASK_FOG; ShaderBits|=(x<<SHIFT_FOG);			}
+	void	Set_Primary_Gradient(PriGradientType x)				{ ShaderBits&=~MASK_PRIGRADIENT;ShaderBits|=(x<<SHIFT_PRIGRADIENT);	}
+	void	Set_Secondary_Gradient(SecGradientType x)				{ ShaderBits&=~MASK_SECGRADIENT;ShaderBits|=(x<<SHIFT_SECGRADIENT);	}
+	void	Set_Src_Blend_Func(SrcBlendFuncType x)					{ ShaderBits&=~MASK_SRCBLEND;ShaderBits|=(x<<SHIFT_SRCBLEND);		}
+	void	Set_Texturing(TexturingType x)							{ ShaderBits&=~MASK_TEXTURING; ShaderBits|=(x<<SHIFT_TEXTURING);	}
+	void	Set_NPatch_Enable(NPatchEnableType x)					{ ShaderBits&=~MASK_NPATCHENABLE; ShaderBits|=(x<<SHIFT_NPATCHENABLE);	}
 
 	void	Init_From_Material3(const W3dMaterial3Struct & mat3);
 	void	Enable_Fog (const char *source);
@@ -343,7 +322,7 @@ public:
 	int							Guess_Sort_Level(void) const;
 
 	// DX 8 state management routines
-	static inline void	Invalidate() { ShaderDirty=true; }
+	static void	Invalidate() { ShaderDirty=true; }
 
 	// Global backface culling invert.  This interface can be used to globally invert all backface
 	// culling.  This is a global setting and will affect everything being rendered.  Typically it
@@ -482,5 +461,3 @@ inline void ShaderClass::Reset()
 	Set_Post_Detail_Alpha_Func(DETAILALPHA_DISABLE);
 	Set_NPatch_Enable(NPATCH_DISABLE);
 }
-
-#endif //SHADER_H

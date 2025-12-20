@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #define DEFINE_DAMAGE_NAMES
 #define DEFINE_DEATH_NAMES
 
@@ -127,6 +127,7 @@ static const BlockParse theTypeTable[] =
 	{ "Video",							INI::parseVideoDefinition },
 	{ "WaterSet",						INI::parseWaterSettingDefinition },
 	{ "WaterTransparency",	INI::parseWaterTransparencyDefinition},
+	{ "Weather",	INI::parseWeatherDefinition},
 	{ "Weapon",							INI::parseWeaponTemplateDefinition },
 	{ "WebpageURL",					INI::parseWebpageURLDefinition },
 	{ "HeaderTemplate",			INI::parseHeaderTemplateDefinition },
@@ -136,7 +137,7 @@ static const BlockParse theTypeTable[] =
 	{	"BenchProfile",				INI::parseBenchProfile },
 	{	"ReallyLowMHz",				parseReallyLowMHz },
 
-	{ NULL,									NULL },		// keep this last!
+	{ NULL,									NULL },
 };
 
 
@@ -189,22 +190,61 @@ INI::INI( void )
 	m_curBlockStart[0]	= 0;
 #endif
 
-}  // end INI
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 INI::~INI( void )
 {
 
-}  // end ~INI
+}
+
+//-------------------------------------------------------------------------------------------------
+UnsignedInt INI::loadFileDirectory( AsciiString fileDirName, INILoadType loadType, Xfer *pXfer, Bool subdirs )
+{
+	UnsignedInt filesRead = 0;
+
+	AsciiString iniDir = fileDirName;
+	AsciiString iniFile = fileDirName;
+
+	char ext[] = ".ini";
+
+	if (iniDir.endsWithNoCase(ext))
+	{
+		iniDir.truncateBy(ARRAY_SIZE(ext)-1);
+	}
+
+	if (!iniFile.endsWithNoCase(ext))
+	{
+		iniFile.concat(ext);
+	}
+
+	if (TheFileSystem->doesFileExist(iniFile.str()))
+	{
+		filesRead += load(iniFile, loadType, pXfer);
+	}
+
+	// Load any additional ini files from a "filename" directory and its subdirectories.
+	filesRead += loadDirectory(iniDir, loadType, pXfer, subdirs);
+
+	// Expect to open and load at least one file.
+	if (filesRead == 0)
+	{
+		throw INI_CANT_OPEN_FILE;
+	}
+
+	return filesRead;
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Load all INI files in the specified directory (and subdirectories if indicated).
 	* If we are to load subdirectories, we will load them *after* we load all the
 	* files in the current directory */
 //-------------------------------------------------------------------------------------------------
-void INI::loadDirectory( AsciiString dirName, Bool subdirs, INILoadType loadType, Xfer *pXfer )
+UnsignedInt INI::loadDirectory( AsciiString dirName, INILoadType loadType, Xfer *pXfer, Bool subdirs )
 {
+	UnsignedInt filesRead = 0;
+
 	// sanity
 	if( dirName.isEmpty() )
 		throw INI_INVALID_DIRECTORY;
@@ -213,7 +253,7 @@ void INI::loadDirectory( AsciiString dirName, Bool subdirs, INILoadType loadType
 	{
 		FilenameList filenameList;
 		dirName.concat('\\');
-		TheFileSystem->getFileListInDirectory(dirName, "*.ini", filenameList, TRUE);
+		TheFileSystem->getFileListInDirectory(dirName, "*.ini", filenameList, subdirs);
 		// Load the INI files in the dir now, in a sorted order.  This keeps things the same between machines
 		// in a network game.
 		FilenameList::const_iterator it = filenameList.begin();
@@ -224,7 +264,7 @@ void INI::loadDirectory( AsciiString dirName, Bool subdirs, INILoadType loadType
 
 			if ((tempname.find('\\') == NULL) && (tempname.find('/') == NULL)) {
 				// this file doesn't reside in a subdirectory, load it first.
-				load( *it, loadType, pXfer );
+				filesRead += load( *it, loadType, pXfer );
 			}
 			++it;
 		}
@@ -236,7 +276,7 @@ void INI::loadDirectory( AsciiString dirName, Bool subdirs, INILoadType loadType
 			tempname = (*it).str() + dirName.getLength();
 
 			if ((tempname.find('\\') != NULL) || (tempname.find('/') != NULL)) {
-				load( *it, loadType, pXfer );
+				filesRead += load( *it, loadType, pXfer );
 			}
 			++it;
 		}
@@ -247,7 +287,8 @@ void INI::loadDirectory( AsciiString dirName, Bool subdirs, INILoadType loadType
 		throw;
 	}
 
-}  // end loadDirectory
+	return filesRead;
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -260,7 +301,7 @@ void INI::prepFile( AsciiString filename, INILoadType loadType )
 		DEBUG_CRASH(( "INI::load, cannot open file '%s', file already open", filename.str() ));
 		throw INI_FILE_ALREADY_OPEN;
 
-	}  // end if
+	}
 
 	// open the file
 	m_file = TheFileSystem->openFile(filename.str(), File::READ);
@@ -270,14 +311,14 @@ void INI::prepFile( AsciiString filename, INILoadType loadType )
 		DEBUG_CRASH(( "INI::load, cannot open file '%s'", filename.str() ));
 		throw INI_CANT_OPEN_FILE;
 
-	}  // end if
+	}
 
 	m_file = m_file->convertToRAMFile();
 
 	// save our filename
 	m_filename = filename;
 
-	// save our load time
+	// save our load type
 	m_loadType = loadType;
 }
 
@@ -337,7 +378,7 @@ static INIFieldParseProc findFieldParse(const FieldParse* parseTable, const char
 //-------------------------------------------------------------------------------------------------
 /** Load and parse an INI file */
 //-------------------------------------------------------------------------------------------------
-void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
+UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 {
 	setFPMode(); // so we have consistent Real values for GameLogic -MDC
 
@@ -364,6 +405,7 @@ void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 				if (parse)
 				{
 					#ifdef DEBUG_CRASHING
+					static_assert(ARRAY_SIZE(m_curBlockStart) >= ARRAY_SIZE(m_buffer), "Incorrect array size");
 					strcpy(m_curBlockStart, m_buffer);
 					#endif
 					try {
@@ -387,9 +429,9 @@ void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 					throw INI_UNKNOWN_TOKEN;
 				}
 
-			}  // end if
+			}
 
-		}  // end while
+		}
 	}
 	catch (...)
 	{
@@ -401,10 +443,11 @@ void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 
 	unPrepFile();
 
-}  // end load
+	return 1;
+}
 
 //-------------------------------------------------------------------------------------------------
-/** Read a line from the already open file.  Any comments will be remved and
+/** Read a line from the already open file.  Any comments will be removed and
 	* therefore ignored from any given line */
 //-------------------------------------------------------------------------------------------------
 void INI::readLine( void )
@@ -437,7 +480,7 @@ void INI::readLine( void )
 				done = TRUE;
 				m_buffer[ i ] = '\0';
 
-			}  // end if
+			}
 
 			// check for new line
 			if( m_buffer[ i ] == '\n' )
@@ -468,7 +511,7 @@ void INI::readLine( void )
 			if( ++i == INI_MAX_CHARS_PER_LINE )
 				done = TRUE;
 
-		}  // end while
+		}
 
 		// increase our line count
 		m_lineNum++;
@@ -480,7 +523,7 @@ void INI::readLine( void )
 			DEBUG_ASSERTCRASH( 0, ("Buffer too small (%d) and was truncated, increase INI_MAX_CHARS_PER_LINE",
 														 INI_MAX_CHARS_PER_LINE) );
 
-		}  // end if
+		}
 	}
 
 	if (s_xfer)
@@ -735,7 +778,7 @@ AsciiString INI::getNextQuotedAsciiString()
 			Bool done=FALSE;
 			if ((strLen=strlen(token)) > 1)
 			{
-				strcpy(buff, &token[1]);	//skip the starting quote
+				strlcpy(buff, &token[1], ARRAY_SIZE(buff));	//skip the starting quote
 				//Check for end of quoted string.  Checking here fixes cases where quoted string on same line with other data.
 				if (buff[strLen-2]=='"')	//skip ending quote if present
 				{	buff[strLen-2]='\0';
@@ -749,8 +792,8 @@ AsciiString INI::getNextQuotedAsciiString()
 
 				if (strlen(token) > 1 && token[1] != '\t')
 				{
-					strcat(buff, " ");
-					strcat(buff, token);
+					strlcat(buff, " ", ARRAY_SIZE(buff));
+					strlcat(buff, token, ARRAY_SIZE(buff));
 				}
 				else
 				{	Int buflen=strlen(buff);
@@ -784,16 +827,16 @@ AsciiString INI::getNextAsciiString()
 
 			if (strlen(token) > 1)
 			{
-				strcpy(buff, &token[1]);
+				strlcpy(buff, &token[1], ARRAY_SIZE(buff));
 			}
 
 			token = getNextToken(getSepsQuote());
 
 			if (strlen(token) > 1 && token[1] != '\t')
 			{
-				strcat(buff, " ");
+				strlcat(buff, " ", ARRAY_SIZE(buff));
 			}
-			strcat(buff, token);
+			strlcat(buff, token, ARRAY_SIZE(buff));
 			result.set(buff);
 		}
 	}
@@ -817,7 +860,7 @@ void INI::parseAndTranslateLabel( INI* ini, void * /*instance*/, void *store, co
 	UnicodeString *theString = (UnicodeString *)store;
 	theString->set( translated.str() );
 
-}  // end parseAndTranslateLabel
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse a string label assumed as an image as part of the image collection.  Translate
@@ -830,7 +873,7 @@ void INI::parseMappedImage( INI *ini, void * /*instance*/, void *store, const vo
 	if( TheMappedImageCollection )
 	{
 		typedef const Image* ConstImagePtr;
-		*(ConstImagePtr*)store = TheMappedImageCollection->findImageByName( AsciiString( token ) );
+		*(ConstImagePtr*)store = TheMappedImageCollection->findImageByName( token );
 	}
 
 	//KM: If we are in the worldbuilder, we want to parse commandbuttons for informational purposes,
@@ -839,7 +882,7 @@ void INI::parseMappedImage( INI *ini, void * /*instance*/, void *store, const vo
 	//else
 	//	throw INI_UNKNOWN_ERROR;
 
-}  // end parseMappedImage
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Parse a string label assumed as a Anim2D template name.  Translate that name to an
@@ -853,16 +896,16 @@ void INI::parseMappedImage( INI *ini, void * /*instance*/, void *store, const vo
 	{
 		Anim2DTemplate **anim2DTemplate = (Anim2DTemplate **)store;
 		*anim2DTemplate = TheAnim2DCollection->findTemplate( AsciiString( token ) );
-	}  // end if
+	}
 	else
 	{
 
 		DEBUG_CRASH(( "INI::parseAnim2DTemplate - TheAnim2DCollection is NULL" ));
 		throw INI_UNKNOWN_ERROR;
 
-	}  // end else
+	}
 
-}  // end parseAnim2DTemplate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse a percent in int or real form such as "23%" or "95.4%" and assign
@@ -874,7 +917,7 @@ void INI::parsePercentToReal( INI* ini, void * /*instance*/, void *store, const 
 	Real *theReal = (Real *)store;
 	*theReal = scanPercentToReal(token);
 
-}  // end parsePercentToReal
+}
 
 //-------------------------------------------------------------------------------------------------
 /** 'store' points to an 32 bit unsigned integer.  We will zero that integer, parse each token
@@ -1043,7 +1086,7 @@ void INI::parseRGBAColorInt( INI* ini, void * /*instance*/, void *store, const v
 	theColor->blue	= colors[ 2 ];
 	theColor->alpha = colors[ 3 ];
 
-}  // end parseRGBAColorInt
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse a color in the form of
@@ -1092,7 +1135,7 @@ void INI::parseColorInt( INI* ini, void * /*instance*/, void *store, const void*
 	Color *theColor = (Color *)store;
 	*theColor = GameMakeColor(colors[0], colors[1], colors[2], colors[3]);
 
-}  // end parseColorInt
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse a 3D coordinate of reals in the form of:
@@ -1106,7 +1149,7 @@ void INI::parseCoord3D( INI* ini, void * /*instance*/, void *store, const void* 
 	theCoord->y = scanReal(ini->getNextSubToken("Y"));
 	theCoord->z = scanReal(ini->getNextSubToken("Z"));
 
-}  // end parseCoord3D
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse a 2D coordinate of reals in the form of:
@@ -1119,7 +1162,7 @@ void INI::parseCoord2D( INI* ini, void * /*instance*/, void *store, const void* 
 	theCoord->x = scanReal(ini->getNextSubToken("X"));
 	theCoord->y = scanReal(ini->getNextSubToken("Y"));
 
-}  // end parseCoord2D
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse a 2D coordinate of Ints in the form of:
@@ -1132,7 +1175,7 @@ void INI::parseICoord2D( INI* ini, void * /*instance*/, void *store, const void*
 	theCoord->x = scanInt(ini->getNextSubToken("X"));
 	theCoord->y = scanInt(ini->getNextSubToken("Y"));
 
-}  // end parseICoord2D
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse an audio event and assign to the 'AudioEventRTS*' at store */
@@ -1145,11 +1188,8 @@ void INI::parseDynamicAudioEventRTS( INI *ini, void * /*instance*/, void *store,
 	// translate the string into a sound
 	if (stricmp(token, "NoSound") == 0)
 	{
-		if (*theSound)
-		{
-			deleteInstance(*theSound);
-			*theSound = NULL;
-		}
+		deleteInstance(*theSound);
+		*theSound = NULL;
 	}
 	else
 	{
@@ -1282,7 +1322,7 @@ void INI::parseParticleSystemTemplate( INI *ini, void * /*instance*/, void *stor
 
 	*theParticleSystemTemplate = pSystemT;
 
-}  // end parseParticleSystemTemplate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse an DamageFX and assign to the 'DamageFX *' at store */
@@ -1338,7 +1378,7 @@ void INI::parseUpgradeTemplate( INI* ini, void * /*instance*/, void *store, cons
 		throw ERROR_BUG;
 	}
 
-	const UpgradeTemplate *uu = TheUpgradeCenter->findUpgrade( AsciiString( token ) );
+	const UpgradeTemplate *uu = TheUpgradeCenter->findUpgrade( token );
 	DEBUG_ASSERTCRASH( uu || stricmp( token, "None" ) == 0, ("Upgrade %s not found!",token) );
 
 	typedef const UpgradeTemplate* ConstUpgradeTemplatePtr;
@@ -1528,12 +1568,11 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 				{
 					DEBUG_ASSERTCRASH( 0, ("[LINE: %d - FILE: '%s'] Unknown field '%s' in block '%s'",
 														 INI::getLineNum(), INI::getFilename().str(), field, m_curBlockStart) );
-					throw INI_UNKNOWN_TOKEN;
 				}
 
-			}  // end else
+			}
 
-		}  // end if
+		}
 
 		// sanity check for reaching end of file with no closing end token
 		if( done == FALSE && INI::isEOF() == TRUE )
@@ -1544,9 +1583,9 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 												 m_curBlockStart, getFilename().str(), m_blockEndToken) );
 			throw INI_MISSING_END_TOKEN;
 
-		}  // end if
+		}
 
-	}  // end while
+	}
 
 }
 
@@ -1868,61 +1907,39 @@ void INI::parseDeathTypeFlags(INI* ini, void* /*instance*/, void* store, const v
 // both blockType and blockName are case insensitive
 Bool INI::isDeclarationOfType( AsciiString blockType, AsciiString blockName, char *bufferToCheck )
 {
-	Bool retVal = true;
-	if (!bufferToCheck || blockType.isEmpty() || blockName.isEmpty()) {
+	if (!bufferToCheck || blockType.isEmpty() || blockName.isEmpty())
 		return false;
-	}
-	// DO NOT RETURN EARLY FROM THIS FUNCTION. (beyond this point)
-	// we have to restore the bufferToCheck to its previous state before returning, so
-	// it is important to get through all the checks.
 
-	char restoreChar;
-	char *tempBuff = bufferToCheck;
-	int blockTypeLength = blockType.getLength();
-	int blockNameLength = blockName.getLength();
+	const char* tempBuff = bufferToCheck;
 
-	while (isspace(*tempBuff)) {
+	while (isspace(*tempBuff))
 		++tempBuff;
-	}
 
-	if (strlen(tempBuff) > blockTypeLength) {
-		restoreChar = tempBuff[blockTypeLength];
-		tempBuff[blockTypeLength] = 0;
+	const int blockTypeLength = blockType.getLength();
+	if (strnicmp(tempBuff, blockType.str(), blockTypeLength) != 0)
+		return false;
 
-		if (stricmp(blockType.str(), tempBuff) != 0) {
-			retVal = false;
-		}
+	tempBuff += blockTypeLength;
 
-		tempBuff[blockTypeLength] = restoreChar;
-		tempBuff = tempBuff + blockTypeLength;
-	} else {
-		retVal = false;
-	}
+	if (!isspace(*tempBuff++))
+		return false;
 
-	while (isspace(*tempBuff)) {
+	while (isspace(*tempBuff))
 		++tempBuff;
-	}
 
-	if (strlen(tempBuff) > blockNameLength) {
-		restoreChar = tempBuff[blockNameLength];
-		tempBuff[blockNameLength] = 0;
+	const int blockNameLength = blockName.getLength();
+	if (strnicmp(tempBuff, blockName.str(), blockNameLength) != 0)
+		return false;
 
-		if (stricmp(blockName.str(), tempBuff) != 0) {
-			retVal = false;
-		}
+	tempBuff += blockNameLength;
 
-		tempBuff[blockNameLength] = restoreChar;
-		tempBuff = tempBuff + blockNameLength;
-	} else {
-		retVal = false;
-	}
-
-	while (strlen(tempBuff)) {
-		retVal = retVal && isspace(tempBuff[0]);
+	while (isspace(*tempBuff))
 		++tempBuff;
-	}
 
-	return retVal;
+	if (*tempBuff != '\0')
+		return false;
+
+	return true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1963,8 +1980,8 @@ Bool INI::isEndOfBlock( char *bufferToCheck )
 		retVal = false;
 	}
 
-	while (strlen(tempBuff)) {
-		retVal = retVal && isspace(tempBuff[0]);
+	while (*tempBuff && retVal) {
+		retVal = isspace(*tempBuff);
 		++tempBuff;
 	}
 

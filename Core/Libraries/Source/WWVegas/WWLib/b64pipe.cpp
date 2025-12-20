@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Library/B64PIPE.CPP                               $*
+ *                     $Archive:: /Commando/Library/B64PIPE.cpp                               $*
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *
@@ -39,7 +39,6 @@
 #include	"always.h"
 #include	"b64pipe.h"
 #include	"base64.h"
-#include	<string.h>
 
 
 /***********************************************************************************************

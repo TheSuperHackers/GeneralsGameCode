@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BATTLE_PLAN_UPDATE_H_
-#define __BATTLE_PLAN_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
@@ -190,7 +187,3 @@ protected:
 	ObjectID m_visionObjectID;
 
 };
-
-
-#endif
-

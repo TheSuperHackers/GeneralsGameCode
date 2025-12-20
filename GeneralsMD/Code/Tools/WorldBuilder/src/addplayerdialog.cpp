@@ -76,9 +76,8 @@ void AddPlayerDialog::OnOK()
 		} else {
 			faction->GetWindowText(theText);
 		}
-		AsciiString name((LPCTSTR)theText);
 
-		const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(name));
+		const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY((LPCTSTR)theText));
 		if (pt)
 		{
 			m_addedSide = pt ? pt->getName() : AsciiString::TheEmptyString;

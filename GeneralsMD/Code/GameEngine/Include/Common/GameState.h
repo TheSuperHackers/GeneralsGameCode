@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GAME_STATE_H_
-#define __GAME_STATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/STLTypedefs.h"
 #include "Common/Snapshot.h"
@@ -57,8 +54,6 @@ enum SaveLoadLayoutType CPP_11(: Int)
 	SLLT_SAVE_AND_LOAD,
 	SLLT_LOAD_ONLY,
 	SLLT_SAVE_ONLY,
-
-	SLLT_NUM_TYPES // keep this last, why? don't know, it's not really used, but we like it this way
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -86,8 +81,6 @@ enum SaveFileType CPP_11(: Int)
 {
 	SAVE_FILE_TYPE_NORMAL,		///< a regular save game at any arbitrary point in the game
 	SAVE_FILE_TYPE_MISSION,		///< a save game in between missions (a mission save)
-
-	SAVE_FILE_TYPE_NUM_TYPES
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -242,6 +235,3 @@ extern GameState *TheGameState;
 
 UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal);
 UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal);
-
-
-#endif  // end __GAME_STATE_H_

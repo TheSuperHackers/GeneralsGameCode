@@ -37,15 +37,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef AABTREE_H
-#define AABTREE_H
 
 #include "always.h"
-#include "refcount.h"
 #include "simplevec.h"
 #include "vector3.h"
 #include "Vector3i.h"
@@ -350,5 +344,3 @@ inline void AABTreeClass::CullNodeStruct::Set_Poly_Count(uint32 count)
 	WWASSERT(count < 0x7FFFFFFF);
 	BackOrPolyCount = count;
 }
-
-#endif

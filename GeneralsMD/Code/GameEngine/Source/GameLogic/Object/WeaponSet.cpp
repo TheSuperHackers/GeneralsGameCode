@@ -29,7 +29,7 @@
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 #define DEFINE_COMMANDSOURCEMASK_NAMES
@@ -63,7 +63,7 @@
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-const char* WeaponSetFlags::s_bitNameList[] =
+const char* const WeaponSetFlags::s_bitNameList[] =
 {
 	"VETERAN",
 	"ELITE",
@@ -92,6 +92,7 @@ const char* WeaponSetFlags::s_bitNameList[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(WeaponSetFlags::s_bitNameList) == WeaponSetFlags::NumBits + 1, "Incorrect array size");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -203,8 +204,7 @@ WeaponSet::WeaponSet()
 WeaponSet::~WeaponSet()
 {
 	for (Int i = 0; i < WEAPONSLOT_COUNT; ++i)
-		if (m_weapons[i])
-			deleteInstance(m_weapons[i]);
+		deleteInstance(m_weapons[i]);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -213,7 +213,7 @@ WeaponSet::~WeaponSet()
 void WeaponSet::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -302,7 +302,7 @@ void WeaponSet::xfer( Xfer *xfer )
 void WeaponSet::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 void WeaponSet::updateWeaponSet(const Object* obj)
@@ -422,11 +422,9 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 				}
 			}
 			else { // Regular old behaviour
-				if (m_weapons[i] != NULL)
-				{
-					deleteInstance(m_weapons[i]);
-					m_weapons[i] = NULL;
-				}
+				deleteInstance(m_weapons[i]);
+				m_weapons[i] = NULL;
+
 
 				if (set->getNth((WeaponSlotType)i))
 				{

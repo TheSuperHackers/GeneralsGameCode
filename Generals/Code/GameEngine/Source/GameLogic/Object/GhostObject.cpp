@@ -27,20 +27,18 @@
 // Author: Michael S. Booth, October 2000
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/GhostObject.h"
 #include "GameLogic/Object.h"
 
-GhostObjectManager *TheGhostObjectManager=NULL;
+GhostObjectManager *TheGhostObjectManager = NULL;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 GhostObject::GhostObject(void):
-//Added By Sadullah Nader
-//Initializations missing and needed
 m_parentAngle(0.0f),
 // TheSuperHackers @bugfix tomsons26 26/04/2025 Change initialization of m_parentGeometryIsSmall from 0.0f.
 // Assigning a float to a bool results in the compiler using a random 1 byte value to assign to the bool.
@@ -52,14 +50,12 @@ m_parentObject(NULL),
 m_partitionData(NULL)
 {
 	m_parentPosition.zero();
-	// End Initializations
-}  // end Object
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 GhostObject::~GhostObject()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -67,8 +63,7 @@ GhostObject::~GhostObject()
 // ------------------------------------------------------------------------------------------------
 void GhostObject::crc( Xfer *xfer )
 {
-
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method
@@ -77,7 +72,6 @@ void GhostObject::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void GhostObject::xfer( Xfer *xfer )
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
@@ -90,20 +84,16 @@ void GhostObject::xfer( Xfer *xfer )
 	xfer->xferObjectID( &parentObjectID );
 	if( xfer->getXferMode() == XFER_LOAD )
 	{
-
 		// tie up parent object pointer
 		m_parentObject = TheGameLogic->findObjectByID( parentObjectID );
 
 		// sanity
 		if( parentObjectID != INVALID_ID && m_parentObject == NULL )
 		{
-
 			DEBUG_CRASH(( "GhostObject::xfer - Unable to connect m_parentObject" ));
 			throw INI_INVALID_DATA;
-
-		}  // end if
-
-	}  // end if
+		}
+	}
 
 	// parent geometry type
 	xfer->xferUser( &m_parentGeometryType, sizeof( GeometryType ) );
@@ -126,16 +116,14 @@ void GhostObject::xfer( Xfer *xfer )
 	// partition data
 	///@todo write me ---> !!!!!
 	// PartitionData	*m_partitionData;	///< our PartitionData
-
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void GhostObject::loadPostProcess( void )
 {
-
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -143,6 +131,7 @@ GhostObjectManager::GhostObjectManager(void)
 {
 	m_lockGhostObjects = FALSE;
 	m_saveLockGhostObjects = FALSE;
+	m_trackAllPlayers = TheGlobalData->m_enablePlayerObserver;
 	m_localPlayer = 0;
 }
 
@@ -150,14 +139,13 @@ GhostObjectManager::GhostObjectManager(void)
 // ------------------------------------------------------------------------------------------------
 GhostObjectManager::~GhostObjectManager()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void GhostObjectManager::reset(void)
 {
-
+	m_trackAllPlayers = TheGlobalData->m_enablePlayerObserver;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -171,14 +159,12 @@ GhostObject *GhostObjectManager::addGhostObject(Object *object, PartitionData *p
 // ------------------------------------------------------------------------------------------------
 void GhostObjectManager::removeGhostObject(GhostObject *mod)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GhostObjectManager::updateOrphanedObjects(int *playerIndexList, int numNonLocalPlayers)
+void GhostObjectManager::updateOrphanedObjects(int *playerIndexList, int playerIndexCount)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -197,8 +183,7 @@ void GhostObjectManager::restorePartitionData(void)
 // ------------------------------------------------------------------------------------------------
 void GhostObjectManager::crc( Xfer *xfer )
 {
-
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method:
@@ -207,7 +192,6 @@ void GhostObjectManager::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void GhostObjectManager::xfer( Xfer *xfer )
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
@@ -215,13 +199,11 @@ void GhostObjectManager::xfer( Xfer *xfer )
 
 	// local player
 	xfer->xferInt( &m_localPlayer );
-
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void GhostObjectManager::loadPostProcess( void )
 {
-
-}  // end loadPostProcess
+}

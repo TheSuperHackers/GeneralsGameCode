@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __Poisoned_Behavior_H_
-#define __Poisoned_Behavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DamageModule.h"
@@ -92,9 +89,7 @@ private:
 	UnsignedInt		m_poisonDamageFrame;
 	UnsignedInt		m_poisonOverallStopFrame;
 	Real					m_poisonDamageAmount;
+	ObjectID			m_poisonSource;
 	DeathType			m_deathType;
 
 };
-
-#endif // __Poisoned_Behavior_H_
-

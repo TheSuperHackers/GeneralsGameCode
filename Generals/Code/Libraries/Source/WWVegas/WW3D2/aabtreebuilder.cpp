@@ -61,7 +61,6 @@
 #include "chunkio.h"
 #include "w3d_file.h"
 #include <stdlib.h>
-#include <string.h>
 #include <assert.h>
 
 #undef WWASSERT
@@ -123,19 +122,14 @@ AABTreeBuilderClass::~AABTreeBuilderClass(void)
  *=============================================================================================*/
 void AABTreeBuilderClass::Reset(void)
 {
-	if (Root) {
-		delete Root; Root = NULL;
-	}
+	delete Root;
+	Root = NULL;
 
-	if (Verts != NULL) {
-		delete[] Verts;
-		Verts = NULL;
-	}
+	delete[] Verts;
+	Verts = NULL;
 
-	if (Polys != NULL) {
-		delete[] Polys;
-		Polys = NULL;
-	}
+	delete[] Polys;
+	Polys = NULL;
 }
 
 /***********************************************************************************************

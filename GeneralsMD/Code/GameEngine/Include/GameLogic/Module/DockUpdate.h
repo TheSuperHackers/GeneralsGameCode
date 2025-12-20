@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _DOCK_UPDATE_H_
-#define _DOCK_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "Common/GameMemory.h"
@@ -156,5 +153,3 @@ protected:
 	void loadDockPositions();  ///< load all the dock positions
 	Coord3D computeApproachPosition( Int positionIndex, Object *forWhom ); ///< Do a smart lookup of this bone position
 };
-
-#endif

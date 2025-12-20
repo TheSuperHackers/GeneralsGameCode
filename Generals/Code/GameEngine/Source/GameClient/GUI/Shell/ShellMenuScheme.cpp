@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "GameClient/ShellMenuScheme.h"
@@ -65,7 +65,7 @@ const FieldParse ShellMenuSchemeManager::m_shellMenuSchemeFieldParseTable[] =
 
 	{ "ImagePart",						ShellMenuSchemeManager::parseImagePart,			NULL, NULL },
 	{ "LinePart",							ShellMenuSchemeManager::parseLinePart,	NULL, NULL },
-	{ NULL,										NULL,													NULL, 0 }  // keep this last
+	{ NULL,										NULL,													NULL, 0 }
 
 };
 
@@ -98,7 +98,7 @@ void INI::parseShellMenuSchemeDefinition( INI *ini )
 	// parse the ini definition
 	ini->initFromINI( SMScheme, SMSchemeManager->getFieldParse() );
 
-}  // end parseCommandButtonDefinition
+}
 
 ShellMenuSchemeLine::ShellMenuSchemeLine( void )
 {
@@ -136,8 +136,7 @@ ShellMenuScheme::~ShellMenuScheme( void )
 	{
 		ShellMenuSchemeImage *image = *it;
 		it = m_imageList.erase( it );
-		if(image)
-			delete image;
+		delete image;
 	}
 
 	ShellMenuSchemeLineListIt lineIt = m_lineList.begin();
@@ -145,8 +144,7 @@ ShellMenuScheme::~ShellMenuScheme( void )
 	{
 		ShellMenuSchemeLine *line = *lineIt;
 		lineIt = m_lineList.erase( lineIt );
-		if(line)
-			delete line;
+		delete line;
 	}
 
 
@@ -215,8 +213,7 @@ ShellMenuSchemeManager::~ShellMenuSchemeManager( void )
 	{
 		ShellMenuScheme *scheme = *it;
 		it = m_schemeList.erase( it );
-		if(scheme)
-			delete scheme;
+		delete scheme;
 	}
 
 }
@@ -228,7 +225,7 @@ void ShellMenuSchemeManager::parseImagePart(INI *ini, void *instance, void* /*st
 			{ "Position",				INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeImage, m_position ) },
 			{ "Size",						INI::parseICoord2D,				NULL, offsetof( ShellMenuSchemeImage, m_size ) },
       { "ImageName",			INI::parseMappedImage,		NULL, offsetof( ShellMenuSchemeImage, m_image ) },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 
 	ShellMenuSchemeImage *schemeImage = NEW ShellMenuSchemeImage;
@@ -246,7 +243,7 @@ void ShellMenuSchemeManager::parseLinePart(INI *ini, void *instance, void* /*sto
       { "Color",						INI::parseColorInt,				NULL, offsetof( ShellMenuSchemeLine, m_color ) },
 			{ "Width",						INI::parseInt,						NULL, offsetof( ShellMenuSchemeLine, m_width ) },
 
-			{ NULL,								NULL,											NULL, 0 }  // keep this last
+			{ NULL,								NULL,											NULL, 0 }
 		};
 
 	ShellMenuSchemeLine *schemeLine = NEW ShellMenuSchemeLine;
@@ -282,8 +279,8 @@ void ShellMenuSchemeManager::init( void )
 {
 	INI ini;
 	// Read from INI all the ControlBarSchemes
-	ini.load( AsciiString( "Data\\INI\\Default\\ShellMenuScheme.ini" ), INI_LOAD_OVERWRITE, NULL );
-	ini.load( AsciiString( "Data\\INI\\ShellMenuScheme.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\ShellMenuScheme", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\ShellMenuScheme", INI_LOAD_OVERWRITE, NULL );
 
 }
 

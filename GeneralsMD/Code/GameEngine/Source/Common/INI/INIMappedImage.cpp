@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "GameClient/Image.h"
@@ -42,11 +42,8 @@
 //-------------------------------------------------------------------------------------------------
 void INI::parseMappedImageDefinition( INI* ini )
 {
-	AsciiString name;
-
 	// read the name
-	const char* c = ini->getNextToken();
-	name.set( c );
+	const char* name = ini->getNextToken();
 
 	//
 	// find existing item if present, note that we do not support overrides
@@ -66,15 +63,14 @@ void INI::parseMappedImageDefinition( INI* ini )
 	{
 
 		// image not found, create a new one
-  	image = newInstance(Image);
+		image = newInstance(Image);
 		image->setName( name );
 		TheMappedImageCollection->addImage(image);
-		DEBUG_ASSERTCRASH( image, ("parseMappedImage: unable to allocate image for '%s'",
-															name.str()) );
+		DEBUG_ASSERTCRASH( image, ("parseMappedImage: unable to allocate image for '%s'", name) );
 
-	}  // end if
+	}
 
 	// parse the ini definition
 	ini->initFromINI( image, image->getFieldParse());
 
-}  // end parseMappedImage
+}

@@ -47,7 +47,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "hanimmgr.h"
-#include <string.h>
 #include "hanim.h"
 #include "hrawanim.h"
 #include "hcanim.h"

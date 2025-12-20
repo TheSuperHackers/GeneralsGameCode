@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SPECTRE_GUNSHIP_DEPLOYMENT_UPDATE_H_
-#define __SPECTRE_GUNSHIP_DEPLOYMENT_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
@@ -55,6 +52,8 @@ enum GunshipCreateLocType CPP_11(: Int)
   CREATE_GUNSHIP_AT_EDGE_FARTHEST_FROM_SOURCE,
 	CREATE_GUNSHIP_AT_EDGE_NEAR_TARGET,
 	CREATE_GUNSHIP_AT_EDGE_FARTHEST_FROM_TARGET,
+
+	GUNSHIP_CREATE_LOC_COUNT
 };
 
 
@@ -145,7 +144,3 @@ protected:
 
 
 };
-
-
-#endif // __SPECTRE_GUNSHIP_DEPLOYMENT_UPDATE_H_
-

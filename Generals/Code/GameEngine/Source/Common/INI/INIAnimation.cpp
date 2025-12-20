@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "GameClient/Anim2D.h"
@@ -56,7 +56,7 @@ void INI::parseAnim2DDefinition( INI* ini )
 		//We don't need it if we're in the builder... which doesn't have this.
 		return;
 
-	}  // end if
+	}
 
 	// find existing animation template if present
 	animTemplate = TheAnim2DCollection->findTemplate( name );
@@ -65,10 +65,10 @@ void INI::parseAnim2DDefinition( INI* ini )
 
 		// item not found, create a new one
 		animTemplate = TheAnim2DCollection->newTemplate( name );
-		DEBUG_ASSERTCRASH( animTemplate, ("INI""parseAnim2DDefinition -  unable to allocate animation template for '%s'",
+		DEBUG_ASSERTCRASH( animTemplate, ("INI::parseAnim2DDefinition -  unable to allocate animation template for '%s'",
 											 name.str()) );
 
-	}  // end if
+	}
 	else
 	{
 
@@ -77,12 +77,12 @@ void INI::parseAnim2DDefinition( INI* ini )
 									animTemplate->getName().str() ));
 		return;
 
-	}  // end else
+	}
 
 	// parse the ini definition
 	ini->initFromINI( animTemplate, animTemplate->getFieldParse() );
 
-}  // end parseAnim2DDefinition
+}
 
 
 

@@ -26,11 +26,11 @@
 // Part of header detangling
 // John McDonald, Aug 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameCommon.h"
 
-const char *TheVeterancyNames[] =
+const char *const TheVeterancyNames[] =
 {
 	"REGULAR",
 	"VETERAN",
@@ -38,16 +38,19 @@ const char *TheVeterancyNames[] =
 	"HEROIC",
 	NULL
 };
+static_assert(ARRAY_SIZE(TheVeterancyNames) == LEVEL_COUNT + 1, "Incorrect array size");
 
-const char *TheRelationshipNames[] =
+const char *const TheRelationshipNames[] =
 {
 	"ENEMIES",
 	"NEUTRAL",
 	"ALLIES",
 	NULL
 };
+static_assert(ARRAY_SIZE(TheRelationshipNames) == RELATIONSHIP_COUNT + 1, "Incorrect array size");
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @todo DO NOT USE THIS FUNCTION! Use WWMath::Normalize_Angle instead. Delete this.
 Real normalizeAngle(Real angle)
 {
 	DEBUG_ASSERTCRASH(!_isnan(angle), ("Angle is NAN in normalizeAngle!"));

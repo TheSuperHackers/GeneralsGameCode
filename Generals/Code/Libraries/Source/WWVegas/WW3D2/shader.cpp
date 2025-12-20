@@ -615,17 +615,17 @@ void ShaderClass::Apply()
 				}
 				break;
 
-			// Bump map is a hack currently as we only have two stages in use!
-			case ShaderClass::GRADIENT_DOTPRODUCT3:
-				if(TextureOpCaps & D3DTEXOPCAPS_DOTPRODUCT3)
-				{
-					PricOp = D3DTOP_DOTPRODUCT3;
-					PricArg1 = D3DTA_TEXTURE;
-					PricArg2 = D3DTA_DIFFUSE;
-					PriaOp = D3DTOP_DISABLE;
-					PriaArg1 = D3DTA_TEXTURE;
-					PriaArg2 = D3DTA_CURRENT;
-				}
+			case ShaderClass::GRADIENT_MODULATE2X:
+				//Modulate Alpha
+				if(!(TextureOpCaps & D3DTOP_MODULATE2X))
+					PricOp = D3DTOP_MODULATE;
+				else
+					PricOp = D3DTOP_MODULATE2X;
+				PricArg1 = D3DTA_TEXTURE;
+				PricArg2 = D3DTA_DIFFUSE;
+				PriaOp = D3DTOP_MODULATE;
+				PriaArg1 = D3DTA_TEXTURE;
+				PriaArg2 = D3DTA_DIFFUSE;
 				break;
 			}
 		}
@@ -999,7 +999,7 @@ const StringClass& ShaderClass::Get_Description(StringClass& str) const
 	case GRADIENT_ADD: str+="GRADIENT_ADD | "; break;
 	case GRADIENT_BUMPENVMAP: str+="GRADIENT_BUMPENVMAP | "; break;
 	case GRADIENT_BUMPENVMAPLUMINANCE: str+="GRADIENT_BUMPENVMAPLUMINANCE | "; break;
-	case GRADIENT_DOTPRODUCT3: str+="GRADIENT_DOTPRODUCT3 | "; break;
+	case GRADIENT_MODULATE2X: str+="GRADIENT_MODULATE2X | "; break;
 	}
 
 	switch (Get_Secondary_Gradient()) {

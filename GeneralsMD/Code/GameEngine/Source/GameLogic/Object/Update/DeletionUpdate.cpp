@@ -115,7 +115,7 @@ void DeletionUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -136,7 +136,7 @@ void DeletionUpdate::xfer( Xfer *xfer )
 	// die frame
 	xfer->xferUnsignedInt( &m_dieFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -147,4 +147,4 @@ void DeletionUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

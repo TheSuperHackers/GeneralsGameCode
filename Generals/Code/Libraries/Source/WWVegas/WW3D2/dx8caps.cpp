@@ -54,7 +54,7 @@ enum {
 };
 
 
-static const char* VendorNames[]={
+static const char* const VendorNames[]={
 	"Unknown",
 	"NVidia",
 	"ATI",
@@ -67,6 +67,7 @@ static const char* VendorNames[]={
 	"CirrusLogic",
 	"Rendition"
 };
+static_assert(ARRAY_SIZE(VendorNames) == DX8Caps::VENDOR_COUNT, "Incorrect array size");
 
 DX8Caps::VendorIdType DX8Caps::Define_Vendor(unsigned vendor_id)
 {
@@ -534,10 +535,13 @@ void DX8Caps::Compute_Caps(WW3DFormat display_format, const D3DADAPTER_IDENTIFIE
 	}
 
 	supportGamma=((swVPCaps.Caps2&D3DCAPS2_FULLSCREENGAMMA)==D3DCAPS2_FULLSCREENGAMMA);
+	SupportPointSprites = (caps.MaxPointSize > 1.0f);
 
 	MaxTexturesPerPass=MAX_TEXTURE_STAGES;
 
 	Check_Texture_Format_Support(display_format,caps);
+	Check_Render_To_Texture_Support(display_format,caps);
+	Check_Depth_Stencil_Support(display_format,caps);
 	Check_Texture_Compression_Support(caps);
 	Check_Bumpmap_Support(caps);
 	Check_Shader_Support(caps);

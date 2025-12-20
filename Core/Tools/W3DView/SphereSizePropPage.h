@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_SPHERESIZEPROPPAGE_H__E86BBE8A_F527_11D3_A08F_00104B791122__INCLUDED_)
-#define AFX_SPHERESIZEPROPPAGE_H__E86BBE8A_F527_11D3_A08F_00104B791122__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // SphereSizePropPage.h : header file
 //
 
@@ -114,5 +110,3 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SPHERESIZEPROPPAGE_H__E86BBE8A_F527_11D3_A08F_00104B791122__INCLUDED_)

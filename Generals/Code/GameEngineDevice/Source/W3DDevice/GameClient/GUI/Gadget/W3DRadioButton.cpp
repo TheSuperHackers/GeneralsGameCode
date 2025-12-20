@@ -86,17 +86,17 @@ static void drawRadioButtonText( GameWindow *window, WinInstanceData *instData )
 	{
 		textColor = window->winGetDisabledTextColor();
 		dropColor = window->winGetDisabledTextBorderColor();
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		textColor = window->winGetHiliteTextColor();
 		dropColor = window->winGetHiliteTextBorderColor();
-	}  // end else if, hilited
+	}
 	else
 	{
 		textColor = window->winGetEnabledTextColor();
 		dropColor = window->winGetEnabledTextBorderColor();
-	}  // end enabled only
+	}
 
 	// set our font to that of our parent if not the same
 	if( text->getFont() != window->winGetFont() )
@@ -112,7 +112,7 @@ static void drawRadioButtonText( GameWindow *window, WinInstanceData *instData )
 	// draw it
 	text->draw( textPos.x, textPos.y, textColor, dropColor );
 
-}  // end drawRadioButtonText
+}
 
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 
@@ -162,7 +162,7 @@ void W3DGadgetRadioButtonDraw( GameWindow *window, WinInstanceData *instData )
 				boxBorder		= GadgetRadioGetDisabledUncheckedBoxBorderColor( window );
 		}
 
-	}  // end if
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
@@ -182,7 +182,7 @@ void W3DGadgetRadioButtonDraw( GameWindow *window, WinInstanceData *instData )
 			boxBorder		= GadgetRadioGetHiliteUncheckedBoxBorderColor( window );
 		}
 
-	}  // end else if
+	}
 	else
 	{
 
@@ -202,7 +202,7 @@ void W3DGadgetRadioButtonDraw( GameWindow *window, WinInstanceData *instData )
 			boxBorder		= GadgetRadioGetEnabledUncheckedBoxBorderColor( window );
 		}
 
-	}  // end else
+	}
 
 	// draw background border
 	start.x = origin.x;
@@ -259,7 +259,7 @@ void W3DGadgetRadioButtonDraw( GameWindow *window, WinInstanceData *instData )
 
 
 
-}  // end W3DGadgetRadioButtonDraw
+}
 
 
 void W3DGadgetRadioButtonImageDraw( GameWindow *window,
@@ -295,7 +295,7 @@ void W3DGadgetRadioButtonImageDraw( GameWindow *window,
 		centerImage				= GadgetRadioGetDisabledUncheckedBoxImage( window );
 		rightImage				= GadgetRadioGetDisabledCheckedBoxImage( window );
 
-	}  // end if
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		// hilited background
@@ -303,7 +303,7 @@ void W3DGadgetRadioButtonImageDraw( GameWindow *window,
 		centerImage				= GadgetRadioGetHiliteUncheckedBoxImage( window );
 		rightImage				= GadgetRadioGetHiliteCheckedBoxImage( window );
 
-	}  // end else if
+	}
 	else
 	{
 		// enabled background
@@ -311,7 +311,7 @@ void W3DGadgetRadioButtonImageDraw( GameWindow *window,
 		centerImage				= GadgetRadioGetEnabledUncheckedBoxImage( window );
 		rightImage				= GadgetRadioGetEnabledCheckedBoxImage( window );
 
-	}  // end else
+	}
 
 	// sanity, we need to have these images to make it look right
 	if( leftImage == NULL || centerImage == NULL ||
@@ -363,7 +363,7 @@ void W3DGadgetRadioButtonImageDraw( GameWindow *window,
 																		start.x, start.y,
 																		end.x, end.y );
 		start.x += centerImage->getImageWidth();
-	}  // end for i
+	}
 
 	TheDisplay->enableClipping(FALSE);
 	// draw left end
@@ -383,5 +383,5 @@ void W3DGadgetRadioButtonImageDraw( GameWindow *window,
 		drawRadioButtonText( window, instData );
 
 
-}  // end W3DGadgetHorizontalSliderImageDraw
+}
 

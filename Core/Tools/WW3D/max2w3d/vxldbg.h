@@ -35,9 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef VXLDBG_H
-#define VXLDBG_H
+#pragma once
 
 #ifndef ALWAYS_H
 #include "always.h"
@@ -76,7 +74,3 @@ private:
 
 	void update_display(void);
 };
-
-
-
-#endif

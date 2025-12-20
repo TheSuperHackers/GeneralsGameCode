@@ -35,12 +35,8 @@
  *---------------------------------------------------------------------------------------------------------------*
  * Functions:                                                                                                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if defined(_MSC_VER)
-#pragma once
-#endif
 
-#ifndef STATIC_SORT_LIST_H
-#define STATIC_SORT_LIST_H
+#pragma once
 
 #include "robjlist.h"
 #include "w3d_file.h"
@@ -59,7 +55,7 @@ class StaticSortListClass
 		virtual void 	Add_To_List(RenderObjClass * robj, unsigned int sort_level) = 0;
 		virtual void 	Render_And_Clear(RenderInfoClass & rinfo) = 0;
 
-}; // end StaticSortListClass
+};
 
 // The actual implementation for the standard ww3d StaticSortList.
 class DefaultStaticSortListClass : public StaticSortListClass
@@ -90,10 +86,4 @@ class DefaultStaticSortListClass : public StaticSortListClass
 		// An array of lists - each object in a given list has same SortLevel.
 		RefRenderObjListClass 	SortLists[MAX_SORT_LEVEL + 1];
 
-}; // end StaticSortListClass
-
-
-
-
-#endif //STATIC_SORT_LIST_H
-
+};

@@ -687,7 +687,7 @@ CMainFrame::WindowProc
 
 				// Concat the default.dat filename onto the path
 				TCHAR full_path[MAX_PATH];
-				::strcat (filename, "\\settings");
+				strlcat (filename, "\\settings", ARRAY_SIZE(filename));
 				::wsprintf (full_path, "%s%d.dat", filename, (LOWORD(wParam) - IDM_SETTINGS1) + 1);
 
 				// Does the file exist in the directory?

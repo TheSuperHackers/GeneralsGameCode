@@ -32,7 +32,7 @@
 #include "Common/BitFlagsIO.h"
 
 template<>
-const char* KindOfMaskType::s_bitNameList[] =
+const char* const KindOfMaskType::s_bitNameList[] =
 {
 	"OBSTACLE",
 	"SELECTABLE",
@@ -200,6 +200,7 @@ const char* KindOfMaskType::s_bitNameList[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(KindOfMaskType::s_bitNameList) == KindOfMaskType::NumBits + 1, "Incorrect array size");
 
 KindOfMaskType KINDOFMASK_NONE;	// inits to all zeroes
 KindOfMaskType KINDOFMASK_FS;		// inits to all zeroes

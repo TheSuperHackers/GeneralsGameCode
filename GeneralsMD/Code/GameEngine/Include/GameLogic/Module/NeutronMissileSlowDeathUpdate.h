@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __NEUTRONMISSILESlowDeathBehavior_H_
-#define __NEUTRONMISSILESlowDeathBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/SlowDeathBehavior.h"
 
@@ -51,7 +48,7 @@ enum NeutronBlast CPP_11(: Int)
 	NEUTRON_BLAST_8,
 	NEUTRON_BLAST_9,
 
-	MAX_NEUTRON_BLASTS  // keep this last
+	MAX_NEUTRON_BLASTS
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -112,5 +109,3 @@ protected:
 	Bool m_scorchPlaced;														///< TRUE once we've placed the scorch mark
 
 };
-
-#endif  // end __NEUTRONMISSILESlowDeathBehavior_H_

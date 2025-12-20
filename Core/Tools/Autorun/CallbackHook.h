@@ -33,8 +33,7 @@
 *
 ******************************************************************************/
 
-#ifndef CALLBACKHOOK_H
-#define CALLBACKHOOK_H
+#pragma once
 
 class CallbackHook
 	{
@@ -81,5 +80,3 @@ template<class T> class Callback : public CallbackHook
 		bool (*mCallback)(T);
 		T mUserData;
 	};
-
-#endif // CALLBACKHOOK_H

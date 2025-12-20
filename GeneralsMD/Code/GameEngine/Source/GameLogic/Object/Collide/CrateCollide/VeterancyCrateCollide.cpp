@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Player.h"
 #include "Common/Xfer.h"
 #include "GameLogic/ExperienceTracker.h"
@@ -181,7 +181,7 @@ void VeterancyCrateCollide::crc( Xfer *xfer )
 	// extend base class
 	CrateCollide::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -199,7 +199,7 @@ void VeterancyCrateCollide::xfer( Xfer *xfer )
 	// extend base class
 	CrateCollide::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -210,4 +210,4 @@ void VeterancyCrateCollide::loadPostProcess( void )
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+}

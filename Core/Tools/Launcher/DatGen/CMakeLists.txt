@@ -1,7 +1,7 @@
 set(DATGEN_SRC
     "DatGen.cpp"
-    "../BFISH.CPP"
-    "../BFISH.H"
+    "../BFISH.cpp"
+    "../BFISH.h"
     "../Toolkit/Debug/DebugPrint.cpp"
     "../Toolkit/Debug/DebugPrint.h"
 )

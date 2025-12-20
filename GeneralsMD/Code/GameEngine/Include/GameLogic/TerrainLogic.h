@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __TERRAINLOGIC_H_
-#define __TERRAINLOGIC_H_
-
 #include "Common/GameMemory.h"
 #include "Common/Snapshot.h"
 #include "Common/STLTypedefs.h"
@@ -197,16 +194,16 @@ public:
 	Bool isPointOnBridge(const Coord3D *pLoc);
 	Drawable *pickBridge(const Vector3 &from, const Vector3 &to, Vector3 *pos);
 	void updateDamageState(void); ///< Updates a bridge's damage info.
-	inline const BridgeInfo *peekBridgeInfo(void) const {return &m_bridgeInfo;}
-	inline PathfindLayerEnum getLayer(void) const {return m_layer;}
-	inline void setLayer(PathfindLayerEnum layer) {m_layer = layer;}
+	const BridgeInfo *peekBridgeInfo(void) const {return &m_bridgeInfo;}
+	PathfindLayerEnum getLayer(void) const {return m_layer;}
+	void setLayer(PathfindLayerEnum layer) {m_layer = layer;}
 	const Region2D *getBounds(void) const {return &m_bounds;}
 	Bool isCellOnEnd(const Region2D *cell);	 // Is pathfind cell on the sides of the bridge
 	Bool isCellOnSide(const Region2D *cell); // Is pathfind cell on the end of the bridge
 	Bool isCellEntryPoint(const Region2D *cell); // Is pathfind cell an entry point to the bridge
 
-	inline void setBridgeObjectID( ObjectID id ) { m_bridgeInfo.bridgeObjectID = id; }
-	inline void setTowerObjectID( ObjectID id, BridgeTowerType which ) { m_bridgeInfo.towerObjectID[ which ] = id; }
+	void setBridgeObjectID( ObjectID id ) { m_bridgeInfo.bridgeObjectID = id; }
+	void setTowerObjectID( ObjectID id, BridgeTowerType which ) { m_bridgeInfo.towerObjectID[ which ] = id; }
 
 };
 
@@ -373,11 +370,10 @@ protected:
 	} m_waterToUpdate[ MAX_DYNAMIC_WATER ];  ///< water tables to dynamicall update
 	Int m_numWaterToUpdate;						///< how many valid entries are in m_waterToUpdate
 
-};  // end class TerrainLogic
+};
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern TerrainLogic *TheTerrainLogic;   ///< singleton definition
 
 extern void makeAlignToNormalMatrix( Real angle, const Coord3D& pos, const Coord3D& normal, Matrix3D& mtx);
 extern Bool LineInRegion( const Coord2D *p1, const Coord2D *p2, const Region2D *clipRegion );
-#endif  // end __TERRAINLOGIC_H_

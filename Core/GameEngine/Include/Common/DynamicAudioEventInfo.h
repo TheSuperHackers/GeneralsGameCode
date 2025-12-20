@@ -28,10 +28,6 @@
 
 #pragma once
 
-
-#ifndef DYNAMICAUDIOEVENTINFO_H_INCLUDED
-#define DYNAMICAUDIOEVENTINFO_H_INCLUDED
-
 #include "Common/AudioEventInfo.h"
 #include "Common/BitFlags.h"
 
@@ -155,8 +151,3 @@ inline Bool DynamicAudioEventInfo::wasPriorityOverriden() const
 {
   return m_overriddenFields.test( OVERRIDE_PRIORITY );
 }
-
-
-
-#endif // DYNAMICAUDIOEVENTINFO_H_INCLUDED
-

@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __GAMESPYMISCPREFERENCES_H__
-#define __GAMESPYMISCPREFERENCES_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -57,5 +54,3 @@ public:
 
 	Int getMaxMessagesPerUpdate( void );
 };
-
-#endif // __GAMESPYMISCPREFERENCES_H__

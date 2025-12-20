@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __ACADEMY_STATS_H
-#define __ACADEMY_STATS_H
-
 #include "Lib/BaseType.h"
 #include "Common/Debug.h"
 #include "Common/Snapshot.h"
@@ -74,8 +71,10 @@ enum AcademyClassificationType CPP_11(: Int)
 	ACT_NONE,
 	ACT_UPGRADE_RADAR,
 	ACT_SUPERPOWER,
+
+	ACT_COUNT
 };
-extern const char *TheAcademyClassificationTypeNames[]; //Change above, change this!
+extern const char *const TheAcademyClassificationTypeNames[]; //Change above, change this!
 
 
 // ----------------------------------------------------------------------------------------------
@@ -275,6 +274,3 @@ private:
 	//35) Did the player ever create a "Firestorm" with his MiGs or Inferno Cannons?
 	UnsignedInt m_firestormsCreated;
 };
-
-#endif // __ACADEMY_STATS_H
-

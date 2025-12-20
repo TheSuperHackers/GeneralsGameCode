@@ -43,7 +43,6 @@
 #include "chunkio.h"
 #include "w3d_file.h"
 #include "wwdebug.h"
-#include <string.h>
 #include <nstrdup.h>
 
 
@@ -62,8 +61,8 @@ NamedPivotMapClass::~NamedPivotMapClass(void)
 
 NamedPivotMapClass::WeightInfoStruct & NamedPivotMapClass::WeightInfoStruct::operator = (WeightInfoStruct const &that)
 {
-	if(Name) delete [] Name;
-	assert(that.Name != 0);
+	delete [] Name;
+	assert(that.Name != NULL);
 	Name = nstrdup(that.Name);
 	Weight = that.Weight;
 	return *this;

@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Commando / G                                                 *
  *                                                                                             *
- *                    File Name : MESHSAVE.H                                                   *
+ *                    File Name : MESHSAVE.h                                                   *
  *                                                                                             *
  *                   Programmer : Greg Hjelstrom                                               *
  *                                                                                             *
@@ -35,19 +35,14 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef MESHSAVE_H
-#define MESHSAVE_H
 
 #include "rawfile.h"	// have to include this before Max.h
 #include <max.h>
-#include "BITTYPE.H"
+#include "BITTYPE.h"
 #include "w3d_file.h"
 #include "chunkio.h"
-#include "PROGRESS.H"
+#include "PROGRESS.h"
 #include "nodelist.h"
 #include "util.h"
 #include "w3dmtl.h"
@@ -218,9 +213,3 @@ private:
 
 	friend class DamageClass;
 };
-
-
-
-
-
-#endif /*MESHSAVE_H*/

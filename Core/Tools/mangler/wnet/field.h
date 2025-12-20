@@ -20,7 +20,7 @@
  *                                                                         *
  *                 Project Name : Westwood Auto Registration App           *
  *                                                                         *
- *                    File Name : FIELD.H                                  *
+ *                    File Name : FIELD.h                                  *
  *                                                                         *
  *                   Programmer : Philip W. Gorrow                         *
  *                                                                         *

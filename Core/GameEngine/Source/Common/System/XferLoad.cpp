@@ -42,7 +42,7 @@ XferLoad::XferLoad( void )
 	m_xferMode = XFER_LOAD;
 	m_fileFP = NULL;
 
-}  // end XferLoad
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -56,9 +56,9 @@ XferLoad::~XferLoad( void )
 		DEBUG_CRASH(( "Warning: Xfer file '%s' was left open", m_identifier.str() ));
 		close();
 
-	}  // end if
+	}
 
-}  // end ~XferLoad
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Open file 'identifier' for reading */
@@ -74,7 +74,7 @@ void XferLoad::open( AsciiString identifier )
 									identifier.str(), m_identifier.str() ));
 		throw XFER_FILE_ALREADY_OPEN;
 
-	}  // end if
+	}
 
 	// call base class
 	Xfer::open( identifier );
@@ -87,9 +87,9 @@ void XferLoad::open( AsciiString identifier )
 		DEBUG_CRASH(( "File '%s' not found", identifier.str() ));
 		throw XFER_FILE_NOT_FOUND;
 
-	}  // end if
+	}
 
-}  // end open
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Close our current file */
@@ -104,7 +104,7 @@ void XferLoad::close( void )
 		DEBUG_CRASH(( "Xfer close called, but no file was open" ));
 		throw XFER_FILE_NOT_OPEN;
 
-	}  // end if
+	}
 
 	// close the file
 	fclose( m_fileFP );
@@ -113,7 +113,7 @@ void XferLoad::close( void )
 	// erase the filename
 	m_identifier.clear();
 
-}  // end close
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Read a block size descriptor from the file at the current position */
@@ -133,12 +133,12 @@ Int XferLoad::beginBlock( void )
 		DEBUG_CRASH(( "Xfer - Error reading block size for '%s'", m_identifier.str() ));
 		return 0;
 
-	}  // end if
+	}
 
 	// return the block size
 	return blockSize;
 
-}  // end beginBlock
+}
 
 // ------------------------------------------------------------------------------------------------
 /** End block ... this does nothing when reading */
@@ -146,7 +146,7 @@ Int XferLoad::beginBlock( void )
 void XferLoad::endBlock( void )
 {
 
-}  // end endBlock
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Skip forward 'dataSize' bytes in the file */
@@ -166,7 +166,7 @@ void XferLoad::skip( Int dataSize )
 	if( fseek( m_fileFP, dataSize, SEEK_CUR ) != 0 )
 		throw XFER_SKIP_ERROR;
 
-}  // end skip
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Entry point for xfering a snapshot */
@@ -180,7 +180,7 @@ void XferLoad::xferSnapshot( Snapshot *snapshot )
 		DEBUG_CRASH(( "XferLoad::xferSnapshot - Invalid parameters" ));
 		throw XFER_INVALID_PARAMETERS;
 
-	}  // end if
+	}
 
 	// run the xfer function of the snapshot
 	snapshot->xfer( this );
@@ -189,7 +189,7 @@ void XferLoad::xferSnapshot( Snapshot *snapshot )
 	if( BitIsSet( getOptions(), XO_NO_POST_PROCESSING ) == FALSE )
 		TheGameState->addPostProcessSnapshot( snapshot );
 
-}  // end xferSnapshot
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Read string from file and store in ascii string */
@@ -212,7 +212,7 @@ void XferLoad::xferAsciiString( AsciiString *asciiStringData )
 	// save into ascii string
 	asciiStringData->set( buffer );
 
-}  // end xferAsciiString
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Read string from file and store in unicode string */
@@ -235,7 +235,7 @@ void XferLoad::xferUnicodeString( UnicodeString *unicodeStringData )
 	// save into unicode string
 	unicodeStringData->set( buffer );
 
-}  // end xferUnicodeString
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Perform the read operation */
@@ -254,7 +254,7 @@ void XferLoad::xferImplementation( void *data, Int dataSize )
 		DEBUG_CRASH(( "XferLoad - Error reading from file '%s'", m_identifier.str() ));
 		throw XFER_READ_ERROR;
 
-	}  // end if
+	}
 
-}  // end xferImplementation
+}
 

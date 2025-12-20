@@ -44,9 +44,6 @@
 
 #pragma once
 
-#ifndef _HANDICAP_H_
-#define _HANDICAP_H_
-
 #include "Lib/BaseType.h"
 
 // ----------------------------------------------------------------------------------------------
@@ -117,5 +114,3 @@ private:
 
 	static ThingType getBestThingType(const ThingTemplate *tmpl);
 };
-
-#endif // _HANDICAP_H_

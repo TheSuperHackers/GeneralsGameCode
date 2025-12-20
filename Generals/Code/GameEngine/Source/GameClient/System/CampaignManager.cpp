@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "Common/Xfer.h"
@@ -72,7 +72,7 @@ const FieldParse CampaignManager::m_campaignFieldParseTable[] =
 	{ "CampaignNameLabel",	INI::parseAsciiString,							NULL, offsetof( Campaign, m_campaignNameLabel ) },
 	{ "FinalVictoryMovie",	INI::parseAsciiString,							NULL, offsetof( Campaign, m_finalMovieName ) },
 
-	{ NULL,										NULL,													NULL, 0 }  // keep this last
+	{ NULL,										NULL,													NULL, 0 }
 
 };
 
@@ -104,7 +104,7 @@ void INI::parseCampaignDefinition( INI *ini )
 	// parse the ini definition
 	ini->initFromINI( campaign, TheCampaignManager->getFieldParse() );
 
-}  // end parseCampaignDefinition
+}
 
 //-----------------------------------------------------------------------------
 Campaign::Campaign( void )
@@ -123,8 +123,7 @@ Campaign::~Campaign( void )
 	{
 		Mission *mission = *it;
 		it = m_missions.erase( it );
-		if(mission)
-			deleteInstance(mission);
+		deleteInstance(mission);
 	}
 }
 
@@ -228,8 +227,7 @@ CampaignManager::~CampaignManager( void )
 	{
 		Campaign *campaign = *it;
 		it = m_campaignList.erase( it );
-		if(campaign)
-			deleteInstance(campaign);
+		deleteInstance(campaign);
 	}
 }
 
@@ -238,7 +236,7 @@ void CampaignManager::init( void )
 {
 	INI ini;
 	// Read from INI all the CampaignManager
-	ini.load( AsciiString( "Data\\INI\\Campaign.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Campaign", INI_LOAD_OVERWRITE, NULL );
 }
 
 //-----------------------------------------------------------------------------
@@ -368,7 +366,7 @@ void CampaignManager::parseMissionPart( INI* ini, void *instance, void *store, c
 			{ "VoiceLength",			INI::parseInt ,								NULL, offsetof( Mission, m_voiceLength ) },
 
 
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 	AsciiString name;
 	const char* c = ini->getNextToken();
@@ -440,7 +438,7 @@ void CampaignManager::xfer( Xfer *xfer )
 	if( xfer->getXferMode() == XFER_LOAD )
 		setCampaignAndMission( currentCampaign, currentMission );
 
-}  // end xfer
+}
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////

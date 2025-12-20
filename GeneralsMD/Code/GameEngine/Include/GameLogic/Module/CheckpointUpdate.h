@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef CHECKPOINT_UPDATE_H
-#define CHECKPOINT_UPDATE_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "Common/KindOf.h"
@@ -88,6 +85,3 @@ protected:
 	void checkForAlliesAndEnemies( void );
 
 };
-
-#endif // end CHECKPOINT_UPDATE_H
-

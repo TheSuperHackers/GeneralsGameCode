@@ -44,9 +44,6 @@
 
 #pragma once
 
-#ifndef _ENERGY_H_
-#define _ENERGY_H_
-
 // INLCUDES /////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Snapshot.h"
 
@@ -118,6 +115,3 @@ private:
 	Int		m_energyConsumption;	///< level of energy consumption, in kw
 	Player *m_owner;						///< Tight pointer to the Player I am intrinsic to.
 };
-
-#endif // _ENERGY_H_
-

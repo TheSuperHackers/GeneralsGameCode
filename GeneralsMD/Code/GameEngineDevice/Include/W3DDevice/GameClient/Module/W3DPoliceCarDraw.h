@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __W3DPOLICECARDRAW_H_
-#define __W3DPOLICECARDRAW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DrawModule.h"
 #include "W3DDevice/GameClient/Module/W3DTruckDraw.h"
@@ -63,6 +60,3 @@ protected:
 	Real					m_curFrame;
 
 };
-
-#endif // __W3DPOLICECARDRAW_H_
-

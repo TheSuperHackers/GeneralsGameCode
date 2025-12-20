@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __STICK_BOMB_UPDATE_H
-#define __STICK_BOMB_UPDATE_H
-
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameClient/Anim2D.h"
 
@@ -128,6 +125,3 @@ private:
 	Anim2DTemplate* m_animTimedTemplate;
 
 };
-
-#endif // __STICK_BOMB_UPDATE_H
-

@@ -32,8 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_EMISSIONTYPEPANELS_
-#define _H_EMISSIONTYPEPANELS_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Resource.h"
@@ -134,5 +132,3 @@ class EmissionPanelCylinder : public ISwapablePanel
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()
 };
-
-#endif /* _H_EMISSIONTYPEPANELS_ */

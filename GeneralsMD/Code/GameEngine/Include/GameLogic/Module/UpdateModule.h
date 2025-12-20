@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __UpdateModule_H_
-#define __UpdateModule_H_
-
 #include "Common/Module.h"
 #include "Common/GameType.h"
 #include "Common/DisabledTypes.h"
@@ -368,5 +365,3 @@ public:
 	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) const {rallyPoint.x=rallyPoint.y=rallyPoint.z=0; return false;}	///< get the natural "rally point" for units to move towards
 	virtual Bool getExitPosition( Coord3D& exitPosition ) const {exitPosition.x=exitPosition.y=exitPosition.z=0; return false;};					///< access to the "Door" position of the production object
 };
-
-#endif

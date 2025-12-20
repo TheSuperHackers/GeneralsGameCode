@@ -46,7 +46,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -63,7 +63,7 @@ const FieldParse ControlBarResizer::m_controlBarResizerParseTable[] =
 {
 	{ "AltPosition",		INI::parseICoord2D,						NULL, offsetof( ResizerWindow, m_altPos ) },
 	{ "AltSize",				INI::parseICoord2D,						NULL, offsetof( ResizerWindow, m_altSize ) },
-	{ NULL,										NULL,													NULL, 0 }  // keep this last
+	{ NULL,										NULL,													NULL, 0 }
 
 };
 //-----------------------------------------------------------------------------
@@ -103,7 +103,7 @@ void ControlBarResizer::init( void )
 {
 	INI ini;
 	// Read from INI all the ControlBarSchemes
-	ini.load( AsciiString( "Data\\INI\\ControlBarResizer.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\ControlBarResizer", INI_LOAD_OVERWRITE, NULL );
 
 }
 
@@ -180,8 +180,8 @@ void ControlBarResizer::sizeWindowsAlt( void )
 {
 	ResizerWindowList::iterator it = m_resizerWindowsList.begin();
 	GameWindow *win = NULL;
-	Real x = (Real)TheDisplay->getWidth() / 800;
-	Real y = (Real)TheDisplay->getHeight() / 600;
+	Real x = (Real)TheDisplay->getWidth() / DEFAULT_DISPLAY_WIDTH;
+	Real y = (Real)TheDisplay->getHeight() / DEFAULT_DISPLAY_HEIGHT;
 	while (it != m_resizerWindowsList.end())
 	{
 		ResizerWindow *rWin = *it;
@@ -236,7 +236,7 @@ void INI::parseControlBarResizerDefinition( INI* ini )
 //	// parse the ini definition
 //	ini->initFromINI( rWin, resizer->getFieldParse());
 //
-}  // end parseMappedImage
+}
 
 
 //-----------------------------------------------------------------------------

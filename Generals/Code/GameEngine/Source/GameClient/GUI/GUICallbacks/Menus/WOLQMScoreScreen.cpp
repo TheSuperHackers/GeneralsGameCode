@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "GameClient/WindowLayout.h"
@@ -60,9 +60,9 @@ static GameWindow *buttonQuickmatch = NULL;
 //-------------------------------------------------------------------------------------------------
 void WOLQMScoreScreenInit( WindowLayout *layout, void *userData )
 {
-	parentWOLQMScoreID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLQMScoreScreen.wnd:WOLQMScoreScreenParent" ) );
-	buttonDisconnectID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLQMScoreScreen.wnd:ButtonDisconnect" ) );
-	buttonQuickmatchID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLQMScoreScreen.wnd:ButtonQuickMatch" ) );
+	parentWOLQMScoreID = TheNameKeyGenerator->nameToKey( "WOLQMScoreScreen.wnd:WOLQMScoreScreenParent" );
+	buttonDisconnectID = TheNameKeyGenerator->nameToKey( "WOLQMScoreScreen.wnd:ButtonDisconnect" );
+	buttonQuickmatchID = TheNameKeyGenerator->nameToKey( "WOLQMScoreScreen.wnd:ButtonQuickMatch" );
 	parentWOLQMScore = TheWindowManager->winGetWindowFromId( NULL, parentWOLQMScoreID );
 	buttonDisconnect = TheWindowManager->winGetWindowFromId( NULL,  buttonDisconnectID);
 	buttonQuickmatch = TheWindowManager->winGetWindowFromId( NULL,  buttonQuickmatchID);
@@ -85,7 +85,7 @@ void WOLQMScoreScreenInit( WindowLayout *layout, void *userData )
 
 	//progressLayout = TheShell->top();
 
-} // WOLQMScoreScreenInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu shutdown method */
@@ -101,7 +101,7 @@ void WOLQMScoreScreenShutdown( WindowLayout *layout, void *userData )
 
 	//progressLayout = NULL;
 
-}  // WOLQMScoreScreenShutdown
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ void WOLQMScoreScreenUpdate( WindowLayout * layout, void *userData)
 	if (WOL::TheWOL)
 		WOL::TheWOL->update();
 	*/
-}// WOLQMScoreScreenUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu input callback */
@@ -146,21 +146,21 @@ WindowMsgHandledType WOLQMScoreScreenInput( GameWindow *window, UnsignedInt msg,
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonDisconnect, buttonDisconnectID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// WOLQMScoreScreenInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu window system callback */
@@ -178,12 +178,12 @@ WindowMsgHandledType WOLQMScoreScreenSystem( GameWindow *window, UnsignedInt msg
 			{
 
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
 			{
@@ -192,7 +192,7 @@ WindowMsgHandledType WOLQMScoreScreenSystem( GameWindow *window, UnsignedInt msg
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 
 		case GBM_SELECTED:
 			{
@@ -208,7 +208,7 @@ WindowMsgHandledType WOLQMScoreScreenSystem( GameWindow *window, UnsignedInt msg
 						WOL::TheWOL->addCommand( WOL::WOLCOMMAND_RESET );  // don't display an error, log out, or anything
 					}
 
-				} //if ( controlID == buttonDisconnect )
+				}
 				else if ( controlID == buttonQuickmatchID )
 				{
 					//TheShell->pop();
@@ -221,10 +221,10 @@ WindowMsgHandledType WOLQMScoreScreenSystem( GameWindow *window, UnsignedInt msg
 						}
 					}
 
-				} //if ( controlID == buttonDisconnect )
+				}
 				*/
 				break;
-			}// case GBM_SELECTED:
+			}
 
 		case GEM_EDIT_DONE:
 			{
@@ -233,7 +233,7 @@ WindowMsgHandledType WOLQMScoreScreenSystem( GameWindow *window, UnsignedInt msg
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// WOLQMScoreScreenSystem
+}

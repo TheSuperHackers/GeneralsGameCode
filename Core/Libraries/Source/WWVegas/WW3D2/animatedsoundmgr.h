@@ -37,15 +37,10 @@
 // MBL Update for CNC3 INCURSION - 10.23.2002 - Expanded param handling, Added STOP command
 //
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __ANIMATEDSOUNDMGR_H
-#define __ANIMATEDSOUNDMGR_H
 
 #include "simplevec.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "hashtemplate.h"
 
 
@@ -131,6 +126,3 @@ private:
 	///////////////////////////////////////////////////////////////////
 	static ANIM_SOUND_LIST *	Find_Sound_List (HAnimClass *anim);
 };
-
-
-#endif //__ANIMATEDSOUNDMGR_H

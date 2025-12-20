@@ -35,13 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef W3D_FILE_H
-#define W3D_FILE_H
 
 #include "always.h"
 #include "bittype.h"
@@ -903,7 +897,7 @@ struct W3dShaderStruct
 	uint8						pad[1];
 
 	// Required by DynamicVectorClass...
-	inline bool			operator == (const W3dShaderStruct & that)
+	bool			operator == (const W3dShaderStruct & that)
 	{
 		return (
 			(DepthCompare == that.DepthCompare) &&
@@ -921,7 +915,7 @@ struct W3dShaderStruct
 			(AlphaTest == that.AlphaTest) );
 	}
 
-	inline bool			operator != (const W3dShaderStruct & that)
+	bool			operator != (const W3dShaderStruct & that)
 	{
 		return !(*this == that);
 	}
@@ -2277,6 +2271,3 @@ struct W3dShdSubMeshHeaderStruct
 ** Include the obsolete structures and chunk ID's
 */
 #include "w3d_obsolete.h"
-
-
-#endif // W3D_FILE_H

@@ -23,7 +23,7 @@
  *                                                                         *
  *                 Project Name : Voxel Technology                         *
  *                                                                         *
- *                    File Name : BITTYPE.H                                *
+ *                    File Name : BITTYPE.h                                *
  *                                                                         *
  *                   Programmer : Greg Hjelstrom                           *
  *                                                                         *
@@ -34,12 +34,8 @@
  *-------------------------------------------------------------------------*
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef BITTYPE_H
-#define BITTYPE_H
+#pragma once
 
 typedef unsigned char	uint8;
 typedef unsigned short	uint16;
@@ -63,4 +59,9 @@ typedef const char *		LPCSTR;
 typedef unsigned int    UINT;
 typedef unsigned long   ULONG;
 
-#endif //BITTYPE_H
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#ifndef _WCHAR_T_DEFINED
+typedef unsigned short wchar_t;
+#define _WCHAR_T_DEFINED
+#endif
+#endif

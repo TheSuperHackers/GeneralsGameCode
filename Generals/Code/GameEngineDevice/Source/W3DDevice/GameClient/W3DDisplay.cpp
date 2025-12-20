@@ -34,14 +34,15 @@
 static void drawFramerateBar(void);
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
+#include <numeric>
 #include <stdlib.h>
 #include <windows.h>
 #include <io.h>
 #include <time.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
+#include "Common/FramePacer.h"
 #include "Common/ThingFactory.h"
-#include "Common/GameEngine.h"
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"
 #include "Common/FileSystem.h"
@@ -97,8 +98,7 @@ static void drawFramerateBar(void);
 #include "WW3D2/meshmatdesc.h"
 #include "WW3D2/meshmdl.h"
 #include "WW3D2/rddesc.h"
-#include "TARGA.H"
-#include "Lib/BaseType.h"
+#include "TARGA.h"
 
 #include "GameLogic/ScriptEngine.h"		// For TheScriptEngine - jkmcd
 #include "GameLogic/GameLogic.h"
@@ -110,10 +110,6 @@ static void drawFramerateBar(void);
 
 
 // DEFINE AND ENUMS ///////////////////////////////////////////////////////////
-#define DEFAULT_DISPLAY_BIT_DEPTH 32
-#define MIN_DISPLAY_BIT_DEPTH 16
-#define MIN_DISPLAY_RESOLUTION_X 800
-#define MIN_DISPLAY_RESOLUTION_Y 600
 
 #define no_SAMPLE_DYNAMIC_LIGHT	1
 #ifdef SAMPLE_DYNAMIC_LIGHT
@@ -150,15 +146,9 @@ StatDumpClass::StatDumpClass( const char *fname )
 {
 	char buffer[ _MAX_PATH ];
 	GetModuleFileName( NULL, buffer, sizeof( buffer ) );
-	char *pEnd = buffer + strlen( buffer );
-	while( pEnd != buffer )
+	if (char *pEnd = strrchr(buffer, '\\'))
 	{
-		if( *pEnd == '\\' )
-		{
-			*pEnd = 0;
-			break;
-		}
-		pEnd--;
+		*pEnd = 0;
 	}
 	// TheSuperHackers @fix Caball009 03/06/2025 Don't use AsciiString here anymore because its memory allocator may not have been initialized yet.
 	const std::string fullPath = std::string(buffer) + "\\" + fname;
@@ -364,7 +354,7 @@ W3DDisplay::W3DDisplay()
 	for (i = 0; i < DisplayStringCount; i++)
 		m_displayStrings[i] = NULL;
 
-}  // end W3DDisplay
+}
 
 // W3DDisplay::~W3DDisplay ====================================================
 /** */
@@ -394,7 +384,7 @@ W3DDisplay::~W3DDisplay()
 		delete m_2DRender;
 		m_2DRender = NULL;
 
-	}  // end if
+	}
 
 	//
 	// delete all our views now since they are W3D views and we need to
@@ -412,7 +402,6 @@ W3DDisplay::~W3DDisplay()
 
 	// shutdown
 	Debug_Statistics::Shutdown_Statistics();
-	TextureLoadTaskClass::shutdown();
 	if (!TheGlobalData->m_headless)
 		W3DShaderManager::shutdown();
 	m_assetManager->Free_Assets();
@@ -425,14 +414,14 @@ W3DDisplay::~W3DDisplay()
 	delete TheW3DFileSystem;
 	TheW3DFileSystem = NULL;
 
-}  // end ~W3DDisplay
+}
 
 // TheSuperHackers @tweak valeronm 20/03/2025 No longer filters resolutions by a 4:3 aspect ratio.
 inline Bool isResolutionSupported(const ResolutionDescClass &res)
 {
 	static const Int minBitDepth = 24;
 
-	return res.Width >= MIN_DISPLAY_RESOLUTION_X && res.BitDepth >= minBitDepth;
+	return res.Width >= DEFAULT_DISPLAY_WIDTH && res.BitDepth >= minBitDepth;
 }
 
 /*Return number of screen modes supported by the current device*/
@@ -528,7 +517,7 @@ void W3DDisplay::setWidth( UnsignedInt width )
 	// of the screen with (width,height) at the lower right
 	m_2DRender->Set_Coordinate_Range( RectClass( 0, 0, getWidth(), getHeight() ) );
 
-}  // end set width
+}
 
 // W3DDisplay::setHeight ======================================================
 /** Set height of display */
@@ -543,7 +532,7 @@ void W3DDisplay::setHeight( UnsignedInt height )
 	// of the screen with (width,height) at the lower right
 	m_2DRender->Set_Coordinate_Range( RectClass( 0, 0, getWidth(), getHeight() ) );
 
-}  // end set height
+}
 
 // W3DDisplay::initAssets =====================================================
 /** */
@@ -551,7 +540,7 @@ void W3DDisplay::setHeight( UnsignedInt height )
 void W3DDisplay::initAssets( void )
 {
 
-}  // end initAssets
+}
 
 // W3DDisplay::init3DScene ====================================================
 /** */
@@ -559,7 +548,7 @@ void W3DDisplay::initAssets( void )
 void W3DDisplay::init3DScene( void )
 {
 
-}  // end init3DScene
+}
 
 // W3DDisplay::init2DScene ====================================================
 /** This is the 2D scene, you can use it to draw on a 2D plane over the
@@ -568,7 +557,7 @@ void W3DDisplay::init3DScene( void )
 void W3DDisplay::init2DScene( void )
 {
 
-}  // end init2DScene
+}
 
 // W3DDisplay::init ===========================================================
 /** Initialize or re-initialize the W3D display system.  Here we need to
@@ -590,7 +579,7 @@ void W3DDisplay::init( void )
 		/// @todo W3DDisplay needs RE-init logic!
 		return;
 
-	}  // end if
+	}
 	// Override the W3D File system
 	TheW3DFileSystem = NEW W3DFileSystem;
 
@@ -701,15 +690,15 @@ void W3DDisplay::init( void )
 				// if the custom resolution did not succeed. This is unlikely to happen but is possible
 				// if the user writes an unsupported resolution in the Option Preferences or if the
 				// graphics adapter does not support the minimum display resolution to begin with.
-				Int xres = MIN_DISPLAY_RESOLUTION_X;
-				Int yres = MIN_DISPLAY_RESOLUTION_Y;
+				Int xres = DEFAULT_DISPLAY_WIDTH;
+				Int yres = DEFAULT_DISPLAY_HEIGHT;
 				Int bitDepth = DEFAULT_DISPLAY_BIT_DEPTH;
 				Int displayModeCount = getDisplayModeCount();
 				Int displayModeIndex = 0;
 				for (; displayModeIndex < displayModeCount; ++displayModeIndex)
 				{
 					getDisplayModeDescription(displayModeIndex, &xres, &yres, &bitDepth);
-					if (xres * yres >= MIN_DISPLAY_RESOLUTION_X * MIN_DISPLAY_RESOLUTION_Y)
+					if (xres * yres >= DEFAULT_DISPLAY_WIDTH * DEFAULT_DISPLAY_HEIGHT)
 						break; // Is good enough. Use it.
 				}
 				TheWritableGlobalData->m_xResolution = xres;
@@ -744,16 +733,14 @@ void W3DDisplay::init( void )
 
 		//Check if level was never set and default to setting most suitable for system.
 		if (TheGameLODManager->getStaticLODLevel() == STATIC_GAME_LOD_UNKNOWN)
-			TheGameLODManager->setStaticLODLevel(TheGameLODManager->findStaticLODLevel());
+		{
+			TheGameLODManager->setStaticLODLevel(TheGameLODManager->getRecommendedStaticLODLevel());
+		}
 		else
-		{	//Static LOD level was applied during GameLOD manager init except for texture reduction
+		{
+			//Static LOD level was applied during GameLOD manager init except for texture reduction
 			//which needs to be applied here.
-			Int txtReduction=TheWritableGlobalData->m_textureReductionFactor;
-			if (txtReduction > 0)
-			{		WW3D::Set_Texture_Reduction(txtReduction,6);
-					//Tell LOD manager that texture reduction was applied.
-					TheGameLODManager->setCurrentTextureReduction(txtReduction);
-			}
+			TheGameClient->setTextureLOD(TheWritableGlobalData->m_textureReductionFactor);
 		}
 
 		if (TheGlobalData->m_displayGamma != 1.0f)
@@ -784,7 +771,7 @@ void W3DDisplay::init( void )
 					TheGlobalLanguageData->m_nativeDebugDisplay.bold);
 			}
 			else
-				font=TheFontLibrary->getFont( AsciiString("FixedSys"), 8, FALSE );
+				font=TheFontLibrary->getFont( "FixedSys", 8, FALSE );
 
 			m_nativeDebugDisplay->setFont( font );
 			m_nativeDebugDisplay->setFontHeight( 13 );
@@ -800,7 +787,7 @@ void W3DDisplay::init( void )
 	{
 		m_debugDisplayCallback = StatDebugDisplay;
 	}
-}  // end init
+}
 
 // W3DDisplay::reset ===========================================================
 /** Reset the W3D display system.  Here we need to
@@ -839,21 +826,16 @@ void W3DDisplay::reset( void )
 
 const UnsignedInt START_CUMU_FRAME = LOGICFRAMES_PER_SECOND / 2;	// skip first half-sec
 
-/** Update a moving average of the last 30 fps measurements.  Also try to filter out temporary spikes.
-	This code is designed to be used by the GameLOD sytems to determine the correct dynamic LOD setting.
-*/
 void W3DDisplay::updateAverageFPS(void)
 {
-	const Real MaximumFrameTimeCutoff = 0.5f;	//largest frame interval (seconds) we accept before ignoring it as a momentary "spike"
-	const Int FPS_HISTORY_SIZE = 30;	//keep track of the last 30 frames
+	constexpr const Int FPS_HISTORY_SIZE = 30;
 
 	static Int64 lastUpdateTime64 = 0;
 	static Int historyOffset = 0;
-	static Int numSamples = 0;
-	static double fpsHistory[FPS_HISTORY_SIZE];
+	static Real fpsHistory[FPS_HISTORY_SIZE] = {0};
 
-	Int64 freq64 = getPerformanceCounterFrequency();
-	Int64 time64 = getPerformanceCounter();
+	const Int64 freq64 = getPerformanceCounterFrequency();
+	const Int64 time64 = getPerformanceCounter();
 
 #if defined(RTS_DEBUG)
 	if (TheGameLogic->getFrame() == START_CUMU_FRAME)
@@ -862,37 +844,21 @@ void W3DDisplay::updateAverageFPS(void)
 	}
 #endif
 
-	Int64 timeDiff = time64 - lastUpdateTime64;
+	const Int64 timeDiff = time64 - lastUpdateTime64;
 
 	// convert elapsed time to seconds
-	double elapsedSeconds = (double)timeDiff/(double)(freq64);
+	Real elapsedSeconds = (Real)timeDiff/(Real)freq64;
 
-	if (elapsedSeconds <= MaximumFrameTimeCutoff)	//make sure it's not a spike
-	{
-		// append new sameple to fps history.
-		if (historyOffset >= FPS_HISTORY_SIZE)
-			historyOffset = 0;
+	// append new sample to fps history.
+	if (historyOffset >= FPS_HISTORY_SIZE)
+		historyOffset = 0;
 
-		m_currentFPS = 1.0/elapsedSeconds;
-		fpsHistory[historyOffset++] = m_currentFPS;
-		numSamples++;
-		if (numSamples > FPS_HISTORY_SIZE)
-			numSamples = FPS_HISTORY_SIZE;
-	}
+	m_currentFPS = 1.0f/elapsedSeconds;
+	fpsHistory[historyOffset++] = m_currentFPS;
 
-	if (numSamples)
-	{
-		// determine average frame rate over our past history.
-		Real average=0;
-		for (Int i=0,j=historyOffset-1; i<numSamples; i++,j--)
-		{
-			if (j < 0)
-				j=FPS_HISTORY_SIZE-1;	// wrap around to front of buffer
-			average += fpsHistory[j];
-		}
-
-		m_averageFPS = average / (Real)numSamples;
-	}
+	// determine average frame rate over our past history.
+	const Real sum = std::accumulate(fpsHistory, fpsHistory + FPS_HISTORY_SIZE, 0.0f);
+	m_averageFPS = sum / FPS_HISTORY_SIZE;
 
 	lastUpdateTime64 = time64;
 }
@@ -924,7 +890,7 @@ void W3DDisplay::gatherDebugStats( void )
 				TheGlobalLanguageData->m_nativeDebugDisplay.bold);
 		}
 		else
-			font = TheFontLibrary->getFont( AsciiString("FixedSys"), 8, FALSE );
+			font = TheFontLibrary->getFont( "FixedSys", 8, FALSE );
 
 		for (int i = 0; i < DisplayStringCount; i++)
 		{
@@ -936,11 +902,11 @@ void W3DDisplay::gatherDebugStats( void )
 			}
 		}
 
-	}  // end if
+	}
 
 	if (m_benchmarkDisplayString == NULL)
 	{
-		GameFont *thisFont = TheFontLibrary->getFont( AsciiString("FixedSys"), 8, FALSE );
+		GameFont *thisFont = TheFontLibrary->getFont( "FixedSys", 8, FALSE );
 		m_benchmarkDisplayString = TheDisplayStringManager->newDisplayString();
 		DEBUG_ASSERTCRASH( m_benchmarkDisplayString, ("Failed to create DisplayString") );
 		m_benchmarkDisplayString->setFont( thisFont );
@@ -1001,7 +967,7 @@ void W3DDisplay::gatherDebugStats( void )
 		//Int LOD = TheGlobalData->m_terrainLOD;
 		//unibuffer.format( L"FPS: %.2f, %.2fms mapLOD=%d [cumu FPS=%.2f] draws: %.2f sort: %.2f", fps, ms, LOD, cumuFPS, drawsPerFrame,sortPolysPerFrame);
 		if (TheGlobalData->m_useFpsLimit)
-				unibuffer.format( L"%.2f/%d FPS, ", fps, TheGameEngine->getFramesPerSecondLimit());
+				unibuffer.format( L"%.2f/%d FPS, ", fps, TheFramePacer->getFramesPerSecondLimit());
 		else
 				unibuffer.format( L"%.2f FPS, ", fps);
 
@@ -1195,8 +1161,10 @@ void W3DDisplay::gatherDebugStats( void )
 		s_sortedPolysSinceLastUpdate = 0;
 
 		// terrain stats
-		unibuffer.format( L"3-Way Blends: %d, Shoreline Blends: %d", TheTerrainRenderObject->getNumExtraBlendTiles(),
-			TheTerrainRenderObject->getNumShoreLineTiles());
+		unibuffer.format( L"3-Way Blends: %d/%d, Shoreline Blends: %d/%d", TheTerrainRenderObject->getNumExtraBlendTiles(TRUE),
+			TheTerrainRenderObject->getNumExtraBlendTiles(FALSE),
+			TheTerrainRenderObject->getNumShoreLineTiles(TRUE),
+			TheTerrainRenderObject->getNumShoreLineTiles(FALSE));
 		m_displayStrings[TerrainStats]->setText( unibuffer );
 
 		// misc debug info
@@ -1359,7 +1327,7 @@ void W3DDisplay::gatherDebugStats( void )
 			// Network outgoing bandwidth stats
 //			unibuffer.format(L"OUT: 0.0 bytes/sec, 0.0 packets/sec");
 //			m_displayStrings[NetOutgoing]->setText( unibuffer );
-      unibuffer.format(L"");
+			unibuffer.clear();
 //			unibuffer.format(L"Network not present");
 			m_displayStrings[NetOutgoing]->setText(unibuffer);
 			m_displayStrings[NetIncoming]->setText(unibuffer);
@@ -1431,7 +1399,7 @@ void W3DDisplay::gatherDebugStats( void )
 
 			//Render ALL modelcondition statii
 
-		}  // end if
+		}
 		m_displayStrings[ SelectedInfo ]->setText( unibuffer );
 
 	}
@@ -1466,7 +1434,7 @@ void W3DDisplay::drawDebugStats( void )
 		y += h;
 	}
 
-}  // end drawDebugStats
+}
 
 // W3DDisplay::drawFPSStats =================================================
 /** Draw the FPS on the screen */
@@ -1510,7 +1478,7 @@ void W3DDisplay::drawCurrentDebugDisplay( void )
 			m_debugDisplayCallback( m_debugDisplay, m_debugDisplayUserData, NULL );
 		}
 	}
-}  // end drawCurrentDebugDisplay
+}
 
 // W3DDisplay::calculateTerrainLOD =================================================
 /** Calculates an adequately speedy terrain Level Of Detail. */
@@ -1610,6 +1578,12 @@ Int W3DDisplay::getLastFrameDrawCalls()
 	return Debug_Statistics::Get_Draw_Calls();
 }
 
+//=============================================================================
+void W3DDisplay::step()
+{
+	stepViews();
+}
+
 //DECLARE_PERF_TIMER(BigAssRenderLoop)
 
 // W3DDisplay::draw ===========================================================
@@ -1619,7 +1593,6 @@ Int W3DDisplay::getLastFrameDrawCalls()
 void W3DDisplay::draw( void )
 {
 	//USE_PERF_TIMER(W3DDisplay_draw)
-	static UnsignedInt syncTime = 0;
 
 	extern HWND ApplicationHWnd;
 	if (ApplicationHWnd && ::IsIconic(ApplicationHWnd)) {
@@ -1694,21 +1667,14 @@ AGAIN:
   	//
 	//PredictiveLODOptimizerClass::Optimize_LODs( 5000 );
 
-	Bool freezeTime = TheTacticalView->isTimeFrozen() && !TheTacticalView->isCameraMovementFinished();
-	freezeTime = freezeTime || TheScriptEngine->isTimeFrozenDebug() || TheScriptEngine->isTimeFrozenScript();
-	freezeTime = freezeTime || TheGameLogic->isGamePaused();
-
-	// hack to let client spin fast in network games but still do effects at the same pace. -MDC
-	static UnsignedInt lastFrame = ~0;
-	freezeTime = freezeTime || (lastFrame == TheGameClient->getFrame());
-	lastFrame = TheGameClient->getFrame();
+	Bool freezeTime = TheFramePacer->isTimeFrozen() || TheFramePacer->isGameHalted();
 
 	/// @todo: I'm assuming the first view is our main 3D view.
 	W3DView *primaryW3DView=(W3DView *)getFirstView();
+
 	if (!freezeTime && TheScriptEngine->isTimeFast())
 	{
 		primaryW3DView->updateCameraMovements();  // Update camera motion effects.
-		syncTime += TheW3DFrameLengthInMsec;
 		return;
 	}
 
@@ -1737,21 +1703,14 @@ AGAIN:
 		}
 	}
 
-	if (!freezeTime)
-	{
-		/// @todo Decouple framerate from timestep
-		// for now, use constant time steps to avoid animations running independent of framerate
-		syncTime += TheW3DFrameLengthInMsec;
-		// allow W3D to update its internals
-		//	WW3D::Sync( GetTickCount() );
-	}
-	WW3D::Sync( syncTime );
+	WW3D::Update_Logic_Frame_Time(TheFramePacer->getLogicTimeStepMilliseconds());
 
-	// Fast & Frozen time limits the time to 33 fps.
-	Int minTime = 30;
-	static Int prevTime = timeGetTime(), now;
+	// TheSuperHackers @info This binds the WW3D update to the logic update.
+	WW3D::Sync(TheGameLogic->hasUpdated());
 
+	static Int now;
 	now=timeGetTime();
+
 	if (TheTacticalView->getTimeMultiplier()>1)
 	{
 		static Int timeMultiplierCounter = 1;
@@ -1761,27 +1720,8 @@ AGAIN:
 		timeMultiplierCounter = TheTacticalView->getTimeMultiplier();
 		// limit the framerate, because while fast time is on, the game logic is running as fast as it can.
 	}
-	else
-	{
-		now = timeGetTime();
-		prevTime = now - minTime;		 // do the first frame immediately.
-	}
-
 
 	do {
-
-		{
-			if(TheGlobalData->m_loadScreenRender != TRUE)
-			{
-
-				// limit the framerate
-				while(TheGlobalData->m_useFpsLimit && (now - prevTime) < minTime-1)
-				{
-					now = timeGetTime();
-				}
-				prevTime = now;
-			}
-		}
 
 		// update all views of the world - recomputes data which will affect drawing
 		if (DX8Wrapper::_Get_D3D_Device8() && (DX8Wrapper::_Get_D3D_Device8()->TestCooperativeLevel()) == D3D_OK)
@@ -1937,7 +1877,7 @@ AGAIN:
 		goto AGAIN;
 	}
 #endif
-}  // end draw
+}
 
 #define LETTER_BOX_FADE_TIME	1000.0f		///1000 ms.
 
@@ -1999,6 +1939,12 @@ Bool W3DDisplay::isLetterBoxFading(void)
 	if (!m_letterBoxEnabled && m_letterBoxFadeLevel != 0.0f)
 		return TRUE;
 	return FALSE;
+}
+
+//WST 10/2/2002 added query function.  JSC Integrated 5/20/03
+Bool W3DDisplay::isLetterBoxed(void)
+{
+	return (m_letterBoxEnabled);
 }
 
 // W3DDisplay::createLightPulse ===============================================
@@ -2104,7 +2050,7 @@ void W3DDisplay::drawLine( Int startX, Int startY,
 												lineWidth, lineColor );
 	m_2DRender->Render();
 
-}  // end drawLine
+}
 
 // W3DDisplay::drawLine =======================================================
 /** draw a line on the display in pixel coordinates with the specified color */
@@ -2122,7 +2068,7 @@ void W3DDisplay::drawLine( Int startX, Int startY,
 												lineWidth, lineColor1, lineColor2 );
 	m_2DRender->Render();
 
-}  // end drawLine
+}
 
 
 // W3DDisplay::drawOpenRect ===================================================
@@ -2175,7 +2121,7 @@ void W3DDisplay::drawOpenRect( Int startX, Int startY, Int width, Int height,
 		m_2DRender->Render();
 	}
 
-}  // end drawOpenRect
+}
 
 // W3DDisplay::drawFillRect ===================================================
 //=============================================================================
@@ -2193,7 +2139,7 @@ void W3DDisplay::drawFillRect( Int startX, Int startY, Int width, Int height,
 	// render it now!
 	m_2DRender->Render();
 
-}  // end drawFillRect
+}
 
 void W3DDisplay::drawRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color)
 {
@@ -2687,14 +2633,14 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 												 Vector2( uv_rect.Left, uv_rect.Top ),
 												 color );
 
-	}  // end if
+	}
 	else
 	{
 
 		// just draw as normal
 		m_2DRender->Add_Quad( screen_rect, uv_rect, color );
 
-	}  // end else
+	}
 
 	m_2DRender->Render();
 
@@ -2703,7 +2649,7 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 	if (doAlphaReset)
 		m_2DRender->Enable_Alpha(true);
 
-}  // end drawImage
+}
 
 //============================================================================
 // W3DDisplay::createVideoBuffer
@@ -2822,7 +2768,7 @@ void W3DDisplay::setClipRegion( IRegion2D *region )
 		m_clipRegion = *region;
 		m_isClippedEnabled = TRUE;
 
-}  // end setClipRegion
+}
 
 //=============================================================================
 /* we don't really need to override this call, since we will soon be called to
@@ -2953,8 +2899,8 @@ void W3DDisplay::takeScreenShot(void)
 #else
 		sprintf( leafname, "%s%.3d.bmp", "sshot", frame_number++);
 #endif
-		strcpy(pathname, TheGlobalData->getPath_UserData().str());
-		strcat(pathname, leafname);
+		strlcpy(pathname, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(pathname));
+		strlcat(pathname, leafname, ARRAY_SIZE(pathname));
 		if (_access( pathname, 0 ) == -1)
 			done = true;
 	}
@@ -3183,9 +3129,9 @@ void W3DDisplay::preloadModelAssets( AsciiString model )
 		nameWithExtension.format( "%s.w3d", model.str() );
 		m_assetManager->Load_3D_Assets( nameWithExtension.str() );
 
-	}  // end if
+	}
 
-}  // end preloadModelAssets
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Preload using the W3D asset manager the texture referenced by the string parameter */
@@ -3197,9 +3143,9 @@ void W3DDisplay::preloadTextureAssets( AsciiString texture )
 	{
 		TextureClass *theTexture = m_assetManager->Get_Texture( texture.str() );
 		theTexture->Release_Ref();//release reference
-	}  // end if
+	}
 
-}  // end preloadModelAssets
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

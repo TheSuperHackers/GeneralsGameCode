@@ -36,11 +36,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef MESHGEOMETRY_H
-#define MESHGEOMETRY_H
+#pragma once
 
 #include "always.h"
-#include "refcount.h"
 #include "bittype.h"
 #include "simplevec.h"
 #include "sharebuf.h"
@@ -286,6 +284,3 @@ inline uint8 MeshGeometryClass::Get_Poly_Surface_Type(int poly_index) const
 	uint8 *type = PolySurfaceType->Get_Array();
 	return type[poly_index];
 }
-
-#endif //MESHGEOMETRY_H
-

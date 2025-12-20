@@ -176,7 +176,7 @@ void ScorchOptions::GetPopSliderInfo(const long sliderID, long *pMin, long *pMax
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 }
 
 void ScorchOptions::PopSliderChanged(const long sliderID, long theVal)
@@ -197,7 +197,7 @@ void ScorchOptions::PopSliderChanged(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 	m_updating = false;
 }
 
@@ -212,7 +212,7 @@ void ScorchOptions::PopSliderFinished(const long sliderID, long theVal)
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
 			break;
-	}	// switch
+	}
 
 }
 

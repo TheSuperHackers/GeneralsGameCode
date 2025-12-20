@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DISABLED_TYPES_H_
-#define __DISABLED_TYPES_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
 #include "Common/BitFlags.h"
@@ -109,6 +106,3 @@ extern const char *TheDisabledNames[];
 extern DisabledMaskType DISABLEDMASK_NONE;	// inits to all zeroes
 extern DisabledMaskType DISABLEDMASK_ALL;		// inits to all bits set.
 void initDisabledMasks();
-
-#endif	// __DISABLED_TYPES_H_
-

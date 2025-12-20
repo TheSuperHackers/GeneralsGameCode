@@ -45,7 +45,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
@@ -117,24 +117,22 @@ GameWindow::GameWindow( void )
 
 	m_editData = NULL;
 
-}  // end GameWindow
+}
 
 // GameWindow::~GameWindow ====================================================
 //=============================================================================
 GameWindow::~GameWindow( void )
 {
 
-	if(	m_inputData )
-		delete m_inputData;
+	delete m_inputData;
 	m_inputData = NULL;
 
-	if( m_editData )
-		delete m_editData;
+	delete m_editData;
 	m_editData = NULL;
 
 	unlinkFromTransitionWindows();
 
-}  // end ~GameWindow
+}
 
 // GameWindow::linkTransitionWindow ============================================
 //=============================================================================
@@ -143,7 +141,7 @@ void GameWindow::linkTransitionWindow( TransitionWindow* transitionWindow )
 
 	m_transitionWindows.push_back(transitionWindow);
 
-}  // end linkTransitionWindow
+}
 
 // GameWindow::unlinkTransitionWindow =========================================
 //=============================================================================
@@ -162,7 +160,7 @@ void GameWindow::unlinkTransitionWindow( TransitionWindow* transitionWindow )
 		++it;
 	}
 
-}  // end unlinkTransitionWindow
+}
 
 // GameWindow::unlinkFromTransitionWindows =========================================
 //=============================================================================
@@ -175,7 +173,7 @@ void GameWindow::unlinkFromTransitionWindows( void )
 		m_transitionWindows.pop_back();
 	}
 
-}  // end unlinkFromTransitionWindows
+}
 
 // GameWindow::normalizeWindowRegion ==========================================
 /** Puts the upper left corner in the window's region.lo field */
@@ -191,7 +189,7 @@ void GameWindow::normalizeWindowRegion( void )
 		m_region.lo.x = m_region.hi.x;
 		m_region.hi.x = temp;
 
-	}  // end if
+	}
 
 	if( m_region.lo.y > m_region.hi.y )
 	{
@@ -200,9 +198,9 @@ void GameWindow::normalizeWindowRegion( void )
 		m_region.lo.y = m_region.hi.y;
 		m_region.hi.y = temp;
 
-	}  // end if
+	}
 
-}  // end normalizeWindowRegion
+}
 
 // GameWindow::findFirstLeaf ==================================================
 /** Returns the first leaf of the branch */
@@ -221,7 +219,7 @@ GameWindow *GameWindow::findFirstLeaf( void )
 
 	return leaf;
 
-}  // end findFirstLeaf
+}
 
 // GameWindow::findLastLeaf ===================================================
 /** Returns the last leaf of the branch */
@@ -243,11 +241,11 @@ GameWindow *GameWindow::findLastLeaf( void )
 		while( leaf->m_next )
 			leaf = leaf->m_next;
 
-	}  // end while
+	}
 
 	return leaf;
 
-}  // end findLastLeaf
+}
 
 // GameWindow::findPrevLeaf ===================================================
 /** Returns the prev leaf of the tree */
@@ -270,11 +268,11 @@ GameWindow *GameWindow::findPrevLeaf( void )
 			while( leaf->m_next )
 				leaf = leaf->m_next;
 
-		}  // end while
+		}
 
 		return leaf;
 
-	}   // end if
+	}
 	else
 	{
 
@@ -297,24 +295,24 @@ GameWindow *GameWindow::findPrevLeaf( void )
 					while( leaf->m_next )
 						leaf = leaf->m_next;
 
-				}  // end while
+				}
 
 				return leaf;
 
-			}  // end if
+			}
 
-		}  // end while
+		}
 
 		if( leaf )
 			return leaf->findLastLeaf();
 		else
 			return NULL;
 
-	}  // end else
+	}
 
 	return NULL;
 
-}  // end findPrevLeaf
+}
 
 // GameWindow::findNextLeaf ===================================================
 /** Returns the next leaf of the tree */
@@ -334,7 +332,7 @@ GameWindow *GameWindow::findNextLeaf( void )
 																						WIN_STATUS_TAB_STOP ) )
 				return leaf;
 
-	}  // end if
+	}
 	else
 	{
 
@@ -351,20 +349,20 @@ GameWindow *GameWindow::findNextLeaf( void )
 							BitIsSet( leaf->m_status, WIN_STATUS_TAB_STOP ) )
 						return leaf;
 
-			}  // end if
+			}
 
-		}  // end while
+		}
 
 		if( leaf )
 			return leaf->findFirstLeaf();
 		else
 			return NULL;
 
-	}  // end else
+	}
 
 	return NULL;
 
-}  // end findNextLeav
+}
 
 // GameWindow::winNextTab =====================================================
 /** Go to next window in tab chain */
@@ -399,7 +397,7 @@ Int GameWindow::winNextTab( void )
 */
 	return WIN_ERR_OK;
 
-}  // end WinNextTab
+}
 
 // GameWindow::winPrevTab =====================================================
 /** Go to previous window in tab chain */
@@ -422,7 +420,7 @@ Int GameWindow::winPrevTab( void )
 			newTab = findFirstLeaf( newTab );
 			firstTry = FALSE;
 
-		}  // end if
+		}
 		else
 			newTab = findNextLeaf( newTab );
 
@@ -436,7 +434,7 @@ Int GameWindow::winPrevTab( void )
 
 	return WIN_ERR_OK;
 
-}  // end WinPrevTab
+}
 
 // GameWindow::winBringToTop ==================================================
 /** Bring this window to the top of the window list, if we have a parent
@@ -454,7 +452,7 @@ Int GameWindow::winBringToTop( void )
 		TheWindowManager->addWindowToParent( this, parent );
 //		TheWindowManager->addWindowToParentAtEnd( this, parent );
 
-	}  // end if
+	}
 	else
 	{
 
@@ -469,7 +467,7 @@ Int GameWindow::winBringToTop( void )
 		TheWindowManager->unlinkWindow( this );
 		TheWindowManager->linkWindow( this );
 
-	}  // end else
+	}
 
 	//
 	// if the window is part of a screen layout, move it to the top
@@ -488,11 +486,11 @@ Int GameWindow::winBringToTop( void )
 		saveLayout->removeWindow( this );
 		saveLayout->addWindow( this );
 
-	}  // end if
+	}
 
 	return WIN_ERR_OK;
 
-}  // end winBringToTop
+}
 
 // GameWindow::winActivate ====================================================
 /** Pop window to top of window list AND activate it */
@@ -512,7 +510,7 @@ Int GameWindow::winActivate( void )
 
 	return WIN_ERR_OK;
 
-}  // end WinActivate
+}
 
 // GameWindow::winSetPosition =================================================
 /** Set the window's position */
@@ -530,7 +528,7 @@ Int GameWindow::winSetPosition( Int x, Int y )
 
 	return WIN_ERR_OK;
 
-}  // end WinSetPosition
+}
 
 // WinGetPosition =============================================================
 /** Get the window's postion */
@@ -547,7 +545,7 @@ Int GameWindow::winGetPosition( Int *x, Int *y )
 
 	return WIN_ERR_OK;
 
-}  // end WinGetPosition
+}
 
 // WinSetCursorPosition =============================================================
 /** Set the window's cursor postion */
@@ -559,7 +557,7 @@ Int GameWindow::winSetCursorPosition( Int x, Int y )
 
 	return WIN_ERR_OK;
 
-}  // end WinSetCursorPosition
+}
 
 // WinGetCursorPosition =============================================================
 /** Get the window's cursor postion */
@@ -578,7 +576,7 @@ Int GameWindow::winGetCursorPosition( Int *x, Int *y )
 
 	return WIN_ERR_OK;
 
-}  // end WinGetPosition
+}
 
 // GameWindow::winGetScreenPosition ===========================================
 /** Get the window's postion in screen coordinates */
@@ -597,11 +595,11 @@ Int GameWindow::winGetScreenPosition( Int *x, Int *y )
 		*y += parent->m_region.lo.y;
 		parent = parent->m_parent;
 
-	}  // end while
+	}
 
 	return WIN_ERR_OK;
 
-}  // end WinGetScreenPosition
+}
 
 // GameWindow::winGetRegion ===================================================
 /** Get the window region */
@@ -614,7 +612,7 @@ Int GameWindow::winGetRegion( IRegion2D *region )
 
 	return WIN_ERR_OK;
 
-}  // end winGetRegion
+}
 
 // GameWindow::winPointInWindow ===============================================
 /** Check to see if the given point is inside the window.  Will
@@ -633,7 +631,7 @@ Bool GameWindow::winPointInWindow( Int x, Int y )
 
 	return FALSE;
 
-}  // end WinPointInWindow
+}
 
 // GameWindow::winSetSize =====================================================
 /** Set the window's size */
@@ -653,7 +651,7 @@ Int GameWindow::winSetSize( Int width, Int height )
 
 	return WIN_ERR_OK;
 
-}  // end WinSetSize
+}
 
 // GameWindow::winGetSize =====================================================
 /** Get the window's size */
@@ -670,7 +668,7 @@ Int GameWindow::winGetSize( Int *width, Int *height )
 
 	return WIN_ERR_OK;
 
-}  // end WinGetSize
+}
 
 // GameWindow::winEnable ======================================================
 /** Enable or disable a window based on the enable parameter.
@@ -691,11 +689,11 @@ Int GameWindow::winEnable( Bool enable )
 		for( child = m_child; child; child = child->m_next)
 			child->winEnable( enable );
 
-	}  // end if
+	}
 
 	return WIN_ERR_OK;
 
-}  // end WinEnable
+}
 
 // GameWindow::winGetEnabled ======================================================
 /** Enable or disable a window based on the enable parameter.
@@ -705,7 +703,7 @@ Bool GameWindow::winGetEnabled( void )
 {
   return BitIsSet( m_status, WIN_STATUS_ENABLED );
 
-}  // end winGetEnabled
+}
 
 // GameWindow::winHide ========================================================
 /** Hide or show a window based on the hide parameter.
@@ -730,17 +728,17 @@ Int GameWindow::winHide( Bool hide )
 		// notify the window manger we are hiding
 		TheWindowManager->windowHiding( this );
 
-	}  // end if
+	}
 	else
 	{
 
 		BitClear( m_status, WIN_STATUS_HIDDEN );
 
-	}  // end else
+	}
 
 	return WIN_ERR_OK;
 
-}  // end WinHide
+}
 
 // GameWindow::winIsHidden ====================================================
 /** Am I hidden? */
@@ -750,7 +748,7 @@ Bool GameWindow::winIsHidden( void )
 
 	return BitIsSet( m_status, WIN_STATUS_HIDDEN );
 
-}  // end WinIsHidden
+}
 
 // GameWindow::winSetStatus ===================================================
 /** Allows the user to directly set a window's status flags. */
@@ -765,7 +763,7 @@ UnsignedInt GameWindow::winSetStatus( UnsignedInt status )
 
 	return oldStatus;
 
-}  // end WinSetStatus
+}
 
 // GameWindow::winClearStatus =================================================
 /** Allows the user to directly clear a window's status flags. */
@@ -779,7 +777,7 @@ UnsignedInt GameWindow::winClearStatus( UnsignedInt status )
 
 	return oldStatus;
 
-}  // end WinClearStatus
+}
 
 // GameWindow::winGetStatus ===================================================
 /** Returns a window's status flags. */
@@ -789,7 +787,7 @@ UnsignedInt GameWindow::winGetStatus( void )
 
 	return m_status;
 
-}  // end WinGetStatus
+}
 
 // GameWindow::winGetStyle ====================================================
 /** Returns a window's style flags. */
@@ -799,7 +797,7 @@ UnsignedInt GameWindow::winGetStyle( void )
 
 	return m_instData.m_style;
 
-}  // end WinGetStyle
+}
 
 // GameWindow::winSetHiliteState ==============================================
 /** Set whether window is highlighted or not */
@@ -812,7 +810,7 @@ void GameWindow::winSetHiliteState( Bool state )
 	else
 		BitClear( m_instData.m_state, WIN_STATE_HILITED );
 
-}  // end WinSetHiliteState
+}
 
 // GameWindow::winSetDrawOffset ===============================================
 /** Set offset for drawing images */
@@ -823,7 +821,7 @@ void GameWindow::winSetDrawOffset( Int x, Int y )
 	m_instData.m_imageOffset.x = x;
 	m_instData.m_imageOffset.y = y;
 
-}  // end WinSetDrawOffset
+}
 
 // GameWindow::winGetDrawOffset ===============================================
 /** Get offset for drawing images */
@@ -838,7 +836,7 @@ void GameWindow::winGetDrawOffset( Int *x, Int *y )
 	*x = m_instData.m_imageOffset.x;
 	*y = m_instData.m_imageOffset.y;
 
-}  // end WinGetDrawOffset
+}
 
 // GameWindow::winSetText =====================================================
 /** Sets the text in a window */
@@ -850,7 +848,7 @@ Int GameWindow::winSetText( UnicodeString newText )
 
 	return WIN_ERR_OK;
 
-}  // end WinSetText
+}
 
 // GameWindow::winGetText =====================================================
 /** Get text from a window ... this works for static text windows and
@@ -861,7 +859,7 @@ UnicodeString GameWindow::winGetText( void )
 	// return the contents of our text field
 	return m_instData.getText();
 
-}  // end WinGetText
+}
 
 // GameWindow::winGetTextLength =====================================================
 //=============================================================================
@@ -870,7 +868,7 @@ Int GameWindow::winGetTextLength()
 	// return the contents of our text field
 	return m_instData.getTextLength();
 
-}  // end WinGetText
+}
 
 // GameWindow::winGetFont =====================================================
 /** Get the font being used by this window */
@@ -880,7 +878,7 @@ GameFont *GameWindow::winGetFont( void )
 
 	return m_instData.getFont();
 
-}  // end WinGetFont
+}
 
 // GameWindow::winSetFont =====================================================
 /** Set font for text in this window */
@@ -912,9 +910,9 @@ void GameWindow::winSetFont( GameFont *font )
 		if( dString )
 			dString->setFont( font );
 
-	}  // end else
+	}
 
-}  // end WinSetFont
+}
 
 // GameWindow::winSetEnabledTextColors ========================================
 /** Set the text colors for the enabled state */
@@ -928,7 +926,7 @@ void GameWindow::winSetEnabledTextColors( Color color, Color borderColor )
 		GadgetComboBoxSetEnabledTextColors(this,  color, borderColor );
 
 
-}  // end winSetEnabledTextColors
+}
 
 // GameWindow::winSetDisabledTextColors =======================================
 /** Set the text colors for the disabled state */
@@ -942,7 +940,7 @@ void GameWindow::winSetDisabledTextColors( Color color, Color borderColor )
 	if( BitIsSet( m_instData.getStyle(), GWS_COMBO_BOX ) )
 		GadgetComboBoxSetDisabledTextColors( this, color, borderColor );
 
-}  // end winSetDisabledTextColors
+}
 
 // GameWindow::winSetHiliteTextColors =========================================
 /** Set the text colors for the Hilite state */
@@ -956,7 +954,7 @@ void GameWindow::winSetHiliteTextColors( Color color, Color borderColor )
 	if( BitIsSet( m_instData.getStyle(), GWS_COMBO_BOX ) )
 		GadgetComboBoxSetHiliteTextColors( this, color, borderColor );
 
-}  // end winSetHiliteTextColors
+}
 
 // GameWindow::winSetIMECompositeTextColors =========================================
 /** Set the text colors for the IME Composite state */
@@ -969,7 +967,7 @@ void GameWindow::winSetIMECompositeTextColors( Color color, Color borderColor )
 
 	if( BitIsSet( m_instData.getStyle(), GWS_COMBO_BOX ) )
 		GadgetComboBoxSetIMECompositeTextColors( this, color, borderColor );
-}  // end winSetIMECompositeTextColors
+}
 
 // GameWindow::winGetEnabledTextColor =========================================
 /** Get the enabled text color */
@@ -979,7 +977,7 @@ Color GameWindow::winGetEnabledTextColor( void )
 
 	return m_instData.m_enabledText.color;
 
-}  // end winGetEnabledTextColor
+}
 
 // GameWindow::winGetEnabledTextBorderColor ===================================
 /** Get the enabled text color */
@@ -989,7 +987,7 @@ Color GameWindow::winGetEnabledTextBorderColor( void )
 
 	return m_instData.m_enabledText.borderColor;
 
-}  // end winGetEnabledTextBorderColor
+}
 
 // GameWindow::winGetDisabledTextColor ========================================
 /** Get the disabled text color */
@@ -999,7 +997,7 @@ Color GameWindow::winGetDisabledTextColor( void )
 
 	return m_instData.m_disabledText.color;
 
-}  // end winGetDisabledTextColor
+}
 
 // GameWindow::winGetDisabledTextBorderColor ==================================
 /** Get the disabled text color */
@@ -1009,7 +1007,7 @@ Color GameWindow::winGetDisabledTextBorderColor( void )
 
 	return m_instData.m_disabledText.borderColor;
 
-}  // end winGetEnabledTextBorderColor
+}
 
 // GameWindow::winGetIMECompositeTextColor ==========================================
 /** Get the IME composite text color */
@@ -1019,7 +1017,7 @@ Color GameWindow::winGetIMECompositeTextColor( void )
 
 	return m_instData.m_imeCompositeText.color;
 
-}  // end winGetIMECompositeTextColor
+}
 
 // GameWindow::winGetIMECompositeBorderColor ==========================================
 /** Get the IME composite border color */
@@ -1029,7 +1027,7 @@ Color GameWindow::winGetIMECompositeBorderColor( void )
 
 	return m_instData.m_imeCompositeText.borderColor;
 
-}  // end winGetIMECompositeBorderColor
+}
 
 // GameWindow::winGetHiliteTextColor ==========================================
 /** Get the hilite text color */
@@ -1039,7 +1037,7 @@ Color GameWindow::winGetHiliteTextColor( void )
 
 	return m_instData.m_hiliteText.color;
 
-}  // end winGetHiliteTextColor
+}
 
 // GameWindow::winGetHiliteTextBorderColor ====================================
 /** Get the hilite text color */
@@ -1049,7 +1047,7 @@ Color GameWindow::winGetHiliteTextBorderColor( void )
 
 	return m_instData.m_hiliteText.borderColor;
 
-}  // end winGetHiliteTextBorderColor
+}
 
 // GameWindow::winSetInstanceData =============================================
 /** Sets the window's instance data which includes parameters
@@ -1083,7 +1081,7 @@ Int GameWindow::winSetInstanceData( WinInstanceData *data )
 
 	return WIN_ERR_OK;
 
-}  // end WinSetInstanceData
+}
 
 // GameWindow::winGetInstanceData =============================================
 /** Return pointer to the instance data for this window */
@@ -1093,7 +1091,7 @@ WinInstanceData *GameWindow::winGetInstanceData( void )
 
 	return &m_instData;
 
-}  // end WinGetInstanceData
+}
 
 // GameWindow::winGetUserData =================================================
 /** Return the user data stored */
@@ -1103,7 +1101,7 @@ void *GameWindow::winGetUserData( void )
 
 	return m_userData;
 
-}  // end WinGetUserData
+}
 
 // GameWindow::winSetUserData =================================================
 /** Set the user data stored */
@@ -1113,7 +1111,7 @@ void GameWindow::winSetUserData( void *data )
 
 	m_userData = data;
 
-}  // end WinSetUserData
+}
 
 // GameWindow::winSetTooltip ==================================================
 /** Sets the window's tooltip text */
@@ -1123,7 +1121,7 @@ void GameWindow::winSetTooltip( UnicodeString tip )
 
 	m_instData.setTooltipText( tip );
 
-}  // end WinSetTooltip
+}
 
 // GameWindow::winSetWindowId =================================================
 /** Sets the window's id */
@@ -1135,7 +1133,7 @@ Int GameWindow::winSetWindowId( Int id )
 
 	return WIN_ERR_OK;
 
-}  // end WinSetWindowId
+}
 
 // GameWindow::winGetWindowId =================================================
 /** Gets the window's id */
@@ -1145,7 +1143,7 @@ Int GameWindow::winGetWindowId( void )
 
 	return m_instData.m_id;
 
-}  // end WinGetWindowId
+}
 
 // GameWindow::winSetParent ===================================================
 /** Sets this window's parent */
@@ -1182,7 +1180,7 @@ Int GameWindow::winSetParent( GameWindow *parent )
 
 	return WIN_ERR_OK;
 
-}  // end WinSetParent
+}
 
 // GameWindow::winGetParent ===================================================
 /** Gets the window's parent */
@@ -1192,7 +1190,7 @@ GameWindow *GameWindow::winGetParent( void )
 
 	return m_parent;
 
-}  // end WinGetParent
+}
 
 // GameWindow::winIsChild =====================================================
 /** Determins if a window is a child/grand-child of a parent */
@@ -1209,11 +1207,11 @@ Bool GameWindow::winIsChild( GameWindow *child )
 		// set up tree
 		child = child->m_parent;
 
-	}  // end while
+	}
 
 	return FALSE;
 
-}  // end WinIsChild
+}
 
 // GameWindow::winGetChild ====================================================
 /** Get the child window of this window */
@@ -1223,7 +1221,7 @@ GameWindow *GameWindow::winGetChild( void )
 
 	return m_child;
 
-}  // end WinGetChild
+}
 
 // GameWindow::winSetOwner ====================================================
 /** Sets the window's owner */
@@ -1238,7 +1236,7 @@ Int GameWindow::winSetOwner( GameWindow *owner )
 
 	return WIN_ERR_OK;
 
-}  // end WinSetOwner
+}
 
 // GameWindow::winGetOwner ====================================================
 /** Gets the window's owner */
@@ -1248,7 +1246,7 @@ GameWindow *GameWindow::winGetOwner( void )
 
 	return m_instData.getOwner();
 
-}  // end winGetOwner
+}
 
 // GameWindow::winSetNext =====================================================
 /** Set next pointer */
@@ -1258,7 +1256,7 @@ void GameWindow::winSetNext( GameWindow *next )
 
 	m_next = next;
 
-}  // end winSetNext
+}
 
 // GameWindow::winGetNext =====================================================
 /** Gets the next window */
@@ -1268,7 +1266,7 @@ GameWindow *GameWindow::winGetNext( void )
 
 	return m_next;
 
-}  // end winGetNext
+}
 
 // GameWindow::winSetPrev =====================================================
 /** Set prev pointer */
@@ -1278,7 +1276,7 @@ void GameWindow::winSetPrev( GameWindow *prev )
 
 	m_prev = prev;
 
-}  // end winSetPrev
+}
 
 // GameWindow::winGetPrev =====================================================
 /** Get the previous window */
@@ -1288,7 +1286,7 @@ GameWindow *GameWindow::winGetPrev( void )
 
 	return m_prev;
 
-}  // end winGetPrev
+}
 
 // GameWindow::winSetNextInLayout =============================================
 /** Set next window in layout */
@@ -1350,7 +1348,7 @@ Int GameWindow::winSetSystemFunc( GameWinSystemFunc system )
 
 	return WIN_ERR_OK;
 
-}  // end WinSetSystemFunc
+}
 
 // GameWindow::winSetInputFunc ================================================
 /** Sets the window's input callback functions. */
@@ -1365,7 +1363,7 @@ Int GameWindow::winSetInputFunc( GameWinInputFunc input )
 
 	return WIN_ERR_OK;
 
-}  // end WinSetInputFunc
+}
 
 // GameWindow::winSetDrawFunc =================================================
 /** Sets the window's redraw callback functions. */
@@ -1380,7 +1378,7 @@ Int GameWindow::winSetDrawFunc( GameWinDrawFunc draw )
 
 	return WIN_ERR_OK;
 
-}  // end WinSetDrawFunc
+}
 
 // GameWindow::winSetTooltipFunc ==============================================
 /** Sets a window's tooltip callback */
@@ -1392,7 +1390,7 @@ Int GameWindow::winSetTooltipFunc( GameWinTooltipFunc tooltip )
 
 	return WIN_ERR_OK;
 
-}  // end WinSetTooltipFunc
+}
 
 // GameWindow::winSetCallbacks ================================================
 /** Sets the window's input, tooltip, and redraw callback functions. */
@@ -1408,7 +1406,7 @@ Int GameWindow::winSetCallbacks( GameWinInputFunc input,
 
 	return WIN_ERR_OK;
 
-}  // end WinSetCallbacks
+}
 
 // GameWindow::winDrawWindow ==================================================
 /** Draws the default background for the specified window. */
@@ -1421,7 +1419,7 @@ Int GameWindow::winDrawWindow( void )
 
 	return WIN_ERR_OK;
 
-}  // end WinDrawWindow
+}
 
 // GameWindow::winPointInChild ================================================
 /** Given a window and the mouse coordinates, return the child
@@ -1447,7 +1445,7 @@ GameWindow *GameWindow::winPointInChild( Int x, Int y, Bool ignoreEnableCheck, B
 			origin.y += parent->m_region.lo.y;
 			parent = parent->m_parent;
 
-		}  // end while
+		}
 
 		if( x >= origin.x && x <= origin.x + child->m_size.x &&
 				y >= origin.y && y <= origin.y + child->m_size.y )
@@ -1471,12 +1469,12 @@ GameWindow *GameWindow::winPointInChild( Int x, Int y, Bool ignoreEnableCheck, B
 			}
 		}
 
-	}  // end for child
+	}
 
 	// not in any children, must be in parent
 	return this;
 
-}  // end WinPointInChild
+}
 
 // GameWindow::winPointInAnyChild =============================================
 /** Find the child in which the cursor resides; regardless of
@@ -1501,7 +1499,7 @@ GameWindow *GameWindow::winPointInAnyChild( Int x, Int y, Bool ignoreHidden, Boo
 			origin.y += parent->m_region.lo.y;
 			parent = parent->m_parent;
 
-		}  // end while
+		}
 
 		if( x >= origin.x && x <= origin.x + child->m_size.x &&
 				y >= origin.y && y <= origin.y + child->m_size.y )
@@ -1510,14 +1508,14 @@ GameWindow *GameWindow::winPointInAnyChild( Int x, Int y, Bool ignoreHidden, Boo
 			if( !(ignoreHidden == TRUE &&	BitIsSet( child->m_status, WIN_STATUS_HIDDEN )) )
 				return child->winPointInChild( x, y, ignoreEnableCheck );
 
-		}  // end if
+		}
 
-	}  // end for child
+	}
 
 	// not in any children, must be in parent
 	return this;
 
-}  // end WinPointInAnyChild
+}
 
 //
 // In release builds the default input and system functions are optimized
@@ -1537,7 +1535,7 @@ WindowMsgHandledType GameWinDefaultInput( GameWindow *window, UnsignedInt msg,
 
 	return MSG_IGNORED;
 
-}  // end GameWinDefaultInput
+}
 
 ///< Input that blocks all (mouse) input like a wall, instead of passing like it wasn't there
 WindowMsgHandledType GameWinBlockInput( GameWindow *window, UnsignedInt msg,
@@ -1546,8 +1544,6 @@ WindowMsgHandledType GameWinBlockInput( GameWindow *window, UnsignedInt msg,
 	if (msg == GWM_CHAR || msg == GWM_MOUSE_POS)
 		return MSG_IGNORED;
 
-	//Added By Sadullah Nader
-	//Fix for drag selecting in the control bar
 	if (msg == GWM_LEFT_UP )//|| msg == GWM_LEFT_DRAG)
 	{
 		//stop drag selecting
@@ -1563,7 +1559,7 @@ WindowMsgHandledType GameWinBlockInput( GameWindow *window, UnsignedInt msg,
 
 	return MSG_HANDLED;
 
-}  // end GameWinBlockInput
+}
 
 // GameWinDefaultSystem =======================================================
 /** The default system callback.  Currently does nothing. */
@@ -1574,7 +1570,7 @@ WindowMsgHandledType GameWinDefaultSystem( GameWindow *window, UnsignedInt msg,
 
 	return MSG_IGNORED;
 
-}  // end GameWinDefaultSystem
+}
 
 // GameWinDefaultTooltip ======================================================
 /** Default tooltip callback */
@@ -1585,7 +1581,7 @@ void GameWinDefaultTooltip( GameWindow *window,
 {
 	return;
 
-}  // end GameWinDefaultTooltip
+}
 
 // GameWinDefaultDraw =========================================================
 /** Default draw, does nothing */
@@ -1595,7 +1591,7 @@ void GameWinDefaultDraw( GameWindow *window, WinInstanceData *instData )
 
 	return;
 
-}  // end GameWinDefaultDraw
+}
 
 // GameWindow::winSetEnabledImage =============================================
 /** Set an enabled image into the draw data for the enabled state */
@@ -1611,12 +1607,12 @@ Int GameWindow::winSetEnabledImage( Int index, const Image *image )
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 
-	}  // end if
+	}
 
 	m_instData.m_enabledDrawData[ index ].image = image;
 	return WIN_ERR_OK;
 
-}  // end winSetEnabledImage
+}
 
 // GameWindow::winSetEnabledColor =============================================
 /** set color for enabled state at index */
@@ -1632,12 +1628,12 @@ Int GameWindow::winSetEnabledColor( Int index, Color color )
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 
-	}  // end if
+	}
 
 	m_instData.m_enabledDrawData[ index ].color = color;
 	return WIN_ERR_OK;
 
-}  // end winSetEnabledColor
+}
 
 // GameWindow::winSetEnabledBorderColor =======================================
 /** set border color for state at this index */
@@ -1653,12 +1649,12 @@ Int GameWindow::winSetEnabledBorderColor( Int index, Color color )
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 
-	}  // end if
+	}
 
 	m_instData.m_enabledDrawData[ index ].borderColor = color;
 	return WIN_ERR_OK;
 
-}  // end winSetEnabledBorderColor
+}
 
 // GameWindow::winSetDisabledImage ============================================
 /** Set an disabled image into the draw data for the disabled state */
@@ -1674,12 +1670,12 @@ Int GameWindow::winSetDisabledImage( Int index, const Image *image )
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 
-	}  // end if
+	}
 
 	m_instData.m_disabledDrawData[ index ].image = image;
 	return WIN_ERR_OK;
 
-}  // end winSetDisabledImage
+}
 
 // GameWindow::winSetDisabledColor ============================================
 /** set color for disabled state at index */
@@ -1695,12 +1691,12 @@ Int GameWindow::winSetDisabledColor( Int index, Color color )
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 
-	}  // end if
+	}
 
 	m_instData.m_disabledDrawData[ index ].color = color;
 	return WIN_ERR_OK;
 
-}  // end winSetDisabledColor
+}
 
 // GameWindow::winSetDisabledBorderColor ======================================
 /** set border color for state at this index */
@@ -1716,12 +1712,12 @@ Int GameWindow::winSetDisabledBorderColor( Int index, Color color )
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 
-	}  // end if
+	}
 
 	m_instData.m_disabledDrawData[ index ].borderColor = color;
 	return WIN_ERR_OK;
 
-}  // end winSetDisabledBorderColor
+}
 
 // GameWindow::winSetHiliteImage ==============================================
 /** Set an hilite image into the draw data for the hilite state */
@@ -1737,12 +1733,12 @@ Int GameWindow::winSetHiliteImage( Int index, const Image *image )
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 
-	}  // end if
+	}
 
 	m_instData.m_hiliteDrawData[ index ].image = image;
 	return WIN_ERR_OK;
 
-}  // end winSetHiliteImage
+}
 
 // GameWindow::winSetHiliteColor ==============================================
 /** set color for hilite state at index */
@@ -1758,12 +1754,12 @@ Int GameWindow::winSetHiliteColor( Int index, Color color )
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 
-	}  // end if
+	}
 
 	m_instData.m_hiliteDrawData[ index ].color = color;
 	return WIN_ERR_OK;
 
-}  // end winSetHiliteColor
+}
 
 // GameWindow::winSetHiliteBorderColor ========================================
 /** set border color for state at this index */
@@ -1779,12 +1775,12 @@ Int GameWindow::winSetHiliteBorderColor( Int index, Color color )
 		assert( 0 );
 		return WIN_ERR_INVALID_PARAMETER;
 
-	}  // end if
+	}
 
 	m_instData.m_hiliteDrawData[ index ].borderColor = color;
 	return WIN_ERR_OK;
 
-}  // end winSetHiliteBorderColor
+}
 
 // GameWindow::winGetInputFunc ================================================
 //=============================================================================
@@ -1793,7 +1789,7 @@ GameWinInputFunc GameWindow::winGetInputFunc( void )
 
 	return m_input;
 
-}  // end winGetInputFunc
+}
 
 // GameWindow::winGetSystemFunc ===============================================
 //=============================================================================
@@ -1802,7 +1798,7 @@ GameWinSystemFunc GameWindow::winGetSystemFunc( void )
 
 	return m_system;
 
-}  // end winGetSystemFunc
+}
 
 // GameWindow::winGetTooltipFunc ==============================================
 //=============================================================================
@@ -1811,7 +1807,7 @@ GameWinTooltipFunc GameWindow::winGetTooltipFunc( void )
 
 	return m_tooltip;
 
-}  // end winGetTooltipFunc
+}
 
 // GameWindow::winGetDrawFunc =================================================
 //=============================================================================
@@ -1820,7 +1816,7 @@ GameWinDrawFunc GameWindow::winGetDrawFunc( void )
 
 	return m_draw;
 
-}  // end winGetDrawFunc
+}
 
 // GameWindow::winSetEditData =================================================
 //=============================================================================
@@ -1829,7 +1825,7 @@ void GameWindow::winSetEditData( GameWindowEditData *editData )
 
 	m_editData = editData;
 
-}  // end winSetEditData
+}
 
 // GameWindow::winGetEditData =================================================
 //=============================================================================
@@ -1838,4 +1834,4 @@ GameWindowEditData *GameWindow::winGetEditData( void )
 
 	return m_editData;
 
-}  // end winGetEditData
+}

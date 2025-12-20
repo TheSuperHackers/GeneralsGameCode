@@ -25,7 +25,7 @@
 // FILE: GUIUtil.cpp //////////////////////////////////////////////////////
 // Author: Matthew D. Campbell, Sept 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameNetwork/GUIUtil.h"
 #include "GameNetwork/NetworkDefs.h"

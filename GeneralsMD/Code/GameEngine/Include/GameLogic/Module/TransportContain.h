@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __TransportContain_H_
-#define __TransportContain_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/OpenContain.h"
 
@@ -114,6 +111,3 @@ protected:
 	UnsignedInt m_frameExitNotBusy;
 
 };
-
-#endif // __TransportContain_H_
-

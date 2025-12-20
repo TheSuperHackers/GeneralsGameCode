@@ -34,8 +34,7 @@
 *
 ******************************************************************************/
 
-#ifndef USTRING_H
-#define USTRING_H
+#pragma once
 
 #include "UTypes.h"
 #include "RefCounted.h"
@@ -235,5 +234,3 @@ class UString
 		WChar* mData;
 		UInt mCapacity;
 	};
-
-#endif // USTRING_H

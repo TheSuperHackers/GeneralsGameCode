@@ -1,4 +1,4 @@
-name: check-replays
+name: Check Replays
 
 permissions:
   contents: read
@@ -23,7 +23,7 @@ on:
 jobs:
   build:
     name: ${{ inputs.preset }}
-    runs-on: windows-latest
+    runs-on: windows-2022
     timeout-minutes: 15
     env:
       GAME_PATH: C:\GameData

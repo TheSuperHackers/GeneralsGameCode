@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SlowDeathBehavior_H_
-#define __SlowDeathBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -54,11 +51,11 @@ enum SlowDeathPhaseType CPP_11(: Int)
 	SDPHASE_MIDPOINT,
 	SDPHASE_FINAL,
 
-	SD_PHASE_COUNT	// keep last
+	SD_PHASE_COUNT
 };
 
 #ifdef DEFINE_SLOWDEATHPHASE_NAMES
-static const char *TheSlowDeathPhaseNames[] =
+static const char *const TheSlowDeathPhaseNames[] =
 {
 	"INITIAL",
 	"MIDPOINT",
@@ -66,6 +63,7 @@ static const char *TheSlowDeathPhaseNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheSlowDeathPhaseNames) == SD_PHASE_COUNT + 1, "Incorrect array size");
 #endif
 
 
@@ -102,7 +100,7 @@ public:
 
 	SlowDeathBehaviorModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
-	inline Bool hasNonLodEffects() const
+	Bool hasNonLodEffects() const
 	{
 		return (m_maskOfLoadedEffects & SlowDeathBehaviorModuleData::HAS_NON_LOD_EFFECTS) != 0;
 	}
@@ -158,8 +156,8 @@ public:
 protected:
 
 	void doPhaseStuff(SlowDeathPhaseType sdphase);
-	inline Bool isSlowDeathActivated() const { return (m_flags & (1<<SLOW_DEATH_ACTIVATED)) != 0; }
-	inline UnsignedInt getDestructionFrame() const { return m_destructionFrame; }
+	Bool isSlowDeathActivated() const { return (m_flags & (1<<SLOW_DEATH_ACTIVATED)) != 0; }
+	UnsignedInt getDestructionFrame() const { return m_destructionFrame; }
 
 private:
 
@@ -177,6 +175,3 @@ private:
 	Real				m_acceleratedTimeScale;		///<used to speedup deaths when needed to improve game performance.
 	UnsignedInt	m_flags;
 };
-
-#endif // __SlowDeathBehavior_H_
-

@@ -46,9 +46,6 @@
 
 #pragma once
 
-#ifndef __KEYBOARD_H_
-#define __KEYBOARD_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -68,18 +65,20 @@
 struct KeyboardIO
 {
 
-	enum StatusType
+	enum StatusType CPP_11(: UnsignedByte)
 	{
 		STATUS_UNUSED		= 0x00,					// Key has not been used
 		STATUS_USED			= 0x01					// Key has been eaten
 	};
 
-	UnsignedByte	key;										// key data
+	void setUsed() { status = STATUS_USED; }
+
+	UnsignedByte	key;										// KeyDefType, key data
 	UnsignedByte	status;									// StatusType, above
 	UnsignedShort	state;									// KEY_STATE_* in KeyDefs.h
 	UnsignedInt		sequence;								// sequence info from DirectX used for order
 
-};  // end KeyboardIO
+};
 
 // class Keyboard =============================================================
 /** Keyboard singleton to interface with the keyboard */
@@ -94,7 +93,7 @@ public:
 	Keyboard( void );
 	virtual ~Keyboard( void );
 
-	// you may extend the functionanilty of these for your device
+	// you may extend the functionality of these for your device
 	virtual void init( void );							/**< initialize the keyboard, only extend this
 																							 functionality, do not replace */
 	virtual void reset( void );							///< Reset keyboard system
@@ -114,11 +113,14 @@ public:
 	// access methods for key data
 	void resetKeys( void );												///< reset the state of the keys
 	KeyboardIO *getFirstKey( void );							///< get first key ready for processing
-	void setKeyStatusData( UnsignedByte key,
+	KeyboardIO *findKey( KeyDefType key, KeyboardIO::StatusType status ); ///< get key ready for processing, can return NULL
+	void setKeyStatusData( KeyDefType key,
 												 KeyboardIO::StatusType data );   ///< set key status
-	WideChar translateKey( WideChar keyCode );		///< translte key code to printable UNICODE char
-	WideChar getPrintableKey( UnsignedByte key, Int state );
+	WideChar translateKey( WideChar keyCode );		///< translate key code to printable UNICODE char
+	WideChar getPrintableKey( KeyDefType key, Int state );
 	enum { MAX_KEY_STATES = 3};
+private:
+	void refreshAltKeys() const;									///< refresh the state of the alt keys, necessary after alt tab
 protected:
 
 	/** get the key data for a single key, KEY_NONE should be returned when
@@ -129,10 +131,10 @@ protected:
 	void initKeyNames( void );  ///< initialize the key names table
 	void updateKeys( void );  ///< update the state of our key data
 	Bool checkKeyRepeat( void );  ///< check for repeating keys
-	UnsignedByte getKeyStatusData( UnsignedByte key );  ///< get key status
-	Bool getKeyStateBit( UnsignedByte key, Int bit );  ///< get key state bit
-	UnsignedInt getKeySequenceData( UnsignedByte key );  ///< get key sequence
-	void setKeyStateData( UnsignedByte key, UnsignedByte data );  ///< get key state
+	UnsignedByte getKeyStatusData( KeyDefType key );  ///< get key status
+	Bool getKeyStateBit( KeyDefType key, Int bit );  ///< get key state bit
+	UnsignedInt getKeySequenceData( KeyDefType key );  ///< get key sequence
+	void setKeyStateData( KeyDefType key, UnsignedByte data );  ///< get key state
 
 	UnsignedShort m_modifiers;
 	// internal keyboard data members
@@ -145,13 +147,12 @@ protected:
 	//Bool m_rControlState; // 1 if right control is down
 	//Bool m_lAltState;			// 1 if left alt is down
 	//Bool m_rAltState;			// 1 if right alt is down
-	UnsignedByte m_shift2Key;  // what key is the secondary shift key
+	KeyDefType m_shift2Key;  // what key is the secondary shift key
 
 	enum { NUM_KEYS  = 256 };
 	KeyboardIO m_keys[ NUM_KEYS ];  ///< the keys
-	KeyboardIO m_keyStatus[ NUM_KEYS ];  ///< the key status flags
+	KeyboardIO m_keyStatus[ KEY_COUNT ];  ///< the key status flags
 
-	enum { KEY_NAMES_COUNT = 256 };
 	struct
 	{
 
@@ -159,14 +160,12 @@ protected:
 		WideChar shifted;
 		WideChar shifted2;
 
-	} m_keyNames[ KEY_NAMES_COUNT ];
+	} m_keyNames[ KEY_COUNT ];
 	UnsignedInt m_inputFrame;  ///< frame input was gathered on
 
-};  // end Keyboard
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
 extern Keyboard *TheKeyboard;
-
-#endif // __KEYBOARD_H_

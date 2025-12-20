@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GlobalData.h"
 #include "Common/NameKeyGenerator.h"
@@ -89,12 +89,12 @@ static Bool pause = FALSE;
 void InGamePopupMessageInit( WindowLayout *layout, void *userData )
 {
 
-	parentID = TheNameKeyGenerator->nameToKey(AsciiString("InGamePopupMessage.wnd:InGamePopupMessageParent"));
+	parentID = TheNameKeyGenerator->nameToKey("InGamePopupMessage.wnd:InGamePopupMessageParent");
 	parent = TheWindowManager->winGetWindowFromId(NULL, parentID);
 
-	staticTextMessageID = TheNameKeyGenerator->nameToKey(AsciiString("InGamePopupMessage.wnd:StaticTextMessage"));
+	staticTextMessageID = TheNameKeyGenerator->nameToKey("InGamePopupMessage.wnd:StaticTextMessage");
 	staticTextMessage = TheWindowManager->winGetWindowFromId(parent, staticTextMessageID);
-	buttonOkID = TheNameKeyGenerator->nameToKey(AsciiString("InGamePopupMessage.wnd:ButtonOk"));
+	buttonOkID = TheNameKeyGenerator->nameToKey("InGamePopupMessage.wnd:ButtonOk");
 	buttonOk = TheWindowManager->winGetWindowFromId(parent, buttonOkID);
 
 	PopupMessageData *pMData = TheInGameUI->getPopupMessageData();
@@ -168,18 +168,18 @@ WindowMsgHandledType InGamePopupMessageInput( GameWindow *window, UnsignedInt ms
 							TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)buttonOk, buttonOkID );
 
-						}  // end if
+						}
 
 						// don't let key fall through anywhere else
 						return MSG_HANDLED;
 
-					}  // end escape
+					}
 
-				}  // end switch( key )
+				}
 
-			}  // end char
+			}
 
-		}  // end switch( msg )
+		}
 		return MSG_IGNORED;
 
 
@@ -200,14 +200,14 @@ WindowMsgHandledType InGamePopupMessageSystem( GameWindow *window, UnsignedInt m
 
 			break;
 
-		}  // end create
+		}
     //---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
 
 			break;
 
-		}  // end case
+		}
 
     //----------------------------------------------------------------------------------------------
     case GWM_INPUT_FOCUS:
@@ -219,7 +219,7 @@ WindowMsgHandledType InGamePopupMessageSystem( GameWindow *window, UnsignedInt m
 
 			break;
 
-		}  // end input
+		}
     //---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
@@ -238,7 +238,7 @@ WindowMsgHandledType InGamePopupMessageSystem( GameWindow *window, UnsignedInt m
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 
 	return MSG_HANDLED;

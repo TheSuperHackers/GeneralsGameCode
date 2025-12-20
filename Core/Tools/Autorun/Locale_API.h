@@ -36,9 +36,6 @@
 
 #pragma once
 
-#ifndef  LOCALE_API_H
-#define  LOCALE_API_H
-
 #include <stdlib.h>
 
 /****************************************************************************/
@@ -63,5 +60,3 @@ const wchar_t*	Locale_GetString				( int StringID, wchar_t *String=NULL );
 */
 bool			Locale_Use_Multi_Language_Files	( void );
 //int				Locale_Get_Language_ID 			( void )	{ return LanguageID; };
-
-#endif

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef UNIT_CRATE_COLLIDE_H_
-#define UNIT_CRATE_COLLIDE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
 #include "GameLogic/Module/CrateCollide.h"
@@ -49,7 +46,6 @@ public:
 	UnitCrateCollideModuleData()
 	{
 		m_unitCount = 0;
-		m_unitType = "";
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
@@ -84,5 +80,3 @@ public:
 protected:
 
 };
-
-#endif

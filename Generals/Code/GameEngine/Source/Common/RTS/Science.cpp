@@ -27,7 +27,7 @@
 // Desc:      @todo
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "Common/Player.h"
@@ -54,9 +54,7 @@ ScienceStore::~ScienceStore()
 	{
 		ScienceInfo* si = *it;
 		++it;
-		if (si) {
-			deleteInstance(si);
-		}
+		deleteInstance(si);
 	}
 }
 

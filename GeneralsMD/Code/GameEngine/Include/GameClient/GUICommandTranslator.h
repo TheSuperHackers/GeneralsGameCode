@@ -31,9 +31,6 @@
 
 #pragma once
 
-#ifndef __GUICOMMANDTRANSLATOR_H_
-#define __GUICOMMANDTRANSLATOR_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameClient/InGameUI.h"
 
@@ -49,7 +46,3 @@ public:
 
 	virtual GameMessageDisposition translateGameMessage( const GameMessage *msg );
 };
-
-#endif  // end __GUICOMMANDTRANSLATOR_H_
-
-

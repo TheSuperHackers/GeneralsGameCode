@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef BOXROBJ_H
-#define BOXROBJ_H
 
 #include "always.h"
 #include "rendobj.h"
@@ -259,9 +254,3 @@ private:
 ** Instance of the loader which the asset manager installs
 */
 extern BoxLoaderClass			_BoxLoader;
-
-
-
-
-#endif
-

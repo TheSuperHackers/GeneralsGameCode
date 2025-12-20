@@ -318,7 +318,7 @@ void CW3DViewApp::OnAppAbout()
 */
 void Debug_Refs(void)
 {
-#ifndef NDEBUG
+#ifdef RTS_DEBUG
 	TRACE("Detecting Active Refs...\r\n");
    //ODS("At time %s", cMiscUtil::Get_Text_Time());
 	RefCountNodeClass * first = RefCountClass::ActiveRefList.First();
@@ -344,7 +344,7 @@ void Debug_Refs(void)
 			ActiveRefStruct * search_ref = &(search_obj->ActiveRefInfo);
 
 			if ( ref->File && search_ref->File &&
-				  !strcmp(search_ref->File, ref->File) &&
+				  strcmp(search_ref->File, ref->File) == 0 &&
 				  (search_ref->Line == ref->Line) ) {
 				count++;
 			} else if ( (ref->File == NULL) &&  (search_ref->File == NULL) ) {
@@ -368,7 +368,7 @@ void Debug_Refs(void)
 	}
 	TRACE("Done.\r\n");
    //ODS("At time %s", cMiscUtil::Get_Text_Time());
-#endif
+#endif // RTS_DEBUG
 }
 
 

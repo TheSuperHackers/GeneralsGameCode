@@ -62,8 +62,7 @@ void PolygonInfoClass::Set_Vertex_Material(VertexMaterialClass *vertexMaterial)
 
 void PolygonInfoClass::Set_Shader(ShaderClass *shader)
 {
-	if(Shader)
-		delete Shader;
+	delete Shader;
 
 	// todo : update for refcounted shaders
 	Shader = W3DNEW ShaderClass(* shader);
@@ -78,8 +77,7 @@ PolygonInfoClass::~PolygonInfoClass()
 		VertexMaterial->Release_Ref();
 
 	// todo : update for refcounted shaders
-	if(Shader)
-		delete Shader;
+	delete Shader;
 }
 
 

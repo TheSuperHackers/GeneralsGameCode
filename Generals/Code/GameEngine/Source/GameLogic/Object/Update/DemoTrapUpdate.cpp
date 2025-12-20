@@ -27,7 +27,7 @@
 // Desc:   Update module to handle demo trap proximity triggering.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 
@@ -269,7 +269,7 @@ void DemoTrapUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -293,7 +293,7 @@ void DemoTrapUpdate::xfer( Xfer *xfer )
 	// detonated
 	xfer->xferBool( &m_detonated );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -304,4 +304,4 @@ void DemoTrapUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

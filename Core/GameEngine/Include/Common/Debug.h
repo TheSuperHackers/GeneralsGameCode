@@ -45,8 +45,7 @@
 
 #pragma once
 
-#ifndef __DEBUG_H_
-#define __DEBUG_H_
+#include <Utility/CppMacros.h>
 
 class AsciiString;
 
@@ -195,7 +194,7 @@ class AsciiString;
 				if (!ignoreCrash) { \
 					TheCurrentIgnoreCrashPtr = &ignoreCrash; \
 					DebugCrash m ; \
-					TheCurrentIgnoreCrashPtr = NULL; \
+					TheCurrentIgnoreCrashPtr = nullptr; \
 				} \
 			} \
 		} while (0)
@@ -262,5 +261,3 @@ public:
 #endif
 
 // MACROS //////////////////////////////////////////////////////////////////
-
-#endif // __DEBUG_H_

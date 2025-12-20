@@ -34,15 +34,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef RCFILE_H
-#define RCFILE_H
 
 #include "always.h"
-#include "WWFILE.H"
+#include "WWFILE.h"
 #include "win.h"
 
 /*
@@ -91,6 +86,3 @@ class ResourceFileClass : public FileClass
 		unsigned char *	EndOfFile;
 
 };
-
-
-#endif

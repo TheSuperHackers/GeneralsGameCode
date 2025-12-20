@@ -27,7 +27,7 @@
 // Author: Matthew D. Campbell, January 2003
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/MiniLog.h"
 
 #ifdef DEBUG_LOGGING
@@ -36,15 +36,9 @@ LogClass::LogClass(const char *fname)
 {
 	char buffer[ _MAX_PATH ];
 	GetModuleFileName( NULL, buffer, sizeof( buffer ) );
-	char *pEnd = buffer + strlen( buffer );
-	while( pEnd != buffer )
+	if (char *pEnd = strrchr(buffer, '\\'))
 	{
-		if( *pEnd == '\\' )
-		{
-			*pEnd = 0;
-			break;
-		}
-		pEnd--;
+		*pEnd = 0;
 	}
 	// TheSuperHackers @fix Caball009 03/06/2025 Don't use AsciiString here anymore because its memory allocator may not have been initialized yet.
 	const std::string fullPath = std::string(buffer) + "\\" + fname;

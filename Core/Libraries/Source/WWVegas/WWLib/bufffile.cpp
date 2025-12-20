@@ -37,7 +37,6 @@
 #include	"always.h"
 #include	"bufffile.h"
 #include	"wwdebug.h"
-#include	<string.h>
 
 int		BufferedFileClass::_DesiredBufferSize	=	1024*16;
 
@@ -242,11 +241,9 @@ int BufferedFileClass::Seek(int pos, int dir)
 */
 void	BufferedFileClass::Reset_Buffer( void )
 {
-	if ( Buffer != NULL ) {
-		delete [] Buffer;
-		Buffer = NULL;
-		BufferSize = 0;
-		BufferAvailable = 0;
-		BufferOffset = 0;
-	}
+	delete [] Buffer;
+	Buffer = NULL;
+	BufferSize = 0;
+	BufferAvailable = 0;
+	BufferOffset = 0;
 }

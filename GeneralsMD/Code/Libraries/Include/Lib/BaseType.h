@@ -26,11 +26,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // tell the compiler to only load this file once
+
 #pragma once
-
-
-#ifndef _BASE_TYPE_H_
-#define _BASE_TYPE_H_
 
 #include "Lib/BaseTypeCore.h"
 #include "Lib/trig.h"
@@ -142,16 +139,16 @@ __forceinline float fast_float_ceil(float f)
 }
 
 //-------------------------------------------------------------------------------------------------
-#define REAL_TO_INT(x)						((Int)(fast_float2long_round(fast_float_trunc(x))))
-#define REAL_TO_UNSIGNEDINT(x)		((UnsignedInt)(fast_float2long_round(fast_float_trunc(x))))
-#define REAL_TO_SHORT(x)					((Short)(fast_float2long_round(fast_float_trunc(x))))
-#define REAL_TO_UNSIGNEDSHORT(x)	((UnsignedShort)(fast_float2long_round(fast_float_trunc(x))))
-#define REAL_TO_BYTE(x)						((Byte)(fast_float2long_round(fast_float_trunc(x))))
-#define REAL_TO_UNSIGNEDBYTE(x)		((UnsignedByte)(fast_float2long_round(fast_float_trunc(x))))
-#define REAL_TO_CHAR(x)						((Char)(fast_float2long_round(fast_float_trunc(x))))
-#define DOUBLE_TO_REAL(x)					((Real) (x))
-#define DOUBLE_TO_INT(x)					((Int) (fast_float2long_round(fast_float_trunc(x))))
-#define INT_TO_REAL(x)						((Real) (x))
+#define REAL_TO_INT(x)						((Int)(x))
+#define REAL_TO_UNSIGNEDINT(x)		((UnsignedInt)(x))
+#define REAL_TO_SHORT(x)					((Short)(x))
+#define REAL_TO_UNSIGNEDSHORT(x)	((UnsignedShort)(x))
+#define REAL_TO_BYTE(x)						((Byte)(x))
+#define REAL_TO_UNSIGNEDBYTE(x)		((UnsignedByte)(x))
+#define REAL_TO_CHAR(x)						((Char)(x))
+#define DOUBLE_TO_REAL(x)					((Real)(x))
+#define DOUBLE_TO_INT(x)					((Int)(x))
+#define INT_TO_REAL(x)						((Real)(x))
 
 // once we've ceiled/floored, trunc and round are identical, and currently, round is faster... (srj)
 #define REAL_TO_INT_CEIL(x)				(fast_float2long_round(fast_float_ceil(x)))
@@ -216,7 +213,7 @@ inline Real Coord2D::toAngle( void ) const
 		c = 1.0f;
 
 	return y < 0.0f ? -ACos(c) : ACos(c);
-}  // end toAngle
+}
 
 struct ICoord2D
 {
@@ -375,7 +372,7 @@ struct RGBColor
 {
 	Real red, green, blue;		// range between 0 and 1
 
-	inline Int getAsInt() const
+	Int getAsInt() const
 	{
 		return
 			((Int)(red * 255.0) << 16) |
@@ -383,7 +380,7 @@ struct RGBColor
 			((Int)(blue * 255.0) << 0);
 	}
 
-	inline void setFromInt(Int c)
+	void setFromInt(Int c)
 	{
 		red = ((c >> 16) & 0xff) / 255.0f;
 		green = ((c >>  8) & 0xff) / 255.0f;
@@ -410,5 +407,3 @@ struct RGBAColorInt
 inline Real nmod(Real x, Real y) {
     return fmod(fmod(x, y) + y, y);
 }
-
-#endif // _BASE_TYPE_H_

@@ -89,21 +89,21 @@ void W3DGadgetVerticalSliderDraw( GameWindow *window,
 		backBorder		= GadgetSliderGetDisabledBorderColor( window );
 		backColor			= GadgetSliderGetDisabledColor( window );
 
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
 		backBorder		= GadgetSliderGetHiliteBorderColor( window );
 		backColor			= GadgetSliderGetHiliteColor( window );
 
-	}  // end else if, hilited
+	}
 	else
 	{
 
 		backBorder		= GadgetSliderGetEnabledBorderColor( window );
 		backColor			= GadgetSliderGetEnabledColor( window );
 
-	}  // end else, enabled
+	}
 
 	// draw background border and rect over whole control
 	if( backBorder != WIN_COLOR_UNDEFINED )
@@ -116,7 +116,7 @@ void W3DGadgetVerticalSliderDraw( GameWindow *window,
 		TheWindowManager->winOpenRect( backBorder, WIN_DRAW_LINE_WIDTH,
 																	 start.x, start.y, end.x, end.y );
 
-	}  // end if
+	}
 	if( backColor != WIN_COLOR_UNDEFINED )
 	{
 
@@ -127,11 +127,11 @@ void W3DGadgetVerticalSliderDraw( GameWindow *window,
 		TheWindowManager->winFillRect( backColor, WIN_DRAW_LINE_WIDTH,
 																	 start.x, start.y, end.x, end.y );
 
-	}  // end if
+	}
 
 
 
-}  // end W3DGadgetVerticalSliderDraw
+}
 
 // W3DGadgetVerticalSliderImageDraw ===========================================
 /** Draw vertical slider with user supplied images */
@@ -161,7 +161,7 @@ void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
 		centerImage				= GadgetSliderGetDisabledImageCenter( window );
 		smallCenterImage	= GadgetSliderGetDisabledImageSmallCenter( window );
 
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
@@ -170,7 +170,7 @@ void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
 		centerImage				= GadgetSliderGetHiliteImageCenter( window );
 		smallCenterImage	= GadgetSliderGetHiliteImageSmallCenter( window );
 
-	}  // end else if, hilited
+	}
 	else
 	{
 
@@ -179,7 +179,7 @@ void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
 		centerImage				= GadgetSliderGetEnabledImageCenter( window );
 		smallCenterImage	= GadgetSliderGetEnabledImageSmallCenter( window );
 
-	}  // end else, enabled
+	}
 
 	// sanity, we need to have these images to make it look right
 	if( topImage == NULL || bottomImage == NULL ||
@@ -241,7 +241,7 @@ void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
 			start.y += centerImage->getImageHeight();
 			end.y += centerImage->getImageHeight();
 
-		}  // end for i
+		}
 
 		//
 		// how many small repeating pieces will fit in the gap from where the
@@ -260,7 +260,7 @@ void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
 			start.y += smallCenterImage->getImageHeight();
 			end.y += smallCenterImage->getImageHeight();
 
-		}  // end for i
+		}
 
 		// draw top end
 		start.x = origin.x + xOffset;
@@ -276,6 +276,6 @@ void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
 	}
 
 
-}  // end W3DGadgetVerticalSliderImageDraw
+}
 
 

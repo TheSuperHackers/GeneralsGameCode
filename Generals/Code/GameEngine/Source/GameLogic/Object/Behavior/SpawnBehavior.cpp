@@ -27,7 +27,7 @@
 // Desc:   Update will create and monitor a group of spawned units and replace as needed
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameState.h"
 #include "Common/ThingFactory.h"
@@ -67,10 +67,7 @@ SpawnBehavior::SpawnBehavior( Thing *thing, const ModuleData* moduleData )
 	//looping back to the beginning
 
 	m_framesToWait = 0;
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_firstBatchCount = 0;
-	//
 	if( md->m_isOneShotData )
 		m_oneShotCountdown = md->m_spawnNumberData;
 	else
@@ -126,9 +123,9 @@ void SpawnBehavior::onDelete()
 			if( obj && obj->isEffectivelyDead() == FALSE )
 				TheGameLogic->destroyObject( obj );
 
-		}  // end for, it
+		}
 
-	}  // end if
+	}
 
 }
 
@@ -184,9 +181,9 @@ void SpawnBehavior::onDie( const DamageInfo *damageInfo )
 			if( obj && obj->isEffectivelyDead() == FALSE )
 				obj->kill();
 
-		}  // end for, it
+		}
 
-	}  // end if
+	}
 
 }
 
@@ -514,9 +511,9 @@ static void findClosestOrphan( Object *obj, void *userData )
 		orphanData->m_closest = obj;
 		orphanData->m_closestDistSq = distSq;
 
-	}  // end if
+	}
 
-}  // findClosestOrphan
+}
 
 // ------------------------------------------------------------------------------------------------
 Object *SpawnBehavior::reclaimOrphanSpawn( void )
@@ -533,14 +530,14 @@ Object *SpawnBehavior::reclaimOrphanSpawn( void )
 	//
 
 	OrphanData orphanData;
-	AsciiString prevName = "";
+	AsciiString prevName;
 	for (std::vector<AsciiString>::const_iterator tempName = md->m_spawnTemplateNameData.begin();
 			tempName != md->m_spawnTemplateNameData.end();
 			++tempName)
 	{
 		if (prevName.compare(*tempName)) // the list may have redundancy, this will skip some of it
 			continue;
-		orphanData.m_matchTemplate = TheThingFactory->findTemplate( *tempName );;
+		orphanData.m_matchTemplate = TheThingFactory->findTemplate( *tempName );
 		orphanData.m_source = getObject();
 		orphanData.m_closest = NULL;
 		orphanData.m_closestDistSq = BIG_DISTANCE;
@@ -854,7 +851,7 @@ void SpawnBehavior::computeAggregateStates(void)
 				SlavedUpdateInterface* sdu = (*update)->getSlavedUpdateInterface();
 				if (sdu != NULL)
 				{
-					m_selfTaskingSpawnCount += ( sdu->isSelfTasking());;
+					m_selfTaskingSpawnCount += ( sdu->isSelfTasking());
 					break;
 				}
 			}
@@ -892,7 +889,7 @@ void SpawnBehavior::computeAggregateStates(void)
 
 			spawnCount++;
 		}
-	} // next iter
+	}
 
 
 
@@ -927,7 +924,7 @@ void SpawnBehavior::computeAggregateStates(void)
 						teamMsg->appendObjectIDArgument( currentSpawn->getID() );
 					}
 				}
-			} // next iter
+			}
 		}
 		// if somebody is selected then I sure need to be!
 		if ( ! obj->getDrawable()->isSelected())
@@ -980,7 +977,7 @@ void SpawnBehavior::crc( Xfer *xfer )
 	// extend base class
 	BehaviorModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1023,11 +1020,11 @@ void SpawnBehavior::xfer( Xfer *xfer )
 				DEBUG_CRASH(( "SpawnBehavior::xfer - Unable to find template '%s'", name.str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// one shot countdown
 	xfer->xferInt( &m_oneShotCountdown );
@@ -1058,7 +1055,7 @@ void SpawnBehavior::xfer( Xfer *xfer )
 	// self tasking spawn count
 	xfer->xferUnsignedInt( &m_selfTaskingSpawnCount );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1069,4 +1066,4 @@ void SpawnBehavior::loadPostProcess( void )
 	// extend base class
 	BehaviorModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

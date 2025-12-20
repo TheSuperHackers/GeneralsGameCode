@@ -32,14 +32,7 @@
  *                                                                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __PART_EMT_LDR_H
-#define __PART_EMT_LDR_H
-
 
 #include "proto.h"
 #include "rendobj.h"
@@ -370,6 +363,3 @@ class ParticleEmitterLoaderClass : public PrototypeLoaderClass
 //	Global variables
 //
 extern ParticleEmitterLoaderClass	_ParticleEmitterLoader;
-
-
-#endif //__PART_EMT_LDR_H

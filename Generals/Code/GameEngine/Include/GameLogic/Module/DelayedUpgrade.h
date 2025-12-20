@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __DELAYED_UPGRADE_H_
-#define __DELAYED_UPGRADE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
 
@@ -82,7 +79,3 @@ protected:
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };
-
-
-#endif
-

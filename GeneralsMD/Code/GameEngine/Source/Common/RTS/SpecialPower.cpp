@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Science.h"
@@ -49,7 +49,7 @@ SpecialPowerStore *TheSpecialPowerStore = NULL;
 
 // Externs ////////////////////////////////////////////////////////////////////////////////////////
 template<>
-const char* SpecialPowerMaskType::s_bitNameList[] =
+const char* const SpecialPowerMaskType::s_bitNameList[] =
 {
 	"SPECIAL_INVALID",
 
@@ -221,6 +221,7 @@ const char* SpecialPowerMaskType::s_bitNameList[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(SpecialPowerMaskType::s_bitNameList) == SpecialPowerMaskType::NumBits + 1, "Incorrect array size");
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -303,8 +304,7 @@ void SpecialPowerStore::parseSpecialPowerDefinition( INI *ini )
 	{ "EvaReadyOwn",						INI::parseEvaNameIndexList,			TheEvaMessageNames, offsetof(SpecialPowerTemplate, m_eva_ready_own) },
 	{ "EvaReadyAlly",						INI::parseEvaNameIndexList,			TheEvaMessageNames, offsetof(SpecialPowerTemplate, m_eva_ready_ally) },
 	{ "EvaReadyEnemy",						INI::parseEvaNameIndexList,			TheEvaMessageNames, offsetof(SpecialPowerTemplate, m_eva_ready_enemy) },
-
-	{ NULL,	NULL, NULL,	0 }  // keep this last
+	{ NULL,	NULL, NULL,	0 }
 
 };
 
@@ -334,14 +334,14 @@ SpecialPowerTemplate::SpecialPowerTemplate()
 	m_eva_ready_ally = EVA_Invalid;
 	m_eva_ready_enemy = EVA_Invalid;
 
-}  // end SpecialPowerTemplate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SpecialPowerTemplate::~SpecialPowerTemplate()
 {
 
-}  // end ~SpecialPowerTemplate
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -354,7 +354,7 @@ SpecialPowerStore::SpecialPowerStore( void )
 
 	m_nextSpecialPowerID = 0;
 
-}  // end SpecialPowerStore
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -371,7 +371,7 @@ SpecialPowerStore::~SpecialPowerStore( void )
 	// set our count to zero
 	m_nextSpecialPowerID = 0;
 
-}  // end ~SpecialPowerStore
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -413,7 +413,7 @@ const SpecialPowerTemplate *SpecialPowerStore::getSpecialPowerTemplateByIndex( U
 
 	return NULL;  // not found
 
-}  // end getSpecialPowerTemplateByIndex
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return the size of the store (WB) */
@@ -423,7 +423,7 @@ Int SpecialPowerStore::getNumSpecialPowers( void )
 
 	return m_specialPowerTemplates.size();
 
-}  // end getNumSpecialPowers
+}
 
 //-------------------------------------------------------------------------------------------------
 /** does the object (and therefore the player) meet all the requirements to use this power */
@@ -456,7 +456,7 @@ Bool SpecialPowerStore::canUseSpecialPower( Object *obj, const SpecialPowerTempl
 		if( player->hasScience( requiredScience ) == FALSE )
 			return FALSE;
 
-	}  // end if
+	}
 
 
 	// I THINK THIS IS WHERE WE BAIL OUT IF A DIFFERENT CONYARD IS ALREADY CHARGIN THIS SPECIAL RIGHT NOW //LORENZEN
@@ -465,7 +465,7 @@ Bool SpecialPowerStore::canUseSpecialPower( Object *obj, const SpecialPowerTempl
 	// all is well
 	return TRUE;
 
-}  // end canUseSpecialPower
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
@@ -485,4 +485,4 @@ void SpecialPowerStore::reset( void )
 			++it;
 		}
 	}
-}  // end reset
+}

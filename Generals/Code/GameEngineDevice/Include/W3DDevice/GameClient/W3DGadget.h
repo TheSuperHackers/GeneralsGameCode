@@ -46,9 +46,6 @@
 
 #pragma once
 
-#ifndef __W3DGADGET_H_
-#define __W3DGADGET_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -89,6 +86,3 @@ extern void W3DGadgetStaticTextDraw( GameWindow *window, WinInstanceData *instDa
 extern void W3DGadgetStaticTextImageDraw( GameWindow *window, WinInstanceData *instData );
 extern void W3DGadgetTextEntryDraw( GameWindow *window, WinInstanceData *instData );
 extern void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData );
-
-#endif // __W3DGADGET_H_
-

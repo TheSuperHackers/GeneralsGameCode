@@ -27,13 +27,14 @@
 // Desc:	 An update that checks for a status bit to stealth the owning object
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_STEALTHLEVEL_NAMES
 #define DEFINE_OBJECT_STATUS_NAMES
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Radar.h"
@@ -98,10 +99,7 @@ StealthUpdate::StealthUpdate( Thing *thing, const ModuleData* moduleData ) : Upd
 	//Must be enabled manually if using disguise system (bomb truck uses)
 	m_enabled = !data->m_teamDisguised;
 
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_detectionExpiresFrame = 0;
-	//
 	m_pulsePhaseRate		= 0.2f;
 	m_pulsePhase				= GameClientRandomValueReal(0, PI);
 
@@ -218,7 +216,7 @@ void StealthUpdate::hintDetectableWhileUnstealthed()
 
 	if( self && md->m_hintDetectableStates.testForAny( self->getStatusBits() ) )
 	{
-		if ( self->getControllingPlayer() == ThePlayerList->getLocalPlayer() )
+		if ( self->getControllingPlayer() == rts::getObservedOrLocalPlayer() )
 		{
 			Drawable *selfDraw = self->getDrawable();
 			if ( selfDraw )
@@ -365,7 +363,7 @@ UpdateSleepTime StealthUpdate::update( void )
 		if( wasHidden && draw )
 			draw->setDrawableHidden( TRUE );
 
-	}  // end if
+	}
 
 	Object *self = getObject();
 	UnsignedInt now = TheGameLogic->getFrame();
@@ -556,7 +554,7 @@ UpdateSleepTime StealthUpdate::update( void )
 
 	if (draw)
 	{
-		StealthLookType stealthLook = calcStealthedStatusForPlayer( self, ThePlayerList->getLocalPlayer() );
+		StealthLookType stealthLook = calcStealthedStatusForPlayer( self, rts::getObservedOrLocalPlayer() );
 		draw->setStealthLook( stealthLook );
 	}
 
@@ -743,6 +741,7 @@ void StealthUpdate::changeVisualDisguise()
 		FXList::doFXPos( data->m_disguiseFX, self->getPosition() );
 
 		m_disguised = true;
+		self->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DISGUISED ) );
 	}
 	else if( m_disguiseAsPlayerIndex != -1 )
 	{
@@ -808,6 +807,7 @@ void StealthUpdate::changeVisualDisguise()
 
 		FXList::doFXPos( data->m_disguiseRevealFX, self->getPosition() );
 		m_disguised = false;
+		self->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DISGUISED ) );
 	}
 
 	//Reset the radar (determines color on add)
@@ -828,7 +828,7 @@ void StealthUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -881,11 +881,11 @@ void StealthUpdate::xfer( Xfer *xfer )
 				DEBUG_CRASH(( "StealthUpdate::xfer - Unknown template '%s'", name.str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// disguise transition frames
 	xfer->xferUnsignedInt( &m_disguiseTransitionFrames );
@@ -899,7 +899,7 @@ void StealthUpdate::xfer( Xfer *xfer )
 	// disguised
 	xfer->xferBool( &m_disguised );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -920,4 +920,4 @@ void StealthUpdate::loadPostProcess( void )
 	if( isDisguised() )
 		m_xferRestoreDisguise = TRUE;
 
-}  // end loadPostProcess
+}

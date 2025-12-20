@@ -27,9 +27,6 @@
 
 #pragma once
 
-#ifndef _H_PlaceEventTranslator
-#define _H_PlaceEventTranslator
-
 #include "GameClient/InGameUI.h"
 
 //-----------------------------------------------------------------------------
@@ -43,5 +40,3 @@ public:
 	~PlaceEventTranslator();
 	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
 };
-
-#endif

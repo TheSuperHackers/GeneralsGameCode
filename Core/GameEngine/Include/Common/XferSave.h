@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __XFER_SAVE_H_
-#define __XFER_SAVE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/Xfer.h"
 
@@ -73,6 +70,3 @@ protected:
 	XferBlockData *m_blockStack;													///< stack of block data
 
 };
-
-#endif // __XFER_SAVE_H_
-

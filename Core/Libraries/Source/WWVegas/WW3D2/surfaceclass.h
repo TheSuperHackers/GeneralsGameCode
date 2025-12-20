@@ -36,15 +36,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
-#ifndef SURFACECLASS_H
-#define SURFACECLASS_H
-
+#include "always.h"
 #include "ww3dformat.h"
-#include "refcount.h"
 
 struct IDirect3DSurface8;
 class Vector2i;
@@ -148,7 +143,3 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 		WW3DFormat SurfaceFormat;
 	friend class TextureClass;
 };
-
-#endif
-
-

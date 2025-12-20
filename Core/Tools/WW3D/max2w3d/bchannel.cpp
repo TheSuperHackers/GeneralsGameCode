@@ -233,7 +233,7 @@ void BitChannelClass::compute_range(void)
 	while ((End >= 0) && (is_default(Get_Bit(End)))) {
 		End--;
 	}
-}	 // compute_range
+}
 
 
 //
@@ -258,12 +258,12 @@ uint32 BitChannelClass::find_useless_packet(W3dTimeCodedBitChannelStruct * c)
             	return(try_idx + 1);
             }
 
-      }	// for
+      }
     }
 
 	return( PACKETS_ALL_USEFUL );
 
-} // find_useless_packet
+}
 
 
 //
@@ -293,7 +293,7 @@ void BitChannelClass::remove_packet(W3dTimeCodedBitChannelStruct * c, uint32 pac
   // Decrement Packet Count
   c->NumTimeCodes--;
 
-} // remove_packet
+}
 
 //
 //  Take a non-compressed TimeCoded Bit Channel
@@ -311,7 +311,7 @@ void BitChannelClass::compress(W3dTimeCodedBitChannelStruct * c)
 
 	}
 
-} // compress
+}
 
 
 

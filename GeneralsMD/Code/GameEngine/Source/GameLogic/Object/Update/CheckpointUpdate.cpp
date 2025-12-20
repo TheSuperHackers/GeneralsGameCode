@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/PerfTimer.h"
 #include "Common/ThingTemplate.h"
@@ -141,7 +141,7 @@ UpdateSleepTime CheckpointUpdate::update()
 				}
 			}
 
-		}// end if change
+		}
 
 		GeometryInfo geom = obj->getGeometryInfo();
 
@@ -164,7 +164,7 @@ UpdateSleepTime CheckpointUpdate::update()
 
 		obj->setGeometryInfo( geom );
 
-	} // end if draw
+	}
 
 	return UPDATE_SLEEP_NONE;
 
@@ -179,7 +179,7 @@ void CheckpointUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -209,7 +209,7 @@ void CheckpointUpdate::xfer( Xfer *xfer )
 	// enemy scan delay
 	xfer->xferUnsignedInt( &m_enemyScanDelay );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -220,4 +220,4 @@ void CheckpointUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

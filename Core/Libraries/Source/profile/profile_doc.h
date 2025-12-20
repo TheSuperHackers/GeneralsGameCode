@@ -26,11 +26,8 @@
 //
 // additional Doxygen module documentation
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef PROFILE_DOC_H // Include guard
-#define PROFILE_DOC_H
+
+#pragma once
 
 // This generates a small main page for Doxygen if a module only
 // documentation is built.
@@ -192,5 +189,3 @@
   </tr></table>
 
 */
-
-#endif // PROFILE_DOC_H

@@ -40,7 +40,7 @@
 #include "ScreenCursor.h"
 #include "mesh.h"
 #include "coltest.h"
-#include "MPU.H"
+#include "MPU.h"
 #include "dazzle.h"
 #include "SoundScene.h"
 #include "WWAudio.h"
@@ -329,8 +329,8 @@ CGraphicView::OnDestroy (void)
 	//
 	// Free the camera object
 	//
-	MEMBER_RELEASE (m_pCamera);
-	MEMBER_RELEASE (m_pLightMesh);
+	REF_PTR_RELEASE (m_pCamera);
+	REF_PTR_RELEASE (m_pLightMesh);
 
 	// Is there an update thread running?
 	if (m_TimerID == 0) {
@@ -388,7 +388,7 @@ Set_Lowest_LOD (RenderObjClass *render_obj)
 			if (psub_obj != NULL) {
 				Set_Lowest_LOD (psub_obj);
 			}
-			MEMBER_RELEASE (psub_obj);
+			REF_PTR_RELEASE (psub_obj);
 		}
 
 		//
@@ -436,7 +436,8 @@ CGraphicView::RepaintView
 	//	Simple check to avoid re-entrance
 	//
 	static bool _already_painting = false;
-	if (_already_painting) return;
+	if (_already_painting)
+		return;
 	_already_painting = true;
 
 	 //
@@ -452,10 +453,15 @@ CGraphicView::RepaintView
 		m_dwLastFrameUpdate = cur_ticks;
 
 		// Update the W3D frame times according to our elapsed tick count
-		if (ticks_to_use == 0) {
-			WW3D::Sync (WW3D::Get_Sync_Time() + (ticks_elapsed * m_animationSpeed));
-		} else {
-			WW3D::Sync (WW3D::Get_Sync_Time() + ticks_to_use);
+		if (ticks_to_use == 0)
+		{
+			WW3D::Update_Logic_Frame_Time(ticks_elapsed * m_animationSpeed);
+			WW3D::Sync(WW3D::Get_Fractional_Sync_Milliseconds() >= WWSyncMilliseconds);
+		}
+		else
+		{
+			WW3D::Update_Logic_Frame_Time(ticks_to_use);
+			WW3D::Sync(true);
 		}
 
 		// Do we need to update the current animation?
@@ -546,7 +552,7 @@ CGraphicView::RepaintView
 		//
 		//	Let the audio class think
 		//
-		WWAudioClass::Get_Instance ()->On_Frame_Update (WW3D::Get_Frame_Time());
+		WWAudioClass::Get_Instance ()->On_Frame_Update (WW3D::Get_Logic_Frame_Time_Milliseconds());
 
 		//
 		//	Update the count of particles and polys in the status bar
@@ -1321,7 +1327,7 @@ CGraphicView::Load_Default_Dat (void)
 	}
 
 	// Concat the default.dat filename onto the path
-	::strcat (filename, "\\default.dat");
+	strlcat(filename, "\\default.dat", ARRAY_SIZE(filename));
 
 	// Does the file exist in the directory?
 	if (::GetFileAttributes (filename) != 0xFFFFFFFF) {

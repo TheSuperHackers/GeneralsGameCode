@@ -35,10 +35,8 @@
  *----------------------------------------------------------------------------------------------*
  * Functions:																					*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-#pragma once
 
-#ifndef TTFONT_H
-#define TTFONT_H
+#pragma once
 
 #include	<stddef.h>
 #include	"POINT.h"
@@ -299,6 +297,3 @@ extern TTFontClass 			*TTTextFontPtr;
 extern TTFontClass 			*TTTextFontPtr640;
 extern TTFontClass 			*TTTextFontPtr800;
 extern TTFontClass 			*TTLicenseFontPtr;
-
-
-#endif

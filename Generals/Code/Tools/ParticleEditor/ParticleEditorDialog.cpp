@@ -336,7 +336,7 @@ void DebugWindowDialog::getSelectedParticleAsciiStringParm( IN int parmNum, OUT 
 		return;
 	}
 
-	if (m_particleParmValues[parmNum].length()) {
+	if (!m_particleParmValues[parmNum].empty()) {
 		strcpy(bufferToCopyInto, m_particleParmValues[parmNum].c_str());
 	} else {
 		bufferToCopyInto[0] = 0;

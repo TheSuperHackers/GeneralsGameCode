@@ -18,9 +18,6 @@
 
 #pragma once
 
-#ifndef __IMPASSABLEOPTIONS_H__
-#define __IMPASSABLEOPTIONS_H__
-
 class ImpassableOptions : public CDialog
 {
 	public:
@@ -46,5 +43,3 @@ class ImpassableOptions : public CDialog
 		afx_msg void OnPreview();
 		DECLARE_MESSAGE_MAP()
 };
-
-#endif /* __IMPASSABLEOPTIONS_H__ */

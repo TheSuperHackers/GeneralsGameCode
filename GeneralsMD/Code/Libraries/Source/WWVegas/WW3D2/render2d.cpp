@@ -38,10 +38,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include "always.h"
 #include "render2d.h"
 #include "mutex.h"
 #include "ww3d.h"
-#include "refcount.h"
 #include "font3d.h"
 #include "rect.h"
 #include "texture.h"
@@ -57,9 +57,6 @@
 #include "wwprofile.h"
 #include "wwmemlog.h"
 #include "assetmgr.h"
-
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 
 RectClass							Render2DClass::ScreenResolution( 0,0,0,0 );
 

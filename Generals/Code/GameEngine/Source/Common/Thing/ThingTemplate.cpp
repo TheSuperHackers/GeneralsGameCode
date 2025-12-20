@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_POWER_NAMES								// for PowerNames[]
 #define DEFINE_SHADOW_NAMES								// for TheShadowNames[]
@@ -240,7 +240,7 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 	{ "CrusherLevel",					INI::parseUnsignedByte,			NULL, offsetof( ThingTemplate, m_crusherLevel ) },
 	{ "CrushableLevel",				INI::parseUnsignedByte,			NULL, offsetof( ThingTemplate, m_crushableLevel ) },
 
-	{ 0, 0, 0, 0 }  // keep this last
+	{ 0, 0, 0, 0 }
 
 };
 // NOTE NOTE NOTE -- s_objectFieldParseTable and s_objectReskinFieldParseTable must be updated in tandem -- see comment above
@@ -258,7 +258,7 @@ const FieldParse ThingTemplate::s_objectReskinFieldParseTable[] =
 	{ "FenceWidth",						INI::parseReal,													NULL,		offsetof( ThingTemplate, m_fenceWidth ) },
 	{ "FenceXOffset",					INI::parseReal,													NULL,		offsetof( ThingTemplate, m_fenceXOffset ) },
 
-	{ 0, 0, 0, 0 }  // keep this last
+	{ 0, 0, 0, 0 }
 
 };
 // NOTE NOTE NOTE -- s_objectFieldParseTable and s_objectReskinFieldParseTable must be updated in tandem -- see comment above
@@ -277,7 +277,7 @@ const ModuleInfo::Nugget *ModuleInfo::getNuggetWithTag( const AsciiString& tag )
 	// no match
 	return NULL;
 
-}  // end isTagPresent
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Add this module info to the thing template */
@@ -314,7 +314,7 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 
 		// srj sez: prevent people from ignoring this.
 		throw INI_INVALID_DATA;
-	}  // end if
+	}
 
 	nugget = thingTemplate->getDrawModuleInfo().getNuggetWithTag( moduleTag );
 	if( nugget != NULL )
@@ -332,7 +332,7 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 
 		// srj sez: prevent people from ignoring this.
 		throw INI_INVALID_DATA;
-	}  // end if
+	}
 
 	nugget = thingTemplate->getClientUpdateModuleInfo().getNuggetWithTag( moduleTag );
 	if( nugget != NULL )
@@ -349,7 +349,7 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 												nugget->first.str()) );
 		// srj sez: prevent people from ignoring this.
 		throw INI_INVALID_DATA;
-	}  // end if
+	}
 
 #endif
 
@@ -1177,7 +1177,7 @@ void ThingTemplate::initForLTA(const AsciiString& name)
 	m_nameString = name;
 
 	char buffer[1024];
-	strncpy(buffer, name.str(), sizeof(buffer));
+	strlcpy(buffer, name.str(), sizeof(buffer));
 	int i=0;
 	for (; buffer[i]; i++) {
 		if (buffer[i] == '/') {

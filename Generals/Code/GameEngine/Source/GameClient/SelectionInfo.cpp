@@ -63,10 +63,7 @@ SelectionInfo::SelectionInfo() :
 //-------------------------------------------------------------------------------------------------
 PickDrawableStruct::PickDrawableStruct() : drawableListToFill(NULL)
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
 	drawableListToFill = FALSE;
-	//
 	forceAttackMode = TheInGameUI->isInForceAttackMode();
 	UnsignedInt pickType = getPickTypesForContext(forceAttackMode);
 	translatePickTypesToKindof(pickType, kindofsToMatch);
@@ -269,7 +266,7 @@ UnsignedInt getPickTypesForContext( Bool forceAttackMode )
 
 	return types;
 
-}  // end getPickTypesForContext
+}
 
 //-------------------------------------------------------------------------------------------------
 UnsignedInt getPickTypesForCurrentSelection( Bool forceAttackMode )
@@ -346,6 +343,18 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 
 	if (!pds->drawableListToFill)
 		return FALSE;
+
+#if !RTS_GENERALS || !PRESERVE_RETAIL_BEHAVIOR
+	// TheSuperHackers @info
+	// In retail, drag-selecting allows the player to select stealthed objects and objects through the
+	// fog. Some players exploit this bug to determine where an opponent's units are and consider this
+	// an important feature and an advanced skill to pull off, so we must leave the exploit.
+	if (draw->getFullyObscuredByShroud())
+		return FALSE;
+
+	if (draw->isDrawableEffectivelyHidden())
+		return FALSE;
+#endif
 
 	if (!draw->getTemplate()->isAnyKindOf(pds->kindofsToMatch))
 		return FALSE;

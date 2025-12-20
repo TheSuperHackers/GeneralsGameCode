@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-#ifndef URLLAUNCH_H
-#define URLLAUNCH_H
+#pragma once
 
 HRESULT MakeEscapedURL( LPWSTR pszInURL, LPWSTR *ppszOutURL );
 
 HRESULT LaunchURL( LPCWSTR pszURL );
-
-#endif  // URLLAUNCH_H

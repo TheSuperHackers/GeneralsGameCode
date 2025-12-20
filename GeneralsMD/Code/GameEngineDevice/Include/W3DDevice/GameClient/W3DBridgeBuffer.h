@@ -44,9 +44,6 @@
 
 #pragma once
 
-#ifndef __W3DBRIDGE_BUFFER_H_
-#define __W3DBRIDGE_BUFFER_H_
-
 //-----------------------------------------------------------------------------
 //           Includes
 //-----------------------------------------------------------------------------
@@ -187,5 +184,3 @@ protected:
 	void cull(CameraClass * camera);						 ///< Culls the bridges.
 	void freeBridgeBuffers(void);									 ///< Frees the index and vertex buffers.
 };
-
-#endif  // end __W3DBRIDGE_BUFFER_H_

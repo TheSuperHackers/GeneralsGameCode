@@ -26,7 +26,8 @@
 //
 // Function level profiling
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+#include "profile.h"
+#include "internal.h"
 #include "../debug/debug.h"
 #include <new>
 

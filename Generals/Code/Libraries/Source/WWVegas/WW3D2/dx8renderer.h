@@ -36,19 +36,12 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DX8_RENDERER_H
-#define DX8_RENDERER_H
 
 #include "always.h"
 #include "wwstring.h"
 #include "simplevec.h"
-#include "refcount.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "dx8list.h"
 #include "shader.h"
 #include "dx8wrapper.h"
@@ -204,9 +197,9 @@ public:
 	virtual void Log(bool only_visible)=0;
 	virtual bool Check_If_Mesh_Fits(MeshModelClass* mmc)=0;
 
-	inline unsigned Get_FVF() const { return FVF; }
+	unsigned Get_FVF() const { return FVF; }
 
-	inline void Add_Visible_Texture_Category(DX8TextureCategoryClass * tex_category,int pass)
+	void Add_Visible_Texture_Category(DX8TextureCategoryClass * tex_category,int pass)
 	{
 		WWASSERT(pass<MAX_PASSES);
 		WWASSERT(tex_category != NULL);
@@ -339,5 +332,3 @@ protected:
 };
 
 extern DX8MeshRendererClass TheDX8MeshRenderer;
-
-#endif

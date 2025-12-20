@@ -416,7 +416,7 @@ void VoxelClass::Compute_Visiblity
 
 		meter.Add_Increment();
 		if (meter.Cancelled()) throw ErrorClass("Export Cancelled");
-	} // done with the X-Y layers
+	}
 
 
 	/////////////////////////////////////////////////////////////
@@ -443,7 +443,7 @@ void VoxelClass::Compute_Visiblity
 
 		meter.Add_Increment();
 		if (meter.Cancelled()) throw ErrorClass("Export Cancelled");
-	} // done with the X-Z layers
+	}
 
 
 	///////////////////////////////////////////////////////////

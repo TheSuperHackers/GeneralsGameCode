@@ -187,7 +187,7 @@ int CAnimReportPage::FindItem (const char *item_name)
 	return m_AnimReport.FindItem(&lvfi);
 }
 
-void CAnimReportPage::MakeChannelStr (int bone_idx, HAnimClass *hanim, char *channels)
+void CAnimReportPage::MakeChannelStr (int bone_idx, HAnimClass *hanim, char channels[6])
 {
 	if (hanim->Has_X_Translation(bone_idx))
 		strcat(channels, "X");

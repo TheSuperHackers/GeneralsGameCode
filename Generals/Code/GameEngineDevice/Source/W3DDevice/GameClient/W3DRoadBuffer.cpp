@@ -47,8 +47,6 @@
 //-----------------------------------------------------------------------------
 #include "W3DDevice/GameClient/W3DRoadBuffer.h"
 
-#include <stdio.h>
-#include <string.h>
 #include <assetmgr.h>
 #include <texture.h>
 #include "Common/GlobalData.h"
@@ -231,14 +229,11 @@ RoadSegment::RoadSegment(void)
 RoadSegment::~RoadSegment(void)
 {
 	m_numVertex = 0;
-	if (m_vb) {
-		delete[] m_vb;
-	}
-	m_vb= NULL;
+	delete[] m_vb;
+	m_vb = NULL;
+
 	m_numIndex = 0;
-	if (m_ib) {
-		delete[] m_ib;
-	}
+	delete[] m_ib;
 	m_ib = NULL;
 }
 
@@ -251,15 +246,18 @@ RoadSegment::~RoadSegment(void)
 //=============================================================================
 void RoadSegment::SetVertexBuffer(VertexFormatXYZDUV1 *vb, Int numVertex)
 {
-	if (m_vb) {
-		delete[] m_vb;
-		m_vb = NULL;
-		m_numVertex = 0;
-	}
+	delete[] m_vb;
+	m_vb = NULL;
+	m_numVertex = 0;
+
 	Vector3 verts[MAX_SEG_VERTEX];
-	if (numVertex<1 || numVertex > MAX_SEG_VERTEX) return;
+	if (numVertex<1 || numVertex > MAX_SEG_VERTEX)
+		return;
+
 	m_vb = NEW VertexFormatXYZDUV1[numVertex];	// pool[]ify
-	if (!m_vb) return;
+	if (!m_vb)
+		return;
+
 	m_numVertex = numVertex;
 	memcpy(m_vb, vb, numVertex*sizeof(VertexFormatXYZDUV1));
 	Int i;
@@ -279,14 +277,17 @@ void RoadSegment::SetVertexBuffer(VertexFormatXYZDUV1 *vb, Int numVertex)
 //=============================================================================
 void RoadSegment::SetIndexBuffer(UnsignedShort *ib, Int numIndex)
 {
-	if (m_ib) {
-		delete[] m_ib;
-		m_ib = NULL;
-		m_numIndex = 0;
-	}
-	if (numIndex < 1 || numIndex > MAX_SEG_INDEX) return;
+	delete[] m_ib;
+	m_ib = NULL;
+	m_numIndex = 0;
+
+	if (numIndex < 1 || numIndex > MAX_SEG_INDEX)
+		return;
+
 	m_ib = NEW UnsignedShort[numIndex];
-	if (!m_ib) return;
+	if (!m_ib)
+		return;
+
 	m_numIndex = numIndex;
 	memcpy(m_ib, ib, numIndex*sizeof(UnsignedShort));
 }
@@ -1597,7 +1598,7 @@ void W3DRoadBuffer::addMapObjects()
 				curRoad.m_scale = road->getRoadWidth();
 				curRoad.m_uniqueID = road->getID();
 				found = TRUE;
-			}  // end if
+			}
 #ifdef LOAD_TEST_ASSETS
 			const Real DEFAULT_SCALE = 30;
 			if (!found) {
@@ -3066,14 +3067,11 @@ W3DRoadBuffer::W3DRoadBuffer(void)	:
 //=============================================================================
 void W3DRoadBuffer::freeRoadBuffers(void)
 {
-	if (m_roads) {
-		delete[] m_roads;
-		m_roads = NULL;
-	}
-	if (m_roadTypes) {
-		delete[] m_roadTypes;
-		m_roadTypes = NULL;
-	}
+	delete[] m_roads;
+	m_roads = NULL;
+
+	delete[] m_roadTypes;
+	m_roadTypes = NULL;
 }
 
 //=============================================================================
@@ -3116,9 +3114,9 @@ void W3DRoadBuffer::allocateRoadBuffers(void)
 				m_maxUID = id;
 #endif // LOAD_TEST_ASSETS
 
-		}  // end if
+		}
 
-	}  // end for road
+	}
 
 #ifdef LOAD_TEST_ASSETS
 	while (i<m_maxRoadTypes && m_roadTypes[i].isAutoLoaded()) {
@@ -3179,6 +3177,7 @@ void W3DRoadBuffer::loadRoads()
 	insertCurveSegments();
 	insertCrossTypeJoins();
 	preloadRoadsInVertexAndIndexBuffers();
+	m_updateBuffers = true;
 	//ticks = ::GetTickCount() - ticks;
 	//char buf[256];
 	//sprintf(buf, "%d road segs, %d milisec.\n", m_numRoads, ticks);
@@ -3197,6 +3196,16 @@ void W3DRoadBuffer::updateLighting(void)
 	for (curRoad=0; curRoad<m_numRoads; curRoad++) {
 		m_roads[curRoad].updateSegLighting();
 	}
+}
+
+//=============================================================================
+// W3DRoadBuffer::updateCenter
+//=============================================================================
+/** Sets the flag to reload the vertex buffer. */
+//=============================================================================
+void W3DRoadBuffer::updateCenter(void)
+{
+	m_updateBuffers = true;
 }
 
 //=============================================================================

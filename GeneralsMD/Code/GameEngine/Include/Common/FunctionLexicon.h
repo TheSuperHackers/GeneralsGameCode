@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __FUNCTIONLEXICON_H_
-#define __FUNCTIONLEXICON_H_
-
 #include "Common/SubsystemInterface.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/GameMemory.h"
@@ -68,7 +65,7 @@ public:
 		TABLE_WIN_LAYOUT_UPDATE,
 		TABLE_WIN_LAYOUT_SHUTDOWN,
 
-		MAX_FUNCTION_TABLES			// keep this last
+		MAX_FUNCTION_TABLES
 	};
 
 public:
@@ -125,7 +122,7 @@ protected:
 
 	TableEntry *m_tables[ MAX_FUNCTION_TABLES ];  ///< the lookup tables
 
-};  // end class FunctionLexicon
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // INLINING
@@ -149,6 +146,3 @@ inline WindowLayoutShutdownFunc FunctionLexicon::winLayoutShutdownFunc( NameKeyT
 // EXTERNALS
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 extern FunctionLexicon *TheFunctionLexicon;  ///< function dictionary external
-
-#endif // end __FUNCTIONLEXICON_H_
-

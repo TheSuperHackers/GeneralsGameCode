@@ -36,8 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef SHDLIB_H
-#define SHDLIB_H
+#pragma once
 
 // TheSuperHackers @build Removes the unused WWShade code. (#596)
 // If there is a desire to revive this, then the WWShade library needs to be re-added.
@@ -68,6 +67,3 @@ extern void SHD_Register_Loader();
 #define SHD_REG_LOADER
 
 #endif // USE_WWSHADE
-
-
-#endif // SHDLIB_H

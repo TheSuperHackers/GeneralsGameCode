@@ -26,8 +26,7 @@ Start Date  : June 9, 1997
 Last Update : May 13, 1999
 \***************************************************************************/
 
-#ifndef CONFIGFILE_HEADER
-#define CONFIGFILE_HEADER
+#pragma once
 
 #include "wstypes.h"
 #include "dictionary.h"
@@ -72,5 +71,3 @@ class ConfigFile
   //   are allowed so you don't need to worry about an outer lock around the enumerate
   CritSec                     Critsec_;    // lock around dictionary
 };
-
-#endif

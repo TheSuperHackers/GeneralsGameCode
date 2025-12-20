@@ -24,7 +24,6 @@
 #include "dx8caps.h"
 #include "textureloader.h"
 #include "texture.h"
-#include <Utility/stdio_adapter.h>
 
 #include <memory.h>
 #ifdef _UNIX

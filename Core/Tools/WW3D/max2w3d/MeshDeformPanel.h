@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Commando / G 3D engine                                       *
  *                                                                                             *
- *                    File Name : MeshDeformPanel.H                                            *
+ *                    File Name : MeshDeformPanel.h                                            *
  *                                                                                             *
  *                   Programmer : Patrick Smith                                                *
  *                                                                                             *
@@ -34,9 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef __MESH_DEFORM_PANEL_H
-#define __MESH_DEFORM_PANEL_H
+#pragma once
 
 #include <max.h>
 #include "resource.h"
@@ -112,6 +110,3 @@ class MeshDeformPanelClass
 		ICustButton *				m_pLockSetsButton;
 		MeshDeformClass *			m_pMeshDeformer;
 };
-
-
-#endif //__MESH_DEFORM_PANEL_H

@@ -856,7 +856,7 @@ void ShaderClass::Apply()
 					SNAPSHOT_SAY(("Warning: Using unsupported texture op: MODULATEALPHA_ADDCOLOR"));
 				}
 				break;
-			} // color operations
+			}
 
 			switch(Get_Post_Detail_Alpha_Func())
 			{
@@ -899,7 +899,7 @@ void ShaderClass::Apply()
 					SNAPSHOT_SAY(("Warning: Using unsupported texture op: ADDSMOOTH"));
 				}
 				break;
-			} // alpha operations
+			}
 
 			// if color is enabled and alpha is disabled set to pass alpha through
 			if ((SeccOp!=D3DTOP_DISABLE) && (SecaOp==D3DTOP_DISABLE)) {
@@ -909,8 +909,8 @@ void ShaderClass::Apply()
 				SeccOp = D3DTOP_SELECTARG2;
 				SeccArg2 = D3DTA_CURRENT;
 			}
-		}	// texturing enabled
-	}	// if diff sec_mask
+		}
+	}
 
 	bool kill_stage_2=false;
 

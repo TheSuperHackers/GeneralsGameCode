@@ -16,14 +16,14 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* $Header: /Commando/Code/wwmath/ODE.CPP 8     7/02/99 10:32a Greg_h $ */
+/* $Header: /Commando/Code/wwmath/ODE.cpp 8     7/02/99 10:32a Greg_h $ */
 /***********************************************************************************************
  ***                            Confidential - Westwood Studios                              ***
  ***********************************************************************************************
  *                                                                                             *
  *                 Project Name : Commando                                                     *
  *                                                                                             *
- *                     $Archive:: /Commando/Code/wwmath/ODE.CPP                               $*
+ *                     $Archive:: /Commando/Code/wwmath/ODE.cpp                               $*
  *                                                                                             *
  *                       Author:: Greg_h                                                       *
  *                                                                                             *

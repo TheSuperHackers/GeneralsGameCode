@@ -34,8 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef SIMPDIB_H
-#define SIMPDIB_H
+#pragma once
 
 #ifndef ALWAYS_H
 #include "always.h"
@@ -77,6 +76,3 @@ private:
 	int					Pitch;		// offset from DIBPixelBase to next row (can be negative for bottom-up DIBS)
 
 };
-
-
-#endif /*SIMPDIB_H*/

@@ -1616,9 +1616,9 @@ WW3DErrorType MeshGeometryClass::Load_W3D(ChunkLoadClass & cload)
 
 	if (strlen(header.ContainerName) > 0) {
 		strcpy(tmpname,header.ContainerName);
-		strcat(tmpname,".");
+		strcat(tmpname, ".");
 	}
-	strcat(tmpname,header.MeshName);
+	strcat(tmpname, header.MeshName);
 
 	Set_Name(tmpname);
 

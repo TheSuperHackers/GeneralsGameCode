@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/BattleHonors.h"
 #include "Common/GameEngine.h"
@@ -79,6 +79,7 @@
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/GameText.h"
+#include "GameClient/Keyboard.h"
 #include "GameClient/MapUtil.h"
 #include "GameClient/Shell.h"
 #include "GameClient/KeyDefs.h"
@@ -94,9 +95,7 @@
 #include "GameNetwork/LANAPICallbacks.h"
 #include "GameNetwork/GameSpyOverlay.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
-#include "GameNetwork/GameSpy/GameResultsThread.h"
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
-//Added By Saad
 #include "GameClient/InGameUI.h"
 
 
@@ -227,16 +226,16 @@ void ScoreScreenInit( WindowLayout *layout, void *userData )
 	buttonIsFinishCampaign = FALSE;
 
 	//Store the keys so we have them later
-	parentID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ParentScoreScreen" ) );
-	buttonOkID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ButtonOk" ) );
-	textEntryChatID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:TextEntryChat" ) );
-	buttonEmoteID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ButtonEmote" ) );
-	listboxChatWindowScoreScreenID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ListboxChatWindowScoreScreen" ) );
-//	buttonRehostID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ButtonRehost" ) );
-	chatBoxBorderID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ChatBoxBorder" ) );
-	buttonBuddiesID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ButtonBuddy" ) );
-	buttonContinueID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ButtonContinue" ) );
-	buttonSaveReplayID = TheNameKeyGenerator->nameToKey( AsciiString( "ScoreScreen.wnd:ButtonSaveReplay" ) );
+	parentID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ParentScoreScreen" );
+	buttonOkID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ButtonOk" );
+	textEntryChatID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:TextEntryChat" );
+	buttonEmoteID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ButtonEmote" );
+	listboxChatWindowScoreScreenID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ListboxChatWindowScoreScreen" );
+//	buttonRehostID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ButtonRehost" );
+	chatBoxBorderID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ChatBoxBorder" );
+	buttonBuddiesID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ButtonBuddy" );
+	buttonContinueID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ButtonContinue" );
+	buttonSaveReplayID = TheNameKeyGenerator->nameToKey( "ScoreScreen.wnd:ButtonSaveReplay" );
 
 	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
 	buttonOk = TheWindowManager->winGetWindowFromId( parent, buttonOkID );
@@ -390,22 +389,22 @@ WindowMsgHandledType ScoreScreenInput( GameWindow *window, UnsignedInt msg,
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)buttonOk, buttonOkID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
 
-}  // end MainMenuInput
+}
 
 static Bool showReplayButtonContinue()
 {
@@ -439,7 +438,7 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 				*(Bool *)mData2 = TRUE;
 
 			break;
-		}  // end input
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -513,7 +512,7 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 					if(TheLAN)
 						TheLAN->RequestChat(txtInput, LANAPIInterface::LANCHAT_EMOTE);
 					//add the gamespy chat request here
-			} //if ( controlID == buttonEmote )
+			}
 			for(Int i = 0; i < MAX_SLOTS; ++i)
 			{
 				AsciiString name;
@@ -540,8 +539,7 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 						req.arg.addbuddy.id = playerID;
 						UnicodeString buddyAddstr;
 						buddyAddstr = TheGameText->fetch("GUI:BuddyAddReq");
-						wcsncpy(req.arg.addbuddy.text, buddyAddstr.str(), MAX_BUDDY_CHAT_LEN);
-						req.arg.addbuddy.text[MAX_BUDDY_CHAT_LEN-1] = 0;
+						wcslcpy(req.arg.addbuddy.text, buddyAddstr.str(), MAX_BUDDY_CHAT_LEN);
 						TheGameSpyBuddyMessageQueue->addRequest(req);
 					}
 				}
@@ -572,7 +570,7 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 						TheLAN->RequestChat(txtInput, LANAPIInterface::LANCHAT_NORMAL);
 					//add the gamespy chat request here
 
-			}// if ( controlID == textEntryChatID )
+			}
 
 			break;
 		}
@@ -628,28 +626,38 @@ void PlayMovieAndBlock(AsciiString movieTitle)
 		videoBuffer = NULL;
 
 		if ( videoStream )
+		{
 			videoStream->close();
-		videoStream = NULL;
+			videoStream = NULL;
+		}
 
 		return;
 	}
+
+	// TheSuperHackers @bugfix Originally this movie render loop stopped rendering when the game window was inactive.
+	// This either skipped the movie or caused decompression artifacts. Now the video just keeps playing until it done.
 
 	GameWindow *movieWindow = s_blankLayout->getFirstWindow();
 	TheWritableGlobalData->m_loadScreenRender = TRUE;
 	while (videoStream->frameIndex() < videoStream->frameCount() - 1)
 	{
+		// TheSuperHackers @feature User can now skip video by pressing ESC
+		if (TheKeyboard)
+		{
+			TheKeyboard->UPDATE();
+			KeyboardIO *io = TheKeyboard->findKey(KEY_ESC, KeyboardIO::STATUS_UNUSED);
+			if (io && BitIsSet(io->state, KEY_STATE_DOWN))
+			{
+				io->setUsed();
+				break;
+			}
+		}
+
 		TheGameEngine->serviceWindowsOS();
 
 		if(!videoStream->isFrameReady())
 		{
 			Sleep(1);
-			continue;
-		}
-
-		if (!TheGameEngine->isActive())
-		{	//we are alt-tabbed out, so just increment the frame
-			videoStream->frameNext();
-			videoStream->frameDecompress();
 			continue;
 		}
 
@@ -666,11 +674,10 @@ void PlayMovieAndBlock(AsciiString movieTitle)
 	}
 	TheWritableGlobalData->m_loadScreenRender = FALSE;
 	movieWindow->winGetInstanceData()->setVideoBuffer(NULL);
-	if (videoBuffer)
-	{
-		delete videoBuffer;
-		videoBuffer = NULL;
-	}
+
+	delete videoBuffer;
+	videoBuffer = NULL;
+
 	if (videoStream)
 	{
 		videoStream->close();
@@ -740,7 +747,7 @@ void finishSinglePlayerInit( void )
 						if (!TheGameLODManager->didMemPass()) {
 							useLowRes = TRUE;
 						}
-						if (TheGameLODManager->findStaticLODLevel()==STATIC_GAME_LOD_LOW) {
+						if (TheGameLODManager->getRecommendedStaticLODLevel()==STATIC_GAME_LOD_LOW) {
 							useLowRes = TRUE;
 						}
 						if (TheGameLODManager->getStaticLODLevel()==STATIC_GAME_LOD_LOW) {
@@ -768,12 +775,8 @@ void finishSinglePlayerInit( void )
 
 	}
 
-	//Added By Sadullah Nader
-	//Fix for the black screen text that appears after loading sequence
-
 	TheInGameUI->freeMessageResources();
 
-	//
 	if (s_blankLayout)
 	{
 		s_blankLayout->destroyWindows();
@@ -1264,15 +1267,6 @@ void populatePlayerInfo( Player *player, Int pos)
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
 
-	// set the total BuildingsDestroyed
-	winName.format("ScoreScreen.wnd:StaticTextBuildingsDestroyed%d", pos);
-	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
-	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	winValue.format(L"%d", scoreKpr->getTotalBuildingsDestroyed());
-	GadgetStaticTextSetText(win, winValue);
-	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
-	win->winHide(FALSE);
-
 	// set the total Resources
 	winName.format("ScoreScreen.wnd:StaticTextResources%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
@@ -1714,7 +1708,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 					stats.surrenders[ptIdx] += TheGameInfo->haveWeSurrendered()  || !TheVictoryConditions->getEndFrame();
 
 					AsciiString systemSpec;
-					systemSpec.format("LOD%d", TheGameLODManager->findStaticLODLevel());
+					systemSpec.format("LOD%d", TheGameLODManager->getRecommendedStaticLODLevel());
 					stats.systemSpec = systemSpec.str();
 
 					stats.techCaptured[ptIdx] += s->getTotalTechBuildingsCaptured();
@@ -1846,7 +1840,8 @@ enum
 	USA_ENEMY,		// Keep friends with friends, enemys with enemys
 	CHINA_ENEMY,
 	GLA_ENEMY,
-	MAX_RELATIONS // keep me last
+
+	MAX_RELATIONS
 };
 /**	Grab the single player info */
 //-------------------------------------------------------------------------------------------------
@@ -2033,12 +2028,6 @@ void hideWindows( Int pos )
 		DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 		win->winHide(TRUE);
 
-		// set the total BuildingsDestroyed
-		winName.format("ScoreScreen.wnd:StaticTextBuildingsDestroyed%d", i);
-		win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
-		DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-		win->winHide(TRUE);
-
 		// set the total Resources
 		winName.format("ScoreScreen.wnd:StaticTextResources%d", i);
 		win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
@@ -2121,12 +2110,6 @@ void setObserverWindows( Player *player, Int i )
 
 	// set the total BuildingsLost
 	winName.format("ScoreScreen.wnd:StaticTextBuildingsLost%d", i);
-	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
-	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	win->winHide(TRUE);
-
-	// set the total BuildingsDestroyed
-	winName.format("ScoreScreen.wnd:StaticTextBuildingsDestroyed%d", i);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 	win->winHide(TRUE);

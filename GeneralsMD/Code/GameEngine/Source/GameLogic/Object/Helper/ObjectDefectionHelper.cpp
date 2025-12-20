@@ -136,7 +136,7 @@ void ObjectDefectionHelper::crc( Xfer *xfer )
 	// object helper crc
 	ObjectHelper::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -166,7 +166,7 @@ void ObjectDefectionHelper::xfer( Xfer *xfer )
 	// do defector fx
 	xfer->xferBool( &m_doDefectorFX );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -177,4 +177,4 @@ void ObjectDefectionHelper::loadPostProcess( void )
 	// object helper base class
 	ObjectHelper::loadPostProcess();
 
-}  // end loadPostProcess
+}

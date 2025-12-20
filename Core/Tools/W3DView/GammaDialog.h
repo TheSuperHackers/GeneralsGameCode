@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_GAMMADIALOG_H__DA25161A_E783_44DE_8398_B311C20C3BE9__INCLUDED_)
-#define AFX_GAMMADIALOG_H__DA25161A_E783_44DE_8398_B311C20C3BE9__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // GammaDialog.h : header file
 //
 
@@ -63,5 +59,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_GAMMADIALOG_H__DA25161A_E783_44DE_8398_B311C20C3BE9__INCLUDED_)

@@ -266,35 +266,35 @@ void GroveOptions::_setDefaultRatios(void)
 	CWnd* pWnd = GetDlgItem(IDC_Grove_Per1);
 	if (pWnd) {
 		defaultRatio = AfxGetApp()->GetProfileInt("GroveOptions", "DefaultRatio1", 0);
-		sprintf(buff, "%d", defaultRatio);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", defaultRatio);
 		pWnd->SetWindowText(buff);
 	}
 
 	pWnd = GetDlgItem(IDC_Grove_Per2);
 	if (pWnd) {
 		defaultRatio = AfxGetApp()->GetProfileInt("GroveOptions", "DefaultRatio2", 0);
-		sprintf(buff, "%d", defaultRatio);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", defaultRatio);
 		pWnd->SetWindowText(buff);
 	}
 
 	pWnd = GetDlgItem(IDC_Grove_Per3);
 	if (pWnd) {
 		defaultRatio = AfxGetApp()->GetProfileInt("GroveOptions", "DefaultRatio3", 0);
-		sprintf(buff, "%d", defaultRatio);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", defaultRatio);
 		pWnd->SetWindowText(buff);
 	}
 
 	pWnd = GetDlgItem(IDC_Grove_Per4);
 	if (pWnd) {
 		defaultRatio = AfxGetApp()->GetProfileInt("GroveOptions", "DefaultRatio4", 0);
-		sprintf(buff, "%d", defaultRatio);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", defaultRatio);
 		pWnd->SetWindowText(buff);
 	}
 
 	pWnd = GetDlgItem(IDC_Grove_Per5);
 	if (pWnd) {
 		defaultRatio = AfxGetApp()->GetProfileInt("GroveOptions", "DefaultRatio5", 0);
-		sprintf(buff, "%d", defaultRatio);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", defaultRatio);
 		pWnd->SetWindowText(buff);
 	}
 }
@@ -308,7 +308,7 @@ void GroveOptions::_setDefaultNumTrees(void)
 
 	int defaultNumTrees = AfxGetApp()->GetProfileInt("GroveOptions", "NumberofTrees", 10);
 	static char buff[ARBITRARY_BUFF_SIZE];
-	sprintf(buff, "%d", defaultNumTrees);
+	snprintf(buff, ARRAY_SIZE(buff), "%d", defaultNumTrees);
 
 	pWnd->SetWindowText(buff);
 }
@@ -379,7 +379,7 @@ void GroveOptions::_updateTreeWeights(void)
 
 	pWnd = GetDlgItem(IDC_Grove_PerTotal);
 	if (pWnd) {
-		sprintf(buff, "%d", val);
+		snprintf(buff, ARRAY_SIZE(buff), "%d", val);
 		pWnd->SetWindowText(buff);
 	}
 }

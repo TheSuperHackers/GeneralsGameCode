@@ -34,19 +34,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-
-
-
-#ifndef __PARAMETER_LIST_H
-#define __PARAMETER_LIST_H
 
 #include "always.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "parameter.h"
 #include "wwdebug.h"
 
@@ -148,16 +139,10 @@ ParameterListClass::Free_Parameters (void)
 		//
 		//	Free the parameter object
 		//
-		if (param != NULL) {
-			delete param;
-		}
+		delete param;
 	}
 
 	Delete_All();
 //	m_Parameters.Delete_All ();
 	return ;
 }
-
-
-#endif //__PARAMETER_LIST_H
-

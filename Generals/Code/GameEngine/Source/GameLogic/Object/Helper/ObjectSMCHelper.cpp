@@ -60,7 +60,7 @@ void ObjectSMCHelper::crc( Xfer *xfer )
 	// object helper crc
 	ObjectHelper::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -78,7 +78,7 @@ void ObjectSMCHelper::xfer( Xfer *xfer )
 	// object helper base class
 	ObjectHelper::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -89,5 +89,5 @@ void ObjectSMCHelper::loadPostProcess( void )
 	// object helper base class
 	ObjectHelper::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

@@ -28,7 +28,7 @@
 //					This instance refuses to spit a second out until the first is clear
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/RandomValue.h"
 #include "Common/ThingTemplate.h"
@@ -46,12 +46,8 @@ QueueProductionExitUpdate::QueueProductionExitUpdate( Thing *thing, const Module
 {
 	m_currentDelay = 0;
 
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_creationClearDistance = 0;
 	m_rallyPoint.zero();
-	//
-
 	// no rally point has been set
 	m_rallyPointExists = false;
 	m_currentBurstCount = 0;
@@ -306,7 +302,7 @@ void QueueProductionExitUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -339,7 +335,7 @@ void QueueProductionExitUpdate::xfer( Xfer *xfer )
 	// current burst count
 	xfer->xferUnsignedInt( &m_currentBurstCount );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -350,4 +346,4 @@ void QueueProductionExitUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

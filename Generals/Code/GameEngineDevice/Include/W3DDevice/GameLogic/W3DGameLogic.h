@@ -33,9 +33,6 @@
 
 #pragma once
 
-#ifndef __W3DGAMELOGIC_H_
-#define __W3DGAMELOGIC_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -64,6 +61,4 @@ protected:
 	virtual TerrainLogic *createTerrainLogic( void ) { return NEW W3DTerrainLogic; };
 	virtual GhostObjectManager *createGhostObjectManager(void) { return NEW W3DGhostObjectManager; }
 
-};  // end class W3DGameLogic
-
-#endif  // end __W3DGAMELOGIC_H_
+};

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Xfer.h"
 
 #include "GameLogic/Module/HighlanderBody.h"
@@ -69,7 +69,7 @@ void HighlanderBody::crc( Xfer *xfer )
 	// extend base class
 	ActiveBody::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -87,7 +87,7 @@ void HighlanderBody::xfer( Xfer *xfer )
 	// extend base class
 	ActiveBody::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -98,4 +98,4 @@ void HighlanderBody::loadPostProcess( void )
 	// extend base class
 	ActiveBody::loadPostProcess();
 
-}  // end loadPostProcess
+}

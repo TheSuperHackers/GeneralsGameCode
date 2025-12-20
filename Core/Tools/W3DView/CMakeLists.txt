@@ -151,7 +151,7 @@ set(W3DVIEW_SRC
     "Utils.cpp"
     "Utils.h"
     "Vector3RndCombo.cpp"
-    "Vector3RndCombo.H"
+    "Vector3RndCombo.h"
     "ViewerAssetMgr.cpp"
     "ViewerAssetMgr.h"
     "ViewerScene.cpp"
@@ -169,6 +169,13 @@ set(W3DVIEW_SRC
 add_library(corei_w3dview INTERFACE)
 
 target_sources(corei_w3dview INTERFACE ${W3DVIEW_SRC})
+
+target_precompile_headers(corei_w3dview INTERFACE
+    "StdAfx.h"
+    [["always.h"]]
+    [["STLUtils.h"]]
+    [["WWCommon.h"]]
+)
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     target_sources(corei_w3dview INTERFACE W3DView.rc)

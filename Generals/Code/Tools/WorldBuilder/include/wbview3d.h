@@ -20,12 +20,8 @@
 // Class to encapsulate height map.
 // Author: Steven Johnson, Aug 2001
 
-#if !defined(AFX_WBVIEW3D_H__832D8241_87F6_11D5_8CE0_00010297BBAC__INCLUDED_)
-#define AFX_WBVIEW3D_H__832D8241_87F6_11D5_8CE0_00010297BBAC__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // wbview3d.h : header file
 //
 
@@ -304,5 +300,3 @@ inline Bool WbView3d::getShowWireframe() { return m_showWireframe; }
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_WBVIEW3D_H__832D8241_87F6_11D5_8CE0_00010297BBAC__INCLUDED_)

@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __HIERARCHYVIEW_H_
-#define __HIERARCHYVIEW_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <windows.h>
 #include <commctrl.h>
@@ -158,7 +155,7 @@ protected:
 #endif
 
 
-};  // end HierarchyView
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 // INLINING ///////////////////////////////////////////////////////////////////
@@ -174,6 +171,3 @@ inline GameWindow *HierarchyView::getPopupTarget( void ) { return m_popupTarget;
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
 extern HierarchyView *TheHierarchyView;  ///< singleton for our view
-
-#endif // __CONTROLPALETTE_H_
-

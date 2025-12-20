@@ -27,9 +27,6 @@
 
 #pragma once
 
-#ifndef _ChinookAIUpdate_H_
-#define _ChinookAIUpdate_H_
-
 #include "GameLogic/AIStateMachine.h"
 #include "GameLogic/Module/SupplyTruckAIUpdate.h"
 
@@ -140,6 +137,3 @@ private:
 	Coord3D									m_originalPos;
 	Bool										m_hasPendingCommand;
 };
-
-#endif
-

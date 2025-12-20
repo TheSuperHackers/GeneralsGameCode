@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Commando / G                                                 *
  *                                                                                             *
- *                    File Name : NODELIST.H                                                   *
+ *                    File Name : NODELIST.h                                                   *
  *                                                                                             *
  *                   Programmer : Greg Hjelstrom                                               *
  *                                                                                             *
@@ -35,9 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef NODELIST_H
-#define NODELIST_H
+#pragma once
 
 #include "always.h"
 #include <max.h>
@@ -97,6 +95,3 @@ public:
 	// returns >0 if nodea > node b.
 	virtual int operator() (INode * nodea,INode * nodeb) const = 0;
 };
-
-
-#endif /*NODELIST_H*/

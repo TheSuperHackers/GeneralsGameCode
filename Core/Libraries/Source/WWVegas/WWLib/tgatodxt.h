@@ -34,8 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef TGATODXT_H
-#define TGATODXT_H
+#pragma once
 
 #pragma message ("(gth) disabling TGAtoDXTClass temporarily so I can test the WW libs merge...")
 #if 0
@@ -81,5 +80,3 @@ class TGAToDXTClass
 extern TGAToDXTClass _TGAToDXTConverter;
 
 #endif //0
-
-#endif

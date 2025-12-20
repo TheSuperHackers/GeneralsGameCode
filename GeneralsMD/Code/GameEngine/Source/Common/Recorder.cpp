@@ -22,7 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Recorder.h"
 #include "Common/file.h"
@@ -45,10 +45,11 @@
 #include "GameLogic/GameLogic.h"
 #include "Common/RandomValue.h"
 #include "Common/CRCDebug.h"
+#include "Common/UserPreferences.h"
 #include "Common/version.h"
 
-CONSTEXPR const char s_genrep[] = "GENREP";
-CONSTEXPR const UnsignedInt replayBufferBytes = 8192;
+constexpr const char s_genrep[] = "GENREP";
+constexpr const UnsignedInt replayBufferBytes = 8192;
 
 Int REPLAY_CRC_INTERVAL = 100;
 
@@ -288,8 +289,8 @@ void RecorderClass::cleanUpReplayFile( void )
 	if (TheGlobalData->m_saveStats)
 	{
 		char fname[_MAX_PATH+1];
-		strncpy(fname, TheGlobalData->m_baseStatsDir.str(), _MAX_PATH);
-		strncat(fname, m_fileName.str(), _MAX_PATH - strlen(fname));
+		strlcpy(fname, TheGlobalData->m_baseStatsDir.str(), ARRAY_SIZE(fname));
+		strlcat(fname, m_fileName.str(), ARRAY_SIZE(fname));
 		DEBUG_LOG(("Saving replay to %s", fname));
 		AsciiString oldFname;
 		oldFname.format("%s%s", getReplayDir().str(), m_fileName.str());
@@ -367,13 +368,10 @@ RecorderClass::RecorderClass()
 	m_file = NULL;
 	m_fileName.clear();
 	m_currentFilePosition = 0;
-	//Added By Sadullah Nader
-	//Initializtion(s) inserted
 	m_doingAnalysis = FALSE;
+	m_archiveReplays = FALSE;
 	m_nextFrame = 0;
 	m_wasDesync = FALSE;
-	//
-
 	init(); // just for the heck of it.
 }
 
@@ -406,6 +404,9 @@ void RecorderClass::init() {
 	m_wasDesync = FALSE;
 	m_doingAnalysis = FALSE;
 	m_playbackFrameCount = 0;
+
+	OptionPreferences optionPref;
+	m_archiveReplays = optionPref.getArchiveReplaysEnabled();
 }
 
 /**
@@ -477,7 +478,7 @@ void RecorderClass::stopPlayback() {
 
 	if (!m_doingAnalysis)
 	{
-		TheMessageStream->appendMessage(GameMessage::MSG_CLEAR_GAME_DATA);
+		TheGameLogic->exitGame();
 	}
 }
 
@@ -728,8 +729,40 @@ void RecorderClass::stopRecording() {
 	if (m_file != NULL) {
 		m_file->close();
 		m_file = NULL;
+
+		if (m_archiveReplays)
+			archiveReplay(m_fileName);
 	}
 	m_fileName.clear();
+}
+
+/**
+ * TheSuperHackers @feature Stubbjax 17/10/2025 Copy the replay file to the archive directory and rename it using the current timestamp.
+ */
+void RecorderClass::archiveReplay(AsciiString fileName)
+{
+	SYSTEMTIME st;
+	GetLocalTime(&st);
+
+	AsciiString archiveFileName;
+	// Use a standard YYYYMMDD_HHMMSS format for simplicity and to avoid conflicts.
+	archiveFileName.format("%04d%02d%02d_%02d%02d%02d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+
+	AsciiString extension = getReplayExtention();
+	AsciiString sourcePath = getReplayDir();
+	sourcePath.concat(fileName);
+
+	if (!sourcePath.endsWith(extension))
+		sourcePath.concat(extension);
+
+	AsciiString destPath = getReplayArchiveDir();
+	TheFileSystem->createDirectory(destPath.str());
+
+	destPath.concat(archiveFileName);
+	destPath.concat(extension);
+
+	if (!CopyFile(sourcePath.str(), destPath.str(), FALSE))
+		DEBUG_LOG(("RecorderClass::archiveReplay: Failed to copy %s to %s", sourcePath.str(), destPath.str()));
 }
 
 /**
@@ -861,7 +894,7 @@ Bool RecorderClass::readReplayHeader(ReplayHeader& header)
 	// Read the GENREP header.
 	char genrep[sizeof(s_genrep) - 1] = {0};
 	m_file->read( &genrep, sizeof(s_genrep) - 1 );
-	if ( strncmp(genrep, s_genrep, sizeof(s_genrep) - 1 ) ) {
+	if ( strncmp(genrep, s_genrep, sizeof(s_genrep) - 1 ) != 0 ) {
 		DEBUG_LOG(("RecorderClass::readReplayHeader - replay file did not have GENREP at the start."));
 		m_file->close();
 		m_file = NULL;
@@ -1136,18 +1169,16 @@ Bool RecorderClass::replayMatchesGameVersion(AsciiString filename)
 
 Bool RecorderClass::replayMatchesGameVersion(const ReplayHeader& header)
 {
-	Bool versionStringDiff = header.versionString != TheVersion->getUnicodeVersion();
-	Bool versionTimeStringDiff = header.versionTimeString != TheVersion->getUnicodeBuildTime();
-	Bool versionNumberDiff = header.versionNumber != TheVersion->getVersionNumber();
-	Bool exeCRCDiff = header.exeCRC != TheGlobalData->m_exeCRC;
-	Bool exeDifferent = versionStringDiff || versionTimeStringDiff || versionNumberDiff || exeCRCDiff;
-	Bool iniDifferent = header.iniCRC != TheGlobalData->m_iniCRC;
-
-	if(exeDifferent || iniDifferent)
-	{
-		return FALSE;
-	}
-	return TRUE;
+	// TheSuperHackers @fix No longer checks the build time here to prevent incorrect Replay playback incompatibility messages when the Replay playback would actually be technically compatible.
+	if (header.versionString != TheVersion->getUnicodeVersion())
+		return false;
+	if (header.versionNumber != TheVersion->getVersionNumber())
+		return false;
+	if (header.exeCRC != TheGlobalData->m_exeCRC)
+		return false;
+	if (header.iniCRC != TheGlobalData->m_iniCRC)
+		return false;
+	return true;
 }
 
 /**
@@ -1245,7 +1276,7 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 
 	Int rankPoints = 0;
 	m_file->read(&rankPoints, sizeof(rankPoints));
-	
+
 	Int maxFPS = 0;
 	m_file->read(&maxFPS, sizeof(maxFPS));
 
@@ -1448,117 +1479,142 @@ void RecorderClass::appendNextCommand() {
 }
 
 void RecorderClass::readArgument(GameMessageArgumentDataType type, GameMessage *msg) {
-	if (type == ARGUMENTDATATYPE_INTEGER) {
-		Int theint;
-		m_file->read(&theint, sizeof(theint));
-		msg->appendIntegerArgument(theint);
+	switch (type) {
+		case ARGUMENTDATATYPE_INTEGER: {
+			Int theint;
+			m_file->read(&theint, sizeof(theint));
+			msg->appendIntegerArgument(theint);
 #ifdef DEBUG_LOGGING
-		if (m_doingAnalysis)
-		{
-			DEBUG_LOG(("Integer argument: %d (%8.8X)", theint, theint));
-		}
+			if (m_doingAnalysis)
+			{
+				DEBUG_LOG(("Integer argument: %d (%8.8X)", theint, theint));
+			}
 #endif
-	} else if (type == ARGUMENTDATATYPE_REAL) {
-		Real thereal;
-		m_file->read(&thereal, sizeof(thereal));
-		msg->appendRealArgument(thereal);
+			break;
+		}
+		case ARGUMENTDATATYPE_REAL: {
+			Real thereal;
+			m_file->read(&thereal, sizeof(thereal));
+			msg->appendRealArgument(thereal);
 #ifdef DEBUG_LOGGING
-		if (m_doingAnalysis)
-		{
-			DEBUG_LOG(("Real argument: %g (%8.8X)", thereal, *(int *)&thereal));
-		}
+			if (m_doingAnalysis)
+			{
+				DEBUG_LOG(("Real argument: %g (%8.8X)", thereal, *(int *)&thereal));
+			}
 #endif
-	} else if (type == ARGUMENTDATATYPE_BOOLEAN) {
-		Bool thebool;
-		m_file->read(&thebool, sizeof(thebool));
-		msg->appendBooleanArgument(thebool);
+			break;
+		}
+		case ARGUMENTDATATYPE_BOOLEAN: {
+			Bool thebool;
+			m_file->read(&thebool, sizeof(thebool));
+			msg->appendBooleanArgument(thebool);
 #ifdef DEBUG_LOGGING
-		if (m_doingAnalysis)
-		{
-			DEBUG_LOG(("Bool argument: %d", thebool));
-		}
+			if (m_doingAnalysis)
+			{
+				DEBUG_LOG(("Bool argument: %d", thebool));
+			}
 #endif
-	} else if (type == ARGUMENTDATATYPE_OBJECTID) {
-		ObjectID theid;
-		m_file->read(&theid, sizeof(theid));
-		msg->appendObjectIDArgument(theid);
+			break;
+		}
+		case ARGUMENTDATATYPE_OBJECTID: {
+			ObjectID theid;
+			m_file->read(&theid, sizeof(theid));
+			msg->appendObjectIDArgument(theid);
 #ifdef DEBUG_LOGGING
-		if (m_doingAnalysis)
-		{
-			DEBUG_LOG(("Object ID argument: %d", theid));
-		}
+			if (m_doingAnalysis)
+			{
+				DEBUG_LOG(("Object ID argument: %d", theid));
+			}
 #endif
-	} else if (type == ARGUMENTDATATYPE_DRAWABLEID) {
-		DrawableID theid;
-		m_file->read(&theid, sizeof(theid));
-		msg->appendDrawableIDArgument(theid);
+			break;
+		}
+		case ARGUMENTDATATYPE_DRAWABLEID: {
+			DrawableID theid;
+			m_file->read(&theid, sizeof(theid));
+			msg->appendDrawableIDArgument(theid);
 #ifdef DEBUG_LOGGING
-		if (m_doingAnalysis)
-		{
-			DEBUG_LOG(("Drawable ID argument: %d", theid));
-		}
+			if (m_doingAnalysis)
+			{
+				DEBUG_LOG(("Drawable ID argument: %d", theid));
+			}
 #endif
-	} else if (type == ARGUMENTDATATYPE_TEAMID) {
-		UnsignedInt theid;
-		m_file->read(&theid, sizeof(theid));
-		msg->appendTeamIDArgument(theid);
+			break;
+		}
+		case ARGUMENTDATATYPE_TEAMID: {
+			UnsignedInt theid;
+			m_file->read(&theid, sizeof(theid));
+			msg->appendTeamIDArgument(theid);
 #ifdef DEBUG_LOGGING
-		if (m_doingAnalysis)
-		{
-			DEBUG_LOG(("Team ID argument: %d", theid));
-		}
+			if (m_doingAnalysis)
+			{
+				DEBUG_LOG(("Team ID argument: %d", theid));
+			}
 #endif
-	} else if (type == ARGUMENTDATATYPE_LOCATION) {
-		Coord3D loc;
-		m_file->read(&loc, sizeof(loc));
-		msg->appendLocationArgument(loc);
+			break;
+		}
+		case ARGUMENTDATATYPE_LOCATION: {
+			Coord3D loc;
+			m_file->read(&loc, sizeof(loc));
+			msg->appendLocationArgument(loc);
 #ifdef DEBUG_LOGGING
-		if (m_doingAnalysis)
-		{
-			DEBUG_LOG(("Coord3D argument: %g %g %g (%8.8X %8.8X %8.8X)", loc.x, loc.y, loc.z,
-				*(int *)&loc.x, *(int *)&loc.y, *(int *)&loc.z));
-		}
+			if (m_doingAnalysis)
+			{
+				DEBUG_LOG(("Coord3D argument: %g %g %g (%8.8X %8.8X %8.8X)", loc.x, loc.y, loc.z,
+					*(int *)&loc.x, *(int *)&loc.y, *(int *)&loc.z));
+			}
 #endif
-	} else if (type == ARGUMENTDATATYPE_PIXEL) {
-		ICoord2D pixel;
-		m_file->read(&pixel, sizeof(pixel));
-		msg->appendPixelArgument(pixel);
+			break;
+		}
+		case ARGUMENTDATATYPE_PIXEL: {
+			ICoord2D pixel;
+			m_file->read(&pixel, sizeof(pixel));
+			msg->appendPixelArgument(pixel);
 #ifdef DEBUG_LOGGING
-		if (m_doingAnalysis)
-		{
-			DEBUG_LOG(("Pixel argument: %d,%d", pixel.x, pixel.y));
-		}
+			if (m_doingAnalysis)
+			{
+				DEBUG_LOG(("Pixel argument: %d,%d", pixel.x, pixel.y));
+			}
 #endif
-	} else if (type == ARGUMENTDATATYPE_PIXELREGION) {
-		IRegion2D reg;
-		m_file->read(&reg, sizeof(reg));
-		msg->appendPixelRegionArgument(reg);
+			break;
+		}
+		case ARGUMENTDATATYPE_PIXELREGION: {
+			IRegion2D reg;
+			m_file->read(&reg, sizeof(reg));
+			msg->appendPixelRegionArgument(reg);
 #ifdef DEBUG_LOGGING
-		if (m_doingAnalysis)
-		{
-			DEBUG_LOG(("Pixel Region argument: %d,%d -> %d,%d", reg.lo.x, reg.lo.y, reg.hi.x, reg.hi.y));
-		}
+			if (m_doingAnalysis)
+			{
+				DEBUG_LOG(("Pixel Region argument: %d,%d -> %d,%d", reg.lo.x, reg.lo.y, reg.hi.x, reg.hi.y));
+			}
 #endif
-	} else if (type == ARGUMENTDATATYPE_TIMESTAMP) {  // Not to be confused with Terrance Stamp... Kneel before Zod!!!
-		UnsignedInt stamp;
-		m_file->read(&stamp, sizeof(stamp));
-		msg->appendTimestampArgument(stamp);
+			break;
+		}
+		case ARGUMENTDATATYPE_TIMESTAMP: {  // Not to be confused with Terrance Stamp... Kneel before Zod!!!
+			UnsignedInt stamp;
+			m_file->read(&stamp, sizeof(stamp));
+			msg->appendTimestampArgument(stamp);
 #ifdef DEBUG_LOGGING
-		if (m_doingAnalysis)
-		{
-			DEBUG_LOG(("Timestamp argument: %d", stamp));
-		}
+			if (m_doingAnalysis)
+			{
+				DEBUG_LOG(("Timestamp argument: %d", stamp));
+			}
 #endif
-	} else if (type == ARGUMENTDATATYPE_WIDECHAR) {
-		WideChar theid;
-		m_file->read(&theid, sizeof(theid));
-		msg->appendWideCharArgument(theid);
+			break;
+		}
+		case ARGUMENTDATATYPE_WIDECHAR: {
+			WideChar theid;
+			m_file->read(&theid, sizeof(theid));
+			msg->appendWideCharArgument(theid);
 #ifdef DEBUG_LOGGING
-		if (m_doingAnalysis)
-		{
-			DEBUG_LOG(("WideChar argument: %d (%lc)", theid, theid));
-		}
+			if (m_doingAnalysis)
+			{
+				DEBUG_LOG(("WideChar argument: %d (%lc)", theid, theid));
+			}
 #endif
+			break;
+		}
+		default:
+			break;
 	}
 }
 
@@ -1598,10 +1654,18 @@ RecorderClass::CullBadCommandsResult RecorderClass::cullBadCommands() {
  */
 AsciiString RecorderClass::getReplayDir()
 {
-	const char* replayDir = "Replays\\";
-
 	AsciiString tmp = TheGlobalData->getPath_UserData();
-	tmp.concat(replayDir);
+	tmp.concat("Replays\\");
+	return tmp;
+}
+
+/**
+ * returns the directory that holds the archived replay files.
+ */
+AsciiString RecorderClass::getReplayArchiveDir()
+{
+	AsciiString tmp = TheGlobalData->getPath_UserData();
+	tmp.concat("ArchivedReplays\\");
 	return tmp;
 }
 
@@ -1701,7 +1765,7 @@ RecorderModeType RecorderClass::getMode() {
 ///< Show or Hide the Replay controls
 void RecorderClass::initControls()
 {
-	NameKeyType parentReplayControlID = TheNameKeyGenerator->nameToKey( AsciiString("ReplayControl.wnd:ParentReplayControl") );
+	NameKeyType parentReplayControlID = TheNameKeyGenerator->nameToKey( "ReplayControl.wnd:ParentReplayControl" );
 	GameWindow *parentReplayControl = TheWindowManager->winGetWindowFromId( NULL, parentReplayControlID );
 
 	Bool show = (getMode() != RECORDERMODETYPE_PLAYBACK);

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Lib/BaseType.h"
 #include "GameClient/Line2D.h"
@@ -128,7 +128,7 @@ Bool ClipLine2D( ICoord2D *p1, ICoord2D *p2, ICoord2D *c1, ICoord2D *c2,
 		*c2 = *p2;
 		return TRUE;
 
-	}  // end if
+	}
 
 	// Both points outside window?
 	if (clipCode1 & clipCode2)
@@ -224,7 +224,7 @@ Bool ClipLine2D( ICoord2D *p1, ICoord2D *p2, ICoord2D *c1, ICoord2D *c2,
 			x2 >= clipLeft && x2 <= clipRight &&
 			y2 >= clipTop && y2 <= clipBottom);
 
-}  // end ClipLine2D
+}
 
 
 // This solution uses the

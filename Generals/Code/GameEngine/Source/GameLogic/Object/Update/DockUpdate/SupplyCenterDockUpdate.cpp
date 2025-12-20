@@ -27,7 +27,7 @@
 // Desc:   The action of this dock update is taking boxes and turning them into money for my ownerplayer
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Xfer.h"
@@ -57,7 +57,7 @@ SupplyCenterDockUpdateModuleData::SupplyCenterDockUpdateModuleData( void )
 
   p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -143,7 +143,7 @@ void SupplyCenterDockUpdate::crc( Xfer *xfer )
 	// extend base class
 	DockUpdate::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -161,7 +161,7 @@ void SupplyCenterDockUpdate::xfer( Xfer *xfer )
 	// extend base class
 	DockUpdate::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -172,4 +172,4 @@ void SupplyCenterDockUpdate::loadPostProcess( void )
 	// extend base class
 	DockUpdate::loadPostProcess();
 
-}  // end loadPostProcess
+}

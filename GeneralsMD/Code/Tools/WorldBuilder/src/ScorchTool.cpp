@@ -111,7 +111,7 @@ void ScorchTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		ScorchOptions::update();
 	} else {
 		pView->snapPoint(&docPt);
-		MapObject *pNew = newInstance(MapObject)(docPt, AsciiString("Scorch"), 0, 0, NULL, NULL );
+		MapObject *pNew = newInstance(MapObject)(docPt, "Scorch", 0, 0, NULL, NULL );
 		pNew->getProperties()->setAsciiString(TheKey_originalOwner, NEUTRAL_TEAM_INTERNAL_STR);
 		pNew->setSelected(true);
 		pNew->setIsScorch();

@@ -101,17 +101,17 @@ static void drawButtonText( GameWindow *window, WinInstanceData *instData )
 	{
 		textColor = window->winGetDisabledTextColor();
 		dropColor = window->winGetDisabledTextBorderColor();
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		textColor = window->winGetHiliteTextColor();
 		dropColor = window->winGetHiliteTextBorderColor();
-	}  // end else if, hilited
+	}
 	else
 	{
 		textColor = window->winGetEnabledTextColor();
 		dropColor = window->winGetEnabledTextBorderColor();
-	}  // end enabled only
+	}
 
 	// set our font to that of our parent if not the same
 	if( text->getFont() != window->winGetFont() )
@@ -127,7 +127,7 @@ static void drawButtonText( GameWindow *window, WinInstanceData *instData )
 	// draw it
 	text->draw( textPos.x, textPos.y, textColor, dropColor );
 
-}  // end drawButtonText
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -163,7 +163,7 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 			border		= GadgetButtonGetDisabledBorderColor( window );
 		}
 
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
@@ -178,7 +178,7 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 			border		= GadgetButtonGetHiliteBorderColor( window );
 		}
 
-	}  // end else if, hilited and enabled
+	}
 	else
 	{
 
@@ -193,7 +193,7 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 			border		= GadgetButtonGetEnabledBorderColor( window );
 		}
 
-	}  // end else, enabled only
+	}
 
 	// compute draw position
 	start.x = origin.x;
@@ -208,7 +208,7 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 		TheWindowManager->winOpenRect( border, WIN_DRAW_LINE_WIDTH,
 																	 start.x, start.y, end.x, end.y );
 
-	}  // end if
+	}
 
 	if( color != WIN_COLOR_UNDEFINED )
 	{
@@ -221,7 +221,7 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 		TheWindowManager->winFillRect( color, WIN_DRAW_LINE_WIDTH,
 																	 start.x, start.y, end.x, end.y );
 
-	}  // end if
+	}
 
 	// draw the button text
 	if( instData->getTextLength() )
@@ -262,7 +262,7 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 		}
 	}
 
-}  // end W3DGadgetPushButtonDraw
+}
 
 
 
@@ -325,7 +325,7 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 			else
 				image			= GadgetButtonGetDisabledImage( window );
 
-		}  // end if, disabled
+		}
 		else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 		{
 
@@ -334,13 +334,13 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 			else
 				image			= GadgetButtonGetHiliteImage( window );
 
-		}  // end else if, hilited and enabled
+		}
 		else
 		{
 
 			if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 				image			= GadgetButtonGetHiliteSelectedImage( window );
-		}  // end else, enabled only
+		}
 	}
 
 
@@ -385,7 +385,7 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 			}
 		}
 		TheDisplay->drawImage( image, start.x, start.y, end.x, end.y, colorMultiplier, drawMode );
-	}  // end if
+	}
 
 	// draw the button text
 	if( instData->getTextLength() )
@@ -472,7 +472,7 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 			}
 		}
 	}
-}  // end W3DGadgetPushButtonImageDraw
+}
 
 
 void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *instData )
@@ -514,7 +514,7 @@ void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *inst
 
 		}
 
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
@@ -533,7 +533,7 @@ void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *inst
 
 		}
 
-	}  // end else if, hilited and enabled
+	}
 	else
 	{
 
@@ -552,7 +552,7 @@ void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *inst
 
 		}
 
-	}  // end else, enabled only
+	}
 
 	// sanity, we need to have these images to make it look right
 	if( leftImage == NULL || rightImage == NULL ||
@@ -614,7 +614,7 @@ void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *inst
 																			end.x, end.y );
 			start.x += centerImage->getImageWidth();
 
-		}  // end for i
+		}
 
 		// we will draw the image but clip the parts we don't want to show
 		IRegion2D reg;

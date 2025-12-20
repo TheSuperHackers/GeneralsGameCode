@@ -151,9 +151,7 @@ bit8 Wstring::cat(const char *s)
 
   strcat(str, s);
 
-  // delete the old string.
-  if(oldStr)
-    delete[](oldStr);
+  delete[](oldStr);
 
   return(TRUE);
 }
@@ -188,9 +186,7 @@ bit8 Wstring::cat(uint32 size, const char *s)
 
   strncat(str, s, size);
 
-  // delete the old string.
-  if(oldStr)
-    delete[](oldStr);
+  delete[](oldStr);
 
   return(TRUE);
 }
@@ -309,8 +305,7 @@ void Wstring::removeSpaces(void)
 
 void Wstring::clear(void)
 {
- if(str)
-   delete[](str);
+ delete[](str);
  str=NULL;
 }
 

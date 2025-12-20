@@ -35,13 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef HASH_H
-#define HASH_H
 
 #include "always.h"
 
@@ -115,6 +109,3 @@ private:
 
 	void					Advance_Next( void );
 };
-
-
-#endif	// HASH_H

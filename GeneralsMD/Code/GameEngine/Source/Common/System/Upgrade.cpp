@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_VETERANCY_NAMES
 #include "Common/Upgrade.h"
@@ -38,12 +38,13 @@
 #include "GameClient/Image.h"
 
 
-const char *TheUpgradeTypeNames[] =
+const char *const TheUpgradeTypeNames[] =
 {
 	"PLAYER",
 	"OBJECT",
 	NULL
 };
+static_assert(ARRAY_SIZE(TheUpgradeTypeNames) == NUM_UPGRADE_TYPES + 1, "Incorrect array size");
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 class UpgradeCenter *TheUpgradeCenter = NULL;
@@ -62,14 +63,14 @@ Upgrade::Upgrade( const UpgradeTemplate *upgradeTemplate )
 	m_next = NULL;
 	m_prev = NULL;
 
-}  // end Upgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 Upgrade::~Upgrade( void )
 {
 
-}  // end ~Upgrade
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -77,7 +78,7 @@ Upgrade::~Upgrade( void )
 void Upgrade::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -95,7 +96,7 @@ void Upgrade::xfer( Xfer *xfer )
 	// status
 	xfer->xferUser( &m_status, sizeof( UpgradeStatusType ) );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -103,7 +104,7 @@ void Upgrade::xfer( Xfer *xfer )
 void Upgrade::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // UPGRADE TEMPLATE ///////////////////////////////////////////////////////////////////////////////
@@ -131,10 +132,7 @@ const FieldParse UpgradeTemplate::m_upgradeFieldParseTable[] =
 //-------------------------------------------------------------------------------------------------
 UpgradeTemplate::UpgradeTemplate( void )
 {
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_cost = 0;
-	//
 	m_type = UPGRADE_TYPE_PLAYER;
 	m_nameKey = NAMEKEY_INVALID;
 	m_buildTime = 0.0f;
@@ -143,14 +141,14 @@ UpgradeTemplate::UpgradeTemplate( void )
 	m_buttonImage = NULL;
 	m_academyClassificationType = ACT_NONE;
 
-}  // end UpgradeTemplate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 UpgradeTemplate::~UpgradeTemplate( void )
 {
 
-}  // end ~UpgradeTemplate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Calculate the time it takes (in logic frames) for a player to build this UpgradeTemplate */
@@ -167,7 +165,7 @@ Int UpgradeTemplate::calcTimeToBuild( Player *player ) const
 	///@todo modify this by power state of player
 	return m_buildTime * LOGICFRAMES_PER_SECOND;
 
-}  // end calcTimeToBuild
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Calculate the cost takes this player to build this upgrade */
@@ -178,7 +176,7 @@ Int UpgradeTemplate::calcCostToBuild( Player *player ) const
 	///@todo modify this by any player handicaps
 	return m_cost;
 
-}  // end calcCostToBuild
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -230,7 +228,7 @@ UpgradeCenter::UpgradeCenter( void )
 	m_nextTemplateMaskBit = 0;
 	buttonImagesCached = FALSE;
 
-}  // end UpgradeCenter
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -251,9 +249,9 @@ UpgradeCenter::~UpgradeCenter( void )
 		// set head to next element
 		m_upgradeList = next;
 
-	}  // end while
+	}
 
-}  // end ~UpgradeCenter
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Upgrade center initialization */
@@ -296,7 +294,7 @@ void UpgradeCenter::reset( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Find upgrade matching name key */
+/** Find upgrade by veterancy level */
 //-------------------------------------------------------------------------------------------------
 const UpgradeTemplate *UpgradeCenter::findVeterancyUpgrade( VeterancyLevel level ) const
 {
@@ -305,7 +303,7 @@ const UpgradeTemplate *UpgradeCenter::findVeterancyUpgrade( VeterancyLevel level
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Find upgrade matching name key */
+/** Find upgrade by name key */
 //-------------------------------------------------------------------------------------------------
 UpgradeTemplate *UpgradeCenter::findNonConstUpgradeByKey( NameKeyType key )
 {
@@ -329,10 +327,10 @@ UpgradeTemplate *UpgradeCenter::firstUpgradeTemplate( void )
 
 	return m_upgradeList;
 
-}  // end firstUpgradeTemplate
+}
 
 //-------------------------------------------------------------------------------------------------
-/** Find upgrade matching name key */
+/** Find upgrade by name key */
 //-------------------------------------------------------------------------------------------------
 const UpgradeTemplate *UpgradeCenter::findUpgradeByKey( NameKeyType key ) const
 {
@@ -348,14 +346,20 @@ const UpgradeTemplate *UpgradeCenter::findUpgradeByKey( NameKeyType key ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Find upgrade matching name */
+/** Find upgrade by name */
 //-------------------------------------------------------------------------------------------------
 const UpgradeTemplate *UpgradeCenter::findUpgrade( const AsciiString& name ) const
 {
-
 	return findUpgradeByKey( TheNameKeyGenerator->nameToKey( name ) );
+}
 
-}  // end findUpgrade
+//-------------------------------------------------------------------------------------------------
+/** Find upgrade by name */
+//-------------------------------------------------------------------------------------------------
+const UpgradeTemplate *UpgradeCenter::findUpgrade( const char* name ) const
+{
+	return findUpgradeByKey( TheNameKeyGenerator->nameToKey( name ) );
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Allocate a new upgrade template */
@@ -388,7 +392,7 @@ UpgradeTemplate *UpgradeCenter::newUpgrade( const AsciiString& name )
 	// return new upgrade
 	return newUpgrade;
 
-}  // end newUnlinkedUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Link an upgrade to our list */
@@ -407,7 +411,7 @@ void UpgradeCenter::linkUpgrade( UpgradeTemplate *upgrade )
 		m_upgradeList->friend_setPrev( upgrade );
 	m_upgradeList = upgrade;
 
-}  // end linkUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Unlink an upgrade from our list */
@@ -426,7 +430,7 @@ void UpgradeCenter::unlinkUpgrade( UpgradeTemplate *upgrade )
 	else
 		m_upgradeList = upgrade->friend_getNext();
 
-}  // end unlinkUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 /** does this player have all the necessary things to make this upgrade */
@@ -454,7 +458,7 @@ Bool UpgradeCenter::canAffordUpgrade( Player *player, const UpgradeTemplate *upg
 
 	return TRUE;  // all is well
 
-}  // end canAffordUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 /** generate a list of upgrade names for WorldBuilder */
@@ -468,7 +472,7 @@ std::vector<AsciiString> UpgradeCenter::getUpgradeNames( void ) const
 
 	return upgradeNames;
 
-}  // end getUpgradeNames
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse an upgrade definition */
@@ -476,8 +480,7 @@ std::vector<AsciiString> UpgradeCenter::getUpgradeNames( void ) const
 void UpgradeCenter::parseUpgradeDefinition( INI *ini )
 {
 	// read the name
-	const char* c = ini->getNextToken();
-	AsciiString name = c;
+	const char* name = ini->getNextToken();
 
 	// find existing item if present
 	UpgradeTemplate* upgrade = TheUpgradeCenter->findNonConstUpgradeByKey( NAMEKEY(name) );
@@ -487,10 +490,10 @@ void UpgradeCenter::parseUpgradeDefinition( INI *ini )
 		// allocate a new item
 		upgrade = TheUpgradeCenter->newUpgrade( name );
 
-	}  // end if
+	}
 
 	// sanity
-	DEBUG_ASSERTCRASH( upgrade, ("parseUpgradeDefinition: Unable to allocate upgrade '%s'", name.str()) );
+	DEBUG_ASSERTCRASH( upgrade, ("parseUpgradeDefinition: Unable to allocate upgrade '%s'", name) );
 
 	// parse the ini definition
 	ini->initFromINI( upgrade, upgrade->getFieldParse() );

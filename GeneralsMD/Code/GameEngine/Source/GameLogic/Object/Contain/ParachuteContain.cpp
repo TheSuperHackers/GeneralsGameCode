@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/CRCDebug.h"
 #include "Common/Player.h"
@@ -100,8 +100,6 @@ ParachuteContain::ParachuteContain( Thing *thing, const ModuleData *moduleData )
 	m_isLandingOverrideSet = FALSE;
 	m_startZ = NO_START_Z;
 
-	//Added By Sadullah Nader
-	//Initializations
 	m_landingOverride.zero();
 	m_paraAttachBone.zero();
 	m_paraAttachOffset.zero();
@@ -112,7 +110,6 @@ ParachuteContain::ParachuteContain( Thing *thing, const ModuleData *moduleData )
 	m_riderSwayBone.zero();
 	m_riderSwayOffset.zero();
 
-	//
 	const ParachuteContainModuleData* d = getParachuteContainModuleData();
 	if (d)
 	{
@@ -700,7 +697,7 @@ void ParachuteContain::crc( Xfer *xfer )
 	// extend base class
 	OpenContain::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -772,7 +769,7 @@ void ParachuteContain::xfer( Xfer *xfer )
 	// opened
 	xfer->xferBool( &m_opened );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -783,4 +780,4 @@ void ParachuteContain::loadPostProcess( void )
 	// extend base class
 	OpenContain::loadPostProcess();
 
-}  // end loadPostProcess
+}

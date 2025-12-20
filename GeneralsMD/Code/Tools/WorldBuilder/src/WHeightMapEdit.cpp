@@ -407,7 +407,7 @@ void WorldHeightMapEdit::loadBaseImages(void)
 		// load the terrain definition for the WorldBuilder to reference
 		loadImagesFromTerrainType( terrain );
 
-	}  // end for
+	}
 
 }
 
@@ -415,29 +415,26 @@ void WorldHeightMapEdit::loadBaseImages(void)
 void WorldHeightMapEdit::loadDirectoryOfImages(const char *pFilePath)
 {
 	char				dirBuf[_MAX_PATH];
-	char				findBuf[_MAX_PATH];
 	char				fileBuf[_MAX_PATH];
 
-	strcpy(dirBuf, pFilePath);
+	strlcpy(dirBuf, pFilePath, ARRAY_SIZE(dirBuf));
 	int len = strlen(dirBuf);
 
 	if (len > 0 && dirBuf[len - 1] != '\\') {
 		dirBuf[len++] = '\\';
 		dirBuf[len] = 0;
 	}
-	strcpy(findBuf, dirBuf);
 
 	FilenameList filenameList;
-	TheFileSystem->getFileListInDirectory(AsciiString(findBuf), AsciiString("*.*"), filenameList, TRUE);
+	TheFileSystem->getFileListInDirectory(AsciiString(dirBuf), "*.*", filenameList, TRUE);
 
-	if (filenameList.size() == 0) {
+	if (filenameList.empty()) {
 		return;
 	}
 	FilenameList::iterator it = filenameList.begin();
 	do {
 		AsciiString filename = *it;
-		//strcpy(fileBuf, dirBuf);
-		strcpy(fileBuf, filename.str());
+		strlcpy(fileBuf, filename.str(), ARRAY_SIZE(fileBuf));
 		loadBitmap(fileBuf, filename.str());
 
 		++it;
@@ -457,7 +454,7 @@ void WorldHeightMapEdit::loadImagesFromTerrainType( TerrainType *terrain )
 	char buffer[ _MAX_PATH ];
 
 	// build path to texture file
-	sprintf( buffer, "%s%s", TERRAIN_TGA_DIR_PATH, terrain->getTexture().str() );
+	snprintf( buffer, ARRAY_SIZE(buffer), "%s%s", TERRAIN_TGA_DIR_PATH, terrain->getTexture().str() );
 
 	// create ascii string for texture path
 	AsciiString texturePath( buffer );
@@ -872,7 +869,7 @@ Int WorldHeightMapEdit::getTileIndexFromTerrainType( TerrainType *terrain )
 	// not found
 	return -1;
 
-}  // end getTileIndexFromTerrainType
+}
 
 Int WorldHeightMapEdit::allocateTiles(Int textureClass)
 {
@@ -982,7 +979,7 @@ Int WorldHeightMapEdit::getTileNdxForClass(Int xIndex, Int yIndex, Int textureCl
 		/* there are actually 4 subcells in a tile.  So be funky. :) */
 		tileNdx = tileNdx << 2;
 		Int ySubIndex = yIndex&0x01;
-		Int xSubIndex = xIndex&0x01;;
+		Int xSubIndex = xIndex&0x01;
 		tileNdx += 2*ySubIndex;
 		tileNdx += xSubIndex;
 	}
@@ -1318,7 +1315,7 @@ void WorldHeightMapEdit::autoBlendOut(Int xIndex, Int yIndex, Int globalEdgeClas
 		delete pCurNode;
 	}
 
-	if (pProcessed) delete[] pProcessed;
+	delete[] pProcessed;
 	pProcessed = NULL;
 }
 
@@ -2158,7 +2155,7 @@ Bool WorldHeightMapEdit::selectInvalidTeam(void)
 		}
 	}
 
-	AsciiString report = "";
+	AsciiString report;
 	AsciiString line;
 
 #if 0
@@ -3353,7 +3350,7 @@ void WorldHeightMapEdit::changeBoundary(Int ndx, ICoord2D *border)
 
 void WorldHeightMapEdit::removeLastBoundary(void)
 {
-	if (m_boundaries.size() == 0) {
+	if (m_boundaries.empty()) {
 		DEBUG_CRASH(("Invalid border remove request. jkmcd"));
 		return;
 	}

@@ -36,8 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef W3DAPPDATA_H
-#define W3DAPPDATA_H
+#pragma once
 
 #include <max.h>
 
@@ -409,7 +408,3 @@ struct W3DDazzleAppDataStruct
 	unsigned int	UnUsed[4];
 	char				DazzleType[128];
 };
-
-
-#endif
-

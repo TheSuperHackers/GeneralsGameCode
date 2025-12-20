@@ -37,7 +37,7 @@
 #include "definitionfactorymgr.h"
 #include "definitionfactory.h"
 #include "wwdebug.h"
-#include <string.h>
+
 #ifdef _UNIX
 #include "osdep.h"
 #endif

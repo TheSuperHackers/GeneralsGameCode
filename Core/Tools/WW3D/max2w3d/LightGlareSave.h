@@ -36,17 +36,12 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef LIGHTGLARESAVE_H
-#define LIGHTGLARESAVE_H
 
 #include <max.h>
 #include "w3d_file.h"
 #include "chunkio.h"
-#include "PROGRESS.H"
+#include "PROGRESS.h"
 
 
 /*******************************************************************************************
@@ -78,7 +73,3 @@ private:
 	W3dLightGlareStruct		GlareData;
 
 };
-
-
-
-#endif

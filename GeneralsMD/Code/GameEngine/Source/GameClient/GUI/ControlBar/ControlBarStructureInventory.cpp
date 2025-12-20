@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/NameKeyGenerator.h"
 #include "Common/ThingTemplate.h"
@@ -163,7 +163,7 @@ void ControlBar::populateStructureInventory( Object *building )
 			m_commandWindows[ i ]->winHide( TRUE );
 
 
-	}  // end for i
+	}
 
 	// show the window
 	m_commandWindows[ EVACUATE_ID ]->winHide( FALSE );
@@ -193,7 +193,7 @@ void ControlBar::populateStructureInventory( Object *building )
 	//
 	m_lastRecordedInventoryCount = contain->getContainCount();
 
-}  // end populateStructureInventory
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -216,7 +216,7 @@ void ControlBar::updateContextStructureInventory( void )
 			TheInGameUI->deselectDrawable( draw );
 		return;
 
-	}  // end if
+	}
 
 	//
 	// if the object being displayed in the interface has a different count than we last knew
@@ -230,5 +230,5 @@ void ControlBar::updateContextStructureInventory( void )
 	if( m_lastRecordedInventoryCount != contain->getContainCount() )
 		populateStructureInventory( source );
 
-}  // end updateContextStructureInventory
+}
 

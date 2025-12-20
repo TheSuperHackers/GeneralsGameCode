@@ -42,7 +42,7 @@
 #include "Sound3D.h"
 #include "WWAudio.h"
 #include "ffactory.h"
-#include "WWFILE.H"
+#include "WWFILE.h"
 #include "chunkio.h"
 #include "scene.h"
 

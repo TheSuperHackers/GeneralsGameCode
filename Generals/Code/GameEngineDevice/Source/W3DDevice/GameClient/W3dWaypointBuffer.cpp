@@ -53,16 +53,16 @@
 //-----------------------------------------------------------------------------
 #include "W3DDevice/GameClient/W3DWaypointBuffer.h"
 
-#include <stdio.h>
-#include <string.h>
 #include <assetmgr.h>
 #include <texture.h>
 
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/RandomValue.h"
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
 
+#include "GameClient/ControlBar.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/GameClient.h"
 #include "GameClient/InGameUI.h"
@@ -224,7 +224,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 			Int numPoints = 0;
 			if( obj )
 			{
-				if ( ! obj->isLocallyControlled())
+				if ( obj->getControllingPlayer() != rts::getObservedOrLocalPlayer())
 					continue;
 
 				ExitInterface *exitInterface = obj->getObjectExitInterface();

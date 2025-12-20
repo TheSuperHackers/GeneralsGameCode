@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __REBUILD_HOLE_EXPOSE_DIE_H_
-#define __REBUILD_HOLE_EXPOSE_DIE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "GameLogic/Module/DieModule.h"
@@ -72,6 +69,3 @@ public:
 	virtual void onDie( const DamageInfo *damageInfo );
 
 };
-
-
-#endif  // end __REBUILD_HOLE_EXPOSE_DIE_H_

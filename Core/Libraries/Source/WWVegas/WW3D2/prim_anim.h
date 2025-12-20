@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __PRIM_ANIM_H
-#define __PRIM_ANIM_H
-
 
 #include "simplevec.h"
 #include "chunkio.h"
@@ -387,5 +381,3 @@ LERPAnimationChannelClass<T>::Evaluate (float time)
 
 	return value;
 }
-
-#endif //__PRIM_ANIM_H

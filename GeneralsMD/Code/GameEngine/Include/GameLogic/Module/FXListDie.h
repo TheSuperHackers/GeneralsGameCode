@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FXListDie_H_
-#define __FXListDie_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "GameLogic/Module/DieModule.h"
@@ -124,13 +121,9 @@ protected:
 		return getFXListDieModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
 	}
 
-	inline Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
+	Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
 
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 
 };
-
-
-#endif // __FXListDie_H_
-

@@ -31,7 +31,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -143,7 +143,7 @@ Bool UserPreferences::load(AsciiString fname)
 				continue;
 
 			(*this)[key] = val;
-		}  // end while
+		}
 		fclose(fp);
 		return true;
 	}
@@ -716,7 +716,7 @@ Money CustomMatchPreferences::getStartingCash(void) const
   }
 
   Money money;
-  money.deposit( strtoul( it->second.str(), NULL, 10 ), FALSE  );
+  money.deposit( strtoul( it->second.str(), NULL, 10 ), FALSE, FALSE );
 
   return money;
 }

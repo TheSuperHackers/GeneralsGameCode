@@ -44,9 +44,6 @@
 
 #pragma once
 
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
-
 #include "Common/Debug.h"
 #include "Common/Energy.h"
 #include "Common/GameType.h"
@@ -61,7 +58,6 @@
 #include "Common/STLTypedefs.h"
 #include "Common/ScoreKeeper.h"
 #include "Common/Team.h"
-#include "Common/STLTypedefs.h"
 #include "Common/Upgrade.h"
 
 // ----------------------------------------------------------------------------------------------
@@ -101,13 +97,14 @@ enum ScienceAvailabilityType CPP_11(: Int)
 };
 
 #ifdef DEFINE_SCIENCE_AVAILABILITY_NAMES
-static const char *ScienceAvailabilityNames[] =
+static const char *const ScienceAvailabilityNames[] =
 {
 	"Available",
 	"Disabled",
 	"Hidden",
 	NULL
 };
+static_assert(ARRAY_SIZE(ScienceAvailabilityNames) == SCIENCE_AVAILABILITY_COUNT + 1, "Incorrect array size");
 #endif	// end DEFINE_SCIENCE_AVAILABILITY_NAMES
 
 static const Int NUM_HOTKEY_SQUADS = 10;
@@ -222,42 +219,42 @@ public:
 
 	void deletePlayerAI();
 
-	inline UnicodeString getPlayerDisplayName() { return m_playerDisplayName; }
-	inline NameKeyType getPlayerNameKey() const { return m_playerNameKey; }
+	UnicodeString getPlayerDisplayName() { return m_playerDisplayName; }
+	NameKeyType getPlayerNameKey() const { return m_playerNameKey; }
 
-	inline AsciiString getSide() const { return m_side; }
+	AsciiString getSide() const { return m_side; }
 
-	inline const PlayerTemplate* getPlayerTemplate() const { return m_playerTemplate;	}
+	const PlayerTemplate* getPlayerTemplate() const { return m_playerTemplate;	}
 	/// return the Player's Handicap sub-object
-	inline const Handicap *getHandicap() const { return &m_handicap; }
-	inline Handicap *getHandicap() { return &m_handicap; }
+	const Handicap *getHandicap() const { return &m_handicap; }
+	Handicap *getHandicap() { return &m_handicap; }
 
 	/// return the Player's Money sub-object
-	inline Money *getMoney() { return &m_money; }
-	inline const Money *getMoney() const { return &m_money; }
+	Money *getMoney() { return &m_money; }
+	const Money *getMoney() const { return &m_money; }
 
 	UnsignedInt getSupplyBoxValue();///< Many things can affect the alue of a crate, but at heart it is a GlobalData ratio.
 
-	inline Energy *getEnergy() { return &m_energy; }
-	inline const Energy *getEnergy() const { return &m_energy; }
+	Energy *getEnergy() { return &m_energy; }
+	const Energy *getEnergy() const { return &m_energy; }
 
 	// adds a power bonus to this player because of energy upgrade at his power plants
-	inline void addPowerBonus(Object *obj) { m_energy.addPowerBonus(obj); }
-	inline void removePowerBonus(Object *obj) { m_energy.removePowerBonus(obj); }
+	void addPowerBonus(Object *obj) { m_energy.addPowerBonus(obj); }
+	void removePowerBonus(Object *obj) { m_energy.removePowerBonus(obj); }
 
-	inline ResourceGatheringManager *getResourceGatheringManager(){ return m_resourceGatheringManager; }
-	inline TunnelTracker* getTunnelSystem(){ return m_tunnelSystem; }
+	ResourceGatheringManager *getResourceGatheringManager(){ return m_resourceGatheringManager; }
+	TunnelTracker* getTunnelSystem(){ return m_tunnelSystem; }
 
-	inline Color getPlayerColor() const { return m_color; }
-	inline Color getPlayerNightColor() const { return m_nightColor;}
+	Color getPlayerColor() const { return m_color; }
+	Color getPlayerNightColor() const { return m_nightColor;}
 	/// return the type of controller
-	inline PlayerType getPlayerType() const { return m_playerType; }
+	PlayerType getPlayerType() const { return m_playerType; }
 	void setPlayerType(PlayerType t, Bool skirmish);
 
-	inline PlayerIndex getPlayerIndex() const { return m_playerIndex; }
+	PlayerIndex getPlayerIndex() const { return m_playerIndex; }
 
 	/// return a bitmask that is unique to this player.
-	inline PlayerMaskType getPlayerMask() const { return 1 << m_playerIndex; }
+	PlayerMaskType getPlayerMask() const { return 1 << m_playerIndex; }
 
 	/// a convenience function to test the ThingTemplate against the players canBuild flags
 	/// called by canBuild
@@ -291,8 +288,8 @@ public:
 	/// return t iff the player has all sciences that are prereqs for knowing the given science
 	Bool hasPrereqsForScience(ScienceType t) const;
 
-	Bool hasUpgradeComplete( const UpgradeTemplate *upgradeTemplate );		///< does player have totally done and produced upgrade
-	Bool hasUpgradeComplete( UpgradeMaskType testMask );		///< does player have totally done and produced upgrade
+	Bool hasUpgradeComplete( const UpgradeTemplate *upgradeTemplate ) const;		///< does player have totally done and produced upgrade
+	Bool hasUpgradeComplete( UpgradeMaskType testMask ) const;		///< does player have totally done and produced upgrade
 	UpgradeMaskType getCompletedUpgradeMask() const { return m_upgradesCompleted; }	///< get list of upgrades that are completed
 	Bool hasUpgradeInProduction( const UpgradeTemplate *upgradeTemplate );		///< does player have this upgrade in progress right now
 	Upgrade *addUpgrade( const UpgradeTemplate *upgradeTemplate,
@@ -531,9 +528,9 @@ public:
 	void removeTeamFromList(TeamPrototype* team);
 
 	typedef std::list<TeamPrototype*> PlayerTeamList;
-	inline const PlayerTeamList* getPlayerTeams() const { return &m_playerTeamPrototypes; }
+	const PlayerTeamList* getPlayerTeams() const { return &m_playerTeamPrototypes; }
 
-	inline Int getMpStartIndex(void) {return m_mpStartIndex;}
+	Int getMpStartIndex(void) {return m_mpStartIndex;}
 
 	/// Set that all units should begin hunting.
 	void setUnitsShouldHunt(Bool unitsShouldHunt, CommandSourceType source);
@@ -593,9 +590,9 @@ public:
 
 	Bool isPlayableSide( void ) const;
 
-	Bool isPlayerObserver( void ) const; // Favor !isActive() - this is used for Observer GUI mostly, not in-game stuff
-	Bool isPlayerDead(void) const; // Favor !isActive() - this is used so OCLs don't give us stuff after death.
-	Bool isPlayerActive(void) const;
+	Bool isPlayerObserver( void ) const; // Favor !isPlayerActive() - this is used for Observer GUI mostly, not in-game stuff
+	Bool isPlayerDead(void) const; // Favor !isPlayerActive() - this is used so OCLs don't give us stuff after death.
+	Bool isPlayerActive(void) const; // Player is alive and not observer. !isPlayerActive() is synonymous with observing.
 
 	Bool didPlayerPreorder( void ) const { return m_isPreorder; }
 
@@ -603,7 +600,7 @@ public:
 	ScoreKeeper* getScoreKeeper( void ) { return &m_scoreKeeper; }
 
 	/// time to create a hotkey team based on this GameMessage
-	void processCreateTeamGameMessage(Int hotkeyNum, GameMessage *msg);
+	void processCreateTeamGameMessage(Int hotkeyNum, const GameMessage *msg);
 
 	/// time to select a hotkey team based on this GameMessage
 	void processSelectTeamGameMessage(Int hotkeyNum, GameMessage *msg);
@@ -792,5 +789,3 @@ private:
 
 	Bool									m_isPlayerDead;
 };
-
-#endif // _PLAYER_H_

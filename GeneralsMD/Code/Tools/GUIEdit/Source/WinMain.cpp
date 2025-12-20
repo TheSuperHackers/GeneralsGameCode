@@ -50,8 +50,8 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"
+#include "Common/FramePacer.h"
 #include "Common/GameMemory.h"
-#include "Common/GameEngine.h"
 #include "GameClient/GameWindowManager.h"
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "resource.h"
@@ -128,7 +128,7 @@ static BOOL initInstance( HINSTANCE hInstance, int nCmdShow )
 
 	return TRUE;
 
-}  // end initInstance
+}
 
 // registerClass ==============================================================
 //
@@ -165,7 +165,7 @@ static ATOM registerClass(HINSTANCE hInstance)
 
 	return RegisterClassEx( &wcex );
 
-}  // registerClass
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -187,15 +187,9 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 	/// @todo remove this force set of working directory later
 	Char buffer[ _MAX_PATH ];
 	GetModuleFileName( NULL, buffer, sizeof( buffer ) );
-	Char *pEnd = buffer + strlen( buffer );
-	while( pEnd != buffer )
+	if (Char *pEnd = strrchr(buffer, '\\'))
 	{
-		if( *pEnd == '\\' )
-		{
-			*pEnd = 0;
-			break;
-		}
-		pEnd--;
+		*pEnd = 0;
 	}
 	::SetCurrentDirectory(buffer);
 
@@ -223,6 +217,8 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 	if( TheEditor == NULL )
 		return FALSE;
 	TheEditor->init();
+
+	TheFramePacer = new FramePacer();
 
 	//
 	// see if we have any messages to process, a NULL window handle tells the
@@ -254,23 +250,26 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 					TranslateMessage( &msg );
 					DispatchMessage( &msg );
 
-				}  // end if
+				}
 
-			}  // end while
+			}
 
-		}  // end if
+		}
 		else
 		{
 
-			// udpate our universe
+			// update our universe
 			TheEditor->update();
 			Sleep(1);
 
-		}  // end else
+		}
 
-	}  // end while
+	}
 
 	// shutdown GUIEdit data
+	delete TheFramePacer;
+	TheFramePacer = NULL;
+
 	delete TheEditor;
 	TheEditor = NULL;
 
@@ -278,7 +277,7 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 
 	return msg.wParam;
 
-}  // end WinMain
+}
 
 // WndProc ====================================================================
 //
@@ -307,7 +306,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 				SetFocus( hWnd );
 			return 0;
 
-		}  // end move mouse
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_COMMAND:
@@ -394,7 +393,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 						else
 							TheEditor->setMode( MODE_EDIT );
 
-					}  // end if
+					}
 					break;
 
 				// --------------------------------------------------------------------
@@ -424,9 +423,9 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 							color.alpha = (Real)newColor->alpha / 255.0f;
 							TheEditWindow->setBackgroundColor( color );
 
-						}  // end if
+						}
 
-					}  //  end if
+					}
 
 					break;
 
@@ -439,7 +438,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 						TheDefaultScheme->openDialog();
 					break;
 
-				}  // end scheme
+				}
 
 				// --------------------------------------------------------------------
 				case MENU_ABOUT:
@@ -449,7 +448,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 										 hWnd, (DLGPROC)AboutCallback );
 					break;
 
-				}  // end about
+				}
 
 
 				// --------------------------------------------------------------------
@@ -458,13 +457,13 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 
 					return DefWindowProc( hWnd, message, wParam, lParam );
 
-				}  // end default
+				}
 
-			}  // end switch( controlID )
+			}
 
 			return 0;
 
-		}  // end command
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_CLOSE:
@@ -474,7 +473,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			TheEditor->menuExit();
 			return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_KEYDOWN:
@@ -498,7 +497,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 							TheEditor->clearSelections();
 					break;
 
-				}  // end escape
+				}
 
 				// --------------------------------------------------------------------
 				case VK_DELETE:
@@ -509,7 +508,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 						TheEditor->deleteSelected();
 					break;
 
-				}  // end delete
+				}
 
 				// --------------------------------------------------------------------
 				case VK_LEFT:
@@ -550,7 +549,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 					}
 					break;
 
-				}  // end Left
+				}
 				// --------------------------------------------------------------------
 				case VK_RIGHT:
 				{
@@ -590,7 +589,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 					}
 					break;
 
-				}  // end RIGHT
+				}
 				// --------------------------------------------------------------------
 				case VK_UP:
 				{
@@ -631,7 +630,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 					}
 					break;
 
-				}  // end Up
+				}
 				// --------------------------------------------------------------------
 				case VK_DOWN:
 				{
@@ -671,7 +670,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 					}
 					break;
 
-				}  // end Down
+				}
 
 				// --------------------------------------------------------------------
 				case VK_RETURN:
@@ -689,13 +688,13 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 						TheEditor->setMode( MODE_EDIT );
 					}
 					break;
-				}// end Enter
+				}
 
-			}  // end switch( virtualKey )
+			}
 
 			return 0;
 
-		}  // end key down
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_SIZE:
@@ -723,13 +722,13 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 					barY = height - barHeight;
 					MoveWindow( statusBar, barX, barY, barWidth, barHeight, TRUE );
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 
 			return 0;
 
-		}  // end size
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_PAINT:
@@ -741,7 +740,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			EndPaint(hWnd, &ps);
 			break;
 
-		}  // end paint
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_DESTROY:
@@ -750,7 +749,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			PostQuitMessage(0);
 			break;
 
-		}  // end destroy
+		}
 
 		// ------------------------------------------------------------------------
 		default:
@@ -758,13 +757,13 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 
 			return DefWindowProc(hWnd, message, wParam, lParam);
 
-		}  // end default
+		}
 
-	}  // end switch( message )
+	}
 
 	return DefWindowProc( hWnd, message, wParam, lParam );
 
-}  // end WndProc
+}
 
 // AboutCallback ==============================================================
 /** Mesage handler for about box. */
@@ -788,5 +787,5 @@ LRESULT CALLBACK AboutCallback( HWND hDlg, UINT message,
 	}
     return FALSE;
 
-}  // end AboutCallback
+}
 

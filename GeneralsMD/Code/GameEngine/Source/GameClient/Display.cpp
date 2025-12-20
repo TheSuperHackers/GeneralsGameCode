@@ -26,7 +26,7 @@
 // The implementation of the Display class
 // Author: Michael S. Booth, March 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/Display.h"
 #include "GameClient/Mouse.h"
@@ -64,11 +64,8 @@ Display::Display()
 	m_elapsedCopywriteTime = 0;
 	m_copyrightDisplayString = NULL;
 
-	// Added by Sadullah Nader
-	// Initializations missing and needed
 	m_currentlyPlayingMovie.clear();
 	m_letterBoxFadeStartTime = 0;
-	// End Add
 }
 
 /**
@@ -131,6 +128,14 @@ void Display::updateViews( void )
 
 }
 
+void Display::stepViews( void )
+{
+
+	for( View *v = m_viewList; v; v = v->getNextView() )
+		v->stepView();
+
+}
+
 /// Redraw the entire display
 void Display::draw( void )
 {
@@ -177,7 +182,7 @@ void Display::setWidth( UnsignedInt width )
 	if( TheMouse )
 		TheMouse->setMouseLimits();
 
-}  // end setWidth
+}
 
 // Display::setHeight =========================================================
 /** Set the height of the display */
@@ -192,7 +197,7 @@ void Display::setHeight( UnsignedInt height )
 	if( TheMouse )
 		TheMouse->setMouseLimits();
 
-}  // end setHeight
+}
 
 //============================================================================
 // Display::playLogoMovie
@@ -308,8 +313,7 @@ void Display::update( void )
 				if( m_elapsedCopywriteTime == 0 && m_elapsedCopywriteTime >= 0)
 				{
 					//display the copyrighttext;
-					if(m_copyrightDisplayString)
-						deleteInstance(m_copyrightDisplayString);
+					deleteInstance(m_copyrightDisplayString);
 					m_copyrightDisplayString = TheDisplayStringManager->newDisplayString();
 					m_copyrightDisplayString->setText(TheGameText->fetch("GUI:EACopyright"));
 					if (TheGlobalLanguageData && TheGlobalLanguageData->m_copyrightFont.name.isNotEmpty())

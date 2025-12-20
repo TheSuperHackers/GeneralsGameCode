@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SPECTRE_GUNSHIP_UPDATE_H_
-#define __SPECTRE_GUNSHIP_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
@@ -170,7 +167,3 @@ protected:
   AudioEventRTS m_howitzerFireSound;
 
 };
-
-
-#endif // __SPECTRE_GUNSHIP_UPDATE_H_
-

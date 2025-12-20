@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BUNKERBUSTER_BEHAVIOR_H_
-#define __BUNKERBUSTER_BEHAVIOR_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -102,6 +99,3 @@ protected:
 
   ObjectID m_victimID;
 };
-
-#endif  // end __BUNKERBUSTER_BEHAVIOR_H_
-

@@ -32,8 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_PARTICLETYPEPANELS_
-#define _H_PARTICLETYPEPANELS_
 
 #include "Resource.h"
 #include "ISwapablePanel.h"
@@ -98,5 +96,3 @@ class ParticlePanelStreak : public ParticlePanelParticle
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()
 };
-
-#endif /* _H_PARTICLETYPEPANELS_ */

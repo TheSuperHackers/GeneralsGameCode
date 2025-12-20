@@ -178,10 +178,8 @@ GridCullSystemClass::GridCullSystemClass(void) :
  *=============================================================================================*/
 GridCullSystemClass::~GridCullSystemClass(void)
 {
-	if (Cells != NULL) {
-		delete Cells;
-		Cells = NULL;
-	}
+	delete Cells;
+	Cells = NULL;
 }
 
 
@@ -470,9 +468,7 @@ void GridCullSystemClass::Re_Partition(const Vector3 & input_min,const Vector3 &
 	OOCellDim.Y = 1.0f / CellDim.Y;
 	OOCellDim.Z = 1.0f / CellDim.Z;
 
-	if (Cells != NULL) {
-		delete[] Cells;
-	}
+	delete[] Cells;
 	Cells = W3DNEWARRAY CullableClass * [total_cell_count()];
 	memset(&(Cells[0]),0,total_cell_count() * sizeof(CullableClass *));
 
@@ -634,11 +630,7 @@ void GridCullSystemClass::Load(ChunkLoadClass & cload)
 	OOCellDim.Y = 1.0f / CellDim.Y;
 	OOCellDim.Z = 1.0f / CellDim.Z;
 
-	if (Cells != NULL) {
-		delete [] Cells;
-		Cells = NULL;
-	}
-
+	delete [] Cells;
 	Cells = W3DNEWARRAY CullableClass * [total_cell_count()];
 	memset(&(Cells[0]),0,total_cell_count() * sizeof(CullableClass *));
 

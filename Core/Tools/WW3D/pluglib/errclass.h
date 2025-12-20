@@ -35,8 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef ERRCLASS_H
-#define ERRCLASS_H
+#pragma once
 
 #include <stdarg.h>
 
@@ -83,6 +82,3 @@ inline ErrorClass & ErrorClass::operator = (const ErrorClass & that)
 
 	return *this;
 }
-
-
-#endif //ERRCLASS_H

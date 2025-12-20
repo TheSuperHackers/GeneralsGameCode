@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef _SPAWN_POINT_PRODUCTION_EXIT_UPDATE_H
-#define _SPAWN_POINT_PRODUCTION_EXIT_UPDATE_H
-
 #include "GameLogic/Module/UpdateModule.h"
 #include "Common/INI.h"
 #include "Lib/BaseType.h"
@@ -100,5 +97,3 @@ private:
 	void initializeBonePositions();	///< Look up the bone positions and store them in world space coords
 	void revalidateOccupiers();			///< Do a lookup on all our ID's and clear the dead ones.
 };
-
-#endif

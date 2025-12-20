@@ -29,7 +29,7 @@
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #define DEFINE_OBJECT_STATUS_NAMES
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
@@ -66,8 +66,7 @@ FireWeaponCollide::FireWeaponCollide( Thing *thing, const ModuleData* moduleData
 //-------------------------------------------------------------------------------------------------
 FireWeaponCollide::~FireWeaponCollide( void )
 {
-	if (m_collideWeapon)
-		deleteInstance(m_collideWeapon);
+	deleteInstance(m_collideWeapon);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -121,7 +120,7 @@ void FireWeaponCollide::crc( Xfer *xfer )
 	// extend base class
 	CollideModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -149,19 +148,19 @@ void FireWeaponCollide::xfer( Xfer *xfer )
 											 ("FireWeaponCollide::xfer - m_collideWeapon present mismatch") );
 		xfer->xferSnapshot( m_collideWeapon );
 
-	}  // end else
+	}
 	else
 	{
 
 		DEBUG_ASSERTCRASH( m_collideWeapon == NULL,
 											 ("FireWeaponCollide::Xfer - m_collideWeapon missing mismatch" ));
 
-	}  // end else
+	}
 
 	// ever fired
 	xfer->xferBool( &m_everFired );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -172,4 +171,4 @@ void FireWeaponCollide::loadPostProcess( void )
 	// extend base class
 	CollideModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_ANIMREPORTPAGE_H__67C01723_7C0D_11D3_9A3A_0090272E6F90__INCLUDED_)
-#define AFX_ANIMREPORTPAGE_H__67C01723_7C0D_11D3_9A3A_0090272E6F90__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // AnimReportPage.h : header file
 //
 
@@ -60,7 +56,7 @@ public:
 protected:
 	void		FillListControl (void);
 	int		FindItem (const char *item_name);
-	void		MakeChannelStr (int bone_idx, HAnimClass *hanim, char *channels);
+	void		MakeChannelStr(int bone_idx, HAnimClass* hanim, char channels[6]);
 
 	CAdvancedAnimSheet *m_Sheet;
 
@@ -74,5 +70,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_ANIMREPORTPAGE_H__67C01723_7C0D_11D3_9A3A_0090272E6F90__INCLUDED_)

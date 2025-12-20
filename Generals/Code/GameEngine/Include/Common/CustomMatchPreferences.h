@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __CUSTOMMATCHPREFERENCES_H__
-#define __CUSTOMMATCHPREFERENCES_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -78,6 +75,15 @@ public:
 	Bool getDisallowNonAsianText( void );
 	void setDisallowNonAsianText( Bool val );
 
-};
+  Bool getSuperweaponRestricted(void) const;
+  void setSuperweaponRestricted( Bool superweaponRestricted);
 
-#endif // __CUSTOMMATCHPREFERENCES_H__
+  Money getStartingCash(void) const;
+  void setStartingCash( const Money &startingCash );
+
+  Bool getFactionsLimited(void) const; // Prefers to only use the original 3 sides, not USA Air Force General, GLA Toxin General, et al
+  void setFactionsLimited( Bool factionsLimited );
+
+  Bool getUseStats( void ) const;
+  void setUseStats( Bool useStats );
+};

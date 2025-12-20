@@ -43,16 +43,12 @@
 
 #pragma once
 
-#ifndef __GAMECLIENT_DEBUGDISPLAY_H
-#define __GAMECLIENT_DEBUGDISPLAY_H
-
-
 //----------------------------------------------------------------------------
 //           Includes
 //----------------------------------------------------------------------------
 
 #include "Lib/BaseType.h"
-#include <stdio.h>
+#include <Utility/stdio_adapter.h>
 
 
 //----------------------------------------------------------------------------
@@ -83,7 +79,6 @@ class DebugDisplayInterface
 			RED,
 			GREEN,
 			BLUE,
-			NUM_COLORS
 		};
 
 		virtual ~DebugDisplayInterface() {};
@@ -150,7 +145,3 @@ extern void AudioDebugDisplay( DebugDisplayInterface *debugDisplay, void *userDa
 //----------------------------------------------------------------------------
 //           Inlining
 //----------------------------------------------------------------------------
-
-
-
-#endif // __GAMECLIENT_DEBUGDISPLAY_H

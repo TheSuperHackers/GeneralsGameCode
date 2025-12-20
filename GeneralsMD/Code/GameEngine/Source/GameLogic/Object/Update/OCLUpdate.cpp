@@ -46,8 +46,7 @@
 void parseFactionObjectCreationList( INI *ini, void *instance, void *store, const void *userData )
 {
 	OCLUpdateModuleData::FactionOCLInfo info;
-	info.m_factionName = "";
-	info.m_ocl = 0;
+	info.m_ocl = NULL;
 
 	const char *token = ini->getNextToken( ini->getSepsColon() );
 
@@ -72,7 +71,7 @@ void parseFactionObjectCreationList( INI *ini, void *instance, void *store, cons
 	OCLUpdateModuleData::FactionOCLList * theList = (OCLUpdateModuleData::FactionOCLList*)store;
 	theList->push_back(info);
 
-}  // end parseFactionObjectCreationList
+}
 
 //-------------------------------------------------------------------------------------------------
 OCLUpdateModuleData::OCLUpdateModuleData()
@@ -199,7 +198,7 @@ UpdateSleepTime OCLUpdate::update( void )
 		// If this is faction triggered, search through the faction specific OCLs to find the match
 		if (data->m_isFactionTriggered)
 		{
-			std::string playerFactionName("");
+			std::string playerFactionName;
 
 			Player *player = getObject()->getControllingPlayer();
 			if (!player) return UPDATE_SLEEP_NONE;
@@ -287,7 +286,7 @@ void OCLUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -317,7 +316,7 @@ void OCLUpdate::xfer( Xfer *xfer )
 	// current owning player color
 	xfer->xferInt( &m_currentPlayerColor );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -328,4 +327,4 @@ void OCLUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

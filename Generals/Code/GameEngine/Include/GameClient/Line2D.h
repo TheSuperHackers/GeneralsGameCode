@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __LINE2D_H_
-#define __LINE2D_H_
-
 typedef std::vector<ICoord2D> Coord2DVector;
 typedef std::vector<ICoord3D> Coord3DVector;
 
@@ -85,7 +82,3 @@ extern Bool PointInsideArea2D( const Coord3D *ptToTest,
 ///< outU will return the U value determined. This is a shortcut for panning
 extern void ShortestDistancePointToSegment2D( const Coord2D *a, const Coord2D *b, const Coord2D *pt,
 																							Real *outDistance, Coord2D *outPosition, Real *outU );
-
-
-#endif // __LINE2D_H_
-

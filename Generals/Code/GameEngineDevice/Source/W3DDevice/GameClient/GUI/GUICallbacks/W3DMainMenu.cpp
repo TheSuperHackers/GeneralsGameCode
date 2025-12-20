@@ -108,7 +108,7 @@ static void advancePosition(GameWindow *window, const Image *image, UnsignedInt 
 	}
 	static Int Width = size.x + image->getImageWidth();
 
-	static Int x = -800;
+	static Int x = -DEFAULT_DISPLAY_WIDTH;
 	static Int y = pos.y - (image->getImageHeight()/2);
 
 	static UnsignedInt m_startTime = timeGetTime();
@@ -594,7 +594,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 
 		}
 
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
@@ -613,7 +613,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 
 		}
 
-	}  // end else if, hilited and enabled
+	}
 	else
 	{
 
@@ -632,7 +632,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 
 		}
 
-	}  // end else, enabled only
+	}
 
 	// sanity, we need to have these images to make it look right
 	if( leftImage == NULL || rightImage == NULL ||
@@ -696,7 +696,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 																			end.x, end.y );
 			start.x += centerImage->getImageWidth();
 
-		}  // end for i
+		}
 
 		// we will draw the image but clip the parts we don't want to show
 		IRegion2D reg;
@@ -772,7 +772,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 	}
 
 //	TheDisplay->enableClipping(FALSE);
-}  // end W3DGadgetPushButtonImageDraw
+}
 
 
 // drawButtonText =============================================================
@@ -801,17 +801,17 @@ static void drawText( GameWindow *window, WinInstanceData *instData )
 	{
 		textColor = window->winGetDisabledTextColor();
 		dropColor = window->winGetDisabledTextBorderColor();
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		textColor = window->winGetHiliteTextColor();
 		dropColor = window->winGetHiliteTextBorderColor();
-	}  // end else if, hilited
+	}
 	else
 	{
 		textColor = window->winGetEnabledTextColor();
 		dropColor = window->winGetEnabledTextBorderColor();
-	}  // end enabled only
+	}
 
 	// set our font to that of our parent if not the same
 	if( text->getFont() != window->winGetFont() )
@@ -827,7 +827,7 @@ static void drawText( GameWindow *window, WinInstanceData *instData )
 	// draw it
 	text->draw( textPos.x, textPos.y, textColor, dropColor );
 
-}  // end drawButtonText
+}
 
 // W3DMainMenuRandomTextDraw ==================================================
 /** Specialized drawing function for the random text */
@@ -887,7 +887,7 @@ void W3DThinBorderDraw( GameWindow *window, WinInstanceData *instData )
 		end.y = begin.y + size.y;
 		TheWindowManager->winDrawImage( image, begin.x, begin.y, end.x, end.y );
 
-	}  // end if
+	}
 	// get window position
 
 //	TheDisplay->drawOpenRect(start.x - 1, start.y - 1, size.x + 2, size.y + 2, 1, BrownishColor);
@@ -916,9 +916,9 @@ void W3DMainMenuInit( WindowLayout *layout, void *userData )
 	NameKeyType buttonUSAID = TheNameKeyGenerator->nameToKey( "MainMenu.wnd:ButtonUSA" );
 	NameKeyType buttonGLAID = TheNameKeyGenerator->nameToKey( "MainMenu.wnd:ButtonGLA" );
 	NameKeyType buttonChinaID = TheNameKeyGenerator->nameToKey( "MainMenu.wnd:ButtonChina" );
-	NameKeyType skirmishID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonSkirmish") );
-	NameKeyType onlineID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonOnline") );
-	NameKeyType networkID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonNetwork") );
+	NameKeyType skirmishID = TheNameKeyGenerator->nameToKey( "MainMenu.wnd:ButtonSkirmish" );
+	NameKeyType onlineID = TheNameKeyGenerator->nameToKey( "MainMenu.wnd:ButtonOnline" );
+	NameKeyType networkID = TheNameKeyGenerator->nameToKey( "MainMenu.wnd:ButtonNetwork" );
 
 	GameWindow *button = TheWindowManager->winGetWindowFromId( parent, skirmishID );
 	if (button)
@@ -984,7 +984,7 @@ void W3DMainMenuInit( WindowLayout *layout, void *userData )
 	if(win)
 		win->winSetDrawFunc(W3DMainMenuButtonDropShadowDraw);
 
-	GameWindow *clipRegionWin = TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:MapBorder") ));
+	GameWindow *clipRegionWin = TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( "MainMenu.wnd:MapBorder" ));
 	Int x,y,width,height;
 	clipRegionWin->winGetScreenPosition(&x, &y);
 	clipRegionWin->winGetSize(&width, &height);

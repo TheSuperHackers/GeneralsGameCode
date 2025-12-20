@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __UPGRADEDIE_H
-#define __UPGRADEDIE_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "GameLogic/Module/DieModule.h"
@@ -78,6 +75,3 @@ public:
 	virtual void onDie( const DamageInfo *damageInfo );
 
 };
-
-#endif // __UPGRADEDIE_H
-

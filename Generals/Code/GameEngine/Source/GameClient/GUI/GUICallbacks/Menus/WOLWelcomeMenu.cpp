@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "gamespy/peer/peer.h"
 
@@ -62,7 +62,6 @@
 #include "GameNetwork/GameSpy/PeerThread.h"
 #include "GameNetwork/GameSpy/PersistentStorageDefs.h"
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
-#include "GameNetwork/GameSpy/BuddyThread.h"
 #include "GameNetwork/GameSpy/ThreadUtils.h"
 #include "GameNetwork/GameSpy/MainMenuUtils.h"
 #include "GameNetwork/WOLBrowser/WebBrowser.h"
@@ -201,7 +200,7 @@ static void shutdownComplete( WindowLayout *layout )
 
 	nextScreen = NULL;
 
-}  // end if
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Handle Num Players Online data */
@@ -239,7 +238,7 @@ static void updateNumPlayersOnline(void)
 		UnicodeString headingStr;
 		headingStr.format(TheGameText->fetch("MOTD:NumPlayersHeading"), lastNumPlayersOnline);
 
-		while (headingStr.nextToken(&line, UnicodeString(L"\n")))
+		while (headingStr.nextToken(&line, L"\n"))
 		{
 			if (line.getCharAt(line.getLength()-1) == '\r')
 				line.removeLastChar();	// there is a trailing '\r'
@@ -248,12 +247,12 @@ static void updateNumPlayersOnline(void)
 
 			if (line.isEmpty())
 			{
-				line = UnicodeString(L" ");
+				line = L" ";
 			}
 
 			GadgetListBoxAddEntryText(listboxInfo, line, GameSpyColor[GSCOLOR_MOTD_HEADING], -1, -1);
 		}
-		GadgetListBoxAddEntryText(listboxInfo, UnicodeString(L" "), GameSpyColor[GSCOLOR_MOTD_HEADING], -1, -1);
+		GadgetListBoxAddEntryText(listboxInfo, L" ", GameSpyColor[GSCOLOR_MOTD_HEADING], -1, -1);
 
 		while (aMotd.nextToken(&aLine, "\n"))
 		{
@@ -409,13 +408,13 @@ void WOLWelcomeMenuInit( WindowLayout *layout, void *userData )
 
 	//TheWOL->reset();
 
-	parentWOLWelcomeID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLWelcomeMenu.wnd:WOLWelcomeMenuParent" ) );
-	buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLWelcomeMenu.wnd:ButtonBack" ) );
+	parentWOLWelcomeID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:WOLWelcomeMenuParent" );
+	buttonBackID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:ButtonBack" );
 	parentWOLWelcome = TheWindowManager->winGetWindowFromId( NULL, parentWOLWelcomeID );
 	buttonBack = TheWindowManager->winGetWindowFromId( NULL,  buttonBackID);
 	buttonOptionsID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:ButtonOptions" );
 	buttonbuttonOptions = TheWindowManager->winGetWindowFromId( NULL,  buttonOptionsID);
-	listboxInfoID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLWelcomeMenu.wnd:InfoListbox" ) );
+	listboxInfoID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:InfoListbox" );
 
 	listboxInfo = TheWindowManager->winGetWindowFromId( NULL,  listboxInfoID);
 
@@ -459,7 +458,7 @@ void WOLWelcomeMenuInit( WindowLayout *layout, void *userData )
 
 	// Clear some defaults
 	/*
-	UnicodeString questionMark = UnicodeString(L"?");
+	UnicodeString questionMark = L"?";
 	GadgetStaticTextSetText(staticTextLastUpdated, questionMark);
 	GadgetStaticTextSetText(staticTextLadderWins, questionMark);
 	GadgetStaticTextSetText(staticTextLadderLosses, questionMark);
@@ -474,19 +473,19 @@ void WOLWelcomeMenuInit( WindowLayout *layout, void *userData )
 
 	//DEBUG_ASSERTCRASH(listboxInfo, ("No control found!"));
 
-	buttonQuickMatchID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLWelcomeMenu.wnd:ButtonQuickMatch" ) );
+	buttonQuickMatchID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:ButtonQuickMatch" );
 	buttonQuickMatch = TheWindowManager->winGetWindowFromId( parentWOLWelcome, buttonQuickMatchID );
 
-	buttonLobbyID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLWelcomeMenu.wnd:ButtonCustomMatch" ) );
+	buttonLobbyID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:ButtonCustomMatch" );
 	buttonLobby = TheWindowManager->winGetWindowFromId( parentWOLWelcome, buttonLobbyID );
 
-	buttonBuddiesID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLWelcomeMenu.wnd:ButtonBuddies" ) );
+	buttonBuddiesID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:ButtonBuddies" );
 	buttonBuddies = TheWindowManager->winGetWindowFromId( parentWOLWelcome, buttonBuddiesID );
 
-	buttonMyInfoID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLWelcomeMenu.wnd:ButtonMyInfo" ) );
+	buttonMyInfoID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:ButtonMyInfo" );
 	buttonMyInfo = TheWindowManager->winGetWindowFromId( parentWOLWelcome, buttonMyInfoID );
 
-	buttonLadderID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLWelcomeMenu.wnd:ButtonLadder" ) );
+	buttonLadderID = TheNameKeyGenerator->nameToKey( "WOLWelcomeMenu.wnd:ButtonLadder" );
 	buttonLadder = TheWindowManager->winGetWindowFromId( parentWOLWelcome, buttonLadderID );
 
 	if (TheFirewallHelper == NULL) {
@@ -544,7 +543,7 @@ void WOLWelcomeMenuInit( WindowLayout *layout, void *userData )
 	raiseMessageBoxes = TRUE;
 	TheTransitionHandler->setGroup("WOLWelcomeMenuFade");
 
-} // WOLWelcomeMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Welcome Menu shutdown method */
@@ -553,10 +552,8 @@ void WOLWelcomeMenuShutdown( WindowLayout *layout, void *userData )
 {
 	listboxInfo = NULL;
 
-	if (TheFirewallHelper != NULL) {
-		delete TheFirewallHelper;
-		TheFirewallHelper = NULL;
-	}
+	delete TheFirewallHelper;
+	TheFirewallHelper = NULL;
 
 	isShuttingDown = TRUE;
 
@@ -568,14 +565,14 @@ void WOLWelcomeMenuShutdown( WindowLayout *layout, void *userData )
 		shutdownComplete( layout );
 		return;
 
-	}  //end if
+	}
 
 	TheShell->reverseAnimatewindow();
 	TheTransitionHandler->reverse("WOLWelcomeMenuFade");
 
 
 	RaiseGSMessageBox();
-}  // WOLWelcomeMenuShutdown
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -627,7 +624,7 @@ void WOLWelcomeMenuUpdate( WindowLayout * layout, void *userData)
 					room.m_groupID = resp.groupRoom.id;
 					room.m_maxWaiting = resp.groupRoom.maxWaiting;
 					room.m_name = resp.groupRoomName.c_str();
-					room.m_translatedName = UnicodeString(L"TEST");
+					room.m_translatedName = L"TEST";
 					room.m_numGames = resp.groupRoom.numGames;
 					room.m_numPlaying = resp.groupRoom.numPlaying;
 					room.m_numWaiting = resp.groupRoom.numWaiting;
@@ -676,7 +673,7 @@ void WOLWelcomeMenuUpdate( WindowLayout * layout, void *userData)
 		}
 	}
 
-}// WOLWelcomeMenuUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Welcome Menu input callback */
@@ -711,21 +708,21 @@ WindowMsgHandledType WOLWelcomeMenuInput( GameWindow *window, UnsignedInt msg,
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonBack, buttonBackID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// WOLWelcomeMenuInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Welcome Menu window system callback */
@@ -743,12 +740,12 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 			{
 
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
 			{
@@ -757,7 +754,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 
 		case GBM_SELECTED:
 			{
@@ -804,7 +801,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 					TheWOLGame = NULL;
 					**/
 
-				} //if ( controlID == buttonBack )
+				}
 				else if (controlID == buttonOptionsID)
 				{
 					GameSpyOpenOverlay( GSOVERLAY_OPTIONS );
@@ -812,7 +809,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 				else if (controlID == buttonQuickMatchID)
 				{
 					GameSpyMiscPreferences mPref;
-					if ((TheDisplay->getWidth() != 800 || TheDisplay->getHeight() != 600) && mPref.getQuickMatchResLocked())
+					if ((TheDisplay->getWidth() != DEFAULT_DISPLAY_WIDTH || TheDisplay->getHeight() != DEFAULT_DISPLAY_HEIGHT) && mPref.getQuickMatchResLocked())
 					{
 						GSMessageBoxOk(TheGameText->fetch("GUI:GSErrorTitle"), TheGameText->fetch("GUI:QuickMatch800x600"));
 					}
@@ -822,7 +819,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 						nextScreen = "Menus/WOLQuickMatchMenu.wnd";
 						TheShell->pop();
 					}
-				}// else if
+				}
 				else if (controlID == buttonMyInfoID )
 				{
 					SetLookAtPlayer(TheGameSpyInfo->getLocalProfileID(), TheGameSpyInfo->getLocalName());
@@ -842,7 +839,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 					TheWOL->setState( WOL::WOLAPI_LOBBY );
 					TheWOL->addCommand( WOL::WOLCOMMAND_REFRESH_CHANNELS );
 					*/
-				}// else if
+				}
 				else if (controlID == buttonBuddiesID)
 				{
 					GameSpyToggleOverlay( GSOVERLAY_BUDDY );
@@ -860,16 +857,16 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 					else
 					{
 						GameSpyCurrentGroupRoomID = 0;
-						GSMessageBoxOk(UnicodeString(L"Oops"), UnicodeString(L"Unable to join title room"), NULL);
+						GSMessageBoxOk(L"Oops", L"Unable to join title room", NULL);
 					}
 					*/
 				}
 				else if (controlID == buttonLadderID)
 				{
-					TheShell->push(AsciiString("Menus/WOLLadderScreen.wnd"));
+					TheShell->push("Menus/WOLLadderScreen.wnd");
 				}
 				break;
-			}// case GBM_SELECTED:
+			}
 
 		case GEM_EDIT_DONE:
 			{
@@ -878,7 +875,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// WOLWelcomeMenuSystem
+}

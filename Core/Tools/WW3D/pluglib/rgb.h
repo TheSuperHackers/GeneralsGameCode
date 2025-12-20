@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /G/wwlib/RGB.H                                              $*
+ *                     $Archive:: /G/wwlib/RGB.h                                              $*
  *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
  *                                                                                             *
@@ -33,12 +33,8 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef RGB_H
-#define RGB_H
+#pragma once
 
 class PaletteClass;
 class HSVClass;
@@ -91,5 +87,3 @@ class RGBClass
 };
 
 extern RGBClass const BlackColor;
-
-#endif

@@ -37,17 +37,11 @@
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
-#ifndef VERTEXMAPPER_H
-#define VERTEXMAPPER_H
-
-#include "refcount.h"
+#include "always.h"
 #include "w3d_file.h"
 #include "w3derr.h"
-#include "wwdebug.h"
 #include "vector2.h"
 #include "vector3.h"
 #include "ww3d.h"
@@ -572,5 +566,3 @@ public:
 ** Utility functions
 */
 void Reset_All_Texture_Mappers(RenderObjClass *robj, bool make_unique);
-
-#endif

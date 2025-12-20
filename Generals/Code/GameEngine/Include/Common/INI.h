@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __INI_H_
-#define __INI_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include <stddef.h>	// for offsetof, which we don't use but everyone who includes us does
 #include "Common/STLTypedefs.h"
@@ -91,14 +88,14 @@ enum
 /** Function typedef for parsing data block fields.
 	*
 	* buffer - the character buffer of the line from INI that we are reading and parsing
-	* instance - instance of what we're loading (for example a thingtemplate instance)
+	* instance - instance of what we're loading (for example a ThingTemplate instance)
 	* store - where to store the data parsed, this is a field in the *instance* 'instance'
 	*/
 //-------------------------------------------------------------------------------------------------
 typedef void (*INIFieldParseProc)( INI *ini, void *instance, void *store, const void* userData );
 
 //-------------------------------------------------------------------------------------------------
-typedef const char* ConstCharPtr;
+typedef const char* const ConstCharPtr;
 typedef ConstCharPtr* ConstCharPtrArray;
 
 //-------------------------------------------------------------------------------------------------
@@ -119,7 +116,7 @@ struct FieldParse
 	const void*					userData;					///< field-specific data
 	Int									offset;						///< offset to data field
 
-	inline void set(const char* t, INIFieldParseProc p, const void* u, Int o)
+	void set(const char* t, INIFieldParseProc p, const void* u, Int o)
 	{
 		token = t;
 		parse = p;
@@ -141,19 +138,15 @@ private:
 public:
 	MultiIniFieldParse() : m_count(0)
 	{
-		//Added By Sadullah Nader
-		//Initializations missing and needed
 		for(Int i = 0; i < MAX_MULTI_FIELDS; i++)
 			m_extraOffset[i] = 0;
-		//
-
 	}
 
 	void add(const FieldParse* f, UnsignedInt e = 0);
 
-	inline Int getCount() const { return m_count; }
-	inline const FieldParse* getNthFieldParse(Int i) const { return m_fieldParse[i]; }
-	inline UnsignedInt getNthExtraOffset(Int i) const { return m_extraOffset[i]; }
+	Int getCount() const { return m_count; }
+	const FieldParse* getNthFieldParse(Int i) const { return m_fieldParse[i]; }
+	UnsignedInt getNthExtraOffset(Int i) const { return m_extraOffset[i]; }
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -173,8 +166,19 @@ public:
 	INI();
 	~INI();
 
-	void loadDirectory( AsciiString dirName, Bool subdirs, INILoadType loadType, Xfer *pXfer );  ///< load directory of INI files
-	void load( AsciiString filename, INILoadType loadType, Xfer *pXfer );		///< load INI file
+	// TheSuperHackers @feature xezon 19/08/2025
+	// Load a specific INI file by name and/or INI files from a directory (and its subdirectories).
+	// For example "Data\INI\Armor" loads "Data\INI\Armor.ini" and all *.ini files in "Data\INI\Armor".
+	// Throws if not a single INI file is found or one is not read correctly.
+	UnsignedInt loadFileDirectory( AsciiString fileDirName, INILoadType loadType, Xfer *pXfer, Bool subdirs = TRUE );
+
+	// Load INI files from a directory (and its subdirectories).
+	// Throws if one INI file is not read correctly.
+	UnsignedInt loadDirectory( AsciiString dirName, INILoadType loadType, Xfer *pXfer, Bool subdirs = TRUE );
+
+	// Load one specific INI file by name.
+	// Throws if the INI file is not found or is not read correctly.
+	UnsignedInt load( AsciiString filename, INILoadType loadType, Xfer *pXfer );
 
 	static Bool isDeclarationOfType( AsciiString blockType, AsciiString blockName, char *bufferToCheck );
 	static Bool isEndOfBlock( char *bufferToCheck );
@@ -200,6 +204,7 @@ public:
 	static void parseParticleSystemDefinition( INI *ini );
 	static void parseWaterSettingDefinition( INI *ini );
 	static void parseWaterTransparencyDefinition( INI *ini );
+	static void parseWeatherDefinition( INI *ini );
 	static void parseMappedImageDefinition( INI *ini );
 	static void parseArmorDefinition( INI *ini );
 	static void parseDamageFXDefinition( INI *ini );
@@ -240,14 +245,14 @@ public:
 	static void parseWindowTransitions( INI* ini );
 
 
-	inline AsciiString getFilename( void ) const { return m_filename; }
-	inline INILoadType getLoadType( void ) const { return m_loadType; }
-	inline UnsignedInt getLineNum( void ) const { return m_lineNum; }
-	inline const char *getSeps( void ) const { return m_seps; }
-	inline const char *getSepsPercent( void ) const { return m_sepsPercent; }
-	inline const char *getSepsColon( void ) const { return m_sepsColon; }
-	inline const char *getSepsQuote( void ) { return m_sepsQuote; }
-	inline Bool isEOF( void ) const { return m_endOfFile; }
+	AsciiString getFilename( void ) const { return m_filename; }
+	INILoadType getLoadType( void ) const { return m_loadType; }
+	UnsignedInt getLineNum( void ) const { return m_lineNum; }
+	const char *getSeps( void ) const { return m_seps; }
+	const char *getSepsPercent( void ) const { return m_sepsPercent; }
+	const char *getSepsColon( void ) const { return m_sepsColon; }
+	const char *getSepsQuote( void ) { return m_sepsQuote; }
+	Bool isEOF( void ) const { return m_endOfFile; }
 
 	void initFromINI( void *what, const FieldParse* parseTable );
 	void initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList );
@@ -403,6 +408,3 @@ protected:
 	char m_curBlockStart[ INI_MAX_CHARS_PER_LINE ];	///< first line of cur block
 #endif
 };
-
-#endif // __INI_H_
-

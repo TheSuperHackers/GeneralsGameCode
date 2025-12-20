@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Commando / G 3D engine                                       *
  *                                                                                             *
- *                    File Name : MeshDeformSaveSet.CPP
+ *                    File Name : MeshDeformSaveSet.cpp
  *                                                                                             *
  *                   Programmer : Patrick Smith                                                *
  *                                                                                             *

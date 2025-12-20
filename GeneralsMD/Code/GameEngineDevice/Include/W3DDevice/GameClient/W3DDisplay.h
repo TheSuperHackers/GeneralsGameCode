@@ -33,9 +33,6 @@
 
 #pragma once
 
-#ifndef __W3DDISPLAY_H_
-#define __W3DDISPLAY_H_
-
 #include "GameClient/Display.h"
 #include "WW3D2/lightenvironment.h"
 
@@ -81,6 +78,7 @@ public:
 	virtual Bool	isClippingEnabled( void ) 	{ return m_isClippedEnabled; }
 	virtual void	enableClipping( Bool onoff )		{ m_isClippedEnabled = onoff; }
 
+	virtual void step(); ///< Do one fixed time step
 	virtual void draw( void );  ///< redraw the entire display
 
 	/// @todo Replace these light management routines with a LightManager singleton
@@ -161,7 +159,7 @@ protected:
 	void drawCurrentDebugDisplay( void );			///< draws current debug display
 	void calculateTerrainLOD(void);						///< Calculate terrain LOD.
 	void renderLetterBox(UnsignedInt time);							///< draw letter box border
-	void updateAverageFPS(void);	///< figure out the average fps over the last 30 frames.
+	void updateAverageFPS(void);	///< calculate the average fps over the last 30 frames.
 
 	Byte m_initialized;												///< TRUE when system is initialized
 	LightClass *m_myLight[LightEnvironmentClass::MAX_LIGHTS];										///< light hack for now
@@ -201,6 +199,4 @@ protected:
 
 	W3DDebugDisplay *m_nativeDebugDisplay;		///< W3D specific debug display interface
 
-};  // end W3DDisplay
-
-#endif  // end __W3DDISPLAY_H_
+};

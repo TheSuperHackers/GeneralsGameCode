@@ -8,7 +8,6 @@ target_link_libraries(z_w3dview PRIVATE
     d3d8
     d3d8lib
     d3dx8
-    dbghelplib
     imm32
     milesstub
     Version

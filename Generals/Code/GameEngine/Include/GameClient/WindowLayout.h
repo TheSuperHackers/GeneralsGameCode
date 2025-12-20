@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __WINDOWLAYOUT_H_
-#define __WINDOWLAYOUT_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
 #include "GameClient/GameWindow.h"
@@ -107,7 +104,7 @@ protected:
 	WindowLayoutUpdateFunc	 m_update;							///< update callback
 	WindowLayoutShutdownFunc m_shutdown;						///< shutdown callback
 
-};  // end class WindowLayout
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
 inline AsciiString WindowLayout::getFilename( void ) const { return m_filenameString; }
@@ -121,6 +118,3 @@ inline void WindowLayout::runShutdown( void *userData ) { if( m_shutdown ) m_shu
 inline void WindowLayout::setInit( WindowLayoutInitFunc init ) { m_init = init; }
 inline void WindowLayout::setUpdate( WindowLayoutUpdateFunc update ) { m_update = update; }
 inline void WindowLayout::setShutdown( WindowLayoutShutdownFunc shutdown ) {m_shutdown = shutdown;}
-
-#endif // __WINDOWLAYOUT_H_
-

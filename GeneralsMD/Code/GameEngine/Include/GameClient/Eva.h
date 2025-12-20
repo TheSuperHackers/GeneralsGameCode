@@ -27,8 +27,6 @@
 // DO NOT DISTRIBUTE
 
 #pragma once
-#ifndef __EVA_H__
-#define __EVA_H__
 
 #include "Common/SubsystemInterface.h"
 #include "Common/AudioEventRTS.h"
@@ -43,8 +41,7 @@ enum EvaMessage CPP_11(: Int)
 	EVA_None = -2, //< Explicitely turn off eva event for vanilla ZH Special Powers
   EVA_Invalid = -1,
 
-	EVA_FIRST = 0,
-	EVA_LowPower = EVA_FIRST,
+	EVA_LowPower,
 	EVA_InsufficientFunds,
 	EVA_SuperweaponDetected_Own_ParticleCannon,
 	EVA_SuperweaponDetected_Own_Nuke,
@@ -170,9 +167,10 @@ enum EvaMessage CPP_11(: Int)
 	  Eva_SuperweaponReady_Enemy_Chronosphere,
 
 	EVA_COUNT,
+	EVA_FIRST = 0,
 };
 
-extern const char *TheEvaMessageNames[];
+extern const char *const TheEvaMessageNames[];
 
 //------------------------------------------------------------------------------------ EvaCheckInfo
 struct EvaSideSounds
@@ -287,5 +285,3 @@ class Eva : public SubsystemInterface
 };
 
 extern Eva *TheEva;
-
-#endif /* __EVA_H__ */

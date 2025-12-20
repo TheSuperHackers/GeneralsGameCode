@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Commando / G 3D engine                                       *
  *                                                                                             *
- *                    File Name : GAMEMAPS.CPP                                                 *
+ *                    File Name : GAMEMAPS.cpp                                                 *
  *                                                                                             *
  *                   Programmer : Greg Hjelstrom                                               *
  *                                                                                             *

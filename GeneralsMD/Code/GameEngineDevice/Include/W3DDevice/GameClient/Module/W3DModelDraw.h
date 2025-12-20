@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __W3DModelDraw_H_
-#define __W3DModelDraw_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/ModelState.h"
 #include "Common/DrawModule.h"
@@ -46,6 +43,8 @@ public:
 		ANIM_MODE_LOOP_PINGPONG,
 		ANIM_MODE_LOOP_BACKWARDS,	//make sure only backwards playing animations after this one
 		ANIM_MODE_ONCE_BACKWARDS,
+
+		ANIM_MODE_COUNT
 	};
 };
 
@@ -238,7 +237,7 @@ struct ModelConditionInfo
 		PUBLIC_BONES_VALID			= 0x0010
 	};
 
-	inline ModelConditionInfo()
+	ModelConditionInfo()
 	{
 		clear();
 	}
@@ -247,8 +246,8 @@ struct ModelConditionInfo
 	void loadAnimations() const;
 	void preloadAssets( TimeOfDay timeOfDay, Real scale );			///< preload any assets for time of day
 
-	inline Int getConditionsYesCount() const { DEBUG_ASSERTCRASH(m_conditionsYesVec.size() > 0, ("empty m_conditionsYesVec.size(), see srj")); return m_conditionsYesVec.size(); }
-	inline const ModelConditionFlags& getNthConditionsYes(Int i) const { return m_conditionsYesVec[i]; }
+	Int getConditionsYesCount() const { DEBUG_ASSERTCRASH(!m_conditionsYesVec.empty(), ("empty m_conditionsYesVec.size(), see srj")); return m_conditionsYesVec.size(); }
+	const ModelConditionFlags& getNthConditionsYes(Int i) const { return m_conditionsYesVec[i]; }
 #if defined(RTS_DEBUG)
 	inline AsciiString getDescription() const { return m_description; }
 #endif
@@ -432,7 +431,7 @@ public:
 	virtual const ObjectDrawInterface* getObjectDrawInterface() const { return this; }
 
 	///@todo: I had to make this public because W3DDevice needs access for casting shadows -MW
-	inline RenderObjClass *getRenderObject() { return m_renderObject; }
+	RenderObjClass *getRenderObject() { return m_renderObject; }
 	virtual Bool updateBonesForClientParticleSystems( void );///< this will reposition particle systems on the fly ML
 
 	virtual void onDrawableBoundToObject();
@@ -443,7 +442,7 @@ protected:
 
 	virtual void onRenderObjRecreated(void){};
 
-	inline const ModelConditionInfo* getCurState() const { return m_curState; }
+	const ModelConditionInfo* getCurState() const { return m_curState; }
 
 	void setModelState(const ModelConditionInfo* newState);
 	const ModelConditionInfo* findBestInfo(const ModelConditionFlags& c) const;
@@ -458,7 +457,7 @@ protected:
 	Bool setCurAnimDurationInMsec(Real duration);
 
 
-	inline Bool getFullyObscuredByShroud() const { return m_fullyObscuredByShroud; }
+	Bool getFullyObscuredByShroud() const { return m_fullyObscuredByShroud; }
 
 private:
 
@@ -534,6 +533,3 @@ private:
 	void hideGarrisonFlags(Bool hide);
 #endif
 };
-
-#endif // __W3DModelDraw_H_
-

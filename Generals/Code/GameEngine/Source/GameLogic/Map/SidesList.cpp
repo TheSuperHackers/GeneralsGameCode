@@ -43,7 +43,7 @@
 //
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/DataChunk.h"
 #include "Common/GameState.h"
@@ -87,10 +87,12 @@ void SidesInfo::init(const Dict* d)
 {
 	deleteInstance(m_pBuildList);
 	m_pBuildList = NULL;
+
 	m_dict.clear();
-	if (m_scripts)
-		deleteInstance(m_scripts);
+
+	deleteInstance(m_scripts);
 	m_scripts = NULL;
+
 	if (d)
 		m_dict = *d;
 }
@@ -294,7 +296,7 @@ Bool SidesList::ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, v
 		}
 	}
 
-	file.registerParser( AsciiString("PlayerScriptsList"), info->label, ScriptList::ParseScriptsDataChunk );
+	file.registerParser( "PlayerScriptsList", info->label, ScriptList::ParseScriptsDataChunk );
 	if (!file.parse(NULL)) {
 		throw(ERROR_CORRUPT_FILE_FORMAT);
 	}
@@ -302,8 +304,7 @@ Bool SidesList::ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, v
 	count = ScriptList::getReadScripts(scripts);
 	for (i=0; i<count; i++) {
 		if (i<TheSidesList->getNumSides()) {
-			ScriptList *pSL = TheSidesList->getSideInfo(i)->getScriptList();
-			deleteInstance(pSL);
+			deleteInstance(TheSidesList->getSideInfo(i)->getScriptList());
 			TheSidesList->getSideInfo(i)->setScriptList(scripts[i]);
 			scripts[i] = NULL;
 		} else {
@@ -513,9 +514,9 @@ void SidesList::prepareForMP_or_Skirmish(void)
 		if (theInputStream.open(path)) {
 				ChunkInputStream *pStrm = &theInputStream;
 				DataChunkInput file( pStrm );
-				file.registerParser( AsciiString("PlayerScriptsList"), AsciiString::TheEmptyString, ScriptList::ParseScriptsDataChunk );
-				file.registerParser( AsciiString("ScriptsPlayers"), AsciiString::TheEmptyString, ParsePlayersDataChunk );
-				file.registerParser( AsciiString("ScriptTeams"), AsciiString::TheEmptyString, ParseTeamsDataChunk );
+				file.registerParser( "PlayerScriptsList", AsciiString::TheEmptyString, ScriptList::ParseScriptsDataChunk );
+				file.registerParser( "ScriptsPlayers", AsciiString::TheEmptyString, ParsePlayersDataChunk );
+				file.registerParser( "ScriptTeams", AsciiString::TheEmptyString, ParseTeamsDataChunk );
 				if (!file.parse(this)) {
 					DEBUG_LOG(("ERROR - Unable to read in skirmish scripts."));
 					return;
@@ -535,11 +536,8 @@ void SidesList::prepareForMP_or_Skirmish(void)
 					}
 					if (curSide == -1) continue;
 
-					ScriptList *pSL = getSkirmishSideInfo(curSide)->getScriptList();
+					deleteInstance(getSkirmishSideInfo(curSide)->getScriptList());
 					getSkirmishSideInfo(curSide)->setScriptList(scripts[i]);
-					scripts[i] = NULL;
-					if (pSL)
-						deleteInstance(pSL);
 					scripts[i] = NULL;
 				}
 				for (i=0; i<MAX_PLAYER_COUNT; i++) {
@@ -818,10 +816,10 @@ validate_team_names:
 			tdict->setAsciiString(TheKey_teamOwner, AsciiString::TheEmptyString);
 			modified = true;
 		}
-//		if (tdict->getType(NAMEKEY(AsciiString("teamAllies"))) != Dict::DICT_NONE)
-//			tdict->remove(NAMEKEY(AsciiString("teamAllies")));
-//		if (tdict->getType(NAMEKEY(AsciiString("teamEnemies"))) != Dict::DICT_NONE)
-//			tdict->remove(NAMEKEY(AsciiString("teamEnemies")));
+//		if (tdict->getType(NAMEKEY("teamAllies")) != Dict::DICT_NONE)
+//			tdict->remove(NAMEKEY("teamAllies"));
+//		if (tdict->getType(NAMEKEY("teamEnemies")) != Dict::DICT_NONE)
+//			tdict->remove(NAMEKEY("teamEnemies"));
 
 	}
 
@@ -834,7 +832,7 @@ validate_team_names:
 void SidesList::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -858,7 +856,7 @@ void SidesList::xfer( Xfer *xfer )
 		DEBUG_CRASH(( "SidesList::xfer - The sides list size has changed, this was not supposed to happen, you must version this method and figure out how to translate between old and new versions now" ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// side data
 	ScriptList *scriptList;
@@ -877,13 +875,13 @@ void SidesList::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "SidesList::xfer - script list missing/present mismatch" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 		if( scriptListPresent )
 			xfer->xferSnapshot( scriptList );
 
-	}  // end for i
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -891,7 +889,7 @@ void SidesList::xfer( Xfer *xfer )
 void SidesList::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 /* ********* BuildListInfo class ****************************/
 /**
@@ -919,8 +917,6 @@ m_automaticallyBuild(true),
 m_priorityBuild(false),
 m_buildingName(AsciiString::TheEmptyString)
 {
-	// Added by Sadullah Nader
-	// these initialized values are necessary!!!
 	m_location.zero();
 	m_rallyPointOffset.x = 0.0f;
 	m_rallyPointOffset.y = 0.0f;
@@ -965,7 +961,7 @@ void BuildListInfo::parseStructure(INI *ini, void *instance, void* /*store*/, co
       { "InitiallyBuilt",			INI::parseBool,		NULL, offsetof( BuildListInfo, m_isInitiallyBuilt ) },
       { "RallyPointOffset",			INI::parseCoord2D,		NULL, offsetof( BuildListInfo, m_rallyPointOffset ) },
       { "AutomaticallyBuild",			INI::parseBool,	NULL, offsetof( BuildListInfo, m_automaticallyBuild ) },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 
 	BuildListInfo *buildInfo = newInstance( BuildListInfo );
@@ -1002,7 +998,7 @@ BuildListInfo *BuildListInfo::duplicate(void)
 void BuildListInfo::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1044,7 +1040,7 @@ void BuildListInfo::xfer( Xfer *xfer )
 		xfer->xferInt(&m_currentGatherers);
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1052,7 +1048,7 @@ void BuildListInfo::xfer( Xfer *xfer )
 void BuildListInfo::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 /* ********* TeamsInfoRec class ****************************/
 TeamsInfoRec::TeamsInfoRec() :

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __EnemyNearUpdate_H_
-#define __EnemyNearUpdate_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "Common/KindOf.h"
@@ -84,6 +81,3 @@ protected:
 	void checkForEnemies( void );
 
 };
-
-#endif // end __EnemyNearUpdate_H_
-

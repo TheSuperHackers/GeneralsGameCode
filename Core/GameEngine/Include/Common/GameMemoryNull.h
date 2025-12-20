@@ -163,3 +163,9 @@ extern void* __cdecl operator new[](size_t size, const char *, int);
 extern void __cdecl operator delete[](void *p, const char *, int);
 
 #endif
+
+#if defined(_MSC_VER) && _MSC_VER < 1300
+// additional overloads for 'placement new'
+inline void* __cdecl operator new[](size_t s, void* p) { return p; }
+inline void __cdecl operator delete[](void*, void* p) {}
+#endif

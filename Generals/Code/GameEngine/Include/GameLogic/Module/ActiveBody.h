@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __ACTIVEBODY_H_
-#define __ACTIVEBODY_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DamageFX.h"
 #include "GameLogic/Module/BodyModule.h"
@@ -87,7 +84,7 @@ public:
 	virtual ObjectID getClearableLastAttacker() const { return (m_lastDamageCleared ? INVALID_ID : m_lastDamageInfo.in.m_sourceID); }
 	virtual void clearLastAttacker() { m_lastDamageCleared = true; }
 
-	void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel );
+	void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback = TRUE );
 
 	virtual void setArmorSetFlag(ArmorSetType ast) { m_curArmorSetFlags.set(ast, 1); }
 	virtual void clearArmorSetFlag(ArmorSetType ast) { m_curArmorSetFlags.set(ast, 0); }
@@ -152,6 +149,3 @@ private:
 	mutable const DamageFX*						m_curDamageFX;
 
 };
-
-#endif // __ACTIVEBODY_H_
-

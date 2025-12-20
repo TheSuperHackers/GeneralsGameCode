@@ -33,6 +33,7 @@
 
 //#include <wsys/StdFileSystem.h>
 #include "W3DDevice/GameClient/W3DFileSystem.h"
+#include "Common/FramePacer.h"
 #include "Common/GlobalData.h"
 #include "WHeightMapEdit.h"
 //#include "Common/GameFileSystem.h"
@@ -86,10 +87,10 @@
 static SubsystemInterfaceList TheSubsystemListRecord;
 
 template<class SUBSYSTEM>
-void initSubsystem(SUBSYSTEM*& sysref, SUBSYSTEM* sys, const char* path1 = NULL, const char* path2 = NULL, const char* dirpath = NULL)
+void initSubsystem(SUBSYSTEM*& sysref, SUBSYSTEM* sys, const char* path1 = NULL, const char* path2 = NULL)
 {
 	sysref = sys;
-	TheSubsystemListRecord.initSubsystem(sys, path1, path2, dirpath, NULL);
+	TheSubsystemListRecord.initSubsystem(sys, path1, path2, NULL);
 }
 
 
@@ -124,7 +125,7 @@ char const * WBGameFileClass::Set_Name( char const *filename )
 	}
 
 	if (TheFileSystem->doesFileExist(filename)) {
-		strcpy( m_filePath, filename );
+		strlcpy(m_filePath, filename, ARRAY_SIZE(m_filePath));
 		m_fileExists = true;
 	}
 	return m_filename;
@@ -315,13 +316,8 @@ BOOL CWorldBuilderApp::InitInstance()
 	// Set the current directory to the app directory.
 	char buf[_MAX_PATH];
 	GetModuleFileName(NULL, buf, sizeof(buf));
-	char *pEnd = buf + strlen(buf);
-	while (pEnd != buf) {
-		if (*pEnd == '\\') {
-			*pEnd = 0;
-			break;
-		}
-		pEnd--;
+	if (char *pEnd = strrchr(buf, '\\')) {
+		*pEnd = 0;
 	}
 	::SetCurrentDirectory(buf);
 
@@ -336,10 +332,12 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	INI ini;
 
-	initSubsystem(TheWritableGlobalData, new GlobalData(), "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
+	initSubsystem(TheWritableGlobalData, new GlobalData(), "Data\\INI\\Default\\GameData", "Data\\INI\\GameData");
+
+	TheFramePacer = new FramePacer();
 
 #if defined(RTS_DEBUG)
-	ini.load( AsciiString( "Data\\INI\\GameDataDebug.ini" ), INI_LOAD_MULTIFILE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\GameDataDebug", INI_LOAD_MULTIFILE, NULL );
 #endif
 
 #ifdef DEBUG_CRASHING
@@ -349,29 +347,29 @@ BOOL CWorldBuilderApp::InitInstance()
 #if 1
 	// srj sez: put INI into our user data folder, not the ap dir
 	free((void*)m_pszProfileName);
-	strcpy(buf, TheGlobalData->getPath_UserData().str());
-	strcat(buf, "WorldBuilder.ini");
+	strlcpy(buf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(buf));
+	strlcat(buf, "WorldBuilder.ini", ARRAY_SIZE(buf));
 #else
-	strcat(buf, "//");
-	strcat(buf, m_pszProfileName);
+	strlcat(buf, "//", ARRAY_SIZE(buf));
+	strlcat(buf, m_pszProfileName, ARRAY_SIZE(buf));
 	free((void*)m_pszProfileName);
 #endif
 	m_pszProfileName = (const char *)malloc(strlen(buf)+2);
 	strcpy((char*)m_pszProfileName, buf);
 
 	// ensure the user maps dir exists
-	sprintf(buf, "%sMaps\\", TheGlobalData->getPath_UserData().str());
+	snprintf(buf, ARRAY_SIZE(buf), "%sMaps\\", TheGlobalData->getPath_UserData().str());
 	CreateDirectory(buf, NULL);
 
 	// read the water settings from INI (must do prior to initing GameClient, apparently)
-	ini.load( AsciiString( "Data\\INI\\Default\\Water.ini" ), INI_LOAD_OVERWRITE, NULL );
-	ini.load( AsciiString( "Data\\INI\\Water.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\Water", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Water", INI_LOAD_OVERWRITE, NULL );
 
 	initSubsystem(TheGameText, CreateGameTextInterface());
-	initSubsystem(TheScienceStore, new ScienceStore(), "Data\\INI\\Default\\Science.ini", "Data\\INI\\Science.ini");
-	initSubsystem(TheMultiplayerSettings, new MultiplayerSettings(), "Data\\INI\\Default\\Multiplayer.ini", "Data\\INI\\Multiplayer.ini");
-	initSubsystem(TheTerrainTypes, new TerrainTypeCollection(), "Data\\INI\\Default\\Terrain.ini", "Data\\INI\\Terrain.ini");
-	initSubsystem(TheTerrainRoads, new TerrainRoadCollection(), "Data\\INI\\Default\\Roads.ini", "Data\\INI\\Roads.ini");
+	initSubsystem(TheScienceStore, new ScienceStore(), "Data\\INI\\Default\\Science", "Data\\INI\\Science");
+	initSubsystem(TheMultiplayerSettings, new MultiplayerSettings(), "Data\\INI\\Default\\Multiplayer", "Data\\INI\\Multiplayer");
+	initSubsystem(TheTerrainTypes, new TerrainTypeCollection(), "Data\\INI\\Default\\Terrain", "Data\\INI\\Terrain");
+	initSubsystem(TheTerrainRoads, new TerrainRoadCollection(), "Data\\INI\\Default\\Roads", "Data\\INI\\Roads");
 
 	WorldHeightMapEdit::init();
 
@@ -387,19 +385,19 @@ BOOL CWorldBuilderApp::InitInstance()
 	initSubsystem(TheModuleFactory, (ModuleFactory*)(new W3DModuleFactory()));
 	initSubsystem(TheSidesList, new SidesList());
 	initSubsystem(TheCaveSystem, new CaveSystem());
-	initSubsystem(TheRankInfoStore, new RankInfoStore(), NULL, "Data\\INI\\Rank.ini");
-	initSubsystem(ThePlayerTemplateStore, new PlayerTemplateStore(), "Data\\INI\\Default\\PlayerTemplate.ini", "Data\\INI\\PlayerTemplate.ini");
-	initSubsystem(TheSpecialPowerStore, new SpecialPowerStore(), "Data\\INI\\Default\\SpecialPower.ini", "Data\\INI\\SpecialPower.ini" );
+	initSubsystem(TheRankInfoStore, new RankInfoStore(), NULL, "Data\\INI\\Rank");
+	initSubsystem(ThePlayerTemplateStore, new PlayerTemplateStore(), "Data\\INI\\Default\\PlayerTemplate", "Data\\INI\\PlayerTemplate");
+	initSubsystem(TheSpecialPowerStore, new SpecialPowerStore(), "Data\\INI\\Default\\SpecialPower", "Data\\INI\\SpecialPower" );
 	initSubsystem(TheParticleSystemManager, (ParticleSystemManager*)(new W3DParticleSystemManager()));
-	initSubsystem(TheFXListStore, new FXListStore(), "Data\\INI\\Default\\FXList.ini", "Data\\INI\\FXList.ini");
-	initSubsystem(TheWeaponStore, new WeaponStore(), NULL, "Data\\INI\\Weapon.ini");
-	initSubsystem(TheObjectCreationListStore, new ObjectCreationListStore(), "Data\\INI\\Default\\ObjectCreationList.ini", "Data\\INI\\ObjectCreationList.ini");
-	initSubsystem(TheLocomotorStore, new LocomotorStore(), NULL, "Data\\INI\\Locomotor.ini");
-	initSubsystem(TheDamageFXStore, new DamageFXStore(), NULL, "Data\\INI\\DamageFX.ini");
-	initSubsystem(TheArmorStore, new ArmorStore(), NULL, "Data\\INI\\Armor.ini");
-	initSubsystem(TheThingFactory, new ThingFactory(), "Data\\INI\\Default\\Object.ini", NULL, "Data\\INI\\Object");
-	initSubsystem(TheCrateSystem, new CrateSystem(), "Data\\INI\\Default\\Crate.ini", "Data\\INI\\Crate.ini");
-	initSubsystem(TheUpgradeCenter, new UpgradeCenter, "Data\\INI\\Default\\Upgrade.ini", "Data\\INI\\Upgrade.ini");
+	initSubsystem(TheFXListStore, new FXListStore(), "Data\\INI\\Default\\FXList", "Data\\INI\\FXList");
+	initSubsystem(TheWeaponStore, new WeaponStore(), NULL, "Data\\INI\\Weapon");
+	initSubsystem(TheObjectCreationListStore, new ObjectCreationListStore(), "Data\\INI\\Default\\ObjectCreationList", "Data\\INI\\ObjectCreationList");
+	initSubsystem(TheLocomotorStore, new LocomotorStore(), NULL, "Data\\INI\\Locomotor");
+	initSubsystem(TheDamageFXStore, new DamageFXStore(), NULL, "Data\\INI\\DamageFX");
+	initSubsystem(TheArmorStore, new ArmorStore(), NULL, "Data\\INI\\Armor");
+	initSubsystem(TheThingFactory, new ThingFactory(), "Data\\INI\\Default\\Object", "Data\\INI\\Object");
+	initSubsystem(TheCrateSystem, new CrateSystem(), "Data\\INI\\Default\\Crate", "Data\\INI\\Crate");
+	initSubsystem(TheUpgradeCenter, new UpgradeCenter, "Data\\INI\\Default\\Upgrade", "Data\\INI\\Upgrade");
 	initSubsystem(TheAnim2DCollection, new Anim2DCollection ); //Init's itself.
 
 	TheSubsystemListRecord.postProcessLoadAll();
@@ -414,6 +412,8 @@ BOOL CWorldBuilderApp::InitInstance()
 	// WB never uses the shroud. With shroud, terrain is black.
 	TheWritableGlobalData->m_shroudOn = FALSE;
 #endif
+
+	TheWritableGlobalData->m_isWorldBuilder = TRUE;
 
 	// Change the registry key under which our settings are stored.
 	// TODO: You should modify this string to be something appropriate
@@ -634,9 +634,11 @@ int CWorldBuilderApp::ExitInstance()
 
 	WorldHeightMapEdit::shutdown();
 
+	delete TheFramePacer;
+	TheFramePacer = NULL;
+
 	delete TheFileSystem;
 	TheFileSystem = NULL;
-	TextureLoadTaskClass::shutdown();
 
 	delete TheW3DFileSystem;
 	TheW3DFileSystem = NULL;
@@ -680,7 +682,7 @@ void CWorldBuilderApp::OnFileOpen()
 #endif
 
 	CFileStatus status;
-	if (m_currentDirectory != AsciiString("")) try {
+	if (!m_currentDirectory.isEmpty()) try {
 		if (CFile::GetStatus(m_currentDirectory.str(), status)) {
 			if (status.m_attribute & CFile::directory) {
 				::SetCurrentDirectory(m_currentDirectory.str());

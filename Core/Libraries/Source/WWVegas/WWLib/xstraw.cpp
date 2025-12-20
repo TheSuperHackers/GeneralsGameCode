@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Code/Library/XSTRAW.CPP                           $*
+ *                     $Archive:: /Commando/Code/Library/XSTRAW.cpp                           $*
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *
@@ -38,9 +38,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"XSTRAW.H"
+#include "XSTRAW.h"
 #include	<stddef.h>
-#include	<string.h>
 
 //---------------------------------------------------------------------------------------------------------
 // BufferStraw

@@ -26,8 +26,13 @@
 //
 // Debug I/O class flat (flat or split log file)
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+#include "debug.h"
+#include "debug_io.h"
+#include "internal.h"
+#include "internal_io.h"
 #include <stdlib.h>
+#include <windows.h>
+#include <WWCommon.h>
 #include <new>      // needed for placement new prototype
 
 DebugIOFlat::OutputStream::OutputStream(const char *filename, unsigned maxSize):
@@ -78,22 +83,20 @@ void DebugIOFlat::OutputStream::Delete(const char *path)
       char help[512];
       if (path[0]&&(path[1]==':'||(path[0]=='\\'&&path[1]=='\\')))
       {
-        strcpy(help,path);
-        strcpy(help+pathLen,fileNameOnly);
-        help[ext-fileNameOnly+pathLen]=0;
+        strlcpy(help, path, ARRAY_SIZE(help));
+        strlcat(help, fileNameOnly, ARRAY_SIZE(help));
       }
       else
       {
         // no, relative path given
-        strcpy(help,m_fileName);
-        strcpy(help+(fileNameOnly-m_fileName),path);
-        strcpy(help+(fileNameOnly-m_fileName)+pathLen,fileNameOnly);
-        help[ext-fileNameOnly+pathLen+(fileNameOnly-m_fileName)]=0;
+        strlcpy(help, m_fileName, ARRAY_SIZE(help));
+        strlcat(help, path, ARRAY_SIZE(help));
+        strlcat(help, fileNameOnly, ARRAY_SIZE(help));
       }
       if (++run)
         wsprintf(help+strlen(help),"(%i)%s",run,ext);
       else
-        strcat(help,ext);
+        strlcat(help, ext, ARRAY_SIZE(help));
       if (CopyFile(m_fileName,help,TRUE))
         break;
       if (GetLastError()!=ERROR_FILE_EXISTS)
@@ -263,7 +266,7 @@ void DebugIOFlat::ExpandMagic(const char *src, const char *splitName, char *buf)
       case 'n':
       case 'N':
         if (splitName&&strlen(splitName)<250)
-          strcpy(help,splitName);
+          strlcpy(help, splitName, ARRAY_SIZE(help));
         break;
       default:
         *dst++=src[-1];
@@ -272,7 +275,7 @@ void DebugIOFlat::ExpandMagic(const char *src, const char *splitName, char *buf)
     unsigned len=strlen(help);
     if (dst-buf+len>250)
       break;
-    strcpy(dst,help);
+    strcpy(dst, help);
     dst+=len;
   }
   strcpy(dst,".log");
@@ -329,14 +332,14 @@ void DebugIOFlat::EmergencyFlush(void)
 void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
                           unsigned argn, const char * const * argv)
 {
-  if (!cmd||!strcmp(cmd,"help"))
+  if (!cmd||strcmp(cmd,"help") == 0)
   {
     if (!argn)
       dbg << "flat I/O help:\n"
              "The following I/O commands are defined:\n"
              "  add, copy, splitadd, splitview, splitremove\n"
              "Type in debug.io flat help <cmd> for a detailed command help.\n";
-    else if (!strcmp(argv[0],"add"))
+    else if (strcmp(argv[0],"add") == 0)
       dbg <<
         "add [ <filename> [ <size in kb> ] ]\n\n"
         "Create flat file I/O (optionally specifying file name and file size).\n"
@@ -360,13 +363,13 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
         "size memory based ring buffer. This data is flushed out once the \n"
         "program exits. If no size is given then the size of the log file is not \n"
         "limited and any log data is written out immediately.\n";
-    else if (!strcmp(argv[0],"copy"))
+    else if (strcmp(argv[0],"copy") == 0)
       dbg <<
         "copy <directory>\n\n"
         "Copies generated log file(s) into the given directory if the program\n"
         "exists or crashes. If there is already a log file with the same\n"
         "name a unique number is appended to the current log files' name.\n";
-    else if (!strcmp(argv[0],"splitadd"))
+    else if (strcmp(argv[0],"splitadd") == 0)
       dbg <<
         "splitadd <types> <filter> <name> [ <size in kb> ]\n\n"
         "Splits off part of the log data. Multiple splits can be defined. They \n"
@@ -399,21 +402,21 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
         "\n"
         "If no size is given then the size of the log file is not limited and \n"
         "any log data is written out immediately.\n";
-    else if (!strcmp(argv[0],"splitview"))
+    else if (strcmp(argv[0],"splitview") == 0)
       dbg << "splitview\n\n"
              "Shows all existing splits in the order they are evaluated.";
-    else if (!strcmp(argv[0],"splitremove"))
+    else if (strcmp(argv[0],"splitremove") == 0)
       dbg << "splitremove <namepattern>\n\n"
              "Removes all active splits matching the given name pattern.";
     else
       dbg << "Unknown flat I/O command";
   }
-  else if (!strcmp(cmd,"add"))
+  else if (strcmp(cmd,"add") == 0)
   {
     // add [ <filename> [ <size in kb> ] ]
     __ASSERT(m_firstStream==NULL);
 
-    strcpy(m_baseFilename,argn?argv[0]:"*eMN");
+    strlcpy(m_baseFilename, argn?argv[0]:"*eMN", ARRAY_SIZE(m_baseFilename));
 
     char fn[256];
     ExpandMagic(m_baseFilename,NULL,fn);
@@ -423,16 +426,15 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
     m_firstStream->stream=OutputStream::Create(fn,argn>1?atoi(argv[1])*1024:0);
     m_lastStreamPtr=&m_firstStream->next;
   }
-  else if (!strcmp(cmd,"copy"))
+  else if (strcmp(cmd,"copy") == 0)
   {
     // copy <directory>
     if (argn)
     {
-      strncpy(m_copyDir,argv[0],sizeof(m_copyDir)-1);
-      m_copyDir[sizeof(m_copyDir)-1]=0;
+      strlcpy(m_copyDir,argv[0],sizeof(m_copyDir));
     }
   }
-  else if (!strcmp(cmd,"splitadd"))
+  else if (strcmp(cmd,"splitadd") == 0)
   {
     // splitadd <types> <filter> <name> [ <size in kb> ]
     if (argn>=3)
@@ -460,18 +462,15 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
       if (!cur->stringTypes)
         cur->stringTypes=0xffffffff;
 
-      strncpy(cur->items,argv[1],sizeof(cur->items)-1);
-      cur->items[sizeof(cur->items)-1]=0;
-
-      strncpy(cur->name,argv[2],sizeof(cur->name)-1);
-      cur->name[sizeof(cur->name)-1]=0;
+      strlcpy(cur->items,argv[1],sizeof(cur->items));
+      strlcpy(cur->name,argv[2],sizeof(cur->name));
 
       // create our filename, search for stream with same filename
       char fn[256];
       ExpandMagic(m_baseFilename,cur->name,fn);
       StreamListEntry *stream=m_firstStream;
       for (;stream;stream=stream->next)
-        if (!strcmp(stream->stream->GetFilename(),fn))
+        if (strcmp(stream->stream->GetFilename(),fn) == 0)
           break;
       if (!stream)
       {
@@ -485,7 +484,7 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
       cur->stream=stream->stream;
     }
   }
-  else if (!strcmp(cmd,"splitview"))
+  else if (strcmp(cmd,"splitview") == 0)
   {
     // splitview
     for (SplitListEntry *cur=m_firstSplit;cur;cur=cur->next)
@@ -508,7 +507,7 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
       dbg << " " << cur->items << " " << cur->name << "\n";
     }
   }
-  else if (!strcmp(cmd,"splitremove"))
+  else if (strcmp(cmd,"splitremove") == 0)
   {
     // splitremove <namepattern>
     const char *pattern=argn<1?"*":argv[0];

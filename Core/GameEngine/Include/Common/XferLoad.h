@@ -29,11 +29,7 @@
 
 #pragma once
 
-#ifndef __XFER_LOAD_H_
-#define __XFER_LOAD_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include <stdio.h>
 #include "Common/Xfer.h"
 
 // FOWARD REFERNCES ///////////////////////////////////////////////////////////////////////////////
@@ -68,6 +64,3 @@ protected:
 	FILE * m_fileFP;																					///< pointer to file
 
 };
-
-#endif // __XFER_LOAD_H_
-

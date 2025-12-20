@@ -1295,13 +1295,8 @@ void ScriptDialog::OnSave()
 	// change it back.
 	char buf[_MAX_PATH];
 	::GetModuleFileName(NULL, buf, sizeof(buf));
-	char *pEnd = buf + strlen(buf);
-	while (pEnd != buf) {
-		if (*pEnd == '\\') {
-			*pEnd = 0;
-			break;
-		}
-		pEnd--;
+	if (char *pEnd = strrchr(buf, '\\')) {
+		*pEnd = 0;
 	}
 	::SetCurrentDirectory(buf);
 	if (IDCANCEL==result) {
@@ -1519,13 +1514,8 @@ void ScriptDialog::OnLoad()
 	// change it back.
 	char buf[_MAX_PATH];
 	::GetModuleFileName(NULL, buf, sizeof(buf));
-	char *pEnd = buf + strlen(buf);
-	while (pEnd != buf) {
-		if (*pEnd == '\\') {
-			*pEnd = 0;
-			break;
-		}
-		pEnd--;
+	if (char *pEnd = strrchr(buf, '\\')) {
+		*pEnd = 0;
 	}
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	::SetCurrentDirectory(buf);
@@ -1544,12 +1534,12 @@ void ScriptDialog::OnLoad()
 		m_firstTrigger = NULL;
 		m_waypointBase = pDoc->getNextWaypointID();
 		m_maxWaypoint = m_waypointBase;
-		file.registerParser( AsciiString("PlayerScriptsList"), AsciiString::TheEmptyString, ScriptList::ParseScriptsDataChunk );
-		file.registerParser( AsciiString("ObjectsList"), AsciiString::TheEmptyString, ParseObjectsDataChunk );
-		file.registerParser( AsciiString("PolygonTriggers"), AsciiString::TheEmptyString, ParsePolygonTriggersDataChunk );
-		file.registerParser( AsciiString("WaypointsList"), AsciiString::TheEmptyString, ParseWaypointDataChunk );
-		file.registerParser( AsciiString("ScriptTeams"), AsciiString::TheEmptyString, ParseTeamsDataChunk );
-		file.registerParser( AsciiString("ScriptsPlayers"), AsciiString::TheEmptyString, ParsePlayersDataChunk );
+		file.registerParser( "PlayerScriptsList", AsciiString::TheEmptyString, ScriptList::ParseScriptsDataChunk );
+		file.registerParser( "ObjectsList", AsciiString::TheEmptyString, ParseObjectsDataChunk );
+		file.registerParser( "PolygonTriggers", AsciiString::TheEmptyString, ParsePolygonTriggersDataChunk );
+		file.registerParser( "WaypointsList", AsciiString::TheEmptyString, ParseWaypointDataChunk );
+		file.registerParser( "ScriptTeams", AsciiString::TheEmptyString, ParseTeamsDataChunk );
+		file.registerParser( "ScriptsPlayers", AsciiString::TheEmptyString, ParsePlayersDataChunk );
 		if (!file.parse(this)) {
 			throw(ERROR_CORRUPT_FILE_FORMAT);
 		}
@@ -1656,7 +1646,7 @@ void ScriptDialog::OnLoad()
 Bool ScriptDialog::ParseObjectsDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
 	file.m_currentObject = NULL;
-	file.registerParser( AsciiString("Object"), info->label, ParseObjectDataChunk );
+	file.registerParser( "Object", info->label, ParseObjectDataChunk );
 	return (file.parse(userData));
 }
 

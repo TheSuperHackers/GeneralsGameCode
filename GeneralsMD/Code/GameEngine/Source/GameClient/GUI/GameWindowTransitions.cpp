@@ -46,7 +46,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ const FieldParse GameWindowTransitionsHandler::m_gameWindowTransitionsFieldParse
 	{ "Window",		GameWindowTransitionsHandler::parseWindow,	NULL, NULL	},
 	{ "FireOnce",	INI::parseBool,															NULL, offsetof( TransitionGroup, m_fireOnce) 	},
 
-	{ NULL,										NULL,													NULL, 0 }  // keep this last
+	{ NULL,										NULL,													NULL, 0 }
 
 };
 
@@ -157,9 +157,8 @@ TransitionWindow::~TransitionWindow( void )
 		m_win->unlinkTransitionWindow(this);
 
 	m_win = NULL;
-	if(m_transition)
-		delete m_transition;
 
+	delete m_transition;
 	m_transition = NULL;
 }
 
@@ -172,9 +171,7 @@ Bool TransitionWindow::init( void )
 //	if( !m_win )
 //		return FALSE;
 
-	if(m_transition)
-		delete m_transition;
-
+	delete m_transition;
 	m_transition = getTransitionForStyle( m_style );
 	m_transition->init(m_win);
 
@@ -253,7 +250,6 @@ TransitionGroup::~TransitionGroup( void )
 	{
 		TransitionWindow *tWin = *it;
 		delete tWin;
-		tWin = NULL;
 		it = m_transitionWindowList.erase(it);
 	}
 }
@@ -398,7 +394,7 @@ void GameWindowTransitionsHandler::load(void )
 {
 	INI ini;
 	// Read from INI all the ControlBarSchemes
-	ini.load( AsciiString( "Data\\INI\\WindowTransitions.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\WindowTransitions", INI_LOAD_OVERWRITE, NULL );
 
 }
 
@@ -578,7 +574,7 @@ void GameWindowTransitionsHandler::parseWindow( INI* ini, void *instance, void *
 			{ "WinName",				INI::parseAsciiString,		NULL,									offsetof( TransitionWindow, m_winName ) },
       { "Style",					INI::parseLookupList,			TransitionStyleNames,	offsetof( TransitionWindow, m_style ) },
 			{ "FrameDelay",			INI::parseInt,						NULL,									offsetof( TransitionWindow, m_frameDelay ) },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 	TransitionWindow *transWin = NEW TransitionWindow;
 	ini->initFromINI(transWin, myFieldParse);

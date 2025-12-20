@@ -378,7 +378,7 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 		}
 	}
 
-}  // end W3DGadgetTabControlDraw
+}
 
 // W3DGadgetRadioButtonImageDraw ==============================================
 /** Draw tabs with user supplied images */
@@ -649,4 +649,4 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 		}
 	}
 
-}  // end W3DGadgetTabControlImageDraw
+}

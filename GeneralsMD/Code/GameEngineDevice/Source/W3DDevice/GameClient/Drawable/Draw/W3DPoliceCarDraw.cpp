@@ -62,11 +62,11 @@ W3DDynamicLight *W3DPoliceCarDraw::createDynamicLight( void )
 		light->Set_Position( Vector3( 0.0f, 0.0f, 0.0f ) );
 		light->Set_Far_Attenuation_Range( 5, 15 );
 
-	}  // end if
+	}
 
 	return light;
 
-}  // end createDynamicSearchLight
+}
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
@@ -92,7 +92,7 @@ W3DPoliceCarDraw::~W3DPoliceCarDraw( void )
 		m_light->setDecayRange();
 		m_light->setDecayColor();
 		m_light = NULL;
-	}  // end if
+	}
 
 }
 
@@ -165,7 +165,7 @@ void W3DPoliceCarDraw::crc( Xfer *xfer )
 	// extend base class
 	W3DTruckDraw::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -185,7 +185,7 @@ void W3DPoliceCarDraw::xfer( Xfer *xfer )
 
 	// John A says there is no data for these to save
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -196,4 +196,4 @@ void W3DPoliceCarDraw::loadPostProcess( void )
 	// extend base class
 	W3DTruckDraw::loadPostProcess();
 
-}  // end loadPostProcess
+}

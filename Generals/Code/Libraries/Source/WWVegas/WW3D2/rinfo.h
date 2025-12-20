@@ -37,21 +37,14 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef RINFO_H
-#define RINFO_H
-
 
 #include "always.h"
 #include "bittype.h"
 #include "ww3d.h"
 #include "wwdebug.h"
 #include "shader.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "matrix3d.h"
 #include "matrix4.h"
 
@@ -163,7 +156,3 @@ private:
 	SpecialRenderInfoClass & operator = (const RenderInfoClass &);
 
 };
-
-
-
-#endif

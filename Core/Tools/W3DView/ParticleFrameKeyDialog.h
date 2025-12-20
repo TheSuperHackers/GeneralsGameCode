@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_PARTICLEFRAMEKEYDIALOG_H__43470F6A_86E2_44CF_8ED9_EE9B74D35908__INCLUDED_)
-#define AFX_PARTICLEFRAMEKEYDIALOG_H__43470F6A_86E2_44CF_8ED9_EE9B74D35908__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // ParticleFrameKeyDialog.h : header file
 //
 
@@ -77,5 +73,3 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_PARTICLEFRAMEKEYDIALOG_H__43470F6A_86E2_44CF_8ED9_EE9B74D35908__INCLUDED_)

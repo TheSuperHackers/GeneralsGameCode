@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef WaterTool_H
-#define WaterTool_H
-
 #include "PolygonTool.h"
 class WorldHeightMapEdit;
 class MapObject;
@@ -62,6 +59,3 @@ protected:
 	void fillTheArea(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
 	PolygonTrigger *adjustSpacing(PolygonTrigger *trigger, Real spacing);
 };
-
-
-#endif //WaterTool_H

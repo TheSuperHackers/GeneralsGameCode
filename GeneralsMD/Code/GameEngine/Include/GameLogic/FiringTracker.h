@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef FIRING_TRACKER_H
-#define FIRING_TRACKER_H
-
 #include "Common/GameType.h"
 #include "Common/GameMemory.h"
 #include "Common/AudioEventRTS.h"
@@ -94,6 +91,3 @@ private:
 
 	WeaponBonusConditionFlags m_prevTargetWeaponBonus;  ///< weaponBonus against previous target
 };
-
-#endif
-

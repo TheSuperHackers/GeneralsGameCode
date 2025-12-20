@@ -69,12 +69,12 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 #include <io.h>
-#include "ARGS.H"
+#include "ARGS.h"
 #include "assert.h"
 #include "Locale_API.h"
 #include "resource.h"
 #include "Utils.h"
-#include "WinFix.H"
+#include "WinFix.h"
 #include "Wnd_File.h"
 #include <winver.h>
 #include <shlwapi.h>

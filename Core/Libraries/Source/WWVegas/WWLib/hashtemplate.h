@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef HASH_TEMPLATE_H
-#define HASH_TEMPLATE_H
 
 #include "always.h"
 #include "wwstring.h"
@@ -402,10 +396,8 @@ template <class KeyType, class ValueType> inline HashTemplateClass<KeyType,Value
 
 template <class KeyType, class ValueType> inline HashTemplateClass<KeyType,ValueType>::~HashTemplateClass()
 {
-	if (Hash)
-		delete[] Hash;
-	if (Table)
-		delete[] Table;
+	delete[] Hash;
+	delete[] Table;
 }
 
 // Get_Hash_Value specialization for StringClass. This is intended to be used
@@ -427,7 +419,3 @@ template <> inline unsigned int HashTemplateKeyClass<StringClass>::Get_Hash_Valu
 	hval = hval + (hval>>5) + (hval>>10) + (hval >> 20);
 	return hval;
 }
-
-
-
-#endif

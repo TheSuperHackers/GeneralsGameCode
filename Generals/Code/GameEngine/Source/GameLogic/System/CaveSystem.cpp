@@ -27,7 +27,7 @@
 // Desc:   System responsible for keeping track of all cave systems on the map
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameState.h"
 #include "Common/TunnelTracker.h"
@@ -52,11 +52,8 @@ void CaveSystem::reset()
 {
 	for( std::vector<TunnelTracker*>::iterator iter = m_tunnelTrackerVector.begin(); iter != m_tunnelTrackerVector.end(); iter++ )
 	{
-		TunnelTracker *currentTracker = *iter;
-		if( currentTracker )// could be NULL, since we don't slide back to fill deleted entries so offsets don't shift
-		{
-			deleteInstance(currentTracker);
-		}
+		TunnelTracker *currentTracker = *iter; // could be NULL, since we don't slide back to fill deleted entries so offsets don't shift
+		deleteInstance(currentTracker);
 	}
 	m_tunnelTrackerVector.clear();
 }
@@ -159,9 +156,9 @@ void CaveSystem::xfer( Xfer *xfer )
 			tracker = *it;
 			xfer->xferSnapshot( tracker );
 
-		}  // end
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -172,7 +169,7 @@ void CaveSystem::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "CaveSystem::xfer - m_tunnelTrackerVector should be empty but is not" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// read each item
 		for( UnsignedShort i = 0; i < count; ++i )
@@ -187,10 +184,10 @@ void CaveSystem::xfer( Xfer *xfer )
 			// put in vector
 			m_tunnelTrackerVector.push_back( tracker );
 
-		}  // end for, i
+		}
 
-	}  // end else, laod
+	}
 
-}  // end xfer
+}
 
 

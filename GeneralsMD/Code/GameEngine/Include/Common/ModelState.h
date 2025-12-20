@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _ModelState_H_
-#define _ModelState_H_
-
 #include "Lib/BaseType.h"
 #include "Common/INI.h"
 #include "Common/BitFlags.h"
@@ -94,13 +91,11 @@ enum ModelConditionFlagType CPP_11(: Int)
 {
 	MODELCONDITION_INVALID = -1,
 
-	MODELCONDITION_FIRST = 0,
-
 //
 // Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
 // existing values!
 //
-	MODELCONDITION_TOPPLED = MODELCONDITION_FIRST,
+	MODELCONDITION_TOPPLED,
 	MODELCONDITION_FRONTCRUSHED,
 	MODELCONDITION_BACKCRUSHED,
 	MODELCONDITION_DAMAGED,
@@ -291,7 +286,8 @@ enum ModelConditionFlagType CPP_11(: Int)
 // existing values!
 //
 
-	MODELCONDITION_COUNT	// keep last!
+	MODELCONDITION_COUNT,
+	MODELCONDITION_FIRST = 0,
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -310,6 +306,3 @@ typedef BitFlags<MODELCONDITION_COUNT> ModelConditionFlags;
 //-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-
-#endif // _ModelState_H_
-

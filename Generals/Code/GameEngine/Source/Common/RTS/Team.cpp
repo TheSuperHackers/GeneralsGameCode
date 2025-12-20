@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/GameState.h"
 #include "Common/Team.h"
 #include "Common/ThingFactory.h"
@@ -62,7 +62,7 @@ TeamFactory *TheTeamFactory = NULL;
 TeamRelationMap::TeamRelationMap( void )
 {
 
-}  // end TeamRelationMap
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ TeamRelationMap::~TeamRelationMap( void )
 	// maek sure the data is clear
 	m_map.clear();
 
-}  // end ~TeamRelationMap
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -80,7 +80,7 @@ TeamRelationMap::~TeamRelationMap( void )
 void TeamRelationMap::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -118,9 +118,9 @@ void TeamRelationMap::xfer( Xfer *xfer )
 			r = (*teamRelationIt).second;
 			xfer->xferUser( &r, sizeof( Relationship ) );
 
-		}  // end for
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -136,11 +136,11 @@ void TeamRelationMap::xfer( Xfer *xfer )
 			// assign relationship
 			m_map[teamID] = r;
 
-		}  // end for, i
+		}
 
-	}  // end else load
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -148,7 +148,7 @@ void TeamRelationMap::xfer( Xfer *xfer )
 void TeamRelationMap::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -293,7 +293,7 @@ TeamPrototype *TeamFactory::findTeamPrototypeByID( TeamPrototypeID id )
 		if( prototype->getID() == id )
 			return prototype;
 
-	}  // end for
+	}
 
 	// not found
 	return NULL;
@@ -330,8 +330,10 @@ Call team->setActive() when all members are added. */
 Team *TeamFactory::createInactiveTeam(const AsciiString& name)
 {
 	TeamPrototype *tp = findTeamPrototype(name);
-	if (!tp)
-		throw ERROR_BAD_ARG;
+	if (!tp) {
+		DEBUG_CRASH(( "Team prototype '%s' does not exist", name.str() ));
+		return NULL;
+	}
 
 	Team *t = NULL;
 	if (tp->getIsSingleton())
@@ -362,9 +364,11 @@ Team *TeamFactory::createInactiveTeam(const AsciiString& name)
 // ------------------------------------------------------------------------
 Team *TeamFactory::createTeam(const AsciiString& name)
 {
-	Team *t = NULL;
-	t = createInactiveTeam(name);
-	t->setActive();
+	Team *t = createInactiveTeam(name);
+
+	if (t)
+		t->setActive();
+
 	return t;
 }
 
@@ -418,7 +422,7 @@ void TeamFactory::teamAboutToBeDeleted(Team* team)
 void TeamFactory::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------
 /** Xfer method
@@ -451,7 +455,7 @@ void TeamFactory::xfer( Xfer *xfer )
 									prototypeCount, m_prototypes.size() ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// xfer each of the prototype information
 	TeamPrototypeMap::iterator it;
@@ -475,9 +479,9 @@ void TeamFactory::xfer( Xfer *xfer )
 			// xfer prototype data
 			xfer->xferSnapshot( teamPrototype );
 
-		}  //end for, it
+		}
 
-	}  // end if, saving
+	}
 	else
 	{
 
@@ -498,14 +502,14 @@ void TeamFactory::xfer( Xfer *xfer )
 				DEBUG_CRASH(( "TeamFactory::xfer - Unable to find team prototype by id" ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
 			// xfer prototype data
 			xfer->xferSnapshot( teamPrototype );
 
-		}  // end for, i
+		}
 
-	}  // end else, loading
+	}
 
 /*
 // SAVE_LOAD_DEBUG
@@ -533,15 +537,15 @@ fprintf( fp, "  Team Instance '%s', id is '%d'\n", team->getName().str(), team->
 			obj = objIt.cur();
 fprintf( fp, "    Member '%s', id '%d'\n", obj->getTemplate()->getName().str(), obj->getID() );
 		}
-	}  // end for
+	}
 
-}  // end for
+}
 fclose( fp );
 
-}  // end if, save
+}
 */
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------
 /** Load post process */
@@ -573,9 +577,9 @@ void TeamFactory::loadPostProcess( void )
 			if( team->getID() >= m_uniqueTeamID )
 				m_uniqueTeamID = team->getID() + 1;
 
-		}  // end for
+		}
 
-	}  // end for, it
+	}
 
 /*
 // SAVE_LOAD_DEBUG
@@ -598,13 +602,13 @@ fprintf( fp, "  Team Instance '%s', id is '%d'\n", team->getName().str(), team->
 			obj = objIt.cur();
 fprintf( fp, "    Member '%s', id '%d'\n", obj->getTemplate()->getName().str(), obj->getID() );
 		}
-	}  // end for
+	}
 
-}  // end for
+}
 fclose( fp );
 */
 
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
@@ -762,7 +766,7 @@ TeamTemplateInfo::TeamTemplateInfo(Dict *d) :
 void TeamTemplateInfo::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------
 /** Xfer method
@@ -780,7 +784,7 @@ void TeamTemplateInfo::xfer( Xfer *xfer )
 	// xfer the production priority
 	xfer->xferInt( &m_productionPriority );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------
 /** Load post process */
@@ -788,7 +792,7 @@ void TeamTemplateInfo::xfer( Xfer *xfer )
 void TeamTemplateInfo::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
@@ -845,19 +849,13 @@ TeamPrototype::~TeamPrototype()
 	if (m_factory)
 		m_factory->removeTeamPrototypeFromList(this);
 
-	if (m_productionConditionScript)
-	{
-		deleteInstance(m_productionConditionScript);
-	}
+	deleteInstance(m_productionConditionScript);
 	m_productionConditionScript = NULL;
 
 	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i)
 	{
-		if (m_genericScriptsToRun[i])
-		{
-			deleteInstance(m_genericScriptsToRun[i]);
-			m_genericScriptsToRun[i] = NULL;
-		}
+		deleteInstance(m_genericScriptsToRun[i]);
+		m_genericScriptsToRun[i] = NULL;
 	}
 }
 
@@ -1184,7 +1182,7 @@ Bool TeamPrototype::evaluateProductionCondition(void)
 void TeamPrototype::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------
 /** Xfer method
@@ -1242,9 +1240,9 @@ void TeamPrototype::xfer( Xfer *xfer )
 			// write team data
 			xfer->xferSnapshot( teamInstance );
 
-		}  // end for
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -1276,16 +1274,16 @@ void TeamPrototype::xfer( Xfer *xfer )
 				// restore original ID we read from the file
 				teamInstance->setID( teamID );
 
-			}  // end if
+			}
 
 			// xfer team data
 			xfer->xferSnapshot( teamInstance );
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------
 /** Load post process */
@@ -1293,7 +1291,7 @@ void TeamPrototype::xfer( Xfer *xfer )
 void TeamPrototype::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
@@ -1318,13 +1316,8 @@ Team::Team(TeamPrototype *proto, TeamID id ) :
 	m_curUnits(0),
 	m_wasIdle(false)
 {
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_created = FALSE;
-
-	//
 	m_commonAttackTarget = INVALID_ID;
-
 	// allocate new relation map pools
 	m_playerRelations = newInstance(PlayerRelationMap);
 	m_teamRelations = newInstance(TeamRelationMap);
@@ -2552,7 +2545,7 @@ void Team::updateGenericScripts(void)
 void Team::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method
@@ -2577,7 +2570,7 @@ void Team::xfer( Xfer *xfer )
 									teamID, m_id ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// member list count and data
 	ObjectID memberID;
@@ -2604,9 +2597,9 @@ void Team::xfer( Xfer *xfer )
 			memberID = obj->getID();
 			xfer->xferObjectID( &memberID );
 
-		}  // end for
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -2620,9 +2613,9 @@ void Team::xfer( Xfer *xfer )
 			// put on pending list for later processing
 			m_xferMemberIDList.push_back( memberID );
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
 	// state
 	xfer->xferAsciiString( &m_state );
@@ -2686,7 +2679,7 @@ void Team::xfer( Xfer *xfer )
 	// player relations
 	xfer->xferSnapshot( m_playerRelations );
 
-}  // ene xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -2711,7 +2704,7 @@ void Team::loadPostProcess( void )
 			DEBUG_CRASH(( "Team::loadPostProcess - Unable to post process object to member list, object ID = '%d'", *it ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		//
 		// we are now disabling this code since the objects set their team during their
@@ -2726,9 +2719,9 @@ void Team::loadPostProcess( void )
 										obj->getTemplate()->getName().str(), obj->getID() ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
-	}  // end for
+	}
 
 	// since we prepended the object member pointers, reverse that list so it's just like before
 //	reverse_TeamMemberList();
@@ -2736,7 +2729,7 @@ void Team::loadPostProcess( void )
 	// we're done with the xfer list now
 	m_xferMemberIDList.clear();
 
-}  // end loadPostProcess
+}
 
 
 

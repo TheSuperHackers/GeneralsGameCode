@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DYNAMIC_SHROUD_RANGE_UPDATE_H_
-#define __DYNAMIC_SHROUD_RANGE_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameClient/RadiusDecal.h"///< For the pseudo-wireframe decal effect
@@ -129,6 +126,3 @@ protected:
 	RadiusDecal m_gridDecal[GRID_FX_DECAL_COUNT];///< For the pseudo-wireframe decal effect
 
 };
-
-#endif
-

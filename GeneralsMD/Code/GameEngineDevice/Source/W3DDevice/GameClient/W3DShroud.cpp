@@ -92,13 +92,13 @@ W3DShroud::W3DShroud(void)
 W3DShroud::~W3DShroud(void)
 {
 	ReleaseResources();
+
 	if (m_pSrcTexture)
 		m_pSrcTexture->Release();
-	m_pSrcTexture=NULL;
-	if (m_finalFogData)
-		delete [] m_finalFogData;
-	if (m_currentFogData)
-		delete [] m_currentFogData;
+
+	delete [] m_finalFogData;
+	delete [] m_currentFogData;
+
 	m_drawFogOfWar=FALSE;
 }
 
@@ -204,14 +204,17 @@ void W3DShroud::reset()
 {
 	//Free old shroud data since it may no longer fit new map.
 	if (m_pSrcTexture)
+	{
 		m_pSrcTexture->Release();
-	m_pSrcTexture=NULL;
-	if (m_finalFogData)
-		delete [] m_finalFogData;
+		m_pSrcTexture=NULL;
+	}
+
+	delete [] m_finalFogData;
 	m_finalFogData=NULL;
-	if (m_currentFogData)
-		delete [] m_currentFogData;
+
+	delete [] m_currentFogData;
 	m_currentFogData=NULL;
+
 	m_clearDstTexture = TRUE;	//always refill the destination texture after a reset
 }
 

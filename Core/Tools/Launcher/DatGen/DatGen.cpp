@@ -23,7 +23,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "BFISH.H"
+#include "BFISH.h"
 #include <Debug/DebugPrint.h>
 
 void __cdecl doIt(void);

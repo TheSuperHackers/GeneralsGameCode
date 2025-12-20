@@ -50,8 +50,7 @@ will you be ready to leave grasshopper.
 
 \*****************************************************************************/
 
-#ifndef WDEBUG_HEADER
-#define WDEBUG_HEADER
+#pragma once
 
 #include <Utility/iostream_adapter.h>
 #include "odevice.h"
@@ -189,5 +188,3 @@ class MsgManager
    static ostream            *warnStream(void);
    static ostream            *errorStream(void);
 };
-
-#endif

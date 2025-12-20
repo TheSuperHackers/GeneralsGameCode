@@ -46,7 +46,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -76,13 +76,9 @@ static char statsDir[255] = "Stats\\";
 //=============================================================================
 StatsCollector::StatsCollector( void )
 {
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_isScrolling = FALSE;
 	m_scrollBeginTime = 0;
 	m_scrollTime = 0;
-
-	//
 	m_timeCount = 0;
 	m_buildCommands = 0;
 	m_moveCommands = 0;
@@ -90,10 +86,8 @@ StatsCollector::StatsCollector( void )
 	m_scrollMapCommands = 0;
 	m_AIUnits = 0;
 	m_playerUnits = 0;
-
 	m_lastUpdate = 0;
 	m_startFrame = TheGameLogic->getFrame();
-
 }
 //Destructor
 //=============================================================================

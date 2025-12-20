@@ -48,7 +48,7 @@ void ObjectWeaponStatusHelper::crc( Xfer *xfer )
 	// object helper crc
 	ObjectHelper::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -66,7 +66,7 @@ void ObjectWeaponStatusHelper::xfer( Xfer *xfer )
 	// object helper base class
 	ObjectHelper::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -77,4 +77,4 @@ void ObjectWeaponStatusHelper::loadPostProcess( void )
 	// object helper base class
 	ObjectHelper::loadPostProcess();
 
-}  // end loadPostProcess
+}

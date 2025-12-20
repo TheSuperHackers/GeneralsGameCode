@@ -32,8 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_LAYERSLIST_
-#define _H_LAYERSLIST_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Common/AsciiString.h"
@@ -185,5 +183,3 @@ class LayersList : public CDialog
 };
 
 extern LayersList *TheLayersList;
-
-#endif /* _H_LAYERSLIST_ */

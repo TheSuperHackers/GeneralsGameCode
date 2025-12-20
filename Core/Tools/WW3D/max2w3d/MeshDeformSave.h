@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Commando / G 3D engine                                       *
  *                                                                                             *
- *                    File Name : MeshDeformSafe.H
+ *                    File Name : MeshDeformSafe.h
  *                                                                                             *
  *                   Programmer : Patrick Smith                                                *
  *                                                                                             *
@@ -35,11 +35,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef __MESH_DEFORM_SAVE_H
-#define __MESH_DEFORM_SAVE_H
+#pragma once
 
 #include <max.h>
-#include "Vector.H"
+#include "Vector.h"
 
 // Forward declarations
 class ChunkSaveClass;
@@ -106,5 +105,3 @@ class MeshDeformSaveClass
 		DEFORM_SAVE_LIST	m_DeformSets;
 		unsigned int		m_AlphaPasses;
 };
-
-#endif //__MESH_DEFORM_SAVE_H

@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef W3D_DYNAMIC_LIGHT_H
-#define W3D_DYNAMIC_LIGHT_H
-
 #include "WW3D2/light.h"
 #include "Lib/BaseType.h"
 class HeightMapRenderObjClass;
@@ -82,7 +79,3 @@ public:
 	// Cull returns true if the terrain vertex at x,y is outside of the light's influence.
 	Bool cull(Int x, Int y ) {return (x<m_minX||y<m_minY||x>m_maxX||y>m_maxY);}
 };
-
-
-
-#endif //TEXTURE_H

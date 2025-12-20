@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #define DEFINE_WEAPONCONDITIONMAP
 #include "Common/BitFlagsIO.h"
 #include "Common/BuildAssistant.h"
@@ -36,6 +36,7 @@
 #include "Common/GameCommon.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/ModuleFactory.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -273,11 +274,8 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	Int i, modIdx;
 	AsciiString modName;
 
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_formationOffset.x = m_formationOffset.y = 0.0f;
 	m_iPos.zero();
-	//
 	for (i = 0; i < MAX_PLAYER_COUNT; ++i)
 	{
 		m_visionSpiedBy[i] = 0;
@@ -299,7 +297,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	// Object's set of these persist for the life of the object.
 	m_partitionLastLook = newInstance(SightingInfo);
@@ -564,7 +562,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	// emit message announcing object's creation
 	TheGameLogic->sendObjectCreated( this );
 
-}  // end Object
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Emit message announcing object's creation
@@ -716,9 +714,7 @@ Object::~Object()
 	delete [] m_behaviors;
 	m_behaviors = NULL;
 
-	if( m_experienceTracker )
-		deleteInstance(m_experienceTracker);
-
+	deleteInstance(m_experienceTracker);
 	m_experienceTracker = NULL;
 
 	// we don't need to delete these, there were deleted on the m_behaviors list
@@ -794,6 +790,26 @@ Int Object::getTransportSlotCount() const
 	return count;
 }
 
+const Object* Object::getEnclosingContainedBy() const
+{
+	for (const Object* child = this, *container = getContainedBy(); container; child = container, container = container->getContainedBy())
+	{
+		ContainModuleInterface* containModule = container->getContain();
+		if (containModule && containModule->isEnclosingContainerFor(child))
+			return container;
+	}
+
+	return NULL;
+}
+
+const Object* Object::getOuterObject() const
+{
+	if (const Object* enclosing = getEnclosingContainedBy())
+		return enclosing;
+
+	return this;
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Run from GameLogic::destroyObject */
 //-------------------------------------------------------------------------------------------------
@@ -817,7 +833,7 @@ void Object::onDestroy()
 
 	//Have to remove ourself from looking as well.  RebuildHoleWorkers definately hit here.
 	handlePartitionCellMaintenance();
-}  // end onDestroy
+}
 
 //=============================================================================
 //=============================================================================
@@ -1083,7 +1099,7 @@ void Object::setStatus( ObjectStatusMaskType objectStatus, Bool set )
 						TheGameLogic->destroyObject(them);
 					}
 				}
-			}// next object
+			}
 
 			if (m_partitionData)
 				m_partitionData->makeDirty(true);
@@ -1257,9 +1273,9 @@ void Object::topple( const Coord3D *toppleDirection, Real toppleSpeed, UnsignedI
 		// apply the topple force
 		toppleUpdate->applyTopplingForce( toppleDirection, toppleSpeed, options );
 
-	}  // end if
+	}
 
-}  // end topple
+}
 
 //=============================================================================
 void Object::setArmorSetFlag(ArmorSetType ast)
@@ -1833,11 +1849,44 @@ Color Object::getNightIndicatorColor() const
 }
 
 //=============================================================================
+// Object::isLogicallyVisible
+//=============================================================================
+Bool Object::isLogicallyVisible() const
+{
+	const Object* obj = getOuterObject();
+
+	// Disguisers are always visible to all players, irrespective of any stealth
+	// status. We thus need to check the type rather than the status as the
+	// disguise status is absent during the disguise transition phase.
+	if (obj->isKindOf(KINDOF_DISGUISER))
+		return true;
+
+	if (obj->testStatus(OBJECT_STATUS_STEALTHED) && !obj->testStatus(OBJECT_STATUS_DETECTED))
+	{
+		const Player* player = rts::getObservedOrLocalPlayer();
+		const Relationship relationship = player->getRelationship(getTeam());
+
+		if (player->isPlayerActive() && relationship != ALLIES)
+			return false;
+	}
+
+	return true;
+}
+
+//=============================================================================
 // Object::isLocallyControlled
 //=============================================================================
 Bool Object::isLocallyControlled() const
 {
 	return getControllingPlayer() == ThePlayerList->getLocalPlayer();
+}
+
+//=============================================================================
+// Object::isLocallyViewed
+//=============================================================================
+Bool Object::isLocallyViewed() const
+{
+	return getControllingPlayer() == rts::getObservedOrLocalPlayer();
 }
 
 //=============================================================================
@@ -2110,7 +2159,7 @@ void Object::kill( DamageType damageType, DeathType deathType )
 
 	DEBUG_ASSERTCRASH(!damageInfo.out.m_noEffect, ("Attempting to kill an unKillable object (InactiveBody?)"));
 
-}  // end kill
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Restore max health to this Object */
@@ -2741,7 +2790,7 @@ ExitInterface *Object::getObjectExitInterface() const
 
 	return exitInterface;
 
-}  // end getObjectExitInterface
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Checks the object against trigger areas when the position changes. */
@@ -2931,7 +2980,7 @@ void Object::setID( ObjectID id )
 	// add new id to lookup table
 	TheGameLogic->addObjectToLookupTable( this );
 
-}  // end setID
+}
 
 // ------------------------------------------------------------------------------------------------
 Real Object::calculateHeightAboveTerrain(void) const
@@ -3260,19 +3309,6 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 	if (body)
 		body->onVeterancyLevelChanged( oldLevel, newLevel, provideFeedback );
 
-	Bool hideAnimationForStealth = FALSE;
-	if( !isLocallyControlled() &&
-			testStatus( OBJECT_STATUS_STEALTHED ) &&
-			!testStatus( OBJECT_STATUS_DETECTED ) &&
-			!testStatus( OBJECT_STATUS_DISGUISED ) )
-	{
-		hideAnimationForStealth = TRUE;
-	}
-
-	Bool doAnimation = ( ! hideAnimationForStealth
-											&& (newLevel > oldLevel)
-											&& ( ! isKindOf(KINDOF_IGNORED_IN_GUI))); //First, we plan to do the animation if the level went up
-
 	switch (newLevel)
 	{
 		case LEVEL_REGULAR:
@@ -3282,7 +3318,6 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 			clearWeaponBonusCondition(WEAPONBONUSCONDITION_VETERAN);
 			clearWeaponBonusCondition(WEAPONBONUSCONDITION_ELITE);
 			clearWeaponBonusCondition(WEAPONBONUSCONDITION_HERO);
-			doAnimation = FALSE;//... but not if somehow up to Regular
 			break;
 		case LEVEL_VETERAN:
 			setWeaponSetFlag(WEAPONSET_VETERAN);
@@ -3310,7 +3345,12 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 			break;
 	}
 
-	if( doAnimation && TheGameLogic->getDrawIconUI() && provideFeedback )
+	Bool doAnimation = provideFeedback
+		&& newLevel > oldLevel
+		&& !isKindOf(KINDOF_IGNORED_IN_GUI)
+		&& isLogicallyVisible();
+
+	if( doAnimation && TheGameLogic->getDrawIconUI() )
 	{
 		if( TheAnim2DCollection && TheGlobalData->m_levelGainAnimationName.isEmpty() == FALSE )
 		{
@@ -3432,7 +3472,7 @@ Bool Object::isAbleToAttack() const
 			{
 				//The turret is enable, meaning we have an enabled weapon. Quit.
 				anyEnabled = TRUE;
-				break;;
+				break;
 			}
 		}
 		if( anyWeapon && !anyEnabled )
@@ -3514,7 +3554,7 @@ void Object::maskObject( Bool mask )
 	if (mask)
 		TheGameLogic->deselectObject(this, ~getControllingPlayer()->getPlayerMask(), TRUE);
 
-}  // end maskObject
+}
 
 //-------------------------------------------------------------------------------------------------
 /*
@@ -3934,11 +3974,8 @@ void Object::updateObjValuesFromMapProperties(Dict* properties)
       audioToModify = NULL; // Belongs to TheAudio now
     }
 
-    if ( audioToModify != NULL )
-    {
-      deleteInstance(audioToModify);
-      audioToModify = NULL;
-    }
+    deleteInstance(audioToModify);
+    audioToModify = NULL;
 
     if ( soundEnabledExists && soundEnabled )
     {
@@ -4170,7 +4207,7 @@ void Object::crc( Xfer *xfer )
 		}
 	}
 
-}  // end crc
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Object xfer implemtation
@@ -4243,7 +4280,7 @@ void Object::xfer( Xfer *xfer )
 		// change the ID of the drawable attached to be the same ID as it was when it was saved
 		draw->setID( drawableID );
 
-	}  // end if
+	}
 
 	// internal name
 	xfer->xferAsciiString( &m_name );
@@ -4475,9 +4512,9 @@ void Object::xfer( Xfer *xfer )
 			// end data block
 			xfer->endBlock();
 
-		}  // end for, it
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 		AsciiString otherModuleIdentifier;
@@ -4501,7 +4538,7 @@ void Object::xfer( Xfer *xfer )
 					break;
 				}
 
-			}  // end for, moduleIt
+			}
 
 			// start of a new block
 			Int dataSize = xfer->beginBlock();
@@ -4521,21 +4558,21 @@ void Object::xfer( Xfer *xfer )
 				// skip this data in the file
 				xfer->skip( dataSize );
 
-			}  // end if
+			}
 			else
 			{
 
 				// xfer the data into this module
 				xfer->xferSnapshot( module );
 
-			}  // end else
+			}
 
 			// end block
 			xfer->endBlock();
 
-		}  // end for, i module count recorded in file
+		}
 
-	}  // end else, load
+	}
 
 
 	if ( version >= 3 )
@@ -4607,7 +4644,7 @@ void Object::loadPostProcess()
 	else
 		m_containedBy = NULL;
 
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Does this object have this upgrade */
@@ -4619,7 +4656,7 @@ Bool Object::hasUpgrade( const UpgradeTemplate *upgradeT ) const
 		return TRUE;
 	}
 	return FALSE;
-}  // end hasUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Is this object capable of having this upgrade */
@@ -4649,7 +4686,7 @@ Bool Object::affectedByUpgrade( const UpgradeTemplate *upgradeT ) const
 	}
 	return FALSE;
 
-}  // end affectedByUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Give this upgrade to this object */
@@ -4666,7 +4703,7 @@ void Object::giveUpgrade( const UpgradeTemplate *upgradeT )
 		//
 		updateUpgradeModules();
 	}
-}  // end giveUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Remove this upgrade from this object */
@@ -4724,7 +4761,7 @@ void Object::onCapture( Player *oldOwner, Player *newOwner )
 		}
 	}
 
-}  // end onCapture
+}
 
 //-------------------------------------------------------------------------------------------------
 /// Object level events that need to happen upon game death
@@ -4775,7 +4812,7 @@ void Object::onDie( DamageInfo *damageInfo )
 	if(m_team)
 		m_team->notifyTeamOfObjectDeath();
 
-	if (isLocallyControlled() && !selfInflicted) // wasLocallyControlled? :-)
+	if (isLocallyViewed() && !selfInflicted) // wasLocallyViewed? :-)
 	{
 		if (isKindOf(KINDOF_STRUCTURE) && isKindOf(KINDOF_MP_COUNT_FOR_VICTORY))
 		{
@@ -4969,6 +5006,15 @@ void Object::adjustModelConditionForWeaponStatus()
 			}
 		}
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool Object::hasGhostObject() const
+{
+	if (m_partitionData == NULL)
+		return false;
+
+	return m_partitionData->getGhostObject() != NULL;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5813,7 +5859,7 @@ void Object::doCommandButtonAtObject( const CommandButton *commandButton, Object
 				if (!obj)
 					return;
 #endif
-				
+
 				if( commandButton->getSpecialPowerTemplate() )
 				{
 					CommandOption commandOptions = (CommandOption)(commandButton->getOptions() | COMMAND_FIRED_BY_SCRIPT);
@@ -6095,11 +6141,11 @@ ProductionUpdateInterface* Object::getProductionUpdateInterface( void )
 		if( pui )
 			return pui;
 
-	}  // end for
+	}
 
 	return NULL;
 
-}  // end getProductionUpdateInterface
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -6115,7 +6161,7 @@ DockUpdateInterface *Object::getDockUpdateInterface( void )
 
 	return NULL;
 
-}  // end getDockUpdateInterface
+}
 
 // ------------------------------------------------------------------------------------------------
 // Search our special power modules for a specific one.
@@ -6171,7 +6217,7 @@ SpawnBehaviorInterface* Object::getSpawnBehaviorInterface() const
 		}
 	}
 	return NULL;
-}  // end getSpawnBehaviorInterfaceFromObject
+}
 
 // ------------------------------------------------------------------------------------------------
 ProjectileUpdateInterface* Object::getProjectileUpdateInterface() const
@@ -6202,7 +6248,7 @@ SpecialPowerUpdateInterface* Object::findSpecialPowerWithOverridableDestinationA
 				return spInterface;
 			}
 		}
-	}  // end for
+	}
 	return NULL;
 }
 
@@ -6221,7 +6267,7 @@ SpecialPowerUpdateInterface* Object::findSpecialPowerWithOverridableDestination(
 				return spInterface;
 			}
 		}
-	}  // end for
+	}
 	return NULL;
 }
 
@@ -6242,7 +6288,7 @@ SpecialAbilityUpdate* Object::findSpecialAbilityUpdate( SpecialPowerType type ) 
 				return spUpdate;
 			}
 		}
-	}  // end for
+	}
 
 	return NULL;
 }
@@ -6517,10 +6563,8 @@ void Object::goInvulnerable( UnsignedInt time )
 // ------------------------------------------------------------------------------------------------
 RadarPriorityType Object::getRadarPriority( void ) const
 {
-	RadarPriorityType priority = RADAR_PRIORITY_INVALID;
-
 	// first, get the priority at the thing template level
-	priority = getTemplate()->getDefaultRadarPriority();
+	RadarPriorityType priority = getTemplate()->getDefaultRadarPriority();
 
 	//
 	// there are some objects that we want to show up on the radar when they have
@@ -6542,7 +6586,7 @@ RadarPriorityType Object::getRadarPriority( void ) const
 			priority = RADAR_PRIORITY_STRUCTURE;
 
 
-	}  // end if
+	}
 
 	// Carbombs will show up as units regardless of their default priority
 	if ( testStatus( OBJECT_STATUS_IS_CARBOMB ) )
@@ -6552,7 +6596,7 @@ RadarPriorityType Object::getRadarPriority( void ) const
 	// return the priority we're going to use
 	return priority;
 
-}  // end getRadarPriority
+}
 
 // ------------------------------------------------------------------------------------------------
 AIGroup *Object::getGroup(void)

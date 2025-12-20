@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Commando / G 3D engine                                       *
  *                                                                                             *
- *                    File Name : GAMEMAPS.H                                                   *
+ *                    File Name : GAMEMAPS.h                                                   *
  *                                                                                             *
  *                   Programmer : Greg Hjelstrom                                               *
  *                                                                                             *
@@ -35,9 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef GAMEMAPS_H
-#define GAMEMAPS_H
+#pragma once
 
 #include <max.h>
 #include "stdmat.h"
@@ -110,6 +108,3 @@ public:
 	IOResult				Save(ISave * isave);
 	IOResult				Load(ILoad * iload);
 };
-
-
-#endif /*GAMEMAPS_H*/

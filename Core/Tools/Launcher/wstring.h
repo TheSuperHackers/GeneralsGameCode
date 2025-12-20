@@ -26,8 +26,7 @@ Start Date  : June 1, 1997
 Last Update : June 17, 1997
 \****************************************************************************/
 
-#ifndef WSTRING_HEADER
-#define WSTRING_HEADER
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -83,5 +82,3 @@ class Wstring
  private:
    char    *str;    // Pointer to allocated string.
 };
-
-#endif

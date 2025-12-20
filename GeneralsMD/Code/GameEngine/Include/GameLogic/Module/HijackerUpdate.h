@@ -34,9 +34,6 @@
 
 #pragma once
 
-#ifndef __HIJACKER_UPDATE_H
-#define __HIJACKER_UPDATE_H
-
 #include "GameLogic/Module/UpdateModule.h"
 
 //-------------------------------------------------------------------------------------------------
@@ -92,6 +89,3 @@ private:
 																			 // of target vehicle if it has one
 
 };
-
-#endif // __HIJACKER_UPDATE_H
-

@@ -35,12 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef HTREE_H
-#define HTREE_H
 
 #include "always.h"
 #include "pivot.h"
@@ -100,7 +95,7 @@ public:
 	void					Anim_Update(		const Matrix3D &		root,
 													HAnimClass *			motion,
 													float						frame);
-	void					Anim_Update(const Matrix3D & root,HRawAnimClass * motion,float frame);
+	void					Anim_Update_Without_Interpolation(const Matrix3D & root,HRawAnimClass * motion,float frame);
 
 	void					Blend_Update(		const Matrix3D &		root,
 													HAnimClass *			motion0,
@@ -206,7 +201,3 @@ WWINLINE const Matrix3D & HTreeClass::Get_Transform(int pivot) const
 
 	return Pivot[pivot].Transform;
 }
-
-
-
-#endif

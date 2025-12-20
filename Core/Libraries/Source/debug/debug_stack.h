@@ -26,11 +26,8 @@
 //
 // Stack walker
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef DEBUG_STACK_H // Include guard
-#define DEBUG_STACK_H
+
+#pragma once
 
 /// \brief stack walker class (singleton)
 class DebugStackwalk
@@ -168,5 +165,3 @@ public:
   \return debug instance
 */
 Debug& operator<<(Debug &dbg, const DebugStackwalk::Signature &sig);
-
-#endif // DEBUG_STACK_H

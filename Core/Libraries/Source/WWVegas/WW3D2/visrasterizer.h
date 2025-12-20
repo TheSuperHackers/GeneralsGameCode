@@ -36,12 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef VISRASTERIZER_H
-#define VISRASTERIZER_H
 
 #include "always.h"
 #include "matrix3d.h"
@@ -208,6 +203,3 @@ protected:
 
 	SimpleVecClass<Vector3>	TempVertexBuffer;
 };
-
-#endif //VISRASTERIZER_H
-

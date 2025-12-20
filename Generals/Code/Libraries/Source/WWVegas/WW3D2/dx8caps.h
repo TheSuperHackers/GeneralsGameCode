@@ -37,12 +37,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
-
-#ifndef DX8CAPS_H
-#define DX8CAPS_H
 
 #include "always.h"
 #include "ww3dformat.h"
@@ -69,7 +64,9 @@ public:
 		VENDOR_3DFX,
 		VENDOR_3DLABS,
 		VENDOR_CIRRUSLOGIC,
-		VENDOR_RENDITION
+		VENDOR_RENDITION,
+
+		VENDOR_COUNT
 	};
 
 	enum DeviceTypeATI {
@@ -218,6 +215,7 @@ public:
 	bool Support_Bump_Envmap() const { return SupportBumpEnvmap; }
 	bool Support_Bump_Envmap_Luminance() const { return SupportBumpEnvmapLuminance; }
 	bool Support_Dot3() const { return SupportDot3; }
+	bool Support_PointSprites() const { return SupportPointSprites; }
 	int Get_Max_Textures_Per_Pass() const { return MaxTexturesPerPass; }
 
 	// -------------------------------------------------------------------------
@@ -278,12 +276,10 @@ private:
 	bool SupportRenderToTextureFormat[WW3D_FORMAT_COUNT];
 	bool SupportDepthStencilFormat[WW3D_ZFORMAT_COUNT];
 	bool SupportDot3;
+	bool SupportPointSprites;
 	int MaxTexturesPerPass;
 	int VertexShaderVersion;
 	int PixelShaderVersion;
 	int MaxSimultaneousTextures;
 	IDirect3D8* Direct3D; // warning XDK name conflict KJM
 };
-
-
-#endif

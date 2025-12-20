@@ -26,7 +26,8 @@
 //
 // Implementation of internal code
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+#include "debug.h"
+#include <windows.h>
 
 void DebugInternalAssert(const char *file, int line, const char *expr)
 {

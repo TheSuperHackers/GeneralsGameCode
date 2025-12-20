@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __PROJECTILE_STREAM_UPDATE_H_
-#define __PROJECTILE_STREAM_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
@@ -77,7 +74,3 @@ protected:
 	ObjectID m_targetObject;///< Need to insert a hole if target changes, so track target ID and target position
 	Coord3D m_targetPosition;
 };
-
-
-#endif
-

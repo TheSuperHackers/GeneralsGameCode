@@ -22,7 +22,7 @@
 #include "timezone.h"
 #include "debug.h"
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 #define usleep(x) Sleep((x)/100000)
 #endif
 

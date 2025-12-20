@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __SPECIALPOWER_H_
-#define __SPECIALPOWER_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/GameMemory.h"
@@ -213,5 +210,3 @@ protected:
 
 // EXTERNAL ///////////////////////////////////////////////////////////////////////////////////////
 extern SpecialPowerStore *TheSpecialPowerStore;
-
-#endif  // end __SPECIALPOWER_H_

@@ -27,7 +27,7 @@
 // Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_OBJECT_STATUS_NAMES
 #include "Common/Xfer.h"
@@ -98,7 +98,7 @@ void DieModule::crc( Xfer *xfer )
 	// extend base class
 	BehaviorModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -114,7 +114,7 @@ void DieModule::xfer( Xfer *xfer )
 	// call base class
 	BehaviorModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -125,4 +125,4 @@ void DieModule::loadPostProcess( void )
 	// call base class
 	BehaviorModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

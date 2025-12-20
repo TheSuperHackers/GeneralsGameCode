@@ -71,10 +71,8 @@ Font3DDataClass::Font3DDataClass( const char *filename )
  ***********************************************************************************************/
 Font3DDataClass::~Font3DDataClass(void)
 {
-	if (Name != NULL) {
-		free(Name);
-		Name = NULL;
-	}
+	free(Name);
+	Name = NULL;
 
 	REF_PTR_RELEASE(Texture);
 }

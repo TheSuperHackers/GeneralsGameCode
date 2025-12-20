@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_ADVANCEDANIMSHEET_H__67C01724_7C0D_11D3_9A3A_0090272E6F90__INCLUDED_)
-#define AFX_ADVANCEDANIMSHEET_H__67C01724_7C0D_11D3_9A3A_0090272E6F90__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // AdvancedAnimSheet.h : header file
 //
 
@@ -88,5 +84,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_ADVANCEDANIMSHEET_H__67C01724_7C0D_11D3_9A3A_0090272E6F90__INCLUDED_)

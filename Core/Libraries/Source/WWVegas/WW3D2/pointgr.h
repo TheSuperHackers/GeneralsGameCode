@@ -34,19 +34,14 @@
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef POINTGR_H
-#define POINTGR_H
 
 #include "sharebuf.h"
 #include "shader.h"
 #include "vector4.h"
 #include "vector3.h"
 #include "vector2.h"
-#include "Vector.H"
+#include "Vector.h"
 
 class VertexMaterialClass;
 class RenderInfoClass;
@@ -236,7 +231,3 @@ public:
 	virtual ~SegmentGroupClass(void);
 
 };
-
-
-
-#endif

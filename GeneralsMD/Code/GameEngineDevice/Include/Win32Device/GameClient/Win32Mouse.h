@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __WIN32MOUSE_H_
-#define __WIN32MOUSE_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -110,11 +107,8 @@ protected:
 	MouseCursor m_currentWin32Cursor;	///< keep track of last cursor image sent to D3D.
 	Int m_directionFrame;	///< current frame of directional cursor (from 0 points up).
 	Bool m_lostFocus;		///< flag if window has lost focus and mouse should stop being updated.
-};  // end Win32Mouse
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __WIN32MOUSE_H_
-

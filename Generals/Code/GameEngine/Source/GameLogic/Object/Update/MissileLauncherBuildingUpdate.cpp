@@ -27,7 +27,7 @@
 // Desc:   Update will change model state conditions based on special power state
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameAudio.h"
 #include "Common/GlobalData.h"
@@ -279,7 +279,7 @@ void MissileLauncherBuildingUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -309,7 +309,7 @@ void MissileLauncherBuildingUpdate::xfer( Xfer *xfer )
 	// timeout frame
 	xfer->xferUnsignedInt( &m_timeoutFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -320,4 +320,4 @@ void MissileLauncherBuildingUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

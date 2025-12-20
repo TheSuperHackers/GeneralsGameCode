@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_VETERANCY_NAMES				// for TheVeterancyNames[]
 #include "Common/Player.h"
@@ -92,7 +92,7 @@ void VeterancyGainCreate::onCreate( void )
 		if( myExp  &&  myExp->isTrainable() )
 		{
 			// srj sez: use "setMin" here so that we never lose levels
-			myExp->setMinVeterancyLevel( md->m_startingLevel );// sVL can override isTrainable, but this module should not.
+			myExp->setMinVeterancyLevel( md->m_startingLevel, false );// sVL can override isTrainable, but this module should not.
 		}
 	}
 
@@ -107,7 +107,7 @@ void VeterancyGainCreate::crc( Xfer *xfer )
 	// extend base class
 	CreateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -125,7 +125,7 @@ void VeterancyGainCreate::xfer( Xfer *xfer )
 	// extend base class
 	CreateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -136,4 +136,4 @@ void VeterancyGainCreate::loadPostProcess( void )
 	// extend base class
 	CreateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

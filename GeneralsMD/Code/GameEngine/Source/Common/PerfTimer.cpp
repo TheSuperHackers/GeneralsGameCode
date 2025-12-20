@@ -26,7 +26,7 @@
 // Author:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/PerfTimer.h"
 
@@ -312,10 +312,7 @@ PerfGather::PerfGather(const char *identifier) :
 	m_next(0),
 	m_prev(0)
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_ignore = FALSE;
-	//
 	DEBUG_ASSERTCRASH(strchr(m_identifier, ',') == NULL, ("PerfGather names must not contain commas"));
 	addToList();
 }
@@ -349,11 +346,12 @@ void PerfGather::reset()
 {
 	PerfGather::termPerfDump();
 
-	strcpy(s_buf, fname);
+	strlcpy(s_buf, fname, ARRAY_SIZE(s_buf);
 
 	char tmp[256];
+	static_assert(ARRAY_SIZE(tmp) >= ARRAY_SIZE(s_buf), "Incorrect array size");
 	strcpy(tmp, s_buf);
-	strcat(tmp, ".csv");
+	strlcat(tmp, ".csv", ARRAY_SIZE(tmp));
 
 	s_perfStatsFile = fopen(tmp, "w");
 	s_perfDumpOptions = options;
@@ -560,8 +558,6 @@ PerfTimer::PerfTimer( const char *identifier, Bool crashWithInfo, Int startFrame
 	m_callCount(0),
 	m_runningTime(0),
 	m_outputInfo(true),
-	//Added By Sadullah Nader
-	//Intializations inserted
 	m_lastFrame(-1)
 {
 }

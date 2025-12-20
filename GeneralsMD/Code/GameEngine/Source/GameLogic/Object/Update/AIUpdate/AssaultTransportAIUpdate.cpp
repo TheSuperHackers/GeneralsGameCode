@@ -28,7 +28,7 @@
 //         troops, order them to attack, then return. Can do extra things like ordering
 //         injured troops to return to the transport for healing purposes.
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"
@@ -487,7 +487,7 @@ void AssaultTransportAIUpdate::crc( Xfer *xfer )
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -523,7 +523,7 @@ void AssaultTransportAIUpdate::xfer( Xfer *xfer )
 	xfer->xferBool( &m_isAttackMove );
 	xfer->xferBool( &m_isAttackObject );
 
-}  // end xfer
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -532,5 +532,5 @@ void AssaultTransportAIUpdate::loadPostProcess( void )
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}
 

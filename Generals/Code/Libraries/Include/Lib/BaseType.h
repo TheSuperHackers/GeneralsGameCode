@@ -26,11 +26,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // tell the compiler to only load this file once
+
 #pragma once
-
-
-#ifndef _BASE_TYPE_H_
-#define _BASE_TYPE_H_
 
 #include "Lib/BaseTypeCore.h"
 #include "Lib/trig.h"
@@ -95,6 +92,52 @@ __forceinline long fast_float2long_round(float f)
 	return i;
 }
 
+// super fast float trunc routine, works always (independent of any FPU modes)
+// code courtesy of Martin Hoffesommer (grin)
+__forceinline float fast_float_trunc(float f)
+{
+#if defined(_MSC_VER) && _MSC_VER < 1300
+  _asm
+  {
+    mov ecx,[f]
+    shr ecx,23
+    mov eax,0xff800000
+    xor ebx,ebx
+    sub cl,127
+    cmovc eax,ebx
+    sar eax,cl
+    and [f],eax
+  }
+  return f;
+#else
+  unsigned x = *(unsigned *)&f;
+  unsigned char exp = x >> 23;
+  int mask = exp < 127 ? 0 : 0xff800000;
+  exp -= 127;
+  mask >>= exp & 31;
+  x &= mask;
+  return *(float *)&x;
+#endif
+}
+
+// same here, fast floor function
+__forceinline float fast_float_floor(float f)
+{
+  static unsigned almost1=(126<<23)|0x7fffff;
+  if (*(unsigned *)&f &0x80000000)
+    f-=*(float *)&almost1;
+  return fast_float_trunc(f);
+}
+
+// same here, fast ceil function
+__forceinline float fast_float_ceil(float f)
+{
+  static unsigned almost1=(126<<23)|0x7fffff;
+  if ( (*(unsigned *)&f &0x80000000)==0)
+    f+=*(float *)&almost1;
+  return fast_float_trunc(f);
+}
+
 //-------------------------------------------------------------------------------------------------
 #define REAL_TO_INT(x)						((Int)(x))
 #define REAL_TO_UNSIGNEDINT(x)		((UnsignedInt)(x))
@@ -103,13 +146,17 @@ __forceinline long fast_float2long_round(float f)
 #define REAL_TO_BYTE(x)						((Byte)(x))
 #define REAL_TO_UNSIGNEDBYTE(x)		((UnsignedByte)(x))
 #define REAL_TO_CHAR(x)						((Char)(x))
-#define DOUBLE_TO_REAL(x)					((Real) (x))
-#define DOUBLE_TO_INT(x)					((Int) (x))
-#define INT_TO_REAL(x)						((Real) (x))
+#define DOUBLE_TO_REAL(x)					((Real)(x))
+#define DOUBLE_TO_INT(x)					((Int)(x))
+#define INT_TO_REAL(x)						((Real)(x))
 
 // once we've ceiled/floored, trunc and round are identical, and currently, round is faster... (srj)
 #define REAL_TO_INT_CEIL(x)				(fast_float2long_round(ceilf(x)))
 #define REAL_TO_INT_FLOOR(x)			(fast_float2long_round(floorf(x)))
+
+#define FAST_REAL_TRUNC(x)        fast_float_trunc(x)
+#define FAST_REAL_CEIL(x)         fast_float_ceil(x)
+#define FAST_REAL_FLOOR(x)        fast_float_floor(x)
 
 //--------------------------------------------------------------------
 // Derived type definitions
@@ -196,7 +243,7 @@ inline Real Coord2D::toAngle( void )
 
 	return value;
 
-}  // end toAngle
+}
 
 struct ICoord2D
 {
@@ -355,7 +402,7 @@ struct RGBColor
 {
 	Real red, green, blue;		// range between 0 and 1
 
-	inline Int getAsInt() const
+	Int getAsInt() const
 	{
 		return
 			((Int)(red * 255.0) << 16) |
@@ -363,7 +410,7 @@ struct RGBColor
 			((Int)(blue * 255.0) << 0);
 	}
 
-	inline void setFromInt(Int c)
+	void setFromInt(Int c)
 	{
 		red = ((c >> 16) & 0xff) / 255.0f;
 		green = ((c >>  8) & 0xff) / 255.0f;
@@ -385,5 +432,3 @@ struct RGBAColorInt
 	UnsignedInt red, green, blue, alpha;  // range between 0 and 255
 
 };
-
-#endif // _BASE_TYPE_H_

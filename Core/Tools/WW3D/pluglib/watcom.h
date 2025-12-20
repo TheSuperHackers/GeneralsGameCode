@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /G/wwlib/WATCOM.H                                           $*
+ *                     $Archive:: /G/wwlib/WATCOM.h                                           $*
  *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
  *                                                                                             *
@@ -33,9 +33,8 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
+
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #if !defined(WATCOM_H) && defined(__WATCOMC__)
 #define WATCOM_H

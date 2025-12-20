@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/AudioEventRTS.h"
 #include "Common/MiscAudio.h"
 #include "Common/Player.h"
@@ -75,7 +75,7 @@ void MoneyCrateCollide::crc( Xfer *xfer )
 	// extend base class
 	CrateCollide::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -93,7 +93,7 @@ void MoneyCrateCollide::xfer( Xfer *xfer )
 	// extend base class
 	CrateCollide::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -104,4 +104,4 @@ void MoneyCrateCollide::loadPostProcess( void )
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+}

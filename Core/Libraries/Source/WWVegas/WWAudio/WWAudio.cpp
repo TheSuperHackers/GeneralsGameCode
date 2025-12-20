@@ -44,7 +44,7 @@
 #include "SoundBuffer.h"
 #include "AudibleSound.h"
 #include "Sound3D.h"
-#include "RAWFILE.H"
+#include "RAWFILE.h"
 #include "SoundScene.h"
 #include "SoundPseudo3D.h"
 #include "ffactory.h"
@@ -109,7 +109,7 @@ WWAudioClass::WWAudioClass (void)
 	  m_PlaybackRate (44100),
 	  m_PlaybackBits (16),
 	  m_PlaybackStereo (true),
-	  m_ReverbFilter (INVALID_MILES_HANDLE),
+	  m_ReverbFilter ((HPROVIDER)INVALID_MILES_HANDLE),
 	  m_UpdateTimer (-1),
 	  m_Driver3DPseudo (NULL),
 	  m_MusicVolume (DEF_MUSIC_VOL),
@@ -372,7 +372,7 @@ WWAudioClass::Get_Sound_Buffer (const char *filename, bool is_3d)
 			buffer = Create_Sound_Buffer (*file, filename, is_3d);
 		} else {
 			static int count = 0;
-			if ( ++count < 10 ) {
+			if ( count++ < 10 ) {
 				WWDEBUG_SAY(( "Sound \"%s\" not found", filename ));
 			}
 		}
@@ -807,7 +807,7 @@ WWAudioClass::Create_3D_Sound
 				sound_obj->Set_Buffer (buffer);
 			} else {
 				static int count = 0;
-				if ( ++count < 10 ) {
+				if ( count++ < 10 ) {
 					WWDEBUG_SAY(( "Sound File not Found \"%s\"", filename ));
 				}
 			}
@@ -2104,7 +2104,7 @@ WWAudioClass::Initialize (const char *registry_subkey_name)
 		HPROENUM next = HPROENUM_FIRST;
 		char *name = NULL;
 		if (::AIL_enumerate_filters (&next, &m_ReverbFilter, &name) == 0) {
-			m_ReverbFilter = INVALID_MILES_HANDLE;
+			m_ReverbFilter = (HPROVIDER)INVALID_MILES_HANDLE;
 		}
 	}
 
@@ -2143,7 +2143,7 @@ WWAudioClass::Initialize
 		HPROENUM next = HPROENUM_FIRST;
 		char *name = NULL;
 		if (::AIL_enumerate_filters (&next, &m_ReverbFilter, &name) == 0) {
-			m_ReverbFilter = INVALID_MILES_HANDLE;
+			m_ReverbFilter = (HPROVIDER)INVALID_MILES_HANDLE;
 		}
 	}
 
@@ -2740,7 +2740,7 @@ WWAudioClass::Save_To_Registry
 //
 ////////////////////////////////////////////////////////////////////////////////////////////
 U32 AILCALLBACK
-WWAudioClass::File_Open_Callback (char const *filename, U32 *file_handle)
+WWAudioClass::File_Open_Callback (char const *filename, void **file_handle)
 {
 	U32 retval = false;
 
@@ -2751,7 +2751,7 @@ WWAudioClass::File_Open_Callback (char const *filename, U32 *file_handle)
 		//
 		FileClass *file = Get_Instance ()->Get_File (filename);
 		if (file != NULL && file->Open ()) {
-			(*file_handle) = (U32)file;
+			(*file_handle) = (void *)file;
 			retval = true;
 		}
 	}
@@ -2766,7 +2766,7 @@ WWAudioClass::File_Open_Callback (char const *filename, U32 *file_handle)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////
 void AILCALLBACK
-WWAudioClass::File_Close_Callback (U32 file_handle)
+WWAudioClass::File_Close_Callback (void *file_handle)
 {
 	if (Get_Instance () != NULL) {
 
@@ -2789,7 +2789,7 @@ WWAudioClass::File_Close_Callback (U32 file_handle)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////
 S32 AILCALLBACK
-WWAudioClass::File_Seek_Callback (U32 file_handle, S32 offset, U32 type)
+WWAudioClass::File_Seek_Callback (void *file_handle, S32 offset, U32 type)
 {
 	S32 retval = 0;
 
@@ -2834,7 +2834,7 @@ WWAudioClass::File_Seek_Callback (U32 file_handle, S32 offset, U32 type)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////
 U32 AILCALLBACK
-WWAudioClass::File_Read_Callback (U32 file_handle, void *buffer, U32 bytes)
+WWAudioClass::File_Read_Callback (void *file_handle, void *buffer, U32 bytes)
 {
 	U32 retval = 0;
 

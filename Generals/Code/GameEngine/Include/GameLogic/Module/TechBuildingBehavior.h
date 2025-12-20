@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __TECH_BUILDING_BEHAVIOR_H_
-#define __TECH_BUILDING_BEHAVIOR_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/DieModule.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -80,5 +77,3 @@ public:
 protected:
 
 };
-
-#endif  // end __TECH_BUILDING_BEHAVIOR_H_

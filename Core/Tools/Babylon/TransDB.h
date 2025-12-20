@@ -21,8 +21,7 @@
 //
 //
 
-#ifndef __TRANSDB_H
-#define __TRANSDB_H
+#pragma once
 
 #include "olestring.h"
 #include "list.h"
@@ -424,7 +423,3 @@ class DupNode : public ListNode
 
 
 extern TransDB* FirstTransDB ( void );
-
-
-
-#endif // __TRANSDB_H

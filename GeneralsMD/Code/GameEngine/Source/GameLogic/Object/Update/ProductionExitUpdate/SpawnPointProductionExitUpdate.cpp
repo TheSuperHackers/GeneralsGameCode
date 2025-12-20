@@ -28,7 +28,7 @@
 //					This instance puts guys at named bones.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameClient/Drawable.h"
@@ -197,7 +197,7 @@ void SpawnPointProductionExitUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -227,7 +227,7 @@ void SpawnPointProductionExitUpdate::xfer( Xfer *xfer )
 	// spawn point occupants
 	xfer->xferUser( &m_spawnPointOccupier, sizeof( ObjectID ) * MAX_SPAWN_POINTS );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -238,4 +238,4 @@ void SpawnPointProductionExitUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

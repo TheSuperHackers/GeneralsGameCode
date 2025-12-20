@@ -22,11 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __W3DVOLUMETRICSHADOW_H_
-#define __W3DVOLUMETRICSHADOW_H_
 
 #include "matrix4.h"
 #include "W3DDevice/GameClient/W3DBufferManager.h"
@@ -85,7 +81,7 @@ protected:
 		W3DVolumetricShadow *m_shadowList;
 		W3DVolumetricShadowRenderTask *m_dynamicShadowVolumesToRender;
 		W3DShadowGeometryManager *m_W3DShadowGeometryManager;
-};  // end class W3DVolumetricShadowManager
+};
 
 extern W3DVolumetricShadowManager *TheW3DVolumetricShadowManager;
 
@@ -189,6 +185,4 @@ class W3DVolumetricShadow	: public Shadow
 
 		Int	  m_numIndicesPerMesh[MAX_SHADOW_CASTER_MESHES];	///<silhouette indices from each mesh.
 
-};  // end class W3DVolumetricShadow
-
-#endif	//__W3DVOLUMETRICSHADOW_H_
+};

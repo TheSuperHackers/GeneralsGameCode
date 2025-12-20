@@ -29,15 +29,12 @@
 
 #pragma once
 
-#ifndef __THINGSORT_H_
-#define __THINGSORT_H_
+#include "GameCommon.h"
 
 //-------------------------------------------------------------------------------------------------
 enum EditorSortingType CPP_11(: Int)
 {
-	ES_FIRST = 0,
-
-	ES_NONE = ES_FIRST,
+	ES_NONE,
 	ES_STRUCTURE,
 	ES_INFANTRY,
 	ES_VEHICLE,
@@ -52,11 +49,12 @@ enum EditorSortingType CPP_11(: Int)
 	ES_ROAD,						// road objects...should never actually be in the object panel.
 	ES_WAYPOINT,					// waypoint objects...should never actually be in the object panel.
 
-	ES_NUM_SORTING_TYPES      // keep this last
-
+	ES_NUM_SORTING_TYPES,
+	ES_FIRST = 0,
 };
+
 #ifdef DEFINE_EDITOR_SORTING_NAMES
-static const char *EditorSortingNames[] =
+static const char *const EditorSortingNames[] =
 {
 	"NONE",
 	"STRUCTURE",
@@ -75,7 +73,5 @@ static const char *EditorSortingNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(EditorSortingNames) == ES_NUM_SORTING_TYPES + 1, "Incorrect array size");
 #endif
-
-#endif // __THINGSORT_H_
-

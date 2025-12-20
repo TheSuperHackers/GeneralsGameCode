@@ -28,8 +28,6 @@
 // DO NOT DISTRIBUTE
 
 #pragma once
-#ifndef __BEZIERSEGMENT_H__
-#define __BEZIERSEGMENT_H__
 
 #include <d3dx8math.h>
 #include "Common/STLTypedefs.h"
@@ -69,5 +67,3 @@ class BezierSegment
 	public:	// He get's friendly access.
 		friend class BezFwdIterator;
 };
-
-#endif /* __BEZIERSEGMENT_H__ */

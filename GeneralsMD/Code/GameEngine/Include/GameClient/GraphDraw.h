@@ -47,8 +47,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-#ifndef __GRAPHDRAW_H__
-#define __GRAPHDRAW_H__
 
 #include "Common/PerfTimer.h"
 #include "Common/STLTypedefs.h"
@@ -85,6 +83,3 @@ extern GraphDraw *TheGraphDraw;
 
 
 #endif /* PERF_TIMERS */
-
-#endif /* __GRAPHDRAW_H__ */
-

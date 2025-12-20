@@ -266,10 +266,7 @@ UString::UString(const UString& s)
 
 UString::~UString()
 	{
-	if (mData != NULL)
-		{
-		delete mData;
-		}
+	delete mData;
 	}
 
 
@@ -1323,11 +1320,7 @@ bool UString::AllocString(UInt size)
 
 	data[0] = 0;
 
-	if (mData != NULL)
-		{
-		delete mData;
-		}
-
+	delete mData;
 	mData = data;
 	mCapacity = size;
 

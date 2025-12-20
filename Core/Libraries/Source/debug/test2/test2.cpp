@@ -51,7 +51,7 @@ public:
   virtual bool Execute(class Debug& dbg, const char *cmd, CommandMode cmdmode,
                        unsigned argn, const char * const * argv)
   {
-    if (strcmp(cmd,"box"))
+    if (strcmp(cmd,"box") != 0)
       return false;
 
     MessageBox(NULL,"Hello world!","Command",MB_OK);

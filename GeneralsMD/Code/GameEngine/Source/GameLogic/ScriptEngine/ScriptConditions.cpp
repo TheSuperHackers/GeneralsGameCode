@@ -27,7 +27,7 @@
 // Author: John Ahlquist, Nov. 2001
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "Common/MapObject.h"
@@ -37,7 +37,6 @@
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"
 #include "Common/Team.h"
-#include "Common/Player.h"
 #include "Common/ObjectStatusTypes.h"
 
 #include "GameClient/ControlBar.h"
@@ -74,8 +73,7 @@ public:
 
 	~ObjectTypesTemp()
 	{
-		if (m_types)
-			deleteInstance(m_types);
+		deleteInstance(m_types);
 	}
 };
 
@@ -114,8 +112,7 @@ public:
 //-------------------------------------------------------------------------------------------------
 TransportStatus::~TransportStatus()
 {
-	if (m_nextStatus)
-		deleteInstance(m_nextStatus);
+	deleteInstance(m_nextStatus);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -126,14 +123,14 @@ static TransportStatus *s_transportStatuses;
 ScriptConditions::ScriptConditions()
 {
 
-}  // end ScriptConditions
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ScriptConditions::~ScriptConditions()
 {
 	reset(); // just in case.
-}  // end ~ScriptConditions
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Init */
@@ -143,7 +140,7 @@ void ScriptConditions::init( void )
 
 	reset();
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
@@ -154,7 +151,7 @@ void ScriptConditions::reset( void )
 	deleteInstance(s_transportStatuses);
 	s_transportStatuses = NULL;
 	// Empty for now.  jba.
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update */
@@ -163,7 +160,7 @@ void ScriptConditions::update( void )
 {
 
 	// Empty for now. jba
-}  // end update
+}
 
 
 //-------------------------------------------------------------------------------------------------

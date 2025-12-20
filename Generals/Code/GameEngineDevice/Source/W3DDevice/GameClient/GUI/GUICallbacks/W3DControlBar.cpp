@@ -26,6 +26,7 @@
 // Author: Colin Day
 // Desc: Control bar callbacks
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/Radar.h"
 #include "Common/Player.h"
@@ -53,15 +54,13 @@ void W3DCameoMovieDraw( GameWindow *window, WinInstanceData *instData )
 
 		TheDisplay->drawVideoBuffer( video, pos.x, pos.y, pos.x + size.x, pos.y + size.y );
 	}
-}  // end W3DLeftHUDDraw
+}
 
 
 //-------------------------------------------------------------------------------------------------
 void W3DLeftHUDDraw( GameWindow *window, WinInstanceData *instData )
 {
 	// draw the default stuff
-//
-	Player *player = ThePlayerList->getLocalPlayer();
 	// draw video buffer
 	VideoBuffer *video = TheInGameUI->videoBuffer();
 	if ( video )
@@ -72,7 +71,7 @@ void W3DLeftHUDDraw( GameWindow *window, WinInstanceData *instData )
 
 		TheDisplay->drawVideoBuffer( video, pos.x, pos.y, pos.x + size.x, pos.y + size.y );
 	}
-	else if( TheRadar->isRadarForced() || ( TheRadar->isRadarHidden() == false && player->hasRadar() ) )
+	else if( rts::localPlayerHasRadar() )
 	{
 		ICoord2D pos, size;
 		//W3DGameWinDefaultDraw( window, instData );
@@ -83,10 +82,8 @@ void W3DLeftHUDDraw( GameWindow *window, WinInstanceData *instData )
 		// draw the radar on the screen now
 		TheRadar->draw( pos.x + 1, pos.y + 1, size.x - 2, size.y - 2 );
 
-	}  // end else if
-
-
-}  // end W3DLeftHUDDraw
+	}
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -97,7 +94,7 @@ void W3DRightHUDDraw( GameWindow *window, WinInstanceData *instData )
 	if( BitIsSet(window->winGetStatus(), WIN_STATUS_IMAGE ))
 		W3DGameWinDefaultDraw( window, instData );
 
-}  // end W3DRightHUDDraw
+}
 
 Real logN(Real value, Real logBase)
 {
@@ -125,15 +122,7 @@ void W3DPowerDraw( GameWindow *window, WinInstanceData *instData )
 	//const Image *beginBar = NULL;
 	const Image *centerBar = NULL;
 	static const Image *slider = TheMappedImageCollection->findImageByName("PowerBarSlider");
-	Player *player = NULL;
-	if(TheControlBar->isObserverControlBarOn())
-	{
-		player = TheControlBar->getObserverLookAtPlayer();
-	}
-	else
-		player = ThePlayerList->getLocalPlayer();
-
-
+	Player* player = TheControlBar->getCurrentlyViewedPlayer();
 
 	if(!player || !TheGlobalData)
 		return;
@@ -222,7 +211,7 @@ void W3DPowerDraw( GameWindow *window, WinInstanceData *instData )
 																			end.x, end.y );
 			start.x += centerBar->getImageWidth();
 
-		}  // end for i
+		}
 
 		// we will draw the image but clip the parts we don't want to show
 		IRegion2D reg;
@@ -292,15 +281,7 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 	const Image *beginBar = NULL;
 	const Image *centerBar = NULL;
 	static const Image *slider = TheMappedImageCollection->findImageByName("PowerBarSlider");
-	Player *player = NULL;
-	if(TheControlBar->isObserverControlBarOn())
-	{
-		player = TheControlBar->getObserverLookAtPlayer();
-	}
-	else
-		player = ThePlayerList->getLocalPlayer();
-
-
+	Player* player = TheControlBar->getCurrentlyViewedPlayer();
 
 	if(!player || !TheGlobalData)
 		return;
@@ -405,7 +386,7 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 																			end.x, end.y );
 			start.x += centerBar->getImageWidth();
 
-		}  // end for i
+		}
 
 		// we will draw the image but clip the parts we don't want to show
 		IRegion2D reg;
@@ -486,13 +467,8 @@ void W3DCommandBarGridDraw( GameWindow *window, WinInstanceData *instData )
 
 void W3DCommandBarGenExpDraw( GameWindow *window, WinInstanceData *instData )
 {
-	Player* player = NULL;
-
 	// TheSuperHackers @bugfix Stubbjax 08/08/2025 Show the experience bar for observers
-	if (TheControlBar->isObserverControlBarOn())
-		player = TheControlBar->getObserverLookAtPlayer();
-	else
-		player = ThePlayerList->getLocalPlayer();
+	Player* player = TheControlBar->getCurrentlyViewedPlayer();
 
 	if (!player)
 		return;
@@ -586,7 +562,7 @@ void W3DCommandBarGenExpDraw( GameWindow *window, WinInstanceData *instData )
 																			end.x, end.y );
 			start.y += centerBar->getImageHeight();
 
-		}  // end for i
+		}
 
 		// we will draw the image but clip the parts we don't want to show
 		IRegion2D reg;
@@ -648,13 +624,13 @@ void W3DCommandBarBackgroundDraw( GameWindow *window, WinInstanceData *instData 
 	ControlBarSchemeManager *man = TheControlBar->getControlBarSchemeManager();
 	if(!man)
 		return;
-	static NameKeyType winNamekey	= TheNameKeyGenerator->nameToKey( AsciiString( "ControlBar.wnd:BackgroundMarker" ) );
+	static NameKeyType winNamekey	= TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" );
 	GameWindow *win =  TheWindowManager->winGetWindowFromId(NULL,winNamekey);
 	static ICoord2D basePos;
 	if(!win)
 	{
 		return;
-		//win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( AsciiString( "ControlBar.wnd:BackgroundMarker" ) ));
+		//win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" ));
 	}
 	TheControlBar->getBackgroundMarkerPos(&basePos.x, &basePos.y);
 	ICoord2D pos, offset;
@@ -673,13 +649,13 @@ void W3DCommandBarForegroundDraw( GameWindow *window, WinInstanceData *instData 
 	if(!man)
 		return;
 
-	static NameKeyType winNamekey	= TheNameKeyGenerator->nameToKey( AsciiString( "ControlBar.wnd:BackgroundMarker" ) );
+	static NameKeyType winNamekey	= TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" );
 	GameWindow *win = TheWindowManager->winGetWindowFromId(NULL,winNamekey);
 	static ICoord2D basePos;
 	if(!win)
 	{
 		return;
-		//win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( AsciiString( "ControlBar.wnd:BackgroundMarker" ) ));
+		//win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" ));
 	}
 	TheControlBar->getForegroundMarkerPos(&basePos.x, &basePos.y);
 	ICoord2D pos, offset;
@@ -697,7 +673,7 @@ void W3DNoDraw( GameWindow *window, WinInstanceData *instData )
 	// draw the default stuff
 //	W3DGameWinDefaultDraw( window, instData );
 
-}  // end W3DRightHUDDraw
+}
 
 void drawSkinnyBorder( Int x, Int y, Int width, Int height);
 void W3DDrawMapPreview( GameWindow *window, WinInstanceData *instData)
@@ -741,7 +717,7 @@ void W3DDrawMapPreview( GameWindow *window, WinInstanceData *instData)
 		TheDisplay->drawLine(pixelX, ul.y, pixelX + width, ul.y, 1, lineColor);
 		TheDisplay->drawLine(pixelX, lr.y + 1, pixelX + width, lr.y + 1, 1, lineColor);
 
-	}  // end if
+	}
 	else
 	{
 
@@ -751,7 +727,7 @@ void W3DDrawMapPreview( GameWindow *window, WinInstanceData *instData)
 		TheDisplay->drawLine(ul.x, pixelY, ul.x, pixelY + height, 1, lineColor);
 		TheDisplay->drawLine(lr.x + 1, pixelY, lr.x + 1, pixelY + height, 1, lineColor);
 
-	}  // end else
+	}
 
 	if(!BitIsSet(window->winGetStatus(), WIN_STATUS_IMAGE) || !window->winGetEnabledImage(0))
 		TheDisplay->drawFillRect(ul.x, ul.y, lr.x -ul.x, lr.y-ul.y, lineColor);
@@ -999,7 +975,7 @@ void W3DCommandBarHelpPopupDraw( GameWindow *window, WinInstanceData *instData )
 																			end.x, end.y );
 			start.y += centerBar->getImageHeight();
 
-		}  // end for i
+		}
 
 		// we will draw the image but clip the parts we don't want to show
 		IRegion2D reg;

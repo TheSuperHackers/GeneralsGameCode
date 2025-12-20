@@ -16,11 +16,11 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// JSUPPORT.CPP
+// JSUPPORT.cpp
 // DBCS Support Codes
 
 #include <windows.h>
-#include "JSUPPORT.H"
+#include "JSUPPORT.h"
 
 // ‘O’u‹Ö‘¥•¶Žš
 // Can't set these characters on top of line

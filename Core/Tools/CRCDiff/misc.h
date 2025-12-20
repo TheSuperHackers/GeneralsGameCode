@@ -23,12 +23,8 @@
 // Description: misc utils
 // ---------------------------------------------------------------------------
 
-#ifndef __MISC_H__
-#define __MISC_H__
+#pragma once
 
 #include <string>
 
 std::string intToString(int val);
-
-#endif // __MISC_H__
-

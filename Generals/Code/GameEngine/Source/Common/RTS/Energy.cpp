@@ -42,7 +42,7 @@
 //
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Energy.h"
 #include "Common/Player.h"
@@ -130,7 +130,7 @@ void Energy::objectEnteringInfluence( Object *obj )
 										 ("Energy - Negative Energy numbers, Produce=%d Consume=%d\n",
 										 m_energyProduction, m_energyConsumption) );
 
-}  // end objectEnteringInfluence
+}
 
 //-------------------------------------------------------------------------------------------------
 /** 'obj' will now no longer add/subtrack from this energy construct */
@@ -188,6 +188,12 @@ void Energy::removePowerBonus( Object *obj )
 	if( obj == NULL )
 		return;
 
+	// TheSuperHackers @bugfix Caball009 14/11/2025 Don't remove power bonus for disabled power plants.
+#if !RETAIL_COMPATIBLE_CRC
+	if ( obj->isDisabled() )
+		return;
+#endif
+
 	addProduction( -obj->getTemplate()->getEnergyBonus() );
 
 	// sanity
@@ -195,7 +201,7 @@ void Energy::removePowerBonus( Object *obj )
 										 ("Energy - Negative Energy numbers, Produce=%d Consume=%d\n",
 										 m_energyProduction, m_energyConsumption) );
 
-}  // end removePowerBonus
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -230,7 +236,7 @@ void Energy::addConsumption(Int amt)
 void Energy::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -263,7 +269,7 @@ void Energy::xfer( Xfer *xfer )
 	xfer->xferInt( &owningPlayerIndex );
 	m_owner = ThePlayerList->getNthPlayer( owningPlayerIndex );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -271,4 +277,4 @@ void Energy::xfer( Xfer *xfer )
 void Energy::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

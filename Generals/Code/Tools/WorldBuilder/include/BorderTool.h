@@ -17,6 +17,7 @@
 */
 
 #pragma once
+
 #include "Tool.h"
 
 class BorderTool : public Tool

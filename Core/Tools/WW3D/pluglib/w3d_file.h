@@ -35,14 +35,12 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef W3D_FILE_H
-#define W3D_FILE_H
+#pragma once
 
 #include "always.h"
 
 #ifndef BITTYPE_H
-#include "BITTYPE.H"
+#include "BITTYPE.h"
 #endif
 
 
@@ -883,7 +881,3 @@ struct W3dTileMapPartitionStruct
 	W3dVectorStruct	Min;							// min corner of the bounding box
 	W3dVectorStruct	Max;							// max corner of the bounding box
 };
-
-
-
-#endif

@@ -515,9 +515,9 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	if (!TheGlobalData->m_showClientPhysics)
 		return;
 
- 	Bool frozen = TheTacticalView->isTimeFrozen() && !TheTacticalView->isCameraMovementFinished();
- 	frozen = frozen || TheScriptEngine->isTimeFrozenDebug() || TheScriptEngine->isTimeFrozenScript();
-	if (frozen)
+	// TheSuperHackers @tweak Update the draw on every WW Sync only.
+	// All calculations are originally catered to a 30 fps logic step.
+	if (WW3D::Get_Sync_Frame_Time() == 0)
 		return;
 
 	const Real ACCEL_THRESHOLD = 0.01f;
@@ -540,21 +540,17 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	const Coord3D *vel = physics->getVelocity();
 	Real speed = physics->getVelocityMagnitude();
 
-
 	const TWheelInfo *wheelInfo = getDrawable()->getWheelInfo();	// note, can return null!
 	if (wheelInfo && (m_frontLeftTireBone || m_rearLeftTireBone))
 	{
-		static Real rotation = 0;
 		const Real rotationFactor = getW3DTankTruckDrawModuleData()->m_rotationSpeedMultiplier;
+		const Real powerslideRotationAddition = getW3DTankTruckDrawModuleData()->m_powerslideRotationAddition * m_isPowersliding;
+
 		m_frontWheelRotation += rotationFactor*speed;
-		if (m_isPowersliding)
-		{
-			m_rearWheelRotation += rotationFactor*(speed+getW3DTankTruckDrawModuleData()->m_powerslideRotationAddition);
-		}
-		else
-		{
-			m_rearWheelRotation += rotationFactor*speed;
-		}
+		m_rearWheelRotation += rotationFactor*(speed+powerslideRotationAddition);
+		m_frontWheelRotation = WWMath::Normalize_Angle(m_frontWheelRotation);
+		m_rearWheelRotation = WWMath::Normalize_Angle(m_rearWheelRotation);
+
 		Matrix3D wheelXfrm(1);
 		if (m_frontLeftTireBone)
 		{
@@ -755,7 +751,7 @@ void W3DTankTruckDraw::crc( Xfer *xfer )
 	// extend base class
 	W3DModelDraw::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -775,7 +771,7 @@ void W3DTankTruckDraw::xfer( Xfer *xfer )
 
 	// John A and Mark W say there is no data to save here
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -789,4 +785,4 @@ void W3DTankTruckDraw::loadPostProcess( void )
 	// toss any existing ones (no need to re-create; we'll do that on demand)
 	tossEmitters();
 
-}  // end loadPostProcess
+}

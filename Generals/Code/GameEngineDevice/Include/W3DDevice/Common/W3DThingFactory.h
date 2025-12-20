@@ -31,9 +31,6 @@
 
 #pragma once
 
-#ifndef __W3DTHINGFACTORY_H_
-#define __W3DTHINGFACTORY_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/ThingFactory.h"
 
@@ -46,7 +43,4 @@ public:
 
 	W3DThingFactory( void );
 	virtual ~W3DThingFactory( void );
-};  // end W3DThingFactory
-
-#endif // __W3DTHINGFACTORY_H_
-
+};

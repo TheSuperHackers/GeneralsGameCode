@@ -35,9 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef LOGDLG_H
-#define LOGDLG_H
+#pragma once
 
 #include <windows.h>
 
@@ -81,7 +79,5 @@ volatile int status;
 
 };
 
-
-#endif
 
 // EOF - logdlg.h

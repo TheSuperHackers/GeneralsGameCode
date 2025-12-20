@@ -175,12 +175,8 @@ MaterialRemapperClass::~MaterialRemapperClass(void)
 	SrcMatInfo->Release_Ref();
 	DestMatInfo->Release_Ref();
 
-	if (TextureRemaps) {
-		delete[] TextureRemaps;
-	}
-	if (VertexMaterialRemaps) {
-		delete[] VertexMaterialRemaps;
-	}
+	delete[] TextureRemaps;
+	delete[] VertexMaterialRemaps;
 }
 
 TextureClass * MaterialRemapperClass::Remap_Texture(TextureClass * src)

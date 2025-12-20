@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _LOADSCREEN_H_
-#define _LOADSCREEN_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -327,5 +324,3 @@ private:
 	GameWindow *m_timeoutText;
 	Int m_oldTimeout;												///< old val, so we can call processTimeout() every frame and not touch the GUI
 };
-
-#endif //_LOADSCREEN_H_

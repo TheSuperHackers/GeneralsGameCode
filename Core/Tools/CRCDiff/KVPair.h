@@ -23,8 +23,7 @@
 // Description: Key/Value Pair class
 // ---------------------------------------------------------------------------
 
-#ifndef __KVPAIR_H__
-#define __KVPAIR_H__
+#pragma once
 
 #include <map>
 #include <string>
@@ -48,6 +47,3 @@ public:
 protected:
 	KeyValueMap m_map;
 };
-
-#endif // __KVPAIR_H__
-

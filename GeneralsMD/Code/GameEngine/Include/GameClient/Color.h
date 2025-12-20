@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __COLOR_H_
-#define __COLOR_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -88,6 +85,3 @@ extern void GameGetColorComponents( Color color,
 extern void GameGetColorComponentsReal( Color color, Real *red, Real *green, Real *blue, Real *alpha );
 
 extern Color GameDarkenColor( Color color, Int percent = 10 );
-
-#endif // __COLOR_H_
-

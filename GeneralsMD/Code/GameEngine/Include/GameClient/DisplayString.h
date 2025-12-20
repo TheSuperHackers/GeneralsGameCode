@@ -46,9 +46,6 @@
 
 #pragma once
 
-#ifndef __DISPLAYSTRING_H_
-#define __DISPLAYSTRING_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -115,7 +112,7 @@ protected:
 	DisplayString *m_next;  ///< for the display string factory list ONLY
 	DisplayString *m_prev;	///< for the display string factory list ONLY
 
-};  // end DisplayString
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 // INLINING ///////////////////////////////////////////////////////////////////
@@ -129,6 +126,3 @@ inline void DisplayString::notifyTextChanged( void ) {}
 inline DisplayString *DisplayString::next( void ) { return m_next; }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __DISPLAYSTRING_H_
-

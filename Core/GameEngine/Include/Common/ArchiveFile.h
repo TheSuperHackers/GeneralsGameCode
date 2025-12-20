@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __ARCHIVEFILE_H
-#define __ARCHIVEFILE_H
-
 #include "Lib/BaseType.h"
 #include "Common/AsciiString.h"
 #include "Common/ArchiveFileSystem.h"
@@ -73,5 +70,3 @@ protected:
 	File *m_file; ///< file pointer to the archive file on disk.  Kept open so we don't have to continuously open and close the file all the time.
 	DetailedArchivedDirectoryInfo m_rootDirectory;
 };
-
-#endif // __ARCHIVEFILE_H

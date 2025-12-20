@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Library/CRCPIPE.CPP                               $*
+ *                     $Archive:: /Commando/Library/CRCPIPE.cpp                               $*
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *

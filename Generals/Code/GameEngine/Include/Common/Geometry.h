@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GEOMETRY_H_
-#define __GEOMETRY_H_
-
 #include "Lib/BaseType.h"
 #include "Common/AsciiString.h"
 #include "Common/Snapshot.h"
@@ -48,22 +45,23 @@ class INI;
 //-------------------------------------------------------------------------------------------------
 enum GeometryType CPP_11(: Int)
 {
-	GEOMETRY_SPHERE = 0,	///< partition/collision testing as sphere. (majorRadius = radius)
+	GEOMETRY_SPHERE,			///< partition/collision testing as sphere. (majorRadius = radius)
 	GEOMETRY_CYLINDER,		///< partition/collision testing as cylinder. (majorRadius = radius, height = height)
 	GEOMETRY_BOX,					///< partition/collision testing as rectangular box (majorRadius = half len in forward dir; minorRadius = half len in side dir; height = height)
 
-	GEOMETRY_NUM_TYPES,  // keep this last
-	GEOMETRY_FIRST = GEOMETRY_SPHERE
+	GEOMETRY_NUM_TYPES,
+	GEOMETRY_FIRST = 0
 };
 
 #ifdef DEFINE_GEOMETRY_NAMES
-static const char *GeometryNames[] =
+static const char *const GeometryNames[] =
 {
 	"SPHERE",
 	"CYLINDER",
 	"BOX",
 	NULL
 };
+static_assert(ARRAY_SIZE(GeometryNames) == GEOMETRY_NUM_TYPES + 1, "Incorrect array size");
 #endif  // end DEFINE_GEOMETRY_NAMES
 
 //-------------------------------------------------------------------------------------------------
@@ -113,42 +111,38 @@ public:
 
 	GeometryInfo(GeometryType type, Bool isSmall, Real height, Real majorRadius, Real minorRadius)
 	{
-		// Added by Sadullah Nader
-		// Initializations missing and needed
 		m_boundingCircleRadius = 0.0f;
 		m_boundingSphereRadius = 0.0f;
-		//
-
 		set(type, isSmall, height, majorRadius, minorRadius);
 	}
 
 	void set(GeometryType type, Bool isSmall, Real height, Real majorRadius, Real minorRadius);
 
 	// bleah, icky but needed for legacy code
-	inline void setMajorRadius(Real majorRadius)
+	void setMajorRadius(Real majorRadius)
 	{
 		m_majorRadius = majorRadius;
 		calcBoundingStuff();
 	}
 
 	// bleah, icky but needed for legacy code
-	inline void setMinorRadius(Real minorRadius)
+	void setMinorRadius(Real minorRadius)
 	{
 		m_minorRadius = minorRadius;
 		calcBoundingStuff();
 	}
 
-	inline GeometryType getGeomType() const { return m_type; }
-	inline Bool getIsSmall() const { return m_isSmall; }
-	inline Real getMajorRadius() const { return m_majorRadius; }	// x-axis
-	inline Real getMinorRadius() const { return m_minorRadius; }	// y-axis
+	GeometryType getGeomType() const { return m_type; }
+	Bool getIsSmall() const { return m_isSmall; }
+	Real getMajorRadius() const { return m_majorRadius; }	// x-axis
+	Real getMinorRadius() const { return m_minorRadius; }	// y-axis
 
 	// this has been removed and should never need to be called...
 	// you should generally call getMaxHeightAbovePosition() instead. (srj)
 	//inline Real getGeomHeight() const { return m_height; }				// z-axis
 
-	inline Real getBoundingCircleRadius() const { return m_boundingCircleRadius; }
-	inline Real getBoundingSphereRadius() const { return m_boundingSphereRadius; }
+	Real getBoundingCircleRadius() const { return m_boundingCircleRadius; }
+	Real getBoundingSphereRadius() const { return m_boundingSphereRadius; }
 
 	Bool isIntersectedByLineSegment(const Coord3D& loc, const Coord3D& from, const Coord3D& to) const;
 
@@ -194,6 +188,3 @@ public:
 #endif
 
 };
-
-#endif
-

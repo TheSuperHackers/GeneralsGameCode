@@ -41,7 +41,7 @@ void DamageModule::crc( Xfer *xfer )
 	// extend base class
 	BehaviorModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -57,7 +57,7 @@ void DamageModule::xfer( Xfer *xfer )
 	// call base class
 	BehaviorModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -68,4 +68,4 @@ void DamageModule::loadPostProcess( void )
 	// call base class
 	BehaviorModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

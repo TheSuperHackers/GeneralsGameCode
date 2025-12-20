@@ -26,7 +26,7 @@
 // Needs to check legality of evacuate, and may move to a place that is better to evacuate at
 // Author: Graham Smallwood, July 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/RandomValue.h"
 #include "GameLogic/Module/TransportAIUpdate.h"
@@ -271,7 +271,7 @@ void TransportAIUpdate::crc( Xfer *xfer )
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -287,7 +287,7 @@ void TransportAIUpdate::xfer( Xfer *xfer )
  // extend base class
 	AIUpdateInterface::xfer(xfer);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -296,4 +296,4 @@ void TransportAIUpdate::loadPostProcess( void )
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}

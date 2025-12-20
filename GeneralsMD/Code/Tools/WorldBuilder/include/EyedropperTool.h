@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef EYEDROPPERTOOL_H
-#define EYEDROPPERTOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 /*************************************************************************/
@@ -43,6 +40,3 @@ public:
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
 	virtual void activate(); ///< Become the current tool.
 };
-
-
-#endif //TOOL_H

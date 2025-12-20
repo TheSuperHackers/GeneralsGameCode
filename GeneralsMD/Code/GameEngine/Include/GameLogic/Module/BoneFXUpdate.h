@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BONEFXUPDATE_H_
-#define __BONEFXUPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -277,5 +274,3 @@ protected:
 	Bool m_bonesResolved[BODYDAMAGETYPE_COUNT];
 	Bool m_active;
 };
-
-#endif  // end __BONEFXUPDATE_H_

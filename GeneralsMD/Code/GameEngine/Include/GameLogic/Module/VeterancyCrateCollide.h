@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef VETERANCY_CRATE_COLLIDE_H_
-#define VETERANCY_CRATE_COLLIDE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
 #include "GameLogic/Module/CrateCollide.h"
@@ -93,5 +90,3 @@ protected:
 	Int getLevelsToGain() const;
 
 };
-
-#endif

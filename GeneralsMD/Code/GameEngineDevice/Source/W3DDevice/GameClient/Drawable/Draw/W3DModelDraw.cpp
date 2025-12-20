@@ -103,15 +103,9 @@ LogClass::LogClass(const char *fname)
 {
 	char buffer[ _MAX_PATH ];
 	GetModuleFileName( NULL, buffer, sizeof( buffer ) );
-	char *pEnd = buffer + strlen( buffer );
-	while( pEnd != buffer )
+	if (char *pEnd = strrchr(buffer, '\\'))
 	{
-		if( *pEnd == '\\' )
-		{
-			*pEnd = 0;
-			break;
-		}
-		pEnd--;
+		*pEnd = 0;
 	}
 	// TheSuperHackers @fix Caball009 03/06/2025 Don't use AsciiString here anymore because its memory allocator may not have been initialized yet.
 	const std::string fullPath = std::string(buffer) + "\\" + fname;
@@ -231,9 +225,11 @@ enum ACBits CPP_11(: Int)
 	MAINTAIN_FRAME_ACROSS_STATES2,
 	MAINTAIN_FRAME_ACROSS_STATES3,
 	MAINTAIN_FRAME_ACROSS_STATES4,
+
+	AC_BITS_COUNT
 };
 
-static const char *ACBitsNames[] =
+static const char *const ACBitsNames[] =
 {
 	"RANDOMSTART",
 	"START_FRAME_FIRST",
@@ -248,6 +244,7 @@ static const char *ACBitsNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(ACBitsNames) == AC_BITS_COUNT + 1, "Incorrect array size");
 
 static const Int ALL_MAINTAIN_FRAME_FLAGS =
 	(1<<MAINTAIN_FRAME_ACROSS_STATES) |
@@ -285,9 +282,15 @@ static const char *TerrainDecalTextureName[TERRAIN_DECAL_MAX]=
 	"EXHordeB",//enthusiastic vehicle
 	"EXHordeB_UP", //enthusiastic vehicle with nationalism
 	"EXJunkCrate",//Marks a crate as special
+#if RTS_GENERALS && RETAIL_COMPATIBLE_XFER_SAVE
+	"", //dummy entry for TERRAIN_DECAL_NONE
 	"EXHordeC_UP", //enthusiastic with fanaticism
 	"EXChemSuit", //Marks a unit as having chemical suit on
-	"",	//dummy entry for TERRAIN_DECAL_NONE
+#else
+	"EXHordeC_UP", //enthusiastic with fanaticism
+	"EXChemSuit", //Marks a unit as having chemical suit on
+	"", //dummy entry for TERRAIN_DECAL_NONE
+#endif
 	"" //dummy entry for TERRAIN_DECAL_SHADOW_TEXTURE
 };
 
@@ -648,7 +651,7 @@ void ModelConditionInfo::validateCachedBones(RenderObjClass* robj, Real scale) c
 	// if we have any animations in this state, always choose the first, since the animations
 	// vary on a per-client basis.
 	HAnimClass* animToUse;
-	if (m_animations.size() > 0)
+	if (!m_animations.empty())
 	{
 		animToUse = m_animations.front().getAnimHandle();	// return an AddRef'ed handle
 	}
@@ -848,7 +851,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 					CRCDEBUG_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) found nothing", m_modelName.str()));
 					BONEPOS_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) found nothing", m_modelName.str()));
 				}
-			}	// if empty
+			}
 
 			DEBUG_ASSERTCRASH(!(m_modelName.isNotEmpty() && m_weaponBarrelInfoVec[wslot].empty()), ("*** ASSET ERROR: No fx bone named '%s' found in model %s!",fxBoneName.str(),m_modelName.str()));
 		}
@@ -1529,8 +1532,10 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 
 		case PARSE_TRANSITION:
 		{
-		  AsciiString firstNm = ini->getNextToken(); firstNm.toLower();
-		  AsciiString secondNm = ini->getNextToken(); secondNm.toLower();
+			AsciiString firstNm = ini->getNextToken();
+			AsciiString secondNm = ini->getNextToken();
+			firstNm.toLower();
+			secondNm.toLower();
 			NameKeyType firstKey = NAMEKEY(firstNm);
 			NameKeyType secondKey = NAMEKEY(secondNm);
 
@@ -1662,7 +1667,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 				throw INI_INVALID_DATA;
 			}
 
-			DEBUG_ASSERTCRASH(info.m_conditionsYesVec.size() == 0, ("*** ASSET ERROR: nonempty m_conditionsYesVec.size(), see srj"));
+			DEBUG_ASSERTCRASH(info.m_conditionsYesVec.empty(), ("*** ASSET ERROR: nonempty m_conditionsYesVec.size(), see srj"));
 			info.m_conditionsYesVec.clear();
 			info.m_conditionsYesVec.push_back(conditionsYes);
 		}
@@ -1907,7 +1912,7 @@ void W3DModelDraw::allocateShadows(void)
 		&& (m_isFirstDrawModule || !(type == SHADOW_DECAL || type == SHADOW_ALPHA_DECAL || type == SHADOW_ADDITIVE_DECAL)))
 	{
 		Shadow::ShadowTypeInfo shadowInfo;
-		strcpy(shadowInfo.m_ShadowName, tmplate->getShadowTextureName().str());
+		strlcpy(shadowInfo.m_ShadowName, tmplate->getShadowTextureName().str(), ARRAY_SIZE(shadowInfo.m_ShadowName));
 		DEBUG_ASSERTCRASH(shadowInfo.m_ShadowName[0] != '\0', ("this should be validated in ThingTemplate now"));
 		shadowInfo.allowUpdates			= FALSE;		//shadow image will never update
 		shadowInfo.allowWorldAlign	= TRUE;	//shadow image will wrap around world objects
@@ -2526,7 +2531,7 @@ void W3DModelDraw::handleClientTurretPositioning()
 				}
 			}
 		}
-	} // next tslot
+	}
 }
 
 
@@ -2779,12 +2784,12 @@ Bool W3DModelDraw::updateBonesForClientParticleSystems()
         sys->setSkipParentXfrm(true);
 
 			}
-		}// next praticle system
+		}
 
 
 //  	m_renderObject->Set_Transform(originalTransform);
 
-	}// end if Drawable
+	}
 
 	return TRUE;
 
@@ -2818,9 +2823,9 @@ void W3DModelDraw::setTerrainDecal(TerrainDecalType type)
 	//decalInfo.m_type = SHADOW_ADDITIVE_DECAL;//temporary kluge to test graphics
 
 	if (type == TERRAIN_DECAL_SHADOW_TEXTURE)
-		strcpy(decalInfo.m_ShadowName,tmplate->getShadowTextureName().str());
+		strlcpy(decalInfo.m_ShadowName, tmplate->getShadowTextureName().str(), ARRAY_SIZE(decalInfo.m_ShadowName));
 	else
-		strcpy(decalInfo.m_ShadowName,TerrainDecalTextureName[type]);
+		strlcpy(decalInfo.m_ShadowName, TerrainDecalTextureName[type], ARRAY_SIZE(decalInfo.m_ShadowName));
 	decalInfo.m_sizeX = tmplate->getShadowSizeX();
 	decalInfo.m_sizeY = tmplate->getShadowSizeY();
 	decalInfo.m_offsetX = tmplate->getShadowOffsetX();
@@ -3138,7 +3143,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 			(m_isFirstDrawModule || !(type == SHADOW_DECAL || type == SHADOW_ALPHA_DECAL || type == SHADOW_ADDITIVE_DECAL)))
 		{
 			Shadow::ShadowTypeInfo shadowInfo;
-			strcpy(shadowInfo.m_ShadowName, tmplate->getShadowTextureName().str());
+			strlcpy(shadowInfo.m_ShadowName, tmplate->getShadowTextureName().str(), ARRAY_SIZE(shadowInfo.m_ShadowName));
 			DEBUG_ASSERTCRASH(shadowInfo.m_ShadowName[0] != '\0', ("this should be validated in ThingTemplate now"));
 			shadowInfo.allowUpdates			= FALSE;		//shadow image will never update
 			shadowInfo.allowWorldAlign	= TRUE;	//shadow image will wrap around world objects
@@ -3147,7 +3152,9 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 			shadowInfo.m_sizeY					= tmplate->getShadowSizeY();
 			shadowInfo.m_offsetX				= tmplate->getShadowOffsetX();
 			shadowInfo.m_offsetY				= tmplate->getShadowOffsetY();
-  			m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo, draw);
+
+			DEBUG_ASSERTCRASH(m_shadow == NULL, ("m_shadow is not NULL"));
+ 			m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo, draw);
 			if (m_shadow)
 			{	m_shadow->enableShadowInvisible(m_fullyObscuredByShroud);
 				m_shadow->enableShadowRender(m_shadowEnabled);
@@ -3207,8 +3214,6 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 
 			// tie in our drawable as the user data pointer in the render object
 			m_renderObject->Set_User_Data(draw->getDrawableInfo());
-
-			setTerrainDecal(draw->getTerrainDecalType());
 
 			//We created a new render object so we need to preserve the visibility state
 			//of the previous render object.
@@ -3277,7 +3282,7 @@ void W3DModelDraw::setSelectable(Bool selectable)
 			current &= ~PICK_TYPE_SELECTABLE;
 		}
 		m_renderObject->Set_Collision_Type(current);
-	}  // end if
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3524,7 +3529,7 @@ Int W3DModelDraw::getPristineBonePositionsForConditionState(
 	for (; i <= endIndex; ++i)
 	{
 		if (i == 0)
-			strcpy(buffer, boneNamePrefix);
+			strlcpy(buffer, boneNamePrefix, ARRAY_SIZE(buffer));
 		else
 			sprintf(buffer, "%s%02d", boneNamePrefix, i);
 
@@ -3681,7 +3686,7 @@ Int W3DModelDraw::getCurrentBonePositions(
 	for (; i <= endIndex; ++i)
 	{
 		if (i == 0)
-			strcpy(buffer, boneNamePrefix);
+			strlcpy(buffer, boneNamePrefix, ARRAY_SIZE(buffer));
 		else
 			sprintf(buffer, "%s%02d", boneNamePrefix, i);
 
@@ -3938,8 +3943,8 @@ void W3DModelDraw::setAnimationLoopDuration(UnsignedInt numFrames)
 */
 void W3DModelDraw::setAnimationCompletionTime(UnsignedInt numFrames)
 {
-	if (m_curState != NULL && m_curState->m_transitionSig != NO_TRANSITION && m_curState->m_animations.size() > 0 &&
-			m_nextState != NULL && m_nextState->m_transitionSig == NO_TRANSITION && m_nextState->m_animations.size() > 0)
+	if (m_curState != NULL && m_curState->m_transitionSig != NO_TRANSITION && !m_curState->m_animations.empty() &&
+			m_nextState != NULL && m_nextState->m_transitionSig == NO_TRANSITION && !m_nextState->m_animations.empty())
 	{
 		// we have a transition; split up the time suitably.
 		// note that this is just a guess, and assumes that the states
@@ -4158,7 +4163,7 @@ void W3DModelDraw::crc( Xfer *xfer )
 	// extend base class
 	DrawModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -4206,9 +4211,9 @@ void W3DModelDraw::xfer( Xfer *xfer )
 				weaponRecoilInfo.m_recoilRate = (*it).m_recoilRate;
 				xfer->xferReal( &weaponRecoilInfo.m_recoilRate );
 
-			}  // end for, it
+			}
 
-		}  // end if, save
+		}
 		else
 		{
 
@@ -4231,11 +4236,11 @@ void W3DModelDraw::xfer( Xfer *xfer )
 				// stuff it in the vector
 				m_weaponRecoilInfoVec[ i ].push_back( weaponRecoilInfo );
 
-			}  // end for, j
+			}
 
-		}  // end else, load
+		}
 
-	}  // end for, i
+	}
 
 	// sub object vector
 	UnsignedByte subObjectCount = m_subObjectVec.size();
@@ -4256,9 +4261,9 @@ void W3DModelDraw::xfer( Xfer *xfer )
 			hideShowSubObjInfo.hide = (*it).hide;
 			xfer->xferBool( &hideShowSubObjInfo.hide );
 
-		}  // end for, it
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -4278,9 +4283,9 @@ void W3DModelDraw::xfer( Xfer *xfer )
 			// stuff in vector
 			m_subObjectVec.push_back( hideShowSubObjInfo );
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
 	// animation
 	if( version >= 2 )
@@ -4322,9 +4327,9 @@ void W3DModelDraw::xfer( Xfer *xfer )
 					Real percent = frame / INT_TO_REAL( anim->Get_Num_Frames()-1 );
 					xfer->xferReal( &percent );
 
-				}  // end if, anim
+				}
 
-			}  // end if
+			}
 			else
 			{
 
@@ -4332,9 +4337,9 @@ void W3DModelDraw::xfer( Xfer *xfer )
 				Bool present = FALSE;
 				xfer->xferBool( &present );
 
-			}  // end else
+			}
 
-		}  // end if, save
+		}
 		else
 		{
 
@@ -4383,15 +4388,15 @@ void W3DModelDraw::xfer( Xfer *xfer )
 						// set animation data
 						hlod->Set_Animation( anim, frame, curMode );
 
-					}  // end if, anim
+					}
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 
-		}  // end else, load
+		}
 
-	}  // end if, version with animation info
+	}
 
 	// when loading, update the sub objects if we have any
 	if( xfer->getXferMode() == XFER_LOAD && m_subObjectVec.empty() == FALSE )
@@ -4411,7 +4416,7 @@ void W3DModelDraw::loadPostProcess( void )
 	// extend base class
 	DrawModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------

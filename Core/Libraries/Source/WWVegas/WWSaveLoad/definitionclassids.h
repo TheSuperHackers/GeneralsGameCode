@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __DEFINITION_CLASS_ID_H
-#define __DEFINITION_CLASS_ID_H
 
 #include "always.h"
 #include "bittype.h"
@@ -102,7 +96,3 @@ SuperClassID_From_ClassID (uint32 class_id)
 
 	return DEF_CLASSID_START + (num_ranges * DEF_CLASSID_RANGE);
 }
-
-
-#endif //__DEFINITION_CLASS_ID_H
-

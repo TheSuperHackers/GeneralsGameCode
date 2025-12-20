@@ -86,7 +86,7 @@ void W3DOverlordTankDraw::doDrawModule(const Matrix3D* transformMtx)
 				Drawable* riderDraw = (*it)->getDrawable();
 				riderDraw->setColorTintEnvelope(*getDrawable()->getColorTintEnvelope());
 				riderDraw->notifyDrawableDependencyCleared();
-				riderDraw->draw(NULL);
+				riderDraw->draw();
 			}
 		}
 		else if (me->getContain()->friend_getRider()
@@ -96,7 +96,7 @@ void W3DOverlordTankDraw::doDrawModule(const Matrix3D* transformMtx)
 			riderDraw->setColorTintEnvelope(*getDrawable()->getColorTintEnvelope());
 
 			riderDraw->notifyDrawableDependencyCleared();
-			riderDraw->draw(NULL);// What the hell?  This param isn't used for anything
+			riderDraw->draw();
 		}
 	}
 }
@@ -133,7 +133,7 @@ void W3DOverlordTankDraw::crc( Xfer *xfer )
 	// extend base class
 	W3DTankDraw::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -151,7 +151,7 @@ void W3DOverlordTankDraw::xfer( Xfer *xfer )
 	// extend base class
 	W3DTankDraw::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -162,4 +162,4 @@ void W3DOverlordTankDraw::loadPostProcess( void )
 	// extend base class
 	W3DTankDraw::loadPostProcess();
 
-}  // end loadPostProcess
+}

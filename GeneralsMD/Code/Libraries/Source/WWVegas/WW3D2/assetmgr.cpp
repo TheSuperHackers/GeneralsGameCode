@@ -110,11 +110,9 @@
 #include "dx8renderer.h"
 #include "metalmap.h"
 #include "w3dexclusionlist.h"
-#include <INI.H>
+#include <INI.h>
 #include <windows.h>
-#include <stdio.h>
 #include <d3dx8core.h>
-#include "texture.h"
 #include "wwprofile.h"
 #include "assetstatus.h"
 #include "ringobj.h"
@@ -257,15 +255,13 @@ WW3DAssetManager::WW3DAssetManager(void) :
  *=============================================================================================*/
 WW3DAssetManager::~WW3DAssetManager(void)
 {
-	if (MetalManager) delete MetalManager;
+	delete MetalManager;
+
 	Free();
 	TheInstance = NULL;
 
-	// If we need to, free the hash table
-	if (PrototypeHashTable != NULL) {
-		delete [] PrototypeHashTable;
-		PrototypeHashTable = NULL;
-	}
+	delete [] PrototypeHashTable;
+	PrototypeHashTable = NULL;
 }
 
 static void Create_Number_String(StringClass& number, unsigned value)
@@ -1351,7 +1347,7 @@ Font3DDataClass * WW3DAssetManager::Get_Font3DData( const char *name )
 	// loop through and see if the Font3D we are looking for has already been
 	// allocated and thus we can just return it.
 	for (	SLNode<Font3DDataClass> *node = Font3DDatas.Head(); node; node = node->Next()) {
-		if (!stricmp(name, node->Data()->Name)) {
+		if (stricmp(name, node->Data()->Name) == 0) {
 			node->Data()->Add_Ref();
 			return node->Data();
 		}
@@ -1465,12 +1461,17 @@ FontCharsClass *	WW3DAssetManager::Get_FontChars( const char * name, int point_s
 		}
 	}
 
-	// If one hasn't been found, create it
+	// If one hasn't been found, try create it
 	FontCharsClass * font = NEW_REF( FontCharsClass, () );
-	font->Initialize_GDI_Font( name, point_size, is_bold );
-	font->Add_Ref();
-	FontCharsList.Add( font );			// add it to the list
-	return font;							// return it
+	if (font->Initialize_GDI_Font( name, point_size, is_bold ))
+	{
+		font->Add_Ref();
+		FontCharsList.Add( font );
+		return font;
+	}
+
+	font->Release_Ref();
+	return NULL;
 }
 
 

@@ -26,10 +26,7 @@
 // Macros/functions/etc to help logging values for tracking down sync errors
 // Author: Matthew D. Campbell, June 2002
 
-// no #pragma once - we want to be able to conditionally define NO_DEBUG_CRC in indiv .cpp files
-
-#ifndef __CRCDEBUG_H__
-#define __CRCDEBUG_H__
+#pragma once
 
 #include "Common/Debug.h"
 
@@ -129,5 +126,3 @@
 extern Int NET_CRC_INTERVAL;
 extern Int REPLAY_CRC_INTERVAL;
 extern Bool TheDebugIgnoreSyncErrors;
-
-#endif // __CRCDEBUG_H__

@@ -388,12 +388,14 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 
 	if (!TheGlobalData->m_showClientPhysics)
 		return;
-	const W3DTruckDrawModuleData *moduleData = getW3DTruckDrawModuleData();
-	if (moduleData==NULL) return; // shouldn't ever happen.
 
- 	Bool frozen = TheTacticalView->isTimeFrozen() && !TheTacticalView->isCameraMovementFinished();
- 	frozen = frozen || TheScriptEngine->isTimeFrozenDebug() || TheScriptEngine->isTimeFrozenScript();
-	if (frozen)
+	const W3DTruckDrawModuleData *moduleData = getW3DTruckDrawModuleData();
+	if (moduleData==NULL)
+		return; // shouldn't ever happen.
+
+	// TheSuperHackers @tweak Update the draw on every WW Sync only.
+	// All calculations are originally catered to a 30 fps logic step.
+	if (WW3D::Get_Sync_Frame_Time() == 0)
 		return;
 
 	const Real ACCEL_THRESHOLD = 0.01f;
@@ -461,7 +463,9 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 
 	if (m_frontLeftTireBone || m_rearLeftTireBone)
 	{
-		Real powerslideRotationAddition = moduleData->m_powerslideRotationAddition;
+		const Real rotationFactor = moduleData->m_rotationSpeedMultiplier;
+		Real powerslideRotationAddition = moduleData->m_powerslideRotationAddition * m_isPowersliding;
+
 		if (ai) {
 			Locomotor *loco = ai->getCurLocomotor();
 			if (loco) {
@@ -471,16 +475,11 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 				}
 			}
 		}
-		const Real rotationFactor = moduleData->m_rotationSpeedMultiplier;
+
 		m_frontWheelRotation += rotationFactor*speed;
-		if (m_isPowersliding)
-		{
-			m_rearWheelRotation += rotationFactor*(speed + powerslideRotationAddition);
-		}
-		else
-		{
-			m_rearWheelRotation += rotationFactor*speed;
-		}
+		m_rearWheelRotation += rotationFactor*(speed + powerslideRotationAddition);
+		m_frontWheelRotation = WWMath::Normalize_Angle(m_frontWheelRotation);
+		m_rearWheelRotation = WWMath::Normalize_Angle(m_rearWheelRotation);
 
 		// For now, just use the same values for mid wheels -- may want to do independent calcs later...
 		m_midFrontWheelRotation = m_frontWheelRotation;
@@ -643,7 +642,7 @@ void W3DTruckDraw::crc( Xfer *xfer )
 	// extend base class
 	W3DModelDraw::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -663,7 +662,7 @@ void W3DTruckDraw::xfer( Xfer *xfer )
 
 	// John A and Mark W say there is no data to save here
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -677,4 +676,4 @@ void W3DTruckDraw::loadPostProcess( void )
 	// toss any existing ones (no need to re-create; we'll do that on demand)
 	tossEmitters();
 
-}  // end loadPostProcess
+}

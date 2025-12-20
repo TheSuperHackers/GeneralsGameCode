@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __EMPUPDATE_H_
-#define __EMPUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -221,22 +218,3 @@ protected:
 	UnsignedInt m_startFrame;			///< frame we die on
   Bool  m_fxFired; ///< have we done our fx yet
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#endif // __EMPUPDATE_H_
-
-

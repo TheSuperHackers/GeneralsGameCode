@@ -32,8 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_RAMPOPTIONS_
-#define _H_RAMPOPTIONS_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "OptionsPanel.h"
@@ -62,5 +60,3 @@ class RampOptions : public COptionsPanel
 };
 
 extern RampOptions* TheRampOptions;
-
-#endif /* _H_RAMPOPTIONS_ */

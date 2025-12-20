@@ -44,8 +44,7 @@ that don't belong to them, etc...
 
 \****************************************************************************/
 
-#ifndef ARRAYLIST_HEADER
-#define ARRAYLIST_HEADER
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -704,6 +703,3 @@ bit8 ArrayList<T>::shrinkVector(void)
 
   return(TRUE);
 }
-
-
-#endif

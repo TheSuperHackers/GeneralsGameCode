@@ -26,7 +26,7 @@
 // The part of a Player's brain that holds the communal Passenger list of all tunnels.
 // Author: Graham Smallwood, March, 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameState.h"
 #include "Common/GlobalData.h"
@@ -54,6 +54,8 @@ TunnelTracker::TunnelTracker()
 	m_containListSize = 0;
 	m_curNemesisID = INVALID_ID;
 	m_nemesisTimestamp = 0;
+	m_framesForFullHeal = 0;
+	m_needsFullHealTimeUpdate = false;
 }
 
 // ------------------------------------------------------------------------
@@ -211,6 +213,7 @@ void TunnelTracker::onTunnelCreated( const Object *newTunnel )
 {
 	m_tunnelCount++;
 	m_tunnelIDs.push_back( newTunnel->getID() );
+	m_needsFullHealTimeUpdate = true;
 }
 
 // ------------------------------------------------------------------------
@@ -218,6 +221,7 @@ void TunnelTracker::onTunnelDestroyed( const Object *deadTunnel )
 {
 	m_tunnelCount--;
 	m_tunnelIDs.remove( deadTunnel->getID() );
+	m_needsFullHealTimeUpdate = true;
 
 	if( m_tunnelCount == 0 )
 	{
@@ -252,10 +256,23 @@ void TunnelTracker::destroyObject( Object *obj, void * )
 
 // ------------------------------------------------------------------------
 	// heal all the objects within the tunnel system using the iterateContained function
+#if PRESERVE_RETAIL_BEHAVIOR || RETAIL_COMPATIBLE_CRC
 void TunnelTracker::healObjects(Real frames)
 {
 	iterateContained(healObject, &frames, FALSE);
 }
+#else
+void TunnelTracker::healObjects()
+{
+	if (m_needsFullHealTimeUpdate)
+	{
+		updateFullHealTime();
+		m_needsFullHealTimeUpdate = false;
+	}
+
+	iterateContained(healObject, &m_framesForFullHeal, FALSE);
+}
+#endif
 
 // ------------------------------------------------------------------------
 	// heal one object within the tunnel network system
@@ -263,7 +280,11 @@ void TunnelTracker::healObject( Object *obj, void *frames)
 {
 
 	//get the number of frames to heal
+#if PRESERVE_RETAIL_BEHAVIOR || RETAIL_COMPATIBLE_CRC
 	Real *framesForFullHeal = (Real*)frames;
+#else
+	UnsignedInt* framesForFullHeal = (UnsignedInt*)frames;
+#endif
 
 	// setup the healing damageInfo structure with all but the amount
 	DamageInfo healInfo;
@@ -284,7 +305,7 @@ void TunnelTracker::healObject( Object *obj, void *frames)
 		// set max health
 		body->attemptHealing( &healInfo );
 
-	}  // end if
+	}
 	else
 	{
 		//
@@ -297,7 +318,32 @@ void TunnelTracker::healObject( Object *obj, void *frames)
 		// do the healing
 		body->attemptHealing( &healInfo );
 
-	}  // end else
+	}
+}
+
+void TunnelTracker::updateFullHealTime()
+{
+	UnsignedInt minFrames = ~0u;
+
+	for (std::list<ObjectID>::const_iterator it = m_tunnelIDs.begin(); it != m_tunnelIDs.end(); ++it)
+	{
+		const Object* tunnelObj = TheGameLogic->findObjectByID(*it);
+		if (!tunnelObj)
+			continue;
+
+		const ContainModuleInterface* contain = tunnelObj->getContain();
+		DEBUG_ASSERTCRASH(contain != NULL, ("Contain module is NULL"));
+
+		if (!contain->isTunnelContain())
+			continue;
+
+		const TunnelContain* tunnelContain = static_cast<const TunnelContain*>(contain);
+		const UnsignedInt framesForFullHeal = tunnelContain->getFullTimeForHeal();
+		if (framesForFullHeal < minFrames)
+			minFrames = framesForFullHeal;
+	}
+
+	m_framesForFullHeal = minFrames;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -306,7 +352,7 @@ void TunnelTracker::healObject( Object *obj, void *frames)
 void TunnelTracker::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -339,9 +385,9 @@ void TunnelTracker::xfer( Xfer *xfer )
 			objectID = (*it)->getID();
 			xfer->xferObjectID( &objectID );
 
-		}  // end for, it
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -351,14 +397,15 @@ void TunnelTracker::xfer( Xfer *xfer )
 			xfer->xferObjectID( &objectID );
 			m_xferContainList.push_back( objectID );
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+		m_needsFullHealTimeUpdate = true;
+	}
 
 	// tunnel count
 	xfer->xferUnsignedInt( &m_tunnelCount );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -367,13 +414,13 @@ void TunnelTracker::loadPostProcess( void )
 {
 
 	// sanity, the contain list should be empty until we post process the id list
-	if( m_containList.size() != 0 )
+	if( !m_containList.empty() )
 	{
 
 		DEBUG_CRASH(( "TunnelTracker::loadPostProcess - m_containList should be empty but is not" ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// translate each object ids on the xferContainList into real object pointers in the contain list
 	Object *obj;
@@ -388,7 +435,7 @@ void TunnelTracker::loadPostProcess( void )
 			DEBUG_CRASH(( "TunnelTracker::loadPostProcess - Unable to find object ID '%d'", *it ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// push on the back of the contain list
 		m_containList.push_back( obj );
@@ -410,9 +457,9 @@ void TunnelTracker::loadPostProcess( void )
 				TheAI->pathfinder()->removeObjectFromPathfindMap( obj );
 
 		}
-	}  // end for, it
+	}
 
 	// we're done with the xfer contain list now
 	m_xferContainList.clear();
 
-}  // end loadPostProcess
+}

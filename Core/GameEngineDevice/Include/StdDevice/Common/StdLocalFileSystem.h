@@ -28,8 +28,6 @@
 
 #pragma once
 
-#ifndef __STDLOCALFILESYSTEM_H
-#define __STDLOCALFILESYSTEM_H
 #include "Common/LocalFileSystem.h"
 
 class StdLocalFileSystem : public LocalFileSystem
@@ -53,5 +51,3 @@ public:
 
 protected:
 };
-
-#endif // __STDLOCALFILESYSTEM_H

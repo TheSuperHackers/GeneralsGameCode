@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __KINDOF_H_
-#define __KINDOF_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
 #include "Common/BitFlags.h"
@@ -44,8 +41,8 @@
 enum KindOfType CPP_11(: Int)
 {
 	KINDOF_INVALID = -1,
-	KINDOF_FIRST = 0,
-	KINDOF_OBSTACLE = KINDOF_FIRST,	///< an obstacle to land-based pathfinders
+	
+	KINDOF_OBSTACLE,								///< an obstacle to land-based pathfinders
 	KINDOF_SELECTABLE,							///< Actually means MOUSE-INTERACTABLE (doesn't mean you can select it!)
 	KINDOF_IMMOBILE,								///< fixed in location
 	KINDOF_CAN_ATTACK,							///< can attack
@@ -212,9 +209,8 @@ enum KindOfType CPP_11(: Int)
 	KINDOF_EXTRA15,
 	KINDOF_EXTRA16,
 
-
-	KINDOF_COUNT										// total number of kindofs
-
+	KINDOF_COUNT,										// total number of kindofs
+	KINDOF_FIRST = 0,
 };
 
 typedef BitFlags<KINDOF_COUNT>	KindOfMaskType;
@@ -261,6 +257,3 @@ inline void FLIP_KINDOFMASK(KindOfMaskType& m)
 extern KindOfMaskType KINDOFMASK_NONE;	// inits to all zeroes
 extern KindOfMaskType KINDOFMASK_FS;		// Initializes all FS types for faction structures.
 void initKindOfMasks();
-
-#endif	// __KINDOF_H_
-

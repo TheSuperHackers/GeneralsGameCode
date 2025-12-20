@@ -36,9 +36,6 @@
 
 #pragma once
 
-#ifndef EXCEPT_H
-#define EXCEPT_H
-
 #ifdef _MSC_VER
 
 #include "win.h"
@@ -84,5 +81,3 @@ typedef struct tThreadInfoType {
 
 
 #endif	//_MSC_VER
-
-#endif	//EXCEPT_H

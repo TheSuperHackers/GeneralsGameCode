@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/RandomValue.h"
@@ -49,7 +49,7 @@ enum
 	CREATE_ABOVE_LOCATION_HEIGHT = 300
 };
 
-static const char* TheOCLCreateLocTypeNames[] =
+static const char* const TheOCLCreateLocTypeNames[] =
 {
 	"CREATE_AT_EDGE_NEAR_SOURCE",
 	"CREATE_AT_EDGE_NEAR_TARGET",
@@ -59,6 +59,7 @@ static const char* TheOCLCreateLocTypeNames[] =
 	"CREATE_AT_EDGE_FARTHEST_FROM_TARGET",
 	NULL
 };
+static_assert(ARRAY_SIZE(TheOCLCreateLocTypeNames) == OCL_CREATE_LOC_COUNT + 1, "Incorrect array size");
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -230,7 +231,7 @@ void OCLSpecialPower::crc( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -248,7 +249,7 @@ void OCLSpecialPower::xfer( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -259,4 +260,4 @@ void OCLSpecialPower::loadPostProcess( void )
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

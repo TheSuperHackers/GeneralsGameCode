@@ -90,7 +90,7 @@ void W3DLogicalScreenToPixelScreen( Real logX, Real logY,
 	*screenX = REAL_TO_INT((screenWidth  * (logX + 1.0f)) / 2.0f);
 	*screenY = REAL_TO_INT((screenHeight * (-logY + 1.0f)) / 2.0f);
 
-}  // end W3DLogicalScreenToPixelScreen
+}
 
 //=============================================================================
 // PixelScreenToW3DLogicalScreen
@@ -107,4 +107,4 @@ void PixelScreenToW3DLogicalScreen( Int screenX, Int screenY,
 	*logX = ((2.0f * screenX) / (Real)screenWidth) - 1.0f;
 	*logY = -(((2.0f * screenY) / (Real)screenHeight) - 1.0f);
 
-}  // end PixelScreenToW3DLogicalScreen
+}

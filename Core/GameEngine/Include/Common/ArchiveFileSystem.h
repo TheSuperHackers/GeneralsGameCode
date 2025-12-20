@@ -43,9 +43,6 @@
 
 #pragma once
 
-#ifndef __ARCHIVEFILESYSTEM_H_
-#define __ARCHIVEFILESYSTEM_H_
-
 #define MUSIC_BIG "Music.big"
 
 //----------------------------------------------------------------------------
@@ -84,26 +81,19 @@ class ArchivedDirectoryInfo;
 class DetailedArchivedDirectoryInfo;
 class ArchivedFileInfo;
 
-typedef std::map<AsciiString, DetailedArchivedDirectoryInfo> DetailedArchivedDirectoryInfoMap;
-typedef std::map<AsciiString, ArchivedDirectoryInfo> ArchivedDirectoryInfoMap;
-typedef std::map<AsciiString, ArchivedFileInfo> ArchivedFileInfoMap;
-typedef std::map<AsciiString, ArchiveFile *> ArchiveFileMap;
-typedef std::map<AsciiString, AsciiString> ArchivedFileLocationMap; // first string is the file name, second one is the archive filename.
+typedef std::map<AsciiString, DetailedArchivedDirectoryInfo> DetailedArchivedDirectoryInfoMap; // Archived directory name to detailed archived directory info
+typedef std::map<AsciiString, ArchivedDirectoryInfo> ArchivedDirectoryInfoMap; // Archived directory name to archived directory info
+typedef std::map<AsciiString, ArchivedFileInfo> ArchivedFileInfoMap; // Archived file name to archived file info
+typedef std::map<AsciiString, ArchiveFile *> ArchiveFileMap; // Archive file name to archive data
+typedef std::multimap<AsciiString, ArchiveFile *> ArchivedFileLocationMap; // Archived file name to archive data
 
 class ArchivedDirectoryInfo
 {
 public:
-	AsciiString								m_directoryName;
-	ArchivedDirectoryInfoMap	m_directories;
-	ArchivedFileLocationMap		m_files;
-
-	void clear()
-	{
-		m_directoryName.clear();
-		m_directories.clear();
-		m_files.clear();
-	}
-
+	AsciiString								m_path; // The full path to this directory
+	AsciiString								m_directoryName; // The current directory
+	ArchivedDirectoryInfoMap	m_directories; // Contained leaf directories
+	ArchivedFileLocationMap		m_files; // Contained files
 };
 
 class DetailedArchivedDirectoryInfo
@@ -112,13 +102,6 @@ public:
 	AsciiString												m_directoryName;
 	DetailedArchivedDirectoryInfoMap	m_directories;
 	ArchivedFileInfoMap								m_files;
-
-	void clear()
-	{
-		m_directoryName.clear();
-		m_directories.clear();
-		m_files.clear();
-	}
 };
 
 class ArchivedFileInfo
@@ -130,23 +113,16 @@ public:
 	UnsignedInt m_size;
 
 	ArchivedFileInfo()
+		: m_offset(0)
+		, m_size(0)
 	{
-		clear();
-	}
-
-	void clear()
-	{
-		m_filename.clear();
-		m_archiveFilename.clear();
-		m_offset = 0;
-		m_size = 0;
 	}
 };
 
 
 class ArchiveFileSystem : public SubsystemInterface
 {
-	public:
+public:
 	ArchiveFileSystem();
 	virtual ~ArchiveFileSystem();
 
@@ -158,24 +134,38 @@ class ArchiveFileSystem : public SubsystemInterface
 	// ArchiveFile operations
 	virtual ArchiveFile*	openArchiveFile( const Char *filename ) = 0;		///< Create new or return existing Archive file from file name
 	virtual void					closeArchiveFile( const Char *filename ) = 0;		///< Close the one specified big file.
-	virtual void					closeAllArchiveFiles( void ) = 0;								///< Close all Archivefiles currently open
+	virtual void					closeAllArchiveFiles( void ) = 0;								///< Close all Archive files currently open
 
 	// File operations
-	virtual File*					openFile( const Char *filename, Int access = 0);	///< Search Archive files for specified file name and open it if found
-	virtual void					closeAllFiles( void ) = 0;									///< Close all files associated with ArchiveFiles
-	virtual Bool					doesFileExist(const Char *filename) const;		///< return true if that file exists in an archive file somewhere.
+	virtual File*					openFile( const Char *filename, Int access = 0, FileInstance instance = 0);	///< Search Archive files for specified file name and open it if found
+	virtual void					closeAllFiles( void ) = 0;									///< Close all files associated with Archive files
+	virtual Bool					doesFileExist(const Char *filename, FileInstance instance = 0) const;	///< return true if that file exists in an archive file somewhere.
 
 	void					getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const; ///< search the given directory for files matching the searchName (egs. *.ini, *.rep).  Possibly search subdirectories.  Scans each Archive file.
-	Bool					getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const; ///< see FileSystem.h
+	Bool					getFileInfo(const AsciiString& filename, FileInfo *fileInfo, FileInstance instance = 0) const; ///< see FileSystem.h
 
 	virtual Bool	loadBigFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite = FALSE) = 0;
 
 	// Unprotected this for copy-protection routines
-	AsciiString						getArchiveFilenameForFile(const AsciiString& filename) const;
+	ArchiveFile* getArchiveFile(const AsciiString& filename, FileInstance instance = 0) const;
+
 	void loadMods( void );
 
+	ArchivedDirectoryInfo* friend_getArchivedDirectoryInfo(const Char* directory);
+
 protected:
-	virtual void					loadIntoDirectoryTree(const ArchiveFile *archiveFile, const AsciiString& archiveFilename, Bool overwrite = FALSE );	///< load the archive file's header information and apply it to the global archive directory tree.
+	struct ArchivedDirectoryInfoResult
+	{
+		ArchivedDirectoryInfoResult() : dirInfo(NULL) {}
+		Bool valid() const { return dirInfo != NULL; }
+
+		ArchivedDirectoryInfo* dirInfo;
+		AsciiString lastToken; ///< Synonymous for file name if the search directory was a file path
+	};
+
+	ArchivedDirectoryInfoResult getArchivedDirectoryInfo(const Char* directory);
+
+	virtual void loadIntoDirectoryTree(ArchiveFile *archiveFile, Bool overwrite = FALSE);	///< load the archive file's header information and apply it to the global archive directory tree.
 
 	ArchiveFileMap m_archiveFileMap;
 	ArchivedDirectoryInfo m_rootDirectory;
@@ -187,5 +177,3 @@ extern ArchiveFileSystem *TheArchiveFileSystem;
 //----------------------------------------------------------------------------
 //           Inlining
 //----------------------------------------------------------------------------
-
-#endif // __ARCHIVEFILESYSTEM_H_

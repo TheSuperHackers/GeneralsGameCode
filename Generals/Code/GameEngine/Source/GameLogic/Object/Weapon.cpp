@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_DAMAGE_NAMES
 #define DEFINE_DEATH_NAMES
@@ -232,7 +232,7 @@ const FieldParse WeaponTemplate::TheWeaponTemplateFieldParseTable[] =
 	{ "PreAttackType",						INI::parseIndexList,										TheWeaponPrefireNames, offsetof(WeaponTemplate, m_prefireType) },
 	{ "ContinueAttackRange",			INI::parseReal,													NULL,							offsetof(WeaponTemplate, m_continueAttackRange) },
 	{ "SuspendFXDelay",						INI::parseDurationUnsignedInt,					NULL,							offsetof(WeaponTemplate, m_suspendFXDelay) },
-	{ NULL,												NULL,																		NULL,							0 }  // keep this last
+	{ NULL,												NULL,																		NULL,							0 }
 
 };
 
@@ -309,25 +309,24 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(NULL)
 	m_continueAttackRange						= 0.0f;
 	m_infantryInaccuracyDist				= 0.0f;
 	m_suspendFXDelay								= 0;
+
+	m_historicDamageTriggerId = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
 WeaponTemplate::~WeaponTemplate()
 {
-	if (m_nextTemplate) {
-		deleteInstance(m_nextTemplate);
-	}
+	deleteInstance(m_nextTemplate);
 
 	// delete any extra-bonus that's present
-	if (m_extraBonus)
-		deleteInstance(m_extraBonus);
+	deleteInstance(m_extraBonus);
 }
 
 // ------------------------------------------------------------------------------------------------
 void WeaponTemplate::reset( void )
 {
 	m_historicDamage.clear();
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /*static*/ void WeaponTemplate::parseWeaponBonusSet( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ )
@@ -437,7 +436,7 @@ void WeaponTemplate::postProcessLoad()
 		m_projectileDetonationOCLNames[i].clear();
 	}
 
-}  // end postProcessLoad
+}
 
 //-------------------------------------------------------------------------------------------------
 Real WeaponTemplate::getAttackRange(const WeaponBonus& bonus) const
@@ -885,9 +884,9 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 
 		Bool handled;
 
-		if(!sourceObj->isLocallyControlled()									// if user watching is not controller and
-			&&  sourceObj->testStatus(OBJECT_STATUS_STEALTHED)	// if unit is stealthed (like a Pathfinder)
-			&& !sourceObj->testStatus(OBJECT_STATUS_DETECTED)		// but not detected...
+		// TheSuperHackers @todo: Remove hardcoded KINDOF_MINE check and apply PlayFXWhenStealthed = Yes to the mine weapons instead.
+
+		if (!sourceObj->isLogicallyVisible()									// if user watching cannot see us
 			&& !sourceObj->isKindOf(KINDOF_MINE)								// and not a mine (which always do the FX, even if hidden)...
 			&& !isPlayFXWhenStealthed()													// and not a weapon marked to playwhenstealthed
 			)
@@ -1096,10 +1095,11 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 }
 
 //-------------------------------------------------------------------------------------------------
+#if RETAIL_COMPATIBLE_CRC
 void WeaponTemplate::trimOldHistoricDamage() const
 {
 	UnsignedInt expirationDate = TheGameLogic->getFrame() - TheGlobalData->m_historicDamageLimit;
-	while (m_historicDamage.size() > 0)
+	while (!m_historicDamage.empty())
 	{
 		HistoricWeaponDamageInfo& h = m_historicDamage.front();
 		if (h.frame <= expirationDate)
@@ -1115,6 +1115,40 @@ void WeaponTemplate::trimOldHistoricDamage() const
 		}
 	}
 }
+#else
+void WeaponTemplate::trimOldHistoricDamage() const
+{
+	if (m_historicDamage.empty())
+		return;
+
+	const UnsignedInt currentFrame = TheGameLogic->getFrame();
+	const UnsignedInt expirationFrame = currentFrame - m_historicBonusTime;
+
+	HistoricWeaponDamageList::iterator it = m_historicDamage.begin();
+
+	while (it != m_historicDamage.end())
+	{
+		if (it->frame <= expirationFrame)
+			it = m_historicDamage.erase(it);
+		else
+			break;
+	}
+}
+#endif
+
+//-------------------------------------------------------------------------------------------------
+void WeaponTemplate::trimTriggeredHistoricDamage() const
+{
+	HistoricWeaponDamageList::iterator it = m_historicDamage.begin();
+
+	while (it != m_historicDamage.end())
+	{
+		if (it->triggerId == m_historicDamageTriggerId)
+			it = m_historicDamage.erase(it);
+		else
+			++it;
+	}
+}
 
 //-------------------------------------------------------------------------------------------------
 static Bool is2DDistSquaredLessThan(const Coord3D& a, const Coord3D& b, Real distSqr)
@@ -1124,16 +1158,9 @@ static Bool is2DDistSquaredLessThan(const Coord3D& a, const Coord3D& b, Real dis
 }
 
 //-------------------------------------------------------------------------------------------------
-void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, const Coord3D *pos, const WeaponBonus& bonus, Bool isProjectileDetonation) const
+#if RETAIL_COMPATIBLE_CRC
+void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* pos) const
 {
-	if (sourceID == 0)	// must have a source
-		return;
-
-	if (victimID == 0 && pos == NULL)	// must have some sort of destination
-		return;
-
-	Object *source = TheGameLogic->findObjectByID(sourceID);	// might be null...
-
 	//
 	/** @todo We need to rewrite the historic stuff ... if you fire 5 missiles, and the 5th,
 	// one creates a firestorm ... and then half a second later another volley of 5 missiles
@@ -1141,10 +1168,10 @@ void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, co
 	// firestorms (CBD) */
 	//
 
-	trimOldHistoricDamage();
-
 	if( m_historicBonusCount > 0 && m_historicBonusWeapon != this )
 	{
+		trimOldHistoricDamage();
+
 		Real radSqr = m_historicBonusRadius * m_historicBonusRadius;
 		Int count = 0;
 		UnsignedInt frameNow = TheGameLogic->getFrame();
@@ -1176,9 +1203,61 @@ void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, co
 			// add AFTER checking for historic stuff
 			m_historicDamage.push_back( HistoricWeaponDamageInfo(frameNow, *pos) );
 
-		}  // end else
+		}
 
-	} // if historic bonuses
+	}
+}
+#else
+void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* pos) const
+{
+	if (m_historicBonusCount > 0 && m_historicBonusWeapon != this)
+	{
+		trimOldHistoricDamage();
+
+		++m_historicDamageTriggerId;
+
+		const Int requiredCount = m_historicBonusCount - 1; // minus 1 since we include ourselves implicitly
+		if (m_historicDamage.size() >= requiredCount)
+		{
+			const Real radSqr = m_historicBonusRadius * m_historicBonusRadius;
+			Int count = 0;
+
+			for (HistoricWeaponDamageList::iterator it = m_historicDamage.begin(); it != m_historicDamage.end(); ++it)
+			{
+				if (is2DDistSquaredLessThan(*pos, it->location, radSqr))
+				{
+					// This one is close enough in time and distance, so count it. This is tracked by template since it applies
+					// across units, so don't try to clear historicDamage on success in here.
+					it->triggerId = m_historicDamageTriggerId;
+
+					if (++count == requiredCount)
+					{
+						TheWeaponStore->createAndFireTempWeapon(m_historicBonusWeapon, source, pos);
+						trimTriggeredHistoricDamage();
+						return;
+					}
+				}
+			}
+		}
+
+		// add AFTER checking for historic stuff
+		m_historicDamage.push_back(HistoricWeaponDamageInfo(TheGameLogic->getFrame(), *pos));
+	}
+}
+#endif
+
+//-------------------------------------------------------------------------------------------------
+void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, const Coord3D *pos, const WeaponBonus& bonus, Bool isProjectileDetonation) const
+{
+	if (sourceID == 0)	// must have a source
+		return;
+
+	if (victimID == 0 && pos == NULL)	// must have some sort of destination
+		return;
+
+	Object *source = TheGameLogic->findObjectByID(sourceID);	// might be null...
+
+	processHistoricDamage(source, pos);
 
 //DEBUG_LOG(("WeaponTemplate::dealDamageInternal: dealing damage %s at frame %d",m_name.str(),TheGameLogic->getFrame()));
 
@@ -1356,8 +1435,7 @@ WeaponStore::~WeaponStore()
 	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
 	{
 		WeaponTemplate* wt = m_weaponTemplateVector[i];
-		if (wt)
-			deleteInstance(wt);
+		deleteInstance(wt);
 	}
 	m_weaponTemplateVector.clear();
 }
@@ -1395,12 +1473,22 @@ void WeaponStore::createAndFireTempWeapon(const WeaponTemplate* wt, const Object
 }
 
 //-------------------------------------------------------------------------------------------------
-const WeaponTemplate *WeaponStore::findWeaponTemplate( AsciiString name ) const
+const WeaponTemplate *WeaponStore::findWeaponTemplate( const AsciiString& name ) const
 {
-	if (stricmp(name.str(), "None") == 0)
+	if (name.compareNoCase("None") == 0)
 		return NULL;
 	const WeaponTemplate * wt = findWeaponTemplatePrivate( TheNameKeyGenerator->nameToKey( name ) );
-	DEBUG_ASSERTCRASH(wt != NULL, ("Weapon %s not found!",name.str()));
+	DEBUG_ASSERTCRASH(wt != NULL, ("Weapon %s not found!",name));
+	return wt;
+}
+
+//-------------------------------------------------------------------------------------------------
+const WeaponTemplate *WeaponStore::findWeaponTemplate( const char* name ) const
+{
+	if (stricmp(name, "None") == 0)
+		return NULL;
+	const WeaponTemplate * wt = findWeaponTemplatePrivate( TheNameKeyGenerator->nameToKey( name ) );
+	DEBUG_ASSERTCRASH(wt != NULL, ("Weapon %s not found!",name));
 	return wt;
 }
 
@@ -1533,7 +1621,7 @@ void WeaponStore::postProcessLoad()
 			wt->postProcessLoad();
 	}
 
-}  // end postProcessLoad
+}
 
 //-------------------------------------------------------------------------------------------------
 /*static*/ void WeaponStore::parseWeaponTemplateDefinition(INI* ini)
@@ -2379,7 +2467,7 @@ Bool Weapon::privateFireWeapon(
 			m_numShotsForCurBarrel = m_template->getShotsPerBarrel();
 		}
 
-		if( m_scatterTargetsUnused.size() )
+		if( !m_scatterTargetsUnused.empty() )
 		{
 			// If I have a set scatter pattern, I need to offset the target by a random pick from that pattern
 			if( victimObj )
@@ -3081,7 +3169,7 @@ void Weapon::crc( Xfer *xfer )
 		}
 #endif // DEBUG_CRC
 
-	}  // end for, it
+	}
 
 	// pitch limited
 	xfer->xferBool( &m_pitchLimited );
@@ -3111,7 +3199,7 @@ void Weapon::crc( Xfer *xfer )
 	}
 #endif // DEBUG_CRC
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer
@@ -3194,9 +3282,9 @@ void Weapon::xfer( Xfer *xfer )
 			intData = *it;
 			xfer->xferInt( &intData );
 
-		}  // end for, it
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -3209,9 +3297,9 @@ void Weapon::xfer( Xfer *xfer )
 			xfer->xferInt( &intData );
 			m_scatterTargetsUnused.push_back( intData );
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
 	// pitch limited
 	xfer->xferBool( &m_pitchLimited );
@@ -3219,7 +3307,7 @@ void Weapon::xfer( Xfer *xfer )
 	// leech weapon range active
 	xfer->xferBool( &m_leechWeaponRangeActive );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */

@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef WWMATH_H
-#define WWMATH_H
 
 #include "always.h"
 #include <math.h>
@@ -253,5 +247,3 @@ inline bool WWMath::Is_Valid_Double(double x)
 	}
 	return true;
 }
-
-#endif

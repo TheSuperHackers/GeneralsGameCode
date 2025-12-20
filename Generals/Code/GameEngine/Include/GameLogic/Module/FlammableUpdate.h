@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FLAMMABLE_UPDATE_H_
-#define __FLAMMABLE_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "GameLogic/Module/DamageModule.h"
@@ -45,8 +42,6 @@ enum FlammabilityStatusType CPP_11(: Int)
 	FS_NORMAL = 0,
 	FS_AFLAME,
 	FS_BURNED,
-
-	FS_NORMAL_COUNT	// keep last
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -113,8 +108,6 @@ protected:
 	UnsignedInt							m_damageEndFrame;
 	AudioHandle							m_audioHandle;
 	Real										m_flameDamageLimit;
+	ObjectID								m_flameSource;
 	UnsignedInt							m_lastFlameDamageDealt;
 };
-
-#endif
-

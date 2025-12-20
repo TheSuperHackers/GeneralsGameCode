@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef SCRIPTS_H
-#define SCRIPTS_H
-
 #include "Common/Snapshot.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "Common/ObjectStatusTypes.h"
@@ -842,7 +839,7 @@ public:
 };
 EMPTY_DTOR(Parameter)
 
-extern const char* TheObjectFlagsNames[];
+extern const char* const TheObjectFlagsNames[];
 
 //-------------------------------------------------------------------------------------------------
 // ******************************** class Condition ***********************************************
@@ -1136,6 +1133,3 @@ public:
 	/// are read, and the caller is responsible for deleting the scripts.
 	static Int getReadScripts(ScriptList *scriptLists[MAX_PLAYER_COUNT]);
 };
-
-#endif
-

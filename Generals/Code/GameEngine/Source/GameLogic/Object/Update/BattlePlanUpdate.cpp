@@ -27,7 +27,7 @@
 // Desc:   Update module to handle building states and battle plan execution & changes
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_MAXHEALTHCHANGETYPE_NAMES						// for TheMaxHealthChangeTypeNames[]
 
@@ -155,12 +155,7 @@ BattlePlanUpdate::BattlePlanUpdate( Thing *thing, const ModuleData* moduleData )
 
 	m_visionObjectID = INVALID_ID;
 
-	//------------------------//
-	// Added by Sadullah Nader//
-	//------------------------//
-
 	m_specialPowerModule   = NULL;
-	//
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -193,7 +188,7 @@ void BattlePlanUpdate::onDelete()
 		obj = TheGameLogic->findObjectByID( m_visionObjectID );
 		if( obj )
 			TheGameLogic->destroyObject( obj );
-	}  // end if
+	}
 
 	// If we get destroyed, then make sure we remove our bonus!
 	// srj sez: we can't do this in the dtor because our team
@@ -436,9 +431,9 @@ void BattlePlanUpdate::createVisionObject()
 		// set the shroud clearing range
 		visionObject->setShroudClearingRange( obj->getGeometryInfo().getBoundingSphereRadius() );
 
-	}  // end if
+	}
 
-}  // end createVisionObject
+}
 
 //-------------------------------------------------------------------------------------------------
 void BattlePlanUpdate::setStatus( TransitionStatus newStatus )
@@ -869,7 +864,7 @@ void BattlePlanUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 //------------------------------------------------------------------------------------------------
 // Xfer method
@@ -923,7 +918,7 @@ void BattlePlanUpdate::xfer( Xfer *xfer )
 	// vision object data
 	xfer->xferObjectID( &m_visionObjectID );
 
-}  // end xfer
+}
 
 //------------------------------------------------------------------------------------------------
 void BattlePlanUpdate::loadPostProcess( void )
@@ -932,4 +927,4 @@ void BattlePlanUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

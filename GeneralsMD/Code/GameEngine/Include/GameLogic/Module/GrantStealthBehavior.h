@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GrantStealthBehavior_H_
-#define __GrantStealthBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/Module/BehaviorModule.h"
@@ -107,6 +104,3 @@ private:
 	ParticleSystemID m_radiusParticleSystemID;
   Real m_currentScanRadius;
 };
-
-#endif // __GrantStealthBehavior_H_
-

@@ -51,9 +51,8 @@
 #include "ww3dformat.h"
 #include "ww3d.h"
 #include <vp.h>
-#include <INI.H>
+#include <INI.h>
 #include <Point.h>
-#include <stdio.h>
 #include <hashtemplate.h>
 #include <wwstring.h>
 #include <wwmath.h>
@@ -175,12 +174,11 @@ MetalMapManagerClass::~MetalMapManagerClass(void)
 			REF_PTR_RELEASE(Textures[i]);
 		}
 		delete [] Textures;
-		Textures = 0;
+		Textures = NULL;
 	}
-	if (MetalParameters) {
-		delete [] MetalParameters;
-		MetalParameters = 0;
-	}
+
+	delete [] MetalParameters;
+	MetalParameters = NULL;
 }
 
 
@@ -342,7 +340,7 @@ void MetalMapManagerClass::Update_Textures(void)
 		}
 		metal_map_surface->Unlock();
 		REF_PTR_RELEASE(metal_map_surface);
-	} // for i
+	}
 }
 
 /***********************************************************************************************

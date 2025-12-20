@@ -12,7 +12,6 @@ target_link_libraries(g_generals PRIVATE
     comctl32
     d3d8
     d3dx8
-    dbghelplib
     dinput8
     dxguid
     g_gameengine

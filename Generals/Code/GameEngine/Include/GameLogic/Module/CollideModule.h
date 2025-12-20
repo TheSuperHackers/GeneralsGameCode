@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __CollideModule_H_
-#define __CollideModule_H_
-
 #include "Common/Module.h"
 #include "GameLogic/Module/BehaviorModule.h"
 
@@ -100,5 +97,3 @@ public:
 inline CollideModule::CollideModule( Thing *thing, const ModuleData* moduleData ) : BehaviorModule( thing, moduleData ) { }
 inline CollideModule::~CollideModule() { }
 //-------------------------------------------------------------------------------------------------
-
-#endif

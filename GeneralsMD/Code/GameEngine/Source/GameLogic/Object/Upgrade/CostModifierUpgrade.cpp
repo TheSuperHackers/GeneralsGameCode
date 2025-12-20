@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingTemplate.h"
@@ -81,7 +81,7 @@ CostModifierUpgradeModuleData::CostModifierUpgradeModuleData( void )
 	m_isOneShot = FALSE;
 	m_stackingType = NO_STACKING;
 
-}  // end CostModifierUpgradeModuleData
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ CostModifierUpgradeModuleData::CostModifierUpgradeModuleData( void )
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,14 +112,14 @@ CostModifierUpgrade::CostModifierUpgrade( Thing *thing, const ModuleData* module
 							UpgradeModule( thing, moduleData )
 {
 
-}  // end CostModifierUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 CostModifierUpgrade::~CostModifierUpgrade( void )
 {
 
-}  // end ~CostModifierUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -148,7 +148,7 @@ void CostModifierUpgrade::onDelete( void )
 	// this upgrade module is now "not upgraded"
 	setUpgradeExecuted(FALSE);
 
-}  // end onDelete
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -176,7 +176,7 @@ void CostModifierUpgrade::onCapture( Player *oldOwner, Player *newOwner )
 
 		setUpgradeExecuted(FALSE);
 
-	}  // end if
+	}
 	if( newOwner )
 	{
 		newOwner->addKindOfProductionCostChange(d->m_kindOf, d->m_percentage,
@@ -184,9 +184,9 @@ void CostModifierUpgrade::onCapture( Player *oldOwner, Player *newOwner )
 
 		setUpgradeExecuted(TRUE);
 
-	}  // end if
+	}
 
-}  // end onCapture
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -204,7 +204,7 @@ void CostModifierUpgrade::upgradeImplementation( void )
 	player->addKindOfProductionCostChange(d->m_kindOf, d->m_percentage,
 		getObject()->getTemplate()->getTemplateID(), stackUniqueType, stackWithAny);
 
-}  // end upgradeImplementation
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -215,7 +215,7 @@ void CostModifierUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -233,7 +233,7 @@ void CostModifierUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -244,4 +244,4 @@ void CostModifierUpgrade::loadPostProcess( void )
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -34,9 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef HLODSAVE_H
-#define HLODSAVE_H
+#pragma once
 
 #include "always.h"
 
@@ -44,7 +42,7 @@
 #include <stdio.h>
 
 #include "w3d_file.h"
-#include "PROGRESS.H"
+#include "PROGRESS.h"
 #include "chunkio.h"
 #include "meshcon.h"
 
@@ -123,7 +121,3 @@ protected:
 	HLodArrayEntry							aggregate_array;
 	HLodArrayEntry							proxy_array;
 };
-
-
-
-#endif

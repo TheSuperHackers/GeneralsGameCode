@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DRAWMODULE_H_
-#define __DRAWMODULE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameType.h"
 #include "Common/Module.h"
@@ -258,7 +255,3 @@ protected:
 	int		m_boneCount;
 	int		m_shadowDrawCount;
 };
-
-
-#endif // __DRAWMODULE_H_
-

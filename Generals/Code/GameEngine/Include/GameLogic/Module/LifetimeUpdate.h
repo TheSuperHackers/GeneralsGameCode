@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __LIFETIMEUPDATE_H_
-#define __LIFETIMEUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -85,6 +82,3 @@ private:
 
 	UnsignedInt m_dieFrame;
 };
-
-#endif // __LIFETIMEUPDATE_H_
-

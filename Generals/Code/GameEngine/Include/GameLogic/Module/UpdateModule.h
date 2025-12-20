@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __UpdateModule_H_
-#define __UpdateModule_H_
-
 #include "Common/Module.h"
 #include "Common/GameType.h"
 #include "Common/DisabledTypes.h"
@@ -372,5 +369,3 @@ public:
 	virtual Bool isTriggeredBy( UpgradeMaskType potentialMask ) = 0;	///< If you were an upgrade, would you trigger for this?
 	virtual void setDelay( UnsignedInt startingDelay ) = 0;	///< Start the upgrade doing countdown
 };
-
-#endif

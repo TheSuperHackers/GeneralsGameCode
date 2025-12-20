@@ -32,7 +32,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Player.h"
 #include "Common/Xfer.h"
 #include "Common/ThingTemplate.h"
@@ -183,7 +183,7 @@ void HelixContain::createPayload()
 
 		contain->enableLoadSounds( TRUE );
 
-  } // endif contain
+  }
 
 	m_payloadCreated = TRUE;
 
@@ -410,7 +410,7 @@ void HelixContain::onContaining( Object *obj, Bool wasSelected )
 
 
 
-}  // end onContaining
+}
 
 void HelixContain::onRemoving( Object *obj )
 {
@@ -421,7 +421,7 @@ void HelixContain::onRemoving( Object *obj )
 	//obj->clearWeaponBonusCondition( WEAPONBONUSCONDITION_GARRISONED );
   obj->clearDisabled( DISABLED_HELD );
 
-} // end onRemoving
+}
 
 
 
@@ -441,7 +441,7 @@ void HelixContain::crc( Xfer *xfer )
 	// extend base class
 	TransportContain::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -463,7 +463,7 @@ void HelixContain::xfer( Xfer *xfer )
   	TransportContain::xfer( xfer );
 
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -474,4 +474,4 @@ void HelixContain::loadPostProcess( void )
 	// extend base class
 	TransportContain::loadPostProcess();
 
-}  // end loadPostProcess
+}

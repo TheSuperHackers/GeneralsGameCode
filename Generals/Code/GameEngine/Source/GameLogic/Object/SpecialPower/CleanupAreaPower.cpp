@@ -42,7 +42,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingTemplate.h"
@@ -69,7 +69,7 @@ void CleanupAreaPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 //-------------------------------------------------------------------------------------------------
 CleanupAreaPower::CleanupAreaPower( Thing *thing, const ModuleData* moduleData ) : SpecialPowerModule( thing, moduleData )
@@ -113,7 +113,7 @@ void CleanupAreaPower::crc( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::crc( xfer );
 
-}  // end crc
+}
 
 //-------------------------------------------------------------------------------------------------
 // Xfer method
@@ -131,7 +131,7 @@ void CleanupAreaPower::xfer( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::xfer( xfer );
 
-}  // end xfer
+}
 
 //-------------------------------------------------------------------------------------------------
 void CleanupAreaPower::loadPostProcess( void )
@@ -140,4 +140,4 @@ void CleanupAreaPower::loadPostProcess( void )
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

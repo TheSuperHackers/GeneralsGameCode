@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "GameClient/ControlBar.h"
@@ -96,6 +96,6 @@ void INI::parseControlBarSchemeDefinition( INI *ini )
 	// parse the ini definition
 	ini->initFromINI( CBScheme, CBSchemeManager->getFieldParse() );
 
-}  // end parseCommandButtonDefinition
+}
 
 

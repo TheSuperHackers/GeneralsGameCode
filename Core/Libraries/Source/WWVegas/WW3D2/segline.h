@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef SEGLINE_H
-#define SEGLINE_H
 
 #include "rendobj.h"
 #include "shader.h"
@@ -181,5 +176,3 @@ class SegmentedLineClass : public RenderObjClass
 		// LineRenderer, contains most of the line settings.
 		SegLineRendererClass		LineRenderer;
 };
-
-#endif // SEGLINE_H

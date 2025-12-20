@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __OVERLORD_CONTAIN_H_
-#define __OVERLORD_CONTAIN_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/TransportContain.h"
 
@@ -108,6 +105,3 @@ private:
 	Bool m_redirectionActivated;
 
 };
-
-#endif
-

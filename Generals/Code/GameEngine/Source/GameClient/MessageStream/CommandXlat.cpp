@@ -26,15 +26,17 @@
 // Translate raw input events into tactical commands
 // Author: Michael S. Booth, February 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "stdlib.h"				// VC++ wants this here, or gives compile error...
 
 #include "Common/AudioAffect.h"
 #include "Common/ActionManager.h"
+#include "Common/FramePacer.h"
 #include "Common/GameAudio.h"
 #include "Common/GameEngine.h"
 #include "Common/GameType.h"
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/MessageStream.h"
 #include "Common/MiscAudio.h"
@@ -87,6 +89,7 @@
 #include "GameNetwork/GameSpyOverlay.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
 
+#include "ww3d.h"
 
 
 #if defined(RTS_DEBUG)
@@ -181,6 +184,91 @@ Bool hasThingsInProduction(PlayerType playerType)
 }
 
 #endif // defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+
+
+bool changeMaxRenderFps(FpsValueChange change)
+{
+	UnsignedInt maxRenderFps = TheFramePacer->getFramesPerSecondLimit();
+	maxRenderFps = RenderFpsPreset::changeFpsValue(maxRenderFps, change);
+
+	TheFramePacer->setFramesPerSecondLimit(maxRenderFps);
+	TheWritableGlobalData->m_useFpsLimit = (maxRenderFps != RenderFpsPreset::UncappedFpsValue);
+
+	UnicodeString message;
+
+	if (TheWritableGlobalData->m_useFpsLimit)
+	{
+		message = TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:SetMaxRenderFps", L"Max Render FPS is %u", maxRenderFps);
+	}
+	else
+	{
+		message = TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:SetUncappedRenderFps", L"Max Render FPS is uncapped");
+	}
+
+	TheInGameUI->messageNoFormat(message);
+
+	return true;
+}
+
+bool changeLogicTimeScale(FpsValueChange change)
+{
+	if (TheNetwork != NULL)
+		return false;
+
+	const UnsignedInt maxRenderFps = TheFramePacer->getFramesPerSecondLimit();
+	UnsignedInt maxRenderRemainder = LogicTimeScaleFpsPreset::StepFpsValue;
+	maxRenderRemainder -= maxRenderFps % LogicTimeScaleFpsPreset::StepFpsValue;
+	maxRenderRemainder %= LogicTimeScaleFpsPreset::StepFpsValue;
+
+	UnsignedInt logicTimeScaleFps = TheFramePacer->getLogicTimeScaleFps();
+	// Set the value to the max render fps value plus a bit when time scale is
+	// disabled. This ensures that the time scale does not re-enable with a
+	// 'surprise' value.
+	if (!TheFramePacer->isLogicTimeScaleEnabled())
+	{
+		logicTimeScaleFps = maxRenderFps + maxRenderRemainder;
+	}
+	// Ceil the value at the max render fps value plus a bit so that the next fps
+	// value decrease would undercut the max render fps at the correct step value.
+	// Example: render fps 72 -> logic value ceiled to 75 -> decreased to 70.
+	logicTimeScaleFps = min(logicTimeScaleFps, maxRenderFps + maxRenderRemainder);
+	logicTimeScaleFps = LogicTimeScaleFpsPreset::changeFpsValue(logicTimeScaleFps, change);
+
+	// Set value before potentially disabling it.
+	if (TheFramePacer->isLogicTimeScaleEnabled())
+	{
+		TheFramePacer->setLogicTimeScaleFps(logicTimeScaleFps);
+	}
+
+	TheFramePacer->enableLogicTimeScale(logicTimeScaleFps < maxRenderFps);
+
+	// Set value after potentially enabling it.
+	if (TheFramePacer->isLogicTimeScaleEnabled())
+	{
+		TheFramePacer->setLogicTimeScaleFps(logicTimeScaleFps);
+	}
+
+	logicTimeScaleFps = TheFramePacer->getLogicTimeScaleFps();
+	const UnsignedInt actualLogicTimeScaleFps = TheFramePacer->getActualLogicTimeScaleFps();
+	const Real actualLogicTimeScaleRatio = TheFramePacer->getActualLogicTimeScaleRatio();
+
+	UnicodeString message;
+
+	if (TheFramePacer->isLogicTimeScaleEnabled())
+	{
+		message = TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:SetLogicTimeScaleFps", L"Logic Time Scale FPS is %u (actual %u, ratio %.02f)",
+			logicTimeScaleFps, actualLogicTimeScaleFps, actualLogicTimeScaleRatio);
+	}
+	else
+	{
+		message = TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:SetUncappedLogicTimeScaleFps", L"Logic Time Scale FPS is uncapped (actual %u, ratio %.02f)",
+			actualLogicTimeScaleFps, actualLogicTimeScaleRatio);
+	}
+
+	TheInGameUI->messageNoFormat(message);
+
+	return true;
+}
 
 
 static Bool isSystemMessage( const GameMessage *msg );
@@ -686,7 +774,7 @@ void pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type m
 			break;
 		}
 
-	}//next drawable in list
+	}
 
 
 
@@ -798,8 +886,8 @@ void findCommandCenterOrMostExpensiveBuilding(Object* obj, void* vccl)
 
 static void viewCommandCenter( void )
 {
-	Player* localPlayer = ThePlayerList->getLocalPlayer();
-	if (!localPlayer)
+	Player* localPlayer = rts::getObservedOrLocalPlayer();
+	if (!localPlayer->isPlayerActive())
 		return;
 
 	CommandCenterLocator ccl;
@@ -840,8 +928,8 @@ void amIAHero(Object* obj, void* heroHolder)
 
 static Object *iNeedAHero( void )
 {
-	Player* localPlayer = ThePlayerList->getLocalPlayer();
-	if (!localPlayer)
+	Player* localPlayer = rts::getObservedOrLocalPlayer();
+	if (!localPlayer->isPlayerActive())
 		return NULL;
 
 	HeroHolder heroHolder;
@@ -898,7 +986,7 @@ GameMessage::Type CommandTranslator::issueMoveToLocationCommand( const Coord3D *
 			else
 				movemsg->appendLocationArgument( *pos );
 
-		}  // end if
+		}
 	}
 
 	// only make sounds if we really did the command messages
@@ -907,7 +995,7 @@ GameMessage::Type CommandTranslator::issueMoveToLocationCommand( const Coord3D *
 		PickAndPlayInfo info;
 		info.m_drawTarget = drawableInWay;
 		pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_DO_MOVETO, &info );
-	}  // end if
+	}
 
 	if(TheStatsCollector)
 		TheStatsCollector->incrementMoveCount();
@@ -943,7 +1031,7 @@ GameMessage::Type CommandTranslator::createAttackMessage( Drawable *draw,
 
 		attackmsg->appendObjectIDArgument( other->getObject()->getID() );	// must pass object IDs to logic
 
-	}  // end if
+	}
 
 	// return the message type created
 	return msgType;
@@ -1002,7 +1090,7 @@ GameMessage::Type CommandTranslator::issueAttackCommand( Drawable *target,
 			// if we have a stats collector, inrement the stats
 			if(TheStatsCollector)
 				TheStatsCollector->incrementAttackCount();
-		}  // end if
+		}
 	}
 	else
 	{
@@ -1027,7 +1115,7 @@ GameMessage::Type CommandTranslator::issueAttackCommand( Drawable *target,
 		info.m_air = targetObj->isUsingAirborneLocomotor();
 		info.m_drawTarget = target;
 		pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), msgType, &info );
-	}  // end if
+	}
 
 	// return the actual message type created
 	return msgType;
@@ -1276,7 +1364,7 @@ GameMessage::Type CommandTranslator::createEnterMessage( Drawable *enter,
 		enterMsg->appendObjectIDArgument( INVALID_ID );		// 0 means current "selection team" of this player
 		enterMsg->appendObjectIDArgument( enter->getObject()->getID() );
 
-	}  // end if
+	}
 	else
 	{
 		DEBUG_CRASH(("Shouldn't get here. jkmcd"));
@@ -1285,7 +1373,7 @@ GameMessage::Type CommandTranslator::createEnterMessage( Drawable *enter,
 	// return the type of the message used
 	return msgType;
 
-}  // end createEnterMessage
+}
 
 //====================================================================================
 CommandTranslator::CommandTranslator() :
@@ -1414,7 +1502,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 		//a position interaction.
 		draw = NULL;
 		obj = NULL;
-	}  //  end if
+	}
 
 	// If the thing is a mine, and is locally controlled, then we should issue a moveto to its location.
 	if (obj && obj->isLocallyControlled() && obj->isKindOf(KINDOF_MINE)) {
@@ -1626,7 +1714,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				hintMessage->appendObjectIDArgument( objectID );
 			}
 
-		}	// if a special power
+		}
 
 		// ********************************************************************************************
 		else if( TheInGameUI->canSelectedObjectsOverrideSpecialPowerDestination( pos, InGameUI::SELECTION_ANY, SPECIAL_INVALID ) )
@@ -1644,9 +1732,9 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 					gameMsg->appendIntegerArgument( SPECIAL_INVALID );
 					gameMsg->appendObjectIDArgument( INVALID_ID );	// no specific source
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 			else
 			{
 
@@ -1654,7 +1742,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				msgType = GameMessage::MSG_DO_SPECIAL_POWER_OVERRIDE_DESTINATION_HINT;
 				hintMessage = TheMessageStream->appendMessage( msgType );
 
-			}  // end else
+			}
 		}
 
 		// ********************************************************************************************
@@ -1675,9 +1763,9 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 
 					pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_RESUME_CONSTRUCTION );
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 			else
 			{
 
@@ -1686,9 +1774,9 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				hintMessage = TheMessageStream->appendMessage( msgType );
 				hintMessage->appendObjectIDArgument( obj->getID() );
 
-			}  // end else
+			}
 
-		}  // end else if
+		}
 		// ********************************************************************************************
 		else if( draw && !TheInGameUI->isInForceAttackMode() &&
 						 TheInGameUI->canSelectedObjectsDoAction( InGameUI::ACTIONTYPE_DOCK_AT,
@@ -1713,7 +1801,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 
  					// only make sounds if we really did the command messages
  					pickAndPlayUnitVoiceResponse(TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_DOCK);
-				}  // end if
+				}
 
 			}
 			else
@@ -1745,9 +1833,9 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 
 					pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_DO_REPAIR );
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 			else
 			{
 
@@ -1756,9 +1844,9 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				hintMessage = TheMessageStream->appendMessage( msgType );
 				hintMessage->appendObjectIDArgument( obj->getID() );
 
-			}  // end else
+			}
 
-		}  // end else if
+		}
 		// ********************************************************************************************
 		else if( draw && !TheInGameUI->isInForceAttackMode() &&
 						TheInGameUI->canSelectedObjectsDoAction( InGameUI::ACTIONTYPE_GET_REPAIRED_AT, obj, InGameUI::SELECTION_ANY ) )
@@ -1779,9 +1867,9 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 					pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_GET_REPAIRED );
 
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 			else
 			{
 
@@ -1790,9 +1878,9 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				hintMessage = TheMessageStream->appendMessage( msgType );
 				hintMessage->appendObjectIDArgument( obj->getID() );
 
-			}  // end else
+			}
 
-		}  // end else if
+		}
 		// ********************************************************************************************
 		else if( draw && !TheInGameUI->isInForceAttackMode() &&
 						 TheInGameUI->canSelectedObjectsDoAction( InGameUI::ACTIONTYPE_GET_HEALED_AT, obj, InGameUI::SELECTION_ANY ) )
@@ -1811,9 +1899,9 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 
 					pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_GET_HEALED );
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 			else
 			{
 
@@ -1822,9 +1910,9 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				hintMessage = TheMessageStream->appendMessage( msgType);
 				hintMessage->appendObjectIDArgument( obj->getID() );
 
-			}  // end else
+			}
 
-		}  // end else if
+		}
 		// ********************************************************************************************
 		else if( draw && draw->getObject() && !TheInGameUI->isInForceAttackMode() &&
 						 TheInGameUI->canSelectedObjectsDoAction( InGameUI::ACTIONTYPE_HIJACK_VEHICLE,
@@ -1839,7 +1927,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
         // I must add a test to keep him from actually entering an enemy vehicle (contained)... Lorenzen
         msgType = createEnterMessage( draw, type );
 
-			}  // end if
+			}
 			else
 			{
 
@@ -1847,9 +1935,9 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				hintMessage = TheMessageStream->appendMessage( msgType );
 				hintMessage->appendObjectIDArgument( draw->getObject()->getID() );
 
-			}  // end else
+			}
 
-		}  // end else if
+		}
 		// ********************************************************************************************
 		else if( draw && !TheInGameUI->isInForceAttackMode() &&
 						 TheInGameUI->canSelectedObjectsDoAction( InGameUI::ACTIONTYPE_CONVERT_OBJECT_TO_CARBOMB, obj, InGameUI::SELECTION_ANY ) )
@@ -1861,7 +1949,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				// issue the command (convert to carbomb is nearly identical to enter)
 				msgType = createEnterMessage( draw, type );
 
-			}  // end if
+			}
 			else
 			{
 
@@ -1869,7 +1957,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				hintMessage = TheMessageStream->appendMessage( msgType );
 				hintMessage->appendObjectIDArgument( obj->getID() );
 
-			}  // end else
+			}
 		}
 		// ********************************************************************************************
 		else if( draw && !TheInGameUI->isInForceAttackMode() && canSelectionSalvage(obj) )
@@ -1890,7 +1978,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				msg->appendLocationArgument(*obj->getPosition());
 			}
 
-		}  // end else if
+		}
 		// ********************************************************************************************
 		else if( draw && !TheInGameUI->isInForceAttackMode() &&
 						 TheInGameUI->canSelectedObjectsDoAction( InGameUI::ACTIONTYPE_ENTER_OBJECT, obj, InGameUI::SELECTION_ANY, true ) )
@@ -1902,16 +1990,16 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				// issue the command
 				msgType = createEnterMessage( draw, type );
 
-			}  // end if
+			}
 			else
 			{
 
 				msgType = GameMessage::MSG_ENTER_HINT;
 				hintMessage = TheMessageStream->appendMessage( msgType );
 				hintMessage->appendObjectIDArgument( obj->getID() );
-			}  // end else
+			}
 
-		}  // end else if
+		}
 		// ********************************************************************************************
 		else if( draw && (result = TheInGameUI->getCanSelectedObjectsAttack( InGameUI::ACTIONTYPE_ATTACK_OBJECT, obj, InGameUI::SELECTION_ANY, TheInGameUI->isInForceAttackMode() )) == ATTACKRESULT_POSSIBLE )
 		{
@@ -1922,7 +2010,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				// issue the attack order
 				msgType = issueAttackCommand( draw, type );
 
-			}  // end if
+			}
 			else
 			{
 
@@ -1931,9 +2019,9 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				hintMessage = TheMessageStream->appendMessage( msgType );
 				hintMessage->appendObjectIDArgument( obj->getID() );
 
-			}  // end else
+			}
 
-		}  // end else if
+		}
 		// ********************************************************************************************
 		else if( draw && result == ATTACKRESULT_POSSIBLE_AFTER_MOVING )
 		{
@@ -1943,7 +2031,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				// issue the attack order
 				msgType = issueAttackCommand( draw, type );
 
-			}  // end if
+			}
 			else
 			{
 
@@ -1952,7 +2040,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				hintMessage = TheMessageStream->appendMessage( msgType );
 				hintMessage->appendObjectIDArgument( obj->getID() );
 
-			}  // end else
+			}
 
 		}
 		// ********************************************************************************************
@@ -1999,7 +2087,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 					}
 				}
 			}
-		}  // end else if
+		}
 		// ********************************************************************************************
 		else if( draw && TheInGameUI->canSelectedObjectsDoAction( InGameUI::ACTIONTYPE_DISABLE_VEHICLE_VIA_HACKING, obj, InGameUI::SELECTION_ANY ) )
 		{
@@ -2035,7 +2123,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				hintMessage->appendObjectIDArgument( obj->getID() );
 			}
 
-		}  // end else if
+		}
 		// ********************************************************************************************
 		else if( draw && TheInGameUI->canSelectedObjectsDoAction( InGameUI::ACTIONTYPE_STEAL_CASH_VIA_HACKING, obj, InGameUI::SELECTION_ANY ) )
 		{
@@ -2063,7 +2151,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 						}
 					}
 				}
-			}  // end if
+			}
 			else
 			{
 				msgType = GameMessage::MSG_HACK_HINT;
@@ -2071,7 +2159,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				hintMessage->appendObjectIDArgument( obj->getID() );
 			}
 
-		}  // end else if
+		}
 		// ********************************************************************************************
 		else if( draw && TheInGameUI->canSelectedObjectsDoAction( InGameUI::ACTIONTYPE_DISABLE_BUILDING_VIA_HACKING, obj, InGameUI::SELECTION_ANY ) )
 		{
@@ -2099,14 +2187,14 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 						}
 					}
 				}
-			}  // end if
+			}
 			else
 			{
 				msgType = GameMessage::MSG_HACK_HINT;
 				hintMessage = TheMessageStream->appendMessage( msgType );
 				hintMessage->appendObjectIDArgument( obj->getID() );
 			}
-		}  // end else if
+		}
 #ifdef ALLOW_SURRENDER
 		// ********************************************************************************************
 		else if( draw && TheInGameUI->canSelectedObjectsDoAction( InGameUI::ACTIONTYPE_PICK_UP_PRISONER, obj, InGameUI::SELECTION_ANY ) )
@@ -2118,7 +2206,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				// issue the command
 				msgType = issueAttackCommand( draw, type, GUICOMMANDMODE_PICK_UP_PRISONER );
 
-			}  // end if
+			}
 			else
 			{
 
@@ -2126,9 +2214,9 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				hintMessage = TheMessageStream->appendMessage( msgType );
 				hintMessage->appendObjectIDArgument( obj->getID() );
 
-			}  // end else
+			}
 
-		}  // end else if
+		}
 #endif
 		// ********************************************************************************************
 		else if ( !draw && TheInGameUI->canSelectedObjectsDoAction( InGameUI::ACTIONTYPE_SET_RALLY_POINT, NULL, InGameUI::SELECTION_ALL, FALSE ))
@@ -2159,7 +2247,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 			msgType = GameMessage::MSG_IMPOSSIBLE_ATTACK_HINT;
 			hintMessage = TheMessageStream->appendMessage( msgType );
 			hintMessage->appendLocationArgument( *pos );
-		}  // end else if
+		}
 
 		// ********************************************************************************************
 		else
@@ -2206,7 +2294,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 
 				if ( draw == NULL )
 					msgType = issueMoveToLocationCommand( pos, drawableInWay, type );
-			}  // end if
+			}
 			else
 			{
 				if( !validQuickPath )
@@ -2232,16 +2320,16 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				hintMessage = TheMessageStream->appendMessage( msgType );
 				hintMessage->appendLocationArgument( *pos );
 
-			}  // end else
+			}
 
-		}  // end else
+		}
 
-	}  // end if
+	}
 
 	// return the message type
 	return msgType;
 
-}  // end evaluateContextCommand
+}
 
 
 // ------------------------------------------------------------------------------------------------
@@ -2504,7 +2592,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			disp = DESTROY_MESSAGE;
 			break;
 
-		}	// end select previous unit
+		}
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_SELECT_NEXT_WORKER:
@@ -2614,7 +2702,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 			disp = DESTROY_MESSAGE;
 			break;
-		}		// end select next worker
+		}
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_SELECT_PREV_WORKER:
@@ -2732,7 +2820,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			disp = DESTROY_MESSAGE;
 			break;
 
-		}	// end select previous worker
+		}
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_SELECT_NEXT_IDLE_WORKER:
@@ -2788,23 +2876,16 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_VIEW_LAST_RADAR_EVENT:
 		{
-//			Player *player = ThePlayerList->getLocalPlayer();
+			// You don't need radar for the space bar. That's silly.
+			Coord3D lastEvent;
 
-			// if the local player has a radar, center on last event (if any)
-			// Excuse me?  You don't need radar for the spacebar.  That's silly.
-//			if( TheRadar->isRadarForced() || ( TheRadar->isRadarHidden() == false && player->hasRadar() ) )
-			{
-				Coord3D lastEvent;
-
-				if( TheRadar->getLastEventLoc( &lastEvent ) )
-					TheTacticalView->lookAt( &lastEvent );
-
-			}  // end if
+			if( TheRadar->getLastEventLoc( &lastEvent ) )
+				TheTacticalView->lookAt( &lastEvent );
 
 			disp = DESTROY_MESSAGE;
 			break;
 
-		}  // end view last radar event
+		}
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_SELECT_ALL:
@@ -2908,7 +2989,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			break;
 */
 
-		}  // end select all
+		}
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_SCATTER:
@@ -3040,6 +3121,46 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			break;
 
 		//-----------------------------------------------------------------------------------------
+		case GameMessage::MSG_META_INCREASE_MAX_RENDER_FPS:
+		{
+			if (changeMaxRenderFps(FpsValueChange_Increase))
+			{
+				disp = DESTROY_MESSAGE;
+			}
+			break;
+		}
+
+		//-----------------------------------------------------------------------------------------
+		case GameMessage::MSG_META_DECREASE_MAX_RENDER_FPS:
+		{
+			if (changeMaxRenderFps(FpsValueChange_Decrease))
+			{
+				disp = DESTROY_MESSAGE;
+			}
+			break;
+		}
+
+		//-----------------------------------------------------------------------------------------
+		case GameMessage::MSG_META_INCREASE_LOGIC_TIME_SCALE:
+		{
+			if (changeLogicTimeScale(FpsValueChange_Increase))
+			{
+				disp = DESTROY_MESSAGE;
+			}
+			break;
+		}
+
+		//-----------------------------------------------------------------------------------------
+		case GameMessage::MSG_META_DECREASE_LOGIC_TIME_SCALE:
+		{
+			if (changeLogicTimeScale(FpsValueChange_Decrease))
+			{
+				disp = DESTROY_MESSAGE;
+			}
+			break;
+		}
+
+		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_TOGGLE_LOWER_DETAILS:
 		{
 			if (TheGlobalData)
@@ -3102,7 +3223,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				Bool hide = false;
 				if (TheWindowManager)
 				{
-					Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
+					Int id = (Int)TheNameKeyGenerator->nameToKey("ControlBar.wnd:ControlBarParent");
 					GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
 
 					if (window)
@@ -3112,6 +3233,28 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				ToggleControlBar();
 			}
 			disp = DESTROY_MESSAGE;
+			break;
+		}
+
+		//-----------------------------------------------------------------------------------------
+		case GameMessage::MSG_META_TOGGLE_PLAYER_OBSERVER:
+		{
+			if (Player *lookAtPlayer = TheControlBar->getObserverLookAtPlayer())
+			{
+				if (Player *observedPlayer = TheControlBar->getObservedPlayer())
+				{
+					// Set no observed player.
+					rts::changeObservedPlayer(NULL);
+					// But keep the look-at player.
+					TheControlBar->setObserverLookAtPlayer(lookAtPlayer);
+				}
+				else
+				{
+					// Set observed player to look-at player.
+					rts::changeObservedPlayer(lookAtPlayer);
+				}
+				disp = DESTROY_MESSAGE;
+			}
 			break;
 		}
 
@@ -3128,6 +3271,10 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			DEBUG_ASSERTCRASH(TheInGameUI->isCameraRotatingLeft(), ("Clearing rotate camera left, but it's already clear!"));
 			TheInGameUI->setCameraRotateLeft( false );
 			break;
+		case GameMessage::MSG_META_ALT_CAMERA_ROTATE_LEFT:
+			if (TheTacticalView->isCameraMovementFinished())
+				TheTacticalView->rotateCamera(-1.0f / 8.0f, 500);
+			break;
 		case GameMessage::MSG_META_BEGIN_CAMERA_ROTATE_RIGHT:
 			DEBUG_ASSERTCRASH(!TheInGameUI->isCameraRotatingRight(), ("Setting rotate camera right, but it's already set!"));
 			TheInGameUI->setCameraRotateRight( true );
@@ -3135,6 +3282,10 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_END_CAMERA_ROTATE_RIGHT:
 			DEBUG_ASSERTCRASH(TheInGameUI->isCameraRotatingRight(), ("Clearing rotate camera right, but it's already clear!"));
 			TheInGameUI->setCameraRotateRight( false );
+			break;
+		case GameMessage::MSG_META_ALT_CAMERA_ROTATE_RIGHT:
+			if (TheTacticalView->isCameraMovementFinished())
+				TheTacticalView->rotateCamera(1.0f / 8.0f, 500);
 			break;
 		case GameMessage::MSG_META_BEGIN_CAMERA_ZOOM_IN:
 			DEBUG_ASSERTCRASH(!TheInGameUI->isCameraZoomingIn(), ("Setting zoom camera in, but it's already set!"));
@@ -3164,19 +3315,21 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 #endif
 				{
 					TheWritableGlobalData->m_TiVOFastMode = 1 - TheGlobalData->m_TiVOFastMode;
-					TheInGameUI->messageNoFormat( TheGlobalData->m_TiVOFastMode ? TheGameText->fetch("GUI:FF_ON") : TheGameText->fetch("GUI:FF_OFF") );
+					TheInGameUI->messageNoFormat( TheGlobalData->m_TiVOFastMode
+						? TheGameText->FETCH_OR_SUBSTITUTE("GUI:FF_ON", L"Fast Forward is on")
+						: TheGameText->FETCH_OR_SUBSTITUTE("GUI:FF_OFF", L"Fast Forward is off")
+					);
 				}
-			}  // end if
+			}
 
 			disp = DESTROY_MESSAGE;
 			break;
 
 		}
 		case GameMessage::MSG_META_TOGGLE_PAUSE:
+		case GameMessage::MSG_META_TOGGLE_PAUSE_ALT:
 		{
-#if !defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
-			if (TheGameLogic->isInReplayGame())
-#endif
+			if (!TheGameLogic->isInMultiplayerGame())
 			{
 				if (TheGameLogic->isGamePaused())
 				{
@@ -3189,17 +3342,18 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 					Bool pauseInput = FALSE;
 					TheGameLogic->setGamePaused(pause, pauseMusic, pauseInput);
 				}
+				disp = DESTROY_MESSAGE;
 			}
 			break;
 		}
 		case GameMessage::MSG_META_STEP_FRAME:
+		case GameMessage::MSG_META_STEP_FRAME_ALT:
 		{
-#if !defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
-			if (TheGameLogic->isInReplayGame())
-#endif
+			if (!TheGameLogic->isInMultiplayerGame())
 			{
 				TheGameLogic->setGamePaused(FALSE);
-				TheGameLogic->setGamePausedInFrame(TheGameLogic->getFrame() + 1);
+				TheGameLogic->setGamePausedInFrame(TheGameLogic->getFrame() + 1, TRUE);
+				disp = DESTROY_MESSAGE;
 			}
 			break;
 		}
@@ -3266,6 +3420,26 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			if (TheDisplay)
 				TheDisplay->takeScreenShot();
 			disp = DESTROY_MESSAGE;
+			break;
+		}
+
+		// --------------------------------------------------------------------------------------------
+		case GameMessage::MSG_CREATE_TEAM0:
+		case GameMessage::MSG_CREATE_TEAM1:
+		case GameMessage::MSG_CREATE_TEAM2:
+		case GameMessage::MSG_CREATE_TEAM3:
+		case GameMessage::MSG_CREATE_TEAM4:
+		case GameMessage::MSG_CREATE_TEAM5:
+		case GameMessage::MSG_CREATE_TEAM6:
+		case GameMessage::MSG_CREATE_TEAM7:
+		case GameMessage::MSG_CREATE_TEAM8:
+		case GameMessage::MSG_CREATE_TEAM9:
+		{
+			Int playerIndex = msg->getPlayerIndex();
+			Player* player = ThePlayerList->getNthPlayer(playerIndex);
+			if (player && player->isLocalPlayer())
+				player->processCreateTeamGameMessage(t - GameMessage::MSG_CREATE_TEAM0, msg);
+
 			break;
 		}
 
@@ -3381,12 +3555,16 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			// Do not eat this message, as it will do something itself at HintSpy
 			break;
 
-		}  // end case GameMessage::MSG_MOUSEOVER_LOCATION_HINT
+		}
 
 		//-----------------------------------------------------------------------------
- 		case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_DOWN:
- 		{
- 			// There are two ways in which we can ignore this as a deselect:
+		// TheSuperHackers @bugfix Treat the raw double click event identical to the raw button down event
+		// because it implicitly is a raw button down event as well. Failing to do so would mess with the
+		// button timings in later events on button up.
+		case GameMessage::MSG_RAW_MOUSE_RIGHT_DOUBLE_CLICK:
+		case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_DOWN:
+		{
+			// There are two ways in which we can ignore this as a deselect:
  			// 1) 2-D position on screen
  			// 2) Time has exceeded the time which we allow for this to be a click.
  			m_mouseRightDragAnchor = msg->getArgument( 0 )->pixel;
@@ -3436,7 +3614,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 					Drawable *draw = TheTacticalView->pickDrawable(&msg->getArgument(0)->pixelRegion.lo,
 																													TheInGameUI->isInForceAttackMode(),
 																													(PickType) pickType);
-					
+
 					// TheSuperHackers @bugfix Stubbjax 07/08/2025 Prevent dead units blocking positional context commands
 					Object* obj = draw ? draw->getObject() : NULL;
 					if (!obj || (obj->isEffectivelyDead() && !obj->isKindOf(KINDOF_ALWAYS_SELECTABLE)))
@@ -3497,7 +3675,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				Drawable *draw = TheTacticalView->pickDrawable(&msg->getArgument(0)->pixelRegion.lo,
 																												TheInGameUI->isInForceAttackMode(),
 																												(PickType) pickType);
-				
+
 				// TheSuperHackers @bugfix Stubbjax 07/08/2025 Prevent dead units blocking positional context commands
 				Object* obj = draw ? draw->getObject() : NULL;
 				if (!obj || (obj->isEffectivelyDead() && !obj->isKindOf(KINDOF_ALWAYS_SELECTABLE)))
@@ -3518,7 +3696,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			}
 			break;
 
-		}  // end case GameMessage::MSG_MOUSE_LEFT_CLICK
+		}
 
 
 #if defined(RTS_DEBUG)
@@ -3570,14 +3748,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 				} while (ThePlayerList->getNthPlayer(idx) == ThePlayerList->getNeutralPlayer());
 
-				ThePlayerList->setLocalPlayer(ThePlayerList->getNthPlayer(idx));
-				TheInGameUI->deselectAllDrawables();
-#ifdef DEBUG_FOG_MEMORY
-				TheGhostObjectManager->setLocalPlayerIndex(idx);
-#endif
-				ThePartitionManager->refreshShroudForLocalPlayer();
-				TheControlBar->initSpecialPowershortcutBar(ThePlayerList->getLocalPlayer());
-				TheControlBar->setControlBarSchemeByPlayer(ThePlayerList->getLocalPlayer());
+				Player* player = ThePlayerList->getNthPlayer(idx);
+				rts::changeLocalPlayer(player);
 			}
 			disp = DESTROY_MESSAGE;
 			break;
@@ -3598,11 +3770,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 					Player *pt = ThePlayerList->getNthPlayer(i);
 					if(pt->getSide().compareNoCase("China") == 0)
 					{
-						ThePlayerList->setLocalPlayer(pt);
-						TheInGameUI->deselectAllDrawables();
-						ThePartitionManager->refreshShroudForLocalPlayer();
-						TheControlBar->setControlBarSchemeByPlayer(ThePlayerList->getLocalPlayer());
-
+						rts::changeLocalPlayer(pt);
 						break;
 					}
 				}
@@ -3615,10 +3783,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 					Player *pt = ThePlayerList->getNthPlayer(i);
 					if(pt->getSide().compareNoCase("America") == 0)
 					{
-						ThePlayerList->setLocalPlayer(pt);
-						TheInGameUI->deselectAllDrawables();
-						ThePartitionManager->refreshShroudForLocalPlayer();
-						TheControlBar->setControlBarSchemeByPlayer(ThePlayerList->getLocalPlayer());
+						rts::changeLocalPlayer(pt);
 						break;
 					}
 				}
@@ -3632,7 +3797,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_LOD_DECREASE:
 		{
-			TheGameClient->adjustLOD(-1);
+			const Int level = clamp(0, WW3D::Get_Texture_Reduction() - 1, 4);
+			TheGameClient->setTextureLOD(level);
 			TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:DebugDecreaseLOD", L"Decrease LOD") );
 			disp = DESTROY_MESSAGE;
 			break;
@@ -3642,7 +3808,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_LOD_INCREASE:
 		{
-			TheGameClient->adjustLOD(1);
+			const Int level = clamp(0, WW3D::Get_Texture_Reduction() + 1, 4);
+			TheGameClient->setTextureLOD(level);
 			TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:DebugIncreaseLOD", L"Increase LOD") );
 			disp = DESTROY_MESSAGE;
 			break;
@@ -3657,7 +3824,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 /*
 			if (TheWindowManager && TheNameKeyGenerator)
 			{
-				GameWindow *motd = TheWindowManager->winGetWindowFromId(NULL, (Int)TheNameKeyGenerator->nameToKey(AsciiString("MOTD.wnd:MOTD")));
+				GameWindow *motd = TheWindowManager->winGetWindowFromId(NULL, (Int)TheNameKeyGenerator->nameToKey("MOTD.wnd:MOTD"));
 				if (motd)
 					motd->winHide(!motd->winIsHidden());
 			}*/
@@ -3706,7 +3873,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				Bool hide = false;
 				if (TheWindowManager)
 				{
-					Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
+					Int id = (Int)TheNameKeyGenerator->nameToKey("ControlBar.wnd:ControlBarParent");
 					GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
 
 					if (window)
@@ -3738,7 +3905,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			disp = DESTROY_MESSAGE;
 			break;
 
-		}  // end clear message text
+		}
 
 		//------------------------------------------------------------------------------- DEMO MESSAGES
 		//-----------------------------------------------------------------------------------------
@@ -3946,42 +4113,45 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEBUG_GIVE_VETERANCY:
 		case GameMessage::MSG_META_DEBUG_TAKE_VETERANCY:
 		{
+			if (TheGameLogic->isInMultiplayerGame())
+				break;
+
 			const DrawableList *list = TheInGameUI->getAllSelectedDrawables();
 			for (DrawableListCIt it = list->begin(); it != list->end(); ++it)
 			{
 				Drawable *pDraw = *it;
-				if (pDraw)
+				if (!pDraw)
+					continue;
+
+				Object *pObject = pDraw->getObject();
+				if (!pObject)
+					continue;
+
+				ExperienceTracker *et = pObject->getExperienceTracker();
+				if (!et || !et->isTrainable())
+					continue;
+
+				VeterancyLevel oldVet = et->getVeterancyLevel();
+				VeterancyLevel newVet = oldVet;
+
+				if (t == GameMessage::MSG_META_DEBUG_GIVE_VETERANCY)
 				{
-					Object *pObject = pDraw->getObject();
-					if (pObject)
+					if (oldVet < LEVEL_LAST)
 					{
-						ExperienceTracker *et = pObject->getExperienceTracker();
-						if (et)
-						{
-							if (et->isTrainable())
-							{
-								VeterancyLevel oldVet = et->getVeterancyLevel();
-								VeterancyLevel newVet = oldVet;
-								if (t == GameMessage::MSG_META_DEBUG_GIVE_VETERANCY)
-								{
-									if (oldVet < LEVEL_LAST)
-									{
-										newVet = (VeterancyLevel)((Int)oldVet + 1);
-									}
-								}
-								else
-								{
-									if (oldVet > LEVEL_FIRST)
-									{
-										newVet = (VeterancyLevel)((Int)oldVet - 1);
-									}
-								}
-								et->setVeterancyLevel(newVet);
-							}
-						}
+						newVet = (VeterancyLevel)((Int)oldVet + 1);
 					}
 				}
+				else
+				{
+					if (oldVet > LEVEL_FIRST)
+					{
+						newVet = (VeterancyLevel)((Int)oldVet - 1);
+					}
+				}
+
+				et->setVeterancyLevel(newVet);
 			}
+
 			disp = DESTROY_MESSAGE;
 			break;
 		}
@@ -4519,7 +4689,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_NO_DRAW:
 		{
-			TheWritableGlobalData->m_noDraw = REAL_TO_INT(pow(2, 32) - 1);
+			const Bool isZero = TheGlobalData->m_noDraw == 0u;
+			TheWritableGlobalData->m_noDraw = isZero ? ~0u : 0u;
 			disp = DESTROY_MESSAGE;
 			break;
 		}
@@ -4711,7 +4882,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				else
 					TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugCameraZoomLimitOff", L"Camera Zoom Limit is OFF") );
 
-			}  // end if
+			}
 
 			disp = DESTROY_MESSAGE;
 			break;
@@ -4733,12 +4904,12 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				else
 					TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugSpecialPowerDelaysOff", L"Special Power (Superweapon) Delay is OFF") );
 
-			}  // end if
+			}
 
 			disp = DESTROY_MESSAGE;
 			break;
 
-		}  // end toggle special power delays
+		}
 
 #ifdef ALLOW_SURRENDER
 		//------------------------------------------------------------------------------- DEMO MESSAGES
@@ -4862,12 +5033,12 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 #endif // DUMP_PERF_STATS
 
 
-	}  // end switch( msg->type )
+	}
 
 
 	return disp;
 
-}  // end CommandTranslator
+}
 
 static Bool isSystemMessage( const GameMessage *msg )
 {

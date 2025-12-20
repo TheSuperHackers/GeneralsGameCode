@@ -36,7 +36,7 @@
 /* Revision History:                                                         */
 /*		4/19/2002 : Initial creation                                          */
 /*---------------------------------------------------------------------------*/
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameLogic/Squad.h"
 
@@ -193,7 +193,7 @@ void Squad::aiGroupFromSquad(AIGroup* aiGroupToFill)
 void Squad::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -226,20 +226,20 @@ void Squad::xfer( Xfer *xfer )
 			objectID = *it;
 			xfer->xferObjectID( &objectID );
 
-		}  // end for, it
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
 		// the cached objects list should be empty
-		if( m_objectsCached.size() != 0 )
+		if( !m_objectsCached.empty() )
 		{
 
 			DEBUG_CRASH(( "Squad::xfer - m_objectsCached should be emtpy, but is not" ));
 			throw SC_INVALID_DATA;
 
-		}  // end of
+		}
 
 		// read all items
 		for( UnsignedShort i = 0; i < objectCount; ++i )
@@ -251,11 +251,11 @@ void Squad::xfer( Xfer *xfer )
 			// put on list
 			m_objectIDs.push_back( objectID );
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -263,4 +263,4 @@ void Squad::xfer( Xfer *xfer )
 void Squad::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

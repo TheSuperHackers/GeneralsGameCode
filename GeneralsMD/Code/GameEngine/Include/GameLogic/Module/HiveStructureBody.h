@@ -31,9 +31,6 @@
 
 #pragma once
 
-#ifndef __HIVE_STRUCTURE_BODY_H
-#define __HIVE_STRUCTURE_BODY_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/StructureBody.h"
 #include "GameLogic/Damage.h"
@@ -81,6 +78,3 @@ protected:
 
 	virtual void attemptDamage( DamageInfo *damageInfo );		///< try to damage this object
 };
-
-#endif // __HIVE_STRUCTURE_BODY_H
-

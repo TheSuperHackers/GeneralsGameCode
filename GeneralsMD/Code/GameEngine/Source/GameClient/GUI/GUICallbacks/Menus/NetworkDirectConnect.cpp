@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "gamespy/peer/peer.h"
 
@@ -113,7 +113,7 @@ void UpdateRemoteIPList()
 //	UnicodeString newEntry = prefs.getRemoteIPEntry(0);
 	UnicodeString newEntry = unisel;
 	UnicodeString newIP;
-	newEntry.nextToken(&newIP, UnicodeString(L":"));
+	newEntry.nextToken(&newIP, L":");
 	Int numFields = swscanf(newIP.str(), L"%d.%d.%d.%d", &(n1[0]), &(n1[1]), &(n1[2]), &(n1[3]));
 
 	if (numFields != 4) {
@@ -140,7 +140,7 @@ void UpdateRemoteIPList()
 			{
 				UnicodeString oldEntry = uni;
 				UnicodeString oldIP;
-				oldEntry.nextToken(&oldIP, UnicodeString(L":"));
+				oldEntry.nextToken(&oldIP, L":");
 
 				swscanf(oldIP.str(), L"%d.%d.%d.%d", &(n2[0]), &(n2[1]), &(n2[2]), &(n2[3]));
 
@@ -219,11 +219,9 @@ void JoinDirectConnectGame()
 	AsciiString ipstring;
 	asciientry.nextToken(&ipstring, "(");
 
-	char ipstr[16];
-	strcpy(ipstr, ipstring.str());
-
 	Int ip1, ip2, ip3, ip4;
-	sscanf(ipstr, "%d.%d.%d.%d", &ip1, &ip2, &ip3, &ip4);
+	Int numFields = sscanf(ipstring.str(), "%d.%d.%d.%d", &ip1, &ip2, &ip3, &ip4);
+	(void)numFields; DEBUG_ASSERTCRASH(numFields == 4, ("JoinDirectConnectGame - invalid IP address format: %s", ipstring.str()));
 
 	DEBUG_LOG(("JoinDirectConnectGame - joining at %d.%d.%d.%d", ip1, ip2, ip3, ip4));
 
@@ -264,12 +262,12 @@ void NetworkDirectConnectInit( WindowLayout *layout, void *userData )
 	buttonPushed = false;
 	isShuttingDown = false;
 	TheShell->showShellMap(TRUE);
-	buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:ButtonBack" ) );
-	buttonHostID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:ButtonHost" ) );
-	buttonJoinID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:ButtonJoin" ) );
-	editPlayerNameID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:EditPlayerName" ) );
-	comboboxRemoteIPID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:ComboboxRemoteIP" ) );
-	staticLocalIPID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:StaticLocalIP" ) );
+	buttonBackID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:ButtonBack" );
+	buttonHostID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:ButtonHost" );
+	buttonJoinID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:ButtonJoin" );
+	editPlayerNameID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:EditPlayerName" );
+	comboboxRemoteIPID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:ComboboxRemoteIP" );
+	staticLocalIPID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:StaticLocalIP" );
 
 	buttonBack = TheWindowManager->winGetWindowFromId( NULL,  buttonBackID);
 	buttonHost = TheWindowManager->winGetWindowFromId( NULL,	buttonHostID);
@@ -349,7 +347,7 @@ void NetworkDirectConnectInit( WindowLayout *layout, void *userData )
 	TheTransitionHandler->setGroup("NetworkDirectConnectFade");
 
 
-} // NetworkDirectConnectInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** This is called when a shutdown is complete for this menu */
@@ -365,7 +363,7 @@ static void shutdownComplete( WindowLayout *layout )
 	// our shutdown is complete
 	TheShell->shutdownComplete( layout );
 
-}  // end if
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Welcome Menu shutdown method */
@@ -382,12 +380,12 @@ void NetworkDirectConnectShutdown( WindowLayout *layout, void *userData )
 		shutdownComplete( layout );
 		return;
 
-	}  //end if
+	}
 
 	TheShell->reverseAnimatewindow();
 
 	TheTransitionHandler->reverse("NetworkDirectConnectFade");
-}  // NetworkDirectConnectShutdown
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -398,7 +396,7 @@ void NetworkDirectConnectUpdate( WindowLayout * layout, void *userData)
 	// We'll only be successful if we've requested to
 	if(isShuttingDown && TheShell->isAnimFinished() && TheTransitionHandler->isFinished())
 		shutdownComplete(layout);
-}// NetworkDirectConnectUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Welcome Menu input callback */
@@ -433,21 +431,21 @@ WindowMsgHandledType NetworkDirectConnectInput( GameWindow *window, UnsignedInt 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonBack, buttonBackID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// NetworkDirectConnectInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Welcome Menu window system callback */
@@ -465,12 +463,12 @@ WindowMsgHandledType NetworkDirectConnectSystem( GameWindow *window, UnsignedInt
 			{
 
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
 			{
@@ -479,7 +477,7 @@ WindowMsgHandledType NetworkDirectConnectSystem( GameWindow *window, UnsignedInt
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 
 		case GBM_SELECTED:
 			{
@@ -504,7 +502,7 @@ WindowMsgHandledType NetworkDirectConnectSystem( GameWindow *window, UnsignedInt
 					buttonPushed = true;
 					LANbuttonPushed = true;
 					TheShell->pop();
-				} //if ( controlID == buttonBack )
+				}
 				else if (controlID == buttonHostID)
 				{
 					HostDirectConnectGame();
@@ -514,7 +512,7 @@ WindowMsgHandledType NetworkDirectConnectSystem( GameWindow *window, UnsignedInt
 					JoinDirectConnectGame();
 				}
 				break;
-			}// case GBM_SELECTED:
+			}
 
 		case GEM_EDIT_DONE:
 			{
@@ -523,7 +521,7 @@ WindowMsgHandledType NetworkDirectConnectSystem( GameWindow *window, UnsignedInt
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// NetworkDirectConnectSystem
+}

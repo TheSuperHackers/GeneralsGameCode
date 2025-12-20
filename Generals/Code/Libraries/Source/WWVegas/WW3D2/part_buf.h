@@ -33,12 +33,8 @@
  *-------------------------------------------------------------------------*
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if defined(_MSC_VER)
-#pragma once
-#endif
 
-#ifndef PART_BUF_H
-#define PART_BUF_H
+#pragma once
 
 #include "rendobj.h"
 #include "pointgr.h"
@@ -429,6 +425,3 @@ class ParticleBufferClass : public RenderObjClass
 		// being per-buffer later if we wish. Default is NO_MAX_SCREEN_SIZE.
 		static float						LODMaxScreenSizes[17];
 };
-
-#endif // PART_BUF_H
-

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __StructureToppleUpdate_H_
-#define __StructureToppleUpdate_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -70,10 +67,10 @@ enum StructureTopplePhaseType CPP_11(: Int)
 	STPHASE_DELAY,
 	STPHASE_FINAL,
 
-	ST_PHASE_COUNT	// keep last
+	ST_PHASE_COUNT
 };
 
-static const char *TheStructureTopplePhaseNames[] =
+static const char *const TheStructureTopplePhaseNames[] =
 {
 	"INITIAL",
 	"DELAY",
@@ -81,6 +78,7 @@ static const char *TheStructureTopplePhaseNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheStructureTopplePhaseNames) == ST_PHASE_COUNT + 1, "Incorrect array size");
 
 //-------------------------------------------------------------------------------------------------
 class StructureToppleUpdateModuleData : public UpdateModuleData
@@ -120,7 +118,6 @@ public:
 		m_toppleDoneFXList = NULL;
 		m_toppleFXList = NULL;
 		m_crushingFXList = NULL;
-		m_crushingWeaponName.set("");
 
 		for (int i = 0; i < ST_PHASE_COUNT; ++i)
 		{
@@ -195,6 +192,3 @@ protected:
 	Real m_buildingHeight;
 
 };
-
-#endif // __StructureToppleUpdate_H_
-

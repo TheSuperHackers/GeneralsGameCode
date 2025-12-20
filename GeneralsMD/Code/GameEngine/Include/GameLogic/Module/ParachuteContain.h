@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __ParachuteContain_H_
-#define __ParachuteContain_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/OpenContain.h"
 
@@ -113,6 +110,3 @@ private:
 	Bool m_needToUpdateParaBones;
 	Bool m_opened;
 };
-
-#endif // __ParachuteContain_H_
-

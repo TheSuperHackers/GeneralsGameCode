@@ -737,7 +737,7 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 					}
 				}
 			}
-		} // for i2
+		}
 
 		if (bestUser && numPlayers == 2)
 		{
@@ -752,7 +752,7 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 			              u1, bestUser, NULL, NULL, NULL, NULL, NULL, NULL, 2, ladderID);
 			break;
 		}
-	} // for i1
+	}
 
 	dumpUsers();
 }

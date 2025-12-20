@@ -34,11 +34,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef __MESH_DEFORM_DATA_H
-#define __MESH_DEFORM_DATA_H
+#pragma once
 
 #include <max.h>
-#include "Vector.H"
+#include "Vector.h"
 #include "MeshDeformSet.h"
 
 
@@ -122,7 +121,3 @@ class MeshDeformModData : public LocalModData
 		int						m_CurrentSet;
 		SETS_LIST				m_SetsList;
 };
-
-
-#endif //__MESH_DEFORM_DATA_H
-

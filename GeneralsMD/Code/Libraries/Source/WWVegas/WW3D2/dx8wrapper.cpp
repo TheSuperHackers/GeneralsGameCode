@@ -45,7 +45,7 @@
 //#define CREATE_DX8_FPU_PRESERVE
 #define WW3D_DEVTYPE D3DDEVTYPE_HAL
 
-#if defined(_MSC_VER) && _MSC_VER < 1300
+#if !defined(WINVER) || WINVER < 0x0500
 #undef WINVER
 #define WINVER 0x0500 // Required to access GetMonitorInfo in VC6.
 #endif
@@ -75,7 +75,6 @@
 #include "textureloader.h"
 #include "missingtexture.h"
 #include "thread.h"
-#include <stdio.h>
 #include <d3dx8core.h>
 #include "pot.h"
 #include "wwprofile.h"
@@ -84,7 +83,7 @@
 #include "formconv.h"
 #include "dx8texman.h"
 #include "bound.h"
-#include "dx8webbrowser.h"
+#include "DbgHelpGuard.h"
 
 #include "shdlib.h"
 
@@ -331,7 +330,13 @@ bool DX8Wrapper::Init(void * hwnd, bool lite)
 		** Create the D3D interface object
 		*/
 		WWDEBUG_SAY(("Create Direct3D8"));
-		D3DInterface = Direct3DCreate8Ptr(D3D_SDK_VERSION);		// TODO: handle failure cases...
+		{
+			// TheSuperHackers @bugfix xezon 13/06/2025 Front load the system dbghelp.dll to prevent
+			// the graphics driver from potentially loading the old game dbghelp.dll and then crashing the game process.
+			DbgHelpGuard dbgHelpGuard;
+
+			D3DInterface = Direct3DCreate8Ptr(D3D_SDK_VERSION);		// TODO: handle failure cases...
+		}
 		if (D3DInterface == NULL) {
 			return(false);
 		}
@@ -516,10 +521,8 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Shutdowns(void)
 	TheDX8MeshRenderer.Shutdown();
 	MissingTexture::_Deinit();
 
-	if (CurrentCaps) {
-		delete CurrentCaps;
-		CurrentCaps=NULL;
-	}
+	delete CurrentCaps;
+	CurrentCaps=NULL;
 
 }
 
@@ -592,6 +595,10 @@ bool DX8Wrapper::Create_Device(void)
 	Vertex_Processing_Behavior|=D3DCREATE_FPU_PRESERVE;
 #endif
 
+	// TheSuperHackers @bugfix xezon 13/06/2025 Front load the system dbghelp.dll to prevent
+	// the graphics driver from potentially loading the old game dbghelp.dll and then crashing the game process.
+	DbgHelpGuard dbgHelpGuard;
+
 	HRESULT hr=D3DInterface->CreateDevice
 	(
 		CurRenderDevice,
@@ -635,6 +642,8 @@ bool DX8Wrapper::Create_Device(void)
 				return false;
 		}
 	}
+
+	dbgHelpGuard.deactivate();
 
 	/*
 	** Initialize all subsystems
@@ -1000,7 +1009,7 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 		_RenderDeviceNameTable[CurRenderDevice].str(),_RenderDeviceDescriptionTable[CurRenderDevice].Get_Driver_Name(),
 		_RenderDeviceDescriptionTable[CurRenderDevice].Get_Driver_Version(),ResolutionWidth,ResolutionHeight,(IsWindowed ? 1 : 0)));
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 	// PWG 4/13/2000 - changed so that if you say to resize the window it resizes
 	// regardless of whether its windowed or not as OpenGL resizes its self around
 	// the caption and edges of the window type you provide, so its important to
@@ -2942,8 +2951,7 @@ IDirect3DSurface8 * DX8Wrapper::_Create_DX8_Surface(const char *filename_)
 			// If file not found, try the dds format
 			// else create a surface with missing texture in it
 			char compressed_name[200];
-			strncpy(compressed_name,filename_, ARRAY_SIZE(compressed_name));
-			compressed_name[ARRAY_SIZE(compressed_name)-1] = '\0';
+			strlcpy(compressed_name,filename_, sizeof(compressed_name));
 			char *ext = strstr(compressed_name, ".");
 			if ( ext && (strlen(ext)==4) &&
 				  ( (ext[1] == 't') || (ext[1] == 'T') ) &&

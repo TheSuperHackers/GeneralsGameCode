@@ -51,7 +51,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerTemplate.h"
@@ -156,7 +156,7 @@ const FieldParse ControlBarSchemeManager::m_controlBarSchemeFieldParseTable[] =
 	{ "ExpBarForegroundImage",		INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_expBarForeground) },
 	{ "PowerPurchaseImage",			INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_powerPurchaseImage) },
 
-	{ NULL,										NULL,													NULL, 0 }  // keep this last
+	{ NULL,										NULL,													NULL, 0 }
 
 };
 
@@ -166,6 +166,7 @@ static const LookupListRec AnimTypeNames[] =
 	{ "SLIDE_RIGHT", ControlBarSchemeAnimation::CB_ANIM_SLIDE_RIGHT },
 	{ NULL, 0	}
 };
+static_assert(ARRAY_SIZE(AnimTypeNames) == ControlBarSchemeAnimation::CB_ANIM_MAX + 1, "Incorrect array size");
 
 static void animSlideRight( ControlBarSchemeAnimation *anim );
 
@@ -188,13 +189,8 @@ ControlBarSchemeImage::~ControlBarSchemeImage( void )
 
 ControlBarSchemeAnimation::ControlBarSchemeAnimation( void )
 {
-	// Added by Sadullah Nader
-	// Initializations missing and needed
-
 	m_animDuration = 0;
 	m_finalPos.x = m_finalPos.y = 0;
-
-	// End Add
 	m_name.clear();
 	m_animType = 0;
 	m_animImage = NULL;
@@ -217,9 +213,7 @@ void ControlBarScheme::reset(void)
 		while (it != m_layer[i].end())
 		{
 			ControlBarSchemeImage *im = *it;
-			if( im )
-				delete im;
-			im = NULL;
+			delete im;
 			it ++;
 		}
 		m_layer[i].clear();
@@ -232,12 +226,7 @@ void ControlBarScheme::reset(void)
 	while (it != m_animations.end())
 	{
 		ControlBarSchemeAnimation *anim = *it;
-		if( anim )
-		{
-			anim->m_animImage = NULL;
-			delete(anim);
-		}
-		anim = NULL;
+		delete anim;
 		it ++;
 	}
 	m_animations.clear();
@@ -310,12 +299,8 @@ ControlBarScheme::ControlBarScheme(void)
 	m_optionsButtonPushed = NULL;
 	m_optionsButtonDisabled = NULL;
 
-	// Added By Sadullah Nader
-	// Initializations needed
-
 	m_commandBarBorderColor = 0;
 
-	//
 	m_idleWorkerButtonEnable = NULL;
 	m_idleWorkerButtonHightlited = NULL;
 	m_idleWorkerButtonPushed = NULL;
@@ -360,7 +345,6 @@ ControlBarScheme::ControlBarScheme(void)
 	m_minMaxButtonEnable = NULL;
 	m_minMaxButtonHightlited = NULL;
 	m_minMaxButtonPushed = NULL;
-
 	m_minMaxUL.x = 0;
 	m_minMaxLR.x = 0;
 
@@ -691,7 +675,7 @@ void ControlBarScheme::addAnimation( ControlBarSchemeAnimation *schemeAnim )
 		return;
 	}
 	m_animations.push_back( schemeAnim );
-}// addAnimation
+}
 
 //
 // Add an image to the proper layer list
@@ -713,7 +697,7 @@ void ControlBarScheme::addImage( ControlBarSchemeImage *schemeImage )
 	}
 
 	m_layer[schemeImage->m_layer].push_back(schemeImage);
-}// addImage
+}
 
 //
 // Update the position of the image that's animating
@@ -850,9 +834,7 @@ ControlBarSchemeManager::~ControlBarSchemeManager( void )
 	while (it != m_schemeList.end())
 	{
 		ControlBarScheme *CBScheme = *it;
-		if( CBScheme )
-			delete CBScheme;
-		CBScheme = NULL;
+		delete CBScheme;
 		it ++;
 	}
 	m_schemeList.clear();
@@ -871,7 +853,7 @@ void ControlBarSchemeManager::parseImagePart(INI *ini, void *instance, void* /*s
 			{ "Size",						INI::parseICoord2D,				NULL, offsetof( ControlBarSchemeImage, m_size ) },
       { "ImageName",			INI::parseMappedImage,		NULL, offsetof( ControlBarSchemeImage, m_image ) },
 			{ "Layer",					INI::parseInt,						NULL, offsetof( ControlBarSchemeImage, m_layer ) },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 
 	ControlBarSchemeImage *schemeImage = NEW ControlBarSchemeImage;
@@ -891,7 +873,7 @@ void ControlBarSchemeManager::parseAnimatingPartImage(INI *ini, void *instance, 
 			{ "Size",						INI::parseICoord2D,				NULL, offsetof( ControlBarSchemeImage, m_size ) },
       { "ImageName",			INI::parseMappedImage,		NULL, offsetof( ControlBarSchemeImage, m_image ) },
 			{ "Layer",					INI::parseInt,						NULL, offsetof( ControlBarSchemeImage, m_layer ) },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 
 	ControlBarSchemeImage *schemeImage = NEW ControlBarSchemeImage;
@@ -912,7 +894,7 @@ void ControlBarSchemeManager::parseAnimatingPart(INI *ini, void *instance, void*
 			{ "Duration",				INI::parseDurationUnsignedInt,			NULL, offsetof( ControlBarSchemeAnimation, m_animDuration ) },
 			{ "FinalPos",				INI::parseICoord2D,			NULL, offsetof( ControlBarSchemeAnimation, m_finalPos ) },
 			{ "ImagePart",			ControlBarSchemeManager::parseAnimatingPartImage,	NULL, NULL },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 
 	ControlBarSchemeAnimation *schemeAnim = NEW ControlBarSchemeAnimation;
@@ -1028,19 +1010,19 @@ void ControlBarSchemeManager::init( void )
 
 	INI ini;
 	// Read from INI all the ControlBarSchemes
-	ini.load( AsciiString( "Data\\INI\\Default\\ControlBarScheme.ini" ), INI_LOAD_OVERWRITE, NULL );
-	ini.load( AsciiString( "Data\\INI\\ControlBarScheme.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\ControlBarScheme", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\ControlBarScheme", INI_LOAD_OVERWRITE, NULL );
 
 //	//Load the user modified control bar schemes
 //	WIN32_FIND_DATA findData;
 //	AsciiString userDataPath;
 //	if(TheGlobalData)
 //	{
-//		userDataPath.format("%sINI\\ControlBarScheme.ini",TheGlobalData->getPath_UserData().str());
+//		userDataPath.format("%sINI\\ControlBarScheme",TheGlobalData->getPath_UserData().str());
 //		if	(FindFirstFile(userDataPath.str(), &findData) !=INVALID_HANDLE_VALUE)
-//			ini.load(userDataPath,  INI_LOAD_OVERWRITE, NULL );
+//			ini.loadFileDirectory(userDataPath,  INI_LOAD_OVERWRITE, NULL );
 //	}
-	if( m_schemeList.size() <= 0 )
+	if( m_schemeList.empty() )
 	{
 		DEBUG_ASSERTCRASH(FALSE,("There's no ControlBarScheme in the ControlBarSchemeList:m_schemeList that was just read from the INI file"));
 		return;

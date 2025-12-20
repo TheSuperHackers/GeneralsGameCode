@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _TEAM_H_
-#define _TEAM_H_
-
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
 #include "Common/Thing.h"
@@ -528,10 +525,10 @@ public:
 								 TeamPrototypeID id );
 	// virtual destructor prototype provided by memory pool object
 
-	inline TeamPrototypeID getID() const { return m_id; }
-	inline const AsciiString& getName() const { return m_name; }
-	inline Bool getIsSingleton() const { return (m_flags & TEAM_SINGLETON) != 0; }
-	inline const TeamTemplateInfo *getTemplateInfo(void) const {return &m_teamTemplate;}
+	TeamPrototypeID getID() const { return m_id; }
+	const AsciiString& getName() const { return m_name; }
+	Bool getIsSingleton() const { return (m_flags & TEAM_SINGLETON) != 0; }
+	const TeamTemplateInfo *getTemplateInfo(void) const {return &m_teamTemplate;}
 	/**
 		return the team's owner (backtracking up if necessary)
 	*/
@@ -756,5 +753,3 @@ const AsciiString& Team::getName(void) const
 
 
 // ------------------------------------------------------------------------
-
-#endif // _TEAM_H_

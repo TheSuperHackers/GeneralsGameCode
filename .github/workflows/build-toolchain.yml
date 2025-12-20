@@ -30,10 +30,23 @@ jobs:
   build:
     name: ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
     runs-on: windows-2022
-    timeout-minutes: 20
+    timeout-minutes: 30
+    env:
+      VCPKG_FILE_CACHE: ${{ github.workspace }}\vcpkg-bincache
+      VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}\vcpkg-bincache,readwrite
+      VCPKG_FEATURE_FLAGS: manifests,versions,binarycaching
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Cache vcpkg binary artifacts
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}\vcpkg-bincache
+          key: vcpkg-bincache-${{ runner.os }}-${{ hashFiles('vcpkg.json','vcpkg-lock.json') }}-${{ inputs.preset }}
+          restore-keys: |
+            vcpkg-bincache-${{ runner.os }}-${{ hashFiles('vcpkg.json','vcpkg-lock.json') }}-
+            vcpkg-bincache-${{ runner.os }}-
 
       - name: Cache VC6 Installation
         if: startsWith(inputs.preset, 'vc6')

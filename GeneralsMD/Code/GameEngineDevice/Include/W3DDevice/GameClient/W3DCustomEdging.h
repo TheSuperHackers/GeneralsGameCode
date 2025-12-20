@@ -44,9 +44,6 @@
 
 #pragma once
 
-#ifndef __W3DCUSTOM_EDGING_H_
-#define __W3DCUSTOM_EDGING_H_
-
 //-----------------------------------------------------------------------------
 //           Includes
 //-----------------------------------------------------------------------------
@@ -107,5 +104,3 @@ protected:
 	void freeEdgingBuffers(void);									 ///< Frees the index and vertex buffers.
 	void loadEdgingsInVertexAndIndexBuffers(WorldHeightMap *pMap, Int minX, Int maxX, Int minY, Int maxY);
 };
-
-#endif  // end __W3DCUSTOM_EDGING_H_

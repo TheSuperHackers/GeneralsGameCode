@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _AUDIOHANDLESPECIALVALUES_H_
-#define _AUDIOHANDLESPECIALVALUES_H_
-
 enum AudioHandleSpecialValues CPP_11(: Int)
 {
 	AHSV_Error					= 0x00,
@@ -41,5 +38,3 @@ enum AudioHandleSpecialValues CPP_11(: Int)
 	AHSV_StopTheMusicFade,
 	AHSV_FirstHandle
 };
-
-#endif // _AUDIOHANDLESPECIALVALUES_H_

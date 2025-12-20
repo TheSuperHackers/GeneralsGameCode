@@ -35,15 +35,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef W3DEXCLUSIONLIST_H
-#define W3DEXCLUSIONLIST_H
 
 #include "always.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "wwstring.h"
 #include "hashtemplate.h"
 
@@ -78,7 +73,3 @@ protected:
 	const DynamicVectorClass<StringClass> &	Names;
 	HashTemplateClass<StringClass,int>			NameHash;
 };
-
-
-
-#endif //EXCLUSIONLIST_H

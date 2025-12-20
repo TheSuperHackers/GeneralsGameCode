@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
 #include "GameClient/InGameUI.h"
@@ -48,7 +48,7 @@
 POWTruckBehaviorModuleData::POWTruckBehaviorModuleData( void )
 {
 
-}  // end POWTruckBehaviorModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ POWTruckBehaviorModuleData::POWTruckBehaviorModuleData( void )
 
   p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,14 +77,14 @@ POWTruckBehavior::POWTruckBehavior( Thing *thing, const ModuleData *moduleData )
 								: OpenContain( thing, moduleData )
 {
 
-}  // end POWTruckBehavior
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 POWTruckBehavior::~POWTruckBehavior( void )
 {
 
-}  // end ~POWTruckBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ void POWTruckBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 	// pick up the prisoner
 	powTruckAI->loadPrisoner( other );
 
-}  // end onCollide
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -123,7 +123,7 @@ void POWTruckBehavior::crc( Xfer *xfer )
 	// extend base class
 	OpenContain::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -141,7 +141,7 @@ void POWTruckBehavior::xfer( Xfer *xfer )
 	// extend base class
 	OpenContain::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -152,6 +152,6 @@ void POWTruckBehavior::loadPostProcess( void )
 	// extend base class
 	OpenContain::loadPostProcess();
 
-}  // end loadPostProcess
+}
 
 #endif

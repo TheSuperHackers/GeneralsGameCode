@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef MESHMDL_H
-#define MESHMDL_H
 
 #include "vector2.h"
 #include "vector3.h"
@@ -386,8 +380,3 @@ inline void	MeshModelClass::Apply_Deformation (const SphereClass &sphere, float 
 	MeshDeformer.Apply (*this, sphere, percent, additive);
 }
 #endif
-
-
-
-#endif
-

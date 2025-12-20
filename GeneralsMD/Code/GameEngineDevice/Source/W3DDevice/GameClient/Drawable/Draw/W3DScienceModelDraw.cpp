@@ -29,6 +29,7 @@
 
 #include "W3DDevice/GameClient/Module/W3DScienceModelDraw.h"
 
+#include "Common/GameUtility.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Science.h"
@@ -82,9 +83,9 @@ void W3DScienceModelDraw::doDrawModule(const Matrix3D* transformMtx)
 		return;
 	}
 
-	if( !ThePlayerList->getLocalPlayer()->hasScience(science)
-			&& ThePlayerList->getLocalPlayer()->isPlayerActive()
-		)
+	Player* player = rts::getObservedOrLocalPlayer();
+
+	if( !player->hasScience(science) && player->isPlayerActive() )
 	{
 		// We just don't draw for people without our science except for Observers
 		setHidden( TRUE );
@@ -103,7 +104,7 @@ void W3DScienceModelDraw::crc( Xfer *xfer )
 	// extend base class
 	W3DModelDraw::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -121,7 +122,7 @@ void W3DScienceModelDraw::xfer( Xfer *xfer )
 	// extend base class
 	W3DModelDraw::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -132,6 +133,6 @@ void W3DScienceModelDraw::loadPostProcess( void )
 	// extend base class
 	W3DModelDraw::loadPostProcess();
 
-}  // end loadPostProcess
+}
 
 

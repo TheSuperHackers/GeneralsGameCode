@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __THINGTEMPLATE_H_
-#define __THINGTEMPLATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
 
@@ -82,7 +79,7 @@ typedef std::map<AsciiString, const FXList*> PerUnitFXMap;
 //	INV_IMAGE_HILITE,
 //	INV_IMAGE_PUSHED,
 //
-//	INV_IMAGE_NUM_IMAGES  // keep this last
+//	INV_IMAGE_NUM_IMAGES
 //
 //};
 //-------------------------------------------------------------------------------------------------
@@ -137,7 +134,7 @@ enum ThingTemplateAudioType CPP_11(: Int)
 	TTAUDIO_voiceAttackAir,						///< Unit is ordered to attack an airborne unit
 	TTAUDIO_voiceGuard,								///< Unit is ordered to guard an area
 
-	TTAUDIO_COUNT   // keep last!
+	TTAUDIO_COUNT
 };
 
 class AudioArray
@@ -154,8 +151,7 @@ public:
 	~AudioArray()
 	{
 		for (Int i = 0; i < TTAUDIO_COUNT; ++i)
-			if (m_audio[i])
-				deleteInstance(m_audio[i]);
+			deleteInstance(m_audio[i]);
 	}
 
 	AudioArray(const AudioArray& that)
@@ -201,10 +197,10 @@ enum BuildCompletionType CPP_11(: Int)
 	BC_APPEARS_AT_RALLY_POINT,	///< unit appears at rally point of its #1 prereq
 	BC_PLACED_BY_PLAYER,				///< unit must be manually placed by player
 
-	BC_NUM_TYPES								// leave this last
+	BC_NUM_TYPES
 };
 #ifdef DEFINE_BUILD_COMPLETION_NAMES
-static const char *BuildCompletionNames[] =
+static const char *const BuildCompletionNames[] =
 {
 	"INVALID",
 	"APPEARS_AT_RALLY_POINT",
@@ -212,6 +208,7 @@ static const char *BuildCompletionNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(BuildCompletionNames) == BC_NUM_TYPES + 1, "Incorrect array size");
 #endif  // end DEFINE_BUILD_COMPLETION_NAMES
 
 enum BuildableStatus CPP_11(: Int)
@@ -222,11 +219,11 @@ enum BuildableStatus CPP_11(: Int)
 	BSTATUS_NO,
 	BSTATUS_ONLY_BY_AI,
 
-	BSTATUS_NUM_TYPES	// leave this last
+	BSTATUS_NUM_TYPES
 };
 
 #ifdef DEFINE_BUILDABLE_STATUS_NAMES
-static const char *BuildableStatusNames[] =
+static const char *const BuildableStatusNames[] =
 {
 	"Yes",
 	"Ignore_Prerequisites",
@@ -234,6 +231,7 @@ static const char *BuildableStatusNames[] =
 	"Only_By_AI",
 	NULL
 };
+static_assert(ARRAY_SIZE(BuildableStatusNames) == BSTATUS_NUM_TYPES + 1, "Incorrect array size");
 #endif	// end DEFINE_BUILDABLE_STATUS_NAMES
 
 enum AmmoPipsStyle CPP_11(: Int)
@@ -443,18 +441,18 @@ public:
 	EditorSortingType getEditorSorting() const { return (EditorSortingType)m_editorSorting; }
 
 	/// return true iff the template has the specified kindOf flag set.
-	inline Bool isKindOf(KindOfType t) const
+	Bool isKindOf(KindOfType t) const
 	{
 		return TEST_KINDOFMASK(m_kindof, t);
 	}
 
 	/// convenience for doing multiple kindof testing at once.
-	inline Bool isKindOfMulti(const KindOfMaskType& mustBeSet, const KindOfMaskType& mustBeClear) const
+	Bool isKindOfMulti(const KindOfMaskType& mustBeSet, const KindOfMaskType& mustBeClear) const
 	{
 		return TEST_KINDOFMASK_MULTI(m_kindof, mustBeSet, mustBeClear);
 	}
 
-	inline Bool isAnyKindOf( const KindOfMaskType& anyKindOf ) const
+	Bool isAnyKindOf( const KindOfMaskType& anyKindOf ) const
 	{
 		return TEST_KINDOFMASK_ANY(m_kindof, anyKindOf);
 	}
@@ -475,6 +473,7 @@ public:
 	Real getFenceXOffset() const { return m_fenceXOffset; }  // return fence offset
 
 	Bool isBridge() const { return m_isBridge; }  // return fence offset
+	Bool isBridgeLike() const { return isBridge() || isKindOf(KINDOF_WALK_ON_TOP_OF_WALL); }
 
 	// Only Object can ask this.  Everyone else should ask the Object.  In fact, you really should ask the Object everything.
 	Real friend_calcVisionRange() const { return m_visionRange; }  ///< get vision range
@@ -592,10 +591,10 @@ public:
 	// these are intended ONLY for the private use of ThingFactory and do not use
 	// the m_override pointer, it deals only with templates at the "top" level
 	//
-	inline void friend_setTemplateName( const AsciiString& name ) { m_nameString = name; }
-	inline ThingTemplate *friend_getNextTemplate() const { return m_nextThingTemplate; }
-	inline void friend_setNextTemplate(ThingTemplate *tmplate) { m_nextThingTemplate = tmplate; }
-	inline void friend_setTemplateID(UnsignedShort id) { m_templateID = id; }
+	void friend_setTemplateName( const AsciiString& name ) { m_nameString = name; }
+	ThingTemplate *friend_getNextTemplate() const { return m_nextThingTemplate; }
+	void friend_setNextTemplate(ThingTemplate *tmplate) { m_nextThingTemplate = tmplate; }
+	void friend_setTemplateID(UnsignedShort id) { m_templateID = id; }
 
 	Int getEnergyProduction() const { return m_energyProduction; }
 	Int getEnergyBonus() const { return m_energyBonus; }
@@ -834,6 +833,3 @@ private:
 //-----------------------------------------------------------------------------
 //           Externals
 //-----------------------------------------------------------------------------
-
-#endif // __THINGTEMPLATE_H_
-
