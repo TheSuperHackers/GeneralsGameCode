@@ -20,7 +20,8 @@
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
 //#include "GameLogic/TerrainLogic.h"
-//#include "GameLogic/Weapon.h"
+#include "GameLogic/Weapon.h"
+#include "Common/ObjectStatusTypes.h"
 
 #include "GameLogic/Module/CarrierDroneAIUpdate.h"
 // #include "GameLogic/Module/JetAIUpdate.h"
@@ -96,7 +97,7 @@ UpdateSleepTime CarrierDroneAIUpdate::update()
 
 	// Init launch state (check contained status)
 	if (!obj->isContained() && m_isContained && m_launchFrame == 0) {
-		DEBUG_LOG((">>> CarrierDroneAIUpdate::update() - Start Launch State %d", obj->getID()));
+		//DEBUG_LOG((">>> CarrierDroneAIUpdate::update() - Start Launch State %d", obj->getID()));
 		obj->setModelConditionState(MODELCONDITION_TAKEOFF);
 		chooseLocomotorSet(data->m_launchingLoco);
 		m_launchFrame = TheGameLogic->getFrame();
@@ -106,6 +107,9 @@ UpdateSleepTime CarrierDroneAIUpdate::update()
 			m_launchingSound.setObjectID(obj->getID());
 			m_launchingSound.setPlayingHandle(TheAudio->addAudioEvent(&m_launchingSound));
 		}
+
+		// obj->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_NO_ATTACK));
+		//obj->getCurrentWeapon()->setPossibleNextShotFrame(m_launchFrame + data->m_launchTime);
 	}
 	m_isContained = obj->isContained();
 
@@ -113,7 +117,7 @@ UpdateSleepTime CarrierDroneAIUpdate::update()
 	if (m_launchFrame != 0) {
 		UnsignedInt now = TheGameLogic->getFrame();
 		if (m_launchFrame + data->m_launchTime <= now) {
-			DEBUG_LOG((">>> CarrierDroneAIUpdate::update() - Stop Launch State %d", obj->getID()));
+			//DEBUG_LOG((">>> CarrierDroneAIUpdate::update() - Stop Launch State %d", obj->getID()));
 			obj->clearModelConditionState(MODELCONDITION_TAKEOFF);
 			chooseLocomotorSet(LOCOMOTORSET_NORMAL);
 			m_launchFrame = 0;
@@ -122,7 +126,14 @@ UpdateSleepTime CarrierDroneAIUpdate::update()
 			{
 				TheAudio->removeAudioEvent(m_launchingSound.getPlayingHandle());
 			}
+
+			// obj->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_NO_ATTACK));
 		}
+		//else { // We are still launching
+		//	if (isAttacking()) {
+		//		return UPDATE_SLEEP_NONE;
+		//	}
+		//}
 	}
 
 	
@@ -137,7 +148,7 @@ UpdateSleepTime CarrierDroneAIUpdate::update()
 	Real dockingDistSquared = data->m_dockingDistance * data->m_dockingDistance;
 	if (getStateMachine()->getCurrentStateID() == AI_ENTER && getGoalObject() != NULL) {
 		distanceToTargetSquared = ThePartitionManager->getDistanceSquared(obj, getGoalObject(), FROM_CENTER_2D);
-		DEBUG_LOG(("CarrierDroneAIUpdate::update() - distance = %f", sqrt(distanceToTargetSquared)));
+		//DEBUG_LOG(("CarrierDroneAIUpdate::update() - distance = %f", sqrt(distanceToTargetSquared)));
 		if (distanceToTargetSquared < dockingDistSquared) {
 			isDocking = true;
 		}
@@ -146,7 +157,7 @@ UpdateSleepTime CarrierDroneAIUpdate::update()
 	Locomotor* loco = getCurLocomotor();
 
 	if (isDocking && !m_isDocking) {
-		DEBUG_LOG((">>> CarrierDroneAIUpdate::update() - ENTER LANDING STATE %d", obj->getID()));
+		//DEBUG_LOG((">>> CarrierDroneAIUpdate::update() - ENTER LANDING STATE %d", obj->getID()));
 
 		//loco->setMaxSpeed(DOCKING_SPEED);
 		chooseLocomotorSet(data->m_dockingLoco);
@@ -166,7 +177,7 @@ UpdateSleepTime CarrierDroneAIUpdate::update()
 		m_isDocking = true;
 	}
 	else if (!isDocking && m_isDocking) {
-		DEBUG_LOG(("<<< CarrierDroneAIUpdate::update() - EXIT LANDING STATE %d", obj->getID()));
+		//DEBUG_LOG(("<<< CarrierDroneAIUpdate::update() - EXIT LANDING STATE %d", obj->getID()));
 
 		obj->clearModelConditionState(MODELCONDITION_LANDING);
 		//loco->setMaxSpeed(loco->getMaxSpeedForCondition(getObject()->getBodyModule()->getDamageState()));

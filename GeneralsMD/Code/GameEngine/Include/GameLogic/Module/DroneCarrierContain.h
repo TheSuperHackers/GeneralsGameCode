@@ -12,11 +12,15 @@
 #include "GameLogic/Module/TransportContain.h"
 #include "GameLogic/Module/GarrisonContain.h"
 
+
+enum DeathType CPP_11(: Int);
+
 //-------------------------------------------------------------------------------------------------
 class DroneCarrierContainModuleData: public TransportContainModuleData
 {
 public:
 	Real							m_launchVelocityBoost;
+	DeathType					m_deathTypeToContained;
 
 	DroneCarrierContainModuleData();
 
@@ -51,6 +55,8 @@ public:
 	virtual short getPortableSlot(ObjectID portableID) const override;
 	virtual const ContainedItemsList* getAddOnList() const override;
 	virtual ContainedItemsList* getAddOnList() override;
+
+	virtual void onDie(const DamageInfo* damageInfo) override;
 
 	// Called from the AI update to reload the contained drones
 	void updateContainedReloadingStatus();
