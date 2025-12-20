@@ -179,7 +179,7 @@ Object* AutoFindHealingUpdate::scanClosestTarget()
 			closestDistSqr = fDistSqr;
 			continue;
 		}
-	}  // end for, other
+	}
 
 	return bestTarget;
 }
@@ -193,7 +193,7 @@ void AutoFindHealingUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -214,7 +214,7 @@ void AutoFindHealingUpdate::xfer( Xfer *xfer )
 	// next scan frames
 	xfer->xferInt( &m_nextScanFrames );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -225,4 +225,4 @@ void AutoFindHealingUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

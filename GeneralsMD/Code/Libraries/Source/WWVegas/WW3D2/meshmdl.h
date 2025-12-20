@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef MESHMDL_H
-#define MESHMDL_H
 
 #include "vector2.h"
 #include "vector3.h"
@@ -346,12 +340,3 @@ protected:
 	friend class DX8MeshRendererClass;
 	friend class DX8PolygonRendererClass;
 };
-
-
-
-
-
-
-
-#endif
-

@@ -47,7 +47,7 @@
 
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "WW3D2/dx8wrapper.h"
-#include "WWLib/TARGA.H"
+#include "WWLib/TARGA.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // ObjectPreview
@@ -197,7 +197,7 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 	}
 	// set render object, or create if we need to
 	if( modelName.isEmpty() == FALSE &&
-			strncmp( modelName.str(), "No ", 3 ) )
+			strncmp( modelName.str(), "No ", 3 ) != 0 )
 	{
 	 	WW3DAssetManager *pMgr = W3DAssetManager::Get_Instance();
 		model = pMgr->Create_Render_Obj(modelName.str());
@@ -218,7 +218,7 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 			}
 
 			// Set the render target
-			DX8Wrapper::Set_Render_Target(objectTexture);
+			DX8Wrapper::Set_Render_Target_With_Z(objectTexture);
 
 			// create the camera
 			Bool orthoCamera = false;

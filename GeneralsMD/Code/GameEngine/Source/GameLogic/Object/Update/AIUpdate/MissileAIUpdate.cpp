@@ -26,7 +26,7 @@
 // Author: Michael S. Booth, December 2001
 // Desc:   Implementation of missile behavior
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Thing.h"
 #include "Common/ThingTemplate.h"
@@ -400,8 +400,8 @@ Bool MissileAIUpdate::projectileHandleCollision( Object *other )
 							thingToKill->kill();
 							++numKilled;
 						}
-					} // next contained item
-				} // if items
+					}
+				}
 
 				if (numKilled > 0)
 				{
@@ -413,7 +413,7 @@ Bool MissileAIUpdate::projectileHandleCollision( Object *other )
 
 					return true;
 				}
-			}	// if a garrisonable thing
+			}
 		}
 	}
 
@@ -1006,7 +1006,7 @@ void MissileAIUpdate::crc( Xfer *xfer )
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1094,4 +1094,4 @@ void MissileAIUpdate::loadPostProcess( void )
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}

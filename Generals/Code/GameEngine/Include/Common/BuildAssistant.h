@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __BUILDASSISTANT_H_
-#define __BUILDASSISTANT_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/STLTypedefs.h"
 #include "Lib/BaseType.h"
@@ -174,7 +171,7 @@ public:
 																							Object *builderObject );
 
 	/// return the "scratch pad" array that can be used to create a line of build locations
-	virtual inline Coord3D *getBuildLocations( void ) { return m_buildPositions; }
+	virtual Coord3D *getBuildLocations( void ) { return m_buildPositions; }
 
 	/// is the template a line build object, like a wall
 	virtual Bool isLineBuildTemplate( const ThingTemplate *tTemplate );
@@ -208,10 +205,7 @@ protected:
 	Int m_buildPositionSize;				///< number of elements in the build position array
 	ObjectSellList m_sellList;			///< list of objects currently going through the "sell process"
 
-};  // end BuildAssistant
+};
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
 extern BuildAssistant *TheBuildAssistant;
-
-#endif // __BUILDASSISTANT_H_
-

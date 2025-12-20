@@ -39,15 +39,12 @@
 
 #pragma once
 
-#ifndef __IMAGEPACKER_H_
-#define __IMAGEPACKER_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <windows.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
-#include "WWLib/TARGA.H"
+#include "WWLib/TARGA.h"
 #include "ImageDirectory.h"
 #include "ImageInfo.h"
 #include "TexturePage.h"
@@ -212,6 +209,3 @@ inline UnsignedInt ImagePacker::getGapMethod( void ) { return m_gapMethod; }
 // EXTERNALS //////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 extern ImagePacker *TheImagePacker;
-
-#endif // __IMAGEPACKER_H_
-

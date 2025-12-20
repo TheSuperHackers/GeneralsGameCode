@@ -80,33 +80,21 @@ BOOL MeshMoldOptions::OnInitDialog()
 	m_moldTreeView.ShowWindow(SW_SHOW);
 
 	{
-		char				dirBuf[_MAX_PATH];
-		char				findBuf[_MAX_PATH];
 		char				fileBuf[_MAX_PATH];
 		Int					i;
 
-		strcpy(dirBuf, ".\\data\\Editor\\Molds");
-		int len = strlen(dirBuf);
-
-		if (len > 0 && dirBuf[len - 1] != '\\') {
-			dirBuf[len++] = '\\';
-			dirBuf[len] = 0;
-		}
-		strcpy(findBuf, dirBuf);
-		strcat(findBuf, "*.w3d");
-
 		FilenameList filenameList;
-		TheFileSystem->getFileListInDirectory(AsciiString(dirBuf), AsciiString("*.w3d"), filenameList, FALSE);
+		TheFileSystem->getFileListInDirectory(".\\data\\Editor\\Molds\\", "*.w3d", filenameList, FALSE);
 
-		if (filenameList.size() > 0) {
+		if (!filenameList.empty()) {
 			HTREEITEM child = NULL;
 			FilenameList::iterator it = filenameList.begin();
 			do {
 				AsciiString filename = *it;
 
-				len = filename.getLength();
+				int len = filename.getLength();
 				if (len<5) continue;
-				strcpy(fileBuf, filename.str());
+				strlcpy(fileBuf, filename.str(), ARRAY_SIZE(fileBuf));
 				for (i=strlen(fileBuf)-1; i>0; i--) {
 					if (fileBuf[i] == '.') {
 						// strip off .w3d file extension.
@@ -142,8 +130,8 @@ BOOL MeshMoldOptions::OnInitDialog()
 
 void MeshMoldOptions::setHeight(Real height)
 {
-	char buffer[50];
-	sprintf(buffer, "%.2f", height);
+	char buffer[32];
+	snprintf(buffer, ARRAY_SIZE(buffer), "%.2f", height);
 	m_currentHeight = height;
 	if (m_staticThis && !m_staticThis->m_updating) {
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_HEIGHT_EDIT);
@@ -154,8 +142,8 @@ void MeshMoldOptions::setHeight(Real height)
 
 void MeshMoldOptions::setScale(Real scale)
 {
-	char buffer[50];
-	sprintf(buffer, "%d", (int)floor(scale*100));
+	char buffer[12];
+	snprintf(buffer, ARRAY_SIZE(buffer), "%d", (int)floor(scale*100));
 	m_currentScale = scale;
 	if (m_staticThis && !m_staticThis->m_updating) {
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_SCALE_EDIT);
@@ -166,8 +154,8 @@ void MeshMoldOptions::setScale(Real scale)
 
 void MeshMoldOptions::setAngle(Int angle)
 {
-	char buffer[50];
-	sprintf(buffer, "%d", angle);
+	char buffer[12];
+	snprintf(buffer, ARRAY_SIZE(buffer), "%d", angle);
 	m_currentAngle = angle;
 	if (m_staticThis && !m_staticThis->m_updating) {
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_ANGLE_EDIT);
@@ -205,7 +193,7 @@ void MeshMoldOptions::GetPopSliderInfo(const long sliderID, long *pMin, long *pM
 			// uh-oh!
 			DEBUG_CRASH(("Missing ID."));
 			break;
-	}	// switch
+	}
 }
 
 void MeshMoldOptions::PopSliderChanged(const long sliderID, long theVal)
@@ -240,7 +228,7 @@ void MeshMoldOptions::PopSliderChanged(const long sliderID, long theVal)
 		default:
 			DEBUG_CRASH(("Missing ID."));
 			break;
-	}	// switch
+	}
 }
 
 void MeshMoldOptions::PopSliderFinished(const long sliderID, long theVal)
@@ -256,7 +244,7 @@ void MeshMoldOptions::PopSliderFinished(const long sliderID, long theVal)
 		default:
 			DEBUG_CRASH(("Missing ID."));
 			break;
-	}	// switch
+	}
 
 }
 

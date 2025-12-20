@@ -32,14 +32,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
-#ifndef __SOUND_SCENE_OBJ_H
-#define __SOUND_SCENE_OBJ_H
-
-#include "refcount.h"
+#include "always.h"
 #include "WWAudio.h"
 #include "bittype.h"
 #include "persist.h"
@@ -272,8 +267,3 @@ SoundSceneObjClass::Register_Callback
 	m_pCallback = callback;
 	return ;
 }
-
-
-
-#endif //__SOUND_SCENE_OBJ_H
-

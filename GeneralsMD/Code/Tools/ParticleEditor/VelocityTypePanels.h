@@ -32,8 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_VELOCITYTYPEPANELS_
-#define _H_VELOCITYTYPEPANELS_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Resource.h"
@@ -134,5 +132,3 @@ class VelocityPanelOutward : public ISwapablePanel
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()
 };
-
-#endif /* _H_VELOCITYTYPEPANELS_ */

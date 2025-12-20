@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Library/CSTRAW.CPP                                $*
+ *                     $Archive:: /Commando/Library/CSTRAW.cpp                                $*
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *
@@ -37,7 +37,6 @@
 
 #include	"always.h"
 #include	"cstraw.h"
-#include	<string.h>
 
 
 /***********************************************************************************************

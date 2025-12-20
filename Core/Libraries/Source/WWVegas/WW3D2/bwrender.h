@@ -36,13 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef BWRENDER_H
-#define BWRENDER_H
-
 
 #include "always.h"
 #include "vector2.h"
@@ -74,7 +68,7 @@ class BWRenderClass
 
 		void Set_H_Line(int start_x, int end_x, int y);
 		void Fill(unsigned char c);
-		inline int Scale() const { return scale; }
+		int Scale() const { return scale; }
 	} pixel_buffer;
 
 	Vector2* vertices;
@@ -90,7 +84,3 @@ public:
 	void Render_Triangles(const unsigned long* indices,int index_count);
 	void Render_Triangle_Strip(const unsigned long* indices,int index_count);
 };
-
-
-#endif //BWRENDER_H
-

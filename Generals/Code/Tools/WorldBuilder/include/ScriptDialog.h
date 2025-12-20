@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_SCRIPTDIALOG_H__885FEF28_85F9_4556_9908_1BEC0B6E4C62__INCLUDED_)
-#define AFX_SCRIPTDIALOG_H__885FEF28_85F9_4556_9908_1BEC0B6E4C62__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // ScriptDialog.h : header file
 //
 
@@ -158,5 +154,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SCRIPTDIALOG_H__885FEF28_85F9_4556_9908_1BEC0B6E4C62__INCLUDED_)

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __HIGHLANDER_BODY_H
-#define __HIGHLANDER_BODY_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/ActiveBody.h"
 
@@ -57,6 +54,3 @@ public:
 protected:
 
 };
-
-#endif
-

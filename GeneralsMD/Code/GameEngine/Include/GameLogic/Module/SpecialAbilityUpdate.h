@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SPECIAL_ABILITY_UPDATE_H
-#define __SPECIAL_ABILITY_UPDATE_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/INI.h"
@@ -285,5 +282,3 @@ private:
 	Bool													m_withinStartAbilityRange;
 	Bool													m_doDisableFXParticles;      // smaller targets cause this flag to toggle, making the particle effect more sparse
 };
-
-#endif // _SPECIAL_POWER_UPDATE_H_

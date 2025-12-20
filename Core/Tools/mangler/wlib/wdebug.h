@@ -50,8 +50,7 @@ will you be ready to leave grasshopper.
 
 \*****************************************************************************/
 
-#ifndef WDEBUG_HEADER
-#define WDEBUG_HEADER
+#pragma once
 
 #define USE_DEBUG_SEM
 
@@ -60,7 +59,7 @@ will you be ready to leave grasshopper.
 #include <Utility/iostream_adapter.h>
 #include <Utility/sstream_adapter.h>
 
-#if !defined(_WINDOWS)
+#if !defined(_WIN32)
 // Windows headers have a tendency to redefine IN
 #ifdef IN
 #undef IN
@@ -184,7 +183,7 @@ extern CritSec DebugLibSemaphore;
 #define DBG(X) X
 
 // In Windows, send a copy to the debugger window
-#ifdef _WINDOWS
+#ifdef _WIN32
 
 // Print a variable
 #define PVAR(v) \
@@ -240,7 +239,7 @@ extern CritSec DebugLibSemaphore;
   DEBUGUNLOCK; \
 }
 
-#else // _WINDOWS
+#else // _WIN32
 
 // Print a variable
 #define PVAR(v) \
@@ -280,7 +279,7 @@ extern CritSec DebugLibSemaphore;
      "]: " << ##X << endl; X \
   DEBUGUNLOCK; \
 }
-#endif // _WINDOWS
+#endif // _WIN32
 
 #endif  // DEBUG
 
@@ -310,5 +309,3 @@ class MsgManager
    static ostream            *warnStream(void);
    static ostream            *errorStream(void);
 };
-
-#endif

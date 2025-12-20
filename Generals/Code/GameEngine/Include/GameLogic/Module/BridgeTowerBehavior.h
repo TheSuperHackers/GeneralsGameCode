@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BRIDGE_TOWER_BEHAVIOR_H_
-#define __BRIDGE_TOWER_BEHAVIOR_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DamageModule.h"
@@ -95,5 +92,3 @@ protected:
 	BridgeTowerType m_type;				///< type of tower (positioning) we are
 
 };
-
-#endif  // end __BRIDGE_TOWER_DAMAGE_H_

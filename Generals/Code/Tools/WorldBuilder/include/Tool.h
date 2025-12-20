@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef TOOL_H
-#define TOOL_H
-
 #include "Lib/BaseType.h"
 #include "Common/STLTypedefs.h"
 
@@ -88,6 +85,3 @@ public:
 															Int widthOutside, CWorldBuilderDoc *pDoc,
 															VecHeightMapIndexes* allIndices);
 };
-
-
-#endif //TOOL_H

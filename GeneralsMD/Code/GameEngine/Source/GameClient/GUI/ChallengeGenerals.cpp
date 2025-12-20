@@ -27,7 +27,7 @@
 // Desc:   This is a manager for data pertaining to the Generals' Challenge personas and related GUI.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/ChallengeGenerals.h"
 
@@ -55,7 +55,7 @@ ChallengeGenerals::~ChallengeGenerals()
 void ChallengeGenerals::init( void )
 {
 	INI ini;
-	ini.load( AsciiString( "Data\\INI\\ChallengeMode.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\ChallengeMode", INI_LOAD_OVERWRITE, NULL );
 }
 
 

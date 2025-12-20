@@ -25,7 +25,7 @@
 // DeliverPayloadAIUpdate.cpp ////////////
 // Author: Graham Smallwood, March 2002
 // Desc:   State machine that controls the approach and deployment of airborne cargo
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 
@@ -116,25 +116,16 @@ DeliverPayloadAIUpdate::DeliverPayloadAIUpdate( Thing *thing, const ModuleData* 
 	m_visibleItemsDelivered = 0;
 	m_deliveryDecal.clear();
 	m_previousDistanceSqr = 0;
-
 	m_freeToExit = FALSE;
 	m_acceptingCommands = TRUE;
-
-	// Added By Sadullah Nader
-	// Initialization missing and needed
-
 	m_diveState = DIVESTATE_PREDIVE;
-
-	// End Add
 }
 
 //-------------------------------------------------------------------------------------------------
 DeliverPayloadAIUpdate::~DeliverPayloadAIUpdate( void )
 {
 	m_deliveryDecal.clear();
-
-	if (m_deliverPayloadStateMachine)
-		deleteInstance(m_deliverPayloadStateMachine);
+	deleteInstance(m_deliverPayloadStateMachine);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -256,8 +247,7 @@ void DeliverPayloadAIUpdate::deliverPayload(
 	//THIS GETS CALLED VIA OBJECT CREATION LISTS ONLY!!!
 	//****************************************************
 
-	if (m_deliverPayloadStateMachine)
-		deleteInstance(m_deliverPayloadStateMachine);
+	deleteInstance(m_deliverPayloadStateMachine);
 	m_deliverPayloadStateMachine = NULL;
 
 	m_moveToPos = *moveToPos;
@@ -407,7 +397,7 @@ void DeliverPayloadAIUpdate::crc( Xfer *xfer )
 {
  // extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -496,7 +486,7 @@ void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 	}
 
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -505,7 +495,7 @@ void DeliverPayloadAIUpdate::loadPostProcess( void )
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -519,7 +509,7 @@ DeliverPayloadStateMachine::DeliverPayloadStateMachine( Object *owner ) : StateM
 	static const StateConditionInfo considerConditions[] =
 	{
 		StateConditionInfo(DeliverPayloadStateMachine::isOffMap, RECOVER_FROM_OFF_MAP, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	// order matters: first state is the default state.
@@ -542,7 +532,7 @@ DeliverPayloadStateMachine::~DeliverPayloadStateMachine()
 void DeliverPayloadStateMachine::crc( Xfer *xfer )
 {
 	StateMachine::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -554,7 +544,7 @@ void DeliverPayloadStateMachine::xfer( Xfer *xfer )
 	xfer->xferVersion( &v, cv );
 
 	StateMachine::xfer(xfer);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -562,7 +552,7 @@ void DeliverPayloadStateMachine::xfer( Xfer *xfer )
 void DeliverPayloadStateMachine::loadPostProcess( void )
 {
 	StateMachine::loadPostProcess();
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 /*static*/ Bool DeliverPayloadStateMachine::isOffMap( State *thisState, void* userData )
@@ -641,7 +631,7 @@ StateReturnType ApproachState::update()
 // ------------------------------------------------------------------------------------------------
 void DeliveringState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -655,14 +645,14 @@ void DeliveringState::xfer( Xfer *xfer )
 
 	xfer->xferUnsignedInt(&m_dropDelayLeft);
 	xfer->xferBool(&m_didOpen);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void DeliveringState::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -707,7 +697,7 @@ StateReturnType DeliveringState::update() // Kick a dude out every so often
 		return STATE_FAILURE;
 
 	const ContainedItemsList* items = owner->getContain() ? owner->getContain()->getContainedItemsList() : NULL;
-	if( (!items || !items->size()) && ai->getVisibleItemsDelivered() == ai->getData()->m_visibleNumBones )
+	if( (!items || items->empty()) && ai->getVisibleItemsDelivered() == ai->getData()->m_visibleNumBones )
 	{
 		//We are out of payload to drop AND our visible payload is empty. It's possible for deliverers to
 		//have one or the other or even both.
@@ -931,7 +921,7 @@ void DeliveringState::onExit( StateExitType ) // Close the doors
 // ------------------------------------------------------------------------------------------------
 void ConsiderNewApproachState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -944,14 +934,14 @@ void ConsiderNewApproachState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferInt(&m_numberEntriesToState);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void ConsiderNewApproachState::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -1043,7 +1033,7 @@ void ConsiderNewApproachState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 void RecoverFromOffMapState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -1056,14 +1046,14 @@ void RecoverFromOffMapState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_reEntryFrame);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void RecoverFromOffMapState::loadPostProcess( void )
 {
-}  // end loadPostProcess
+}
 
 
 //-------------------------------------------------------------------------------------------------

@@ -31,10 +31,6 @@
 
 #pragma once
 
-#ifndef __GAMEWINDOWMANAGER_H_
-#define __GAMEWINDOWMANAGER_H_
-
-
 #include "Common/STLTypedefs.h"
 #include "Common/SubsystemInterface.h"
 #include "GameClient/WindowLayout.h"
@@ -256,6 +252,10 @@ public:
 	virtual GameWindow *winGetGrabWindow( void );  ///< who is currently 'held' by mouse
 	virtual void winSetLoneWindow( GameWindow *window );  ///< set the open window
 
+	// Finds the top-level window at the mouse position that matches the required and forbidden status masks.
+	virtual GameWindow* findWindowUnderMouse(GameWindow*& toolTipWindow, const ICoord2D* mousePos, unsigned int requiredStatusMask, unsigned int forbiddenStatusMask);
+	static bool isMouseWithinWindow(GameWindow* window, const ICoord2D* mousePos, unsigned int requiredStatusMask, unsigned int forbiddenStatusMask);
+
 	virtual Bool isEnabled( GameWindow *win );  ///< is window or parents enabled
 	virtual Bool isHidden( GameWindow *win );  ///< is parent or parents hidden
 	virtual void addWindowToParent( GameWindow *window, GameWindow *parent );
@@ -355,7 +355,7 @@ protected:
 	const Image *m_cursorBitmap;
 	UnsignedInt m_captureFlags;
 
-};  // end GameWindowManager
+};
 
 // INLINE /////////////////////////////////////////////////////////////////////////////////////////
 inline GameWinDrawFunc GameWindowManager::getDefaultDraw( void ) { return GameWinDefaultDraw; }
@@ -412,6 +412,3 @@ public:
 	virtual GameWinDrawFunc getTextEntryImageDrawFunc() { return NULL; }
 	virtual GameWinDrawFunc getTextEntryDrawFunc() { return NULL; }
 };
-
-#endif // __GAMEWINDOWMANAGER_H_
-

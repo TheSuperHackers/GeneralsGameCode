@@ -36,13 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef MULTILIST_H
-#define MULTILIST_H
 
 #include "always.h"
 #include "mempool.h"
@@ -530,7 +524,3 @@ protected:
 
 	MultiListNodeClass *		OriginalHead;
 };
-
-
-#endif //LIST_CLASS_H
-

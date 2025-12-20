@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DELETION_UPDATE_H_
-#define __DELETION_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -86,6 +83,3 @@ protected:
 	UnsignedInt m_dieFrame;			///< frame we die on
 
 };
-
-#endif
-

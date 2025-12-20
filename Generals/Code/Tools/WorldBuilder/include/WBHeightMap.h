@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __WBHEIGHTMAP_H_
-#define __WBHEIGHTMAP_H_
+#pragma once
 
 #include "W3DDevice/GameClient/HeightMap.h"
 
@@ -46,5 +45,3 @@ protected:
 	Bool m_drawEntireMap;
 	Bool m_flattenHeights;
 };
-
-#endif  // end __WBHEIGHTMAP_H_

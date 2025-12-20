@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FireWeaponWhenDamagedBehavior_H_
-#define __FireWeaponWhenDamagedBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/UpgradeModule.h"
@@ -158,7 +155,7 @@ protected:
 		return getFireWeaponWhenDamagedBehaviorModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
 	}
 
-	inline Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
+	Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
 
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
@@ -173,6 +170,3 @@ private:
 	Weapon *m_continuousWeaponRubble;
 
 };
-
-#endif // __FireWeaponWhenDamagedBehavior_H_
-

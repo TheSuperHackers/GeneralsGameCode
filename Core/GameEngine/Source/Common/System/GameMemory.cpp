@@ -42,7 +42,7 @@
 //
 // ----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // SYSTEM INCLUDES
 
@@ -2681,7 +2681,7 @@ MemoryPool *MemoryPoolFactory::findMemoryPool(const char *poolName)
 {
 	for (MemoryPool *pool = m_firstPoolInFactory; pool; pool = pool->getNextPoolInList())
 	{
-		if (!strcmp(poolName, pool->getPoolName()))
+		if (strcmp(poolName, pool->getPoolName()) == 0)
 		{
 			DEBUG_ASSERTCRASH(poolName == pool->getPoolName(), ("hmm, ptrs should probably match here"));
 			return pool;
@@ -2975,8 +2975,8 @@ void MemoryPoolFactory::memoryPoolUsageReport( const char* filename, FILE *appen
 	if( !appendToFileInstead )
 	{
 		char tmp[256];
-		strcpy(tmp,filename);
-		strcat(tmp,".csv");
+		strlcpy(tmp, filename, ARRAY_SIZE(tmp));
+		strlcat(tmp, ".csv", ARRAY_SIZE(tmp));
 		perfStatsFile = fopen(tmp, "w");
 	}
 	else

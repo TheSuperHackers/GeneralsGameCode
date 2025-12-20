@@ -50,8 +50,9 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/GameUtility.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
@@ -89,11 +90,15 @@ static NameKeyType buttonCancelID = NAMEKEY_INVALID;
 
 static GameWindow *winFlag = NULL;
 static GameWindow *winGeneralPortrait = NULL;
+// TheSuperHackers @tweak Allow idle worker selection for observers.
+static GameWindow *buttonIdleWorker = NULL;
 static GameWindow *staticTextNumberOfUnits = NULL;
 static GameWindow *staticTextNumberOfBuildings = NULL;
 static GameWindow *staticTextNumberOfUnitsKilled = NULL;
 static GameWindow *staticTextNumberOfUnitsLost = NULL;
 static GameWindow *staticTextPlayerName = NULL;
+
+static NameKeyType s_replayObserverNameKey = NAMEKEY_INVALID;
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -123,8 +128,39 @@ void ControlBar::initObserverControls( void )
 	staticTextPlayerName = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:StaticTextPlayerName"));
 	winFlag = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:WinFlag"));
 	winGeneralPortrait = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:WinGeneralPortrait"));
+	buttonIdleWorker = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonIdleWorker"));
 
 	buttonCancelID = TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonCancel");
+
+	s_replayObserverNameKey = TheNameKeyGenerator->nameToKey("ReplayObserver");
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControlBar::setObserverLookAtPlayer(Player *player)
+{
+	if (player != NULL && player == ThePlayerList->findPlayerWithNameKey(s_replayObserverNameKey))
+	{
+		// Looking at the observer. Treat as not looking at player.
+		m_observerLookAtPlayer = NULL;
+	}
+	else
+	{
+		m_observerLookAtPlayer = player;
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControlBar::setObservedPlayer(Player *player)
+{
+	if (player != NULL && player == ThePlayerList->findPlayerWithNameKey(s_replayObserverNameKey))
+	{
+		// Looking at the observer. Treat as not observing player.
+		m_observedPlayer = NULL;
+	}
+	else
+	{
+		m_observedPlayer = player;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -142,7 +178,7 @@ WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt m
 		{
 				break;
 
-		}  // end create
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_MOUSE_ENTERING:
@@ -160,21 +196,27 @@ WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt m
 			Int controlID = control->winGetWindowId();
 			if( controlID == buttonCancelID)
 			{
-				TheControlBar->setObserverLookAtPlayer(NULL);
+				rts::changeObservedPlayer(NULL);
+
 				ObserverPlayerInfoWindow->winHide(TRUE);
 				ObserverPlayerListWindow->winHide(FALSE);
+				buttonIdleWorker->winHide(TRUE);
 				TheControlBar->populateObserverList();
-
 			}
+
 			for(Int i = 0; i <MAX_BUTTONS; ++i)
 			{
 				if( controlID == buttonPlayerID[i])
 				{
+					Player* player = static_cast<Player*>(GadgetButtonGetData(buttonPlayer[i]));
+					rts::changeObservedPlayer(player);
+
 					ObserverPlayerInfoWindow->winHide(FALSE);
 					ObserverPlayerListWindow->winHide(TRUE);
-					TheControlBar->setObserverLookAtPlayer((Player *) GadgetButtonGetData( buttonPlayer[i]));
+
 					if(TheControlBar->getObserverLookAtPlayer())
 						TheControlBar->populateObserverInfoWindow();
+
 					return MSG_HANDLED;
 				}
 			}
@@ -182,7 +224,7 @@ WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt m
 		//	if( controlID == buttonCommunicator && TheGameLogic->getGameMode() == GAME_INTERNET )
 	/*
 		{
-				popupCommunicatorLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/PopupCommunicator.wnd" ) );
+				popupCommunicatorLayout = TheWindowManager->winCreateLayout( "Menus/PopupCommunicator.wnd" );
 				popupCommunicatorLayout->runInit();
 				popupCommunicatorLayout->hide( FALSE );
 				popupCommunicatorLayout->bringForward();
@@ -191,17 +233,17 @@ WindowMsgHandledType ControlBarObserverSystem( GameWindow *window, UnsignedInt m
 
 			break;
 
-		}  // end button selected
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end ControlBarSystem
+}
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
@@ -232,7 +274,7 @@ void ControlBar::populateObserverList( void )
 				buttonPlayer[currentButton]->winHide(FALSE);
 				buttonPlayer[currentButton]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
 
-				const GameSlot *slot = TheGameInfo->getConstSlot(currentButton);
+				const GameSlot *slot = TheGameInfo->getConstSlot(i);
 				Color playerColor = p->getPlayerColor();
 				Color backColor = GameMakeColor(0, 0, 0, 255);
 				staticTextPlayer[currentButton]->winSetEnabledTextColors( playerColor, backColor );
@@ -301,6 +343,7 @@ void ControlBar::populateObserverInfoWindow ( void )
 	{
 		ObserverPlayerInfoWindow->winHide(TRUE);
 		ObserverPlayerListWindow->winHide(FALSE);
+		buttonIdleWorker->winHide(TRUE);
 		populateObserverList();
 		return;
 	}
@@ -338,4 +381,5 @@ void ControlBar::populateObserverInfoWindow ( void )
 	staticTextPlayerName->winSetEnabledTextColors(color, GameMakeColor(0,0,0,255));
 	winFlag->winSetEnabledImage(0, m_observerLookAtPlayer->getPlayerTemplate()->getFlagWaterMarkImage());
 	winGeneralPortrait->winHide(FALSE);
+	buttonIdleWorker->winHide(FALSE);
 }

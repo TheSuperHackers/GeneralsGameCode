@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef RINGOBJ_H
-#define RINGOBJ_H
 
 #include "always.h"
 #include "rendobj.h"
@@ -363,8 +358,4 @@ private:
 extern RingLoaderClass			_RingLoader;
 
 
-#endif // RINGOBJ_H
-
 // EOF - ringobj,h
-
-

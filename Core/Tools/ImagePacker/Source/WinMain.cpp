@@ -103,7 +103,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		TheImagePacker = NULL;
 		return 0;
 
-	}  // end if
+	}
 
 	// load the dialog box
 	DialogBox( hInstance, (LPCTSTR)IMAGE_PACKER_DIALOG,
@@ -118,4 +118,4 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	// all done
 	return 0;
 
-}  // end WinMain
+}

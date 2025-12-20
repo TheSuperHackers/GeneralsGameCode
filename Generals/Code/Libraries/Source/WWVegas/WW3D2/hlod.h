@@ -34,38 +34,14 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
-#ifndef HLOD_H
-#define HLOD_H
-
-#ifndef ANIMOBJ_H
 #include "animobj.h"
-#endif
-
-#ifndef VECTOR_H
-#include "Vector.H"
-#endif
-
-#ifndef SNAPPTS_H
+#include "Vector.h"
 #include "snapPts.h"
-#endif
-
-#ifndef PROTO_H
 #include "proto.h"
-#endif
-
-#ifndef W3DERR_H
 #include "w3derr.h"
-#endif
-
-#ifndef __PROXY_H
 #include "proxy.h"
-#endif
-
 
 class DistLODClass;
 class HModelClass;
@@ -390,6 +366,3 @@ private:
 ** Instance of the loaders which the asset manager install
 */
 extern HLodLoaderClass			_HLodLoader;
-
-
-#endif

@@ -38,8 +38,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_STATISTICS_
-#define _H_STATISTICS_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
@@ -62,5 +60,3 @@ extern Real Normalize(Real valueToNormalize, Real minRange, Real maxRange);
 
 // same as Normalize, except that output will be in the range [outRangeMin, outRangeMax]
 extern Real NormalizeToRange(Real valueToNormalize, Real minRange, Real maxRange, Real outRangeMin, Real outRangeMax);
-
-#endif /* _H_STATISTICS_ */

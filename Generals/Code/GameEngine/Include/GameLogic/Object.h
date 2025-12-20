@@ -27,8 +27,6 @@
 // Author: Michael S. Booth, October 2000
 
 #pragma once
-#ifndef _OBJECT_H_
-#define _OBJECT_H_
 
 #include "Lib/BaseType.h"
 #include "ref_ptr.h"
@@ -116,9 +114,6 @@ enum WeaponSetType CPP_11(: Int);
 enum WeaponStatus CPP_11(: Int);
 enum RadarPriorityType CPP_11(: Int);
 enum CanAttackResult CPP_11(: Int);
-
-// For ObjectStatusTypes
-#include "Common/ObjectStatusTypes.h"
 
 // For ObjectScriptStatusBit
 #include "GameLogic/ObjectScriptStatusBits.h"
@@ -217,7 +212,7 @@ public:
 	void healCompletely();														///< Restore max health to this Object
 
 	void scoreTheKill( const Object *victim );						///< I just killed this object.
-	void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel );	///< I just achieved this level right this moment
+	void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback = TRUE );	///< I just achieved this level right this moment
 	ExperienceTracker* getExperienceTracker() {return m_experienceTracker;}
 	const ExperienceTracker* getExperienceTracker() const {return m_experienceTracker;}
 	VeterancyLevel getVeterancyLevel() const;
@@ -242,7 +237,10 @@ public:
 	void setCustomIndicatorColor(Color c);
 	void removeCustomIndicatorColor();
 
+	Bool isLogicallyVisible() const; ///< Returns whether the object is logically visible to the player, irrespective of shroud.
+
 	Bool isLocallyControlled() const;
+	Bool isLocallyViewed() const;
 	Bool isNeutralControlled() const;
 
 	Bool getIsUndetectedDefector(void) const { return BitIsSet(m_privateStatus, UNDETECTED_DEFECTOR); }
@@ -391,6 +389,7 @@ public:
 	void friend_setPartitionData(PartitionData *pd) { m_partitionData = pd; }
 	PartitionData *friend_getPartitionData() const { return m_partitionData; }
 	const PartitionData *friend_getConstPartitionData() const { return m_partitionData; }
+	Bool hasGhostObject() const; ///< This object has a ghost object. This does not imply that a ghost snapshot is taken or active.
 
 	void onPartitionCellChange();///< We have moved a 'significant' amount, so do maintenence that can be considered 'cell-based'
 	void handlePartitionCellMaintenance();					///< Undo and redo all shroud actions.  Call when something has changed, like position or ownership or Death
@@ -421,6 +420,8 @@ public:
 	void onRemovedFrom( Object *removedFrom );
 	Int getTransportSlotCount() const;
 	void friend_setContainedBy( Object *containedBy ) { m_containedBy = containedBy; }
+	const Object* getEnclosingContainedBy() const; ///< Find the first enclosing container in the containment chain.
+	const Object* getOuterObject() const; ///< Get the top-level object
 
 	// Special Powers -------------------------------------------------------------------------------
 	SpecialPowerModuleInterface *getSpecialPowerModule( const SpecialPowerTemplate *specialPowerTemplate ) const;
@@ -766,7 +767,7 @@ private:
 	Bool													m_singleUseCommandUsed;
 	Bool													m_isReceivingDifficultyBonus;
 
-};  // end class Object
+};
 
 // deleteInstance is not meant to be used with Object in order to require the use of TheGameLogic->destroyObject()
 void deleteInstance(Object* object) CPP_11(= delete);
@@ -783,5 +784,3 @@ AsciiString DebugDescribeObject(const Object *obj);
 #ifdef DEBUG_OBJECT_ID_EXISTS
 extern ObjectID TheObjectIDToDebug;
 #endif
-
-#endif // _OBJECT_H_

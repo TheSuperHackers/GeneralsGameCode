@@ -26,7 +26,7 @@
 // Author: Graham Smallwood, February 2002
 // Desc:   State machine that controls when and with who a Truck docks
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ResourceGatheringManager.h"
@@ -251,7 +251,7 @@ void SupplyTruckAIUpdate::crc( Xfer *xfer )
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -272,7 +272,7 @@ void SupplyTruckAIUpdate::xfer( Xfer *xfer )
 	xfer->xferInt(&m_numberBoxes);
 	xfer->xferBool(&m_forcePending);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -281,7 +281,7 @@ void SupplyTruckAIUpdate::loadPostProcess( void )
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}
 
 //----------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------
@@ -396,7 +396,7 @@ SupplyTruckStateMachine::SupplyTruckStateMachine( Object *owner ) : StateMachine
 	{
 		StateConditionInfo(ownerIdle, ST_IDLE, NULL),
 		StateConditionInfo(ownerDocking, ST_DOCKING, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	static const StateConditionInfo idleConditions[] =
@@ -405,20 +405,20 @@ SupplyTruckStateMachine::SupplyTruckStateMachine( Object *owner ) : StateMachine
 		StateConditionInfo(isForcedIntoWantingState, ST_WANTING, NULL),
 		StateConditionInfo(ownerDocking, ST_DOCKING, NULL),
 		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	static const StateConditionInfo wantingConditions[] =
 	{
 		StateConditionInfo(ownerDocking, ST_DOCKING, NULL),
 		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	static const StateConditionInfo regroupingConditions[] =
 	{
 		StateConditionInfo(ownerPlayerCommanded, ST_BUSY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	static const StateConditionInfo dockingConditions[] =
@@ -426,7 +426,7 @@ SupplyTruckStateMachine::SupplyTruckStateMachine( Object *owner ) : StateMachine
 		StateConditionInfo(isForcedIntoBusyState, ST_BUSY, NULL),
 		StateConditionInfo(ownerAvailableForSupplying, ST_WANTING, NULL),
 		StateConditionInfo(ownerNotDockingOrIdle, ST_BUSY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	// order matters: first state is the default state.
@@ -448,7 +448,7 @@ SupplyTruckStateMachine::~SupplyTruckStateMachine()
 void SupplyTruckStateMachine::crc( Xfer *xfer )
 {
 	StateMachine::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -460,7 +460,7 @@ void SupplyTruckStateMachine::xfer( Xfer *xfer )
 	xfer->xferVersion( &v, cv );
 
 	StateMachine::xfer(xfer);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -468,7 +468,7 @@ void SupplyTruckStateMachine::xfer( Xfer *xfer )
 void SupplyTruckStateMachine::loadPostProcess( void )
 {
 	StateMachine::loadPostProcess();
-}  // end loadPostProcess
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

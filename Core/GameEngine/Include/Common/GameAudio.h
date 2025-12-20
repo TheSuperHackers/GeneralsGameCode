@@ -41,9 +41,6 @@
 
 #pragma once
 
-#ifndef __COMMON_GAMEAUDIO_H_
-#define __COMMON_GAMEAUDIO_H_
-
 // Includes
 #include "Lib/BaseType.h"
 #include "Common/STLTypedefs.h"
@@ -431,5 +428,3 @@ class AudioManagerDummy : public AudioManager
 
 
 extern AudioManager *TheAudio;
-
-#endif // __COMMON_GAMEAUDIO_H_

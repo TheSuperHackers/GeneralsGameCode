@@ -50,8 +50,7 @@ will you be ready to leave grasshopper.
 
 \*****************************************************************************/
 
-#ifndef MYDEBUG_HEADER
-#define MYDEBUG_HEADER
+#pragma once
 
 #define USE_SEM
 
@@ -130,5 +129,3 @@ public:
 
 	static ostream            *paranoidStream(void);
 };
-
-#endif

@@ -36,8 +36,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef __AI_GUARD_RETALIATION_H
-#define __AI_GUARD_RETALIATION_H
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
@@ -78,8 +76,6 @@ public:
 
 	GuardRetaliateExitConditions() : m_attackGiveUpFrame(0), m_conditionsToConsider(0), m_radiusSqr(0.0f)
 	{
-		//Added By Sadullah Nader
-		// Initializations missing and needed
 		m_center.zero();
 	}
 
@@ -257,5 +253,3 @@ private:
 };
 
 //--------------------------------------------------------------------------------------
-
-#endif

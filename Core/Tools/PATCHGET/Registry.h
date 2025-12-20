@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef __REGISTRY_H__
-#define __REGISTRY_H__
-
 #include <string>
 
 namespace patchget
@@ -51,5 +48,3 @@ bool SetStringInRegistry(std::string path, std::string key, std::string val);
 bool SetUnsignedIntInRegistry(std::string path, std::string key, unsigned int val);
 
 } // namespace patchget
-
-#endif // __REGISTRY_H__

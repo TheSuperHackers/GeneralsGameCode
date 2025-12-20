@@ -82,15 +82,11 @@ DamageClass::DamageClass(void):
  *=============================================================================================*/
 DamageClass::~DamageClass(void)
 {
-	if (Verts != NULL) {
-		delete [] Verts;
-		Verts = NULL;
-	}
+	delete [] Verts;
+	Verts = NULL;
 
-	if (Colors != NULL) {
-		delete[] Colors;
-		Colors = NULL;
-	}
+	delete[] Colors;
+	Colors = NULL;
 }
 
 /***********************************************************************************************

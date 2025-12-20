@@ -92,7 +92,7 @@ RailroadBehaviorModuleData::RailroadBehaviorModuleData( void )
 	m_braking = 0.99f;
 	m_friction = 0.97f;
 	m_waitAtStationTime = 150;
-}  // end RailroadBehaviorModuleData
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -162,7 +162,7 @@ RailroadBehavior::RailroadBehavior( Thing *thing, const ModuleData *moduleData )
 	m_conductorState = m_isLocomotive ? ACCELERATE : COAST;
 
 
-}  // end RailroadBehavior
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -180,7 +180,7 @@ RailroadBehavior::~RailroadBehavior( void )
 	}
 
 
-}  // end ~RailroadBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -416,7 +416,7 @@ void RailroadBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 
 
 
-}  // end RailroadBehavior:: on collide
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -630,7 +630,7 @@ void RailroadBehavior::loadTrackData( void )
 		}
 	}
 
-}  // end loadTrackData
+}
 
 
 
@@ -846,7 +846,7 @@ UpdateSleepTime RailroadBehavior::update( void )
 
 	return UPDATE_SLEEP_NONE;
 
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -1512,7 +1512,7 @@ void RailroadBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1598,7 +1598,7 @@ void RailroadBehavior::xfer( Xfer *xfer )
 	}
 
 
-}  // end xfer
+}
 
 
 
@@ -1640,7 +1640,7 @@ void RailroadBehavior::loadPostProcess( void )
 	m_whistleSound.setObjectID( getObject()->getID() ) ;
 	m_clicketyClackSound.setObjectID( getObject()->getID() ) ;
 
-}  // end loadPostProcess
+}
 
 
 

@@ -31,7 +31,6 @@
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 #include "agg_def.h"
 #include "part_ldr.h"
-#include "rendobj.h"
 #include "hanim.h"
 #include "dx8wrapper.h"
 #include "dx8indexbuffer.h"
@@ -78,6 +77,7 @@
 #include "WorldBuilder.h"
 #include "wbview3d.h"
 #include "Common/Debug.h"
+#include "Common/FramePacer.h"
 #include "Common/ThingFactory.h"
 #include "GameClient/Water.h"
 #include "Common/WellKnownKeys.h"
@@ -183,6 +183,7 @@ public:
 
 	virtual void drawView( void ) {};															///< Render the world visible in this view.
 	virtual void updateView( void ) {};															///< Render the world visible in this view.
+	virtual void stepView() {}; ///< Update view for every fixed time step
 
 	virtual void setZoomLimited( Bool limit ) {}			///< limit the zoom height
 	virtual Bool isZoomLimited( void ) { return TRUE; }							///< get status of zoom limit
@@ -453,19 +454,15 @@ WbView3d::~WbView3d()
 // ----------------------------------------------------------------------------
 void WbView3d::shutdownWW3D(void)
 {
-	if (m_intersector) {
-		delete m_intersector;
-		m_intersector = NULL;
-	}
+	delete m_intersector;
+	m_intersector = NULL;
 
-	if (m_layer) {
-		delete m_layer;
-		m_layer = NULL;
-	}
-	if (m_buildLayer) {
-		delete m_buildLayer;
-		m_buildLayer = NULL;
-	}
+	delete m_layer;
+	m_layer = NULL;
+
+	delete m_buildLayer;
+	m_buildLayer = NULL;
+
 	if (m3DFont) {
 		m3DFont->Release();
 		m3DFont = NULL;
@@ -1068,7 +1065,7 @@ void WbView3d::updateFenceListObjects(MapObject *pObject)
 
 				renderObj = m_assetManager->Create_Render_Obj( modelName.str(), scale, 0);
 
-			}  // end if
+			}
 		}
 
 		if (renderObj) {
@@ -1199,7 +1196,7 @@ void WbView3d::invalBuildListItemInView(BuildListInfo *pBuildToInval)
 						Shadow::ShadowTypeInfo shadowInfo;
 						shadowInfo.allowUpdates=FALSE;	//shadow image will never update
 						shadowInfo.allowWorldAlign=TRUE;	//shadow image will wrap around world objects
-						strcpy(shadowInfo.m_ShadowName,tTemplate->getShadowTextureName().str());
+						strlcpy(shadowInfo.m_ShadowName, tTemplate->getShadowTextureName().str(), ARRAY_SIZE(shadowInfo.m_ShadowName));
 						DEBUG_ASSERTCRASH(shadowInfo.m_ShadowName[0] != '\0', ("this should be validated in ThingTemplate now"));
 						shadowInfo.m_type=(ShadowType)tTemplate->getShadowType();
 						shadowInfo.m_sizeX=tTemplate->getShadowSizeX();
@@ -1208,7 +1205,7 @@ void WbView3d::invalBuildListItemInView(BuildListInfo *pBuildToInval)
 						shadowInfo.m_offsetY=tTemplate->getShadowOffsetY();
 						shadowObj=TheW3DShadowManager->addShadow(renderObj, &shadowInfo);
 					}
-				}  // end if
+				}
 			}
 			if (renderObj) {
 				pBuild->setRenderObj(renderObj);
@@ -1307,15 +1304,18 @@ AsciiString WbView3d::getModelNameAndScale(MapObject *pMapObj, Real *scale, Body
 			break;
 	}
 
-	AsciiString modelName("No Model Name");
+	AsciiString modelName;
 	*scale = 1.0f;
-	Int i;
+
+#ifdef LOAD_TEST_ASSETS
 	char buffer[ _MAX_PATH ];
+
 	if (strncmp(TEST_STRING, pMapObj->getName().str(), strlen(TEST_STRING)) == 0)
 	{
 		/* Handle test art models here */
-		strcpy(buffer, pMapObj->getName().str());
+		strlcpy(buffer, pMapObj->getName().str(), ARRAY_SIZE(buffer));
 
+		Int i;
 		for (i=0; buffer[i]; i++) {
 			if (buffer[i] == '/') {
 				i++;
@@ -1324,7 +1324,9 @@ AsciiString WbView3d::getModelNameAndScale(MapObject *pMapObj, Real *scale, Body
 		}
 		modelName = buffer+i;
 	}
-	else
+#endif
+
+	if (modelName.isEmpty())
 	{
 		modelName = "No Model Name"; // must be this while GDF exists (it's the default)
 		const ThingTemplate *tTemplate;
@@ -1337,8 +1339,8 @@ AsciiString WbView3d::getModelNameAndScale(MapObject *pMapObj, Real *scale, Body
 			modelName = getBestModelName(tTemplate, state);
 			*scale = tTemplate->getAssetScale();
 
-		}  // end if
-	}  // end else
+		}
+	}
 	return modelName;
 }
 
@@ -1472,7 +1474,7 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 					shadowInfo.allowWorldAlign=TRUE;	//shadow image will wrap around world objects
 					if (tTemplate && tTemplate->getShadowType() != SHADOW_NONE && !(pMapObj->getFlags() & FLAG_DONT_RENDER))
 					{	//add correct type of shadow
-						strcpy(shadowInfo.m_ShadowName,tTemplate->getShadowTextureName().str());
+						strlcpy(shadowInfo.m_ShadowName, tTemplate->getShadowTextureName().str(), ARRAY_SIZE(shadowInfo.m_ShadowName));
 						DEBUG_ASSERTCRASH(shadowInfo.m_ShadowName[0] != '\0', ("this should be validated in ThingTemplate now"));
 						shadowInfo.m_type=(ShadowType)tTemplate->getShadowType();
 						shadowInfo.m_sizeX=tTemplate->getShadowSizeX();
@@ -1485,7 +1487,7 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 						shadowObj=TheW3DShadowManager->addShadow(renderObj, &shadowInfo);
 					}
 				}
-			}  // end if
+			}
 		}
 
 		if (renderObj && !(pMapObj->getFlags() & FLAG_DONT_RENDER)) {
@@ -1755,7 +1757,7 @@ Bool WbView3d::viewToDocCoords(CPoint curPt, Coord3D *newPt, Bool constrain)
 			intersection = castResult.ContactPoint;
 			m_curTrackingZ = intersection.Z;
 			result = true;
-		}  // end if
+		}
 	}
 	if (!result) {
 		intersection.X = Vector3::Find_X_At_Z(m_curTrackingZ, rayLocation, rayDirectionPt);
@@ -2056,12 +2058,18 @@ void WbView3d::redraw(void)
       m_showBoundingBoxes, m_showSightRanges, m_showWeaponRanges, m_showSoundCircles, m_highlightTestArt, m_showLetterbox);
 	}
 
-	WW3D::Sync( GetTickCount() );
+	WW3D::Update_Logic_Frame_Time(TheFramePacer->getLogicTimeStepMilliseconds());
+	WW3D::Sync(WW3D::Get_Fractional_Sync_Milliseconds() >= WWSyncMilliseconds);
+
 	m_buildRedMultiplier += (GetTickCount()-m_time)/500.0f;
 	if (m_buildRedMultiplier>4.0f || m_buildRedMultiplier<0) {
 		m_buildRedMultiplier = 0;
 	}
+
 	render();
+
+	TheFramePacer->update();
+
 	m_time = ::GetTickCount();
 }
 
@@ -2459,8 +2467,8 @@ void WbView3d::drawLabels(HDC hdc)
 				switch(i) {
 					case 0 : break;
 					case 1: name = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel1, &exists); break;
-					case 2: name = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel2, &exists);; break;
-					case 3: name = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel3, &exists);; break;
+					case 2: name = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel2, &exists); break;
+					case 3: name = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel3, &exists); break;
 					default: name.clear();
 				}
 				if (!name.isEmpty() && m_showWaypoints) {
@@ -2571,7 +2579,7 @@ void WbView3d::drawLabels(HDC hdc)
 
 			if (m_lightFeedbackMesh[lIndex] == NULL)
 			{	char nameBuf[64];
-				sprintf(nameBuf,"WB_LIGHT%d",lIndex+1);
+				snprintf(nameBuf, ARRAY_SIZE(nameBuf), "WB_LIGHT%d", lIndex+1);
 				m_lightFeedbackMesh[lIndex]=WW3DAssetManager::Get_Instance()->Create_Render_Obj(nameBuf);
 			}
 			if (m_lightFeedbackMesh[lIndex]==NULL) {
@@ -2618,7 +2626,7 @@ void WbView3d::drawLabels(HDC hdc)
 				DeleteObject(pen);	//delete new pen
 			}
 #endif	//DRAW_LIGHT_DIRECTION_RAYS
-		}//end for
+		}
 	}
 	else
 	{	if (!m_doLightFeedback)

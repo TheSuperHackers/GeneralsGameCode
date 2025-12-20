@@ -400,7 +400,7 @@ void CommandButtonHuntUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -448,17 +448,17 @@ void CommandButtonHuntUpdate::xfer( Xfer *xfer )
 						m_commandButton = button;
 						break;  // exit for, i
 
-					}  // end if
+					}
 
-				}  // end for, i
+				}
 
-			} // end if, commandSet
+			}
 
-		}  // end if, command button name present
+		}
 
-	}  // end if, loading
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -469,4 +469,4 @@ void CommandButtonHuntUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -36,9 +36,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "hmdldef.H"
+#include "hmdldef.h"
 #include <assert.h>
-#include <string.h>
 #include "w3d_file.h"
 #include "chunkio.h"
 #include "snapPts.h"
@@ -95,10 +94,8 @@ HModelDefClass::~HModelDefClass(void)
  *=============================================================================================*/
 void HModelDefClass::Free(void)
 {
-	if (SubObjects != NULL) {
-		delete[] SubObjects;
-		SubObjects = NULL;
-	}
+	delete[] SubObjects;
+	SubObjects = NULL;
 	SubObjectCount = 0;
 
 	if (SnapPoints != NULL) {
@@ -151,11 +148,12 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 	/*
 	** process the header info
 	*/
-	strncpy(ModelName,header.Name,W3D_NAME_LEN);
-	ModelName[W3D_NAME_LEN - 1] = 0;
-	strncpy(BasePoseName,header.HierarchyName,W3D_NAME_LEN);
-	BasePoseName[W3D_NAME_LEN-1] = 0;
-	strcpy(Name,ModelName);
+	static_assert(ARRAY_SIZE(ModelName) >= ARRAY_SIZE(header.Name), "Incorrect array size");
+	static_assert(ARRAY_SIZE(BasePoseName) >= ARRAY_SIZE(header.HierarchyName), "Incorrect array size");
+	static_assert(ARRAY_SIZE(Name) >= ARRAY_SIZE(ModelName), "Incorrect array size");
+	strcpy(ModelName, header.Name);
+	strcpy(BasePoseName, header.HierarchyName);
+	strcpy(Name, ModelName);
 
 	/*
 	** Just allocate a node for the number of sub objects we're expecting
@@ -237,9 +235,10 @@ bool HModelDefClass::read_connection(ChunkLoadClass & cload,HmdlNodeDefStruct * 
 		return false;
 	}
 
-	strcpy(node->RenderObjName,ModelName);
-	strcat(node->RenderObjName,".");
-	strcat(node->RenderObjName,con.RenderObjName);
+	static_assert(ARRAY_SIZE(node->RenderObjName) >= ARRAY_SIZE(ModelName), "Incorrect array size");
+	strcpy(node->RenderObjName, ModelName);
+	strlcat(node->RenderObjName, ".", ARRAY_SIZE(node->RenderObjName));
+	strlcat(node->RenderObjName, con.RenderObjName, ARRAY_SIZE(node->RenderObjName));
 
 	if (pre30) {
 		if (con.PivotIdx == 65535) {

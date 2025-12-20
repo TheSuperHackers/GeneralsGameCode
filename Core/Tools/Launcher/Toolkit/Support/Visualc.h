@@ -33,10 +33,8 @@
 *     $Revision:  $
 *
 ******************************************************************************/
-#pragma once
 
-#ifndef _VISUALC_H_
-#define _VISUALC_H_
+#pragma once
 
 #if defined(_MSC_VER)
 
@@ -87,4 +85,3 @@
 #pragma warning(disable:4786)
 
 #endif // _MSC_VER
-#endif // _VISUALC_H_

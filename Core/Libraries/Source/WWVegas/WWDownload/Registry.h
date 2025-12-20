@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef __WWDOWNLOAD_REGISTRY_H__
-#define __WWDOWNLOAD_REGISTRY_H__
-
 #include <string>
 
 /**
@@ -46,5 +43,3 @@ bool SetStringInRegistry(std::string path, std::string key, std::string val);
 	* Store an unsigned int in the registry - returns true on success
 	*/
 bool SetUnsignedIntInRegistry(std::string path, std::string key, unsigned int val);
-
-#endif // __WWDOWNLOAD_REGISTRY_H__

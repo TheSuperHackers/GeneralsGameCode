@@ -43,12 +43,7 @@
  *   CameraClass::Get_View_Space_Frustum_Corners -- returns the corners of the view space frus *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef CAMERA_H
-#define CAMERA_H
 
 #include "always.h"
 #include "rendobj.h"
@@ -451,6 +446,3 @@ inline const Vector3 * CameraClass::Get_View_Space_Frustum_Corners(void) const
 	const FrustumClass & frustum = Get_View_Space_Frustum();
 	return frustum.Corners;
 }
-
-
-#endif

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __HordeUpdate_H_
-#define __HordeUpdate_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "Common/KindOf.h"
@@ -44,19 +41,41 @@ class UpgradeTemplate;
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
+// TheSuperHackers @bugfix xezon 15/09/2025 Adds a new horde action to select a fixed implementation.
+//
+// TheSuperHackers @todo If we want more control over the horde setup, then we need to implement
+// filters for separate weapon bonuses and required upgrades. But adding more behavior modules will
+// be a performance concern. Example INI setup:
+//
+// Behavior = HordeUpdate ModuleTag
+//   Action = NATIONALISM
+//   ;ApplyWeaponBonus = NATIONALISM
+//   UpgradeRequired = Upgrade_Nationalism
+// End
+//
 enum HordeActionType CPP_11(: Int)
 {
-	HORDEACTION_HORDE = 0,
+	HORDEACTION_HORDE, ///< Classic action, applies the Horde bonus correctly, but Nationalism and Fanaticism bonuses are not removed after leaving horde.
+	HORDEACTION_HORDE_FIXED, ///< Applies the Horde, Nationalism and Fanaticism bonuses correctly.
 
-	HORDEACTION_COUNT
+	HORDEACTION_COUNT,
+
+#if RETAIL_COMPATIBLE_CRC
+	HORDEACTION_DEFAULT = HORDEACTION_HORDE,
+#else
+	HORDEACTION_DEFAULT = HORDEACTION_HORDE_FIXED, ///< Does not change unmodified retail game behavior, because all its horde update modules explicitly set Action = HORDE.
+#endif
 };
 
 #ifdef DEFINE_HORDEACTION_NAMES
-static const char *TheHordeActionTypeNames[] =
+static const char *const TheHordeActionTypeNames[] =
 {
 	"HORDE",
+	"HORDE_FIXED",
+
 	NULL
 };
+static_assert(ARRAY_SIZE(TheHordeActionTypeNames) == HORDEACTION_COUNT + 1, "Incorrect array size");
 #endif
 
 //-------------------------------------------------------------------------------------------------
@@ -64,15 +83,15 @@ class HordeUpdateModuleData : public ModuleData
 {
 public:
   UnsignedInt								m_updateRate;   ///< how often to recheck our horde status
-	KindOfMaskType						m_kindof;				///< the kind(s) of units that count towards horde-ness
+	KindOfMaskType						m_kindof;				///< the kind(s) of units that count towards hordeness
 	Int												m_minCount;		  ///< min count to get "horde" status
-  Real											m_minDist;      ///< min dist to contribute to horde-ness
+  Real											m_minDist;      ///< min dist to contribute to hordeness
 	Bool											m_alliesOnly;		///< if true, only allied units count towards hordeness
 	Bool											m_exactMatch;		///< if true, only exact same type of units count towards hordeness
 	Real											m_rubOffRadius;///< If I am this close to another guy who is a true hordesman, it'll rub off on me
-	HordeActionType						m_action;				///< what to do if we get horde-ness
-	Bool											m_allowedNationalism; ///< Nationalism is hard ocded.  Yeah!  Add to the goodness with this flag instead of rewriting after Alpha.
-	std::vector<AsciiString>	m_flagSubObjNames;		///< name(s) of the flag subobj
+	HordeActionType						m_action;				///< what to do if we get hordeness
+	Bool											m_allowedNationalism; ///< Nationalism is hard coded.  Yeah!  Add to the goodness with this flag instead of rewriting after Alpha.
+	std::vector<AsciiString>	m_flagSubObjNames;		///< name(s) of the flag sub obj
 
 	HordeUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
@@ -89,7 +108,7 @@ public:
 	virtual Bool hasFlag() const = 0;
 	virtual Bool isTrueHordeMember() const = 0;
 	virtual Bool isAllowedNationalism() const = 0;
-
+	virtual HordeActionType getHordeActionType() const = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -106,11 +125,13 @@ public:
 	HordeUpdateInterface *getHordeUpdateInterface() { return this; }
 
 	virtual void onDrawableBoundToObject();
+	virtual UpdateSleepTime update();	///< update this object's AI
+
 	virtual Bool isInHorde() const { return m_inHorde; }
+	virtual Bool hasFlag() const { return m_hasFlag; }
 	virtual Bool isTrueHordeMember() const { return m_trueHordeMember && m_inHorde; }
 	virtual Bool isAllowedNationalism() const;
-	virtual Bool hasFlag() const { return m_hasFlag; }
-	virtual UpdateSleepTime update();	///< update this object's AI
+	virtual HordeActionType getHordeActionType() const { return getHordeUpdateModuleData()->m_action; };
 
 protected:
 
@@ -119,11 +140,8 @@ protected:
 
 private:
 	UnsignedInt m_lastHordeRefreshFrame; //Just like it sounds
-	Bool				m_inHorde;				 //I amy be a trueMember, or I may merely inherit hordehood from a neighbor who is
-	Bool				m_trueHordeMember; //meaning, I have enough hordesman near me to qualify
+	Bool				m_inHorde;				 //I may be a true member, or I may merely inherit hordehood from a neighbor who is
+	Bool				m_trueHordeMember; //meaning, I have enough hordesmen near me to qualify
 	Bool				m_hasFlag;
 
 };
-
-#endif // __HordeUpdate_H_
-

@@ -34,8 +34,7 @@
 *
 ******************************************************************************/
 
-#ifndef _DEBUGPRINT_H_
-#define _DEBUGPRINT_H_
+#pragma once
 
 #ifdef RTS_DEBUG
 
@@ -61,5 +60,3 @@ extern char debugLogName[];
 #define PrintWin32Error
 
 #endif // RTS_DEBUG
-
-#endif // _DEBUGPRINT_H_

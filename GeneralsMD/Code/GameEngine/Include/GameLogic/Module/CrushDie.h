@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __CrushDie_H_
-#define __CrushDie_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/INI.h"
@@ -101,6 +98,3 @@ public:
 	virtual void onDie( const DamageInfo *damageInfo );
 
 };
-
-#endif // __CrushDie_H_
-

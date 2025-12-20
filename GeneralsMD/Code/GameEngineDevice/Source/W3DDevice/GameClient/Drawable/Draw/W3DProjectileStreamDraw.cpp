@@ -230,7 +230,7 @@ void W3DProjectileStreamDraw::crc( Xfer *xfer )
 	// extend base class
 	DrawModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -250,7 +250,7 @@ void W3DProjectileStreamDraw::xfer( Xfer *xfer )
 
 	// Graham says there is no data that needs saving here
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -261,4 +261,4 @@ void W3DProjectileStreamDraw::loadPostProcess( void )
 	// extend base class
 	DrawModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

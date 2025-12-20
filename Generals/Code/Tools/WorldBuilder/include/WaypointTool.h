@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef WAYPOINTTOOL_H
-#define WAYPOINTTOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 class MapObject;
@@ -58,6 +55,3 @@ public:
 	virtual void activate(); ///< Become the current tool.
 	virtual void deactivate(); ///< Become not the current tool.
 };
-
-
-#endif //WAYPOINTTOOL_H

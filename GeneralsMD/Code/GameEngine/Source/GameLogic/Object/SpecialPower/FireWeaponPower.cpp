@@ -42,7 +42,7 @@
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES //For access to TheWeaponSlotTypeNames
 
@@ -76,7 +76,7 @@ FireWeaponPowerModuleData::FireWeaponPowerModuleData( void )
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 
 // ------------------------------------------------------------------------------------------------
@@ -185,7 +185,7 @@ void FireWeaponPower::crc( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -203,7 +203,7 @@ void FireWeaponPower::xfer( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -214,4 +214,4 @@ void FireWeaponPower::loadPostProcess( void )
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

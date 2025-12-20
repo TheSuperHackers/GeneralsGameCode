@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Voxel Technology                                             *
  *                                                                                             *
- *                    File Name : MATRIX3D.CPP                                                 *
+ *                    File Name : MATRIX3D.cpp                                                 *
  *                                                                                             *
  *                Org Programmer : Greg Hjelstrom                                               *
  *                                                                                             *
@@ -60,7 +60,6 @@
 #include <math.h>
 #include <assert.h>
 #include <stdlib.h>
-//#include <stdio.h>
 #include "vector3.h"
 #include "matrix3.h"
 #include "matrix4.h"

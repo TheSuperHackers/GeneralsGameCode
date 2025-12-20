@@ -27,12 +27,12 @@
 // Author: John Ahlquist, Nov. 2001
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AudioAffect.h"
 #include "Common/AudioHandleSpecialValues.h"
+#include "Common/FramePacer.h"
 #include "Common/GameAudio.h"
-#include "Common/GameEngine.h"
 #include "Common/MapObject.h"							// For MAP_XY_FACTOR
 #include "Common/PartitionSolver.h"
 #include "Common/Player.h"
@@ -131,14 +131,14 @@ ScriptActions::ScriptActions()
 	m_suppressNewWindows = FALSE;
 	m_unnamedUnit = AsciiString::TheEmptyString;
 
-}  // end ScriptActions
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ScriptActions::~ScriptActions()
 {
 	reset(); // just in case.
-}  // end ~ScriptActions
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Init */
@@ -148,7 +148,7 @@ void ScriptActions::init( void )
 
 	reset();
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
@@ -158,7 +158,7 @@ void ScriptActions::reset( void )
 	m_suppressNewWindows = FALSE;
 	closeWindows(FALSE); // Close victory or defeat windows.
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update */
@@ -166,7 +166,7 @@ void ScriptActions::reset( void )
 void ScriptActions::update( void )
 {
 	// Empty for now.  jba.
-}  // end update
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -594,7 +594,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 					obj->setOrientation(0.0f);
 
 
-				}  // end if
+				}
 			}
 			if (obj) pos.y += 2*obj->getGeometryInfo().getMajorRadius();
 		}
@@ -1032,7 +1032,7 @@ void ScriptActions::doCreateObject(const AsciiString& objectName, const AsciiStr
       }
 
 
-		}  // end if
+		}
 	} else {
 		DEBUG_LOG(("WARNING - ThingTemplate '%s' not found.", thingName.str()));
 	}
@@ -1219,7 +1219,7 @@ void ScriptActions::createUnitOnTeamAt(const AsciiString& unitName, const AsciiS
 				Coord3D destination = *way->getLocation();
 				obj->setPosition(&destination);
 			}
-		}  // end if
+		}
 	} else {
 		DEBUG_LOG(("WARNING - ThingTemplate '%s' not found.", objType.str()));
 	}
@@ -2215,7 +2215,7 @@ void ScriptActions::doTeamHuntWithCommandButton(const AsciiString& teamName, con
 						msg.concat("' requires CommandButtonHuntUpdate in .ini definition to hunt with ");
 						msg.concat(ability);
 						TheScriptEngine->AppendDebugMessage(msg, false);
-					}  // end if
+					}
 				}
 				break;
 
@@ -2627,11 +2627,10 @@ void ScriptActions::doDisplayCinematicText(const AsciiString& displayText, const
 
 	// get the font name
 	AsciiString fontName = AsciiString::TheEmptyString;
-	char buf[256];
-	char *c;
-	strcpy(buf, fontType.str());
+
 	// TheSuperHackers @fix xezon 16/03/2025 Fixes potential buffer overrun via prior c!='\0' test.
-	for( c = buf; *c != '\0'; c++ )
+	const char* c = fontType.str();
+	for (; *c != '\0'; c++)
 	{
 		if( *c != ' ' && *c++ != '-' )
 			fontName.concat(c);
@@ -2970,7 +2969,7 @@ void ScriptActions::doTeamRadarCreateEvent(const AsciiString& teamName, Int even
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doRadarDisable(void)
 {
-	TheRadar->hide(true);
+	TheRadar->hide(ThePlayerList->getLocalPlayer()->getPlayerIndex(), true);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2978,7 +2977,7 @@ void ScriptActions::doRadarDisable(void)
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doRadarEnable(void)
 {
-	TheRadar->hide(false);
+	TheRadar->hide(ThePlayerList->getLocalPlayer()->getPlayerIndex(), false);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4082,7 +4081,7 @@ void ScriptActions::doSetMoney(const AsciiString& playerName, Int money)
 		return;
 
 	m->withdraw(m->countMoney());
-	m->deposit(money);
+	m->deposit(money, FALSE, FALSE);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5120,7 +5119,7 @@ void ScriptActions::doDestroyAllContained(const AsciiString& unitName, Int damag
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doRadarForceEnable(void)
 {
-	TheRadar->forceOn(true);
+	TheRadar->forceOn(ThePlayerList->getLocalPlayer()->getPlayerIndex(), true);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5128,7 +5127,7 @@ void ScriptActions::doRadarForceEnable(void)
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doRadarRevertNormal(void)
 {
-	TheRadar->forceOn(false);
+	TheRadar->forceOn(ThePlayerList->getLocalPlayer()->getPlayerIndex(), false);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -7129,11 +7128,11 @@ void ScriptActions::executeAction( ScriptAction *pAction )
 		case ScriptAction::SET_FPS_LIMIT:
 			if (!pAction->getParameter(0)->getInt())
 			{
-				TheGameEngine->setFramesPerSecondLimit(TheGlobalData->m_framesPerSecondLimit);
+				TheFramePacer->setFramesPerSecondLimit(TheGlobalData->m_framesPerSecondLimit);
 			}
 			else
 			{
-				TheGameEngine->setFramesPerSecondLimit(pAction->getParameter(0)->getInt());
+				TheFramePacer->setFramesPerSecondLimit(pAction->getParameter(0)->getInt());
 			}
 			// Setting the fps limit doesn't do much good if we don't use it.  jba.
 			TheWritableGlobalData->m_useFpsLimit = true;

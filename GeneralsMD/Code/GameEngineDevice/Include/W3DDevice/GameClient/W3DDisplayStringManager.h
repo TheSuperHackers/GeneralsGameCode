@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _W3DDISPLAYSTRINGMANAGER_H_
-#define _W3DDISPLAYSTRINGMANAGER_H_
-
 #include "GameClient/DisplayStringManager.h"
 #include "W3DDevice/GameClient/W3DDisplayString.h"
 
@@ -76,6 +73,3 @@ protected:
 	DisplayString *m_formationLetterDisplayString;
 
 };
-
-#endif // _W3DDISPLAYSTRINGMANAGER_H_
-

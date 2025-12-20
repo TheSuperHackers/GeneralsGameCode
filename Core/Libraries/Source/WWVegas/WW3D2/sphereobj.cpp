@@ -236,7 +236,7 @@ SphereRenderObjClass::SphereRenderObjClass(const SphereRenderObjClass & src)
 SphereRenderObjClass::~SphereRenderObjClass()
 {
 	REF_PTR_RELEASE(SphereMaterial);
-} // destructor
+}
 
 /***********************************************************************************************
  * SphereRenderObjClass::operator -- assignment operator                                       *
@@ -365,7 +365,7 @@ void SphereRenderObjClass::Init_Material (void)
 	// is to turn off backface culling...  ug...
 	SphereShader.Set_Cull_Mode(ShaderClass::CULL_MODE_DISABLE);
 
-}	// Init_Material
+}
 
 
 /***********************************************************************************************
@@ -437,8 +437,8 @@ const char * SphereRenderObjClass::Get_Name(void) const
 void SphereRenderObjClass::Set_Name(const char * name)
 {
 	WWASSERT(name != NULL);
-	WWASSERT(strlen(name) < 2*W3D_NAME_LEN);
-	strcpy(Name,name);
+	const size_t nameLen = strlcpy(Name, name, ARRAY_SIZE(Name));
+	(void)nameLen; WWASSERT(nameLen < ARRAY_SIZE(Name));
 }
 
 
@@ -528,7 +528,7 @@ void SphereRenderObjClass::render_sphere()
 		DX8Wrapper::Draw_Triangles(0,mesh.face_ct,0,mesh.Vertex_ct);
 	}
 
-} // render_sphere
+}
 
 
 /***********************************************************************************************
@@ -547,7 +547,7 @@ void SphereRenderObjClass::render_sphere()
  *=============================================================================================*/
 void SphereRenderObjClass::vis_render_sphere(SpecialRenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent)
 {
-}	// vis_render_sphere
+}
 
 
 /***********************************************************************************************
@@ -1104,13 +1104,9 @@ void SphereRenderObjClass::animate (void)
 				ScaleChannel.Get_Key_Count () > 0 ||
 				VectorChannel.Get_Key_Count () > 0)
 		{
-			//
-			// Convert from milliseconds to seconds and normalize the time
-			//
 			if (AnimDuration > 0) {
-				float	frametime = WW3D::Get_Frame_Time();
-				frametime = (frametime * 0.001F) / AnimDuration;
-				anim_time += frametime;
+				float frametime = WW3D::Get_Logic_Frame_Time_Seconds();
+				anim_time += frametime / AnimDuration;
 			} else {
 				anim_time = 1.0F;
 			}
@@ -1141,7 +1137,7 @@ void SphereRenderObjClass::animate (void)
 
 	return ;
 
-} // animate
+}
 
 
 /*
@@ -1166,7 +1162,7 @@ SpherePrototypeClass::SpherePrototypeClass (void)
 SpherePrototypeClass::SpherePrototypeClass(SphereRenderObjClass *sphere)
 {
 	::memset (&Definition, 0, sizeof (Definition));
-	::strcpy (Definition.Name, sphere->Get_Name ());
+	strlcpy(Definition.Name, sphere->Get_Name(), ARRAY_SIZE(Definition.Name));
 
 	Definition.DefaultAlpha = sphere->Get_Default_Alpha ();
 	Definition.AnimDuration = sphere->AnimDuration;
@@ -1194,7 +1190,7 @@ SpherePrototypeClass::SpherePrototypeClass(SphereRenderObjClass *sphere)
 			filename = name;
 		}
 
-		::strcpy (Definition.TextureName, filename);
+		strlcpy(Definition.TextureName, filename, ARRAY_SIZE(Definition.TextureName));
 
 	}
 
@@ -1382,7 +1378,7 @@ inverse_alpha(false)
 
 	Generate(radius, slices, stacks);
 
-} // SphereMesh Constructor
+}
 
 /***********************************************************************************************
  * SphereMeshClass::SphereMeshClass -- Constructor for SphereMesh Geometry							  *
@@ -1415,7 +1411,7 @@ tri_poly(NULL),
 inverse_alpha(false)
 {
 
-} // Empty SphereMesh Constructor
+}
 
 
 
@@ -1484,7 +1480,7 @@ void	SphereMeshClass::Set_Alpha_Vector (const AlphaVectorStruct &v, bool inverse
 	}
 
 	return ;
-} // Set_Alpha_Vector
+}
 
 
 /***********************************************************************************************
@@ -1563,8 +1559,8 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 			uv->V = stackstep;
 			uv++;
 
-		} // for slices
-	} // for stacks
+		}
+	}
 
 	// Assign vertex for south pole;
 	*veclist = -1.0f * vec;
@@ -1698,7 +1694,7 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 	Set_Alpha_Vector (alpha_vector, inverse_alpha, IsAdditive, true);
 	return ;
 
-} // Generate
+}
 
 
 
@@ -1715,7 +1711,7 @@ SphereMeshClass::~SphereMeshClass(void)
 
 	Free();
 
-} // Destructor
+}
 
 
 /***********************************************************************************************
@@ -1732,13 +1728,13 @@ SphereMeshClass::~SphereMeshClass(void)
  *=============================================================================================*/
 void SphereMeshClass::Free(void)
 {
-	if (vtx)				delete [] vtx;
-	if (vtx_normal)	delete [] vtx_normal;
-	if (vtx_uv)			delete [] vtx_uv;
-	if (dcg)				delete [] dcg;
-	if (strips)			delete [] strips;
-	if (fans)			delete [] fans;
-	if (tri_poly)		delete [] tri_poly;
+	delete [] vtx;
+	delete [] vtx_normal;
+	delete [] vtx_uv;
+	delete [] dcg;
+	delete [] strips;
+	delete [] fans;
+	delete [] tri_poly;
 
 	vtx			= NULL;
 	vtx_normal	= NULL;

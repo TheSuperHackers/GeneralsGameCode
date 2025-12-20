@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __MOBNEXUSCONTAIN_H_
-#define __MOBNEXUSCONTAIN_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/OpenContain.h"
 
@@ -103,6 +100,3 @@ private:
 	Int m_extraSlotsInUse;
 
 };
-
-#endif // __MOBNEXUSCONTAIN_H_
-

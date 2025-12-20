@@ -33,9 +33,6 @@
 
 #pragma once
 
-#ifndef __HELIX_CONTAIN_H_
-#define __HELIX_CONTAIN_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/TransportContain.h"
 
@@ -129,6 +126,3 @@ private:
   ObjectID  m_portableStructureID;
 
 };
-
-#endif
-

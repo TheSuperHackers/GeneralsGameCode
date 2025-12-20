@@ -26,9 +26,6 @@
 
 #pragma once
 
-#ifndef _WeaponSet_H_
-#define _WeaponSet_H_
-
 #include "Lib/BaseType.h"
 #include "Common/GameType.h"
 #include "Common/KindOf.h"
@@ -53,7 +50,7 @@ enum DamageType CPP_11(: Int);
 #include "GameLogic/WeaponSetFlags.h"
 
 #ifdef DEFINE_WEAPONSLOTTYPE_NAMES
-static const char *TheWeaponSlotTypeNames[] =
+static const char *const TheWeaponSlotTypeNames[] =
 {
 	"PRIMARY",
 	"SECONDARY",
@@ -61,6 +58,7 @@ static const char *TheWeaponSlotTypeNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheWeaponSlotTypeNames) == WEAPONSLOT_COUNT + 1, "Incorrect array size");
 
 static const LookupListRec TheWeaponSlotTypeNamesLookupList[] =
 {
@@ -68,8 +66,9 @@ static const LookupListRec TheWeaponSlotTypeNamesLookupList[] =
 	{ "SECONDARY",	SECONDARY_WEAPON },
 	{ "TERTIARY",		TERTIARY_WEAPON },
 
-	{ NULL, 0	}// keep this last!
+	{ NULL, 0	}
 };
+static_assert(ARRAY_SIZE(TheWeaponSlotTypeNamesLookupList) == WEAPONSLOT_COUNT + 1, "Incorrect array size");
 
 #endif
 
@@ -117,7 +116,7 @@ private:
 	static void parsePreferredAgainst(INI* ini, void *instance, void *store, const void* userData);
 
 public:
-	inline WeaponTemplateSet()
+	WeaponTemplateSet()
 	{
 		clear();
 	}
@@ -132,14 +131,14 @@ public:
 	Bool isWeaponLockSharedAcrossSets() const {return m_isWeaponLockSharedAcrossSets; }
 
 	Bool hasAnyWeapons() const;
-	inline const WeaponTemplate* getNth(WeaponSlotType n) const { return m_template[n]; }
-	inline UnsignedInt getNthCommandSourceMask(WeaponSlotType n) const { return m_autoChooseMask[n]; }
-	inline const KindOfMaskType& getNthPreferredAgainstMask(WeaponSlotType n) const { return m_preferredAgainst[n]; }
+	const WeaponTemplate* getNth(WeaponSlotType n) const { return m_template[n]; }
+	UnsignedInt getNthCommandSourceMask(WeaponSlotType n) const { return m_autoChooseMask[n]; }
+	const KindOfMaskType& getNthPreferredAgainstMask(WeaponSlotType n) const { return m_preferredAgainst[n]; }
 
-	inline Int getConditionsYesCount() const { return 1; }
-	inline const WeaponSetFlags& getNthConditionsYes(Int i) const { return m_types; }
+	Int getConditionsYesCount() const { return 1; }
+	const WeaponSetFlags& getNthConditionsYes(Int i) const { return m_types; }
 #if defined(RTS_DEBUG)
-	inline AsciiString getDescription() const { return AsciiString("ArmorTemplateSet"); }
+	inline AsciiString getDescription() const { return "ArmorTemplateSet"; }
 #endif
 };
 
@@ -243,5 +242,3 @@ public:
 
 	static ModelConditionFlags getModelConditionForWeaponSlot(WeaponSlotType wslot, WeaponSetConditionType a);
 };
-
-#endif	// _WeaponSet_H_

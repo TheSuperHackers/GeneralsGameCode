@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _AI_PLAYER_H_
-#define _AI_PLAYER_H_
-
 #include "Common/GameMemory.h"
 #include "Common/Snapshot.h"
 
@@ -116,11 +113,8 @@ public:
 		m_reinforcement(false),
 		m_stopQueueing(false),
 		m_reinforcementID(INVALID_ID),
-		//Added By Sadullah Nader
-		//Initialization(s) inserted
 		m_frameStarted(0),
 		m_priorityBuild(FALSE)
-		//
 	{
 	}
 
@@ -297,8 +291,3 @@ protected:
 
 	ObjectID m_curWarehouseID;
 };
-
-#endif // _AI_PLAYER_H_
-
-
-

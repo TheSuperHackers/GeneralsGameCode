@@ -25,7 +25,7 @@
 // AIDock.cpp
 // Implementation of docking behavior
 // Author: Michael S. Booth, February 2002
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 
 #include "Common/Module.h"
@@ -46,7 +46,7 @@ AIDockMachine::AIDockMachine( Object *obj ) : StateMachine( obj, "AIDockMachine"
 	static const StateConditionInfo waitForClearanceConditions[] =
 	{
 		StateConditionInfo(ableToAdvance, AI_DOCK_ADVANCE_POSITION, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(NULL, NULL, NULL)
 	};
 
 	// order matters: first state is the default state.
@@ -92,7 +92,7 @@ void AIDockMachine::halt()
 void AIDockMachine::crc( Xfer *xfer )
 {
 	StateMachine::crc(xfer);
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -105,7 +105,7 @@ void AIDockMachine::xfer( Xfer *xfer )
 
 	StateMachine::xfer(xfer);
 	xfer->xferInt(&m_approachPosition);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -113,7 +113,7 @@ void AIDockMachine::xfer( Xfer *xfer )
 void AIDockMachine::loadPostProcess( void )
 {
 	StateMachine::loadPostProcess();
-}  // end loadPostProcess
+}
 
 // State transition conditions ----------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ void AIDockApproachState::xfer( Xfer *xfer )
 		AIInternalMoveToState::xfer(xfer);
 	}
 
-}  // end xfer
+}
 
 //----------------------------------------------------------------------------------------------
 /**

@@ -42,7 +42,7 @@
 //
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/MissionStats.h"
 #include "Common/Player.h"
@@ -75,7 +75,7 @@ void MissionStats::init()
 void MissionStats::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -102,7 +102,7 @@ void MissionStats::xfer( Xfer *xfer )
 	// buildings lost
 	xfer->xferInt( &m_buildingsLost );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -110,4 +110,4 @@ void MissionStats::xfer( Xfer *xfer )
 void MissionStats::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

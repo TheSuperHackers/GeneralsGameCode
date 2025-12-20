@@ -24,7 +24,7 @@
 
 // FILE: SubsystemInterface.cpp
 // ----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/SubsystemInterface.h"
 #include "Common/Xfer.h"
@@ -151,18 +151,16 @@ void SubsystemInterfaceList::removeSubsystem(SubsystemInterface* sys)
 #endif
 }
 //-----------------------------------------------------------------------------
-void SubsystemInterfaceList::initSubsystem(SubsystemInterface* sys, const char* path1, const char* path2, const char* dirpath, Xfer *pXfer, AsciiString name, Bool optional /*=FALSE*/)
+void SubsystemInterfaceList::initSubsystem(SubsystemInterface* sys, const char* path1, const char* path2, Xfer *pXfer, AsciiString name, Bool optional /*=FALSE*/)
 {
 	sys->setName(name);
 	sys->init();
 
 	INI ini;
 	if (path1)
-		ini.load(path1, INI_LOAD_OVERWRITE, pXfer, optional );
+		ini.loadFileDirectory(path1, INI_LOAD_OVERWRITE, pXfer, TRUE, optional);
 	if (path2)
-		ini.load(path2, INI_LOAD_OVERWRITE, pXfer, optional );
-	if (dirpath)
-		ini.loadDirectory(dirpath, TRUE, INI_LOAD_OVERWRITE, pXfer );
+		ini.loadFileDirectory(path2, INI_LOAD_OVERWRITE, pXfer, TRUE, optional);
 
 	m_subsystems.push_back(sys);
 }

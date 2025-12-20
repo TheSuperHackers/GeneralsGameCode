@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __POWERPLANTUPDATE_H_
-#define __POWERPLANTUPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -99,5 +96,3 @@ protected:
 	Bool m_extended;										 ///< TRUE when extend is all done
 
 };
-
-#endif  // end __POWERPLANTUPDATE_H_

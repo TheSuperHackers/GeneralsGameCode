@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STDOUTD_HEADER
-#define STDOUTD_HEADER
+#pragma once
 
 #include "odevice.h"
 
@@ -36,5 +35,3 @@ class StdoutD : public OutputDevice
      return(len);
    }
 };
-
-#endif

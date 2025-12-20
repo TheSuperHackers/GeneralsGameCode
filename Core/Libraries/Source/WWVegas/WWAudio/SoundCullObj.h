@@ -34,17 +34,11 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
-#ifndef __SOUNDCULLOBJ_H
-#define __SOUNDCULLOBJ_H
-
+#include "always.h"
 #include "SoundSceneObj.h"
 #include "cullsys.h"
-#include "refcount.h"
 #include "mempool.h"
 #include "multilist.h"
 
@@ -169,5 +163,3 @@ SoundCullObjClass::Get_Bounding_Box (void) const
 	m_AABox.Center = m_Transform.Get_Translation ();
 	return m_AABox;
 }
-
-#endif //__SOUNDCULLOBJ_H

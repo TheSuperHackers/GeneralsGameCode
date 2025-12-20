@@ -26,7 +26,9 @@
 //
 // Debug I/O class ods (OutputDebugString, for use in debugger)
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+#include "debug.h"
+#include "internal.h"
+#include "internal_io.h"
 #include <new>      // needed for placement new prototype
 
 void DebugIOOds::Write(StringType type, const char *src, const char *str)

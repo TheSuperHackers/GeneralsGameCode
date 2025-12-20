@@ -34,29 +34,12 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
-#ifndef CURVE_H
-#define CURVE_H
-
-#ifndef ALWAYS_H
 #include "always.h"
-#endif
-
-#ifndef VECTOR_H
-#include "Vector.H"
-#endif
-
-#ifndef VECTOR3_H
+#include "Vector.h"
 #include "vector3.h"
-#endif
-
-#ifndef PERSIST_H
 #include "persist.h"
-#endif
 
 class ChunkLoadClass;
 class ChunkSaveClass;
@@ -174,6 +157,3 @@ public:
 	virtual bool								Save(ChunkSaveClass &csave);
 	virtual bool								Load(ChunkLoadClass &cload);
 };
-
-
-#endif //CURVE_H

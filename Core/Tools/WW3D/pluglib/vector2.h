@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Westwood 3D                                                  *
  *                                                                                             *
- *                    File Name : VECTOR2.H                                                    *
+ *                    File Name : VECTOR2.h                                                    *
  *                                                                                             *
  *                   Programmer : Greg Hjelstrom                                               *
  *                                                                                             *
@@ -49,12 +49,7 @@
  *   Vector2::Lerp -- linearly interpolates two Vector2's                                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef VECTOR2_H
-#define VECTOR2_H
 
 #include "always.h"
 #include "wwmath.h"
@@ -634,7 +629,3 @@ inline void Vector2::Lerp(const Vector2 & a,const Vector2 & b,float t,Vector2 * 
 	set_result->X = (a.X + (b.X - a.X)*t);
    set_result->Y = (a.Y + (b.Y - a.Y)*t);
 }
-
-
-#endif /* VECTOR2_H */
-

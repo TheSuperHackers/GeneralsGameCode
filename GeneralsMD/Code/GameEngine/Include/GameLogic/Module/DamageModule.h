@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DamageModule_H_
-#define __DamageModule_H_
-
 #include "Common/Module.h"
 #include "GameLogic/Damage.h"
 #include "GameLogic/Module/BehaviorModule.h"
@@ -113,5 +110,3 @@ protected:
 inline DamageModule::DamageModule( Thing *thing, const ModuleData* moduleData ) : BehaviorModule( thing, moduleData ) { }
 inline DamageModule::~DamageModule() { }
 //-------------------------------------------------------------------------------------------------
-
-#endif

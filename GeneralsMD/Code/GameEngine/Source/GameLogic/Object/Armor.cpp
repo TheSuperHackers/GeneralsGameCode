@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 
 #include "Common/INI.h"
@@ -145,11 +145,10 @@ ArmorStore::~ArmorStore()
 }
 
 //-------------------------------------------------------------------------------------------------
-const ArmorTemplate* ArmorStore::findArmorTemplate(AsciiString name) const
+const ArmorTemplate* ArmorStore::findArmorTemplate(NameKeyType namekey) const
 {
-	NameKeyType namekey = TheNameKeyGenerator->nameToKey(name);
-  ArmorTemplateMap::const_iterator it = m_armorTemplates.find(namekey);
-  if (it == m_armorTemplates.end())
+	ArmorTemplateMap::const_iterator it = m_armorTemplates.find(namekey);
+	if (it == m_armorTemplates.end())
 	{
 		return NULL;
 	}
@@ -157,6 +156,18 @@ const ArmorTemplate* ArmorStore::findArmorTemplate(AsciiString name) const
 	{
 		return &(*it).second;
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+const ArmorTemplate* ArmorStore::findArmorTemplate(const AsciiString& name) const
+{
+	return findArmorTemplate(TheNameKeyGenerator->nameToKey(name));
+}
+
+//-------------------------------------------------------------------------------------------------
+const ArmorTemplate* ArmorStore::findArmorTemplate(const char* name) const
+{
+	return findArmorTemplate(TheNameKeyGenerator->nameToKey(name));
 }
 
 //-------------------------------------------------------------------------------------------------

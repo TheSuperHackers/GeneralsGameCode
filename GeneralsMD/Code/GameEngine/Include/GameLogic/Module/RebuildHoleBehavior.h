@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __REBUILD_HOLE_BEHAVIOR_H_
-#define __REBUILD_HOLE_BEHAVIOR_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -120,5 +117,3 @@ protected:
 	const ThingTemplate *m_rebuildTemplate;	///< what we are rebuilding
 
 };
-
-#endif  // end __REBUILD_HOLE_BEHAVIOR_H_

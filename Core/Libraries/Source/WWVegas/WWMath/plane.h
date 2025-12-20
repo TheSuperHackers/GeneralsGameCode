@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Voxel Technology                                             *
  *                                                                                             *
- *                    File Name : PLANE.H                                                      *
+ *                    File Name : PLANE.h                                                      *
  *                                                                                             *
  *                   Programmer : Greg Hjelstrom                                               *
  *                                                                                             *
@@ -35,12 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef PLANE_H
-#define PLANE_H
 
 #include "always.h"
 #include "vector3.h"
@@ -246,5 +241,3 @@ inline void PlaneClass::Intersect_Planes(const PlaneClass & a, const PlaneClass 
 	// find the point).
 	line_dir->Normalize();
 }
-
-#endif /*PLANE_H*/

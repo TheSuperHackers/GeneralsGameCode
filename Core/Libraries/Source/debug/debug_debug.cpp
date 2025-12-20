@@ -26,10 +26,13 @@
 //
 // Debug class implementation
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+#include "debug.h"
+#include "internal.h"
+#include "internal_except.h"
+#include "internal_io.h"
 #include <stdlib.h>
-#include <Utility/stdio_adapter.h>
-#include <string.h>
+#include <windows.h>
+#include <WWCommon.h>
 #include <new>      // needed for placement new prototype
 
 // a little dummy variable that makes the linker actually include
@@ -346,7 +349,7 @@ bool Debug::AssertDone(void)
                         "time being (stops logging this assertion as well).";
     char *help=(char *)DebugAllocMemory(ioBuffer[curType].used+strlen(addInfo)+1);
     strcpy(help,ioBuffer[curType].buffer+82);
-    strcat(help,addInfo);
+    strcat(help, addInfo);
 
     // First hit? Then do a stack trace
     if (curFrameEntry->hits==1)
@@ -523,7 +526,7 @@ Debug& Debug::LogBegin(const char *fileOrGroup)
     // we're doing all this extra work so that DLOGs can be spread across
     // multiple calls
     if (Instance.curType==DebugIOInterface::StringType::Log&&
-        strcmp(Instance.curSource,Instance.curFrameEntry->fileOrGroup))
+        strcmp(Instance.curSource,Instance.curFrameEntry->fileOrGroup) != 0)
       Instance.FlushOutput();
 
     if (Instance.curType!=DebugIOInterface::StringType::Log)
@@ -610,7 +613,7 @@ bool Debug::CrashDone(bool die)
 #endif
     char *help=(char *)DebugAllocMemory(ioBuffer[curType].used+strlen(addInfo)+1);
     strcpy(help,ioBuffer[curType].buffer+82);
-    strcat(help,addInfo);
+    strcat(help, addInfo);
 
     // First hit? Then do a stack trace
     if (curFrameEntry->hits==1)
@@ -729,8 +732,7 @@ Debug& Debug::operator<<(const char *str)
 
 void Debug::SetPrefixAndRadix(const char *prefix, int radix)
 {
-  strncpy(m_prefix,prefix?prefix:"",sizeof(m_prefix)-1);
-  m_prefix[sizeof(m_prefix)-1]=0;
+  strlcpy(m_prefix,prefix?prefix:"",sizeof(m_prefix));
   m_radix=radix;
 }
 
@@ -1186,7 +1188,7 @@ void Debug::UpdateFrameStatus(FrameHashEntry &entry)
       entry.frameType==FrameTypeCheck)
     wsprintf(help,"%s(%i)",entry.fileOrGroup,entry.line);
   else
-    strcpy(help,entry.fileOrGroup);
+    strlcpy(help, entry.fileOrGroup, ARRAY_SIZE(help));
 
   // update frame status
   bool active=entry.frameType!=FrameTypeLog;
@@ -1225,7 +1227,7 @@ const char *Debug::AddLogGroup(const char *fileOrGroup, const char *descr)
   KnownLogGroupList *cur=firstLogGroup;
   for (;cur;cur=cur->next)
   {
-    if (!strcmp(cur->nameGroup,fileOrGroup))
+    if (strcmp(cur->nameGroup,fileOrGroup) == 0)
     {
       // yes, return translated name
       return cur->nameGroup;
@@ -1423,11 +1425,11 @@ void Debug::SetBuildInfo(const char *version,
                          const char *buildDate)
 {
   if (version)
-    strncpy(Instance.m_version,version,sizeof(Instance.m_version)-1);
+    strlcpy(Instance.m_version,version,sizeof(Instance.m_version));
   if (internalVersion)
-    strncpy(Instance.m_intVersion,internalVersion,sizeof(Instance.m_intVersion)-1);
+    strlcpy(Instance.m_intVersion,internalVersion,sizeof(Instance.m_intVersion));
   if (buildDate)
-    strncpy(Instance.m_buildDate,buildDate,sizeof(Instance.m_buildDate)-1);
+    strlcpy(Instance.m_buildDate,buildDate,sizeof(Instance.m_buildDate));
 }
 
 void Debug::WriteBuildInfo(void)
@@ -1545,7 +1547,7 @@ void Debug::ExecCommand(const char *cmdstart, const char *cmdend)
 
     // command group known?
     for (CmdInterfaceListEntry *cur=firstCmdGroup;cur;cur=cur->next)
-      if (!strcmp(curCommandGroup,cur->group))
+      if (strcmp(curCommandGroup,cur->group) == 0)
         break;
     if (!cur)
     {
@@ -1561,18 +1563,18 @@ void Debug::ExecCommand(const char *cmdstart, const char *cmdend)
       // search for a matching command handler
       for (CmdInterfaceListEntry *cur=firstCmdGroup;cur;cur=cur->next)
       {
-        if (strcmp(curCommandGroup,cur->group))
+        if (strcmp(curCommandGroup,cur->group) != 0)
           continue;
 
         bool doneCommand=cur->cmdif->Execute(*this,p,mode,numParts-1,parts+1);
-        if (doneCommand&&(strcmp(p,"help")||numParts>1))
+        if (doneCommand&&(strcmp(p,"help") != 0||numParts>1))
           break;
       }
 
       // display error message if command not found, break away
       if (!cur&&mode==DebugCmdInterface::CommandMode::Normal)
       {
-        if (strcmp(p,"help"))
+        if (strcmp(p,"help") != 0)
           operator<<("Unknown command");
         else if (numParts>1)
           operator<<("Unknown command, help not available");

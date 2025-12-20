@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BRIDGE_BEHAVIOR_H_
-#define __BRIDGE_BEHAVIOR_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "GameClient/TerrainRoads.h"
@@ -197,5 +194,3 @@ protected:
 	UnsignedInt m_deathFrame;								///< frame we died on
 
 };
-
-#endif  // end __BRIDGE_DAMAGE_H_

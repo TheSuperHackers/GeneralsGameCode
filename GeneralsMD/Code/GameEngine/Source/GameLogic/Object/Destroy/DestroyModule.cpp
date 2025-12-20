@@ -38,14 +38,14 @@ DestroyModule::DestroyModule( Thing *thing, const ModuleData* moduleData )
 							: BehaviorModule( thing, moduleData )
 {
 
-}  // end DestroyModule
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 DestroyModule::~DestroyModule( void )
 {
 
-}  // end ~DestroyModule
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -56,7 +56,7 @@ void DestroyModule::crc( Xfer *xfer )
 	// extend base class
 	BehaviorModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -74,7 +74,7 @@ void DestroyModule::xfer( Xfer *xfer )
 	// extend base class
 	BehaviorModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -85,5 +85,5 @@ void DestroyModule::loadPostProcess( void )
 	// extend base class
 	BehaviorModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

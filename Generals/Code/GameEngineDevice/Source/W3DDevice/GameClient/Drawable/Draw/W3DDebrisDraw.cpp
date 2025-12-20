@@ -270,7 +270,7 @@ void W3DDebrisDraw::crc( Xfer *xfer )
 	// extend base class
 	DrawModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -320,7 +320,7 @@ void W3DDebrisDraw::xfer( Xfer *xfer )
 	// final stop
 	xfer->xferBool( &m_finalStop );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -331,4 +331,4 @@ void W3DDebrisDraw::loadPostProcess( void )
 	// extend base class
 	DrawModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

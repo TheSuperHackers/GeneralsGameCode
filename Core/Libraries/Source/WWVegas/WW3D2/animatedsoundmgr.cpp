@@ -37,13 +37,11 @@
 // MBL Update for CNC3 INCURSION - 10.23.2002 - Expanded param handling, Added STOP command
 //
 
-#include <string.h>	// stricmp()
 #include "animatedsoundmgr.h"
-#include "INI.H"
+#include "INI.h"
 #include "inisup.h"
 #include "ffactory.h"
-#include "WWFILE.H"
-#include <stdio.h>
+#include "WWFILE.h"
 #include "definition.h"
 #include "definitionmgr.h"
 #include "definitionclassids.h"

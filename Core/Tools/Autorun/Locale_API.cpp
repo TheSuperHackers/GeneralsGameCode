@@ -290,20 +290,15 @@ int Locale_Init	( int language, char *file )
 
 void Locale_Restore ( void )
 {
-	if (TheGameText)
-	{
-		delete TheGameText;
-		TheGameText = NULL;
-	}
+	delete TheGameText;
+	TheGameText = NULL;
 
 	#if( USE_MULTI_FILE_FORMAT )
 		LOCALE_freetable();
 		LOCALE_restore();
 	#else
-		if( LocaleFile ) {
-			free( LocaleFile );
-			LocaleFile = NULL;
-		}
+		free( LocaleFile );
+		LocaleFile = NULL;
 	#endif
 }
 

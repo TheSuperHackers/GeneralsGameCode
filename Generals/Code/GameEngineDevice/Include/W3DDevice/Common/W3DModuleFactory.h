@@ -32,9 +32,6 @@
 
 #pragma once
 
-#ifndef __W3DMODULEFACTORY_H_
-#define __W3DMODULEFACTORY_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/ModuleFactory.h"
 
@@ -49,5 +46,3 @@ public:
 	virtual void init( void );
 
 };
-
-#endif // __W3DMODULEFACTORY_H_

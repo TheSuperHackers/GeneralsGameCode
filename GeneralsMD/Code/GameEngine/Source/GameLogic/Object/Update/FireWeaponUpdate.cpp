@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
@@ -83,8 +83,7 @@ FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData )
 //-------------------------------------------------------------------------------------------------
 FireWeaponUpdate::~FireWeaponUpdate( void )
 {
-	if (m_weapon)
-		deleteInstance(m_weapon);
+	deleteInstance(m_weapon);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -136,7 +135,7 @@ void FireWeaponUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -160,7 +159,7 @@ void FireWeaponUpdate::xfer( Xfer *xfer )
   if ( version >= 2 )
     xfer->xferUnsignedInt( &m_initialDelayFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -171,4 +170,4 @@ void FireWeaponUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

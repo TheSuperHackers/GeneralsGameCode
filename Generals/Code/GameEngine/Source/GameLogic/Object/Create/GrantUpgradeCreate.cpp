@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_OBJECT_STATUS_NAMES
 #include "Common/Player.h"
@@ -41,7 +41,6 @@
 // ------------------------------------------------------------------------------------------------
 GrantUpgradeCreateModuleData::GrantUpgradeCreateModuleData()
 {
-	m_upgradeName = "";
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -68,14 +67,14 @@ void GrantUpgradeCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-------------------------------------------------------------------------------------------------
 GrantUpgradeCreate::GrantUpgradeCreate( Thing *thing, const ModuleData* moduleData ) : CreateModule( thing, moduleData )
 {
-}  // end GrantUpgradeCreate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 GrantUpgradeCreate::~GrantUpgradeCreate( void )
 {
 
-}  // end ~GrantUpgradeCreate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** The create callback. */
@@ -109,7 +108,7 @@ void GrantUpgradeCreate::onCreate( void )
 		}
 	}
 
-}  // end onCreate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -137,7 +136,7 @@ void GrantUpgradeCreate::onBuildComplete( void )
 	{
 		getObject()->giveUpgrade( upgradeTemplate );
 	}
-}  // end onBuildComplete
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -148,7 +147,7 @@ void GrantUpgradeCreate::crc( Xfer *xfer )
 	// extend base class
 	CreateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -166,7 +165,7 @@ void GrantUpgradeCreate::xfer( Xfer *xfer )
 	// extend base class
 	CreateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -177,4 +176,4 @@ void GrantUpgradeCreate::loadPostProcess( void )
 	// extend base class
 	CreateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

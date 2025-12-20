@@ -133,7 +133,7 @@ static void removeLeadingAndTrailing ( char *buffer )
 
 	while ( *ptr++ = *first++ );
 
-	ptr -= 2;;
+	ptr -= 2;
 
 	while ( (ptr > buffer) && (ch = *ptr) && iswspace ( ch ) )
 	{
@@ -330,7 +330,7 @@ BOOL CBabylonDlg::OnInitDialog()
 #endif
 
 
-	Ready();;
+	Ready();
 
 	PostMessage ( WM_COMMAND, MAKEWPARAM ( IDC_RELOAD, BN_CLICKED ));
 
@@ -980,27 +980,27 @@ static int parseComment ( FILE *file, char *buffer, INFO *info )
 		return new_lines;
 	}
 
-	if ( !stricmp ( token, "COMMENT" ) )
+	if ( stricmp ( token, "COMMENT" ) == 0 )
 	{
 		new_lines += getString ( file, buffer, info->comment );
 	}
-	else if ( !stricmp ( token, "CONTEXT" ) )
+	else if ( stricmp ( token, "CONTEXT" ) == 0 )
 	{
 		new_lines += getString ( file, buffer, info->context );
 	}
-	else if ( !stricmp ( token, "SPEAKER" ) )
+	else if ( stricmp ( token, "SPEAKER" ) == 0 )
 	{
 		new_lines += getString ( file, buffer, info->speaker );
 	}
-	else if ( !stricmp ( token, "LISTENER" ) )
+	else if ( stricmp ( token, "LISTENER" ) == 0 )
 	{
 		new_lines += getString ( file, buffer, info->listener );
 	}
-	else if ( !stricmp ( token, "MAXLEN" ) )
+	else if ( stricmp ( token, "MAXLEN" ) == 0 )
 	{
 		info->maxlen = atoi ( buffer );
 	}
-	else if ( !stricmp ( token, "WAVE" ) )
+	else if ( stricmp ( token, "WAVE" ) == 0 )
 	{
 		new_lines += getString ( file, buffer, info->wave );
 	}
@@ -1024,7 +1024,7 @@ static int getLabelCount( char *filename )
 		if( fscanf( fp, "%s", buffer ) == EOF )
 			break;
 
-		if ( !stricmp( buffer, "END" ) )
+		if ( stricmp( buffer, "END" ) == 0 )
 		{
 			count++;
 		}
@@ -1083,7 +1083,7 @@ int CBabylonDlg::LoadStrFile ( TransDB *db, const char *filename, void (*cb) ( v
 			line_number++;
 			removeLeadingAndTrailing ( buffer );
 
-			if ( !stricmp ( buffer, "END" )	)
+			if ( stricmp ( buffer, "END" ) == 0	)
 			{
 				break;
 			}
@@ -1138,10 +1138,7 @@ exit:
 
 	db->ClearChanges ();
 
-	if ( label )
-	{
-		delete label;
-	}
+	delete label;
 
 	if ( file )
 	{
@@ -1610,7 +1607,7 @@ int CBabylonDlg::UpdateLabel( BabylonLabel *source, BabylonLabel *destination, U
 		if ( (stext = (BabylonText *) dtext->Matched ()) )
 		{
 			// stext is the newer version;
-			if ( wcscmp ( dtext->Get (), stext->Get ()))
+			if ( wcscmp ( dtext->Get (), stext->Get ()) != 0)
 			{
 				if ( update )
 				{
@@ -1620,7 +1617,7 @@ int CBabylonDlg::UpdateLabel( BabylonLabel *source, BabylonLabel *destination, U
 				label_modified = TRUE;
 				info.changes ++;
 			}
-			if ( wcsicmp ( dtext->Wave (), stext->Wave ()))
+			if ( wcsicmp ( dtext->Wave (), stext->Wave ()) != 0)
 			{
 				if ( update )
 				{
@@ -1982,7 +1979,7 @@ int CBabylonDlg::UpdateDB(TransDB *source, TransDB *destination, int update )
 				source->ClearChanges ();
 			}
 		}
-	}	// update
+	}
 
 
 	Ready ();

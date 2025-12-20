@@ -29,7 +29,7 @@
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Xfer.h"
 #include "GameClient/Drawable.h"
 #include "GameLogic/Module/PoisonedBehavior.h"
@@ -70,6 +70,7 @@ PoisonedBehavior::PoisonedBehavior( Thing *thing, const ModuleData* moduleData )
 	m_poisonDamageFrame = 0;
 	m_poisonOverallStopFrame = 0;
 	m_poisonDamageAmount = 0.0f;
+	m_poisonSource = INVALID_ID;
 	m_deathType = DEATH_POISONED;
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 }
@@ -117,7 +118,7 @@ UpdateSleepTime PoisonedBehavior::update()
 		// If it is time to do damage, then do it and reset the damage timer
 		DamageInfo damage;
 		damage.in.m_amount = m_poisonDamageAmount;
-		damage.in.m_sourceID = INVALID_ID;
+		damage.in.m_sourceID = m_poisonSource;
 		damage.in.m_damageType = DAMAGE_UNRESISTABLE; // Not poison, as that will infect us again
 		damage.in.m_deathType = m_deathType;
 		getObject()->attemptDamage( &damage );
@@ -157,6 +158,10 @@ void PoisonedBehavior::startPoisonedEffects( const DamageInfo *damageInfo )
 
 	// We are going to take the damage dealt by the original poisoner every so often for a while.
 	m_poisonDamageAmount = damageInfo->out.m_actualDamageDealt;
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Stubbjax 03/09/2025 Allow poison damage to award xp to the poison source.
+	m_poisonSource = damageInfo->in.m_sourceID;
+#endif
 
 	m_poisonOverallStopFrame = now + d->m_poisonDurationData;
 
@@ -182,6 +187,7 @@ void PoisonedBehavior::stopPoisonedEffects()
 	m_poisonDamageFrame = 0;
 	m_poisonOverallStopFrame = 0;
 	m_poisonDamageAmount = 0.0f;
+	m_poisonSource = INVALID_ID;
 
 	Drawable *myDrawable = getObject()->getDrawable();
 	if( myDrawable )
@@ -197,7 +203,7 @@ void PoisonedBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -208,7 +214,11 @@ void PoisonedBehavior::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 2;
+#else
+	const XferVersion currentVersion = 3;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -229,7 +239,13 @@ void PoisonedBehavior::xfer( Xfer *xfer )
 		xfer->xferUser(&m_deathType, sizeof(m_deathType));
 	}
 
-}  // end xfer
+#if !RETAIL_COMPATIBLE_XFER_SAVE
+	if (version >= 3)
+	{
+		xfer->xferObjectID(&m_poisonSource);
+	}
+#endif
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -240,4 +256,4 @@ void PoisonedBehavior::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -61,7 +61,7 @@ TechBuildingBehaviorModuleData::TechBuildingBehaviorModuleData( void )
 
   p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -129,7 +129,7 @@ void TechBuildingBehavior::onDie( const DamageInfo *damageInfo )
 	us->clearModelConditionState( MODELCONDITION_CAPTURED );
 	us->setTeam( ThePlayerList->getNeutralPlayer()->getDefaultTeam() );
 
-}  // end onDie
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -142,7 +142,7 @@ void TechBuildingBehavior::onCapture( Player *oldOwner, Player *newOwner )
 	// wake up next frame so we can re-evaluate our captured status
 	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
 
-}  // end onCapture
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ void TechBuildingBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -167,7 +167,7 @@ void TechBuildingBehavior::xfer( Xfer *xfer )
 	// extend base class
 	UpdateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -177,5 +177,5 @@ void TechBuildingBehavior::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __WEAPON_SET_UPGRADE_H_
-#define __WEAPON_SET_UPGRADE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
 #include "GameLogic/WeaponSet.h"
@@ -78,7 +75,3 @@ protected:
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };
-
-
-#endif // __DEFAULTDIE_H_
-

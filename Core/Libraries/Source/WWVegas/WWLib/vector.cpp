@@ -53,8 +53,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"Vector.H"
-#include	<string.h>
+#include "Vector.h"
 
 /*
 **	The following template function can be located here ONLY if all the instantiations are

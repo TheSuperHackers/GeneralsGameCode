@@ -32,9 +32,6 @@
 
 #pragma once
 
-#ifndef __OPENCONTAIN_H_
-#define __OPENCONTAIN_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/CollideModule.h"
@@ -292,5 +289,3 @@ private:
 	Bool								m_loadSoundsEnabled;								///< Don't serialize -- used for disabling sounds during payload creation.
   Bool                m_passengerAllowedToFire;      ///< Newly promoted from the template data to the module for upgrade overriding access
 };
-
-#endif  // end __OPENCONTAIN_H_

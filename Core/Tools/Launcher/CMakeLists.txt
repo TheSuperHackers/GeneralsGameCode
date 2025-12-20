@@ -1,8 +1,8 @@
 add_subdirectory(DatGen)
 
 set(LAUNCHER_SRC
-    "BFISH.CPP"
-    "BFISH.H"
+    "BFISH.cpp"
+    "BFISH.h"
     "configfile.cpp"
     "configfile.h"
     "dialog.cpp"

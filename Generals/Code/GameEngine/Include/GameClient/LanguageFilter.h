@@ -22,11 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __LANGUAGEFILTER_H
-#define __LANGUAGEFILTER_H
 
 #include "Common/STLTypedefs.h"
 #include "Common/AsciiString.h"
@@ -85,5 +81,3 @@ protected:
 
 extern LanguageFilter *TheLanguageFilter;
 LanguageFilter * createLanguageFilter();
-
-#endif //#define __LANGUAGEFILTER_H

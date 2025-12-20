@@ -34,9 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef __UTILS_H
-#define __UTILS_H
+#pragma once
 
 #pragma warning (push, 3)
 #include "mss.h"
@@ -46,23 +44,11 @@
 //
 // Macros
 //
-#define SAFE_DELETE(pobject)					\
-			if (pobject) {							\
-				delete pobject;					\
-				pobject = NULL;					\
-			}											\
+#define SAFE_DELETE(pobject) { delete pobject; pobject = NULL; }
 
-#define SAFE_DELETE_ARRAY(pobject)			\
-			if (pobject) {							\
-				delete [] pobject;				\
-				pobject = NULL;					\
-			}											\
+#define SAFE_DELETE_ARRAY(pobject) { delete [] pobject; pobject = NULL; }
 
-#define SAFE_FREE(pobject)						\
-			if (pobject) {							\
-				::free (pobject);					\
-				pobject = NULL;					\
-			}											\
+#define SAFE_FREE(pobject) { ::free (pobject); pobject = NULL; }
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -100,6 +86,3 @@ Get_Filename_From_Path (LPCTSTR path)
 	// Return the filename part of the path
 	return filename;
 }
-
-
-#endif //__UTILS_H

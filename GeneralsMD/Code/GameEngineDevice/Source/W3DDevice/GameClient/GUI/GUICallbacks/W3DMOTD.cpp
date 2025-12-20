@@ -45,7 +45,6 @@
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
-#include <stdio.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/NameKeyGenerator.h"
@@ -95,7 +94,7 @@ WindowMsgHandledType MOTDSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end create
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
@@ -103,7 +102,7 @@ WindowMsgHandledType MOTDSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end case
+		}
 
 		// ------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -116,14 +115,14 @@ WindowMsgHandledType MOTDSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end selected
+		}
 
 		default:
 			return MSG_IGNORED;
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-}  // end MOTDSystem
+}
 
 

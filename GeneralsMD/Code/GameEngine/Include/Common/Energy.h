@@ -44,9 +44,6 @@
 
 #pragma once
 
-#ifndef _ENERGY_H_
-#define _ENERGY_H_
-
 // INLCUDES /////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Snapshot.h"
 
@@ -123,6 +120,3 @@ private:
 	UnsignedInt m_powerSabotagedTillFrame; ///< If power is sabotaged, the frame will be greater than now.
 	Player *m_owner;						///< Tight pointer to the Player I am intrinsic to.
 };
-
-#endif // _ENERGY_H_
-

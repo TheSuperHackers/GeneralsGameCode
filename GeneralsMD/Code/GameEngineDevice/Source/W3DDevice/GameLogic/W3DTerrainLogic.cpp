@@ -49,7 +49,7 @@ m_mapMinZ(0),
 m_mapMaxZ(1)
 {
 	m_mapData = NULL;
-}  // end W3DTerrainLogic
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ W3DTerrainLogic::~W3DTerrainLogic()
 
 	// free terrain data
 
-}  // end W3DTerrainLogic
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Device DEPENDENT implementation init details for logical terrain */
@@ -73,7 +73,7 @@ void W3DTerrainLogic::init( void )
 	m_mapMinZ = 0;
 	m_mapMaxZ = 1;
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
@@ -86,7 +86,7 @@ void W3DTerrainLogic::reset( void )
 	m_mapMinZ = 0;
 	m_mapMaxZ = 1;
 	WorldHeightMap::freeListOfMapObjects();
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** newMap */
@@ -96,7 +96,7 @@ void W3DTerrainLogic::newMap( Bool saveGame )
 
 	TheTerrainRenderObject->loadRoadsAndBridges( this, saveGame );
 	TerrainLogic::newMap( saveGame );
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update */
@@ -104,7 +104,7 @@ void W3DTerrainLogic::newMap( Bool saveGame )
 void W3DTerrainLogic::update( void )
 {
 	TerrainLogic::update();
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Device DEPENDENT implementation for load details of logical terrain.
@@ -116,23 +116,6 @@ Bool W3DTerrainLogic::loadMap( AsciiString filename , Bool query )
 		return FALSE;
 
 	WorldHeightMap *terrainHeightMap;				///< holds raw heightmap data samples
-
-	char	tempBuf[_MAX_PATH];
-	char	filenameBuf[_MAX_PATH];
-	int length = 0;
-
-	strcpy(tempBuf, filename.str());
-
-	length = strlen( tempBuf );
-	if( length >= 4 )
-	{
-		memset( filenameBuf, '\0', _MAX_PATH);
-		strncpy( filenameBuf, tempBuf, length - 4);
-	}
-
-//	const char *fname = filename.reverseFind('\\');
-//	if (fname)
-//		filename = fname+1;
 
 	CachedFileInputStream fileStrm;
 	if ( !fileStrm.open(filename) )
@@ -187,7 +170,7 @@ Bool W3DTerrainLogic::loadMap( AsciiString filename , Bool query )
 
 	return TRUE;  // success
 
-}  // end load
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Get the 3D extent of the terrain in world coordinates */
@@ -200,7 +183,7 @@ void W3DTerrainLogic::getExtent( Region3D *extent ) const
 
 	// Note - m_boundaries are stored in height map grids wide, so we have to
 	// multiply by the grid width.
-	if (m_boundaries.size() > 0) {
+	if (!m_boundaries.empty()) {
 		extent->hi.x = m_boundaries[m_activeBoundary].x*MAP_XY_FACTOR;
 		extent->hi.y = m_boundaries[m_activeBoundary].y*MAP_XY_FACTOR;
 	} else {
@@ -294,7 +277,7 @@ Real W3DTerrainLogic::getGroundHeight( Real x, Real y, Coord3D* normal ) const
 		return 0;
 	}
 #endif
-}  // end getHight
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Get the height considering the layer. */
@@ -348,7 +331,7 @@ Real W3DTerrainLogic::getLayerHeight( Real x, Real y, PathfindLayerEnum layer, C
 	return height;
 
 #endif
-}  // end getLayerHeight
+}
 
 //-------------------------------------------------------------------------------------------------
 /** W3D isCliffCell for terrain logic */
@@ -359,7 +342,7 @@ Bool W3DTerrainLogic::isCliffCell( Real x, Real y) const
 	// W3DTerrainLogic shouldn't depend on TheTerrainRenderObject!
 	return TheTerrainRenderObject->isCliffCell(x,y);
 
-}  // end isCliffCell
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -370,7 +353,7 @@ void W3DTerrainLogic::crc( Xfer *xfer )
 	// extend base class
 	TerrainLogic::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer
@@ -388,7 +371,7 @@ void W3DTerrainLogic::xfer( Xfer *xfer )
 	// extend base class
 	TerrainLogic::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -399,4 +382,4 @@ void W3DTerrainLogic::loadPostProcess( void )
 	// extend base class
 	TerrainLogic::loadPostProcess();
 
-}  // end loadPostProcess
+}

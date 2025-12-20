@@ -35,13 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef HTREEMGR_H
-#define HTREEMGR_H
 
 #include "always.h"
 #include "bittype.h"
@@ -90,6 +84,3 @@ private:
 	HTreeClass *				TreePtr[MAX_TREES];		// TODO: no no! make this dynamic...
 
 };
-
-
-#endif

@@ -65,7 +65,6 @@
 #include "ffactory.h"
 #include "font3d.h"
 #include "render2dsentence.h"
-#include <stdio.h>
 #include "Common/PerfTimer.h"
 #include "Common/GlobalData.h"
 
@@ -241,7 +240,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char* name)
 static inline void Munge_Render_Obj_Name(char *newname, const char *oldname, float scale, const int color, const char *textureName)
 {
 	char lower_case_name[255];
-	strcpy(lower_case_name, oldname);
+	strlcpy(lower_case_name, oldname, ARRAY_SIZE(lower_case_name));
 	_strlwr(lower_case_name);
 
 	if (!textureName)
@@ -254,7 +253,7 @@ static inline void Munge_Render_Obj_Name(char *newname, const char *oldname, flo
 static inline void Munge_Texture_Name(char *newname, const char *oldname, const int color)
 {
 	char lower_case_name[255];
-	strcpy(lower_case_name, oldname);
+	strlcpy(lower_case_name, oldname, ARRAY_SIZE(lower_case_name));
 	_strlwr(lower_case_name);
 	sprintf(newname,"#%d#%s", color, lower_case_name);
 }
@@ -628,7 +627,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 
 	// make sure texture is loaded
 	if (!texture->Is_Initialized())
-		TextureLoader::Request_High_Priority_Loading(texture, (MipCountType)texture->Get_Mip_Level_Count());
+		TextureLoader::Request_Foreground_Loading(texture);
 
 	SurfaceClass::SurfaceDescription desc;
 	SurfaceClass *newsurf, *oldsurf;
@@ -944,7 +943,7 @@ bool W3DAssetManager::Load_3D_Assets( const char * filename )
 
 	// Try to find an existing prototype
 	char basename[512];
-	strcpy(basename, filename);
+	strlcpy(basename, filename, ARRAY_SIZE(basename));
 	char *pext = strrchr(basename, '.');	//find file extension
 	if (pext)
 		*pext = '\0';	//drop the extension
@@ -1288,7 +1287,7 @@ void W3DAssetManager::Make_Unique(RenderObjClass *robj, Bool geometry, Bool colo
 static inline void Munge_Render_Obj_Name(char *newname, const char *oldname, float scale, const Vector3 &hsv_shift)
 {
 	char lower_case_name[255];
-	strcpy(lower_case_name, oldname);
+	strlcpy(lower_case_name, oldname, ARRAY_SIZE(lower_case_name));
 	_strlwr(lower_case_name);
 	sprintf(newname,"#%s!%gH%gS%gV%g", lower_case_name, scale, hsv_shift.X, hsv_shift.Y, hsv_shift.Z);
 }
@@ -1296,7 +1295,7 @@ static inline void Munge_Render_Obj_Name(char *newname, const char *oldname, flo
 static inline void Munge_Texture_Name(char *newname, const char *oldname, const Vector3 &hsv_shift)
 {
 	char lower_case_name[255];
-	strcpy(lower_case_name, oldname);
+	strlcpy(lower_case_name, oldname, ARRAY_SIZE(lower_case_name));
 	_strlwr(lower_case_name);
 	sprintf(newname,"#%s!H%gS%gV%g", lower_case_name, hsv_shift.X, hsv_shift.Y, hsv_shift.Z);
 }
@@ -1319,7 +1318,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scal
 
 	if (isGranny)
 	{	//Granny objects share the same prototype since they allow instance scaling.
-		strcpy(newname,name);	//use same name for all granny objects at any scale.
+		strlcpy(newname, name, ARRAY_SIZE(newname));	//use same name for all granny objects at any scale.
 	}
 	Set_WW3D_Load_On_Demand(false); // munged name will never be found in a file.
 	rendobj=WW3DAssetManager::Create_Render_Obj(newname);
@@ -1425,7 +1424,7 @@ TextureClass * W3DAssetManager::Get_Texture_With_HSV_Shift(const char * filename
 
 			// No cached texture - need to create
 			char lower_case_name[255];
-			strcpy(lower_case_name, filename);
+			strlcpy(lower_case_name, filename, ARRAY_SIZE(lower_case_name));
 			_strlwr(lower_case_name);
 			TextureClass *oldtex = TextureHash.Get(lower_case_name);
 			if (!oldtex) {

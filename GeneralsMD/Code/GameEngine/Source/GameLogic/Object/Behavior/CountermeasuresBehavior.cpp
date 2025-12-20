@@ -30,7 +30,7 @@
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Thing.h"
 #include "Common/ThingTemplate.h"
 #include "Common/INI.h"
@@ -365,7 +365,7 @@ void CountermeasuresBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpgradeMux::upgradeMuxCRC( xfer );
 
-}  // end crc
+}
 
 //------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -397,7 +397,7 @@ void CountermeasuresBehavior::xfer( Xfer *xfer )
 		xfer->xferUnsignedInt( &m_nextVolleyFrame );
 	}
 
-}  // end xfer
+}
 
 //------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -411,6 +411,6 @@ void CountermeasuresBehavior::loadPostProcess( void )
 	// extend base class
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
-}  // end loadPostProcess
+}
 
 

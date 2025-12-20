@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/RandomValue.h"
@@ -105,7 +105,6 @@ void TunnelContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
 		return;
 
 	owningPlayer->getTunnelSystem()->removeFromContain( obj, exposeStealthUnits );
-
 }
 
 
@@ -140,9 +139,9 @@ void TunnelContain::harmAndForceExitAllContained( DamageInfo *info )
 		removeFromContain( obj, true );
     obj->attemptDamage( info );
 		it = (*fullList).begin();
-	}  // end while
+	}
 
-}  // end removeAllContained
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -241,6 +240,7 @@ void TunnelContain::onRemoving( Object *obj )
 	obj->clearDisabled( DISABLED_HELD );
 
 	/// place the object in the world at position of the container m_object
+#if RETAIL_COMPATIBLE_CRC
 	ThePartitionManager->registerObject( obj );
 	obj->setPosition( getObject()->getPosition() );
 	if( obj->getDrawable() )
@@ -248,10 +248,14 @@ void TunnelContain::onRemoving( Object *obj )
 		obj->setSafeOcclusionFrame(TheGameLogic->getFrame()+obj->getTemplate()->getOcclusionDelay());
 		obj->getDrawable()->setDrawableHidden( false );
 	}
+#else
+	// TheSuperHackers @bugfix Now correctly adds the objects to the world without issues with shrouded portable structures.
+	obj->setPosition(getObject()->getPosition());
+	obj->setSafeOcclusionFrame(TheGameLogic->getFrame() + obj->getTemplate()->getOcclusionDelay());
+	addOrRemoveObjFromWorld(obj, TRUE);
+#endif
 
 	doUnloadSound();
-
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -321,7 +325,11 @@ const ContainedItemsList* TunnelContain::getContainedItemsList() const
 	return NULL;
 }
 
-
+UnsignedInt TunnelContain::getFullTimeForHeal(void) const
+{
+	const TunnelContainModuleData* modData = getTunnelContainModuleData();
+	return modData->m_framesForFullHeal;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
@@ -369,14 +377,14 @@ void TunnelContain::scatterToNearbyPosition(Object* obj)
 		ai->ignoreObstacle(theContainer);
  		ai->aiMoveToPosition( &pos, CMD_FROM_AI );
 
-	}  // end if
+	}
 	else
 	{
 
 		// no ai, just set position at the target pos
 		obj->setPosition( &pos );
 
-	}  // end else
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -521,7 +529,6 @@ UpdateSleepTime TunnelContain::update( void )
 {
 	// extending functionality to heal the units within the tunnel system
 	OpenContain::update();
-	const TunnelContainModuleData *modData = getTunnelContainModuleData();
 
 	Object *obj = getObject();
 	Player *controllingPlayer = NULL;
@@ -532,10 +539,13 @@ UpdateSleepTime TunnelContain::update( void )
 	if (controllingPlayer)
 	{
 		TunnelTracker *tunnelSystem = controllingPlayer->getTunnelSystem();
+#if PRESERVE_RETAIL_BEHAVIOR || RETAIL_COMPATIBLE_CRC
 		if (tunnelSystem)
 		{
+			const TunnelContainModuleData* modData = getTunnelContainModuleData();
 			tunnelSystem->healObjects(modData->m_framesForFullHeal);
 		}
+#endif
 
 		// check for attacked.
 		BodyModuleInterface *body = obj->getBodyModule();
@@ -569,7 +579,7 @@ void TunnelContain::crc( Xfer *xfer )
 	// extend base class
 	OpenContain::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -593,7 +603,7 @@ void TunnelContain::xfer( Xfer *xfer )
 	// Currently registered with owning player
 	xfer->xferBool( &m_isCurrentlyRegistered );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -604,4 +614,4 @@ void TunnelContain::loadPostProcess( void )
 	// extend base class
 	OpenContain::loadPostProcess();
 
-}  // end loadPostProcess
+}

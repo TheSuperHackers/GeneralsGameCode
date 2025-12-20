@@ -31,7 +31,7 @@
 #include "Common/BitFlagsIO.h"
 
 template<>
-const char* DisabledMaskType::s_bitNameList[] =
+const char* const DisabledMaskType::s_bitNameList[] =
 {
 	"DEFAULT",
 	"DISABLED_HACKED",
@@ -47,6 +47,7 @@ const char* DisabledMaskType::s_bitNameList[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(DisabledMaskType::s_bitNameList) == DisabledMaskType::NumBits + 1, "Incorrect array size");
 
 DisabledMaskType DISABLEDMASK_NONE;	// inits to all zeroes
 DisabledMaskType DISABLEDMASK_ALL;

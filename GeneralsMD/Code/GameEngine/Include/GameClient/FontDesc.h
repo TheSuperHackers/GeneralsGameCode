@@ -27,8 +27,6 @@
 // Author: Mark Wilczynski, October 2002
 
 #pragma once
-#ifndef _FONTDESC_H_
-#define _FONTDESC_H_
 
 #include "Common/GameType.h"
 
@@ -39,5 +37,3 @@ struct FontDesc
 	Int	size;			///<point size
 	Bool bold;			///<is bold?
 };
-
-#endif // _FONTDESC_H_

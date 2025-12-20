@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __XFERCRC_H_
-#define __XFERCRC_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/Xfer.h"
 
@@ -69,6 +66,3 @@ protected:
 	UnsignedInt m_crc;
 
 };
-
-#endif // __XFERDISKWRITE_H_
-

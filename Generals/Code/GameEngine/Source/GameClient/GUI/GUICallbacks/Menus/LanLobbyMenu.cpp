@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Lib/BaseType.h"
 #include "Common/crc.h"
@@ -243,6 +243,48 @@ UnicodeString LANPreferences::getRemoteIPEntry(Int i)
 	return ret;
 }
 
+static const char superweaponRestrictionKey[] = "SuperweaponRestrict";
+
+Bool LANPreferences::getSuperweaponRestricted(void) const
+{
+  LANPreferences::const_iterator it = find(superweaponRestrictionKey);
+  if (it == end())
+  {
+    return false;
+  }
+
+  return ( it->second.compareNoCase( "yes" ) == 0 );
+}
+
+void LANPreferences::setSuperweaponRestricted( Bool superweaponRestricted )
+{
+  (*this)[superweaponRestrictionKey] = superweaponRestricted ? "Yes" : "No";
+}
+
+static const char startingCashKey[] = "StartingCash";
+Money LANPreferences::getStartingCash(void) const
+{
+  LANPreferences::const_iterator it = find(startingCashKey);
+  if (it == end())
+  {
+    return TheMultiplayerSettings->getDefaultStartingMoney();
+  }
+
+  Money money;
+  money.deposit( strtoul( it->second.str(), NULL, 10 ), FALSE, FALSE );
+
+  return money;
+}
+
+void LANPreferences::setStartingCash( const Money & startingCash )
+{
+  AsciiString option;
+
+  option.format( "%d", startingCash.countMoney() );
+
+  (*this)[startingCashKey] = option;
+}
+
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 
 
@@ -310,14 +352,8 @@ static void playerTooltip(GameWindow *window,
 		//TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:LobbyPlayers") );
 		return;
 	}
-	UnicodeString tooltip;
-	tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getLogin().str(), player->getHost().str());
-#if defined(RTS_DEBUG)
-	UnicodeString ip;
-	ip.format(L" - %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(player->getIP()));
-	tooltip.concat(ip);
-#endif
-	TheMouse->setCursorTooltip( tooltip );
+
+	setLANPlayerTooltip(player);
 }
 
 
@@ -331,20 +367,20 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 	LANisShuttingDown = false;
 
 	// get the ids for our controls
-	parentLanLobbyID = TheNameKeyGenerator->nameToKey( AsciiString( "LanLobbyMenu.wnd:LanLobbyMenuParent" ) );
-	buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString( "LanLobbyMenu.wnd:ButtonBack" ) );
-	buttonClearID = TheNameKeyGenerator->nameToKey( AsciiString( "LanLobbyMenu.wnd:ButtonClear" ) );
-	buttonHostID = TheNameKeyGenerator->nameToKey( AsciiString( "LanLobbyMenu.wnd:ButtonHost" ) );
-	buttonJoinID = TheNameKeyGenerator->nameToKey( AsciiString( "LanLobbyMenu.wnd:ButtonJoin" ) );
-	buttonDirectConnectID = TheNameKeyGenerator->nameToKey( AsciiString( "LanLobbyMenu.wnd:ButtonDirectConnect" ) );
-	buttonEmoteID = TheNameKeyGenerator->nameToKey( AsciiString( "LanLobbyMenu.wnd:ButtonEmote" ) );
-	staticToolTipID = TheNameKeyGenerator->nameToKey( AsciiString( "LanLobbyMenu.wnd:StaticToolTip" ) );
-	textEntryPlayerNameID = TheNameKeyGenerator->nameToKey( AsciiString( "LanLobbyMenu.wnd:TextEntryPlayerName" ) );
-	textEntryChatID = TheNameKeyGenerator->nameToKey( AsciiString( "LanLobbyMenu.wnd:TextEntryChat" ) );
-	listboxPlayersID = TheNameKeyGenerator->nameToKey( AsciiString( "LanLobbyMenu.wnd:ListboxPlayers" ) );
-	listboxChatWindowID = TheNameKeyGenerator->nameToKey( AsciiString( "LanLobbyMenu.wnd:ListboxChatWindowLanLobby" ) );
-	listboxGamesID = TheNameKeyGenerator->nameToKey( AsciiString( "LanLobbyMenu.wnd:ListboxGames" ) );
-	staticTextGameInfoID = TheNameKeyGenerator->nameToKey( AsciiString( "LanLobbyMenu.wnd:StaticTextGameInfo" ) );
+	parentLanLobbyID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:LanLobbyMenuParent" );
+	buttonBackID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:ButtonBack" );
+	buttonClearID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:ButtonClear" );
+	buttonHostID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:ButtonHost" );
+	buttonJoinID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:ButtonJoin" );
+	buttonDirectConnectID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:ButtonDirectConnect" );
+	buttonEmoteID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:ButtonEmote" );
+	staticToolTipID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:StaticToolTip" );
+	textEntryPlayerNameID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:TextEntryPlayerName" );
+	textEntryChatID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:TextEntryChat" );
+	listboxPlayersID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:ListboxPlayers" );
+	listboxChatWindowID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:ListboxChatWindowLanLobby" );
+	listboxGamesID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:ListboxGames" );
+	staticTextGameInfoID = TheNameKeyGenerator->nameToKey( "LanLobbyMenu.wnd:StaticTextGameInfo" );
 
 
 	// Get pointers to the window buttons
@@ -480,7 +516,7 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 //	//TheShell->registerWithAnimateManager(buttonOptions, WIN_ANIMATION_SLIDE_LEFT, TRUE, 1);
 //	TheShell->registerWithAnimateManager(buttonBack, WIN_ANIMATION_SLIDE_RIGHT, TRUE, 1);
 
-} // GameLobbyMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** This is called when a shutdown is complete for this menu */
@@ -503,7 +539,7 @@ static void shutdownComplete( WindowLayout *layout )
 
 	LANnextScreen = NULL;
 
-}  // end if
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Lan Lobby menu shutdown method */
@@ -540,13 +576,13 @@ void LanLobbyMenuShutdown( WindowLayout *layout, void *userData )
 		shutdownComplete( layout );
 		return;
 
-	}  //end if
+	}
 
 	TheShell->reverseAnimatewindow();
 	TheTransitionHandler->reverse("LanLobbyFade");
 	//if(	shellmapOn)
 //		TheShell->showShellMap(TRUE);
-}  // LanLobbyMenuShutdown
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -588,7 +624,7 @@ void LanLobbyMenuUpdate( WindowLayout * layout, void *userData)
 	}
 
 
-}// LanLobbyMenuUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Lan Lobby menu input callback */
@@ -623,21 +659,21 @@ WindowMsgHandledType LanLobbyMenuInput( GameWindow *window, UnsignedInt msg,
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonBack, buttonBackID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// LanLobbyMenuInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Lan Lobby menu window system callback */
@@ -655,13 +691,13 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 			{
 				SignalUIInteraction(SHELL_SCRIPT_HOOK_LAN_OPENED);
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				SignalUIInteraction(SHELL_SCRIPT_HOOK_LAN_CLOSED);
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
 			{
@@ -670,7 +706,7 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 		case GLM_DOUBLE_CLICKED:
 			{
 				if (LANbuttonPushed)
@@ -732,12 +768,12 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					TheLAN = NULL;
 					//TheTransitionHandler->reverse("LanLobbyFade");
 
-				} //if ( controlID == buttonBack )
+				}
 				else if ( controlID == buttonHostID )
 				{
-					TheLAN->RequestGameCreate( UnicodeString(L""), FALSE);
+					TheLAN->RequestGameCreate( L"", FALSE);
 
-				}//else if ( controlID == buttonHostID )
+				}
 				else if ( controlID == buttonClearID )
 				{
 					GadgetTextEntrySetText(textEntryPlayerName, UnicodeString::TheEmptyString);
@@ -750,7 +786,7 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 				else if ( controlID == buttonJoinID )
 				{
 
-					//TheShell->push( AsciiString("Menus/LanGameOptionsMenu.wnd") );
+					//TheShell->push( "Menus/LanGameOptionsMenu.wnd" );
 
 					int rowSelected = -1;
 					GadgetListBoxGetSelected( listboxGames, &rowSelected );
@@ -768,7 +804,7 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 						GadgetListBoxAddEntryText(listboxChatWindow, TheGameText->fetch("LAN:ErrorNoGameSelected") , chatSystemColor, -1, 0);
 					}
 
-				} //else if ( controlID == buttonJoinID )
+				}
 				else if ( controlID == buttonEmoteID )
 				{
 					// read the user's input
@@ -782,15 +818,15 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 //						TheLAN->RequestChat(txtInput, LANAPIInterface::LANCHAT_EMOTE);
 						TheLAN->RequestChat(txtInput, LANAPIInterface::LANCHAT_NORMAL);
 					}
-				} //if ( controlID == buttonEmote )
+				}
 				else if (controlID == buttonDirectConnectID)
 				{
 					TheLAN->RequestLobbyLeave( false );
-					TheShell->push(AsciiString("Menus/NetworkDirectConnect.wnd"));
+					TheShell->push("Menus/NetworkDirectConnect.wnd");
 				}
 
 				break;
-			}// case GBM_SELECTED:
+			}
 
 		case GEM_UPDATE_TEXT:
 			{
@@ -836,9 +872,9 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					// Put the whitespace-free version in the box
 					GadgetTextEntrySetText( textEntryPlayerName, txtInput );
 
-				}// if ( controlID == textEntryPlayerNameID )
+				}
 				break;
-			}//case GEM_UPDATE_TEXT:
+			}
 		case GEM_EDIT_DONE:
 			{
 				if (LANbuttonPushed)
@@ -863,7 +899,7 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					if (!txtInput.isEmpty())
 						TheLAN->RequestChat(txtInput, LANAPIInterface::LANCHAT_NORMAL);
 
-				}// if ( controlID == textEntryChatID )
+				}
 				/*
 				else if ( controlID == textEntryPlayerNameID )
 				{
@@ -880,14 +916,14 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					// Put the whitespace-free version in the box
 					GadgetTextEntrySetText( textEntryPlayerName, txtInput );
 
-				}// if ( controlID == textEntryPlayerNameID )
+				}
 				*/
 				break;
 			}
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// LanLobbyMenuSystem
+}

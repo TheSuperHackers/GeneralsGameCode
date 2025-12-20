@@ -36,12 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef HRAWANIM_H
-#define HRAWANIM_H
 
 #include "always.h"
 #include "hanim.h"
@@ -97,8 +92,6 @@ public:
 	float							Get_Frame_Rate() { return FrameRate; }
 	float							Get_Total_Time() { return (float)NumFrames / FrameRate; }
 
-//	Vector3						Get_Translation(int pividx,float frame);
-//	Quaternion					Get_Orientation(int pividx,float frame);
 	void							Get_Translation(Vector3& translation, int pividx,float frame) const;
 	void							Get_Orientation(Quaternion& orientation, int pividx,float frame) const;
 	void							Get_Transform(Matrix3D& transform, int pividx,float frame) const;
@@ -135,9 +128,3 @@ private:
 	void add_bit_channel(BitChannelClass * newchan);
 
 };
-
-
-
-
-#endif
-

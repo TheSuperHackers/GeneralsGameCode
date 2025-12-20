@@ -46,7 +46,7 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/Color.h"
 
@@ -96,7 +96,7 @@ void GameGetColorComponents( Color color,
 	*green	= (color & 0x0000FF00) >> 8;
 	*blue		= (color & 0x000000FF);
 
-}  // end GameGetColorComponents
+}
 
 //Put on ice until later M Lorenzen
 //void GameGetColorComponentsWithCheatSpy( Color color,
@@ -148,5 +148,5 @@ Color GameDarkenColor( Color color, Int percent )
 
 	return GameMakeColor(r,g,b,a);
 
-}// end GameDarkenColor
+}
 

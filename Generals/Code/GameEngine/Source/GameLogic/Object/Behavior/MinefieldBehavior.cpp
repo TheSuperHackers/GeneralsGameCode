@@ -29,7 +29,7 @@
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #define DEFINE_RELATIONSHIP_NAMES
 #include "Common/GameState.h"
 #include "Common/RandomValue.h"
@@ -618,7 +618,7 @@ void MinefieldBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -665,7 +665,7 @@ void MinefieldBehavior::xfer( Xfer *xfer )
 		DEBUG_CRASH(( "MinefieldBehavior::xfer - MAX_IMMUNITY has changed size, you must version this code and then you can remove this error message" ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 	for( UnsignedByte i = 0; i < maxImmunity; ++i )
 	{
 
@@ -675,12 +675,12 @@ void MinefieldBehavior::xfer( Xfer *xfer )
 		// collide time
 		xfer->xferUnsignedInt( &m_immunes[ i ].collideTime );
 
-	}  // end for, i
+	}
 
 	if( xfer->getXferMode() == XFER_LOAD )
 		m_detonators.clear();
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -691,4 +691,4 @@ void MinefieldBehavior::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

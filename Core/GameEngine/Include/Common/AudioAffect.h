@@ -25,10 +25,8 @@
 // EA Pacific
 // John McDonald, Jr
 // Do not distribute
-#pragma once
 
-#ifndef _AUDIOAFFECT_H_
-#define _AUDIOAFFECT_H_
+#pragma once
 
 #include <Lib/BaseType.h>
 
@@ -44,5 +42,3 @@ enum AudioAffect CPP_11(: Int)
 
 	AudioAffect_SystemSetting = 0x10,
 };
-
-#endif // _AUDIOAFFECT_H_

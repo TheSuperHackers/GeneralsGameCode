@@ -43,7 +43,7 @@
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"
@@ -69,7 +69,7 @@ BaikonurLaunchPowerModuleData::BaikonurLaunchPowerModuleData( void )
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 
 // ------------------------------------------------------------------------------------------------
@@ -130,7 +130,7 @@ void BaikonurLaunchPower::crc( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -148,7 +148,7 @@ void BaikonurLaunchPower::xfer( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -159,4 +159,4 @@ void BaikonurLaunchPower::loadPostProcess( void )
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

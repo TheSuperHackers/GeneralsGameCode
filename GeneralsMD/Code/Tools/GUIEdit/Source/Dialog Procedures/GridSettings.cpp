@@ -96,7 +96,7 @@ static void initGridSettings( HWND hWndDialog )
 	RGBColorInt *color = TheEditor->getGridColor();
 	gridColor = *color;
 
-}  // end initGridSettings
+}
 
 // GridSettingsDialogProc =====================================================
 /** Dialog procedure for grid settings dialog */
@@ -116,7 +116,7 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 			initGridSettings( hWndDialog );
 			return TRUE;
 
-		}  // end init dialog
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_DRAWITEM:
@@ -158,11 +158,11 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 				// we have taken care of it
 				return TRUE;
 
-			}  // end if
+			}
 
 			return FALSE;
 
-		}  // end draw item
+		}
 
 		// ------------------------------------------------------------------------
     case WM_COMMAND:
@@ -196,13 +196,13 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 							gridColor = *newColor;
 							InvalidateRect( hWndControl, NULL, TRUE );
 
-						}  // end if
+						}
 
-					}  // end if
+					}
 
 					break;
 
-				}  // end color buttons
+				}
 
 				// --------------------------------------------------------------------
         case IDOK:
@@ -229,7 +229,7 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 
           break;
 
-				}  // end ok
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -238,13 +238,13 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 					EndDialog( hWndDialog, FALSE );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -253,13 +253,13 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 			EndDialog( hWndDialog, FALSE );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end GridSettingsDialogProc
+}
 

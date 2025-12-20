@@ -34,14 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-
-#ifndef __DEFINITION_MGR_H
-#define __DEFINITION_MGR_H
 
 #include "always.h"
 #include "saveload.h"
@@ -50,7 +43,7 @@
 #include "wwdebug.h"
 #include "wwstring.h"
 #include "hashtemplate.h"
-#include "Vector.H"
+#include "Vector.h"
 
 
 // Forward declarations
@@ -182,6 +175,3 @@ DefinitionMgrClass::Get_First (void)
 
 	return definition;
 }
-
-
-#endif //__DEFINITION_MGR_H

@@ -42,7 +42,7 @@
 
 #include "proto.h"
 #include "mesh.h"
-#include "hmdldef.H"
+#include "hmdldef.h"
 #include "hlod.h"
 #include "w3derr.h"
 
@@ -100,7 +100,7 @@ public:
 	HModelDefClass *				HModelDef;
 
 protected:
-	virtual ~HModelPrototypeClass(void)							{ if (HModelDef) delete HModelDef; }
+	virtual ~HModelPrototypeClass(void)							{ delete HModelDef; }
 
 };
 

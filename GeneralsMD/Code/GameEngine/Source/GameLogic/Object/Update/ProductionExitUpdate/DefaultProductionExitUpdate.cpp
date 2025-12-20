@@ -28,7 +28,7 @@
 //					This instance simply spits the guy out at a point.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/RandomValue.h"
 #include "Common/ThingTemplate.h"
@@ -46,13 +46,7 @@ DefaultProductionExitUpdate::DefaultProductionExitUpdate( Thing *thing, const Mo
 {
 	// no rally point has been set
 	m_rallyPointExists = false;
-	// Added By Sadullah Nader
-	// Initialization missing and needed
-
 	m_rallyPoint.zero();
-
-	//
-
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 }
 
@@ -186,7 +180,7 @@ void DefaultProductionExitUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -210,7 +204,7 @@ void DefaultProductionExitUpdate::xfer( Xfer *xfer )
 	// rally point exists
 	xfer->xferBool( &m_rallyPointExists );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -221,4 +215,4 @@ void DefaultProductionExitUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

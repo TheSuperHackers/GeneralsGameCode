@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Library/HSV.CPP                                   $*
+ *                     $Archive:: /Commando/Library/HSV.cpp                                   $*
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *

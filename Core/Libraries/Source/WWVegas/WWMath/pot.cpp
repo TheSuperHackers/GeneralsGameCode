@@ -22,7 +22,7 @@
  *                                                                         *
  *                 Project Name : G                                        *
  *                                                                         *
- *                     $Archive:: /G/ww3d/POT.CPP                         $*
+ *                     $Archive:: /G/ww3d/POT.cpp                         $*
  *                                                                         *
  *                      $Author:: Naty_h                                  $*
  *                                                                         *

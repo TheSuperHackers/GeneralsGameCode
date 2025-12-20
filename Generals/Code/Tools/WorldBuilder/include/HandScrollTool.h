@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef HandScrollTool_H
-#define HandScrollTool_H
-
 #include "Tool.h"
 /**************************************************************************
                             HandScrollTool
@@ -53,6 +50,3 @@ public:
 	virtual void activate(); ///< Become the current tool.
 	virtual Bool followsTerrain(void) {return false;};
 };
-
-
-#endif //TOOL_H

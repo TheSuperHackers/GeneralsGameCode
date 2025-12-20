@@ -36,12 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DX8_WRAPPER_H
-#define DX8_WRAPPER_H
 
 #include "always.h"
 #include "dllist.h"
@@ -70,7 +65,7 @@
 #define	VALUE_NAME_RENDER_DEVICE_WINDOWED			"RenderDeviceWindowed"
 #define	VALUE_NAME_RENDER_DEVICE_TEXTURE_DEPTH		"RenderDeviceTextureDepth"
 
-const unsigned MAX_TEXTURE_STAGES=2;
+const unsigned MAX_TEXTURE_STAGES=8;
 const unsigned MAX_VERTEX_STREAMS=2;
 const unsigned MAX_VERTEX_SHADER_CONSTANTS=96;
 const unsigned MAX_PIXEL_SHADER_CONSTANTS=8;
@@ -354,6 +349,37 @@ public:
 	** Resources
 	*/
 
+	static IDirect3DVolumeTexture8* _Create_DX8_Volume_Texture
+	(
+		unsigned int width,
+		unsigned int height,
+		unsigned int depth,
+		WW3DFormat format,
+		MipCountType mip_level_count,
+		D3DPOOL pool=D3DPOOL_MANAGED
+	);
+
+	static IDirect3DCubeTexture8* _Create_DX8_Cube_Texture
+	(
+		unsigned int width,
+		unsigned int height,
+		WW3DFormat format,
+		MipCountType mip_level_count,
+		D3DPOOL pool=D3DPOOL_MANAGED,
+		bool rendertarget=false
+	);
+
+
+	static IDirect3DTexture8* _Create_DX8_ZTexture
+	(
+		unsigned int width,
+		unsigned int height,
+		WW3DZFormat zformat,
+		MipCountType mip_level_count,
+		D3DPOOL pool=D3DPOOL_MANAGED
+	);
+
+
 	static IDirect3DTexture8 * _Create_DX8_Texture
 	(
 		unsigned int width,
@@ -441,14 +467,31 @@ public:
 	static IDirect3DSwapChain8 *	Create_Additional_Swap_Chain (HWND render_window);
 
 	/*
-	** Render target interface
+	** Render target interface. If render target format is WW3D_FORMAT_UNKNOWN, current display format is used.
 	*/
-	static TextureClass *	Create_Render_Target (int width, int height, bool alpha=false);
+	static TextureClass *	Create_Render_Target (int width, int height, WW3DFormat format = WW3D_FORMAT_UNKNOWN);
 
-	static void					Set_Render_Target (TextureBaseClass * texture);
-	static void					Set_Render_Target (IDirect3DSurface8 *render_target);
+	static void					Set_Render_Target (IDirect3DSurface8 *render_target, bool use_default_depth_buffer = false);
+	static void					Set_Render_Target (IDirect3DSurface8* render_target, IDirect3DSurface8* dpeth_buffer);
+
 	static void					Set_Render_Target (IDirect3DSwapChain8 *swap_chain);
 	static bool					Is_Render_To_Texture(void) { return IsRenderToTexture; }
+
+	// for depth map support KJM V
+	static void Create_Render_Target
+	(
+		int width,
+		int height,
+		WW3DFormat format,
+		WW3DZFormat zformat,
+		TextureClass** target,
+		ZTextureClass** depth_buffer
+	);
+	static void					Set_Render_Target_With_Z (TextureClass * texture, ZTextureClass* ztexture=NULL);
+
+	static void Set_Shadow_Map(int idx, ZTextureClass* ztex) { Shadow_Map[idx]=ztex; }
+	static ZTextureClass* Get_Shadow_Map(int idx) { return Shadow_Map[idx]; }
+	// for depth map support KJM ^
 
 	// shader system udpates KJM v
 	static void Apply_Default_State();
@@ -602,6 +645,9 @@ protected:
 	static RenderInfoClass*				Render_Info;
 
 	static DWORD							Vertex_Processing_Behavior;
+
+	static ZTextureClass*				Shadow_Map[MAX_SHADOW_MAPS];
+
 	static Vector3							Ambient_Color;
 	// shader system updates KJM ^
 
@@ -636,7 +682,10 @@ protected:
 	static IDirect3DDevice8 *			D3DDevice;				//d3ddevice8;
 
 	static IDirect3DSurface8 *			CurrentRenderTarget;
+	static IDirect3DSurface8 *			CurrentDepthBuffer;
 	static IDirect3DSurface8 *			DefaultRenderTarget;
+	static IDirect3DSurface8 *			DefaultDepthBuffer;
+
 	static unsigned							DrawPolygonLowBoundLimit;
 
 	static bool								IsRenderToTexture;
@@ -1240,7 +1289,7 @@ WWINLINE void DX8Wrapper::Get_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4
 
 WWINLINE const D3DLIGHT8& DX8Wrapper::Peek_Light(unsigned index)
 {
-	return render_state.Lights[index];;
+	return render_state.Lights[index];
 }
 
 WWINLINE bool DX8Wrapper::Is_Light_Enabled(unsigned index)
@@ -1342,6 +1391,3 @@ WWINLINE RenderStateStruct& RenderStateStruct::operator= (const RenderStateStruc
 
 	return *this;
 }
-
-
-#endif

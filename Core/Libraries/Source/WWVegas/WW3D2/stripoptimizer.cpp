@@ -481,7 +481,7 @@ private:
 };
 
 int Stripify::s_mod[6] = {0,1,2,0,1,2};
-} // Strip
+}
 
 
 template <> inline unsigned int HashTemplateKeyClass<Strip::Edge>::Get_Hash_Value(const Strip::Edge& s)
@@ -1009,7 +1009,7 @@ int* Stripify::stripify  (const Vector3i* inTris, int N)
 
 	return rOut;
 }
-} // Strip
+}
 int* StripOptimizerClass::Stripify(const int* tris, int N)
 {
 	return Strip::Stripify::stripify((const Strip::Vector3i*)tris,N);

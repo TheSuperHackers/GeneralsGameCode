@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/NameKeyGenerator.h"
 #include "Common/ThingTemplate.h"
@@ -47,7 +47,6 @@
 #include "GameLogic/Module/TransportContain.h"
 #include "GameLogic/Module/MobNexusContain.h"
 #include "GameLogic/Module/SpecialAbilityUpdate.h"
-#include "GameLogic/Module/BattlePlanUpdate.h"
 #include "GameLogic/Module/VeterancyGainCreate.h"
 #include "GameLogic/Module/HackInternetAIUpdate.h"
 #include "GameLogic/Weapon.h"
@@ -97,7 +96,7 @@ void ControlBar::populateInvDataCallback( Object *obj, void *userData )
 													data->transport->getTemplate()->getName().str()) );
 		return;
 
-	}  // end if
+	}
 
 	// get the window control that we're going to put our smiling faces in
 	GameWindow *control = data->controls[ data->currIndex ];
@@ -126,7 +125,7 @@ void ControlBar::populateInvDataCallback( Object *obj, void *userData )
 	// enable the control
 	control->winEnable( TRUE );
 
-}  // end populateInvDataCallback
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Transports have an extra special manipulation of the user interface.  They get to look
@@ -223,9 +222,9 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
 			//
 			setControlCommand( m_commandWindows[ i ], commandButton );
 
-		}  // end if
+		}
 
-	}  // end for i
+	}
 
 	// After Every change to the m_commandWIndows, we need to show fill in the missing blanks with the images
 	// removed from multiplayer branch
@@ -246,7 +245,7 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
 		data.transport = transport;
 		contain->iterateContained( populateInvDataCallback, &data, FALSE );
 
-	}  // end if
+	}
 
 	//
 	// save the last recorded inventory count so we know when we have to redo the gui when
@@ -254,7 +253,7 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
 	//
 	m_lastRecordedInventoryCount = contain->getContainCount();
 
-}  // end doTransportInventoryUI
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -287,7 +286,7 @@ void ControlBar::populateCommand( Object *obj )
 		// nothing left to do
 		return;
 
-	}  // end if
+	}
 
 	// transports do extra special things with the user interface buttons
 	if( obj->getContain()  &&  obj->getContain()->isDisplayedOnControlBar() )
@@ -310,7 +309,7 @@ void ControlBar::populateCommand( Object *obj )
 			// hide window on interface
 			m_commandWindows[ i ]->winHide( TRUE );
 
-		}  // end if
+		}
 		else
 		{
 
@@ -399,13 +398,13 @@ void ControlBar::populateCommand( Object *obj )
 						}
 					}
 
-				}  // end if
+				}
 
-			}  // end else
+			}
 
-		}  // end else
+		}
 
-	}  // end for i
+	}
 
 	// After Every change to the m_commandWIndows, we need to show fill in the missing blanks with the images
 	// removed from multiplayer branch
@@ -426,7 +425,7 @@ void ControlBar::populateCommand( Object *obj )
 		//
 		showRallyPoint( exit->getRallyPoint() );
 
-	}  // end if
+	}
 
 	//
 	// to avoid a one frame delay where windows may become enabled/disabled, run the update
@@ -434,7 +433,7 @@ void ControlBar::populateCommand( Object *obj )
 	//
 	updateContextCommand();
 
-}  // end populateCommand
+}
 
 //-------------------------------------------------------------------------------------------------
 /** reset transport data */
@@ -449,9 +448,9 @@ void ControlBar::resetContainData( void )
 		m_containData[ i ].control = NULL;
 		m_containData[ i ].objectID = INVALID_ID;
 
-	}  // end for i
+	}
 
-}  // end resetTransportData
+}
 
 //-------------------------------------------------------------------------------------------------
 /** reset the build queue data we use to die queue entires to control */
@@ -468,9 +467,9 @@ void ControlBar::resetBuildQueueData( void )
 		m_queueData[ i ].productionID = PRODUCTIONID_INVALID;
 		m_queueData[ i ].upgradeToResearch = NULL;
 
-	}  // end for i
+	}
 
-}  // end resetBuildQueue
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -498,11 +497,11 @@ void ControlBar::populateBuildQueue( Object *producer )
 			buttonName.format( "ControlBar.wnd:ButtonQueue%02d", i + 1 );
 			buildQueueIDs[ i ] = TheNameKeyGenerator->nameToKey( buttonName );
 
-		}  // end for i
+		}
 
 		idsInitialized = TRUE;
 
-	}  // end if
+	}
 
 	// get window pointers to all the buttons for the build queue
 	for( i = 0; i < MAX_BUILD_QUEUE_BUTTONS; i++ )
@@ -520,12 +519,12 @@ void ControlBar::populateBuildQueue( Object *producer )
 		m_queueData[ i ].control->winClearStatus( WIN_STATUS_USE_OVERLAY_STATES );
 
 		// set the text of the window to nothing by default
-		GadgetButtonSetText( m_queueData[ i ].control, UnicodeString( L"" ) );
+		GadgetButtonSetText( m_queueData[ i ].control, L"" );
 
 		//Clear any potential veterancy rank, or else we'll see it when it's empty!
 		GadgetButtonDrawOverlayImage( m_queueData[ i ].control, NULL );
 
-	}  // end for i
+	}
 
 	// step through each object being built and set the image data for the buttons
 	ProductionUpdateInterface *pu = producer->getProductionUpdateInterface();
@@ -575,7 +574,7 @@ void ControlBar::populateBuildQueue( Object *producer )
 	//		image = TheMappedImageCollection->findImageByName( production->getProductionObject()->getInventoryImageName( INV_IMAGE_DISABLED ) );
 	//		GadgetButtonSetDisabledImage( m_queueData[ windowIndex ].control, image );
 
-		}  // end if
+		}
 		else
 		{
 			const UpgradeTemplate *ut = production->getProductionUpgrade();
@@ -604,12 +603,12 @@ void ControlBar::populateBuildQueue( Object *producer )
 	//		image = TheMappedImageCollection->findImageByName( ut->getQueueImageName( UpgradeTemplate::UPGRADE_DISABLED ) );
 	//		GadgetButtonSetDisabledImage( m_queueData[ windowIndex ].control, image );
 
-		}  // end else
+		}
 
 		// we have filled up this window now
 		windowIndex++;
 
-	}  // end for
+	}
 
 	//
 	// save the count of things being produced in the build queue, when it changes we will
@@ -617,7 +616,7 @@ void ControlBar::populateBuildQueue( Object *producer )
 	//
 	m_displayedQueueCount = pu->getProductionCount();
 
-}  // end populateBuildQueue
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -645,7 +644,7 @@ void ControlBar::updateContextCommand( void )
 		// re-evaluate the UI because something has changed
 		evaluateContextUI();
 
-	}  // end if, transport
+	}
 
 	// get production update for those objects that have one
 	ProductionUpdateInterface *pu = obj ? obj->getProductionUpdateInterface() : NULL;
@@ -669,9 +668,9 @@ void ControlBar::updateContextCommand( void )
 			m_contextParent[ CP_BUILD_QUEUE ]->winHide( FALSE );
 			populateBuildQueue( obj );
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 	else
 	{
 
@@ -684,9 +683,9 @@ void ControlBar::updateContextCommand( void )
 			// show the portrait image
 			setPortraitByObject( obj );
 
-		}  // end if
+		}
 
-	}  // end else
+	}
 
 	// update a visible production queue
 	if( m_contextParent[ CP_BUILD_QUEUE ]->winIsHidden() == FALSE )
@@ -725,11 +724,11 @@ void ControlBar::updateContextCommand( void )
 
 				GadgetButtonDrawInverseClock(win,produce->getPercentComplete(), m_buildUpClockColor);
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// evaluate each command on whether or not it should be enabled
 	for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
@@ -814,9 +813,9 @@ void ControlBar::updateContextCommand( void )
 			else
 				GadgetCheckLikeButtonSetVisualCheck( win, FALSE );
 
-		}  // end if
+		}
 
-	}  // end for i
+	}
 
 	// After Every change to the m_commandWIndows, we need to show fill in the missing blanks with the images
 	// removed from multiplayer branch
@@ -825,7 +824,7 @@ void ControlBar::updateContextCommand( void )
 //	// if we have a build tooltip layout, update it with the new data.
 //	repopulateBuildTooltipLayout();
 
-}  // end updatecontextCommand
+}
 
 //-------------------------------------------------------------------------------------------------
 const Image* ControlBar::calculateVeterancyOverlayForThing( const ThingTemplate *thingTemplate )
@@ -875,7 +874,7 @@ const Image* ControlBar::calculateVeterancyOverlayForThing( const ThingTemplate 
 		case LEVEL_HEROIC:
 			return m_rankHeroicIcon;
 	}
-	return NULL;;
+	return NULL;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -897,7 +896,7 @@ const Image* ControlBar::calculateVeterancyOverlayForObject( const Object *obj )
 		case LEVEL_HEROIC:
 			return m_rankHeroicIcon;
 	}
-	return NULL;;
+	return NULL;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1383,5 +1382,5 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 	// all is well with the command
 	return COMMAND_AVAILABLE;
 
-}  // end getCommandAvailability
+}
 

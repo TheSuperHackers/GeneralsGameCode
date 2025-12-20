@@ -22,11 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #pragma once
-
-#ifndef __W3DSHROUD_H_
-#define __W3DSHROUD_H_
 
 #include "WW3D2/matpass.h"
 #include "WW3D2/dx8wrapper.h"
@@ -127,5 +123,3 @@ protected:
 	void interpolateFogLevels(RECT *rect);		///<fade current fog levels to actual logic side levels.
 	void fillBorderShroudData(W3DShroudLevel level, SurfaceClass* pDestSurface);	///<fill the destination texture with a known value
 };
-
-#endif	//__W3DSHROUD_H_

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef SIDESLIST_H
-#define SIDESLIST_H
-
 #include "Common/Dict.h"
 #include "Common/Errors.h"
 #include "Common/GameType.h"
@@ -390,7 +387,3 @@ inline Bool BuildListInfo::isBuildable( void )
 
 	return false;
 }
-
-
-#endif
-

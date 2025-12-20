@@ -27,9 +27,6 @@
 
 #pragma once
 
-#ifndef _MISCAUDIO_H_
-#define _MISCAUDIO_H_
-
 #include "Common/AudioEventRTS.h"
 
 struct MiscAudio
@@ -74,7 +71,3 @@ struct MiscAudio
 	AudioEventRTS m_aircraftWheelScreech;									///< When a jet lands on a runway.
 	AudioEventRTS m_chronoDisabledSoundLoop;									///< When a unit is being disabled/deleted by a chrono gun
 };
-
-
-#endif /* _MISCAUDIO_H_ */
-

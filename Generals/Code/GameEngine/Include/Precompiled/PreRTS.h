@@ -26,8 +26,7 @@
 // Be careful what you stick in here, because putting files that change often in here will
 // tend to cheese people's goats.
 
-#ifndef __PRERTS_H__
-#define __PRERTS_H__
+#pragma once
 
 //-----------------------------------------------------------------------------
 // srj sez: this must come first, first, first.
@@ -69,9 +68,7 @@ class STLSpecialAlloc;
 #include <snmp.h>
 #include <stdarg.h>
 #include <stddef.h>
-#include <Utility/stdio_adapter.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <sys/timeb.h>
 #include <sys/types.h>
@@ -126,5 +123,3 @@ class STLSpecialAlloc;
 
 #include "Common/Thing.h"
 #include "Common/UnicodeString.h"
-
-#endif /* __PRERTS_H__ */

@@ -64,14 +64,14 @@
 W3DGameClient::W3DGameClient()
 {
 
-}  // end W3DGameClient
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DGameClient::~W3DGameClient()
 {
 
-}  // end ~W3DGameClient
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize resources for the w3d game client */
@@ -82,7 +82,7 @@ void W3DGameClient::init( void )
 	// extending initialization routine
 	GameClient::init();
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Per frame udpate, note we are extending functionality */
@@ -93,7 +93,7 @@ void W3DGameClient::update( void )
 	// call base
 	GameClient::update();
 
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset this device client system.  Note we are extending reset functionality from
@@ -105,7 +105,7 @@ void W3DGameClient::reset( void )
 	// call base class
 	GameClient::reset();
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** allocate a new drawable using the thing template for initialization.
@@ -115,7 +115,7 @@ void W3DGameClient::reset( void )
 	* in the GameLogic and GameClient themselves */
 //-------------------------------------------------------------------------------------------------
 Drawable *W3DGameClient::friend_createDrawable( const ThingTemplate *tmplate,
-																								DrawableStatus statusBits )
+																								DrawableStatusBits statusBits )
 {
 	Drawable *draw = NULL;
 
@@ -162,9 +162,9 @@ void W3DGameClient::createRayEffectByTemplate( const Coord3D *start,
 		// add this ray effect to the list of ray effects
 		TheRayEffects->addRayEffect( draw, start, end );
 
-	}  // end if
+	}
 
-}  // end createRayEffectByTemplate
+}
 
 //-------------------------------------------------------------------------------------------------
 /**  Tell all the drawables what time of day it is now */
@@ -183,7 +183,7 @@ void W3DGameClient::setTimeOfDay( TimeOfDay tod )
 	//tell the display to update its lighting
 	TheDisplay->setTimeOfDay( tod );
 
-}  // end setTimeOfDay
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -193,32 +193,19 @@ void W3DGameClient::setTeamColor(Int red, Int green, Int blue)
 
 	W3DStatusCircle::setColor(red, green, blue);
 
-}  // end setTeamColor
+}
 
 //-------------------------------------------------------------------------------------------------
-/** temporary entry point for adjusting LOD for development testing. */
 //-------------------------------------------------------------------------------------------------
-void W3DGameClient::adjustLOD( Int adj )
+void W3DGameClient::setTextureLOD( Int level )
 {
-	if (TheGlobalData == NULL)
-		return;
+	if (WW3D::Get_Texture_Reduction() != level)
+	{
+		WW3D::Set_Texture_Reduction(level, 6);
 
-	TheWritableGlobalData->m_textureReductionFactor += adj;
-
-	if (TheWritableGlobalData->m_textureReductionFactor > 4)
-		TheWritableGlobalData->m_textureReductionFactor = 4;	//16x less resolution is probably enough.
-	if (TheWritableGlobalData->m_textureReductionFactor < 0)
-		TheWritableGlobalData->m_textureReductionFactor = 0;
-
-	if (WW3D::Get_Texture_Reduction() != TheWritableGlobalData->m_textureReductionFactor)
-	{	WW3D::Set_Texture_Reduction(TheWritableGlobalData->m_textureReductionFactor,6);
-		TheGameLODManager->setCurrentTextureReduction(TheWritableGlobalData->m_textureReductionFactor);
+		//I commented this out because we're no longer using terrain LOD.  So I
+		//stole this function and keys to adjust the texture resolution instead. -MW
+		//if( TheTerrainRenderObject )
+		//	TheTerrainRenderObject->setTextureLOD(level);
 	}
-
-//I commented this out because we're no longer using terrain LOD.  So I
-//stole this function and keys to adjust the texture resolution instead. -MW
-
-//	if( TheTerrainRenderObject )
-//		TheTerrainRenderObject->adjustTerrainLOD( adj );
-
-}  // end adjustLOD
+}

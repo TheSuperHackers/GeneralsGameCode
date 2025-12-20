@@ -50,7 +50,6 @@ target_link_libraries(z_guiedit PRIVATE
     core_debug
     core_profile
     d3d8lib
-    dbghelplib
     imm32
     stlport
     vfw32

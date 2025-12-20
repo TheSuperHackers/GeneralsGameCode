@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/BuildAssistant.h"
 #include "Common/Thing.h"
@@ -71,7 +71,6 @@
 void parseUpgradePair( INI *ini, void *instance, void *store, const void *userData )
 {
 	upgradePair info;
-	info.type = "";
 	info.amount = 0;
 
 	const char *token = ini->getNextToken( ini->getSepsColon() );
@@ -97,7 +96,7 @@ void parseUpgradePair( INI *ini, void *instance, void *store, const void *userDa
 	std::list<upgradePair> * theList = (std::list<upgradePair>*)store;
 	theList->push_back(info);
 
-}  // end parseFactionObjectCreationList
+}
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -192,7 +191,7 @@ void AutoDepositUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -219,7 +218,7 @@ void AutoDepositUpdate::xfer( Xfer *xfer )
 		xfer->xferBool(&m_initialized);
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -230,4 +229,4 @@ void AutoDepositUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

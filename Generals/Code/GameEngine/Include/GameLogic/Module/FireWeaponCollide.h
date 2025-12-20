@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FireWeaponCollide_H_
-#define __FireWeaponCollide_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/CollideModule.h"
 #include "GameLogic/Weapon.h"
@@ -80,7 +77,3 @@ private:
 	Bool m_everFired;
 
 };
-
-
-#endif
-

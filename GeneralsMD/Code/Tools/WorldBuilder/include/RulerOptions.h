@@ -16,13 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-#ifndef __RULEROPTIONS_H_
-#define __RULEROPTIONS_H_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // RulerOptions.h : header file
 //
 #include "OptionsPanel.h"
@@ -76,5 +71,3 @@ public:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // __RULEROPTIONS_H_

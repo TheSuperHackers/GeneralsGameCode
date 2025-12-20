@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef CRATE_COLLIDE_H_
-#define CRATE_COLLIDE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/CollideModule.h"
 
@@ -93,5 +90,3 @@ protected:
 	virtual Bool isValidToExecute( const Object *other ) const;
 
 };
-
-#endif

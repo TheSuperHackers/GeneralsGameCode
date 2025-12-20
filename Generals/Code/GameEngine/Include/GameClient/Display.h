@@ -28,16 +28,10 @@
 
 #pragma once
 
-#ifndef _GAME_DISPLAY_H_
-#define _GAME_DISPLAY_H_
-
-#include <stdio.h>
 #include "Common/SubsystemInterface.h"
-#include "View.h"
 #include "GameClient/Color.h"
 #include "GameClient/GameFont.h"
-
-class View;
+#include "GameClient/View.h"
 
 struct ShroudLevel
 {
@@ -109,6 +103,7 @@ public:
 
 	virtual void drawViews( void );																///< Render all views of the world
 	virtual void updateViews ( void );															///< Updates state of world views
+	virtual void stepViews(); ///< Update views for every fixed time step
 
 	virtual VideoBuffer*	createVideoBuffer( void ) = 0;							///< Create a video buffer that can be used for this display
 
@@ -118,6 +113,7 @@ public:
 	virtual	Bool isClippingEnabled( void ) = 0;
 	virtual	void enableClipping( Bool onoff ) = 0;
 
+	virtual void step() {}; ///< Do one fixed time step
 	virtual void draw( void );																		///< Redraw the entire display
 	virtual void setTimeOfDay( TimeOfDay tod ) = 0;								///< Set the time of day for this display
 	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius,Real attenuationWidth,
@@ -175,6 +171,7 @@ public:
 	virtual void toggleLetterBox(void) = 0;										///< enabled letter-boxed display
 	virtual void enableLetterBox(Bool enable) = 0;						///< forces letter-boxed display on/off
 	virtual Bool isLetterBoxFading( void ) { return FALSE; }	///< returns true while letterbox fades in/out
+	virtual Bool isLetterBoxed( void ) { return FALSE; }	//WST 10/2/2002. Added query interface
 
 	virtual void setCinematicText( AsciiString string ) { m_cinematicText = string; }
 	virtual void setCinematicFont( GameFont *font ) { m_cinematicFont = font; }
@@ -221,10 +218,8 @@ extern Display *TheDisplay;
 
 extern void StatDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp = NULL );
 
-//Added By Saad
 //Necessary for display resolution confirmation dialog box
 //Holds the previous and current display settings
-
 typedef struct _DisplaySettings
 {
 	Int xRes;  //Resolution width
@@ -232,6 +227,3 @@ typedef struct _DisplaySettings
 	Int bitDepth; //Color Depth
 	Bool windowed; //Window mode TRUE: we're windowed, FALSE: we're not windowed
 } DisplaySettings;
-
-
-#endif // _GAME_DISPLAY_H_

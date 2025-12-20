@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef LIGHT_H
-#define LIGHT_H
 
 #include "always.h"
 #include "rendobj.h"
@@ -180,5 +174,3 @@ protected:
 	Vector3					SpotDirection;
 	//bool						Donut; ///does this light only apply at edges
 };
-
-#endif

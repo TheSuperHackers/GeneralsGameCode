@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _GAME_TYPE_H_
-#define _GAME_TYPE_H_
-
 #include "Lib/BaseType.h"
 
 // the default size of the world map
@@ -67,17 +64,18 @@ class INI;
 //-------------------------------------------------------------------------------------------------
 enum TimeOfDay CPP_11(: Int)
 {
-	TIME_OF_DAY_INVALID = 0,
-	TIME_OF_DAY_FIRST = 1,
-	TIME_OF_DAY_MORNING = TIME_OF_DAY_FIRST,
+	TIME_OF_DAY_INVALID,
+
+	TIME_OF_DAY_MORNING,
 	TIME_OF_DAY_AFTERNOON,
 	TIME_OF_DAY_EVENING,
 	TIME_OF_DAY_NIGHT,
 
-	TIME_OF_DAY_COUNT					// keep this last
+	TIME_OF_DAY_COUNT,
+	TIME_OF_DAY_FIRST = TIME_OF_DAY_MORNING,
 };
 
-extern const char *TimeOfDayNames[];
+extern const char *const TimeOfDayNames[];
 // defined in Common/GameType.cpp
 
 //-------------------------------------------------------------------------------------------------
@@ -86,10 +84,10 @@ enum Weather CPP_11(: Int)
 	WEATHER_NORMAL = 0,
 	WEATHER_SNOWY = 1,
 
-	WEATHER_COUNT					// keep this last
+	WEATHER_COUNT
 };
 
-extern const char *WeatherNames[];
+extern const char *const WeatherNames[];
 
 enum Scorches CPP_11(: Int)
 {
@@ -181,7 +179,7 @@ enum WeaponSlotType CPP_11(: Int)
 	WEAPON_SEVEN,
 	WEAPON_EIGHT,
 
-	WEAPONSLOT_COUNT	// keep last
+	WEAPONSLOT_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -196,6 +194,3 @@ enum WeaponSlotType CPP_11(: Int)
 enum PathfindLayerEnum CPP_11(: Int) {LAYER_INVALID = 0, LAYER_GROUND = 1, LAYER_WALL = 15, LAYER_LAST=15};
 
 //-------------------------------------------------------------------------------------------------
-
-#endif // _GAME_TYPE_H_
-

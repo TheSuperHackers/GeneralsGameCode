@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __GADGETLISTBOX_H_
-#define __GADGETLISTBOX_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -72,7 +69,8 @@ extern void GadgetListboxCreateScrollbar( GameWindow *listbox );
 extern void GadgetListBoxAddMultiSelect( GameWindow *listbox );
 extern void GadgetListBoxRemoveMultiSelect( GameWindow *listbox );
 extern void GadgetListBoxSetListLength( GameWindow *listbox, Int newLength );
-extern Int  GadgetListBoxGetListLength( GameWindow *listbox );
+extern Int  GadgetListBoxGetListLength( GameWindow *listbox ); ///< Returns the maximum possible number of list entries. Length is synonymous to rows
+extern Int  GadgetListBoxGetMaxSelectedLength( GameWindow *listbox ); ///< Returns the maximum possible number of list entries that can be selected
 extern Int  GadgetListBoxGetNumEntries( GameWindow *listbox );
 extern Int  GadgetListBoxGetNumColumns( GameWindow *listbox );
 extern Int  GadgetListBoxGetColumnWidth( GameWindow *listbox, Int column );
@@ -208,6 +206,3 @@ inline GameWindow *GadgetListBoxGetDownButton( GameWindow *g )
 }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GADGETLISTBOX_H_
-

@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Commando / G 3D engine                                       *
  *                                                                                             *
- *                    File Name : GAMEMTL.H                                                    *
+ *                    File Name : GAMEMTL.h                                                    *
  *                                                                                             *
  *                   Programmer : Greg Hjelstrom                                               *
  *                                                                                             *
@@ -35,9 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef GAMEMTL_H
-#define GAMEMTL_H
+#pragma once
 
 #include <max.h>
 #include "w3dmtl.h"
@@ -366,8 +364,3 @@ private:
 };
 
 Mtl * CreateGameMtl();
-
-#endif
-
-
-

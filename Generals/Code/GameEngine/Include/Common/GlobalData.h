@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _GLOBALDATA_H_
-#define _GLOBALDATA_H_
-
 #include "Common/GameCommon.h"	// ensure we get DUMP_PERF_STATS, or not
 #include "Common/AsciiString.h"
 #include "Common/GameType.h"
@@ -39,6 +36,7 @@
 #include "Common/SubsystemInterface.h"
 #include "GameClient/Color.h"
 #include "Common/STLTypedefs.h"
+#include "Common/Money.h"
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 struct FieldParse;
@@ -52,8 +50,8 @@ enum AIDebugOptions CPP_11(: Int);
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 
-CONSTEXPR const Int MAX_GLOBAL_LIGHTS = 3;
-CONSTEXPR const Int SIMULATE_REPLAYS_SEQUENTIAL = -1;
+constexpr const Int MAX_GLOBAL_LIGHTS = 3;
+constexpr const Int SIMULATE_REPLAYS_SEQUENTIAL = -1;
 
 //-------------------------------------------------------------------------------------------------
 class CommandLineData
@@ -155,6 +153,7 @@ public:
 	Int	m_waterType;
 	Bool m_showSoftWaterEdge;
 	Bool m_usingWaterTrackEditor;
+	Bool m_isWorldBuilder;
 
 	Int m_featherWater;
 
@@ -364,6 +363,8 @@ public:
 
 	Real m_keyboardScrollFactor;			///< Factor applied to game scrolling speed via keyboard scrolling
 	Real m_keyboardDefaultScrollFactor;			///< Factor applied to game scrolling speed via keyboard scrolling
+	Bool m_drawScrollAnchor;					///< Set that the scroll anchor should be enabled
+	Bool m_moveScrollAnchor;					///< set that the scroll anchor should move
 
 	Bool m_animateWindows;						///< Should we animate window transitions?
 
@@ -397,9 +398,20 @@ public:
 	Bool m_saveCameraInReplay;
 	Bool m_useCameraInReplay;
 
+	// TheSuperHackers @feature xezon 09/09/2025 Enable the shroud and everything related for observing individual players in any game mode.
+	// Enabling this does have a performance cost because the ghost object manager must keep track of all relevant objects for all players.
+	Bool m_enablePlayerObserver;
+
+	// TheSuperHackers @feature L3-M 05/09/2025 allow the network latency counter and render fps counter font size to be set, a size of zero disables them
+	Int m_networkLatencyFontSize;
+	Int m_renderFpsFontSize;
 	// TheSuperHackers @feature Mauller 21/06/2025 allow the system time and game time font size to be set, a size of zero disables them
 	Int m_systemTimeFontSize;
 	Int m_gameTimeFontSize;
+
+	// TheSuperHackers @feature L3-M 21/08/2025 toggle the money per minute display, false shows only the original current money
+	Bool m_showMoneyPerMinute;
+	Bool m_allowMoneyPerMinuteForPlayer;
 
 	Real m_shakeSubtleIntensity;			///< Intensity for shaking a camera with SHAKE_SUBTLE
 	Real m_shakeNormalIntensity;			///< Intensity for shaking a camera with SHAKE_NORMAL
@@ -423,14 +435,17 @@ public:
 
 	AsciiString m_specialPowerViewObjectName;	///< Created when certain special powers are fired so players can watch.
 
+	Real m_objectPlacementOpacity; ///< Sets the opacity of build preview objects.
+	Bool m_objectPlacementShadows; ///< Enables or disables shadows of build preview objects.
+
 	std::vector<AsciiString> m_standardPublicBones;
 
 	Real m_standardMinefieldDensity;
 	Real m_standardMinefieldDistance;
 
 
-	Bool m_showMetrics;								///< whether or not to show the metrics.
-	Int m_defaultStartingCash;				///< The amount of cash a player starts with by default.
+	Bool  m_showMetrics;								///< whether or not to show the metrics.
+	Money m_defaultStartingCash;				///< The amount of cash a player starts with by default.
 
 	Bool m_debugShowGraphicalFramerate;		///< Whether or not to show the graphical framerate bar.
 
@@ -573,6 +588,4 @@ extern GlobalData* TheWritableGlobalData;
 inline const GlobalData* const& TheGlobalData = TheWritableGlobalData;
 #else
 #define TheGlobalData ((const GlobalData*)TheWritableGlobalData)
-#endif
-
 #endif

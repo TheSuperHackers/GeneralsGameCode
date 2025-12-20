@@ -112,7 +112,7 @@ static LRESULT CALLBACK staticTextPropertiesCallback( HWND hWndDialog,
 						SetDlgItemText( hWndDialog, BUTTON_CENTERED, "No" );
 					break;
 
-				}  // end centered
+				}
 
 				// --------------------------------------------------------------------
         case IDOK:
@@ -151,12 +151,12 @@ static LRESULT CALLBACK staticTextPropertiesCallback( HWND hWndDialog,
 						TextData *textData = (TextData *)window->winGetUserData();
 						textData->centered = currCentered;
 
-					}  // end if
+					}
 
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end OK
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -165,13 +165,13 @@ static LRESULT CALLBACK staticTextPropertiesCallback( HWND hWndDialog,
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -180,15 +180,15 @@ static LRESULT CALLBACK staticTextPropertiesCallback( HWND hWndDialog,
       DestroyWindow( hWndDialog );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end staticTextPropertiesCallback
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -251,7 +251,7 @@ HWND InitStaticTextPropertiesDialog( GameWindow *window )
 
 	return dialog;
 
-}  // end InitStaticTextPropertiesDialog
+}
 
 
 

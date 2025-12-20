@@ -27,7 +27,7 @@
 // Desc:   Handles processing of unit special abilities.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameAudio.h"
 #include "Common/GlobalData.h"
@@ -68,10 +68,7 @@
 //-------------------------------------------------------------------------------------------------
 SpecialAbilityUpdate::SpecialAbilityUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_captureFlashPhase = 0.0f;
-	//
 	m_active = false;
 	m_prepFrames = 0;
 	m_animFrames = 0;
@@ -920,7 +917,7 @@ void SpecialAbilityUpdate::startPreparation()
 				draw->setAnimationCompletionTime(data->m_preparationFrames);
 
 			//Warn the victim so he might have a chance to react!
-			if( target && target->isLocallyControlled() )
+			if( target && target->isLocallyViewed() )
 			{
 				TheEva->setShouldPlay( EVA_BuildingBeingStolen );
 			}
@@ -954,7 +951,7 @@ void SpecialAbilityUpdate::startPreparation()
 				}
 
 				//Warn the victim so he might have a chance to react!
-				if( spTemplate->getSpecialPowerType() == SPECIAL_BLACKLOTUS_CAPTURE_BUILDING && target && target->isLocallyControlled() )
+				if( spTemplate->getSpecialPowerType() == SPECIAL_BLACKLOTUS_CAPTURE_BUILDING && target && target->isLocallyViewed() )
 				{
 					TheEva->setShouldPlay( EVA_BuildingBeingStolen );
 				}
@@ -1308,7 +1305,7 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
 			}
 
 			//Play the "building stolen" EVA event if the local player is the victim!
-			if( target && target->isLocallyControlled() )
+			if( target && target->isLocallyViewed() )
 			{
 				TheEva->setShouldPlay( EVA_BuildingStolen );
 			}
@@ -1335,14 +1332,18 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
 				return;
 			}
 
-			//Steal a thousand cash from the other team!
+			//Steal cash from the other team!
 			Money *targetMoney = target->getControllingPlayer()->getMoney();
 			Money *objectMoney = object->getControllingPlayer()->getMoney();
 			if( targetMoney && objectMoney )
 			{
 				UnsignedInt cash = targetMoney->countMoney();
+#if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_BEHAVIOR
 				UnsignedInt desiredAmount = 1000;
-				//Check to see if they have 1000 cash, otherwise, take the remainder!
+#else
+				UnsignedInt desiredAmount = data->m_effectValue;
+#endif
+				//Check to see if they have the cash, otherwise, take the remainder!
 				cash = min( desiredAmount, cash );
 				if( cash > 0 )
 				{
@@ -1354,7 +1355,7 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
 						controller->getScoreKeeper()->addMoneyEarned( cash );
 
 					//Play the "cash stolen" EVA event if the local player is the victim!
-					if( target && target->isLocallyControlled() )
+					if( target && target->isLocallyViewed() )
 					{
 						TheEva->setShouldPlay( EVA_CashStolen );
 					}
@@ -1820,7 +1821,7 @@ void SpecialAbilityUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1883,7 +1884,7 @@ void SpecialAbilityUpdate::xfer( Xfer *xfer )
   // capture flash phase
   xfer->xferReal( &m_captureFlashPhase );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1894,4 +1895,4 @@ void SpecialAbilityUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -16,9 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-#ifndef SIMPLEPLAYER_H
-#define SIMPLEPLAYER_H
+#pragma once
 
 #include "wmsdk.h"
 
@@ -119,5 +117,3 @@ protected:
     LPWSTR  m_pszUrl;
 
 };
-
-#endif // SIMPLEPLAYER_H

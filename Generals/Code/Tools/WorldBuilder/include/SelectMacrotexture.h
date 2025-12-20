@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_SELECTMACROTEXTURE_H__0AB61BFA_3A67_40CB_A38F_7067F6BA352B__INCLUDED_)
-#define AFX_SELECTMACROTEXTURE_H__0AB61BFA_3A67_40CB_A38F_7067F6BA352B__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // SelectMacrotexture.h : header file
 //
 
@@ -65,5 +61,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SELECTMACROTEXTURE_H__0AB61BFA_3A67_40CB_A38F_7067F6BA352B__INCLUDED_)

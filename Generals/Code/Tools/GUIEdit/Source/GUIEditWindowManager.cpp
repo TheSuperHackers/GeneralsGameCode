@@ -33,7 +33,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include <stdlib.h>
-#include <stdio.h>
 
 #include "Common/Debug.h"
 #include "GameClient/GadgetSlider.h"
@@ -70,11 +69,11 @@ Bool GUIEditWindowManager::isWindowInClipboard( GameWindow *window,
 		if( window == other )
 			return TRUE;  // found
 
-	}  // end for window
+	}
 
 	return FALSE;  // not found
 
-}  // end isWindowInClipboard
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Add the window to clipboard list */
@@ -97,7 +96,7 @@ void GUIEditWindowManager::linkToClipboard( GameWindow *window,
 		(*list)->winSetPrev( window );
 	*list = window;
 
-}  // end linkToClipboard
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Unlink window from the clipboard list */
@@ -125,7 +124,7 @@ void GUIEditWindowManager::unlinkFromClipboard( GameWindow *window,
 	else
 		*list = next;
 
-}  // end unlinkFromClipboard
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Remove selection entries for child windows that also have ANY of
@@ -157,7 +156,7 @@ void GUIEditWindowManager::removeSupervisedChildSelections( void )
 				parentSelected = TRUE;
 			parent = parent->winGetParent();
 
-		}  // end while
+		}
 
 		//
 		// if there is a parent selected then we can remove this
@@ -166,9 +165,9 @@ void GUIEditWindowManager::removeSupervisedChildSelections( void )
 		if( parentSelected == TRUE )
 			TheEditor->unSelectWindow( window );
 
-	}  // end for select
+	}
 
-}  // end removeSupervisedChildSelections
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Traverse the selected window list, any child windows we encounter
@@ -206,11 +205,11 @@ void GUIEditWindowManager::orphanSelectedChildren( void )
 			//
 			window->winSetPosition( pos.x, pos.y );
 
-		}  // end if, we had a parent
+		}
 
-	}  // end for select
+	}
 
-}  // end orphanSelectedChildren
+}
 */
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -228,7 +227,7 @@ GUIEditWindowManager::GUIEditWindowManager( void )
 	m_copySpacing = 8;
 	m_numCopiesPasted = 0;
 
-}  // end GUIEditWindowManager
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -241,7 +240,7 @@ GUIEditWindowManager::~GUIEditWindowManager( void )
 	// free all data on the clipboard
 	resetClipboard();
 
-}  // end ~GUIEditWindowManager
+}
 
 //-------------------------------------------------------------------------------------------------
 /** initialize the system */
@@ -252,7 +251,7 @@ void GUIEditWindowManager::init( void )
 	// extending functionality
 	W3DGameWindowManager::init();
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Destroy a game window */
@@ -275,12 +274,12 @@ Int GUIEditWindowManager::winDestroy( GameWindow *window )
 		// set the edit data to NULL in the window
 		window->winSetEditData( NULL );
 
-	}  // end if
+	}
 
 	// call our base class functionality
 	return W3DGameWindowManager::winDestroy( window );
 
-}  // end winDestroy
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Create a new window by setting up its parameters and callbacks. */
@@ -310,11 +309,11 @@ GameWindow *GUIEditWindowManager::winCreate( GameWindow *parent,
 		// attach edit data to window
 		window->winSetEditData( editData );
 
-	}  // end if
+	}
 
 	return window;
 
-}  // end winCreate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Destroy all windows in the clipboard */
@@ -346,7 +345,7 @@ void GUIEditWindowManager::resetClipboard( void )
 		//
 		winDestroy( window );
 
-	}  // end for window
+	}
 
 	// immediately process the destroyed windows just to be clean here
 	processDestroyList();
@@ -355,7 +354,7 @@ void GUIEditWindowManager::resetClipboard( void )
 	m_clipboard = NULL;
 	m_numCopiesPasted = 0;
 
-}  // end resetClipboard
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Is the clipboard empty */
@@ -368,7 +367,7 @@ Bool GUIEditWindowManager::isClipboardEmpty( void )
 
 	return FALSE;
 
-}  // end isClipboardEmtpy
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Remove the selected windows from the current layout and put them into
@@ -395,7 +394,7 @@ void GUIEditWindowManager::cutSelectedToClipboard( void )
 	if( m_clipboard )
 		TheEditor->deleteSelected();
 
-}  // end cutSelectedToClipboard
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Given the current window in a list pointed to by 'root', if that
@@ -440,14 +439,14 @@ void GUIEditWindowManager::duplicateSelected( GameWindow *root )
 				pos.y += parentPos.y;
 				duplicate->winSetPosition( pos.x, pos.y );
 
-			}  // end if
+			}
 
 			// add window to the clipboard
 			linkToClipboard( duplicate, &m_clipboard );
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 	else
 	{
 
@@ -457,12 +456,12 @@ void GUIEditWindowManager::duplicateSelected( GameWindow *root )
 		//
 		duplicateSelected( root->winGetChild() );
 
-	}  // end else
+	}
 
 	// move on to the next window
 	duplicateSelected( root->winGetNext() );
 
-}  // end duplicateSelected
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Copy the selected windows to the clipboard */
@@ -487,7 +486,7 @@ void GUIEditWindowManager::copySelectedToClipboard( void )
 	//
 	duplicateSelected( m_windowList );
 
-}  // end copySelectedToClipboard
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Take the string representation of the name of the window passed in,
@@ -502,7 +501,7 @@ void GUIEditWindowManager::incrementName( GameWindow *window )
 	// this I will botch it (cuz I'm currently not sure
 	// how to test it)
 	char name[MAX_WINDOW_NAME_LEN];
-	strcpy(name, instData->m_decoratedNameString.str());
+	strlcpy(name, instData->m_decoratedNameString.str(), ARRAY_SIZE(name));
 
 	Int len = strlen( name );
 	char numberBuffer[ MAX_WINDOW_NAME_LEN ];
@@ -515,10 +514,10 @@ void GUIEditWindowManager::incrementName( GameWindow *window )
 	if( len == 0 )
 	{
 
-		strcat( name, "1" );
+		strlcat(name, "1", ARRAY_SIZE(name));
 		goto cleanup;
 
-	}  // end if
+	}
 
 	//
 	// start from the end of the string and back up to the start picking
@@ -540,16 +539,16 @@ void GUIEditWindowManager::incrementName( GameWindow *window )
 			hasNumberSuffix = TRUE;
 			numberBuffer[ j-- ] = c;
 
-		}  // end if
+		}
 		else
 		{
 
 			numberStartIndex = i + 1;
 			break;  // exit for i
 
-		}  // end else
+		}
 
-	}  // end for i
+	}
 
 	//
 	// if we have a number suffix change it to a number, increment it, and
@@ -577,24 +576,24 @@ void GUIEditWindowManager::incrementName( GameWindow *window )
 				name[ i + numberStartIndex ] = numberBuffer[ i ];
 				charsAdded++;
 
-			}  // end if
+			}
 		}
 		name[ numberStartIndex + charsAdded ] = 0;  // terminate at end of new string
 
-	}  // end if
+	}
 	else
 	{
 
 		// no number at end, easy ... just append a number '1'
-		strcat( name, "1" );
+		strlcat(name, "1", ARRAY_SIZE(name));
 
-	}  // end else
+	}
 
 cleanup:
 
 	instData->m_decoratedNameString = name;
 
-}  // end incrementName
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Validate the names for all the windows and child windows in the copy
@@ -644,9 +643,9 @@ void GUIEditWindowManager::validateClipboardNames( GameWindow *root )
 			MessageBox( TheEditor->getWindowHandle(), buffer, "Error Mapping Names", MB_OK );
 			nameOK = TRUE;
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// validate our children names
 	GameWindow *child;
@@ -656,7 +655,7 @@ void GUIEditWindowManager::validateClipboardNames( GameWindow *root )
 	// validate the next window in the list
 	validateClipboardNames( root->winGetNext() );
 
-}  // end validateClipboardNames
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Paste the contents of the clipboard into the window world */
@@ -676,7 +675,7 @@ void GUIEditWindowManager::pasteClipboard( void )
 								MB_OK );
 		return;
 
-	}  // end if
+	}
 
 	// create a duplicate of everything in the clipboard
 	assert( m_clipboardDup == NULL );
@@ -727,7 +726,7 @@ void GUIEditWindowManager::pasteClipboard( void )
 		// notify the hierarchy of the new window added
 		TheHierarchyView->addWindow( window, HIERARCHY_ADD_AT_TOP );
 
-	}  // end for window
+	}
 
 	// the clipboard duplicate list is only for the act of pasting
 	assert( m_clipboardDup == NULL );
@@ -754,13 +753,13 @@ void GUIEditWindowManager::pasteClipboard( void )
 		// notify the editor that each of the windows was created
 		TheEditor->notifyNewWindow( window );
 
-	}  // end while
+	}
 
 	// if we did in fact paste a window then our file contents have changed
 	if( firstWindow )
 		TheEditor->setUnsaved( TRUE );
 
-}  // end pasteClipboard
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Convinience funtion to copy the Draw state info for a given instance */
@@ -828,7 +827,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 																							source->winGetFont(),
 																							FALSE );
 
-	}  // end if
+	}
 	else if( BitIsSet( style, GWS_RADIO_BUTTON ) )
 	{
 		RadioButtonData *radioData = (RadioButtonData *)source->winGetUserData();
@@ -849,7 +848,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 																							 source->winGetFont(),
 																							 FALSE );
 
-	}  // end else if
+	}
 	else if( BitIsSet( style, GWS_CHECK_BOX ) )
 	{
 
@@ -864,7 +863,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 																						source->winGetFont(),
 																						FALSE );
 
-	}  // end else if
+	}
 	else if( BitIsSet( style, GWS_HORZ_SLIDER | GWS_VERT_SLIDER ) )
 	{
 		SliderData *sliderData = (SliderData *)source->winGetUserData();
@@ -913,11 +912,11 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 								&sourceInstData->m_hiliteDrawData,
 								sizeof( WinDrawData ) * MAX_DRAW_DATA );
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end else if
+	}
 	else if( BitIsSet( style, GWS_COMBO_BOX ) )
 	{
 		ComboBoxData *comboData = (ComboBoxData *)source->winGetUserData();
@@ -1033,7 +1032,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 									&sourceInstData->m_hiliteDrawData,
 									sizeof( WinDrawData ) * MAX_DRAW_DATA );
 
-				}  // if
+				}
 
 				// down button
 				GameWindow *downButton = comboData->listboxData->downButton;
@@ -1055,7 +1054,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 									&sourceInstData->m_hiliteDrawData,
 									sizeof( WinDrawData ) * MAX_DRAW_DATA );
 
-				}  // if
+				}
 
 				// slider
 				GameWindow *slider = comboData->listboxData->slider;
@@ -1097,15 +1096,15 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 									&sourceInstData->m_hiliteDrawData,
 									sizeof( WinDrawData ) * MAX_DRAW_DATA );
 
-					}  // end if
+					}
 
-				}  // if
+				}
 
-			} // if
+			}
 
-		}  // end if
+		}
 
-	}  // end else if
+	}
 	else if( BitIsSet( style, GWS_SCROLL_LISTBOX ) )
 	{
 		ListboxData *listData = (ListboxData *)source->winGetUserData();
@@ -1185,7 +1184,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 								&sourceInstData->m_hiliteDrawData,
 								sizeof( WinDrawData ) * MAX_DRAW_DATA );
 
-			}  // if
+			}
 
 			// down button
 			GameWindow *downButton = listData->downButton;
@@ -1207,7 +1206,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 								&sourceInstData->m_hiliteDrawData,
 								sizeof( WinDrawData ) * MAX_DRAW_DATA );
 
-			}  // if
+			}
 
 			// slider
 			GameWindow *slider = listData->slider;
@@ -1249,13 +1248,13 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 								&sourceInstData->m_hiliteDrawData,
 								sizeof( WinDrawData ) * MAX_DRAW_DATA );
 
-				}  // end if
+				}
 
-			}  // if
+			}
 
-		}  // end if
+		}
 
-	}  // end else if
+	}
 	else if( BitIsSet( style, GWS_ENTRY_FIELD ) )
 	{
 		EntryData *entryData = (EntryData *)source->winGetUserData();
@@ -1280,7 +1279,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 																						 source->winGetFont(),
 																						 FALSE );
 
-	}  // end else if
+	}
 	else if( BitIsSet( style, GWS_STATIC_TEXT ) )
 	{
 		TextData *textData = (TextData *)source->winGetUserData();
@@ -1300,7 +1299,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 																							source->winGetFont(),
 																							FALSE );
 
-	}  // end else if
+	}
 	else if( BitIsSet( style, GWS_PROGRESS_BAR ) )
 	{
 
@@ -1315,7 +1314,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 																							 source->winGetFont(),
 																							 FALSE );
 
-	}  // end else if
+	}
 	else if( BitIsSet( style, GWS_USER_WINDOW ) )
 	{
 
@@ -1329,7 +1328,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 																						 NULL,
 																						 &instDataCopy );
 
-	}  // end else if
+	}
 	else
 	{
 
@@ -1340,7 +1339,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 		memset( &instDataCopy, 0, sizeof( instDataCopy ) );  // see comment below
 		return NULL;
 
-	}  // end else
+	}
 
 	// sanity
 	if( duplicate == NULL )
@@ -1352,7 +1351,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 		memset( &instDataCopy, 0, sizeof( instDataCopy ) );  // see comment below
 		return NULL;
 
-	}  // end if
+	}
 
 	//
 	// since we're using the real window system here to create things, we
@@ -1376,7 +1375,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 			*editData = *sourceEditData;
 //			memcpy( editData, sourceEditData, sizeof( GameWindowEditData ) );
 
-	}  // end if
+	}
 
 	//
 	// duplicate all the children for the window, except if this window
@@ -1391,7 +1390,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 		for( child = source->winGetChild(); child; child = child->winGetNext() )
 			duplicateWindow( child, duplicate );
 
-	}  // end if
+	}
 
 	//
 	// the inst data copy was literally a copy, now it's going to go out of
@@ -1403,7 +1402,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 	// return the duped window
 	return duplicate;
 
-}  // end duplicateWindow
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Create a duplicate everything on the clipboard list and put it
@@ -1435,9 +1434,9 @@ void GUIEditWindowManager::createClipboardDuplicate( void )
 		if( duplicate )
 			linkToClipboard( duplicate, &m_clipboardDup );
 
-	}  // end for
+	}
 
-}  // end createClipboardDuplicate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Make the 'target' a child of the 'parent' */
@@ -1473,7 +1472,7 @@ void GUIEditWindowManager::makeChildOf( GameWindow *target,
 		target->winSetPosition( screenPos.x, screenPos.y );
 		return;
 
-	}  // end if
+	}
 
 	// check to see if this is already out parent, nothing to do
 	if( prevParent == parent )
@@ -1489,7 +1488,7 @@ void GUIEditWindowManager::makeChildOf( GameWindow *target,
 								MB_OK );
 		return;
 
-	}  // end if
+	}
 
 	// get the target screen position before the move to child
 	ICoord2D screenPosBeforeMove;
@@ -1528,7 +1527,7 @@ void GUIEditWindowManager::makeChildOf( GameWindow *target,
 	// move the target
 	TheEditor->moveWindowTo( target, safeLoc.x, safeLoc.y );
 
-}  // end makeChildOf
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Move the 'windowToMove' to be just in front of the 'aheadOf' window
@@ -1570,14 +1569,14 @@ void GUIEditWindowManager::moveAheadOf( GameWindow *windowToMove,
 		//
 		windowToMove->winSetPosition( pos.x, pos.y );
 
-	}  // end if
+	}
 	else
 	{
 
 		// just take off the main list
 		unlinkWindow( windowToMove );
 
-	}  // end else
+	}
 
 	// insert the window at the specified location
 	insertWindowAheadOf( windowToMove, aheadOf );
@@ -1613,5 +1612,5 @@ void GUIEditWindowManager::moveAheadOf( GameWindow *windowToMove,
 	// move the target
 	TheEditor->moveWindowTo( windowToMove, safeLoc.x, safeLoc.y );
 
-}  // end moveAheadOf
+}
 

@@ -42,7 +42,7 @@
 //
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ProductionPrerequisite.h"
 #include "Common/Player.h"
@@ -131,7 +131,7 @@ Int ProductionPrerequisite::getAllPossibleBuildFacilityTemplates(const ThingTemp
 const ThingTemplate *ProductionPrerequisite::getExistingBuildFacilityTemplate( const Player *player ) const
 {
 	DEBUG_ASSERTCRASH(player, ("player may not be null"));
-	if (m_prereqUnits.size())
+	if (!m_prereqUnits.empty())
 	{
 		Int ownCount[MAX_PREREQ];
 		Int cnt = calcNumPrereqUnitsOwned(player, ownCount);
@@ -200,7 +200,7 @@ void ProductionPrerequisite::addUnitPrereq( AsciiString unit, Bool orUnitWithPre
 	info.unit = NULL;
 	m_prereqUnits.push_back(info);
 
-}  // end addUnitPrereq
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Add a unit prerequisite, if 'orWithPrevious' is set then this unit is said
@@ -217,7 +217,7 @@ void ProductionPrerequisite::addUnitPrereq( const std::vector<AsciiString>& unit
 		orWithPrevious = true;
 	}
 
-}  // end addUnitPrereq
+}
 
 //-------------------------------------------------------------------------------------------------
 // returns an asciistring which is a list of all the prerequisites
@@ -237,14 +237,10 @@ UnicodeString ProductionPrerequisite::getRequiresList(const Player *player) cons
 	Int i;
 
 	Bool orRequirements[MAX_PREREQ];
-	//Added for fix below in getRequiresList
-	//By Sadullah Nader
-	//Initializes the OR_WITH_PREV structures
 	for (i = 0; i < MAX_PREREQ; i++)
 	{
 		orRequirements[i] = FALSE;
 	}
-	//
 	// account for the "or" unit cases, start for loop at 1
 	for (i = 1; i < cnt; i++)
 	{

@@ -227,7 +227,7 @@ GameTextManager::GameTextManager()
 	m_munkee(FALSE),
 	m_noStringList(NULL),
 	m_useStringFile(TRUE),
-	m_failed(L"***FATAL*** String Manager failed to initilaized properly")
+	m_failed(L"***FATAL*** String Manager failed to initialized properly")
 {
 }
 
@@ -340,18 +340,11 @@ void GameTextManager::init( void )
 
 void GameTextManager::deinit( void )
 {
+	delete [] m_stringInfo;
+	m_stringInfo = NULL;
 
-	if( m_stringInfo != NULL )
-	{
-		delete [] m_stringInfo;
-		m_stringInfo = NULL;
-	}
-
-	if( m_stringLUT != NULL )
-	{
-		delete [] m_stringLUT;
-		m_stringLUT = NULL;
-	}
+	delete [] m_stringLUT;
+	m_stringLUT = NULL;
 
 	m_textCount = 0;
 
@@ -448,7 +441,7 @@ void GameTextManager::removeLeadingAndTrailing ( Char *buffer )
 
 	while ( (*ptr++ = *first++) != 0 );
 
-	ptr -= 2;;
+	ptr -= 2;
 
 	while ( (ptr > buffer) && (ch = *ptr) != 0 && iswspace ( ch ) )
 	{
@@ -785,7 +778,7 @@ Bool GameTextManager::getStringCount( char *filename )
 				m_buffer[ len+1] = 0;
 			readToEndOfQuote( &file, &m_buffer[1], m_buffer2, m_buffer3, MAX_UITEXT_LENGTH );
 		}
-		else if( !stricmp( m_buffer, "END") )
+		else if( stricmp( m_buffer, "END") == 0 )
 		{
 			m_textCount++;
 		}
@@ -981,7 +974,7 @@ Bool GameTextManager::parseStringFile( char *filename )
 
 		for ( Int i = 0; i < listCount; i++ )
 		{
-			if ( !stricmp ( m_stringInfo[i].label.c_str(), m_buffer ))
+			if ( stricmp ( m_stringInfo[i].label.c_str(), m_buffer ) == 0 )
 			{
 				DEBUG_ASSERTCRASH ( FALSE, ("String label '%s' multiply defined!", m_buffer ));
 			}
@@ -1032,7 +1025,7 @@ Bool GameTextManager::parseStringFile( char *filename )
 					readString = TRUE;
 				}
 			}
-			else if ( !stricmp ( m_buffer, "END" ))
+			else if ( stricmp ( m_buffer, "END" ) == 0 )
 			{
 				break;
 			}

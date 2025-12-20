@@ -34,17 +34,14 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
-
-#ifndef WWDEBUG_H
-#define WWDEBUG_H
 
 // TheSuperHackers @todo Recover WWDEBUG?
 #ifdef WWDEBUG
 #include <Utility/intrin_compat.h>
 #endif
+
+#include "../../../../../Core/GameEngine/Include/Common/Debug.h"
 
 // The macro MESSAGE allows user to put:
 // #pragma MESSAGE("Hello world")
@@ -52,8 +49,8 @@
 // sourcefname.cpp (123) : Hello world
 // would be printed if put in sourcefname.cpp on line 123 in compile window like an error.
 // You can then use next/prev error	hot keys to see where comment is.  It is not an error and
-// will be printed everytime it is compiled.  Very useful to put comments in code that cannot
-// be forgoten.
+// will be printed every time it is compiled.  Very useful to put comments in code that cannot
+// be forgotten.
 #define STRING_IT(a) #a
 #define TOKEN_IT(a) STRING_IT(,##a)
 #define MESSAGE(a) message (__FILE__ "(" TOKEN_IT(__LINE__) ") : " a)
@@ -109,8 +106,6 @@ void					WWDebug_DBWin32_Message_Handler( const char * message);
 ** and strings go away when the release version is built.
 ** WWDEBUG_SAY(("dir = %f",dir));
 */
-
-#include "../../../../../Core/GameEngine/Include/Common/Debug.h"
 
 #ifdef DEBUG_LOGGING
 #define WWDEBUG_SAY(x)							DEBUG_LOG(x)
@@ -176,6 +171,4 @@ void					WWDebug_DBWin32_Message_Handler( const char * message);
 #else
 #define WWDEBUG_PROFILE_START(x)
 #define WWDEBUG_PROFILE_STOP(x)
-#endif
-
 #endif

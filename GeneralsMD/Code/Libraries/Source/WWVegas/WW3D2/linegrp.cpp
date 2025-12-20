@@ -382,7 +382,7 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 				}
 				break;
 		}
-	}	// writing to ib
+	}
 
 	// make the vertex buffers
 
@@ -463,7 +463,7 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 			}
 
 		}
-	} // writing to vb
+	}
 
 	DX8Wrapper::Set_Index_Buffer(iba, 0);
 	DX8Wrapper::Set_Vertex_Buffer(vba);

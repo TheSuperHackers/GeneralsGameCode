@@ -37,11 +37,6 @@
 
 #pragma once
 
-#ifndef __WSYS_FILE_H
-#define __WSYS_FILE_H
-
-
-
 //----------------------------------------------------------------------------
 //           Includes
 //----------------------------------------------------------------------------
@@ -162,6 +157,3 @@ inline void File::deleteOnClose( void ) { m_deleteOnClose = TRUE;};
 
 // include FileSystem.h as it will be used alot with File.h
 //#include "wsys/FileSystem.h"
-
-
-#endif // __WSYS_FILE_H

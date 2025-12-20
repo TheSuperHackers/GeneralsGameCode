@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CRITSEC_HEADER
-#define CRITSEC_HEADER
+#pragma once
 
 #include "wstypes.h"
 #ifdef _WIN32
@@ -58,5 +57,3 @@ class CritSec
     mutable int                 RefCount_;      // Reference count
   #endif
 };
-
-#endif

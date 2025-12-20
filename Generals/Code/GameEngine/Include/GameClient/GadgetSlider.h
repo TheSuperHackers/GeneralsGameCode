@@ -53,9 +53,6 @@
 
 #pragma once
 
-#ifndef __GADGETSLIDER_H_
-#define __GADGETSLIDER_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -440,6 +437,3 @@ inline Color GadgetSliderGetHiliteSelectedThumbBorderColor( GameWindow *g )
 																						}
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GADGETSLIDER_H_
-

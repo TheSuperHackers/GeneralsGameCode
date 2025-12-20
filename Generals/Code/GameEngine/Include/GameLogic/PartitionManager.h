@@ -46,9 +46,6 @@
 
 #pragma once
 
-#ifndef __PARTITIONMANAGER_H_
-#define __PARTITIONMANAGER_H_
-
 //-----------------------------------------------------------------------------
 //           Includes
 //-----------------------------------------------------------------------------
@@ -103,7 +100,6 @@ enum ValueOrThreat CPP_11(: Int)
 {
 	VOT_CashValue = 1,
 	VOT_ThreatValue,
-	VOT_NumItems
 };
 
 // ----------------------------------------------------------------------------------------------
@@ -217,22 +213,22 @@ public:
 	/**
 		return the Cell for this COI (null if the COI is not in use)
 	*/
-	inline PartitionCell *getCell() { return m_cell; }
+	PartitionCell *getCell() { return m_cell; }
 
 	/**
 		return the Module for this COI (null if the COI is not in use)
 	*/
-	inline PartitionData *getModule() { return m_module; }
+	PartitionData *getModule() { return m_module; }
 
 	/**
 		return the previous COI in the Cell's list of COIs.
 	*/
-	inline CellAndObjectIntersection *getPrevCoi() { return m_prevCoi; }
+	CellAndObjectIntersection *getPrevCoi() { return m_prevCoi; }
 
 	/**
 		return the next COI in the Cell's list of COIs.
 	*/
-	inline CellAndObjectIntersection *getNextCoi() { return m_nextCoi; }
+	CellAndObjectIntersection *getNextCoi() { return m_nextCoi; }
 
 	// only for use by PartitionCell.
 	void friend_addToCellList(CellAndObjectIntersection **pListHead);
@@ -345,13 +341,13 @@ public:
 	void invalidateShroudedStatusForAllCois(Int playerIndex);
 
 #ifdef PM_CACHE_TERRAIN_HEIGHT
-	inline Real getLoTerrain() const { return m_loTerrainZ; }
-	inline Real getHiTerrain() const { return m_hiTerrainZ; }
+	Real getLoTerrain() const { return m_loTerrainZ; }
+	Real getHiTerrain() const { return m_hiTerrainZ; }
 #endif
 
 	void getCellCenterPos(Real& x, Real& y);
 
-	inline CellAndObjectIntersection *getFirstCoiInCell() { return m_firstCoiInCell; }
+	CellAndObjectIntersection *getFirstCoiInCell() { return m_firstCoiInCell; }
 
 	#ifdef RTS_DEBUG
 	void validateCoiList();
@@ -514,7 +510,7 @@ public:
 
 	ObjectShroudStatus getShroudedStatus(Int playerIndex);
 
-	inline Int wasSeenByAnyPlayers() const	///<check if a player in the game has seen the object but is now looking at fogged version.
+	Int wasSeenByAnyPlayers() const	///<check if a player in the game has seen the object but is now looking at fogged version.
 	{
 		Int i=0;
 		for (; i<MAX_PLAYER_COUNT; i++)
@@ -553,13 +549,13 @@ public:
 	Int friend_getDoneFlag() { return m_doneFlag; }
 	void friend_setDoneFlag(Int i) { m_doneFlag = i; }
 
-	inline Bool isInListDirtyModules(PartitionData* const* pListHead) const
+	Bool isInListDirtyModules(PartitionData* const* pListHead) const
 	{
 		Bool result = (*pListHead == this || m_prevDirty || m_nextDirty);
 		DEBUG_ASSERTCRASH(result == (m_dirtyStatus != NOT_DIRTY), ("dirty flag mismatch"));
 		return result;
 	}
-	inline void prependToDirtyModules(PartitionData** pListHead)
+	void prependToDirtyModules(PartitionData** pListHead)
 	{
 		DEBUG_ASSERTCRASH((m_dirtyStatus != NOT_DIRTY), ("dirty flag mismatch"));
 		m_nextDirty = *pListHead;
@@ -1113,10 +1109,7 @@ private:
 public:
 	PartitionFilterGarrisonable( Bool match ) : m_match(match)
 	{
-		//Added By Sadullah Nader
-		//Initializations
 		m_player = NULL;
-		//
 	}
 protected:
 	virtual Bool allow( Object *other );
@@ -1291,7 +1284,7 @@ public:
 	void xfer( Xfer *xfer );
 	void loadPostProcess( void );
 
-	inline Bool getUpdatedSinceLastReset( void ) const { return m_updatedSinceLastReset; }
+	Bool getUpdatedSinceLastReset( void ) const { return m_updatedSinceLastReset; }
 
 	void registerObject( Object *object );				///< add thing to system
 	void unRegisterObject( Object *object );			///< remove thing from system
@@ -1433,19 +1426,19 @@ public:
 	*/
 	Bool isClearLineOfSightTerrain(const Object* obj, const Coord3D& objPos, const Object* other, const Coord3D& otherPos);
 
-	inline Bool isInListDirtyModules(PartitionData* o) const
+	Bool isInListDirtyModules(PartitionData* o) const
 	{
 		return o->isInListDirtyModules(&m_dirtyModules);
 	}
-	inline void prependToDirtyModules(PartitionData* o)
+	void prependToDirtyModules(PartitionData* o)
 	{
 		o->prependToDirtyModules(&m_dirtyModules);
 	}
-	inline void removeFromDirtyModules(PartitionData* o)
+	void removeFromDirtyModules(PartitionData* o)
 	{
 		o->removeFromDirtyModules(&m_dirtyModules);
 	}
-	inline void removeAllDirtyModules()
+	void removeAllDirtyModules()
 	{
 		while (m_dirtyModules)
 		{
@@ -1486,6 +1479,8 @@ public:
 	CellShroudStatus getShroudStatusForPlayer( Int playerIndex, Int x, Int y ) const;
 	CellShroudStatus getShroudStatusForPlayer( Int playerIndex, const Coord3D *loc ) const;
 
+	ObjectShroudStatus getPropShroudStatusForPlayer(Int playerIndex, const Coord3D *loc ) const;
+
 	Real getGroundOrStructureHeight(Real posx, Real posy);
 
 	void getMostValuableLocation( Int playerIndex, UnsignedInt whichPlayerTypes, ValueOrThreat valType, Coord3D *outLocation );
@@ -1496,7 +1491,7 @@ public:
 	// If saveToFog is false, then we are writing STORE_PERMENANT_REVEAL
 	void storeFoggedCells(ShroudStatusStoreRestore &outPartitionStore, Bool storeToFog) const;
 	void restoreFoggedCells(const ShroudStatusStoreRestore &inPartitionStore, Bool restoreToFog);
-};  // end class PartitionManager
+};
 
 // -----------------------------------------------------------------------------
 inline void PartitionManager::worldToCell(Real wx, Real wy, Int *cx, Int *cy)
@@ -1560,6 +1555,3 @@ public:
 //           Externals
 //-----------------------------------------------------------------------------
 extern PartitionManager *ThePartitionManager;  ///< object manager singleton
-
-#endif // __PARTITIONMANAGER_H_
-

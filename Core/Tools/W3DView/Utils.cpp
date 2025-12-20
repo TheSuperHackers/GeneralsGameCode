@@ -18,7 +18,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //
-//  Utils.CPP
+//  Utils.cpp
 //
 //  Module containing usefull misc. utility functions
 //
@@ -33,7 +33,7 @@
 #include "assetmgr.h"
 #include "agg_def.h"
 #include "hlod.h"
-#include <VFW.H>
+#include <VFW.h>
 #include "rcfile.h"
 
 
@@ -559,7 +559,7 @@ Build_Emitter_List
 
 			// Recursivly add emitters to the list
 			Build_Emitter_List (*psub_obj, list);
-			MEMBER_RELEASE (psub_obj);
+			REF_PTR_RELEASE (psub_obj);
 		}
 	}
 
@@ -586,7 +586,7 @@ Is_Aggregate (const char *asset_name)
 	}
 
 	// Free our hold on the temporary render object
-	MEMBER_RELEASE (prender_obj);
+	REF_PTR_RELEASE (prender_obj);
 
 	// Return the true/false result code
 	return retval;
@@ -649,7 +649,7 @@ Is_Real_LOD (const char *asset_name)
 	}
 
 	// Free our hold on the temporary render object
-	MEMBER_RELEASE (prender_obj);
+	REF_PTR_RELEASE (prender_obj);
 
 	// Return the true/false result code
 	return retval;

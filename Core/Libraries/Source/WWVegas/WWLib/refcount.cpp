@@ -44,7 +44,7 @@
 // TheSuperHackers @build feliwir 17/04/2025 include __debugbreak macros
 #include <Utility/intrin_compat.h>
 
-#ifndef NDEBUG
+#ifdef RTS_DEBUG
 
 // #define PARANOID_REFCOUNTS
 
@@ -161,14 +161,12 @@ void	RefCountClass::Inc_Total_Refs(const RefCountClass * obj)
 	assert(Validate_Active_Ref(obj));
 #endif
 	TotalRefs++;
-
 }
 
 // SKB 7/21/99 Set BreakOnRefernce to a pointer and it will break when called.
 //					This is used for debugging, please do not deleted.
 RefCountClass* BreakOnReference = 0;
 
-#ifndef NDEBUG
 void RefCountClass::Add_Ref(void) const
 {
 	NumRefs++;
@@ -179,7 +177,6 @@ void RefCountClass::Add_Ref(void) const
 	}
 	Inc_Total_Refs(this);
 }
-#endif
 
 /***********************************************************************************************
  * RefCountClass::Validate_Active_Ref -- decrements the total reference count                   *
@@ -206,8 +203,4 @@ void	RefCountClass::Dec_Total_Refs(const RefCountClass * obj)
 	}
 }
 
-
-
-#endif
-
-
+#endif // RTS_DEBUG

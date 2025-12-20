@@ -35,23 +35,15 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef HANIM_H
-#define HANIM_H
 
 #include "always.h"
 #include "quat.h"
-#include "refcount.h"
 #include "w3d_file.h"
 #include "hash.h"
 #include "mempool.h"
-#include <refcount.h>
-#include <SLIST.H>
-#include <Vector.H>
+#include <SLIST.h>
+#include <Vector.h>
 
 struct NodeMotionStruct;
 class MotionChannelClass;
@@ -95,11 +87,7 @@ public:
 	virtual float				Get_Frame_Rate() = 0;
 	virtual float				Get_Total_Time() = 0;
 
-//	virtual Vector3			Get_Translation(int pividx,float frame) = 0;
-//	virtual Quaternion		Get_Orientation(int pividx,float frame) = 0;
 	// Jani: Changed to pass in reference of destination to avoid copying
-	virtual void				Get_Translation(int pividx,float frame) {}	// todo: remove
-	virtual void				Get_Orientation(int pividx,float frame) {}	// todo: remove
 	virtual void				Get_Translation(Vector3& translation, int pividx,float frame) const = 0;
 	virtual void				Get_Orientation(Quaternion& orientation, int pividx,float frame) const = 0;
 	virtual void				Get_Transform(Matrix3D&, int pividx, float frame) const = 0;
@@ -161,8 +149,8 @@ private:
 
 	// This info is packaged into a struct to minimize DynamicVectorClass overhead
 	struct WeightInfoStruct {
-		WeightInfoStruct() : Name(0) {}
-		~WeightInfoStruct() { if(Name) delete [] Name; }
+		WeightInfoStruct() : Name(NULL) {}
+		~WeightInfoStruct() { delete [] Name; }
 
 		char *Name;
 		float Weight;
@@ -269,5 +257,3 @@ protected:
 	DynamicVectorClass<HAnimComboDataClass *> HAnimComboData;
 
 };
-
-#endif

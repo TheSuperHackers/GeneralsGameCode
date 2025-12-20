@@ -102,21 +102,21 @@ void W3DGadgetComboBoxDraw( GameWindow *window, WinInstanceData *instData )
 		border				= GadgetComboBoxGetDisabledBorderColor( window );
 		titleColor		= window->winGetDisabledTextColor();
 		titleBorder		= window->winGetDisabledTextBorderColor();
-	}  // end if, disabled
+	}
 	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		background		= GadgetComboBoxGetHiliteColor( window );
 		border				= GadgetComboBoxGetHiliteBorderColor( window );
 		titleColor		= window->winGetHiliteTextColor();
 		titleBorder		= window->winGetHiliteTextBorderColor();
-	}  // end else if, hilited
+	}
 	else
 	{
 		background		= GadgetComboBoxGetEnabledColor( window );
 		border				= GadgetComboBoxGetEnabledBorderColor( window );
 		titleColor		= window->winGetEnabledTextColor();
 		titleBorder		= window->winGetEnabledTextBorderColor();
-	}  // end else, enabled
+	}
 
 	// Draw the title
 	if( title && title->getTextLength() )
@@ -132,7 +132,7 @@ void W3DGadgetComboBoxDraw( GameWindow *window, WinInstanceData *instData )
 		y += fontHeight + 1;
 		height -= fontHeight + 1;
 
-	}  // end if
+	}
 
 	// draw the back border
 	if( border != WIN_COLOR_UNDEFINED )
@@ -145,7 +145,7 @@ void W3DGadgetComboBoxDraw( GameWindow *window, WinInstanceData *instData )
 																	 x + 1, y + 1,
 																	 x + width - 1, y + height - 1 );
 
-}  // end W3DGadgetComboBoxDraw
+}
 
 // W3DGadgetComboBoxImageDraw ==================================================
 /** Draw combo box with user supplied images */
@@ -200,7 +200,7 @@ void W3DGadgetComboBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 																		start.x, start.y,
 																		end.x, end.y );
 
-	}  // end if
+	}
 
 	// Draw the title
 	if( title && title->getTextLength() )
@@ -216,8 +216,8 @@ void W3DGadgetComboBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 		y += TheWindowManager->winFontHeight( instData->getFont() );
 		height -= TheWindowManager->winFontHeight( instData->getFont() ) + 1;
 
-	}  // end if
+	}
 
 
-}  // end W3DGadgetComboBoxImageDraw
+}
 

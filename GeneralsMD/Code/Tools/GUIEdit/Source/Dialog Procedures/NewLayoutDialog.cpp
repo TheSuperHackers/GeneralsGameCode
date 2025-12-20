@@ -77,7 +77,7 @@ static void initNewLayoutDialog( HWND hWndDialog )
 	// set default keyboard focus
 	SetFocus( GetDlgItem( hWndDialog, IDOK ) );
 
-}  // end initNewLayoutDialog
+}
 
 // NewLayoutDialogProc ========================================================
 /** Dialog procedure for the new layout dialog when starting an entire
@@ -98,7 +98,7 @@ LRESULT CALLBACK NewLayoutDialogProc( HWND hWndDialog, UINT message,
 			initNewLayoutDialog( hWndDialog );
 			return FALSE;
 
-		}  // end init dialog
+		}
 
 		// ------------------------------------------------------------------------
     case WM_COMMAND:
@@ -119,7 +119,7 @@ LRESULT CALLBACK NewLayoutDialogProc( HWND hWndDialog, UINT message,
 
           break;
 
-				}  // end ok
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -128,13 +128,13 @@ LRESULT CALLBACK NewLayoutDialogProc( HWND hWndDialog, UINT message,
 					EndDialog( hWndDialog, FALSE );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -143,13 +143,13 @@ LRESULT CALLBACK NewLayoutDialogProc( HWND hWndDialog, UINT message,
 			EndDialog( hWndDialog, FALSE );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end NewLayoutDialogProc
+}
 

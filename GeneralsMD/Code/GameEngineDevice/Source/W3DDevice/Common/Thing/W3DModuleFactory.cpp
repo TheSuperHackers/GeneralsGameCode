@@ -81,4 +81,4 @@ void W3DModuleFactory::init( void )
 	addModule( W3DPropDraw );
 	addModule( W3DDependencyCarrierDraw );
 
-}  // end init
+}

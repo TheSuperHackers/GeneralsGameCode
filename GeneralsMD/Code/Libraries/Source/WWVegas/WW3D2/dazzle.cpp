@@ -48,12 +48,12 @@
 #include "assetmgr.h"
 #include "Vector3i.h"
 #include "quat.h"
-#include "INI.H"
+#include "INI.h"
 #include "Point.h"
 #include "rinfo.h"
 #include "vertmaterial.h"
 #include "chunkio.h"
-#include "WWFILE.H"
+#include "WWFILE.h"
 #include "inisup.h"
 #include "persistfactory.h"
 #include "ww3dids.h"
@@ -65,7 +65,6 @@
 #include "scene.h"
 #include "wwprofile.h"
 #include "visrasterizer.h"
-#include <cstdio>
 #include <limits.h>
 #include <wwprofile.h>
 
@@ -975,8 +974,7 @@ void DazzleRenderObjClass::Render(RenderInfoClass & rinfo)
 			const DazzleTypeClass* params=types[type];
 			params->Calculate_Intensities(dazzle_intensity,dazzle_size,current_halo_intensity,camera_dir,current_dir,dir,current_distance);
 
-			unsigned time_ms=WW3D::Get_Frame_Time();
-			if (time_ms==0) time_ms=1;
+			float time_ms=WW3D::Get_Logic_Frame_Time_Milliseconds();
 			float weight=pow(params->ic.history_weight,time_ms);
 
 			if (dazzle_intensity>0.0f) {
@@ -1047,9 +1045,6 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 	else {
 		screen_x_scale=h/w;
 	}
-
-//	unsigned time_ms=WW3D::Get_Frame_Time();
-//	if (time_ms==0) time_ms=1;
 
 	// Do NOT scale halo by current scale
 	// because it uses screen parallel primitives
@@ -1502,7 +1497,7 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 	*/
 	if (new_obj == NULL) {
 		static int count = 0;
-		if ( ++count < 10 ) {
+		if ( count++ < 10 ) {
 			WWDEBUG_SAY(("DazzlePersistFactory failed to create dazzle of type: %s!!",dazzle_type));
 			WWDEBUG_SAY(("Replacing it with a NULL render object!"));
 		}
@@ -1586,9 +1581,6 @@ void DazzleLayerClass::Render(CameraClass* camera)
 	if (!camera) return;
 
 	camera->Apply();
-
-	unsigned time_ms=WW3D::Get_Frame_Time();
-	if (time_ms==0) time_ms=1;
 
 	DX8Wrapper::Set_Material(NULL);
 

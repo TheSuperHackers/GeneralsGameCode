@@ -36,17 +36,12 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DECALMSH_H
-#define DECALMSH_H
 
 #include "always.h"
 #include "bittype.h"
 #include "simplevec.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "vector2.h"
 #include "vector3.h"
 #include "Vector3i.h"
@@ -288,7 +283,3 @@ inline uint32 SkinDecalMeshClass::Get_Decal_ID(int decal_index)
 {
 	return Decals[decal_index].DecalID;
 }
-
-
-#endif //DECALMSH_H
-

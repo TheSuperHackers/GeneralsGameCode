@@ -46,9 +46,6 @@
 
 #pragma once
 
-#ifndef __PROPERTIES_H_
-#define __PROPERTIES_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -347,7 +344,7 @@ typedef enum
 	GENERIC_DISABLED,
 	GENERIC_HILITE,
 
-	NUM_STATE_IDENTIFIERS  // keep this last
+	NUM_STATE_IDENTIFIERS
 
 } StateIdentifier;
 
@@ -425,6 +422,3 @@ extern Color GetPropsDisabledTextColor( void );
 extern Color GetPropsDisabledTextBorderColor( void );
 extern Color GetPropsHiliteTextColor( void );
 extern Color GetPropsHiliteTextBorderColor( void );
-
-#endif // __PROPERTIES_H_
-

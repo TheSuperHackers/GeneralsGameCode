@@ -34,10 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef ALPHA_MODIFIER_H
-#define ALPHA_MODIFIER_H
-
+#pragma once
 
 #include <max.h>
 #include "iparamm2.h"
@@ -146,9 +143,3 @@ class AlphaModDlgProc : public ParamMap2UserDlgProc
 
 		void SetThing(ReferenceTarget *m) {AlphaModifier = (AlphaModifierClass*)m;}
 };
-
-
-#endif //ALPHA_MODIFIER_H
-
-
-

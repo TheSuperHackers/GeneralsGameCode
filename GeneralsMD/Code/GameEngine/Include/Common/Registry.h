@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __REGISTRY_H__
-#define __REGISTRY_H__
-
 #include <Common/AsciiString.h>
 
 /**
@@ -51,5 +48,3 @@ AsciiString GetRegistryLanguage(void); // convenience function
 AsciiString GetRegistryGameName(void); // convenience function
 UnsignedInt GetRegistryVersion(void); // convenience function
 UnsignedInt GetRegistryMapPackVersion(void); // convenience function
-
-#endif // __REGISTRY_H__

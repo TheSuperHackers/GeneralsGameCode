@@ -106,13 +106,9 @@ MeshModelClass::~MeshModelClass(void)
 	Reset(0,0,0);
 	REF_PTR_RELEASE(MatInfo);
 
-	if (DefMatDesc != NULL) {
-		delete DefMatDesc;
-	}
-	if (AlternateMatDesc != NULL) {
-		delete AlternateMatDesc;
-	}
-	return ;
+	delete DefMatDesc;
+	delete AlternateMatDesc;
+
 }
 
 MeshModelClass & MeshModelClass::operator = (const MeshModelClass & that)
@@ -127,10 +123,8 @@ MeshModelClass & MeshModelClass::operator = (const MeshModelClass & that)
 		*DefMatDesc = *(that.DefMatDesc);
 		CurMatDesc = DefMatDesc;
 
-		if (AlternateMatDesc != NULL) {
-			delete AlternateMatDesc;
-			AlternateMatDesc = NULL;
-		}
+		delete AlternateMatDesc;
+		AlternateMatDesc = NULL;
 
 		if (that.AlternateMatDesc != NULL) {
 			AlternateMatDesc = W3DNEW MeshMatDescClass(*(that.AlternateMatDesc));
@@ -138,11 +132,11 @@ MeshModelClass & MeshModelClass::operator = (const MeshModelClass & that)
 
 		clone_materials(that);
 
-		if (GapFiller) {
-			delete GapFiller;
-				GapFiller=NULL;
-		}
-		if (that.GapFiller) GapFiller=W3DNEW GapFillerClass(*that.GapFiller);
+		delete GapFiller;
+			GapFiller=NULL;
+
+		if (that.GapFiller)
+			GapFiller=W3DNEW GapFillerClass(*that.GapFiller);
 	}
 	return * this;
 }
@@ -162,10 +156,10 @@ void MeshModelClass::Reset(int polycount,int vertcount,int passcount)
 
 	MatInfo->Reset();
 	DefMatDesc->Reset(polycount,vertcount,passcount);
-	if (AlternateMatDesc != NULL) {
-		delete AlternateMatDesc;
-		AlternateMatDesc = NULL;
-	}
+
+	delete AlternateMatDesc;
+	AlternateMatDesc = NULL;
+
 	CurMatDesc = DefMatDesc;
 
 	return ;
@@ -178,7 +172,7 @@ void MeshModelClass::Register_For_Rendering()
 		if (WW3D::Get_NPatches_Gap_Filling_Mode()!=WW3D::NPATCHES_GAP_FILLING_DISABLED) {
 			Init_For_NPatch_Rendering();
 		}
-		else if (GapFiller) {
+		else {
 			delete GapFiller;
 			GapFiller=NULL;
 		}
@@ -187,7 +181,7 @@ void MeshModelClass::Register_For_Rendering()
 		if (WW3D::Get_NPatches_Gap_Filling_Mode()==WW3D::NPATCHES_GAP_FILLING_FORCE) {
 			Init_For_NPatch_Rendering();
 		}
-		else if (GapFiller) {
+		else {
 			delete GapFiller;
 			GapFiller=NULL;
 		}

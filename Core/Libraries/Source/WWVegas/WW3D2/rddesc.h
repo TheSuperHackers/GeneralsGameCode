@@ -34,15 +34,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
-#ifndef RDDESC_H
-#define RDDESC_H
-
-#include "Vector.H"
+#include "Vector.h"
 #include "wwstring.h"
 #include <d3d8types.h>
 #include <d3d8caps.h>
@@ -166,7 +160,3 @@ inline void RenderDeviceDescClass::add_resolution(int w,int h,int bits)
 		ResArray.Add(ResolutionDescClass(w,h,bits));
 	}
 }
-
-
-#endif
-

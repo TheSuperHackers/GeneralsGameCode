@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _REPLACE_OBJECT_UPGRADE_H
-#define _REPLACE_OBJECT_UPGRADE_H
-
 #include "GameLogic/Module/UpgradeModule.h"
 
 //-----------------------------------------------------------------------------
@@ -64,6 +61,3 @@ protected:
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };
-#endif // _COMMAND_SET_UPGRADE_H
-
-

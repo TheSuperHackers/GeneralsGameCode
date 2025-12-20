@@ -34,10 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-
-#ifndef INPUTDLG_H
-#define INPUTDLG_H
+#pragma once
 
 #include "dllmain.h"
 #include "resource.h"
@@ -81,6 +78,3 @@ protected:
 	LRESULT OnInitDialog (WPARAM wParam, LPARAM lParam);
 	BOOL OnOK (void);
 };
-
-
-#endif

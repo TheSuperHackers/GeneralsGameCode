@@ -30,19 +30,14 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if !defined(AFX_TEXTURESETTINGSDIALOG_H__362C7398_D199_11D2_9FFD_00104B791122__INCLUDED_)
-#define AFX_TEXTURESETTINGSDIALOG_H__362C7398_D199_11D2_9FFD_00104B791122__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #ifdef WW3D_DX8
 
 // Forward delcarations
 class TextureClass;
 
-#include "Resource.H"
+#include "Resource.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -125,5 +120,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_TEXTURESETTINGSDIALOG_H__362C7398_D199_11D2_9FFD_00104B791122__INCLUDED_)

@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __DEFINITION_FACTORY_MGR_H
-#define __DEFINITION_FACTORY_MGR_H
 
 #include "always.h"
 #include "bittype.h"
@@ -85,6 +80,3 @@ private:
 	/////////////////////////////////////////////////////////////////////
 	static DefinitionFactoryClass *	_FactoryListHead;
 };
-
-
-#endif //__DEFINITION_FACTORY_MGR_H

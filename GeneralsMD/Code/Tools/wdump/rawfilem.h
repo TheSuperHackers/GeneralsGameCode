@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /G/wdump/RAWFILEM.H                                         $*
+ *                     $Archive:: /G/wdump/RAWFILEM.h                                         $*
  *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
  *                                                                                             *
@@ -38,8 +38,7 @@
  *   RawFileMClass::Is_Open -- Checks to see if the file is open or not.                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef RAWFILEM_Hx
-#define RAWFILEM_Hx
+#pragma once
 
 #include	<errno.h>
 #include	<limits.h>
@@ -51,14 +50,14 @@
 #define	NULL_HANDLE		INVALID_HANDLE_VALUE
 #define	HANDLE_TYPE		HANDLE
 
-#include	"WWFILE.H"
+#include "WWFILE.h"
 
 #ifdef NEVER
 	/*
 	**	This is a duplicate of the error numbers. The error handler for the RawFileMClass handles
 	**	these errors. If the error routine is overridden and additional errors are defined, then
 	**	use numbers starting with 100. Note that these errors here are listed in numerical order.
-	**	These errors are defined in the standard header file "ERRNO.H".
+	**	These errors are defined in the standard header file "ERRNO.h".
 	*/
 	EZERO,				// Non-error.
 	EINVFNC,				// Invalid function number.
@@ -320,5 +319,3 @@ inline bool RawFileMClass::Is_Open(void) const
 {
 	return(Handle != INVALID_HANDLE_VALUE);
 }
-
-#endif

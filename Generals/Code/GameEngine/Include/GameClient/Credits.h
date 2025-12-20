@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __CREDITS_H_
-#define __CREDITS_H_
-
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -71,7 +68,8 @@ CREDIT_STYLE_POSITION,
 CREDIT_STYLE_NORMAL,
 CREDIT_STYLE_COLUMN,
 CREDIT_STYLE_BLANK,			///< Keep this second to last
-MAX_CREDIT_STYLES				///< Keep this last
+
+MAX_CREDIT_STYLES
 };
 
 enum{ CREDIT_SPACE_OFFSET = 2 };
@@ -82,9 +80,10 @@ static const LookupListRec CreditStyleNames[] =
 	{ "MINORTITLE",				CREDIT_STYLE_POSITION },
 	{ "NORMAL",			CREDIT_STYLE_NORMAL },
 	{ "COLUMN",				CREDIT_STYLE_COLUMN },
-
-	{ NULL, 0	}// keep this last!
+	// CREDIT_STYLE_BLANK
+	{ NULL, 0	}
 };
+static_assert(ARRAY_SIZE(CreditStyleNames) == MAX_CREDIT_STYLES, "Incorrect array size");
 
 
 class CreditsLine
@@ -163,4 +162,3 @@ private:
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 extern CreditsManager *TheCredits;
-#endif // __CREDITS_H_

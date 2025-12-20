@@ -32,9 +32,6 @@
 
 #pragma once
 
-#ifndef SABOTAGE_FAKE_BUILDING_CRATE_COLLIDE_H_
-#define SABOTAGE_FAKE_BUILDING_CRATE_COLLIDE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
 #include "GameLogic/Module/CrateCollide.h"
@@ -87,5 +84,3 @@ protected:
 	virtual Bool isSabotageBuildingCrateCollide() const { return TRUE; }
 
 };
-
-#endif

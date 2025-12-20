@@ -33,14 +33,10 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
+
 #pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef B64STRAW_H
-#define B64STRAW_H
-
-#include	"STRAW.H"
+#include "STRAW.h"
 
 /*
 **	Performs Base 64 encoding/decoding on the data that is drawn through the straw. Note that
@@ -87,6 +83,3 @@ class Base64Straw : public Straw
 		Base64Straw(Base64Straw & rvalue);
 		Base64Straw & operator = (Base64Straw const & pipe);
 };
-
-
-#endif

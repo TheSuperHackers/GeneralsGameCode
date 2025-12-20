@@ -41,7 +41,7 @@ void BodyModule::crc( Xfer *xfer )
 	// call base class
 	BehaviorModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method
@@ -62,7 +62,7 @@ void BodyModule::xfer( Xfer *xfer )
 	// damage scalar
 	xfer->xferReal( &m_damageScalar );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -73,4 +73,4 @@ void BodyModule::loadPostProcess( void )
 	// call base class
 	BehaviorModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

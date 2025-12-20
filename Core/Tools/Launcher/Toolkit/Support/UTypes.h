@@ -34,8 +34,7 @@
 *
 ******************************************************************************/
 
-#ifndef UTYPES_H
-#define UTYPES_H
+#pragma once
 
 //! Signed integer value
 typedef int Int;
@@ -90,5 +89,3 @@ typedef enum {OFF = false, ON = true, PENDING = -1} TriState;
 #ifndef NULL
 #define NULL (0L)
 #endif
-
-#endif // UTYPES_H

@@ -22,8 +22,7 @@
 locale.h - REAL fonts
 @ */
 
-#ifndef __LOCALE_H
-#define __LOCALE_H 1
+#pragma once
 
 //#ifdef __cplusplus
 //extern "C" {
@@ -66,7 +65,4 @@ const char *	LOCALE_getstring( int stringid );							/* use values in the .h fil
 //#ifdef __cplusplus
 //}
 //#endif
-
-#endif /* __LOCALE_H */
 /* END ABSTRACT */
-

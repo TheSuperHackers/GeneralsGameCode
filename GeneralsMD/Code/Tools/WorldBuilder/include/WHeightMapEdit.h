@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef WHeightMapEdit_H
-#define WHeightMapEdit_H
-
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 
 class DataChunkOutput;
@@ -164,5 +161,3 @@ public: // Editing methods.
 	// outHandle: 0 means BL, 1 means TL, 2 means TR, 3 means BR
 	void findBoundaryNear(Coord3D *pt, float okDistance, Int *outNdx, Int *outHandle);
 };
-
-#endif

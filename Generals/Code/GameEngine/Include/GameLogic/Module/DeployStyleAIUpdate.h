@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __DEPLOY_STYLE_AI_UPDATE_H
-#define __DEPLOY_STYLE_AI_UPDATE_H
-
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 
@@ -61,10 +58,7 @@ public:
 		m_packTime = 0;
 		m_resetTurretBeforePacking = false;
 		m_turretsFunctionOnlyWhenDeployed = false;
-		// Added By Sadullah Nader
-		// Initialization necessary
 		m_turretsMustCenterBeforePacking = FALSE;
-		// End Add
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
@@ -125,6 +119,3 @@ protected:
 	Bool										m_isGuardingPosition;
 	Bool										m_overriddenAttack;
 };
-
-#endif
-

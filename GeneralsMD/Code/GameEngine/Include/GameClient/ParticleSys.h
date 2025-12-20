@@ -29,10 +29,6 @@
 
 #pragma once
 
-#ifndef _PARTICLE_SYS_H_
-#define _PARTICLE_SYS_H_
-
-#include <stdio.h>
 #include "Common/AsciiString.h"
 #include "Common/GameMemory.h"
 #include "Common/GameType.h"
@@ -107,8 +103,8 @@ enum ParticlePriorityType CPP_11(: Int)
 	CRITICAL,				///< super special top priority like a superweapon
 	ALWAYS_RENDER,	///< used for logically important display (not just fluff), so must never be culled, regardless of particle cap, lod, etc
 	// !!! *Noting* goes here ... special is the top priority !!!
-	PARTICLE_PRIORITY_HIGHEST = ALWAYS_RENDER,
-	NUM_PARTICLE_PRIORITIES  ///< Keep this last
+	NUM_PARTICLE_PRIORITIES,
+	PARTICLE_PRIORITY_HIGHEST = NUM_PARTICLE_PRIORITIES - 1,
 };
 
 /**
@@ -175,16 +171,16 @@ public:
 
 	void applyForce( const Coord3D *force );		///< add the given acceleration
 
-	inline const Coord3D *getPosition( void ) { return &m_pos; }
-	inline Real getSize( void ) { return m_size; }
-	inline Real getAngle( void ) { return m_angleZ; }
-	inline Real getAlpha( void ) { return m_alpha; }
-	inline const RGBColor *getColor( void ) { return &m_color; }
-	inline void setColor( RGBColor *color ) { m_color = *color; }
+	const Coord3D *getPosition( void ) { return &m_pos; }
+	Real getSize( void ) { return m_size; }
+	Real getAngle( void ) { return m_angleZ; }
+	Real getAlpha( void ) { return m_alpha; }
+	const RGBColor *getColor( void ) { return &m_color; }
+	void setColor( RGBColor *color ) { m_color = *color; }
 
 	inline Bool isInvisible( void );										///< return true if this particle is invisible
-	inline Bool isCulled (void) {return m_isCulled;}				///< return true if the particle falls off the edge of the screen
-	inline void setIsCulled (Bool enable) { m_isCulled = enable;}		///< set particle to not visible because it's outside view frustum
+	Bool isCulled (void) {return m_isCulled;}				///< return true if the particle falls off the edge of the screen
+	void setIsCulled (Bool enable) { m_isCulled = enable;}		///< set particle to not visible because it's outside view frustum
 
 	void controlParticleSystem( ParticleSystem *sys ) { m_systemUnderControl = sys; }
 	void detachControlledParticleSystem( void ) { m_systemUnderControl = NULL; }
@@ -244,46 +240,6 @@ public:
 
 };
 
-
-//--------------------------------------------------------------------------------------------------------------
-
-#ifdef DEFINE_PARTICLE_SYSTEM_NAMES
-
-/**** NOTE: These MUST be kept in sync with the enumerations below *****/
-
-static const char *ParticleShaderTypeNames[] =
-{
-	"NONE", "ADDITIVE", "ALPHA", "ALPHA_TEST", "MULTIPLY", NULL
-};
-
-static const char *ParticleTypeNames[] =
-{
-	"NONE", "PARTICLE", "DRAWABLE", "STREAK", "VOLUME_PARTICLE","SMUDGE", NULL
-};
-
-static const char *EmissionVelocityTypeNames[] =
-{
-	"NONE", "ORTHO", "SPHERICAL", "HEMISPHERICAL", "CYLINDRICAL", "OUTWARD", NULL
-};
-
-static const char *EmissionVolumeTypeNames[] =
-{
-	"NONE", "POINT", "LINE", "BOX", "SPHERE", "CYLINDER", NULL
-};
-
-//"NONE", "FLUFF", "DEBRIS", "NATURE", "WEAPON", "DAMAGE", "SPECIAL"
-static const char *ParticlePriorityNames[] =
-{
-	"NONE", "WEAPON_EXPLOSION","SCORCHMARK","DUST_TRAIL","BUILDUP","DEBRIS_TRAIL","UNIT_DAMAGE_FX","DEATH_EXPLOSION","SEMI_CONSTANT","CONSTANT","WEAPON_TRAIL","AREA_EFFECT","CRITICAL", "ALWAYS_RENDER", NULL
-};
-
-static const char *WindMotionNames[] =
-{
-	"NONE", "Unused", "PingPong", "Circular", NULL
-};
-
-#endif
-
 /**
  * All of the properties of a particle system, used by both ParticleSystemTemplates
  * and ParticleSystem classes.
@@ -304,13 +260,15 @@ public:
 
 	enum ParticleShaderType
 	{
-		INVALID_SHADER=0, ADDITIVE, ALPHA, ALPHA_TEST, MULTIPLY
+		INVALID_SHADER=0, ADDITIVE, ALPHA, ALPHA_TEST, MULTIPLY,
+		PARTICLE_SHADER_TYPE_COUNT
 	}
 	m_shaderType;																///< how this particle is rendered
 
 	enum ParticleType
 	{
-		INVALID_TYPE=0, PARTICLE, DRAWABLE, STREAK, VOLUME_PARTICLE, SMUDGE	 ///< is a particle a 2D-screen-facing particle, or a Drawable, or a Segment in a streak?
+		INVALID_TYPE=0, PARTICLE, DRAWABLE, STREAK, VOLUME_PARTICLE, SMUDGE, ///< is a particle a 2D-screen-facing particle, or a Drawable, or a Segment in a streak?
+		PARTICLE_TYPE_COUNT
 	}
 	m_particleType;
 
@@ -367,7 +325,8 @@ public:
 	// The direction and speed at which particles are emitted
 	enum EmissionVelocityType
 	{
-		INVALID_VELOCITY=0, ORTHO, SPHERICAL, HEMISPHERICAL, CYLINDRICAL, OUTWARD
+		INVALID_VELOCITY=0, ORTHO, SPHERICAL, HEMISPHERICAL, CYLINDRICAL, OUTWARD,
+		EMISSION_VELOCITY_TYPE_COUNT
 	}
 	m_emissionVelocityType;
 
@@ -410,7 +369,8 @@ public:
 	// Note that the volume is relative to the system's position and orientation
 	enum EmissionVolumeType
 	{
-		INVALID_VOLUME=0, POINT, LINE, BOX, SPHERE, CYLINDER
+		INVALID_VOLUME=0, POINT, LINE, BOX, SPHERE, CYLINDER,
+		EMISSION_VOLUME_TYPE_COUNT
 	}
 	m_emissionVolumeType;												///< the type of volume where particles are created
 
@@ -459,7 +419,9 @@ public:
 		WIND_MOTION_INVALID = 0,
 		WIND_MOTION_NOT_USED,
 		WIND_MOTION_PING_PONG,
-		WIND_MOTION_CIRCULAR
+		WIND_MOTION_CIRCULAR,
+
+		WIND_MOTION_COUNT
 	};
 	WindMotion m_windMotion;				///< motion of the wind angle updating
 	Real m_windAngle;								///< angle of the "wind" associated with this system
@@ -476,6 +438,49 @@ public:
 
 };
 
+//--------------------------------------------------------------------------------------------------------------
+
+#ifdef DEFINE_PARTICLE_SYSTEM_NAMES
+
+/**** NOTE: These MUST be kept in sync with the enumerations above *****/
+
+static const char *const ParticleShaderTypeNames[] =
+{
+	"NONE", "ADDITIVE", "ALPHA", "ALPHA_TEST", "MULTIPLY", NULL
+};
+static_assert(ARRAY_SIZE(ParticleShaderTypeNames) == ParticleSystemInfo::PARTICLE_SHADER_TYPE_COUNT + 1, "Incorrect array size");
+
+static const char *const ParticleTypeNames[] =
+{
+	"NONE", "PARTICLE", "DRAWABLE", "STREAK", "VOLUME_PARTICLE","SMUDGE", NULL
+};
+static_assert(ARRAY_SIZE(ParticleTypeNames) == ParticleSystemInfo::PARTICLE_TYPE_COUNT + 1, "Incorrect array size");
+
+static const char *const EmissionVelocityTypeNames[] =
+{
+	"NONE", "ORTHO", "SPHERICAL", "HEMISPHERICAL", "CYLINDRICAL", "OUTWARD", NULL
+};
+static_assert(ARRAY_SIZE(EmissionVelocityTypeNames) == ParticleSystemInfo::EMISSION_VELOCITY_TYPE_COUNT + 1, "Incorrect array size");
+
+static const char *const EmissionVolumeTypeNames[] =
+{
+	"NONE", "POINT", "LINE", "BOX", "SPHERE", "CYLINDER", NULL
+};
+static_assert(ARRAY_SIZE(EmissionVolumeTypeNames) == ParticleSystemInfo::EMISSION_VOLUME_TYPE_COUNT + 1, "Incorrect array size");
+
+static const char *const ParticlePriorityNames[] =
+{
+	"NONE", "WEAPON_EXPLOSION","SCORCHMARK","DUST_TRAIL","BUILDUP","DEBRIS_TRAIL","UNIT_DAMAGE_FX","DEATH_EXPLOSION","SEMI_CONSTANT","CONSTANT","WEAPON_TRAIL","AREA_EFFECT","CRITICAL", "ALWAYS_RENDER", NULL
+};
+static_assert(ARRAY_SIZE(ParticlePriorityNames) == NUM_PARTICLE_PRIORITIES + 1, "Incorrect array size");
+
+static const char *const WindMotionNames[] =
+{
+	"NONE", "Unused", "PingPong", "Circular", NULL
+};
+static_assert(ARRAY_SIZE(WindMotionNames) == ParticleSystemInfo::WIND_MOTION_COUNT + 1, "Incorrect array size");
+
+#endif
 
 /**
  * A ParticleSystemTemplate, used by the ParticleSystemManager to instantiate ParticleSystems.
@@ -537,7 +542,7 @@ public:
 									ParticleSystemID id,
 									Bool createSlaves );			///< create a particle system from a template and assign it this ID
 
-	inline ParticleSystemID getSystemID( void ) const { return m_systemID; }	///< get unique system ID
+	ParticleSystemID getSystemID( void ) const { return m_systemID; }	///< get unique system ID
 
 	void setPosition( const Coord3D *pos );			///< set the position of the particle system
 	void getPosition( Coord3D *pos );				///< get the position of the particle system
@@ -622,8 +627,8 @@ public:
 	void removeParticle( Particle *p );
 	UnsignedInt getParticleCount( void ) const { return m_particleCount; }
 
-	inline ObjectID getAttachedObject( void ) { return m_attachedToObjectID; }
-	inline DrawableID getAttachedDrawable( void ) { return m_attachedToDrawableID; }
+	ObjectID getAttachedObject( void ) { return m_attachedToObjectID; }
+	DrawableID getAttachedDrawable( void ) { return m_attachedToDrawableID; }
 
 	// Access to dynamically changing part of a particle system.
 	void setEmissionVolumeSphereRadius( Real newRadius ) { if (m_emissionVolumeType == SPHERE) m_emissionVolume.sphere.radius = newRadius; }
@@ -823,6 +828,3 @@ extern ParticleSystemManager *TheParticleSystemManager;
 
 class DebugDisplayInterface;
 extern void ParticleSystemDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp = NULL );
-
-
-#endif // _PARTICLE_SYS_H_

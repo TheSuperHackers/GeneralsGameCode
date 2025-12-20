@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SWAYCLIENTUPDATE_H_
-#define __SWAYCLIENTUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/ClientUpdateModule.h"
 
@@ -70,6 +67,3 @@ protected:
 
 	void updateSway(void);
 };
-
-#endif // __SWAYCLIENTUPDATE_H_
-

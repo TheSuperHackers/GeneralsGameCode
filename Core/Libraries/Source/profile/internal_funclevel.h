@@ -26,11 +26,10 @@
 //
 // Function level profiling (internal header)
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef INTERNAL_FUNCLEVEL_H // Include guard
-#define INTERNAL_FUNCLEVEL_H
+
+#pragma once
+
+#include <windows.h>
 
 class ProfileFuncLevelTracer
 {
@@ -358,5 +357,3 @@ inline ProfileFuncLevelTracer::Function *ProfileFuncLevelTracer::FunctionMap::Fi
       return e->funcPtr;
   return NULL;
 }
-
-#endif // INTERNAL_FUNCLEVEL_H

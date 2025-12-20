@@ -39,7 +39,7 @@
 
 #include "always.h"
 #include "nvdxtlib.h"
-#include "TARGA.H"
+#include "TARGA.h"
 #include "tgatodxt.h"
 #include "wwdebug.h"
 #include <io.h>
@@ -191,7 +191,7 @@ TGAToDXTClass::ErrorCode TGAToDXTClass::Convert (const char *inputpathname, cons
 			if (!validsize) error_code = INVALID_SIZE;
 			if (!validaspect) error_code = INVALID_ASPECT_RATIO;
 		}
-	} // error == 0
+	}
 
 	return error_code;
 }

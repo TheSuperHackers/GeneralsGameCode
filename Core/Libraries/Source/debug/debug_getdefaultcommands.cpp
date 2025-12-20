@@ -26,7 +26,6 @@
 //
 // DebugGetDefaultCommands function
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
 
 // this function has its own file so that it can be 'overridden'
 // by another program using the Debug module

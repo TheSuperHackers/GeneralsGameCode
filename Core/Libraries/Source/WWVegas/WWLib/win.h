@@ -33,12 +33,8 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef WIN_H
-#define WIN_H
+#pragma once
 
 /*
 **	This header file includes the Windows headers. If there are any special pragmas that need
@@ -88,5 +84,3 @@ void __cdecl Print_Win32Error(unsigned long win32Error);
 #else // _WIN32
 //#include <unistd.h>	// file does not exist
 #endif // _WIN32
-
-#endif // WIN_H

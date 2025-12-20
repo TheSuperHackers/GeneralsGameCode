@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __UNDEAD_BODY_H
-#define __UNDEAD_BODY_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/ActiveBody.h"
 
@@ -72,6 +69,3 @@ protected:
 	void startSecondLife(DamageInfo *damageInfo);
 
 };
-
-#endif
-

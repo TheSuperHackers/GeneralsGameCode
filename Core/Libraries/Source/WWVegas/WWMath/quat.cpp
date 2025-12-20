@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Voxel Technology                                             *
  *                                                                                             *
- *                    File Name : QUAT.CPP                                                     *
+ *                    File Name : QUAT.cpp                                                     *
  *                                                                                             *
  *                   Programmer : Greg Hjelstrom                                               *
  *                                                                                             *
@@ -54,7 +54,6 @@
 #include "matrix4.h"
 #include "wwmath.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>

@@ -36,19 +36,12 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __PARAMETER_H
-#define __PARAMETER_H
 
 #include "always.h"
-#include <string.h>
 #include <stdlib.h>
 #include "parametertypes.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "wwstring.h"
 #include "bittype.h"
 #include "obbox.h"
@@ -1155,7 +1148,3 @@ public:
 	// Copy methods
 	virtual void				Copy_Value (const ParameterClass &src);
 };
-
-
-#endif //__PARAMETER_H
-

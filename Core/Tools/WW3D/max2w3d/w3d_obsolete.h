@@ -34,14 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef W3D_OBSOLETE_H
-#define W3D_OBSOLETE_H
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Obsolete chunk id's
@@ -328,6 +321,3 @@ struct W3dHModelAuxDataStruct
 	float32					LODMax;
 	uint32					FutureUse[32];
 };
-
-
-#endif // W3D_OBSOLETE_H

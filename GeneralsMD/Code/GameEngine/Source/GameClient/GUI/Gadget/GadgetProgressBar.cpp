@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
@@ -94,17 +94,17 @@ WindowMsgHandledType GadgetProgressBarSystem( GameWindow *window, UnsignedInt ms
 
 			break;
 
-    }  // end set progress
+    }
 
 		// ------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-}  // end GadgetProgressBarSystem
+}
 
 // GadgetProgressBarSetProgress ===============================================
 /** send progress system message to Progress Bar */
@@ -115,4 +115,4 @@ void GadgetProgressBarSetProgress( GameWindow *g, Int progress )
 		return;
 
 	TheWindowManager->winSendSystemMsg( g, GPM_SET_PROGRESS, progress, 0);
-} // end GadgetProgressBarSetProgress
+}

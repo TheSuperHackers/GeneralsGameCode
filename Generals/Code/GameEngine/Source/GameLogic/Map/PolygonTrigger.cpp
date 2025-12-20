@@ -26,7 +26,7 @@
 // Class to encapsulate polygon trigger areas.
 // Author: John Ahlquist, November 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/DataChunk.h"
 #include "Common/MapObject.h"
@@ -48,11 +48,8 @@ m_numPoints(0),
 m_sizePoints(0),
 m_exportWithScripts(false),
 m_isWaterArea(false),
-//Added By Sadullah Nader
-//Initializations inserted
 m_isRiver(FALSE),
 m_riverStart(0)
-//
 {
 	if (initialAllocation < 2) initialAllocation = 2;
 	m_points = NEW ICoord3D[initialAllocation];		// pool[]ify
@@ -69,10 +66,9 @@ m_riverStart(0)
 */
 PolygonTrigger::~PolygonTrigger(void)
 {
-	if (m_points) {
-		delete [] m_points;
-		m_points = NULL;
-	}
+	delete [] m_points;
+	m_points = NULL;
+
 	if (m_nextPolygonTrigger) {
 		PolygonTrigger *cur = m_nextPolygonTrigger;
 		PolygonTrigger *next;
@@ -497,7 +493,7 @@ Bool PolygonTrigger::isValid(void) const
 void PolygonTrigger::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -526,7 +522,7 @@ void PolygonTrigger::xfer( Xfer *xfer )
 		// xfer point
 		xfer->xferICoord3D( point );
 
-	}  // end for, i
+	}
 
 	// bounds
 	xfer->xferIRegion2D( &m_bounds );
@@ -537,7 +533,7 @@ void PolygonTrigger::xfer( Xfer *xfer )
 	// bounds need update
 	xfer->xferBool( &m_boundsNeedsUpdate );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -545,4 +541,4 @@ void PolygonTrigger::xfer( Xfer *xfer )
 void PolygonTrigger::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}

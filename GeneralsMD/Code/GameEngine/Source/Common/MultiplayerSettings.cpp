@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_TERRAIN_LOD_NAMES
 #define DEFINE_TIME_OF_DAY_NAMES
@@ -49,7 +49,7 @@ const FieldParse MultiplayerColorDefinition::m_colorFieldParseTable[] =
 	{ "TooltipName",	INI::parseAsciiString,	NULL,	offsetof( MultiplayerColorDefinition, m_tooltipName ) },
 	{ "RGBColor",			INI::parseRGBColor,			NULL,	offsetof( MultiplayerColorDefinition, m_rgbValue ) },
 	{ "RGBNightColor",			INI::parseRGBColor,		NULL,	offsetof( MultiplayerColorDefinition, m_rgbValueNight ) },
-	{ NULL,					NULL,						NULL,						0 }  // keep this last
+	{ NULL,					NULL,						NULL,						0 }
 
 };
 
@@ -63,7 +63,7 @@ const FieldParse MultiplayerSettings::m_multiplayerSettingsFieldParseTable[] =
 	{ "ShowRandomStartPos",				INI::parseBool,	NULL,	offsetof( MultiplayerSettings, m_showRandomStartPos ) },
 	{ "ShowRandomColor",					INI::parseBool,	NULL,	offsetof( MultiplayerSettings, m_showRandomColor ) },
 
-	{ NULL,					NULL,						NULL,						0 }  // keep this last
+	{ NULL,					NULL,						NULL,						0 }
 
 };
 
@@ -80,12 +80,11 @@ MultiplayerSettings::MultiplayerSettings()
 	m_showRandomPlayerTemplate = TRUE;
 	m_showRandomStartPos = TRUE;
 	m_showRandomColor = TRUE;
-
 	m_observerColor;
 	m_randomColor;
 
   m_gotDefaultStartingMoney = false;
-}  // end MultiplayerSettings
+}
 
 MultiplayerColorDefinition::MultiplayerColorDefinition()
 {

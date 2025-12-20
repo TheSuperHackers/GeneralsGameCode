@@ -219,15 +219,11 @@ void HMorphAnimClass::Free(void)
 		PoseData = NULL;
 	}
 
-	if (MorphKeyData != NULL) {
-		delete[] MorphKeyData;
-		MorphKeyData = NULL;
-	}
+	delete[] MorphKeyData;
+	MorphKeyData = NULL;
 
-	if (PivotChannel != NULL) {
-		delete[] PivotChannel;
-		PivotChannel = NULL;
-	}
+	delete[] PivotChannel;
+	PivotChannel = NULL;
 }
 
 
@@ -347,8 +343,7 @@ bool HMorphAnimClass::Import(const char *hierarchy_name, TextFileClass &text_des
 	//
 	// Copy the hierarchy name into a class variable
 	//
-	::strncpy (HierarchyName, hierarchy_name, W3D_NAME_LEN);
-	HierarchyName[W3D_NAME_LEN - 1] = 0;
+	strlcpy (HierarchyName, hierarchy_name, W3D_NAME_LEN);
 
 	//
 	// Attempt to load the new base pose
@@ -431,10 +426,8 @@ bool HMorphAnimClass::Import(const char *hierarchy_name, TextFileClass &text_des
 				//
 				// Cleanup
 				//
-				if (channel_list != NULL) {
-					delete [] channel_list;
-					channel_list = NULL;
-				}
+				delete [] channel_list;
+				channel_list = NULL;
 			}
 
 			//
@@ -447,10 +440,8 @@ bool HMorphAnimClass::Import(const char *hierarchy_name, TextFileClass &text_des
 		//
 		// Cleanup
 		//
-		if (column_list != NULL) {
-			delete [] column_list;
-			column_list = NULL;
-		}
+		delete [] column_list;
+		column_list = NULL;
 	}
 
 	return retval;
@@ -484,7 +475,7 @@ void HMorphAnimClass::Set_Name(const char * name)
 	//
 	// Copy the full name
 	//
-	::strcpy (Name, name);
+	strlcpy(Name, name, ARRAY_SIZE(Name));
 
 	//
 	// Try to find the separator (a period)
@@ -498,8 +489,8 @@ void HMorphAnimClass::Set_Name(const char * name)
 		// into our two buffers
 		//
 		separator[0] = 0;
-		::strcpy (AnimName, separator + 1);
-		::strcpy (HierarchyName, full_name);
+		strlcpy(AnimName, separator + 1, ARRAY_SIZE(AnimName));
+		strlcpy(HierarchyName, full_name, ARRAY_SIZE(HierarchyName));
 	}
 
 	return ;
@@ -557,11 +548,14 @@ int HMorphAnimClass::Load_W3D(ChunkLoadClass & cload)
 	cload.Read(&header,sizeof(header));
 	cload.Close_Chunk();
 
-	strncpy(AnimName,header.Name,sizeof(AnimName));
-   strncpy(HierarchyName,header.HierarchyName,sizeof(HierarchyName));
-	strcpy(Name,HierarchyName);
-	strcat(Name,".");
-	strcat(Name,AnimName);
+	static_assert(ARRAY_SIZE(AnimName) >= ARRAY_SIZE(header.Name), "Incorrect array size");
+	static_assert(ARRAY_SIZE(HierarchyName) >= ARRAY_SIZE(header.HierarchyName), "Incorrect array size");
+	static_assert(ARRAY_SIZE(Name) >= ARRAY_SIZE(HierarchyName), "Incorrect array size");
+	strcpy(AnimName, header.Name);
+	strcpy(HierarchyName, header.HierarchyName);
+	strcpy(Name, HierarchyName);
+	strlcat(Name, ".", ARRAY_SIZE(Name));
+	strlcat(Name, AnimName, ARRAY_SIZE(Name));
 
 	HTreeClass * base_pose = WW3DAssetManager::Get_Instance()->Get_HTree(HierarchyName);
 	if (base_pose == NULL) {
@@ -628,9 +622,10 @@ int HMorphAnimClass::Save_W3D(ChunkSaveClass & csave)
 
 	// init the header data
 	W3dMorphAnimHeaderStruct header;
-	memset(&header,0,sizeof(header));
-	strncpy(header.Name,AnimName,sizeof(header.Name));
-	strncpy(header.HierarchyName,HierarchyName,sizeof(header.HierarchyName));
+	static_assert(ARRAY_SIZE(header.Name) >= ARRAY_SIZE(AnimName), "Incorrect array size");
+	static_assert(ARRAY_SIZE(header.HierarchyName) >= ARRAY_SIZE(HierarchyName), "Incorrect array size");
+	strcpy(header.Name, AnimName);
+	strcpy(header.HierarchyName, HierarchyName);
 
 	header.FrameCount = FrameCount;
 	header.FrameRate = FrameRate;

@@ -34,12 +34,7 @@
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef LINE3D_H
-#define LINE3D_H
 
 #include "always.h"
 #include "rendobj.h"
@@ -120,5 +115,3 @@ class Line3DClass : public W3DMPO, public RenderObjClass
 		Vector4						Color;
 		char														SortLevel;
 };
-
-#endif

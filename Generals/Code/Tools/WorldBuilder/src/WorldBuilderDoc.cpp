@@ -194,7 +194,7 @@ public:
 		return(numBytes);
 	};
 	virtual void flush(void) {
-		while (m_cachedChunks.size() != 0)//!m_cachedChunks.empty())
+		while (!m_cachedChunks.empty())//!m_cachedChunks.empty())
 		{
 			CachedChunk c = m_cachedChunks.front();
 			m_cachedChunks.pop_front();
@@ -232,7 +232,7 @@ public:
 			return;
 		UnsignedByte *srcBuffer = NEW UnsignedByte[m_totalBytes];
 		UnsignedByte *insertPos = srcBuffer;
-		while (m_cachedChunks.size() != 0)
+		while (!m_cachedChunks.empty())
 		{
 			CachedChunk c = m_cachedChunks.front();
 			m_cachedChunks.pop_front();
@@ -332,7 +332,7 @@ void CWorldBuilderDoc::Serialize(CArchive& ar)
 				DataChunkInput file( pStrm );
 				if (file.isValidFileType()) {	// Backwards compatible files aren't valid data chunk files.
 					// Read the waypoints.
-					file.registerParser( AsciiString("WaypointsList"), AsciiString::TheEmptyString, ParseWaypointDataChunk );
+					file.registerParser( "WaypointsList", AsciiString::TheEmptyString, ParseWaypointDataChunk );
 					if (!file.parse(this)) {
 						throw(ERROR_CORRUPT_FILE_FORMAT);
 					}
@@ -422,11 +422,11 @@ void CWorldBuilderDoc::Serialize(CArchive& ar)
 
 AsciiString ConvertName(AsciiString name)
 {
-	char oldName[256];
+	const char* replacePrefix = "Fundamentalist";
+	const size_t offset = name.startsWith(replacePrefix) ? strlen(replacePrefix) : 0u;
 	char newName[256];
-	strcpy(oldName, name.str());
 	strcpy(newName, "GLA");
-	strcat(newName, oldName+strlen("Fundamentalist"));
+	strlcat(newName, name.str() + offset, ARRAY_SIZE(newName));
 	AsciiString swapName;
 	swapName.set(newName);
 	const ThingTemplate *tt = TheThingFactory->findTemplate(swapName);
@@ -438,11 +438,11 @@ AsciiString ConvertName(AsciiString name)
 
 AsciiString ConvertFaction(AsciiString name)
 {
-	char oldName[256];
+	const char* replacePrefix = "FactionFundamentalist";
+	const size_t offset = name.startsWith(replacePrefix) ? strlen(replacePrefix) : 0u;
 	char newName[256];
-	strcpy(oldName, name.str());
 	strcpy(newName, "FactionGLA");
-	strcat(newName, oldName+strlen("FactionFundamentalist"));
+	strlcat(newName, name.str() + offset, ARRAY_SIZE(newName));
 	AsciiString swapName;
 	swapName.set(newName);
 	const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(swapName));
@@ -1359,13 +1359,8 @@ BOOL CWorldBuilderDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 	WbApp()->setCurrentDirectory(AsciiString(buf));
 	::GetModuleFileName(NULL, buf, sizeof(buf));
-	char *pEnd = buf + strlen(buf);
-	while (pEnd != buf) {
-		if (*pEnd == '\\') {
-			*pEnd = 0;
-			break;
-		}
-		pEnd--;
+	if (char *pEnd = strrchr(buf, '\\')) {
+		*pEnd = 0;
 	}
 	::SetCurrentDirectory(buf);
 
@@ -1479,7 +1474,7 @@ Bool CWorldBuilderDoc::getAllIndexesInRect(const Coord3D* bl, const Coord3D* br,
 	FindIndexNearest(this, &center, &ndx, PREFER_BOTTOM);
 	AddUniqueAndNeighbors(this, bl, br, tl, tr, ndx, allIndices);
 
-	return (allIndices->size() > 0);
+	return (!allIndices->empty());
 }
 
 
@@ -2103,24 +2098,15 @@ void CWorldBuilderDoc::OnDumpDocToText(void)
 	static FILE *theLogFile = NULL;
 	Bool open = false;
 	try {
-		char dirbuf[ _MAX_PATH ];
-		::GetModuleFileName( NULL, dirbuf, sizeof( dirbuf ) );
-		char *pEnd = dirbuf + strlen( dirbuf );
-		while( pEnd != dirbuf )
+		char curbuf[_MAX_PATH];
+		GetModuleFileName(NULL, curbuf, sizeof(curbuf));
+		if (char *pEnd = strrchr(curbuf, '\\'))
 		{
-			if( *pEnd == '\\' )
-			{
-				*(pEnd + 1) = 0;
-				break;
-			}
-			pEnd--;
+			*(pEnd + 1) = 0;
 		}
 
-		char curbuf[ _MAX_PATH ];
-
-		strcpy(curbuf, dirbuf);
-		strcat(curbuf, m_strTitle);
-		strcat(curbuf, ".txt");
+		strlcat(curbuf, m_strTitle, ARRAY_SIZE(curbuf));
+		strlcat(curbuf, ".txt", ARRAY_SIZE(curbuf));
 
 		theLogFile = fopen(curbuf, "w");
 		if (theLogFile == NULL)
@@ -2259,7 +2245,7 @@ void CWorldBuilderDoc::OnDumpDocToText(void)
 
 			fprintf(theLogFile, "Total Map Objects (with ThingTemplates): %d\n", totalObjectCount);
 
-			while (mapOfTemplates.size() > 0) {
+			while (!mapOfTemplates.empty()) {
 				std::map<AsciiString, Int>::iterator storedIt = mapOfTemplates.begin();
 
 				for (it = mapOfTemplates.begin(); it != mapOfTemplates.end(); ++it) {

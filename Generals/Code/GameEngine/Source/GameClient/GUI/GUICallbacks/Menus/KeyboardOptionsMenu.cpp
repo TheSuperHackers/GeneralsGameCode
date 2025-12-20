@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameAudio.h"
 #include "Common/GameEngine.h"
@@ -395,7 +395,7 @@ void KeyboardOptionsMenuInit( WindowLayout *layout, void *userData )
 	parentKeyboardOptionsMenu = TheWindowManager->winGetWindowFromId( NULL, parentKeyboardOptionsMenuID );
 
 	// get ids for our children controls
-	buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString("KeyboardOptionsMenu.wnd:ButtonBack") );
+	buttonBackID = TheNameKeyGenerator->nameToKey( "KeyboardOptionsMenu.wnd:ButtonBack" );
 	buttonBack = TheWindowManager->winGetWindowFromId( parentKeyboardOptionsMenu, buttonBackID );
 
 	comboBoxCategoryListID = TheNameKeyGenerator->nameToKey( "KeyboardOptionsMenu.wnd:ComboBoxCategoryList" );
@@ -468,7 +468,7 @@ void KeyboardOptionsMenuShutdown( WindowLayout *layout, void *userData )
 void KeyboardOptionsMenuUpdate( WindowLayout *layout, void *userData )
 {
 
-}  // end OptionsMenuUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Options menu input callback */
@@ -499,29 +499,28 @@ WindowMsgHandledType KeyboardOptionsMenuInput( GameWindow *window, UnsignedInt m
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						AsciiString buttonName( "KeyboardOptionsMenu.wnd:ButtonBack" );
-						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
+						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( "KeyboardOptionsMenu.wnd:ButtonBack" );
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)button, buttonID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
 
-}  // end KeyboardOptionsMenuInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** options menu window system callback */
@@ -538,7 +537,7 @@ WindowMsgHandledType KeyboardOptionsMenuSystem( GameWindow *window, UnsignedInt 
 
 			break;
 
-		}  // end create
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
@@ -546,7 +545,7 @@ WindowMsgHandledType KeyboardOptionsMenuSystem( GameWindow *window, UnsignedInt 
 
 			break;
 
-		}  // end case
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -558,7 +557,7 @@ WindowMsgHandledType KeyboardOptionsMenuSystem( GameWindow *window, UnsignedInt 
 
 			return MSG_HANDLED;
 
-		}  // end input
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GCM_SELECTED:
@@ -593,7 +592,7 @@ WindowMsgHandledType KeyboardOptionsMenuSystem( GameWindow *window, UnsignedInt 
       }
 			break;
 
-		}  // end selected
+		}
 
 		// ---------------------------------------------------------------------------------------------
 		case GLM_SELECTED:
@@ -635,13 +634,13 @@ WindowMsgHandledType KeyboardOptionsMenuSystem( GameWindow *window, UnsignedInt 
 
 						break;
 					}
-				} // end if
+				}
 
-			} // end selected
+			}
 
 			break;
 
-		} // end case
+		}
 
 		// ---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -655,7 +654,7 @@ WindowMsgHandledType KeyboardOptionsMenuSystem( GameWindow *window, UnsignedInt 
 				// go back one screen
 				TheShell->pop();
 
-			}  // end if
+			}
 			else if( controlID == buttonAssignID )
 			{
 				// check grammar in text field
@@ -688,16 +687,16 @@ WindowMsgHandledType KeyboardOptionsMenuSystem( GameWindow *window, UnsignedInt 
 
 			break;
 
-		}	// end selected
+		}
 
 		default:
 			return MSG_IGNORED;
 
-	}	// end switch
+	}
 
 	return MSG_HANDLED;
 
-}  // end KeyboardOptionsMenuSystem
+}
 
 // KeyboardTextEntryInput =======================================================
 /** Handle input for text entry field */
@@ -1007,7 +1006,7 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 																								GEM_UPDATE_TEXT,
 																								(WindowMsgData)window,
 																								0 );
-							}  // end if
+							}
 						}
 					}
 					break;
@@ -1102,7 +1101,7 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 				}*/
 
 
-			}  // end switch( mData1 )
+			}
 
 			break;
 
@@ -1153,10 +1152,10 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end GadgetTextEntryInput
+}
 
 

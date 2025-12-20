@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __LASER_UPDATE_H
-#define __LASER_UPDATE_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/ClientUpdateModule.h"
 
@@ -125,7 +122,3 @@ protected:
 
 	LaserRadiusUpdate m_laserRadius;
 };
-
-
-#endif
-

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _W3D_TANK_DRAW_H_
-#define _W3D_TANK_DRAW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DrawModule.h"
 #include "GameClient/ParticleSys.h"
@@ -105,6 +102,3 @@ protected:
 	void updateTreadObjects(void);												///< update pointers to sub-objects like treads.
 	void updateTreadPositions(Real uvDelta);									///< update uv coordinates on each tread
 };
-
-#endif // _W3D_TANK_DRAW_H_
-

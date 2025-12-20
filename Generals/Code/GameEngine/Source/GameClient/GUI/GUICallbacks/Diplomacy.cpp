@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GlobalData.h"
 #include "Common/MultiplayerSettings.h"
@@ -290,8 +290,8 @@ void ResetDiplomacy( void )
 		theLayout = NULL;
 	}
 	theWindow = NULL;
-	if (theAnimateWindowManager)
-		delete theAnimateWindowManager;
+
+	delete theAnimateWindowManager;
 	theAnimateWindowManager = NULL;
 }
 
@@ -361,19 +361,19 @@ WindowMsgHandledType DiplomacyInput( GameWindow *window, UnsignedInt msg,
 					HideDiplomacy();
 					return MSG_HANDLED;
 					//return MSG_IGNORED;
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
 			return MSG_HANDLED;
 
-		}  // end char
+		}
 
 	}
 
 	return MSG_IGNORED;
 
-}  // end DiplomacyInput
+}
 
 //-------------------------------------------------------------------------------------------------
 WindowMsgHandledType DiplomacySystem( GameWindow *window, UnsignedInt msg,
@@ -392,7 +392,7 @@ WindowMsgHandledType DiplomacySystem( GameWindow *window, UnsignedInt msg,
 			//if (focus)
 				//TheWindowManager->winSetGrabWindow( chatTextEntry );
 			break;
-		} // end focus change
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -402,7 +402,7 @@ WindowMsgHandledType DiplomacySystem( GameWindow *window, UnsignedInt msg,
 				*(Bool *)mData2 = FALSE;
 
 			return MSG_HANDLED;
-		}//case GWM_INPUT_FOCUS:
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -442,17 +442,17 @@ WindowMsgHandledType DiplomacySystem( GameWindow *window, UnsignedInt msg,
 			}
 			break;
 
-		}  // end button selected
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end DiplomacySystem
+}
 
 void PopulateInGameDiplomacyPopup( void )
 {

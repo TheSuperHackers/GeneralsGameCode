@@ -43,7 +43,7 @@
 //         Includes
 //----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/GameText.h"
 #include "Common/Language.h"
@@ -258,11 +258,8 @@ GameTextManager::GameTextManager()
 #endif
 	m_mapStringInfo(NULL),
 	m_mapStringLUT(NULL),
-	m_failed(L"***FATAL*** String Manager failed to initilaize properly")
+	m_failed(L"***FATAL*** String Manager failed to initialize properly")
 {
-	// Added By Sadullah Nader
-	// Initializations missing and needed
-
 	for(Int i=0; i < MAX_UITEXT_LENGTH; i++)
 	{
 		m_buffer[i] = 0;
@@ -379,17 +376,11 @@ void GameTextManager::init( void )
 void GameTextManager::deinit( void )
 {
 
-	if( m_stringInfo != NULL )
-	{
-		delete [] m_stringInfo;
-		m_stringInfo = NULL;
-	}
+	delete [] m_stringInfo;
+	m_stringInfo = NULL;
 
-	if( m_stringLUT != NULL )
-	{
-		delete [] m_stringLUT;
-		m_stringLUT = NULL;
-	}
+	delete [] m_stringLUT;
+	m_stringLUT = NULL;
 
 	m_textCount = 0;
 
@@ -418,17 +409,11 @@ void GameTextManager::deinit( void )
 
 void GameTextManager::reset( void )
 {
-	if( m_mapStringInfo != NULL )
-	{
-		delete [] m_mapStringInfo;
-		m_mapStringInfo = NULL;
-	}
+	delete [] m_mapStringInfo;
+	m_mapStringInfo = NULL;
 
-	if( m_mapStringLUT != NULL )
-	{
-		delete [] m_mapStringLUT;
-		m_mapStringLUT = NULL;
-	}
+	delete [] m_mapStringLUT;
+	m_mapStringLUT = NULL;
 }
 
 
@@ -497,7 +482,7 @@ void GameTextManager::removeLeadingAndTrailing ( Char *buffer )
 
 	while ( (*ptr++ = *first++) != 0 );
 
-	ptr -= 2;;
+	ptr -= 2;
 
 	while ( (ptr > buffer) && (ch = *ptr) != 0 && iswspace ( ch ) )
 	{
@@ -840,7 +825,7 @@ Bool GameTextManager::getStringCount( const char *filename, Int& textCount )
 				m_buffer[ len+1] = 0;
 			readToEndOfQuote( file, &m_buffer[1], m_buffer2, m_buffer3, MAX_UITEXT_LENGTH );
 		}
-		else if( !stricmp( m_buffer, "END") )
+		else if( stricmp( m_buffer, "END") == 0 )
 		{
 			textCount++;
 		}
@@ -1051,7 +1036,7 @@ Bool GameTextManager::parseStringFile( const char *filename )
 
 		for ( Int i = 0; i < listCount; i++ )
 		{
-			if ( !stricmp ( m_stringInfo[i].label.str(), m_buffer ))
+			if ( stricmp ( m_stringInfo[i].label.str(), m_buffer ) == 0)
 			{
 				DEBUG_ASSERTCRASH ( FALSE, ("String label '%s' multiply defined!", m_buffer ));
 			}
@@ -1102,7 +1087,7 @@ Bool GameTextManager::parseStringFile( const char *filename )
 					readString = TRUE;
 				}
 			}
-			else if ( !stricmp ( m_buffer, "END" ))
+			else if ( stricmp ( m_buffer, "END" ) == 0)
 			{
 				break;
 			}
@@ -1182,7 +1167,7 @@ Bool GameTextManager::parseMapStringFile( const char *filename )
 
 		for ( Int i = 0; i < listCount; i++ )
 		{
-			if ( !stricmp ( m_mapStringInfo[i].label.str(), m_buffer ))
+			if ( stricmp ( m_mapStringInfo[i].label.str(), m_buffer ) == 0)
 			{
 				DEBUG_ASSERTCRASH ( FALSE, ("String label '%s' multiply defined!", m_buffer ));
 			}
@@ -1237,7 +1222,7 @@ Bool GameTextManager::parseMapStringFile( const char *filename )
 					readString = TRUE;
 				}
 			}
-			else if ( !stricmp ( m_buffer, "END" ))
+			else if ( stricmp ( m_buffer, "END" ) == 0)
 			{
 				break;
 			}

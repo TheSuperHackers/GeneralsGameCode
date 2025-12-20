@@ -42,7 +42,7 @@
 //
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_VETERANCY_NAMES				// for TheVeterancyNames[]
 
@@ -181,9 +181,9 @@ AsciiString PlayerTemplate::getStartingUnit( Int i ) const
 	// assign the money into the 'Money' (m_money) pointed to at 'store'
 	Money *theMoney = (Money *)store;
 	theMoney->init();
-	theMoney->deposit( money );
+	theMoney->setStartingCash(money);
 
-}  // end parseStartMoney
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////

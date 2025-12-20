@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __SOUNDHANDLE_H
-#define __SOUNDHANDLE_H
 
 #include "WWAudio.h"
 
@@ -108,8 +103,8 @@ public:
 	virtual U32		Get_Sample_Loop_Count (void) = 0;
 	virtual void	Set_Sample_MS_Position (U32 ms) = 0;
 	virtual void	Get_Sample_MS_Position (S32 *len, S32 *pos) = 0;
-	virtual void	Set_Sample_User_Data (S32 i, U32 val) = 0;
-	virtual U32		Get_Sample_User_Data (S32 i) = 0;
+	virtual void	Set_Sample_User_Data (S32 i, void *val) = 0;
+	virtual void *	Get_Sample_User_Data (S32 i) = 0;
 	virtual S32		Get_Sample_Playback_Rate (void) = 0;
 	virtual void	Set_Sample_Playback_Rate (S32 rate) = 0;
 
@@ -124,6 +119,3 @@ protected:
 	///////////////////////////////////////////////////////////////////
 	SoundBufferClass *	Buffer;
 };
-
-
-#endif //__SOUNDHANDLE_H

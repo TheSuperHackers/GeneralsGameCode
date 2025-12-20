@@ -20,7 +20,7 @@
  *                                                                         *
  *                 Project Name : Westwood Auto Registration App           *
  *                                                                         *
- *                    File Name : PACKET.CPP                               *
+ *                    File Name : PACKET.cpp                               *
  *                                                                         *
  *                   Programmer : Philip W. Gorrow                         *
  *                                                                         *
@@ -39,7 +39,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
-#ifndef _WINDOWS
+#ifndef _WIN32
 #include <netinet/in.h>
 #else
 #define Win32_Winsock

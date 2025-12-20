@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __CreateModule_H_
-#define __CreateModule_H_
-
 #include "Common/Module.h"
 #include "GameLogic/Module/BehaviorModule.h"
 
@@ -85,5 +82,3 @@ private:
 	Bool m_needToRunOnBuildComplete; ///< Prevent the multiple calling of onBuildComplete
 
 };
-
-#endif

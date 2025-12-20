@@ -99,7 +99,7 @@ bool AABoxCollisionTestClass::Cull(const AABoxClass & box)
 void AABoxCollisionTestClass::Rotate(ROTATION_TYPE rotation)
 {
 
-#ifndef NDEBUG
+#ifdef RTS_DEBUG
 
 	int i;
 	Matrix3D tm(1);
@@ -156,9 +156,7 @@ void AABoxCollisionTestClass::Rotate(ROTATION_TYPE rotation)
 		if (realmax.Z <= pts[i].Z) realmax.Z = pts[i].Z;
 	}
 
-
-#endif
-
+#endif // RTS_DEBUG
 
 	// rotate the test by the desired rotation about the Z axis, special cased for
 	// 90 degree rotations about Z.  arbitrary rotations cause the axis aligned
@@ -216,13 +214,13 @@ void AABoxCollisionTestClass::Rotate(ROTATION_TYPE rotation)
 			break;
 	}
 
-#ifndef NDEBUG
+#ifdef RTS_DEBUG
 
 	assert((Box.Center - realcenter).Length() < 0.001f);
 	assert((SweepMin - realmin).Length() < 0.001f);
 	assert((SweepMax - realmax).Length() < 0.001f);
 
-#endif
+#endif // RTS_DEBUG
 }
 
 

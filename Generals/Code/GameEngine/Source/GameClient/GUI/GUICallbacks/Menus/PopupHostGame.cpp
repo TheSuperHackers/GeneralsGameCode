@@ -50,7 +50,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GlobalData.h"
 #include "Common/NameKeyGenerator.h"
@@ -306,39 +306,39 @@ void PopulateCustomLadderComboBox( void )
 //-------------------------------------------------------------------------------------------------
 void PopupHostGameInit( WindowLayout *layout, void *userData )
 {
-	parentPopupID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:ParentHostPopUp"));
+	parentPopupID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:ParentHostPopUp");
 	parentPopup = TheWindowManager->winGetWindowFromId(NULL, parentPopupID);
 
-	textEntryGameNameID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:TextEntryGameName"));
+	textEntryGameNameID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:TextEntryGameName");
 	textEntryGameName = TheWindowManager->winGetWindowFromId(parentPopup, textEntryGameNameID);
 	UnicodeString name;
 	name.translate(TheGameSpyInfo->getLocalName());
 	GadgetTextEntrySetText(textEntryGameName, name);
 
-	textEntryGameDescriptionID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:TextEntryGameDescription"));
+	textEntryGameDescriptionID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:TextEntryGameDescription");
 	textEntryGameDescription = TheWindowManager->winGetWindowFromId(parentPopup, textEntryGameDescriptionID);
 	GadgetTextEntrySetText(textEntryGameDescription, UnicodeString::TheEmptyString);
 
-	textEntryLadderPasswordID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:TextEntryLadderPassword"));
+	textEntryLadderPasswordID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:TextEntryLadderPassword");
 	textEntryLadderPassword = TheWindowManager->winGetWindowFromId(parentPopup, textEntryLadderPasswordID);
 	GadgetTextEntrySetText(textEntryLadderPassword, UnicodeString::TheEmptyString);
 
-	textEntryGamePasswordID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:TextEntryGamePassword"));
+	textEntryGamePasswordID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:TextEntryGamePassword");
 	textEntryGamePassword = TheWindowManager->winGetWindowFromId(parentPopup, textEntryGamePasswordID);
 	GadgetTextEntrySetText(textEntryGamePassword, UnicodeString::TheEmptyString);
 
-	buttonCreateGameID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:ButtonCreateGame"));
+	buttonCreateGameID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:ButtonCreateGame");
 	buttonCreateGame = TheWindowManager->winGetWindowFromId(parentPopup, buttonCreateGameID);
 
-	buttonCancelID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:ButtonCancel"));
+	buttonCancelID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:ButtonCancel");
 	buttonCancel = TheWindowManager->winGetWindowFromId(parentPopup, buttonCancelID);
 
-	checkBoxAllowObserversID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:CheckBoxAllowObservers"));
+	checkBoxAllowObserversID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:CheckBoxAllowObservers");
 	checkBoxAllowObservers = TheWindowManager->winGetWindowFromId(parentPopup, checkBoxAllowObserversID);
 	CustomMatchPreferences customPref;
 	GadgetCheckBoxSetChecked(checkBoxAllowObservers, customPref.allowsObservers());
 
-	comboBoxLadderNameID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:ComboBoxLadderName"));
+	comboBoxLadderNameID = TheNameKeyGenerator->nameToKey("PopupHostGame.wnd:ComboBoxLadderName");
 	comboBoxLadderName = TheWindowManager->winGetWindowFromId(parentPopup, comboBoxLadderNameID);
 	if (comboBoxLadderName)
 		GadgetComboBoxReset(comboBoxLadderName);
@@ -381,18 +381,18 @@ WindowMsgHandledType PopupHostGameInput( GameWindow *window, UnsignedInt msg, Wi
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonCancel, buttonCancelID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
 
@@ -412,7 +412,7 @@ WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, W
 
 			break;
 
-		}  // end create
+		}
     //---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
@@ -420,7 +420,7 @@ WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, W
 
 			break;
 
-		}  // end case
+		}
 
     //----------------------------------------------------------------------------------------------
     case GWM_INPUT_FOCUS:
@@ -432,7 +432,7 @@ WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, W
 
 			break;
 
-		}  // end input
+		}
 
     //----------------------------------------------------------------------------------------------
 		case GEM_UPDATE_TEXT:
@@ -460,9 +460,9 @@ WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, W
 					// Put the whitespace-free version in the box
 					GadgetTextEntrySetText( textEntryGameName, txtInput );
 
-				}// if ( controlID == textEntryPlayerNameID )
+				}
 				break;
-			}//case GEM_UPDATE_TEXT:
+			}
     //---------------------------------------------------------------------------------------------
 		case GCM_SELECTED:
 			{
@@ -485,7 +485,7 @@ WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, W
 					}
 				}
 				break;
-			} // case GCM_SELECTED
+			}
 
     //---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -518,7 +518,7 @@ WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, W
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
@@ -542,10 +542,17 @@ void createGame( void )
 	req.password = passwd.str();
 	CustomMatchPreferences customPref;
 	Bool aO = GadgetCheckBoxIsChecked(checkBoxAllowObservers);
+  Bool limitArmies = FALSE;
+  Bool useStats = TRUE;
 	customPref.setAllowsObserver(aO);
+  customPref.setFactionsLimited( limitArmies );
+  customPref.setUseStats( useStats );
 	customPref.write();
 	req.stagingRoomCreation.allowObservers = aO;
+  req.stagingRoomCreation.useStats = useStats;
 	TheGameSpyGame->setAllowObservers(aO);
+  TheGameSpyGame->setOldFactionsOnly( limitArmies );
+  TheGameSpyGame->setUseStats( useStats );
 	req.stagingRoomCreation.exeCRC = TheGlobalData->m_exeCRC;
 	req.stagingRoomCreation.iniCRC = TheGlobalData->m_iniCRC;
 	req.stagingRoomCreation.gameVersion = TheGameSpyInfo->getInternalIP();

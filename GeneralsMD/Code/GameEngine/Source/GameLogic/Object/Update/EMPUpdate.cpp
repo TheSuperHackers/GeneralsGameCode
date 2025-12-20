@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Thing.h"
 #include "Common/ThingTemplate.h"
@@ -149,7 +149,7 @@ UpdateSleepTime EMPUpdate::update( void )
 	{
 		RGBColor end = data->m_endColor;
 		saturateRGB( end, 5 );
-		dr->colorFlash( &end, 9999, m_tintEnvFadeFrames, TRUE );
+		dr->colorFlash( &end, 0, m_tintEnvFadeFrames, ~0u );
 		doDisableAttack();
 	}
 
@@ -365,7 +365,7 @@ void EMPUpdate::doDisableAttack( void )
 void EMPUpdate::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -380,7 +380,7 @@ void EMPUpdate::xfer( Xfer *xfer )
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -388,7 +388,7 @@ void EMPUpdate::xfer( Xfer *xfer )
 void EMPUpdate::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
                                                                                                                                                   ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -531,7 +531,7 @@ void LeafletDropBehavior::doDisableAttack( void )
 void LeafletDropBehavior::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -548,7 +548,7 @@ void LeafletDropBehavior::xfer( Xfer *xfer )
 
   xfer->xferUnsignedInt( &m_startFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -556,7 +556,7 @@ void LeafletDropBehavior::xfer( Xfer *xfer )
 void LeafletDropBehavior::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 
 

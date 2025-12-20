@@ -32,8 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_MOREPARMSDIALOG_
-#define _H_MOREPARMSDIALOG_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Resource.h"
@@ -60,5 +58,3 @@ class MoreParmsDialog : public CDialog
 		afx_msg void OnParticleSystemEdit();
 		DECLARE_MESSAGE_MAP()
 };
-
-#endif /* _H_MOREPARMSDIALOG_ */

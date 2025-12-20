@@ -38,7 +38,7 @@
 #include "verchk.h"
 #include <windows.h>
 #include <winnt.h>
-#include "RAWFILE.H"
+#include "RAWFILE.h"
 #include "ffactory.h"
 
 

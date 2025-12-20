@@ -50,9 +50,6 @@
 
 #pragma once
 
-#ifndef __GADGETTEXTENTRY_H_
-#define __GADGETTEXTENTRY_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -124,6 +121,3 @@ inline Color GadgetTextEntryGetHiliteColor( GameWindow *g )								{ return g->w
 inline Color GadgetTextEntryGetHiliteBorderColor( GameWindow *g )					{ return g->winGetHiliteBorderColor( 0 ); }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GADGETTEXTENTRY_H_
-

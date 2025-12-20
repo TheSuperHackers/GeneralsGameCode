@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __HEALCONTAIN_H_
-#define __HEALCONTAIN_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/OpenContain.h"
 
@@ -66,11 +63,10 @@ public:
 
 	virtual UpdateSleepTime update();												///< called once per frame
 	virtual Bool isHealContain() const { return true; } ///< true when container only contains units while healing (not a transport!)
+	virtual Bool isTunnelContain() const { return FALSE; }
 
 protected:
 
 	Bool doHeal( Object *obj, UnsignedInt framesForFullHeal );		///< do the heal on an object
 
 };
-
-#endif  // end __HEALCONTAIN_H_

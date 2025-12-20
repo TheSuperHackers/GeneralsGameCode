@@ -34,15 +34,14 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef	CRANDOM_H
-#define	CRANDOM_H
+#pragma once
 
 #ifndef	ALWAYS_H
 	#include "always.h"
 #endif
 
 #ifndef	RANDOM_H
-	#include "RANDOM.H"
+	#include "RANDOM.h"
 #endif
 
 #ifndef	WWDEBUG_H
@@ -119,5 +118,3 @@ inline float CRandom::Get_Float( float min, float max )
 ** be synced between other computers.  Good for simple visual and sound effects.
 */
 extern	CRandom	FreeRandom;
-
-#endif

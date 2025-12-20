@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Library/LZOSTRAW.CPP                              $*
+ *                     $Archive:: /Commando/Library/LZOSTRAW.cpp                              $*
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *

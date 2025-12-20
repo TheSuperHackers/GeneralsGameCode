@@ -33,12 +33,8 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef BOUND_H
-#define BOUND_H
+#pragma once
 
 template<class T> inline
 T Bound(T original, T minval, T maxval)
@@ -55,7 +51,3 @@ T Bound(T original, T minval, T maxval)
 //float Bound(float, float, float);
 //double Bound(double, double, double);
 #endif
-
-
-#endif
-

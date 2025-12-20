@@ -87,7 +87,7 @@ BOOL EditObjectParameter::OnInitDialog()
 	{
 		addObject(tTemplate);
 
-	}  // end for tTemplate
+	}
 
 
 	addObjectLists();
@@ -100,7 +100,6 @@ BOOL EditObjectParameter::OnInitDialog()
 //-------------------------------------------------------------------------------------------------
 void EditObjectParameter::addObject( const ThingTemplate *thingTemplate  )
 {
-	char buffer[ _MAX_PATH ];
 	HTREEITEM parent = TVI_ROOT;
 	const char *leafName;
 	//
@@ -121,8 +120,7 @@ void EditObjectParameter::addObject( const ThingTemplate *thingTemplate  )
 		// first sort by Side, either create or find the tree item with matching side name
 		AsciiString side = thingTemplate->getDefaultOwningSide();
 		DEBUG_ASSERTCRASH(!side.isEmpty(), ("NULL default side in template") );
-		strcpy( buffer, side.str() );
-		parent = findOrAdd( parent, buffer );
+		parent = findOrAdd( parent, side.str());
 
 		// next tier uses the editor sorting that design can specify in the INI
 		EditorSortingType i = ES_FIRST;
@@ -137,9 +135,9 @@ void EditObjectParameter::addObject( const ThingTemplate *thingTemplate  )
 				parent = findOrAdd( parent, EditorSortingNames[ i ] );
 				break;  // exit for
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
 		if( i == ES_NUM_SORTING_TYPES )
 			parent = findOrAdd( parent, "UNSORTED" );
@@ -147,7 +145,7 @@ void EditObjectParameter::addObject( const ThingTemplate *thingTemplate  )
 		// the leaf name is the name of the template
 		leafName = thingTemplate->getName().str();
 
-	}  // end if
+	}
 
 	// add to the tree view
 	if( leafName )

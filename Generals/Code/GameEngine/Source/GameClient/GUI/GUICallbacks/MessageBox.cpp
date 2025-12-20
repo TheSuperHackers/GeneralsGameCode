@@ -46,7 +46,7 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "Common/NameKeyGenerator.h"
@@ -113,7 +113,7 @@ WindowMsgHandledType MessageBoxSystem( GameWindow *window, UnsignedInt msg,
 			window->winSetUserData( NULL );
 			break;
 
-		}  // end case
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -125,17 +125,17 @@ WindowMsgHandledType MessageBoxSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end input
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
-			static NameKeyType buttonOkID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonOk" ) );
-			static NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonYes" ) );
-			static NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonNo" ) );
-			static NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( AsciiString( "MessageBox.wnd:ButtonCancel" ) );
+			static NameKeyType buttonOkID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonOk" );
+			static NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonYes" );
+			static NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonNo" );
+			static NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( "MessageBox.wnd:ButtonCancel" );
 			WindowMessageBoxData *MsgBoxCallbacks = (WindowMessageBoxData *)window->winGetUserData();
 
 			if( controlID == buttonOkID )
@@ -146,39 +146,39 @@ WindowMsgHandledType MessageBoxSystem( GameWindow *window, UnsignedInt msg,
 
 				TheWindowManager->winDestroy(window);
 
-			}  // end if
+			}
 			else if( controlID == buttonYesID )
 			{
 				if (MsgBoxCallbacks->yesCallback)
 					MsgBoxCallbacks->yesCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
+			}
 			else if( controlID == buttonNoID )
 			{
 				if (MsgBoxCallbacks->noCallback)
 					MsgBoxCallbacks->noCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
+			}
 			else if( controlID == buttonCancelID )
 			{
 				if (MsgBoxCallbacks->cancelCallback)
 					MsgBoxCallbacks->cancelCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
+			}
 
 			break;
 
-		}  // end selected
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-}  // end MessageBoxSystem
+}
 //-------------------------------------------------------------------------------------------------
 /** Message Box window system callback */
 //-------------------------------------------------------------------------------------------------
@@ -197,7 +197,7 @@ WindowMsgHandledType QuitMessageBoxSystem( GameWindow *window, UnsignedInt msg,
 			window->winSetUserData( NULL );
 			break;
 
-		}  // end case
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -209,17 +209,17 @@ WindowMsgHandledType QuitMessageBoxSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end input
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
-			static NameKeyType buttonOkID = TheNameKeyGenerator->nameToKey( AsciiString( "QuitMessageBox.wnd:ButtonOk" ) );
-			static NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey( AsciiString( "QuitMessageBox.wnd:ButtonYes" ) );
-			static NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( AsciiString( "QuitMessageBox.wnd:ButtonNo" ) );
-			static NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( AsciiString( "QuitMessageBox.wnd:ButtonCancel" ) );
+			static NameKeyType buttonOkID = TheNameKeyGenerator->nameToKey( "QuitMessageBox.wnd:ButtonOk" );
+			static NameKeyType buttonYesID = TheNameKeyGenerator->nameToKey( "QuitMessageBox.wnd:ButtonYes" );
+			static NameKeyType buttonNoID = TheNameKeyGenerator->nameToKey( "QuitMessageBox.wnd:ButtonNo" );
+			static NameKeyType buttonCancelID = TheNameKeyGenerator->nameToKey( "QuitMessageBox.wnd:ButtonCancel" );
 			WindowMessageBoxData *MsgBoxCallbacks = (WindowMessageBoxData *)window->winGetUserData();
 
 			if( controlID == buttonOkID )
@@ -230,36 +230,36 @@ WindowMsgHandledType QuitMessageBoxSystem( GameWindow *window, UnsignedInt msg,
 
 				TheWindowManager->winDestroy(window);
 
-			}  // end if
+			}
 			else if( controlID == buttonYesID )
 			{
 				if (MsgBoxCallbacks->yesCallback)
 					MsgBoxCallbacks->yesCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
+			}
 			else if( controlID == buttonNoID )
 			{
 				if (MsgBoxCallbacks->noCallback)
 					MsgBoxCallbacks->noCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
+			}
 			else if( controlID == buttonCancelID )
 			{
 				if (MsgBoxCallbacks->cancelCallback)
 					MsgBoxCallbacks->cancelCallback();
 				TheWindowManager->winDestroy(window);
-			}  // end else if
+			}
 
 			break;
 
-		}  // end selected
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-}  // end MessageBoxSystem
+}

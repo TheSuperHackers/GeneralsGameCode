@@ -26,7 +26,7 @@
 // Simple rigid body physics
 // Author: Michael S. Booth, November 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // please talk to MDC (x36804) before taking this out
 #define NO_DEBUG_CRC
@@ -258,11 +258,8 @@ void PhysicsBehavior::onObjectCreated()
 //-------------------------------------------------------------------------------------------------
 PhysicsBehavior::~PhysicsBehavior()
 {
-	if (m_bounceSound)
-	{
-		deleteInstance(m_bounceSound);
-		m_bounceSound = NULL;
-	}
+	deleteInstance(m_bounceSound);
+	m_bounceSound = NULL;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -614,11 +611,8 @@ void PhysicsBehavior::setBounceSound(const AudioEventRTS* bounceSound)
 	}
 	else
 	{
-		if (m_bounceSound)
-		{
-			deleteInstance(m_bounceSound);
-			m_bounceSound = NULL;
-		}
+		deleteInstance(m_bounceSound);
+		m_bounceSound = NULL;
 	}
 }
 
@@ -828,7 +822,7 @@ UpdateSleepTime PhysicsBehavior::update()
 		{
 			obj->setTransformMatrix(&mtx);
 		}
-	} // if not held
+	}
 
 	// reset the acceleration for accumulation next frame
 	m_accel.zero();
@@ -1801,7 +1795,7 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 			crusheeOther->attemptDamage( &damageInfo );
 		}
 
-	} // if crushable
+	}
 
 	return true;
 }
@@ -1861,7 +1855,7 @@ void PhysicsBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1941,7 +1935,7 @@ void PhysicsBehavior::xfer( Xfer *xfer )
 	// mag of current vel
 	xfer->xferReal( &m_velMag );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1952,4 +1946,4 @@ void PhysicsBehavior::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

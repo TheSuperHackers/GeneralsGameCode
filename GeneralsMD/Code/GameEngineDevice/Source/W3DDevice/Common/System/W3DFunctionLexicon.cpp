@@ -118,14 +118,14 @@ static FunctionLexicon::TableEntry layoutInitTable [] =
 W3DFunctionLexicon::W3DFunctionLexicon( void )
 {
 
-}  // end W3DFunctionLexicon
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DFunctionLexicon::~W3DFunctionLexicon( void )
 {
 
-}  // end ~W3DFunctionLexicon
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the function table specific for our implementations of
@@ -141,7 +141,7 @@ void W3DFunctionLexicon::init( void )
 	loadTable( gameWinDrawTable, TABLE_GAME_WIN_DEVICEDRAW );
 	loadTable( layoutInitTable, TABLE_WIN_LAYOUT_DEVICEINIT );
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
@@ -154,7 +154,7 @@ void W3DFunctionLexicon::reset( void )
 	// extend
 	FunctionLexicon::reset();
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update */
@@ -165,6 +165,6 @@ void W3DFunctionLexicon::update( void )
 	// extend?
 	FunctionLexicon::update();
 
-}  // end update
+}
 
 

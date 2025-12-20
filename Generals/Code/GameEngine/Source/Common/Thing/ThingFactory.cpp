@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
@@ -74,7 +74,7 @@ void ThingFactory::freeDatabase( void )
 
 	m_templateHashMap.clear();
 
-}  // end freeDatabase
+}
 
 //-------------------------------------------------------------------------------------------------
 /** add the thing template passed in, into the databse */
@@ -93,7 +93,7 @@ void ThingFactory::addTemplate( ThingTemplate *tmplate )
 
 	// Add it to the hash table.
 	m_templateHashMap[tmplate->getName()] = tmplate;
-}  // end addTemplate
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC METHODS
@@ -111,7 +111,7 @@ ThingFactory::ThingFactory()
 #else
 	m_templateHashMap.reserve( TEMPLATE_HASH_SIZE );
 #endif
-}  // end ThingFactory
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ ThingFactory::~ThingFactory()
 	// free all the template data
 	freeDatabase();
 
-}  // end ~ThingFactory
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Create a new template with name 'name' and add to our template list */
@@ -134,7 +134,7 @@ ThingTemplate *ThingFactory::newTemplate( const AsciiString& name )
 	newTemplate = newInstance(ThingTemplate);
 
 	// if the default template is present, get it and copy over any data to the new template
-	const ThingTemplate *defaultT = findTemplate( AsciiString( "DefaultThingTemplate" ) );
+	const ThingTemplate *defaultT = findTemplate( "DefaultThingTemplate", FALSE );
 	if( defaultT )
 	{
 
@@ -142,7 +142,7 @@ ThingTemplate *ThingFactory::newTemplate( const AsciiString& name )
 		*newTemplate = *defaultT;
 		newTemplate->setCopiedFromDefault();
 
-	}  // end if
+	}
 
 	// give template a unique identifier
 	newTemplate->friend_setTemplateID( m_nextTemplateID++ );
@@ -192,7 +192,7 @@ ThingTemplate* ThingFactory::newOverride( ThingTemplate *thingTemplate )
 	// return the newly created override for us to set values with etc
 	return newTemplate;
 
-}  // end newOverride
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Init */
@@ -200,7 +200,7 @@ ThingTemplate* ThingFactory::newOverride( ThingTemplate *thingTemplate )
 void ThingFactory::init( void )
 {
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
@@ -238,7 +238,7 @@ void ThingFactory::reset( void )
 
 		t = nextT;
 	}
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update */
@@ -246,7 +246,7 @@ void ThingFactory::reset( void )
 void ThingFactory::update( void )
 {
 
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return the template with the matching database name */
@@ -265,7 +265,7 @@ const ThingTemplate *ThingFactory::findByTemplateID( UnsignedShort id )
 //-------------------------------------------------------------------------------------------------
 /** Return the template with the matching database name */
 //-------------------------------------------------------------------------------------------------
-ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name )
+ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name, Bool check )
 {
 	ThingTemplateHashMapIt tIt = m_templateHashMap.find(name);
 
@@ -276,7 +276,7 @@ ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name )
 #ifdef LOAD_TEST_ASSETS
 	if (!strncmp(name.str(), TEST_STRING, strlen(TEST_STRING)))
 	{
-		ThingTemplate *tmplate = newTemplate( AsciiString( "Un-namedTemplate" ) );
+		ThingTemplate *tmplate = newTemplate( "Un-namedTemplate" );
 
 		// load the values
 		tmplate->initForLTA( name );
@@ -292,10 +292,13 @@ ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name )
 
 #endif
 
-	//DEBUG_LOG(("*** Object template %s not found",name.str()));
+	if( check && name.isNotEmpty() )
+	{
+		DEBUG_CRASH( ("Failed to find thing template %s (case sensitive) This issue has a chance of crashing after you ignore it!", name.str() ) );
+	}
 	return NULL;
 
-}  // end getTemplate
+}
 
 //=============================================================================
 Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, ObjectStatusMaskType statusBits )
@@ -343,7 +346,7 @@ Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, Objec
 }
 
 //=============================================================================
-Drawable *ThingFactory::newDrawable(const ThingTemplate *tmplate, DrawableStatus statusBits)
+Drawable *ThingFactory::newDrawable(const ThingTemplate *tmplate, DrawableStatusBits statusBits)
 {
 	if (tmplate == NULL)
 		throw ERROR_BAD_ARG;
@@ -356,7 +359,7 @@ Drawable *ThingFactory::newDrawable(const ThingTemplate *tmplate, DrawableStatus
 
 	return draw;
 
-}  // end newDrawableByType
+}
 
 #if defined(RTS_DEBUG) || defined(DEBUG_CRASHING)
 AsciiString TheThingTemplateBeingParsedName;
@@ -372,7 +375,7 @@ AsciiString TheThingTemplateBeingParsedName;
 #endif
 
 	// find existing item if present
-	ThingTemplate *thingTemplate = TheThingFactory->findTemplateInternal( name );
+	ThingTemplate *thingTemplate = TheThingFactory->findTemplateInternal( name, FALSE );
 	if( !thingTemplate )
 	{
 		// no item is present, create a new one
@@ -532,10 +535,10 @@ void ThingFactory::postProcessLoad()
 		}
 #endif
 
-	}  // end for
+	}
 
 #ifdef CHECK_THING_NAMES
 	dumpMissingStringNames();
 	exit(0);
 #endif
-}  // end postProcess
+}

@@ -39,12 +39,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DX8_WRAPPER_H
-#define DX8_WRAPPER_H
 
 #include "always.h"
 #include "dllist.h"
@@ -1350,7 +1345,7 @@ WWINLINE void DX8Wrapper::Get_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4
 
 WWINLINE const D3DLIGHT8& DX8Wrapper::Peek_Light(unsigned index)
 {
-	return render_state.Lights[index];;
+	return render_state.Lights[index];
 }
 
 WWINLINE bool DX8Wrapper::Is_Light_Enabled(unsigned index)
@@ -1509,6 +1504,3 @@ WWINLINE RenderStateStruct& RenderStateStruct::operator= (const RenderStateStruc
 
 	return *this;
 }
-
-
-#endif

@@ -1,20 +1,20 @@
 set(PATCHGET_SRC
-    "CHATAPI.CPP"
-    "CHATAPI.H"
-    "COMINIT.CPP"
-    "COMINIT.H"
+    "CHATAPI.cpp"
+    "CHATAPI.h"
+    "COMINIT.cpp"
+    "COMINIT.h"
     "debug.cpp"
     "debug.h"
     "DownloadManager.cpp"
     "DownloadManager.h"
-    "PROCESS.CPP"
-    "PROCESS.H"
+    "PROCESS.cpp"
+    "PROCESS.h"
     "registry.cpp"
     "Registry.h"
-    "RESOURCE.H"
-    "WINBLOWS.CPP"
-    "WINBLOWS.H"
-    "WSTYPES.H"
+    "RESOURCE.h"
+    "WINBLOWS.cpp"
+    "WINBLOWS.h"
+    "WSTYPES.h"
 )
 
 add_library(corei_patchgrabber INTERFACE)
@@ -25,7 +25,6 @@ target_link_libraries(corei_patchgrabber INTERFACE
     comctl32
     core_debug
     core_profile
-    dbghelplib
     gamespy::gamespy
     imm32
     vfw32

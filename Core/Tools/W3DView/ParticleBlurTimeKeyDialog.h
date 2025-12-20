@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_PARTICLEBLURTIMEKEYDIALOG_H__FCCD7E5F_E09A_450E_A1A4_0E401CC00C3B__INCLUDED_)
-#define AFX_PARTICLEBLURTIMEKEYDIALOG_H__FCCD7E5F_E09A_450E_A1A4_0E401CC00C3B__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // ParticleBlurTimeKeyDialog.h : header file
 //
 
@@ -76,5 +72,3 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_PARTICLEBLURTIMEKEYDIALOG_H__FCCD7E5F_E09A_450E_A1A4_0E401CC00C3B__INCLUDED_)

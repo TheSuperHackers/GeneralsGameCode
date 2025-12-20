@@ -27,9 +27,6 @@
 
 #pragma once
 
-#ifndef __RadiusDecalUpdate_H_
-#define __RadiusDecalUpdate_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameClient/RadiusDecal.h"
@@ -84,6 +81,3 @@ private:
 	RadiusDecal m_deliveryDecal;
 	Bool m_killWhenNoLongerAttacking;
 };
-
-#endif // __RadiusDecalUpdate_H_
-

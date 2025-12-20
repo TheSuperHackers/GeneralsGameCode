@@ -36,9 +36,6 @@
 
 #pragma once
 
-#ifndef __MODULEFACTORY_H_
-#define __MODULEFACTORY_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include <stdlib.h>
 
@@ -122,10 +119,7 @@ protected:
 	ModuleTemplateMap			m_moduleTemplateMap;
 	ModuleDataList				m_moduleDataList;
 
-};  // end class ModuleFactory
+};
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
 extern ModuleFactory *TheModuleFactory;  ///< singleton definition
-
-#endif // __MODULEFACTORY_H_
-

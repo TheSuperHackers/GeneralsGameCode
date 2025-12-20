@@ -28,7 +28,7 @@
 //					This instance kicks things it outputs into SupplyTruck autopilot after exiting.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/RandomValue.h"
 #include "Common/ThingTemplate.h"
@@ -195,7 +195,7 @@ void SupplyCenterProductionExitUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -219,7 +219,7 @@ void SupplyCenterProductionExitUpdate::xfer( Xfer *xfer )
 	// rally point exists
 	xfer->xferBool( &m_rallyPointExists );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -230,4 +230,4 @@ void SupplyCenterProductionExitUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

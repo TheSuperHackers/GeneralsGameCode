@@ -41,7 +41,7 @@
 // Desc:      Contains the information describing scripts.
 //
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Lib/BaseType.h"
 
@@ -75,7 +75,7 @@ static ScriptGroup *s_mtGroup = NULL;
 // These strings must be in the same order as they are in their definitions
 // (See SHELL_SCRIPT_HOOK_* )
 //
-const char *TheShellHookNames[]=
+static const char *const TheShellHookNames[]=
 {
 	"ShellMainMenuCampaignPushed", //SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_SELECTED,
 	"ShellMainMenuCampaignHighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_HIGHLIGHTED,
@@ -116,6 +116,8 @@ const char *TheShellHookNames[]=
 	"ShellLANClosed", //SHELL_SCRIPT_HOOK_LAN_CLOSED,
 	"ShellLANEnteredFromGame", //SHELL_SCRIPT_HOOK_LAN_ENTERED_FROM_GAME,
 };
+static_assert(ARRAY_SIZE(TheShellHookNames) == SHELL_SCRIPT_HOOK_TOTAL, "Incorrect array size");
+
 void SignalUIInteraction(Int interaction)
 {
 	if (TheScriptEngine)
@@ -215,14 +217,11 @@ m_firstScript(NULL)
 */
 ScriptList::~ScriptList(void)
 {
-	if (m_firstGroup) {
-		deleteInstance(m_firstGroup);
-		m_firstGroup = NULL;
-	}
-	if (m_firstScript) {
-		deleteInstance(m_firstScript);
-		m_firstScript = NULL;
-	}
+	deleteInstance(m_firstGroup);
+	m_firstGroup = NULL;
+
+	deleteInstance(m_firstScript);
+	m_firstScript = NULL;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -260,7 +259,7 @@ void ScriptList::xfer( Xfer *xfer )
 		DEBUG_CRASH(( "ScriptList::xfer - Script list count has changed, attempting to recover."));
 		// throw SC_INVALID_DATA; try to recover. jba.
 
-	}  // end if
+	}
 
 	// all script data here
 	for( script = getScript(); script; script = script->getNext() )	{
@@ -289,7 +288,7 @@ void ScriptList::xfer( Xfer *xfer )
 
 		DEBUG_CRASH(( "ScriptList::xfer - Script group count has changed, attempting to recover."));
 
-	}  // end if
+	}
 
 	// all script group data
 	for( scriptGroup = getScriptGroup(); scriptGroup; scriptGroup = scriptGroup->getNext() ) {
@@ -523,13 +522,11 @@ void ScriptList::deleteGroup(ScriptGroup *pGrp)
 Bool ScriptList::ParseScriptsDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
 	Int i;
-	file.registerParser( AsciiString("ScriptList"), info->label, ScriptList::ParseScriptListDataChunk );
+	file.registerParser( "ScriptList", info->label, ScriptList::ParseScriptListDataChunk );
 	DEBUG_ASSERTCRASH(s_numInReadList==0, ("Leftover scripts floating aroung."));
 	for (i=0; i<s_numInReadList; i++) {
-		if (s_readLists[i]) {
-			deleteInstance(s_readLists[i]);
-			s_readLists[i] = NULL;
-		}
+		deleteInstance(s_readLists[i]);
+		s_readLists[i] = NULL;
 	}
 	TScriptListReadInfo readInfo;
 	for (i=0; i<MAX_PLAYER_COUNT; i++) {
@@ -616,8 +613,8 @@ Bool ScriptList::ParseScriptListDataChunk(DataChunkInput &file, DataChunkInfo *i
 	pInfo->readLists[pInfo->numLists] = newInstance(ScriptList);
 	Int cur = pInfo->numLists;
 	pInfo->numLists++;
-	file.registerParser( AsciiString("Script"), info->label, Script::ParseScriptFromListDataChunk );
-	file.registerParser( AsciiString("ScriptGroup"), info->label, ScriptGroup::ParseGroupDataChunk );
+	file.registerParser( "Script", info->label, Script::ParseScriptFromListDataChunk );
+	file.registerParser( "ScriptGroup", info->label, ScriptGroup::ParseGroupDataChunk );
 	return file.parse(pInfo->readLists[cur]);
 
 }
@@ -635,10 +632,7 @@ m_firstScript(NULL),
 m_hasWarnings(false),
 m_isGroupActive(true),
 m_isGroupSubroutine(false),
-//Added By Sadullah Nader
-//Initializations inserted
 m_nextGroup(NULL)
-//
 {
 	m_groupName.format("Script Group %d", ScriptList::getNextID());
 }
@@ -649,11 +643,10 @@ m_nextGroup(NULL)
 */
 ScriptGroup::~ScriptGroup(void)
 {
-	if (m_firstScript) {
-		// Delete the first script.  m_firstScript deletes the entire list.
-		deleteInstance(m_firstScript);
-		m_firstScript = NULL;
-	}
+	// Delete the first script.  m_firstScript deletes the entire list.
+	deleteInstance(m_firstScript);
+	m_firstScript = NULL;
+
 	if (m_nextGroup) {
 		// Delete all the subsequent groups in our list.
 		ScriptGroup *cur = m_nextGroup;
@@ -673,7 +666,7 @@ ScriptGroup::~ScriptGroup(void)
 void ScriptGroup::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -701,7 +694,7 @@ void ScriptGroup::xfer( Xfer *xfer )
 		DEBUG_CRASH(( "ScriptGroup::xfer - Script list count has changed, attempting to recover."));
 		// throw SC_INVALID_DATA; try to recover. jba.
 
-	}  // end if
+	}
 
 	// xfer script data
 	for( script = getScript(); script; script = script->getNext() )	{
@@ -718,7 +711,7 @@ void ScriptGroup::xfer( Xfer *xfer )
 		}
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -726,7 +719,7 @@ void ScriptGroup::xfer( Xfer *xfer )
 void ScriptGroup::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 /**
   ScriptGroup::duplicate - Creates a full, "deep" copy of ScriptGroup.
@@ -884,7 +877,7 @@ Bool ScriptGroup::ParseGroupDataChunk(DataChunkInput &file, DataChunkInfo *info,
 		pGroup->m_isGroupSubroutine= file.readByte();
 	}
 	pList->addGroup(pGroup, AT_END);
-	file.registerParser( AsciiString("Script"), info->label, Script::ParseScriptFromGroupDataChunk );
+	file.registerParser( "Script", info->label, Script::ParseScriptFromGroupDataChunk );
 	return file.parse(pGroup);
 
 }
@@ -910,11 +903,8 @@ m_hasWarnings(false),
 m_nextScript(NULL),
 m_condition(NULL),
 m_action(NULL),
-//Added By Sadullah Nader
-//Initializations inserted
 m_actionFalse(NULL),
 m_curTime(0.0f)
-//
 {
 }
 
@@ -934,16 +924,10 @@ Script::~Script(void)
 			cur = next;
 		}
 	}
-	if (m_condition) {
-		deleteInstance(m_condition);
-	}
-	if (m_action) {
-		deleteInstance(m_action);
-	}
 
-	if (m_actionFalse) {
-		deleteInstance(m_actionFalse);
-	}
+	deleteInstance(m_condition);
+	deleteInstance(m_action);
+	deleteInstance(m_actionFalse);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -952,7 +936,7 @@ Script::~Script(void)
 void Script::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -972,7 +956,7 @@ void Script::xfer( Xfer *xfer )
 	xfer->xferBool( &active );
 	setActive( active );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -980,7 +964,7 @@ void Script::xfer( Xfer *xfer )
 void Script::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 /**
   Script::duplicate - Creates a full, "deep" copy of script. Condition list and action
@@ -990,12 +974,7 @@ void Script::loadPostProcess( void )
 Script *Script::duplicate(void) const
 {
 	Script *pNew = newInstance(Script);
-	if (pNew->m_condition) {
-		deleteInstance(pNew->m_condition);
-	}
-	if (pNew->m_action) {
-		deleteInstance(pNew->m_action);
-	}
+
 	pNew->m_scriptName = m_scriptName;
 	pNew->m_comment = m_comment;
 	pNew->m_conditionComment = m_conditionComment;
@@ -1007,6 +986,7 @@ Script *Script::duplicate(void) const
 	pNew->m_normal = m_normal;
 	pNew->m_hard = m_hard;
 	pNew->m_delayEvaluationSeconds = m_delayEvaluationSeconds;
+
 	if (m_condition) {
 		pNew->m_condition = m_condition->duplicate();
 	}
@@ -1029,12 +1009,7 @@ Script *Script::duplicateAndQualify(const AsciiString& qualifier,
 			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const
 {
 	Script *pNew = newInstance(Script);
-	if (pNew->m_condition) {
-		deleteInstance(pNew->m_condition);
-	}
-	if (pNew->m_action) {
-		deleteInstance(pNew->m_action);
-	}
+
 	pNew->m_scriptName = m_scriptName;
 	pNew->m_scriptName.concat(qualifier);
 	pNew->m_comment = m_comment;
@@ -1047,6 +1022,7 @@ Script *Script::duplicateAndQualify(const AsciiString& qualifier,
 	pNew->m_normal = m_normal;
 	pNew->m_hard = m_hard;
 	pNew->m_delayEvaluationSeconds = m_delayEvaluationSeconds;
+
 	if (m_condition) {
 		pNew->m_condition = m_condition->duplicateAndQualify(qualifier, playerTemplateName, newPlayerName);
 	}
@@ -1078,19 +1054,16 @@ void Script::updateFrom(Script *pSrc)
 	this->m_easy = pSrc->m_easy;
 	this->m_normal = pSrc->m_normal;
 	this->m_hard = pSrc->m_hard;
-	if (this->m_condition) {
-		deleteInstance(this->m_condition);
-	}
+
+	deleteInstance(this->m_condition);
 	this->m_condition = pSrc->m_condition;
 	pSrc->m_condition = NULL;
-	if (this->m_action) {
-		deleteInstance(this->m_action);
-	}
+
+	deleteInstance(this->m_action);
 	this->m_action = pSrc->m_action;
 	pSrc->m_action = NULL;
-	if (this->m_actionFalse) {
-		deleteInstance(this->m_actionFalse);
-	}
+
+	deleteInstance(this->m_actionFalse);
 	this->m_actionFalse = pSrc->m_actionFalse;
 	pSrc->m_actionFalse = NULL;
 }
@@ -1266,9 +1239,9 @@ Script *Script::ParseScript(DataChunkInput &file, unsigned short version)
 	if (version>=K_SCRIPT_DATA_VERSION_2) {
 		pScript->m_delayEvaluationSeconds = file.readInt();
 	}
-	file.registerParser( AsciiString("OrCondition"), AsciiString("Script"), OrCondition::ParseOrConditionDataChunk );
-	file.registerParser( AsciiString("ScriptAction"),  AsciiString("Script"), ScriptAction::ParseActionDataChunk );
-	file.registerParser( AsciiString("ScriptActionFalse"),  AsciiString("Script"), ScriptAction::ParseActionFalseDataChunk );
+	file.registerParser( "OrCondition", "Script", OrCondition::ParseOrConditionDataChunk );
+	file.registerParser( "ScriptAction",  "Script", ScriptAction::ParseActionDataChunk );
+	file.registerParser( "ScriptActionFalse",  "Script", ScriptAction::ParseActionFalseDataChunk );
 	if (! file.parse(pScript) )
 	{
 		return NULL;
@@ -1338,10 +1311,9 @@ OrCondition *Script::findPreviousOrCondition( OrCondition *curOr )
 //-------------------------------------------------------------------------------------------------
 OrCondition::~OrCondition(void)
 {
-	if (m_firstAnd) {
-		deleteInstance(m_firstAnd);
-		m_firstAnd = NULL;
-	}
+	deleteInstance(m_firstAnd);
+	m_firstAnd = NULL;
+
 	if (m_nextOr) {
 		OrCondition *cur = m_nextOr;
 		OrCondition *next;
@@ -1463,7 +1435,7 @@ Bool OrCondition::ParseOrConditionDataChunk(DataChunkInput &file, DataChunkInfo 
 	} else {
 		pScript->setOrCondition(pOrCondition);
 	}
-	file.registerParser( AsciiString("Condition"), info->label, Condition::ParseConditionDataChunk );
+	file.registerParser( "Condition", info->label, Condition::ParseConditionDataChunk );
 	return file.parse(pOrCondition);
 
 }
@@ -1526,8 +1498,7 @@ void Condition::setConditionType(enum ConditionType type)
 {
 	Int i;
 	for (i=0; i<m_numParms; i++) {
-		if (m_parms[i])
-			deleteInstance(m_parms[i]);
+		deleteInstance(m_parms[i]);
 		m_parms[i] = NULL;
 	}
 	m_conditionType = type;
@@ -2082,13 +2053,13 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 		// quick hack to make loading models with "Fundamentalist" switch to "GLA"
 		if (pParm->m_string.startsWith("Fundamentalist"))
 		{
-			char oldName[256];
+			const char* replacePrefix = "Fundamentalist";
+			const size_t offset = pParm->m_string.startsWith(replacePrefix) ? strlen(replacePrefix) : 0u;
 			char newName[256];
-			strcpy(oldName, pParm->m_string.str());
 			strcpy(newName, "GLA");
-			strcat(newName, oldName+strlen("Fundamentalist"));
+			strlcat(newName, pParm->m_string.str() + offset, ARRAY_SIZE(newName));
+			DEBUG_LOG(("Changing Script Ref from %s to %s", pParm->m_string.str(), newName));
 			pParm->m_string.set(newName);
-			DEBUG_LOG(("Changing Script Ref from %s to %s", oldName, newName));
 		}
 	}
 
@@ -2119,7 +2090,7 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 	if (pParm->getParameterType() == KIND_OF_PARAM)
   {
 		// Need to change the string to an integer
-		const char** kindofNames = KindOfMaskType::getBitNames();
+		const char* const* kindofNames = KindOfMaskType::getBitNames();
 		if (!pParm->m_string.isEmpty())
     {
 			Bool found = false;
@@ -2195,10 +2166,7 @@ ScriptAction::ScriptAction():
 m_actionType(NO_OP),
 m_hasWarnings(false),
 m_numParms(0),
-//Added By Sadullah Nader
-//Initializations inserted
 m_nextAction(NULL)
-//
 {
 }
 
@@ -2217,8 +2185,7 @@ void ScriptAction::setActionType(enum ScriptActionType type)
 {
 	Int i;
 	for (i=0; i<m_numParms; i++) {
-		if (m_parms[i])
-			deleteInstance(m_parms[i]);
+		deleteInstance(m_parms[i]);
 		m_parms[i] = NULL;
 	}
 	m_actionType = type;
@@ -2520,10 +2487,10 @@ Bool ScriptAction::ParseActionFalseDataChunk(DataChunkInput &file, DataChunkInfo
 	return true;
 }
 
-// NOTE: Changing these or adding ot TheOBjectFlagNames requires changes to
+// NOTE: Changing these or adding to TheObjectFlagsNames requires changes to
 // ScriptActions::changeObjectPanelFlagForSingleObject
 // THEY SHOULD STAY IN SYNC.
-const char* TheObjectFlagsNames[] =
+const char* const TheObjectFlagsNames[] =
 {
 	"Enabled",
 	"Powered",

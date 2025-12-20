@@ -51,7 +51,7 @@ GameStateMap *TheGameStateMap = NULL;
 GameStateMap::GameStateMap( void )
 {
 
-}  // end GameStateMap
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ GameStateMap::~GameStateMap( void )
 	//
 	clearScratchPadMaps();
 
-}  // end ~GameStateMap
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Embed the pristine map into the xfer stream */
@@ -80,7 +80,7 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 		DEBUG_CRASH(( "embedPristineMap - Error opening source file '%s'", map.str() ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// how big is the map file
 	Int fileSize = file->seek( 0, File::END );
@@ -96,7 +96,7 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 		DEBUG_CRASH(( "embedPristineMap - Unable to allocate buffer for file '%s'", map.str() ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// copy the file to the buffer
 	if( file->read( buffer, fileSize ) != fileSize )
@@ -105,7 +105,7 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 		DEBUG_CRASH(( "embeddPristineMap - Error reading from file '%s'", map.str() ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// close the BIG file
 	file->close();
@@ -119,7 +119,7 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 	// delete the buffer
 	delete [] buffer;
 
-}  // end embedPristineMap
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Embed an "in use" map into the xfer stream.  An "in use" map is one that has already
@@ -136,7 +136,7 @@ static void embedInUseMap( AsciiString map, Xfer *xfer )
 		DEBUG_CRASH(( "embedInUseMap - Unable to open file '%s'", map.str() ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// how big is the file
 	fseek( fp, 0, SEEK_END );
@@ -153,7 +153,7 @@ static void embedInUseMap( AsciiString map, Xfer *xfer )
 		DEBUG_CRASH(( "embedInUseMap - Unable to allocate buffer for file '%s'", map.str() ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// read the entire file
 	if( fread( buffer, 1, fileSize, fp ) != fileSize )
@@ -162,7 +162,7 @@ static void embedInUseMap( AsciiString map, Xfer *xfer )
 		DEBUG_CRASH(( "embedInUseMap - Error reading from file '%s'", map.str() ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// embed file into xfer stream
 	xfer->beginBlock();
@@ -175,7 +175,7 @@ static void embedInUseMap( AsciiString map, Xfer *xfer )
 	// delete buffer
 	delete [] buffer;
 
-}  // embedInUseMap
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Extract the map from the xfer stream and save as a file with filename 'mapToSave' */
@@ -192,7 +192,7 @@ static void extractAndSaveMap( AsciiString mapToSave, Xfer *xfer )
 		DEBUG_CRASH(( "extractAndSaveMap - Unable to open file '%s'", mapToSave.str() ));
 		throw SC_INVALID_DATA;
 
-	}  // en
+	}
 
 	// read data size from file
 	dataSize = xfer->beginBlock();
@@ -205,7 +205,7 @@ static void extractAndSaveMap( AsciiString mapToSave, Xfer *xfer )
 		DEBUG_CRASH(( "extractAndSaveMap - Unable to allocate buffer for file '%s'", mapToSave.str() ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// read map file
 	xfer->xferUser( buffer, dataSize );
@@ -217,7 +217,7 @@ static void extractAndSaveMap( AsciiString mapToSave, Xfer *xfer )
 		DEBUG_CRASH(( "extractAndSaveMap - Error writing to file '%s'", mapToSave.str() ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// close the new file
 	fclose( fp );
@@ -228,7 +228,7 @@ static void extractAndSaveMap( AsciiString mapToSave, Xfer *xfer )
 	// delete the buffer
 	delete [] buffer;
 
-}  // end extractAndSaveMap
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -292,7 +292,7 @@ void GameStateMap::xfer( Xfer *xfer )
 			//
 			firstSave = TRUE;
 
-		}  // end if
+		}
 
 		// save the pristine name
 		// For cross-machine compatibility, we always write
@@ -309,7 +309,7 @@ void GameStateMap::xfer( Xfer *xfer )
 			xfer->xferInt( &gameMode);
 		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -341,7 +341,7 @@ void GameStateMap::xfer( Xfer *xfer )
 			TheGameLogic->setGameMode((GameMode)gameMode);
 		}
 
-	}  // end else, load
+	}
 
 	// map data
 	if( xfer->getXferMode() == XFER_SAVE )
@@ -356,7 +356,7 @@ void GameStateMap::xfer( Xfer *xfer )
 
 			embedPristineMap( saveGameInfo->pristineMapName, xfer );
 
-		}  // end if, first save
+		}
 		else
 		{
 
@@ -367,9 +367,9 @@ void GameStateMap::xfer( Xfer *xfer )
 			//
 			embedInUseMap( saveGameInfo->saveGameMapName, xfer );
 
-		}  // end else
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -379,7 +379,7 @@ void GameStateMap::xfer( Xfer *xfer )
 		//
 		extractAndSaveMap( saveGameInfo->saveGameMapName, xfer );
 
-	}  // end else
+	}
 
 	//
 	// it's important that early in the load process, we xfer the object ID counter
@@ -414,10 +414,8 @@ void GameStateMap::xfer( Xfer *xfer )
 		}
 		xfer->xferSnapshot(TheSkirmishGameInfo);
 	} else {
-		if (TheSkirmishGameInfo) {
-			delete TheSkirmishGameInfo;
-			TheSkirmishGameInfo = NULL;
-		}
+		delete TheSkirmishGameInfo;
+		TheSkirmishGameInfo = NULL;
 	}
 
 	//
@@ -429,7 +427,7 @@ void GameStateMap::xfer( Xfer *xfer )
 		TheGameLogic->startNewGame( TRUE );
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Delete any scratch pad maps in the save directory.  Scratch pad maps are maps that
@@ -471,7 +469,7 @@ void GameStateMap::clearScratchPadMaps( void )
 			// we are no longer on our first item
 			first = FALSE;
 
-		}  // end if, first
+		}
 
 		// see if this is a file, and therefore a possible .map file
 		if( !(item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
@@ -482,7 +480,7 @@ void GameStateMap::clearScratchPadMaps( void )
 			if( c && stricmp( c, ".map" ) == 0 )
 				fileToDelete.set( item.cFileName );  // we want to delete this one
 
-		}  // end if
+		}
 
 		//
 		// find the next file before we delete this one, this is probably not necessary
@@ -496,7 +494,7 @@ void GameStateMap::clearScratchPadMaps( void )
 		if( fileToDelete.isEmpty() == FALSE )
 			DeleteFile( fileToDelete.str() );
 
-	}  // end while
+	}
 
 	// close search resources
 	FindClose( hFile );
@@ -504,4 +502,4 @@ void GameStateMap::clearScratchPadMaps( void )
 	// restore our directory to the current directory
 	SetCurrentDirectory( currentDirectory );
 
-}  // end clearScratchPadMaps
+}

@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
@@ -201,13 +201,13 @@ Bool handleLobbySlashCommands(UnicodeString uText)
 	else if (token == "fakecrc")
 	{
 		g_fakeCRC = !g_fakeCRC;
-		TheGameSpyInfo->addText(UnicodeString(L"Toggled CRC fakery"), GameSpyColor[GSCOLOR_DEFAULT], NULL);
+		TheGameSpyInfo->addText(L"Toggled CRC fakery", GameSpyColor[GSCOLOR_DEFAULT], NULL);
 		return TRUE; // was a slash command
 	}
 	else if (token == "slots")
 	{
 		g_debugSlots = !g_debugSlots;
-		TheGameSpyInfo->addText(UnicodeString(L"Toggled SlotList debug"), GameSpyColor[GSCOLOR_DEFAULT], NULL);
+		TheGameSpyInfo->addText(L"Toggled SlotList debug", GameSpyColor[GSCOLOR_DEFAULT], NULL);
 		return TRUE; // was a slash command
 	}
 #endif
@@ -366,7 +366,7 @@ static void populateGroupRoomListbox(GameWindow *lb)
 	GadgetComboBoxSetSelectedPos(lb, indexToSelect);
 }
 
-static const char *rankNames[] = {
+static const char *const rankNames[] = {
 	"Private",
 	"Corporal",
 	"Sergeant",
@@ -378,6 +378,8 @@ static const char *rankNames[] = {
 	"Brigadier",
 	"Commander",
 };
+static_assert(ARRAY_SIZE(rankNames) == MAX_RANKS, "Incorrect array size");
+
 
 const Image* LookupSmallRankImage(Int side, Int rankPoints)
 {
@@ -561,7 +563,7 @@ void PopulateLobbyPlayerListbox(void)
 		}
 
 		// restore selection
-		if (indicesToSelect.size())
+		if (!indicesToSelect.empty())
 		{
 			std::set<Int>::const_iterator indexIt = indicesToSelect.begin();
 			const size_t count = indicesToSelect.size();
@@ -603,40 +605,40 @@ void WOLLobbyMenuInit( WindowLayout *layout, void *userData )
 	gameListRefreshTime = 0;
 	playerListRefreshTime = 0;
 
-	parentWOLLobbyID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLCustomLobby.wnd:WOLLobbyMenuParent" ) );
+	parentWOLLobbyID = TheNameKeyGenerator->nameToKey( "WOLCustomLobby.wnd:WOLLobbyMenuParent" );
 	parent = TheWindowManager->winGetWindowFromId(NULL, parentWOLLobbyID);
 
-	buttonBackID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ButtonBack"));
+	buttonBackID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ButtonBack");
 	buttonBack = TheWindowManager->winGetWindowFromId(parent, buttonBackID);
 
-	buttonHostID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ButtonHost"));
+	buttonHostID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ButtonHost");
 	buttonHost = TheWindowManager->winGetWindowFromId(parent, buttonHostID);
 
-	buttonRefreshID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ButtonRefresh"));
+	buttonRefreshID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ButtonRefresh");
 	buttonRefresh = TheWindowManager->winGetWindowFromId(parent, buttonRefreshID);
 
-	buttonJoinID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ButtonJoin"));
+	buttonJoinID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ButtonJoin");
 	buttonJoin = TheWindowManager->winGetWindowFromId(parent, buttonJoinID);
 	buttonJoin->winEnable(FALSE);
 
-	buttonBuddyID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ButtonBuddy"));
+	buttonBuddyID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ButtonBuddy");
 	buttonBuddy = TheWindowManager->winGetWindowFromId(parent, buttonBuddyID);
 
-	buttonEmoteID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ButtonEmote"));
+	buttonEmoteID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ButtonEmote");
 	buttonEmote = TheWindowManager->winGetWindowFromId(parent, buttonEmoteID);
 
-	textEntryChatID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:TextEntryChat"));
+	textEntryChatID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:TextEntryChat");
 	textEntryChat = TheWindowManager->winGetWindowFromId(parent, textEntryChatID);
 
-	listboxLobbyPlayersID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ListboxPlayers"));
+	listboxLobbyPlayersID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ListboxPlayers");
 	listboxLobbyPlayers = TheWindowManager->winGetWindowFromId(parent, listboxLobbyPlayersID);
 	listboxLobbyPlayers->winSetTooltipFunc(playerTooltip);
 
-	listboxLobbyChatID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ListboxChat"));
+	listboxLobbyChatID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ListboxChat");
 	listboxLobbyChat = TheWindowManager->winGetWindowFromId(parent, listboxLobbyChatID);
 	TheGameSpyInfo->registerTextWindow(listboxLobbyChat);
 
-	comboLobbyGroupRoomsID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ComboBoxGroupRooms"));
+	comboLobbyGroupRoomsID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ComboBoxGroupRooms");
 	comboLobbyGroupRooms = TheWindowManager->winGetWindowFromId(parent, comboLobbyGroupRoomsID);
 
 	GadgetTextEntrySetText(textEntryChat, UnicodeString::TheEmptyString);
@@ -703,7 +705,7 @@ void WOLLobbyMenuInit( WindowLayout *layout, void *userData )
 	if(win)
 		win->winHide(TRUE);
 	DontShowMainMenu = TRUE;
-} // WOLLobbyMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** This is called when a shutdown is complete for this menu */
@@ -726,7 +728,7 @@ static void shutdownComplete( WindowLayout *layout )
 
 	nextScreen = NULL;
 
-}  // end if
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Lobby Menu shutdown method */
@@ -771,7 +773,7 @@ void WOLLobbyMenuShutdown( WindowLayout *layout, void *userData )
 		shutdownComplete( layout );
 		return;
 
-	}  //end if
+	}
 
 	TheShell->reverseAnimatewindow();
 	DontShowMainMenu = FALSE;
@@ -779,7 +781,7 @@ void WOLLobbyMenuShutdown( WindowLayout *layout, void *userData )
 	RaiseGSMessageBox();
 	TheTransitionHandler->reverse("WOLCustomLobbyFade");
 
-}  // WOLLobbyMenuShutdown
+}
 
 static void fillPlayerInfo(const PeerResponse *resp, PlayerInfo *info)
 {
@@ -1065,7 +1067,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 								AsciiString hostName;
 								hostName.translate(room->getConstSlot(0)->getName());
 								const char *firstPlayer = resp.stagingRoomPlayerNames[i].c_str();
-								if (!strcmp(hostName.str(), firstPlayer))
+								if (strcmp(hostName.str(), firstPlayer) == 0)
 								{
 									DEBUG_LOG(("Saw host %s == %s in slot %d", hostName.str(), firstPlayer, i));
 									isHostPresent = TRUE;
@@ -1133,7 +1135,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 					{
 					case PEER_CLEAR:
 						TheGameSpyInfo->clearStagingRoomList();
-						//TheGameSpyInfo->addText( UnicodeString(L"gameList: PEER_CLEAR"), GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
+						//TheGameSpyInfo->addText( L"gameList: PEER_CLEAR", GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
 						break;
 					case PEER_ADD:
 					case PEER_UPDATE:
@@ -1146,7 +1148,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 						//if (ParseAsciiStringToGameInfo(&room, resp.stagingRoomMapName.c_str()))
 						//if (ParseAsciiStringToGameInfo(&room, resp.stagingServerGameOptions.c_str()))
 						Bool serverOk = TRUE;
-						if (!resp.stagingRoomMapName.length())
+						if (resp.stagingRoomMapName.empty())
 						{
 							serverOk = FALSE;
 						}
@@ -1171,6 +1173,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 							room.setExeCRC(resp.stagingRoom.exeCRC);
 							room.setIniCRC(resp.stagingRoom.iniCRC);
 							room.setAllowObservers(resp.stagingRoom.allowObservers);
+              room.setUseStats(resp.stagingRoom.useStats);
 							room.setPingString(resp.stagingServerPingString.c_str());
 							room.setLadderIP(resp.stagingServerLadderIP.c_str());
 							room.setLadderPort(resp.stagingRoom.ladderPort);
@@ -1217,7 +1220,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 										slot->setState(SLOT_BRUTAL_AI);
 										++numPlayers;
 									}
-									else if (resp.stagingRoomPlayerNames[i].length())
+									else if (!resp.stagingRoomPlayerNames[i].empty())
 									{
 										UnicodeString nameUStr;
 										nameUStr.translate(resp.stagingRoomPlayerNames[i].c_str());
@@ -1235,29 +1238,29 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 							if (resp.stagingRoom.action == PEER_ADD)
 							{
 								TheGameSpyInfo->addStagingRoom(room);
-								//TheGameSpyInfo->addText( UnicodeString(L"gameList: PEER_ADD"), GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
+								//TheGameSpyInfo->addText( L"gameList: PEER_ADD", GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
 							}
 							else
 							{
 								TheGameSpyInfo->updateStagingRoom(room);
-								//TheGameSpyInfo->addText( UnicodeString(L"gameList: PEER_UPDATE"), GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
+								//TheGameSpyInfo->addText( L"gameList: PEER_UPDATE", GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
 							}
 						}
 						else
 						{
 							room.setID(resp.stagingRoom.id);
 							TheGameSpyInfo->removeStagingRoom(room);
-							//TheGameSpyInfo->addText( UnicodeString(L"gameList: PEER_UPDATE FAILED"), GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
+							//TheGameSpyInfo->addText( L"gameList: PEER_UPDATE FAILED", GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
 						}
 						break;
 					}
 					case PEER_REMOVE:
 						room.setID(resp.stagingRoom.id);
 						TheGameSpyInfo->removeStagingRoom(room);
-						//TheGameSpyInfo->addText( UnicodeString(L"gameList: PEER_REMOVE"), GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
+						//TheGameSpyInfo->addText( L"gameList: PEER_REMOVE", GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
 						break;
 					default:
-						//TheGameSpyInfo->addText( UnicodeString(L"gameList: Unknown"), GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
+						//TheGameSpyInfo->addText( L"gameList: Unknown", GameSpyColor[GSCOLOR_DEFAULT], listboxLobbyChat );
 						break;
 					}
 				}
@@ -1307,7 +1310,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 	refreshGameList();
 #endif
 	}
-}// WOLLobbyMenuUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Lobby Menu input callback */
@@ -1342,21 +1345,21 @@ WindowMsgHandledType WOLLobbyMenuInput( GameWindow *window, UnsignedInt msg,
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonBack, buttonBackID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// WOLLobbyMenuInput
+}
 
 //static void doSliderTrack(GameWindow *control, Int val)
 //{
@@ -1427,13 +1430,13 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 //				sliderChatAdjustID = NAMEKEY("WOLCustomLobby.wnd:SliderChatAdjust");
 
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		//---------------------------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -1443,7 +1446,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 
 		//---------------------------------------------------------------------------------------------
 		case GLM_SELECTED:
@@ -1480,7 +1483,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					{
 						RefreshGameInfoListBox(GetGameListBox(), GetGameInfoListBox());
 					}
-				} //if ( controlID == GetGameListBoxID() )
+				}
 
 				break;
 			}
@@ -1511,7 +1514,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					nextScreen = "Menus/WOLWelcomeMenu.wnd";
 					TheShell->pop();
 
-				} //if ( controlID == buttonBack )
+				}
 				else if ( controlID == buttonRefreshID )
 				{
 					// Added 2/17/03 added the game refresh button
@@ -1633,7 +1636,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 				}
 
 				break;
-			}// case GBM_SELECTED:
+			}
 
 		//---------------------------------------------------------------------------------------------
 		case GCM_SELECTED:
@@ -1670,7 +1673,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 						}
 					}
 				}
-			} // case GCM_SELECTED
+			}
 			break;
 
 		//---------------------------------------------------------------------------------------------
@@ -1695,7 +1698,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					}
 				}
 				break;
-			}// case GLM_DOUBLE_CLICKED:
+			}
 
 		//---------------------------------------------------------------------------------------------
 		case GLM_RIGHT_CLICKED:
@@ -1723,20 +1726,20 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 
 					Bool isBuddy = FALSE;
 					if (profileID <= 0)
-						rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCNoProfileMenu.wnd"));
+						rcLayout = TheWindowManager->winCreateLayout("Menus/RCNoProfileMenu.wnd");
 					else
 					{
 						if (profileID == TheGameSpyInfo->getLocalProfileID())
 						{
-							rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCLocalPlayerMenu.wnd"));
+							rcLayout = TheWindowManager->winCreateLayout("Menus/RCLocalPlayerMenu.wnd");
 						}
 						else if(TheGameSpyInfo->isBuddy(profileID))
 						{
-							rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCBuddiesMenu.wnd"));
+							rcLayout = TheWindowManager->winCreateLayout("Menus/RCBuddiesMenu.wnd");
 							isBuddy = TRUE;
 						}
 						else
-							rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCNonBuddiesMenu.wnd"));
+							rcLayout = TheWindowManager->winCreateLayout("Menus/RCNonBuddiesMenu.wnd");
 					}
 					if(!rcLayout)
 						break;
@@ -1789,7 +1792,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 							const LadderInfo *linfo = TheLadderList->findLadder(theRoom->getLadderIP(), theRoom->getLadderPort());
 							if (linfo)
 							{
-								rcLayout = TheWindowManager->winCreateLayout(AsciiString("Menus/RCGameDetailsMenu.wnd"));
+								rcLayout = TheWindowManager->winCreateLayout("Menus/RCGameDetailsMenu.wnd");
 								if (!rcLayout)
 									break;
 
@@ -1852,7 +1855,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// WOLLobbyMenuSystem
+}

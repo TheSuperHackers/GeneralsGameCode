@@ -23,7 +23,7 @@
  *                                                                         *
  *                 Project Name : Voxel Technology                         *
  *                                                                         *
- *                    File Name : QUAT.H                                   *
+ *                    File Name : QUAT.h                                   *
  *                                                                         *
  *                   Programmer : Greg Hjelstrom                           *
  *                                                                         *
@@ -35,12 +35,7 @@
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef QUAT_H
-#define QUAT_H
 
 #include "always.h"
 #include "wwmath.h"
@@ -309,9 +304,3 @@ WWINLINE Quaternion & Quaternion::operator = (const Quaternion & source)
 
   return *this;
 }
-
-
-#endif /* QUAT_H */
-
-
-

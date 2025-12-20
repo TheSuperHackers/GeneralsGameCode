@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef FIRING_TRACKER_H
-#define FIRING_TRACKER_H
-
 #include "Common/GameType.h"
 #include "Common/GameMemory.h"
 #include "Common/AudioEventRTS.h"
@@ -91,6 +88,3 @@ private:
 	UnsignedInt			m_frameToStopLoopingSound;	///< if sound is looping, frame to stop looping it (or zero if not looping)
 	AudioHandle			m_audioHandle;
 };
-
-#endif
-

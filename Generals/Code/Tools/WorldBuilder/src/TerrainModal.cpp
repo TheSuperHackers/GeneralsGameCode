@@ -168,15 +168,15 @@ void TerrainModal::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 				parent = findOrAdd( parent, terrainTypeNames[ i ] );
 				break;  // exit for
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
-		strcpy( buffer, terrain->getName().str() );
+		strlcpy(buffer, terrain->getName().str(), ARRAY_SIZE(buffer));
 
 		doAdd = TRUE;
 
-	}  // end if
+	}
 	else
 	{
 
@@ -202,7 +202,7 @@ void TerrainModal::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 			doAdd = TRUE;
 		}
 
-	}  // end else
+	}
 
 	if (doAdd)
 	{
@@ -234,7 +234,7 @@ void TerrainModal::updateTextures(void)
 		}
 		const char *tName = WorldHeightMapEdit::getTexClassName(i).str();
 		char path[_MAX_PATH];
-		strncpy(path, tName, _MAX_PATH-2);
+		strlcpy(path, tName, _MAX_PATH);
 		addTerrain(path, i, TVI_ROOT);
 	}
 	setTerrainTreeViewSelection(TVI_ROOT, m_currentFgTexture);

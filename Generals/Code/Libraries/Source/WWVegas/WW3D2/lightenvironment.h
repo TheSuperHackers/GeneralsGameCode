@@ -36,12 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef LIGHTENVIRONMENT_H
-#define LIGHTENVIRONMENT_H
 
 #include "always.h"
 #include "vector3.h"
@@ -159,7 +154,3 @@ protected:
 	OutputLightStruct	OutputLights[MAX_LIGHTS];	// ouput lights
 
 };
-
-
-#endif //LIGHTENVIRONMENT_H
-

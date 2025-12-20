@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
@@ -154,7 +154,7 @@ WindowMsgHandledType GadgetVerticalSliderInput( GameWindow *window, UnsignedInt 
 				if( clickPos > mousey - y )
 					clickPos = mousey - y;
 
-			}  // end if
+			}
 			else
 			{
 
@@ -162,7 +162,7 @@ WindowMsgHandledType GadgetVerticalSliderInput( GameWindow *window, UnsignedInt 
 				if( clickPos < mousey - y )
 					clickPos = mousey - y;
 
-			}  // end else
+			}
 
 			// keep pos valid on window
 			if( clickPos > y + size.y - childSize.y / 2 )
@@ -246,20 +246,20 @@ WindowMsgHandledType GadgetVerticalSliderInput( GameWindow *window, UnsignedInt 
 				default:
 					return MSG_IGNORED;
 
-			}  // end switch( mData1 )
+			}
 
 			break;
 
-		}  // end char
+		}
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end GadgetVerticalSliderInput
+}
 
 // GadgetVerticalSliderSystem =================================================
 /** Handle system messages for vertical slider */
@@ -318,7 +318,7 @@ WindowMsgHandledType GadgetVerticalSliderSystem( GameWindow *window, UnsignedInt
 																						s->position );
 				break;
 
-			}  // end if
+			}
 			else if( mousey < y )
 			{
 
@@ -332,7 +332,7 @@ WindowMsgHandledType GadgetVerticalSliderSystem( GameWindow *window, UnsignedInt
 																						s->position );
 				break;
 
-			}  // end else if
+			}
 
 			if( childCenter.y <= y + childSize.y / 2 )
 			{
@@ -456,14 +456,14 @@ WindowMsgHandledType GadgetVerticalSliderSystem( GameWindow *window, UnsignedInt
 
 			break;
 
-		}  // end resized
+		}
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end GadgetVerticalSliderSystem
+}
 

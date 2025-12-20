@@ -26,10 +26,9 @@
 // Implementation of Data Chunk save/load system
 // Author: Michael S. Booth, October 2000
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "stdlib.h"
-#include "string.h"
 #include "Compression.h"
 #include "Common/DataChunk.h"
 #include "Common/file.h"
@@ -44,10 +43,8 @@ CachedFileInputStream::CachedFileInputStream(void):m_buffer(NULL),m_size(0)
 
 CachedFileInputStream::~CachedFileInputStream(void)
 {
-	if (m_buffer) {
-		delete[] m_buffer;
-		m_buffer=NULL;
-	}
+	delete[] m_buffer;
+	m_buffer=NULL;
 }
 
 Bool CachedFileInputStream::open(AsciiString path)
@@ -104,10 +101,9 @@ Bool CachedFileInputStream::open(AsciiString path)
 
 void CachedFileInputStream::close(void)
 {
-	if (m_buffer) {
-		delete[] m_buffer;
-		m_buffer=NULL;
-	}
+	delete[] m_buffer;
+	m_buffer=NULL;
+
 	m_pos=0;
 	m_size=0;
 }
@@ -241,11 +237,7 @@ m_pOut(pOut)
 	AsciiString tmpFileName = TheGlobalData->getPath_UserData();
 	tmpFileName.concat(TEMP_FILENAME);
 	m_tmp_file = ::fopen( tmpFileName.str(), "wb" );
-	// Added Sadullah Nader
-	// Initializations missing and needed
 	m_chunkStack = NULL;
-
-	// End Add
 }
 
 DataChunkOutput::~DataChunkOutput()
@@ -747,7 +739,7 @@ AsciiString DataChunkInput::openDataChunk(DataChunkVersionType *ver )
 	c->next = m_chunkStack;
 	m_chunkStack = c;
 	if (this->atEndOfFile()) {
-		return (AsciiString(""));
+		return AsciiString::TheEmptyString;
 	}
 	return m_contents.getName( c->id );
 }
@@ -783,7 +775,7 @@ AsciiString DataChunkInput::getChunkLabel( void )
 	{
 		// TODO: Throw exception
 		DEBUG_CRASH(("Bad."));
-		return AsciiString("");
+		return AsciiString::TheEmptyString;
 	}
 
 	return m_contents.getName( m_chunkStack->id );

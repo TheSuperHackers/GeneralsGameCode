@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "Common/QuickmatchPreferences.h"
@@ -720,10 +720,8 @@ void WOLQuickMatchMenuInit( WindowLayout *layout, void *userData )
 	isShuttingDown = false;
 	raiseMessageBoxes = true;
 
-	if (TheNAT != NULL) {
-		delete TheNAT;
-		TheNAT = NULL;
-	}
+	delete TheNAT;
+	TheNAT = NULL;
 
 	parentWOLQuickMatchID = NAMEKEY( "WOLQuickMatchMenu.wnd:WOLQuickMatchMenuParent" );
 	buttonBackID = NAMEKEY( "WOLQuickMatchMenu.wnd:ButtonBack" );
@@ -767,9 +765,9 @@ void WOLQuickMatchMenuInit( WindowLayout *layout, void *userData )
 	comboBoxSide = TheWindowManager->winGetWindowFromId( parentWOLQuickMatch, comboBoxSideID );
 	comboBoxColor = TheWindowManager->winGetWindowFromId( parentWOLQuickMatch, comboBoxColorID );
 
-	if (TheLadderList->getStandardLadders()->size() == 0
-		&& TheLadderList->getSpecialLadders()->size() == 0
-		&& TheLadderList->getLocalLadders()->size() == 0)
+	if (TheLadderList->getStandardLadders()->empty()
+		&& TheLadderList->getSpecialLadders()->empty()
+		&& TheLadderList->getLocalLadders()->empty())
 	{
 		// no ladders, so just disable them
 		comboBoxDisabledLadder = comboBoxLadder;
@@ -895,7 +893,7 @@ void WOLQuickMatchMenuInit( WindowLayout *layout, void *userData )
 	UpdateStartButton();
 	TheTransitionHandler->setGroup("WOLQuickMatchMenuFade");
 	isInInit= FALSE;
-} // WOLQuickMatchMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** This is called when a shutdown is complete for this menu */
@@ -918,7 +916,7 @@ static void shutdownComplete( WindowLayout *layout )
 
 	nextScreen = NULL;
 
-}  // end if
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Quick Match Menu shutdown method */
@@ -945,13 +943,13 @@ void WOLQuickMatchMenuShutdown( WindowLayout *layout, void *userData )
 		shutdownComplete( layout );
 		return;
 
-	}  //end if
+	}
 
 	TheShell->reverseAnimatewindow();
 	TheTransitionHandler->reverse("WOLQuickMatchMenuFade");
 
 	RaiseGSMessageBox();
-}  // WOLQuickMatchMenuShutdown
+}
 
 
 #ifdef PERF_TEST
@@ -1114,7 +1112,7 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 			{
 			case PeerResponse::PEERRESPONSE_PLAYERUTM:
 				{
-					if (!stricmp(resp.command.c_str(), "STATS"))
+					if (stricmp(resp.command.c_str(), "STATS") == 0)
 					{
 						DEBUG_LOG(("Saw STATS from %s, data was '%s'", resp.nick.c_str(), resp.commandOptions.c_str()));
 						AsciiString data = resp.commandOptions.c_str();
@@ -1143,7 +1141,7 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 						}
 					}
 					Int slotNum = TheGameSpyGame->getSlotNum(resp.nick.c_str());
-					if ((slotNum >= 0) && (slotNum < MAX_SLOTS) && (!stricmp(resp.command.c_str(), "NAT"))) {
+					if ((slotNum >= 0) && (slotNum < MAX_SLOTS) && (stricmp(resp.command.c_str(), "NAT") == 0)) {
 						// this is a command for NAT negotiations, pass if off to TheNAT
 						sawImportantMessage = TRUE;
 						if (TheNAT != NULL) {
@@ -1189,11 +1187,11 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 				/*
 				if (resp.joinGroupRoom.ok)
 				{
-					TheGameSpyInfo->addText(UnicodeString(L"Joined group room"), GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
+					TheGameSpyInfo->addText(L"Joined group room", GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
 				}
 				else
 				{
-					TheGameSpyInfo->addText(UnicodeString(L"Didn't join group room"), GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
+					TheGameSpyInfo->addText(L"Didn't join group room", GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
 				}
 				*/
 				break;
@@ -1286,7 +1284,7 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 					switch( resp.qmStatus.status )
 					{
 					case QM_IDLE:
-						//TheGameSpyInfo->addText(UnicodeString(L"Status: QM_IDLE"), GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
+						//TheGameSpyInfo->addText(L"Status: QM_IDLE", GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
 						break;
 					case QM_JOININGQMCHANNEL:
 						TheGameSpyInfo->addText(TheGameText->fetch("QM:JOININGQMCHANNEL"), GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
@@ -1459,7 +1457,7 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 		}
 #endif // PERF_TEST
 	}
-}// WOLQuickMatchMenuUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Quick Match Menu input callback */
@@ -1495,21 +1493,21 @@ WindowMsgHandledType WOLQuickMatchMenuInput( GameWindow *window, UnsignedInt msg
 							TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonBack, buttonBackID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// WOLQuickMatchMenuInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Quick Match Menu window system callback */
@@ -1527,12 +1525,12 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 			{
 
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
 			{
@@ -1541,7 +1539,7 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 
 		case GCM_SELECTED:
 			{
@@ -1593,7 +1591,7 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 					UpdateStartButton();
 				}
 				break;
-			} // case GCM_SELECTED
+			}
 
 		case GBM_SELECTED:
 			{
@@ -1785,8 +1783,7 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 					req.QM.discons = numDiscons;
 
 
-					strncpy(req.QM.pings, TheGameSpyInfo->getPingString().str(), 17);
-					req.QM.pings[16] = 0;
+					strlcpy(req.QM.pings, TheGameSpyInfo->getPingString().str(), sizeof(req.QM.pings));
 
 					req.QM.botID = TheGameSpyConfig->getQMBotID();
 					req.QM.roomID = TheGameSpyConfig->getQMChannel();
@@ -1824,7 +1821,7 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 					TheGameSpyInfo->leaveGroupRoom();
 					nextScreen = "Menus/WOLWelcomeMenu.wnd";
 					TheShell->pop();
-				} //if ( controlID == buttonBack )
+				}
 				else if ( controlID == buttonSelectAllMapsID )
 				{
 					Int numMaps = GadgetListBoxGetNumEntries(listboxMapSelect);
@@ -1834,7 +1831,7 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 						GadgetListBoxSetItemData(listboxMapSelect, (void *)1, i);
 						GadgetListBoxAddEntryText(listboxMapSelect, GadgetListBoxGetText(listboxMapSelect, i, 1), GameSpyColor[GSCOLOR_MAP_SELECTED], i, 1);
 					}
-				} //if ( controlID == buttonSelectAllMapsID )
+				}
 				else if ( controlID == buttonSelectNoMapsID )
 				{
 					Int numMaps = GadgetListBoxGetNumEntries(listboxMapSelect);
@@ -1844,9 +1841,9 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 						GadgetListBoxSetItemData(listboxMapSelect, (void *)0, i);
 						GadgetListBoxAddEntryText(listboxMapSelect, GadgetListBoxGetText(listboxMapSelect, i, 1), GameSpyColor[GSCOLOR_MAP_UNSELECTED], i, 1);
 					}
-				} //if ( controlID == buttonSelectNoMapsID )
+				}
 				break;
-			}// case GBM_SELECTED:
+			}
 
 		case GLM_SELECTED:
 			{
@@ -1877,7 +1874,7 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 				}
 				UpdateStartButton();
 				break;
-			}// case GLM_SELECTED
+			}
 
 		case GEM_EDIT_DONE:
 			{
@@ -1886,7 +1883,7 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// WOLQuickMatchMenuSystem
+}

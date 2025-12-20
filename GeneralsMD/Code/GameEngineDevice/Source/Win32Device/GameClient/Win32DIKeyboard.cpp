@@ -107,7 +107,7 @@ static void printReturnCode( char *label, HRESULT hr )
 
 	}
 
-}  // end printReturnCode
+}
 
 //-------------------------------------------------------------------------------------------------
 /** create our interface to the direct input keybard */
@@ -130,7 +130,7 @@ void DirectInputKeyboard::openKeyboard( void )
 		closeKeyboard();
 		return;
 
-	}  // end if
+	}
 
 	// obtain an interface to the system keyboard device
 	hr = m_pDirectInput->CreateDevice( GUID_SysKeyboard,
@@ -144,7 +144,7 @@ void DirectInputKeyboard::openKeyboard( void )
 		closeKeyboard();
 		return;
 
-	}  // end if
+	}
 
 	// set the data format for the keyboard
 	hr = m_pKeyboardDevice->SetDataFormat( &c_dfDIKeyboard );
@@ -156,7 +156,7 @@ void DirectInputKeyboard::openKeyboard( void )
 		closeKeyboard();
 		return;
 
-	}  // end if
+	}
 
 	/// @todo Check the cooperative level of keyboard for NT, 2000, DX8 etc ...
 	// set the cooperative level for the keyboard, must be non-exclusive for
@@ -174,7 +174,7 @@ void DirectInputKeyboard::openKeyboard( void )
 		closeKeyboard();
 		return;
 
-	}  // end if
+	}
 
   // set the keyboard buffer size
 	DIPROPDWORD prop;
@@ -192,7 +192,7 @@ void DirectInputKeyboard::openKeyboard( void )
 		closeKeyboard();
 		return;
 
-	}  // end if
+	}
 
 	// acquire the keyboard
 	hr = m_pKeyboardDevice->Acquire();
@@ -205,11 +205,11 @@ void DirectInputKeyboard::openKeyboard( void )
 		// closeKeyboard();
 		return;
 
-	}  // end if
+	}
 
 	DEBUG_LOG(( "OK - Keyboard initialized successfully." ));
 
-}  // end openKeyboard
+}
 
 //-------------------------------------------------------------------------------------------------
 /** close the direct input keyboard */
@@ -225,7 +225,7 @@ void DirectInputKeyboard::closeKeyboard( void )
 		m_pKeyboardDevice = NULL;
 		DEBUG_LOG(( "OK - Keyboard deviced closed" ));
 
-	}  // end if
+	}
 	if( m_pDirectInput )
 	{
 
@@ -233,11 +233,11 @@ void DirectInputKeyboard::closeKeyboard( void )
 		m_pDirectInput = NULL;
 		DEBUG_LOG(( "OK - Keyboard direct input interface closed" ));
 
-	}  // end if
+	}
 
 	DEBUG_LOG(( "OK - Keyboard shutdown complete" ));
 
-}  // end closeKeyboard
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Get a single keyboard event from direct input */
@@ -296,9 +296,9 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 
 						break;
 
-					}  // end, got the keyboard back OK
+					}
 
-				}  // end switch
+				}
 
 				return;
 
@@ -306,7 +306,7 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 			default:
 				return;
 
-		}  // end switch( hr )
+		}
 
 		// no keys returned
 		if( num == 0 )
@@ -328,9 +328,9 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 		// set status as unused (unprocessed)
 		key->status = KeyboardIO::STATUS_UNUSED;
 
-	}  // end if, we have a DI keyboard device
+	}
 
-}  // end getKey
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -354,7 +354,7 @@ DirectInputKeyboard::DirectInputKeyboard( void )
 		m_modifiers &= ~KEY_STATE_CAPSLOCK;
 	}
 
-}  // end DirectInputKeyboard
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -364,7 +364,7 @@ DirectInputKeyboard::~DirectInputKeyboard( void )
 	// close keyboard and release all resource
 	closeKeyboard();
 
-}  // end ~DirectInputKeyboard
+}
 
 //-------------------------------------------------------------------------------------------------
 /** initialize the keyboard */
@@ -378,7 +378,7 @@ void DirectInputKeyboard::init( void )
 	// open the direct input keyboard
 	openKeyboard();
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset keyboard system */
@@ -389,7 +389,7 @@ void DirectInputKeyboard::reset( void )
 	// extend functionality
 	Keyboard::reset();
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** called once per frame to update the keyboard state */
@@ -409,10 +409,10 @@ void DirectInputKeyboard::update( void )
 		m_pKeyboardDevice->GetDeviceData( sizeof( DIDEVICEOBJECTDATA ),
 																			NULL, &items, 0 );
 
-	}  // end if
+	}
 */
 
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return TRUE if the caps lock key is down/hilighted */
@@ -422,4 +422,4 @@ Bool DirectInputKeyboard::getCapsState( void )
 
 	return BitIsSet( GetKeyState( VK_CAPITAL ), 0X01);
 
-}  // end getCapsState
+}

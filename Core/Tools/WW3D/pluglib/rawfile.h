@@ -37,12 +37,8 @@
  *   RawFileClass::~RawFileClass -- Default deconstructor for a file object.                   *
  *   RawFileClass::Is_Open -- Checks to see if the file is open or not.                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef RAWFILE_Hx
-#define RAWFILE_Hx
+#pragma once
 
 //#include	<errno.h>
 
@@ -199,7 +195,3 @@ inline char const * RawFileClass::File_Name(void) const
 {
 	return(Filename);
 }
-
-
-
-#endif

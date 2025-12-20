@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _DATA_CHUNK_H_
-#define _DATA_CHUNK_H_
-
 #include "Common/GameMemory.h"
 #include "Common/Dict.h"
 #include "Common/MapReaderWriterInfo.h"
@@ -232,7 +229,3 @@ public:
 
 	NameKeyType readNameKey(void);
 };
-
-
-
-#endif // _DATA_CHUNK_H_

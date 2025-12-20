@@ -19,12 +19,7 @@
 // BabylonDlg.h : header file
 //
 
-#if !defined(AFX_BABYLONDLG_H__2BF3124D_3BA1_11D3_B9DA_006097B90D93__INCLUDED_)
-#define AFX_BABYLONDLG_H__2BF3124D_3BA1_11D3_B9DA_006097B90D93__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "resource.h"
 #include "TransDB.h"
@@ -152,5 +147,3 @@ extern CBabylonDlg *MainDLG;
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_BABYLONDLG_H__2BF3124D_3BA1_11D3_B9DA_006097B90D93__INCLUDED_)

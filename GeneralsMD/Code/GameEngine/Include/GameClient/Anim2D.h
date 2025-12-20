@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __ANIM_2D_H_
-#define __ANIM_2D_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Snapshot.h"
 
@@ -52,11 +49,11 @@ enum Anim2DMode CPP_11(: Int)
 	ANIM_2D_PING_PONG_BACKWARDS,
 	// dont' forget to add new animation mode names to Anim2DModeNames[] below
 
-	ANIM_2D_NUM_MODES						// keep this last please
+	ANIM_2D_NUM_MODES
 
 };
 #ifdef DEFINE_ANIM_2D_MODE_NAMES
-static const char *Anim2DModeNames[] =
+static const char *const Anim2DModeNames[] =
 {
 	"NONE",
 	"ONCE",
@@ -67,6 +64,7 @@ static const char *Anim2DModeNames[] =
 	"PING_PONG_BACKWARDS",
 	NULL
 };
+static_assert(ARRAY_SIZE(Anim2DModeNames) == ANIM_2D_NUM_MODES + 1, "Incorrect array size");
 #endif
 
 // ------------------------------------------------------------------------------------------------
@@ -221,5 +219,3 @@ protected:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern Anim2DCollection *TheAnim2DCollection;
-
-#endif  // end __ANIM_2D_H_

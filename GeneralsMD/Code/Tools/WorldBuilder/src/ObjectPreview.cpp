@@ -47,7 +47,7 @@
 
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "WW3D2/dx8wrapper.h"
-#include "WWLib/TARGA.H"
+#include "WWLib/TARGA.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // ObjectPreview

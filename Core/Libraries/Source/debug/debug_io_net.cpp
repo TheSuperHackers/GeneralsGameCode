@@ -26,7 +26,10 @@
 //
 // Debug I/O class net (Network destination via named pipe)
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+#include "debug.h"
+#include "internal.h"
+#include "internal_io.h"
+#include <windows.h>
 #include <new>      // needed for placement new prototype
 
 DebugIONet::DebugIONet(void)
@@ -83,13 +86,13 @@ void DebugIONet::EmergencyFlush(void)
 void DebugIONet::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
                          unsigned argn, const char * const * argv)
 {
-  if (!cmd||!strcmp(cmd,"help"))
+  if (!cmd||strcmp(cmd,"help") == 0)
   {
     dbg << "net I/O help:\n"
            "  add [ <machine> ]\n"
            "    create net I/O (optionally specifying the machine to connect to)\n";
   }
-  else if (!strcmp(cmd,"add"))
+  else if (strcmp(cmd,"add") == 0)
   {
     const char *machine=argn?argv[0]:".";
 

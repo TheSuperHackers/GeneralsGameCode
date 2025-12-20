@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __FIRE_SPREAD_UPDATE_H_
-#define __FIRE_SPREAD_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -76,6 +73,3 @@ protected:
 	UnsignedInt calcNextSpreadDelay();
 
 };
-
-#endif
-

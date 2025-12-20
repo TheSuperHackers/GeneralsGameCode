@@ -47,7 +47,7 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AudioEventRTS.h"
 #include "Common/Language.h"
@@ -108,7 +108,7 @@ static void doAudioFeedback(GameWindow *window)
 		if( TheAudio )
 		{
 			TheAudio->addAudioEvent( &buttonClick );
-		}  // end if
+		}
 	}
 }
 
@@ -278,7 +278,7 @@ static void adjustDisplay( GameWindow *window, Int adjustment,
 																					0 );
 	}
 
-}  // end adjustDisplay
+}
 
 // computeTotalHeight =========================================================
 /** Compute Total Height and fill in listHeight values */
@@ -311,8 +311,8 @@ static void computeTotalHeight( GameWindow *window )
 					DisplayString *displayString = (DisplayString *)list->listData[i].cell[j].data;
 					if(displayString)
 						displayString->getSize( NULL, &cellHeight );
-				}//else
-			}//if
+				}
+			}
 			else if(list->listData[i].cell[j].cellType == LISTBOX_IMAGE)
 			{
 				if(list->listData[i].cell[j].height > 0)
@@ -322,7 +322,7 @@ static void computeTotalHeight( GameWindow *window )
 			}
 			if(cellHeight > tempHeight)
 				tempHeight = cellHeight;
-		}//for
+		}
 		list->listData[i].height = tempHeight;
 		height += (list->listData[i].height + 1);
 		list->listData[i].listHeight = height;
@@ -383,7 +383,7 @@ static Int addImageEntry( const Image *image, Color color, Int row, Int column, 
 
 	return (row);
 
-}// static Int addImageEntry( Image image, Int column, GameWindow *window)
+}
 
 // startingRow will get moved to startingRow+1, etc.  This assumes there is space!!!!!
 static Int moveRowsDown(ListboxData *list, Int startingRow)
@@ -529,7 +529,7 @@ static Int addEntry( UnicodeString *string, Int color, Int row, Int column, Game
 	}
 
 	return (row);
-}  // end addEntry
+}
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 
@@ -573,11 +573,11 @@ WindowMsgHandledType GadgetListBoxInput( GameWindow *window, UnsignedInt msg,
 																								GLM_DOUBLE_CLICKED,
 																								(WindowMsgData)window,
 																								list->selectPos );
-					}  // end if
+					}
 
 					break;
 
-				}  // end enter or space
+				}
 
 				// --------------------------------------------------------------------
 				case KEY_DOWN:
@@ -624,11 +624,11 @@ WindowMsgHandledType GadgetListBoxInput( GameWindow *window, UnsignedInt msg,
 																								GLM_SELECTED,
 																								(WindowMsgData)window,
 																								list->selectPos );
-					}  // end if
+					}
 
 					break;
 
-				}  // end key down
+				}
 
 				// --------------------------------------------------------------------
 				case KEY_UP:
@@ -675,7 +675,7 @@ WindowMsgHandledType GadgetListBoxInput( GameWindow *window, UnsignedInt msg,
 
 					break;
 
-				}  // end key up
+				}
 
 				// --------------------------------------------------------------------
 				case KEY_RIGHT:
@@ -727,7 +727,7 @@ WindowMsgHandledType GadgetListBoxInput( GameWindow *window, UnsignedInt msg,
 									continue;
 								for(j = 0; j < TheKeyboard->MAX_KEY_STATES; ++j)
 								{
-									if(dString->getText().getCharAt(0) == TheKeyboard->getPrintableKey(mData1, j))
+									if(dString->getText().getCharAt(0) == TheKeyboard->getPrintableKey((KeyDefType)mData1, j))
 									{
 										list->selectPos = position;
 										Int prevPos = getListboxTopEntry(list);
@@ -752,11 +752,11 @@ WindowMsgHandledType GadgetListBoxInput( GameWindow *window, UnsignedInt msg,
 							return MSG_IGNORED;
 					}
 
-			}  // end switch( mData1 )
+			}
 
 			break;
 
-		}  // end case char
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_WHEEL_DOWN:
@@ -769,7 +769,7 @@ WindowMsgHandledType GadgetListBoxInput( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end wheel down
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_WHEEL_UP:
@@ -780,7 +780,7 @@ WindowMsgHandledType GadgetListBoxInput( GameWindow *window, UnsignedInt msg,
 			adjustDisplay( window, -1, TRUE );
 			break;
 
-		}  // end wheel up
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_LEFT_UP:
@@ -858,7 +858,7 @@ WindowMsgHandledType GadgetListBoxInput( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end left click, left up
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_RIGHT_DOWN:
@@ -913,7 +913,7 @@ WindowMsgHandledType GadgetListBoxInput( GameWindow *window, UnsignedInt msg,
 																					(WindowMsgData)&rc );
 			break;
 
-		}  // end right up, right click
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_MOUSE_ENTERING:
@@ -929,11 +929,11 @@ WindowMsgHandledType GadgetListBoxInput( GameWindow *window, UnsignedInt msg,
 																						0 );
 				//TheWindowManager->winSetFocus( window );
 
-			}  // end if
+			}
 
 			break;
 
-		}  //  end mouse entering
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_MOUSE_LEAVING:
@@ -947,11 +947,11 @@ WindowMsgHandledType GadgetListBoxInput( GameWindow *window, UnsignedInt msg,
 																						GBM_MOUSE_LEAVING,
 																						(WindowMsgData)window,
 																						0 );
-			}  // end if
+			}
 
 			break;
 
-		}  // end mouse leaving
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_LEFT_DRAG:
@@ -973,11 +973,11 @@ WindowMsgHandledType GadgetListBoxInput( GameWindow *window, UnsignedInt msg,
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch msg
+	}
 
 	return MSG_HANDLED;
 
-}  // end GadgetListBoxInput
+}
 
 // GadgetListBoxMultiInput ====================================================
 /** Handle input for multiple selection list box */
@@ -1009,7 +1009,7 @@ WindowMsgHandledType GadgetListBoxMultiInput( GameWindow *window, UnsignedInt ms
 			}
 			break;
 
-		}  // end char
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_LEFT_UP:
@@ -1078,7 +1078,7 @@ WindowMsgHandledType GadgetListBoxMultiInput( GameWindow *window, UnsignedInt ms
 																					selectPos );
 			break;
 
-		}  // end left up, left click
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_RIGHT_UP:
@@ -1169,7 +1169,7 @@ WindowMsgHandledType GadgetListBoxMultiInput( GameWindow *window, UnsignedInt ms
 																					(WindowMsgData)&rc );
 			break;
 
-		}  // end right up, right click
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_WHEEL_DOWN:
@@ -1207,11 +1207,11 @@ WindowMsgHandledType GadgetListBoxMultiInput( GameWindow *window, UnsignedInt ms
 																						0 );
 				//TheWindowManager->winSetFocus( window );
 
-			}  // end if
+			}
 
 			break;
 
-		}  //  end mouse entering
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_MOUSE_LEAVING:
@@ -1225,11 +1225,11 @@ WindowMsgHandledType GadgetListBoxMultiInput( GameWindow *window, UnsignedInt ms
 																						GBM_MOUSE_LEAVING,
 																						(WindowMsgData)window,
 																						0 );
-			}  // end if
+			}
 
 			break;
 
-		}  // end mouse leaving
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_LEFT_DRAG:
@@ -1251,11 +1251,11 @@ WindowMsgHandledType GadgetListBoxMultiInput( GameWindow *window, UnsignedInt ms
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end GadgetListBoxMultiInput
+}
 
 // GadgetListBoxSystem ========================================================
 /** Handle system messages for list box */
@@ -1275,7 +1275,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 			instData->setText(*(UnicodeString*)mData1);
 			break;
 
-		}  // end set lavel
+		}
 
 		// ------------------------------------------------------------------------
 		case GLM_GET_TEXT:
@@ -1315,7 +1315,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end selected
+		}
 
 		// ------------------------------------------------------------------------
 		case GGM_LEFT_DRAG:
@@ -1334,7 +1334,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end left drag
+		}
 
 		// ------------------------------------------------------------------------
 		case GLM_DEL_ALL:
@@ -1388,7 +1388,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 			adjustDisplay( window, 0, TRUE );
 			break;
 
-		}  // end delete all
+		}
 
 		// ------------------------------------------------------------------------
 		case GLM_DEL_ENTRY:
@@ -1445,7 +1445,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 			computeTotalHeight( window );
 			break;
 
-		}  // end delete entry
+		}
 
 		// ------------------------------------------------------------------------
 		case GLM_ADD_ENTRY:
@@ -1535,20 +1535,20 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 
 						i++;
 
-					}  // end while
+					}
 
-				}  // end if
+				}
 				else
 				{
 					if( row == list->selectPos )
 						list->selectPos = -1;
 				}
 
-			}  // end success
+			}
 
 			return((WindowMsgHandledType) addedIndex );
 
-		}  // end add entry
+		}
 
 		// ------------------------------------------------------------------------
 		case GLM_TOGGLE_MULTI_SELECTION:
@@ -1601,7 +1601,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end toggle multi-select
+		}
 
 		// ------------------------------------------------------------------------
 		case GLM_SET_SELECTION:
@@ -1685,9 +1685,9 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 
 					adjustDisplay( window, 0, TRUE );
 
-				}  // end else if
+				}
 
-			}  // end else
+			}
 
 			TheWindowManager->winSendSystemMsg( window->winGetOwner(),
 																					GLM_SELECTED,
@@ -1695,7 +1695,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 																					list->selectPos );
 			break;
 
-		}  // end set selection
+		}
 
 		// ------------------------------------------------------------------------
 		case GLM_SCROLL_BUFFER:
@@ -1724,8 +1724,8 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 					{
 						if( cells[j].cellType == LISTBOX_TEXT && cells[j].data )
 							TheDisplayStringManager->freeDisplayString((DisplayString *) cells[j].data );
-//						if (cells[i].userData)
-//							free(cells[i].userData);
+
+//						free(cells[i].userData);
 						cells[j].data = NULL;
 						cells[j].userData = NULL;
 						cells[j].color = 0;
@@ -1785,7 +1785,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end scroll buffer
+		}
 
 		// ------------------------------------------------------------------------
 		case GLM_GET_SELECTION:
@@ -1798,7 +1798,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end get selection
+		}
 
 		// ------------------------------------------------------------------------
 		case GLM_SET_UP_BUTTON:
@@ -1886,8 +1886,8 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 					list->slider->winGetSize( &sliderSize.x, &sliderSize.y );
 					list->columnWidth[0] -= sliderSize.x;
 
-				}  // end if
-			}// if
+				}
+			}
 			else
 			{
 				if( !list->columnWidthPercentage )
@@ -1903,17 +1903,17 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 					list->slider->winGetSize( &sliderSize.x, &sliderSize.y );
 					totalWidth -= sliderSize.x;
 
-				}  // end if
+				}
 				for(Int i = 0; i < list->columns; i++ )
 				{
 					list->columnWidth[i] = list->columnWidthPercentage[i] * totalWidth / 100;
-				}// for
-			}// else
+				}
+			}
 				//reset the total height
 				computeTotalHeight(window);
 			break;
 
-		}  // end resized
+		}
 
 		// ------------------------------------------------------------------------
 		case GLM_UPDATE_DISPLAY:
@@ -1933,7 +1933,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 			adjustDisplay( window, 0, TRUE );
 			break;
 
-		}  // end update display
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
@@ -1957,8 +1957,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 							TheDisplayStringManager->freeDisplayString((DisplayString *) cells[j].data );
 						}
 					}
-//					if ( cells[j].userData )
-//						free(cells[j].userData);
+//					free(cells[j].userData);
 
 					// Null out the data pointers so they're not destroyed when we free up this listdata
 					cells[j].userData = NULL;
@@ -1969,10 +1968,8 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 			}
 
 			delete[]( list->listData );
-			if( list->columnWidth	)
-				delete[]( list->columnWidth );
-			if( list->columnWidthPercentage	)
-				delete[]( list->columnWidthPercentage );
+			delete[]( list->columnWidth );
+			delete[]( list->columnWidthPercentage );
 			if( list->multiSelect )
 				delete[]( list->selections );
 
@@ -1982,7 +1979,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end destroy
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
@@ -2006,7 +2003,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 			*(Bool*)mData2 = TRUE;
 			break;
 
-		}  // end input focus
+		}
 		// ------------------------------------------------------------------------
 		case GSM_SLIDER_TRACK:
 		{
@@ -2022,7 +2019,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 			adjustDisplay( window, 0, FALSE );
 			break;
 
-		}  // end slider track
+		}
 		// ------------------------------------------------------------------------
 		case GLM_SET_ITEM_DATA:
 		{
@@ -2033,7 +2030,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 				list->listData[pos->y].cell[pos->x].userData = data;
 
 			break;
-		}//case GLM_SET_ITEM_DATA:
+		}
 		// ------------------------------------------------------------------------
 		case GLM_GET_ITEM_DATA:
 		{
@@ -2045,17 +2042,17 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 				*data = list->listData[pos->y].cell[pos->x].userData;
 
 			break;
-		}//case GLM_GET_ITEM_DATA:
+		}
 
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end GadgetListBoxSystem
+}
 
 // GadgetListBoxSetColors =====================================================
 /** Set the colors for a list box, note that this will also automatically
@@ -2157,9 +2154,9 @@ void GadgetListBoxSetColors( GameWindow *listbox,
 		GadgetButtonSetHiliteSelectedColor( downButton, GadgetSliderGetHiliteSelectedThumbColor( slider ) );
 		GadgetButtonSetHiliteSelectedBorderColor( downButton, GadgetSliderGetHiliteSelectedThumbBorderColor( slider ) );
 
-	}  // end if
+	}
 
-}  // end GadgetListBoxSetColors
+}
 
 // GadgetListBoxGetText =======================================================
 /** Get the text for a list box entry */
@@ -2168,7 +2165,7 @@ UnicodeString GadgetListBoxGetText( GameWindow *listbox, Int row, Int column)
 {
 	Color color;
 	return GadgetListBoxGetTextAndColor( listbox,&color,row,column );
-}  // end GadgetListBoxGetText
+}
 
 // GadgetListBoxGetText =======================================================
 /** Get the text for a list box entry */
@@ -2196,7 +2193,7 @@ UnicodeString GadgetListBoxGetTextAndColor( GameWindow *listbox, Color *color, I
 
 	//return UnicodeString::TheEmptyString;
 
-}  // end GadgetListBoxGetText
+}
 
 // GadgetListBoxAddEntryText ==================================================
 /** Add a new string entry into the listbox at the insert position */
@@ -2208,7 +2205,7 @@ Int GadgetListBoxAddEntryText( GameWindow *listbox,
 	if (!listbox)
 		return -1;
 	if (text.isEmpty())
-		text = UnicodeString(L" ");
+		text = L" ";
 	Int index;
 	AddMessageStruct addInfo;
 	addInfo.row = row;
@@ -2237,7 +2234,7 @@ Int GadgetListBoxAddEntryText( GameWindow *listbox,
 	}
 
 	return (index);
-}  // end GadgetListBoxAddEntry
+}
 
 // GadgetListBoxAddEntryImage =================================================
 /** Add a new string entry into the listbox at the insert position */
@@ -2259,7 +2256,7 @@ Int GadgetListBoxAddEntryImage( GameWindow *listbox, const Image *image,
 	/// @TODO: Don't do this type cast!
 	index = (Int) TheWindowManager->winSendSystemMsg( listbox, GLM_ADD_ENTRY, (WindowMsgData)&addInfo, color );
 	return (index);
-}  // end GadgetListBoxAddEntryImage
+}
 
 Int GadgetListBoxAddEntryImage( GameWindow *listbox, const Image *image,
 															 Int row, Int column,
@@ -2299,9 +2296,9 @@ void GadgetListBoxSetFont( GameWindow *g, GameFont *font )
 						dString->setFont( font );
 					}
 				}
-		}  // end for i
+		}
 
-}  // end GadgetListBoxSetFont
+}
 
 // GadgetListboxCreateScrollbar ===============================================
 /** Create the scroll bar using a slider and two buttons for a listbox */
@@ -2412,7 +2409,7 @@ void GadgetListboxCreateScrollbar( GameWindow *listbox )
 	// we now have all the scrollbar parts, this better be set :)
 	listData->scrollBar = TRUE;
 
-}  // end GadgetListBoxCreateScrollbar
+}
 
 // GadgetListBoxAddMultiSelect ================================================
 /** Enable multi selections for a listbox
@@ -2440,7 +2437,7 @@ void GadgetListBoxAddMultiSelect( GameWindow *listbox )
 		listboxData->listData = NULL;
 		return;
 
-	}  // end if
+	}
 
 	memset( listboxData->selections, -1,
 		      listboxData->listLength * sizeof(Int) );
@@ -2451,7 +2448,7 @@ void GadgetListBoxAddMultiSelect( GameWindow *listbox )
 	// adjust the input procedure for the listbox
 	listbox->winSetInputFunc( GadgetListBoxMultiInput );
 
-}  // end GadgetListBoxEnableMultiSelect
+}
 
 // GadgetListBoxRemoveMultiSelect =============================================
 /** Remove multi select capability from a listbox */
@@ -2460,20 +2457,15 @@ void GadgetListBoxRemoveMultiSelect( GameWindow *listbox )
 {
 	ListboxData *listData = (ListboxData *)listbox->winGetUserData();
 
-	if( listData->selections )
-	{
-
-		delete[]( listData->selections );
-		listData->selections = NULL;
-
-	}  // end if
+	delete[]( listData->selections );
+	listData->selections = NULL;
 
 	listData->multiSelect = FALSE;
 
 	// adjust the input procedure for the listbox
 	listbox->winSetInputFunc( GadgetListBoxInput );
 
-}  // end GadgetListBoxRemoveMultiSelect
+}
 
 // GadgetListBoxSetListLength =================================================
 /** Set OR reset the list length data contained in the listboxData
@@ -2546,8 +2538,7 @@ void GadgetListBoxSetListLength( GameWindow *listbox, Int newLength )
 						TheDisplayStringManager->freeDisplayString((DisplayString *) cells[j].data );
 					}
 				}
-//			if ( cells[j].userData )
-//					free(cells[j].userData);
+//				free(cells[j].userData);
 			}
 		}
 		if (i >= newLength) {
@@ -2558,8 +2549,7 @@ void GadgetListBoxSetListLength( GameWindow *listbox, Int newLength )
 
 	listboxData->listLength = newLength;
 
-	if( listboxData->listData )
-		delete[]( listboxData->listData );
+	delete[]( listboxData->listData );
 	listboxData->listData = newData;
 
 	//reset the total height
@@ -2573,7 +2563,7 @@ void GadgetListBoxSetListLength( GameWindow *listbox, Int newLength )
 		assert( 0 );
 		return;
 
-	}  // end if
+	}
 
 	// adjust the selection array for multi select listboxes
 	if( listboxData->multiSelect )
@@ -2582,26 +2572,29 @@ void GadgetListBoxSetListLength( GameWindow *listbox, Int newLength )
 		GadgetListBoxRemoveMultiSelect( listbox );
 		GadgetListBoxAddMultiSelect( listbox );
 
-	}  // end if
+	}
 
-}  // end GadgetListBoxSetListLength
+}
 
-// GadgetListBoxGetListLength =================================================
-/** Get the list length data contained in the listboxData
-	* parameter. */
 //=============================================================================
 Int GadgetListBoxGetListLength( GameWindow *listbox )
 {
 	ListboxData *listboxData = (ListboxData *)listbox->winGetUserData();
-	if (listboxData->multiSelect)
-	{
+	if (listboxData)
 		return listboxData->listLength;
-	}
-	else
-	{
-		return 1;
-	}
-}  // end GadgetListBoxGetListLength
+
+	return 0;
+}
+
+//=============================================================================
+Int GadgetListBoxGetMaxSelectedLength( GameWindow *listbox )
+{
+	ListboxData *listboxData = (ListboxData *)listbox->winGetUserData();
+	if (listboxData)
+		return listboxData->multiSelect ? listboxData->listLength : 1;
+
+	return 0;
+}
 
 // GadgetListBoxGetNumEntries =================================================
 /** Get the list length data contained in the listboxData
@@ -2617,7 +2610,7 @@ Int GadgetListBoxGetNumEntries( GameWindow *listbox )
 		return listboxData->endPos;
 
 	return 0;
-}  // end GadgetListBoxGetNumEntries
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Get the selected item(s) of a listbox.  For a single select listbox the parameter
@@ -2636,7 +2629,7 @@ void GadgetListBoxGetSelected( GameWindow *listbox, Int *selectList )
 	// get selected indeces via system message
 	TheWindowManager->winSendSystemMsg( listbox, GLM_GET_SELECTION, 0, (WindowMsgData)selectList );
 
-}  // end GadgetListBoxGetSelected
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Set the selected item of a listbox.  The parameter is a single integer.  If
@@ -2652,7 +2645,7 @@ void GadgetListBoxSetSelected( GameWindow *listbox, Int selectIndex )
 	// set selected index via system message
 	TheWindowManager->winSendSystemMsg( listbox, GLM_SET_SELECTION, (WindowMsgData)(&selectIndex), 1 );
 
-}  // end GadgetListBoxSetSelected
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Set the selected item of a listbox. */
@@ -2679,7 +2672,7 @@ void GadgetListBoxReset( GameWindow *listbox )
 	// reset via system message
 	TheWindowManager->winSendSystemMsg( listbox, GLM_DEL_ALL, 0, 0 );
 
-}  // end GadgetListBoxReset
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -2692,7 +2685,7 @@ void GadgetListBoxSetItemData( GameWindow *listbox, void *data, Int row, Int col
 	if (listbox)
 		TheWindowManager->winSendSystemMsg( listbox, GLM_SET_ITEM_DATA, (WindowMsgData)&pos, (WindowMsgData)data);
 
-}// void GadgetListBoxSetItemData( Int index, void *data )
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -2757,7 +2750,7 @@ void GadgetListBoxSetBottomVisibleEntry( GameWindow *window, Int newPos )
 	int prevPos = GadgetListBoxGetBottomVisibleEntry( window );
 
 	adjustDisplay(window, newPos - prevPos + 1, true);
-} // void GadgetListBoxSetTopVisibleEntry( GameWindow *window, Int newPos )
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -2771,7 +2764,7 @@ Int GadgetListBoxGetTopVisibleEntry( GameWindow *window )
 		return 0;
 
 	return getListboxTopEntry(listData);
-} // Int GadgetListBoxGetTopVisibleEntry( GameWindow *window )
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -2787,7 +2780,7 @@ void GadgetListBoxSetTopVisibleEntry( GameWindow *window, Int newPos )
 	int prevPos = GadgetListBoxGetTopVisibleEntry( window );
 
 	adjustDisplay(window, newPos - prevPos, true);
-} // void GadgetListBoxSetTopVisibleEntry( GameWindow *window, Int newPos )
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -2800,7 +2793,7 @@ void GadgetListBoxSetAudioFeedback( GameWindow *listbox, Bool enable )
 		return;
 
 	listboxData->audioFeedback = enable;
-}  // end GadgetListBoxSetAudioFeedback
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -2813,7 +2806,7 @@ Int GadgetListBoxGetNumColumns( GameWindow *listbox )
 		return 0;
 
 	return listboxData->columns;
-}  // end GadgetListBoxGetNumColumns
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -2828,5 +2821,5 @@ Int GadgetListBoxGetColumnWidth( GameWindow *listbox, Int column )
 		return 0;
 
 	return listboxData->columnWidth[column];
-}  // end GadgetListBoxGetNumColumns
+}
 

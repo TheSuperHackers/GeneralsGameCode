@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __TUNNEL_CONTAIN_H_
-#define __TUNNEL_CONTAIN_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/OpenContain.h"
 #include "GameLogic/Module/HealContain.h"
@@ -117,6 +114,7 @@ public:
 	virtual UnsignedInt getContainCount() const;
 	virtual Int getContainMax( void ) const;
 	virtual const ContainedItemsList* getContainedItemsList() const;
+	virtual UnsignedInt getFullTimeForHeal(void) const; ///< Returns the time in frames until a contained object becomes fully healed
 	virtual Bool isDisplayedOnControlBar() const { return TRUE; } ///< Does this container display its contents on the ControlBar?
 	virtual Bool isKickOutOnCapture(){ return FALSE; }///< Caves and Tunnels don't kick out on capture.
 
@@ -139,5 +137,3 @@ protected:
 	Bool m_isCurrentlyRegistered; ///< Keeps track if this is registered with the player, so we don't double remove and mess up
 
 };
-
-#endif  // end __TUNNEL_CONTAIN_H_

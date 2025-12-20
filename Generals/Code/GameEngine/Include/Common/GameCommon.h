@@ -47,9 +47,6 @@
 
 #pragma once
 
-#ifndef _GAMECOMMON_H_
-#define _GAMECOMMON_H_
-
 // ----------------------------------------------------------------------------------------------
 #include "Lib/BaseType.h"
 #include "WWCommon.h"
@@ -65,7 +62,8 @@
 // ----------------------------------------------------------------------------------------------
 enum
 {
-	LOGICFRAMES_PER_SECOND = 30,
+	BaseFps = 30, // The historic base frame rate for this game. This value must never change.
+	LOGICFRAMES_PER_SECOND = WWSyncPerSecond,
 	MSEC_PER_SECOND = 1000
 };
 const Real LOGICFRAMES_PER_MSEC_REAL = (((Real)LOGICFRAMES_PER_SECOND) / ((Real)MSEC_PER_SECOND));
@@ -147,8 +145,6 @@ enum CellShroudStatus CPP_11(: Int)
 	CELLSHROUD_CLEAR,
 	CELLSHROUD_FOGGED,
 	CELLSHROUD_SHROUDED,
-
-	CELLSHROUD_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -161,8 +157,6 @@ enum ObjectShroudStatus CPP_11(: Int)
 	OBJECTSHROUD_FOGGED,				///< object is completely fogged
 	OBJECTSHROUD_SHROUDED,			///< object is completely shrouded
 	OBJECTSHROUD_INVALID_BUT_PREVIOUS_VALID,			///< indeterminate state, will recompute, BUT previous status is valid, don't reset (used for save/load)
-
-	OBJECTSHROUD_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -189,7 +183,7 @@ enum
 // NOTE NOTE NOTE: Keep TheVeterencyNames in sync with these.
 enum VeterancyLevel CPP_11(: Int)
 {
-	LEVEL_REGULAR = 0,
+	LEVEL_REGULAR,
 	LEVEL_VETERAN,
 	LEVEL_ELITE,
 	LEVEL_HEROIC,
@@ -197,12 +191,12 @@ enum VeterancyLevel CPP_11(: Int)
 	LEVEL_COUNT,
 	LEVEL_INVALID,
 
-	LEVEL_FIRST = LEVEL_REGULAR,
+	LEVEL_FIRST = 0,
 	LEVEL_LAST = LEVEL_HEROIC
 };
 
 // TheVeterancyNames is defined in GameCommon.cpp
-extern const char *TheVeterancyNames[];
+extern const char *const TheVeterancyNames[];
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -214,7 +208,8 @@ enum CommandSourceType CPP_11(: Int)
 	CMD_FROM_AI,
 	CMD_FROM_DOZER,							// Special rare command when the dozer originates a command to attack a mine. Mines are not ai-attackable, and it seems deceitful for the dozer to generate a player or script command. jba.
 
-};		///< the source of a command
+	COMMAND_SOURCE_TYPE_COUNT
+};
 
 //-------------------------------------------------------------------------------------------------
 enum AbleToAttackType CPP_11(: Int)
@@ -467,6 +462,7 @@ enum WhichTurretType CPP_11(: Int)
 
 // ------------------------------------------------------------------------
 // this normalizes an angle to the range -PI...PI.
+// TheSuperHackers @todo DO NOT USE THIS FUNCTION! Use WWMath::Normalize_Angle instead. Delete this.
 extern Real normalizeAngle(Real angle);
 
 // ------------------------------------------------------------------------
@@ -480,14 +476,13 @@ inline Real stdAngleDiff(Real a1, Real a2)
 // NOTE NOTE NOTE: Keep TheRelationShipNames in sync with this enum
 enum Relationship CPP_11(: Int)
 {
-	ENEMIES = 0,
+	ENEMIES,
 	NEUTRAL,
-	ALLIES
+	ALLIES,
+
+	RELATIONSHIP_COUNT
 };
 
 
 // TheRelationShipNames is defined in Common/GameCommon.cpp
-extern const char *TheRelationshipNames[];
-
-#endif // _GAMECOMMON_H_
-
+extern const char *const TheRelationshipNames[];

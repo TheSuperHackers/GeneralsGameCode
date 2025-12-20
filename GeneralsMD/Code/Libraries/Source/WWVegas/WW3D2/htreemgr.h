@@ -35,13 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef HTREEMGR_H
-#define HTREEMGR_H
 
 #include "always.h"
 #include "bittype.h"
@@ -93,6 +87,3 @@ private:
 	HashTemplateClass<StringClass,HTreeClass*> TreeHash;
 
 };
-
-
-#endif

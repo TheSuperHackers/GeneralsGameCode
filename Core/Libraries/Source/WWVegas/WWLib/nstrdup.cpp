@@ -37,7 +37,6 @@
 
 
 #include "always.h"
-#include "string.h"
 #include "nstrdup.h"
 //#include "../app/main/gnew.h"
 

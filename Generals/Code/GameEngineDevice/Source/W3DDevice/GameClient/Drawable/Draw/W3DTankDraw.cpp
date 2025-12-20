@@ -310,12 +310,15 @@ void W3DTankDraw::onRenderObjRecreated(void)
 //-------------------------------------------------------------------------------------------------
 void W3DTankDraw::doDrawModule(const Matrix3D* transformMtx)
 {
+	W3DModelDraw::doDrawModule(transformMtx);
+
+	// TheSuperHackers @tweak Update the draw on every WW Sync only.
+	// All calculations are originally catered to a 30 fps logic step.
+	if (WW3D::Get_Sync_Frame_Time() == 0)
+		return;
+
 	const Real DEBRIS_THRESHOLD = 0.00001f;
 
- 	Bool frozen = TheTacticalView->isTimeFrozen() && !TheTacticalView->isCameraMovementFinished();
- 	frozen = frozen || TheScriptEngine->isTimeFrozenDebug() || TheScriptEngine->isTimeFrozenScript();
-	if (frozen)
-		return;
 	if (getRenderObject()==NULL) return;
 	if (getRenderObject() != m_prevRenderObj) {
 		updateTreadObjects();
@@ -404,8 +407,6 @@ void W3DTankDraw::doDrawModule(const Matrix3D* transformMtx)
 			}
 		}
 	}
-
-	W3DModelDraw::doDrawModule(transformMtx);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -417,7 +418,7 @@ void W3DTankDraw::crc( Xfer *xfer )
 	// extend base class
 	W3DModelDraw::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -437,7 +438,7 @@ void W3DTankDraw::xfer( Xfer *xfer )
 
 	// John A and Mark W say there is no data to save here
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -452,4 +453,4 @@ void W3DTankDraw::loadPostProcess( void )
 	tossEmitters();
 	createEmitters();
 
-}  // end loadPostProcess
+}

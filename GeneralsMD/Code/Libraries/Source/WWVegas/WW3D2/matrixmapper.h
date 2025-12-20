@@ -37,9 +37,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef MATRIXMAPPER_H
-#define MATRIXMAPPER_H
+#pragma once
 
 #include "always.h"
 #include "bittype.h"
@@ -168,5 +166,3 @@ inline const Matrix4x4 & MatrixMapperClass::Get_Texture_Transform(void) const
 {
 	return ViewToTexture;
 }
-
-#endif

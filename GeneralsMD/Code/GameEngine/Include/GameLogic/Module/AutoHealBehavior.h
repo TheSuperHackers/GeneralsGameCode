@@ -33,9 +33,6 @@
 
 #pragma once
 
-#ifndef __AutoHealBehavior_H_
-#define __AutoHealBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameClient/ParticleSys.h"
 #include "GameLogic/Module/BehaviorModule.h"
@@ -169,7 +166,7 @@ protected:
 		return getAutoHealBehaviorModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
 	}
 
-	inline Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
+	Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
 
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
@@ -189,6 +186,3 @@ private:
 	Bool m_stopped;
 
 };
-
-#endif // __AutoHealBehavior_H_
-

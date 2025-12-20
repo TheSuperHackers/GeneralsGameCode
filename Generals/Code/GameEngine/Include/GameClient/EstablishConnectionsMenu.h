@@ -47,9 +47,9 @@ public:
 protected:
 	EstablishConnectionsMenuStateType m_menuState;
 
-	static const char *m_playerReadyControlNames[MAX_SLOTS];
-	static const char *m_playerNameControlNames[MAX_SLOTS];
-	static const char *m_playerStatusControlNames[MAX_SLOTS];
+	static const char *const m_playerReadyControlNames[MAX_SLOTS];
+	static const char *const m_playerNameControlNames[MAX_SLOTS];
+	static const char *const m_playerStatusControlNames[MAX_SLOTS];
 };
 
 extern EstablishConnectionsMenu *TheEstablishConnectionsMenu;

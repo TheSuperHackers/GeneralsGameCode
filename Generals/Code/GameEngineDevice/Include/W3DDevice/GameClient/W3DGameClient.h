@@ -34,9 +34,6 @@
 
 #pragma once
 
-#ifndef __W3DGAMEINTERFACE_H_
-#define __W3DGAMEINTERFACE_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -74,7 +71,7 @@ public:
 	virtual ~W3DGameClient();
 
 	/// given a type, create a drawable
-	virtual Drawable *friend_createDrawable( const ThingTemplate *thing, DrawableStatus statusBits = DRAWABLE_STATUS_NONE );
+	virtual Drawable *friend_createDrawable( const ThingTemplate *thing, DrawableStatusBits statusBits = DRAWABLE_STATUS_DEFAULT );
 
 	virtual void init( void );		///< initialize resources
 	virtual void update( void );  ///< per frame update
@@ -88,7 +85,7 @@ public:
 
 	//---------------------------------------------------------------------------
 	virtual void setTeamColor( Int red, Int green, Int blue );  ///< @todo superhack for demo, remove!!!
-	virtual void adjustLOD( Int adj ); ///< @todo hack for evaluation, remove.
+	virtual void setTextureLOD( Int level );
 
 protected:
 
@@ -116,7 +113,7 @@ protected:
 
 	virtual void setFrameRate(Real msecsPerFrame) { TheW3DFrameLengthInMsec = msecsPerFrame; }
 
-};  // end class W3DGameClient
+};
 
 inline Keyboard *W3DGameClient::createKeyboard( void ) { return NEW DirectInputKeyboard; }
 inline Mouse *W3DGameClient::createMouse( void )
@@ -126,5 +123,3 @@ inline Mouse *W3DGameClient::createMouse( void )
 	TheWin32Mouse = mouse;   ///< global cheat for the WndProc()
 	return mouse;
 }
-
-#endif  // end __W3DGAMEINTERFACE_H_

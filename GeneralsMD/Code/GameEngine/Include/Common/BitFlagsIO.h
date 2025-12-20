@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __BitFlagsIO_H_
-#define __BitFlagsIO_H_
-
 #include "Common/BitFlags.h"
 #include "Common/INI.h"
 #include "Common/Xfer.h"
@@ -182,9 +179,9 @@ void BitFlags<NUMBITS>::xfer(Xfer* xfer)
 			AsciiString bitNameA = bitName;
 			xfer->xferAsciiString( &bitNameA );
 
-		}  // end for i
+		}
 
-	}  // end if, save
+	}
 	else if( xfer->getXferMode() == XFER_LOAD )
 	{
   	// clear the kind of mask data
@@ -210,24 +207,26 @@ void BitFlags<NUMBITS>::xfer(Xfer* xfer)
 				throw XFER_READ_ERROR;
 			}
 
-		}  // end for, i
+		}
 
-	}  // end else if, load
+	}
 	else if( xfer->getXferMode() == XFER_CRC )
 	{
 
 		// just call the xfer implementation on the data values
+#if RETAIL_COMPATIBLE_CRC
 		xfer->xferUser( this, sizeof( this ) );
+#else
+		xfer->xferUser( this, sizeof( *this ) );
+#endif
 
-	}  // end else if, crc
+	}
 	else
 	{
 
 		DEBUG_CRASH(( "BitFlagsXfer - Unknown xfer mode '%d'", xfer->getXferMode() ));
 		throw XFER_MODE_UNKNOWN;
 
-	}  // end else
+	}
 
-}  // end xfer
-
-#endif
+}

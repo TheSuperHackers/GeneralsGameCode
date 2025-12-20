@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/GameMemory.h"
 #include "Common/GameState.h"
 #include "Common/GlobalData.h"
@@ -379,7 +379,7 @@ void AIPlayer::queueSupplyTruck( void )
 			m_player->setCanBuildUnits(true);
 			const ThingTemplate *tTemplate = TheThingFactory->firstTemplate();
 			while (tTemplate) {
-				Bool isSupplyTruck = tTemplate->isKindOf(KINDOF_HARVESTER);;
+				Bool isSupplyTruck = tTemplate->isKindOf(KINDOF_HARVESTER);
 				if (isSupplyTruck) {
 					Object *factory = findFactory(tTemplate, false);
 					if (factory) {
@@ -494,7 +494,7 @@ Object *AIPlayer::buildStructureNow(const ThingTemplate *bldgPlan, BuildListInfo
 				exitInterface->setRallyPoint(&rallyPoint);
 			}
 		}
-	} // bldg built
+	}
 	return bldg;
 }
 
@@ -683,7 +683,7 @@ Object *AIPlayer::buildStructureWithDozer(const ThingTemplate *bldgPlan, BuildLi
 			bldgName.concat(" - Building started.");
 			TheScriptEngine->AppendDebugMessage(bldgName, false);
 		}
-	} // bldg built
+	}
 	TheTerrainVisual->removeAllBibs();	// isLocationLegalToBuild adds bib feedback, turn it off.  jba.
 	return bldg;
 }
@@ -797,10 +797,11 @@ void AIPlayer::processBaseBuilding( void )
 						m_frameLastBuildingBuilt = TheGameLogic->getFrame();
 						// only build one building per delay loop
 						break;
-					} // bldg built
+					}
 
 #else
 					// force delay between rebuilds
+					Int framesToBuild = bldgPlan->calcTimeToBuild(m_player);
 					if (TheGameLogic->getFrame() - m_frameLastBuildingBuilt < framesToBuild)
 					{
 						m_buildDelay = framesToBuild - (TheGameLogic->getFrame() - m_frameLastBuildingBuilt);
@@ -815,7 +816,7 @@ void AIPlayer::processBaseBuilding( void )
 							m_player->getMoney()->withdraw( cost );
 
 							// inst-construct the building
-							bldg = buildStructureNow(bldgPlan, info, NULL);
+							bldg = buildStructureNow(bldgPlan, info);
 							// store the object with the build order
 							if (bldg)
 							{
@@ -832,12 +833,12 @@ void AIPlayer::processBaseBuilding( void )
 								m_frameLastBuildingBuilt = TheGameLogic->getFrame();
 								// only build one building per delay loop
 								break;
-							} // bldg built
-						} // have money
-					} // rebuild delay ok
+							}
+						}
+					}
 #endif
-				} // building missing
-			} // is buildable
+				}
+			}
 		}
 	}
 }
@@ -1031,7 +1032,7 @@ Bool AIPlayer::isLocationSafe(const Coord3D *pos, const ThingTemplate *tthing )
 	}
 	return true;
 
-}  // isSupplySourceSafe
+}
 
 
 // ------------------------------------------------------------------------------------------------
@@ -1283,7 +1284,7 @@ Bool AIPlayer::startTraining( WorkOrder *order, Bool busyOK, AsciiString teamNam
 			}
 			return true;
 		}
-	}  // end if
+	}
 
 	return FALSE;
 
@@ -1322,9 +1323,9 @@ Object *AIPlayer::findFactory(const ThingTemplate *thing, Bool busyOK)
 			Bool busy = pu->getProductionCount()>0;
 			if (!busy) return factory; // found a not busy factory.
 			if (busyOK) busyFactory = factory;
-		}  // end if
+		}
 
-	}  // end for
+	}
 	// We didn't find an idle factory, so return the busy one.
 	if (busyOK) return busyFactory;
 	return NULL;
@@ -1718,8 +1719,8 @@ void AIPlayer::buildUpgrade(const AsciiString &upgrade)
 				TheScriptEngine->AppendDebugMessage( msg, false);
 				return;
 			}
-		}  // end if
-	}  // end for
+		}
+	}
 
 	AsciiString msg = TheNameKeyGenerator->keyToName(m_player->getPlayerNameKey());
 	msg.concat(" lacks factory to build upgrade ");
@@ -2964,7 +2965,7 @@ Object * AIPlayer::findDozer( const Coord3D *pos )
 void AIPlayer::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -3007,9 +3008,9 @@ void AIPlayer::xfer( Xfer *xfer )
 			// xfer it
 			xfer->xferSnapshot( teamInQueue );
 
-		}  // end for, iterate team build queue
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -3020,7 +3021,7 @@ void AIPlayer::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "AIPlayer::xfer - TeamBuildQueue head is not NULL, you should delete it or something before loading a new list" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// ready all data
 		for( UnsignedShort i = 0; i < teamBuildQueueCount; ++i )
@@ -3035,12 +3036,12 @@ void AIPlayer::xfer( Xfer *xfer )
 			// xfer data
 			xfer->xferSnapshot( teamInQueue );
 
-		}  // end for, i
+		}
 
 		// the list was loaded in reverse order, reverse the list so it's in the same order as before
 		reverse_TeamBuildQueue();
 
-	}  // end else, load
+	}
 
 	// team ready queue count
 	UnsignedShort teamReadyQueueCount = 0;
@@ -3066,9 +3067,9 @@ void AIPlayer::xfer( Xfer *xfer )
 			// xfer data
 			xfer->xferSnapshot( teamReadyQueue );
 
-		}  // end for, iterate team ready queue
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -3079,7 +3080,7 @@ void AIPlayer::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "AIPlayer::xfer - TeamReadyQueue head is not NULL, you should delete it or something before loading a new list" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// read all data
 		for( UnsignedShort i = 0; i < teamReadyQueueCount; ++i )
@@ -3094,12 +3095,12 @@ void AIPlayer::xfer( Xfer *xfer )
 			// xfer data
 			xfer->xferSnapshot( teamInQueue );
 
-		}  // end for, i
+		}
 
 		// reverse the list since it was loaded in reverse order due to the prepend
 		reverse_TeamReadyQueue();
 
-	}  // end else, load
+	}
 
 	// xfer player index ... this is really just for sanity
 	PlayerIndex playerIndex = m_player->getPlayerIndex();
@@ -3110,7 +3111,7 @@ void AIPlayer::xfer( Xfer *xfer )
 		DEBUG_CRASH(( "AIPlayer::xfer - player index mismatch" ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 
 	// xfer the rest of the ai player data (it's pretty straight forward)
 	xfer->xferBool( &m_readyToBuildTeam );
@@ -3140,7 +3141,7 @@ void AIPlayer::xfer( Xfer *xfer )
 	xfer->xferBool( &m_dozerIsRepairing );
 	xfer->xferInt( &m_bridgeTimer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -3148,7 +3149,7 @@ void AIPlayer::xfer( Xfer *xfer )
 void AIPlayer::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -3272,7 +3273,7 @@ void TeamInQueue::disband()
 void TeamInQueue::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -3284,7 +3285,7 @@ void TeamInQueue::xfer( Xfer *xfer )
 
 	// version
 	XferVersion currentVersion = 1;
-	XferVersion version = currentVersion;;
+	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
 	// xfer work order count
@@ -3305,9 +3306,9 @@ void TeamInQueue::xfer( Xfer *xfer )
 			// xfer work order data
 			xfer->xferSnapshot( workOrder );
 
-		}  // end for
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -3318,7 +3319,7 @@ void TeamInQueue::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "TeamInQueue::xfer - m_workOrders should be NULL but isn't.  Perhaps you should blow it away before loading" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// load all work orders
 		for( UnsignedShort i = 0; i < workOrderCount; ++i )
@@ -3340,14 +3341,14 @@ void TeamInQueue::xfer( Xfer *xfer )
 
 				last->m_next = workOrder;
 
-			}  // end else
+			}
 
 			// load work order data
 			xfer->xferSnapshot( workOrder );
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
 	// xfer the rest of the team in queue data
 	xfer->xferBool( &m_priorityBuild );
@@ -3361,7 +3362,7 @@ void TeamInQueue::xfer( Xfer *xfer )
 	xfer->xferBool( &m_reinforcement );
 	xfer->xferObjectID( &m_reinforcementID );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -3369,7 +3370,7 @@ void TeamInQueue::xfer( Xfer *xfer )
 void TeamInQueue::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3380,7 +3381,7 @@ void TeamInQueue::loadPostProcess( void )
 WorkOrder::~WorkOrder()
 {
 
-}  // end WorkOrder
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Verify factoryID still refers to an active object */
@@ -3399,7 +3400,7 @@ void WorkOrder::validateFactory( Player *thisPlayer )
 		m_factoryID = INVALID_ID;
 	}
 
-}  // end validateFactory
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -3407,7 +3408,7 @@ void WorkOrder::validateFactory( Player *thisPlayer )
 void WorkOrder::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -3443,7 +3444,7 @@ void WorkOrder::xfer( Xfer *xfer )
 	// is resource gatherer
 	xfer->xferBool( &m_isResourceGatherer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -3451,7 +3452,7 @@ void WorkOrder::xfer( Xfer *xfer )
 void WorkOrder::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 
 //----------------------------------------------------------------------------------------------------------

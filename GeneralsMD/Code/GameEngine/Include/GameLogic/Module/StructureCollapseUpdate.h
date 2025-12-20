@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __StructureCollapseUpdate_H_
-#define __StructureCollapseUpdate_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -53,7 +50,7 @@ enum StructureCollapsePhaseType CPP_11(: Int)
 	SCPHASE_BURST,
 	SCPHASE_FINAL,
 
-	SC_PHASE_COUNT	// keep last
+	SC_PHASE_COUNT
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -78,9 +75,6 @@ public:
 		m_minCollapseDelay = 0;
 		m_maxCollapseDelay = 0;
 		m_minBurstDelay = 9999;
-		//Removed by Sadullah Nader
-		//Redundancy from above
-		//m_minBurstDelay = 9999;
 		m_maxShudder = 0;
 		m_collapseDamping = 0.0;
 		m_bigBurstFrequency = 0;
@@ -149,6 +143,3 @@ protected:
 	Real												m_currentHeight;
 
 };
-
-#endif // __StructureCollapseUpdate_H_
-

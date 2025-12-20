@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/PlayerTemplate.h"
 #include "Common/BattleHonors.h"
@@ -90,7 +90,7 @@ static Int lookAtPlayerID = 0;
 static std::string lookAtPlayerName;
 
 
-static const char *rankNames[] = {
+static const char *const rankNames[] = {
 	"Private",
 	"Corporal",
 	"Sergeant",
@@ -102,6 +102,8 @@ static const char *rankNames[] = {
 	"Brigadier",
 	"Commander",
 };
+static_assert(ARRAY_SIZE(rankNames) == MAX_RANKS, "Incorrect array size");
+
 
 static const Image* lookupRankImage(AsciiString side, Int rank)
 {
@@ -456,8 +458,8 @@ void ResetBattleHonorInsertion(void)
 }
 void InsertBattleHonor(GameWindow *list, const Image *image, Bool enabled, Int itemData, Int& row, Int& column, UnicodeString text = UnicodeString::TheEmptyString)
 {
-	Int width = MAX_BATTLE_HONOR_IMAGE_WIDTH * (TheDisplay->getWidth() / 800.0f);
-	Int height = MAX_BATTLE_HONOR_IMAGE_HEIGHT * (TheDisplay->getHeight() / 600.0f);
+	Int width = MAX_BATTLE_HONOR_IMAGE_WIDTH * (TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH);
+	Int height = MAX_BATTLE_HONOR_IMAGE_HEIGHT * (TheDisplay->getHeight() / (Real)DEFAULT_DISPLAY_HEIGHT);
 
 	static Int enabledColor = 0xFFFFFFFF;
 	static Int disabledColor = GameMakeColor(80, 80, 80, 255);
@@ -1103,7 +1105,7 @@ void HandlePersistentStorageResponses( void )
 					}
 					DEBUG_LOG(("PopulatePlayerInfoWindows() - lookAtPlayerID is %d, got %d", lookAtPlayerID, resp.player.id));
 					PopulatePlayerInfoWindows("PopupPlayerInfo.wnd");
-					//GadgetListBoxAddEntryText(listboxInfo, UnicodeString(L"Got info!"), GameSpyColor[GSCOLOR_DEFAULT], -1);
+					//GadgetListBoxAddEntryText(listboxInfo, L"Got info!", GameSpyColor[GSCOLOR_DEFAULT], -1);
 
 					// also update info for player list in lobby
 					PlayerInfoMap::iterator it = TheGameSpyInfo->getPlayerInfoMap()->begin();
@@ -1200,7 +1202,7 @@ void GameSpyPlayerInfoOverlayInit( WindowLayout *layout, void *userData )
 
 	isOverlayActive = true;
 
-	//GadgetListBoxAddEntryText(listboxInfo, UnicodeString(L"Working"), GameSpyColor[GSCOLOR_DEFAULT], -1);
+	//GadgetListBoxAddEntryText(listboxInfo, L"Working", GameSpyColor[GSCOLOR_DEFAULT], -1);
 
 	GameSpyCloseOverlay(GSOVERLAY_BUDDY);
 	raiseMessageBox = true;
@@ -1243,7 +1245,7 @@ void GameSpyPlayerInfoOverlayInit( WindowLayout *layout, void *userData )
 	}
 
 	//TheWindowManager->winSetModal(parent);
-} // GameSpyPlayerInfoOverlayInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Overlay shutdown method */
@@ -1257,7 +1259,7 @@ void GameSpyPlayerInfoOverlayShutdown( WindowLayout *layout, void *userData )
 
 	// our shutdown is complete
 	isOverlayActive = false;
-}  // GameSpyPlayerInfoOverlayShutdown
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -1268,7 +1270,7 @@ void GameSpyPlayerInfoOverlayUpdate( WindowLayout * layout, void *userData)
 	if (raiseMessageBox)
 		RaiseGSMessageBox();
 	raiseMessageBox = false;
-}// GameSpyPlayerInfoOverlayUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Overlay input callback */
@@ -1301,21 +1303,21 @@ WindowMsgHandledType GameSpyPlayerInfoOverlayInput( GameWindow *window, Unsigned
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonClose, buttonCloseID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// GameSpyPlayerInfoOverlayInput
+}
 void messageBoxYes( void );
 //-------------------------------------------------------------------------------------------------
 /** Overlay window system callback */
@@ -1333,12 +1335,12 @@ WindowMsgHandledType GameSpyPlayerInfoOverlaySystem( GameWindow *window, Unsigne
 			{
 
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
 			{
@@ -1347,7 +1349,7 @@ WindowMsgHandledType GameSpyPlayerInfoOverlaySystem( GameWindow *window, Unsigne
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 		case GBM_SELECTED:
 			{
 				GameWindow *control = (GameWindow *)mData1;
@@ -1423,15 +1425,15 @@ WindowMsgHandledType GameSpyPlayerInfoOverlaySystem( GameWindow *window, Unsigne
 				}
 
 				break;
-			}// case GBM_SELECTED:
+			}
 
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// GameSpyPlayerInfoOverlaySystem
+}
 
 static void messageBoxYes( void )
 {

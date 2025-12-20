@@ -27,9 +27,6 @@
 
 #pragma once
 
-#ifndef __GUIUTIL_H__
-#define __GUIUTIL_H__
-
 class GameWindow;
 class GameInfo;
 
@@ -53,5 +50,3 @@ void EnableAcceptControls(Bool Enabled, GameInfo *myGame, GameWindow *comboPlaye
 										GameWindow *comboColor[], GameWindow *comboPlayerTemplate[],
 										GameWindow *comboTeam[], GameWindow *buttonAccept[], GameWindow *buttonStart,
 										GameWindow *buttonMapStartPosition[], Int slotNum = -1);
-
-#endif // __GUIUTIL_H__

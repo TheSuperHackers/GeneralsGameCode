@@ -65,7 +65,7 @@
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GlobalData.h"
 #include "Common/BuildAssistant.h"
@@ -114,7 +114,7 @@ void ControlBarPopupDescriptionUpdateFunc( WindowLayout *layout, void *param )
 	{
 		Bool wasFinished = theAnimateWindowManager->isFinished();
 		theAnimateWindowManager->update();
-		if (theAnimateWindowManager && theAnimateWindowManager->isFinished() && !wasFinished && theAnimateWindowManager->isReversed())
+		if (theAnimateWindowManager->isFinished() && !wasFinished && theAnimateWindowManager->isReversed())
 		{
 			delete theAnimateWindowManager;
 			theAnimateWindowManager = NULL;
@@ -321,7 +321,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 							}
 						}
 					}
-				} //End overcharge special case
+				}
 
 				//Special case: When building units, the CanMakeType determines reasons for not being able to buy stuff.
 				else if( thingTemplate )
@@ -518,11 +518,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 			name = TheGameText->fetch("CONTROLBAR:Power");
 			descrip = TheGameText->fetch("CONTROLBAR:PowerDescription");
 
-			Player *playerToDisplay = NULL;
-			if(TheControlBar->isObserverControlBarOn())
-				playerToDisplay = TheControlBar->getObserverLookAtPlayer();
-			else
-				playerToDisplay = ThePlayerList->getLocalPlayer();
+			Player* playerToDisplay = TheControlBar->getCurrentlyViewedPlayer();
 
 			if( playerToDisplay && playerToDisplay->getEnergy() )
 			{
@@ -561,7 +557,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 	if(win)
 	{
 
-		static NameKeyType winNamekey	= TheNameKeyGenerator->nameToKey( AsciiString( "ControlBar.wnd:BackgroundMarker" ) );
+		static NameKeyType winNamekey	= TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" );
 		static ICoord2D lastOffset = { 0, 0 };
 
 		ICoord2D size, newSize, pos;
@@ -646,8 +642,8 @@ void ControlBar::deleteBuildTooltipLayout( void )
 //	m_buildToolTipLayout->destroyWindows();
 //	deleteInstance(m_buildToolTipLayout);
 //	m_buildToolTipLayout = NULL;
-	if(theAnimateWindowManager)
-		delete theAnimateWindowManager;
+
+	delete theAnimateWindowManager;
 	theAnimateWindowManager = NULL;
 
 }

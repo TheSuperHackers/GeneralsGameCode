@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Commando / G 3D engine                                       *
  *                                                                                             *
- *                    File Name : MESH.H                                                       *
+ *                    File Name : MESH.h                                                       *
  *                                                                                             *
  *                   Programmer : Greg Hjelstrom                                               *
  *                                                                                             *
@@ -35,13 +35,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef MESH_H
-#define MESH_H
 
 #include "always.h"
 #include "rendobj.h"
@@ -149,7 +143,7 @@ public:
 
 	void								Set_Lighting_Environment(LightEnvironmentClass * light_env) { if (light_env) {m_localLightEnv=*light_env;LightEnvironment = &m_localLightEnv;} else {LightEnvironment = NULL;} }
 	LightEnvironmentClass *		Get_Lighting_Environment(void) { return LightEnvironment; }
-	inline float	Get_Alpha_Override(void) { return m_alphaOverride;}
+	float	Get_Alpha_Override(void) { return m_alphaOverride;}
 
 	void								Set_Next_Visible_Skin(MeshClass * next_visible) { NextVisibleSkin = next_visible; }
 	MeshClass *						Peek_Next_Visible_Skin(void) { return NextVisibleSkin; }
@@ -208,6 +202,3 @@ inline MeshModelClass * MeshClass::Peek_Model(void)
 // model. This is useful for stuff like making a RenderObjects' polys sort.
 //void Set_MeshModel_Flag(RenderObjClass *robj, MeshModelClass::FlagsType flag, int onoff);
 void Set_MeshModel_Flag(RenderObjClass *robj, int flag, int onoff);
-
-#endif /*MESH_H*/
-

@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/CRCDebug.h"
 #include "Common/Debug.h"
@@ -80,7 +80,7 @@ CRCVerification::~CRCVerification()
 	{
 		if (TheInGameUI)
 		{
-			TheInGameUI->message(UnicodeString(L"GameLogic changed outside of GameLogic::update() - call Matt (x36804)!"));
+			TheInGameUI->message(L"GameLogic changed outside of GameLogic::update() - call Matt (x36804)!");
 		}
 		CRCDEBUG_LOG(("GameLogic changed outside of GameLogic::update()!!!"));
 	}

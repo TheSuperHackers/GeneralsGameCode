@@ -26,7 +26,7 @@
 // Computerized opponent
 // Author: Michael S. Booth, January 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 
 #include "Common/GameMemory.h"
@@ -258,10 +258,11 @@ void AISkirmishPlayer::processBaseBuilding( void )
 				}
 				m_frameLastBuildingBuilt = TheGameLogic->getFrame();
 				// only build one building per delay loop
-			} // bldg built
+			}
 
 #else
 			// force delay between rebuilds
+			Int framesToBuild = bldgPlan->calcTimeToBuild(m_player);
 			if (TheGameLogic->getFrame() - m_frameLastBuildingBuilt < framesToBuild)
 			{
 				m_buildDelay = framesToBuild - (TheGameLogic->getFrame() - m_frameLastBuildingBuilt);
@@ -276,12 +277,12 @@ void AISkirmishPlayer::processBaseBuilding( void )
 					m_player->getMoney()->withdraw( cost );
 
 					// inst-construct the building
-					bldg = buildStructureNow(bldgPlan, info, NULL);
+					bldg = buildStructureNow(bldgPlan, bldgInfo);
 					// store the object with the build order
 					if (bldg)
 					{
-						info->setObjectID( bldg->getID() );
-						info->decrementNumRebuilds();
+						bldgInfo->setObjectID( bldg->getID() );
+						bldgInfo->decrementNumRebuilds();
 
 						m_readyToBuildStructure = false;
 						m_structureTimer = TheAI->getAiData()->m_structureSeconds*LOGICFRAMES_PER_SECOND;
@@ -291,11 +292,9 @@ void AISkirmishPlayer::processBaseBuilding( void )
 							m_structureTimer = m_structureTimer/TheAI->getAiData()->m_structuresWealthyMod;
 						}
 						m_frameLastBuildingBuilt = TheGameLogic->getFrame();
-						// only build one building per delay loop
-						break;
-					} // bldg built
-				} // have money
-			} // rebuild delay ok
+					}
+				}
+			}
 #endif
 		}
 	}
@@ -332,7 +331,7 @@ Bool AISkirmishPlayer::startTraining( WorkOrder *order, Bool busyOK, AsciiString
 			}
 			return true;
 		}
-	}  // end if
+	}
 
 	return FALSE;
 
@@ -1171,7 +1170,7 @@ void AISkirmishPlayer::computeSuperweaponTarget(const SpecialPowerTemplate *powe
 void AISkirmishPlayer::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1213,7 +1212,7 @@ void AISkirmishPlayer::xfer( Xfer *xfer )
 	// right flank right defense angle
 	xfer->xferReal( &m_curRightFlankRightDefenseAngle );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1221,5 +1220,5 @@ void AISkirmishPlayer::xfer( Xfer *xfer )
 void AISkirmishPlayer::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 

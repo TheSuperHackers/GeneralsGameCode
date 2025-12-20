@@ -43,12 +43,10 @@
 #include "w3d_util.h"
 #include "chunkio.h"
 #include "w3derr.h"
-#include "INI.H"
-#include "XSTRAW.H"
+#include "INI.h"
+#include "XSTRAW.h"
 #include "dx8wrapper.h"
 
-#include <stdio.h>
-#include <string.h>
 
 static unsigned int unique=1;
 

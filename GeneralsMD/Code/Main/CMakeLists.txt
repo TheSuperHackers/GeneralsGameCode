@@ -14,7 +14,6 @@ target_link_libraries(z_generals PRIVATE
     core_profile
     d3d8
     d3dx8
-    dbghelplib
     dinput8
     dxguid
     imm32

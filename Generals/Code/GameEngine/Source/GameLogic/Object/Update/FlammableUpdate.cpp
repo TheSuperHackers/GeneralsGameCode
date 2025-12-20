@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AudioEventRTS.h"
 #include "Common/GameAudio.h"
@@ -47,10 +47,7 @@ FlammableUpdateModuleData::FlammableUpdateModuleData()
 	m_aflameDuration = 0;
 	m_aflameDamageDelay = 0;
 	m_aflameDamageAmount = 0;
-	// Enabled By Sadullah Nader
-	// Initialization needed
 	m_burningSoundName.clear();
-	//
 	m_flameDamageLimitData = 20.0f;
 	m_flameDamageExpirationDelay = LOGICFRAMES_PER_SECOND * 2;
 }
@@ -84,6 +81,7 @@ FlammableUpdate::FlammableUpdate( Thing *thing, const ModuleData* moduleData ) :
 	m_damageEndFrame = 0;
 	m_audioHandle = NULL;
 	m_flameDamageLimit = getFlammableUpdateModuleData()->m_flameDamageLimitData;
+	m_flameSource = INVALID_ID;
 	m_lastFlameDamageDealt = 0;
 
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
@@ -110,6 +108,12 @@ void FlammableUpdate::onDamage( DamageInfo *damageInfo )
 			m_flameDamageLimit = getFlammableUpdateModuleData()->m_flameDamageLimitData;
 		}
 		m_lastFlameDamageDealt = now;
+#if RETAIL_COMPATIBLE_CRC
+		m_flameSource = getObject()->getID();
+#else
+		// TheSuperHackers @bugfix Stubbjax 03/09/2025 Allow flame damage to award xp to the flame source.
+		m_flameSource = damageInfo->in.m_sourceID;
+#endif
 
 		Object *me = getObject();
 		if( !me->getStatusBits().test( OBJECT_STATUS_AFLAME ) && !me->getStatusBits().test( OBJECT_STATUS_BURNED ) )
@@ -229,7 +233,7 @@ void FlammableUpdate::doAflameDamage()
 
 	DamageInfo info;
 	info.in.m_amount = data->m_aflameDamageAmount;
-	info.in.m_sourceID = getObject()->getID();
+	info.in.m_sourceID = m_flameSource;
 	info.in.m_damageType = DAMAGE_FLAME;
 	info.in.m_deathType = DEATH_BURNED;
 
@@ -276,7 +280,7 @@ void FlammableUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -287,7 +291,11 @@ void FlammableUpdate::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
+#else
+	XferVersion currentVersion = 2;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -312,7 +320,13 @@ void FlammableUpdate::xfer( Xfer *xfer )
 	// last flame damage dealt
 	xfer->xferUnsignedInt( &m_lastFlameDamageDealt );
 
-}  // end xfer
+#if !RETAIL_COMPATIBLE_XFER_SAVE
+	if (version >= 2)
+	{
+		xfer->xferObjectID(&m_flameSource);
+	}
+#endif
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -323,4 +337,4 @@ void FlammableUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

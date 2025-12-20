@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef _IN_GAME_UI_H_
-#define _IN_GAME_UI_H_
-
 #include "Common/GameCommon.h"
 #include "Common/GameType.h"
 #include "Common/MessageStream.h"		// for GameMessageTranslator
@@ -98,11 +95,11 @@ enum RadiusCursorType CPP_11(: Int)
 	RADIUSCURSOR_SPYDRONE,
 
 
-	RADIUSCURSOR_COUNT	// keep last
+	RADIUSCURSOR_COUNT
 };
 
 #ifdef DEFINE_RADIUSCURSOR_NAMES
-static const char *TheRadiusCursorNames[] =
+static const char *const TheRadiusCursorNames[] =
 {
 	"NONE",
 	"ATTACK_DAMAGE_AREA",
@@ -135,6 +132,7 @@ static const char *TheRadiusCursorNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheRadiusCursorNames) == RADIUSCURSOR_COUNT + 1, "Incorrect array size");
 #endif
 
 // ------------------------------------------------------------------------------------------------
@@ -345,7 +343,6 @@ public:  // ********************************************************************
 		ACTIONTYPE_SET_RALLY_POINT,
 		ACTIONTYPE_COMBATDROP_INTO,
 
-		//Keep last.
 		NUM_ACTIONTYPES
 	};
 
@@ -519,7 +516,7 @@ public:  // ********************************************************************
 	Bool				isDrawableCaptionBold( void )				{ return m_drawableCaptionBold; }
 	Color				getDrawableCaptionColor( void )			{ return m_drawableCaptionColor; }
 
-	inline Bool shouldMoveRMBScrollAnchor( void ) { return m_moveRMBScrollAnchor; }
+	Bool shouldMoveRMBScrollAnchor( void ) { return m_moveRMBScrollAnchor; }
 
 	Bool isClientQuiet( void ) const			{ return m_clientQuiet; }
 	Bool isInWaypointMode( void ) const			{ return m_waypointMode; }
@@ -554,6 +551,8 @@ public:  // ********************************************************************
 
 	virtual void recreateControlBar( void );
 	virtual void refreshCustomUiResources( void );
+	virtual void refreshNetworkLatencyResources(void);
+	virtual void refreshRenderFpsResources(void);
 	virtual void refreshSystemTimeResources( void );
 	virtual void refreshGameTimeResources( void );
 
@@ -575,7 +574,10 @@ private:
 	virtual void updateIdleWorker( void );
 	virtual void resetIdleWorker( void );
 
-	void drawSystemTime();
+	void updateRenderFpsString();
+	void drawNetworkLatency(Int &x, Int &y);
+	void drawRenderFps(Int &x, Int &y);
+	void drawSystemTime(Int &x, Int &y);
 	void drawGameTime();
 
 public:
@@ -613,7 +615,6 @@ protected:
 #ifdef RTS_DEBUG
 		DEBUG_HINT,
 #endif
-		NUM_HINT_TYPES  // keep this one last
 	};
 
 	// mouse mode interface
@@ -622,7 +623,6 @@ protected:
 		MOUSEMODE_DEFAULT = 0,
 		MOUSEMODE_BUILD_PLACE,
 		MOUSEMODE_GUI_COMMAND,
-		MOUSEMODE_MAX
 	};
 
 	enum { MAX_MOVE_HINTS = 256 };
@@ -732,6 +732,31 @@ protected:
 	// Video playback data
 	VideoBuffer*								m_cameoVideoBuffer;///< video playback buffer
 	VideoStreamInterface*				m_cameoVideoStream;///< Video stream;
+
+	// Network Latency Counter
+	DisplayString *							m_networkLatencyString;
+	AsciiString									m_networkLatencyFont;
+	Int													m_networkLatencyPointSize;
+	Bool												m_networkLatencyBold;
+	Coord2D											m_networkLatencyPosition;
+	Color												m_networkLatencyColor;
+	Color												m_networkLatencyDropColor;
+	UnsignedInt									m_lastNetworkLatencyFrames;
+
+	// Render FPS Counter
+	DisplayString *							m_renderFpsString;
+	DisplayString *							m_renderFpsLimitString;
+	AsciiString									m_renderFpsFont;
+	Int													m_renderFpsPointSize;
+	Bool												m_renderFpsBold;
+	Coord2D											m_renderFpsPosition;
+	Color												m_renderFpsColor;
+	Color												m_renderFpsLimitColor;
+	Color												m_renderFpsDropColor;
+	UnsignedInt									m_renderFpsRefreshMs;
+	UnsignedInt									m_lastRenderFps;
+	UnsignedInt									m_lastRenderFpsLimit;
+	UnsignedInt									m_lastRenderFpsUpdateMs;
 
 	// System Time
 	DisplayString *										m_systemTimeString;
@@ -881,5 +906,3 @@ protected:
 
 // the singleton
 extern InGameUI *TheInGameUI;
-
-#endif // _IN_GAME_UI_H_

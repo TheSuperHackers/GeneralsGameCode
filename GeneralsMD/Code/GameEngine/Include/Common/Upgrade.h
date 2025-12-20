@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __UPGRADE_H_
-#define __UPGRADE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/INI.h"
@@ -150,9 +147,9 @@ enum UpgradeType CPP_11(: Int)
 	UPGRADE_TYPE_PLAYER = 0,						// upgrade applies to a player as a whole
 	UPGRADE_TYPE_OBJECT,								// upgrade applies to an object instance only
 
-	NUM_UPGRADE_TYPES,		// keep this last
+	NUM_UPGRADE_TYPES
 };
-extern const char *TheUpgradeTypeNames[]; //Change above, change this!
+extern const char *const TheUpgradeTypeNames[]; //Change above, change this!
 
 //-------------------------------------------------------------------------------------------------
 /** A single upgrade template definition */
@@ -242,10 +239,11 @@ public:
 	void reset( void );												///< subsystem interface
 	void update( void ) { }										///< subsystem interface
 
-	UpgradeTemplate *firstUpgradeTemplate( void );	///< return the first upgrade template
-	const UpgradeTemplate *findUpgradeByKey( NameKeyType key ) const;		///< find upgrade by name key
-	const UpgradeTemplate *findUpgrade( const AsciiString& name ) const;				///< find and return upgrade by name
-	const UpgradeTemplate *findVeterancyUpgrade(VeterancyLevel level) const;				///< find and return upgrade by name
+	UpgradeTemplate *firstUpgradeTemplate( void ); ///< return the first upgrade template
+	const UpgradeTemplate *findUpgradeByKey( NameKeyType key ) const; ///< find upgrade by name key
+	const UpgradeTemplate *findUpgrade( const AsciiString& name ) const; ///< find and return upgrade by name
+	const UpgradeTemplate *findUpgrade( const char* name ) const; ///< find and return upgrade by name
+	const UpgradeTemplate *findVeterancyUpgrade(VeterancyLevel level) const; ///< find and return upgrade by veterancy level
 
 	UpgradeTemplate *newUpgrade( const AsciiString& name );				///< allocate, link, and return new upgrade
 
@@ -270,5 +268,3 @@ protected:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern UpgradeCenter *TheUpgradeCenter;
-
-#endif  // end __UPGRADE_H_

@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __SKIRMISHPREFERENCES_H__
-#define __SKIRMISHPREFERENCES_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -64,5 +61,3 @@ public:
   Money getStartingCash(void) const;
   void setStartingCash( const Money &startingCash );
 };
-
-#endif // __SKIRMISHPREFERENCES_H__

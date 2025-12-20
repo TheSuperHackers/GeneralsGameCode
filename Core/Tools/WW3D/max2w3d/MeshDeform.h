@@ -23,7 +23,7 @@
  *                                                                                             *
  *                 Project Name : Commando / G 3D engine                                       *
  *                                                                                             *
- *                    File Name : MeshDeform.H                                                 *
+ *                    File Name : MeshDeform.h                                                 *
  *                                                                                             *
  *                   Programmer : Patrick Smith                                                *
  *                                                                                             *
@@ -35,12 +35,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef __MESH_DEFORM_H
-#define __MESH_DEFORM_H
+#pragma once
 
 #include <max.h>
-#include "Vector.H"
+#include "Vector.h"
 
 // Forward declarations
 class MeshDeformPanelClass;
@@ -196,6 +194,3 @@ class MeshDeformClass : public OSModifier
 		// Information
 		CStr							m_OperationName;
 };
-
-
-#endif //__MESH_DEFORM_H

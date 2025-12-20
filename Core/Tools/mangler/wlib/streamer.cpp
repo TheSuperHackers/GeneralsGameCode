@@ -43,8 +43,8 @@ Streamer::~Streamer()
   ///////// calling sync seems to cause crashes here on Win32
   //sync();
   /////////
-  if (Buf)
-    delete[] Buf;
+
+  delete[] Buf;
 }
 
 int Streamer::setOutputDevice(OutputDevice *device)

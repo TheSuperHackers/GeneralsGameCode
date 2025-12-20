@@ -785,7 +785,6 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 				if( ParseHotKey && (*word == L'&') && (*word+1 != 0) && (*word+1 > L' ') && (*word+1 != L'\n'))
 				{
 					int offset = 0;
-					//Added By Saad
 					if (word_width != 0 )
 					{
 						const WCHAR *word_back = word;
@@ -796,7 +795,6 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 							offset =-1;
 						}
 					}
-					//
 					*word++;
 					calcHotKeyX = true;
 				}
@@ -853,7 +851,6 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 			//
 			word_width = Font->Get_Char_Spacing (*word++);
 			wordCount = 0;
-			//Added By Saad
 			line_width += word_width;
 		}
 		//
@@ -1170,6 +1167,8 @@ Render2DSentenceClass::Build_Sentence (const WCHAR *text, int *hkX, int *hkY)
 		return ;
 	}
 
+	if (Font == NULL)
+		return;
 
 	if(Centered && (WrapWidth > 0 || wcschr(text,L'\n')))
 		Build_Sentence_Centered(text, hkX, hkY);
@@ -1504,7 +1503,7 @@ FontCharsClass::Update_Current_Buffer (int char_width)
 //	Create_GDI_Font
 //
 ////////////////////////////////////////////////////////////////////////////////////
-void
+bool
 FontCharsClass::Create_GDI_Font (const char *font_name)
 {
 	HDC screen_dc = ::GetDC ((HWND)WW3D::Get_Window());
@@ -1598,6 +1597,8 @@ FontCharsClass::Create_GDI_Font (const char *font_name)
 	if (doingGenerals) {
 		CharOverhang = 0;
 	}
+
+	return GDIFont != NULL && GDIBitmap != NULL;
 }
 
 
@@ -1646,7 +1647,7 @@ FontCharsClass::Free_GDI_Font (void)
 //	Initialize_GDI_Font
 //
 ////////////////////////////////////////////////////////////////////////////////////
-void
+bool
 FontCharsClass::Initialize_GDI_Font (const char *font_name, int point_size, bool is_bold)
 {
 	//
@@ -1664,8 +1665,7 @@ FontCharsClass::Initialize_GDI_Font (const char *font_name, int point_size, bool
 	//
 	//	Create the actual font object
 	//
-	Create_GDI_Font (font_name);
-	return ;
+	return Create_GDI_Font (font_name);
 }
 
 
@@ -1763,10 +1763,8 @@ FontCharsClass::Free_Character_Arrays (void)
 		//	Delete each member of the unicode array
 		//
 		for (int index = 0; index < count; index ++) {
-			if ( UnicodeCharArray[index] != NULL ) {
-				delete UnicodeCharArray[index];
-				UnicodeCharArray[index] = NULL;
-			}
+			delete UnicodeCharArray[index];
+			UnicodeCharArray[index] = NULL;
 		}
 
 		//
@@ -1780,10 +1778,8 @@ FontCharsClass::Free_Character_Arrays (void)
 	//	Delete each member of the ascii character array
 	//
 	for (int index = 0; index < 256; index ++) {
-		if ( ASCIICharArray[index] != NULL ) {
-			delete ASCIICharArray[index];
-			ASCIICharArray[index] = NULL;
-		}
+		delete ASCIICharArray[index];
+		ASCIICharArray[index] = NULL;
 	}
 
 	return ;

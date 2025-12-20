@@ -26,11 +26,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // tell the compiler to only load this file once
+
 #pragma once
-
-
-#ifndef _BASE_TYPE_CORE_H_
-#define _BASE_TYPE_CORE_H_
 
 #include <math.h>
 #include <string.h>
@@ -117,11 +114,6 @@
 #define FALSE false
 #endif
 
-// Elements in an array
-#ifndef ELEMENTS_OF
-#define ELEMENTS_OF( x ) ( sizeof( x ) / sizeof( x[0] ) )
-#endif
-
 //--------------------------------------------------------------------
 // Fundamental type definitions
 //--------------------------------------------------------------------
@@ -137,5 +129,3 @@ typedef bool						Bool;					//
 // note, the types below should use "long long", but MSVC doesn't support it yet
 typedef int64_t						Int64;						// 8 bytes
 typedef uint64_t					UnsignedInt64;	  	        // 8 bytes
-
-#endif // _BASE_TYPE_CORE_H_

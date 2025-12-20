@@ -33,7 +33,7 @@
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameAudio.h"
 #include "Common/MiscAudio.h"
@@ -97,6 +97,14 @@ Bool SabotageCommandCenterCrateCollide::isValidToExecute( const Object *other ) 
 		return FALSE;
 	}
 
+#if !RETAIL_COMPATIBLE_CRC
+	if (other->getStatusBits().testForAny(MAKE_OBJECT_STATUS_MASK2(OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_SOLD)))
+	{
+		// TheSuperHackers @bugfix Stubbjax 03/08/2025 Can't enter something being sold or under construction.
+		return FALSE;
+	}
+#endif
+
 	Relationship r = getObject()->getRelationship( other );
 	if( r != ENEMIES )
 	{
@@ -128,7 +136,7 @@ Bool SabotageCommandCenterCrateCollide::executeCrateBehavior( Object *other )
 
 	//When the sabotage occurs, play the appropriate EVA
 	//event if the local player is the victim!
-	if( other->isLocallyControlled() )
+	if( other->isLocallyViewed() )
 	{
 		TheEva->setShouldPlay( EVA_BuildingSabotaged );
 	}
@@ -156,7 +164,7 @@ void SabotageCommandCenterCrateCollide::crc( Xfer *xfer )
 	// extend base class
 	CrateCollide::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -174,7 +182,7 @@ void SabotageCommandCenterCrateCollide::xfer( Xfer *xfer )
 	// extend base class
 	CrateCollide::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -185,4 +193,4 @@ void SabotageCommandCenterCrateCollide::loadPostProcess( void )
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+}

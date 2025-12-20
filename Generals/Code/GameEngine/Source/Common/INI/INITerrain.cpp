@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "Common/TerrainTypes.h"
@@ -56,7 +56,7 @@ void INI::parseTerrainDefinition( INI* ini )
 	// parse the ini definition
 	ini->initFromINI( terrainType, terrainType->getFieldParse() );
 
-}  // end parseTerrain
+}
 
 
 

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SUBSYSTEMINTERFACE_H_
-#define __SUBSYSTEMINTERFACE_H_
-
 #include "Common/INI.h"
 #include "Common/STLTypedefs.h"
 
@@ -131,8 +128,8 @@ protected:
 	Bool m_dumpUpdate;
 	Bool m_dumpDraw;
 #else
-	inline void UPDATE(void) {update();}
-	inline void DRAW(void) {draw();}
+	void UPDATE(void) {update();}
+	void DRAW(void) {draw();}
 #endif
 protected:
 	AsciiString m_name;
@@ -140,7 +137,7 @@ public:
 	AsciiString getName(void) {return m_name;}
 	void setName(AsciiString name) {m_name = name;}
 
-};  // end SubsystemInterface
+};
 
 //-------------------------------------------------------------------------------------------------
 class SubsystemInterfaceList
@@ -150,7 +147,7 @@ public:
 	SubsystemInterfaceList();
 	~SubsystemInterfaceList();
 
-	void initSubsystem(SubsystemInterface* sys, const char* path1, const char* path2, const char* dirpath, Xfer *pXfer, AsciiString name="", Bool optional=FALSE);
+	void initSubsystem(SubsystemInterface* sys, const char* path1, const char* path2, Xfer *pXfer, AsciiString name="", Bool optional=FALSE);
 	void addSubsystem(SubsystemInterface* sys);
 	void removeSubsystem(SubsystemInterface* sys);
 	void postProcessLoadAll();
@@ -169,6 +166,3 @@ private:
 };
 
 extern SubsystemInterfaceList* TheSubsystemList;
-
-#endif // __SUBSYSTEMINTERFACE_H_
-

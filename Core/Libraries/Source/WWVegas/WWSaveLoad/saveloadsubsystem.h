@@ -34,15 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-
-#ifndef SAVELOADSUBSYSTEM_H
-#define SAVELOADSUBSYSTEM_H
-
 
 #include "always.h"
 #include "bittype.h"
@@ -89,7 +81,3 @@ private:
 
 	friend class SaveLoadSystemClass;
 };
-
-
-
-#endif

@@ -25,7 +25,7 @@
 // AI.cpp
 // The Artificial Intelligence system
 // Author: Michael S. Booth, November 2000
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/CRCDebug.h"
 #include "Common/GameState.h"
@@ -63,8 +63,7 @@ void TAiData::addFactionBuildList(AISideBuildList *buildList)
 	AISideBuildList *info = m_sideBuildLists;
 	while (info) {
 		if (buildList->m_side == info->m_side) {
-			if (info->m_buildList)
-				deleteInstance(info->m_buildList);
+			deleteInstance(info->m_buildList);
 			info->m_buildList = buildList->m_buildList;
 			buildList->m_buildList = NULL;
 			buildList->m_next = NULL;
@@ -109,9 +108,7 @@ AISideBuildList::AISideBuildList( AsciiString side ) :
 
 AISideBuildList::~AISideBuildList()
 {
-	if (m_buildList) {
-		deleteInstance(m_buildList); // note - deletes all in the list.
-	}
+	deleteInstance(m_buildList); // note - deletes all in the list.
 	m_buildList = NULL;
 }
 
@@ -200,7 +197,7 @@ static const FieldParse TheAIFieldParseTable[] =
  	{ "RetaliationFriendsRadius",	INI::parseReal,NULL,			offsetof( TAiData, m_retaliateFriendsRadius ) },
 
 
-	{ NULL,					NULL,						NULL,						0 }  // keep this last
+	{ NULL,					NULL,						NULL,						0 }
 
 };
 
@@ -220,7 +217,7 @@ void AI::parseSideInfo(INI *ini, void *instance, void* /*store*/, const void* /*
 			{ "SkillSet3",										AI::parseSkillSet,				NULL, offsetof( AISideInfo, m_skillSet3 ) },
 			{ "SkillSet4",										AI::parseSkillSet,				NULL, offsetof( AISideInfo, m_skillSet4 ) },
 			{ "SkillSet5",										AI::parseSkillSet,				NULL, offsetof( AISideInfo, m_skillSet5 ) },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 
 	AISideInfo *resourceInfo = ((TAiData*)instance)->m_sideInfo;
@@ -245,7 +242,7 @@ void AI::parseSkillSet(INI *ini, void *instance, void* store, const void* /*user
 	static const FieldParse myFieldParse[] =
 		{
 			{ "Science",											AI::parseScience,					NULL, NULL },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 
 	TSkillSet *skillset = ((TSkillSet*)store);
@@ -284,7 +281,7 @@ void AI::parseSkirmishBuildList(INI *ini, void *instance, void* /*store*/, const
 	static const FieldParse myFieldParse[] =
 		{
 			{ "Structure",			BuildListInfo::parseStructure,			NULL, NULL },
-			{ NULL,							NULL,											NULL, 0 }  // keep this last
+			{ NULL,							NULL,											NULL, 0 }
 		};
 
 	AISideBuildList *build = newInstance(AISideBuildList)(faction);
@@ -330,7 +327,7 @@ void AI::reset( void )
 	}
 
 #if RETAIL_COMPATIBLE_AIGROUP
-	while (m_groupList.size())
+	while (!m_groupList.empty())
 	{
 		AIGroup *groupToRemove = m_groupList.front();
 		if (groupToRemove)
@@ -373,10 +370,9 @@ void AI::update( void )
  */
 AI::~AI()
 {
-	if (m_pathfinder) {
-		delete m_pathfinder;
-	}
+	delete m_pathfinder;
 	m_pathfinder = NULL;
+
 	while (m_aiData)
 	{
 		TAiData *cur = m_aiData;
@@ -436,7 +432,7 @@ void AI::parseAiDataDefinition( INI* ini )
 		// parse the ini weapon definition
 		ini->initFromINI( TheAI->m_aiData, TheAIFieldParseTable );
 
-	}  // end if
+	}
 }
 
 
@@ -945,8 +941,6 @@ m_infantryPathfindDiameter(6),
 m_vehiclePathfindDiameter(6),
 m_supplyCenterSafeRadius(250),
 m_rebuildDelaySeconds(10),
-//Added By Sadullah Nader
-//Initialization(s) inserted
 m_distanceRequiresGroup(0.0f),
 m_sideBuildLists(NULL),
 m_structuresPoorMod(0.0f),
@@ -955,7 +949,6 @@ m_aiDozerBoredRadiusModifier(2.0),
 m_aiCrushesInfantry(true),
 m_maxRetaliateDistance(210.0f),
 m_retaliateFriendsRadius(120.0f)
-//
 {
 }
 
@@ -988,7 +981,7 @@ void TAiData::crc( Xfer *xfer )
 	xfer->xferBool( &m_enableRepulsors );
 	CRCGEN_LOG(("CRC after AI TAiData for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 
-}  // end crc
+}
 
 //-----------------------------------------------------------------------------
 void TAiData::xfer( Xfer *xfer )
@@ -999,13 +992,13 @@ void TAiData::xfer( Xfer *xfer )
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
-}  // end xfer
+}
 
 //-----------------------------------------------------------------------------
 void TAiData::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 //-----------------------------------------------------------------------------
 void AI::crc( Xfer *xfer )
@@ -1034,7 +1027,7 @@ void AI::crc( Xfer *xfer )
 		}
 	}
 
-}  // end crc
+}
 
 //-----------------------------------------------------------------------------
 void AI::xfer( Xfer *xfer )
@@ -1045,12 +1038,12 @@ void AI::xfer( Xfer *xfer )
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
-}  // end xfer
+}
 
 //-----------------------------------------------------------------------------
 void AI::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 

@@ -27,7 +27,7 @@
 // Desc:   Keeps track of shots fired and people targeted for weapons that want a history of such a thing
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AudioHandleSpecialValues.h"
 #include "Common/GameType.h"
@@ -370,7 +370,7 @@ void FiringTracker::crc( Xfer *xfer )
 	// object helper base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -411,4 +411,4 @@ void FiringTracker::loadPostProcess( void )
 	// object helper back class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

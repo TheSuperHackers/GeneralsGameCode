@@ -30,16 +30,14 @@
 
 #pragma once
 
-#ifndef __USERPREFERENCES_H__
-#define __USERPREFERENCES_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "Common/STLTypedefs.h"
 
 class Money;
-enum CursorCaptureMode CPP_11(: Int);
+typedef UnsignedInt CursorCaptureMode;
+typedef UnsignedInt ScreenEdgeScrollMode;
 
 //-----------------------------------------------------------------------------
 // PUBLIC TYPES ///////////////////////////////////////////////////////////////
@@ -91,11 +89,21 @@ public:
 	void setOnlineIPAddress(AsciiString IP);	// convenience function
 	void setLANIPAddress(UnsignedInt IP);			// convenience function
 	void setOnlineIPAddress(UnsignedInt IP);	// convenience function
+	Bool getArchiveReplaysEnabled() const;		// convenience function
 	Bool getAlternateMouseModeEnabled(void);	// convenience function
 	Bool getRetaliationModeEnabled();					// convenience function
 	Bool getDoubleClickAttackMoveEnabled(void);	// convenience function
 	Real getScrollFactor(void);								// convenience function
+	Bool getDrawScrollAnchor(void);
+	Bool getMoveScrollAnchor(void);
+	Bool getCursorCaptureEnabledInWindowedGame() const;
+	Bool getCursorCaptureEnabledInWindowedMenu() const;
+	Bool getCursorCaptureEnabledInFullscreenGame() const;
+	Bool getCursorCaptureEnabledInFullscreenMenu() const;
 	CursorCaptureMode getCursorCaptureMode() const;
+	Bool getScreenEdgeScrollEnabledInWindowedApp() const;
+	Bool getScreenEdgeScrollEnabledInFullscreenApp() const;
+	ScreenEdgeScrollMode getScreenEdgeScrollMode() const;
 	Bool getSendDelay(void);									// convenience function
 	Int getFirewallBehavior(void);						// convenience function
 	Short getFirewallPortAllocationDelta(void);	// convenience function
@@ -111,6 +119,7 @@ public:
 	Real getMoneyTransactionVolume(void) const;
 	Bool saveCameraInReplays(void);
 	Bool useCameraInReplays(void);
+	Bool getPlayerObserverEnabled() const;
 	Int	 getStaticGameDetail(void);	// detail level selected by the user.
 	Int	 getIdealStaticGameDetail(void);	// detail level detected for user.
  	Real getGammaValue(void);
@@ -133,8 +142,14 @@ public:
 	Int	 getCampaignDifficulty(void);
 	void setCampaignDifficulty( Int diff );
 
+	Int getNetworkLatencyFontSize(void);
+	Int getRenderFpsFontSize(void);
 	Int getSystemTimeFontSize(void);
 	Int getGameTimeFontSize(void);
+
+	Real getResolutionFontAdjustment(void);
+
+	Bool getShowMoneyPerMinute(void) const;
 };
 
 //-----------------------------------------------------------------------------
@@ -161,5 +176,3 @@ public:
   void setSuperweaponRestricted( Bool superweaponRestricted);
   void setStartingCash( const Money & startingCash );
 };
-
-#endif // __USERPREFERENCES_H__

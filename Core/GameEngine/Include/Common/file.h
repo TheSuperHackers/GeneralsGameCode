@@ -43,11 +43,6 @@
 
 #pragma once
 
-#ifndef __FILE_H
-#define __FILE_H
-
-
-
 //----------------------------------------------------------------------------
 //           Includes
 //----------------------------------------------------------------------------
@@ -227,9 +222,3 @@ inline const char* File::getName( void ) const { return m_nameStr.str(); }
 inline void File::setName( const char *name ) { m_nameStr.set(name); }
 inline Int File::getAccess( void ) const { return m_access; }
 inline void File::deleteOnClose( void ) { m_deleteOnClose = TRUE; }
-
-
-
-
-
-#endif // __FILE_H

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __WORKER_AI_UPDATE_H_
-#define __WORKER_AI_UPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
@@ -268,7 +265,3 @@ private:
  	AudioEventRTS m_suppliesDepletedVoice;						///< Sound played when I take the last box.
 
 };
-
-
-#endif // __WORKER_AI_UPDATE_H_
-

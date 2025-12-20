@@ -41,7 +41,7 @@
 #include "always.h"
 #include "wwmemlog.h"
 #include "wwdebug.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "FastAllocator.h"
 
 #define USE_FAST_ALLOCATOR
@@ -95,7 +95,7 @@ static unsigned FreeCount;
 ** Name for each memory category.  I'm padding the array with some "undefined" strings in case
 ** someone forgets to set the name when adding a new category.
 */
-static const char * _MemoryCategoryNames[] =
+static const char *const _MemoryCategoryNames[] =
 {
 	"UNKNOWN",
 	"Geometry",
@@ -531,6 +531,7 @@ void WWMemoryLogClass::Register_Memory_Released(int category,int size)
 static void _MemLogCleanup(void)
 {
 	delete _TheMemLog;
+	_TheMemLog = NULL;
 }
 
 
@@ -578,10 +579,9 @@ MemLogClass * WWMemoryLogClass::Get_Log(void)
 void WWMemoryLogClass::Release_Log(void)
 {
 	MemLogMutexLockClass lock;
-	if (_TheMemLog) {
-		delete _TheMemLog;
-		_TheMemLog = NULL;
-	}
+
+	delete _TheMemLog;
+	_TheMemLog = NULL;
 }
 
 

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _CREATE_OBJECT_DIE_H_
-#define _CREATE_OBJECT_DIE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "GameLogic/Module/DieModule.h"
@@ -71,6 +68,3 @@ public:
 	virtual void onDie( const DamageInfo *damageInfo );
 
 };
-
-#endif // _CREATE_OBJECT_DIE_H_
-

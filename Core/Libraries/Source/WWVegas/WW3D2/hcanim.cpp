@@ -56,7 +56,6 @@
 #include "chunkio.h"
 #include "w3d_file.h"
 #include "wwdebug.h"
-#include <string.h>
 #include <nstrdup.h>
 
 
@@ -137,25 +136,25 @@ NodeCompressedMotionStruct::~NodeCompressedMotionStruct()
 
 	switch (Flavor) {
 		case ANIM_FLAVOR_TIMECODED:
-			if (tc.X) delete tc.X;
-			if (tc.Y) delete tc.Y;
-			if (tc.Z) delete tc.Z;
-			if (tc.Q) delete tc.Q;
+			delete tc.X;
+			delete tc.Y;
+			delete tc.Z;
+			delete tc.Q;
 			break;
 		case ANIM_FLAVOR_ADAPTIVE_DELTA:
-			if (ad.X) delete ad.X;
-			if (ad.Y) delete ad.Y;
-			if (ad.Z) delete ad.Z;
-			if (ad.Q) delete ad.Q;
+			delete ad.X;
+			delete ad.Y;
+			delete ad.Z;
+			delete ad.Q;
 			break;
 		default:
 			WWASSERT(0);	// unknown flavor
 			break;
 	}
 
-	if (Vis) delete Vis;
+	delete Vis;
 
-}  // ~NodeCompressedMotionStruct
+}
 
 
 /***********************************************************************************************
@@ -214,9 +213,8 @@ HCompressedAnimClass::~HCompressedAnimClass(void)
  *=============================================================================================*/
 void HCompressedAnimClass::Free(void)
 {
-	if (NodeMotion != NULL) {
-		delete[] NodeMotion;
-	}
+	delete[] NodeMotion;
+	NodeMotion = NULL;
 }
 
 
@@ -257,15 +255,17 @@ int HCompressedAnimClass::Load_W3D(ChunkLoadClass & cload)
 
 	cload.Close_Chunk();
 
-	strcpy(Name,aheader.HierarchyName);
-	strcat(Name,".");
-	strcat(Name,aheader.Name);
+	static_assert(ARRAY_SIZE(Name) >= ARRAY_SIZE(aheader.HierarchyName), "Incorrect array size");
+	strcpy(Name, aheader.HierarchyName);
+	strlcat(Name, ".", ARRAY_SIZE(Name));
+	strlcat(Name, aheader.Name, ARRAY_SIZE(Name));
 
 	// TSS chasing crash bug 05/26/99
    WWASSERT(HierarchyName != NULL);
    WWASSERT(aheader.HierarchyName != NULL);
    WWASSERT(sizeof(HierarchyName) >= W3D_NAME_LEN);
-   strncpy(HierarchyName,aheader.HierarchyName,W3D_NAME_LEN);
+	 static_assert(ARRAY_SIZE(HierarchyName) >= ARRAY_SIZE(aheader.HierarchyName), "Incorrect array size");
+	 strcpy(HierarchyName, aheader.HierarchyName);
 
 	HTreeClass * base_pose = WW3DAssetManager::Get_Instance()->Get_HTree(HierarchyName);
 	if (base_pose == NULL) {
@@ -371,7 +371,7 @@ Error:
 	Free();
 	return LOAD_ERROR;
 
-}	 // Load_W3D
+}
 
 /***********************************************************************************************
  * HCompressedAnimClass::read_channel -- Reads in a single channel of motion                   *
@@ -392,7 +392,7 @@ bool HCompressedAnimClass::read_channel(ChunkLoadClass & cload,TimeCodedMotionCh
 
 	return result;
 
-}	// read_channel
+}
 
 bool HCompressedAnimClass::read_channel(ChunkLoadClass & cload,AdaptiveDeltaMotionChannelClass * * newchan)
 {
@@ -401,7 +401,7 @@ bool HCompressedAnimClass::read_channel(ChunkLoadClass & cload,AdaptiveDeltaMoti
 
 	return result;
 
-}	// read_channel
+}
 
 
 /***********************************************************************************************
@@ -439,7 +439,7 @@ void HCompressedAnimClass::add_channel(TimeCodedMotionChannelClass * newchan)
 			break;
 	}
 
-}	// add_channel
+}
 
 void HCompressedAnimClass::add_channel(AdaptiveDeltaMotionChannelClass * newchan)
 {
@@ -464,7 +464,7 @@ void HCompressedAnimClass::add_channel(AdaptiveDeltaMotionChannelClass * newchan
 			break;
 	}
 
-}	// add_channel
+}
 
 
 
@@ -488,7 +488,7 @@ bool HCompressedAnimClass::read_bit_channel(ChunkLoadClass & cload,TimeCodedBitC
 
 	return result;
 
-}	// read_bit_channel
+}
 
 
 /***********************************************************************************************
@@ -577,7 +577,7 @@ void HCompressedAnimClass::Get_Orientation(Quaternion& q, int pividx,float frame
 			WWASSERT(0); // unknown flavor
 			break;
 	}
-} // Get_Orientation
+}
 
 /***********************************************************************************************
  * HCompressedAnimClass::Get_Transform -- returns the transform matrix for the given frame	  *

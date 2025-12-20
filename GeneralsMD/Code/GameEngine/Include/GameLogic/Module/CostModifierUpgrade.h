@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __COST_MODIFIER_UPGRADE_H_
-#define __COST_MODIFIER_UPGRADE_H_
-
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -131,5 +128,3 @@ protected:
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };
-
-#endif // __COST_MODIFIER_UPGRADE_H_

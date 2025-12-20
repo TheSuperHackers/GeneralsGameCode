@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef PROTO_H
-#define PROTO_H
 
 #include "always.h"
 #include <stdlib.h>
@@ -94,8 +88,8 @@ public:
 	virtual RenderObjClass *	Create(void) = 0;
 	virtual void							DeleteSelf() = 0;
 
-	inline void friend_setNextHash(PrototypeClass* n) { NextHash = n; }
-	inline PrototypeClass* friend_getNextHash() { return NextHash; }
+	void friend_setNextHash(PrototypeClass* n) { NextHash = n; }
+	PrototypeClass* friend_getNextHash() { return NextHash; }
 
 protected:
 	virtual ~PrototypeClass(void) {};
@@ -177,7 +171,3 @@ public:
 */
 extern MeshLoaderClass			_MeshLoader;
 extern HModelLoaderClass		_HModelLoader;
-
-
-
-#endif

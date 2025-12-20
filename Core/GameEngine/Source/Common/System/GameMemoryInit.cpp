@@ -41,7 +41,7 @@
 // Desc:      Memory manager
 //
 // ----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // SYSTEM INCLUDES
 
@@ -113,17 +113,11 @@ void userMemoryManagerInitPools()
 	// we expect. so do it the hard way.
 	char buf[_MAX_PATH];
 	::GetModuleFileName(NULL, buf, sizeof(buf));
-	char* pEnd = buf + strlen(buf);
-	while (pEnd != buf)
+	if (char* pEnd = strrchr(buf, '\\'))
 	{
-		if (*pEnd == '\\')
-		{
-			*pEnd = 0;
-			break;
-		}
-		--pEnd;
+		*pEnd = 0;
 	}
-	strcat(buf, "\\Data\\INI\\MemoryPools.ini");
+	strlcat(buf, "\\Data\\INI\\MemoryPools.ini", ARRAY_SIZE(buf));
 
 	FILE* fp = fopen(buf, "r");
 	if (fp)

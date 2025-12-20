@@ -87,7 +87,7 @@ static void ensureValidPlayerName(Dict *d)
 {
 	// ensure there are no illegal chars in it. (in particular, no spaces!)
 	char buf[1024];
-	strcpy(buf, d->getAsciiString(TheKey_playerName).str());
+	strlcpy(buf, d->getAsciiString(TheKey_playerName).str(), ARRAY_SIZE(buf));
 	for (char* p = buf; *p; ++p)
 		if (!islegalplayernamechar(*p))
 			*p = '_';
@@ -305,8 +305,8 @@ void PlayerListDlg::OnNewplayer()
 	newPlayerDict.setBool(TheKey_playerIsHuman, true);
 	newPlayerDict.setUnicodeString(TheKey_playerDisplayName, pnameu);
 	newPlayerDict.setAsciiString(TheKey_playerFaction, addedPTName);
-	newPlayerDict.setAsciiString(TheKey_playerEnemies, AsciiString(""));
-	newPlayerDict.setAsciiString(TheKey_playerAllies, AsciiString(""));
+	newPlayerDict.setAsciiString(TheKey_playerEnemies, "");
+	newPlayerDict.setAsciiString(TheKey_playerAllies, "");
 
 #ifdef NOT_IN_USE
 	// auto-open the advanced prop editor
@@ -568,11 +568,11 @@ void PlayerListDlg::updateTheUI(void)
 		pname = playerNameForUI(m_sides, i);
 
 		rstr = calcRelationStr(m_sides, m_curPlayerIdx, i);
-		sprintf(buffer, "%s: %s",pname.str(),rstr);
+		snprintf(buffer, ARRAY_SIZE(buffer), "%s: %s",pname.str(),rstr);
 		regardOthers->AddString(buffer);
 
 		rstr = calcRelationStr(m_sides, i, m_curPlayerIdx);
-		sprintf(buffer, "%s: %s",pname.str(),rstr);
+		snprintf(buffer, ARRAY_SIZE(buffer), "%s: %s",pname.str(),rstr);
 		regardMe->AddString(buffer);
 	}
 
@@ -856,8 +856,8 @@ static void addSide(SidesList *sides, AsciiString faction,
 		newPlayerDict.setBool(TheKey_playerIsHuman, false);
 		newPlayerDict.setUnicodeString(TheKey_playerDisplayName, playerUStr);
 		newPlayerDict.setAsciiString(TheKey_playerFaction, faction);
-		newPlayerDict.setAsciiString(TheKey_playerEnemies, AsciiString(""));
-		newPlayerDict.setAsciiString(TheKey_playerAllies, AsciiString(""));
+		newPlayerDict.setAsciiString(TheKey_playerEnemies, "");
+		newPlayerDict.setAsciiString(TheKey_playerAllies, "");
 
 		ensureValidPlayerName(&newPlayerDict);
 		sides->addSide(&newPlayerDict);

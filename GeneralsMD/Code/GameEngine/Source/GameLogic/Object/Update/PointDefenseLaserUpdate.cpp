@@ -328,7 +328,7 @@ Object* PointDefenseLaserUpdate::scanClosestTarget()
 				bestTargetOutOfRange[index] = other;
 			}
 		}
-	}  // end for, other
+	}
 
 	if( bestTargetInRange[ 0 ] )
 	{
@@ -377,7 +377,7 @@ void PointDefenseLaserUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -407,7 +407,7 @@ void PointDefenseLaserUpdate::xfer( Xfer *xfer )
 	// next shot available in frames
 	xfer->xferInt( &m_nextShotAvailableInFrames );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -418,4 +418,4 @@ void PointDefenseLaserUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

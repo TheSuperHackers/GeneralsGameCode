@@ -28,9 +28,10 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameAudio.h"
+#include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/INI.h"
 #include "Common/Player.h"
@@ -65,7 +66,7 @@ SpecialPowerModuleData::SpecialPowerModuleData()
 	m_startsPaused = FALSE;
 	m_scriptedSpecialPowerOnly = FALSE;
 
-}  // end SpecialPowerModuleData
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -84,7 +85,7 @@ SpecialPowerModuleData::SpecialPowerModuleData()
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -142,7 +143,7 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 	}
 
 
-}  // end SpecialPowerModule
+}
 
 //-------------------------------------------------------------------------------------------------
 const AudioEventRTS& SpecialPowerModule::getInitiateSound() const
@@ -162,7 +163,7 @@ SpecialPowerModule::~SpecialPowerModule()
 																		getObject()->getID(),
 																		getSpecialPowerModuleData()->m_specialPowerTemplate );
 
-}  // end ~SpecialPowerModule
+}
 
 //-------------------------------------------------------------------------------------------------
 void SpecialPowerModule::setReadyFrame( UnsignedInt frame )
@@ -241,7 +242,7 @@ ScienceType SpecialPowerModule::getRequiredScience( void ) const
 {
 
 	return getSpecialPowerModuleData()->m_specialPowerTemplate->getRequiredScience();
-}  // end ~SpecialPowerModule
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -249,7 +250,7 @@ const SpecialPowerTemplate * SpecialPowerModule::getSpecialPowerTemplate( void )
 {
 
 	return getSpecialPowerModuleData()->m_specialPowerTemplate;
-}  // end ~SpecialPowerModule
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -257,7 +258,7 @@ AsciiString SpecialPowerModule::getPowerName( void ) const
 {
 
 	return getSpecialPowerModuleData()->m_specialPowerTemplate->getName();
-}  // end ~SpecialPowerModule
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Is this module designed for the power identier template passed in? */
@@ -280,7 +281,7 @@ Bool SpecialPowerModule::isModuleForPower( const SpecialPowerTemplate *specialPo
 	//We don't match templates.
 	return FALSE;
 
-}  // end canExecutePower
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Is this special power ready to use */
@@ -308,7 +309,7 @@ Bool SpecialPowerModule::isReady() const
 
 	return (m_pausedCount == 0) && (TheGameLogic->getFrame() >= m_availableOnFrame);
 
-}  // end isReady
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Get the percentage ready a special power is to use
@@ -550,7 +551,8 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
 	// Let EVA do her thing
 	SpecialPowerType type = getSpecialPowerModuleData()->m_specialPowerTemplate->getSpecialPowerType();
 
-  Player *localPlayer = ThePlayerList->getLocalPlayer();
+	Player *localPlayer = rts::getObservedOrLocalPlayer();
+	Relationship relationship = localPlayer->getRelationship(getObject()->getTeam());
 
   // Only play the EVA sounds if this is not the local player, and the local player doesn't consider the
 	// person an enemy.
@@ -564,7 +566,7 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
       {
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_ParticleCannon);
       }
-      else if ( localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES )
+      else if (relationship != ENEMIES)
       {
         // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_ParticleCannon);
@@ -580,7 +582,7 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
       {
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_Nuke);
       }
-      else if ( localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES )
+      else if (relationship != ENEMIES)
       {
         // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_Nuke);
@@ -596,7 +598,7 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
       {
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_ScudStorm);
       }
-      else if ( localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES )
+      else if (relationship != ENEMIES)
       {
         // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_ScudStorm);
@@ -614,7 +616,7 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
       {
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_GPS_Scrambler);
       }
-      else if ( localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES )
+      else if (relationship != ENEMIES)
       {
         // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_GPS_Scrambler);
@@ -630,7 +632,7 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
       {
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_Sneak_Attack);
       }
-      else if ( localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES )
+      else if (relationship != ENEMIES)
       {
         // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
         TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_Sneak_Attack);
@@ -774,7 +776,7 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
 		soundAtLocation.setPlayerIndex(getObject()->getControllingPlayer()->getPlayerIndex());
 		TheAudio->addAudioEvent( &soundAtLocation );
 
-	}  // end if
+	}
 
 }
 
@@ -902,7 +904,7 @@ void SpecialPowerModule::pauseCountdown( Bool pause )
 			m_availableOnFrame += (TheGameLogic->getFrame() - m_pausedOnFrame);
 		}
 	}
-}  // end pauseCountdown
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -939,7 +941,7 @@ void SpecialPowerModule::crc( Xfer *xfer )
 	// extend base class
 	BehaviorModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -969,7 +971,7 @@ void SpecialPowerModule::xfer( Xfer *xfer )
 	// paused percent
 	xfer->xferReal( &m_pausedPercent );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1003,4 +1005,4 @@ void SpecialPowerModule::loadPostProcess( void )
 
 
 
-}  // end loadPostProcess
+}

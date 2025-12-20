@@ -34,16 +34,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef SCENE_H
-#define SCENE_H
 
 #include "always.h"
-#include "refcount.h"
 #include "vector3.h"
 #include "robjlist.h"
 #include "wwdebug.h"
@@ -265,5 +258,3 @@ protected:
 	virtual void Customized_Render(RenderInfoClass & rinfo);
 	virtual void Post_Render_Processing(RenderInfoClass& rinfo);
 };
-
-#endif

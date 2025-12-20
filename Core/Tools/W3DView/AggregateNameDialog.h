@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_AGGREGATENAMEDIALOG_H__3F618448_CDEA_11D2_9FFC_00104B791122__INCLUDED_)
-#define AFX_AGGREGATENAMEDIALOG_H__3F618448_CDEA_11D2_9FFC_00104B791122__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 // AggregateNameDialog.h : header file
 //
 
@@ -79,5 +75,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_AGGREGATENAMEDIALOG_H__3F618448_CDEA_11D2_9FFC_00104B791122__INCLUDED_)

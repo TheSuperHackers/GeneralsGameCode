@@ -199,8 +199,8 @@ DX8TextureCategoryClass::DX8TextureCategoryClass(
 	WWASSERT(pass>=0);
 	WWASSERT(pass<DX8FVFCategoryContainer::MAX_PASSES);
 
-
-	for (int a=0;a<MAX_TEXTURE_STAGES;++a) {
+	for (int a=0;a<MeshMatDescClass::MAX_TEX_STAGES;++a)
+	{
 		textures[a]=NULL;
 		REF_PTR_SET(textures[a],texs[a]);
 	}
@@ -214,7 +214,8 @@ DX8TextureCategoryClass::~DX8TextureCategoryClass()
 	while (DX8PolygonRendererClass* p_renderer=PolygonRendererList.Get_Head()) {
 		TheDX8MeshRenderer.Unregister_Mesh_Type(p_renderer->Get_Mesh_Model_Class());
 	}
-	for (int a=0;a<MAX_TEXTURE_STAGES;++a) {
+	for (int a=0;a<MeshMatDescClass::MAX_TEX_STAGES;++a)
+	{
 		REF_PTR_RELEASE(textures[a]);
 	}
 
@@ -543,13 +544,13 @@ void DX8FVFCategoryContainer::Change_Polygon_Renderer_Texture(
 					prl.Add(rem);
 				}
 				poly_it.Next();
-			} // while
-		} //if src_texture==texture
+			}
+		}
 		else
 			// quit loop if we've got a texture change
 			if (foundtexture) break;
 		src_it.Next();
-	} // while
+	}
 
 	PolyRemoverListIterator prli(&prl);
 
@@ -634,12 +635,12 @@ void DX8FVFCategoryContainer::Change_Polygon_Renderer_Material(
 					prl.Add(rem);
 				}
 				poly_it.Next();
-			} // while
-		} // if
+			}
+		}
 		else
 			if (foundtexture) break;
 		src_it.Next();
-	} // while
+	}
 
 	PolyRemoverListIterator prli(&prl);
 
@@ -1175,8 +1176,10 @@ void DX8FVFCategoryContainer::Generate_Texture_Categories(Vertex_Split_Table& sp
 
 		for (int i=0;i<polygon_count;++i) {
 			TextureClass* textures[MeshMatDescClass::MAX_TEX_STAGES];
-			WWASSERT(MAX_TEXTURE_STAGES==MeshMatDescClass::MAX_TEX_STAGES);
-			for (int stage=0;stage<MeshMatDescClass::MAX_TEX_STAGES;stage++) {
+			// disabled this assert as MAX_TEXTURE_STAGES is now 8, but legacy MeshMat::MAX_TEX_STAGES is still 2
+	//		WWASSERT(MAX_TEXTURE_STAGES==MeshMatDescClass::MAX_TEX_STAGES);
+			for (int stage=0;stage<MeshMatDescClass::MAX_TEX_STAGES;stage++)
+			{
 				textures[stage]=split_table.Peek_Texture(i,pass,stage);
 			}
 			VertexMaterialClass* mat=split_table.Peek_Material(i,pass);
@@ -1346,8 +1349,8 @@ void DX8SkinFVFCategoryContainer::Render(void)
 				renderedVertexCount += mesh_vertex_count;
 
 				mesh = mesh->Peek_Next_Visible_Skin();
-			}	//while
-		}//lock
+			}
+		}
 
 		SNAPSHOT_SAY(("Set vb: %x ib: %x",&vb.FVF_Info(),index_buffer));
 
@@ -1366,7 +1369,7 @@ void DX8SkinFVFCategoryContainer::Render(void)
 		}
 
 		Render_Procedural_Material_Passes();
-	}//while
+	}
 
 	//remove all the rendered data from queues
 	for (unsigned pass=0;pass<passes;++pass) {

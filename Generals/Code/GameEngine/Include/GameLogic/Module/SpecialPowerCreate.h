@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _SPECIAL_POWER_CREATE_H_
-#define _SPECIAL_POWER_CREATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/CreateModule.h"
 
@@ -57,5 +54,3 @@ public:
 protected:
 
 };
-
-#endif // _SPECIAL_POWER_CREATE_H_

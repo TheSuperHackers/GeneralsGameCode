@@ -15,22 +15,31 @@ add_subdirectory(Code)
 
 # If we are building on windows for windows, try and get the game install path from the registry.
 if("${CMAKE_HOST_SYSTEM}" MATCHES "Windows" AND "${CMAKE_SYSTEM}" MATCHES "Windows")
-    if(NOT RTS_INSTALL_PREFIX_ZEROHOUR)
-        get_filename_component(RTS_INSTALL_PREFIX_ZEROHOUR  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour;InstallPath]" ABSOLUTE CACHE)
-    endif()
+    include(${CMAKE_SOURCE_DIR}/cmake/registry.cmake)
+
+    # Check the EA App/CD registry path
+    fetch_registry_value(
+        "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/Command and Conquer Generals Zero Hour"
+        "InstallPath"
+        RTS_INSTALL_PREFIX_ZEROHOUR
+        "Zero Hour install path from registry")
 
     # Check the "First Decade" registry path
-    if(NOT RTS_INSTALL_PREFIX_ZEROHOUR OR "${RTS_INSTALL_PREFIX_ZEROHOUR}" STREQUAL "/registry")
-        get_filename_component(RTS_INSTALL_PREFIX_ZEROHOUR  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer The First Decade;zh_folder]" ABSOLUTE CACHE)
-    endif()
+    fetch_registry_value(
+        "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/Command and Conquer The First Decade"
+        "zh_folder"
+        RTS_INSTALL_PREFIX_ZEROHOUR
+        "Zero Hour install path from registry")
 
     # Check the Steam registry path
-    if(NOT RTS_INSTALL_PREFIX_ZEROHOUR OR "${RTS_INSTALL_PREFIX_ZEROHOUR}" STREQUAL "/registry")
-        get_filename_component(RTS_INSTALL_PREFIX_ZEROHOUR  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\EA Games\\ZeroHour;installPath]" ABSOLUTE CACHE)
-    endif()
+    fetch_registry_value(
+        "HKEY_LOCAL_MACHINE/SOFTWARE/Electronic Arts/EA Games/ZeroHour"
+        "installPath"
+        RTS_INSTALL_PREFIX_ZEROHOUR
+        "Zero Hour install path from registry")
 endif()
 
-if(RTS_INSTALL_PREFIX_ZEROHOUR AND NOT "${RTS_INSTALL_PREFIX_ZEROHOUR}" STREQUAL "/registry")
+if(RTS_INSTALL_PREFIX_ZEROHOUR)
     install(TARGETS z_generals RUNTIME DESTINATION "${RTS_INSTALL_PREFIX_ZEROHOUR}")
     install(FILES $<TARGET_PDB_FILE:z_generals> DESTINATION "${RTS_INSTALL_PREFIX_ZEROHOUR}" OPTIONAL)
 
@@ -63,7 +72,7 @@ if(RTS_INSTALL_PREFIX_ZEROHOUR AND NOT "${RTS_INSTALL_PREFIX_ZEROHOUR}" STREQUAL
         install(TARGETS z_mapcachebuilder RUNTIME DESTINATION "${RTS_INSTALL_PREFIX_ZEROHOUR}")
         install(FILES $<TARGET_PDB_FILE:z_mapcachebuilder> DESTINATION "${RTS_INSTALL_PREFIX_ZEROHOUR}" OPTIONAL)
     endif()
-    
+
     if(TARGET z_w3dview)
         install(TARGETS z_w3dview RUNTIME DESTINATION "${RTS_INSTALL_PREFIX_ZEROHOUR}")
         install(FILES $<TARGET_PDB_FILE:z_w3dview> DESTINATION "${RTS_INSTALL_PREFIX_ZEROHOUR}" OPTIONAL)
@@ -73,4 +82,8 @@ if(RTS_INSTALL_PREFIX_ZEROHOUR AND NOT "${RTS_INSTALL_PREFIX_ZEROHOUR}" STREQUAL
         install(TARGETS z_wdump RUNTIME DESTINATION "${RTS_INSTALL_PREFIX_ZEROHOUR}")
         install(FILES $<TARGET_PDB_FILE:z_wdump> DESTINATION "${RTS_INSTALL_PREFIX_ZEROHOUR}" OPTIONAL)
     endif()
+else()
+    message(STATUS "Zero Hour install path not found. Registry keys for 'Command and Conquer Generals Zero Hour' not found. "
+                   "Zero Hour targets will be built, but not installed. "
+                   "You can specify the path manually by setting RTS_INSTALL_PREFIX_ZEROHOUR.")
 endif()

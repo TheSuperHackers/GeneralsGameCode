@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __RADARUPGRADE_H_
-#define __RADARUPGRADE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
 
@@ -78,6 +75,3 @@ protected:
 
 
 };
-
-#endif // __RADARUPGRADE_H_
-

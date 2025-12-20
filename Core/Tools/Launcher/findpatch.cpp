@@ -206,8 +206,8 @@ void Delete_Patches(ConfigFile &config)
           DBGMSG("UNLINK: "<<findData.cFileName);
         }
       }
-    }  // If there's at least one file
+    }
     FindClose(hFile);
-  }  // while there's apps in config
+  }
   return;
 }

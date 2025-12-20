@@ -207,7 +207,7 @@ void WBDocUndoable::Undo(void)
 AddObjectUndoable::~AddObjectUndoable(void)
 {
 	m_pDoc = NULL;  // not ref counted.
-	if (m_objectToAdd && !m_addedToList) {
+	if (!m_addedToList) {
 		deleteInstance(m_objectToAdd);
 		m_objectToAdd=NULL;
 	}
@@ -649,9 +649,8 @@ void FlagsInfo::UndoFlags(CWorldBuilderDoc *pDoc)
 ModifyFlagsUndoable::~ModifyFlagsUndoable(void)
 {
 	m_pDoc = NULL;  // not ref counted.
-	if (m_flagsList) {
-		delete m_flagsList;
-	}
+
+	delete m_flagsList;
 	m_flagsList = NULL;
 }
 
@@ -857,7 +856,7 @@ void DictItemUndoable::Undo(void)
 ***************************************************************************/
 DeleteInfo::~DeleteInfo(void)
 {
-	if (m_didDelete && m_objectToDelete) {
+	if (m_didDelete) {
 		deleteInstance(m_objectToDelete);
 	}
 	DeleteInfo *pCur = m_next;
@@ -937,9 +936,8 @@ void DeleteInfo::UndoDelete(WorldHeightMapEdit *pMap)
 DeleteObjectUndoable::~DeleteObjectUndoable(void)
 {
 	m_pDoc = NULL;  // not ref counted.
-	if (m_deleteList) {
-		delete m_deleteList;
-	}
+
+	delete m_deleteList;
 	m_deleteList=NULL;
 }
 

@@ -61,7 +61,7 @@ W3DTracerDraw::W3DTracerDraw( Thing *thing, const ModuleData* moduleData ) : Dra
 	m_speedInDistPerFrame = 1.0f;
 	m_theTracer = NULL;
 
-}  // end W3DTracerDraw
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -160,7 +160,7 @@ void W3DTracerDraw::crc( Xfer *xfer )
 	// extend base class
 	DrawModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -180,7 +180,7 @@ void W3DTracerDraw::xfer( Xfer *xfer )
 
 	// no data to save here, nobody will ever notice
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -191,4 +191,4 @@ void W3DTracerDraw::loadPostProcess( void )
 	// extend base class
 	DrawModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

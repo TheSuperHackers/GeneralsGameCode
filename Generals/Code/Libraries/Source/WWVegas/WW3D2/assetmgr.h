@@ -35,19 +35,13 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef ASSETMGR_H
-#define ASSETMGR_H
 
 #include "always.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "htreemgr.h"
 #include "hanimmgr.h"
-#include "SLIST.H"
+#include "SLIST.h"
 #include "texture.h"
 #include "hashtemplate.h"
 #include "simplevec.h"
@@ -124,7 +118,7 @@ public:
 	-------------------------------------------------------------------------------------
 	Dec 11, 1997, Asset Manager Brainstorming:
 
-	- WW3DAssetManager will be diferentiated from other game data asset managers
+	- WW3DAssetManager will be differentiated from other game data asset managers
 	(sounds, strings, etc) because they behave differently and serve different
 	purposes
 
@@ -178,6 +172,10 @@ public:
 	the prototype class needs to be able to tell you the class ID.  Actually this
 	code only seems to be used by tools such as SView but is needed anyway...
 
+	-------------------------------------------------------------------------------------
+	TheSuperHackers @fix xezon 08/11/2025
+	The Asset Manager will now return null when it cannot find or create a valid font
+	with the given inputs. This way the user knows that the requested font is unusable.
 */
 
 
@@ -203,7 +201,7 @@ public:
 	**	WW3DAssetManager::Get_Instance();
 	*/
 	static WW3DAssetManager *		Get_Instance(void) { return TheInstance; }
-	static void							Delete_This(void) { if (TheInstance) delete TheInstance; TheInstance=NULL; }
+	static void							Delete_This(void) { delete TheInstance; TheInstance=NULL; }
 
 	/*
 	** Load data from any type of w3d file
@@ -271,7 +269,6 @@ public:
 		TextureBaseClass::TexAssetType type=TextureBaseClass::TEX_REGULAR,
 		bool allow_reduction=true
 	);
-	TextureClass*						Get_Bumpmap_Based_On_Texture(TextureClass* texture);
 
 	virtual void						Release_All_Textures(void);
 	virtual void						Release_Unused_Textures(void);
@@ -281,12 +278,12 @@ public:
 
 	/*
 	** Access to Font3DInstances. (These are not saved, we just use the
-	** asset manager as a convienient way to create them.)
+	** asset manager as a convenient way to create them.)
 	*/
 	virtual Font3DInstanceClass * Get_Font3DInstance( const char * name);
 
 	/*
-	** Access to FontChars. Used by Render2DSentenceClass
+	** Access to FontChars. Used by Render2DSentenceClass. Can return null.
 	*/
 	virtual FontCharsClass *		Get_FontChars( const char * name, int point_size, bool is_bold = false );
 
@@ -437,5 +434,3 @@ protected:
 	// Font3DInstance need access to the Font3DData
 	friend class Font3DInstanceClass;
 };
-
-#endif

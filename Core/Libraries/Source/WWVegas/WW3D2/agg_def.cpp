@@ -182,9 +182,7 @@ AggregateDefClass::Free_Subobject_List (void)
 	// Delete all the stucture pointers contained in the subobject list
 	for (int index = 0; index < m_SubobjectList.Count (); index ++) {
 		W3dAggregateSubobjectStruct *pinfo = m_SubobjectList[index];
-		if (pinfo) {
-			delete pinfo;
-		}
+		delete pinfo;
 	}
 
 	// Reset the lists contents
@@ -883,7 +881,7 @@ AggregateLoaderClass::Load_W3D (ChunkLoadClass &chunk_load)
 
 			// Error!  Free the definition
 			delete pdefinition;
-			pdefinition = NULL;
+
 		} else {
 
 			// Success!  Create a prototype from the definition

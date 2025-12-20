@@ -26,9 +26,6 @@
 
 #pragma once
 
-#ifndef _WeaponSet_H_
-#define _WeaponSet_H_
-
 #include "Lib/BaseType.h"
 #include "Common/GameType.h"
 #include "Common/KindOf.h"
@@ -54,7 +51,7 @@ enum DamageType CPP_11(: Int);
 #include "GameLogic/WeaponSetFlags.h"
 
 #ifdef DEFINE_WEAPONSLOTTYPE_NAMES
-static const char *TheWeaponSlotTypeNames[] =
+static const char *const TheWeaponSlotTypeNames[] =
 {
 	"PRIMARY",
 	"SECONDARY",
@@ -67,6 +64,7 @@ static const char *TheWeaponSlotTypeNames[] =
 
 	NULL
 };
+static_assert(ARRAY_SIZE(TheWeaponSlotTypeNames) == WEAPONSLOT_COUNT + 1, "Incorrect array size");
 
 static const LookupListRec TheWeaponSlotTypeNamesLookupList[] =
 {
@@ -79,8 +77,9 @@ static const LookupListRec TheWeaponSlotTypeNamesLookupList[] =
 	{ "WEAPON_SEVEN",	WEAPON_SEVEN },
 	{ "WEAPON_EIGHT",	WEAPON_EIGHT },
 	
-	{ NULL, 0	}// keep this last!
+	{ NULL, 0	}
 };
+static_assert(ARRAY_SIZE(TheWeaponSlotTypeNamesLookupList) == WEAPONSLOT_COUNT + 1, "Incorrect array size");
 
 #endif
 
@@ -176,7 +175,7 @@ public:
 	inline Int getConditionsYesCount() const { return 1; }
 	inline const WeaponSetFlags& getNthConditionsYes(Int i) const { return m_types; }
 #if defined(RTS_DEBUG)
-	inline AsciiString getDescription() const { return AsciiString("ArmorTemplateSet"); }
+	inline AsciiString getDescription() const { return "ArmorTemplateSet"; }
 #endif
 };
 
@@ -285,5 +284,3 @@ public:
 
 	static ModelConditionFlags getModelConditionForWeaponSlot(WeaponSlotType wslot, WeaponSetConditionType a);
 };
-
-#endif	// _WeaponSet_H_

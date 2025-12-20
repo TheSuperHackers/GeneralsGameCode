@@ -27,7 +27,7 @@
 // Author: Michael S. Booth, November 2001
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_PARTICLE_SYSTEM_NAMES
 
@@ -68,8 +68,6 @@ ParticleSystemManager *TheParticleSystemManager = NULL;
 // ------------------------------------------------------------------------------------------------
 ParticleInfo::ParticleInfo( void )
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_angleZ = 0.0f;
 	m_angularDamping = 0.0f;
 	m_angularRateZ = 0.0f;
@@ -87,8 +85,7 @@ ParticleInfo::ParticleInfo( void )
 	m_lifetime = 0;
 	m_particleUpTowardsEmitter = FALSE;
 
-	//
-}  // end ParticleInfo
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -96,7 +93,7 @@ ParticleInfo::ParticleInfo( void )
 void ParticleInfo::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -154,7 +151,7 @@ void ParticleInfo::xfer( Xfer *xfer )
 		xfer->xferReal( &m_alphaKey[ i ].value );
 		xfer->xferUnsignedInt( &m_alphaKey[ i ].frame );
 
-	}  // end for, i
+	}
 
 	// color keys
 	for( i = 0; i < MAX_KEYFRAMES; ++i )
@@ -163,7 +160,7 @@ void ParticleInfo::xfer( Xfer *xfer )
 		xfer->xferRGBColor( &m_colorKey[ i ].color );
 		xfer->xferUnsignedInt( &m_colorKey[ i ].frame );
 
-	}  // end for, i
+	}
 
 	// color scale
 	xfer->xferReal( &m_colorScale );
@@ -174,7 +171,7 @@ void ParticleInfo::xfer( Xfer *xfer )
 	// wind randomness
 	xfer->xferReal( &m_windRandomness );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -182,7 +179,7 @@ void ParticleInfo::xfer( Xfer *xfer )
 void ParticleInfo::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
@@ -262,10 +259,7 @@ Particle::Particle( ParticleSystem *system, const ParticleInfo *info )
 
 	m_angleZ = info->m_angleZ;
 
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_lastPos.zero();
-	//
 	m_windRandomness = info->m_windRandomness;
 	m_particleUpTowardsEmitter = info->m_particleUpTowardsEmitter;
 	m_emitterPos = info->m_emitterPos;
@@ -507,9 +501,9 @@ void Particle::doWindMotion( void )
 			systemPos.y += objPos->y;
 			systemPos.z += objPos->z;
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 	else if( DrawableID attachedDraw = m_system->getAttachedDrawable() )
 	{
 		Drawable *draw = TheGameClient->findDrawableByID( attachedDraw );
@@ -522,9 +516,9 @@ void Particle::doWindMotion( void )
 			systemPos.y += drawPos->y;
 			systemPos.z += drawPos->z;
 
-		}  // end if
+		}
 
-	}  // end else if
+	}
 
 	//
 	// compute a vector from the system position in the world to the particle ... we will use
@@ -559,9 +553,9 @@ void Particle::doWindMotion( void )
 		m_pos.x += (Cos( windAngle ) * windForceStrength);
 		m_pos.y += (Sin( windAngle ) * windForceStrength);
 
-	}  // end if
+	}
 
-}  // doWindMotion
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Get priority of a particle ... which is the priority of it's attached system */
@@ -621,7 +615,7 @@ Bool Particle::isInvisible( void )
 void Particle::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -680,7 +674,7 @@ void Particle::xfer( Xfer *xfer )
 	ParticleSystemID systemUnderControlID = m_systemUnderControl ? m_systemUnderControl->getSystemID() : INVALID_PARTICLE_SYSTEM_ID;
 	xfer->xferUser( &systemUnderControlID, sizeof( ParticleSystemID ) );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -710,11 +704,11 @@ void Particle::loadPostProcess( void )
 			DEBUG_CRASH(( "Particle::loadPostProcess - Unable to find system under control pointer" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
-}  // end loadPostProcess
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -728,8 +722,6 @@ ParticleSystemInfo::ParticleSystemInfo()
 	m_isEmitAboveGroundOnly = false;
 	m_isParticleUpTowardsEmitter = false;
 
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_driftVelocity.zero();
 	m_gravity = 0.0f;
 	m_isEmissionVolumeHollow = FALSE;
@@ -737,7 +729,6 @@ ParticleSystemInfo::ParticleSystemInfo()
 	m_slavePosOffset.zero();
 	m_systemLifetime = 0;
 
-	//
 	// some default values for the wind motion values
 	m_windMotion = WIND_MOTION_NOT_USED;
 	m_windAngle = 0.0f;
@@ -769,7 +760,7 @@ void ParticleSystemInfo::tintAllColors( Color tintColor )
 		m_colorKey[ key ].color.blue  *= (Real)(rgb.blue ) / 255.0f;
 	}
 
-}  // end loadPostProcess
+}
 
 // ----------------
 void ParticleSystemInfo::tintColorsAllFrames(Color tintColor)
@@ -793,7 +784,7 @@ void ParticleSystemInfo::tintColorsAllFrames(Color tintColor)
 void ParticleSystemInfo::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -863,7 +854,7 @@ void ParticleSystemInfo::xfer( Xfer *xfer )
 		xfer->xferUser( &m_alphaKey[ i ].var, sizeof( GameClientRandomVariable ) );
 		xfer->xferUnsignedInt( &m_alphaKey[ i ].frame );
 
-	}  // end for, i
+	}
 
 	// color keys
 	for( i = 0; i < MAX_KEYFRAMES; ++i )
@@ -872,7 +863,7 @@ void ParticleSystemInfo::xfer( Xfer *xfer )
 		xfer->xferRGBColor( &m_colorKey[ i ].color );
 		xfer->xferUnsignedInt( &m_colorKey[ i ].frame );
 
-	}  // end for, i
+	}
 
 	// color scale
 	xfer->xferUser( &m_colorScale, sizeof( GameClientRandomVariable ) );
@@ -940,7 +931,7 @@ void ParticleSystemInfo::xfer( Xfer *xfer )
 			xfer->xferUser( &m_emissionVelocity.outward.otherSpeed, sizeof( GameClientRandomVariable ) );
 			break;
 
-	}  // end switch, m_emissionVelocityType
+	}
 
 	// emission volume type
 	xfer->xferUser( &m_emissionVolumeType, sizeof( EmissionVolumeType ) );
@@ -976,7 +967,7 @@ void ParticleSystemInfo::xfer( Xfer *xfer )
 			xfer->xferReal( &m_emissionVolume.cylinder.length );
 			break;
 
-	}  // end switch, m_emissionVolumeType
+	}
 
 	// is emission volume hollow
 	xfer->xferBool( &m_isEmissionVolumeHollow );
@@ -1026,7 +1017,7 @@ void ParticleSystemInfo::xfer( Xfer *xfer )
 	// wind motion moving to end angle
 	xfer->xferByte( &m_windMotionMovingToEndAngle );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -1034,7 +1025,7 @@ void ParticleSystemInfo::xfer( Xfer *xfer )
 void ParticleSystemInfo::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // ParticleSystem /////////////////////////////////////////////////////////////////////////////////
@@ -1053,12 +1044,9 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 	m_template = sysTemplate;
 	m_systemID = id;
 
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_lastPos.zero();
 	m_pos.zero();
 	m_velCoeff.zero();
-	//
 
 	m_attachedToDrawableID = INVALID_DRAWABLE_ID;
 	m_attachedToObjectID = INVALID_ID;
@@ -1182,9 +1170,9 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 			setSlave( slaveSystem );
 			m_slaveSystem->setMaster( this );
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	m_attachedSystemName = sysTemplate->m_attachedSystemName;
 	m_particleCount = 0;
@@ -1210,7 +1198,7 @@ ParticleSystem::~ParticleSystem()
 		m_slaveSystem->setMaster( NULL );
 		setSlave( NULL );
 
-	}  // end if
+	}
 
 	// tell any master system that *we* are going away
 	if( m_masterSystem )
@@ -1220,7 +1208,7 @@ ParticleSystem::~ParticleSystem()
 		m_masterSystem->setSlave( NULL );
 		setMaster( NULL );
 
-	}  // end if
+	}
 
 
 	// destroy all particles "in the air"
@@ -1248,7 +1236,7 @@ void ParticleSystem::setMaster( ParticleSystem *master )
 	m_masterSystem = master;
 	m_masterSystemID = master ? master->getSystemID() : INVALID_PARTICLE_SYSTEM_ID;
 
-}  // end set Master
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -1258,7 +1246,7 @@ void ParticleSystem::setSlave( ParticleSystem *slave )
 	m_slaveSystem = slave;
 	m_slaveSystemID = slave ? slave->getSystemID() : INVALID_PARTICLE_SYSTEM_ID;
 
-}  // end setSlave
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -1735,7 +1723,7 @@ Particle *ParticleSystem::createParticle( const ParticleInfo *info,
 				return NULL;
 		}
 
-	}  // end if
+	}
 
 	Particle *p = newInstance(Particle)( this, info );
 	return p;
@@ -2056,9 +2044,9 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 					m_burstDelayLeft--;
 				}
 
-			} // end if stopped check
-		} // end if system lifetime check
-	} // end if is destroyed
+			}
+		}
+	}
 
 	//
 	// Update all particles in the system
@@ -2181,9 +2169,9 @@ void ParticleSystem::updateWindMotion( void )
 							GameClientRandomValueReal( m_windMotionEndAngleMin,
 																				 m_windMotionEndAngleMax );
 
-				}  // end if
+				}
 
-			}  // end if
+			}
 			else
 			{
 
@@ -2209,13 +2197,13 @@ void ParticleSystem::updateWindMotion( void )
 							GameClientRandomValueReal( m_windMotionEndAngleMin,
 																				 m_windMotionEndAngleMax );
 
-				}  // end if
+				}
 
-			}  // end else
+			}
 
 			break;
 
-		}  // end case
+		}
 
 		// --------------------------------------------------------------------------------------------
 		case ParticleSystemInfo::WIND_MOTION_CIRCULAR:
@@ -2236,7 +2224,7 @@ void ParticleSystem::updateWindMotion( void )
 
 			break;
 
-		}  // end case
+		}
 
 		// ---------------------------------------------------------------------------------------------
 		default:
@@ -2244,11 +2232,11 @@ void ParticleSystem::updateWindMotion( void )
 
 			break;
 
-		}  // end default
+		}
 
-	}  // end if
+	}
 
-}  // end updateWindMotion
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -2403,7 +2391,7 @@ void ParticleSystem::setControlParticle( Particle *p )
 void ParticleSystem::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -2515,9 +2503,9 @@ void ParticleSystem::xfer( Xfer *xfer )
 			// write particle information
 			xfer->xferSnapshot( particle );
 
-		}  // end for, particle
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 		ParticlePriorityType priority = getPriority();
@@ -2537,11 +2525,11 @@ void ParticleSystem::xfer( Xfer *xfer )
 			// read in the particle data
 			xfer->xferSnapshot( particle );
 
-		}  // end for i
+		}
 
-	}  // end else, load
+	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -2563,7 +2551,7 @@ void ParticleSystem::loadPostProcess( void )
 			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_slaveSystem is not NULL but should be" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// assign system
 		m_slaveSystem = TheParticleSystemManager->findParticleSystem( m_slaveSystemID );
@@ -2575,9 +2563,9 @@ void ParticleSystem::loadPostProcess( void )
 			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_slaveSystem is NULL or destroyed" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// reconnect master pointers if needed
 	if( m_masterSystemID != INVALID_PARTICLE_SYSTEM_ID )
@@ -2590,7 +2578,7 @@ void ParticleSystem::loadPostProcess( void )
 			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_masterSystem is not NULL but should be" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// assign system
 		m_masterSystem = TheParticleSystemManager->findParticleSystem( m_masterSystemID );
@@ -2602,11 +2590,11 @@ void ParticleSystem::loadPostProcess( void )
 			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_masterSystem is NULL or destroyed" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
-}  // end loadPostProcess
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // ParticleSystemTemplate /////////////////////////////////////////////////////////////////////////
@@ -2781,7 +2769,7 @@ void ParticleSystemTemplate::parseRandomRGBColor( INI* ini, void *instance,
 			if( colors[j][i] < -255 || colors[j][i] > 255 )
 				throw INI_INVALID_DATA;
 
-		}  // end for i
+		}
 	}
 
 	// assign the color components to the "RGBColor" pointer at 'store'
@@ -2798,10 +2786,7 @@ void ParticleSystemTemplate::parseRandomRGBColor( INI* ini, void *instance,
 ParticleSystemTemplate::ParticleSystemTemplate( const AsciiString &name ) :
 	m_name(name)
 {
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_slaveTemplate = NULL;
-	//
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2842,13 +2827,10 @@ ParticleSystemManager::ParticleSystemManager( void )
 	m_onScreenParticleCount = 0;
 	m_localPlayerIndex = 0;
 
-	//Added By Sadullah Nader
-	//Initializations inserted
 	m_lastLogicFrameUpdate = 0;
 	m_particleCount = 0;
 	m_fieldParticleCount = 0;
 	m_particleSystemCount = 0;
-	//
 
 	for( Int i = 0; i < NUM_PARTICLE_PRIORITIES; ++i )
 	{
@@ -2856,7 +2838,7 @@ ParticleSystemManager::ParticleSystemManager( void )
 		m_allParticlesHead[ i ] = NULL;
 		m_allParticlesTail[ i ] = NULL;
 
-	}  // end for, i
+	}
 
 }
 
@@ -2880,7 +2862,7 @@ void ParticleSystemManager::init( void )
 {
 	/// Read INI data and build templates
 	INI ini;
-	ini.load( AsciiString( "Data\\INI\\ParticleSystem.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\ParticleSystem", INI_LOAD_OVERWRITE, NULL );
 
 	// sanity, our lists must be empty!!
 	for( Int i = 0; i < NUM_PARTICLE_PRIORITIES; ++i )
@@ -2894,7 +2876,7 @@ void ParticleSystemManager::init( void )
 		m_allParticlesHead[ i ] = NULL;
 		m_allParticlesTail[ i ] = NULL;
 
-	}  // end for, i
+	}
 
 }
 
@@ -2922,7 +2904,7 @@ void ParticleSystemManager::reset( void )
 		m_allParticlesHead[ i ] = NULL;
 		m_allParticlesTail[ i ] = NULL;
 
-	}  // end for, i
+	}
 
 	m_particleCount = 0;
 	m_fieldParticleCount = 0;
@@ -3019,7 +3001,7 @@ ParticleSystem *ParticleSystemManager::findParticleSystem( ParticleSystemID id )
 
 	return NULL;
 
-}  // end findParticleSystem
+}
 
 // ------------------------------------------------------------------------------------------------
 /** destroy the particle system with the given id (if it still exists) */
@@ -3251,7 +3233,7 @@ void ParticleSystemManager::preloadAssets( TimeOfDay timeOfDay )
 void ParticleSystemManager::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -3289,7 +3271,7 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 
 			// ignore destroyed systems and non-saveable systems
 			if( system->isDestroyed() == TRUE || system->isSaveable() == FALSE )	{
-				AsciiString mtString = "";
+				AsciiString mtString;
 				xfer->xferAsciiString(&mtString); // write null string as key for destroyed system.
 				continue;
 			}
@@ -3301,10 +3283,10 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 			// write system data
 			xfer->xferSnapshot( system );
 
-		}  // end for, it
+		}
 		DEBUG_ASSERTCRASH(systemCount==0, ("Mismatch in write count."));
 
-	}  // end if, save
+	}
 	else
 	{
 		const ParticleSystemTemplate *systemTemplate;
@@ -3328,7 +3310,7 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 											systemName.str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
 			// create system
 			system = createParticleSystem( systemTemplate, FALSE );
@@ -3340,16 +3322,16 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 											systemName.str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
 			// read system data
 			xfer->xferSnapshot( system );
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
-}  // end particleSystemManager
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -3357,7 +3339,7 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 void ParticleSystemManager::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Output particle system statistics to the screen

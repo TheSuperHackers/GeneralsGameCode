@@ -37,7 +37,6 @@
 #include "wwstring.h"
 #include "wwmemlog.h"
 #include "mutex.h"
-#include <Utility/stdio_adapter.h>
 
 
 ///////////////////////////////////////////////////////////////////

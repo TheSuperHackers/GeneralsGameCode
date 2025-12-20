@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /G/wwlib/PIPE.CPP                                           $*
+ *                     $Archive:: /G/wwlib/PIPE.cpp                                           $*
  *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
  *                                                                                             *
@@ -40,9 +40,8 @@
 
 
 #include	"always.h"
-#include	"PIPE.H"
+#include "PIPE.h"
 #include	<stddef.h>
-//#include	<string.h>
 
 
 /***********************************************************************************************

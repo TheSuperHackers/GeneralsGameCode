@@ -32,16 +32,9 @@
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*/
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef FONT3D_H
-#define FONT3D_H
 
 #include "always.h"
-#include "refcount.h"
 #include "vector4.h"
 #include "widestring.h"
 #include "rect.h"
@@ -93,10 +86,10 @@ public:
 	unsigned char	Char_Height( WCHAR /*ch = 'H'*/ )			{ return CharHeight; }
 
 	// u and v are in normalized texture space
-	inline float	Char_U_Offset( WCHAR ch = (WCHAR)'H')		{ return UOffsetTable[ch&0xFF]; }// & 0xFF]; }
-	inline float	Char_V_Offset( WCHAR ch = (WCHAR)'H')		{ return VOffsetTable[ch&0xFF]; }// & 0xFF]; }
-	inline float	Char_U_Width( WCHAR ch = (WCHAR)'H' )		{ return UWidthTable[ch&0xFF]; }// & 0xFF]; }
-	inline float	Char_V_Height( WCHAR /*ch = 'H'*/)			{ return VHeight; }
+	float	Char_U_Offset( WCHAR ch = (WCHAR)'H')		{ return UOffsetTable[ch&0xFF]; }// & 0xFF]; }
+	float	Char_V_Offset( WCHAR ch = (WCHAR)'H')		{ return VOffsetTable[ch&0xFF]; }// & 0xFF]; }
+	float	Char_U_Width( WCHAR ch = (WCHAR)'H' )		{ return UWidthTable[ch&0xFF]; }// & 0xFF]; }
+	float	Char_V_Height( WCHAR /*ch = 'H'*/)			{ return VHeight; }
 
 	// get all four UV values as one vector4
 	Vector4 Char_UV_Corners( WCHAR ch = (WCHAR)'H' )
@@ -218,6 +211,3 @@ private:
 
 	void					Build_Cached_Tables();
 };
-
-
-#endif

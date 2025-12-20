@@ -43,7 +43,7 @@
 // ----------------------------------------------------------------------------
 
 // SYSTEM INCLUDES
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 
 // USER INCLUDES
@@ -69,6 +69,9 @@
 #include "GameClient/Mouse.h"
 #if defined(DEBUG_STACKTRACE) || defined(IG_DEBUG_STACKTRACE)
 	#include "Common/StackDump.h"
+#endif
+#ifdef RTS_ENABLE_CRASHDUMP
+#include "Common/MiniDumper.h"
 #endif
 
 // Horrible reference, but we really, really need to know if we are windowed.
@@ -376,39 +379,47 @@ void DebugInit(int flags)
 
 		char dirbuf[ _MAX_PATH ];
 		::GetModuleFileName( NULL, dirbuf, sizeof( dirbuf ) );
-		char *pEnd = dirbuf + strlen( dirbuf );
-		while( pEnd != dirbuf )
+		if (char *pEnd = strrchr(dirbuf, '\\'))
 		{
-			if( *pEnd == '\\' )
-			{
-				*(pEnd + 1) = 0;
-				break;
-			}
-			pEnd--;
+			*(pEnd + 1) = 0;
 		}
 
+		static_assert(ARRAY_SIZE(theLogFileNamePrev) >= ARRAY_SIZE(dirbuf), "Incorrect array size");
 		strcpy(theLogFileNamePrev, dirbuf);
-		strcat(theLogFileNamePrev, gAppPrefix);
-		strcat(theLogFileNamePrev, DEBUG_FILE_NAME_PREV);
+		strlcat(theLogFileNamePrev, gAppPrefix, ARRAY_SIZE(theLogFileNamePrev));
+		strlcat(theLogFileNamePrev, DEBUG_FILE_NAME_PREV, ARRAY_SIZE(theLogFileNamePrev));
 		if (rts::ClientInstance::getInstanceId() > 1u)
 		{
 			size_t offset = strlen(theLogFileNamePrev);
 			snprintf(theLogFileNamePrev + offset, ARRAY_SIZE(theLogFileNamePrev) - offset, "_Instance%.2u", rts::ClientInstance::getInstanceId());
 		}
-		strcat(theLogFileNamePrev, ".txt");
+		strlcat(theLogFileNamePrev, ".txt", ARRAY_SIZE(theLogFileNamePrev));
 
+		static_assert(ARRAY_SIZE(theLogFileName) >= ARRAY_SIZE(dirbuf), "Incorrect array size");
 		strcpy(theLogFileName, dirbuf);
-		strcat(theLogFileName, gAppPrefix);
-		strcat(theLogFileName, DEBUG_FILE_NAME);
+		strlcat(theLogFileName, gAppPrefix, ARRAY_SIZE(theLogFileNamePrev));
+		strlcat(theLogFileName, DEBUG_FILE_NAME, ARRAY_SIZE(theLogFileNamePrev));
 		if (rts::ClientInstance::getInstanceId() > 1u)
 		{
 			size_t offset = strlen(theLogFileName);
 			snprintf(theLogFileName + offset, ARRAY_SIZE(theLogFileName) - offset, "_Instance%.2u", rts::ClientInstance::getInstanceId());
 		}
-		strcat(theLogFileName, ".txt");
+		strlcat(theLogFileName, ".txt", ARRAY_SIZE(theLogFileNamePrev));
 
 		remove(theLogFileNamePrev);
-		rename(theLogFileName, theLogFileNamePrev);
+		if (rename(theLogFileName, theLogFileNamePrev) != 0)
+		{
+#ifdef DEBUG_LOGGING
+			DebugLog("Warning: Could not rename buffer file '%s' to '%s'. Will remove instead", theLogFileName, theLogFileNamePrev);
+#endif
+			if (remove(theLogFileName) != 0)
+			{
+#ifdef DEBUG_LOGGING
+				DebugLog("Warning: Failed to remove file '%s'", theLogFileName);
+#endif
+			}
+		}
+
 		theLogFile = fopen(theLogFileName, "w");
 		if (theLogFile != NULL)
 		{
@@ -509,7 +520,7 @@ void DebugCrash(const char *format, ...)
 	char theCrashBuffer[ LARGE_BUFFER ];
 
 	prepBuffer(theCrashBuffer);
-	strcat(theCrashBuffer, "ASSERTION FAILURE: ");
+	strlcat(theCrashBuffer, "ASSERTION FAILURE: ", ARRAY_SIZE(theCrashBuffer));
 
 	va_list arg;
 	va_start(arg, format);
@@ -538,7 +549,7 @@ void DebugCrash(const char *format, ...)
 #endif
 	}
 
-	strcat(theCrashBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue");
+	strlcat(theCrashBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue", ARRAY_SIZE(theCrashBuffer));
 
 	const int result = doCrashBox(theCrashBuffer, useLogging);
 
@@ -719,6 +730,22 @@ double SimpleProfiler::getAverageTime()
 		}
 	}
 
+
+static void TriggerMiniDump()
+{
+#ifdef RTS_ENABLE_CRASHDUMP
+	if (TheMiniDumper && TheMiniDumper->IsInitialized())
+	{
+		// Create both minimal and full memory dumps
+		TheMiniDumper->TriggerMiniDump(DumpType_Minimal);
+		TheMiniDumper->TriggerMiniDump(DumpType_Full);
+	}
+
+	MiniDumper::shutdownMiniDumper();
+#endif
+}
+
+
 void ReleaseCrash(const char *reason)
 {
 	/// do additional reporting on the crash, if possible
@@ -729,6 +756,8 @@ void ReleaseCrash(const char *reason)
 		}
 	}
 
+	TriggerMiniDump();
+
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];
 
@@ -736,13 +765,24 @@ void ReleaseCrash(const char *reason)
 		return; // We are shutting down, and TheGlobalData has been freed.  jba. [4/15/2003]
 	}
 
-	strcpy(prevbuf, TheGlobalData->getPath_UserData().str());
-	strcat(prevbuf, RELEASECRASH_FILE_NAME_PREV);
-	strcpy(curbuf, TheGlobalData->getPath_UserData().str());
-	strcat(curbuf, RELEASECRASH_FILE_NAME);
+	strlcpy(prevbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(prevbuf));
+	strlcat(prevbuf, RELEASECRASH_FILE_NAME_PREV, ARRAY_SIZE(prevbuf));
+	strlcpy(curbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(curbuf));
+	strlcat(curbuf, RELEASECRASH_FILE_NAME, ARRAY_SIZE(curbuf));
 
  	remove(prevbuf);
-	rename(curbuf, prevbuf);
+	if (rename(curbuf, prevbuf) != 0)
+	{
+#ifdef DEBUG_LOGGING
+		DebugLog("Warning: Could not rename buffer file '%s' to '%s'. Will remove instead", curbuf, prevbuf);
+#endif
+		if (remove(curbuf) != 0)
+		{
+#ifdef DEBUG_LOGGING
+			DebugLog("Warning: Failed to remove file '%s'", curbuf);
+#endif
+		}
+	}
 
 	theReleaseCrashLogFile = fopen(curbuf, "w");
 	if (theReleaseCrashLogFile)
@@ -794,6 +834,8 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		return;
 	}
 
+	TriggerMiniDump();
+
 	UnicodeString prompt = TheGameText->fetch(p);
 	UnicodeString mesg = TheGameText->fetch(m);
 
@@ -825,13 +867,24 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];
 
-	strcpy(prevbuf, TheGlobalData->getPath_UserData().str());
-	strcat(prevbuf, RELEASECRASH_FILE_NAME_PREV);
-	strcpy(curbuf, TheGlobalData->getPath_UserData().str());
-	strcat(curbuf, RELEASECRASH_FILE_NAME);
+	strlcpy(prevbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(prevbuf));
+	strlcat(prevbuf, RELEASECRASH_FILE_NAME_PREV, ARRAY_SIZE(prevbuf));
+	strlcpy(curbuf, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(curbuf));
+	strlcat(curbuf, RELEASECRASH_FILE_NAME, ARRAY_SIZE(curbuf));
 
  	remove(prevbuf);
-	rename(curbuf, prevbuf);
+	if (rename(curbuf, prevbuf) != 0)
+	{
+#ifdef DEBUG_LOGGING
+		DebugLog("Warning: Could not rename buffer file '%s' to '%s'. Will remove instead", curbuf, prevbuf);
+#endif
+		if (remove(curbuf) != 0)
+		{
+#ifdef DEBUG_LOGGING
+			DebugLog("Warning: Failed to remove file '%s'", curbuf);
+#endif
+		}
+	}
 
 	theReleaseCrashLogFile = fopen(curbuf, "w");
 	if (theReleaseCrashLogFile)

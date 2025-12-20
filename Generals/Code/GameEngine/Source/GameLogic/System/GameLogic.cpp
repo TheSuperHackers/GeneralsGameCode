@@ -27,19 +27,22 @@
 // Author: Michael S. Booth, October 2000
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AudioAffect.h"
 #include "Common/AudioHandleSpecialValues.h"
 #include "Common/BuildAssistant.h"
 #include "Common/CRCDebug.h"
+#include "Common/FramePacer.h"
 #include "Common/GameAudio.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
+#include "Common/GameUtility.h"
 #include "Common/INI.h"
 #include "Common/LatchRestore.h"
 #include "Common/MapObject.h"
 #include "Common/MultiplayerSettings.h"
+#include "Common/OSDisplay.h"
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -68,7 +71,6 @@
 #include "GameClient/Mouse.h"
 #include "GameClient/ParticleSys.h"
 #include "GameClient/View.h"
-#include "GameClient/ControlBar.h"
 #include "GameClient/CampaignManager.h"
 #include "GameClient/GameWindowTransitions.h"
 
@@ -205,8 +207,6 @@ void setFPMode( void )
 // ------------------------------------------------------------------------------------------------
 GameLogic::GameLogic( void )
 {
-	//Added By Sadullah Nader
-	//Initializations missing and necessary
 	m_background = NULL;
 	m_CRC = 0;
 	m_isInUpdate = FALSE;
@@ -222,9 +222,9 @@ GameLogic::GameLogic( void )
 	m_shouldValidateCRCs = FALSE;
 
 	m_startNewGame = FALSE;
-	//
 
 	m_frame = 0;
+	m_hasUpdated = FALSE;
 	m_frameObjectsChangedTriggerAreas = 0;
 	m_width = 0;
 	m_height = 0;
@@ -241,6 +241,7 @@ GameLogic::GameLogic( void )
 	m_pauseInput = FALSE;
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
+	m_logicTimeScaleEnabledMemory = FALSE;
 	m_loadScreen = NULL;
 	m_forceGameStartByTimeOut = FALSE;
 #ifdef DUMP_PERF_STATS
@@ -254,6 +255,7 @@ GameLogic::GameLogic( void )
 void GameLogic::setDefaults( Bool saveGame )
 {
 	m_frame = 0;
+	m_hasUpdated = FALSE;
 	m_width = DEFAULT_WORLD_WIDTH;
 	m_height = DEFAULT_WORLD_HEIGHT;
 	m_objList = NULL;
@@ -313,7 +315,7 @@ void GameLogic::destroyAllObjectsImmediate()
 	processDestroyList();
 	DEBUG_ASSERTCRASH( m_objList == NULL, ("destroyAllObjectsImmediate: Object list not cleared") );
 
-}  // end destroyAllObjectsImmediate
+}
 
 //-------------------------------------------------------------------------------------------------
 /**GameLogic class destructor, the destruction order should mirror the
@@ -406,6 +408,8 @@ void GameLogic::init( void )
 	m_pauseInput = FALSE;
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
+	m_logicTimeScaleEnabledMemory = FALSE;
+
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
 		m_progressComplete[i] = FALSE;
@@ -447,6 +451,8 @@ void GameLogic::reset( void )
 	m_pauseInput = FALSE;
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
+	m_logicTimeScaleEnabledMemory = FALSE;
+
 	setFPMode();
 
 	// destroy all objects
@@ -470,11 +476,8 @@ void GameLogic::reset( void )
 	}
 	m_forceGameStartByTimeOut = FALSE;
 
-	if(TheStatsCollector)
-	{
-		delete TheStatsCollector;
-		TheStatsCollector = NULL;
-	}
+	delete TheStatsCollector;
+	TheStatsCollector = NULL;
 
 	// clear any table of contents we have
 	m_objectTOC.clear();
@@ -492,7 +495,7 @@ void GameLogic::reset( void )
 	TheWaterTransparency = (WaterTransparencySetting*) wt->deleteOverrides();
 
 	m_rankPointsToAddAtGameStart = 0;
-}  // end reset
+}
 
 static Object * placeObjectAtPosition(Int slotNum, AsciiString objectTemplateName, Coord3D& pos, Player *pPlayer,
 																	const PlayerTemplate *pTemplate)
@@ -961,7 +964,7 @@ void GameLogic::updateLoadProgress( Int progress )
 	if( m_loadScreen )
 		m_loadScreen->update( progress );
 
-}  // end updateLoadProgress
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Delete the load screen */
@@ -969,19 +972,24 @@ void GameLogic::updateLoadProgress( Int progress )
 void GameLogic::deleteLoadScreen( void )
 {
 
-	if( m_loadScreen )
-	{
+	delete m_loadScreen;
+	m_loadScreen = NULL;
 
-		delete m_loadScreen;
-		m_loadScreen = NULL;
-
-	}  // end if
-
-}  // end deleteLoadScreen
+}
 
 void GameLogic::setGameLoading( Bool loading )
 {
 	m_loadingScene = loading;
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void GameLogic::updateDisplayBusyState()
+{
+	const Bool busySystem = isInInteractiveGame() && !isGamePaused();
+	const Bool busyDisplay = busySystem && !TheGlobalData->m_headless;
+
+	OSDisplaySetBusyState(busyDisplay, busySystem);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -992,6 +1000,8 @@ void GameLogic::setGameMode( GameMode mode )
 	m_gameMode = mode;
 
 	TheMouse->onGameModeChanged(prev, mode);
+
+	updateDisplayBusyState();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1010,6 +1020,7 @@ void GameLogic::startNewGame( Bool saveGame )
 
 	// reset the frame counter
 	m_frame = 0;
+	m_hasUpdated = FALSE;
 
 #ifdef DEBUG_CRC
 	// TheSuperHackers @info helmutbuhler 04/09/2025
@@ -1032,7 +1043,7 @@ void GameLogic::startNewGame( Bool saveGame )
 
 			DEBUG_CRASH(( "FATAL SAVE/LOAD ERROR! - Setting a pristine map name that refers to a map in the save directory.  The pristine map should always refer to the ORIGINAL map in the Maps directory, if the pristine map string is corrupt then map.ini files will not load correctly." ));
 
-		}  // end if
+		}
 
 		if( m_startNewGame == FALSE )
 		{
@@ -1062,7 +1073,7 @@ void GameLogic::startNewGame( Bool saveGame )
 
 		}
 
-	}  // end if
+	}
 
 	m_rankLevelLimit = 1000;	// this is reset every game.
 	setDefaults( saveGame );
@@ -1122,10 +1133,8 @@ void GameLogic::startNewGame( Bool saveGame )
 		}
 	} else {
 		if (m_gameMode == GAME_SINGLE_PLAYER)	{
-			if (TheSkirmishGameInfo) {
-				delete TheSkirmishGameInfo;
-				TheSkirmishGameInfo = NULL;
-			}
+			delete TheSkirmishGameInfo;
+			TheSkirmishGameInfo = NULL;
 		}
 	}
 
@@ -1145,7 +1154,6 @@ void GameLogic::startNewGame( Bool saveGame )
 			TheMouse->setVisibility(FALSE);
 			m_loadScreen->init(game);
 
-			//
 			updateLoadProgress( LOAD_PROGRESS_START );
 		}
 	}
@@ -1340,7 +1348,7 @@ void GameLogic::startNewGame( Bool saveGame )
 		Dict d;
 		d.setAsciiString(TheKey_playerName, "ReplayObserver");
 		d.setBool(TheKey_playerIsHuman, TRUE);
-		d.setUnicodeString(TheKey_playerDisplayName, UnicodeString(L"Observer"));
+		d.setUnicodeString(TheKey_playerDisplayName, L"Observer");
 		const PlayerTemplate* pt;
 		pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey("FactionObserver") );
 		if (pt)
@@ -1409,7 +1417,7 @@ void GameLogic::startNewGame( Bool saveGame )
 			{
 				ChunkInputStream *pStrm = &theInputStream;
 				DataChunkInput file( pStrm );
-				file.registerParser( AsciiString("PlayerScriptsList"), AsciiString::TheEmptyString, ScriptList::ParseScriptsDataChunk );
+				file.registerParser( "PlayerScriptsList", AsciiString::TheEmptyString, ScriptList::ParseScriptsDataChunk );
 				if (!file.parse(NULL)) {
 					DEBUG_LOG(("ERROR - Unable to read in multiplayer scripts."));
 					return;
@@ -1503,8 +1511,22 @@ void GameLogic::startNewGame( Bool saveGame )
 	// update the loadscreen
 	updateLoadProgress(LOAD_PROGRESS_POST_VICTORY_CONDITION_SETUP);
 
+	Player *localPlayer = ThePlayerList->getLocalPlayer();
+	Player *observerPlayer = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver"));
+
 	// set the radar as on a new map
 	TheRadar->newMap( TheTerrainLogic );
+
+	// TheSuperHackers @tweak Force on radar for all observers.
+	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
+	{
+		Player *player = ThePlayerList->getNthPlayer(i);
+		if (player->isPlayerObserver())
+		{
+			TheRadar->forceOn(i, TRUE);
+		}
+	}
+
 	TheInGameUI->setClientQuiet( FALSE ); // okay to start beeping and stuff
 
 	// Tell the multiplayer victory condition singleton that the players are created
@@ -1525,7 +1547,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	ThePartitionManager->init();
 	ThePartitionManager->refreshShroudForLocalPlayer();// Can't do this until after init, and doesn't seem right to do in init
 
-	TheGhostObjectManager->setLocalPlayerIndex(ThePlayerList->getLocalPlayer()->getPlayerIndex());
+	TheGhostObjectManager->setLocalPlayerIndex(localPlayer->getPlayerIndex());
 	TheGhostObjectManager->reset();
 
 	// update the loadscreen
@@ -1557,14 +1579,7 @@ void GameLogic::startNewGame( Bool saveGame )
 		if( thingTemplate == NULL )
 			continue;
 
-		Bool isBridgeLikeObject = false;
-
-		if (thingTemplate->isBridge())
-			isBridgeLikeObject = true;
-		if (thingTemplate->isKindOf(KINDOF_WALK_ON_TOP_OF_WALL))
-			isBridgeLikeObject = true;
-
-		if (!isBridgeLikeObject)
+		if (!thingTemplate->isBridgeLike())
 			continue;
 
 		Team *team = ThePlayerList->getNeutralPlayer()->getDefaultTeam();
@@ -1589,9 +1604,9 @@ void GameLogic::startNewGame( Bool saveGame )
 			// in the map object properties.
 			// update this object instance with properties from the map object
 			obj->updateObjValuesFromMapProperties( pMapObj->getProperties() );
-		}  // end if
+		}
 
-	}	// for, loading bridge map objects
+	}
 
 	// update the loadscreen
 	updateLoadProgress(LOAD_PROGRESS_POST_BRIDGE_LOAD);
@@ -1607,8 +1622,8 @@ void GameLogic::startNewGame( Bool saveGame )
 	updateLoadProgress(LOAD_PROGRESS_POST_PATHFINDER_NEW_MAP);
 
 	// reveal the map for the permanent observer
-	ThePartitionManager->revealMapForPlayerPermanently( ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver"))->getPlayerIndex() );
-	DEBUG_LOG(("Reveal shroud for %ls whose index is %d", ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver"))->getPlayerDisplayName().str(),ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver"))->getPlayerIndex()));
+	ThePartitionManager->revealMapForPlayerPermanently( observerPlayer->getPlayerIndex() );
+	DEBUG_LOG(("Reveal shroud for %ls whose index is %d", observerPlayer->getPlayerDisplayName().str(), observerPlayer->getPlayerIndex()));
 
 	if (game)
 	{
@@ -1671,11 +1686,8 @@ void GameLogic::startNewGame( Bool saveGame )
 			if( thingTemplate == NULL )
 				continue;
 
-			Bool isBridgeLikeObject = false;
-			if (thingTemplate->isBridge()) isBridgeLikeObject = true;
-			if (thingTemplate->isKindOf(KINDOF_WALK_ON_TOP_OF_WALL)) isBridgeLikeObject = true;
-			if (isBridgeLikeObject)
-				continue;	// bridges have to be added earlier.
+			if (thingTemplate->isBridgeLike())
+				continue; // bridges have to be added earlier.
 
 			Bool useTrees = TheGlobalData->m_useTrees;
 			if (TheRecorder && TheRecorder->isMultiplayer()) {
@@ -1729,7 +1741,7 @@ void GameLogic::startNewGame( Bool saveGame )
 				team->setActive();
 				TheAI->pathfinder()->addObjectToPathfindMap( obj );
 
-			}  // end if
+			}
 
 			if(timeGetTime() > timer + 500)
 			{
@@ -1739,9 +1751,9 @@ void GameLogic::startNewGame( Bool saveGame )
 				timer = timeGetTime();
 			}
 
-		}	// for, loading map objects
+		}
 
-	}  // end if, not loading save game
+	}
 
 	#ifdef DUMP_PERF_STATS
 	GetPrecisionTimer(&endTime64);
@@ -1964,7 +1976,7 @@ void GameLogic::startNewGame( Bool saveGame )
 		if (!TheGlobalData->m_headless)
 		{
 			if(TheShell->getScreenCount() == 0)
-				TheShell->push( AsciiString("Menus/MainMenu.wnd") );
+				TheShell->push( "Menus/MainMenu.wnd" );
 			else if (TheShell->top())
 			{
 				TheShell->top()->hide(FALSE);
@@ -1992,15 +2004,15 @@ void GameLogic::startNewGame( Bool saveGame )
 		// explicitly set the Control bar to Observer Mode
 		if(m_gameMode == GAME_REPLAY )
 		{
+			rts::changeLocalPlayer(observerPlayer);
 
-			ThePlayerList->setLocalPlayer(ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver")));
-			TheRadar->forceOn(TRUE);
-			ThePartitionManager->refreshShroudForLocalPlayer();
-			TheControlBar->setControlBarSchemeByPlayer( ThePlayerList->getLocalPlayer());
-			DEBUG_LOG(("Start of a replay game %ls, %d",ThePlayerList->getLocalPlayer()->getPlayerDisplayName().str(), ThePlayerList->getLocalPlayer()->getPlayerIndex()));
+			DEBUG_LOG(("Start of a replay game %ls, %d", localPlayer->getPlayerDisplayName().str(), localPlayer->getPlayerIndex()));
 		}
 		else
-			TheControlBar->setControlBarSchemeByPlayer(ThePlayerList->getLocalPlayer());
+		{
+			TheControlBar->setControlBarSchemeByPlayer(localPlayer);
+			TheControlBar->initSpecialPowershortcutBar(localPlayer);
+		}
 //		ShowControlBar();
 
 	}
@@ -2051,7 +2063,6 @@ void GameLogic::startNewGame( Bool saveGame )
 			}
 		}
 	}
-	TheControlBar->initSpecialPowershortcutBar(ThePlayerList->getLocalPlayer());
 
 	if(m_gameMode == GAME_SHELL)
 	{
@@ -2079,8 +2090,6 @@ void GameLogic::startNewGame( Bool saveGame )
 		TheGameSpyBuddyMessageQueue->addRequest(req);
 	}
 
-	//Added By Sadullah Nader
-	//Added to fix the quit menu
 	//ReAllows quit menu to work during loading scene
 	setGameLoading(FALSE);
 
@@ -2095,7 +2104,14 @@ void GameLogic::startNewGame( Bool saveGame )
 	if (TheGameSpyInfo)
 		TheGameSpyInfo->updateAdditionalGameSpyDisconnections(1);
 
-}  // end startNewGame
+
+  if ( isInReplayGame() && TheInGameUI && TheGameText )
+  {
+		TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE( "GUI:FastForwardInstructions", L"Press F to toggle Fast Forward" ) );
+  }
+
+
+}
 
 //-----------------------------------------------------------------------------------------
 static void findAndSelectCommandCenter(Object *obj, void* alreadyFound)
@@ -2124,20 +2140,18 @@ void GameLogic::loadMapINI( AsciiString mapName )
 		return;
 	}
 
-	char filename[_MAX_PATH];
-	char fullFledgeFilename[_MAX_PATH];
-
-	memset(filename, 0, _MAX_PATH);
-	strcpy(filename, mapName.str());
-
 	//
 	// if map name begins with a "SAVE_DIRECTORY\", then the map refers to a map
 	// that has been extracted from a save game file ... in that case we need to get
 	// the pristine map name string in order to manipulate and load the right map.ini
 	// for that map from it's original location
 	//
-	if (TheGameState->isInSaveDirectory(filename))
-		strcpy( filename, TheGameState->getSaveGameInfo()->pristineMapName.str() );
+	const char* pristineMapName = TheGameState->isInSaveDirectory(mapName.str())
+		? TheGameState->getSaveGameInfo()->pristineMapName.str()
+		: mapName.str();
+
+	char filename[_MAX_PATH];
+	strlcpy(filename, pristineMapName, ARRAY_SIZE(filename));
 
 	// sanity
 	int length = strlen(filename);
@@ -2153,12 +2167,16 @@ void GameLogic::loadMapINI( AsciiString mapName )
 	*extension = 0;
 
 
+	char fullFledgeFilename[_MAX_PATH];
 	sprintf(fullFledgeFilename, "%s\\map.ini", filename);
 	if (TheFileSystem->doesFileExist(fullFledgeFilename)) {
 		DEBUG_LOG(("Loading map.ini"));
 		INI ini;
 		ini.load( AsciiString(fullFledgeFilename), INI_LOAD_CREATE_OVERRIDES, NULL );
 	}
+
+	// TheSuperHackers @todo Implement ini load directory for map folder.
+	// Requires adjustments in map transfer.
 
 	sprintf(fullFledgeFilename, "%s\\solo.ini", filename);
 	if (TheFileSystem->doesFileExist(fullFledgeFilename)) {
@@ -2331,7 +2349,7 @@ void GameLogic::processCommandList( CommandList *list )
 		}
 	}
 
-}  // end processCommandList
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -3143,29 +3161,12 @@ void GameLogic::update( void )
 	}
 
 	// send the current time to the GameClient
-	DEBUG_ASSERTCRASH(TheGameLogic == this, ("hmm, TheGameLogic is not right"));
 	UnsignedInt now = TheGameLogic->getFrame();
 	TheGameClient->setFrame(now);
 
 	// update (execute) scripts
 	{
 		TheScriptEngine->UPDATE();
-	}
-
-	Bool freezeTime = TheTacticalView->isTimeFrozen() && !TheTacticalView->isCameraMovementFinished();
-	freezeTime = freezeTime || TheScriptEngine->isTimeFrozenDebug() || TheScriptEngine->isTimeFrozenScript();
-
-	if (freezeTime)
-	{
-		if (TheCommandList->containsMessageOfType(GameMessage::MSG_CLEAR_GAME_DATA))
-		{
-			TheScriptEngine->forceUnfreezeTime();
-		}
-		else
-		{
-			/// @todo - make sure this never happens during a network game.  jba.
-			return;
-		}
 	}
 
 	// Note - TerrainLogic update needs to happen after ScriptEngine update, but before object updates.  jba.
@@ -3336,6 +3337,7 @@ void GameLogic::update( void )
 	if (!m_startNewGame)
 	{
 		m_frame++;
+		m_hasUpdated = TRUE;
 	}
 }
 
@@ -3343,6 +3345,8 @@ void GameLogic::update( void )
 // ------------------------------------------------------------------------------------------------
 void GameLogic::preUpdate()
 {
+	m_hasUpdated = FALSE;
+
 	if (m_pauseFrame == m_frame && m_pauseFrame != 0)
 	{
 		m_pauseFrame = 0;
@@ -3385,7 +3389,7 @@ void GameLogic::addObjectToLookupTable( Object *obj )
 	// add to lookup
 	m_objHash[ obj->getID() ] = obj;
 
-}  // end addObjectToLookupTable
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Remove object from the ID lookup table */
@@ -3400,7 +3404,7 @@ void GameLogic::removeObjectFromLookupTable( Object *obj )
 	// remove from lookup table
 	m_objHash.erase( obj->getID() );
 
-}  // end removeObjectFromLookupTable
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given an object, register it with the GameLogic and give it a unique ID. */
@@ -3515,7 +3519,7 @@ void GameLogic::destroyObject( Object *obj )
 	if( obj->isKindOf( KINDOF_WALK_ON_TOP_OF_WALL ) )
 		TheAI->pathfinder()->removeWallPiece( obj );
 
-}  // end destroyObject
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -3648,6 +3652,17 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 }
 
 // ------------------------------------------------------------------------------------------------
+void GameLogic::exitGame()
+{
+	// TheSuperHackers @fix The logic update must not be halted to process the game exit message.
+	setGamePaused(FALSE);
+	TheScriptEngine->forceUnfreezeTime();
+	TheScriptEngine->doUnfreezeTime();
+
+	TheMessageStream->appendMessage(GameMessage::MSG_CLEAR_GAME_DATA);
+}
+
+// ------------------------------------------------------------------------------------------------
 /** A new GameLogic object has been constructed, therefore create
  * a corresponding drawable and bind them together. */
 // ------------------------------------------------------------------------------------------------
@@ -3702,11 +3717,17 @@ Bool GameLogic::isGamePaused( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GameLogic::setGamePausedInFrame( UnsignedInt frame )
+void GameLogic::setGamePausedInFrame( UnsignedInt frame, Bool disableLogicTimeScale )
 {
 	if (frame >= m_frame)
 	{
 		m_pauseFrame = frame;
+
+		if (disableLogicTimeScale)
+		{
+			m_logicTimeScaleEnabledMemory = TheFramePacer->isLogicTimeScaleEnabled();
+			TheFramePacer->enableLogicTimeScale(FALSE);
+		}
 	}
 }
 
@@ -3731,6 +3752,8 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic, Bool pauseInput )
 	pauseGameSound(paused);
 	pauseGameMusic(paused && pauseMusic);
 	pauseGameInput(paused && pauseInput);
+
+	updateDisplayBusyState();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3738,6 +3761,12 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic, Bool pauseInput )
 void GameLogic::pauseGameLogic(Bool paused)
 {
 	m_gamePaused = paused;
+
+	if (!paused && m_logicTimeScaleEnabledMemory)
+	{
+		m_logicTimeScaleEnabledMemory = FALSE;
+		TheFramePacer->enableLogicTimeScale(TRUE);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -4050,7 +4079,7 @@ void GameLogic::getAIMetricsStatistics( UnsignedInt *numAI, UnsignedInt *numMovi
 void GameLogic::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given a string name, find the object TOC entry (if any) associated with it */
@@ -4064,7 +4093,7 @@ GameLogic::ObjectTOCEntry *GameLogic::findTOCEntryByName( AsciiString name )
 
 	return NULL;
 
-}  // end findTOCEntryByname
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given a object TOC identifier, find the object TOC if any */
@@ -4078,7 +4107,7 @@ GameLogic::ObjectTOCEntry *GameLogic::findTOCEntryById( UnsignedShort id )
 
 	return NULL;
 
-}  // end findTOCEntryById
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Add an object TOC entry */
@@ -4091,7 +4120,7 @@ void GameLogic::addTOCEntry( AsciiString name, UnsignedShort id )
 	tocEntry.id = id;
 	m_objectTOC.push_back( tocEntry );
 
-}  // end addTOCEntry
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer object table of contents */
@@ -4127,7 +4156,7 @@ void GameLogic::xferObjectTOC( Xfer *xfer )
 			// add this entry to the TOC
 			addTOCEntry( obj->getTemplate()->getName(), ++tocCount );
 
-		}  // end for obj
+		}
 
 		// xfer entries in the TOC
 		xfer->xferUnsignedInt( &tocCount );
@@ -4147,9 +4176,9 @@ void GameLogic::xferObjectTOC( Xfer *xfer )
 			// xfer the paired id
 			xfer->xferUnsignedShort( &tocEntry->id );
 
-		}  // end for
+		}
 
-	}  // end if
+	}
 	else
 	{
 		AsciiString templateName;
@@ -4171,11 +4200,11 @@ void GameLogic::xferObjectTOC( Xfer *xfer )
 			// add this to the TOC
 			addTOCEntry( templateName, id );
 
-		}  // end for i
+		}
 
-	}  // end else
+	}
 
-}  // end xferObjectTOC
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -4222,21 +4251,21 @@ void GameLogic::prepareLogicForObjectLoad( void )
 					destroyObject( oldTower );
 				}
 
-			}  // end for, i
+			}
 
 			// destroy the old bridge object
 			destroyObject( oldObject );
 
-		}  // end if, bridge
+		}
 		else if( obj->isKindOf( KINDOF_WALK_ON_TOP_OF_WALL ) )
 		{
 
 			// destroy walk on top of wall things too
 			destroyObject( obj );
 
-		}  // end else if
+		}
 
-	}  // end for, obj
+	}
 
 	// process the destruction of these objects immediately before we proceed with the load process
 	processDestroyList();
@@ -4246,7 +4275,7 @@ void GameLogic::prepareLogicForObjectLoad( void )
 										 ("GameLogic::prepareLogicForObjectLoad - There are still objects loaded in the engine, but it should be empty (Top is '%s')",
 										 getFirstObject()->getTemplate()->getName().str()) );
 
-}  // end prepareLogicForObjectLoad
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load/Save game logic to xfer
@@ -4309,7 +4338,7 @@ void GameLogic::xfer( Xfer *xfer )
 				DEBUG_CRASH(( "GameLogic::xfer - Object TOC entry not found for '%s'", obj->getTemplate()->getName().str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
 			// transfer TOC id entry
 			xfer->xferUnsignedShort( &tocEntry->id );
@@ -4323,9 +4352,9 @@ void GameLogic::xfer( Xfer *xfer )
 			// end a block of data
 			xfer->endBlock();
 
-		}  // end for
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 		Team *defaultTeam = ThePlayerList->getNeutralPlayer()->getDefaultTeam();
@@ -4349,7 +4378,7 @@ void GameLogic::xfer( Xfer *xfer )
 				DEBUG_CRASH(( "GameLogic::xfer - No TOC entry match for id '%d'", tocID ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
 			// a block of data has begun
 			objectDataSize = xfer->beginBlock();
@@ -4364,7 +4393,7 @@ void GameLogic::xfer( Xfer *xfer )
 				xfer->skip( objectDataSize );
 				continue;
 
-			}  // end if
+			}
 
 			// create new object
 			obj = TheThingFactory->newObject( thingTemplate, defaultTeam );
@@ -4379,9 +4408,9 @@ void GameLogic::xfer( Xfer *xfer )
 			if( obj->isKindOf( KINDOF_WALK_ON_TOP_OF_WALL ) )
 				TheAI->pathfinder()->addWallPiece( obj );
 
-		}  // end for, i
+		}
 
-	}  // end else
+	}
 
 	// campaign info
 	xfer->xferSnapshot( TheCampaignManager );
@@ -4420,7 +4449,7 @@ void GameLogic::xfer( Xfer *xfer )
 										sanityTriggerCount, triggerCount ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// xfer each of the polygon triggers
 		if( xfer->getXferMode() == XFER_SAVE )
@@ -4437,9 +4466,9 @@ void GameLogic::xfer( Xfer *xfer )
 				// xfer polygon data
 				xfer->xferSnapshot( poly );
 
-			}  // end for, poly
+			}
 
-		}  // end if, save
+		}
 		else
 		{
 			Int triggerID;
@@ -4462,12 +4491,12 @@ void GameLogic::xfer( Xfer *xfer )
 												triggerID ));
 					throw SC_INVALID_DATA;
 
-				}  // end if
+				}
 
 				// xfer polygon data
 				xfer->xferSnapshot( poly );
 
-			}  // end for, i
+			}
 
 			//
 			// force a recalculation of the pathfinding cause some of these polygon triggers
@@ -4476,9 +4505,9 @@ void GameLogic::xfer( Xfer *xfer )
 			//
 			TheAI->pathfinder()->newMap();
 
-		}  // end else, load
+		}
 
-	}	 // end if, version >= 3
+	}
 
 	// note that version=4 is the same as version=3
 	if (version >= 5)
@@ -4577,7 +4606,7 @@ void GameLogic::xfer( Xfer *xfer )
 		xfer->xferInt(&m_rankPointsToAddAtGameStart);
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process entry point */
@@ -4650,13 +4679,13 @@ void GameLogic::loadPostProcess( void )
 				u->friend_setIndexInLogic(m_sleepyUpdates.size() - 1);
 			}
 
-		}  // end for, u
+		}
 
-	}  // end for, obj
+	}
 
 	// re-sort the priority queue all at once now that all modules are on it
 	remakeSleepyUpdate();
 
-}  // end loadPostProcess
+}
 
 

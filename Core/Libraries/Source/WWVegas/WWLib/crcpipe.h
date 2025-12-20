@@ -34,11 +34,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef CRCPIPE_H
-#define CRCPIPE_H
+#pragma once
 
-#include	"CRC.H"
-#include	"PIPE.H"
+#include "CRC.h"
+#include "PIPE.h"
 
 /*
 **	This class doesn't modify the data being piped through, but it does examine it and build
@@ -60,5 +59,3 @@ class CRCPipe : public Pipe
 		CRCPipe(CRCPipe & rvalue);
 		CRCPipe & operator = (CRCPipe const & pipe);
 };
-
-#endif

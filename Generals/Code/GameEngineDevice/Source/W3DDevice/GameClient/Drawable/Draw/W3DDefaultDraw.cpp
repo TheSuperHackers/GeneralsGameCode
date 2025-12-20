@@ -94,10 +94,10 @@ void W3DDefaultDraw::reactToTransformChange( const Matrix3D *oldMtx,
 																						 const Coord3D *oldPos,
 																						 Real oldAngle )
 {
-
+#ifdef LOAD_TEST_ASSETS
 	if( m_renderObject )
 		m_renderObject->Set_Transform( *getDrawable()->getTransformMatrix() );
-
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -170,7 +170,7 @@ void W3DDefaultDraw::crc( Xfer *xfer )
 	// extend base class
 	DrawModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -188,7 +188,7 @@ void W3DDefaultDraw::xfer( Xfer *xfer )
 	// extend base class
 	DrawModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -199,4 +199,4 @@ void W3DDefaultDraw::loadPostProcess( void )
 	// extend base class
 	DrawModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

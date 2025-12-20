@@ -47,16 +47,10 @@
  *   SimpleDynVecClass<T>::Delete_All -- delete all items from the array                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef SIMPLEVEC_H
-#define SIMPLEVEC_H
 
 #include "always.h"
 #include <assert.h>
-#include <string.h>		// for memmove
 
 
 #if (_MSC_VER >= 1200)
@@ -130,11 +124,9 @@ inline SimpleVecClass<T>::SimpleVecClass(int size) :
 template<class T>
 inline SimpleVecClass<T>::~SimpleVecClass(void)
 {
-	if (Vector != NULL) {
-		delete[] Vector;
-		Vector = NULL;
-		VectorMax = 0;
-	}
+	delete[] Vector;
+	Vector = NULL;
+	VectorMax = 0;
 }
 
 /***********************************************************************************************
@@ -194,11 +186,9 @@ inline bool SimpleVecClass<T>::Resize(int newsize)
 		/*
 		** Delete entire vector and reset counts
 		*/
+		delete[] Vector;
+		Vector = NULL;
 		VectorMax = 0;
-		if (Vector != NULL) {
-			delete[] Vector;
-			Vector = NULL;
-		}
 	}
 	return true;
 }
@@ -330,10 +320,8 @@ inline SimpleDynVecClass<T>::SimpleDynVecClass(int size) :
 template<class T>
 inline SimpleDynVecClass<T>::~SimpleDynVecClass(void)
 {
-	if (Vector != NULL) {
-		delete[] Vector;
-		Vector = NULL;
-	}
+	delete[] Vector;
+	Vector = NULL;
 }
 
 /***********************************************************************************************
@@ -645,6 +633,3 @@ inline int SimpleDynVecClass<T>::Find_Index(T const & object)
 #if (_MSC_VER >= 1200)
 #pragma warning (pop)
 #endif
-
-#endif // SIMPLEVEC_H
-

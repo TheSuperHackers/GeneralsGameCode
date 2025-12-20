@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef _GAME_MEMORY_H_
-#define _GAME_MEMORY_H_
-
 // Turn off memory pool checkpointing for now.
 #ifndef DISABLE_MEMORYPOOL_CHECKPOINTING
 	#define DISABLE_MEMORYPOOL_CHECKPOINTING 1
@@ -65,7 +62,7 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 #include <new.h>
-#include <stdio.h>
+#include <Utility/stdio_adapter.h>
 #ifdef MEMORYPOOL_OVERRIDE_MALLOC
 	#include <malloc.h>
 #endif
@@ -746,8 +743,8 @@ protected:
 	virtual ~MemoryPoolObject() { }
 
 protected:
-	inline void *operator new(size_t s) { DEBUG_CRASH(("This should be impossible")); return 0; }
-	inline void operator delete(void *p) { DEBUG_CRASH(("This should be impossible")); }
+	void *operator new(size_t s) { DEBUG_CRASH(("This should be impossible")); return 0; }
+	void operator delete(void *p) { DEBUG_CRASH(("This should be impossible")); }
 
 protected:
 
@@ -913,6 +910,3 @@ public:
 
 
 #define EMPTY_DTOR(CLASS) inline CLASS::~CLASS() { }
-
-
-#endif // _GAME_MEMORY_H_

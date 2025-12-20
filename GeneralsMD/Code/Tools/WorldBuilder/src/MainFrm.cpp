@@ -77,14 +77,11 @@ CMainFrame::CMainFrame()
 
 CMainFrame::~CMainFrame()
 {
-	if (m_layersList) {
-		delete m_layersList;
-	}
+	delete m_layersList;
+	m_layersList = NULL;
 
-	if (m_scriptDialog) {
-		delete m_scriptDialog;
-		m_scriptDialog = NULL;
-	}
+	delete m_scriptDialog;
+	m_scriptDialog = NULL;
 
 	SaveBarState("MainFrame");
 	TheMainFrame = NULL;
@@ -427,10 +424,7 @@ void CMainFrame::OnEditGloballightoptions()
 
 void CMainFrame::onEditScripts()
 {
-	if (m_scriptDialog) {
-		// Delete the old one since it is no longer valid.
-		delete m_scriptDialog;
-	}
+	delete m_scriptDialog;
 
 	CRect frameRect;
 	GetWindowRect(&frameRect);

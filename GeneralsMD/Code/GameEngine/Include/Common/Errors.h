@@ -45,9 +45,6 @@
 
 #pragma once
 
-#ifndef __ERRORS_H_
-#define __ERRORS_H_
-
 /**
 	An ErrorCode is the repository for failure modes. In almost all situations,
 	these values will  be THROWN, not returned as error codes. Feel free
@@ -68,5 +65,3 @@ enum ErrorCode CPP_11(: UnsignedInt)
 
 	ERROR_LAST
 };
-
-#endif // __ERRORS_H_

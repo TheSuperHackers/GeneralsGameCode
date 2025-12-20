@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SMARTBOMB_UPDATE_H_
-#define __SMARTBOMB_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -83,6 +80,3 @@ protected:
 
 
 };
-
-#endif // __SMARTBOMB_UPDATE_H_
-

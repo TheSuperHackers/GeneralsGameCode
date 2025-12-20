@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __JET_SLOW_DEATH_BEHAVIOR_H_
-#define __JET_SLOW_DEATH_BEHAVIOR_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "GameLogic/Module/BehaviorModule.h"
@@ -105,6 +102,3 @@ protected:
 	AudioEventRTS m_deathLoopSound;					///< death loop sound
 
 };
-
-
-#endif  // end __JET_SLOW_DEATH_BEHAVIOR_H_

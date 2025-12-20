@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _GAME_INTERFACE_H_
-#define _GAME_INTERFACE_H_
-
 #include "Common/GameType.h"
 #include "Common/MessageStream.h"		// for GameMessageTranslator
 #include "Common/Snapshot.h"
@@ -99,6 +96,8 @@ public:
 	virtual void setFrame( UnsignedInt frame ) { m_frame = frame; }			///< Set the GameClient's internal frame number
 	virtual void registerDrawable( Drawable *draw );										///< Given a drawable, register it with the GameClient and give it a unique ID
 
+	void step(); ///< Do one fixed time step
+
 	void updateHeadless();
 
 	void addDrawableToLookupTable( Drawable *draw );			///< add drawable ID to hash lookup table
@@ -129,7 +128,7 @@ public:
 
 	virtual void iterateDrawablesInRegion( Region3D *region, GameClientFuncPtr userFunc, void *userData );		///< Calls userFunc for each drawable contained within the region
 
-	virtual Drawable *friend_createDrawable( const ThingTemplate *thing, DrawableStatus statusBits = DRAWABLE_STATUS_NONE ) = 0;
+	virtual Drawable *friend_createDrawable( const ThingTemplate *thing, DrawableStatusBits statusBits = DRAWABLE_STATUS_DEFAULT ) = 0;
 	virtual void destroyDrawable( Drawable *draw );											///< Destroy the given drawable
 
 	virtual void setTimeOfDay( TimeOfDay tod );													///< Tell all the drawables what time of day it is now
@@ -141,7 +140,8 @@ public:
 
 	//---------------------------------------------------------------------------
 	virtual void setTeamColor( Int red, Int green, Int blue ) = 0;  ///< @todo superhack for demo, remove!!!
-	virtual void adjustLOD( Int adj ) = 0; ///< @todo hack for evaluation, remove.
+
+	virtual void setTextureLOD( Int level ) = 0;
 
 	virtual void releaseShadows(void);	///< frees all shadow resources used by this module - used by Options screen.
 	virtual void allocateShadows(void); ///< create shadow resources if not already present. Used by Options screen.
@@ -303,5 +303,3 @@ extern GameClient *TheGameClient;
 //					m_roadBuffer = NULL
 //					m_shroud = NULL
 //		TheRadar = RadarDummy
-
-#endif // _GAME_INTERFACE_H_

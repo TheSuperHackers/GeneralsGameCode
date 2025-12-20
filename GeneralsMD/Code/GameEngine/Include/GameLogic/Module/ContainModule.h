@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __ContainModule_H_
-#define __ContainModule_H_
-
 #include "Common/Module.h"
 #include "GameLogic/WeaponBonusConditionFlags.h" // Can't forward a typedef.  This should me made a BitFlags class.
 #include "GameLogic/Damage.h"
@@ -216,5 +213,3 @@ public:
 	virtual ContainedItemsList* getAddOnList() = 0;
 };
 //-------------------------------------------------------------------------------------------------
-
-#endif

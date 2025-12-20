@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef RoadTool_H
-#define RoadTool_H
-
 #include "Tool.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 class WorldHeightMapEdit;
@@ -58,6 +55,3 @@ public:
 	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
 	virtual void activate(); ///< Become the current tool.
 };
-
-
-#endif //TOOL_H

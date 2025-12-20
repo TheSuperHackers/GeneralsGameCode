@@ -34,24 +34,19 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __SOUNDOBJ_H
-#define __SOUNDOBJ_H
 
 #pragma warning (push, 3)
 #include "mss.h"
 #pragma warning (pop)
 
 //#include <malloc.h>
+#include "always.h"
 #include "vector3.h"
 #include "matrix3d.h"
-#include "refcount.h"
-#include "RAWFILE.H"
+#include "RAWFILE.h"
 #include "SoundSceneObj.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "wwstring.h"
 #include "definition.h"
 
@@ -459,6 +454,3 @@ protected:
 	// Misc UI info
 	Vector3				m_AttenuationSphereColor;
 };
-
-
-#endif //__SOUNDOBJ_H

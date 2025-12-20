@@ -297,15 +297,15 @@ void TerrainMaterial::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 				parent = findOrAdd( parent, terrainTypeNames[ i ] );
 				break;  // exit for
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
 		// set the name in the tree view to that of the entry
-		strcpy( buffer, terrain->getName().str() );
+		strlcpy(buffer, terrain->getName().str(), ARRAY_SIZE(buffer));
 
 		doAdd = TRUE;
-	}  // end if
+	}
  	else if (!WorldHeightMapEdit::getTexClassIsBlendEdge(terrainNdx))
 	{
 
@@ -329,14 +329,14 @@ void TerrainMaterial::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 			doAdd = TRUE;
 			i++;
 		}
-	}  // end else
+	}
 
 	Int tilesPerRow = TEXTURE_WIDTH/(2*TILE_PIXEL_EXTENT+TILE_OFFSET);
 	Int availableTiles = 4 * tilesPerRow * tilesPerRow;
 	Int percent = (WorldHeightMapEdit::getTexClassNumTiles(terrainNdx)*100 + availableTiles/2) / availableTiles;
 
 	char label[_MAX_PATH];
-	sprintf(label, "%d%% %s", percent, buffer);
+	snprintf(label, ARRAY_SIZE(label), "%d%% %s", percent, buffer);
 
 
 	if( doAdd )
@@ -369,7 +369,7 @@ void TerrainMaterial::updateTextures(WorldHeightMapEdit *pMap)
 		for (i=0; i<pMap->getNumTexClasses(); i++) {
 			char path[_MAX_PATH];
 			AsciiString uiName = pMap->getTexClassUiName(i);
-			strncpy(path, uiName.str(), _MAX_PATH-2);
+			strlcpy(path, uiName.str(), _MAX_PATH);
 			m_staticThis->addTerrain(path, i, TVI_ROOT);
 		}
 		m_staticThis->m_updating = false;
@@ -405,7 +405,7 @@ void TerrainMaterial::OnChangeSizeEdit()
 			if (1==sscanf(buffer, "%d", &width)) {
 				m_currentWidth = width;
 				BigTileTool::setWidth(m_currentWidth);
-				sprintf(buffer, "%.1f FEET.", m_currentWidth*MAP_XY_FACTOR);
+				snprintf(buffer, ARRAY_SIZE(buffer), "%.1f FEET.", m_currentWidth*MAP_XY_FACTOR);
 				pEdit = m_staticThis->GetDlgItem(IDC_WIDTH_LABEL);
 				if (pEdit) pEdit->SetWindowText(buffer);
 			}
@@ -425,7 +425,7 @@ void TerrainMaterial::GetPopSliderInfo(const long sliderID, long *pMin, long *pM
 			break;
 		default:
 			break;
-	}	// switch
+	}
 }
 
 
@@ -445,7 +445,7 @@ void TerrainMaterial::PopSliderChanged(const long sliderID, long theVal)
 
 		default:
 			break;
-	}	// switch
+	}
 }
 
 void TerrainMaterial::PopSliderFinished(const long sliderID, long theVal)
@@ -456,7 +456,7 @@ void TerrainMaterial::PopSliderFinished(const long sliderID, long theVal)
 
 		default:
 			break;
-	}	// switch
+	}
 
 }
 

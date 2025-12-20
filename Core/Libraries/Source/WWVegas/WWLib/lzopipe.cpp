@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Library/LZOPIPE.CPP                               $*
+ *                     $Archive:: /Commando/Library/LZOPIPE.cpp                               $*
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *
@@ -40,7 +40,7 @@
 
 
 #include	"always.h"
-#include	"BUFF.H"
+#include "BUFF.h"
 #include	"lzo.h"
 #include	"lzopipe.h"
 #include	<assert.h>

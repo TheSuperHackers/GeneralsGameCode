@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __W3DDEFAULTDRAW_H_
-#define __W3DDEFAULTDRAW_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameType.h"
 #include "Common/DrawModule.h"
@@ -75,6 +72,3 @@ private:
 	Shadow*				m_shadow;													///< Updates/Renders shadows of this object
 #endif
 };
-
-#endif // __W3DDEFAULTDRAW_H_
-

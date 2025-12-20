@@ -169,9 +169,9 @@ void ObjectTypes::xfer(Xfer *xfer)
 			// write type name
 			xfer->xferAsciiString( &(*it) );
 
-		}  // end for, it
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 
@@ -182,7 +182,7 @@ void ObjectTypes::xfer(Xfer *xfer)
 			DEBUG_CRASH(( "ObjectTypes::xfer - m_objectTypes vector should be emtpy but is not!" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// read all data
 		AsciiString typeName;
@@ -195,9 +195,9 @@ void ObjectTypes::xfer(Xfer *xfer)
 			// put on vector
 			m_objectTypes.push_back( typeName );
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
 }
 

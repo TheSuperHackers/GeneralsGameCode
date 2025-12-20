@@ -164,7 +164,7 @@ static LRESULT CALLBACK comboBoxPropertiesCallback( HWND hWndDialog,
 
 					break;
 
-				}  // end case subcontrol color
+				}
 
 				// --------------------------------------------------------------------
         case IDOK:
@@ -405,7 +405,7 @@ static LRESULT CALLBACK comboBoxPropertiesCallback( HWND hWndDialog,
 								GadgetButtonSetHiliteSelectedColor( upButton, info->color );
 								GadgetButtonSetHiliteSelectedBorderColor( upButton, info->borderColor );
 
-							}  // end if
+							}
 
 							// down button
 							GameWindow *downButton = GadgetListBoxGetDownButton( listBox );
@@ -445,7 +445,7 @@ static LRESULT CALLBACK comboBoxPropertiesCallback( HWND hWndDialog,
 								GadgetButtonSetHiliteSelectedColor( downButton, info->color );
 								GadgetButtonSetHiliteSelectedBorderColor( downButton, info->borderColor );
 
-							}  // end if
+							}
 
 							// slider
 							GameWindow *slider = GadgetListBoxGetSlider( listBox );
@@ -532,8 +532,8 @@ static LRESULT CALLBACK comboBoxPropertiesCallback( HWND hWndDialog,
 								GadgetSliderSetHiliteSelectedThumbColor( slider, info->color );
 								GadgetSliderSetHiliteSelectedThumbBorderColor( slider, info->borderColor );
 
-							}  // end if
-						} // end if (listBox)
+							}
+						}
 						// save specific list data
 						ComboBoxData *comboData = (ComboBoxData *)window->winGetUserData();
 
@@ -551,12 +551,12 @@ static LRESULT CALLBACK comboBoxPropertiesCallback( HWND hWndDialog,
 							GadgetComboBoxSetMaxDisplay( window, newMaxDisplay );
 
 
-					}  // end if
+					}
 
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end OK
+				}
 
 				// --------------------------------------------------------------------
         case IDCANCEL:
@@ -565,13 +565,13 @@ static LRESULT CALLBACK comboBoxPropertiesCallback( HWND hWndDialog,
           DestroyWindow( hWndDialog );
           break;
 
-				}  // end cancel
+				}
 
-      }  // end switch( LOWORD( wParam ) )
+      }
 
       return 0;
 
-    } // end of WM_COMMAND
+    }
 
 		// ------------------------------------------------------------------------
     case WM_CLOSE:
@@ -580,15 +580,15 @@ static LRESULT CALLBACK comboBoxPropertiesCallback( HWND hWndDialog,
       DestroyWindow( hWndDialog );
       return 0;
 
-		}  // end close
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }  // end of switch
+  }
 
-}  // end comboBoxPropertiesCallback
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -758,7 +758,7 @@ HWND InitComboBoxPropertiesDialog( GameWindow *window )
 			borderColor = GadgetButtonGetHiliteSelectedBorderColor( upButton );
 			StoreImageAndColor( COMBOBOX_LISTBOX_UP_BUTTON_HILITE_PUSHED, image, color, borderColor );
 
-		}  // end if
+		}
 
 		// --------------------------------------------------------------------------
 		GameWindow *downButton = GadgetListBoxGetDownButton( listBox );
@@ -798,7 +798,7 @@ HWND InitComboBoxPropertiesDialog( GameWindow *window )
 			borderColor = GadgetButtonGetHiliteSelectedBorderColor( downButton );
 			StoreImageAndColor( COMBOBOX_LISTBOX_DOWN_BUTTON_HILITE_PUSHED, image, color, borderColor );
 
-		}  // end if
+		}
 
 		GameWindow *slider = GadgetListBoxGetSlider( listBox );
 		if( slider )
@@ -882,7 +882,7 @@ HWND InitComboBoxPropertiesDialog( GameWindow *window )
 			borderColor = GadgetSliderGetHiliteSelectedThumbBorderColor( slider );
 			StoreImageAndColor( COMBOBOX_LISTBOX_SLIDER_THUMB_HILITE_PUSHED, image, color, borderColor );
 
-		}  // end if
+		}
 
 		GameWindow *dropDownButton = GadgetComboBoxGetDropDownButton( window );
 		if ( dropDownButton )
@@ -977,7 +977,7 @@ HWND InitComboBoxPropertiesDialog( GameWindow *window )
 
 	return dialog;
 
-}  // end InitComboBoxPropertiesDialog
+}
 
 
 

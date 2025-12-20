@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SCRIPTACTIONS_H_
-#define __SCRIPTACTIONS_H_
-
 class ScriptAction;
 class GameWindow;
 class	Team;
@@ -60,7 +57,7 @@ public:
 
 	// Called by the script engine in postProcessLoad()
 	virtual void doEnableOrDisableObjectDifficultyBonuses(Bool enableBonuses) = 0;
-};  // end class ScriptActionsInterface
+};
 extern ScriptActionsInterface *TheScriptActions;   ///< singleton definition
 
 
@@ -377,9 +374,4 @@ protected:
 	void doResizeViewGuardband(const Real gbx, const Real gby );
 	void deleteAllUnmanned();
 
-};  // end class ScriptActions
-
-
-#endif  // end __SCRIPTACTIONS_H_
-
-
+};

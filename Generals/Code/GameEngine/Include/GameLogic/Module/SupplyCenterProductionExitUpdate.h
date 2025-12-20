@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef _SUPPLY_CENTER_PRODUCTION_EXIT_UPDATE_H
-#define _SUPPLY_CENTER_PRODUCTION_EXIT_UPDATE_H
-
 #include "GameLogic/Module/UpdateModule.h"
 
 class Object;
@@ -112,6 +109,3 @@ inline const Coord3D *SupplyCenterProductionExitUpdate::getRallyPoint( void ) co
 
 	return NULL;
 }
-
-
-#endif

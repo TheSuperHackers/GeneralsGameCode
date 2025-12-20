@@ -242,15 +242,12 @@ DistLODDefClass::~DistLODDefClass(void)
  *=============================================================================================*/
 void DistLODDefClass::Free(void)
 {
-	if (Name != NULL) {
-		delete[] Name;
-		Name = NULL;
-	}
+	delete[] Name;
+	Name = NULL;
+
 	if (Lods != NULL) {
 		for (int i=0; i<LodCount; i++) {
-			if (Lods[i].Name != NULL) {
-				delete[] Lods[i].Name;
-			}
+			delete[] Lods[i].Name;
 		}
 		delete[] Lods;
 		Lods = NULL;

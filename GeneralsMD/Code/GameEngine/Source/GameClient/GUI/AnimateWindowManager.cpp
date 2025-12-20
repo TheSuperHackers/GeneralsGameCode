@@ -51,7 +51,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/AnimateWindowManager.h"
 #include "GameClient/GameWindow.h"
@@ -111,14 +111,11 @@ void AnimateWindow::setAnimData( 	ICoord2D startPos, ICoord2D endPos,
 
 static void clearWinList(AnimateWindowList &winList)
 {
-	wnd::AnimateWindow *win = NULL;
 	while (!winList.empty())
 	{
-		win = *(winList.begin());
+		wnd::AnimateWindow *win = *(winList.begin());
 		winList.pop_front();
-		if (win)
-			deleteInstance(win);
-		win = NULL;
+		deleteInstance(win);
 	}
 }
 
@@ -140,22 +137,14 @@ AnimateWindowManager::AnimateWindowManager( void )
 }
 AnimateWindowManager::~AnimateWindowManager( void )
 {
-	if(m_slideFromRight)
-		delete m_slideFromRight;
-	if(m_slideFromRightFast)
-		delete m_slideFromRightFast;
-	if(m_slideFromLeft)
-		delete m_slideFromLeft;
-	if(m_slideFromTop)
-		delete m_slideFromTop;
-	if(m_slideFromTopFast)
-		delete m_slideFromTopFast;
-	if(m_slideFromBottom)
-		delete m_slideFromBottom;
-	if(m_spiral)
-		delete m_spiral;
-	if (m_slideFromBottomTimed)
-		delete m_slideFromBottomTimed;
+	delete m_slideFromRight;
+	delete m_slideFromRightFast;
+	delete m_slideFromLeft;
+	delete m_slideFromTop;
+	delete m_slideFromTopFast;
+	delete m_slideFromBottom;
+	delete m_spiral;
+	delete m_slideFromBottomTimed;
 
 	m_slideFromRight = NULL;
 	resetToRestPosition( );

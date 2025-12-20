@@ -26,7 +26,7 @@
 // Pseudo-random number generators
 // Author: Michael S. Booth, January 1998
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 
 #include "Lib/BaseType.h"
@@ -350,10 +350,11 @@ DEBUG_LOG(( "%d: GetGameAudioRandomValueReal = %f, %s line %d",
 // GameClientRandomVariable
 //
 
-/*static*/ const char *GameClientRandomVariable::DistributionTypeNames[] =
+const char *const GameClientRandomVariable::DistributionTypeNames[] =
 {
-	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS"
+	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", NULL
 };
+static_assert(ARRAY_SIZE(GameClientRandomVariable::DistributionTypeNames) == GameClientRandomVariable::DISTRIBUTION_COUNT + 1, "Incorrect array size");
 
 /**
 	define the range of random values, and the distribution of values
@@ -377,7 +378,7 @@ Real GameClientRandomVariable::getValue( void ) const
 			DEBUG_ASSERTLOG(m_low == m_high, ("m_low != m_high for a CONSTANT GameClientRandomVariable"));
 			if (m_low == m_high) {
 				return m_low;
-			} // else return as though a UNIFORM.
+			}
 			FALLTHROUGH;
 
 		case UNIFORM:
@@ -395,10 +396,11 @@ Real GameClientRandomVariable::getValue( void ) const
 // GameLogicRandomVariable
 //
 
-/*static*/ const char *GameLogicRandomVariable::DistributionTypeNames[] =
+const char *const GameLogicRandomVariable::DistributionTypeNames[] =
 {
-	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS"
+	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", NULL
 };
+static_assert(ARRAY_SIZE(GameLogicRandomVariable::DistributionTypeNames) == GameLogicRandomVariable::DISTRIBUTION_COUNT + 1, "Incorrect array size");
 
 /**
 	define the range of random values, and the distribution of values
@@ -422,7 +424,7 @@ Real GameLogicRandomVariable::getValue( void ) const
 			DEBUG_ASSERTLOG(m_low == m_high, ("m_low != m_high for a CONSTANT GameLogicRandomVariable"));
 			if (m_low == m_high) {
 				return m_low;
-			} // else return as though a UNIFORM.
+			}
 			FALLTHROUGH;
 
 		case UNIFORM:

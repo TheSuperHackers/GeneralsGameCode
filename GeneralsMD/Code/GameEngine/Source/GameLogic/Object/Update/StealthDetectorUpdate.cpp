@@ -27,11 +27,12 @@
 // Desc:	 An update that checks for a status bit to stealth the owning object
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_STEALTHLEVEL_NAMES
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
+#include "Common/GameUtility.h"
 #include "Common/MiscAudio.h"
 #include "Common/Radar.h"
 #include "Common/ThingTemplate.h"
@@ -218,7 +219,7 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 			{
 
 				// for the player revealing the stealth unit do some UI feedback
-				if( ThePlayerList->getLocalPlayer() == self->getControllingPlayer() &&
+				if( rts::getObservedOrLocalPlayer() == self->getControllingPlayer() &&
 						self->getRelationship( them ) != ALLIES )
 				{
 					Bool doFeedback = TRUE;
@@ -255,12 +256,12 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
             {
               TheEva->setShouldPlay( message );
             }
-					}  // end if
+					}
 
-				}  // end if
+				}
 
 				// for the unit being revealed, do some UI feedback
-				if( ThePlayerList->getLocalPlayer() == them->getControllingPlayer() &&
+				if( rts::getObservedOrLocalPlayer() == them->getControllingPlayer() &&
 						self->getRelationship( them ) != ALLIES )
 				{
  					Bool doFeedback = TRUE;
@@ -291,11 +292,11 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
             {
               TheEva->setShouldPlay( message );
             }
-					}  // end if
+					}
 
-				}  // end if
+				}
 
-			}  // end if, them was not previously detected
+			}
 
 			// updateRate PLUS 1 is necessary to ensure it stays detected 'till we are called again...
 			stealth->markAsDetected(data->m_updateRate + 1);
@@ -326,7 +327,7 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 				}
 			}
 
-		}//end if them has stealthupdate
+		}
 		else // perhaps they are garrisoning something stealthy, eh?
 		{
 			ContainModuleInterface *contain = them->getContain();
@@ -354,7 +355,7 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 	}
 
 
-  const Player *localPlayer = ThePlayerList->getLocalPlayer();
+  const Player *localPlayer = rts::getObservedOrLocalPlayer();
 
 	//Make sure the detector is visible to the local player before we add effects or sounds.
 	if ( self->getShroudedStatus( localPlayer->getPlayerIndex() ) <= OBJECTSHROUD_PARTIAL_CLEAR )
@@ -413,7 +414,7 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 
     }
 
-	} // end if doIRFX
+	}
 
 
 	return UPDATE_SLEEP(data->m_updateRate);
@@ -429,7 +430,7 @@ void StealthDetectorUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -450,7 +451,7 @@ void StealthDetectorUpdate::xfer( Xfer *xfer )
 	// enabled
 	xfer->xferBool( &m_enabled );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -461,4 +462,4 @@ void StealthDetectorUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

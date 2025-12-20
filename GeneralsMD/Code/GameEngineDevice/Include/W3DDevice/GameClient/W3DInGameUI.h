@@ -33,9 +33,6 @@
 
 #pragma once
 
-#ifndef __W3DINGAMEUI_H_
-#define __W3DINGAMEUI_H_
-
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -84,6 +81,4 @@ protected:
 	RenderObjClass *m_buildingPlacementAnchor;
 	RenderObjClass *m_buildingPlacementArrow;
 
-};  // end class W3DInGameUI
-
-#endif  // end __W3DINGAMEUI_H_
+};

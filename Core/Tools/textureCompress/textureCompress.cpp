@@ -64,7 +64,7 @@ static void logStuff(const char *fmt, ...)
 	::MessageBox(NULL, buffer, "textureCompress", MB_OK);
 }
 
-#ifndef NDEBUG
+#ifdef RTS_DEBUG
 
 class DebugMunkee
 {
@@ -96,7 +96,7 @@ static void debugLog(const char *fmt, ...)
 
 #define DEBUG_LOG(x) {}
 
-#endif // NDEBUG
+#endif // RTS_DEBUG
 
 
 static void usage(const char *progname)
@@ -231,7 +231,7 @@ Directory::Directory( const std::string& dirPath ) : m_dirPath(dirPath)
 		// if this is a subdirectory keep the name around till the end
 		if( item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
 		{
-			if ( strcmp( item.cFileName, "." ) && strcmp( item.cFileName, ".." ) )
+			if ( strcmp( item.cFileName, "." ) != 0 && strcmp( item.cFileName, ".." ) )
 			{
 				info.set(item);
 				m_subdirs.insert( info );
@@ -619,7 +619,7 @@ int main(int argc, const char **argv)
 		const char *targetDir = argv[2];
 		const char *cacheDir  = argv[3];
 
-#ifndef NDEBUG
+#ifdef RTS_DEBUG
 		theDebugMunkee = new DebugMunkee(argv[4]);
 #endif
 
@@ -631,7 +631,7 @@ int main(int argc, const char **argv)
 		//printSet( hasAlpha, "Using Alpha Channel" );
 		//tearDownLoadWindow();
 
-#ifndef NDEBUG
+#ifdef RTS_DEBUG
 		delete theDebugMunkee;
 		theDebugMunkee = NULL;
 #endif

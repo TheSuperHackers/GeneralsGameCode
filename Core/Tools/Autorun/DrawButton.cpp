@@ -22,7 +22,7 @@
  *																			  *
  *                  Project Name : Autorun									  *
  *																			  *
- *                     File Name : AUTORUN.CPP								  *
+ *                     File Name : AUTORUN.cpp								  *
  *																			  *
  *                    Programmers: Maria del Mar McCready Legg				  *
  *																			  *

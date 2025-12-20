@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __QUICKMATCHPREFERENCES_H__
-#define __QUICKMATCHPREFERENCES_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -78,5 +75,3 @@ public:
 	void setSide(Int val);
 	Int getSide( void );
 };
-
-#endif // __QUICKMATCHPREFERENCES_H__

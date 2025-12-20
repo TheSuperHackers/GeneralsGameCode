@@ -34,25 +34,16 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef VERTMATERIAL_H
-#define VERTMATERIAL_H
 
 #include "always.h"
 
-#include "refcount.h"
 #include "vector3.h"
 #include "w3d_file.h"
 #include "meshbuild.h"
 #include "w3derr.h"
 #include "mapper.h"
 #include "wwstring.h"
-
-#include <string.h>
 
 class ChunkLoadClass;
 class ChunkSaveClass;
@@ -214,7 +205,7 @@ public:
 	/*
 	** CRC, used by the loading code to build a list of the unique materials
 	*/
-	inline unsigned long Get_CRC(void) const
+	unsigned long Get_CRC(void) const
 	{
 		if (CRCDirty) {
 			CRC=Compute_CRC();
@@ -319,6 +310,3 @@ inline bool VertexMaterialClass::Are_Mappers_Time_Variant(void) const
 	}
 	return false;
 }
-
-#endif //VERTMATERIAL_H
-

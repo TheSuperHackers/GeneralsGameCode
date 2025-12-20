@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef EXPERIENCE_TRACKER_H
-#define EXPERIENCE_TRACKER_H
-
 #include "Common/GameCommon.h"
 #include "Common/GameType.h"
 #include "Common/GameMemory.h"
@@ -49,15 +46,18 @@ public:
 	Int getExperienceValue( const Object* killer ) const;										///< How much do give for being killed
 	Int getCurrentExperience( void ) const { return m_currentExperience; };	///< How much experience do I have at the moment?
 	Bool isTrainable() const;																						///< Can I gain experience?
+	void setTrainable(Bool trainable);																	///< Set whether I can gain experience
+	void resetTrainable();																							///< Set to default trainable state from template
 	Bool isAcceptingExperiencePoints() const;														///< Either I am trainable, or I have a Sink set up
 
 	void setVeterancyLevel( VeterancyLevel newLevel, Bool provideFeedback = TRUE );						///< Set Level to this
-	void setMinVeterancyLevel( VeterancyLevel newLevel );					///< Set Level to AT LEAST this... if we are already >= this level, do nothing.
+	void setMinVeterancyLevel( VeterancyLevel newLevel, Bool provideFeedback = TRUE );					///< Set Level to AT LEAST this... if we are already >= this level, do nothing.
 	void addExperiencePoints( Int experienceGain, Bool canScaleForBonus = TRUE );	///< Gain this many exp.
 	Bool gainExpForLevel(Int levelsToGain, Bool canScaleForBonus = TRUE );			  ///< Gain enough exp to gain a level. return false if can't gain a level.
 	Bool canGainExpForLevel(Int levelsToGain) const;															///< return same value as gainExpForLevel, but don't change anything
 	void setExperienceAndLevel(Int experienceIn, Bool provideFeedback = TRUE );
 	void setExperienceSink( ObjectID sink );											///< My experience actually goes to this person (loose couple)
+	ObjectID getExperienceSink() const;
 
 	Real getExperienceScalar() const { return m_experienceScalar; }
 	Real getExperienceValueScalar() const { return m_experienceValueScalar; }
@@ -76,6 +76,5 @@ private:
 	ObjectID					m_experienceSink;										///< ID of object I have pledged my experience point gains to
 	Real							m_experienceScalar;									///< Scales any experience gained by this multiplier.
 	Real							m_experienceValueScalar;									///< Scales any experience given by this multiplier.
+	Bool							m_isTrainable;											///< Can I gain experience?
 };
-
-#endif

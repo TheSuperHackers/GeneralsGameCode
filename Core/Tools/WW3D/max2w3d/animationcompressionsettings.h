@@ -36,9 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef __ANIMATION_COMPRESSION_SETTINGS_H
-#define __ANIMATION_COMPRESSION_SETTINGS_H
+#pragma once
 
 #include <windows.h>
 #include <max.h>
@@ -90,7 +88,3 @@ private:
 	HWND								Wnd;
 	HWND								ParentWnd;
 };
-
-
-#endif //__ANIMATION_COMPRESSION_SETTINGS_H
-

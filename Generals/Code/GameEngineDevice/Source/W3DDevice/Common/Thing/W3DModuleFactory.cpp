@@ -71,4 +71,4 @@ void W3DModuleFactory::init( void )
 	addModule( W3DTracerDraw );
 	addModule( W3DTankTruckDraw );
 
-}  // end init
+}

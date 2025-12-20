@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef FloodFillTool_H
-#define FloodFillTool_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 /**************************************************************************
@@ -51,6 +48,3 @@ public:
 	void setAdjustCliffs(Bool val) {m_adjustCliffTextures = val;}
 
 };
-
-
-#endif //TOOL_H

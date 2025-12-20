@@ -150,7 +150,7 @@ void BeaconClientUpdate::hideBeacon( void )
 		if( system )
 			system->stop();
 
-	}  // end if
+	}
 
 //	DEBUG_LOG(("in hideBeacon(): draw=%d, m_particleSystemID=%d", draw, m_particleSystemID));
 
@@ -192,7 +192,7 @@ void BeaconClientUpdate::crc( Xfer *xfer )
 	// extend base class
 	ClientUpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -216,7 +216,7 @@ void BeaconClientUpdate::xfer( Xfer *xfer )
 	// last radar pulse
 	xfer->xferUnsignedInt( &m_lastRadarPulse );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -227,4 +227,4 @@ void BeaconClientUpdate::loadPostProcess( void )
 	// extend base class
 	ClientUpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

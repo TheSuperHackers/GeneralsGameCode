@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __POW_TRUCK_AI_UPDATE_H_
-#define __POW_TRUCK_AI_UPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/AIUpdate.h"
 
@@ -146,5 +143,3 @@ protected:
 };
 
 #endif
-
-#endif  // end __POW_TRUCK_AI_UPDATE_H_

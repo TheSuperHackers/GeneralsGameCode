@@ -34,9 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef SKIN_H
-#define SKIN_H
+#pragma once
 
 #include <max.h>
 #include "simpmod.h"
@@ -397,9 +395,3 @@ public:
 	*/
 	friend BOOL CALLBACK _bone_influence_dialog_thunk(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam);
 };
-
-
-
-
-#endif
-

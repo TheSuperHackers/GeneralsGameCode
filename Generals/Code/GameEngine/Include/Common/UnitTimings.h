@@ -29,11 +29,4 @@
 
 #pragma once
 
-#ifndef __UNITTIMINGS_H_
-#define __UNITTIMINGS_H_
-
-
 #define dontDO_UNIT_TIMINGS
-
-#endif
-

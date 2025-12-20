@@ -47,8 +47,6 @@
 //-----------------------------------------------------------------------------
 #include "W3DDevice/GameClient/W3DBridgeBuffer.h"
 
-#include <stdio.h>
-#include <string.h>
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include <texture.h>
 #include "Common/GlobalData.h"
@@ -214,20 +212,20 @@ Bool W3DBridge::load(BodyDamageType curDamageState)
 		default: return false;
 
 		case 	BODY_PRISTINE:
-			strcpy( textureFile, bridge->getTexture().str() );
-			strcpy( modelName, bridge->getBridgeModel().str() );
+			strlcpy(textureFile, bridge->getTexture().str(), ARRAY_SIZE(textureFile));
+			strlcpy(modelName, bridge->getBridgeModel().str(), ARRAY_SIZE(modelName));
 			break;
 		case BODY_DAMAGED:
-			strcpy( textureFile, bridge->getTextureDamaged().str() );
-			strcpy( modelName, bridge->getBridgeModelNameDamaged().str() );
+			strlcpy(textureFile, bridge->getTextureDamaged().str(), ARRAY_SIZE(textureFile));
+			strlcpy(modelName, bridge->getBridgeModelNameDamaged().str(), ARRAY_SIZE(modelName));
 			break;
 		case BODY_REALLYDAMAGED:
-			strcpy( textureFile, bridge->getTextureReallyDamaged().str() );
-			strcpy( modelName, bridge->getBridgeModelNameReallyDamaged().str() );
+			strlcpy(textureFile, bridge->getTextureReallyDamaged().str(), ARRAY_SIZE(textureFile));
+			strlcpy(modelName, bridge->getBridgeModelNameReallyDamaged().str(), ARRAY_SIZE(modelName));
 			break;
 		case BODY_RUBBLE:
-			strcpy( textureFile, bridge->getTextureBroken().str() );
-			strcpy( modelName, bridge->getBridgeModelNameBroken().str() );
+			strlcpy(textureFile, bridge->getTextureBroken().str(), ARRAY_SIZE(textureFile));
+			strlcpy(modelName, bridge->getBridgeModelNameBroken().str(), ARRAY_SIZE(modelName));
 			break;
 	}
 
@@ -236,12 +234,15 @@ Bool W3DBridge::load(BodyDamageType curDamageState)
 	char section[_MAX_PATH];
 	char right[_MAX_PATH];
 
+	static_assert(ARRAY_SIZE(left) >= ARRAY_SIZE(section), "Incorrect array size");
+	static_assert(ARRAY_SIZE(section) >= ARRAY_SIZE(modelName), "Incorrect array size");
+	static_assert(ARRAY_SIZE(right) >= ARRAY_SIZE(modelName), "Incorrect array size");
 	strcpy(left, modelName);
-	strcat(left, ".BRIDGE_LEFT");
+	strlcat(left, ".BRIDGE_LEFT", ARRAY_SIZE(left));
 	strcpy(section, modelName);
-	strcat(section, ".BRIDGE_SPAN");
+	strlcat(section, ".BRIDGE_SPAN", ARRAY_SIZE(section));
 	strcpy(right, modelName);
-	strcat(right, ".BRIDGE_RIGHT");
+	strlcat(right, ".BRIDGE_RIGHT", ARRAY_SIZE(right));
 
 	m_bridgeTexture = pMgr->Get_Texture(textureFile,  MIP_LEVELS_3);
 	m_leftMtx.Make_Identity();
@@ -256,15 +257,15 @@ Bool W3DBridge::load(BodyDamageType curDamageState)
 		Matrix3D mtx = pSub->Get_Transform();
 		if (0==strnicmp(left, pSub->Get_Name(), strlen(left))) {
 			m_leftMtx = mtx;
-			strcpy(left, pSub->Get_Name());
+			strlcpy(left, pSub->Get_Name(), ARRAY_SIZE(left));
 		}
 		if (0==strnicmp(section, pSub->Get_Name(), strlen(section))) {
 			m_sectionMtx = mtx;
-			strcpy(section, pSub->Get_Name());
+			strlcpy(section, pSub->Get_Name(), ARRAY_SIZE(section));
 		}
 		if (0==strnicmp(right, pSub->Get_Name(), strlen(right))) {
 			m_rightMtx = mtx;
-			strcpy(right, pSub->Get_Name());
+			strlcpy(right, pSub->Get_Name(), ARRAY_SIZE(right));
 		}
 		REF_PTR_RELEASE(pSub);
 		//DEBUG_LOG(("Sub obj name %s", pSub->Get_Name()));
@@ -864,7 +865,7 @@ static RenderObjClass* createTower( SimpleSceneClass *scene,
 		case BRIDGE_TOWER_TO_RIGHT:		towerPos = bridgeInfo->toRight;			break;
 		default: return NULL;
 
-	}  // end switch
+	}
 
 	// set the Z position to that of the terrain
 	towerPos.z = TheTerrainRenderObject->getHeightMapHeight( towerPos.x, towerPos.y, NULL);
@@ -949,7 +950,7 @@ static void updateTowerPos( RenderObjClass* tower,
 		case BRIDGE_TOWER_TO_RIGHT:		towerPos = bridgeInfo->toRight;			break;
 		default: return;
 
-	}  // end switch
+	}
 
 	// set the position of the tower render object to the position in the world
 	Matrix3D transform;
@@ -1030,7 +1031,7 @@ void W3DBridgeBuffer::worldBuilderUpdateBridgeTowers( W3DAssetManager *assetMana
 							towerRenderObj = createTower( scene, assetManager, pMapObj, (BridgeTowerType)j, &bridgeInfo );
 							created = TRUE;
 
-						}  // end if
+						}
 
 						// sanity
 						DEBUG_ASSERTCRASH( towerRenderObj != NULL, ("worldBuilderUpdateBridgeTowers: unable to create tower for bridge '%s'",
@@ -1043,11 +1044,11 @@ void W3DBridgeBuffer::worldBuilderUpdateBridgeTowers( W3DAssetManager *assetMana
 						if( created )
 							REF_PTR_RELEASE( towerRenderObj );
 
-					}  // end for j
+					}
 
-				}  // end if
+				}
 
-			}  // end for i
+			}
 
 			// skip the 2nd map object representing the second half of the bridgef
 			pMapObj = pMapObj2;

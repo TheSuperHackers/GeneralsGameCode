@@ -31,9 +31,6 @@
 
 #pragma once
 
-#ifndef _SPY_VISION_UPDATE_H
-#define _SPY_VISION_UPDATE_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/UpgradeModule.h"
@@ -134,7 +131,7 @@ protected:
 	{
 		return getSpyVisionUpdateModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
 	}
-	inline Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
+	Bool isUpgradeActive() const { return isAlreadyUpgraded(); }
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 private:
@@ -146,6 +143,3 @@ private:
 	Bool m_currentlyActive;
 	Bool m_resetTimersNextUpdate;
 };
-
-#endif
-

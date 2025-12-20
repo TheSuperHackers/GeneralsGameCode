@@ -92,7 +92,7 @@ void INI::parseHeaderTemplateDefinition( INI *ini )
 		// allocate a new item
 		hTemplate = TheHeaderTemplateManager->newHeaderTemplate( name );
 
-	}  // end if
+	}
 	else
 	{
 		DEBUG_CRASH(( "[LINE: %d in '%s'] Duplicate header Template %s found!", ini->getLineNum(), ini->getFilename().str(), name.str() ));
@@ -100,15 +100,13 @@ void INI::parseHeaderTemplateDefinition( INI *ini )
 	// parse the ini definition
 	ini->initFromINI( hTemplate, TheHeaderTemplateManager->getFieldParse() );
 
-}  // end parseCommandButtonDefinition
+}
 
 HeaderTemplate::HeaderTemplate( void ) :
 m_font(NULL),
 m_point(0),
 m_bold(FALSE)
 {
-	//Added By Sadullah Nader
-	//Initializations missing and needed
 	m_fontName.clear();
 	m_name.clear();
 }
@@ -124,11 +122,7 @@ HeaderTemplateManager::~HeaderTemplateManager( void )
 	while(it != m_headerTemplateList.end())
 	{
 		HeaderTemplate *hTemplate = *it;
-		if(hTemplate)
-		{
-			hTemplate->m_font = NULL;
-			delete hTemplate;
-		}
+		delete hTemplate;
 		it = m_headerTemplateList.erase(it);
 
 	}
@@ -136,22 +130,14 @@ HeaderTemplateManager::~HeaderTemplateManager( void )
 
 void HeaderTemplateManager::init( void )
 {
-	INI ini;
-	AsciiString fname;
-	fname.format("Data\\%s\\HeaderTemplate.ini", GetRegistryLanguage().str());
-	OSVERSIONINFO	osvi;
-	osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFO);
-	if (GetVersionEx(&osvi))
-	{	//check if we're running Win9x variant since they may need different fonts
-		if (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
-		{	AsciiString tempName;
+	{
+		AsciiString fname;
+		fname.format("Data\\%s\\HeaderTemplate", GetRegistryLanguage().str());
 
-			tempName.format("Data\\%s\\HeaderTemplate9x.ini", GetRegistryLanguage().str());
-			if (TheFileSystem->doesFileExist(tempName.str()))
-				fname = tempName;
-		}
+		INI ini;
+		ini.loadFileDirectory( fname, INI_LOAD_OVERWRITE, NULL );
 	}
-	ini.load( fname, INI_LOAD_OVERWRITE, NULL );
+
 	populateGameFonts();
 }
 
@@ -220,7 +206,7 @@ HeaderTemplate *HeaderTemplateManager::getNextHeader( HeaderTemplate *ht )
 
 }
 
-void HeaderTemplateManager::headerNotifyResolutionChange( void )
+void HeaderTemplateManager::onResolutionChanged( void )
 {
 	populateGameFonts();
 }

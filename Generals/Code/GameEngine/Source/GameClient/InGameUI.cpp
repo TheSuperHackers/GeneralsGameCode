@@ -23,18 +23,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // InGameUI.cpp ///////////////////////////////////////////////////////////////////////////////////
-// Implementation of in-game user interface singleton inteface
+// Implementation of in-game user interface singleton
 // Author: Michael S. Booth, March 2001
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_SHADOW_NAMES
 
 #include "Common/ActionManager.h"
+#include "Common/FramePacer.h"
 #include "Common/GameAudio.h"
-#include "Common/GameEngine.h"
 #include "Common/GameType.h"
+#include "Common/GameUtility.h"
 #include "Common/MessageStream.h"
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
@@ -45,7 +46,6 @@
 #include "Common/ThingTemplate.h"
 #include "Common/BuildAssistant.h"
 #include "Common/Recorder.h"
-#include "Common/BuildAssistant.h"
 #include "Common/SpecialPower.h"
 
 #include "GameClient/Anim2D.h"
@@ -66,7 +66,6 @@
 #include "GameClient/GadgetStaticText.h"
 #include "GameClient/View.h"
 #include "GameClient/TerrainVisual.h"
-#include "GameClient/ControlBar.h"
 #include "GameClient/Display.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/LookAtXlat.h"
@@ -86,11 +85,45 @@
 #include "GameLogic/Module/SupplyWarehouseDockUpdate.h"
 #include "GameLogic/Module/MobMemberSlavedUpdate.h"//ML
 
+#include "GameNetwork/NetworkInterface.h"
+
 
 
 // ------------------------------------------------------------------------------------------------
-static const Real placementOpacity = 0.45f;
-static const RGBColor illegalBuildColor = { 1.0, 0.0, 0.0 };
+static const RGBColor IllegalBuildColor = { 1.0, 0.0, 0.0 };
+
+// ------------------------------------------------------------------------------------------------
+static UnicodeString formatMoneyValue(UnsignedInt amount)
+{
+	UnicodeString result;
+	if (amount >= 100000)
+	{
+		result.format(L"%uk", amount / 1000);
+	}
+	else
+	{
+		result.format(L"%u", amount);
+	}
+	return result;
+}
+
+static UnicodeString formatIncomeValue(UnsignedInt cashPerMin)
+{
+	UnicodeString result;
+	if (cashPerMin >= 10000)
+	{
+		result.format(L"%uk", cashPerMin / 1000);
+	}
+	else if (cashPerMin >= 1000)
+	{
+		result.format(L"%u", (cashPerMin / 100) * 100);
+	}
+	else
+	{
+		result.format(L"%u", (cashPerMin / 10) * 10);
+	}
+	return result;
+}
 
 //-------------------------------------------------------------------------------------------------
 /// The InGameUI singleton instance.
@@ -340,7 +373,7 @@ Real SuperweaponInfo::getHeight() const
 void InGameUI::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -507,7 +540,7 @@ void InGameUI::xfer( Xfer *xfer )
 void InGameUI::loadPostProcess( void )
 {
 
-}  // end loadPostProcess
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -590,7 +623,7 @@ Bool InGameUI::removeSuperweapon(Int playerIndex, const AsciiString& powerName, 
 				SuperweaponInfo *info = *listIt;
 				swList.erase(listIt);
 				deleteInstance(info);
-				if (swList.size() == 0)
+				if (swList.empty())
 				{
 					m_superweapons[playerIndex].erase(mapIt);
 				}
@@ -696,7 +729,7 @@ void InGameUI::setSuperweaponDisplayEnabledByScript(Bool enable)
 // ------------------------------------------------------------------------------------------------
 Bool InGameUI::getSuperweaponDisplayEnabledByScript(void) const
 {
-	return m_superweaponHiddenByScript;
+	return !m_superweaponHiddenByScript;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -843,6 +876,20 @@ const FieldParse InGameUI::s_fieldParseTable[] =
 	{ "SpyDroneRadiusCursor",				RadiusDecalTemplate::parseRadiusDecalTemplate, NULL, offsetof( InGameUI, m_radiusCursors[ RADIUSCURSOR_SPYDRONE] ) },
 
 	// TheSuperHackers @info ui enhancement configuration
+	{ "NetworkLatencyFont",      INI::parseAsciiString,  NULL, offsetof( InGameUI, m_networkLatencyFont ) },
+	{ "NetworkLatencyBold",      INI::parseBool,         NULL, offsetof( InGameUI, m_networkLatencyBold ) },
+	{ "NetworkLatencyPosition",  INI::parseCoord2D,      NULL, offsetof( InGameUI, m_networkLatencyPosition ) },
+	{ "NetworkLatencyColor",     INI::parseColorInt,     NULL, offsetof( InGameUI, m_networkLatencyColor ) },
+	{ "NetworkLatencyDropColor", INI::parseColorInt,     NULL, offsetof( InGameUI, m_networkLatencyDropColor ) },
+
+	{ "RenderFpsFont",          INI::parseAsciiString,  NULL, offsetof( InGameUI, m_renderFpsFont ) },
+	{ "RenderFpsBold",          INI::parseBool,         NULL, offsetof( InGameUI, m_renderFpsBold ) },
+	{ "RenderFpsPosition",      INI::parseCoord2D,      NULL, offsetof( InGameUI, m_renderFpsPosition ) },
+	{ "RenderFpsColor",         INI::parseColorInt,     NULL, offsetof( InGameUI, m_renderFpsColor ) },
+	{ "RenderFpsLimitColor",    INI::parseColorInt,     NULL, offsetof( InGameUI, m_renderFpsLimitColor ) },
+	{ "RenderFpsDropColor",     INI::parseColorInt,     NULL, offsetof( InGameUI, m_renderFpsDropColor ) },
+	{ "RenderFpsRefreshMs",     INI::parseUnsignedInt,  NULL, offsetof( InGameUI, m_renderFpsRefreshMs ) },
+
 	{ "SystemTimeFont",         INI::parseAsciiString,  NULL, offsetof( InGameUI, m_systemTimeFont ) },
 	{ "SystemTimeBold",         INI::parseBool,         NULL, offsetof( InGameUI, m_systemTimeBold ) },
 	{ "SystemTimePosition",     INI::parseCoord2D,      NULL, offsetof( InGameUI, m_systemTimePosition ) },
@@ -855,7 +902,7 @@ const FieldParse InGameUI::s_fieldParseTable[] =
 	{ "GameTimeColor",          INI::parseColorInt,     NULL, offsetof( InGameUI, m_gameTimeColor ) },
 	{ "GameTimeDropColor",      INI::parseColorInt,     NULL, offsetof( InGameUI, m_gameTimeDropColor ) },
 
-	{ NULL,													NULL,										NULL,		0 }  // keep this last
+	{ NULL,													NULL,										NULL,		0 }
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -868,6 +915,16 @@ void INI::parseInGameUIDefinition( INI* ini )
 		// parse the ini weapon definition
 		ini->initFromINI( TheInGameUI, TheInGameUI->getFieldParse() );
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+namespace
+{
+	// helpers for inline counters
+	constexpr const Int kHudAnchorX = 3;
+	constexpr const Int kHudAnchorY = -1;
+	constexpr const Int kHudGapPx = 6;
+	inline Bool isAtHudAnchorPos(const Coord2D &p) { return p.x == kHudAnchorX && p.y == kHudAnchorY; }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -889,8 +946,6 @@ InGameUI::InGameUI()
 	m_mouseModeCursor = Mouse::ARROW;
 	m_mousedOverDrawableID = INVALID_DRAWABLE_ID;
 
-	//Added By Sadullah Nader
-	//Initializations missing and needed
 	m_currentlyPlayingMovie.clear();
 	m_militarySubtitle = NULL;
 	m_popupMessageData = NULL;
@@ -936,7 +991,7 @@ InGameUI::InGameUI()
 		m_moveHint[ i ].sourceID = 0;
 		m_moveHint[ i ].frame = 0;
 
-	}  //  end for i
+	}
 
 	for( i = 0; i < MAX_BUILD_PROGRESS; i++ )
 	{
@@ -945,7 +1000,7 @@ InGameUI::InGameUI()
 		m_buildProgress[ i ].m_percentComplete = 0.0f;
 		m_buildProgress[ i ].m_control = NULL;
 
-	}  // end for i
+	}
 
 	m_pendingGUICommand = NULL;
 
@@ -974,18 +1029,43 @@ InGameUI::InGameUI()
 		m_uiMessages[ i ].timestamp = 0;
 		m_uiMessages[ i ].color = 0;
 
-	}  // end for i
+	}
 
 	m_replayWindow = NULL;
 	m_messagesOn = TRUE;
 
-	// TheSuperHackers @info the default font, size and positions of the system and game times were chosen based on GenTools implementation
+	// TheSuperHackers @info the default font, size and positions of the various counters were chosen based on GenTools implementation
+	m_networkLatencyString = NULL;
+	m_networkLatencyFont = "Tahoma";
+	m_networkLatencyPointSize = TheGlobalData->m_networkLatencyFontSize;
+	m_networkLatencyBold = TRUE;
+	m_networkLatencyPosition.x = kHudAnchorX;
+	m_networkLatencyPosition.y = kHudAnchorY;
+	m_networkLatencyColor = GameMakeColor( 173, 216, 255, 255 );
+	m_networkLatencyDropColor = GameMakeColor( 0, 0, 0, 255 );
+	m_lastNetworkLatencyFrames = ~0u;
+
+	m_renderFpsString = NULL;
+	m_renderFpsLimitString = NULL;
+	m_renderFpsFont = "Tahoma";
+	m_renderFpsPointSize = TheGlobalData->m_renderFpsFontSize;
+	m_renderFpsBold = TRUE;
+	m_renderFpsPosition.x = kHudAnchorX;
+	m_renderFpsPosition.y = kHudAnchorY;
+	m_renderFpsColor = GameMakeColor( 255, 255, 0, 255 );
+	m_renderFpsLimitColor = GameMakeColor(119, 119, 119, 255);
+	m_renderFpsDropColor = GameMakeColor( 0, 0, 0, 255 );
+	m_renderFpsRefreshMs = 1000;
+	m_lastRenderFps = ~0u;
+	m_lastRenderFpsLimit = ~0u;
+	m_lastRenderFpsUpdateMs = 0u;
+
 	m_systemTimeString = NULL;
 	m_systemTimeFont = "Tahoma";
 	m_systemTimePointSize = TheGlobalData->m_systemTimeFontSize;
 	m_systemTimeBold = TRUE;
-	m_systemTimePosition.x = 3; // TheSuperHackers @info relative to the left of the screen
-	m_systemTimePosition.y = -1;
+	m_systemTimePosition.x = kHudAnchorX; // TheSuperHackers @info relative to the left of the screen
+	m_systemTimePosition.y = kHudAnchorY;
 	m_systemTimeColor = GameMakeColor( 255, 255, 255, 255 );
 	m_systemTimeDropColor = GameMakeColor( 0, 0, 0, 255 );
 
@@ -994,8 +1074,8 @@ InGameUI::InGameUI()
 	m_gameTimeFont = "Tahoma";
 	m_gameTimePointSize = TheGlobalData->m_gameTimeFontSize;
 	m_gameTimeBold = TRUE;
-	m_gameTimePosition.x = 3; // TheSuperHackers @info relative to the right of the screen
-	m_gameTimePosition.y = -1;
+	m_gameTimePosition.x = kHudAnchorX; // TheSuperHackers @info relative to the right of the screen
+	m_gameTimePosition.y = kHudAnchorY;
 	m_gameTimeColor = GameMakeColor( 255, 255, 255, 255 );
 	m_gameTimeDropColor = GameMakeColor( 0, 0, 0, 255 );
 
@@ -1058,7 +1138,7 @@ InGameUI::InGameUI()
 
 	m_soloNexusSelectedDrawableID = INVALID_DRAWABLE_ID;
 
-}  // end InGameUI
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -1101,7 +1181,7 @@ InGameUI::~InGameUI()
 void InGameUI::init( void )
 {
 	INI ini;
-	ini.load( AsciiString( "Data\\INI\\InGameUI.ini" ), INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\InGameUI", INI_LOAD_OVERWRITE, NULL );
 
 	//override INI values with language localized values:
 	if (TheGlobalLanguageData)
@@ -1188,8 +1268,10 @@ void InGameUI::init( void )
 
 	m_soloNexusSelectedDrawableID = INVALID_DRAWABLE_ID;
 
+	setDrawRMBScrollAnchor(TheGlobalData->m_drawScrollAnchor);
+	setMoveRMBScrollAnchor(TheGlobalData->m_moveScrollAnchor);
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -1304,13 +1386,7 @@ void InGameUI::handleRadiusCursor()
 		// from screen to world
 		// But only if the radar is on.
 		//
-		Bool radarOn = TheRadar->isRadarForced()
-									|| ( !TheRadar->isRadarHidden()
-												&& ThePlayerList->getLocalPlayer()
-												&& ThePlayerList->getLocalPlayer()->hasRadar()
-											);
-
-		if( !radarOn  ||  (TheRadar->screenPixelToWorld( &mouseIO->pos, &pos ) == FALSE) )// if radar off, or point not on radar
+		if( !rts::localPlayerHasRadar()  ||  (TheRadar->screenPixelToWorld( &mouseIO->pos, &pos ) == FALSE) )// if radar off, or point not on radar
 			TheTacticalView->screenToTerrain( &mouseIO->pos, &pos );
 
 		m_curRadiusCursor.setPosition(pos);	//world space position of center of decal
@@ -1370,7 +1446,7 @@ void InGameUI::evaluateSoloNexus( Drawable *newlyAddedDrawable )
 			return;
 		}
 
-	}  // end for
+	}
 
 
 }
@@ -1415,9 +1491,16 @@ void InGameUI::handleBuildPlacements( void )
 				v.y = worldEnd.y - worldStart.y;
 				angle = v.toAngle();
 
-			}  // end if
+				// TheSuperHackers @tweak Stubbjax 04/08/2025 Snap angle to nearest 45 degrees
+				// while using force attack mode for convenience.
+				if (isInForceAttackMode())
+				{
+					const Real snapRadians = DEG_TO_RADF(45);
+					angle = WWMath::Round(angle / snapRadians) * snapRadians;
+				}
+			}
 
-		}  // end if
+		}
 		else
 		{
 			const MouseIO *mouseIO = TheMouse->getMouseStatus();
@@ -1425,7 +1508,7 @@ void InGameUI::handleBuildPlacements( void )
 			// location is the mouse position
 			loc = mouseIO->pos;
 
-		}  // end else
+		}
 
 		// set the location and angle of the place icon
 		/**@todo this whole orientation vector thing is LAME! Must replace, all I want to
@@ -1460,8 +1543,9 @@ void InGameUI::handleBuildPlacements( void )
 																											 BuildAssistant::SHROUD_REVEALED,
 																											 builderObject,
 																											 NULL );
+
 			if( lbc != LBC_OK )
-				m_placeIcon[ 0 ]->colorTint( &illegalBuildColor );
+				m_placeIcon[ 0 ]->colorTint( &IllegalBuildColor );
 			else
 				m_placeIcon[ 0 ]->colorTint( NULL );
 
@@ -1475,7 +1559,7 @@ void InGameUI::handleBuildPlacements( void )
 			} else {
 				TheTerrainVisual->removeFactionBibDrawable(m_placeIcon[0]);
 			}
-		}  // end if
+		}
 
 
 
@@ -1521,10 +1605,13 @@ void InGameUI::handleBuildPlacements( void )
 			{
 
 				if( m_placeIcon[ i ] == NULL )
-					m_placeIcon[ i ] = TheThingFactory->newDrawable( m_pendingPlaceType,
-																													 DRAWABLE_STATUS_NO_STATE_PARTICLES );
+				{
+					UnsignedInt drawableStatus = DRAWABLE_STATUS_NO_STATE_PARTICLES;
+					drawableStatus |= TheGlobalData->m_objectPlacementShadows ? DRAWABLE_STATUS_SHADOWS : 0;
+					m_placeIcon[ i ] = TheThingFactory->newDrawable( m_pendingPlaceType, drawableStatus );
+				}
 
-			}  // end for i
+			}
 
 			//
 			// destroy any drawables that we're not using anymore because a previous
@@ -1537,7 +1624,7 @@ void InGameUI::handleBuildPlacements( void )
 					TheGameClient->destroyDrawable( m_placeIcon[ i ] );
 				m_placeIcon[ i ] = NULL;
 
-			}  // end for i
+			}
 
 			//
 			// march down each drawable and set the position based on its position in the
@@ -1546,22 +1633,22 @@ void InGameUI::handleBuildPlacements( void )
 			for( i = 0; i < tileBuildInfo->tilesUsed; i++ )
 			{
 
-				// set the drawble position
+				// set the drawable position
 				m_placeIcon[ i ]->setPosition( &tileBuildInfo->positions[ i ] );
 
-				// set opacity for the drawble
-				m_placeIcon[ i ]->setDrawableOpacity( placementOpacity );
+				// set opacity for the drawable
+				m_placeIcon[ i ]->setDrawableOpacity( TheGlobalData->m_objectPlacementOpacity );
 
 				// set the drawable angle
 				m_placeIcon[ i ]->setOrientation( angle );
 
-			}  // end for i
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
-}  // end handleBuildPlacements
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Pre-draw phase of the in game ui */
@@ -1581,7 +1668,7 @@ void InGameUI::preDraw( void )
 	// draw world animations
 	updateAndDrawWorldAnimations();
 
-}  // end preDraw
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update the in game user interface */
@@ -1654,9 +1741,9 @@ void InGameUI::update( void )
 			if( a == 0 )
 				removeMessageAtIndex( i );
 
-		}  // end if
+		}
 
-	}  // end for i
+	}
 
 	//
 	// Update the Military Subtitle display
@@ -1773,7 +1860,8 @@ void InGameUI::update( void )
 
 	// update the player money window if the money amount has changed
 	// this seems like as good a place as any to do the power hide/show
-	static Int lastMoney = -1;
+	static UnsignedInt lastMoney = ~0u;
+	static UnsignedInt lastIncome = ~0u;
 	static NameKeyType moneyWindowKey = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:MoneyDisplay" );
 	static NameKeyType powerWindowKey = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:PowerWindow" );
 
@@ -1786,23 +1874,43 @@ void InGameUI::update( void )
 //		moneyWin = TheWindowManager->winGetWindowFromId( NULL, moneyWindowKey );
 //
 //	}  // end if
-	Player *moneyPlayer = NULL;
-	if( TheControlBar->isObserverControlBarOn())
-		moneyPlayer = TheControlBar->getObserverLookAtPlayer();
-	else
-		moneyPlayer = ThePlayerList->getLocalPlayer();
+	Player* moneyPlayer = TheControlBar->getCurrentlyViewedPlayer();
 	if( moneyPlayer)
 	{
-		Int currentMoney = moneyPlayer->getMoney()->countMoney();
-		if( lastMoney != currentMoney )
+		Money *money = moneyPlayer->getMoney();
+		Bool wantShowIncome = TheGlobalData->m_showMoneyPerMinute;
+		Bool canShowIncome = TheGlobalData->m_allowMoneyPerMinuteForPlayer || TheControlBar->isObserverControlBarOn();
+		Bool doShowIncome = wantShowIncome && canShowIncome;
+		if (!doShowIncome)
 		{
-			UnicodeString buffer;
+			UnsignedInt currentMoney = money->countMoney();
+			if( lastMoney != currentMoney )
+			{
+				UnicodeString buffer;
 
-			buffer.format( TheGameText->fetch( "GUI:ControlBarMoneyDisplay" ), currentMoney );
-			GadgetStaticTextSetText( moneyWin, buffer );
-			lastMoney = currentMoney;
+				buffer.format(TheGameText->fetch( "GUI:ControlBarMoneyDisplay" ), currentMoney );
+				GadgetStaticTextSetText( moneyWin, buffer );
+				lastMoney = currentMoney;
 
-		}  // end if
+			}
+		}
+		else
+		{
+			// TheSuperHackers @feature L3-M 21/08/2025 player money per minute
+			UnsignedInt currentMoney = money->countMoney();
+			UnsignedInt cashPerMin = money->getCashPerMinute();
+			if ( lastMoney != currentMoney || lastIncome != cashPerMin )
+			{
+				UnicodeString buffer;
+				UnicodeString moneyStr = formatMoneyValue(currentMoney);
+				UnicodeString incomeStr = formatIncomeValue(cashPerMin);
+
+				buffer.format(TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:ControlBarMoneyDisplayIncome", L"$ %ls +%ls/min", moneyStr.str(), incomeStr.str()));
+				GadgetStaticTextSetText(moneyWin, buffer);
+				lastMoney = currentMoney;
+				lastIncome = cashPerMin;
+			}
+		}
 		moneyWin->winHide(FALSE);
 		powerWin->winHide(FALSE);
 	}
@@ -1827,30 +1935,34 @@ void InGameUI::update( void )
 		layout->runUpdate();
 	}
 
-	//Handle keyboard camera rotations
-	if( m_cameraRotatingLeft && !m_cameraRotatingRight )
+	if (m_cameraRotatingLeft || m_cameraRotatingRight || m_cameraZoomingIn || m_cameraZoomingOut)
 	{
-		//Keyboard rotate left
-		TheTacticalView->setAngle( TheTacticalView->getAngle() - TheGlobalData->m_keyboardCameraRotateSpeed );
-	}
-	if( m_cameraRotatingRight && !m_cameraRotatingLeft )
-	{
-		//Keyboard rotate right
-		TheTacticalView->setAngle( TheTacticalView->getAngle() + TheGlobalData->m_keyboardCameraRotateSpeed );
-	}
-	if( m_cameraZoomingIn && !m_cameraZoomingOut )
-	{
-		//Keyboard zoom in
-		TheTacticalView->zoomIn();
-	}
-	if( m_cameraZoomingOut && !m_cameraZoomingIn )
-	{
-		//Keyboard zoom out
-		TheTacticalView->zoomOut();
+		// TheSuperHackers @tweak The camera rotation and zoom are now decoupled from the render update.
+		const Real fpsRatio = TheFramePacer->getBaseOverUpdateFpsRatio();
+		const Real rotateAngle = TheGlobalData->m_keyboardCameraRotateSpeed * fpsRatio;
+		const Real zoomHeight = (Real)View::ZoomHeightPerSecond * fpsRatio;
+
+		if( m_cameraRotatingLeft && !m_cameraRotatingRight )
+		{
+			TheTacticalView->setAngle( TheTacticalView->getAngle() - rotateAngle );
+		}
+		else if( m_cameraRotatingRight && !m_cameraRotatingLeft )
+		{
+			TheTacticalView->setAngle( TheTacticalView->getAngle() + rotateAngle );
+		}
+
+		if( m_cameraZoomingIn && !m_cameraZoomingOut )
+		{
+			TheTacticalView->zoom( -zoomHeight );
+		}
+		else if( m_cameraZoomingOut && !m_cameraZoomingIn )
+		{
+			TheTacticalView->zoom( +zoomHeight );
+		}
 	}
 
 
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 void InGameUI::registerWindowLayout( WindowLayout *layout )
@@ -1925,13 +2037,13 @@ void InGameUI::reset( void )
 	m_namedTimers.clear();
 	m_namedTimerLastFlashFrame = 0;
 	m_namedTimerUsedFlashColor = TRUE; // so next one is false
-	m_showNamedTimers = TRUE;
+	showNamedTimerDisplay(true);
 
 	removeMilitarySubtitle();
 	clearPopupMessageData();
 	m_superweaponLastFlashFrame = 0;
 	m_superweaponUsedFlashColor = TRUE; // so next one is false
-	m_superweaponHiddenByScript = FALSE;
+	setSuperweaponDisplayEnabledByScript(true);
 
 	clearFloatingText();
 	clearWorldAnimations();
@@ -1944,21 +2056,29 @@ void InGameUI::reset( void )
 		m_moveHint[ i ].sourceID = 0;
 		m_moveHint[ i ].frame = 0;
 
-	}  //  end for i
+	}
 
-	m_waypointMode			= false;
-	m_forceAttackMode		= false;
-	m_forceMoveToMode		= false;
-	m_attackMoveToMode	= false;
-	m_preferSelection		= false;
-	m_clientQuiet    = false;
+	setClientQuiet(false);
+	setWaypointMode(false);
+	setForceMoveMode(false);
+	setForceAttackMode(false);
+	setPreferSelectionMode(false);
+	clearAttackMoveToMode();
+
+	// TheSuperHackers @bugfix Disable all camera interactions to prevent them getting stuck after game end.
+	setScrolling(false);
+	setSelecting(false);
+	setCameraRotateLeft(false);
+	setCameraRotateRight(false);
+	setCameraZoomIn(false);
+	setCameraZoomOut(false);
 
 	m_windowLayouts.clear();
 
 	m_tooltipsDisabledUntil = 0;
 
 	UpdateDiplomacyBriefingText(AsciiString::TheEmptyString, TRUE);
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Free any resources we used for our messages */
@@ -1982,12 +2102,18 @@ void InGameUI::freeMessageResources( void )
 		// set timestamp to zero
 		m_uiMessages[ i ].timestamp = 0;
 
-	}  // end for i
+	}
 
-}  // end freeMessageResources
+}
 
 void InGameUI::freeCustomUiResources( void )
 {
+	TheDisplayStringManager->freeDisplayString(m_networkLatencyString);
+	m_networkLatencyString = NULL;
+	TheDisplayStringManager->freeDisplayString(m_renderFpsString);
+	m_renderFpsString = NULL;
+	TheDisplayStringManager->freeDisplayString(m_renderFpsLimitString);
+	m_renderFpsLimitString = NULL;
 	TheDisplayStringManager->freeDisplayString(m_systemTimeString);
 	m_systemTimeString = NULL;
 	TheDisplayStringManager->freeDisplayString(m_gameTimeString);
@@ -2026,7 +2152,7 @@ void InGameUI::message( AsciiString stringManagerLabel, ... )
 	{
 		DEBUG_CRASH(("InGameUI::message failed with code:%d", result));
 	}
-}  // end
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -2067,7 +2193,7 @@ void InGameUI::message( UnicodeString format, ... )
 	{
 		DEBUG_CRASH(("InGameUI::message failed with code:%d", result));
 	}
-}  // end message
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Interface for display text messages to the user */
@@ -2094,7 +2220,7 @@ void InGameUI::messageColor( const RGBColor *rgbColor, UnicodeString format, ...
 	{
 		DEBUG_CRASH(("InGameUI::messageColor failed with code:%d", result));
 	}
-}  // end message
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -2142,7 +2268,7 @@ void InGameUI::addMessageText( const UnicodeString& formattedMessage, const RGBC
 	else
 		m_uiMessages[ 0 ].color = color2;
 
-}  // end addFormattedMessage
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Remove the message on screen at index i */
@@ -2156,7 +2282,7 @@ void InGameUI::removeMessageAtIndex( Int i )
 	m_uiMessages[ i ].displayString = NULL;
 	m_uiMessages[ i ].timestamp = 0;
 
-}  // end removeMessageAtIndex
+}
 
 //-------------------------------------------------------------------------------------------------
 /** An area selection is occurring, start graphical "hint". */
@@ -2442,7 +2568,7 @@ void InGameUI::createMouseoverHint( const GameMessage *msg )
 				else
 					tooltip = str;
 
-				Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
+				const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
 
 				Int x, y;
 				ThePartitionManager->worldToCell(obj->getPosition()->x, obj->getPosition()->y, &x, &y);
@@ -2544,7 +2670,7 @@ void InGameUI::createCommandHint( const GameMessage *msg )
 	if( draw && (t == GameMessage::MSG_DO_ATTACK_OBJECT_HINT || t == GameMessage::MSG_DO_ATTACK_OBJECT_AFTER_MOVING_HINT) )
 	{
 		const Object* obj = draw->getObject();
-		Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
+		const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
 #if ENABLE_CONFIGURABLE_SHROUD
 		ObjectShroudStatus ss = (!obj || !TheGlobalData->m_shroudOn) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
 #else
@@ -2616,10 +2742,7 @@ void InGameUI::createCommandHint( const GameMessage *msg )
 							setMouseCursor( Mouse::GENERIC_INVALID );
 						else if( drawSelectable && obj->isLocallyControlled() && !obj->isKindOf(KINDOF_MINE))
 							setMouseCursor( Mouse::SELECTING );
-						else if( TheRadar->isRadarWindow( window ) &&
-										 TheRadar->isRadarForced() == FALSE &&
-										 (TheRadar->isRadarHidden() ||
-										 ThePlayerList->getLocalPlayer()->hasRadar() == FALSE) )
+						else if( TheRadar->isRadarWindow( window ) && !rts::localPlayerHasRadar() )
 							setMouseCursor( Mouse::ARROW );
 						else
 							setMouseCursor( Mouse::MOVETO );
@@ -2895,11 +3018,11 @@ void InGameUI::setGUICommand( const CommandButton *command )
 			m_mouseMode = MOUSEMODE_DEFAULT;
 			return;
 
-		}  // end if
+		}
 
 		m_mouseMode = MOUSEMODE_GUI_COMMAND;
 
-	}  // end if
+	}
 	else
 	{
 		m_mouseMode = MOUSEMODE_DEFAULT;
@@ -2930,7 +3053,7 @@ void InGameUI::setGUICommand( const CommandButton *command )
 
 	m_mouseModeCursor = TheMouse->getMouseCursor();
 
-}  // end setGUICommand
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Get the pending gui command */
@@ -2959,10 +3082,10 @@ void InGameUI::destroyPlacementIcons( void )
 		}
 		m_placeIcon[ i ] = NULL;
 
-	}  // end for i
+	}
 	TheTerrainVisual->removeAllBibs();
 
-}  // end destroyPlacementIcons
+}
 
 //-------------------------------------------------------------------------------------------------
 /** User has clicked on a built item that requires placement in the world.  We will
@@ -3024,8 +3147,12 @@ void InGameUI::placeBuildAvailable( const ThingTemplate *build, Drawable *buildD
 			///@ todo when message stream order more formalized eliminate this
 //			TheInGameUI->deselectAllDrawables();
 
-			// create a drawble of what we are building to be "attached" at the cursor
-			draw = TheThingFactory->newDrawable( build, DRAWABLE_STATUS_NO_STATE_PARTICLES );
+			{
+				// create a drawable of what we are building to be "attached" at the cursor
+				UnsignedInt drawableStatus = DRAWABLE_STATUS_NO_STATE_PARTICLES;
+				drawableStatus |= TheGlobalData->m_objectPlacementShadows ? DRAWABLE_STATUS_SHADOWS : 0;
+				draw = TheThingFactory->newDrawable( build, drawableStatus );
+			}
 			if (sourceObject)
 			{
 				if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
@@ -3043,20 +3170,17 @@ void InGameUI::placeBuildAvailable( const ThingTemplate *build, Drawable *buildD
 			//
 			Real angle = build->getPlacementViewAngle();
 
-			// don't forget to take into account the current view angle
-			// angle += TheTacticalView->getAngle();	Don't do this - makes odd angled building placements.  jba.
-
 			// set the angle in the icon we just created
 			draw->setOrientation( angle );
 
 			// set the build icon attached to the cursor to be "see-thru"
-			draw->setDrawableOpacity( placementOpacity );
+			draw->setDrawableOpacity( TheGlobalData->m_objectPlacementOpacity );
 
 			// set the "icon" in the icon array at the first index
 			DEBUG_ASSERTCRASH( m_placeIcon[ 0 ] == NULL, ("placeBuildAvailable, build icon array is not empty!") );
 			m_placeIcon[ 0 ] = draw;
 
-		}  // end if
+		}
 		else
 		{
 			if (m_mouseMode == MOUSEMODE_BUILD_PLACE)
@@ -3071,11 +3195,11 @@ void InGameUI::placeBuildAvailable( const ThingTemplate *build, Drawable *buildD
 			// if we have a place icons destroy them
 			destroyPlacementIcons();
 
-		}  // end else
+		}
 
-	}  // end if
+	}
 
-}  // end placeBuildAvailable
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return the thing we're attempting to place */
@@ -3092,7 +3216,7 @@ ObjectID InGameUI::getPendingPlaceSourceObjectID( void )
 
 	return m_pendingPlaceSourceObjectID;
 
-}  // end getPendingPlaceSourceObjectID
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Start the angle selection interface for selecting building angles when placing them */
@@ -3108,11 +3232,11 @@ void InGameUI::setPlacementStart( const ICoord2D *start )
 		m_placeAnchorEnd = *start;
 		m_placeAnchorInProgress = TRUE;
 
-	}  // end if
+	}
 	else
 		m_placeAnchorInProgress = FALSE;
 
-}  // end setPlacementStart
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Set the end anchor for the angle build interface */
@@ -3123,7 +3247,7 @@ void InGameUI::setPlacementEnd( const ICoord2D *end )
 	if( end )
 		m_placeAnchorEnd = *end;
 
-}  // end setPlacementEnd
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Is the angle selection interface for placing building at angles up? */
@@ -3133,7 +3257,7 @@ Bool InGameUI::isPlacementAnchored( void )
 
 	return m_placeAnchorInProgress;
 
-}  // end isPlacementAnchored
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Get the start and end anchor points for the building angle selection interface */
@@ -3146,7 +3270,7 @@ void InGameUI::getPlacementPoints( ICoord2D *start, ICoord2D *end )
 	if( end )
 		*end = m_placeAnchorEnd;
 
-}  // end getPlacementPoints
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return the angle of the drawable at the cursor if any */
@@ -3159,7 +3283,7 @@ Real InGameUI::getPlacementAngle( void )
 
 	return 0.0f;
 
-}  // end getPlacementAngle
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Mark given Drawable as "selected". */
@@ -3187,9 +3311,9 @@ void InGameUI::selectDrawable( Drawable *draw )
 		// the control needs to update its context sensitive display now
 		TheControlBar->onDrawableSelected( draw );
 
-	}  // end if
+	}
 
-}  // end selectDrawable
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Clear "selected" status of Drawable. */
@@ -3226,9 +3350,9 @@ void InGameUI::deselectDrawable( Drawable *draw )
 		// the control needs to update its context sensitive display now
 		TheControlBar->onDrawableDeselected( draw );
 
-	}  // end if
+	}
 
-}  // end deselectDrawable
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Clear all drawables' "select" status */
@@ -3247,7 +3371,7 @@ void InGameUI::deselectAllDrawables( Bool postMsg )
 		// do the deselection
 		TheInGameUI->deselectDrawable( draw );
 
-	}  // end while
+	}
 
 	// keep our list all tidy
 	m_selectedDrawables.clear();
@@ -3308,7 +3432,7 @@ Drawable *InGameUI::getFirstSelectedDrawable( void )
 
 	return m_selectedDrawables.front();
 
-}  // end getFirstSelectedDrawable
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return true if the selected ID is in the drawable list */
@@ -3322,11 +3446,11 @@ Bool InGameUI::isDrawableSelected( DrawableID idToCheck ) const
 		if( (*it)->getID() == idToCheck )
 			return TRUE;
 
-	}  // end for
+	}
 
 	return FALSE;
 
-}  // end isDrawableSelected
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return true if all of the given objects are selected */
@@ -3341,7 +3465,7 @@ Bool InGameUI::areAllObjectsSelected(const std::vector<Object*>& objectsToCheck)
 
 	return TRUE;
 
-}  // end areAllObjectsSelected
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -3361,11 +3485,11 @@ Bool InGameUI::isAnySelectedKindOf( KindOfType kindOf ) const
 		if( draw && draw->isKindOf( kindOf ) )
 			return TRUE;
 
-	}  // end for, it
+	}
 
 	return FALSE;  // no selected objects are of the kind of type
 
-}  // end isAnySelectedKindOf
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -3385,11 +3509,11 @@ Bool InGameUI::isAllSelectedKindOf( KindOfType kindOf ) const
 		if( draw && draw->isKindOf( kindOf ) == FALSE )
 			return FALSE;  // not all objects are of the kind of type
 
-	}  // end for, it
+	}
 
 	return TRUE;  // all objects have this kindof bit set in them
 
-}  // end isAllSelectedKindOf
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Set the input enabled/disabled */
@@ -3440,9 +3564,22 @@ void InGameUI::disregardDrawable( Drawable *draw )
 //-------------------------------------------------------------------------------------------------
 void InGameUI::postWindowDraw( void )
 {
+	Int hudOffsetX = 0;
+	Int hudOffsetY = 0;
+
+	if (m_networkLatencyPointSize > 0 && TheGameLogic->isInMultiplayerGame())
+	{
+		drawNetworkLatency(hudOffsetX, hudOffsetY);
+	}
+
+	if (m_renderFpsPointSize > 0)
+	{
+		drawRenderFps(hudOffsetX, hudOffsetY);
+	}
+
 	if (m_systemTimePointSize > 0)
 	{
-		drawSystemTime();
+		drawSystemTime(hudOffsetX, hudOffsetY);
 	}
 
 	if ( (m_gameTimePointSize > 0) && !TheGameLogic->isInShellGame() && TheGameLogic->isInGame() )
@@ -3480,14 +3617,16 @@ void InGameUI::postDraw( void )
 				m_uiMessages[ i ].displayString->draw( x, y, m_uiMessages[ i ].color, dropColor );
 
 				// increment text spot to next location
-				GameFont *font = m_uiMessages[ i ].displayString->getFont();
-				y += font->height;
+				if (GameFont *font = m_uiMessages[ i ].displayString->getFont())
+				{
+					y += font->height;
+				}
 
-			}  //end if
+			}
 
-		}  // end for i
+		}
 
-	}  // end if
+	}
 
 	if( m_militarySubtitle )
 	{
@@ -3772,7 +3911,7 @@ void InGameUI::postDraw( void )
 			TheDisplay->drawFillRect( anchor->x-w, anchor->y-h*r, w*2+1, h*2*r+1, mainColor );
 		}
 	}
-}  // end postDraw
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Expire a hint of the specified type with the corresponding hint index */
@@ -3790,7 +3929,7 @@ void InGameUI::expireHint( HintType type, UnsignedInt hintIndex )
 		m_moveHint[ hintIndex ].sourceID = 0;
 		m_moveHint[ hintIndex ].frame = 0;
 
-	}  // end if
+	}
 	else
 	{
 
@@ -3798,9 +3937,9 @@ void InGameUI::expireHint( HintType type, UnsignedInt hintIndex )
 		DEBUG_CRASH(("undefined hint type"));
 		return;
 
-	}  // end else
+	}
 
-}  // end expireHint
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Create the control user interface GUI */
@@ -3808,7 +3947,7 @@ void InGameUI::expireHint( HintType type, UnsignedInt hintIndex )
 void InGameUI::createControlBar( void )
 {
 
-	TheWindowManager->winCreateFromScript( AsciiString("ControlBar.wnd") );
+	TheWindowManager->winCreateFromScript( "ControlBar.wnd" );
 	HideControlBar();
 /*
 	// hide all windows created from this layout
@@ -3817,7 +3956,7 @@ void InGameUI::createControlBar( void )
 		window->winHide( TRUE );
 */
 
-}  // end createControlBar
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Create the replay control GUI */
@@ -3825,7 +3964,7 @@ void InGameUI::createControlBar( void )
 void InGameUI::createReplayControl( void )
 {
 
-	m_replayWindow = TheWindowManager->winCreateFromScript( AsciiString("ReplayControl.wnd") );
+	m_replayWindow = TheWindowManager->winCreateFromScript( "ReplayControl.wnd" );
 
 /*
 	// hide all windows created from this layout
@@ -3834,7 +3973,7 @@ void InGameUI::createReplayControl( void )
 		window->winHide( TRUE );
 */
 
-}  // end createReplayControl
+}
 
 // ------------------------------------------------------------------------------------------------
 // InGameUI::playMovie
@@ -3916,7 +4055,7 @@ void InGameUI::playCameoMovie( const AsciiString& movieName )
 		stopCameoMovie();
 		return;
 	}
-	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( AsciiString("ControlBar.wnd:RightHUD") ));
+	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:RightHUD" ));
 	WinInstanceData *winData = window->winGetInstanceData();
 	winData->setVideoBuffer(m_cameoVideoBuffer);
 //	window->winHide(FALSE);
@@ -3927,8 +4066,8 @@ void InGameUI::playCameoMovie( const AsciiString& movieName )
 void InGameUI::stopCameoMovie( void )
 {
 //RightHUD
-	//GameWindow *window = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( AsciiString("ControlBar.wnd:CameoMovieWindow") ));
-	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( AsciiString("ControlBar.wnd:RightHUD") ));
+	//GameWindow *window = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:CameoMovieWindow" ));
+	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:RightHUD" ));
 //	window->winHide(FALSE);
 	WinInstanceData *winData = window->winGetInstanceData();
 	winData->setVideoBuffer(NULL);
@@ -3996,9 +4135,9 @@ void InGameUI::displayCantBuildMessage( LegalBuildCode lbc )
 			TheInGameUI->message( "GUI:CantBuildThere" );
 			break;
 
-	}  // end switch
+	}
 
-}  // end displayCantBuildMessage
+}
 
 // ------------------------------------------------------------------------------------------------
 // InGameUI::militarySubtitle
@@ -4029,8 +4168,8 @@ void InGameUI::militarySubtitle( const AsciiString& label, Int duration )
 
 	// calculate where this screen position should be since the position being passed in is based off 8x6
 	Coord2D multiplyer;
-	multiplyer.x = TheDisplay->getWidth() / 800;
-	multiplyer.y = TheDisplay->getHeight() / 600;
+	multiplyer.x = TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH;
+	multiplyer.y = TheDisplay->getHeight() / (Real)DEFAULT_DISPLAY_HEIGHT;
 
 	// lets bring out the data structure!
 	m_militarySubtitle = NEW MilitarySubtitleData;
@@ -4201,7 +4340,7 @@ CanAttackResult InGameUI::getCanSelectedObjectsAttack( ActionType action, const 
 
 		}
 
-	}  // end for
+	}
 
 	if( count > 0 )
 	{
@@ -4340,7 +4479,7 @@ Bool InGameUI::canSelectedObjectsDoAction( ActionType action, const Object *obje
 
 			++qualify;
 		}
-	}  // end for
+	}
 
 	//If the rule is all must qualify, do the check now and return success
 	//only if all the selected units qualified.
@@ -4383,7 +4522,7 @@ Bool InGameUI::canSelectedObjectsDoSpecialPower( const CommandButton *command, c
 	if (ignoreSelDraw)
 		tmpList.push_back(ignoreSelDraw);
 
-	const DrawableList* selected = (tmpList.size() > 0) ? &tmpList : TheInGameUI->getAllSelectedDrawables();
+	const DrawableList* selected = (!tmpList.empty()) ? &tmpList : TheInGameUI->getAllSelectedDrawables();
 
 	// set up counters for rule checking
 	Int count = 0;
@@ -4646,7 +4785,7 @@ Int InGameUI::selectMatchingAcrossRegion( IRegion2D *region )
 		}
 	}
 
-	if (drawableList.size() == 0)
+	if (drawableList.empty())
 		return -1; // nothing useful selected to begin with - don't bother iterating
 
 	std::set<const ThingTemplate*>::iterator iter;
@@ -4960,7 +5099,7 @@ try_again:
 	translate.translate(text);
 	newFTD->m_text = translate;
 	newFTD->m_dString->setText(translate);
-	newFTD->m_dString->setFont(TheWindowManager->winFindFont( AsciiString("Arial"), POINTSIZE, FALSE ));
+	newFTD->m_dString->setFont(TheWindowManager->winFindFont( "Arial", POINTSIZE, FALSE ));
 
 	if(m_floatingTextTimeOut <= 0)
 		newFTD->m_frameTimeOut = TheGameLogic->getFrame() +  DEFAULT_FLOATING_TEXT_TIMEOUT;
@@ -5026,7 +5165,7 @@ void InGameUI::updateFloatingText( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Itterates through and draws each floating text */
+/** Iterates through and draws each floating text */
 //-------------------------------------------------------------------------------------------------
 void InGameUI::drawFloatingText( void )
 {
@@ -5036,8 +5175,7 @@ void InGameUI::drawFloatingText( void )
 	{
 		ftd = *it;
 		ICoord2D pos;
-		// get the local player's index
-		Int playerNdx = ThePlayerList->getLocalPlayer()->getPlayerIndex();
+		const Int playerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
 
 		// which PartitionManager cells are we looking at?
 		Int pCX, pCY;
@@ -5046,7 +5184,7 @@ void InGameUI::drawFloatingText( void )
 		// translate it's 3d pos into a 2d screen pos
 		if( TheTacticalView->worldToScreen(&ftd->m_pos3D, &pos)
 			&& ftd->m_dString
-			&& ThePartitionManager->getShroudStatusForPlayer(playerNdx, pCX, pCY) == CELLSHROUD_CLEAR )
+			&& ThePartitionManager->getShroudStatusForPlayer(playerIndex, pCX, pCY) == CELLSHROUD_CLEAR )
 		{
 			pos.y -= ftd->m_frameCount * m_floatingTextMoveUpSpeed;
 			Color dropColor;
@@ -5126,7 +5264,7 @@ void InGameUI::popupMessage( const AsciiString& identifier, Int x, Int y, Int wi
 	if( pause )
 		TheGameLogic->setGamePaused(TRUE, pauseMusic);
 
-	m_popupMessageData->layout = TheWindowManager->winCreateLayout(AsciiString("InGamePopupMessage.wnd"));
+	m_popupMessageData->layout = TheWindowManager->winCreateLayout("InGamePopupMessage.wnd");
 	m_popupMessageData->layout->runInit();
 }
 
@@ -5160,14 +5298,11 @@ void InGameUI::clearPopupMessageData( void )
 //-------------------------------------------------------------------------------------------------
 FloatingTextData::FloatingTextData(void)
 {
-	// Added By Sadullah Nader
-	// Initializations missing and needed
 	m_color = 0;
 	m_frameCount = 0;
 	m_frameTimeOut = 0;
 	m_pos3D.zero();
 	m_text.clear();
-	//
 	m_dString = TheDisplayStringManager->newDisplayString();
 }
 
@@ -5198,7 +5333,7 @@ WorldAnimationData::WorldAnimationData( void )
 	m_options = WORLD_ANIM_NO_OPTIONS;
 	m_zRisePerSecond = 0.0f;
 
-}  // end WorldAnimationData
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Add a 2D animation at a spot in the world */
@@ -5233,7 +5368,7 @@ void InGameUI::addWorldAnimation( Anim2DTemplate *animTemplate,
 	// add to list
 	m_worldAnimationList.push_front( wad );
 
-}  // end addWorldAnimation
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Delete all world animations */
@@ -5255,9 +5390,9 @@ void InGameUI::clearWorldAnimations( void )
 
 		it = m_worldAnimationList.erase( it );
 
-	}  // end for
+	}
 
-}  // end clearWorldAnimations
+}
 
 static const UnsignedInt FRAMES_BEFORE_EXPIRE_TO_FADE = LOGICFRAMES_PER_SECOND * 1;
 // ------------------------------------------------------------------------------------------------
@@ -5292,26 +5427,27 @@ void InGameUI::updateAndDrawWorldAnimations( void )
 				it = m_worldAnimationList.erase( it );
 				continue;
 
-			}  // end if
+			}
 
 			// update the Z value
 			if( wad->m_zRisePerSecond )
 				wad->m_worldPos.z += wad->m_zRisePerSecond / LOGICFRAMES_PER_SECOND;
 
-		}  // end if
+		}
 
 		//
 		// don't bother going forward with the draw process if this location is shrouded for
 		// the local player
 		//
-		Int playerIndex = ThePlayerList->getLocalPlayer()->getPlayerIndex();
+		const Int playerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
+
 		if( ThePartitionManager->getShroudStatusForPlayer( playerIndex, &wad->m_worldPos ) != CELLSHROUD_CLEAR )
 		{
 
 			++it;
 			continue;
 
-		}  // end if
+		}
 
 		// update translucency value
 		if( BitIsSet( wad->m_options, WORLD_ANIM_FADE_ON_EXPIRE ) )
@@ -5326,9 +5462,9 @@ void InGameUI::updateAndDrawWorldAnimations( void )
 				Real alpha = INT_TO_REAL( framesTillExpire ) / INT_TO_REAL( FRAMES_BEFORE_EXPIRE_TO_FADE );
 				wad->m_anim->setAlpha( alpha );
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
 		// project the point to screen space
 		ICoord2D screen;
@@ -5338,7 +5474,9 @@ void InGameUI::updateAndDrawWorldAnimations( void )
 			UnsignedInt height = wad->m_anim->getCurrentFrameHeight();
 
 			// scale the width and height given the camera zoom level
-			Real zoomScale = TheTacticalView->getMaxZoom() / TheTacticalView->getZoom();
+			// TheSuperHackers @todo Rework this with sane values. scaler=1.3 originally came from TheTacticalView::getMaxZoom()
+			constexpr Real scaler = 1.3f;
+			Real zoomScale = scaler / TheTacticalView->getZoom();
 			width *= zoomScale;
 			height *= zoomScale;
 
@@ -5349,14 +5487,14 @@ void InGameUI::updateAndDrawWorldAnimations( void )
 			// draw the animation
 			wad->m_anim->draw( screen.x, screen.y, width, height );
 
-		}  // end if
+		}
 
 		// go to the next element in the list
 		++it;
 
-	}  // end for
+	}
 
-}  // end updateAndDrawWorldAnimations
+}
 
 
 Object *InGameUI::findIdleWorker( Object *obj)
@@ -5421,10 +5559,12 @@ void InGameUI::removeIdleWorker( Object *obj, Int playerNumber )
 
 void InGameUI::selectNextIdleWorker( void )
 {
-	Int index = ThePlayerList->getLocalPlayer()->getPlayerIndex();
+	Player* player = rts::getObservedOrLocalPlayer();
+	Int index = player->getPlayerIndex();
+
 	if(m_idleWorkers[index].empty())
 	{
-		DEBUG_ASSERTCRASH(FALSE, ("InGameUI::selectNextIdleWorker We're trying to select a worker when our list is empty for player %ls", ThePlayerList->getLocalPlayer()->getPlayerDisplayName().str()));
+		DEBUG_ASSERTCRASH(FALSE, ("InGameUI::selectNextIdleWorker We're trying to select a worker when our list is empty for player %ls", player->getPlayerDisplayName().str()));
 		return;
 	}
 	Object *selectThisObject = NULL;
@@ -5511,7 +5651,8 @@ ObjectPtrVector InGameUI::getUniqueIdleWorkers(const ObjectList& idleWorkers)
 
 Int InGameUI::getIdleWorkerCount( void )
 {
-	Int index = ThePlayerList->getLocalPlayer()->getPlayerIndex();
+	Player* player = rts::getObservedOrLocalPlayer();
+	Int index = player->getPlayerIndex();
 	return m_idleWorkers[index].size();
 }
 
@@ -5550,10 +5691,10 @@ void InGameUI::updateIdleWorker( void )
 {
 	Int idleCount = getIdleWorkerCount();
 
-	if(idleCount > 0 && m_currentIdleWorkerDisplay != idleCount && getInputEnabled())
+	if(idleCount > 0 && m_currentIdleWorkerDisplay != idleCount)
 		showIdleWorkerLayout();
 
-	if((idleCount <= 0 && m_idleWorkerWin) || !getInputEnabled())
+	if(idleCount <= 0 && m_idleWorkerWin)
 		hideIdleWorkerLayout();
 }
 
@@ -5573,28 +5714,65 @@ void InGameUI::resetIdleWorker( void )
 
 void InGameUI::recreateControlBar( void )
 {
-	GameWindow *win = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd")));
-	if(win)
-		deleteInstance(win);
+	GameWindow *win = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd"));
+	deleteInstance(win);
 
 	m_idleWorkerWin = NULL;
 
 	createControlBar();
 
-	if(TheControlBar)
-	{
-		delete TheControlBar;
-		TheControlBar = NEW ControlBar;
-		TheControlBar->init();
-	}
-
-
+	delete TheControlBar;
+	TheControlBar = NEW ControlBar;
+	TheControlBar->init();
 }
 
 void InGameUI::refreshCustomUiResources(void)
 {
+	refreshNetworkLatencyResources();
+	refreshRenderFpsResources();
 	refreshSystemTimeResources();
 	refreshGameTimeResources();
+}
+
+void InGameUI::refreshNetworkLatencyResources(void)
+{
+	if (!m_networkLatencyString)
+	{
+		m_networkLatencyString = TheDisplayStringManager->newDisplayString();
+		m_lastNetworkLatencyFrames = ~0u;
+	}
+
+	m_networkLatencyPointSize = TheGlobalData->m_networkLatencyFontSize;
+	Int adjustedNetworkLatencyFontSize = TheGlobalLanguageData->adjustFontSize(m_networkLatencyPointSize);
+	GameFont* latencyFont = TheWindowManager->winFindFont(m_networkLatencyFont, adjustedNetworkLatencyFontSize, m_networkLatencyBold);
+	m_networkLatencyString->setFont(latencyFont);
+}
+
+void InGameUI::refreshRenderFpsResources(void)
+{
+	if (!m_renderFpsString)
+	{
+		m_renderFpsString = TheDisplayStringManager->newDisplayString();
+		m_lastRenderFps = ~0u;
+		m_lastRenderFpsUpdateMs = 0u;
+	}
+
+	if (!m_renderFpsLimitString)
+	{
+		m_renderFpsLimitString = TheDisplayStringManager->newDisplayString();
+		m_lastRenderFpsLimit = ~0u;
+	}
+
+	m_renderFpsPointSize = TheGlobalData->m_renderFpsFontSize;
+	Int adjustedRenderFpsFontSize = TheGlobalLanguageData->adjustFontSize(m_renderFpsPointSize);
+	GameFont *fpsFont = TheWindowManager->winFindFont(m_renderFpsFont, adjustedRenderFpsFontSize, m_renderFpsBold);
+	m_renderFpsString->setFont(fpsFont);
+	m_renderFpsLimitString->setFont(fpsFont);
+
+	if (m_renderFpsPointSize > 0)
+	{
+		updateRenderFpsString();
+	}
 }
 
 void InGameUI::refreshSystemTimeResources(void)
@@ -5671,29 +5849,126 @@ WindowMsgHandledType IdleWorkerSystem( GameWindow *window, UnsignedInt msg,
 			}
 			break;
 
-		}  // end button selected
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
 }
 
-void InGameUI::drawSystemTime()
+
+void InGameUI::updateRenderFpsString()
+{
+	const UnsignedInt renderFps = (UnsignedInt)(TheDisplay->getAverageFPS() + 0.5f);
+	if (renderFps != m_lastRenderFps)
+	{
+		UnicodeString fpsStr;
+		fpsStr.format(L"%u", renderFps);
+		m_renderFpsString->setText(fpsStr);
+		m_lastRenderFps = renderFps;
+	}
+}
+
+void InGameUI::drawNetworkLatency(Int &x, Int &y)
+{
+	const UnsignedInt networkLatencyFrames = TheNetwork->getRunAhead();
+
+	if (networkLatencyFrames != m_lastNetworkLatencyFrames)
+	{
+		UnicodeString latencyStr;
+		latencyStr.format(L"%u", networkLatencyFrames);
+		m_networkLatencyString->setText(latencyStr);
+		m_lastNetworkLatencyFrames = networkLatencyFrames;
+	}
+
+	// TheSuperHackers @info at the HUD anchor this draws inline and advances x otherwise uses configured position
+	if (isAtHudAnchorPos(m_networkLatencyPosition))
+	{
+		m_networkLatencyString->draw(kHudAnchorX + x, kHudAnchorY + y, m_networkLatencyColor, m_networkLatencyDropColor);
+		x += m_networkLatencyString->getWidth() + kHudGapPx;
+	}
+	else
+	{
+		m_networkLatencyString->draw(m_networkLatencyPosition.x, m_networkLatencyPosition.y, m_networkLatencyColor, m_networkLatencyDropColor);
+	}
+}
+
+void InGameUI::drawRenderFps(Int &x, Int &y)
+{
+	if (m_renderFpsRefreshMs > 0u)
+	{
+		const UnsignedInt nowMs = timeGetTime();
+		const UnsignedInt deltaMs = nowMs - m_lastRenderFpsUpdateMs;
+		if (deltaMs >= m_renderFpsRefreshMs)
+		{
+			m_lastRenderFpsUpdateMs = nowMs;
+			updateRenderFpsString();
+		}
+	}
+	else
+	{
+		updateRenderFpsString();
+	}
+
+	UnsignedInt renderFpsLimit = 0u;
+	if (TheGlobalData->m_useFpsLimit)
+	{
+		renderFpsLimit = (UnsignedInt)TheFramePacer->getFramesPerSecondLimit();
+		if (renderFpsLimit == RenderFpsPreset::UncappedFpsValue)
+		{
+			renderFpsLimit = 0u;
+		}
+	}
+	if (renderFpsLimit != m_lastRenderFpsLimit)
+	{
+		UnicodeString fpsLimitStr;
+		fpsLimitStr.format(L"[%u]", renderFpsLimit);
+		m_renderFpsLimitString->setText(fpsLimitStr);
+		m_lastRenderFpsLimit = renderFpsLimit;
+	}
+
+	// TheSuperHackers @info at the HUD anchor this draws inline and advances x otherwise uses configured position
+	if (isAtHudAnchorPos(m_renderFpsPosition))
+	{
+		const Int drawY = kHudAnchorY + y;
+
+		m_renderFpsString->draw(kHudAnchorX + x, drawY, m_renderFpsColor, m_renderFpsDropColor);
+		x += m_renderFpsString->getWidth();
+		m_renderFpsLimitString->draw(kHudAnchorX + x, drawY, m_renderFpsLimitColor, m_renderFpsDropColor);
+		x += m_renderFpsLimitString->getWidth() + kHudGapPx;
+	}
+	else
+	{
+		m_renderFpsString->draw(m_renderFpsPosition.x, m_renderFpsPosition.y, m_renderFpsColor, m_renderFpsDropColor);
+		m_renderFpsLimitString->draw(m_renderFpsPosition.x + m_renderFpsString->getWidth(), m_renderFpsPosition.y, m_renderFpsLimitColor, m_renderFpsDropColor);
+	}
+}
+
+void InGameUI::drawSystemTime(Int &x, Int &y)
 {
 	// current system time
 	SYSTEMTIME systemTime;
 	GetLocalTime( &systemTime );
 
-    UnicodeString TimeString;
-    TimeString.format(L"%2.2d:%2.2d:%2.2d", systemTime.wHour, systemTime.wMinute, systemTime.wSecond);
-    m_systemTimeString->setText(TimeString);
+	UnicodeString TimeString;
+	TimeString.format(L"%2.2d:%2.2d:%2.2d", systemTime.wHour, systemTime.wMinute, systemTime.wSecond);
+	m_systemTimeString->setText(TimeString);
 
-	m_systemTimeString->draw(m_systemTimePosition.x, m_systemTimePosition.y, m_systemTimeColor, m_systemTimeDropColor);
+	// TheSuperHackers @info at the HUD anchor this draws inline and advances x otherwise uses configured position
+	if (isAtHudAnchorPos(m_systemTimePosition))
+	{
+		m_systemTimeString->draw(kHudAnchorX + x, kHudAnchorY + y, m_systemTimeColor, m_systemTimeDropColor);
+		x += m_systemTimeString->getWidth() + kHudGapPx;
+	}
+	else
+	{
+		m_systemTimeString->draw(m_systemTimePosition.x, m_systemTimePosition.y, m_systemTimeColor, m_systemTimeDropColor);
+	}
 }
 
 void InGameUI::drawGameTime()

@@ -24,7 +24,7 @@
 #include "EmitterParticlePropPage.h"
 #include "part_emt.h"
 #include "Utils.h"
-#include "Vector3RndCombo.H"
+#include "Vector3RndCombo.h"
 #include "VolumeRandomDialog.h"
 #include "EmitterInstanceList.h"
 

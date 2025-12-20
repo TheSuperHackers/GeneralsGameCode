@@ -22,9 +22,6 @@
 
 #pragma once
 
-#ifndef BRUSHTOOL_H
-#define BRUSHTOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 /*************************************************************************/
@@ -64,6 +61,3 @@ public:
 	virtual Bool followsTerrain(void) {return false;};
 
 };
-
-
-#endif //BRUSHTOOL_H

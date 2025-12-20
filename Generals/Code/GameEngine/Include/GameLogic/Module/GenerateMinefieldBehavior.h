@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __GenerateMinefieldBehavior_H_
-#define __GenerateMinefieldBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DieModule.h"
@@ -122,6 +119,3 @@ private:
 	void placeMinesAroundRect(const Coord3D& pos, Real majorRadius, Real minorRadius, const ThingTemplate* mineTemplate);
 	Object* placeMineAt(const Coord3D& pt, const ThingTemplate* mineTemplate, Team* team, const Object* producer);
 };
-
-#endif // __GenerateMinefieldBehavior_H_
-

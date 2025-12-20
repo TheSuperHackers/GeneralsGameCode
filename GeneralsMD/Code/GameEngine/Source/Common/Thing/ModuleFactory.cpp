@@ -35,7 +35,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Module.h"
 #include "Common/ModuleFactory.h"
@@ -228,7 +228,6 @@
 #include "GameLogic/Module/UnpauseSpecialPowerUpgrade.h"
 #include "GameLogic/Module/WeaponBonusUpgrade.h"
 #include "GameLogic/Module/WeaponSetUpgrade.h"
-#include "GameLogic/Module/WeaponBonusUpgrade.h"
 #include "GameLogic/Module/CostModifierUpgrade.h"
 #include "GameLogic/Module/ProductionTimeModifierUpgrade.h"
 #include "GameLogic/Module/UnitProductionBonusUpgrade.h"
@@ -611,7 +610,7 @@ void ModuleFactory::init( void )
 	addModule( DynamicGeometryClientUpdate );
 	addModule( BeaconClientUpdate );
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 Int ModuleFactory::findModuleInterfaceMask(const AsciiString& name, ModuleType type)
@@ -734,7 +733,7 @@ Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const M
 
 	return NULL;
 
-}  // end newModule
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Add a module template to our list of templates */

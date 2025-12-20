@@ -99,7 +99,7 @@ while (1)
 #include "tcp.h"
 #include <stdarg.h>
 
-#ifndef _WINDOWS
+#ifndef _WIN32
 #include <errno.h>
 #define closesocket close
 #endif
@@ -170,7 +170,7 @@ sint32 TCP::SetBlocking(bit8 block,sint32 whichFD)
    if (whichFD==0)
      whichFD=fd;
 
-   #ifdef _WINDOWS
+   #ifdef _WIN32
    unsigned long flag=1;
    if (block)
      flag=0;
@@ -219,7 +219,7 @@ sint32 TCP::Write(const uint8 *msg,uint32 len,sint32 whichFD)
   }
   SetBlocking(TRUE,whichFD);
   retval=send(whichFD,(const char *)msg,len,0);
-  #ifdef _WINDOWS
+  #ifdef _WIN32
     if (retval==SOCKET_ERROR)
       retval=-1;
   #endif
@@ -241,7 +241,7 @@ sint32 TCP::WriteNB(uint8 *msg,uint32 len,sint32 whichFD)
     whichFD=fd;
   }
   retval=send(whichFD,(const char *)msg,len,0);
-  #ifdef _WINDOWS
+  #ifdef _WIN32
     if (retval==SOCKET_ERROR)
       retval=-1;
   #endif
@@ -942,7 +942,7 @@ bit8 TCP::Bind(uint32 IP,uint16 Port,bit8 reuseAddr)
   }
 
   retval=bind(fd,(struct sockaddr *)&addr,sizeof(addr));
-  #ifdef _WINDOWS
+  #ifdef _WIN32
     if (retval==SOCKET_ERROR)
       retval=-1;
   #endif
@@ -1013,7 +1013,7 @@ bit8 TCP::Connect(uint32 IP,uint16 Port)
     result = connect(fd,(struct sockaddr *)&serverAddr, sizeof(serverAddr));
     status=GetStatus();
 
-    #ifdef _WINDOWS
+    #ifdef _WIN32
       if (result==SOCKET_ERROR)
         result=-1;
     #endif
@@ -1107,7 +1107,7 @@ bit8 TCP::ConnectAsync(uint32 IP,uint16 Port)
   connectErrno=errno;
   status=GetStatus();
 
-  #ifdef _WINDOWS
+  #ifdef _WIN32
     if (result==SOCKET_ERROR)
     {
       DBGMSG("Socket error 1  " << status);
@@ -1124,7 +1124,7 @@ bit8 TCP::ConnectAsync(uint32 IP,uint16 Port)
     ClearStatus();
     result = connect(fd,(struct sockaddr *)&serverAddr, sizeof(serverAddr));
     status=GetStatus();
-    #ifdef _WINDOWS
+    #ifdef _WIN32
       if (result==SOCKET_ERROR)
       {
         DBGMSG("Socket error 2  " << status);
@@ -1159,14 +1159,14 @@ bit8 TCP::ConnectAsync(uint32 IP,uint16 Port)
 
 void TCP::ClearStatus(void)
 {
-  #ifndef _WINDOWS
+  #ifndef _WIN32
   errno=0;
   #endif
 }
 
 int TCP::GetStatus(void)
 {
-  #ifdef _WINDOWS
+  #ifdef _WIN32
   int status=WSAGetLastError();
   if (status==0) return(OK);
   else if (status==WSAEINTR) return(INTR);

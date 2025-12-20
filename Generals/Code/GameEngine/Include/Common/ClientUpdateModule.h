@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __ClientUpdateModule_H_
-#define __ClientUpdateModule_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include <stdlib.h>
 
@@ -63,7 +60,3 @@ public:
 inline ClientUpdateModule::ClientUpdateModule( Thing *thing, const ModuleData* moduleData ) : DrawableModule( thing, moduleData ) { }
 inline ClientUpdateModule::~ClientUpdateModule() { }
 //-------------------------------------------------------------------------------------------------
-
-
-#endif // __ClientUpdateModule_H_
-

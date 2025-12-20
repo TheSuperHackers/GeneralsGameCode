@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CHATDEFS_HEADER
-#define CHATDEFS_HEADER
+#pragma once
 
 // gks 11/3/1999: version numbers for SetClientVersion
 // GMU 01/12/01 : bumped CHAT_VERSION_MINOR to 15
@@ -168,6 +167,3 @@
 #define CHAN_MODE_KEY         0x0100
 #define CHAN_MODE_BAN         0x0200
 #define CHAN_MODE_LIMIT       0x0400
-
-
-#endif

@@ -222,7 +222,7 @@ void W3DRopeDraw::crc( Xfer *xfer )
 	// extend base class
 	DrawModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -282,7 +282,7 @@ void W3DRopeDraw::xfer( Xfer *xfer )
 		tossSegments();
 
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
@@ -293,4 +293,4 @@ void W3DRopeDraw::loadPostProcess( void )
 	// extend base class
 	DrawModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

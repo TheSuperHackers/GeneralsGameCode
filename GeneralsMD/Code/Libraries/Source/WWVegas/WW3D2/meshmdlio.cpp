@@ -90,8 +90,6 @@
 #include "realcrc.h"
 #include "dx8wrapper.h"
 
-#include <stdio.h>
-
 #ifdef _UNIX
 #include "osdep/osdep.h"
 #endif
@@ -275,9 +273,9 @@ WW3DErrorType MeshModelClass::Load_W3D(ChunkLoadClass & cload)
 
 	if (strlen(context->Header.ContainerName) > 0) {
 		strcpy(tmpname,context->Header.ContainerName);
-		strcat(tmpname,".");
+		strcat(tmpname, ".");
 	}
-	strcat(tmpname,context->Header.MeshName);
+	strcat(tmpname, context->Header.MeshName);
 
 	Set_Name(tmpname);
 
@@ -1966,10 +1964,9 @@ MeshLoadContextClass::~MeshLoadContextClass(void)
 {
 	int i;
 
-	if (TexCoords != NULL) {
-		delete TexCoords;
-		TexCoords = NULL;
-	}
+	delete TexCoords;
+	TexCoords = NULL;
+
 	for (i=0; i<Textures.Count(); i++) {
 		Textures[i]->Release_Ref();
 	}
@@ -2330,9 +2327,9 @@ WW3DErrorType MeshModelClass::write_header(ChunkSaveClass & csave,MeshSaveContex
 			hierarchy_name_len = (int)mesh_name - (int)name;
 			mesh_name++;
 		}
-		assert( hierarchy_name_len <= W3D_NAME_LEN);
-		strncpy( header.MeshName, mesh_name, W3D_NAME_LEN);
-		strncpy( header.ContainerName, name, hierarchy_name_len);
+		assert( hierarchy_name_len < W3D_NAME_LEN);
+		strlcpy( header.MeshName, mesh_name, W3D_NAME_LEN);
+		strlcpy( header.ContainerName, name, hierarchy_name_len + 1);
 	} else {
 		sprintf(header.MeshName,"UnNamed");
 	}

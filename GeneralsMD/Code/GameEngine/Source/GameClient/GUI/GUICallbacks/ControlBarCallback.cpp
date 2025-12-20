@@ -29,8 +29,9 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/GameUtility.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -64,15 +65,11 @@ WindowLayout *popupCommunicatorLayout = NULL;
 WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 																	 WindowMsgData mData1, WindowMsgData mData2 )
 {
-
-	// get player
-	Player *player = ThePlayerList->getLocalPlayer();
-
 	//
 	// if the player doesn't have a radar, or the radar is hidden, and the radar is not being
 	// forced to on, we just eat input over the radar window
 	//
-	if( !TheRadar->isRadarForced() && (TheRadar->isRadarHidden() || !player->hasRadar()) )
+	if( !rts::localPlayerHasRadar() )
 		return MSG_HANDLED;
 
 	// If the middle mouse button is depressed, then just let the message fall all the
@@ -128,7 +125,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 				// Groovy
 				TheMouse->setCursor(cur);
 
-			}  // end if
+			}
 
 			return MSG_HANDLED;
 		}
@@ -152,15 +149,14 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 
 			// is the mouse in the radar window
 			ICoord2D radar;
-			if( (TheRadar->isRadarHidden() == FALSE || TheRadar->isRadarForced()) &&
-					TheRadar->localPixelToRadar( &mouse, &radar ) )
+			if( TheRadar->localPixelToRadar( &mouse, &radar ) )
 			{
 
 /*
 //
 // this is an example piece of code to find the object under the pixel position
 // of the radar ... should we in the future wish to allow commands to be executed
-// on objects throught he radar.  note tho that this is extremely hard to do because
+// on objects through the radar.  note tho that this is extremely hard to do because
 // the pixels on the radar are very small and it's hard to do accurate targeting
 //
 
@@ -187,7 +183,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 					else
 						TheMouse->setCursor( Mouse::CROSS );
 
-				}  // end if
+				}
 				else
 				{
 					// Else we are not super targeting, so we have to try to refresh the move cursor.
@@ -212,11 +208,11 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 					TheMouse->setCursor(cur);
 				}
 
-			}  // end if
+			}
 
 			break;
 
-		}  // end case mouse position
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_RIGHT_UP:// Here to eat
@@ -252,9 +248,8 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 			// completely drawn with the radar ... so it's just a translation from
 			// our window size we're drawing into to the radar cell size
 			//
-			if( (TheRadar->isRadarHidden() == FALSE || TheRadar->isRadarForced()) &&
-					TheRadar->localPixelToRadar( &mouse, &radar ) &&
-					TheRadar->radarToWorld( &radar, &world ) )
+			if( TheRadar->localPixelToRadar( &mouse, &radar ) &&
+			    TheRadar->radarToWorld( &radar, &world ) )
 			{
 
 				// No drawables, or a right click automatically means its a look at.
@@ -283,7 +278,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 					// do the command
 					TheGameClient->evaluateContextCommand( NULL, &world, CommandTranslator::DO_COMMAND );
 
-				}  // end if
+				}
 				else if( command && command->getCommandType() == GUI_COMMAND_ATTACK_MOVE)
 				{
 					// Attack move has changed from a modifier to a command, so it moves up here.
@@ -315,25 +310,25 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 					// Play the unit voice response
 					pickAndPlayUnitVoiceResponse(drawableList, GameMessage::MSG_DO_MOVETO);
 
-				}  // end else
+				}
 
 			}
 
 
 	break;
 
-		}  // end left down
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	TheInGameUI->clearAttackMoveToMode();
 	return MSG_HANDLED;
 
-}  // end LeftHUDInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Input procedure for the control bar */
@@ -344,7 +339,7 @@ WindowMsgHandledType ControlBarInput( GameWindow *window, UnsignedInt msg,
 
 	return MSG_IGNORED;
 
-}  // end ControlBarInput
+}
 void ToggleQuitMenu(void);
 //-------------------------------------------------------------------------------------------------
 /** System callback for the control bar parent */
@@ -362,11 +357,11 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 		{
 
 			// get ids for our children controls
-			buttonCommunicator = TheNameKeyGenerator->nameToKey( AsciiString("ControlBar.wnd:PopupCommunicator") );
+			buttonCommunicator = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:PopupCommunicator" );
 
 			break;
 
-		}  // end create
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GBM_MOUSE_ENTERING:
@@ -454,7 +449,7 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 			}
 			break;
 
-		}  // end button selected
+		}
 
 		//---------------------------------------------------------------------------------------------
 		case GEM_EDIT_DONE:
@@ -479,17 +474,17 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 				}
 			}
 			break;
-		} // end edit done
+		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch( msg )
+	}
 
 	return MSG_HANDLED;
 
-}  // end ControlBarSystem
+}
 
 extern void showReplayControls( void );
 extern void hideReplayControls( void );
@@ -507,7 +502,7 @@ void ShowControlBar( Bool immediate )
 
 	TheControlBar->showSpecialPowerShortcut();
 
-	Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
+	Int id = (Int)TheNameKeyGenerator->nameToKey("ControlBar.wnd:ControlBarParent");
 	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
 
 	if (window)
@@ -542,7 +537,7 @@ void HideControlBar( Bool immediate )
 
 	TheControlBar->hideSpecialPowerShortcut();
 
-	Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
+	Int id = (Int)TheNameKeyGenerator->nameToKey("ControlBar.wnd:ControlBarParent");
 	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
 
 	if (window)
@@ -578,7 +573,7 @@ void ToggleControlBar( Bool immediate )
 
 	toggleReplayControls();
 
-	Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
+	Int id = (Int)TheNameKeyGenerator->nameToKey("ControlBar.wnd:ControlBarParent");
 	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
 
 	if (window)

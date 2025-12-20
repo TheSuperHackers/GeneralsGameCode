@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __EMPUPDATE_H_
-#define __EMPUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -123,6 +120,3 @@ protected:
 
 
 };
-
-#endif // __EMPUPDATE_H_
-

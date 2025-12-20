@@ -47,9 +47,8 @@ extern "C" {
 #	define PARM_ParticleTypeName		0x00
 # define PARM_SlaveSystemName			0x01
 #	define PARM_AttachedSystemName	0x02
+# define PARM_NumParms						0x03
 
-// Keep this one last
-# define PARM_NumParms	0x03
 	// parmNum can be exactly one of the above defines (PARM_*)
 	void __declspec(dllexport) GetSelectedParticleAsciiStringParm( int parmNum, char *bufferToCopyInto, ParticleSystemTemplate **whichTemplate );
 	void __declspec(dllexport) UpdateParticleAsciiStringParm( int parmNum, const char *bufferToCopyFrom, ParticleSystemTemplate **whichTemplate  );

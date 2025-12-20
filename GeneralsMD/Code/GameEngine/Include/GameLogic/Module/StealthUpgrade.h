@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __STEALTH_UPGRADE_H_
-#define __STEALTH_UPGRADE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
 
@@ -70,7 +67,3 @@ protected:
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
 };
-
-
-#endif
-

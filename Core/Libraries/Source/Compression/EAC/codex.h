@@ -37,12 +37,7 @@
 /*                                                                  */
 /*------------------------------------------------------------------*/
 
-#ifndef __CODEX_H
-#define __CODEX_H 1
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -118,6 +113,5 @@ int GCALL CODEX_encode(void *dest, const void *source, int sourcesize, int *opts
 
 #ifdef __cplusplus
 }
-#endif
 #endif
 

@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __SOUND_PSEUDO_3DOBJ_H
-#define __SOUND_PSEUDO_3DOBJ_H
-
 
 #include "Sound3D.h"
 
@@ -158,6 +152,3 @@ class SoundPseudo3DClass : public Sound3DClass
 		//	Private member data
 		//////////////////////////////////////////////////////////////////////
 };
-
-
-#endif //__SOUND_PSEUDO_3DOBJ_H

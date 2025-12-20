@@ -65,7 +65,7 @@ void Win32GameEngine::init( void )
 	// extending functionality
 	GameEngine::init();
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset the system */
@@ -76,7 +76,7 @@ void Win32GameEngine::reset( void )
 	// extending functionality
 	GameEngine::reset();
 
-}  // end reset
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Update the game engine by updating the GameClient and
@@ -116,7 +116,7 @@ void Win32GameEngine::update( void )
 	// allow windows to perform regular windows maintenance stuff like msgs
 	serviceWindowsOS();
 
-}  // end update
+}
 
 //-------------------------------------------------------------------------------------------------
 /** This function may be called from within this application to let
@@ -157,7 +157,7 @@ void Win32GameEngine::serviceWindowsOS( void )
 		DispatchMessage( &msg );
 		TheMessageTime = 0;
 
-	}  // end while
+	}
 
-}  // end ServiceWindowsOS
+}
 
