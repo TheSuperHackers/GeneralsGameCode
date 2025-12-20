@@ -1002,8 +1002,8 @@ Bool ChinookAIUpdate::chooseLocomotorSet(LocomotorSetType wst)
 UpdateSleepTime ChinookAIUpdate::update()
 {
 	ParkingPlaceBehaviorInterface* pp = getPP(m_airfieldForHealing);
-	ContainModuleInterface* contain = getObject()->getContain();
-	Bool waitingToEnterOrExit = contain && contain->hasObjectsWantingToEnterOrExit();
+	const ContainModuleInterface* contain = getObject()->getContain();
+	const Bool waitingToEnterOrExit = contain && contain->hasObjectsWantingToEnterOrExit();
 
 	if (pp != NULL)
 	{
