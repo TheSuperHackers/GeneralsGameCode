@@ -5075,6 +5075,10 @@ void Drawable::xfer( Xfer *xfer )
 	// prev tint status
 	xfer->xferUnsignedInt( &m_prevTintStatus );
 
+	// TheSuperHackers @tweak Caball009 21/12/2025 Trigger transition in tint color after loading a save game.
+	if (xfer->getXferMode() == XFER_LOAD && m_prevTintStatus == m_tintStatus)
+		m_prevTintStatus = 0;
+
 	// fading mode
 	xfer->xferUser( &m_fadeMode, sizeof( FadingMode ) );
 
