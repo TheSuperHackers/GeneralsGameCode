@@ -455,6 +455,8 @@ public:
 	static void _Enable_Triangle_Draw(bool enable) { _EnableTriangleDraw=enable; }
 	static bool _Is_Triangle_Draw_Enabled() { return _EnableTriangleDraw; }
 
+	static unsigned int Bytes_Per_Pixel(D3DFORMAT format);
+
 	/*
 	** Additional swap chain interface
 	**
@@ -1159,6 +1161,85 @@ WWINLINE void DX8Wrapper::Set_Alpha (const float alpha, unsigned int &color)
 	unsigned char *component = (unsigned char*) &color;
 
 	component [3] = 255.0f * alpha;
+}
+
+WWINLINE unsigned int DX8Wrapper::Bytes_Per_Pixel(D3DFORMAT format)
+{
+	switch (format)
+	{
+	// 8-bit formats
+	case D3DFMT_A8:
+	case D3DFMT_P8:
+	case D3DFMT_L8:
+		return 1;
+
+	// 16-bit formats
+	case D3DFMT_R5G6B5:
+	case D3DFMT_X1R5G5B5:
+	case D3DFMT_A1R5G5B5:
+	case D3DFMT_A4R4G4B4:
+	case D3DFMT_X4R4G4B4:
+	case D3DFMT_A8L8:
+	case D3DFMT_A4L4:
+	case D3DFMT_V8U8:
+	case D3DFMT_L6V5U5:
+		return 2;
+
+	// 24-bit formats
+	case D3DFMT_R8G8B8:
+		return 3;
+
+	// 32-bit formats
+	case D3DFMT_A8R8G8B8:
+	case D3DFMT_X8R8G8B8:
+	case D3DFMT_A8R3G3B2:
+	case D3DFMT_A2B10G10R10:
+	case D3DFMT_G16R16:
+	case D3DFMT_X8L8V8U8:
+	case D3DFMT_Q8W8V8U8:
+	case D3DFMT_W11V11U10:
+	case D3DFMT_A2W10V10U10:
+	case D3DFMT_V16U16:
+		return 4;
+
+	// Palette-based alpha
+	case D3DFMT_A8P8:
+		return 0;
+
+	// Packed YUV
+	case D3DFMT_UYVY:
+	case D3DFMT_YUY2:
+		return 0;
+
+	// Block-compressed
+	case D3DFMT_DXT1:
+	case D3DFMT_DXT2:
+	case D3DFMT_DXT3:
+	case D3DFMT_DXT4:
+	case D3DFMT_DXT5:
+		return 0;
+
+	// Depth / stencil
+	case D3DFMT_D16_LOCKABLE:
+	case D3DFMT_D16:
+	case D3DFMT_D15S1:
+	case D3DFMT_D24S8:
+	case D3DFMT_D24X8:
+	case D3DFMT_D24X4S4:
+	case D3DFMT_D32:
+		return 0;
+
+	// Non-image data
+	case D3DFMT_VERTEXDATA:
+	case D3DFMT_INDEX16:
+	case D3DFMT_INDEX32:
+		return 0;
+
+	// Unknown / invalid
+	case D3DFMT_UNKNOWN:
+	default:
+		return 0;
+	}
 }
 
 WWINLINE void DX8Wrapper::Get_Render_State(RenderStateStruct& state)

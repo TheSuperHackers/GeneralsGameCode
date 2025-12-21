@@ -134,62 +134,88 @@ void W3DSmudgeManager::ReAcquireResources(void)
 }
 
 /*Copies a portion of the current render target into a specified buffer*/
-Int copyRect(unsigned char *buf, Int bufSize, int oX, int oY, int width, int height)
+Int copyRect(unsigned char *buf, Int bufSize, Int oX, Int oY, Int width, Int height)
 {
- 	IDirect3DSurface8 *surface=NULL;	///<previous render target
- 	IDirect3DSurface8 *tempSurface=NULL;
+	IDirect3DSurface8 *surface=NULL;	///<previous render target
+	IDirect3DSurface8 *tempSurface=NULL;
 	Int result = 0;
-	HRESULT hr = S_OK;
 
- 	LPDIRECT3DDEVICE8 m_pDev=DX8Wrapper::_Get_D3D_Device8();
+	LPDIRECT3DDEVICE8 m_pDev=DX8Wrapper::_Get_D3D_Device8();
 
 	if (!m_pDev)
 		goto error;
 
- 	m_pDev->GetRenderTarget(&surface);
+	m_pDev->GetRenderTarget(&surface);
 
 	if (!surface)
 		goto error;
 
- 	D3DSURFACE_DESC desc;
-
- 	surface->GetDesc(&desc);
+	D3DSURFACE_DESC desc;
+	surface->GetDesc(&desc);
 
 	RECT srcRect;
 	srcRect.left=oX;
 	srcRect.top=oY;
 	srcRect.right=oX+width;
 	srcRect.bottom=oY+height;
+	DEBUG_ASSERTCRASH(srcRect.left >= 0, ("copyRect - Invalid size"));
+	DEBUG_ASSERTCRASH(srcRect.top >= 0, ("copyRect - Invalid size"));
+	DEBUG_ASSERTCRASH(srcRect.right < (LONG)desc.Width, ("copyRect - Invalid size"));
+	DEBUG_ASSERTCRASH(srcRect.bottom < (LONG)desc.Height, ("copyRect - Invalid size"));
 
 	POINT dstPoint;
 	dstPoint.x=0;
 	dstPoint.y=0;
 
- 	hr=m_pDev->CreateImageSurface(  width, height, desc.Format, &tempSurface);
+	HRESULT hr;
+	hr=m_pDev->CreateImageSurface(width, height, desc.Format, &tempSurface);
 
 	if (hr != S_OK)
 		goto error;
 
- 	hr=m_pDev->CopyRects(surface,&srcRect,1,tempSurface,&dstPoint);
+	hr=m_pDev->CopyRects(surface,&srcRect,1,tempSurface,&dstPoint);
 
 	if (hr != S_OK)
 		goto error;
 
- 	D3DLOCKED_RECT lrect;
+	D3DLOCKED_RECT lrect;
 
- 	hr=tempSurface->LockRect(&lrect,NULL,D3DLOCK_READONLY);
+	hr=tempSurface->LockRect(&lrect,NULL,D3DLOCK_READONLY);
 
 	if (hr != S_OK)
 		goto error;
 
- 	tempSurface->GetDesc(&desc);
+	tempSurface->GetDesc(&desc);
+	UnsignedInt bytesPerPixel;
+	bytesPerPixel = DX8Wrapper::Bytes_Per_Pixel(desc.Format);
 
-	if (desc.Size < bufSize)
-		bufSize = desc.Size;
+	if (bytesPerPixel == 0)
+		goto error;
 
-	memcpy(buf,lrect.pBits,bufSize);
-	result = bufSize;
+	Int rowSize;
+	Int totalSize;
+	rowSize = width * bytesPerPixel;
+	totalSize = height * rowSize;
 
+	if (totalSize > bufSize)
+		totalSize = bufSize;
+
+	UnsignedByte* dst;
+	UnsignedByte* src;
+	Int rowCount;
+	Int row;
+	dst = buf;
+	src = (UnsignedByte*)lrect.pBits;
+	rowCount = totalSize / rowSize;
+
+	for (row = 0; row < rowCount; ++row)
+	{
+		memcpy(dst, src, rowSize);
+		dst += rowSize;
+		src += lrect.Pitch;
+	}
+
+	result = totalSize;
 	tempSurface->UnlockRect();
 
 error:
