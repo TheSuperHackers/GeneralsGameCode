@@ -2849,12 +2849,18 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 		&& outerDrawable
 		&& outerDrawable->isVisible();
 
+	if (doAnimation)
+		createVeterancyLevelFX(oldLevel, newLevel);
+}
+
+void Object::createVeterancyLevelFX(VeterancyLevel oldLevel, VeterancyLevel newLevel)
+{
 #if RETAIL_COMPATIBLE_CRC
 	if (isEffectivelyDead())
 		return;
 #endif
 
-	if( doAnimation && TheGameLogic->getDrawIconUI() )
+	if (TheGameLogic->getDrawIconUI())
 	{
 		if( TheAnim2DCollection && TheGlobalData->m_levelGainAnimationName.isEmpty() == FALSE )
 		{
@@ -2874,7 +2880,6 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 		soundToPlay.setObjectID( getID() );
 		TheAudio->addAudioEvent( &soundToPlay );
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
