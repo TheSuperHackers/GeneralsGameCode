@@ -161,6 +161,7 @@ public:
 
 	static AsciiString normalizePath(const AsciiString& path);	///< normalizes a file path. The path can refer to a directory. File path must be absolute, but does not need to exist. Returns an empty string on failure.
 	static Bool isPathInDirectory(const AsciiString& testPath, const AsciiString& basePath);	///< determines if a file path is within a base path. Both paths must be absolute, but do not need to exist.
+	static Bool hasValidTransferFileContent(const AsciiString& filePath);	///< validates that a file's content matches expected format for its extension during map transfer operations. Checks file headers, magic bytes, size limits, and basic structure. TheSuperHackers @security bobtista 06/11/2025
 
 protected:
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
