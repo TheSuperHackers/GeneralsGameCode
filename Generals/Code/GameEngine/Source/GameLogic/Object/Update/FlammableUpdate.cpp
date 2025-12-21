@@ -285,7 +285,9 @@ void FlammableUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version */
+	* 1: Initial version
+	* 2. TheSuperHackers @tweak Serialize flame source
+	*/
 // ------------------------------------------------------------------------------------------------
 void FlammableUpdate::xfer( Xfer *xfer )
 {
@@ -320,12 +322,10 @@ void FlammableUpdate::xfer( Xfer *xfer )
 	// last flame damage dealt
 	xfer->xferUnsignedInt( &m_lastFlameDamageDealt );
 
-#if !RETAIL_COMPATIBLE_XFER_SAVE
 	if (version >= 2)
 	{
 		xfer->xferObjectID(&m_flameSource);
 	}
-#endif
 }
 
 // ------------------------------------------------------------------------------------------------
