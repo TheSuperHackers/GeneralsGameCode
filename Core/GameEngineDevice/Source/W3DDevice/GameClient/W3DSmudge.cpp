@@ -337,7 +337,29 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 #ifdef USE_COPY_RECTS
 	DX8Wrapper::Set_Texture(0,m_backgroundTexture);
 #else
-	DX8Wrapper::Set_DX8_Texture(0,backTexture);
+
+	IDirect3DTexture8* renderTextureCopy = NULL;
+	DX8Wrapper::_Get_D3D_Device8()->CreateTexture(
+		D3DDesc.Width,
+		D3DDesc.Height,
+		1,
+		0,
+		D3DDesc.Format,
+		D3DPOOL_DEFAULT,
+		&renderTextureCopy);
+
+	IDirect3DSurface8* srcRT = nullptr;
+	IDirect3DSurface8* dstRT = nullptr;
+
+	backTexture->GetSurfaceLevel(0, &srcRT);
+	renderTextureCopy->GetSurfaceLevel(0, &dstRT);
+
+	DX8Wrapper::_Get_D3D_Device8()->CopyRects(srcRT, nullptr, 0, dstRT, nullptr);
+
+	srcRT->Release();
+	dstRT->Release();
+
+	DX8Wrapper::Set_DX8_Texture(0,renderTextureCopy);
 	//Need these states in case texture is non-power-of-2
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
 	DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
@@ -441,12 +463,13 @@ flushSmudges:
 	// to force the GPU to flush all current pipeline state and commit the previous draw call.
 	// This is required for some AMD models and drivers that refuse to flush a single draw call
 	// for the smudges. This draw call is invisible and harmless.
-	if (smudgesBatchCount == 1)
-	{
-		DX8Wrapper::_Get_D3D_Device8()->DrawPrimitive(D3DPT_POINTLIST, 0, 1);
-	}
+	//if (smudgesBatchCount == 1)
+	//{
+	//	DX8Wrapper::_Get_D3D_Device8()->DrawPrimitive(D3DPT_POINTLIST, 0, 1);
+	//}
 
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLOROP,D3DTOP_MODULATE);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAOP,D3DTOP_MODULATE);
 
+	renderTextureCopy->Release();
 }
