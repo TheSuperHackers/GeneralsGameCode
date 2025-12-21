@@ -1924,7 +1924,9 @@ void W3DTreeBuffer::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer
 	* Version Info:
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: TheSuperHackers @tweak Serialize sink frames as float instead of integer
+	*/
 // ------------------------------------------------------------------------------------------------
 void W3DTreeBuffer::xfer( Xfer *xfer )
 {

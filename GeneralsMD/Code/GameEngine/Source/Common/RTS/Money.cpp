@@ -161,7 +161,8 @@ void Money::crc( Xfer *xfer )
 /** Xfer method
 	* Version Info:
 	* 1: Initial version
-	* 2: Add saveload support for the cash per minute income tracking */
+	* 2: TheSuperHackers @tweak Serialize income tracking
+	*/
 // ------------------------------------------------------------------------------------------------
 void Money::xfer( Xfer *xfer )
 {
@@ -205,7 +206,7 @@ void Money::loadPostProcess( void )
 // ------------------------------------------------------------------------------------------------
 void Money::parseMoneyAmount( INI *ini, void *instance, void *store, const void* userData )
 {
-  // Someday, maybe, have mulitple fields like Gold:10000 Wood:1000 Tiberian:10
+  // Someday, maybe, have multiple fields like Gold:10000 Wood:1000 Tiberian:10
   Money * money = (Money *)store;
 	UnsignedInt moneyAmount;
 	INI::parseUnsignedInt( ini, instance, &moneyAmount, userData );

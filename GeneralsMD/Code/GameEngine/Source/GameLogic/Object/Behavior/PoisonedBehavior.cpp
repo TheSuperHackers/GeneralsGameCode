@@ -209,7 +209,10 @@ void PoisonedBehavior::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: Serialize death type
+	* 3: TheSuperHackers @tweak Serialize poison source
+	*/
 // ------------------------------------------------------------------------------------------------
 void PoisonedBehavior::xfer( Xfer *xfer )
 {
@@ -240,12 +243,10 @@ void PoisonedBehavior::xfer( Xfer *xfer )
 		xfer->xferUser(&m_deathType, sizeof(m_deathType));
 	}
 
-#if !RETAIL_COMPATIBLE_XFER_SAVE
 	if (version >= 3)
 	{
 		xfer->xferObjectID(&m_poisonSource);
 	}
-#endif
 }
 
 // ------------------------------------------------------------------------------------------------
