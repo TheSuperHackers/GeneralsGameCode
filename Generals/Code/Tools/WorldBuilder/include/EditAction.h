@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // EditAction.h : header file
 //
@@ -32,7 +33,7 @@ class EditAction : public CDialog
 {
 // Construction
 public:
-	EditAction(CWnd* pParent = NULL);   // standard constructor
+	EditAction(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(EditAction)

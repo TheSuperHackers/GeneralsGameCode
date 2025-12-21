@@ -20,6 +20,8 @@
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
+#include <Utility/CppMacros.h>
+
 #include "StdAfx.h"
 #include "resource.h"
 
@@ -40,7 +42,7 @@
 TileTool::TileTool(void) :
 	Tool(ID_TILE_TOOL, IDC_TILE_CURSOR)
 {
-	m_htMapEditCopy = NULL;
+	m_htMapEditCopy = nullptr;
 }
 
 /// Destructor

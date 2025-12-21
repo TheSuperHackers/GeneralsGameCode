@@ -68,7 +68,7 @@ bit8 ConfigFile::readFile(FILE *in)
     cptr=Eat_Spaces(string);
     if ((*cptr==0)||(*cptr=='#'))  // '#' signals a comment
       continue;
-    if (strchr(cptr,'=')==NULL)   // All config entries must have a '='
+    if (strchr(cptr,'=')==nullptr)   // All config entries must have a '='
       continue;
     key=cptr;
     key.truncate('=');

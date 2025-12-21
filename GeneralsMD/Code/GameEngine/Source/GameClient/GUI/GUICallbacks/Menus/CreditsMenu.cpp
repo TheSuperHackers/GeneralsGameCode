@@ -69,7 +69,7 @@
 static NameKeyType parentMainMenuID = NAMEKEY_INVALID;
 
 // window pointers --------------------------------------------------------------------------------
-static GameWindow *parentMainMenu = NULL;
+static GameWindow *parentMainMenu = nullptr;
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ void CreditsMenuInit( WindowLayout *layout, void *userData )
 	TheCredits->init();
 
 	parentMainMenuID = TheNameKeyGenerator->nameToKey( "CreditsMenu.wnd:ParentCreditsWindow" );
-	parentMainMenu = TheWindowManager->winGetWindowFromId( NULL, parentMainMenuID );
+	parentMainMenu = TheWindowManager->winGetWindowFromId( nullptr, parentMainMenuID );
 
 
 	// show menu
@@ -113,7 +113,7 @@ void CreditsMenuShutdown( WindowLayout *layout, void *userData )
 {
 	TheCredits->reset();
 	delete TheCredits;
-	TheCredits = NULL;
+	TheCredits = nullptr;
 	TheShell->showShellMap(TRUE);
 
 	// hide menu

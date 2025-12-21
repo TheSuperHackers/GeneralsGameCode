@@ -69,7 +69,7 @@ void INI::parseMultiplayerColorDefinition( INI* ini )
 	// find existing item if present, but this type does not allow overrides,
 	//so if it exists just overwrite it.
 	multiplayerColorDefinition = TheMultiplayerSettings->findMultiplayerColorDefinitionByName( name );
-	if( multiplayerColorDefinition == NULL )
+	if( multiplayerColorDefinition == nullptr )
 		multiplayerColorDefinition = TheMultiplayerSettings->newMultiplayerColorDefinition( name );
 
 	ini->initFromINI( multiplayerColorDefinition, multiplayerColorDefinition->getFieldParse() );
@@ -88,9 +88,9 @@ namespace
 
   const FieldParse startingMoneyFieldParseTable[] =
   {
-    { "Value",			  Money::parseMoneyAmount,	NULL,	offsetof( MultiplayerStartingMoneySettings, money ) },
-    { "Default",	   	INI::parseBool,         	NULL,	offsetof( MultiplayerStartingMoneySettings, isDefault ) },
-    { NULL,	NULL,	NULL,	0 }
+    { "Value",			  Money::parseMoneyAmount,	nullptr,	offsetof( MultiplayerStartingMoneySettings, money ) },
+    { "Default",	   	INI::parseBool,         	nullptr,	offsetof( MultiplayerStartingMoneySettings, isDefault ) },
+    { nullptr,	nullptr,	nullptr,	0 }
   };
 }
 

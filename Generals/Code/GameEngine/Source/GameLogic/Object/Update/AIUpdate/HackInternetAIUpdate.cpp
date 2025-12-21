@@ -164,7 +164,7 @@ void HackInternetAIUpdate::hackInternet()
 {
 	//if (m_hackInternetStateMachine)
 	//	deleteInstance(m_hackInternetStateMachine);
-	//m_hackInternetStateMachine = NULL;
+	//m_hackInternetStateMachine = nullptr;
 
 	// must make the state machine AFTER initing the other stuff, since it may inquire of its values...
 	//m_hackInternetStateMachine = newInstance(HackInternetStateMachine)( getObject() );

@@ -238,7 +238,7 @@ static const char* calcRelationStr(SidesList& sides, int t1, int t2)
 // PlayerListDlg dialog
 
 
-PlayerListDlg::PlayerListDlg(CWnd* pParent /*=NULL*/)
+PlayerListDlg::PlayerListDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(PlayerListDlg::IDD, pParent), m_updating(0)
 {
 	//{{AFX_DATA_INIT(PlayerListDlg)

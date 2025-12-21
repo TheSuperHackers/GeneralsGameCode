@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // EmitterParticlePropPage.h : header file
 //
@@ -38,7 +39,7 @@ class EmitterParticlePropPageClass : public CPropertyPage
 
 // Construction
 public:
-	EmitterParticlePropPageClass (EmitterInstanceListClass *pemitter_list = NULL);
+	EmitterParticlePropPageClass (EmitterInstanceListClass *pemitter_list = nullptr);
 	~EmitterParticlePropPageClass ();
 
 // Dialog Data

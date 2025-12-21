@@ -66,7 +66,7 @@ enum
 // PRIVATE DATA ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 static Bool bordersInit = FALSE;
-static const Image *borderPieces[NUM_BORDER_PIECES] = { 0 };
+static const Image *borderPieces[NUM_BORDER_PIECES] = { nullptr };
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 
@@ -438,7 +438,7 @@ void W3DGameWindow::winDrawBorder( void )
 
 						TheWindowManager->winGetTextSize( m_instData.getFont(),
 																							m_instData.getText(),
-																							&textWidth, NULL, 0 );
+																							&textWidth, nullptr, 0 );
 						width -= textWidth + 6;
 						x += textWidth + 6;
 
@@ -525,7 +525,7 @@ void W3DGameWindow::winDrawBorder( void )
 void W3DGameWindow::winSetFont( GameFont *font )
 {
 
-	if (font == NULL)
+	if (font == nullptr)
 		return;
 
 	// extending functionality
@@ -549,7 +549,7 @@ Int W3DGameWindow::winSetText( UnicodeString newText )
 	GameWindow::winSetText( newText );
 
 	// rebuild the sentence in our text renderer
-	m_textRenderer.Build_Sentence( m_instData.getText().str(),NULL, NULL );
+	m_textRenderer.Build_Sentence( m_instData.getText().str(),nullptr, nullptr );
 
 	// this is a visual change
 	m_needPolyDraw = TRUE;

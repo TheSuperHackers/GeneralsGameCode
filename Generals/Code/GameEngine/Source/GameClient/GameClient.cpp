@@ -86,7 +86,7 @@
 #define DRAWABLE_HASH_SIZE	8192
 
 /// The GameClient singleton instance
-GameClient *TheGameClient = NULL;
+GameClient *TheGameClient = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 GameClient::GameClient()
@@ -96,14 +96,14 @@ GameClient::GameClient()
 	for( Int i = 0; i < MAX_CLIENT_TRANSLATORS; i++ )
 		m_translators[ i ] = TRANSLATOR_ID_INVALID;
 	m_numTranslators = 0;
-	m_commandTranslator = NULL;
+	m_commandTranslator = nullptr;
 
 	m_drawableTOC.clear();
 	m_textBearingDrawableList.clear();
 
 	m_frame = 0;
 
-	m_drawableList = NULL;
+	m_drawableList = nullptr;
 
 	m_nextDrawableID = (DrawableID)1;
 	TheDrawGroupInfo = new DrawGroupInfo;
@@ -117,11 +117,11 @@ GameClient::~GameClient()
 {
 #ifdef PERF_TIMERS
 	delete TheGraphDraw;
-	TheGraphDraw = NULL;
+	TheGraphDraw = nullptr;
 #endif
 
 	delete TheDrawGroupInfo;
-	TheDrawGroupInfo = NULL;
+	TheDrawGroupInfo = nullptr;
 
 	// clear any drawable TOC we might have
 	m_drawableTOC.clear();
@@ -139,7 +139,7 @@ GameClient::~GameClient()
 	//DEBUG_LOG(("End Texture files ------------------------------------------------"));
 
 	delete TheCampaignManager;
-	TheCampaignManager = NULL;
+	TheCampaignManager = nullptr;
 
 	// destroy all Drawables
 	Drawable *draw, *nextDraw;
@@ -148,39 +148,39 @@ GameClient::~GameClient()
 		nextDraw = draw->getNextDrawable();
 		destroyDrawable( draw );
 	}
-	m_drawableList = NULL;
+	m_drawableList = nullptr;
 
 	// delete the ray effects
 	delete TheRayEffects;
-	TheRayEffects = NULL;
+	TheRayEffects = nullptr;
 
 	// delete the hot key manager
 	delete TheHotKeyManager;
-	TheHotKeyManager = NULL;
+	TheHotKeyManager = nullptr;
 
 	// destroy the in-game user interface
 	delete TheInGameUI;
-	TheInGameUI = NULL;
+	TheInGameUI = nullptr;
 
 	// delete the shell
 	delete TheShell;
-	TheShell = NULL;
+	TheShell = nullptr;
 
 	delete TheIMEManager;
-	TheIMEManager = NULL;
+	TheIMEManager = nullptr;
 
 	// delete window manager
 	delete TheWindowManager;
-	TheWindowManager = NULL;
+	TheWindowManager = nullptr;
 
 	// delete the font library
 	TheFontLibrary->reset();
 	delete TheFontLibrary;
-	TheFontLibrary = NULL;
+	TheFontLibrary = nullptr;
 
 	TheMouse->reset();
 	delete TheMouse;
-	TheMouse = NULL;
+	TheMouse = nullptr;
 
 	///@todo :  TheTerrainVisual used to be the first thing destroyed.
 	//I had to put in here so that drawables free their track marks before
@@ -188,41 +188,41 @@ GameClient::~GameClient()
 
 	// destroy the terrain visual representation
 	delete TheTerrainVisual;
-	TheTerrainVisual = NULL;
+	TheTerrainVisual = nullptr;
 
 	// destroy the display
 	delete TheDisplay;
-	TheDisplay = NULL;
+	TheDisplay = nullptr;
 
 	delete TheHeaderTemplateManager;
-	TheHeaderTemplateManager = NULL;
+	TheHeaderTemplateManager = nullptr;
 
 	delete TheLanguageFilter;
-	TheLanguageFilter = NULL;
+	TheLanguageFilter = nullptr;
 
 	delete TheVideoPlayer;
-	TheVideoPlayer = NULL;
+	TheVideoPlayer = nullptr;
 
 	// destroy all translators
 	for( UnsignedInt i = 0; i < m_numTranslators; i++ )
 		TheMessageStream->removeTranslator( m_translators[ i ] );
 	m_numTranslators = 0;
-	m_commandTranslator = NULL;
+	m_commandTranslator = nullptr;
 
 	delete TheAnim2DCollection;
-	TheAnim2DCollection = NULL;
+	TheAnim2DCollection = nullptr;
 
 	delete TheMappedImageCollection;
-	TheMappedImageCollection = NULL;
+	TheMappedImageCollection = nullptr;
 
 	delete TheKeyboard;
-	TheKeyboard = NULL;
+	TheKeyboard = nullptr;
 
 	delete TheDisplayStringManager;
-	TheDisplayStringManager = NULL;
+	TheDisplayStringManager = nullptr;
 
 	delete TheEva;
-	TheEva = NULL;
+	TheEva = nullptr;
 
 }
 
@@ -236,7 +236,7 @@ void GameClient::init( void )
 
 	INI ini;
 	// Load the DrawGroupInfo here, before the Display Manager is loaded.
-	ini.loadFileDirectory("Data\\INI\\DrawGroupInfo", INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory("Data\\INI\\DrawGroupInfo", INI_LOAD_OVERWRITE, nullptr);
 
 	// Override the ini values with localized versions:
 	if (TheGlobalLanguageData && TheGlobalLanguageData->m_drawGroupInfoFont.name.isNotEmpty())
@@ -440,7 +440,7 @@ void GameClient::reset( void )
 		nextDraw = draw->getNextDrawable();
 		destroyDrawable( draw );
 	}
-	m_drawableList = NULL;
+	m_drawableList = nullptr;
 
 	TheDisplay->reset();
 	TheTerrainVisual->reset();
@@ -619,7 +619,7 @@ void GameClient::update( void )
 				for (Int i=0; i < numPlayers; i++)
 				{
 					Player *player = ThePlayerList->getNthPlayer(i);
-					if (player->getPlayerTemplate() != NULL && player->getPlayerIndex() != localPlayerIndex)
+					if (player->getPlayerTemplate() != nullptr && player->getPlayerIndex() != localPlayerIndex)
 						nonLocalPlayerIndices[numNonLocalPlayers++] = player->getPlayerIndex();
 				}
 				//update ghost objects which don't have drawables or objects.
@@ -627,7 +627,7 @@ void GameClient::update( void )
 			}
 			else
 			{
-				TheGhostObjectManager->updateOrphanedObjects(NULL, 0);
+				TheGhostObjectManager->updateOrphanedObjects(nullptr, 0);
 			}
 		}
 
@@ -766,7 +766,7 @@ void GameClient::iterateDrawablesInRegion( Region3D *region, GameClientFuncPtr u
 		nextDrawable = draw->getNextDrawable();
 
 		Coord3D pos = *draw->getPosition();
-		if( region == NULL ||
+		if( region == nullptr ||
 			  (pos.x >= region->lo.x && pos.x <= region->hi.x &&
 			   pos.y >= region->lo.y && pos.y <= region->hi.y &&
 				 pos.z >= region->lo.z && pos.z <= region->hi.z) )
@@ -794,7 +794,7 @@ Drawable* GameClient::findDrawableByID( const DrawableID id )
 	DrawablePtrHashIt it = m_drawableHash.find(id);
 	if (it == m_drawableHash.end()) {
 		// no such drawable
-		return NULL;
+		return nullptr;
 	}
 
 	return (*it).second;
@@ -825,7 +825,7 @@ void GameClient::destroyDrawable( Drawable *draw )
 	{
 
 		DEBUG_ASSERTCRASH( obj->getDrawable() == draw, ("Object/Drawable pointer mismatch!") );
-		obj->friend_bindToDrawable( NULL );
+		obj->friend_bindToDrawable( nullptr );
 
 	}
 
@@ -844,7 +844,7 @@ void GameClient::addDrawableToLookupTable(Drawable *draw )
 {
 
 	// sanity
-	if( draw == NULL )
+	if( draw == nullptr )
 		return;
 
 	// add to lookup
@@ -859,7 +859,7 @@ void GameClient::removeDrawableFromLookupTable( Drawable *draw )
 {
 
 	// sanity
-	if( draw == NULL )
+	if( draw == nullptr )
 		return;
 
 	// remove from table
@@ -968,7 +968,7 @@ void GameClient::selectDrawablesInGroup( Int group )
 // ------------------------------------------------------------------------------------------------
 void GameClient::addTextBearingDrawable( Drawable *tbd )
 {
-	if ( tbd != NULL )
+	if ( tbd != nullptr )
 		m_textBearingDrawableList.push_back( tbd );
 }
 // ------------------------------------------------------------------------------------------------
@@ -1197,7 +1197,7 @@ GameClient::DrawableTOCEntry *GameClient::findTOCEntryByName( AsciiString name )
 		if( (*it).name == name )
 			return &(*it);
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -1211,7 +1211,7 @@ GameClient::DrawableTOCEntry *GameClient::findTOCEntryById( UnsignedShort id )
 		if( (*it).id == id )
 			return &(*it);
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -1233,7 +1233,7 @@ static Bool shouldSaveDrawable(const Drawable* draw)
 {
 	if (draw->testDrawableStatus(DRAWABLE_STATUS_NO_SAVE))
 	{
-		if (draw->getObject() == NULL)
+		if (draw->getObject() == nullptr)
 		{
 			return false;
 		}
@@ -1275,7 +1275,7 @@ void GameClient::xferDrawableTOC( Xfer *xfer )
 			templateName = draw->getTemplate()->getName();
 
 			// if is this drawable name already in the TOC, skip it
-			if( findTOCEntryByName( templateName ) != NULL )
+			if( findTOCEntryByName( templateName ) != nullptr )
 				continue;
 
 			// add this entry to the TOC
@@ -1389,7 +1389,7 @@ void GameClient::xfer( Xfer *xfer )
 
 			// get TOC entry for this drawable
 			tocEntry = findTOCEntryByName( draw->getTemplate()->getName() );
-			if( tocEntry == NULL )
+			if( tocEntry == nullptr )
 			{
 
 				DEBUG_CRASH(( "GameClient::xfer - Drawable TOC entry not found for '%s'", draw->getTemplate()->getName().str() ));
@@ -1431,7 +1431,7 @@ void GameClient::xfer( Xfer *xfer )
 
 			// find TOC entry with this identifier
 			tocEntry = findTOCEntryById( tocID );
-			if( tocEntry == NULL )
+			if( tocEntry == nullptr )
 			{
 
 				DEBUG_CRASH(( "GameClient::xfer - No TOC entry match for id '%d'", tocID ));
@@ -1444,7 +1444,7 @@ void GameClient::xfer( Xfer *xfer )
 
 			// find matching thing template
 			thingTemplate = TheThingFactory->findTemplate( tocEntry->name );
-			if( thingTemplate == NULL )
+			if( thingTemplate == nullptr )
 			{
 
 				DEBUG_CRASH(( "GameClient::xfer - Unrecognized thing template '%s', skipping.  ENGINEERS - Are you *sure* it's OK to be ignoring this object from the save file???  Think hard about it!",
@@ -1466,7 +1466,7 @@ void GameClient::xfer( Xfer *xfer )
 				Object *object = TheGameLogic->findObjectByID( objectID );
 
 				// sanity
-				if( object == NULL )
+				if( object == nullptr )
 				{
 
 					DEBUG_CRASH(( "GameClient::xfer - Cannot find object '%d' that is supposed to be attached to this drawable '%s'",
@@ -1477,7 +1477,7 @@ void GameClient::xfer( Xfer *xfer )
 
 				// get the drawable from the object
 				draw = object->getDrawable();
-				if( draw == NULL )
+				if( draw == nullptr )
 				{
 
 					DEBUG_CRASH(( "GameClient::xfer - There is no drawable attached to the object '%s' (%d) and there should be",
@@ -1512,7 +1512,7 @@ void GameClient::xfer( Xfer *xfer )
 				draw = TheThingFactory->newDrawable( thingTemplate );
 
 				// sanity
-				if( draw == NULL )
+				if( draw == nullptr )
 				{
 
 					DEBUG_CRASH(( "GameClient::xfer - Unable to create drawable for '%s'",

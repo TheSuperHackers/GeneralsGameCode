@@ -16,6 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <Utility/CppMacros.h>
 #include <cstdlib> // for FILE ops
 #include "global.h"
 
@@ -27,7 +28,7 @@ GlobalClass::GlobalClass(void)
 bool GlobalClass::ReadFile(const char *fname)
 {
 	FILE *fp;
-	if ((fp = fopen(fname, "r")) == NULL)
+	if ((fp = fopen(fname, "r")) == nullptr)
 		return false;
 	config.readFile(fp);
 	fclose(fp);

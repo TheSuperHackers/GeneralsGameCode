@@ -50,7 +50,7 @@
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-DamageFXStore *TheDamageFXStore = NULL;					///< the DamageFX store definition
+DamageFXStore *TheDamageFXStore = nullptr;					///< the DamageFX store definition
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ ConstFXListPtr DamageFX::getDamageFXList(DamageType t, Real damageAmount, const 
 		if you really need to change this for some reason, consider carefully... (srj)
 	*/
 	if (damageAmount == 0.0f)
-		return NULL;
+		return nullptr;
 
 	const DFX& dfx = m_dfx[t][source ? source->getVeterancyLevel() : LEVEL_REGULAR];
 	ConstFXListPtr fx =
@@ -124,15 +124,15 @@ const FieldParse* DamageFX::getFieldParse() const
 {
 	static const FieldParse myFieldParse[] =
 	{
-		{ "AmountForMajorFX",						parseAmount,			NULL, 0 },
-		{ "MajorFX",										parseMajorFXList,	NULL, 0 },
-		{ "MinorFX",										parseMinorFXList,	NULL, 0 },
-		{ "ThrottleTime",								parseTime,				NULL, 0 },
+		{ "AmountForMajorFX",						parseAmount,			nullptr, 0 },
+		{ "MajorFX",										parseMajorFXList,	nullptr, 0 },
+		{ "MinorFX",										parseMinorFXList,	nullptr, 0 },
+		{ "ThrottleTime",								parseTime,				nullptr, 0 },
 		{ "VeterancyAmountForMajorFX",	parseAmount,			TheVeterancyNames, 0 },
 		{ "VeterancyMajorFX",						parseMajorFXList,	TheVeterancyNames, 0 },
 		{ "VeterancyMinorFX",						parseMinorFXList,	TheVeterancyNames, 0 },
 		{ "VeterancyThrottleTime",			parseTime,				TheVeterancyNames, 0 },
-		{ 0, 0, 0,0 }
+		{ nullptr, nullptr, nullptr,0 }
 	};
 	return myFieldParse;
 }
@@ -203,7 +203,7 @@ static void parseCommonStuff(
 	parseCommonStuff(ini, names, vetFirst, vetLast, damageFirst, damageLast);
 
 	ConstFXListPtr fx;
-	INI::parseFXList(ini, NULL, &fx, NULL);
+	INI::parseFXList(ini, nullptr, &fx, nullptr);
 
 	for (Int dt = damageFirst; dt <= damageLast; ++dt)
 	{
@@ -225,7 +225,7 @@ static void parseCommonStuff(
 	parseCommonStuff(ini, names, vetFirst, vetLast, damageFirst, damageLast);
 
 	ConstFXListPtr fx;
-	INI::parseFXList(ini, NULL, &fx, NULL);
+	INI::parseFXList(ini, nullptr, &fx, nullptr);
 
 	for (Int dt = damageFirst; dt <= damageLast; ++dt)
 	{
@@ -247,7 +247,7 @@ static void parseCommonStuff(
 	parseCommonStuff(ini, names, vetFirst, vetLast, damageFirst, damageLast);
 
 	UnsignedInt t;
-	INI::parseDurationUnsignedInt(ini, NULL, &t, NULL);
+	INI::parseDurationUnsignedInt(ini, nullptr, &t, nullptr);
 
 	for (Int dt = damageFirst; dt <= damageLast; ++dt)
 	{
@@ -279,7 +279,7 @@ const DamageFX *DamageFXStore::findDamageFX(NameKeyType namekey) const
 	DamageFXMap::const_iterator it = m_dfxmap.find(namekey);
 	if (it == m_dfxmap.end())
 	{
-		return NULL;
+		return nullptr;
 	}
 	else
 	{

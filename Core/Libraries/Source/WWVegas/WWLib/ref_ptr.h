@@ -219,7 +219,7 @@ class RefCountPtr
 		// Is generally used for objects returned by operator new and "Get" functions.
 		static RefCountPtr<T> Create_NoAddRef(T *t)
 		{
-			WWASSERT(t == NULL || t->Num_Refs() >= 1);
+			WWASSERT(t == nullptr || t->Num_Refs() >= 1);
 			return RefCountPtr<T>(t, RefCountPtr<T>::GET);
 		}
 

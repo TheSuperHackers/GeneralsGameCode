@@ -30,14 +30,14 @@
 //----------------------------------------------------------------------------
 GameMessageParser::GameMessageParser()
 {
-	m_first = NULL;
+	m_first = nullptr;
 	m_argTypeCount = 0;
 }
 
 //----------------------------------------------------------------------------
 GameMessageParser::GameMessageParser(GameMessage *msg)
 {
-	m_first = NULL;
+	m_first = nullptr;
 	m_argTypeCount = 0;
 
 	UnsignedByte argCount = msg->getArgumentCount();
@@ -65,8 +65,8 @@ GameMessageParser::GameMessageParser(GameMessage *msg)
 //----------------------------------------------------------------------------
 GameMessageParser::~GameMessageParser()
 {
-	GameMessageParserArgumentType *temp = NULL;
-	while (m_first != NULL) {
+	GameMessageParserArgumentType *temp = nullptr;
+	while (m_first != nullptr) {
 		temp = m_first->getNext();
 		deleteInstance(m_first);
 		m_first = temp;
@@ -76,7 +76,7 @@ GameMessageParser::~GameMessageParser()
 //----------------------------------------------------------------------------
 void GameMessageParser::addArgType(GameMessageArgumentDataType type, Int argCount)
 {
-	if (m_first == NULL) {
+	if (m_first == nullptr) {
 		m_first = newInstance(GameMessageParserArgumentType)(type, argCount);
 		m_last = m_first;
 		return;
@@ -89,7 +89,7 @@ void GameMessageParser::addArgType(GameMessageArgumentDataType type, Int argCoun
 //----------------------------------------------------------------------------
 GameMessageParserArgumentType::GameMessageParserArgumentType(GameMessageArgumentDataType type, Int argCount)
 {
-	m_next = NULL;
+	m_next = nullptr;
 	m_type = type;
 	m_argCount = argCount;
 }

@@ -17,6 +17,7 @@
 */
 
 
+#include <Utility/CppMacros.h>
 #include <Utility/iostream_adapter.h>
 
 #include <signal.h>
@@ -51,7 +52,7 @@ int main(int argc, char **argv)
 	if( argc <= 1 )
 	{
 		// No args - use a default config file
-		if ((conf = fopen("mangler.cfg", "r")) == NULL) {
+		if ((conf = fopen("mangler.cfg", "r")) == nullptr) {
 			cout << "Cannot open mangler.cfg for reading." << endl;
 			DisplayHelp(argv[0]);
 		}
@@ -64,7 +65,7 @@ int main(int argc, char **argv)
 	else if( argc == 2 )
 	{
 		// Use a user-supplied config file
-		if ((conf = fopen(argv[1], "r")) == NULL) {
+		if ((conf = fopen(argv[1], "r")) == nullptr) {
 			cout << "Cannot open " << argv[1] << " for reading." << endl;
 			DisplayHelp(argv[0]);
 		}

@@ -50,7 +50,7 @@
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 static NameKeyType radioButtonSystemMapsID = NAMEKEY_INVALID;
 static NameKeyType radioButtonUserMapsID = NAMEKEY_INVALID;
-static GameWindow *mapList = NULL;
+static GameWindow *mapList = nullptr;
 
 static Bool showSoloMaps = true;
 static Bool isShuttingDown = false;
@@ -109,7 +109,7 @@ static void shutdownComplete( WindowLayout *layout )
 void SetDifficultyRadioButton( void )
 {
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey( "MapSelectMenu.wnd:MapSelectMenuParent" );
-	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	GameWindow *parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 
 	if (!TheScriptEngine)
 	{
@@ -171,7 +171,7 @@ void MapSelectMenuInit( WindowLayout *layout, void *userData )
 
 	// get the listbox window
 	NameKeyType mapListID = TheNameKeyGenerator->nameToKey( "MapSelectMenu.wnd:ListboxMap" );
-	mapList = TheWindowManager->winGetWindowFromId( NULL, mapListID );
+	mapList = TheWindowManager->winGetWindowFromId( nullptr, mapListID );
 	if( mapList )
 	{
 		if (TheMapCache)
@@ -182,14 +182,14 @@ void MapSelectMenuInit( WindowLayout *layout, void *userData )
 
 	// set keyboard focus to main parent
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey( "MapSelectMenu.wnd:MapSelectMenuParent" );
-	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	GameWindow *parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 	TheWindowManager->winSetFocus( parent );
 
 	NameKeyType buttonBackID = TheNameKeyGenerator->nameToKey( "MapSelectMenu.wnd:ButtonBack" );
-	GameWindow *buttonBack = TheWindowManager->winGetWindowFromId( NULL, buttonBackID );
+	GameWindow *buttonBack = TheWindowManager->winGetWindowFromId( nullptr, buttonBackID );
 
 	NameKeyType buttonOKID = TheNameKeyGenerator->nameToKey( "MapSelectMenu.wnd:ButtonOK" );
-	GameWindow *buttonOK = TheWindowManager->winGetWindowFromId( NULL, buttonOKID );
+	GameWindow *buttonOK = TheWindowManager->winGetWindowFromId( nullptr, buttonOKID );
 
 
 	TheShell->registerWithAnimateManager(buttonBack, WIN_ANIMATION_SLIDE_RIGHT, TRUE,0);
@@ -404,7 +404,7 @@ WindowMsgHandledType MapSelectMenuSystem( GameWindow *window, UnsignedInt msg,
 
 				Int selected;
 				UnicodeString map;
-				GameWindow *mapWindow = TheWindowManager->winGetWindowFromId( NULL, listboxMap );
+				GameWindow *mapWindow = TheWindowManager->winGetWindowFromId( nullptr, listboxMap );
 
 				// get the selected index
 				GadgetListBoxGetSelected( mapWindow, &selected );
@@ -454,7 +454,7 @@ WindowMsgHandledType MapSelectMenuSystem( GameWindow *window, UnsignedInt msg,
 						//buttonPushed = true;
 						GadgetListBoxSetSelected( control, rowSelected );
 						NameKeyType buttonOKID = TheNameKeyGenerator->nameToKey( "MapSelectMenu.wnd:ButtonOK" );
-						GameWindow *buttonOK = TheWindowManager->winGetWindowFromId( NULL, buttonOKID );
+						GameWindow *buttonOK = TheWindowManager->winGetWindowFromId( nullptr, buttonOKID );
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)buttonOK, buttonOKID );

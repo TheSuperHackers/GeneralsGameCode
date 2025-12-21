@@ -37,7 +37,7 @@ static int doCrashBox(const char *buffer, bool logResult)
 {
 	int result;
 
-	result = ::MessageBox(NULL, buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_APPLMODAL|MB_ICONWARNING);
+	result = ::MessageBox(nullptr, buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_APPLMODAL|MB_ICONWARNING);
 
 	switch(result)
 	{
@@ -96,7 +96,7 @@ void DebugCrash(const char *format, ...)
   va_end(arg);
 
 	if (strlen(theBuffer) >= sizeof(theBuffer))
-		::MessageBox(NULL, "String too long for debug buffers", "", MB_OK|MB_APPLMODAL);
+		::MessageBox(nullptr, "String too long for debug buffers", "", MB_OK|MB_APPLMODAL);
 
 	OutputDebugString(theBuffer);
 	OutputDebugString("\n");
@@ -106,10 +106,10 @@ void DebugCrash(const char *format, ...)
 
 	int result = doCrashBox(theBuffer, true);
 
-	if (result == IDIGNORE && TheCurrentIgnoreCrashPtr != NULL)
+	if (result == IDIGNORE && TheCurrentIgnoreCrashPtr != nullptr)
 	{
 		int yn;
-		yn = ::MessageBox(NULL, "Ignore this crash from now on?", "", MB_YESNO|MB_APPLMODAL);
+		yn = ::MessageBox(nullptr, "Ignore this crash from now on?", "", MB_YESNO|MB_APPLMODAL);
 		if (yn == IDYES)
 			*TheCurrentIgnoreCrashPtr = 1;
 	}

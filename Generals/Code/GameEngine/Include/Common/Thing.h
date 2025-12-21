@@ -84,10 +84,10 @@ class Thing : public MemoryPoolObject
 {
 	// note, it is explicitly OK to pass null for 'thing' here;
 	// they will check for null and return null in these cases.
-	friend inline Object *AsObject(Thing *thing) { return thing ? thing->asObjectMeth() : NULL; }
-	friend inline Drawable *AsDrawable(Thing *thing) { return thing ? thing->asDrawableMeth() : NULL; }
-	friend inline const Object *AsObject(const Thing *thing) { return thing ? thing->asObjectMeth() : NULL; }
-	friend inline const Drawable *AsDrawable(const Thing *thing) { return thing ? thing->asDrawableMeth() : NULL; }
+	friend inline Object *AsObject(Thing *thing) { return thing ? thing->asObjectMeth() : nullptr; }
+	friend inline Drawable *AsDrawable(Thing *thing) { return thing ? thing->asDrawableMeth() : nullptr; }
+	friend inline const Object *AsObject(const Thing *thing) { return thing ? thing->asObjectMeth() : nullptr; }
+	friend inline const Drawable *AsDrawable(const Thing *thing) { return thing ? thing->asDrawableMeth() : nullptr; }
 
 	MEMORY_POOL_GLUE_ABC(Thing)
 
@@ -148,10 +148,10 @@ protected:
 	// Virtual method since objects can be on bridges and need to calculate heigh above terrain differently.
 	virtual Real calculateHeightAboveTerrain(void) const;		// Calculates the actual height above terrain.  Doesn't use cache.
 
-	virtual Object *asObjectMeth() { return NULL; }
-	virtual Drawable *asDrawableMeth() { return NULL; }
-	virtual const Object *asObjectMeth() const { return NULL; }
-	virtual const Drawable *asDrawableMeth() const { return NULL; }
+	virtual Object *asObjectMeth() { return nullptr; }
+	virtual Drawable *asDrawableMeth() { return nullptr; }
+	virtual const Object *asObjectMeth() const { return nullptr; }
+	virtual const Drawable *asDrawableMeth() const { return nullptr; }
 
 	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) = 0;
 

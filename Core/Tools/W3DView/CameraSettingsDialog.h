@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // CameraSettingsDialog.h : header file
 //
@@ -28,7 +29,7 @@ class CameraSettingsDialogClass : public CDialog
 {
 // Construction
 public:
-	CameraSettingsDialogClass(CWnd* pParent = NULL);   // standard constructor
+	CameraSettingsDialogClass(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CameraSettingsDialogClass)

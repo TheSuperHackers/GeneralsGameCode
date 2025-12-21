@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // RingGeneralPropPage.h : header file
 //
@@ -36,7 +37,7 @@ class RingGeneralPropPageClass : public CPropertyPage
 
 // Construction
 public:
-	RingGeneralPropPageClass (RingRenderObjClass *ring = NULL);
+	RingGeneralPropPageClass (RingRenderObjClass *ring = nullptr);
 	~RingGeneralPropPageClass ();
 
 // Dialog Data

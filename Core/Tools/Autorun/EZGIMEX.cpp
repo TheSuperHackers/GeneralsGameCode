@@ -49,10 +49,11 @@
 
 /* And increase stream buffer */
 /*
- setvbuf(f, NULL, _IOFBF, FILE_BUFFER_SIZE);
+ setvbuf(f, nullptr, _IOFBF, FILE_BUFFER_SIZE);
 */
 
 #define __NOINLINE__ 1
+#include <Utility/CppMacros.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -151,13 +152,13 @@ GSTREAM * GCALL gopen(const char *filename)
 
     handle = fopen( filename, "r+b" );
 
-	Msg( __LINE__, __FILE__, "gopen:: handle = %d", (( handle != NULL )? 1 : 0 ));
+	Msg( __LINE__, __FILE__, "gopen:: handle = %d", (( handle != nullptr )? 1 : 0 ));
 
     if ( !handle ) {
 
         handle = fopen( filename, "rb" );
 
-		Msg( __LINE__, __FILE__, "gopen:: handle = %d", (( handle != NULL )? 1 : 0 ));
+		Msg( __LINE__, __FILE__, "gopen:: handle = %d", (( handle != nullptr )? 1 : 0 ));
 	}
     return((GSTREAM *) handle);
 }

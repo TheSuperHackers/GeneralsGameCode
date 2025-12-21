@@ -50,9 +50,9 @@ static NameKeyType parentWOLStatusID = NAMEKEY_INVALID;
 static NameKeyType buttonDisconnectID = NAMEKEY_INVALID;
 
 // Window Pointers ------------------------------------------------------------------------
-static GameWindow *parentWOLStatus = NULL;
-static GameWindow *buttonDisconnect = NULL;
-GameWindow *progressTextWindow = NULL;
+static GameWindow *parentWOLStatus = nullptr;
+static GameWindow *buttonDisconnect = nullptr;
+GameWindow *progressTextWindow = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the WOL Status Menu */
@@ -61,10 +61,10 @@ void WOLStatusMenuInit( WindowLayout *layout, void *userData )
 {
 	parentWOLStatusID = TheNameKeyGenerator->nameToKey( "WOLStatusMenu.wnd:WOLStatusMenuParent" );
 	buttonDisconnectID = TheNameKeyGenerator->nameToKey( "WOLStatusMenu.wnd:ButtonDisconnect" );
-	parentWOLStatus = TheWindowManager->winGetWindowFromId( NULL, parentWOLStatusID );
-	buttonDisconnect = TheWindowManager->winGetWindowFromId( NULL,  buttonDisconnectID);
+	parentWOLStatus = TheWindowManager->winGetWindowFromId( nullptr, parentWOLStatusID );
+	buttonDisconnect = TheWindowManager->winGetWindowFromId( nullptr,  buttonDisconnectID);
 
-	progressTextWindow = TheWindowManager->winGetWindowFromId( NULL,
+	progressTextWindow = TheWindowManager->winGetWindowFromId( nullptr,
 		TheNameKeyGenerator->nameToKey( "WOLStatusMenu.wnd:ListboxStatus" ) );
 
 	// Show Menu
@@ -90,7 +90,7 @@ void WOLStatusMenuShutdown( WindowLayout *layout, void *userData )
 	// our shutdown is complete
 	TheShell->shutdownComplete( layout );
 
-	//progressLayout = NULL;
+	//progressLayout = nullptr;
 
 	//WOL::raiseWOLMessageBox();
 }

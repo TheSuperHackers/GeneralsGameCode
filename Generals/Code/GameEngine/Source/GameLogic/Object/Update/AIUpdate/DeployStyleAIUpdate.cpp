@@ -154,7 +154,7 @@ UpdateSleepTime DeployStyleAIUpdate::update( void )
 	Object *self = getObject();
 	Weapon *weapon = self->getCurrentWeapon();
 	Bool inRange = FALSE;
-	Object *designatedTarget = NULL;
+	Object *designatedTarget = nullptr;
 	Bool isAttacking = FALSE;
 
 	if( weapon )
@@ -171,7 +171,7 @@ UpdateSleepTime DeployStyleAIUpdate::update( void )
 			designatedTarget = TheGameLogic->findObjectByID( m_attackObjectID );
 			if( designatedTarget && designatedTarget->isEffectivelyDead() )
 			{
-				designatedTarget = NULL;
+				designatedTarget = nullptr;
 			}
 			if( designatedTarget )
 			{
@@ -192,7 +192,7 @@ UpdateSleepTime DeployStyleAIUpdate::update( void )
 			}
 			else
 			{
-				//Get the current goal object (NULL if we have a turret).
+				//Get the current goal object (nullptr if we have a turret).
 				designatedTarget = getGoalObject();
 			}
 			if( !designatedTarget )
@@ -223,12 +223,12 @@ UpdateSleepTime DeployStyleAIUpdate::update( void )
 					}
 					else
 					{
-						designatedTarget = NULL;
+						designatedTarget = nullptr;
 					}
 				}
 				else
 				{
-					designatedTarget = NULL;
+					designatedTarget = nullptr;
 				}
 			}
 			else if( designatedTarget )

@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 // GammaDialogClass dialog
 
 
-GammaDialogClass::GammaDialogClass(CWnd* pParent /*=NULL*/)
+GammaDialogClass::GammaDialogClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(GammaDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(GammaDialogClass)

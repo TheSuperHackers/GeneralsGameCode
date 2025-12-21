@@ -45,7 +45,7 @@
 
 // Singleton ------------------------------------------
 
-LANGameInfo *TheLANGameInfo = NULL;
+LANGameInfo *TheLANGameInfo = nullptr;
 
 // LANGameSlot ----------------------------------------
 
@@ -62,10 +62,10 @@ LANPlayer * LANGameSlot::getUser( void )
 		m_user.setIP(getIP());
 		m_user.setLastHeard(getLastHeard());
 		m_user.setName(getName());
-		m_user.setNext(NULL);
+		m_user.setNext(nullptr);
 		return &m_user;
 	}
-	return NULL;
+	return nullptr;
 }
 
 // Various tests
@@ -89,7 +89,7 @@ Bool LANGameSlot::isLocalPlayer( void ) const
 LANGameInfo::LANGameInfo()
 {
 	m_lastHeard = 0;
-	m_next = NULL;
+	m_next = nullptr;
 	m_isDirectConnect = false;
 	//
 	for (Int i = 0; i< MAX_SLOTS; ++i)
@@ -117,7 +117,7 @@ LANGameSlot* LANGameInfo::getLANSlot( Int slotNum )
 {
 	DEBUG_ASSERTCRASH( slotNum >= 0 && slotNum < MAX_SLOTS, ("LANGameInfo::getLANSlot - Invalid slot number"));
 	if (slotNum < 0 || slotNum >= MAX_SLOTS)
-		return NULL;
+		return nullptr;
 
 	return &m_LANSlot[slotNum];
 }
@@ -126,7 +126,7 @@ const LANGameSlot* LANGameInfo::getConstLANSlot( Int slotNum ) const
 {
 	DEBUG_ASSERTCRASH( slotNum >= 0 && slotNum < MAX_SLOTS, ("LANGameInfo::getConstLANSlot - Invalid slot number"));
 	if (slotNum < 0 || slotNum >= MAX_SLOTS)
-		return NULL;
+		return nullptr;
 
 	return &m_LANSlot[slotNum];
 }
@@ -198,7 +198,7 @@ void LANGameInfo::resetAccepted( void )
 
 void LANDisplayGameList( GameWindow *gameListbox, LANGameInfo *gameList )
 {
-	LANGameInfo *selectedPtr = NULL;
+	LANGameInfo *selectedPtr = nullptr;
 	Int selectedIndex = -1;
 	Int indexToSelect = -1;
 	if (gameListbox)

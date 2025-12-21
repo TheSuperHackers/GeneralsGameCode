@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // EditLODDialog.h : header file
 //
@@ -28,7 +29,7 @@ class CEditLODDialog : public CDialog
 {
 // Construction
 public:
-	CEditLODDialog(CWnd* pParent = NULL);   // standard constructor
+	CEditLODDialog(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CEditLODDialog)

@@ -43,7 +43,7 @@ class CNewHeightMap : public CDialog
 {
 // Construction
 public:
-	CNewHeightMap(TNewHeightInfo *hiP, const char *label, CWnd* pParent = NULL);   // standard constructor
+	CNewHeightMap(TNewHeightInfo *hiP, const char *label, CWnd* pParent = nullptr);   // standard constructor
 
 	void GetHeightInfo(TNewHeightInfo *hiP) {*hiP = mHeightInfo; };
 // Dialog Data

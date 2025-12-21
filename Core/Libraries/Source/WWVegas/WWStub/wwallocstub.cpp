@@ -17,6 +17,7 @@
 */
 
 // TheSuperHackers @build feliwir 15/04/2025 Simple allocator implementation useful for tools
+
 #include "always.h"
 #include <stdlib.h>
 
@@ -66,7 +67,7 @@ void operator delete[](void * p, const char *, int)
 
 void* createW3DMemPool(const char *poolName, int allocationSize)
 {
-	return NULL;
+	return nullptr;
 }
 
 void* allocateFromW3DMemPool(void* pool, int allocationSize)

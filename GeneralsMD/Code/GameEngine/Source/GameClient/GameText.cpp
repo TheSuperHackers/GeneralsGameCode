@@ -145,8 +145,8 @@ class GameTextManager : public GameTextInterface
 		virtual void					update( void ) {};			///< update text manager
 		virtual void					reset( void );					///< Resets the text system
 
-		virtual UnicodeString fetch( const Char *label, Bool *exists = NULL );		///< Returns the associated labeled unicode text
-		virtual UnicodeString fetch( AsciiString label, Bool *exists = NULL );		///< Returns the associated labeled unicode text
+		virtual UnicodeString fetch( const Char *label, Bool *exists = nullptr );		///< Returns the associated labeled unicode text
+		virtual UnicodeString fetch( AsciiString label, Bool *exists = nullptr );		///< Returns the associated labeled unicode text
 		virtual UnicodeString fetchFormat( const Char *label, ... );
 		virtual UnicodeString fetchOrSubstitute( const Char *label, const WideChar *substituteText );
 		virtual UnicodeString fetchOrSubstituteFormat( const Char *label, const WideChar *substituteFormat, ... );
@@ -210,7 +210,7 @@ static int _cdecl			compareLUT ( const void *,  const void*);
 //         Public Data
 //----------------------------------------------------------------------------
 
-GameTextInterface *TheGameText = NULL;
+GameTextInterface *TheGameText = nullptr;
 
 //----------------------------------------------------------------------------
 //         Private Prototypes
@@ -245,10 +245,10 @@ GameTextInterface* CreateGameTextInterface( void )
 GameTextManager::GameTextManager()
 :	m_textCount(0),
 	m_maxLabelLen(0),
-	m_stringInfo(NULL),
-	m_stringLUT(NULL),
+	m_stringInfo(nullptr),
+	m_stringLUT(nullptr),
 	m_initialized(FALSE),
-	m_noStringList(NULL),
+	m_noStringList(nullptr),
 #if defined(RTS_DEBUG)
 	m_jabberWockie(FALSE),
 	m_munkee(FALSE),
@@ -256,8 +256,8 @@ GameTextManager::GameTextManager()
 #else
 	m_useStringFile(TRUE),
 #endif
-	m_mapStringInfo(NULL),
-	m_mapStringLUT(NULL),
+	m_mapStringInfo(nullptr),
+	m_mapStringLUT(nullptr),
 	m_failed(L"***FATAL*** String Manager failed to initialize properly")
 {
 	for(Int i=0; i < MAX_UITEXT_LENGTH; i++)
@@ -329,7 +329,7 @@ void GameTextManager::init( void )
 
 	m_stringInfo = NEW StringInfo[m_textCount];
 
-	if( m_stringInfo == NULL )
+	if( m_stringInfo == nullptr )
 	{
 		deinit();
 		return;
@@ -377,10 +377,10 @@ void GameTextManager::deinit( void )
 {
 
 	delete [] m_stringInfo;
-	m_stringInfo = NULL;
+	m_stringInfo = nullptr;
 
 	delete [] m_stringLUT;
-	m_stringLUT = NULL;
+	m_stringLUT = nullptr;
 
 	m_textCount = 0;
 
@@ -398,7 +398,7 @@ void GameTextManager::deinit( void )
 	DEBUG_LOG(("*** End missing strings ***"));
 	DEBUG_LOG_RAW(("\n"));
 
-	m_noStringList = NULL;
+	m_noStringList = nullptr;
 
 	m_initialized = FALSE;
 }
@@ -410,10 +410,10 @@ void GameTextManager::deinit( void )
 void GameTextManager::reset( void )
 {
 	delete [] m_mapStringInfo;
-	m_mapStringInfo = NULL;
+	m_mapStringInfo = nullptr;
 
 	delete [] m_mapStringLUT;
-	m_mapStringLUT = NULL;
+	m_mapStringLUT = nullptr;
 }
 
 
@@ -515,7 +515,7 @@ void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *w
 		{
 			if ( (ch = *in++) == 0 )
 			{
-				in = NULL; // have exhausted the input m_buffer
+				in = nullptr; // have exhausted the input m_buffer
 				ch = readChar ( file );
 			}
 		}
@@ -572,7 +572,7 @@ void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *w
 		{
 			if ( (ch = *in++) == 0 )
 			{
-				in = NULL; // have exhausted the input m_buffer
+				in = nullptr; // have exhausted the input m_buffer
 				ch = readChar ( file );
 			}
 		}
@@ -678,7 +678,7 @@ void GameTextManager::translateCopy( WideChar *outbuf, Char *inbuf )
 	if ( m_jabberWockie )
 	{
 		static Char buffer[MAX_UITEXT_LENGTH*2];
-		Char *firstLetter = NULL, *lastLetter;
+		Char *firstLetter = nullptr, *lastLetter;
 		Char *b = buffer;
 		Int formatWord = FALSE;
 		Char ch;
@@ -694,7 +694,7 @@ void GameTextManager::translateCopy( WideChar *outbuf, Char *inbuf )
 						lastLetter = b-1;
 						reverseWord ( firstLetter, lastLetter );
 					}
-					firstLetter = NULL;
+					firstLetter = nullptr;
 					formatWord = FALSE;
 				}
 				*b++ = ch;
@@ -807,7 +807,7 @@ Bool GameTextManager::getStringCount( const char *filename, Int& textCount )
 	file = TheFileSystem->openFile(filename, File::READ | File::TEXT);
 	DEBUG_LOG(("Looking in %s for string file", filename));
 
-	if ( file == NULL )
+	if ( file == nullptr )
 	{
 		return FALSE;
 	}
@@ -833,7 +833,7 @@ Bool GameTextManager::getStringCount( const char *filename, Int& textCount )
 
 	textCount += 500;
 	file->close();
-	file = NULL;
+	file = nullptr;
 	return TRUE;
 }
 
@@ -848,7 +848,7 @@ Bool GameTextManager::getCSFInfo ( const Char *filename )
 	File *file = TheFileSystem->openFile(filename, File::READ | File::BINARY);
 	DEBUG_LOG(("Looking in %s for compiled string file", filename));
 
-	if ( file != NULL )
+	if ( file != nullptr )
 	{
 		if ( file->read( &header, sizeof ( header )) == sizeof ( header ) )
 		{
@@ -870,7 +870,7 @@ Bool GameTextManager::getCSFInfo ( const Char *filename )
 		}
 
 		file->close();
-		file = NULL;
+		file = nullptr;
 	}
 
 	return ok;
@@ -891,7 +891,7 @@ Bool GameTextManager::parseCSF( const Char *filename )
 
 	file = TheFileSystem->openFile(filename, File::READ | File::BINARY);
 
-	if ( file == NULL )
+	if ( file == nullptr )
 	{
 		return FALSE;
 	}
@@ -997,7 +997,7 @@ Bool GameTextManager::parseCSF( const Char *filename )
 quit:
 
 	file->close();
-	file = NULL;
+	file = nullptr;
 
 	return ok;
 }
@@ -1014,7 +1014,7 @@ Bool GameTextManager::parseStringFile( const char *filename )
 
 	File *file = TheFileSystem->openFile(filename, File::READ | File::TEXT);
 
-	if ( file == NULL )
+	if ( file == nullptr )
 	{
 		return FALSE;
 	}
@@ -1099,7 +1099,7 @@ Bool GameTextManager::parseStringFile( const char *filename )
 quit:
 
 	file->close();
-	file = NULL;
+	file = nullptr;
 
 	return ok;
 }
@@ -1145,7 +1145,7 @@ Bool GameTextManager::parseMapStringFile( const char *filename )
 	File *file;
 
 	file = TheFileSystem->openFile(filename, File::READ | File::TEXT);
-	if ( file == NULL )
+	if ( file == nullptr )
 	{
 		return FALSE;
 	}
@@ -1234,7 +1234,7 @@ Bool GameTextManager::parseMapStringFile( const char *filename )
 quit:
 
 	file->close();
-	file = NULL;
+	file = nullptr;
 
 	return ok;
 }
@@ -1247,7 +1247,7 @@ UnicodeString GameTextManager::fetch( const Char *label, Bool *exists )
 {
 	DEBUG_ASSERTCRASH ( m_initialized, ("String Manager has not been m_initialized") );
 
-	if( m_stringInfo == NULL )
+	if( m_stringInfo == nullptr )
 	{
 		if( exists )
 			*exists = FALSE;
@@ -1258,17 +1258,17 @@ UnicodeString GameTextManager::fetch( const Char *label, Bool *exists )
 	StringLookUp key;
 	AsciiString lb;
 	lb = label;
-	key.info = NULL;
+	key.info = nullptr;
 	key.label = &lb;
 
 	lookUp = (StringLookUp *) bsearch( &key, (void*) m_stringLUT, m_textCount, sizeof(StringLookUp), compareLUT );
 
-	if ( lookUp == NULL && m_mapStringLUT && m_mapTextCount )
+	if ( lookUp == nullptr && m_mapStringLUT && m_mapTextCount )
 	{
 		lookUp = (StringLookUp *) bsearch( &key, (void*) m_mapStringLUT, m_mapTextCount, sizeof(StringLookUp), compareLUT );
 	}
 
-	if( lookUp == NULL )
+	if( lookUp == nullptr )
 	{
 
 		// string not found

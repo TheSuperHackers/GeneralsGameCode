@@ -46,9 +46,9 @@
 #include "GameNetwork/GameInfo.h"
 #include "GameNetwork/NetworkInterface.h"
 
-static GameWindow *chatWindow = NULL;
-static GameWindow *chatTextEntry = NULL;
-static GameWindow *chatTypeStaticText = NULL;
+static GameWindow *chatWindow = nullptr;
+static GameWindow *chatTextEntry = nullptr;
+static GameWindow *chatTypeStaticText = nullptr;
 static UnicodeString s_savedChat;
 static InGameChatType inGameChatType;
 
@@ -79,11 +79,11 @@ void ShowInGameChat( Bool immediate )
 		chatWindow = TheWindowManager->winCreateFromScript( "InGameChat.wnd" );
 
 		static NameKeyType textEntryChatID = TheNameKeyGenerator->nameToKey( "InGameChat.wnd:TextEntryChat" );
-		chatTextEntry = TheWindowManager->winGetWindowFromId( NULL, textEntryChatID );
+		chatTextEntry = TheWindowManager->winGetWindowFromId( nullptr, textEntryChatID );
 		GadgetTextEntrySetText( chatTextEntry, UnicodeString::TheEmptyString );
 
 		static NameKeyType chatTypeStaticTextID = TheNameKeyGenerator->nameToKey( "InGameChat.wnd:StaticTextChatType" );
-		chatTypeStaticText = TheWindowManager->winGetWindowFromId( NULL, chatTypeStaticTextID );
+		chatTypeStaticText = TheWindowManager->winGetWindowFromId( nullptr, chatTypeStaticTextID );
 	}
 	TheWindowManager->winSetFocus( chatTextEntry );
 	SetInGameChatType( INGAME_CHAT_EVERYONE );
@@ -95,9 +95,9 @@ void ResetInGameChat( void )
 {
 	if(chatWindow)
 		TheWindowManager->winDestroy( chatWindow );
-	chatWindow = NULL;
-	chatTextEntry = NULL;
-	chatTypeStaticText = NULL;
+	chatWindow = nullptr;
+	chatTextEntry = nullptr;
+	chatTypeStaticText = nullptr;
 	s_savedChat.clear();
 }
 
@@ -112,9 +112,9 @@ void HideInGameChat( Bool immediate )
 		chatWindow->winEnable(FALSE);
 		chatTextEntry->winHide(TRUE);
 		chatTextEntry->winEnable(FALSE);
-		TheWindowManager->winSetFocus( NULL );
+		TheWindowManager->winSetFocus( nullptr );
 	}
-	TheWindowManager->winSetFocus( NULL );
+	TheWindowManager->winSetFocus( nullptr );
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -145,7 +145,7 @@ void SetInGameChatType( InGameChatType chatType )
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 Bool IsInGameChatActive() {
-	if (chatWindow != NULL) {
+	if (chatWindow != nullptr) {
 		if (chatWindow->winIsHidden() == FALSE) {
 			return TRUE;
 		}

@@ -215,7 +215,7 @@ private:
 	do \
 	{ \
 		Drawable* _xq_nextDrawable; \
-		for (Drawable* DRAW = TheGameClient->firstDrawable(); DRAW != NULL; DRAW = _xq_nextDrawable ) \
+		for (Drawable* DRAW = TheGameClient->firstDrawable(); DRAW != nullptr; DRAW = _xq_nextDrawable ) \
 		{ \
 			_xq_nextDrawable = DRAW->getNextDrawable(); \
 			if (DRAW->getStatusFlags() & (STATUS)) \
@@ -246,29 +246,29 @@ extern GameClient *TheGameClient;
 //
 //	GameEngine:
 //		TheGameClient is partially disabled:
-//			TheKeyboard = NULL
-//			TheMouse = NULL
+//			TheKeyboard = nullptr
+//			TheMouse = nullptr
 //			TheDisplay is partially disabled:
-//				m_3DInterfaceScene = NULL
-//				m_2DScene = NULL
-//				m_3DScene = NULL
+//				m_3DInterfaceScene = nullptr
+//				m_2DScene = nullptr
+//				m_3DScene = nullptr
 //				(m_assetManager remains!)
 //			TheWindowManager = GameWindowManagerDummy
-//			TheIMEManager = NULL
+//			TheIMEManager = nullptr
 //			TheTerrainVisual is partially disabled:
-//				TheTerrainTracksRenderObjClassSystem = NULL
-//				TheW3DShadowManager = NULL
-//				TheWaterRenderObj = NULL
-//				TheSmudgeManager = NULL
+//				TheTerrainTracksRenderObjClassSystem = nullptr
+//				TheW3DShadowManager = nullptr
+//				TheWaterRenderObj = nullptr
+//				TheSmudgeManager = nullptr
 //				TheTerrainRenderObject is partially disabled:
-//					m_treeBuffer = NULL
-//					m_propBuffer = NULL
-//					m_bibBuffer = NULL
+//					m_treeBuffer = nullptr
+//					m_propBuffer = nullptr
+//					m_bibBuffer = nullptr
 //					m_bridgeBuffer is partially disabled:
-//						m_vertexBridge = NULL
-//						m_indexBridge = NULL
-//						m_vertexMaterial = NULL
-//					m_waypointBuffer = NULL
-//					m_roadBuffer = NULL
-//					m_shroud = NULL
+//						m_vertexBridge = nullptr
+//						m_indexBridge = nullptr
+//						m_vertexMaterial = nullptr
+//					m_waypointBuffer = nullptr
+//					m_roadBuffer = nullptr
+//					m_shroud = nullptr
 //		TheRadar = RadarDummy

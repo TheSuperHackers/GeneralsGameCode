@@ -107,7 +107,7 @@ public:
 
 protected:
 
-	void newWorkerRespawnProcess( Object *existingWorker );		///< start the worker respawn process (again if existingWorker is non NULL)
+	void newWorkerRespawnProcess( Object *existingWorker );		///< start the worker respawn process (again if existingWorker is non nullptr)
 
 	ObjectID m_workerID;										///< id of the worker that will rebuild us
 	ObjectID m_reconstructingID;						///< ID of the object we're reconstructing

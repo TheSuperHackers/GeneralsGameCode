@@ -219,7 +219,7 @@ protected:
 
 inline int MaterialInfoClass::Add_Vertex_Material(VertexMaterialClass * vmat)
 {
-	if (vmat != NULL) {
+	if (vmat != nullptr) {
 		vmat->Add_Ref();
 	}
 	int index = VertexMaterials.Count();
@@ -251,7 +251,7 @@ inline VertexMaterialClass * MaterialInfoClass::Get_Vertex_Material(const char *
 {
 	int index = Get_Vertex_Material_Index(name);
 	if (index == -1) {
-		return NULL;
+		return nullptr;
 	} else {
 		return Get_Vertex_Material(index);
 	}
@@ -268,7 +268,7 @@ inline VertexMaterialClass * MaterialInfoClass::Peek_Vertex_Material(const char 
 {
 	int index = Get_Vertex_Material_Index(name);
 	if (index == -1) {
-		return NULL;
+		return nullptr;
 	} else {
 		return Peek_Vertex_Material(index);
 	}
@@ -308,7 +308,7 @@ inline TextureClass * MaterialInfoClass::Get_Texture(const char * name)
 {
 	int index = Get_Texture_Index(name);
 	if (index == -1) {
-		return NULL;
+		return nullptr;
 	} else {
 		return Get_Texture(index);
 	}

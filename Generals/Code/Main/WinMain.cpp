@@ -70,9 +70,9 @@
 
 
 // GLOBALS ////////////////////////////////////////////////////////////////////
-HINSTANCE ApplicationHInstance = NULL;  ///< our application instance
-HWND ApplicationHWnd = NULL;  ///< our application window handle
-Win32Mouse *TheWin32Mouse = NULL;  ///< for the WndProc() only
+HINSTANCE ApplicationHInstance = nullptr;  ///< our application instance
+HWND ApplicationHWnd = nullptr;  ///< our application window handle
+Win32Mouse *TheWin32Mouse = nullptr;  ///< for the WndProc() only
 DWORD TheMessageTime = 0;	///< For getting the time that a message was posted from Windows.
 
 const Char *g_strFile = "data\\Generals.str";
@@ -83,7 +83,7 @@ static Bool gInitializing = false;
 static Bool gDoPaint = true;
 static Bool isWinMainActive = false;
 
-static HBITMAP gLoadScreenBitmap = NULL;
+static HBITMAP gLoadScreenBitmap = nullptr;
 
 //#define DEBUG_WINDOWS_MESSAGES
 
@@ -516,7 +516,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			//-------------------------------------------------------------------------
 			case 0x020A: // WM_MOUSEWHEEL
 			{
-				if( TheWin32Mouse == NULL )
+				if( TheWin32Mouse == nullptr )
 					return 0;
 
 				long x = (long) LOWORD(lParam);
@@ -535,7 +535,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			//-------------------------------------------------------------------------
 			case WM_MOUSEMOVE:
 			{
-				if( TheWin32Mouse == NULL )
+				if( TheWin32Mouse == nullptr )
 					return 0;
 
 				// ignore when window is not active
@@ -584,7 +584,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 					::SetBkColor(dc, RGB(0,0,0));
 					::TextOut(dc, 30, 30, "Loading Command & Conquer Generals...", 37);
 #endif
-					if (gLoadScreenBitmap!=NULL) {
+					if (gLoadScreenBitmap!=nullptr) {
 						Int savContext = ::SaveDC(dc);
 						HDC tmpDC = ::CreateCompatibleDC(dc);
 						HBITMAP savBitmap = (HBITMAP)::SelectObject(tmpDC, gLoadScreenBitmap);
@@ -677,8 +677,8 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 
   WNDCLASS wndClass = { CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, WndProc, 0, 0, hInstance,
                        LoadIcon (hInstance, MAKEINTRESOURCE(IDI_ApplicationIcon)),
-                       NULL/*LoadCursor(NULL, IDC_ARROW)*/,
-                       (HBRUSH)GetStockObject(BLACK_BRUSH), NULL,
+                       nullptr/*LoadCursor(nullptr, IDC_ARROW)*/,
+                       (HBRUSH)GetStockObject(BLACK_BRUSH), nullptr,
 	                     TEXT("Game Window") };
   RegisterClass( &wndClass );
 
@@ -715,10 +715,10 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 														//(GetSystemMetrics( SM_CYSCREEN ) / 25) - (startHeight / 25),//this works with any screen res
 														rect.right-rect.left,
 														rect.bottom-rect.top,
-														0L,
-														0L,
+														nullptr,
+														nullptr,
 														hInstance,
-														0L );
+														nullptr );
 
 
 	if (!runWindowed)
@@ -795,7 +795,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 		/// @todo remove this force set of working directory later
 		Char buffer[ _MAX_PATH ];
-		GetModuleFileName( NULL, buffer, sizeof( buffer ) );
+		GetModuleFileName( nullptr, buffer, sizeof( buffer ) );
 		if (Char *pEnd = strrchr(buffer, '\\'))
 		{
 			*pEnd = 0;
@@ -834,14 +834,14 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// save our application instance for future use
 		ApplicationHInstance = hInstance;
 
-		if (gLoadScreenBitmap!=NULL) {
+		if (gLoadScreenBitmap!=nullptr) {
 			::DeleteObject(gLoadScreenBitmap);
-			gLoadScreenBitmap = NULL;
+			gLoadScreenBitmap = nullptr;
 		}
 
 
 		// BGC - initialize COM
-	//	OleInitialize(NULL);
+	//	OleInitialize(nullptr);
 
 
 
@@ -855,7 +855,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 		if (!rts::ClientInstance::initialize())
 		{
-			HWND ccwindow = FindWindow(rts::ClientInstance::getFirstInstanceName(), NULL);
+			HWND ccwindow = FindWindow(rts::ClientInstance::getFirstInstanceName(), nullptr);
 			if (ccwindow)
 			{
 				SetForegroundWindow(ccwindow);
@@ -864,7 +864,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 			DEBUG_LOG(("Generals is already running...Bail!"));
 			delete TheVersion;
-			TheVersion = NULL;
+			TheVersion = nullptr;
 			shutdownMemoryManager();
 			return exitcode;
 		}
@@ -875,7 +875,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		exitcode = GameMain();
 
 		delete TheVersion;
-		TheVersion = NULL;
+		TheVersion = nullptr;
 
 	#ifdef MEMORYPOOL_DEBUG
 		TheMemoryPoolFactory->debugMemoryReport(REPORT_POOLINFO | REPORT_POOL_OVERFLOW | REPORT_SIMPLE_LEAKS, 0, 0);
@@ -897,10 +897,10 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #ifdef RTS_ENABLE_CRASHDUMP
 	MiniDumper::shutdownMiniDumper();
 #endif
-	TheAsciiStringCriticalSection = NULL;
-	TheUnicodeStringCriticalSection = NULL;
-	TheDmaCriticalSection = NULL;
-	TheMemoryPoolCriticalSection = NULL;
+	TheAsciiStringCriticalSection = nullptr;
+	TheUnicodeStringCriticalSection = nullptr;
+	TheDmaCriticalSection = nullptr;
+	TheMemoryPoolCriticalSection = nullptr;
 
 	return exitcode;
 

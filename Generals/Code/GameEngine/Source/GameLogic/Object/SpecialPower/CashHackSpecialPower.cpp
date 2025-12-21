@@ -53,8 +53,8 @@ static void parseCashHackUpgradePair( INI* ini, void * /*instance*/, void *store
 {
 	CashHackSpecialPowerModuleData::Upgrades up;
 
-	INI::parseScience(ini, NULL, &up.m_science, NULL);
-	INI::parseInt(ini, NULL, &up.m_amountToSteal, NULL);
+	INI::parseScience(ini, nullptr, &up.m_science, nullptr);
+	INI::parseInt(ini, nullptr, &up.m_amountToSteal, nullptr);
 
 	std::vector<CashHackSpecialPowerModuleData::Upgrades>* s = (std::vector<CashHackSpecialPowerModuleData::Upgrades>*)store;
 	s->push_back(up);
@@ -68,9 +68,9 @@ static void parseCashHackUpgradePair( INI* ini, void * /*instance*/, void *store
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "UpgradeMoneyAmount", parseCashHackUpgradePair, NULL, offsetof( CashHackSpecialPowerModuleData, m_upgrades ) },
-		{ "MoneyAmount", INI::parseInt, NULL, offsetof( CashHackSpecialPowerModuleData, m_defaultAmountToSteal ) },
-		{ 0, 0, 0, 0 }
+		{ "UpgradeMoneyAmount", parseCashHackUpgradePair, nullptr, offsetof( CashHackSpecialPowerModuleData, m_upgrades ) },
+		{ "MoneyAmount", INI::parseInt, nullptr, offsetof( CashHackSpecialPowerModuleData, m_defaultAmountToSteal ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 
@@ -112,7 +112,7 @@ Int CashHackSpecialPower::findAmountToSteal() const
 {
 	const CashHackSpecialPowerModuleData* d = getCashHackSpecialPowerModuleData();
 	const Player* controller = getObject()->getControllingPlayer();
-	if (controller != NULL)
+	if (controller != nullptr)
 	{
 		for (std::vector<CashHackSpecialPowerModuleData::Upgrades>::const_iterator it = d->m_upgrades.begin();
 					it != d->m_upgrades.end();

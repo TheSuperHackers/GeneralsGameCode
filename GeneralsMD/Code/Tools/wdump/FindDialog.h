@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // FindDialog.h : header file
 //
@@ -31,7 +32,7 @@ class FindDialog : public CDialog
 {
 // Construction
 public:
-	FindDialog(CWnd* pParent = NULL);   // standard constructor
+	FindDialog(CWnd* pParent = nullptr);   // standard constructor
 
 	static const char *String()
 	{
@@ -40,7 +41,7 @@ public:
 
 	static void Compare (const char *string)
 	{
-		_Found |= (strstr (string, _FindString) != NULL);
+		_Found |= (strstr (string, _FindString) != nullptr);
 	}
 
 	static bool Found()

@@ -121,25 +121,25 @@ static SimpleVecClass<Vector3> _VNormArray(1024);
  *   11/9/2000  gth : Created.                                                                 *
  *=============================================================================================*/
 MeshGeometryClass::MeshGeometryClass(void) :
-	MeshName(NULL),
-	UserText(NULL),
+	MeshName(nullptr),
+	UserText(nullptr),
 	Flags(0),
 	SortLevel(SORT_LEVEL_NONE),
 	W3dAttributes(0),
 	PolyCount(0),
 	VertexCount(0),
-	Poly(NULL),
-	PolySurfaceType(NULL),
-	Vertex(NULL),
-	VertexNorm(NULL),
-	PlaneEq(NULL),
-	VertexShadeIdx(NULL),
-	VertexBoneLink(NULL),
+	Poly(nullptr),
+	PolySurfaceType(nullptr),
+	Vertex(nullptr),
+	VertexNorm(nullptr),
+	PlaneEq(nullptr),
+	VertexShadeIdx(nullptr),
+	VertexBoneLink(nullptr),
 	BoundBoxMin(0,0,0),
 	BoundBoxMax(1,1,1),
 	BoundSphereCenter(0,0,0),
 	BoundSphereRadius(1),
-	CullTree(NULL)
+	CullTree(nullptr)
 {
 }
 
@@ -157,25 +157,25 @@ MeshGeometryClass::MeshGeometryClass(void) :
  *   11/9/2000  gth : Created.                                                                 *
  *=============================================================================================*/
 MeshGeometryClass::MeshGeometryClass(const MeshGeometryClass & that) :
-	MeshName(NULL),
-	UserText(NULL),
+	MeshName(nullptr),
+	UserText(nullptr),
 	Flags(0),
 	SortLevel(SORT_LEVEL_NONE),
 	W3dAttributes(0),
 	PolyCount(0),
 	VertexCount(0),
-	Poly(NULL),
-	PolySurfaceType(NULL),
-	Vertex(NULL),
-	VertexNorm(NULL),
-	PlaneEq(NULL),
-	VertexShadeIdx(NULL),
-	VertexBoneLink(NULL),
+	Poly(nullptr),
+	PolySurfaceType(nullptr),
+	Vertex(nullptr),
+	VertexNorm(nullptr),
+	PlaneEq(nullptr),
+	VertexShadeIdx(nullptr),
+	VertexBoneLink(nullptr),
 	BoundBoxMin(0,0,0),
 	BoundBoxMax(1,1,1),
 	BoundSphereCenter(0,0,0),
 	BoundSphereRadius(1),
-	CullTree(NULL)
+	CullTree(nullptr)
 {
 	*this = that;
 }
@@ -311,7 +311,7 @@ const char * MeshGeometryClass::Get_Name(void) const
 	if (MeshName) {
 		return MeshName->Get_Array();
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -356,7 +356,7 @@ const char * MeshGeometryClass::Get_User_Text(void)
 	if (UserText) {
 		return UserText->Get_Array();
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -398,7 +398,7 @@ void MeshGeometryClass::Set_User_Text(char * usertext)
  *=============================================================================================*/
 void MeshGeometryClass::Get_Bounding_Box(AABoxClass * set_box)
 {
-	WWASSERT(set_box != NULL);
+	WWASSERT(set_box != nullptr);
 	set_box->Center = (BoundBoxMax + BoundBoxMin) * 0.5f;
 	set_box->Extent = (BoundBoxMax - BoundBoxMin) * 0.5f;
 }
@@ -418,7 +418,7 @@ void MeshGeometryClass::Get_Bounding_Box(AABoxClass * set_box)
  *=============================================================================================*/
 void MeshGeometryClass::Get_Bounding_Sphere(SphereClass * set_sphere)
 {
-	WWASSERT(set_sphere != NULL);
+	WWASSERT(set_sphere != nullptr);
 	set_sphere->Center = BoundSphereCenter;
 	set_sphere->Radius = BoundSphereRadius;
 }
@@ -473,7 +473,7 @@ void MeshGeometryClass::Generate_Rigid_APT(const Vector3 & view_dir, SimpleDynVe
  *=============================================================================================*/
 void MeshGeometryClass::Generate_Rigid_APT(const OBBoxClass & local_box, SimpleDynVecClass<uint32> & apt)
 {
-	if (CullTree != NULL) {
+	if (CullTree != nullptr) {
 		CullTree->Generate_APT(local_box, apt);
 	} else {
 
@@ -512,7 +512,7 @@ void MeshGeometryClass::Generate_Rigid_APT(const OBBoxClass & local_box, SimpleD
  *=============================================================================================*/
 void MeshGeometryClass::Generate_Rigid_APT(const OBBoxClass & local_box,const Vector3 & viewdir,SimpleDynVecClass<uint32> & apt)
 {
-	if (CullTree != NULL) {
+	if (CullTree != nullptr) {
 		CullTree->Generate_APT(local_box, viewdir,apt);
 	} else {
 
@@ -1247,7 +1247,7 @@ bool MeshGeometryClass::cast_obbox_brute_force(OBBoxCollisionTestClass & boxtest
  *=============================================================================================*/
 void MeshGeometryClass::Compute_Plane_Equations(Vector4 * peq)
 {
-	WWASSERT(peq!=NULL);
+	WWASSERT(peq!=nullptr);
 
 	TriIndex * poly	= Poly->Get_Array();
 	Vector3 * vert		= Vertex->Get_Array();
@@ -1284,7 +1284,7 @@ void MeshGeometryClass::Compute_Plane_Equations(Vector4 * peq)
  *=============================================================================================*/
 void MeshGeometryClass::Compute_Vertex_Normals(Vector3 * vnorm)
 {
-	WWASSERT(vnorm != NULL);
+	WWASSERT(vnorm != nullptr);
 	if ((PolyCount == 0)|| (VertexCount == 0)) {
 		return;
 	}
@@ -1376,7 +1376,7 @@ void MeshGeometryClass::Compute_Bounds(Vector3 * verts)
 	}
 
 	// find bounding box minimum and maximum
-	if (verts == NULL) {
+	if (verts == nullptr) {
 		verts = Vertex->Get_Array();
 	}
 	VectorProcessorClass::MinMax(verts,BoundBoxMin,BoundBoxMax,VertexCount);
@@ -1465,7 +1465,7 @@ Vector4 * MeshGeometryClass::get_planes(bool create)
 	if (PlaneEq) {
 		return PlaneEq->Get_Array();
 	}
-	return NULL;
+	return nullptr;
 #endif
 }
 
@@ -1540,7 +1540,7 @@ void MeshGeometryClass::Generate_Culling_Tree(void)
 		AABTreeBuilderClass builder;
 		builder.Build_AABTree(PolyCount,Poly->Get_Array(),VertexCount,Vertex->Get_Array());
 
-		DEBUG_ASSERTCRASH(CullTree == NULL, ("MeshGeometryClass::Generate_Culling_Tree: Leaking CullTree"));
+		DEBUG_ASSERTCRASH(CullTree == nullptr, ("MeshGeometryClass::Generate_Culling_Tree: Leaking CullTree"));
 		CullTree = NEW_REF(AABTreeClass,(&builder));
 		CullTree->Set_Mesh(this);
 	}
@@ -1611,7 +1611,7 @@ WW3DErrorType MeshGeometryClass::Load_W3D(ChunkLoadClass & cload)
 	Set_Name(tmpname);
 
 	delete[] tmpname;
-	tmpname = NULL;
+	tmpname = nullptr;
 
 	/*
 	** Set Bounding Info
@@ -1671,7 +1671,7 @@ WW3DErrorType MeshGeometryClass::Load_W3D(ChunkLoadClass & cload)
 	** If this mesh is collideable and no AABTree was in the file, generate one now
 	*/
 	if (	(((W3dAttributes & W3D_MESH_FLAG_COLLISION_TYPE_MASK) >> W3D_MESH_FLAG_COLLISION_TYPE_SHIFT) != 0) &&
-			(CullTree == NULL))
+			(CullTree == nullptr))
 	{
 		Generate_Culling_Tree();
 	}
@@ -1892,9 +1892,9 @@ WW3DErrorType MeshGeometryClass::read_user_text(ChunkLoadClass & cload)
 	** This shouldn't happen but if there are more than one
 	** USER_TEXT chunks in the mesh file, store only the first
 	** one.  I am assuming that if the UserText buffer is not
-	** NULL, then a previous user text chunk has been read in...
+	** nullptr, then a previous user text chunk has been read in...
 	*/
-	if (UserText != NULL) {
+	if (UserText != nullptr) {
 		return WW3D_ERROR_OK;
 	}
 

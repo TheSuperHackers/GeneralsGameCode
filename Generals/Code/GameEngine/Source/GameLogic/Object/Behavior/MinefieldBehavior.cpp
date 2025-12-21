@@ -53,7 +53,7 @@ const Real MIN_HEALTH = 0.1f;
 // ------------------------------------------------------------------------------------------------
 MinefieldBehaviorModuleData::MinefieldBehaviorModuleData()
 {
-	m_detonationWeapon = NULL;
+	m_detonationWeapon = nullptr;
 	m_detonatedBy = (1 << ENEMIES) | (1 << NEUTRAL);
 	m_stopsRegenAfterCreatorDies = true;
 	m_regenerates = false;
@@ -74,17 +74,17 @@ MinefieldBehaviorModuleData::MinefieldBehaviorModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "DetonationWeapon", INI::parseWeaponTemplate,	NULL, offsetof( MinefieldBehaviorModuleData, m_detonationWeapon ) },
+		{ "DetonationWeapon", INI::parseWeaponTemplate,	nullptr, offsetof( MinefieldBehaviorModuleData, m_detonationWeapon ) },
 		{ "DetonatedBy", INI::parseBitString32, TheRelationshipNames, offsetof( MinefieldBehaviorModuleData, m_detonatedBy ) },
-		{ "StopsRegenAfterCreatorDies", INI::parseBool, NULL, offsetof( MinefieldBehaviorModuleData, m_stopsRegenAfterCreatorDies ) },
-		{ "Regenerates", INI::parseBool, NULL, offsetof( MinefieldBehaviorModuleData, m_regenerates ) },
-		{ "WorkersDetonate", INI::parseBool, NULL, offsetof( MinefieldBehaviorModuleData, m_workersDetonate ) },
-		{ "CreatorDeathCheckRate", INI::parseDurationUnsignedInt, NULL, offsetof( MinefieldBehaviorModuleData, m_creatorDeathCheckRate ) },
-		{ "ScootFromStartingPointTime", INI::parseDurationUnsignedInt, NULL, offsetof( MinefieldBehaviorModuleData, m_scootFromStartingPointTime ) },
-		{ "NumVirtualMines", INI::parseUnsignedInt, NULL, offsetof( MinefieldBehaviorModuleData, m_numVirtualMines ) },
-		{ "RepeatDetonateMoveThresh", INI::parseReal, NULL, offsetof( MinefieldBehaviorModuleData, m_repeatDetonateMoveThresh ) },
-		{ "DegenPercentPerSecondAfterCreatorDies", INI::parsePercentToReal,	NULL, offsetof( MinefieldBehaviorModuleData, m_healthPercentToDrainPerSecond ) },
-		{ 0, 0, 0, 0 }
+		{ "StopsRegenAfterCreatorDies", INI::parseBool, nullptr, offsetof( MinefieldBehaviorModuleData, m_stopsRegenAfterCreatorDies ) },
+		{ "Regenerates", INI::parseBool, nullptr, offsetof( MinefieldBehaviorModuleData, m_regenerates ) },
+		{ "WorkersDetonate", INI::parseBool, nullptr, offsetof( MinefieldBehaviorModuleData, m_workersDetonate ) },
+		{ "CreatorDeathCheckRate", INI::parseDurationUnsignedInt, nullptr, offsetof( MinefieldBehaviorModuleData, m_creatorDeathCheckRate ) },
+		{ "ScootFromStartingPointTime", INI::parseDurationUnsignedInt, nullptr, offsetof( MinefieldBehaviorModuleData, m_scootFromStartingPointTime ) },
+		{ "NumVirtualMines", INI::parseUnsignedInt, nullptr, offsetof( MinefieldBehaviorModuleData, m_numVirtualMines ) },
+		{ "RepeatDetonateMoveThresh", INI::parseReal, nullptr, offsetof( MinefieldBehaviorModuleData, m_repeatDetonateMoveThresh ) },
+		{ "DegenPercentPerSecondAfterCreatorDies", INI::parsePercentToReal,	nullptr, offsetof( MinefieldBehaviorModuleData, m_healthPercentToDrainPerSecond ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add( dataFieldParse );
@@ -215,7 +215,7 @@ UpdateSleepTime MinefieldBehavior::update()
 		if (m_immunes[i].id == INVALID_ID)
 			continue;
 
-		if (TheGameLogic->findObjectByID(m_immunes[i].id) == NULL ||
+		if (TheGameLogic->findObjectByID(m_immunes[i].id) == nullptr ||
 				now > m_immunes[i].collideTime + 2)
 		{
 			//DEBUG_LOG(("expiring an immunity %d",m_immunes[i].id));
@@ -237,7 +237,7 @@ UpdateSleepTime MinefieldBehavior::update()
 			if (producerID != INVALID_ID)
 			{
 				Object* producer = TheGameLogic->findObjectByID(producerID);
-				if (producer == NULL || producer->isEffectivelyDead())
+				if (producer == nullptr || producer->isEffectivelyDead())
 				{
 					m_regenerates = false;
 					m_draining = true;
@@ -331,7 +331,7 @@ static Real calcDistSquared(const Coord3D& a, const Coord3D& b)
 //-------------------------------------------------------------------------------------------------
 void MinefieldBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3D *normal )
 {
-	if (other == NULL || other->isEffectivelyDead())
+	if (other == nullptr || other->isEffectivelyDead())
 		return;
 
 	if (m_virtualMinesRemaining == 0)
@@ -377,7 +377,7 @@ void MinefieldBehavior::onCollide( Object *other, const Coord3D *loc, const Coor
 	// have a real mine they area trying to clear... it's possible they could be trying to
 	// clear a position where there is no mine, in which case we grant them no immunity, muwahahaha)
 	AIUpdateInterface* otherAI = other->getAI();
-	if (otherAI && otherAI->isClearingMines() && otherAI->getGoalObject() != NULL)
+	if (otherAI && otherAI->isClearingMines() && otherAI->getGoalObject() != nullptr)
 	{
 		// mine-clearers are granted immunity to us for as long as they continuously
 		// collide, even if no longer clearing mines. (this prevents the problem

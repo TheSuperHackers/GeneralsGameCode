@@ -34,6 +34,7 @@
 ******************************************************************************/
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 class CallbackHook
 	{
@@ -68,7 +69,7 @@ template<class T> class Callback : public CallbackHook
 
 		virtual bool DoCallback(void) const
 			{
-			if (mCallback != NULL)
+			if (mCallback != nullptr)
 				{
 				return mCallback(mUserData);
 				}

@@ -37,9 +37,9 @@ static char THIS_FILE[] = __FILE__;
 // PlaySoundDialogClass
 //
 /////////////////////////////////////////////////////////////////////////////
-PlaySoundDialogClass::PlaySoundDialogClass(LPCTSTR filename, CWnd* pParent /*=NULL*/)
+PlaySoundDialogClass::PlaySoundDialogClass(LPCTSTR filename, CWnd* pParent /*=nullptr*/)
 	:	Filename (filename),
-		SoundObj (NULL),
+		SoundObj (nullptr),
 		CDialog(PlaySoundDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(PlaySoundDialogClass)
@@ -81,8 +81,8 @@ END_MESSAGE_MAP()
 void
 PlaySoundDialogClass::OnPlaySoundEffect (void)
 {
-	ASSERT (SoundObj != NULL);
-	if (SoundObj != NULL) {
+	ASSERT (SoundObj != nullptr);
+	if (SoundObj != nullptr) {
 		SoundObj->Stop ();
 		SoundObj->Play ();
 	}
@@ -126,7 +126,7 @@ PlaySoundDialogClass::OnInitDialog (void)
 	//	Create the sound effect so we can play it
 	//
 	SoundObj = WWAudioClass::Get_Instance ()->Create_Sound_Effect (Filename);
-	if (SoundObj == NULL) {
+	if (SoundObj == nullptr) {
 		CString message;
 		message.Format ("Cannot find sound file: %s!", (LPCTSTR)Filename, MB_OK);
 		MessageBox (message, "File Not Found", MB_ICONEXCLAMATION | MB_OK);
@@ -147,8 +147,8 @@ PlaySoundDialogClass::OnInitDialog (void)
 void
 PlaySoundDialogClass::OnStopSoundEffect (void)
 {
-	ASSERT (SoundObj != NULL);
-	if (SoundObj != NULL) {
+	ASSERT (SoundObj != nullptr);
+	if (SoundObj != nullptr) {
 		SoundObj->Stop ();
 	}
 

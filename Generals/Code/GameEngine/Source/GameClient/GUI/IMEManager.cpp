@@ -220,7 +220,7 @@ IMEManager::MessageInfo IMEManager::m_mainMessageInfo[] =
 	{ "WM_IME_ENDCOMPOSITION"		, WM_IME_ENDCOMPOSITION  },
 	{ "WM_IME_COMPOSITION"			, WM_IME_COMPOSITION     },
 	{ "WM_IME_KEYLAST"					, WM_IME_KEYLAST         },
-	{ NULL, 0 }
+	{ nullptr, 0 }
 };
 
 IMEManager::MessageInfo IMEManager::m_notifyInfo[] =
@@ -239,7 +239,7 @@ IMEManager::MessageInfo IMEManager::m_notifyInfo[] =
 	{ "IMN_SETSTATUSWINDOWPOS"		, IMN_SETSTATUSWINDOWPOS  },
 	{ "IMN_GUIDELINE"							, IMN_GUIDELINE           },
 	{ "IMN_PRIVATE"								, IMN_PRIVATE             },
-	{ NULL, 0 }
+	{ nullptr, 0 }
 };
 
 IMEManager::MessageInfo IMEManager::m_requestInfo[] =
@@ -251,7 +251,7 @@ IMEManager::MessageInfo IMEManager::m_requestInfo[] =
 	{ "IMR_RECONVERTSTRING"					, IMR_RECONVERTSTRING       },
 	{ "IMR_CONFIRMRECONVERTSTRING"	, IMR_CONFIRMRECONVERTSTRING},
 #endif
-	{ NULL, 0 }
+	{ nullptr, 0 }
 };
 
 
@@ -267,7 +267,7 @@ IMEManager::MessageInfo IMEManager::m_controlInfo[] =
 	{ "IMC_SETSTATUSWINDOWPOS"		, IMC_SETSTATUSWINDOWPOS  },
 	{ "IMC_CLOSESTATUSWINDOW"			, IMC_CLOSESTATUSWINDOW   },
 	{ "IMC_OPENSTATUSWINDOW"			, IMC_OPENSTATUSWINDOW    },
- 	{ NULL, 0 }
+ 	{ nullptr, 0 }
 };
 
 IMEManager::MessageInfo IMEManager::m_setContextInfo[] =
@@ -278,7 +278,7 @@ IMEManager::MessageInfo IMEManager::m_setContextInfo[] =
 	{ "CANDIDATEWINDOW4"			, ISC_SHOWUICANDIDATEWINDOW<<3	},
 	{ "COMPOSITIONWINDOW"			,	ISC_SHOWUICOMPOSITIONWINDOW		},
 	{ "GUIDELINE"							, ISC_SHOWUIGUIDELINE						},
-	{ NULL, 0 }
+	{ nullptr, 0 }
 };
 
 IMEManager::MessageInfo IMEManager::m_setCmodeInfo[] =
@@ -296,7 +296,7 @@ IMEManager::MessageInfo IMEManager::m_setCmodeInfo[] =
 	{ "EUDC"					, IME_CMODE_EUDC        },
 	{ "SYMBOL"				, IME_CMODE_SYMBOL      },
 	{ "FIXED"					, IME_CMODE_FIXED       },
-	{ NULL, 0 }
+	{ nullptr, 0 }
 };
 
 IMEManager::MessageInfo IMEManager::m_setSmodeInfo[] =
@@ -307,7 +307,7 @@ IMEManager::MessageInfo IMEManager::m_setSmodeInfo[] =
 	{ "AUTOMATIC"			, IME_SMODE_AUTOMATIC    },
 	{ "PHRASEPREDICT"	, IME_SMODE_PHRASEPREDICT},
 	{ "CONVERSATION"	, IME_SMODE_CONVERSATION },
-	{ NULL, 0 }
+	{ nullptr, 0 }
 };
 
 #endif
@@ -316,7 +316,7 @@ IMEManager::MessageInfo IMEManager::m_setSmodeInfo[] =
 //         Public Data
 //----------------------------------------------------------------------------
 
-IMEManagerInterface *TheIMEManager = NULL;
+IMEManagerInterface *TheIMEManager = nullptr;
 
 
 //----------------------------------------------------------------------------
@@ -337,7 +337,7 @@ IMEManagerInterface *TheIMEManager = NULL;
 
 Char*		IMEManager::getMessageName( IMEManager::MessageInfo *msgTable, Int value )
 {
-	Char *name = NULL;
+	Char *name = nullptr;
 
 	if ( msgTable )
 	{
@@ -395,14 +395,14 @@ void		IMEManager::printMessageInfo( Int message, Int wParam, Int lParam )
 		case WM_IME_NOTIFY:
 		{
 			Char *notifyName = getMessageName( m_notifyInfo, wParam );
-			if ( notifyName == NULL ) notifyName = "unknown";
+			if ( notifyName == nullptr ) notifyName = "unknown";
 			DEBUG_LOG(( "IMM: %s(0x%04x) - %s(0x%04x) - 0x%08x",  messageText, message, notifyName, wParam, lParam ));
 			break;
 		}
 		case WM_IME_CONTROL:
 		{
 			Char *controlName = getMessageName( m_controlInfo, wParam );
-			if ( controlName == NULL ) controlName = "unknown";
+			if ( controlName == nullptr ) controlName = "unknown";
 
 			DEBUG_LOG(( "IMM: %s(0x%04x) - %s(0x%04x) - 0x%08x",  messageText, message, controlName, wParam, lParam ));
 			break;
@@ -411,7 +411,7 @@ void		IMEManager::printMessageInfo( Int message, Int wParam, Int lParam )
 		case WM_IME_REQUEST:
 		{
 			Char *requestName = getMessageName( m_requestInfo, wParam );
-			if ( requestName == NULL ) requestName = "unknown";
+			if ( requestName == nullptr ) requestName = "unknown";
 
 			DEBUG_LOG(( "IMM: %s(0x%04x) - %s(0x%04x) - 0x%08x",  messageText, message, requestName, wParam, lParam ));
 			break;
@@ -444,7 +444,7 @@ void IMEManager::printConversionStatus( void )
 	DWORD mode;
 	if ( m_context )
 	{
-		ImmGetConversionStatus( m_context, &mode, NULL );
+		ImmGetConversionStatus( m_context, &mode, nullptr );
 
 		AsciiString flags;
 
@@ -463,7 +463,7 @@ void IMEManager::printSentenceStatus( void )
 	DWORD mode;
 	if ( m_context )
 	{
-		ImmGetConversionStatus( m_context, NULL, &mode );
+		ImmGetConversionStatus( m_context, nullptr, &mode );
 
 		AsciiString flags;
 
@@ -494,12 +494,12 @@ IMEManagerInterface *CreateIMEManagerInterface( void )
 //============================================================================
 
 IMEManager::IMEManager()
-: m_window(NULL),
-	m_context(NULL),
-	m_candidateWindow(NULL),
-	m_statusWindow(NULL),
+: m_window(nullptr),
+	m_context(nullptr),
+	m_candidateWindow(nullptr),
+	m_statusWindow(nullptr),
 	m_candidateCount(0),
-	m_candidateString(NULL),
+	m_candidateString(nullptr),
 	m_compositionStringLength(0),
 	m_composing(FALSE),
 	m_disabled(0),
@@ -507,9 +507,9 @@ IMEManager::IMEManager()
 	m_indexBase(1),
 
 	m_compositionCharsDisplayed(0),
-	m_candidateDownArrow(NULL),
-	m_candidateTextArea(NULL),
-	m_candidateUpArrow(NULL),
+	m_candidateDownArrow(nullptr),
+	m_candidateTextArea(nullptr),
+	m_candidateUpArrow(nullptr),
 	m_compositionCursorPos(0),
 	m_pageSize(0),
 	m_pageStart(0),
@@ -526,8 +526,8 @@ IMEManager::~IMEManager()
 {
 	if ( m_candidateWindow )
 	{
-		m_candidateWindow->winSetUserData( NULL );
-		m_candidateTextArea->winSetUserData( NULL );
+		m_candidateWindow->winSetUserData( nullptr );
+		m_candidateTextArea->winSetUserData( nullptr );
 
 		TheWindowManager->winDestroy( m_candidateWindow );
 	}
@@ -583,10 +583,10 @@ void IMEManager::init( void )
 
 
 
-		if ( m_candidateTextArea == NULL )
+		if ( m_candidateTextArea == nullptr )
 		{
 			TheWindowManager->winDestroy( m_candidateWindow );
-			m_candidateWindow = NULL;
+			m_candidateWindow = nullptr;
 		}
 	}
 
@@ -598,7 +598,7 @@ void IMEManager::init( void )
 	}
 
 	// attach IMEManager to each window
-	if ( m_candidateWindow != NULL )
+	if ( m_candidateWindow != nullptr )
 	{
 		m_candidateWindow->winSetUserData( TheIMEManager );
 		m_candidateTextArea->winSetUserData( TheIMEManager );
@@ -651,8 +651,8 @@ void IMEManager::attach( GameWindow *window )
 
 void IMEManager::detatch( void )
 {
-	//ImmAssociateContext( ApplicationHWnd, NULL );
-	m_window = NULL;
+	//ImmAssociateContext( ApplicationHWnd, nullptr );
+	m_window = nullptr;
 
 }
 
@@ -999,7 +999,7 @@ void IMEManager::enable( void )
 void IMEManager::disable( void )
 {
 	m_disabled++;
-	ImmAssociateContext( ApplicationHWnd, NULL );
+	ImmAssociateContext( ApplicationHWnd, nullptr );
 }
 
 //============================================================================
@@ -1008,7 +1008,7 @@ void IMEManager::disable( void )
 
 Bool IMEManager::isEnabled( void )
 {
-	return m_context != NULL && m_disabled == 0;
+	return m_context != nullptr && m_disabled == 0;
 }
 
 //============================================================================
@@ -1105,7 +1105,7 @@ void IMEManager::updateCompositionString( void )
 		if ( result >= 0 )
 		{
 			m_compositionStringLength = result/2;
-			m_compositionCursorPos = (ImmGetCompositionStringW( m_context, GCS_CURSORPOS, NULL, 0) & 0xffff );
+			m_compositionCursorPos = (ImmGetCompositionStringW( m_context, GCS_CURSORPOS, nullptr, 0) & 0xffff );
 		}
 		else
 		{
@@ -1126,7 +1126,7 @@ void IMEManager::updateCompositionString( void )
 				}
 				else
 				{
-					m_compositionCursorPos = (ImmGetCompositionString( m_context, GCS_CURSORPOS, NULL, 0) & 0xffff );
+					m_compositionCursorPos = (ImmGetCompositionString( m_context, GCS_CURSORPOS, nullptr, 0) & 0xffff );
 					convRes = wcslen( m_compositionString );
 				}
 
@@ -1205,7 +1205,7 @@ void IMEManager::getResultsString ( void )
 
 void IMEManager::convertToUnicode ( Char *mbcs, UnicodeString &unicode )
 {
- 	int size = MultiByteToWideChar( CP_ACP, 0, mbcs, strlen(mbcs), NULL, 0 );
+ 	int size = MultiByteToWideChar( CP_ACP, 0, mbcs, strlen(mbcs), nullptr, 0 );
 
 	unicode.clear();
 
@@ -1240,7 +1240,7 @@ void IMEManager::convertToUnicode ( Char *mbcs, UnicodeString &unicode )
 
 void IMEManager::openCandidateList( Int candidateFlags )
 {
-	if ( m_candidateWindow == NULL )
+	if ( m_candidateWindow == nullptr )
 	{
 		return;
 	}
@@ -1309,14 +1309,14 @@ void IMEManager::openCandidateList( Int candidateFlags )
 
 void IMEManager::closeCandidateList( Int candidateFlags  )
 {
-	if ( m_candidateWindow != NULL )
+	if ( m_candidateWindow != nullptr )
 	{
 		m_candidateWindow->winHide( TRUE );
 		TheWindowManager->winUnsetModal( m_candidateWindow );
 	}
 
 	delete [] m_candidateString;
-	m_candidateString = NULL;
+	m_candidateString = nullptr;
 
 	m_candidateCount = 0;
 
@@ -1330,15 +1330,15 @@ void IMEManager::updateCandidateList( Int candidateFlags  )
 {
 
 	delete [] m_candidateString;
-	m_candidateString = NULL;
+	m_candidateString = nullptr;
 
 	m_pageSize = 10;
 	m_candidateCount = 0;
 	m_pageStart = 0;
 	m_selectedIndex = 0;
 
-	if (	m_candidateWindow == NULL ||
-				m_context == NULL ||
+	if (	m_candidateWindow == nullptr ||
+				m_context == nullptr ||
 				candidateFlags == 0)
 	{
 		return;
@@ -1366,7 +1366,7 @@ void IMEManager::updateCandidateList( Int candidateFlags  )
 			// create a temporary buffer for reading the candidate list
 			Char *buffer = NEW Char[size];
 
-			if ( buffer == NULL )
+			if ( buffer == nullptr )
 			{
 				return;
 			}
@@ -1478,14 +1478,14 @@ Int IMEManager::getIndexBase( void )
 
 void IMEManager::resizeCandidateWindow( Int pageSize )
 {
-	if ( m_candidateWindow == NULL )
+	if ( m_candidateWindow == nullptr )
 	{
 		return;
 	}
 
 	GameFont *font = m_candidateTextArea->winGetFont();
 
-	if ( font == NULL )
+	if ( font == nullptr )
 	{
 		return;
 	}
@@ -1527,7 +1527,7 @@ Int	IMEManager::getCandidateCount()
 
 const UnicodeString* IMEManager::getCandidate( Int index )
 {
-	if ( m_candidateString != NULL && index >=0 && index < m_candidateCount )
+	if ( m_candidateString != nullptr && index >=0 && index < m_candidateCount )
 	{
 		return &m_candidateString[index];
 	}
@@ -1568,7 +1568,7 @@ Int IMEManager::getCandidatePageStart()
 
 void IMEManager::openStatusWindow( void )
 {
-	if ( m_statusWindow == NULL )
+	if ( m_statusWindow == nullptr )
 	{
 		return;
 	}
@@ -1581,7 +1581,7 @@ void IMEManager::openStatusWindow( void )
 
 void IMEManager::closeStatusWindow( void )
 {
-	if ( m_statusWindow == NULL )
+	if ( m_statusWindow == nullptr )
 	{
 		return;
 	}

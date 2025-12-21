@@ -150,7 +150,7 @@ void SpawnBehavior::onDie( const DamageInfo *damageInfo )
 			for (BehaviorModule** update = currentSpawn->getBehaviorModules(); *update; ++update)
 			{
 				SlavedUpdateInterface* sdu = (*update)->getSlavedUpdateInterface();
-				if (sdu != NULL)
+				if (sdu != nullptr)
 				{
 					sdu->onSlaverDie( damageInfo );
 					break;
@@ -158,7 +158,7 @@ void SpawnBehavior::onDie( const DamageInfo *damageInfo )
 			}
 
 			// our spawner has died, we must invalidate the ID now in the spawned object
-			currentSpawn->setProducer( NULL );
+			currentSpawn->setProducer( nullptr );
 
 		}
 	}
@@ -296,7 +296,7 @@ Bool SpawnBehavior::maySpawnSelfTaskAI( Real maxSelfTaskersRatio )
 // ------------------------------------------------------------------------------------------------
 Object* SpawnBehavior::getClosestSlave( const Coord3D *pos )
 {
-	Object *closest = NULL;
+	Object *closest = nullptr;
 	Real closestDistance;
 	for( objectIDListIterator it = m_spawnIDs.begin(); it != m_spawnIDs.end(); ++it )
 	{
@@ -483,9 +483,9 @@ public:
 OrphanData::OrphanData( void )
 {
 
-	m_matchTemplate = NULL;
-	m_source = NULL;
-	m_closest = NULL;
+	m_matchTemplate = nullptr;
+	m_source = nullptr;
+	m_closest = nullptr;
 	m_closestDistSq = BIG_DISTANCE;
 
 }
@@ -539,7 +539,7 @@ Object *SpawnBehavior::reclaimOrphanSpawn( void )
 			continue;
 		orphanData.m_matchTemplate = TheThingFactory->findTemplate( *tempName );
 		orphanData.m_source = getObject();
-		orphanData.m_closest = NULL;
+		orphanData.m_closest = nullptr;
 		orphanData.m_closestDistSq = BIG_DISTANCE;
 		player->iterateObjects( findClosestOrphan, &orphanData );
 		prevName = *tempName;
@@ -555,17 +555,17 @@ Bool SpawnBehavior::createSpawn()
 	const SpawnBehaviorModuleData *md = getSpawnBehaviorModuleData();
 
 	ExitInterface* exitInterface = parent->getObjectExitInterface();
-	if( exitInterface == NULL )
+	if( exitInterface == nullptr )
 	{
-		DEBUG_ASSERTCRASH( exitInterface != NULL, ("Something cannot have SpawnBehavior without an exit interface") );
+		DEBUG_ASSERTCRASH( exitInterface != nullptr, ("Something cannot have SpawnBehavior without an exit interface") );
 		return FALSE;
 	}
 
-	ExitDoorType exitDoor = exitInterface->reserveDoorForExit(NULL, NULL);
+	ExitDoorType exitDoor = exitInterface->reserveDoorForExit(nullptr, nullptr);
 	if (exitDoor == DOOR_NONE_AVAILABLE)
 		return FALSE;
 
-	Object *newSpawn = NULL;
+	Object *newSpawn = nullptr;
 
 	// try to reclaim orphaned objects if possible
 	Bool reclaimedOrphan = FALSE;
@@ -577,7 +577,7 @@ Bool SpawnBehavior::createSpawn()
 	}
 
 													// This assures that an orphan has not just been reclaimed,
-	if( newSpawn == NULL )	// and that we really want a new spawn, here.
+	if( newSpawn == nullptr )	// and that we really want a new spawn, here.
 	{
 		m_spawnTemplate = TheThingFactory->findTemplate( *m_templateNameIterator );
 
@@ -607,7 +607,7 @@ Bool SpawnBehavior::createSpawn()
 	for (BehaviorModule** update = newSpawn->getBehaviorModules(); *update; ++update)
 	{
 		SlavedUpdateInterface* sdu = (*update)->getSlavedUpdateInterface();
-		if (sdu != NULL)
+		if (sdu != nullptr)
 		{
 			sdu->onEnslave( parent );
 			break;
@@ -631,7 +631,7 @@ Bool SpawnBehavior::createSpawn()
 					ExitInterface* barracksExitInterface = barracks->getObjectExitInterface();
 					if ( barracksExitInterface )
 					{
-						ExitDoorType barracksDoor = barracksExitInterface->reserveDoorForExit(NULL, NULL);
+						ExitDoorType barracksDoor = barracksExitInterface->reserveDoorForExit(nullptr, nullptr);
 						barracksExitInterface->exitObjectViaDoor( newSpawn, barracksDoor );
 						newSpawn->setProducer(parent);//let parents producer exit him, but he thinks it was me
 						--m_initialBurstCountdown;
@@ -646,8 +646,8 @@ Bool SpawnBehavior::createSpawn()
 			{
 				// find the closest spawn to the nexus...
 				//there is probably a more elegant way to choose the budHost, but oh well
-				Object *budHost = NULL;
-				Object *curSpawn = NULL;
+				Object *budHost = nullptr;
+				Object *curSpawn = nullptr;
 				Real tapeMeasure = 99999;
 				Real closest = 999999.9f; // 1000 * 1000
 				objectIDListIterator iter;
@@ -667,7 +667,7 @@ Bool SpawnBehavior::createSpawn()
 						}
 					}
 				}
-				exitInterface->exitObjectByBudding( newSpawn, budHost );// also handles the NULL pointer okay
+				exitInterface->exitObjectByBudding( newSpawn, budHost );// also handles the nullptr pointer okay
 
 			}
 
@@ -721,7 +721,7 @@ void SpawnBehavior::onSpawnDeath( ObjectID deadSpawn, DamageInfo *damageInfo )
 	if ( (m_spawnCount == 0) && m_aggregateHealth) // I'm dead without my spawn
 	{
 		Object *killer = TheGameLogic->findObjectByID(damageInfo->in.m_sourceID);
-		if (killer != NULL) {
+		if (killer != nullptr) {
 			killer->scoreTheKill(getObject());
 		}
 		TheGameLogic->destroyObject(getObject());
@@ -759,7 +759,7 @@ void SpawnBehavior::onDamage( DamageInfo *info )
 			for (BehaviorModule** update = currentSpawn->getBehaviorModules(); *update; ++update)
 			{
 				SlavedUpdateInterface* sdu = (*update)->getSlavedUpdateInterface();
-				if (sdu != NULL)
+				if (sdu != nullptr)
 				{
 					sdu->onSlaverDamage( info );
 					break;
@@ -830,8 +830,8 @@ void SpawnBehavior::computeAggregateStates(void)
 	Bool SomebodyIsSelected = FALSE;
 	Bool SomebodyIsNotSelected = FALSE;
 
-	Drawable *spawnDraw = NULL;
-	Object *currentSpawn = NULL;
+	Drawable *spawnDraw = nullptr;
+	Object *currentSpawn = nullptr;
 
 	WeaponBonusConditionFlags spawnWeaponBonus;
 
@@ -849,7 +849,7 @@ void SpawnBehavior::computeAggregateStates(void)
 			for (BehaviorModule** update = currentSpawn->getBehaviorModules(); *update; ++update)
 			{
 				SlavedUpdateInterface* sdu = (*update)->getSlavedUpdateInterface();
-				if (sdu != NULL)
+				if (sdu != nullptr)
 				{
 					m_selfTaskingSpawnCount += ( sdu->isSelfTasking());
 					break;
@@ -1009,12 +1009,12 @@ void SpawnBehavior::xfer( Xfer *xfer )
 	if( xfer->getXferMode() == XFER_LOAD )
 	{
 
-		m_spawnTemplate = NULL;
+		m_spawnTemplate = nullptr;
 		if( name.isEmpty() == FALSE )
 		{
 
 			m_spawnTemplate = TheThingFactory->findTemplate( name );
-			if( m_spawnTemplate == NULL )
+			if( m_spawnTemplate == nullptr )
 			{
 
 				DEBUG_CRASH(( "SpawnBehavior::xfer - Unable to find template '%s'", name.str() ));

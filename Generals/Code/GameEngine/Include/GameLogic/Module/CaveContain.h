@@ -55,7 +55,7 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "CaveIndex", INI::parseInt, NULL, offsetof( CaveContainModuleData, m_caveIndexData ) },
+			{ "CaveIndex", INI::parseInt, nullptr, offsetof( CaveContainModuleData, m_caveIndexData ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);

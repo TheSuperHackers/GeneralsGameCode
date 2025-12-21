@@ -45,8 +45,8 @@ AIDockMachine::AIDockMachine( Object *obj ) : StateMachine( obj, "AIDockMachine"
 {
 	static const StateConditionInfo waitForClearanceConditions[] =
 	{
-		StateConditionInfo(ableToAdvance, AI_DOCK_ADVANCE_POSITION, NULL),
-		StateConditionInfo(NULL, NULL, NULL)
+		StateConditionInfo(ableToAdvance, AI_DOCK_ADVANCE_POSITION, nullptr),
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
 	// order matters: first state is the default state.
@@ -72,13 +72,13 @@ void AIDockMachine::halt()
 	Object *goalObject = getGoalObject();
 
 	// sanity
-	if( goalObject != NULL )
+	if( goalObject != nullptr )
 	{
 		// get dock update interface
 		DockUpdateInterface *dock = goalObject->getDockUpdateInterface();
 
 		// We need to say goodbye, or we will leave our spot taken forever.
-		if( dock != NULL )
+		if( dock != nullptr )
 			dock->cancelDock( getOwner() );
 	}
 
@@ -122,13 +122,13 @@ void AIDockMachine::loadPostProcess( void )
 	Object *goalObject = thisState->getMachineGoalObject();
 	AIDockMachine *myMachine = (AIDockMachine *)thisState->getMachine();
 
-	if( goalObject == NULL )
+	if( goalObject == nullptr )
 		return FALSE;
 
 	DockUpdateInterface *dock = goalObject->getDockUpdateInterface();
 
 	// if we have nothing to dock with, fail
-	if( dock == NULL )
+	if( dock == nullptr )
 		return FALSE;
 
 	// if the dock says we can advance, then sidetrack to the scoot forward state
@@ -169,14 +169,14 @@ StateReturnType AIDockApproachState::onEnter( void )
 	Object *goalObject = getMachineGoalObject();
 
 	// sanity
-	if( goalObject == NULL )
+	if( goalObject == nullptr )
 		return STATE_FAILURE;
 
 	// get dock update interface
 	DockUpdateInterface *dock = goalObject->getDockUpdateInterface();
 
 	// if we have nothing to dock with, fail
-	if (dock == NULL)
+	if (dock == nullptr)
 		return STATE_FAILURE;
 
 	// fail if the dock is closed
@@ -196,7 +196,7 @@ StateReturnType AIDockApproachState::onEnter( void )
 
 	AIUpdateInterface *ai = getMachineOwner()->getAIUpdateInterface();
 	if (ai) {
-		ai->ignoreObstacle( NULL );
+		ai->ignoreObstacle( nullptr );
 	}
 	// this behavior is an extention of basic MoveTo
 	return AIInternalMoveToState::onEnter();
@@ -208,7 +208,7 @@ StateReturnType AIDockApproachState::update( void )
 	Object *goalObject = getMachineGoalObject();
 
 	// if we have nothing to dock with, fail
-	if (goalObject == NULL)
+	if (goalObject == nullptr)
 		return STATE_FAILURE;
 
 	// this behavior is an extention of basic MoveTo
@@ -220,7 +220,7 @@ void AIDockApproachState::onExit( StateExitType status )
 {
 	Object *goalObject = getMachineGoalObject();
 
-	DockUpdateInterface *dock = NULL;
+	DockUpdateInterface *dock = nullptr;
 	if( goalObject )
 		dock = goalObject->getDockUpdateInterface();
 
@@ -259,13 +259,13 @@ StateReturnType AIDockWaitForClearanceState::update( void )
 {
 	Object *goalObject = getMachineGoalObject();
 
-	if( goalObject == NULL )
+	if( goalObject == nullptr )
 		return STATE_FAILURE;
 
 	DockUpdateInterface *dock = goalObject->getDockUpdateInterface();
 
 	// if we have nothing to dock with, fail
-	if (dock == NULL)
+	if (dock == nullptr)
 		return STATE_FAILURE;
 
 	// fail if the dock is closed
@@ -291,7 +291,7 @@ void AIDockWaitForClearanceState::onExit( StateExitType status )
 {
 	Object *goalObject = getMachineGoalObject();
 
-	DockUpdateInterface *dock = NULL;
+	DockUpdateInterface *dock = nullptr;
 	if( goalObject )
 		dock = goalObject->getDockUpdateInterface();
 
@@ -325,14 +325,14 @@ StateReturnType AIDockAdvancePositionState::onEnter( void )
 	Object *goalObject = getMachineGoalObject();
 
 	// sanity
-	if( goalObject == NULL )
+	if( goalObject == nullptr )
 		return STATE_FAILURE;
 
 	// get dock update interface
 	DockUpdateInterface *dock = goalObject->getDockUpdateInterface();
 
 	// if we have nothing to dock with, fail
-	if (dock == NULL)
+	if (dock == nullptr)
 		return STATE_FAILURE;
 
 	// fail if the dock is closed
@@ -352,7 +352,7 @@ StateReturnType AIDockAdvancePositionState::onEnter( void )
 
 	AIUpdateInterface *ai = getMachineOwner()->getAIUpdateInterface();
 	if (ai) {
-		ai->ignoreObstacle( NULL );
+		ai->ignoreObstacle( nullptr );
 	}
 	// this behavior is an extention of basic MoveTo
 	return AIInternalMoveToState::onEnter();
@@ -364,7 +364,7 @@ StateReturnType AIDockAdvancePositionState::update( void )
 	Object *goalObject = getMachineGoalObject();
 
 	// if we have nothing to dock with, fail
-	if (goalObject == NULL)
+	if (goalObject == nullptr)
 		return STATE_FAILURE;
 
 	// this behavior is an extention of basic MoveTo
@@ -376,7 +376,7 @@ void AIDockAdvancePositionState::onExit( StateExitType status )
 {
 	Object *goalObject = getMachineGoalObject();
 
-	DockUpdateInterface *dock = NULL;
+	DockUpdateInterface *dock = nullptr;
 	if( goalObject )
 		dock = goalObject->getDockUpdateInterface();
 
@@ -406,12 +406,12 @@ StateReturnType AIDockMoveToEntryState::onEnter( void )
 {
 	Object *goalObject = getMachineGoalObject();
 
-  DockUpdateInterface *dock = NULL;
+  DockUpdateInterface *dock = nullptr;
 	if( goalObject )
 		dock = goalObject->getDockUpdateInterface();
 
 	// if we have nothing to dock with, fail
-	if (dock == NULL)
+	if (dock == nullptr)
 		return STATE_FAILURE;
 
 	// fail if the dock is closed
@@ -440,7 +440,7 @@ StateReturnType AIDockMoveToEntryState::onEnter( void )
 StateReturnType AIDockMoveToEntryState::update( void )
 {
 	// if we have nothing to dock with, fail
-	if (getMachineGoalObject() == NULL)
+	if (getMachineGoalObject() == nullptr)
 		return STATE_FAILURE;
 
 	// this behavior is an extention of basic MoveTo
@@ -452,7 +452,7 @@ void AIDockMoveToEntryState::onExit( StateExitType status )
 {
 	Object *goalObject = getMachineGoalObject();
 
-	DockUpdateInterface *dock = NULL;
+	DockUpdateInterface *dock = nullptr;
 	if( goalObject )
 		dock = goalObject->getDockUpdateInterface();
 
@@ -486,12 +486,12 @@ StateReturnType AIDockMoveToDockState::onEnter( void )
 {
 	Object *goalObject = getMachineGoalObject();
 
-	DockUpdateInterface *dock = NULL;
+	DockUpdateInterface *dock = nullptr;
 	if( goalObject )
 		dock = goalObject->getDockUpdateInterface();
 
 	// if we have nothing to dock with, fail
-	if (dock == NULL)
+	if (dock == nullptr)
 		return STATE_FAILURE;
 
 	// fail if the dock is closed
@@ -524,7 +524,7 @@ StateReturnType AIDockMoveToDockState::update( void )
 	Object *goalObject = getMachineGoalObject();
 
 	// if we have nothing to dock with, fail
-	if (goalObject == NULL)
+	if (goalObject == nullptr)
 		return STATE_FAILURE;
 
 	DockUpdateInterface *dock = goalObject->getDockUpdateInterface();
@@ -540,7 +540,7 @@ void AIDockMoveToDockState::onExit( StateExitType status )
 {
 	Object *goalObject = getMachineGoalObject();
 
-	DockUpdateInterface *dock = NULL;
+	DockUpdateInterface *dock = nullptr;
 	if( goalObject )
 		dock = goalObject->getDockUpdateInterface();
 
@@ -592,12 +592,12 @@ StateReturnType AIDockProcessDockState::onEnter( void )
 {
 	Object *goalObject = getMachineGoalObject();
 
-	DockUpdateInterface *dock = NULL;
+	DockUpdateInterface *dock = nullptr;
 	if( goalObject )
 		dock = goalObject->getDockUpdateInterface();
 
 	// if we have nothing to dock with, fail
-	if (dock == NULL)
+	if (dock == nullptr)
 		return STATE_FAILURE;
 
 	setNextDockActionFrame();
@@ -614,12 +614,12 @@ StateReturnType AIDockProcessDockState::update( void )
 {
 	Object *goalObject = getMachineGoalObject();
 
-	DockUpdateInterface *dock = NULL;
+	DockUpdateInterface *dock = nullptr;
 	if( goalObject )
 		dock = goalObject->getDockUpdateInterface();
 
 	// if we have nothing to dock with, fail
-	if (dock == NULL)
+	if (dock == nullptr)
 		return STATE_FAILURE;
 
 	// Some dockers can have a delay built in
@@ -673,7 +673,7 @@ Object* AIDockProcessDockState::findMyDrone()
 	Player *player = self->getControllingPlayer();
 	DroneInfo dInfo;
 	dInfo.found = FALSE;
-	dInfo.drone = NULL;
+	dInfo.drone = nullptr;
 	dInfo.owner = self;
 
 	//Iterate the objects in search for a drone with a producer ID of me.
@@ -709,12 +709,12 @@ StateReturnType AIDockMoveToExitState::onEnter( void )
 {
 	Object *goalObject = getMachineGoalObject();
 
-	DockUpdateInterface *dock = NULL;
+	DockUpdateInterface *dock = nullptr;
 	if( goalObject )
 		dock = goalObject->getDockUpdateInterface();
 
 	// if we have nothing to dock with, fail
-	if (dock == NULL)
+	if (dock == nullptr)
 		return STATE_FAILURE;
 
 	// get the exit position
@@ -735,7 +735,7 @@ StateReturnType AIDockMoveToExitState::onEnter( void )
 StateReturnType AIDockMoveToExitState::update( void )
 {
 	// if we have nothing to dock with, fail
-	if (getMachineGoalObject() == NULL)
+	if (getMachineGoalObject() == nullptr)
 		return STATE_FAILURE;
 
 	// this behavior is an extention of basic MoveTo
@@ -747,7 +747,7 @@ void AIDockMoveToExitState::onExit( StateExitType status )
 {
 	Object *goalObject = getMachineGoalObject();
 
-	DockUpdateInterface *dock = NULL;
+	DockUpdateInterface *dock = nullptr;
 	if( goalObject )
 		dock = goalObject->getDockUpdateInterface();
 
@@ -774,18 +774,18 @@ StateReturnType AIDockMoveToRallyState::onEnter( void )
 {
 	Object *goalObject = getMachineGoalObject();
 
-  DockUpdateInterface *dock = NULL;
+  DockUpdateInterface *dock = nullptr;
 	if( goalObject )
 		dock = goalObject->getDockUpdateInterface();
 
 	// if we have nothing to dock with, fail
-	if (dock == NULL)
+	if (dock == nullptr)
 		return STATE_FAILURE;
 
 	// if they don't have anywhere to send us, then we are good
 	if( ! dock->isRallyPointAfterDockType()															//Chooses not to
-		|| goalObject->getObjectExitInterface() == NULL										//or can't
-		|| goalObject->getObjectExitInterface()->getRallyPoint() == NULL	//or can't right now.
+		|| goalObject->getObjectExitInterface() == nullptr										//or can't
+		|| goalObject->getObjectExitInterface()->getRallyPoint() == nullptr	//or can't right now.
 		)
 	{
 		return STATE_SUCCESS; // Success in an Enter is like success in an update.  We're all fine here

@@ -130,7 +130,7 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
         DeleteObject( hBrushNew );
 
         // validate this new area
-        ValidateRect( hWndControl, NULL );
+        ValidateRect( hWndControl, nullptr );
 
 				// we have taken care of it
 				return TRUE;
@@ -179,7 +179,7 @@ static LRESULT CALLBACK genericPropertiesCallback( HWND hWndDialog,
 																									newColor->blue,
 																									newColor->alpha );
 							SetControlColor( controlID, newGameColor );
-							InvalidateRect( hWndControl, NULL, TRUE );
+							InvalidateRect( hWndControl, nullptr, TRUE );
 
 						}
 
@@ -285,7 +285,7 @@ void InitCallbackCombos( HWND dialog, GameWindow *window )
 {
 	HWND combo;
 	FunctionLexicon::TableEntry *entry;
-	GameWindowEditData *editData = NULL;
+	GameWindowEditData *editData = nullptr;
 	AsciiString name;
 
 	// get edit data from window
@@ -434,8 +434,8 @@ HWND InitUserWinPropertiesDialog( GameWindow *window )
 												 (LPCTSTR)GENERIC_PROPERTIES_DIALOG,
 												 TheEditor->getWindowHandle(),
 												 (DLGPROC)genericPropertiesCallback );
-	if( dialog == NULL )
-		return NULL;
+	if( dialog == nullptr )
+		return nullptr;
 
 	// do the common initialization
 	CommonDialogInitialize( window, dialog );

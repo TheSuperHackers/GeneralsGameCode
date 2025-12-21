@@ -64,13 +64,13 @@ static DWORD WINAPI		_logdata_thread_function(LPVOID log_obj_ptr);
  *   02/09/2000 JGA  : Created.                                                                *
  *=============================================================================================*/
 LogDataDialogClass::LogDataDialogClass(HWND parent):
- Hwnd(NULL),
+ Hwnd(nullptr),
  ParentHwnd(parent),
  buffer_index(0),
  last_buffer_index(0),
  status(0)
 {
-	ThreadHandle = CreateThread(NULL, 0, _logdata_thread_function, (LPVOID)this, 0, &ThreadID);
+	ThreadHandle = CreateThread(nullptr, 0, _logdata_thread_function, (LPVOID)this, 0, &ThreadID);
 
 	if (ThreadHandle) {
 		while (status == 0) {
@@ -272,7 +272,7 @@ bool LogDataDialogClass::Dialog_Proc
 					status = 2;
 
 					EndDialog(Hwnd, 1);
-					Hwnd = NULL;
+					Hwnd = nullptr;
 					return TRUE;
 					break;
 
@@ -287,7 +287,7 @@ bool LogDataDialogClass::Dialog_Proc
 
 			if (status >= 2) {
 				EndDialog(Hwnd, 1);
-				Hwnd = NULL;
+				Hwnd = nullptr;
 			}
 
 			return TRUE;
@@ -301,7 +301,7 @@ bool LogDataDialogClass::Dialog_Proc
 void LogDataDialogClass::Dialog_Init()
 {
 
-	SetCursor(LoadCursor (NULL, IDC_ARROW));
+	SetCursor(LoadCursor (nullptr, IDC_ARROW));
 
 	RECT desktop;
 	RECT ourwin;

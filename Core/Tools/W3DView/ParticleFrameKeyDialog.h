@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // ParticleFrameKeyDialog.h : header file
 //
@@ -28,7 +29,7 @@ class ParticleFrameKeyDialogClass : public CDialog
 {
 // Construction
 public:
-	ParticleFrameKeyDialogClass(float frame,CWnd* pParent = NULL);   // standard constructor
+	ParticleFrameKeyDialogClass(float frame,CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(ParticleFrameKeyDialogClass)

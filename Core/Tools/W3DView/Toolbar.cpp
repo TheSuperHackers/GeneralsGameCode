@@ -71,14 +71,14 @@ CFancyToolbar::~CFancyToolbar (void)
         {
             // Free the BMP for this button
             ::DeleteObject (m_pButtonArray[iButton].hBMPUp);
-            m_pButtonArray[iButton].hBMPUp = NULL;
+            m_pButtonArray[iButton].hBMPUp = nullptr;
         }
 
         if (m_pButtonArray[iButton].hBMPDn)
         {
             // Free the BMP for this button
             ::DeleteObject (m_pButtonArray[iButton].hBMPDn);
-            m_pButtonArray[iButton].hBMPDn = NULL;
+            m_pButtonArray[iButton].hBMPDn = nullptr;
         }
     }
 
@@ -101,7 +101,7 @@ CFancyToolbar::RegisterFancyToolbarClass (void)
         classInfo.style = CS_PARENTDC;
         classInfo.lpfnWndProc = ::DefWindowProc;
         classInfo.hInstance = ::AfxGetInstanceHandle ();
-        classInfo.hCursor = ::LoadCursor (NULL, IDC_ARROW);
+        classInfo.hCursor = ::LoadCursor (nullptr, IDC_ARROW);
         classInfo.hbrBackground = (HBRUSH)COLOR_BTNFACE;
         classInfo.lpszClassName = TOOLBAR_CLASS_NAME;
 
@@ -260,7 +260,7 @@ CFancyToolbar::Paint (void)
     }
 
     // Let the window know its done painting
-    ::ValidateRect (m_hWnd, NULL);
+    ::ValidateRect (m_hWnd, nullptr);
     return ;
 }
 
@@ -470,7 +470,7 @@ CFancyToolbar::SetButtonState
             {
                 // Repaint the toolbar
                 //Paint ();
-                InvalidateRect (NULL);
+                InvalidateRect (nullptr);
                 UpdateWindow ();
             }
 

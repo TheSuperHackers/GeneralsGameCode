@@ -38,7 +38,7 @@ static char THIS_FILE[] = __FILE__;
 // TexturePathDialogClass
 //
 /////////////////////////////////////////////////////////////////////////////
-TexturePathDialogClass::TexturePathDialogClass(CWnd* pParent /*=NULL*/)
+TexturePathDialogClass::TexturePathDialogClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(TexturePathDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(TexturePathDialogClass)

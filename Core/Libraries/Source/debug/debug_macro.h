@@ -28,6 +28,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // I'm putting the documentation for the following macros
 // here because Doxygen otherwise includes the values of each macro
@@ -153,7 +154,7 @@ if (!DCHECK_MSG(!(cond),msg))
     \endcode
     so it can be used e.g. like this:
     \code
-DFAIL_IF_MSG(!ptrval,"pointer must not be NULL") return;
+DFAIL_IF_MSG(!ptrval,"pointer must not be nullptr") return;
     \endcode
 
     \param cond condition which is checked for failure
@@ -328,7 +329,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be NULL") return;
     (Debug::SkipNext(),(Debug::CrashBegin(__FILE__,__LINE__) << msg).CrashDone(true))
 
   #define DFAIL() \
-    Debug::AssertBegin(__FILE__,__LINE__,NULL).AssertDone()
+    Debug::AssertBegin(__FILE__,__LINE__,nullptr).AssertDone()
 
   #define D_ISLOG() \
     Debug::IsLogEnabled(__FILE__)
@@ -349,7 +350,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be NULL") return;
   #define DLOG_GROUP(group,what)  ((void)0)
   #define DLOG_GROUP_DESCR(g,d)
   #define DCRASH(msg)             ((void)0)
-  #define DCRASH_RELEASE(msg)     (Debug::SkipNext(),(Debug::CrashBegin(NULL,0) << msg).CrashDone(true))
+  #define DCRASH_RELEASE(msg)     (Debug::SkipNext(),(Debug::CrashBegin(nullptr,0) << msg).CrashDone(true))
   #define DFAIL()                 ((void)0)
   #define D_ISLOG()               false
   #define D_ISLOG_GROUP(group)    false

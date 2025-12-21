@@ -45,6 +45,7 @@
 //-----------------------------------------------------------------------------
 //         Includes
 //-----------------------------------------------------------------------------
+
 #include "W3DDevice/GameClient/W3DCustomEdging.h"
 
 #include <assetmgr.h>
@@ -285,8 +286,8 @@ for the trees. */
 W3DCustomEdging::W3DCustomEdging(void)
 {
 	m_initialized = false;
-	m_vertexEdging = NULL;
-	m_indexEdging = NULL;
+	m_vertexEdging = nullptr;
+	m_indexEdging = nullptr;
 	clearAllEdging();
 	allocateEdgingBuffers();
 	m_initialized = true;
@@ -370,7 +371,7 @@ void W3DCustomEdging::drawEdging(WorldHeightMap *pMap, Int minX, Int maxX, Int m
 	DX8Wrapper::Draw_Triangles(	m_curEdgingIndexOffset, m_curNumEdgingIndices/3, 0,	m_curNumEdgingVertices);
 
 	DX8Wrapper::Set_Texture(0,edgeTex);
-	DX8Wrapper::Set_Texture(1, NULL);
+	DX8Wrapper::Set_Texture(1, nullptr);
 	// Draw the custom edge.
 	DX8Wrapper::Apply_Render_State_Changes();
 
@@ -384,7 +385,7 @@ void W3DCustomEdging::drawEdging(WorldHeightMap *pMap, Int minX, Int maxX, Int m
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHATESTENABLE, false);	//test pixels if transparent(clipped) before rendering.
 	DX8Wrapper::Draw_Triangles(	m_curEdgingIndexOffset, m_curNumEdgingIndices/3, 0,	m_curNumEdgingVertices);
 #endif
-	DX8Wrapper::Set_Texture(1, NULL);
+	DX8Wrapper::Set_Texture(1, nullptr);
 	if (cloudTexture) {
 		DX8Wrapper::Set_Shader(detailOpaqueShader);
 		DX8Wrapper::Apply_Render_State_Changes();
@@ -413,7 +414,7 @@ void W3DCustomEdging::drawEdging(WorldHeightMap *pMap, Int minX, Int maxX, Int m
 		DX8Wrapper::Draw_Triangles(	m_curEdgingIndexOffset, m_curNumEdgingIndices/3, 0,	m_curNumEdgingVertices);
 	}
 	if (noiseTexture) {
-		DX8Wrapper::Set_Texture(1, NULL);
+		DX8Wrapper::Set_Texture(1, nullptr);
 		DX8Wrapper::Set_Texture(0,noiseTexture);
 		DX8Wrapper::Apply_Render_State_Changes();
 		DX8Wrapper::Set_Texture(1,edgeTex);

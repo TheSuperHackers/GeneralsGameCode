@@ -293,7 +293,7 @@ bool IndexClass<INDEX, T>::Increase_Table_Size(int amount)
 	if (amount < 0) return(false);
 
 	NodeElement * table = W3DNEWARRAY NodeElement[IndexSize + amount];
-	if (table != NULL) {
+	if (table != nullptr) {
 
 		/*
 		**	Copy all valid nodes into the new table.
@@ -680,7 +680,7 @@ int _USERENTRY IndexClass<INDEX, T>::search_compfunc(void const * ptr1, void con
  * INPUT:   id -- The index ID to search for.                                                  *
  *                                                                                             *
  * OUTPUT:  Returns with a pointer to the NodeElement that matches the index ID specified. If  *
- *          no matching index could be found, then NULL is returned.                           *
+ *          no matching index could be found, then nullptr is returned.                           *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *

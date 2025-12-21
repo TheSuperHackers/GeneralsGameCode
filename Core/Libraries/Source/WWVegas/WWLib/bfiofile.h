@@ -53,7 +53,7 @@ class BufferIOFileClass : public RawFileClass
 		BufferIOFileClass(void);
 		virtual ~BufferIOFileClass(void);
 
-		bool Cache( long size=0, void * ptr=NULL);
+		bool Cache( long size=0, void * ptr=nullptr);
 		void Free( void);
 		bool Commit( void);
 		virtual char const * Set_Name(char const * filename);

@@ -90,9 +90,9 @@ public:
 	int SaveLog ( void );
 	void Status ( const char *string, int log = TRUE);
 	void Log ( const char *string, LogFormat format = NEW_LINE );
-	CBabylonDlg(CWnd* pParent = NULL);	// standard constructor
+	CBabylonDlg(CWnd* pParent = nullptr);	// standard constructor
 	virtual ~CBabylonDlg();
-	int LoadStrFile ( TransDB *db, const char *fileaname, void (*cb ) (void ) = NULL );
+	int LoadStrFile ( TransDB *db, const char *fileaname, void (*cb ) (void ) = nullptr );
 	void Ready ( void ) { Status ( "Ready", FALSE ); ProgressComplete(); };
 
 // Dialog Data

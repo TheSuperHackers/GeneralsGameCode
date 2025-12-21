@@ -16,6 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <Utility/CppMacros.h>
 #include "verchk.h"
 #include "wolSetup.h"
 #include <windows.h>
@@ -34,7 +35,7 @@
 	*/
 bool GetVersionInfo(char* filename, VS_FIXEDFILEINFO* fileInfo)
 {
-   if (filename == NULL || fileInfo == NULL)
+   if (filename == nullptr || fileInfo == nullptr)
    {
       return false;
    }

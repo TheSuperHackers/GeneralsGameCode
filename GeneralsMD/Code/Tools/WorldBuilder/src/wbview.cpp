@@ -257,10 +257,10 @@ void WbView::mouseMove(TTrackingMode m, CPoint viewPt)
 		}
 		pObj = pObj->getNext();
 	}
-	if (pObj==NULL) {
+	if (pObj==nullptr) {
 		pObj = picked3dObjectInView(viewPt);
 	}
-	Real height = TheTerrainRenderObject->getHeightMapHeight(cpt.x, cpt.y, NULL);
+	Real height = TheTerrainRenderObject->getHeightMapHeight(cpt.x, cpt.y, nullptr);
 	CString str, str2, str3;
 	// If a layer has been activated, display it.
 	if (strcmp(AsciiString::TheEmptyString.str(), LayersList::TheActiveLayerName.c_str()) != 0) {
@@ -419,7 +419,7 @@ WorldHeightMapEdit *WbView::getTrackingHeightMap()
 		pMap = WbApp()->getCurTool()->getHeightMap();
 	}
 	// If we aren't editing, or the tool doesn't provide a map, use the current one.
-	if (pMap == NULL) {
+	if (pMap == nullptr) {
 		pMap = WbDoc()->GetHeightMap();
 	}
 	return pMap;
@@ -429,7 +429,7 @@ WorldHeightMapEdit *WbView::getTrackingHeightMap()
 void WbView::constrainCenterPt()
 {
 	WorldHeightMapEdit *pMap = WbDoc()->GetHeightMap();
-	if (pMap==NULL) return;
+	if (pMap==nullptr) return;
 #if 0
 	if (m_centerPt.X >= pMap->getXExtent()) m_centerPt.X = pMap->getXExtent()-1;
 	if (m_centerPt.X<0) m_centerPt.X = 0;
@@ -453,7 +453,7 @@ BOOL WbView::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 			WbApp()->getCurTool()->setCursor();
 		} else {
 			// Else just use the system arrow cursor.  This shouldn't normally happen.
-			::SetCursor(::LoadCursor(NULL, IDC_ARROW));
+			::SetCursor(::LoadCursor(nullptr, IDC_ARROW));
 		}
 		return(0);
 	}
@@ -499,8 +499,8 @@ void WbView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void WbView::OnEditCopy()
 {
-	MapObject *pTheCopy = NULL;
-	MapObject *pTmp = NULL;
+	MapObject *pTheCopy = nullptr;
+	MapObject *pTmp = nullptr;
 
 	MapObject *pObj = MapObject::getFirstMapObject();
 	// Note - map segments come in pairs.  So copy both.
@@ -510,7 +510,7 @@ void WbView::OnEditCopy()
 		if (pMapObj->getFlag(FLAG_ROAD_POINT1)) {
 			pMapObj2 = pMapObj->getNext();
 			DEBUG_ASSERTCRASH(pMapObj2 && pMapObj2->getFlag(FLAG_ROAD_POINT2), ("oops"));
-			if (pMapObj2==NULL) break;
+			if (pMapObj2==nullptr) break;
 			if (!pMapObj2->getFlag(FLAG_ROAD_POINT2)) continue;
 			// If one end of a road segment is selected, both are.
 			if (pMapObj->isSelected() || pMapObj2->isSelected()) {
@@ -533,7 +533,7 @@ void WbView::OnEditCopy()
 		pObj = pObj->getNext();
 	}
 	WbApp()->setMapObjPasteList(pTheCopy);
-	pTheCopy = NULL; // belongs to the app.
+	pTheCopy = nullptr; // belongs to the app.
 }
 
 void WbView::OnUpdateEditCopy(CCmdUI* pCmdUI)
@@ -555,8 +555,8 @@ void WbView::OnUpdateEditCut(CCmdUI* pCmdUI)
 void WbView::OnEditPaste()
 {
 	CWorldBuilderDoc* pDoc = WbDoc();
-	MapObject *pTheCopy = NULL;
-	MapObject *pTmp = NULL;
+	MapObject *pTheCopy = nullptr;
+	MapObject *pTmp = nullptr;
 
 	/* First, clear the selection. */
 	PointerTool::clearSelection();
@@ -574,7 +574,7 @@ void WbView::OnEditPaste()
 	AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, pTheCopy);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-	pTheCopy = NULL; // undoable owns it now.
+	pTheCopy = nullptr; // undoable owns it now.
 
 }
 
@@ -584,7 +584,7 @@ void WbView::OnViewShowObjects()
 	m_showObjects = !m_showObjects;
 	Invalidate(false);
 	WbView  *pView = (WbView *)WbDoc()->GetActive2DView();
-	if (pView != NULL && pView != this) {
+	if (pView != nullptr && pView != this) {
 		pView->Invalidate(!m_showObjects);
 	}
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIcons", m_showObjects?1:0);
@@ -599,7 +599,7 @@ void WbView::OnUpdateViewShowObjects(CCmdUI* pCmdUI)
 void WbView::OnUpdateEditPaste(CCmdUI* pCmdUI)
 {
 	MapObject *pTheCopy = WbApp()->getMapObjPasteList();
-	pCmdUI->Enable(pTheCopy != NULL);
+	pCmdUI->Enable(pTheCopy != nullptr);
 }
 
 void WbView::OnViewSnaptogrid()
@@ -616,26 +616,26 @@ void WbView::OnUpdateViewSnaptogrid(CCmdUI* pCmdUI)
 void WbView::OnEditSelectdup()
 {
 	WorldHeightMapEdit *pMap = WbDoc()->GetHeightMap();
-	if (pMap==NULL) return;
+	if (pMap==nullptr) return;
 	pMap->selectDuplicates();
 }
 void WbView::OnEditSelectsimilar()
 {
 	WorldHeightMapEdit *pMap = WbDoc()->GetHeightMap();
-	if (pMap==NULL) return;
+	if (pMap==nullptr) return;
 	pMap->selectSimilar();
 }
 void WbView::OnEditSelectinvalidteam()
 {
 	WorldHeightMapEdit *pMap = WbDoc()->GetHeightMap();
-	if (pMap==NULL) return;
+	if (pMap==nullptr) return;
 	pMap->selectInvalidTeam();
 }
 
 void WbView::OnEditReplace()
 {
 	WorldHeightMapEdit *pMap = WbDoc()->GetHeightMap();
-	if (pMap==NULL) return;
+	if (pMap==nullptr) return;
 
 	EditorSortingType sort = ES_NONE;
 	for (MapObject* pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext()) {
@@ -793,7 +793,7 @@ void WbView::OnEditWorldinfo()
 #if 0
 	Dict *d = MapObject::getWorldDict();
 	Dict dcopy = *d;
-	MapObjectProps editor(&dcopy, "Edit World Info", NULL);
+	MapObjectProps editor(&dcopy, "Edit World Info", nullptr);
 	if (editor.DoModal() == IDOK)
 	{
 		CWorldBuilderDoc* pDoc = WbDoc();
@@ -919,7 +919,7 @@ void WbView::OnShowNames()
 	m_showNames = m_showNames ? false : true;
 	Invalidate(false);
 	WbView  *pView = (WbView *)WbDoc()->GetActive2DView();
-	if (pView != NULL && pView != this) {
+	if (pView != nullptr && pView != this) {
 		pView->Invalidate(false);
 	}
 
@@ -963,7 +963,7 @@ void WbView::OnValidationFixTeams()
 		AsciiString oname = d->getAsciiString(TheKey_teamOwner);
 		AsciiString tname = d->getAsciiString(TheKey_teamName);
 		SidesInfo* pSide = TheSidesList->findSideInfo(oname);
-		Bool found = pSide!=NULL;
+		Bool found = pSide!=nullptr;
 		if (!found) {
 				CString msg;
 				msg.Format(IDS_PLAYERLESS_TEAM_REMOVED, tname.str(), oname.str());
@@ -984,7 +984,7 @@ void WbView::OnValidationFixTeams()
 			continue;
 		}
 
-		if (pMapObj->getThingTemplate()==NULL) {
+		if (pMapObj->getThingTemplate()==nullptr) {
 			continue; // Objects that don't have templates don't need teams. [8/8/2003]
 		}
 		// at this point, only objects with models and teams should be left to process
@@ -1027,7 +1027,7 @@ void WbView::OnValidationFixTeams()
 					AsciiString team;
 					team.set("team");
 					team.concat(fix.getSelectedOwner());
-					if (TheSidesList->findTeamInfo(team)==NULL) {
+					if (TheSidesList->findTeamInfo(team)==nullptr) {
 						team.set("team"); // neutral.
 					}
 					pMapObj->getProperties()->setAsciiString(TheKey_originalOwner,  team);
@@ -1050,7 +1050,7 @@ void WbView::OnShowTerrain()
 	m_showTerrain = !m_showTerrain;
 	Invalidate(false);
 	WbView  *pView = (WbView *)WbDoc()->GetActive2DView();
-	if (pView != NULL && pView != this) {
+	if (pView != nullptr && pView != this) {
 		pView->Invalidate(false);
 	}
 

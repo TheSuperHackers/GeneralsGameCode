@@ -35,7 +35,7 @@ int Find_Patch(OUT char *filename,int maxlen, ConfigFile &config)
   WIN32_FIND_DATA     findData;
   char                string[128];
   HANDLE              hFile;
-  const char         *extensions[]={"web","exe","exn","rtp",NULL};
+  const char         *extensions[]={"web","exe","exn","rtp", nullptr};
   int                 i;
   int                 skuIndex=0;
   Wstring             key;
@@ -131,7 +131,7 @@ bit8 Get_App_Dir(OUT char *filename,int maxlen, ConfigFile &config,int index)
   }
   DWORD  type;
   DWORD  length=MAX_PATH;
-  regRetval=RegQueryValueEx(regKey,"InstallPath",NULL,&type,(uint8 *)gamePath,
+  regRetval=RegQueryValueEx(regKey,"InstallPath",nullptr,&type,(uint8 *)gamePath,
       &length);
   DBGMSG("GAME PATH = "<<gamePath);
   if ((regRetval!=ERROR_SUCCESS)||(type!=REG_SZ))
@@ -145,7 +145,7 @@ bit8 Get_App_Dir(OUT char *filename,int maxlen, ConfigFile &config,int index)
   //  path to a file, you better end the directory with a trailing '\\'!!!
   char *cptr=gamePath;
   char *tempPtr;
-  while( (tempPtr=strchr(cptr,'\\')) !=NULL)
+  while( (tempPtr=strchr(cptr,'\\')) !=nullptr)
     cptr=tempPtr+1;
   if (cptr)
     *cptr=0;

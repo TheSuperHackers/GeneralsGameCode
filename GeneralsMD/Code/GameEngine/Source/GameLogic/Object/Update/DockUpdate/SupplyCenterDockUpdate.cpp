@@ -55,8 +55,8 @@ SupplyCenterDockUpdateModuleData::SupplyCenterDockUpdateModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "GrantTemporaryStealth",		INI::parseDurationUnsignedInt,  NULL, offsetof( SupplyCenterDockUpdateModuleData, m_grantTemporaryStealthFrames ) },
-		{ 0, 0, 0, 0 }
+		{ "GrantTemporaryStealth",		INI::parseDurationUnsignedInt,  nullptr, offsetof( SupplyCenterDockUpdateModuleData, m_grantTemporaryStealthFrames ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add(dataFieldParse);
@@ -84,14 +84,14 @@ SupplyCenterDockUpdate::~SupplyCenterDockUpdate()
 Bool SupplyCenterDockUpdate::action( Object* docker, Object *drone )
 {
 	const SupplyCenterDockUpdateModuleData *data = getSupplyCenterDockUpdateModuleData();
-	SupplyTruckAIInterface* supplyTruckAI = NULL;
-	if( docker->getAIUpdateInterface() == NULL )
+	SupplyTruckAIInterface* supplyTruckAI = nullptr;
+	if( docker->getAIUpdateInterface() == nullptr )
 		return FALSE;
 
 	supplyTruckAI = docker->getAIUpdateInterface()->getSupplyTruckAIInterface();
 
-	DEBUG_ASSERTCRASH( supplyTruckAI != NULL, ("Something Docking with a Supply Center must have a Supply-truck like AIUpdate") );
-	if( supplyTruckAI == NULL )
+	DEBUG_ASSERTCRASH( supplyTruckAI != nullptr, ("Something Docking with a Supply Center must have a Supply-truck like AIUpdate") );
+	if( supplyTruckAI == nullptr )
 		return FALSE;
 
 	UnsignedInt value = 0;

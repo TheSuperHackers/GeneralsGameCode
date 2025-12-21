@@ -59,10 +59,10 @@ LaserUpdateModuleData::LaserUpdateModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "MuzzleParticleSystem",		INI::parseAsciiString,	NULL, offsetof( LaserUpdateModuleData, m_particleSystemName ) },
-		{ "TargetParticleSystem",		INI::parseAsciiString,  NULL, offsetof( LaserUpdateModuleData, m_targetParticleSystemName ) },
-		{ "PunchThroughScalar",			INI::parseReal,					NULL, offsetof( LaserUpdateModuleData, m_punchThroughScalar ) },
-		{ 0, 0, 0, 0 }
+		{ "MuzzleParticleSystem",		INI::parseAsciiString,	nullptr, offsetof( LaserUpdateModuleData, m_particleSystemName ) },
+		{ "TargetParticleSystem",		INI::parseAsciiString,  nullptr, offsetof( LaserUpdateModuleData, m_targetParticleSystemName ) },
+		{ "PunchThroughScalar",			INI::parseReal,					nullptr, offsetof( LaserUpdateModuleData, m_punchThroughScalar ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
@@ -116,7 +116,7 @@ void LaserUpdate::updateStartPos()
 		return;// Can't update if not told to update
 
 	const Drawable *parentDrawable = TheGameClient->findDrawableByID(m_parentID);
-	if( parentDrawable == NULL )
+	if( parentDrawable == nullptr )
 		return;// Can't update if no one to ask
 
 	if( m_parentBoneName.isNotEmpty() )
@@ -167,7 +167,7 @@ void LaserUpdate::updateEndPos()
 	Bool targetDead = (targetDrawable && targetDrawable->getObject())
 										? targetDrawable->getObject()->isEffectivelyDead()
 										: FALSE;
-	if( targetDrawable == NULL || targetDead )
+	if( targetDrawable == nullptr || targetDead )
 	{
 		// If here, we used to track something, but now it is gone.  So make our end point pierce through
 		// the old spot, and then stop trying to find a target Drawable
@@ -344,7 +344,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 	}
 
 	// Create special particle systems
-	//PLEASE NOTE You cannot check an ID for NULL.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
+	//PLEASE NOTE You cannot check an ID for nullptr.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
 	if( !m_particleSystemID )
 	{
 		const Player *localPlayer = rts::getObservedOrLocalPlayer();
@@ -384,7 +384,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 	}
 
 	//Adjust the position of any existing particle system.
-	//PLEASE NOTE You cannot check an ID for NULL.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
+	//PLEASE NOTE You cannot check an ID for nullptr.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
 	if( m_particleSystemID )
 	{
 		system = TheParticleSystemManager->findParticleSystem( m_particleSystemID );
@@ -394,7 +394,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 		}
 	}
 
-	//PLEASE NOTE You cannot check an ID for NULL.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
+	//PLEASE NOTE You cannot check an ID for nullptr.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
 	if( m_targetParticleSystemID )
 	{
 		system = TheParticleSystemManager->findParticleSystem( m_targetParticleSystemID );
@@ -408,7 +408,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 	//it probably won't get rendered!!!
 	// And as a client update, we cannot set the logic position.
 	Coord3D posToUse;
-	if( parent == NULL )
+	if( parent == nullptr )
 	{
 		posToUse.set( startPos );
 		posToUse.add( endPos );
@@ -432,7 +432,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 Real LaserUpdate::getTemplateLaserRadius() const
 {
 	const Drawable *draw = getDrawable();
-	const LaserDrawInterface* ldi = NULL;
+	const LaserDrawInterface* ldi = nullptr;
 	for( const DrawModule** d = draw->getDrawModules(); *d; ++d )
 	{
 		ldi = (*d)->getLaserDrawInterface();

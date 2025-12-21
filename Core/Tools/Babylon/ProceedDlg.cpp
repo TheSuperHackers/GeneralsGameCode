@@ -33,7 +33,7 @@ static char THIS_FILE[] = __FILE__;
 // ProceedDlg dialog
 
 
-ProceedDlg::ProceedDlg(const char *nmessage, CWnd* pParent /*=NULL*/)
+ProceedDlg::ProceedDlg(const char *nmessage, CWnd* pParent /*=nullptr*/)
 	: CDialog(ProceedDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(ProceedDlg)

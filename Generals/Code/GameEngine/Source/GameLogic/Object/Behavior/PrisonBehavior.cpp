@@ -72,7 +72,7 @@ PrisonVisual::PrisonVisual( void )
 
 	m_objectID = INVALID_ID;
 	m_drawableID = INVALID_DRAWABLE_ID;
-	m_next = NULL;
+	m_next = nullptr;
 
 }
 
@@ -105,8 +105,8 @@ PrisonBehaviorModuleData::PrisonBehaviorModuleData( void )
 	static const FieldParse dataFieldParse[] =
 	{
 
-		{ "ShowPrisoners",	INI::parseBool,					NULL,		offsetof( PrisonBehaviorModuleData, m_showPrisoners ) },
-		{ "YardBonePrefix",	INI::parseAsciiString,	NULL,		offsetof( PrisonBehaviorModuleData, m_prisonYardBonePrefix ) },
+		{ "ShowPrisoners",	INI::parseBool,					nullptr,		offsetof( PrisonBehaviorModuleData, m_showPrisoners ) },
+		{ "YardBonePrefix",	INI::parseAsciiString,	nullptr,		offsetof( PrisonBehaviorModuleData, m_prisonYardBonePrefix ) },
 		{ 0, 0, 0, 0 }
 
 	};
@@ -125,7 +125,7 @@ PrisonBehavior::PrisonBehavior( Thing *thing, const ModuleData *moduleData )
 							: OpenContain( thing, moduleData )
 {
 
-	m_visualList = NULL;
+	m_visualList = nullptr;
 
 }
 
@@ -214,7 +214,7 @@ void PrisonBehavior::pickVisualLocation( Coord3D *pos )
 	Int i;
 
 	// sanity
-	if( pos == NULL )
+	if( pos == nullptr )
 		return;
 
 	// initialize the picked location to that of the prison center
@@ -226,7 +226,7 @@ void PrisonBehavior::pickVisualLocation( Coord3D *pos )
 	Int yardBones = us->getMultiLogicalBonePosition( modData->m_prisonYardBonePrefix.str(),
 																									 MAX_YARD_BONES,
 																									 yardPositions,
-																									 NULL );
+																									 nullptr );
 
 	//
 	// we must have at least 3 bone locations to make a yard polygon, otherwise we'll
@@ -300,7 +300,7 @@ void PrisonBehavior::addVisual( Object *obj )
 {
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return;
 
 	// create a drawable
@@ -338,14 +338,14 @@ void PrisonBehavior::removeVisual( Object *obj )
 {
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return;
 
 	// initialize a drawable ID to invalid
 	DrawableID drawableID = INVALID_DRAWABLE_ID;
 
 	// find visual info in our list, once found, take this opportunity to remove it from that list
-	PrisonVisual *visual, *prevVisual = NULL;
+	PrisonVisual *visual, *prevVisual = nullptr;
 	for( visual = m_visualList; visual; visual = visual->m_next )
 	{
 
@@ -434,7 +434,7 @@ void PrisonBehavior::xfer( Xfer *xfer )
 	{
 
 		// the visual list should be empty
-		if( m_visualList != NULL )
+		if( m_visualList != nullptr )
 		{
 
 			DEBUG_CRASH(( "PrisonBehavior::xfer - the visual list should be empty but is not" ));

@@ -81,7 +81,7 @@ public:
 		m_conflictingUpgradeNames.clear();
 		m_removalUpgradeNames.clear();
 
-		m_fxListUpgrade = NULL;
+		m_fxListUpgrade = nullptr;
 		m_activationMask.clear();
 		m_conflictingMask.clear();
 		m_requiresAllTriggers = false;
@@ -91,11 +91,11 @@ public:
 	{
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "TriggeredBy",		INI::parseAsciiStringVector, NULL, offsetof( UpgradeMuxData, m_activationUpgradeNames ) },
-			{ "ConflictsWith",	INI::parseAsciiStringVector, NULL, offsetof( UpgradeMuxData, m_conflictingUpgradeNames ) },
-			{ "RemovesUpgrades",INI::parseAsciiStringVector, NULL, offsetof( UpgradeMuxData, m_removalUpgradeNames ) },
-			{ "FXListUpgrade",	INI::parseFXList, NULL, offsetof( UpgradeMuxData, m_fxListUpgrade ) },
-			{ "RequiresAllTriggers", INI::parseBool, NULL, offsetof( UpgradeMuxData, m_requiresAllTriggers ) },
+			{ "TriggeredBy",		INI::parseAsciiStringVector, nullptr, offsetof( UpgradeMuxData, m_activationUpgradeNames ) },
+			{ "ConflictsWith",	INI::parseAsciiStringVector, nullptr, offsetof( UpgradeMuxData, m_conflictingUpgradeNames ) },
+			{ "RemovesUpgrades",INI::parseAsciiStringVector, nullptr, offsetof( UpgradeMuxData, m_removalUpgradeNames ) },
+			{ "FXListUpgrade",	INI::parseFXList, nullptr, offsetof( UpgradeMuxData, m_fxListUpgrade ) },
+			{ "RequiresAllTriggers", INI::parseBool, nullptr, offsetof( UpgradeMuxData, m_requiresAllTriggers ) },
 			{ 0, 0, 0, 0 }
 		};
 		return dataFieldParse;

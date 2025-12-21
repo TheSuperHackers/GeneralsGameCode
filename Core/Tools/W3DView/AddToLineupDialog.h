@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // AddToLineupDialog.h : header file
 //
@@ -30,7 +31,7 @@ class CAddToLineupDialog : public CDialog
 {
 // Construction
 public:
-	CAddToLineupDialog(ViewerSceneClass *scene, CWnd* pParent = NULL);   // standard constructor
+	CAddToLineupDialog(ViewerSceneClass *scene, CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CAddToLineupDialog)

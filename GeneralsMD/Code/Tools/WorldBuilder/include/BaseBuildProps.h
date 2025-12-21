@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // BaseBuildProps.h : header file
 //
@@ -28,7 +29,7 @@ class BaseBuildProps : public CDialog
 {
 // Construction
 public:
-	BaseBuildProps(CWnd* pParent = NULL);   // standard constructor
+	BaseBuildProps(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(BaseBuildProps)

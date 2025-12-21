@@ -31,13 +31,13 @@
 
 Scorches ScorchOptions::m_scorchtype = SCORCH_1;
 Real ScorchOptions::m_scorchsize = DEFAULT_SCORCHMARK_RADIUS;
-ScorchOptions *ScorchOptions::m_staticThis = NULL;
+ScorchOptions *ScorchOptions::m_staticThis = nullptr;
 
 /////////////////////////////////////////////////////////////////////////////
 // ScorchOptions dialog
 
 
-ScorchOptions::ScorchOptions(CWnd* pParent /*=NULL*/)
+ScorchOptions::ScorchOptions(CWnd* pParent /*=nullptr*/)
 {
 	//{{AFX_DATA_INIT(ScorchOptions)
 		// NOTE: the ClassWizard will add member initialization here
@@ -63,7 +63,7 @@ END_MESSAGE_MAP()
 
 MapObject *ScorchOptions::getSingleSelectedScorch(void)
 {
-	MapObject *theMapObj = NULL;
+	MapObject *theMapObj = nullptr;
 //	Bool found = false;
 	Int selCount=0;
 	MapObject *pMapObj;
@@ -79,7 +79,7 @@ MapObject *ScorchOptions::getSingleSelectedScorch(void)
 		return theMapObj;
 	}
 
-	return(NULL);
+	return(nullptr);
 }
 
 void ScorchOptions::updateTheUI(void)
@@ -261,7 +261,7 @@ void ScorchOptions::getAllSelectedDicts(void)
 Dict** ScorchOptions::getAllSelectedDictsData()
 {
 #if defined(USING_STLPORT) || __cplusplus < 201103L
-	return !m_allSelectedDicts.empty() ? &m_allSelectedDicts.front() : NULL;
+	return !m_allSelectedDicts.empty() ? &m_allSelectedDicts.front() : nullptr;
 #else
 	return m_allSelectedDicts.data();
 #endif

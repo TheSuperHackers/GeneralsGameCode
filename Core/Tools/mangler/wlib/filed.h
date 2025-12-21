@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include "odevice.h"
 
@@ -26,7 +27,7 @@ class FileD : public OutputDevice
    FileD(IN char *filename, IN char *mode = "w")
    {
      out=fopen(filename,mode);
-     if (out==NULL)
+     if (out==nullptr)
        out=fopen("FileDev.out",mode);
    }
 

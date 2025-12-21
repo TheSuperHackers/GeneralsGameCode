@@ -33,7 +33,7 @@ static char THIS_FILE[] = __FILE__;
 // CVerifyTextDlg dialog
 
 
-CVerifyTextDlg::CVerifyTextDlg( char *trans, char *orig, CWnd* pParent /*=NULL*/)
+CVerifyTextDlg::CVerifyTextDlg( char *trans, char *orig, CWnd* pParent /*=nullptr*/)
 	: CDialog(CVerifyTextDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CVerifyTextDlg)

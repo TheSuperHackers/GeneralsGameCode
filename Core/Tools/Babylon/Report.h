@@ -44,7 +44,7 @@ class CReport : public CDialog
 
 // Construction
 public:
-	CReport(CWnd* pParent = NULL);   // standard constructor
+	CReport(CWnd* pParent = nullptr);   // standard constructor
 
 	char*					Filename	( void )			{ return filename; };
 	RPOPTIONS*		Options			( void )		{ return &options; };

@@ -263,7 +263,7 @@ bool DebugCmdInterfaceDebug::Execute(class Debug& dbg, const char *cmd,
           if (cur->io)
           {
             cur->io->Delete();
-            cur->io=NULL;
+            cur->io=nullptr;
           }
           return true;
         }
@@ -276,7 +276,7 @@ bool DebugCmdInterfaceDebug::Execute(class Debug& dbg, const char *cmd,
         return true;
       }
 
-      cur->io->Execute(dbg,argn>1?argv[1]:NULL,!normalMode,argn>1?argn-2:0,argv+2);
+      cur->io->Execute(dbg,argn>1?argv[1]:nullptr,!normalMode,argn>1?argn-2:0,argv+2);
     }
     return true;
   }
@@ -366,7 +366,7 @@ bool DebugCmdInterfaceDebug::Execute(class Debug& dbg, const char *cmd,
         dbg.lastPatternEntry=cur;
       }
       else
-        dbg.lastPatternEntry=NULL;
+        dbg.lastPatternEntry=nullptr;
     }
     if (strcmp(cmd,"add") == 0)
     {

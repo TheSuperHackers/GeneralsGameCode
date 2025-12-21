@@ -41,7 +41,7 @@ class VerifyDlg : public CDialog
 	CSliderCtrl *slider;
 // Construction
 public:
-	VerifyDlg(BabylonText *ntext, LangID langid, const char *path, CWnd* pParent = NULL);   // standard constructor
+	VerifyDlg(BabylonText *ntext, LangID langid, const char *path, CWnd* pParent = nullptr);   // standard constructor
 	void CloseAudio ( void );
 
 // Dialog Data

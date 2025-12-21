@@ -40,6 +40,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+#include <Utility/CppMacros.h>
+
 #include <windows.h>
 #include <Utility/stdio_adapter.h>
 
@@ -83,7 +85,7 @@ BOOL CALLBACK ImageErrorProc( HWND hWndDialog, UINT message,
 			//
 
 			// sanity
-			if( TheImagePacker == NULL )
+			if( TheImagePacker == nullptr )
 				return TRUE;
 
 			// go through all images
@@ -101,7 +103,7 @@ BOOL CALLBACK ImageErrorProc( HWND hWndDialog, UINT message,
 				image = TheImagePacker->getImage( i );
 
 				// sanity
-				if( image == NULL )
+				if( image == nullptr )
 					continue;
 
 				// if image can't be processed find out why

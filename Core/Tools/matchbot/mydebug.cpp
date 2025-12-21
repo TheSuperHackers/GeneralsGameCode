@@ -16,16 +16,17 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <Utility/CppMacros.h>
 #include <stdlib.h>
 #include "mydebug.h"
 #include "streamer.h"
 #include "odevice.h"
 
 
-// static MyMsgManager         *msg_manager=NULL;
+// static MyMsgManager         *msg_manager=nullptr;
 
 // static int                paranoid_enabled=0;
-static ostream           *paranoid_ostream=NULL;
+static ostream           *paranoid_ostream=nullptr;
 static Streamer           paranoid_streamer;
 
 // Don't dare touch this semaphore in application code!
@@ -38,7 +39,7 @@ CritSec                      MyDebugLibSemaphore;
 
 int MyMsgManager::setAllStreams(OutputDevice *device)
 {
-	if (device==NULL)
+	if (device==nullptr)
 		return(1);
 
 	MYDEBUGLOCK;
@@ -54,7 +55,7 @@ int MyMsgManager::setAllStreams(OutputDevice *device)
 
 int MyMsgManager::setParanoidStream(OutputDevice *device)
 {
-	if (device==NULL)
+	if (device==nullptr)
 		return(1);
 
 	MYDEBUGLOCK;

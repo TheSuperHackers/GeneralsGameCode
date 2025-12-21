@@ -61,8 +61,8 @@
 // PRIVATE DATA ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 static Byte drawCnt = 0;
-// static TbIME *ourIME = NULL;  ///< @todo need this for IME kanji support
-static GameWindow *curWindow = NULL;  /**< so we can keep track of the input
+// static TbIME *ourIME = nullptr;  ///< @todo need this for IME kanji support
+static GameWindow *curWindow = nullptr;  /**< so we can keep track of the input
 																					 window when using IME */
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
@@ -202,7 +202,7 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 						GameWindow *parent;
 						parent = window->winGetParent();
 						if(parent && !BitIsSet(parent->winGetStyle(), GWS_COMBO_BOX))
-							parent = NULL;
+							parent = nullptr;
 						if(parent)
 							TheWindowManager->winNextTab(parent);
 						else
@@ -220,7 +220,7 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 						GameWindow *parent;
 						parent = window->winGetParent();
 						if(parent && !BitIsSet(parent->winGetStyle(), GWS_COMBO_BOX))
-							parent = NULL;
+							parent = nullptr;
 						if(parent)
 							TheWindowManager->winPrevTab(parent);
 						else
@@ -365,8 +365,8 @@ WindowMsgHandledType GadgetTextEntrySystem( GameWindow *window, UnsignedInt msg,
 
 			// free all edit data
 			delete( (EntryData *)window->winGetUserData() );
-			window->winSetUserData(NULL);
-			e = NULL;
+			window->winSetUserData(nullptr);
+			e = nullptr;
 			break;
 
 		// ------------------------------------------------------------------------
@@ -376,7 +376,7 @@ WindowMsgHandledType GadgetTextEntrySystem( GameWindow *window, UnsignedInt msg,
 				// If we're losing focus
 				/// @todo need to enable this for IME support
 				// ourIME->UnActivate();
-				curWindow = NULL;
+				curWindow = nullptr;
 				BitClear( instData->m_state, WIN_STATE_SELECTED );
 				BitClear( instData->m_state, WIN_STATE_HILITED );
 
@@ -385,7 +385,7 @@ WindowMsgHandledType GadgetTextEntrySystem( GameWindow *window, UnsignedInt msg,
 				e->constructText->setText( UnicodeString::TheEmptyString );
 				e->conCharPos = 0;
 				if(TheIMEManager && TheIMEManager->isAttachedTo(window))
-					TheIMEManager->attach(NULL);
+					TheIMEManager->attach(nullptr);
 				//TheIMEManager->detatch();
 			}
 			else
@@ -433,7 +433,7 @@ BoolCode InitializeEntryGadget( void )
 BoolCode ShutdownEntryGadget( void )
 {
 	delete ourIME;
-	ourIME = NULL;
+	ourIME = nullptr;
 
 	return TRUE;
 }
@@ -443,7 +443,7 @@ void InformEntry( WideChar c )
 	Int i, listCount = 0;
 	EntryData *e;
 
-	if( ourIME == NULL || curWindow == NULL )
+	if( ourIME == nullptr || curWindow == nullptr )
 		return;
 
 	e = (EntryData *)curWindow->winGetUserData();
@@ -495,7 +495,7 @@ void InformEntry( WideChar c )
 		else
 		{
 			Int maxWidth = 0;
-			ListboxData list = NULL;
+			ListboxData list = nullptr;
 			ICoord2D constructSize, sliderSize;
 
 			WinHide( e->constructList, FALSE );
@@ -513,7 +513,7 @@ void InformEntry( WideChar c )
 				WideChar *text = (WideChar *)ourIME->CandidateList_GetItem( i );
 
 				TheWindowManager->winGetTextSize( e->constructList->instData.font,
-																					text, NULL, &tempWidth, 0 );
+																					text, nullptr, &tempWidth, 0 );
 
 				if( tempWidth > maxWidth )
 					maxWidth = tempWidth;
@@ -570,7 +570,7 @@ UnicodeString GadgetTextEntryGetText( GameWindow *textentry )
 {
 
 	// sanity
-	if( textentry == NULL )
+	if( textentry == nullptr )
 		return UnicodeString::TheEmptyString;
 
 	// verify that this is a list box

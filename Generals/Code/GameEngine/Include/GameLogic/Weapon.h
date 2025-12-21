@@ -68,7 +68,7 @@ static const char *const TheWeaponReloadNames[] =
 	"YES",
 	"NO",
 	"RETURN_TO_BASE",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheWeaponReloadNames) == WEAPON_RELOAD_COUNT + 1, "Incorrect array size");
 #endif
@@ -89,7 +89,7 @@ static const char *const TheWeaponPrefireNames[] =
 	"PER_SHOT",
 	"PER_ATTACK",
 	"PER_CLIP",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheWeaponPrefireNames) == PREFIRE_COUNT + 1, "Incorrect array size");
 #endif
@@ -129,7 +129,7 @@ static const char *const TheWeaponAffectsMaskNames[] =
 	"SUICIDE",
 	"NOT_SIMILAR",
 	"NOT_AIRBORNE",
-	NULL
+	nullptr
 };
 #endif
 
@@ -161,7 +161,7 @@ static const char *const TheWeaponCollideMaskNames[] =
 	"SMALL_MISSILES",			//All missiles are also projectiles!
 	"BALLISTIC_MISSILES", //All missiles are also projectiles!
 	"CONTROLLED_STRUCTURES",
-	NULL
+	nullptr
 };
 #endif
 
@@ -245,7 +245,7 @@ static const char *const TheWeaponBonusNames[] =
 	"FRENZY_TWO",
 	"FRENZY_THREE",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheWeaponBonusNames) == WEAPONBONUSCONDITION_COUNT + 1, "Incorrect array size");
 #endif
@@ -300,7 +300,7 @@ static const char *const TheWeaponBonusFieldNames[] =
 	"RANGE",
 	"RATE_OF_FIRE",
 	"PRE_ATTACK",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheWeaponBonusFieldNames) == WeaponBonus::FIELD_COUNT + 1, "Incorrect array size");
 #endif
@@ -353,8 +353,8 @@ public:
 	void reset( void );
 
 	void friend_setNextTemplate(WeaponTemplate *nextTemplate) { m_nextTemplate = nextTemplate; }
-	WeaponTemplate *friend_clearNextTemplate( void ) {	WeaponTemplate *ret = m_nextTemplate; m_nextTemplate = NULL; return ret; }
-	Bool isOverride( void ) { return m_nextTemplate != NULL; }
+	WeaponTemplate *friend_clearNextTemplate( void ) {	WeaponTemplate *ret = m_nextTemplate; m_nextTemplate = nullptr; return ret; }
+	Bool isOverride( void ) { return m_nextTemplate != nullptr; }
 
 	/// field table for loading the values from an INI
 	const FieldParse *getFieldParse() const { return TheWeaponTemplateFieldParseTable; }
@@ -474,7 +474,7 @@ protected:
 
 private:
 
-	// NOTE: m_nextTemplate will be cleaned up if it is NON-NULL.
+	// NOTE: m_nextTemplate will be cleaned up if it is NON-nullptr.
 	WeaponTemplate *m_nextTemplate;
 
 	static void parseWeaponBonusSet( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );
@@ -577,10 +577,10 @@ public:
 //~Weapon();
 
 	// return true if we auto-reloaded our clip after firing.
-	Bool fireWeapon(const Object *source, Object *target, ObjectID* projectileID = NULL);
+	Bool fireWeapon(const Object *source, Object *target, ObjectID* projectileID = nullptr);
 
 	// return true if we auto-reloaded our clip after firing.
-	Bool fireWeapon(const Object *source, const Coord3D* pos, ObjectID* projectileID = NULL);
+	Bool fireWeapon(const Object *source, const Coord3D* pos, ObjectID* projectileID = nullptr);
 
 	void fireProjectileDetonationWeapon(const Object *source, Object *target, WeaponBonusConditionFlags extraBonusFlags);
 
@@ -600,12 +600,12 @@ public:
 	*/
 	Real estimateWeaponDamage(const Object *source, const Object *target)
 	{
-		return estimateWeaponDamage(source, target, NULL);
+		return estimateWeaponDamage(source, target, nullptr);
 	}
 
 	Real estimateWeaponDamage(const Object *source, const Coord3D* pos)
 	{
-		return estimateWeaponDamage(source, NULL, pos);
+		return estimateWeaponDamage(source, nullptr, pos);
 	}
 
 	/** return true if the target is within attack range, false otherwise.
@@ -619,7 +619,7 @@ public:
 	Bool isGoalPosWithinAttackRange(const Object *source, const Coord3D* goalPos, const Object *target, const Coord3D* targetPos) const;
 
 	//Used only by garrison contains that move objects around before doing the range check.
-	//If target object is specified, we'll use his position, but if it's NULL we will use the
+	//If target object is specified, we'll use his position, but if it's nullptr we will use the
 	//target position passed in.
 	//NOTE: This is not a user friendly function -- use with caution if at all! -- Kris
 	Bool isSourceObjectWithGoalPositionWithinAttackRange(const Object *source, const Coord3D *goalPos, const Object *target, const Coord3D *targetPos) const;

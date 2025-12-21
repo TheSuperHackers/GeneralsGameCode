@@ -103,7 +103,7 @@ static const char *const ScienceAvailabilityNames[] =
 	"Available",
 	"Disabled",
 	"Hidden",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(ScienceAvailabilityNames) == SCIENCE_AVAILABILITY_COUNT + 1, "Incorrect array size");
 #endif	// end DEFINE_SCIENCE_AVAILABILITY_NAMES
@@ -443,7 +443,7 @@ public:
 
 	virtual Bool computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius); ///< Calculates best pos for weapon given radius.
 
-	/// Get the enemy an ai player is currently focused on.  NOTE - Can be NULL.
+	/// Get the enemy an ai player is currently focused on.  NOTE - Can be nullptr.
 	Player  *getCurrentEnemy( void );
 
 	/// Is this player a skirmish ai player?
@@ -531,8 +531,8 @@ public:
 	/**
 		return this player's "default" team.
 	*/
-	Team *getDefaultTeam() { DEBUG_ASSERTCRASH(m_defaultTeam!=NULL,("default team is null")); return m_defaultTeam; }
-	const Team *getDefaultTeam() const { DEBUG_ASSERTCRASH(m_defaultTeam!=NULL,("default team is null")); return m_defaultTeam; }
+	Team *getDefaultTeam() { DEBUG_ASSERTCRASH(m_defaultTeam!=nullptr,("default team is null")); return m_defaultTeam; }
+	const Team *getDefaultTeam() const { DEBUG_ASSERTCRASH(m_defaultTeam!=nullptr,("default team is null")); return m_defaultTeam; }
 
 	void setBuildList(BuildListInfo *pBuildList);			///< sets the build list.
 	BuildListInfo *getBuildList( void ) { return m_pBuildList; }		///< returns the build list. (build list might be modified by the solo AI)

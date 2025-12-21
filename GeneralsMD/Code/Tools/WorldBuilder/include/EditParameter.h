@@ -31,7 +31,7 @@ class EditParameter : public CDialog
 {
 // Construction
 public:
-	EditParameter(CWnd* pParent = NULL);   // standard constructor
+	EditParameter(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(EditParameter)
@@ -57,7 +57,7 @@ public:
 	static Bool loadScripts(CComboBox *pCombo, Bool subr, AsciiString match = AsciiString::TheEmptyString);
 	static Bool loadWaypoints(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
 	static Bool loadTransports(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
-	static Bool loadObjectTypeList(CComboBox *pCombo, std::vector<AsciiString> *strings = NULL, AsciiString match = AsciiString::TheEmptyString);
+	static Bool loadObjectTypeList(CComboBox *pCombo, std::vector<AsciiString> *strings = nullptr, AsciiString match = AsciiString::TheEmptyString);
 
 protected:
 	static Bool loadSides(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);

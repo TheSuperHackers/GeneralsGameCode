@@ -196,7 +196,7 @@ END_MESSAGE_MAP()
 
 IMPLEMENT_DYNAMIC(CBabylonDlg, CDialog);
 
-CBabylonDlg::CBabylonDlg(CWnd* pParent /*=NULL*/)
+CBabylonDlg::CBabylonDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CBabylonDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CBabylonDlg)
@@ -204,16 +204,16 @@ CBabylonDlg::CBabylonDlg(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 	// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-	m_pAutoProxy = NULL;
+	m_pAutoProxy = nullptr;
 }
 
 CBabylonDlg::~CBabylonDlg()
 {
 	// If there is an automation proxy for this dialog, set
-	//  its back pointer to this dialog to NULL, so it knows
+	//  its back pointer to this dialog to nullptr, so it knows
 	//  the dialog has been deleted.
-	if (m_pAutoProxy != NULL)
-		m_pAutoProxy->m_pDialog = NULL;
+	if (m_pAutoProxy != nullptr)
+		m_pAutoProxy->m_pDialog = nullptr;
 
 }
 
@@ -266,7 +266,7 @@ BOOL CBabylonDlg::OnInitDialog()
 	ASSERT(IDM_ABOUTBOX < 0xF000);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
-	if (pSysMenu != NULL)
+	if (pSysMenu != nullptr)
 	{
 		CString strAboutMenu;
 		strAboutMenu.LoadString(IDS_ABOUTBOX);
@@ -427,7 +427,7 @@ BOOL CBabylonDlg::CanExit()
 	// If the proxy object is still around, then the automation
 	//  controller is still holding on to this application.  Leave
 	//  the dialog around, but hide its UI.
-	if (m_pAutoProxy != NULL)
+	if (m_pAutoProxy != nullptr)
 	{
 		ShowWindow(SW_HIDE);
 		return FALSE;
@@ -451,7 +451,7 @@ BOOL CBabylonDlg::CanExit()
 //DEL 		}
 //DEL 		else
 //DEL 		{
-//DEL 			SelectFile ( NULL );
+//DEL 			SelectFile ( nullptr );
 //DEL 		}
 //DEL 		delete dlg;
 //DEL 	}
@@ -684,7 +684,7 @@ void CBabylonDlg::Status( const char *string, int log )
 
 int CBabylonDlg::SaveLog()
 {
-	FILE *log = NULL;
+	FILE *log = nullptr;
 	EDITSTREAM es;
  	CRichEditCtrl *rec = (CRichEditCtrl *) GetDlgItem ( IDC_LOG );
 	int ok = FALSE;
@@ -759,7 +759,7 @@ static int readToEndOfQuote( FILE *file, char *in, char *out, char *wavefile, in
 		{
 			if ( !(ch = *in++))
 			{
-				in = NULL; // have exhausted the input buffer
+				in = nullptr; // have exhausted the input buffer
 				ch = getc ( file );
 			}
 		}
@@ -835,7 +835,7 @@ static int readToEndOfQuote( FILE *file, char *in, char *out, char *wavefile, in
 		{
 			if ( !(ch = *in++))
 			{
-				in = NULL; // have exhausted the input buffer
+				in = nullptr; // have exhausted the input buffer
 				ch = getc ( file );
 			}
 		}
@@ -1037,8 +1037,8 @@ static int getLabelCount( char *filename )
 
 int CBabylonDlg::LoadStrFile ( TransDB *db, const char *filename, void (*cb) ( void ) )
 {
-	FILE *file = NULL;
-	BabylonLabel *label = NULL;
+	FILE *file = nullptr;
+	BabylonLabel *label = nullptr;
 	int status = FALSE;
 	int line_number = 0;
 	int label_count = 0;
@@ -1128,7 +1128,7 @@ int CBabylonDlg::LoadStrFile ( TransDB *db, const char *filename, void (*cb) ( v
 		{
 			cb ();
 		}
-		label = NULL;
+		label = nullptr;
 
 	}
 	status = TRUE;
@@ -1555,7 +1555,7 @@ int CBabylonDlg::UpdateLabel( BabylonLabel *source, BabylonLabel *destination, U
 			if ( !stext->Matched () )
 			{
 				int result;
-				BabylonText *match = NULL;
+				BabylonText *match = nullptr;
 
 				if ( update && !skip )
 				{
@@ -2076,7 +2076,7 @@ int CBabylonDlg::MatchText ( BabylonText *text, BabylonLabel *label, BabylonText
 	CMatchDlg dlg;
 	int result;
 
-	*match = NULL;
+	*match = nullptr;
 	sprintf ( buffer, "Text: %s\n\nLabel:%s\n", text->GetSB (), label->NameSB () );
 
 	// TODO: Add your control notification handler code here
@@ -2128,7 +2128,7 @@ void CBabylonDlg::OnImport()
 {
 	if ( CanOperate ())
 	{
-		CFileDialog fd ( TRUE , NULL, "*.xls",  OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR );
+		CFileDialog fd ( TRUE , nullptr, "*.xls",  OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR );
 
 		if ( fd.DoModal () == IDOK )
 		{
@@ -2159,7 +2159,7 @@ int CBabylonDlg::ValidateStrFile( const char *filename)
 	PROCESS_INFORMATION ProcessInfo;
 	const char *results = "strcheck.rst";
 	int errors = 0;
-	FILE *file = NULL;
+	FILE *file = nullptr;
 
 	StartupInfo.cb = sizeof(STARTUPINFO);
 	StartupInfo.dwFlags = STARTF_USESHOWWINDOW;
@@ -2175,15 +2175,14 @@ int CBabylonDlg::ValidateStrFile( const char *filename)
 
 	sprintf ( buffer, "strcheck %s %s", filename, results );
 
-	if (!CreateProcess(
-			NULL,
+	if (!CreateProcess( nullptr,
 			buffer,
-			NULL,
-			NULL,
+			nullptr,
+			nullptr,
 			FALSE,
 			0,
-			NULL,
-			NULL,
+			nullptr,
+			nullptr,
 			&StartupInfo,
 			&ProcessInfo))
 	{
@@ -2497,7 +2496,7 @@ void CBabylonDlg::OnTranslations()
 
 void CBabylonDlg::OnSelchangeCombolang()
 {
-	LANGINFO *info = NULL;
+	LANGINFO *info = nullptr;
 	int index;
 
 	index = combo->GetCurSel ();
@@ -2557,7 +2556,7 @@ void CBabylonDlg::OnSent()
 	// TODO: Add your control notification handler code here
 	if ( CanOperate ())
 	{
-		CFileDialog fd ( TRUE , NULL, "*.xls",  OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR );
+		CFileDialog fd ( TRUE , nullptr, "*.xls",  OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR );
 
 		if ( fd.DoModal () == IDOK )
 		{

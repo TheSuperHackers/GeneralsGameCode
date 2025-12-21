@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // ParticleRotationKeyDialog.h : header file
 //
@@ -28,7 +29,7 @@ class ParticleRotationKeyDialogClass : public CDialog
 {
 // Construction
 public:
-	ParticleRotationKeyDialogClass(float rotation,CWnd* pParent = NULL);   // standard constructor
+	ParticleRotationKeyDialogClass(float rotation,CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(ParticleRotationKeyDialogClass)

@@ -95,9 +95,9 @@ static Bool raiseMessageBoxes = TRUE;
 static Bool campaignSelected = FALSE;
 #if defined(RTS_DEBUG) || defined RTS_PROFILE
 static NameKeyType campaignID = NAMEKEY_INVALID;
-static GameWindow *buttonCampaign = NULL;
+static GameWindow *buttonCampaign = nullptr;
 #ifdef TEST_COMPRESSION
-static GameWindow *buttonCompressTest = NULL;
+static GameWindow *buttonCompressTest = nullptr;
 void DoCompressTest( void );
 #endif // TEST_COMPRESSION
 #endif
@@ -140,37 +140,37 @@ static NameKeyType buttonDiffBackID = NAMEKEY_INVALID;
 
 
 // window pointers --------------------------------------------------------------------------------
-static GameWindow *parentMainMenu = NULL;
-static GameWindow *buttonSinglePlayer = NULL;
-static GameWindow *buttonMultiPlayer = NULL;
-static GameWindow *buttonSkirmish = NULL;
-static GameWindow *buttonOnline = NULL;
-static GameWindow *buttonNetwork = NULL;
-static GameWindow *buttonOptions = NULL;
-static GameWindow *buttonExit = NULL;
-static GameWindow *buttonMOTD = NULL;
-static GameWindow *buttonWorldBuilder = NULL;
-static GameWindow *mainMenuMovie = NULL;
-static GameWindow *getUpdate = NULL;
-static GameWindow *buttonTRAINING = NULL;
-static GameWindow *buttonChallenge = NULL;
-static GameWindow *buttonUSA = NULL;
-static GameWindow *buttonGLA = NULL;
-static GameWindow *buttonChina = NULL;
-static GameWindow *buttonUSARecentSave = NULL;
-static GameWindow *buttonUSALoadGame = NULL;
-static GameWindow *buttonGLARecentSave = NULL;
-static GameWindow *buttonGLALoadGame = NULL;
-static GameWindow *buttonChinaRecentSave = NULL;
-static GameWindow *buttonChinaLoadGame = NULL;
-static GameWindow *buttonReplay = NULL;
-static GameWindow *buttonLoadReplay = NULL;
-static GameWindow *buttonLoad = NULL;
-static GameWindow *buttonCredits = NULL;
-static GameWindow *buttonEasy = NULL;
-static GameWindow *buttonMedium = NULL;
-static GameWindow *buttonHard = NULL;
-static GameWindow *buttonDiffBack = NULL;
+static GameWindow *parentMainMenu = nullptr;
+static GameWindow *buttonSinglePlayer = nullptr;
+static GameWindow *buttonMultiPlayer = nullptr;
+static GameWindow *buttonSkirmish = nullptr;
+static GameWindow *buttonOnline = nullptr;
+static GameWindow *buttonNetwork = nullptr;
+static GameWindow *buttonOptions = nullptr;
+static GameWindow *buttonExit = nullptr;
+static GameWindow *buttonMOTD = nullptr;
+static GameWindow *buttonWorldBuilder = nullptr;
+static GameWindow *mainMenuMovie = nullptr;
+static GameWindow *getUpdate = nullptr;
+static GameWindow *buttonTRAINING = nullptr;
+static GameWindow *buttonChallenge = nullptr;
+static GameWindow *buttonUSA = nullptr;
+static GameWindow *buttonGLA = nullptr;
+static GameWindow *buttonChina = nullptr;
+static GameWindow *buttonUSARecentSave = nullptr;
+static GameWindow *buttonUSALoadGame = nullptr;
+static GameWindow *buttonGLARecentSave = nullptr;
+static GameWindow *buttonGLALoadGame = nullptr;
+static GameWindow *buttonChinaRecentSave = nullptr;
+static GameWindow *buttonChinaLoadGame = nullptr;
+static GameWindow *buttonReplay = nullptr;
+static GameWindow *buttonLoadReplay = nullptr;
+static GameWindow *buttonLoad = nullptr;
+static GameWindow *buttonCredits = nullptr;
+static GameWindow *buttonEasy = nullptr;
+static GameWindow *buttonMedium = nullptr;
+static GameWindow *buttonHard = nullptr;
+static GameWindow *buttonDiffBack = nullptr;
 static GameWindow *dropDownWindows[DROPDOWN_COUNT];
 
 static Bool buttonPushed = FALSE;
@@ -192,7 +192,7 @@ enum
 static Int showFade = FALSE;
 static Int dropDown = DROPDOWN_NONE;
 static Int pendingDropDown = DROPDOWN_NONE;
-static AnimateWindowManager *localAnimateWindowManager = NULL;
+static AnimateWindowManager *localAnimateWindowManager = nullptr;
 static Bool notShown = TRUE;
 static Bool FirstTimeRunningTheGame = TRUE;
 
@@ -208,7 +208,7 @@ static Bool dontAllowTransitions = FALSE;
 const Int /*TIME_OUT = 15,*/ CORNER = 10;
 void AcceptResolution();
 void DeclineResolution();
-GameWindow *resAcceptMenu = NULL;
+GameWindow *resAcceptMenu = nullptr;
 extern DisplaySettings oldDispSettings, newDispSettings;
 extern Bool dispChanged;
 //static time_t timeStarted = 0, currentTime = 0;
@@ -373,7 +373,7 @@ static void TimetToFileTime( time_t t, LPFILETIME pft )
 
 void initialHide( void )
 {
-GameWindow *win = NULL;
+GameWindow *win = nullptr;
 	win = TheWindowManager->winGetWindowFromId(parentMainMenu, TheNameKeyGenerator->nameToKey("MainMenu.wnd:WinFactionGLA"));
 	if(win)
 		win->winHide(TRUE);
@@ -443,7 +443,7 @@ GameWindow *win = NULL;
 static void initLabelVersion()
 {
 	NameKeyType versionID = TheNameKeyGenerator->nameToKey( "MainMenu.wnd:LabelVersion" );
-	GameWindow *labelVersion = TheWindowManager->winGetWindowFromId( NULL, versionID );
+	GameWindow *labelVersion = TheWindowManager->winGetWindowFromId( nullptr, versionID );
 
 	if (labelVersion)
 	{
@@ -476,7 +476,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	pendingDropDown = DROPDOWN_NONE;
 	Int i = 0;
 	for(; i < DROPDOWN_COUNT; ++i)
-		dropDownWindows[i] = NULL;
+		dropDownWindows[i] = nullptr;
 
 	// get ids for our windows
 	mainMenuID = TheNameKeyGenerator->nameToKey( "MainMenu.wnd:MainMenuParent" );
@@ -516,7 +516,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	buttonDiffBackID = TheNameKeyGenerator->nameToKey( "MainMenu.wnd:ButtonDiffBack" );
 
 	// get pointers to the window buttons
-	parentMainMenu = TheWindowManager->winGetWindowFromId( NULL, mainMenuID );
+	parentMainMenu = TheWindowManager->winGetWindowFromId( nullptr, mainMenuID );
 	//buttonCampaign = TheWindowManager->winGetWindowFromId( parentMainMenu, campaignID );
 	buttonSinglePlayer = TheWindowManager->winGetWindowFromId( parentMainMenu, buttonSinglePlayerID );
 	buttonMultiPlayer = TheWindowManager->winGetWindowFromId( parentMainMenu, buttonMultiPlayerID );
@@ -573,7 +573,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 																									 WIN_STATUS_ENABLED | WIN_STATUS_IMAGE,
 																									 25, 175,
 																									 400, 400,
-																									 &instData, NULL, TRUE );
+																									 &instData, nullptr, TRUE );
 #endif // TEST_COMPRESSION
 
 	instData.init();
@@ -585,7 +585,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 																									 WIN_STATUS_ENABLED,
 																									 25, 54,
 																									 180, 26,
-																									 &instData, NULL, TRUE );
+																									 &instData, nullptr, TRUE );
 #endif
 
 	initLabelVersion();
@@ -610,11 +610,11 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 			checkedForUpdate = TRUE;
 			DEBUG_LOG(("Looking for a patch for productID=%d, versionStr=%s, distribution=%d",
 				gameProductID, gameVersionUniqueIDStr, gameDistributionID));
-			ptCheckForPatch( gameProductID, gameVersionUniqueIDStr, gameDistributionID, patchAvailableCallback, PTFalse, NULL );
-			//ptCheckForPatch( productID, versionUniqueIDStr, distributionID, mapPackAvailableCallback, PTFalse, NULL );
+			ptCheckForPatch( gameProductID, gameVersionUniqueIDStr, gameDistributionID, patchAvailableCallback, PTFalse, nullptr );
+			//ptCheckForPatch( productID, versionUniqueIDStr, distributionID, mapPackAvailableCallback, PTFalse, nullptr );
 		}
 	}
-	if (getUpdate != NULL)
+	if (getUpdate != nullptr)
 	{
 		getUpdate->winHide( TRUE );
 		//getUpdate->winEnable( FALSE );
@@ -688,7 +688,7 @@ void MainMenuShutdown( WindowLayout *layout, void *userData )
 
 //	if(winVidManager)
 	//		delete winVidManager;
-	//	winVidManager = NULL;
+	//	winVidManager = nullptr;
 
 
 	if( popImmediate )
@@ -696,7 +696,7 @@ void MainMenuShutdown( WindowLayout *layout, void *userData )
 //		if(localAnimateWindowManager)
 //		{
 //			delete localAnimateWindowManager;
-//			localAnimateWindowManager = NULL;
+//			localAnimateWindowManager = nullptr;
 //		}
 		shutdownComplete( layout );
 		return;
@@ -778,7 +778,7 @@ void DoResolutionDialog()
 
 	resAcceptMenu = TheWindowManager->gogoMessageBox( CORNER, CORNER, -1, -1,MSG_BOX_OK | MSG_BOX_CANCEL ,
 																									 TheGameText->fetch("GUI:Resolution"),
-																									 resTimerString, NULL, NULL, AcceptResolution,
+																									 resTimerString, nullptr, nullptr, AcceptResolution,
 																									 DeclineResolution);
 }
 
@@ -792,11 +792,11 @@ void ResolutionDialogUpdate()
 {
 	if (timeStarted == 0 && currentTime == 0)
 	{
-		timeStarted = currentTime = time(NULL);
+		timeStarted = currentTime = time(nullptr);
 	}
 	else
 	{
-		currentTime = time(NULL);
+		currentTime = time(nullptr);
 	}
 
 	if ( ( currentTime - timeStarted ) >= TIME_OUT)
@@ -808,7 +808,7 @@ void ResolutionDialogUpdate()
 	// Used for debugging purposes
 	//------------------------------------------------------------------------------------------------------
 	DEBUG_LOG(("Resolution Timer :  started at %d,  current time at %d, frameTicker is %d", timeStarted,
-							time(NULL) , currentTime));
+							time(nullptr) , currentTime));
 }
 */
 
@@ -1487,7 +1487,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 
 				// load the options menu
 				WindowLayout *optLayout = TheShell->getOptionsLayout(TRUE);
-				DEBUG_ASSERTCRASH(optLayout != NULL, ("unable to get options menu layout"));
+				DEBUG_ASSERTCRASH(optLayout != nullptr, ("unable to get options menu layout"));
 				optLayout->runInit();
 				optLayout->hide(FALSE);
 				optLayout->bringForward();
@@ -1495,11 +1495,11 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 			else if( controlID == worldBuilderID )
 			{
 #if defined RTS_DEBUG
-				if(_spawnl(_P_NOWAIT,"WorldBuilderD.exe","WorldBuilderD.exe", NULL) < 0)
-					MessageBoxOk(TheGameText->fetch("GUI:WorldBuilder"), TheGameText->fetch("GUI:WorldBuilderLoadFailed"),NULL);
+				if(_spawnl(_P_NOWAIT,"WorldBuilderD.exe","WorldBuilderD.exe", nullptr) < 0)
+					MessageBoxOk(TheGameText->fetch("GUI:WorldBuilder"), TheGameText->fetch("GUI:WorldBuilderLoadFailed"),nullptr);
 #else
-				if(_spawnl(_P_NOWAIT,"WorldBuilder.exe","WorldBuilder.exe", NULL) < 0)
-					MessageBoxOk(TheGameText->fetch("GUI:WorldBuilder"), TheGameText->fetch("GUI:WorldBuilderLoadFailed"),NULL);
+				if(_spawnl(_P_NOWAIT,"WorldBuilder.exe","WorldBuilder.exe", nullptr) < 0)
+					MessageBoxOk(TheGameText->fetch("GUI:WorldBuilder"), TheGameText->fetch("GUI:WorldBuilderLoadFailed"),nullptr);
 #endif
 			}
 			else if( controlID == getUpdateID )
@@ -1517,7 +1517,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				}
 				else
 				{
-					QuitMessageBoxYesNo(TheGameText->fetch("GUI:QuitPopupTitle"), TheGameText->fetch("GUI:QuitPopupMessage"),quitCallback,NULL);
+					QuitMessageBoxYesNo(TheGameText->fetch("GUI:QuitPopupTitle"), TheGameText->fetch("GUI:QuitPopupMessage"),quitCallback,nullptr);
 				}
 //#endif
 
@@ -1580,7 +1580,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				showLogo = FALSE;
 				showSide = SHOW_USA;
 //				launchChallengeMenu = FALSE;
-//				WindowLayout *layout = NULL;
+//				WindowLayout *layout = nullptr;
 //				layout = TheWindowManager->winCreateLayout( "Menus/DifficultySelect.wnd" );
 //				layout->runInit();
 //				layout->hide( FALSE );
@@ -1608,7 +1608,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				showLogo = FALSE;
 				showSide = SHOW_GLA;
 //				launchChallengeMenu = FALSE;
-//				WindowLayout *layout = NULL;
+//				WindowLayout *layout = nullptr;
 //				layout = TheWindowManager->winCreateLayout( "Menus/DifficultySelect.wnd" );
 //				layout->runInit();
 //				layout->hide( FALSE );
@@ -1636,7 +1636,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				showLogo = FALSE;
 				showSide = SHOW_CHINA;
 //				launchChallengeMenu = FALSE;
-//				WindowLayout *layout = NULL;
+//				WindowLayout *layout = nullptr;
 //				layout = TheWindowManager->winCreateLayout( "Menus/DifficultySelect.wnd" );
 //				layout->runInit();
 //				layout->hide( FALSE );

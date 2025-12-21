@@ -176,16 +176,16 @@ static void startOnline( void )
 
   // Close that contacting window
   DestroyWindow(g_ContactWindow);
-  g_ContactWindow=NULL;
+  g_ContactWindow=nullptr;
 
 	if (cantConnect)
 	{
-		MessageBox(NULL, "Can't Connect", GAME_NAME, MB_OK);
+		MessageBox(nullptr, "Can't Connect", GAME_NAME, MB_OK);
 		exit(0);
 	}
 	else if (queuedDownloads.size())
 	{
-		if (MessageBox(NULL, "Patches Available.  Download?", GAME_NAME, MB_YESNO) == IDYES)
+		if (MessageBox(nullptr, "Patches Available.  Download?", GAME_NAME, MB_YESNO) == IDYES)
 		{
 			DEBUG_LOG(("Downloading patches"));
 			while (queuedDownloads.size())
@@ -210,7 +210,7 @@ static void startOnline( void )
 				}
 				*/
 				delete TheDownloadManager;
-				TheDownloadManager = NULL;
+				TheDownloadManager = nullptr;
 
 				if (g_Finished != 1)
 				{
@@ -229,7 +229,7 @@ static void startOnline( void )
 	}
 	else
 	{
-		MessageBox(NULL, "No Patches Available", GAME_NAME, MB_OK);
+		MessageBox(nullptr, "No Patches Available", GAME_NAME, MB_OK);
 		exit(0);
 	}
 }
@@ -278,7 +278,7 @@ static std::string getNextLine(std::string in, std::string& remainder)
 //-----------------------------------------------------------------------------
 inline const char* skipSeps(const char* p, const char* seps)
 {
-	while (*p && strchr(seps, *p) != NULL)
+	while (*p && strchr(seps, *p) != nullptr)
 		++p;
 	return p;
 }
@@ -286,18 +286,18 @@ inline const char* skipSeps(const char* p, const char* seps)
 //-----------------------------------------------------------------------------
 inline const char* skipNonSeps(const char* p, const char* seps)
 {
-	while (*p && strchr(seps, *p) == NULL)
+	while (*p && strchr(seps, *p) == nullptr)
 		++p;
 	return p;
 }
 
 //-----------------------------------------------------------------------------
-bool nextToken(std::string& base, std::string& tok, const char* seps = NULL)
+bool nextToken(std::string& base, std::string& tok, const char* seps = nullptr)
 {
 	if (base.empty())
 		return false;
 
-	if (seps == NULL)
+	if (seps == nullptr)
 		seps = " \n\r\t";
 
 	const char* start = skipSeps(base.c_str(), seps);
@@ -463,8 +463,8 @@ static void StartPatchCheck( void )
 	// check for a patch first
 	checksLeft = 2;
 	cantConnect = false;
-	ghttpGet(gameURL.c_str(), GHTTPFalse, patchCheckCallback, NULL);
-	ghttpGet(mapURL.c_str(), GHTTPFalse, patchCheckCallback, NULL);
+	ghttpGet(gameURL.c_str(), GHTTPFalse, patchCheckCallback, nullptr);
+	ghttpGet(mapURL.c_str(), GHTTPFalse, patchCheckCallback, nullptr);
 
 	DEBUG_LOG(("Started looking for patches at '%s' && '%s'", gameURL.c_str(), mapURL.c_str()));
 }
@@ -526,7 +526,7 @@ BOOL CALLBACK downloadDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 			//sprintf(localfile,"%s\\%s",g_Update->localpath,g_Update->patchfile);
 
 			// Create the directory
-			//CreateDirectory((char *)g_Update->localpath, NULL );
+			//CreateDirectory((char *)g_Update->localpath, nullptr );
 
 			TheDownloadManager->downloadFile(TheDownload.server, TheDownload.userName, TheDownload.password,
 				TheDownload.file, TheDownload.localFile, TheDownload.regKey, TheDownload.tryResume);
@@ -537,7 +537,7 @@ BOOL CALLBACK downloadDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 			*/
 			g_DownloadWindow = hwndDlg;
 			g_Finished = 0;
-			SetTimer( hwndDlg, 1, 200, NULL );    // was 50
+			SetTimer( hwndDlg, 1, 200, nullptr );    // was 50
 
 			break;
 
@@ -625,8 +625,8 @@ HWND CreatePrimaryWin(void)
   wc.cbWndExtra = 0;            // No extra win data
   wc.hInstance = Global_instance;
   wc.hIcon=LoadIcon(Global_instance, MAKEINTRESOURCE(IDI_ICON1));
-  wc.hCursor = NULL;  /////////LoadCursor( NULL, IDC_ARROW );
-  wc.hbrBackground = NULL;
+  wc.hCursor = nullptr;  /////////LoadCursor( nullptr, IDC_ARROW );
+  wc.hbrBackground = nullptr;
   wc.lpszMenuName = name;
   wc.lpszClassName = name;
   RegisterClass( &wc );
@@ -645,10 +645,10 @@ HWND CreatePrimaryWin(void)
       //GetSystemMetrics( SM_CYSCREEN ),
       0,0,
 
-      NULL,
-      NULL,
+      nullptr,
+      nullptr,
       Global_instance,
-      NULL );
+      nullptr );
 
   SendMessage(hwnd,WM_SETICON,(WPARAM)ICON_SMALL,
       (LPARAM)LoadIcon(Global_instance, MAKEINTRESOURCE(IDI_ICON1)));
@@ -667,7 +667,7 @@ void DispatchEvents(void)
 {
   MSG msg;
   int counter=0;
-  while(PeekMessage(&msg,NULL,0,0, PM_REMOVE))
+  while(PeekMessage(&msg,nullptr,0,0, PM_REMOVE))
   {
     TranslateMessage(&msg);
     DispatchMessage(&msg);
@@ -696,7 +696,7 @@ int main(int argc, char *argv[])
   {
     char username[64];
     valuesize=sizeof(username);
-    if (RegQueryValueEx(rKey,"UserName",NULL,&type,(uint8 *)username,&valuesize)==ERROR_SUCCESS)
+    if (RegQueryValueEx(rKey,"UserName",nullptr,&type,(uint8 *)username,&valuesize)==ERROR_SUCCESS)
       have_registered=true;
     RegCloseKey(rKey);
   }
@@ -711,7 +711,7 @@ int main(int argc, char *argv[])
 
   if (!have_registered)
   {
-    if (MessageBox(NULL,Fetch_String(TXT_REGNOW),Fetch_String(TXT_TITLE),MB_YESNO)==IDNO)
+    if (MessageBox(nullptr,Fetch_String(TXT_REGNOW),Fetch_String(TXT_TITLE),MB_YESNO)==IDNO)
       have_registered=true;  // pretend they've alredy registered
   }
 
@@ -723,7 +723,7 @@ int main(int argc, char *argv[])
     {
       char regapp[300];
       valuesize=sizeof(regapp);
-      if ((RegQueryValueEx(rKey,"InstallPath",NULL,&type,(uint8 *)regapp,&valuesize)==ERROR_SUCCESS)&&
+      if ((RegQueryValueEx(rKey,"InstallPath",nullptr,&type,(uint8 *)regapp,&valuesize)==ERROR_SUCCESS)&&
              (strlen(regapp) > 8))
       {
         // Launch the process
@@ -732,9 +732,9 @@ int main(int argc, char *argv[])
         info.cbSize=sizeof(info);
         info.fMask=SEE_MASK_NOCLOSEPROCESS;
         info.hwnd=g_PrimaryWindow;
-        info.lpVerb=NULL;
+        info.lpVerb=nullptr;
         info.lpFile=regapp;
-        info.lpParameters=NULL;
+        info.lpParameters=nullptr;
         info.lpDirectory=".";
         info.nShow=SW_SHOW;
         ShellExecuteEx(&info);
@@ -865,15 +865,15 @@ char const * Fetch_String(int id)
    /******
    char resname[32];
    sprintf(resname,"#%d",id);
-   HMODULE hmod=GetModuleHandle(NULL);
+   HMODULE hmod=GetModuleHandle(nullptr);
    HRSRC hrsrc=FindResourceEx(hmod, RT_STRING, MAKEINTRESOURCE(id), LANGID);
    if (hrsrc==0)
    {
      char message_buffer[256];
-	  FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &message_buffer[0], 256, NULL );
+	  FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &message_buffer[0], 256, nullptr );
 
    }
-   HGLOBAL resdata=LoadResource(NULL,hrsrc);
+   HGLOBAL resdata=LoadResource(nullptr,hrsrc);
    LPVOID vdata=LockResource(resdata);
    strcpy(stringptr,(char *)vdata);
    *********/
@@ -903,13 +903,13 @@ void Startup_Chat(void)
 	/*
   //////CComObject<CChatEventSink>* g_pChatSink;
   HRESULT          hRes;
-  g_pChatSink=NULL;
+  g_pChatSink=nullptr;
 
-  CoCreateInstance(CLSID_Chat, NULL, CLSCTX_INPROC_SERVER,
+  CoCreateInstance(CLSID_Chat, nullptr, CLSCTX_INPROC_SERVER,
       IID_IChat, (void**)&pChat);
 
 
-  if (pChat==NULL)
+  if (pChat==nullptr)
   {
     char error[128];
     char apimissing[256];
@@ -922,8 +922,8 @@ void Startup_Chat(void)
   g_pChatSink=new CChatEventSink;
 
   // Get a connection point from the chat class
-  IConnectionPoint           *pConnectionPoint=NULL;
-  IConnectionPointContainer  *pContainer=NULL;
+  IConnectionPoint           *pConnectionPoint=nullptr;
+  IConnectionPointContainer  *pContainer=nullptr;
 
   dwChatAdvise=0;
   hRes=pChat->QueryInterface(IID_IConnectionPointContainer,(void**)&pContainer);
@@ -945,8 +945,8 @@ void Shutdown_Chat(void)
 	/*
     /////AtlUnadvise(pChat, IID_IChatEvent, dwChatAdvise);
 
-    IConnectionPoint           *pConnectionPoint=NULL;
-    IConnectionPointContainer  *pContainer=NULL;
+    IConnectionPoint           *pConnectionPoint=nullptr;
+    IConnectionPointContainer  *pContainer=nullptr;
     HRESULT                     hRes;
 
     hRes=pChat->QueryInterface(IID_IConnectionPointContainer,(void**)&pContainer);
@@ -976,7 +976,7 @@ void Update_If_Required(void)
   int   i;
   // Create the events
   for (i=0; i<NUM_EVENTS; i++)
-    Events[i]=CreateEvent(NULL,FALSE,FALSE,NULL);
+    Events[i]=CreateEvent(nullptr,FALSE,FALSE,nullptr);
 
 	StartPatchCheck();
 
@@ -984,7 +984,7 @@ void Update_If_Required(void)
 	{
 		ghttpThink();
     MSG msg;
-    while(PeekMessage(&msg,NULL,0,0, PM_REMOVE))
+    while(PeekMessage(&msg,nullptr,0,0, PM_REMOVE))
     {
       TranslateMessage(&msg);
       DispatchMessage(&msg);
@@ -1022,7 +1022,7 @@ void Update_If_Required(void)
 
   // Create the events
   for (i=0; i<NUM_EVENTS; i++)
-    Events[i]=CreateEvent(NULL,FALSE,FALSE,NULL);
+    Events[i]=CreateEvent(nullptr,FALSE,FALSE,nullptr);
 
   /// For Testing....
   ///pChat->RequestServerList(1000,262364,"register","regpas98",15);
@@ -1034,7 +1034,7 @@ void Update_If_Required(void)
   {
     pChat->PumpMessages();
     MSG msg;
-    while(PeekMessage(&msg,NULL,0,0, PM_REMOVE))
+    while(PeekMessage(&msg,nullptr,0,0, PM_REMOVE))
     {
       TranslateMessage(&msg);
       DispatchMessage(&msg);
@@ -1097,7 +1097,7 @@ CChatEventSink::QueryInterface(const IID& iid, void** ppv)
 	}
 	else
 	{
-		*ppv = NULL;
+		*ppv = nullptr;
 		return E_NOINTERFACE;
 	}
 	(reinterpret_cast<IUnknown*>(*ppv))->AddRef() ;
@@ -1157,7 +1157,7 @@ CDownloadEventSink::QueryInterface(const IID& iid, void** ppv)
 	}
 	else
 	{
-		*ppv = NULL;
+		*ppv = nullptr;
 		return E_NOINTERFACE;
 	}
 	(reinterpret_cast<IUnknown*>(*ppv))->AddRef() ;
@@ -1204,16 +1204,16 @@ void SetupDownload( void )
 	/*
   HRESULT              hRes;
 
-  g_pDownloadSink=NULL;
+  g_pDownloadSink=nullptr;
 
-  CoCreateInstance(CLSID_Download, NULL, CLSCTX_INPROC_SERVER,
+  CoCreateInstance(CLSID_Download, nullptr, CLSCTX_INPROC_SERVER,
       IID_IDownload, (void**)&pDownload);
   _ASSERTE(pDownload);
   g_pDownloadSink=new CDownloadEventSink;
 
   // Get a connection point from the chat class
-  IConnectionPoint           *pConnectionPoint=NULL;
-  IConnectionPointContainer  *pContainer=NULL;
+  IConnectionPoint           *pConnectionPoint=nullptr;
+  IConnectionPointContainer  *pContainer=nullptr;
   dwDownloadAdvise = 0;
 
   hRes=pDownload->QueryInterface(IID_IConnectionPointContainer,(void**)&pContainer);
@@ -1232,8 +1232,8 @@ void ClosedownDownload( void )
 /*
   // AtlUnadvise(pDownload, IID_IDownloadEvent, dwDownloadAdvise);
 
-  IConnectionPoint           *pConnectionPoint=NULL;
-  IConnectionPointContainer  *pContainer=NULL;
+  IConnectionPoint           *pConnectionPoint=nullptr;
+  IConnectionPointContainer  *pContainer=nullptr;
   HRESULT                     hRes;
 
   hRes=pDownload->QueryInterface(IID_IConnectionPointContainer,(void**)&pContainer);
@@ -1308,7 +1308,7 @@ BOOL CALLBACK Download_Dialog_Proc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
          sprintf(localfile,"%s\\%s",g_Update->localpath,g_Update->patchfile);
 
          // Create the directory
-         CreateDirectory((char *)g_Update->localpath, NULL );
+         CreateDirectory((char *)g_Update->localpath, nullptr );
 
          res=pDownload->DownloadFile((char *)g_Update->server, (char *)g_Update->login, (char *)g_Update->password,
             fullpath, localfile, APP_REG_KEY);
@@ -1316,7 +1316,7 @@ BOOL CALLBACK Download_Dialog_Proc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 */
 			g_DownloadWindow = hwndDlg;
 			g_Finished = 0;
-			SetTimer( hwndDlg, 1, 200, NULL );    // was 50
+			SetTimer( hwndDlg, 1, 200, nullptr );    // was 50
 
 			break;
 
@@ -1474,7 +1474,7 @@ STDMETHODIMP CChatEventSink::OnServerList(HRESULT res, Server* servers)
   // If we get this, then we don't need to patch
   // Close that contacting window
   DestroyWindow(g_ContactWindow);
-  g_ContactWindow=NULL;
+  g_ContactWindow=nullptr;
 
   LogMsg("Server List");
 
@@ -1661,7 +1661,7 @@ STDMETHODIMP CChatEventSink::OnUpdateList(HRESULT r, Update * updates)
 
   // Close that contacting window
   DestroyWindow(g_ContactWindow);
-  g_ContactWindow=NULL;
+  g_ContactWindow=nullptr;
 
   if( FAILED(r) )
   {
@@ -1669,7 +1669,7 @@ STDMETHODIMP CChatEventSink::OnUpdateList(HRESULT r, Update * updates)
     SetEvent(Events[ABORT_EVENT]);   // An error occurred, bail out
   }
 
-  if( updates == NULL )  // shouldn't happen
+  if( updates == nullptr )  // shouldn't happen
 	return S_OK;
 
 
@@ -1680,7 +1680,7 @@ STDMETHODIMP CChatEventSink::OnUpdateList(HRESULT r, Update * updates)
 
   // Count the updates;
   tmp = updates;
-  while( tmp != NULL )
+  while( tmp != nullptr )
   {
     tmp = tmp->next;
     numupdates++;
@@ -1711,7 +1711,7 @@ STDMETHODIMP CChatEventSink::OnUpdateList(HRESULT r, Update * updates)
   }
 
   // Do the downloads
-  while( tmp != NULL )
+  while( tmp != nullptr )
   {
     g_Update = tmp;
 

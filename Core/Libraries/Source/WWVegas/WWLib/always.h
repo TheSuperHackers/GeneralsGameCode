@@ -158,7 +158,7 @@ private:
 	static void* getClassMemoryPool()
 	{
 		assert(0);	// must replace this via W3DMPO_GLUE
-		return 0;
+		return nullptr;
 	}
 protected:
 	// we never call this; it is present to cause compile errors in descendent classes
@@ -256,7 +256,8 @@ template <class T> T max(T a,T b)
 
 
 #ifndef	NULL
-	#define	NULL		0
+	//#define	NULL		0
+	// NULL is now deprecated - use nullptr instead
 #endif
 
 

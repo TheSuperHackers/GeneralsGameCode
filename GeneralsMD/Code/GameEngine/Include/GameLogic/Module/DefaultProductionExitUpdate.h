@@ -56,9 +56,9 @@ public:
     UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "UnitCreatePoint",		INI::parseCoord3D,		NULL, offsetof( DefaultProductionExitUpdateModuleData, m_unitCreatePoint ) },
-			{ "NaturalRallyPoint",  INI::parseCoord3D,		NULL, offsetof( DefaultProductionExitUpdateModuleData, m_naturalRallyPoint ) },
-			{ "UseSpawnRallyPoint", INI::parseBool,				NULL, offsetof( DefaultProductionExitUpdateModuleData, m_useSpawnRallyPoint ) },
+			{ "UnitCreatePoint",		INI::parseCoord3D,		nullptr, offsetof( DefaultProductionExitUpdateModuleData, m_unitCreatePoint ) },
+			{ "NaturalRallyPoint",  INI::parseCoord3D,		nullptr, offsetof( DefaultProductionExitUpdateModuleData, m_naturalRallyPoint ) },
+			{ "UseSpawnRallyPoint", INI::parseBool,				nullptr, offsetof( DefaultProductionExitUpdateModuleData, m_useSpawnRallyPoint ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -113,7 +113,7 @@ inline const Coord3D *DefaultProductionExitUpdate::getRallyPoint( void ) const
 	if (m_rallyPointExists)
 		return &m_rallyPoint;
 
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------

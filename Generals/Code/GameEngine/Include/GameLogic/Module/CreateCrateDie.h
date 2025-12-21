@@ -59,7 +59,7 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "CrateData",	CreateCrateDieModuleData::parseCrateData,		NULL, NULL },
+			{ "CrateData",	CreateCrateDieModuleData::parseCrateData,		nullptr, 0 },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);

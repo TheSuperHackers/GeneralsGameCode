@@ -40,6 +40,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+#include <Utility/CppMacros.h>
+
 #include <windows.h>
 #include <Utility/stdio_adapter.h>
 
@@ -83,7 +85,7 @@ BOOL CALLBACK PageErrorProc( HWND hWndDialog, UINT message,
 			//
 
 			// sanity
-			if( TheImagePacker == NULL )
+			if( TheImagePacker == nullptr )
 				return TRUE;
 
 			// go through all pages

@@ -113,7 +113,7 @@ DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const cha
 	// Set the string variables.
 	//--------------------------------------------------------------------------
 	memset( String, '\0', MAX_PATH );
-//	if ( string != NULL ) {
+//	if ( string != nullptr ) {
 //		wcscpy( String, Locale_GetString( string_num, String ));
 
 
@@ -127,9 +127,9 @@ DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const cha
 	//--------------------------------------------------------------------------
 	// Set the font pointer.
 	//--------------------------------------------------------------------------
-	MyFontPtr = NULL;
+	MyFontPtr = nullptr;
 
-	if ( fontptr != NULL ) {
+	if ( fontptr != nullptr ) {
 		MyFontPtr = fontptr;
 	}
 
@@ -182,16 +182,16 @@ DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const cha
 	// Set the string variables.
 	//--------------------------------------------------------------------------
 	memset( String, '\0', MAX_PATH );
-	if ( string != NULL ) {
+	if ( string != nullptr ) {
 		wcscpy( String, string );
 	}
 
 	//--------------------------------------------------------------------------
 	// Set the font pointer.
 	//--------------------------------------------------------------------------
-	MyFontPtr = NULL;
+	MyFontPtr = nullptr;
 
-	if ( fontptr != NULL ) {
+	if ( fontptr != nullptr ) {
 		MyFontPtr = fontptr;
 	}
 
@@ -233,7 +233,7 @@ void DrawButton::Draw_Text ( HDC hDC )
 	RECT	outline_rect;
 	Rect	rect;
 
-	if( hDC == NULL ) {
+	if( hDC == nullptr ) {
 		return;
 	}
 

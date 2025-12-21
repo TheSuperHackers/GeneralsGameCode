@@ -35,7 +35,7 @@
 #include "GameClient/TerrainRoads.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-TerrainRoadCollection *TheTerrainRoads = NULL;
+TerrainRoadCollection *TheTerrainRoads = nullptr;
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 UnsignedInt TerrainRoadCollection::m_idCounter = 0;
@@ -45,11 +45,11 @@ UnsignedInt TerrainRoadCollection::m_idCounter = 0;
 const FieldParse TerrainRoadType::m_terrainRoadFieldParseTable[] =
 {
 
-	{ "Texture",						INI::parseAsciiString,				NULL, offsetof( TerrainRoadType, m_texture ) },
-	{ "RoadWidth",					INI::parseReal,								NULL, offsetof( TerrainRoadType, m_roadWidth ) },
-	{ "RoadWidthInTexture",	INI::parseReal,								NULL, offsetof( TerrainRoadType, m_roadWidthInTexture ) },
+	{ "Texture",						INI::parseAsciiString,				nullptr, offsetof( TerrainRoadType, m_texture ) },
+	{ "RoadWidth",					INI::parseReal,								nullptr, offsetof( TerrainRoadType, m_roadWidth ) },
+	{ "RoadWidthInTexture",	INI::parseReal,								nullptr, offsetof( TerrainRoadType, m_roadWidthInTexture ) },
 
-	{ NULL,									NULL,													NULL, 0 },
+	{ nullptr,									nullptr,													nullptr, 0 },
 
 };
 
@@ -58,35 +58,35 @@ const FieldParse TerrainRoadType::m_terrainRoadFieldParseTable[] =
 const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
 {
 
-	{ "BridgeScale",									INI::parseReal,								NULL, offsetof( TerrainRoadType, m_bridgeScale ) },
-	{ "ScaffoldObjectName",						INI::parseAsciiString,				NULL, offsetof( TerrainRoadType, m_scaffoldObjectName ) },
-	{ "ScaffoldSupportObjectName",		INI::parseAsciiString,				NULL, offsetof( TerrainRoadType, m_scaffoldSupportObjectName ) },
-	{ "RadarColor",										INI::parseRGBColor,						NULL, offsetof( TerrainRoadType, m_radarColor ) },
+	{ "BridgeScale",									INI::parseReal,								nullptr, offsetof( TerrainRoadType, m_bridgeScale ) },
+	{ "ScaffoldObjectName",						INI::parseAsciiString,				nullptr, offsetof( TerrainRoadType, m_scaffoldObjectName ) },
+	{ "ScaffoldSupportObjectName",		INI::parseAsciiString,				nullptr, offsetof( TerrainRoadType, m_scaffoldSupportObjectName ) },
+	{ "RadarColor",										INI::parseRGBColor,						nullptr, offsetof( TerrainRoadType, m_radarColor ) },
 
-	{ "TransitionEffectsHeight",			INI::parseReal,								NULL, offsetof( TerrainRoadType, m_transitionEffectsHeight ) },
-	{ "NumFXPerType",									INI::parseInt,								NULL,	offsetof( TerrainRoadType, m_numFXPerType ) },
+	{ "TransitionEffectsHeight",			INI::parseReal,								nullptr, offsetof( TerrainRoadType, m_transitionEffectsHeight ) },
+	{ "NumFXPerType",									INI::parseInt,								nullptr,	offsetof( TerrainRoadType, m_numFXPerType ) },
 
-	{ "BridgeModelName",							INI::parseAsciiString,				NULL, offsetof( TerrainRoadType, m_bridgeModelName ) },
-	{ "Texture",											INI::parseAsciiString,				NULL, offsetof( TerrainRoadType, m_texture ) },
-	{ "BridgeModelNameDamaged",				INI::parseAsciiString,				NULL, offsetof( TerrainRoadType, m_bridgeModelNameDamaged ) },
-	{ "TextureDamaged",								INI::parseAsciiString,				NULL, offsetof( TerrainRoadType, m_textureDamaged ) },
-	{ "BridgeModelNameReallyDamaged",	INI::parseAsciiString,				NULL, offsetof( TerrainRoadType, m_bridgeModelNameReallyDamaged ) },
-	{ "TextureReallyDamaged",					INI::parseAsciiString,				NULL, offsetof( TerrainRoadType, m_textureReallyDamaged ) },
-	{ "BridgeModelNameBroken",				INI::parseAsciiString,				NULL, offsetof( TerrainRoadType, m_bridgeModelNameBroken ) },
-	{ "TextureBroken",								INI::parseAsciiString,				NULL, offsetof( TerrainRoadType, m_textureBroken ) },
+	{ "BridgeModelName",							INI::parseAsciiString,				nullptr, offsetof( TerrainRoadType, m_bridgeModelName ) },
+	{ "Texture",											INI::parseAsciiString,				nullptr, offsetof( TerrainRoadType, m_texture ) },
+	{ "BridgeModelNameDamaged",				INI::parseAsciiString,				nullptr, offsetof( TerrainRoadType, m_bridgeModelNameDamaged ) },
+	{ "TextureDamaged",								INI::parseAsciiString,				nullptr, offsetof( TerrainRoadType, m_textureDamaged ) },
+	{ "BridgeModelNameReallyDamaged",	INI::parseAsciiString,				nullptr, offsetof( TerrainRoadType, m_bridgeModelNameReallyDamaged ) },
+	{ "TextureReallyDamaged",					INI::parseAsciiString,				nullptr, offsetof( TerrainRoadType, m_textureReallyDamaged ) },
+	{ "BridgeModelNameBroken",				INI::parseAsciiString,				nullptr, offsetof( TerrainRoadType, m_bridgeModelNameBroken ) },
+	{ "TextureBroken",								INI::parseAsciiString,				nullptr, offsetof( TerrainRoadType, m_textureBroken ) },
 
-	{ "TowerObjectNameFromLeft",			INI::parseAsciiString,				NULL,	offsetof( TerrainRoadType, m_towerObjectName[ BRIDGE_TOWER_FROM_LEFT ] ) },
-	{ "TowerObjectNameFromRight",			INI::parseAsciiString,				NULL,	offsetof( TerrainRoadType, m_towerObjectName[ BRIDGE_TOWER_FROM_RIGHT ] ) },
-	{ "TowerObjectNameToLeft",				INI::parseAsciiString,				NULL,	offsetof( TerrainRoadType, m_towerObjectName[ BRIDGE_TOWER_TO_LEFT ] ) },
-	{ "TowerObjectNameToRight",				INI::parseAsciiString,				NULL,	offsetof( TerrainRoadType, m_towerObjectName[ BRIDGE_TOWER_TO_RIGHT ] ) },
+	{ "TowerObjectNameFromLeft",			INI::parseAsciiString,				nullptr,	offsetof( TerrainRoadType, m_towerObjectName[ BRIDGE_TOWER_FROM_LEFT ] ) },
+	{ "TowerObjectNameFromRight",			INI::parseAsciiString,				nullptr,	offsetof( TerrainRoadType, m_towerObjectName[ BRIDGE_TOWER_FROM_RIGHT ] ) },
+	{ "TowerObjectNameToLeft",				INI::parseAsciiString,				nullptr,	offsetof( TerrainRoadType, m_towerObjectName[ BRIDGE_TOWER_TO_LEFT ] ) },
+	{ "TowerObjectNameToRight",				INI::parseAsciiString,				nullptr,	offsetof( TerrainRoadType, m_towerObjectName[ BRIDGE_TOWER_TO_RIGHT ] ) },
 
-	{ "DamagedToSound",								INI::parseAsciiString,				NULL, offsetof( TerrainRoadType, m_damageToSoundString[ BODY_DAMAGED ] ) },
-	{ "RepairedToSound",							INI::parseAsciiString,				NULL, offsetof( TerrainRoadType, m_repairedToSoundString[ BODY_DAMAGED ] ) },
-	{ "TransitionToOCL",							parseTransitionToOCL,					NULL,	NULL },
-	{ "TransitionToFX",								parseTransitionToFX,					NULL, NULL },
+	{ "DamagedToSound",								INI::parseAsciiString,				nullptr, offsetof( TerrainRoadType, m_damageToSoundString[ BODY_DAMAGED ] ) },
+	{ "RepairedToSound",							INI::parseAsciiString,				nullptr, offsetof( TerrainRoadType, m_repairedToSoundString[ BODY_DAMAGED ] ) },
+	{ "TransitionToOCL",							parseTransitionToOCL,					nullptr, 0 },
+	{ "TransitionToFX",								parseTransitionToFX,					nullptr, 0 },
 
 
-	{ NULL,									NULL,													NULL, 0 },
+	{ nullptr,									nullptr,													nullptr, 0 },
 
 };
 
@@ -209,7 +209,7 @@ TerrainRoadType::TerrainRoadType( void )
 
 	m_isBridge = FALSE;
 	m_id = 0;
-	m_next = NULL;
+	m_next = nullptr;
 	m_roadWidth = 0.0f;
 	m_roadWidthInTexture = 0.0f;
 	m_bridgeScale = 1.0f;
@@ -237,8 +237,8 @@ TerrainRoadType::~TerrainRoadType( void )
 TerrainRoadCollection::TerrainRoadCollection( void )
 {
 
-	m_roadList = NULL;
-	m_bridgeList = NULL;
+	m_roadList = nullptr;
+	m_bridgeList = nullptr;
 
 	m_idCounter = 1;   ///< MUST start this at 1.
 
@@ -298,7 +298,7 @@ TerrainRoadType *TerrainRoadCollection::findRoad( AsciiString name )
 	}
 
 	// not found
-	return NULL;
+	return nullptr;
 
 }
 
@@ -318,7 +318,7 @@ TerrainRoadType *TerrainRoadCollection::findBridge( AsciiString name )
 	}
 
 	// not found
-	return NULL;
+	return nullptr;
 
 }
 

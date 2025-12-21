@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // AmbientLightDialog.h : header file
 //
@@ -28,7 +29,7 @@ class CAmbientLightDialog : public CDialog
 {
 // Construction
 public:
-	CAmbientLightDialog(CWnd* pParent = NULL);   // standard constructor
+	CAmbientLightDialog(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CAmbientLightDialog)

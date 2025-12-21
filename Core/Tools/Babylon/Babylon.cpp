@@ -35,11 +35,11 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 char AppTitle[200];
-CBabylonDlg *MainDLG = NULL;
+CBabylonDlg *MainDLG = nullptr;
 
 static const char *AppName = "Babylon:";
 static int AlreadyRunning( void );
-static HWND FoundWindow = NULL;
+static HWND FoundWindow = nullptr;
 /////////////////////////////////////////////////////////////////////////////
 // CBabylonApp
 
@@ -62,8 +62,8 @@ CBabylonApp::CBabylonApp()
 // The one and only CBabylonApp object
 
 CBabylonApp theApp;
-TransDB				*BabylonstrDB = NULL;
-TransDB				*MainDB = NULL;
+TransDB				*BabylonstrDB = nullptr;
+TransDB				*MainDB = nullptr;
 char		BabylonstrFilename[_MAX_PATH];
 char		MainXLSFilename[_MAX_PATH];
 char		DialogPath[_MAX_PATH];
@@ -208,7 +208,7 @@ BOOL CALLBACK EnumAllWindowsProc(HWND hWnd, LPARAM lParam)
 		 return FALSE;
 	}
 
-	FoundWindow = NULL;
+	FoundWindow = nullptr;
 	return TRUE;
 }
 
@@ -227,7 +227,7 @@ BOOL CALLBACK EnumAllWindowsProcExact(HWND hWnd, LPARAM lParam)
 		 return FALSE;
 	}
 
-	FoundWindow = NULL;
+	FoundWindow = nullptr;
 	return TRUE;
 }
 

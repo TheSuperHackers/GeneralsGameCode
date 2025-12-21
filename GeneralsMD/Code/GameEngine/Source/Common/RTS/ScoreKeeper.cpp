@@ -407,7 +407,7 @@ void ScoreKeeper::xferObjectCountMap( Xfer *xfer, ObjectCountMap *map )
 {
 
 	// sanity
-	if( map == NULL )
+	if( map == nullptr )
 	{
 
 		DEBUG_CRASH(( "xferObjectCountMap - Invalid map parameter" ));
@@ -458,7 +458,7 @@ void ScoreKeeper::xferObjectCountMap( Xfer *xfer, ObjectCountMap *map )
 			// read thing template name
 			xfer->xferAsciiString( &thingTemplateName );
 			thingTemplate = TheThingFactory->findTemplate( thingTemplateName );
-			if( thingTemplate == NULL )
+			if( thingTemplate == nullptr )
 			{
 
 				DEBUG_CRASH(( "xferObjectCountMap - Unknown thing template '%s'", thingTemplateName.str() ));

@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // OptionsPanel.h : header file
 //
@@ -32,7 +33,7 @@ class COptionsPanel : public CDialog
 {
 // Construction
 public:
-	COptionsPanel(Int dlgid = 0, CWnd* pParent = NULL);   // standard constructor
+	COptionsPanel(Int dlgid = 0, CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(COptionsPanel)

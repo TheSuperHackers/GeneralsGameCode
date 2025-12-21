@@ -22,6 +22,7 @@
 // (c) Electronic Arts 2003
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include "resource.h"
 
@@ -35,7 +36,7 @@ class TeamObjectProperties : public CPropertyPage
 {
 // Construction
 public:
-	TeamObjectProperties(Dict* dictToEdit = NULL);
+	TeamObjectProperties(Dict* dictToEdit = nullptr);
 	~TeamObjectProperties();
 
 // Dialog Data

@@ -71,12 +71,12 @@ bool MaterialPassClass::EnablePerPolygonCulling = true;
  *=============================================================================================*/
 MaterialPassClass::MaterialPassClass(void) :
 	Shader(0),
-	Material(NULL),
-	CullVolume(NULL),
+	Material(nullptr),
+	CullVolume(nullptr),
 	EnableOnTranslucentMeshes(true)
 {
 	for (int i=0; i<MAX_TEX_STAGES; i++) {
-		Texture[i] = NULL;
+		Texture[i] = nullptr;
 	}
 }
 
@@ -130,7 +130,7 @@ void MaterialPassClass::Install_Materials(void) const
  * MaterialPassClass::Set_Texture -- Set texture to use                                        *
  *                                                                                             *
  * INPUT:                                                                                      *
- * tex - pointer to the texture for this material pass (or NULL)                               *
+ * tex - pointer to the texture for this material pass (or nullptr)                               *
  *                                                                                             *
  * OUTPUT:                                                                                     *
  *                                                                                             *

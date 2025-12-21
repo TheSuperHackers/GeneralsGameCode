@@ -29,18 +29,18 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-BabylonText *MatchingBabylonText = NULL;
+BabylonText *MatchingBabylonText = nullptr;
 BabylonText *MatchOriginalText;
 BabylonLabel *MatchLabel;
 
 #define MAX_MATCH 256
-static BabylonText *current_match = NULL;
+static BabylonText *current_match = nullptr;
 
 /////////////////////////////////////////////////////////////////////////////
 // CMatchDlg dialog
 
 
-CMatchDlg::CMatchDlg(CWnd* pParent /*=NULL*/)
+CMatchDlg::CMatchDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CMatchDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CMatchDlg)
@@ -74,14 +74,14 @@ void CMatchDlg::OnCancel()
 {
 	// TODO: Add extra cleanup here
 
-	MatchingBabylonText = NULL;
+	MatchingBabylonText = nullptr;
 	CDialog::OnCancel();
 }
 
 void CMatchDlg::OnNomatch()
 {
 	// TODO: Add your control notification handler code here
-	MatchingBabylonText = NULL;
+	MatchingBabylonText = nullptr;
 	CDialog::OnOK ();
 }
 
@@ -112,7 +112,7 @@ BOOL CMatchDlg::OnInitDialog()
 	SetWindowText ( buffer );
 	CDialog::OnInitDialog();
 
-	current_match = NULL;
+	current_match = nullptr;
 
 	newtext = (CStatic *) GetDlgItem ( IDC_NEWTEXT );
 	newtext->SetWindowText ( MatchOriginalText->GetSB());
@@ -149,7 +149,7 @@ BOOL CMatchDlg::OnInitDialog()
 
 	combo->SetCurSel ( 0 );
 	OnSelchangeMatchcombo();
-	MatchingBabylonText = NULL;
+	MatchingBabylonText = nullptr;
 	// TODO: Add extra initialization here
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -173,7 +173,7 @@ void CMatchDlg::OnSelchangeMatchcombo()
 	}
 	else
 	{
-		current_match = NULL;
+		current_match = nullptr;
 	}
 }
 

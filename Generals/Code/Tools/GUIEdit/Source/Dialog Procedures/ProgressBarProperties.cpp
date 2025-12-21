@@ -237,8 +237,8 @@ HWND InitProgressBarPropertiesDialog( GameWindow *window )
 												 (LPCTSTR)PROGRESS_BAR_PROPERTIES_DIALOG,
 												 TheEditor->getWindowHandle(),
 												 (DLGPROC)progressBarPropertiesCallback );
-	if( dialog == NULL )
-		return NULL;
+	if( dialog == nullptr )
+		return nullptr;
 
 	// do the common initialization
 	CommonDialogInitialize( window, dialog );

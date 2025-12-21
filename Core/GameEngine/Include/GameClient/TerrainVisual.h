@@ -75,7 +75,7 @@ struct SeismicSimulationNode
     m_region.hi.x = 0;
     m_region.hi.y = 0;
     m_clean = FALSE;
-    callbackFilter = NULL;
+    callbackFilter = nullptr;
     m_life = 0;
     m_magnitude = DEFAULT_SEISMIC_SIMULATION_MAGNITUDE;
 
@@ -95,7 +95,7 @@ struct SeismicSimulationNode
     m_magnitude   = ssn.m_magnitude;
 
   }
-  SeismicSimulationNode( const Coord3D* ctr, Real rad, Real mag, SeismicSimulationFilterBase *cbf = NULL )
+  SeismicSimulationNode( const Coord3D* ctr, Real rad, Real mag, SeismicSimulationFilterBase *cbf = nullptr )
   {
     m_center.x    = REAL_TO_INT_FLOOR(ctr->x/MAP_XY_FACTOR);
     m_center.y    = REAL_TO_INT_FLOOR(ctr->y/MAP_XY_FACTOR);
@@ -114,7 +114,7 @@ struct SeismicSimulationNode
 
   SeismicSimulationFilterBase::SeismicSimStatusCode handleFilterCallback( WorldHeightMapInterfaceClass *heightMap )
   {
-    if ( callbackFilter == NULL )
+    if ( callbackFilter == nullptr )
       return SeismicSimulationFilterBase::SEISMIC_STATUS_INVALID;
 
     ++m_life;
@@ -126,7 +126,7 @@ struct SeismicSimulationNode
   {
     DEBUG_ASSERTCRASH( callbackFilter, ("SeismicSimulationNode::applyGravity() has no callback filter!") );
 
-    if ( callbackFilter == NULL )
+    if ( callbackFilter == nullptr )
       return velocityIn;//oops, we have no callback!
 
     return callbackFilter->applyGravityCallback( velocityIn );
@@ -186,7 +186,7 @@ static const char *const TerrainLODNames[] =
 	"AUTOMATIC",
 	"DISABLE",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TerrainLODNames) == TERRAIN_LOD_NUM_TYPES + 1, "Incorrect array size");
 #endif  // end DEFINE_TERRAIN_LOD_NAMES
@@ -285,8 +285,8 @@ public:
   virtual void updateSeismicSimulations( void ) = 0; /// walk the SeismicSimulationList and, well, do it.
   virtual void addSeismicSimulation( const SeismicSimulationNode& sim ) = 0;
 #endif
-  virtual WorldHeightMap* getLogicHeightMap( void ) {return NULL;};
-  virtual WorldHeightMap* getClientHeightMap( void ) {return NULL;};
+  virtual WorldHeightMap* getLogicHeightMap( void ) {return nullptr;};
+  virtual WorldHeightMap* getClientHeightMap( void ) {return nullptr;};
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////
   ////////////////////////////////////////////////////

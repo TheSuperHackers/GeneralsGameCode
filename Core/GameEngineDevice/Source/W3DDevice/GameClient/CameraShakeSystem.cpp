@@ -135,7 +135,7 @@ CameraShakeSystemClass::CameraShakerClass::~CameraShakerClass(void)
 
 void CameraShakeSystemClass::CameraShakerClass::Compute_Rotations(const Vector3 & camera_position, Vector3 * set_angles)
 {
-	WWASSERT(set_angles != NULL);
+	WWASSERT(set_angles != nullptr);
 
 	/*
 	** We want several different sinusiods, each with a different phase shift and

@@ -225,10 +225,10 @@ int W3dExportClass::DoExport
 {
 	ExportInterface = do_export;
 	MaxInterface = max;
-	RootNode = NULL;
-	OriginList = NULL;
-	DamageRootList = NULL;
-	HierarchyTree = NULL;
+	RootNode = nullptr;
+	OriginList = nullptr;
+	DamageRootList = nullptr;
+	HierarchyTree = nullptr;
 
 	try {
 
@@ -243,7 +243,7 @@ int W3dExportClass::DoExport
 		char rootname[_MAX_FNAME + 1];
 		char drivename[_MAX_DRIVE + 1];
 		char dirname[_MAX_DIR + 1];
-		_splitpath(filename, drivename, dirname, rootname, NULL);
+		_splitpath(filename, drivename, dirname, rootname, nullptr);
 		sprintf(CurrentExportPath, "%s%s", drivename, dirname);
 
 		/*
@@ -251,7 +251,7 @@ int W3dExportClass::DoExport
 		** MAX file being exported. This is so that it can use the old relative pathname of the
 		** W3D file containing the hierarchy.
 		*/
-		_splitpath(max->GetCurFilePath(), drivename, dirname, NULL, NULL);
+		_splitpath(max->GetCurFilePath(), drivename, dirname, nullptr, nullptr);
 		sprintf(CurrentScenePath, "%s%s", drivename, dirname);
 
 		/*
@@ -271,7 +271,7 @@ int W3dExportClass::DoExport
 		/*
 		** Initialize the logging system
 		*/
-		ExportLog::Init(NULL);
+		ExportLog::Init(nullptr);
 
 		/*
 		** Create a chunk saver to write the w3d file with
@@ -279,7 +279,7 @@ int W3dExportClass::DoExport
 		RawFileClass stream(filename);
 
 		if (!stream.Open(FileClass::WRITE)) {
-			MessageBox(NULL,"Unable to open file.","Error",MB_OK | MB_SETFOREGROUND);
+			MessageBox(nullptr,"Unable to open file.","Error",MB_OK | MB_SETFOREGROUND);
 			return 1;
 		}
 
@@ -301,24 +301,24 @@ int W3dExportClass::DoExport
 		*/
 		stream.Close();
 
-		if (HierarchyTree != NULL) {
+		if (HierarchyTree != nullptr) {
 			delete HierarchyTree;
-			HierarchyTree = NULL;
+			HierarchyTree = nullptr;
 		}
 
-		if (OriginList != NULL) {
+		if (OriginList != nullptr) {
 			delete OriginList;
-			OriginList = NULL;
+			OriginList = nullptr;
 		}
 
-		if (DamageRootList != NULL) {
+		if (DamageRootList != nullptr) {
 			delete DamageRootList;
-			DamageRootList = NULL;
+			DamageRootList = nullptr;
 		}
 
 	} catch (ErrorClass error) {
 
-		MessageBox(NULL,error.error_message,"Error",MB_OK | MB_SETFOREGROUND);
+		MessageBox(nullptr,error.error_message,"Error",MB_OK | MB_SETFOREGROUND);
 	}
 
 	ExportLog::Shutdown(ExportOptions.ReviewLog);
@@ -350,7 +350,7 @@ void W3dExportClass::DoOriginBasedExport(char *rootname,ChunkSaveClass &csave)
 	** Build the damage root list.
 	*/
 	INodeListClass	*damage_list = get_damage_root_list();
-	assert(damage_list != NULL);
+	assert(damage_list != nullptr);
 
 	/*
 	** Start the progress meter
@@ -372,7 +372,7 @@ void W3dExportClass::DoOriginBasedExport(char *rootname,ChunkSaveClass &csave)
 	bool				is_base_object = false;
 	INodeListClass	*origin_list = get_origin_list();
 	unsigned int	i, count = origin_list->Num_Nodes();
-	INode				*base_origin = NULL;
+	INode				*base_origin = nullptr;
 
 	for (i = 0; i < count; i++)
 	{
@@ -390,7 +390,7 @@ void W3dExportClass::DoOriginBasedExport(char *rootname,ChunkSaveClass &csave)
 	Progress_Meter_Class treemeter(meter, meter.Increment);
 	if (!Export_Hierarchy(rootname, csave, treemeter, base_origin))
 	{
-		MessageBox(NULL,"Hierarchy Export Failure!","Error",MB_OK | MB_SETFOREGROUND);
+		MessageBox(nullptr,"Hierarchy Export Failure!","Error",MB_OK | MB_SETFOREGROUND);
 		End_Progress_Bar();
 		return;
 	}
@@ -404,7 +404,7 @@ void W3dExportClass::DoOriginBasedExport(char *rootname,ChunkSaveClass &csave)
 		Progress_Meter_Class animmeter(meter, meter.Increment);
 		if (!Export_Animation(rootname, csave, animmeter, base_origin))
 		{
-			MessageBox(NULL,"Animation Export Failure!","Error",MB_OK | MB_SETFOREGROUND);
+			MessageBox(nullptr,"Animation Export Failure!","Error",MB_OK | MB_SETFOREGROUND);
 			End_Progress_Bar();
 			return;
 		}
@@ -420,7 +420,7 @@ void W3dExportClass::DoOriginBasedExport(char *rootname,ChunkSaveClass &csave)
 		{
 			if (!Export_Damage_Animations(rootname, csave, damagemeter, (*damage_list)[i]))
 			{
-				MessageBox(NULL, "Damage Animation Export Failure!", "Error", MB_OK | MB_SETFOREGROUND);
+				MessageBox(nullptr, "Damage Animation Export Failure!", "Error", MB_OK | MB_SETFOREGROUND);
 				End_Progress_Bar();
 				return;
 			}
@@ -436,7 +436,7 @@ void W3dExportClass::DoOriginBasedExport(char *rootname,ChunkSaveClass &csave)
 	MeshConnectionsClass **connections = new MeshConnectionsClass*[count];
 	if (!connections)
 	{
-		MessageBox(NULL, "Memory allocation failure!", "Error", MB_OK | MB_SETFOREGROUND);
+		MessageBox(nullptr, "Memory allocation failure!", "Error", MB_OK | MB_SETFOREGROUND);
 		End_Progress_Bar();
 		return;
 	}
@@ -466,11 +466,11 @@ void W3dExportClass::DoOriginBasedExport(char *rootname,ChunkSaveClass &csave)
 		/*
 		** Write each mesh (if needed)
 		*/
-		MeshConnectionsClass *meshcon = NULL;
+		MeshConnectionsClass *meshcon = nullptr;
 		Progress_Meter_Class meshmeter(meter, meter.Increment);
 		if (!Export_Geometry(rootname, csave, meshmeter, origin, &meshcon))
 		{
-			MessageBox(NULL, "Geometry Export Failure!", "Error", MB_OK | MB_SETFOREGROUND);
+			MessageBox(nullptr, "Geometry Export Failure!", "Error", MB_OK | MB_SETFOREGROUND);
 			End_Progress_Bar();
 			return;
 		}
@@ -481,14 +481,14 @@ void W3dExportClass::DoOriginBasedExport(char *rootname,ChunkSaveClass &csave)
 		** the array in order of LOD (top-level last).
 		*/
 		int lod_level = Get_Lod_Level(origin);
-		if (lod_level >= count || connections[count - lod_level - 1] != NULL)
+		if (lod_level >= count || connections[count - lod_level - 1] != nullptr)
 		{
 			char text[256];
 			sprintf(text, "Origin Naming Error! There are %d models defined in this "
 				"scene, therefore your origin names should be\n\"Origin.00\" through "
 				"\"Origin.%02d\", 00 being the high-poly model and %02d being the "
 				"lowest detail LOD.", count, count-1, count-1);
-			MessageBox(NULL, text, "Error", MB_OK | MB_SETFOREGROUND);
+			MessageBox(nullptr, text, "Error", MB_OK | MB_SETFOREGROUND);
 			End_Progress_Bar();
 			return;
 		}
@@ -506,7 +506,7 @@ void W3dExportClass::DoOriginBasedExport(char *rootname,ChunkSaveClass &csave)
 			Progress_Meter_Class hlod_meter(meter, meter.Increment);
 			if (!Export_HLod(rootname, htree->Get_Name(), csave, hlod_meter, connections, count))
 			{
-				MessageBox(NULL, "HLOD Generation Failure!", "Error", MB_OK | MB_SETFOREGROUND);
+				MessageBox(nullptr, "HLOD Generation Failure!", "Error", MB_OK | MB_SETFOREGROUND);
 				End_Progress_Bar();
 				return;
 			}
@@ -519,7 +519,7 @@ void W3dExportClass::DoOriginBasedExport(char *rootname,ChunkSaveClass &csave)
 	*/
 	for (i = 0; i < count; i++)
 	{
-		if (connections[i] != NULL)
+		if (connections[i] != nullptr)
 			delete connections[i];
 	}
 	delete []connections;
@@ -549,12 +549,12 @@ bool W3dExportClass::Export_Hierarchy(char *name,ChunkSaveClass & csave,Progress
 	if (!ExportOptions.ExportHierarchy) return true;
 	HierarchySaveClass::Enable_Terrain_Optimization(ExportOptions.EnableTerrainMode);
 
-	if (root == NULL) return false;
+	if (root == nullptr) return false;
 
 	try {
 		HierarchyTree = new HierarchySaveClass(root,CurTime,meter,name,FixupType);
 	} catch (ErrorClass err) {
-		MessageBox(NULL, err.error_message,"Error!",MB_OK | MB_SETFOREGROUND);
+		MessageBox(nullptr, err.error_message,"Error!",MB_OK | MB_SETFOREGROUND);
 		return false;
 	}
 
@@ -584,11 +584,11 @@ bool W3dExportClass::Export_Animation(char * name,ChunkSaveClass & csave,Progres
 	if (!ExportOptions.ExportAnimation) return true;
 	HierarchySaveClass * htree = get_hierarchy_tree();
 
-	if ((root == NULL) || (htree == NULL)) {
+	if ((root == nullptr) || (htree == nullptr)) {
 		return false;
 	}
 
-	MotionClass * motion = NULL;
+	MotionClass * motion = nullptr;
 
 	try {
 		motion = new MotionClass(	ExportInterface->theScene,
@@ -600,7 +600,7 @@ bool W3dExportClass::Export_Animation(char * name,ChunkSaveClass & csave,Progres
 											MaxInterface->GetMAXHWnd(),
 											name);
 	} catch (ErrorClass err) {
-		MessageBox(NULL,err.error_message,"Error!",MB_OK | MB_SETFOREGROUND);
+		MessageBox(nullptr,err.error_message,"Error!",MB_OK | MB_SETFOREGROUND);
 		return false;
 	}
 
@@ -631,7 +631,7 @@ bool W3dExportClass::Export_Damage_Animations(char *name, ChunkSaveClass &csave,
 	if (!ExportOptions.ExportAnimation) return true;
 	HierarchySaveClass *htree = get_hierarchy_tree();
 
-	if ((damage_root == NULL) || (htree == NULL))
+	if ((damage_root == nullptr) || (htree == nullptr))
 		return false;
 
 	int damage_state = Get_Damage_State(damage_root);
@@ -664,7 +664,7 @@ bool W3dExportClass::Export_Damage_Animations(char *name, ChunkSaveClass &csave,
 		sprintf(anim_name, "damage%d-%d", current_region, damage_state);
 
 		// Export an animation for this damage region.
-		MotionClass *motion = NULL;
+		MotionClass *motion = nullptr;
 		try
 		{
 			motion = new MotionClass(	ExportInterface->theScene,
@@ -679,11 +679,11 @@ bool W3dExportClass::Export_Damage_Animations(char *name, ChunkSaveClass &csave,
 		}
 		catch (ErrorClass err)
 		{
-			MessageBox(NULL, err.error_message, "Error!", MB_OK | MB_SETFOREGROUND);
+			MessageBox(nullptr, err.error_message, "Error!", MB_OK | MB_SETFOREGROUND);
 			return false;
 		}
 
-		assert(motion != NULL);
+		assert(motion != nullptr);
 		motion->Save(csave);
 
 		delete motion;
@@ -691,7 +691,7 @@ bool W3dExportClass::Export_Damage_Animations(char *name, ChunkSaveClass &csave,
 
 	if (num_damage_bones <= 0)
 	{
-		MessageBox(NULL, "Warning: Your damage bones need to be given damage region numbers. "
+		MessageBox(nullptr, "Warning: Your damage bones need to be given damage region numbers. "
 			"You can do this in the W3D Tools panel.", name, MB_OK | MB_ICONINFORMATION | MB_SETFOREGROUND);
 	}
 
@@ -724,22 +724,22 @@ bool W3dExportClass::Export_Geometry(char * name,ChunkSaveClass & csave,Progress
 {
 	unsigned int i;
 
-	assert(root != NULL);
+	assert(root != nullptr);
 	if (!ExportOptions.ExportGeometry) return true;
 
 	/*
 	** If we're attaching the meshes to a hierarchy, get the tree
 	*/
-	HierarchySaveClass * htree = NULL;
+	HierarchySaveClass * htree = nullptr;
 	if (ExportOptions.LoadHierarchy || ExportOptions.ExportHierarchy) {
 		htree = get_hierarchy_tree();
-		if (htree == NULL) {
+		if (htree == nullptr) {
 			return false;
 		}
 	}
 
 	DynamicVectorClass<GeometryExportTaskClass *> export_tasks;
-	INodeListClass *geometry_list = NULL;
+	INodeListClass *geometry_list = nullptr;
 
 	/*
 	** Create the lists of nodes that we're going to work with
@@ -783,14 +783,14 @@ bool W3dExportClass::Export_Geometry(char * name,ChunkSaveClass & csave,Progress
 	** If we're only exporting geometry, only export the first mesh. (no more collections)
 	*/
 	int geometry_count = geometry_list->Num_Nodes();
-	if ((htree == NULL) && (geometry_list->Num_Nodes() > 1)) {
+	if ((htree == nullptr) && (geometry_list->Num_Nodes() > 1)) {
 		geometry_count = MIN(geometry_count,1);
 		ExportLog::printf("\nDiscarding extra meshes since we are not exporting a hierarchical model.\n");
 	}
 
 	for (i=0; i<geometry_count; i++) {
 		GeometryExportTaskClass * export_task = GeometryExportTaskClass::Create_Task((*geometry_list)[i],context);
-		if (export_task != NULL) {
+		if (export_task != nullptr) {
 			export_tasks.Add(export_task);
 		}
 	}
@@ -807,7 +807,7 @@ bool W3dExportClass::Export_Geometry(char * name,ChunkSaveClass & csave,Progress
 	** If there is only one piece of geometry to export and no place-holders, and we're not
 	** exporting a hierarchical model, then we force the name to match the filename
 	*/
-	if ((export_tasks.Count() == 1) && (htree == NULL))
+	if ((export_tasks.Count() == 1) && (htree == nullptr))
 	{
 		export_tasks[0]->Set_Name(name);
 		export_tasks[0]->Set_Container_Name("");
@@ -816,13 +816,13 @@ bool W3dExportClass::Export_Geometry(char * name,ChunkSaveClass & csave,Progress
 	/*
 	** Generate the mesh-connections object to return to the caller
 	*/
-	MeshConnectionsClass * meshcon = NULL;
-	if (htree != NULL) {
+	MeshConnectionsClass * meshcon = nullptr;
+	if (htree != nullptr) {
 		Progress_Meter_Class mcmeter(meter,meter.Increment);
 		try {
 			meshcon = new MeshConnectionsClass(export_tasks,context);
 		} catch (ErrorClass err) {
-			MessageBox(NULL,err.error_message,"Error!",MB_OK | MB_SETFOREGROUND);
+			MessageBox(nullptr,err.error_message,"Error!",MB_OK | MB_SETFOREGROUND);
 			return false;
 		}
 		*out_connection = meshcon;
@@ -941,7 +941,7 @@ HierarchySaveClass * W3dExportClass::get_hierarchy_tree(void)
 	/*
 	** If the hierarchy tree pointer has been initialized, just return it
 	*/
-	if (HierarchyTree != NULL) return HierarchyTree;
+	if (HierarchyTree != nullptr) return HierarchyTree;
 
 	/*
 	** If we are supposed to be loading a hierarchy from disk, then
@@ -955,7 +955,7 @@ HierarchySaveClass * W3dExportClass::get_hierarchy_tree(void)
 			char buf[256];
 			sprintf(buf,"Unable to load hierarchy file: %s\nIf this Max file has been moved, please re-select the hierarchy file.",HierarchyFilename);
 			MessageBox(MaxInterface->GetMAXHWnd(),buf,"Error",MB_OK | MB_SETFOREGROUND);
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -965,7 +965,7 @@ HierarchySaveClass * W3dExportClass::get_hierarchy_tree(void)
 	** function failed to create a hierarchy tree for us.
 	*/
 	assert(0);
-	return NULL;
+	return nullptr;
 }
 
 
@@ -983,7 +983,7 @@ HierarchySaveClass * W3dExportClass::get_hierarchy_tree(void)
  *=============================================================================================*/
 INodeListClass * W3dExportClass::get_damage_root_list(void)
 {
-	if (DamageRootList != NULL) return DamageRootList;
+	if (DamageRootList != nullptr) return DamageRootList;
 
 	/*
 	** Create a list of all damage root objects in the scene.
@@ -1008,7 +1008,7 @@ INodeListClass * W3dExportClass::get_damage_root_list(void)
  *=============================================================================================*/
 INodeListClass * W3dExportClass::get_origin_list(void)
 {
-	if (OriginList != NULL) return OriginList;
+	if (OriginList != nullptr) return OriginList;
 
 	/*
 	** Create a list of all origins in the scene.
@@ -1051,7 +1051,7 @@ bool W3dExportClass::get_export_options(BOOL suppress_prompts)
 	// scene pointer. If there is no such AppDataChunk create one and set it
 	// to default values.
 
-	W3dExportOptionsStruct *options = NULL;
+	W3dExportOptionsStruct *options = nullptr;
 
 	AppDataChunk * appdata = MaxInterface->GetScenePointer()->GetAppDataChunk(W3D_EXPORTER_CLASS_ID,SCENE_EXPORT_CLASS_ID,0);
 
@@ -1159,7 +1159,7 @@ void W3dExportClass::Start_Progress_Bar(void)
 		"Processing Triangle Mesh",
 		TRUE,
 		progress_callback,
-		NULL);
+		nullptr);
 }
 
 /***********************************************************************************************
@@ -1192,7 +1192,7 @@ static bool dupe_check(const INodeListClass & list)
 				if (stricmp(list[i]->GetName(),list[j]->GetName()) == 0) {
 					char buf[256];
 					sprintf(buf,"Geometry Nodes with duplicated names found!\nDuplicated Name: %s\n",list[i]->GetName());
-					MessageBox(NULL,buf,"Error",MB_OK | MB_SETFOREGROUND);
+					MessageBox(nullptr,buf,"Error",MB_OK | MB_SETFOREGROUND);
 					return true;
 				}
 			}
@@ -1205,12 +1205,12 @@ static bool check_lod_extensions (INodeListClass &list, INode *origin)
 {
 	/*
 	** Assumptions:
-	** - If origin == NULL, then we're just exporting a single model and don't need to
+	** - If origin == nullptr, then we're just exporting a single model and don't need to
 	** worry about lod extensions at all.
 	** - If origin is the root of the scene, then we're just exporting a single model as well.
 	** - Otherwise origin actually points to an Origin and not just any INode.
 	*/
-	if (origin == NULL) return true;
+	if (origin == nullptr) return true;
 	if (origin->IsRootNode()) return true;
 
 	char	*extension = strrchr(origin->GetName(), '.');
@@ -1220,7 +1220,7 @@ static bool check_lod_extensions (INodeListClass &list, INode *origin)
 		char *this_ext = strrchr(list[i]->GetName(), '.');
 
 		// Check for the existance of an extension in this node.
-		if (this_ext == NULL)
+		if (this_ext == nullptr)
 			return false;
 
 		// Check that the extensions are the same.
@@ -1239,7 +1239,7 @@ bool W3dExportClass::get_base_object_tm (Matrix3 &tm)
 		return false;
 
 	unsigned int	i, count = origin_list->Num_Nodes();
-	INode				*base_origin = NULL;
+	INode				*base_origin = nullptr;
 	for (i = 0; i < count; i++)
 	{
 		INode *node = (*origin_list)[i];
@@ -1265,12 +1265,12 @@ static DWORD WINAPI progress_callback( LPVOID arg )
 
 static HierarchySaveClass * load_hierarchy_file(char * filename)
 {
-	HierarchySaveClass * hier = NULL;
+	HierarchySaveClass * hier = nullptr;
 
 	RawFileClass file(filename);
 
 	if (!file.Open()) {
-		return NULL;
+		return nullptr;
 	}
 	ChunkLoadClass cload(&file);
 
@@ -1279,9 +1279,9 @@ static HierarchySaveClass * load_hierarchy_file(char * filename)
 		hier = new HierarchySaveClass();
 		hier->Load(cload);
 	} else {
-		hier = NULL;
+		hier = nullptr;
 		file.Close();
-		return NULL;
+		return nullptr;
 	}
 
 	cload.Close_Chunk();

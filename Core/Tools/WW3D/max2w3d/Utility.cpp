@@ -112,7 +112,7 @@ Value * input_box_cf (Value **arg_list, int count)
 {
 	// Create the input box (but don't show it yet).
 	InputDlg input_box(MAXScript_interface->GetMAXHWnd());
-	Value *param = NULL;
+	Value *param = nullptr;
 
 	// Check the 'caption' parameter.
 	param = key_arg(caption);

@@ -121,8 +121,8 @@ static void updateTeamAndPlayerStuff( Object *obj, void *userData )
 #define REALLY_FAR	(100000 * MAP_XY_FACTOR)
 
 // GLOBALS ////////////////////////////////////////////////////////////////////////////////////////
-ScriptActionsInterface *TheScriptActions = NULL;
-GameWindow *ScriptActions::m_messageWindow = NULL;
+ScriptActionsInterface *TheScriptActions = nullptr;
+GameWindow *ScriptActions::m_messageWindow = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -178,7 +178,7 @@ void ScriptActions::closeWindows( Bool suppressNewWindows )
 
 	if (m_messageWindow) {
 		TheWindowManager->winDestroy(m_messageWindow);
-		m_messageWindow = NULL;
+		m_messageWindow = nullptr;
 	}
 }
 
@@ -508,7 +508,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 	Bool needToMoveToDestination = false;
 	//Validate the waypoint
 	Waypoint *way = TheTerrainLogic->getWaypointByName(waypoint);
-	if (way==NULL)
+	if (way==nullptr)
 	{
 		return;
 	}
@@ -530,7 +530,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 
 	//Create the team (not the units inside team).
 	Team *theTeam = TheTeamFactory->createInactiveTeam( team );
-	if (theTeam==NULL) {
+	if (theTeam==nullptr) {
 		return;
 	}
 	const ThingTemplate *transportTemplate;
@@ -538,8 +538,8 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 
 	//Create the transport first (if applicable), so we can determine if it has paradrop capabilities.
 	//If so, we'll be doing a lot of things differently!
-	Object *transport=NULL;
-	ContainModuleInterface *contain = NULL;
+	Object *transport=nullptr;
+	ContainModuleInterface *contain = nullptr;
 	transportTemplate = TheThingFactory->findTemplate( pInfo->m_transportUnitType );
 	if( transportTemplate )
 	{
@@ -556,7 +556,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 	//Check to see if we have a transport, and if our transport has paradrop capabilities. If this is the
 	//case, we'll need to create each unit inside "parachute containers".
 	static NameKeyType key_DeliverPayloadAIUpdate = NAMEKEY("DeliverPayloadAIUpdate");
-	DeliverPayloadAIUpdate *dp = NULL;
+	DeliverPayloadAIUpdate *dp = nullptr;
 	if( transport )
 	{
 		dp = (DeliverPayloadAIUpdate*)transport->findUpdateModule(key_DeliverPayloadAIUpdate);
@@ -564,7 +564,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 
 	//Our tranport has a deliverPayload update module. This means it'll do airborned drops.
 
-	const ThingTemplate* putInContainerTemplate  = NULL;
+	const ThingTemplate* putInContainerTemplate  = nullptr;
 	if( dp )
 	{
 		//Check to see if we are packaging our units
@@ -580,7 +580,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 		Coord3D pos = origin;
 		if (unitTemplate && theTeam)
 		{
-			Object *obj = NULL;
+			Object *obj = nullptr;
 			for (j=0; j<pInfo->m_unitsInfo[i].maxUnits; j++)
 			{
 				// create new object in the world
@@ -655,7 +655,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 		}
 
 	}
-	contain = NULL;
+	contain = nullptr;
 	if( transport )
 	{
 		contain = transport->getContain();
@@ -674,7 +674,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 				// it's our transport.
 				continue;
 			}
-			if (obj->getContainedBy() != NULL)
+			if (obj->getContainedBy() != nullptr)
 			{
 				continue;
 			}
@@ -848,10 +848,10 @@ void ScriptActions::doOversizeTheTerrain(Int amount)
 void ScriptActions::doSetupCamera(const AsciiString& waypoint, Real zoom, Real pitch, const AsciiString& lookAtWaypoint)
 {
 	Waypoint *way = TheTerrainLogic->getWaypointByName(waypoint);
-	if (way==NULL) return;
+	if (way==nullptr) return;
 	Coord3D	pos = *way->getLocation();
 	Waypoint *lookat = TheTerrainLogic->getWaypointByName(lookAtWaypoint);
-	if (lookat==NULL) return;
+	if (lookat==nullptr) return;
 	Coord3D destination = *lookat->getLocation();
 	TheTacticalView->moveCameraTo(&pos, 0, 0, true, 0.0f, 0.0f);
 	TheTacticalView->cameraModLookToward(&destination);
@@ -955,7 +955,7 @@ void ScriptActions::doRotateCameraTowardObject(const AsciiString& unitName, Real
 void ScriptActions::doRotateCameraTowardWaypoint(const AsciiString& waypointName, Real sec, Real easeIn, Real easeOut, Bool reverseRotation)
 {
 	Waypoint *way = TheTerrainLogic->getWaypointByName(waypointName);
-	if (way==NULL) return;
+	if (way==nullptr) return;
 	TheTacticalView->rotateCameraTowardPosition(way->getLocation(), sec*1000.0f, easeIn*1000.0f, easeOut*1000.0f, reverseRotation);
 }
 
@@ -977,7 +977,7 @@ void ScriptActions::doMoveCameraAlongWaypointPath(const AsciiString& waypoint, R
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doCreateObject(const AsciiString& objectName, const AsciiString& thingName, const AsciiString& teamName, Coord3D *pos, Real angle )
 {
-	Object* pOldObj = NULL;
+	Object* pOldObj = nullptr;
 
 	if (objectName != m_unnamedUnit) {
 		 pOldObj = TheScriptEngine->getUnitNamed(objectName);
@@ -995,7 +995,7 @@ void ScriptActions::doCreateObject(const AsciiString& objectName, const AsciiStr
 	Team *theTeam = TheScriptEngine->getTeamNamed( teamName );
 	// The team is the team based on the name, and the calling team (if any) and the team that
 	// triggered the condition.  jba. :)
-	if (theTeam==NULL) {
+	if (theTeam==nullptr) {
 		// We may need to create the team.
 		theTeam = TheTeamFactory->createTeam( teamName );
 	}
@@ -1049,7 +1049,7 @@ void ScriptActions::doAttack(const AsciiString& attackerName, const AsciiString&
 	const Team *victimTeam = TheScriptEngine->getTeamNamed( victimName );
 
 	// sanity
-	if( attackingTeam == NULL || victimTeam == NULL )
+	if( attackingTeam == nullptr || victimTeam == nullptr )
 		return;
 
 	AIGroupPtr aiGroup = TheAI->createGroup();
@@ -1186,7 +1186,7 @@ void ScriptActions::createUnitOnTeamAt(const AsciiString& unitName, const AsciiS
 	Team *theTeam = TheScriptEngine->getTeamNamed( teamName );
 	// The team is the team based on the name, and the calling team (if any) and the team that
 	// triggered the condition.  jba. :)
-	if (theTeam==NULL) {
+	if (theTeam==nullptr) {
 		// We may need to create the team.
 		theTeam = TheTeamFactory->createTeam( teamName );
 	}
@@ -1723,7 +1723,7 @@ void ScriptActions::doTeamFollowSkirmishApproachPath(const AsciiString& teamName
 	Coord3D pos;
 	pos.x=pos.y=pos.z=0;
 
-	Object *firstUnit=NULL;
+	Object *firstUnit=nullptr;
 	// Get the center point for the team
 	for (DLINK_ITERATOR<Object> iter = theTeam->iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
@@ -1733,7 +1733,7 @@ void ScriptActions::doTeamFollowSkirmishApproachPath(const AsciiString& teamName
 		pos.y += objPos.y;
 		pos.z += objPos.z; // Not actually used by getClosestWaypointOnPath, but hey, might as well be correct.
 		count++;
-		if (firstUnit==NULL) {
+		if (firstUnit==nullptr) {
 			firstUnit = obj;
 		}
 	}
@@ -1743,7 +1743,7 @@ void ScriptActions::doTeamFollowSkirmishApproachPath(const AsciiString& teamName
 	pos.z /= count;
 
 	Player *enemyPlayer = TheScriptEngine->getSkirmishEnemyPlayer();
-	if (enemyPlayer==NULL) return;
+	if (enemyPlayer==nullptr) return;
 	Int mpNdx = enemyPlayer->getMpStartIndex()+1;
 
 	AsciiString pathLabel;
@@ -1806,7 +1806,7 @@ void ScriptActions::doTeamMoveToSkirmishApproachPath(const AsciiString& teamName
 	pos.z /= count;
 
 	Player *enemyPlayer = TheScriptEngine->getSkirmishEnemyPlayer();
-	if (enemyPlayer==NULL) return;
+	if (enemyPlayer==nullptr) return;
 	Int mpNdx = enemyPlayer->getMpStartIndex()+1;
 
 	AsciiString pathLabel;
@@ -2679,7 +2679,7 @@ void ScriptActions::doCameoFlash(const AsciiString& name, Int timeInSeconds)
 
 	//sanity
 	button = TheControlBar->findCommandButton( name );
-	if( button == NULL )
+	if( button == nullptr )
 	{
 		DEBUG_CRASH(( "ScriptActions::doCameoFlash can't find AsciiString cameoflash" ));
 		return;
@@ -2741,7 +2741,7 @@ void ScriptActions::doNamedFlash(const AsciiString& unitName, Int timeInSeconds,
 		Int frames = LOGICFRAMES_PER_SECOND * timeInSeconds;
 		// every time the framecount % 20 == 0, drawable::update will call doNamedFlash
 		Int count = frames / DRAWABLE_FRAMES_PER_FLASH;
-		Color flashy = (color == NULL) ? obj->getIndicatorColor() : color->getAsInt();
+		Color flashy = (color == nullptr) ? obj->getIndicatorColor() : color->getAsInt();
 		drawable->setFlashColor( flashy );
 		drawable->setFlashCount( count );
 		return;
@@ -2754,7 +2754,7 @@ void ScriptActions::doNamedFlash(const AsciiString& unitName, Int timeInSeconds,
 void ScriptActions::doTeamFlash(const AsciiString& teamName, Int timeInSeconds, const RGBColor *color)
 {
 	Team *team = TheScriptEngine->getTeamNamed( teamName );
-	if (team == NULL || !team->hasAnyObjects())
+	if (team == nullptr || !team->hasAnyObjects())
 		return;
 
 	DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList();
@@ -2773,7 +2773,7 @@ void ScriptActions::doTeamFlash(const AsciiString& teamName, Int timeInSeconds, 
 		Int frames = LOGICFRAMES_PER_SECOND * timeInSeconds;
 
 		Int count = frames / DRAWABLE_FRAMES_PER_FLASH;
-		Color flashy = (color == NULL) ? obj->getIndicatorColor() : color->getAsInt();
+		Color flashy = (color == nullptr) ? obj->getIndicatorColor() : color->getAsInt();
 		draw->setFlashColor( flashy );
 		draw->setFlashCount( count );
 	}
@@ -2877,7 +2877,7 @@ void ScriptActions::doNamedTransferAssetsToPlayer(const AsciiString& unitName, c
 	}
 
 	pObj->setTeam(playerTeam);
-	updateTeamAndPlayerStuff(pObj, NULL);
+	updateTeamAndPlayerStuff(pObj, nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2886,7 +2886,7 @@ void ScriptActions::doNamedTransferAssetsToPlayer(const AsciiString& unitName, c
 void ScriptActions::excludePlayerFromScoreScreen(const AsciiString& playerName)
 {
 	Player *pPlayer = TheScriptEngine->getPlayerFromAsciiString(playerName);
-	if (pPlayer == NULL) {
+	if (pPlayer == nullptr) {
 		return;
 	}
 
@@ -3224,7 +3224,7 @@ void ScriptActions::doMergeTeamIntoTeam(const AsciiString& teamSrcName, const As
 {
 	Team *teamSrc = TheScriptEngine->getTeamNamed(teamSrcName);
 	Team *teamDest = TheScriptEngine->getTeamNamed(teamDestName);
-	if (teamDest==NULL) {
+	if (teamDest==nullptr) {
 		teamDest = TheTeamFactory->findTeam( teamDestName );
 	}
 	if (!teamSrc || !teamDest) {
@@ -3246,12 +3246,12 @@ void ScriptActions::doMergeTeamIntoTeam(const AsciiString& teamSrcName, const As
 		nextObj = iter.cur();
 		iter.advance();
 		obj->setTeam(teamDest);
-		updateTeamAndPlayerStuff(obj, NULL);
+		updateTeamAndPlayerStuff(obj, nullptr);
 	}
 
 	if (nextObj) {
 		nextObj->setTeam(teamDest);
-		updateTeamAndPlayerStuff(nextObj, NULL);
+		updateTeamAndPlayerStuff(nextObj, nullptr);
 	}
 
 	teamSrc->deleteTeam();
@@ -3480,7 +3480,7 @@ void ScriptActions::doTeamGarrisonNearestBuilding(const AsciiString& teamName)
 	PartitionFilterSameMapStatus filterMapStatus(leader);
 	filters[ count++ ] = &filterMapStatus;
 
-	filters[count++] = NULL;
+	filters[count++] = nullptr;
 
 	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(leader, REALLY_FAR, FROM_CENTER_3D, filters, ITER_SORTED_NEAR_TO_FAR);
 	MemoryPoolObjectHolder hold(iter);
@@ -3534,7 +3534,7 @@ void ScriptActions::doTeamExitAllBuildings(const AsciiString& teamName)
 		}
 
 		ai->chooseLocomotorSet(LOCOMOTORSET_NORMAL);
-		ai->aiExit(NULL, CMD_FROM_SCRIPT);
+		ai->aiExit(nullptr, CMD_FROM_SCRIPT);
 	}
 }
 
@@ -3614,7 +3614,7 @@ void ScriptActions::doUnitGarrisonNearestBuilding(const AsciiString& unitName)
 		filters[ count++ ] = &f3;
 	}
 
-	filters[count++] = NULL;
+	filters[count++] = nullptr;
 
 	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(theUnit, REALLY_FAR, FROM_CENTER_3D, filters, ITER_SORTED_NEAR_TO_FAR);
 	MemoryPoolObjectHolder hold(iter);
@@ -3741,7 +3741,7 @@ void ScriptActions::doNamedSetBoobytrapped( const AsciiString& thingTemplateName
 					const Matrix3D *transform = obj->getTransformMatrix();
 					transform->Transform_Vector( *transform, *(Vector3*)(&pos), (Vector3*)(&pos) );
 
-					update->initStickyBomb( obj, NULL, &pos );
+					update->initStickyBomb( obj, nullptr, &pos );
 				}
 			}
 		}
@@ -3780,7 +3780,7 @@ void ScriptActions::doTeamSetBoobytrapped( const AsciiString& thingTemplateName,
 					const Matrix3D *transform = obj->getTransformMatrix();
 					transform->Transform_Vector( *transform, *(Vector3*)(&pos), (Vector3*)(&pos) );
 
-					update->initStickyBomb( obj, NULL, &pos );
+					update->initStickyBomb( obj, nullptr, &pos );
 				}
 			}
 		}
@@ -3803,7 +3803,7 @@ void ScriptActions::doUnitExitBuilding(const AsciiString& unitName)
 	}
 
 	ai->chooseLocomotorSet(LOCOMOTORSET_NORMAL);
-	ai->aiExit(NULL, CMD_FROM_SCRIPT);
+	ai->aiExit(nullptr, CMD_FROM_SCRIPT);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4062,7 +4062,7 @@ void ScriptActions::doTransferTeamToPlayer(const AsciiString& teamName, const As
 	theTeam->setControllingPlayer(playerDest);
 
 	// srj sez: ensure that all these guys get the upgrades that belong to the new player
-	theTeam->iterateObjects(updateTeamAndPlayerStuff, NULL);
+	theTeam->iterateObjects(updateTeamAndPlayerStuff, nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4234,11 +4234,11 @@ void ScriptActions::doSkirmishFireSpecialPowerAtMostCost( const AsciiString &pla
 {
 	Int enemyNdx;
 	Player *enemyPlayer = TheScriptEngine->getSkirmishEnemyPlayer();
-	if (enemyPlayer == NULL) return;
+	if (enemyPlayer == nullptr) return;
 	enemyNdx = enemyPlayer->getPlayerIndex();
 
 	const SpecialPowerTemplate *power = TheSpecialPowerStore->findSpecialPowerTemplate(specialPower);
-	if (power==NULL)
+	if (power==nullptr)
 		return;
 	Real radius = 50.0f;
 	if (power->getRadiusCursorRadius()>radius) {
@@ -4248,7 +4248,7 @@ void ScriptActions::doSkirmishFireSpecialPowerAtMostCost( const AsciiString &pla
 	Player::PlayerTeamList::const_iterator it;
 
 	Player *pPlayer = TheScriptEngine->getPlayerFromAsciiString(player);
-	if (pPlayer==NULL)
+	if (pPlayer==nullptr)
 		return;
 
 
@@ -4750,8 +4750,8 @@ void ScriptActions::doTeamRemoveAllOverrideRelations(const AsciiString& teamName
 	Team *theTeam = TheScriptEngine->getTeamNamed( teamName );
 	if (theTeam) {
 		// invalid ID is OK -- it removes all relationships
-		theTeam->removeOverrideTeamRelationship( NULL );
-		theTeam->removeOverridePlayerRelationship( NULL );
+		theTeam->removeOverrideTeamRelationship( TEAM_ID_INVALID );
+		theTeam->removeOverridePlayerRelationship( PLAYER_INDEX_INVALID );
 	}
 }
 //-------------------------------------------------------------------------------------------------
@@ -5020,11 +5020,11 @@ void ScriptActions::doBorderSwitch(Int borderToUse)
 	 *	and re-reveal the map. BGC
 	*/
 	Int observerPlayerIndex = -1;
-	if (ThePlayerList != NULL)
+	if (ThePlayerList != nullptr)
 	{
 		Player *observer = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver"));
 
-		if (observer != NULL) {
+		if (observer != nullptr) {
 			observerPlayerIndex = observer->getPlayerIndex();
 		}
 	}
@@ -5055,7 +5055,7 @@ void ScriptActions::doForceObjectSelection(const AsciiString& teamName, const As
 		return;
 	}
 
-	Object *bestGuess = NULL;
+	Object *bestGuess = nullptr;
 
 	for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
 		Object *obj = iter.cur();
@@ -5064,7 +5064,7 @@ void ScriptActions::doForceObjectSelection(const AsciiString& teamName, const As
 		}
 
 		if (obj->getTemplate() && obj->getTemplate()->getName() == objectType) {
-			if (bestGuess == NULL || obj->getID() < bestGuess->getID()) { // lower ID means its newer
+			if (bestGuess == nullptr || obj->getID() < bestGuess->getID()) { // lower ID means its newer
 				bestGuess = obj;
 			}
 		}
@@ -5092,7 +5092,7 @@ void* __cdecl killTheObject( Object *obj, void* userObj )
 	userObj;
 	if (obj)
 		obj->kill();
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5111,7 +5111,7 @@ void ScriptActions::doDestroyAllContained(const AsciiString& unitName, Int damag
 		return;
 	}
 
-	cmi->iterateContained((ContainIterateFunc)killTheObject, NULL, false);
+	cmi->iterateContained((ContainIterateFunc)killTheObject, nullptr, false);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5160,10 +5160,10 @@ static CaveInterface* findCave(Object* obj)
 	for (BehaviorModule** i = obj->getBehaviorModules(); *i; ++i)
 	{
 		CaveInterface* c = (*i)->getCaveInterface();
-		if (c != NULL)
+		if (c != nullptr)
 			return c;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5178,7 +5178,7 @@ void ScriptActions::doSetCaveIndex( const AsciiString& caveName, Int caveIndex )
 	}
 
 	CaveInterface *caveModule = findCave(obj);
-	if( caveModule == NULL )
+	if( caveModule == nullptr )
 		return;
 
 	caveModule->tryToSetCaveIndex( caveIndex );
@@ -5197,7 +5197,7 @@ void ScriptActions::doSetWarehouseValue( const AsciiString& warehouseName, Int c
 
 	static const NameKeyType warehouseModuleKey = TheNameKeyGenerator->nameToKey( "SupplyWarehouseDockUpdate" );
 	SupplyWarehouseDockUpdate *warehouseModule = (SupplyWarehouseDockUpdate *)obj->findUpdateModule( warehouseModuleKey );
-	if( warehouseModule == NULL )
+	if( warehouseModule == nullptr )
 		return;
 
 	warehouseModule->setCashValue( cashValue );
@@ -5262,7 +5262,7 @@ void ScriptActions::doMoveUnitTowardsNearest( const AsciiString& unitName, const
 		return;
 	}
 
-	Object *bestObj = NULL;
+	Object *bestObj = nullptr;
 
 	const ThingTemplate *templ = TheThingFactory->findTemplate( objectType, FALSE );
 	if( templ )
@@ -5271,7 +5271,7 @@ void ScriptActions::doMoveUnitTowardsNearest( const AsciiString& unitName, const
 		PartitionFilterPolygonTrigger acceptWithin(trig);
 		PartitionFilterSameMapStatus filterMapStatus(obj);
 
-		PartitionFilter *filters[] = { &thingsToAccept, &acceptWithin, &filterMapStatus, NULL };
+		PartitionFilter *filters[] = { &thingsToAccept, &acceptWithin, &filterMapStatus, nullptr };
 
 		bestObj = ThePartitionManager->getClosestObject( obj->getPosition(), REALLY_FAR, FROM_CENTER_2D, filters );
 		if( !bestObj )
@@ -5298,7 +5298,7 @@ void ScriptActions::doMoveUnitTowardsNearest( const AsciiString& unitName, const
 				if( thisType )
 				{
 					PartitionFilterThing f2( thisType, true );
-					PartitionFilter *filters[] = { &f2, &acceptWithin, &filterMapStatus, 0 };
+					PartitionFilter *filters[] = { &f2, &acceptWithin, &filterMapStatus, nullptr };
 
 					Object *obj = ThePartitionManager->getClosestObject( &pos, REALLY_FAR, FROM_CENTER_2D, filters, &dist );
 					if( obj )
@@ -5336,7 +5336,7 @@ void ScriptActions::doMoveTeamTowardsNearest( const AsciiString& teamName, const
 	}
 
 	//Get the first object (to use in the partition filter checks).
-	Object *teamObj = NULL;
+	Object *teamObj = nullptr;
 	DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList();
 	for (; !iter.done(); iter.advance())
 	{
@@ -5358,14 +5358,14 @@ void ScriptActions::doMoveTeamTowardsNearest( const AsciiString& teamName, const
 	Coord3D teamPos = *team->getEstimateTeamPosition();
 	PartitionFilterSameMapStatus filterMapStatus( teamObj );
 	PartitionFilterPolygonTrigger acceptWithin( trig );
-	Object *bestObj = NULL;
+	Object *bestObj = nullptr;
 
 	const ThingTemplate *templ = TheThingFactory->findTemplate( objectType, FALSE );
 	if( templ )
 	{
 		//Find the closest specified template.
 		PartitionFilterThing thingsToAccept( templ, true );
-		PartitionFilter *filters[] = { &thingsToAccept, &acceptWithin, &filterMapStatus, NULL };
+		PartitionFilter *filters[] = { &thingsToAccept, &acceptWithin, &filterMapStatus, nullptr };
 		bestObj = ThePartitionManager->getClosestObject( &teamPos, REALLY_FAR, FROM_CENTER_2D, filters );
 		if (!bestObj)
 		{
@@ -5387,7 +5387,7 @@ void ScriptActions::doMoveTeamTowardsNearest( const AsciiString& teamName, const
 				if( thisType )
 				{
 					PartitionFilterThing thingToAccept( thisType, true );
-					PartitionFilter *filters[] = { &thingToAccept, &acceptWithin, &filterMapStatus, NULL };
+					PartitionFilter *filters[] = { &thingToAccept, &acceptWithin, &filterMapStatus, nullptr };
 
 					Object *obj = ThePartitionManager->getClosestObject( &teamPos, REALLY_FAR, FROM_CENTER_2D, filters, &dist );
 					if( obj )
@@ -5498,7 +5498,7 @@ void ScriptActions::doSkirmishCommandButtonOnMostValuable( const AsciiString& te
 		return;
 	}
 
-	Object *srcObj = NULL;
+	Object *srcObj = nullptr;
 	if (commandButton->getSpecialPowerTemplate()) {
 		srcObj = theGroup->getSpecialPowerSourceObject(commandButton->getSpecialPowerTemplate()->getID());
 	} else {
@@ -5516,7 +5516,7 @@ void ScriptActions::doSkirmishCommandButtonOnMostValuable( const AsciiString& te
 	PartitionFilterValidCommandButtonTarget f2(srcObj, commandButton, true, CMD_FROM_SCRIPT);
 	PartitionFilterSameMapStatus filterMapStatus(srcObj);
 
-	PartitionFilter *filters[] = { &f1, &f2, &filterMapStatus, 0 };
+	PartitionFilter *filters[] = { &f1, &f2, &filterMapStatus, nullptr };
 	// @todo: Should we add the group's radius to the range? Seems like a possibility.
 	SimpleObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(&pos, range, FROM_CENTER_2D, filters, ITER_SORTED_EXPENSIVE_TO_CHEAP);
 	MemoryPoolObjectHolder hold(iter);
@@ -5561,7 +5561,7 @@ void ScriptActions::doTeamUseCommandButtonOnNamed( const AsciiString& teamName, 
 		return;
 	}
 
-	Object *srcObj = NULL;
+	Object *srcObj = nullptr;
 	if (commandButton->getSpecialPowerTemplate()) {
 		srcObj = theGroup->getSpecialPowerSourceObject(commandButton->getSpecialPowerTemplate()->getID());
 	} else {
@@ -5577,7 +5577,7 @@ void ScriptActions::doTeamUseCommandButtonOnNamed( const AsciiString& teamName, 
 		return;
 	}
 
-	if (commandButton->isValidToUseOn(srcObj, obj, NULL, CMD_FROM_SCRIPT)) {
+	if (commandButton->isValidToUseOn(srcObj, obj, nullptr, CMD_FROM_SCRIPT)) {
 		theGroup->groupDoCommandButtonAtObject(commandButton, obj, CMD_FROM_SCRIPT);
 	}
 }
@@ -5604,7 +5604,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestEnemy( const AsciiString& tea
 		return;
 	}
 
-	Object *srcObj = NULL;
+	Object *srcObj = nullptr;
 	if (commandButton->getSpecialPowerTemplate()) {
 		srcObj = theGroup->getSpecialPowerSourceObject(commandButton->getSpecialPowerTemplate()->getID());
 	} else {
@@ -5622,7 +5622,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestEnemy( const AsciiString& tea
 	Coord3D pos;
 	theGroup->getCenter(&pos);
 
-	PartitionFilter *filters[] = { &f1, &f2, &filterMapStatus, 0 };
+	PartitionFilter *filters[] = { &f1, &f2, &filterMapStatus, nullptr };
 	Object *obj = ThePartitionManager->getClosestObject(&pos, REALLY_FAR, FROM_CENTER_2D, filters);
 	if (!obj) {
 		return;
@@ -5654,7 +5654,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestGarrisonedBuilding( const Asc
 		return;
 	}
 
-	Object *srcObj = NULL;
+	Object *srcObj = nullptr;
 	if (commandButton->getSpecialPowerTemplate()) {
 		srcObj = theGroup->getSpecialPowerSourceObject(commandButton->getSpecialPowerTemplate()->getID());
 	} else {
@@ -5674,7 +5674,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestGarrisonedBuilding( const Asc
 	Coord3D pos;
 	theGroup->getCenter(&pos);
 
-	PartitionFilter *filters[] = { &f1, &f2, &f3, &f4, &filterMapStatus, 0 };
+	PartitionFilter *filters[] = { &f1, &f2, &f3, &f4, &filterMapStatus, nullptr };
 	Object *obj = ThePartitionManager->getClosestObject(&pos, REALLY_FAR, FROM_CENTER_2D, filters);
 	if (!obj) {
 		return;
@@ -5706,7 +5706,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestKindof( const AsciiString& te
 		return;
 	}
 
-	Object *srcObj = NULL;
+	Object *srcObj = nullptr;
 	if (commandButton->getSpecialPowerTemplate()) {
 		srcObj = theGroup->getSpecialPowerSourceObject(commandButton->getSpecialPowerTemplate()->getID());
 	} else {
@@ -5725,7 +5725,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestKindof( const AsciiString& te
 	Coord3D pos;
 	theGroup->getCenter(&pos);
 
-	PartitionFilter *filters[] = { &f1, &f2, &f3, &filterMapStatus, 0 };
+	PartitionFilter *filters[] = { &f1, &f2, &f3, &filterMapStatus, nullptr };
 	Object *obj = ThePartitionManager->getClosestObject(&pos, REALLY_FAR, FROM_CENTER_2D, filters);
 	if (!obj) {
 		return;
@@ -5757,7 +5757,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestBuilding( const AsciiString& 
 		return;
 	}
 
-	Object *srcObj = NULL;
+	Object *srcObj = nullptr;
 	if (commandButton->getSpecialPowerTemplate()) {
 		srcObj = theGroup->getSpecialPowerSourceObject(commandButton->getSpecialPowerTemplate()->getID());
 	} else {
@@ -5776,7 +5776,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestBuilding( const AsciiString& 
 	Coord3D pos;
 	theGroup->getCenter(&pos);
 
-	PartitionFilter *filters[] = { &f1, &f2, &f3, &filterMapStatus, 0 };
+	PartitionFilter *filters[] = { &f1, &f2, &f3, &filterMapStatus, nullptr };
 	Object *obj = ThePartitionManager->getClosestObject(&pos, REALLY_FAR, FROM_CENTER_2D, filters);
 	if (!obj) {
 		return;
@@ -5808,7 +5808,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestBuildingClass( const AsciiStr
 		return;
 	}
 
-	Object *srcObj = NULL;
+	Object *srcObj = nullptr;
 	if (commandButton->getSpecialPowerTemplate()) {
 		srcObj = theGroup->getSpecialPowerSourceObject(commandButton->getSpecialPowerTemplate()->getID());
 	} else {
@@ -5828,7 +5828,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestBuildingClass( const AsciiStr
 	Coord3D pos;
 	theGroup->getCenter(&pos);
 
-	PartitionFilter *filters[] = { &f1, &f2, &f3, &f4, &filterMapStatus, 0 };
+	PartitionFilter *filters[] = { &f1, &f2, &f3, &f4, &filterMapStatus, nullptr };
 	Object *obj = ThePartitionManager->getClosestObject(&pos, REALLY_FAR, FROM_CENTER_2D, filters);
 	if (!obj) {
 		return;
@@ -5860,7 +5860,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 		return;
 	}
 
-	Object *srcObj = NULL;
+	Object *srcObj = nullptr;
 	if (commandButton->getSpecialPowerTemplate()) {
 		srcObj = theGroup->getSpecialPowerSourceObject(commandButton->getSpecialPowerTemplate()->getID());
 	} else {
@@ -5871,7 +5871,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 		return;
 	}
 
-	Object *bestObj = NULL;
+	Object *bestObj = nullptr;
 
 	//First look for a specific object type (object lists will fail)
 	const ThingTemplate *thingTemplate = TheThingFactory->findTemplate( objectType, FALSE );
@@ -5881,7 +5881,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 		PartitionFilterThing f2(thingTemplate, true);
 		PartitionFilterValidCommandButtonTarget f3(srcObj, commandButton, true, CMD_FROM_SCRIPT);
 		PartitionFilterSameMapStatus filterMapStatus(srcObj);
-		PartitionFilter *filters[] = { &f1, &f2, &f3, &filterMapStatus, 0 };
+		PartitionFilter *filters[] = { &f1, &f2, &f3, &filterMapStatus, nullptr };
 
 		Coord3D pos;
 		theGroup->getCenter(&pos);
@@ -5913,7 +5913,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 				if( thisType )
 				{
 					PartitionFilterThing f2( thisType, true );
-					PartitionFilter *filters[] = { &f1, &f2, &f3, &f4, 0 };
+					PartitionFilter *filters[] = { &f1, &f2, &f3, &f4, nullptr };
 
 					Object *obj = ThePartitionManager->getClosestObject(&pos, REALLY_FAR, FROM_CENTER_2D, filters, &dist );
 					if( obj )
@@ -5958,7 +5958,7 @@ void ScriptActions::doTeamPartialUseCommandButton( Real percentage, const AsciiS
 
 	for (iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
 		Object *obj = iter.cur();
-		if (commandButton->isValidToUseOn(obj, NULL, NULL, CMD_FROM_SCRIPT)) {
+		if (commandButton->isValidToUseOn(obj, nullptr, nullptr, CMD_FROM_SCRIPT)) {
 			objList.push_back(obj);
 		}
 	}
@@ -6001,7 +6001,7 @@ void ScriptActions::doTeamCaptureNearestUnownedFactionUnit( const AsciiString& t
 	Coord3D pos;
 	theGroup->getCenter(&pos);
 
-	PartitionFilter *filters[] = { &f1, &f2, &filterMapStatus, 0 };
+	PartitionFilter *filters[] = { &f1, &f2, &filterMapStatus, nullptr };
 	Object *obj = ThePartitionManager->getClosestObject(&pos, REALLY_FAR, FROM_CENTER_2D, filters);
 	if (!obj) {
 		return;
@@ -6230,7 +6230,7 @@ void ScriptActions::doC3CameraShake
 )
 {
 	Waypoint *way = TheTerrainLogic->getWaypointByName(waypointName);
-	DEBUG_ASSERTLOG( (way != NULL), ("Camera shake with No Valid Waypoint") );
+	DEBUG_ASSERTLOG( (way != nullptr), ("Camera shake with No Valid Waypoint") );
 	Coord3D pos = *way->getLocation();
 
 	TheTacticalView->Add_Camera_Shake(pos, radius, duration_seconds, amplitude);
@@ -6432,7 +6432,7 @@ void ScriptActions::doRemoveCommandBarButton(const AsciiString& buttonName, cons
 
 	if (slotNum >= 0)
 	{
-		TheGameLogic->setControlBarOverride(templ->friend_getCommandSetString(), slotNum, NULL);
+		TheGameLogic->setControlBarOverride(templ->friend_getCommandSetString(), slotNum, nullptr);
 	}
 }
 
@@ -6445,7 +6445,7 @@ void ScriptActions::doAddCommandBarButton(const AsciiString& buttonName, const A
 	}
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton( buttonName );
-	if (commandButton == NULL)
+	if (commandButton == nullptr)
 	{
 		// not here. use doRemoveCommandBarButton to remove one.
 		return;
@@ -6903,10 +6903,10 @@ void ScriptActions::executeAction( ScriptAction *pAction )
 			doCameoFlash(pAction->getParameter(0)->getString(), pAction->getParameter(1)->getInt());
 			return;
 		case ScriptAction::NAMED_FLASH:
-			doNamedFlash(pAction->getParameter(0)->getString(), pAction->getParameter(1)->getInt(), NULL);
+			doNamedFlash(pAction->getParameter(0)->getString(), pAction->getParameter(1)->getInt(), nullptr);
 			return;
 		case ScriptAction::TEAM_FLASH:
-			doTeamFlash(pAction->getParameter(0)->getString(), pAction->getParameter(1)->getInt(), NULL);
+			doTeamFlash(pAction->getParameter(0)->getString(), pAction->getParameter(1)->getInt(), nullptr);
 			return;
 		case ScriptAction::NAMED_FLASH_WHITE:
 			{

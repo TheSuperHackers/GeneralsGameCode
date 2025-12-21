@@ -126,7 +126,7 @@ enum CallbackType
 void callbackWrapper( GPConnection *con, void *arg, void *param )
 {
 	CallbackType info = (CallbackType)(Int)param;
-	BuddyThreadClass *thread = MESSAGE_QUEUE->getThread() ? MESSAGE_QUEUE->getThread() : NULL /*(TheGameSpyBuddyMessageQueue)?TheGameSpyBuddyMessageQueue->getThread():NULL*/;
+	BuddyThreadClass *thread = MESSAGE_QUEUE->getThread() ? MESSAGE_QUEUE->getThread() : nullptr /*(TheGameSpyBuddyMessageQueue)?TheGameSpyBuddyMessageQueue->getThread():nullptr*/;
 	if (!thread)
 		return;
 
@@ -154,7 +154,7 @@ void callbackWrapper( GPConnection *con, void *arg, void *param )
 
 GameSpyBuddyMessageQueue::GameSpyBuddyMessageQueue()
 {
-	m_thread = NULL;
+	m_thread = nullptr;
 }
 
 GameSpyBuddyMessageQueue::~GameSpyBuddyMessageQueue()
@@ -181,7 +181,7 @@ void GameSpyBuddyMessageQueue::startThread( void )
 void GameSpyBuddyMessageQueue::endThread( void )
 {
 	delete m_thread;
-	m_thread = NULL;
+	m_thread = nullptr;
 }
 
 Bool GameSpyBuddyMessageQueue::isThreadRunning( void )

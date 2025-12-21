@@ -161,7 +161,7 @@ protected:
 	Condition *m_firstAnd;	 // These are Anded.
 
 public:
-	OrCondition():m_nextOr(NULL),m_firstAnd(NULL){};
+	OrCondition():m_nextOr(nullptr),m_firstAnd(nullptr){};
 	//~OrCondition();
 	/// Duplicate creates a "deep" copy.  If it is head of a linked list, duplicates the entire list.
 	OrCondition *duplicate(void) const;
@@ -577,7 +577,7 @@ public:
 		if (ndx>=0 && ndx<m_numParms)
 			return m_parms[ndx];
 
-		return NULL;
+		return nullptr;
 	}
 	Bool hasWarnings(void) const { return m_hasWarnings;}
 	Int getNumParameters(void) {return m_numParms;}
@@ -1008,7 +1008,7 @@ public:
 		if (ndx>=0 && ndx<m_numParms)
 			return m_parms[ndx];
 
-		return NULL;
+		return nullptr;
 	}
 
 	Int getNumParameters(void) {return m_numParms;}

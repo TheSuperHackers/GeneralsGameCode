@@ -53,8 +53,8 @@ DynamicMeshModel::DynamicMeshModel(unsigned int max_polys, unsigned int max_vert
 	MeshGeometryClass(),
 	DynamicMeshPNum(0),
 	DynamicMeshVNum(0),
-	MatDesc(NULL),
-	MatInfo(NULL)
+	MatDesc(nullptr),
+	MatInfo(nullptr)
 {
 	MatInfo = NEW_REF(MaterialInfoClass, ());
 
@@ -69,8 +69,8 @@ DynamicMeshModel::DynamicMeshModel(unsigned int max_polys, unsigned int max_vert
 	MeshGeometryClass(),
 	DynamicMeshPNum(0),
 	DynamicMeshVNum(0),
-	MatDesc(NULL),
-	MatInfo(NULL)
+	MatDesc(nullptr),
+	MatInfo(nullptr)
 {
 	MatInfo = mat_info;
 	MatInfo->Add_Ref();
@@ -86,8 +86,8 @@ DynamicMeshModel::DynamicMeshModel(const DynamicMeshModel &src) :
 	MeshGeometryClass(src),
 	DynamicMeshPNum(src.DynamicMeshPNum),
 	DynamicMeshVNum(src.DynamicMeshVNum),
-	MatDesc(NULL),
-	MatInfo(NULL)
+	MatDesc(nullptr),
+	MatInfo(nullptr)
 {
 	// Copy the material info structure.
 	MatInfo = NEW_REF(MaterialInfoClass, (*(src.MatInfo)));
@@ -105,7 +105,7 @@ DynamicMeshModel::DynamicMeshModel(const DynamicMeshModel &src) :
 DynamicMeshModel::~DynamicMeshModel(void)
 {
 	delete MatDesc;
-	MatDesc = NULL;
+	MatDesc = nullptr;
 
 	REF_PTR_RELEASE(MatInfo);
 }
@@ -274,28 +274,28 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 		bool material_changed = false;
 		bool shader_changed = false;
 
-		TextureClass **texture_array0 = NULL;
+		TextureClass **texture_array0 = nullptr;
 		TexBufferClass * tex_buf = MatDesc->Get_Texture_Array(pass, 0, false);
 		if (tex_buf) {
 			texture_array0 = tex_buf->Get_Array();
 		} else {
-			texture_array0 = NULL;
+			texture_array0 = nullptr;
 		}
 
-		TextureClass **texture_array1 = NULL;
+		TextureClass **texture_array1 = nullptr;
 		TexBufferClass * tex_buf1 = MatDesc->Get_Texture_Array(pass, 1, false);
 		if (tex_buf1) {
 			texture_array1 = tex_buf1->Get_Array();
 		} else {
-			texture_array1 = NULL;
+			texture_array1 = nullptr;
 		}
 
-		VertexMaterialClass **material_array = NULL;
+		VertexMaterialClass **material_array = nullptr;
 		MatBufferClass * mat_buf = MatDesc->Get_Material_Array(pass, false);
 		if (mat_buf) {
 			material_array = mat_buf->Get_Array();
 		} else {
-			material_array = NULL;
+			material_array = nullptr;
 		}
 		ShaderClass *shader_array = MatDesc->Get_Shader_Array(pass, false);
 
@@ -518,7 +518,7 @@ bool DynamicMeshClass::End_Vertex()
 **
 *******************************************************************/
 DynamicMeshClass::DynamicMeshClass(int max_poly, int max_vert) :
-	Model(NULL),
+	Model(nullptr),
 	PolyCount(0),
 	VertCount(0),
 	TriVertexCount(0),
@@ -544,7 +544,7 @@ DynamicMeshClass::DynamicMeshClass(int max_poly, int max_vert) :
 }
 
 DynamicMeshClass::DynamicMeshClass(int max_poly, int max_vert, MaterialInfoClass *mat_info) :
-	Model(NULL),
+	Model(nullptr),
 	PolyCount(0),
 	VertCount(0),
 	TriVertexCount(0),
@@ -571,7 +571,7 @@ DynamicMeshClass::DynamicMeshClass(int max_poly, int max_vert, MaterialInfoClass
 
 DynamicMeshClass::DynamicMeshClass(const DynamicMeshClass & src) :
 	RenderObjClass(src),
-	Model(NULL),
+	Model(nullptr),
 	PolyCount(src.PolyCount),
 	VertCount(src.VertCount),
 	TriVertexCount(src.TriVertexCount),

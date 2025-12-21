@@ -108,9 +108,9 @@ DebugHintObject::~DebugHintObject(void)
 }
 
 DebugHintObject::DebugHintObject(void) :
-	m_indexBuffer(NULL),
-	m_vertexMaterialClass(NULL),
-	m_vertexBufferTile(NULL),
+	m_indexBuffer(nullptr),
+	m_vertexMaterialClass(nullptr),
+	m_vertexBufferTile(nullptr),
 	m_myColor(0),
 	m_mySize(0)
 {
@@ -200,7 +200,7 @@ void DebugHintObject::setLocAndColorAndSize(const Coord3D *loc, Int argb, Int si
 
 	if (m_myLoc.z < 0 && TheTerrainRenderObject)
 	{
-		m_myLoc.z = TheTerrainRenderObject->getHeightMapHeight(m_myLoc.x, m_myLoc.y, NULL);
+		m_myLoc.z = TheTerrainRenderObject->getHeightMapHeight(m_myLoc.x, m_myLoc.y, nullptr);
 	}
 
 	if (m_vertexBufferTile)
@@ -242,7 +242,7 @@ void DebugHintObject::Render(RenderInfoClass & rinfo)
 	{
 		DX8Wrapper::Set_Material(m_vertexMaterialClass);
 		DX8Wrapper::Set_Shader(m_shaderClass);
-		DX8Wrapper::Set_Texture(0, NULL);
+		DX8Wrapper::Set_Texture(0, nullptr);
 		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
 		DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile);
 
@@ -270,13 +270,13 @@ W3DInGameUI::W3DInGameUI()
 	for( i = 0; i < MAX_MOVE_HINTS; i++ )
 	{
 
-		m_moveHintRenderObj[ i ] = NULL;
-		m_moveHintAnim[ i ] = NULL;
+		m_moveHintRenderObj[ i ] = nullptr;
+		m_moveHintAnim[ i ] = nullptr;
 
 	}
 
-	m_buildingPlacementAnchor = NULL;
-	m_buildingPlacementArrow = NULL;
+	m_buildingPlacementAnchor = nullptr;
+	m_buildingPlacementArrow = nullptr;
 
 }
 
@@ -313,13 +313,13 @@ static void loadText( char *filename, GameWindow *listboxText )
 
 	// open the file
 	fp = fopen( filename, "r" );
-	if( fp == NULL )
+	if( fp == nullptr )
 		return;
 
 	char buffer[ 1024 ];
 	UnicodeString line;
 	Color color = GameMakeColor(255, 255, 255, 255);
-	while( fgets( buffer, 1024, fp ) != NULL )
+	while( fgets( buffer, 1024, fp ) != nullptr )
 	{
 		line.translate(buffer);
 		line.trim();
@@ -482,7 +482,7 @@ void W3DInGameUI::drawMoveHints( View *view )
 //				continue;
 
 			// create render object and add to scene of needed
-			if( m_moveHintRenderObj[ i ] == NULL )
+			if( m_moveHintRenderObj[ i ] == nullptr )
 			{
 				RenderObjClass *hint;
 				HAnimClass *anim;
@@ -495,7 +495,7 @@ void W3DInGameUI::drawMoveHints( View *view )
 				anim = W3DDisplay::m_assetManager->Get_HAnim(animName.str());
 
 				// sanity
-				if( hint == NULL )
+				if( hint == nullptr )
 				{
 
 					DEBUG_CRASH(("unable to create hint"));
@@ -621,8 +621,8 @@ void W3DInGameUI::drawPlaceAngle( View *view )
 		}
 	}
 
-	Bool anchorInScene = m_buildingPlacementAnchor->Peek_Scene() != NULL;
-	Bool arrowInScene	 = m_buildingPlacementArrow->Peek_Scene() != NULL;
+	Bool anchorInScene = m_buildingPlacementAnchor->Peek_Scene() != nullptr;
+	Bool arrowInScene	 = m_buildingPlacementArrow->Peek_Scene() != nullptr;
 
 	// get out of here if this display isn't up anyway
 	if( isPlacementAnchored() == FALSE )

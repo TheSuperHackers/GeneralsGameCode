@@ -33,7 +33,7 @@ class RoadOptions : public COptionsPanel
 {
 // Construction
 public:
-	RoadOptions(CWnd* pParent = NULL);   ///< standard constructor
+	RoadOptions(CWnd* pParent = nullptr);   ///< standard constructor
 
 	~RoadOptions(void);   ///< standard destructor
 	enum { NAME_MAX_LEN = 64 };

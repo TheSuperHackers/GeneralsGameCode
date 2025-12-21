@@ -84,9 +84,9 @@ Real ObjectTool::calcAngle(Coord3D downPt, Coord3D curPt, WbView* pView)
 void ObjectTool::deactivate()
 {
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
-	if (pDoc==NULL) return;
+	if (pDoc==nullptr) return;
 	WbView3d *p3View = pDoc->GetActive3DView();
-	p3View->setObjTracking(NULL, m_downPt3d, 0, false);
+	p3View->setObjTracking(nullptr, m_downPt3d, 0, false);
 }
 /// Shows the object options panel
 void ObjectTool::activate()
@@ -94,9 +94,9 @@ void ObjectTool::activate()
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_OBJECT_OPTIONS);
 	DrawObject::setDoBrushFeedback(false);
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
-	if (pDoc==NULL) return;
+	if (pDoc==nullptr) return;
 	WbView3d *p3View = pDoc->GetActive3DView();
-	p3View->setObjTracking(NULL, m_downPt3d, 0, false);
+	p3View->setObjTracking(nullptr, m_downPt3d, 0, false);
 }
 
 /** Execute the tool on mouse down - Place an object. */
@@ -129,14 +129,14 @@ void ObjectTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 		angle = pCur->getThingTemplate()->getPlacementViewAngle();
 	}
 	WbView3d *p3View = pDoc->GetActive3DView();
-	p3View->setObjTracking(NULL, m_downPt3d, 0, false);
+	p3View->setObjTracking(nullptr, m_downPt3d, 0, false);
 	loc.z = ObjectOptions::getCurObjectHeight();
 	if (pCur) {
 		// Display the transparent version of this object.
 		p3View->setObjTracking(pCur, loc, angle, true);
 	} else {
 		// Don't display anything.
-		p3View->setObjTracking(NULL, loc, angle, false);
+		p3View->setObjTracking(nullptr, loc, angle, false);
 	}
 }
 
@@ -164,7 +164,7 @@ void ObjectTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 		AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, pNew);
 		pDoc->AddAndDoUndoable(pUndo);
 		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-		pNew = NULL; // undoable owns it now.
+		pNew = nullptr; // undoable owns it now.
 	}
 }
 

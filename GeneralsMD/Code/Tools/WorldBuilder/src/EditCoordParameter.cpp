@@ -30,7 +30,7 @@
 // EditCoordParameter dialog
 
 
-EditCoordParameter::EditCoordParameter(CWnd* pParent /*=NULL*/)
+EditCoordParameter::EditCoordParameter(CWnd* pParent /*=nullptr*/)
 	: CDialog(EditCoordParameter::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(EditCoordParameter)

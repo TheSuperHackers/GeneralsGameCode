@@ -19,6 +19,7 @@
 //
 // Create the dialog used during the patching process.
 //
+#include <Utility/CppMacros.h>
 #include"winblows.h"
 #include"resource.h"
 #include"loadbmp.h"
@@ -30,7 +31,7 @@ BOOL CALLBACK Patch_Window_Proc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 HWND Create_Patch_Dialog(void)
 {
   PatchDialog=CreateDialog(Global_instance, MAKEINTRESOURCE(IDD_PATCHPROGRESS),
-    NULL, (DLGPROC)Patch_Window_Proc);
+    nullptr, (DLGPROC)Patch_Window_Proc);
 
   ShowWindow(PatchDialog, SW_NORMAL);
   SetForegroundWindow(PatchDialog);

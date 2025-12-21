@@ -120,7 +120,7 @@ void CRCDebugStartNewGame()
 	if (g_saveDebugCRCPerFrame)
 	{
 		// Create folder for frame data, if it doesn't exist yet.
-		CreateDirectory(g_saveDebugCRCPerFrameDir.str(), NULL);
+		CreateDirectory(g_saveDebugCRCPerFrameDir.str(), nullptr);
 
 		// Delete existing files
 		FilenameList files;
@@ -188,7 +188,7 @@ static AsciiString getFname(AsciiString path)
 
 static void addCRCDebugLineInternal(bool count, const char *fmt, va_list args)
 {
-	if (TheGameLogic == NULL || !(IS_FRAME_OK_TO_LOG))
+	if (TheGameLogic == nullptr || !(IS_FRAME_OK_TO_LOG))
 		return;
 
 	if (lastCRCDebugFrame != TheGameLogic->getFrame())

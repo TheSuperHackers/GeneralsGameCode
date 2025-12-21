@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // AnimMixingPage.h : header file
 //
@@ -32,7 +33,7 @@ class CAnimMixingPage : public CPropertyPage
 
 // Construction
 public:
-	CAnimMixingPage(CAdvancedAnimSheet *sheet = NULL);
+	CAnimMixingPage(CAdvancedAnimSheet *sheet = nullptr);
 	~CAnimMixingPage();
 
 // Dialog Data

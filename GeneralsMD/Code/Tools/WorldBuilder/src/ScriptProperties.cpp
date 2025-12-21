@@ -29,7 +29,7 @@
 
 IMPLEMENT_DYNCREATE(ScriptProperties, CPropertyPage)
 
-ScriptProperties::ScriptProperties() : m_updating(false), m_script(NULL),
+ScriptProperties::ScriptProperties() : m_updating(false), m_script(nullptr),
 CPropertyPage(ScriptProperties::IDD)
 {
 	//{{AFX_DATA_INIT(ScriptProperties)

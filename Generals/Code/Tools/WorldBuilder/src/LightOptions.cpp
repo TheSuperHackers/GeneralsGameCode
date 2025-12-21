@@ -28,12 +28,12 @@
 #include "wbview3d.h"
 #include "Common/WellKnownKeys.h"
 
-LightOptions *LightOptions::m_staticThis = NULL;
+LightOptions *LightOptions::m_staticThis = nullptr;
 /////////////////////////////////////////////////////////////////////////////
 /// LightOptions dialog trivial construstor - Create does the real work.
 
 
-LightOptions::LightOptions(CWnd* pParent /*=NULL*/)
+LightOptions::LightOptions(CWnd* pParent /*=nullptr*/)
 {
 	//{{AFX_DATA_INIT(LightOptions)
 		// NOTE: the ClassWizard will add member initialization here
@@ -52,7 +52,7 @@ void LightOptions::DoDataExchange(CDataExchange* pDX)
 MapObject *LightOptions::getSingleSelectedLight(void)
 {
 	MapObject *pMapObj;
-	MapObject *theMapObj = NULL;
+	MapObject *theMapObj = nullptr;
 //	Bool found = false;
 	Int selCount=0;
 	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
@@ -66,7 +66,7 @@ MapObject *LightOptions::getSingleSelectedLight(void)
 	if (selCount==1 && theMapObj) {
 		return theMapObj;
 	}
-	return(NULL);
+	return(nullptr);
 }
 
 

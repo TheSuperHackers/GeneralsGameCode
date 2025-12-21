@@ -103,33 +103,33 @@ static NameKeyType comboBoxColorID = NAMEKEY_INVALID;
 
 
 // Window Pointers ------------------------------------------------------------------------
-static GameWindow *parentWOLQuickMatch = NULL;
-static GameWindow *buttonBack = NULL;
-static GameWindow *buttonStart = NULL;
-static GameWindow *buttonStop = NULL;
-static GameWindow *buttonWiden = NULL;
-GameWindow *quickmatchTextWindow = NULL;
-static GameWindow *listboxMapSelect = NULL;
-//static GameWindow *textEntryMaxDisconnects = NULL;
-//static GameWindow *textEntryMaxPoints = NULL;
-//static GameWindow *textEntryMinPoints = NULL;
-static GameWindow *textEntryWaitTime = NULL;
-static GameWindow *comboBoxNumPlayers = NULL;
-static GameWindow *comboBoxMaxPing = NULL;
-static GameWindow *comboBoxLadder = NULL;
-static GameWindow *comboBoxDisabledLadder = NULL; // enable and disable this, but never use it.  it is a stand-in for comboBoxLadder for when there are no ladders
-static GameWindow *comboBoxMaxDisconnects = NULL;
-static GameWindow *staticTextNumPlayers = NULL;
-static GameWindow *comboBoxSide = NULL;
-static GameWindow *comboBoxColor = NULL;
+static GameWindow *parentWOLQuickMatch = nullptr;
+static GameWindow *buttonBack = nullptr;
+static GameWindow *buttonStart = nullptr;
+static GameWindow *buttonStop = nullptr;
+static GameWindow *buttonWiden = nullptr;
+GameWindow *quickmatchTextWindow = nullptr;
+static GameWindow *listboxMapSelect = nullptr;
+//static GameWindow *textEntryMaxDisconnects = nullptr;
+//static GameWindow *textEntryMaxPoints = nullptr;
+//static GameWindow *textEntryMinPoints = nullptr;
+static GameWindow *textEntryWaitTime = nullptr;
+static GameWindow *comboBoxNumPlayers = nullptr;
+static GameWindow *comboBoxMaxPing = nullptr;
+static GameWindow *comboBoxLadder = nullptr;
+static GameWindow *comboBoxDisabledLadder = nullptr; // enable and disable this, but never use it.  it is a stand-in for comboBoxLadder for when there are no ladders
+static GameWindow *comboBoxMaxDisconnects = nullptr;
+static GameWindow *staticTextNumPlayers = nullptr;
+static GameWindow *comboBoxSide = nullptr;
+static GameWindow *comboBoxColor = nullptr;
 
 static Bool isShuttingDown = false;
 static Bool buttonPushed = false;
-static const char *nextScreen = NULL;
+static const char *nextScreen = nullptr;
 static Bool raiseMessageBoxes = false;
 static Bool isInInit = FALSE;
-static const Image *selectedImage = NULL;
-static const Image *unselectedImage = NULL;
+static const Image *selectedImage = nullptr;
+static const Image *unselectedImage = nullptr;
 
 static bool isPopulatingLadderBox = false;
 static Int maxPingEntries = 0;
@@ -280,7 +280,7 @@ static void populateQMColorComboBox(QuickMatchPreferences& pref)
 
 // -----------------------------------------------------------------------------
 
-static void populateQMSideComboBox(Int favSide, const LadderInfo *li = NULL)
+static void populateQMSideComboBox(Int favSide, const LadderInfo *li = nullptr)
 {
 	Int numPlayerTemplates = ThePlayerTemplateStore->getPlayerTemplateCount();
 	UnicodeString playerTemplateName;
@@ -411,7 +411,7 @@ void PopulateQMLadderListBox( GameWindow *win )
 
 	// start with "No Ladder"
 	index = GadgetListBoxAddEntryText( win, TheGameText->fetch("GUI:NoLadder"), normalColor, -1 );
-	GadgetListBoxSetItemData( win, 0, index );
+	GadgetListBoxSetItemData( win, nullptr, index );
 
 	// add the last ladder
 	Int selectedPos = 0;
@@ -501,7 +501,7 @@ void PopulateQMLadderComboBox( void )
 	Int index;
 	GadgetComboBoxReset( comboBoxLadder );
 	index = GadgetComboBoxAddEntry( comboBoxLadder, TheGameText->fetch("GUI:NoLadder"), normalColor );
-	GadgetComboBoxSetItemData( comboBoxLadder, index, 0 );
+	GadgetComboBoxSetItemData( comboBoxLadder, index, nullptr );
 
 	std::set<const LadderInfo *> usedLadders;
 
@@ -562,7 +562,7 @@ static void populateQuickMatchMapSelectListbox( QuickMatchPreferences& pref )
 	GadgetComboBoxGetSelectedPos( comboBoxLadder, &selected );
 	index = (Int)GadgetComboBoxGetItemData( comboBoxLadder, selected );
 	const LadderInfo *li = TheLadderList->findLadderByIndex( index );
-	//listboxMapSelect->winEnable( li == NULL || li->randomMaps == FALSE );
+	//listboxMapSelect->winEnable( li == nullptr || li->randomMaps == FALSE );
 
 	Int numPlayers = 0;
 	if (li)
@@ -715,13 +715,13 @@ void WOLQuickMatchMenuInit( WindowLayout *layout, void *userData )
 		}
 	}
 
-	nextScreen = NULL;
+	nextScreen = nullptr;
 	buttonPushed = false;
 	isShuttingDown = false;
 	raiseMessageBoxes = true;
 
 	delete TheNAT;
-	TheNAT = NULL;
+	TheNAT = nullptr;
 
 	parentWOLQuickMatchID = NAMEKEY( "WOLQuickMatchMenu.wnd:WOLQuickMatchMenuParent" );
 	buttonBackID = NAMEKEY( "WOLQuickMatchMenu.wnd:ButtonBack" );
@@ -745,7 +745,7 @@ void WOLQuickMatchMenuInit( WindowLayout *layout, void *userData )
 	comboBoxSideID = NAMEKEY( "WOLQuickMatchMenu.wnd:ComboBoxSide" );
 	comboBoxColorID = NAMEKEY( "WOLQuickMatchMenu.wnd:ComboBoxColor" );
 
-	parentWOLQuickMatch = TheWindowManager->winGetWindowFromId( NULL, parentWOLQuickMatchID );
+	parentWOLQuickMatch = TheWindowManager->winGetWindowFromId( nullptr, parentWOLQuickMatchID );
 	buttonBack = TheWindowManager->winGetWindowFromId( parentWOLQuickMatch,  buttonBackID);
 	buttonStart = TheWindowManager->winGetWindowFromId( parentWOLQuickMatch,  buttonStartID);
 	buttonStop = TheWindowManager->winGetWindowFromId( parentWOLQuickMatch,  buttonStopID);
@@ -771,7 +771,7 @@ void WOLQuickMatchMenuInit( WindowLayout *layout, void *userData )
 	{
 		// no ladders, so just disable them
 		comboBoxDisabledLadder = comboBoxLadder;
-		comboBoxLadder = NULL;
+		comboBoxLadder = nullptr;
 
 		isPopulatingLadderBox = TRUE;
 
@@ -779,7 +779,7 @@ void WOLQuickMatchMenuInit( WindowLayout *layout, void *userData )
 		Int index;
 		GadgetComboBoxReset( comboBoxDisabledLadder );
 		index = GadgetComboBoxAddEntry( comboBoxDisabledLadder, TheGameText->fetch("GUI:NoLadder"), normalColor );
-		GadgetComboBoxSetItemData( comboBoxDisabledLadder, index, 0 );
+		GadgetComboBoxSetItemData( comboBoxDisabledLadder, index, nullptr );
 		GadgetComboBoxSetSelectedPos( comboBoxDisabledLadder, index );
 
 		isPopulatingLadderBox = FALSE;
@@ -791,7 +791,7 @@ void WOLQuickMatchMenuInit( WindowLayout *layout, void *userData )
 			comboBoxLadder->winHide(TRUE);
 			comboBoxLadder->winEnable(FALSE);
 		}
-		comboBoxLadder = NULL;
+		comboBoxLadder = nullptr;
 		GameWindow *staticTextLadder = TheWindowManager->winGetWindowFromId( parentWOLQuickMatch,
 			NAMEKEY("WOLQuickMatchMenu.wnd:StaticTextLadder") );
 		if (staticTextLadder)
@@ -799,7 +799,7 @@ void WOLQuickMatchMenuInit( WindowLayout *layout, void *userData )
 		*/
 	}
 
-	GameWindow *buttonBuddies = TheWindowManager->winGetWindowFromId(NULL, buttonBuddiesID);
+	GameWindow *buttonBuddies = TheWindowManager->winGetWindowFromId(nullptr, buttonBuddiesID);
 	if (buttonBuddies)
 		buttonBuddies->winEnable(TRUE);
 
@@ -907,14 +907,14 @@ static void shutdownComplete( WindowLayout *layout )
 	layout->hide( TRUE );
 
 	// our shutdown is complete
-	TheShell->shutdownComplete( layout, (nextScreen != NULL) );
+	TheShell->shutdownComplete( layout, (nextScreen != nullptr) );
 
-	if (nextScreen != NULL)
+	if (nextScreen != nullptr)
 	{
 		TheShell->push(nextScreen);
 	}
 
-	nextScreen = NULL;
+	nextScreen = nullptr;
 
 }
 
@@ -928,10 +928,10 @@ void WOLQuickMatchMenuShutdown( WindowLayout *layout, void *userData )
 	if (!TheGameEngine->getQuitting())
 		saveQuickMatchOptions();
 
-	parentWOLQuickMatch = NULL;
-	buttonBack = NULL;
-	quickmatchTextWindow = NULL;
-	selectedImage = unselectedImage = NULL;
+	parentWOLQuickMatch = nullptr;
+	buttonBack = nullptr;
+	quickmatchTextWindow = nullptr;
+	selectedImage = unselectedImage = nullptr;
 
 	isShuttingDown = true;
 
@@ -1029,7 +1029,7 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 
 		if (TheGameSpyGame && TheGameSpyGame->isGameInProgress())
 		{
-			if (TheGameSpyInfo->isDisconnectedAfterGameStart(NULL))
+			if (TheGameSpyInfo->isDisconnectedAfterGameStart(nullptr))
 			{
 				return; // already been disconnected, so don't worry.
 			}
@@ -1049,7 +1049,7 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 
 						// check for scorescreen
 						NameKeyType listboxChatWindowScoreScreenID = NAMEKEY("ScoreScreen.wnd:ListboxChatWindowScoreScreen");
-						GameWindow *listboxChatWindowScoreScreen = TheWindowManager->winGetWindowFromId( NULL, listboxChatWindowScoreScreenID );
+						GameWindow *listboxChatWindowScoreScreen = TheWindowManager->winGetWindowFromId( nullptr, listboxChatWindowScoreScreenID );
 						if (listboxChatWindowScoreScreen)
 						{
 							GadgetListBoxAddEntryText(listboxChatWindowScoreScreen, TheGameText->fetch(disconMunkee),
@@ -1068,7 +1068,7 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 			return; // if we're in game, all we care about is if we've been disconnected from the chat server
 		}
 
-		if (TheNAT != NULL) {
+		if (TheNAT != nullptr) {
 			NATStateType NATState = TheNAT->update();
 			if (NATState == NATSTATE_DONE)
 			{
@@ -1081,7 +1081,7 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 			{
 				// delete TheNAT, its no good for us anymore.
 				delete TheNAT;
-				TheNAT = NULL;
+				TheNAT = nullptr;
 
 				// Just back out.  This cleans up some slot list problems
 				buttonPushed = true;
@@ -1144,7 +1144,7 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 					if ((slotNum >= 0) && (slotNum < MAX_SLOTS) && (stricmp(resp.command.c_str(), "NAT") == 0)) {
 						// this is a command for NAT negotiations, pass if off to TheNAT
 						sawImportantMessage = TRUE;
-						if (TheNAT != NULL) {
+						if (TheNAT != nullptr) {
 							TheNAT->processGlobalMessage(slotNum, resp.commandOptions.c_str());
 						}
 					}
@@ -1390,7 +1390,7 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 							DEBUG_LOG(("Starting a QM game: options=[%s]", GameInfoToAsciiString(TheGameSpyGame).str()));
 							SendStatsToOtherPlayers(TheGameSpyGame);
 							TheGameSpyGame->startGame(0);
-							GameWindow *buttonBuddies = TheWindowManager->winGetWindowFromId(NULL, buttonBuddiesID);
+							GameWindow *buttonBuddies = TheWindowManager->winGetWindowFromId(nullptr, buttonBuddiesID);
 							if (buttonBuddies)
 								buttonBuddies->winEnable(FALSE);
 							GameSpyCloseOverlay(GSOVERLAY_BUDDY);
@@ -1683,7 +1683,7 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 					Int ladderIndex, index, selected;
 					GadgetComboBoxGetSelectedPos( comboBoxLadder, &selected );
 					ladderIndex = (Int)GadgetComboBoxGetItemData( comboBoxLadder, selected );
-					const LadderInfo *ladderInfo = NULL;
+					const LadderInfo *ladderInfo = nullptr;
 					if (ladderIndex < 0)
 					{
 						ladderIndex = 0;
@@ -1803,7 +1803,7 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 						LadderPreferences ladPref;
 						ladPref.loadProfile( TheGameSpyInfo->getLocalProfileID() );
 						LadderPref p;
-						p.lastPlayDate = time(NULL);
+						p.lastPlayDate = time(nullptr);
 						p.address = ladderInfo->address;
 						p.port = ladderInfo->port;
 						p.name = ladderInfo->name;
@@ -1838,7 +1838,7 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 					for ( Int i=0; i<numMaps; ++i )
 					{
 						GadgetListBoxAddEntryImage(listboxMapSelect, unselectedImage, i, 0);
-						GadgetListBoxSetItemData(listboxMapSelect, (void *)0, i);
+						GadgetListBoxSetItemData(listboxMapSelect, (void *)nullptr, i);
 						GadgetListBoxAddEntryText(listboxMapSelect, GadgetListBoxGetText(listboxMapSelect, i, 1), GameSpyColor[GSCOLOR_MAP_UNSELECTED], i, 1);
 					}
 				}

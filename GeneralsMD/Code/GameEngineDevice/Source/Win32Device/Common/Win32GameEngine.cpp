@@ -30,6 +30,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include <windows.h>
+
 #include "Win32Device/Common/Win32GameEngine.h"
 #include "Common/PerfTimer.h"
 
@@ -97,7 +98,7 @@ void Win32GameEngine::update( void )
 			Sleep(5);
 			serviceWindowsOS();
 
-			if (TheLAN != NULL) {
+			if (TheLAN != nullptr) {
 				// BGC - need to update TheLAN so we can process and respond to other
 				// people's messages who may not be alt-tabbed out like we are.
 				TheLAN->setIsActive(isActive());
@@ -136,14 +137,14 @@ void Win32GameEngine::serviceWindowsOS( void )
   Int returnValue;
 
 	//
-	// see if we have any messages to process, a NULL window handle tells the
+	// see if we have any messages to process, a nullptr window handle tells the
 	// OS to look at the main window associated with the calling thread, us!
 	//
-	while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
+	while( PeekMessage( &msg, nullptr, 0, 0, PM_NOREMOVE ) )
 	{
 
 		// get the message
-		returnValue = GetMessage( &msg, NULL, 0, 0 );
+		returnValue = GetMessage( &msg, nullptr, 0, 0 );
 
 		// this is one possible way to check for quitting conditions as a message
 		// of WM_QUIT will cause GetMessage() to return 0

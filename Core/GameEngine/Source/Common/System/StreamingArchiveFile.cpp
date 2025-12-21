@@ -102,7 +102,7 @@
 //=================================================================
 
 StreamingArchiveFile::StreamingArchiveFile()
-: m_file(NULL),
+: m_file(nullptr),
 	m_startingPos(0),
 	m_size(0),
 	m_curPos(0)
@@ -140,12 +140,12 @@ Bool StreamingArchiveFile::open( const Char *filename, Int access, size_t buffer
 	//USE_PERF_TIMER(StreamingArchiveFile)
 	File *file = TheFileSystem->openFile( filename, access, bufferSize );
 
-	if ( file == NULL )
+	if ( file == nullptr )
 	{
 		return FALSE;
 	}
 
-	return (open( file ) != NULL);
+	return open( file );
 }
 
 //============================================================================
@@ -163,7 +163,7 @@ Bool StreamingArchiveFile::open( File *file )
 Bool StreamingArchiveFile::openFromArchive(File *archiveFile, const AsciiString& filename, Int offset, Int size)
 {
 	//USE_PERF_TIMER(StreamingArchiveFile)
-	if (archiveFile == NULL) {
+	if (archiveFile == nullptr) {
 		return FALSE;
 	}
 

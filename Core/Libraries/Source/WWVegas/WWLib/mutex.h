@@ -45,8 +45,8 @@ class MutexClass
 	void Unlock();
 
 public:
-	// Name can (and usually should) be NULL. Use name only if you wish to create a globally unique mutex
-	MutexClass(const char* name = NULL);
+	// Name can (and usually should) be nullptr. Use name only if you wish to create a globally unique mutex
+	MutexClass(const char* name = nullptr);
 	~MutexClass();
 
 	enum {
@@ -89,7 +89,7 @@ class CriticalSectionClass
 	void Unlock();
 
 public:
-	// Name can (and usually should) be NULL. Use name only if you wish to create a globally unique mutex
+	// Name can (and usually should) be nullptr. Use name only if you wish to create a globally unique mutex
 	CriticalSectionClass();
 	~CriticalSectionClass();
 
@@ -123,7 +123,7 @@ class FastCriticalSectionClass
 #endif
 
 public:
-	// Name can (and usually should) be NULL. Use name only if you wish to create a globally unique mutex
+	// Name can (and usually should) be nullptr. Use name only if you wish to create a globally unique mutex
 	FastCriticalSectionClass()
 #if defined(_MSC_VER) && _MSC_VER < 1300
 		: Flag(0)

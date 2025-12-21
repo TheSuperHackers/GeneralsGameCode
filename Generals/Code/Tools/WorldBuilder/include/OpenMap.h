@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // OpenMap.h : header file
 //
@@ -35,7 +36,7 @@ class OpenMap : public CDialog
 {
 // Construction
 public:
-	OpenMap(TOpenMapInfo *pInfo, CWnd* pParent = NULL);   // standard constructor
+	OpenMap(TOpenMapInfo *pInfo, CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(OpenMap)

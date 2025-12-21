@@ -51,7 +51,7 @@ NullSaveClass::NullSaveClass
 	memset(&NullData,0,sizeof(NullData));
 
 	NullData.Version = W3D_NULL_OBJECT_CURRENT_VERSION;
-	if ((container_name != NULL) && (strlen(container_name) > 0)) {
+	if ((container_name != nullptr) && (strlen(container_name) > 0)) {
 		strcpy(NullData.Name,container_name);
 		strcat(NullData.Name,".");
 	}

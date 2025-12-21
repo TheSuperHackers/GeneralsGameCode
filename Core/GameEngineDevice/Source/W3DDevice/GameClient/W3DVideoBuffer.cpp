@@ -103,8 +103,8 @@
 
 W3DVideoBuffer::W3DVideoBuffer( VideoBuffer::Type format )
 : VideoBuffer(format),
-	m_texture(NULL),
-	m_surface(NULL)
+	m_texture(nullptr),
+	m_surface(nullptr)
 {
 
 }
@@ -129,17 +129,17 @@ Bool W3DVideoBuffer::allocate( UnsignedInt width, UnsignedInt height )
 
 	if ( w3dFormat == WW3D_FORMAT_UNKNOWN )
 	{
-		return NULL;
+		return FALSE;
 	}
 
 	m_texture  = MSGNEW("TextureClass") TextureClass ( m_textureWidth, m_textureHeight, w3dFormat, MIP_LEVELS_1 );
 
-	if ( m_texture == NULL )
+	if ( m_texture == nullptr )
 	{
 		return FALSE;
 	}
 
-	if ( lock() == NULL )
+	if ( lock() == nullptr )
 	{
 		free();
 		return FALSE;
@@ -166,9 +166,9 @@ W3DVideoBuffer::~W3DVideoBuffer()
 
 void*		W3DVideoBuffer::lock( void )
 {
-	void *mem = NULL;
+	void *mem = nullptr;
 
-	if ( m_surface != NULL )
+	if ( m_surface != nullptr )
 	{
 		unlock();
 	}
@@ -189,11 +189,11 @@ void*		W3DVideoBuffer::lock( void )
 
 void		W3DVideoBuffer::unlock( void )
 {
-	if ( m_surface != NULL )
+	if ( m_surface != nullptr )
 	{
 		m_surface->Unlock();
 		m_surface->Release_Ref();
-		m_surface = NULL;
+		m_surface = nullptr;
 	}
 }
 
@@ -203,7 +203,7 @@ void		W3DVideoBuffer::unlock( void )
 
 Bool		W3DVideoBuffer::valid( void )
 {
-	return m_texture != NULL;
+	return m_texture != nullptr;
 }
 
 //============================================================================
@@ -218,9 +218,9 @@ void	W3DVideoBuffer::free( void )
 	{
 		unlock();
 		m_texture->Release_Ref();
-		m_texture = NULL;
+		m_texture = nullptr;
 	}
-	m_surface = NULL;
+	m_surface = nullptr;
 
 	VideoBuffer::free();
 }

@@ -57,7 +57,7 @@ Undoable::~Undoable(void)
 /// Create a new undoable.
 //
 Undoable::Undoable(void):
-	mNext(NULL)
+	mNext(nullptr)
 {
 }
 
@@ -90,7 +90,7 @@ WBDocUndoable::~WBDocUndoable(void)
 {
 	REF_PTR_RELEASE(mPNewHeightMapData);
 	REF_PTR_RELEASE(mPOldHeightMapData);
-	mPDoc = NULL;  // not ref counted.
+	mPDoc = nullptr;  // not ref counted.
 }
 
 
@@ -98,9 +98,9 @@ WBDocUndoable::~WBDocUndoable(void)
 /// Create a new undoable.
 //
 WBDocUndoable::WBDocUndoable(CWorldBuilderDoc *pDoc, WorldHeightMapEdit *pNewHtMap, Coord3D *pObjOffset):
-	mPNewHeightMapData(NULL),
-	mPOldHeightMapData(NULL),
-	mPDoc(NULL)
+	mPNewHeightMapData(nullptr),
+	mPOldHeightMapData(nullptr),
+	mPDoc(nullptr)
 {
 	if (pObjOffset) {
 		m_offsetObjects = true;
@@ -143,7 +143,7 @@ void WBDocUndoable::Do(void)
 				pBuild->setLocation(loc);
 			}
 		}
-		mPDoc->invalObject(NULL); // Inval all objects.
+		mPDoc->invalObject(nullptr); // Inval all objects.
 	}
 	mPNewHeightMapData->dbgVerifyAfterUndo();
 }
@@ -168,7 +168,7 @@ void WBDocUndoable::Redo(void)
 			pCur->setLocation(&loc);
 			pCur = pCur->getNext();
 		}
-		mPDoc->invalObject(NULL); // Inval all objects.
+		mPDoc->invalObject(nullptr); // Inval all objects.
 	}
 	mPNewHeightMapData->dbgVerifyAfterUndo();
 }
@@ -193,7 +193,7 @@ void WBDocUndoable::Undo(void)
 			pCur->setLocation(&loc);
 			pCur = pCur->getNext();
 		}
-		mPDoc->invalObject(NULL); // Inval all objects.
+		mPDoc->invalObject(nullptr); // Inval all objects.
 	}
 	mPOldHeightMapData->dbgVerifyAfterUndo();
 }
@@ -206,10 +206,10 @@ void WBDocUndoable::Undo(void)
 //
 AddObjectUndoable::~AddObjectUndoable(void)
 {
-	m_pDoc = NULL;  // not ref counted.
+	m_pDoc = nullptr;  // not ref counted.
 	if (!m_addedToList) {
 		deleteInstance(m_objectToAdd);
-		m_objectToAdd=NULL;
+		m_objectToAdd=nullptr;
 	}
 }
 
@@ -218,10 +218,10 @@ AddObjectUndoable::~AddObjectUndoable(void)
 // AddObjectUndoable - create a new undoable.
 //
 AddObjectUndoable::AddObjectUndoable(CWorldBuilderDoc *pDoc, MapObject *pObjectToAdd):
-	m_pDoc(NULL),
+	m_pDoc(nullptr),
 	m_numObjects(0),
 	m_addedToList(false),
-	m_objectToAdd(NULL)
+	m_objectToAdd(nullptr)
 {
 	m_pDoc = pDoc; // not ref counted.
 	m_objectToAdd = pObjectToAdd;
@@ -234,7 +234,7 @@ void AddObjectUndoable::Do(void)
 {
 //	WorldHeightMapEdit *pMap = m_pDoc->GetHeightMap();
 	MapObject *pCur = m_objectToAdd;
-	MapObject *pLast = NULL;
+	MapObject *pLast = nullptr;
 
 	// Clear selection.
 	PointerTool::clearSelection();
@@ -248,7 +248,7 @@ void AddObjectUndoable::Do(void)
 		m_numObjects++;
 		pCur = pCur->getNext();
 	}
-	if (pLast==NULL) {
+	if (pLast==nullptr) {
 		return;
 	}
 	pLast->setNextMap(MapObject::getFirstMapObject());
@@ -307,7 +307,7 @@ void AddObjectUndoable::Undo(void)
 	}
 	if ((m_numObjects == 1) && pCur) {
 		MapObject::TheMapObjectListPtr = pCur->getNext();
-		pCur->setNextMap(NULL);
+		pCur->setNextMap(nullptr);
 		m_addedToList = false;
 	}
 	pCur = m_objectToAdd;
@@ -325,19 +325,19 @@ void AddObjectUndoable::Undo(void)
 ***************************************************************************/
 MoveInfo::~MoveInfo(void)
 {
-	m_objectToModify=NULL; // The map info list owns these, don't delete.
+	m_objectToModify=nullptr; // The map info list owns these, don't delete.
 	MoveInfo *pCur = m_next;
 	MoveInfo *tmp;
 	while (pCur) {
 		tmp = pCur;
 		pCur = tmp->m_next;
-		tmp->m_next = NULL;
+		tmp->m_next = nullptr;
 		delete tmp;
 	}
 }
 
 MoveInfo::MoveInfo( MapObject *pObjToMove):
-	m_next(NULL)
+	m_next(nullptr)
 {
 	m_objectToModify = pObjToMove;	// Not copied.
 	m_newAngle = m_objectToModify->getAngle();
@@ -434,28 +434,28 @@ void MoveInfo::UndoMove(CWorldBuilderDoc *pDoc)
 //
 ModifyObjectUndoable::~ModifyObjectUndoable(void)
 {
-	m_pDoc = NULL;  // not ref counted.
+	m_pDoc = nullptr;  // not ref counted.
 	if (m_moveList) {
 		delete m_moveList;
 	}
-	m_moveList = NULL;
+	m_moveList = nullptr;
 }
 
 //
 // ModifyObjectUndoable - create a new undoable.
 //
 ModifyObjectUndoable::ModifyObjectUndoable(CWorldBuilderDoc *pDoc):
-	m_pDoc(NULL),
-	m_moveList(NULL),
+	m_pDoc(nullptr),
+	m_moveList(nullptr),
 	m_inval(false)
 {
 	m_pDoc = pDoc; // not ref counted.
 	MapObject *curMapObj = MapObject::getFirstMapObject();
-	MoveInfo *pCurInfo = NULL;
+	MoveInfo *pCurInfo = nullptr;
 	while (curMapObj) {
 		if (curMapObj->isSelected()) {
 			MoveInfo *pNew = new MoveInfo(curMapObj);
-			if (pCurInfo == NULL) {
+			if (pCurInfo == nullptr) {
 				m_moveList = pNew;
 			} else {
 				pCurInfo->m_next = pNew;
@@ -513,7 +513,7 @@ void ModifyObjectUndoable::SetThingTemplate(const ThingTemplate* thing)
 	{
 		WbView3d *p3View = m_pDoc->GetActive3DView();
 		p3View->resetRenderObjects();
-		p3View->invalObjectInView(NULL);
+		p3View->invalObjectInView(nullptr);
 	}
 }
 
@@ -529,7 +529,7 @@ void ModifyObjectUndoable::SetName(AsciiString name)
 	{
 		WbView3d *p3View = m_pDoc->GetActive3DView();
 		p3View->resetRenderObjects();
-		p3View->invalObjectInView(NULL);
+		p3View->invalObjectInView(nullptr);
 	}
 }
 
@@ -555,7 +555,7 @@ void ModifyObjectUndoable::Redo(void)
 	{
 		WbView3d *p3View = m_pDoc->GetActive3DView();
 		p3View->resetRenderObjects();
-		p3View->invalObjectInView(NULL);
+		p3View->invalObjectInView(nullptr);
 	}
 }
 
@@ -573,7 +573,7 @@ void ModifyObjectUndoable::Undo(void)
 	{
 		WbView3d *p3View = m_pDoc->GetActive3DView();
 		p3View->resetRenderObjects();
-		p3View->invalObjectInView(NULL);
+		p3View->invalObjectInView(nullptr);
 	}
 }
 
@@ -582,19 +582,19 @@ void ModifyObjectUndoable::Undo(void)
 ***************************************************************************/
 FlagsInfo::~FlagsInfo(void)
 {
-	m_objectToModify=NULL; // The map info list owns these, don't delete.
+	m_objectToModify=nullptr; // The map info list owns these, don't delete.
 	FlagsInfo *pCur = m_next;
 	FlagsInfo *tmp;
 	while (pCur) {
 		tmp = pCur;
 		pCur = tmp->m_next;
-		tmp->m_next = NULL;
+		tmp->m_next = nullptr;
 		delete tmp;
 	}
 }
 
 FlagsInfo::FlagsInfo( MapObject *pObjToMove, Int flagMask, Int flagValue):
-	m_next(NULL)
+	m_next(nullptr)
 {
 	m_objectToModify = pObjToMove;	// Not copied.
 	m_flagMask = flagMask;
@@ -648,26 +648,26 @@ void FlagsInfo::UndoFlags(CWorldBuilderDoc *pDoc)
 //
 ModifyFlagsUndoable::~ModifyFlagsUndoable(void)
 {
-	m_pDoc = NULL;  // not ref counted.
+	m_pDoc = nullptr;  // not ref counted.
 
 	delete m_flagsList;
-	m_flagsList = NULL;
+	m_flagsList = nullptr;
 }
 
 //
 // ModifyFlagsUndoable - create a new undoable.
 //
 ModifyFlagsUndoable::ModifyFlagsUndoable(CWorldBuilderDoc *pDoc, Int flagMask, Int flagValue):
-	m_pDoc(NULL),
-	m_flagsList(NULL)
+	m_pDoc(nullptr),
+	m_flagsList(nullptr)
 {
 	m_pDoc = pDoc; // not ref counted.
 	MapObject *curMapObj = MapObject::getFirstMapObject();
-	FlagsInfo *pCurInfo = NULL;
+	FlagsInfo *pCurInfo = nullptr;
 	while (curMapObj) {
 		if (curMapObj->isSelected()) {
 			FlagsInfo *pNew = new FlagsInfo(curMapObj, flagMask, flagValue);
-			if (pCurInfo == NULL) {
+			if (pCurInfo == nullptr) {
 				m_flagsList = pNew;
 			} else {
 				pCurInfo->m_next = pNew;
@@ -739,7 +739,7 @@ void SidesListUndoable::Do(void)
 	BuildList::update();
 	WbView3d *p3View = m_pDoc->GetActive3DView();
 	p3View->resetRenderObjects();
-	p3View->invalObjectInView(NULL);
+	p3View->invalObjectInView(nullptr);
 }
 
 void SidesListUndoable::Undo(void)
@@ -751,7 +751,7 @@ void SidesListUndoable::Undo(void)
 	BuildList::update();
 	WbView3d *p3View = m_pDoc->GetActive3DView();
 	p3View->resetRenderObjects();
-	p3View->invalObjectInView(NULL);
+	p3View->invalObjectInView(nullptr);
 }
 
 /*************************************************************************
@@ -798,7 +798,7 @@ void DictItemUndoable::Do(void)
 	if (m_inval && m_pDoc) {
 		WbView3d *p3View = m_pDoc->GetActive3DView();
 		p3View->resetRenderObjects();
-		p3View->invalObjectInView(NULL);
+		p3View->invalObjectInView(nullptr);
 	}
 }
 
@@ -815,7 +815,7 @@ void DictItemUndoable::Undo(void)
 	if (m_inval && m_pDoc) {
 		WbView3d *p3View = m_pDoc->GetActive3DView();
 		p3View->resetRenderObjects();
-		p3View->invalObjectInView(NULL);
+		p3View->invalObjectInView(nullptr);
 	}
 }
 
@@ -864,18 +864,18 @@ DeleteInfo::~DeleteInfo(void)
 	while (pCur) {
 		tmp = pCur;
 		pCur = tmp->m_next;
-		tmp->m_next = NULL;
+		tmp->m_next = nullptr;
 		delete tmp;
 	}
-	m_objectToDelete=NULL;
-	m_priorObject=NULL;
+	m_objectToDelete=nullptr;
+	m_priorObject=nullptr;
 }
 
 DeleteInfo::DeleteInfo( MapObject *pObjectToDelete):
-	m_objectToDelete(NULL),
+	m_objectToDelete(nullptr),
 	m_didDelete(false),
-	m_next(NULL),
-	m_priorObject(NULL)
+	m_next(nullptr),
+	m_priorObject(nullptr)
 {
 	m_objectToDelete = pObjectToDelete;	// Not copied.
 }
@@ -886,7 +886,7 @@ DeleteInfo::DeleteInfo( MapObject *pObjectToDelete):
 void DeleteInfo::DoDelete(WorldHeightMapEdit *pMap)
 {
 	DEBUG_ASSERTCRASH(!m_didDelete,("oops"));
-	m_priorObject = NULL;
+	m_priorObject = nullptr;
 	MapObject *curMapObj = MapObject::getFirstMapObject();
 	Bool found = false;
 	while (curMapObj) {
@@ -899,7 +899,7 @@ void DeleteInfo::DoDelete(WorldHeightMapEdit *pMap)
 	}
 	DEBUG_ASSERTCRASH(found,("not found"));
 	if (!found) {
-		m_objectToDelete = NULL;
+		m_objectToDelete = nullptr;
 		return;
 	}
 	if (m_priorObject) {
@@ -908,7 +908,7 @@ void DeleteInfo::DoDelete(WorldHeightMapEdit *pMap)
 		DEBUG_ASSERTCRASH(MapObject::TheMapObjectListPtr == m_objectToDelete,("oops"));
 		MapObject::TheMapObjectListPtr = MapObject::TheMapObjectListPtr->getNext();
 	}
-	m_objectToDelete->setNextMap(NULL);
+	m_objectToDelete->setNextMap(nullptr);
 	m_didDelete = true;
 }
 
@@ -919,7 +919,7 @@ void DeleteInfo::UndoDelete(WorldHeightMapEdit *pMap)
 	if (m_priorObject) {
 		m_objectToDelete->setNextMap(m_priorObject->getNext());
 		m_priorObject->setNextMap(m_objectToDelete);
-		m_priorObject = NULL;
+		m_priorObject = nullptr;
 	} else {
 		m_objectToDelete->setNextMap(MapObject::TheMapObjectListPtr);
 		MapObject::TheMapObjectListPtr = m_objectToDelete;
@@ -935,10 +935,10 @@ void DeleteInfo::UndoDelete(WorldHeightMapEdit *pMap)
 //
 DeleteObjectUndoable::~DeleteObjectUndoable(void)
 {
-	m_pDoc = NULL;  // not ref counted.
+	m_pDoc = nullptr;  // not ref counted.
 
 	delete m_deleteList;
-	m_deleteList=NULL;
+	m_deleteList=nullptr;
 }
 
 
@@ -946,8 +946,8 @@ DeleteObjectUndoable::~DeleteObjectUndoable(void)
 // DeleteObjectUndoable - create a new undoable.	Deletes all selected objects.
 //
 DeleteObjectUndoable::DeleteObjectUndoable(CWorldBuilderDoc *pDoc):
-	m_pDoc(NULL),
-	m_deleteList(NULL)
+	m_pDoc(nullptr),
+	m_deleteList(nullptr)
 {
 	// Note - you can't delete just one end of a map segment.  So delete both.
 	MapObject *pMapObj;
@@ -956,7 +956,7 @@ DeleteObjectUndoable::DeleteObjectUndoable(CWorldBuilderDoc *pDoc):
 		if (pMapObj->getFlag(FLAG_ROAD_POINT1)) {
 			pMapObj2 = pMapObj->getNext();
 			DEBUG_ASSERTCRASH(pMapObj2 && pMapObj2->getFlag(FLAG_ROAD_POINT2), ("oops"));
-			if (pMapObj2==NULL) break;
+			if (pMapObj2==nullptr) break;
 			if (!pMapObj2->getFlag(FLAG_ROAD_POINT2)) continue;
 			// If one end of a road segment is selected, both are.
 			if (pMapObj->isSelected() || pMapObj2->isSelected()) {
@@ -969,11 +969,11 @@ DeleteObjectUndoable::DeleteObjectUndoable(CWorldBuilderDoc *pDoc):
 
 	m_pDoc = pDoc; // not ref counted.
 	MapObject *curMapObj = MapObject::getFirstMapObject();
-	DeleteInfo *pCurInfo = NULL;
+	DeleteInfo *pCurInfo = nullptr;
 	while (curMapObj) {
 		if (curMapObj->isSelected()) {
 			DeleteInfo *pNew = new DeleteInfo(curMapObj);
-			if (pCurInfo == NULL) {
+			if (pCurInfo == nullptr) {
 				m_deleteList = pNew;
 			} else {
 				pCurInfo->m_next = pNew;
@@ -992,7 +992,7 @@ void DeleteObjectUndoable::Do(void)
 {
 	WorldHeightMapEdit *pMap = m_pDoc->GetHeightMap();
 	DeleteInfo *pCur = m_deleteList;
-	DeleteInfo *pInvertedList = NULL;
+	DeleteInfo *pInvertedList = nullptr;
 	while (pCur) {
 		// first, remove it from the Layers list.
 		TheLayersList->removeMapObjectFromLayersList(pCur->m_objectToDelete);
@@ -1007,7 +1007,7 @@ void DeleteObjectUndoable::Do(void)
 	WbView3d *p3View = m_pDoc->GetActive3DView();
 	if (p3View) { // Shouldn't ever be null, but just in case... jba.
 		p3View->resetRenderObjects();
-		p3View->invalObjectInView(NULL);
+		p3View->invalObjectInView(nullptr);
 	}
 	m_deleteList = pInvertedList;
 }
@@ -1019,7 +1019,7 @@ void DeleteObjectUndoable::Undo(void)
 {
 	WorldHeightMapEdit *pMap = m_pDoc->GetHeightMap();
 	DeleteInfo *pCur = m_deleteList;
-	DeleteInfo *pInvertedList=NULL;
+	DeleteInfo *pInvertedList=nullptr;
 	while (pCur) {
 		// Re-Add it to the layers list
 		Dict* objDict = pCur->m_objectToDelete->getProperties();
@@ -1047,10 +1047,10 @@ void DeleteObjectUndoable::Undo(void)
 AddPolygonUndoable::~AddPolygonUndoable(void)
 {
 	if (m_trigger && !m_isTriggerInList) {
-		DEBUG_ASSERTCRASH(m_trigger->getNext()==NULL, ("Logic error."));
+		DEBUG_ASSERTCRASH(m_trigger->getNext()==nullptr, ("Logic error."));
 		deleteInstance(m_trigger);
 	}
-	m_trigger=NULL;
+	m_trigger=nullptr;
 }
 
 //
@@ -1093,7 +1093,7 @@ void AddPolygonUndoable::Undo(void)
 //
 AddPolygonPointUndoable::~AddPolygonPointUndoable(void)
 {
-	m_trigger=NULL;
+	m_trigger=nullptr;
 }
 
 //
@@ -1132,7 +1132,7 @@ void AddPolygonPointUndoable::Undo(void)
 //
 ModifyPolygonPointUndoable::~ModifyPolygonPointUndoable(void)
 {
-	m_trigger=NULL;
+	m_trigger=nullptr;
 }
 
 //
@@ -1171,7 +1171,7 @@ void ModifyPolygonPointUndoable::Undo(void)
 //
 MovePolygonUndoable::~MovePolygonUndoable(void)
 {
-	m_trigger=NULL;
+	m_trigger=nullptr;
 }
 
 //
@@ -1244,7 +1244,7 @@ void MovePolygonUndoable::Undo(void)
 //
 InsertPolygonPointUndoable::~InsertPolygonPointUndoable(void)
 {
-	m_trigger=NULL;
+	m_trigger=nullptr;
 }
 
 //
@@ -1281,7 +1281,7 @@ void InsertPolygonPointUndoable::Undo(void)
 //
 DeletePolygonPointUndoable::~DeletePolygonPointUndoable(void)
 {
-	m_trigger=NULL;
+	m_trigger=nullptr;
 }
 
 //
@@ -1319,10 +1319,10 @@ void DeletePolygonPointUndoable::Undo(void)
 DeletePolygonUndoable::~DeletePolygonUndoable(void)
 {
 	if (m_trigger && !m_isTriggerInList) {
-		DEBUG_ASSERTCRASH(m_trigger->getNext()==NULL, ("Logic error."));
+		DEBUG_ASSERTCRASH(m_trigger->getNext()==nullptr, ("Logic error."));
 		deleteInstance(m_trigger);
 	}
-	m_trigger=NULL;
+	m_trigger=nullptr;
 }
 
 //
@@ -1363,7 +1363,7 @@ void DeletePolygonUndoable::Undo(void)
 // MultipleUndoable - constructor.
 //
 MultipleUndoable::MultipleUndoable(void)
-  : m_undoableList( NULL )
+  : m_undoableList( nullptr )
 {
 }
 
@@ -1396,7 +1396,7 @@ void MultipleUndoable::Do(void)
 {
   Undoable * undoable = m_undoableList;
 
-  while ( undoable != NULL )
+  while ( undoable != nullptr )
   {
     Undoable * next = undoable->GetNext();
     undoable->Do();
@@ -1410,7 +1410,7 @@ void MultipleUndoable::Do(void)
 //
 static void undoHelper(Undoable * undoable)
 {
-  if ( undoable == NULL )
+  if ( undoable == nullptr )
     return;
 
   undoHelper( undoable->GetNext() );
@@ -1435,7 +1435,7 @@ void MultipleUndoable::Redo(void)
 {
   Undoable * undoable = m_undoableList;
 
-  while ( undoable != NULL )
+  while ( undoable != nullptr )
   {
     Undoable * next = undoable->GetNext();
     undoable->Redo();

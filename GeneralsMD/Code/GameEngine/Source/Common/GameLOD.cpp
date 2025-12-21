@@ -47,29 +47,29 @@
 //Hack to get access to a static method on the W3DDevice side. -MW
 extern Bool testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, MemValueType *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex);
 
-GameLODManager *TheGameLODManager=NULL;
+GameLODManager *TheGameLODManager=nullptr;
 
 static const FieldParse TheStaticGameLODFieldParseTable[] =
 {
-	{ "MinimumFPS",						INI::parseInt,					NULL,	offsetof( StaticGameLODInfo, m_minFPS)},
-	{ "MinimumProcessorFps",			INI::parseInt,					NULL,	offsetof( StaticGameLODInfo, m_minProcessorFPS)},
-	{ "SampleCount2D",					INI::parseInt,					NULL,	offsetof( StaticGameLODInfo, m_sampleCount2D ) },
-	{ "SampleCount3D",					INI::parseInt,					NULL,	offsetof( StaticGameLODInfo, m_sampleCount3D ) },
-	{ "StreamCount",					INI::parseInt,					NULL,	offsetof( StaticGameLODInfo, m_streamCount ) },
-	{ "MaxParticleCount",				INI::parseInt,					NULL,	offsetof( StaticGameLODInfo, m_maxParticleCount ) },
-	{ "UseShadowVolumes",				INI::parseBool,					NULL,	offsetof( StaticGameLODInfo, m_useShadowVolumes ) },
-	{ "UseShadowDecals",				INI::parseBool,					NULL,	offsetof( StaticGameLODInfo, m_useShadowDecals ) },
-	{ "UseCloudMap",					INI::parseBool,					NULL,	offsetof( StaticGameLODInfo, m_useCloudMap ) },
-	{ "UseLightMap",					INI::parseBool,					NULL,	offsetof( StaticGameLODInfo, m_useLightMap ) },
-	{ "ShowSoftWaterEdge",				INI::parseBool,					NULL,	offsetof( StaticGameLODInfo, m_showSoftWaterEdge ) },
-	{ "MaxTankTrackEdges",				INI::parseInt,					NULL,	offsetof( StaticGameLODInfo, m_maxTankTrackEdges) },
-	{ "MaxTankTrackOpaqueEdges",		INI::parseInt,					NULL,	offsetof( StaticGameLODInfo, m_maxTankTrackOpaqueEdges) },
-	{ "MaxTankTrackFadeDelay",			INI::parseInt,					NULL,	offsetof( StaticGameLODInfo, m_maxTankTrackFadeDelay) },
-	{ "UseBuildupScaffolds",			INI::parseBool,					NULL,	offsetof( StaticGameLODInfo, m_useBuildupScaffolds ) },
-	{ "UseTreeSway",					INI::parseBool,					NULL,	offsetof( StaticGameLODInfo, m_useTreeSway ) },
-	{ "UseEmissiveNightMaterials",		INI::parseBool,					NULL,	offsetof( StaticGameLODInfo, m_useEmissiveNightMaterials ) },
-	{ "UseHeatEffects",					INI::parseBool,					NULL,	offsetof( StaticGameLODInfo, m_useHeatEffects ) },
-	{ "TextureReductionFactor",		INI::parseInt,					NULL,	offsetof( StaticGameLODInfo, m_textureReduction ) },
+	{ "MinimumFPS",						INI::parseInt,					nullptr,	offsetof( StaticGameLODInfo, m_minFPS)},
+	{ "MinimumProcessorFps",			INI::parseInt,					nullptr,	offsetof( StaticGameLODInfo, m_minProcessorFPS)},
+	{ "SampleCount2D",					INI::parseInt,					nullptr,	offsetof( StaticGameLODInfo, m_sampleCount2D ) },
+	{ "SampleCount3D",					INI::parseInt,					nullptr,	offsetof( StaticGameLODInfo, m_sampleCount3D ) },
+	{ "StreamCount",					INI::parseInt,					nullptr,	offsetof( StaticGameLODInfo, m_streamCount ) },
+	{ "MaxParticleCount",				INI::parseInt,					nullptr,	offsetof( StaticGameLODInfo, m_maxParticleCount ) },
+	{ "UseShadowVolumes",				INI::parseBool,					nullptr,	offsetof( StaticGameLODInfo, m_useShadowVolumes ) },
+	{ "UseShadowDecals",				INI::parseBool,					nullptr,	offsetof( StaticGameLODInfo, m_useShadowDecals ) },
+	{ "UseCloudMap",					INI::parseBool,					nullptr,	offsetof( StaticGameLODInfo, m_useCloudMap ) },
+	{ "UseLightMap",					INI::parseBool,					nullptr,	offsetof( StaticGameLODInfo, m_useLightMap ) },
+	{ "ShowSoftWaterEdge",				INI::parseBool,					nullptr,	offsetof( StaticGameLODInfo, m_showSoftWaterEdge ) },
+	{ "MaxTankTrackEdges",				INI::parseInt,					nullptr,	offsetof( StaticGameLODInfo, m_maxTankTrackEdges) },
+	{ "MaxTankTrackOpaqueEdges",		INI::parseInt,					nullptr,	offsetof( StaticGameLODInfo, m_maxTankTrackOpaqueEdges) },
+	{ "MaxTankTrackFadeDelay",			INI::parseInt,					nullptr,	offsetof( StaticGameLODInfo, m_maxTankTrackFadeDelay) },
+	{ "UseBuildupScaffolds",			INI::parseBool,					nullptr,	offsetof( StaticGameLODInfo, m_useBuildupScaffolds ) },
+	{ "UseTreeSway",					INI::parseBool,					nullptr,	offsetof( StaticGameLODInfo, m_useTreeSway ) },
+	{ "UseEmissiveNightMaterials",		INI::parseBool,					nullptr,	offsetof( StaticGameLODInfo, m_useEmissiveNightMaterials ) },
+	{ "UseHeatEffects",					INI::parseBool,					nullptr,	offsetof( StaticGameLODInfo, m_useHeatEffects ) },
+	{ "TextureReductionFactor",		INI::parseInt,					nullptr,	offsetof( StaticGameLODInfo, m_textureReduction ) },
 };
 
 static const char *const StaticGameLODNames[]=
@@ -111,10 +111,10 @@ StaticGameLODInfo::StaticGameLODInfo(void)
 
 static const FieldParse TheDynamicGameLODFieldParseTable[] =
 {
-	{ "MinimumFPS",						INI::parseInt,					NULL,	offsetof( DynamicGameLODInfo, m_minFPS)},
-	{ "ParticleSkipMask",				INI::parseInt,					NULL,	offsetof( DynamicGameLODInfo, m_dynamicParticleSkipMask)},
-	{ "DebrisSkipMask",					INI::parseInt,					NULL,	offsetof( DynamicGameLODInfo, m_dynamicDebrisSkipMask)},
-	{ "SlowDeathScale",					INI::parseReal,					NULL,	offsetof( DynamicGameLODInfo, m_slowDeathScale)},
+	{ "MinimumFPS",						INI::parseInt,					nullptr,	offsetof( DynamicGameLODInfo, m_minFPS)},
+	{ "ParticleSkipMask",				INI::parseInt,					nullptr,	offsetof( DynamicGameLODInfo, m_dynamicParticleSkipMask)},
+	{ "DebrisSkipMask",					INI::parseInt,					nullptr,	offsetof( DynamicGameLODInfo, m_dynamicDebrisSkipMask)},
+	{ "SlowDeathScale",					INI::parseReal,					nullptr,	offsetof( DynamicGameLODInfo, m_slowDeathScale)},
 	{ "MinParticlePriority",			INI::parseIndexList, ParticlePriorityNames,	offsetof( DynamicGameLODInfo, m_minDynamicParticlePriority)},
 	{ "MinParticleSkipPriority",		INI::parseIndexList, ParticlePriorityNames,	offsetof( DynamicGameLODInfo, m_minDynamicParticleSkipPriority)},
 };
@@ -141,21 +141,21 @@ DynamicGameLODInfo::DynamicGameLODInfo(void)
 //Keep this in sync with enum in GameLOD.h
 static const char *const CPUNames[] =
 {
-	"XX","P3", "P4","K7", NULL
+	"XX","P3", "P4","K7", nullptr
 };
 static_assert(ARRAY_SIZE(CPUNames) == CPU_MAX + 1, "Incorrect array size");
 
 //Keep this in sync with enum in GameLOD.h
 static const char *const VideoNames[] =
 {
-	"XX","V2","V3","V4","V5","TNT","TNT2","GF2","R100","PS11","GF3","GF4","PS14","R200","PS20","R300", NULL
+	"XX","V2","V3","V4","V5","TNT","TNT2","GF2","R100","PS11","GF3","GF4","PS14","R200","PS20","R300", nullptr
 };
 static_assert(ARRAY_SIZE(VideoNames) == DC_MAX + 1, "Incorrect array size");
 
 void parseReallyLowMHz(INI* ini)
 {
 	Int mhz;
-	INI::parseInt(ini,NULL,&mhz,NULL);
+	INI::parseInt(ini,nullptr,&mhz,nullptr);
 	if (TheGameLODManager)
 	{
 		TheGameLODManager->setReallyLowMHz(mhz);
@@ -170,11 +170,11 @@ void INI::parseBenchProfile( INI* ini)
 
 			if (preset)
 			{
-				INI::parseIndexList(ini,NULL,&preset->m_cpuType,CPUNames);
-				INI::parseInt(ini,NULL,&preset->m_mhz,NULL);
-				INI::parseReal(ini,NULL,&preset->m_intBenchIndex,NULL);
-				INI::parseReal(ini,NULL,&preset->m_floatBenchIndex,NULL);
-				INI::parseReal(ini,NULL,&preset->m_memBenchIndex,NULL);
+				INI::parseIndexList(ini,nullptr,&preset->m_cpuType,CPUNames);
+				INI::parseInt(ini,nullptr,&preset->m_mhz,nullptr);
+				INI::parseReal(ini,nullptr,&preset->m_intBenchIndex,nullptr);
+				INI::parseReal(ini,nullptr,&preset->m_floatBenchIndex,nullptr);
+				INI::parseReal(ini,nullptr,&preset->m_memBenchIndex,nullptr);
 			}
 	}
 }
@@ -198,10 +198,10 @@ void INI::parseLODPreset( INI* ini )
 
 			if (preset)
 			{
-				INI::parseIndexList(ini,NULL,&preset->m_cpuType,CPUNames);
-				INI::parseInt(ini,NULL,&preset->m_mhz,NULL);
-				INI::parseIndexList(ini,NULL,&preset->m_videoType,VideoNames);
-				INI::parseInt(ini,NULL,&preset->m_memory,NULL);
+				INI::parseIndexList(ini,nullptr,&preset->m_cpuType,CPUNames);
+				INI::parseInt(ini,nullptr,&preset->m_mhz,nullptr);
+				INI::parseIndexList(ini,nullptr,&preset->m_videoType,VideoNames);
+				INI::parseInt(ini,nullptr,&preset->m_memory,nullptr);
 			}
 		}
 	}
@@ -280,7 +280,7 @@ BenchProfile *GameLODManager::newBenchProfile(void)
 	}
 
 	DEBUG_CRASH(( "GameLODManager::newBenchProfile - Too many profiles defined"));
-	return NULL;
+	return nullptr;
 }
 
 LODPresetInfo *GameLODManager::newLODPreset(StaticGameLODLevel index)
@@ -296,17 +296,17 @@ LODPresetInfo *GameLODManager::newLODPreset(StaticGameLODLevel index)
 		DEBUG_CRASH(( "GameLODManager::newLODPreset - Too many presets defined for '%s'", TheGameLODManager->getStaticGameLODLevelName(index)));
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void GameLODManager::init(void)
 {
 	INI ini;
 	//Get Presets for each LOD level.
-	ini.loadFileDirectory( "Data\\INI\\GameLOD", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\GameLOD", INI_LOAD_OVERWRITE, nullptr );
 
 	//Get presets for each known hardware configuration
-	ini.loadFileDirectory( "Data\\INI\\GameLODPresets", INI_LOAD_OVERWRITE, NULL);
+	ini.loadFileDirectory( "Data\\INI\\GameLODPresets", INI_LOAD_OVERWRITE, nullptr);
 
 	//Get Presets for custom LOD level by pulling them out of initial globaldata (which should
 	//have all settings already applied).
@@ -320,7 +320,7 @@ void GameLODManager::init(void)
 	m_idealDetailLevel=(StaticGameLODLevel)optionPref.getIdealStaticGameDetail();
 
 	//always get this data in case we need it later.
-	testMinimumRequirements(NULL,&m_cpuType,&m_cpuFreq,&m_numRAM,NULL,NULL,NULL);
+	testMinimumRequirements(nullptr,&m_cpuType,&m_cpuFreq,&m_numRAM,nullptr,nullptr,nullptr);
 
 	if ((Real)(m_numRAM)/(Real)(256*1024*1024) >= PROFILE_ERROR_LIMIT)
 		m_memPassed=TRUE;	//check if they have at least 256 MB
@@ -330,7 +330,7 @@ void GameLODManager::init(void)
 		if (m_cpuType == XX || TheGlobalData->m_forceBenchmark)
 		{
 			//need to run the benchmark
-			testMinimumRequirements(NULL,NULL,NULL,NULL,&m_intBenchIndex,&m_floatBenchIndex,&m_memBenchIndex);
+			testMinimumRequirements(nullptr,nullptr,nullptr,nullptr,&m_intBenchIndex,&m_floatBenchIndex,&m_memBenchIndex);
 
 			if (TheGlobalData->m_forceBenchmark)
 			{	//we want to see the numbers.  So dump them to a logfile.
@@ -485,7 +485,7 @@ StaticGameLODLevel GameLODManager::getRecommendedStaticLODLevel(void)
 		m_idealDetailLevel = STATIC_GAME_LOD_LOW;
 
 		//get system configuration - only need vide chip type, got rest in ::init().
-		testMinimumRequirements(&m_videoChipType,NULL,NULL,NULL,NULL,NULL,NULL);
+		testMinimumRequirements(&m_videoChipType,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr);
 		if (m_videoChipType == DC_UNKNOWN)
 			m_videoChipType = DC_TNT2;	//presume it's at least TNT2 level
 

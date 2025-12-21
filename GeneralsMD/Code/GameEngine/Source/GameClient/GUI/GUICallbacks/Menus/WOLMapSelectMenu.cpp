@@ -49,38 +49,37 @@
 static NameKeyType buttonBack = NAMEKEY_INVALID;
 static NameKeyType buttonOK = NAMEKEY_INVALID;
 static NameKeyType listboxMap = NAMEKEY_INVALID;
-static GameWindow *parent = NULL;
+static GameWindow *parent = nullptr;
 static Bool raiseMessageBoxes = FALSE;
-static GameWindow *winMapPreview = NULL;
+static GameWindow *winMapPreview = nullptr;
 static NameKeyType winMapPreviewID = NAMEKEY_INVALID;
 
 static NameKeyType radioButtonSystemMapsID = NAMEKEY_INVALID;
 static NameKeyType radioButtonUserMapsID = NAMEKEY_INVALID;
 
 extern WindowLayout *WOLMapSelectLayout;			///< Map selection overlay
-static GameWindow *mapList = NULL;
+static GameWindow *mapList = nullptr;
 
-static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {0};
 static NameKeyType buttonMapStartPositionID[MAX_SLOTS] = { NAMEKEY_INVALID,NAMEKEY_INVALID,
 																									NAMEKEY_INVALID,NAMEKEY_INVALID,
 																										NAMEKEY_INVALID,NAMEKEY_INVALID,
 																										NAMEKEY_INVALID,NAMEKEY_INVALID };
 
-static GameWindow *winMapWindow = NULL;
+static GameWindow *winMapWindow = nullptr;
 
 static void NullifyControls(void)
 {
-	parent = NULL;
-	mapList = NULL;
+	parent = nullptr;
+	mapList = nullptr;
 	if (winMapPreview)
 	{
-		winMapPreview->winSetUserData(NULL);
-		winMapPreview = NULL;
+		winMapPreview->winSetUserData(nullptr);
+		winMapPreview = nullptr;
 	}
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
-		buttonMapStartPosition[i] = NULL;
+		buttonMapStartPosition[i] = nullptr;
 	}
 }
 
@@ -98,7 +97,7 @@ static const char *gadgetsToHide[] =
 	"ButtonStart",
 	"StaticTextMapPreview",
 
-	NULL
+	nullptr
 };
 static const char *perPlayerGadgetsToHide[] =
 {
@@ -106,14 +105,14 @@ static const char *perPlayerGadgetsToHide[] =
 	"ComboBoxColor",
 	"ComboBoxPlayerTemplate",
 	//"ButtonStartPosition",
-	NULL
+	nullptr
 };
 void positionStartSpots( AsciiString mapName, GameWindow *buttonMapStartPositions[], GameWindow *mapWindow);
 
 static void showGameSpyGameOptionsUnderlyingGUIElements( Bool show )
 {
 	ShowUnderlyingGUIElements( show, layoutFilename, parentName, gadgetsToHide, perPlayerGadgetsToHide );
-	GameWindow *win	= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey("GameSpyGameOptionsMenu.wnd:ButtonBack") );
+	GameWindow *win	= TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey("GameSpyGameOptionsMenu.wnd:ButtonBack") );
 	if(win)
 		win->winEnable( show );
 }
@@ -128,7 +127,7 @@ void WOLMapSelectMenuInit( WindowLayout *layout, void *userData )
 
 	// set keyboard focus to main parent
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey( "WOLMapSelectMenu.wnd:WOLMapSelectMenuParent" );
-	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 
 	TheWindowManager->winSetFocus( parent );
 
@@ -393,7 +392,7 @@ WindowMsgHandledType WOLMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 				{
 					WOLMapSelectLayout->destroyWindows();
 					deleteInstance(WOLMapSelectLayout);
-					WOLMapSelectLayout = NULL;
+					WOLMapSelectLayout = nullptr;
 				}
 
 				WOLPositionStartSpots();
@@ -461,7 +460,7 @@ WindowMsgHandledType WOLMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 					{
 						WOLMapSelectLayout->destroyWindows();
 						deleteInstance(WOLMapSelectLayout);
-						WOLMapSelectLayout = NULL;
+						WOLMapSelectLayout = nullptr;
 					}
 
 					showGameSpyGameOptionsUnderlyingGUIElements( TRUE );

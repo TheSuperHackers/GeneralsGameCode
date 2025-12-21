@@ -17,6 +17,7 @@
 */
 
 
+#include <Utility/CppMacros.h>
 #include <stdio.h>
 #include <string.h>
 #include "encrypt.h"
@@ -69,7 +70,7 @@ char *do_encrypt(char *String)
 	for (Cnt = 0; Cnt < MAX_ENCRYPTED_STRING; Cnt++)
 		Return_Buffer[Cnt] = Base_String[Temp_Buffer[Cnt] & 0x3F];
 
-	Return_Buffer[Cnt] = NULL;
+	Return_Buffer[Cnt] = '\0';
 	return (Return_Buffer);
 
 }

@@ -57,7 +57,7 @@ HijackerUpdate::HijackerUpdate( Thing *thing, const ModuleData *moduleData ) : U
 	setIsInVehicle( FALSE );
 	m_wasTargetAirborne = false;
 	m_ejectPos.zero();
-//	m_ejectPilotDMI = NULL;
+//	m_ejectPilotDMI = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -148,7 +148,7 @@ UpdateSleepTime HijackerUpdate::update( void )
 
 			}
 
-			setTargetObject( NULL );
+			setTargetObject( nullptr );
 			setIsInVehicle( FALSE );
 			setUpdate( FALSE );
 			m_wasTargetAirborne = false;
@@ -174,9 +174,9 @@ void HijackerUpdate::setTargetObject( const Object *object )
 
 		// here we also test the target to see whether it ejects pilots
 		// when it dies... if so, stores a pointer to that diemoduleinterface
-		// NULL if not...
+		// nullptr if not...
 
-//		BehaviorModule **dmi = NULL;
+//		BehaviorModule **dmi = nullptr;
 //		for( dmi = object->getBehaviorModules(); *dmi; ++dmi )
 //		{
 //			m_ejectPilotDMI = (*dmi)->getEjectPilotDieInterface();
@@ -187,7 +187,7 @@ void HijackerUpdate::setTargetObject( const Object *object )
 	else
 	{
 		m_targetID = INVALID_ID;
-//		m_ejectPilotDMI = NULL;
+//		m_ejectPilotDMI = nullptr;
 	}
 
 }
@@ -198,7 +198,7 @@ Object* HijackerUpdate::getTargetObject() const
   {
     return TheGameLogic->findObjectByID( m_targetID );
   }
-  return NULL;
+  return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------

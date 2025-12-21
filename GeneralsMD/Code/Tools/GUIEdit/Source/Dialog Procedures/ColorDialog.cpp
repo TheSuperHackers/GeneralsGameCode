@@ -257,7 +257,7 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWnd, UINT uMsg,
 	*
 	* Returns:
 	* Pointer to selected color
-	* NULL for canceled request
+	* nullptr for canceled request
 	*/
 // ============================================================================
 RGBColorInt *SelectColor( Int red, Int green, Int blue, Int alpha,
@@ -276,7 +276,7 @@ RGBColorInt *SelectColor( Int red, Int green, Int blue, Int alpha,
 								 TheEditor->getWindowHandle(), SelectColorDlgProc ) )
 		return &selectedColor;
   else
-    return NULL;
+    return nullptr;
 
 }
 
@@ -406,19 +406,19 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
 
           if (mode == MODE_RGB)  {
             rgbColor.red =   (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR1,
-                                                    NULL, FALSE);
+                                                    nullptr, FALSE);
             rgbColor.green = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR2,
-                                                    NULL, FALSE);
+                                                    nullptr, FALSE);
             rgbColor.blue =  (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR3,
-                                                    NULL, FALSE);
+                                                    nullptr, FALSE);
           }
           else  {
             hsvColor.hue        = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR1,
-                                                         NULL, FALSE);
+                                                         nullptr, FALSE);
             hsvColor.saturation = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR2,
-                                                         NULL, FALSE);
+                                                         nullptr, FALSE);
             hsvColor.value      = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR3,
-                                                         NULL, FALSE);
+                                                         nullptr, FALSE);
             // convert to ranges 0 - 1 for RGB conversion
             hsvColor.saturation /= 100.0f;
             hsvColor.value      /= 100.0f;
@@ -444,7 +444,7 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
           DeleteObject (hBrushNew);
 
           // validate this new area
-          ValidateRect (hWndControl, NULL);
+          ValidateRect (hWndControl, nullptr);
 
           break;
 
@@ -531,7 +531,7 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
           // original pen
           if (mode == MODE_HSV)  {
             hsvColor.hue = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR1,
-                                                  NULL, FALSE);
+                                                  nullptr, FALSE);
             hsvColor.saturation = 1.0f / 100.0f;
             hsvColor.value = 1;
             rgbColor = hsvToRGB (hsvColor);
@@ -593,9 +593,9 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
           // original pen
           if (mode == MODE_HSV)  {
             hsvColor.hue = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR1,
-                                                  NULL, FALSE);
+                                                  nullptr, FALSE);
             hsvColor.saturation =
-              (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR2, NULL, FALSE) / 100.0f;
+              (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR2, nullptr, FALSE) / 100.0f;
             hsvColor.value = 1.0f / 100.0f;
             rgbColor = hsvToRGB (hsvColor);
             rgbColor.red   *= 255.0f;
@@ -722,24 +722,24 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
 
         if (mode == MODE_RGB)  {
           rgbColor.red =   (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR1,
-                                                  NULL, FALSE);
+                                                  nullptr, FALSE);
           rgbColor.green = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR2,
-                                                  NULL, FALSE);
+                                                  nullptr, FALSE);
           rgbColor.blue =  (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR3,
-                                                  NULL, FALSE);
+                                                  nullptr, FALSE);
 					rgbColor.alpha = (Real) GetDlgItemInt( hWndDlg, LABEL_ALPHA,
-																								  NULL, FALSE );
+																								  nullptr, FALSE );
 
         }
         else  {
           hsvColor.hue        = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR1,
-                                                       NULL, FALSE);
+                                                       nullptr, FALSE);
           hsvColor.saturation = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR2,
-                                                       NULL, FALSE);
+                                                       nullptr, FALSE);
           hsvColor.value      = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR3,
-                                                       NULL, FALSE);
+                                                       nullptr, FALSE);
 					hsvColor.alpha			= (Real) GetDlgItemInt( hWndDlg, LABEL_ALPHA,
-																											 NULL, FALSE );
+																											 nullptr, FALSE );
 
           // convert to ranges 0 - 1 for RGB conversion
           hsvColor.saturation /= 100.0f;
@@ -759,13 +759,13 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
 
         // force update of preview box
         // invalidate the preview box to force an update of its color
-        InvalidateRect( hWndPreview, NULL, FALSE);
+        InvalidateRect( hWndPreview, nullptr, FALSE);
         UpdateWindow (hWndPreview);
 
         // force updates of the colorbars
-        InvalidateRect (hWndColorBar1, NULL, FALSE);
-        InvalidateRect (hWndColorBar2, NULL, FALSE);
-        InvalidateRect (hWndColorBar3, NULL, FALSE);
+        InvalidateRect (hWndColorBar1, nullptr, FALSE);
+        InvalidateRect (hWndColorBar2, nullptr, FALSE);
+        InvalidateRect (hWndColorBar3, nullptr, FALSE);
         UpdateWindow (hWndColorBar1);
         UpdateWindow (hWndColorBar2);
         UpdateWindow (hWndColorBar3);
@@ -811,9 +811,9 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
           HSVColorReal hsvColor;
 
           if (mode == MODE_RGB)  {  // switch to HSV
-            rgbColor.red = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR1, NULL, FALSE);
-            rgbColor.green = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR2, NULL, FALSE);
-            rgbColor.blue = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR3, NULL, FALSE);
+            rgbColor.red = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR1, nullptr, FALSE);
+            rgbColor.green = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR2, nullptr, FALSE);
+            rgbColor.blue = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR3, nullptr, FALSE);
 
             // convert rgb to range 0 - 1
             rgbColor.red   /= 255.0f;
@@ -849,9 +849,9 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
 
           }
           else  {  // switch to RGB
-            hsvColor.hue = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR1, NULL, FALSE);
-            hsvColor.saturation = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR2, NULL, FALSE);
-            hsvColor.value = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR3, NULL, FALSE);
+            hsvColor.hue = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR1, nullptr, FALSE);
+            hsvColor.saturation = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR2, nullptr, FALSE);
+            hsvColor.value = (Real) GetDlgItemInt (hWndDlg, LABEL_COLOR3, nullptr, FALSE);
 
             // convert saturation and value to range 0 - 1
             hsvColor.saturation /= 100.0f;
@@ -888,9 +888,9 @@ BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg,
           }
 
           // invalidate all the vertical color bars so they are redrawn
-          InvalidateRect (hWndColorBar1, NULL, TRUE);
-          InvalidateRect (hWndColorBar2, NULL, TRUE);
-          InvalidateRect (hWndColorBar3, NULL, TRUE);
+          InvalidateRect (hWndColorBar1, nullptr, TRUE);
+          InvalidateRect (hWndColorBar2, nullptr, TRUE);
+          InvalidateRect (hWndColorBar3, nullptr, TRUE);
 
         }
 

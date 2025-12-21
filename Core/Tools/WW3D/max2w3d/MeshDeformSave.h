@@ -75,8 +75,8 @@ class MeshDeformSaveClass
 		//////////////////////////////////////////////////////////////////////
 		//	Public methods
 		//////////////////////////////////////////////////////////////////////
-		void					Initialize (MeshBuilderClass &builder, Object *object, Mesh &mesh, Matrix3 *transform = NULL);
-		void					Initialize (MeshBuilderClass &builder, Mesh &mesh, MeshDeformModData &mod_data, Matrix3 *transform = NULL);
+		void					Initialize (MeshBuilderClass &builder, Object *object, Mesh &mesh, Matrix3 *transform = nullptr);
+		void					Initialize (MeshBuilderClass &builder, Mesh &mesh, MeshDeformModData &mod_data, Matrix3 *transform = nullptr);
 
 		//void					Re_Index (MeshBuilderClass &builder);
 		bool					Export (ChunkSaveClass &chunk_save);

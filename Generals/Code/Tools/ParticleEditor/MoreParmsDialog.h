@@ -45,7 +45,7 @@ class MoreParmsDialog : public CDialog
 {
 	public:
 		enum { IDD = IDD_PSEd_EditMoreParms };
-		MoreParmsDialog(UINT nIDTemplate = MoreParmsDialog::IDD, CWnd* pParentWnd = NULL);
+		MoreParmsDialog(UINT nIDTemplate = MoreParmsDialog::IDD, CWnd* pParentWnd = nullptr);
 		virtual ~MoreParmsDialog();
 
 		void InitPanel( void );

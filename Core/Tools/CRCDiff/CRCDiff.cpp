@@ -16,6 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <Utility/CppMacros.h>
 #include "debug.h"
 #include "expander.h"
 #include "KVPair.h"
@@ -45,7 +46,7 @@ static bool getNextLine(FILE *fp, char *line, int& frame, int& index) {
 		return false;
 
 	char buf[LINESIZE];
-	while (fgets(buf, LINESIZE-1, fp) != NULL)
+	while (fgets(buf, LINESIZE-1, fp) != nullptr)
 	{
 		int len = strlen(buf);
 		if (buf[len-1] == '\n')
@@ -70,7 +71,7 @@ static std::string readInFile(const char *fname) {
 
 	std::string ret;
 	char buf[LINESIZE];
-	while (fgets(buf, LINESIZE-1, fp) != NULL)
+	while (fgets(buf, LINESIZE-1, fp) != nullptr)
 	{
 		ret.append(buf);
 	}
@@ -81,7 +82,7 @@ static std::string readInFile(const char *fname) {
 
 //=============================================================================
 
-static FILE *ofp = NULL;
+static FILE *ofp = nullptr;
 
 void dumpQueued(void);
 
@@ -190,7 +191,7 @@ int main(int argc, char *argv[])
 	atexit(exitWait);
 	const char *inFname[2];
 	const char *outFname = "out.html";
-	FILE *ifp[2] = {NULL, NULL};
+	FILE *ifp[2] = { nullptr, nullptr};
 	std::string header, footer;
 
 	if (argc != 7)
@@ -264,7 +265,7 @@ int main(int argc, char *argv[])
 				if (seenRight && seenLeft)
 				{
 					outputLine(lastFrame[0], lastIndex[0], linkNum++,
-						"leftOnly", lastLine[0], NULL, NULL);
+						"leftOnly", lastLine[0], nullptr, nullptr);
 					++numDiffs;
 				}
 				lastFrame[0] = -1;
@@ -278,7 +279,7 @@ int main(int argc, char *argv[])
 				if (seenRight && seenLeft)
 				{
 					outputLine(lastFrame[1], lastIndex[1], linkNum++,
-						NULL, NULL, "rightOnly", lastLine[1]);
+						nullptr, nullptr, "rightOnly", lastLine[1]);
 					++numDiffs;
 				}
 				lastFrame[1] = -1;
@@ -329,7 +330,7 @@ int main(int argc, char *argv[])
 			if (seenRight && seenLeft)
 			{
 				outputLine(lastFrame[0], lastIndex[0], linkNum++,
-					"leftOnly", lastLine[0], NULL, NULL);
+					"leftOnly", lastLine[0], nullptr, nullptr);
 				++numDiffs;
 			}
 			lastFrame[0] = -1;
@@ -342,7 +343,7 @@ int main(int argc, char *argv[])
 			if (seenRight && seenLeft)
 			{
 				outputLine(lastFrame[1], lastIndex[1], linkNum++,
-					NULL, NULL, "rightOnly", lastLine[1]);
+					nullptr, nullptr, "rightOnly", lastLine[1]);
 				++numDiffs;
 			}
 			lastFrame[1] = -1;

@@ -86,21 +86,21 @@ void W3DLaserDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "NumBeams",							INI::parseUnsignedInt,					NULL, offsetof( W3DLaserDrawModuleData, m_numBeams ) },
-		{ "InnerBeamWidth",				INI::parseReal,									NULL, offsetof( W3DLaserDrawModuleData, m_innerBeamWidth ) },
-		{ "OuterBeamWidth",				INI::parseReal,									NULL, offsetof( W3DLaserDrawModuleData, m_outerBeamWidth ) },
-		{ "InnerColor",						INI::parseColorInt,							NULL, offsetof( W3DLaserDrawModuleData, m_innerColor ) },
-		{ "OuterColor",						INI::parseColorInt,							NULL, offsetof( W3DLaserDrawModuleData, m_outerColor ) },
-		{ "MaxIntensityLifetime",	INI::parseDurationUnsignedInt,	NULL, offsetof( W3DLaserDrawModuleData, m_maxIntensityFrames ) },
-		{ "FadeLifetime",					INI::parseDurationUnsignedInt,	NULL, offsetof( W3DLaserDrawModuleData, m_fadeFrames ) },
-		{ "Texture",							INI::parseAsciiString,					NULL, offsetof( W3DLaserDrawModuleData, m_textureName ) },
-		{ "ScrollRate",						INI::parseReal,									NULL, offsetof( W3DLaserDrawModuleData, m_scrollRate ) },
-		{ "Tile",									INI::parseBool,									NULL, offsetof( W3DLaserDrawModuleData, m_tile ) },
-		{ "Segments",							INI::parseUnsignedInt,					NULL, offsetof( W3DLaserDrawModuleData, m_segments ) },
-    { "ArcHeight",						INI::parseReal,									NULL, offsetof( W3DLaserDrawModuleData, m_arcHeight ) },
-		{ "SegmentOverlapRatio",	INI::parseReal,									NULL, offsetof( W3DLaserDrawModuleData, m_segmentOverlapRatio ) },
-		{ "TilingScalar",					INI::parseReal,									NULL, offsetof( W3DLaserDrawModuleData, m_tilingScalar ) },
-		{ 0, 0, 0, 0 }
+		{ "NumBeams",							INI::parseUnsignedInt,					nullptr, offsetof( W3DLaserDrawModuleData, m_numBeams ) },
+		{ "InnerBeamWidth",				INI::parseReal,									nullptr, offsetof( W3DLaserDrawModuleData, m_innerBeamWidth ) },
+		{ "OuterBeamWidth",				INI::parseReal,									nullptr, offsetof( W3DLaserDrawModuleData, m_outerBeamWidth ) },
+		{ "InnerColor",						INI::parseColorInt,							nullptr, offsetof( W3DLaserDrawModuleData, m_innerColor ) },
+		{ "OuterColor",						INI::parseColorInt,							nullptr, offsetof( W3DLaserDrawModuleData, m_outerColor ) },
+		{ "MaxIntensityLifetime",	INI::parseDurationUnsignedInt,	nullptr, offsetof( W3DLaserDrawModuleData, m_maxIntensityFrames ) },
+		{ "FadeLifetime",					INI::parseDurationUnsignedInt,	nullptr, offsetof( W3DLaserDrawModuleData, m_fadeFrames ) },
+		{ "Texture",							INI::parseAsciiString,					nullptr, offsetof( W3DLaserDrawModuleData, m_textureName ) },
+		{ "ScrollRate",						INI::parseReal,									nullptr, offsetof( W3DLaserDrawModuleData, m_scrollRate ) },
+		{ "Tile",									INI::parseBool,									nullptr, offsetof( W3DLaserDrawModuleData, m_tile ) },
+		{ "Segments",							INI::parseUnsignedInt,					nullptr, offsetof( W3DLaserDrawModuleData, m_segments ) },
+    { "ArcHeight",						INI::parseReal,									nullptr, offsetof( W3DLaserDrawModuleData, m_arcHeight ) },
+		{ "SegmentOverlapRatio",	INI::parseReal,									nullptr, offsetof( W3DLaserDrawModuleData, m_segmentOverlapRatio ) },
+		{ "TilingScalar",					INI::parseReal,									nullptr, offsetof( W3DLaserDrawModuleData, m_tilingScalar ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -110,8 +110,8 @@ void W3DLaserDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-------------------------------------------------------------------------------------------------
 W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 	DrawModule( thing, moduleData ),
-	m_line3D(NULL),
-	m_texture(NULL),
+	m_line3D(nullptr),
+	m_texture(nullptr),
 	m_textureAspectRatio(1.0f),
 	m_selfDirty(TRUE)
 {
@@ -200,7 +200,7 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 				}
 
 				// add to scene
-				if (W3DDisplay::m_3DScene != NULL)
+				if (W3DDisplay::m_3DScene != nullptr)
 					W3DDisplay::m_3DScene->Add_Render_Object( line );	//add it to our scene so it gets rendered with other objects.
 
 				// hide the render object until the first time we come to draw it and
@@ -225,7 +225,7 @@ W3DLaserDraw::~W3DLaserDraw( void )
 	{
 
 		// remove line from scene
-		if (W3DDisplay::m_3DScene != NULL)
+		if (W3DDisplay::m_3DScene != nullptr)
 			W3DDisplay::m_3DScene->Remove_Render_Object( m_line3D[ i ] );
 
 		// delete line

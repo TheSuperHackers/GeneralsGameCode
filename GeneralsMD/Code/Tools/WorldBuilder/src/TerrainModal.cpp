@@ -34,7 +34,7 @@
 // TerrainModal dialog
 
 
-TerrainModal::TerrainModal(AsciiString path, WorldHeightMapEdit *pMap, CWnd* pParent  /*=NULL*/)
+TerrainModal::TerrainModal(AsciiString path, WorldHeightMapEdit *pMap, CWnd* pParent  /*=nullptr*/)
 	: CDialog(TerrainModal::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(TerrainModal)
@@ -60,10 +60,10 @@ void TerrainModal::updateLabel(void)
 	if (!pDoc) return;
 
 	const char *tName = pDoc->GetHeightMap()->getTexClassUiName(m_currentFgTexture).str();
-	if (tName == NULL || tName[0] == 0) {
+	if (tName == nullptr || tName[0] == 0) {
 		tName = pDoc->GetHeightMap()->getTexClassUiName(m_currentFgTexture).str();
 	}
-	if (tName == NULL) {
+	if (tName == nullptr) {
 		return;
 	}
 	const char *leaf = tName;
@@ -98,7 +98,7 @@ BOOL TerrainModal::OnInitDialog()
 	pWnd->GetWindowRect(&rect);
 	ScreenToClient(&rect);
 	rect.DeflateRect(2,2,2,2);
-	m_terrainSwatches.Create(NULL, "", WS_CHILD, rect, this, IDC_TERRAIN_SWATCHES);
+	m_terrainSwatches.Create(nullptr, "", WS_CHILD, rect, this, IDC_TERRAIN_SWATCHES);
 	m_terrainSwatches.ShowWindow(SW_SHOW);
 
 	pWnd = GetDlgItem(IDC_MISSING_NAME);
@@ -119,7 +119,7 @@ HTREEITEM TerrainModal::findOrAdd(HTREEITEM parent, const char *pLabel)
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = m_terrainTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
@@ -247,7 +247,7 @@ Bool TerrainModal::setTerrainTreeViewSelection(HTREEITEM parent, Int selection)
 	char buffer[_MAX_PATH];
 	::memset(&item, 0, sizeof(item));
 	HTREEITEM child = m_terrainTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		item.mask = TVIF_HANDLE|TVIF_PARAM;
 		item.hItem = child;
 		item.pszText = buffer;

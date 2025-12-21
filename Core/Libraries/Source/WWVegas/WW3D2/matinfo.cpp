@@ -73,7 +73,7 @@ MaterialInfoClass * MaterialInfoClass::Clone(void) const
 
 int MaterialInfoClass::Add_Texture(TextureClass * tex)
 {
-	WWASSERT(tex != NULL);
+	WWASSERT(tex != nullptr);
 	tex->Add_Ref();
 	int index = Textures.Count();
 	Textures.Add(tex);
@@ -133,13 +133,13 @@ void MaterialInfoClass::Free(void)
 
 MaterialRemapperClass::MaterialRemapperClass(MaterialInfoClass * src,MaterialInfoClass * dest) :
 	TextureCount(0),
-	TextureRemaps(NULL),
+	TextureRemaps(nullptr),
 	VertexMaterialCount(0),
-	VertexMaterialRemaps(NULL),
-	LastSrcVmat(NULL),
-	LastDestVmat(NULL),
-	LastSrcTex(NULL),
-	LastDestTex(NULL)
+	VertexMaterialRemaps(nullptr),
+	LastSrcVmat(nullptr),
+	LastDestVmat(nullptr),
+	LastSrcTex(nullptr),
+	LastDestTex(nullptr)
 {
 	WWASSERT(src);
 	WWASSERT(dest);
@@ -181,7 +181,7 @@ MaterialRemapperClass::~MaterialRemapperClass(void)
 
 TextureClass * MaterialRemapperClass::Remap_Texture(TextureClass * src)
 {
-	if (src == NULL) return src;
+	if (src == nullptr) return src;
 	if (src == LastSrcTex) return LastDestTex;
 	for (int i=0; i<TextureCount; i++) {
 		if (TextureRemaps[i].Src == src) {
@@ -191,12 +191,12 @@ TextureClass * MaterialRemapperClass::Remap_Texture(TextureClass * src)
 		}
 	}
 	WWASSERT(0); // uh-oh didn't find the texture, what happend???
-	return NULL;
+	return nullptr;
 }
 
 VertexMaterialClass * MaterialRemapperClass::Remap_Vertex_Material(VertexMaterialClass * src)
 {
-	if (src == NULL) return src;
+	if (src == nullptr) return src;
 	if (src == LastSrcVmat) return LastDestVmat;
 	for (int i=0; i<VertexMaterialCount; i++) {
 		if (VertexMaterialRemaps[i].Src == src) {
@@ -206,7 +206,7 @@ VertexMaterialClass * MaterialRemapperClass::Remap_Vertex_Material(VertexMateria
 		}
 	}
 	WWASSERT(0); // uh-oh didn't find the material, what happend???
-	return NULL;
+	return nullptr;
 }
 
 void MaterialRemapperClass::Remap_Mesh(const MeshMatDescClass * srcmeshmatdesc, MeshMatDescClass * destmeshmatdesc)
@@ -264,8 +264,8 @@ void MaterialRemapperClass::Remap_Mesh(const MeshMatDescClass * srcmeshmatdesc, 
 MaterialCollectorClass::MaterialCollectorClass(void)
 {
 	LastShader = ShaderClass(0xFFFFFFFF);
-	LastMaterial = NULL;
-	LastTexture = NULL;
+	LastMaterial = nullptr;
+	LastTexture = nullptr;
 }
 
 MaterialCollectorClass::~MaterialCollectorClass(void)
@@ -338,7 +338,7 @@ void MaterialCollectorClass::Reset(void)
 
 void MaterialCollectorClass::Add_Texture(TextureClass * tex)
 {
-	if (tex == NULL) return;
+	if (tex == nullptr) return;
 	if (tex == LastTexture) return;
 	if (Find_Texture(tex) != -1) return;
 	Textures.Add(tex);
@@ -356,7 +356,7 @@ void MaterialCollectorClass::Add_Shader(ShaderClass shader)
 
 void MaterialCollectorClass::Add_Vertex_Material(VertexMaterialClass * vmat)
 {
-	if (vmat == NULL) return;
+	if (vmat == nullptr) return;
 	if (vmat == LastMaterial) return;
 	if (Find_Vertex_Material(vmat) != -1) return;
 	VertexMaterials.Add(vmat);

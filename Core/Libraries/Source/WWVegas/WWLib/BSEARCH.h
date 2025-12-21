@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 /*
 **	Binary searching template. It can be faster than the built in C library
@@ -64,5 +65,5 @@ T * Binary_Search(T * A, int n, T const & target)
 		   stride -= pivot + 1;
 		}
    }
-   return (NULL);
+   return (nullptr);
 }

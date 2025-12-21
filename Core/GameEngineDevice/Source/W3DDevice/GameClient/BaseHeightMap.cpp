@@ -55,6 +55,7 @@
 #include <rinfo.h>
 #include <camera.h>
 #include <d3dx8core.h>
+
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"
 #include "Common/Xfer.h"
@@ -112,7 +113,7 @@ static ShaderClass detailOpaqueShader(SC_DETAIL_BLEND);
 //         Global Functions & Data
 //-----------------------------------------------------------------------------
 /// The one-of for the terrain rendering object.
-BaseHeightMapRenderObjClass *TheTerrainRenderObject=NULL;
+BaseHeightMapRenderObjClass *TheTerrainRenderObject=nullptr;
 
 /** Entry point so that trees can be drawn at the appropriate point in the rendering pipe for
     transparent objects. */
@@ -201,33 +202,33 @@ BaseHeightMapRenderObjClass::~BaseHeightMapRenderObjClass(void)
 	freeMapResources();
 
 	delete m_treeBuffer;
-	m_treeBuffer = NULL;
+	m_treeBuffer = nullptr;
 
 	delete m_propBuffer;
-	m_propBuffer = NULL;
+	m_propBuffer = nullptr;
 
 	delete m_bibBuffer;
-	m_bibBuffer = NULL;
+	m_bibBuffer = nullptr;
 
 #ifdef DO_ROADS
 	delete m_roadBuffer;
-	m_roadBuffer = NULL;
+	m_roadBuffer = nullptr;
 #endif
 
 	delete m_bridgeBuffer;
-	m_bridgeBuffer = NULL;
+	m_bridgeBuffer = nullptr;
 
 	delete m_waypointBuffer;
-	m_waypointBuffer = NULL;
+	m_waypointBuffer = nullptr;
 
 	delete m_shroud;
-	m_shroud = NULL;
+	m_shroud = nullptr;
 
 	delete [] m_shoreLineTilePositions;
-	m_shoreLineTilePositions = NULL;
+	m_shoreLineTilePositions = nullptr;
 
 	delete [] m_shoreLineSortInfos;
-	m_shoreLineSortInfos = NULL;
+	m_shoreLineSortInfos = nullptr;
 }
 
 //=============================================================================
@@ -246,9 +247,9 @@ BaseHeightMapRenderObjClass::BaseHeightMapRenderObjClass(void)
 	//We should refine this with actual value.
 	m_maxHeight=(pow(256.0, sizeof(HeightSampleType))-1.0)*MAP_HEIGHT_SCALE;
 	m_minHeight=0;
-	m_shoreLineTilePositions=NULL;
+	m_shoreLineTilePositions=nullptr;
 	m_numShoreLineTiles=0;
-	m_shoreLineSortInfos=NULL;
+	m_shoreLineSortInfos=nullptr;
 	m_shoreLineSortInfosSize=0;
 	m_shoreLineSortInfosXMajor=TRUE;
 	m_shoreLineTileSortMaxCoordinate=0;
@@ -257,13 +258,13 @@ BaseHeightMapRenderObjClass::BaseHeightMapRenderObjClass(void)
 	m_shoreLineTilePositionsSize=0;
 	m_currentMinWaterOpacity = -1.0f;
 
-	m_vertexMaterialClass=NULL;
-	m_stageZeroTexture=NULL;
-	m_stageOneTexture=NULL;
-	m_stageTwoTexture=NULL;
-	m_stageThreeTexture=NULL;
-	m_destAlphaTexture=NULL;
-	m_map=NULL;
+	m_vertexMaterialClass=nullptr;
+	m_stageZeroTexture=nullptr;
+	m_stageOneTexture=nullptr;
+	m_stageTwoTexture=nullptr;
+	m_stageThreeTexture=nullptr;
+	m_destAlphaTexture=nullptr;
+	m_map=nullptr;
 	m_depthFade.X = 0.0f;
 	m_depthFade.Y = 0.0f;
 	m_depthFade.Z = 0.0f;
@@ -271,20 +272,20 @@ BaseHeightMapRenderObjClass::BaseHeightMapRenderObjClass(void)
 	m_disableTextures = false;
 	TheTerrainRenderObject = this;
 
-	m_treeBuffer = NULL;
-	m_propBuffer = NULL;
-	m_bibBuffer = NULL;
-	m_bridgeBuffer = NULL;
-	m_waypointBuffer = NULL;
+	m_treeBuffer = nullptr;
+	m_propBuffer = nullptr;
+	m_bibBuffer = nullptr;
+	m_bridgeBuffer = nullptr;
+	m_waypointBuffer = nullptr;
 #ifdef DO_ROADS
-	m_roadBuffer = NULL;
+	m_roadBuffer = nullptr;
 #endif
 #ifdef DO_SCORCH
-	m_vertexScorch = NULL;
-	m_indexScorch = NULL;
-	m_scorchTexture = NULL;
+	m_vertexScorch = nullptr;
+	m_indexScorch = nullptr;
+	m_scorchTexture = nullptr;
 	clearAllScorches();
-	m_shroud = NULL;
+	m_shroud = nullptr;
 #endif
 	m_bridgeBuffer = NEW W3DBridgeBuffer;
 
@@ -334,24 +335,24 @@ void BaseHeightMapRenderObjClass::adjustTerrainLOD(Int adj)
 		TheWritableGlobalData->m_terrainLOD=TERRAIN_LOD_MAX;
 	}
 
-	if (m_map==NULL) return;
+	if (m_map==nullptr) return;
 	if (m_shroud)
 		m_shroud->reset();	//need reset here since initHeightData will load new shroud.
 
-	BaseHeightMapRenderObjClass *newROBJ = NULL;
+	BaseHeightMapRenderObjClass *newROBJ = nullptr;
 	if (TheGlobalData->m_terrainLOD==7) {
 		newROBJ = TheHeightMap;
-		if (newROBJ==NULL) {
+		if (newROBJ==nullptr) {
 			newROBJ = NEW_REF( HeightMapRenderObjClass, () );
 		}
 	}	else {
 		newROBJ = TheFlatHeightMap;
-		if (newROBJ==NULL) {
+		if (newROBJ==nullptr) {
 			newROBJ = NEW_REF( FlatHeightMapRenderObjClass, () );
 		}
 	}
 	if (TheGlobalData->m_terrainLOD == 5)
-		newROBJ = NULL;
+		newROBJ = nullptr;
 	RTS3DScene *pMyScene = (RTS3DScene *)Scene;
 	if (pMyScene) {
 		pMyScene->Remove_Render_Object(this);
@@ -368,7 +369,7 @@ void BaseHeightMapRenderObjClass::adjustTerrainLOD(Int adj)
 		newROBJ->initHeightData( m_map->getDrawWidth(),
 																					 m_map->getDrawHeight(),
 																					 m_map,
-																					 NULL);
+																					 nullptr);
 		TheTerrainRenderObject = newROBJ;
 		newROBJ->staticLightingChanged();
 		newROBJ->m_roadBuffer->loadRoads();
@@ -401,7 +402,7 @@ void BaseHeightMapRenderObjClass::ReleaseResources(void)
 		m_waypointBuffer->freeWaypointBuffers();
 	}
 	// We need to save the map.
-	WorldHeightMap *pMap=NULL;
+	WorldHeightMap *pMap=nullptr;
 	REF_PTR_SET(pMap, m_map);
 	freeMapResources();
 	m_map = pMap; // ref_ptr_set has already incremented the ref count.
@@ -453,7 +454,7 @@ void BaseHeightMapRenderObjClass::ReAcquireResources(void)
 
 	if (m_map)
 	{
-		this->initHeightData(m_x,m_y,m_map, NULL);
+		this->initHeightData(m_x,m_y,m_map, nullptr);
 		// Tell lights to update next time through.
 		m_needFullUpdate = true;
 	}
@@ -997,7 +998,7 @@ Real BaseHeightMapRenderObjClass::getHeightMapHeight(Real x, Real y, Coord3D* no
 //=============================================================================
 Bool BaseHeightMapRenderObjClass::isClearLineOfSight(const Coord3D& pos, const Coord3D& posOther) const
 {
-	if (m_map == NULL)
+	if (m_map == nullptr)
 		return false;	// doh. should not happen.
 
   WorldHeightMap *logicHeightMap = TheTerrainVisual?TheTerrainVisual->getLogicHeightMap():m_map;
@@ -1156,7 +1157,7 @@ Bool BaseHeightMapRenderObjClass::isClearLineOfSight(const Coord3D& pos, const C
 	Real fzinc = fdz * fnsInv;
 	while (numSteps--)
 	{
-		Real terrainHeight = getHeightMapHeight( fx, fy, NULL );
+		Real terrainHeight = getHeightMapHeight( fx, fy, nullptr );
 
 		// if terrainHeight > fz, we can't see, so punt.
 		// add a little fudge to account for slop.
@@ -1200,7 +1201,7 @@ Real BaseHeightMapRenderObjClass::getMaxCellHeight(Real x, Real y) const
 	//  0-----1
 	//Find surrounding grid points
 
-	if (m_map == NULL)
+	if (m_map == nullptr)
 	{	//sample point is not on the heightmap
 		return 0.0f;	//return default height
 	}
@@ -1243,7 +1244,7 @@ Real BaseHeightMapRenderObjClass::getMaxCellHeight(Real x, Real y) const
 Bool BaseHeightMapRenderObjClass::isCliffCell(Real x, Real y)
 {
 
-	if (m_map == NULL)
+	if (m_map == nullptr)
 	{	//sample point is not on the heightmap
 		return false;
 	}
@@ -1269,7 +1270,7 @@ Bool BaseHeightMapRenderObjClass::isCliffCell(Real x, Real y)
 //=============================================================================
 Bool BaseHeightMapRenderObjClass::showAsVisibleCliff(Int xIndex, Int yIndex) const
 {
-	if (m_map == NULL)
+	if (m_map == nullptr)
 	{
 		return false;
 	}
@@ -1428,7 +1429,7 @@ Int BaseHeightMapRenderObjClass::Class_ID(void) const
 RenderObjClass *	 BaseHeightMapRenderObjClass::Clone(void) const
 {
 	assert(false);
-	return NULL;
+	return nullptr;
 }
 
 //=============================================================================
@@ -1780,7 +1781,7 @@ Int BaseHeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pM
 	if (m_roadBuffer)
 		m_roadBuffer->setMap(m_map);
 #endif
-	HeightSampleType *data = NULL;
+	HeightSampleType *data = nullptr;
 	if (pMap) {
 		data = pMap->getDataPtr();
 	}
@@ -1833,7 +1834,7 @@ Int BaseHeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pM
 	m_curNumScorchIndices=0;
 	// If the textures aren't allocated (usually because of a hardware reset) need to allocate.
 	Bool needToAllocate = false;
-	if (m_stageTwoTexture == NULL && m_treeBuffer) {
+	if (m_stageTwoTexture == nullptr && m_treeBuffer) {
 		needToAllocate = true;
 	}
 	if (data && needToAllocate)
@@ -2083,7 +2084,7 @@ Int BaseHeightMapRenderObjClass::getStaticDiffuse(Int x, Int y)
 	if (y >= m_map->getYExtent())
 		y=m_map->getYExtent()-1;
 
-	if (m_map == NULL) {
+	if (m_map == nullptr) {
 		return(0);
 	}
 
@@ -2134,10 +2135,10 @@ Int BaseHeightMapRenderObjClass::getStaticDiffuse(Int x, Int y)
 		doTheLight(&vertex, lightRay, &normalAtTexel, it, 1.0f);
 		if (it) {
 		 pMyScene->destroyLightsIterator(it);
-		 it = NULL;
+		 it = nullptr;
 		}
 	} else {
-		doTheLight(&vertex, lightRay, &normalAtTexel, NULL, 1.0f);
+		doTheLight(&vertex, lightRay, &normalAtTexel, nullptr, 1.0f);
 	}
 	return vertex.diffuse;
 }
@@ -2399,7 +2400,7 @@ is rendered. */
 //=============================================================================
 void BaseHeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjListIterator *pLightsIterator)
 {
-	if (m_map==NULL) {
+	if (m_map==nullptr) {
 		return;
 	}
 	if (m_updating) {
@@ -2960,8 +2961,8 @@ void BaseHeightMapRenderObjClass::renderTrees(CameraClass * camera)
 		return;
 	}
 #endif
-	if (m_map==NULL) return;
-	if (Scene==NULL) return;
+	if (m_map==nullptr) return;
+	if (Scene==nullptr) return;
 	if (m_treeBuffer) {
 		Matrix3D tm(Transform);
 		DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);

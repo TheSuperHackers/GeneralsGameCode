@@ -116,7 +116,7 @@ Object *	HashTableClass<Object,Key>::Find(Key * key) const
 	}
 
 	// couldn't find it
-	return NULL;
+	return nullptr;
 }
 
 #endif

@@ -107,7 +107,7 @@ void
 LogicalListenerClass::Add_To_Scene (bool /*start_playing*/)
 {
 	SoundSceneClass *scene = WWAudioClass::Get_Instance ()->Get_Sound_Scene ();
-	if ((scene != NULL) && (m_Scene == NULL)) {
+	if ((scene != nullptr) && (m_Scene == nullptr)) {
 
 		//
 		//	Add this listener to the culling system
@@ -128,14 +128,14 @@ LogicalListenerClass::Add_To_Scene (bool /*start_playing*/)
 void
 LogicalListenerClass::Remove_From_Scene (void)
 {
-	if (m_Scene != NULL) {
+	if (m_Scene != nullptr) {
 
 		//
 		//	Remove this listener from the culling system
 		//
 		m_Scene->Remove_Logical_Listener (this);
-		m_Scene = NULL;
-		m_PhysWrapper = NULL;
+		m_Scene = nullptr;
+		m_PhysWrapper = nullptr;
 	}
 
 	return ;

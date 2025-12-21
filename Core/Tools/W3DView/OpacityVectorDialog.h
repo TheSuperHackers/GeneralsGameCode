@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include "resource.h"
 #include "sphereobj.h"
@@ -34,7 +35,7 @@ class OpacityVectorDialogClass : public CDialog
 {
 // Construction
 public:
-	OpacityVectorDialogClass(CWnd* pParent = NULL);   // standard constructor
+	OpacityVectorDialogClass(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(OpacityVectorDialogClass)

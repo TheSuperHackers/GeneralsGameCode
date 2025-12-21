@@ -64,9 +64,9 @@ RailedTransportDockUpdateModuleData::RailedTransportDockUpdateModuleData( void )
 	static const FieldParse dataFieldParse[] =
 	{
 
-		{ "PullInsideDuration", INI::parseDurationUnsignedInt, NULL, offsetof( RailedTransportDockUpdateModuleData, m_pullInsideDurationInFrames ) },
-		{ "PushOutsideDuration",INI::parseDurationUnsignedInt, NULL, offsetof( RailedTransportDockUpdateModuleData, m_pushOutsideDurationInFrames ) },
-		{ 0, 0, 0, 0 }
+		{ "PullInsideDuration", INI::parseDurationUnsignedInt, nullptr, offsetof( RailedTransportDockUpdateModuleData, m_pullInsideDurationInFrames ) },
+		{ "PushOutsideDuration",INI::parseDurationUnsignedInt, nullptr, offsetof( RailedTransportDockUpdateModuleData, m_pushOutsideDurationInFrames ) },
+		{ nullptr, nullptr, nullptr, 0 }
 
 	};
 
@@ -126,7 +126,7 @@ Bool RailedTransportDockUpdate::action( Object *docker, Object *drone )
 	Object *us = getObject();
 
 	// sanity
-	if( docker == NULL )
+	if( docker == nullptr )
 		return FALSE;
 
 	// set this object as docking with us if not already done so
@@ -256,7 +256,7 @@ void RailedTransportDockUpdate::doPullInDocking( void )
 		Object *docker = TheGameLogic->findObjectByID( m_dockingObjectID );
 
 		// check for docker gone
-		if( docker == NULL )
+		if( docker == nullptr )
 			m_dockingObjectID = INVALID_ID;
 
 		// pull it
@@ -337,7 +337,7 @@ void RailedTransportDockUpdate::doPushOutDocking( void )
 		Object *unloader = TheGameLogic->findObjectByID( m_unloadingObjectID );
 
 		// if unloader is not found (like they got destroyed) unload the next object inside
-		if( unloader == NULL )
+		if( unloader == nullptr )
 		{
 
 			unloadNext();
@@ -408,8 +408,8 @@ void RailedTransportDockUpdate::doPushOutDocking( void )
 				{
 					Coord3D finalPos;
 
-					draw->getPristineBonePositions( "DOCKWAITING07", 0, &finalPos, NULL, 1 );
-					us->convertBonePosToWorldPos( &finalPos, NULL, &finalPos, NULL );
+					draw->getPristineBonePositions( "DOCKWAITING07", 0, &finalPos, nullptr, 1 );
+					us->convertBonePosToWorldPos( &finalPos, nullptr, &finalPos, nullptr );
 					unloaderAI->aiMoveToPosition( &finalPos, CMD_FROM_AI );
 
 				}
@@ -433,7 +433,7 @@ static void getFirstContain( Object *obj, void *userData )
 	Object **firstContain = (Object **)userData;
 
 	// if object has been found get out of here
-	if( *firstContain != NULL )
+	if( *firstContain != nullptr )
 		return;
 
 	// assign this as the first object found
@@ -460,12 +460,12 @@ void RailedTransportDockUpdate::unloadNext( void )
 
 	// better be an open container
 	ContainModuleInterface *contain = us->getContain();
-	OpenContain *openContain = contain ? contain->asOpenContain() : NULL;
+	OpenContain *openContain = contain ? contain->asOpenContain() : nullptr;
 	DEBUG_ASSERTCRASH( openContain, ("Unloading next from railed transport, but '%s' has no open container",
 										 us->getTemplate()->getName().str()) );
 
 	// get the first contained object
-	Object *unloader = NULL;
+	Object *unloader = nullptr;
 	openContain->iterateContained( getFirstContain, &unloader, FALSE );
 	if( unloader )
 	{

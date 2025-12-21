@@ -47,7 +47,7 @@ void INI::parseTerrainDefinition( INI* ini )
 
 	// find existing item if present
 	terrainType = TheTerrainTypes->findTerrain( name );
-	if( terrainType == NULL )
+	if( terrainType == nullptr )
 		terrainType = TheTerrainTypes->newTerrain( name );
 
 	// sanity

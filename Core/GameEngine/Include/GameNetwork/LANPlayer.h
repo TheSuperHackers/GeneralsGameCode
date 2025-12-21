@@ -27,6 +27,7 @@
 // Author: Matthew D. Campbell, October 2001 (Pulled out of LANAPI.h by CLH on 12/21/01
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 /**
  * LAN player class.  This is for players sitting in the lobby.  Players are
@@ -35,7 +36,7 @@
 class LANPlayer
 {
 public:
-	LANPlayer() { m_name = m_login = m_host = L""; m_lastHeard = 0; m_next = NULL; m_IP = 0; }
+	LANPlayer() { m_name = m_login = m_host = L""; m_lastHeard = 0; m_next = nullptr; m_IP = 0; }
 
 	// Access functions
 	UnicodeString getName( void ) { return m_name; }

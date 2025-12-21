@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // ExportScriptsOptions.h : header file
 //
@@ -28,7 +29,7 @@ class ExportScriptsOptions : public CDialog
 {
 // Construction
 public:
-	ExportScriptsOptions(CWnd* pParent = NULL);   // standard constructor
+	ExportScriptsOptions(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(ExportScriptsOptions)

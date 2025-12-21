@@ -64,14 +64,14 @@ static Bool mustDownloadPatch = FALSE;
 static Bool cantConnectBeforeOnline = FALSE;
 static std::list<QueuedDownload> queuedDownloads;
 
-static char *MOTDBuffer = NULL;
-static char *configBuffer = NULL;
-GameWindow *onlineCancelWindow = NULL;
+static char *MOTDBuffer = nullptr;
+static char *configBuffer = nullptr;
+GameWindow *onlineCancelWindow = nullptr;
 
 static Bool s_asyncDNSThreadDone = TRUE;
 static Bool s_asyncDNSThreadSucceeded = FALSE;
 static Bool s_asyncDNSLookupInProgress = FALSE;
-static HANDLE s_asyncDNSThreadHandle = NULL;
+static HANDLE s_asyncDNSThreadHandle = nullptr;
 enum {
 	LOOKUP_INPROGRESS,
 	LOOKUP_FAILED,
@@ -181,7 +181,7 @@ static void startOnline( void )
 	if (onlineCancelWindow)
 	{
 		TheWindowManager->winDestroy(onlineCancelWindow);
-		onlineCancelWindow = NULL;
+		onlineCancelWindow = nullptr;
 	}
 
 	if (cantConnectBeforeOnline)
@@ -222,10 +222,10 @@ static void startOnline( void )
 	SetUpGameSpy(MOTDBuffer, configBuffer);
 
 	delete[] MOTDBuffer;
-	MOTDBuffer = NULL;
+	MOTDBuffer = nullptr;
 
 	delete[] configBuffer;
-	configBuffer = NULL;
+	configBuffer = nullptr;
 
 #ifdef ALLOW_NON_PROFILED_LOGIN
 	UserPreferences pref;
@@ -326,7 +326,7 @@ static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
 	if (onlineCancelWindow && !checksLeftBeforeOnline)
 	{
 		TheWindowManager->winDestroy(onlineCancelWindow);
-		onlineCancelWindow = NULL;
+		onlineCancelWindow = nullptr;
 	}
 
 	DEBUG_LOG(("------- Got MOTD before going online -------"));
@@ -352,7 +352,7 @@ static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
 	}
 
 	delete[] configBuffer;
-	configBuffer = NULL;
+	configBuffer = nullptr;
 
 	if (result != GHTTPSuccess || bufferLen < 100)
 	{
@@ -362,7 +362,7 @@ static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
 		if (onlineCancelWindow && !checksLeftBeforeOnline)
 		{
 			TheWindowManager->winDestroy(onlineCancelWindow);
-			onlineCancelWindow = NULL;
+			onlineCancelWindow = nullptr;
 		}
 		cantConnectBeforeOnline = TRUE;
 		if (!checksLeftBeforeOnline)
@@ -390,7 +390,7 @@ static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
 	if (onlineCancelWindow && !checksLeftBeforeOnline)
 	{
 		TheWindowManager->winDestroy(onlineCancelWindow);
-		onlineCancelWindow = NULL;
+		onlineCancelWindow = nullptr;
 	}
 
 	DEBUG_LOG(("Got Config before going online"));
@@ -449,11 +449,11 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 					if (onlineCancelWindow && !checksLeftBeforeOnline)
 					{
 						TheWindowManager->winDestroy(onlineCancelWindow);
-						onlineCancelWindow = NULL;
+						onlineCancelWindow = nullptr;
 					}
 
 					delete[] configBuffer;
-					configBuffer = NULL;
+					configBuffer = nullptr;
 
 					AsciiString fname;
 					fname.format("%sGeneralsOnline\\Config.txt", TheGlobalData->getPath_UserData().str());
@@ -561,15 +561,15 @@ void CancelPatchCheckCallback( void )
 	if (onlineCancelWindow)
 	{
 		TheWindowManager->winDestroy(onlineCancelWindow);
-		onlineCancelWindow = NULL;
+		onlineCancelWindow = nullptr;
 	}
 	queuedDownloads.clear();
 
 	delete[] MOTDBuffer;
-	MOTDBuffer = NULL;
+	MOTDBuffer = nullptr;
 
 	delete[] configBuffer;
-	configBuffer = NULL;
+	configBuffer = nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -588,7 +588,7 @@ static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result,
 
 	Int state = STATS_MAX; // STATS_MAX == none
 	AsciiString line;
-	OverallStats *stats = NULL;
+	OverallStats *stats = nullptr;
 	while (message.nextToken(&line, "\n"))
 	{
 		line.trim();
@@ -646,7 +646,7 @@ static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result,
 				stats->losses[state] = atoi(lossesLine.str());
 			}
 
-			stats = NULL;
+			stats = nullptr;
 		}
 	}
 
@@ -694,7 +694,7 @@ void CheckOverallStats( void )
 #elif RTS_ZEROHOUR
 	const char *const url = "http://gamestats.gamespy.com/ccgenzh/display.html";
 #endif
-	ghttpGet(url, GHTTPFalse, overallStatsCallback, NULL);
+	ghttpGet(url, GHTTPFalse, overallStatsCallback, nullptr);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -706,7 +706,7 @@ void CheckNumPlayersOnline( void )
 #elif RTS_ZEROHOUR
 	const char *const url = "http://launch.gamespyarcade.com/software/launch/arcadecount2.dll?svcname=ccgenzh";
 #endif
-	ghttpGet(url, GHTTPFalse, numPlayersOnlineCallback, NULL);
+	ghttpGet(url, GHTTPFalse, numPlayersOnlineCallback, nullptr);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -739,9 +739,9 @@ int asyncGethostbyname(char * szName)
 	{
 		/* Kick off gethostname thread */
 		s_asyncDNSThreadDone = FALSE;
-		s_asyncDNSThreadHandle = CreateThread( NULL, 0, asyncGethostbynameThreadFunc, szName, 0, &threadid );
+		s_asyncDNSThreadHandle = CreateThread( nullptr, 0, asyncGethostbynameThreadFunc, szName, 0, &threadid );
 
-		if( s_asyncDNSThreadHandle == NULL )
+		if( s_asyncDNSThreadHandle == nullptr )
 		{
 			return( LOOKUP_FAILED );
 		}
@@ -754,7 +754,7 @@ int asyncGethostbyname(char * szName)
 			/* Thread finished */
 			stat = 0;
 			s_asyncDNSLookupInProgress = FALSE;
-			s_asyncDNSThreadHandle = NULL;
+			s_asyncDNSThreadHandle = nullptr;
 			return( (s_asyncDNSThreadSucceeded)?LOOKUP_SUCCEEDED:LOOKUP_FAILED );
 		}
 	}
@@ -814,7 +814,7 @@ void StopAsyncDNSCheck( void )
 			TerminateThread(s_asyncDNSThreadHandle,0);
 		DEBUG_ASSERTCRASH(res, ("Could not terminate the Async DNS Lookup thread!"));	// Thread still not killed!
 	}
-	s_asyncDNSThreadHandle = NULL;
+	s_asyncDNSThreadHandle = nullptr;
 	s_asyncDNSLookupInProgress = FALSE;
 }
 

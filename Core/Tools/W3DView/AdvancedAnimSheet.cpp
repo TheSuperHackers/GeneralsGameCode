@@ -42,8 +42,8 @@ static char THIS_FILE[] = __FILE__;
 // Will compare their names.
 static int anim_name_compare (const void *arg1, const void *arg2)
 {
-	ASSERT(arg1 != NULL);
-	ASSERT(arg2 != NULL);
+	ASSERT(arg1 != nullptr);
+	ASSERT(arg2 != nullptr);
 	HAnimClass *a1 = *(HAnimClass**)arg1;
 	HAnimClass *a2 = *(HAnimClass**)arg2;
 	return _stricmp( a1->Get_Name(), a2->Get_Name() );
@@ -117,7 +117,7 @@ HAnimClass ** CAdvancedAnimSheet::GetAnims (void)
 	LoadAnims();
 
 	// Return the array regardless of validity. If the entries are
-	// invalid, they'll all be NULL, but the array itself is cool.
+	// invalid, they'll all be nullptr, but the array itself is cool.
 	return Anims;
 }
 
@@ -127,10 +127,10 @@ void CAdvancedAnimSheet::LoadAnims (void)
 	// Get the current render object and it's HTree. If it doesn't have
 	// an HTree, then it's not animating and we're not interested.
 	RenderObjClass *robj = ::GetCurrentDocument()->GetDisplayedObject();
-	if (robj == NULL)
+	if (robj == nullptr)
 		return;
 	const HTreeClass *htree = robj->Get_HTree();
-	if (htree == NULL)
+	if (htree == nullptr)
 		return;
 	const char *htree_name = htree->Get_Name();
 
@@ -142,7 +142,7 @@ void CAdvancedAnimSheet::LoadAnims (void)
 	// Get an iterator from the asset manager that we can
 	// use to enumerate the currently loaded assets
 	AssetIterator *pAnimEnum = WW3DAssetManager::Get_Instance()->Create_HAnim_Iterator();
-	ASSERT(pAnimEnum != NULL);
+	ASSERT(pAnimEnum != nullptr);
 	if (pAnimEnum)
 	{
 		// Loop through all the animations in the manager
@@ -153,7 +153,7 @@ void CAdvancedAnimSheet::LoadAnims (void)
 			// Get an instance of the animation object
 			HAnimClass *pHierarchyAnim = WW3DAssetManager::Get_Instance()->Get_HAnim(pszAnimName);
 
-			ASSERT(pHierarchyAnim != NULL);
+			ASSERT(pHierarchyAnim != nullptr);
 			if (pHierarchyAnim)
 			{
 				// Does this animation apply to the current model's HTree?
@@ -182,7 +182,7 @@ void CAdvancedAnimSheet::LoadAnims (void)
 
 		// Free the object
 		delete pAnimEnum;
-		pAnimEnum = NULL;
+		pAnimEnum = nullptr;
 	}
 
 	/*

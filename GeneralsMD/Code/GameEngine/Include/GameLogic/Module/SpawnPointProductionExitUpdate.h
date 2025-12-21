@@ -52,7 +52,7 @@ public:
     UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "SpawnPointBoneName",		INI::parseAsciiString,		NULL, offsetof( SpawnPointProductionExitUpdateModuleData, m_spawnPointBoneNameData ) },
+			{ "SpawnPointBoneName",		INI::parseAsciiString,		nullptr, offsetof( SpawnPointProductionExitUpdateModuleData, m_spawnPointBoneNameData ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -79,7 +79,7 @@ public:
 	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor );
 	virtual void unreserveDoorForExit( ExitDoorType exitDoor );
 	virtual void setRallyPoint( const Coord3D * ){}
-	virtual const Coord3D *getRallyPoint() const { return NULL; }
+	virtual const Coord3D *getRallyPoint() const { return nullptr; }
 	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) { return; }
 
 	virtual UpdateSleepTime update()										{ return UPDATE_SLEEP_FOREVER; }

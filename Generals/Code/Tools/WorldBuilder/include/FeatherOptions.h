@@ -37,7 +37,7 @@ public:
 				MIN_RADIUS=1,
 				MAX_RADIUS=5};
 
-	FeatherOptions(CWnd* pParent = NULL);   // standard constructor
+	FeatherOptions(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(FeatherOptions)

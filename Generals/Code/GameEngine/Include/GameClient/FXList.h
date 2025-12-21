@@ -79,13 +79,13 @@ public:
 		The main guts of the system: actually perform the sound and/or video effects
 		needed. Note that primary and/or secondary can be null, so you must check for this.
 	*/
-	virtual void doFXPos(const Coord3D *primary, const Matrix3D* primaryMtx = NULL, const Real primarySpeed = 0.0f, const Coord3D *secondary = NULL, const Real overrideRadius = 0.0f) const = 0;
+	virtual void doFXPos(const Coord3D *primary, const Matrix3D* primaryMtx = nullptr, const Real primarySpeed = 0.0f, const Coord3D *secondary = nullptr, const Real overrideRadius = 0.0f) const = 0;
 
 	/**
 		the object-based version... by default, just call the location-based implementation.
 		Note that primary and/or secondary can be null, so you must check for this.
 	*/
-	virtual void doFXObj(const Object* primary, const Object* secondary = NULL) const;
+	virtual void doFXObj(const Object* primary, const Object* secondary = nullptr) const;
 
 private:
 
@@ -139,13 +139,13 @@ public:
 	}
 
 	/// inline convenience method to avoid having to check for null.
-	inline static void doFXPos(const FXList* fx, const Coord3D *primary, const Matrix3D* primaryMtx = NULL, const Real primarySpeed = 0.0f, const Coord3D *secondary = NULL, const Real overrideRadius = 0.0f)
+	inline static void doFXPos(const FXList* fx, const Coord3D *primary, const Matrix3D* primaryMtx = nullptr, const Real primarySpeed = 0.0f, const Coord3D *secondary = nullptr, const Real overrideRadius = 0.0f)
 	{
 		if (fx) fx->doFXPos(primary, primaryMtx, primarySpeed, secondary, overrideRadius);
 	}
 
 	/// inline convenience method to avoid having to check for null.
-	inline static void doFXObj(const FXList* fx, const Object* primary, const Object* secondary = NULL)
+	inline static void doFXObj(const FXList* fx, const Object* primary, const Object* secondary = nullptr)
 	{
 		if (fx)
 		{
@@ -166,13 +166,13 @@ protected:
 		The main guts of the system: actually perform the sound and/or video effects
 		needed. Note that primary and/or secondary can be null, so you must check for this.
 	*/
-	void doFXPos(const Coord3D *primary, const Matrix3D* primaryMtx = NULL, const Real primarySpeed = 0.0f, const Coord3D *secondary = NULL, const Real overrideRadius = 0.0f) const;
+	void doFXPos(const Coord3D *primary, const Matrix3D* primaryMtx = nullptr, const Real primarySpeed = 0.0f, const Coord3D *secondary = nullptr, const Real overrideRadius = 0.0f) const;
 
 	/**
 		the object-based version... by default, just call the location-based implementation.
 		Note that primary and/or secondary can be null, so you must check for this.
 	*/
-	void doFXObj(const Object* primary, const Object* secondary = NULL) const;
+	void doFXObj(const Object* primary, const Object* secondary = nullptr) const;
 
 private:
 
@@ -200,7 +200,7 @@ public:
 
 	/**
 		return the FXList with the given namekey.
-		return NULL if no such FXList exists.
+		return nullptr if no such FXList exists.
 	*/
 	const FXList *findFXList( const char* name ) const;
 

@@ -36,7 +36,7 @@
 #include "GameClient/GameWindowManager.h"
 
 void ClearGSMessageBoxes( void );	///< Tear down any GS message boxes (e.g. in case we have a new one to put up)
-void GSMessageBoxOk(UnicodeString titleString,UnicodeString bodyString, GameWinMsgBoxFunc okFunc = NULL);	///< Display a Message box with Ok button and track it
+void GSMessageBoxOk(UnicodeString titleString,UnicodeString bodyString, GameWinMsgBoxFunc okFunc = nullptr);	///< Display a Message box with Ok button and track it
 void GSMessageBoxOkCancel(UnicodeString title, UnicodeString message, GameWinMsgBoxFunc okFunc, GameWinMsgBoxFunc cancelFunc);	///< Display a Message box with Ok/Cancel buttons and track it
 void GSMessageBoxYesNo(UnicodeString title, UnicodeString message, GameWinMsgBoxFunc yesFunc, GameWinMsgBoxFunc noFunc);	///< Display a Message box with Yes/No buttons and track it
 void RaiseGSMessageBox( void );		///< Bring GS message box to the foreground (if we transition screens while a message box is up)

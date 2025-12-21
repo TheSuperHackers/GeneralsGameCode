@@ -30,6 +30,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include <stdlib.h>
 #include <math.h>
+
 #include "Common/Thing.h"
 #include "Common/ThingFactory.h"
 #include "Common/GameAudio.h"
@@ -72,12 +73,12 @@ void W3DTankDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "TreadDebrisLeft", INI::parseAsciiString, NULL, offsetof(W3DTankDrawModuleData, m_treadDebrisNameLeft) },
-		{ "TreadDebrisRight", INI::parseAsciiString, NULL, offsetof(W3DTankDrawModuleData, m_treadDebrisNameRight) },
-		{ "TreadAnimationRate", INI::parseVelocityReal, NULL, offsetof(W3DTankDrawModuleData, m_treadAnimationRate) },
-		{ "TreadPivotSpeedFraction", INI::parseReal, NULL, offsetof(W3DTankDrawModuleData, m_treadPivotSpeedFraction) },
-		{ "TreadDriveSpeedFraction", INI::parseReal, NULL, offsetof(W3DTankDrawModuleData, m_treadDriveSpeedFraction) },
-		{ 0, 0, 0, 0 }
+		{ "TreadDebrisLeft", INI::parseAsciiString, nullptr, offsetof(W3DTankDrawModuleData, m_treadDebrisNameLeft) },
+		{ "TreadDebrisRight", INI::parseAsciiString, nullptr, offsetof(W3DTankDrawModuleData, m_treadDebrisNameRight) },
+		{ "TreadAnimationRate", INI::parseVelocityReal, nullptr, offsetof(W3DTankDrawModuleData, m_treadAnimationRate) },
+		{ "TreadPivotSpeedFraction", INI::parseReal, nullptr, offsetof(W3DTankDrawModuleData, m_treadPivotSpeedFraction) },
+		{ "TreadDriveSpeedFraction", INI::parseReal, nullptr, offsetof(W3DTankDrawModuleData, m_treadDriveSpeedFraction) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -85,13 +86,13 @@ void W3DTankDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DTankDraw::W3DTankDraw( Thing *thing, const ModuleData* moduleData )
-: W3DModelDraw( thing, moduleData ),m_prevRenderObj(NULL), m_treadDebrisLeft(NULL), m_treadDebrisRight(NULL)
+: W3DModelDraw( thing, moduleData ),m_prevRenderObj(nullptr), m_treadDebrisLeft(nullptr), m_treadDebrisRight(nullptr)
 {
-	m_treadDebrisLeft = NULL;
-	m_treadDebrisRight = NULL;
+	m_treadDebrisLeft = nullptr;
+	m_treadDebrisRight = nullptr;
 
 	for (Int i=0; i<MAX_TREADS_PER_TANK; i++)
-		m_treads[i].m_robj = NULL;
+		m_treads[i].m_robj = nullptr;
 
 	m_treadCount=0;
 	//Assume all things face along x axis when created.
@@ -108,15 +109,15 @@ void W3DTankDraw::tossEmitters( void )
 {
 	if (m_treadDebrisLeft)
 	{
-		m_treadDebrisLeft->attachToObject(NULL);
+		m_treadDebrisLeft->attachToObject(nullptr);
 		m_treadDebrisLeft->destroy();
-		m_treadDebrisLeft = NULL;
+		m_treadDebrisLeft = nullptr;
 	}
 	if (m_treadDebrisRight)
 	{
-		m_treadDebrisRight->attachToObject(NULL);
+		m_treadDebrisRight->attachToObject(nullptr);
 		m_treadDebrisRight->destroy();
-		m_treadDebrisRight = NULL;
+		m_treadDebrisRight = nullptr;
 	}
 }
 
@@ -261,7 +262,7 @@ void W3DTankDraw::updateTreadObjects(void)
 			const char *meshName;
 			//Check if subobject name starts with "TREADS".
 			if (subObj && subObj->Class_ID() == RenderObjClass::CLASSID_MESH && subObj->Get_Name()
-				&& ( (meshName=strchr(subObj->Get_Name(),'.') ) != 0 && *(meshName++))
+				&& ( (meshName=strchr(subObj->Get_Name(),'.') ) != nullptr && *(meshName++))
 				&&_strnicmp(meshName,"TREADS", 6) == 0)
 			{	//check if sub-object has the correct material to do texture scrolling.
 				MaterialInfoClass *mat=subObj->Get_Material_Info();
@@ -319,19 +320,19 @@ void W3DTankDraw::doDrawModule(const Matrix3D* transformMtx)
 
 	const Real DEBRIS_THRESHOLD = 0.00001f;
 
-	if (getRenderObject()==NULL) return;
+	if (getRenderObject()==nullptr) return;
 	if (getRenderObject() != m_prevRenderObj) {
 		updateTreadObjects();
 	}
 
 	// get object from logic
 	Object *obj = getDrawable()->getObject();
-	if (obj == NULL)
+	if (obj == nullptr)
 		return;
 
 	// get object physics state
 	PhysicsBehavior *physics = obj->getPhysics();
-	if (physics == NULL)
+	if (physics == nullptr)
 		return;
 
 	const Coord3D *vel = physics->getVelocity();

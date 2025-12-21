@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // BackgroundColorDialog.h : header file
 //
@@ -28,7 +29,7 @@ class CBackgroundColorDialog : public CDialog
 {
 // Construction
 public:
-	CBackgroundColorDialog(CWnd* pParent = NULL);   // standard constructor
+	CBackgroundColorDialog(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CBackgroundColorDialog)

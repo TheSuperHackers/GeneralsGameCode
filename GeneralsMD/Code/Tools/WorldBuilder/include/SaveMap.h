@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // SaveMap.h : header file
 //
@@ -36,7 +37,7 @@ class SaveMap : public CDialog
 {
 // Construction
 public:
-	SaveMap(TSaveMapInfo *pInfo, CWnd* pParent = NULL);   // standard constructor
+	SaveMap(TSaveMapInfo *pInfo, CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(SaveMap)

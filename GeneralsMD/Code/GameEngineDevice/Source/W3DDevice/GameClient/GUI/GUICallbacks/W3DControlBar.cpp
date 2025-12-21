@@ -26,6 +26,7 @@
 // Author: Colin Day
 // Desc: Control bar callbacks
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include "Common/GameUtility.h"
 #include "Common/GlobalData.h"
 #include "Common/Radar.h"
@@ -118,16 +119,16 @@ void W3DPowerDraw( GameWindow *window, WinInstanceData *instData )
 	//static const Image *endBarGreen = TheMappedImageCollection->findImageByName("PowerBarGreenEndR");
 	//static const Image *beginBarGreen = TheMappedImageCollection->findImageByName("PowerBarGreenEndL");
 	static const Image *centerBarGreen = TheMappedImageCollection->findImageByName("PowerPointG");
-	//const Image *endBar = NULL;
-	//const Image *beginBar = NULL;
-	const Image *centerBar = NULL;
+	//const Image *endBar = nullptr;
+	//const Image *beginBar = nullptr;
+	const Image *centerBar = nullptr;
 	static const Image *slider = TheMappedImageCollection->findImageByName("PowerBarSlider");
 	Player* player = TheControlBar->getCurrentlyViewedPlayer();
 
 	if(!player || !TheGlobalData)
 		return;
 	Energy *energy = player->getEnergy();
-	if( energy == NULL )
+	if( energy == nullptr )
 		return;
 
 	Int consumption = energy->getConsumption();
@@ -277,16 +278,16 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 	static const Image *endBarGreen = TheMappedImageCollection->findImageByName("PowerBarGreenEndR");
 	static const Image *beginBarGreen = TheMappedImageCollection->findImageByName("PowerBarGreenEndL");
 	static const Image *centerBarGreen = TheMappedImageCollection->findImageByName("PowerBarGreen");
-	const Image *endBar = NULL;
-	const Image *beginBar = NULL;
-	const Image *centerBar = NULL;
+	const Image *endBar = nullptr;
+	const Image *beginBar = nullptr;
+	const Image *centerBar = nullptr;
 	static const Image *slider = TheMappedImageCollection->findImageByName("PowerBarSlider");
 	Player* player = TheControlBar->getCurrentlyViewedPlayer();
 
 	if(!player || !TheGlobalData)
 		return;
 	Energy *energy = player->getEnergy();
-	if( energy == NULL )
+	if( energy == nullptr )
 		return;
 
 	Int consumption = energy->getConsumption();
@@ -600,7 +601,7 @@ void W3DCommandBarGenExpDraw( GameWindow *window, WinInstanceData *instData )
 
 void W3DCommandBarTopDraw( GameWindow *window, WinInstanceData *instData )
 {
-	GameWindow *win = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonGeneral"));
+	GameWindow *win = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonGeneral"));
 	if(!win || win->winIsHidden() || !ThePlayerList->getLocalPlayer()->isPlayerActive())
 		return;
 
@@ -625,12 +626,12 @@ void W3DCommandBarBackgroundDraw( GameWindow *window, WinInstanceData *instData 
 	if(!man)
 		return;
 	static NameKeyType winNamekey	= TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" );
-	GameWindow *win =  TheWindowManager->winGetWindowFromId(NULL,winNamekey);
+	GameWindow *win =  TheWindowManager->winGetWindowFromId(nullptr,winNamekey);
 	static ICoord2D basePos;
 	if(!win)
 	{
 		return;
-		//win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" ));
+		//win = TheWindowManager->winGetWindowFromId(nullptr,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" ));
 	}
 	TheControlBar->getBackgroundMarkerPos(&basePos.x, &basePos.y);
 	ICoord2D pos, offset;
@@ -650,12 +651,12 @@ void W3DCommandBarForegroundDraw( GameWindow *window, WinInstanceData *instData 
 		return;
 
 	static NameKeyType winNamekey	= TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" );
-	GameWindow *win = TheWindowManager->winGetWindowFromId(NULL,winNamekey);
+	GameWindow *win = TheWindowManager->winGetWindowFromId(nullptr,winNamekey);
 	static ICoord2D basePos;
 	if(!win)
 	{
 		return;
-		//win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" ));
+		//win = TheWindowManager->winGetWindowFromId(nullptr,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:BackgroundMarker" ));
 	}
 	TheControlBar->getForegroundMarkerPos(&basePos.x, &basePos.y);
 	ICoord2D pos, offset;

@@ -52,8 +52,8 @@ m_maxOutwardMovement(1.0f)
 	const Real START_ACCEL_PERCENT = 0.01f;
 	const Real VELOCITY_BOUNCE_PERCENT = 0.3f;			// multiply the velocity by this when you bounce
   const Real MINIMUM_TOPPLE_SPEED = 0.5f;         // Won't let trees fall slower than this
-	m_toppleFX = NULL;
-	m_bounceFX = NULL;
+	m_toppleFX = nullptr;
+	m_bounceFX = nullptr;
 	m_stumpName.clear();
 	m_killWhenToppled = true;
 	m_doTopple = false;
@@ -78,27 +78,27 @@ void W3DTreeDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
   ModuleData::buildFieldParse(p);
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "ModelName", INI::parseAsciiString, NULL, offsetof(W3DTreeDrawModuleData, m_modelName) },
-		{ "TextureName", INI::parseAsciiString, NULL, offsetof(W3DTreeDrawModuleData, m_textureName) },
-		{ "MoveOutwardTime", INI::parseDurationUnsignedInt, NULL, offsetof(W3DTreeDrawModuleData, m_framesToMoveOutward) },
-		{ "MoveInwardTime", INI::parseDurationUnsignedInt, NULL, offsetof(W3DTreeDrawModuleData, m_framesToMoveInward) },
-		{ "MoveOutwardDistanceFactor", INI::parseReal, NULL, offsetof(W3DTreeDrawModuleData, m_maxOutwardMovement) },
-		{ "DarkeningFactor", INI::parseReal, NULL, offsetof(W3DTreeDrawModuleData, m_darkening) },
+		{ "ModelName", INI::parseAsciiString, nullptr, offsetof(W3DTreeDrawModuleData, m_modelName) },
+		{ "TextureName", INI::parseAsciiString, nullptr, offsetof(W3DTreeDrawModuleData, m_textureName) },
+		{ "MoveOutwardTime", INI::parseDurationUnsignedInt, nullptr, offsetof(W3DTreeDrawModuleData, m_framesToMoveOutward) },
+		{ "MoveInwardTime", INI::parseDurationUnsignedInt, nullptr, offsetof(W3DTreeDrawModuleData, m_framesToMoveInward) },
+		{ "MoveOutwardDistanceFactor", INI::parseReal, nullptr, offsetof(W3DTreeDrawModuleData, m_maxOutwardMovement) },
+		{ "DarkeningFactor", INI::parseReal, nullptr, offsetof(W3DTreeDrawModuleData, m_darkening) },
 
 // Topple parameters [7/7/2003]
-		{ "ToppleFX",	INI::parseFXList, NULL, offsetof( W3DTreeDrawModuleData, m_toppleFX ) },
-		{ "BounceFX",	INI::parseFXList, NULL, offsetof( W3DTreeDrawModuleData, m_bounceFX ) },
-		{ "StumpName",	INI::parseAsciiString, NULL, offsetof( W3DTreeDrawModuleData, m_stumpName ) },
-		{ "KillWhenFinishedToppling",	INI::parseBool, NULL, offsetof( W3DTreeDrawModuleData, m_killWhenToppled ) },
-		{ "DoTopple",	INI::parseBool, NULL, offsetof( W3DTreeDrawModuleData, m_doTopple ) },
-		{ "InitialVelocityPercent",	INI::parsePercentToReal, NULL, offsetof( W3DTreeDrawModuleData, m_initialVelocityPercent ) },
-		{ "InitialAccelPercent",	INI::parsePercentToReal, NULL, offsetof( W3DTreeDrawModuleData, m_initialAccelPercent ) },
-		{ "BounceVelocityPercent",	INI::parsePercentToReal, NULL, offsetof( W3DTreeDrawModuleData, m_bounceVelocityPercent ) },
-    { "MinimumToppleSpeed",	INI::parsePositiveNonZeroReal, NULL, offsetof( W3DTreeDrawModuleData, m_minimumToppleSpeed ) },
-    { "SinkDistance",	INI::parsePositiveNonZeroReal, NULL, offsetof( W3DTreeDrawModuleData, m_sinkDistance ) },
-		{ "SinkTime", INI::parseDurationUnsignedInt, NULL, offsetof(W3DTreeDrawModuleData, m_sinkFrames) },
-		{ "DoShadow",	INI::parseBool, NULL, offsetof( W3DTreeDrawModuleData, m_doShadow ) },
-		{ 0, 0, 0, 0 }
+		{ "ToppleFX",	INI::parseFXList, nullptr, offsetof( W3DTreeDrawModuleData, m_toppleFX ) },
+		{ "BounceFX",	INI::parseFXList, nullptr, offsetof( W3DTreeDrawModuleData, m_bounceFX ) },
+		{ "StumpName",	INI::parseAsciiString, nullptr, offsetof( W3DTreeDrawModuleData, m_stumpName ) },
+		{ "KillWhenFinishedToppling",	INI::parseBool, nullptr, offsetof( W3DTreeDrawModuleData, m_killWhenToppled ) },
+		{ "DoTopple",	INI::parseBool, nullptr, offsetof( W3DTreeDrawModuleData, m_doTopple ) },
+		{ "InitialVelocityPercent",	INI::parsePercentToReal, nullptr, offsetof( W3DTreeDrawModuleData, m_initialVelocityPercent ) },
+		{ "InitialAccelPercent",	INI::parsePercentToReal, nullptr, offsetof( W3DTreeDrawModuleData, m_initialAccelPercent ) },
+		{ "BounceVelocityPercent",	INI::parsePercentToReal, nullptr, offsetof( W3DTreeDrawModuleData, m_bounceVelocityPercent ) },
+    { "MinimumToppleSpeed",	INI::parsePositiveNonZeroReal, nullptr, offsetof( W3DTreeDrawModuleData, m_minimumToppleSpeed ) },
+    { "SinkDistance",	INI::parsePositiveNonZeroReal, nullptr, offsetof( W3DTreeDrawModuleData, m_sinkDistance ) },
+		{ "SinkTime", INI::parseDurationUnsignedInt, nullptr, offsetof(W3DTreeDrawModuleData, m_sinkFrames) },
+		{ "DoShadow",	INI::parseBool, nullptr, offsetof( W3DTreeDrawModuleData, m_doShadow ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }

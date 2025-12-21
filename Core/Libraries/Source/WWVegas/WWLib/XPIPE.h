@@ -35,6 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include "BUFF.h"
 #include "PIPE.h"
@@ -81,7 +82,7 @@ class FilePipe : public Pipe
 		FileClass * File;
 		bool HasOpened;
 
-		bool Valid_File(void) {return(File != NULL);}
+		bool Valid_File(void) {return(File != nullptr);}
 		FilePipe(FilePipe & rvalue);
 		FilePipe & operator = (FilePipe const & pipe);
 

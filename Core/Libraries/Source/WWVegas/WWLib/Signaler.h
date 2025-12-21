@@ -38,6 +38,7 @@
 ******************************************************************************/
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 template<typename T> class Signaler
 	{
@@ -55,11 +56,11 @@ template<typename T> class Signaler
 			{}
 
 		virtual void SignalDropped(Signaler<T>& signaler)
-			{mConnection = NULL;}
+			{mConnection = nullptr;}
 
 	protected:
 		Signaler() :
-				mConnection(NULL)
+				mConnection()
 			{}
 
 		virtual ~Signaler()
@@ -69,7 +70,7 @@ template<typename T> class Signaler
 			{mConnection = &source;}
 
 		void Disconnect(void)
-			{if (mConnection) {mConnection->SignalDropped(*this);} mConnection = NULL;}
+			{if (mConnection) {mConnection->SignalDropped(*this);} mConnection = nullptr;}
 
 		// Prevent copy and assignment
 		Signaler(const Signaler&);

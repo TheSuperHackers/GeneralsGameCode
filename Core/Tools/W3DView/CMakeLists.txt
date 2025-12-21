@@ -170,6 +170,10 @@ add_library(corei_w3dview INTERFACE)
 
 target_sources(corei_w3dview INTERFACE ${W3DVIEW_SRC})
 
+target_link_libraries(corei_w3dview INTERFACE
+    core_utility
+)
+
 target_precompile_headers(corei_w3dview INTERFACE
     "StdAfx.h"
     [["always.h"]]

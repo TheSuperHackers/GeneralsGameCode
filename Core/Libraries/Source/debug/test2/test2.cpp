@@ -54,7 +54,7 @@ public:
     if (strcmp(cmd,"box") != 0)
       return false;
 
-    MessageBox(NULL,"Hello world!","Command",MB_OK);
+    MessageBox(nullptr,"Hello world!","Command",MB_OK);
     return true;
   }
 
@@ -89,7 +89,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
   Debug::Command("debug.io ; send via EXE, try test.box!");
 
 	// Main message loop:
-	while (GetMessage(&msg, NULL, 0, 0))
+	while (GetMessage(&msg, nullptr, 0, 0))
 	{
 		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 		{
@@ -128,7 +128,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.cbWndExtra		= 0;
 	wcex.hInstance		= hInstance;
 	wcex.hIcon			= LoadIcon(hInstance, (LPCTSTR)IDI_TEST2);
-	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
+	wcex.hCursor		= LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
 	wcex.lpszMenuName	= (LPCSTR)IDC_TEST2;
 	wcex.lpszClassName	= szWindowClass;
@@ -154,7 +154,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // Store instance handle in our global variable
 
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
+      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -162,7 +162,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    }
 
    // create a timer for calling Debug::Update
-   SetTimer(hWnd,1,100,NULL);
+   SetTimer(hWnd,1,100,nullptr);
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);

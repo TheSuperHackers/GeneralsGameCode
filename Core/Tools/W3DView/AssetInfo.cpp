@@ -57,11 +57,11 @@ AssetInfoClass::Initialize (void)
 			prender_obj->Add_Ref();
 
 		// If we are wrapping an asset name, then create an instance of it.
-		if (prender_obj == NULL) {
+		if (prender_obj == nullptr) {
 			prender_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj (m_Name);
 		}
 
-		if (prender_obj != NULL) {
+		if (prender_obj != nullptr) {
 
 			// Get the hierarchy tree for this object (if one exists)
 			const HTreeClass *phtree = prender_obj->Get_HTree ();

@@ -51,7 +51,7 @@
 //-------------------------------------------------------------------------------------------------
 PointDefenseLaserUpdateModuleData::PointDefenseLaserUpdateModuleData()
 {
-	m_weaponTemplate		= NULL;
+	m_weaponTemplate		= nullptr;
 	m_scanFrames				= 0;
 	m_scanRange					= 0.0f;
 	m_velocityFactor		= 0.0f;
@@ -64,13 +64,13 @@ PointDefenseLaserUpdateModuleData::PointDefenseLaserUpdateModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "WeaponTemplate",				INI::parseWeaponTemplate,				NULL, offsetof( PointDefenseLaserUpdateModuleData, m_weaponTemplate ) },
-		{ "PrimaryTargetTypes",		KindOfMaskType::parseFromINI,								NULL, offsetof( PointDefenseLaserUpdateModuleData, m_primaryTargetKindOf ) },
-		{ "SecondaryTargetTypes",	KindOfMaskType::parseFromINI,								NULL, offsetof( PointDefenseLaserUpdateModuleData, m_secondaryTargetKindOf ) },
-		{ "ScanRate",							INI::parseDurationUnsignedInt,	NULL, offsetof( PointDefenseLaserUpdateModuleData, m_scanFrames ) },
-		{ "ScanRange",						INI::parseReal,									NULL, offsetof( PointDefenseLaserUpdateModuleData, m_scanRange ) },
-		{ "PredictTargetVelocityFactor", INI::parseReal,					NULL, offsetof( PointDefenseLaserUpdateModuleData, m_velocityFactor ) },
-		{ 0, 0, 0, 0 }
+		{ "WeaponTemplate",				INI::parseWeaponTemplate,				nullptr, offsetof( PointDefenseLaserUpdateModuleData, m_weaponTemplate ) },
+		{ "PrimaryTargetTypes",		KindOfMaskType::parseFromINI,								nullptr, offsetof( PointDefenseLaserUpdateModuleData, m_primaryTargetKindOf ) },
+		{ "SecondaryTargetTypes",	KindOfMaskType::parseFromINI,								nullptr, offsetof( PointDefenseLaserUpdateModuleData, m_secondaryTargetKindOf ) },
+		{ "ScanRate",							INI::parseDurationUnsignedInt,	nullptr, offsetof( PointDefenseLaserUpdateModuleData, m_scanFrames ) },
+		{ "ScanRange",						INI::parseReal,									nullptr, offsetof( PointDefenseLaserUpdateModuleData, m_scanRange ) },
+		{ "PredictTargetVelocityFactor", INI::parseReal,					nullptr, offsetof( PointDefenseLaserUpdateModuleData, m_velocityFactor ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
@@ -185,7 +185,7 @@ void PointDefenseLaserUpdate::fireWhenReady()
 				{
 					scanClosestTarget();
 					m_nextScanFrames = data->m_scanFrames;
-					target = NULL; //Set target to NULL so we don't shoot at it (might be out of range)
+					target = nullptr; //Set target to nullptr so we don't shoot at it (might be out of range)
 				}
 			}
 			else
@@ -242,8 +242,8 @@ Object* PointDefenseLaserUpdate::scanClosestTarget()
 {
 	const PointDefenseLaserUpdateModuleData *data = getPointDefenseLaserUpdateModuleData();
 	Object *me = getObject();
-	Object *bestTargetOutOfRange[2] = { NULL, NULL };
-	Object *bestTargetInRange[2] = { NULL, NULL };
+	Object *bestTargetOutOfRange[2] = { nullptr, nullptr };
+	Object *bestTargetInRange[2] = { nullptr, nullptr };
 	Real closestDist[2];
 	Real closestOutsideRange[2];
 	Int index;
@@ -360,7 +360,7 @@ Object* PointDefenseLaserUpdate::scanClosestTarget()
 	//Utter failure -- nothing on the scope.
 	m_bestTargetID = INVALID_ID;
 	m_inRange = false;
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------

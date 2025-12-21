@@ -62,7 +62,7 @@ public:
 	SupplyWarehouseDockUpdate( Thing *thing, const ModuleData* moduleData );
 
 	virtual void setDockCrippled( Bool setting ); ///< Game Logic can set me as inoperative.  I get to decide what that means.
-	virtual Bool action( Object* docker, Object *drone = NULL );	///<For me, this means identifying who is docking and either taking Boxes away or giving them
+	virtual Bool action( Object* docker, Object *drone = nullptr );	///<For me, this means identifying who is docking and either taking Boxes away or giving them
 
 	Int getBoxesStored() const { return m_boxesStored; }
 

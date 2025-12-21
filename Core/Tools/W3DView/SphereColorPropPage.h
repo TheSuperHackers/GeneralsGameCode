@@ -36,7 +36,7 @@ class SphereColorPropPageClass : public CPropertyPage
 
 // Construction
 public:
-	SphereColorPropPageClass (SphereRenderObjClass *sphere = NULL);
+	SphereColorPropPageClass (SphereRenderObjClass *sphere = nullptr);
 	~SphereColorPropPageClass ();
 
 // Dialog Data

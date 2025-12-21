@@ -42,20 +42,20 @@ const char* NEUTRAL_TEAM_INTERNAL_STR = "team";
 /////////////////////////////////////////////////////////////////////////////
 // MapObjectProps dialog
 
-/*static*/ MapObjectProps *MapObjectProps::TheMapObjectProps = NULL;
+/*static*/ MapObjectProps *MapObjectProps::TheMapObjectProps = nullptr;
 
 void MapObjectProps::makeMain()
 {
-	DEBUG_ASSERTCRASH(TheMapObjectProps == NULL, ("already have a main props"));
-	if (TheMapObjectProps == NULL)
+	DEBUG_ASSERTCRASH(TheMapObjectProps == nullptr, ("already have a main props"));
+	if (TheMapObjectProps == nullptr)
 		TheMapObjectProps = this;
 }
 
-MapObjectProps::MapObjectProps(Dict* dictToEdit, const char* title, CWnd* pParent /*=NULL*/) :
+MapObjectProps::MapObjectProps(Dict* dictToEdit, const char* title, CWnd* pParent /*=nullptr*/) :
 	COptionsPanel(MapObjectProps::IDD, pParent),
 	m_dictToEdit(dictToEdit),
 	m_title(title),
-	m_selectedObject(NULL)
+	m_selectedObject(nullptr)
 {
 	//{{AFX_DATA_INIT(MapObjectProps)
 		// NOTE: the ClassWizard will add member initialization here
@@ -65,7 +65,7 @@ MapObjectProps::MapObjectProps(Dict* dictToEdit, const char* title, CWnd* pParen
 MapObjectProps::~MapObjectProps()
 {
 	if (TheMapObjectProps == this)
-		TheMapObjectProps = NULL;
+		TheMapObjectProps = nullptr;
 }
 
 void MapObjectProps::DoDataExchange(CDataExchange* pDX)
@@ -176,7 +176,7 @@ BOOL MapObjectProps::OnInitDialog()
 
 	m_heightSlider.SetupPopSliderButton(this, IDC_HEIGHT_POPUP, this);
 	m_angleSlider.SetupPopSliderButton(this, IDC_ANGLE_POPUP, this);
-	m_posUndoable = NULL;
+	m_posUndoable = nullptr;
 	m_angle = 0;
 	m_height = 0;
 
@@ -205,7 +205,7 @@ void MapObjectProps::updateTheUI(void)
 			continue;
 		}
 
-		m_dictToEdit = pMapObj ? pMapObj->getProperties() : NULL;
+		m_dictToEdit = pMapObj ? pMapObj->getProperties() : nullptr;
 
 		_DictToTeam();
 		_DictToName();
@@ -238,7 +238,7 @@ void MapObjectProps::updateTheUI(void)
 /*static*/ MapObject *MapObjectProps::getSingleSelectedMapObject(void)
 {
 	MapObject *pMapObj;
-	MapObject *theMapObj = NULL;
+	MapObject *theMapObj = nullptr;
 //	Bool found = false;
 	Int selCount=0;
 	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
@@ -253,7 +253,7 @@ void MapObjectProps::updateTheUI(void)
 	if (selCount==1 && theMapObj) {
 		return theMapObj;
 	}
-	return(NULL);
+	return(nullptr);
 }
 
 void MapObjectProps::OnEditprop()
@@ -717,13 +717,13 @@ void MapObjectProps::_DictToPrebuiltUpgrades(void)
 		return;
 	}
 
-	if (m_selectedObject == NULL) {
+	if (m_selectedObject == nullptr) {
 		return;
 	}
 
 	// Otherwise, fill it with the upgrades available for this unit
 	const ThingTemplate *tt = m_selectedObject->getThingTemplate();
-	if (tt == NULL) {
+	if (tt == nullptr) {
 		// This is valid. For instance, Scorch marks do not have thing templates.
 		return;
 	}
@@ -1345,7 +1345,7 @@ void MapObjectProps::getAllSelectedDicts(void)
 Dict** MapObjectProps::getAllSelectedDictsData()
 {
 #if defined(USING_STLPORT) || __cplusplus < 201103L
-	return !m_allSelectedDicts.empty() ? &m_allSelectedDicts.front() : NULL;
+	return !m_allSelectedDicts.empty() ? &m_allSelectedDicts.front() : nullptr;
 #else
 	return m_allSelectedDicts.data();
 #endif
@@ -1419,7 +1419,7 @@ void MapObjectProps::PopSliderFinished(const long sliderID, long theVal)
 		case IDC_HEIGHT_POPUP:
 		case IDC_ANGLE_POPUP:
 			REF_PTR_RELEASE(m_posUndoable); // belongs to pDoc now.
-			m_posUndoable = NULL;
+			m_posUndoable = nullptr;
 			break;
 
 		default:

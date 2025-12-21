@@ -132,7 +132,7 @@ static const char *const TheDamageNames[] =
 	"COMANCHE_VULCAN",
 	"FLESHY_SNIPER",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheDamageNames) == DAMAGE_NUM_TYPES + 1, "Incorrect array size");
 #endif // end DEFINE_DAMAGE_NAMES
@@ -222,7 +222,7 @@ static const char *const TheDeathNames[] =
 	"EXTRA_7",
 	"EXTRA_8",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheDeathNames) == DEATH_NUM_TYPES + 1, "Incorrect array size");
 #endif // end DEFINE_DEATH_NAMES

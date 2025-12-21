@@ -111,7 +111,7 @@ void QueueProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDoorType 
 		PhysicsBehavior *newObjectPhysics = newObj->getPhysics();
 		PhysicsBehavior *myPhysics = creationObject->getPhysics();
 
-		if( (myPhysics != NULL) && creationInAir && (newObjectPhysics != NULL) )
+		if( (myPhysics != nullptr) && creationInAir && (newObjectPhysics != nullptr) )
 		{
 			Coord3D startingForce = *myPhysics->getVelocity();
 			startingForce.x *= newObjectPhysics->getMass();

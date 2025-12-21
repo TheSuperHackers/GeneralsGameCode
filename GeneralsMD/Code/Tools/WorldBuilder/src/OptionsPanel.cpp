@@ -28,7 +28,7 @@
 // COptionsPanel dialog
 
 
-COptionsPanel::COptionsPanel(Int dlgid /*=0*/, CWnd* pParent /*=NULL*/)
+COptionsPanel::COptionsPanel(Int dlgid /*=0*/, CWnd* pParent /*=nullptr*/)
 	: CDialog(dlgid ? dlgid : COptionsPanel::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(COptionsPanel)

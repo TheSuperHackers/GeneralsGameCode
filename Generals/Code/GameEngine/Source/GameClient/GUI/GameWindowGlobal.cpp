@@ -133,7 +133,7 @@ const Image *GameWindowManager::winFindImage( const char *name )
 	if( TheMappedImageCollection )
 		return TheMappedImageCollection->findImageByName( name );
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -185,7 +185,7 @@ void GameWindowManager::winGetTextSize( GameFont *font, UnicodeString text,
 Int GameWindowManager::winFontHeight( GameFont *font )
 {
 
-	if (font == NULL)
+	if (font == nullptr)
 		return 0;
 
 	return font->height;
@@ -234,7 +234,7 @@ GameFont *GameWindowManager::winFindFont( AsciiString fontName,
 	if( TheFontLibrary )
 		return TheFontLibrary->getFont( fontName, pointSize, bold );
 
-	return NULL;
+	return nullptr;
 
 }
 

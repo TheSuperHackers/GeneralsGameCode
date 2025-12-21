@@ -19,6 +19,7 @@
 //
 // If you link with this it will automatically call the COM initialization stuff
 //
+#include <Utility/CppMacros.h>
 #include "COMINIT.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -30,10 +31,10 @@ namespace patchget
 
 ComInit::ComInit()
 {
-  HRESULT hRes = CoInitialize(NULL);
+  HRESULT hRes = CoInitialize(nullptr);
   if (SUCCEEDED(hRes)==FALSE)
   {
-    MessageBox(NULL,"Can't initialize COM?!?!","Error:",MB_OK);
+    MessageBox(nullptr,"Can't initialize COM?!?!","Error:",MB_OK);
     exit(0);
   }
 }

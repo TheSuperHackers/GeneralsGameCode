@@ -52,4 +52,4 @@ DrawGroupInfo::DrawGroupInfo()
 	m_usingPixelOffsetY = TRUE;
 }
 
-DrawGroupInfo *TheDrawGroupInfo = NULL;
+DrawGroupInfo *TheDrawGroupInfo = nullptr;

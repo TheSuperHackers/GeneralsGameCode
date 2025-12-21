@@ -34,7 +34,7 @@ private:
 
 // Construction
 public:
-	AddPlayerDialog(AsciiString side, CWnd* pParent = NULL);   // standard constructor
+	AddPlayerDialog(AsciiString side, CWnd* pParent = nullptr);   // standard constructor
 
 	AsciiString getAddedSide() { return m_addedSide; }
 

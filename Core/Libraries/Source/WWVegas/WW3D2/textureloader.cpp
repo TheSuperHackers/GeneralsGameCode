@@ -80,7 +80,7 @@ TextureLoadTaskListClass::TextureLoadTaskListClass(void)
 void TextureLoadTaskListClass::Push_Front	(TextureLoadTaskClass *task)
 {
 	// task should non-null and not on any list
-	WWASSERT(task != NULL && task->Next == NULL && task->Prev == NULL);
+	WWASSERT(task != nullptr && task->Next == nullptr && task->Prev == nullptr);
 
 	// update inserted task to point to list
 	task->Next			= Root.Next;
@@ -95,7 +95,7 @@ void TextureLoadTaskListClass::Push_Front	(TextureLoadTaskClass *task)
 void TextureLoadTaskListClass::Push_Back(TextureLoadTaskClass *task)
 {
 	// task should be non-null and not on any list
-	WWASSERT(task != NULL && task->Next == NULL && task->Prev == NULL);
+	WWASSERT(task != nullptr && task->Next == nullptr && task->Prev == nullptr);
 
 	// update inserted task to point to list
 	task->Next			= &Root;
@@ -111,7 +111,7 @@ TextureLoadTaskClass *TextureLoadTaskListClass::Pop_Front(void)
 {
 	// exit early if list is empty
 	if (Is_Empty()) {
-		return 0;
+		return nullptr;
 	}
 
 	// otherwise, grab first task and remove it.
@@ -125,7 +125,7 @@ TextureLoadTaskClass *TextureLoadTaskListClass::Pop_Back(void)
 {
 	// exit early if list is empty
 	if (Is_Empty()) {
-		return 0;
+		return nullptr;
 	}
 
 	// otherwise, grab last task and remove it.
@@ -146,9 +146,9 @@ void TextureLoadTaskListClass::Remove(TextureLoadTaskClass *task)
 	task->Next->Prev = task->Prev;
 
 	// update task to no longer point at list
-	task->Prev	= 0;
-	task->Next	= 0;
-	task->List	= 0;
+	task->Prev	= nullptr;
+	task->Next	= nullptr;
+	task->List	= nullptr;
 }
 
 
@@ -180,7 +180,7 @@ TextureLoadTaskClass *SynchronizedTextureLoadTaskListClass::Pop_Front(void)
 {
 	// this duplicates code inside base class, but saves us an unnecessary lock.
 	if (Is_Empty()) {
-		return 0;
+		return nullptr;
 	}
 
 	FastCriticalSectionClass::LockClass lock(CriticalSection);
@@ -192,7 +192,7 @@ TextureLoadTaskClass *SynchronizedTextureLoadTaskListClass::Pop_Back(void)
 {
 	// this duplicates code inside base class, but saves us an unnecessary lock.
 	if (Is_Empty()) {
-		return 0;
+		return nullptr;
 	}
 
 	FastCriticalSectionClass::LockClass lock(CriticalSection);
@@ -249,8 +249,8 @@ IDirect3DTexture8* Load_Compressed_Texture(
 	// If DDS file isn't available, use TGA file to convert to DDS.
 
 	DDSFileClass dds_file(filename,reduction_factor);
-	if (!dds_file.Is_Available()) return NULL;
-	if (!dds_file.Load()) return NULL;
+	if (!dds_file.Is_Available()) return nullptr;
+	if (!dds_file.Load()) return nullptr;
 
 	unsigned width=dds_file.Get_Width(0);
 	unsigned height=dds_file.Get_Height(0);
@@ -269,7 +269,7 @@ IDirect3DTexture8* Load_Compressed_Texture(
 	);
 
 	for (unsigned level=0;level<mips;++level) {
-		IDirect3DSurface8* d3d_surface=NULL;
+		IDirect3DSurface8* d3d_surface=nullptr;
 		WWASSERT(d3d_texture);
 		DX8_ErrorCode(d3d_texture->GetSurfaceLevel(level/*-reduction_factor*/,&d3d_surface));
 		dds_file.Copy_Level_To_Surface(level,d3d_surface);
@@ -415,7 +415,7 @@ IDirect3DTexture8* TextureLoader::Load_Thumbnail(const StringClass& filename, co
 {
 	WWASSERT(Is_DX8_Thread());
 
-	ThumbnailClass* thumb=NULL;
+	ThumbnailClass* thumb=nullptr;
 	thumb=ThumbnailManagerClass::Peek_Thumbnail_Instance_From_Any_Manager(filename);
 
 	// If no thumb is found return a missing texture
@@ -456,7 +456,7 @@ IDirect3DTexture8* TextureLoader::Load_Thumbnail(const StringClass& filename, co
 			sysmem_texture->LockRect(
 				level,
 				&locked_rects[level],
-				NULL,
+				nullptr,
 				0));
 	}
 
@@ -529,7 +529,7 @@ IDirect3DSurface8* TextureLoader::Load_Surface_Immediate(
 	if (compressed) {
 		IDirect3DTexture8* comp_tex=Load_Compressed_Texture(filename,0,MIP_LEVELS_1,WW3D_FORMAT_UNKNOWN);
 		if (comp_tex) {
-			IDirect3DSurface8* d3d_surface=NULL;
+			IDirect3DSurface8* d3d_surface=nullptr;
 			DX8_ErrorCode(comp_tex->GetSurfaceLevel(0,&d3d_surface));
 			comp_tex->Release();
 			return d3d_surface;
@@ -566,7 +566,7 @@ IDirect3DSurface8* TextureLoader::Load_Surface_Immediate(
 	unsigned char* src_surface=(unsigned char*)targa.GetImage();
 
 	// No paletted destination format allowed
-	unsigned char* converted_surface=NULL;
+	unsigned char* converted_surface=nullptr;
 	if (src_format==WW3D_FORMAT_A1R5G5B5 || src_format==WW3D_FORMAT_R5G6B5 || src_format==WW3D_FORMAT_A4R4G4B4 ||
 		src_format==WW3D_FORMAT_P8 || src_format==WW3D_FORMAT_L8 || src_width!=width || src_height!=height) {
 		converted_surface=W3DNEWARRAY unsigned char[width*height*4];
@@ -600,7 +600,7 @@ IDirect3DSurface8* TextureLoader::Load_Surface_Immediate(
 	DX8_ErrorCode(
 		d3d_surface->LockRect(
 			&locked_rect,
-			NULL,
+			nullptr,
 			0));
 
 	BitmapHandlerClass::Copy_Image(
@@ -963,7 +963,7 @@ void TextureLoader::Load_Thumbnail(TextureBaseClass *tc)
 
 	// release our reference to thumbnail texture
 	d3d_texture->Release();
-	d3d_texture = 0;
+	d3d_texture = nullptr;
 }
 
 
@@ -1003,8 +1003,8 @@ void LoaderThreadClass::Thread_Function(void)
 ////////////////////////////////////////////////////////////////////////////////
 
 TextureLoadTaskClass::TextureLoadTaskClass()
-:	Texture			(0),
-	D3DTexture		(0),
+:	Texture			(nullptr),
+	D3DTexture		(nullptr),
 	Format			(WW3D_FORMAT_UNKNOWN),
 	Width				(0),
 	Height			(0),
@@ -1020,7 +1020,7 @@ TextureLoadTaskClass::TextureLoadTaskClass()
 	// is done by Init() and Deinit().
 
 	for (int i = 0; i < MIP_LEVELS_MAX; ++i) {
-		LockedSurfacePtr[i]		= NULL;
+		LockedSurfacePtr[i]		= nullptr;
 		LockedSurfacePitch[i]	= 0;
 	}
 }
@@ -1038,7 +1038,7 @@ TextureLoadTaskClass *TextureLoadTaskClass::Create(TextureBaseClass *tc, TaskTyp
 	// and priority, then associate the texture with the task.
 
 	// pull a load task from front of free list
-	TextureLoadTaskClass *task = NULL;
+	TextureLoadTaskClass *task = nullptr;
 	switch (tc->Get_Asset_Type())
 	{
 		case TextureBaseClass::TEX_REGULAR : task=_TexLoadFreeList.Pop_Front(); break;
@@ -1101,7 +1101,7 @@ void TextureLoadTaskClass::Init(TextureBaseClass* tc, TaskType type, PriorityTyp
 	Priority			= priority;
 	State				= STATE_NONE;
 
-	D3DTexture		= 0;
+	D3DTexture		= nullptr;
 
 	TextureClass* tex=Texture->As_TextureClass();
 
@@ -1123,19 +1123,19 @@ void TextureLoadTaskClass::Init(TextureBaseClass* tc, TaskType type, PriorityTyp
 
 	for (int i = 0; i < MIP_LEVELS_MAX; ++i)
 	{
-		LockedSurfacePtr[i]		= NULL;
+		LockedSurfacePtr[i]		= nullptr;
 		LockedSurfacePitch[i]	= 0;
 	}
 
 	switch (Type)
 	{
 		case TASK_THUMBNAIL:
-			WWASSERT(Texture->ThumbnailLoadTask == NULL);
+			WWASSERT(Texture->ThumbnailLoadTask == nullptr);
 			Texture->ThumbnailLoadTask = this;
 			break;
 
 		case TASK_LOAD:
-			WWASSERT(Texture->TextureLoadTask == NULL);
+			WWASSERT(Texture->TextureLoadTask == nullptr);
 			Texture->TextureLoadTask = this;
 			break;
 	}
@@ -1145,25 +1145,25 @@ void TextureLoadTaskClass::Init(TextureBaseClass* tc, TaskType type, PriorityTyp
 void TextureLoadTaskClass::Deinit()
 {
 	// task should not be on any list when it is being detached from texture.
-	WWASSERT(Next == NULL);
-	WWASSERT(Prev == NULL);
+	WWASSERT(Next == nullptr);
+	WWASSERT(Prev == nullptr);
 
-	WWASSERT(D3DTexture == NULL);
+	WWASSERT(D3DTexture == nullptr);
 
 	for (int i = 0; i < MIP_LEVELS_MAX; ++i) {
-		WWASSERT(LockedSurfacePtr[i] == NULL);
+		WWASSERT(LockedSurfacePtr[i] == nullptr);
 	}
 
 	if (Texture) {
 		switch (Type) {
 			case TASK_THUMBNAIL:
 				WWASSERT(Texture->ThumbnailLoadTask == this);
-				Texture->ThumbnailLoadTask = NULL;
+				Texture->ThumbnailLoadTask = nullptr;
 				break;
 
 			case TASK_LOAD:
 				WWASSERT(Texture->TextureLoadTask == this);
-				Texture->TextureLoadTask = NULL;
+				Texture->TextureLoadTask = nullptr;
 				break;
 		}
 
@@ -1287,13 +1287,13 @@ void TextureLoadTaskClass::Apply(bool initialize)
 
 	// Verify that none of the mip levels are locked
 	for (unsigned i=0;i<MipLevelCount;++i) {
-		WWASSERT(LockedSurfacePtr[i]==NULL);
+		WWASSERT(LockedSurfacePtr[i]==nullptr);
 	}
 
 	Texture->Apply_New_Surface(D3DTexture, initialize);
 
 	D3DTexture->Release();
-	D3DTexture = NULL;
+	D3DTexture = nullptr;
 }
 
 static bool	Get_Texture_Information
@@ -1786,7 +1786,7 @@ void TextureLoadTaskClass::Lock_Surfaces(void)
 			(
 				i,
 				&locked_rect,
-				NULL,
+				nullptr,
 				0
 			)
 		);
@@ -1805,7 +1805,7 @@ void TextureLoadTaskClass::Unlock_Surfaces(void)
 			WWASSERT(ThreadClass::_Get_Current_Thread_ID() == DX8Wrapper::_Get_Main_Thread_ID());
 			DX8_ErrorCode(Peek_D3D_Texture()->UnlockRect(i));
 		}
-		LockedSurfacePtr[i] = NULL;
+		LockedSurfacePtr[i] = nullptr;
 	}
 
 #ifndef USE_MANAGED_TEXTURES
@@ -1899,7 +1899,7 @@ bool TextureLoadTaskClass::Load_Uncompressed_Mipmap(void)
 	}
 
 	unsigned char * src_surface			= (unsigned char*)targa.GetImage();
-	unsigned char * converted_surface	= NULL;
+	unsigned char * converted_surface	= nullptr;
 
 	// No paletted format allowed when generating mipmaps
 	Vector3 hsv_shift=HSVShift;
@@ -1956,7 +1956,7 @@ bool TextureLoadTaskClass::Load_Uncompressed_Mipmap(void)
 			src_height,
 			src_pitch,
 			src_format,
-			NULL,
+			nullptr,
 			0,
 			true,
 			hsv_shift);
@@ -1982,7 +1982,7 @@ bool TextureLoadTaskClass::Load_Uncompressed_Mipmap(void)
 			src_height,
 			src_pitch,
 			src_format,
-			NULL,
+			nullptr,
 			0,
 			true,
 			hsv_shift);
@@ -2042,7 +2042,7 @@ CubeTextureLoadTaskClass::CubeTextureLoadTaskClass()
 	{
 		for (int i = 0; i < MIP_LEVELS_MAX; ++i)
 		{
-			LockedCubeSurfacePtr[f][i]		= NULL;
+			LockedCubeSurfacePtr[f][i]		= nullptr;
 			LockedCubeSurfacePitch[f][i]	= 0;
 		}
 	}
@@ -2071,7 +2071,7 @@ void CubeTextureLoadTaskClass::Init(TextureBaseClass* tc, TaskType type, Priorit
 	Priority			= priority;
 	State				= STATE_NONE;
 
-	D3DTexture		= 0;
+	D3DTexture		= nullptr;
 
 	CubeTextureClass* tex=Texture->As_CubeTextureClass();
 
@@ -2095,7 +2095,7 @@ void CubeTextureLoadTaskClass::Init(TextureBaseClass* tc, TaskType type, Priorit
 	{
 		for (int i = 0; i < MIP_LEVELS_MAX; ++i)
 		{
-			LockedCubeSurfacePtr[f][i]		= NULL;
+			LockedCubeSurfacePtr[f][i]		= nullptr;
 			LockedCubeSurfacePitch[f][i]	= 0;
 		}
 	}
@@ -2103,12 +2103,12 @@ void CubeTextureLoadTaskClass::Init(TextureBaseClass* tc, TaskType type, Priorit
 	switch (Type)
 	{
 	case TASK_THUMBNAIL:
-		WWASSERT(Texture->ThumbnailLoadTask == NULL);
+		WWASSERT(Texture->ThumbnailLoadTask == nullptr);
 		Texture->ThumbnailLoadTask = this;
 		break;
 
 	case TASK_LOAD:
-		WWASSERT(Texture->TextureLoadTask == NULL);
+		WWASSERT(Texture->TextureLoadTask == nullptr);
 		Texture->TextureLoadTask = this;
 		break;
 	}
@@ -2118,16 +2118,16 @@ void CubeTextureLoadTaskClass::Init(TextureBaseClass* tc, TaskType type, Priorit
 void CubeTextureLoadTaskClass::Deinit()
 {
 	// task should not be on any list when it is being detached from texture.
-	WWASSERT(Next == NULL);
-	WWASSERT(Prev == NULL);
+	WWASSERT(Next == nullptr);
+	WWASSERT(Prev == nullptr);
 
-	WWASSERT(D3DTexture == NULL);
+	WWASSERT(D3DTexture == nullptr);
 
 	for (int f=0; f<6; f++)
 	{
 		for (int i = 0; i < MIP_LEVELS_MAX; ++i)
 		{
-			WWASSERT(LockedCubeSurfacePtr[f][i] == NULL);
+			WWASSERT(LockedCubeSurfacePtr[f][i] == nullptr);
 		}
 	}
 
@@ -2137,12 +2137,12 @@ void CubeTextureLoadTaskClass::Deinit()
 		{
 			case TASK_THUMBNAIL:
 				WWASSERT(Texture->ThumbnailLoadTask == this);
-				Texture->ThumbnailLoadTask = NULL;
+				Texture->ThumbnailLoadTask = nullptr;
 				break;
 
 			case TASK_LOAD:
 				WWASSERT(Texture->TextureLoadTask == this);
-				Texture->TextureLoadTask = NULL;
+				Texture->TextureLoadTask = nullptr;
 				break;
 		}
 
@@ -2166,7 +2166,7 @@ void CubeTextureLoadTaskClass::Lock_Surfaces(void)
 					(D3DCUBEMAP_FACES)f,
 					i,
 					&locked_rect,
-					NULL,
+					nullptr,
 					0
 				)
 			);
@@ -2190,7 +2190,7 @@ void CubeTextureLoadTaskClass::Unlock_Surfaces(void)
 					Peek_D3D_Cube_Texture()->UnlockRect((D3DCUBEMAP_FACES)f,i)
 				);
 			}
-			LockedCubeSurfacePtr[f][i] = NULL;
+			LockedCubeSurfacePtr[f][i] = nullptr;
 		}
 	}
 
@@ -2454,7 +2454,7 @@ VolumeTextureLoadTaskClass::VolumeTextureLoadTaskClass()
 
 	for (int i = 0; i < MIP_LEVELS_MAX; ++i)
 	{
-		LockedSurfacePtr[i]			= NULL;
+		LockedSurfacePtr[i]			= nullptr;
 		LockedSurfacePitch[i]		= 0;
 		LockedSurfaceSlicePitch[i]	= 0;
 	}
@@ -2482,7 +2482,7 @@ void VolumeTextureLoadTaskClass::Init(TextureBaseClass* tc, TaskType type, Prior
 	Priority			= priority;
 	State				= STATE_NONE;
 
-	D3DTexture		= 0;
+	D3DTexture		= nullptr;
 
 	VolumeTextureClass* tex=Texture->As_VolumeTextureClass();
 
@@ -2505,7 +2505,7 @@ void VolumeTextureLoadTaskClass::Init(TextureBaseClass* tc, TaskType type, Prior
 
 	for (int i = 0; i < MIP_LEVELS_MAX; ++i)
 	{
-		LockedSurfacePtr[i]			= NULL;
+		LockedSurfacePtr[i]			= nullptr;
 		LockedSurfacePitch[i]		= 0;
 		LockedSurfaceSlicePitch[i]	= 0;
 	}
@@ -2513,12 +2513,12 @@ void VolumeTextureLoadTaskClass::Init(TextureBaseClass* tc, TaskType type, Prior
 	switch (Type)
 	{
 	case TASK_THUMBNAIL:
-		WWASSERT(Texture->ThumbnailLoadTask == NULL);
+		WWASSERT(Texture->ThumbnailLoadTask == nullptr);
 		Texture->ThumbnailLoadTask = this;
 		break;
 
 	case TASK_LOAD:
-		WWASSERT(Texture->TextureLoadTask == NULL);
+		WWASSERT(Texture->TextureLoadTask == nullptr);
 		Texture->TextureLoadTask = this;
 		break;
 	}
@@ -2535,7 +2535,7 @@ void VolumeTextureLoadTaskClass::Lock_Surfaces()
 			(
 				i,
 				&locked_box,
-				NULL,
+				nullptr,
 				0
 			)
 		);
@@ -2558,7 +2558,7 @@ void VolumeTextureLoadTaskClass::Unlock_Surfaces()
 				Peek_D3D_Volume_Texture()->UnlockBox(i)
 			);
 		}
-		LockedSurfacePtr[i] = NULL;
+		LockedSurfacePtr[i] = nullptr;
 	}
 
 #ifndef USE_MANAGED_TEXTURES

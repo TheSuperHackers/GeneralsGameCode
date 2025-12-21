@@ -21,6 +21,8 @@
 #ifndef __HUFWRITE
 #define __HUFWRITE 1
 
+#include <Utility/CppMacros.h>
+
 #include <string.h>
 #include "codex.h"
 #include "huffcodex.h"
@@ -1181,8 +1183,8 @@ int GCALL HUFF_encode(void *compresseddata, const void *source, int sourcesize, 
     int   plen=0;
     struct HUFFMemStruct infile;
     struct HUFFMemStruct outfile;
-    struct HuffEncodeContext *EC=0;
-    void *deltabuf=0;
+    struct HuffEncodeContext *EC=nullptr;
+    void *deltabuf=nullptr;
     int opt=0;
     if (opts)
         opt = opts[0];

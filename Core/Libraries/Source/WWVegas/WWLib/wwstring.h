@@ -497,7 +497,7 @@ inline void StringClass::Trim(void)
 inline const StringClass &
 StringClass::operator+= (const TCHAR *string)
 {
-	WWASSERT (string != NULL);
+	WWASSERT (string != nullptr);
 
 	int cur_len = Get_Length ();
 	int src_len = _tcslen (string);

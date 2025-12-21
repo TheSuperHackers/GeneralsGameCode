@@ -46,8 +46,8 @@ protected:
 
 // Construction
 public:
-	PickUnitDialog(CWnd* pParent = NULL);   // standard constructor
-	PickUnitDialog(UINT id, CWnd* pParent = NULL);   // standard constructor
+	PickUnitDialog(CWnd* pParent = nullptr);   // standard constructor
+	PickUnitDialog(UINT id, CWnd* pParent = nullptr);   // standard constructor
 	~PickUnitDialog(void);   ///< standard destructor
 
 // Dialog Data
@@ -87,7 +87,7 @@ public:
 class ReplaceUnitDialog : public PickUnitDialog
 {
 public:
-	ReplaceUnitDialog(CWnd* pParent = NULL);   // standard constructor
+	ReplaceUnitDialog(CWnd* pParent = nullptr);   // standard constructor
 
 	void setMissing(AsciiString name) {m_missingName = name;};
 

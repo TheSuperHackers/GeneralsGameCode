@@ -25,6 +25,7 @@ This is useful because the constructor will automatically call sem_init
   libraries if you don't have posix.
 \******************************************************************************/
 
+#include <Utility/CppMacros.h>
 #include "sem4.h"
 
 #ifdef _REENTRANT
@@ -34,7 +35,7 @@ Sem4::Sem4()
 #ifndef _WIN32
   sem_init(&sem,1,1);
 #else
-  sem = CreateSemaphore(NULL, 1, 1, NULL);
+  sem = CreateSemaphore(nullptr, 1, 1, nullptr);
 #endif
 }
 
@@ -43,7 +44,7 @@ Sem4::Sem4(uint32 value)
 #ifndef _WIN32
   sem_init(&sem,1,value);
 #else
-  sem = CreateSemaphore(NULL, value, value, NULL);
+  sem = CreateSemaphore(nullptr, value, value, nullptr);
 #endif
 }
 
@@ -84,7 +85,7 @@ sint32 Sem4::Post(void) const
 #else
   if (!sem)
 	  return -1;
-  if (!ReleaseSemaphore(sem, 1 ,NULL))
+  if (!ReleaseSemaphore(sem, 1 ,nullptr))
 	  return -1;
   return 0;
 #endif

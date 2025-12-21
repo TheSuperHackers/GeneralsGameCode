@@ -62,13 +62,13 @@ public:
 	SidesInfo(const SidesInfo& thatref);
 	~SidesInfo(void);
 	void init(const Dict* d);
-	void clear() { init(NULL); }
+	void clear() { init(nullptr); }
 	Dict* getDict() { return &m_dict; }
 	void addToBuildList(BuildListInfo *pBuildList, Int position);
 	Int removeFromBuildList(BuildListInfo *pBuildList);
 	void reorderInBuildList(BuildListInfo *pBuildList, Int newPosition);
 	BuildListInfo* getBuildList(void) {return m_pBuildList;} ///< Gets the build list.
-	void releaseBuildList(void)  {m_pBuildList=NULL;} ///< Used when the build list is passed to class Player.
+	void releaseBuildList(void)  {m_pBuildList=nullptr;} ///< Used when the build list is passed to class Player.
 	ScriptList *getScriptList(void) {return(m_scripts);};
 	void setScriptList(ScriptList *pScriptList) {m_scripts = pScriptList;};
 
@@ -84,7 +84,7 @@ private:
 public:
 	Dict* getDict() { return &m_dict; }
 	void init(const Dict* d) { m_dict.clear(); if (d) m_dict = *d; }
-	void clear() { init(NULL); }
+	void clear() { init(nullptr); }
 };
 
 
@@ -115,7 +115,7 @@ public:
 		}
 		DEBUG_CRASH(("Out of range."));
 		throw ERROR_BAD_ARG;
-		return NULL;
+		return nullptr;
 	}
 };
 
@@ -154,8 +154,8 @@ public:
 	inline SidesInfo *getSideInfo(Int side);
 	inline SidesInfo *getSkirmishSideInfo(Int side);
 	Int getNumSkirmishSides() { return m_numSkirmishSides; }
-	SidesInfo *findSideInfo(AsciiString name, Int* index = NULL);
-	SidesInfo *findSkirmishSideInfo(AsciiString name, Int* index = NULL);
+	SidesInfo *findSideInfo(AsciiString name, Int* index = nullptr);
+	SidesInfo *findSkirmishSideInfo(AsciiString name, Int* index = nullptr);
 
 	void prepareForMP_or_Skirmish(void); // After a map is loaded, save & clear any players.
 
@@ -169,7 +169,7 @@ public:
 	Int getNumSkirmishTeams() { return m_skirmishTeamrec.getNumTeams(); }
  	void addSkirmishTeam(const Dict* d);
 
-	TeamsInfo *findTeamInfo(AsciiString name, Int* index = NULL);
+	TeamsInfo *findTeamInfo(AsciiString name, Int* index = nullptr);
 
 	Bool isPlayerDefaultTeam(TeamsInfo *t);
 
@@ -221,7 +221,7 @@ inline SidesInfo * SidesList::getSideInfo(Int side)
 	}
 	DEBUG_CRASH(("Out of range."));
 	throw ERROR_BAD_ARG;
-	return NULL;
+	return nullptr;
 }
 
 inline SidesInfo * SidesList::getSkirmishSideInfo(Int side)
@@ -232,7 +232,7 @@ inline SidesInfo * SidesList::getSkirmishSideInfo(Int side)
 	}
 	DEBUG_CRASH(("Out of range."));
 	throw ERROR_BAD_ARG;
-	return NULL;
+	return nullptr;
 }
 
 

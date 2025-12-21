@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // AnimationSpeed.h : header file
 //
@@ -28,7 +29,7 @@ class CAnimationSpeed : public CDialog
 {
 // Construction
 public:
-	CAnimationSpeed(CWnd* pParent = NULL);   // standard constructor
+	CAnimationSpeed(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CAnimationSpeed)

@@ -31,7 +31,7 @@
 #include "Common/TerrainTypes.h"
 #include "W3DDevice/GameClient/TerrainTex.h"
 
-BlendMaterial *BlendMaterial::m_staticThis = NULL;
+BlendMaterial *BlendMaterial::m_staticThis = nullptr;
 
 static Int defaultMaterialIndex = -1;
 
@@ -40,7 +40,7 @@ static Int defaultMaterialIndex = -1;
 
 Int BlendMaterial::m_currentBlendTexture(-1);
 
-BlendMaterial::BlendMaterial(CWnd* pParent /*=NULL*/) :
+BlendMaterial::BlendMaterial(CWnd* pParent /*=nullptr*/) :
 	m_updating(false)
 {
 	//{{AFX_DATA_INIT(BlendMaterial)
@@ -84,7 +84,7 @@ Bool BlendMaterial::setTerrainTreeViewSelection(HTREEITEM parent, Int selection)
 	char buffer[_MAX_PATH];
 	::memset(&item, 0, sizeof(item));
 	HTREEITEM child = m_terrainTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		item.mask = TVIF_HANDLE|TVIF_PARAM;
 		item.hItem = child;
 		item.pszText = buffer;
@@ -126,7 +126,7 @@ BOOL BlendMaterial::OnInitDialog()
 	pWnd->GetWindowRect(&rect);
 	ScreenToClient(&rect);
 	rect.DeflateRect(2,2,2,2);
-	//m_terrainSwatches.Create(NULL, "", WS_CHILD, rect, this, IDC_TERRAIN_SWATCHES);
+	//m_terrainSwatches.Create(nullptr, "", WS_CHILD, rect, this, IDC_TERRAIN_SWATCHES);
 	//m_terrainSwatches.ShowWindow(SW_SHOW);
 
 	m_staticThis = this;
@@ -144,7 +144,7 @@ HTREEITEM BlendMaterial::findOrAdd(HTREEITEM parent, const char *pLabel)
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = m_terrainTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
@@ -268,7 +268,7 @@ BOOL BlendMaterial::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 				m_currentBlendTexture = texClass;
 			}	else if (!(item.state & TVIS_EXPANDEDONCE) ) {
 				HTREEITEM child = m_terrainTreeView.GetChildItem(hItem);
-				while (child != NULL) {
+				while (child != nullptr) {
 					hItem = child;
 					child = m_terrainTreeView.GetChildItem(hItem);
 				}

@@ -35,14 +35,14 @@ class RenderObjClass;
 //
 // Macros
 //
-#define SAFE_DELETE(pobject) { delete pobject; pobject = NULL; }
-#define SAFE_DELETE_ARRAY(pobject) { delete [] pobject; pobject = NULL; }
+#define SAFE_DELETE(pobject) { delete pobject; pobject = nullptr; }
+#define SAFE_DELETE_ARRAY(pobject) { delete [] pobject; pobject = nullptr; }
 
 #define COM_RELEASE(pobject)					\
 			if (pobject) {							\
 				pobject->Release ();				\
 			}											\
-			pobject = NULL;						\
+			pobject = nullptr;						\
 
 #define SAFE_CLOSE(handle)								\
 			if (handle != INVALID_HANDLE_VALUE) {	\
@@ -114,7 +114,7 @@ CString					Filename_From_Asset_Name (LPCTSTR asset_name);
 //
 //	File routines
 //
-bool						Get_File_Time (LPCTSTR path, LPFILETIME pcreation_time, LPFILETIME paccess_time = NULL, LPFILETIME pwrite_time = NULL);
+bool						Get_File_Time (LPCTSTR path, LPFILETIME pcreation_time, LPFILETIME paccess_time = nullptr, LPFILETIME pwrite_time = nullptr);
 bool						Are_Glide_Drivers_Acceptable (void);
 bool						Copy_File (LPCTSTR existing_filename, LPCTSTR new_filename, bool bforce_copy = false);
 

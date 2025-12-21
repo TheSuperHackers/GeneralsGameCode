@@ -59,9 +59,9 @@ void W3DDependencyModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "AttachToBoneInContainer", INI::parseAsciiString, NULL, offsetof(W3DDependencyModelDrawModuleData, m_attachToDrawableBoneInContainer) },
+		{ "AttachToBoneInContainer", INI::parseAsciiString, nullptr, offsetof(W3DDependencyModelDrawModuleData, m_attachToDrawableBoneInContainer) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -98,7 +98,7 @@ void W3DDependencyModelDraw::doDrawModule(const Matrix3D* transformMtx)
     if ( ! me )
       return;
 
-	  Drawable *theirDrawable = NULL;
+	  Drawable *theirDrawable = nullptr;
 
 	  if( me->getContainedBy() && !me->getContainedBy()->getContain()->isEnclosingContainerFor(me) )
 		  theirDrawable = me->getContainedBy()->getDrawable();

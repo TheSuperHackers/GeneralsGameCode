@@ -98,7 +98,7 @@ public:
 inline CollisionTestClass::CollisionTestClass(CastResultStruct * res,int collision_type) :
 	Result(res),
 	CollisionType(collision_type),
-	CollidedRenderObj(NULL)
+	CollidedRenderObj(nullptr)
 {
 }
 

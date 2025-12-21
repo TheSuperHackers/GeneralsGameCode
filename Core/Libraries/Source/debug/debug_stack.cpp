@@ -26,6 +26,7 @@
 //
 // Stack walker
 //////////////////////////////////////////////////////////////////////////////
+
 #include "debug.h"
 #include "debug_stack.h"
 #include <windows.h>
@@ -53,7 +54,7 @@ static union
 static char const *const DebughelpFunctionNames[] =
 {
 #include "debug_stack.inl"
-	NULL
+	nullptr
 };
 #undef DBGHELP
 
@@ -71,7 +72,7 @@ static void InitDbghelp(void)
 
 	// firstly check for dbghelp.dll in the EXE directory
 	char dbgHelpPath[256];
-	if (GetModuleFileName(NULL,dbgHelpPath,sizeof(dbgHelpPath)))
+	if (GetModuleFileName(nullptr,dbgHelpPath,sizeof(dbgHelpPath)))
 	{
 		char *slash=strrchr(dbgHelpPath,'\\');
 		if (slash)
@@ -100,7 +101,7 @@ static void InitDbghelp(void)
   {
     // not all functions found -> clear them all
     while (funcptr!=gDbg.funcPtr)
-      *--funcptr=NULL;
+      *--funcptr=0;
   }
   else
   {
@@ -108,7 +109,7 @@ static void InitDbghelp(void)
     gDbg._SymSetOptions(gDbg._SymGetOptions()|SYMOPT_DEFERRED_LOADS|SYMOPT_LOAD_LINES);
 
     // Init module
-    gDbg._SymInitialize((HANDLE)GetCurrentProcessId(),NULL,TRUE);
+    gDbg._SymInitialize((HANDLE)GetCurrentProcessId(),nullptr,TRUE);
 
     // Check: are we using a newer version of dbghelp.dll?
     // (older versions have some serious issues.. err... bugs)
@@ -380,7 +381,7 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
   bool skipFirst=!ctx;
   while (sig.m_numAddr<Signature::MAX_ADDR&&
 		     gDbg._StackWalk(IMAGE_FILE_MACHINE_I386,GetCurrentProcess(),GetCurrentThread(),
-                         &stackFrame,NULL,NULL,gDbg._SymFunctionTableAccess,gDbg._SymGetModuleBase,NULL))
+                         &stackFrame,nullptr,nullptr,gDbg._SymFunctionTableAccess,gDbg._SymGetModuleBase,nullptr))
   {
     if (skipFirst)
       skipFirst=false;

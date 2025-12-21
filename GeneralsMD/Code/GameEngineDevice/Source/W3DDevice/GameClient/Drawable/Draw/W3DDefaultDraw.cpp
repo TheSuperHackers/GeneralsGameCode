@@ -54,8 +54,8 @@
 W3DDefaultDraw::W3DDefaultDraw(Thing *thing, const ModuleData* moduleData) : DrawModule(thing, moduleData)
 {
 #ifdef LOAD_TEST_ASSETS
-	m_renderObject = NULL;
-	m_shadow = NULL;
+	m_renderObject = nullptr;
+	m_shadow = nullptr;
 	if (!getDrawable()->getTemplate()->getLTAName().isEmpty())
 	{
 		m_renderObject = W3DDisplay::m_assetManager->Create_Render_Obj(getDrawable()->getTemplate()->getLTAName().str(), getDrawable()->getScale(), 0);
@@ -108,13 +108,13 @@ W3DDefaultDraw::~W3DDefaultDraw(void)
 	if (TheW3DShadowManager && m_shadow)
 	{
 		TheW3DShadowManager->removeShadow(m_shadow);
-		m_shadow = NULL;
+		m_shadow = nullptr;
 	}
 	if (m_renderObject)
 	{
 		W3DDisplay::m_3DScene->Remove_Render_Object(m_renderObject);
   	REF_PTR_RELEASE(m_renderObject);
-		m_renderObject = NULL;
+		m_renderObject = nullptr;
 	}
 #endif
 }

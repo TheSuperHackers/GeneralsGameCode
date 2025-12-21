@@ -135,7 +135,7 @@ protected:
 	void deletePasteObjList(void)
 	{
 		deleteInstance(m_pasteMapObjList);
-		m_pasteMapObjList = NULL;
+		m_pasteMapObjList = nullptr;
 	};
 
 public:

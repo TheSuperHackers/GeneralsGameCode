@@ -42,7 +42,7 @@ IMPLEMENT_DYNCREATE(EmitterUserPropPageClass, CPropertyPage)
 //  EmitterUserPropPageClass
 //
 EmitterUserPropPageClass::EmitterUserPropPageClass (EmitterInstanceListClass *pemitter)
-	: m_pEmitterList (NULL),
+	: m_pEmitterList (nullptr),
 	  m_bValid (true),
 	  m_iType (EMITTER_TYPEID_DEFAULT),
 	  CPropertyPage(EmitterUserPropPageClass::IDD)
@@ -96,7 +96,7 @@ END_MESSAGE_MAP()
 void
 EmitterUserPropPageClass::Initialize (void)
 {
-	if (m_pEmitterList != NULL) {
+	if (m_pEmitterList != nullptr) {
 
 		// Record the user information from the emitter (if it exists)
 		m_iType			= m_pEmitterList->Get_User_Type ();

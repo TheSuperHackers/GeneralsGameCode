@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // SaveSettingsDialog.h : header file
 //
@@ -28,7 +29,7 @@ class CSaveSettingsDialog : public CDialog
 {
 // Construction
 public:
-	CSaveSettingsDialog(CWnd* pParent = NULL);   // standard constructor
+	CSaveSettingsDialog(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CSaveSettingsDialog)

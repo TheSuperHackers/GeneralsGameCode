@@ -78,7 +78,7 @@ Browse_For_Folder (HWND parent_wnd, LPCTSTR initial_path, CString &path)
 {
 	bool retval = false;
 
-	OPENFILENAME openfilename	= { sizeof (OPENFILENAME), 0 };
+	OPENFILENAME openfilename	= { sizeof (OPENFILENAME), nullptr };
 	TCHAR filename[MAX_PATH]	= { 0 };
 
 	openfilename.lpstrInitialDir	= initial_path;

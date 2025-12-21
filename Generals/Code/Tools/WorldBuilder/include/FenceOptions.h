@@ -33,7 +33,7 @@ class FenceOptions : public COptionsPanel
 {
 // Construction
 public:
-	FenceOptions(CWnd* pParent = NULL);   ///< standard constructor
+	FenceOptions(CWnd* pParent = nullptr);   ///< standard constructor
 
 	~FenceOptions(void);   ///< standard destructor
 	enum { NAME_MAX_LEN = 64 };

@@ -33,7 +33,7 @@
 // MapSettings dialog
 
 
-MapSettings::MapSettings(CWnd* pParent /*=NULL*/)
+MapSettings::MapSettings(CWnd* pParent /*=nullptr*/)
 	: CDialog(MapSettings::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(MapSettings)

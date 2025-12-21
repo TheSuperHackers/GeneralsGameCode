@@ -78,7 +78,7 @@ public:
 
 	void setNextOptimized( PathNode *node );
 
-	PathNode *getNextOptimized(Coord2D* dir = NULL, Real* dist = NULL)  	///< return next node in optimized path
+	PathNode *getNextOptimized(Coord2D* dir = nullptr, Real* dist = nullptr)  	///< return next node in optimized path
 	{
 		if (dir)
 			*dir = m_nextOptiDirNorm2D;
@@ -87,7 +87,7 @@ public:
 		return m_nextOpti;
 	}
 
-	const PathNode *getNextOptimized(Coord2D* dir = NULL, Real* dist = NULL) const  	///< return next node in optimized path
+	const PathNode *getNextOptimized(Coord2D* dir = nullptr, Real* dist = nullptr) const  	///< return next node in optimized path
 	{
 		if (dir)
 			*dir = m_nextOptiDirNorm2D;
@@ -318,7 +318,7 @@ public:
 	/// remove all cells from closed list.
 	static Int releaseOpenList( PathfindCell *list );
 
-	inline PathfindCell *getNextOpen(void) {return m_info->m_nextOpen?m_info->m_nextOpen->m_cell:NULL;}
+	inline PathfindCell *getNextOpen(void) {return m_info->m_nextOpen?m_info->m_nextOpen->m_cell: nullptr;}
 
 	inline UnsignedShort getXIndex(void) const {return m_info->m_pos.x;}
 	inline UnsignedShort getYIndex(void) const {return m_info->m_pos.y;}
@@ -337,7 +337,7 @@ public:
 	void setParentCell(PathfindCell* parent);
 	void clearParentCell(void);
 	void setParentCellHierarchical(PathfindCell* parent);
-	inline PathfindCell* getParentCell(void) const {return m_info ? m_info->m_pathParent ? m_info->m_pathParent->m_cell : NULL : NULL;}
+	inline PathfindCell* getParentCell(void) const {return m_info ? m_info->m_pathParent ? m_info->m_pathParent->m_cell : nullptr : nullptr;}
 
 	Bool startPathfind( PathfindCell *goalCell );
 	Bool getPinched(void) const {return m_pinched;}
@@ -345,7 +345,7 @@ public:
 
 	Bool allocateInfo(const ICoord2D &pos);
 	void releaseInfo(void);
-	Bool hasInfo(void) const {return m_info!=NULL;}
+	Bool hasInfo(void) const {return m_info!=nullptr;}
 	zoneStorageType getZone(void) const {return m_zone;}
 	void setZone(zoneStorageType zone) {m_zone = zone;}
 	void setGoalUnit(ObjectID unit, const ICoord2D &pos );
@@ -673,7 +673,7 @@ public:
 
 	void setIgnoreObstacleID( ObjectID objID );					///< if non-zero, the pathfinder will ignore the given obstacle
 
-	Bool validMovementPosition( Bool isCrusher, LocomotorSurfaceTypeMask acceptableSurfaces, PathfindCell *toCell, PathfindCell *fromCell = NULL );		///< Return true if given position is a valid movement location
+	Bool validMovementPosition( Bool isCrusher, LocomotorSurfaceTypeMask acceptableSurfaces, PathfindCell *toCell, PathfindCell *fromCell = nullptr );		///< Return true if given position is a valid movement location
 	Bool validMovementPosition( Bool isCrusher, PathfindLayerEnum layer, const LocomotorSet& locomotorSet, Int x, Int y );					///< Return true if given position is a valid movement location
 	Bool validMovementPosition( Bool isCrusher, PathfindLayerEnum layer, const LocomotorSet& locomotorSet, const Coord3D *pos );		///< Return true if given position is a valid movement location
 	Bool validMovementTerrain( PathfindLayerEnum layer, const Locomotor* locomotor, const Coord3D *pos );		///< Return true if given position is a valid movement location
@@ -706,7 +706,7 @@ public:
 
 	// Adjusts the destination to a spot near dest that is not occupied by other units.
 	Bool adjustDestination(Object *obj, const LocomotorSet& locomotorSet,
-		Coord3D *dest, const Coord3D *groupDest=NULL);
+		Coord3D *dest, const Coord3D *groupDest=nullptr);
 
 	// Adjusts the destination to a spot near dest for landing that is not occupied by other units.
 	Bool adjustToLandingDestination(Object *obj, Coord3D *dest);
@@ -930,7 +930,7 @@ inline PathfindCell *Pathfinder::getCell( PathfindLayerEnum layer, Int x, Int y 
 	if (x >= m_extent.lo.x && x <= m_extent.hi.x &&
 		y >= m_extent.lo.y && y <= m_extent.hi.y)
 	{
-		PathfindCell *cell = NULL;
+		PathfindCell *cell = nullptr;
 		if (layer > LAYER_GROUND && layer <= LAYER_LAST)
 		{
 			cell = m_layers[layer].getCell(x, y);
@@ -941,7 +941,7 @@ inline PathfindCell *Pathfinder::getCell( PathfindLayerEnum layer, Int x, Int y 
 	}
 	else
 	{
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -949,7 +949,7 @@ inline PathfindCell *Pathfinder::getCell( PathfindLayerEnum layer, const Coord3D
 {
 	ICoord2D cell;
 	Bool overflow = worldToCell( pos, &cell );
-	if (overflow) return NULL;
+	if (overflow) return nullptr;
 	return getCell( layer, cell.x, cell.y );
 }
 

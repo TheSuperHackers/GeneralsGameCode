@@ -95,11 +95,11 @@ HAnimManagerClass::~HAnimManagerClass(void)
 	Reset_Missing();	// Jani: Deleting missing animations as well
 
 	delete AnimPtrTable;
-	AnimPtrTable = NULL;
+	AnimPtrTable = nullptr;
 
 	Reset_Missing();
 	delete MissingAnimTable;
-	MissingAnimTable = NULL;
+	MissingAnimTable = nullptr;
 }
 
 
@@ -154,7 +154,7 @@ int HAnimManagerClass::Load_Morph_Anim(ChunkLoadClass & cload)
 {
 	HMorphAnimClass * newanim = W3DNEW HMorphAnimClass;
 
-	if (newanim == NULL) {
+	if (newanim == nullptr) {
 		goto Error;
 	}
 
@@ -164,7 +164,7 @@ int HAnimManagerClass::Load_Morph_Anim(ChunkLoadClass & cload)
 		// load failed!
 		newanim->Release_Ref();
 		goto Error;
-	} else if (Peek_Anim(newanim->Get_Name()) != NULL) {
+	} else if (Peek_Anim(newanim->Get_Name()) != nullptr) {
 		// duplicate exists!
 		newanim->Release_Ref();	// Release the one we just loaded
 		goto Error;
@@ -197,7 +197,7 @@ int HAnimManagerClass::Load_Raw_Anim(ChunkLoadClass & cload)
 {
 	HRawAnimClass * newanim = W3DNEW HRawAnimClass;
 
-	if (newanim == NULL) {
+	if (newanim == nullptr) {
 		goto Error;
 	}
 
@@ -207,7 +207,7 @@ int HAnimManagerClass::Load_Raw_Anim(ChunkLoadClass & cload)
 		// load failed!
 		newanim->Release_Ref();
 		goto Error;
-	} else if (Peek_Anim(newanim->Get_Name()) != NULL) {
+	} else if (Peek_Anim(newanim->Get_Name()) != nullptr) {
 		// duplicate exists!
 		newanim->Release_Ref();	// Release the one we just loaded
 		goto Error;
@@ -240,7 +240,7 @@ int HAnimManagerClass::Load_Compressed_Anim(ChunkLoadClass & cload)
 {
 	HCompressedAnimClass * newanim = W3DNEW HCompressedAnimClass;
 
-	if (newanim == NULL) {
+	if (newanim == nullptr) {
 		goto Error;
 	}
 
@@ -250,7 +250,7 @@ int HAnimManagerClass::Load_Compressed_Anim(ChunkLoadClass & cload)
 		// load failed!
 		newanim->Release_Ref();
 		goto Error;
-	} else if (Peek_Anim(newanim->Get_Name()) != NULL) {
+	} else if (Peek_Anim(newanim->Get_Name()) != nullptr) {
 		// duplicate exists!
 		newanim->Release_Ref();	// Release the one we just loaded
 		goto Error;
@@ -299,7 +299,7 @@ HAnimClass * HAnimManagerClass::Peek_Anim(const char * name)
 HAnimClass * HAnimManagerClass::Get_Anim(const char * name)
 {
 	HAnimClass * anim = Peek_Anim( name );
-	if ( anim != NULL ) {
+	if ( anim != nullptr ) {
 		anim->Add_Ref();
 	}
 	return anim;
@@ -385,7 +385,7 @@ void HAnimManagerClass::Create_Asset_List(DynamicVectorClass<StringClass> & excl
 		// Anims are named in the format: <skeleton>.<animname>
 		const char * anim_name = anim->Get_Name();
 		const char * filename = strchr(anim_name,'.');
-		if (filename != NULL) {
+		if (filename != nullptr) {
 			exclusion_list.Add(StringClass(filename+1));
 		}
 	}
@@ -406,7 +406,7 @@ void HAnimManagerClass::Create_Asset_List(DynamicVectorClass<StringClass> & excl
  *=============================================================================================*/
 bool HAnimManagerClass::Add_Anim(HAnimClass *new_anim)
 {
-	WWASSERT (new_anim != NULL);
+	WWASSERT (new_anim != nullptr);
 
 	// Increment the refcount on the W3DNEW animation and add it to our table.
 	new_anim->Add_Ref ();
@@ -420,7 +420,7 @@ bool HAnimManagerClass::Add_Anim(HAnimClass *new_anim)
 ** Missing Anims
 **
 ** The idea here, allow the system to register which anims are determined to be missing
-** so that if they are asked for again, we can quickly return NULL, without searching the
+** so that if they are asked for again, we can quickly return nullptr, without searching the
 ** disk again.
 */
 void	HAnimManagerClass::Register_Missing( const char * name )
@@ -430,7 +430,7 @@ void	HAnimManagerClass::Register_Missing( const char * name )
 
 bool	HAnimManagerClass::Is_Missing( const char * name )
 {
-	return ( MissingAnimTable->Find( name ) != NULL );
+	return ( MissingAnimTable->Find( name ) != nullptr );
 }
 
 void	HAnimManagerClass::Reset_Missing( void )

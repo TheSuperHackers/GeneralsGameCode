@@ -36,7 +36,7 @@ static int max_index;
 // CExportDlg dialog
 
 
-CExportDlg::CExportDlg(CWnd* pParent /*=NULL*/)
+CExportDlg::CExportDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(CExportDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CExportDlg)
@@ -149,7 +149,7 @@ BOOL CExportDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 	combo = (CComboBox *) GetDlgItem ( IDC_COMBOLANG );
 
-	combo->SetItemDataPtr ( 0, NULL );
+	combo->SetItemDataPtr ( 0, nullptr );
 
 	options.filter = TR_CHANGES;
 	options.include_comments = FALSE;
@@ -198,7 +198,7 @@ BOOL CExportDlg::OnInitDialog()
 void CExportDlg::OnSelchangeCombolang()
 {
 	// TODO: Add your control notification handler code here
-	LANGINFO *info = NULL;
+	LANGINFO *info = nullptr;
 	int index;
 	CButton *export_button = (CButton *) GetDlgItem ( IDOK );
 	CComboBox *combo = (CComboBox *) GetDlgItem ( IDC_COMBOLANG );

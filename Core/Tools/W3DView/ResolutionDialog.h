@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include "resource.h"
 
@@ -30,7 +31,7 @@ class ResolutionDialogClass : public CDialog
 {
 // Construction
 public:
-	ResolutionDialogClass(CWnd* pParent = NULL);   // standard constructor
+	ResolutionDialogClass(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(ResolutionDialogClass)

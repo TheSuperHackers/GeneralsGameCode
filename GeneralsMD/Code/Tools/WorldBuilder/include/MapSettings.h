@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // MapSettings.h : header file
 //
@@ -28,7 +29,7 @@ class MapSettings : public CDialog
 {
 // Construction
 public:
-	MapSettings(CWnd* pParent = NULL);   // standard constructor
+	MapSettings(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(MapSettings)

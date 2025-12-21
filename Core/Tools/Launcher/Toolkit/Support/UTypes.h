@@ -87,5 +87,6 @@ typedef enum {OFF = false, ON = true, PENDING = -1} TriState;
 
 //! Empty pointer
 #ifndef NULL
-#define NULL (0L)
+//#define NULL (0L)
+// NULL is now deprecated - use nullptr instead
 #endif

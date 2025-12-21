@@ -64,7 +64,7 @@
 *	Globals
 *****************************************************************************/
 
-HINSTANCE					AppInstance = NULL;
+HINSTANCE					AppInstance = nullptr;
 static int					ControlsInit = FALSE;
 static W3dClassDesc		W3d_Export_Class_Descriptor;
 
@@ -158,9 +158,9 @@ DLLEXPORT ClassDesc * LibClassDesc(int i)
 		case 7:	return Get_PS2_Material_Conversion(); break;
 		case 8:	return Get_Alpha_Desc(); break;
 		//case 6:	return Get_Mesh_Deform_Desc(); break;
-		//Moumine 7/24/2001    4:33:52 PM Removed #6 and shifted up instead of returning NULL
-		// NULL causes a crash in "File->Summary info->Plug-in ifo..."
-		default: return NULL; break;
+		//Moumine 7/24/2001    4:33:52 PM Removed #6 and shifted up instead of returning nullptr
+		// nullptr causes a crash in "File->Summary info->Plug-in ifo..."
+		default: return nullptr; break;
 	}
 }
 
@@ -199,8 +199,8 @@ TCHAR * Get_String( int id )
 {
 	static TCHAR buf[256];
 	if (AppInstance)
-		return LoadString(AppInstance, id, buf, sizeof(buf)) ? buf : NULL;
-	return NULL;
+		return LoadString(AppInstance, id, buf, sizeof(buf)) ? buf : nullptr;
+	return nullptr;
 }
 
 

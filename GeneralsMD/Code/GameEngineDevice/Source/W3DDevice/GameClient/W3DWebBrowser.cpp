@@ -52,7 +52,7 @@ Bool W3DWebBrowser::createBrowserWindow(const char *tag, GameWindow *win)
 
 	WebBrowserURL *url = findURL( AsciiString(tag) );
 
-	if (url == NULL) {
+	if (url == nullptr) {
 		DEBUG_LOG(("W3DWebBrowser::createBrowserWindow - couldn't find URL for page %s", tag));
 		return FALSE;
 	}
@@ -62,7 +62,7 @@ Bool W3DWebBrowser::createBrowserWindow(const char *tag, GameWindow *win)
 #else
 	CComQIPtr<IDispatch> idisp(m_dispatch);
 #endif
-	if (m_dispatch == NULL)
+	if (m_dispatch == nullptr)
 	{
 		return FALSE;
 	}

@@ -63,8 +63,8 @@
  *   3/27/98    GTH : Created.                                                                 *
  *=============================================================================================*/
 LayerClass::LayerClass(void) :
-	Scene(NULL),
-	Camera(NULL),
+	Scene(nullptr),
+	Camera(nullptr),
 	Clear(false),
 	ClearZ(true),
 	ClearColor(0,0,0)
@@ -132,11 +132,11 @@ LayerClass::~LayerClass(void)
 {
 	if (Scene) {
 		Scene->Release_Ref();
-		Scene=0;
+		Scene=nullptr;
 	}
 	if (Camera) {
 		Camera->Release_Ref();
-		Camera=0;
+		Camera=nullptr;
 	}
 }
 

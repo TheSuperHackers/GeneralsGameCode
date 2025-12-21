@@ -58,14 +58,14 @@
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-GameWindowTransitionsHandler *TheTransitionHandler = NULL;
+GameWindowTransitionsHandler *TheTransitionHandler = nullptr;
 const FieldParse GameWindowTransitionsHandler::m_gameWindowTransitionsFieldParseTable[] =
 {
 
-	{ "Window",		GameWindowTransitionsHandler::parseWindow,	NULL, NULL	},
-	{ "FireOnce",	INI::parseBool,															NULL, offsetof( TransitionGroup, m_fireOnce) 	},
+	{ "Window",		GameWindowTransitionsHandler::parseWindow,	nullptr, 0	},
+	{ "FireOnce",	INI::parseBool,															nullptr, offsetof( TransitionGroup, m_fireOnce) 	},
 
-	{ NULL,										NULL,													NULL, 0 }
+	{ nullptr,										nullptr,													nullptr, 0 }
 
 };
 
@@ -136,9 +136,9 @@ Transition *getTransitionForStyle( Int style )
 
 	default:
 		DEBUG_ASSERTCRASH(FALSE, ("getTransitionForStyle:: An invalid style was passed in. Style = %d", style));
-		return NULL;
+		return nullptr;
 	}
-	return NULL;
+	return nullptr;
 }
 
 TransitionWindow::TransitionWindow( void )
@@ -147,8 +147,8 @@ TransitionWindow::TransitionWindow( void )
 	m_style = 0;
 
 	m_winID = NAMEKEY_INVALID;
-	m_win = NULL;
-	m_transition = NULL;
+	m_win = nullptr;
+	m_transition = nullptr;
 }
 
 TransitionWindow::~TransitionWindow( void )
@@ -156,16 +156,16 @@ TransitionWindow::~TransitionWindow( void )
 	if (m_win)
 		m_win->unlinkTransitionWindow(this);
 
-	m_win = NULL;
+	m_win = nullptr;
 
 	delete m_transition;
-	m_transition = NULL;
+	m_transition = nullptr;
 }
 
 Bool TransitionWindow::init( void )
 {
 	m_winID = TheNameKeyGenerator->nameToKey(m_winName);
-	m_win		= TheWindowManager->winGetWindowFromId(NULL, m_winID);
+	m_win		= TheWindowManager->winGetWindowFromId(nullptr, m_winID);
 	m_currentFrameDelay = m_frameDelay;
 //	DEBUG_ASSERTCRASH( m_win, ("TransitionWindow::init Failed to find window %s", m_winName.str()));
 //	if( !m_win )
@@ -223,7 +223,7 @@ void TransitionWindow::unlinkGameWindow(GameWindow* win)
 		return;
 
 	m_transition->unlinkGameWindow(win);
-	m_win = NULL;
+	m_win = nullptr;
 }
 
 Int TransitionWindow::getTotalFrames( void )
@@ -359,19 +359,19 @@ void TransitionGroup::addWindow( TransitionWindow *transWin )
 
 GameWindowTransitionsHandler::GameWindowTransitionsHandler(void)
 {
-	m_currentGroup = NULL;
-	m_pendingGroup = NULL;
-	m_drawGroup = NULL;
-	m_secondaryDrawGroup = NULL;
+	m_currentGroup = nullptr;
+	m_pendingGroup = nullptr;
+	m_drawGroup = nullptr;
+	m_secondaryDrawGroup = nullptr;
 
 }
 
 GameWindowTransitionsHandler::~GameWindowTransitionsHandler( void )
 {
-	m_currentGroup = NULL;
-	m_pendingGroup = NULL;
-	m_drawGroup = NULL;
-	m_secondaryDrawGroup = NULL;
+	m_currentGroup = nullptr;
+	m_pendingGroup = nullptr;
+	m_drawGroup = nullptr;
+	m_secondaryDrawGroup = nullptr;
 
 	TransitionGroupList::iterator it = m_transitionGroupList.begin();
 	while( it != m_transitionGroupList.end() )
@@ -384,26 +384,26 @@ GameWindowTransitionsHandler::~GameWindowTransitionsHandler( void )
 
 void GameWindowTransitionsHandler::init(void )
 {
-	m_currentGroup = NULL;
-	m_pendingGroup = NULL;
-	m_drawGroup = NULL;
-	m_secondaryDrawGroup = NULL;
+	m_currentGroup = nullptr;
+	m_pendingGroup = nullptr;
+	m_drawGroup = nullptr;
+	m_secondaryDrawGroup = nullptr;
 }
 
 void GameWindowTransitionsHandler::load(void )
 {
 	INI ini;
 	// Read from INI all the ControlBarSchemes
-	ini.loadFileDirectory( "Data\\INI\\WindowTransitions", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\WindowTransitions", INI_LOAD_OVERWRITE, nullptr );
 
 }
 
 void GameWindowTransitionsHandler::reset( void )
 {
-	m_currentGroup = NULL;
-	m_pendingGroup = NULL;
-	m_drawGroup = NULL;
-	m_secondaryDrawGroup = NULL;
+	m_currentGroup = nullptr;
+	m_pendingGroup = nullptr;
+	m_drawGroup = nullptr;
+	m_secondaryDrawGroup = nullptr;
 
 }
 
@@ -412,7 +412,7 @@ void GameWindowTransitionsHandler::update( void )
 	if(m_drawGroup != m_currentGroup)
 		m_secondaryDrawGroup = m_drawGroup;
 	else
-		m_secondaryDrawGroup = NULL;
+		m_secondaryDrawGroup = nullptr;
 
 	m_drawGroup = m_currentGroup;
 	if(m_currentGroup && !m_currentGroup->isFinished())
@@ -420,23 +420,23 @@ void GameWindowTransitionsHandler::update( void )
 
 	if(m_currentGroup && m_currentGroup->isFinished() && m_currentGroup->isFireOnce())
 	{
-		m_currentGroup = NULL;
+		m_currentGroup = nullptr;
 	}
 
 	if(m_currentGroup && m_pendingGroup && m_currentGroup->isFinished())
 	{
 		m_currentGroup = m_pendingGroup;
-		m_pendingGroup = NULL;
+		m_pendingGroup = nullptr;
 	}
 
 	if(!m_currentGroup && m_pendingGroup)
 	{
 		m_currentGroup = m_pendingGroup;
-		m_pendingGroup = NULL;
+		m_pendingGroup = nullptr;
 	}
 
 	if(m_currentGroup && m_currentGroup->isFinished() && m_currentGroup->isReversed())
-		m_currentGroup = NULL;
+		m_currentGroup = nullptr;
 }
 
 
@@ -452,7 +452,7 @@ void GameWindowTransitionsHandler::draw( void )
 void GameWindowTransitionsHandler::setGroup(AsciiString groupName, Bool immidiate )
 {
 	if(groupName.isEmpty() && immidiate)
-		m_currentGroup = NULL;
+		m_currentGroup = nullptr;
 	if(immidiate && m_currentGroup)
 	{
 		m_currentGroup->skip();
@@ -490,7 +490,7 @@ void GameWindowTransitionsHandler::reverse( AsciiString groupName )
 	}
 	if( m_pendingGroup == g)
 	{
-		m_pendingGroup = NULL;
+		m_pendingGroup = nullptr;
 		return;
 	}
 	if(m_currentGroup)
@@ -502,7 +502,7 @@ void GameWindowTransitionsHandler::reverse( AsciiString groupName )
 	m_currentGroup->init();
 	m_currentGroup->skip();
 	m_currentGroup->reverse();
-	m_pendingGroup = NULL;
+	m_pendingGroup = nullptr;
 }
 
 void GameWindowTransitionsHandler::remove( AsciiString groupName,  Bool skipPending )
@@ -513,12 +513,12 @@ void GameWindowTransitionsHandler::remove( AsciiString groupName,  Bool skipPend
 		if(skipPending)
 			m_pendingGroup->skip();
 
-		m_pendingGroup = NULL;
+		m_pendingGroup = nullptr;
 	}
 	if(m_currentGroup == g)
 	{
 		m_currentGroup->skip();
-		m_currentGroup = NULL;
+		m_currentGroup = nullptr;
 		if(m_pendingGroup)
 			m_currentGroup = m_pendingGroup;
 	}
@@ -527,13 +527,13 @@ void GameWindowTransitionsHandler::remove( AsciiString groupName,  Bool skipPend
 TransitionGroup *GameWindowTransitionsHandler::getNewGroup( AsciiString name )
 {
 	if(name.isEmpty())
-		return NULL;
+		return nullptr;
 
 	// test to see if we're trying to add an already exisitng group.
 	if(findGroup(name))
 	{
 		DEBUG_ASSERTCRASH(FALSE, ("GameWindowTransitionsHandler::getNewGroup - We already have a group %s", name.str()));
-		return NULL;
+		return nullptr;
 	}
 	TransitionGroup *g = NEW TransitionGroup;
 	g->setName(name);
@@ -554,7 +554,7 @@ Bool GameWindowTransitionsHandler::isFinished( void )
 TransitionGroup *GameWindowTransitionsHandler::findGroup( AsciiString groupName )
 {
 	if(groupName.isEmpty())
-		return NULL;
+		return nullptr;
 
 	TransitionGroupList::iterator it = m_transitionGroupList.begin();
 	while( it != m_transitionGroupList.end() )
@@ -564,17 +564,17 @@ TransitionGroup *GameWindowTransitionsHandler::findGroup( AsciiString groupName 
 			return g;
 		it++;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void GameWindowTransitionsHandler::parseWindow( INI* ini, void *instance, void *store, const void *userData )
 {
 	static const FieldParse myFieldParse[] =
 		{
-			{ "WinName",				INI::parseAsciiString,		NULL,									offsetof( TransitionWindow, m_winName ) },
+			{ "WinName",				INI::parseAsciiString,		nullptr,									offsetof( TransitionWindow, m_winName ) },
       { "Style",					INI::parseLookupList,			TransitionStyleNames,	offsetof( TransitionWindow, m_style ) },
-			{ "FrameDelay",			INI::parseInt,						NULL,									offsetof( TransitionWindow, m_frameDelay ) },
-			{ NULL,							NULL,											NULL, 0 }
+			{ "FrameDelay",			INI::parseInt,						nullptr,									offsetof( TransitionWindow, m_frameDelay ) },
+			{ nullptr,							nullptr,											nullptr, 0 }
 		};
 	TransitionWindow *transWin = NEW TransitionWindow;
 	ini->initFromINI(transWin, myFieldParse);

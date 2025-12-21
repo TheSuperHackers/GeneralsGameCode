@@ -45,7 +45,7 @@ class GroveOptions : public COptionsPanel
 		Int	mNumTrees;
 
 	public:
-		GroveOptions(CWnd* pParent = NULL);
+		GroveOptions(CWnd* pParent = nullptr);
 		~GroveOptions();
 		void makeMain(void);
 

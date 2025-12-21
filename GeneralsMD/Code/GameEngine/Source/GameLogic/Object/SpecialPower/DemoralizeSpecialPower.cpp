@@ -52,7 +52,7 @@ DemoralizeSpecialPowerModuleData::DemoralizeSpecialPowerModuleData( void )
 	m_baseDurationInFrames = 0;
 	m_bonusDurationPerCapturedInFrames = 0;
 	m_maxDurationInFrames = 0;
-	m_fxList = NULL;
+	m_fxList = nullptr;
 
 }
 
@@ -64,13 +64,13 @@ void DemoralizeSpecialPowerModuleData::buildFieldParse( MultiIniFieldParse &p )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "BaseRange",									INI::parseReal,			NULL,			offsetof( DemoralizeSpecialPowerModuleData, m_baseRange ) },
-		{ "BonusRangePerCaptured",			INI::parseReal,			NULL,			offsetof( DemoralizeSpecialPowerModuleData, m_bonusRangePerCaptured ) },
-		{ "MaxRange",										INI::parseReal,			NULL,			offsetof( DemoralizeSpecialPowerModuleData, m_maxRange ) },
-		{ "BaseDuration",								INI::parseDurationUnsignedInt,	NULL,   offsetof( DemoralizeSpecialPowerModuleData, m_baseDurationInFrames ) },
-		{ "BonusDurationPerCaptured",		INI::parseDurationUnsignedInt,	NULL,   offsetof( DemoralizeSpecialPowerModuleData, m_bonusDurationPerCapturedInFrames ) },
-		{ "MaxDuration",								INI::parseDurationUnsignedInt,	NULL,   offsetof( DemoralizeSpecialPowerModuleData, m_maxDurationInFrames ) },
-		{ "FXList",											INI::parseFXList,								NULL,		offsetof( DemoralizeSpecialPowerModuleData, m_fxList ) },
+		{ "BaseRange",									INI::parseReal,			nullptr,			offsetof( DemoralizeSpecialPowerModuleData, m_baseRange ) },
+		{ "BonusRangePerCaptured",			INI::parseReal,			nullptr,			offsetof( DemoralizeSpecialPowerModuleData, m_bonusRangePerCaptured ) },
+		{ "MaxRange",										INI::parseReal,			nullptr,			offsetof( DemoralizeSpecialPowerModuleData, m_maxRange ) },
+		{ "BaseDuration",								INI::parseDurationUnsignedInt,	nullptr,   offsetof( DemoralizeSpecialPowerModuleData, m_baseDurationInFrames ) },
+		{ "BonusDurationPerCaptured",		INI::parseDurationUnsignedInt,	nullptr,   offsetof( DemoralizeSpecialPowerModuleData, m_bonusDurationPerCapturedInFrames ) },
+		{ "MaxDuration",								INI::parseDurationUnsignedInt,	nullptr,   offsetof( DemoralizeSpecialPowerModuleData, m_maxDurationInFrames ) },
+		{ "FXList",											INI::parseFXList,								nullptr,		offsetof( DemoralizeSpecialPowerModuleData, m_fxList ) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add( dataFieldParse );
@@ -104,7 +104,7 @@ void DemoralizeSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real 
 		return;
 
 	// sanity
-	if( loc == NULL )
+	if( loc == nullptr )
 		return;
 
 	// call the base class action cause we are *EXTENDING* functionality
@@ -148,7 +148,7 @@ void DemoralizeSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real 
 	PartitionFilterAcceptByKindOf filter2( MAKE_KINDOF_MASK( KINDOF_INFANTRY ),
 																				 KINDOFMASK_NONE );
 	PartitionFilterSameMapStatus filterMapStatus(source);
-	PartitionFilter *filters[] = { &filter1, &filter2, &filterMapStatus, NULL };
+	PartitionFilter *filters[] = { &filter1, &filter2, &filterMapStatus, nullptr };
 	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( loc,
 																																		 range,
 																																		 FROM_CENTER_2D,

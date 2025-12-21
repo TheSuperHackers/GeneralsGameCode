@@ -115,19 +115,19 @@
 static SubsystemInterfaceList _TheSubsystemList;
 
 template<class SUBSYSTEM>
-void initSubsystem(SUBSYSTEM*& sysref, SUBSYSTEM* sys, const char* path1 = NULL, const char* path2 = NULL)
+void initSubsystem(SUBSYSTEM*& sysref, SUBSYSTEM* sys, const char* path1 = nullptr, const char* path2 = nullptr)
 {
 	sysref = sys;
-	_TheSubsystemList.initSubsystem(sys, path1, path2, NULL);
+	_TheSubsystemList.initSubsystem(sys, path1, path2, nullptr);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-HINSTANCE ApplicationHInstance = NULL;  ///< our application instance
+HINSTANCE ApplicationHInstance = nullptr;  ///< our application instance
 
 /// just to satisfy the game libraries we link to
-HWND ApplicationHWnd = NULL;
+HWND ApplicationHWnd = nullptr;
 
 const char *gAppPrefix = "MC_";
 
@@ -143,14 +143,14 @@ const Char *g_csfFile = "data\\%s\\Generals.csf";
 
 static char *nextParam(char *newSource, const char *seps)
 {
-	static char *source = NULL;
+	static char *source = nullptr;
 	if (newSource)
 	{
 		source = newSource;
 	}
 	if (!source)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	// find first separator
@@ -186,15 +186,15 @@ static char *nextParam(char *newSource, const char *seps)
 			*end = 0;
 
 			if (!*source)
-				source = NULL;
+				source = nullptr;
 		}
 		else
 		{
-			source = NULL;
+			source = nullptr;
 		}
 
 		if (first && !*first)
-			first = NULL;
+			first = nullptr;
 	}
 
 	return first;
@@ -223,7 +223,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	// Set the current directory to the app directory.
 	char buf[_MAX_PATH];
-	GetModuleFileName(NULL, buf, sizeof(buf));
+	GetModuleFileName(nullptr, buf, sizeof(buf));
 	if (char *pEnd = strrchr(buf, '\\')) {
 		*pEnd = 0;
 	}
@@ -235,11 +235,11 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	std::list<std::string> argvSet;
 	char *token;
 	token = nextParam(lpCmdLine, "\" ");
-	while (token != NULL) {
+	while (token != nullptr) {
 		char * str = strtrim(token);
 		argvSet.push_back(str);
 		DEBUG_LOG(("Adding '%s'", str));
-		token = nextParam(NULL, "\" ");
+		token = nextParam(nullptr, "\" ");
 	}
 
 	// not part of the subsystem list, because it should normally never be reset!
@@ -263,16 +263,16 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	initSubsystem(TheModuleFactory, (ModuleFactory*)(new W3DModuleFactory()));
 	initSubsystem(TheSidesList, new SidesList());
 	initSubsystem(TheCaveSystem, new CaveSystem());
-	initSubsystem(TheRankInfoStore, new RankInfoStore(), NULL, "Data\\INI\\Rank");
+	initSubsystem(TheRankInfoStore, new RankInfoStore(), nullptr, "Data\\INI\\Rank");
 	initSubsystem(ThePlayerTemplateStore, new PlayerTemplateStore(), "Data\\INI\\Default\\PlayerTemplate", "Data\\INI\\PlayerTemplate");
 	initSubsystem(TheSpecialPowerStore, new SpecialPowerStore(), "Data\\INI\\Default\\SpecialPower", "Data\\INI\\SpecialPower" );
 	initSubsystem(TheParticleSystemManager, (ParticleSystemManager*)(new W3DParticleSystemManager()));
 	initSubsystem(TheFXListStore, new FXListStore(), "Data\\INI\\Default\\FXList", "Data\\INI\\FXList");
-	initSubsystem(TheWeaponStore, new WeaponStore(), NULL, "Data\\INI\\Weapon");
+	initSubsystem(TheWeaponStore, new WeaponStore(), nullptr, "Data\\INI\\Weapon");
 	initSubsystem(TheObjectCreationListStore, new ObjectCreationListStore(), "Data\\INI\\Default\\ObjectCreationList", "Data\\INI\\ObjectCreationList");
-	initSubsystem(TheLocomotorStore, new LocomotorStore(), NULL, "Data\\INI\\Locomotor");
-	initSubsystem(TheDamageFXStore, new DamageFXStore(), NULL, "Data\\INI\\DamageFX");
-	initSubsystem(TheArmorStore, new ArmorStore(), NULL, "Data\\INI\\Armor");
+	initSubsystem(TheLocomotorStore, new LocomotorStore(), nullptr, "Data\\INI\\Locomotor");
+	initSubsystem(TheDamageFXStore, new DamageFXStore(), nullptr, "Data\\INI\\DamageFX");
+	initSubsystem(TheArmorStore, new ArmorStore(), nullptr, "Data\\INI\\Armor");
 	initSubsystem(TheThingFactory, new ThingFactory(), "Data\\INI\\Default\\Object", "Data\\INI\\Object");
 	initSubsystem(TheCrateSystem, new CrateSystem(), "Data\\INI\\Default\\Crate", "Data\\INI\\Crate");
 	initSubsystem(TheUpgradeCenter, new UpgradeCenter, "Data\\INI\\Default\\Upgrade", "Data\\INI\\Upgrade");
@@ -294,23 +294,23 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	TheMapCache->updateCache();
 
 	delete TheMapCache;
-	TheMapCache = NULL;
+	TheMapCache = nullptr;
 
 	// load the dialog box
 	//DialogBox( hInstance, (LPCTSTR)IMAGE_PACKER_DIALOG,
-	//					 NULL, (DLGPROC)ImagePackerProc );
+	//					 nullptr, (DLGPROC)ImagePackerProc );
 
 	// delete TheGlobalData
 	//delete TheGlobalData;
-	//TheGlobalData = NULL;
+	//TheGlobalData = nullptr;
 
 	_TheSubsystemList.shutdownAll();
 
 	delete TheFileSystem;
-	TheFileSystem = NULL;
+	TheFileSystem = nullptr;
 
 	delete TheNameKeyGenerator;
-	TheNameKeyGenerator = NULL;
+	TheNameKeyGenerator = nullptr;
 
 	}
 	catch (...)

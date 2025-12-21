@@ -26,6 +26,7 @@
 //
 // Debug I/O class con (console window)
 //////////////////////////////////////////////////////////////////////////////
+
 #include "debug.h"
 #include "internal.h"
 #include "internal_io.h"
@@ -59,7 +60,7 @@ DebugIOCon::DebugIOCon(void):
     ci.bVisible=FALSE;
     SetConsoleCursorInfo(h,&ci);
 
-    Write(StringType::Other,NULL,"\n\nEA/Debug console open\n\n");
+    Write(StringType::Other,nullptr,"\n\nEA/Debug console open\n\n");
   }
 }
 
@@ -188,7 +189,7 @@ void DebugIOCon::Write(StringType type, const char *src, const char *str)
     return;
 
   DWORD dwDummy;
-  WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),str,strlen(str),&dwDummy,NULL);
+  WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),str,strlen(str),&dwDummy,nullptr);
 }
 
 void DebugIOCon::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,

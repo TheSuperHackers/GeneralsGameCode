@@ -40,7 +40,7 @@ static char THIS_FILE[] = __FILE__;
 //
 //  CSceneLightDialog
 //
-CSceneLightDialog::CSceneLightDialog(CWnd* pParent /*=NULL*/)
+CSceneLightDialog::CSceneLightDialog(CWnd* pParent /*=nullptr*/)
 	: m_CurrentChannel (DIFFUSE),
 	  m_InitialStartAtten (0),
 	  m_InitialEndAtten (0),
@@ -138,7 +138,7 @@ CSceneLightDialog::OnInitDialog (void)
 
 		// Attempt to calculate the light's distance from the object
 		float distance = 0;
-		if (pCDoc->GetDisplayedObject () != NULL) {
+		if (pCDoc->GetDisplayedObject () != nullptr) {
 
 			// Get the position of the light and the displayed object
 			Vector3 light_pos = pCDoc->GetSceneLight ()->Get_Position ();
@@ -299,7 +299,7 @@ CSceneLightDialog::WindowProc
 		{
 			// Did this notification come from a spin control?
 			NMHDR *pheader = (NMHDR *)lParam;
-			if ((pheader != NULL) && (pheader->code == UDN_DELTAPOS)) {
+			if ((pheader != nullptr) && (pheader->code == UDN_DELTAPOS)) {
 				LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
 
 				// Get the buddy window associated with this spin control

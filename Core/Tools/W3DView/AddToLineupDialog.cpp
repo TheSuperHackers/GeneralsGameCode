@@ -38,7 +38,7 @@ static char THIS_FILE[] = __FILE__;
 // CAddToLineupDialog dialog
 
 
-CAddToLineupDialog::CAddToLineupDialog(ViewerSceneClass *scene, CWnd* pParent /*=NULL*/)
+CAddToLineupDialog::CAddToLineupDialog(ViewerSceneClass *scene, CWnd* pParent /*=nullptr*/)
 :	CDialog(CAddToLineupDialog::IDD, pParent),
 	m_pCScene(scene)
 {
@@ -79,9 +79,9 @@ BOOL CAddToLineupDialog::OnInitDialog()
 		// Populate the combo box with the names of the objects that
 		// can be added to the lineup.
 		WW3DAssetManager *assets = WW3DAssetManager::Get_Instance();
-		ASSERT(assets != NULL);
+		ASSERT(assets != nullptr);
 		RenderObjIterator *it = assets->Create_Render_Obj_Iterator();
-		ASSERT(it != NULL);
+		ASSERT(it != nullptr);
 		for (; !it->Is_Done(); it->Next())
 		{
 			if (m_pCScene->Can_Line_Up(it->Current_Item_Class_ID()))

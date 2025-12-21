@@ -74,7 +74,7 @@ static void drawCheckBoxText( GameWindow *window, WinInstanceData *instData )
 	DisplayString *text = instData->getTextDisplayString();
 
 	// sanity
-	if( text == NULL || text->getTextLength() == 0 )
+	if( text == nullptr || text->getTextLength() == 0 )
 		return;
 
 	// get window position and size
@@ -251,7 +251,7 @@ void W3DGadgetCheckBoxDraw( GameWindow *window, WinInstanceData *instData )
 void W3DGadgetCheckBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 {
 	Int checkOffsetFromLeft;
-	const Image  *boxImage = NULL;//*backgroundImage = NULL,
+	const Image  *boxImage = nullptr;//*backgroundImage = nullptr,
 	ICoord2D origin, start, end, size;
 
 	// get window position and size

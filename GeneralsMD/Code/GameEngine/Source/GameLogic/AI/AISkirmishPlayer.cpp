@@ -75,7 +75,7 @@ m_curLeftFlankRightDefenseAngle(0),
 m_curRightFlankLeftDefenseAngle(0),
 m_curRightFlankRightDefenseAngle(0),
 m_frameToCheckEnemy(0),
-m_currentEnemy(NULL)
+m_currentEnemy(nullptr)
 
 {
 	m_frameLastBuildingBuilt = TheGameLogic->getFrame();
@@ -99,12 +99,12 @@ void AISkirmishPlayer::processBaseBuilding( void )
 	//
 	if (m_readyToBuildStructure)
 	{
-		const ThingTemplate *bldgPlan=NULL;
-		BuildListInfo	*bldgInfo = NULL;
+		const ThingTemplate *bldgPlan=nullptr;
+		BuildListInfo	*bldgInfo = nullptr;
 		Bool isPriority = false;
-		Object *bldg = NULL;
-		const ThingTemplate *powerPlan=NULL;
-		BuildListInfo	*powerInfo = NULL;
+		Object *bldg = nullptr;
+		const ThingTemplate *powerPlan=nullptr;
+		BuildListInfo	*powerInfo = nullptr;
 		Bool isUnderPowered = !m_player->getEnergy()->hasSufficientPower();
 		Bool powerUnderConstruction = false;
 		for( BuildListInfo *info = m_player->getBuildList(); info; info = info->getNext() )
@@ -121,7 +121,7 @@ void AISkirmishPlayer::processBaseBuilding( void )
 			if (info->getObjectID() != INVALID_ID) {
 				// used to have a building.
 				Object *bldg = TheGameLogic->findObjectByID( info->getObjectID() );
-				if (bldg==NULL) {
+				if (bldg==nullptr) {
 					// got destroyed.
 					ObjectID priorID;
 					priorID = info->getObjectID();
@@ -155,15 +155,15 @@ void AISkirmishPlayer::processBaseBuilding( void )
 
               if (myDozer && ( myDozer->getControllingPlayer() != m_player || myDozer->isDisabledByType( DISABLED_UNMANNED ) ) )
               {//I don't expect this dozer to work well with me.
-                myDozer = NULL;
-                bldg->setBuilder( NULL );
+                myDozer = nullptr;
+                bldg->setBuilder( nullptr );
               }
 
-							if (myDozer==NULL) {
+							if (myDozer==nullptr) {
 								DEBUG_LOG(("AI's Dozer got killed (or captured).  Find another dozer."));
 								queueDozer();
  								myDozer = findDozer(bldg->getPosition());
-								if (myDozer==NULL || myDozer->getAI()==NULL) {
+								if (myDozer==nullptr || myDozer->getAI()==nullptr) {
 									continue;
 								}
 								myDozer->getAI()->aiResumeConstruction(bldg, CMD_FROM_AI);
@@ -205,7 +205,7 @@ void AISkirmishPlayer::processBaseBuilding( void )
 				}
 			}
 			if (curPlan->isKindOf(KINDOF_FS_POWER)) {
-				if (powerPlan==NULL && !curPlan->isKindOf(KINDOF_CASH_GENERATOR)) {
+				if (powerPlan==nullptr && !curPlan->isKindOf(KINDOF_CASH_GENERATOR)) {
 					if (isUnderPowered || info->isAutomaticBuild()) {
 						powerPlan = curPlan;
 						powerInfo = info;
@@ -216,7 +216,7 @@ void AISkirmishPlayer::processBaseBuilding( void )
 				continue; // marked to not build automatically.
 			}
 			Object *dozer = findDozer(info->getLocation());
-			if (dozer==NULL) {
+			if (dozer==nullptr) {
 				if (isUnderPowered) {
 					queueDozer();
 				}
@@ -233,7 +233,7 @@ void AISkirmishPlayer::processBaseBuilding( void )
 			// check if this building has any "rebuilds" left
 			if (info->isBuildable())
 			{
-				if (bldgPlan == NULL) {
+				if (bldgPlan == nullptr) {
 					bldgPlan = curPlan;
 					bldgInfo = info;
 				}
@@ -478,7 +478,7 @@ Int AISkirmishPlayer::getMyEnemyPlayerIndex(void) {
 */
 void AISkirmishPlayer::acquireEnemy(void)
 {
-	Player *bestEnemy = NULL;
+	Player *bestEnemy = nullptr;
 	Real bestDistanceSqr = HUGE_DIST*HUGE_DIST;
 
 	if (m_currentEnemy) {
@@ -531,7 +531,7 @@ void AISkirmishPlayer::acquireEnemy(void)
 			}
 		}
 	}
-	if (bestEnemy!=NULL && (bestEnemy!=m_currentEnemy)) {
+	if (bestEnemy!=nullptr && (bestEnemy!=m_currentEnemy)) {
 		m_currentEnemy = bestEnemy;
 		AsciiString msg = TheNameKeyGenerator->keyToName(m_player->getPlayerNameKey());
 		msg.concat(" acquiring target enemy player: ");
@@ -598,7 +598,7 @@ void AISkirmishPlayer::buildAIBaseDefense(Bool flank)
 void AISkirmishPlayer::buildAIBaseDefenseStructure(const AsciiString &thingName, Bool flank)
 {
 	const ThingTemplate *tTemplate = TheThingFactory->findTemplate(thingName);
-	if (tTemplate==NULL) {
+	if (tTemplate==nullptr) {
 		DEBUG_CRASH(("Couldn't find base defense structure '%s' for side %s", thingName.str(), m_player->getSide().str()));
 		return;
 	}
@@ -692,7 +692,7 @@ void AISkirmishPlayer::buildAIBaseDefenseStructure(const AsciiString &thingName,
 		Bool canBuild;
 		Real placeAngle = tTemplate->getPlacementViewAngle();
 		canBuild = LBC_OK == TheBuildAssistant->isLocationLegalToBuild(&buildPos, tTemplate, placeAngle,
-			BuildAssistant::TERRAIN_RESTRICTIONS|BuildAssistant::NO_OBJECT_OVERLAP, NULL, m_player);
+			BuildAssistant::TERRAIN_RESTRICTIONS|BuildAssistant::NO_OBJECT_OVERLAP, nullptr, m_player);
 		TheTerrainVisual->removeAllBibs();	// isLocationLegalToBuild adds bib feedback, turn it off.  jba.
 		if (flank) {
 			m_curFlankBaseDefense++;
@@ -777,7 +777,7 @@ void AISkirmishPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recr
 		teamName.concat(" - Recruiting.");
 		TheScriptEngine->AppendDebugMessage(teamName, false);
 		const TCreateUnitsInfo *unitInfo = &teamProto->getTemplateInfo()->m_unitsInfo[0];
-//		WorkOrder *orders = NULL;
+//		WorkOrder *orders = nullptr;
 		Int i;
 		Int unitsRecruited = 0;
 		// Recruit.
@@ -828,7 +828,7 @@ void AISkirmishPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recr
 			// Put in front of queue.
 			prependTo_TeamReadyQueue(team);
 			team->m_priorityBuild = false;
-			team->m_workOrders = NULL;
+			team->m_workOrders = nullptr;
 			team->m_frameStarted = TheGameLogic->getFrame();
 			team->m_team = theTeam;
 			AsciiString teamName = teamProto->getName();
@@ -838,7 +838,7 @@ void AISkirmishPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recr
 			//disband.
 			if (!theTeam->getPrototype()->getIsSingleton()) {
 				deleteInstance(theTeam);
-				theTeam = NULL;
+				theTeam = nullptr;
 			}
 			AsciiString teamName = teamProto->getName();
 			teamName.concat(" - Recruited 0 units, disbanding.");
@@ -1086,7 +1086,7 @@ void AISkirmishPlayer::newMap( void )
 		}
 		build = build->m_next;
 	}
-	DEBUG_ASSERTLOG(build!=NULL, ("Couldn't find build list for skirmish player."));
+	DEBUG_ASSERTLOG(build!=nullptr, ("Couldn't find build list for skirmish player."));
 
 	// Build any with the initially built flag.
 	for( BuildListInfo *info = m_player->getBuildList(); info; info = info->getNext() )

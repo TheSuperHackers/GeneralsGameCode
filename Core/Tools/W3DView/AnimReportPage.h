@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // AnimReportPage.h : header file
 //
@@ -33,7 +34,7 @@ class CAnimReportPage : public CPropertyPage
 
 // Construction
 public:
-	CAnimReportPage(CAdvancedAnimSheet *sheet = NULL);
+	CAnimReportPage(CAdvancedAnimSheet *sheet = nullptr);
 	~CAnimReportPage();
 
 // Dialog Data

@@ -656,7 +656,7 @@ WWINLINE float Distance(float x1, float y1, float x2, float y2)
  *=============================================================================================*/
 WWINLINE void Vector2::Lerp(const Vector2 & a,const Vector2 & b,float t,Vector2 * set_result)
 {
-	assert(set_result != NULL);
+	assert(set_result != nullptr);
 	set_result->X = (a.X + (b.X - a.X)*t);
    set_result->Y = (a.Y + (b.Y - a.Y)*t);
 }

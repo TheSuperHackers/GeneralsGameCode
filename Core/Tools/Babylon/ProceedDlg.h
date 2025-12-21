@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // ProceedDlg.h : header file
 //
@@ -30,7 +31,7 @@ class ProceedDlg : public CDialog
 // Construction
 	const char *message;
 public:
-	ProceedDlg(const char *message, CWnd* pParent = NULL);   // standard constructor
+	ProceedDlg(const char *message, CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(ProceedDlg)

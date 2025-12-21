@@ -117,7 +117,7 @@ public:
 	// access methods for key data
 	void resetKeys( void );												///< reset the state of the keys
 	KeyboardIO *getFirstKey( void );							///< get first key ready for processing
-	KeyboardIO *findKey( KeyDefType key, KeyboardIO::StatusType status ); ///< get key ready for processing, can return NULL
+	KeyboardIO *findKey( KeyDefType key, KeyboardIO::StatusType status ); ///< get key ready for processing, can return nullptr
 	void setKeyStatusData( KeyDefType key,
 												 KeyboardIO::StatusType data );   ///< set key status
 	WideChar translateKey( WideChar keyCode );		///< translate key code to printable UNICODE char

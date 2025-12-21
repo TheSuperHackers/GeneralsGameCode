@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // VerifyTextDlg.h : header file
 //
@@ -30,7 +31,7 @@ class CVerifyTextDlg : public CDialog
 	char *m_trans;
 	char *m_orig;
 public:
-	CVerifyTextDlg(char *trans, char *orig, CWnd* pParent = NULL);   // standard constructor
+	CVerifyTextDlg(char *trans, char *orig, CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CVerifyTextDlg)

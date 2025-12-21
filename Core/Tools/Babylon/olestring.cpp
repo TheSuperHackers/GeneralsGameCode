@@ -62,8 +62,8 @@ template <typename text>int IsFormatTypeChar ( text ch )
 
 OLEString::OLEString ( void )
 {
-	ole = NULL;
-	sb = NULL;
+	ole = nullptr;
+	sb = nullptr;
 	len = 0;
 
 	Unlock ();
@@ -75,8 +75,8 @@ OLEString::~OLEString ( )
 {
 	delete [] ole;
 	delete [] sb;
-	ole = NULL;
-	sb = NULL;
+	ole = nullptr;
+	sb = nullptr;
 	len = 0;
 
 }
@@ -88,8 +88,8 @@ void OLEString::Set ( OLECHAR *new_ole )
 	{
 		delete [] ole;
 		delete [] sb;
-		ole = NULL;
-		sb = NULL;
+		ole = nullptr;
+		sb = nullptr;
 
 		len = wcslen ( new_ole );
 		{
@@ -109,8 +109,8 @@ void OLEString::Set ( const char *new_sb )
 	{
 		delete [] ole;
 		delete [] sb;
-		ole = NULL;
-		sb = NULL;
+		ole = nullptr;
+		sb = nullptr;
 
 		len = strlen ( new_sb );
 
@@ -207,7 +207,7 @@ void OLEString::FormatMetaString ( void )
 
 	Set ( string );
 	delete [] string;
-	string = NULL;
+	string = nullptr;
 }
 
 template <typename text> void StripSpaces ( text *string )

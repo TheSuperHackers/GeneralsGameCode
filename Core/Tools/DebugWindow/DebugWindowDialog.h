@@ -17,6 +17,7 @@
 */
 
 
+#include <Utility/CppMacros.h>
 #include "Resource.h"
 #include <map>			// for std::pair
 #include <string>		// for std::string
@@ -34,7 +35,7 @@ class DebugWindowDialog : public CDialog
 {
 	public:
 		enum {IDD = IDD_DebugWindow};
-		DebugWindowDialog(UINT nIDTemplate = DebugWindowDialog::IDD, CWnd* pParentWnd = NULL);
+		DebugWindowDialog(UINT nIDTemplate = DebugWindowDialog::IDD, CWnd* pParentWnd = nullptr);
 
 		bool CanProceed(void);
 		bool RunAppFast(void);

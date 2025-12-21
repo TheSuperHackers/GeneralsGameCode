@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include "wstypes.h"
 #ifdef _WIN32
@@ -45,7 +46,7 @@ class CritSec
                 CritSec();
                ~CritSec();
 
-  sint32		lock(int *refcount=NULL) RO;
+  sint32		lock(int *refcount=nullptr) RO;
   sint32		unlock(void) RO;
 
  protected:

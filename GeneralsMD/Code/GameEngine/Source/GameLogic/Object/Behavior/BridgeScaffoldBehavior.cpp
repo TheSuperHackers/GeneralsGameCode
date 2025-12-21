@@ -284,11 +284,11 @@ BridgeScaffoldBehaviorInterface *BridgeScaffoldBehavior::getBridgeScaffoldBehavi
 {
 
 	// santiy
-	if( obj == NULL )
-		return NULL;
+	if( obj == nullptr )
+		return nullptr;
 
 	// get the bridge tower behavior interface
-	BridgeScaffoldBehaviorInterface *bridgeScaffoldInterface = NULL;
+	BridgeScaffoldBehaviorInterface *bridgeScaffoldInterface = nullptr;
 	BehaviorModule **bmi;
 	for( bmi = obj->getBehaviorModules(); *bmi; ++bmi )
 	{
@@ -300,7 +300,7 @@ BridgeScaffoldBehaviorInterface *BridgeScaffoldBehavior::getBridgeScaffoldBehavi
 	}
 
 	// interface not found
-	return NULL;
+	return nullptr;
 
 }
 

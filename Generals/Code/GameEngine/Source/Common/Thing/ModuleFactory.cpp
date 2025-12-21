@@ -254,7 +254,7 @@
 #include "GameClient/Module/BeaconClientUpdate.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-ModuleFactory *TheModuleFactory = NULL;  ///< the module factory singleton
+ModuleFactory *TheModuleFactory = nullptr;  ///< the module factory singleton
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
@@ -525,7 +525,7 @@ ModuleData* ModuleFactory::newModuleDataFromINI(INI* ini, const AsciiString& nam
 																								const AsciiString& moduleTag)
 {
 	if (name.isEmpty())
-		return NULL;
+		return nullptr;
 
 	const ModuleTemplate* moduleTemplate = findModuleTemplate(name, type);
 	if (moduleTemplate)
@@ -536,7 +536,7 @@ ModuleData* ModuleFactory::newModuleDataFromINI(INI* ini, const AsciiString& nam
 		return md;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
@@ -559,7 +559,7 @@ const ModuleFactory::ModuleTemplate* ModuleFactory::findModuleTemplate(const Asc
   if (it == m_moduleTemplateMap.end())
 	{
 		DEBUG_CRASH(( "Module name '%s' not found", name.str() ));
-		return NULL;
+		return nullptr;
 	}
 	else
 	{
@@ -576,7 +576,7 @@ Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const M
 	if( name.isEmpty() )
 	{
 		DEBUG_CRASH(("attempting to create module with empty name"));
-		return NULL;
+		return nullptr;
 	}
 	const ModuleTemplate* mt = findModuleTemplate(name, type);
 	if (mt)
@@ -589,34 +589,34 @@ Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const M
 			BehaviorModule* bm = (BehaviorModule*)mod;
 
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_BODY)) != 0) == (bm->getBody() != NULL),
+				((mt->m_whichInterfaces & (MODULEINTERFACE_BODY)) != 0) == (bm->getBody() != nullptr),
 				("getInterfaceMask bad for MODULE_BODY (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_COLLIDE)) != 0) == (bm->getCollide() != NULL),
+				((mt->m_whichInterfaces & (MODULEINTERFACE_COLLIDE)) != 0) == (bm->getCollide() != nullptr),
 				("getInterfaceMask bad for MODULE_COLLIDE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_CONTAIN)) != 0) == (bm->getContain() != NULL),
+				((mt->m_whichInterfaces & (MODULEINTERFACE_CONTAIN)) != 0) == (bm->getContain() != nullptr),
 				("getInterfaceMask bad for MODULE_CONTAIN (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_CREATE)) != 0) == (bm->getCreate() != NULL),
+				((mt->m_whichInterfaces & (MODULEINTERFACE_CREATE)) != 0) == (bm->getCreate() != nullptr),
 				("getInterfaceMask bad for MODULE_CREATE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_DAMAGE)) != 0) == (bm->getDamage() != NULL),
+				((mt->m_whichInterfaces & (MODULEINTERFACE_DAMAGE)) != 0) == (bm->getDamage() != nullptr),
 				("getInterfaceMask bad for MODULE_DAMAGE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_DESTROY)) != 0) == (bm->getDestroy() != NULL),
+				((mt->m_whichInterfaces & (MODULEINTERFACE_DESTROY)) != 0) == (bm->getDestroy() != nullptr),
 				("getInterfaceMask bad for MODULE_DESTROY (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_DIE)) != 0) == (bm->getDie() != NULL),
+				((mt->m_whichInterfaces & (MODULEINTERFACE_DIE)) != 0) == (bm->getDie() != nullptr),
 				("getInterfaceMask bad for MODULE_DIE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_SPECIAL_POWER)) != 0) == (bm->getSpecialPower() != NULL),
+				((mt->m_whichInterfaces & (MODULEINTERFACE_SPECIAL_POWER)) != 0) == (bm->getSpecialPower() != nullptr),
 				("getInterfaceMask bad for MODULE_SPECIAL_POWER (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_UPDATE)) != 0) == (bm->getUpdate() != NULL),
+				((mt->m_whichInterfaces & (MODULEINTERFACE_UPDATE)) != 0) == (bm->getUpdate() != nullptr),
 				("getInterfaceMask bad for MODULE_UPDATE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_UPGRADE)) != 0) == (bm->getUpgrade() != NULL),
+				((mt->m_whichInterfaces & (MODULEINTERFACE_UPGRADE)) != 0) == (bm->getUpgrade() != nullptr),
 				("getInterfaceMask bad for MODULE_UPGRADE (%s)",name.str()));
 		}
 #endif
@@ -624,7 +624,7 @@ Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const M
 		return mod;
 	}
 
-	return NULL;
+	return nullptr;
 
 }
 

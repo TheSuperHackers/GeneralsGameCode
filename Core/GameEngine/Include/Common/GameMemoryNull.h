@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #define allocateBytes(ARGCOUNT,ARGLITERAL)          allocateBytesImplementation(ARGCOUNT)
 #define allocateBytesDoNotZero(ARGCOUNT,ARGLITERAL) allocateBytesDoNotZeroImplementation(ARGCOUNT)
@@ -64,11 +65,11 @@ class MemoryPoolFactory
 {
 public:
 
-	void memoryPoolUsageReport( const char* filename, FILE *appendToFileInstead = NULL );
+	void memoryPoolUsageReport( const char* filename, FILE *appendToFileInstead = nullptr );
 
 #ifdef MEMORYPOOL_DEBUG
 
-	void debugMemoryReport(Int flags, Int startCheckpoint, Int endCheckpoint, FILE *fp = NULL );
+	void debugMemoryReport(Int flags, Int startCheckpoint, Int endCheckpoint, FILE *fp = nullptr );
 	void debugSetInitFillerIndex(Int index);
 
 #endif

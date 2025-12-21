@@ -142,30 +142,30 @@ void W3DRadar::deleteResources( void )
 	//
 	if( m_terrainTexture )
 		m_terrainTexture->Release_Ref();
-	m_terrainTexture = NULL;
+	m_terrainTexture = nullptr;
 
 	deleteInstance(m_terrainImage);
-	m_terrainImage = NULL;
+	m_terrainImage = nullptr;
 
 	//
 	// delete overlay resources used
 	//
 	if( m_overlayTexture )
 		m_overlayTexture->Release_Ref();
-	m_overlayTexture = NULL;
+	m_overlayTexture = nullptr;
 
 	deleteInstance(m_overlayImage);
-	m_overlayImage = NULL;
+	m_overlayImage = nullptr;
 
 	//
 	// delete shroud resources used
 	//
 	if( m_shroudTexture )
 		m_shroudTexture->Release_Ref();
-	m_shroudTexture = NULL;
+	m_shroudTexture = nullptr;
 
 	deleteInstance(m_shroudImage);
-	m_shroudImage = NULL;
+	m_shroudImage = nullptr;
 
 }
 
@@ -235,7 +235,7 @@ void W3DRadar::radarToPixel( const ICoord2D *radar, ICoord2D *pixel,
 {
 
 	// sanity
-	if( radar == NULL || pixel == NULL )
+	if( radar == nullptr || pixel == nullptr )
 		return;
 
 	pixel->x = (radar->x * radarWidth / RADAR_CELL_WIDTH) + radarUpperLeftX;
@@ -252,7 +252,7 @@ void W3DRadar::drawHeroIcon( Int pixelX, Int pixelY, Int width, Int height, cons
 {
 	// get the hero icon image
 	static const Image *image = (Image *)TheMappedImageCollection->findImageByName("HeroReticle");
-	if (image != NULL)
+	if (image != nullptr)
 	{
 		// convert world to radar coords
 		ICoord2D ulRadar;
@@ -682,7 +682,7 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 {
 
 	// sanity
-	if( listHead == NULL || texture == NULL )
+	if( listHead == nullptr || texture == nullptr )
 		return;
 
 	// get surface for texture to render into
@@ -834,16 +834,16 @@ W3DRadar::W3DRadar( void )
 {
 
 	m_terrainTextureFormat = WW3D_FORMAT_UNKNOWN;
-	m_terrainImage = NULL;
-	m_terrainTexture = NULL;
+	m_terrainImage = nullptr;
+	m_terrainTexture = nullptr;
 
 	m_overlayTextureFormat = WW3D_FORMAT_UNKNOWN;
-	m_overlayImage = NULL;
-	m_overlayTexture = NULL;
+	m_overlayImage = nullptr;
+	m_overlayTexture = nullptr;
 
 	m_shroudTextureFormat = WW3D_FORMAT_UNKNOWN;
-	m_shroudImage = NULL;
-	m_shroudTexture = NULL;
+	m_shroudImage = nullptr;
+	m_shroudTexture = nullptr;
 
 	m_textureWidth = RADAR_CELL_WIDTH;
 	m_textureHeight = RADAR_CELL_HEIGHT;
@@ -1025,7 +1025,7 @@ void W3DRadar::newMap( TerrainLogic *terrain )
 	Radar::newMap( terrain );
 
 	// sanity
-	if( terrain == NULL )
+	if( terrain == nullptr )
 		return;
 
 	// build terrain texture
@@ -1074,7 +1074,7 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 			// check to see if this point is part of a working bridge
 			Bool workingBridge = FALSE;
 			bridge = TheTerrainLogic->findBridgeAt( &worldPoint );
-			if( bridge != NULL )
+			if( bridge != nullptr )
 			{
 				Object *obj = TheGameLogic->findObjectByID( bridge->peekBridgeInfo()->bridgeObjectID );
 
@@ -1118,7 +1118,7 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 
 								// get color for this Z and add to our sample color
 								Real underwaterZ;
-								if( terrain->isUnderwater( worldPoint.x, worldPoint.y, NULL, &underwaterZ ) )
+								if( terrain->isUnderwater( worldPoint.x, worldPoint.y, nullptr, &underwaterZ ) )
 								{
 									// this is our "color" for water
 									color = waterColor;
@@ -1297,7 +1297,7 @@ void W3DRadar::setShroudLevel(Int shroudX, Int shroudY, CellShroudStatus setting
 		return;
 #endif
 
-	W3DShroud* shroud = TheTerrainRenderObject ? TheTerrainRenderObject->getShroud() : NULL;
+	W3DShroud* shroud = TheTerrainRenderObject ? TheTerrainRenderObject->getShroud() : nullptr;
 	if (!shroud)
 		return;
 
@@ -1466,7 +1466,7 @@ void W3DRadar::refreshObjects()
 {
 	if constexpr (OVERLAY_REFRESH_RATE > 1)
 	{
-		if (m_overlayTexture != NULL)
+		if (m_overlayTexture != nullptr)
 		{
 			updateObjectTexture(m_overlayTexture);
 		}
@@ -1484,7 +1484,7 @@ void W3DRadar::refreshObjects()
 {
 
 	// sanity
-	if( listHead == NULL || texture == NULL )
+	if( listHead == nullptr || texture == nullptr )
 		return;
 
 	// get surface for texture to render into

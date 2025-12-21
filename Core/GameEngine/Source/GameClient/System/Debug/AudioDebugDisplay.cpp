@@ -106,9 +106,9 @@ static void printFunc( char *text )
 //============================================================================
 
 #if defined(RTS_DEBUG)
-void AudioDebugDisplay ( DebugDisplayInterface *dd, void *, FILE *fp = NULL )
+void AudioDebugDisplay ( DebugDisplayInterface *dd, void *, FILE *fp = nullptr )
 {
-	TheAudio->audioDebugDisplay( dd, NULL, fp );
+	TheAudio->audioDebugDisplay( dd, nullptr, fp );
 }
 #endif
 

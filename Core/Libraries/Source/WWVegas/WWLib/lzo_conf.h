@@ -280,7 +280,7 @@
 #else
 /* This is the safe (but slower) version */
 #define LZO_CHECK_MPOS_DET(m_pos,m_off,in,ip,max_offset) \
-		(m_pos == NULL || (m_off = ip - m_pos) > max_offset)
+		(m_pos == nullptr || (m_off = ip - m_pos) > max_offset)
 #endif
 
 

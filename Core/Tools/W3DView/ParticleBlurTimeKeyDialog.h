@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // ParticleBlurTimeKeyDialog.h : header file
 //
@@ -28,7 +29,7 @@ class ParticleBlurTimeKeyDialogClass : public CDialog
 {
 // Construction
 public:
-	ParticleBlurTimeKeyDialogClass(float blur_time, CWnd* pParent = NULL);   // standard constructor
+	ParticleBlurTimeKeyDialogClass(float blur_time, CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(ParticleBlurTimeKeyDialogClass)

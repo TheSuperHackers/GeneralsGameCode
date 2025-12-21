@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // SelectMacrotexture.h : header file
 //
@@ -28,7 +29,7 @@ class SelectMacrotexture : public CDialog
 {
 // Construction
 public:
-	SelectMacrotexture(CWnd* pParent = NULL);   // standard constructor
+	SelectMacrotexture(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(SelectMacrotexture)

@@ -60,7 +60,7 @@ public:
 		ScienceType									m_science;
 		const ObjectCreationList*		m_ocl;
 
-		Upgrades() : m_science(SCIENCE_INVALID), m_ocl(NULL)
+		Upgrades() : m_science(SCIENCE_INVALID), m_ocl(nullptr)
 		{
 		}
 	};

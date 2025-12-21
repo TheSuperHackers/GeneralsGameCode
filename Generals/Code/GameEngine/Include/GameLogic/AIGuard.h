@@ -138,7 +138,7 @@ class AIGuardInnerState : public State
 public:
 	AIGuardInnerState( StateMachine *machine ) : State( machine, "AIGuardInner" )
 	{
-		m_attackState = NULL;
+		m_attackState = nullptr;
 	}
 	virtual StateReturnType onEnter( void );
 	virtual StateReturnType update( void );
@@ -184,7 +184,7 @@ class AIGuardOuterState : public State
 public:
 	AIGuardOuterState( StateMachine *machine ) : State( machine, "AIGuardOuter" )
 	{
-		m_attackState = NULL;
+		m_attackState = nullptr;
 	}
 	virtual StateReturnType onEnter( void );
 	virtual StateReturnType update( void );

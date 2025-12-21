@@ -47,7 +47,7 @@ static const Int K_LOCAL_TEAMS_VERSION_1 = 1;
 #define SCRIPT_DIALOG_SECTION "ScriptDialog"
 
 static const char* NEUTRAL_NAME_STR = "(neutral)";
-ScriptDialog *ScriptDialog::m_staticThis = NULL;
+ScriptDialog *ScriptDialog::m_staticThis = nullptr;
 
 static AsciiString formatScriptLabel(Script *pScr) {
 	AsciiString fmt;
@@ -126,12 +126,12 @@ void CSDTreeCtrl::OnRButtonDown(UINT nFlags, CPoint point)
 	if (item)
 	{
 		ScriptDialog *sd = (ScriptDialog*) GetParent();
-		if (sd->friend_getCurScript() != NULL)
+		if (sd->friend_getCurScript() != nullptr)
 		{
 			Bool active = sd->friend_getCurScript()->isActive();
 			pPopup->CheckMenuItem(ID_SCRIPTACTIVATE, MF_BYCOMMAND | (active ? MF_CHECKED : MF_UNCHECKED));
 		}
-		else if (sd->friend_getCurGroup() != NULL)
+		else if (sd->friend_getCurGroup() != nullptr)
 		{
 			Bool active = sd->friend_getCurGroup()->isActive();
 			pPopup->CheckMenuItem(ID_SCRIPTACTIVATE, MF_BYCOMMAND | (active ? MF_CHECKED : MF_UNCHECKED));
@@ -149,7 +149,7 @@ END_MESSAGE_MAP()
 // ScriptDialog dialog
 
 
-ScriptDialog::ScriptDialog(CWnd* pParent /*=NULL*/)
+ScriptDialog::ScriptDialog(CWnd* pParent /*=nullptr*/)
 	: CDialog(ScriptDialog::IDD, pParent)
 {
 	m_draggingTreeView = false;
@@ -160,8 +160,8 @@ ScriptDialog::ScriptDialog(CWnd* pParent /*=NULL*/)
 
 ScriptDialog::~ScriptDialog()
 {
-	EditParameter::setCurSidesList(NULL);
-	m_staticThis=NULL;
+	EditParameter::setCurSidesList(nullptr);
+	m_staticThis=nullptr;
 }
 
 
@@ -200,7 +200,7 @@ void ScriptDialog::OnSelchangedScriptTree(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 	CTreeCtrl *pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
-	if (pNMTreeView->itemNew.hItem==NULL) {
+	if (pNMTreeView->itemNew.hItem==nullptr) {
 		m_curSelection.IntToList(0);
 		m_curSelection.m_objType = ListType::PLAYER_TYPE;
 	} else {
@@ -215,10 +215,10 @@ void ScriptDialog::OnSelchangedScriptTree(NMHDR* pNMHDR, LRESULT* pResult)
 	ScriptGroup *pGroup = getCurGroup();
 
 	CWnd *pWnd = GetDlgItem(IDC_EDIT_SCRIPT);
-	pWnd->EnableWindow(pScript!=NULL || pGroup!=NULL);
+	pWnd->EnableWindow(pScript!=nullptr || pGroup!=nullptr);
 
 	pWnd = GetDlgItem(IDC_COPY_SCRIPT);
-	pWnd->EnableWindow(pScript!=NULL);
+	pWnd->EnableWindow(pScript!=nullptr);
 
 	pWnd = GetDlgItem(IDC_DELETE);
 	pWnd->EnableWindow(m_curSelection.m_objType != ListType::PLAYER_TYPE);
@@ -257,7 +257,7 @@ Script *ScriptDialog::getCurScript(void)
 	if (m_curSelection.m_objType == ListType::SCRIPT_IN_PLAYER_TYPE || m_curSelection.m_objType == ListType::SCRIPT_IN_GROUP_TYPE) {
 		ScriptList *pSL = m_sides.getSideInfo(m_curSelection.m_playerIndex)->getScriptList();
 		if (pSL) {
-			Script *pScr=NULL;
+			Script *pScr=nullptr;
 			if (m_curSelection.m_objType == ListType::SCRIPT_IN_PLAYER_TYPE) {
 				pScr = pSL->getScript();
 			}	else {
@@ -278,17 +278,17 @@ Script *ScriptDialog::getCurScript(void)
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 ScriptGroup *ScriptDialog::getCurGroup(void)
 {
 	ScriptList *pSL = m_sides.getSideInfo(m_curSelection.m_playerIndex)->getScriptList();
 	if (m_curSelection.m_objType == ListType::PLAYER_TYPE) {
-		return NULL;
+		return nullptr;
 	}
 	if (m_curSelection.m_objType == ListType::SCRIPT_IN_PLAYER_TYPE) {
-		return NULL;
+		return nullptr;
 	}
 	if (pSL) {
 		Int groupNdx;
@@ -299,7 +299,7 @@ ScriptGroup *ScriptDialog::getCurGroup(void)
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 /** Updates the warning flags in a script, & script conditions & actions. */
@@ -394,7 +394,7 @@ BOOL ScriptDialog::OnInitDialog()
 		pTree->SetImageList(&m_imageList, TVSIL_STATE);
 		for (i=0; i<m_sides.getNumSides(); i++) {
 			HTREEITEM hItem = addPlayer(i);
-			if (!didSelect && hItem != NULL) {
+			if (!didSelect && hItem != nullptr) {
 				pTree->SelectItem(hItem);
 				didSelect = true;
 			}
@@ -406,7 +406,7 @@ BOOL ScriptDialog::OnInitDialog()
 	GetWindowRect(&top);
 	top.top = ::AfxGetApp()->GetProfileInt(SCRIPT_DIALOG_SECTION, "Top", top.top);
 	top.left =::AfxGetApp()->GetProfileInt(SCRIPT_DIALOG_SECTION, "Left", top.left);
-	SetWindowPos(NULL, top.left, top.top, 0, 0, SWP_NOZORDER|SWP_NOSIZE);
+	SetWindowPos(nullptr, top.left, top.top, 0, 0, SWP_NOZORDER|SWP_NOSIZE);
 
 	return FALSE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -485,7 +485,7 @@ Bool ScriptDialog::updateIcons(HTREEITEM hItem)
 	CTreeCtrl *pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
 	HTREEITEM child = pTree->GetChildItem(hItem);
 
-	while (child != NULL) {
+	while (child != nullptr) {
 		ListType lt;
 		lt.IntToList(pTree->GetItemData(child));
 
@@ -637,7 +637,7 @@ void ScriptDialog::reloadPlayer(Int playerIndex, ScriptList *pSL)
 
 	CTreeCtrl *pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
 	HTREEITEM player = pTree->GetChildItem(TVI_ROOT);
-	while (player != NULL) {
+	while (player != nullptr) {
 		TVITEM item;
 		::memset(&item, 0, sizeof(item));
 		item.mask = TVIF_HANDLE|TVIF_PARAM;
@@ -683,7 +683,7 @@ HTREEITEM ScriptDialog::findItem(ListType sel, Bool failSafe)
 	CTreeCtrl *pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
 	HTREEITEM player = pTree->GetChildItem(TVI_ROOT);
 	TVITEM item;
-	while (player != NULL) {
+	while (player != nullptr) {
 		::memset(&item, 0, sizeof(item));
 		item.mask = TVIF_HANDLE|TVIF_PARAM;
 		item.hItem = player;
@@ -696,7 +696,7 @@ HTREEITEM ScriptDialog::findItem(ListType sel, Bool failSafe)
 		player = pTree->GetNextSiblingItem(player);
 	}
 	DEBUG_ASSERTCRASH(player, ("Couldn't find player."));
-	if (!player) return NULL;
+	if (!player) return nullptr;
 	if (sel.m_objType == ListType::PLAYER_TYPE) {
 		return player;
 	}
@@ -706,7 +706,7 @@ HTREEITEM ScriptDialog::findItem(ListType sel, Bool failSafe)
 		group = player; // top level scripts are grouped under player.
 	} else {
 		group = pTree->GetChildItem(player);
-		while (group != NULL) {
+		while (group != nullptr) {
 			::memset(&item, 0, sizeof(item));
 			item.mask = TVIF_HANDLE|TVIF_PARAM;
 			item.hItem = group;
@@ -721,13 +721,13 @@ HTREEITEM ScriptDialog::findItem(ListType sel, Bool failSafe)
 		}
 	}
 	DEBUG_ASSERTCRASH(group, ("Couldn't find group."));
-	if (!group) return NULL;
+	if (!group) return nullptr;
 	if (sel.m_objType == ListType::GROUP_TYPE) {
 		return group;
 	}
 
 	HTREEITEM script;
-	for (script = pTree->GetChildItem(group); script != NULL; script = pTree->GetNextSiblingItem(script)) {
+	for (script = pTree->GetChildItem(group); script != nullptr; script = pTree->GetNextSiblingItem(script)) {
 		::memset(&item, 0, sizeof(item));
 		item.mask = TVIF_HANDLE|TVIF_PARAM;
 		item.hItem = script;
@@ -864,7 +864,7 @@ void ScriptDialog::OnEditScript()
 	Script *pScript = getCurScript();
 	ScriptGroup *pGroup = getCurGroup();
 	DEBUG_ASSERTCRASH(pScript || pGroup, ("Null script."));
-	if (pScript == NULL) {
+	if (pScript == nullptr) {
 		CTreeCtrl *pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
 		HTREEITEM item = findItem(m_curSelection);
 		if (pGroup) {
@@ -872,7 +872,7 @@ void ScriptDialog::OnEditScript()
 			if (IDOK==editDlg.DoModal()) {
 				if (item) {
 					pTree->SetItemText(item, pGroup->getName().str());
-					pTree->SelectItem(NULL);
+					pTree->SelectItem(nullptr);
 					updateWarnings();
 					pTree->SelectItem(item);
 				}
@@ -906,7 +906,7 @@ void ScriptDialog::OnEditScript()
 		HTREEITEM item = findItem(m_curSelection);
 		if (item) {
 			pTree->SetItemText(item, formatScriptLabel(pScript).str());
-			pTree->SelectItem(NULL);
+			pTree->SelectItem(nullptr);
 			updateWarnings();
 			pTree->SelectItem(item); // Updates the comment field & text field.
 		}
@@ -919,7 +919,7 @@ void ScriptDialog::OnCopyScript()
 {
 	Script *pScript = getCurScript();
 	DEBUG_ASSERTCRASH(pScript, ("Null script."));
-	if (pScript == NULL) return;
+	if (pScript == nullptr) return;
 	Script *pDup = pScript->duplicate();
 	AsciiString newName = pDup->getName();
 	newName.concat(" C");
@@ -944,7 +944,7 @@ void ScriptDialog::OnDelete()
 						m_curSelection.m_objType = ListType::PLAYER_TYPE;
 					} else {
 						pGroup->deleteScript(pScript);
-						if (pGroup->getScript()==NULL) {
+						if (pGroup->getScript()==nullptr) {
 							m_curSelection.m_objType = ListType::GROUP_TYPE;
 						}
 					}
@@ -953,7 +953,7 @@ void ScriptDialog::OnDelete()
 			}
 		} else {
 			pSL->deleteScript(pScript);
-			if (pSL->getScript()==NULL) {
+			if (pSL->getScript()==nullptr) {
 				m_curSelection.m_objType = ListType::PLAYER_TYPE;
 			}
 		}
@@ -1128,10 +1128,10 @@ void ScriptDialog::OnSave()
 
 	ScriptList *scripts[MAX_PLAYER_COUNT];
 	for (i=0; i<MAX_PLAYER_COUNT; i++) {
-		scripts[i] = NULL;
+		scripts[i] = nullptr;
 	}
 
-	CFileDialog fileDlg(false, ".scb", NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+	CFileDialog fileDlg(false, ".scb", nullptr, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 		"Script files (.scb)|*.scb||", this);
 
 	Int result = fileDlg.DoModal();
@@ -1139,7 +1139,7 @@ void ScriptDialog::OnSave()
 	// Open document dialog may change working directory,
 	// change it back.
 	char buf[_MAX_PATH];
-	::GetModuleFileName(NULL, buf, sizeof(buf));
+	::GetModuleFileName(nullptr, buf, sizeof(buf));
 	if (char *pEnd = strrchr(buf, '\\')) {
 		*pEnd = 0;
 	}
@@ -1187,7 +1187,7 @@ void ScriptDialog::OnSave()
 			scripts[0] = newInstance( ScriptList);
 			scripts[0]->addScript(pScript, 0);
 		}
-		if (scripts[0] == NULL) {
+		if (scripts[0] == nullptr) {
 			::AfxMessageBox("No scripts selected - aborting export.", MB_OK);
 			return;
 		}
@@ -1343,7 +1343,7 @@ void ScriptDialog::OnSave()
 
 void ScriptDialog::OnLoad()
 {
-	CFileDialog fileDlg(true, ".scb", NULL, 0,
+	CFileDialog fileDlg(true, ".scb", nullptr, 0,
 		"Script files (.scb)|*.scb||", this);
 
 	Int result = fileDlg.DoModal();
@@ -1351,7 +1351,7 @@ void ScriptDialog::OnLoad()
 	// Open document dialog may change working directory,
 	// change it back.
 	char buf[_MAX_PATH];
-	::GetModuleFileName(NULL, buf, sizeof(buf));
+	::GetModuleFileName(nullptr, buf, sizeof(buf));
 	if (char *pEnd = strrchr(buf, '\\')) {
 		*pEnd = 0;
 	}
@@ -1368,8 +1368,8 @@ void ScriptDialog::OnLoad()
 	try {
 		ChunkInputStream *pStrm = &theInputStream;
 		DataChunkInput file( pStrm );
-		m_firstReadObject = NULL;
-		m_firstTrigger = NULL;
+		m_firstReadObject = nullptr;
+		m_firstTrigger = nullptr;
 		m_waypointBase = pDoc->getNextWaypointID();
 		m_maxWaypoint = m_waypointBase;
 		file.registerParser( "PlayerScriptsList", AsciiString::TheEmptyString, ScriptList::ParseScriptsDataChunk );
@@ -1393,13 +1393,13 @@ void ScriptDialog::OnLoad()
 			AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, m_firstReadObject);
 			pDoc->AddAndDoUndoable(pUndo);
 			REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-			m_firstReadObject = NULL; // undoable owns it now.
+			m_firstReadObject = nullptr; // undoable owns it now.
 		}
 		PolygonTrigger *pTrig;
 		PolygonTrigger *pNextTrig;
 		for (pTrig=m_firstTrigger; pTrig; pTrig = pNextTrig) {
 			pNextTrig = pTrig->getNext();
-			pTrig->setNextPoly(NULL);
+			pTrig->setNextPoly(nullptr);
 			PolygonTrigger::addPolygonTrigger(pTrig);
 		}
 
@@ -1407,7 +1407,7 @@ void ScriptDialog::OnLoad()
 		Int count = ScriptList::getReadScripts(scripts);
 		Int i;
 		for (i=0; i<count; i++) {
-			if (scripts[i]->getScript() == NULL && scripts[i]->getScriptGroup()==NULL) continue;
+			if (scripts[i]->getScript() == nullptr && scripts[i]->getScriptGroup()==nullptr) continue;
 			Int curSide = -1;
 			if (count==1) {
 				curSide = m_curSelection.m_playerIndex;
@@ -1439,7 +1439,7 @@ void ScriptDialog::OnLoad()
 			Int j=0;
 			for (pScr = scripts[i]->getScript(); pScr; pScr=pNextScr) {
 				pNextScr=pScr->getNext();
-				pScr->setNextScript(NULL);
+				pScr->setNextScript(nullptr);
 				pSL->addScript(pScr, j); //unlink it and add.
 				j++;
 			}
@@ -1448,13 +1448,13 @@ void ScriptDialog::OnLoad()
 			ScriptGroup *pNextGroup;
 			for (pGroup = scripts[i]->getScriptGroup(); pGroup; pGroup=pNextGroup) {
 				pNextGroup=pGroup->getNext();
-				pGroup->setNextGroup(NULL);
+				pGroup->setNextGroup(nullptr);
 				pSL->addGroup(pGroup, j);
 				j++;
 			}
 			scripts[i]->discard(); /* Frees the script list, but none of it's children, as they have been
 														copied into the current scripts. */
-			scripts[i] = NULL;
+			scripts[i] = nullptr;
 			if (pSL) {
 				reloadPlayer(curSide, pSL);
 			}
@@ -1473,7 +1473,7 @@ void ScriptDialog::OnLoad()
 */
 Bool ScriptDialog::ParseObjectsDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
-	file.m_currentObject = NULL;
+	file.m_currentObject = nullptr;
 	file.registerParser( "Object", info->label, ParseObjectDataChunk );
 	return (file.parse(userData));
 }
@@ -1543,10 +1543,10 @@ Bool ScriptDialog::ParseObjectDataChunk(DataChunkInput &file, DataChunkInfo *inf
 	}
 
 	if (pPrevious) {
-		DEBUG_ASSERTCRASH(pThis->m_firstReadObject != NULL && pPrevious->getNext() == NULL, ("Bad linkage."));
+		DEBUG_ASSERTCRASH(pThis->m_firstReadObject != nullptr && pPrevious->getNext() == nullptr, ("Bad linkage."));
 		pPrevious->setNextMap(pThisOne);
 	}	else {
-		DEBUG_ASSERTCRASH(pThis->m_firstReadObject == NULL, ("Bad linkage."));
+		DEBUG_ASSERTCRASH(pThis->m_firstReadObject == nullptr, ("Bad linkage."));
 		pThis->m_firstReadObject = pThisOne;
 	}
 	file.m_currentObject = pThisOne;
@@ -1656,8 +1656,8 @@ Bool ScriptDialog::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChunk
 	AsciiString triggerName;
 	// Remove any existing polygon triggers, if any.
 	ScriptDialog *pThis = (ScriptDialog *)userData;
-	pThis->m_firstTrigger = NULL;
-	PolygonTrigger *pPrevTrig = NULL;
+	pThis->m_firstTrigger = nullptr;
+	PolygonTrigger *pPrevTrig = nullptr;
 	count = file.readInt();
 	Bool isRiver;
 	Int riverStart;
@@ -1721,7 +1721,7 @@ void ScriptDialog::OnDblclkScriptTree(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	Script *pScript = getCurScript();
 	ScriptGroup *pGroup = getCurGroup();
-	if (pScript == NULL && pGroup == NULL) return;
+	if (pScript == nullptr && pGroup == nullptr) return;
 	OnEditScript();
 	*pResult = 0;
 }
@@ -1767,7 +1767,7 @@ void ScriptDialog::OnMouseMove(UINT nFlags, CPoint point)
 		const Int CENTER_OFFSET = 12;
 		point.y -= CENTER_OFFSET;
     tvht.pt = point;
-    if ((htiTarget = pTree->HitTest( &tvht)) != NULL) {
+    if ((htiTarget = pTree->HitTest( &tvht)) != nullptr) {
 			pTree->SelectDropTarget(htiTarget);
     }
   }
@@ -1788,7 +1788,7 @@ void ScriptDialog::OnLButtonUp(UINT nFlags, CPoint point)
 		const Int CENTER_OFFSET = 12;
 		point.y -= CENTER_OFFSET;
     tvht.pt = point;
-    if ((htiTarget = pTree->HitTest( &tvht)) != NULL) {
+    if ((htiTarget = pTree->HitTest( &tvht)) != nullptr) {
       pTree->SelectItem(htiTarget);
 			pTree->SelectDropTarget(htiTarget);
 			doDropOn(m_dragItem, htiTarget);
@@ -1806,13 +1806,13 @@ void ScriptDialog::doDropOn(HTREEITEM hDrag, HTREEITEM hTarget)
 	ListType target;
 	target.IntToList(pTree->GetItemData(hTarget));
 
-	Script *dragScript = NULL;
-	ScriptGroup *dragGroup = NULL;
+	Script *dragScript = nullptr;
+	ScriptGroup *dragGroup = nullptr;
 	m_curSelection = drag;
 	Script *pScript = getCurScript();
 	ScriptList *pSL = m_sides.getSideInfo(m_curSelection.m_playerIndex)->getScriptList();
 	ScriptGroup *pGroup = getCurGroup();
-	if (pSL == NULL) return;
+	if (pSL == nullptr) return;
 	if (pScript) {
 		dragScript = pScript->duplicate();
 		if (pGroup) {
@@ -1841,7 +1841,7 @@ void ScriptDialog::doDropOn(HTREEITEM hDrag, HTREEITEM hTarget)
 	pSL = m_sides.getSideInfo(m_curSelection.m_playerIndex)->getScriptList();
 	pGroup = getCurGroup();
 	DEBUG_ASSERTCRASH((pSL), ("Hmm - bad data. jba."));
-	if (pSL == NULL) return;
+	if (pSL == nullptr) return;
 
 	// If we are dragging a group onto a script, adjust the group index so we add after.
 	if (drag.m_objType == ListType::GROUP_TYPE) {
@@ -1901,7 +1901,7 @@ void ScriptDialog::OnScriptActivate()
 	CTreeCtrl *pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
 	HTREEITEM item = findItem(m_curSelection);
 
-	if (getCurScript() != NULL)
+	if (getCurScript() != nullptr)
 	{
 		/// Updates attributes
 		active = getCurScript()->isActive();
@@ -1923,7 +1923,7 @@ void ScriptDialog::OnScriptActivate()
 				pTree->SetItemState(item, INDEXTOSTATEIMAGEMASK(6), TVIS_STATEIMAGEMASK);
 		}
 	}
-	else if (getCurGroup() != NULL)
+	else if (getCurGroup() != nullptr)
 	{
 		/// Updates attributes
 		active = getCurGroup()->isActive();

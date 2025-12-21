@@ -163,9 +163,9 @@ class StreakLineClass : public RenderObjClass
 
 		void	Set_LocsWidthsColors( unsigned int num_points,
 																Vector3 *locs,
-																float *widths = NULL,
-																Vector4 *colors = NULL,
-																unsigned int *personalities = NULL);
+																float *widths = nullptr,
+																Vector4 *colors = nullptr,
+																unsigned int *personalities = nullptr);
 
 
 	protected:

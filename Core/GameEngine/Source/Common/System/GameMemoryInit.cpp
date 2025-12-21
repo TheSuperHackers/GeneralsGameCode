@@ -77,7 +77,7 @@ void userMemoryAdjustPoolSize(const char *poolName, Int& initialAllocationCount,
 	if (initialAllocationCount > 0)
 		return;
 
-	for (const PoolSizeRec* p = PoolSizes; p->name != NULL; ++p)
+	for (const PoolSizeRec* p = PoolSizes; p->name != nullptr; ++p)
 	{
 		if (strcmp(p->name, poolName) == 0)
 		{
@@ -112,7 +112,7 @@ void userMemoryManagerInitPools()
 	// since we're called prior to main, the cur dir might not be what
 	// we expect. so do it the hard way.
 	char buf[_MAX_PATH];
-	::GetModuleFileName(NULL, buf, sizeof(buf));
+	::GetModuleFileName(nullptr, buf, sizeof(buf));
 	if (char* pEnd = strrchr(buf, '\\'))
 	{
 		*pEnd = 0;
@@ -130,7 +130,7 @@ void userMemoryManagerInitPools()
 				continue;
 			if (sscanf(buf, "%s %d %d", poolName, &initial, &overflow ) == 3)
 			{
-				for (PoolSizeRec* p = PoolSizes; p->name != NULL; ++p)
+				for (PoolSizeRec* p = PoolSizes; p->name != nullptr; ++p)
 				{
 					if (stricmp(p->name, poolName) == 0)
 					{

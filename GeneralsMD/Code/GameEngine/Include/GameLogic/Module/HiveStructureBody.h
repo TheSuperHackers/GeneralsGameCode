@@ -51,8 +51,8 @@ public:
     StructureBodyModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "PropagateDamageTypesToSlavesWhenExisting",   INI::parseDamageTypeFlags, NULL, offsetof( HiveStructureBodyModuleData, m_damageTypesToPropagateToSlaves ) },
-			{ "SwallowDamageTypesIfSlavesNotExisting",			INI::parseDamageTypeFlags, NULL, offsetof( HiveStructureBodyModuleData, m_damageTypesToSwallow ) },
+			{ "PropagateDamageTypesToSlavesWhenExisting",   INI::parseDamageTypeFlags, nullptr, offsetof( HiveStructureBodyModuleData, m_damageTypesToPropagateToSlaves ) },
+			{ "SwallowDamageTypesIfSlavesNotExisting",			INI::parseDamageTypeFlags, nullptr, offsetof( HiveStructureBodyModuleData, m_damageTypesToSwallow ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);

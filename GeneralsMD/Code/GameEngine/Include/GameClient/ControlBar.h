@@ -133,7 +133,7 @@ static const char *const TheCommandOptionNames[] =
 	"CAN_USE_WAYPOINTS",
 	"MUST_BE_STOPPED",
 
-	NULL
+	nullptr
 };
 #endif  // end DEFINE_COMMAND_OPTION_NAMES
 
@@ -261,7 +261,7 @@ static const char *const TheGuiCommandNames[] =
 	"SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT",
 	"SELECT_ALL_UNITS_OF_TYPE",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheGuiCommandNames) == GUI_COMMAND_NUM_COMMANDS + 1, "Incorrect array size");
 #endif  // end DEFINE_GUI_COMMAND_NAMES
@@ -285,7 +285,7 @@ static const LookupListRec CommandButtonMappedBorderTypeNames[] =
 	{ "ACTION",				COMMAND_BUTTON_BORDER_ACTION },
 	{ "SYSTEM",				COMMAND_BUTTON_BORDER_SYSTEM },
 
-	{ NULL, 0	}
+	{ nullptr, 0	}
 };
 static_assert(ARRAY_SIZE(CommandButtonMappedBorderTypeNames) == COMMAND_BUTTON_BORDER_COUNT + 1, "Incorrect array size");
 //-------------------------------------------------------------------------------------------------
@@ -314,7 +314,7 @@ public:
 	Bool isValidObjectTarget(const Object* sourceObj, const Object* targetObj) const;
 	Bool isValidObjectTarget(const Drawable* source, const Drawable* target) const;
 
-	// Note: It is perfectly valid for either (or both!) of targetObj and targetLocation to be NULL.
+	// Note: It is perfectly valid for either (or both!) of targetObj and targetLocation to be nullptr.
 	// This is a convenience function to make several calls to other functions.
 	Bool isValidToUseOn(const Object *sourceObj, const Object *targetObj, const Coord3D *targetLocation, CommandSourceType commandSource) const;
 	Bool isReady(const Object *sourceObj) const;
@@ -448,29 +448,29 @@ class SideSelectWindowData
 public:
 	SideSelectWindowData(void)
 	{
-		generalSpeak = NULL;
+		generalSpeak = nullptr;
 		m_currColor = 0;
-		m_gereralsNameWin = NULL;
+		m_gereralsNameWin = nullptr;
 		m_lastTime = 0;
-		m_pTemplate = NULL;
-		m_sideNameWin = NULL;
+		m_pTemplate = nullptr;
+		m_sideNameWin = nullptr;
 		m_startTime = 0;
 		m_state = 0;
-		m_upgradeImage1 = NULL;
-		m_upgradeImage1Win = NULL;
-		m_upgradeImage2 = NULL;
-		m_upgradeImage2Win = NULL;
-		m_upgradeImage3 = NULL;
-		m_upgradeImage3Win = NULL;
-		m_upgradeImage4 = NULL;
-		m_upgradeImage4Win = NULL;
+		m_upgradeImage1 = nullptr;
+		m_upgradeImage1Win = nullptr;
+		m_upgradeImage2 = nullptr;
+		m_upgradeImage2Win = nullptr;
+		m_upgradeImage3 = nullptr;
+		m_upgradeImage3Win = nullptr;
+		m_upgradeImage4 = nullptr;
+		m_upgradeImage4Win = nullptr;
 		m_upgradeImageSize.x = m_upgradeImageSize.y = 0;
 
-		m_upgradeLabel1Win = NULL;
-		m_upgradeLabel2Win = NULL;
-		m_upgradeLabel3Win = NULL;
-		m_upgradeLabel4Win = NULL;
-		sideWindow = NULL;
+		m_upgradeLabel1Win = nullptr;
+		m_upgradeLabel2Win = nullptr;
+		m_upgradeLabel3Win = nullptr;
+		m_upgradeLabel4Win = nullptr;
+		sideWindow = nullptr;
 	}
 	~SideSelectWindowData(void);
 
@@ -741,7 +741,7 @@ public:
 	void setObservedPlayer(Player *player); ///< Sets the observed player. Used to present the game world as if that player was the local player.
 	Player *getObservedPlayer() const { return m_observedPlayer; } ///< Return the observed player. Can return null.
 
-	/// Returns the currently viewed player. May return NULL if no player is selected while observing.
+	/// Returns the currently viewed player. May return nullptr if no player is selected while observing.
 	Player* getCurrentlyViewedPlayer();
 	/// Returns the relationship with the currently viewed player. May return NEUTRAL if no player is selected while observing.
 	Relationship getCurrentlyViewedPlayerRelationship(const Team* team);
@@ -818,7 +818,7 @@ protected:
 	/// show/hide the portrait window image using the image from the object
 	void setPortraitByObject( Object *obj );
 
-	/// show rally point at world location, a NULL location will hide any visible rally point marker
+	/// show rally point at world location, a nullptr location will hide any visible rally point marker
 	void showRallyPoint( const Coord3D *loc );
 
 	/// post process step, after all commands and command sets are loaded
@@ -843,7 +843,7 @@ protected:
 	static void populateInvDataCallback( Object *obj, void *userData );
 
 	// the following methods are for updating the currently showing context
-	CommandAvailability getCommandAvailability( const CommandButton *command, Object *obj, GameWindow *win, GameWindow *applyToWin = NULL, Bool forceDisabledEvaluation = FALSE ) const;
+	CommandAvailability getCommandAvailability( const CommandButton *command, Object *obj, GameWindow *win, GameWindow *applyToWin = nullptr, Bool forceDisabledEvaluation = FALSE ) const;
 	void updateContextMultiSelect( void );
 	void updateContextPurchaseScience( void );
 	void updateContextCommand( void );
@@ -978,7 +978,7 @@ public:
 	void hideBuildTooltipLayout( void );
 	void deleteBuildTooltipLayout( void );
 	Bool getShowBuildTooltipLayout( void ){return m_showBuildToolTipLayout;	}
-	void populateBuildTooltipLayout( const CommandButton *commandButton, GameWindow *tooltipWin = NULL );
+	void populateBuildTooltipLayout( const CommandButton *commandButton, GameWindow *tooltipWin = nullptr );
 	void repopulateBuildTooltipLayout( void );
 private:
 

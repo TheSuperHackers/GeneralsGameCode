@@ -99,280 +99,280 @@ ColorControl colorControlTable[] =
 
 ImageAndColorInfo imageAndColorTable[] =
 {
-	{ GWS_PUSH_BUTTON, BUTTON_ENABLED, "[Button] Enabled (Normal)", NULL, 0, 0 },
-	{ GWS_PUSH_BUTTON, BUTTON_ENABLED_PUSHED, "[Button] Enabled (Pushed)", NULL, 0, 0 },
-	{ GWS_PUSH_BUTTON, BUTTON_DISABLED, "[Button] Disabled (Normal)", NULL, 0, 0 },
-	{ GWS_PUSH_BUTTON, BUTTON_DISABLED_PUSHED, "[Button] Disabled (Pushed)", NULL, 0, 0 },
-	{ GWS_PUSH_BUTTON, BUTTON_HILITE, "[Button] Hilite (Normal)", NULL, 0, 0 },
-	{ GWS_PUSH_BUTTON, BUTTON_HILITE_PUSHED, "[Button] Hilite (Pushed)", NULL, 0, 0 },
+	{ GWS_PUSH_BUTTON, BUTTON_ENABLED, "[Button] Enabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_PUSH_BUTTON, BUTTON_ENABLED_PUSHED, "[Button] Enabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_PUSH_BUTTON, BUTTON_DISABLED, "[Button] Disabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_PUSH_BUTTON, BUTTON_DISABLED_PUSHED, "[Button] Disabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_PUSH_BUTTON, BUTTON_HILITE, "[Button] Hilite (Normal)", nullptr, nullptr, 0 },
+	{ GWS_PUSH_BUTTON, BUTTON_HILITE_PUSHED, "[Button] Hilite (Pushed)", nullptr, nullptr, 0 },
 
-	{ GWS_RADIO_BUTTON, RADIO_ENABLED, "[Radio] Enabled Surface", NULL, 0, 0 },
-	{ GWS_RADIO_BUTTON, RADIO_ENABLED_UNCHECKED_BOX, "[Radio] Enabled Nubbin (Un-checked)", NULL, 0, 0 },
-	{ GWS_RADIO_BUTTON, RADIO_ENABLED_CHECKED_BOX, "[Radio] Enabled Nubbin (Checked)", NULL, 0, 0 },
-	{ GWS_RADIO_BUTTON, RADIO_DISABLED, "[Radio] Disabled Surface", NULL, 0, 0 },
-	{ GWS_RADIO_BUTTON, RADIO_DISABLED_UNCHECKED_BOX, "[Radio] Disabled Nubbin (Un-checked)", NULL, 0, 0 },
-	{ GWS_RADIO_BUTTON, RADIO_DISABLED_CHECKED_BOX, "[Radio] Disabled Nubbin (Checked)", NULL, 0, 0 },
-	{ GWS_RADIO_BUTTON, RADIO_HILITE, "[Radio] Hilite Surface", NULL, 0, 0 },
-	{ GWS_RADIO_BUTTON, RADIO_HILITE_UNCHECKED_BOX, "[Radio] Hilite Nubbin (Un-checked)", NULL, 0, 0 },
-	{ GWS_RADIO_BUTTON, RADIO_HILITE_CHECKED_BOX, "[Radio] Hilite Nubbin (Checked)", NULL, 0, 0 },
+	{ GWS_RADIO_BUTTON, RADIO_ENABLED, "[Radio] Enabled Surface", nullptr, nullptr, 0 },
+	{ GWS_RADIO_BUTTON, RADIO_ENABLED_UNCHECKED_BOX, "[Radio] Enabled Nubbin (Un-checked)", nullptr, nullptr, 0 },
+	{ GWS_RADIO_BUTTON, RADIO_ENABLED_CHECKED_BOX, "[Radio] Enabled Nubbin (Checked)", nullptr, nullptr, 0 },
+	{ GWS_RADIO_BUTTON, RADIO_DISABLED, "[Radio] Disabled Surface", nullptr, nullptr, 0 },
+	{ GWS_RADIO_BUTTON, RADIO_DISABLED_UNCHECKED_BOX, "[Radio] Disabled Nubbin (Un-checked)", nullptr, nullptr, 0 },
+	{ GWS_RADIO_BUTTON, RADIO_DISABLED_CHECKED_BOX, "[Radio] Disabled Nubbin (Checked)", nullptr, nullptr, 0 },
+	{ GWS_RADIO_BUTTON, RADIO_HILITE, "[Radio] Hilite Surface", nullptr, nullptr, 0 },
+	{ GWS_RADIO_BUTTON, RADIO_HILITE_UNCHECKED_BOX, "[Radio] Hilite Nubbin (Un-checked)", nullptr, nullptr, 0 },
+	{ GWS_RADIO_BUTTON, RADIO_HILITE_CHECKED_BOX, "[Radio] Hilite Nubbin (Checked)", nullptr, nullptr, 0 },
 
-	{ GWS_CHECK_BOX, CHECK_BOX_ENABLED, "[Check Box] Enabled Surface", NULL, 0, 0 },
-	{ GWS_CHECK_BOX, CHECK_BOX_ENABLED_UNCHECKED_BOX, "[Check Box] Enabled Box (Un-checked)", NULL, 0, 0 },
-	{ GWS_CHECK_BOX, CHECK_BOX_ENABLED_CHECKED_BOX, "[Check Box] Enabled Box (Checked)", NULL, 0, 0 },
-	{ GWS_CHECK_BOX, CHECK_BOX_DISABLED, "[Check Box] Disabled Surface", NULL, 0, 0 },
-	{ GWS_CHECK_BOX, CHECK_BOX_DISABLED_UNCHECKED_BOX, "[Check Box] Disabled Box (Un-checked)", NULL, 0, 0 },
-	{ GWS_CHECK_BOX, CHECK_BOX_DISABLED_CHECKED_BOX, "[Check Box] Disabled Box (Checked)", NULL, 0, 0 },
-	{ GWS_CHECK_BOX, CHECK_BOX_HILITE, "[Check Box] Hilite Surface", NULL, 0, 0 },
-	{ GWS_CHECK_BOX, CHECK_BOX_HILITE_UNCHECKED_BOX, "[Check Box] Hilite Box (Un-checked)", NULL, 0, 0 },
-	{ GWS_CHECK_BOX, CHECK_BOX_HILITE_CHECKED_BOX, "[Check Box] Hilite Box (Checked)", NULL, 0, 0 },
+	{ GWS_CHECK_BOX, CHECK_BOX_ENABLED, "[Check Box] Enabled Surface", nullptr, nullptr, 0 },
+	{ GWS_CHECK_BOX, CHECK_BOX_ENABLED_UNCHECKED_BOX, "[Check Box] Enabled Box (Un-checked)", nullptr, nullptr, 0 },
+	{ GWS_CHECK_BOX, CHECK_BOX_ENABLED_CHECKED_BOX, "[Check Box] Enabled Box (Checked)", nullptr, nullptr, 0 },
+	{ GWS_CHECK_BOX, CHECK_BOX_DISABLED, "[Check Box] Disabled Surface", nullptr, nullptr, 0 },
+	{ GWS_CHECK_BOX, CHECK_BOX_DISABLED_UNCHECKED_BOX, "[Check Box] Disabled Box (Un-checked)", nullptr, nullptr, 0 },
+	{ GWS_CHECK_BOX, CHECK_BOX_DISABLED_CHECKED_BOX, "[Check Box] Disabled Box (Checked)", nullptr, nullptr, 0 },
+	{ GWS_CHECK_BOX, CHECK_BOX_HILITE, "[Check Box] Hilite Surface", nullptr, nullptr, 0 },
+	{ GWS_CHECK_BOX, CHECK_BOX_HILITE_UNCHECKED_BOX, "[Check Box] Hilite Box (Un-checked)", nullptr, nullptr, 0 },
+	{ GWS_CHECK_BOX, CHECK_BOX_HILITE_CHECKED_BOX, "[Check Box] Hilite Box (Checked)", nullptr, nullptr, 0 },
 
-	{ GWS_HORZ_SLIDER, HSLIDER_ENABLED_LEFT, "[HSlider] Enabled Left End (or bar colors for no image)", NULL, 0, 0 },
-	{ GWS_HORZ_SLIDER, HSLIDER_ENABLED_RIGHT, "[HSlider] Enabled Right End", NULL, 0, 0 },
-	{ GWS_HORZ_SLIDER, HSLIDER_ENABLED_CENTER, "[HSlider] Enabled Repeating Center", NULL, 0, 0 },
-	{ GWS_HORZ_SLIDER, HSLIDER_ENABLED_SMALL_CENTER, "[HSlider] Enabled Repeating Small Cener", NULL, 0, 0 },
-	{ GWS_HORZ_SLIDER, HSLIDER_DISABLED_LEFT, "[HSlider] Disabled Left End (or bar colors for no image)", NULL, 0, 0 },
-	{ GWS_HORZ_SLIDER, HSLIDER_DISABLED_RIGHT, "[HSlider] Disabled Right End", NULL, 0, 0 },
-	{ GWS_HORZ_SLIDER, HSLIDER_DISABLED_CENTER, "[HSlider] Disabled Repeating Center", NULL, 0, 0 },
-	{ GWS_HORZ_SLIDER, HSLIDER_DISABLED_SMALL_CENTER, "[HSlider] Disabled Repeating Small Cener", NULL, 0, 0 },
-	{ GWS_HORZ_SLIDER, HSLIDER_HILITE_LEFT, "[HSlider] Hilite Left End (or bar colors for no image)", NULL, 0, 0 },
-	{ GWS_HORZ_SLIDER, HSLIDER_HILITE_RIGHT, "[HSlider] Hilite Right End", NULL, 0, 0 },
-	{ GWS_HORZ_SLIDER, HSLIDER_HILITE_CENTER, "[HSlider] Hilite Repeating Center", NULL, 0, 0 },
-	{ GWS_HORZ_SLIDER, HSLIDER_HILITE_SMALL_CENTER, "[HSlider] Hilite Repeating Small Cener", NULL, 0, 0 },
-	{ GWS_HORZ_SLIDER, HSLIDER_THUMB_ENABLED, "[Thumb [HSlider]] Enabled (Normal)", NULL, 0, 0 },
-	{ GWS_HORZ_SLIDER, HSLIDER_THUMB_ENABLED_PUSHED, "[Thumb [HSlider]] Enabled (Pushed)", NULL, 0, 0 },
-	{ GWS_HORZ_SLIDER, HSLIDER_THUMB_DISABLED, "[Thumb [HSlider]] Disabled (Normal)", NULL, 0, 0 },
-	{ GWS_HORZ_SLIDER, HSLIDER_THUMB_DISABLED_PUSHED, "[Thumb [HSlider]] Disabled (Pushed)", NULL, 0, 0 },
-	{ GWS_HORZ_SLIDER, HSLIDER_THUMB_HILITE, "[Thumb [HSlider]] Hilite (Normal)", NULL, 0, 0 },
-	{ GWS_HORZ_SLIDER, HSLIDER_THUMB_HILITE_PUSHED, "[Thumb [HSlider]] Hilite (Pushed)", NULL, 0, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_ENABLED_LEFT, "[HSlider] Enabled Left End (or bar colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_ENABLED_RIGHT, "[HSlider] Enabled Right End", nullptr, nullptr, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_ENABLED_CENTER, "[HSlider] Enabled Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_ENABLED_SMALL_CENTER, "[HSlider] Enabled Repeating Small Cener", nullptr, nullptr, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_DISABLED_LEFT, "[HSlider] Disabled Left End (or bar colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_DISABLED_RIGHT, "[HSlider] Disabled Right End", nullptr, nullptr, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_DISABLED_CENTER, "[HSlider] Disabled Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_DISABLED_SMALL_CENTER, "[HSlider] Disabled Repeating Small Cener", nullptr, nullptr, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_HILITE_LEFT, "[HSlider] Hilite Left End (or bar colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_HILITE_RIGHT, "[HSlider] Hilite Right End", nullptr, nullptr, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_HILITE_CENTER, "[HSlider] Hilite Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_HILITE_SMALL_CENTER, "[HSlider] Hilite Repeating Small Cener", nullptr, nullptr, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_THUMB_ENABLED, "[Thumb [HSlider]] Enabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_THUMB_ENABLED_PUSHED, "[Thumb [HSlider]] Enabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_THUMB_DISABLED, "[Thumb [HSlider]] Disabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_THUMB_DISABLED_PUSHED, "[Thumb [HSlider]] Disabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_THUMB_HILITE, "[Thumb [HSlider]] Hilite (Normal)", nullptr, nullptr, 0 },
+	{ GWS_HORZ_SLIDER, HSLIDER_THUMB_HILITE_PUSHED, "[Thumb [HSlider]] Hilite (Pushed)", nullptr, nullptr, 0 },
 
-	{ GWS_VERT_SLIDER, VSLIDER_ENABLED_TOP, "[VSlider] Enabled Top End (or bar colors for no image)", NULL, 0, 0 },
-	{ GWS_VERT_SLIDER, VSLIDER_ENABLED_BOTTOM, "[VSlider] Enabled Bottom End", NULL, 0, 0 },
-	{ GWS_VERT_SLIDER, VSLIDER_ENABLED_CENTER, "[VSlider] Enabled Repeating Center", NULL, 0, 0 },
-	{ GWS_VERT_SLIDER, VSLIDER_ENABLED_SMALL_CENTER, "[VSlider] Enabled Repeating Small Cener", NULL, 0, 0 },
-	{ GWS_VERT_SLIDER, VSLIDER_DISABLED_TOP, "[VSlider] Disabled Top End (or bar colors for no image)", NULL, 0, 0 },
-	{ GWS_VERT_SLIDER, VSLIDER_DISABLED_BOTTOM, "[VSlider] Disabled Bottom End", NULL, 0, 0 },
-	{ GWS_VERT_SLIDER, VSLIDER_DISABLED_CENTER, "[VSlider] Disabled Repeating Center", NULL, 0, 0 },
-	{ GWS_VERT_SLIDER, VSLIDER_DISABLED_SMALL_CENTER, "[VSlider] Disabled Repeating Small Cener", NULL, 0, 0 },
-	{ GWS_VERT_SLIDER, VSLIDER_HILITE_TOP, "[VSlider] Hilite Top End (or bar colors for no image)", NULL, 0, 0 },
-	{ GWS_VERT_SLIDER, VSLIDER_HILITE_BOTTOM, "[VSlider] Hilite Bottom End", NULL, 0, 0 },
-	{ GWS_VERT_SLIDER, VSLIDER_HILITE_CENTER, "[VSlider] Hilite Repeating Center", NULL, 0, 0 },
-	{ GWS_VERT_SLIDER, VSLIDER_HILITE_SMALL_CENTER, "[VSlider] Hilite Repeating Small Cener", NULL, 0, 0 },
-	{ GWS_VERT_SLIDER, VSLIDER_THUMB_ENABLED, "[Thumb [VSlider]] Enabled (Normal)", NULL, 0, 0 },
-	{ GWS_VERT_SLIDER, VSLIDER_THUMB_ENABLED_PUSHED, "[Thumb [VSlider]] Enabled (Pushed)", NULL, 0, 0 },
-	{ GWS_VERT_SLIDER, VSLIDER_THUMB_DISABLED, "[Thumb [VSlider]] Disabled (Normal)", NULL, 0, 0 },
-	{ GWS_VERT_SLIDER, VSLIDER_THUMB_DISABLED_PUSHED, "[Thumb [VSlider]] Disabled (Pushed)", NULL, 0, 0 },
-	{ GWS_VERT_SLIDER, VSLIDER_THUMB_HILITE, "[Thumb [VSlider]] Hilite (Normal)", NULL, 0, 0 },
-	{ GWS_VERT_SLIDER, VSLIDER_THUMB_HILITE_PUSHED, "[Thumb [VSlider]] Hilite (Pushed)", NULL, 0, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_ENABLED_TOP, "[VSlider] Enabled Top End (or bar colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_ENABLED_BOTTOM, "[VSlider] Enabled Bottom End", nullptr, nullptr, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_ENABLED_CENTER, "[VSlider] Enabled Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_ENABLED_SMALL_CENTER, "[VSlider] Enabled Repeating Small Cener", nullptr, nullptr, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_DISABLED_TOP, "[VSlider] Disabled Top End (or bar colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_DISABLED_BOTTOM, "[VSlider] Disabled Bottom End", nullptr, nullptr, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_DISABLED_CENTER, "[VSlider] Disabled Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_DISABLED_SMALL_CENTER, "[VSlider] Disabled Repeating Small Cener", nullptr, nullptr, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_HILITE_TOP, "[VSlider] Hilite Top End (or bar colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_HILITE_BOTTOM, "[VSlider] Hilite Bottom End", nullptr, nullptr, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_HILITE_CENTER, "[VSlider] Hilite Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_HILITE_SMALL_CENTER, "[VSlider] Hilite Repeating Small Cener", nullptr, nullptr, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_THUMB_ENABLED, "[Thumb [VSlider]] Enabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_THUMB_ENABLED_PUSHED, "[Thumb [VSlider]] Enabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_THUMB_DISABLED, "[Thumb [VSlider]] Disabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_THUMB_DISABLED_PUSHED, "[Thumb [VSlider]] Disabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_THUMB_HILITE, "[Thumb [VSlider]] Hilite (Normal)", nullptr, nullptr, 0 },
+	{ GWS_VERT_SLIDER, VSLIDER_THUMB_HILITE_PUSHED, "[Thumb [VSlider]] Hilite (Pushed)", nullptr, nullptr, 0 },
 
-	{ GWS_SCROLL_LISTBOX, LISTBOX_ENABLED,															"[Listbox] Enabled Surface", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_ENABLED_SELECTED_ITEM_LEFT,						"[Listbox] Enabled Selected Item Left End (or colors)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_ENABLED_SELECTED_ITEM_RIGHT,					"[Listbox] Enabled Selected Item Right End", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_ENABLED_SELECTED_ITEM_CENTER,					"[Listbox] Enabled Selected Item Repeating Center", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER,		"[Listbox] Enabled Selected Item Small Repeating Center", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_DISABLED,															"[Listbox] Disabled Surface", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_DISABLED_SELECTED_ITEM_LEFT,					"[Listbox] Disabled Selected Item Left End (or colors)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_DISABLED_SELECTED_ITEM_RIGHT,					"[Listbox] Disabled Selected Item Right End", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_DISABLED_SELECTED_ITEM_CENTER,				"[Listbox] Disabled Selected Item Repeating Center", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER,	"[Listbox] Disabled Selected Item Small Repeating Center", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_HILITE,																"[Listbox] Hilite Surface", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_HILITE_SELECTED_ITEM_LEFT,						"[Listbox] Hilite Selected Item Left End (or colors)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_HILITE_SELECTED_ITEM_RIGHT,						"[Listbox] Hilite Selected Item Right End", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_HILITE_SELECTED_ITEM_CENTER,					"[Listbox] Hilite Selected Item Repeating Center", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_HILITE_SELECTED_ITEM_SMALL_CENTER,		"[Listbox] Hilite Selected Item Small Repeating Center", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_UP_BUTTON_ENABLED,										"[Up Button [Listbox]] Enabled (Normal)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_UP_BUTTON_ENABLED_PUSHED,							"[Up Button [Listbox]] Enabled (Pushed)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_UP_BUTTON_DISABLED,										"[Up Button [Listbox]] Disabled (Normal)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_UP_BUTTON_DISABLED_PUSHED,						"[Up Button [Listbox]] Disabled (Pushed)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_UP_BUTTON_HILITE,											"[Up Button [Listbox]] Hilite (Normal)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_UP_BUTTON_HILITE_PUSHED,							"[Up Button [Listbox]] Hilite (Pushed)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_DOWN_BUTTON_ENABLED,									"[Down Button [Listbox]] Enabled (Normal)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_DOWN_BUTTON_ENABLED_PUSHED,						"[Down Button [Listbox]] Enabled (Pushed)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_DOWN_BUTTON_DISABLED,									"[Down Button [Listbox]] Disabled (Normal)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_DOWN_BUTTON_DISABLED_PUSHED,					"[Down Button [Listbox]] Disabled (Pushed)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_DOWN_BUTTON_HILITE,										"[Down Button [Listbox]] Hilite (Normal)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_DOWN_BUTTON_HILITE_PUSHED,						"[Down Button [Listbox]] Hilite (Pushed)", NULL, 0, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_ENABLED,															"[Listbox] Enabled Surface", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_ENABLED_SELECTED_ITEM_LEFT,						"[Listbox] Enabled Selected Item Left End (or colors)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_ENABLED_SELECTED_ITEM_RIGHT,					"[Listbox] Enabled Selected Item Right End", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_ENABLED_SELECTED_ITEM_CENTER,					"[Listbox] Enabled Selected Item Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER,		"[Listbox] Enabled Selected Item Small Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_DISABLED,															"[Listbox] Disabled Surface", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_DISABLED_SELECTED_ITEM_LEFT,					"[Listbox] Disabled Selected Item Left End (or colors)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_DISABLED_SELECTED_ITEM_RIGHT,					"[Listbox] Disabled Selected Item Right End", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_DISABLED_SELECTED_ITEM_CENTER,				"[Listbox] Disabled Selected Item Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER,	"[Listbox] Disabled Selected Item Small Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_HILITE,																"[Listbox] Hilite Surface", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_HILITE_SELECTED_ITEM_LEFT,						"[Listbox] Hilite Selected Item Left End (or colors)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_HILITE_SELECTED_ITEM_RIGHT,						"[Listbox] Hilite Selected Item Right End", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_HILITE_SELECTED_ITEM_CENTER,					"[Listbox] Hilite Selected Item Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_HILITE_SELECTED_ITEM_SMALL_CENTER,		"[Listbox] Hilite Selected Item Small Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_UP_BUTTON_ENABLED,										"[Up Button [Listbox]] Enabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_UP_BUTTON_ENABLED_PUSHED,							"[Up Button [Listbox]] Enabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_UP_BUTTON_DISABLED,										"[Up Button [Listbox]] Disabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_UP_BUTTON_DISABLED_PUSHED,						"[Up Button [Listbox]] Disabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_UP_BUTTON_HILITE,											"[Up Button [Listbox]] Hilite (Normal)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_UP_BUTTON_HILITE_PUSHED,							"[Up Button [Listbox]] Hilite (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_DOWN_BUTTON_ENABLED,									"[Down Button [Listbox]] Enabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_DOWN_BUTTON_ENABLED_PUSHED,						"[Down Button [Listbox]] Enabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_DOWN_BUTTON_DISABLED,									"[Down Button [Listbox]] Disabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_DOWN_BUTTON_DISABLED_PUSHED,					"[Down Button [Listbox]] Disabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_DOWN_BUTTON_HILITE,										"[Down Button [Listbox]] Hilite (Normal)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_DOWN_BUTTON_HILITE_PUSHED,						"[Down Button [Listbox]] Hilite (Pushed)", nullptr, nullptr, 0 },
 
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_ENABLED_TOP, "[Slider [Listbox]] Enabled Top End (or bar colors for no image)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_ENABLED_BOTTOM, "[Slider [Listbox]] Enabled Bottom End", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_ENABLED_CENTER, "[Slider [Listbox]] Enabled Repeating Center", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_ENABLED_SMALL_CENTER, "[Slider [Listbox]] Enabled Repeating Small Cener", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_DISABLED_TOP, "[Slider [Listbox]] Disabled Top End (or bar colors for no image)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_DISABLED_BOTTOM, "[Slider [Listbox]] Disabled Bottom End", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_DISABLED_CENTER, "[Slider [Listbox]] Disabled Repeating Center", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_DISABLED_SMALL_CENTER, "[Slider [Listbox]] Disabled Repeating Small Cener", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_HILITE_TOP, "[Slider [Listbox]] Hilite Top End (or bar colors for no image)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_HILITE_BOTTOM, "[Slider [Listbox]] Hilite Bottom End", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_HILITE_CENTER, "[Slider [Listbox]] Hilite Repeating Center", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_HILITE_SMALL_CENTER, "[Slider [Listbox]] Hilite Repeating Small Cener", NULL, 0, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_ENABLED_TOP, "[Slider [Listbox]] Enabled Top End (or bar colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_ENABLED_BOTTOM, "[Slider [Listbox]] Enabled Bottom End", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_ENABLED_CENTER, "[Slider [Listbox]] Enabled Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_ENABLED_SMALL_CENTER, "[Slider [Listbox]] Enabled Repeating Small Cener", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_DISABLED_TOP, "[Slider [Listbox]] Disabled Top End (or bar colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_DISABLED_BOTTOM, "[Slider [Listbox]] Disabled Bottom End", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_DISABLED_CENTER, "[Slider [Listbox]] Disabled Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_DISABLED_SMALL_CENTER, "[Slider [Listbox]] Disabled Repeating Small Cener", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_HILITE_TOP, "[Slider [Listbox]] Hilite Top End (or bar colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_HILITE_BOTTOM, "[Slider [Listbox]] Hilite Bottom End", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_HILITE_CENTER, "[Slider [Listbox]] Hilite Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_HILITE_SMALL_CENTER, "[Slider [Listbox]] Hilite Repeating Small Cener", nullptr, nullptr, 0 },
 
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_ENABLED, "[Slider Thumb [Listbox]] Enabled (Normal)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_ENABLED_PUSHED, "[Slider Thumb [Listbox]] Enabled (Pushed)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_DISABLED, "[Slider Thumb [Listbox]] Disabled (Normal)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_DISABLED_PUSHED, "[Slider Thumb [Listbox]] Disabled (Pushed)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_HILITE, "[Slider Thumb [Listbox]] Hilite (Normal)", NULL, 0, 0 },
-	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_HILITE_PUSHED, "[Slider Thumb [Listbox]] Hilite (Pushed)", NULL, 0, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_ENABLED, "[Slider Thumb [Listbox]] Enabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_ENABLED_PUSHED, "[Slider Thumb [Listbox]] Enabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_DISABLED, "[Slider Thumb [Listbox]] Disabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_DISABLED_PUSHED, "[Slider Thumb [Listbox]] Disabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_HILITE, "[Slider Thumb [Listbox]] Hilite (Normal)", nullptr, nullptr, 0 },
+	{ GWS_SCROLL_LISTBOX, LISTBOX_SLIDER_THUMB_HILITE_PUSHED, "[Slider Thumb [Listbox]] Hilite (Pushed)", nullptr, nullptr, 0 },
 
-	{ GWS_COMBO_BOX, COMBOBOX_ENABLED,															"[ComboBox] Enabled Surface", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_ENABLED_SELECTED_ITEM_LEFT,						"[ComboBox] Enabled Selected Item Left End (or colors)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_ENABLED_SELECTED_ITEM_RIGHT,					"[ComboBox] Enabled Selected Item Right End", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_ENABLED_SELECTED_ITEM_CENTER,					"[ComboBox] Enabled Selected Item Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER,		"[ComboBox] Enabled Selected Item Small Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_DISABLED,															"[ComboBox] Disabled Surface", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_DISABLED_SELECTED_ITEM_LEFT,					"[ComboBox] Disabled Selected Item Left End (or colors)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_DISABLED_SELECTED_ITEM_RIGHT,					"[ComboBox] Disabled Selected Item Right End", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_DISABLED_SELECTED_ITEM_CENTER,				"[ComboBox] Disabled Selected Item Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER,	"[ComboBox] Disabled Selected Item Small Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_HILITE,																"[ComboBox] Hilite Surface", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_HILITE_SELECTED_ITEM_LEFT,						"[ComboBox] Hilite Selected Item Left End (or colors)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_HILITE_SELECTED_ITEM_RIGHT,						"[ComboBox] Hilite Selected Item Right End", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_HILITE_SELECTED_ITEM_CENTER,					"[ComboBox] Hilite Selected Item Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_HILITE_SELECTED_ITEM_SMALL_CENTER,		"[ComboBox] Hilite Selected Item Small Repeating Center", NULL, 0, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_ENABLED,															"[ComboBox] Enabled Surface", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_ENABLED_SELECTED_ITEM_LEFT,						"[ComboBox] Enabled Selected Item Left End (or colors)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_ENABLED_SELECTED_ITEM_RIGHT,					"[ComboBox] Enabled Selected Item Right End", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_ENABLED_SELECTED_ITEM_CENTER,					"[ComboBox] Enabled Selected Item Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER,		"[ComboBox] Enabled Selected Item Small Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_DISABLED,															"[ComboBox] Disabled Surface", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_DISABLED_SELECTED_ITEM_LEFT,					"[ComboBox] Disabled Selected Item Left End (or colors)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_DISABLED_SELECTED_ITEM_RIGHT,					"[ComboBox] Disabled Selected Item Right End", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_DISABLED_SELECTED_ITEM_CENTER,				"[ComboBox] Disabled Selected Item Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER,	"[ComboBox] Disabled Selected Item Small Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_HILITE,																"[ComboBox] Hilite Surface", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_HILITE_SELECTED_ITEM_LEFT,						"[ComboBox] Hilite Selected Item Left End (or colors)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_HILITE_SELECTED_ITEM_RIGHT,						"[ComboBox] Hilite Selected Item Right End", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_HILITE_SELECTED_ITEM_CENTER,					"[ComboBox] Hilite Selected Item Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_HILITE_SELECTED_ITEM_SMALL_CENTER,		"[ComboBox] Hilite Selected Item Small Repeating Center", nullptr, nullptr, 0 },
 
-	{ GWS_COMBO_BOX, COMBOBOX_DROP_DOWN_BUTTON_ENABLED, "[Button [ComboBox]] Enabled (Normal)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_DROP_DOWN_BUTTON_ENABLED_PUSHED, "[Button [ComboBox]] Enabled (Pushed)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_DROP_DOWN_BUTTON_DISABLED, "[Button [ComboBox]] Disabled (Normal)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_DROP_DOWN_BUTTON_DISABLED_PUSHED, "[Button [ComboBox]] Disabled (Pushed)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_DROP_DOWN_BUTTON_HILITE, "[Button [ComboBox]] Hilite (Normal)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_DROP_DOWN_BUTTON_HILITE_PUSHED, "[Button [ComboBox]] Hilite (Pushed)", NULL, 0, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_DROP_DOWN_BUTTON_ENABLED, "[Button [ComboBox]] Enabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_DROP_DOWN_BUTTON_ENABLED_PUSHED, "[Button [ComboBox]] Enabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_DROP_DOWN_BUTTON_DISABLED, "[Button [ComboBox]] Disabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_DROP_DOWN_BUTTON_DISABLED_PUSHED, "[Button [ComboBox]] Disabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_DROP_DOWN_BUTTON_HILITE, "[Button [ComboBox]] Hilite (Normal)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_DROP_DOWN_BUTTON_HILITE_PUSHED, "[Button [ComboBox]] Hilite (Pushed)", nullptr, nullptr, 0 },
 
-	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_ENABLED_LEFT, "[Text Entry [ComboBox]] Enabled Left End (Or colors for no image)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_ENABLED_RIGHT, "[Text Entry [ComboBox]] Enabled Right End", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_ENABLED_CENTER, "[Text Entry [ComboBox]] Enabled Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_ENABLED_SMALL_CENTER, "[Text Entry [ComboBox]] Enabled Small Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_DISABLED_LEFT, "[Text Entry [ComboBox]] Disabled Left End (Or colors for no image)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_DISABLED_RIGHT, "[Text Entry [ComboBox]] Disabled Right End", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_DISABLED_CENTER, "[Text Entry [ComboBox]] Disabled Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_DISABLED_SMALL_CENTER, "[Text Entry [ComboBox]] Disabled Small Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_HILITE_LEFT, "[Text Entry [ComboBox]] Hilite Left End (Or colors for no image)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_HILITE_RIGHT, "[Text Entry [ComboBox]] Hilite Right End", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_HILITE_CENTER, "[Text Entry [ComboBox]] Hilite Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_HILITE_SMALL_CENTER, "[Text Entry [ComboBox]] Hilite Small Repeating Center", NULL, 0, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_ENABLED_LEFT, "[Text Entry [ComboBox]] Enabled Left End (Or colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_ENABLED_RIGHT, "[Text Entry [ComboBox]] Enabled Right End", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_ENABLED_CENTER, "[Text Entry [ComboBox]] Enabled Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_ENABLED_SMALL_CENTER, "[Text Entry [ComboBox]] Enabled Small Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_DISABLED_LEFT, "[Text Entry [ComboBox]] Disabled Left End (Or colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_DISABLED_RIGHT, "[Text Entry [ComboBox]] Disabled Right End", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_DISABLED_CENTER, "[Text Entry [ComboBox]] Disabled Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_DISABLED_SMALL_CENTER, "[Text Entry [ComboBox]] Disabled Small Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_HILITE_LEFT, "[Text Entry [ComboBox]] Hilite Left End (Or colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_HILITE_RIGHT, "[Text Entry [ComboBox]] Hilite Right End", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_HILITE_CENTER, "[Text Entry [ComboBox]] Hilite Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_EDIT_BOX_HILITE_SMALL_CENTER, "[Text Entry [ComboBox]] Hilite Small Repeating Center", nullptr, nullptr, 0 },
 
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_ENABLED,															"[Listbox [ComboBox]] Enabled Surface", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_LEFT,						"[Listbox [ComboBox]] Enabled Selected Item Left End (or colors)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_RIGHT,					"[Listbox [ComboBox]] Enabled Selected Item Right End", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_CENTER,					"[Listbox [ComboBox]] Enabled Selected Item Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER,		"[Listbox [ComboBox]] Enabled Selected Item Small Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DISABLED,															"[Listbox [ComboBox]] Disabled Surface", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_LEFT,					"[Listbox [ComboBox]] Disabled Selected Item Left End (or colors)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_RIGHT,					"[Listbox [ComboBox]] Disabled Selected Item Right End", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_CENTER,				"[Listbox [ComboBox]] Disabled Selected Item Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER,	"[Listbox [ComboBox]] Disabled Selected Item Small Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_HILITE,																"[Listbox [ComboBox]] Hilite Surface", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_LEFT,						"[Listbox [ComboBox]] Hilite Selected Item Left End (or colors)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_RIGHT,						"[Listbox [ComboBox]] Hilite Selected Item Right End", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_CENTER,					"[Listbox [ComboBox]] Hilite Selected Item Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_SMALL_CENTER,		"[Listbox [ComboBox]] Hilite Selected Item Small Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_UP_BUTTON_ENABLED,										"[Up Button [Listbox]] Enabled (Normal)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_UP_BUTTON_ENABLED_PUSHED,							"[Up Button [Listbox [ComboBox]]] Enabled (Pushed)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_UP_BUTTON_DISABLED,										"[Up Button [Listbox [ComboBox]]] Disabled (Normal)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_UP_BUTTON_DISABLED_PUSHED,						"[Up Button [Listbox [ComboBox]]] Disabled (Pushed)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_UP_BUTTON_HILITE,											"[Up Button [Listbox [ComboBox]]] Hilite (Normal)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_UP_BUTTON_HILITE_PUSHED,							"[Up Button [Listbox [ComboBox]]] Hilite (Pushed)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DOWN_BUTTON_ENABLED,									"[Down Button [Listbox [ComboBox]]] Enabled (Normal)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DOWN_BUTTON_ENABLED_PUSHED,						"[Down Button [Listbox [ComboBox]]] Enabled (Pushed)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DOWN_BUTTON_DISABLED,									"[Down Button [Listbox [ComboBox]]] Disabled (Normal)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DOWN_BUTTON_DISABLED_PUSHED,					"[Down Button [Listbox [ComboBox]]] Disabled (Pushed)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DOWN_BUTTON_HILITE,										"[Down Button [Listbox [ComboBox]]] Hilite (Normal)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DOWN_BUTTON_HILITE_PUSHED,						"[Down Button [Listbox [ComboBox]]] Hilite (Pushed)", NULL, 0, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_ENABLED,															"[Listbox [ComboBox]] Enabled Surface", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_LEFT,						"[Listbox [ComboBox]] Enabled Selected Item Left End (or colors)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_RIGHT,					"[Listbox [ComboBox]] Enabled Selected Item Right End", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_CENTER,					"[Listbox [ComboBox]] Enabled Selected Item Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER,		"[Listbox [ComboBox]] Enabled Selected Item Small Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DISABLED,															"[Listbox [ComboBox]] Disabled Surface", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_LEFT,					"[Listbox [ComboBox]] Disabled Selected Item Left End (or colors)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_RIGHT,					"[Listbox [ComboBox]] Disabled Selected Item Right End", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_CENTER,				"[Listbox [ComboBox]] Disabled Selected Item Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER,	"[Listbox [ComboBox]] Disabled Selected Item Small Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_HILITE,																"[Listbox [ComboBox]] Hilite Surface", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_LEFT,						"[Listbox [ComboBox]] Hilite Selected Item Left End (or colors)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_RIGHT,						"[Listbox [ComboBox]] Hilite Selected Item Right End", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_CENTER,					"[Listbox [ComboBox]] Hilite Selected Item Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_SMALL_CENTER,		"[Listbox [ComboBox]] Hilite Selected Item Small Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_UP_BUTTON_ENABLED,										"[Up Button [Listbox]] Enabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_UP_BUTTON_ENABLED_PUSHED,							"[Up Button [Listbox [ComboBox]]] Enabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_UP_BUTTON_DISABLED,										"[Up Button [Listbox [ComboBox]]] Disabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_UP_BUTTON_DISABLED_PUSHED,						"[Up Button [Listbox [ComboBox]]] Disabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_UP_BUTTON_HILITE,											"[Up Button [Listbox [ComboBox]]] Hilite (Normal)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_UP_BUTTON_HILITE_PUSHED,							"[Up Button [Listbox [ComboBox]]] Hilite (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DOWN_BUTTON_ENABLED,									"[Down Button [Listbox [ComboBox]]] Enabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DOWN_BUTTON_ENABLED_PUSHED,						"[Down Button [Listbox [ComboBox]]] Enabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DOWN_BUTTON_DISABLED,									"[Down Button [Listbox [ComboBox]]] Disabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DOWN_BUTTON_DISABLED_PUSHED,					"[Down Button [Listbox [ComboBox]]] Disabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DOWN_BUTTON_HILITE,										"[Down Button [Listbox [ComboBox]]] Hilite (Normal)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_DOWN_BUTTON_HILITE_PUSHED,						"[Down Button [Listbox [ComboBox]]] Hilite (Pushed)", nullptr, nullptr, 0 },
 
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_ENABLED_TOP, "[Slider [Listbox [ComboBox]]] Enabled Top End (or bar colors for no image)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_ENABLED_BOTTOM, "[Slider [Listbox [ComboBox]]] Enabled Bottom End", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_ENABLED_CENTER, "[Slider [Listbox [ComboBox]]] Enabled Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_ENABLED_SMALL_CENTER, "[Slider [Listbox [ComboBox]]] Enabled Repeating Small Cener", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_DISABLED_TOP, "[Slider [Listbox [ComboBox]]] Disabled Top End (or bar colors for no image)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_DISABLED_BOTTOM, "[Slider [Listbox [ComboBox]]] Disabled Bottom End", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_DISABLED_CENTER, "[Slider [Listbox [ComboBox]]] Disabled Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_DISABLED_SMALL_CENTER, "[Slider [Listbox [ComboBox]]] Disabled Repeating Small Cener", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_HILITE_TOP, "[Slider [Listbox [ComboBox]]] Hilite Top End (or bar colors for no image)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_HILITE_BOTTOM, "[Slider [Listbox [ComboBox]]] Hilite Bottom End", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_HILITE_CENTER, "[Slider [Listbox [ComboBox]]] Hilite Repeating Center", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_HILITE_SMALL_CENTER, "[Slider [Listbox [ComboBox]]] Hilite Repeating Small Cener", NULL, 0, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_ENABLED_TOP, "[Slider [Listbox [ComboBox]]] Enabled Top End (or bar colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_ENABLED_BOTTOM, "[Slider [Listbox [ComboBox]]] Enabled Bottom End", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_ENABLED_CENTER, "[Slider [Listbox [ComboBox]]] Enabled Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_ENABLED_SMALL_CENTER, "[Slider [Listbox [ComboBox]]] Enabled Repeating Small Cener", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_DISABLED_TOP, "[Slider [Listbox [ComboBox]]] Disabled Top End (or bar colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_DISABLED_BOTTOM, "[Slider [Listbox [ComboBox]]] Disabled Bottom End", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_DISABLED_CENTER, "[Slider [Listbox [ComboBox]]] Disabled Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_DISABLED_SMALL_CENTER, "[Slider [Listbox [ComboBox]]] Disabled Repeating Small Cener", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_HILITE_TOP, "[Slider [Listbox [ComboBox]]] Hilite Top End (or bar colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_HILITE_BOTTOM, "[Slider [Listbox [ComboBox]]] Hilite Bottom End", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_HILITE_CENTER, "[Slider [Listbox [ComboBox]]] Hilite Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_HILITE_SMALL_CENTER, "[Slider [Listbox [ComboBox]]] Hilite Repeating Small Cener", nullptr, nullptr, 0 },
 
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_ENABLED, "[Slider Thumb [Listbox [ComboBox]]] Enabled (Normal)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_ENABLED_PUSHED, "[Slider Thumb [Listbox [ComboBox]]] Enabled (Pushed)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_DISABLED, "[Slider Thumb [Listbox [ComboBox]]] Disabled (Normal)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_DISABLED_PUSHED, "[Slider Thumb [Listbox [ComboBox]]] Disabled (Pushed)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_HILITE, "[Slider Thumb [Listbox [ComboBox]]] Hilite (Normal)", NULL, 0, 0 },
-	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_HILITE_PUSHED, "[Slider Thumb [Listbox [ComboBox]]] Hilite (Pushed)", NULL, 0, 0 },
-
-
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_ENABLED_LEFT,							"[Bar] Enabled Left End (or color for no images)", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_ENABLED_RIGHT,							"[Bar] Enabled Right End", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_ENABLED_CENTER,						"[Bar] Enabled Repeating Center End", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_ENABLED_SMALL_CENTER,			"[Bar] Enabled Small Repeating Center", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_ENABLED_BAR_LEFT,					"[Bar] Enabled Fill Bar Left End (or color for no images)", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_ENABLED_BAR_RIGHT,					"[Bar] Enabled Fill Bar Right End", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_ENABLED_BAR_CENTER,				"[Bar] Enabled Fill Bar Repeating Center", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_ENABLED_BAR_SMALL_CENTER,	"[Bar] Enabled Fill Bar Small Repeating Center", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_DISABLED_LEFT,							"[Bar] Disabled Left End (or color for no images)", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_DISABLED_RIGHT,						"[Bar] Disabled Right End", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_DISABLED_CENTER,						"[Bar] Disabled Repeating Center End", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_DISABLED_SMALL_CENTER,			"[Bar] Disabled Small Repeating Center", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_DISABLED_BAR_LEFT,					"[Bar] Disabled Fill Bar Left End (or color for no images)", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_DISABLED_BAR_RIGHT,				"[Bar] Disabled Fill Bar Right End", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_DISABLED_BAR_CENTER,				"[Bar] Disabled Fill Bar Repeating Center", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_DISABLED_BAR_SMALL_CENTER,	"[Bar] Disabled Fill Bar Small Repeating Center", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_HILITE_LEFT,								"[Bar] Hilite Left End (or color for no images)", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_HILITE_RIGHT,							"[Bar] Hilite Right End", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_HILITE_CENTER,							"[Bar] Hilite Repeating Center End", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_HILITE_SMALL_CENTER,				"[Bar] Hilite Small Repeating Center", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_HILITE_BAR_LEFT,						"[Bar] Hilite Fill Bar Left End (or color for no images)", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_HILITE_BAR_RIGHT,					"[Bar] Hilite Fill Bar Right End", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_HILITE_BAR_CENTER,					"[Bar] Hilite Fill Bar Repeating Center", NULL, 0, 0 },
-	{ GWS_PROGRESS_BAR, PROGRESS_BAR_HILITE_BAR_SMALL_CENTER,		"[Bar] Hilite Fill Bar Small Repeating Center", NULL, 0, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_ENABLED, "[Slider Thumb [Listbox [ComboBox]]] Enabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_ENABLED_PUSHED, "[Slider Thumb [Listbox [ComboBox]]] Enabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_DISABLED, "[Slider Thumb [Listbox [ComboBox]]] Disabled (Normal)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_DISABLED_PUSHED, "[Slider Thumb [Listbox [ComboBox]]] Disabled (Pushed)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_HILITE, "[Slider Thumb [Listbox [ComboBox]]] Hilite (Normal)", nullptr, nullptr, 0 },
+	{ GWS_COMBO_BOX, COMBOBOX_LISTBOX_SLIDER_THUMB_HILITE_PUSHED, "[Slider Thumb [Listbox [ComboBox]]] Hilite (Pushed)", nullptr, nullptr, 0 },
 
 
-	{ GWS_STATIC_TEXT, STATIC_TEXT_ENABLED, "[Static Text] Enabled", NULL, 0, 0 },
-	{ GWS_STATIC_TEXT, STATIC_TEXT_DISABLED, "[Static Text] Disabled", NULL, 0, 0 },
-	{ GWS_STATIC_TEXT, STATIC_TEXT_HILITE, "[Static Text] Hilite", NULL, 0, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_ENABLED_LEFT,							"[Bar] Enabled Left End (or color for no images)", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_ENABLED_RIGHT,							"[Bar] Enabled Right End", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_ENABLED_CENTER,						"[Bar] Enabled Repeating Center End", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_ENABLED_SMALL_CENTER,			"[Bar] Enabled Small Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_ENABLED_BAR_LEFT,					"[Bar] Enabled Fill Bar Left End (or color for no images)", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_ENABLED_BAR_RIGHT,					"[Bar] Enabled Fill Bar Right End", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_ENABLED_BAR_CENTER,				"[Bar] Enabled Fill Bar Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_ENABLED_BAR_SMALL_CENTER,	"[Bar] Enabled Fill Bar Small Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_DISABLED_LEFT,							"[Bar] Disabled Left End (or color for no images)", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_DISABLED_RIGHT,						"[Bar] Disabled Right End", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_DISABLED_CENTER,						"[Bar] Disabled Repeating Center End", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_DISABLED_SMALL_CENTER,			"[Bar] Disabled Small Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_DISABLED_BAR_LEFT,					"[Bar] Disabled Fill Bar Left End (or color for no images)", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_DISABLED_BAR_RIGHT,				"[Bar] Disabled Fill Bar Right End", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_DISABLED_BAR_CENTER,				"[Bar] Disabled Fill Bar Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_DISABLED_BAR_SMALL_CENTER,	"[Bar] Disabled Fill Bar Small Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_HILITE_LEFT,								"[Bar] Hilite Left End (or color for no images)", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_HILITE_RIGHT,							"[Bar] Hilite Right End", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_HILITE_CENTER,							"[Bar] Hilite Repeating Center End", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_HILITE_SMALL_CENTER,				"[Bar] Hilite Small Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_HILITE_BAR_LEFT,						"[Bar] Hilite Fill Bar Left End (or color for no images)", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_HILITE_BAR_RIGHT,					"[Bar] Hilite Fill Bar Right End", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_HILITE_BAR_CENTER,					"[Bar] Hilite Fill Bar Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_PROGRESS_BAR, PROGRESS_BAR_HILITE_BAR_SMALL_CENTER,		"[Bar] Hilite Fill Bar Small Repeating Center", nullptr, nullptr, 0 },
 
-	{ GWS_ENTRY_FIELD, TEXT_ENTRY_ENABLED_LEFT, "[Text Entry] Enabled Left End (Or colors for no image)", NULL, 0, 0 },
-	{ GWS_ENTRY_FIELD, TEXT_ENTRY_ENABLED_RIGHT, "[Text Entry] Enabled Right End", NULL, 0, 0 },
-	{ GWS_ENTRY_FIELD, TEXT_ENTRY_ENABLED_CENTER, "[Text Entry] Enabled Repeating Center", NULL, 0, 0 },
-	{ GWS_ENTRY_FIELD, TEXT_ENTRY_ENABLED_SMALL_CENTER, "[Text Entry] Enabled Small Repeating Center", NULL, 0, 0 },
-	{ GWS_ENTRY_FIELD, TEXT_ENTRY_DISABLED_LEFT, "[Text Entry] Disabled Left End (Or colors for no image)", NULL, 0, 0 },
-	{ GWS_ENTRY_FIELD, TEXT_ENTRY_DISABLED_RIGHT, "[Text Entry] Disabled Right End", NULL, 0, 0 },
-	{ GWS_ENTRY_FIELD, TEXT_ENTRY_DISABLED_CENTER, "[Text Entry] Disabled Repeating Center", NULL, 0, 0 },
-	{ GWS_ENTRY_FIELD, TEXT_ENTRY_DISABLED_SMALL_CENTER, "[Text Entry] Disabled Small Repeating Center", NULL, 0, 0 },
-	{ GWS_ENTRY_FIELD, TEXT_ENTRY_HILITE_LEFT, "[Text Entry] Hilite Left End (Or colors for no image)", NULL, 0, 0 },
-	{ GWS_ENTRY_FIELD, TEXT_ENTRY_HILITE_RIGHT, "[Text Entry] Hilite Right End", NULL, 0, 0 },
-	{ GWS_ENTRY_FIELD, TEXT_ENTRY_HILITE_CENTER, "[Text Entry] Hilite Repeating Center", NULL, 0, 0 },
-	{ GWS_ENTRY_FIELD, TEXT_ENTRY_HILITE_SMALL_CENTER, "[Text Entry] Hilite Small Repeating Center", NULL, 0, 0 },
 
-	{ GWS_TAB_CONTROL, TC_TAB_0_ENABLED,					"[Tab Control] Tab 0 Enabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_0_DISABLED,					"[Tab Control] Tab 0 Disabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_0_HILITE,						"[Tab Control] Tab 0 Hilite", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_1_ENABLED,					"[Tab Control] Tab 1 Enabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_1_DISABLED,					"[Tab Control] Tab 1 Disabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_1_HILITE,						"[Tab Control] Tab 1 Hilite", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_2_ENABLED,					"[Tab Control] Tab 2 Enabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_2_DISABLED,					"[Tab Control] Tab 2 Disabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_2_HILITE,						"[Tab Control] Tab 2 Hilite", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_3_ENABLED,					"[Tab Control] Tab 3 Enabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_3_DISABLED,					"[Tab Control] Tab 3 Disabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_3_HILITE,						"[Tab Control] Tab 3 Hilite", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_4_ENABLED,					"[Tab Control] Tab 4 Enabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_4_DISABLED,					"[Tab Control] Tab 4 Disabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_4_HILITE,						"[Tab Control] Tab 4 Hilite", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_5_ENABLED,					"[Tab Control] Tab 5 Enabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_5_DISABLED,					"[Tab Control] Tab 5 Disabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_5_HILITE,						"[Tab Control] Tab 5 Hilite", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_6_ENABLED,					"[Tab Control] Tab 6 Enabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_6_DISABLED,					"[Tab Control] Tab 6 Disabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_6_HILITE,						"[Tab Control] Tab 6 Hilite", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_7_ENABLED,					"[Tab Control] Tab 7 Enabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_7_DISABLED,					"[Tab Control] Tab 7 Disabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TC_TAB_7_HILITE,						"[Tab Control] Tab 7 Hilite", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TAB_CONTROL_ENABLED,				"[Tab Control] Background Surface Enabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TAB_CONTROL_DISABLED,			"[Tab Control] Background Surface Disabled", NULL, 0, 0 },
-	{ GWS_TAB_CONTROL, TAB_CONTROL_HILITE,				"[Tab Control] Background Surface Hilite", NULL, 0, 0 },
+	{ GWS_STATIC_TEXT, STATIC_TEXT_ENABLED, "[Static Text] Enabled", nullptr, nullptr, 0 },
+	{ GWS_STATIC_TEXT, STATIC_TEXT_DISABLED, "[Static Text] Disabled", nullptr, nullptr, 0 },
+	{ GWS_STATIC_TEXT, STATIC_TEXT_HILITE, "[Static Text] Hilite", nullptr, nullptr, 0 },
 
-	{ GWS_USER_WINDOW, GENERIC_ENABLED, "[User]Enabled Surface", NULL, 0, 0 },
-	{ GWS_USER_WINDOW, GENERIC_DISABLED, "[User]Disabled Surface", NULL, 0, 0 },
-	{ GWS_USER_WINDOW, GENERIC_HILITE, "[User]Hilite Surface", NULL, 0, 0 },
+	{ GWS_ENTRY_FIELD, TEXT_ENTRY_ENABLED_LEFT, "[Text Entry] Enabled Left End (Or colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_ENTRY_FIELD, TEXT_ENTRY_ENABLED_RIGHT, "[Text Entry] Enabled Right End", nullptr, nullptr, 0 },
+	{ GWS_ENTRY_FIELD, TEXT_ENTRY_ENABLED_CENTER, "[Text Entry] Enabled Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_ENTRY_FIELD, TEXT_ENTRY_ENABLED_SMALL_CENTER, "[Text Entry] Enabled Small Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_ENTRY_FIELD, TEXT_ENTRY_DISABLED_LEFT, "[Text Entry] Disabled Left End (Or colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_ENTRY_FIELD, TEXT_ENTRY_DISABLED_RIGHT, "[Text Entry] Disabled Right End", nullptr, nullptr, 0 },
+	{ GWS_ENTRY_FIELD, TEXT_ENTRY_DISABLED_CENTER, "[Text Entry] Disabled Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_ENTRY_FIELD, TEXT_ENTRY_DISABLED_SMALL_CENTER, "[Text Entry] Disabled Small Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_ENTRY_FIELD, TEXT_ENTRY_HILITE_LEFT, "[Text Entry] Hilite Left End (Or colors for no image)", nullptr, nullptr, 0 },
+	{ GWS_ENTRY_FIELD, TEXT_ENTRY_HILITE_RIGHT, "[Text Entry] Hilite Right End", nullptr, nullptr, 0 },
+	{ GWS_ENTRY_FIELD, TEXT_ENTRY_HILITE_CENTER, "[Text Entry] Hilite Repeating Center", nullptr, nullptr, 0 },
+	{ GWS_ENTRY_FIELD, TEXT_ENTRY_HILITE_SMALL_CENTER, "[Text Entry] Hilite Small Repeating Center", nullptr, nullptr, 0 },
 
-	{ 0, IDENTIFIER_INVALID, NULL, NULL, 0, 0 }
+	{ GWS_TAB_CONTROL, TC_TAB_0_ENABLED,					"[Tab Control] Tab 0 Enabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_0_DISABLED,					"[Tab Control] Tab 0 Disabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_0_HILITE,						"[Tab Control] Tab 0 Hilite", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_1_ENABLED,					"[Tab Control] Tab 1 Enabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_1_DISABLED,					"[Tab Control] Tab 1 Disabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_1_HILITE,						"[Tab Control] Tab 1 Hilite", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_2_ENABLED,					"[Tab Control] Tab 2 Enabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_2_DISABLED,					"[Tab Control] Tab 2 Disabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_2_HILITE,						"[Tab Control] Tab 2 Hilite", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_3_ENABLED,					"[Tab Control] Tab 3 Enabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_3_DISABLED,					"[Tab Control] Tab 3 Disabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_3_HILITE,						"[Tab Control] Tab 3 Hilite", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_4_ENABLED,					"[Tab Control] Tab 4 Enabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_4_DISABLED,					"[Tab Control] Tab 4 Disabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_4_HILITE,						"[Tab Control] Tab 4 Hilite", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_5_ENABLED,					"[Tab Control] Tab 5 Enabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_5_DISABLED,					"[Tab Control] Tab 5 Disabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_5_HILITE,						"[Tab Control] Tab 5 Hilite", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_6_ENABLED,					"[Tab Control] Tab 6 Enabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_6_DISABLED,					"[Tab Control] Tab 6 Disabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_6_HILITE,						"[Tab Control] Tab 6 Hilite", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_7_ENABLED,					"[Tab Control] Tab 7 Enabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_7_DISABLED,					"[Tab Control] Tab 7 Disabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TC_TAB_7_HILITE,						"[Tab Control] Tab 7 Hilite", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TAB_CONTROL_ENABLED,				"[Tab Control] Background Surface Enabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TAB_CONTROL_DISABLED,			"[Tab Control] Background Surface Disabled", nullptr, nullptr, 0 },
+	{ GWS_TAB_CONTROL, TAB_CONTROL_HILITE,				"[Tab Control] Background Surface Hilite", nullptr, nullptr, 0 },
+
+	{ GWS_USER_WINDOW, GENERIC_ENABLED, "[User]Enabled Surface", nullptr, nullptr, 0 },
+	{ GWS_USER_WINDOW, GENERIC_DISABLED, "[User]Disabled Surface", nullptr, nullptr, 0 },
+	{ GWS_USER_WINDOW, GENERIC_HILITE, "[User]Hilite Surface", nullptr, nullptr, 0 },
+
+	{ 0, IDENTIFIER_INVALID, nullptr, nullptr, nullptr, 0 }
 
 };
 
@@ -395,7 +395,7 @@ void InitPropertiesDialog( GameWindow *window, Int x, Int y )
 	POINT screen;
 
 	// sanity
-	if( window == NULL )
+	if( window == nullptr )
 		return;
 
 	// translate client position to screen coords of menu
@@ -428,7 +428,7 @@ void InitPropertiesDialog( GameWindow *window, Int x, Int y )
 		dialog = InitUserWinPropertiesDialog( window );
 
 	// sanity check dialog
-	if( dialog == NULL )
+	if( dialog == nullptr )
 	{
 
 		DEBUG_LOG(( "Error creating properties dialog" ));
@@ -459,7 +459,7 @@ void LoadFontCombo( HWND comboBox, GameFont *currFont )
 	Int index;
 
 	// sanity
-	if( comboBox == NULL || TheFontLibrary == NULL )
+	if( comboBox == nullptr || TheFontLibrary == nullptr )
 		return;
 
 	// reset the combo box
@@ -491,7 +491,7 @@ void LoadFontCombo( HWND comboBox, GameFont *currFont )
 	SendMessage( comboBox, CB_INSERTSTRING, 0, (LPARAM)"[None]" );
 
 	// if no font select the top index
-	if( currFont == NULL )
+	if( currFont == nullptr )
 	{
 
 		SendMessage( comboBox, CB_SETCURSEL, 0, 0 );
@@ -533,8 +533,8 @@ GameFont *GetSelectedFontFromCombo( HWND combo )
 {
 
 	// santiy
-	if( combo == NULL )
-		return NULL;
+	if( combo == nullptr )
+		return nullptr;
 
 	// get the selected item
 	Int selected;
@@ -542,7 +542,7 @@ GameFont *GetSelectedFontFromCombo( HWND combo )
 
 	// index 0 is the "none" selector
 	if( selected == 0 )
-		return NULL;
+		return nullptr;
 
 	// get the font from the selected item
 	return (GameFont *)SendMessage( combo, CB_GETITEMDATA, selected, 0 );
@@ -557,7 +557,7 @@ static void saveFontSelection( HWND combo, GameWindow *window )
 	GameFont *font;
 
 	// sanity
-	if( combo == NULL || window == NULL )
+	if( combo == nullptr || window == nullptr )
 		return;
 
 	// get the font
@@ -575,7 +575,7 @@ static void saveHeaderSelection( HWND comboBox, GameWindow *window )
 	char buffer[ 512 ];
 
 	// santiy
-	if( comboBox == NULL )
+	if( comboBox == nullptr )
 		return;
 
 	// get the selected index
@@ -600,7 +600,7 @@ static void loadTooltipTextLabel( HWND edit, GameWindow *window )
 {
 
 	// sanity
-	if( edit == NULL || window == NULL )
+	if( edit == nullptr || window == nullptr )
 		return;
 
 	// limit the text entry field in size
@@ -619,7 +619,7 @@ static void loadTooltipDelayTextLabel( HWND dialog, HWND edit, GameWindow *windo
 {
 
 	// sanity
-	if( dialog == NULL || edit == NULL || window == NULL )
+	if( dialog == nullptr || edit == nullptr || window == nullptr )
 		return;
 
 	// limit the text entry field in size
@@ -638,7 +638,7 @@ static void saveTooltipTextLabel( HWND edit, GameWindow *window )
 {
 
 	// sanity
-	if( edit == NULL || window == NULL )
+	if( edit == nullptr || window == nullptr )
 		return;
 
 	// get the text from the edit control into the label buffer
@@ -657,11 +657,11 @@ static void saveTooltipDelayTextLabel(HWND dialog, HWND edit, GameWindow *window
 {
 
 	// sanity
-	if( dialog == NULL || edit == NULL || window == NULL )
+	if( dialog == nullptr || edit == nullptr || window == nullptr )
 		return;
 //  WinInstanceData *instData = window->winGetInstanceData();
 
-//  instData->m_tooltipDelay = GetDlgItemInt( dialog, edit, NULL, TRUE );
+//  instData->m_tooltipDelay = GetDlgItemInt( dialog, edit, nullptr, TRUE );
 
 }
 
@@ -673,7 +673,7 @@ static void loadTextLabel( HWND edit, GameWindow *window )
 {
 
 	// sanity
-	if( edit == NULL || window == NULL )
+	if( edit == nullptr || window == nullptr )
 		return;
 
 	// limit the text entry field in size
@@ -691,7 +691,7 @@ static void saveTextLabel( HWND edit, GameWindow *window )
 {
 
 	// sanity
-	if( edit == NULL || window == NULL )
+	if( edit == nullptr || window == nullptr )
 		return;
 
 	// get the text from the edit control into the label buffer
@@ -733,7 +733,7 @@ void LoadTextStateCombo( HWND comboBox,
 	{
 
 	// sanity
-	if( comboBox == NULL )
+	if( comboBox == nullptr )
 		return;
 
 	//
@@ -767,7 +767,7 @@ void LoadStateCombo( UnsignedInt style, HWND comboBox )
 	Int index;
 
 	// sanity
-	if( comboBox == NULL )
+	if( comboBox == nullptr )
 		return;
 
 	// load the combo box with matching bit fields
@@ -799,7 +799,7 @@ void CommonDialogInitialize( GameWindow *window, HWND dialog )
 	WinInstanceData *instData;
 
 	// sanity
-	if( window == NULL || dialog == NULL )
+	if( window == nullptr || dialog == nullptr )
 		return;
 
 	// get instance data
@@ -894,11 +894,11 @@ static Bool validateName( GameWindow *root, GameWindow *exception, char *name )
 {
 
 	// end recursion, note that "" is always a valid name
-	if( root == NULL || name == NULL || strlen( name ) == 0 )
+	if( root == nullptr || name == nullptr || strlen( name ) == 0 )
 		return TRUE;
 
 	// a name cannot have a colon in it cause we use it for decoration
-	if( strchr( name, ':' ) != NULL )
+	if( strchr( name, ':' ) != nullptr )
 	{
 		char buffer[ 1024 ];
 
@@ -945,7 +945,7 @@ static void adjustGadgetDrawMethods( Bool useImages, GameWindow *window )
 {
 
 	// sanity
-	if( window == NULL )
+	if( window == nullptr )
 		return;
 
 	// get style of window
@@ -1047,7 +1047,7 @@ Bool SaveCommonDialogProperties( HWND dialog, GameWindow *window )
 	UnsignedInt bit;
 
 	// sanity
-	if( dialog == NULL || window == NULL )
+	if( dialog == nullptr || window == nullptr )
 		return FALSE;
 
 	// get name in the name edit box
@@ -1147,7 +1147,7 @@ Bool SaveCommonDialogProperties( HWND dialog, GameWindow *window )
   	// save delay text label data if present
 	HWND editTooltipDelayText = GetDlgItem( dialog, EDIT_TOOLTIP_DELAY );
 	if( editTooltipDelayText )
-  	instData->m_tooltipDelay = GetDlgItemInt( dialog, EDIT_TOOLTIP_DELAY, NULL, TRUE );
+  	instData->m_tooltipDelay = GetDlgItemInt( dialog, EDIT_TOOLTIP_DELAY, nullptr, TRUE );
 
 	HWND headerCombo = GetDlgItem( dialog, COMBO_HEADER );
 	if( headerCombo )
@@ -1169,14 +1169,14 @@ void LoadImageListComboBox( HWND comboBox )
 	Image *image;
 
 	// sanity
-	if( comboBox == NULL )
+	if( comboBox == nullptr )
 		return;
 
 	// clear the content of the box
 	SendMessage( comboBox, CB_RESETCONTENT, 0, 0 );
 
 	// load the combo box with string names from the GUI image collection
-  for (unsigned index=0;(image=TheMappedImageCollection->Enum(index))!=NULL;index++)
+  for (unsigned index=0;(image=TheMappedImageCollection->Enum(index))!=nullptr;index++)
 	{
 
 		SendMessage( comboBox, CB_ADDSTRING, 0, (LPARAM)image->getName().str() );
@@ -1200,7 +1200,7 @@ void LoadHeaderTemplateListComboBox( HWND comboBox, AsciiString selected )
 	HeaderTemplate *ht;
 
 	// sanity
-	if( comboBox == NULL )
+	if( comboBox == nullptr )
 		return;
 
 	// clear the content of the box
@@ -1235,7 +1235,7 @@ void LoadHeaderTemplateListComboBox( HWND comboBox, AsciiString selected )
 	* image Loc from the GUI collection
 	*
 	* NOTE: The image list combo boxes have a [NONE] at index 0, if that
-	* is selected NULL will be returned
+	* is selected nullptr will be returned
 	*/
 //=============================================================================
 const Image *ComboBoxSelectionToImage( HWND comboBox )
@@ -1244,15 +1244,15 @@ const Image *ComboBoxSelectionToImage( HWND comboBox )
 	char buffer[ 512 ];
 
 	// santiy
-	if( comboBox == NULL )
-		return NULL;
+	if( comboBox == nullptr )
+		return nullptr;
 
 	// get the selected index
 	selected = SendMessage( comboBox, CB_GETCURSEL, 0, 0 );
 
 	// do nothing if index 0 is selected (contains the string "[NONE]")
 	if( selected == CB_ERR || selected == 0 )
-		return NULL;
+		return nullptr;
 
 	// get the text of the selected item
 	SendMessage( comboBox, CB_GETLBTEXT, selected, (LPARAM)buffer );
@@ -1279,7 +1279,7 @@ RGBColorInt *GetControlColor( UnsignedInt controlID )
 	}
 
 	// not found
-	return NULL;
+	return nullptr;
 
 }
 
@@ -1327,7 +1327,7 @@ ImageAndColorInfo *GetStateInfo( StateIdentifier id )
 
 	}
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -1345,7 +1345,7 @@ void SwitchToState( StateIdentifier id, HWND dialog )
 
 	// get the data for the new state
 	info = GetStateInfo( id );
-	if( info == NULL )
+	if( info == nullptr )
 	{
 
 		DEBUG_LOG(( "Invalid state request" ));
@@ -1367,8 +1367,8 @@ void SwitchToState( StateIdentifier id, HWND dialog )
 	// invalidate the color previews, they will redraw with the new
 	// state automatically
 	//
-	InvalidateRect( colorButton, NULL, TRUE );
-	InvalidateRect( borderColorButton, NULL, TRUE );
+	InvalidateRect( colorButton, nullptr, TRUE );
+	InvalidateRect( borderColorButton, nullptr, TRUE );
 
 }
 
@@ -1432,7 +1432,7 @@ ImageAndColorInfo *GetCurrentStateInfo( HWND dialog )
 	// get selected state
 	selected = SendMessage( stateCombo, CB_GETCURSEL, 0, 0 );
 	if( selected == CB_ERR )
-		return NULL;
+		return nullptr;
 
 	// get the state ID of the selected item (stored in the item data)
 	stateID = (StateIdentifier)SendMessage( stateCombo, CB_GETITEMDATA, selected, 0 );
@@ -1558,7 +1558,7 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
         DeleteObject( hBrushNew );
 
         // validate this new area
-        ValidateRect( hWndControl, NULL );
+        ValidateRect( hWndControl, nullptr );
 
 				// we have taken care of it
 				*returnCode = TRUE;
@@ -1615,8 +1615,8 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 						currTextIndex = SendMessage( hWndControl, CB_GETCURSEL, 0, 0 );
 
 						// invalidate each of the preview windows for text colors
-						InvalidateRect( GetDlgItem( hWndDialog, BUTTON_TEXT_COLOR ), NULL, TRUE );
-						InvalidateRect( GetDlgItem( hWndDialog, BUTTON_TEXT_BORDER_COLOR ), NULL, TRUE );
+						InvalidateRect( GetDlgItem( hWndDialog, BUTTON_TEXT_COLOR ), nullptr, TRUE );
+						InvalidateRect( GetDlgItem( hWndDialog, BUTTON_TEXT_BORDER_COLOR ), nullptr, TRUE );
 
 					}
 					used = TRUE;
@@ -1695,7 +1695,7 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 							assert( 0 );
 
 						// invalidate the color preview
-						InvalidateRect( hWndControl, NULL, TRUE );
+						InvalidateRect( hWndControl, nullptr, TRUE );
 
 					}
 

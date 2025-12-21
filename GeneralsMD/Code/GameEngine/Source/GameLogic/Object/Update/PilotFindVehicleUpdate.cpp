@@ -66,10 +66,10 @@ PilotFindVehicleUpdateModuleData::PilotFindVehicleUpdateModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "ScanRate",							INI::parseDurationUnsignedInt,	NULL, offsetof( PilotFindVehicleUpdateModuleData, m_scanFrames ) },
-		{ "ScanRange",						INI::parseReal,									NULL, offsetof( PilotFindVehicleUpdateModuleData, m_scanRange ) },
-		{ "MinHealth",						INI::parseReal,									NULL, offsetof( PilotFindVehicleUpdateModuleData, m_minHealth ) },
-		{ 0, 0, 0, 0 }
+		{ "ScanRate",							INI::parseDurationUnsignedInt,	nullptr, offsetof( PilotFindVehicleUpdateModuleData, m_scanFrames ) },
+		{ "ScanRange",						INI::parseReal,									nullptr, offsetof( PilotFindVehicleUpdateModuleData, m_scanRange ) },
+		{ "MinHealth",						INI::parseReal,									nullptr, offsetof( PilotFindVehicleUpdateModuleData, m_minHealth ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
@@ -109,7 +109,7 @@ UpdateSleepTime PilotFindVehicleUpdate::update()
 	const PilotFindVehicleUpdateModuleData *data = getPilotFindVehicleUpdateModuleData();
 
 	AIUpdateInterface *ai = obj->getAI();
-	if (ai==NULL) return UPDATE_SLEEP_FOREVER;
+	if (ai==nullptr) return UPDATE_SLEEP_FOREVER;
 
 	if(  !ai->isIdle() )
 	{
@@ -149,7 +149,7 @@ Object* PilotFindVehicleUpdate::scanClosestTarget()
 	filters[1] = &aliveFilter;
 	filters[2] = &playerFilter;
 	filters[3] = &filterMapStatus;
-	filters[4] = NULL;
+	filters[4] = nullptr;
 
 	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( me->getPosition(), data->m_scanRange,
 		FROM_CENTER_2D, filters, ITER_SORTED_NEAR_TO_FAR );
@@ -178,7 +178,7 @@ Object* PilotFindVehicleUpdate::scanClosestTarget()
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------

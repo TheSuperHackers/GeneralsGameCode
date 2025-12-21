@@ -62,7 +62,7 @@ Bool PartitionFilterFlammable::allow(Object *objOther)
 	// It must be burnable in general, and burnable now
 	static NameKeyType key_FlammableUpdate = NAMEKEY("FlammableUpdate");
 	FlammableUpdate* fu = (FlammableUpdate*)objOther->findUpdateModule(key_FlammableUpdate);
-	if (fu == NULL)
+	if (fu == nullptr)
 		return FALSE;
 
 	if( ! fu->wouldIgnite() )
@@ -79,7 +79,7 @@ FireSpreadUpdateModuleData::FireSpreadUpdateModuleData()
 {
 	m_minSpreadTryDelayData = 0;
 	m_maxSpreadTryDelayData = 0;
-	m_oclEmbers = NULL;
+	m_oclEmbers = nullptr;
 	m_spreadTryRange = 0;
 }
 
@@ -90,11 +90,11 @@ FireSpreadUpdateModuleData::FireSpreadUpdateModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "OCLEmbers",				INI::parseObjectCreationList,		NULL, offsetof( FireSpreadUpdateModuleData, m_oclEmbers ) },
-		{ "MinSpreadDelay",		INI::parseDurationUnsignedInt,	NULL, offsetof( FireSpreadUpdateModuleData, m_minSpreadTryDelayData ) },
-		{ "MaxSpreadDelay",		INI::parseDurationUnsignedInt,	NULL, offsetof( FireSpreadUpdateModuleData, m_maxSpreadTryDelayData ) },
-		{ "SpreadTryRange",		INI::parseReal,									NULL, offsetof( FireSpreadUpdateModuleData, m_spreadTryRange ) },
-		{ 0, 0, 0, 0 }
+		{ "OCLEmbers",				INI::parseObjectCreationList,		nullptr, offsetof( FireSpreadUpdateModuleData, m_oclEmbers ) },
+		{ "MinSpreadDelay",		INI::parseDurationUnsignedInt,	nullptr, offsetof( FireSpreadUpdateModuleData, m_minSpreadTryDelayData ) },
+		{ "MaxSpreadDelay",		INI::parseDurationUnsignedInt,	nullptr, offsetof( FireSpreadUpdateModuleData, m_maxSpreadTryDelayData ) },
+		{ "SpreadTryRange",		INI::parseReal,									nullptr, offsetof( FireSpreadUpdateModuleData, m_spreadTryRange ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -122,15 +122,15 @@ UpdateSleepTime FireSpreadUpdate::update( void )
 	if( !me->getStatusBits().test( OBJECT_STATUS_AFLAME ) )
 		return UPDATE_SLEEP_FOREVER;		// not on fire -- sleep forever
 	{
-		ObjectCreationList::create( d->m_oclEmbers, getObject(), NULL );
+		ObjectCreationList::create( d->m_oclEmbers, getObject(), nullptr );
 
 		if( d->m_spreadTryRange != 0 )
 		{
 			// This will spread fire explicitly
 			PartitionFilterFlammable fFilter;
-			PartitionFilter *filters[] = { &fFilter, NULL };
+			PartitionFilter *filters[] = { &fFilter, nullptr };
 
-//			SimpleObjectIterator *iter = NULL;
+//			SimpleObjectIterator *iter = nullptr;
 //			iter = ThePartitionManager->iterateObjectsInRange(getObject(),
 //																									d->m_spreadTryRange,
 //																									FROM_CENTER_3D,

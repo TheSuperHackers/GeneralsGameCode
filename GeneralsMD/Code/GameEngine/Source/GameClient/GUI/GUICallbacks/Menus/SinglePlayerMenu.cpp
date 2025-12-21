@@ -70,19 +70,19 @@ void SinglePlayerMenuInit( WindowLayout *layout, void *userData )
 
 	// set keyboard focus to main parent
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:SinglePlayerMenuParent" );
-	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	GameWindow *parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 	TheWindowManager->winSetFocus( parent );
 
 	NameKeyType buttonNewID = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonNew" );
-	GameWindow *buttonNew = TheWindowManager->winGetWindowFromId( NULL, buttonNewID );
+	GameWindow *buttonNew = TheWindowManager->winGetWindowFromId( nullptr, buttonNewID );
 	TheShell->registerWithAnimateManager(buttonNew, WIN_ANIMATION_SLIDE_LEFT, TRUE,1);
 
 	NameKeyType buttonLoadID = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonLoad" );
-	GameWindow *buttonLoad = TheWindowManager->winGetWindowFromId( NULL, buttonLoadID );
+	GameWindow *buttonLoad = TheWindowManager->winGetWindowFromId( nullptr, buttonLoadID );
 	TheShell->registerWithAnimateManager(buttonLoad, WIN_ANIMATION_SLIDE_LEFT, TRUE,200);
 
 	NameKeyType buttonBackID = TheNameKeyGenerator->nameToKey( "SinglePlayerMenu.wnd:ButtonBack" );
-	GameWindow *buttonBack = TheWindowManager->winGetWindowFromId( NULL, buttonBackID );
+	GameWindow *buttonBack = TheWindowManager->winGetWindowFromId( nullptr, buttonBackID );
 	TheShell->registerWithAnimateManager(buttonBack, WIN_ANIMATION_SLIDE_RIGHT, TRUE,1);
 
 

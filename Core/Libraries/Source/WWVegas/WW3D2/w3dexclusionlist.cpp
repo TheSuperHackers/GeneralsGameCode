@@ -61,13 +61,13 @@ bool	W3DExclusionListClass::Is_Excluded(PrototypeClass * proto) const
 	char * root_name = copy.Peek_Buffer();
 
 	// don't preserve munged prototypes
-	if (strchr(root_name,'#') != NULL) {
+	if (strchr(root_name,'#') != nullptr) {
 		return false;
 	}
 
 	// chop off the sub-object name if present (
 	char * tmp = strchr(root_name,'.');
-	if (tmp != NULL) {
+	if (tmp != nullptr) {
 		*tmp = 0;
 	}
 

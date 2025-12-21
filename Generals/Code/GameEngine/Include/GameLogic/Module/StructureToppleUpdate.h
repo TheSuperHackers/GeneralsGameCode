@@ -76,7 +76,7 @@ static const char *const TheStructureTopplePhaseNames[] =
 	"DELAY",
 	"FINAL",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheStructureTopplePhaseNames) == ST_PHASE_COUNT + 1, "Incorrect array size");
 
@@ -113,11 +113,11 @@ public:
 		m_structuralIntegrity = 0.1f;
 		m_structuralDecay = 0.0f;
 		m_damageFXTypes = DAMAGE_TYPE_FLAGS_ALL;
-		m_toppleStartFXList = NULL;
-		m_toppleDelayFXList = NULL;
-		m_toppleDoneFXList = NULL;
-		m_toppleFXList = NULL;
-		m_crushingFXList = NULL;
+		m_toppleStartFXList = nullptr;
+		m_toppleDelayFXList = nullptr;
+		m_toppleDoneFXList = nullptr;
+		m_toppleFXList = nullptr;
+		m_crushingFXList = nullptr;
 
 		for (int i = 0; i < ST_PHASE_COUNT; ++i)
 		{

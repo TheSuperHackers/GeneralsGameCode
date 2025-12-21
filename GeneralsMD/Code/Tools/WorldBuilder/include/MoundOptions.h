@@ -41,7 +41,7 @@ public:
 				MIN_FEATHER=0,
 				MAX_FEATHER=20};
 
-	MoundOptions(CWnd* pParent = NULL);   // standard constructor
+	MoundOptions(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(MoundOptions)

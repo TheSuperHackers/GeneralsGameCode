@@ -36,14 +36,14 @@
 #include "GameLogic/TerrainLogic.h"
 
 /* ********* PolygonTrigger class ****************************/
-PolygonTrigger *PolygonTrigger::ThePolygonTriggerListPtr = NULL;
+PolygonTrigger *PolygonTrigger::ThePolygonTriggerListPtr = nullptr;
 Int PolygonTrigger::s_currentID = 1;
 /**
  PolygonTrigger - Constructor.
 */
 PolygonTrigger::PolygonTrigger(Int initialAllocation) :
-m_nextPolygonTrigger(NULL),
-m_points(NULL),
+m_nextPolygonTrigger(nullptr),
+m_points(nullptr),
 m_numPoints(0),
 m_sizePoints(0),
 m_exportWithScripts(false),
@@ -67,14 +67,14 @@ m_riverStart(0)
 PolygonTrigger::~PolygonTrigger(void)
 {
 	delete [] m_points;
-	m_points = NULL;
+	m_points = nullptr;
 
 	if (m_nextPolygonTrigger) {
 		PolygonTrigger *cur = m_nextPolygonTrigger;
 		PolygonTrigger *next;
 		while (cur) {
 			next = cur->getNext();
-			cur->setNextPoly(NULL); // prevents recursion.
+			cur->setNextPoly(nullptr); // prevents recursion.
 			deleteInstance(cur);
 			cur = next;
 		}
@@ -119,7 +119,7 @@ PolygonTrigger *PolygonTrigger::getPolygonTriggerByID(Int triggerID)
 			return poly;
 
 	// not found
-	return NULL;
+	return nullptr;
 
 }
 
@@ -142,7 +142,7 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 	AsciiString triggerName;
 	// Remove any existing polygon triggers, if any.
 	PolygonTrigger::deleteTriggers(); // just in case.
-	PolygonTrigger *pPrevTrig = NULL;
+	PolygonTrigger *pPrevTrig = nullptr;
 	ICoord3D loc;
 	count = file.readInt();
 	while (count>0) {
@@ -293,7 +293,7 @@ void PolygonTrigger::addPolygonTrigger(PolygonTrigger *pTrigger)
 */
 void PolygonTrigger::removePolygonTrigger(PolygonTrigger *pTrigger)
 {
-	PolygonTrigger *pPrev = NULL;
+	PolygonTrigger *pPrev = nullptr;
 	PolygonTrigger *pTrig=getFirstPolygonTrigger();
 	for (; pTrig; pTrig = pTrig->getNext()) {
 		if (pTrig==pTrigger) break;
@@ -309,7 +309,7 @@ void PolygonTrigger::removePolygonTrigger(PolygonTrigger *pTrigger)
 			ThePolygonTriggerListPtr = pTrig->m_nextPolygonTrigger;
 		}
 	}
-	pTrigger->m_nextPolygonTrigger = NULL;
+	pTrigger->m_nextPolygonTrigger = nullptr;
 }
 
 /**
@@ -318,7 +318,7 @@ void PolygonTrigger::removePolygonTrigger(PolygonTrigger *pTrigger)
 void PolygonTrigger::deleteTriggers(void)
 {
 	PolygonTrigger *pList = ThePolygonTriggerListPtr;
-	ThePolygonTriggerListPtr = NULL;
+	ThePolygonTriggerListPtr = nullptr;
 	s_currentID = 1;
 	deleteInstance(pList);
 }
@@ -403,7 +403,7 @@ void PolygonTrigger::deletePoint(Int ndx)
 
 void PolygonTrigger::getCenterPoint(Coord3D* pOutCoord)	const
 {
-	DEBUG_ASSERTCRASH(pOutCoord != NULL, ("pOutCoord was null. Non-Fatal, but shouldn't happen."));
+	DEBUG_ASSERTCRASH(pOutCoord != nullptr, ("pOutCoord was null. Non-Fatal, but shouldn't happen."));
 	if (!pOutCoord) {
 		return;
 	}
@@ -474,7 +474,7 @@ const WaterHandle* PolygonTrigger::getWaterHandle(void)	const
 	if( isWaterArea() )
 		return &m_waterHandle;
 
-	return NULL;  // this polygon trigger is not a water area
+	return nullptr;  // this polygon trigger is not a water area
 
 }
 

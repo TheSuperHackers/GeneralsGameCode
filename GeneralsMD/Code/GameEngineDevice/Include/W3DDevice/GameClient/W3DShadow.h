@@ -23,6 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 #include "matrix4.h"
 #include "GameClient/Shadow.h"
@@ -42,7 +43,7 @@ public:
 
 	// shadow list management
 	void Reset( void );
-	Shadow* addShadow( RenderObjClass *robj,Shadow::ShadowTypeInfo *shadowInfo=NULL, Drawable *draw=NULL);	///< adds shadow caster to rendering system.
+	Shadow* addShadow( RenderObjClass *robj,Shadow::ShadowTypeInfo *shadowInfo=nullptr, Drawable *draw=nullptr);	///< adds shadow caster to rendering system.
 	void removeShadow(Shadow *shadow);	///< removed shadow from rendering system and frees its resources.
 	void removeAllShadows(void); ///< Remove all shadows.
 	void setShadowColor(UnsignedInt color) { m_shadowColor=color;}	///<sets the shadow color and alpha, value in ARGB format.

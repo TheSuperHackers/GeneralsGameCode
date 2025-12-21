@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // BackgroundObjectDialog.h : header file
 //
@@ -28,7 +29,7 @@ class CBackgroundObjectDialog : public CDialog
 {
 // Construction
 public:
-	CBackgroundObjectDialog(CWnd* pParent = NULL);   // standard constructor
+	CBackgroundObjectDialog(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CBackgroundObjectDialog)

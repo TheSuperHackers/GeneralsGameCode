@@ -49,7 +49,7 @@ BOOL CALLBACK Update_Info_Proc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
     case WM_INITDIALOG:
     {
       FILE *in = fopen("launcher.txt","r");
-      if (in==NULL)
+      if (in==nullptr)
       {
         EndDialog(hwnd,-1);
         return(1);
@@ -57,7 +57,7 @@ BOOL CALLBACK Update_Info_Proc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 
       char   line[270];
       int    lastsel=0;
-      char  *cptr=NULL;
+      char  *cptr=nullptr;
       while(fgets(line,255,in))
       {
         //Get rid of any trailing junk
@@ -76,7 +76,7 @@ BOOL CALLBACK Update_Info_Proc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPara
 
 	     SendDlgItemMessage(hwnd, IDC_TEXT, EM_SETSEL, (WPARAM)lastsel, (LPARAM)lastsel );
 	     SendDlgItemMessage(hwnd, IDC_TEXT, EM_REPLACESEL, 0, (LPARAM)(line) );
-	     SendDlgItemMessage(hwnd, IDC_TEXT, EM_GETSEL, (WPARAM)NULL, (LPARAM)&lastsel );
+	     SendDlgItemMessage(hwnd, IDC_TEXT, EM_GETSEL, (WPARAM)nullptr, (LPARAM)&lastsel );
       }
       unselectText=1;
       fclose(in);
@@ -158,7 +158,7 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
       lpClass,
       REG_OPTION_NON_VOLATILE,
       KEY_ALL_ACCESS,
-      NULL,
+      nullptr,
       &regKey,
       &regPrevious);
 
@@ -167,21 +167,21 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
       RegSetValueEx(regKey,"EXEPatch",0,REG_SZ,(const uint8*)patchfile,strlen(patchfile)+1);
 
       char message[256];
-      LoadString(NULL,IDS_SYS_RESTART,message,256);
+      LoadString(nullptr,IDS_SYS_RESTART,message,256);
       char title[128];
-      LoadString(NULL,IDS_SYS_RESTART_TITLE,title,128);
+      LoadString(nullptr,IDS_SYS_RESTART_TITLE,title,128);
 
-      MessageBox(NULL,message,title,MB_OK);
+      MessageBox(nullptr,message,title,MB_OK);
 
       Shutdown_Computer_Now();
     }
     else
     {
       char message[256];
-      LoadString(NULL,IDS_RUNONCE_ERR,message,256);
+      LoadString(nullptr,IDS_RUNONCE_ERR,message,256);
       char string[256];
       sprintf(string,message,patchfile);
-      MessageBox(NULL,string,"ERROR",MB_OK);
+      MessageBox(nullptr,string,"ERROR",MB_OK);
     }
   }
   //
@@ -191,21 +191,21 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
   {
     MSG msg;
     HWND dialog=Create_Patch_Dialog();
-    while(PeekMessage(&msg,NULL,0,0, PM_REMOVE))
+    while(PeekMessage(&msg,nullptr,0,0, PM_REMOVE))
     {
       TranslateMessage(&msg);
       DispatchMessage(&msg);
     }
     HINSTANCE hInst=LoadLibrary("patchw32.dll");
-    if (hInst==NULL)
+    if (hInst==nullptr)
     {
       char message[256];
-      LoadString(NULL,IDS_ERR_MISSING_FILE,message,256);
+      LoadString(nullptr,IDS_ERR_MISSING_FILE,message,256);
       char string[256];
       sprintf(string,message,"patchw32.dll");
       char title[128];
-      LoadString(NULL,IDS_ERROR,title,128);
-      MessageBox(NULL,string,title,MB_OK);
+      LoadString(nullptr,IDS_ERROR,title,128);
+      MessageBox(nullptr,string,title,MB_OK);
       exit(-1);
       return;
     }
@@ -215,13 +215,13 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
 
     PATCHFUNC patchFunc;
     patchFunc=(PATCHFUNC)GetProcAddress(hInst,"RTPatchApply32@12");
-    if (patchFunc==NULL)
+    if (patchFunc==nullptr)
     {
       char message[256];
-      LoadString(NULL,IDS_BAD_LIBRARY,message,256);
+      LoadString(nullptr,IDS_BAD_LIBRARY,message,256);
       char title[128];
-      LoadString(NULL,IDS_ERROR,title,128);
-      MessageBox(NULL,message,title,MB_OK);
+      LoadString(nullptr,IDS_ERROR,title,128);
+      MessageBox(nullptr,message,title,MB_OK);
       return;
     }
 
@@ -248,7 +248,7 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
     char   *cptr=patchfile;
     char   *tempPtr;
     DWORD   version;
-    while( (tempPtr=strchr(cptr,'\\')) !=NULL)
+    while( (tempPtr=strchr(cptr,'\\')) !=nullptr)
       cptr=tempPtr+1;
     if (cptr)
       version=atol(cptr);
@@ -300,7 +300,7 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
 			Wait_Process(notepad);
 		}
 #else
-    DialogBox(Global_instance,MAKEINTRESOURCE(IDD_CHANGELOG),NULL,(DLGPROC)Update_Info_Proc);
+    DialogBox(Global_instance,MAKEINTRESOURCE(IDD_CHANGELOG),nullptr,(DLGPROC)Update_Info_Proc);
 #endif
   }
   //
@@ -323,18 +323,18 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
   else if (strcasecmp(patchfile+strlen(patchfile)-strlen(".web"),".web")==0)
   {
     char message[256];
-    LoadString(NULL,IDS_WEBPATCH,message,256);
+    LoadString(nullptr,IDS_WEBPATCH,message,256);
     char title[128];
-    LoadString(NULL,IDS_WEBPATCH_TITLE,title,128);
-    MessageBox(NULL,message,title,MB_OK);
+    LoadString(nullptr,IDS_WEBPATCH_TITLE,title,128);
+    MessageBox(nullptr,message,title,MB_OK);
 
     FILE *in=fopen(patchfile,"r");
-    if (in!=NULL)
+    if (in!=nullptr)
     {
       char URL[256];
       fgets(URL,255,in);
       fclose(in);
-      ShellExecute(NULL,NULL,URL,NULL,".",SW_SHOW);
+      ShellExecute(nullptr,nullptr,URL,nullptr,".",SW_SHOW);
       _unlink(patchfile);
       //// This is somewhat skanky, but we can't wait
       //// for the viewer to exit (I tried).
@@ -342,7 +342,7 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
     }
     else
     {
-      MessageBox(NULL,patchfile,"Patchfile vanished?",MB_OK);
+      MessageBox(nullptr,patchfile,"Patchfile vanished?",MB_OK);
     }
   }
 }
@@ -362,15 +362,14 @@ void Shutdown_Computer_Now(void)
   }
 
   // Get the LUID for the shutdown privilege.
-  LookupPrivilegeValue(NULL, SE_SHUTDOWN_NAME,
-        &tkp.Privileges[0].Luid);
+  LookupPrivilegeValue(nullptr, SE_SHUTDOWN_NAME, &tkp.Privileges[0].Luid);
 
   tkp.PrivilegeCount = 1;  // one privilege to set
   tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
 
   // Get the shutdown privilege for this process.
   AdjustTokenPrivileges(hToken, FALSE, &tkp, 0,
-        (PTOKEN_PRIVILEGES)NULL, 0);
+        (PTOKEN_PRIVILEGES)nullptr, 0);
 
   // Cannot test the return value of AdjustTokenPrivileges.
   if (GetLastError() != ERROR_SUCCESS)
@@ -383,13 +382,13 @@ void Shutdown_Computer_Now(void)
   {
     // Should never happen
     char restart[128];
-    LoadString(NULL,IDS_MUST_RESTART,restart,128);
-    MessageBox(NULL,restart,"OK",MB_OK);
+    LoadString(nullptr,IDS_MUST_RESTART,restart,128);
+    MessageBox(nullptr,restart,"OK",MB_OK);
     exit(0);
   }
 
   MSG     msg;
-  while (GetMessage(&msg, NULL, 0, 0))
+  while (GetMessage(&msg, nullptr, 0, 0))
   {
     TranslateMessage( &msg );
     DispatchMessage( &msg );
@@ -410,7 +409,7 @@ __declspec(dllexport) LPVOID CALLBACK PatchCallBack(UINT Id, LPVOID Param)
   // Make sure our windows get updated
   MSG     msg;
   int     counter=0;
-  while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE ))
+  while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE ))
   {
     TranslateMessage( &msg );
     DispatchMessage( &msg );
@@ -445,11 +444,11 @@ __declspec(dllexport) LPVOID CALLBACK PatchCallBack(UINT Id, LPVOID Param)
 	  // Error message header/text
       ///////*g_LogFile << (char *)Parm << endl;
       char errmsg[256];
-      LoadString(NULL,IDS_ERR_PATCH,errmsg,256);
-      MessageBox(NULL,(char *)Param,errmsg,MB_OK);
+      LoadString(nullptr,IDS_ERR_PATCH,errmsg,256);
+      MessageBox(nullptr,(char *)Param,errmsg,MB_OK);
       {
         FILE *out=fopen("patch.err","a");
-        time_t  timet=time(NULL);
+        time_t  timet=time(nullptr);
         fprintf(out,"\n\nPatch Error: %s\n",ctime(&timet));
         fprintf(out,"%s\n",(char *)Param);
         fclose(out);
@@ -507,7 +506,7 @@ __declspec(dllexport) LPVOID CALLBACK PatchCallBack(UINT Id, LPVOID Param)
 
       currFile++;
       char xofy[64];
-      LoadString(NULL,IDS_FILE_X_OF_Y,xofy,64);
+      LoadString(nullptr,IDS_FILE_X_OF_Y,xofy,64);
       sprintf(string,xofy,currFile,fileCount);
       SetWindowText(GetDlgItem(PatchDialog,IDC_CAPTION),string);
 
@@ -575,7 +574,7 @@ __declspec(dllexport) LPVOID CALLBACK PatchCallBack(UINT Id, LPVOID Param)
   }
 
   if(Abort)
-    return (NULL);
+    return (nullptr);
   else
 	return (RetVal);
 }

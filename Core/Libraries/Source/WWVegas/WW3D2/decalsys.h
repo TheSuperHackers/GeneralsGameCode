@@ -162,7 +162,7 @@ public:
 	** Material parameters: just grab a pointer the material pass and modify it.
 	** Remember to release your ref to it when you are done.
 	*/
-	MaterialPassClass *			Get_Material(void)								{ WWASSERT(Material != NULL); Material->Add_Ref(); return Material; }
+	MaterialPassClass *			Get_Material(void)								{ WWASSERT(Material != nullptr); Material->Add_Ref(); return Material; }
 
 	/*
 	** Decal generation support.  Call Set_Mesh_Transform for the mesh you want to add

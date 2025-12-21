@@ -17,6 +17,7 @@
 */
 
 #pragma once
+#include <Utility/CppMacros.h>
 
 // EmitterPhysicsPropPage.h : header file
 //
@@ -37,7 +38,7 @@ class EmitterPhysicsPropPageClass : public CPropertyPage
 
 // Construction
 public:
-	EmitterPhysicsPropPageClass (EmitterInstanceListClass *pemitter_list = NULL);
+	EmitterPhysicsPropPageClass (EmitterInstanceListClass *pemitter_list = nullptr);
 	~EmitterPhysicsPropPageClass ();
 
 // Dialog Data

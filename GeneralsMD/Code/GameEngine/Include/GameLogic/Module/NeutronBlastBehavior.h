@@ -54,9 +54,9 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "BlastRadius",		INI::parseReal, NULL, offsetof( NeutronBlastBehaviorModuleData, m_blastRadius ) },
-			{ "AffectAirborne", INI::parseBool, NULL, offsetof( NeutronBlastBehaviorModuleData, m_isAffectAirborne ) },
-			{ "AffectAllies",		INI::parseBool, NULL, offsetof( NeutronBlastBehaviorModuleData, m_affectAllies ) },
+			{ "BlastRadius",		INI::parseReal, nullptr, offsetof( NeutronBlastBehaviorModuleData, m_blastRadius ) },
+			{ "AffectAirborne", INI::parseBool, nullptr, offsetof( NeutronBlastBehaviorModuleData, m_isAffectAirborne ) },
+			{ "AffectAllies",		INI::parseBool, nullptr, offsetof( NeutronBlastBehaviorModuleData, m_affectAllies ) },
 			{ 0, 0, 0, 0 }
 		};
 

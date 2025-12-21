@@ -29,6 +29,8 @@
 
 #pragma once
 
+#include <Utility/CppMacros.h>
+
 // include all our public header files (use double quotes here)
 #include "profile_doc.h"
 #include "profile_highlevel.h"
@@ -50,7 +52,7 @@ public:
   /**
     \brief Starts range recording.
 
-    \param range name of range to record, ==NULL for "frame"
+    \param range name of range to record, == nullptr for "frame"
   */
   static void StartRange(const char *range=0);
 
@@ -58,7 +60,7 @@ public:
     \brief Appends profile data to the last recorded frame
     of the given range.
 
-    \param range name of range to record, ==NULL for "frame"
+    \param range name of range to record, == nullptr for "frame"
   */
   static void AppendRange(const char *range=0);
 
@@ -68,7 +70,7 @@ public:
     \note After this call the recorded range data will be available
     as a new range frame.
 
-    \param range name of range to record, ==NULL for "frame"
+    \param range name of range to record, == nullptr for "frame"
   */
   static void StopRange(const char *range=0);
 

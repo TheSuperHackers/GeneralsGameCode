@@ -82,120 +82,120 @@
 
 
 static NameKeyType		comboBoxOnlineIPID	= NAMEKEY_INVALID;
-static GameWindow *		comboBoxOnlineIP		= NULL;
+static GameWindow *		comboBoxOnlineIP		= nullptr;
 
 static NameKeyType		comboBoxLANIPID	= NAMEKEY_INVALID;
-static GameWindow *		comboBoxLANIP		= NULL;
+static GameWindow *		comboBoxLANIP		= nullptr;
 
 static NameKeyType    comboBoxAntiAliasingID   = NAMEKEY_INVALID;
-static GameWindow *   comboBoxAntiAliasing     = NULL;
+static GameWindow *   comboBoxAntiAliasing     = nullptr;
 
 static NameKeyType    comboBoxResolutionID      = NAMEKEY_INVALID;
-static GameWindow *   comboBoxResolution       = NULL;
+static GameWindow *   comboBoxResolution       = nullptr;
 
 static NameKeyType    comboBoxDetailID      = NAMEKEY_INVALID;
-static GameWindow *   comboBoxDetail        = NULL;
+static GameWindow *   comboBoxDetail        = nullptr;
 
 static NameKeyType		checkAlternateMouseID	= NAMEKEY_INVALID;
-static GameWindow *		checkAlternateMouse		= NULL;
+static GameWindow *		checkAlternateMouse		= nullptr;
 
 static NameKeyType		sliderScrollSpeedID	= NAMEKEY_INVALID;
-static GameWindow *		sliderScrollSpeed		= NULL;
+static GameWindow *		sliderScrollSpeed		= nullptr;
 
 static NameKeyType    checkLanguageFilterID = NAMEKEY_INVALID;
-static GameWindow *   checkLanguageFilter   = NULL;
+static GameWindow *   checkLanguageFilter   = nullptr;
 
 static NameKeyType		checkUseCameraID		= NAMEKEY_INVALID;
-static GameWindow *		checkUseCamera			= NULL;
+static GameWindow *		checkUseCamera			= nullptr;
 
 static NameKeyType		checkSaveCameraID		= NAMEKEY_INVALID;
-static GameWindow *		checkSaveCamera			= NULL;
+static GameWindow *		checkSaveCamera			= nullptr;
 
 static NameKeyType		checkSendDelayID		= NAMEKEY_INVALID;
-static GameWindow *		checkSendDelay			= NULL;
+static GameWindow *		checkSendDelay			= nullptr;
 
 static NameKeyType		checkDrawAnchorID		= NAMEKEY_INVALID;
-static GameWindow *		checkDrawAnchor			= NULL;
+static GameWindow *		checkDrawAnchor			= nullptr;
 
 static NameKeyType		checkMoveAnchorID		= NAMEKEY_INVALID;
-static GameWindow *		checkMoveAnchor			= NULL;
+static GameWindow *		checkMoveAnchor			= nullptr;
 
 static NameKeyType		buttonFirewallRefreshID	= NAMEKEY_INVALID;
-static GameWindow *		buttonFirewallRefresh		= NULL;
+static GameWindow *		buttonFirewallRefresh		= nullptr;
 //
 //static NameKeyType    checkAudioHardwareID = NAMEKEY_INVALID;
-//static GameWindow *   checkAudioHardware   = NULL;
+//static GameWindow *   checkAudioHardware   = nullptr;
 //
 //static NameKeyType    checkAudioSurroundID = NAMEKEY_INVALID;
-//static GameWindow *   checkAudioSurround   = NULL;
+//static GameWindow *   checkAudioSurround   = nullptr;
 ////volume controls
 //
 static NameKeyType    sliderMusicVolumeID = NAMEKEY_INVALID;
-static GameWindow *   sliderMusicVolume   = NULL;
+static GameWindow *   sliderMusicVolume   = nullptr;
 
 static NameKeyType    sliderSFXVolumeID = NAMEKEY_INVALID;
-static GameWindow *   sliderSFXVolume   = NULL;
+static GameWindow *   sliderSFXVolume   = nullptr;
 
 static NameKeyType    sliderVoiceVolumeID = NAMEKEY_INVALID;
-static GameWindow *   sliderVoiceVolume   = NULL;
+static GameWindow *   sliderVoiceVolume   = nullptr;
 
 static NameKeyType    sliderGammaID = NAMEKEY_INVALID;
-static GameWindow *   sliderGamma = NULL;
+static GameWindow *   sliderGamma = nullptr;
 
 //Advanced Options Screen
 static NameKeyType    WinAdvancedDisplayID      = NAMEKEY_INVALID;
-static GameWindow *   WinAdvancedDisplay				= NULL;
+static GameWindow *   WinAdvancedDisplay				= nullptr;
 
 static NameKeyType    ButtonAdvancedAcceptID      = NAMEKEY_INVALID;
-static GameWindow *   ButtonAdvancedAccept				= NULL;
+static GameWindow *   ButtonAdvancedAccept				= nullptr;
 
 static NameKeyType    ButtonAdvancedCancelID      = NAMEKEY_INVALID;
-static GameWindow *   ButtonAdvancedCancel				= NULL;
+static GameWindow *   ButtonAdvancedCancel				= nullptr;
 
 static NameKeyType    sliderTextureResolutionID = NAMEKEY_INVALID;
-static GameWindow *   sliderTextureResolution = NULL;
+static GameWindow *   sliderTextureResolution = nullptr;
 
 static NameKeyType    sliderParticleCapID = NAMEKEY_INVALID;
-static GameWindow *   sliderParticleCap = NULL;
+static GameWindow *   sliderParticleCap = nullptr;
 
 static NameKeyType    check3DShadowsID = NAMEKEY_INVALID;
-static GameWindow *   check3DShadows   = NULL;
+static GameWindow *   check3DShadows   = nullptr;
 
 static NameKeyType    check2DShadowsID = NAMEKEY_INVALID;
-static GameWindow *   check2DShadows   = NULL;
+static GameWindow *   check2DShadows   = nullptr;
 
 static NameKeyType    checkCloudShadowsID = NAMEKEY_INVALID;
-static GameWindow *   checkCloudShadows   = NULL;
+static GameWindow *   checkCloudShadows   = nullptr;
 
 static NameKeyType    checkGroundLightingID = NAMEKEY_INVALID;
-static GameWindow *   checkGroundLighting   = NULL;
+static GameWindow *   checkGroundLighting   = nullptr;
 
 static NameKeyType    checkSmoothWaterID = NAMEKEY_INVALID;
-static GameWindow *   checkSmoothWater   = NULL;
+static GameWindow *   checkSmoothWater   = nullptr;
 
 static NameKeyType    checkBuildingOcclusionID = NAMEKEY_INVALID;
-static GameWindow *   checkBuildingOcclusion   = NULL;
+static GameWindow *   checkBuildingOcclusion   = nullptr;
 
 static NameKeyType    checkPropsID = NAMEKEY_INVALID;
-static GameWindow *   checkProps   = NULL;
+static GameWindow *   checkProps   = nullptr;
 
 static NameKeyType    checkExtraAnimationsID = NAMEKEY_INVALID;
-static GameWindow *   checkExtraAnimations   = NULL;
+static GameWindow *   checkExtraAnimations   = nullptr;
 
 static NameKeyType    checkNoDynamicLodID = NAMEKEY_INVALID;
-static GameWindow *   checkNoDynamicLod   = NULL;
+static GameWindow *   checkNoDynamicLod   = nullptr;
 
 static NameKeyType    checkUnlockFpsID = NAMEKEY_INVALID;
-static GameWindow *   checkUnlockFps   = NULL;
+static GameWindow *   checkUnlockFps   = nullptr;
 
 /*
 
 static NameKeyType    radioHighID = NAMEKEY_INVALID;
-static GameWindow *   radioHigh   = NULL;
+static GameWindow *   radioHigh   = nullptr;
 static NameKeyType    radioMediumID = NAMEKEY_INVALID;
-static GameWindow *   radioMedium   = NULL;
+static GameWindow *   radioMedium   = nullptr;
 static NameKeyType    radioLowID = NAMEKEY_INVALID;
-static GameWindow *   radioLow   = NULL;
+static GameWindow *   radioLow   = nullptr;
 
 */
 
@@ -204,7 +204,7 @@ Bool dispChanged = FALSE;
 extern Int timer;
 extern void DoResolutionDialog();
 static Bool ignoreSelected = FALSE;
-WindowLayout *OptionsLayout = NULL;
+WindowLayout *OptionsLayout = nullptr;
 
 
 OptionPreferences::OptionPreferences( void )
@@ -951,7 +951,7 @@ Bool OptionPreferences::getShowMoneyPerMinute(void) const
 	return FALSE;
 }
 
-static OptionPreferences *pref = NULL;
+static OptionPreferences *pref = nullptr;
 
 static void setDefaults( void )
 {
@@ -1247,7 +1247,7 @@ static void saveOptions( void )
 
 	//-------------------------------------------------------------------------------------------------
 	// HTTP Proxy
-	GameWindow *textEntryHTTPProxy = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("OptionsMenu.wnd:TextEntryHTTPProxy"));
+	GameWindow *textEntryHTTPProxy = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:TextEntryHTTPProxy"));
 	if (textEntryHTTPProxy && textEntryHTTPProxy->winGetEnabled())
 	{
 		UnicodeString uStr = GadgetTextEntryGetText(textEntryHTTPProxy);
@@ -1259,7 +1259,7 @@ static void saveOptions( void )
 
 	//-------------------------------------------------------------------------------------------------
 	// Firewall Port Override
-	GameWindow *textEntryFirewallPortOverride = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("OptionsMenu.wnd:TextEntryFirewallPortOverride"));
+	GameWindow *textEntryFirewallPortOverride = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:TextEntryFirewallPortOverride"));
 	if (textEntryFirewallPortOverride && textEntryFirewallPortOverride->winGetEnabled())
 	{
 		UnicodeString uStr = GadgetTextEntryGetText(textEntryFirewallPortOverride);
@@ -1569,7 +1569,7 @@ static void DestroyOptionsLayout() {
 	SignalUIInteraction(SHELL_SCRIPT_HOOK_OPTIONS_CLOSED);
 
 	TheShell->destroyOptionsLayout();
-	OptionsLayout = NULL;
+	OptionsLayout = nullptr;
 }
 
 static void showAdvancedOptions()
@@ -1594,7 +1594,7 @@ static void cancelAdvancedOptions()
 static void initLabelVersion()
 {
 	NameKeyType versionID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:LabelVersion" );
-	GameWindow *labelVersion = TheWindowManager->winGetWindowFromId( NULL, versionID );
+	GameWindow *labelVersion = TheWindowManager->winGetWindowFromId( nullptr, versionID );
 
 	if (labelVersion)
 	{
@@ -1627,100 +1627,100 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	SignalUIInteraction(SHELL_SCRIPT_HOOK_OPTIONS_OPENED);
 
 	comboBoxLANIPID				 = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:ComboBoxIP" );
-	comboBoxLANIP					 = TheWindowManager->winGetWindowFromId( NULL,  comboBoxLANIPID);
+	comboBoxLANIP					 = TheWindowManager->winGetWindowFromId( nullptr,  comboBoxLANIPID);
 	comboBoxOnlineIPID		 = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:ComboBoxOnlineIP" );
-	comboBoxOnlineIP			 = TheWindowManager->winGetWindowFromId( NULL,  comboBoxOnlineIPID);
+	comboBoxOnlineIP			 = TheWindowManager->winGetWindowFromId( nullptr,  comboBoxOnlineIPID);
 	checkAlternateMouseID  = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckAlternateMouse" );
-	checkAlternateMouse	   = TheWindowManager->winGetWindowFromId( NULL, checkAlternateMouseID);
+	checkAlternateMouse	   = TheWindowManager->winGetWindowFromId( nullptr, checkAlternateMouseID);
 	sliderScrollSpeedID	   = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:SliderScrollSpeed" );
-	sliderScrollSpeed		   = TheWindowManager->winGetWindowFromId( NULL,  sliderScrollSpeedID);
+	sliderScrollSpeed		   = TheWindowManager->winGetWindowFromId( nullptr,  sliderScrollSpeedID);
 	comboBoxAntiAliasingID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:ComboBoxAntiAliasing" );
-	comboBoxAntiAliasing   = TheWindowManager->winGetWindowFromId( NULL, comboBoxAntiAliasingID );
+	comboBoxAntiAliasing   = TheWindowManager->winGetWindowFromId( nullptr, comboBoxAntiAliasingID );
 	comboBoxResolutionID   = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:ComboBoxResolution" );
-	comboBoxResolution     = TheWindowManager->winGetWindowFromId( NULL, comboBoxResolutionID );
+	comboBoxResolution     = TheWindowManager->winGetWindowFromId( nullptr, comboBoxResolutionID );
 	comboBoxDetailID			 = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:ComboBoxDetail" );
-	comboBoxDetail		   = TheWindowManager->winGetWindowFromId( NULL, comboBoxDetailID );
+	comboBoxDetail		   = TheWindowManager->winGetWindowFromId( nullptr, comboBoxDetailID );
 
 	checkLanguageFilterID  = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckLanguageFilter" );
-	checkLanguageFilter    = TheWindowManager->winGetWindowFromId( NULL, checkLanguageFilterID );
+	checkLanguageFilter    = TheWindowManager->winGetWindowFromId( nullptr, checkLanguageFilterID );
 	checkSendDelayID       = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckSendDelay" );
-	checkSendDelay				 = TheWindowManager->winGetWindowFromId( NULL, checkSendDelayID);
+	checkSendDelay				 = TheWindowManager->winGetWindowFromId( nullptr, checkSendDelayID);
 	buttonFirewallRefreshID	= TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:ButtonFirewallRefresh" );
-	buttonFirewallRefresh		= TheWindowManager->winGetWindowFromId( NULL, buttonFirewallRefreshID);
+	buttonFirewallRefresh		= TheWindowManager->winGetWindowFromId( nullptr, buttonFirewallRefreshID);
 	checkDrawAnchorID       = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckBoxDrawAnchor" );
-	checkDrawAnchor				 = TheWindowManager->winGetWindowFromId( NULL, checkDrawAnchorID);
+	checkDrawAnchor				 = TheWindowManager->winGetWindowFromId( nullptr, checkDrawAnchorID);
 	checkMoveAnchorID       = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckBoxMoveAnchor" );
-	checkMoveAnchor				 = TheWindowManager->winGetWindowFromId( NULL, checkMoveAnchorID);
+	checkMoveAnchor				 = TheWindowManager->winGetWindowFromId( nullptr, checkMoveAnchorID);
 
 	// Replay camera
 	checkSaveCameraID      = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckBoxSaveCamera" );
-	checkSaveCamera        = TheWindowManager->winGetWindowFromId( NULL, checkSaveCameraID );
+	checkSaveCamera        = TheWindowManager->winGetWindowFromId( nullptr, checkSaveCameraID );
 	checkUseCameraID       = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckBoxUseCamera" );
-	checkUseCamera         = TheWindowManager->winGetWindowFromId( NULL, checkUseCameraID );
+	checkUseCamera         = TheWindowManager->winGetWindowFromId( nullptr, checkUseCameraID );
 
 //	// Speakers and 3-D Audio
 //	checkAudioSurroundID   = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckAudioSurround" );
-//	checkAudioSurround     = TheWindowManager->winGetWindowFromId( NULL, checkAudioSurroundID );
+//	checkAudioSurround     = TheWindowManager->winGetWindowFromId( nullptr, checkAudioSurroundID );
 //	checkAudioHardwareID   = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckAudioHardware" );
-//	checkAudioHardware     = TheWindowManager->winGetWindowFromId( NULL, checkAudioHardwareID );
+//	checkAudioHardware     = TheWindowManager->winGetWindowFromId( nullptr, checkAudioHardwareID );
 //
 	// Volume Controls
 	sliderMusicVolumeID    = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:SliderMusicVolume" );
-	sliderMusicVolume      = TheWindowManager->winGetWindowFromId( NULL, sliderMusicVolumeID );
+	sliderMusicVolume      = TheWindowManager->winGetWindowFromId( nullptr, sliderMusicVolumeID );
 	sliderSFXVolumeID      = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:SliderSFXVolume" );
-	sliderSFXVolume        = TheWindowManager->winGetWindowFromId( NULL, sliderSFXVolumeID );
+	sliderSFXVolume        = TheWindowManager->winGetWindowFromId( nullptr, sliderSFXVolumeID );
 	sliderVoiceVolumeID    = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:SliderVoiceVolume" );
-	sliderVoiceVolume      = TheWindowManager->winGetWindowFromId( NULL, sliderVoiceVolumeID );
+	sliderVoiceVolume      = TheWindowManager->winGetWindowFromId( nullptr, sliderVoiceVolumeID );
  	sliderGammaID    = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:SliderGamma" );
- 	sliderGamma      = TheWindowManager->winGetWindowFromId( NULL, sliderGammaID );
+ 	sliderGamma      = TheWindowManager->winGetWindowFromId( nullptr, sliderGammaID );
 
 //	checkBoxLowTextureDetailID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckLowTextureDetail" );
-//	checkBoxLowTextureDetail      = TheWindowManager->winGetWindowFromId( NULL, checkBoxLowTextureDetailID );
+//	checkBoxLowTextureDetail      = TheWindowManager->winGetWindowFromId( nullptr, checkBoxLowTextureDetailID );
 
 	WinAdvancedDisplayID		= TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:WinAdvancedDisplayOptions" );
-	WinAdvancedDisplay      = TheWindowManager->winGetWindowFromId( NULL, WinAdvancedDisplayID );
+	WinAdvancedDisplay      = TheWindowManager->winGetWindowFromId( nullptr, WinAdvancedDisplayID );
 
 	ButtonAdvancedAcceptID		= TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:ButtonAdvanceAccept" );
-	ButtonAdvancedAccept      = TheWindowManager->winGetWindowFromId( NULL, ButtonAdvancedAcceptID );
+	ButtonAdvancedAccept      = TheWindowManager->winGetWindowFromId( nullptr, ButtonAdvancedAcceptID );
 
 	ButtonAdvancedCancelID		= TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:ButtonAdvanceBack" );
-	ButtonAdvancedCancel      = TheWindowManager->winGetWindowFromId( NULL, ButtonAdvancedCancelID );
+	ButtonAdvancedCancel      = TheWindowManager->winGetWindowFromId( nullptr, ButtonAdvancedCancelID );
 
 	sliderTextureResolutionID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:LowResSlider" );
-	sliderTextureResolution = TheWindowManager->winGetWindowFromId( NULL, sliderTextureResolutionID );
+	sliderTextureResolution = TheWindowManager->winGetWindowFromId( nullptr, sliderTextureResolutionID );
 
 	check3DShadowsID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:Check3DShadows" );
-	check3DShadows   = TheWindowManager->winGetWindowFromId( NULL, check3DShadowsID);
+	check3DShadows   = TheWindowManager->winGetWindowFromId( nullptr, check3DShadowsID);
 
 	check2DShadowsID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:Check2DShadows" );
-	check2DShadows   = TheWindowManager->winGetWindowFromId( NULL, check2DShadowsID);
+	check2DShadows   = TheWindowManager->winGetWindowFromId( nullptr, check2DShadowsID);
 
 	checkCloudShadowsID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckCloudShadows" );
-	checkCloudShadows   = TheWindowManager->winGetWindowFromId( NULL, checkCloudShadowsID);
+	checkCloudShadows   = TheWindowManager->winGetWindowFromId( nullptr, checkCloudShadowsID);
 
 	checkGroundLightingID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckGroundLighting" );
-	checkGroundLighting   = TheWindowManager->winGetWindowFromId( NULL, checkGroundLightingID);
+	checkGroundLighting   = TheWindowManager->winGetWindowFromId( nullptr, checkGroundLightingID);
 
 	checkSmoothWaterID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckSmoothWater" );
-	checkSmoothWater   = TheWindowManager->winGetWindowFromId( NULL, checkSmoothWaterID);
+	checkSmoothWater   = TheWindowManager->winGetWindowFromId( nullptr, checkSmoothWaterID);
 
 	checkExtraAnimationsID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckExtraAnimations" );
-	checkExtraAnimations   = TheWindowManager->winGetWindowFromId( NULL, checkExtraAnimationsID);
+	checkExtraAnimations   = TheWindowManager->winGetWindowFromId( nullptr, checkExtraAnimationsID);
 
 	checkNoDynamicLodID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckNoDynamicLOD" );
-	checkNoDynamicLod   = TheWindowManager->winGetWindowFromId( NULL, checkNoDynamicLodID);
+	checkNoDynamicLod   = TheWindowManager->winGetWindowFromId( nullptr, checkNoDynamicLodID);
 
 	checkUnlockFpsID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckUnlockFPS" );
-	checkUnlockFps   = TheWindowManager->winGetWindowFromId( NULL, checkUnlockFpsID);
+	checkUnlockFps   = TheWindowManager->winGetWindowFromId( nullptr, checkUnlockFpsID);
 
 	checkBuildingOcclusionID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckBehindBuilding" );
-	checkBuildingOcclusion   = TheWindowManager->winGetWindowFromId( NULL, checkBuildingOcclusionID);
+	checkBuildingOcclusion   = TheWindowManager->winGetWindowFromId( nullptr, checkBuildingOcclusionID);
 
 	checkPropsID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckShowProps" );
-	checkProps   = TheWindowManager->winGetWindowFromId( NULL, checkPropsID);
+	checkProps   = TheWindowManager->winGetWindowFromId( nullptr, checkPropsID);
 
 	sliderParticleCapID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:ParticleCapSlider" );
-  sliderParticleCap = TheWindowManager->winGetWindowFromId( NULL, sliderParticleCapID );
+  sliderParticleCap = TheWindowManager->winGetWindowFromId( nullptr, sliderParticleCapID );
 
 	WinAdvancedDisplay->winHide(TRUE);
 
@@ -1809,7 +1809,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	}
 
 	// HTTP Proxy
-	GameWindow *textEntryHTTPProxy = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("OptionsMenu.wnd:TextEntryHTTPProxy"));
+	GameWindow *textEntryHTTPProxy = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:TextEntryHTTPProxy"));
 	if (textEntryHTTPProxy)
 	{
 		UnicodeString uStr;
@@ -1820,7 +1820,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	}
 
  	// Firewall Port Override
- 	GameWindow *textEntryFirewallPortOverride = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("OptionsMenu.wnd:TextEntryFirewallPortOverride"));
+ 	GameWindow *textEntryFirewallPortOverride = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:TextEntryFirewallPortOverride"));
  	if (textEntryFirewallPortOverride)
  	{
  			UnicodeString uStr;
@@ -2047,7 +2047,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 
 	// set keyboard focus to main parent
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:OptionsMenuParent" );
-	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	GameWindow *parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 	TheWindowManager->winSetFocus( parent );
 
 	if( (TheGameLogic->isInGame() && TheGameLogic->getGameMode() != GAME_SHELL) || TheGameSpyInfo )
@@ -2096,10 +2096,10 @@ void OptionsMenuShutdown( WindowLayout *layout, void *userData )
 	{
 		pref->write();
 		delete pref;
-		pref = NULL;
+		pref = nullptr;
 	}
 
-	comboBoxIP = NULL;
+	comboBoxIP = nullptr;
 
 	// hide menu
 	layout->hide( TRUE );
@@ -2253,10 +2253,10 @@ WindowMsgHandledType OptionsMenuSystem( GameWindow *window, UnsignedInt msg,
 				//TheShell->pop();
 
 				delete pref;
-				pref = NULL;
+				pref = nullptr;
 
-				comboBoxLANIP = NULL;
-				comboBoxOnlineIP = NULL;
+				comboBoxLANIP = nullptr;
+				comboBoxOnlineIP = nullptr;
 
 				if(GameSpyIsOverlayOpen(GSOVERLAY_OPTIONS))
 					GameSpyCloseOverlay(GSOVERLAY_OPTIONS);
@@ -2274,11 +2274,11 @@ WindowMsgHandledType OptionsMenuSystem( GameWindow *window, UnsignedInt msg,
 				{
 					pref->write();
 					delete pref;
-					pref = NULL;
+					pref = nullptr;
 				}
 
-				comboBoxLANIP = NULL;
-				comboBoxOnlineIP = NULL;
+				comboBoxLANIP = nullptr;
+				comboBoxOnlineIP = nullptr;
 
 				if(!TheGameLogic->isInGame() || TheGameLogic->isInShellGame())
 					destroyQuitMenu(); // if we're in a game, the change res then enter the same kind of game, we nee the quit menu to be gone.

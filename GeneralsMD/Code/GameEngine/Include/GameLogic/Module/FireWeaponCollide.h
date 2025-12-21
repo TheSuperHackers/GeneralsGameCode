@@ -47,7 +47,7 @@ public:
 
 	FireWeaponCollideModuleData()
 	{
-		m_collideWeaponTemplate = NULL;
+		m_collideWeaponTemplate = nullptr;
 		m_fireOnce = FALSE;
 	}
 
