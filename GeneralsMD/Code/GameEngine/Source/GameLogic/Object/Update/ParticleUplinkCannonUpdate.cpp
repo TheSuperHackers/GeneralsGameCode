@@ -578,9 +578,11 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 			{
 				Real speed = data->m_manualDrivingSpeed;
 #if RETAIL_COMPATIBLE_CRC
-				const Bool useFasterSpeed = m_scriptedWaypointMode || (m_lastDrivingClickFrame != 0 && m_2ndLastDrivingClickFrame != 0 && m_lastDrivingClickFrame - m_2ndLastDrivingClickFrame < data->m_doubleClickToFastDriveDelay);
+				DEBUG_ASSERTCRASH(m_lastDrivingClickFrame >= m_2ndLastDrivingClickFrame, ("m_lastDrivingClickFrame should always be >= m_2ndLastDrivingClickFrame"));
+				const Bool useFasterSpeed = m_scriptedWaypointMode || (m_lastDrivingClickFrame - m_2ndLastDrivingClickFrame < data->m_doubleClickToFastDriveDelay);
 #else
-				const Bool useFasterSpeed = m_scriptedWaypointMode || (m_lastDrivingClickTimeMsec != 0 && m_2ndLastDrivingClickTimeMsec != 0 && m_lastDrivingClickTimeMsec - m_2ndLastDrivingClickTimeMsec < data->m_doubleClickToFastDriveDelay);
+				DEBUG_ASSERTCRASH(m_lastDrivingClickTimeMsec >= m_2ndLastDrivingClickTimeMsec, ("m_lastDrivingClickTimeMsec should always be >= m_2ndLastDrivingClickTimeMsec"));
+				const Bool useFasterSpeed = m_scriptedWaypointMode || (m_lastDrivingClickTimeMsec - m_2ndLastDrivingClickTimeMsec < data->m_doubleClickToFastDriveDelay);
 #endif
 				if( useFasterSpeed )
 				{
