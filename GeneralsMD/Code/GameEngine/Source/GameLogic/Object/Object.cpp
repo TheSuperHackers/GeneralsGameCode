@@ -4517,7 +4517,8 @@ void Object::removeUpgrade( const UpgradeTemplate *upgradeT )
 //-------------------------------------------------------------------------------------------------
 void Object::onCapture( Player *oldOwner, Player *newOwner )
 {
-	// Everybody dhills when they captured so they don't keep doing something the new player might not want him to be doing
+	// Everybody chills when they captured so they don't keep doing something the new player might not want him to be doing
+	// TheSuperHackers @tweak Stubbjax 19/11/2025 Except when the new owner is an ally, so that Hackers keep on hacking, etc.
 	if( getAIUpdateInterface()  &&  (oldOwner != newOwner) )
 	{
 #if RETAIL_COMPATIBLE_CRC
