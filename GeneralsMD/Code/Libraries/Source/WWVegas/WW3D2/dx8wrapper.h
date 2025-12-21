@@ -527,6 +527,7 @@ public:
 	static IDirect3D8* _Get_D3D8() { return D3DInterface; }
 	/// Returns the display format - added by TR for video playback - not part of W3D
 	static WW3DFormat	getBackBufferFormat( void );
+	static D3DFORMAT _Get_D3D_Back_Buffer_Format() { return DisplayFormat; }
 	static bool Reset_Device(bool reload_assets=true);
 
 	static const DX8Caps*	Get_Current_Caps() { WWASSERT(CurrentCaps); return CurrentCaps; }
