@@ -2599,7 +2599,7 @@ StateReturnType AIAttackApproachTargetState::updateInternal()
 #if RETAIL_COMPATIBLE_CRC
 			return STATE_FAILURE;	// If obj is stealthed, can no longer approach.
 #else
-			Bool isTargetingMine = weapon && weapon->getDamageType() == DAMAGE_DISARM &&
+			const Bool isTargetingMine = weapon && weapon->getDamageType() == DAMAGE_DISARM &&
 				(victim->isKindOf(KINDOF_MINE));
 
 			if (!isTargetingMine)
