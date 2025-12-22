@@ -2677,25 +2677,29 @@ Bool MilesAudioManager::isOnScreen( const Coord3D *pos ) const
 //-------------------------------------------------------------------------------------------------
 Real MilesAudioManager::getEffectiveVolume(AudioEventRTS *event) const
 {
-	Real volume = 1.0f;
-	volume *= (event->getVolume() * event->getVolumeShift());
-	if (event->getAudioEventInfo()->m_soundType == AT_Music)
+	Real volume = event->getVolume() * event->getVolumeShift();
+
+	switch (event->getAudioEventInfo()->m_soundType)
+	{
+	case AT_Music:
 	{
 		volume *= m_musicVolume;
+		break;
 	}
-	else if (event->getAudioEventInfo()->m_soundType == AT_Streaming)
+	case AT_Streaming:
 	{
 		volume *= m_speechVolume;
+		break;
 	}
-	else
+	case AT_SoundEffect:
 	{
 		if (event->isPositionalAudio())
 		{
 			volume *= m_sound3DVolume;
-			Coord3D distance = m_listenerPosition;
 			const Coord3D *pos = event->getCurrentPosition();
 			if (pos)
 			{
+				Coord3D distance = m_listenerPosition;
 				distance.sub(pos);
 				Real objMinDistance;
 				Real objMaxDistance;
@@ -2730,6 +2734,8 @@ Real MilesAudioManager::getEffectiveVolume(AudioEventRTS *event) const
 		{
 			volume *= m_soundVolume;
 		}
+		break;
+	}
 	}
 
 	return volume;
