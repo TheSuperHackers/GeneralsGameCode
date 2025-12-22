@@ -2067,25 +2067,14 @@ Bool Object::isNonFactionStructure(void) const
 	return isStructure() && !isFactionStructure();
 }
 
-void localIsHero( Object *obj, void* userData )
-{
-	Bool *hero = (Bool*)userData;
-
-	if( obj && obj->isKindOf( KINDOF_HERO ) )
-	{
-		*hero = TRUE;
-	}
-}
-
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @performance bobtista 13/11/2025 Use cached hero count for O(1) lookup instead of O(n) iteration.
 Bool Object::isHero(void) const
 {
 	ContainModuleInterface *contain = getContain();
 	if( contain )
 	{
-		Bool heroInside = FALSE;
-		contain->iterateContained( localIsHero, (void*)(&heroInside), FALSE );
-		if( heroInside )
+		if( contain->getHeroUnitsContained() > 0 )
 		{
 			return TRUE;
 		}
