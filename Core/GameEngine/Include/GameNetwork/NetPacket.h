@@ -126,7 +126,6 @@ protected:
 	static void FillBufferWithDisconnectFrameMessage(UnsignedByte *buffer, NetCommandRef *msg);
 	static void FillBufferWithDisconnectScreenOffMessage(UnsignedByte *buffer, NetCommandRef *msg);
 	static void FillBufferWithFrameResendRequestMessage(UnsignedByte *buffer, NetCommandRef *msg);
-	static void FillBufferWithWrapperCommand(UnsignedByte *buffer, NetCommandRef *msg);
 
 	Bool addFrameCommand(NetCommandRef *msg);
 	Bool isRoomForFrameMessage(NetCommandRef *msg);
