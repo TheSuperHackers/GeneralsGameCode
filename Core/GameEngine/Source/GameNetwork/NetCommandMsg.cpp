@@ -1186,9 +1186,7 @@ void NetDisconnectFrameCommandMsg::setDisconnectFrame(UnsignedInt disconnectFram
 }
 
 size_t NetDisconnectFrameCommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketDisconnectFrameCommand)
-		+ sizeof(UnsignedByte)
-		+ sizeof(UnsignedInt);
+	return sizeof(NetPacketDisconnectFrameCommand);
 }
 
 //-------------------------
@@ -1211,9 +1209,7 @@ void NetDisconnectScreenOffCommandMsg::setNewFrame(UnsignedInt newFrame) {
 }
 
 size_t NetDisconnectScreenOffCommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketDisconnectScreenOffCommand)
-		+ sizeof(UnsignedByte)
-		+ sizeof(UnsignedInt);
+	return sizeof(NetPacketDisconnectScreenOffCommand);
 }
 
 //-------------------------
@@ -1236,9 +1232,7 @@ void NetFrameResendRequestCommandMsg::setFrameToResend(UnsignedInt frame) {
 }
 
 size_t NetFrameResendRequestCommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketFrameResendRequestCommand)
-		+ sizeof(UnsignedByte)
-		+ sizeof(UnsignedInt);
+	return sizeof(NetPacketFrameResendRequestCommand);
 }
 
 //-------------------------
