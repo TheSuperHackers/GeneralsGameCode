@@ -206,7 +206,8 @@ jobs:
           Write-Host "github.ref='${{ github.ref }}'" -ForegroundColor Cyan
 
       - name: Save vcpkg binary cache
-        if: ${{ always() && startsWith(inputs.preset, 'win32') && steps.vcpkg_cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main' }}
+        # TODO: Add back && github.ref == 'refs/heads/main' after testing to prevent PR cache races
+        if: ${{ always() && startsWith(inputs.preset, 'win32') && steps.vcpkg_cache.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@v4
         with:
           path: ${{ github.workspace }}\vcpkg-bincache
