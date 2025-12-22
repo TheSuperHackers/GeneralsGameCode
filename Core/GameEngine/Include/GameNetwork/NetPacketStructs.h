@@ -135,7 +135,7 @@ struct NetPacketPlayerLeaveCommand {
 // Run Ahead Metrics Command Packet
 ////////////////////////////////////////////////////////////////////////////////
 
-// Run ahead metrics command packet structure  
+// Run ahead metrics command packet structure
 // Fields: T + type, R + relay, P + playerID, C + commandID, D + averageLatency + averageFps
 struct NetPacketRunAheadMetricsCommand {
 	NetPacketCommandTypeField commandType;
