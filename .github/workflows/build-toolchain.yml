@@ -126,12 +126,36 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}\vcpkg-bincache
-          key: vcpkg-bincache-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}
+          key: vcpkg-bincache-v2-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}
           restore-keys: |
-            vcpkg-bincache-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-
+            vcpkg-bincache-v2-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-
+            vcpkg-bincache-v2-${{ runner.os }}-
 
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
+
+      - name: Validate vcpkg cache not empty
+        if: startsWith(inputs.preset, 'win32')
+        id: vcpkg_cache_validate
+        shell: pwsh
+        run: |
+          $dir = "${{ github.workspace }}\vcpkg-bincache"
+          if (!(Test-Path $dir)) {
+            Write-Host "Cache directory does not exist" -ForegroundColor Yellow
+            "valid=false" >> $env:GITHUB_OUTPUT
+            exit 0
+          }
+          $files = Get-ChildItem $dir -Recurse -File -ErrorAction SilentlyContinue
+          $bytes = ($files | Measure-Object Length -Sum).Sum
+          Write-Host "vcpkg-bincache: $($files.Count) files, $([math]::Round($bytes / 1MB, 2)) MB" -ForegroundColor Cyan
+          # Consider cache invalid if less than 1MB (empty or nearly empty)
+          if ($bytes -lt 1048576) {
+            Write-Host "Cache is too small (< 1MB), treating as invalid" -ForegroundColor Yellow
+            "valid=false" >> $env:GITHUB_OUTPUT
+          } else {
+            Write-Host "Cache appears valid" -ForegroundColor Green
+            "valid=true" >> $env:GITHUB_OUTPUT
+          }
 
       - name: Force vcpkg binary cache directory
         shell: pwsh
@@ -200,17 +224,19 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "vcpkg_cache.cache-hit='${{ steps.vcpkg_cache.outputs.cache-hit }}'" -ForegroundColor Cyan
+          Write-Host "vcpkg_cache_validate.valid='${{ steps.vcpkg_cache_validate.outputs.valid }}'" -ForegroundColor Cyan
           Write-Host "vcpkg_key.msvc='${{ steps.vcpkg_key.outputs.msvc }}'" -ForegroundColor Cyan
           Write-Host "vcpkg_key.baseline='${{ steps.vcpkg_key.outputs.baseline }}'" -ForegroundColor Cyan
           Write-Host "vcpkg_key.triplet='${{ steps.vcpkg_key.outputs.triplet }}'" -ForegroundColor Cyan
           Write-Host "github.ref='${{ github.ref }}'" -ForegroundColor Cyan
 
       - name: Save vcpkg binary cache
-        # Only save if cache was not hit AND this is the designated job to save (prevents all 6 jobs from racing)
-        # We use Generals + win32-vcpkg-debug as the "designated saver" since it's deterministic and always runs
+        # Save if:
+        # 1. Cache was not hit OR cache is invalid (empty/small)
+        # 2. This is the designated job (Generals + win32-vcpkg-debug) to prevent all 6 jobs from racing
         # All other jobs will benefit from the cache once it's saved by this job
-        if: ${{ always() && startsWith(inputs.preset, 'win32') && steps.vcpkg_cache.outputs.cache-hit != 'true' && inputs.game == 'Generals' && inputs.preset == 'win32-vcpkg-debug' }}
+        if: ${{ always() && startsWith(inputs.preset, 'win32') && (steps.vcpkg_cache.outputs.cache-hit != 'true' || steps.vcpkg_cache_validate.outputs.valid != 'true') && inputs.game == 'Generals' && inputs.preset == 'win32-vcpkg-debug' }}
         uses: actions/cache/save@v4
         with:
           path: ${{ github.workspace }}\vcpkg-bincache
-          key: vcpkg-bincache-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}
+          key: vcpkg-bincache-v2-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}
