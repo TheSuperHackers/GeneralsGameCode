@@ -103,75 +103,27 @@ jobs:
         with:
           arch: x86
 
-      - name: Compute vcpkg cache key parts
-        if: startsWith(inputs.preset, 'win32')
-        id: vcpkg_key
-        shell: pwsh
-        run: |
-          $baseline = (Get-Content vcpkg.json | ConvertFrom-Json)."builtin-baseline"
-          $msvc = $env:VCToolsVersion
-          if (-not $msvc) { $msvc = "unknown" }
-
-          $triplet = "x86-windows"
-          if ("${{ inputs.preset }}" -like "x64*") { $triplet = "x64-windows" }
-
-          "baseline=$baseline" >> $env:GITHUB_OUTPUT
-          "msvc=$msvc" >> $env:GITHUB_OUTPUT
-          "triplet=$triplet" >> $env:GITHUB_OUTPUT
-          Write-Host "vcpkg cache key parts: baseline=$baseline, msvc=$msvc, triplet=$triplet"
-
       - name: Restore vcpkg binary cache
         if: startsWith(inputs.preset, 'win32')
         id: vcpkg_cache
         uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}\vcpkg-bincache
-          key: vcpkg-bincache-v2-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}
-          restore-keys: |
-            vcpkg-bincache-v2-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-
-            vcpkg-bincache-v2-${{ runner.os }}-
+          key: vcpkg-bincache-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}-${{ inputs.preset }}
 
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
 
-      - name: Validate vcpkg cache not empty
+      - name: Configure vcpkg to use cached directory
         if: startsWith(inputs.preset, 'win32')
-        id: vcpkg_cache_validate
         shell: pwsh
         run: |
-          $dir = "${{ github.workspace }}\vcpkg-bincache"
-          if (!(Test-Path $dir)) {
-            Write-Host "Cache directory does not exist" -ForegroundColor Yellow
-            "valid=false" >> $env:GITHUB_OUTPUT
-            exit 0
-          }
-          $files = Get-ChildItem $dir -Recurse -File -ErrorAction SilentlyContinue
-          $bytes = ($files | Measure-Object Length -Sum).Sum
-          Write-Host "vcpkg-bincache: $($files.Count) files, $([math]::Round($bytes / 1MB, 2)) MB" -ForegroundColor Cyan
-          # Consider cache invalid if less than 1MB (empty or nearly empty)
-          if ($bytes -lt 1048576) {
-            Write-Host "Cache is too small (< 1MB), treating as invalid" -ForegroundColor Yellow
-            "valid=false" >> $env:GITHUB_OUTPUT
-          } else {
-            Write-Host "Cache appears valid" -ForegroundColor Green
-            "valid=true" >> $env:GITHUB_OUTPUT
-          }
-
-      - name: Force vcpkg binary cache directory
-        shell: pwsh
-        run: |
-          # Override VCPKG_DEFAULT_BINARY_CACHE that lukka/run-vcpkg sets to its own temp dir
-          # This ensures vcpkg uses our cached directory instead
           $cacheDir = "${{ github.workspace }}\vcpkg-bincache"
-          # Ensure the cache directory exists (cache restore may not create it on miss)
           New-Item -ItemType Directory -Force -Path $cacheDir | Out-Null
           $env:VCPKG_DEFAULT_BINARY_CACHE = $cacheDir
           $env:VCPKG_BINARY_SOURCES = "clear;files,$cacheDir,readwrite"
           "VCPKG_DEFAULT_BINARY_CACHE=$cacheDir" >> $env:GITHUB_ENV
           "VCPKG_BINARY_SOURCES=$env:VCPKG_BINARY_SOURCES" >> $env:GITHUB_ENV
-          Write-Host "Forced vcpkg binary cache to: $cacheDir" -ForegroundColor Cyan
-          Write-Host "VCPKG_DEFAULT_BINARY_CACHE=$env:VCPKG_DEFAULT_BINARY_CACHE" -ForegroundColor Gray
-          Write-Host "VCPKG_BINARY_SOURCES=$env:VCPKG_BINARY_SOURCES" -ForegroundColor Gray
 
       - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
         shell: pwsh
@@ -219,24 +171,9 @@ jobs:
           retention-days: 30
           if-no-files-found: error
 
-      - name: Debug vcpkg cache state
-        if: ${{ always() && startsWith(inputs.preset, 'win32') }}
-        shell: pwsh
-        run: |
-          Write-Host "vcpkg_cache.cache-hit='${{ steps.vcpkg_cache.outputs.cache-hit }}'" -ForegroundColor Cyan
-          Write-Host "vcpkg_cache_validate.valid='${{ steps.vcpkg_cache_validate.outputs.valid }}'" -ForegroundColor Cyan
-          Write-Host "vcpkg_key.msvc='${{ steps.vcpkg_key.outputs.msvc }}'" -ForegroundColor Cyan
-          Write-Host "vcpkg_key.baseline='${{ steps.vcpkg_key.outputs.baseline }}'" -ForegroundColor Cyan
-          Write-Host "vcpkg_key.triplet='${{ steps.vcpkg_key.outputs.triplet }}'" -ForegroundColor Cyan
-          Write-Host "github.ref='${{ github.ref }}'" -ForegroundColor Cyan
-
       - name: Save vcpkg binary cache
-        # Save if:
-        # 1. Cache was not hit OR cache is invalid (empty/small)
-        # 2. This is the designated job (Generals + win32-vcpkg-debug) to prevent all 6 jobs from racing
-        # All other jobs will benefit from the cache once it's saved by this job
-        if: ${{ always() && startsWith(inputs.preset, 'win32') && (steps.vcpkg_cache.outputs.cache-hit != 'true' || steps.vcpkg_cache_validate.outputs.valid != 'true') && inputs.game == 'Generals' && inputs.preset == 'win32-vcpkg-debug' }}
+        if: ${{ always() && startsWith(inputs.preset, 'win32') && steps.vcpkg_cache.outputs.cache-hit != 'true' && inputs.game == 'Generals' && inputs.preset == 'win32-vcpkg-debug' }}
         uses: actions/cache/save@v4
         with:
           path: ${{ github.workspace }}\vcpkg-bincache
-          key: vcpkg-bincache-v2-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}
+          key: vcpkg-bincache-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}-${{ inputs.preset }}
