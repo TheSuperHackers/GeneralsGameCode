@@ -206,11 +206,10 @@ jobs:
           Write-Host "github.ref='${{ github.ref }}'" -ForegroundColor Cyan
 
       - name: Save vcpkg binary cache
-        # Save if cache was not hit (cache-hit != 'true' handles both 'false' and empty string cases)
-        # Note: All 6 parallel jobs may attempt to save the same cache key simultaneously.
-        # This is expected - GitHub Actions ensures only one succeeds, others show harmless warnings.
-        # See: https://github.com/actions/cache/blob/main/save/README.md
-        if: ${{ always() && startsWith(inputs.preset, 'win32') && steps.vcpkg_cache.outputs.cache-hit != 'true' }}
+        # Only save if cache was not hit AND this is the designated job to save (prevents all 6 jobs from racing)
+        # We use Generals + win32-vcpkg-debug as the "designated saver" since it's deterministic and always runs
+        # All other jobs will benefit from the cache once it's saved by this job
+        if: ${{ always() && startsWith(inputs.preset, 'win32') && steps.vcpkg_cache.outputs.cache-hit != 'true' && inputs.game == 'Generals' && inputs.preset == 'win32-vcpkg-debug' }}
         uses: actions/cache/save@v4
         with:
           path: ${{ github.workspace }}\vcpkg-bincache
