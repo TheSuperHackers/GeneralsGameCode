@@ -891,7 +891,7 @@ static void populateRandomStartPosition( GameInfo *game )
 			continue;
 
 		Int posIdx = slot->getStartPos();
-		if (posIdx >= 0 || posIdx >= numPlayers)
+		if (posIdx >= 0 || posIdx >= numPlayers) // TheSuperHackers @todo stm 19/12/2025 possible out of bounds issue because this is a malformed boundscheck
 		{
 			hasStartSpotBeenPicked = TRUE;
 			taken[posIdx] = TRUE;
@@ -1252,6 +1252,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		{
 			TheGameInfo = TheChallengeGameInfo;
 		}
+		// TheSuperHackers @info stm 18/12/2025 TheGameInfo is nullptr when you load a savegame of a regular campaign mission
 	}
 
   // On a NEW game, we need to copy the superweapon restrictions from the game info to here
