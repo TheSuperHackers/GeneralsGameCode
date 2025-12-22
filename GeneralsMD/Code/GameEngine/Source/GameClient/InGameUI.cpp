@@ -90,6 +90,7 @@
 #include "GameNetwork/NetworkInterface.h"
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.
+#include "Common/Geometry.h"
 
 
 
@@ -1506,7 +1507,6 @@ void InGameUI::evaluateSoloNexus( Drawable *newlyAddedDrawable )
 
 }
 
-
 void InGameUI::handleBuildPlacements( void )
 {
 
@@ -1524,28 +1524,29 @@ void InGameUI::handleBuildPlacements( void )
 		// location the icon will be at (anchored is the start, otherwise it's the mouse)
 		if( isPlacementAnchored() )
 		{
-			ICoord2D start, end;
+			if (!m_pendingPlaceType->isKindOf(KINDOF_SHIPYARD)) {
+				ICoord2D start, end;
 
-			// get the placement arrow points
-			getPlacementPoints( &start, &end );
+				// get the placement arrow points
+				getPlacementPoints(&start, &end);
 
-			// set icon to anchor point
-			loc = start;
+				// set icon to anchor point
+				loc = start;
 
-			// only adjust angle if we've actually moved the mouse
-			if( start.x != end.x || start.y != end.y )
-			{
-				Coord3D worldStart, worldEnd;
+				// only adjust angle if we've actually moved the mouse
+				if (start.x != end.x || start.y != end.y)
+				{
+					Coord3D worldStart, worldEnd;
 
-				// project the start and the end points of the line anchor into the 3D world
-				TheTacticalView->screenToTerrain( &start, &worldStart );
-				TheTacticalView->screenToTerrain( &end, &worldEnd );
+					// project the start and the end points of the line anchor into the 3D world
+					TheTacticalView->screenToTerrain(&start, &worldStart);
+					TheTacticalView->screenToTerrain(&end, &worldEnd);
 
-				Coord2D v;
-				v.x = worldEnd.x - worldStart.x;
-				v.y = worldEnd.y - worldStart.y;
-				angle = v.toAngle();
-
+					Coord2D v;
+					v.x = worldEnd.x - worldStart.x;
+					v.y = worldEnd.y - worldStart.y;
+					angle = v.toAngle();
+				}
 				// TheSuperHackers @tweak Stubbjax 04/08/2025 Snap angle to nearest 45 degrees
 				// while using force attack mode for convenience.
 				if (isInForceAttackMode())
@@ -1554,8 +1555,18 @@ void InGameUI::handleBuildPlacements( void )
 					angle = WWMath::Round(angle / snapRadians) * snapRadians;
 				}
 			}
+			else {
+				// In case of Shipyard, do not update rotation
+				ICoord2D start, end;
 
-		}
+				// get the placement arrow points
+				getPlacementPoints(&start, &end);
+
+				// set icon to anchor point
+				loc = start;
+			}
+
+		}  // end if
 		else
 		{
 			const MouseIO *mouseIO = TheMouse->getMouseStatus();
@@ -1563,7 +1574,53 @@ void InGameUI::handleBuildPlacements( void )
 			// location is the mouse position
 			loc = mouseIO->pos;
 
-		}
+			if (m_pendingPlaceType->isKindOf(KINDOF_SHIPYARD)) {
+				// For shipyard sample the terrain an rotate according to descending terrain (water is lower)
+				const GeometryInfo& geom = m_pendingPlaceType->getTemplateGeometryInfo();
+
+				Coord3D worldPos;
+				TheTacticalView->screenToTerrain(&loc, &worldPos);
+
+				Real check_radius = 0.0f;
+				if (geom.getGeomType() == GEOMETRY_BOX)
+				{
+					check_radius = std::max(geom.getMinorRadius(), geom.getMajorRadius());
+				}  // end if
+				else if (geom.getGeomType() == GEOMETRY_SPHERE ||
+					geom.getGeomType() == GEOMETRY_CYLINDER)
+				{
+					check_radius = geom.getBoundingCircleRadius();
+				}  // end else if
+				else
+				{
+					DEBUG_ASSERTCRASH(0, ("InGameUI::handleBuildPlacements (Shipyard placement): Undefined geometry '%d' for '%s'", geom.getGeomType(), m_pendingPlaceType->getName().str()));
+					return;
+				}  // end else
+
+				//Check 4 sample points
+				Real hx1 = TheTerrainLogic->getGroundHeight(worldPos.x + check_radius, worldPos.y);
+				Real hx2 = TheTerrainLogic->getGroundHeight(worldPos.x - check_radius, worldPos.y);
+				Real hy1 = TheTerrainLogic->getGroundHeight(worldPos.x, worldPos.y + check_radius);
+				Real hy2 = TheTerrainLogic->getGroundHeight(worldPos.x, worldPos.y - check_radius);
+
+				Real dx = hx1 - hx2;
+				Real dy = hy1 - hy2;
+
+				Coord2D v;
+				v.x = dx;
+				v.y = dy;
+				constexpr Real pi2 = PI * 2.0f;
+				angle = v.toAngle() + m_pendingPlaceType->getPlacementViewAngle();
+				if (angle < 0.0f) {
+					angle += pi2;
+				}
+				else if (angle > pi2) {
+					angle -= pi2;
+				}
+			}
+
+
+		}  // end else
 
 		// set the location and angle of the place icon
 		/**@todo this whole orientation vector thing is LAME! Must replace, all I want to

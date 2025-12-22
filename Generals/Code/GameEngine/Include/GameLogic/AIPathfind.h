@@ -809,7 +809,7 @@ protected:
 									 const Object *obj, Int attackDistance);
 
 	Path *buildActualPath( const Object *obj, LocomotorSurfaceTypeMask acceptableSurfaces,
-		const Coord3D *fromPos, PathfindCell *goalCell, Bool center, Bool blocked );	///< Work backwards from goal cell to construct final path
+		const Coord3D *fromPos, PathfindCell *goalCell, Bool center, Bool blocked, Int requireWaterLevel );	///< Work backwards from goal cell to construct final path
 	Path *buildGroundPath( Bool isCrusher,const Coord3D *fromPos, PathfindCell *goalCell,
 		Bool center, Int pathDiameter );	///< Work backwards from goal cell to construct final path
 	Path *buildHierachicalPath( const Coord3D *fromPos, PathfindCell *goalCell);	///< Work backwards from goal cell to construct final path

@@ -836,7 +836,19 @@ UpdateSleepTime PhysicsBehavior::update()
 		applyForce(&bounceForce);
 	}
 
-	Bool airborneAtEnd = obj->isAboveTerrain();
+	Bool isWaterCollision{ false };
+	Bool airborneAtEnd{ false };
+	if (m_pui != nullptr && m_pui->projectileShouldCollideWithWater()) {
+		airborneAtEnd = obj->isAboveTerrainOrWater();
+
+		if (!airborneAtEnd) {
+			const Coord3D* pos = obj->getPosition();
+			isWaterCollision = TheTerrainLogic->isUnderwater(pos->x, pos->y);
+		}
+	}
+	else {
+		airborneAtEnd = obj->isAboveTerrain();
+	}
 
 	// it's not good enough to check for airborne being different between
 	// the start and end of this func... we have to compare since last frame,

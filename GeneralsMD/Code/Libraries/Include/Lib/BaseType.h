@@ -197,6 +197,7 @@ struct Coord2D
 
 	Real toAngle( void ) const;  ///< turn 2D vector into angle (where angle 0 is down the +x axis)
 
+	void rotateByAngle(Real angle); ///< rotate the vector by the given angle (radians)
 };
 
 inline Real Coord2D::toAngle( void ) const
@@ -213,6 +214,18 @@ inline Real Coord2D::toAngle( void ) const
 		c = 1.0f;
 
 	return y < 0.0f ? -ACos(c) : ACos(c);
+}
+
+inline void Coord2D::rotateByAngle(Real angle)
+{
+	Real cs = Cos(angle);
+	Real sn = Sin(angle);
+
+	Real px = x * cs - y * sn;
+	Real py = x * sn + y * cs;
+
+	x = px;
+	y = py;
 }
 
 struct ICoord2D

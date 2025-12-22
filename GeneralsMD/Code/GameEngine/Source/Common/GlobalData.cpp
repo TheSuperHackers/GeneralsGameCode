@@ -398,6 +398,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "MinDistFromEdgeOfMapForBuild",	 INI::parseReal,				NULL,			offsetof( GlobalData, m_MinDistFromEdgeOfMapForBuild ) },
 	{ "SupplyBuildBorder",	 INI::parseReal,				NULL,			offsetof( GlobalData, m_SupplyBuildBorder ) },
 	{ "AllowedHeightVariationForBuilding", INI::parseReal,NULL,			offsetof( GlobalData, m_allowedHeightVariationForBuilding ) },
+	{ "AllowedHeightVariationForBuildingShipyard", INI::parseReal,NULL,			offsetof(GlobalData, m_allowedHeightVariationForBuildingShipyard) },
 	{ "MinLowEnergyProductionSpeed",INI::parseReal,				NULL,			offsetof( GlobalData, m_MinLowEnergyProductionSpeed ) },
 	{ "MaxLowEnergyProductionSpeed",INI::parseReal,				NULL,			offsetof( GlobalData, m_MaxLowEnergyProductionSpeed ) },
 	{ "LowEnergyPenaltyModifier",		INI::parseReal,				NULL,			offsetof( GlobalData, m_LowEnergyPenaltyModifier ) },
@@ -572,7 +573,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{"ChronoDamageParticleSystemSmall", INI::parseAsciiString, NULL, offsetof(GlobalData, m_chronoDisableParticleSystemSmall) },
 
 	{"DefaultExcludedDeathTypes", INI::parseDeathTypeFlagsList, NULL, offsetof(GlobalData, m_defaultExcludedDeathTypes) },
-	
+	{"HeightAboveTerrainIncludesWater", INI::parseBool, NULL, offsetof(GlobalData, m_heightAboveTerrainIncludesWater) },
 	{ NULL,					NULL,						NULL,						0 }  // keep this last
 
 };
@@ -915,6 +916,7 @@ GlobalData::GlobalData()
 	m_MinDistFromEdgeOfMapForBuild = 0.0f;
 	m_SupplyBuildBorder = 0.0f;
 	m_allowedHeightVariationForBuilding = 0.0f;
+	m_allowedHeightVariationForBuildingShipyard = 0.0f;
 	m_MinLowEnergyProductionSpeed = 0.0f;
 	m_MaxLowEnergyProductionSpeed = 0.0f;
 	m_LowEnergyPenaltyModifier = 0.0f;
@@ -1157,6 +1159,8 @@ GlobalData::GlobalData()
 	m_chronoDisableParticleSystemMedium.clear();
 	m_chronoDisableParticleSystemSmall.clear();
 	// m_chronoTintStatusType = TINT_STATUS_INVALID;
+
+	m_heightAboveTerrainIncludesWater = false;
 
 }  // end GlobalData
 

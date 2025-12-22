@@ -711,6 +711,14 @@ Object* DumbProjectileBehavior::getTargetObject()
 	return TheGameLogic->findObjectByID(m_victimID);
 }
 
+bool DumbProjectileBehavior::projectileShouldCollideWithWater() const
+{
+	if (m_detonationWeaponTmpl != nullptr) {
+		return m_detonationWeaponTmpl->getProjectileCollideMask() & WeaponCollideMaskType::WEAPON_COLLIDE_WATER;
+	}
+	return false;
+}
+
 // ------------------------------------------------------------------------------------------------
 /** displayFlightPath for debugging */
 // ------------------------------------------------------------------------------------------------

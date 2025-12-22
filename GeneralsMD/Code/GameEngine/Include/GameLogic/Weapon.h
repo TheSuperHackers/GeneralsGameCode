@@ -146,7 +146,8 @@ enum WeaponCollideMaskType CPP_11(: Int)
 	WEAPON_COLLIDE_WALLS									= 0x0020,
 	WEAPON_COLLIDE_SMALL_MISSILES					= 0x0040, //All missiles are also projectiles!
 	WEAPON_COLLIDE_BALLISTIC_MISSILES			= 0x0080, //All missiles are also projectiles!
-	WEAPON_COLLIDE_CONTROLLED_STRUCTURES	= 0x0100	//this is "ONLY structures belonging to the projectile's controller".
+	WEAPON_COLLIDE_CONTROLLED_STRUCTURES	= 0x0100,	//this is "ONLY structures belonging to the projectile's controller".
+	WEAPON_COLLIDE_WATER                  = 0x0200
 };
 
 #ifdef DEFINE_WEAPONCOLLIDEMASK_NAMES
@@ -161,6 +162,7 @@ static const char *const TheWeaponCollideMaskNames[] =
 	"SMALL_MISSILES",			//All missiles are also projectiles!
 	"BALLISTIC_MISSILES", //All missiles are also projectiles!
 	"CONTROLLED_STRUCTURES",
+	"WATER",
 	NULL
 };
 #endif
@@ -399,21 +401,21 @@ class WeaponTemplate : public MemoryPoolObject
 {
 	friend class WeaponStore;
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( WeaponTemplate, "WeaponTemplate" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(WeaponTemplate, "WeaponTemplate")
 
 public:
 
 	WeaponTemplate();
 	// virtual destructor declared by memory pool
 
-	void reset( void );
+	void reset(void);
 
-	void friend_setNextTemplate(WeaponTemplate *nextTemplate) { m_nextTemplate = nextTemplate; }
-	WeaponTemplate *friend_clearNextTemplate( void ) {	WeaponTemplate *ret = m_nextTemplate; m_nextTemplate = NULL; return ret; }
-	Bool isOverride( void ) { return m_nextTemplate != NULL; }
+	void friend_setNextTemplate(WeaponTemplate* nextTemplate) { m_nextTemplate = nextTemplate; }
+	WeaponTemplate* friend_clearNextTemplate(void) { WeaponTemplate* ret = m_nextTemplate; m_nextTemplate = NULL; return ret; }
+	Bool isOverride(void) { return m_nextTemplate != NULL; }
 
 	/// field table for loading the values from an INI
-	const FieldParse *getFieldParse() const { return TheWeaponTemplateFieldParseTable; }
+	const FieldParse* getFieldParse() const { return TheWeaponTemplateFieldParseTable; }
 
 	/**
 		fire the weapon. return the logic-frame in which the damage will be dealt.
@@ -425,15 +427,15 @@ public:
 	*/
 	UnsignedInt fireWeaponTemplate
 	(
-		const Object *sourceObj,
+		const Object* sourceObj,
 		WeaponSlotType wslot,
 		Int specificBarrelToUse,
-		Object *victimObj,
+		Object* victimObj,
 		const Coord3D* victimPos,
 		const WeaponBonus& bonus,
 		Bool isProjectileDetonation,
 		Bool ignoreRanges,
-		Weapon *firingWeapon,
+		Weapon* firingWeapon,
 		ObjectID* projectileID,
 		Bool inflictDamage
 	) const;
@@ -445,8 +447,8 @@ public:
 		take weapon range into account -- it ASSUMES that the victim is within range!
 	*/
 	Real estimateWeaponTemplateDamage(
-		const Object *sourceObj,
-		const Object *victimObj,
+		const Object* sourceObj,
+		const Object* victimObj,
 		const Coord3D* victimPos,
 		const WeaponBonus& bonus
 	) const;
@@ -467,7 +469,7 @@ public:
 	Real getShockWaveRadius() const { return m_shockWaveRadius; }
 	Real getShockWaveTaperOff() const { return m_shockWaveTaperOff; }
 
-	Real getRequestAssistRange() const {return m_requestAssistRange;}
+	Real getRequestAssistRange() const { return m_requestAssistRange; }
 	AsciiString getName() const { return m_name; }
 	AsciiString getProjectileStreamName() const { return m_projectileStreamName; }
 	AsciiString getLaserName() const { return m_laserName; }
@@ -499,7 +501,7 @@ public:
 	Int getContinuousFireOneShotsNeeded() const { return m_continuousFireOneShotsNeeded; }
 	Int getContinuousFireTwoShotsNeeded() const { return m_continuousFireTwoShotsNeeded; }
 	UnsignedInt getContinuousFireCoastFrames() const { return m_continuousFireCoastFrames; }
- 	UnsignedInt getAutoReloadWhenIdleFrames() const { return m_autoReloadWhenIdleFrames; }
+	UnsignedInt getAutoReloadWhenIdleFrames() const { return m_autoReloadWhenIdleFrames; }
 	UnsignedInt getSuspendFXDelay() const { return m_suspendFXDelay; }
 
 	const FXList* getFireFX(VeterancyLevel v) const { return m_fireFXs[v]; }
@@ -530,8 +532,9 @@ public:
 	Bool isScatterTargetAligned() const { return m_scatterTargetAligned; }
 	Bool isScatterTargetRandom() const { return m_scatterTargetRandom; }
 	Bool isScatterTargetRandomAngle() const { return m_scatterTargetRandomAngle; }
-	Real getScatterTargetMinScalar () const { return m_scatterTargetMinScalar; }
+	Real getScatterTargetMinScalar() const { return m_scatterTargetMinScalar; }
 	Bool isScatterTargetCenteredAtShooter() const { return m_scatterTargetCenteredAtShooter; }
+	Bool isScatterOnWaterSurface() const { return m_scatterOnWaterSurface; }
 
 	Bool shouldProjectileCollideWith(
 		const Object* projectileLauncher,
@@ -658,6 +661,8 @@ private:
 
 	UnsignedInt m_scatterTargetResetTime;  ///< if this much time between shots has passed, we reset the scatter targets
 	Bool m_scatterTargetResetRecenter;  ///< when resetting scatter targets, use indices in the "middle" of the list, to keep the target centered for Line based attacks 
+
+	Bool m_scatterOnWaterSurface; ///< Scatter radius and targets include the water surface instead of just the terrain height
 
 	mutable HistoricWeaponDamageList m_historicDamage;
 	mutable UnsignedInt m_historicDamageTriggerId;

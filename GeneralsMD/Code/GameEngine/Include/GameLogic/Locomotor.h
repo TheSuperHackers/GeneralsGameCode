@@ -59,7 +59,7 @@ enum LocomotorAppearance CPP_11(: Int)
 	LOCO_CLIMBER,			// human climber - backs down cliffs.
 	LOCO_OTHER,
 	LOCO_MOTORCYCLE,
-
+	LOCO_SHIP,
 	LOCOMOTOR_APPEARANCE_COUNT
 };
 
@@ -84,7 +84,7 @@ static const char *const TheLocomotorAppearanceNames[] =
 	"CLIMBER",
 	"OTHER",
 	"MOTORCYCLE",
-
+	"SHIP",
 	NULL
 };
 static_assert(ARRAY_SIZE(TheLocomotorAppearanceNames) == LOCOMOTOR_APPEARANCE_COUNT + 1, "Array size");
@@ -218,6 +218,8 @@ private:
 	Real											m_rudderCorrectionRate;
 	Real											m_elevatorCorrectionDegree;
 	Real											m_elevatorCorrectionRate;
+
+	Int												m_requiredWaterLevel; ///< for LOCO_SHIP, how deep the water must be
 };
 
 typedef OVERRIDE<LocomotorTemplate> LocomotorTemplateOverride;
@@ -320,6 +322,9 @@ public:
 	Bool isInvalidPositionAllowed() const { return getFlag( ALLOW_INVALID_POSITION ); }
 
 	void setPreferredHeight( Real height ) { m_preferredHeight = height; }
+
+	//Returns 0 for non SHIP locomotors
+	inline Int getRequireWaterLevel() const { return m_template->m_appearance == LOCO_SHIP ? m_template->m_requiredWaterLevel : 0; };
 
 #ifdef CIRCLE_FOR_LANDING
 	/**

@@ -96,6 +96,7 @@ public:
 	virtual void projectileNowJammed() {}
 	virtual Object* getTargetObject();
 	virtual const Coord3D* getTargetPosition();
+	virtual Bool projectileShouldCollideWithWater() const override;
 
 protected:
 

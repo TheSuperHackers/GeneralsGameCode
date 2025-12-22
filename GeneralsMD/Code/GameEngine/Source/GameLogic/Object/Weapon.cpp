@@ -252,6 +252,7 @@ const FieldParse WeaponTemplate::TheWeaponTemplateFieldParseTable[] =
 	{ "ContinuousLaserLoopTime",				INI::parseDurationUnsignedInt,					NULL,							offsetof(WeaponTemplate, m_continuousLaserLoopTime) },
 	{ "LaserGroundTargetHeight",				INI::parseReal,					NULL,							offsetof(WeaponTemplate, m_laserGroundTargetHeight) },
 	{ "LaserGroundUnitTargetHeight",				INI::parseReal,					NULL,					offsetof(WeaponTemplate, m_laserGroundUnitTargetHeight) },
+	{ "ScatterOnWaterSurface", INI::parseBool, NULL, offsetof(WeaponTemplate, m_scatterOnWaterSurface) },
 	{ NULL,												NULL,																		NULL,							0 }  // keep this last
 
 };
@@ -345,7 +346,7 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(NULL)
 	m_scatterTargetResetTime = 0;
 	m_preAttackFXDelay = 6; // Non-Zero default! 6 frames = 200ms. This should be a good base value to avoid spamming
 	m_laserGroundUnitTargetHeight = 10; // Default Height offset
-
+	m_scatterOnWaterSurface = false;
 	m_historicDamageTriggerId = 0;
 }
 
@@ -1025,7 +1026,16 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		//If we aim for the center point of our target and miss, the shot will go much farther than
 		//we expect!
 		// srj sez: we should actually fire at the layer the victim is on, if possible, in case it is on a bridge...
-		projectileDestination.z = TheTerrainLogic->getLayerHeight( projectileDestination.x, projectileDestination.y, targetLayer );
+
+		if (targetLayer == LAYER_GROUND && firingWeapon->getTemplate()->isScatterOnWaterSurface()) {
+				Real waterZ;
+				Real terrainZ;
+				TheTerrainLogic->isUnderwater(projectileDestination.x, projectileDestination.y, &waterZ, &terrainZ);
+				projectileDestination.z = std::max(waterZ, terrainZ);
+		}
+		else {
+			projectileDestination.z = TheTerrainLogic->getLayerHeight(projectileDestination.x, projectileDestination.y, targetLayer);
+		}
 	}
 
 	if (getProjectileTemplate() == NULL || isProjectileDetonation)
@@ -2979,7 +2989,15 @@ Bool Weapon::privateFireWeapon(
 			targetPos.x += scatterOffset.x;
 			targetPos.y += scatterOffset.y;
 
-			targetPos.z = TheTerrainLogic->getGroundHeight(targetPos.x, targetPos.y);
+			if (m_template->isScatterOnWaterSurface()) {
+				Real waterZ;
+				Real terrainZ;
+				TheTerrainLogic->isUnderwater(targetPos.x, targetPos.y, &waterZ, &terrainZ);
+				targetPos.z = std::max(waterZ, terrainZ);
+			}
+			else {
+				targetPos.z = TheTerrainLogic->getGroundHeight(targetPos.x, targetPos.y);
+			}
 
 			// Note AW: We have to ignore Ranges when using ScatterTargets, or else the weapon can fail in the next stage
 			ignoreRanges = TRUE;

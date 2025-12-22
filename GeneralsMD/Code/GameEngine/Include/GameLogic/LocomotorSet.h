@@ -80,6 +80,7 @@ private:
 	LocomotorVector						m_locomotors;
 	LocomotorSurfaceTypeMask	m_validLocomotorSurfaces;
 	Bool											m_downhillOnly;
+	Int												m_requiredWaterLevel; // for ships, if there are multiple water locomotors the lowest allowed value is used
 
 	LocomotorSet(const LocomotorSet& that);
 	LocomotorSet& operator=(const LocomotorSet& that);
@@ -105,5 +106,6 @@ public:
 
 	LocomotorSurfaceTypeMask getValidSurfaces() const { return m_validLocomotorSurfaces; }
 	Bool isDownhillOnly( void ) const { return m_downhillOnly; };
+	Int getRequiredWaterLevel() const { return m_requiredWaterLevel; };
 
 };

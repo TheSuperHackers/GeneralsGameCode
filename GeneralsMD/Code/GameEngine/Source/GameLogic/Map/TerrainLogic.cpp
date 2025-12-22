@@ -2637,7 +2637,7 @@ void TerrainLogic::setActiveBoundary(Int newActiveBoundary)
 // ------------------------------------------------------------------------------------------------
 void TerrainLogic::flattenTerrain(Object *obj)
 {
-	if (obj->getGeometryInfo().getIsSmall()) {
+	if (obj->getGeometryInfo().getIsSmall() || obj->isKindOf(KINDOF_SHIPYARD)) {
 		return;
 	}
 

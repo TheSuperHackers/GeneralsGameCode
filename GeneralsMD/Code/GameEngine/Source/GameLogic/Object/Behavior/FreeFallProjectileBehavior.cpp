@@ -399,6 +399,15 @@ Object* FreeFallProjectileBehavior::getTargetObject()
 	return TheGameLogic->findObjectByID(m_victimID);
 }
 
+bool FreeFallProjectileBehavior::projectileShouldCollideWithWater() const
+{
+	if (m_detonationWeaponTmpl != nullptr) {
+		return m_detonationWeaponTmpl->getProjectileCollideMask() & WeaponCollideMaskType::WEAPON_COLLIDE_WATER;
+	}
+	return false;
+}
+
+
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------

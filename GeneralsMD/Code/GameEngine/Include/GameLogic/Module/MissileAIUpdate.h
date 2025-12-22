@@ -109,6 +109,7 @@ public:
 	virtual void projectileNowJammed();///< We lose our Object target and scatter to the ground
 	virtual Object* getTargetObject();
 	virtual const Coord3D* getTargetPosition();
+	virtual bool projectileShouldCollideWithWater() const override;
 
 	virtual Bool processCollision(PhysicsBehavior *physics, Object *other); ///< Returns true if the physics collide should apply the force.  Normally not.  jba.
 

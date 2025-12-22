@@ -335,6 +335,7 @@ public:
 	Real m_MinDistFromEdgeOfMapForBuild;
 	Real m_SupplyBuildBorder;
 	Real m_allowedHeightVariationForBuilding;  ///< how "flat" is still flat enough to build on
+	Real m_allowedHeightVariationForBuildingShipyard;  ///< how "flat" is still flat enough to build on
 	Real m_MinLowEnergyProductionSpeed;
 	Real m_MaxLowEnergyProductionSpeed;
 	Real m_LowEnergyPenaltyModifier;
@@ -586,7 +587,7 @@ public:
 	//AudioEventRTS m_chronoDisableSoundLoop;
 
 	DeathTypeFlags m_defaultExcludedDeathTypes;
-
+	Bool m_heightAboveTerrainIncludesWater;
 
 	// the trailing '\' is included!
   const AsciiString &getPath_UserData() const { return m_userDataDir; }

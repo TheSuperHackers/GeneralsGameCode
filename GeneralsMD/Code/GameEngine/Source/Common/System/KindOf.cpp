@@ -180,6 +180,7 @@ const char* const KindOfMaskType::s_bitNameList[] =
 	"SUPERHEAVY_VEHICLE",
 
 	"TELEPORTER",
+	"SHIPYARD",
 
 	"EXTRA1",
 	"EXTRA2",

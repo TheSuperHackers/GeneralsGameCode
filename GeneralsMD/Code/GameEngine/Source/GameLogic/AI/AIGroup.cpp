@@ -669,7 +669,7 @@ Bool AIGroup::friend_computeGroundPath( const Coord3D *pos, CommandSourceType cm
 			{
 				if (!TheAI->pathfinder()->isLinePassable(obj,
 								ai->getLocomotorSet().getValidSurfaces(), obj->getLayer(), *obj->getPosition(),
-								center, false, true)) {
+								center, false, true, ai->getLocomotorSet().getRequiredWaterLevel())) {
 					isPassable = false;
 				}
 			}

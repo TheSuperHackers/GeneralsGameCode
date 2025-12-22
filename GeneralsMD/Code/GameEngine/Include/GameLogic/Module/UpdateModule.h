@@ -266,6 +266,7 @@ public:
 	virtual Bool projectileHandleCollision(Object *other) = 0;
 	virtual void setFramesTillCountermeasureDiversionOccurs( UnsignedInt frames ) = 0; ///< Number of frames till missile diverts to countermeasures.
 	virtual void projectileNowJammed() = 0;
+	virtual Bool projectileShouldCollideWithWater() const { return false; };
 
 	virtual Object* getTargetObject() = 0;
 	virtual const Coord3D* getTargetPosition() = 0;

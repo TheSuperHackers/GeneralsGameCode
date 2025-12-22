@@ -1483,6 +1483,7 @@ Bool Drawable::calcPhysicsXform(PhysicsXformInfo& info)
 				calcPhysicsXformTreads(locomotor, info);
 				hasPhysicsXform = true;
 				break;
+			case LOCO_SHIP:
 			case LOCO_HOVER:
 			case LOCO_WINGS:
 				calcPhysicsXformHoverOrWings(locomotor, info);

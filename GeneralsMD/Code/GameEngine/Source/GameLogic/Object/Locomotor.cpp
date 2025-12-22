@@ -45,8 +45,8 @@
 #include "GameLogic/Module/PhysicsUpdate.h"
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/Module/AIUpdate.h"
-
-
+#include "vector3.h"
+#include <array>
 static const Real DONUT_TIME_DELAY_SECONDS=2.5f;
 static const Real DONUT_DISTANCE=4.0*PATHFIND_CELL_SIZE_F;
 
@@ -350,6 +350,7 @@ LocomotorTemplate::LocomotorTemplate()
 	m_elevatorCorrectionDegree  = 0.0f;
 	m_elevatorCorrectionRate    = 0.0f;
 
+	m_requiredWaterLevel = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -422,6 +423,13 @@ void LocomotorTemplate::validate()
 			m_minSpeed = 0.01f;
 		}
 	}
+
+	if (m_appearance != LOCO_SHIP) {
+		if (m_requiredWaterLevel > 0) {
+			DEBUG_CRASH(("Non SHIP locomotors should not have a 'RequiredWaterLevel' of greater than 0!"));
+		}
+	}
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -500,7 +508,8 @@ const FieldParse* LocomotorTemplate::getFieldParse() const
 		{ "RudderCorrectionRate",			 INI::parseReal, NULL, offsetof(LocomotorTemplate, m_rudderCorrectionRate) },
 		{ "ElevatorCorrectionDegree",	 INI::parseReal, NULL, offsetof(LocomotorTemplate, m_elevatorCorrectionDegree) },
 		{ "ElevatorCorrectionRate",		 INI::parseReal, NULL, offsetof(LocomotorTemplate, m_elevatorCorrectionRate) },
-		{ NULL, NULL, NULL, 0 }
+		{ "RequiredWaterLevel",        INI::parseUnsignedInt, NULL, offsetof(LocomotorTemplate, m_requiredWaterLevel)},
+		{ NULL, NULL, NULL, 0 }  // keep this last
 
 	};
 	return TheFieldParse;
@@ -1097,6 +1106,7 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 			case LOCO_TREADS:
 					moveTowardsPositionTreads(obj, physics, goalPos, onPathDistToGoal, desiredSpeed);
 					break;
+			case LOCO_SHIP:
 			case LOCO_HOVER:
 					moveTowardsPositionHover(obj, physics, goalPos, onPathDistToGoal, desiredSpeed);
 					break;
@@ -2504,6 +2514,7 @@ Bool Locomotor::locoUpdate_maintainCurrentPosition(Object* obj)
 			maintainCurrentPositionTreads(obj, physics);
 			requiresConstantCalling = FALSE;
 			break;
+		case LOCO_SHIP:
 		case LOCO_HOVER:
 			maintainCurrentPositionHover(obj, physics);
 			requiresConstantCalling = TRUE;
@@ -2648,7 +2659,7 @@ LocomotorSet::LocomotorSet()
 	m_locomotors.clear();
 	m_validLocomotorSurfaces = 0;
 	m_downhillOnly = FALSE;
-
+	m_requiredWaterLevel = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2737,7 +2748,7 @@ void LocomotorSet::xfer( Xfer *xfer )
 
 	xfer->xferInt(&m_validLocomotorSurfaces);
 	xfer->xferBool(&m_downhillOnly);
-
+	xfer->xferInt(&m_requiredWaterLevel);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2805,6 +2816,11 @@ void LocomotorSet::addLocomotor(const LocomotorTemplate* lt)
 	if (loco)
 	{
 		m_locomotors.push_back(loco);
+
+		if (loco->getAppearance() == LOCO_SHIP) {
+			m_requiredWaterLevel = std::max(m_requiredWaterLevel, loco->getRequireWaterLevel());
+		}
+
 		m_validLocomotorSurfaces |= loco->getLegalSurfaces();
 		if (loco->getIsDownhillOnly())
 		{
