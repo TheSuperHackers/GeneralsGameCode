@@ -2619,14 +2619,22 @@ void AIUpdateInterface::aiDoCommand(const AICommandParms* parms)
 			privateFollowWaypointPathAsTeamExact(parms->m_waypoint, parms->m_cmdSource);
 			break;
 		case AICMD_FOLLOW_PATH:
-			privateFollowPath(&parms->m_coords, parms->m_obj, parms->m_cmdSource, FALSE);
+		{
+			// Copy coordinates to a local vector since privateFollowPath requires a non-const pointer.
+			std::vector<Coord3D> coords = parms->m_coords;
+			privateFollowPath(&coords, parms->m_obj, parms->m_cmdSource, FALSE);
 			break;
+		}
 		case AICMD_FOLLOW_PATH_APPEND:
 			privateFollowPathAppend(&parms->m_pos, parms->m_cmdSource);
 			break;
 		case AICMD_FOLLOW_EXITPRODUCTION_PATH:
-			privateFollowPath(&parms->m_coords, parms->m_obj, parms->m_cmdSource, TRUE);
+		{
+			// Copy coordinates to a local vector since privateFollowPath requires a non-const pointer.
+			std::vector<Coord3D> coords = parms->m_coords;
+			privateFollowPath(&coords, parms->m_obj, parms->m_cmdSource, TRUE);
 			break;
+		}
 		case AICMD_ATTACK_OBJECT:
 			privateAttackObject(parms->m_obj, parms->m_intValue, parms->m_cmdSource);
 			break;
@@ -3240,7 +3248,7 @@ void AIUpdateInterface::privateFollowPathAppend( const Coord3D *pos, CommandSour
 /**
  * Follow the path defined by the given array of points
  */
-void AIUpdateInterface::privateFollowPath( const std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource, Bool exitProduction )
+void AIUpdateInterface::privateFollowPath( std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource, Bool exitProduction )
 {
 	if (getObject()->isMobile() == FALSE)
 		return;
@@ -3681,7 +3689,7 @@ void AIUpdateInterface::privateExit( Object *objectToExit, CommandSourceType cmd
 /**
  * Get out of whatever it is inside of
  */
-void AIUpdateInterface::doQuickExit( const std::vector<Coord3D>* path )
+void AIUpdateInterface::doQuickExit( std::vector<Coord3D>* path )
 {
 
 	Bool locked = getStateMachine()->isLocked();
