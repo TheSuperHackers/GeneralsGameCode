@@ -172,13 +172,6 @@ jobs:
         run: |
           cmake --build --preset ${{ inputs.preset }}
 
-      - name: Save vcpkg binary cache
-        if: startsWith(inputs.preset, 'win32') && steps.vcpkg_cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
-        uses: actions/cache/save@v4
-        with:
-          path: ${{ github.workspace }}\vcpkg-bincache
-          key: vcpkg-bincache-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}
-
       - name: Collect ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
         shell: pwsh
         run: |
@@ -201,3 +194,20 @@ jobs:
           path: build\${{ inputs.preset }}\${{ inputs.game }}\artifacts
           retention-days: 30
           if-no-files-found: error
+
+      - name: Debug vcpkg cache state
+        if: ${{ always() && startsWith(inputs.preset, 'win32') }}
+        shell: pwsh
+        run: |
+          Write-Host "vcpkg_cache.cache-hit='${{ steps.vcpkg_cache.outputs.cache-hit }}'" -ForegroundColor Cyan
+          Write-Host "vcpkg_key.msvc='${{ steps.vcpkg_key.outputs.msvc }}'" -ForegroundColor Cyan
+          Write-Host "vcpkg_key.baseline='${{ steps.vcpkg_key.outputs.baseline }}'" -ForegroundColor Cyan
+          Write-Host "vcpkg_key.triplet='${{ steps.vcpkg_key.outputs.triplet }}'" -ForegroundColor Cyan
+          Write-Host "github.ref='${{ github.ref }}'" -ForegroundColor Cyan
+
+      - name: Save vcpkg binary cache
+        if: ${{ always() && startsWith(inputs.preset, 'win32') && steps.vcpkg_cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main' }}
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ github.workspace }}\vcpkg-bincache
+          key: vcpkg-bincache-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}
