@@ -206,7 +206,10 @@ jobs:
           Write-Host "github.ref='${{ github.ref }}'" -ForegroundColor Cyan
 
       - name: Save vcpkg binary cache
-        # TODO: Add back && github.ref == 'refs/heads/main' after testing to prevent PR cache races
+        # Save if cache was not hit (cache-hit != 'true' handles both 'false' and empty string cases)
+        # Note: All 6 parallel jobs may attempt to save the same cache key simultaneously.
+        # This is expected - GitHub Actions ensures only one succeeds, others show harmless warnings.
+        # See: https://github.com/actions/cache/blob/main/save/README.md
         if: ${{ always() && startsWith(inputs.preset, 'win32') && steps.vcpkg_cache.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@v4
         with:
