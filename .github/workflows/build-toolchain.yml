@@ -139,6 +139,8 @@ jobs:
           # Override VCPKG_DEFAULT_BINARY_CACHE that lukka/run-vcpkg sets to its own temp dir
           # This ensures vcpkg uses our cached directory instead
           $cacheDir = "${{ github.workspace }}\vcpkg-bincache"
+          # Ensure the cache directory exists (cache restore may not create it on miss)
+          New-Item -ItemType Directory -Force -Path $cacheDir | Out-Null
           $env:VCPKG_DEFAULT_BINARY_CACHE = $cacheDir
           $env:VCPKG_BINARY_SOURCES = "clear;files,$cacheDir,readwrite"
           "VCPKG_DEFAULT_BINARY_CACHE=$cacheDir" >> $env:GITHUB_ENV
