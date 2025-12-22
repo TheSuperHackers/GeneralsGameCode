@@ -104,11 +104,11 @@ struct NetPacketAckCommand {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Frame info command packet structure
-// Fields: T + type, R + relay, F + frame, P + playerID, C + commandID, D + commandCount
+// Fields: T + type, F + frame, R + relay, P + playerID, C + commandID, D + commandCount
 struct NetPacketFrameCommand {
 	NetPacketCommandTypeField commandType;
-	NetPacketRelayField relay;
 	NetPacketFrameField frame;
+	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
 	NetPacketCommandIdField commandId;
 	NetPacketDataFieldHeader dataHeader;
