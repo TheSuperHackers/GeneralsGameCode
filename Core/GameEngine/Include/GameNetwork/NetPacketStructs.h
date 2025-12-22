@@ -309,11 +309,11 @@ struct NetPacketDisconnectChatCommand {
 // Game command packed struct (variable: game message data follows)
 struct NetPacketGameCommand {
 	NetPacketCommandTypeField commandType;
+	NetPacketFrameField frame;
 	NetPacketRelayField relay;
 	NetPacketPlayerIdField playerId;
-	NetPacketDataFieldHeader dataHeader;
-	NetPacketFrameField frame;
 	NetPacketCommandIdField commandId;
+	NetPacketDataFieldHeader dataHeader;
 };
 
 // Wrapper command packet (fixed size - contains metadata about wrapped command)
