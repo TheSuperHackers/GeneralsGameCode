@@ -1285,7 +1285,6 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 			if (slot->isAI())
 			{
 				isSkirmishOrSkirmishReplay = TRUE;
-				continue;
 			}
 		}
 	} else {
