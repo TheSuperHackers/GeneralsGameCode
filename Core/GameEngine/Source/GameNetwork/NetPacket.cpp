@@ -515,21 +515,21 @@ void NetPacket::FillBufferWithAckCommand(UnsignedByte *buffer, NetCommandRef *ms
 	switch (type) {
 
 	case NETCOMMANDTYPE_ACKBOTH: {
-		NetAckBothCommandMsg* ackbothmsg = (NetAckBothCommandMsg*)cmdMsg;
+		NetAckBothCommandMsg* ackbothmsg = (NetAckBothCommandMsg*)msg;
 		commandID = ackbothmsg->getCommandID();
 		originalPlayerID = ackbothmsg->getOriginalPlayerID();
 		break;
 	}
 
 	case NETCOMMANDTYPE_ACKSTAGE1: {
-		NetAckStage1CommandMsg* ackstageonemsg = (NetAckStage1CommandMsg*)cmdMsg;
+		NetAckStage1CommandMsg* ackstageonemsg = (NetAckStage1CommandMsg*)msg;
 		commandID = ackstageonemsg->getCommandID();
 		originalPlayerID = ackstageonemsg->getOriginalPlayerID();
 		break;
 	}
 
 	case NETCOMMANDTYPE_ACKSTAGE2: {
-		NetAckStage2CommandMsg* ackstagetwomsg = (NetAckStage2CommandMsg*)cmdMsg;
+		NetAckStage2CommandMsg* ackstagetwomsg = (NetAckStage2CommandMsg*)msg;
 		commandID = ackstagetwomsg->getCommandID();
 		originalPlayerID = ackstagetwomsg->getOriginalPlayerID();
 		break;
