@@ -105,7 +105,7 @@ enum
 	local player affiliation, etc. (The entire list of checks is contained in shouldPlayLocally()).
 
 	In addition, the world and unit audio are never allowed to exceed their footprint, as specified
-	in the audio settings INI file. In order to accomodate this, the audio uses an audio cache. The
+	in the audio settings INI file. In order to accommodate this, the audio uses an audio cache. The
 	audio cache will attempt to load a sample, assuming there is enough room. If there is not enough
 	room, then it goes through and finds any samples that are lower priority, and kills them until
 	enough room is present for the sample. If it cannot free enough room, nothing happens to the
@@ -190,7 +190,7 @@ class AudioManager : public SubsystemInterface
 		virtual void closeDevice( void ) = 0;
 		virtual void *getDevice( void ) = 0;
 
-		// Debice Dependent notification functions
+		// Device Dependent notification functions
 		virtual void notifyOfAudioCompletion( UnsignedInt audioCompleted, UnsignedInt flags ) = 0;
 
 		// Device Dependent enumerate providers functions. It is okay for there to be only 1 provider (Miles provides a maximum of 64.

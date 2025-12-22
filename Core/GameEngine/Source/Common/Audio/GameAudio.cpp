@@ -419,7 +419,12 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 		}
 	}
 
-	switch (eventToAdd->getAudioEventInfo()->m_soundType)
+	const AudioType soundType = eventToAdd->getAudioEventInfo()->m_soundType;
+
+	// Check if audio type is on
+	// TheSuperHackers @info Zero audio volume is not a fail condition, because music, speech and sounds
+	// still need to be in flight in case the user raises the volume on runtime after the audio was already triggered.
+	switch (soundType)
 	{
 		case AT_Music:
 			if (!isOn(AudioAffect_Music))
@@ -430,14 +435,12 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 				return AHSV_NoSound;
 			break;
 		case AT_Streaming:
+			// if we're currently playing uninterruptable speech, then disallow the addition of this sample
+			if (getDisallowSpeech())
+				return AHSV_NoSound;
 			if (!isOn(AudioAffect_Speech))
 				return AHSV_NoSound;
 			break;
-	}
-
-	// if we're currently playing uninterruptable speech, then disallow the addition of this sample
-	if (getDisallowSpeech() && eventToAdd->getAudioEventInfo()->m_soundType == AT_Streaming) {
-		return AHSV_NoSound;
 	}
 
 	if (!eventToAdd->getUninterruptable()) {
@@ -469,8 +472,7 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 		return AHSV_Muted;
 	}
 
-	AudioType type = eventToAdd->getAudioEventInfo()->m_soundType;
-	if (type == AT_Music)
+	if (soundType == AT_Music)
 	{
 		m_music->addAudioEvent(audioEvent);
 	}
