@@ -348,10 +348,7 @@ Int NetAckBothCommandMsg::getSortNumber() {
 }
 
 size_t NetAckBothCommandMsg::getPackedByteCount() const {
-	return sizeof(NetPacketPlayerIdField)
-		+ sizeof(NetPacketDataFieldHeader)
-		+ sizeof(UnsignedShort)
-		+ sizeof(UnsignedByte);
+	return sizeof(NetPacketAckCommand);
 }
 
 //-------------------------
