@@ -39,13 +39,42 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Cache vcpkg binary artifacts
-        uses: actions/cache@v4
+      - name: Compute vcpkg cache key parts
+        id: vcpkg_key
+        shell: pwsh
+        run: |
+          $baseline = (Get-Content vcpkg.json | ConvertFrom-Json)."builtin-baseline"
+          
+          # Try to get MSVC version - check VCToolsVersion first, then try cl.exe
+          $msvc = $env:VCToolsVersion
+          if (-not $msvc) {
+            try {
+              $clOutput = cl.exe 2>&1 | Out-String
+              if ($clOutput -match "Version (\d+\.\d+\.\d+\.\d+)") {
+                $msvc = $matches[1]
+              }
+            } catch {
+              # Compiler not available yet, will be detected after VC2022 setup
+            }
+          }
+          if (-not $msvc) { $msvc = "unknown" }
+
+          $triplet = "x86-windows"
+          if ("${{ inputs.preset }}" -like "x64*") { $triplet = "x64-windows" }
+
+          "baseline=$baseline" >> $env:GITHUB_OUTPUT
+          "msvc=$msvc" >> $env:GITHUB_OUTPUT
+          "triplet=$triplet" >> $env:GITHUB_OUTPUT
+          Write-Host "vcpkg cache key parts: baseline=$baseline, msvc=$msvc, triplet=$triplet"
+
+      - name: Restore vcpkg binary cache
+        id: vcpkg_cache
+        uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}\vcpkg-bincache
-          key: vcpkg-bincache-${{ runner.os }}-${{ hashFiles('vcpkg.json','vcpkg-lock.json') }}-${{ inputs.preset }}
+          key: vcpkg-bincache-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}
           restore-keys: |
-            vcpkg-bincache-${{ runner.os }}-${{ hashFiles('vcpkg.json','vcpkg-lock.json') }}-
+            vcpkg-bincache-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-
             vcpkg-bincache-${{ runner.os }}-
 
       - name: Cache VC6 Installation
@@ -121,8 +150,10 @@ jobs:
           # Override VCPKG_DEFAULT_BINARY_CACHE that lukka/run-vcpkg sets to its own temp dir
           # This ensures vcpkg uses our cached directory instead
           $cacheDir = "${{ github.workspace }}\vcpkg-bincache"
+          $env:VCPKG_DEFAULT_BINARY_CACHE = $cacheDir
+          $env:VCPKG_BINARY_SOURCES = "clear;files,$cacheDir,readwrite"
           "VCPKG_DEFAULT_BINARY_CACHE=$cacheDir" >> $env:GITHUB_ENV
-          "VCPKG_BINARY_SOURCES=clear;files,$cacheDir,readwrite" >> $env:GITHUB_ENV
+          "VCPKG_BINARY_SOURCES=$env:VCPKG_BINARY_SOURCES" >> $env:GITHUB_ENV
           Write-Host "Forced vcpkg binary cache to: $cacheDir" -ForegroundColor Cyan
           Write-Host "VCPKG_DEFAULT_BINARY_CACHE=$env:VCPKG_DEFAULT_BINARY_CACHE" -ForegroundColor Gray
           Write-Host "VCPKG_BINARY_SOURCES=$env:VCPKG_BINARY_SOURCES" -ForegroundColor Gray
@@ -149,6 +180,13 @@ jobs:
         shell: pwsh
         run: |
           cmake --build --preset ${{ inputs.preset }}
+
+      - name: Save vcpkg binary cache
+        if: steps.vcpkg_cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ github.workspace }}\vcpkg-bincache
+          key: vcpkg-bincache-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}
 
       - name: Collect ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
         shell: pwsh
