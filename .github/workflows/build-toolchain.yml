@@ -115,6 +115,18 @@ jobs:
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
 
+      - name: Force vcpkg binary cache directory
+        shell: pwsh
+        run: |
+          # Override VCPKG_DEFAULT_BINARY_CACHE that lukka/run-vcpkg sets to its own temp dir
+          # This ensures vcpkg uses our cached directory instead
+          $cacheDir = "${{ github.workspace }}\vcpkg-bincache"
+          "VCPKG_DEFAULT_BINARY_CACHE=$cacheDir" >> $env:GITHUB_ENV
+          "VCPKG_BINARY_SOURCES=clear;files,$cacheDir,readwrite" >> $env:GITHUB_ENV
+          Write-Host "Forced vcpkg binary cache to: $cacheDir" -ForegroundColor Cyan
+          Write-Host "VCPKG_DEFAULT_BINARY_CACHE=$env:VCPKG_DEFAULT_BINARY_CACHE" -ForegroundColor Gray
+          Write-Host "VCPKG_BINARY_SOURCES=$env:VCPKG_BINARY_SOURCES" -ForegroundColor Gray
+
       - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
         shell: pwsh
         run: |
