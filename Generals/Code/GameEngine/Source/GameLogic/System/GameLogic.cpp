@@ -249,36 +249,6 @@ GameLogic::GameLogic( void )
 #endif
 }
 
-// ------------------------------------------------------------------------------------------------
-/** Utility function to set class variables to default values. */
-// ------------------------------------------------------------------------------------------------
-void GameLogic::setDefaults( Bool saveGame )
-{
-	m_frame = 0;
-	m_hasUpdated = FALSE;
-	m_width = DEFAULT_WORLD_WIDTH;
-	m_height = DEFAULT_WORLD_HEIGHT;
-	m_objList = NULL;
-#ifdef ALLOW_NONSLEEPY_UPDATES
-	m_normalUpdates.clear();
-#endif
-	for (std::vector<UpdateModulePtr>::iterator it = m_sleepyUpdates.begin(); it != m_sleepyUpdates.end(); ++it)
-	{
-		(*it)->friend_setIndexInLogic(-1);
-	}
-	m_sleepyUpdates.clear();
-	m_curUpdateModule = NULL;
-
-	//
-	// only reset the next object ID allocater counter when we're not loading a save game.
-	// for save games, we read this value out of the save game file and it is important
-	// that we preserve it as we load and execute the game
-	//
-	if( saveGame == FALSE )
-		m_nextObjID = (ObjectID)1;
-
-}
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 Bool GameLogic::isInSinglePlayerGame( void )
@@ -455,7 +425,20 @@ void GameLogic::reset( void )
 	// clear any table of contents we have
 	m_objectTOC.clear();
 
-	setDefaults( FALSE );
+	m_frame = 0;
+	m_hasUpdated = FALSE;
+	m_width = DEFAULT_WORLD_WIDTH;
+	m_height = DEFAULT_WORLD_HEIGHT;
+	m_objList = NULL;
+#ifdef ALLOW_NONSLEEPY_UPDATES
+	m_normalUpdates.clear();
+#endif
+	for (std::vector<UpdateModulePtr>::iterator it = m_sleepyUpdates.begin(); it != m_sleepyUpdates.end(); ++it)
+	{
+		(*it)->friend_setIndexInLogic(-1);
+	}
+	m_sleepyUpdates.clear();
+	m_curUpdateModule = NULL;
 
 	m_isScoringEnabled = TRUE;
 	m_showBehindBuildingMarkers = TRUE;
@@ -1049,7 +1032,15 @@ void GameLogic::startNewGame( Bool saveGame )
 	}
 
 	m_rankLevelLimit = 1000;	// this is reset every game.
-	setDefaults( saveGame );
+
+	//
+	// only reset the next object ID allocater counter when we're not loading a save game.
+	// for save games, we read this value out of the save game file and it is important
+	// that we preserve it as we load and execute the game
+	//
+	if( saveGame == FALSE )
+		m_nextObjID = (ObjectID)1;
+
 	TheWritableGlobalData->m_loadScreenRender = TRUE;	///< mark it so only a few select things are rendered during load
 	TheWritableGlobalData->m_TiVOFastMode = FALSE;	//always disable the TIVO fast-forward mode at the start of a new game.
 

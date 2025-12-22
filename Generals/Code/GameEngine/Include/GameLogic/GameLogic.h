@@ -329,7 +329,6 @@ private:
 
 	ObjectID m_nextObjID;																		///< For allocating object id's
 
-	void setDefaults( Bool saveGame );											///< Set default values of class object
 	void processDestroyList( void );												///< Destroy all pending objects on the destroy list
 
 	void destroyAllObjectsImmediate();											///< destroy, and process destroy list immediately
