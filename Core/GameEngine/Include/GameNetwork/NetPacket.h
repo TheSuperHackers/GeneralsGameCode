@@ -69,9 +69,10 @@ public:
 	UnsignedInt getAddr();
 	UnsignedShort getPort();
 
-protected:
 	static UnsignedInt GetBufferSizeNeededForCommand(NetCommandMsg *msg);
 	static void FillBufferWithCommand(UnsignedByte *buffer, NetCommandRef *msg);
+
+protected:
 
 	// These functions return the size of the command without any compression, repetition, etc.
 	// i.e. All of the required fields are taken into account when returning the size.

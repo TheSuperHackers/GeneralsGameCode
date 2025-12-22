@@ -2270,12 +2270,11 @@ void ConnectionManager::updateLoadProgress( Int progress )
 
 void ConnectionManager::loadProgressComplete()
 {
-	NetCommandMsg *msg = newInstance(NetCommandMsg);
+	NetLoadCompleteCommandMsg *msg = newInstance(NetLoadCompleteCommandMsg);
 	msg->setPlayerID( m_localSlot );
 	if (DoesCommandRequireACommandID(msg->getNetCommandType()) == TRUE) {
 		msg->setID(GenerateNextCommandID());
 	}
-	msg->setNetCommandType(NETCOMMANDTYPE_LOADCOMPLETE);
 	processLoadComplete(msg);
 	sendLocalCommand(msg, 0xff ^ (1 << m_localSlot));
 
@@ -2284,9 +2283,8 @@ void ConnectionManager::loadProgressComplete()
 
 void ConnectionManager::sendTimeOutGameStart()
 {
-	NetCommandMsg *msg = newInstance(NetCommandMsg);
+	NetTimeOutGameStartCommandMsg *msg = newInstance(NetTimeOutGameStartCommandMsg);
 	msg->setPlayerID( m_localSlot );
-	msg->setNetCommandType(NETCOMMANDTYPE_TIMEOUTSTART);
 	if (DoesCommandRequireACommandID(msg->getNetCommandType()) == TRUE) {
 		msg->setID(GenerateNextCommandID());
 	}

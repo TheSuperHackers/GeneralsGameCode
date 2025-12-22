@@ -44,12 +44,13 @@ public:
 	void setExecutionFrame(UnsignedInt frame) { m_executionFrame = frame; }
 	void setPlayerID(UnsignedInt playerID) { m_playerID = playerID; }
 	void setID(UnsignedShort id) { m_id = id; }
-	UnsignedInt getExecutionFrame() { return m_executionFrame; }
-	UnsignedInt getPlayerID() { return m_playerID; }
-	UnsignedShort getID() { return m_id; }
+	UnsignedInt getExecutionFrame() const { return m_executionFrame; }
+	UnsignedInt getPlayerID() const { return m_playerID; }
+	UnsignedShort getID() const { return m_id; }
 	void setNetCommandType(NetCommandType type) { m_commandType = type; }
 	NetCommandType getNetCommandType() { return m_commandType; }
 	virtual Int getSortNumber();
+	virtual size_t getPackedByteCount() const = 0;
 	void attach();
 	void detach();
 
@@ -76,9 +77,11 @@ public:
 	NetGameCommandMsg(GameMessage *msg);
 	//virtual ~NetGameCommandMsg();
 
-	GameMessage *constructGameMessage();
+	GameMessage *constructGameMessage() const;
 	void addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg);
 	void setGameMessageType(GameMessage::Type type);
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	Int m_numArgs;
@@ -106,6 +109,8 @@ public:
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
 	virtual Int getSortNumber();
 
+	virtual size_t getPackedByteCount() const;
+
 protected:
 	UnsignedShort m_commandID;
 	UnsignedByte m_originalPlayerID;
@@ -129,6 +134,8 @@ public:
 	UnsignedByte getOriginalPlayerID();
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
 	virtual Int getSortNumber();
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnsignedShort m_commandID;
@@ -154,6 +161,8 @@ public:
 	void setOriginalPlayerID(UnsignedByte originalPlayerID);
 	virtual Int getSortNumber();
 
+	virtual size_t getPackedByteCount() const;
+
 protected:
 	UnsignedShort m_commandID;
 	UnsignedByte m_originalPlayerID;
@@ -170,6 +179,8 @@ public:
 	void setCommandCount(UnsignedShort commandCount);
 	UnsignedShort getCommandCount();
 
+	virtual size_t getPackedByteCount() const;
+
 protected:
 	UnsignedShort m_commandCount;
 };
@@ -184,6 +195,8 @@ public:
 
 	UnsignedByte getLeavingPlayerID();
 	void setLeavingPlayerID(UnsignedByte id);
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnsignedByte m_leavingPlayerID;
@@ -201,6 +214,8 @@ public:
 	void setAverageLatency(Real avgLat);
 	Int  getAverageFps();
 	void setAverageFps(Int fps);
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	Real m_averageLatency;
@@ -221,6 +236,8 @@ public:
 	UnsignedByte getFrameRate();
 	void setFrameRate(UnsignedByte frameRate);
 
+	virtual size_t getPackedByteCount() const;
+
 protected:
 	UnsignedShort m_runAhead;
 	UnsignedByte m_frameRate;
@@ -237,6 +254,8 @@ public:
 	UnsignedInt getPlayerIndex();
 	void setPlayerIndex(UnsignedInt playerIndex);
 
+	virtual size_t getPackedByteCount() const;
+
 protected:
 	UnsignedInt m_playerIndex;
 };
@@ -248,6 +267,8 @@ class NetKeepAliveCommandMsg : public NetCommandMsg
 public:
 	NetKeepAliveCommandMsg();
 	//virtual ~NetKeepAliveCommandMsg();
+
+	virtual size_t getPackedByteCount() const;
 };
 
 //-----------------------------------------------------------------------------
@@ -257,6 +278,8 @@ class NetDisconnectKeepAliveCommandMsg : public NetCommandMsg
 public:
 	NetDisconnectKeepAliveCommandMsg();
 	//virtual ~NetDisconnectKeepAliveCommandMsg();
+
+	virtual size_t getPackedByteCount() const;
 };
 
 //-----------------------------------------------------------------------------
@@ -273,6 +296,8 @@ public:
 	UnsignedInt getDisconnectFrame();
 	void setDisconnectFrame(UnsignedInt frame);
 
+	virtual size_t getPackedByteCount() const;
+
 protected:
 	UnsignedByte m_disconnectSlot;
 	UnsignedInt m_disconnectFrame;
@@ -285,6 +310,8 @@ class NetPacketRouterQueryCommandMsg : public NetCommandMsg
 public:
 	NetPacketRouterQueryCommandMsg();
 	//virtual ~NetPacketRouterQueryCommandMsg();
+
+	virtual size_t getPackedByteCount() const;
 };
 
 //-----------------------------------------------------------------------------
@@ -294,6 +321,8 @@ class NetPacketRouterAckCommandMsg : public NetCommandMsg
 public:
 	NetPacketRouterAckCommandMsg();
 	//virtual ~NetPacketRouterAckCommandMsg();
+
+	virtual size_t getPackedByteCount() const;
 };
 
 //-----------------------------------------------------------------------------
@@ -306,6 +335,8 @@ public:
 
 	UnicodeString getText();
 	void setText(UnicodeString text);
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnicodeString m_text;
@@ -324,6 +355,8 @@ public:
 
 	Int getPlayerMask( void );
 	void setPlayerMask( Int playerMask );
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnicodeString m_text;
@@ -344,6 +377,8 @@ public:
 	UnsignedInt getVoteFrame();
 	void setVoteFrame(UnsignedInt voteFrame);
 
+	virtual size_t getPackedByteCount() const;
+
 protected:
 	UnsignedByte m_slot;
 	UnsignedInt m_voteFrame;
@@ -359,6 +394,9 @@ public:
 
 	UnsignedByte getPercentage();
 	void setPercentage( UnsignedByte percent );
+
+	virtual size_t getPackedByteCount() const;
+
 protected:
 	UnsignedByte m_percent;
 };
@@ -373,6 +411,8 @@ public:
 
 	UnsignedByte * getData();
 	void setData(UnsignedByte *data, UnsignedInt dataLength);
+
+	virtual size_t getPackedByteCount() const;
 
 	UnsignedInt getChunkNumber();
 	void setChunkNumber(UnsignedInt chunkNumber);
@@ -421,6 +461,8 @@ public:
 	UnsignedByte * getFileData();
 	void setFileData(UnsignedByte *data, UnsignedInt dataLength);
 
+	virtual size_t getPackedByteCount() const;
+
 protected:
 	AsciiString m_portableFilename;
 
@@ -448,6 +490,8 @@ public:
 	UnsignedByte getPlayerMask(void);
 	void setPlayerMask(UnsignedByte playerMask);
 
+	virtual size_t getPackedByteCount() const;
+
 protected:
 	AsciiString m_portableFilename;
 	UnsignedShort m_fileID;
@@ -468,6 +512,8 @@ public:
 	Int getProgress();
 	void setProgress(Int val);
 
+	virtual size_t getPackedByteCount() const;
+
 protected:
 	UnsignedShort m_fileID;
 	Int m_progress;
@@ -483,6 +529,8 @@ public:
 	UnsignedInt getDisconnectFrame();
 	void setDisconnectFrame(UnsignedInt disconnectFrame);
 
+	virtual size_t getPackedByteCount() const;
+
 protected:
 	UnsignedInt m_disconnectFrame;
 };
@@ -496,6 +544,8 @@ public:
 
 	UnsignedInt getNewFrame();
 	void setNewFrame(UnsignedInt newFrame);
+
+	virtual size_t getPackedByteCount() const;
 
 protected:
 	UnsignedInt m_newFrame;
@@ -511,6 +561,28 @@ public:
 	UnsignedInt getFrameToResend();
 	void setFrameToResend(UnsignedInt frame);
 
+	virtual size_t getPackedByteCount() const;
+
 protected:
 	UnsignedInt m_frameToResend;
+};
+
+class NetLoadCompleteCommandMsg : public NetCommandMsg
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetLoadCompleteCommandMsg, "NetLoadCompleteCommandMsg")
+public:
+	NetLoadCompleteCommandMsg();
+	//virtual ~NetLoadCompleteCommandMsg();
+
+	virtual size_t getPackedByteCount() const;
+};
+
+class NetTimeOutGameStartCommandMsg : public NetCommandMsg
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetTimeOutGameStartCommandMsg, "NetTimeOutGameStartCommandMsg")
+public:
+	NetTimeOutGameStartCommandMsg();
+	//virtual ~NetTimeOutGameStartCommandMsg();
+
+	virtual size_t getPackedByteCount() const;
 };
