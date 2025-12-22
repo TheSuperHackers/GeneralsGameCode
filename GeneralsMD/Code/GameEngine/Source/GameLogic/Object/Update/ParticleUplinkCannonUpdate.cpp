@@ -184,8 +184,13 @@ ParticleUplinkCannonUpdate::ParticleUplinkCannonUpdate( Thing *thing, const Modu
 	m_nextDamagePulseFrame = 0;
 	m_startAttackFrame = 0;
 	m_startDecayFrame = 0;
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
 	m_lastDrivingClickFrame = 0;
 	m_2ndLastDrivingClickFrame = 0;
+#else
+	m_lastDrivingClickTimeMsec = 0;
+	m_2ndLastDrivingClickTimeMsec = 0;
+#endif
 	m_clientShroudedLastFrame = FALSE;
 
 	for( Int i = 0; i < MAX_OUTER_NODES; i++ )
@@ -374,8 +379,13 @@ void ParticleUplinkCannonUpdate::setSpecialPowerOverridableDestination( const Co
 	{
 		m_overrideTargetDestination = *loc;
 		m_manualTargetMode = TRUE;
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
 		m_2ndLastDrivingClickFrame = m_lastDrivingClickFrame;
 		m_lastDrivingClickFrame = TheGameLogic->getFrame();
+#else
+		m_2ndLastDrivingClickTimeMsec = m_lastDrivingClickTimeMsec;
+		m_lastDrivingClickTimeMsec = timeGetTime();
+#endif
 	}
 }
 
@@ -567,7 +577,14 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 			else
 			{
 				Real speed = data->m_manualDrivingSpeed;
-				if( m_scriptedWaypointMode || m_lastDrivingClickFrame - m_2ndLastDrivingClickFrame < data->m_doubleClickToFastDriveDelay )
+#if RETAIL_COMPATIBLE_CRC
+				DEBUG_ASSERTCRASH(m_lastDrivingClickFrame >= m_2ndLastDrivingClickFrame, ("m_lastDrivingClickFrame should always be >= m_2ndLastDrivingClickFrame"));
+				const Bool useFasterSpeed = m_scriptedWaypointMode || (m_lastDrivingClickFrame - m_2ndLastDrivingClickFrame < data->m_doubleClickToFastDriveDelay);
+#else
+				DEBUG_ASSERTCRASH(m_lastDrivingClickTimeMsec >= m_2ndLastDrivingClickTimeMsec, ("m_lastDrivingClickTimeMsec should always be >= m_2ndLastDrivingClickTimeMsec"));
+				const Bool useFasterSpeed = m_scriptedWaypointMode || (m_lastDrivingClickTimeMsec - m_2ndLastDrivingClickTimeMsec < data->m_doubleClickToFastDriveDelay);
+#endif
+				if( useFasterSpeed )
 				{
 					//Because we double clicked, use the faster driving speed.
 					speed = data->m_manualFastDrivingSpeed;
@@ -1392,7 +1409,12 @@ void ParticleUplinkCannonUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: Added m_startDecayFrame
+	* 3: Added m_manualTargetMode, m_scriptedWaypointMode, m_nextDestWaypointID
+	* 4: Added m_orbitToTargetLaserRadius
+	* 5: Changed m_lastDrivingClickFrame and m_2ndLastDrivingClickFrame to m_lastDrivingClickTimeMsec and m_2ndLastDrivingClickTimeMsec (frames to milliseconds)
+	*/
 // ------------------------------------------------------------------------------------------------
 void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 {
@@ -1402,7 +1424,7 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 #if RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 3;
 #else
-	const XferVersion currentVersion = 4;
+	const XferVersion currentVersion = 5;
 #endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
@@ -1499,10 +1521,30 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 	}
 
 	// the time of last manual target click
-	xfer->xferUnsignedInt( & m_lastDrivingClickFrame );
-
-	// the time of the 2nd last manual target click
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
+	// Retail builds stay at version 3 for compatibility, so always use old frame format
+	xfer->xferUnsignedInt( &m_lastDrivingClickFrame );
 	xfer->xferUnsignedInt( &m_2ndLastDrivingClickFrame );
+#else
+	if( version >= 5 )
+	{
+		xfer->xferUnsignedInt( &m_lastDrivingClickTimeMsec );
+		xfer->xferUnsignedInt( &m_2ndLastDrivingClickTimeMsec );
+	}
+	else
+	{
+		// Old versions stored frame numbers, which we can't meaningfully convert to milliseconds
+		UnsignedInt oldLastDrivingClickFrame = 0;
+		UnsignedInt old2ndLastDrivingClickFrame = 0;
+		xfer->xferUnsignedInt( &oldLastDrivingClickFrame );
+		xfer->xferUnsignedInt( &old2ndLastDrivingClickFrame );
+		if( xfer->getXferMode() == XFER_LOAD )
+		{
+			m_lastDrivingClickTimeMsec = 0;
+			m_2ndLastDrivingClickTimeMsec = 0;
+		}
+	}
+#endif
 
 	if( version >= 3 )
 	{
