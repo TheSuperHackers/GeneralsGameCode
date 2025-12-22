@@ -39,44 +39,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Compute vcpkg cache key parts
-        id: vcpkg_key
-        shell: pwsh
-        run: |
-          $baseline = (Get-Content vcpkg.json | ConvertFrom-Json)."builtin-baseline"
-          
-          # Try to get MSVC version - check VCToolsVersion first, then try cl.exe
-          $msvc = $env:VCToolsVersion
-          if (-not $msvc) {
-            try {
-              $clOutput = cl.exe 2>&1 | Out-String
-              if ($clOutput -match "Version (\d+\.\d+\.\d+\.\d+)") {
-                $msvc = $matches[1]
-              }
-            } catch {
-              # Compiler not available yet, will be detected after VC2022 setup
-            }
-          }
-          if (-not $msvc) { $msvc = "unknown" }
-
-          $triplet = "x86-windows"
-          if ("${{ inputs.preset }}" -like "x64*") { $triplet = "x64-windows" }
-
-          "baseline=$baseline" >> $env:GITHUB_OUTPUT
-          "msvc=$msvc" >> $env:GITHUB_OUTPUT
-          "triplet=$triplet" >> $env:GITHUB_OUTPUT
-          Write-Host "vcpkg cache key parts: baseline=$baseline, msvc=$msvc, triplet=$triplet"
-
-      - name: Restore vcpkg binary cache
-        id: vcpkg_cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ github.workspace }}\vcpkg-bincache
-          key: vcpkg-bincache-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}
-          restore-keys: |
-            vcpkg-bincache-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-
-            vcpkg-bincache-${{ runner.os }}-
-
       - name: Cache VC6 Installation
         if: startsWith(inputs.preset, 'vc6')
         id: cache-vc6
@@ -141,6 +103,33 @@ jobs:
         with:
           arch: x86
 
+      - name: Compute vcpkg cache key parts
+        if: startsWith(inputs.preset, 'win32')
+        id: vcpkg_key
+        shell: pwsh
+        run: |
+          $baseline = (Get-Content vcpkg.json | ConvertFrom-Json)."builtin-baseline"
+          $msvc = $env:VCToolsVersion
+          if (-not $msvc) { $msvc = "unknown" }
+
+          $triplet = "x86-windows"
+          if ("${{ inputs.preset }}" -like "x64*") { $triplet = "x64-windows" }
+
+          "baseline=$baseline" >> $env:GITHUB_OUTPUT
+          "msvc=$msvc" >> $env:GITHUB_OUTPUT
+          "triplet=$triplet" >> $env:GITHUB_OUTPUT
+          Write-Host "vcpkg cache key parts: baseline=$baseline, msvc=$msvc, triplet=$triplet"
+
+      - name: Restore vcpkg binary cache
+        if: startsWith(inputs.preset, 'win32')
+        id: vcpkg_cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}\vcpkg-bincache
+          key: vcpkg-bincache-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-${{ steps.vcpkg_key.outputs.triplet }}
+          restore-keys: |
+            vcpkg-bincache-${{ runner.os }}-msvc${{ steps.vcpkg_key.outputs.msvc }}-baseline${{ steps.vcpkg_key.outputs.baseline }}-
+
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
 
@@ -182,7 +171,7 @@ jobs:
           cmake --build --preset ${{ inputs.preset }}
 
       - name: Save vcpkg binary cache
-        if: steps.vcpkg_cache.outputs.cache-hit != 'true'
+        if: startsWith(inputs.preset, 'win32') && steps.vcpkg_cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
         uses: actions/cache/save@v4
         with:
           path: ${{ github.workspace }}\vcpkg-bincache
