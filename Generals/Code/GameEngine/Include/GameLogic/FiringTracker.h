@@ -55,9 +55,21 @@ public:
 	void shotFired(const Weapon* weaponFired, ObjectID victimID );			///< Owner just fired this weapon at this Object
 	ObjectID getLastShotVictim() const { return m_victimID; }						///< get the last victim ID that was shot at
 	Int getNumConsecutiveShotsAtVictim( const Object *victim ) const;
+	void forceCoolDown();																						///< Force immediate cooldown, stopping all continuous fire states
 
+#if !RETAIL_COMPATIBLE_CRC
+	/// Exclude power-related disable types so update() doesn't restart barrel animations.
+	/// forceCoolDown() in setDisabledUntil() handles immediate cooldown.
+	virtual DisabledMaskType getDisabledTypesToProcess() const
+	{
+		DisabledMaskType mask = DISABLEDMASK_ALL;
+		mask.clear(MAKE_DISABLED_MASK3(DISABLED_HACKED, DISABLED_EMP, DISABLED_UNDERPOWERED));
+		return mask;
+	}
+#else
 	/// this is never disabled, since we want disabled things to continue to slowly "spin down"... (srj)
 	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
+#endif
 
 	virtual UpdateSleepTime update();	///< See if spin down is needed because we haven't shot in a while
 
