@@ -228,6 +228,8 @@ protected:
 	UnsignedInt			m_lastDrivingClickFrame;
 	UnsignedInt			m_2ndLastDrivingClickFrame;
 
+	XferVersion			m_xferVersion;
+
 	Bool						m_upBonesCached;
 	Bool						m_defaultInfoCached;
 	Bool						m_invalidSettings;

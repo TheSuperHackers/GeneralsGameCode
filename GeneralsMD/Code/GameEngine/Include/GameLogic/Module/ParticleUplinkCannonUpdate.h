@@ -231,6 +231,8 @@ protected:
 	UnsignedInt			m_2ndLastDrivingClickFrame;
 	UnsignedInt			m_nextDestWaypointID;
 
+	XferVersion			m_xferVersion;
+
 	Bool						m_upBonesCached;
 	Bool						m_defaultInfoCached;
 	Bool						m_invalidSettings;

@@ -4858,7 +4858,9 @@ void TintEnvelope::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method
 	* Version Info;
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: TheSuperHackers @tweak Serialize sustain counter as float instead of integer
+	*/
 // ------------------------------------------------------------------------------------------------
 void TintEnvelope::xfer( Xfer *xfer )
 {
