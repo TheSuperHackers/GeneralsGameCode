@@ -352,6 +352,19 @@ public:
 
 	UnicodeString& operator=(const UnicodeString& stringSrc);	///< the same as set()
 	UnicodeString& operator=(const WideChar* s);				///< the same as set()
+
+	const WideChar& operator[](Int index) const
+	{
+		DEBUG_ASSERTCRASH(index >= 0 && index < getLength(), ("bad index in UnicodeString::operator[]"));
+		return peek()[index];
+	}
+
+	WideChar& operator[](Int index)
+	{
+		DEBUG_ASSERTCRASH(index >= 0 && index < getLength(), ("bad index in UnicodeString::operator[]"));
+		ensureUniqueBufferOfSize(m_data->m_numCharsAllocated, true, NULL, NULL);
+		return peek()[index];
+	}
 };
 
 
