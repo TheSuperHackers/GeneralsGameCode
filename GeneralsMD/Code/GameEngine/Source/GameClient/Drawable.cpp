@@ -87,8 +87,7 @@
 #endif
 
 
-#define VERY_TRANSPARENT_MATERIAL_PASS_OPACITY (0.001f)
-#define MATERIAL_PASS_OPACITY_FADE_SCALAR (0.8f)
+#define MATERIAL_PASS_OPACITY_MIN (0.001f)
 
 static const char *const TheDrawableIconNames[] =
 {
@@ -256,6 +255,8 @@ const Int MAX_ENABLED_MODULES								= 16;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
+
+/*static*/ Real							Drawable::s_secondMaterialPassOpacityScalar = 1.0f;
 
 /*static*/ Bool							Drawable::s_staticImagesInited = false;
 /*static*/ const Image*			Drawable::s_veterancyImage[LEVEL_COUNT]	= { NULL };
@@ -433,6 +434,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatusBits statu
 	m_hidden = false;
 	m_hiddenByStealth = false;
 	m_secondMaterialPassOpacity = 0.0f;
+	m_secondMaterialPassOpacityAllowRefill = false;
 	m_drawableFullyObscuredByShroud = false;
 
   m_receivesDynamicLights = TRUE; // a good default... overridden by one of my draw modules if at all
@@ -2601,22 +2603,50 @@ void Drawable::setStealthLook(StealthLookType look)
 	}
 }
 
+void Drawable::updateSecondMaterialPassOpacityScalar()
+{
+	// TheSuperHackers @tweak The opacity step is no longer a fixed value.
+	// min opacity = (X ^ (frame rate / updates per second)) -> e.g. [ 0.05 = X ^ (100 / 2) ] -> [ X = 0.941845 ] -> [ 0.941845 ^ 50 = 0.05 ]
+	const Real updatesPerSec = 2.0f;
+	const Real scalar = pow(MATERIAL_PASS_OPACITY_MIN, updatesPerSec / TheFramePacer->getUpdateFps());
+
+	s_secondMaterialPassOpacityScalar = scalar;
+}
 
 //-------------------------------------------------------------------------------------------------
 /** default draw is to just call the database defined draw */
 //-------------------------------------------------------------------------------------------------
 void Drawable::draw()
 {
-  if ( testTintStatus( TINT_STATUS_FRENZY ) == FALSE )
+  if (testTintStatus(TINT_STATUS_FRENZY) == FALSE)
   {
-    if ( getObject() && getObject()->isEffectivelyDead() )
-		  m_secondMaterialPassOpacity = 0.0f;//dead folks don't stealth anyway
-	  else if ( m_secondMaterialPassOpacity > VERY_TRANSPARENT_MATERIAL_PASS_OPACITY )// keep fading any add'l material unless something has set it to zero
-		  m_secondMaterialPassOpacity *= MATERIAL_PASS_OPACITY_FADE_SCALAR;
-	  else
-		  m_secondMaterialPassOpacity = 0.0f;
-  }
+		if (getObject() && getObject()->isEffectivelyDead())
+		{
+			m_secondMaterialPassOpacity = 0.0f;//dead folks don't stealth anyway
+		}
+		else if (!TheFramePacer->isGameHalted())
+		{
+			const Bool shouldFade = m_secondMaterialPassOpacity > MATERIAL_PASS_OPACITY_MIN;
+			const Bool allowRefill = m_secondMaterialPassOpacityAllowRefill;
 
+			if (shouldFade || allowRefill)
+			{
+				if (!shouldFade && allowRefill)
+				{
+					m_secondMaterialPassOpacity = s_secondMaterialPassOpacityScalar;
+					m_secondMaterialPassOpacityAllowRefill = FALSE;
+				}
+				else
+				{
+					m_secondMaterialPassOpacity *= s_secondMaterialPassOpacityScalar;
+				}
+			}
+			else
+			{
+				m_secondMaterialPassOpacity = 0.0f;
+			}
+		}
+  }
 
 	if (m_hidden || m_hiddenByStealth || getFullyObscuredByShroud())
 		return;	// my, that was easy

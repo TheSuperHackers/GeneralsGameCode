@@ -1003,6 +1003,7 @@ void GameEngine::execute( void )
 			}
 
 			TheFramePacer->update();
+			Drawable::updateSecondMaterialPassOpacityScalar();
 		}
 
 #ifdef PERF_TIMERS
