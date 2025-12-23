@@ -229,6 +229,7 @@ public:
 
 	void scoreTheKill( const Object *victim );						///< I just killed this object.
 	void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback = TRUE );	///< I just achieved this level right this moment
+	void createVeterancyLevelFX(VeterancyLevel oldLevel, VeterancyLevel newLevel);
 	ExperienceTracker* getExperienceTracker() {return m_experienceTracker;}
 	const ExperienceTracker* getExperienceTracker() const {return m_experienceTracker;}
 	VeterancyLevel getVeterancyLevel() const;

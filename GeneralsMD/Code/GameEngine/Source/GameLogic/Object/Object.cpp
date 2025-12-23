@@ -3129,6 +3129,12 @@ Bool Object::hasAnySpecialPower() const
 //-------------------------------------------------------------------------------------------------
 void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback )
 {
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Stubbjax 10/12/2025 Do not play veterancy animations for dead units.
+	if (isEffectivelyDead())
+		return;
+#endif
+
 	updateUpgradeModules();
 
 	const UpgradeTemplate* up = TheUpgradeCenter->findVeterancyUpgrade(newLevel);
@@ -3180,7 +3186,18 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 		&& !isKindOf(KINDOF_IGNORED_IN_GUI)
 		&& isLogicallyVisible();
 
-	if( doAnimation && TheGameLogic->getDrawIconUI() )
+	if (doAnimation)
+		createVeterancyLevelFX(oldLevel, newLevel);
+}
+
+void Object::createVeterancyLevelFX(VeterancyLevel oldLevel, VeterancyLevel newLevel)
+{
+#if RETAIL_COMPATIBLE_CRC
+	if (isEffectivelyDead())
+		return;
+#endif
+
+	if (TheGameLogic->getDrawIconUI())
 	{
 		if( TheAnim2DCollection && TheGlobalData->m_levelGainAnimationName.isEmpty() == FALSE )
 		{
@@ -3200,7 +3217,6 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 		soundToPlay.setObjectID( getID() );
 		TheAudio->addAudioEvent( &soundToPlay );
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
