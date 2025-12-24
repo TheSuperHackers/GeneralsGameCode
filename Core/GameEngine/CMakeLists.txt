@@ -546,6 +546,7 @@ set(GAMEENGINE_SRC
     Include/GameNetwork/NetCommandRef.h
     Include/GameNetwork/NetCommandWrapperList.h
     Include/GameNetwork/NetPacket.h
+    Include/GameNetwork/NetPacketStructs.h
     Include/GameNetwork/NetworkDefs.h
     Include/GameNetwork/NetworkInterface.h
     Include/GameNetwork/networkutil.h
