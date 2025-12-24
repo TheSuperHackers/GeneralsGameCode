@@ -678,6 +678,7 @@ set(GAMEENGINE_SRC
     Source/Common/Thing/ThingFactory.cpp
     Source/Common/Thing/ThingTemplate.cpp
     Source/Common/UserPreferences.cpp
+    Source/Common/OptionPreferences.cpp
     Source/Common/version.cpp
 #    Source/Common/WorkerProcess.cpp
     Source/GameClient/ClientInstance.cpp
