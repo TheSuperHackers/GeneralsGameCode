@@ -32,6 +32,7 @@
 #include "Common/Recorder.h"
 #include "Common/version.h"
 #include "GameClient/ClientInstance.h"
+#include "Common/ReplayListCsv.h"
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
@@ -439,6 +440,40 @@ Int parseReplay(char *args[], int num)
 		rts::ClientInstance::skipPrimaryInstance();
 
 		return 2;
+	}
+	return 1;
+}
+
+Int parseSimReplayList(char *args[], int num)
+{
+	if (num > 1)
+	{
+		AsciiString filename = args[1];
+		bool success = ReadReplayListFromCsv(filename, &TheWritableGlobalData->m_simulateReplays);
+		if (!success)
+		{
+			printf("Cannot open csv file: \"%s\"\n", filename.str());
+			exit(1);
+		}
+		TheWritableGlobalData->m_playIntro = FALSE;
+		TheWritableGlobalData->m_afterIntro = TRUE;
+		TheWritableGlobalData->m_playSizzle = FALSE;
+		TheWritableGlobalData->m_shellMapOn = FALSE;
+
+		// Make replay playback possible while other clients (possible retail) are running
+		rts::ClientInstance::setMultiInstance(TRUE);
+		rts::ClientInstance::skipPrimaryInstance();
+		return 2;
+	}
+	return 1;
+}
+
+Int parseWriteReplayList(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_writeReplayList = args[1];
+		TheWritableGlobalData->m_headless = TRUE;
 	}
 	return 1;
 }
@@ -1163,6 +1198,18 @@ static CommandLineParam paramsForStartup[] =
 	// (If you have 4 cores, call it with -jobs 4)
 	// If you do not call this, all replays will be simulated in sequence in the same process.
 	{ "-jobs", parseJobs },
+	
+	// TheSuperHackers @feature helmutbuhler 28/04/2025
+	// Pass in a csv file to play back multiple replays. The file must be in the replay folder.
+	{ "-replayList", parseSimReplayList },
+
+	// TheSuperHackers @feature helmutbuhler 28/04/2025
+	// Write out information about all replays in a folder to a csv file.
+	// Call it with -writeReplayList . for all replays in the replay folder.
+	// Call it with -writeReplayList folder for all replays in the folder subfolder.
+	// The result will be saved in replay_list.csv in that folder.
+	// todo: this is a bit unintuitive. Maybe use ReplaySimulation::resolveFilenameWildcards for this?
+	{ "-writeReplayList", parseWriteReplayList },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded
