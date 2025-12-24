@@ -212,6 +212,20 @@ Bool KodiakUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate *sp
     Drawable *draw = gunShip->getDrawable();
     if ( draw )
       draw->clearAndSetModelConditionState( MODELCONDITION_DOOR_1_OPENING, MODELCONDITION_DOOR_1_CLOSING );
+
+    ContainModuleInterface* cmi = getObject()->getContain();
+    if (cmi) {
+      ContainedItemsList* addOns = cmi->getAddOnList();
+      if (addOns) {
+        for (ContainedItemsList::iterator it = addOns->begin(); it != addOns->end(); it++) {
+          draw = (*it)->getDrawable();
+          if (draw) {
+            draw->clearAndSetModelConditionState(MODELCONDITION_DOOR_1_OPENING, MODELCONDITION_DOOR_1_CLOSING);
+          }
+        }
+      }
+    }
+
     friend_enableAfterburners(TRUE);
 
     setLogicalStatus( GUNSHIP_STATUS_INSERTING ); // The gunship is en route to the tharget area, from map-edge
@@ -450,6 +464,14 @@ UpdateSleepTime KodiakUpdate::update()
           Drawable *draw = gunship->getDrawable();
           if ( draw )
             draw->clearAndSetModelConditionState( MODELCONDITION_DOOR_1_CLOSING, MODELCONDITION_DOOR_1_OPENING );
+
+          for (Object* turret : turrets) {
+            draw = turret->getDrawable();
+            if (draw) {
+              draw->clearAndSetModelConditionState(MODELCONDITION_DOOR_1_CLOSING, MODELCONDITION_DOOR_1_OPENING);
+            }
+          }
+
           friend_enableAfterburners(FALSE);
 
         }
@@ -863,7 +885,21 @@ void KodiakUpdate::disengageAndDepartAO( Object *gunship )
     Drawable *draw = gunship->getDrawable();
     if ( draw )
       draw->clearAndSetModelConditionState( MODELCONDITION_DOOR_1_OPENING, MODELCONDITION_DOOR_1_CLOSING );
-          friend_enableAfterburners(TRUE);
+
+    ContainModuleInterface* cmi = getObject()->getContain();
+    if (cmi) {
+      ContainedItemsList* addOns = cmi->getAddOnList();
+      if (addOns) {
+        for (ContainedItemsList::iterator it = addOns->begin(); it != addOns->end(); it++) {
+          draw = (*it)->getDrawable();
+          if (draw) {
+            draw->clearAndSetModelConditionState(MODELCONDITION_DOOR_1_OPENING, MODELCONDITION_DOOR_1_CLOSING);
+          }
+        }
+      }
+    }
+
+    friend_enableAfterburners(TRUE);
 
 
   cleanUp();
