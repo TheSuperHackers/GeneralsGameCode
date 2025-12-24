@@ -2073,9 +2073,6 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	// update the loadscreen
 	updateLoadProgress(LOAD_PROGRESS_POST_PRELOAD_ASSETS);
 
-	TheTacticalView->setAngleAndPitchToDefault();
-	TheTacticalView->setZoomToDefault();
-
 	if( TheRecorder )
 		TheRecorder->initControls();
 
@@ -2099,6 +2096,11 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	// update the loadscreen
 	updateLoadProgress(LOAD_PROGRESS_POST_STARTING_CAMERA);
 
+	// Set up the camera height based on the map height & globalData.
+	TheTacticalView->initHeightForMap();
+	TheTacticalView->setAngleAndPitchToDefault();
+	TheTacticalView->setZoomToDefault();
+
 	Waypoint *way = findNamedWaypoint(startingCamName);
 	if (way)
 	{
@@ -2116,11 +2118,6 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		TheTacticalView->lookAt( &pos );
 		DEBUG_LOG(("Failed to find initial camera position waypoint %s", startingCamName.str()));
 	}
-
-	// Set up the camera height based on the map height & globalData.
-	TheTacticalView->initHeightForMap();
-	TheTacticalView->setAngleAndPitchToDefault();
-	TheTacticalView->setZoomToDefault();
 
 	// update the loadscreen
 	updateLoadProgress(LOAD_PROGRESS_POST_STARTING_CAMERA_2);
