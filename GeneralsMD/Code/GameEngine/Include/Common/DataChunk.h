@@ -100,6 +100,7 @@ public:
 	UnsignedInt getID( const AsciiString& name );				// convert name to integer identifier
 	AsciiString getName( UnsignedInt id );	// convert integer identifier to name
 	UnsignedInt allocateID( const AsciiString& name );		// create new ID for given name or return existing mapping
+	void setID( const AsciiString& name, UnsignedInt id );	// set specific ID for name (for TOC preservation)
 
 	Bool isOpenedForRead(void) {return m_headerOpened;};
 
@@ -134,6 +135,8 @@ public:
 	void writeArrayOfBytes(char *ptr, Int len);
 	void writeDict(const Dict& d);
 	void writeNameKey(const NameKeyType key);
+
+	void setTOCEntry(const AsciiString& name, UnsignedInt id); // Set TOC entry for preservation
 };
 
 //----------------------------------------------------------------------
