@@ -124,6 +124,7 @@ private:
 
 	ThingTemplate					*m_firstTemplate;			///< head of linked list
 	UnsignedShort					m_nextTemplateID;			///< next available ID for templates
+	UnsignedShort					m_templateCount;			///< the value of m_nextTemplateID before loading the first map (even shellmap)
 
 	ThingTemplateHashMap	m_templateHashMap;		///< all thing templates, for fast lookup.
 
