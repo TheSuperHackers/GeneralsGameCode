@@ -105,6 +105,7 @@ ThingFactory::ThingFactory()
 {
 	m_firstTemplate = NULL;
 	m_nextTemplateID = 1;	// not zero!
+	m_templateCount = 0;
 
 #ifdef USING_STLPORT
 	m_templateHashMap.resize( TEMPLATE_HASH_SIZE );
@@ -207,6 +208,8 @@ void ThingFactory::init( void )
 //-------------------------------------------------------------------------------------------------
 void ThingFactory::reset( void )
 {
+	UnsignedInt erased = 0;
+
 	ThingTemplate *t;
 	// go through all templates and delete any overrides
 	for( t = m_firstTemplate; t; /* empty */ )
@@ -234,10 +237,15 @@ void ThingFactory::reset( void )
 		if (stillValid == NULL) {
 			// Also needs to be removed from the Hash map.
 			m_templateHashMap.erase(templateName);
+			++erased;
 		}
 
 		t = nextT;
 	}
+
+	// TheSuperHackers @bugfix Caball009 25/12/2025 Avoid mismatches by making m_nextTemplateID unique for a single match instead of unique since game launch.
+	DEBUG_ASSERTCRASH(m_templateIDCount + erased == m_nextTemplateID, ("Thing template ID is invalid after deleting overrides"));
+	m_nextTemplateID = m_templateCount;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -541,6 +549,8 @@ void ThingFactory::postProcessLoad()
 #endif
 
 	}
+
+	m_templateCount = m_nextTemplateID;
 
 #ifdef CHECK_THING_NAMES
 	dumpMissingStringNames();
