@@ -2620,6 +2620,12 @@ void AIGroup::groupDoSpecialPower( UnsignedInt specialPowerID, UnsignedInt comma
 		//Special powers do a lot of different things, but the top level stuff doesn't use
 		//ai interface code. It finds the special power module and calls it directly for each object.
 		Object *object = (*i);
+#if !RETAIL_COMPATIBLE_AIGROUP
+		// TheSuperHackers @bugfix bobtista 01/11/2025 Prevents AI from trying to fire special powers from buildings under construction.
+		if (object->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION)) {
+			continue;
+		}
+#endif
 		const SpecialPowerTemplate *spTemplate = TheSpecialPowerStore->findSpecialPowerTemplateByID( specialPowerID );
 		if( spTemplate )
 		{
@@ -2659,6 +2665,12 @@ void AIGroup::groupDoSpecialPowerAtLocation( UnsignedInt specialPowerID, const C
 		//ai interface code. It finds the special power module and calls it directly for each object.
 
 		Object *object = (*i);
+#if !RETAIL_COMPATIBLE_AIGROUP
+		// TheSuperHackers @bugfix bobtista 01/11/2025 Prevents AI from trying to fire special powers from buildings under construction.
+		if (object->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION)) {
+			continue;
+		}
+#endif
 		const SpecialPowerTemplate *spTemplate = TheSpecialPowerStore->findSpecialPowerTemplateByID( specialPowerID );
 		if( spTemplate )
 		{
@@ -2698,6 +2710,12 @@ void AIGroup::groupDoSpecialPowerAtObject( UnsignedInt specialPowerID, Object *t
 		//ai interface code. It finds the special power module and calls it directly for each object.
 
 		Object *object = (*i);
+#if !RETAIL_COMPATIBLE_AIGROUP
+		// TheSuperHackers @bugfix bobtista 01/11/2025 Prevents AI from trying to fire special powers from buildings under construction.
+		if (object->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION)) {
+			continue;
+		}
+#endif
 		const SpecialPowerTemplate *spTemplate = TheSpecialPowerStore->findSpecialPowerTemplateByID( specialPowerID );
 		if( spTemplate )
 		{
