@@ -35,13 +35,13 @@ and features will be possible to implement.
 Here's an overview of our current focus and future plans
 
 - **Modernizing the Codebase**: Transitioning to modern C++ standards and refactoring old code.
-- **Critical Bug Fixes**: Fixing game-breaking issues (e.g., fullscreen crash).
-- **Minor Bug Fixes**: Addressing minor bugs (e.g., UI issues, graphical glitches).
-- **Cross-Platform Support**: Adding support for more platforms (e.g., Linux, macOS).
+- [**Critical Bug Fixes**](https://github.com/TheSuperHackers/GeneralsGameCode/issues?q=state%3Aopen%20label%3ACritical): Fixing game-breaking issues (e.g., fullscreen crash).
+- [**Minor Bug Fixes**](https://github.com/TheSuperHackers/GeneralsGameCode/issues?q=state%3Aopen%20label%3AMinor): Addressing minor bugs (e.g., UI issues, graphical glitches).
+- [**Cross-Platform Support**](https://github.com/TheSuperHackers/GeneralsGameCode/issues?q=label%3APlatform%20state%3Aopen): Adding support for more platforms (e.g., Linux, macOS).
 - **Engine Improvements**: Enhancing the game engine to improve performance and stability.
 - **Client-Side Features**: Enhancing the game's client with features such as an improved replay viewer and UI updates.
-- **Multiplayer Improvements**: Implementing a new game server and an upgraded matchmaking lobby.
-- **Tooling Improvements**: Developing new or improving existing tools for modding and game development.
+- [**Multiplayer Improvements**](https://github.com/TheSuperHackers/GeneralsGameCode/issues?q=state%3Aopen%20label%3ANetwork): Implementing a new game server and an upgraded matchmaking lobby.
+- [**Tooling Improvements**](https://github.com/TheSuperHackers/GeneralsGameCode/issues?q=label%3ATools%20state%3Aopen): Developing new or improving existing tools for modding and game development.
 - **Community-Driven Improvements**: Once the community grows, we plan to incorporate more features, updates, and
   changes based on player feedback.
 
