@@ -236,7 +236,7 @@ void ThingFactory::reset( void )
 			m_templateHashMap.erase(templateName);
 		}
 
-		DEBUG_ASSERTCRASH(!nextT || t->getTemplateID() == nextT->getTemplateID() + 1);
+		DEBUG_ASSERTCRASH(!nextT || t->getTemplateID() == nextT->getTemplateID() + 1, ("Next template ID is unexpected"));
 
 		t = nextT;
 	}
