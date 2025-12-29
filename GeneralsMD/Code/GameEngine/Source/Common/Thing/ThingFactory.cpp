@@ -104,8 +104,7 @@ void ThingFactory::addTemplate( ThingTemplate *tmplate )
 ThingFactory::ThingFactory()
 {
 	m_firstTemplate = NULL;
-	m_nextTemplateID = 1;	// not zero!
-	m_templateCount = 0;
+	m_nextTemplateID = 0;
 
 #ifdef USING_STLPORT
 	m_templateHashMap.resize( TEMPLATE_HASH_SIZE );
@@ -146,7 +145,7 @@ ThingTemplate *ThingFactory::newTemplate( const AsciiString& name )
 	}
 
 	// give template a unique identifier
-	newTemplate->friend_setTemplateID( m_nextTemplateID++ );
+	newTemplate->friend_setTemplateID( ++m_nextTemplateID ); // pre-increment to use non-zero ID value
 	DEBUG_ASSERTCRASH( m_nextTemplateID != 0, ("m_nextTemplateID wrapped to zero") );
 
 	// assign name
@@ -237,12 +236,14 @@ void ThingFactory::reset( void )
 			m_templateHashMap.erase(templateName);
 		}
 
+		DEBUG_ASSERTCRASH(!nextT || t->getTemplateID() == nextT->getTemplateID() + 1);
+
 		t = nextT;
 	}
 
 	// TheSuperHackers @bugfix Caball009 25/12/2025 Avoid mismatches by making m_nextTemplateID unique for a single match instead of unique since game launch.
-	DEBUG_ASSERTCRASH(m_templateHashMap.size() + 1 == m_templateCount, ("The ThingTemplate count is invalid after deleting overrides"));
-	m_nextTemplateID = m_templateCount;
+	DEBUG_ASSERTCRASH(m_firstTemplate && m_firstTemplate->getTemplateID() == m_templateHashMap.size(), ("Template ID is unexpected after deleting overrides"));
+	m_nextTemplateID = static_cast<UnsignedShort>(m_templateHashMap.size());
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -546,8 +547,6 @@ void ThingFactory::postProcessLoad()
 #endif
 
 	}
-
-	m_templateCount = m_nextTemplateID;
 
 #ifdef CHECK_THING_NAMES
 	dumpMissingStringNames();
