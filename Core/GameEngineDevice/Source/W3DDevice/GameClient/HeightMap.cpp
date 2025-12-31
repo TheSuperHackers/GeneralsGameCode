@@ -1387,7 +1387,10 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 //=============================================================================
 // HeightMapRenderObjClass::On_Frame_Update
 //=============================================================================
-/** Updates the diffuse color values in the vertices as affected by the dynamic lights.*/
+// Updates the diffuse color values in the vertices as affected by the dynamic
+// lights.
+// TheSuperHackers @bugfix xezon 15/12/2025 The dynamic lights are now properly
+// drawn on the entirety of the drawable map region.
 //=============================================================================
 void HeightMapRenderObjClass::On_Frame_Update(void)
 {
@@ -1418,10 +1421,10 @@ void HeightMapRenderObjClass::On_Frame_Update(void)
 	Int numDynaLights=0;
 	W3DDynamicLight *enabledLights[MAX_ENABLED_DYNAMIC_LIGHTS];
 
-	Int yCoordMin = m_map->getDrawOrgY();
-	Int yCoordMax = m_y+m_map->getDrawOrgY();
-	Int xCoordMin = m_map->getDrawOrgX();
-	Int xCoordMax = m_x+m_map->getDrawOrgX();
+	const Int xCoordMin = m_map->getDrawOrgX() - m_map->getBorderSizeInline();
+	const Int yCoordMin = m_map->getDrawOrgY() - m_map->getBorderSizeInline();
+	const Int xCoordMax = xCoordMin + m_map->getDrawWidth();
+	const Int yCoordMax = yCoordMin + m_map->getDrawHeight();
 
 	for (pDynamicLightsIterator.First(); !pDynamicLightsIterator.Is_Done(); pDynamicLightsIterator.Next())
 	{
