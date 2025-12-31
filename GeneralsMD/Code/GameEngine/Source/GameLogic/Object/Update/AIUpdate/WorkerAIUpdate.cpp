@@ -280,6 +280,7 @@ UpdateSleepTime WorkerAIUpdate::update( void )
 			Bool invalidTask = FALSE;
 
 			// validate the task and the target
+			// TheSuperHackers @bugfix Stubbjax 16/11/2025 Invalidate the task when the build scaffold is destroyed.
 			if( currentTask == DOZER_TASK_REPAIR &&
 					TheActionManager->canRepairObject( getObject(), targetObject, getLastCommandSource() ) == FALSE )
 				invalidTask = TRUE;
