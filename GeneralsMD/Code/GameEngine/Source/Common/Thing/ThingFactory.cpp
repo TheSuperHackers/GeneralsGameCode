@@ -243,7 +243,7 @@ void ThingFactory::reset( void )
 
 	// TheSuperHackers @bugfix Caball009 25/12/2025 Avoid mismatches by making m_nextTemplateID unique for a single match instead of unique since game launch.
 	DEBUG_ASSERTCRASH(m_firstTemplate && m_firstTemplate->getTemplateID() == m_templateHashMap.size(), ("Template ID is unexpected after deleting overrides"));
-	m_nextTemplateID = static_cast<UnsignedShort>(m_templateHashMap.size());
+	m_nextTemplateID = m_firstTemplate->getTemplateID();
 }
 
 //-------------------------------------------------------------------------------------------------
