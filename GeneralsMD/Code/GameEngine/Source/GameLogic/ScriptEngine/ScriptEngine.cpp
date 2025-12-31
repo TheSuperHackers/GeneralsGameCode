@@ -5569,8 +5569,15 @@ void ScriptEngine::update( void )
 		}
 	}
 
+	Int playerCount = TheSidesList->getNumSides();
+	if (TheGameLogic->getGameMode() == GAME_REPLAY && playerCount > 0)
+	{
+		if (ThePlayerList->getNthPlayer(playerCount - 1)->isPlayerObserver())
+			--playerCount;
+	}
+
 	// Evaluate the scripts.
-	for (i=0; i<TheSidesList->getNumSides(); i++) {
+	for (i=0; i<playerCount; i++) {
 		m_currentPlayer = ThePlayerList->getNthPlayer(i);
 		ScriptList *pSL = TheSidesList->getSideInfo(i)->getScriptList();
 		if (!pSL) continue;
