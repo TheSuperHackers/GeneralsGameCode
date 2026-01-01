@@ -1648,15 +1648,12 @@ const WeaponTemplate *WeaponStore::findWeaponTemplate( const char* name ) const
 WeaponTemplate *WeaponStore::findWeaponTemplatePrivate( NameKeyType key ) const
 {
 	// search weapon list for name
-#if RETAIL_COMPATIBLE_CRC
-	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
-		if( m_weaponTemplateVector[ i ]->getNameKey() == key )
-			return m_weaponTemplateVector[i];
-#else
+	//for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
+	//	if( m_weaponTemplateVector[ i ]->getNameKey() == key )
+	//		return m_weaponTemplateVector[i];
 	WeaponTemplateMap::const_iterator it = m_weaponTemplateHashMap.find(key);
 	if(it != m_weaponTemplateHashMap.end())
 		return it->second;
-#endif
 
 	return NULL;
 
@@ -1674,11 +1671,8 @@ WeaponTemplate *WeaponStore::newWeaponTemplate(AsciiString name)
 	WeaponTemplate *wt = newInstance(WeaponTemplate);
 	wt->m_name = name;
 	wt->m_nameKey = TheNameKeyGenerator->nameToKey( name );
-#if RETAIL_COMPATIBLE_CRC
-	m_weaponTemplateVector.push_back(wt);
-#else
+	//m_weaponTemplateVector.push_back(wt);
 	m_weaponTemplateHashMap[wt->m_nameKey] = wt;
-#endif
 
 	return wt;
 }
