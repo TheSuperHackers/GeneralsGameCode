@@ -5074,20 +5074,18 @@ void Drawable::xfer( Xfer *xfer )
 	// status
 	xfer->xferUnsignedInt( &m_status );
 
-#if RETAIL_COMPATIBLE_XFER_SAVE
+	if (version <= 7)
+	{
+		// prev tint status
+		xfer->xferUnsignedInt( &m_prevTintStatus );
+
+		// TheSuperHackers @bugfix Caball009 21/12/2025 Trigger tinting after loading a save game.
+		if (xfer->getXferMode() == XFER_LOAD)
+			m_prevTintStatus = 0;
+	}
+
 	// tint status
 	xfer->xferUnsignedInt( &m_tintStatus );
-
-	// prev tint status
-	xfer->xferUnsignedInt( &m_prevTintStatus );
-
-	// TheSuperHackers @tweak Caball009 21/12/2025 Trigger transition in tint color after loading a save game.
-	if (xfer->getXferMode() == XFER_LOAD)
-		m_prevTintStatus = 0;
-#else
-	// tint status
-	xfer->xferUnsignedInt( &m_tintStatus );
-#endif
 
 	// fading mode
 	xfer->xferUser( &m_fadeMode, sizeof( FadingMode ) );
