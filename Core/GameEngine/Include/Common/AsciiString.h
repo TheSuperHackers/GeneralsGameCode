@@ -364,6 +364,16 @@ public:
 	Bool isNotEmpty() const { return !isEmpty(); }
 	Bool isNotNone() const { return !isNone(); }
 
+	/**
+		return true iff the string is valid UTF-8.
+	*/
+	Bool isValidUtf8() const;
+
+	/**
+		convert the given UnicodeString to UTF-8 and store it in self.
+	*/
+	void convertToUtf8(const UnicodeString& unicodeStr);
+
 //
 // You might think it would be a good idea to overload the * operator
 // to allow for an implicit conversion to an char*. This is

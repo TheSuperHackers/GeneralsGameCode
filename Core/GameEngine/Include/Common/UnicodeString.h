@@ -340,6 +340,11 @@ public:
 	*/
 	Bool nextToken(UnicodeString* token, UnicodeString delimiters = UnicodeString::TheEmptyString);
 
+	/**
+		convert the given UTF-8 encoded AsciiString to WideChar and store it in self.
+	*/
+	void convertFromUtf8(const AsciiString& asciiStr);
+
 //
 // You might think it would be a good idea to overload the * operator
 // to allow for an implicit conversion to an WideChar*. This is
