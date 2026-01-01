@@ -4906,7 +4906,7 @@ void Drawable::xferDrawableModules( Xfer *xfer )
 	* 5: save full mtx, not pos+orient.
 	* 6: Added m_ambientSoundEnabledFromScript flag
 	* 7: Save the customize ambient sound info
-	* 8: Removed m_prevTintStatus because loading its value is unnecessary and undesirable
+	* 8: TheSuperHackers @bugfix Removed m_prevTintStatus because loading its value is unnecessary and undesirable
 	*/
 // ------------------------------------------------------------------------------------------------
 void Drawable::xfer( Xfer *xfer )
