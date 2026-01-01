@@ -2008,14 +2008,16 @@ Bool PartitionManager::geomCollidesWithGeom(const Coord3D* pos1,
 		Real angle1,
 		const Coord3D* pos2,
 		const GeometryInfo& geom2,
-		Real angle2) const
+		Real angle2,
+		Bool passHeightCheck) const
 {
 	CollideInfo thisInfo(pos1, geom1, angle1);
 	CollideInfo thatInfo(pos2, geom2, angle2);
 
 	// invariant for all geometries: first do z collision check.
-	if (thisInfo.position.z + thisInfo.geom.getMaxHeightAbovePosition() >= thatInfo.position.z &&
-			thisInfo.position.z <= thatInfo.position.z + thatInfo.geom.getMaxHeightAbovePosition())
+	if ( (thisInfo.position.z + thisInfo.geom.getMaxHeightAbovePosition() >= thatInfo.position.z &&
+			thisInfo.position.z <= thatInfo.position.z + thatInfo.geom.getMaxHeightAbovePosition()) ||
+			passHeightCheck )
 	{
 		GeometryType thisGeom = geom1.getGeomType();
 		GeometryType thatGeom = geom2.getGeomType();
@@ -3344,6 +3346,20 @@ Object *PartitionManager::getClosestObjects(
 
 				if (!filtersAllow(filters, thisObj))
 					continue;
+
+				// IamInnocent - 31/12/25 Added Boundary Box checks for Structures, relating to Issue: https://github.com/TheSuperHackers/GeneralsGameCode/issues/2036
+				#if !PRESERVE_RETAIL_BEHAVIOR
+				if(thisObj->isKindOf(KINDOF_STRUCTURE) && (distProc == distCalcProc_BoundaryAndBoundary_2D || distProc == distCalcProc_BoundaryAndBoundary_3D))
+				{
+					const GeometryInfo* geomInfo = &thisObj->getGeometryInfo();
+					if(geomInfo && geomInfo->getGeomType() == GEOMETRY_BOX)
+					{
+						GeometryInfo geometry( GEOMETRY_SPHERE, TRUE, maxDist, maxDist, maxDist );
+						if(!geomCollidesWithGeom(objPos, geometry, 0.0f, thisObj->getPosition(), *geomInfo, thisObj->getOrientation(), distProc == distCalcProc_BoundaryAndBoundary_2D ? TRUE : FALSE))
+							continue;
+					}
+				}
+				#endif
 
 				// ok, this is within the range, and the filters allow it.
 				// add it to the iter, if we have one....

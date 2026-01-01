@@ -1442,7 +1442,8 @@ public:
 							Real angle1,
 							const Coord3D* pos2,
 							const GeometryInfo& geom2,
-							Real angle2
+							Real angle2,
+							Bool passHeightCheck = FALSE
   ) const;
 
 	/// finding legal positions in the world
