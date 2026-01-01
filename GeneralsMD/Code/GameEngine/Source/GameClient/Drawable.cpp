@@ -5074,6 +5074,9 @@ void Drawable::xfer( Xfer *xfer )
 	// status
 	xfer->xferUnsignedInt( &m_status );
 
+	// tint status
+	xfer->xferUnsignedInt( &m_tintStatus );
+
 	if (version <= 7)
 	{
 		// prev tint status
@@ -5083,9 +5086,6 @@ void Drawable::xfer( Xfer *xfer )
 		if (xfer->getXferMode() == XFER_LOAD)
 			m_prevTintStatus = 0;
 	}
-
-	// tint status
-	xfer->xferUnsignedInt( &m_tintStatus );
 
 	// fading mode
 	xfer->xferUser( &m_fadeMode, sizeof( FadingMode ) );
