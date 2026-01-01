@@ -44,6 +44,7 @@
 #include "GameNetwork/LANAPI.h"						// for testing packet size
 #include "GameNetwork/LANAPICallbacks.h"	// for testing packet size
 #include "strtok_r.h"
+#include "utf8.h"
 
 
 
@@ -1032,6 +1033,11 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 	//DEBUG_LOG(("Saw options of %s", options.str()));
 	DEBUG_LOG(("ParseAsciiStringToGameInfo - parsing [%s]", options.str()));
 
+	if (!options.isValidUtf8())
+	{
+		DEBUG_LOG(("ParseAsciiStringToGameInfo - options string is not valid UTF-8"));
+		return false;
+	}
 
 	while ( (keyValPair = strtok_r(bufPtr, ";", &strPos)) != NULL )
 	{
@@ -1167,8 +1173,9 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 								DEBUG_LOG(("ParseAsciiStringToGameInfo - slotValue name is empty, quitting"));
 								break;
 							}
+
 							UnicodeString name;
-              				name.set(MultiByteToWideCharSingleLine(slotValue.str() +1).c_str());
+							name.convertFromUtf8(slotValue.str() + 1);
 
 							//DEBUG_LOG(("ParseAsciiStringToGameInfo - name is %s", slotValue.str()+1));
 
