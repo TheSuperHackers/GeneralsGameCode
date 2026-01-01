@@ -104,7 +104,7 @@ void ThingFactory::addTemplate( ThingTemplate *tmplate )
 ThingFactory::ThingFactory()
 {
 	m_firstTemplate = NULL;
-	m_nextTemplateID = 1; // not zero!
+	m_nextTemplateID = 1;	// not zero!
 
 #ifdef USING_STLPORT
 	m_templateHashMap.resize( TEMPLATE_HASH_SIZE );
