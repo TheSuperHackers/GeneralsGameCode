@@ -1577,22 +1577,19 @@ WeaponStore::~WeaponStore()
 {
 	deleteAllDelayedDamage();
 
-#if RETAIL_COMPATIBLE_CRC
 	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
 	{
 		WeaponTemplate* wt = m_weaponTemplateVector[i];
 		deleteInstance(wt);
 	}
-	m_weaponTemplateVector.clear();
-#else
 	for (WeaponTemplateMap::iterator it = m_weaponTemplateHashMap.begin(); it != m_weaponTemplateHashMap.end(); ++it)
 	{
 		WeaponTemplate* wt = it->second;
 		if (wt)
 			deleteInstance(wt);
 	}
+	m_weaponTemplateVector.clear();
 	m_weaponTemplateHashMap.clear();
-#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1651,7 +1648,6 @@ const WeaponTemplate *WeaponStore::findWeaponTemplate( const char* name ) const
 WeaponTemplate *WeaponStore::findWeaponTemplatePrivate( NameKeyType key ) const
 {
 	// search weapon list for name
-	/// IamInnocent 1/1/26 - Added Weapon Templates registering in HashMap format for efficient Searching: https://github.com/TheSuperHackers/GeneralsGameCode/issues/1933
 #if RETAIL_COMPATIBLE_CRC
 	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
 		if( m_weaponTemplateVector[ i ]->getNameKey() == key )
@@ -1731,19 +1727,16 @@ void WeaponStore::deleteAllDelayedDamage()
 void WeaponStore::resetWeaponTemplates( void )
 {
 
-#if RETAIL_COMPATIBLE_CRC
 	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
 	{
 		WeaponTemplate* wt = m_weaponTemplateVector[i];
 		wt->reset();
 	}
-#else
 	for (WeaponTemplateMap::iterator it = m_weaponTemplateHashMap.begin(); it != m_weaponTemplateHashMap.end(); ++it)
 	{
 		WeaponTemplate* wt = it->second;
 		wt->reset();
 	}
-#endif
 
 }
 
@@ -1751,7 +1744,6 @@ void WeaponStore::resetWeaponTemplates( void )
 void WeaponStore::reset()
 {
 	// clean up any overriddes.
-#if RETAIL_COMPATIBLE_CRC
 	for (size_t i = 0; i < m_weaponTemplateVector.size(); ++i)
 	{
 		WeaponTemplate *wt = m_weaponTemplateVector[i];
@@ -1762,7 +1754,6 @@ void WeaponStore::reset()
 			deleteInstance(override);
 		}
 	}
-#else
 	for (WeaponTemplateMap::iterator it = m_weaponTemplateHashMap.begin(); it != m_weaponTemplateHashMap.end(); ++it)
 	{
 		WeaponTemplate* wt = it->second;
@@ -1773,7 +1764,6 @@ void WeaponStore::reset()
 			deleteInstance(override);
 		}
 	}
-#endif
 
 	deleteAllDelayedDamage();
 	resetWeaponTemplates();
@@ -1801,21 +1791,18 @@ void WeaponStore::postProcessLoad()
 		return;
 	}
 
-#if RETAIL_COMPATIBLE_CRC
 	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
 	{
 		WeaponTemplate* wt = m_weaponTemplateVector[i];
 		if (wt)
 			wt->postProcessLoad();
 	}
-#else
 	for (WeaponTemplateMap::iterator it = m_weaponTemplateHashMap.begin(); it != m_weaponTemplateHashMap.end(); ++it)
 	{
 		WeaponTemplate* wt = it->second;
 		if (wt)
 			wt->postProcessLoad();
 	}
-#endif
 
 }
 
