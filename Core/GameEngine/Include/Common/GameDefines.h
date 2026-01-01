@@ -50,6 +50,11 @@
 #define RETAIL_COMPATIBLE_AIGROUP (1) // AIGroup logic is expected to be CRC compatible with retail Generals 1.08, Zero Hour 1.04
 #endif
 
+// IamInnocent - DRAWUPDATE is Retail CRC Compatible, but might need more checking. Remove this comment once this check is done.
+#ifndef RETAIL_COMPATIBLE_DRAWUPDATE
+#define RETAIL_COMPATIBLE_DRAWUPDATE (1) // Drawable Update logic is expected to be CRC compatible with retail Generals 1.08, Zero Hour 1.04
+#endif
+
 #ifndef ENABLE_GAMETEXT_SUBSTITUTES
 #define ENABLE_GAMETEXT_SUBSTITUTES (1) // The code can provide substitute texts when labels and strings are missing in the STR or CSF translation file
 #endif

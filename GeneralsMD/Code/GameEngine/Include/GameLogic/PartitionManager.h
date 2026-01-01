@@ -92,6 +92,7 @@ class Team;
 class ThingTemplate;
 class GhostObject;
 class CommandButton;
+class Drawable;
 
 enum CommandSourceType CPP_11(: Int);
 
@@ -1528,6 +1529,9 @@ public:
 	// If saveToFog is false, then we are writing STORE_PERMENANT_REVEAL
 	void storeFoggedCells(ShroudStatusStoreRestore &outPartitionStore, Bool storeToFog) const;
 	void restoreFoggedCells(const ShroudStatusStoreRestore &inPartitionStore, Bool restoreToFog);
+
+	std::list<Drawable*> getDrawablesInRegion( IRegion2D *region2D );
+	Bool hasNoOffset() const { return m_radiusVec.empty(); }
 };
 
 // -----------------------------------------------------------------------------

@@ -155,6 +155,13 @@ public:
 	void incrementRenderedObjectCount() { m_renderedObjectCount++; }
 	virtual void notifyTerrainObjectMoved(Object *obj) = 0;
 
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	void informClientNewDrawable(Drawable *draw);
+	void addDrawableToEfficientList(Drawable *draw);
+	void clearEfficientDrawablesList() { m_drawablesIterateListMarkedForClear = TRUE; }
+	void setEfficientDrawableRegion(Region3D *region) { m_axisAlignedRegion.lo = region->lo; m_axisAlignedRegion.hi = region->hi; }
+	Region3D *getEfficientDrawableRegion() { return &m_axisAlignedRegion; }
+#endif
 
 protected:
 
@@ -213,6 +220,13 @@ private:
 	typedef std::list< Drawable* > TextBearingDrawableList;
 	typedef TextBearingDrawableList::iterator TextBearingDrawableListIterator;
 	TextBearingDrawableList m_textBearingDrawableList;	///< the drawables that have registered here during drawablepostdraw
+
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	std::list< Drawable* > m_drawablesIterateList;
+	Bool m_drawablesIterateListMarkedForClear;
+
+	Region3D m_axisAlignedRegion;
+#endif
 };
 
 //Kris: Try not to use this if possible. In every case I found in the code base, the status was always Drawable::SELECTED.

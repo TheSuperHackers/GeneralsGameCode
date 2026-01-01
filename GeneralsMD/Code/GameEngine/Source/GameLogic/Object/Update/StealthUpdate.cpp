@@ -784,6 +784,14 @@ UpdateSleepTime StealthUpdate::update( void )
 		}
 
 		self->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DETECTED ) );
+
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+		if(draw && ThePlayerList->getLocalPlayer()->getRelationship(self->getTeam()) == ENEMIES)
+		{
+			// Redraw everything as Stealth Detection bugs out how existing Drawables work
+			TheGameClient->clearEfficientDrawablesList();
+		}
+#endif
 	}
 	else
 	{
@@ -1108,6 +1116,14 @@ void StealthUpdate::changeVisualDisguise()
 		self->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DISGUISED ) );
 		self->clearModelConditionState( MODELCONDITION_DISGUISED );
 	}
+
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	if(ThePlayerList->getLocalPlayer()->getRelationship(self->getTeam()) == ENEMIES)
+	{
+		// Redraw everything as Stealth Detection bugs out how existing Drawables work
+		TheGameClient->clearEfficientDrawablesList();
+	}
+#endif
 
 	//Reset the radar (determines color on add)
 	TheRadar->removeObject( self );

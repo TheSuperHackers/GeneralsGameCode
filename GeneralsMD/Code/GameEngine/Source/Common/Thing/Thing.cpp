@@ -46,6 +46,9 @@
 #include "Lib/trig.h"
 #include "GameLogic/TerrainLogic.h"
 
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+#include "GameClient/GameClient.h"
+#endif
 
 static constexpr const Real InitialThingPosX = 0.0f;
 static constexpr const Real InitialThingPosY = 0.0f;
@@ -169,6 +172,15 @@ void Thing::setPositionZ( Real z )
 		setTransformMatrix(&mtx);
 	}
 	DEBUG_ASSERTCRASH(!(_isnan(getPosition()->x) || _isnan(getPosition()->y) || _isnan(getPosition()->z)), ("Drawable/Object position NAN! '%s'", m_template->getName().str() ));
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	if(TheGameClient)
+	{
+		if(AsObject(this) && AsObject(this)->getDrawable())
+			TheGameClient->informClientNewDrawable(AsObject(this)->getDrawable());
+		else if(AsDrawable(this))
+			TheGameClient->informClientNewDrawable(AsDrawable(this));
+	}
+#endif
 }
 
 //=============================================================================
@@ -198,6 +210,15 @@ void Thing::setPosition( const Coord3D *pos )
 		setTransformMatrix(&mtx);
 	}
 	DEBUG_ASSERTCRASH(!(_isnan(getPosition()->x) || _isnan(getPosition()->y) || _isnan(getPosition()->z)), ("Drawable/Object position NAN! '%s'", m_template->getName().str() ));
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	if(TheGameClient)
+	{
+		if(AsObject(this) && AsObject(this)->getDrawable())
+			TheGameClient->informClientNewDrawable(AsObject(this)->getDrawable());
+		else if(AsDrawable(this))
+			TheGameClient->informClientNewDrawable(AsDrawable(this));
+	}
+#endif
 }
 
 //=============================================================================

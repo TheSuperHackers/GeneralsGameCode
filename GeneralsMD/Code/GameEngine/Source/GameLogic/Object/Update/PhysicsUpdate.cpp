@@ -46,6 +46,10 @@
 #include "GameLogic/Weapon.h"
 #include "GameLogic/LogicRandomValue.h"
 
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+#include "GameClient/GameClient.h"
+#endif
+
 const Real DEFAULT_MASS = 1.0f;
 
 const Real DEFAULT_SHOCK_YAW = 0.05f;
@@ -907,6 +911,12 @@ UpdateSleepTime PhysicsBehavior::update()
 			obj->kill();
 		}
 	}
+
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	// Always inform the Drawable for Physics, since the Object may end up within the Screen Region and it will need to be Registered.
+	if(obj->getDrawable())
+		TheGameClient->informClientNewDrawable(obj->getDrawable());
+#endif
 
 	setFlag(UPDATE_EVER_RUN, true);
 	setFlag(WAS_AIRBORNE_LAST_FRAME, airborneAtEnd);

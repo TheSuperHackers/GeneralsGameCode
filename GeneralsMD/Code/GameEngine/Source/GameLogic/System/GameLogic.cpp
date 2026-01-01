@@ -4234,6 +4234,10 @@ void GameLogic::bindObjectAndDrawable(Object* obj, Drawable* draw)
 {
 	draw->friend_bindToObject( obj );
 	obj->friend_bindToDrawable( draw );
+
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	TheGameClient->informClientNewDrawable(draw);
+#endif
 }
 
 // ------------------------------------------------------------------------------------------------

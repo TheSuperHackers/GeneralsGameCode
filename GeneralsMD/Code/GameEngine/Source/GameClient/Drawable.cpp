@@ -2646,7 +2646,11 @@ void Drawable::draw()
 		applyPhysicsXform(&transformMtx);
 	}
 
+#if RETAIL_COMPATIBLE_DRAWUPDATE
 	for (DrawModule** dm = getDrawModules(); *dm; ++dm)
+#else
+	for (DrawModule** dm = getDrawModules(); dm != nullptr && *dm; ++dm)
+#endif
 	{
 		(*dm)->doDrawModule(&transformMtx);
 	}
@@ -4070,7 +4074,11 @@ void Drawable::replaceModelConditionStateInDrawable()
 	const TerrainDecalType terrainDecalType = getTerrainDecalType();
 	setTerrainDecal(TERRAIN_DECAL_NONE);
 
+#if RETAIL_COMPATIBLE_DRAWUPDATE
 	for (DrawModule** dm = getDrawModules(); *dm; ++dm)
+#else
+	for (DrawModule** dm = getDrawModules(); dm != nullptr && *dm; ++dm)
+#endif
 	{
 		ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
 		if (di)
@@ -4650,6 +4658,9 @@ void Drawable::updateHiddenStatus()
 			di->setHidden(hidden != 0);
 	}
 
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	TheGameClient->informClientNewDrawable(this);
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------

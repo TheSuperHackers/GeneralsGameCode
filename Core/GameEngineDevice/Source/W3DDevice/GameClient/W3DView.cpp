@@ -75,6 +75,10 @@
 #include "GameLogic/TerrainLogic.h"									///< @todo This should be TerrainVisual (client side)
 #include "Common/AudioEventInfo.h"
 
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+#include "GameLogic/PartitionManager.h"
+#endif
+
 #include "W3DDevice/Common/W3DConvert.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
@@ -171,6 +175,9 @@ W3DView::W3DView()
 	m_shakerAngles.X =0.0f;							// Proper camera shake generator & sources
 	m_shakerAngles.Y =0.0f;
 	m_shakerAngles.Z =0.0f;
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	m_updateEfficient = false;
+#endif
 
 }
 
@@ -624,6 +631,12 @@ void W3DView::setCameraTransform( void )
 		 it = NULL;
 		}
 	}
+
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	// Redraw everything
+	TheGameClient->clearEfficientDrawablesList();
+	m_updateEfficient = TRUE;
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1401,12 +1414,25 @@ void W3DView::update(void)
   TheTerrainVisual->updateSeismicSimulations();
 #endif
 
+	// render all of the visible Drawables
+	/// @todo this needs to use a real region partition or something
+	//// TheSuperHackers @performance IamInnocent 01/01/26 - Implemented an Efficient Drawable Iteration Function for Drawables Under Screen Region
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	if(WW3D::Get_Sync_Frame_Time() || m_updateEfficient)
+	{
+		Region3D axisAlignedRegion;
+		getAxisAlignedViewRegion(axisAlignedRegion);
+
+		TheGameClient->setEfficientDrawableRegion(&axisAlignedRegion);
+		TheGameClient->iterateDrawablesInRegion( &axisAlignedRegion, drawDrawable, NULL );
+		m_updateEfficient = FALSE;
+	}
+#else
 	Region3D axisAlignedRegion;
 	getAxisAlignedViewRegion(axisAlignedRegion);
 
-	// render all of the visible Drawables
-	/// @todo this needs to use a real region partition or something
 	TheGameClient->iterateDrawablesInRegion( &axisAlignedRegion, drawDrawable, NULL );
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2126,10 +2152,11 @@ Int W3DView::iterateDrawablesInRegion( IRegion2D *screenRegion,
 			regionIsPoint = TRUE;
 		}
 
-		normalizedRegion.lo.x = ((Real)(screenRegion->lo.x - m_originX) / (Real)getWidth()) * 2.0f - 1.0f;
-		normalizedRegion.lo.y = -(((Real)(screenRegion->hi.y - m_originY) / (Real)getHeight()) * 2.0f - 1.0f);
-		normalizedRegion.hi.x = ((Real)(screenRegion->hi.x - m_originX) / (Real)getWidth()) * 2.0f - 1.0f;
-		normalizedRegion.hi.y = -(((Real)(screenRegion->lo.y - m_originY) / (Real)getHeight()) * 2.0f - 1.0f);
+		// Changed to use fast int->real type casts
+		normalizedRegion.lo.x = (INT_TO_REAL(screenRegion->lo.x - m_originX) / INT_TO_REAL(getWidth())) * 2.0f - 1.0f;
+		normalizedRegion.lo.y = -((INT_TO_REAL(screenRegion->hi.y - m_originY) / INT_TO_REAL(getHeight())) * 2.0f - 1.0f);
+		normalizedRegion.hi.x = (INT_TO_REAL(screenRegion->hi.x - m_originX) / INT_TO_REAL(getWidth())) * 2.0f - 1.0f;
+		normalizedRegion.hi.y = -((INT_TO_REAL(screenRegion->lo.y - m_originY) / INT_TO_REAL(getHeight())) * 2.0f - 1.0f);
 
 	}
 
@@ -2143,6 +2170,56 @@ Int W3DView::iterateDrawablesInRegion( IRegion2D *screenRegion,
 			return 0;
 		}
 	}
+
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	// TheSuperHackers @performance IamInnocent 01/01/2026 - Uses Partition Manager to find Drawables that fits onto the region.
+	/// This function is mainly used During Selection.
+	if(screenRegion != NULL && !onlyDrawableToTest && !ThePartitionManager->hasNoOffset())
+	{
+		std::list< Drawable* > drawables = ThePartitionManager->getDrawablesInRegion( screenRegion );
+
+		for( std::list< Drawable* >::iterator it = drawables.begin(); it != drawables.end(); ++it )
+		{
+			// not inside
+			inside = FALSE;
+
+			// project the center of the drawable to the screen
+			/// @todo use a real 3D position in the drawable
+			pos = *(*it)->getPosition();
+			world.X = pos.x;
+			world.Y = pos.y;
+			world.Z = pos.z;
+
+			// project the world point to the screen
+			if( m_3DCamera->Project( screen, world ) == CameraClass::INSIDE_FRUSTUM &&
+					screen.X >= normalizedRegion.lo.x &&
+					screen.X <= normalizedRegion.hi.x &&
+					screen.Y >= normalizedRegion.lo.y &&
+					screen.Y <= normalizedRegion.hi.y )
+			{
+
+				inside = TRUE;
+
+			}  // end if
+
+			// if inside do the callback and count up
+			if( inside )
+			{
+
+				if( callback( (*it), userData ) )
+					++count;
+
+			}  // end if
+
+			// If onlyDrawableToTest, then we should bail out now.
+			//if (onlyDrawableToTest != NULL)
+			//	break;
+
+		}  // end for draw
+
+		return count;
+	}
+#endif
 
 	for( draw = TheGameClient->firstDrawable();
 			 draw;

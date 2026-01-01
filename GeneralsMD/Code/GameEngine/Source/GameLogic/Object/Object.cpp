@@ -4810,6 +4810,10 @@ void Object::handlePartitionCellMaintenance()
 	handleShroud();
 	handleValueMap();
 	handleThreatMap();
+
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	TheGameClient->informClientNewDrawable(getDrawable());
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
