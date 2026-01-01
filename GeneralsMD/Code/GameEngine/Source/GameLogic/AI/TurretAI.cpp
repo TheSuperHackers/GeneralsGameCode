@@ -1219,13 +1219,17 @@ StateReturnType TurretAIRecenterTurretState::update()
   if( getMachineOwner()->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION))
     return STATE_CONTINUE;//ML so that under-construction base-defenses do not re-center while under construction
 
+	getMachineOwner()->setNeedUpdateTurretPositioning(TRUE);
 
 	TurretAI* turret = getTurretAI();
 	Bool angleAligned = turret->friend_turnTowardsAngle(turret->getNaturalTurretAngle(), 0.5f, 0.0f);
 	Bool pitchAligned = turret->friend_turnTowardsPitch(turret->getNaturalTurretPitch(), 0.5f);
 
 	if( angleAligned && pitchAligned )
+	{
+		getMachineOwner()->setNeedUpdateTurretPositioning(FALSE);
 		return STATE_SUCCESS;
+	}
 
 	return STATE_CONTINUE;
 }
@@ -1373,11 +1377,16 @@ StateReturnType TurretAIIdleScanState::update()
   if( getMachineOwner()->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION))
     return STATE_CONTINUE;//ML so that under-construction base-defenses do not idle-scan while under construction
 
+	getMachineOwner()->setNeedUpdateTurretPositioning(TRUE);
+
 	Bool angleAligned = getTurretAI()->friend_turnTowardsAngle(getTurretAI()->getNaturalTurretAngle() + m_desiredAngle, 0.5f, 0.0f);
 	Bool pitchAligned = getTurretAI()->friend_turnTowardsPitch(getTurretAI()->getNaturalTurretPitch(), 0.5f);
 
 	if( angleAligned && pitchAligned )
+	{
+		getMachineOwner()->setNeedUpdateTurretPositioning(FALSE);
 		return STATE_SUCCESS;
+	}
 
 	return STATE_CONTINUE;
 }

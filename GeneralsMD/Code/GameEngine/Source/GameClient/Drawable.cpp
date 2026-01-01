@@ -762,6 +762,17 @@ Real Drawable::getAnimationScrubScalar( void ) const // lorenzen
 #endif
 
 //-------------------------------------------------------------------------------------------------
+void Drawable::setNeedUpdateTurretPositioning(Bool set)
+{
+	for (DrawModule** dm = getDrawModules(); *dm; ++dm)
+	{
+		ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
+		if (di)
+			di->setNeedUpdateTurretPositioning(set);
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
 Int Drawable::getPristineBonePositions(const char* boneNamePrefix, Int startIndex, Coord3D* positions, Matrix3D* transforms, Int maxBones) const
 {
 	Int count = 0;
