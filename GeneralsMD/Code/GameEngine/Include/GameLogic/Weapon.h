@@ -337,6 +337,9 @@ struct HistoricWeaponDamageInfo
 };
 
 typedef std::list<HistoricWeaponDamageInfo> HistoricWeaponDamageList;
+#if !RETAIL_COMPATIBLE_CRC
+	typedef std::hash_map<NameKeyType, WeaponTemplate*, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > WeaponTemplateMap;
+#endif
 
 //-------------------------------------------------------------------------------------------------
 class WeaponTemplate : public MemoryPoolObject
@@ -886,7 +889,12 @@ private:
 		WeaponBonus m_bonus;												///< the weapon bonus to use
 	};
 
+// IamInnocent 1/1/26 - Added Weapon Templates registering in HashMap format for efficient Searching: https://github.com/TheSuperHackers/GeneralsGameCode/issues/1933
+#if RETAIL_COMPATIBLE_CRC
 	std::vector<WeaponTemplate*> m_weaponTemplateVector;
+#else
+	WeaponTemplateMap m_weaponTemplateHashMap;
+#endif
 	std::list<WeaponDelayedDamageInfo> m_weaponDDI;
 };
 
