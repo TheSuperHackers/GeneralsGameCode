@@ -1498,8 +1498,8 @@ WeaponTemplate *WeaponStore::findWeaponTemplatePrivate( NameKeyType key ) const
 {
 	// search weapon list for name
 	WeaponTemplateMap::const_iterator it = m_weaponTemplateHashMap.find(key);
-		if(it != m_weaponTemplateHashMap.end())
-			return it->second;
+	if(it != m_weaponTemplateHashMap.end())
+		return it->second;
 
 	return NULL;
 
