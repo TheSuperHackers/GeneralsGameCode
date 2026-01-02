@@ -888,9 +888,10 @@ private:
 
 	std::vector<WeaponTemplate*> m_weaponTemplateVector;
 
-	// TheSuperHackers @performance IamInnocent 01/01/2026 - Now stores weapon templates in map instead of vector to optimize for searches first
+	// TheSuperHackers @performance IamInnocent 01/01/2026 - Now additionally stores the same weapon templates in a hash map to optimize lookups by name key
 	typedef std::hash_map<NameKeyType, WeaponTemplate*, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > WeaponTemplateMap;
 	WeaponTemplateMap m_weaponTemplateHashMap;
+
 	std::list<WeaponDelayedDamageInfo> m_weaponDDI;
 };
 
