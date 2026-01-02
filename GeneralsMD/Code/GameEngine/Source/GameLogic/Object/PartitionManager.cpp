@@ -2015,9 +2015,9 @@ Bool PartitionManager::geomCollidesWithGeom(const Coord3D* pos1,
 	CollideInfo thatInfo(pos2, geom2, angle2);
 
 	// invariant for all geometries: first do z collision check.
-	if ( (thisInfo.position.z + thisInfo.geom.getMaxHeightAbovePosition() >= thatInfo.position.z &&
-			thisInfo.position.z <= thatInfo.position.z + thatInfo.geom.getMaxHeightAbovePosition()) ||
-			passHeightCheck )
+	if ( passHeightCheck ||
+		 (thisInfo.position.z + thisInfo.geom.getMaxHeightAbovePosition() >= thatInfo.position.z &&
+		  thisInfo.position.z <= thatInfo.position.z + thatInfo.geom.getMaxHeightAbovePosition()) )
 	{
 		GeometryType thisGeom = geom1.getGeomType();
 		GeometryType thatGeom = geom2.getGeomType();
@@ -3347,19 +3347,19 @@ Object *PartitionManager::getClosestObjects(
 				if (!filtersAllow(filters, thisObj))
 					continue;
 
-				// IamInnocent - 31/12/25 Added Boundary Box checks for Structures, relating to Issue: https://github.com/TheSuperHackers/GeneralsGameCode/issues/2036
-				#if !PRESERVE_RETAIL_BEHAVIOR
-				if(thisObj->isKindOf(KINDOF_STRUCTURE) && (distProc == distCalcProc_BoundaryAndBoundary_2D || distProc == distCalcProc_BoundaryAndBoundary_3D))
+				// TheSuperHackers @fix IamInnocent 31/12/2025 Added boundary box checks for structures to get an accurate hitbox instead of a hitcircle.
+#if !RETAIL_COMPATIBLE_CRC && !PRESERVE_RETAIL_BEHAVIOR
+				if(thisObj->isKindOf(KINDOF_STRUCTURE) && (dc == FROM_BOUNDINGSPHERE_2D || dc == FROM_BOUNDINGSPHERE_3D))
 				{
-					const GeometryInfo* geomInfo = &thisObj->getGeometryInfo();
-					if(geomInfo && geomInfo->getGeomType() == GEOMETRY_BOX)
+					const GeometryInfo& geomInfo = thisObj->getGeometryInfo();
+					if(geomInfo.getGeomType() == GEOMETRY_BOX)
 					{
-						GeometryInfo geometry( GEOMETRY_SPHERE, TRUE, maxDist, maxDist, maxDist );
-						if(!geomCollidesWithGeom(objPos, geometry, 0.0f, thisObj->getPosition(), *geomInfo, thisObj->getOrientation(), distProc == distCalcProc_BoundaryAndBoundary_2D ? TRUE : FALSE))
+						const GeometryInfo geometry( GEOMETRY_CYLINDER, TRUE, maxDist, maxDist, maxDist );
+						if(!geomCollidesWithGeom(objPos, geometry, 0.0f, thisObj->getPosition(), geomInfo, thisObj->getOrientation(), TRUE))
 							continue;
 					}
 				}
-				#endif
+#endif
 
 				// ok, this is within the range, and the filters allow it.
 				// add it to the iter, if we have one....
