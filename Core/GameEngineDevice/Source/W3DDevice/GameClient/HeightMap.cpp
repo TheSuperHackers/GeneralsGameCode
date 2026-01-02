@@ -1389,8 +1389,8 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 //=============================================================================
 // Updates the diffuse color values in the vertices as affected by the dynamic
 // lights.
-// TheSuperHackers @bugfix xezon 15/12/2025 The dynamic lights are now properly
-// drawn on the entirety of the drawable map region.
+// TheSuperHackers @bugfix xezon 15/12/2025 Now draws the dynamic lights
+// properly on the entirety of the drawable map region.
 //=============================================================================
 void HeightMapRenderObjClass::On_Frame_Update(void)
 {
