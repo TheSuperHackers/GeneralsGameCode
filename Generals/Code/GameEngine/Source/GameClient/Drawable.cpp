@@ -4248,13 +4248,18 @@ void Drawable::xferDrawableModules( Xfer *xfer )
 	*    during the module xfer (CBD)
 	* 4: Added m_ambientSoundEnabled flag
 	* 5: save full mtx, not pos+orient.
+	* 6: TheSuperHackers @bugfix Removed m_prevTintStatus because loading its value is unnecessary and undesirable
 	*/
 // ------------------------------------------------------------------------------------------------
 void Drawable::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 5;
+#else
+	const XferVersion currentVersion = 6;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -4414,8 +4419,15 @@ void Drawable::xfer( Xfer *xfer )
 	// tint status
 	xfer->xferUnsignedInt( &m_tintStatus );
 
-	// prev tint status
-	xfer->xferUnsignedInt( &m_prevTintStatus );
+	if (version <= 5)
+	{
+		// prev tint status
+		xfer->xferUnsignedInt( &m_prevTintStatus );
+
+		// TheSuperHackers @bugfix Caball009 21/12/2025 Trigger tinting after loading a save game.
+		if (xfer->getXferMode() == XFER_LOAD)
+			m_prevTintStatus = 0;
+	}
 
 	// fading mode
 	xfer->xferUser( &m_fadeMode, sizeof( FadingMode ) );
