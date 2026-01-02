@@ -1717,11 +1717,6 @@ void WeaponStore::resetWeaponTemplates( void )
 		WeaponTemplate* wt = m_weaponTemplateVector[i];
 		wt->reset();
 	}
-	for (WeaponTemplateMap::iterator it = m_weaponTemplateHashMap.begin(); it != m_weaponTemplateHashMap.end(); ++it)
-	{
-		WeaponTemplate* wt = it->second;
-		wt->reset();
-	}
 
 }
 
@@ -1732,16 +1727,6 @@ void WeaponStore::reset()
 	for (size_t i = 0; i < m_weaponTemplateVector.size(); ++i)
 	{
 		WeaponTemplate *wt = m_weaponTemplateVector[i];
-		if (wt->isOverride())
-		{
-			WeaponTemplate *override = wt;
-			wt = wt->friend_clearNextTemplate();
-			deleteInstance(override);
-		}
-	}
-	for (WeaponTemplateMap::iterator it = m_weaponTemplateHashMap.begin(); it != m_weaponTemplateHashMap.end(); ++it)
-	{
-		WeaponTemplate* wt = it->second;
 		if (wt->isOverride())
 		{
 			WeaponTemplate *override = wt;
@@ -1779,12 +1764,6 @@ void WeaponStore::postProcessLoad()
 	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
 	{
 		WeaponTemplate* wt = m_weaponTemplateVector[i];
-		if (wt)
-			wt->postProcessLoad();
-	}
-	for (WeaponTemplateMap::iterator it = m_weaponTemplateHashMap.begin(); it != m_weaponTemplateHashMap.end(); ++it)
-	{
-		WeaponTemplate* wt = it->second;
 		if (wt)
 			wt->postProcessLoad();
 	}
