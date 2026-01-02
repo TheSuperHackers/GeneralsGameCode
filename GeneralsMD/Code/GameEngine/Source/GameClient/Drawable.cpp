@@ -2607,16 +2607,27 @@ void Drawable::setStealthLook(StealthLookType look)
 //-------------------------------------------------------------------------------------------------
 void Drawable::draw()
 {
-  if ( testTintStatus( TINT_STATUS_FRENZY ) == FALSE )
-  {
-    if ( getObject() && getObject()->isEffectivelyDead() )
-		  m_secondMaterialPassOpacity = 0.0f;//dead folks don't stealth anyway
-	  else if ( m_secondMaterialPassOpacity > VERY_TRANSPARENT_MATERIAL_PASS_OPACITY )// keep fading any add'l material unless something has set it to zero
-		  m_secondMaterialPassOpacity *= MATERIAL_PASS_OPACITY_FADE_SCALAR;
-	  else
-		  m_secondMaterialPassOpacity = 0.0f;
-  }
-
+	if ( testTintStatus( TINT_STATUS_FRENZY ) == FALSE )
+	{
+		if ( getObject() && getObject()->isEffectivelyDead() )
+		{
+			//dead folks don't stealth anyway
+			m_secondMaterialPassOpacity = 0.0f;
+		}
+		else if ( m_secondMaterialPassOpacity > VERY_TRANSPARENT_MATERIAL_PASS_OPACITY )
+		{
+			// keep fading any added material unless something has set it to zero
+			// TheSuperHackers @tweak The stealth opacity fade time step is now decoupled from the render update.
+			const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+			const Real opacityFrame = m_secondMaterialPassOpacity * MATERIAL_PASS_OPACITY_FADE_SCALAR;
+			const Real opacityStep = (m_secondMaterialPassOpacity - opacityFrame) * timeScale;
+			m_secondMaterialPassOpacity -= opacityStep;
+		}
+		else
+		{
+			m_secondMaterialPassOpacity = 0.0f;
+		}
+	}
 
 	if (m_hidden || m_hiddenByStealth || getFullyObscuredByShroud())
 		return;	// my, that was easy
