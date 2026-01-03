@@ -1210,8 +1210,8 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
 
 	// Write out the terrain height data.
 	if (version >= 2) {
-		UnsignedByte *data = m_logicHeightMap->getDataPtr();
-		Int len = m_logicHeightMap->getXExtent()*m_logicHeightMap->getYExtent();
+		HeightSampleType *data = m_logicHeightMap->getDataPtr();
+		Int len = m_logicHeightMap->getXExtent()*m_logicHeightMap->getYExtent() * sizeof(HeightSampleType);
 		Int xferLen = len;
 		xfer->xferInt(&xferLen);
 		if (len!=xferLen) {

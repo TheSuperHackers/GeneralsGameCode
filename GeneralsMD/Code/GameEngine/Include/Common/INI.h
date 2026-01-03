@@ -49,7 +49,8 @@ enum INILoadType CPP_11(: Int)
 	INI_LOAD_INVALID,						///< invalid load type
 	INI_LOAD_OVERWRITE,					///< create new or load *over* existing data instance
 	INI_LOAD_CREATE_OVERRIDES,	///< create new or load into *new* override data instance
-	INI_LOAD_MULTIFILE					///< create new or continue loading into existing data instance.
+	INI_LOAD_MULTIFILE,					///< create new or continue loading into existing data instance.
+	INI_LOAD_MAPDATA_ONLY       ///< used by WorldBuilder to only load MapData from map.ini
 };
 
 //-------------------------------------------------------------------------------------------------

@@ -32,6 +32,7 @@
 #include "Common/MapReaderWriterInfo.h"
 #include "Common/FileSystem.h"
 #include "Common/TerrainTypes.h"
+#include "Common/MapData.h"
 #include "GameLogic/PolygonTrigger.h"
 #include "GameLogic/SidesList.h"
 #include "rendobj.h"
@@ -114,7 +115,7 @@ WorldHeightMapEdit::WorldHeightMapEdit(Int width, Int height, UnsignedByte initi
 	m_blendTileNdxes = new Short[m_dataSize];
 	m_extraBlendTileNdxes = new Short[m_dataSize];
 	m_cliffInfoNdxes = new Short[m_dataSize];
-	m_data = new UnsignedByte[m_dataSize + m_width+1];
+	m_data = new HeightSampleType[m_dataSize + m_width+1];
 	m_numBitmapTiles = 0;
 	m_numBlendedTiles = 1;
 	m_numCliffInfo = 1;
@@ -219,7 +220,7 @@ m_warnTooManyBlend(false)
 	m_cellCliffState	= new UnsignedByte[numBytesX*numBytesY];
 	memset(m_cellFlipState,0,numBytesX*numBytesY);	//clear all flags
 	memset(m_cellCliffState,0,numBytesX*numBytesY);	//clear all flags
-	m_data = new UnsignedByte[m_dataSize + m_width+1];
+	m_data = new HeightSampleType[m_dataSize + m_width+1];
 	if (m_data == NULL) {
 		AfxMessageBox(IDS_OUT_OF_MEMORY);
 		m_dataSize = 0;
@@ -587,7 +588,15 @@ void WorldHeightMapEdit::saveToFile(DataChunkOutput &chunkWriter)
 			chunkWriter.writeInt(m_boundaries[i].y);
 		}
 		chunkWriter.writeInt(m_dataSize);
-		chunkWriter.writeArrayOfBytes((char *)m_data, m_dataSize);
+
+		//Convert back to single byte data
+		std::vector<UnsignedByte> binary_data(m_dataSize);
+		const Real f = 1.0f / TheMapData->m_HeightmapScale;
+		for (size_t i = 0; i < m_dataSize; i++) {
+			binary_data[i] = std::clamp(static_cast<UnsignedByte>(std::round(m_data[i] * f)), static_cast<UnsignedByte>(0U), static_cast<UnsignedByte>(255U));
+		}
+
+		chunkWriter.writeArrayOfBytes((char *)&binary_data[0], m_dataSize);
 
 	/*
 		chunkWriter.writeInt(m_width);
@@ -1799,7 +1808,7 @@ Bool WorldHeightMapEdit::resize(Int newXSize, Int newYSize, Int newHeight, Int n
 	Short *tileNdxes = new Short[newDataSize];
 	Short *blendTileNdxes = new Short[newDataSize];
 	Short *extraBlendTileNdxes = new Short[newDataSize];
-	UnsignedByte *data = new UnsignedByte[newDataSize];
+	HeightSampleType *data = new HeightSampleType[newDataSize];
 	Short  *cliffInfoNdxes = new Short[newDataSize];
 
 	Int i, j;

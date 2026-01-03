@@ -59,6 +59,7 @@
 #include "GameLogic/Module/StealthUpdate.h"
 #include "GameLogic/Module/RebuildHoleBehavior.h"
 #include "GameLogic/ScriptEngine.h"
+#include "GameLogic/TerrainLogic.h"
 
 #include "GameClient/AnimateWindowManager.h"
 #include "GameClient/ControlBar.h"
@@ -2764,8 +2765,17 @@ void ControlBar::showRallyPoint(const Coord3D* loc)
 	// sanity
 	DEBUG_ASSERTCRASH(marker, ("showRallyPoint: No rally point marker found"));
 
-	// set the position of the rally point drawble to the position passed in
-	marker->setPosition(loc);
+	// Adapt position to water height if under water
+	Real waterZ{ 0 };
+	if (TheTerrainLogic->isUnderwater(loc->x, loc->y, &waterZ)) {
+		Coord3D waterLoc = *loc;
+		waterLoc.z = waterZ;
+		marker->setPosition(&waterLoc);
+	}
+	else {
+		// set the position of the rally point drawble to the position passed in
+		marker->setPosition(loc);
+	}
 	marker->setOrientation(TheGlobalData->m_downwindAngle); // To blow down wind -- ML
 
 	// set the marker colors to that of the local player

@@ -2488,10 +2488,6 @@ Bool AIUpdateInterface::isAircraftThatAdjustsDestination(void) const
 	{
 		return FALSE; // thrust doesn't adjust.
 	}
-	if (m_curLocomotor->getAppearance() == LOCO_SHIP)
-	{
-		return TRUE;	// behave like hover
-	}
 
 	return FALSE;
 }

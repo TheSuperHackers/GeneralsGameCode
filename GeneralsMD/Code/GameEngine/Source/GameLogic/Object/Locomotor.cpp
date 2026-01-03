@@ -1107,6 +1107,8 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 					moveTowardsPositionTreads(obj, physics, goalPos, onPathDistToGoal, desiredSpeed);
 					break;
 			case LOCO_SHIP:
+				  moveTowardsPositionTreads(obj, physics, goalPos, onPathDistToGoal, desiredSpeed);
+				  break;
 			case LOCO_HOVER:
 					moveTowardsPositionHover(obj, physics, goalPos, onPathDistToGoal, desiredSpeed);
 					break;
@@ -2364,6 +2366,47 @@ Bool Locomotor::handleBehaviorZ(Object* obj, PhysicsBehavior *physics, const Coo
 					preferredHeight = pos.z + delta;
 
 					Real liftToUse = calcLiftToUseAtPt(obj, physics, pos.z, surfaceHt, preferredHeight);
+
+					//DEBUG_LOG(("HandleBZ %d LiftToUse %f",TheGameLogic->getFrame(),liftToUse));
+					if (liftToUse != 0.0f)
+					{
+						Coord3D force;
+						force.x = 0.0f;
+						force.y = 0.0f;
+						force.z = liftToUse * physics->getMass();
+						physics->applyMotiveForce(&force);
+					}
+				}
+			}
+			break;
+
+		case Z_SEA_SURFACE_RELATIVE_HEIGHT:
+			requiresConstantCalling = TRUE;
+			{
+				if (m_preferredHeight != 0.0f || getFlag(PRECISE_Z_POS))
+				{
+					Coord3D pos = *obj->getPosition();
+
+					Real waterZ;
+					Real terrainZ;
+					Real preferredHeight;
+					if (TheTerrainLogic->isUnderwater(pos.x, pos.y, &waterZ, &terrainZ)) {
+						// for submarines with negative preferred height, if water is too shallow always stay above terrain height
+						preferredHeight = std::max(waterZ + m_preferredHeight, terrainZ);
+					}
+					else {
+						preferredHeight = TheTerrainLogic->getLayerHeight(pos.x, pos.y, obj->getLayer()) + m_preferredHeight;
+					}
+
+					if (getFlag(PRECISE_Z_POS))
+						preferredHeight = goalPos.z;
+
+					Real delta = preferredHeight - pos.z;
+					delta *= getPreferredHeightDamping();
+					preferredHeight = pos.z + delta;
+
+					// surfaceHt is an unused parameter
+					Real liftToUse = calcLiftToUseAtPt(obj, physics, pos.z, 0.0f, preferredHeight);
 
 					//DEBUG_LOG(("HandleBZ %d LiftToUse %f",TheGameLogic->getFrame(),liftToUse));
 					if (liftToUse != 0.0f)

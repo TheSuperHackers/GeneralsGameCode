@@ -912,7 +912,7 @@ Real BaseHeightMapRenderObjClass::getHeightMapHeight(Real x, Real y, Coord3D* no
 		return getClipHeight(ix, iy) * MAP_HEIGHT_SCALE;
 	}
 
-	const UnsignedByte* data = logicHeightMap->getDataPtr();
+	const HeightSampleType* data = logicHeightMap->getDataPtr();
 	int idx = ix + iy*xExtent;
 	float p0 = data[idx];
 	float p2 = data[idx + xExtent + 1];
@@ -1074,7 +1074,7 @@ Bool BaseHeightMapRenderObjClass::isClearLineOfSight(const Coord3D& pos, const C
 	Real zinc = dz * nsInv;
 
 	Bool result = true;
-	const UnsignedByte* data = logicHeightMap->getDataPtr();
+	const HeightSampleType* data = logicHeightMap->getDataPtr();
 	Int xExtent = logicHeightMap->getXExtent();
 	Int yExtent = logicHeightMap->getYExtent();
 	for (Int curpixel = 0; curpixel < numpixels; curpixel++)
@@ -1221,7 +1221,7 @@ Real BaseHeightMapRenderObjClass::getMaxCellHeight(Real x, Real y) const
 	if (iY >= (logicHeightMap->getYExtent()-1)) {
 		iY = logicHeightMap->getYExtent()-2;
 	}
-	UnsignedByte *data = logicHeightMap->getDataPtr();
+	HeightSampleType *data = logicHeightMap->getDataPtr();
 	p0=data[iX+iY*logicHeightMap->getXExtent()]*MAP_HEIGHT_SCALE;
 	p1=data[(iX+offset)+iY*logicHeightMap->getXExtent()]*MAP_HEIGHT_SCALE;
 	p2=data[(iX+offset)+(iY+offset)*logicHeightMap->getXExtent()]*MAP_HEIGHT_SCALE;

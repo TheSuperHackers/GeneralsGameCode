@@ -250,6 +250,7 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 	{ "CrusherLevel",					INI::parseUnsignedByte,			NULL, offsetof( ThingTemplate, m_crusherLevel ) },
 	{ "CrushableLevel",				INI::parseUnsignedByte,			NULL, offsetof( ThingTemplate, m_crushableLevel ) },
 	{ "AmmoPipsStyle",  INI::parseByteSizedIndexList, AmmoPipsStyleNames, offsetof(ThingTemplate, m_ammoPipsStyle) },
+	{ "MaxPathfindingCellRadius", INI::parseUnsignedByte, NULL, offsetof(ThingTemplate, m_maxPathfindingCellRadius) },
 	{ 0, 0, 0, 0 }
 
 };
@@ -1048,6 +1049,7 @@ ThingTemplate::ThingTemplate() :
 	m_crushableLevel = 255; //Unspecified, this object is unable to be crushed by anything!
 
 	m_ammoPipsStyle = AMMO_PIPS_DEFAULT;
+	m_maxPathfindingCellRadius = 2U;
 }
 
 //-------------------------------------------------------------------------------------------------

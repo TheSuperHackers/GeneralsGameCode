@@ -1581,6 +1581,11 @@ void InGameUI::handleBuildPlacements( void )
 				Coord3D worldPos;
 				TheTacticalView->screenToTerrain(&loc, &worldPos);
 
+				Real terrainZ{ 0 };
+				Real waterZ{ 0 };
+				TheTerrainLogic->isUnderwater(worldPos.x, worldPos.y, &waterZ, &terrainZ);
+				worldPos.z = std::max(terrainZ, waterZ);
+
 				Real check_radius = 0.0f;
 				if (geom.getGeomType() == GEOMETRY_BOX)
 				{
@@ -1626,6 +1631,15 @@ void InGameUI::handleBuildPlacements( void )
 		/**@todo this whole orientation vector thing is LAME! Must replace, all I want to
 		to do is set a simple angle and have it automatically change, ug! */
 		TheTacticalView->screenToTerrain( &loc, &world );
+
+		// If shipyard move up building to at least waterheight if lower
+		if (m_pendingPlaceType->isKindOf(KINDOF_SHIPYARD)) {
+			Real terrainZ{ 0 };
+			Real waterZ{ 0 };
+			TheTerrainLogic->isUnderwater(world.x, world.y, &waterZ, &terrainZ);
+			world.z = std::max(terrainZ, waterZ);
+		}
+
 		m_placeIcon[ 0 ]->setPosition( &world );
 		m_placeIcon[ 0 ]->setOrientation( angle );
 

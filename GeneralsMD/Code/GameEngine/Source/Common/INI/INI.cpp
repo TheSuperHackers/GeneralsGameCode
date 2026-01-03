@@ -420,7 +420,11 @@ UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer, 
 
 			// the first word is the type of data we're processing
 			const char *token = strtok( m_buffer, m_seps );
-			if( token )
+
+			// skip non MapData blocks if loading
+			bool skip = (loadType == INI_LOAD_MAPDATA_ONLY) && (strcmp(token, "MapData") != 0);
+
+			if( token && !skip)
 			{
 				INIBlockParse parse = findBlockParse(token);
 				if (parse)

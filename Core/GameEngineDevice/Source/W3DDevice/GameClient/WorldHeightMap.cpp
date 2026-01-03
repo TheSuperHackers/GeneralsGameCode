@@ -41,6 +41,7 @@
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
 #include "Common/WellKnownKeys.h"
+#include "Common/MapData.h"
 
 #include "GameLogic/PolygonTrigger.h"
 #include "GameLogic/SidesList.h"
@@ -878,7 +879,7 @@ Bool WorldHeightMap::ParseHeightMapData(DataChunkInput &file, DataChunkInfo *inf
 	}
 
 	m_dataSize = file.readInt();
-	m_data = MSGNEW("WorldHeightMap_ParseHeightMapData") UnsignedByte[m_dataSize];
+	m_data = MSGNEW("WorldHeightMap_ParseHeightMapData") HeightSampleType[m_dataSize];
 	if (m_dataSize <= 0 || (m_dataSize != (m_width*m_height))) {
 		throw ERROR_CORRUPT_FILE_FORMAT	;
 	}
@@ -891,8 +892,14 @@ Bool WorldHeightMap::ParseHeightMapData(DataChunkInput &file, DataChunkInfo *inf
   m_seismicZVelocities = MSGNEW("WorldHeightMap_ParseHeightMapData _ zvelocities allocated") Real[m_dataSize];
   fillSeismicZVelocities( 0 );
 
+	//load as bytes first
+	std::vector<UnsignedByte> loaded_data(m_dataSize);
 
-	file.readArrayOfBytes((char *)m_data, m_dataSize);
+	file.readArrayOfBytes((char *)&loaded_data.at(0), m_dataSize);
+	for (size_t i = 0; i < loaded_data.size(); i++) {
+		m_data[i] = static_cast<HeightSampleType>(std::round(loaded_data[i]* TheMapData->m_HeightmapScale));
+	}
+
 	// Resize me.
 	if (info->version == K_HEIGHT_MAP_VERSION_1) {
 		Int newWidth = (m_width+1)/2;
@@ -952,11 +959,18 @@ Bool WorldHeightMap::ParseSizeOnly(DataChunkInput &file, DataChunkInfo *info, vo
 	}
 
 	m_dataSize = file.readInt();
-	m_data = MSGNEW("WorldHeightMap_ParseSizeOnly") UnsignedByte[m_dataSize];
+	m_data = MSGNEW("WorldHeightMap_ParseSizeOnly") HeightSampleType[m_dataSize];
 	if (m_dataSize <= 0 || (m_dataSize != (m_width*m_height))) {
 		throw ERROR_CORRUPT_FILE_FORMAT	;
 	}
-	file.readArrayOfBytes((char *)m_data, m_dataSize);
+
+	//load as bytes first
+	std::vector<UnsignedByte> loaded_data(m_dataSize);
+	file.readArrayOfBytes((char*)&loaded_data.at(0), m_dataSize);
+	for (size_t i = 0; i < loaded_data.size(); i++) {
+		m_data[i] = static_cast<HeightSampleType>(std::round(loaded_data[i] * TheMapData->m_HeightmapScale));
+	}
+
 	// Resize me.
 	if (info->version == K_HEIGHT_MAP_VERSION_1) {
 		Int newWidth = (m_width+1)/2;

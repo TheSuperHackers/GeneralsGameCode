@@ -9650,13 +9650,14 @@ void Pathfinder::changeBridgeState( PathfindLayerEnum layer, Bool repaired)
 
 void Pathfinder::getRadiusAndCenter(const Object *obj, Int &iRadius, Bool &center)
 {
-	enum {MAX_RADIUS = 2};
 	if (!obj)
 	{
 		center = true;
 		iRadius = 0;
 		return;
 	}
+	const Int max_radius = obj->getTemplate() != nullptr ? obj->getTemplate()->getMaxPathFindingCellRadius() : 2;
+
 	Real diameter = 2*obj->getGeometryInfo().getBoundingCircleRadius();
 	if (diameter>PATHFIND_CELL_SIZE_F && diameter<2.0f*PATHFIND_CELL_SIZE_F) {
 		diameter = 2.0f*PATHFIND_CELL_SIZE_F;
@@ -9669,9 +9670,9 @@ void Pathfinder::getRadiusAndCenter(const Object *obj, Int &iRadius, Bool &cente
 		center = true;
 	}
 	iRadius /= 2;
-	if (iRadius > MAX_RADIUS)
+	if (iRadius > max_radius)
 	{
-		iRadius = MAX_RADIUS;
+		iRadius = max_radius;
 		center = true;
 	}
 }

@@ -130,6 +130,7 @@ set(GAMEENGINE_SRC
     Include/Common/UserPreferences.h
     Include/Common/version.h
     Include/Common/WellKnownKeys.h
+    Include/Common/MapData.h
 #    Include/Common/WorkerProcess.h
 #    Include/Common/Xfer.h
 #    Include/Common/XferCRC.h
@@ -602,6 +603,7 @@ set(GAMEENGINE_SRC
     Source/Common/GameLOD.cpp
     Source/Common/GameMain.cpp
     Source/Common/GlobalData.cpp
+    Source/Common/MapData.cpp
     Source/Common/INI/INI.cpp
     Source/Common/INI/INIAiData.cpp
     Source/Common/INI/INIAnimation.cpp

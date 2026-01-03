@@ -71,6 +71,7 @@
 #include "Common/GameLOD.h"
 #include "Common/Registry.h"
 #include "Common/GameCommon.h"	// FOR THE ALLOW_DEBUG_CHEATS_IN_RELEASE #define
+#include "Common/MapData.h"
 
 #include "GameLogic/Armor.h"
 #include "GameLogic/AI.h"
@@ -451,6 +452,7 @@ void GameEngine::init()
 		initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", TheWritableGlobalData, &xferCRC, "Data\\INI\\Default\\GameData", "Data\\INI\\GameData");
 		TheWritableGlobalData->parseCustomDefinition();
 
+		initSubsystem(TheWriteableMapData, "TheWriteableMapData", MapData::createMapDataSystem(), &xferCRC);
 
 	#ifdef DUMP_PERF_STATS///////////////////////////////////////////////////////////////////////////
 	GetPrecisionTimer(&endTime64);//////////////////////////////////////////////////////////////////

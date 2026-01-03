@@ -33,6 +33,7 @@
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"
 #include "Common/WellKnownKeys.h"
+#include "Common/MapData.h"
 
 #include "GameClient/Line2D.h"
 #include "GameClient/View.h"
@@ -41,7 +42,6 @@
 #include "GameLogic/PolygonTrigger.h"
 #include "GameLogic/SidesList.h"
 #include "GameLogic/ScriptEngine.h"
-
 
 #include "Compression.h"
 #include "CUndoable.h"
@@ -1238,6 +1238,7 @@ BOOL CWorldBuilderDoc::OnNewDocument()
 
 	// clear out map-specific text
 	TheGameText->reset();
+	TheWriteableMapData->reset();
 
 	TNewHeightInfo hi;
 	hi.initialHeight = AfxGetApp()->GetProfileInt("GameOptions", "Default Map Height", 16);
@@ -1404,15 +1405,25 @@ BOOL CWorldBuilderDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 	// clear out map-specific text
 	TheGameText->reset();
+	TheWriteableMapData->reset();
 	AsciiString s = lpszPathName;
+	AsciiString s_mapini;
 	const char* lastSep = s.reverseFind('\\');
 	if (lastSep != NULL)
 	{
 		s.truncateTo(lastSep - s.str() + 1);
 	}
+	s_mapini = s;
 	s.concat("map.str");
 	DEBUG_LOG(("Looking for map-specific text in [%s]", s.str()));
 	TheGameText->initMapStringFile(s);
+
+	s_mapini.concat("map.ini");
+	if (TheFileSystem->doesFileExist(s_mapini.str()))
+	{
+		INI ini;
+		ini.load(s_mapini, INI_LOAD_MAPDATA_ONLY, nullptr, true);
+	}
 
 	WbApp()->setCurrentDirectory(AsciiString(buf));
 	::GetModuleFileName(NULL, buf, sizeof(buf));

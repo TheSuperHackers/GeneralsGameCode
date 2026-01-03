@@ -35,6 +35,7 @@
 #include "W3DDevice/GameClient/W3DFileSystem.h"
 #include "Common/FramePacer.h"
 #include "Common/GlobalData.h"
+#include "Common/MapData.h"
 #include "WHeightMapEdit.h"
 //#include "Common/GameFileSystem.h"
 #include "Common/FileSystem.h"
@@ -345,6 +346,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	INI ini;
 
 	initSubsystem(TheWritableGlobalData, new GlobalData(), "Data\\INI\\Default\\GameData", "Data\\INI\\GameData");
+	initSubsystem(TheWriteableMapData, new MapData());
 
 	TheFramePacer = new FramePacer();
 

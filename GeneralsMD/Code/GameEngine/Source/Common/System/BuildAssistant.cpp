@@ -1195,8 +1195,9 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 			Short totalSamples = sampleData.waterSamples + sampleData.landSamples;
 			Real threshold_water = totalSamples * 0.6f;
 			Real threshold_land = 1.0f;
+			Real max_land = totalSamples * 0.2f;
 
-			if (static_cast<Real>(sampleData.waterSamples) < threshold_water || static_cast<Real>(sampleData.landSamples) < threshold_land) {
+			if (static_cast<Real>(sampleData.waterSamples) < threshold_water || static_cast<Real>(sampleData.landSamples) < threshold_land || static_cast<Real>(sampleData.landSamples) > max_land) {
 				return LBC_RESTRICTED_TERRAIN;
 			}
 

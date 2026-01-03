@@ -101,6 +101,7 @@ enum LocomotorBehaviorZ CPP_11(: Int)
 	Z_FIXED_ABSOLUTE_HEIGHT,						// stays fixed at absolute height, regardless of physics
 	Z_RELATIVE_TO_GROUND_AND_BUILDINGS,	// stays fixed at surface-rel height including buildings, regardless of physics
 	Z_SMOOTH_RELATIVE_TO_HIGHEST_LAYER,	// try to follow a height relative to the highest layer.
+	Z_SEA_SURFACE_RELATIVE_HEIGHT,     //try to follow a specific height relative to terrain / water height, optimized for submarines
 
 	LOCOMOTOR_BEHAVIOR_Z_COUNT
 };
@@ -116,6 +117,7 @@ static const char *const TheLocomotorBehaviorZNames[] =
 	"FIXED_ABSOLUTE_HEIGHT",
 	"FIXED_RELATIVE_TO_GROUND_AND_BUILDINGS",
 	"RELATIVE_TO_HIGHEST_LAYER",
+	"SEA_SURFACE_RELATIVE_HEIGHT",
 
 	NULL
 };
