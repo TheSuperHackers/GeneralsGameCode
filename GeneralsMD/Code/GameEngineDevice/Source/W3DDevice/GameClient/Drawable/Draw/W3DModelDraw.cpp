@@ -1227,6 +1227,7 @@ void W3DModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "IgnoreAnimationSpeedScaling", INI::parseBool, NULL, offsetof(W3DModelDrawModuleData, m_ignoreAnimScaling) },
 		{ "IgnoreRotation", INI::parseBool, NULL, offsetof(W3DModelDrawModuleData, m_ignoreRotation) },
 		{ "OnlyVisibleToOwningPlayer", INI::parseBool, NULL, offsetof(W3DModelDrawModuleData, m_showForOwnerOnly) },
+		//{ "DisableMovementEffectsOverWater", INI::parseBool, NULL, offsetof(W3DModelDrawModuleData, m_disableMoveEffectsOverWater) },
     { 0, 0, 0, 0 }
 	};
   p.add(dataFieldParse);
@@ -3743,13 +3744,13 @@ void W3DModelDraw::reactToTransformChange( const Matrix3D* oldMtx,
 		Object *obj = getDrawable()->getObject();
 		const Coord3D* pos = getDrawable()->getPosition();
 
-		if ( m_fullyObscuredByShroud || obj->testStatus( OBJECT_STATUS_STEALTHED ) == TRUE )
+		if ( m_fullyObscuredByShroud || obj->testStatus( OBJECT_STATUS_STEALTHED ) == TRUE || getDrawable()->isDrawableEffectivelyHidden() )
 		{
 				m_trackRenderObject->addCapEdgeToTrack(pos->x, pos->y);
 		}
 		else
 		{
-			if (obj && obj->isSignificantlyAboveTerrain())
+			if (obj->isSignificantlyAboveTerrain() || (obj->isKindOf(KINDOF_NO_MOVE_EFFECTS_ON_WATER) && obj->isOverWater()))
 			{
 				m_trackRenderObject->setAirborne();
 			}

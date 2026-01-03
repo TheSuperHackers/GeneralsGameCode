@@ -316,7 +316,7 @@ public:
 
 	Bool															m_showForOwnerOnly;  ///< show this model only to the owning player 
 
-	Bool															m_autoSelectObject;  ///< show this model only to the owning player 
+	// Bool															m_disableMoveEffectsOverWater;  ///< disable track marks and tread/wheel anims over water
 
 	W3DModelDrawModuleData();
 	~W3DModelDrawModuleData();

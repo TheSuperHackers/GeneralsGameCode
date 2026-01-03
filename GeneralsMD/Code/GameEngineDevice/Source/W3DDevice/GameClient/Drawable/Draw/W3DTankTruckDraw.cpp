@@ -537,19 +537,33 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	if (physics == NULL)
 		return;
 
+	// skip wheel animations - if over water
+	bool overWater = false;
+	if (obj->isKindOf(KINDOF_NO_MOVE_EFFECTS_ON_WATER) && obj->isOverWater() && !obj->isSignificantlyAboveTerrainOrWater()) {
+		overWater = true;
+		// we need to zero all wheel offsets
+
+	}
+
 	const Coord3D *vel = physics->getVelocity();
 	Real speed = physics->getVelocityMagnitude();
 
 	const TWheelInfo *wheelInfo = getDrawable()->getWheelInfo();	// note, can return null!
 	if (wheelInfo && (m_frontLeftTireBone || m_rearLeftTireBone))
 	{
-		const Real rotationFactor = getW3DTankTruckDrawModuleData()->m_rotationSpeedMultiplier;
-		const Real powerslideRotationAddition = getW3DTankTruckDrawModuleData()->m_powerslideRotationAddition * m_isPowersliding;
+		if (!overWater) {
+			const Real rotationFactor = getW3DTankTruckDrawModuleData()->m_rotationSpeedMultiplier;
+			const Real powerslideRotationAddition = getW3DTankTruckDrawModuleData()->m_powerslideRotationAddition * m_isPowersliding;
 
-		m_frontWheelRotation += rotationFactor*speed;
-		m_rearWheelRotation += rotationFactor*(speed+powerslideRotationAddition);
-		m_frontWheelRotation = WWMath::Normalize_Angle(m_frontWheelRotation);
-		m_rearWheelRotation = WWMath::Normalize_Angle(m_rearWheelRotation);
+			m_frontWheelRotation += rotationFactor * speed;
+			m_rearWheelRotation += rotationFactor * (speed + powerslideRotationAddition);
+			m_frontWheelRotation = WWMath::Normalize_Angle(m_frontWheelRotation);
+			m_rearWheelRotation = WWMath::Normalize_Angle(m_rearWheelRotation);
+		}
+
+		// For now, just use the same values for mid wheels -- may want to do independent calcs later...
+		m_midFrontWheelRotation = m_frontWheelRotation;
+		m_midRearWheelRotation = m_rearWheelRotation;
 
 		Matrix3D wheelXfrm(1);
 		if (m_frontLeftTireBone)
@@ -707,7 +721,7 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	m_treadDebrisRight->setBurstCountMultiplier( velMult.z );
 #endif
 	//Update movement of treads
-	if (m_treadCount)
+	if (m_treadCount && !(obj->isKindOf(KINDOF_NO_MOVE_EFFECTS_ON_WATER) && obj->isOverWater()))
 	{
 		Real offset_u;
 		Real treadScrollSpeed=getW3DTankTruckDrawModuleData()->m_treadAnimationRate;

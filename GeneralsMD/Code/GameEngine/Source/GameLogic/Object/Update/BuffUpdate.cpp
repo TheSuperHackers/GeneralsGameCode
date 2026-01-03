@@ -79,6 +79,7 @@ void BuffUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "RequiredAffectKindOf",		KindOfMaskType::parseFromINI,		NULL, offsetof( BuffUpdateModuleData, m_requiredAffectKindOf ) },
+		{ "RequiresAllKindOfs", INI::parseBool, NULL, offsetof(BuffUpdateModuleData, m_requiresAllKindOfs) },
 		{ "ForbiddenAffectKindOf",	KindOfMaskType::parseFromINI,		NULL, offsetof( BuffUpdateModuleData, m_forbiddenAffectKindOf ) },
 		{ "AffectsTargets", INI::parseBitString32,	TheWeaponAffectsMaskNames, offsetof(BuffUpdateModuleData, m_targetsMask) },
 		{ "AffectAirborne", INI::parseBool, NULL, offsetof(BuffUpdateModuleData, m_isAffectAirborne) },
@@ -115,14 +116,21 @@ struct tempBuffData // This is used for iterator to apply buff to contained obje
 	KindOfMaskType m_requiredMask;
 	KindOfMaskType m_forbiddenMask;
 	Bool m_isAffectAirborne;
+	Bool m_requiresAllKindOfs;
 };
 void containIteratingDoBuff( Object *passenger, void *voidData)
 {
 	tempBuffData *data = (tempBuffData *)voidData;
 
-	if (passenger->isKindOfMulti(data->m_requiredMask, data->m_forbiddenMask)) {
+	bool match = FALSE;
+	if (!data->m_requiresAllKindOfs)
+		match = passenger->isAnyKindOf(data->m_requiredMask) && !passenger->isAnyKindOf(data->m_forbiddenMask);
+	else
+		match = passenger->isKindOfMulti(data->m_requiredMask, data->m_forbiddenMask);
+
+	if (match) {
 		if (data->m_isAffectAirborne || !passenger->isAirborneTarget()) {
-			passenger->applyBuff(data->m_template, data->m_duration, data->m_sourceObj); // TODO: create function in object
+			passenger->applyBuff(data->m_template, data->m_duration, data->m_sourceObj);
 		}
 	}
 }
@@ -170,16 +178,23 @@ UpdateSleepTime BuffUpdate::update( void )
 	buffData.m_duration = data->m_buffDuration;
 	buffData.m_requiredMask = data->m_requiredAffectKindOf;
 	buffData.m_forbiddenMask = data->m_forbiddenAffectKindOf;
+	buffData.m_requiresAllKindOfs = data->m_requiresAllKindOfs;
 	buffData.m_isAffectAirborne = data->m_isAffectAirborne;
 	buffData.m_sourceObj = me; // TODO: Support for projectiles
 
 	
 	for( Object *currentObj = iter->first(); currentObj != NULL; currentObj = iter->next() )
 	{
-		if( currentObj->isKindOfMulti(data->m_requiredAffectKindOf, data->m_forbiddenAffectKindOf) )
+		bool match = FALSE;
+		if (!data->m_requiresAllKindOfs)
+			match = currentObj->isAnyKindOf(data->m_requiredAffectKindOf) && !currentObj->isAnyKindOf(data->m_forbiddenAffectKindOf);
+		else
+			match = currentObj->isKindOfMulti(data->m_requiredAffectKindOf, data->m_forbiddenAffectKindOf);
+
+		if (match)
 		{
 			if (data->m_isAffectAirborne || !currentObj->isAirborneTarget()) {
-				currentObj->applyBuff(buffTemp, data->m_buffDuration, me);  // TODO
+				currentObj->applyBuff(buffTemp, data->m_buffDuration, me);
 			}
 		}
 

@@ -117,6 +117,7 @@ static_assert(ARRAY_SIZE(TheDrawableIconNames) == MAX_ICONS + 1, "Incorrect arra
 
 
 // -----
+template<>
 const char* const TintStatusFlags::s_bitNameList[] =
 {
 	"NONE",
@@ -131,6 +132,8 @@ const char* const TintStatusFlags::s_bitNameList[] =
 	"TELEPORT_RECOVER",
 	"DISABLED_CHRONO",
 	"GAINING_CHRONO_DAMAGE",
+	"FORCE_FIELD",
+	"IRON_CURTAIN",
 	"EXTRA1",
 	"EXTRA2",
 	"EXTRA3",
@@ -139,8 +142,12 @@ const char* const TintStatusFlags::s_bitNameList[] =
 	"EXTRA6",
 	"EXTRA7",
 	"EXTRA8",
+	"EXTRA9",
+	"EXTRA10",
 	NULL
 };
+static_assert(ARRAY_SIZE(TintStatusFlags::s_bitNameList) == TintStatusFlags::NumBits + 1, "Incorrect array size");
+
 
 /** 
  * Returns a special DynamicAudioEventInfo which can be used to mark a sound as "no sound".
@@ -238,6 +245,13 @@ DrawableLocoInfo::DrawableLocoInfo()
 DrawableLocoInfo::~DrawableLocoInfo()
 {
 }
+
+// ------------------------------------------------------------------------------------------------
+void DrawableLocoInfo::reset()
+{
+	*this = DrawableLocoInfo();
+}
+
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -1458,6 +1472,22 @@ void Drawable::applyPhysicsXform(Matrix3D* mtx)
 		mtx->Rotate_Y( m_physicsXform->m_totalPitch );
 		mtx->Rotate_X( -m_physicsXform->m_totalRoll );
 		mtx->Rotate_Z( m_physicsXform->m_totalYaw );
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void Drawable::resetPhysicsXform()
+{
+	if (m_physicsXform != NULL)
+	{
+		m_physicsXform->m_totalPitch = 0.0;
+		m_physicsXform->m_totalRoll = 0.0;
+		m_physicsXform->m_totalYaw = 0.0;
+		m_physicsXform->m_totalZ = 0.0;
+
+		if (m_locoInfo) {
+			m_locoInfo->reset();
+		}
 	}
 }
 

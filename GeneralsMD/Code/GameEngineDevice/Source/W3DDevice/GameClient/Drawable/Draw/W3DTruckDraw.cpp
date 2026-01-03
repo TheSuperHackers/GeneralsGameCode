@@ -416,11 +416,20 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	if (physics == NULL)
 		return;
 
+	// skip wheel animations - if over water
+	bool overWater = false;
+	if (obj->isKindOf(KINDOF_NO_MOVE_EFFECTS_ON_WATER) && obj->isOverWater() && !obj->isSignificantlyAboveTerrainOrWater()) {
+		overWater = true;
+		// we need to zero all wheel offsets
+
+	}
+
 	const Coord3D *vel = physics->getVelocity();
 	Real speed = physics->getVelocityMagnitude();
 
 	const TWheelInfo *wheelInfo = getDrawable()->getWheelInfo();	// note, can return null!
 	AIUpdateInterface *ai = obj->getAI();
+
 	if (m_cabBone && wheelInfo) {
 		Matrix3D cabXfrm(1);
 		cabXfrm.Make_Identity();
@@ -463,31 +472,34 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 
 	if (m_frontLeftTireBone || m_rearLeftTireBone)
 	{
-		const Real rotationFactor = moduleData->m_rotationSpeedMultiplier;
-		Real powerslideRotationAddition = moduleData->m_powerslideRotationAddition * m_isPowersliding;
 
-		if (ai) {
-			Locomotor *loco = ai->getCurLocomotor();
-			if (loco) {
-				if (loco->isMovingBackwards()) {
-					speed = -speed; // rotate wheels backwards.  jba.
-					powerslideRotationAddition = -powerslideRotationAddition;
+		if (!overWater) {
+
+			const Real rotationFactor = moduleData->m_rotationSpeedMultiplier;
+			Real powerslideRotationAddition = moduleData->m_powerslideRotationAddition * m_isPowersliding;
+
+			if (ai) {
+				Locomotor* loco = ai->getCurLocomotor();
+				if (loco) {
+					if (loco->isMovingBackwards()) {
+						speed = -speed; // rotate wheels backwards.  jba.
+						powerslideRotationAddition = -powerslideRotationAddition;
+					}
 				}
 			}
+
+			m_frontWheelRotation += rotationFactor * speed;
+			m_rearWheelRotation += rotationFactor * (speed + powerslideRotationAddition);
+			m_frontWheelRotation = WWMath::Normalize_Angle(m_frontWheelRotation);
+			m_rearWheelRotation = WWMath::Normalize_Angle(m_rearWheelRotation);
+
 		}
-
-		m_frontWheelRotation += rotationFactor*speed;
-		m_rearWheelRotation += rotationFactor*(speed + powerslideRotationAddition);
-		m_frontWheelRotation = WWMath::Normalize_Angle(m_frontWheelRotation);
-		m_rearWheelRotation = WWMath::Normalize_Angle(m_rearWheelRotation);
-
 		// For now, just use the same values for mid wheels -- may want to do independent calcs later...
 		m_midFrontWheelRotation = m_frontWheelRotation;
 		m_midRearWheelRotation = m_rearWheelRotation;
 
+
 		Matrix3D wheelXfrm(1);
-
-
 
 		if (m_frontLeftTireBone && wheelInfo)
 		{

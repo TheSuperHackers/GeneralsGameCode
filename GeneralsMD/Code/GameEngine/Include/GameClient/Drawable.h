@@ -155,6 +155,7 @@ public:
 	TWheelInfo m_wheelInfo;			///< Wheel offset & angle info for a wheeled type locomotor.
 
 	DrawableLocoInfo();
+	void reset();
 };
 
 //-----------------------------------------------------------------------------
@@ -604,6 +605,8 @@ public:
   Real friend_getStealthOpacity( void ) { return m_stealthOpacity; }
   Real friend_getExplicitOpacity( void ) { return m_explicitOpacity; }
   Real friend_getEffectiveStealthOpacity( void ) { return m_effectiveStealthOpacity; }
+
+	void resetPhysicsXform();
 
 protected:
 

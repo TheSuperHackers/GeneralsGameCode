@@ -128,6 +128,8 @@ public:
 	Real getHeightAboveTerrain() const;
 	Real getHeightAboveTerrainOrWater() const;
 
+	Bool isOverWater() const;
+
 	Bool isAboveTerrain() const { return getHeightAboveTerrain() > 0.0f; }
 	Bool isAboveTerrainOrWater() const { return getHeightAboveTerrainOrWater() > 0.0f; }
 
@@ -135,6 +137,7 @@ public:
 	If we treat this as airborne, then they slide down slopes.  This checks whether
 	they are high enough that we should let them act like they're flying. jba. */
 	Bool isSignificantlyAboveTerrain() const ;
+	Bool isSignificantlyAboveTerrainOrWater() const ;
 
 	void convertBonePosToWorldPos(const Coord3D* bonePos, const Matrix3D* boneTransform, Coord3D* worldPos, Matrix3D* worldTransform) const;
 
@@ -186,6 +189,7 @@ private:
 	mutable Coord3D		m_cachedDirVector;									///< unit direction vector
 	mutable Real			m_cachedAltitudeAboveTerrain;
 	mutable Real			m_cachedAltitudeAboveTerrainOrWater;
+	mutable Bool			m_cachedIsOverWater;
 	mutable Int				m_cacheFlags;
 
 };

@@ -365,7 +365,7 @@ void W3DTankDraw::doDrawModule(const Matrix3D* transformMtx)
 	m_treadDebrisRight->setBurstCountMultiplier( velMult.z );
 
 	//Update movement of treads
-	if (m_treadCount)
+	if (m_treadCount && !(obj->isKindOf(KINDOF_NO_MOVE_EFFECTS_ON_WATER) && obj->isOverWater()))
 	{
 		PhysicsTurningType turn=physics->getTurning();
 		Real offset_u;

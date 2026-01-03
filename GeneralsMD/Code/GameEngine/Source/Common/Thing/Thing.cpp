@@ -321,15 +321,28 @@ Real Thing::getHeightAboveTerrainOrWater() const
 		if (TheTerrainLogic->isUnderwater(pos->x, pos->y, &waterZ))
 		{
 			m_cachedAltitudeAboveTerrainOrWater = pos->z - waterZ;
+			m_cachedIsOverWater = TRUE;
 		}
 		else
 		{
 			m_cachedAltitudeAboveTerrainOrWater = getHeightAboveTerrain();
+			m_cachedIsOverWater = FALSE;
 		}
 		m_cacheFlags |= VALID_ALTITUDE_SEALEVEL;
 	}
 	return m_cachedAltitudeAboveTerrainOrWater;
 }
+
+// ------------------------------------------------------------------------------
+Bool Thing::isOverWater() const
+{
+	if (!(m_cacheFlags & VALID_ALTITUDE_SEALEVEL))
+	{
+		getHeightAboveTerrainOrWater();
+	}
+	return m_cachedIsOverWater;
+}
+
 
 //=============================================================================
 /** If we treat this as airborne, then they slide down slopes.  This checks whether
@@ -340,6 +353,13 @@ Bool Thing::isSignificantlyAboveTerrain() const
 	// If it's high enough that it will take more than 3 frames to return to the ground,
 	// then it's significantly airborne.  jba
 	return (getHeightAboveTerrain() > -(3*3)*TheGlobalData->m_gravity);
+}
+//-------------------------------------------------------------------------------------------------
+Bool Thing::isSignificantlyAboveTerrainOrWater() const
+{
+	// If it's high enough that it will take more than 3 frames to return to the ground,
+	// then it's significantly airborne.  jba
+	return (getHeightAboveTerrainOrWater() > -(3 * 3) * TheGlobalData->m_gravity);
 }
 
 

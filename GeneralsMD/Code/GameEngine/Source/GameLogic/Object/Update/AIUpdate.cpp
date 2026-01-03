@@ -952,6 +952,14 @@ void AIUpdateInterface::chooseGoodLocomotorFromCurrentSet( void )
 		// Add speed multiplier to loco
 		if (m_speedMultiplier != 1.0)
 			m_curLocomotor->applySpeedMultiplier(m_speedMultiplier);
+
+		// Reset drawable transforms
+		if (prevLoco != NULL && prevLoco->getAppearance() != m_curLocomotor->getAppearance()) {
+			Drawable* draw = getObject()->getDrawable();
+			if (draw) {
+				draw->resetPhysicsXform();
+			}
+		}
 	}
 }
 

@@ -74,6 +74,7 @@ public:
 	KindOfMaskType						m_forbiddenAffectKindOf;	///< Must be clear on target
 	Int									m_targetsMask;				///< ALLIES, ENEMIES or NEUTRALS
 	Bool								m_isAffectAirborne;					///< Affect Airborne targets
+	Bool								m_requiresAllKindOfs;					///< requires ALL requiredKindOfs or just one of them
 	UnsignedInt								m_buffDuration;					///< How long a hit lasts on target
 	UnsignedInt								m_buffDelay;							///< How often to pulse
 	Real											m_buffRange;							///< How far to affect
