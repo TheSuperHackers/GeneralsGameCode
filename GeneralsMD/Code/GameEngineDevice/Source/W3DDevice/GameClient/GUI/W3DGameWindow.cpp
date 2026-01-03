@@ -378,14 +378,21 @@ void W3DGameWinDefaultDraw( GameWindow *window, WinInstanceData *instData )
 
 	}
 
-	// if we have a video buffer, draw the video buffer
-	if ( instData->m_videoBuffer )
+	// if the display has a movie playing then we need to draw the video buffer
+	if( TheDisplay->isMoviePlaying() )
 	{
-		ICoord2D pos, size;
-		window->winGetScreenPosition( &pos.x, &pos.y );
-		window->winGetSize( &size.x, &size.y );
 
-		TheDisplay->drawVideoBuffer( instData->m_videoBuffer, pos.x, pos.y, pos.x + size.x, pos.y + size.y );
+		if (TheDisplay->isVideoAspectMaintained()) {
+			TheDisplay->drawScaledVideoBuffer();
+		}
+		else {
+			ICoord2D pos, size;
+			window->winGetScreenPosition( &pos.x, &pos.y );
+			window->winGetSize( &size.x, &size.y );
+
+			TheDisplay->drawVideoBuffer( pos.x, pos.y, pos.x + size.x, pos.y + size.y );
+		}
+
 	}
 
 }

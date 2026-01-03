@@ -150,6 +150,7 @@ public:
 	Real getResolutionFontAdjustment(void);
 
 	Bool getShowMoneyPerMinute(void) const;
+	Bool getMaintainVideoAspect(void) const;
 };
 
 //-----------------------------------------------------------------------------

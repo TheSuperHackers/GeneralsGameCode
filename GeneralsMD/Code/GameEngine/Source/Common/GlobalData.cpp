@@ -329,6 +329,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "Sounds3DOn",									INI::parseBool,				NULL,			offsetof( GlobalData, m_sounds3DOn ) },
 	{ "SpeechOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_speechOn ) },
 	{ "VideoOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_videoOn ) },
+	{ "MaintainVideoAspect",				INI::parseBool,				NULL,			offsetof(GlobalData, m_maintainVideoAspect) },
 	{ "DisableCameraMovements",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableCameraMovement ) },
 
 /* These are internal use only, they do not need file definitons
@@ -784,6 +785,7 @@ GlobalData::GlobalData()
 	m_sounds3DOn = TRUE;
 	m_speechOn = TRUE;
 	m_videoOn = TRUE;
+	m_maintainVideoAspect = TRUE;
 	m_disableCameraMovement = FALSE;
 	m_maxVisibleTranslucentObjects = 512;
 	m_maxVisibleOccluderObjects = 512;
@@ -1226,6 +1228,7 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	TheWritableGlobalData->m_systemTimeFontSize = optionPref.getSystemTimeFontSize();
 	TheWritableGlobalData->m_gameTimeFontSize = optionPref.getGameTimeFontSize();
 	TheWritableGlobalData->m_showMoneyPerMinute = optionPref.getShowMoneyPerMinute();
+	TheWritableGlobalData->m_maintainVideoAspect = optionPref.getMaintainVideoAspect();
 
 	Int val=optionPref.getGammaValue();
 	//generate a value between 0.6 and 2.0.

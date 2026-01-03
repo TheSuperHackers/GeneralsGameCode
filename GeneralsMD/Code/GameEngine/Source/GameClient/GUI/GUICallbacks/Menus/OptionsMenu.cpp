@@ -995,6 +995,19 @@ Bool OptionPreferences::getShowMoneyPerMinute(void) const
 	return FALSE;
 }
 
+Bool OptionPreferences::getMaintainVideoAspect(void) const
+{
+	OptionPreferences::const_iterator it = find("MaintainVideoAspect");
+	if (it == end())
+		return TheGlobalData->m_maintainVideoAspect;
+
+	if (stricmp(it->second.str(), "yes") == 0)
+	{
+		return TRUE;
+	}
+	return FALSE;
+}
+
 static OptionPreferences *pref = NULL;
 
 static void setDefaults( void )
@@ -1572,6 +1585,16 @@ static void saveOptions( void )
 		prefString = show ? "yes" : "no";
 		(*pref)["ShowMoneyPerMinute"] = prefString;
 		TheWritableGlobalData->m_showMoneyPerMinute = show;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Set Video Scaling
+	{
+		Bool maintainAspect = pref->getMaintainVideoAspect();
+		AsciiString prefString;
+		prefString = maintainAspect ? "yes" : "no";
+		(*pref)["MaintainVideoAspect"] = prefString;
+		TheWritableGlobalData->m_maintainVideoAspect = maintainAspect;
 	}
 
 	//-------------------------------------------------------------------------------------------------

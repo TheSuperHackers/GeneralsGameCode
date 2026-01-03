@@ -326,6 +326,7 @@ void GameClient::init( void )
 	if( TheDisplay ) {
 		TheDisplay->init();
  		TheDisplay->setName("TheDisplay");
+		TheDisplay->setMaintainVideoAspect(TheGlobalData->m_maintainVideoAspect);
 	}
 
 	TheHeaderTemplateManager = MSGNEW("GameClientSubsystem") HeaderTemplateManager;
