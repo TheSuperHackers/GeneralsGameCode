@@ -87,6 +87,9 @@ BoneFXUpdate::BoneFXUpdate( Thing *thing, const ModuleData* moduleData ) : Updat
 	}
 	m_particleSystemIDs.clear();
 	m_active = FALSE;
+#if !PRESERVE_RETAIL_BEHAVIOR
+	m_inactive = FALSE;
+#endif
 
 	m_curBodyState = BODY_PRISTINE;
 }
@@ -288,6 +291,11 @@ UpdateSleepTime BoneFXUpdate::update()
 /// @todo srj use SLEEPY_UPDATE here
 	const BoneFXUpdateModuleData *d = getBoneFXUpdateModuleData();
 	Int now = TheGameLogic->getFrame();
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+	if(m_inactive == TRUE)
+		return UPDATE_SLEEP_NONE;
+#endif
 
 	if (m_active == FALSE) {
 		initTimes();
@@ -566,7 +574,11 @@ void BoneFXUpdate::xfer( Xfer *xfer )
 {
 
 	// version
+#if !RETAIL_COMPATIBLE_XFER_SAVE && !PRESERVE_RETAIL_BEHAVIOR
+	XferVersion currentVersion = 2;
+#else
 	XferVersion currentVersion = 1;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -642,6 +654,11 @@ void BoneFXUpdate::xfer( Xfer *xfer )
 
 	// active
 	xfer->xferBool( &m_active );
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+	if( version >= 2)
+		xfer->xferBool( &m_inactive );
+#endif
 
 }
 

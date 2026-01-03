@@ -86,7 +86,10 @@ void ProjectileStreamUpdate::addProjectile( ObjectID sourceID, ObjectID newID, O
 		{
 			// Changed targets, insert a hole to break the stream
 			m_projectileIDs[ m_nextFreeIndex ] = INVALID_ID;
-			m_nextFreeIndex = (m_nextFreeIndex + 1) % MAX_PROJECTILE_STREAM;
+
+			// TheSuperHackers @ performance IamInnocent 03/01/26 - Refractor the usage of Modulo to Comparison
+			if(++m_nextFreeIndex >= MAX_PROJECTILE_STREAM)
+				m_nextFreeIndex -= MAX_PROJECTILE_STREAM;
 
 			// And mark this as our new target
 			m_targetObject = victimID;
@@ -101,7 +104,8 @@ void ProjectileStreamUpdate::addProjectile( ObjectID sourceID, ObjectID newID, O
 		{
 			// New position, so insert hole
 			m_projectileIDs[ m_nextFreeIndex ] = INVALID_ID;
-			m_nextFreeIndex = (m_nextFreeIndex + 1) % MAX_PROJECTILE_STREAM;
+			if(++m_nextFreeIndex >= MAX_PROJECTILE_STREAM)
+				m_nextFreeIndex -= MAX_PROJECTILE_STREAM;
 
 			// And mark this as our new target
 			m_targetPosition = (*victimPos);
@@ -117,7 +121,8 @@ void ProjectileStreamUpdate::addProjectile( ObjectID sourceID, ObjectID newID, O
 
 	// Keep track of the id in a circular array
 	m_projectileIDs[ m_nextFreeIndex ] = newID;
-	m_nextFreeIndex = (m_nextFreeIndex + 1) % MAX_PROJECTILE_STREAM;
+	if(++m_nextFreeIndex >= MAX_PROJECTILE_STREAM)
+		m_nextFreeIndex -= MAX_PROJECTILE_STREAM;
 	DEBUG_ASSERTCRASH( m_nextFreeIndex != m_firstValidIndex, ("Need to increase the allowed number of simultaneous particles in ProjectileStreamUpdate.") );
 }
 
@@ -126,7 +131,8 @@ void ProjectileStreamUpdate::cullFrontOfList()
 	while( (m_firstValidIndex != m_nextFreeIndex)  &&  (TheGameLogic->findObjectByID( m_projectileIDs[m_firstValidIndex] ) == nullptr) )
 	{
 		// Chew off the front if they are gone.  Don't chew on the middle, as bad ones there are just a break in the chain
-		m_firstValidIndex = (m_firstValidIndex + 1) % MAX_PROJECTILE_STREAM;
+		if(++m_nextFreeIndex >= MAX_PROJECTILE_STREAM)
+			m_nextFreeIndex -= MAX_PROJECTILE_STREAM;
 	}
 }
 
@@ -189,7 +195,8 @@ void ProjectileStreamUpdate::getAllPoints( Vector3 *points, Int *count )
 			points[pointCount].Z = 0;
 		}
 
-		pointIndex = (pointIndex + 1) % MAX_PROJECTILE_STREAM;
+		if(++pointIndex >= MAX_PROJECTILE_STREAM)
+			pointIndex -= MAX_PROJECTILE_STREAM;
 		pointCount++;
 	}
 
