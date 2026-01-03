@@ -2596,14 +2596,16 @@ StateReturnType AIAttackApproachTargetState::updateInternal()
 	{
 		if( victim->testStatus( OBJECT_STATUS_STEALTHED ) && !victim->testStatus( OBJECT_STATUS_DETECTED ) )
 		{
+			// If obj is stealthed, can no longer approach.
+			// TheSuperHackers @bugfix Stubbjax 19/11/2025 Except when disarming stealthed mines.
 #if RETAIL_COMPATIBLE_CRC
-			return STATE_FAILURE;	// If obj is stealthed, can no longer approach.
+			return STATE_FAILURE;
 #else
 			const Bool isTargetingMine = weapon && weapon->getDamageType() == DAMAGE_DISARM &&
 				(victim->isKindOf(KINDOF_MINE));
 
 			if (!isTargetingMine)
-				return STATE_FAILURE;	// If obj is stealthed, can no longer approach - unless we're targeting a mine!
+				return STATE_FAILURE;
 #endif
 		}
 		ai->setCurrentVictim(victim);
