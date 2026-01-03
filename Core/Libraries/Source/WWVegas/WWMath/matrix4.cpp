@@ -43,6 +43,10 @@
 #include "matrix4.h"
 #include <assert.h>
 
+#include "WWLib/win.h"
+#include <d3d8types.h>
+#include <d3dx8math.h>
+
 /***********************************************************************************************
  * Matrix4x4::Multiply -- Multiply two Matrix4x4's together                                        *
  *                                                                                             *
@@ -195,3 +199,70 @@ int operator != (const Matrix4x4 & a, const Matrix4x4 & b)
 	return (!(a == b));
 }
 
+
+void To_D3DMATRIX(_D3DMATRIX& dxm, const Matrix4x4& m)
+{
+	dxm.m[0][0] = m[0][0];
+	dxm.m[0][1] = m[1][0];
+	dxm.m[0][2] = m[2][0];
+	dxm.m[0][3] = m[3][0];
+
+	dxm.m[1][0] = m[0][1];
+	dxm.m[1][1] = m[1][1];
+	dxm.m[1][2] = m[2][1];
+	dxm.m[1][3] = m[3][1];
+
+	dxm.m[2][0] = m[0][2];
+	dxm.m[2][1] = m[1][2];
+	dxm.m[2][2] = m[2][2];
+	dxm.m[2][3] = m[3][2];
+
+	dxm.m[3][0] = m[0][3];
+	dxm.m[3][1] = m[1][3];
+	dxm.m[3][2] = m[2][3];
+	dxm.m[3][3] = m[3][3];
+}
+
+_D3DMATRIX To_D3DMATRIX(const Matrix4x4& m)
+{
+	_D3DMATRIX dxm;
+	To_D3DMATRIX(dxm, m);
+	return dxm;
+}
+
+D3DXMATRIX To_D3DXMATRIX(const Matrix4x4& m)
+{
+	D3DXMATRIX dxm;
+	To_D3DMATRIX(dxm, m);
+	return dxm;
+}
+
+void To_Matrix4x4(Matrix4x4& m, const _D3DMATRIX& dxm)
+{
+	m[0][0] = dxm.m[0][0];
+	m[0][1] = dxm.m[1][0];
+	m[0][2] = dxm.m[2][0];
+	m[0][3] = dxm.m[3][0];
+
+	m[1][0] = dxm.m[0][1];
+	m[1][1] = dxm.m[1][1];
+	m[1][2] = dxm.m[2][1];
+	m[1][3] = dxm.m[3][1];
+
+	m[2][0] = dxm.m[0][2];
+	m[2][1] = dxm.m[1][2];
+	m[2][2] = dxm.m[2][2];
+	m[2][3] = dxm.m[3][2];
+
+	m[3][0] = dxm.m[0][3];
+	m[3][1] = dxm.m[1][3];
+	m[3][2] = dxm.m[2][3];
+	m[3][3] = dxm.m[3][3];
+}
+
+Matrix4x4 To_Matrix4x4(const _D3DMATRIX& dxm)
+{
+	Matrix4x4 m;
+	To_Matrix4x4(m, dxm);
+	return m;
+}
