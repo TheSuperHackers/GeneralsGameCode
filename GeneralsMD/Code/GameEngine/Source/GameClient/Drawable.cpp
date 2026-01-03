@@ -2618,10 +2618,11 @@ void Drawable::draw()
 		{
 			// keep fading any added material unless something has set it to zero
 			// TheSuperHackers @tweak The stealth opacity fade time step is now decoupled from the render update.
+			static_assert(MATERIAL_PASS_OPACITY_FADE_SCALAR > 0.0f && MATERIAL_PASS_OPACITY_FADE_SCALAR < 1.0f, "MATERIAL_PASS_OPACITY_FADE_SCALAR must be between 0 and 1");
+
 			const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
-			const Real opacityFrame = m_secondMaterialPassOpacity * MATERIAL_PASS_OPACITY_FADE_SCALAR;
-			const Real opacityStep = (m_secondMaterialPassOpacity - opacityFrame) * timeScale;
-			m_secondMaterialPassOpacity -= opacityStep;
+			const Real fadeScalar = 1.0f - (1.0f - MATERIAL_PASS_OPACITY_FADE_SCALAR) * timeScale;
+			m_secondMaterialPassOpacity *= fadeScalar;
 		}
 		else
 		{
