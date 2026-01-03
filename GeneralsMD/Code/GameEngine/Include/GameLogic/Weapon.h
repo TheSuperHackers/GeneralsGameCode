@@ -464,6 +464,13 @@ public:
 	Bool isPlayFXWhenStealthed() const { return m_playFXWhenStealthed; }
 	Bool getDieOnDetonate() const { return m_dieOnDetonate; }
 
+#if !PRESERVE_RETAIL_BEHAVIOR
+	UnsignedInt getFXRenderingInterval() const { return m_fxRenderingInterval; }
+	UnsignedInt getFXMaxStackInterval() const { return m_fxMaxStackInterval; }
+	Int getFXMaxStackPerLoc() const { return m_fxMaxStackPerLoc; }
+	Bool getCheckFireFXForFXMaxStack() const { return m_checkFireFXForFXMaxStack; }
+#endif
+
 	Bool shouldProjectileCollideWith(
 		const Object* projectileLauncher,
 		const Object* projectile,
@@ -562,6 +569,13 @@ private:
 	ObjectStatusTypes m_damageStatusType;		///< If our damage is Status damage, the status we apply
 	UnsignedInt m_suspendFXDelay;						///< The fx can be suspended for any delay, in frames, then they will execute as normal
 	Bool m_dieOnDetonate;
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+	UnsignedInt m_fxRenderingInterval;
+	UnsignedInt m_fxMaxStackInterval;
+	Int m_fxMaxStackPerLoc;
+	Bool m_checkFireFXForFXMaxStack;
+#endif
 
 	mutable HistoricWeaponDamageList m_historicDamage;
 	mutable UnsignedInt m_historicDamageTriggerId;
@@ -766,6 +780,11 @@ public:
 	void setClipPercentFull(Real percent, Bool allowReduction);
 	UnsignedInt getSuspendFXFrame( void ) const { return m_suspendFXFrame; }
 
+#if !PRESERVE_RETAIL_BEHAVIOR
+	UnsignedInt getLastFXShotFrame( void ) const { return m_lastFXFireFrame; }
+	void setLastFXShotFrame(UnsignedInt frame) { m_lastFXFireFrame = frame; }
+#endif
+
 protected:
 
 	Weapon(const WeaponTemplate* tmpl, WeaponSlotType wslot);
@@ -810,6 +829,10 @@ private:
 	std::vector<Int>					m_scatterTargetsUnused;			///< A running memory of which targets I've used, so I can shoot them all at random
 	Bool											m_pitchLimited;
 	Bool											m_leechWeaponRangeActive;		///< This weapon has unlimited range until attack state is aborted!
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+	UnsignedInt								m_lastFXFireFrame;						///< frame a shot was last fired on with FX Rendered
+#endif
 
 	// setter function for status that should not be used outside this class
 	void setStatus( WeaponStatus status) { m_status = status; }

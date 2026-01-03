@@ -243,6 +243,10 @@ public:
 
 	virtual UpdateSleepTime update();
 
+#if !PRESERVE_RETAIL_BEHAVIOR
+	void setInactive() { m_inactive = TRUE; }
+#endif
+
 protected:
 
 	virtual void onObjectCreated();
@@ -273,4 +277,8 @@ protected:
 	BodyDamageType m_curBodyState;
 	Bool m_bonesResolved[BODYDAMAGETYPE_COUNT];
 	Bool m_active;
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+	Bool m_inactive;
+#endif
 };
