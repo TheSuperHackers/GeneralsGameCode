@@ -4033,7 +4033,7 @@ void W3DModelDraw::updateSubObjects()
 //-------------------------------------------------------------------------------------------------
 void W3DModelDraw::setNeedUpdateTurretPositioning(Bool set)
 {
-	m_needUpdateTurretPosition = set; // A simple function with the dangers of an atomic bomb, misuse and it'll cause desync
+	m_needUpdateTurretPosition = set;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -4058,7 +4058,11 @@ void W3DModelDraw::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 2;
+#else
+	const XferVersion currentVersion = 3;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -4284,13 +4288,14 @@ void W3DModelDraw::xfer( Xfer *xfer )
 	if( xfer->getXferMode() == XFER_LOAD && m_subObjectVec.empty() == FALSE )
 		updateSubObjects();
 
-#if !RETAIL_COMPATIBLE_CRC
-	// Update Turret Position
-	xfer->xferBool( &m_needUpdateTurretPosition );
+	if( version >= 3 )
+	{
+		// Update Turret Position
+		xfer->xferBool( &m_needUpdateTurretPosition );
 
-	// Handle Recoil
-	xfer->xferBool( &m_doHandleRecoil );
-#endif
+		// Handle Recoil
+		xfer->xferBool( &m_doHandleRecoil );
+	}
 
 }
 

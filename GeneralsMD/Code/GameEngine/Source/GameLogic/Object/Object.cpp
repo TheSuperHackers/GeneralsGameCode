@@ -4039,7 +4039,11 @@ void Object::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 9;
+#else
+	const XferVersion currentVersion = 10;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -4245,10 +4249,8 @@ void Object::xfer( Xfer *xfer )
 	// health box offset
 	xfer->xferCoord3D( &m_healthBoxOffset );
 
-#if !RETAIL_COMPATIBLE_CRC
-	// turret need positioning
-	xfer->xferBool( &m_turretNeedPositioning );
-#endif
+	if( version >= 10 )
+		xfer->xferBool( &m_turretNeedPositioning );
 
 	// Entered & exited housekeeping.
 	Int i;
