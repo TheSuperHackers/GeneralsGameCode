@@ -1113,7 +1113,9 @@ void Drawable::updateDrawable( void )
 			{
 				//LERP
 				(*dm)->setTerrainDecalOpacity(m_decalOpacity);
-				m_decalOpacity += m_decalOpacityFadeRate;
+				// TheSuperHackers @tweak Decal opacity fade is now decoupled from the render update.
+				const Real decalFadeTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+				m_decalOpacity += m_decalOpacityFadeRate * decalFadeTimeScale;
 			}
 			//---------------
 
