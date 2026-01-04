@@ -684,14 +684,6 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 				stopAllSpeech();
 			}
 
-			Real curVolume = 1.0;
-			if (info->m_soundType == AT_Music) {
-				curVolume = m_musicVolume;
-			} else {
-				curVolume = m_speechVolume;
-			}
-			curVolume *= event->getVolume();
-
 			Bool foundSoundToReplace = false;
 			if (handleToKill) {
 				for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
@@ -727,7 +719,7 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 				if ((info->m_soundType == AT_Streaming) && event->getUninterruptable()) {
 					setDisallowSpeech(TRUE);
 	 			}
-				AIL_set_stream_volume_pan(stream, curVolume, 0.5f);
+				AIL_set_stream_volume_pan(stream, getEffectiveVolume(event), 0.5f);
 				playStream(event, stream);
 				m_playingStreams.push_back(audio);
 				audio = NULL;
@@ -1238,22 +1230,21 @@ H3DSAMPLE MilesAudioManager::getFirst3DSample( AudioEventRTS *event )
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::adjustPlayingVolume( PlayingAudio *audio )
 {
-	Real desiredVolume = audio->m_audioEventRTS->getVolume() * audio->m_audioEventRTS->getVolumeShift();
 	Real pan;
 	if (audio->m_type == PAT_Sample) {
 		AIL_sample_volume_pan(audio->m_sample, NULL, &pan);
-		AIL_set_sample_volume_pan(audio->m_sample, m_soundVolume * desiredVolume, pan);
+		AIL_set_sample_volume_pan(audio->m_sample, getEffectiveVolume(audio->m_audioEventRTS), pan);
 
 	} else if (audio->m_type == PAT_3DSample) {
-		AIL_set_3D_sample_volume(audio->m_3DSample, m_sound3DVolume * desiredVolume);
+		AIL_set_3D_sample_volume(audio->m_3DSample, getEffectiveVolume(audio->m_audioEventRTS));
 
 	} else if (audio->m_type == PAT_Stream) {
 		AIL_stream_volume_pan(audio->m_stream, NULL, &pan);
 		if (audio->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music ) {
-			AIL_set_stream_volume_pan(audio->m_stream, m_musicVolume * desiredVolume, pan);
+			AIL_set_stream_volume_pan(audio->m_stream, getEffectiveVolume(audio->m_audioEventRTS), pan);
 
 		} else {
-			AIL_set_stream_volume_pan(audio->m_stream, m_speechVolume * desiredVolume, pan);
+			AIL_set_stream_volume_pan(audio->m_stream, getEffectiveVolume(audio->m_audioEventRTS), pan);
 
 		}
 	}
@@ -1281,11 +1272,10 @@ void MilesAudioManager::stopAllSpeech( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::initFilters( HSAMPLE sample, const AudioEventRTS *event )
+void MilesAudioManager::initFilters( HSAMPLE sample, AudioEventRTS *event )
 {
 	// set the sample volume
-	Real volume = event->getVolume() * event->getVolumeShift() * m_soundVolume;
-	AIL_set_sample_volume_pan(sample, volume, 0.5f);
+	AIL_set_sample_volume_pan(sample, getEffectiveVolume(event), 0.5f);
 
 	// pitch shift
 	Real pitchShift = event->getPitchShift();
@@ -1309,11 +1299,10 @@ void MilesAudioManager::initFilters( HSAMPLE sample, const AudioEventRTS *event 
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::initFilters3D( H3DSAMPLE sample, const AudioEventRTS *event, const Coord3D *pos )
+void MilesAudioManager::initFilters3D( H3DSAMPLE sample, AudioEventRTS *event, const Coord3D *pos )
 {
 	// set the sample volume
-	Real volume = event->getVolume() * event->getVolumeShift() * m_sound3DVolume;
-	AIL_set_3D_sample_volume(sample, volume);
+	AIL_set_3D_sample_volume(sample, getEffectiveVolume(event));
 
 	// pitch shift
 	Real pitchShift = event->getPitchShift();
