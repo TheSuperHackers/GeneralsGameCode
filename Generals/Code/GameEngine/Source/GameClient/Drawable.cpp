@@ -1632,7 +1632,11 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 		// if we had an overlap last frame, and we're now in the air, give a
 		// kick to the pitch for effect
 		if (physics->getPreviousOverlap() != INVALID_ID && m_locoInfo->m_overlapZ > 0.0f)
-			m_locoInfo->m_pitchRate += LEAVE_OVERLAP_PITCH_KICK;
+		{
+			// TheSuperHackers @tweak Leave overlap pitch kick is now decoupled from the render update.
+			const Real overlapTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+			m_locoInfo->m_pitchRate += LEAVE_OVERLAP_PITCH_KICK * overlapTimeScale;
+		}
 	}
 
 
@@ -1707,8 +1711,10 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 
 				Real recoil = PI/16.0f * GameClientRandomValueReal( 0.5f, 1.0f );
 
-				m_locoInfo->m_accelerationPitchRate -= recoil * forward;
-				m_locoInfo->m_accelerationRollRate -= recoil * lateral;
+				// TheSuperHackers @tweak Hit recoil is now decoupled from the render update.
+				const Real hitRecoilTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+				m_locoInfo->m_accelerationPitchRate -= recoil * forward * hitRecoilTimeScale;
+				m_locoInfo->m_accelerationRollRate -= recoil * lateral * hitRecoilTimeScale;
 			}
 
 			m_lastDamageTimestamp = obj->getBodyModule()->getLastDamageTimestamp();
@@ -1855,24 +1861,27 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 		Real factor = curSpeed/maxSpeed;
 		if (fabs(m_locoInfo->m_pitchRate)<factor*BOUNCE_ANGLE_KICK/4 && fabs(m_locoInfo->m_rollRate)<factor*BOUNCE_ANGLE_KICK/8)
 		{
+			// TheSuperHackers @tweak Bounce kick is now decoupled from the render update.
+			const Real bounceTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+			const Real scaledBounceKick = BOUNCE_ANGLE_KICK * factor * bounceTimeScale;
 			// do the bouncy.
 			switch (GameClientRandomValue(0,3))
 			{
 			case 0:
-				m_locoInfo->m_pitchRate -= BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate -= BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate -= scaledBounceKick;
+				m_locoInfo->m_rollRate -= scaledBounceKick/2;
 				break;
 			case 1:
-				m_locoInfo->m_pitchRate += BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate -= BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate += scaledBounceKick;
+				m_locoInfo->m_rollRate -= scaledBounceKick/2;
 				break;
 			case 2:
-				m_locoInfo->m_pitchRate -= BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate += BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate -= scaledBounceKick;
+				m_locoInfo->m_rollRate += scaledBounceKick/2;
 				break;
 			case 3:
-				m_locoInfo->m_pitchRate += BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate += BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate += scaledBounceKick;
+				m_locoInfo->m_rollRate += scaledBounceKick/2;
 				break;
 			}
 		}
@@ -3750,8 +3759,10 @@ Bool Drawable::handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelToUse,
 		recoilAngle += PI;
 		if (m_locoInfo)
 		{
-			m_locoInfo->m_accelerationPitchRate += recoilAmount * Cos(recoilAngle);
-			m_locoInfo->m_accelerationRollRate += recoilAmount * Sin(recoilAngle);
+			// TheSuperHackers @tweak Weapon recoil is now decoupled from the render update.
+			const Real recoilTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+			m_locoInfo->m_accelerationPitchRate += recoilAmount * Cos(recoilAngle) * recoilTimeScale;
+			m_locoInfo->m_accelerationRollRate += recoilAmount * Sin(recoilAngle) * recoilTimeScale;
 		}
 	}
 
