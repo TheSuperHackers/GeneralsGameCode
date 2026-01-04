@@ -49,7 +49,7 @@ class ArmorTemplate : public Overridable
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ArmorTemplate, "ArmorTemplatePool")
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
-		ArmorTemplate(const ArmorTemplate&)
+	ArmorTemplate(const ArmorTemplate&)
 	{
 		DEBUG_CRASH(("This should never be called"));
 	}
