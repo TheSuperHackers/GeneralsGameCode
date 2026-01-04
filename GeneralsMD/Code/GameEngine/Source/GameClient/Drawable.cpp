@@ -1981,10 +1981,9 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 		{
 			// Wheels extend when airborne.
 			m_locoInfo->m_wheelInfo.m_framesAirborne = 0;
-			m_locoInfo->m_wheelInfo.m_framesAirborneCounter++;
-
 			// TheSuperHackers @tweak Wheel suspension offset is now decoupled from the render update.
 			const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+			m_locoInfo->m_wheelInfo.m_framesAirborneCounter += timeScale;
 			const Real suspensionFactor = 0.5f * timeScale;
 
 			if (pos->z - hheight > -MAX_SUSPENSION_EXTENSION)
@@ -2296,10 +2295,9 @@ void Drawable::calcPhysicsXformMotorcycle( const Locomotor *locomotor, PhysicsXf
 		{
 			// Wheels extend when airborne.
 			m_locoInfo->m_wheelInfo.m_framesAirborne = 0;
-			m_locoInfo->m_wheelInfo.m_framesAirborneCounter++;
-
 			// TheSuperHackers @tweak Wheel suspension offset is now decoupled from the render update.
 			const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+			m_locoInfo->m_wheelInfo.m_framesAirborneCounter += timeScale;
 			const Real suspensionFactor = 0.5f * timeScale;
 
 			if (pos->z - hheight > -MAX_SUSPENSION_EXTENSION)
@@ -5234,8 +5232,21 @@ void Drawable::xfer( Xfer *xfer )
 		xfer->xferReal( &m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset );
 		xfer->xferReal( &m_locoInfo->m_wheelInfo.m_rearRightHeightOffset );
 		xfer->xferReal( &m_locoInfo->m_wheelInfo.m_wheelAngle );
-		xfer->xferInt( &m_locoInfo->m_wheelInfo.m_framesAirborneCounter );
-		xfer->xferInt( &m_locoInfo->m_wheelInfo.m_framesAirborne );
+		// TheSuperHackers @tweak Changed from Int to Real for frame-rate independent airborne tracking.
+		if (version >= 9)
+		{
+			xfer->xferReal( &m_locoInfo->m_wheelInfo.m_framesAirborneCounter );
+			xfer->xferReal( &m_locoInfo->m_wheelInfo.m_framesAirborne );
+		}
+		else
+		{
+			Int framesAirborneCounter = static_cast<Int>(m_locoInfo->m_wheelInfo.m_framesAirborneCounter);
+			Int framesAirborne = static_cast<Int>(m_locoInfo->m_wheelInfo.m_framesAirborne);
+			xfer->xferInt( &framesAirborneCounter );
+			xfer->xferInt( &framesAirborne );
+			m_locoInfo->m_wheelInfo.m_framesAirborneCounter = static_cast<Real>(framesAirborneCounter);
+			m_locoInfo->m_wheelInfo.m_framesAirborne = static_cast<Real>(framesAirborne);
+		}
 	}
 
 	// modules
