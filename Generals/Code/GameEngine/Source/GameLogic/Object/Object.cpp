@@ -2790,7 +2790,7 @@ Bool Object::hasSpecialPower( SpecialPowerType type ) const
 void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback )
 {
 #if !RETAIL_COMPATIBLE_CRC
-	// TheSuperHackers @bugfix Stubbjax 10/12/2025 Do not play veterancy animations for dead units.
+	// TheSuperHackers @bugfix Stubbjax 10/12/2025 Do not apply veterancy bonuses and animations for dead units.
 	if (isEffectivelyDead())
 		return;
 #endif
