@@ -368,8 +368,7 @@ public:
 	void friend_removeFromCellList(CellAndObjectIntersection *coi);
 
 #if !PRESERVE_RETAIL_BEHAVIOR
-	Int getWeaponNameStack(const AsciiString& weaponName) const;
-	void registerWeaponNameStack(const AsciiString& weaponName, UnsignedInt duration);
+	Bool checkWeaponNameStack(const AsciiString& weaponName, Int maxCount, UnsignedInt duration);
 #endif
 };
 
@@ -1542,8 +1541,7 @@ public:
 	void restoreFoggedCells(const ShroudStatusStoreRestore &inPartitionStore, Bool restoreToFog);
 
 #if !PRESERVE_RETAIL_BEHAVIOR
-	Int getWeaponNameStackAtCell(const Coord3D *pos, const AsciiString& weaponName) const;
-	void registerWeaponNameAtCell(const Coord3D *pos, const AsciiString& weaponName, UnsignedInt duration);
+	Bool checkWeaponNameStackAtCell(const Coord3D *pos, const AsciiString& weaponName, Int maxCount, UnsignedInt duration);
 #endif
 };
 

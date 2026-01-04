@@ -946,11 +946,11 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		VeterancyLevel v = sourceObj->getVeterancyLevel();
 		const FXList* fx = isProjectileDetonation ? getProjectileDetonateFX(v) : getFireFX(v);
 
-		if ( TheGameLogic->getFrame() < firingWeapon->getSuspendFXFrame()
-#if !PRESERVE_RETAIL_BEHAVIOR
-			 || !renderWeaponFX
+#if PRESERVE_RETAIL_BEHAVIOR
+		if ( TheGameLogic->getFrame() < firingWeapon->getSuspendFXFrame() )
+#else
+		if ( TheGameLogic->getFrame() < firingWeapon->getSuspendFXFrame() || !renderWeaponFX )
 #endif
-		   )
 			fx = NULL;
 
 		Bool handled;
@@ -958,10 +958,8 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 #if !PRESERVE_RETAIL_BEHAVIOR
 		if( getFXMaxStackPerLoc() > 0 && fx && (isProjectileDetonation || getCheckFireFXForFXMaxStack()) )
 		{
-			// Check if there is any FX Stack to apply for the Weapon at Loc. Purely in data form, so shouldn't have much performance issue
-			if(ThePartitionManager->getWeaponNameStackAtCell(&targetPos, getName()) <= getFXMaxStackPerLoc())
-				ThePartitionManager->registerWeaponNameAtCell(&targetPos, getName(), getFXMaxStackInterval() ? getFXMaxStackInterval() : getDelayBetweenShots(bonus));
-			else
+			// Check if there is any FX Stack to apply for the Weapon at Loc. Returns TRUE if stack reaches MaxStackCount
+			if(ThePartitionManager->checkWeaponNameStackAtCell(&targetPos, getName(), getFXMaxStackPerLoc(), getFXMaxStackInterval() ? getFXMaxStackInterval() : getDelayBetweenShots(bonus)))
 				fx = NULL;
 		}
 #endif
