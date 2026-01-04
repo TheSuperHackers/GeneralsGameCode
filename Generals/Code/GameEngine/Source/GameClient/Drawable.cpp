@@ -1640,11 +1640,17 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 	// the ground can only push back if we're touching it
 	if (overlapped || m_locoInfo->m_overlapZ <= 0.0f)
 	{
-		m_locoInfo->m_pitchRate += ((-PITCH_STIFFNESS * (m_locoInfo->m_pitch - groundPitch)) + (-PITCH_DAMPING * m_locoInfo->m_pitchRate));		// spring/damper
-		if (m_locoInfo->m_pitchRate > 0.0f)
-			m_locoInfo->m_pitchRate *= 0.5f;
+		// TheSuperHackers @tweak The pitch/roll rate damping is now decoupled from the render update.
+		const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
 
-		m_locoInfo->m_rollRate += ((-ROLL_STIFFNESS * (m_locoInfo->m_roll - groundRoll)) + (-ROLL_DAMPING * m_locoInfo->m_rollRate));		// spring/damper
+		m_locoInfo->m_pitchRate += timeScale * ((-PITCH_STIFFNESS * (m_locoInfo->m_pitch - groundPitch)) + (-PITCH_DAMPING * m_locoInfo->m_pitchRate));		// spring/damper
+		if (m_locoInfo->m_pitchRate > 0.0f)
+		{
+			const Real pitchDamp = 1.0f - (1.0f - 0.5f) * timeScale;
+			m_locoInfo->m_pitchRate *= pitchDamp;
+		}
+
+		m_locoInfo->m_rollRate += timeScale * ((-ROLL_STIFFNESS * (m_locoInfo->m_roll - groundRoll)) + (-ROLL_DAMPING * m_locoInfo->m_rollRate));		// spring/damper
 	}
 
 	m_locoInfo->m_pitch += m_locoInfo->m_pitchRate * UNIFORM_AXIAL_DAMPING;
@@ -1866,11 +1872,17 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 	// the ground can only push back if we're touching it
 	if (!airborne)
 	{
-		m_locoInfo->m_pitchRate += ((-PITCH_STIFFNESS * (m_locoInfo->m_pitch - groundPitch)) + (-PITCH_DAMPING * m_locoInfo->m_pitchRate));		// spring/damper
-		if (m_locoInfo->m_pitchRate > 0.0f)
-			m_locoInfo->m_pitchRate *= 0.5f;
+		// TheSuperHackers @tweak The pitch/roll rate damping is now decoupled from the render update.
+		const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
 
-		m_locoInfo->m_rollRate += ((-ROLL_STIFFNESS * (m_locoInfo->m_roll - groundRoll)) + (-ROLL_DAMPING * m_locoInfo->m_rollRate));		// spring/damper
+		m_locoInfo->m_pitchRate += timeScale * ((-PITCH_STIFFNESS * (m_locoInfo->m_pitch - groundPitch)) + (-PITCH_DAMPING * m_locoInfo->m_pitchRate));		// spring/damper
+		if (m_locoInfo->m_pitchRate > 0.0f)
+		{
+			const Real pitchDamp = 1.0f - (1.0f - 0.5f) * timeScale;
+			m_locoInfo->m_pitchRate *= pitchDamp;
+		}
+
+		m_locoInfo->m_rollRate += timeScale * ((-ROLL_STIFFNESS * (m_locoInfo->m_roll - groundRoll)) + (-ROLL_DAMPING * m_locoInfo->m_rollRate));		// spring/damper
 	}
 
 	m_locoInfo->m_pitch += m_locoInfo->m_pitchRate * UNIFORM_AXIAL_DAMPING;
