@@ -55,6 +55,12 @@ ArmorTemplate::ArmorTemplate()
 }
 
 //-------------------------------------------------------------------------------------------------
+ArmorTemplate::~ArmorTemplate()
+{
+
+}
+
+//-------------------------------------------------------------------------------------------------
 void ArmorTemplate::clear()
 {
 	for (int i = 0; i < DAMAGE_NUM_TYPES; i++)
@@ -125,7 +131,7 @@ const ArmorTemplate* ArmorStore::findArmorTemplate(NameKeyType namekey) const
 	}
 	else
 	{
-		return &(*it).second;
+		return (*it).second;
 	}
 }
 
@@ -149,11 +155,67 @@ const ArmorTemplate* ArmorStore::findArmorTemplate(const char* name) const
 		{ "Armor", ArmorTemplate::parseArmorCoefficients, NULL, 0 }
 	};
 
-	const char *c = ini->getNextToken();
-	NameKeyType key = TheNameKeyGenerator->nameToKey(c);
-	ArmorTemplate& armorTmpl = TheArmorStore->m_armorTemplates[key];
-	armorTmpl.clear();
-	ini->initFromINI(&armorTmpl, myFieldParse);
+	const char *name = ini->getNextToken();
+	NameKeyType key = TheNameKeyGenerator->nameToKey(name);
+
+	// TheSuperHackers @bugfix Caball009 04/01/2025 Avoid mismatches by creating overrides instead of overwriting the default data.
+	// The code resembles the code of the ThingFactory.
+	ArmorTemplate *armorTmpl = TheArmorStore->m_armorTemplates[key];
+	if (!armorTmpl)
+	{
+		DEBUG_ASSERTCRASH(ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES, ("Override without base template for armor templates is unexpected"));
+
+		armorTmpl = newInstance(ArmorTemplate);
+		armorTmpl->clear();
+
+		TheArmorStore->m_armorTemplates[key] = armorTmpl;
+	}
+	else if (ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES)
+	{
+		DEBUG_CRASH(( "[LINE: %d in '%s'] Duplicate armor definition %s found!", ini->getLineNum(), ini->getFilename().str(), name ));
+	}
+	else
+	{
+		armorTmpl = TheArmorStore->newOverride(armorTmpl);
+	}
+
+	ini->initFromINI(armorTmpl, myFieldParse);
+}
+
+//-------------------------------------------------------------------------------------------------
+ArmorTemplate* ArmorStore::newOverride( ArmorTemplate *armorTemplate )
+{
+	// sanity
+	DEBUG_ASSERTCRASH( armorTemplate, ("newOverride(): NULL 'parent' armor template") );
+
+	// sanity just for debuging, the armor must be in the master list to do overrides
+	DEBUG_ASSERTCRASH( findArmorTemplate( armorTemplate->getName() ) != NULL,
+										 ("newOverride(): Armor template '%s' not in master list",
+										 armorTemplate->getName().str()) );
+
+	// find final override of the 'parent' template
+	ArmorTemplate *child = static_cast<ArmorTemplate*>(armorTemplate->friend_getFinalOverride());
+
+	// allocate new template
+	ArmorTemplate *newTemplate = newInstance(ArmorTemplate);
+
+	// copy data from final override to 'newTemplate' as a set of initial default values
+	*newTemplate = *child;
+
+	newTemplate->markAsOverride();
+	child->setNextOverride(newTemplate);
+
+	// return the newly created override for us to set values with etc
+	return newTemplate;
+}
+
+//-------------------------------------------------------------------------------------------------
+void ArmorStore::reset()
+{
+	for (ArmorTemplateMap::iterator itr = m_armorTemplates.begin(); itr != m_armorTemplates.end(); ++itr)
+	{
+		itr->second->deleteOverrides();
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
