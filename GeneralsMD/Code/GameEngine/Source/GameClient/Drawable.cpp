@@ -1170,7 +1170,9 @@ void Drawable::updateDrawable( void )
 			Real numer = (m_fadeMode == FADING_IN) ? (m_timeElapsedFade) : (m_timeToFade-m_timeElapsedFade);
 
 			setDrawableOpacity(numer/(Real)m_timeToFade);
-			++m_timeElapsedFade;
+			// TheSuperHackers @tweak Drawable fade is now decoupled from the render update.
+			const Real fadeTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+			m_timeElapsedFade += fadeTimeScale;
 
 			if (m_timeElapsedFade > m_timeToFade)
 				m_fadeMode = FADING_NONE;
@@ -4993,7 +4995,7 @@ void Drawable::xfer( Xfer *xfer )
 #if RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 7;
 #else
-	const XferVersion currentVersion = 8;
+	const XferVersion currentVersion = 9;
 #endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
@@ -5168,7 +5170,17 @@ void Drawable::xfer( Xfer *xfer )
 	xfer->xferUser( &m_fadeMode, sizeof( FadingMode ) );
 
 	// time elapsed fade
-	xfer->xferUnsignedInt( &m_timeElapsedFade );
+	// TheSuperHackers @tweak Changed from UnsignedInt to Real for frame-rate independent fading.
+	if (version >= 9)
+	{
+		xfer->xferReal( &m_timeElapsedFade );
+	}
+	else
+	{
+		UnsignedInt timeElapsedFadeFrames = static_cast<UnsignedInt>(m_timeElapsedFade);
+		xfer->xferUnsignedInt( &timeElapsedFadeFrames );
+		m_timeElapsedFade = static_cast<Real>(timeElapsedFadeFrames);
+	}
 
 	// time to fade
 	xfer->xferUnsignedInt( &m_timeToFade );
