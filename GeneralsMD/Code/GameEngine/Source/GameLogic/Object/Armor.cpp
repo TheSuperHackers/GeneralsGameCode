@@ -176,22 +176,21 @@ const ArmorTemplate* ArmorStore::findArmorTemplate(const char* name) const
 	}
 	else
 	{
-		armorTmpl = TheArmorStore->newOverride(armorTmpl);
+		armorTmpl = TheArmorStore->newOverride(armorTmpl, name);
 	}
 
 	ini->initFromINI(armorTmpl, myFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
-ArmorTemplate* ArmorStore::newOverride( ArmorTemplate *armorTemplate )
+ArmorTemplate* ArmorStore::newOverride(ArmorTemplate *armorTemplate, const char *name)
 {
 	// sanity
 	DEBUG_ASSERTCRASH( armorTemplate, ("newOverride(): NULL 'parent' armor template") );
 
 	// sanity just for debuging, the armor must be in the master list to do overrides
-	DEBUG_ASSERTCRASH( findArmorTemplate( armorTemplate->getName() ) != NULL,
-										 ("newOverride(): Armor template '%s' not in master list",
-										 armorTemplate->getName().str()) );
+	DEBUG_ASSERTCRASH( findArmorTemplate( name ) != NULL,
+										 ("newOverride(): Armor template '%s' not in master list", name) );
 
 	// find final override of the 'parent' template
 	ArmorTemplate *child = static_cast<ArmorTemplate*>(armorTemplate->friend_getFinalOverride());

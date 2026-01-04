@@ -133,7 +133,7 @@ public:
 
 private:
 
-	ArmorTemplate* newOverride(ArmorTemplate *armorTemplate);
+	ArmorTemplate* newOverride(ArmorTemplate *armorTemplate, const char* name);
 
 	typedef std::hash_map< NameKeyType, ArmorTemplate*, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > ArmorTemplateMap;
 	ArmorTemplateMap m_armorTemplates;
