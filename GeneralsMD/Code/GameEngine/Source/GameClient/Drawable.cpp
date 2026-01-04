@@ -1778,7 +1778,11 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 		// if we had an overlap last frame, and we're now in the air, give a
 		// kick to the pitch for effect
 		if (physics->getPreviousOverlap() != INVALID_ID && m_locoInfo->m_overlapZ > 0.0f)
-			m_locoInfo->m_pitchRate += LEAVE_OVERLAP_PITCH_KICK;
+		{
+			// TheSuperHackers @tweak Leave overlap pitch kick is now decoupled from the render update.
+			const Real overlapTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+			m_locoInfo->m_pitchRate += LEAVE_OVERLAP_PITCH_KICK * overlapTimeScale;
+		}
 	}
 
 
@@ -1853,8 +1857,10 @@ void Drawable::calcPhysicsXformTreads( const Locomotor *locomotor, PhysicsXformI
 
 				Real recoil = PI/16.0f * GameClientRandomValueReal( 0.5f, 1.0f );
 
-				m_locoInfo->m_accelerationPitchRate -= recoil * forward;
-				m_locoInfo->m_accelerationRollRate -= recoil * lateral;
+				// TheSuperHackers @tweak Hit recoil is now decoupled from the render update.
+				const Real hitRecoilTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+				m_locoInfo->m_accelerationPitchRate -= recoil * forward * hitRecoilTimeScale;
+				m_locoInfo->m_accelerationRollRate -= recoil * lateral * hitRecoilTimeScale;
 			}
 
 			m_lastDamageTimestamp = obj->getBodyModule()->getLastDamageTimestamp();
@@ -2002,24 +2008,27 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 		Real factor = curSpeed/maxSpeed;
 		if (fabs(m_locoInfo->m_pitchRate)<factor*BOUNCE_ANGLE_KICK/4 && fabs(m_locoInfo->m_rollRate)<factor*BOUNCE_ANGLE_KICK/8)
 		{
+			// TheSuperHackers @tweak Bounce kick is now decoupled from the render update.
+			const Real bounceTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+			const Real scaledBounceKick = BOUNCE_ANGLE_KICK * factor * bounceTimeScale;
 			// do the bouncy.
 			switch (GameClientRandomValue(0,3))
 			{
 			case 0:
-				m_locoInfo->m_pitchRate -= BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate -= BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate -= scaledBounceKick;
+				m_locoInfo->m_rollRate -= scaledBounceKick/2;
 				break;
 			case 1:
-				m_locoInfo->m_pitchRate += BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate -= BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate += scaledBounceKick;
+				m_locoInfo->m_rollRate -= scaledBounceKick/2;
 				break;
 			case 2:
-				m_locoInfo->m_pitchRate -= BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate += BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate -= scaledBounceKick;
+				m_locoInfo->m_rollRate += scaledBounceKick/2;
 				break;
 			case 3:
-				m_locoInfo->m_pitchRate += BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate += BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate += scaledBounceKick;
+				m_locoInfo->m_rollRate += scaledBounceKick/2;
 				break;
 			}
 		}
@@ -2312,24 +2321,27 @@ void Drawable::calcPhysicsXformMotorcycle( const Locomotor *locomotor, PhysicsXf
 		Real factor = curSpeed/maxSpeed;
 		if (fabs(m_locoInfo->m_pitchRate)<factor*BOUNCE_ANGLE_KICK/4 && fabs(m_locoInfo->m_rollRate)<factor*BOUNCE_ANGLE_KICK/8)
 		{
+			// TheSuperHackers @tweak Bounce kick is now decoupled from the render update.
+			const Real bounceTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+			const Real scaledBounceKick = BOUNCE_ANGLE_KICK * factor * bounceTimeScale;
 			// do the bouncy.
 			switch (GameClientRandomValue(0,3))
 			{
 			case 0:
-				m_locoInfo->m_pitchRate -= BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate -= BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate -= scaledBounceKick;
+				m_locoInfo->m_rollRate -= scaledBounceKick/2;
 				break;
 			case 1:
-				m_locoInfo->m_pitchRate += BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate -= BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate += scaledBounceKick;
+				m_locoInfo->m_rollRate -= scaledBounceKick/2;
 				break;
 			case 2:
-				m_locoInfo->m_pitchRate -= BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate += BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate -= scaledBounceKick;
+				m_locoInfo->m_rollRate += scaledBounceKick/2;
 				break;
 			case 3:
-				m_locoInfo->m_pitchRate += BOUNCE_ANGLE_KICK*factor;
-				m_locoInfo->m_rollRate += BOUNCE_ANGLE_KICK*factor/2;
+				m_locoInfo->m_pitchRate += scaledBounceKick;
+				m_locoInfo->m_rollRate += scaledBounceKick/2;
 				break;
 			}
 		}
@@ -2339,29 +2351,32 @@ void Drawable::calcPhysicsXformMotorcycle( const Locomotor *locomotor, PhysicsXf
 
 	// process chassis suspension dynamics - damp back towards groundPitch
 
+	// TheSuperHackers @tweak Spring-damper physics are now decoupled from the render update.
+	const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+
 	// the ground can only push back if we're touching it
 	if (!airborne)
 	{
-		m_locoInfo->m_pitchRate += ((-PITCH_STIFFNESS * (m_locoInfo->m_pitch - groundPitch)) + (-PITCH_DAMPING * m_locoInfo->m_pitchRate));		// spring/damper
-		m_locoInfo->m_rollRate += ((-ROLL_STIFFNESS * (m_locoInfo->m_roll - groundRoll)) + (-ROLL_DAMPING * m_locoInfo->m_rollRate));		// spring/damper
+		m_locoInfo->m_pitchRate += ((-PITCH_STIFFNESS * (m_locoInfo->m_pitch - groundPitch)) + (-PITCH_DAMPING * m_locoInfo->m_pitchRate)) * timeScale;		// spring/damper
+		m_locoInfo->m_rollRate += ((-ROLL_STIFFNESS * (m_locoInfo->m_roll - groundRoll)) + (-ROLL_DAMPING * m_locoInfo->m_rollRate)) * timeScale;		// spring/damper
 	}
 	else
 	{
 		//Autolevel
-		m_locoInfo->m_pitchRate += ( (-PITCH_STIFFNESS * m_locoInfo->m_pitch) + (-PITCH_DAMPING * m_locoInfo->m_pitchRate) );		// spring/damper
-		m_locoInfo->m_rollRate += ( (-ROLL_STIFFNESS * m_locoInfo->m_roll) + (-ROLL_DAMPING * m_locoInfo->m_rollRate) );		// spring/damper
+		m_locoInfo->m_pitchRate += ( (-PITCH_STIFFNESS * m_locoInfo->m_pitch) + (-PITCH_DAMPING * m_locoInfo->m_pitchRate) ) * timeScale;		// spring/damper
+		m_locoInfo->m_rollRate += ( (-ROLL_STIFFNESS * m_locoInfo->m_roll) + (-ROLL_DAMPING * m_locoInfo->m_rollRate) ) * timeScale;		// spring/damper
 	}
 
-	m_locoInfo->m_pitch += m_locoInfo->m_pitchRate * UNIFORM_AXIAL_DAMPING;
-	m_locoInfo->m_roll += m_locoInfo->m_rollRate   * UNIFORM_AXIAL_DAMPING;
+	m_locoInfo->m_pitch += m_locoInfo->m_pitchRate * UNIFORM_AXIAL_DAMPING * timeScale;
+	m_locoInfo->m_roll += m_locoInfo->m_rollRate   * UNIFORM_AXIAL_DAMPING * timeScale;
 
 	// process chassis acceleration dynamics - damp back towards zero
 
-	m_locoInfo->m_accelerationPitchRate += ((-PITCH_STIFFNESS * (m_locoInfo->m_accelerationPitch)) + (-PITCH_DAMPING * m_locoInfo->m_accelerationPitchRate));		// spring/damper
-	m_locoInfo->m_accelerationPitch += m_locoInfo->m_accelerationPitchRate;
+	m_locoInfo->m_accelerationPitchRate += ((-PITCH_STIFFNESS * (m_locoInfo->m_accelerationPitch)) + (-PITCH_DAMPING * m_locoInfo->m_accelerationPitchRate)) * timeScale;		// spring/damper
+	m_locoInfo->m_accelerationPitch += m_locoInfo->m_accelerationPitchRate * timeScale;
 
-	m_locoInfo->m_accelerationRollRate += ((-ROLL_STIFFNESS * m_locoInfo->m_accelerationRoll) + (-ROLL_DAMPING * m_locoInfo->m_accelerationRollRate));		// spring/damper
-	m_locoInfo->m_accelerationRoll += m_locoInfo->m_accelerationRollRate;
+	m_locoInfo->m_accelerationRollRate += ((-ROLL_STIFFNESS * m_locoInfo->m_accelerationRoll) + (-ROLL_DAMPING * m_locoInfo->m_accelerationRollRate)) * timeScale;		// spring/damper
+	m_locoInfo->m_accelerationRoll += m_locoInfo->m_accelerationRollRate * timeScale;
 
 	// compute total pitch and roll of tank
 	info.m_totalPitch = m_locoInfo->m_pitch + m_locoInfo->m_accelerationPitch;
@@ -2380,10 +2395,10 @@ void Drawable::calcPhysicsXformMotorcycle( const Locomotor *locomotor, PhysicsXf
 	{
 		// cause the chassis to pitch & roll in reaction to acceleration/deceleration
 		Real forwardAccel = dir->x * accel->x + dir->y * accel->y;
-		m_locoInfo->m_accelerationPitchRate += -(FORWARD_ACCEL_COEFF * forwardAccel);
+		m_locoInfo->m_accelerationPitchRate += -(FORWARD_ACCEL_COEFF * forwardAccel) * timeScale;
 
 		Real lateralAccel = -dir->y * accel->x + dir->x * accel->y;
-		m_locoInfo->m_accelerationRollRate += -(LATERAL_ACCEL_COEFF * lateralAccel);
+		m_locoInfo->m_accelerationRollRate += -(LATERAL_ACCEL_COEFF * lateralAccel) * timeScale;
 	}
 
 	// limit acceleration pitch and roll
@@ -4285,8 +4300,10 @@ Bool Drawable::handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelToUse,
 		recoilAngle += PI;
 		if (m_locoInfo)
 		{
-			m_locoInfo->m_accelerationPitchRate += recoilAmount * Cos(recoilAngle);
-			m_locoInfo->m_accelerationRollRate += recoilAmount * Sin(recoilAngle);
+			// TheSuperHackers @tweak Weapon recoil is now decoupled from the render update.
+			const Real recoilTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+			m_locoInfo->m_accelerationPitchRate += recoilAmount * Cos(recoilAngle) * recoilTimeScale;
+			m_locoInfo->m_accelerationRollRate += recoilAmount * Sin(recoilAngle) * recoilTimeScale;
 		}
 	}
 
