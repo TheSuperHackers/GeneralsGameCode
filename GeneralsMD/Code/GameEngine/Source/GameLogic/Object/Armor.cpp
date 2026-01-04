@@ -156,17 +156,23 @@ const ArmorTemplate* ArmorStore::findArmorTemplate(const char* name) const
 	};
 
 	const char *name = ini->getNextToken();
-	NameKeyType key = TheNameKeyGenerator->nameToKey(name);
+	const NameKeyType key = TheNameKeyGenerator->nameToKey(name);
 
 	// TheSuperHackers @bugfix Caball009 04/01/2025 Avoid mismatches by creating overrides instead of overwriting the default data.
 	// The code resembles the code of the ThingFactory.
 	ArmorTemplate *armorTmpl = TheArmorStore->m_armorTemplates[key];
 	if (!armorTmpl)
 	{
-		DEBUG_ASSERTCRASH(ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES, ("Override without base template for armor templates is unexpected"));
-
+		// no item is present, create a new one
 		armorTmpl = newInstance(ArmorTemplate);
 		armorTmpl->clear();
+
+		if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
+		{
+			// This ArmorTemplate is actually an override, so we will mark it as such so that it properly
+			// gets deleted on ::reset().
+			armorTmpl->markAsOverride();
+		}
 
 		TheArmorStore->m_armorTemplates[key] = armorTmpl;
 	}
@@ -213,7 +219,13 @@ void ArmorStore::reset()
 {
 	for (ArmorTemplateMap::iterator itr = m_armorTemplates.begin(); itr != m_armorTemplates.end(); ++itr)
 	{
-		itr->second->deleteOverrides();
+		const Overridable *stillValid = itr->second->deleteOverrides();
+
+		if (stillValid == NULL)
+		{
+			// Also needs to be removed from the Hash map.
+			m_armorTemplates.erase(itr->first);
+		}
 	}
 }
 
