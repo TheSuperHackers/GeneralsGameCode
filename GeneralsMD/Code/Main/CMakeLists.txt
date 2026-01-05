@@ -45,7 +45,9 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h
 "
 )
 
-target_link_options(z_generals PRIVATE "/NODEFAULTLIB:libci.lib")
+if(MSVC)
+    target_link_options(z_generals PRIVATE "/NODEFAULTLIB:libci.lib")
+endif()
 
 target_include_directories(z_generals PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -57,7 +59,10 @@ target_sources(z_generals PRIVATE
     WinMain.h
 )
 
-if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
+# RC files optional for MinGW builds
+# Icon: LoadIcon() handles missing resource gracefully (uses default system icon)
+# Manifest: DPI awareness metadata (nice to have but not essential)
+if(MSVC)
     # VS2005 and later adds default manifest, we need to turn it off to prevent conflict with custom manifest
     if(NOT IS_VS6_BUILD)
         target_link_options(z_generals PRIVATE
