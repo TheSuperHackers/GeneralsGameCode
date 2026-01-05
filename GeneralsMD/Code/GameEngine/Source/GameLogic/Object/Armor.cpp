@@ -217,14 +217,20 @@ ArmorTemplate* ArmorStore::newOverride(ArmorTemplate *armorTemplate, const char 
 //-------------------------------------------------------------------------------------------------
 void ArmorStore::reset()
 {
-	for (ArmorTemplateMap::iterator itr = m_armorTemplates.begin(); itr != m_armorTemplates.end(); ++itr)
+	ArmorTemplateMap::iterator itr = m_armorTemplates.begin();
+
+	while (itr != m_armorTemplates.end())
 	{
 		const Overridable *stillValid = itr->second->deleteOverrides();
 
 		if (stillValid == NULL)
 		{
 			// Also needs to be removed from the Hash map.
-			m_armorTemplates.erase(itr->first);
+			itr = m_armorTemplates.erase(itr);
+		}
+		else
+		{
+			++itr;
 		}
 	}
 }
