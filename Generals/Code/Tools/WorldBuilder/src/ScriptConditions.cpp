@@ -126,18 +126,20 @@ void ScriptConditionsDlg::OnEditCondition()
 	}
 	EditCondition cDlg;
 	cDlg.setCondition(m_condition);
-	cDlg.DoModal();
-	ScriptDialog::updateScriptWarning(m_script);
-	pList->DeleteString(m_index);
-	AsciiString label;
-	Bool first;
-	if (m_orCondition && m_orCondition->getFirstAndCondition() == m_condition) {
-		first = true;
+	if (cDlg.DoModal() == IDOK)
+	{
+		ScriptDialog::updateScriptWarning(m_script);
+		pList->DeleteString(m_index);
+		AsciiString label;
+		Bool first = false;
+		if (m_orCondition && m_orCondition->getFirstAndCondition() == m_condition) {
+			first = true;
+		}
+		if (first) label = "  ";
+		else label = "    AND ";
+		label.concat(m_condition->getUiText());
+		pList->InsertString(m_index, label.str());
 	}
-	if (first) label = "  ";
-	else label = "    AND ";
-	label.concat(m_condition->getUiText());
-	pList->InsertString(m_index, label.str());
 }
 
 void ScriptConditionsDlg::enableUI()

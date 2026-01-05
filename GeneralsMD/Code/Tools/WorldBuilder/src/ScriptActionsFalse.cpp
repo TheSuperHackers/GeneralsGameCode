@@ -116,11 +116,13 @@ void ScriptActionsFalse::OnEditAction()
 	}
 	EditAction cDlg;
 	cDlg.setAction(m_falseAction);
-	cDlg.DoModal();
-	ScriptDialog::updateScriptWarning(m_script);
-	pList->DeleteString(m_index);
-	pList->InsertString(m_index, m_falseAction->getUiText().str());
-	pList->SetCurSel(m_index);
+	if (cDlg.DoModal() == IDOK)
+	{
+		ScriptDialog::updateScriptWarning(m_script);
+		pList->DeleteString(m_index);
+		pList->InsertString(m_index, m_falseAction->getUiText().str());
+		pList->SetCurSel(m_index);
+	}
 }
 
 void ScriptActionsFalse::enableUI()
