@@ -75,7 +75,7 @@ static ScriptGroup *s_mtGroup = nullptr;
 // These strings must be in the same order as they are in their definitions
 // (See SHELL_SCRIPT_HOOK_* )
 //
-static const char *const TheShellHookNames[]=
+const char *const TheShellHookNames[]=
 {
 	"ShellMainMenuCampaignPushed", //SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_SELECTED,
 	"ShellMainMenuCampaignHighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_HIGHLIGHTED,

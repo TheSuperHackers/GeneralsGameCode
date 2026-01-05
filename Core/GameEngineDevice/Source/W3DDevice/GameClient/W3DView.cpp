@@ -757,7 +757,7 @@ void drawDebugCircle( const Coord3D & center, Real radius, Real width, Color col
   }
 }
 
-void drawDrawableExtents( Drawable *draw, void *userData );  // FORWARD DECLARATION
+static void drawDrawableExtents( Drawable *draw, void *userData );  // FORWARD DECLARATION
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 static void drawContainedDrawable( Object *obj, void *userData )
@@ -867,7 +867,7 @@ static void drawDrawableExtents( Drawable *draw, void *userData )
 }
 
 
-void drawAudioLocations( Drawable *draw, void *userData );
+static void drawAudioLocations( Drawable *draw, void *userData );
 // ------------------------------------------------------------------------------------------------
 // Helper for drawAudioLocations
 // ------------------------------------------------------------------------------------------------

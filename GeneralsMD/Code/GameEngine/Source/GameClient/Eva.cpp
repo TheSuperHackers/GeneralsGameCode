@@ -35,7 +35,7 @@
 
 
 //-------------------------------------------------------------------------------------------------
-static const char *const TheEvaMessageNames[] =
+const char *const TheEvaMessageNames[] =
 {
 	"LOWPOWER",
 	"INSUFFICIENTFUNDS",

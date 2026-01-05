@@ -778,7 +778,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 // drawButtonText =============================================================
 /** Draw button text to the screen */
 //=============================================================================
-static void drawText( GameWindow *window, WinInstanceData *instData )
+void drawText( GameWindow *window, WinInstanceData *instData )
 {
 	ICoord2D origin, size, textPos;
 	Int width, height;
