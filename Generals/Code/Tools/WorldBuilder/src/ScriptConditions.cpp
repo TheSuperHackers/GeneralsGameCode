@@ -130,7 +130,7 @@ void ScriptConditionsDlg::OnEditCondition()
 	ScriptDialog::updateScriptWarning(m_script);
 	pList->DeleteString(m_index);
 	AsciiString label;
-	Bool first;
+	Bool first = false;
 	if (m_orCondition && m_orCondition->getFirstAndCondition() == m_condition) {
 		first = true;
 	}
