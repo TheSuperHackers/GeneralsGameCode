@@ -36,7 +36,7 @@
 
 #pragma once
 
-#ifdef _MSC_VER
+#if defined(_WIN32)
 
 #include "win.h"
 /*
@@ -80,4 +80,4 @@ typedef struct tThreadInfoType {
 
 
 
-#endif	//_MSC_VER
+#endif	//_WIN32

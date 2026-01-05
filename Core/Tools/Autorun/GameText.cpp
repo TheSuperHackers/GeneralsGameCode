@@ -174,7 +174,7 @@ class GameTextManager : public GameTextInterface
 		Char						readChar( File *file );
 };
 
-static int _cdecl			compareLUT ( const void *,  const void*);
+static int __cdecl			compareLUT ( const void *,  const void*);
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------

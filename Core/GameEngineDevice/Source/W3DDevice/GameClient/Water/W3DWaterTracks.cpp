@@ -1083,7 +1083,7 @@ extern HWND ApplicationHWnd;
 //TODO: Fix editor so it actually draws the wave segment instead of line while editing
 //Could freeze all the water while editing?  Or keep setting elapsed time on current segment.
 //Have to make it so seamless merge of segments at final position.
-static void TestWaterUpdate(void)
+void TestWaterUpdate(void)
 {
 	static Int doInit=1;
 	static WaterTracksObj *track=nullptr,*track2=nullptr;

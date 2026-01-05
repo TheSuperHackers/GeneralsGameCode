@@ -47,11 +47,22 @@ bool __DebugIncludeInLink1;
 // .CRT$XCZ. We jam in our own two functions at the very beginning
 // and end of this list (B and Y respectively since the A and Z segments
 // contain list delimiters).
+#if defined(_MSC_VER)
 #pragma data_seg(".CRT$XCB")
 void *Debug::PreStatic=&Debug::PreStaticInit;
 #pragma data_seg(".CRT$XCY")
 void *Debug::PostStatic=&Debug::PostStaticInit;
 #pragma data_seg()
+#elif defined(__GNUC__) && defined(_WIN32)
+// For GCC/MinGW-w64 targeting Windows, use constructor attributes
+// Use priority 101 for PreStatic (very early) and 65434 for PostStatic (very late)
+void __attribute__((constructor(101))) GccPreStaticInit() { Debug::PreStaticInit(); }
+void __attribute__((constructor(65434))) GccPostStaticInit() { Debug::PostStaticInit(); }
+void *Debug::PreStatic = nullptr;
+void *Debug::PostStatic = nullptr;
+#else
+#error "Unsupported compiler or platform. This code requires MSVC or GCC/MinGW-w64 targeting Windows."
+#endif
 
 Debug::LogDescription::LogDescription(const char *fileOrGroup, const char *description)
 {
@@ -253,15 +264,36 @@ Debug::~Debug()
   // again, do not put any code in here
 }
 
+#if defined(_MSC_VER)
+// MSVC: Use SE Translator
 static void LocalSETranslator(unsigned, struct _EXCEPTION_POINTERS *pExPtrs)
 {
   // simply call our regular exception handler
   DebugExceptionhandler::ExceptionFilter(pExPtrs);
 }
+#elif defined(__GNUC__) && defined(_WIN32)
+// MinGW-w64: Use Vectored Exception Handler (Windows-only)
+// Note: VEH is process-wide (unlike MSVC's per-thread _set_se_translator),
+// but this matches the existing process-wide SetUnhandledExceptionFilter architecture.
+// Returns EXCEPTION_CONTINUE_SEARCH to avoid interfering with normal exception handling.
+static LONG WINAPI LocalVectoredExceptionHandler(struct _EXCEPTION_POINTERS *pExPtrs)
+{
+  // Call our regular exception handler
+  DebugExceptionhandler::ExceptionFilter(pExPtrs);
+  return EXCEPTION_CONTINUE_SEARCH;
+}
+#endif
 
 void Debug::InstallExceptionHandler(void)
 {
+#if defined(_MSC_VER)
   _set_se_translator(LocalSETranslator);
+#elif defined(__GNUC__) && defined(_WIN32)
+  // MinGW-w64 doesn't support _set_se_translator, use Vectored Exception Handler
+  AddVectoredExceptionHandler(1, LocalVectoredExceptionHandler);
+#else
+  #error "Unsupported compiler for exception handling"
+#endif
 }
 
 bool Debug::SkipNext(void)
@@ -274,11 +306,23 @@ bool Debug::SkipNext(void)
   // do not implement this function inline, we do need
   // a valid frame pointer here!
   unsigned help;
+#if defined(_MSC_VER)
   _asm
   {
     mov eax,[ebp+4]   // return address
     mov help,eax
   };
+#elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
+  // GCC/Clang inline assembly for x86-32
+  __asm__ __volatile__(
+    "mov 4(%%ebp), %0"
+    : "=r"(help)
+    :
+    : "memory"
+  );
+#else
+  #error "Unsupported compiler or architecture for inline assembly"
+#endif
   curStackFrame=help;
 
   // do we know if to skip the following code?
@@ -390,7 +434,13 @@ bool Debug::AssertDone(void)
           }
           break;
         case IDRETRY:
+#if defined(_MSC_VER)
           _asm int 0x03
+#elif defined(__GNUC__)
+          __builtin_trap();
+#else
+          #error "Unsupported compiler for breakpoint"
+#endif
           break;
         default:
           ((void)0);
@@ -658,7 +708,13 @@ bool Debug::CrashDone(bool die)
             }
             break;
           case IDRETRY:
+#if defined(_MSC_VER)
             _asm int 0x03
+#elif defined(__GNUC__)
+            __builtin_trap();
+#else
+            #error "Unsupported compiler for breakpoint"
+#endif
             break;
           default:
             ((void)0);

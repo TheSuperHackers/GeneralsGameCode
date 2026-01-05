@@ -45,6 +45,7 @@
 class StringClass;
 struct IDirect3DTexture8;
 class TextureLoadTaskClass;
+class TextureLoadTaskListClass;
 
 class TextureLoader
 {
