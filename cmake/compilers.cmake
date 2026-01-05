@@ -8,6 +8,15 @@ if (DEFINED MSVC_VERSION)
     message(STATUS "MSVC_VERSION: ${MSVC_VERSION}")
 endif()
 
+# TheSuperHackers @build JohnsterID 05/01/2026 Add MinGW-w64 detection and configure compiler flags
+# Detect MinGW-w64
+if(MINGW)
+    message(STATUS "MinGW-w64 detected")
+    set(IS_MINGW_BUILD TRUE)
+else()
+    set(IS_MINGW_BUILD FALSE)
+endif()
+
 # Set variable for VS6 to handle special cases.
 if (DEFINED MSVC_VERSION AND MSVC_VERSION LESS 1300)
     set(IS_VS6_BUILD TRUE)
@@ -25,8 +34,11 @@ if(MSVC)
     add_link_options("/INCREMENTAL:NO")
 else()
     # We go a bit wild here and assume any other compiler we are going to use supports -g for debug info.
-    string(APPEND CMAKE_CXX_FLAGS_RELEASE " -g")
-    string(APPEND CMAKE_C_FLAGS_RELEASE " -g")
+    # For MinGW, skip adding -g to Release builds
+    if(NOT (MINGW AND CMAKE_BUILD_TYPE STREQUAL "Release"))
+        string(APPEND CMAKE_CXX_FLAGS_RELEASE " -g")
+        string(APPEND CMAKE_C_FLAGS_RELEASE " -g")
+    endif()
 endif()
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
