@@ -118,6 +118,11 @@ ArmorStore::ArmorStore()
 //-------------------------------------------------------------------------------------------------
 ArmorStore::~ArmorStore()
 {
+	for (ArmorTemplateMap::iterator itr = m_armorTemplates.begin(); itr != m_armorTemplates.end(); ++itr)
+	{
+		deleteInstance(itr->second);
+	}
+
 	m_armorTemplates.clear();
 }
 
