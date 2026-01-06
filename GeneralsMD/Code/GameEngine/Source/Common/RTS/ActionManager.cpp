@@ -458,10 +458,8 @@ Bool ActionManager::canResumeConstructionOf( const Object *obj,
 	if( obj->isKindOf( KINDOF_DOZER ) == FALSE )
 		return FALSE;
 
-	Relationship r = obj->getRelationship(objectBeingConstructed);
-
-	// only available to our allies
-	if( r != ALLIES )
+	// TheSuperHackers @bugfix Stubbjax 06/01/2025 Ensure only the owner of the construction can resume it.
+	if (obj->getControllingPlayer() != objectBeingConstructed->getControllingPlayer())
 		return FALSE;
 
 	// if the objectBeingConstructed is not actually under construction we can't resume that!
