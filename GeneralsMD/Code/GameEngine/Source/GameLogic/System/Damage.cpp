@@ -92,7 +92,10 @@ const char* const DamageTypeFlags::s_bitNameList[] =
 	"SEISMIC",
 	"RAD_BEAM",
 	"TESLA",
+	"JET_TORPEDO",
+	"ANTI_SHIP",
 	// Specific damage types with special logic attached
+	"TORPEDO",
 	"CHRONO_GUN",
 	"CHRONO_UNRESISTABLE",
 	//"ZOMBIE_VIRUS",  // TODO

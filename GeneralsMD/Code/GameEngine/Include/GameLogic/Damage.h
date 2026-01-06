@@ -97,8 +97,11 @@ enum DamageType CPP_11(: Int)
 	DAMAGE_SEISMIC,
 	DAMAGE_RAD_BEAM,
 	DAMAGE_TESLA,
+	DAMAGE_JET_TORPEDO,
+	DAMAGE_ANTI_SHIP,
 	
 	// Specific damage types with special logic attached
+	DAMAGE_TORPEDO, ///< can only attack units over water
 	DAMAGE_CHRONO_GUN,   ///< Disable target and remove them once health threshold is reached
 	DAMAGE_CHRONO_UNRESISTABLE,  ///< Used for recovery from CHRONO_GUN
 	// DAMAGE_ZOMBIE_VIRUS,  // TODO

@@ -148,8 +148,16 @@ static void doSetRallyPoint( Object *obj, const Coord3D& pos )
 	// tells me how to get the locomotor sets based on a thing template (CBD)
 	//
 	NameKeyType key;
+	Coord3D rallyPointPos = pos;
 	if (obj->isKindOf(KINDOF_SHIPYARD)) {
 		key = NAMEKEY("BasicBoatLocomotor");
+
+		//Shift pos up to water height
+		Real waterZ;
+		if (TheTerrainLogic->isUnderwater(rallyPointPos.x, rallyPointPos.y, &waterZ)) {
+			rallyPointPos.z = waterZ;
+		}
+
 	}
 	else {
 		key = NAMEKEY("BasicHumanLocomotor");
@@ -157,7 +165,7 @@ static void doSetRallyPoint( Object *obj, const Coord3D& pos )
 
 	LocomotorSet locomotorSet;
 	locomotorSet.addLocomotor( TheLocomotorStore->findLocomotorTemplate( key ) );
-	if( TheAI->pathfinder()->clientSafeQuickDoesPathExist( locomotorSet, obj->getPosition(), &pos ) == FALSE )
+	if( TheAI->pathfinder()->clientSafeQuickDoesPathExist( locomotorSet, obj->getPosition(), &rallyPointPos) == FALSE )
 	{
 
 		// user feedback
@@ -169,7 +177,7 @@ static void doSetRallyPoint( Object *obj, const Coord3D& pos )
 
 			// play the no can do sound
 			static AudioEventRTS rallyNotSet("UnableToSetRallyPoint");
-			rallyNotSet.setPosition(&pos);
+			rallyNotSet.setPosition(&rallyPointPos);
 			rallyNotSet.setPlayerIndex(obj->getControllingPlayer()->getPlayerIndex());
 			TheAudio->addAudioEvent(&rallyNotSet);
 
@@ -191,7 +199,7 @@ static void doSetRallyPoint( Object *obj, const Coord3D& pos )
 
 		// play a sound for setting the rally point
 		static AudioEventRTS rallyPointSet("RallyPointSet");
-		rallyPointSet.setPosition(&pos);
+		rallyPointSet.setPosition(&rallyPointPos);
 		rallyPointSet.setPlayerIndex(obj->getControllingPlayer()->getPlayerIndex());
 		TheAudio->addAudioEvent(&rallyPointSet);
 
@@ -207,7 +215,7 @@ static void doSetRallyPoint( Object *obj, const Coord3D& pos )
 	if( exitInterface )
 	{
 		// set the rally point
-		exitInterface->setRallyPoint( &pos );
+		exitInterface->setRallyPoint( &rallyPointPos);
 
 	}
 

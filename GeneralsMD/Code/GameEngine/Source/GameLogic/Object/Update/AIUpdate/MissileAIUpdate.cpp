@@ -131,6 +131,7 @@ void MissileAIUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "KillSelfDelay",     INI::parseDurationUnsignedInt, NULL, offsetof( MissileAIUpdateModuleData, m_killSelfDelay ) },
 		{ "ZCorrectionFactor", INI::parseReal,   NULL, offsetof(MissileAIUpdateModuleData, m_zDirFactor) },
 		{ "ApplyLauncherBonus", INI::parseBool,  NULL, offsetof(MissileAIUpdateModuleData, m_applyLauncherBonus) },
+		{ "IsTorpedo",         INI::parseBool,   NULL, offsetof(MissileAIUpdateModuleData, m_isTorpedo) },
 		{ 0, 0, 0, 0 }
 	};
 
@@ -633,7 +634,7 @@ void MissileAIUpdate::doAttackState(Bool turnOK, Bool randomPath)
 		}
 	}
 
-	if(curLoco && curLoco->getPreferredHeight() > 0)
+	if(curLoco && (curLoco->getPreferredHeight() > 0 || curLoco->getPreferredHeight() < 0) )
 	{
 		// Am I close enough to the target to ignore my preferred height setting?
 		Real distanceToTargetSquared = ThePartitionManager->getDistanceSquared( getObject(), getGoalPosition(), FROM_CENTER_2D );
@@ -840,6 +841,13 @@ UpdateSleepTime MissileAIUpdate::update()
 		TheGameLogic->destroyObject(getObject());
 		return UPDATE_SLEEP_FOREVER;
 	}
+
+	// If treated as torpedo, explode when not over water
+	const MissileAIUpdateModuleData* d = getMissileAIUpdateModuleData();
+	if (d->m_isTorpedo && !getObject()->isOverWater()) {
+		detonate();
+	}
+
 	switch( m_state )
 	{
 		case PRELAUNCH:

@@ -838,6 +838,11 @@ CanAttackResult WeaponSet::getAbleToUseWeaponAgainstTarget( AbleToAttackType att
 					continue;
 				}
 
+				// Torpedoes cannot attack units not above water
+				if (weapon->getDamageType() == DAMAGE_TORPEDO && !victim->isOverWater()) {
+					continue;
+				}
+
 				return okResult;
 			}
 		}

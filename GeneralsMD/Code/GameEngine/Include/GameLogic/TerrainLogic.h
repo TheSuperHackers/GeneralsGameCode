@@ -288,6 +288,9 @@ public:
 
 	virtual Drawable *pickBridge(const Vector3 &from, const Vector3 &to, Vector3 *pos);
 
+	// get water around a world point
+	virtual bool pickWaterPlane(const Vector3 &from, const Vector3 &to, const Vector3 &aroundPos, Vector3 &outPos);
+
 	virtual void addBridgeToLogic(BridgeInfo *pInfo, Dict *props, AsciiString bridgeTemplateName); ///< Adds a bridge's logical info.
 	virtual void addLandmarkBridgeToLogic(Object *bridgeObj); ///< Adds a bridge's logical info.
 	virtual void deleteBridge( Bridge *bridge );	///< remove a bridge

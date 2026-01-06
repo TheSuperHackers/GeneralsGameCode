@@ -2319,6 +2319,16 @@ void W3DView::screenToTerrain( const ICoord2D *screen, Coord3D *world )
 		intersection = bridgePt;
 	}
 
+	//Check for water height in this area, create a dummy plane around the point
+	if (TheGlobalData->m_heightAboveTerrainIncludesWater) {
+		Vector3 outPos{ 0,0,0 };
+		if (TheTerrainLogic->pickWaterPlane(rayStart, rayEnd, intersection, outPos)) {
+			if (outPos.Z > intersection.Z) {
+				intersection = outPos;
+			}
+		}
+	}
+
 	world->x = intersection.X;
 	world->y = intersection.Y;
 	world->z = intersection.Z;

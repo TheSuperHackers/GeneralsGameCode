@@ -542,6 +542,14 @@ void AIGroup::computeIndividualDestination( Coord3D *dest, const Coord3D *groupD
 	dest->x = groupDest->x + v.x;
 	dest->y = groupDest->y + v.y;
 	dest->z = TheTerrainLogic->getLayerHeight( dest->x, dest->y, layer );
+
+	if (TheGlobalData->m_heightAboveTerrainIncludesWater) {
+		// Put waypoints on water surface instead of ground
+		if (Real waterZ = 0; TheTerrainLogic->isUnderwater(dest->x, dest->y, &waterZ)) {
+			if (waterZ > dest->z) dest->z = waterZ;
+		}
+	}
+
 	AIUpdateInterface *ai = obj->getAIUpdateInterface();
 	if (ai && ai->isDoingGroundMovement()) {
 		if (isFormation) {

@@ -81,6 +81,12 @@ void DefaultProductionExitUpdate::exitObjectViaDoor( Object *newObj, ExitDoorTyp
 		// make sure the point is on the terrain
 		loc.Z = TheTerrainLogic ? TheTerrainLogic->getLayerHeight( loc.X, loc.Y, creationObject->getLayer() ) : 0.0f;
 
+		// If underwater use water height, fixes shipyards spawning ships under water
+		if (Real waterZ = 0;  TheTerrainLogic && TheTerrainLogic->isUnderwater(loc.X, loc.Y, &waterZ)) {
+			if (waterZ > loc.Z) loc.Z = waterZ;
+		}
+
+
 		// we need it in Coord3D form
 		createPoint.x = loc.X;
 		createPoint.y = loc.Y;

@@ -1975,6 +1975,34 @@ Drawable *TerrainLogic::pickBridge(const Vector3 &from, const Vector3 &to, Vecto
 	return(curDraw);
 }
 
+bool TerrainLogic::pickWaterPlane(const Vector3& from, const Vector3& to, const Vector3& aroundPos, Vector3 &outPos) {
+	Real waterZ{ 0 };
+	if (isUnderwater(aroundPos.X, aroundPos.Y, &waterZ)) {
+		Vector3 normal(0, 0, 1.0f);
+		Vector3 point(aroundPos.X, aroundPos.Y, waterZ);
+
+		PlaneClass plane(normal, point);
+
+		Real t;
+		plane.Compute_Intersection(from, to, &t);
+		Vector3 intersectPos;
+		intersectPos = from + (to - from) * t;
+
+		outPos.X = intersectPos.X;
+		outPos.Y = intersectPos.Y;
+		outPos.Z = intersectPos.Z;
+
+		return true;
+	}
+	else {
+		outPos.X = 0;
+		outPos.Y = 0;
+		outPos.Z = 0;
+		return false;
+	}
+}
+
+
 //-------------------------------------------------------------------------------------------------
 /** Deletes the bridges list. */
 //-------------------------------------------------------------------------------------------------
