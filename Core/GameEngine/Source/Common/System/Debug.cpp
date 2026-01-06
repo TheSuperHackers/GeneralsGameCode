@@ -746,6 +746,43 @@ static void TriggerMiniDump()
 }
 
 
+// TheSuperHackers @bugfix JohnsterID 06/01/2025 Helper function to extract crash location from stack trace
+static void extractCrashLocation(char* outBuffer, size_t bufferSize)
+{
+	outBuffer[0] = '\0';
+
+	if (bufferSize == 0 || g_LastErrorDump.isEmpty()) {
+		return;
+	}
+
+	const char* stackStr = g_LastErrorDump.str();
+
+	// Skip leading whitespace/newlines
+	while (*stackStr && (*stackStr == ' ' || *stackStr == '\t' || *stackStr == '\n' || *stackStr == '\r')) {
+		stackStr++;
+	}
+
+	// Skip if no content or contains "<Unknown>"
+	if (!*stackStr || strstr(stackStr, "<Unknown>") != NULL) {
+		return;
+	}
+
+	// Find end of first line
+	const char* lineEnd = stackStr;
+	const size_t maxLineLength = bufferSize < 401 ? bufferSize - 1 : 400;
+
+	while (*lineEnd && *lineEnd != '\n' && *lineEnd != '\r' && (size_t)(lineEnd - stackStr) < maxLineLength) {
+		lineEnd++;
+	}
+
+	size_t len = lineEnd - stackStr;
+	if (len > 0) {
+		strncpy(outBuffer, stackStr, len);
+		outBuffer[len] = '\0';
+	}
+}
+
+
 void ReleaseCrash(const char *reason)
 {
 	/// do additional reporting on the crash, if possible
@@ -806,22 +843,49 @@ void ReleaseCrash(const char *reason)
 		}
 	}
 
-#if defined(RTS_DEBUG)
-	/* static */ char buff[8192]; // not so static so we can be threadsafe
-	snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);
-	::MessageBox(NULL, buff, "Technical Difficulties...", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
-#else
-// crash error messaged changed 3/6/03 BGC
-//	::MessageBox(NULL, "Sorry, a serious error occurred.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
-//	::MessageBox(NULL, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
+	// TheSuperHackers @bugfix JohnsterID 06/01/2025 Update crash message to show crash report locations
+	// and point users to repo. Removes outdated EA forum references.
+	// Also shows crash location from stack trace when debug symbols are available.
+	char crashInfoPath[_MAX_PATH];
+	strlcpy(crashInfoPath, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(crashInfoPath));
+	strlcat(crashInfoPath, RELEASECRASH_FILE_NAME, ARRAY_SIZE(crashInfoPath));
 
-// crash error message changed again 8/22/03 M Lorenzen... made this message box modal to the system so it will appear on top of any task-modal windows, splash-screen, etc.
-  ::MessageBox(NULL, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.",
-   "Technical Difficulties...",
-   MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
-
-
+#ifdef RTS_ENABLE_CRASHDUMP
+	char crashDumpDir[_MAX_PATH];
+	strlcpy(crashDumpDir, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(crashDumpDir));
+	strlcat(crashDumpDir, "CrashDumps\\", ARRAY_SIZE(crashDumpDir));
 #endif
+
+	char crashLocation[512];
+	extractCrashLocation(crashLocation, ARRAY_SIZE(crashLocation));
+
+	char buff[2560];
+	char* p = buff;
+	char* end = buff + sizeof(buff);
+
+	p += snprintf(p, end - p, "The game encountered a critical error and needs to close.\n\n");
+
+#if defined(RTS_DEBUG)
+	if (reason && *reason) {
+		p += snprintf(p, end - p, "Error: %s\n", reason);
+	}
+#endif
+
+	if (crashLocation[0] != '\0') {
+		p += snprintf(p, end - p, "Location:\n%s\n\n", crashLocation);
+	} else if (p > buff && *(p - 1) != '\n') {
+		p += snprintf(p, end - p, "\n");
+	}
+
+	p += snprintf(p, end - p, "Crash report saved to:\n%s\n", crashInfoPath);
+
+#ifdef RTS_ENABLE_CRASHDUMP
+	p += snprintf(p, end - p, "\nMinidump files saved to:\n%s\n", crashDumpDir);
+#endif
+
+	snprintf(p, end - p, "\nPlease report the issue:\nhttps://github.com/TheSuperHackers/GeneralsGameCode/issues");
+
+	::MessageBox(NULL, buff, "Game Crash", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
 
 	_exit(1);
 }
@@ -848,9 +912,31 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		}
 	}
 
+	// TheSuperHackers @bugfix JohnsterID 06/01/2025 Append crash file locations to localized error message
+	char crashInfoPath[_MAX_PATH];
+	strlcpy(crashInfoPath, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(crashInfoPath));
+	strlcat(crashInfoPath, RELEASECRASH_FILE_NAME, ARRAY_SIZE(crashInfoPath));
+
+	char crashInfoAppendix[1024];
+	snprintf(crashInfoAppendix, sizeof(crashInfoAppendix),
+		"\n\nCrash report: %s"
+#ifdef RTS_ENABLE_CRASHDUMP
+		"\nMinidump files: %sCrashDumps\\"
+#endif
+		"\n\nReport issue: https://github.com/TheSuperHackers/GeneralsGameCode/issues",
+		crashInfoPath
+#ifdef RTS_ENABLE_CRASHDUMP
+		, TheGlobalData->getPath_UserData().str()
+#endif
+	);
+
 	if (TheSystemIsUnicode)
 	{
-		::MessageBoxW(NULL, mesg.str(), prompt.str(), MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
+		UnicodeString appendix;
+		appendix.translate(crashInfoAppendix);
+		UnicodeString fullMessage = mesg;
+		fullMessage.concat(appendix);
+		::MessageBoxW(NULL, fullMessage.str(), prompt.str(), MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
 	}
 	else
 	{
@@ -859,6 +945,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		AsciiString promptA, mesgA;
 		promptA.translate(prompt);
 		mesgA.translate(mesg);
+		mesgA.concat(crashInfoAppendix);
 		//Make sure main window is not TOP_MOST
 		::SetWindowPos(ApplicationHWnd, HWND_NOTOPMOST, 0, 0, 0, 0,SWP_NOSIZE |SWP_NOMOVE);
 		::MessageBoxA(NULL, mesgA.str(), promptA.str(), MB_OK|MB_TASKMODAL|MB_ICONERROR);
