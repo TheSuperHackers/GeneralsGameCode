@@ -1322,7 +1322,6 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		}
 
 		//DEBUG_LOG(("Starting LAN game with %d players", game->getNumPlayers()));
-		Dict d;
 		for (int i=0; i<MAX_SLOTS; ++i)
 		{
 			// Add a Side to TheSidesList
@@ -1337,6 +1336,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 			if (!slot || !slot->isOccupied())
 				continue;
 
+			Dict d;
 			d.clear();
 			AsciiString playerName;
 			playerName.format("player%d", i);
@@ -1684,16 +1684,14 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	#endif
 
 		// Special case, load any bridge map objects.
- 	const ThingTemplate *thingTemplate;
-	MapObject *pMapObj;
-	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
+	for (MapObject *pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
 	{
 
 		if (pMapObj->getFlag(FLAG_BRIDGE_FLAGS) || pMapObj->getFlag(FLAG_ROAD_FLAGS))
 			continue;	// these roads & bridges are special cased in the terrain side.
 
 		// get thing template based from map object name
-		thingTemplate = pMapObj->getThingTemplate();
+		const ThingTemplate *thingTemplate = pMapObj->getThingTemplate();
 		if( thingTemplate == nullptr )
 			continue;
 
@@ -1792,14 +1790,12 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		forceFluffToProp = TRUE; // Always do client side fluff - faster, and syncs properly. jba.
 	}
 
-	progressCount = LOAD_PROGRESS_LOOP_ALL_THE_FREAKN_OBJECTS;
-	Int timer = timeGetTime();
 	if( loadingSaveGame ) {
 		// Loading a loadingSaveGame, need to add the trees to the client. jba. [8/11/2003]
-		for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
+		for (MapObject *pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
 		{
 			// get thing template based from map object name
-			thingTemplate = pMapObj->getThingTemplate();
+			const ThingTemplate *thingTemplate = pMapObj->getThingTemplate();
 			if( thingTemplate == nullptr )
 				continue;
 			// don't create trees and shrubs if this is one and we have that option off
@@ -1817,8 +1813,9 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	}
 	else
 	{
-
-		for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
+		Int progressCount = LOAD_PROGRESS_LOOP_ALL_THE_FREAKN_OBJECTS;
+		Int timer = timeGetTime();
+		for (MapObject *pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
 		{
 
 			if (pMapObj->getFlag(FLAG_BRIDGE_FLAGS) || pMapObj->getFlag(FLAG_ROAD_FLAGS)) {
@@ -1829,7 +1826,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 			handleNameChange( pMapObj );
 
 			// get thing template based from map object name
-			thingTemplate = pMapObj->getThingTemplate();
+			const ThingTemplate *thingTemplate = pMapObj->getThingTemplate();
 
 			//
 			// if no template continue, some map objects don't have thing templates like
@@ -1931,10 +1928,10 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	DEBUG_LOG(("%s", Buf));
 	#endif
 
-	progressCount = LOAD_PROGRESS_LOOP_INITIAL_NETWORK_BUILDINGS;
 	// place initial network buildings/units
 	if (TheGameInfo && !loadingSaveGame)
 	{
+		Int progressCount = LOAD_PROGRESS_LOOP_INITIAL_NETWORK_BUILDINGS;
 		for (int i=0; i<MAX_SLOTS; ++i)
 		{
 			GameSlot *slot = TheGameInfo->getSlot(i);
