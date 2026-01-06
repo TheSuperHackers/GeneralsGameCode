@@ -173,6 +173,7 @@ ParticleUplinkCannonUpdate::ParticleUplinkCannonUpdate( Thing *thing, const Modu
 	m_defaultInfoCached = false;
 	m_invalidSettings = false;
 	m_manualTargetMode = false;
+	m_xferVersion = 1;
 	m_initialTargetPosition.zero();
 	m_currentTargetPosition.zero();
 	m_overrideTargetDestination.zero();
@@ -1308,7 +1309,10 @@ void ParticleUplinkCannonUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: Serialize decay frames
+	* 4: TheSuperHackers @tweak Serialize orbit to target laser radius
+	*/
 // ------------------------------------------------------------------------------------------------
 void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 {
@@ -1322,6 +1326,7 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 #endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
+	m_xferVersion = version;
 
 	// extend base class
 	UpdateModule::xfer( xfer );
@@ -1436,27 +1441,28 @@ void ParticleUplinkCannonUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-#if RETAIL_COMPATIBLE_XFER_SAVE
-	// TheSuperHackers @info xezon 17/05/2025
-	// For retail game compatibility, this transfers the loaded visual laser radius
-	// settings from the Drawable's LaserUpdate to the local LaserRadiusUpdate.
-	if( m_orbitToTargetBeamID != INVALID_DRAWABLE_ID )
+	if (m_xferVersion <= 3)
 	{
-		Drawable* drawable = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
-		if( drawable != NULL )
+		// TheSuperHackers @info xezon 17/05/2025
+		// For retail game compatibility, this transfers the loaded visual laser radius
+		// settings from the Drawable's LaserUpdate to the local LaserRadiusUpdate.
+		if( m_orbitToTargetBeamID != INVALID_DRAWABLE_ID )
 		{
-			static NameKeyType nameKeyClientUpdate = NAMEKEY( "LaserUpdate" );
-			LaserUpdate *update = (LaserUpdate*)drawable->findClientUpdateModule( nameKeyClientUpdate );
-			if( update != NULL )
+			Drawable* drawable = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
+			if( drawable != NULL )
 			{
-				m_orbitToTargetLaserRadius = update->getLaserRadiusUpdate();
+				static NameKeyType nameKeyClientUpdate = NAMEKEY( "LaserUpdate" );
+				LaserUpdate *update = (LaserUpdate*)drawable->findClientUpdateModule( nameKeyClientUpdate );
+				if( update != NULL )
+				{
+					m_orbitToTargetLaserRadius = update->getLaserRadiusUpdate();
+				}
+			}
+			else
+			{
+				DEBUG_CRASH(( "ParticleUplinkCannonUpdate::loadPostProcess - Unable to find drawable for m_orbitToTargetBeamID" ));
 			}
 		}
-		else
-		{
-			DEBUG_CRASH(( "ParticleUplinkCannonUpdate::loadPostProcess - Unable to find drawable for m_orbitToTargetBeamID" ));
-		}
 	}
-#endif
 
 }

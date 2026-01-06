@@ -2607,16 +2607,28 @@ void Drawable::setStealthLook(StealthLookType look)
 //-------------------------------------------------------------------------------------------------
 void Drawable::draw()
 {
-  if ( testTintStatus( TINT_STATUS_FRENZY ) == FALSE )
-  {
-    if ( getObject() && getObject()->isEffectivelyDead() )
-		  m_secondMaterialPassOpacity = 0.0f;//dead folks don't stealth anyway
-	  else if ( m_secondMaterialPassOpacity > VERY_TRANSPARENT_MATERIAL_PASS_OPACITY )// keep fading any add'l material unless something has set it to zero
-		  m_secondMaterialPassOpacity *= MATERIAL_PASS_OPACITY_FADE_SCALAR;
-	  else
-		  m_secondMaterialPassOpacity = 0.0f;
-  }
+	if ( testTintStatus( TINT_STATUS_FRENZY ) == FALSE )
+	{
+		if ( getObject() && getObject()->isEffectivelyDead() )
+		{
+			//dead folks don't stealth anyway
+			m_secondMaterialPassOpacity = 0.0f;
+		}
+		else if ( m_secondMaterialPassOpacity > VERY_TRANSPARENT_MATERIAL_PASS_OPACITY )
+		{
+			// keep fading any added material unless something has set it to zero
+			// TheSuperHackers @tweak The stealth opacity fade time step is now decoupled from the render update.
+			static_assert(MATERIAL_PASS_OPACITY_FADE_SCALAR > 0.0f && MATERIAL_PASS_OPACITY_FADE_SCALAR < 1.0f, "MATERIAL_PASS_OPACITY_FADE_SCALAR must be between 0 and 1");
 
+			const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+			const Real fadeScalar = 1.0f - (1.0f - MATERIAL_PASS_OPACITY_FADE_SCALAR) * timeScale;
+			m_secondMaterialPassOpacity *= fadeScalar;
+		}
+		else
+		{
+			m_secondMaterialPassOpacity = 0.0f;
+		}
+	}
 
 	if (m_hidden || m_hiddenByStealth || getFullyObscuredByShroud())
 		return;	// my, that was easy
@@ -5627,7 +5639,9 @@ void TintEnvelope::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method
 	* Version Info;
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: TheSuperHackers @tweak Serialize sustain counter as float instead of integer
+	*/
 // ------------------------------------------------------------------------------------------------
 void TintEnvelope::xfer( Xfer *xfer )
 {

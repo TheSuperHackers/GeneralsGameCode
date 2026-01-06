@@ -273,8 +273,8 @@ class MilesAudioManager : public AudioManager
 		void stopAllSpeech( void );
 
 	protected:
-		void initFilters( HSAMPLE sample, const AudioEventRTS *eventInfo );
-		void initFilters3D( H3DSAMPLE sample, const AudioEventRTS *eventInfo, const Coord3D *pos );
+		void initFilters( HSAMPLE sample, AudioEventRTS *eventInfo );
+		void initFilters3D( H3DSAMPLE sample, AudioEventRTS *eventInfo, const Coord3D *pos );
 
 	protected:
 		ProviderInfo m_provider3D[MAXPROVIDERS];

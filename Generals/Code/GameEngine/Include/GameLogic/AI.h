@@ -536,18 +536,18 @@ public:
 		aiDoCommand(&parms);
 	}
 
-	void aiFollowExitProductionPath( const std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource )
+	void aiFollowExitProductionPath( std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_FOLLOW_EXITPRODUCTION_PATH, cmdSource);
-		parms.m_coords = *path;
+		stl::move_or_swap(parms.m_coords, *path);
 		parms.m_obj = ignoreObject;
 		aiDoCommand(&parms);
 	}
 
-	void aiFollowPath( const std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource )
+	void aiFollowPath( std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource )
 	{
 		AICommandParms parms(AICMD_FOLLOW_PATH, cmdSource);
-		parms.m_coords = *path;
+		stl::move_or_swap(parms.m_coords, *path);
 		parms.m_obj = ignoreObject;
 		aiDoCommand(&parms);
 	}

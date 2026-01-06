@@ -816,9 +816,9 @@ void AIStateMachine::loadPostProcess( void )
 /**
  * Define a simple path
  */
-void AIStateMachine::setGoalPath( const std::vector<Coord3D>* path )
+void AIStateMachine::setGoalPath( std::vector<Coord3D>* path )
 {
-	m_goalPath = *path;
+	stl::move_or_swap(m_goalPath, *path);
 }
 
 #ifdef STATE_MACHINE_DEBUG
@@ -2596,7 +2596,17 @@ StateReturnType AIAttackApproachTargetState::updateInternal()
 	{
 		if( victim->testStatus( OBJECT_STATUS_STEALTHED ) && !victim->testStatus( OBJECT_STATUS_DETECTED ) )
 		{
-			return STATE_FAILURE;	// If obj is stealthed, can no longer approach.
+			// If obj is stealthed, can no longer approach.
+			// TheSuperHackers @bugfix Stubbjax 19/11/2025 Except when disarming stealthed mines.
+#if RETAIL_COMPATIBLE_CRC
+			return STATE_FAILURE;
+#else
+			const Bool isTargetingMine = weapon && weapon->getDamageType() == DAMAGE_DISARM &&
+				(victim->isKindOf(KINDOF_MINE));
+
+			if (!isTargetingMine)
+				return STATE_FAILURE;
+#endif
 		}
 		ai->setCurrentVictim(victim);
 		// Attacking an object.

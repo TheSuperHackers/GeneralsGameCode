@@ -2399,7 +2399,7 @@ Bool JetAIUpdate::getTreatAsAircraftForLocoDistToGoal() const
 /**
  * Follow the path defined by the given array of points
  */
-void JetAIUpdate::privateFollowPath( const std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource, Bool exitProduction )
+void JetAIUpdate::privateFollowPath( std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource, Bool exitProduction )
 {
 	if (exitProduction)
 	{

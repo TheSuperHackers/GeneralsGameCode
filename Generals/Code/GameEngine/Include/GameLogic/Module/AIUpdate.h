@@ -244,7 +244,7 @@ protected:
 	virtual void privateFollowWaypointPathAsTeam( const Waypoint *way, CommandSourceType cmdSource );///< start following the path from the given point
 	virtual void privateFollowWaypointPathExact( const Waypoint *way, CommandSourceType cmdSource );///< start following the path from the given point
 	virtual void privateFollowWaypointPathAsTeamExact( const Waypoint *way, CommandSourceType cmdSource );///< start following the path from the given point
-	virtual void privateFollowPath( const std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource, Bool exitProduction );///< follow the path defined by the given array of points
+	virtual void privateFollowPath( std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource, Bool exitProduction );///< follow the path defined by the given array of points
 	virtual void privateFollowPathAppend( const Coord3D *pos, CommandSourceType cmdSource );
 	virtual void privateAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource );					///< attack given object
 	virtual void privateForceAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource );					///< attack given object
@@ -338,7 +338,7 @@ public:
 	virtual Bool isBusy() const;
 
 	virtual void onObjectCreated();
-	virtual void doQuickExit( const std::vector<Coord3D>* path );			///< get out of this Object
+	virtual void doQuickExit( std::vector<Coord3D>* path );			///< get out of this Object
 
 	virtual void aiDoCommand(const AICommandParms* parms);
 
