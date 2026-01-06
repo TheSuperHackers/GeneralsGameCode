@@ -54,7 +54,7 @@ class ArmorTemplate : public Overridable
 		DEBUG_CRASH(("This should never be called"));
 	}
 #else
-		ArmorTemplate(const ArmorTemplate& that) = delete;
+	ArmorTemplate(const ArmorTemplate& that) = delete;
 #endif
 
 public:
