@@ -626,7 +626,13 @@ protected:
 		Real m_totalYaw;						///< Current total yaw for this frame
 		Real m_totalZ;
 
-		PhysicsXformInfo() : m_totalPitch(0), m_totalRoll(0), m_totalYaw(0), m_totalZ(0) { }
+		Real m_prevTotalPitch;
+		Real m_prevTotalRoll;
+		Real m_prevTotalYaw;
+		Real m_prevTotalZ;
+
+		PhysicsXformInfo() : m_totalPitch(0), m_totalRoll(0), m_totalYaw(0), m_totalZ(0),
+			m_prevTotalPitch(0), m_prevTotalRoll(0), m_prevTotalYaw(0), m_prevTotalZ(0) { }
 	};
 
 	Bool calcPhysicsXform(PhysicsXformInfo& info);
