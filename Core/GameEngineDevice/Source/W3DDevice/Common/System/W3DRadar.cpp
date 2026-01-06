@@ -54,6 +54,7 @@
 #include "W3DDevice/GameClient/W3DShroud.h"
 #include "WW3D2/texture.h"
 #include "WW3D2/dx8caps.h"
+#include "WWMath/vector2i.h"
 
 
 
@@ -132,7 +133,7 @@ void W3DRadar::initializeTextureFormats( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Delete resources used specifically in this W3D radar implemetation */
+/** Delete resources used specifically in this W3D radar implementation */
 //-------------------------------------------------------------------------------------------------
 void W3DRadar::deleteResources( void )
 {
@@ -166,6 +167,9 @@ void W3DRadar::deleteResources( void )
 
 	deleteInstance(m_shroudImage);
 	m_shroudImage = nullptr;
+
+	DEBUG_ASSERTCRASH(m_shroudSurface == NULL, ("W3DRadar::deleteResources: m_shroudSurface is expected NULL"));
+	DEBUG_ASSERTCRASH(m_shroudSurfaceBits == NULL, ("W3DRadar::deleteResources: m_shroudSurfaceBits is expected NULL"));
 
 }
 
@@ -844,6 +848,10 @@ W3DRadar::W3DRadar( void )
 	m_shroudTextureFormat = WW3D_FORMAT_UNKNOWN;
 	m_shroudImage = nullptr;
 	m_shroudTexture = nullptr;
+	m_shroudSurface = nullptr;
+	m_shroudSurfaceBits = nullptr;
+	m_shroudSurfacePitch = 0;
+	m_shroudSurfacePixelSize = 0;
 
 	m_textureWidth = RADAR_CELL_WIDTH;
 	m_textureHeight = RADAR_CELL_HEIGHT;
@@ -1301,9 +1309,6 @@ void W3DRadar::setShroudLevel(Int shroudX, Int shroudY, CellShroudStatus setting
 	if (!shroud)
 		return;
 
-	SurfaceClass* surface = m_shroudTexture->Get_Surface_Level();
-	DEBUG_ASSERTCRASH( surface, ("W3DRadar: Can't get surface for Shroud texture") );
-
 	Int mapMinX = shroudX * shroud->getCellWidth();
 	Int mapMinY = shroudY * shroud->getCellHeight();
 	Int mapMaxX = (shroudX+1) * shroud->getCellWidth();
@@ -1315,21 +1320,19 @@ void W3DRadar::setShroudLevel(Int shroudX, Int shroudY, CellShroudStatus setting
 	worldPoint.x = mapMinX;
 	worldPoint.y = mapMinY;
 	worldToRadar( &worldPoint, &radarPoint );
-	Int radarMinX = radarPoint.x;
-	Int radarMinY = radarPoint.y;
+	const Int radarMinX = radarPoint.x;
+	const Int radarMinY = radarPoint.y;
 
 	worldPoint.x = mapMaxX;
 	worldPoint.y = mapMaxY;
 	worldToRadar( &worldPoint, &radarPoint );
-	Int radarMaxX = radarPoint.x;
-	Int radarMaxY = radarPoint.y;
+	const Int radarMaxX = radarPoint.x;
+	const Int radarMaxY = radarPoint.y;
 
-/*
-	Int radarMinX = REAL_TO_INT_FLOOR(mapMinX / getXSample());
-	Int radarMinY = REAL_TO_INT_FLOOR(mapMinY / getYSample());
-	Int radarMaxX = REAL_TO_INT_CEIL(mapMaxX / getXSample());
-	Int radarMaxY = REAL_TO_INT_CEIL(mapMaxY / getYSample());
-*/
+	// Int radarMinX = REAL_TO_INT_FLOOR(mapMinX / getXSample());
+	// Int radarMinY = REAL_TO_INT_FLOOR(mapMinY / getYSample());
+	// Int radarMaxX = REAL_TO_INT_CEIL(mapMaxX / getXSample());
+	// Int radarMaxY = REAL_TO_INT_CEIL(mapMaxY / getYSample());
 
 	/// @todo srj -- this really needs to smooth the display!
 
@@ -1343,15 +1346,69 @@ void W3DRadar::setShroudLevel(Int shroudX, Int shroudY, CellShroudStatus setting
 	else
 		alpha = 0;
 
-	for( Int y = radarMinY; y <= radarMaxY; y++ )
+	if (m_shroudSurface == NULL)
 	{
-		for( Int x = radarMinX; x <= radarMaxX; x++ )
+		// This is expensive.
+		SurfaceClass* surface = m_shroudTexture->Get_Surface_Level();
+		DEBUG_ASSERTCRASH( surface, ("W3DRadar: Can't get surface for Shroud texture") );
+
+		for( Int y = radarMinY; y <= radarMaxY; y++ )
 		{
-			if( legalRadarPoint( x, y ) )
+			for( Int x = radarMinX; x <= radarMaxX; x++ )
+			{
 				surface->DrawPixel( x, y, GameMakeColor( 0, 0, 0, alpha ) );
+			}
+		}
+		REF_PTR_RELEASE(surface);
+	}
+	else
+	{
+		// This is cheap.
+		DEBUG_ASSERTCRASH(m_shroudSurfaceBits != NULL, ("W3DRadar::setShroudLevel: m_shroudSurfaceBits is not expected NULL"));
+		DEBUG_ASSERTCRASH(m_shroudSurfacePixelSize != 0, ("W3DRadar::setShroudLevel: m_shroudSurfacePixelSize is not expected 0"));
+		const Color color = GameMakeColor( 0, 0, 0, alpha );
+
+		for( Int y = radarMinY; y <= radarMaxY; ++y )
+		{
+			UnsignedByte* row = static_cast<UnsignedByte*>(m_shroudSurfaceBits) + y * m_shroudSurfacePitch;
+			for( Int x = radarMinX; x <= radarMaxX; ++x )
+			{
+				UnsignedByte* column = row + x * m_shroudSurfacePixelSize;
+
+				switch (m_shroudSurfacePixelSize)
+				{
+				case 1: *column = (UnsignedByte)(color & 0xFF); break;
+				case 2: *reinterpret_cast<UnsignedShort*>(column) = (UnsignedShort)(color & 0xFFFF); break;
+				case 4: *reinterpret_cast<UnsignedInt*>(column) = (UnsignedInt)color; break;
+				}
+			}
 		}
 	}
-	REF_PTR_RELEASE(surface);
+}
+
+void W3DRadar::beginSetShroudLevel()
+{
+	DEBUG_ASSERTCRASH( m_shroudSurface == NULL, ("W3DRadar::beginSetShroudLevel: m_shroudSurface is expected NULL") );
+	m_shroudSurface = m_shroudTexture->Get_Surface_Level();
+	DEBUG_ASSERTCRASH( m_shroudSurface != NULL, ("W3DRadar::beginSetShroudLevel: Can't get surface for Shroud texture") );
+
+	SurfaceClass::SurfaceDescription sd;
+	m_shroudSurface->Get_Description(sd);
+	m_shroudSurfaceBits = m_shroudSurface->Lock(&m_shroudSurfacePitch);
+	m_shroudSurfacePixelSize = Get_Bytes_Per_Pixel(sd.Format);
+}
+
+void W3DRadar::endSetShroudLevel()
+{
+	DEBUG_ASSERTCRASH( m_shroudSurface != NULL, ("W3DRadar::endSetShroudLevel: m_shroudSurface is not expected NULL") );
+	if (m_shroudSurfaceBits != NULL)
+	{
+		m_shroudSurface->Unlock();
+		m_shroudSurfaceBits = NULL;
+		m_shroudSurfacePitch = 0;
+		m_shroudSurfacePixelSize = 0;
+	}
+	REF_PTR_RELEASE(m_shroudSurface);
 }
 
 //-------------------------------------------------------------------------------------------------

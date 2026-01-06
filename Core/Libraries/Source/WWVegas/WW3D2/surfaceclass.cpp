@@ -205,11 +205,27 @@ void SurfaceClass::Get_Description(SurfaceDescription &surface_desc)
 	surface_desc.Width = d3d_desc.Width;
 }
 
-void * SurfaceClass::Lock(int * pitch)
+void *SurfaceClass::Lock(int *pitch)
 {
 	D3DLOCKED_RECT lock_rect;
 	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
 	DX8_ErrorCode(D3DSurface->LockRect(&lock_rect, nullptr, 0));
+	*pitch = lock_rect.Pitch;
+	return (void *)lock_rect.pBits;
+}
+
+void *SurfaceClass::Lock(int *pitch, const Vector2i &min, const Vector2i &max)
+{
+	D3DLOCKED_RECT lock_rect;
+	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
+
+	RECT rect;
+	rect.left = min.I;
+	rect.top = min.J;
+	rect.right = max.I;
+	rect.bottom = max.J;
+	DX8_ErrorCode(D3DSurface->LockRect(&lock_rect, &rect, 0));
+
 	*pitch = lock_rect.Pitch;
 	return (void *)lock_rect.pBits;
 }
@@ -312,7 +328,7 @@ void SurfaceClass::Copy(const unsigned char *other)
  * HISTORY:                                                                                    *
  *   5/2/2001   hy : Created.                                                                  *
  *=============================================================================================*/
-void SurfaceClass::Copy(Vector2i &min,Vector2i &max, const unsigned char *other)
+void SurfaceClass::Copy(const Vector2i &min, const Vector2i &max, const unsigned char *other)
 {
 	SurfaceDescription sd;
 	Get_Description(sd);

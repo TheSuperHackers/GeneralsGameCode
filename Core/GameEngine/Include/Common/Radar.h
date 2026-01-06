@@ -218,8 +218,11 @@ public:
 	/// empty the entire shroud
 	virtual void clearShroud() = 0;
 
-	/// set the shroud level at shroud cell x,y
-	virtual void setShroudLevel( Int x, Int y, CellShroudStatus setting ) = 0;
+	/// TheSuperHackers @performance xezon 20/12/2025 Provides beginSetShroudLevel and endSetShroudLevel to improve performance.
+	/// Calling setShroudLevel many times is very expensive because it will lock a render resource on every call.
+	virtual void setShroudLevel( Int x, Int y, CellShroudStatus setting ) = 0; ///< set the shroud level at shroud cell x,y
+	virtual void beginSetShroudLevel() {} ///< call this once before multiple calls to setShroudLevel for better performance
+	virtual void endSetShroudLevel() {} ///< call this once after beginSetShroudLevel and setShroudLevel
 
 protected:
 

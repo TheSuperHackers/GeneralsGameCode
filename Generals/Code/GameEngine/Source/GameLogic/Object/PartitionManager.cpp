@@ -3047,15 +3047,21 @@ void PartitionManager::refreshShroudForLocalPlayer()
 	TheDisplay->clearShroud();
 	TheRadar->clearShroud();
 
-	const Int playerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
-	for (int i = 0; i < m_totalCellCount; ++i)
+	if (m_totalCellCount != 0)
 	{
-		Int x = m_cells[i].getCellX();
-		Int y = m_cells[i].getCellY();
-		CellShroudStatus status = m_cells[i].getShroudStatusForPlayer(playerIndex);
-		TheDisplay->setShroudLevel(x, y, status);
-		TheRadar->setShroudLevel(x, y, status);
-		m_cells[i].invalidateShroudedStatusForAllCois(playerIndex);
+		const Int playerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
+		TheRadar->beginSetShroudLevel();
+
+		for (int i = 0; i < m_totalCellCount; ++i)
+		{
+			const Int x = m_cells[i].getCellX();
+			const Int y = m_cells[i].getCellY();
+			const CellShroudStatus status = m_cells[i].getShroudStatusForPlayer(playerIndex);
+			TheDisplay->setShroudLevel(x, y, status);
+			TheRadar->setShroudLevel(x, y, status);
+			m_cells[i].invalidateShroudedStatusForAllCois(playerIndex);
+		}
+		TheRadar->endSetShroudLevel();
 	}
 }
 

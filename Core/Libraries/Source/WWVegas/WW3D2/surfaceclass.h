@@ -79,7 +79,8 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 		 void Get_Description(SurfaceDescription &surface_desc);
 
 		// Lock / unlock the surface
-		void * Lock(int * pitch);
+		void *Lock(int *pitch);
+		void *Lock(int *pitch, const Vector2i &min, const Vector2i &max);
 		void Unlock(void);
 
 		// HY -- The following functions are support functions for font3d
@@ -97,7 +98,7 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 		void Copy(const unsigned char *other);
 
 		// support for copying from a byte array
-		void Copy(Vector2i &min,Vector2i &max, const unsigned char *other);
+		void Copy(const Vector2i &min, const Vector2i &max, const unsigned char *other);
 
 		// copies the contents of one surface to another, stretches
 		void Stretch_Copy(
