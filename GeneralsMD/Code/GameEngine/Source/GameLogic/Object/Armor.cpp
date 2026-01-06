@@ -118,9 +118,9 @@ ArmorStore::ArmorStore()
 //-------------------------------------------------------------------------------------------------
 ArmorStore::~ArmorStore()
 {
-	for (ArmorTemplateMap::iterator itr = m_armorTemplates.begin(); itr != m_armorTemplates.end(); ++itr)
+	for (ArmorTemplateMap::iterator it = m_armorTemplates.begin(); it != m_armorTemplates.end(); ++it)
 	{
-		deleteInstance(itr->second);
+		deleteInstance(it->second);
 	}
 
 	m_armorTemplates.clear();
@@ -222,22 +222,22 @@ ArmorTemplate* ArmorStore::newOverride(ArmorTemplate *armorTemplate, const char 
 //-------------------------------------------------------------------------------------------------
 void ArmorStore::reset()
 {
-	ArmorTemplateMap::iterator itr = m_armorTemplates.begin();
+	ArmorTemplateMap::iterator it = m_armorTemplates.begin();
 
-	while (itr != m_armorTemplates.end())
+	while (it != m_armorTemplates.end())
 	{
-		ArmorTemplateMap::iterator next = itr;
+		ArmorTemplateMap::iterator next = it;
 		++next;
 
-		const Overridable *stillValid = itr->second->deleteOverrides();
+		const Overridable *stillValid = it->second->deleteOverrides();
 
 		if (stillValid == NULL)
 		{
 			// Also needs to be removed from the Hash map.
-			m_armorTemplates.erase(itr);
+			m_armorTemplates.erase(it);
 		}
 
-		itr = next;
+		it = next;
 	}
 }
 
