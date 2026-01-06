@@ -85,7 +85,6 @@ const float V_epsilon(0.01f);
 // Externs defined somewhere in W3D.
 //---------------------------------------------------------------------
 
-unsigned int PixelSize(const SurfaceClass::SurfaceDescription &sd);
 void Convert_Pixel(Vector3 &rgb, const SurfaceClass::SurfaceDescription &sd, const unsigned char * pixel);
 void Convert_Pixel(unsigned char * pixel,const SurfaceClass::SurfaceDescription &sd, const Vector3 &rgb);
 
@@ -613,7 +612,7 @@ void W3DAssetManager::Remap_Palette(SurfaceClass *surface, const int color, Bool
 	int pitch,size;
 //	UnsignedInt newPalette[TEAM_COLOR_PALETTE_SIZE];
 
-	size=PixelSize(sd);
+	size=Get_Bytes_Per_Pixel(sd.Format);
 	unsigned char *bits=(unsigned char*) surface->Lock(&pitch);
 
 	if (doPaletteOnly)
@@ -664,7 +663,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 	texture->Get_Level_Description(desc);
 
 	Int psize;
-	psize=PixelSize(desc);
+	psize=Get_Bytes_Per_Pixel(desc.Format);
 	DEBUG_ASSERTCRASH( psize == 2 || psize == 4, ("Can't Recolor Texture %s", name) );
 
 	oldsurf=texture->Get_Surface_Level();
