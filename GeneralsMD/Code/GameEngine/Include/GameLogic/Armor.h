@@ -111,7 +111,7 @@ class ArmorStore : public SubsystemInterface
 public:
 
 	ArmorStore();
-	~ArmorStore();
+	virtual ~ArmorStore();
 
 	void init() { }
 	void reset();
