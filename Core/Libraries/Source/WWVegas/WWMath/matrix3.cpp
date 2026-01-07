@@ -290,7 +290,7 @@ void Matrix3x3::Symmetric_Eigen_Solve(void)
 void Matrix3x3::Multiply(const Matrix3x3 & A,const Matrix3x3 & B,Matrix3x3 * set_res)
 {
 	Matrix3x3 tmp;
-	Matrix3x3 * Aptr;
+	const Matrix3x3 * Aptr;
 	float tmp1,tmp2,tmp3;
 
 	// Check for aliased parameters, copy the 'A' matrix into a temporary if the
@@ -300,7 +300,7 @@ void Matrix3x3::Multiply(const Matrix3x3 & A,const Matrix3x3 & B,Matrix3x3 * set
 		tmp = A;
 		Aptr = &tmp;
 	} else {
-		Aptr = (Matrix3x3 *)&A;
+		Aptr = &A;
 	}
 
 	tmp1 = B[0][0];
