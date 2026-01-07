@@ -1170,8 +1170,8 @@ void HeightMapRenderObjClass::oversizeTerrain(Int tilesToOversize)
 	Int height = WorldHeightMap::NORMAL_DRAW_HEIGHT;
 	if (tilesToOversize>0 && tilesToOversize<5)
 	{
-		width += 32*tilesToOversize;
-		height += 32*tilesToOversize;
+		width += VERTEX_BUFFER_TILE_LENGTH * tilesToOversize;
+		height += VERTEX_BUFFER_TILE_LENGTH * tilesToOversize;
 		if (width>m_map->getXExtent())
 			width = m_map->getXExtent();
 		if (height>m_map->getYExtent())

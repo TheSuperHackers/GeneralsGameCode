@@ -42,6 +42,8 @@ typedef std::vector<ICoord2D> VecICoord2D;
 /** MapObject class
 Not ref counted.  Do not store pointers to this class.  */
 
+#define VERTEX_BUFFER_TILE_LENGTH	32		//tiles of side length 32 (grid of 33x33 vertices).
+
 #define K_MIN_HEIGHT  0
 #define K_MAX_HEIGHT  255
 
@@ -105,10 +107,10 @@ public:
 	enum {TILE_4x4, TILE_6x6, TILE_8x8} m_tileMode;
 #endif
 	enum {
-		NORMAL_DRAW_WIDTH = 129,
-		NORMAL_DRAW_HEIGHT = 129,
-		STRETCH_DRAW_WIDTH = 65,
-		STRETCH_DRAW_HEIGHT = 65
+		NORMAL_DRAW_WIDTH = 1 + 4*VERTEX_BUFFER_TILE_LENGTH,
+		NORMAL_DRAW_HEIGHT = 1 + 4*VERTEX_BUFFER_TILE_LENGTH,
+		STRETCH_DRAW_WIDTH = 1 + 2*VERTEX_BUFFER_TILE_LENGTH,
+		STRETCH_DRAW_HEIGHT = 1 + 2*VERTEX_BUFFER_TILE_LENGTH,
 	};
 
 protected:

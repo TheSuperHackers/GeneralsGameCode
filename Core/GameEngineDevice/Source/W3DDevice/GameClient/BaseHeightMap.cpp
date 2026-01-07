@@ -693,7 +693,7 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 	Int EndCellX = 0;
  	Int StartCellY = 0;
 	Int EndCellY = 0;
-	const Int overhang = 2*32+m_map->getBorderSizeInline(); // Allow picking past the edge for scrolling & objects.
+	const Int overhang = 2*VERTEX_BUFFER_TILE_LENGTH + m_map->getBorderSizeInline(); // Allow picking past the edge for scrolling & objects.
  	Vector3 minPt(MAP_XY_FACTOR*(-overhang), MAP_XY_FACTOR*(-overhang), -MAP_XY_FACTOR);
 	Vector3 maxPt(MAP_XY_FACTOR*(m_map->getXExtent()+overhang),
 		MAP_XY_FACTOR*(m_map->getYExtent()+overhang), MAP_HEIGHT_SCALE*m_map->getMaxHeightValue()+MAP_XY_FACTOR);
