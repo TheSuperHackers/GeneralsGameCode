@@ -1778,7 +1778,7 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjLis
 		}
 
 		if (abs(deltaX)>CENTER_LIMIT || abs(deltaY)>CENTER_LIMIT) {
-			if (abs(deltaY) >= CENTER_LIMIT) {
+			if (abs(deltaY) > CENTER_LIMIT) {
 				if (m_map->setDrawOrg(m_map->getDrawOrgX(), newOrgY)) {
 					Int minY = 0;
 					Int maxY = 0;
