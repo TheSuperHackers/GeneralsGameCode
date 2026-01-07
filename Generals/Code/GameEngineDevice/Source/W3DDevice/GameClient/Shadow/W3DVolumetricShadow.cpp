@@ -386,7 +386,7 @@ int W3DShadowGeometryHeightmapMesh::GetPolygonIndex (long dwPolyId, short *psInd
 	UnsignedByte alpha[4];
 	float UA[4], VA[4];
 	Bool flipForBlend;
-	map->getAlphaUVData(column+m_patchOriginX, row+m_patchOriginY, UA, VA, alpha, &flipForBlend, false);
+	map->getAlphaUVData(column+m_patchOriginX, row+m_patchOriginY, UA, VA, alpha, &flipForBlend);
 	if (flipForBlend)
 	{
 		if (dwPolyId &1)

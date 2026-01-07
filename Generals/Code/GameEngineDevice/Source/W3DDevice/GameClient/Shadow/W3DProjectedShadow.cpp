@@ -444,7 +444,7 @@ Int W3DProjectedShadowManager::renderProjectedTerrainShadow(W3DProjectedShadow *
 				{
 					for (i=rowStart,k=startX; k<endX; i++,k++)
 					{	///@todo: Fix this to deal with flipped triangles
-						hmap->getAlphaUVData(k, j, UA, VA, alpha, &flipForBlend, false);
+						hmap->getAlphaUVData(k, j, UA, VA, alpha, &flipForBlend);
 /*						if (flipForBlend)
 						{	pvIndices[0]=i;
 							pvIndices[1]=i+1;
