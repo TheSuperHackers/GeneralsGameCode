@@ -234,7 +234,7 @@ DEBUG_LOG(( "%d: GetGameLogicRandomValue = %d (%d - %d), %s line %d",
 Int GetGameLogicRandomValueUnsynchronized( int lo, int hi, const char *file, int line )
 {
 #if RETAIL_COMPATIBLE_CRC
-	//return GetGameLogicRandomValue(lo, hi, file, line);
+	return GetGameLogicRandomValue(lo, hi, file, line);
 #endif
 
 	if (lo >= hi)
@@ -332,7 +332,7 @@ DEBUG_LOG(( "%d: GetGameLogicRandomValueReal = %f, %s line %d",
 Real GetGameLogicRandomValueRealUnsynchronized( Real lo, Real hi, const char *file, int line )
 {
 #if RETAIL_COMPATIBLE_CRC
-	//return GetGameLogicRandomValueReal(lo, hi, file, line);
+	return GetGameLogicRandomValueReal(lo, hi, file, line);
 #endif
 
 	if (lo >= hi)
