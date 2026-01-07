@@ -1677,8 +1677,8 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjLis
 
 	Real intersectionZ;
 	minHt = m_map->getMaxHeightValue();
-	for (i=0; i<m_x; i++) {
-		for (j=0; j<m_y; j++) {
+	for (j=0; j<m_y; j+=4) {
+		for (i=0; i<m_x; i+=4) {
 			Short cur = m_map->getDisplayHeight(i,j);
 			if (cur<minHt) minHt = cur;
 		}
