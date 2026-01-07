@@ -1991,7 +1991,7 @@ void BaseHeightMapRenderObjClass::updateScorches(void)
 #if 0
 				UnsignedByte alpha[4];
 				float UA[4], VA[4];
-				m_map->getAlphaUVData(xNdx, yNdx, UA, VA, alpha, &flipForBlend, false);
+				m_map->getAlphaUVData(xNdx, yNdx, UA, VA, alpha, &flipForBlend);
 #endif
 				if (flipForBlend) {
 					*curIb++ = startVertex + j*yOffset + i+1;
@@ -2089,7 +2089,7 @@ Int BaseHeightMapRenderObjClass::getStaticDiffuse(Int x, Int y)
 
 	Vector3 l2r,n2f,normalAtTexel;
 	Int vn0,un0,vp1,up1;
-	const Int cellOffset = 1;
+	constexpr const Int cellOffset = 1;
 
 	vn0 = y-cellOffset;
 	vp1 = y+cellOffset;

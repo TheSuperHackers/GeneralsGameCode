@@ -188,8 +188,8 @@ protected:
 	TileData *getSourceTile(UnsignedInt ndx) { if (ndx<NUM_SOURCE_TILES) return(m_sourceTiles[ndx]); return(NULL); };
 	TileData *getEdgeTile(UnsignedInt ndx) { if (ndx<NUM_SOURCE_TILES) return(m_edgeTiles[ndx]); return(NULL); };
 	/// UV mapping data for a cell to map into the terrain texture.
-	void getUVForNdx(Int ndx, float *minU, float *minV, float *maxU, float*maxV, Bool fullTile);
-	Bool getUVForTileIndex(Int ndx, Short tileNdx, float U[4], float V[4], Bool fullTile);
+	void getUVForNdx(Int ndx, float *minU, float *minV, float *maxU, float*maxV);
+	Bool getUVForTileIndex(Int ndx, Short tileNdx, float U[4], float V[4]);
 	Int getTextureClassFromNdx(Int tileNdx);
 	void readTexClass(TXTextureClass *texClass, TileData **tileData);
 	Int updateTileTexturePositions(Int *edgeHeight); ///< Places each tile in the texture.
@@ -267,7 +267,7 @@ public:  // tile and texture info.
 	TextureClass *getAlphaTerrainTexture(void); //< generates if needed and returns alpha terrain texture
 	TextureClass *getEdgeTerrainTexture(void); //< generates if needed and returns blend edge texture
 	/// UV mapping data for a cell to map into the terrain texture.  Returns true if the textures had to be stretched for cliffs.
-	Bool getUVData(Int xIndex, Int yIndex, float U[4], float V[4], Bool fullTile);
+	Bool getUVData(Int xIndex, Int yIndex, float U[4], float V[4]);
 	Bool getFlipState(Int xIndex, Int yIndex) const;
 	///Faster version of above function without all the safety checks - For people that do checks externally.
 	Bool getQuickFlipState(Int xIndex, Int yIndex) const
@@ -280,7 +280,7 @@ public:  // tile and texture info.
 	Bool getCliffState(Int xIndex, Int yIndex) const;
 	Bool getExtraAlphaUVData(Int xIndex, Int yIndex, float U[4], float V[4], UnsignedByte alpha[4], Bool *flip, Bool *cliff);
 	/// UV mapping data for a cell to map into the alpha terrain texture.
-	void getAlphaUVData(Int xIndex, Int yIndex, float U[4], float V[4], UnsignedByte alpha[4], Bool *flip, Bool fullTile);
+	void getAlphaUVData(Int xIndex, Int yIndex, float U[4], float V[4], UnsignedByte alpha[4], Bool *flip);
 	void getTerrainColorAt(Real x, Real y, RGBColor *pColor);
 	AsciiString getTerrainNameAt(Real x, Real y);
 	Bool isCliffMappedTexture(Int xIndex, Int yIndex);

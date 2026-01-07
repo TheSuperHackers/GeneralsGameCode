@@ -95,8 +95,6 @@
 #define no_OPTIMIZED_HEIGHTMAP_LIGHTING	01
 // Doesn't work well.  jba.
 
-const Bool HALF_RES_MESH = false;
-
 HeightMapRenderObjClass *TheHeightMap = NULL;
 //-----------------------------------------------------------------------------
 //         Private Data
@@ -308,12 +306,8 @@ Int HeightMapRenderObjClass::updateVB(DX8VertexBufferClass	*pVB, char *data, Int
 	Int xCoord, yCoord;
 	Int vn0,un0,vp1,up1;
 	Vector3 l2r,n2f,normalAtTexel;
-	Int	vertsPerRow=(VERTEX_BUFFER_TILE_LENGTH)*4;	//vertices per row of VB
-
-	Int cellOffset = 1;
-	if (HALF_RES_MESH) {
-		cellOffset = 2;
-	}
+	constexpr const Int vertsPerRow=(VERTEX_BUFFER_TILE_LENGTH)*4;	//vertices per row of VB
+	constexpr const Int cellOffset = 1;
 
 	REF_PTR_SET(m_map, pMap);	//update our heightmap pointer in case it changed since last call.
 	if (m_vertexBufferTiles && pMap)
@@ -332,14 +326,9 @@ Int HeightMapRenderObjClass::updateVB(DX8VertexBufferClass	*pVB, char *data, Int
 		for (j=y0; j<y1; j++)
 		{
 			VERTEX_FORMAT *vb = vBase;
-			if (HALF_RES_MESH) {
-				if (j&1) continue;
-				vb += ((j-originY)/2)*vertsPerRow/2;	//skip to correct row in vertex buffer
-				vb += ((x0-originX)/2)*4;		//skip to correct vertex in row.
-			} else {
-				vb += (j-originY)*vertsPerRow;	//skip to correct row in vertex buffer
-				vb += (x0-originX)*4;		//skip to correct vertex in row.
-			}
+			vb += (j-originY)*vertsPerRow;	//skip to correct row in vertex buffer
+			vb += (x0-originX)*4;		//skip to correct vertex in row.
+
 			vn0 = getYWithOrigin(j)-cellOffset;
 			if (vn0 < -pMap->getDrawOrgY())
 				vn0=-pMap->getDrawOrgY();
@@ -350,9 +339,6 @@ Int HeightMapRenderObjClass::updateVB(DX8VertexBufferClass	*pVB, char *data, Int
 			yCoord = getYWithOrigin(j)+pMap->getDrawOrgY();
 			for (i=x0; i<x1; i++)
 			{
-				if (HALF_RES_MESH) {
-					if (i&1) continue;
-				}
 				un0 = getXWithOrigin(i)-cellOffset;
 				if (un0 < -pMap->getDrawOrgX())
 					un0=-pMap->getDrawOrgX();
@@ -368,8 +354,8 @@ Int HeightMapRenderObjClass::updateVB(DX8VertexBufferClass	*pVB, char *data, Int
 				Bool flipForBlend = false;			 // True if the blend needs the triangles flipped.
 
 				if (pMap) {
-					pMap->getUVData(getXWithOrigin(i),getYWithOrigin(j),U, V, HALF_RES_MESH);
-					pMap->getAlphaUVData(getXWithOrigin(i),getYWithOrigin(j), UA, VA, alpha, &flipForBlend, HALF_RES_MESH);
+					pMap->getUVData(getXWithOrigin(i),getYWithOrigin(j),U, V);
+					pMap->getAlphaUVData(getXWithOrigin(i),getYWithOrigin(j), UA, VA, alpha, &flipForBlend);
 				}
 
 
@@ -569,7 +555,7 @@ Int HeightMapRenderObjClass::updateVBForLight(DX8VertexBufferClass	*pVB, char *d
 	Int i,j,k;
 	Int vn0,un0,vp1,up1;
 	Vector3 l2r,n2f,normalAtTexel;
-	Int	vertsPerRow=(VERTEX_BUFFER_TILE_LENGTH)*4;	//vertices per row of VB
+	constexpr const Int	vertsPerRow=(VERTEX_BUFFER_TILE_LENGTH)*4;	//vertices per row of VB
 
 	if (m_vertexBufferTiles && m_map)
 	{
@@ -583,9 +569,6 @@ Int HeightMapRenderObjClass::updateVBForLight(DX8VertexBufferClass	*pVB, char *d
 
 		for (j=y0; j<y1; j++)
 		{
-			if (HALF_RES_MESH) {
-				if (j&1) continue;
-			}
 			Int yCoord = getYWithOrigin(j)+m_map->getDrawOrgY()-m_map->getBorderSizeInline();
 			Bool intersect = false;
 			for (k=0; k<numLights; k++) {
@@ -610,9 +593,6 @@ Int HeightMapRenderObjClass::updateVBForLight(DX8VertexBufferClass	*pVB, char *d
 
 			for (i=x0; i<x1; i++)
 			{
-				if (HALF_RES_MESH) {
-					if (i&1) continue;
-				}
 				Int xCoord = getXWithOrigin(i)+m_map->getDrawOrgX()-m_map->getBorderSizeInline();
 				Bool intersect = false;
 				for (k=0; k<numLights; k++) {
@@ -634,9 +614,6 @@ Int HeightMapRenderObjClass::updateVBForLight(DX8VertexBufferClass	*pVB, char *d
 				}
 				// vb is the pointer to the vertex in the hardware dx8 vertex buffer.
 				Int offset = (j-originY)*vertsPerRow+4*(i-originX);
-				if (HALF_RES_MESH) {
-					offset = (j-originY)*vertsPerRow/4+2*(i-originX);
-				}
 				vb = vBase + offset;	//skip to correct row in vertex buffer
 				// vbMirror is the pointer to the vertex in our memory based copy.
 				// The important point is that we can read out of our copy to get the original
@@ -716,7 +693,7 @@ Int HeightMapRenderObjClass::updateVBForLightOptimized(DX8VertexBufferClass	*pVB
 	Int i,j,k;
 	Int vn0,un0,vp1,up1;
 	Vector3 l2r,n2f,normalAtTexel;
-	Int	vertsPerRow=(VERTEX_BUFFER_TILE_LENGTH)*4;	//vertices per row of VB
+	constexpr const Int vertsPerRow=(VERTEX_BUFFER_TILE_LENGTH)*4;	//vertices per row of VB
 
 	if (m_vertexBufferTiles && m_map)
 	{
@@ -735,22 +712,9 @@ Int HeightMapRenderObjClass::updateVBForLightOptimized(DX8VertexBufferClass	*pVB
 		// the formula's that Generals is using but in the case of the "half-res-mesh" I'm not
 		// sure things are correct...
 		//
-		Int quad_right_offset;
-		Int quad_below_offset;
-		Int quad_below_right_offset;
-
-		if (HALF_RES_MESH == false) {
-			// offset = (j-originY)*vertsPerRow+4*(i-originX);
-			quad_right_offset = 4;
-			quad_below_offset = vertsPerRow;
-			quad_below_right_offset = vertsPerRow + 4;
-
-		} else {
-			// offset = (j-originY)*vertsPerRow/4+2*(i-originX);
-			quad_right_offset = 2;
-			quad_below_offset = vertsPerRow/4;
-			quad_below_right_offset = vertsPerRow/4 + 2;
-		}
+		constexpr const Int quad_right_offset = 4;
+		constexpr const Int quad_below_offset = vertsPerRow;
+		//constexpr const Int quad_below_right_offset = vertsPerRow + 4;
 
 		//
 		// i,j loop over the quads affected by the light.  Each quad has its *own* 4 vertices.  This
@@ -758,9 +722,6 @@ Int HeightMapRenderObjClass::updateVBForLightOptimized(DX8VertexBufferClass	*pVB
 		//
 		for (j=y0; j<y1; j++)
 		{
-			if (HALF_RES_MESH) {
-				if (j&1) continue;
-			}
 			Int yCoord = getYWithOrigin(j)+m_map->getDrawOrgY()-m_map->getBorderSizeInline();
 			Bool intersect = false;
 			for (k=0; k<numLights; k++) {
@@ -785,9 +746,6 @@ Int HeightMapRenderObjClass::updateVBForLightOptimized(DX8VertexBufferClass	*pVB
 
 			for (i=x0; i<x1; i++)
 			{
-				if (HALF_RES_MESH) {
-					if (i&1) continue;
-				}
 				Int xCoord = getXWithOrigin(i)+m_map->getDrawOrgX()-m_map->getBorderSizeInline();
 				Bool intersect = false;
 				for (k=0; k<numLights; k++) {
@@ -809,9 +767,6 @@ Int HeightMapRenderObjClass::updateVBForLightOptimized(DX8VertexBufferClass	*pVB
 				}
 				// vb is the pointer to the vertex in the hardware dx8 vertex buffer.
 				Int offset = (j-originY)*vertsPerRow+4*(i-originX);
-				if (HALF_RES_MESH) {
-					offset = (j-originY)*vertsPerRow/4+2*(i-originX);
-				}
 				vb = vBase + offset;	//skip to correct row in vertex buffer
 				// vbMirror is the pointer to the vertex in our memory based copy.
 				// The important point is that we can read out of our copy to get the original
@@ -1704,10 +1659,8 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjLis
 		return; // no need to center.
 	}
 
-	Int cellOffset = 1;
-	if (HALF_RES_MESH) {
-		cellOffset = 2;
-	}
+	constexpr const Int cellOffset = 1;
+
 	// determine the ray corresponding to the camera and distance to projection plane
 	Matrix3D camera_matrix = camera->Get_Transform();
 
@@ -1812,10 +1765,6 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjLis
 		if (TheTacticalView->getFieldOfView() != 0) {
 			newOrgX = (visMaxX+visMinX)/2-m_x/2.0;
 			newOrgY = (visMaxY+visMinY)/2-m_y/2.0;
-		}
-		if (HALF_RES_MESH) {
-			newOrgX &= 0xFFFFFFFE;
-			newOrgY &= 0xFFFFFFFE;
 		}
 		Int deltaX = newOrgX - m_map->getDrawOrgX();
 		Int deltaY = newOrgY - m_map->getDrawOrgY();
@@ -2069,10 +2018,6 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 				count++;
 				Int numPolys = VERTEX_BUFFER_TILE_LENGTH*VERTEX_BUFFER_TILE_LENGTH*2;
 				Int numVertex = (VERTEX_BUFFER_TILE_LENGTH*2)*(VERTEX_BUFFER_TILE_LENGTH*2);
-				if (HALF_RES_MESH) {
-					numPolys /= 4;
-					numVertex /= 4;
-				}
 				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTiles[j*m_numVBTilesX+i]);
 #ifdef PRE_TRANSFORM_VERTEX
 				if (m_xformedVertexBuffer && pass==0) {
@@ -2207,10 +2152,6 @@ void HeightMapRenderObjClass::renderTerrainPass(CameraClass *pCamera)
 			count++;
 			Int numPolys = VERTEX_BUFFER_TILE_LENGTH*VERTEX_BUFFER_TILE_LENGTH*2;
 			Int numVertex = (VERTEX_BUFFER_TILE_LENGTH*2)*(VERTEX_BUFFER_TILE_LENGTH*2);
-			if (HALF_RES_MESH) {
-				numPolys /= 4;
-				numVertex /= 4;
-			}
 			DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTiles[j*m_numVBTilesX+i]);
 #ifdef PRE_TRANSFORM_VERTEX
 			if (m_xformedVertexBuffer && pass==0) {
