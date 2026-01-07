@@ -1187,7 +1187,6 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 
 	// Fill in the game color and Factions before we do the Load Screen
 	TheGameInfo = nullptr;
-	Int localSlot = 0;
 	if (TheNetwork)
 	{
 		if (TheLAN)
@@ -1311,6 +1310,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	DEBUG_LOG(("%s", Buf));
 	#endif
 
+	Int localSlot = 0;
 	Int progressCount = LOAD_PROGRESS_SIDE_POPULATION;
 	if (TheGameInfo)
 	{
@@ -1630,7 +1630,6 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	updateLoadProgress(LOAD_PROGRESS_POST_VICTORY_CONDITION_SETUP);
 
 	Player *localPlayer = ThePlayerList->getLocalPlayer();
-	Player *observerPlayer = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver"));
 
 	// set the radar as on a new map
 	TheRadar->newMap( TheTerrainLogic );
@@ -1738,6 +1737,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	updateLoadProgress(LOAD_PROGRESS_POST_PATHFINDER_NEW_MAP);
 
 	// reveal the map for the permanent observer
+	Player *observerPlayer = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver"));
 	ThePartitionManager->revealMapForPlayerPermanently( observerPlayer->getPlayerIndex() );
 	DEBUG_LOG(("Reveal shroud for %ls whose index is %d", observerPlayer->getPlayerDisplayName().str(), observerPlayer->getPlayerIndex()));
 
@@ -5209,5 +5209,3 @@ void GameLogic::loadPostProcess( void )
 	remakeSleepyUpdate();
 
 }
-
-
