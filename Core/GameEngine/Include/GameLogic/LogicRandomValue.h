@@ -33,11 +33,15 @@
 
 // do NOT use these functions directly, rather use the macros below
 extern Int GetGameLogicRandomValue( int lo, int hi, const char *file, int line );
+extern Int GetGameLogicRandomValueUnsynchronized(int lo, int hi, const char* file, int line);
 extern Real GetGameLogicRandomValueReal( Real lo, Real hi, const char *file, int line );
+extern Real GetGameLogicRandomValueRealUnsynchronized(Real lo, Real hi, const char* file, int line);
 
 // use these macros to access the random value functions
 #define GameLogicRandomValue( lo, hi ) GetGameLogicRandomValue( lo, hi, __FILE__, __LINE__ )
+#define GameLogicRandomValueUnsynchronized( lo, hi ) GetGameLogicRandomValueUnsynchronized( lo, hi, __FILE__, __LINE__ )
 #define GameLogicRandomValueReal( lo, hi ) GetGameLogicRandomValueReal( lo, hi, __FILE__, __LINE__ )
+#define GameLogicRandomValueRealUnsynchronized( lo, hi ) GetGameLogicRandomValueRealUnsynchronized( lo, hi, __FILE__, __LINE__ )
 
 //--------------------------------------------------------------------------------------------------------------
 class CColorAlphaDialog;

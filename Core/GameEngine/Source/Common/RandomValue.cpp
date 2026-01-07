@@ -229,6 +229,34 @@ DEBUG_LOG(( "%d: GetGameLogicRandomValue = %d (%d - %d), %s line %d",
 }
 
 //
+// Integer random value; does not change the seed values
+//
+Int GetGameLogicRandomValueUnsynchronized( int lo, int hi, const char *file, int line )
+{
+#if RETAIL_COMPATIBLE_CRC
+	return GetGameLogicRandomValue(lo, hi, file, line);
+#endif
+
+	if (lo >= hi)
+		return lo;
+
+	UnsignedInt seed[ARRAY_SIZE(theGameLogicSeed)];
+	memcpy(&seed[0], &theGameLogicSeed[0], sizeof(seed));
+
+	const UnsignedInt delta = hi - lo + 1;
+	const Int rval = ((Int)(randomValue(seed) % delta)) + lo;
+
+	DEBUG_ASSERTCRASH(rval >= lo && rval <= hi, ("Bad random val"));
+
+#ifdef DEBUG_RANDOM_LOGIC
+	DEBUG_LOG(( "%d: GetGameLogicRandomValueUnsynchronized = %d (%d - %d), %s line %d",
+		TheGameLogic->getFrame(), rval, lo, hi, file, line ));
+#endif
+
+	return rval;
+}
+
+//
 // Integer random value
 //
 Int GetGameClientRandomValue( int lo, int hi, const char *file, int line )
@@ -294,6 +322,34 @@ DEBUG_LOG(( "%d: GetGameLogicRandomValueReal = %f, %s line %d",
 					TheGameLogic->getFrame(), rval, file, line ));
 #endif
 /**/
+
+	return rval;
+}
+
+//
+// Real random value; does not change the seed values
+//
+Real GetGameLogicRandomValueRealUnsynchronized( Real lo, Real hi, const char *file, int line )
+{
+#if RETAIL_COMPATIBLE_CRC
+	return GetGameLogicRandomValueReal(lo, hi, file, line);
+#endif
+
+	if (lo >= hi)
+		return lo;
+
+	UnsignedInt seed[ARRAY_SIZE(theGameLogicSeed)];
+	memcpy(&seed[0], &theGameLogicSeed[0], sizeof(seed));
+
+	const Real delta = hi - lo;
+	const Real rval = ((Real)(randomValue(seed)) * theMultFactor) * delta + lo;
+
+	DEBUG_ASSERTCRASH(rval >= lo && rval <= hi, ("Bad random val"));
+
+#ifdef DEBUG_RANDOM_LOGIC
+	DEBUG_LOG(( "%d: GetGameLogicRandomValueRealUnsynchronized = %f, %s line %d",
+		TheGameLogic->getFrame(), rval, file, line ));
+#endif
 
 	return rval;
 }
