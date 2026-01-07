@@ -365,6 +365,20 @@ void WeaponTemplate::reset( void )
 	m_historicDamage.clear();
 }
 
+void WeaponTemplate::copy_from(const WeaponTemplate& other) {
+	//Backup nextTemplate, name and namekey
+	WeaponTemplate* nextTempl = this->m_nextTemplate;
+	AsciiString name = this->m_name;
+	NameKeyType nameKey = this->m_nameKey;
+
+	// take all values from other
+	*this = other;
+
+	this->m_nextTemplate = nextTempl;
+	this->m_name = name;
+	this->m_nameKey = nameKey;
+}
+
 //-------------------------------------------------------------------------------------------------
 /*static*/ void WeaponTemplate::parseWeaponBonusSet( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ )
 {
@@ -1933,6 +1947,69 @@ void WeaponStore::postProcessLoad()
 		DEBUG_ASSERTCRASH(TheAudio->isValidAudioEvent(&weapon->getFireSound()), ("Invalid FireSound %s in Weapon '%s'.", weapon->getFireSound().getEventName().str(), weapon->getName().str()));
 	}
 #endif
+
+}
+
+
+//-------------------------------------------------------------------------------------------------
+/*static*/ void WeaponStore::parseWeaponExtendTemplateDefinition(INI* ini)
+{
+	AsciiString name;
+	AsciiString parent;
+
+	// read the weapon name
+	const char* c = ini->getNextToken();
+	name.set(c);
+
+	// read the parent name
+	const char* c2 = ini->getNextToken();
+	parent.set(c2);
+
+	// find parent if present
+	WeaponTemplate* parentWeapon = TheWeaponStore->findWeaponTemplatePrivate(TheNameKeyGenerator->nameToKey(parent));
+	if (parentWeapon)
+	{
+
+		// find existing item if present
+		WeaponTemplate* weapon = TheWeaponStore->findWeaponTemplatePrivate(TheNameKeyGenerator->nameToKey(name));
+		if (weapon)
+		{
+			if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
+				weapon = TheWeaponStore->newOverride(weapon);
+			else
+			{
+				DEBUG_CRASH(("Weapon '%s' already exists, but OVERRIDE not specified", c));
+				return;
+			}
+
+		}
+		else
+		{
+			// no item is present, create a new one
+			weapon = TheWeaponStore->newWeaponTemplate(name);
+		}
+
+		//copy from parent
+		weapon->copy_from(*parentWeapon);
+
+		// parse the ini weapon definition
+		ini->initFromINI(weapon, weapon->getFieldParse());
+
+		if (weapon->m_projectileName.isNone())
+			weapon->m_projectileName.clear();
+
+#if defined(RTS_DEBUG)
+		if (!weapon->getFireSound().getEventName().isEmpty() && weapon->getFireSound().getEventName().compareNoCase("NoSound") != 0)
+		{
+			DEBUG_ASSERTCRASH(TheAudio->isValidAudioEvent(&weapon->getFireSound()), ("Invalid FireSound %s in Weapon '%s'.", weapon->getFireSound().getEventName().str(), weapon->getName().str()));
+		}
+#endif
+
+	}
+	else
+	{
+		DEBUG_CRASH(("Weapon '%s' cannot extend parrent '%s' as it not exists", c, c2));
+	}
 
 }
 

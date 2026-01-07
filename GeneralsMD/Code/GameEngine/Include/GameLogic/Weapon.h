@@ -417,6 +417,8 @@ public:
 	/// field table for loading the values from an INI
 	const FieldParse* getFieldParse() const { return TheWeaponTemplateFieldParseTable; }
 
+	void copy_from(const WeaponTemplate& other);
+
 	/**
 		fire the weapon. return the logic-frame in which the damage will be dealt.
 
@@ -973,6 +975,7 @@ public:
 	void handleProjectileDetonation( const WeaponTemplate* w, const Object *source, const Coord3D* pos, WeaponBonusConditionFlags extraBonusFlags, Bool inflictDamage = TRUE );
 
 	static void parseWeaponTemplateDefinition(INI* ini);
+	static void parseWeaponExtendTemplateDefinition(INI* ini);
 
 protected:
 

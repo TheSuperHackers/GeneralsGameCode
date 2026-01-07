@@ -510,6 +510,7 @@ public:
 
 
 	static void parseLocomotorTemplateDefinition(INI* ini);
+	static void parseLocomotorExtendTemplateDefinition(INI* ini);
 
 protected:
 
