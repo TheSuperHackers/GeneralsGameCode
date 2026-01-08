@@ -47,6 +47,7 @@ thumbs.db
 .clang-format
 /.vscode
 /Dependencies/MaxSDK/maxsdk
+/tmp/
 
 ## IntelliJ, CLion, etc.
 /.idea
