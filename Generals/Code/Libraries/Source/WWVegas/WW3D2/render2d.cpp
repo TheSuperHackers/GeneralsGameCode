@@ -611,6 +611,9 @@ void Render2DClass::Render(void)
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_COLORARG2, D3DTA_TFACTOR);
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+
+			// TheSuperHackers @bugfix Stubbjax 08/01/2025 Fix possible greyscale rendering issues on hardware without DOT3 support.
+			DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_COLOROP, D3DTOP_DISABLE);
 		}
 	}
 	else
