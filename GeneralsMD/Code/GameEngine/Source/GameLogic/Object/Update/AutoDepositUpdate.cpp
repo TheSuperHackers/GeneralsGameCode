@@ -184,7 +184,7 @@ UpdateSleepTime AutoDepositUpdate::update( void )
 			  moneyString.format( TheGameText->fetch( "GUI:AddCash" ), moneyAmount );
 			  Coord3D pos;
 			  pos.set( getObject()->getPosition() );
-			  pos.z += 10.0f; //add a little z to make it show up above the unit.
+			  pos.z += 10.0f + modData->m_textZOffset; //add a little z to make it show up above the unit.
 
         if ( owner->isKindOf( KINDOF_STRUCTURE ) )
         {
