@@ -149,7 +149,19 @@ UpdateSleepTime DeployStyleAIUpdate::update( void )
 		{
 			case READY_TO_MOVE:
 				//We're need to deploy before we can attack.
-				setMyState( DEPLOY );
+				if (data->m_turnBeforeUnpacking) {
+					// Check if we finished turning before deploying
+					if (isWithinAttackAngle()) {
+						setMyState(DEPLOY);
+					}
+					else {
+						// stay in READY_TO_MOVE state
+						break;
+					}
+				}
+				else { // Deploy right away
+					setMyState(DEPLOY);
+				}
 				break;
 			case READY_TO_ATTACK:
 				//Let the AI handle attacking.
@@ -412,6 +424,31 @@ void DeployStyleAIUpdate::setMyState( DeployStateTypes stateID, Bool reverseDepl
 		}
 	}
 
+}
+
+// ------------------------------------------------------------------------------------------------
+Bool DeployStyleAIUpdate::isWithinAttackAngle(void) const
+{
+	const Object* self = getObject();
+	const Weapon* weapon = self->getCurrentWeapon();
+	const AIUpdateInterface* ai = self->getAI();
+
+	Object* victim = ai->getCurrentVictim();
+	const Coord3D* pos;
+	if (victim)
+		pos = victim->getPosition();
+	else
+		pos = ai->getCurrentVictimPos();
+
+	if (pos == NULL || weapon == NULL)
+		return false;
+
+	Real aimDelta = weapon->getTemplate()->getAimDelta();
+
+	// TODO: get limited turret turn angle
+
+	Real relAngle = ThePartitionManager->getRelativeAngle2D(self, pos);
+	return abs(relAngle) <= aimDelta;
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -52,6 +52,7 @@ public:
 	Bool						m_turretsFunctionOnlyWhenDeployed;
 	Bool						m_turretsMustCenterBeforePacking;
 	Bool						m_manualDeployAnimations;
+	Bool						m_turnBeforeUnpacking;
 
 	DeployStyleAIUpdateModuleData()
 	{
@@ -61,6 +62,7 @@ public:
 		m_turretsFunctionOnlyWhenDeployed = false;
 		m_turretsMustCenterBeforePacking = FALSE;
 		m_manualDeployAnimations = FALSE;
+		m_turnBeforeUnpacking = FALSE;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
@@ -75,6 +77,7 @@ public:
 			{ "TurretsFunctionOnlyWhenDeployed", INI::parseBool,		NULL, offsetof( DeployStyleAIUpdateModuleData, m_turretsFunctionOnlyWhenDeployed ) },
 			{ "TurretsMustCenterBeforePacking", INI::parseBool,			NULL, offsetof( DeployStyleAIUpdateModuleData, m_turretsMustCenterBeforePacking ) },
 			{ "ManualDeployAnimations",	INI::parseBool,							NULL, offsetof( DeployStyleAIUpdateModuleData, m_manualDeployAnimations ) },
+			{ "TurnBeforeUnpacking",	INI::parseBool,							NULL, offsetof( DeployStyleAIUpdateModuleData, m_turnBeforeUnpacking ) },
 			{ 0, 0, 0, 0 }
 		};
 		p.add(dataFieldParse);
@@ -109,4 +112,6 @@ protected:
 
 	DeployStateTypes				m_state;
 	UnsignedInt							m_frameToWaitForDeploy;
+
+	Bool isWithinAttackAngle() const;
 };
