@@ -1040,7 +1040,7 @@ void W3DProjectedShadowManager::queueDecal(W3DProjectedShadow *shadow)
 						hmapVertex.X=(float)(i-borderSize)*MAP_XY_FACTOR;
 						hmapVertex.Z=__max((float)hmap->getHeight(i,j)*MAP_HEIGHT_SCALE,layerHeight);
 
-						if (TheGlobalData->m_heightAboveTerrainIncludesWater) {
+						if (TheGlobalData->m_heightAboveTerrainIncludesWater && TheTerrainLogic != nullptr) {
 							if (Real waterZ = 0; TheTerrainLogic->isUnderwater(hmapVertex.X, hmapVertex.Y, &waterZ)) {
 								if (waterZ > hmapVertex.Z) hmapVertex.Z = waterZ;
 							}
@@ -1066,7 +1066,7 @@ void W3DProjectedShadowManager::queueDecal(W3DProjectedShadow *shadow)
 					hmapVertex.X=(float)(i-borderSize)*MAP_XY_FACTOR;
 					hmapVertex.Z=(float)hmap->getHeight(i,j)*MAP_HEIGHT_SCALE+0.01f * MAP_XY_FACTOR;
 
-					if (TheGlobalData->m_heightAboveTerrainIncludesWater) {
+					if (TheGlobalData->m_heightAboveTerrainIncludesWater && TheTerrainLogic != nullptr) {
 						if (Real waterZ = 0; TheTerrainLogic->isUnderwater(hmapVertex.X, hmapVertex.Y, &waterZ)) {
 							if (waterZ > hmapVertex.Z) hmapVertex.Z = waterZ;
 						}

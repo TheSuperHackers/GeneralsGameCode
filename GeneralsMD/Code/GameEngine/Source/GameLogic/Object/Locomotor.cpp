@@ -641,10 +641,60 @@ LocomotorTemplate *LocomotorStore::newOverride( LocomotorTemplate *locoTemplate 
 		TheLocomotorStore->m_locomotorTemplates[namekey] = loco;
 }
 
+void LocomotorStore::parseLocomotorExtendTemplateDefinition(INI* ini)
+{
+	if (!TheLocomotorStore)
+		throw INI_INVALID_DATA;
+
+	Bool isOverride = false;
+	// read the Locomotor name
+	const char* token = ini->getNextToken();
+	NameKeyType namekey = NAMEKEY(token);
+
+	const char* token2 = ini->getNextToken();
+	NameKeyType parentKey = NAMEKEY(token2);
+
+	LocomotorTemplate* locoParent = TheLocomotorStore->findLocomotorTemplate(parentKey);
+	if (locoParent) {
+
+		LocomotorTemplate* loco = TheLocomotorStore->findLocomotorTemplate(namekey);
+		if (loco) {
+			if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES) {
+				loco = TheLocomotorStore->newOverride((LocomotorTemplate*)loco->friend_getFinalOverride());
+			}
+			isOverride = true;
+		}
+		else {
+			loco = newInstance(LocomotorTemplate);
+			if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES) {
+				loco->markAsOverride();
+			}
+		}
+		// copy all parent values
+		*loco = *locoParent;
+		loco->friend_setName(token);
+		ini->initFromINI(loco, loco->getFieldParse());
+		loco->validate();
+
+		// if this is an override, then we want the pointer on the existing named locomotor to point us
+		// to the override, so don't add it to the map.
+		if (!isOverride)
+			TheLocomotorStore->m_locomotorTemplates[namekey] = loco;
+	}
+	else {
+		DEBUG_CRASH(("LocomotorExtend '%s': parent '%s' does not exist", token, token2));
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 /*static*/ void INI::parseLocomotorTemplateDefinition( INI* ini )
 {
 	LocomotorStore::parseLocomotorTemplateDefinition(ini);
+}
+
+/*static*/ void INI::parseLocomotorExtendTemplateDefinition(INI* ini)
+{
+	LocomotorStore::parseLocomotorExtendTemplateDefinition(ini);
 }
 
 //-------------------------------------------------------------------------------------------------

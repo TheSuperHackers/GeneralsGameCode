@@ -45,4 +45,9 @@ void INI::parseWeaponTemplateDefinition( INI* ini )
 	WeaponStore::parseWeaponTemplateDefinition(ini);
 }
 
+void INI::parseWeaponExtendTemplateDefinition(INI* ini)
+{
+	WeaponStore::parseWeaponExtendTemplateDefinition(ini);
+}
+
 

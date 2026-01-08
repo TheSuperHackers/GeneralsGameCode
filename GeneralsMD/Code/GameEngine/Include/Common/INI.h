@@ -191,10 +191,12 @@ public:
 	static void parseObjectReskinDefinition( INI *ini );
 	static void parseObjectExtendDefinition( INI* ini );
 	static void parseWeaponTemplateDefinition( INI *ini );
+	static void parseWeaponExtendTemplateDefinition(INI* ini);
 	static void parseScienceDefinition( INI *ini );
 	static void parseRankDefinition( INI *ini );
 	static void parseCrateTemplateDefinition( INI *ini );
 	static void parseLocomotorTemplateDefinition( INI *ini );
+	static void parseLocomotorExtendTemplateDefinition( INI *ini );
 	static void parseLanguageDefinition( INI *ini );
 	static void parsePlayerTemplateDefinition( INI *ini );
 	static void parseGameDataDefinition( INI *ini );
