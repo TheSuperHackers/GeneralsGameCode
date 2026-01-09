@@ -47,6 +47,11 @@ thumbs.db
 .clang-format
 /.vscode
 /Dependencies/MaxSDK/maxsdk
+/tmp/
+
+## AI assistant config (user-specific)
+/.claude/
+/CLAUDE.md
 
 ## IntelliJ, CLion, etc.
 /.idea
