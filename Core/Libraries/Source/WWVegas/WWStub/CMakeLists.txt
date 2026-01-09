@@ -10,5 +10,4 @@ target_sources(core_wwstub PRIVATE ${WWSTUB_SRC})
 
 target_link_libraries(core_wwstub PRIVATE
     core_wwcommon
-    corei_always
 )

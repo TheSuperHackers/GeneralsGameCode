@@ -17,6 +17,9 @@ target_link_libraries(corei_always INTERFACE
     corei_libraries_include
     resources
 )
+target_precompile_headers(corei_always INTERFACE
+    [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
+)
 
 # Set where the build results will end up
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})

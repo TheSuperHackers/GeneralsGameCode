@@ -15,10 +15,9 @@ target_compile_definitions(zi_always INTERFACE
     RTS_ZEROHOUR=1
 )
 target_link_libraries(zi_always INTERFACE
-    core_utility
     zi_libraries_include
     # Must stay below so headers from game are included first
-    corei_libraries_include
+    corei_always
 )
 
 # Contains internal libraries

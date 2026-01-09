@@ -15,5 +15,4 @@ target_sources(core_wwdebug PRIVATE ${WWDEBUG_SRC})
 
 target_link_libraries(core_wwdebug PRIVATE
     core_wwcommon
-    corei_always
 )

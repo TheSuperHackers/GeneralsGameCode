@@ -3,11 +3,11 @@ add_library(z_wwcommon INTERFACE)
 
 target_link_libraries(z_wwcommon INTERFACE
     core_config
-    core_utility
     core_wwcommon
     d3d8lib
     milesstub
     stlport
+    zi_always
 )
 
 target_include_directories(z_wwcommon INTERFACE
