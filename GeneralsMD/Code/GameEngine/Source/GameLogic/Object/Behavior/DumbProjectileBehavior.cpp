@@ -687,8 +687,8 @@ UpdateSleepTime DumbProjectileBehavior::update()
 			{
 				DEBUG_CRASH(("Vector must contain two or more elements; check the weapon speed value"));
 
-				prevPos = Coord3D(0.0f, 0.0f, 0.0f);
-				curPos = Coord3D(0.0f, 1.0f, 0.0f);
+				prevPos.set(0.0f, 0.0f, 0.0f);
+				curPos.set(0.0f, 1.0f, 0.0f);
 			}
 #else
 			const Coord3D prevPos = m_flightPath[0];
