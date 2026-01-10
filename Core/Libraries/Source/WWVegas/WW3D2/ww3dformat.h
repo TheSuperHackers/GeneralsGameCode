@@ -195,6 +195,8 @@ WW3DFormat Get_Valid_Texture_Format(WW3DFormat format,bool is_compression_allowe
 
 unsigned Get_Bytes_Per_Pixel(WW3DFormat format);
 
+unsigned ARGB_Color_To_WW3D_Color(WW3DFormat format, unsigned argb);
+
 void Get_WW3D_Format_Name(WW3DFormat format, StringClass& name);
 void Get_WW3D_ZFormat_Name(WW3DZFormat format, StringClass& name);
 

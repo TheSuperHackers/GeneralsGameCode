@@ -422,6 +422,102 @@ unsigned Get_Bytes_Per_Pixel(WW3DFormat format)
 	return 0;
 }
 
+unsigned ARGB_Color_To_WW3D_Color(WW3DFormat format, unsigned argb)
+{
+	unsigned a = (argb >> 24) & 0xFF;
+	unsigned r = (argb >> 16) & 0xFF;
+	unsigned g = (argb >>  8) & 0xFF;
+	unsigned b = (argb >>  0) & 0xFF;
+
+	switch (format)
+	{
+	case WW3D_FORMAT_R8G8B8:
+		return (r << 16) | (g << 8) | b;
+
+	case WW3D_FORMAT_A8R8G8B8:
+		return (a << 24) | (r << 16) | (g << 8) | b;
+
+	case WW3D_FORMAT_X8R8G8B8:
+		return (0xFF << 24) | (r << 16) | (g << 8) | b;
+
+	case WW3D_FORMAT_R5G6B5:
+		return ((r >> 3) << 11) |
+					 ((g >> 2) << 5)  |
+					 ((b >> 3) << 0);
+
+	case WW3D_FORMAT_X1R5G5B5:
+		return ( 1       << 15) |
+					 ((r >> 3) << 10) |
+					 ((g >> 3) << 5)  |
+					 ((b >> 3) << 0);
+
+	case WW3D_FORMAT_A1R5G5B5:
+		return ((a >> 7) << 15) |
+					 ((r >> 3) << 10) |
+					 ((g >> 3) << 5)  |
+					 ((b >> 3) << 0);
+
+	case WW3D_FORMAT_A4R4G4B4:
+		return ((a >> 4) << 12) |
+					 ((r >> 4) << 8)  |
+					 ((g >> 4) << 4)  |
+					 ((b >> 4) << 0);
+
+	case WW3D_FORMAT_R3G3B2:
+		return ((r >> 5) << 5) |
+					 ((g >> 5) << 2) |
+					 ((b >> 6) << 0);
+
+	case WW3D_FORMAT_A8:
+		return a;
+
+	case WW3D_FORMAT_A8R3G3B2:
+		return ( a       << 8) |
+					 ((r >> 5) << 5) |
+					 ((g >> 5) << 2) |
+					 ((b >> 6) << 0);
+
+	case WW3D_FORMAT_X4R4G4B4:
+		return ( 0xF     << 12) |
+					 ((r >> 4) << 8) |
+					 ((g >> 4) << 4) |
+					 ((b >> 4) << 0);
+
+	case WW3D_FORMAT_L8:
+	{
+			unsigned l = (r * 77 + g * 150 + b * 29) >> 8;
+			return l;
+	}
+
+	case WW3D_FORMAT_A8L8:
+	{
+			unsigned l = (r * 77 + g * 150 + b * 29) >> 8;
+			return (a << 8) | l;
+	}
+
+	case WW3D_FORMAT_A4L4:
+	{
+			unsigned l = (r * 77 + g * 150 + b * 29) >> 8;
+			return ((a >> 4) << 4) | (l >> 4);
+	}
+
+	// Palettized, bump-map, and compressed formats
+	// cannot be represented by a single ARGB color
+	case WW3D_FORMAT_P8:
+	case WW3D_FORMAT_A8P8:
+	case WW3D_FORMAT_U8V8:
+	case WW3D_FORMAT_L6V5U5:
+	case WW3D_FORMAT_X8L8V8U8:
+	case WW3D_FORMAT_DXT1:
+	case WW3D_FORMAT_DXT2:
+	case WW3D_FORMAT_DXT3:
+	case WW3D_FORMAT_DXT4:
+	case WW3D_FORMAT_DXT5:
+	default:
+			return 0;
+	}
+}
+
 unsigned Get_Num_Depth_Bits(WW3DZFormat zformat)
 {
 	switch (zformat)
