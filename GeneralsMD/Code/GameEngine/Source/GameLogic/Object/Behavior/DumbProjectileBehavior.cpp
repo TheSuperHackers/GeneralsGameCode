@@ -447,6 +447,8 @@ Bool DumbProjectileBehavior::calcFlightPath(Bool recalcNumSegments)
 		m_flightPathSegments = ceil( flightDistance / m_flightPathSpeed );
 	}
 
+	// TheSuperHackers @bugfix Caball009 10/01/2026 The way flight paths are used requires at least two curve points.
+	// getSegmentPoints will create only 1 element with default values for m_flightPath if m_flightPathSegments equals 1.
 #if RETAIL_COMPATIBLE_CRC
 	flightCurve.getSegmentPoints(m_flightPathSegments, &m_flightPath);
 #else
