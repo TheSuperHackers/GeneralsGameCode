@@ -322,6 +322,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/EjectPilotDie.h
     Include/GameLogic/Module/EMPUpdate.h
     Include/GameLogic/Module/EnemyNearUpdate.h
+    Include/GameLogic/Module/ProximityCaptureUpdate.h
     Include/GameLogic/Module/ExperienceScalarUpgrade.h
     Include/GameLogic/Module/FireOCLAfterWeaponCooldownUpdate.h
     Include/GameLogic/Module/FireSpreadUpdate.h
@@ -1053,6 +1054,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Update/DynamicShroudClearingRangeUpdate.cpp
     Source/GameLogic/Object/Update/EMPUpdate.cpp
     Source/GameLogic/Object/Update/EnemyNearUpdate.cpp
+    Source/GameLogic/Object/Update/ProximityCaptureUpdate.cpp
     Source/GameLogic/Object/Update/FireOCLAfterWeaponCooldownUpdate.cpp
     Source/GameLogic/Object/Update/FireSpreadUpdate.cpp
     Source/GameLogic/Object/Update/FirestormDynamicGeometryInfoUpdate.cpp

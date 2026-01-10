@@ -102,6 +102,7 @@
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/UpgradeModule.h"
 #include "GameLogic/Module/EnergyShieldBehavior.h"
+#include "GameLogic/Module/ProximityCaptureUpdate.h"
 
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
@@ -1548,7 +1549,6 @@ Bool Object::getProgressBarShowingInfo(bool selected, Real& progress, Int& type,
 		return FALSE;
 
 	// We put every case of Progress bars here.
-	// Maybe we should require a KindOf for performance?
 
 	type = 0;  // TODO
 	color = { 255, 255, 255, 255 };  // Default = white
@@ -1576,6 +1576,13 @@ Bool Object::getProgressBarShowingInfo(bool selected, Real& progress, Int& type,
 				progress = 1.0 - ltu->getProgress();
 				return true;
 			}
+		}
+		else if ((*u)->getModuleNameKey() == NAMEKEY("ProximityCaptureUpdate")) {
+			ProximityCaptureUpdate* pcu = (ProximityCaptureUpdate*)(*u);
+			if (pcu->getProgressBarInfo(progress, type, color, colorBG)) {
+				return true;
+			}
+
 		}
 		
 	}

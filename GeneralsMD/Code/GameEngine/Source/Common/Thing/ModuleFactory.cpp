@@ -123,6 +123,7 @@
 #include "GameLogic/Module/DynamicGeometryInfoUpdate.h"
 #include "GameLogic/Module/DynamicShroudClearingRangeUpdate.h"
 #include "GameLogic/Module/EnemyNearUpdate.h"
+#include "GameLogic/Module/ProximityCaptureUpdate.h"
 #include "GameLogic/Module/FireSpreadUpdate.h"
 #include "GameLogic/Module/FirestormDynamicGeometryInfoUpdate.h"
 #include "GameLogic/Module/FireWeaponUpdate.h"
@@ -428,6 +429,7 @@ void ModuleFactory::init( void )
 	addModule( HordeUpdate );
 	addModule( ToppleUpdate );
 	addModule( EnemyNearUpdate );
+	addModule( ProximityCaptureUpdate );
 	addModule( LifetimeUpdate );
 	addModule( RadiusDecalUpdate );
 	addModule( RadiusDecalBehavior );

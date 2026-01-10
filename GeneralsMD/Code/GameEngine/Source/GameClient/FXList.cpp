@@ -665,10 +665,18 @@ protected:
 					{
 						//old way:
 						//newPos.z = TheTerrainLogic->getGrsoundHeight( newPos.x, newPos.y ) + 1;// The plus one prevents scissoring with terrain
-
 						//new way: now we allow bridges in the GroundHeight.
+						//newer way: include water
+
 						PathfindLayerEnum layer = TheTerrainLogic->getLayerForDestination(&newPos);
-						newPos.z = TheTerrainLogic->getLayerHeight( newPos.x, newPos.y, layer );
+						
+						if (Real waterZ = 0; TheGlobalData->m_heightAboveTerrainIncludesWater && layer == LAYER_GROUND &&
+							TheTerrainLogic->isUnderwater(newPos.x, newPos.y, &waterZ)) {
+								newPos.z = waterZ;
+						}
+						else {
+							newPos.z = TheTerrainLogic->getLayerHeight(newPos.x, newPos.y, layer);
+						}
 					}
 					else
 						newPos.z = primary->z + offset.z + m_height.getValue();

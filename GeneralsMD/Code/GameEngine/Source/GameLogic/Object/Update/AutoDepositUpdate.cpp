@@ -133,7 +133,7 @@ void AutoDepositUpdate::awardInitialCaptureBonus( Player *player )
 		moneyString.format( TheGameText->fetch( "GUI:AddCash" ), getAutoDepositUpdateModuleData()->m_initialCaptureBonus );
 		Coord3D pos;
 		pos.set( getObject()->getPosition() );
-		pos.z += 10.0f; //add a little z to make it show up above the unit.
+		pos.z += 10.0f + getAutoDepositUpdateModuleData()->m_textZOffset; //add a little z to make it show up above the unit.
 		Color color = player->getPlayerColor() | GameMakeColor( 0, 0, 0, 230 );
 		TheInGameUI->addFloatingText( moneyString, &pos, color );
 	}

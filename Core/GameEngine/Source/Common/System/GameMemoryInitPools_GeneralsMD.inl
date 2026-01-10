@@ -269,6 +269,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "SupplyWarehouseCreate", 48, 16 },
 	{ "SupplyWarehouseDockUpdate", 48, 16 },
 	{ "EnemyNearUpdate", 1024, 32 },
+	{ "ProximityCaptureUpdate", 32, 32 },
 	{ "TechBuildingBehavior", 32, 32 },
 	{ "ToppleUpdate", 256, 128 },
 	{ "TransitionDamageFX", 384, 128 },
