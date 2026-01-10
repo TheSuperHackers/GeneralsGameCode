@@ -168,8 +168,8 @@ void W3DRadar::deleteResources( void )
 	deleteInstance(m_shroudImage);
 	m_shroudImage = nullptr;
 
-	DEBUG_ASSERTCRASH(m_shroudSurface == NULL, ("W3DRadar::deleteResources: m_shroudSurface is expected NULL"));
-	DEBUG_ASSERTCRASH(m_shroudSurfaceBits == NULL, ("W3DRadar::deleteResources: m_shroudSurfaceBits is expected NULL"));
+	DEBUG_ASSERTCRASH(m_shroudSurface == nullptr, ("W3DRadar::deleteResources: m_shroudSurface is expected null"));
+	DEBUG_ASSERTCRASH(m_shroudSurfaceBits == nullptr, ("W3DRadar::deleteResources: m_shroudSurfaceBits is expected null"));
 
 }
 
@@ -697,6 +697,10 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 
 	Player *player = rts::getObservedOrLocalPlayer();
 
+	int pitch;
+	void *pBits = surface->Lock(&pitch);
+	const unsigned int bytesPerPixel = surface->Get_Bytes_Per_Pixel();
+
 	for( const RadarObject *rObj = listHead; rObj; rObj = rObj->friend_getNext() )
 	{
 		if (!canRenderObject(rObj, player))
@@ -736,21 +740,23 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 
 		// draw the blip, but make sure the points are legal
 		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
-			surface->DrawPixel( radarPoint.x, radarPoint.y, c );
+			surface->Draw_Pixel( radarPoint.x, radarPoint.y, c, bytesPerPixel, pBits, pitch );
 
 		radarPoint.y++;
 		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
-			surface->DrawPixel( radarPoint.x, radarPoint.y, c );
+			surface->Draw_Pixel( radarPoint.x, radarPoint.y, c, bytesPerPixel, pBits, pitch );
 
 		radarPoint.x++;
 		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
-			surface->DrawPixel( radarPoint.x, radarPoint.y, c );
+			surface->Draw_Pixel( radarPoint.x, radarPoint.y, c, bytesPerPixel, pBits, pitch );
 
 		radarPoint.y--;
 		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
-			surface->DrawPixel( radarPoint.x, radarPoint.y, c );
+			surface->Draw_Pixel( radarPoint.x, radarPoint.y, c, bytesPerPixel, pBits, pitch );
 
 	}
+
+	surface->Unlock();
 	REF_PTR_RELEASE(surface);
 
 }
@@ -1068,6 +1074,11 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 	ICoord2D radarPoint;
 	Coord3D worldPoint;
 	Bridge *bridge;
+
+	int pitch;
+	void *pBits = surface->Lock(&pitch);
+	const unsigned int bytesPerPixel = surface->Get_Bytes_Per_Pixel();
+
 	for( y = 0; y < m_textureHeight; y++ )
 	{
 
@@ -1253,25 +1264,17 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 
 			}
 
-			//
 			// draw the pixel for the terrain at this point, note that because of the orientation
 			// of our world we draw it with positive y in the "up" direction
-			//
-			// FYI: I tried making this faster by pulling out all the code inside DrawPixel
-			// and locking only once ... but it made absolutely *no* performance difference,
-			// the sampling and interpolation algorithm for generating pretty looking terrain
-			// and water for the radar is just, well, expensive.
-			//
-			surface->DrawPixel( x, y, GameMakeColor( color.red * 255,
-																							 color.green * 255,
-																							 color.blue * 255,
-																							 255 ) );
+			Color pixelColor = GameMakeColor( color.red * 255, color.green * 255, color.blue * 255, 255 );
+			surface->Draw_Pixel( x, y, pixelColor, bytesPerPixel, pBits, pitch );
 
 		}
 
 	}
 
 	// all done with the surface
+	surface->Unlock();
 	REF_PTR_RELEASE(surface);
 
 }
@@ -1288,11 +1291,18 @@ void W3DRadar::clearShroud()
 	SurfaceClass *surface = m_shroudTexture->Get_Surface_Level();
 
 	// fill to clear, shroud will make black.  Don't want to make something black that logic can't clear
-	unsigned int color = GameMakeColor( 0, 0, 0, 0 );
+
+	int pitch;
+	void *pBits = surface->Lock(&pitch);
+	const unsigned int bytesPerPixel = surface->Get_Bytes_Per_Pixel();
+	const Color color = GameMakeColor( 0, 0, 0, 0 );
+
 	for( Int y = 0; y < m_textureHeight; y++ )
 	{
-		surface->DrawHLine(y, 0, m_textureWidth-1, color);
+		surface->Draw_H_Line(y, 0, m_textureWidth-1, color, bytesPerPixel, pBits, pitch);
 	}
+
+	surface->Unlock();
 	REF_PTR_RELEASE(surface);
 }
 
@@ -1346,41 +1356,39 @@ void W3DRadar::setShroudLevel(Int shroudX, Int shroudY, CellShroudStatus setting
 	else
 		alpha = 0;
 
-	if (m_shroudSurface == NULL)
+	if (m_shroudSurface == nullptr)
 	{
 		// This is expensive.
 		SurfaceClass* surface = m_shroudTexture->Get_Surface_Level();
 		DEBUG_ASSERTCRASH( surface, ("W3DRadar: Can't get surface for Shroud texture") );
+		int pitch;
+		void *pBits = surface->Lock(&pitch);
+		const unsigned int bytesPerPixel = surface->Get_Bytes_Per_Pixel();
+		const Color color = GameMakeColor( 0, 0, 0, alpha );
 
-		for( Int y = radarMinY; y <= radarMaxY; y++ )
+		for( Int y = radarMinY; y <= radarMaxY; ++y )
 		{
-			for( Int x = radarMinX; x <= radarMaxX; x++ )
+			for( Int x = radarMinX; x <= radarMaxX; ++x )
 			{
-				surface->DrawPixel( x, y, GameMakeColor( 0, 0, 0, alpha ) );
+				surface->Draw_Pixel( x, y, color, bytesPerPixel, pBits, pitch );
 			}
 		}
+
+		surface->Unlock();
 		REF_PTR_RELEASE(surface);
 	}
 	else
 	{
 		// This is cheap.
-		DEBUG_ASSERTCRASH(m_shroudSurfaceBits != NULL, ("W3DRadar::setShroudLevel: m_shroudSurfaceBits is not expected NULL"));
+		DEBUG_ASSERTCRASH(m_shroudSurfaceBits != nullptr, ("W3DRadar::setShroudLevel: m_shroudSurfaceBits is not expected null"));
 		DEBUG_ASSERTCRASH(m_shroudSurfacePixelSize != 0, ("W3DRadar::setShroudLevel: m_shroudSurfacePixelSize is not expected 0"));
 		const Color color = GameMakeColor( 0, 0, 0, alpha );
 
 		for( Int y = radarMinY; y <= radarMaxY; ++y )
 		{
-			UnsignedByte* row = static_cast<UnsignedByte*>(m_shroudSurfaceBits) + y * m_shroudSurfacePitch;
 			for( Int x = radarMinX; x <= radarMaxX; ++x )
 			{
-				UnsignedByte* column = row + x * m_shroudSurfacePixelSize;
-
-				switch (m_shroudSurfacePixelSize)
-				{
-				case 1: *column = (UnsignedByte)(color & 0xFF); break;
-				case 2: *reinterpret_cast<UnsignedShort*>(column) = (UnsignedShort)(color & 0xFFFF); break;
-				case 4: *reinterpret_cast<UnsignedInt*>(column) = (UnsignedInt)color; break;
-				}
+				m_shroudSurface->Draw_Pixel( x, y, color, m_shroudSurfacePixelSize, m_shroudSurfaceBits, m_shroudSurfacePitch );
 			}
 		}
 	}
@@ -1388,9 +1396,9 @@ void W3DRadar::setShroudLevel(Int shroudX, Int shroudY, CellShroudStatus setting
 
 void W3DRadar::beginSetShroudLevel()
 {
-	DEBUG_ASSERTCRASH( m_shroudSurface == NULL, ("W3DRadar::beginSetShroudLevel: m_shroudSurface is expected NULL") );
+	DEBUG_ASSERTCRASH( m_shroudSurface == nullptr, ("W3DRadar::beginSetShroudLevel: m_shroudSurface is expected null") );
 	m_shroudSurface = m_shroudTexture->Get_Surface_Level();
-	DEBUG_ASSERTCRASH( m_shroudSurface != NULL, ("W3DRadar::beginSetShroudLevel: Can't get surface for Shroud texture") );
+	DEBUG_ASSERTCRASH( m_shroudSurface != nullptr, ("W3DRadar::beginSetShroudLevel: Can't get surface for Shroud texture") );
 
 	SurfaceClass::SurfaceDescription sd;
 	m_shroudSurface->Get_Description(sd);
@@ -1400,11 +1408,11 @@ void W3DRadar::beginSetShroudLevel()
 
 void W3DRadar::endSetShroudLevel()
 {
-	DEBUG_ASSERTCRASH( m_shroudSurface != NULL, ("W3DRadar::endSetShroudLevel: m_shroudSurface is not expected NULL") );
-	if (m_shroudSurfaceBits != NULL)
+	DEBUG_ASSERTCRASH( m_shroudSurface != nullptr, ("W3DRadar::endSetShroudLevel: m_shroudSurface is not expected null") );
+	if (m_shroudSurfaceBits != nullptr)
 	{
 		m_shroudSurface->Unlock();
-		m_shroudSurfaceBits = NULL;
+		m_shroudSurfaceBits = nullptr;
 		m_shroudSurfacePitch = 0;
 		m_shroudSurfacePixelSize = 0;
 	}
@@ -1555,6 +1563,10 @@ void W3DRadar::refreshObjects()
 
 	UnsignedByte minAlpha = 8;
 
+	int pitch;
+	void *pBits = surface->Lock(&pitch);
+	const unsigned int bytesPerPixel = surface->Get_Bytes_Per_Pixel();
+
 	for( const RadarObject *rObj = listHead; rObj; rObj = rObj->friend_getNext() )
 	{
     UnsignedByte h = (UnsignedByte)(rObj->isTemporarilyHidden());
@@ -1639,24 +1651,26 @@ void W3DRadar::refreshObjects()
 
 		// draw the blip, but make sure the points are legal
 		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
-			surface->DrawPixel( radarPoint.x, radarPoint.y, c );
+			surface->Draw_Pixel( radarPoint.x, radarPoint.y, c, bytesPerPixel, pBits, pitch );
 
 		radarPoint.x++;
 		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
-			surface->DrawPixel( radarPoint.x, radarPoint.y, c );
+			surface->Draw_Pixel( radarPoint.x, radarPoint.y, c, bytesPerPixel, pBits, pitch );
 
 		radarPoint.y++;
 		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
-			surface->DrawPixel( radarPoint.x, radarPoint.y, c );
+			surface->Draw_Pixel( radarPoint.x, radarPoint.y, c, bytesPerPixel, pBits, pitch );
 
 		radarPoint.x--;
 		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
-			surface->DrawPixel( radarPoint.x, radarPoint.y, c );
+			surface->Draw_Pixel( radarPoint.x, radarPoint.y, c, bytesPerPixel, pBits, pitch );
 
 
 
 
 	}
+
+	surface->Unlock();
 	REF_PTR_RELEASE(surface);
 
 }

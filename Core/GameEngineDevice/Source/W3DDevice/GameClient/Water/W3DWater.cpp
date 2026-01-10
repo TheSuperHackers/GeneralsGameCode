@@ -965,7 +965,11 @@ void WaterRenderObjClass::ReAcquireResources(void)
 	if (m_whiteTexture && !m_whiteTexture->Is_Initialized())
 	{	m_whiteTexture->Init();
 		SurfaceClass *surface=m_whiteTexture->Get_Surface_Level();
-		surface->DrawPixel(0,0,0xffffffff);
+		int pitch;
+		void *pBits = surface->Lock(&pitch);
+		const unsigned int bytesPerPixel = surface->Get_Bytes_Per_Pixel();
+		surface->Draw_Pixel(0, 0, 0xffffffff, bytesPerPixel, pBits, pitch);
+		surface->Unlock();
 		REF_PTR_RELEASE(surface);
 	}
 }
@@ -1111,7 +1115,11 @@ Int WaterRenderObjClass::init(Real waterLevel, Real dx, Real dy, SceneClass *par
 	//For some reason setting a null texture does not result in 0xffffffff for pixel shaders so using explicit "white" texture.
 	m_whiteTexture=MSGNEW("TextureClass") TextureClass(1,1,WW3D_FORMAT_A4R4G4B4,MIP_LEVELS_1);
 	SurfaceClass *surface=m_whiteTexture->Get_Surface_Level();
-	surface->DrawPixel(0,0,0xffffffff);
+	int pitch;
+	void *pBits = surface->Lock(&pitch);
+	const unsigned int bytesPerPixel = surface->Get_Bytes_Per_Pixel();
+	surface->Draw_Pixel(0, 0, 0xffffffff, bytesPerPixel, pBits, pitch);
+	surface->Unlock();
 	REF_PTR_RELEASE(surface);
 
 	m_waterNoiseTexture=WW3DAssetManager::Get_Instance()->Get_Texture("Noise0000.tga");
@@ -2961,7 +2969,11 @@ void WaterRenderObjClass::setupFlatWaterShader(void)
 			if (!m_whiteTexture->Is_Initialized())
 			{	m_whiteTexture->Init();
 				SurfaceClass *surface=m_whiteTexture->Get_Surface_Level();
-				surface->DrawPixel(0,0,0xffffffff);
+				int pitch;
+				void *pBits = surface->Lock(&pitch);
+				const unsigned int bytesPerPixel = surface->Get_Bytes_Per_Pixel();
+				surface->Draw_Pixel(0, 0, 0xffffffff, bytesPerPixel, pBits, pitch);
+				surface->Unlock();
 				REF_PTR_RELEASE(surface);
 			}
 			DX8Wrapper::_Get_D3D_Device8()->SetTexture(3,m_whiteTexture->Peek_D3D_Texture());
