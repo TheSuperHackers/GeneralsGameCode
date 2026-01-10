@@ -670,7 +670,6 @@ UpdateSleepTime DumbProjectileBehavior::update()
       //long, blurry projectile graphics which look badly oriented on step 0 of the flight path
       // so lets orient it the same as if it were on frame 1!
     {
-
 #if RETAIL_COMPATIBLE_CRC
 			Coord3D prevPos;
 			Coord3D curPos;
