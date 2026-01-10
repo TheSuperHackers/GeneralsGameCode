@@ -677,7 +677,7 @@ UpdateSleepTime DumbProjectileBehavior::update()
 
 			// TheSuperHackers @bugfix Caball009 10/01/2026 Check vector size before accessing the second element to prevent out of bounds access.
 			// The non-deterministic behavior for retail clients cannot be fixed, so this will remain a source of potential mismatches in retail compatibility mode.
-			// If there's only one element, set current position to a fixed value so that the behavior is deterministic for patched clients.
+			// If there's only one element, set current position to a valid value so that the behavior is deterministic for patched clients.
 			if (m_flightPath.size() >= 2)
 			{
 				curPos = m_flightPath[1];
