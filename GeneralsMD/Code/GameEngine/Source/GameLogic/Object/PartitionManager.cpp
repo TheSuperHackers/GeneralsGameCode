@@ -358,15 +358,13 @@ static void testRotatedPointsAgainstRect(
 
 #if !RETAIL_COMPATIBLE_CRC && !PRESERVE_RETAIL_BEHAVIOR && USE_ACCURATE_SPHERE_TO_RECT
 static Real fast_hypot(
-	Real x1,
-	Real x2,
-	Real y1,
-	Real y2
+	Real x,
+	Real y
 );
 static void testSphereAgainstRect(
 	const Coord2D *pts,				// an array of 4
 	const CollideInfo *a,
-	Real &distance
+	Real &distSqr
 );
 #endif
 
@@ -458,10 +456,10 @@ static void testRotatedPointsAgainstRect(
 
 #if !RETAIL_COMPATIBLE_CRC && !PRESERVE_RETAIL_BEHAVIOR && USE_ACCURATE_SPHERE_TO_RECT
 //-----------------------------------------------------------------------------
-static Real fast_hypot(Real x1, Real x2, Real y1, Real y2)
+static Real fast_hypot(Real x, Real y)
 {
-	Real dx = fabs(x1 - x2);
-	Real dy = fabs(y1 - y2);
+	Real dx = fabs(x);
+	Real dy = fabs(y);
 
 	// Longest line and shortest between x and y
 	Real a = max(dx, dy);
@@ -475,11 +473,12 @@ static Real fast_hypot(Real x1, Real x2, Real y1, Real y2)
 static void testSphereAgainstRect(
 	const Coord2D *pts,				// an array of 4
 	const CollideInfo *a,
-	Real &distance
+	Real &distSqr
 )
 {
 	// Get two points that are closest to the source
 	Real x1, x2, y1, y2;
+	Real dx1, dx2, dy1, dy2;
 	x1 = x2 = y1 = y2 = 0.0f;
 
 	Real dist[4];
@@ -510,27 +509,46 @@ static void testSphereAgainstRect(
 		{
 			x1 = points[minIdx].x;
 			y1 = points[minIdx].y;
+			dx1 = x1 - a->position.x;
+			dy1 = y1 - a->position.y;
 			lastMinIdx = minIdx;
 		}
 		else
 		{
 			x2 = points[minIdx].x;
 			y2 = points[minIdx].y;
+			dx2 = x2 - a->position.x;
+			dy2 = y2 - a->position.y;
 			break;
 		}
+	}
+
+	// If the coordinates fall within the same directory angle, we get the shortest from the index points
+	if( (dx1 >= 0 && dx2 >= 0 && dy1 >= 0 && dy2 >= 0) ||
+		(dx1 <= 0 && dx2 <= 0 && dy1 >= 0 && dy2 >= 0) ||
+		(dx1 >= 0 && dx2 >= 0 && dy1 <= 0 && dy2 <= 0) ||
+		(dx1 <= 0 && dx2 <= 0 && dy1 <= 0 && dy2 <= 0) )
+	{
+		distSqr = dist[lastMinIdx];
+		return;
 	}
 
 	DEBUG_ASSERTCRASH(minIdx <= 3, ("Hmm, this should not be possible."));
 
 	// Get the Triangle length of all 3 points
-	Real boundary_h = fast_hypot(x1, x2, y1, y2);
-	Real boundary_1 = fast_hypot(x1, a->position.x, y1, a->position.y);
-	Real boundary_2 = fast_hypot(x2, a->position.x, y2, a->position.y);
+	Real boundary_h = fast_hypot((x1 - x2), (y1 - y2));
+	Real boundary_1 = fast_hypot(dx1, dy1);
+	Real boundary_2 = fast_hypot(dx2, dy2);
+	Real sqr_boundary_2 = sqr(boundary_2);
 
-	// Heron's formula
-	Real semiPeri = (boundary_h + boundary_1 + boundary_2) * 0.5;
-	Real Area = sqrtf(semiPeri * (semiPeri - boundary_h) * (semiPeri - boundary_1) * (semiPeri - boundary_2));
-	distance = Area * 2 / boundary_h;
+	// Heron's formula (Not reliable because it always finds the shortest height)
+	//Real semiPeri = (boundary_h + boundary_1 + boundary_2) * 0.5;
+	//Real Area = sqrtf(semiPeri * (semiPeri - boundary_h) * (semiPeri - boundary_1) * (semiPeri - boundary_2));
+	//distance = Area * 2 / boundary_h;
+
+	Real cosAngle_1 = (sqr_boundary_2 + sqr(boundary_h) - sqr(boundary_1)) * 0.5  / (boundary_2 * boundary_h);
+	Real boundary_h1 = cosAngle_1 * boundary_2;
+	distSqr = sqr_boundary_2 - sqr(boundary_h1);
 }
 #endif
 
@@ -606,11 +624,9 @@ static Bool xy_collideTest_Rect_Circle(const CollideInfo *a, const CollideInfo *
 
 	Coord2D pts[4];
 	rectToFourPoints(a, pts);
+	testSphereAgainstRect(pts, b, distSqr);
 
-	Real distance = 0.0f;
-	testSphereAgainstRect(pts, b, distance);
-
-	if(distance <= b->geom.getMajorRadius())
+	if(distSqr <= sqr(b->geom.getMajorRadius()))
 	{
 		if (cinfo)
 		{
@@ -620,7 +636,7 @@ static Bool xy_collideTest_Rect_Circle(const CollideInfo *a, const CollideInfo *
 			cinfo->loc = b->position;
 			projectCoord3D(&cinfo->loc, &cinfo->normal, b->geom.getMajorRadius());
 			if(cinfo->getDistance)
-				cinfo->distSqr = sqr(distance);
+				cinfo->distSqr = distSqr;
 		}
 		return true;
 	}
