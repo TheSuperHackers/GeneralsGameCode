@@ -205,6 +205,7 @@ target_include_directories(g_worldbuilder PRIVATE
 target_compile_definitions(g_worldbuilder PRIVATE _AFXDLL)
 
 target_precompile_headers(g_worldbuilder PRIVATE
+    [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
     [["always.h"]]
     [["Common/STLTypedefs.h"]]
     [["StdAfx.h"]]

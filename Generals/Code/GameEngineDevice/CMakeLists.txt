@@ -190,6 +190,7 @@ target_include_directories(g_gameenginedevice PUBLIC
 )
 
 target_precompile_headers(g_gameenginedevice PRIVATE
+    [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
     [["Common/STLTypedefs.h"]]
     [["Common/SubsystemInterface.h"]]
     [["INI.h"]]
@@ -199,8 +200,8 @@ target_precompile_headers(g_gameenginedevice PRIVATE
 
 target_link_libraries(g_gameenginedevice PRIVATE
     corei_gameenginedevice_private
-    gi_always    
-    gi_main  
+    gi_always
+    gi_main
 )
 
 target_link_libraries(g_gameenginedevice PUBLIC
