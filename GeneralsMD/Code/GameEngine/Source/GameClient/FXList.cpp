@@ -542,6 +542,21 @@ private:
 EMPTY_DTOR(TerrainScorchFXNugget)
 
 //-------------------------------------------------------------------------------------------------
+static const char* const AllowedSurfaceNames[] =
+{
+  "ALL",
+	"LAND",
+	"WATER",
+	NULL
+};
+
+enum AllowedSurfaceType CPP_11(: Int) {
+	SURFACE_ALL = 0,
+	SURFACE_LAND,
+	SURFACE_WATER
+};
+
+//-------------------------------------------------------------------------------------------------
 class ParticleSystemFXNugget : public FXNugget
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ParticleSystemFXNugget, "ParticleSystemFXNugget")
@@ -561,6 +576,11 @@ public:
 		m_createAtGroundHeight = FALSE;
 		m_useCallersRadius = FALSE;
 		m_rotateX = m_rotateY = m_rotateZ = 0;
+
+		m_maxAllowedHeight = INFINITY;
+		m_minAllowedHeight = -INFINITY;
+		// m_createAtWaterHeight = FALSE;
+		m_allowedSurfaceType = SURFACE_ALL;
 	}
 
 	virtual void doFXPos(const Coord3D *primary, const Matrix3D* primaryMtx, const Real /*primarySpeed*/, const Coord3D * /*secondary*/, const Real overrideRadius ) const
@@ -623,6 +643,11 @@ public:
 			{ "AttachToObject",				INI::parseBool,							NULL, offsetof( ParticleSystemFXNugget, m_attachToObject ) },
 			{ "CreateAtGroundHeight",	INI::parseBool,							NULL, offsetof( ParticleSystemFXNugget, m_createAtGroundHeight ) },
 			{ "UseCallersRadius",			INI::parseBool,							NULL, offsetof( ParticleSystemFXNugget, m_useCallersRadius ) },
+			// New height controls
+			// { "CreateAtWaterHeight",	INI::parseBool,							NULL, offsetof(ParticleSystemFXNugget, m_createAtWaterHeight) },
+			{ "MinAllowedHeight",			INI::parseReal,							NULL, offsetof(ParticleSystemFXNugget, m_minAllowedHeight) },
+			{ "MaxAllowedHeight",			INI::parseReal,							NULL, offsetof(ParticleSystemFXNugget, m_maxAllowedHeight) },
+			{ "AllowedSurface",				INI::parseIndexList,				AllowedSurfaceNames, offsetof(ParticleSystemFXNugget, m_allowedSurfaceType) },
 			{ 0, 0, 0, 0 }
 		};
 
@@ -650,6 +675,38 @@ protected:
 		DEBUG_ASSERTCRASH(tmp, ("ParticleSystem %s not found",m_name.str()));
 		if (tmp)
 		{
+			Real groundHeight = 0; // we might need it later
+
+			// Evaluate Height and allowed surfaces first.
+			if ((TheTerrainLogic != NULL) && (m_minAllowedHeight > -INFINITY || m_maxAllowedHeight < INFINITY || m_allowedSurfaceType != SURFACE_ALL || m_createAtGroundHeight)) {
+				PathfindLayerEnum layer = TheTerrainLogic->getLayerForDestination(primary);
+
+				if (layer != LAYER_GROUND) {  // Bridge
+					if (m_allowedSurfaceType == SURFACE_WATER) return;  // No water effects over bridges.
+					groundHeight = TheTerrainLogic->getLayerHeight(primary->x, primary->y, layer);
+				}
+				else {  // Ground (Water or Land)
+					Real waterZ = 0;
+					Real terrainZ = 0;
+					if (m_allowedSurfaceType != SURFACE_ALL || TheGlobalData->m_heightAboveTerrainIncludesWater) { // Do water check
+						Bool isWater = TheTerrainLogic->isUnderwater(primary->x, primary->y, &waterZ, &terrainZ);
+
+						if (isWater) {
+							if (m_allowedSurfaceType == SURFACE_LAND) return;
+							groundHeight = waterZ;
+						}
+						else {
+							if (m_allowedSurfaceType == SURFACE_WATER) return;
+							groundHeight = terrainZ;
+						}
+					}
+				}
+
+				Real zOffset = primary->z - groundHeight;
+				if (zOffset < m_minAllowedHeight || zOffset > m_maxAllowedHeight) return;
+			}
+
+
 			for (Int i = 0; i < m_count; i++ )
 			{
 				ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(tmp);
@@ -661,25 +718,35 @@ protected:
 
 					newPos.x = primary->x + offset.x + radius * cos(angle);
 					newPos.y = primary->y + offset.y + radius * sin(angle);
-					if( m_createAtGroundHeight && TheTerrainLogic )
-					{
-						//old way:
-						//newPos.z = TheTerrainLogic->getGrsoundHeight( newPos.x, newPos.y ) + 1;// The plus one prevents scissoring with terrain
-						//new way: now we allow bridges in the GroundHeight.
-						//newer way: include water
 
-						PathfindLayerEnum layer = TheTerrainLogic->getLayerForDestination(&newPos);
-						
-						if (Real waterZ = 0; TheGlobalData->m_heightAboveTerrainIncludesWater && layer == LAYER_GROUND &&
-							TheTerrainLogic->isUnderwater(newPos.x, newPos.y, &waterZ)) {
-								newPos.z = waterZ;
-						}
-						else {
-							newPos.z = TheTerrainLogic->getLayerHeight(newPos.x, newPos.y, layer);
-						}
+
+					if (m_createAtGroundHeight) {
+						newPos.z = groundHeight + offset.z + m_height.getValue();
 					}
-					else
+					else {
 						newPos.z = primary->z + offset.z + m_height.getValue();
+					}
+
+					//if( m_createAtGroundHeight && TheTerrainLogic )
+					//{
+					//	//old way:
+					//	//newPos.z = TheTerrainLogic->getGrsoundHeight( newPos.x, newPos.y ) + 1;// The plus one prevents scissoring with terrain
+					//	//new way: now we allow bridges in the GroundHeight.
+					//	//newer way: include water
+					//	//newest way: include height limits and surface check
+
+					//	PathfindLayerEnum layer = TheTerrainLogic->getLayerForDestination(&newPos);
+					//	
+					//	if (Real waterZ = 0; TheGlobalData->m_heightAboveTerrainIncludesWater && layer == LAYER_GROUND &&
+					//		TheTerrainLogic->isUnderwater(newPos.x, newPos.y, &waterZ)) {
+					//			newPos.z = waterZ + offset.z + m_height.getValue();
+					//	}
+					//	else {
+					//		newPos.z = TheTerrainLogic->getLayerHeight(newPos.x, newPos.y, layer) + offset.z + m_height.getValue();
+					//	}
+					//}
+					//else
+					//	newPos.z = primary->z + offset.z + m_height.getValue();
 
 
 					if (m_orientToObject && mtx)
@@ -738,6 +805,11 @@ private:
 	Bool						m_createAtGroundHeight;
 	Bool						m_useCallersRadius;
 	Bool						m_ricochet;
+
+	Real						m_maxAllowedHeight;
+	Real						m_minAllowedHeight;
+	//Bool						m_createAtWaterHeight;
+	AllowedSurfaceType m_allowedSurfaceType;
 };
 EMPTY_DTOR(ParticleSystemFXNugget)
 
