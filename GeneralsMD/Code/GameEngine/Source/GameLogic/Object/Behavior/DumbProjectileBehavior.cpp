@@ -446,7 +446,21 @@ Bool DumbProjectileBehavior::calcFlightPath(Bool recalcNumSegments)
 		Real flightDistance = flightCurve.getApproximateLength();
 		m_flightPathSegments = ceil( flightDistance / m_flightPathSpeed );
 	}
-	flightCurve.getSegmentPoints( m_flightPathSegments, &m_flightPath );
+
+#if RETAIL_COMPATIBLE_CRC
+	flightCurve.getSegmentPoints(m_flightPathSegments, &m_flightPath);
+#else
+	if (m_flightPathSegments >= 2)
+	{
+		flightCurve.getSegmentPoints(m_flightPathSegments, &m_flightPath);
+	}
+	else
+	{
+		m_flightPathSegments = 0;
+		m_flightPath.clear();
+	}
+#endif
+
 	DEBUG_ASSERTCRASH(m_flightPathSegments == m_flightPath.size(), ("m_flightPathSegments mismatch"));
 
 #if defined(RTS_DEBUG)
@@ -584,7 +598,13 @@ UpdateSleepTime DumbProjectileBehavior::update()
 		return UPDATE_SLEEP_NONE;
 	}
 
-	if( m_currentFlightPathStep >= m_flightPath.size() )
+#if RETAIL_COMPATIBLE_CRC
+	const Bool preventOutOfBounds = FALSE;
+#else
+	const Bool preventOutOfBounds = m_flightPath.size() <= 1;
+#endif
+
+	if( preventOutOfBounds || m_currentFlightPathStep >= m_flightPath.size() )
 	{
 		// No more steps to use. Would go out of bounds on vector, so have to do something.
 		// We could allow physics to take over and make us fall, but the point of this whole task
@@ -649,7 +669,26 @@ UpdateSleepTime DumbProjectileBehavior::update()
       // so lets orient it the same as if it were on frame 1!
     {
 		  Coord3D prevPos = m_flightPath[0];
-		  Coord3D curPos = m_flightPath[1];
+		  Coord3D curPos;
+
+#if RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @bugfix Caball009 10/01/2026 Check vector size before accessing the second element to prevent out of bounds access.
+			// If there's only one element, set current position to a fixed garbage value in a poor attempt to imitate retail behavior.
+			// Using a fixed value means that the behavior is deterministic for patched clients.
+			if (m_flightPath.size() >= 2)
+			{
+				curPos = m_flightPath[1];
+			}
+			else
+			{
+				DEBUG_CRASH(("Vector must contain two or more elements; check the weapon speed value"));
+
+				const Coord3D indeterminateValue = Coord3D(-NAN, -NAN, -NAN);
+				curPos = indeterminateValue;
+			}
+#else
+			curPos = m_flightPath[1];
+#endif
 
 		  Vector3 curDir(curPos.x - prevPos.x, curPos.y - prevPos.y, curPos.z - prevPos.z);
 		  curDir.Normalize();	// buildTransformMatrix wants it this way
