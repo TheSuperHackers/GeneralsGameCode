@@ -35,6 +35,8 @@
 #include "playerlistdlg.h"
 #include "teamsdialog.h"
 #include "LayersList.h"
+#include "BrushTool.h"
+#include "Lib/BaseType.h"
 
 Bool WbView::m_snapToGrid = false;
 
@@ -139,6 +141,7 @@ BEGIN_MESSAGE_MAP(WbView, CView)
 	ON_COMMAND(ID_VIEW_SHOW_TERRAIN, OnShowTerrain)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOW_TERRAIN, OnUpdateShowTerrain)
 	ON_WM_CREATE()
+	ON_WM_MOUSEWHEEL()
 
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -1082,4 +1085,50 @@ void WbView::rulerFeedbackInfo(Coord3D &point1, Coord3D &point2, Real dist)
 	m_rulerPoints[0] = point1;
 	m_rulerPoints[1] = point2;
 	m_rulerLength = dist;
+}
+
+// ----------------------------------------------------------------------------
+BOOL WbView::OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
+{
+	if (handleBrushMouseWheel(nFlags, zDelta)) {
+		return TRUE;
+	}
+	
+	return CView::OnMouseWheel(nFlags, zDelta, point);
+}
+
+// ----------------------------------------------------------------------------
+Bool WbView::handleBrushMouseWheel(UINT nFlags, short zDelta)
+{
+	Tool *pCurTool = WbApp()->getCurTool();
+	if (pCurTool && pCurTool->getToolID() == ID_BRUSH_TOOL) {
+		Bool shiftDown = (nFlags & MK_SHIFT) != 0;
+		Bool ctrlDown = (nFlags & MK_CONTROL) != 0;
+		
+		if (shiftDown && !ctrlDown) {
+			Int currentWidth = BrushTool::getWidth();
+			Int delta = zDelta > 0 ? 1 : -1;
+			Int newWidth = clamp(1, currentWidth + delta, 100);
+			BrushTool::setWidth(newWidth);
+			
+			CString statusText;
+			statusText.Format("Brush Width: %d", newWidth);
+			CMainFrame::GetMainFrame()->SetMessageText(statusText);
+			
+			return TRUE;
+		} else if (ctrlDown && !shiftDown) {
+			Int currentFeather = BrushTool::getFeather();
+			Int delta = zDelta > 0 ? 1 : -1;
+			Int newFeather = clamp(0, currentFeather + delta, 100);
+			BrushTool::setFeather(newFeather);
+			
+			CString statusText;
+			statusText.Format("Brush Feather: %d", newFeather);
+			CMainFrame::GetMainFrame()->SetMessageText(statusText);
+			
+			return TRUE;
+		}
+	}
+	
+	return FALSE;
 }

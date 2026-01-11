@@ -71,6 +71,7 @@
 #include "W3DDevice/Common/W3DConvert.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "DrawObject.h"
+#include "BrushTool.h"
 #include "Common/MapObject.h"
 #include "Common/GlobalData.h"
 #include "ShadowOptions.h"
@@ -406,7 +407,7 @@ WbView3d::WbView3d() :
 	m_showWeaponRanges(false),
 	m_highlightTestArt(false),
 	m_showLetterbox(false),
-  m_showSoundCircles(false)
+	m_showSoundCircles(false)
 {
 	TheTacticalView = &bogusTacticalView;
 	m_actualWinSize.x = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "Width", THREE_D_VIEW_WIDTH);
@@ -2144,6 +2145,7 @@ BEGIN_MESSAGE_MAP(WbView3d, WbView)
 	ON_WM_CREATE()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
+	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_TIMER()
 	ON_WM_DESTROY()
@@ -2352,6 +2354,8 @@ int WbView3d::OnCreate(LPCREATESTRUCT lpCreateStruct)
 // ----------------------------------------------------------------------------
 void WbView3d::OnPaint()
 {
+	// Reset hint drawn flag at start of paint cycle to prevent double-drawing
+	m_brushHintState.beginFrame();
 
 	PAINTSTRUCT ps;
 	HDC hdc = ::BeginPaint(m_hWnd, &ps);
@@ -2641,6 +2645,9 @@ void WbView3d::drawLabels(HDC hdc)
 			}
 		}
 	}
+
+	// Draw brush mode hint (only once per frame to prevent double-drawing)
+	drawBrushModeHint(hdc);
 }
 
 
@@ -2654,6 +2661,12 @@ void WbView3d::OnSize(UINT nType, int cx, int cy)
 // ----------------------------------------------------------------------------
 BOOL WbView3d::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
+	// Check if brush tool should handle this first
+	if (handleBrushMouseWheel(nFlags, zDelta)) {
+		return TRUE;
+	}
+	
+	// Default behavior: camera zoom
 	if (m_trackingMode == TRACK_NONE) {
 
 		//WST 11/21/02 New Triple speed camera zoom request by designers
@@ -3253,3 +3266,99 @@ void WbView3d::OnUpdateViewShowSoundCircles(CCmdUI* pCmdUI)
   pCmdUI->SetCheck(m_showSoundCircles ? 1 : 0);
 }
 
+//=============================================================================
+// WbView3d::OnMouseMove
+//=============================================================================
+void WbView3d::OnMouseMove(UINT nFlags, CPoint point)
+{
+	WbView::OnMouseMove(nFlags, point);
+}
+
+//=============================================================================
+// WbView3d::clearBrushModeHintState
+//=============================================================================
+/** Clears the brush mode hint state. */
+//=============================================================================
+void WbView3d::clearBrushModeHintState()
+{
+	m_brushHintState.reset();
+}
+
+//=============================================================================
+// WbView3d::drawBrushModeHint
+//=============================================================================
+/** Draws the brush mode hint on canvas near the brush cursor in 3D view. */
+//=============================================================================
+void WbView3d::drawBrushModeHint(HDC hdc)
+{
+	if (m_brushHintState.drawnThisFrame) {
+		return;
+	}
+
+	Coord3D brushPos = DrawObject::getFeedbackPos();
+	
+	Vector3 worldPos, screenPos;
+	worldPos.Set(brushPos.x, brushPos.y, brushPos.z);
+	if (CameraClass::INSIDE_FRUSTUM != m_camera->Project(screenPos, worldPos)) {
+		clearBrushModeHintState();
+		return;
+	}
+
+	CRect rClient;
+	GetClientRect(&rClient);
+	Int sx, sy;
+	W3DLogicalScreenToPixelScreen(screenPos.X, screenPos.Y, &sx, &sy,
+		rClient.right - rClient.left, rClient.bottom - rClient.top);
+	CPoint hintPos(rClient.left + sx + HintDrawState::HINT_OFFSET_X,
+	               rClient.top + sy - HintDrawState::HINT_OFFSET_Y);
+
+	char hintTextBuf[512];
+	BrushTool::BrushHintInfo info;
+	if (!BrushTool::getBrushHintInfo(info, hintTextBuf, sizeof(hintTextBuf), hintPos, m_brushHintState.lastMode)) {
+		if (info.shouldClear) {
+			clearBrushModeHintState();
+		}
+		return;
+	}
+
+	Int textLen = (Int)strlen(hintTextBuf);
+	if (!info.shouldShow || textLen == 0) {
+		clearBrushModeHintState();
+		return;
+	}
+
+	Bool needUpdate = m_brushHintState.needsUpdate(hintPos, info.modeInt);
+
+	SIZE textSize;
+	if (m3DFont && !hdc) {
+		textSize.cx = textLen * 6;  // Approximate character width for 3D font
+		textSize.cy = 16;
+	} else {
+		::GetTextExtentPoint32(hdc, hintTextBuf, textLen, &textSize);
+	}
+
+	CRect hintRect;
+	if (!needUpdate && !m_brushHintState.lastRect.IsRectEmpty()) {
+		hintPos = m_brushHintState.lastPos;
+		hintRect = m_brushHintState.lastRect;
+	} else {
+		hintRect = HintDrawState::computeHintRect(hintPos, textSize.cx, textSize.cy);
+	}
+
+	if (m3DFont && !hdc) {
+		RECT textRect = hintRect;
+		textRect.bottom = textRect.top + textSize.cy;
+		m3DFont->DrawText(hintTextBuf, textLen, &textRect,
+			DT_LEFT | DT_NOCLIP | DT_TOP | DT_SINGLELINE, 0xFFFFFFFF);
+	} else if (hdc) {
+		::SetBkMode(hdc, TRANSPARENT);
+		::SetTextColor(hdc, RGB(255, 255, 255));
+		::TextOut(hdc, hintPos.x, hintPos.y - textSize.cy, hintTextBuf, textLen);
+	}
+
+	if (needUpdate) {
+		m_brushHintState.commitUpdate(hintPos, hintRect, info.modeInt);
+	} else {
+		m_brushHintState.drawnThisFrame = true;
+	}
+}

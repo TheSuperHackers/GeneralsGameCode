@@ -30,6 +30,9 @@ BrushOptions *BrushOptions::m_staticThis = NULL;
 Int BrushOptions::m_currentWidth = 0;
 Int BrushOptions::m_currentHeight = 0;
 Int BrushOptions::m_currentFeather = 0;
+Int BrushOptions::m_currentRaiseLower = BrushTool::MIN_RAISE_LOWER;
+Int BrushOptions::m_currentSmoothRadius = BrushTool::MIN_SMOOTH_RADIUS;
+Int BrushOptions::m_currentSmoothRate = BrushTool::MIN_SMOOTH_RATE;
 /////////////////////////////////////////////////////////////////////////////
 /// BrushOptions dialog trivial construstor - Create does the real work.
 
@@ -87,6 +90,42 @@ void BrushOptions::setHeight(Int height)
 	}
 }
 
+void BrushOptions::setRaiseLowerAmount(Int amount)
+{
+	char buffer[_MAX_PATH];
+	snprintf(buffer, ARRAY_SIZE(buffer), "%d", amount);
+	m_currentRaiseLower = amount;
+	if (m_staticThis && !m_staticThis->m_updating) {
+		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_RAISELOWER_EDIT);
+		if (pEdit) pEdit->SetWindowText(buffer);
+		snprintf(buffer, ARRAY_SIZE(buffer), "%.1f FEET.", m_currentRaiseLower*MAP_HEIGHT_SCALE);
+		pEdit = m_staticThis->GetDlgItem(IDC_RAISELOWER_LABEL);
+		if (pEdit) pEdit->SetWindowText(buffer);
+	}
+}
+
+void BrushOptions::setSmoothRadius(Int radius)
+{
+	CString buf;
+	buf.Format("%d", radius);
+	m_currentSmoothRadius = radius;
+	if (m_staticThis && !m_staticThis->m_updating) {
+		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_RADIUS_EDIT);
+		if (pEdit) pEdit->SetWindowText(buf);
+	}
+}
+
+void BrushOptions::setSmoothRate(Int rate)
+{
+	CString buf;
+	buf.Format("%d", rate);
+	m_currentSmoothRate = rate;
+	if (m_staticThis && !m_staticThis->m_updating) {
+		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_RATE_EDIT);
+		if (pEdit) pEdit->SetWindowText(buf);
+	}
+}
+
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -103,6 +142,9 @@ BOOL BrushOptions::OnInitDialog()
 	m_brushWidthPopup.SetupPopSliderButton(this, IDC_SIZE_POPUP, this);
 	m_brushFeatherPopup.SetupPopSliderButton(this, IDC_FEATHER_POPUP, this);
 	m_brushHeightPopup.SetupPopSliderButton(this, IDC_HEIGHT_POPUP, this);
+	m_raiseLowerPopup.SetupPopSliderButton(this, IDC_RAISELOWER_POPUP, this);
+	m_smoothRadiusPopup.SetupPopSliderButton(this, IDC_RADIUS_POPUP, this);
+	m_smoothRatePopup.SetupPopSliderButton(this, IDC_RATE_POPUP, this);
 
 
 	m_staticThis = this;
@@ -110,6 +152,9 @@ BOOL BrushOptions::OnInitDialog()
 	setFeather(m_currentFeather);
 	setWidth(m_currentWidth);
 	setHeight(m_currentHeight);
+	setRaiseLowerAmount(m_currentRaiseLower);
+	setSmoothRadius(m_currentSmoothRadius);
+	setSmoothRate(m_currentSmoothRate);
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -183,6 +228,60 @@ void BrushOptions::OnChangeHeightEdit()
 		}
 }
 
+void BrushOptions::OnChangeRaiseLowerEdit()
+{
+		if (m_updating) return;
+		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_RAISELOWER_EDIT);
+		char buffer[_MAX_PATH];
+		if (pEdit) {
+			pEdit->GetWindowText(buffer, sizeof(buffer));
+			Int amount;
+			m_updating = true;
+			if (1==sscanf(buffer, "%d", &amount)) {
+				m_currentRaiseLower = amount;
+				BrushTool::setRaiseLowerAmount(m_currentRaiseLower);
+				snprintf(buffer, ARRAY_SIZE(buffer), "%.1f FEET.", m_currentRaiseLower*MAP_HEIGHT_SCALE);
+				pEdit = m_staticThis->GetDlgItem(IDC_RAISELOWER_LABEL);
+				if (pEdit) pEdit->SetWindowText(buffer);
+			}
+			m_updating = false;
+		}
+}
+
+void BrushOptions::OnChangeSmoothRadiusEdit()
+{
+		if (m_updating) return;
+		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_RADIUS_EDIT);
+		char buffer[_MAX_PATH];
+		if (pEdit) {
+			pEdit->GetWindowText(buffer, sizeof(buffer));
+			Int radius;
+			m_updating = true;
+			if (1==sscanf(buffer, "%d", &radius)) {
+				m_currentSmoothRadius = radius;
+				BrushTool::setSmoothRadius(m_currentSmoothRadius);
+			}
+			m_updating = false;
+		}
+}
+
+void BrushOptions::OnChangeSmoothRateEdit()
+{
+		if (m_updating) return;
+		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_RATE_EDIT);
+		char buffer[_MAX_PATH];
+		if (pEdit) {
+			pEdit->GetWindowText(buffer, sizeof(buffer));
+			Int rate;
+			m_updating = true;
+			if (1==sscanf(buffer, "%d", &rate)) {
+				m_currentSmoothRate = rate;
+				BrushTool::setSmoothRate(m_currentSmoothRate);
+			}
+			m_updating = false;
+		}
+}
+
 void BrushOptions::GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial)
 {
 	switch (sliderID) {
@@ -205,6 +304,27 @@ void BrushOptions::GetPopSliderInfo(const long sliderID, long *pMin, long *pMax,
 			*pMin = 0;
 			*pMax = 20;
 			*pInitial = m_currentFeather;
+			*pLineSize = 1;
+			break;
+
+		case IDC_RAISELOWER_POPUP:
+			*pMin = BrushTool::MIN_RAISE_LOWER;
+			*pMax = BrushTool::MAX_RAISE_LOWER;
+			*pInitial = m_currentRaiseLower;
+			*pLineSize = 1;
+			break;
+
+		case IDC_RADIUS_POPUP:
+			*pMin = BrushTool::MIN_SMOOTH_RADIUS;
+			*pMax = BrushTool::MAX_SMOOTH_RADIUS;
+			*pInitial = m_currentSmoothRadius;
+			*pLineSize = 1;
+			break;
+
+		case IDC_RATE_POPUP:
+			*pMin = BrushTool::MIN_SMOOTH_RATE;
+			*pMax = BrushTool::MAX_SMOOTH_RATE;
+			*pInitial = m_currentSmoothRate;
 			*pLineSize = 1;
 			break;
 
@@ -245,6 +365,30 @@ void BrushOptions::PopSliderChanged(const long sliderID, long theVal)
 			BrushTool::setFeather(m_currentFeather);
 			break;
 
+		case IDC_RAISELOWER_POPUP:
+			m_currentRaiseLower = theVal;
+			str.Format("%d", m_currentRaiseLower);
+			pEdit = m_staticThis->GetDlgItem(IDC_RAISELOWER_EDIT);
+			if (pEdit) pEdit->SetWindowText(str);
+			BrushTool::setRaiseLowerAmount(m_currentRaiseLower);
+			break;
+
+		case IDC_RADIUS_POPUP:
+			m_currentSmoothRadius = theVal;
+			str.Format("%d", m_currentSmoothRadius);
+			pEdit = m_staticThis->GetDlgItem(IDC_RADIUS_EDIT);
+			if (pEdit) pEdit->SetWindowText(str);
+			BrushTool::setSmoothRadius(m_currentSmoothRadius);
+			break;
+
+		case IDC_RATE_POPUP:
+			m_currentSmoothRate = theVal;
+			str.Format("%d", m_currentSmoothRate);
+			pEdit = m_staticThis->GetDlgItem(IDC_RATE_EDIT);
+			if (pEdit) pEdit->SetWindowText(str);
+			BrushTool::setSmoothRate(m_currentSmoothRate);
+			break;
+
 		default:
 			// uh-oh!
 			DEBUG_CRASH(("Slider message from unknown control"));
@@ -254,20 +398,8 @@ void BrushOptions::PopSliderChanged(const long sliderID, long theVal)
 
 void BrushOptions::PopSliderFinished(const long sliderID, long theVal)
 {
-	switch (sliderID) {
-		case IDC_SIZE_POPUP:
-			break;
-		case IDC_HEIGHT_POPUP:
-			break;
-		case IDC_FEATHER_POPUP:
-			break;
-
-		default:
-			// uh-oh!
-			DEBUG_CRASH(("Slider message from unknown control"));
-			break;
-	}
-
+	// Required by PopupSliderOwner interface - no action needed on slider release
+	// (all updates happen in PopSliderChanged during drag)
 }
 
 
@@ -276,6 +408,9 @@ BEGIN_MESSAGE_MAP(BrushOptions, COptionsPanel)
 	ON_EN_CHANGE(IDC_FEATHER_EDIT, OnChangeFeatherEdit)
 	ON_EN_CHANGE(IDC_SIZE_EDIT, OnChangeSizeEdit)
 	ON_EN_CHANGE(IDC_HEIGHT_EDIT, OnChangeHeightEdit)
+	ON_EN_CHANGE(IDC_RAISELOWER_EDIT, OnChangeRaiseLowerEdit)
+	ON_EN_CHANGE(IDC_RADIUS_EDIT, OnChangeSmoothRadiusEdit)
+	ON_EN_CHANGE(IDC_RATE_EDIT, OnChangeSmoothRateEdit)
 	ON_WM_HSCROLL()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()

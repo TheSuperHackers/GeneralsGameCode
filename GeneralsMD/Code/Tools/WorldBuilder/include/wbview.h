@@ -41,6 +41,64 @@ enum RulerTypeEnum {
 };
 
 /////////////////////////////////////////////////////////////////////////////
+// HintDrawState - reusable flicker reduction state for on-screen text hints
+//
+// Usage:
+//   1. Call beginFrame() at start of each paint/render cycle
+//   2. Call needsUpdate() to check if hint position changed significantly
+//   3. Call commitUpdate() after drawing to store the new state
+//   4. Call reset() when hint should be hidden
+
+struct HintDrawState {
+	static const Int HINT_UPDATE_THRESHOLD = 15;  ///< Pixel threshold for hint position updates
+	static const Int HINT_OFFSET_X = 20;
+	static const Int HINT_OFFSET_Y = 20;
+	static const Int HINT_PADDING = 6;
+	
+	Int lastMode;
+	CRect lastRect;
+	CPoint lastPos;
+	Bool drawnThisFrame;
+	
+	HintDrawState() : lastMode(-1), lastPos(-10000, -10000), drawnThisFrame(false) {}
+	
+	void reset() {
+		if (!lastRect.IsRectEmpty()) {
+			lastRect.SetRectEmpty();
+			lastMode = -1;
+			lastPos = CPoint(-10000, -10000);
+		}
+	}
+	
+	void beginFrame() { drawnThisFrame = false; }
+	
+	bool needsUpdate(CPoint newPos, Int newMode, Int threshold = HINT_UPDATE_THRESHOLD) const {
+		if (newMode != lastMode) return true;
+		if (lastRect.IsRectEmpty()) return true;
+		Int dx = abs(newPos.x - lastPos.x);
+		Int dy = abs(newPos.y - lastPos.y);
+		return (dx > threshold || dy > threshold);
+	}
+	
+	void commitUpdate(CPoint pos, const CRect& rect, Int mode) {
+		lastPos = pos;
+		lastRect = rect;
+		lastMode = mode;
+		drawnThisFrame = true;
+	}
+	
+	/// Compute hint rect from position and text size
+	static CRect computeHintRect(CPoint pos, Int textWidth, Int textHeight) {
+		CRect rect;
+		rect.left = pos.x - HINT_PADDING;
+		rect.top = pos.y - textHeight - HINT_PADDING;
+		rect.right = pos.x + textWidth + HINT_PADDING;
+		rect.bottom = pos.y + HINT_PADDING;
+		return rect;
+	}
+};
+
+/////////////////////////////////////////////////////////////////////////////
 // WbView view
 
 class WbView : public CView
@@ -241,10 +299,13 @@ protected:
 	afx_msg void OnShowTerrain();
 	afx_msg void OnUpdateShowTerrain(CCmdUI* pCmdUI);
 	afx_msg int OnCreate(LPCREATESTRUCT lpcs);
-
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint point);
 
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+
+protected:
+	Bool handleBrushMouseWheel(UINT nFlags, short zDelta);
 };
 
 /////////////////////////////////////////////////////////////////////////////
