@@ -230,6 +230,10 @@ public:
 
 	virtual void setGuardBandBias( const Coord2D *gb ) { m_guardBandBias.x = gb->x; m_guardBandBias.y = gb->y; }
 
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	virtual void setUpdateEfficient(void) { m_updateEfficient = TRUE; }
+#endif
+
 
 private:
 
@@ -296,6 +300,11 @@ private:
 	Bool				m_useRealZoomCam;
 	AsciiString		m_cameraSlaveObjectName;
 	AsciiString		m_cameraSlaveObjectBoneName;
+
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	// Efficient Draw Update
+	Bool				m_updateEfficient;
+#endif
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////

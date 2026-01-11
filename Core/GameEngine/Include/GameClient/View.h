@@ -234,6 +234,10 @@ public:
 	virtual void forceCameraConstraintRecalc(void) {}
 	virtual void setGuardBandBias( const Coord2D *gb ) = 0;
 
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	virtual void setUpdateEfficient(void) {}
+#endif
+
 protected:
 
 	friend class Display;

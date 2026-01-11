@@ -4939,6 +4939,161 @@ void PartitionManager::restoreFoggedCells(const ShroudStatusStoreRestore &inPart
 	}
 }
 
+//-----------------------------------------------------------------------------
+std::list<Drawable*> PartitionManager::getDrawablesInRegion( IRegion2D *region2D )
+{
+	//IamInnocent 6/10/2025 - Uses PartitionManager to Find Drawables within a Region
+	std::list<Drawable*> drawables;
+
+	ICoord2D loRegion, hiRegion;
+	Coord3D loWorld, hiWorld;
+
+	if(region2D != NULL)
+	{
+		loRegion.x = region2D->lo.x;
+		loRegion.y = region2D->lo.y;
+		hiRegion.x = region2D->hi.x;
+		hiRegion.y = region2D->hi.y;
+	}
+	else
+	{
+		// This function is used to find the Whole Screen Region, currently it is not needed.
+		/*IRegion2D region;
+		ICoord2D origin;
+		ICoord2D size;
+
+		TheTacticalView->getOrigin( &origin.x, &origin.y );
+		size.x = TheTacticalView->getWidth();
+		size.y = TheTacticalView->getHeight();
+
+		TheInGameUI->buildRegion( &origin, &size, &region );
+		loRegion.x = region.lo.x;
+		loRegion.y = region.lo.y;
+		hiRegion.x = region.hi.x;
+		hiRegion.y = region.hi.y;
+		*/
+		return drawables;
+	}
+	TheTacticalView->screenToTerrain( &loRegion, &loWorld );
+	TheTacticalView->screenToTerrain( &hiRegion, &hiWorld );
+
+	Int cellCenterX, cellCenterY;
+	Real centerX = loWorld.x + (hiWorld.x - loWorld.x) / 2;
+	Real centerY = loWorld.y + (hiWorld.y - loWorld.y) / 2;
+	worldToCell(centerX, centerY, &cellCenterX, &cellCenterY);
+
+	/*
+		m_radiusVec[curRadius] contains a list of the cells (foo) that could
+		contain objects that are <= (curRadius * cellSize) distance away from cell (0,0).
+	*/
+#ifdef FASTER_GCO
+
+	Int maxRadius = m_maxGcoRadius;
+	Real maxDist = hiWorld.x - loWorld.x > loWorld.y - hiWorld.y ? hiWorld.x - loWorld.x : loWorld.y - hiWorld.y;
+	if (maxDist < HUGE_DIST)
+	{
+		// don't go outwards any farther than necessary.
+		/// Need to increase the minimum value to be able to select air units under a small region
+		maxRadius = minInt(m_maxGcoRadius, worldToCellDist(max(200.0f,maxDist)));
+	}
+#if defined(INTENSE_DEBUG)
+	/*
+		Note, if you ever enable this code, be forewarned that it can give
+		you "false positives" for objects that are located just off the map... (srj)
+	*/
+	Int maxRadiusLimit = maxRadius + 3;
+	if (maxRadiusLimit > m_maxGcoRadius) maxRadiusLimit = m_maxGcoRadius;
+#else
+	Int maxRadiusLimit = maxRadius;
+#endif
+
+	static Int theIterFlag = 1;	// nonzero, thanks
+	++theIterFlag;
+
+	/*
+		m_radiusVec[curRadius] contains a list of the cells (foo) that could
+		contain objects that are <= (curRadius * cellSize) distance away from cell (0,0).
+	*/
+  for (Int curRadius = 0; curRadius <= maxRadiusLimit; ++curRadius)
+  {
+    const OffsetVec& offsets = m_radiusVec[curRadius];
+		if (offsets.empty())
+			continue;
+    for (OffsetVec::const_iterator it = offsets.begin(); it != offsets.end(); ++it)
+		{
+			PartitionCell* thisCell = getCellAt(cellCenterX + it->x, cellCenterY + it->y);
+			if (thisCell == NULL)
+				continue;
+
+			for (CellAndObjectIntersection *thisCoi = thisCell->getFirstCoiInCell(); thisCoi; thisCoi = thisCoi->getNextCoi())
+			{
+				PartitionData *thisMod = thisCoi->getModule();
+				Object *thisObj = thisMod->getObject();
+
+				if (thisObj == NULL)
+					continue;
+
+				// since an object can exist in multiple COIs, we use this to avoid processing
+				// the same one more than once.
+				if (thisMod->friend_getDoneFlag() == theIterFlag)
+					continue;
+				thisMod->friend_setDoneFlag(theIterFlag);
+
+				if (!thisObj->getDrawable())
+					continue;
+
+				drawables.push_back( thisObj->getDrawable() );
+
+			} // next coi
+		}	// next cell in this radius
+  } // next radius
+
+#else // not FASTER_GCO
+
+	CellOutwardIterator iter(this, cellCenterX, cellCenterY);
+	if (maxDist < HUGE_DIST)
+	{
+		// don't go outwards any farther than necessary.
+		Int max = worldToCellDist(maxDist) + 1;
+		// default value for "max" is largest possible, based on map size, so we should
+		// never make it any larger than that
+		if (max < iter.getMaxRadius())
+			iter.setMaxRadius(max);
+	}
+
+	static Int theIterFlag = 1;	// nonzero, thanks
+	++theIterFlag;
+
+	PartitionCell *thisCell;
+	while ((thisCell = iter.nextNonEmpty()) != NULL)
+	{
+		CellAndObjectIntersection *nextCoi;
+		for (CellAndObjectIntersection *thisCoi = thisCell->getFirstCoiInCell(); thisCoi; thisCoi = nextCoi)
+		{
+			nextCoi = thisCoi->getNextCoi();
+
+			PartitionData *thisMod = thisCoi->getModule();
+
+			Object *thisObj = thisMod->getObject();
+
+			if (thisObj == NULL)
+				continue;
+
+			if (thisMod->friend_getDoneFlag() == theIterFlag)
+				continue;
+
+			thisMod->friend_setDoneFlag(theIterFlag);
+
+			if (!thisObj->getDrawable())
+				continue;
+
+			drawables.push_back( thisObj->getDrawable() );
+		}
+	}
+
+#endif  // not FASTER_GCO
+	return drawables;
+}
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

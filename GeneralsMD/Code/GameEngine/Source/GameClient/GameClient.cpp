@@ -109,6 +109,18 @@ GameClient::GameClient()
 
 	m_nextDrawableID = (DrawableID)1;
 	TheDrawGroupInfo = new DrawGroupInfo;
+
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	m_drawablesIterateList.clear();
+	m_drawablesIterateListMarkedForClear = FALSE;
+
+	m_axisAlignedRegion.lo.x = 0.0f;
+	m_axisAlignedRegion.lo.y = 0.0f;
+	m_axisAlignedRegion.lo.z = 0.0f;
+	m_axisAlignedRegion.hi.x = 0.0f;
+	m_axisAlignedRegion.hi.y = 0.0f;
+	m_axisAlignedRegion.hi.z = 0.0f;
+#endif
 }
 
 //std::vector<std::string>	preloadTextureNamesGlobalHack;
@@ -127,6 +139,18 @@ GameClient::~GameClient()
 
 	// clear any drawable TOC we might have
 	m_drawableTOC.clear();
+
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	m_drawablesIterateList.clear();
+	m_drawablesIterateListMarkedForClear = FALSE;
+
+	m_axisAlignedRegion.lo.x = 0.0f;
+	m_axisAlignedRegion.lo.y = 0.0f;
+	m_axisAlignedRegion.lo.z = 0.0f;
+	m_axisAlignedRegion.hi.x = 0.0f;
+	m_axisAlignedRegion.hi.y = 0.0f;
+	m_axisAlignedRegion.hi.z = 0.0f;
+#endif
 
 	//DEBUG_LOG(("Preloaded texture files ------------------------------------------"));
 	//for (Int oog=0; oog<preloadTextureNamesGlobalHack2.size(); ++oog)
@@ -475,6 +499,17 @@ void GameClient::reset( void )
 	// TheSuperHackers @fix Mauller 13/04/2025 Reset the drawable id so it does not keep growing over the lifetime of the game.
 	m_nextDrawableID = (DrawableID)1;
 
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	m_drawablesIterateList.clear();
+	m_drawablesIterateListMarkedForClear = FALSE;
+
+	m_axisAlignedRegion.lo.x = 0.0f;
+	m_axisAlignedRegion.lo.y = 0.0f;
+	m_axisAlignedRegion.lo.z = 0.0f;
+	m_axisAlignedRegion.hi.x = 0.0f;
+	m_axisAlignedRegion.hi.y = 0.0f;
+	m_axisAlignedRegion.hi.z = 0.0f;
+#endif
 }
 
 /** -----------------------------------------------------------------------------------------------
@@ -799,6 +834,40 @@ void GameClient::iterateDrawablesInRegion( Region3D *region, GameClientFuncPtr u
 {
 	Drawable *draw, *nextDrawable;
 
+	// Added a More Efficient Form of IterateDrawablesInRegion that does not Iterate Through Every Drawable present in the Map
+	/// @todo Maybe we could use Vector or Hash_Map for more Efficiency? On Normal conditions, there should be around 30-50 Drawables within the Screen.
+	//// At worse conditions, 8 player maps, around 150-200 drawables.
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+	if(m_drawablesIterateListMarkedForClear)
+	{
+		m_drawablesIterateList.clear();
+		m_drawablesIterateListMarkedForClear = FALSE;
+	}
+	
+	if(region != NULL && !m_drawablesIterateList.empty())
+	{
+		for( std::list< Drawable* >::iterator it = m_drawablesIterateList.begin(); it != m_drawablesIterateList.end();)
+		{
+			Coord3D pos = *(*it)->getPosition();
+			if( pos.x >= region->lo.x && pos.x <= region->hi.x &&
+				pos.y >= region->lo.y && pos.y <= region->hi.y &&
+					pos.z >= region->lo.z && pos.z <= region->hi.z )
+			{
+				(*userFunc)( (*it), userData );
+			}
+			else
+			{
+				it = m_drawablesIterateList.erase(it);
+				continue;
+			}
+			++it;
+		}
+
+		// We stop here
+		return;
+	}
+#endif
+
 	for( draw = m_drawableList; draw; draw=nextDrawable )
 	{
 		nextDrawable = draw->getNextDrawable();
@@ -809,10 +878,53 @@ void GameClient::iterateDrawablesInRegion( Region3D *region, GameClientFuncPtr u
 			   pos.y >= region->lo.y && pos.y <= region->hi.y &&
 				 pos.z >= region->lo.z && pos.z <= region->hi.z) )
 		{
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+			addDrawableToEfficientList(draw);
+#endif
 			(*userFunc)( draw, userData );
 		}
 	}
 }
+
+#if !RETAIL_COMPATIBLE_DRAWUPDATE
+/** -----------------------------------------------------------------------------------------------
+ * Inform the Client to add this Unit to the Efficient Drawable List
+ */
+void GameClient::informClientNewDrawable(Drawable *draw)
+{
+	// sanity
+	if( draw == NULL )
+		return;
+
+	// Only inform New Drawable if the drawables are iterated at least once throughout the whole map.
+	if(m_drawablesIterateList.empty())
+		return;
+
+	Coord3D currPos = *draw->getPosition();
+	Region3D *region = getEfficientDrawableRegion();
+	if( currPos.x <= region->lo.x || currPos.x >= region->hi.x ||
+		currPos.y <= region->lo.y || currPos.y >= region->hi.y ||
+			currPos.z <= region->lo.z || currPos.z >= region->hi.z )
+		return;
+		
+	TheTacticalView->setUpdateEfficient();
+
+	addDrawableToEfficientList(draw);
+}
+
+/** -----------------------------------------------------------------------------------------------
+ * Add drawable to the Efficient Drawable List
+ */
+void GameClient::addDrawableToEfficientList(Drawable *draw)
+{
+	// Only add the Drawable if it is not within the Iterate List
+	std::list< Drawable* >::iterator it = std::find(m_drawablesIterateList.begin(), m_drawablesIterateList.end(), draw);
+	if (it == m_drawablesIterateList.end())
+	{
+		m_drawablesIterateList.push_back( draw );
+	}
+}
+#endif
 
 /**Helper function to update fake GLA structures to become visible to certain players.
 We should only call this during critical moments, such as changing teams, changing to
