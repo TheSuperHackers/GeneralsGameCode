@@ -2,7 +2,6 @@ add_executable(z_w3dview WIN32)
 
 target_link_libraries(z_w3dview PRIVATE
     core_config
-    core_utility
     core_wwstub # avoid linking GameEngine
     corei_w3dview # this interface gets the source files for the tool
     d3d8
@@ -15,6 +14,7 @@ target_link_libraries(z_w3dview PRIVATE
     winmm
     z_wwaudio
     z_wwvegas
+    zi_always
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

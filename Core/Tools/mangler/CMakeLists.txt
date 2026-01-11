@@ -68,7 +68,7 @@ target_include_directories(core_manglerlib PRIVATE
 target_link_libraries(core_manglerlib PRIVATE wsock32)
 target_link_libraries(core_manglerlib PUBLIC
     core_config
-    core_utility
+    corei_always
 )
 
 # mangler app
