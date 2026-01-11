@@ -749,16 +749,16 @@ static void TriggerMiniDump()
 // TheSuperHackers @bugfix JohnsterID 06/01/2025 Helper function to extract crash location from stack trace
 static void extractCrashLocation(char* outBuffer, size_t bufferSize)
 {
-	outBuffer[0] = '\0';
-
 	if (bufferSize == 0 || g_LastErrorDump.isEmpty()) {
 		return;
 	}
 
+	outBuffer[0] = '\0';
+
 	const char* stackStr = g_LastErrorDump.str();
 
 	// Skip leading whitespace/newlines
-	while (*stackStr && (*stackStr == ' ' || *stackStr == '\t' || *stackStr == '\n' || *stackStr == '\r')) {
+	while (*stackStr && isspace(static_cast<unsigned char>(*stackStr))) {
 		stackStr++;
 	}
 
@@ -883,7 +883,7 @@ void ReleaseCrash(const char *reason)
 	p += snprintf(p, end - p, "\nMinidump files saved to:\n%s\n", crashDumpDir);
 #endif
 
-	snprintf(p, end - p, "\nPlease report the issue:\nhttps://github.com/TheSuperHackers/GeneralsGameCode/issues");
+	snprintf(p, end - p, "\nPlease report the issue:\nhttps://github.com/TheSuperHackers/GeneralsCrashReports/issues");
 
 	::MessageBox(NULL, buff, "Game Crash", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
 
@@ -923,7 +923,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 #ifdef RTS_ENABLE_CRASHDUMP
 		"\nMinidump files: %sCrashDumps\\"
 #endif
-		"\n\nReport issue: https://github.com/TheSuperHackers/GeneralsGameCode/issues",
+		"\n\nReport issue: https://github.com/TheSuperHackers/GeneralsCrashReports/issues",
 		crashInfoPath
 #ifdef RTS_ENABLE_CRASHDUMP
 		, TheGlobalData->getPath_UserData().str()
