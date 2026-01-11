@@ -362,7 +362,7 @@ static Real fast_hypot(
 	Real y
 );
 static void testSphereAgainstRect(
-	const Coord2D *pts,				// an array of 4
+	const Coord2D pts[],			// an array of 4
 	const CollideInfo *a,
 	Real &distSqr
 );
@@ -462,92 +462,82 @@ static Real fast_hypot(Real x, Real y)
 	Real dy = fabs(y);
 
 	// Longest line and shortest between x and y
-	Real a = max(dx, dy);
-	Real b = min(dx, dy);
+	Real a, b;
+	if(dx > dy) {
+		a = dx;
+		b = dy;
+	} else {
+		a = dy;
+		b = dx;
+	}
+
+	Real ratio = b / a;
 
 	// max error ≈ 1.04 %
-	return a * ( 1 + 0.428 * pow(b/a, 2) );
+	return a * ( 1 + 0.428 * ratio * ratio );
 }
 
 //-----------------------------------------------------------------------------
 static void testSphereAgainstRect(
-	const Coord2D *pts,				// an array of 4
+	const Coord2D pts[],			// an array of 4
 	const CollideInfo *a,
 	Real &distSqr
 )
 {
 	// Get two points that are closest to the source
-	Real x1, x2, y1, y2;
 	Real dx1, dx2, dy1, dy2;
-	x1 = x2 = y1 = y2 = 0.0f;
+	Real minDist = HUGE_DIST_SQR;
+	Real secondMinDist = 0.0f;
+	Int minIdx = -1;
+	Int secondMinIdx = -1;
 
-	Real dist[4];
-	Coord2D points[4];
-	for (Int i = 0; i < 4; ++i, ++pts)
+	// Get the derivatives between the four points to the source
+	Real derivates[4][2];
+	for (Int i = 0; i < 4; ++i)
 	{
-		points[i].x = pts->x;
-		points[i].y = pts->y;
-		dist[i] = sqr(pts->x - a->position.x) + sqr(pts->y - a->position.y);
-	}
+		derivates[i][0] = pts[i].x - a->position.x;
+		derivates[i][1] = pts[i].y - a->position.y;
 
-	Real minDist;
-	Int minIdx;
-	Int lastMinIdx = -1;
-	while( TRUE )
-	{
-		minDist = HUGE_DIST_SQR;
-		minIdx = 4;
-		for (Int idx = 0; idx < 4; idx++)
+		Real curDistSqr = sqr(derivates[i][0]) + sqr(derivates[i][1]);
+		if(minDist > curDistSqr)
 		{
-			if(minDist > dist[idx] && idx != lastMinIdx)
-			{
-				minDist = dist[idx];
-				minIdx = idx;
-			}
+			minDist = curDistSqr;
+			minIdx = i;
 		}
-		if(x1 == 0.0f && y1 == 0.0f)
+		if( minDist >= secondMinDist ||
+			(secondMinDist > curDistSqr && curDistSqr > minDist) )
 		{
-			x1 = points[minIdx].x;
-			y1 = points[minIdx].y;
-			dx1 = x1 - a->position.x;
-			dy1 = y1 - a->position.y;
-			lastMinIdx = minIdx;
-		}
-		else
-		{
-			x2 = points[minIdx].x;
-			y2 = points[minIdx].y;
-			dx2 = x2 - a->position.x;
-			dy2 = y2 - a->position.y;
-			break;
+			secondMinDist = curDistSqr;
+			secondMinIdx = i;
 		}
 	}
 
-	// If the coordinates fall within the same directory angle, we get the shortest from the index points
-	if( (dx1 >= 0 && dx2 >= 0 && dy1 >= 0 && dy2 >= 0) ||
-		(dx1 <= 0 && dx2 <= 0 && dy1 >= 0 && dy2 >= 0) ||
-		(dx1 >= 0 && dx2 >= 0 && dy1 <= 0 && dy2 <= 0) ||
-		(dx1 <= 0 && dx2 <= 0 && dy1 <= 0 && dy2 <= 0) )
+	dx1 = derivates[minIdx][0];
+	dy1 = derivates[minIdx][1];
+	dx2 = derivates[secondMinIdx][0];
+	dy2 = derivates[secondMinIdx][1];
+
+	Bool polarity_x1 = dx1 >= 0;
+	Bool polarity_x2 = dx2 >= 0;
+	Bool polarity_y1 = dy1 >= 0;
+	Bool polarity_y2 = dy2 >= 0;
+
+	// If the polarity of both the closest coordinates are the same, then we simply get the shortest distance
+	if( polarity_x1 == polarity_x2 && polarity_y1 == polarity_y2 )
 	{
-		distSqr = dist[lastMinIdx];
+		distSqr = sqr(derivates[minIdx][0]) + sqr(derivates[minIdx][1]);
 		return;
 	}
 
-	DEBUG_ASSERTCRASH(minIdx <= 3, ("Hmm, this should not be possible."));
+	DEBUG_ASSERTCRASH(secondMinIdx >= 0 && secondMinIdx <= 3, ("Hmm, this should not be possible."));
 
 	// Get the Triangle length of all 3 points
-	Real boundary_h = fast_hypot((x1 - x2), (y1 - y2));
-	Real boundary_1 = fast_hypot(dx1, dy1);
-	Real boundary_2 = fast_hypot(dx2, dy2);
-	Real sqr_boundary_2 = sqr(boundary_2);
+	Real boundary_h = fast_hypot(pts[minIdx].x - pts[secondMinIdx].x, pts[minIdx].y - pts[secondMinIdx].y);
+	Real sqr_boundary_1 = sqr(dx1) + sqr(dy1);
+	Real sqr_boundary_2 = sqr(dx2) + sqr(dy2);
 
-	// Heron's formula (Not reliable because it always finds the shortest height)
-	//Real semiPeri = (boundary_h + boundary_1 + boundary_2) * 0.5;
-	//Real Area = sqrtf(semiPeri * (semiPeri - boundary_h) * (semiPeri - boundary_1) * (semiPeri - boundary_2));
-	//distance = Area * 2 / boundary_h;
-
-	Real cosAngle_1 = (sqr_boundary_2 + sqr(boundary_h) - sqr(boundary_1)) * 0.5  / (boundary_2 * boundary_h);
-	Real boundary_h1 = cosAngle_1 * boundary_2;
+	// By Simplying Law of Cosines, we can get the distSqr;
+	Real boundary_h1 = (sqr_boundary_2 + sqr(boundary_h) - sqr_boundary_1) * 0.5 / boundary_h;
 	distSqr = sqr_boundary_2 - sqr(boundary_h1);
 }
 #endif
