@@ -13,6 +13,11 @@ target_include_directories(corei_libraries_source_wwvegas INTERFACE "Libraries/S
 target_include_directories(corei_libraries_source_wwvegas_wwlib INTERFACE "Libraries/Source/WWVegas/WWLib")
 target_include_directories(corei_main INTERFACE "Main")
 
+target_sources(corei_libraries_include PRIVATE
+    Libraries/Include/Lib/BaseTypeCore.h
+    Libraries/Include/rts/debug.h
+    Libraries/Include/rts/profile.h
+)
 target_link_libraries(corei_always INTERFACE
     core_utility
     corei_libraries_include
