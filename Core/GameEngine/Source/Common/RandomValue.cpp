@@ -234,7 +234,7 @@ DEBUG_LOG(( "%d: GetGameLogicRandomValue = %d (%d - %d), %s line %d",
 // The intended use case for this function are randomized values that are desirable to be synchronized across clients,
 // but should not result in a mismatch if they aren't; e.g. for scripted audio events.
 //
-Int GetGameLogicCurrentRandomValue( int lo, int hi, const char *file, int line )
+Int GetGameLogicRandomValueUnchanged( int lo, int hi, const char *file, int line )
 {
 #if RETAIL_COMPATIBLE_CRC
 	return GetGameLogicRandomValue(lo, hi, file, line);
@@ -252,7 +252,7 @@ Int GetGameLogicCurrentRandomValue( int lo, int hi, const char *file, int line )
 	DEBUG_ASSERTCRASH(rval >= lo && rval <= hi, ("Bad random val"));
 
 #ifdef DEBUG_RANDOM_LOGIC
-	DEBUG_LOG(( "%d: GetGameLogicCurrentRandomValue = %d (%d - %d), %s line %d",
+	DEBUG_LOG(( "%d: GetGameLogicRandomValueUnchanged = %d (%d - %d), %s line %d",
 		TheGameLogic->getFrame(), rval, lo, hi, file, line ));
 #endif
 
@@ -335,7 +335,7 @@ DEBUG_LOG(( "%d: GetGameLogicRandomValueReal = %f, %s line %d",
 // The intended use case for this function are randomized values that are desirable to be synchronized across clients,
 // but should not result in a mismatch if they aren't; e.g. for scripted audio events.
 //
-Real GetGameLogicCurrentRandomValueReal( Real lo, Real hi, const char *file, int line )
+Real GetGameLogicRandomValueRealUnchanged( Real lo, Real hi, const char *file, int line )
 {
 #if RETAIL_COMPATIBLE_CRC
 	return GetGameLogicRandomValueReal(lo, hi, file, line);
@@ -353,7 +353,7 @@ Real GetGameLogicCurrentRandomValueReal( Real lo, Real hi, const char *file, int
 	DEBUG_ASSERTCRASH(rval >= lo && rval <= hi, ("Bad random val"));
 
 #ifdef DEBUG_RANDOM_LOGIC
-	DEBUG_LOG(( "%d: GetGameLogicCurrentRandomValueReal = %f, %s line %d",
+	DEBUG_LOG(( "%d: GetGameLogicRandomValueRealUnchanged = %f, %s line %d",
 		TheGameLogic->getFrame(), rval, file, line ));
 #endif
 

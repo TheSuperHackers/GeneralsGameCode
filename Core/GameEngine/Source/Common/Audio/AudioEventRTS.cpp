@@ -340,7 +340,7 @@ void AudioEventRTS::generateFilename( void )
 		{
 			if (m_isLogicalAudio)
 			{
-				which = GameLogicCurrentRandomValue(0, m_eventInfo->m_sounds.size() - 1);
+				which = GameLogicRandomValueUnchanged(0, m_eventInfo->m_sounds.size() - 1);
 			}
 			else
 			{
@@ -388,7 +388,7 @@ void AudioEventRTS::generatePlayInfo( void )
 		// needs to be logic because it needs to be the same on all systems.
 		Int attackToPlay;
 		if (m_isLogicalAudio) {
-			attackToPlay = GameLogicCurrentRandomValue(0, attackSize - 1);
+			attackToPlay = GameLogicRandomValueUnchanged(0, attackSize - 1);
 		} else {
 			attackToPlay = GameAudioRandomValue(0, attackSize - 1);
 		}
@@ -406,7 +406,7 @@ void AudioEventRTS::generatePlayInfo( void )
 		// needs to be logic because it needs to be the same on all systems.
 		Int decayToPlay;
 		if (m_isLogicalAudio) {
-			decayToPlay = GameLogicCurrentRandomValue(0, decaySize - 1);
+			decayToPlay = GameLogicRandomValueUnchanged(0, decaySize - 1);
 		} else {
 			decayToPlay = GameAudioRandomValue(0, decaySize - 1);
 		}
