@@ -8,7 +8,6 @@ set_target_properties(core_assetcull PROPERTIES OUTPUT_NAME assetcull)
 target_sources(core_assetcull PRIVATE ${ASSETCULL_SRC})
 
 target_link_libraries(core_assetcull PRIVATE
-    core_config
     corei_always
 )
 

@@ -57,7 +57,6 @@ set_target_properties(core_babylon PROPERTIES OUTPUT_NAME babylon)
 target_sources(core_babylon PRIVATE ${BABYLON_SRC})
 
 target_link_libraries(core_babylon PRIVATE
-    core_config
     corei_always
 )
 

@@ -8,7 +8,6 @@ set_target_properties(core_compress PROPERTIES OUTPUT_NAME compress)
 target_sources(core_compress PRIVATE ${COMRPESS_SRC})
 
 target_link_libraries(core_compress PRIVATE
-    core_config
     core_compression
     corei_always
 )
