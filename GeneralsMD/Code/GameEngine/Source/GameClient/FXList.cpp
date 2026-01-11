@@ -489,6 +489,31 @@ public:
 	{
 		if (primary)
 		{
+			// If scormarks are high above the ground
+			if (TheGlobalData->m_hideScorchmarksAboveGround && TheTerrainLogic) {
+				/*PathfindLayerEnum layer = TheTerrainLogic->getLayerForDestination(primary);
+				Real groundHeight = 0;
+				if (layer != LAYER_GROUND) {
+					TheTerrainLogic->getLayerHeight(primary->x, primary->y, layer);
+				}
+				else {
+					Real waterZ;
+					Real terrainZ;
+					if (TheTerrainLogic->isUnderwater(primary->x, primary->y, &waterZ, &terrainZ))
+						groundHeight = waterZ;
+					else
+						groundHeight = terrainZ;
+				}*/
+
+				PathfindLayerEnum layer = TheTerrainLogic->getLayerForDestination(primary);
+				if (layer != LAYER_GROUND)
+					return;
+
+				Real groundHeight = TheTerrainLogic->getLayerHeight(primary->x, primary->y, layer);
+				if (primary->z - groundHeight > m_radius)
+					return;
+			}
+
 			Int scorch = m_scorch;
 			if (scorch < 0)
 			{

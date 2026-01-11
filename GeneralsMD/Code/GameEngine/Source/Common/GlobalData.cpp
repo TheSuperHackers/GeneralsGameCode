@@ -574,6 +574,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 
 	{"DefaultExcludedDeathTypes", INI::parseDeathTypeFlagsList, NULL, offsetof(GlobalData, m_defaultExcludedDeathTypes) },
 	{"HeightAboveTerrainIncludesWater", INI::parseBool, NULL, offsetof(GlobalData, m_heightAboveTerrainIncludesWater) },
+	{"HideScorchmarksAboveGround", INI::parseBool, NULL, offsetof(GlobalData, m_hideScorchmarksAboveGround) },
 	{ NULL,					NULL,						NULL,						0 }  // keep this last
 
 };

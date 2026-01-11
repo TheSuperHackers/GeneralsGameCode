@@ -588,6 +588,7 @@ public:
 
 	DeathTypeFlags m_defaultExcludedDeathTypes;
 	Bool m_heightAboveTerrainIncludesWater;
+	Bool m_hideScorchmarksAboveGround;
 
 	// the trailing '\' is included!
   const AsciiString &getPath_UserData() const { return m_userDataDir; }
