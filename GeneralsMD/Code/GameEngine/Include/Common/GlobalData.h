@@ -264,6 +264,7 @@ public:
 	Bool m_sounds3DOn;
 	Bool m_speechOn;
 	Bool m_videoOn;
+	Bool m_maintainVideoAspect;
 	Bool m_disableCameraMovement;
 
 	Bool m_useFX;									///< If false, don't render effects

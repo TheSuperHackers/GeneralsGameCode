@@ -3567,6 +3567,12 @@ void InGameUI::postWindowDraw( void )
 	Int hudOffsetX = 0;
 	Int hudOffsetY = 0;
 
+	// TheSuperHackers @info During video playback we don't want custom overlay elements showing
+	if (TheDisplay->isMoviePlaying())
+	{
+		return;
+	}
+
 	if (m_networkLatencyPointSize > 0 && TheGameLogic->isInMultiplayerGame())
 	{
 		drawNetworkLatency(hudOffsetX, hudOffsetY);

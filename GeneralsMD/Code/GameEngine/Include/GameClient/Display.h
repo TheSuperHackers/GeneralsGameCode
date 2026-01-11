@@ -143,14 +143,17 @@ public:
 
 	/// draw a video buffer fit within the screen coordinates
 	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream ) = 0;
-	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY,
-													Int endX, Int endY ) = 0;
+	virtual void drawScaledVideoBuffer() = 0;
+	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY, Int endX, Int endY ) = 0;
+	virtual void drawVideoBuffer(Int startX, Int startY, Int endX, Int endY) = 0;
 
 	/// FullScreen video playback
 	virtual void playLogoMovie( AsciiString movieName, Int minMovieLength, Int minCopyrightLength );
 	virtual void playMovie( AsciiString movieName );
 	virtual void stopMovie( void );
 	virtual Bool isMoviePlaying(void);
+
+	virtual VideoBuffer* getVideoBuffer() { return m_videoBuffer; }
 
 	/// Register debug display callback
 	virtual void setDebugDisplayCallback( DebugDisplayCallback *callback, void *userData = NULL  );
@@ -172,6 +175,9 @@ public:
 	virtual void enableLetterBox(Bool enable) = 0;						///< forces letter-boxed display on/off
 	virtual Bool isLetterBoxFading( void ) { return FALSE; }	///< returns true while letterbox fades in/out
 	virtual Bool isLetterBoxed( void ) { return FALSE; }	//WST 10/2/2002. Added query interface
+
+	virtual void setMaintainVideoAspect(Bool maintainAspect) { m_maintainVideoAspect = maintainAspect; }
+	virtual Bool isVideoAspectMaintained() { return m_maintainVideoAspect;  }
 
 	virtual void setCinematicText( AsciiString string ) { m_cinematicText = string; }
 	virtual void setCinematicFont( GameFont *font ) { m_cinematicFont = font; }
@@ -205,6 +211,7 @@ protected:
 	void									*m_debugDisplayUserData;	///< Data for debug display update handler
 	Real	m_letterBoxFadeLevel;	///<tracks the current alpha level for fading letter-boxed mode in/out.
 	Bool	m_letterBoxEnabled;		///<current state of letterbox
+	Bool	m_maintainVideoAspect;
 	UnsignedInt	m_letterBoxFadeStartTime;		///< time of letterbox fade start
 	Int		m_movieHoldTime;									///< time that we hold on the last frame of the movie
 	Int		m_copyrightHoldTime;							///< time that the copyright must be on the screen
