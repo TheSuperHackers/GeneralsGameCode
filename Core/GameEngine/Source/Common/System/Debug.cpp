@@ -762,13 +762,16 @@ static void extractCrashLocation(char* outBuffer, size_t bufferSize)
 		stackStr++;
 	}
 
-	// Skip if no content or contains "<Unknown>"
-	if (!*stackStr || strstr(stackStr, "<Unknown>") != NULL) {
+	// Skip if no content or first line starts with "<Unknown>"
+	// Only check the first line (crash location) rather than entire stack trace,
+	// so we can still show useful info even if deeper frames lack symbols.
+	if (!*stackStr || strncmp(stackStr, "<Unknown>", 9) == 0) {
 		return;
 	}
 
 	// Find end of first line
 	const char* lineEnd = stackStr;
+	// Limit to 400 chars to fit in 512 byte buffer with safety margin
 	const size_t maxLineLength = bufferSize < 401 ? bufferSize - 1 : 400;
 
 	while (*lineEnd && *lineEnd != '\n' && *lineEnd != '\r' && (size_t)(lineEnd - stackStr) < maxLineLength) {
