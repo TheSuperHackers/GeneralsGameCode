@@ -45,6 +45,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/CriticalSection.h"
+#include "utf8.h"
 
 
 // -----------------------------------------------------
@@ -464,4 +465,19 @@ Bool UnicodeString::nextToken(UnicodeString* tok, UnicodeString delimiters)
 		tok->clear();
 		return false;
 	}
+}
+
+//-----------------------------------------------------------------------------
+void UnicodeString::convertFromUtf8(const AsciiString& asciiStr)
+{
+	const size_t requiredBytes = get_size_as_widechar(asciiStr.str());
+	if (requiredBytes == 0)
+	{
+		DEBUG_CRASH(("UnicodeString::convertFromUtf8: failed to get size as WideChar"));
+		return;
+	}
+
+	ensureUniqueBufferOfSize(static_cast<int>(requiredBytes / sizeof(WideChar)), false, NULL, NULL);
+	convert_utf8_to_widechar(asciiStr.str(), peek(), requiredBytes);
+	validate();
 }
