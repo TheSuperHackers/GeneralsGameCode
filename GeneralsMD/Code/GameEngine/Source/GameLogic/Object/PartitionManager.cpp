@@ -472,9 +472,10 @@ static Real fast_hypot(Real x, Real y)
 	}
 
 	Real ratio = b / a;
+	ratio *= ratio;
 
 	// max error ≈ 1.04 %
-	return a * ( 1 + 0.428 * ratio * ratio );
+	return a * ( 1 + 0.428 * ratio );
 }
 
 //-----------------------------------------------------------------------------
@@ -492,13 +493,13 @@ static void testSphereAgainstRect(
 	Int secondMinIdx = -1;
 
 	// Get the derivatives between the four points to the source
-	Real derivates[4][2];
+	Real derivatives[4][2];
 	for (Int i = 0; i < 4; ++i)
 	{
-		derivates[i][0] = pts[i].x - a->position.x;
-		derivates[i][1] = pts[i].y - a->position.y;
+		derivatives[i][0] = pts[i].x - a->position.x;
+		derivatives[i][1] = pts[i].y - a->position.y;
 
-		Real curDistSqr = sqr(derivates[i][0]) + sqr(derivates[i][1]);
+		Real curDistSqr = sqr(derivatives[i][0]) + sqr(derivatives[i][1]);
 		if(minDist > curDistSqr)
 		{
 			minDist = curDistSqr;
@@ -512,10 +513,10 @@ static void testSphereAgainstRect(
 		}
 	}
 
-	dx1 = derivates[minIdx][0];
-	dy1 = derivates[minIdx][1];
-	dx2 = derivates[secondMinIdx][0];
-	dy2 = derivates[secondMinIdx][1];
+	dx1 = derivatives[minIdx][0];
+	dy1 = derivatives[minIdx][1];
+	dx2 = derivatives[secondMinIdx][0];
+	dy2 = derivatives[secondMinIdx][1];
 
 	Bool polarity_x1 = dx1 >= 0;
 	Bool polarity_x2 = dx2 >= 0;
@@ -525,7 +526,7 @@ static void testSphereAgainstRect(
 	// If the polarity of both the closest coordinates are the same, then we simply get the shortest distance
 	if( polarity_x1 == polarity_x2 && polarity_y1 == polarity_y2 )
 	{
-		distSqr = sqr(derivates[minIdx][0]) + sqr(derivates[minIdx][1]);
+		distSqr = sqr(derivatives[minIdx][0]) + sqr(derivatives[minIdx][1]);
 		return;
 	}
 
