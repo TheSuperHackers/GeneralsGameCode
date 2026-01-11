@@ -31,7 +31,7 @@
 #define CPP_11(code)
 #define static_assert(expr, msg)
 #define constexpr
-#define nullptr (0)
+#define nullptr 0
 #endif
 
 #if __cplusplus >= 201703L
