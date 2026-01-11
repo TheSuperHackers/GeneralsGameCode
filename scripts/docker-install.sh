@@ -6,9 +6,9 @@
 # allowing you to test your compiled version with the full game data.
 #
 # Usage:
-#   ./scripts/install-to-game.sh /path/to/game/installation
-#   ./scripts/install-to-game.sh --detect        # Auto-detect game location
-#   ./scripts/install-to-game.sh --restore       # Restore original files
+#   ./scripts/docker-install.sh /path/to/game/installation
+#   ./scripts/docker-install.sh --detect        # Auto-detect game location
+#   ./scripts/docker-install.sh --restore       # Restore original files
 #
 
 set -euo pipefail
@@ -46,7 +46,7 @@ Options:
     --dry-run       Show what would be installed without actually copying
 
 Requirements:
-    - Build the project first using: ./scripts/build-linux.sh
+    - Build the project first using: ./scripts/docker-build.sh
     - Have an existing Generals/Zero Hour installation with game data files
 
 The script will:
@@ -57,13 +57,13 @@ The script will:
 
 Example:
     # Linux with Wine
-    ./scripts/install-to-game.sh ~/.wine/drive_c/Program\ Files/EA\ Games/Command\ and\ Conquer\ Generals\ Zero\ Hour
+    ./scripts/docker-install.sh ~/.wine/drive_c/Program\ Files/EA\ Games/Command\ and\ Conquer\ Generals\ Zero\ Hour
 
     # Windows (from Git Bash or WSL)
-    ./scripts/install-to-game.sh "C:/Program Files/EA Games/Command and Conquer Generals Zero Hour"
+    ./scripts/docker-install.sh "C:/Program Files/EA Games/Command and Conquer Generals Zero Hour"
 
 To restore original files:
-    ./scripts/install-to-game.sh --restore /path/to/game
+    ./scripts/docker-install.sh --restore /path/to/game
 EOF
 }
 
@@ -95,7 +95,7 @@ detect_game() {
     done
 
     # Fallback: Common Linux Wine locations
-    for prefix in ~/.wine ~/.wine32 ~/.wine-* ~/.local/share/Steam/steamapps/compatdata/*/pfx; do
+    for prefix in ~/.wine ~/.wine32 ~/.wine-*; do
         if [ -d "$prefix" ]; then
             for path in \
                 "$prefix/drive_c/Program Files/EA Games/Command and Conquer Generals Zero Hour" \
@@ -106,6 +106,30 @@ detect_game() {
                     candidates+=("$path")
                 fi
             done
+        fi
+    done
+
+    # Steam Proton prefixes (for games run through Proton)
+    for prefix in ~/.local/share/Steam/steamapps/compatdata/*/pfx; do
+        if [ -d "$prefix" ]; then
+            for path in \
+                "$prefix/drive_c/Program Files/EA Games/Command and Conquer Generals Zero Hour" \
+                "$prefix/drive_c/Program Files (x86)/EA Games/Command and Conquer Generals Zero Hour"; do
+                if [ -d "$path/Data" ]; then
+                    candidates+=("$path")
+                fi
+            done
+        fi
+    done
+
+    # Steam native game installations (steamapps/common)
+    for path in \
+        ~/.local/share/Steam/steamapps/common/"Command and Conquer Generals Zero Hour" \
+        ~/.local/share/Steam/steamapps/common/"Command & Conquer Generals - Zero Hour" \
+        ~/.steam/steam/steamapps/common/"Command and Conquer Generals Zero Hour" \
+        ~/.steam/steam/steamapps/common/"Command & Conquer Generals - Zero Hour"; do
+        if [ -d "$path/Data" ]; then
+            candidates+=("$path")
         fi
     done
 
@@ -147,7 +171,7 @@ check_build() {
         print_error "Build directory not found: $BUILD_DIR"
         echo ""
         echo "Please build the project first:"
-        echo "  ./scripts/build-linux.sh"
+        echo "  ./scripts/docker-build.sh"
         exit 1
     fi
 
@@ -155,7 +179,7 @@ check_build() {
         print_error "Built executables not found"
         echo ""
         echo "Please build the project first:"
-        echo "  ./scripts/build-linux.sh"
+        echo "  ./scripts/docker-build.sh"
         exit 1
     fi
 

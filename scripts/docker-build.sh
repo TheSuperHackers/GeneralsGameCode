@@ -6,12 +6,12 @@
 # The resulting binaries can be run on Linux using Wine or on Windows natively.
 #
 # Usage:
-#   ./scripts/build-linux.sh                  # Full build (both games)
-#   ./scripts/build-linux.sh --game zh        # Build Zero Hour only
-#   ./scripts/build-linux.sh --game generals  # Build Generals only
-#   ./scripts/build-linux.sh --target generalszh  # Build specific target
-#   ./scripts/build-linux.sh --clean          # Clean build directory
-#   ./scripts/build-linux.sh --interactive    # Enter container shell
+#   ./scripts/docker-build.sh                  # Full build (both games)
+#   ./scripts/docker-build.sh --game zh        # Build Zero Hour only
+#   ./scripts/docker-build.sh --game generals  # Build Generals only
+#   ./scripts/docker-build.sh --target generalszh  # Build specific target
+#   ./scripts/docker-build.sh --clean          # Clean build directory
+#   ./scripts/docker-build.sh --interactive    # Enter container shell
 #
 
 set -euo pipefail
