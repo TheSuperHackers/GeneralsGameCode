@@ -232,7 +232,7 @@ DEBUG_LOG(( "%d: GetGameLogicRandomValue = %d (%d - %d), %s line %d",
 // TheSuperHackers @info This function does not change the seed values with retail compability disabled.
 // Consecutive calls always return the same value for the same combination of min / max values, assuming the seed values haven't changed in between.
 // The intended use case for this function are randomized values that are desirable to be synchronized across clients,
-// but should not result in a mismatch if they aren't; e.g. for scripted audio events.
+// but should not result in a mismatch if they aren't synchronized; e.g. for scripted audio events.
 //
 Int GetGameLogicRandomValueUnchanged( int lo, int hi, const char *file, int line )
 {
@@ -333,7 +333,7 @@ DEBUG_LOG(( "%d: GetGameLogicRandomValueReal = %f, %s line %d",
 // TheSuperHackers @info This function does not change the seed values with retail compability disabled.
 // Consecutive calls always return the same value for the same combination of min / max values, assuming the seed values haven't changed in between.
 // The intended use case for this function are randomized values that are desirable to be synchronized across clients,
-// but should not result in a mismatch if they aren't; e.g. for scripted audio events.
+// but should not result in a mismatch if they aren't synchronized; e.g. for scripted audio events.
 //
 Real GetGameLogicRandomValueRealUnchanged( Real lo, Real hi, const char *file, int line )
 {
