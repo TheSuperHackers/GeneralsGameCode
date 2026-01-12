@@ -368,6 +368,15 @@ void DebugInit(int flags)
 
 		theMainThreadID = GetCurrentThreadId();
 
+#if defined(DEBUG_STACKTRACE) || defined(IG_DEBUG_STACKTRACE)
+		// TheSuperHackers @bugfix JohnsterID 12/01/2026 Initialize g_LastErrorDump at startup
+		// This ensures isEmpty() works reliably across all build configs. Without explicit
+		// initialization, different STL implementations (VC6/STLPort vs Win32) may leave
+		// garbage/uninitialized data in the global AsciiString, causing extractCrashLocation
+		// to extract invalid data when ReleaseCrash is called without exception context.
+		g_LastErrorDump.clear();
+#endif
+
 	#ifdef DEBUG_LOGGING
 
 		// TheSuperHackers @info Debug initialization can happen very early.
@@ -749,6 +758,8 @@ static void TriggerMiniDump()
 // TheSuperHackers @bugfix JohnsterID 06/01/2025 Helper function to extract crash location from stack trace
 static void extractCrashLocation(char* outBuffer, size_t bufferSize)
 {
+	// TheSuperHackers @bugfix JohnsterID 12/01/2026 g_LastErrorDump is explicitly initialized
+	// in DebugInit(), so isEmpty() now works reliably across all build configs.
 	if (bufferSize == 0 || g_LastErrorDump.isEmpty()) {
 		return;
 	}
@@ -757,17 +768,8 @@ static void extractCrashLocation(char* outBuffer, size_t bufferSize)
 
 	const char* stackStr = g_LastErrorDump.str();
 
-	// TheSuperHackers @bugfix JohnsterID 12/01/2026 Defensive checks for valid stack trace
-	// isEmpty() check above doesn't work reliably across all build configs (VC6/STLPort vs Win32).
-	// This ensures consistent behavior when ReleaseCrash called without exception context.
+	// Defensive check for null or empty string
 	if (!stackStr || !*stackStr) {
-		return;
-	}
-
-	// TheSuperHackers @bugfix JohnsterID 12/01/2026 Verify stack trace format
-	// Valid stack traces from WriteStackLine() start with "  " (two spaces).
-	// This prevents extraction of garbage/uninitialized data from g_LastErrorDump.
-	if (stackStr[0] != ' ' || stackStr[1] != ' ') {
 		return;
 	}
 
