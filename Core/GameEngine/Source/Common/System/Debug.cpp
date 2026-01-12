@@ -757,6 +757,13 @@ static void extractCrashLocation(char* outBuffer, size_t bufferSize)
 
 	const char* stackStr = g_LastErrorDump.str();
 
+	// TheSuperHackers @bugfix JohnsterID 12/01/2026 Defensive check for null or empty string
+	// isEmpty() check above doesn't work reliably across all build configs (VC6/STLPort vs Win32).
+	// This ensures consistent behavior when ReleaseCrash called without exception context.
+	if (!stackStr || !*stackStr) {
+		return;
+	}
+
 	// Skip leading whitespace/newlines
 	while (*stackStr && isspace(static_cast<unsigned char>(*stackStr))) {
 		stackStr++;
