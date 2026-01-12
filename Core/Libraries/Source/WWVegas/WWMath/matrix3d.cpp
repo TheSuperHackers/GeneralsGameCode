@@ -512,7 +512,7 @@ void Matrix3D::Obj_Look_At(const Vector3 &p,const Vector3 &t,float roll)
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   8/7/98     GTH : Created.                                                                 *
- *   03/01/2026 TheSuperHackers : Implemented with assistance of Chat GPT.                     *
+ *   01/03/2026 TheSuperHackers : Implemented with assistance of Chat GPT.                     *
  *=============================================================================================*/
 Matrix3D * Matrix3D::Get_Inverse(Matrix3D * out, float * detOut, const Matrix3D * m)
 {
