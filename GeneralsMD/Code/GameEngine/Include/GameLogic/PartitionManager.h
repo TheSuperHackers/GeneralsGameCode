@@ -304,6 +304,13 @@ private:
 	Short													m_cellX;						///< x-coord of this cell within the Partition Mgr coords (NOT in world coords)
 	Short													m_cellY;						///< y-coord of this cell within the Partition Mgr coords (NOT in world coords)
 
+#if !PRESERVE_RETAIL_BEHAVIOR
+	typedef std::pair<AsciiString,Int> WeaponNameDurationPair;
+	typedef std::vector<WeaponNameDurationPair> WeaponNameDurationVec;
+
+	WeaponNameDurationVec m_weaponNameDurationVec;
+#endif
+
 public:
 
 	// Note, we allocate these in arrays, thus we must have a default ctor (and NOT descend from MPO)
@@ -359,6 +366,10 @@ public:
 
 	// intended only for CellAndObjectIntersection.
 	void friend_removeFromCellList(CellAndObjectIntersection *coi);
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+	Bool checkWeaponNameStack(const AsciiString& weaponName, Int maxCount, UnsignedInt duration);
+#endif
 };
 
 //=====================================
@@ -1528,6 +1539,10 @@ public:
 	// If saveToFog is false, then we are writing STORE_PERMENANT_REVEAL
 	void storeFoggedCells(ShroudStatusStoreRestore &outPartitionStore, Bool storeToFog) const;
 	void restoreFoggedCells(const ShroudStatusStoreRestore &inPartitionStore, Bool restoreToFog);
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+	Bool checkWeaponNameStackAtCell(const Coord3D *pos, const AsciiString& weaponName, Int maxCount, UnsignedInt duration);
+#endif
 };
 
 // -----------------------------------------------------------------------------

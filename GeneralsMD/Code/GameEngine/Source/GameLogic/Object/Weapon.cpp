@@ -76,6 +76,10 @@
 #include "GameLogic/Module/PhysicsUpdate.h"
 #include "GameLogic/TerrainLogic.h"
 
+#if !PRESERVE_RETAIL_BEHAVIOR
+#include "GameLogic/Module/BoneFXUpdate.h"
+#endif
+
 #define RATIONALIZE_ATTACK_RANGE
 #define ATTACK_RANGE_IS_2D
 
@@ -238,6 +242,15 @@ const FieldParse WeaponTemplate::TheWeaponTemplateFieldParseTable[] =
 	{ "ContinueAttackRange",			INI::parseReal,													NULL,							offsetof(WeaponTemplate, m_continueAttackRange) },
 	{ "SuspendFXDelay",						INI::parseDurationUnsignedInt,					NULL,							offsetof(WeaponTemplate, m_suspendFXDelay) },
 	{ "MissileCallsOnDie",			INI::parseBool,													NULL,							offsetof(WeaponTemplate, m_dieOnDetonate) },
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+	// TheSuperHackers @performance IamInnocent 03/01/2026 - Tweaks to Limit FX Rendering for Performance Improvisation
+	{ "FXRenderingInterval",		INI::parseDurationUnsignedInt,			NULL,			offsetof( WeaponTemplate, m_fxRenderingInterval ) },
+	{ "FXMaxStackInterval",			INI::parseDurationUnsignedInt,			NULL,			offsetof( WeaponTemplate, m_fxMaxStackInterval ) },
+	{ "FXMaxStackPerLoc",			INI::parseInt,							NULL,			offsetof( WeaponTemplate, m_fxMaxStackPerLoc ) },
+	{ "CheckFireFXForFXMaxStack",	INI::parseBool,							NULL,			offsetof( WeaponTemplate, m_checkFireFXForFXMaxStack ) },
+#endif
+
 	{ NULL,												NULL,																		NULL,							0 }
 
 };
@@ -322,6 +335,13 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(NULL)
 	m_damageStatusType							= OBJECT_STATUS_NONE;
 	m_suspendFXDelay								= 0;
 	m_dieOnDetonate						= FALSE;
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+	m_fxRenderingInterval = 0;
+	m_fxMaxStackInterval = 0;
+	m_fxMaxStackPerLoc = 0;
+	m_checkFireFXForFXMaxStack = FALSE;
+#endif
 
 	m_historicDamageTriggerId = 0;
 }
@@ -893,6 +913,22 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		}
 	}
 
+#if !PRESERVE_RETAIL_BEHAVIOR
+	Bool renderWeaponFX = TRUE;
+	if( getFXRenderingInterval() > 0 && !isProjectileDetonation )
+	{
+		if(TheGameLogic->getFrame() >= firingWeapon->getLastFXShotFrame() + getFXRenderingInterval())
+		{
+			firingWeapon->setLastFXShotFrame(TheGameLogic->getFrame());
+			renderWeaponFX = TRUE;
+		}
+		else
+		{
+			renderWeaponFX = FALSE;
+		}
+	}
+#endif
+
 	// call this even if FXList is null, because this also handles stuff like Gun Barrel Recoil
 	if (sourceObj && sourceObj->getDrawable())
 	{
@@ -910,10 +946,23 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		VeterancyLevel v = sourceObj->getVeterancyLevel();
 		const FXList* fx = isProjectileDetonation ? getProjectileDetonateFX(v) : getFireFX(v);
 
+#if PRESERVE_RETAIL_BEHAVIOR
 		if ( TheGameLogic->getFrame() < firingWeapon->getSuspendFXFrame() )
+#else
+		if ( TheGameLogic->getFrame() < firingWeapon->getSuspendFXFrame() || !renderWeaponFX )
+#endif
 			fx = NULL;
 
 		Bool handled;
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+		if( getFXMaxStackPerLoc() > 0 && fx && (isProjectileDetonation || getCheckFireFXForFXMaxStack()) )
+		{
+			// Check if there is any FX Stack to apply for the Weapon at Loc. Returns TRUE if stack reaches MaxStackCount
+			if(ThePartitionManager->checkWeaponNameStackAtCell(&targetPos, getName(), getFXMaxStackPerLoc(), getFXMaxStackInterval() ? getFXMaxStackInterval() : getDelayBetweenShots(bonus)))
+				fx = NULL;
+		}
+#endif
 
 		// TheSuperHackers @todo: Remove hardcoded KINDOF_MINE check and apply PlayFXWhenStealthed = Yes to the mine weapons instead.
 
@@ -1139,6 +1188,18 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			{
 				pui->projectileLaunchAtObjectOrPosition(victimObj, &projectileDestination, sourceObj, wslot, specificBarrelToUse, this, m_projectileExhausts[v]);
 			}
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+			if( !renderWeaponFX )
+			{
+				static NameKeyType key_BoneFXUpdate = NAMEKEY("BoneFXUpdate");
+				BoneFXUpdate *bfxu = (BoneFXUpdate *)projectile->findUpdateModule(key_BoneFXUpdate);
+				if (bfxu != NULL)
+				{
+					bfxu->setInactive();
+				}
+			}
+#endif
 		}
 		else
 		{
@@ -1837,6 +1898,10 @@ Weapon::Weapon(const WeaponTemplate* tmpl, WeaponSlotType wslot)
 	m_numShotsForCurBarrel = 	m_template->getShotsPerBarrel();
 	m_lastFireFrame = 0;
 	m_suspendFXFrame = TheGameLogic->getFrame() + m_template->getSuspendFXDelay();
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+	m_lastFXFireFrame = 0;
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1858,6 +1923,10 @@ Weapon::Weapon(const Weapon& that)
 	this->m_numShotsForCurBarrel = m_template->getShotsPerBarrel();
 	this->m_lastFireFrame = 0;
 	this->m_suspendFXFrame = that.getSuspendFXFrame();
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+	this->m_lastFXFireFrame = 0;
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1881,6 +1950,10 @@ Weapon& Weapon::operator=(const Weapon& that)
 		this->m_suspendFXFrame = that.getSuspendFXFrame();
 		this->m_numShotsForCurBarrel = m_template->getShotsPerBarrel();
 		this->m_projectileStreamID = INVALID_ID;
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+		this->m_lastFXFireFrame = 0;
+#endif
 	}
 	return *this;
 }

@@ -1250,6 +1250,10 @@ PartitionCell::PartitionCell()
 		// default threat value is 0
 		m_threatValue[i] = 0;
 	}
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+	m_weaponNameDurationVec.clear();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1495,6 +1499,48 @@ void PartitionCell::validateCoiList()
 		DEBUG_ASSERTCRASH(prevCoi == NULL || prevCoi->getNextCoi() == coi, ("coi link mismatch"));
 		DEBUG_ASSERTCRASH((coi == getFirstCoiInCell()) == (prevCoi == NULL) , ("coi link mismatch"));
 		DEBUG_ASSERTCRASH(nextCoi == NULL || nextCoi->getPrevCoi() == coi, ("coi link mismatch"));
+	}
+}
+#endif
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+//-----------------------------------------------------------------------------
+Bool PartitionCell::checkWeaponNameStack(const AsciiString& weaponName, Int maxCount, UnsignedInt duration)
+{
+	Int count = 0;
+	UnsignedInt now = TheGameLogic->getFrame();
+	for(WeaponNameDurationVec::iterator it = m_weaponNameDurationVec.begin(); it != m_weaponNameDurationVec.end(); /* empty */)
+	{
+		// Delete the element if it has exceeded the current frame
+		if (it->second <= now)
+		{
+			it = m_weaponNameDurationVec.erase(it);
+			continue;
+		}
+
+		// Add it to count if it matches the name
+		if(it->first == weaponName)
+			count++;
+
+		++it;
+	}
+
+	if(count < maxCount)
+	{
+		// Add it to vector if it has not reached maxCount
+		WeaponNameDurationPair stack;
+		stack.first = weaponName;
+		stack.second = now + duration;
+
+		m_weaponNameDurationVec.push_back(stack);
+
+		// return FALSE if not yet reached Max Count
+		return FALSE;
+	}
+	else
+	{
+		// return TRUE if reached Max Count
+		return TRUE;
 	}
 }
 #endif
@@ -4592,6 +4638,21 @@ Bool PartitionManager::isClearLineOfSightTerrain(const Object* obj, const Coord3
 	return TheTerrainLogic->isClearLineOfSight(pos, posOther);
 #endif
 }
+
+#if !PRESERVE_RETAIL_BEHAVIOR
+//-----------------------------------------------------------------------------
+Bool PartitionManager::checkWeaponNameStackAtCell(const Coord3D *pos, const AsciiString& weaponName, Int maxCount, UnsignedInt duration)
+{
+	Int cellX, cellY;
+	worldToCell(pos->x, pos->y, &cellX, &cellY);
+	PartitionCell* cell = getCellAt(cellX, cellY);	// might be null if off the edge
+	DEBUG_ASSERTCRASH(cell != NULL, ("off the map"));
+	if (cell)
+		return cell->checkWeaponNameStack(weaponName, maxCount, duration);
+	else
+		return FALSE;
+}
+#endif
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
