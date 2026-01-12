@@ -521,7 +521,7 @@ WWINLINE Matrix4x4 Matrix4x4::Transpose() const
 }
 
 /***********************************************************************************************
- * Matrix4x4::Inverse -- returns the inverse of the matrix                                       *
+ * Matrix4x4::Inverse -- returns the inverse of the matrix                                     *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -531,7 +531,7 @@ WWINLINE Matrix4x4 Matrix4x4::Transpose() const
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   06/02/1997 GH  : Created.                                                                 *
- *   01/03/2026 TheSuperHackers : Implemented with assistance of Chat GPT.                     *
+ *   01/03/2026 TheSuperHackers : Implemented.                                                 *
  *=============================================================================================*/
 WWINLINE Matrix4x4* Matrix4x4::Inverse(Matrix4x4* out, float* detOut, const Matrix4x4* m)
 {
