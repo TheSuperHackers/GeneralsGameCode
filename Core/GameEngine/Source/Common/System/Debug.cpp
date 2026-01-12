@@ -757,10 +757,17 @@ static void extractCrashLocation(char* outBuffer, size_t bufferSize)
 
 	const char* stackStr = g_LastErrorDump.str();
 
-	// TheSuperHackers @bugfix JohnsterID 12/01/2026 Defensive check for null or empty string
+	// TheSuperHackers @bugfix JohnsterID 12/01/2026 Defensive checks for valid stack trace
 	// isEmpty() check above doesn't work reliably across all build configs (VC6/STLPort vs Win32).
 	// This ensures consistent behavior when ReleaseCrash called without exception context.
 	if (!stackStr || !*stackStr) {
+		return;
+	}
+
+	// TheSuperHackers @bugfix JohnsterID 12/01/2026 Verify stack trace format
+	// Valid stack traces from WriteStackLine() start with "  " (two spaces).
+	// This prevents extraction of garbage/uninitialized data from g_LastErrorDump.
+	if (stackStr[0] != ' ' || stackStr[1] != ' ') {
 		return;
 	}
 
