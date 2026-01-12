@@ -96,12 +96,7 @@ SpecialPowerModuleData::SpecialPowerModuleData()
 SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleData )
 									: BehaviorModule( thing, moduleData )
 {
-
-#if RETAIL_COMPATIBLE_CRC
 	m_availableOnFrame = 0;
-#else
-	m_availableOnFrame = 0xFFFFFFFF;
-#endif
 	m_pausedCount = 0;
 	m_pausedOnFrame = 0;
 	m_pausedPercent = 0.0f;
@@ -111,16 +106,36 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 	// if we're pre-built, start counting down
 	if( !getObject()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 	{
-		//A sharedNSync special only startPowerRecharges when first scienced or when executed,
-		//Since a new modue with same SPTemplates may construct at any time.
-		if ( getSpecialPowerTemplate()->isSharedNSync() == FALSE )
-			startPowerRecharge();
+		init();
 	}
+	else
+	{
+#if RETAIL_COMPATIBLE_CRC
+		initCountdown();
+#else
+		// TheSuperHackers @bugfix The Special Power will not be available until construction is done.
+		m_availableOnFrame = ~0u;
+#endif
+	}
+}
+
+void SpecialPowerModule::init()
+{
+	//A sharedNSync special only startPowerRecharges when first scienced or when executed,
+	//Since a new module with same SPTemplates may construct at any time.
+	if ( getSpecialPowerTemplate()->isSharedNSync() == FALSE )
+		startPowerRecharge();
+
+	initCountdown();
+}
+
+void SpecialPowerModule::initCountdown()
+{
 	// WE USED TO DO THE POLL-EVERYBODY-AND-VOTE-ON-WHO-TO-SYNC-TO THING HERE,
 	// BUT NO MORE, NOW IT IS HANDLED IN PLAYER
 
 	// Some Special powers need to be activated by an Upgrade, so prevent the timer from going until then
-	const SpecialPowerModuleData *md = (const SpecialPowerModuleData *)moduleData;
+	const SpecialPowerModuleData *md = getSpecialPowerModuleData();
 	if( md->m_startsPaused )
 		pauseCountdown( TRUE );
 
@@ -128,7 +143,7 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 
 	// Now, if we find that we have just come into being,
 	// but there is already a science granted for our shared superweapon,
-	// lets make sure TheIngameUI knows about our public timer
+	// lets make sure TheInGameUI knows about our public timer
 	// add this weapon to the UI if it has a public timer for all to see
 	if( m_pausedCount == 0 &&
 			getSpecialPowerTemplate()->isSharedNSync() == TRUE &&
@@ -141,7 +156,6 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 																 getObject()->getID(),
 																 getSpecialPowerModuleData()->m_specialPowerTemplate );
 	}
-
 
 }
 
@@ -381,6 +395,17 @@ Bool SpecialPowerModule::isScriptOnly() const
 	return modData->m_scriptedSpecialPowerOnly;
 }
 
+//-------------------------------------------------------------------------------------------------
+void SpecialPowerModule::onConstructionCompleted()
+{
+#if !RETAIL_COMPATIBLE_CRC
+	DEBUG_ASSERTCRASH(m_availableOnFrame == ~0u,
+		("Unexpected state. Function must be called only after OBJECT_STATUS_UNDER_CONSTRUCTION was removed"));
+
+	m_availableOnFrame = 0;
+	init();
+#endif
+}
 
 //-------------------------------------------------------------------------------------------------
 /** A special power has been used ... start the recharge process by computing the frame
@@ -429,6 +454,13 @@ void SpecialPowerModule::startPowerRecharge()
 //-------------------------------------------------------------------------------------------------
 Bool SpecialPowerModule::initiateIntentToDoSpecialPower( const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions )
 {
+#if !RETAIL_COMPATIBLE_CRC
+	if( getObject()->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) )
+	{
+		return false;
+	}
+#endif
+
 	Bool valid = false;
 	// tell our update modules that we intend to do this special power.
 	for( BehaviorModule** u = getObject()->getBehaviorModules(); *u; ++u )
@@ -456,26 +488,20 @@ Bool SpecialPowerModule::initiateIntentToDoSpecialPower( const Object *targetObj
 	}
 
 #if RETAIL_COMPATIBLE_CRC
-	// TheSuperHackers @info we need to leave early if we are in the MissileLauncherBuildingUpdate crash fix codepath
-	if (m_availableOnFrame == 0xFFFFFFFF)
+	// TheSuperHackers @info Leave early if we are in the special power crash fix code path
+	if (m_availableOnFrame == ~0u)
 	{
-		DEBUG_ASSERTCRASH(!valid, ("Using MissileLauncherBuildingUpdate escape path when valid is set to true"));
+		DEBUG_ASSERTCRASH(!valid, ("Using special power escape path when valid is set to true"));
 		return false;
 	}
 #endif
 
+	//If we depend on our update module to trigger the special power, make sure we have the appropriate update module!
+	DEBUG_ASSERTCRASH(valid || !getSpecialPowerModuleData()->m_updateModuleStartsAttack,
+		("Object does not contain a special power module to execute. Did you forget to add it to the object INI?"));
+
 	getObject()->getControllingPlayer()->getAcademyStats()->recordSpecialPowerUsed( getSpecialPowerModuleData()->m_specialPowerTemplate );
-
-	//If we depend on our update module to trigger the special power, make sure we have the
-	//appropriate update module!
-	if( !valid && getSpecialPowerModuleData()->m_updateModuleStartsAttack )
-	{
-		DEBUG_CRASH( ("Object does not contain a special power module to execute.  Did you forget to add it to the object INI?"));
-		//DEBUG_CRASH(( "Object does not contain special power module (%s) to execute.  Did you forget to add it to the object INI?",
-		//							command->m_specialPower->getName().str() ));
-	}
-
-	return valid;
+	return true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -679,15 +705,16 @@ void SpecialPowerModule::doSpecialPower( UnsignedInt commandOptions )
 
 	//This tells the update module that we want to do our special power. The update modules
 	//will then start processing each frame.
-	initiateIntentToDoSpecialPower( NULL, NULL, NULL, commandOptions );
-
-	//Only trigger the special power immediately if the updatemodule doesn't start the attack.
-	//An example of a case that wouldn't trigger immediately is for a unit that needs to
-	//close to range before firing the special attack. A case that would trigger immediately
-	//is the napalm strike. If we don't call this now, it's up to the update module to do so.
-	if( !getSpecialPowerModuleData()->m_updateModuleStartsAttack )
+	if (initiateIntentToDoSpecialPower( NULL, NULL, NULL, commandOptions ))
 	{
-		triggerSpecialPower( NULL );// Location-less trigger
+		//Only trigger the special power immediately if the update module doesn't start the attack.
+		//An example of a case that wouldn't trigger immediately is for a unit that needs to
+		//close to range before firing the special attack. A case that would trigger immediately
+		//is the napalm strike. If we don't call this now, it's up to the update module to do so.
+		if( !getSpecialPowerModuleData()->m_updateModuleStartsAttack )
+		{
+			triggerSpecialPower( NULL );// Location-less trigger
+		}
 	}
 }
 
@@ -701,15 +728,16 @@ void SpecialPowerModule::doSpecialPowerAtObject( Object *obj, UnsignedInt comman
 
 	//This tells the update module that we want to do our special power. The update modules
 	//will then start processing each frame.
-	initiateIntentToDoSpecialPower( obj, NULL, NULL, commandOptions );
-
-	//Only trigger the special power immediately if the updatemodule doesn't start the attack.
-	//An example of a case that wouldn't trigger immediately is for a unit that needs to
-	//close to range before firing the special attack. A case that would trigger immediately
-	//is the napalm strike. If we don't call this now, it's up to the update module to do so.
-	if( !getSpecialPowerModuleData()->m_updateModuleStartsAttack )
+	if (initiateIntentToDoSpecialPower( obj, NULL, NULL, commandOptions ))
 	{
-		triggerSpecialPower( obj->getPosition() );
+		//Only trigger the special power immediately if the update module doesn't start the attack.
+		//An example of a case that wouldn't trigger immediately is for a unit that needs to
+		//close to range before firing the special attack. A case that would trigger immediately
+		//is the napalm strike. If we don't call this now, it's up to the update module to do so.
+		if( !getSpecialPowerModuleData()->m_updateModuleStartsAttack )
+		{
+			triggerSpecialPower( obj->getPosition() );
+		}
 	}
 }
 
@@ -723,21 +751,16 @@ void SpecialPowerModule::doSpecialPowerAtLocation( const Coord3D *loc, Real angl
 
 	//This tells the update module that we want to do our special power. The update modules
 	//will then start processing each frame.
-	initiateIntentToDoSpecialPower( NULL, loc, NULL, commandOptions );
-
-#if RETAIL_COMPATIBLE_CRC
-	// TheSuperHackers @info we need to leave early if we are in the MissileLauncherBuildingUpdate crash fix codepath
-	if (m_availableOnFrame == 0xFFFFFFFF)
-		return;
-#endif
-
-	//Only trigger the special power immediately if the updatemodule doesn't start the attack.
-	//An example of a case that wouldn't trigger immediately is for a unit that needs to
-	//close to range before firing the special attack. A case that would trigger immediately
-	//is the napalm strike. If we don't call this now, it's up to the update module to do so.
-	if( !getSpecialPowerModuleData()->m_updateModuleStartsAttack )
+	if (initiateIntentToDoSpecialPower( NULL, loc, NULL, commandOptions ))
 	{
-		triggerSpecialPower( loc );
+		//Only trigger the special power immediately if the update module doesn't start the attack.
+		//An example of a case that wouldn't trigger immediately is for a unit that needs to
+		//close to range before firing the special attack. A case that would trigger immediately
+		//is the napalm strike. If we don't call this now, it's up to the update module to do so.
+		if( !getSpecialPowerModuleData()->m_updateModuleStartsAttack )
+		{
+			triggerSpecialPower( loc );
+		}
 	}
 }
 
@@ -751,15 +774,16 @@ void SpecialPowerModule::doSpecialPowerUsingWaypoints( const Waypoint *way, Unsi
 
 	//This tells the update module that we want to do our special power. The update modules
 	//will then start processing each frame.
-	initiateIntentToDoSpecialPower( NULL, NULL, way, commandOptions );
-
-	//Only trigger the special power immediately if the updatemodule doesn't start the attack.
-	//An example of a case that wouldn't trigger immediately is for a unit that needs to
-	//close to range before firing the special attack. A case that would trigger immediately
-	//is the napalm strike. If we don't call this now, it's up to the update module to do so.
-	if( !getSpecialPowerModuleData()->m_updateModuleStartsAttack )
+	if (initiateIntentToDoSpecialPower( NULL, NULL, way, commandOptions ))
 	{
-		triggerSpecialPower( NULL );// This type doesn't create view objects
+		//Only trigger the special power immediately if the update module doesn't start the attack.
+		//An example of a case that wouldn't trigger immediately is for a unit that needs to
+		//close to range before firing the special attack. A case that would trigger immediately
+		//is the napalm strike. If we don't call this now, it's up to the update module to do so.
+		if( !getSpecialPowerModuleData()->m_updateModuleStartsAttack )
+		{
+			triggerSpecialPower( NULL );// This type doesn't create view objects
+		}
 	}
 }
 
