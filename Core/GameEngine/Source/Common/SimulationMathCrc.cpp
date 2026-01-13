@@ -26,7 +26,7 @@
 #include <math.h>
 #include <stdio.h>
 
-static void append_matrix_crc(XferCRC &xfer)
+static void appendMatrixCrc(XferCRC &xfer)
 {
     Matrix3D matrix;
     Matrix3D factors_matrix;
@@ -62,10 +62,10 @@ UnsignedInt SimulationMathCrc::calculate()
     xfer.open("SimulationMathCrc");
 
     _fpreset();
-	// TheSuperHackers @info stm Use the same rounding mode as used in the game, this affects vc6 only.
+    // TheSuperHackers @info stm Use the same rounding mode as used in the game. This affects vc6 only.
     _controlfp(0x000A001F, _MCW_RC | _MCW_PC | _MCW_EM);
 
-    append_matrix_crc(xfer);
+    appendMatrixCrc(xfer);
 
     _fpreset();
 
@@ -75,5 +75,5 @@ UnsignedInt SimulationMathCrc::calculate()
 }
 
 void SimulationMathCrc::print() {
-    printf("Simulation CRC: %08X\n", calculate());
+    printf("Simulation Math CRC: %08X\n", calculate());
 }
