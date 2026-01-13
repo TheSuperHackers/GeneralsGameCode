@@ -545,7 +545,7 @@ void WorkerAIUpdate::privateDock( Object *dock, CommandSourceType cmdSource )
 {
 	AIUpdateInterface::privateDock( dock, cmdSource );
 
-	// If this is a command from a player, I will remember this as my favorite dock to override
+	// If this is a command from a player, I will remember this as my favorite dock to OVERRIDE
 	// ResourceManager searches.
 	if ((cmdSource == CMD_FROM_PLAYER) && dock)
 	{
@@ -1154,14 +1154,14 @@ class ActAsDozerState :  public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ActAsDozerState, "ActAsDozerState")
 protected:
 	// snapshot interface STUBBED.
-	void crc( Xfer *xfer ) override{};
-	void xfer( Xfer *xfer ) override{};
-	void loadPostProcess() override{};
+	void crc( Xfer *xfer ) OVERRIDE{};
+	void xfer( Xfer *xfer ) OVERRIDE{};
+	void loadPostProcess() OVERRIDE{};
 
 public:
 	ActAsDozerState( StateMachine *machine ) :State( machine, "ActAsDozerState" ){}
-	StateReturnType onEnter() override;
-	StateReturnType update() override;
+	StateReturnType onEnter() OVERRIDE;
+	StateReturnType update() OVERRIDE;
 	virtual StateReturnType onExit();
 };
 EMPTY_DTOR(ActAsDozerState)
@@ -1173,14 +1173,14 @@ class ActAsSupplyTruckState :  public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ActAsSupplyTruckState, "ActAsSupplyTruckState")
 protected:
 	// snapshot interface STUBBED.
-	void crc( Xfer *xfer ) override{};
-	void xfer( Xfer *xfer ) override{};
-	void loadPostProcess() override{};
+	void crc( Xfer *xfer ) OVERRIDE{};
+	void xfer( Xfer *xfer ) OVERRIDE{};
+	void loadPostProcess() OVERRIDE{};
 
 public:
 	ActAsSupplyTruckState( StateMachine *machine ) :State( machine, "ActAsSupplyTruckState" ){}
-	StateReturnType onEnter() override;
-	StateReturnType update() override;
+	StateReturnType onEnter() OVERRIDE;
+	StateReturnType update() OVERRIDE;
 	virtual StateReturnType onExit();
 };
 EMPTY_DTOR(ActAsSupplyTruckState)

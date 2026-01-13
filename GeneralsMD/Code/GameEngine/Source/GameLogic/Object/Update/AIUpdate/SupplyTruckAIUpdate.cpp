@@ -204,7 +204,7 @@ void SupplyTruckAIUpdate::privateDock( Object *dock, CommandSourceType cmdSource
 {
 	AIUpdateInterface::privateDock( dock, cmdSource );
 
-	// If this is a command from a player, I will remember this as my favorite dock to override
+	// If this is a command from a player, I will remember this as my favorite dock to OVERRIDE
 	// ResourceManager searches.
 	if ((cmdSource == CMD_FROM_PLAYER) && dock)
 	{
@@ -293,13 +293,13 @@ class SupplyTruckBusyState :  public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SupplyTruckBusyState, "SupplyTruckBusyState")
 protected:
 	// snapshot interface STUBBED.
-	void crc( Xfer *xfer ) override{};
-	void xfer( Xfer *xfer ) override{};
-	void loadPostProcess() override{};
+	void crc( Xfer *xfer ) OVERRIDE{};
+	void xfer( Xfer *xfer ) OVERRIDE{};
+	void loadPostProcess() OVERRIDE{};
 
 public:
 	SupplyTruckBusyState( StateMachine *machine ) : State( machine, "SupplyTruckBusyState" ) { }
-	StateReturnType onEnter() override
+	StateReturnType onEnter() OVERRIDE
 	{
 		if( getMachineOwner() && getMachineOwner()->getAI() )
 		{
@@ -317,11 +317,11 @@ TheInGameUI->DEBUG_addFloatingText("entering busy state", getMachineOwner()->get
 #endif
 		return STATE_CONTINUE;
 	}
-	StateReturnType update() override
+	StateReturnType update() OVERRIDE
 	{
 		return STATE_CONTINUE;
 	}
-	void onExit(StateExitType status) override
+	void onExit(StateExitType status) OVERRIDE
 	{
 #ifdef DEBUG_SUPPLY_STATE
 TheInGameUI->DEBUG_addFloatingText("exiting busy state", getMachineOwner()->getPosition(), GameMakeColor(255, 0, 0, 255));
@@ -337,18 +337,18 @@ class SupplyTruckIdleState :  public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SupplyTruckIdleState, "SupplyTruckIdleState")
 protected:
 	// snapshot interface STUBBED.
-	void crc( Xfer *xfer ) override{};
-	void xfer( Xfer *xfer ) override{};
-	void loadPostProcess() override{};
+	void crc( Xfer *xfer ) OVERRIDE{};
+	void xfer( Xfer *xfer ) OVERRIDE{};
+	void loadPostProcess() OVERRIDE{};
 
 public:
 	SupplyTruckIdleState( StateMachine *machine ) : State( machine, "SupplyTruckIdleState" ) { }
-	StateReturnType onEnter() override;
-	StateReturnType update() override
+	StateReturnType onEnter() OVERRIDE;
+	StateReturnType update() OVERRIDE
 	{
 		return STATE_CONTINUE;
 	}
-	void onExit(StateExitType status) override
+	void onExit(StateExitType status) OVERRIDE
 	{
 #ifdef DEBUG_SUPPLY_STATE
 TheInGameUI->DEBUG_addFloatingText("exiting idle state", getMachineOwner()->getPosition(), GameMakeColor(255, 0, 0, 255));

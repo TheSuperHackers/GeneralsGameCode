@@ -77,21 +77,21 @@ class VictoryConditions : public VictoryConditionsInterface
 public:
 	VictoryConditions();
 
-	void init( void ) override;
-	void reset( void ) override;
-	void update( void ) override;
+	void init( void ) OVERRIDE;
+	void reset( void ) OVERRIDE;
+	void update( void ) OVERRIDE;
 
-	Bool hasAchievedVictory(Player *player) override;					///< has a specific player and his allies won?
-	Bool hasBeenDefeated(Player *player) override;							///< has a specific player and his allies lost?
-	Bool hasSinglePlayerBeenDefeated(Player *player) override;	///< has a specific player lost?
+	Bool hasAchievedVictory(Player *player) OVERRIDE;					///< has a specific player and his allies won?
+	Bool hasBeenDefeated(Player *player) OVERRIDE;							///< has a specific player and his allies lost?
+	Bool hasSinglePlayerBeenDefeated(Player *player) OVERRIDE;	///< has a specific player lost?
 
-	void cachePlayerPtrs( void ) override;											///< players have been created - cache the ones of interest
+	void cachePlayerPtrs( void ) OVERRIDE;											///< players have been created - cache the ones of interest
 
-	Bool isLocalAlliedVictory( void ) override;								///< convenience function
-	Bool isLocalAlliedDefeat( void ) override;									///< convenience function
-	Bool isLocalDefeat( void ) override;												///< convenience function
-	Bool amIObserver( void ) override { return m_isObserver;} 	///< Am I an observer?( need this for scripts )
-	UnsignedInt getEndFrame( void ) override { return m_endFrame; }	///< on which frame was the game effectively over?
+	Bool isLocalAlliedVictory( void ) OVERRIDE;								///< convenience function
+	Bool isLocalAlliedDefeat( void ) OVERRIDE;									///< convenience function
+	Bool isLocalDefeat( void ) OVERRIDE;												///< convenience function
+	Bool amIObserver( void ) OVERRIDE { return m_isObserver;} 	///< Am I an observer?( need this for scripts )
+	UnsignedInt getEndFrame( void ) OVERRIDE { return m_endFrame; }	///< on which frame was the game effectively over?
 private:
 	Player*				m_players[MAX_PLAYER_COUNT];
 	Int						m_localSlotNum;

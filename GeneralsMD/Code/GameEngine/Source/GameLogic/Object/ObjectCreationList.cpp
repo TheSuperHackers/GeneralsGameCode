@@ -132,7 +132,7 @@ public:
 	{
 	}
 
-	Object* create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Real angle, UnsignedInt lifetimeFrames = 0 ) const override
+	Object* create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Real angle, UnsignedInt lifetimeFrames = 0 ) const OVERRIDE
 	{
 		if (!primaryObj || !primary || !secondary)
 		{
@@ -179,7 +179,7 @@ public:
 	{
 	}
 
-	Object* create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Real angle, UnsignedInt lifetimeFrames = 0 ) const override
+	Object* create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Real angle, UnsignedInt lifetimeFrames = 0 ) const OVERRIDE
 	{
 		if (!primaryObj || !primary || !secondary)
 		{
@@ -261,12 +261,12 @@ public:
 		m_transportName.clear();
 	}
 
-	Object* create(const Object *primaryObj, const Coord3D *primary, const Coord3D *secondary, Real angle, UnsignedInt lifetimeFrames = 0 ) const override
+	Object* create(const Object *primaryObj, const Coord3D *primary, const Coord3D *secondary, Real angle, UnsignedInt lifetimeFrames = 0 ) const OVERRIDE
 	{
 		return create( primaryObj, primary, secondary, true, lifetimeFrames );
 	}
 
-	Object* create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 ) const override
+	Object* create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 ) const OVERRIDE
 	{
 		if (!primaryObj || !primary || !secondary)
 		{
@@ -619,7 +619,7 @@ public:
 	{
 	}
 
-	Object* create( const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const override
+	Object* create( const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const OVERRIDE
 	{
 		if (primary)
 		{
@@ -650,7 +650,7 @@ public:
 		return nullptr;
 	}
 
-	Object* create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Real angle, UnsignedInt lifetimeFrames = 0 ) const override
+	Object* create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Real angle, UnsignedInt lifetimeFrames = 0 ) const OVERRIDE
 	{
 		DEBUG_CRASH(("You must call this effect with an object, not a location"));
 		return nullptr;
@@ -775,7 +775,7 @@ public:
 		m_offset.zero();
 	}
 
-	Object* create(const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const override
+	Object* create(const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const OVERRIDE
 	{
 		if (primary)
 		{
@@ -791,7 +791,7 @@ public:
 		return nullptr;
 	}
 
-	Object* create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Real angle, UnsignedInt lifetimeFrames = 0 ) const override
+	Object* create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Real angle, UnsignedInt lifetimeFrames = 0 ) const OVERRIDE
 	{
 		if (primary)
 		{

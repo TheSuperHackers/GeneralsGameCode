@@ -86,13 +86,13 @@ class DozerActionPickActionPosState : public State
 public:
 
 	DozerActionPickActionPosState( StateMachine *machine, DozerTask task );
-	StateReturnType update( void ) override;
+	StateReturnType update( void ) OVERRIDE;
 
 protected:
 	// snapshot interface
-	void crc( Xfer *xfer ) override;
-	void xfer( Xfer *xfer ) override;
-	void loadPostProcess() override;
+	void crc( Xfer *xfer ) OVERRIDE;
+	void xfer( Xfer *xfer ) OVERRIDE;
+	void loadPostProcess() OVERRIDE;
 
 protected:
 
@@ -243,13 +243,13 @@ class DozerActionMoveToActionPosState : public State
 public:
 
 	DozerActionMoveToActionPosState( StateMachine *machine, DozerTask task ) : State( machine, "DozerActionMoveToActionPosState" ) { m_task = task; }
-	StateReturnType update( void ) override;
+	StateReturnType update( void ) OVERRIDE;
 
 protected:
 	// snapshot interface
-	void crc( Xfer *xfer ) override;
-	void xfer( Xfer *xfer ) override;
-	void loadPostProcess() override;
+	void crc( Xfer *xfer ) OVERRIDE;
+	void xfer( Xfer *xfer ) OVERRIDE;
+	void loadPostProcess() OVERRIDE;
 
 protected:
 
@@ -386,15 +386,15 @@ public:
 		m_task = task;
 		m_enterFrame = 0;
 	}
-	StateReturnType update( void ) override;
-	StateReturnType onEnter( void ) override;
-	void onExit( StateExitType status ) override { }
+	StateReturnType update( void ) OVERRIDE;
+	StateReturnType onEnter( void ) OVERRIDE;
+	void onExit( StateExitType status ) OVERRIDE { }
 
 protected:
 	// snapshot interface
-	void crc( Xfer *xfer ) override;
-	void xfer( Xfer *xfer ) override;
-	void loadPostProcess() override;
+	void crc( Xfer *xfer ) OVERRIDE;
+	void xfer( Xfer *xfer ) OVERRIDE;
+	void loadPostProcess() OVERRIDE;
 
 protected:
 
@@ -797,9 +797,9 @@ public:
 
 protected:
 	// snapshot interface
-	void crc( Xfer *xfer ) override;
-	void xfer( Xfer *xfer ) override;
-	void loadPostProcess() override;
+	void crc( Xfer *xfer ) OVERRIDE;
+	void xfer( Xfer *xfer ) OVERRIDE;
+	void loadPostProcess() OVERRIDE;
 
 protected:
 
@@ -972,15 +972,15 @@ public:
 		m_idlePlayerNumber = 0;
 		m_isMarkedAsIdle   = FALSE;
 	}
-	StateReturnType update( void ) override;
-	StateReturnType onEnter( void ) override;
-	void onExit( StateExitType status ) override;
+	StateReturnType update( void ) OVERRIDE;
+	StateReturnType onEnter( void ) OVERRIDE;
+	void onExit( StateExitType status ) OVERRIDE;
 
 protected:
 	// snapshot interface
-	void crc( Xfer *xfer ) override;
-	void xfer( Xfer *xfer ) override;
-	void loadPostProcess() override;
+	void crc( Xfer *xfer ) OVERRIDE;
+	void xfer( Xfer *xfer ) OVERRIDE;
+	void loadPostProcess() OVERRIDE;
 
 protected:
 
@@ -1159,16 +1159,16 @@ public:
 		Note that we DON'T use CONVERT_SLEEP_TO_CONTINUE; since we're not doing anything else
 		interesting in update, we can sleep when this machine sleeps
 	*/
-	StateReturnType update( void ) override { return m_actionMachine->updateStateMachine(); }
+	StateReturnType update( void ) OVERRIDE { return m_actionMachine->updateStateMachine(); }
 
-	StateReturnType onEnter( void ) override;
-	void onExit( StateExitType status ) override;
+	StateReturnType onEnter( void ) OVERRIDE;
+	void onExit( StateExitType status ) OVERRIDE;
 
 protected:
 	// snapshot interface
-	void crc( Xfer *xfer ) override;
-	void xfer( Xfer *xfer ) override;
-	void loadPostProcess() override;
+	void crc( Xfer *xfer ) OVERRIDE;
+	void xfer( Xfer *xfer ) OVERRIDE;
+	void loadPostProcess() OVERRIDE;
 
 protected:
 
@@ -1258,14 +1258,14 @@ class DozerPrimaryGoingHomeState : public State
 
 protected:
 	// snapshot interface	 STUBBED no member vars
-	void crc( Xfer *xfer ) override{};
-	void xfer( Xfer *xfer ) override{};
-	void loadPostProcess() override{};
+	void crc( Xfer *xfer ) OVERRIDE{};
+	void xfer( Xfer *xfer ) OVERRIDE{};
+	void loadPostProcess() OVERRIDE{};
 
 public:
 
 	DozerPrimaryGoingHomeState( StateMachine *machine ) : State( machine, "DozerPrimaryGoingHomeState" ) { }
-	StateReturnType update( void ) override { return STATE_FAILURE; }
+	StateReturnType update( void ) OVERRIDE { return STATE_FAILURE; }
 
 };
 EMPTY_DTOR(DozerPrimaryGoingHomeState)

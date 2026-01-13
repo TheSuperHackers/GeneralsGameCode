@@ -74,7 +74,7 @@ public:
 #if defined(RTS_DEBUG)
 	virtual const char* debugGetName() { return "PartitionFilterTensileFormationMember"; }
 #endif
-	Bool allow( Object *objOther ) override
+	Bool allow( Object *objOther ) OVERRIDE
 	{
 		return ( getTFU( objOther ) != nullptr );
 	}

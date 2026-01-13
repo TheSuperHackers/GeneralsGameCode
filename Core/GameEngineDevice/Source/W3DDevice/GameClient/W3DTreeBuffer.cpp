@@ -421,7 +421,7 @@ protected:
 public:
 	GDIFileStream2():m_file(nullptr) {};
 	GDIFileStream2(File* pFile):m_file(pFile) {};
-	Int read(void *pData, Int numBytes) override {
+	Int read(void *pData, Int numBytes) OVERRIDE {
 		return(m_file?m_file->read(pData, numBytes):0);
 	};
 };

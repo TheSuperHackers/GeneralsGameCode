@@ -137,9 +137,9 @@ static NullPrototypeClass _NullPrototype;
 class RObjIterator : public RenderObjIterator
 {
 public:
-	bool					Is_Done(void) override;
-	const char *			Current_Item_Name(void) override;
-	int						Current_Item_Class_ID(void) override;
+	bool					Is_Done(void) OVERRIDE;
+	const char *			Current_Item_Name(void) OVERRIDE;
+	int						Current_Item_Class_ID(void) OVERRIDE;
 protected:
 	friend class WW3DAssetManager;
 };
@@ -154,10 +154,10 @@ class HAnimIterator : public AssetIterator
 public:
 	HAnimIterator(void) : Iterator( WW3DAssetManager::Get_Instance()->HAnimManager ) { };
 
-	void			First(void) override { Iterator.First(); }
-	void			Next(void) override	{ Iterator.Next(); }
-	bool			Is_Done(void) override { return Iterator.Is_Done(); }
-	const char *	Current_Item_Name(void) override { return Iterator.Get_Current_Anim()->Get_Name(); }
+	void			First(void) OVERRIDE { Iterator.First(); }
+	void			Next(void) OVERRIDE	{ Iterator.Next(); }
+	bool			Is_Done(void) OVERRIDE { return Iterator.Is_Done(); }
+	const char *	Current_Item_Name(void) OVERRIDE { return Iterator.Get_Current_Anim()->Get_Name(); }
 
 protected:
 	HAnimManagerIterator	Iterator;
@@ -167,8 +167,8 @@ protected:
 class HTreeIterator : public AssetIterator
 {
 public:
-	bool					Is_Done(void) override;
-	const char *			Current_Item_Name(void) override;
+	bool					Is_Done(void) OVERRIDE;
+	const char *			Current_Item_Name(void) OVERRIDE;
 protected:
 	friend class WW3DAssetManager;
 };
@@ -177,10 +177,10 @@ class Font3DDataIterator : public AssetIterator
 {
 public:
 
-	void					First(void) override { Node = WW3DAssetManager::Get_Instance()->Font3DDatas.Head(); }
-	void					Next(void) override	{ Node = Node->Next(); }
-	bool					Is_Done(void) override { return Node==nullptr; }
-	const char *			Current_Item_Name(void) override { return Node->Data()->Name; }
+	void					First(void) OVERRIDE { Node = WW3DAssetManager::Get_Instance()->Font3DDatas.Head(); }
+	void					Next(void) OVERRIDE	{ Node = Node->Next(); }
+	bool					Is_Done(void) OVERRIDE { return Node==nullptr; }
+	const char *			Current_Item_Name(void) OVERRIDE { return Node->Data()->Name; }
 
 protected:
 

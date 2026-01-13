@@ -73,7 +73,7 @@ protected:
 	File* m_file;
 public:
 	GDIFileStream(File* pFile):m_file(pFile) {};
-	Int read(void *pData, Int numBytes) override {
+	Int read(void *pData, Int numBytes) OVERRIDE {
 			return(m_file->read(pData, numBytes));
 	};
 };

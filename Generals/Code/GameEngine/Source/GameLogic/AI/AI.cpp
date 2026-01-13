@@ -513,7 +513,7 @@ private:
 public:
 	PartitionFilterLiveMapEnemies(const Object *obj) : m_obj(obj) { }
 
-	Bool allow(Object *objOther) override
+	Bool allow(Object *objOther) OVERRIDE
 	{
 		// this is way fast (bit test) so do it first.
 		if (objOther->isEffectivelyDead())
@@ -543,7 +543,7 @@ private:
 public:
 	PartitionFilterWithinAttackRange(const Object* obj) : m_obj(obj) { }
 
-	Bool allow(Object* objOther) override
+	Bool allow(Object* objOther) OVERRIDE
 	{
 		for (Int i = 0; i < WEAPONSLOT_COUNT;	i++ )
 		{

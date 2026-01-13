@@ -78,7 +78,7 @@ public:
 	virtual const char* debugGetName() { return "PartitionFilterHordeMember"; }
 #endif
 
-	Bool allow(Object *objOther) override
+	Bool allow(Object *objOther) OVERRIDE
 	{
 		// must be exact same type as us (well, maybe)
 		if (m_data->m_exactMatch && m_obj->getTemplate() != objOther->getTemplate())

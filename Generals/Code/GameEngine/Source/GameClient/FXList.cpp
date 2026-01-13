@@ -95,7 +95,7 @@ class SoundFXNugget : public FXNugget
 
 public:
 
-	void doFXPos(const Coord3D *primary, const Matrix3D* /*primaryMtx*/, const Real /*primarySpeed*/, const Coord3D * /*secondary*/, const Real /*overrideRadius*/ ) const override
+	void doFXPos(const Coord3D *primary, const Matrix3D* /*primaryMtx*/, const Real /*primarySpeed*/, const Coord3D * /*secondary*/, const Real /*overrideRadius*/ ) const OVERRIDE
 	{
 		AudioEventRTS sound(m_soundName);
 
@@ -107,7 +107,7 @@ public:
 		TheAudio->addAudioEvent(&sound);
 	}
 
-	void doFXObj(const Object* primary, const Object* secondary = nullptr) const override
+	void doFXObj(const Object* primary, const Object* secondary = nullptr) const OVERRIDE
 	{
 		AudioEventRTS sound(m_soundName);
 		if (primary)
@@ -165,7 +165,7 @@ public:
 		m_probability = 1.0f;
 	}
 
-	void doFXPos(const Coord3D *primary, const Matrix3D* primaryMtx, const Real primarySpeed, const Coord3D *secondary, const Real /*overrideRadius*/ ) const override
+	void doFXPos(const Coord3D *primary, const Matrix3D* primaryMtx, const Real primarySpeed, const Coord3D *secondary, const Real /*overrideRadius*/ ) const OVERRIDE
 	{
 		if (m_probability <= GameClientRandomValueReal(0, 1))
 			return;
@@ -263,7 +263,7 @@ public:
 		m_secondaryOffset.x = m_secondaryOffset.y = m_secondaryOffset.z = 0;
 	}
 
-	void doFXPos(const Coord3D *primary, const Matrix3D* /*primaryMtx*/, const Real /*primarySpeed*/, const Coord3D * secondary, const Real /*overrideRadius*/ ) const override
+	void doFXPos(const Coord3D *primary, const Matrix3D* /*primaryMtx*/, const Real /*primarySpeed*/, const Coord3D * secondary, const Real /*overrideRadius*/ ) const OVERRIDE
 	{
 		const ThingTemplate* tmpl = TheThingFactory->findTemplate(m_templateName);
 		DEBUG_ASSERTCRASH(tmpl, ("RayEffect %s not found",m_templateName.str()));
@@ -320,7 +320,7 @@ public:
 		m_color.red = m_color.green = m_color.blue = 0;
 	}
 
-	void doFXObj(const Object* primary, const Object* /*secondary*/) const override
+	void doFXObj(const Object* primary, const Object* /*secondary*/) const OVERRIDE
 	{
 		if (primary)
 		{
@@ -337,7 +337,7 @@ public:
 		}
 	}
 
-	void doFXPos(const Coord3D *primary, const Matrix3D* /*primaryMtx*/, const Real /*primarySpeed*/, const Coord3D * /*secondary*/, const Real /*overrideRadius*/ ) const override
+	void doFXPos(const Coord3D *primary, const Matrix3D* /*primaryMtx*/, const Real /*primarySpeed*/, const Coord3D * /*secondary*/, const Real /*overrideRadius*/ ) const OVERRIDE
 	{
 		if (primary)
 		{
@@ -385,7 +385,7 @@ public:
 	{
 	}
 
-	void doFXPos(const Coord3D *primary, const Matrix3D* /*primaryMtx*/, const Real /*primarySpeed*/, const Coord3D * /*secondary*/, const Real /*overrideRadius*/ ) const override
+	void doFXPos(const Coord3D *primary, const Matrix3D* /*primaryMtx*/, const Real /*primarySpeed*/, const Coord3D * /*secondary*/, const Real /*overrideRadius*/ ) const OVERRIDE
 	{
 		if (primary)
 		{
@@ -445,7 +445,7 @@ public:
 	{
 	}
 
-	void doFXPos(const Coord3D *primary, const Matrix3D* /*primaryMtx*/, const Real /*primarySpeed*/, const Coord3D * /*secondary*/, const Real /*overrideRadius*/ ) const override
+	void doFXPos(const Coord3D *primary, const Matrix3D* /*primaryMtx*/, const Real /*primarySpeed*/, const Coord3D * /*secondary*/, const Real /*overrideRadius*/ ) const OVERRIDE
 	{
 		if (primary)
 		{
@@ -523,7 +523,7 @@ public:
 		m_rotateX = m_rotateY = m_rotateZ = 0;
 	}
 
-	void doFXPos(const Coord3D *primary, const Matrix3D* primaryMtx, const Real /*primarySpeed*/, const Coord3D * /*secondary*/, const Real overrideRadius ) const override
+	void doFXPos(const Coord3D *primary, const Matrix3D* primaryMtx, const Real /*primarySpeed*/, const Coord3D * /*secondary*/, const Real overrideRadius ) const OVERRIDE
 	{
 		if (primary)
 		{
@@ -535,7 +535,7 @@ public:
 		}
 	}
 
-	void doFXObj(const Object* primary, const Object* secondary) const override
+	void doFXObj(const Object* primary, const Object* secondary) const OVERRIDE
 	{
 		if (primary)
 		{
@@ -694,12 +694,12 @@ public:
     m_orientToBone = true;
 	}
 
-	void doFXPos(const Coord3D *primary, const Matrix3D* primaryMtx, const Real /*primarySpeed*/, const Coord3D * /*secondary*/, const Real /*overrideRadius*/ ) const override
+	void doFXPos(const Coord3D *primary, const Matrix3D* primaryMtx, const Real /*primarySpeed*/, const Coord3D * /*secondary*/, const Real /*overrideRadius*/ ) const OVERRIDE
 	{
 		DEBUG_CRASH(("You must use the object form for this effect"));
 	}
 
-	void doFXObj(const Object* primary, const Object* /*secondary*/) const override
+	void doFXObj(const Object* primary, const Object* /*secondary*/) const OVERRIDE
 	{
 		if (primary)
 		{
