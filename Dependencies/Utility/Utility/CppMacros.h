@@ -31,6 +31,7 @@
 #define CPP_11(code)
 #define static_assert(expr, msg)
 #define constexpr
+#define noexcept
 #define nullptr 0
 #endif
 
@@ -38,7 +39,6 @@
 #define REGISTER
 #define FALLTHROUGH [[fallthrough]]
 #else
-#define noexcept
 #define REGISTER register
 #define FALLTHROUGH
 #endif
