@@ -30,6 +30,7 @@
 #include "Common/CRCDebug.h"
 #include "Common/LocalFileSystem.h"
 #include "Common/Recorder.h"
+#include "Common/SimulationMathCrc.h"
 #include "Common/version.h"
 #include "GameClient/ClientInstance.h"
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
@@ -455,6 +456,13 @@ Int parseJobs(char *args[], int num)
 		}
 		return 2;
 	}
+	return 1;
+}
+
+Int parsePrintSimMathCrc(char *args[], int num)
+{
+	SimulationMathCrc::print();
+	exit(0);
 	return 1;
 }
 
@@ -1163,6 +1171,8 @@ static CommandLineParam paramsForStartup[] =
 	// (If you have 4 cores, call it with -jobs 4)
 	// If you do not call this, all replays will be simulated in sequence in the same process.
 	{ "-jobs", parseJobs },
+
+	{ "-printSimMathCrc", parsePrintSimMathCrc },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded
