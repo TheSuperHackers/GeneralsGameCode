@@ -53,7 +53,7 @@
 W3DDebrisDraw::W3DDebrisDraw(Thing *thing, const ModuleData* moduleData) : DrawModule(thing, moduleData)
 {
   m_renderObject = nullptr;
-	for (int i = 0; i < ANIM_ANIM_STATECOUNT; ++i)
+	for (int i = 0; i < ANIM_STATECOUNT; ++i)
 		m_anims[i] = nullptr;
 	m_fxFinal = nullptr;
 	m_state = ANIM_INITIAL;
