@@ -53,10 +53,10 @@
 W3DDebrisDraw::W3DDebrisDraw(Thing *thing, const ModuleData* moduleData) : DrawModule(thing, moduleData)
 {
   m_renderObject = nullptr;
-	for (int i = 0; i < STATECOUNT; ++i)
+	for (int i = 0; i < ANIM_ANIM_STATECOUNT; ++i)
 		m_anims[i] = nullptr;
 	m_fxFinal = nullptr;
-	m_state = INITIAL;
+	m_state = ANIM_INITIAL;
 	m_frames = 0;
 	m_shadow = nullptr;
 	m_finalStop = false;
@@ -78,7 +78,7 @@ W3DDebrisDraw::~W3DDebrisDraw(void)
   	REF_PTR_RELEASE(m_renderObject);
  		m_renderObject = nullptr;
 	}
-	for (int i = 0; i < STATECOUNT; ++i)
+	for (int i = 0; i < ANIM_STATECOUNT; ++i)
 	{
 		REF_PTR_RELEASE(m_anims[i]);
 		m_anims[i] = nullptr;
@@ -153,14 +153,14 @@ void W3DDebrisDraw::setModelName(AsciiString name, Color color, ShadowType t)
 void W3DDebrisDraw::setAnimNames(AsciiString initial, AsciiString flying, AsciiString final, const FXList* finalFX)
 {
 	int i;
-	for (i = 0; i < STATECOUNT; ++i)
+	for (i = 0; i < ANIM_STATECOUNT; ++i)
 	{
 		REF_PTR_RELEASE(m_anims[i]);
 		m_anims[i] = nullptr;
 	}
 
-	m_anims[INITIAL] = initial.isEmpty() ? nullptr : W3DDisplay::m_assetManager->Get_HAnim(initial.str());
-	m_anims[FLYING] = flying.isEmpty() ? nullptr : W3DDisplay::m_assetManager->Get_HAnim(flying.str());
+	m_anims[ANIM_INITIAL] = initial.isEmpty() ? nullptr : W3DDisplay::m_assetManager->Get_HAnim(initial.str());
+	m_anims[ANIM_FLYING] = flying.isEmpty() ? nullptr : W3DDisplay::m_assetManager->Get_HAnim(flying.str());
 	if (stricmp(final.str(), "STOP") == 0)
 	{
 		m_finalStop = true;
@@ -170,7 +170,7 @@ void W3DDebrisDraw::setAnimNames(AsciiString initial, AsciiString flying, AsciiS
 	{
 		m_finalStop = false;
 	}
-	m_anims[FINAL] = final.isEmpty() ? nullptr : W3DDisplay::m_assetManager->Get_HAnim(final.str());
+	m_anims[ANIM_FINAL] = final.isEmpty() ? nullptr : W3DDisplay::m_assetManager->Get_HAnim(final.str());
 	m_state = 0;
 	m_frames = 0;
 	m_fxFinal = finalFX;
@@ -227,7 +227,7 @@ void W3DDebrisDraw::doDrawModule(const Matrix3D* transformMtx)
 		}
 		m_renderObject->Set_Transform(*transformMtx);
 
-		static const RenderObjClass::AnimMode TheAnimModes[STATECOUNT] =
+		static const RenderObjClass::AnimMode TheAnimModes[ANIM_STATECOUNT] =
 		{
 			RenderObjClass::ANIM_MODE_ONCE,
 			RenderObjClass::ANIM_MODE_LOOP,
@@ -237,11 +237,11 @@ void W3DDebrisDraw::doDrawModule(const Matrix3D* transformMtx)
 		Int oldState = m_state;
 		Object* obj = getDrawable()->getObject();
 		const Int MIN_FINAL_FRAMES = 3;
-		if (m_state != FINAL && obj != nullptr && !obj->isAboveTerrain() && m_frames > MIN_FINAL_FRAMES)
+		if (m_state != ANIM_FINAL && obj != nullptr && !obj->isAboveTerrain() && m_frames > MIN_FINAL_FRAMES)
 		{
-			m_state = FINAL;
+			m_state = ANIM_FINAL;
 		}
-		else if (m_state < FINAL && (isAnimationComplete(m_renderObject)))
+		else if (m_state < ANIM_FINAL && (isAnimationComplete(m_renderObject)))
 		{
 			++m_state;
 		}
@@ -249,7 +249,7 @@ void W3DDebrisDraw::doDrawModule(const Matrix3D* transformMtx)
 		if (hanim != nullptr && (hanim != m_renderObject->Peek_Animation() || oldState != m_state))
 		{
 			RenderObjClass::AnimMode m = TheAnimModes[m_state];
-			if (m_state == FINAL)
+			if (m_state == ANIM_FINAL)
 			{
 				FXList::doFXPos(m_fxFinal, getDrawable()->getPosition(), getDrawable()->getTransformMatrix(), 0, nullptr, 0.0f);
 				if (m_finalStop)
