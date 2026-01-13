@@ -213,7 +213,7 @@ void ControlBar::updateContextStructureInventory( void )
 	// about we need to repopulate the buttons of the interface
 	//
 	ContainModuleInterface *contain = source->getContain();
-	DEBUG_ASSERTCRASH( contain, ("No contain module defined for object in the iventory bar") );
+	DEBUG_ASSERTCRASH( contain, ("No contain module defined for object in the inventory bar") );
 	if (!contain)
 		return;
 

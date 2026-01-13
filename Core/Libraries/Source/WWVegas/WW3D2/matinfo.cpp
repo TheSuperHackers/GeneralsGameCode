@@ -190,7 +190,7 @@ TextureClass * MaterialRemapperClass::Remap_Texture(TextureClass * src)
 			return TextureRemaps[i].Dest;
 		}
 	}
-	WWASSERT(0); // uh-oh didn't find the texture, what happend???
+	WWASSERT(0); // uh-oh didn't find the texture, what happened???
 	return NULL;
 }
 
@@ -205,7 +205,7 @@ VertexMaterialClass * MaterialRemapperClass::Remap_Vertex_Material(VertexMateria
 			return VertexMaterialRemaps[i].Dest;
 		}
 	}
-	WWASSERT(0); // uh-oh didn't find the material, what happend???
+	WWASSERT(0); // uh-oh didn't find the material, what happened???
 	return NULL;
 }
 

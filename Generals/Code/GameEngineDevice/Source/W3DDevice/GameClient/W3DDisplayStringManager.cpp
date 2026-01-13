@@ -116,7 +116,7 @@ DisplayString *W3DDisplayStringManager::newDisplayString( void )
 	if( newString == NULL )
 	{
 
-		DEBUG_LOG(( "newDisplayString: Could not allcoate new W3D display string" ));
+		DEBUG_LOG(( "newDisplayString: Could not allocate new W3D display string" ));
 		assert( 0 );
 		return NULL;
 

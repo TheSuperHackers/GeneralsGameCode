@@ -523,7 +523,7 @@ Bool ScriptList::ParseScriptsDataChunk(DataChunkInput &file, DataChunkInfo *info
 {
 	Int i;
 	file.registerParser( "ScriptList", info->label, ScriptList::ParseScriptListDataChunk );
-	DEBUG_ASSERTCRASH(s_numInReadList==0, ("Leftover scripts floating aroung."));
+	DEBUG_ASSERTCRASH(s_numInReadList==0, ("Leftover scripts floating around."));
 	for (i=0; i<s_numInReadList; i++) {
 		deleteInstance(s_readLists[i]);
 		s_readLists[i] = NULL;

@@ -206,7 +206,7 @@ void MobNexusContain::onContaining( Object *rider )
 
 	Int mobNexusSlotCount = rider->getTransportSlotCount();
 
-	DEBUG_ASSERTCRASH(mobNexusSlotCount > 0, ("Hmm, this object isnt MobNexusable"));
+	DEBUG_ASSERTCRASH(mobNexusSlotCount > 0, ("Hmm, this object isn't MobNexusable"));
 	m_extraSlotsInUse += mobNexusSlotCount - 1;
 	DEBUG_ASSERTCRASH(m_extraSlotsInUse >= 0 && m_extraSlotsInUse + getContainCount() <= getContainMax(), ("Hmm, bad slot count"));
 
@@ -277,7 +277,7 @@ void MobNexusContain::onRemoving( Object *rider )
 		scatterToNearbyPosition(rider);
 
 	Int mobNexusSlotCount = rider->getTransportSlotCount();
-	DEBUG_ASSERTCRASH(mobNexusSlotCount > 0, ("This object isnt MobNexusable"));
+	DEBUG_ASSERTCRASH(mobNexusSlotCount > 0, ("This object isn't MobNexusable"));
 	m_extraSlotsInUse -= mobNexusSlotCount - 1;
 	DEBUG_ASSERTCRASH(m_extraSlotsInUse >= 0 && m_extraSlotsInUse + getContainCount() <= getContainMax(), ("Bad slot count, MobNexus"));
 

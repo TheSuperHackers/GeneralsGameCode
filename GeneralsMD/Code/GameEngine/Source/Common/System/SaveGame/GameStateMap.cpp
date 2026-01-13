@@ -104,7 +104,7 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 	if( file->read( buffer, fileSize ) != fileSize )
 	{
 
-		DEBUG_CRASH(( "embeddPristineMap - Error reading from file '%s'", map.str() ));
+		DEBUG_CRASH(( "embedPristineMap - Error reading from file '%s'", map.str() ));
 		throw SC_INVALID_DATA;
 
 	}
@@ -113,7 +113,7 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 	file->close();
 
 	// write the contents to the save file
-	DEBUG_ASSERTCRASH( xfer->getXferMode() == XFER_SAVE, ("embedPristineMap - Unsupposed xfer mode") );
+	DEBUG_ASSERTCRASH( xfer->getXferMode() == XFER_SAVE, ("embedPristineMap - Unsupported xfer mode") );
 	xfer->beginBlock();
 	xfer->xferUser( buffer, fileSize );
 	xfer->endBlock();

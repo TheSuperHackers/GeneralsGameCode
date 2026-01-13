@@ -139,7 +139,7 @@ void DirectInputKeyboard::openKeyboard( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to create keyboard device" ));
+		DEBUG_LOG(( "ERROR - openKeyboard: Unable to create keyboard device" ));
 		assert( 0 );
 		closeKeyboard();
 		return;
@@ -151,7 +151,7 @@ void DirectInputKeyboard::openKeyboard( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to set data format for keyboard" ));
+		DEBUG_LOG(( "ERROR - openKeyboard: Unable to set data format for keyboard" ));
 		assert( 0 );
 		closeKeyboard();
 		return;
@@ -169,7 +169,7 @@ void DirectInputKeyboard::openKeyboard( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to set cooperative level" ));
+		DEBUG_LOG(( "ERROR - openKeyboard: Unable to set cooperative level" ));
 		assert( 0 );
 		closeKeyboard();
 		return;

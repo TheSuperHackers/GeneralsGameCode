@@ -101,7 +101,7 @@ static int thePlanSubjectCount = 0;
 static void doMoveTo( Object *obj, const Coord3D *pos )
 {
 	AIUpdateInterface *ai = obj->getAIUpdateInterface();
-	DEBUG_ASSERTCRASH(ai, ("Attemped doMoveTo() on an Object with no AI"));
+	DEBUG_ASSERTCRASH(ai, ("Attempted doMoveTo() on an Object with no AI"));
 	if (ai)
 	{
 		if (theBuildPlan)
@@ -1586,7 +1586,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Player *player = ThePlayerList->getNthPlayer(msg->getPlayerIndex());
 
 			if (player == NULL) {
-				DEBUG_CRASH(("GameLogicDispatch - MSG_CREATE_SELECTED_GROUP had an invalid player nubmer"));
+				DEBUG_CRASH(("GameLogicDispatch - MSG_CREATE_SELECTED_GROUP had an invalid player number"));
 				break;
 			}
 
@@ -1612,7 +1612,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Player *player = ThePlayerList->getNthPlayer(msg->getPlayerIndex());
 
 			if (player == NULL) {
-				DEBUG_CRASH(("GameLogicDispatch - MSG_CREATE_SELECTED_GROUP had an invalid player nubmer"));
+				DEBUG_CRASH(("GameLogicDispatch - MSG_CREATE_SELECTED_GROUP had an invalid player number"));
 				break;
 			}
 

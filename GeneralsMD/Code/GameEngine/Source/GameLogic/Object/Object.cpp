@@ -2759,7 +2759,7 @@ void Object::setLayer(PathfindLayerEnum layer)
 		DEBUG_LOG(("Changing layer from %d to %d", m_layer, layer));
 		if (m_layer != LAYER_GROUND) {
 			if (TheTerrainLogic->objectInteractsWithBridgeLayer(this, m_layer)) {
-				DEBUG_CRASH(("Probably shouldn't be chaging layer. jba."));
+				DEBUG_CRASH(("Probably shouldn't be changing layer. jba."));
 			}
 		}
 #endif

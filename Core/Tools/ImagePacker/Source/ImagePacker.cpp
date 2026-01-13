@@ -809,7 +809,7 @@ void ImagePacker::addImage( char *path )
 	if( info->m_path == NULL )
 	{
 
-		MessageBox( NULL, "Unable to allcoate image path info", "Error",
+		MessageBox( NULL, "Unable to allocate image path info", "Error",
 								MB_OK | MB_ICONERROR );
 		delete info;
 		return;

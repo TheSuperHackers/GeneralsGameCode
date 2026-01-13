@@ -3146,7 +3146,7 @@ Bool W3DVolumetricShadow::allocateSilhouette(Int meshIndex, Int numVertices )
 	if( m_silhouetteIndex[meshIndex] == NULL )
 	{
 
-//		DBGPRINTF(( "Unable to allcoate silhouette storage '%d'\n", numEntries ));
+//		DBGPRINTF(( "Unable to allocate silhouette storage '%d'\n", numEntries ));
 		assert( 0 );
 		return FALSE;
 

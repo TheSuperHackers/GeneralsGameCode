@@ -212,7 +212,7 @@ void TransportContain::onContaining( Object *rider )
 
 	Int transportSlotCount = rider->getTransportSlotCount();
 
-	DEBUG_ASSERTCRASH(transportSlotCount > 0, ("Hmm, this object isnt transportable"));
+	DEBUG_ASSERTCRASH(transportSlotCount > 0, ("Hmm, this object isn't transportable"));
 	m_extraSlotsInUse += transportSlotCount - 1;
 	DEBUG_ASSERTCRASH(m_extraSlotsInUse >= 0 && m_extraSlotsInUse + getContainCount() <= getContainMax(), ("Hmm, bad slot count"));
 
@@ -280,7 +280,7 @@ void TransportContain::onRemoving( Object *rider )
 	}
 
 	Int transportSlotCount = rider->getTransportSlotCount();
-	DEBUG_ASSERTCRASH(transportSlotCount > 0, ("Hmm, this object isnt transportable"));
+	DEBUG_ASSERTCRASH(transportSlotCount > 0, ("Hmm, this object isn't transportable"));
 	m_extraSlotsInUse -= transportSlotCount - 1;
 	DEBUG_ASSERTCRASH(m_extraSlotsInUse >= 0 && m_extraSlotsInUse + getContainCount() <= getContainMax(), ("Hmm, bad slot count"));
 
