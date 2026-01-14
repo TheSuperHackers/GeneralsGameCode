@@ -196,12 +196,13 @@ inline VertexFormatXYZNDUV2 * DynamicVBAccessClass::WriteLockClass::Get_Formatte
 /**
 ** DX8VertexBufferClass
 ** This class wraps a DX8 vertex buffer.  Use the lock objects to modify or append to the vertex buffer.
+**
+** TheSuperHackers @performance Allow placement new and bypass the W3DMemPool to create big buffers.
 */
 class DX8VertexBufferClass : public VertexBufferClass
 {
 	W3DMPO_GLUE(DX8VertexBufferClass)
-protected:
-	~DX8VertexBufferClass();
+
 public:
 	enum UsageType {
 		USAGE_DEFAULT=0,
@@ -210,11 +211,15 @@ public:
 		USAGE_NPATCHES=4
 	};
 
+	void* operator new(size_t s, void* placement) noexcept { return placement; }
+	void operator delete(void* p, void* placement) noexcept {}
+
 	DX8VertexBufferClass(unsigned FVF, unsigned short VertexCount, UsageType usage=USAGE_DEFAULT);
 	DX8VertexBufferClass(const Vector3* vertices, const Vector3* normals, const Vector2* tex_coords, unsigned short VertexCount,UsageType usage=USAGE_DEFAULT);
 	DX8VertexBufferClass(const Vector3* vertices, const Vector3* normals, const Vector4* diffuse, const Vector2* tex_coords, unsigned short VertexCount,UsageType usage=USAGE_DEFAULT);
 	DX8VertexBufferClass(const Vector3* vertices, const Vector4* diffuse, const Vector2* tex_coords, unsigned short VertexCount,UsageType usage=USAGE_DEFAULT);
 	DX8VertexBufferClass(const Vector3* vertices, const Vector2* tex_coords, unsigned short VertexCount,UsageType usage=USAGE_DEFAULT);
+	~DX8VertexBufferClass();
 
 	IDirect3DVertexBuffer8* Get_DX8_Vertex_Buffer() { return VertexBuffer; }
 
