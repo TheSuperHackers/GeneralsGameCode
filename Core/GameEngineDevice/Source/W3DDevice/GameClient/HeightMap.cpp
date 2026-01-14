@@ -257,7 +257,7 @@ is confusing, but it makes sliding the map 10x faster.  */
 //=============================================================================
 Int HeightMapRenderObjClass::getXWithOrigin(Int x)
 {
-	const Real xMax = m_x-1;
+	const Int xMax = m_x-1;
 	x -= m_originX;
 	if (x < 0) x += xMax;
 	if (x >= xMax) x -= xMax;
@@ -275,7 +275,7 @@ is confusing, but it makes sliding the map 10x faster.  */
 //=============================================================================
 Int HeightMapRenderObjClass::getYWithOrigin(Int y)
 {
-	const Real yMax = m_y-1;
+	const Int yMax = m_y-1;
 	y -= m_originY;
 	if (y < 0) y += yMax;
 	if (y >= yMax) y -= yMax;
