@@ -1,4 +1,3 @@
-
 set(UTILITY_SRC
     Utility/compat.h
     Utility/CppMacros.h
