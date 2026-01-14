@@ -257,12 +257,12 @@ is confusing, but it makes sliding the map 10x faster.  */
 //=============================================================================
 Int HeightMapRenderObjClass::getXWithOrigin(Int x)
 {
-	const Real maxX = m_x-1;
+	const Real xMax = m_x-1;
 	x -= m_originX;
-	if (x < 0) x += maxX;
-	if (x >= maxX) x -= maxX;
+	if (x < 0) x += xMax;
+	if (x >= xMax) x -= xMax;
 	if (x < 0) { DEBUG_CRASH(("X out of range.")); x = 0; }
-	if (x >= maxX) { DEBUG_CRASH(("X out of range.")); x = maxX; }
+	if (x >= xMax) { DEBUG_CRASH(("X out of range.")); x = xMax; }
 	return x;
 }
 
@@ -275,12 +275,12 @@ is confusing, but it makes sliding the map 10x faster.  */
 //=============================================================================
 Int HeightMapRenderObjClass::getYWithOrigin(Int y)
 {
-	const Real maxY = m_y-1;
+	const Real yMax = m_y-1;
 	y -= m_originY;
-	if (y < 0) y += maxY;
-	if (y >= maxY) y -= maxY;
+	if (y < 0) y += yMax;
+	if (y >= yMax) y -= yMax;
 	if (y < 0) { DEBUG_CRASH(("Y out of range.")); y = 0; }
-	if (y >= maxY) { DEBUG_CRASH(("Y out of range.")); y = maxY; }
+	if (y >= yMax) { DEBUG_CRASH(("Y out of range.")); y = yMax; }
 	return y;
 }
 
