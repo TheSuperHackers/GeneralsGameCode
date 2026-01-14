@@ -23,6 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "W3DDevice/GameClient/W3DStatusCircle.h"
+#include "W3DDevice/GameClient/WorldHeightMap.h"
 
 #include <stdlib.h>
 #include <assetmgr.h>
@@ -62,8 +63,6 @@
 	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_ENABLE, \
 	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
 
-#define VERTEX_BUFFER_TILE_LENGTH	32		//tiles of side length 32 (grid of 33x33 vertices).
-#define VERTS_IN_BLOCK_ROW			(VERTEX_BUFFER_TILE_LENGTH+1)
 
 
 static ShaderClass detailOpaqueShader(SC_ALPHA);
