@@ -152,6 +152,19 @@ Int HeightMapRenderObjClass::freeMapResources(void)
 	return 0;
 }
 
+//=============================================================================
+
+DX8VertexBufferClass *HeightMapRenderObjClass::getVertexBufferTile(Int x, Int y)
+{
+	return m_vertexBufferTiles + y*m_numVBTilesX+x;
+}
+
+//=============================================================================
+VERTEX_FORMAT *HeightMapRenderObjClass::getVertexBufferBackup(Int x, Int y)
+{
+	constexpr const Int numVertex = VERTEX_BUFFER_TILE_LENGTH*2*VERTEX_BUFFER_TILE_LENGTH*2;
+	return m_vertexBufferBackup + y*m_numVBTilesX*numVertex + x*numVertex;
+}
 
 //=============================================================================
 // HeightMapRenderObjClass::doTheDynamicLight
@@ -995,9 +1008,8 @@ Int HeightMapRenderObjClass::updateBlock(Int x0, Int y0, Int x1, Int y1,  WorldH
 			if (xMin >= xMax) {
 				continue;
 			}
-			constexpr const Int numVertex = VERTEX_BUFFER_TILE_LENGTH*2*VERTEX_BUFFER_TILE_LENGTH*2;
-			DX8VertexBufferClass *pVB = m_vertexBufferTiles + j*m_numVBTilesX+i;	//point to correct row/column of vertex buffers
-			VERTEX_FORMAT *pData = m_vertexBufferBackup + j*m_numVBTilesX*numVertex + i*numVertex;
+			DX8VertexBufferClass *pVB = getVertexBufferTile(i, j);
+			VERTEX_FORMAT *pData = getVertexBufferBackup(i, j);
 			updateVB(pVB, pData, xMin, yMin, xMax, yMax, originX, originY, pMap, pLightsIterator);
 		}
 	}
@@ -1511,9 +1523,8 @@ void HeightMapRenderObjClass::On_Frame_Update(void)
 				if (!intersect) {
 					continue;
 				}
-				constexpr const Int numVertex = VERTEX_BUFFER_TILE_LENGTH*2*VERTEX_BUFFER_TILE_LENGTH*2;
-				DX8VertexBufferClass *pVB = m_vertexBufferTiles + j*m_numVBTilesX+i;	//point to correct row/column of vertex buffers
-				VERTEX_FORMAT *pData = m_vertexBufferBackup + j*m_numVBTilesX*numVertex + i*numVertex;
+				DX8VertexBufferClass *pVB = getVertexBufferTile(i, j);
+				VERTEX_FORMAT *pData = getVertexBufferBackup(i, j);
 				updateVBForLight(pVB, pData, xMin, yMin, xMax, yMax, originX,originY, enabledLights, numDynaLights);
 			}
 		}
