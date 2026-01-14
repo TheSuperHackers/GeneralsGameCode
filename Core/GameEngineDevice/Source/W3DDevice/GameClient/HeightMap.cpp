@@ -130,7 +130,7 @@ void HeightMapRenderObjClass::freeIndexVertexBuffers(void)
 	{
 		(m_vertexBufferTiles + i)->~DX8VertexBufferClass();
 	}
-	::operator delete[](m_vertexBufferTiles);
+	::operator delete(m_vertexBufferTiles);
 	m_vertexBufferTiles = nullptr;
 
 	delete[] m_vertexBufferBackup;
