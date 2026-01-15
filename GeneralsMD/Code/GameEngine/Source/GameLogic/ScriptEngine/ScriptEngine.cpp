@@ -7879,7 +7879,7 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 {
 	VecSequentialScriptPtrIt it;
 	size_t currIndex = 0;
-	size_t prevIndex = 0;
+	size_t prevIndex = ~0u;
 	Bool itAdvanced = false;
 
 	Int spinCount = 0;
