@@ -61,7 +61,8 @@ static const char* const VendorNames[]={
 	"3Dfx",
 	"3DLabs",
 	"CirrusLogic",
-	"Rendition"
+	"Rendition",
+	"VMware",
 };
 static_assert(ARRAY_SIZE(VendorNames) == DX8Caps::VENDOR_COUNT, "Incorrect array size");
 
