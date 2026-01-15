@@ -47,6 +47,8 @@
 #include "Common/CRCDebug.h"
 #include "Common/OptionPreferences.h"
 #include "Common/version.h"
+#include "Common/Xfer.h"
+#include "Common/GameState.h"
 
 constexpr const char s_genrep[] = "GENREP";
 constexpr const UnsignedInt replayBufferBytes = 8192;
@@ -418,6 +420,11 @@ void RecorderClass::reset() {
 		m_file = nullptr;
 	}
 	m_fileName.clear();
+
+	if (m_crcInfo != nullptr) {
+		delete m_crcInfo;
+		m_crcInfo = nullptr;
+	}
 
 	init();
 }
@@ -1030,9 +1037,13 @@ public:
 	int GetQueueSize() const { return m_data.size(); }
 
 	UnsignedInt getLocalPlayer() { return m_localPlayer; }
+	void setLocalPlayer(UnsignedInt player) { m_localPlayer = player; }
 
 	void setSawCRCMismatch() { m_sawCRCMismatch = TRUE; }
 	Bool sawCRCMismatch() const { return m_sawCRCMismatch; }
+
+	Bool getSkippedOne(void) const { return m_skippedOne; }
+	void setSkippedOne(Bool skipped) { m_skippedOne = skipped; }
 
 protected:
 
@@ -1669,6 +1680,16 @@ AsciiString RecorderClass::getReplayArchiveDir()
 }
 
 /**
+ * returns the directory that holds replay checkpoint files.
+ */
+AsciiString RecorderClass::getReplayCheckpointDir()
+{
+	AsciiString tmp = TheGlobalData->getPath_UserData();
+	tmp.concat("Replays\\Checkpoints\\");
+	return tmp;
+}
+
+/**
  * returns the file extension for the replay files.
  */
 AsciiString RecorderClass::getReplayExtention() {
@@ -1798,6 +1819,168 @@ Bool RecorderClass::isMultiplayer()
 		return true;
 
 	return false;
+}
+
+void RecorderClass::crc( Xfer *xfer )
+{
+}
+
+void RecorderClass::xfer( Xfer *xfer )
+{
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
+
+	Int modeInt = static_cast<Int>(m_mode);
+	xfer->xferInt( &modeInt );
+	m_mode = static_cast<RecorderModeType>(modeInt);
+
+	xfer->xferAsciiString( &m_fileName );
+	xfer->xferAsciiString( &m_currentReplayFilename );
+	xfer->xferInt( &m_currentFilePosition );
+	xfer->xferUnsignedInt( &m_nextFrame );
+	xfer->xferUnsignedInt( &m_playbackFrameCount );
+	xfer->xferInt( &m_originalGameMode );
+	xfer->xferBool( &m_doingAnalysis );
+	xfer->xferBool( &m_wasDesync );
+
+	AsciiString gameInfoStr;
+	if ( xfer->getXferMode() == XFER_SAVE )
+	{
+		gameInfoStr = GameInfoToAsciiString( &m_gameInfo );
+	}
+	xfer->xferAsciiString( &gameInfoStr );
+	if ( xfer->getXferMode() == XFER_LOAD )
+	{
+		m_gameInfo.reset();
+		m_gameInfo.enterGame();
+		ParseAsciiStringToGameInfo( &m_gameInfo, gameInfoStr );
+		m_gameInfo.startGame(0);
+	}
+
+	xferCRCInfo( xfer );
+
+	if ( xfer->getXferMode() == XFER_SAVE && m_file != nullptr )
+	{
+		m_currentFilePosition = m_file->position();
+	}
+}
+
+void RecorderClass::xferCRCInfo( Xfer *xfer )
+{
+	Bool hasCRCInfo = (m_crcInfo != nullptr);
+	xfer->xferBool( &hasCRCInfo );
+
+	if ( !hasCRCInfo )
+	{
+		return;
+	}
+
+	if ( xfer->getXferMode() == XFER_LOAD && m_crcInfo == nullptr )
+	{
+		m_crcInfo = NEW CRCInfo( 0, FALSE );
+	}
+
+	Bool sawMismatch = m_crcInfo->sawCRCMismatch();
+	xfer->xferBool( &sawMismatch );
+	if ( xfer->getXferMode() == XFER_LOAD && sawMismatch )
+	{
+		m_crcInfo->setSawCRCMismatch();
+	}
+
+	UnsignedInt localPlayer = m_crcInfo->getLocalPlayer();
+	xfer->xferUnsignedInt( &localPlayer );
+	if ( xfer->getXferMode() == XFER_LOAD )
+	{
+		m_crcInfo->setLocalPlayer( localPlayer );
+	}
+
+	Bool skippedOne = m_crcInfo->getSkippedOne();
+	xfer->xferBool( &skippedOne );
+	if ( xfer->getXferMode() == XFER_LOAD )
+	{
+		m_crcInfo->setSkippedOne( skippedOne );
+	}
+
+	UnsignedInt queueSize = m_crcInfo->GetQueueSize();
+	xfer->xferUnsignedInt( &queueSize );
+
+	if ( xfer->getXferMode() == XFER_SAVE )
+	{
+		std::list<UnsignedInt> tempQueue;
+		while ( m_crcInfo->GetQueueSize() > 0 )
+		{
+			UnsignedInt crc = m_crcInfo->readCRC();
+			tempQueue.push_back( crc );
+			xfer->xferUnsignedInt( &crc );
+		}
+		for ( std::list<UnsignedInt>::iterator it = tempQueue.begin(); it != tempQueue.end(); ++it )
+		{
+			m_crcInfo->addCRC( *it );
+		}
+	}
+	else
+	{
+		for ( UnsignedInt i = 0; i < queueSize; ++i )
+		{
+			UnsignedInt crc = 0;
+			xfer->xferUnsignedInt( &crc );
+			m_crcInfo->addCRC( crc );
+		}
+	}
+}
+
+void RecorderClass::loadPostProcess( void )
+{
+	if ( !isPlaybackMode() )
+	{
+		return;
+	}
+
+	if ( m_currentReplayFilename.isEmpty() )
+	{
+		return;
+	}
+
+	if ( !reopenReplayFileAtPosition( m_currentFilePosition ) )
+	{
+		DEBUG_LOG(("RecorderClass::loadPostProcess - Failed to reopen replay file at position %d", m_currentFilePosition));
+		m_mode = RECORDERMODETYPE_NONE;
+		return;
+	}
+
+	REPLAY_CRC_INTERVAL = m_gameInfo.getCRCInterval();
+	DEBUG_LOG(("RecorderClass::loadPostProcess - Resumed replay at file position %d, next frame %d", m_currentFilePosition, m_nextFrame));
+}
+
+Bool RecorderClass::reopenReplayFileAtPosition( Int position )
+{
+	if ( m_file != nullptr )
+	{
+		m_file->close();
+		m_file = nullptr;
+	}
+
+	AsciiString filepath = getReplayDir();
+	filepath.concat( m_currentReplayFilename.str() );
+
+	m_file = TheFileSystem->openFile( filepath.str(), File::READ | File::BINARY, replayBufferBytes );
+	if ( m_file == nullptr )
+	{
+		DEBUG_LOG(("RecorderClass::reopenReplayFileAtPosition - Failed to open %s", filepath.str()));
+		return FALSE;
+	}
+
+	Int seekResult = m_file->seek( position, File::seekMode::START );
+	if ( seekResult != position )
+	{
+		DEBUG_LOG(("RecorderClass::reopenReplayFileAtPosition - Seek to %d failed, got %d", position, seekResult));
+		m_file->close();
+		m_file = nullptr;
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 /**

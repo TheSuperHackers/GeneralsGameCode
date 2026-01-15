@@ -40,6 +40,7 @@
 #include "Common/PlayerList.h"
 #include "Common/RandomValue.h"
 #include "Common/Radar.h"
+#include "Common/Recorder.h"
 #include "Common/Team.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/XferLoad.h"
@@ -322,6 +323,7 @@ void GameState::init()
 	addSnapshotBlock( "CHUNK_ParticleSystem",					TheParticleSystemManager,	SNAPSHOT_SAVELOAD );
 	addSnapshotBlock( "CHUNK_TerrainVisual",					TheTerrainVisual,					SNAPSHOT_SAVELOAD );
 	addSnapshotBlock( "CHUNK_GhostObject",						TheGhostObjectManager,		SNAPSHOT_SAVELOAD );
+	addSnapshotBlock( "CHUNK_Recorder",							TheRecorder,							SNAPSHOT_SAVELOAD );
 
 	// add all the snapshot objects to our list of data blocks for deep CRCs of logic
 	addSnapshotBlock( "CHUNK_TeamFactory",						TheTeamFactory,						SNAPSHOT_DEEPCRC_LOGICONLY );
