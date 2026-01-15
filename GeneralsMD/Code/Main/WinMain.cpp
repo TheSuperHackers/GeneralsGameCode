@@ -67,6 +67,8 @@
 #include "resource.h"
 
 #include <rts/profile.h>
+
+#include "imgui.h"
 #ifdef RTS_ENABLE_CRASHDUMP
 #include "Common/MiniDumper.h"
 #endif
@@ -290,13 +292,20 @@ static const char *messageToString(unsigned int message)
 }
 #endif
 
+#ifdef RTS_IMGUI_ENABLED
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND, UINT, WPARAM, LPARAM);
+#endif
 // WndProc ====================================================================
 /** Window Procedure */
 //=============================================================================
 LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 													WPARAM wParam, LPARAM lParam )
 {
-
+#ifdef RTS_IMGUI_ENABLED
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam)) {
+		return true;
+	}
+#endif
 	try
 	{
 		// First let the IME manager do it's stuff.

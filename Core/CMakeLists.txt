@@ -25,6 +25,7 @@ target_link_libraries(corei_always INTERFACE
     core_utility
     corei_libraries_include
     resources
+    lib_imgui
 )
 target_link_libraries(corei_always_no_pch INTERFACE
     core_config

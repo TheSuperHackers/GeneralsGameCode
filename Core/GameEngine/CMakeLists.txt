@@ -1164,6 +1164,13 @@ else()
     )
 endif()
 
+if(RTS_BUILD_OPTION_IMGUI)
+    list(APPEND GAMEENGINE_SRC
+            Source/GameClient/GUI/Console.cpp
+            Include/GameClient/Console.h
+    )
+endif ()
+
 
 add_library(corei_gameengine_private INTERFACE)
 add_library(corei_gameengine_public INTERFACE)

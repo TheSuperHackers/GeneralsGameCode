@@ -32,6 +32,13 @@
 #include "GameClient/GameClient.h"
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
+#ifdef RTS_IMGUI_ENABLED
+#include <imgui.h>
+#include <imgui_impl_win32.h>
+#include "imgui_impl_dx8.h"
+#include "dx8wrapper.h"
+#endif
+
 #include "Common/ActionManager.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
@@ -48,6 +55,7 @@
 #include "GameClient/CampaignManager.h"
 #include "GameClient/ChallengeGenerals.h"
 #include "GameClient/CommandXlat.h"
+#include "GameClient/Console.h"
 #include "GameClient/ControlBar.h"
 #include "GameClient/Diplomacy.h"
 #include "GameClient/Display.h"
@@ -511,6 +519,16 @@ DECLARE_PERF_TIMER(GameClient_draw)
 void GameClient::update( void )
 {
 	USE_PERF_TIMER(GameClient_update)
+#ifdef RTS_IMGUI_ENABLED
+	ImGui_ImplDX8_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+	// Draw console UI
+	{
+		DevConsole.Draw(0.5f);
+		ImGui::ShowDemoWindow();
+	}
+#endif
 	// create the FRAME_TICK message
 	GameMessage *frameMsg = TheMessageStream->appendMessage( GameMessage::MSG_FRAME_TICK );
 	frameMsg->appendTimestampArgument( getFrame() );
@@ -623,6 +641,9 @@ void GameClient::update( void )
 		// redraw all views, update the GUI
 		TheDisplay->DRAW();
 		TheDisplay->UPDATE();
+#ifdef RTS_IMGUI_ENABLED
+		ImGui::Render();  // Prepare render data
+#endif
 		return;
 	}
 
@@ -728,6 +749,9 @@ void GameClient::update( void )
 	// need to draw the first frame, then don't draw again until TheGlobalData->m_noDraw
 	if (TheGlobalData->m_noDraw > TheGameLogic->getFrame() && TheGameLogic->getFrame() > 0)
 	{
+#ifdef RTS_IMGUI_ENABLED
+		ImGui::Render();
+#endif
 		return;
 	}
 #endif
@@ -751,6 +775,11 @@ void GameClient::update( void )
 		TheDisplay->UPDATE();
 	}
 
+
+#ifdef RTS_IMGUI_ENABLED
+	ImGui::Render();  // Prepare render data
+#endif
+
 	{
 		USE_PERF_TIMER(GameClient_draw)
 
@@ -758,6 +787,8 @@ void GameClient::update( void )
 	//if(TheGameLogic->getFrame() >= 2)
 
 		TheDisplay->DRAW();
+
+
 	}
 
 	{
