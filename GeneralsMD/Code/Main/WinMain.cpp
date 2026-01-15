@@ -68,7 +68,10 @@
 
 #include <rts/profile.h>
 
+#ifdef RTS_IMGUI_ENABLED
 #include "imgui.h"
+#endif
+
 #ifdef RTS_ENABLE_CRASHDUMP
 #include "Common/MiniDumper.h"
 #endif

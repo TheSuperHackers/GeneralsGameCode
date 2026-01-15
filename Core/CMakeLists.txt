@@ -25,8 +25,12 @@ target_link_libraries(corei_always INTERFACE
     core_utility
     corei_libraries_include
     resources
-    lib_imgui
 )
+# link imgui if needed
+if (RTS_BUILD_OPTION_IMGUI)
+    target_link_libraries(corei_always INTERFACE lib_imgui)
+endif ()
+
 target_link_libraries(corei_always_no_pch INTERFACE
     core_config
     core_utility_no_pch
