@@ -685,7 +685,7 @@ MeshDeformSetClass::Apply_Position_Changes
 				Point3 new_pos = info.value;
 
 				// Transform the new position if necessary
-				if (transform != NULL) {
+				if (transform != nullptr) {
 					new_pos = new_pos * (*transform);
 				}
 
@@ -708,7 +708,7 @@ MeshDeformSetClass::Apply_Position_Changes
 				Point3 new_pos = info.value;
 
 				// Transform the new position if necessary
-				if (transform != NULL) {
+				if (transform != nullptr) {
 					new_pos = new_pos * (*transform);
 				}
 
@@ -899,7 +899,7 @@ MeshDeformSetClass::Update_Mesh (TriObject &tri_obj)
 	Copy_Vertex_Array (tri_obj.mesh);
 
 	// Should we update the mesh or copy it?
-	if (m_pMesh != NULL) {
+	if (m_pMesh != nullptr) {
 
 		//
 		//	Copy the vertex colors from the triangle object
@@ -1288,7 +1288,7 @@ MeshDeformSetClass::Save
 					//	Get the absolute color of this vertex
 					//
 					VertColor color (1, 1, 1);
-					if (mesh.vertCol != NULL) {
+					if (mesh.vertCol != nullptr) {
 						int vert_col_index = w3d_vert.MaxVertColIndex;
 						color = mesh.vertCol[vert_col_index];
 						Apply_Color_Changes (max_vert_index, vert_col_index, key_frame, color);

@@ -40,7 +40,7 @@ public:
 	char*				Filename ( void )			{ return filename; };
 	TROPTIONS*	Options ( void )			{ return &options; };
 
-	CExportDlg(CWnd* pParent = NULL);   // standard constructor
+	CExportDlg(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CExportDlg)

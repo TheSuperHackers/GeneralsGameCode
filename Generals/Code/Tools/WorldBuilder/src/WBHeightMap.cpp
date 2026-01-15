@@ -70,7 +70,7 @@ void WBHeightMap::setFlattenHeights(Bool flat)
 		m_flattenHeights = flat;
 		m_originX = 0;
 		m_originY = 0;
- 		updateBlock(0, 0, m_x-1, m_y-1, m_map, NULL);
+ 		updateBlock(0, 0, m_x-1, m_y-1, m_map, nullptr);
 	}
 }
 
@@ -91,7 +91,7 @@ void WBHeightMap::flattenHeights(void) {
 			static int count = 0;
 			count++;
 			Int numVertex = (VERTEX_BUFFER_TILE_LENGTH*2)*(VERTEX_BUFFER_TILE_LENGTH*2);
-			DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexBufferTiles[j*m_numVBTilesX+i]);
+			DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexBufferTiles + j*m_numVBTilesX+i);
 			VERTEX_FORMAT *vbHardware = (VERTEX_FORMAT*)lockVtxBuffer.Get_Vertex_Array();
 			Int vtx;
 			for (vtx=0; vtx<numVertex; vtx++) {

@@ -33,7 +33,7 @@ Int ContourOptions::m_contourWidth = 1;
 /// ContourOptions dialog trivial construstor - Create does the real work.
 
 
-ContourOptions::ContourOptions(CWnd* pParent /*=NULL*/)
+ContourOptions::ContourOptions(CWnd* pParent /*=nullptr*/)
 	: CDialog(ContourOptions::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(ContourOptions)

@@ -20,6 +20,7 @@
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
+
 #include "StdAfx.h"
 #include "resource.h"
 
@@ -42,9 +43,9 @@ Int FeatherTool::m_radius = 0;
 FeatherTool::FeatherTool(void) :
 	Tool(ID_FEATHERTOOL, IDC_BRUSH_CROSS)
 {
-	m_htMapEditCopy = NULL;
-	m_htMapFeatherCopy = NULL;
-	m_htMapRateCopy = NULL;
+	m_htMapEditCopy = nullptr;
+	m_htMapFeatherCopy = nullptr;
+	m_htMapRateCopy = nullptr;
 }
 
 /// Destructor

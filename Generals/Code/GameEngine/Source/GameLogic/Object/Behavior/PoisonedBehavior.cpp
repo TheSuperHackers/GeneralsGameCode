@@ -54,9 +54,9 @@ PoisonedBehaviorModuleData::PoisonedBehaviorModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "PoisonDamageInterval", INI::parseDurationUnsignedInt, NULL, offsetof(PoisonedBehaviorModuleData, m_poisonDamageIntervalData) },
-		{ "PoisonDuration", INI::parseDurationUnsignedInt, NULL, offsetof(PoisonedBehaviorModuleData, m_poisonDurationData) },
-		{ 0, 0, 0, 0 }
+		{ "PoisonDamageInterval", INI::parseDurationUnsignedInt, nullptr, offsetof(PoisonedBehaviorModuleData, m_poisonDamageIntervalData) },
+		{ "PoisonDuration", INI::parseDurationUnsignedInt, nullptr, offsetof(PoisonedBehaviorModuleData, m_poisonDurationData) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   UpdateModuleData::buildFieldParse(p);

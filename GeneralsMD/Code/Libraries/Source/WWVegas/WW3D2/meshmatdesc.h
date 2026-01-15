@@ -145,11 +145,11 @@ public:
 	** Determine whether this material description contains data for the specified category
 	*/
 	bool							Has_UV(int pass,int stage)					{ return UVSource[pass][stage] != -1; }
-	bool							Has_Color_Array(int array)					{ return ColorArray[array] != NULL; }
+	bool							Has_Color_Array(int array)					{ return ColorArray[array] != nullptr; }
 
-	bool							Has_Texture_Data(int pass,int stage)	{ return (Texture[pass][stage] != NULL) || (TextureArray[pass][stage] != NULL); }
-	bool							Has_Shader_Data(int pass)					{ return (Shader[pass] != NullShader) || (ShaderArray[pass] != NULL); }
-	bool							Has_Material_Data(int pass)				{ return (Material[pass] != NULL) || (MaterialArray[pass] != NULL); }
+	bool							Has_Texture_Data(int pass,int stage)	{ return (Texture[pass][stage] != nullptr) || (TextureArray[pass][stage] != nullptr); }
+	bool							Has_Shader_Data(int pass)					{ return (Shader[pass] != NullShader) || (ShaderArray[pass] != nullptr); }
+	bool							Has_Material_Data(int pass)				{ return (Material[pass] != nullptr) || (MaterialArray[pass] != nullptr); }
 
 	/*
 	** "Get" functions for Materials, Textures, and Shaders when there are more than one (per-polygon or per-vertex)
@@ -178,7 +178,7 @@ public:
 	** Post-Load processing, configures all materials to use the correct passes and
 	** material color sources, etc.
 	*/
-	void							Post_Load_Process(bool enable_lighting = true,MeshModelClass * parent = NULL);
+	void							Post_Load_Process(bool enable_lighting = true,MeshModelClass * parent = nullptr);
 	void							Disable_Lighting(void);
 
 	/*
@@ -225,7 +225,7 @@ protected:
 /**
 ** MatBufferClass
 ** This is a ShareBufferClass of pointers to vertex materials.  Should be written as a template...
-** Get and Peek work like normal, and all non-NULL pointers will be released when the buffer
+** Get and Peek work like normal, and all non-null pointers will be released when the buffer
 ** is destroyed.
 */
 class MatBufferClass : public ShareBufferClass < VertexMaterialClass * >
@@ -303,12 +303,12 @@ private:
 inline Vector2 * MeshMatDescClass::Get_UV_Array(int pass,int stage)
 {
 	if (UVSource[pass][stage] == -1) {
-		return NULL;
+		return nullptr;
 	}
-	if (UV[UVSource[pass][stage]] != NULL) {
+	if (UV[UVSource[pass][stage]] != nullptr) {
 		return UV[UVSource[pass][stage]]->Get_Array();
 	}
-	return NULL;
+	return nullptr;
 }
 
 inline void MeshMatDescClass::Set_UV_Source(int pass,int stage,int sourceindex)
@@ -332,7 +332,7 @@ inline int MeshMatDescClass::Get_UV_Source(int pass,int stage)
 inline int MeshMatDescClass::Get_UV_Array_Count(void)
 {
 	int count = 0;
-	while ((UV[count] != NULL) && (count < MAX_UV_ARRAYS)) {
+	while ((UV[count] != nullptr) && (count < MAX_UV_ARRAYS)) {
 		count++;
 	}
 	return count;
@@ -345,10 +345,10 @@ inline Vector2 * MeshMatDescClass::Get_UV_Array_By_Index(int index, bool create)
 	if (create && !UV[index]) {
 		UV[index] = NEW_REF(UVBufferClass,(VertexCount, "MeshMatDescClass::UV"));
 	}
-	if (UV[index] != NULL) {
+	if (UV[index] != nullptr) {
 		return UV[index]->Get_Array();
 	}
-	return NULL;
+	return nullptr;
 }
 
 inline unsigned* MeshMatDescClass::Get_DCG_Array(int pass)
@@ -357,25 +357,25 @@ inline unsigned* MeshMatDescClass::Get_DCG_Array(int pass)
 	WWASSERT(pass < MAX_PASSES);
 	switch (DCGSource[pass]) {
 		case VertexMaterialClass::MATERIAL:
-			return NULL;
+			return nullptr;
 			break;
 		case VertexMaterialClass::COLOR1:
 			if (ColorArray[0]) {
 				return ColorArray[0]->Get_Array();
 			} else {
-				return NULL;
+				return nullptr;
 			}
 			break;
 		case VertexMaterialClass::COLOR2:
 			if (ColorArray[1]) {
 				return ColorArray[1]->Get_Array();
 			} else {
-				return NULL;
+				return nullptr;
 			}
 			break;
 		default:
 			WWASSERT(0);
-			return(NULL);
+			return(nullptr);
 			break;
 	};
 }
@@ -386,25 +386,25 @@ inline unsigned * MeshMatDescClass::Get_DIG_Array(int pass)
 	WWASSERT(pass < MAX_PASSES);
 	switch (DIGSource[pass]) {
 		case VertexMaterialClass::MATERIAL:
-			return NULL;
+			return nullptr;
 			break;
 		case VertexMaterialClass::COLOR1:
 			if (ColorArray[0]) {
 				return ColorArray[0]->Get_Array();
 			} else {
-				return NULL;
+				return nullptr;
 			}
 			break;
 		case VertexMaterialClass::COLOR2:
 			if (ColorArray[1]) {
 				return ColorArray[1]->Get_Array();
 			} else {
-				return NULL;
+				return nullptr;
 			}
 			break;
 		default:
 			WWASSERT(0);
-			return(NULL);
+			return(nullptr);
 			break;
 	};
 }
@@ -437,7 +437,7 @@ inline unsigned * MeshMatDescClass::Get_Color_Array(int index,bool create)
 	if (ColorArray[index]) {
 		return ColorArray[index]->Get_Array();
 	}
-	return NULL;
+	return nullptr;
 }
 
 inline VertexMaterialClass * MeshMatDescClass::Get_Single_Material(int pass) const
@@ -465,17 +465,17 @@ inline ShaderClass MeshMatDescClass::Get_Single_Shader(int pass) const
 
 inline bool MeshMatDescClass::Has_Material_Array(int pass) const
 {
-	return (MaterialArray[pass] != NULL);
+	return (MaterialArray[pass] != nullptr);
 }
 
 inline bool MeshMatDescClass::Has_Shader_Array(int pass) const
 {
-	return (ShaderArray[pass] != NULL);
+	return (ShaderArray[pass] != nullptr);
 }
 
 inline bool MeshMatDescClass::Has_Texture_Array(int pass,int stage) const
 {
-	return (TextureArray[pass][stage] != NULL);
+	return (TextureArray[pass][stage] != nullptr);
 }
 
 inline void MeshMatDescClass::Disable_Backface_Culling(void)

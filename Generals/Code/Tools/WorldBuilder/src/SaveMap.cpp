@@ -28,7 +28,7 @@
 // SaveMap dialog
 
 
-SaveMap::SaveMap(TSaveMapInfo *pInfo, CWnd* pParent /*=NULL*/)
+SaveMap::SaveMap(TSaveMapInfo *pInfo, CWnd* pParent /*=nullptr*/)
 	: CDialog(SaveMap::IDD, pParent),
 	m_pInfo(pInfo)
 {
@@ -74,7 +74,7 @@ void SaveMap::OnUserMaps()
 void SaveMap::OnOK()
 {
 	CWnd *pEdit = GetDlgItem(IDC_SAVE_MAP_EDIT);
-	if (pEdit == NULL) {
+	if (pEdit == nullptr) {
 		DEBUG_CRASH(("Bad resources."));
 		OnCancel();
 		return;
@@ -119,7 +119,7 @@ void SaveMap::populateMapListbox( Bool systemMaps )
 	m_pInfo->usingSystemDir = m_usingSystemDir = systemMaps;
 	::AfxGetApp()->WriteProfileInt(MAP_OPENSAVE_PANEL_SECTION, "UseSystemDir", m_usingSystemDir);
 
-	HANDLE			hFindFile = 0;
+	HANDLE			hFindFile = nullptr;
 	WIN32_FIND_DATA			findData;
 	char				dirBuf[_MAX_PATH];
 	char				findBuf[_MAX_PATH];
@@ -136,7 +136,7 @@ void SaveMap::populateMapListbox( Bool systemMaps )
 		dirBuf[len] = 0;
 	}
 	CListBox *pList = (CListBox *)this->GetDlgItem(IDC_SAVE_LIST);
-	if (pList == NULL) return;
+	if (pList == nullptr) return;
 	pList->ResetContent();
 	snprintf(findBuf, ARRAY_SIZE(findBuf), "%s*.*", dirBuf);
 
@@ -163,7 +163,7 @@ void SaveMap::populateMapListbox( Bool systemMaps )
 		if (hFindFile) FindClose(hFindFile);
  	}
 	CEdit *pEdit = (CEdit*)GetDlgItem(IDC_SAVE_MAP_EDIT);
-	if (pEdit != NULL) {
+	if (pEdit != nullptr) {
 		strlcpy(fileBuf, m_pInfo->filename, ARRAY_SIZE(fileBuf));
 		Int len = strlen(fileBuf);
 		if (len>4 && stricmp(".map", fileBuf+(len-4)) == 0) {
@@ -186,7 +186,7 @@ void SaveMap::populateMapListbox( Bool systemMaps )
 void SaveMap::OnSelchangeSaveList()
 {
 	CListBox *pList = (CListBox *)this->GetDlgItem(IDC_SAVE_LIST);
-	if (pList == NULL) {
+	if (pList == nullptr) {
 		return;
 	}
 
@@ -196,7 +196,7 @@ void SaveMap::OnSelchangeSaveList()
 		pList->GetText(sel, filename);
 	}
 	CWnd *pEdit = GetDlgItem(IDC_SAVE_MAP_EDIT);
-	if (pEdit == NULL) {
+	if (pEdit == nullptr) {
 		return;
 	}
 	pEdit->SetWindowText(filename);
@@ -207,11 +207,11 @@ BOOL SaveMap::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	CButton *pSystemMaps = (CButton *)this->GetDlgItem(IDC_SYSTEMMAPS);
-	if (pSystemMaps != NULL)
+	if (pSystemMaps != nullptr)
 		pSystemMaps->SetCheck( m_usingSystemDir );
 
 	CButton *pUserMaps = (CButton *)this->GetDlgItem(IDC_USERMAPS);
-	if (pUserMaps != NULL)
+	if (pUserMaps != nullptr)
 		pUserMaps->SetCheck( !m_usingSystemDir );
 
 	// TheSuperHackers @tweak Originally World Builder has hidden the System Maps tab button in Release builds,

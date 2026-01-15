@@ -95,7 +95,7 @@ static FunctionLexicon::TableEntry gameWinDrawTable [] =
 	{ NAMEKEY_INVALID, "W3DNoDraw",											W3DNoDraw },
 	{ NAMEKEY_INVALID, "W3DDrawMapPreview",							W3DDrawMapPreview },
 
-	{ NAMEKEY_INVALID, NULL,														NULL },
+	{ NAMEKEY_INVALID, nullptr,														nullptr },
 
 };
 
@@ -105,7 +105,7 @@ static FunctionLexicon::TableEntry layoutInitTable [] =
 
 	{ NAMEKEY_INVALID, "W3DMainMenuInit",								W3DMainMenuInit },
 
-	{ NAMEKEY_INVALID, NULL,														NULL },
+	{ NAMEKEY_INVALID, nullptr,														nullptr },
 
 };
 

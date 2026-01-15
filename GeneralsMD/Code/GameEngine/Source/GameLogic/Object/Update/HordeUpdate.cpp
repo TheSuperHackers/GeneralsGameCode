@@ -57,7 +57,7 @@ static HordeUpdateInterface* getHUI(Object* obj)
 		if( hui )
 			return hui;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -132,17 +132,17 @@ HordeUpdateModuleData::HordeUpdateModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "UpdateRate", INI::parseDurationUnsignedInt, NULL, offsetof(HordeUpdateModuleData, m_updateRate) },
-		{ "KindOf", KindOfMaskType::parseFromINI, NULL, offsetof(HordeUpdateModuleData, m_kindof) },
-		{ "Count", INI::parseInt, NULL, offsetof(HordeUpdateModuleData, m_minCount) },
-		{ "Radius", INI::parseReal, NULL, offsetof(HordeUpdateModuleData, m_minDist) },
-		{ "RubOffRadius", INI::parseReal, NULL, offsetof(HordeUpdateModuleData, m_rubOffRadius) },
-		{ "AlliesOnly", INI::parseBool, NULL, offsetof(HordeUpdateModuleData, m_alliesOnly) },
-		{ "ExactMatch", INI::parseBool, NULL, offsetof(HordeUpdateModuleData, m_exactMatch) },
+		{ "UpdateRate", INI::parseDurationUnsignedInt, nullptr, offsetof(HordeUpdateModuleData, m_updateRate) },
+		{ "KindOf", KindOfMaskType::parseFromINI, nullptr, offsetof(HordeUpdateModuleData, m_kindof) },
+		{ "Count", INI::parseInt, nullptr, offsetof(HordeUpdateModuleData, m_minCount) },
+		{ "Radius", INI::parseReal, nullptr, offsetof(HordeUpdateModuleData, m_minDist) },
+		{ "RubOffRadius", INI::parseReal, nullptr, offsetof(HordeUpdateModuleData, m_rubOffRadius) },
+		{ "AlliesOnly", INI::parseBool, nullptr, offsetof(HordeUpdateModuleData, m_alliesOnly) },
+		{ "ExactMatch", INI::parseBool, nullptr, offsetof(HordeUpdateModuleData, m_exactMatch) },
 		{ "Action", INI::parseIndexList, TheHordeActionTypeNames, offsetof(HordeUpdateModuleData, m_action) },
-		{ "FlagSubObjectNames", INI::parseAsciiStringVector, NULL, offsetof(HordeUpdateModuleData, m_flagSubObjNames) },
-		{ "AllowedNationalism", INI::parseBool, NULL, offsetof(HordeUpdateModuleData, m_allowedNationalism) },
-		{ 0, 0, 0, 0 }
+		{ "FlagSubObjectNames", INI::parseAsciiStringVector, nullptr, offsetof(HordeUpdateModuleData, m_flagSubObjNames) },
+		{ "AllowedNationalism", INI::parseBool, nullptr, offsetof(HordeUpdateModuleData, m_allowedNationalism) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
@@ -257,7 +257,7 @@ UpdateSleepTime HordeUpdate::update( void )
 		m_lastHordeRefreshFrame = TheGameLogic->getFrame();
 
 		PartitionFilterHordeMember hmFilter(getObject(), md);
-		PartitionFilter *filters[] = { &hmFilter, NULL };
+		PartitionFilter *filters[] = { &hmFilter, nullptr };
 		SimpleObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(getObject(), md->m_minDist, FROM_BOUNDINGSPHERE_3D, filters);
 		MemoryPoolObjectHolder hold(iter);
 
@@ -275,7 +275,7 @@ UpdateSleepTime HordeUpdate::update( void )
 			for (Object* other = iter->first(); other; other = iter->next())
 			{
 				HordeUpdateInterface* hui = getHUI(other);
-				if ( hui != NULL && hui->isTrueHordeMember() )
+				if ( hui != nullptr && hui->isTrueHordeMember() )
 				{
 					Real dist = ThePartitionManager->getDistanceSquared(getObject(), other, FROM_CENTER_2D);
 

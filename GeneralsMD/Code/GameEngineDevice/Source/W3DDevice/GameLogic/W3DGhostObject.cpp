@@ -177,8 +177,8 @@ Bool W3DRenderObjectSnapshot::removeFromScene()
 W3DRenderObjectSnapshot::W3DRenderObjectSnapshot(RenderObjClass *robj, DrawableInfo *drawInfo,
 																								 Bool cloneParentRobj)
 {
-	m_robj = NULL;
-	m_next = NULL;
+	m_robj = nullptr;
+	m_next = nullptr;
 	update(robj, drawInfo, cloneParentRobj);
 }
 
@@ -298,15 +298,15 @@ void W3DRenderObjectSnapshot::loadPostProcess( void )
 W3DGhostObject::W3DGhostObject()
 {
 	for (Int i = 0; i < MAX_PLAYER_COUNT; i++)
-		m_parentSnapshots[i] = NULL;
+		m_parentSnapshots[i] = nullptr;
 
-	m_drawableInfo.m_drawable = NULL;
+	m_drawableInfo.m_drawable = nullptr;
 	m_drawableInfo.m_flags = 0;
-	m_drawableInfo.m_ghostObject = NULL;
+	m_drawableInfo.m_ghostObject = nullptr;
 	m_drawableInfo.m_shroudStatusObjectID = INVALID_ID;
 
-	m_nextSystem = NULL;
-	m_prevSystem = NULL;
+	m_nextSystem = nullptr;
+	m_prevSystem = nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -318,12 +318,12 @@ W3DGhostObject::~W3DGhostObject()
 	{
 		for (Int i = 0; i < MAX_PLAYER_COUNT; i++)
 		{
-			DEBUG_ASSERTCRASH(m_parentSnapshots[i] == NULL, ("Delete of non-empty GhostObject"));
+			DEBUG_ASSERTCRASH(m_parentSnapshots[i] == nullptr, ("Delete of non-empty GhostObject"));
 		}
 	}
 	else
 	{
-		DEBUG_ASSERTCRASH(m_parentSnapshots[TheGhostObjectManager->getLocalPlayerIndex()] == NULL, ("Delete of non-empty GhostObject"));
+		DEBUG_ASSERTCRASH(m_parentSnapshots[TheGhostObjectManager->getLocalPlayerIndex()] == nullptr, ("Delete of non-empty GhostObject"));
 	}
 #endif
 }
@@ -351,7 +351,7 @@ void W3DGhostObject::snapShot(int playerIndex)
 	draw->setShroudClearFrame(InvalidShroudClearFrame);
 
 	W3DRenderObjectSnapshot *snap = m_parentSnapshots[playerIndex];
-	W3DRenderObjectSnapshot *prevSnap = NULL;
+	W3DRenderObjectSnapshot *prevSnap = nullptr;
 
 	//walk through all W3D render objects used by this object
 	for (DrawModule ** dm = draw->getDrawModules(); *dm; ++dm)
@@ -366,7 +366,7 @@ void W3DGhostObject::snapShot(int playerIndex)
 			//as for build-ups that are currently disabled.
 			if (robj)
 			{
-				if (snap == NULL)
+				if (snap == nullptr)
 				{
 					snap = NEW W3DRenderObjectSnapshot(robj, &m_drawableInfo);	// poolify
 					if (prevSnap)
@@ -417,7 +417,7 @@ void W3DGhostObject::snapShot(int playerIndex)
 void W3DGhostObject::removeParentObject(void)
 {
 	// sanity
-	if( m_parentObject == NULL )
+	if( m_parentObject == nullptr )
 		return;
 
 	Drawable *draw = m_parentObject->getDrawable();
@@ -441,7 +441,7 @@ void W3DGhostObject::removeParentObject(void)
 			RenderObjClass *robj = w3dDraw->getRenderObject();
 			if (robj)
 			{
-				DEBUG_ASSERTCRASH(robj->Peek_Scene() != NULL, ("Removing GhostObject parent not in scene"));
+				DEBUG_ASSERTCRASH(robj->Peek_Scene() != nullptr, ("Removing GhostObject parent not in scene"));
 				robj->Remove();
 			}
 		}
@@ -534,7 +534,7 @@ void W3DGhostObject::freeSnapShot(int playerIndex)
 			delete snap;
 			snap = nextSnap;
 		}
-		m_parentSnapshots[playerIndex] = NULL;
+		m_parentSnapshots[playerIndex] = nullptr;
 	}
 }
 
@@ -628,7 +628,7 @@ void W3DGhostObject::xfer( Xfer *xfer )
 		m_drawableInfo.m_drawable = TheGameClient->findDrawableByID( drawableID );
 
 		// sanity
-		if( drawableID != INVALID_DRAWABLE_ID && m_drawableInfo.m_drawable == NULL )
+		if( drawableID != INVALID_DRAWABLE_ID && m_drawableInfo.m_drawable == nullptr )
 			DEBUG_CRASH(( "W3DGhostObject::xfer - Unable to find drawable for ghost object" ));
 	}
 
@@ -661,7 +661,7 @@ void W3DGhostObject::xfer( Xfer *xfer )
 		// sanity, this catches when we read from the file a count of zero, but our data
 		// structure already has something allocated in this snapshot index
 		//
-		if( snapshotCount == 0 && m_parentSnapshots[ i ] != NULL )
+		if( snapshotCount == 0 && m_parentSnapshots[ i ] != nullptr )
 		{
 			DEBUG_CRASH(( "W3DGhostObject::xfer - m_parentShapshots[ %d ] has data present but the count from the xfer stream is empty", i ));
 			throw INI_INVALID_DATA;
@@ -700,7 +700,7 @@ void W3DGhostObject::xfer( Xfer *xfer )
 		else
 		{
 			RenderObjClass *renderObject;
-			W3DRenderObjectSnapshot *prevObjectSnapshot = NULL;
+			W3DRenderObjectSnapshot *prevObjectSnapshot = nullptr;
 
 			for( UnsignedByte j = 0; j < snapshotCount; ++j )
 			{
@@ -741,7 +741,7 @@ void W3DGhostObject::xfer( Xfer *xfer )
 	// in the world, we need to remove it
 	//
 	if( m_parentObject &&
-			m_parentSnapshots[TheGhostObjectManager->getLocalPlayerIndex()] != NULL &&
+			m_parentSnapshots[TheGhostObjectManager->getLocalPlayerIndex()] != nullptr &&
 			xfer->getXferMode() == XFER_LOAD )
 		removeParentObject();
 
@@ -811,8 +811,8 @@ void W3DGhostObject::loadPostProcess( void )
 // ------------------------------------------------------------------------------------------------
 W3DGhostObjectManager::W3DGhostObjectManager(void)
 {
-	m_freeModules = NULL;
-	m_usedModules = NULL;
+	m_freeModules = nullptr;
+	m_usedModules = nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -853,7 +853,7 @@ void W3DGhostObjectManager::reset(void)
 		mod = nextmod;
 	}
 
-	DEBUG_ASSERTCRASH(m_usedModules == NULL, ("Reset of Non-Empty GhostObjectManager"));
+	DEBUG_ASSERTCRASH(m_usedModules == nullptr, ("Reset of Non-Empty GhostObjectManager"));
 
 	//Delete any remaining modules (should be none)
 	mod = m_usedModules;
@@ -885,7 +885,7 @@ void W3DGhostObjectManager::removeGhostObject(GhostObject *object)
 		m_usedModules = mod->m_nextSystem;
 
 	// add module to free list
-	mod->m_prevSystem = NULL;
+	mod->m_prevSystem = nullptr;
 	mod->m_nextSystem = m_freeModules;
 	if( m_freeModules )
 		m_freeModules->m_prevSystem = mod;
@@ -898,11 +898,11 @@ GhostObject *W3DGhostObjectManager::addGhostObject(Object *object, PartitionData
 {
 	// we disabled adding new ghost objects - used during map border resizing and loading
 	if (m_lockGhostObjects || m_saveLockGhostObjects )
-		return NULL;
+		return nullptr;
 
 #if defined(DEBUG_FOG_MEMORY) && defined(DEBUG_CRASHING)
 	// sanity
-	if( object != NULL )
+	if( object != nullptr )
 	{
 		W3DGhostObject *sanity = m_usedModules;
 		while( sanity )
@@ -930,7 +930,7 @@ GhostObject *W3DGhostObjectManager::addGhostObject(Object *object, PartitionData
 		mod = NEW W3DGhostObject;	// poolify
 	}
 
-	mod->m_prevSystem = NULL;
+	mod->m_prevSystem = nullptr;
 	mod->m_nextSystem = m_usedModules;
 	if( m_usedModules )
 		m_usedModules->m_prevSystem = mod;
@@ -938,7 +938,7 @@ GhostObject *W3DGhostObjectManager::addGhostObject(Object *object, PartitionData
 
 	//Copy settings from parent object
 	mod->m_parentObject = object;
-	mod->m_drawableInfo.m_drawable = NULL;	//these dummy render objects don't have drawables.
+	mod->m_drawableInfo.m_drawable = nullptr;	//these dummy render objects don't have drawables.
 	mod->m_drawableInfo.m_ghostObject = mod;
 	mod->m_partitionData = pd;
 
@@ -990,10 +990,10 @@ void W3DGhostObjectManager::setLocalPlayerIndex(int playerIndex)
 	// TheSuperHackers @bugfix xezon 06/09/2025 This function now properly updates
 	// all real objects when changing players without waiting for another logic step.
 	// This is particularly noticeable when changing the player while the game is paused.
-	for (Drawable* draw = TheGameClient->firstDrawable(); draw != NULL; draw = draw->getNextDrawable())
+	for (Drawable* draw = TheGameClient->firstDrawable(); draw != nullptr; draw = draw->getNextDrawable())
 	{
 		Object* obj = draw->getObject();
-		if (obj == NULL)
+		if (obj == nullptr)
 			continue;
 
 		const ObjectShroudStatus shroudStatus = obj->getShroudedStatus(playerIndex);
@@ -1028,7 +1028,7 @@ void W3DGhostObjectManager::updateOrphanedObjects(int *playerIndexList, int play
 		{
 			numStoredSnapshots = 0;
 
-			if (playerIndexList != NULL && playerIndexCount > 0)
+			if (playerIndexList != nullptr && playerIndexCount > 0)
 			{
 				int* playerIndex = playerIndexList;
 				int* const playerIndexEnd = playerIndexList + playerIndexCount;
@@ -1050,7 +1050,7 @@ void W3DGhostObjectManager::updateOrphanedObjects(int *playerIndexList, int play
 			if (!numStoredSnapshots)
 			{
 				ThePartitionManager->unRegisterGhostObject(mod);
-				mod->m_partitionData = NULL;
+				mod->m_partitionData = nullptr;
 				removeGhostObject(mod);
 			}
 		}
@@ -1078,14 +1078,14 @@ void W3DGhostObjectManager::releasePartitionData(void)
 		if (!mod->m_parentObject)
 		{
 			ThePartitionManager->unRegisterGhostObject(mod);
-			mod->m_partitionData = NULL;
+			mod->m_partitionData = nullptr;
 		}
 		else
 		{
 			//The parent object will handle unregistering so just tell to break the
 			//ghost object link.
-			mod->friend_getPartitionData()->friend_setGhostObject(NULL);
-			mod->m_partitionData = NULL;
+			mod->friend_getPartitionData()->friend_setGhostObject(nullptr);
+			mod->m_partitionData = nullptr;
 		}
 		mod=nextmod;
 	}
@@ -1183,8 +1183,8 @@ void W3DGhostObjectManager::xfer( Xfer *xfer )
 	else
 	{
 		// sanity, there should be no ghost objects loaded at this time
-		DEBUG_ASSERTCRASH( m_usedModules == NULL,
-			("W3DGhostObjectManager::xfer - The used module list is not NULL upon load, but should be!") );
+		DEBUG_ASSERTCRASH( m_usedModules == nullptr,
+			("W3DGhostObjectManager::xfer - The used module list is not null upon load, but should be!") );
 
 		// now it's time to unlock the ghost objects for loading
 		DEBUG_ASSERTCRASH( m_saveLockGhostObjects == TRUE,
@@ -1211,11 +1211,11 @@ void W3DGhostObjectManager::xfer( Xfer *xfer )
 				ghostObject = addGhostObject( object, object->friend_getPartitionData() );
 
 				// sanity
-				DEBUG_ASSERTCRASH( ghostObject != NULL,
+				DEBUG_ASSERTCRASH( ghostObject != nullptr,
 					("W3DGhostObjectManager::xfer - Could not create ghost object for object '%s'", object->getTemplate()->getName().str()) );
 
 				// link the ghost object and logical object togehter through partition/ghostObject dat
-				DEBUG_ASSERTCRASH( object->friend_getPartitionData()->getGhostObject() == NULL,
+				DEBUG_ASSERTCRASH( object->friend_getPartitionData()->getGhostObject() == nullptr,
 					("W3DGhostObjectManager::xfer - Ghost object already on object '%s'", object->getTemplate()->getName().str()) );
 
 				object->friend_getPartitionData()->friend_setGhostObject( ghostObject );
@@ -1223,7 +1223,7 @@ void W3DGhostObjectManager::xfer( Xfer *xfer )
 			else
 			{
 				// create object with no object or partition data
-				ghostObject = addGhostObject( NULL, NULL );
+				ghostObject = addGhostObject( nullptr, nullptr );
 
 				// register ghost object object with partition system and fill out partition data
 				ThePartitionManager->registerGhostObject( ghostObject );

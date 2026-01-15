@@ -61,7 +61,7 @@ const char *gAppPrefix = "ip_";	// So IP can have a different debug log file nam
 ///////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-ImagePacker *TheImagePacker = NULL;
+ImagePacker *TheImagePacker = nullptr;
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 
@@ -80,23 +80,23 @@ TexturePage *ImagePacker::createNewTexturePage( void )
 
 	// allocate new page
 	page = new TexturePage( getTargetWidth(), getTargetHeight() );
-	if( page == NULL )
+	if( page == nullptr )
 	{
 
 		DEBUG_ASSERTCRASH( page, ("Unable to allocate new texture page.") );
-		return NULL;
+		return nullptr;
 
 	}
 
 	// link page to list
-	page->m_prev = NULL;
+	page->m_prev = nullptr;
 	page->m_next = m_pageList;
 	if( m_pageList )
 		m_pageList->m_prev = page;
 	m_pageList = page;
 
 	// add the tail pointer if this is the first page
-	if( m_pageTail == NULL )
+	if( m_pageTail == nullptr )
 		m_pageTail = page;
 
 	// we got a new page now
@@ -134,10 +134,10 @@ Bool ImagePacker::validateImages( void )
 		image = m_imageList[ i ];
 
 		// sanity
-		if( image == NULL )
+		if( image == nullptr )
 		{
 
-			DEBUG_ASSERTCRASH( image, ("Image in imagelist is NULL") );
+			DEBUG_ASSERTCRASH( image, ("Image in imagelist is null") );
 			continue;  // should never happen
 
 		}
@@ -195,8 +195,8 @@ Bool ImagePacker::validateImages( void )
 Bool ImagePacker::packImages( void )
 {
 	UnsignedInt i;
-	TexturePage *page = NULL;
-	ImageInfo *image = NULL;
+	TexturePage *page = nullptr;
+	ImageInfo *image = nullptr;
 
 	//
 	// first sanity check all images loaded, if there are images that cannot
@@ -238,11 +238,11 @@ Bool ImagePacker::packImages( void )
 		}
 
 		// if image was not able to go on any existing page create a new page for it
-		if( page == NULL )
+		if( page == nullptr )
 		{
 
 			page = createNewTexturePage();
-			if( page == NULL )
+			if( page == nullptr )
 				return FALSE;
 
 			// try to add the image to this page
@@ -252,7 +252,7 @@ Bool ImagePacker::packImages( void )
 
 				sprintf( buffer, "Unable to add image '%s' to a brand new page!\n", image->m_path );
 				DEBUG_ASSERTCRASH( 0, (buffer) );
-				MessageBox( NULL, buffer, "Internal Error", MB_OK | MB_ICONERROR );
+				MessageBox( nullptr, buffer, "Internal Error", MB_OK | MB_ICONERROR );
 				return FALSE;
 
 			}
@@ -363,7 +363,7 @@ void ImagePacker::addImagesInDirectory( char *dir )
 {
 
 	// sanity
-	if( dir == NULL )
+	if( dir == nullptr )
 		return;
 
 	char currDir[ _MAX_PATH ];
@@ -461,7 +461,7 @@ Bool ImagePacker::checkOutputDirectory( void )
 	GetCurrentDirectory( _MAX_PATH, currDir );
 
 	// create the output directory if it does not exist
-	CreateDirectory( m_outputDirectory, NULL );
+	CreateDirectory( m_outputDirectory, nullptr );
 
 	// change into the output directory
 	SetCurrentDirectory( m_outputDirectory );
@@ -504,7 +504,7 @@ Bool ImagePacker::checkOutputDirectory( void )
 
 		sprintf( buffer, "The output directory (%s) must be empty before proceeding.  Delete '%d' files and continue with build process?",
 						 m_outputDirectory, fileCount );
-		response = MessageBox( NULL, buffer,
+		response = MessageBox( nullptr, buffer,
 													 "Delete files to continue?",
 													 MB_YESNO | MB_ICONWARNING );
 
@@ -572,7 +572,7 @@ void ImagePacker::resetPageList( void )
 
 	}
 
-	m_pageTail = NULL;
+	m_pageTail = nullptr;
 	m_pageCount = 0;
 	m_targetPreviewPage = 1;
 
@@ -606,7 +606,7 @@ void ImagePacker::resetImageList( void )
 {
 
 	delete [] m_imageList;
-	m_imageList = NULL;
+	m_imageList = nullptr;
 	m_imageCount = 0;
 
 }
@@ -625,7 +625,7 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 	HANDLE hFile;  // handle for search resources
 
 	// santiy
-	if( path == NULL )
+	if( path == nullptr )
 		return;
 
 	// check to see if path is already in list
@@ -643,10 +643,10 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 
 	// image is not in list, make a new entry and link to the list
 	dir = new ImageDirectory;
-	if( dir == NULL )
+	if( dir == nullptr )
 	{
 
-		MessageBox( NULL, "Unable to allocate image directory", "Error",
+		MessageBox( nullptr, "Unable to allocate image directory", "Error",
 								MB_OK | MB_ICONERROR );
 		return;
 
@@ -656,10 +656,10 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 	Int len = strlen( path );
 	dir->m_path = new char[ len + 1 ];
 	strcpy( dir->m_path, path );
-	if( dir->m_path == NULL )
+	if( dir->m_path == nullptr )
 	{
 
-		MessageBox( NULL, "Unable to allocate path for directory", "Error",
+		MessageBox( nullptr, "Unable to allocate path for directory", "Error",
 								MB_OK | MB_ICONERROR );
 		delete dir;
 		return;
@@ -667,7 +667,7 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 	}
 
 	// tie to list
-	dir->m_prev = NULL;
+	dir->m_prev = nullptr;
 	dir->m_next = m_dirList;
 	if( m_dirList )
 		m_dirList->m_prev = dir;
@@ -788,15 +788,15 @@ void ImagePacker::addImage( char *path )
 {
 
 	// sanity
-	if( path == NULL )
+	if( path == nullptr )
 		return;
 
 	// allocate a new entry
 	ImageInfo *info = new ImageInfo;
-	if( info == NULL )
+	if( info == nullptr )
 	{
 
-		MessageBox( NULL, "Unable to allocate image info", "Error",
+		MessageBox( nullptr, "Unable to allocate image info", "Error",
 								MB_OK | MB_ICONERROR );
 		return;
 
@@ -806,10 +806,10 @@ void ImagePacker::addImage( char *path )
 	Int len = strlen( path );
 	info->m_path = new char[ len + 1 ];
 	strcpy( info->m_path, path );
-	if( info->m_path == NULL )
+	if( info->m_path == nullptr )
 	{
 
-		MessageBox( NULL, "Unable to allcoate image path info", "Error",
+		MessageBox( nullptr, "Unable to allcoate image path info", "Error",
 								MB_OK | MB_ICONERROR );
 		delete info;
 		return;
@@ -869,12 +869,12 @@ Bool ImagePacker::generateINIFile( void )
 
 	// open the file
 	fp = fopen( filename, "w" );
-	if( fp == NULL )
+	if( fp == nullptr )
 	{
 		char buffer[ _MAX_PATH + 64 ];
 
 		sprintf( buffer, "Cannot open INI file '%s' for writing.", filename );
-		MessageBox( NULL, buffer, "Error Opening File", MB_OK | MB_ICONERROR );
+		MessageBox( nullptr, buffer, "Error Opening File", MB_OK | MB_ICONERROR );
 		return FALSE;
 
 	}
@@ -948,7 +948,7 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 	Int i;
 
 	// sanity
-	if( dialog == NULL )
+	if( dialog == nullptr )
 		return FALSE;
 
 	// if we are using a user target image size, it must be a power of 2
@@ -957,7 +957,7 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 		UnsignedInt size, val;
 		Int bitCount = 0;
 
-		size = GetDlgItemInt( dialog, EDIT_WIDTH, NULL, FALSE );
+		size = GetDlgItemInt( dialog, EDIT_WIDTH, nullptr, FALSE );
 		for( val = size; val; val >>= 1 )
 			if( BitIsSet( val, 0x1 ) )
 				bitCount++;
@@ -969,7 +969,7 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 		if( bitCount != 1 )
 		{
 
-			MessageBox( NULL, "The target image size must be a power of 2.",
+			MessageBox( nullptr, "The target image size must be a power of 2.",
 									"Must Be Power Of 2", MB_OK | MB_ICONERROR );
 			return FALSE;
 
@@ -988,7 +988,7 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 	else
 	{
 
-		MessageBox( NULL, "Internal Error. Target Size Unknown.",
+		MessageBox( nullptr, "Internal Error. Target Size Unknown.",
 								"Error", MB_OK | MB_ICONERROR );
 		return FALSE;
 
@@ -1027,7 +1027,7 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 		setGapMethod( ImagePacker::GAP_METHOD_GUTTER );
 
 	// get gutter size whether we are using that option or not
-	Int gutter = GetDlgItemInt( dialog, EDIT_GUTTER, NULL, FALSE );
+	Int gutter = GetDlgItemInt( dialog, EDIT_GUTTER, nullptr, FALSE );
 	if( gutter < 0 )
 		gutter = 0;
 	setGutter( gutter );
@@ -1051,7 +1051,7 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 
 				sprintf( buffer, "Output filename '%s' contains one or more of the following illegal characters:\n\n%s",
 								 m_outputFile, illegal );
-				MessageBox( NULL, buffer, "Illegal Filename", MB_OK | MB_ICONERROR );
+				MessageBox( nullptr, buffer, "Illegal Filename", MB_OK | MB_ICONERROR );
 				return FALSE;
 
 			}
@@ -1095,20 +1095,20 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 ImagePacker::ImagePacker( void )
 {
 
-	m_hWnd = NULL;
+	m_hWnd = nullptr;
 	m_targetSize.x = DEFAULT_TARGET_SIZE;
 	m_targetSize.y = DEFAULT_TARGET_SIZE;
 	m_useSubFolders = TRUE;
 	strcpy( m_outputFile, "" );
 	strcpy( m_outputDirectory, "" );
-	m_dirList = NULL;
+	m_dirList = nullptr;
 	m_dirCount = 0;
 	m_imagesInDirs = 0;
-	m_imageList = NULL;
+	m_imageList = nullptr;
 	m_imageCount = 0;
 	strcpy( m_statusBuffer, "" );
-	m_pageList = NULL;
-	m_pageTail = NULL;
+	m_pageList = nullptr;
+	m_pageTail = nullptr;
 	m_pageCount = 0;
 	m_gapMethod = GAP_METHOD_EXTEND_RGB;
 	m_gutterSize = 1;
@@ -1116,10 +1116,10 @@ ImagePacker::ImagePacker( void )
 	m_createINI = TRUE;
 
 	m_targetPreviewPage = 1;
-	m_hWndPreview = NULL;
+	m_hWndPreview = nullptr;
 	m_showTextureInPreview = FALSE;
 
-	m_targa = NULL;
+	m_targa = nullptr;
 	m_compressTextures = FALSE;
 
 }
@@ -1148,11 +1148,11 @@ Bool ImagePacker::init( void )
 
 	// allocate a targa to read the headers for the images
 	m_targa = new Targa;
-	if( m_targa == NULL )
+	if( m_targa == nullptr )
 	{
 
 		DEBUG_ASSERTCRASH( m_targa, ("Unable to allocate targa header during init") );
-		MessageBox( NULL, "ImagePacker can't init, unable to create targa",
+		MessageBox( nullptr, "ImagePacker can't init, unable to create targa",
 								"Internal Error", MB_OK | MB_ICONERROR );
 		return FALSE;
 
@@ -1182,7 +1182,7 @@ Bool ImagePacker::process( void )
 	char currDir[ _MAX_PATH ];
 	GetCurrentDirectory( _MAX_PATH, currDir );
 	sprintf( m_outputDirectory, "%s\\ImagePackerOutput\\", currDir );
-	CreateDirectory( m_outputDirectory, NULL );
+	CreateDirectory( m_outputDirectory, nullptr );
 
 	// subdir of output directory based on output image name
 	strlcat(m_outputDirectory, m_outputFile, ARRAY_SIZE(m_outputDirectory));

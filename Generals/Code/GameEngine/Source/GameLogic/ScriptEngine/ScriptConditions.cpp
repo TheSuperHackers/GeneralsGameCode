@@ -66,7 +66,7 @@ class ObjectTypesTemp
 public:
 	ObjectTypes* m_types;
 
-	ObjectTypesTemp() : m_types(NULL)
+	ObjectTypesTemp() : m_types(nullptr)
 	{
 		m_types = newInstance(ObjectTypes);
 	}
@@ -93,7 +93,7 @@ namespace rts
 };
 
 // GLOBALS ////////////////////////////////////////////////////////////////////////////////////////
-ScriptConditionsInterface *TheScriptConditions = NULL;
+ScriptConditionsInterface *TheScriptConditions = nullptr;
 
 class TransportStatus : public MemoryPoolObject
 {
@@ -105,7 +105,7 @@ public:
 	Int								m_unitCount;
 
 public:
-	TransportStatus() : m_objID(INVALID_ID), m_frameNumber(0), m_unitCount(0), m_nextStatus(NULL) {}
+	TransportStatus() : m_objID(INVALID_ID), m_frameNumber(0), m_unitCount(0), m_nextStatus(nullptr) {}
 	//~TransportStatus();
 };
 
@@ -149,7 +149,7 @@ void ScriptConditions::reset( void )
 {
 
 	deleteInstance(s_transportStatuses);
-	s_transportStatuses = NULL;
+	s_transportStatuses = nullptr;
 	// Empty for now.  jba.
 }
 
@@ -170,7 +170,7 @@ parameter so we don't have to do a name search.  May return null if the player d
 Player *ScriptConditions::playerFromParam(Parameter *pSideParm)
 {
 	DEBUG_ASSERTCRASH(Parameter::SIDE == pSideParm->getParameterType(), ("Wrong parameter type."));
-	Player *pPlayer=NULL;
+	Player *pPlayer=nullptr;
 	UnsignedInt mask = (UnsignedInt)pSideParm->getInt();
 	if (mask) {
 		pPlayer = ThePlayerList->getPlayerFromMask(mask);
@@ -373,7 +373,7 @@ Bool ScriptConditions::evaluateHasUnits(Parameter *pTeamParm)
 
 	// It isn't THIS_TEAM, and doesn't match the THIS_TEAM, so check if any team with this name
 	// has units.
-	TeamPrototype *pProto = NULL;
+	TeamPrototype *pProto = nullptr;
 	pProto = TheTeamFactory->findTeamPrototype(desiredTeamName);
 
 	if (pProto) {
@@ -399,7 +399,7 @@ Bool ScriptConditions::evaluateTeamInsideAreaPartially(Parameter *pTeamParm, Par
 	AsciiString triggerName = pTriggerAreaParm->getString();
 	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerAreaParm->getString());
 
-	if (pTrig == NULL) return false;
+	if (pTrig == nullptr) return false;
 	if (theTeam) {
 		return (theTeam->someInsideSomeOutside(pTrig, (UnsignedInt) pTypeParm->getInt()) ||
 						theTeam->allInside(pTrig, (UnsignedInt) pTypeParm->getInt()));
@@ -420,7 +420,7 @@ Bool ScriptConditions::evaluateNamedInsideArea(Parameter *pUnitParm, Parameter *
 
 	AsciiString triggerName = pTriggerAreaParm->getString();
 	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerAreaParm->getString());
-	if (pTrig == NULL) return false;
+	if (pTrig == nullptr) return false;
 	if (theObj) {
 		Coord3D pCoord = *theObj->getPosition();
 		ICoord3D iCoord;
@@ -437,7 +437,7 @@ Bool ScriptConditions::evaluatePlayerHasUnitTypeInArea(Condition *pCondition, Pa
 {
 	AsciiString triggerName = pTriggerParm->getString();
 	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
-	if (pTrig == NULL) return false;
+	if (pTrig == nullptr) return false;
 
 	Player* pPlayer = playerFromParam(pPlayerParm);
 	if (!pPlayer) {
@@ -529,7 +529,7 @@ Bool ScriptConditions::evaluatePlayerHasUnitKindInArea(Condition *pCondition, Pa
 {
 	AsciiString triggerName = pTriggerParm->getString();
 	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
-	if (pTrig == NULL) return false;
+	if (pTrig == nullptr) return false;
 
 	KindOfType kind = (KindOfType)pKindParm->getInt();
 
@@ -654,7 +654,7 @@ Bool ScriptConditions::evaluateTeamInsideAreaEntirely(Parameter *pTeamParm, Para
 	AsciiString triggerName = pTriggerParm->getString();
 	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
 
-	if (pTrig == NULL)
+	if (pTrig == nullptr)
 		return false;
 
 	if (theTeam) {
@@ -772,7 +772,7 @@ Bool ScriptConditions::evaluateNamedAttackedByPlayer(Parameter *pUnitParm, Param
 
 	ObjectID id = lastDamageInfo->in.m_sourceID;
 	Object* pAttacker = TheGameLogic->findObjectByID(id);
-	Player *pPlayer = NULL;
+	Player *pPlayer = nullptr;
 	if (lastDamageInfo->in.m_sourcePlayerMask) {
 		pPlayer = ThePlayerList->getPlayerFromMask(lastDamageInfo->in.m_sourcePlayerMask);
 	}
@@ -878,7 +878,7 @@ Bool ScriptConditions::evaluateNamedCreated(Parameter* pUnitParm)
 {
 	// This is actually evaluateNamedExists(...)
 	///@todo - evaluate created, not exists...
-	return (TheScriptEngine->getUnitNamed(pUnitParm->getString()) != NULL);
+	return (TheScriptEngine->getUnitNamed(pUnitParm->getString()) != nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1043,7 +1043,7 @@ Bool ScriptConditions::evaluateEnemySighted(Parameter *pItemParm, Parameter *pAl
 	// and only on-map (or not)
 	PartitionFilterSameMapStatus filterMapStatus(theObj);
 
-	PartitionFilter *filters[] = { &filterTeam, &filterAlive, &filterStealth, &filterMapStatus, NULL };
+	PartitionFilter *filters[] = { &filterTeam, &filterAlive, &filterStealth, &filterMapStatus, nullptr };
 
 	Real visionRange = theObj->getVisionRange();
 
@@ -1088,7 +1088,7 @@ Bool ScriptConditions::evaluateTypeSighted(Parameter *pItemParm, Parameter *pTyp
 	// and only on-map (or not)
 	PartitionFilterSameMapStatus filterMapStatus(theObj);
 
-	PartitionFilter *filters[] = { &filterAlive, &filterStealth, &filterMapStatus, NULL };
+	PartitionFilter *filters[] = { &filterAlive, &filterStealth, &filterMapStatus, nullptr };
 
 	Real visionRange = theObj->getVisionRange();
 
@@ -1810,14 +1810,14 @@ Bool ScriptConditions::evaluateSkirmishSpecialPowerIsReady(Parameter *pSkirmishP
 	}
 	Int nextFrame = TheGameLogic->getFrame() + 10*LOGICFRAMES_PER_SECOND;
 	const SpecialPowerTemplate *power = TheSpecialPowerStore->findSpecialPowerTemplate(pPower->getString());
-	if (power==NULL) {
+	if (power==nullptr) {
 		pPower->friend_setInt(-1); // flag as never true.
 		return false;
 	}
 	Bool found = false;
 	Player::PlayerTeamList::const_iterator it;
 	Player *pPlayer = playerFromParam(pSkirmishPlayerParm);
-	if (pPlayer==NULL)
+	if (pPlayer==nullptr)
 		return false;
 
 	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it) {
@@ -1892,7 +1892,7 @@ Bool ScriptConditions::evaluateUnitHasEmptied(Parameter *pUnitParm)
 	UnsignedInt frameNum = TheGameLogic->getFrame();
 
 
-	if (stats == NULL)
+	if (stats == nullptr)
 	{
 		TransportStatus *transportStatus = newInstance(TransportStatus);
 		transportStatus->m_objID = object->getID();
@@ -1932,7 +1932,7 @@ Bool ScriptConditions::evaluateTeamIsContained(Parameter *pTeamParm, Bool allCon
 			continue;
 		}
 
-		Bool isContained = (obj->getContainedBy() != NULL);
+		Bool isContained = (obj->getContainedBy() != nullptr);
 		if (!isContained) {
 			// we could still be exiting, in which case we should pretend like we are contained.
 
@@ -2130,7 +2130,7 @@ Bool ScriptConditions::evaluateSkirmishSuppliesWithinDistancePerimeter(Parameter
 	PartitionFilterPlayerAffiliation f2(player, ALLOW_NEUTRAL, true);
 	PartitionFilterOnMap filterMapStatus;
 
-	PartitionFilter *filters[] = { &f1, &f2, &filterMapStatus, 0 };
+	PartitionFilter *filters[] = { &f1, &f2, &filterMapStatus, nullptr };
 
 	SimpleObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(&center, distance, FROM_CENTER_2D, filters, ITER_FASTEST);
 	MemoryPoolObjectHolder hold(iter);
@@ -2181,9 +2181,9 @@ Bool ScriptConditions::evaluateSkirmishPlayerTechBuildingWithinDistancePerimeter
 	PartitionFilterOnMap filterMapStatus;
 
 
-	PartitionFilter *filters[] = { &f1, &f2, &f3, &filterMapStatus, 0 };
+	PartitionFilter *filters[] = { &f1, &f2, &f3, &filterMapStatus, nullptr };
 
-	Bool comparison = ThePartitionManager->getClosestObject(&center, radius, FROM_CENTER_2D, filters) != NULL;
+	Bool comparison = ThePartitionManager->getClosestObject(&center, radius, FROM_CENTER_2D, filters) != nullptr;
 	pCondition->setCustomData(-1); // false.
 	if (comparison) {
 		pCondition->setCustomData(1); // true.
@@ -2391,7 +2391,7 @@ Bool ScriptConditions::evaluateSkirmishPlayerHasComparisonCapturedUnits(Paramete
 Bool ScriptConditions::evaluateSkirmishNamedAreaExists(Parameter *, Parameter *pTriggerParm)
 {
 	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
-	return (pTrig != NULL);
+	return (pTrig != nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2444,10 +2444,10 @@ Bool ScriptConditions::evaluateSkirmishPlayerHasUnitsInArea(Condition *pConditio
 	PartitionFilterPolygonTrigger f2(pTrig);
 	PartitionFilterOnMap filterMapStatus;
 
-	PartitionFilter *filters[] = { &f1, &f2, &filterMapStatus, 0 };
+	PartitionFilter *filters[] = { &f1, &f2, &filterMapStatus, nullptr };
 
 	Object *obj = ThePartitionManager->getClosestObject(&center, radius, FROM_CENTER_2D, filters);
-	Bool condition = (obj!=NULL);
+	Bool condition = (obj!=nullptr);
 	pCondition->setCustomData(-1); // false.
 	if (condition) {
 		pCondition->setCustomData(1); // true.
@@ -2738,15 +2738,15 @@ Bool ScriptConditions::evaluateCondition( Condition *pCondition )
 		case Condition::UNIT_HEALTH:
 			return evaluateUnitHealth(pCondition->getParameter(0), pCondition->getParameter(1), pCondition->getParameter(2));
 		case Condition::PLAYER_TRIGGERED_SPECIAL_POWER:
-			return evaluatePlayerSpecialPowerFromUnitTriggered(pCondition->getParameter(0), pCondition->getParameter(1), NULL);
+			return evaluatePlayerSpecialPowerFromUnitTriggered(pCondition->getParameter(0), pCondition->getParameter(1), nullptr);
 		case Condition::PLAYER_TRIGGERED_SPECIAL_POWER_FROM_NAMED:
 			return evaluatePlayerSpecialPowerFromUnitTriggered(pCondition->getParameter(0), pCondition->getParameter(1), pCondition->getParameter(2));
 		case Condition::PLAYER_MIDWAY_SPECIAL_POWER:
-			return evaluatePlayerSpecialPowerFromUnitMidway(pCondition->getParameter(0), pCondition->getParameter(1), NULL);
+			return evaluatePlayerSpecialPowerFromUnitMidway(pCondition->getParameter(0), pCondition->getParameter(1), nullptr);
 		case Condition::PLAYER_MIDWAY_SPECIAL_POWER_FROM_NAMED:
 			return evaluatePlayerSpecialPowerFromUnitMidway(pCondition->getParameter(0), pCondition->getParameter(1), pCondition->getParameter(2));
 		case Condition::PLAYER_COMPLETED_SPECIAL_POWER:
-			return evaluatePlayerSpecialPowerFromUnitComplete(pCondition->getParameter(0), pCondition->getParameter(1), NULL);
+			return evaluatePlayerSpecialPowerFromUnitComplete(pCondition->getParameter(0), pCondition->getParameter(1), nullptr);
 		case Condition::PLAYER_COMPLETED_SPECIAL_POWER_FROM_NAMED:
 			return evaluatePlayerSpecialPowerFromUnitComplete(pCondition->getParameter(0), pCondition->getParameter(1), pCondition->getParameter(2));
 		case Condition::PLAYER_ACQUIRED_SCIENCE:
@@ -2760,7 +2760,7 @@ Bool ScriptConditions::evaluateCondition( Condition *pCondition )
 			DEBUG_CRASH(("PLAYER_SELECTED_GENERAL script conditions are no longer in use"));
 			return false;
 		case Condition::PLAYER_BUILT_UPGRADE:
-			return evaluateUpgradeFromUnitComplete(pCondition->getParameter(0), pCondition->getParameter(1), NULL);
+			return evaluateUpgradeFromUnitComplete(pCondition->getParameter(0), pCondition->getParameter(1), nullptr);
 		case Condition::PLAYER_BUILT_UPGRADE_FROM_NAMED:
 			return evaluateUpgradeFromUnitComplete(pCondition->getParameter(0), pCondition->getParameter(1), pCondition->getParameter(2));
 		case Condition::PLAYER_HAS_OBJECT_COMPARISON:

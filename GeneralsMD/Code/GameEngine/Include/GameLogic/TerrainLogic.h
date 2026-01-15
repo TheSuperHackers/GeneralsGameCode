@@ -103,8 +103,8 @@ public:
 	Waypoint *getNext(void) const {return m_pNext; }
 	/// Enumerate the directed links from a waypoint using this,a nd getLink.
 	Int getNumLinks(void) const {return m_numLinks; }
-	/// Get the n'th directed link.  (May be NULL).
-	Waypoint *getLink(Int ndx) const {if (ndx>=0 && ndx <= MAX_LINKS) return m_links[ndx]; return NULL; }
+	/// Get the n'th directed link.  (May be nullptr).
+	Waypoint *getLink(Int ndx) const {if (ndx>=0 && ndx <= MAX_LINKS) return m_links[ndx]; return nullptr; }
 	/// Get the waypoint's name.
 	AsciiString getName(void) const {return m_name; }
 	/// Get the integer id.
@@ -227,8 +227,8 @@ public:
 	virtual Bool loadMap( AsciiString filename, Bool query );
 	virtual void newMap( Bool saveGame );	///< Initialize the logic for new map.
 
-	virtual Real getGroundHeight( Real x, Real y, Coord3D* normal = NULL )  const;
-	virtual Real getLayerHeight(Real x, Real y, PathfindLayerEnum layer, Coord3D* normal = NULL, Bool clip = true) const;
+	virtual Real getGroundHeight( Real x, Real y, Coord3D* normal = nullptr )  const;
+	virtual Real getLayerHeight(Real x, Real y, PathfindLayerEnum layer, Coord3D* normal = nullptr, Bool clip = true) const;
 	virtual void getExtent( Region3D *extent ) const { DEBUG_CRASH(("not implemented"));  }		///< @todo This should not be a stub - this should own this functionality
 	virtual void getExtentIncludingBorder( Region3D *extent ) const { DEBUG_CRASH(("not implemented"));  }		///< @todo This should not be a stub - this should own this functionality
 	virtual void getMaximumPathfindExtent( Region3D *extent ) const { DEBUG_CRASH(("not implemented"));  }		///< @todo This should not be a stub - this should own this functionality
@@ -240,7 +240,7 @@ public:
 
 	virtual PathfindLayerEnum alignOnTerrain( Real angle, const Coord3D& pos, Bool stickToGround, Matrix3D& mtx);
 
-	virtual Bool isUnderwater( Real x, Real y, Real *waterZ = NULL, Real *terrainZ = NULL );			///< is point under water
+	virtual Bool isUnderwater( Real x, Real y, Real *waterZ = nullptr, Real *terrainZ = nullptr );			///< is point under water
 	virtual Bool isCliffCell( Real x, Real y) const;			///< is point cliff cell
 	virtual const WaterHandle* getWaterHandle( Real x, Real y );					///< get water handle at this location
 	virtual const WaterHandle* getWaterHandleByName( AsciiString name );	///< get water handle by name
@@ -274,10 +274,10 @@ public:
 	///Gets the first bridge.  Traverse all bridges using bridge->getNext();
 	virtual Bridge *getFirstBridge(void) const { return m_bridgeListHead; }
 
-	/// Find the bridge at a location.  NULL means no bridge.
+	/// Find the bridge at a location.  null means no bridge.
 	virtual Bridge *findBridgeAt(const Coord3D *pLoc) const;
 
-	/// Find the bridge at a location.  NULL means no bridge. Note that the layer value will be used to resolve crossing bridges.
+	/// Find the bridge at a location.  null means no bridge. Note that the layer value will be used to resolve crossing bridges.
 	virtual Bridge *findBridgeLayerAt(const Coord3D *pLoc, PathfindLayerEnum layer, Bool clip = true) const;
 
 	///  Returns true if the object is close enough to interact with the bridge for pathfinding.

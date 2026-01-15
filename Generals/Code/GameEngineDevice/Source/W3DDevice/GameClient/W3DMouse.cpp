@@ -88,9 +88,9 @@ W3DMouse::W3DMouse( void )
 	for (Int i=0; i<NUM_MOUSE_CURSORS; i++)
 	{
 		for (Int j=0; j<MAX_2D_CURSOR_ANIM_FRAMES; j++)
-			cursorTextures[i][j]=NULL;
-		cursorModels[i]=NULL;
-		cursorAnims[i]=NULL;
+			cursorTextures[i][j]=nullptr;
+		cursorModels[i]=nullptr;
+		cursorAnims[i]=nullptr;
 	}
 
 	m_currentD3DCursor=NONE;
@@ -101,7 +101,7 @@ W3DMouse::W3DMouse( void )
 	m_currentFrames = 0;
 	m_currentFMS= 1.0f/1000.0f;
 
-	m_camera = NULL;
+	m_camera = nullptr;
 	m_drawing = FALSE;
 
 }
@@ -133,7 +133,7 @@ void W3DMouse::initPolygonAssets(void)
 		return;
 
 	//Check if texture assets already loaded
-	if (m_currentRedrawMode == RM_POLYGON && cursorImages[1] == NULL)
+	if (m_currentRedrawMode == RM_POLYGON && cursorImages[1] == nullptr)
 	{
 		for (Int i=0; i<NUM_MOUSE_CURSORS; i++)
 		{
@@ -149,7 +149,7 @@ void W3DMouse::freePolygonAssets(void)
 
 	for (Int i=0; i<NUM_MOUSE_CURSORS; i++)
 	{
-		cursorImages[i]=NULL;
+		cursorImages[i]=nullptr;
 	}
 }
 
@@ -200,7 +200,7 @@ Bool W3DMouse::loadD3DCursorTextures(MouseCursor cursor)
 	for (Int i=0; i<animFrames; i++)
 	{
 		sprintf(FrameName,"%s%04d.tga",baseName,i);
-		if ((cursorTextures[cursor][i]=am->Get_Texture(FrameName)) != NULL)
+		if ((cursorTextures[cursor][i]=am->Get_Texture(FrameName)) != nullptr)
 		{	m_currentD3DSurface[m_currentFrames]=cursorTextures[cursor][i]->Get_Surface_Level();
 			m_currentFrames++;
 		}
@@ -223,18 +223,18 @@ void W3DMouse::initD3DAssets(void)
 	WW3DAssetManager *am=WW3DAssetManager::Get_Instance();
 
 	//Check if texture assets already loaded
-	if (m_currentRedrawMode == RM_DX8 && cursorTextures[1] == NULL && am)
+	if (m_currentRedrawMode == RM_DX8 && cursorTextures[1] == nullptr && am)
 	{
 		for (Int i=0; i<NUM_MOUSE_CURSORS; i++)
 		{
 			for (Int j=0; j < MAX_2D_CURSOR_ANIM_FRAMES; j++)
 			{
-				cursorTextures[i][j]=NULL;//am->Get_Texture(m_cursorInfo[i].textureName.str());
+				cursorTextures[i][j]=nullptr;//am->Get_Texture(m_cursorInfo[i].textureName.str());
 			}
 		}
 
 		for (Int x = 0; x < MAX_2D_CURSOR_ANIM_FRAMES; x++)
-			m_currentD3DSurface[x]=NULL;
+			m_currentD3DSurface[x]=nullptr;
 	}
 }
 
@@ -264,7 +264,7 @@ void W3DMouse::initW3DAssets(void)
 		return;
 
 	//Check if model assets already loaded
-	if ((cursorModels[1] == NULL && W3DDisplay::m_assetManager))
+	if ((cursorModels[1] == nullptr && W3DDisplay::m_assetManager))
 	{
 		for (Int i=1; i<NUM_MOUSE_CURSORS; i++)
 		{
@@ -282,13 +282,13 @@ void W3DMouse::initW3DAssets(void)
 			}
 		}
 	}
-	if ((cursorAnims[1] == NULL && W3DDisplay::m_assetManager))
+	if ((cursorAnims[1] == nullptr && W3DDisplay::m_assetManager))
 	{
 		for (Int i=1; i<NUM_MOUSE_CURSORS; i++)
 		{
 			if (!m_cursorInfo[i].W3DAnimName.isEmpty())
 			{
-				DEBUG_ASSERTCRASH(cursorAnims[i] == NULL, ("hmm, leak festival"));
+				DEBUG_ASSERTCRASH(cursorAnims[i] == nullptr, ("hmm, leak festival"));
 				cursorAnims[i] = W3DDisplay::m_assetManager->Get_HAnim(m_cursorInfo[i].W3DAnimName.str());
 				if (cursorAnims[i] && cursorModels[i])
 				{
@@ -387,12 +387,12 @@ void W3DMouse::setCursor( MouseCursor cursor )
 	//make sure Windows didn't reset our cursor
 	if (m_currentRedrawMode == RM_DX8)
 	{
-		SetCursor(NULL);	//Kill Windows Cursor
+		SetCursor(nullptr);	//Kill Windows Cursor
 
 		LPDIRECT3DDEVICE8 m_pDev=DX8Wrapper::_Get_D3D_Device8();
 		Bool doImageChange=FALSE;
 
-		if (m_pDev != NULL)
+		if (m_pDev != nullptr)
 		{
 			m_pDev->ShowCursor(FALSE);	//disable DX8 cursor
 			if (cursor != m_currentD3DCursor)
@@ -423,7 +423,7 @@ void W3DMouse::setCursor( MouseCursor cursor )
 	}
 	else if (m_currentRedrawMode == RM_POLYGON)
 	{
-		SetCursor(NULL);	//Kill Windows Cursor
+		SetCursor(nullptr);	//Kill Windows Cursor
 		m_currentD3DCursor=NONE;
 		m_currentW3DCursor=NONE;
 		m_currentPolygonCursor = cursor;
@@ -431,7 +431,7 @@ void W3DMouse::setCursor( MouseCursor cursor )
 	}
 	else if (m_currentRedrawMode == RM_W3D)
 	{
-		SetCursor(NULL);	//Kill Windows Cursor
+		SetCursor(nullptr);	//Kill Windows Cursor
 		m_currentD3DCursor=NONE;
 		m_currentPolygonCursor=NONE;
 		if (cursor != m_currentW3DCursor)

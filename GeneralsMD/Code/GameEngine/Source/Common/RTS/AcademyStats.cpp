@@ -68,7 +68,7 @@ const char *const TheAcademyClassificationTypeNames[] =
 	"ACT_NONE",
 	"ACT_UPGRADE_RADAR",
 	"ACT_SUPERPOWER",
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheAcademyClassificationTypeNames) == ACT_COUNT + 1, "Incorrect array size");
 
@@ -122,11 +122,11 @@ void AcademyStats::init( const Player *player )
 
 	//Find the command set for our dozer... so we can extract information about things
 	//we can build.
-	m_dozerCommandSet = NULL;
+	m_dozerCommandSet = nullptr;
 	player->iterateObjects( findDozerCommandSet, (void*)m_dozerCommandSet );
 
-	m_commandCenterTemplate = NULL;
-	m_supplyCenterTemplate = NULL;
+	m_commandCenterTemplate = nullptr;
+	m_supplyCenterTemplate = nullptr;
 
 	if( m_dozerCommandSet )
 	{
@@ -291,7 +291,7 @@ static void updateAcademyStats( Object *obj, void *userData )
 
 	if( academy->isFirstUpdate() )
 	{
-		academy->recordProduction( obj, NULL );
+		academy->recordProduction( obj, nullptr );
 	}
 }
 
@@ -1069,7 +1069,7 @@ Bool AcademyStats::calculateAcademyAdvice( AcademyAdviceInfo *info )
 	//Sanity
 	if( !info )
 	{
-		DEBUG_CRASH( ("AcademyStats::calculateAcademyAdvice() was passed in NULL AcademyAdviceInfo.") );
+		DEBUG_CRASH( ("AcademyStats::calculateAcademyAdvice() was passed in null AcademyAdviceInfo.") );
 		return FALSE;
 	}
 

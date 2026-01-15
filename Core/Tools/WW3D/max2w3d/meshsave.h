@@ -117,7 +117,7 @@ public:
 			int							&numMaterialColors,
 			int							&numHouseColors,
 			char *						materialColorTexture,
-			WorldInfoClass *			world_info = NULL
+			WorldInfoClass *			world_info = nullptr
 			);
 
 	~MeshSaveClass(void);

@@ -135,7 +135,7 @@ GeneralsUser::GeneralsUser(void)
 	minPoints = maxPoints = 100;
 	country = color = -1;
 	pseudoPing.clear();
-	matchStart = time(NULL);
+	matchStart = time(nullptr);
 	timeToWiden = 0;
 	widened = false;
 	numPlayers = 2;
@@ -189,12 +189,12 @@ GeneralsMatcher::GeneralsMatcher()
 	INFMSG("weightAvgPoints = " << weightAvgPoints);
 	INFMSG("totalWeight = " << totalWeight);
 
-	Global.config.getInt("SecondsBetweenPoolSizeAnnouncements", m_secondsBetweenPoolSizeAnnouncements, NULL);
+	Global.config.getInt("SecondsBetweenPoolSizeAnnouncements", m_secondsBetweenPoolSizeAnnouncements, nullptr);
 	if (m_secondsBetweenPoolSizeAnnouncements < 10)
 	{
 		m_secondsBetweenPoolSizeAnnouncements = 10;
 	}
-	m_nextPoolSizeAnnouncement = time(NULL);
+	m_nextPoolSizeAnnouncement = time(nullptr);
 }
 
 void GeneralsMatcher::init(void)
@@ -434,7 +434,7 @@ void GeneralsMatcher::sendMatchInfo(std::string name1, std::string name2, std::s
 void GeneralsMatcher::checkMatches(void)
 {
 	bool showPoolSize = false;
-	time_t now = time(NULL);
+	time_t now = time(nullptr);
 	if (now > m_nextPoolSizeAnnouncement)
 	{
 		m_nextPoolSizeAnnouncement = now + m_secondsBetweenPoolSizeAnnouncements;
@@ -524,7 +524,7 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 	UserMap::iterator i1, i2, i3, i4, i5, i6, i7, i8;
 	GeneralsUser *u1, *u2, *u3, *u4, *u5, *u6, *u7, *u8;
 	static const double fitnessThreshold = 0.3;
-	time_t now = time(NULL);
+	time_t now = time(nullptr);
 
 	std::string s;
 	if (showPoolSize)
@@ -560,7 +560,7 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 		if (u1->status != STATUS_WORKING)
 			continue;
 
-		GeneralsUser *bestUser = NULL;
+		GeneralsUser *bestUser = nullptr;
 		double bestMatchFitness = 0.0;
 		std::string bestName = "";
 
@@ -619,7 +619,7 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 									{
 										// match 4 players
 										sendMatchInfo(i1->first, i2->first, i3->first, i4->first, "", "", "", "",
-										              u1, u2, u3, u4, NULL, NULL, NULL, NULL, 4, ladderID);
+										              u1, u2, u3, u4, nullptr, nullptr, nullptr, nullptr, 4, ladderID);
 										break;
 									}
 									else
@@ -665,7 +665,7 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 														{
 															// match 6 players
 															sendMatchInfo(i1->first, i2->first, i3->first, i4->first, i5->first, i6->first, "", "",
-															              u1, u2, u3, u4, u5, u6, NULL, NULL, 6, ladderID);
+															              u1, u2, u3, u4, u5, u6, nullptr, nullptr, 6, ladderID);
 															break;
 														}
 														else
@@ -749,7 +749,7 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 			       "\tping in ms: " << sqrt(1000000 * calcPingDelta(u1, bestUser) / (255*255*2)) << "\n"
 			       "\tprevious attempts: " << u1->widened << ", " << bestUser->widened);
 			sendMatchInfo(i1->first, bestName, "", "", "", "", "", "",
-			              u1, bestUser, NULL, NULL, NULL, NULL, NULL, NULL, 2, ladderID);
+			              u1, bestUser, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, 2, ladderID);
 			break;
 		}
 	}
@@ -814,7 +814,7 @@ bool GeneralsMatcher::handleUserInfo(const char *nick, const std::string& msg)
 		{
 			int val = atoi(v.c_str());
 			if (val > 0)
-				userInfo->timeToWiden = time(NULL) + val;
+				userInfo->timeToWiden = time(nullptr) + val;
 			else
 				userInfo->timeToWiden = 0;
 		}
@@ -911,7 +911,7 @@ bool GeneralsMatcher::handleUserInfo(const char *nick, const std::string& msg)
 			{
 				buf2[0] = *buf++;
 				buf2[1] = *buf++;
-				ping = (int)strtol(buf2, NULL, 16);
+				ping = (int)strtol(buf2, nullptr, 16);
 				userInfo->pseudoPing.push_back(ping);
 			}
 		}
@@ -959,7 +959,7 @@ bool GeneralsMatcher::handleUserInfo(const char *nick, const std::string& msg)
 	}
 
 	userInfo->status = STATUS_WORKING;
-	userInfo->matchStart = time(NULL);
+	userInfo->matchStart = time(nullptr);
 	peerMessagePlayer(m_peer, nick, s.c_str(), NormalMessage);
 
 	DBGMSG("Player " << nick << " is matching now, ack was [" << s << "]");
@@ -979,7 +979,7 @@ GeneralsUser* GeneralsMatcher::findUser(const std::string& who)
 	if (user)
 		return user;
 
-	return NULL;
+	return nullptr;
 }
 
 GeneralsUser* GeneralsMatcher::findUserInAnyLadder(const std::string& who)
@@ -990,18 +990,18 @@ GeneralsUser* GeneralsMatcher::findUserInAnyLadder(const std::string& who)
 		if (uIt != lIt->second.end())
 			return uIt->second;
 	}
-	return NULL;
+	return nullptr;
 }
 
 GeneralsUser* GeneralsMatcher::findUserInLadder(const std::string& who, int ladderID)
 {
 	LadderMap::iterator lIt = m_ladders.find(ladderID);
 	if (lIt == m_ladders.end())
-		return NULL;
+		return nullptr;
 
 	UserMap::iterator uIt = lIt->second.find(who);
 	if (uIt == lIt->second.end())
-		return NULL;
+		return nullptr;
 
 	return uIt->second;
 }
@@ -1024,14 +1024,14 @@ GeneralsUser* GeneralsMatcher::findNonLadderUser(const std::string& who)
 	if (it != m_nonLadderUsers4v4.end())
 		return it->second;
 
-	return NULL;
+	return nullptr;
 }
 
 GeneralsUser* GeneralsMatcher::findNonMatchingUser(const std::string& who)
 {
 	UserMap::iterator it = m_nonMatchingUsers.find(who);
 	if (it == m_nonMatchingUsers.end())
-		return NULL;
+		return nullptr;
 
 	return it->second;
 }
@@ -1106,11 +1106,11 @@ GeneralsUser* GeneralsMatcher::removeUserInLadder(const std::string& who, int la
 {
 	LadderMap::iterator lIt = m_ladders.find(ladderID);
 	if (lIt == m_ladders.end())
-		return NULL;
+		return nullptr;
 
 	UserMap::iterator uIt = lIt->second.find(who);
 	if (uIt == lIt->second.end())
-		return NULL;
+		return nullptr;
 
 	GeneralsUser *user = uIt->second;
 	lIt->second.erase(uIt);
@@ -1129,7 +1129,7 @@ GeneralsUser* GeneralsMatcher::removeUserInAnyLadder(const std::string& who)
 			return user;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 GeneralsUser* GeneralsMatcher::removeNonLadderUser(const std::string& who)
@@ -1166,14 +1166,14 @@ GeneralsUser* GeneralsMatcher::removeNonLadderUser(const std::string& who)
 		return user;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 GeneralsUser* GeneralsMatcher::removeNonMatchingUser(const std::string& who)
 {
 	UserMap::iterator it = m_nonMatchingUsers.find(who);
 	if (it == m_nonMatchingUsers.end())
-		return NULL;
+		return nullptr;
 
 	GeneralsUser *user = it->second;
 	m_nonMatchingUsers.erase(it);
@@ -1292,7 +1292,7 @@ GeneralsClientMatcher::GeneralsClientMatcher()
 
 void GeneralsClientMatcher::init(void)
 {
-	m_baseNick.setFormatted("qmBot%d", time(NULL));
+	m_baseNick.setFormatted("qmBot%d", time(nullptr));
 	m_profileID = 0;
 }
 

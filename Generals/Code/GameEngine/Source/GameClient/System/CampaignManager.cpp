@@ -59,7 +59,7 @@
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-CampaignManager *TheCampaignManager = NULL;
+CampaignManager *TheCampaignManager = nullptr;
 
 
 
@@ -67,12 +67,12 @@ CampaignManager *TheCampaignManager = NULL;
 const FieldParse CampaignManager::m_campaignFieldParseTable[] =
 {
 
-	{ "Mission",						CampaignManager::parseMissionPart,	NULL, NULL },
-	{ "FirstMission",				INI::parseAsciiString,							NULL,	offsetof( Campaign, m_firstMission )  },
-	{ "CampaignNameLabel",	INI::parseAsciiString,							NULL, offsetof( Campaign, m_campaignNameLabel ) },
-	{ "FinalVictoryMovie",	INI::parseAsciiString,							NULL, offsetof( Campaign, m_finalMovieName ) },
+	{ "Mission",						CampaignManager::parseMissionPart,	nullptr, 0 },
+	{ "FirstMission",				INI::parseAsciiString,							nullptr,	offsetof( Campaign, m_firstMission )  },
+	{ "CampaignNameLabel",	INI::parseAsciiString,							nullptr, offsetof( Campaign, m_campaignNameLabel ) },
+	{ "FinalVictoryMovie",	INI::parseAsciiString,							nullptr, offsetof( Campaign, m_finalMovieName ) },
 
-	{ NULL,										NULL,													NULL, 0 }
+	{ nullptr,										nullptr,													nullptr, 0 }
 
 };
 
@@ -160,7 +160,7 @@ Mission *Campaign::newMission( AsciiString name )
 Mission *Campaign::getMission( AsciiString missionName )
 {
 	if(missionName.isEmpty())
-		return NULL;
+		return nullptr;
 	MissionListIt it;
 	it = m_missions.begin();
 	// we've reached the end of the campaign
@@ -172,7 +172,7 @@ Mission *Campaign::getMission( AsciiString missionName )
 		++it;
 	}
 	DEBUG_ASSERTCRASH(FALSE, ("getMission couldn't find %s", missionName.str()));
-	return NULL;
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -191,7 +191,7 @@ Mission *Campaign::getNextMission( Mission *current)
 	it = m_missions.begin();
 	// we've reached the end of the campaign
 	if(name.isEmpty())
-		return NULL;
+		return nullptr;
 	while(it != m_missions.end())
 	{
 		Mission *mission = *it;
@@ -200,7 +200,7 @@ Mission *Campaign::getNextMission( Mission *current)
 		++it;
 	}
 //	DEBUG_ASSERTCRASH(FALSE, ("GetNextMission couldn't find %s", current->m_nextMission.str()));
-	return NULL;
+	return nullptr;
 }
 
 
@@ -208,8 +208,8 @@ Mission *Campaign::getNextMission( Mission *current)
 CampaignManager::CampaignManager( void )
 {
 	m_campaignList.clear();
-	m_currentCampaign = NULL;
-	m_currentMission = NULL;
+	m_currentCampaign = nullptr;
+	m_currentMission = nullptr;
 	m_victorious = FALSE;
 	m_currentRankPoints = 0;
 	m_difficulty = DIFFICULTY_NORMAL;
@@ -218,8 +218,8 @@ CampaignManager::CampaignManager( void )
 //-----------------------------------------------------------------------------
 CampaignManager::~CampaignManager( void )
 {
-	m_currentCampaign = NULL;
-	m_currentMission = NULL;
+	m_currentCampaign = nullptr;
+	m_currentMission = nullptr;
 
 	CampaignListIt it = m_campaignList.begin();
 
@@ -236,7 +236,7 @@ void CampaignManager::init( void )
 {
 	INI ini;
 	// Read from INI all the CampaignManager
-	ini.loadFileDirectory( "Data\\INI\\Campaign", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Campaign", INI_LOAD_OVERWRITE, nullptr );
 }
 
 //-----------------------------------------------------------------------------
@@ -255,7 +255,7 @@ Mission *CampaignManager::getCurrentMission( void )
 Mission *CampaignManager::gotoNextMission( void )
 {
 	if (!m_currentCampaign || !m_currentMission)
-		return NULL;
+		return nullptr;
 	m_currentMission = m_currentCampaign->getNextMission(m_currentMission);
 	return m_currentMission;
 
@@ -297,14 +297,14 @@ void CampaignManager::setCampaign( AsciiString campaign )
 		if(camp->m_name.compare(campaign) == 0)
 		{
 			m_currentCampaign = camp;
-			m_currentMission = camp->getNextMission( NULL );
+			m_currentMission = camp->getNextMission( nullptr );
 			return;
 		}
 		++it;
 	}
 	// could not find the mission. we are resetting the missions to nothing.
-	m_currentCampaign = NULL;
-	m_currentMission = NULL;
+	m_currentCampaign = nullptr;
+	m_currentMission = nullptr;
 	m_currentRankPoints = 0;
 	m_difficulty = DIFFICULTY_NORMAL;
 }
@@ -350,23 +350,23 @@ void CampaignManager::parseMissionPart( INI* ini, void *instance, void *store, c
 {
 	static const FieldParse myFieldParse[] =
 		{
-			{ "Map",							INI::parseAsciiString,				NULL, offsetof( Mission, m_mapName ) },
-			{ "NextMission",			INI::parseAsciiString,				NULL, offsetof( Mission, m_nextMission ) },
-			{ "IntroMovie",				INI::parseAsciiString,				NULL, offsetof( Mission, m_movieLabel ) },
-			{ "ObjectiveLine0",		INI::parseAsciiString,				NULL, offsetof( Mission, m_missionObjectivesLabel[0] ) },
-      { "ObjectiveLine1",		INI::parseAsciiString,				NULL, offsetof( Mission, m_missionObjectivesLabel[1] ) },
-			{ "ObjectiveLine2",		INI::parseAsciiString,				NULL, offsetof( Mission, m_missionObjectivesLabel[2] ) },
-			{ "ObjectiveLine3",		INI::parseAsciiString,				NULL, offsetof( Mission, m_missionObjectivesLabel[3] ) },
-			{ "ObjectiveLine4",		INI::parseAsciiString,				NULL, offsetof( Mission, m_missionObjectivesLabel[4] ) },
-			{ "BriefingVoice",		INI::parseAudioEventRTS,			NULL, offsetof( Mission, m_briefingVoice ) },
-			{ "UnitNames0",				INI::parseAsciiString,				NULL, offsetof( Mission, m_unitNames[0] ) },
-			{ "UnitNames1",				INI::parseAsciiString,				NULL, offsetof( Mission, m_unitNames[1] ) },
-			{ "UnitNames2",				INI::parseAsciiString,				NULL, offsetof( Mission, m_unitNames[2] ) },
-			{ "LocationNameLabel",INI::parseAsciiString,				NULL, offsetof( Mission, m_locationNameLabel ) },
-			{ "VoiceLength",			INI::parseInt ,								NULL, offsetof( Mission, m_voiceLength ) },
+			{ "Map",							INI::parseAsciiString,				nullptr, offsetof( Mission, m_mapName ) },
+			{ "NextMission",			INI::parseAsciiString,				nullptr, offsetof( Mission, m_nextMission ) },
+			{ "IntroMovie",				INI::parseAsciiString,				nullptr, offsetof( Mission, m_movieLabel ) },
+			{ "ObjectiveLine0",		INI::parseAsciiString,				nullptr, offsetof( Mission, m_missionObjectivesLabel[0] ) },
+      { "ObjectiveLine1",		INI::parseAsciiString,				nullptr, offsetof( Mission, m_missionObjectivesLabel[1] ) },
+			{ "ObjectiveLine2",		INI::parseAsciiString,				nullptr, offsetof( Mission, m_missionObjectivesLabel[2] ) },
+			{ "ObjectiveLine3",		INI::parseAsciiString,				nullptr, offsetof( Mission, m_missionObjectivesLabel[3] ) },
+			{ "ObjectiveLine4",		INI::parseAsciiString,				nullptr, offsetof( Mission, m_missionObjectivesLabel[4] ) },
+			{ "BriefingVoice",		INI::parseAudioEventRTS,			nullptr, offsetof( Mission, m_briefingVoice ) },
+			{ "UnitNames0",				INI::parseAsciiString,				nullptr, offsetof( Mission, m_unitNames[0] ) },
+			{ "UnitNames1",				INI::parseAsciiString,				nullptr, offsetof( Mission, m_unitNames[1] ) },
+			{ "UnitNames2",				INI::parseAsciiString,				nullptr, offsetof( Mission, m_unitNames[2] ) },
+			{ "LocationNameLabel",INI::parseAsciiString,				nullptr, offsetof( Mission, m_locationNameLabel ) },
+			{ "VoiceLength",			INI::parseInt ,								nullptr, offsetof( Mission, m_voiceLength ) },
 
 
-			{ NULL,							NULL,											NULL, 0 }
+			{ nullptr,							nullptr,											nullptr, 0 }
 		};
 	AsciiString name;
 	const char* c = ini->getNextToken();

@@ -70,7 +70,7 @@ static inline void decryptBuf( unsigned char *buf, Int len )
 Transport::Transport(void)
 {
 	m_winsockInit = false;
-	m_udpsock = NULL;
+	m_udpsock = nullptr;
 }
 
 Transport::~Transport(void)
@@ -120,7 +120,7 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 		DEBUG_CRASH(("Could not bind to 0x%8.8X:%d", ip, port));
 		DEBUG_LOG(("Transport::init - Failure to bind socket with error code %x", retval));
 		delete m_udpsock;
-		m_udpsock = NULL;
+		m_udpsock = nullptr;
 		return false;
 	}
 
@@ -162,7 +162,7 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 void Transport::reset( void )
 {
 	delete m_udpsock;
-	m_udpsock = NULL;
+	m_udpsock = nullptr;
 
 	if (m_winsockInit)
 	{
@@ -190,7 +190,7 @@ Bool Transport::update( void )
 Bool Transport::doSend() {
 	if (!m_udpsock)
 	{
-		DEBUG_LOG(("Transport::doSend() - m_udpSock is NULL!"));
+		DEBUG_LOG(("Transport::doSend() - m_udpSock is null!"));
 		return FALSE;
 	}
 
@@ -270,7 +270,7 @@ Bool Transport::doRecv()
 {
 	if (!m_udpsock)
 	{
-		DEBUG_LOG(("Transport::doRecv() - m_udpSock is NULL!"));
+		DEBUG_LOG(("Transport::doRecv() - m_udpSock is null!"));
 		return FALSE;
 	}
 

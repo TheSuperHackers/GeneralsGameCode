@@ -147,7 +147,7 @@ public:
 			UnsignedInt ladderPassCRC;
 			Int maxPing;
 			Int maxDiscons, discons;
-			char pings[17]; // 8 servers (0-ff), 1 NULL
+			char pings[17]; // 8 servers (0-ff), 1 null terminator
 			Int numPlayers;
 			Int botID;
 			Int roomID;

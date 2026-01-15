@@ -56,7 +56,7 @@ static const char* const TheShadowNames[] =
 	"SHADOW_DIRECTIONAL_PROJECTION",
 	"SHADOW_ALPHA_DECAL",
 	"SHADOW_ADDITIVE_DECAL",
-	NULL
+	nullptr
 };
 #endif  // end DEFINE_SHADOW_NAMES
 

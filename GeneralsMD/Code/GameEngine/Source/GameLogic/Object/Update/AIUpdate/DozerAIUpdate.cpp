@@ -167,11 +167,11 @@ StateReturnType DozerActionPickActionPosState::update( void )
 	Object *goalObject = TheGameLogic->findObjectByID( dozerAI->getTaskTarget( m_task ) );
 
 	// if there is no goal, get out of this machine with a failure code (success is done in the action state )
-	if( goalObject == NULL )
+	if( goalObject == nullptr )
 	{
 
 		// to be clean get rid of the goal object we set
-		getMachine()->setGoalObject( NULL );
+		getMachine()->setGoalObject( nullptr );
 
 		// cancel our task
 		dozerAI->cancelTask( m_task );
@@ -295,7 +295,7 @@ StateReturnType DozerActionMoveToActionPosState::update( void )
 	Object *dozer = getMachineOwner();
 
 	// sanity
-	if( goalObject == NULL || dozer == NULL )
+	if( goalObject == nullptr || dozer == nullptr )
 		return STATE_FAILURE;
 
 	AIUpdateInterface *ai = dozer->getAIUpdateInterface();
@@ -308,7 +308,7 @@ StateReturnType DozerActionMoveToActionPosState::update( void )
 			if ( dozerAI )
 				dozerAI->internalTaskComplete( m_task );
 		}
-		getMachine()->setGoalObject( NULL );
+		getMachine()->setGoalObject( nullptr );
 		return STATE_FAILURE;
 	}
 
@@ -330,7 +330,7 @@ StateReturnType DozerActionMoveToActionPosState::update( void )
 			if ( dozerAI )
 				dozerAI->internalTaskComplete( m_task );
 		}
-		getMachine()->setGoalObject( NULL );
+		getMachine()->setGoalObject( nullptr );
 		return STATE_FAILURE;
 	}
 
@@ -478,7 +478,7 @@ StateReturnType DozerActionDoActionState::update( void )
 //	const UnsignedInt ACTION_TIME = LOGICFRAMES_PER_SECOND * 4 ; // frames to spend here in this state doing the action
 
 	// check for object gone
-	if( goalObject == NULL )
+	if( goalObject == nullptr )
 		return STATE_FAILURE;
 
 	if ( dozer->isDisabledByType( DISABLED_UNMANNED ) )// Yipes, I've been sniped!
@@ -722,7 +722,7 @@ StateReturnType DozerActionDoActionState::update( void )
 						// remember who has been healing it, and will return false to everybody else
 						//or if the goalObject is already receiving healing, I must stop, since my healing is getting rejected here
 						dozerAI->internalTaskComplete( m_task );
-						getMachine()->setGoalObject( NULL );
+						getMachine()->setGoalObject( nullptr );
 						return STATE_FAILURE;
 					}
 
@@ -766,7 +766,7 @@ StateReturnType DozerActionDoActionState::update( void )
 		dozerAI->internalTaskComplete( m_task );
 
 		// to be clean get rid of the goal object we set
-		getMachine()->setGoalObject( NULL );
+		getMachine()->setGoalObject( nullptr );
 
 
 		getMachineOwner()->setWeaponSetFlag(WEAPONSET_MINE_CLEARING_DETAIL);//maybe go clear some mines, if I feel like it
@@ -862,11 +862,11 @@ static Object *findObjectToRepair( Object *dozer )
 {
 
 	// sanity
-	if( dozer == NULL )
-		return  NULL;
+	if( dozer == nullptr )
+		return  nullptr;
 	if( !dozer->getAIUpdateInterface() )
 	{
-		return NULL;
+		return nullptr;
 	}
 	const DozerAIInterface *dozerAI = dozer->getAIUpdateInterface()->getDozerAIInterface();
 
@@ -874,7 +874,7 @@ static Object *findObjectToRepair( Object *dozer )
 	PartitionFilterAcceptByKindOf filter2( MAKE_KINDOF_MASK( KINDOF_STRUCTURE ),
 																				 KINDOFMASK_NONE );
 	PartitionFilterSameMapStatus filterMapStatus(dozer);
-	PartitionFilter *filters[] = { &filter1, &filter2, &filterMapStatus, NULL };
+	PartitionFilter *filters[] = { &filter1, &filter2, &filterMapStatus, nullptr };
 	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( dozer->getPosition(),
 																																		 dozerAI->getBoredRange(),
 																																		 FROM_CENTER_2D,
@@ -882,7 +882,7 @@ static Object *findObjectToRepair( Object *dozer )
 
 	MemoryPoolObjectHolder hold( iter );
 	Object *obj;
-	Object *closestRepairTarget = NULL;
+	Object *closestRepairTarget = nullptr;
 	Real closestRepairTargetDistSqr = 0.0f;
 	for( obj = iter->first(); obj; obj = iter->next() )
 	{
@@ -892,7 +892,7 @@ static Object *findObjectToRepair( Object *dozer )
 			continue;
 
 		// target the closest valid repair target
-		if( closestRepairTarget == NULL )
+		if( closestRepairTarget == nullptr )
 		{
 
 			closestRepairTarget = obj;
@@ -926,11 +926,11 @@ static Object *findMine( Object *dozer )
 {
 
 	// sanity
-	if( dozer == NULL )
-		return  NULL;
+	if( dozer == nullptr )
+		return  nullptr;
 	if( !dozer->getAIUpdateInterface() )
 	{
-		return NULL;
+		return nullptr;
 	}
 	const DozerAIInterface *dozerAI = dozer->getAIUpdateInterface()->getDozerAIInterface();
 
@@ -939,7 +939,7 @@ static Object *findMine( Object *dozer )
 	PartitionFilterRelationship	filterTeam(dozer, PartitionFilterRelationship::ALLOW_ENEMIES | PartitionFilterRelationship::ALLOW_NEUTRAL);
 	PartitionFilterPossibleToAttack filterAttack(ATTACK_NEW_TARGET, dozer, CMD_FROM_DOZER);
 	PartitionFilterSameMapStatus filterMapStatus(dozer);
-	PartitionFilter *filters[] = { &filterTeam, &filterAttack, &filterMapStatus, NULL };
+	PartitionFilter *filters[] = { &filterTeam, &filterAttack, &filterMapStatus, nullptr };
 	Object* mine = ThePartitionManager->getClosestObject(dozer, dozerAI->getBoredRange(), FROM_CENTER_2D, filters);
 
 	return mine;
@@ -1128,7 +1128,7 @@ StateReturnType DozerPrimaryIdleState::update( void )
 		} else {
 			getMachineOwner()->setWeaponSetFlag(WEAPONSET_MINE_CLEARING_DETAIL);//maybe go clear some mines, if I feel like it
 			Object *mine = findMine(dozer);
-			if (mine!=NULL) {
+			if (mine!=nullptr) {
 				ai->aiAttackObject( mine, 1, CMD_FROM_DOZER);
 			}
 		}
@@ -1276,10 +1276,10 @@ DozerPrimaryStateMachine::DozerPrimaryStateMachine( Object *owner ) : StateMachi
 {
 	static const StateConditionInfo idleConditions[] =
 	{
-		StateConditionInfo(isBuildMostImportant, DOZER_PRIMARY_BUILD, NULL),
-		StateConditionInfo(isRepairMostImportant, DOZER_PRIMARY_REPAIR, NULL),
-		StateConditionInfo(isFortifyMostImportant, DOZER_PRIMARY_FORTIFY, NULL),
-		StateConditionInfo(NULL, NULL, NULL)
+		StateConditionInfo(isBuildMostImportant, DOZER_PRIMARY_BUILD, nullptr),
+		StateConditionInfo(isRepairMostImportant, DOZER_PRIMARY_REPAIR, nullptr),
+		StateConditionInfo(isFortifyMostImportant, DOZER_PRIMARY_FORTIFY, nullptr),
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
 	// order matters: first state is the default state.
@@ -1423,10 +1423,10 @@ void DozerAIUpdateModuleData::buildFieldParse( MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "RepairHealthPercentPerSecond",	INI::parsePercentToReal,	NULL, offsetof( DozerAIUpdateModuleData, m_repairHealthPercentPerSecond ) },
-		{ "BoredTime",										INI::parseDurationReal,		NULL, offsetof( DozerAIUpdateModuleData, m_boredTime ) },
-		{ "BoredRange",										INI::parseReal,						NULL, offsetof( DozerAIUpdateModuleData, m_boredRange ) },
-		{ 0, 0, 0, 0 }
+		{ "RepairHealthPercentPerSecond",	INI::parsePercentToReal,	nullptr, offsetof( DozerAIUpdateModuleData, m_repairHealthPercentPerSecond ) },
+		{ "BoredTime",										INI::parseDurationReal,		nullptr, offsetof( DozerAIUpdateModuleData, m_boredTime ) },
+		{ "BoredRange",										INI::parseReal,						nullptr, offsetof( DozerAIUpdateModuleData, m_boredRange ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add( dataFieldParse );
@@ -1461,10 +1461,10 @@ DozerAIUpdate::DozerAIUpdate( Thing *thing, const ModuleData* moduleData ) :
 	m_buildSubTask = DOZER_SELECT_BUILD_DOCK_LOCATION;  // irrelavant, but I want non-garbage value
 
 	//
-	// initialize the dozer machine to NULL, we want to do this and create it during the update
+	// initialize the dozer machine to nullptr, we want to do this and create it during the update
 	// implementation because at this point we don't have the object all setup
 	//
-	m_dozerMachine = NULL;
+	m_dozerMachine = nullptr;
 
 	createMachines();
 }
@@ -1494,7 +1494,7 @@ DozerAIUpdate::~DozerAIUpdate( void )
 void DozerAIUpdate::createMachines( void )
 {
 
-	if( m_dozerMachine == NULL )
+	if( m_dozerMachine == nullptr )
 	{
 
 		m_dozerMachine = newInstance(DozerPrimaryStateMachine)( getObject() );
@@ -1511,18 +1511,18 @@ void DozerAIUpdate::createBridgeScaffolding( Object *bridgeTower )
 {
 
 	// sanity
-	if( bridgeTower == NULL )
+	if( bridgeTower == nullptr )
 		return;
 
 	// get the bridge behavior interface from the bridge object that this tower is a part of
 	BridgeTowerBehaviorInterface *btbi = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( bridgeTower );
-	if( btbi == NULL )
+	if( btbi == nullptr )
 		return;
 	Object *bridgeObject = TheGameLogic->findObjectByID( btbi->getBridgeID() );
-	if( bridgeObject == NULL )
+	if( bridgeObject == nullptr )
 		return;
 	BridgeBehaviorInterface *bbi = BridgeBehavior::getBridgeBehaviorInterfaceFromObject( bridgeObject );
-	if( bbi == NULL )
+	if( bbi == nullptr )
 		return;
 
 	// tell the bridge to create scaffolding if necessary
@@ -1537,18 +1537,18 @@ void DozerAIUpdate::removeBridgeScaffolding( Object *bridgeTower )
 {
 
 	// sanity
-	if( bridgeTower == NULL )
+	if( bridgeTower == nullptr )
 		return;
 
 	// get the bridge behavior interface from the bridge object that this tower is a part of
 	BridgeTowerBehaviorInterface *btbi = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( bridgeTower );
-	if( btbi == NULL )
+	if( btbi == nullptr )
 		return;
 	Object *bridgeObject = TheGameLogic->findObjectByID( btbi->getBridgeID() );
-	if( bridgeObject == NULL )
+	if( bridgeObject == nullptr )
 		return;
 	BridgeBehaviorInterface *bbi = BridgeBehavior::getBridgeBehaviorInterfaceFromObject( bridgeObject );
-	if( bbi == NULL )
+	if( bbi == nullptr )
 		return;
 
 	// tell the bridge to end any scaffolding from repairing
@@ -1604,7 +1604,7 @@ UpdateSleepTime DozerAIUpdate::update( void )
 				TheActionManager->canRepairObject( getObject(), targetObject, getLastCommandSource() ) == FALSE )
 			invalidTask = TRUE;
 #if !RETAIL_COMPATIBLE_CRC
-		else if (currentTask == DOZER_TASK_BUILD && targetObject == NULL)
+		else if (currentTask == DOZER_TASK_BUILD && targetObject == nullptr)
 			invalidTask = TRUE;
 #endif
 
@@ -1643,8 +1643,8 @@ Object *DozerAIUpdate::construct( const ThingTemplate *what,
 	createMachines();
 
 	// sanity
-	if( what == NULL || pos == NULL || owningPlayer == NULL )
-		return NULL;
+	if( what == nullptr || pos == nullptr || owningPlayer == nullptr )
+		return nullptr;
 
 	// sanity
 	DEBUG_ASSERTCRASH( getObject()->getControllingPlayer() == owningPlayer,
@@ -1667,7 +1667,7 @@ Object *DozerAIUpdate::construct( const ThingTemplate *what,
 
 			// make sure the player is capable of building this
 			if( TheBuildAssistant->canMakeUnit( getObject(), what ) != CANMAKE_OK)
-				return NULL;
+				return nullptr;
 
 			// validate the the position to build at is valid
 			if( TheBuildAssistant->isLocationLegalToBuild( pos, what, angle,
@@ -1675,8 +1675,8 @@ Object *DozerAIUpdate::construct( const ThingTemplate *what,
 																										 BuildAssistant::CLEAR_PATH |
 																										 BuildAssistant::NO_OBJECT_OVERLAP |
 																										 BuildAssistant::SHROUD_REVEALED,
-																										 getObject(), NULL ) != LBC_OK )
-				return NULL;
+																										 getObject(), nullptr ) != LBC_OK )
+				return nullptr;
 
 		}
 
@@ -1748,7 +1748,7 @@ Bool DozerAIUpdate::canAcceptNewRepair( Object *obj )
 {
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return FALSE;
 
 	// if we're not repairing right now, we don't have any accept restrictions
@@ -1769,14 +1769,14 @@ Bool DozerAIUpdate::canAcceptNewRepair( Object *obj )
 		if( currentRepair->isKindOf( KINDOF_BRIDGE_TOWER ) &&
 				obj->isKindOf( KINDOF_BRIDGE_TOWER ) )
 		{
-			BridgeTowerBehaviorInterface *currentTowerInterface = NULL;
-			BridgeTowerBehaviorInterface *newTowerInterface = NULL;
+			BridgeTowerBehaviorInterface *currentTowerInterface = nullptr;
+			BridgeTowerBehaviorInterface *newTowerInterface = nullptr;
 
 			currentTowerInterface = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( currentRepair );
 			newTowerInterface = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( obj );
 
 			// sanity
-			if( currentTowerInterface == NULL || newTowerInterface == NULL )
+			if( currentTowerInterface == nullptr || newTowerInterface == nullptr )
 			{
 
 				DEBUG_CRASH(( "Unable to find bridge tower interface on object" ));
@@ -1859,7 +1859,7 @@ void DozerAIUpdate::privateResumeConstruction( Object *obj, CommandSourceType cm
 {
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return;
 
 	// make sure we can resume construction on this
@@ -1929,7 +1929,7 @@ void DozerAIUpdate::privateResumeConstruction( Object *obj, CommandSourceType cm
 
 			// have to repair at a tower.
 			Real bestDistSqr = 1e10f;
-			Object* bestTower = NULL;
+			Object* bestTower = nullptr;
 			for (Int i = 0; i < BRIDGE_MAX_TOWERS; ++i)
 			{
 				Object* tower = TheGameLogic->findObjectByID(bbi->getTowerID((BridgeTowerType)i));
@@ -1955,7 +1955,7 @@ void DozerAIUpdate::privateResumeConstruction( Object *obj, CommandSourceType cm
 				return bestTower;
 
 			DEBUG_CRASH(("should not happen, no reachable tower found"));
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -1973,7 +1973,7 @@ void DozerAIUpdate::newTask( DozerTask task, Object *target )
 	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'", task) );
 
 	// sanity
-	if( target == NULL )
+	if( target == nullptr )
 		return;
 
 	//
@@ -1993,7 +1993,7 @@ void DozerAIUpdate::newTask( DozerTask task, Object *target )
 
 		Coord3D position;
 		target = findGoodBuildOrRepairPositionAndTarget(me, target, position);
-		if (target == NULL)
+		if (target == nullptr)
 			return;	// could happen for some bridges
 
 		//
@@ -2165,7 +2165,7 @@ void DozerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 
 			///@todo This would be correct except that we don't have idle crane animations and it is December.
 //			Object* goalObject = TheGameLogic->findObjectByID(m_task[task].m_targetObjectID);
-//			if (goalObject != NULL)
+//			if (goalObject != nullptr)
 //			{
 //				goalObject->clearModelConditionState(MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED);
 //			}
@@ -2181,7 +2181,7 @@ void DozerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 			getObject()->clearModelConditionState( MODELCONDITION_ACTIVELY_CONSTRUCTING );
 
 			// Bridges have been made indestructible, so the code below was meaningless. -- ML
-			// Object *obj = NULL;
+			// Object *obj = nullptr;
 			// get object to reapir (if present)
 			//obj = TheGameLogic->findObjectByID( m_task[ task ].m_targetObjectID );
 			//
@@ -2252,7 +2252,7 @@ void DozerAIUpdate::onDelete( void )
 	for( i = 0; i < DOZER_NUM_TASKS; i++ )
 	{
 		Object* goalObject = TheGameLogic->findObjectByID(m_task[i].m_targetObjectID);
-		if (goalObject != NULL)
+		if (goalObject != nullptr)
 		{
 			goalObject->clearModelConditionState(MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED);
 		}
@@ -2297,18 +2297,18 @@ const Coord3D* DozerAIUpdate::getDockPoint( DozerTask task, DozerDockPoint point
 
 	// sanity
 	if( task < 0 || task >= DOZER_NUM_TASKS )
-		return NULL;
+		return nullptr;
 
 	// sanity
 	if( point < 0 || point >= DOZER_NUM_DOCK_POINTS )
-		return NULL;
+		return nullptr;
 
 	// if the point has been set (is valid) then return it
 	if( m_dockPoint[ task ][ point ].valid )
 		return &m_dockPoint[ task ][ point ].location;
 
 	// no valid point has been set for this dock point on this task
-	return NULL;
+	return nullptr;
 
 }
 

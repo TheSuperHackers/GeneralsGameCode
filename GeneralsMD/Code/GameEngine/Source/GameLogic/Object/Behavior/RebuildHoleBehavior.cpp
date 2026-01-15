@@ -62,10 +62,10 @@ RebuildHoleBehaviorModuleData::RebuildHoleBehaviorModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-	  { "WorkerObjectName", INI::parseAsciiString, NULL, offsetof( RebuildHoleBehaviorModuleData, m_workerTemplateName ) },
-		{ "WorkerRespawnDelay", INI::parseDurationReal,	NULL, offsetof( RebuildHoleBehaviorModuleData, m_workerRespawnDelay ) },
-		{ "HoleHealthRegen%PerSecond", INI::parsePercentToReal, NULL, offsetof( RebuildHoleBehaviorModuleData, m_holeHealthRegenPercentPerSecond ) },
-		{ 0, 0, 0, 0 }
+	  { "WorkerObjectName", INI::parseAsciiString, nullptr, offsetof( RebuildHoleBehaviorModuleData, m_workerTemplateName ) },
+		{ "WorkerRespawnDelay", INI::parseDurationReal,	nullptr, offsetof( RebuildHoleBehaviorModuleData, m_workerRespawnDelay ) },
+		{ "HoleHealthRegen%PerSecond", INI::parsePercentToReal, nullptr, offsetof( RebuildHoleBehaviorModuleData, m_holeHealthRegenPercentPerSecond ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add( dataFieldParse );
@@ -86,8 +86,8 @@ RebuildHoleBehavior::RebuildHoleBehavior( Thing *thing, const ModuleData* module
 	m_reconstructingID = INVALID_ID;
 	m_spawnerObjectID = INVALID_ID;
 	m_workerWaitCounter = 0;
-	m_workerTemplate = NULL;
-	m_rebuildTemplate = NULL;
+	m_workerTemplate = nullptr;
+	m_rebuildTemplate = nullptr;
 
 }
 
@@ -184,8 +184,8 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 {
 	const RebuildHoleBehaviorModuleData *modData = getRebuildHoleBehaviorModuleData();
 	Object *hole = getObject();
-	Object *reconstructing = NULL;
-	Object *worker = NULL;
+	Object *reconstructing = nullptr;
+	Object *worker = nullptr;
 
 	// get the worker object if we have one
 	if( m_workerID != 0 )
@@ -195,8 +195,8 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 		worker = TheGameLogic->findObjectByID( m_workerID );
 
 		// if the worker is no longer there, start the respawning process for a worker again
-		if( worker == NULL )
-			newWorkerRespawnProcess( NULL );
+		if( worker == nullptr )
+			newWorkerRespawnProcess( nullptr );
 
 	}
 
@@ -211,7 +211,7 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 		// if that object does not exist anymore, we need to kill a worker if we have one
 		// and start the spawning process over again
 		//
-		if( reconstructing == NULL )
+		if( reconstructing == nullptr )
 		{
 			newWorkerRespawnProcess( worker );
 			m_reconstructingID = INVALID_ID;
@@ -220,7 +220,7 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 	}
 
 	// see if it's time for us to spawn a worker
-	if( worker == NULL && m_workerWaitCounter > 0 )
+	if( worker == nullptr && m_workerWaitCounter > 0 )
 	{
 
 		// decrement counter and respawn if it's time
@@ -228,7 +228,7 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 		{
 
 			// resolve the worker template pointer if necessary
-			if( m_workerTemplate == NULL )
+			if( m_workerTemplate == nullptr )
 				m_workerTemplate = TheThingFactory->findTemplate( modData->m_workerTemplateName );
 
 			// create a worker
@@ -250,7 +250,7 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 				if( ai )
 				{
 
-					if( reconstructing == NULL )
+					if( reconstructing == nullptr )
 						reconstructing = ai->construct( m_rebuildTemplate,
 																						hole->getPosition(),
 																						hole->getOrientation(),
@@ -361,7 +361,7 @@ void RebuildHoleBehavior::onDie( const DamageInfo *damageInfo )
 // ------------------------------------------------------------------------------------------------
 /*static*/ RebuildHoleBehaviorInterface* RebuildHoleBehavior::getRebuildHoleBehaviorInterfaceFromObject( Object *obj )
 {
-	RebuildHoleBehaviorInterface *rhbi = NULL;
+	RebuildHoleBehaviorInterface *rhbi = nullptr;
 
 	if( obj )
 	{
@@ -432,7 +432,7 @@ void RebuildHoleBehavior::xfer( Xfer *xfer )
 		{
 
 			m_workerTemplate = TheThingFactory->findTemplate( workerName );
-			if( m_workerTemplate == NULL )
+			if( m_workerTemplate == nullptr )
 			{
 
 				DEBUG_CRASH(( "RebuildHoleBehavior::xfer - Unable to find template '%s'",
@@ -443,7 +443,7 @@ void RebuildHoleBehavior::xfer( Xfer *xfer )
 
 		}
 		else
-			m_workerTemplate = NULL;
+			m_workerTemplate = nullptr;
 
 	}
 
@@ -457,7 +457,7 @@ void RebuildHoleBehavior::xfer( Xfer *xfer )
 		{
 
 			m_rebuildTemplate = TheThingFactory->findTemplate( rebuildName );
-			if( m_rebuildTemplate == NULL )
+			if( m_rebuildTemplate == nullptr )
 			{
 
 				DEBUG_CRASH(( "RebuildHoleBehavior::xfer - Unable to find template '%s'",
@@ -468,7 +468,7 @@ void RebuildHoleBehavior::xfer( Xfer *xfer )
 
 		}
 		else
-			m_rebuildTemplate = NULL;
+			m_rebuildTemplate = nullptr;
 
 	}
 

@@ -75,7 +75,7 @@ static void Record_Texture_Begin()
 	procedural_texture_count=0;
 	record_count=0;
 	texture_change_count=0;
-	latest_texture=NULL;
+	latest_texture=nullptr;
 	texture_statistics.Resize(0);
 }
 

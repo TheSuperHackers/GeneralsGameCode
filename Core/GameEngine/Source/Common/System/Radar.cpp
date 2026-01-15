@@ -56,7 +56,7 @@
 
 
 // GLOBALS ////////////////////////////////////////////////////////////////////////////////////////
-Radar *TheRadar = NULL;  ///< the radar global singleton
+Radar *TheRadar = nullptr;  ///< the radar global singleton
 
 // PRIVATE ////////////////////////////////////////////////////////////////////////////////////////
 #define RADAR_QUEUE_TERRAIN_REFRESH_DELAY (LOGICFRAMES_PER_SECOND * 3.0f)
@@ -68,7 +68,7 @@ void Radar::deleteList( RadarObject **list )
 	while( *list )
 	{
 		RadarObject *nextObject = (*list)->friend_getNext();
-		(*list)->friend_getObject()->friend_setRadarData( NULL );
+		(*list)->friend_getObject()->friend_setRadarData( nullptr );
 		deleteInstance(*list);
 		*list = nextObject;
 	}
@@ -86,7 +86,7 @@ void Radar::deleteListResources( void )
 #ifdef DEBUG_CRASHING
 	for( Object *obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
 	{
-		DEBUG_ASSERTCRASH( obj->friend_getRadarData() == NULL,
+		DEBUG_ASSERTCRASH( obj->friend_getRadarData() == nullptr,
 			("Radar::deleteListResources: Unexpectedly an object still has radar data assigned") );
 	}
 #endif
@@ -98,8 +98,8 @@ void Radar::deleteListResources( void )
 RadarObject::RadarObject( void )
 {
 
-	m_object = NULL;
-	m_next = NULL;
+	m_object = nullptr;
+	m_next = nullptr;
 	m_color = GameMakeColor( 255, 255, 255, 255 );
 
 }
@@ -123,7 +123,7 @@ Bool RadarObject::isTemporarilyHidden() const
 Bool RadarObject::isTemporarilyHidden(const Object* obj)
 {
 	Drawable* draw = obj->getDrawable();
-	if (draw == NULL || draw->getStealthLook() == STEALTHLOOK_INVISIBLE || draw->isDrawableEffectivelyHidden())
+	if (draw == nullptr || draw->getStealthLook() == STEALTHLOOK_INVISIBLE || draw->isDrawableEffectivelyHidden())
 		return true;
 
 	return false;
@@ -158,7 +158,7 @@ void RadarObject::xfer( Xfer *xfer )
 
 		// find the object and save
 		m_object = TheGameLogic->findObjectByID( objectID );
-		if( m_object == NULL )
+		if( m_object == nullptr )
 		{
 
 			DEBUG_CRASH(( "RadarObject::xfer - Unable to find object for radar data" ));
@@ -189,10 +189,10 @@ void RadarObject::loadPostProcess( void )
 Radar::Radar( void )
 {
 
-	m_radarWindow = NULL;
-	m_objectList = NULL;
-	m_localObjectList = NULL;
-	m_localHeroObjectList = NULL;
+	m_radarWindow = nullptr;
+	m_objectList = nullptr;
+	m_localObjectList = nullptr;
+	m_localHeroObjectList = nullptr;
 	std::fill(m_radarHidden, m_radarHidden + ARRAY_SIZE(m_radarHidden), false);
 	std::fill(m_radarForceOn, m_radarForceOn + ARRAY_SIZE(m_radarForceOn), false);
 	m_terrainAverageZ = 0.0f;
@@ -320,7 +320,7 @@ void Radar::newMap( TerrainLogic *terrain )
 
 	// keep a pointer for our radar window
 	Int id = NAMEKEY( "ControlBar.wnd:LeftHUD" );
-	m_radarWindow = TheWindowManager->winGetWindowFromId( NULL, id );
+	m_radarWindow = TheWindowManager->winGetWindowFromId( nullptr, id );
 	DEBUG_ASSERTCRASH( m_radarWindow, ("Radar::newMap - Unable to find radar game window") );
 
 	// reset all the data in the radar
@@ -394,8 +394,8 @@ Bool Radar::addObject( Object *obj )
 	RadarObject *newObj;
 
 	// sanity
-	DEBUG_ASSERTCRASH( obj->friend_getRadarData() == NULL,
-										 ("Radar: addObject - non NULL radar data for '%s'",
+	DEBUG_ASSERTCRASH( obj->friend_getRadarData() == nullptr,
+										 ("Radar: addObject - non null radar data for '%s'",
 										 obj->getTemplate()->getName().str()) );
 
 	// allocate a new object
@@ -437,7 +437,7 @@ Bool Radar::addObject( Object *obj )
 //-------------------------------------------------------------------------------------------------
 Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 {
-	RadarObject *radarObject, *prevObject = NULL;
+	RadarObject *radarObject, *prevObject = nullptr;
 
 	// find the object in list
 	for( radarObject = *list; radarObject; radarObject = radarObject->friend_getNext() )
@@ -447,13 +447,13 @@ Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 		{
 
 			// unlink the object from list
-			if( prevObject == NULL )
+			if( prevObject == nullptr )
 				*list = radarObject->friend_getNext();  // removing head of list
 			else
 				prevObject->friend_setNext( radarObject->friend_getNext() );
 
-			// set the object radar data to NULL
-			obj->friend_setRadarData( NULL );
+			// set the object radar data to null
+			obj->friend_setRadarData( nullptr );
 
 			// delete the object instance
 			deleteInstance(radarObject);
@@ -480,7 +480,7 @@ Bool Radar::removeObject( Object *obj )
 {
 
 	// sanity
-	if( obj->friend_getRadarData() == NULL )
+	if( obj->friend_getRadarData() == nullptr )
 		return FALSE;
 
 	if( deleteFromList( obj, &m_localHeroObjectList ) == TRUE )
@@ -509,7 +509,7 @@ Bool Radar::radarToWorld2D( const ICoord2D *radar, Coord3D *world )
 	Int x, y;
 
 	// sanity
-	if( radar == NULL || world == NULL )
+	if( radar == nullptr || world == nullptr )
 		return FALSE;
 
 	// get the coords
@@ -559,7 +559,7 @@ Bool Radar::worldToRadar( const Coord3D *world, ICoord2D *radar )
 {
 
 	// sanity
-	if( world == NULL || radar == NULL )
+	if( world == nullptr || radar == nullptr )
 		return FALSE;
 
 	// sanity check the world position
@@ -600,7 +600,7 @@ Bool Radar::localPixelToRadar( const ICoord2D *pixel, ICoord2D *radar )
 {
 
 	// sanity
-	if( pixel == NULL || radar == NULL )
+	if( pixel == nullptr || radar == nullptr )
 		return FALSE;
 
 	// get window size of the radar
@@ -670,11 +670,11 @@ Bool Radar::screenPixelToWorld( const ICoord2D *pixel, Coord3D *world )
 {
 
 	// sanity
-	if( pixel == NULL || world == NULL )
+	if( pixel == nullptr || world == nullptr )
 		return FALSE;
 
 	// if we have no radar window can't do the conversion
-	if( m_radarWindow == NULL )
+	if( m_radarWindow == nullptr )
 		return FALSE;
 
 	// translate pixel coords to local pixel coords relative to the radar window
@@ -702,16 +702,16 @@ Object *Radar::objectUnderRadarPixel( const ICoord2D *pixel )
 {
 
 	// sanity
-	if( pixel == NULL )
-		return NULL;
+	if( pixel == nullptr )
+		return nullptr;
 
 	// convert pixel location to radar logical radar location
 	ICoord2D radar;
 	if( localPixelToRadar( pixel, &radar ) == FALSE )
-		return NULL;
+		return nullptr;
 
 	// object we will return
-	Object *obj = NULL;
+	Object *obj = nullptr;
 
 	//
 	// scan the objects on the radar list and return any object that maps its world location
@@ -722,11 +722,11 @@ Object *Radar::objectUnderRadarPixel( const ICoord2D *pixel )
 	obj = searchListForRadarLocationMatch( m_localHeroObjectList, &radar );
 
 	// search the local object list if not found
-	if( obj == NULL )
+	if( obj == nullptr )
 		obj = searchListForRadarLocationMatch( m_localObjectList, &radar );
 
 	// search all other objects if still not found
-	if( obj == NULL )
+	if( obj == nullptr )
 		obj = searchListForRadarLocationMatch( m_objectList, &radar );
 
 	// return the object found (if any)
@@ -741,8 +741,8 @@ Object *Radar::searchListForRadarLocationMatch( RadarObject *listHead, ICoord2D 
 {
 
 	// sanity
-	if( listHead == NULL || radarMatch == NULL )
-		return NULL;
+	if( listHead == nullptr || radarMatch == nullptr )
+		return nullptr;
 
 	// scan the list
 	RadarObject *radarObject;
@@ -754,10 +754,10 @@ Object *Radar::searchListForRadarLocationMatch( RadarObject *listHead, ICoord2D 
 		Object *obj = radarObject->friend_getObject();
 
 		// sanity
-		if( obj == NULL )
+		if( obj == nullptr )
 		{
 
-			DEBUG_CRASH(( "Radar::searchListForRadarLocationMatch - NULL object encountered in list" ));
+			DEBUG_CRASH(( "Radar::searchListForRadarLocationMatch - null object encountered in list" ));
 			continue;
 
 		}
@@ -775,7 +775,7 @@ Object *Radar::searchListForRadarLocationMatch( RadarObject *listHead, ICoord2D 
 	}
 
 	// no match found
-	return NULL;
+	return nullptr;
 
 }
 
@@ -907,7 +907,7 @@ void Radar::createEvent( const Coord3D *world, RadarEventType type, Real seconds
 {
 
 	// sanity
-	if( world == NULL )
+	if( world == nullptr )
 		return;
 
 	// lookup the colors we are to used based on the event
@@ -952,7 +952,7 @@ void Radar::createPlayerEvent( Player *player, const Coord3D *world,
 {
 
 	// sanity
-	if( player == NULL || world == NULL )
+	if( player == nullptr || world == nullptr )
 		return;
 
 	// figure out the two colors we should use
@@ -995,7 +995,7 @@ void Radar::internalCreateEvent( const Coord3D *world, RadarEventType type, Real
 	static Real secondsBeforeDieToFade = 0.5f;  ///< this many seconds before we hit the die frame we start to fade away
 
 	// sanity
-	if( world == NULL || color1 == NULL || color2 == NULL )
+	if( world == nullptr || color1 == nullptr || color2 == nullptr )
 		return;
 
 	// translate the world coord to radar coords
@@ -1060,7 +1060,7 @@ void Radar::tryUnderAttackEvent( const Object *obj )
 {
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return;
 
 	// try to create the event
@@ -1183,7 +1183,7 @@ Bool Radar::tryEvent( RadarEventType event, const Coord3D *pos )
 {
 
 	// sanity
-	if( event <= RADAR_EVENT_INVALID || event >= RADAR_EVENT_NUM_EVENTS || pos == NULL )
+	if( event <= RADAR_EVENT_INVALID || event >= RADAR_EVENT_NUM_EVENTS || pos == nullptr )
 		return FALSE;
 
 	// see if there was an event of this type within the given range within the given time
@@ -1277,7 +1277,7 @@ static void xferRadarObjectList( Xfer *xfer, RadarObject **head )
 	RadarObject *radarObject;
 
 	// sanity
-	DEBUG_ASSERTCRASH( head != NULL, ("xferRadarObjectList - Invalid parameters" ));
+	DEBUG_ASSERTCRASH( head != nullptr, ("xferRadarObjectList - Invalid parameters" ));
 
 	// version
 	XferVersion currentVersion = 1;
@@ -1308,7 +1308,7 @@ static void xferRadarObjectList( Xfer *xfer, RadarObject **head )
 	{
 
 		// the list should be empty at this point as we are loading it as a whole
-		if( *head != NULL )
+		if( *head != nullptr )
 		{
 #if 1
 			// srj sez: yeah, it SHOULD be, but a few rogue things come into existence (via their ctor) preloaded
@@ -1318,12 +1318,12 @@ static void xferRadarObjectList( Xfer *xfer, RadarObject **head )
 			{
 				if (!radarObject->friend_getObject()->isDestroyed())
 				{
-					DEBUG_CRASH(( "xferRadarObjectList - List head should be NULL, or contain only destroyed objects" ));
+					DEBUG_CRASH(( "xferRadarObjectList - List head should be null, or contain only destroyed objects" ));
 					throw SC_INVALID_DATA;
 				}
 			}
 #else
-			DEBUG_CRASH(( "xferRadarObjectList - List head should be NULL, but isn't" ));
+			DEBUG_CRASH(( "xferRadarObjectList - List head should be null, but isn't" ));
 			throw SC_INVALID_DATA;
 #endif
 		}
@@ -1336,13 +1336,13 @@ static void xferRadarObjectList( Xfer *xfer, RadarObject **head )
 			radarObject = newInstance(RadarObject);
 
 			// link to the end of the list
-			if( *head == NULL )
+			if( *head == nullptr )
 				*head = radarObject;
 			else
 			{
 
 				RadarObject *other;
-				for( other = *head; other->friend_getNext() != NULL; other = other->friend_getNext() )
+				for( other = *head; other->friend_getNext() != nullptr; other = other->friend_getNext() )
 				{
 				}
 
@@ -1413,10 +1413,10 @@ void Radar::xfer( Xfer *xfer )
 			// Transfer all local hero objects to local object list.
 			RadarObject **fromList = &m_localHeroObjectList;
 			RadarObject **toList = &m_localObjectList;
-			while (*fromList != NULL)
+			while (*fromList != nullptr)
 			{
 				RadarObject* nextObject = (*fromList)->friend_getNext();
-				(*fromList)->friend_setNext(NULL);
+				(*fromList)->friend_setNext(nullptr);
 				linkRadarObject(*fromList, toList);
 				*fromList = nextObject;
 			}
@@ -1443,13 +1443,13 @@ void Radar::xfer( Xfer *xfer )
 		RadarObject *currObject;
 		RadarObject *prevObject;
 		RadarObject *nextObject;
-		prevObject = NULL;
-		for (currObject = *fromList; currObject != NULL; currObject = nextObject)
+		prevObject = nullptr;
+		for (currObject = *fromList; currObject != nullptr; currObject = nextObject)
 		{
 			nextObject = currObject->friend_getNext();
 			if (currObject->friend_getObject()->isHero())
 			{
-				if (prevObject != NULL)
+				if (prevObject != nullptr)
 				{
 					prevObject->friend_setNext(nextObject);
 				}
@@ -1457,7 +1457,7 @@ void Radar::xfer( Xfer *xfer )
 				{
 					*fromList = nextObject;
 				}
-				currObject->friend_setNext(NULL);
+				currObject->friend_setNext(nullptr);
 				linkRadarObject(currObject, toList);
 				continue;
 			}
@@ -1540,7 +1540,7 @@ Bool Radar::isPriorityVisible( RadarPriorityType priority )
 // ------------------------------------------------------------------------------------------------
 void Radar::linkRadarObject( RadarObject *newObj, RadarObject **list )
 {
-	if( *list == NULL )
+	if( *list == nullptr )
 	{
 		// trivial case, an empty list
 		*list = newObj;
@@ -1554,9 +1554,9 @@ void Radar::linkRadarObject( RadarObject *newObj, RadarObject **list )
 	RadarObject *prevObject;
 	RadarObject *nextObject;
 
-	DEBUG_ASSERTCRASH(newObj->friend_getNext() == NULL, ("newObj->friend_getNext is not NULL"));
+	DEBUG_ASSERTCRASH(newObj->friend_getNext() == nullptr, ("newObj->friend_getNext is not null"));
 
-	prevObject = NULL;
+	prevObject = nullptr;
 	prevPriority = RADAR_PRIORITY_INVALID;
 	for( currObject = *list; currObject; currObject = nextObject )
 	{
@@ -1571,7 +1571,7 @@ void Radar::linkRadarObject( RadarObject *newObj, RadarObject **list )
 		// our new priority, and the current object in the list has a priority
 		// higher than our equal to our own we need to be inserted here
 		//
-		if( (prevObject == NULL || prevPriority < newPriority ) && (currPriority >= newPriority) )
+		if( (prevObject == nullptr || prevPriority < newPriority ) && (currPriority >= newPriority) )
 		{
 			// insert into the list just ahead of currObject
 			if( prevObject )
@@ -1592,7 +1592,7 @@ void Radar::linkRadarObject( RadarObject *newObj, RadarObject **list )
 			}
 			break;
 		}
-		else if( nextObject == NULL )
+		else if( nextObject == nullptr )
 		{
 			// at the end of the list, put object here
 			currObject->friend_setNext( newObj );
@@ -1644,7 +1644,7 @@ void Radar::assignObjectColorToRadarObject( RadarObject *radarObj, Object *obj )
 			useIndicatorColor = false;
 	}
 
-	if( useIndicatorColor || (player == NULL) )
+	if( useIndicatorColor || (player == nullptr) )
 	{
 		radarObj->setColor( obj->getIndicatorColor() );
 	}

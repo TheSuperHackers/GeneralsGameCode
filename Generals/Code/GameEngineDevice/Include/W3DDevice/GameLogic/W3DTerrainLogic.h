@@ -53,11 +53,11 @@ public:
 	virtual Bool loadMap( AsciiString filename , Bool query );
 	virtual void newMap( Bool saveGame );	///< Initialize the logic for new map.
 
-	virtual Real getGroundHeight( Real x, Real y, Coord3D* normal = NULL ) const;
+	virtual Real getGroundHeight( Real x, Real y, Coord3D* normal = nullptr ) const;
 
 	virtual Bool isCliffCell( Real x, Real y) const;			///< is point cliff cell.
 
-	virtual Real getLayerHeight(Real x, Real y, PathfindLayerEnum layer, Coord3D* normal = NULL, Bool clip = true) const;
+	virtual Real getLayerHeight(Real x, Real y, PathfindLayerEnum layer, Coord3D* normal = nullptr, Bool clip = true) const;
 
 	virtual void getExtent( Region3D *extent ) const ;					///< Get the 3D extent of the terrain in world coordinates
 

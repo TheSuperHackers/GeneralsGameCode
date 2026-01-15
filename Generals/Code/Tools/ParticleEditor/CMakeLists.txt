@@ -36,25 +36,19 @@ target_include_directories(g_particleeditor PRIVATE
     res
 )
 
-target_compile_definitions(g_particleeditor PRIVATE _AFXDLL)
-
 target_link_libraries(g_particleeditor PRIVATE
+    core_config
     corei_libraries_source_wwvegas
     corei_libraries_source_wwvegas_wwlib
-    d3d8lib
+    gi_always_no_pch
     gi_gameengine_include
-    gi_always
     gi_libraries_source_wwvegas
-    core_config
-    imm32
     stlport
-    vfw32
-    winmm
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     target_link_options(g_particleeditor PRIVATE /NODEFAULTLIB:libci.lib /NODEFAULTLIB:libc.lib)
-
+    target_compile_definitions(g_particleeditor PRIVATE _AFXDLL)
     target_sources(g_particleeditor PRIVATE ParticleEditor.rc)
     set_target_properties(g_particleeditor PROPERTIES OUTPUT_NAME ParticleEditor)
 else()

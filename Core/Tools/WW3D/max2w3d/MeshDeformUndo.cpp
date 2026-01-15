@@ -58,7 +58,7 @@ VertexRestoreClass::VertexRestoreClass
 		m_SetIndex (0),
 		m_KeyframeIndex (0)
 {
-	assert (mesh != NULL);
+	assert (mesh != nullptr);
 
 	//
 	//	Remember the deformer's current settings
@@ -91,9 +91,9 @@ VertexRestoreClass::Free_Vertex_Array (void)
 void
 VertexRestoreClass::Restore (int is_undo)
 {
-	assert (m_pMesh != NULL);
-	assert (m_pModData != NULL);
-	assert (m_pModifier != NULL);
+	assert (m_pMesh != nullptr);
+	assert (m_pModData != nullptr);
+	assert (m_pModifier != nullptr);
 
 	// Is this being called as part of an undo operation?
 	if (is_undo != 0) {
@@ -129,9 +129,9 @@ VertexRestoreClass::Restore (int is_undo)
 void
 VertexRestoreClass::Redo (void)
 {
-	assert (m_pMesh != NULL);
-	assert (m_pModData != NULL);
-	assert (m_pModifier != NULL);
+	assert (m_pMesh != nullptr);
+	assert (m_pModData != nullptr);
+	assert (m_pModifier != nullptr);
 
 	//
 	//	Ensure the modifier is in the state it was when

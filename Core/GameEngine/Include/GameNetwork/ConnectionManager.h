@@ -176,8 +176,8 @@ private:
 	void requestFrameDataResend(Int playerID, UnsignedInt frame); ///< request of this player that he send the specified frame's data.
 
 	// The connections are set up like the slot list. The connection corresponding to the local
-	// player's position in the slot list will be NULL.  Connections corresponding to slots that
-	// do not have a player will also be NULL.
+	// player's position in the slot list will be null.  Connections corresponding to slots that
+	// do not have a player will also be null.
 	Connection *m_connections[MAX_SLOTS];
 
 	Transport *m_transport;

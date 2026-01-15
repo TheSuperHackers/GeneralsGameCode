@@ -53,7 +53,7 @@ void ControlBar::parseCommandButtonDefinition( INI *ini )
 
 	// find existing item if present
 	CommandButton *button = TheControlBar->findNonConstCommandButton( name );
-	if( button == NULL )
+	if( button == nullptr )
 	{
 		// allocate a new item
 		button = TheControlBar->newCommandButton( name );

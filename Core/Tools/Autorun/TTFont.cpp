@@ -68,14 +68,14 @@
 //-------------------------------------------------------------------------
 // Text Fonts.
 //-------------------------------------------------------------------------
-TTFontClass *TTButtonFontPtr		= NULL;
-TTFontClass *TTButtonFontPtrSmall	= NULL;
-TTFontClass *TTTextFontPtr			= NULL;
-TTFontClass	*TTTextFontPtr640		= NULL;
-TTFontClass	*TTTextFontPtr800		= NULL;
-TTFontClass	*TTLicenseFontPtr		= NULL;
+TTFontClass *TTButtonFontPtr		= nullptr;
+TTFontClass *TTButtonFontPtrSmall	= nullptr;
+TTFontClass *TTTextFontPtr			= nullptr;
+TTFontClass	*TTTextFontPtr640		= nullptr;
+TTFontClass	*TTTextFontPtr800		= nullptr;
+TTFontClass	*TTLicenseFontPtr		= nullptr;
 
-FontManagerClass * FontManager		= NULL;
+FontManagerClass * FontManager		= nullptr;
 
 //unsigned long TEXT_COLOR			  		= RGB( 247, 171,  11 );
 //unsigned long SHADOW_COLOR		  		= RGB(  40,   8,   8 );
@@ -142,7 +142,7 @@ TTFontClass::TTFontClass(
 	//--------------------------------------------------------------------------
 	// Get or Set a Font filename.
 	//--------------------------------------------------------------------------
-	if (( filename == NULL ) || ( filename[0] == '\0' )) {
+	if (( filename == nullptr ) || ( filename[0] == '\0' )) {
 		strcpy( szFilename, "Arial.ttf" );
 	} else {
 		strcpy( szFilename, filename );
@@ -151,7 +151,7 @@ TTFontClass::TTFontClass(
 	//--------------------------------------------------------------------------
 	// Get or Set a Font facename.
 	//--------------------------------------------------------------------------
-	if (( facename == NULL ) || ( facename[0] == '\0' )) {
+	if (( facename == nullptr ) || ( facename[0] == '\0' )) {
 		strcpy( szFacename, "Arial" );
 	} else {
 		strcpy( szFacename, facename );
@@ -180,7 +180,7 @@ TTFontClass::TTFontClass(
 				pitchAndFamily,
 				szFacename );
 
-	if ( hdc && ( Font != NULL )) {
+	if ( hdc && ( Font != nullptr )) {
 
 		//----------------------------------------------------------------------
 		// The GetTextFace function lets a program determine the face name of
@@ -196,7 +196,7 @@ TTFontClass::TTFontClass(
 
 			SelectObject( hdc, old_object );
 			DeleteObject( Font );
-			Font = NULL;
+			Font = nullptr;
 
 			Font = CreateFont(
 					height,				// height of font
@@ -335,14 +335,14 @@ int TTFontClass::Char_Pixel_Width ( HDC hdc, char const * string, int *num_bytes
 	//--------------------------------------------------------------------------
 	// These values must be passed in.
 	//--------------------------------------------------------------------------
-	if ( string == NULL || *string == '\0' || hdc == NULL ) {
+	if ( string == nullptr || *string == '\0' || hdc == nullptr ) {
 		return( 0 );
 	}
 
 	//--------------------------------------------------------------------------
 	// If this value is passed in, the set the default value (1=single).
 	//--------------------------------------------------------------------------
-	if ( num_bytes!= NULL ) {
+	if ( num_bytes!= nullptr ) {
 		*num_bytes = 1;
 	}
 
@@ -378,7 +378,7 @@ int TTFontClass::Char_Pixel_Width ( HDC hdc, char const * string, int *num_bytes
 
 int TTFontClass::String_Pixel_Width( HDC hdc, char const * string ) const
 {
-	if ( string == NULL ) {
+	if ( string == nullptr ) {
 		return(0);
 	}
 
@@ -392,7 +392,7 @@ int TTFontClass::String_Pixel_Width( HDC hdc, char const * string ) const
 
 	size.cx = 0;
 
-	if ( localDC == NULL ) {
+	if ( localDC == nullptr ) {
 		return( size.cx );
 	}
 
@@ -432,11 +432,11 @@ void TTFontClass::String_Pixel_Bounds( HDC hdc, const char* string, Rect& bounds
 	bounds.Width = 0;
 	bounds.Height = 0;
 
-	if ( string == NULL ) {
+	if ( string == nullptr ) {
 		return;
 	}
 
-	if ( hdc == NULL ) {
+	if ( hdc == nullptr ) {
 		return;
 	}
 
@@ -501,14 +501,14 @@ void TTFontClass::String_Pixel_Bounds( HDC hdc, const char* string, Rect& bounds
 //
 UINT TTFontClass::Get_Double_Byte_Char	( const char *string, int *num_bytes ) const
 {
-	if ( string == NULL || *string == '\0' ) {
+	if ( string == nullptr || *string == '\0' ) {
 		return( 0 );
 	}
 
 	const char *ptr = string;
 	UINT c = *(BYTE *)ptr++;
 
-	if ( num_bytes != NULL ) {
+	if ( num_bytes != nullptr ) {
 		*num_bytes = 1;
 	}
 
@@ -536,7 +536,7 @@ UINT TTFontClass::Get_Double_Byte_Char	( const char *string, int *num_bytes ) co
 	//--------------------------------------------------------------------------
 	if( IsDBCSLeadByte( c )&& *ptr ) {		// [OYO]
 		c = ( c << 8 ) | *(BYTE *)ptr++;
-		if ( num_bytes != NULL ) {
+		if ( num_bytes != nullptr ) {
 			*num_bytes = 2;
 		}
 	}
@@ -677,7 +677,7 @@ Point2D TTFontClass::Print(
 	int length = wcslen( string );
 
 	memset( buffer, '\0', _MAX_PATH );
-	WideCharToMultiByte( CodePage, 0, string, length, buffer, _MAX_PATH, NULL, NULL );
+	WideCharToMultiByte( CodePage, 0, string, length, buffer, _MAX_PATH, nullptr, nullptr );
 
 	return( Print( hdc, buffer, cliprect, forecolor, backcolor, flag, shadow ));
 }
@@ -703,10 +703,10 @@ Point2D TTFontClass::Print(
 	//--------------------------------------------------------------------------
 	// If no string, why continue?
 	//--------------------------------------------------------------------------
-	assert( string != NULL );
-	assert( hdc != NULL );
+	assert( string != nullptr );
+	assert( hdc != nullptr );
 
-	if (( string == NULL ) || ( string[0] == '\0' )) {
+	if (( string == nullptr ) || ( string[0] == '\0' )) {
 		return( point );
 	}
 
@@ -729,7 +729,7 @@ Point2D TTFontClass::Print(
 	//--------------------------------------------------------------------------
 	if ( hdc ) {
 
-		assert( Font != NULL );
+		assert( Font != nullptr );
 
 		old_object = SelectObject( hdc, Font );
 
@@ -747,7 +747,7 @@ Point2D TTFontClass::Print(
 //			&rect,				// optional dimensions
 //			string,				// string
 //			length,				// number of characters in string
-//			NULL				// array of spacing values
+//			nullptr				// array of spacing values
 //		);
 
 // 		result = TextOutW(
@@ -817,10 +817,10 @@ Point2D TTFontClass::Print(
 	//--------------------------------------------------------------------------
 	// If no string, why continue?
 	//--------------------------------------------------------------------------
-	assert( string != NULL );
-	assert( hdc != NULL );
+	assert( string != nullptr );
+	assert( hdc != nullptr );
 
-	if (( string == NULL ) || ( string[0] == '\0' )) {
+	if (( string == nullptr ) || ( string[0] == '\0' )) {
 		return( point );
 	}
 
@@ -848,7 +848,7 @@ Point2D TTFontClass::Print(
 	//--------------------------------------------------------------------------
 	if ( hdc ) {
 
-		assert( Font != NULL );
+		assert( Font != nullptr );
 
 		old_object = SelectObject( hdc, Font );
 
@@ -1047,14 +1047,14 @@ int TTFontClass::Find_Text_VLength( HDC hdc, char *str, int width )
 	bool	make_dc	= FALSE;
 	HDC	localDC	= hdc;
 
-	if ( *str == '\0' || str == NULL ) {
+	if ( *str == '\0' || str == nullptr ) {
 		return( 0 );
 	}
 
 	//--------------------------------------------------------------------------
 	// If no DC was passed in, then we need to get one.
 	//--------------------------------------------------------------------------
-	if ( localDC == NULL ) {
+	if ( localDC == nullptr ) {
 		return( 0 );
 	}
 
@@ -1223,7 +1223,7 @@ FontManagerClass::FontManagerClass ( HDC hdc )
 		strcpy( szFacename, "Arial" );
 
 		strcpy( szPath, Args->Get_argv(0));
-		_splitpath( szPath, drive, dir, NULL, NULL );
+		_splitpath( szPath, drive, dir, nullptr, nullptr );
 		_makepath( szPath, drive, dir, "Setup\\Setup", ".ini" );
 
 		GetPrivateProfileString( "Fonts", "Font", "Arial.tff", szFile, MAX_PATH, szPath );
@@ -1351,37 +1351,37 @@ FontManagerClass::FontManagerClass ( HDC hdc )
 		//----------------------------------------------------------------------
 		// If we fell through...
 		//----------------------------------------------------------------------
-		if( TTButtonFontPtr == NULL || TTTextFontPtr == NULL ) {
+		if( TTButtonFontPtr == nullptr || TTTextFontPtr == nullptr ) {
 
 			strcpy( szFile, "Arial.tff" );
 			strcpy( szFacename, "Arial" );
 
-			if( TTButtonFontPtr	== NULL ) {
+			if( TTButtonFontPtr	== nullptr ) {
 				TTButtonFontPtr		= new TTFontClass( hdc, szFile, szFacename, 22, FW_SEMIBOLD,	ANSI_CHARSET, 0, 0, 0, FALSE );
 			}
-			if( TTButtonFontPtrSmall == NULL ) {
+			if( TTButtonFontPtrSmall == nullptr ) {
 				TTButtonFontPtrSmall= new TTFontClass( hdc, szFile, szFacename, 22, FW_SEMIBOLD,	ANSI_CHARSET, 0, 0, 0, FALSE );
 			}
-			if( TTTextFontPtr == NULL ) {
+			if( TTTextFontPtr == nullptr ) {
 				TTTextFontPtr		= new TTFontClass( hdc, szFile, szFacename, 16, FW_SEMIBOLD,	ANSI_CHARSET, 0, 0, 0, FALSE );
 			}
-			if( TTTextFontPtr640 == NULL ) {
+			if( TTTextFontPtr640 == nullptr ) {
 				TTTextFontPtr640	= new TTFontClass( hdc, szFile, szFacename, 14, FW_SEMIBOLD, 	ANSI_CHARSET, 0, 0, 0, FALSE );
 			}
-			if( TTTextFontPtr800 == NULL ) {
+			if( TTTextFontPtr800 == nullptr ) {
 				TTTextFontPtr800	= new TTFontClass( hdc, szFile, szFacename, 14, FW_SEMIBOLD, 	ANSI_CHARSET, 0, 0, 0, FALSE );
 			}
-			if( TTLicenseFontPtr == NULL ) {
+			if( TTLicenseFontPtr == nullptr ) {
 				TTLicenseFontPtr	= new TTFontClass( hdc, szFile, szFacename, 12, FW_MEDIUM,		ANSI_CHARSET, 0, 0, 0, FALSE );
 			}
 		}
 	}
-	assert( TTTextFontPtr			!= NULL );
-	assert( TTTextFontPtr640		!= NULL );
-	assert( TTTextFontPtr800		!= NULL );
-	assert( TTButtonFontPtr			!= NULL );
-	assert( TTButtonFontPtrSmall	!= NULL );
-	assert( TTLicenseFontPtr		!= NULL );
+	assert( TTTextFontPtr			!= nullptr );
+	assert( TTTextFontPtr640		!= nullptr );
+	assert( TTTextFontPtr800		!= nullptr );
+	assert( TTButtonFontPtr			!= nullptr );
+	assert( TTButtonFontPtrSmall	!= nullptr );
+	assert( TTLicenseFontPtr		!= nullptr );
 }
 
 /***********************************************************************************************
@@ -1399,10 +1399,10 @@ FontManagerClass::FontManagerClass ( HDC hdc )
 FontManagerClass::~FontManagerClass ( void )
 {
 	delete TTButtonFontPtr;
-	TTButtonFontPtr = NULL;
+	TTButtonFontPtr = nullptr;
 
 	delete TTTextFontPtr;
-	TTTextFontPtr = NULL;
+	TTTextFontPtr = nullptr;
 }
 
 
@@ -1423,7 +1423,7 @@ FontManagerClass::~FontManagerClass ( void )
  *=============================================================================================*/
 TTFontClass * Font_From_TPF ( TextPrintType flags )
 {
-	TTFontClass *fontptr= NULL;
+	TTFontClass *fontptr= nullptr;
 
 	switch (flags & 0x000F) {
 

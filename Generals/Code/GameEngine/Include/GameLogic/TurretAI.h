@@ -309,7 +309,7 @@ public:
 
 	virtual void notifyFired();
 	virtual void notifyNewVictimChosen(Object* victim);
-	virtual const Coord3D* getOriginalVictimPos() const { return NULL; }	// yes, we return NULL here
+	virtual const Coord3D* getOriginalVictimPos() const { return nullptr; }	// yes, we return nullptr here
 	virtual Bool isWeaponSlotOkToFire(WeaponSlotType wslot) const;
 
 	// these are only for use by the state machines... don't call them otherwise, please

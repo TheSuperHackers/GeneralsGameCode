@@ -44,7 +44,7 @@ OCLUpdateModuleData::OCLUpdateModuleData()
 {
 	m_minDelay = 0;
 	m_maxDelay = 0;
-	m_ocl = NULL;
+	m_ocl = nullptr;
 	m_isCreateAtEdge = FALSE;
 }
 
@@ -55,11 +55,11 @@ OCLUpdateModuleData::OCLUpdateModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "OCL",					INI::parseObjectCreationList,		NULL, offsetof( OCLUpdateModuleData, m_ocl ) },
-		{ "MinDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( OCLUpdateModuleData, m_minDelay ) },
-		{ "MaxDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( OCLUpdateModuleData, m_maxDelay ) },
-		{ "CreateAtEdge",	INI::parseBool,									NULL, offsetof( OCLUpdateModuleData, m_isCreateAtEdge ) },
-		{ 0, 0, 0, 0 }
+		{ "OCL",					INI::parseObjectCreationList,		nullptr, offsetof( OCLUpdateModuleData, m_ocl ) },
+		{ "MinDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof( OCLUpdateModuleData, m_minDelay ) },
+		{ "MaxDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof( OCLUpdateModuleData, m_maxDelay ) },
+		{ "CreateAtEdge",	INI::parseBool,									nullptr, offsetof( OCLUpdateModuleData, m_isCreateAtEdge ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }

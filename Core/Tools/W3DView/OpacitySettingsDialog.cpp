@@ -49,7 +49,7 @@ static char THIS_FILE[] = __FILE__;
 //
 /////////////////////////////////////////////////////////////////////////////
 OpacitySettingsDialogClass::OpacitySettingsDialogClass (float opacity, CWnd *pParent)
-	:	m_OpacityBar (NULL),
+	:	m_OpacityBar (nullptr),
 		m_Opacity (opacity),
 		CDialog(OpacitySettingsDialogClass::IDD, pParent)
 {

@@ -100,7 +100,7 @@ void ProjectileStreamUpdate::addProjectile( ObjectID sourceID, ObjectID newID, O
 		// Clear position so we know we are an object shot
 		m_targetPosition.zero();
 	}
-	else if( victimPos != NULL )
+	else if( victimPos != nullptr )
 	{
 		if( ! (m_targetPosition == (*victimPos)) )
 		{
@@ -128,7 +128,7 @@ void ProjectileStreamUpdate::addProjectile( ObjectID sourceID, ObjectID newID, O
 
 void ProjectileStreamUpdate::cullFrontOfList()
 {
-	while( (m_firstValidIndex != m_nextFreeIndex)  &&  (TheGameLogic->findObjectByID( m_projectileIDs[m_firstValidIndex] ) == NULL) )
+	while( (m_firstValidIndex != m_nextFreeIndex)  &&  (TheGameLogic->findObjectByID( m_projectileIDs[m_firstValidIndex] ) == nullptr) )
 	{
 		// Chew off the front if they are gone.  Don't chew on the middle, as bad ones there are just a break in the chain
 		m_firstValidIndex = (m_firstValidIndex + 1) % MAX_PROJECTILE_STREAM;
@@ -140,7 +140,7 @@ Bool ProjectileStreamUpdate::considerDying()
 	if( m_firstValidIndex == m_nextFreeIndex  &&  m_owningObject != INVALID_ID )
 	{
 		//If I have no projectiles to watch, and my master is dead, then yes, I want to die
-		if( TheGameLogic->findObjectByID(m_owningObject) == NULL )
+		if( TheGameLogic->findObjectByID(m_owningObject) == nullptr )
 			return TRUE;
 	}
 

@@ -101,7 +101,7 @@
 //============================================================================
 
 W3DDebugDisplay::W3DDebugDisplay()
-: m_displayString(NULL)
+: m_displayString(nullptr)
 {
 
 }
@@ -133,7 +133,7 @@ void W3DDebugDisplay::init( void )
 
 void W3DDebugDisplay::drawText( Int x, Int y, Char *text )
 {
-	if ( m_font == NULL || m_displayString == NULL )
+	if ( m_font == nullptr || m_displayString == nullptr )
 	{
 		return ;
 	}

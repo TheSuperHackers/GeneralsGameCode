@@ -48,7 +48,7 @@ public:
 		static const FieldParse dataFieldParse[] =
 		{
 
-			{ "RodsExtendTime", INI::parseDurationUnsignedInt, NULL, offsetof( PowerPlantUpdateModuleData, m_rodsExtendTime ) },
+			{ "RodsExtendTime", INI::parseDurationUnsignedInt, nullptr, offsetof( PowerPlantUpdateModuleData, m_rodsExtendTime ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);

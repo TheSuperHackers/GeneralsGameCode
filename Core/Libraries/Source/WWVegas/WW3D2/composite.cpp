@@ -206,10 +206,10 @@ void CompositeRenderObjClass::Set_Name(const char * name)
  *=============================================================================================*/
 void CompositeRenderObjClass::Set_Base_Model_Name(const char *name)
 {
-	// NULL is a legal value for BaseModelName. Unfortunately,
+	// null is a legal value for BaseModelName. Unfortunately,
 	// StringClass::operator= does not modify the string when
-	// assigning NULL, so we explicitly handle that case here.
-	if (name != 0) {
+	// assigning null, so we explicitly handle that case here.
+	if (name != nullptr) {
 		BaseModelName = name;
 	} else {
 		BaseModelName = "";
@@ -479,7 +479,7 @@ void CompositeRenderObjClass::Delete_Decal(uint32 decal_id)
 void CompositeRenderObjClass::Update_Obj_Space_Bounding_Volumes(void)
 {
 	int i;
-	RenderObjClass * robj = NULL;
+	RenderObjClass * robj = nullptr;
 
 	// if we don't have any sub objects, just set default bounds
 	if (Get_Num_Sub_Objects() <= 0) {
@@ -553,7 +553,7 @@ void CompositeRenderObjClass::Set_User_Data(void *value, bool recursive)
 const char * CompositeRenderObjClass::Get_Base_Model_Name (void) const
 {
 	if (BaseModelName.Is_Empty()) {
-		return NULL;
+		return nullptr;
 	}
 
 	return BaseModelName;

@@ -42,11 +42,11 @@
 #include "texture.h"
 
 #ifndef SAFE_DELETE
-#define SAFE_DELETE(pointer) { delete pointer; pointer = NULL; }
+#define SAFE_DELETE(pointer) { delete pointer; pointer = nullptr; }
 #endif
 
 #ifndef SAFE_DELETE_ARRAY
-#define SAFE_DELETE_ARRAY(pointer) { delete [] pointer; pointer = NULL; }
+#define SAFE_DELETE_ARRAY(pointer) { delete [] pointer; pointer = nullptr; }
 #endif
 
 
@@ -68,13 +68,13 @@ const char *EMITTER_TYPE_NAMES[EMITTER_TYPEID_COUNT] =
 //	ParticleEmitterDefClass
 //
 ParticleEmitterDefClass::ParticleEmitterDefClass (void)
-	:	m_pName (NULL),
+	:	m_pName (nullptr),
 		m_Version (0L),
-		m_pUserString (NULL),
+		m_pUserString (nullptr),
 		m_iUserType (EMITTER_TYPEID_DEFAULT),
 		m_InitialOrientationRandom (0),
-		m_pCreationVolume (NULL),
-		m_pVelocityRandomizer (NULL)
+		m_pCreationVolume (nullptr),
+		m_pVelocityRandomizer (nullptr)
 {
 	::memset (&m_Info, 0, sizeof (m_Info));
 	::memset (&m_InfoV2, 0, sizeof (m_InfoV2));
@@ -95,13 +95,13 @@ ParticleEmitterDefClass::ParticleEmitterDefClass (void)
 //	ParticleEmitterDefClass
 //
 ParticleEmitterDefClass::ParticleEmitterDefClass (const ParticleEmitterDefClass &src)
-	:	m_pName (NULL),
+	:	m_pName (nullptr),
 		m_Version (0L),
-		m_pUserString (NULL),
+		m_pUserString (nullptr),
 		m_iUserType (EMITTER_TYPEID_DEFAULT),
 		m_InitialOrientationRandom (src.m_InitialOrientationRandom),
-		m_pCreationVolume (NULL),
-		m_pVelocityRandomizer (NULL)
+		m_pCreationVolume (nullptr),
+		m_pVelocityRandomizer (nullptr)
 {
 	::memset (&m_Info, 0, sizeof (m_Info));
 	::memset (&m_InfoV2, 0, sizeof (m_InfoV2));
@@ -126,19 +126,19 @@ ParticleEmitterDefClass::ParticleEmitterDefClass (const ParticleEmitterDefClass 
 ParticleEmitterDefClass::~ParticleEmitterDefClass (void)
 {
 	// Free the name buffer if necessary
-	if (m_pName != NULL) {
+	if (m_pName != nullptr) {
 
 		// free() is used because the buffer was allocated with ::_strdup().
 		::free (m_pName);
-		m_pName = NULL;
+		m_pName = nullptr;
 	}
 
 	// Free the user-string buffer if necessary
-	if (m_pUserString != NULL) {
+	if (m_pUserString != nullptr) {
 
 		// free() is used because the buffer was allocated with ::malloc() or ::_strdup().
 		::free (m_pUserString);
-		m_pUserString = NULL;
+		m_pUserString = nullptr;
 	}
 
 	Free_Props ();
@@ -237,7 +237,7 @@ ParticleEmitterDefClass::Set_Velocity_Random (Vector3Randomizer *randomizer)
 	//
 	//	Ensure our persistent structure is up-to-date so it will save correctly
 	//
-	if (m_pVelocityRandomizer != NULL) {
+	if (m_pVelocityRandomizer != nullptr) {
 		Initialize_Randomizer_Struct (*m_pVelocityRandomizer, m_InfoV2.VelRandom);
 	}
 
@@ -258,7 +258,7 @@ ParticleEmitterDefClass::Set_Creation_Volume (Vector3Randomizer *randomizer)
 	//
 	//	Ensure our persistent structure is up-to-date so it will save correctly
 	//
-	if (m_pCreationVolume != NULL) {
+	if (m_pCreationVolume != nullptr) {
 		Initialize_Randomizer_Struct (*m_pCreationVolume, m_InfoV2.CreationVolume);
 	}
 
@@ -317,7 +317,7 @@ ParticleEmitterDefClass::Normalize_Filename (void)
 
 	// Find the last occurance of the directory deliminator
 	LPCTSTR filename = ::strrchr (path, '\\');
-	if (filename != NULL) {
+	if (filename != nullptr) {
 
 		// Increment past the directory deliminator
 		filename ++;
@@ -451,7 +451,7 @@ ParticleEmitterDefClass::Convert_To_Ver2 (void)
 		//
 		ShaderClass shader = ShaderClass::_PresetAdditiveSpriteShader;
 		TextureClass *ptexture = WW3DAssetManager::Get_Instance ()->Get_Texture (m_Info.TextureFilename);
-		if (ptexture != NULL) {
+		if (ptexture != nullptr) {
 			// If texture has an alpha channel do alpha blending instead of additive
 			// (which is the default for point groups):
 //			SurfaceClass::SurfaceDescription surf_desc;
@@ -628,7 +628,7 @@ ParticleEmitterDefClass::Read_Info (ChunkLoadClass &chunk_load)
 Vector3Randomizer *
 ParticleEmitterDefClass::Create_Randomizer (W3dVolumeRandomizerStruct &info)
 {
-	Vector3Randomizer *randomizer = NULL;
+	Vector3Randomizer *randomizer = nullptr;
 	switch (info.ClassID)
 	{
 		case Vector3Randomizer::CLASSID_SOLIDBOX:
@@ -787,7 +787,7 @@ ParticleEmitterDefClass::Read_Props (ChunkLoadClass &chunk_load)
 			//
 			//	Read the color keyframes from the chunk
 			//
-			Read_Color_Keyframe (chunk_load, NULL, &m_ColorKeyframes.Start);
+			Read_Color_Keyframe (chunk_load, nullptr, &m_ColorKeyframes.Start);
 			for (index = 0; index < m_ColorKeyframes.NumKeyFrames; index ++) {
 				Read_Color_Keyframe (chunk_load,
 											&m_ColorKeyframes.KeyTimes[index],
@@ -814,7 +814,7 @@ ParticleEmitterDefClass::Read_Props (ChunkLoadClass &chunk_load)
 			//
 			//	Read the opacity keyframes from the chunk
 			//
-			Read_Opacity_Keyframe (chunk_load, NULL, &m_OpacityKeyframes.Start);
+			Read_Opacity_Keyframe (chunk_load, nullptr, &m_OpacityKeyframes.Start);
 			for (index = 0; index < m_OpacityKeyframes.NumKeyFrames; index ++) {
 				Read_Opacity_Keyframe (chunk_load,
 												&m_OpacityKeyframes.KeyTimes[index],
@@ -824,7 +824,7 @@ ParticleEmitterDefClass::Read_Props (ChunkLoadClass &chunk_load)
 			//
 			//	Read the size keyframes from the chunk
 			//
-			Read_Size_Keyframe (chunk_load, NULL, &m_SizeKeyframes.Start);
+			Read_Size_Keyframe (chunk_load, nullptr, &m_SizeKeyframes.Start);
 			for (index = 0; index < m_SizeKeyframes.NumKeyFrames; index ++) {
 				Read_Size_Keyframe (chunk_load,
 											&m_SizeKeyframes.KeyTimes[index],
@@ -865,12 +865,12 @@ ParticleEmitterDefClass::Read_Color_Keyframe
 	if (chunk_load.Read (&key_frame, sizeof (key_frame)) == sizeof (key_frame)) {
 
 		// Pass the key time to the caller
-		if (key_time != NULL) {
+		if (key_time != nullptr) {
 			(*key_time) = key_frame.Time;
 		}
 
 		// Pass the oclor back to the caller
-		if (value != NULL) {
+		if (value != nullptr) {
 			(*value) = RGBA_TO_VECTOR3 (key_frame.Color);
 		}
 
@@ -903,12 +903,12 @@ ParticleEmitterDefClass::Read_Opacity_Keyframe
 	if (chunk_load.Read (&key_frame, sizeof (key_frame)) == sizeof (key_frame)) {
 
 		// Pass the key time to the caller
-		if (key_time != NULL) {
+		if (key_time != nullptr) {
 			(*key_time) = key_frame.Time;
 		}
 
 		// Pass the value back to the caller
-		if (value != NULL) {
+		if (value != nullptr) {
 			(*value) = key_frame.Opacity;
 		}
 
@@ -941,12 +941,12 @@ ParticleEmitterDefClass::Read_Size_Keyframe
 	if (chunk_load.Read (&key_frame, sizeof (key_frame)) == sizeof (key_frame)) {
 
 		// Pass the key time to the caller
-		if (key_time != NULL) {
+		if (key_time != nullptr) {
 			(*key_time) = key_frame.Time;
 		}
 
 		// Pass the value back to the caller
-		if (value != NULL) {
+		if (value != nullptr) {
 			(*value) = key_frame.Size;
 		}
 
@@ -1215,7 +1215,7 @@ ParticleEmitterDefClass::Save_User_Data (ChunkSaveClass &chunk_save)
 			ret_val = WW3D_ERROR_OK;
 
 			// Do we need to write the user string to the file?
-			if (m_pUserString != NULL) {
+			if (m_pUserString != nullptr) {
 
 				// Now write the user string param to the file
 				if (chunk_save.Write (m_pUserString, string_len) != string_len) {
@@ -1800,11 +1800,11 @@ PrototypeClass *
 ParticleEmitterLoaderClass::Load_W3D (ChunkLoadClass &chunk_load)
 {
 	// Assume failure
-	ParticleEmitterPrototypeClass *pprototype = NULL;
+	ParticleEmitterPrototypeClass *pprototype = nullptr;
 
 	// Create a definition object
 	ParticleEmitterDefClass *pdefinition = W3DNEW ParticleEmitterDefClass;
-	if (pdefinition != NULL) {
+	if (pdefinition != nullptr) {
 
 		// Ask the definition object to load the emitter data
 		if (pdefinition->Load_W3D (chunk_load) != WW3D_ERROR_OK) {

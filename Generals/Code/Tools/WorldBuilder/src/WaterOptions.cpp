@@ -34,7 +34,7 @@
 #include "Common/WellKnownKeys.h"
 #include "LayersList.h"
 
-WaterOptions *WaterOptions::m_staticThis = NULL;
+WaterOptions *WaterOptions::m_staticThis = nullptr;
 Int WaterOptions::m_waterHeight = 7;
 Int WaterOptions::m_waterPointSpacing = MAP_XY_FACTOR;
 Bool WaterOptions::m_creatingWaterAreas = false;
@@ -42,8 +42,8 @@ Bool WaterOptions::m_creatingWaterAreas = false;
 /// WaterOptions dialog trivial construstor - Create does the real work.
 
 
-WaterOptions::WaterOptions(CWnd* pParent /*=NULL*/):
-m_moveUndoable(NULL)
+WaterOptions::WaterOptions(CWnd* pParent /*=nullptr*/):
+m_moveUndoable(nullptr)
 {
 	//{{AFX_DATA_INIT(WaterOptions)
 		// NOTE: the ClassWizard will add member initialization here
@@ -88,7 +88,7 @@ void WaterOptions::updateTheUI(void)
 	}
 	pButton = (CButton*)GetDlgItem(IDC_MAKE_RIVER);
 	pButton->SetCheck(isRiver ? 1:0);
-	pButton->EnableWindow(theTrigger!=NULL);
+	pButton->EnableWindow(theTrigger!=nullptr);
 
 	pWnd = m_staticThis->GetDlgItem(IDC_SPACING);
 	char buffer[12];

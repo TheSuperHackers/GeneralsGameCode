@@ -48,10 +48,10 @@ void ControlBar::updateOCLTimerTextDisplay( UnsignedInt totalSeconds, Real perce
 {
 	UnicodeString text;
 	static UnsignedInt descID = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:OCLTimerStaticText" );
-	GameWindow *descWindow = TheWindowManager->winGetWindowFromId( NULL, descID );
+	GameWindow *descWindow = TheWindowManager->winGetWindowFromId( nullptr, descID );
 
 	static UnsignedInt barID = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:OCLTimerProgressBar" );
-	GameWindow *barWindow = TheWindowManager->winGetWindowFromId( NULL, barID );
+	GameWindow *barWindow = TheWindowManager->winGetWindowFromId( nullptr, barID );
 
 	// santiy
 	DEBUG_ASSERTCRASH( descWindow, ("Under construction window not found") );
@@ -80,7 +80,7 @@ void ControlBar::populateOCLTimer( Object *creatorObject )
 {
 
 	// sanity
-	if( creatorObject == NULL )
+	if( creatorObject == nullptr )
 		return;
 
 	// get our parent window

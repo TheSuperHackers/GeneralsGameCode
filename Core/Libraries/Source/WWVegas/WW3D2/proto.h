@@ -81,7 +81,7 @@ class PrototypeClass
 
 public:
 
-	PrototypeClass(void) : NextHash(NULL) {}
+	PrototypeClass(void) : NextHash(nullptr) {}
 
 	virtual const char *			Get_Name(void)	const = 0;
 	virtual int								Get_Class_ID(void) const = 0;

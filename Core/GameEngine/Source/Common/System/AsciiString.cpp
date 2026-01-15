@@ -54,7 +54,7 @@
 //-----------------------------------------------------------------------------
 inline char* skipSeps(char* p, const char* seps)
 {
-	while (*p && strchr(seps, *p) != NULL)
+	while (*p && strchr(seps, *p) != nullptr)
 		++p;
 	return p;
 }
@@ -62,7 +62,7 @@ inline char* skipSeps(char* p, const char* seps)
 //-----------------------------------------------------------------------------
 inline char* skipNonSeps(char* p, const char* seps)
 {
-	while (*p && strchr(seps, *p) == NULL)
+	while (*p && strchr(seps, *p) == nullptr)
 		++p;
 	return p;
 }
@@ -144,7 +144,7 @@ void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData
 		return;
 	}
 
-	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("Cannot use dynamic memory allocator before its initialization. Check static initialization order."));
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("Cannot use dynamic memory allocator before its initialization. Check static initialization order."));
 	DEBUG_ASSERTCRASH(numCharsNeeded <= MAX_LEN, ("AsciiString::ensureUniqueBufferOfSize exceeds max string length %d with requested length %d", MAX_LEN, numCharsNeeded));
 	int minBytes = sizeof(AsciiStringData) + numCharsNeeded*sizeof(char);
 	int actualBytes = TheDynamicMemoryAllocator->getActualAllocationSize(minBytes);
@@ -190,29 +190,29 @@ void AsciiString::releaseBuffer()
 		{
 			TheDynamicMemoryAllocator->freeBytes(m_data);
 		}
-		m_data = 0;
+		m_data = nullptr;
 	}
 	validate();
 }
 
 // -----------------------------------------------------
-AsciiString::AsciiString(const char* s) : m_data(NULL)
+AsciiString::AsciiString(const char* s) : m_data(nullptr)
 {
 	//DEBUG_ASSERTCRASH(isMemoryManagerOfficiallyInited(), ("Initializing AsciiStrings prior to main (ie, as static vars) can cause memory leak reporting problems. Are you sure you want to do this?"));
 	int len = s ? (int)strlen(s) : 0;
 	if (len > 0)
 	{
-		ensureUniqueBufferOfSize(len + 1, false, s, NULL);
+		ensureUniqueBufferOfSize(len + 1, false, s, nullptr);
 	}
 	validate();
 }
 
 // -----------------------------------------------------
-AsciiString::AsciiString(const char* s, int len) : m_data(NULL)
+AsciiString::AsciiString(const char* s, int len) : m_data(nullptr)
 {
 	if (len > 0)
 	{
-		ensureUniqueBufferOfSize(len + 1, false, s, NULL);
+		ensureUniqueBufferOfSize(len + 1, false, s, nullptr);
 	}
 	validate();
 }
@@ -248,7 +248,7 @@ void AsciiString::set(const char* s, int len)
 	{
 		if (len > 0)
 		{
-			ensureUniqueBufferOfSize(len + 1, false, s, NULL);
+			ensureUniqueBufferOfSize(len + 1, false, s, nullptr);
 		}
 		else
 		{
@@ -263,7 +263,7 @@ char*  AsciiString::getBufferForRead(Int len)
 {
 	validate();
 	DEBUG_ASSERTCRASH(len>0, ("No need to allocate 0 len strings."));
-	ensureUniqueBufferOfSize(len + 1, false, NULL, NULL);
+	ensureUniqueBufferOfSize(len + 1, false, nullptr, nullptr);
 	validate();
 	return peek();
 }
@@ -290,7 +290,7 @@ void AsciiString::concat(const char* s)
 
 	if (m_data)
 	{
-		ensureUniqueBufferOfSize(getLength() + addlen + 1, true, NULL, s);
+		ensureUniqueBufferOfSize(getLength() + addlen + 1, true, nullptr, s);
 	}
 	else
 	{
@@ -401,7 +401,7 @@ void AsciiString::truncateBy(const Int charCount)
 		const size_t len = strlen(peek());
 		if (len > 0)
 		{
-			ensureUniqueBufferOfSize(len + 1, true, NULL, NULL);
+			ensureUniqueBufferOfSize(len + 1, true, nullptr, nullptr);
 			size_t count = charCount;
 			if (charCount > len)
 			{
@@ -422,7 +422,7 @@ void AsciiString::truncateTo(const Int maxLength)
 		const size_t len = strlen(peek());
 		if (len > maxLength)
 		{
-			ensureUniqueBufferOfSize(len + 1, true, NULL, NULL);
+			ensureUniqueBufferOfSize(len + 1, true, nullptr, nullptr);
 			peek()[maxLength] = 0;
 		}
 	}
@@ -510,7 +510,7 @@ Bool AsciiString::nextToken(AsciiString* tok, const char* seps)
 	if (this->isEmpty() || tok == this)
 		return false;
 
-	if (seps == NULL)
+	if (seps == nullptr)
 		seps = " \n\r\t";
 
 	char* start = skipSeps(peek(), seps);

@@ -353,7 +353,7 @@ public:
 		token was found. (note that this modifies 'this' as well, stripping
 		the token off!)
 	*/
-	Bool nextToken(AsciiString* token, const char* seps = NULL);
+	Bool nextToken(AsciiString* token, const char* seps = nullptr);
 
 	/**
 		return true iff the string is "NONE" (case-insensitive).
@@ -420,7 +420,7 @@ inline int AsciiString::getByteCount() const
 inline Bool AsciiString::isEmpty() const
 {
 	validate();
-	return m_data == NULL || peek()[0] == 0;
+	return m_data == nullptr || peek()[0] == 0;
 }
 
 // -----------------------------------------------------

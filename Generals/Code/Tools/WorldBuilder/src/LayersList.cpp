@@ -77,7 +77,7 @@ void CLLTreeCtrl::OnRButtonDown(UINT nFlags, CPoint point)
 	SelectItem(item);
 
 	if (item) {
-		if (GetParentItem(item) == NULL) {
+		if (GetParentItem(item) == nullptr) {
 			mLastClickedLayer = GetItemText(item);
 			mLastClickedObject = AsciiString::TheEmptyString;
 			contextIsLayer = true;
@@ -139,7 +139,7 @@ END_MESSAGE_MAP()
 
 LayersList::LayersList(UINT nIDTemplate, CWnd *parentWnd) : CDialog(nIDTemplate, parentWnd)
 {
-	mTree = NULL;
+	mTree = nullptr;
 	resetLayers();
 }
 
@@ -170,7 +170,7 @@ void LayersList::resetLayers(void)
 void LayersList::addMapObjectToLayersList(MapObject *objToAdd, AsciiString layerToAddTo)
 {
 	if (!objToAdd || findMapObjectAndList(objToAdd)) {
-		DEBUG_CRASH(("MapObject added was NULL or object already in Layers List. jkmcd"));
+		DEBUG_CRASH(("MapObject added was null or object already in Layers List. jkmcd"));
 		return;
 	}
 	ListLayerIt layerIt;
@@ -205,7 +205,7 @@ AsciiString LayersList::removeMapObjectFromLayersList(MapObject *objToRemove)
 void LayersList::changeMapObjectLayer(MapObject *objToChange, AsciiString layerToPlaceOn)
 {
 	if (!objToChange) {
-		DEBUG_CRASH(("Attempted to change location of NULL object. jkmcd"));
+		DEBUG_CRASH(("Attempted to change location of null object. jkmcd"));
 		return;
 	}
 
@@ -441,7 +441,7 @@ void LayersList::addMapObjectToLayer(IN MapObject *objectToAdd, IN ListLayerIt *
 void LayersList::removeMapObjectFromLayer(IN MapObject *objectToRemove, IN ListLayerIt *layerIt, IN ListMapObjectPtrIt *objectIt)
 {
 	if (!objectToRemove) {
-		DEBUG_CRASH(("Attempted to remove NULL object from layers list. jkmcd"));
+		DEBUG_CRASH(("Attempted to remove null object from layers list. jkmcd"));
 		return;
 	}
 
@@ -526,7 +526,7 @@ void LayersList::OnBeginEditLabel(NMHDR *pNotifyStruct, LRESULT* pResult)
 	}
 
 	TV_DISPINFO *ptvdi = (TV_DISPINFO*) pNotifyStruct;
-	if (ptvdi == NULL) {
+	if (ptvdi == nullptr) {
 		(*pResult) = 1;
 		return;
 	}
@@ -637,7 +637,7 @@ void LayersList::OnDeleteLayer()
 HTREEITEM LayersList::findTreeLayerNamed(const AsciiString& nameToFind)
 {
 	if (!mTree) {
-		return NULL;
+		return nullptr;
 	}
 
 	HTREEITEM hItem = mTree->GetRootItem();
@@ -649,13 +649,13 @@ HTREEITEM LayersList::findTreeLayerNamed(const AsciiString& nameToFind)
 		hItem = mTree->GetNextSiblingItem(hItem);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 HTREEITEM LayersList::findTreeObjectNamed(const AsciiString& objectToFind, HTREEITEM layerItem)
 {
 	if (!(layerItem && mTree)) {
-		return NULL;
+		return nullptr;
 	}
 
 	HTREEITEM hItem = mTree->GetChildItem(layerItem);
@@ -667,7 +667,7 @@ HTREEITEM LayersList::findTreeObjectNamed(const AsciiString& objectToFind, HTREE
 		hItem = mTree->GetNextSiblingItem(hItem);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void LayersList::OnHideShowLayer()
@@ -849,7 +849,7 @@ MapObject *LayersList::findObjectByUID(AsciiString objectIDToFind)
 		obj = obj->getNext();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 BEGIN_MESSAGE_MAP(LayersList, CDialog)
@@ -870,4 +870,4 @@ END_MESSAGE_MAP()
 std::string LayersList::TheDefaultLayerName = "Default Layer";
 std::string LayersList::TheDefaultNewLayerName = "New Layer";
 const std::string LayersList::TheUnmutableDefaultLayerName = "Default Layer";
-extern LayersList *TheLayersList = NULL;
+extern LayersList *TheLayersList = nullptr;

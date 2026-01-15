@@ -130,14 +130,14 @@ public:
 	bool					Is_Initialized (void)	{ return m_IsInitialized; }
 
 	void					Reload_Displayed_Object (void);
-	void					Display_Emitter (ParticleEmitterClass *pemitter = NULL, bool use_global_reset_flag = true, bool allow_reset = true);
-	void					DisplayObject (RenderObjClass *pCModel = NULL, bool use_global_reset_flag = true, bool allow_reset = true, bool add_ghost = false);
+	void					Display_Emitter (ParticleEmitterClass *pemitter = nullptr, bool use_global_reset_flag = true, bool allow_reset = true);
+	void					DisplayObject (RenderObjClass *pCModel = nullptr, bool use_global_reset_flag = true, bool allow_reset = true, bool add_ghost = false);
 	BOOL					SaveSettings (LPCTSTR pszFilename, DWORD dwSettingsMask);
 	BOOL					LoadSettings (LPCTSTR pszFileName);
 	CGraphicView *		GetGraphicView (void);
 	CDataTreeView *	GetDataTreeView (void);
 
-	void					Build_Emitter_List (EmitterInstanceListClass *emitter_list, LPCTSTR emitter_name, RenderObjClass *render_obj = NULL);
+	void					Build_Emitter_List (EmitterInstanceListClass *emitter_list, LPCTSTR emitter_name, RenderObjClass *render_obj = nullptr);
 
 	//
 	//  Animation methods
@@ -145,7 +145,7 @@ public:
 	void					Make_Movie (void);
 	void					ResetAnimation (void);
 	void					StepAnimation (int frame_inc = 1);
-	void					PlayAnimation (RenderObjClass *pobj, LPCTSTR panim_name = NULL, bool use_global_reset_flag = true, bool allow_reset = true);
+	void					PlayAnimation (RenderObjClass *pobj, LPCTSTR panim_name = nullptr, bool use_global_reset_flag = true, bool allow_reset = true);
 	void					PlayAnimation (RenderObjClass *pobj, HAnimComboClass *pcombo, bool use_global_reset_flag = true, bool allow_reset = true);
 	void					UpdateFrame (float time_slice);
 	void					SetAnimationBlend (BOOL bBlend)	{ m_bAnimBlend = bBlend; }
@@ -191,7 +191,7 @@ public:
 	//
 	//	Scene methods
 	//
-	void					Remove_Object_From_Scene (RenderObjClass *prender_obj = NULL);
+	void					Remove_Object_From_Scene (RenderObjClass *prender_obj = nullptr);
 
 	//
 	//	Emitter serialization methods
@@ -224,12 +224,12 @@ public:
 	//
 	bool					Save_Current_LOD (const CString &filename);
 	bool					Save_Selected_LOD (void);
-	void					Switch_LOD (int increment = 1, RenderObjClass *render_obj = NULL);
+	void					Switch_LOD (int increment = 1, RenderObjClass *render_obj = nullptr);
 
 	//
 	// Alternate Material interface.
 	//
-	void					Toggle_Alternate_Materials(RenderObjClass * obj = NULL);
+	void					Toggle_Alternate_Materials(RenderObjClass * obj = nullptr);
 
 	//
 	//	Prototype methods
@@ -248,7 +248,7 @@ public:
 	//
 	//	Particle methods
 	//
-	int					Count_Particles (RenderObjClass *render_obj = NULL);
+	int					Count_Particles (RenderObjClass *render_obj = nullptr);
 	void					Update_Particle_Count (void);
 
 	//
@@ -268,7 +268,7 @@ public:
 	//
 	void					Copy_Assets_To_Dir (LPCTSTR directory);
 	bool					Lookup_Path (LPCTSTR asset_name, CString &path);
-	const char *		Get_Last_Path (void) const { return (m_LastPath.IsEmpty () ? NULL : (const char *)m_LastPath); }
+	const char *		Get_Last_Path (void) const { return (m_LastPath.IsEmpty () ? nullptr : (const char *)m_LastPath); }
 
 	//
 	//	Texture search paths

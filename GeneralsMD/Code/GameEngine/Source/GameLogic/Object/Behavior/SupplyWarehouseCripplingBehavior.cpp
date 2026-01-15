@@ -50,10 +50,10 @@ SupplyWarehouseCripplingBehaviorModuleData::SupplyWarehouseCripplingBehaviorModu
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "SelfHealSupression",	INI::parseDurationUnsignedInt,	NULL, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealSupression) },
-		{ "SelfHealDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealDelay) },
-		{ "SelfHealAmount",			INI::parseReal,									NULL, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealAmount) },
-		{ 0, 0, 0, 0 }
+		{ "SelfHealSupression",	INI::parseDurationUnsignedInt,	nullptr, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealSupression) },
+		{ "SelfHealDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealDelay) },
+		{ "SelfHealAmount",			INI::parseReal,									nullptr, offsetof(SupplyWarehouseCripplingBehaviorModuleData, m_selfHealAmount) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   UpdateModuleData::buildFieldParse(p);
@@ -103,7 +103,7 @@ UpdateSleepTime SupplyWarehouseCripplingBehavior::update()
 	UnsignedInt now = TheGameLogic->getFrame();
 	m_nextHealingFrame = now + md->m_selfHealDelay;
 
-	getObject()->attemptHealing(md->m_selfHealAmount, NULL);
+	getObject()->attemptHealing(md->m_selfHealAmount, nullptr);
 
 	if( getObject()->getBodyModule()->getHealth() == getObject()->getBodyModule()->getMaxHealth() )
 		return UPDATE_SLEEP_FOREVER;// this can't be in onHealing, as the healing comes from here

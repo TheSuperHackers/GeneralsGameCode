@@ -114,7 +114,7 @@ static inline CullableClass * get_next_object(CullableClass * obj)
 AABTreeCullSystemClass::AABTreeCullSystemClass(void) :
 	ObjectCount(0),
 	NodeCount(0),
-	IndexedNodes(NULL)
+	IndexedNodes(nullptr)
 {
 	RootNode = new AABTreeNodeClass;
 	Re_Index_Nodes();
@@ -133,7 +133,7 @@ AABTreeCullSystemClass::~AABTreeCullSystemClass(void)
 
 	// Delete indexed node pointer array
 	delete[] IndexedNodes;
-	IndexedNodes = NULL;
+	IndexedNodes = nullptr;
 }
 
 
@@ -141,7 +141,7 @@ void AABTreeCullSystemClass::Add_Object_Internal(CullableClass * obj,int node_in
 {
 	WWASSERT_PRINT
 	(
-		(obj->Get_Culling_System() == NULL),
+		(obj->Get_Culling_System() == nullptr),
 		"AABTreeCullSystemClass::Add -- Object is already in another culling system!\n"
 	);
 
@@ -172,9 +172,9 @@ void AABTreeCullSystemClass::Remove_Object_Internal(CullableClass * obj)
 	WWASSERT(node);
 
 	node->Remove_Object(obj);
-	link->Set_Culling_System(NULL);
+	link->Set_Culling_System(nullptr);
 	delete link;
-	obj->Set_Cull_Link(NULL);
+	obj->Set_Cull_Link(nullptr);
 
 	ObjectCount--;
 	WWASSERT(ObjectCount >= 0);
@@ -304,7 +304,7 @@ void AABTreeCullSystemClass::Add_Loaded_Object(AABTreeNodeClass * node,CullableC
 
 	WWASSERT_PRINT
 	(
-		(obj->Get_Culling_System() == NULL),
+		(obj->Get_Culling_System() == nullptr),
 		"AABTreeCullSystemClass::Add_Loaded_Object -- Object is already in another culling system!\n"
 	);
 
@@ -381,7 +381,7 @@ void AABTreeCullSystemClass::Re_Partition(const AABoxClass & bounds,SimpleDynVec
 	*/
 	dummy_node->Box.Extent.Set(0,0,0);
 	CullableClass * obj = get_first_object(dummy_node);
-	while (obj != NULL) {
+	while (obj != nullptr) {
 		Update_Culling(obj);
 		obj = get_first_object(dummy_node);
 	}
@@ -781,7 +781,7 @@ void AABTreeCullSystemClass::Load_Nodes(AABTreeNodeClass * node,ChunkLoadClass &
 
 	// if we are supposed to have a front child, load it
 	if (node_desc.Attributes & AABNODE_ATTRIBUTE_FRONT_CHILD) {
-		WWASSERT(node->Front == NULL);
+		WWASSERT(node->Front == nullptr);
 		node->Front = new AABTreeNodeClass();
 		node->Front->Parent = node;
 		Load_Nodes(node->Front,cload);
@@ -789,7 +789,7 @@ void AABTreeCullSystemClass::Load_Nodes(AABTreeNodeClass * node,ChunkLoadClass &
 
 	// if we have a back child, load it
 	if (node_desc.Attributes & AABNODE_ATTRIBUTE_BACK_CHILD) {
-		WWASSERT(node->Back == NULL);
+		WWASSERT(node->Back == nullptr);
 		node->Back = new AABTreeNodeClass();
 		node->Back->Parent = node;
 		Load_Nodes(node->Back,cload);
@@ -882,7 +882,7 @@ void AABTreeCullSystemClass::Save_Object_Linkage(ChunkSaveClass & csave,Cullable
 void AABTreeCullSystemClass::Re_Index_Nodes(void)
 {
 	delete[] IndexedNodes;
-	IndexedNodes = NULL;
+	IndexedNodes = nullptr;
 
 	NodeCount = Partition_Node_Count();
 	WWASSERT(NodeCount > 0);
@@ -918,10 +918,10 @@ void AABTreeCullSystemClass::Re_Index_Nodes_Recursive(AABTreeNodeClass * node,in
 AABTreeNodeClass::AABTreeNodeClass(void) :
 	Index(0),
 	Box(Vector3(0,0,0),Vector3(0,0,0)),
-	Parent(NULL),
-	Front(NULL),
-	Back(NULL),
-	Object(NULL),
+	Parent(nullptr),
+	Front(nullptr),
+	Back(nullptr),
+	Object(nullptr),
 	UserData(0)
 {
 }
@@ -929,14 +929,14 @@ AABTreeNodeClass::AABTreeNodeClass(void) :
 AABTreeNodeClass::~AABTreeNodeClass(void)
 {
 	// objects should be removed before deleting the partition tree
-	WWASSERT(Object == NULL);
+	WWASSERT(Object == nullptr);
 
 	// delete our children
 	delete Front;
-	Front = NULL;
+	Front = nullptr;
 
 	delete Back;
-	Back = NULL;
+	Back = nullptr;
 }
 
 void AABTreeNodeClass::Compute_Bounding_Box(void)
@@ -1000,7 +1000,7 @@ void AABTreeNodeClass::Add_Object(CullableClass * obj,bool update_bounds)
 	if (update_bounds) {
 		// if this is the only object and we have no children, just copy
 		// the object's bounding box, otherwise, add it to what we have
-		if ((Object_Count() == 1) && (Front == NULL) && (Back == NULL)) {
+		if ((Object_Count() == 1) && (Front == nullptr) && (Back == nullptr)) {
 			Box = obj->Get_Cull_Box();
 		} else {
 			Box.Add_Box(obj->Get_Cull_Box());
@@ -1013,7 +1013,7 @@ void AABTreeNodeClass::Remove_Object(CullableClass * obj)
 	WWASSERT(obj);
 
 	// find the given object in our linked list
-	CullableClass * prevobj = NULL;
+	CullableClass * prevobj = nullptr;
 	CullableClass * curobj = Object;
 
 	while (curobj) {
@@ -1029,8 +1029,8 @@ void AABTreeNodeClass::Remove_Object(CullableClass * obj)
 				Object = link->NextObject;
 			}
 
-			link->NextObject = NULL;
-			link->Node = NULL;
+			link->NextObject = nullptr;
+			link->Node = nullptr;
 			return;
 		}
 
@@ -1076,7 +1076,7 @@ CullableClass * AABTreeNodeClass::Peek_Object(int index)
 {
 	int count = 0;
 	CullableClass * obj = Object;
-	WWASSERT(obj != NULL);
+	WWASSERT(obj != nullptr);
 
 	while (obj && (count != index)) {
 		count++;
@@ -1107,7 +1107,7 @@ void AABTreeNodeClass::Partition(void)
 	*/
 	SimpleDynVecClass<AABoxClass> boxes(obj_count);
 	CullableClass * obj = Object;
-	while (obj != NULL) {
+	while (obj != nullptr) {
 		boxes.Add(obj->Get_Cull_Box());
 		obj = get_next_object(obj);
 	}
@@ -1144,7 +1144,7 @@ void AABTreeNodeClass::Partition(void)
 		Front->Partition();
 	} else {
 		delete front;
-		front = NULL;
+		front = nullptr;
 	}
 
 	/*
@@ -1156,7 +1156,7 @@ void AABTreeNodeClass::Partition(void)
 		Back->Partition();
 	} else {
 		delete back;
-		back = NULL;
+		back = nullptr;
 	}
 }
 
@@ -1165,8 +1165,8 @@ void AABTreeNodeClass::Partition(void)
 void AABTreeNodeClass::Split_Objects(const AABTreeNodeClass::SplitChoiceStruct & sc,AABTreeNodeClass * front,AABTreeNodeClass * back)
 {
 	// This function assumes that this node is a leaf
-	WWASSERT(Front == NULL);
-	WWASSERT(Back == NULL);
+	WWASSERT(Front == nullptr);
+	WWASSERT(Back == nullptr);
 	WWASSERT(Object_Count() == sc.FrontCount + sc.BackCount);
 
 	int fcount = 0;
@@ -1255,7 +1255,7 @@ void AABTreeNodeClass::Partition(const AABoxClass & bounds,SimpleDynVecClass<AAB
 		Front->Parent = this;
 		Front->Partition(sc.FrontBox,frontboxes);
 	} else {
-		Front = NULL;
+		Front = nullptr;
 	}
 
 	/*
@@ -1266,7 +1266,7 @@ void AABTreeNodeClass::Partition(const AABoxClass & bounds,SimpleDynVecClass<AAB
 		Back->Parent = this;
 		Back->Partition(sc.BackBox,backboxes);
 	} else {
-		Back = NULL;
+		Back = nullptr;
 	}
 }
 
@@ -1473,7 +1473,7 @@ AABTreeIterator::AABTreeIterator(AABTreeCullSystemClass * tree) :
 	Tree(tree),
 	CurNodeIndex(0)
 {
-	WWASSERT(Tree != NULL);
+	WWASSERT(Tree != nullptr);
 }
 
 void AABTreeIterator::Reset(void)
@@ -1507,7 +1507,7 @@ bool AABTreeIterator::Enter_Sibling(void)
 		/*
 		** if our parent doesn't have two children, we don't have a sibling
 		*/
-		if ((parent_front == NULL) || (parent_back == NULL)) {
+		if ((parent_front == nullptr) || (parent_back == nullptr)) {
 			return false;
 		}
 
@@ -1533,7 +1533,7 @@ bool AABTreeIterator::Enter_Sibling(void)
 bool AABTreeIterator::Has_Front_Child(void)
 {
 	validate();
-	return (Tree->IndexedNodes[CurNodeIndex]->Front != NULL);
+	return (Tree->IndexedNodes[CurNodeIndex]->Front != nullptr);
 }
 
 bool AABTreeIterator::Enter_Front_Child(void)
@@ -1549,7 +1549,7 @@ bool AABTreeIterator::Enter_Front_Child(void)
 bool AABTreeIterator::Has_Back_Child(void)
 {
 	validate();
-	return (Tree->IndexedNodes[CurNodeIndex]->Back != NULL);
+	return (Tree->IndexedNodes[CurNodeIndex]->Back != nullptr);
 }
 
 bool AABTreeIterator::Enter_Back_Child(void)

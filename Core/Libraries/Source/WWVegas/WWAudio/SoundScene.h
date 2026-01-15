@@ -177,7 +177,7 @@ class SoundSceneClass
 		{
 		public:
 			AudibleInfoClass (void)
-				:	sound_obj (NULL),
+				:	sound_obj (nullptr),
 					distance2 (0) { }
 
 			AudibleInfoClass (AudibleSoundClass *obj, float dist2)

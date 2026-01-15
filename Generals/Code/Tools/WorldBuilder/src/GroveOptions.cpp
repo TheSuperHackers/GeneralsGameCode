@@ -25,7 +25,7 @@
 
 #define ARBITRARY_BUFF_SIZE		128
 
-/*extern*/ GroveOptions *TheGroveOptions = NULL;
+/*extern*/ GroveOptions *TheGroveOptions = nullptr;
 
 void GroveOptions::makeMain(void)
 {
@@ -168,7 +168,7 @@ BOOL GroveOptions::OnInitDialog()
 
 GroveOptions::~GroveOptions()
 {
-	TheGroveOptions = NULL;
+	TheGroveOptions = nullptr;
 }
 
 

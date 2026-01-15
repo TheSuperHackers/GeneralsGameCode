@@ -33,7 +33,7 @@
 
 #include <list>
 
-RoadOptions *RoadOptions::m_staticThis = NULL;
+RoadOptions *RoadOptions::m_staticThis = nullptr;
 Bool RoadOptions::m_updating = false;
 AsciiString RoadOptions::m_currentRoadName;
 Int RoadOptions::m_currentRoadIndex=0;
@@ -48,7 +48,7 @@ Bool RoadOptions::m_doJoin = false;		///< Is a join to different road type.
 // RoadOptions dialog
 
 
-RoadOptions::RoadOptions(CWnd* pParent /*=NULL*/)
+RoadOptions::RoadOptions(CWnd* pParent /*=nullptr*/)
 {
 	m_currentRoadName = "Road";
 	//{{AFX_DATA_INIT(RoadOptions)
@@ -99,7 +99,7 @@ void RoadOptions::updateLabel(void)
 /** Returns true if only one or more roads is selected. */
 Bool RoadOptions::selectionIsRoadsOnly(void)
 {
-//	MapObject *theMapObj = NULL;
+//	MapObject *theMapObj = nullptr;
 	Bool foundRoad = false;
 	Bool foundAnythingElse = false;
 	MapObject *pMapObj;
@@ -118,7 +118,7 @@ Bool RoadOptions::selectionIsRoadsOnly(void)
 /** Returns true if only one or more roads is selected. */
 void RoadOptions::updateSelection(void)
 {
-//	MapObject *theMapObj = NULL;
+//	MapObject *theMapObj = nullptr;
 	Int angled = 0;
 	Int tight = 0;
 	Int broad = 0;
@@ -312,7 +312,7 @@ HTREEITEM RoadOptions::findOrAdd(HTREEITEM parent, const char *pLabel)
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = m_roadTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
@@ -344,7 +344,7 @@ Bool RoadOptions::findAndSelect(HTREEITEM parent, AsciiString label)
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = m_roadTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
@@ -419,7 +419,7 @@ Bool RoadOptions::setRoadTreeViewSelection(HTREEITEM parent, Int selection)
 	char buffer[NAME_MAX_LEN];
 	::memset(&item, 0, sizeof(item));
 	HTREEITEM child = m_roadTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT;
 		item.hItem = child;
 		item.pszText = buffer;
@@ -549,7 +549,7 @@ BOOL RoadOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 				updateLabel();
 			}	else if (!(item.state & TVIS_EXPANDEDONCE) ) {
 				HTREEITEM child = m_roadTreeView.GetChildItem(hItem);
-				while (child != NULL) {
+				while (child != nullptr) {
 					hItem = child;
 					child = m_roadTreeView.GetChildItem(hItem);
 				}

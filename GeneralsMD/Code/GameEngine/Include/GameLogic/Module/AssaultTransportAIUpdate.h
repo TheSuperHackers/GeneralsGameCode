@@ -61,8 +61,8 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "MembersGetHealedAtLifeRatio",						INI::parseReal,	NULL, offsetof( AssaultTransportAIUpdateModuleData, m_membersGetHealedAtLifeRatio ) },
-			{ "ClearRangeRequiredToContinueAttackMove", INI::parseReal, NULL, offsetof( AssaultTransportAIUpdateModuleData, m_clearRangeRequiredToContinueAttackMove ) },
+			{ "MembersGetHealedAtLifeRatio",						INI::parseReal,	nullptr, offsetof( AssaultTransportAIUpdateModuleData, m_membersGetHealedAtLifeRatio ) },
+			{ "ClearRangeRequiredToContinueAttackMove", INI::parseReal, nullptr, offsetof( AssaultTransportAIUpdateModuleData, m_clearRangeRequiredToContinueAttackMove ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);

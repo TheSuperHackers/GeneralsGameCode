@@ -65,7 +65,7 @@ DumbProjectileBehaviorModuleData::DumbProjectileBehaviorModuleData() :
 	m_firstPercentIndent(0.0f),
 	m_secondPercentIndent(0.0f),
 	m_garrisonHitKillCount(0),
-	m_garrisonHitKillFX(NULL),
+	m_garrisonHitKillFX(nullptr),
 	m_flightPathAdjustDistPerFrame(0.0f)
 {
 }
@@ -77,25 +77,25 @@ void DumbProjectileBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "MaxLifespan", INI::parseDurationUnsignedInt, NULL, offsetof( DumbProjectileBehaviorModuleData, m_maxLifespan ) },
-		{ "TumbleRandomly", INI::parseBool, NULL, offsetof( DumbProjectileBehaviorModuleData, m_tumbleRandomly ) },
-		{ "DetonateCallsKill", INI::parseBool, NULL, offsetof( DumbProjectileBehaviorModuleData, m_detonateCallsKill ) },
-		{ "OrientToFlightPath", INI::parseBool, NULL, offsetof( DumbProjectileBehaviorModuleData, m_orientToFlightPath ) },
+		{ "MaxLifespan", INI::parseDurationUnsignedInt, nullptr, offsetof( DumbProjectileBehaviorModuleData, m_maxLifespan ) },
+		{ "TumbleRandomly", INI::parseBool, nullptr, offsetof( DumbProjectileBehaviorModuleData, m_tumbleRandomly ) },
+		{ "DetonateCallsKill", INI::parseBool, nullptr, offsetof( DumbProjectileBehaviorModuleData, m_detonateCallsKill ) },
+		{ "OrientToFlightPath", INI::parseBool, nullptr, offsetof( DumbProjectileBehaviorModuleData, m_orientToFlightPath ) },
 
-		{ "FirstHeight",					INI::parseReal,						NULL, offsetof( DumbProjectileBehaviorModuleData, m_firstHeight ) },
-		{ "SecondHeight",					INI::parseReal,						NULL, offsetof( DumbProjectileBehaviorModuleData, m_secondHeight ) },
-		{ "FirstPercentIndent",		INI::parsePercentToReal,	NULL, offsetof( DumbProjectileBehaviorModuleData, m_firstPercentIndent ) },
-		{ "SecondPercentIndent",	INI::parsePercentToReal,	NULL, offsetof( DumbProjectileBehaviorModuleData, m_secondPercentIndent ) },
+		{ "FirstHeight",					INI::parseReal,						nullptr, offsetof( DumbProjectileBehaviorModuleData, m_firstHeight ) },
+		{ "SecondHeight",					INI::parseReal,						nullptr, offsetof( DumbProjectileBehaviorModuleData, m_secondHeight ) },
+		{ "FirstPercentIndent",		INI::parsePercentToReal,	nullptr, offsetof( DumbProjectileBehaviorModuleData, m_firstPercentIndent ) },
+		{ "SecondPercentIndent",	INI::parsePercentToReal,	nullptr, offsetof( DumbProjectileBehaviorModuleData, m_secondPercentIndent ) },
 
-		{ "GarrisonHitKillRequiredKindOf", KindOfMaskType::parseFromINI, NULL, offsetof( DumbProjectileBehaviorModuleData, m_garrisonHitKillKindof ) },
-		{ "GarrisonHitKillForbiddenKindOf", KindOfMaskType::parseFromINI, NULL, offsetof( DumbProjectileBehaviorModuleData, m_garrisonHitKillKindofNot ) },
-		{ "GarrisonHitKillCount", INI::parseUnsignedInt, NULL, offsetof( DumbProjectileBehaviorModuleData, m_garrisonHitKillCount ) },
-		{ "GarrisonHitKillFX", INI::parseFXList, NULL, offsetof( DumbProjectileBehaviorModuleData, m_garrisonHitKillFX ) },
+		{ "GarrisonHitKillRequiredKindOf", KindOfMaskType::parseFromINI, nullptr, offsetof( DumbProjectileBehaviorModuleData, m_garrisonHitKillKindof ) },
+		{ "GarrisonHitKillForbiddenKindOf", KindOfMaskType::parseFromINI, nullptr, offsetof( DumbProjectileBehaviorModuleData, m_garrisonHitKillKindofNot ) },
+		{ "GarrisonHitKillCount", INI::parseUnsignedInt, nullptr, offsetof( DumbProjectileBehaviorModuleData, m_garrisonHitKillCount ) },
+		{ "GarrisonHitKillFX", INI::parseFXList, nullptr, offsetof( DumbProjectileBehaviorModuleData, m_garrisonHitKillFX ) },
 
-		{ "FlightPathAdjustDistPerSecond", INI::parseVelocityReal, NULL, offsetof( DumbProjectileBehaviorModuleData, m_flightPathAdjustDistPerFrame ) },
+		{ "FlightPathAdjustDistPerSecond", INI::parseVelocityReal, nullptr, offsetof( DumbProjectileBehaviorModuleData, m_flightPathAdjustDistPerFrame ) },
 
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add(dataFieldParse);
@@ -110,7 +110,7 @@ DumbProjectileBehavior::DumbProjectileBehavior( Thing *thing, const ModuleData* 
 {
 	m_launcherID = INVALID_ID;
 	m_victimID = INVALID_ID;
-	m_detonationWeaponTmpl = NULL;
+	m_detonationWeaponTmpl = nullptr;
 	m_lifespanFrame = 0;
 	m_flightPath.clear();
 	m_flightPathSegments = 0;
@@ -409,7 +409,7 @@ Bool DumbProjectileBehavior::calcFlightPath(Bool recalcNumSegments)
 	controlPoints[3] = m_flightPathEnd;
 
 	Real highestInterveningTerrain;
-	Bool onMap = ThePartitionManager->estimateTerrainExtremesAlongLine( controlPoints[0], controlPoints[3], NULL, &highestInterveningTerrain, NULL, NULL );
+	Bool onMap = ThePartitionManager->estimateTerrainExtremesAlongLine( controlPoints[0], controlPoints[3], nullptr, &highestInterveningTerrain, nullptr, nullptr );
 	if( !onMap )
 	{
 		return false;
@@ -463,7 +463,7 @@ Bool DumbProjectileBehavior::projectileHandleCollision( Object *other )
 {
 	const DumbProjectileBehaviorModuleData* d = getDumbProjectileBehaviorModuleData();
 
-	if (other != NULL)
+	if (other != nullptr)
 	{
 		Object *projectileLauncher = TheGameLogic->findObjectByID( projectileGetLauncherID() );
 
@@ -502,7 +502,7 @@ Bool DumbProjectileBehavior::projectileHandleCollision( Object *other )
 				if (numKilled > 0)
 				{
 					// note, fx is played at center of building, not at grenade's location
-					FXList::doFXObj(d->m_garrisonHitKillFX, other, NULL);
+					FXList::doFXObj(d->m_garrisonHitKillFX, other, nullptr);
 
 					getObject()->getControllingPlayer()->getAcademyStats()->recordClearedGarrisonedBuilding();
 
@@ -756,7 +756,7 @@ void DumbProjectileBehavior::xfer( Xfer *xfer )
 	{
 
 		if( weaponTemplateName == AsciiString::TheEmptyString )
-			m_detonationWeaponTmpl = NULL;
+			m_detonationWeaponTmpl = nullptr;
 		else
 		{
 
@@ -764,7 +764,7 @@ void DumbProjectileBehavior::xfer( Xfer *xfer )
 			m_detonationWeaponTmpl = TheWeaponStore->findWeaponTemplate( weaponTemplateName );
 
 			// sanity
-			if( m_detonationWeaponTmpl == NULL )
+			if( m_detonationWeaponTmpl == nullptr )
 			{
 
 				DEBUG_CRASH(( "DumbProjectileBehavior::xfer - Unknown weapon template '%s'",

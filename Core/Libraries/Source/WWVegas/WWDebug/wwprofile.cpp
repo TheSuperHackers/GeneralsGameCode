@@ -129,8 +129,8 @@ WWProfileHierachyNodeClass::WWProfileHierachyNodeClass( const char * name, WWPro
 	StartTime( 0 ),
 	RecursionCounter( 0 ),
 	Parent( parent ),
-	Child( NULL ),
-	Sibling( NULL )
+	Child( nullptr ),
+	Sibling( nullptr )
 {
 	Reset();
 
@@ -141,14 +141,14 @@ WWProfileHierachyNodeClass::WWProfileHierachyNodeClass( const char * name, WWPro
 }
 
 WWProfileHierachyNodeClass::WWProfileHierachyNodeClass( unsigned id, WWProfileHierachyNodeClass * parent ) :
-	Name( NULL ),
+	Name( nullptr ),
 	TotalCalls( 0 ),
 	TotalTime( 0 ),
 	StartTime( 0 ),
 	RecursionCounter( 0 ),
 	Parent( parent ),
-	Child( NULL ),
-	Sibling( NULL ),
+	Child( nullptr ),
+	Sibling( nullptr ),
 	ProfileStringID(id)
 {
 	Reset();
@@ -346,7 +346,7 @@ bool	WWProfileHierachyNodeClass::Return( void )
 **
 ***************************************************************************************************/
 bool									WWProfileManager::IsProfileEnabled=false;
-WWProfileHierachyNodeClass		WWProfileManager::Root( "Root", NULL );
+WWProfileHierachyNodeClass		WWProfileManager::Root( "Root", nullptr );
 WWProfileHierachyNodeClass	*	WWProfileManager::CurrentNode = &WWProfileManager::Root;
 WWProfileHierachyNodeClass	*	WWProfileManager::CurrentRootNode = &WWProfileManager::Root;
 int									WWProfileManager::FrameCounter = 0;
@@ -482,7 +482,7 @@ void WWProfileManager::Increment_Frame_Counter( void )
 	if (ProfileCollecting) {
 		float time=Get_Time_Since_Reset();
 		TotalFrameTimes+=time;
-		WWProfileHierachyNodeClass* new_root=Root.Clone_Hierarchy(NULL);
+		WWProfileHierachyNodeClass* new_root=Root.Clone_Hierarchy(nullptr);
 		new_root->Set_Total_Time(time);
 		new_root->Set_Total_Calls(1);
 		ProfileCollectVector.Add(new_root);
@@ -564,7 +564,7 @@ void	WWProfileManager::End_Collecting(const char* filename)
 	int i;
 	if (filename && ProfileCollectVector.Count()!=0) {
 		FileClass * file= _TheWritingFileFactory->Get_File(filename);
-		if (file != NULL) {
+		if (file != nullptr) {
 			//
 			//	Open or create the file
 			//
@@ -722,9 +722,9 @@ static unsigned Read_Frame(char* memory,unsigned pos,unsigned maxpos,WWProfileHi
 	char statusstring[256];
 	unsigned framenumber=0;
 	float frametime;
-	root=NULL;
-	WWProfileHierachyInfoClass* parent=NULL;
-	WWProfileHierachyInfoClass* latest=NULL;
+	root=nullptr;
+	WWProfileHierachyInfoClass* parent=nullptr;
+	WWProfileHierachyInfoClass* latest=nullptr;
 
 	pos+=7;	// "FRAME: "
 
@@ -765,7 +765,7 @@ static unsigned Read_Frame(char* memory,unsigned pos,unsigned maxpos,WWProfileHi
 			new_node->Set_Total_Time(time);
 			new_node->Set_Total_Calls(count);
 			latest=new_node;
-			if (root==NULL) root=new_node;
+			if (root==nullptr) root=new_node;
 		}
 		else if (memory[pos]=='{') {
 			parent=latest;
@@ -787,12 +787,12 @@ static unsigned Read_Frame(char* memory,unsigned pos,unsigned maxpos,WWProfileHi
 
 void WWProfileManager::Load_Profile_Log(const char* filename, WWProfileHierachyInfoClass**& array, unsigned& count)
 {
-	array=NULL;
+	array=nullptr;
 	count=0;
 
 	unsigned i;
 	FileClass * file= _TheFileFactory->Get_File(filename);
-	if (file != NULL && file->Is_Available()) {
+	if (file != nullptr && file->Is_Available()) {
 		HashTemplateClass<StringClass, unsigned> string_hash;
 		HashTemplateClass<unsigned, StringClass> id_hash;
 		SimpleDynVecClass<WWProfileHierachyInfoClass*> vec;
@@ -819,7 +819,7 @@ void WWProfileManager::Load_Profile_Log(const char* filename, WWProfileHierachyI
 				id_hash.Insert(id,string);
 			}
 			else if (tmp[0]=='F' && tmp[1]=='R' && tmp[2]=='A' && tmp[3]=='M' && tmp[4]=='E' && tmp[5]==':') {
-				WWProfileHierachyInfoClass* node=NULL;
+				WWProfileHierachyInfoClass* node=nullptr;
 				pos=Read_Frame(memory,pos,size,node,id_hash);
 				if (node) {
 					vec.Add(node);
@@ -902,7 +902,7 @@ void	WWProfileIterator::Next(void)
 
 bool	WWProfileIterator::Is_Done(void)
 {
-	return CurrentChild == NULL;
+	return CurrentChild == nullptr;
 }
 
 void	WWProfileIterator::Enter_Child( void )
@@ -914,12 +914,12 @@ void	WWProfileIterator::Enter_Child( void )
 void	WWProfileIterator::Enter_Child( int index )
 {
 	CurrentChild = CurrentParent->Get_Child();
-	while ( (CurrentChild != NULL) && (index != 0) ) {
+	while ( (CurrentChild != nullptr) && (index != 0) ) {
 		index--;
 		CurrentChild = CurrentChild->Get_Sibling();
 	}
 
-	if ( CurrentChild != NULL ) {
+	if ( CurrentChild != nullptr ) {
 		CurrentParent = CurrentChild;
 		CurrentChild = CurrentParent->Get_Child();
 	}
@@ -927,7 +927,7 @@ void	WWProfileIterator::Enter_Child( int index )
 
 void	WWProfileIterator::Enter_Parent( void )
 {
-	if ( CurrentParent->Get_Parent() != NULL ) {
+	if ( CurrentParent->Get_Parent() != nullptr ) {
 		CurrentParent = CurrentParent->Get_Parent();
 	}
 	CurrentChild = CurrentParent->Get_Child();
@@ -958,13 +958,13 @@ void	WWProfileInOrderIterator::Next(void)
 	} else {											//	if not, go to my parent's sibling, or his.......
 		// Find a parent with a sibling....
 		bool done = false;
-		while ( CurrentNode != NULL && !done ) {
+		while ( CurrentNode != nullptr && !done ) {
 
 			// go to my parent
 			CurrentNode = CurrentNode->Get_Parent();
 
 			// If I have a sibling, go there
-			if ( CurrentNode != NULL && CurrentNode->Get_Sibling() != NULL ) {
+			if ( CurrentNode != nullptr && CurrentNode->Get_Sibling() != nullptr ) {
 				CurrentNode = CurrentNode->Get_Sibling();
 				done = true;
 			}
@@ -974,7 +974,7 @@ void	WWProfileInOrderIterator::Next(void)
 
 bool	WWProfileInOrderIterator::Is_Done(void)
 {
-	return CurrentNode == NULL;
+	return CurrentNode == nullptr;
 }
 
 /*
@@ -1003,7 +1003,7 @@ WWTimeItClass::~WWTimeItClass( void )
 */
 WWMeasureItClass::WWMeasureItClass( float * p_result )
 {
-	WWASSERT(p_result != NULL);
+	WWASSERT(p_result != nullptr);
 	PResult = p_result;
 	WWProfile_Get_Ticks( &Time );
 }
@@ -1013,7 +1013,7 @@ WWMeasureItClass::~WWMeasureItClass( void )
 	__int64 End;
 	WWProfile_Get_Ticks( &End );
 	End -= Time;
-	WWASSERT(PResult != NULL);
+	WWASSERT(PResult != nullptr);
 	*PResult = End  * WWProfile_Get_Inv_Processor_Ticks_Per_Second();
 }
 
@@ -1098,8 +1098,8 @@ WWProfileHierachyInfoClass::WWProfileHierachyInfoClass( const char * name, WWPro
 	TotalCalls( 0 ),
 	TotalTime( 0 ),
 	Parent( parent ),
-	Child( NULL ),
-	Sibling( NULL )
+	Child( nullptr ),
+	Sibling( nullptr )
 {
 }
 

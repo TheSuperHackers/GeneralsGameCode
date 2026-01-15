@@ -78,7 +78,7 @@ void StickyBombUpdate::onObjectCreated()
 			Object *target = ai->getGoalObject();
 			if( target )
 			{
-				init( target, NULL);
+				init( target, nullptr);
 			}
 		}
 	}

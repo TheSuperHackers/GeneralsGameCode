@@ -63,7 +63,7 @@ public:
 
 	virtual DockUpdateInterface* getDockUpdateInterface() { return this; }
 
-	virtual Bool action( Object *docker, Object *drone = NULL );	///< for me this means do some repair
+	virtual Bool action( Object *docker, Object *drone = nullptr );	///< for me this means do some repair
 
 	virtual Bool isRallyPointAfterDockType(){return TRUE;} ///< A minority of docks want to give you a final command to their rally point
 

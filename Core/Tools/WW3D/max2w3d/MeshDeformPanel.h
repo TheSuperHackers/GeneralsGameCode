@@ -56,11 +56,11 @@ class MeshDeformPanelClass
 		//////////////////////////////////////////////////////////////////////
 		MeshDeformPanelClass (HWND hwnd)
 			:	m_hWnd (hwnd),
-				m_pColorSwatch (NULL),
-				m_pMaxSetsSpin (NULL),
-				m_pMeshDeformer (NULL),
-				m_pLockSetsButton (NULL),
-				m_pMaxSetsEdit (NULL)				{ }
+				m_pColorSwatch (nullptr),
+				m_pMaxSetsSpin (nullptr),
+				m_pMeshDeformer (nullptr),
+				m_pLockSetsButton (nullptr),
+				m_pMaxSetsEdit (nullptr)				{ }
 		virtual ~MeshDeformPanelClass (void)	{ }
 
 		//////////////////////////////////////////////////////////////////////

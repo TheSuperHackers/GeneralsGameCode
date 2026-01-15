@@ -51,8 +51,8 @@
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 static NameKeyType buttonOkID = NAMEKEY_INVALID;
-static GameWindow *buttonOk = NULL;
-static GameWindow *parent = NULL;
+static GameWindow *buttonOk = nullptr;
+static GameWindow *parent = nullptr;
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
@@ -64,7 +64,7 @@ void PopupCommunicatorInit( WindowLayout *layout, void *userData )
 
 	//set keyboard focus to main parent and set modal
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey("PopupCommunicator.wnd:PopupCommunicator");
-	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 	TheWindowManager->winSetFocus( parent );
 	TheWindowManager->winSetModal( parent );
 
@@ -189,7 +189,7 @@ WindowMsgHandledType PopupCommunicatorSystem( GameWindow *window, UnsignedInt ms
 				{
 					popupCommunicatorLayout->destroyWindows();
 					deleteInstance(popupCommunicatorLayout);
-					popupCommunicatorLayout = NULL;
+					popupCommunicatorLayout = nullptr;
 				}
 			}
 

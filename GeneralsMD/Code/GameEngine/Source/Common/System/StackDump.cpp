@@ -59,7 +59,7 @@ void StackDumpDefaultHandler(const char*line)
 //*****************************************************************************
 void StackDump(void (*callback)(const char*))
 {
-	if (callback == NULL)
+	if (callback == nullptr)
 	{
 		callback = StackDumpDefaultHandler;
 	}
@@ -89,7 +89,7 @@ MYEIP1:
 //*****************************************************************************
 void StackDumpFromContext(DWORD eip,DWORD esp,DWORD ebp, void (*callback)(const char*))
 {
-	if (callback == NULL)
+	if (callback == nullptr)
 	{
 		callback = StackDumpDefaultHandler;
 	}
@@ -127,10 +127,10 @@ BOOL InitSymbolInfo()
 	process = GetCurrentProcess();
 
 	//Get the apps name
-	::GetModuleFileName(NULL, pathname, _MAX_PATH);
+	::GetModuleFileName(nullptr, pathname, _MAX_PATH);
 
 	// turn it into a search path
-	_splitpath(pathname, drive, directory, NULL, NULL);
+	_splitpath(pathname, drive, directory, nullptr, nullptr);
 	sprintf(pathname, "%s:\\%s", drive, directory);
 
 	// append the current directory to build a search path for SymInit
@@ -139,8 +139,8 @@ BOOL InitSymbolInfo()
 	if(DbgHelpLoader::symInitialize(process, pathname, FALSE))
 	{
 		// regenerate the name of the app
-		::GetModuleFileName(NULL, pathname, _MAX_PATH);
-		if(DbgHelpLoader::symLoadModule(process, NULL, pathname, NULL, 0, 0))
+		::GetModuleFileName(nullptr, pathname, _MAX_PATH);
+		if(DbgHelpLoader::symLoadModule(process, nullptr, pathname, nullptr, 0, 0))
 		{
 				//Load any other relevant modules (ie dlls) here
 				atexit(DbgHelpLoader::unload);
@@ -197,11 +197,11 @@ stack_frame.AddrFrame.Offset = myebp;
 											process,
 											thread,
 											&stack_frame,
-											NULL, //&gsContext,
-											NULL,
+											nullptr, //&gsContext,
+											nullptr,
 											DbgHelpLoader::symFunctionTableAccess,
 											DbgHelpLoader::symGetModuleBase,
-											NULL);
+											nullptr);
 					skip--;
 			}
 
@@ -213,11 +213,11 @@ stack_frame.AddrFrame.Offset = myebp;
 											process,
 											thread,
 											&stack_frame,
-											NULL, //&gsContext,
-											NULL,
+											nullptr, //&gsContext,
+											nullptr,
 											DbgHelpLoader::symFunctionTableAccess,
 											DbgHelpLoader::symGetModuleBase,
-											NULL);
+											nullptr);
 
 
 
@@ -356,11 +356,11 @@ stack_frame.AddrFrame.Offset = myebp;
 								process,
 								thread,
 								&stack_frame,
-								NULL,	//&gsContext,
-								NULL,
+								nullptr,	//&gsContext,
+								nullptr,
 								DbgHelpLoader::symFunctionTableAccess,
 								DbgHelpLoader::symGetModuleBase,
-								NULL) != 0;
+								nullptr) != 0;
 			skip--;
 		}
 
@@ -370,11 +370,11 @@ stack_frame.AddrFrame.Offset = myebp;
 								process,
 								thread,
 								&stack_frame,
-								NULL, //&gsContext,
-								NULL,
+								nullptr, //&gsContext,
+								nullptr,
 								DbgHelpLoader::symFunctionTableAccess,
 								DbgHelpLoader::symGetModuleBase,
-								NULL) != 0;
+								nullptr) != 0;
 			if (stillgoing)
 			{
 				*addresses  = (void*)stack_frame.AddrPC.Offset;
@@ -386,7 +386,7 @@ stack_frame.AddrFrame.Offset = myebp;
 		// Fill remainder
 		while (count)
 		{
-			*addresses = NULL;
+			*addresses = nullptr;
 			addresses++;
 			count--;
 		}
@@ -395,7 +395,7 @@ stack_frame.AddrFrame.Offset = myebp;
 /*
 	else
 	{
-		memset(addresses,NULL,count*sizeof(void*));
+		memset(addresses,nullptr,count*sizeof(void*));
 	}
 */
 }
@@ -407,7 +407,7 @@ stack_frame.AddrFrame.Offset = myebp;
 //*****************************************************************************
 void StackDumpFromAddresses(void**addresses, unsigned int count, void (*callback)(const char *))
 {
-	if (callback == NULL)
+	if (callback == nullptr)
 	{
 		callback = StackDumpDefaultHandler;
 	}
@@ -415,7 +415,7 @@ void StackDumpFromAddresses(void**addresses, unsigned int count, void (*callback
 	if (!InitSymbolInfo())
 		return;
 
-	while ((count--) && (*addresses!=NULL))
+	while ((count--) && (*addresses!=nullptr))
 	{
 		WriteStackLine(*addresses,callback);
 		addresses++;
@@ -558,7 +558,7 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 	}
 
 	DOUBLE_DEBUG (("\nStack Dump:"));
-	StackDumpFromContext(context->Eip, context->Esp, context->Ebp, NULL);
+	StackDumpFromContext(context->Eip, context->Esp, context->Ebp, nullptr);
 
 	DOUBLE_DEBUG (("\nDetails:"));
 

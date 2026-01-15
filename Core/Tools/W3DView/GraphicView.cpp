@@ -71,7 +71,7 @@ IMPLEMENT_DYNCREATE(CGraphicView, CView)
 ////////////////////////////////////////////////////////////////////////////
 CGraphicView::CGraphicView (void)
     : m_bInitialized (FALSE),
-      m_pCamera (NULL),
+      m_pCamera (nullptr),
       m_TimerID (0),
       m_bMouseDown (FALSE),
       m_bRMouseDown (FALSE),
@@ -83,7 +83,7 @@ CGraphicView::CGraphicView (void)
       m_objectRotation (NoRotation),
 		m_LightRotation (NoRotation),
 		m_bLightMeshInScene (false),
-		m_pLightMesh (NULL),
+		m_pLightMesh (nullptr),
 		m_ParticleCountUpdate (0),
 		m_CameraBonePosX (false),
 		m_UpdateCounter (0),
@@ -213,11 +213,11 @@ CGraphicView::InitializeGraphicView (void)
 													m_iWindowed) == WW3D_ERROR_OK);
 
     ASSERT (bReturn);
-    if (bReturn && (m_pCamera == NULL))
+    if (bReturn && (m_pCamera == nullptr))
     {
         // Instantiate a new camera class
 	    m_pCamera = new CameraClass ();
-        bReturn = (m_pCamera != NULL);
+        bReturn = (m_pCamera != nullptr);
 
         // Were we successful in creating a camera?
         ASSERT (m_pCamera);
@@ -239,13 +239,13 @@ CGraphicView::InitializeGraphicView (void)
 
 	Reset_FOV ();
 
-	 if (m_pLightMesh == NULL)
+	 if (m_pLightMesh == nullptr)
 	 {
-		ResourceFileClass light_mesh_file (NULL, "Light.w3d");
+		ResourceFileClass light_mesh_file (nullptr, "Light.w3d");
 		WW3DAssetManager::Get_Instance()->Load_3D_Assets (light_mesh_file);
 
 		m_pLightMesh = WW3DAssetManager::Get_Instance()->Create_Render_Obj ("LIGHT");
-		ASSERT (m_pLightMesh != NULL);
+		ASSERT (m_pLightMesh != nullptr);
 		m_bLightMeshInScene = false;
 	 }
 
@@ -324,7 +324,7 @@ CGraphicView::OnDestroy (void)
 	//
 	//	Remove the listener from the camera
 	//
-	WWAudioClass::Get_Instance ()->Get_Sound_Scene ()->Attach_Listener_To_Obj (NULL);
+	WWAudioClass::Get_Instance ()->Get_Sound_Scene ()->Attach_Listener_To_Obj (nullptr);
 
 	//
 	// Free the camera object
@@ -382,10 +382,10 @@ CGraphicView::OnInitialUpdate (void)
 void
 Set_Lowest_LOD (RenderObjClass *render_obj)
 {
-	if (render_obj != NULL) {
+	if (render_obj != nullptr) {
 		for (int index = 0; index < render_obj->Get_Num_Sub_Objects (); index ++) {
 			RenderObjClass *psub_obj = render_obj->Get_Sub_Object (index);
-			if (psub_obj != NULL) {
+			if (psub_obj != nullptr) {
 				Set_Lowest_LOD (psub_obj);
 			}
 			REF_PTR_RELEASE (psub_obj);
@@ -489,7 +489,7 @@ CGraphicView::RepaintView
 
 		// Reset the current lod to be the lowest possible LOD...
 		RenderObjClass *prender_obj = doc->GetDisplayedObject ();
-		if ((prender_obj != NULL) &&
+		if ((prender_obj != nullptr) &&
 			 (doc->GetScene ()->Are_LODs_Switching ()))
 		{
 			Set_Lowest_LOD (prender_obj);
@@ -561,7 +561,7 @@ CGraphicView::RepaintView
 			m_ParticleCountUpdate = cur_ticks;
 			doc->Update_Particle_Count ();
 
-			int polys = (prender_obj != NULL) ? prender_obj->Get_Num_Polys () : 0;
+			int polys = (prender_obj != nullptr) ? prender_obj->Get_Num_Polys () : 0;
 			((CMainFrame *)::AfxGetMainWnd ())->UpdatePolygonCount (polys);
 		}
 
@@ -653,7 +653,7 @@ CGraphicView::WindowProc
 		}
 
 		RepaintView (FALSE);
-		ValidateRect (NULL);
+		ValidateRect (nullptr);
 		return 0;
 
 	} else if (message == WM_KEYDOWN) {
@@ -694,11 +694,11 @@ fnTimerCallback
 )
 {
 	HWND hwnd = (HWND)dwUser;
-	if (hwnd != NULL) {
+	if (hwnd != nullptr) {
 
 		// Send this event off to the view to process (hackish, but fine for now)
-		if ((GetProp (hwnd, "WaitingToProcess") == NULL) &&
-			 (GetProp (hwnd, "Inactive") == NULL)) {
+		if ((GetProp (hwnd, "WaitingToProcess") == nullptr) &&
+			 (GetProp (hwnd, "Inactive") == nullptr)) {
 
 			SetProp (hwnd, "WaitingToProcess", (HANDLE)1);
 
@@ -771,7 +771,7 @@ CGraphicView::OnLButtonUp
     }
     else
     {
-        ::SetCursor (::LoadCursor (NULL, MAKEINTRESOURCE (IDC_ARROW)));
+        ::SetCursor (::LoadCursor (nullptr, MAKEINTRESOURCE (IDC_ARROW)));
 		  ((CW3DViewDoc *)GetDocument())->Set_Cursor ("cursor.tga");
     }
 
@@ -847,7 +847,7 @@ CGraphicView::OnMouseMove
 	else if ((nFlags & MK_CONTROL) && m_bMouseDown)
 	{
 		LightClass *pSceneLight = doc->GetSceneLight ();
-		if ((pSceneLight != NULL) && (m_pLightMesh != NULL))
+		if ((pSceneLight != nullptr) && (m_pLightMesh != nullptr))
 		{
 			RECT rect;
 			GetClientRect (&rect);
@@ -895,7 +895,7 @@ CGraphicView::OnMouseMove
 		CW3DViewDoc *doc= (CW3DViewDoc *)GetDocument();
 		LightClass *pscene_light = doc->GetSceneLight ();
 		RenderObjClass *prender_obj = doc->GetDisplayedObject ();
-		if ((pscene_light != NULL) && (prender_obj != NULL)) {
+		if ((pscene_light != nullptr) && (prender_obj != nullptr)) {
 
 			// Calculate a light adjustment factor
 			CRect rect;
@@ -1070,7 +1070,7 @@ CGraphicView::OnMouseMove
 
 				// Get the main window of our app
 				CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd ();
-				if (pCMainWnd != NULL)
+				if (pCMainWnd != nullptr)
 				{
 					// Ensure the background camera matches the main camera
 					CW3DViewDoc *doc = (CW3DViewDoc *)GetDocument();
@@ -1079,7 +1079,7 @@ CGraphicView::OnMouseMove
 
 					// Update the current object if necessary
 					RenderObjClass *prender_obj = doc->GetDisplayedObject ();
-					if (prender_obj != NULL) {
+					if (prender_obj != nullptr) {
 
 						// Ensure the status bar is updated with the correct poly count
 						pCMainWnd->UpdatePolygonCount (prender_obj->Get_Num_Polys ());
@@ -1214,7 +1214,7 @@ CGraphicView::Reset_Camera_To_Display_Sphere (SphereClass &sphere)
 	// Make the same adjustment for the scene light
 	CW3DViewDoc* doc = (CW3DViewDoc *)GetDocument();
 	LightClass *pSceneLight = doc->GetSceneLight ();
-	if ((m_pLightMesh != NULL) && (pSceneLight != NULL)) {
+	if ((m_pLightMesh != nullptr) && (pSceneLight != nullptr)) {
 
 		// Reposition the light and its 'mesh' as appropriate
 		transform.Make_Identity ();
@@ -1252,7 +1252,7 @@ CGraphicView::Reset_Camera_To_Display_Sphere (SphereClass &sphere)
 
 	// Update the camera distance in the status bar
 	CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd ();
-	if (pCMainWnd != NULL) {
+	if (pCMainWnd != nullptr) {
 		pCMainWnd->UpdateCameraDistance (m_CameraDistance);
 		pCMainWnd->UpdateFrameCount (0, 0, 0);
 	}
@@ -1298,7 +1298,7 @@ CGraphicView::Reset_Camera_To_Display_Object (RenderObjClass &render_object)
 
 	// Update the polygon count in the main window
 	CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd ();
-	if (pCMainWnd != NULL) {
+	if (pCMainWnd != nullptr) {
 		pCMainWnd->UpdatePolygonCount (render_object.Get_Num_Polys ());
 	}
 
@@ -1318,11 +1318,11 @@ CGraphicView::Load_Default_Dat (void)
 {
 	// Get the directory where this executable was run from
 	TCHAR filename[MAX_PATH];
-	::GetModuleFileName (NULL, filename, sizeof (filename));
+	::GetModuleFileName (nullptr, filename, sizeof (filename));
 
 	// Strip the filename from the path
 	LPTSTR ppath = ::strrchr (filename, '\\');
-	if (ppath != NULL) {
+	if (ppath != nullptr) {
 		ppath[0] = 0;
 	}
 
@@ -1334,7 +1334,7 @@ CGraphicView::Load_Default_Dat (void)
 
 		// Ask the document to load the settings from this data file
 		CW3DViewDoc *pCDoc = (CW3DViewDoc *)GetDocument ();
-		if (pCDoc != NULL) {
+		if (pCDoc != nullptr) {
 			pCDoc->LoadSettings (filename);
 		}
 	}
@@ -1361,7 +1361,7 @@ CGraphicView::OnRButtonUp
 	if (m_bMouseDown) {
 		((CW3DViewDoc *)GetDocument())->Set_Cursor ("orbit.tga");
 	} else {
-		::SetCursor (::LoadCursor (NULL, MAKEINTRESOURCE (IDC_ARROW)));
+		::SetCursor (::LoadCursor (nullptr, MAKEINTRESOURCE (IDC_ARROW)));
 		((CW3DViewDoc *)GetDocument())->Set_Cursor ("cursor.tga");
 		ReleaseCapture ();
 	}
@@ -1530,7 +1530,7 @@ CGraphicView::SetCameraPos (CAMERA_POS cameraPos)
 
         // Get the main window of our app
         CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd ();
-        if (pCMainWnd != NULL)
+        if (pCMainWnd != nullptr)
         {
             CW3DViewDoc* doc = (CW3DViewDoc *)GetDocument();
 
@@ -1637,7 +1637,7 @@ CGraphicView::Rotate_Object (void)
 
 	// Get the currently displayed object
 	RenderObjClass *prender_obj = doc->GetDisplayedObject ();
-	if (prender_obj != NULL)
+	if (prender_obj != nullptr)
 	{
 		// Get the current transform for the object
 		Matrix3D transform = prender_obj->Get_Transform ();
@@ -1686,7 +1686,7 @@ CGraphicView::Rotate_Light (void)
 	// Get the currently displayed object
 	LightClass *pscene_light = doc->GetSceneLight ();
 	RenderObjClass *prender_obj = doc->GetDisplayedObject ();
-	if ((pscene_light != NULL) && (prender_obj != NULL)) {
+	if ((pscene_light != nullptr) && (prender_obj != nullptr)) {
 		Matrix3D rotation_matrix (1);
 
 		// Build a rotation matrix that contains the x,y,z
@@ -1818,7 +1818,7 @@ CGraphicView::Set_Camera_Distance (float dist)
 	// Update the status bar
 	//
 	CMainFrame *main_wnd = (CMainFrame *)::AfxGetMainWnd ();
-	if (main_wnd != NULL) {
+	if (main_wnd != nullptr) {
 		main_wnd->UpdateCameraDistance (m_CameraDistance);
 	}
 

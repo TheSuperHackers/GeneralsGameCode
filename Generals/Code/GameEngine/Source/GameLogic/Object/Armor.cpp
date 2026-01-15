@@ -40,7 +40,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-ArmorStore* TheArmorStore = NULL;					///< the ArmorTemplate store definition
+ArmorStore* TheArmorStore = nullptr;					///< the ArmorTemplate store definition
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -120,7 +120,7 @@ const ArmorTemplate* ArmorStore::findArmorTemplate(NameKeyType namekey) const
 	ArmorTemplateMap::const_iterator it = m_armorTemplates.find(namekey);
 	if (it == m_armorTemplates.end())
 	{
-		return NULL;
+		return nullptr;
 	}
 	else
 	{
@@ -145,7 +145,7 @@ const ArmorTemplate* ArmorStore::findArmorTemplate(const char* name) const
 {
 	static const FieldParse myFieldParse[] =
 	{
-		{ "Armor", ArmorTemplate::parseArmorCoefficients, NULL, 0 }
+		{ "Armor", ArmorTemplate::parseArmorCoefficients, nullptr, 0 }
 	};
 
 	const char *c = ini->getNextToken();

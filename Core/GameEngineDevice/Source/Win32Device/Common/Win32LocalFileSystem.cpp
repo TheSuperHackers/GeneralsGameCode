@@ -48,7 +48,7 @@ File * Win32LocalFileSystem::openFile(const Char *filename, Int access, size_t b
 
 	// sanity check
 	if (strlen(filename) <= 0) {
-		return NULL;
+		return nullptr;
 	}
 
 	if (access & File::WRITE) {
@@ -60,7 +60,7 @@ File * Win32LocalFileSystem::openFile(const Char *filename, Int access, size_t b
 		AsciiString dirName;
 		string.nextToken(&token, "\\/");
 		dirName = token;
-		while ((token.find('.') == NULL) || (string.find('.') != NULL)) {
+		while ((token.find('.') == nullptr) || (string.find('.') != nullptr)) {
 			createDirectory(dirName);
 			string.nextToken(&token, "\\/");
 			dirName.concat('\\');
@@ -73,7 +73,7 @@ File * Win32LocalFileSystem::openFile(const Char *filename, Int access, size_t b
 
 	if (file->open(filename, access, bufferSize) == FALSE) {
 		deleteInstance(file);
-		file = NULL;
+		file = nullptr;
 	} else {
 		file->deleteOnClose();
 	}
@@ -124,7 +124,7 @@ Bool Win32LocalFileSystem::doesFileExist(const Char *filename) const
 
 void Win32LocalFileSystem::getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList & filenameList, Bool searchSubdirectories) const
 {
-	HANDLE fileHandle = NULL;
+	HANDLE fileHandle = nullptr;
 	WIN32_FIND_DATA findData;
 
 	AsciiString asciisearch;
@@ -187,7 +187,7 @@ void Win32LocalFileSystem::getFileListInDirectory(const AsciiString& currentDire
 Bool Win32LocalFileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const
 {
 	WIN32_FIND_DATA findData;
-	HANDLE findHandle = NULL;
+	HANDLE findHandle = nullptr;
 	findHandle = FindFirstFile(filename.str(), &findData);
 
 	if (findHandle == INVALID_HANDLE_VALUE) {
@@ -207,14 +207,14 @@ Bool Win32LocalFileSystem::getFileInfo(const AsciiString& filename, FileInfo *fi
 Bool Win32LocalFileSystem::createDirectory(AsciiString directory)
 {
 	if ((!directory.isEmpty()) && (directory.getLength() < _MAX_DIR)) {
-		return (CreateDirectory(directory.str(), NULL) != 0);
+		return (CreateDirectory(directory.str(), nullptr) != 0);
 	}
 	return FALSE;
 }
 
 AsciiString Win32LocalFileSystem::normalizePath(const AsciiString& filePath) const
 {
-	DWORD retval = GetFullPathNameA(filePath.str(), 0, NULL, NULL);
+	DWORD retval = GetFullPathNameA(filePath.str(), 0, nullptr, nullptr);
 	if (retval == 0)
 	{
 		DEBUG_LOG(("Unable to determine buffer size for normalized file path. Error=(%u).", GetLastError()));
@@ -222,7 +222,7 @@ AsciiString Win32LocalFileSystem::normalizePath(const AsciiString& filePath) con
 	}
 
 	AsciiString normalizedFilePath;
-	retval = GetFullPathNameA(filePath.str(), retval, normalizedFilePath.getBufferForRead(retval - 1), NULL);
+	retval = GetFullPathNameA(filePath.str(), retval, normalizedFilePath.getBufferForRead(retval - 1), nullptr);
 	if (retval == 0)
 	{
 		DEBUG_LOG(("Unable to normalize file path '%s'. Error=(%u).", filePath.str(), GetLastError()));

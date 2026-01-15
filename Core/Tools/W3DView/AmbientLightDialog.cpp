@@ -39,7 +39,7 @@ static char THIS_FILE[] = __FILE__;
 // CAmbientLightDialog dialog
 
 
-CAmbientLightDialog::CAmbientLightDialog(CWnd* pParent /*=NULL*/)
+CAmbientLightDialog::CAmbientLightDialog(CWnd* pParent /*=nullptr*/)
 	: CDialog(CAmbientLightDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CAmbientLightDialog)

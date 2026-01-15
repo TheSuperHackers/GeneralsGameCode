@@ -55,7 +55,7 @@
 ///@todo - do delayed script evaluations for team scripts. jba.
 
 // GLOBALS ////////////////////////////////////////////////////////////////////
-TeamFactory *TheTeamFactory = NULL;
+TeamFactory *TheTeamFactory = nullptr;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -234,7 +234,7 @@ void TeamFactory::initFromSides(SidesList *sides)
 // ------------------------------------------------------------------------
 void TeamFactory::initTeam(const AsciiString& name, const AsciiString& owner, Bool isSingleton, Dict *d)
 {
-	DEBUG_ASSERTCRASH(findTeamPrototype(name)==NULL,("team already exists"));
+	DEBUG_ASSERTCRASH(findTeamPrototype(name)==nullptr,("team already exists"));
 	Player *pOwner = ThePlayerList->findPlayerWithNameKey(NAMEKEY(owner));
 	DEBUG_ASSERTCRASH(pOwner, ("no owner found for team %s (%s)",name.str(),owner.str()));
 	if (!pOwner)
@@ -277,14 +277,14 @@ TeamPrototype *TeamFactory::findTeamPrototype(const AsciiString& name)
 	if (it != m_prototypes.end())
 		return it->second;
 
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------
 TeamPrototype *TeamFactory::findTeamPrototypeByID( TeamPrototypeID id )
 {
 	TeamPrototypeMap::iterator it;
-	TeamPrototype *prototype = NULL;
+	TeamPrototype *prototype = nullptr;
 
 	for( it = m_prototypes.begin(); it != m_prototypes.end(); ++it )
 	{
@@ -296,7 +296,7 @@ TeamPrototype *TeamFactory::findTeamPrototypeByID( TeamPrototypeID id )
 	}
 
 	// not found
-	return NULL;
+	return nullptr;
 
 }
 
@@ -306,7 +306,7 @@ Team *TeamFactory::findTeamByID( TeamID teamID )
 
 	// simple case
 	if( teamID == TEAM_ID_INVALID )
-		return NULL;
+		return nullptr;
 
 	// search all prototypes for the matching team ID
 	TeamPrototype *tp;
@@ -320,7 +320,7 @@ Team *TeamFactory::findTeamByID( TeamID teamID )
 			return team;
 	}
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -332,10 +332,10 @@ Team *TeamFactory::createInactiveTeam(const AsciiString& name)
 	TeamPrototype *tp = findTeamPrototype(name);
 	if (!tp) {
 		DEBUG_CRASH(( "Team prototype '%s' does not exist", name.str() ));
-		return NULL;
+		return nullptr;
 	}
 
-	Team *t = NULL;
+	Team *t = nullptr;
 	if (tp->getIsSingleton())
 	{
 		t = tp->getFirstItemIn_TeamInstanceList();
@@ -375,10 +375,10 @@ Team *TeamFactory::createTeam(const AsciiString& name)
 // ------------------------------------------------------------------------
 Team *TeamFactory::createTeamOnPrototype( TeamPrototype *prototype )
 {
-	if( prototype == NULL )
+	if( prototype == nullptr )
 		throw ERROR_BAD_ARG;
 
-	Team *t = NULL;
+	Team *t = nullptr;
 	if( prototype->getIsSingleton() )
 	{
 		t = prototype->getFirstItemIn_TeamInstanceList();
@@ -396,13 +396,13 @@ Team* TeamFactory::findTeam(const AsciiString& name)
 	if (tp)
 	{
 		Team *t = tp->getFirstItemIn_TeamInstanceList();
-		if (t == NULL && !tp->getIsSingleton())
+		if (t == nullptr && !tp->getIsSingleton())
 		{
 			t = createInactiveTeam(name);
 		}
 		return t;
 	}
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------
@@ -496,7 +496,7 @@ void TeamFactory::xfer( Xfer *xfer )
 			teamPrototype = findTeamPrototypeByID( teamPrototypeID );
 
 			// sanity
-			if( teamPrototype == NULL )
+			if( teamPrototype == nullptr )
 			{
 
 				DEBUG_CRASH(( "TeamFactory::xfer - Unable to find team prototype by id" ));
@@ -517,7 +517,7 @@ if( xfer->getXferMode() == XFER_SAVE )
 {
 
 FILE *fp = fopen( "TeamCheckSave.txt", "w+t" );
-if( fp == NULL )
+if( fp == nullptr )
 	return;
 
 Object *obj;
@@ -584,7 +584,7 @@ void TeamFactory::loadPostProcess( void )
 /*
 // SAVE_LOAD_DEBUG
 FILE *fp = fopen( "TeamCheckLoad.txt", "w+t" );
-if( fp == NULL )
+if( fp == nullptr )
 	return;
 
 Object *obj;
@@ -813,9 +813,9 @@ TeamPrototype::TeamPrototype( TeamFactory *tf,
 	m_flags(isSingleton ? TeamPrototype::TEAM_SINGLETON : 0),
 	m_teamTemplate(d),
 	m_productionConditionAlwaysFalse(false),
-	m_productionConditionScript(NULL)
+	m_productionConditionScript(nullptr)
 {
-	DEBUG_ASSERTCRASH(!(m_owningPlayer == NULL), ("bad args to TeamPrototype ctor"));
+	DEBUG_ASSERTCRASH(!(m_owningPlayer == nullptr), ("bad args to TeamPrototype ctor"));
 	if (m_factory)
 		m_factory->addTeamPrototypeToList(this);
 
@@ -824,7 +824,7 @@ TeamPrototype::TeamPrototype( TeamFactory *tf,
 
 	m_retrievedGenericScripts = false;
 	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
-		m_genericScriptsToRun[i] = NULL;
+		m_genericScriptsToRun[i] = nullptr;
 	}
 }
 
@@ -850,12 +850,12 @@ TeamPrototype::~TeamPrototype()
 		m_factory->removeTeamPrototypeFromList(this);
 
 	deleteInstance(m_productionConditionScript);
-	m_productionConditionScript = NULL;
+	m_productionConditionScript = nullptr;
 
 	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i)
 	{
 		deleteInstance(m_genericScriptsToRun[i]);
-		m_genericScriptsToRun[i] = NULL;
+		m_genericScriptsToRun[i] = nullptr;
 	}
 }
 
@@ -873,13 +873,13 @@ Team *TeamPrototype::findTeamByID( TeamID teamID )
 		if( iter.cur()->getID() == teamID )
 			return iter.cur();
 	}
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------
 void TeamPrototype::setControllingPlayer(Player *newController)
 {
-	DEBUG_ASSERTCRASH(newController, ("Attempted to set NULL player as team-owner, illegal."));
+	DEBUG_ASSERTCRASH(newController, ("Attempted to set null player as team-owner, illegal."));
 	if (!newController) {
 		return;
 	}
@@ -889,7 +889,7 @@ void TeamPrototype::setControllingPlayer(Player *newController)
 
 	m_owningPlayer = newController;
 
-	// impossible to get here with a NULL pointer.
+	// impossible to get here with a nullptr pointer.
 	m_owningPlayer->addTeamToList(this);
 }
 
@@ -919,8 +919,8 @@ Script *TeamPrototype::getGenericScript(Int scriptToRetrieve)
 		m_retrievedGenericScripts = TRUE;	// set this to true so we won't do the lookup again.
 		// Go get them from the script engine, and duplicate each one.
 		for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
-			const Script *tmpScript = NULL;
-			Script *scriptToSave = NULL;
+			const Script *tmpScript = nullptr;
+			Script *scriptToSave = nullptr;
 			if (!m_teamTemplate.m_teamGenericScripts[i].isEmpty()) {
 				tmpScript = TheScriptEngine->findScriptByName(m_teamTemplate.m_teamGenericScripts[i]);
 				if (tmpScript) {
@@ -1057,7 +1057,7 @@ void TeamPrototype::updateState(void)
 		done = true;
 		for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
 		{
-			if (iter.cur()->getFirstItemIn_TeamMemberList() == NULL)
+			if (iter.cur()->getFirstItemIn_TeamMemberList() == nullptr)
 			{
 				// Team has no members.
 				if (this->getIsSingleton())
@@ -1134,7 +1134,7 @@ Bool TeamPrototype::evaluateProductionCondition(void)
 		if (delaySeconds>0) {
 			m_productionConditionScript->setFrameToEvaluate(TheGameLogic->getFrame()+delaySeconds*LOGICFRAMES_PER_SECOND);
 		}
-		return TheScriptEngine->evaluateConditions(m_productionConditionScript, NULL, getControllingPlayer());
+		return TheScriptEngine->evaluateConditions(m_productionConditionScript, nullptr, getControllingPlayer());
 	}
 	// We don't have a script yet, so check for one.
 	if (m_teamTemplate.m_productionCondition.isEmpty()) {
@@ -1169,7 +1169,7 @@ Bool TeamPrototype::evaluateProductionCondition(void)
 		// Make a copy of the script locally, just for paranoia's sake.  We can't be sure
 		// exactly what order the teams & scripts will get reset, so be safe.
 		m_productionConditionScript = pScript->duplicate();
-		return TheScriptEngine->evaluateConditions(m_productionConditionScript, NULL, getControllingPlayer());
+		return TheScriptEngine->evaluateConditions(m_productionConditionScript, nullptr, getControllingPlayer());
 	}
 	// Couldn't find a script.
 	m_productionConditionAlwaysFalse = true;
@@ -1265,7 +1265,7 @@ void TeamPrototype::xfer( Xfer *xfer )
 			// created with exactly the same team IDs they had before
 			//
 			teamInstance = TheTeamFactory->findTeamByID( teamID );
-			if( teamInstance == NULL )
+			if( teamInstance == nullptr )
 			{
 
 				// create team
@@ -1347,7 +1347,7 @@ Team::Team(TeamPrototype *proto, TeamID id ) :
 // ------------------------------------------------------------------------
 Team::~Team()
 {
-//	DEBUG_ASSERTCRASH(getFirstItemIn_TeamMemberList() == NULL, ("Team still has members in existence"));
+//	DEBUG_ASSERTCRASH(getFirstItemIn_TeamMemberList() == nullptr, ("Team still has members in existence"));
 
 	TheScriptEngine->notifyOfTeamDestruction(this);
 
@@ -1361,9 +1361,9 @@ Team::~Team()
 	}
 
 	Object* tm;
-	while ((tm = getFirstItemIn_TeamMemberList()) != NULL)
+	while ((tm = getFirstItemIn_TeamMemberList()) != nullptr)
 	{
-		tm->setTeam(NULL);
+		tm->setTeam(nullptr);
 	}
 //this test is valid, but will generate a 'false positive' during game teardown
 //DEBUG_ASSERTCRASH(!(getControllingPlayer() && getControllingPlayer()->getDefaultTeam()==this),("I am still someones default team -- sure you want to delete me?"));
@@ -1390,7 +1390,7 @@ Player *Team::getControllingPlayer() const
 // ------------------------------------------------------------------------
 void Team::setControllingPlayer(Player *newController)
 {
-	// NULL is not allowed, but is caught by TeamPrototype::setControllingPlayer()
+	// nullptr is not allowed, but is caught by TeamPrototype::setControllingPlayer()
 	m_proto->setControllingPlayer(newController);
 
 	// This function is used by one script, and it is kind of odd.  The actual units
@@ -1445,7 +1445,7 @@ Int Team::getTargetableCount() const
 			continue;
 		}
 
-		if (obj->isEffectivelyDead() || (obj->getAIUpdateInterface() == NULL && !obj->isKindOf(KINDOF_STRUCTURE))) {
+		if (obj->isEffectivelyDead() || (obj->getAIUpdateInterface() == nullptr && !obj->isKindOf(KINDOF_STRUCTURE))) {
 			continue;
 		}
 
@@ -1459,7 +1459,7 @@ Int Team::getTargetableCount() const
 Relationship Team::getRelationship(const Team *that) const
 {
 	// do we have an override for that particular team? if so, return it.
-	if (!m_teamRelations->m_map.empty() && that != NULL)
+	if (!m_teamRelations->m_map.empty() && that != nullptr)
 	{
 		TeamRelationMapType::const_iterator it = m_teamRelations->m_map.find(that->getID());
 		if (it != m_teamRelations->m_map.end())
@@ -1469,10 +1469,10 @@ Relationship Team::getRelationship(const Team *that) const
 	}
 
 	// hummm... well, do we have an override for that team's player?
-	if (!m_playerRelations->m_map.empty() && that != NULL)
+	if (!m_playerRelations->m_map.empty() && that != nullptr)
 	{
 		Player* thatPlayer = that->getControllingPlayer();
-		if (thatPlayer != NULL)
+		if (thatPlayer != nullptr)
 		{
 			PlayerRelationMapType::const_iterator it = m_playerRelations->m_map.find(thatPlayer->getPlayerIndex());
 			if (it != m_playerRelations->m_map.end())
@@ -1489,7 +1489,7 @@ Relationship Team::getRelationship(const Team *that) const
 // ------------------------------------------------------------------------
 void Team::setTeamTargetObject(const Object *target)
 {
-	if (target==NULL) {
+	if (target==nullptr) {
 		m_commonAttackTarget = INVALID_ID;
 		return;
 	}
@@ -1506,7 +1506,7 @@ void Team::setTeamTargetObject(const Object *target)
 Object *Team::getTeamTargetObject(void)
 {
 	if (m_commonAttackTarget == INVALID_ID) {
-		return NULL;
+		return nullptr;
 	}
 	Object *target = TheGameLogic->findObjectByID(m_commonAttackTarget);
 	if (target) {
@@ -1514,16 +1514,16 @@ Object *Team::getTeamTargetObject(void)
 	if( target->testStatus( OBJECT_STATUS_STEALTHED ) &&
 			!target->testStatus( OBJECT_STATUS_DETECTED ) )
 		{
-			target = NULL;
+			target = nullptr;
 		}
 	}
 	if (target && target->isEffectivelyDead()) {
-		target = NULL;
+		target = nullptr;
 	}
 	if (target && target->getContainedBy()) {
-		target = NULL; // target entered a building or vehicle, so stop targeting.
+		target = nullptr; // target entered a building or vehicle, so stop targeting.
 	}
-	if (target == NULL) {
+	if (target == nullptr) {
 		m_commonAttackTarget = INVALID_ID;
 	}
 	return target;
@@ -1832,7 +1832,7 @@ void Team::updateState(void)
 			PartitionFilterAlive filterAlive;
 			PartitionFilterSameMapStatus filterMapStatus(iter.cur());
 
-			PartitionFilter *filters[] = { &filterTeam, &filterAlive, &filterMapStatus, NULL };
+			PartitionFilter *filters[] = { &filterTeam, &filterAlive, &filterMapStatus, nullptr };
 			Real visionRange = iter.cur()->getVisionRange();
 			anyAliveInTeam = true;
 			Object *pObj = ThePartitionManager->getClosestObject( iter.cur(), visionRange,
@@ -2216,11 +2216,11 @@ const Coord3D* Team::getEstimateTeamPosition(void)
 	DLINK_ITERATOR<Object> iter = iterate_TeamMemberList();
 	Object *obj = iter.cur();
 	if (!obj)
-		return NULL;
+		return nullptr;
 
 	const Coord3D *pos = iter.cur()->getPosition();
 	if (!pos)
-		return NULL;
+		return nullptr;
 
 	return pos;
 }
@@ -2290,9 +2290,9 @@ void Team::deleteTeam(Bool ignoreDead)
 void Team::transferUnitsTo(Team *newTeam)
 {
 	if (this == newTeam) return;
-	if (newTeam == NULL) return;
+	if (newTeam == nullptr) return;
 	Object *obj;
-	while ((obj = getFirstItemIn_TeamMemberList()) != 0)
+	while ((obj = getFirstItemIn_TeamMemberList()) != nullptr)
 	{
 		obj->setTeam(newTeam);
 	}
@@ -2318,9 +2318,9 @@ static Bool isInBuildVariations(const ThingTemplate* ttWithVariations, const Thi
 Object *Team::tryToRecruit(const ThingTemplate *tTemplate, const Coord3D *teamHome, Real maxDist)
 {
 	Player *myPlayer = getControllingPlayer();
-	Object *obj=NULL;
+	Object *obj=nullptr;
 	Real distSqr = maxDist*maxDist;
-	Object *recruit = NULL;
+	Object *recruit = nullptr;
 	for( obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
 	{
 		if (!obj->getTemplate()->isEquivalentTo(tTemplate))
@@ -2364,7 +2364,7 @@ Object *Team::tryToRecruit(const ThingTemplate *tTemplate, const Coord3D *teamHo
 		dx = teamHome->x - obj->getPosition()->x;
 		dy = teamHome->y - obj->getPosition()->y;
 
-		if (isDefaultTeam && recruit == NULL) {
+		if (isDefaultTeam && recruit == nullptr) {
 			recruit = obj;
 			distSqr = dx*dx+dy*dy;
 		}
@@ -2375,10 +2375,10 @@ Object *Team::tryToRecruit(const ThingTemplate *tTemplate, const Coord3D *teamHo
 		distSqr = dx*dx+dy*dy;
 		recruit = obj;
 	}
-	if (recruit!=NULL) {
+	if (recruit!=nullptr) {
 		return recruit;
 	}
- 	return NULL;
+ 	return nullptr;
 }
 
 // ------------------------------------------------------------------------
@@ -2394,7 +2394,7 @@ void Team::evacuateTeam(void)
 
 		ContainModuleInterface *cmi = obj->getContain();
 		UnsignedInt numContained = 0;
-		if (cmi != NULL) {
+		if (cmi != nullptr) {
 			numContained = cmi->getContainCount();
 		}
 		if (numContained > 0) {
@@ -2426,7 +2426,7 @@ void Team::killTeam(void)
 	// TheSuperHackers @bugfix Mauller 20/07/2025 the neutral player has no player template so we need to check for a null template
 	const PlayerTemplate* playerTemplate = getControllingPlayer()->getPlayerTemplate();
 	// beacons are effectively dead, so we need to destroy via a non-kill() method
-	const ThingTemplate* beaconTemplate = playerTemplate ? TheThingFactory->findTemplate( playerTemplate->getBeaconTemplate() ) : NULL;
+	const ThingTemplate* beaconTemplate = playerTemplate ? TheThingFactory->findTemplate( playerTemplate->getBeaconTemplate() ) : nullptr;
 
 	// now find objects to kill
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance()) {
@@ -2698,7 +2698,7 @@ void Team::loadPostProcess( void )
 
 		// find object
 		obj = TheGameLogic->findObjectByID( *it );
-		if( obj == NULL )
+		if( obj == nullptr )
 		{
 
 			DEBUG_CRASH(( "Team::loadPostProcess - Unable to post process object to member list, object ID = '%d'", *it ));

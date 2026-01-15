@@ -43,7 +43,7 @@
 #include "HierarchyView.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-GUIEditWindowManager *TheGUIEditWindowManager = NULL;  ///< editor use only
+GUIEditWindowManager *TheGUIEditWindowManager = nullptr;  ///< editor use only
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ Bool GUIEditWindowManager::isWindowInClipboard( GameWindow *window,
 	GameWindow *other;
 
 	// sanity
-	if( list == NULL || window == NULL )
+	if( list == nullptr || window == nullptr )
 		return FALSE;
 
 	// just run through the window list in the clipboard to check
@@ -83,14 +83,14 @@ void GUIEditWindowManager::linkToClipboard( GameWindow *window,
 {
 
 	// sanity
-	if( window == NULL || list == NULL )
+	if( window == nullptr || list == nullptr )
 		return;
 
 	// debug sanity checking, can't add if already in it
 	if( isWindowInClipboard( window, list ) )
 		return;
 
-	window->winSetPrev( NULL );
+	window->winSetPrev( nullptr );
 	window->winSetNext( *list );
 	if( *list )
 		(*list)->winSetPrev( window );
@@ -107,7 +107,7 @@ void GUIEditWindowManager::unlinkFromClipboard( GameWindow *window,
 	GameWindow *next, *prev;
 
 	// sanity
-	if( window == NULL || list == NULL )
+	if( window == nullptr || list == nullptr )
 		return;
 
 	// debug sanity checking, can't remove if not in
@@ -197,7 +197,7 @@ void GUIEditWindowManager::orphanSelectedChildren( void )
 			window->winGetScreenPosition( &pos.x, &pos.y );
 
 			// remove the child from the parent and add to top level of window system
-			window->winSetParent( NULL );
+			window->winSetParent( nullptr );
 
 			//
 			// adjust the position, which previously was relative to the parent
@@ -221,8 +221,8 @@ void GUIEditWindowManager::orphanSelectedChildren( void )
 GUIEditWindowManager::GUIEditWindowManager( void )
 {
 
-	m_clipboard = NULL;
-	m_clipboardDup = NULL;
+	m_clipboard = nullptr;
+	m_clipboardDup = nullptr;
 
 	m_copySpacing = 8;
 	m_numCopiesPasted = 0;
@@ -235,7 +235,7 @@ GUIEditWindowManager::~GUIEditWindowManager( void )
 {
 
 	// the duplicate list is only used in the actual act of pasting
-	assert( m_clipboardDup == NULL );
+	assert( m_clipboardDup == nullptr );
 
 	// free all data on the clipboard
 	resetClipboard();
@@ -271,8 +271,8 @@ Int GUIEditWindowManager::winDestroy( GameWindow *window )
 		// delete it
 		delete editData;
 
-		// set the edit data to NULL in the window
-		window->winSetEditData( NULL );
+		// set the edit data to null in the window
+		window->winSetEditData( nullptr );
 
 	}
 
@@ -351,7 +351,7 @@ void GUIEditWindowManager::resetClipboard( void )
 	processDestroyList();
 
 	// nothing in the buffer now
-	m_clipboard = NULL;
+	m_clipboard = nullptr;
 	m_numCopiesPasted = 0;
 
 }
@@ -407,7 +407,7 @@ void GUIEditWindowManager::duplicateSelected( GameWindow *root )
 {
 
 	// end of recursion
-	if( root == NULL )
+	if( root == nullptr )
 		return;
 
 	// if widow is selected duplicate and continue on
@@ -416,7 +416,7 @@ void GUIEditWindowManager::duplicateSelected( GameWindow *root )
 		GameWindow *duplicate;
 
 		// perform the duplication of window and all children
-		duplicate = duplicateWindow( root, NULL );
+		duplicate = duplicateWindow( root, nullptr );
 		if( duplicate )
 		{
 
@@ -608,7 +608,7 @@ void GUIEditWindowManager::validateClipboardNames( GameWindow *root )
 	Int sanityLoop = 0;
 
 	// end of recursion
-	if( root == NULL )
+	if( root == nullptr )
 		return;
 
 	// get our inst data
@@ -663,10 +663,10 @@ void GUIEditWindowManager::validateClipboardNames( GameWindow *root )
 void GUIEditWindowManager::pasteClipboard( void )
 {
 	GameWindow *window, *next;
-	GameWindow *firstWindow = NULL;
+	GameWindow *firstWindow = nullptr;
 
 	// check for empty clipboard
-	if( m_clipboard == NULL )
+	if( m_clipboard == nullptr )
 	{
 
 		MessageBox( TheEditor->getWindowHandle(),
@@ -678,7 +678,7 @@ void GUIEditWindowManager::pasteClipboard( void )
 	}
 
 	// create a duplicate of everything in the clipboard
-	assert( m_clipboardDup == NULL );
+	assert( m_clipboardDup == nullptr );
 	createClipboardDuplicate();
 
 	//
@@ -729,7 +729,7 @@ void GUIEditWindowManager::pasteClipboard( void )
 	}
 
 	// the clipboard duplicate list is only for the act of pasting
-	assert( m_clipboardDup == NULL );
+	assert( m_clipboardDup == nullptr );
 
 	// we've now completed another successful copy pasted in
 	m_numCopiesPasted++;
@@ -784,15 +784,15 @@ void InstDrawCopy (  WinInstanceData *instData, WinInstanceData *sourceInstData)
 GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 																									 GameWindow *parent )
 {
-	GameWindow *duplicate = NULL;
+	GameWindow *duplicate = nullptr;
 	UnsignedInt style, status;
 	WinInstanceData *instData;
 	WinInstanceData instDataCopy;
 	ICoord2D pos, size;
 
 	// sanity
-	if( source == NULL )
-		return NULL;
+	if( source == nullptr )
+		return nullptr;
 
 	// get the window instance data and make a copy of it for creating new stuff
 	instData = source->winGetInstanceData();
@@ -803,8 +803,8 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 	// do NOT copy the display string instances, these MUST be allocated when
 	// needed in real windows
 	//
-	instDataCopy.m_text = NULL;
-	instDataCopy.m_tooltip = NULL;
+	instDataCopy.m_text = nullptr;
+	instDataCopy.m_tooltip = nullptr;
 
 	// get a few properties we're going to need
 	style = source->winGetStyle();
@@ -1128,7 +1128,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 			}
 		}
 		else
-			listDataCopy.columnWidth = NULL;
+			listDataCopy.columnWidth = nullptr;
 
 		if(listData->columnWidthPercentage)
 		{
@@ -1139,7 +1139,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 			}
 		}
 		else
-			listDataCopy.columnWidthPercentage = NULL;
+			listDataCopy.columnWidthPercentage = nullptr;
 
 		duplicate =
 			TheWindowManager->gogoGadgetListBox( parent,
@@ -1325,7 +1325,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 																						 pos.y,
 																						 size.x,
 																						 size.y,
-																						 NULL,
+																						 nullptr,
 																						 &instDataCopy );
 
 	}
@@ -1337,19 +1337,19 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 								"Internal Error", MB_OK );
 		assert( 0 );
 		memset( &instDataCopy, 0, sizeof( instDataCopy ) );  // see comment below
-		return NULL;
+		return nullptr;
 
 	}
 
 	// sanity
-	if( duplicate == NULL )
+	if( duplicate == nullptr )
 	{
 
 		MessageBox( TheEditor->getWindowHandle(), "Unable to duplicate window",
 								"Internal Error", MB_OK );
 		assert( 0 );
 		memset( &instDataCopy, 0, sizeof( instDataCopy ) );  // see comment below
-		return NULL;
+		return nullptr;
 
 	}
 
@@ -1361,7 +1361,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 	// but that is totally isolated in the parent so that's OK and
 	// necessary.
 	//
-	if( parent == NULL )
+	if( parent == nullptr )
 		unlinkWindow( duplicate );
 
 	// copy edit data, only for the editor
@@ -1416,7 +1416,7 @@ void GUIEditWindowManager::createClipboardDuplicate( void )
 
 	// find last window in clipboard
 	lastWindow = m_clipboard;
-	while( lastWindow && lastWindow->winGetNext() != NULL )
+	while( lastWindow && lastWindow->winGetNext() != nullptr )
 		lastWindow = lastWindow->winGetNext();
 
 	//
@@ -1428,7 +1428,7 @@ void GUIEditWindowManager::createClipboardDuplicate( void )
 	{
 
 		// duplicate the window and all its children
-		duplicate = duplicateWindow( window, NULL );
+		duplicate = duplicateWindow( window, nullptr );
 
 		// add duplicate to list
 		if( duplicate )
@@ -1446,18 +1446,18 @@ void GUIEditWindowManager::makeChildOf( GameWindow *target,
 {
 
 	// sanity
-	if( target == NULL )
+	if( target == nullptr )
 		return;
 
 	// get target parent
 	GameWindow *prevParent = target->winGetParent();
 
 	// check for no parent
-	if( parent == NULL )
+	if( parent == nullptr )
 	{
 
 		// if target already has no parent nothing to do
-		if( prevParent == NULL )
+		if( prevParent == nullptr )
 			return;
 
 		//
@@ -1538,7 +1538,7 @@ void GUIEditWindowManager::moveAheadOf( GameWindow *windowToMove,
 {
 
 	// sanity
-	if( windowToMove == NULL || aheadOf == NULL || windowToMove == aheadOf )
+	if( windowToMove == nullptr || aheadOf == nullptr || windowToMove == aheadOf )
 		return;
 
 	//

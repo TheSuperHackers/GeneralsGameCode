@@ -65,7 +65,7 @@ EmitterPropertySheetClass::EmitterPropertySheetClass
 	UINT nIDCaption,
 	CWnd *pParentWnd
 )
-	:  m_pEmitterList (NULL),
+	:  m_pEmitterList (nullptr),
 	   CPropertySheet (nIDCaption, pParentWnd, 0)
 {
 	m_pEmitterList = emitter_list;
@@ -84,7 +84,7 @@ EmitterPropertySheetClass::EmitterPropertySheetClass
 	LPCTSTR pszCaption,
 	CWnd *pParentWnd
 )
-	:  m_pEmitterList (NULL),
+	:  m_pEmitterList (nullptr),
 	   CPropertySheet (pszCaption, pParentWnd, 0)
 {
 	m_pEmitterList = emitter_list;
@@ -192,7 +192,7 @@ void
 EmitterPropertySheetClass::Add_Emitter_To_Viewer (void)
 {
 	CW3DViewDoc *pdoc = ::GetCurrentDocument ();
-	if ((pdoc != NULL) && (m_pEmitterList != NULL)) {
+	if ((pdoc != nullptr) && (m_pEmitterList != nullptr)) {
 
 		//
 		// Create a new prototype for this emitter and add it to the asset manager
@@ -286,7 +286,7 @@ EmitterPropertySheetClass::Update_Emitter (void)
 void
 EmitterPropertySheetClass::Initialize (void)
 {
-	if (m_pEmitterList == NULL) {
+	if (m_pEmitterList == nullptr) {
 		Create_New_Emitter ();
 	} else {
 		m_LastSavedName = m_pEmitterList->Get_Name ();
@@ -305,10 +305,10 @@ EmitterPropertySheetClass::Initialize (void)
 	m_LineGroupPage.Set_Emitter (m_pEmitterList);
 
 	// Initialize the user page with data from the prototype
-	/*if (m_pEmitter != NULL) {
-		ParticleEmitterPrototypeClass *proto = NULL;
+	/*if (m_pEmitter != nullptr) {
+		ParticleEmitterPrototypeClass *proto = nullptr;
 		proto = (ParticleEmitterPrototypeClass *)WW3DAssetManager::Get_Instance ()->Find_Prototype (m_pEmitter->Get_Name ());
-		if (proto != NULL) {
+		if (proto != nullptr) {
 			ParticleEmitterDefClass *definition = proto->Get_Definition ();
 			m_UserPage.Set_Type (definition->Get_User_Type ());
 			m_UserPage.Set_String (definition->Get_User_String ());
@@ -382,7 +382,7 @@ EmitterPropertySheetClass::Create_Emitter (void)
 	//
 	//	Load the texture
 	//
-	TextureClass *ptexture = NULL;
+	TextureClass *ptexture = nullptr;
 	if (texture_name.GetLength () > 0) {
 		ptexture = WW3DAssetManager::Get_Instance()->Get_Texture (texture_name);
 	}
@@ -428,48 +428,48 @@ EmitterPropertySheetClass::Create_New_Emitter (void)
 	color.Start = Vector3 (1, 1, 1);
 	color.Rand.Set (0,0,0);
 	color.NumKeyFrames = 0;
-	color.KeyTimes = NULL;
-	color.Values = NULL;
+	color.KeyTimes = nullptr;
+	color.Values = nullptr;
 
 	ParticlePropertyStruct<float> opacity;
 	opacity.Start = 1.0F;
 	opacity.Rand = 0.0F;
 	opacity.NumKeyFrames = 0;
-	opacity.KeyTimes = NULL;
-	opacity.Values = NULL;
+	opacity.KeyTimes = nullptr;
+	opacity.Values = nullptr;
 
 	ParticlePropertyStruct<float> size;
 	size.Start = 0.1F;
 	size.Rand = 0.0F;
 	size.NumKeyFrames = 0;
-	size.KeyTimes = NULL;
-	size.Values = NULL;
+	size.KeyTimes = nullptr;
+	size.Values = nullptr;
 
 	ParticlePropertyStruct<float> rotation;
 	rotation.Start = 0.0f;
 	rotation.Rand = 0.0f;
 	rotation.NumKeyFrames = 0;
-	rotation.KeyTimes = NULL;
-	rotation.Values = NULL;
+	rotation.KeyTimes = nullptr;
+	rotation.Values = nullptr;
 
 	ParticlePropertyStruct<float> frames;
 	frames.Start = 0.0f;
 	frames.Rand = 0.0f;
 	frames.NumKeyFrames = 0;
-	frames.KeyTimes = NULL;
-	frames.Values = NULL;
+	frames.KeyTimes = nullptr;
+	frames.Values = nullptr;
 
 	ParticlePropertyStruct<float> blurtimes;
 	blurtimes.Start = 0.0f;
 	blurtimes.Rand = 0.0f;
 	blurtimes.NumKeyFrames = 0;
-	blurtimes.KeyTimes = NULL;
-	blurtimes.Values = NULL;
+	blurtimes.KeyTimes = nullptr;
+	blurtimes.Values = nullptr;
 
 	//
 	//	Create the new emitter
 	//
-	ParticleEmitterClass *emitter = NULL;
+	ParticleEmitterClass *emitter = nullptr;
 	emitter = new ParticleEmitterClass (10,
 													1,
 													new Vector3SolidBoxRandomizer(Vector3(0.1F, 0.1F, 0.1F)),
@@ -487,7 +487,7 @@ EmitterPropertySheetClass::Create_New_Emitter (void)
 													Vector3 (0, 0, 0),
 													1.0F,
 													0.0F,
-													NULL,
+													nullptr,
 													ShaderClass::_PresetAdditiveSpriteShader,
 													0);
 

@@ -72,7 +72,7 @@ void NeutronBlastBehavior::onDie( const DamageInfo *damageInfo )
 	// setup scan filters
 	PartitionFilterSameMapStatus filterMapStatus( self );
 	PartitionFilterAlive filterAlive;
-	PartitionFilter *filters[] = { &filterAlive, &filterMapStatus, NULL };
+	PartitionFilter *filters[] = { &filterAlive, &filterMapStatus, nullptr };
 
 	// scan objects in our region
 	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( self->getPosition(), blastRadius, FROM_CENTER_2D, filters );

@@ -56,7 +56,7 @@ static const char *const TheWeaponSlotTypeNames[] =
 	"SECONDARY",
 	"TERTIARY",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheWeaponSlotTypeNames) == WEAPONSLOT_COUNT + 1, "Incorrect array size");
 
@@ -66,7 +66,7 @@ static const LookupListRec TheWeaponSlotTypeNamesLookupList[] =
 	{ "SECONDARY",	SECONDARY_WEAPON },
 	{ "TERTIARY",		TERTIARY_WEAPON },
 
-	{ NULL, 0	}
+	{ nullptr, 0	}
 };
 static_assert(ARRAY_SIZE(TheWeaponSlotTypeNamesLookupList) == WEAPONSLOT_COUNT + 1, "Incorrect array size");
 

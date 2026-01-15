@@ -181,9 +181,9 @@ int main(int argc, char *argv[])
 	ConfigFile config;
 	FILE* in = fopen(configName, "r");
 
-	if (in == NULL)
+	if (in == nullptr)
 	{
-		MessageBox(NULL,"You must run the game from its install directory.",
+		MessageBox(nullptr,"You must run the game from its install directory.",
 			"Launcher config file missing",MB_OK);
 		exit(-1);
 	}
@@ -193,7 +193,7 @@ int main(int argc, char *argv[])
 
 	if (ok == FALSE)
 	{
-		MessageBox(NULL,"File 'launcher.cfg' is corrupt","Error",MB_OK);
+		MessageBox(nullptr,"File 'launcher.cfg' is corrupt","Error",MB_OK);
 		exit(-1);
 	}
 
@@ -264,12 +264,12 @@ int main(int argc, char *argv[])
 		if (cutoffTime == 0)
 		{
 			// We didn't have the FLAG parameter; somebody's been hacking.  No game for you!  Bad hacker!
-			DBGMSG("Saw cutoffTime of 0; real time is " << time(NULL));
-			MessageBox(NULL,"File 'launcher.cfg' is corrupt","Error",MB_OK);
+			DBGMSG("Saw cutoffTime of 0; real time is " << time(nullptr));
+			MessageBox(nullptr,"File 'launcher.cfg' is corrupt","Error",MB_OK);
 			exit(-1);
 		}
 
-		if (time(NULL) > cutoffTime)
+		if (time(nullptr) > cutoffTime)
 		{
 			// The future is now!  Just run the game.
 			RunGame(argv[0], config, proc);
@@ -315,8 +315,8 @@ void CreatePrimaryWin(const char *prefix)
 	wc.cbWndExtra = 0;            // No extra win data
 	wc.hInstance = Global_instance;
 	wc.hIcon=LoadIcon(Global_instance, MAKEINTRESOURCE(IDI_GENERALS));
-	wc.hCursor = NULL;  /////////LoadCursor( NULL, IDC_ARROW );
-	wc.hbrBackground = NULL;
+	wc.hCursor = nullptr;  /////////LoadCursor( nullptr, IDC_ARROW );
+	wc.hbrBackground = nullptr;
 	wc.lpszMenuName = name;
 	wc.lpszClassName = name;
 	RegisterClass(&wc);
@@ -326,7 +326,7 @@ void CreatePrimaryWin(const char *prefix)
 	*/
 	HWND hwnd = CreateWindowEx(WS_EX_TOPMOST, name, name, WS_POPUP, 0, 0,
 		GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
-		NULL, NULL, Global_instance, NULL);
+		nullptr, nullptr, Global_instance, nullptr);
 
 	if(!hwnd)
 	{
@@ -361,7 +361,7 @@ void myChdir(char *path)
 	int  abc;
 
 	_splitpath( path, drive, dir, file, ext );
-	_makepath ( filepath,   drive, dir, NULL, NULL );
+	_makepath ( filepath,   drive, dir, nullptr, nullptr );
 
 	if ( filepath[ strlen( filepath ) - 1 ] == '\\' )
 	{

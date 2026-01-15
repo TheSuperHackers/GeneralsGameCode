@@ -82,7 +82,7 @@ public:
 
 	SpecialAbilityUpdateModuleData()
 	{
-		m_specialPowerTemplate = NULL;
+		m_specialPowerTemplate = nullptr;
 		m_startAbilityRange = SPECIAL_ABILITY_HUGE_DISTANCE;
 		m_abilityAbortRange = SPECIAL_ABILITY_HUGE_DISTANCE;
 		m_preparationFrames = 0;
@@ -99,7 +99,7 @@ public:
 		m_skipPackingWithNoTarget = FALSE;
 		m_flipObjectAfterPacking = FALSE;
 		m_flipObjectAfterUnpacking = FALSE;
-		m_disableFXParticleSystem = NULL;
+		m_disableFXParticleSystem = nullptr;
 		m_fleeRangeAfterCompletion = 0.0f;
 		m_doCaptureFX = FALSE;
 		m_alwaysValidateSpecialObjects = FALSE;
@@ -117,40 +117,40 @@ public:
 		static const FieldParse dataFieldParse[] =
 		{
 			//Primary data values
-			{ "SpecialPowerTemplate",				INI::parseSpecialPowerTemplate,		NULL, offsetof( SpecialAbilityUpdateModuleData, m_specialPowerTemplate ) },
-			{ "StartAbilityRange",					INI::parseReal,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_startAbilityRange ) },
-			{ "AbilityAbortRange",					INI::parseReal,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_abilityAbortRange ) },
-			{ "PreparationTime",						INI::parseDurationUnsignedInt,		NULL, offsetof( SpecialAbilityUpdateModuleData, m_preparationFrames ) },
-			{ "PersistentPrepTime",					INI::parseDurationUnsignedInt,		NULL, offsetof( SpecialAbilityUpdateModuleData, m_persistentPrepFrames ) },
-			{ "PackTime",										INI::parseDurationUnsignedInt,		NULL, offsetof( SpecialAbilityUpdateModuleData, m_packTime ) },
-			{ "UnpackTime",									INI::parseDurationUnsignedInt,		NULL, offsetof( SpecialAbilityUpdateModuleData, m_unpackTime ) },
-			{ "PreTriggerUnstealthTime",	  INI::parseDurationUnsignedInt,		NULL, offsetof( SpecialAbilityUpdateModuleData, m_preTriggerUnstealthFrames ) },
-			{ "SkipPackingWithNoTarget",		INI::parseBool,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_skipPackingWithNoTarget ) },
-			{ "PackUnpackVariationFactor",	INI::parseReal,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_packUnpackVariationFactor ) },
+			{ "SpecialPowerTemplate",				INI::parseSpecialPowerTemplate,		nullptr, offsetof( SpecialAbilityUpdateModuleData, m_specialPowerTemplate ) },
+			{ "StartAbilityRange",					INI::parseReal,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_startAbilityRange ) },
+			{ "AbilityAbortRange",					INI::parseReal,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_abilityAbortRange ) },
+			{ "PreparationTime",						INI::parseDurationUnsignedInt,		nullptr, offsetof( SpecialAbilityUpdateModuleData, m_preparationFrames ) },
+			{ "PersistentPrepTime",					INI::parseDurationUnsignedInt,		nullptr, offsetof( SpecialAbilityUpdateModuleData, m_persistentPrepFrames ) },
+			{ "PackTime",										INI::parseDurationUnsignedInt,		nullptr, offsetof( SpecialAbilityUpdateModuleData, m_packTime ) },
+			{ "UnpackTime",									INI::parseDurationUnsignedInt,		nullptr, offsetof( SpecialAbilityUpdateModuleData, m_unpackTime ) },
+			{ "PreTriggerUnstealthTime",	  INI::parseDurationUnsignedInt,		nullptr, offsetof( SpecialAbilityUpdateModuleData, m_preTriggerUnstealthFrames ) },
+			{ "SkipPackingWithNoTarget",		INI::parseBool,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_skipPackingWithNoTarget ) },
+			{ "PackUnpackVariationFactor",	INI::parseReal,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_packUnpackVariationFactor ) },
 
 			//Secondary data values
-			{ "SpecialObject",							INI::parseAsciiString,						NULL, offsetof( SpecialAbilityUpdateModuleData, m_specialObjectName ) },
-			{ "SpecialObjectAttachToBone",	INI::parseAsciiString,						NULL, offsetof( SpecialAbilityUpdateModuleData, m_specialObjectAttachToBoneName ) },
-			{ "MaxSpecialObjects",					INI::parseUnsignedInt,						NULL, offsetof( SpecialAbilityUpdateModuleData, m_maxSpecialObjects ) },
-			{ "SpecialObjectsPersistent",		INI::parseBool,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_specialObjectsPersistent ) },
-			{ "EffectDuration",							INI::parseDurationUnsignedInt,		NULL, offsetof( SpecialAbilityUpdateModuleData, m_effectDuration ) },
-			{ "EffectValue",								INI::parseInt,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_effectValue ) },
-			{ "UniqueSpecialObjectTargets", INI::parseBool,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_uniqueSpecialObjectTargets ) },
-			{ "SpecialObjectsPersistWhenOwnerDies", INI::parseBool,						NULL, offsetof( SpecialAbilityUpdateModuleData, m_specialObjectsPersistWhenOwnerDies ) },
-			{ "AlwaysValidateSpecialObjects",				INI::parseBool,						NULL, offsetof( SpecialAbilityUpdateModuleData, m_alwaysValidateSpecialObjects ) },
-			{ "FlipOwnerAfterPacking",			INI::parseBool,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_flipObjectAfterPacking ) },
-			{ "FlipOwnerAfterUnpacking",		INI::parseBool,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_flipObjectAfterUnpacking ) },
-			{ "FleeRangeAfterCompletion",		INI::parseReal,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_fleeRangeAfterCompletion ) },
-			{ "DisableFXParticleSystem",		INI::parseParticleSystemTemplate, NULL, offsetof( SpecialAbilityUpdateModuleData, m_disableFXParticleSystem ) },
-			{ "DoCaptureFX",								INI::parseBool,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_doCaptureFX ) },
-			{ "PackSound",									INI::parseAudioEventRTS,					NULL, offsetof( SpecialAbilityUpdateModuleData, m_packSound ) },
-			{ "UnpackSound",								INI::parseAudioEventRTS,					NULL, offsetof( SpecialAbilityUpdateModuleData, m_unpackSound ) },
-			{ "PrepSoundLoop",							INI::parseAudioEventRTS,					NULL, offsetof( SpecialAbilityUpdateModuleData, m_prepSoundLoop ) },
-			{ "TriggerSound",								INI::parseAudioEventRTS,					NULL, offsetof( SpecialAbilityUpdateModuleData, m_triggerSound ) },
-			{ "LoseStealthOnTrigger",				INI::parseBool,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_loseStealthOnTrigger ) },
-			{ "AwardXPForTriggering",				INI::parseInt,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_awardXPForTriggering ) },
-			{ "SkillPointsForTriggering",		INI::parseInt,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_skillPointsForTriggering ) },
-			{ "ApproachRequiresLOS",				INI::parseBool,										NULL, offsetof( SpecialAbilityUpdateModuleData, m_approachRequiresLOS ) },
+			{ "SpecialObject",							INI::parseAsciiString,						nullptr, offsetof( SpecialAbilityUpdateModuleData, m_specialObjectName ) },
+			{ "SpecialObjectAttachToBone",	INI::parseAsciiString,						nullptr, offsetof( SpecialAbilityUpdateModuleData, m_specialObjectAttachToBoneName ) },
+			{ "MaxSpecialObjects",					INI::parseUnsignedInt,						nullptr, offsetof( SpecialAbilityUpdateModuleData, m_maxSpecialObjects ) },
+			{ "SpecialObjectsPersistent",		INI::parseBool,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_specialObjectsPersistent ) },
+			{ "EffectDuration",							INI::parseDurationUnsignedInt,		nullptr, offsetof( SpecialAbilityUpdateModuleData, m_effectDuration ) },
+			{ "EffectValue",								INI::parseInt,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_effectValue ) },
+			{ "UniqueSpecialObjectTargets", INI::parseBool,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_uniqueSpecialObjectTargets ) },
+			{ "SpecialObjectsPersistWhenOwnerDies", INI::parseBool,						nullptr, offsetof( SpecialAbilityUpdateModuleData, m_specialObjectsPersistWhenOwnerDies ) },
+			{ "AlwaysValidateSpecialObjects",				INI::parseBool,						nullptr, offsetof( SpecialAbilityUpdateModuleData, m_alwaysValidateSpecialObjects ) },
+			{ "FlipOwnerAfterPacking",			INI::parseBool,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_flipObjectAfterPacking ) },
+			{ "FlipOwnerAfterUnpacking",		INI::parseBool,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_flipObjectAfterUnpacking ) },
+			{ "FleeRangeAfterCompletion",		INI::parseReal,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_fleeRangeAfterCompletion ) },
+			{ "DisableFXParticleSystem",		INI::parseParticleSystemTemplate, nullptr, offsetof( SpecialAbilityUpdateModuleData, m_disableFXParticleSystem ) },
+			{ "DoCaptureFX",								INI::parseBool,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_doCaptureFX ) },
+			{ "PackSound",									INI::parseAudioEventRTS,					nullptr, offsetof( SpecialAbilityUpdateModuleData, m_packSound ) },
+			{ "UnpackSound",								INI::parseAudioEventRTS,					nullptr, offsetof( SpecialAbilityUpdateModuleData, m_unpackSound ) },
+			{ "PrepSoundLoop",							INI::parseAudioEventRTS,					nullptr, offsetof( SpecialAbilityUpdateModuleData, m_prepSoundLoop ) },
+			{ "TriggerSound",								INI::parseAudioEventRTS,					nullptr, offsetof( SpecialAbilityUpdateModuleData, m_triggerSound ) },
+			{ "LoseStealthOnTrigger",				INI::parseBool,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_loseStealthOnTrigger ) },
+			{ "AwardXPForTriggering",				INI::parseInt,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_awardXPForTriggering ) },
+			{ "SkillPointsForTriggering",		INI::parseInt,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_skillPointsForTriggering ) },
+			{ "ApproachRequiresLOS",				INI::parseBool,										nullptr, offsetof( SpecialAbilityUpdateModuleData, m_approachRequiresLOS ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -177,7 +177,7 @@ public:
 	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const { return false; } //Is it active now?
 	virtual Bool doesSpecialPowerHaveOverridableDestination() const { return false; }	//Does it have it, even if it's not active?
 	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) {}
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const;
+	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const;
 
 //	virtual Bool isBusy() const { return m_isBusy; }
 

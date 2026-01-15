@@ -71,7 +71,7 @@ static const char *szWindowClass = "GUIEdit";
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 HINSTANCE ApplicationHInstance;				///< main application instance
 HWND ApplicationHWnd;							///< main application HWnd
-Win32Mouse *TheWin32Mouse = NULL;	///< for Win32 mouse
+Win32Mouse *TheWin32Mouse = nullptr;	///< for Win32 mouse
 const char *gAppPrefix = "ge_"; /// So GuiEdit can have a different debug log file name if we need it
 
 const Char *g_strFile = "data\\Generals.str";
@@ -114,12 +114,12 @@ static BOOL initInstance( HINSTANCE hInstance, int nCmdShow )
 																		0,											// y position
 																		GetSystemMetrics( SM_CXSCREEN ), // width
 																		GetSystemMetrics( SM_CYSCREEN ),  // height
-																		NULL,										// parent
-																		NULL,										// menu
+																		nullptr,										// parent
+																		nullptr,										// menu
 																		ApplicationHInstance,		// instance
-																		NULL );									// creation data
+																		nullptr );									// creation data
 
-	if( ApplicationHWnd == NULL )
+	if( ApplicationHWnd == nullptr )
 		return FALSE;
 
 	// display the window
@@ -157,7 +157,7 @@ static ATOM registerClass(HINSTANCE hInstance)
 	wcex.cbWndExtra			= 0;
 	wcex.hInstance			= hInstance;
 	wcex.hIcon					= LoadIcon(hInstance, (LPCTSTR)GUIEDIT_LARGE_ICON);
-	wcex.hCursor				= LoadCursor(NULL, IDC_ARROW);
+	wcex.hCursor				= LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)GetStockObject( BLACK_BRUSH );
 	wcex.lpszMenuName		=	(LPCSTR)GUIEDIT_MENU;
 	wcex.lpszClassName	= szWindowClass;
@@ -186,7 +186,7 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 
 	/// @todo remove this force set of working directory later
 	Char buffer[ _MAX_PATH ];
-	GetModuleFileName( NULL, buffer, sizeof( buffer ) );
+	GetModuleFileName( nullptr, buffer, sizeof( buffer ) );
 	if (Char *pEnd = strrchr(buffer, '\\'))
 	{
 		*pEnd = 0;
@@ -214,29 +214,29 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 
 	// initialize GUIEdit data
 	TheEditor = new GUIEdit;
-	if( TheEditor == NULL )
+	if( TheEditor == nullptr )
 		return FALSE;
 	TheEditor->init();
 
 	TheFramePacer = new FramePacer();
 
 	//
-	// see if we have any messages to process, a NULL window handle tells the
+	// see if we have any messages to process, a nullptr window handle tells the
 	// OS to look at the main window associated with the calling thread, us!
 	//
 	while( quit == FALSE )
 	{
 
 		// is there is message ready for us?
-		if( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
+		if( PeekMessage( &msg, nullptr, 0, 0, PM_NOREMOVE ) )
 		{
 
 			// process ALL messages waiting
-			while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
+			while( PeekMessage( &msg, nullptr, 0, 0, PM_NOREMOVE ) )
 			{
 
 				// get the message
-				returnValue = GetMessage( &msg, NULL, 0, 0 );
+				returnValue = GetMessage( &msg, nullptr, 0, 0 );
 
 				// check for quitting
 				if( returnValue == 0 )
@@ -268,10 +268,10 @@ Int APIENTRY WinMain(HINSTANCE hInstance,
 
 	// shutdown GUIEdit data
 	delete TheFramePacer;
-	TheFramePacer = NULL;
+	TheFramePacer = nullptr;
 
 	delete TheEditor;
-	TheEditor = NULL;
+	TheEditor = nullptr;
 
 	shutdownMemoryManager();
 

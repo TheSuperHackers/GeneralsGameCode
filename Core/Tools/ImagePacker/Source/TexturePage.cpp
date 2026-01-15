@@ -79,10 +79,10 @@ void TexturePage::extendToRowIfOpen( char *src,
 {
 	char otherAlpha;
 	char otherColor[ 3 ];
-	char *row = NULL;
+	char *row = nullptr;
 
 	// sanity
-	if( src == NULL )
+	if( src == nullptr )
 		return;
 
 	//
@@ -229,7 +229,7 @@ void TexturePage::extendImageEdges( Byte *destBuffer,
 {
 
 	// sanity
-	if( destBuffer == NULL || image == NULL )
+	if( destBuffer == nullptr || image == nullptr )
 		return;
 
 	//
@@ -426,7 +426,7 @@ void TexturePage::extendImageEdges( Byte *destBuffer,
 			//
 			if( currPixel == TRUE )
 			{
-				char *dst = NULL;
+				char *dst = nullptr;
 
 				// top left corner
 				if( x == 0 && y == 0 &&
@@ -514,7 +514,7 @@ Bool TexturePage::addImageData( Byte *destBuffer,
 {
 
 	// sanity
-	if( destBuffer == NULL || image == NULL )
+	if( destBuffer == nullptr || image == nullptr )
 		return FALSE;
 
 	// load the real image data for the source
@@ -525,7 +525,7 @@ Bool TexturePage::addImageData( Byte *destBuffer,
 
 		sprintf( buffer, "Error loading source file '%s'\n", image->m_path );
 		DEBUG_ASSERTCRASH( 0, (buffer) );
-		MessageBox( NULL, buffer, "Cannot Load Source File", MB_OK | MB_ICONERROR );
+		MessageBox( nullptr, buffer, "Cannot Load Source File", MB_OK | MB_ICONERROR );
 		return FALSE;
 
 	}
@@ -761,7 +761,7 @@ UnsignedInt TexturePage::buildFitRegion( IRegion2D *region,
 {
 
 	// sanity
-	if( region == NULL || xGutter == NULL || yGutter == NULL )
+	if( region == nullptr || xGutter == nullptr || yGutter == nullptr )
 		return 0;
 
 	//
@@ -853,12 +853,12 @@ TexturePage::TexturePage( Int width, Int height )
 	Int canvasSize;
 
 	m_id = -1;
-	m_next = NULL;
-	m_prev = NULL;
+	m_next = nullptr;
+	m_prev = nullptr;
 	m_size.x = width;
 	m_size.y = height;
-	m_packedImage = NULL;
-	m_targa = NULL;
+	m_packedImage = nullptr;
+	m_targa = nullptr;
 
 	// create a "canvas" to represent used and unused areas
 	canvasSize = m_size.x * m_size.y;
@@ -893,10 +893,10 @@ Bool TexturePage::addImage( ImageInfo *image )
 	IRegion2D region;
 
 	// santiy
-	if( image == NULL )
+	if( image == nullptr )
 	{
 
-		DEBUG_ASSERTCRASH( image, ("TexturePage::addImage: NULL image!") );
+		DEBUG_ASSERTCRASH( image, ("TexturePage::addImage: null image!") );
 		return TRUE;  // say it was added
 
 	}
@@ -1147,7 +1147,7 @@ Bool TexturePage::addImage( ImageInfo *image )
 					image->m_pagePos.hi.y -= yGutter;
 
 				// link this image to the texture page
-				image->m_prevPageImage = NULL;
+				image->m_prevPageImage = nullptr;
 				image->m_nextPageImage = m_imageList;
 				if( m_imageList )
 					m_imageList->m_prevPageImage = image;
@@ -1174,22 +1174,22 @@ Bool TexturePage::generateTexture( void )
 {
 
 	// sanity
-	if( m_imageList == NULL )
+	if( m_imageList == nullptr )
 		return FALSE;
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_packedImage == NULL, ("The packed image list must be NULL before generating texture") );
-	DEBUG_ASSERTCRASH( m_targa == NULL, ("The targa must be NULL before generating a new texture") );
+	DEBUG_ASSERTCRASH( m_packedImage == nullptr, ("The packed image list must be null before generating texture") );
+	DEBUG_ASSERTCRASH( m_targa == nullptr, ("The targa must be null before generating a new texture") );
 
 	// allocate targa to help us generate the final texture
 	m_targa = new Targa;
-	if( m_targa == NULL )
+	if( m_targa == nullptr )
 	{
 		char buffer[ 128 ];
 
 		sprintf( buffer, "Unable to allocate new targa to generate texture\n" );
 		DEBUG_ASSERTCRASH( m_targa, (buffer) );
-		MessageBox( NULL, buffer, "Internal Error", MB_OK | MB_ICONERROR );
+		MessageBox( nullptr, buffer, "Internal Error", MB_OK | MB_ICONERROR );
 		return FALSE;
 
 	}
@@ -1212,13 +1212,13 @@ Bool TexturePage::generateTexture( void )
 	// allocate a buffer for our final image
 	Int bufferSize = m_size.x * m_size.y * bpp;
 	m_packedImage = new Byte[ bufferSize ];
-	if( m_packedImage == NULL )
+	if( m_packedImage == nullptr )
 	{
 		char buffer[ 128 ];
 
 		sprintf( buffer, "Unable to allocate final packed image buffer\n" );
 		DEBUG_ASSERTCRASH( m_packedImage, (buffer) );
-		MessageBox( NULL, buffer, "Internal Error", MB_OK | MB_ICONERROR );
+		MessageBox( nullptr, buffer, "Internal Error", MB_OK | MB_ICONERROR );
 		BitSet( m_status, PAGE_ERROR );
 		BitSet( m_status, CANT_ALLOCATE_PACKED_IMAGE );
 		return FALSE;
@@ -1267,7 +1267,7 @@ Bool TexturePage::writeFile( char *baseFilename )
 {
 
 	// sanity
-	if( baseFilename == NULL || m_targa == NULL )
+	if( baseFilename == nullptr || m_targa == nullptr )
 	{
 
 		BitSet( m_status, PAGE_ERROR );
@@ -1311,7 +1311,7 @@ void TexturePage::getPixel( Int x, Int y, Byte *r, Byte *g, Byte *b, Byte *a )
 {
 
 	// do nothing if we have no image data
-	if( m_packedImage == NULL )
+	if( m_packedImage == nullptr )
 		return;
 
 	// how many bytes per pixel for the targa file format

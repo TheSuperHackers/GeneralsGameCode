@@ -257,7 +257,7 @@ UpdateSleepTime SpecialAbilityUpdate::update( void )
   {
     Object* target = TheGameLogic->findObjectByID(m_targetID);
 
-    if (target != NULL)
+    if (target != nullptr)
     {
       if (target->isEffectivelyDead())
         shouldAbort = TRUE;
@@ -321,7 +321,7 @@ UpdateSleepTime SpecialAbilityUpdate::update( void )
 
   SpecialPowerModuleInterface *spm = getMySPM();
 
-  if ( shouldAbort || spm == NULL )
+  if ( shouldAbort || spm == nullptr )
   {
     // doh, a colleague has already captured it. just stop.
     ai->aiIdle( CMD_FROM_AI );
@@ -828,7 +828,7 @@ Bool SpecialAbilityUpdate::isWithinStartAbilityRange() const
   }
 
   Real fDistSquared = 0.0f;
-  Object *target = NULL;
+  Object *target = nullptr;
   if( m_targetID != INVALID_ID )
   {
     target = TheGameLogic->findObjectByID( m_targetID );
@@ -870,7 +870,7 @@ Bool SpecialAbilityUpdate::isWithinStartAbilityRange() const
     {
       //Make sure we can see the target!
       PartitionFilterLineOfSight  filterLOS( self );
-      PartitionFilter *filters[] = { &filterLOS, NULL };
+      PartitionFilter *filters[] = { &filterLOS, nullptr };
       ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( self, range, FROM_BOUNDINGSPHERE_2D, filters, ITER_SORTED_NEAR_TO_FAR );
       MemoryPoolObjectHolder hold(iter);
       for( Object *theTarget = iter->first(); theTarget; theTarget = iter->next() )
@@ -903,7 +903,7 @@ Bool SpecialAbilityUpdate::isWithinAbilityAbortRange() const
   range = __max( 0.0f, range - UNDERSIZE );
 
   Real fDistSquared = 0.0f;
-  Object *target = NULL;
+  Object *target = nullptr;
   if( m_targetID != INVALID_ID )
   {
     target = TheGameLogic->findObjectByID( m_targetID );
@@ -1080,7 +1080,7 @@ void SpecialAbilityUpdate::startPreparation()
   SpecialPowerModuleInterface *spmInterface = getMySPM();
   if( spmInterface )
   {
-    spmInterface->markSpecialPowerTriggered(NULL);// Null for not creating a view object
+    spmInterface->markSpecialPowerTriggered(nullptr);// Null for not creating a view object
   }
 
   if (getObject()->getAI()) {
@@ -1120,7 +1120,7 @@ Bool SpecialAbilityUpdate::initLaser(Object* specialObject, Object* target )
   }
 
   Coord3D startPos;
-  if( !getObject()->getSingleLogicalBonePosition( data->m_specialObjectAttachToBoneName.str(), &startPos, NULL ) )
+  if( !getObject()->getSingleLogicalBonePosition( data->m_specialObjectAttachToBoneName.str(), &startPos, nullptr ) )
   {
     //If we can't find the bone, then set it to our current position.
     startPos.set( getObject()->getPosition() );
@@ -1621,7 +1621,7 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
 Object* SpecialAbilityUpdate::createSpecialObject()
 {
   const SpecialAbilityUpdateModuleData* data = getSpecialAbilityUpdateModuleData();
-  Object *specialObject = NULL;
+  Object *specialObject = nullptr;
 
   if( m_specialObjectEntries == data->m_maxSpecialObjects )
   {
@@ -1631,7 +1631,7 @@ Object* SpecialAbilityUpdate::createSpecialObject()
       //limit we can have, then don't allow any more to be created....
       //We could add recycling code if need be.. but the logic that handles
       //canDoSpecialPowerXXX should prevent this triggering.
-      return NULL;
+      return nullptr;
     }
     else
     {
@@ -1792,7 +1792,7 @@ void SpecialAbilityUpdate::finishAbility()
 				if (contPlayer) {
 					PartitionFilterSamePlayer filterPlayer( contPlayer );	// Look for our own mines.
 					PartitionFilterAcceptByKindOf filterKind(MAKE_KINDOF_MASK(KINDOF_MINE), KINDOFMASK_NONE);
-					PartitionFilter *filters[] = { &filterKind, &filterPlayer, NULL };
+					PartitionFilter *filters[] = { &filterKind, &filterPlayer, nullptr };
 					Object *mine = ThePartitionManager->getClosestObject( &pos, data->m_fleeRangeAfterCompletion, FROM_CENTER_2D, filters );// could be null. this is ok.
 					if (mine) {
 						dir.set(pos.x-mine->getPosition()->x, pos.y-mine->getPosition()->y, 0);
@@ -1948,7 +1948,7 @@ Object* SpecialAbilityUpdate::findSpecialObjectWithProducerID( const Object *tar
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------

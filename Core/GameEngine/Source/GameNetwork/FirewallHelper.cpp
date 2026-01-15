@@ -57,7 +57,7 @@
 #include "GameNetwork/GameSpy/GSConfig.h"
 
 
-FirewallHelperClass *TheFirewallHelper = NULL;
+FirewallHelperClass *TheFirewallHelper = nullptr;
 
 FirewallHelperClass * createFirewallHelper()
 {
@@ -360,8 +360,8 @@ Bool FirewallHelperClass::sendToManglerFromPort(UnsignedInt address, UnsignedSho
 //	DEBUG_LOG(("PacketID = %u", packetID));
 //	DEBUG_LOG(("OriginalPortNumber = %u", port));
 
-	if (spareSocket == NULL) {
-		DEBUG_ASSERTCRASH(spareSocket != NULL, ("Could not find spare socket for send."));
+	if (spareSocket == nullptr) {
+		DEBUG_ASSERTCRASH(spareSocket != nullptr, ("Could not find spare socket for send."));
 		DEBUG_LOG(("FirewallHelperClass::sendToManglerFromPort - failed to find the spare socket for port %d", port));
 		return FALSE;
 	}
@@ -382,7 +382,7 @@ SpareSocketStruct * FirewallHelperClass::findSpareSocketByPort(UnsignedShort por
 	}
 
 	DEBUG_LOG(("FirewallHelperClass::findSpareSocketByPort - didn't find it"));
-	return NULL;
+	return nullptr;
 }
 
 ManglerMessage * FirewallHelperClass::findEmptyMessage() {
@@ -391,7 +391,7 @@ ManglerMessage * FirewallHelperClass::findEmptyMessage() {
 			return &(m_messages[i]);
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void FirewallHelperClass::byteAdjust(ManglerData *data) {
@@ -422,17 +422,17 @@ void FirewallHelperClass::byteAdjust(ManglerData *data) {
  *=============================================================================================*/
 UnsignedShort FirewallHelperClass::getManglerResponse(UnsignedShort packetID, Int time)
 {
-	ManglerMessage *msg = NULL;
+	ManglerMessage *msg = nullptr;
 
-//	SpareSocketStruct *spareSocket = NULL;
+//	SpareSocketStruct *spareSocket = nullptr;
 
 	sockaddr_in addr;
 
 	Int i = 0;
 	for (; i < MAX_SPARE_SOCKETS; ++i) {
-		if (m_spareSockets[i].udp != NULL) {
+		if (m_spareSockets[i].udp != nullptr) {
 			ManglerMessage *message = findEmptyMessage();
-			if (message == NULL) {
+			if (message == nullptr) {
 				break;
 			}
 			Int retval = m_spareSockets[i].udp->Read((unsigned char *)message, sizeof(ManglerData), &addr);
@@ -462,7 +462,7 @@ UnsignedShort FirewallHelperClass::getManglerResponse(UnsignedShort packetID, In
 	}
 
 	// See if we have already received it and saved it.
-	if (msg == NULL) {
+	if (msg == nullptr) {
 		for (i = 0; i < MAX_SPARE_SOCKETS; ++i) {
 			if ((m_messages[i].length != 0) && (m_messages[i].data.PacketID == packetID)) {
 				msg = &(m_messages[i]);
@@ -471,7 +471,7 @@ UnsignedShort FirewallHelperClass::getManglerResponse(UnsignedShort packetID, In
 		}
 	}
 
-	if (msg == NULL) {
+	if (msg == nullptr) {
 		return 0;
 	}
 
@@ -1522,7 +1522,7 @@ Bool FirewallHelperClass::openSpareSocket(UnsignedShort port) {
 	}
 
 	m_spareSockets[i].udp = NEW UDP();
-	if (m_spareSockets[i].udp == NULL) {
+	if (m_spareSockets[i].udp == nullptr) {
 		DEBUG_LOG(("FirewallHelperClass::openSpareSocket - failed to create UDP object"));
 		return FALSE;
 	}
@@ -1544,7 +1544,7 @@ void FirewallHelperClass::closeSpareSocket(UnsignedShort port) {
 	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
 		if (m_spareSockets[i].port == port) {
 			delete m_spareSockets[i].udp;
-			m_spareSockets[i].udp = NULL;
+			m_spareSockets[i].udp = nullptr;
 			m_spareSockets[i].port = 0;
 			break;
 		}
@@ -1557,7 +1557,7 @@ void FirewallHelperClass::closeSpareSocket(UnsignedShort port) {
 void FirewallHelperClass::closeAllSpareSockets() {
 	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
 		delete (m_spareSockets[i].udp);
-		m_spareSockets[i].udp = NULL;
+		m_spareSockets[i].udp = nullptr;
 		m_spareSockets[i].port = 0;
 	}
 }

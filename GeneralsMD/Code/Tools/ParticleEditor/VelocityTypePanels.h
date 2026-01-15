@@ -49,7 +49,7 @@ class VelocityPanelOrtho : public ISwapablePanel
 	public:
 		enum {IDD = IDD_PSEd_VelocityPanelOrtho};
 		virtual DWORD GetIDD( void ) { return IDD; }
-		VelocityPanelOrtho(UINT nIDTemplate = VelocityPanelOrtho::IDD, CWnd* pParentWnd = NULL);
+		VelocityPanelOrtho(UINT nIDTemplate = VelocityPanelOrtho::IDD, CWnd* pParentWnd = nullptr);
 
 		void InitPanel( void );
 
@@ -67,7 +67,7 @@ class VelocityPanelSphere : public ISwapablePanel
 	public:
 		enum {IDD = IDD_PSEd_VelocityPanelSphere};
 		virtual DWORD GetIDD( void ) { return IDD; }
-		VelocityPanelSphere(UINT nIDTemplate = VelocityPanelSphere::IDD, CWnd* pParentWnd = NULL);
+		VelocityPanelSphere(UINT nIDTemplate = VelocityPanelSphere::IDD, CWnd* pParentWnd = nullptr);
 
 		void InitPanel( void );
 
@@ -85,7 +85,7 @@ class VelocityPanelHemisphere : public ISwapablePanel
 	public:
 		enum {IDD = IDD_PSEd_VelocityPanelHemisphere};
 		virtual DWORD GetIDD( void ) { return IDD; }
-		VelocityPanelHemisphere(UINT nIDTemplate = VelocityPanelHemisphere::IDD, CWnd* pParentWnd = NULL);
+		VelocityPanelHemisphere(UINT nIDTemplate = VelocityPanelHemisphere::IDD, CWnd* pParentWnd = nullptr);
 
 		void InitPanel( void );
 
@@ -103,7 +103,7 @@ class VelocityPanelCylinder : public ISwapablePanel
 	public:
 		enum {IDD = IDD_PSEd_VelocityPanelCylinder};
 		virtual DWORD GetIDD( void ) { return IDD; }
-		VelocityPanelCylinder(UINT nIDTemplate = VelocityPanelCylinder::IDD, CWnd* pParentWnd = NULL);
+		VelocityPanelCylinder(UINT nIDTemplate = VelocityPanelCylinder::IDD, CWnd* pParentWnd = nullptr);
 
 		void InitPanel( void );
 
@@ -121,7 +121,7 @@ class VelocityPanelOutward : public ISwapablePanel
 	public:
 		enum {IDD = IDD_PSEd_VelocityPanelOutward};
 		virtual DWORD GetIDD( void ) { return IDD; }
-		VelocityPanelOutward(UINT nIDTemplate = VelocityPanelOutward::IDD, CWnd* pParentWnd = NULL);
+		VelocityPanelOutward(UINT nIDTemplate = VelocityPanelOutward::IDD, CWnd* pParentWnd = nullptr);
 
 		void InitPanel( void );
 

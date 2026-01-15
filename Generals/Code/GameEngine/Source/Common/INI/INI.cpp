@@ -64,7 +64,7 @@
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-static Xfer *s_xfer = NULL;
+static Xfer *s_xfer = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 /** This is the table of data types we can have in INI files.  To add a new data type
@@ -137,7 +137,7 @@ static const BlockParse theTypeTable[] =
 	{	"BenchProfile",				INI::parseBenchProfile },
 	{	"ReallyLowMHz",				parseReallyLowMHz },
 
-	{ NULL,									NULL },
+	{ nullptr,									nullptr },
 };
 
 
@@ -146,7 +146,7 @@ static const BlockParse theTypeTable[] =
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 Bool INI::isValidINIFilename( const char *filename )
 {
-	if( filename == NULL )
+	if( filename == nullptr )
 		return FALSE;
 
 	Int len = strlen( filename );
@@ -175,7 +175,7 @@ Bool INI::isValidINIFilename( const char *filename )
 INI::INI( void )
 {
 
-	m_file							= NULL;
+	m_file							= nullptr;
 	m_filename					= "None";
 	m_loadType					= INI_LOAD_INVALID;
 	m_lineNum						= 0;
@@ -262,7 +262,7 @@ UnsignedInt INI::loadDirectory( AsciiString dirName, INILoadType loadType, Xfer 
 			AsciiString tempname;
 			tempname = (*it).str() + dirName.getLength();
 
-			if ((tempname.find('\\') == NULL) && (tempname.find('/') == NULL)) {
+			if ((tempname.find('\\') == nullptr) && (tempname.find('/') == nullptr)) {
 				// this file doesn't reside in a subdirectory, load it first.
 				filesRead += load( *it, loadType, pXfer );
 			}
@@ -275,7 +275,7 @@ UnsignedInt INI::loadDirectory( AsciiString dirName, INILoadType loadType, Xfer 
 			AsciiString tempname;
 			tempname = (*it).str() + dirName.getLength();
 
-			if ((tempname.find('\\') != NULL) || (tempname.find('/') != NULL)) {
+			if ((tempname.find('\\') != nullptr) || (tempname.find('/') != nullptr)) {
 				filesRead += load( *it, loadType, pXfer );
 			}
 			++it;
@@ -295,7 +295,7 @@ UnsignedInt INI::loadDirectory( AsciiString dirName, INILoadType loadType, Xfer 
 void INI::prepFile( AsciiString filename, INILoadType loadType )
 {
 	// if we have a file open already -- we can't do another one
-	if( m_file != NULL )
+	if( m_file != nullptr )
 	{
 
 		DEBUG_CRASH(( "INI::load, cannot open file '%s', file already open", filename.str() ));
@@ -305,7 +305,7 @@ void INI::prepFile( AsciiString filename, INILoadType loadType )
 
 	// open the file
 	m_file = TheFileSystem->openFile(filename.str(), File::READ);
-	if( m_file == NULL )
+	if( m_file == nullptr )
 	{
 
 		DEBUG_CRASH(( "INI::load, cannot open file '%s'", filename.str() ));
@@ -328,12 +328,12 @@ void INI::unPrepFile()
 {
 	// close the file
 	m_file->close();
-	m_file = NULL;
+	m_file = nullptr;
 	m_filename = "None";
 	m_loadType = INI_LOAD_INVALID;
 	m_lineNum = 0;
 	m_endOfFile = FALSE;
-	s_xfer = NULL;
+	s_xfer = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -346,7 +346,7 @@ static INIBlockParse findBlockParse(const char* token)
 			return parse->parse;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -371,7 +371,7 @@ static INIFieldParseProc findFieldParse(const FieldParse* parseTable, const char
 	}
 	else
 	{
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -455,7 +455,7 @@ void INI::readLine( void )
 	Bool isComment = FALSE;
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_file, ("readLine(), file pointer is NULL") );
+	DEBUG_ASSERTCRASH( m_file, ("readLine(), file pointer is null") );
 
 	// if we've reached end of file we'll just keep returning empty string in our buffer
 	if( m_endOfFile )
@@ -721,7 +721,7 @@ void INI::parseAsciiStringVector( INI* ini, void * /*instance*/, void *store, co
 {
 	std::vector<AsciiString>* asv = (std::vector<AsciiString>*)store;
 	asv->clear();
-	for (const char *token = ini->getNextTokenOrNull(); token != NULL; token = ini->getNextTokenOrNull())
+	for (const char *token = ini->getNextTokenOrNull(); token != nullptr; token = ini->getNextTokenOrNull())
 	{
 		asv->push_back(token);
 	}
@@ -734,7 +734,7 @@ void INI::parseAsciiStringVectorAppend( INI* ini, void * /*instance*/, void *sto
 	std::vector<AsciiString>* asv = (std::vector<AsciiString>*)store;
 	// nope, don't clear. duh.
 	// asv->clear();
-	for (const char *token = ini->getNextTokenOrNull(); token != NULL; token = ini->getNextTokenOrNull())
+	for (const char *token = ini->getNextTokenOrNull(); token != nullptr; token = ini->getNextTokenOrNull())
 	{
 		asv->push_back(token);
 	}
@@ -746,7 +746,7 @@ void INI::parseAsciiStringVectorAppend( INI* ini, void * /*instance*/, void *sto
 {
 	ScienceVec* asv = (ScienceVec*)store;
 	asv->clear();
-	for (const char *token = ini->getNextTokenOrNull(); token != NULL; token = ini->getNextTokenOrNull())
+	for (const char *token = ini->getNextTokenOrNull(); token != nullptr; token = ini->getNextTokenOrNull())
 	{
 		if (stricmp(token, "None") == 0)
 		{
@@ -766,7 +766,7 @@ AsciiString INI::getNextQuotedAsciiString()
 	buff[0] = '\0';
 
 	const char *token = getNextTokenOrNull();	// if null, just leave an empty string
-	if (token != NULL)
+	if (token != nullptr)
 	{
 		if (token[0] != '\"')
 		{
@@ -814,7 +814,7 @@ AsciiString INI::getNextAsciiString()
 	AsciiString result;
 
 	const char *token = getNextTokenOrNull();	// if null, just leave an empty string
-	if (token != NULL)
+	if (token != nullptr)
 	{
 		if (token[0] != '\"')
 		{
@@ -900,7 +900,7 @@ void INI::parseMappedImage( INI *ini, void * /*instance*/, void *store, const vo
 	else
 	{
 
-		DEBUG_CRASH(( "INI::parseAnim2DTemplate - TheAnim2DCollection is NULL" ));
+		DEBUG_CRASH(( "INI::parseAnim2DTemplate - TheAnim2DCollection is null" ));
 		throw INI_UNKNOWN_ERROR;
 
 	}
@@ -927,7 +927,7 @@ void INI::parsePercentToReal( INI* ini, void * /*instance*/, void *store, const 
 void INI::parseBitString8( INI* ini, void * /*instance*/, void *store, const void* userData )
 {
 	UnsignedInt tmp;
-	INI::parseBitString32(ini, NULL, &tmp, userData);
+	INI::parseBitString32(ini, nullptr, &tmp, userData);
 	if (tmp & 0xffffff00)
 	{
 		DEBUG_CRASH(("Bad bitstring list INI::parseBitString8"));
@@ -946,7 +946,7 @@ void INI::parseBitString32( INI* ini, void * /*instance*/, void *store, const vo
 	ConstCharPtrArray flagList = (ConstCharPtrArray)userData;
 	UnsignedInt *bits = (UnsignedInt *)store;
 
-	if( flagList == NULL || flagList[ 0 ] == NULL)
+	if( flagList == nullptr || flagList[ 0 ] == nullptr)
 	{
 		DEBUG_ASSERTCRASH( flagList, ("INTERNAL ERROR! parseBitString32: No flag list provided!") );
 		throw INI_INVALID_NAME_LIST;
@@ -956,7 +956,7 @@ void INI::parseBitString32( INI* ini, void * /*instance*/, void *store, const vo
 	Bool foundAddOrSub = false;
 
 	// loop through all tokens
-	for (const char *token = ini->getNextTokenOrNull(); token != NULL; token = ini->getNextTokenOrNull())
+	for (const char *token = ini->getNextTokenOrNull(); token != nullptr; token = ini->getNextTokenOrNull())
 	{
 		if (stricmp(token, "NONE") == 0)
 		{
@@ -1049,7 +1049,7 @@ void INI::parseRGBAColorInt( INI* ini, void * /*instance*/, void *store, const v
 	for( Int i = 0; i < 4; i++ )
 	{
 		const char* token = ini->getNextTokenOrNull(ini->getSepsColon());
-		if (token == NULL)
+		if (token == nullptr)
 		{
 			if (i < 3)
 			{
@@ -1101,7 +1101,7 @@ void INI::parseColorInt( INI* ini, void * /*instance*/, void *store, const void*
 	for( Int i = 0; i < 4; i++ )
 	{
 		const char* token = ini->getNextTokenOrNull(ini->getSepsColon());
-		if (token == NULL)
+		if (token == nullptr)
 		{
 			if (i < 3)
 			{
@@ -1189,11 +1189,11 @@ void INI::parseDynamicAudioEventRTS( INI *ini, void * /*instance*/, void *store,
 	if (stricmp(token, "NoSound") == 0)
 	{
 		deleteInstance(*theSound);
-		*theSound = NULL;
+		*theSound = nullptr;
 	}
 	else
 	{
-		if (*theSound == NULL)
+		if (*theSound == nullptr)
 			*theSound = newInstance(DynamicAudioEventRTS);
 		(*theSound)->m_event.setEventName(AsciiString(token));
 	}
@@ -1237,7 +1237,7 @@ void INI::parseThingTemplate( INI* ini, void * /*instance*/, void *store, const 
 
 	if (stricmp(token, "None") == 0)
 	{
-		*theThingTemplate = NULL;
+		*theThingTemplate = nullptr;
 	}
 	else
 	{
@@ -1261,7 +1261,7 @@ void INI::parseArmorTemplate( INI* ini, void * /*instance*/, void *store, const 
 
 	if (stricmp(token, "None") == 0)
 	{
-		*theArmorTemplate = NULL;
+		*theArmorTemplate = nullptr;
 	}
 	else
 	{
@@ -1301,7 +1301,7 @@ void INI::parseFXList( INI* ini, void * /*instance*/, void *store, const void* /
 	ConstFXListPtr* theFXList = (ConstFXListPtr*)store;
 
 	const FXList *fxl = TheFXListStore->findFXList(token);	// could be null!
-	DEBUG_ASSERTCRASH(fxl != NULL || stricmp(token, "None") == 0, ("FXList %s not found!",token));
+	DEBUG_ASSERTCRASH(fxl != nullptr || stricmp(token, "None") == 0, ("FXList %s not found!",token));
 	// assign it, even if null!
 	*theFXList = fxl;
 
@@ -1336,7 +1336,7 @@ void INI::parseDamageFX( INI* ini, void * /*instance*/, void *store, const void*
 
 	if (stricmp(token, "None") == 0)
 	{
-		*theDamageFX = NULL;
+		*theDamageFX = nullptr;
 	}
 	else
 	{
@@ -1511,7 +1511,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 {
 	Bool done = FALSE;
 
-	if( what == NULL )
+	if( what == nullptr )
 	{
 		DEBUG_ASSERTCRASH( 0, ("INI::initFromINI - Invalid parameters supplied!") );
 		throw INI_INVALID_PARAMS;
@@ -1539,7 +1539,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 				for (int ptIdx = 0; ptIdx < parseTableList.getCount(); ++ptIdx)
 				{
 					int offset = 0;
-					const void* userData = 0;
+					const void* userData = nullptr;
 					INIFieldParseProc parse = findFieldParse(parseTableList.getNthFieldParse(ptIdx), field, offset, userData);
 					if (parse)
 					{
@@ -1593,7 +1593,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 /*static*/ const char* INI::getNextToken(const char* seps)
 {
 	if (!seps) seps = getSeps();
-	const char *token = ::strtok(NULL, seps);
+	const char *token = ::strtok(nullptr, seps);
 	if (!token)
 		throw INI_INVALID_DATA;
 	return token;
@@ -1603,7 +1603,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 /*static*/ const char* INI::getNextTokenOrNull(const char* seps)
 {
 	if (!seps) seps = getSeps();
-	const char *token = ::strtok(NULL, seps);
+	const char *token = ::strtok(nullptr, seps);
 	return token;
 }
 
@@ -1652,7 +1652,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 //-------------------------------------------------------------------------------------------------
 /*static*/ Int INI::scanIndexList(const char* token, ConstCharPtrArray nameList)
 {
-	if( nameList == NULL || nameList[ 0 ] == NULL )
+	if( nameList == nullptr || nameList[ 0 ] == nullptr )
 	{
 
 		DEBUG_ASSERTCRASH( 0, ("INTERNAL ERROR! scanIndexList, invalid name list") );
@@ -1678,7 +1678,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 //-------------------------------------------------------------------------------------------------
 /*static*/ Int INI::scanLookupList(const char* token, ConstLookupListRecArray lookupList)
 {
-	if( lookupList == NULL || lookupList[ 0 ].name == NULL )
+	if( lookupList == nullptr || lookupList[ 0 ].name == nullptr )
 	{
 		DEBUG_ASSERTCRASH( 0, ("INTERNAL ERROR! scanLookupList, invalid name list") );
 		throw INI_INVALID_NAME_LIST;

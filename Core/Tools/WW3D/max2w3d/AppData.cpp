@@ -82,11 +82,11 @@ Value * copy_app_data_cf (Value **arg_list, int count)
 	** Copy W3DAppData0Struct
 	*/
 	W3DAppData0Struct *app_data_0 = GetW3DAppData0(src_node);
-	if (app_data_0 != NULL) {
+	if (app_data_0 != nullptr) {
 
 		// App Data 0 is now obsolete, not fatal if we don't find one
 		W3DAppData0Struct *copy_data_0 = new W3DAppData0Struct;
-		if (copy_data_0 == NULL)
+		if (copy_data_0 == nullptr)
 			throw RuntimeError("Out of memory.");
 
 		// Copy the app data and give it to the target node.
@@ -99,11 +99,11 @@ Value * copy_app_data_cf (Value **arg_list, int count)
 	** Copy W3DAppData1Struct
 	*/
 	W3DAppData1Struct *app_data_1 = GetW3DAppData1(src_node);
-	if (app_data_1 == NULL)
+	if (app_data_1 == nullptr)
 		throw RuntimeError("Unable to retrieve W3DAppData1Struct from object: ", arg_list[1]);
 
 	W3DAppData1Struct *copy_data_1 = new W3DAppData1Struct;
-	if (copy_data_1 == NULL)
+	if (copy_data_1 == nullptr)
 		throw RuntimeError("Out of memory.");
 
 	// Copy the app data and give it to the target node.
@@ -116,11 +116,11 @@ Value * copy_app_data_cf (Value **arg_list, int count)
 	** Copy W3DAppData2Struct
 	*/
 	W3DAppData2Struct *app_data_2 = GetW3DAppData2(src_node);
-	if (app_data_2 == NULL)
+	if (app_data_2 == nullptr)
 		throw RuntimeError("Unable to retrieve W3DAppData1Struct from object: ", arg_list[1]);
 
 	W3DAppData2Struct *copy_data_2 = new W3DAppData2Struct;
-	if (copy_data_2 == NULL)
+	if (copy_data_2 == nullptr)
 		throw RuntimeError("Out of memory.");
 
 	// Copy the app data and give it to the target node.
@@ -132,10 +132,10 @@ Value * copy_app_data_cf (Value **arg_list, int count)
 	** Copy W3DDazzleAppDataStruct if one is present.
 	*/
 	W3DDazzleAppDataStruct *dazzle_app_data = GetW3DDazzleAppData(src_node);
-	if (dazzle_app_data != NULL) {
+	if (dazzle_app_data != nullptr) {
 
 		W3DDazzleAppDataStruct *copy_dazzle_data = new W3DDazzleAppDataStruct;
-		if (copy_dazzle_data == NULL)
+		if (copy_dazzle_data == nullptr)
 			throw RuntimeError("Out of memory.");
 
 
@@ -170,7 +170,7 @@ Value * set_origin_app_data_cf (Value **arg_list, int count)
 
 	// Get the node's W3DAppData2Struct, and modify it accordingly.
 	W3DAppData2Struct *data = GetW3DAppData2(origin);
-	if (data == NULL)
+	if (data == nullptr)
 		throw RuntimeError("Unable to retrieve W3DAppData0Struct from object: ", arg_list[0]);
 
 	// Turn off Export Geometry and Export Hierarchy.
@@ -196,7 +196,7 @@ Value * get_hierarchy_file_cf (Value **arg_list, int count)
 	check_arg_count("wwGetHierarchyFile", 0, count);
 
 	// Retrieve the export options from the scene.
-	W3dExportOptionsStruct *options = NULL;
+	W3dExportOptionsStruct *options = nullptr;
 	AppDataChunk * appdata = MAXScript_interface->GetScenePointer()->GetAppDataChunk(W3D_EXPORTER_CLASS_ID,SCENE_EXPORT_CLASS_ID,0);
 	if (appdata)
 		options = (W3dExportOptionsStruct*)(appdata->data);

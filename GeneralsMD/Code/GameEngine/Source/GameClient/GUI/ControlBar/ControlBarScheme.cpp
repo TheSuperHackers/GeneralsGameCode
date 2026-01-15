@@ -73,90 +73,90 @@ enum{
 const FieldParse ControlBarSchemeManager::m_controlBarSchemeFieldParseTable[] =
 {
 
-	{ "ImagePart",						ControlBarSchemeManager::parseImagePart,			NULL, NULL },
-	{ "AnimatingPart",				ControlBarSchemeManager::parseAnimatingPart,	NULL, NULL },
-	{ "ScreenCreationRes",		INI::parseICoord2D,						NULL, offsetof( ControlBarScheme, m_ScreenCreationRes ) },
-	{ "Side",									INI::parseAsciiString,				NULL, offsetof( ControlBarScheme, m_side ) },
-	{ "QueueButtonImage",			INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_buttonQueueImage ) },
-	{ "RightHUDImage",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_rightHUDImage ) },
-	{ "BuildUpClockColor",		INI::parseColorInt,						NULL, offsetof( ControlBarScheme, m_buildUpClockColor ) },
-	{ "ButtonBorderBuildColor",			INI::parseColorInt,						NULL, offsetof( ControlBarScheme, m_borderBuildColor ) },
-	{ "CommandBarBorderColor",			INI::parseColorInt,						NULL, offsetof( ControlBarScheme, m_commandBarBorderColor ) },
-	{ "ButtonBorderActionColor",		INI::parseColorInt,						NULL, offsetof( ControlBarScheme, m_borderActionColor ) },
-	{ "ButtonBorderUpgradeColor",		INI::parseColorInt,						NULL, offsetof( ControlBarScheme, m_borderUpgradeColor ) },
-	{ "ButtonBorderSystemColor",		INI::parseColorInt,						NULL, offsetof( ControlBarScheme, m_borderSystemColor ) },
-	{ "OptionsButtonEnable",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_optionsButtonEnable ) },
-	{ "OptionsButtonHightlited",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_optionsButtonHightlited ) },
-	{ "OptionsButtonPushed",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_optionsButtonPushed ) },
-	{ "OptionsButtonDisabled",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_optionsButtonDisabled ) },
-	{ "IdleWorkerButtonEnable",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_idleWorkerButtonEnable ) },
-	{ "IdleWorkerButtonHightlited",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_idleWorkerButtonHightlited ) },
-	{ "IdleWorkerButtonPushed",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_idleWorkerButtonPushed ) },
-	{ "IdleWorkerButtonDisabled",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_idleWorkerButtonDisabled ) },
-	{ "BuddyButtonEnable",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_buddyButtonEnable ) },
-	{ "BuddyButtonHightlited",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_buddyButtonHightlited ) },
-	{ "BuddyButtonPushed",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_buddyButtonPushed ) },
-	{ "BuddyButtonDisabled",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_buddyButtonDisabled) },
-	{ "BeaconButtonEnable",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_beaconButtonEnable ) },
-	{ "BeaconButtonHightlited",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_beaconButtonHightlited ) },
-	{ "BeaconButtonPushed",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_beaconButtonPushed ) },
-	{ "BeaconButtonDisabled",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_beaconButtonDisabled ) },
-	{ "GenBarButtonIn",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_genBarButtonIn ) },
-	{ "GenBarButtonOn",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_genBarButtonOn ) },
-	{ "ToggleButtonUpIn",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_toggleButtonUpIn ) },
-	{ "ToggleButtonUpOn",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_toggleButtonUpOn ) },
-	{ "ToggleButtonUpPushed",		INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_toggleButtonUpPushed ) },
-	{ "ToggleButtonDownIn",			INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_toggleButtonDownIn ) },
-	{ "ToggleButtonDownOn", 		INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_toggleButtonDownOn ) },
-	{ "ToggleButtonDownPushed",	INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_toggleButtonDownPushed ) },
+	{ "ImagePart",						ControlBarSchemeManager::parseImagePart,			nullptr, 0 },
+	{ "AnimatingPart",				ControlBarSchemeManager::parseAnimatingPart,	nullptr, 0 },
+	{ "ScreenCreationRes",		INI::parseICoord2D,						nullptr, offsetof( ControlBarScheme, m_ScreenCreationRes ) },
+	{ "Side",									INI::parseAsciiString,				nullptr, offsetof( ControlBarScheme, m_side ) },
+	{ "QueueButtonImage",			INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_buttonQueueImage ) },
+	{ "RightHUDImage",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_rightHUDImage ) },
+	{ "BuildUpClockColor",		INI::parseColorInt,						nullptr, offsetof( ControlBarScheme, m_buildUpClockColor ) },
+	{ "ButtonBorderBuildColor",			INI::parseColorInt,						nullptr, offsetof( ControlBarScheme, m_borderBuildColor ) },
+	{ "CommandBarBorderColor",			INI::parseColorInt,						nullptr, offsetof( ControlBarScheme, m_commandBarBorderColor ) },
+	{ "ButtonBorderActionColor",		INI::parseColorInt,						nullptr, offsetof( ControlBarScheme, m_borderActionColor ) },
+	{ "ButtonBorderUpgradeColor",		INI::parseColorInt,						nullptr, offsetof( ControlBarScheme, m_borderUpgradeColor ) },
+	{ "ButtonBorderSystemColor",		INI::parseColorInt,						nullptr, offsetof( ControlBarScheme, m_borderSystemColor ) },
+	{ "OptionsButtonEnable",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_optionsButtonEnable ) },
+	{ "OptionsButtonHightlited",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_optionsButtonHightlited ) },
+	{ "OptionsButtonPushed",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_optionsButtonPushed ) },
+	{ "OptionsButtonDisabled",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_optionsButtonDisabled ) },
+	{ "IdleWorkerButtonEnable",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_idleWorkerButtonEnable ) },
+	{ "IdleWorkerButtonHightlited",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_idleWorkerButtonHightlited ) },
+	{ "IdleWorkerButtonPushed",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_idleWorkerButtonPushed ) },
+	{ "IdleWorkerButtonDisabled",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_idleWorkerButtonDisabled ) },
+	{ "BuddyButtonEnable",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_buddyButtonEnable ) },
+	{ "BuddyButtonHightlited",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_buddyButtonHightlited ) },
+	{ "BuddyButtonPushed",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_buddyButtonPushed ) },
+	{ "BuddyButtonDisabled",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_buddyButtonDisabled) },
+	{ "BeaconButtonEnable",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_beaconButtonEnable ) },
+	{ "BeaconButtonHightlited",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_beaconButtonHightlited ) },
+	{ "BeaconButtonPushed",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_beaconButtonPushed ) },
+	{ "BeaconButtonDisabled",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_beaconButtonDisabled ) },
+	{ "GenBarButtonIn",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_genBarButtonIn ) },
+	{ "GenBarButtonOn",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_genBarButtonOn ) },
+	{ "ToggleButtonUpIn",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_toggleButtonUpIn ) },
+	{ "ToggleButtonUpOn",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_toggleButtonUpOn ) },
+	{ "ToggleButtonUpPushed",		INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_toggleButtonUpPushed ) },
+	{ "ToggleButtonDownIn",			INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_toggleButtonDownIn ) },
+	{ "ToggleButtonDownOn", 		INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_toggleButtonDownOn ) },
+	{ "ToggleButtonDownPushed",	INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_toggleButtonDownPushed ) },
 
-	{ "GeneralButtonEnable",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_generalButtonEnable ) },
-	{ "GeneralButtonHightlited",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_generalButtonHightlited ) },
-	{ "GeneralButtonPushed",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_generalButtonPushed ) },
-	{ "GeneralButtonDisabled",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_generalButtonDisabled ) },
+	{ "GeneralButtonEnable",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_generalButtonEnable ) },
+	{ "GeneralButtonHightlited",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_generalButtonHightlited ) },
+	{ "GeneralButtonPushed",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_generalButtonPushed ) },
+	{ "GeneralButtonDisabled",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_generalButtonDisabled ) },
 
-	{ "UAttackButtonEnable",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_uAttackButtonEnable ) },
-	{ "UAttackButtonHightlited",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_uAttackButtonHightlited ) },
-	{ "UAttackButtonPushed",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_uAttackButtonPushed ) },
+	{ "UAttackButtonEnable",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_uAttackButtonEnable ) },
+	{ "UAttackButtonHightlited",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_uAttackButtonHightlited ) },
+	{ "UAttackButtonPushed",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_uAttackButtonPushed ) },
 
-	{ "GenArrow",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_genArrow) },
+	{ "GenArrow",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_genArrow) },
 
-	{ "MinMaxButtonEnable",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_minMaxButtonEnable ) },
-	{ "MinMaxButtonHightlited",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_minMaxButtonHightlited ) },
-	{ "MinMaxButtonPushed",				INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_minMaxButtonPushed ) },
+	{ "MinMaxButtonEnable",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_minMaxButtonEnable ) },
+	{ "MinMaxButtonHightlited",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_minMaxButtonHightlited ) },
+	{ "MinMaxButtonPushed",				INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_minMaxButtonPushed ) },
 
-	{ "MinMaxUL", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_minMaxUL ) },
-	{ "MinMaxLR", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_minMaxLR ) },
+	{ "MinMaxUL", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_minMaxUL ) },
+	{ "MinMaxLR", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_minMaxLR ) },
 
-	{ "GeneralUL", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_generalUL ) },
-	{ "GeneralLR", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_generalLR ) },
+	{ "GeneralUL", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_generalUL ) },
+	{ "GeneralLR", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_generalLR ) },
 
-	{ "UAttackUL", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_uAttackUL ) },
-	{ "UAttackLR", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_uAttackLR ) },
+	{ "UAttackUL", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_uAttackUL ) },
+	{ "UAttackLR", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_uAttackLR ) },
 
-	{ "OptionsUL", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_optionsUL ) },
-	{ "OptionsLR", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_optionsLR ) },
+	{ "OptionsUL", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_optionsUL ) },
+	{ "OptionsLR", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_optionsLR ) },
 
-	{ "WorkerUL", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_workerUL ) },
-	{ "WorkerLR", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_workerLR ) },
+	{ "WorkerUL", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_workerUL ) },
+	{ "WorkerLR", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_workerLR ) },
 
-	{ "ChatUL", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_chatUL ) },
-	{ "ChatLR", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_chatLR ) },
+	{ "ChatUL", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_chatUL ) },
+	{ "ChatLR", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_chatLR ) },
 
-	{ "BeaconUL", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_beaconUL ) },
-	{ "BeaconLR", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_beaconLR ) },
+	{ "BeaconUL", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_beaconUL ) },
+	{ "BeaconLR", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_beaconLR ) },
 
-	{ "PowerBarUL", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_powerBarUL ) },
-	{ "PowerBarLR", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_powerBarLR ) },
+	{ "PowerBarUL", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_powerBarUL ) },
+	{ "PowerBarLR", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_powerBarLR ) },
 
-	{ "MoneyUL", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_moneyUL ) },
-	{ "MoneyLR", 		INI::parseICoord2D,				NULL, offsetof( ControlBarScheme, m_moneyLR ) },
+	{ "MoneyUL", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_moneyUL ) },
+	{ "MoneyLR", 		INI::parseICoord2D,				nullptr, offsetof( ControlBarScheme, m_moneyLR ) },
 
-	{ "CommandMarkerImage",		INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_commandMarkerImage) },
-	{ "ExpBarForegroundImage",		INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_expBarForeground) },
-	{ "PowerPurchaseImage",			INI::parseMappedImage,				NULL, offsetof( ControlBarScheme, m_powerPurchaseImage) },
+	{ "CommandMarkerImage",		INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_commandMarkerImage) },
+	{ "ExpBarForegroundImage",		INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_expBarForeground) },
+	{ "PowerPurchaseImage",			INI::parseMappedImage,				nullptr, offsetof( ControlBarScheme, m_powerPurchaseImage) },
 
-	{ NULL,										NULL,													NULL, 0 }
+	{ nullptr,										nullptr,													nullptr, 0 }
 
 };
 
@@ -164,7 +164,7 @@ const FieldParse ControlBarSchemeManager::m_controlBarSchemeFieldParseTable[] =
 static const LookupListRec AnimTypeNames[] =
 {
 	{ "SLIDE_RIGHT", ControlBarSchemeAnimation::CB_ANIM_SLIDE_RIGHT },
-	{ NULL, 0	}
+	{ nullptr, 0	}
 };
 static_assert(ARRAY_SIZE(AnimTypeNames) == ControlBarSchemeAnimation::CB_ANIM_MAX + 1, "Incorrect array size");
 
@@ -178,13 +178,13 @@ ControlBarSchemeImage::ControlBarSchemeImage( void )
 	m_name.clear();
 	m_position.x = m_position.y = 0;
 	m_size.x = m_size.y = 0;
-	m_image = NULL;
+	m_image = nullptr;
 	m_layer = 0;
 }
 
 ControlBarSchemeImage::~ControlBarSchemeImage( void )
 {
-	m_image = NULL;
+	m_image = nullptr;
 }
 
 ControlBarSchemeAnimation::ControlBarSchemeAnimation( void )
@@ -193,14 +193,14 @@ ControlBarSchemeAnimation::ControlBarSchemeAnimation( void )
 	m_finalPos.x = m_finalPos.y = 0;
 	m_name.clear();
 	m_animType = 0;
-	m_animImage = NULL;
+	m_animImage = nullptr;
 	m_startPos.x = m_startPos.y = 0;
 	m_currentFrame = 0;
 }
 
 ControlBarSchemeAnimation::~ControlBarSchemeAnimation( void )
 {
-	m_animImage = NULL;
+	m_animImage = nullptr;
 }
 
 
@@ -234,41 +234,41 @@ void ControlBarScheme::reset(void)
 	m_name.clear();
 	m_ScreenCreationRes.x = m_ScreenCreationRes.y = 0;
 	m_side.clear();
-	m_buttonQueueImage = NULL;
-	m_rightHUDImage = NULL;
-		m_optionsButtonEnable = NULL;
-	m_optionsButtonHightlited = NULL;
-	m_optionsButtonPushed = NULL;
-	m_optionsButtonDisabled = NULL;
+	m_buttonQueueImage = nullptr;
+	m_rightHUDImage = nullptr;
+		m_optionsButtonEnable = nullptr;
+	m_optionsButtonHightlited = nullptr;
+	m_optionsButtonPushed = nullptr;
+	m_optionsButtonDisabled = nullptr;
 
-	m_idleWorkerButtonEnable = NULL;
-	m_idleWorkerButtonHightlited = NULL;
-	m_idleWorkerButtonPushed = NULL;
-	m_idleWorkerButtonDisabled = NULL;
+	m_idleWorkerButtonEnable = nullptr;
+	m_idleWorkerButtonHightlited = nullptr;
+	m_idleWorkerButtonPushed = nullptr;
+	m_idleWorkerButtonDisabled = nullptr;
 
-	m_buddyButtonEnable = NULL;
-	m_buddyButtonHightlited = NULL;
-	m_buddyButtonPushed = NULL;
-	m_buddyButtonDisabled = NULL;
+	m_buddyButtonEnable = nullptr;
+	m_buddyButtonHightlited = nullptr;
+	m_buddyButtonPushed = nullptr;
+	m_buddyButtonDisabled = nullptr;
 
-	m_beaconButtonEnable = NULL;
-	m_beaconButtonHightlited = NULL;
-	m_beaconButtonPushed = NULL;
-	m_beaconButtonDisabled = NULL;
+	m_beaconButtonEnable = nullptr;
+	m_beaconButtonHightlited = nullptr;
+	m_beaconButtonPushed = nullptr;
+	m_beaconButtonDisabled = nullptr;
 
-	m_genBarButtonIn = NULL;
-	m_genBarButtonOn = NULL;
+	m_genBarButtonIn = nullptr;
+	m_genBarButtonOn = nullptr;
 
-	m_toggleButtonUpIn = NULL;
-	m_toggleButtonUpOn = NULL;
-	m_toggleButtonUpPushed = NULL;
-	m_toggleButtonDownIn = NULL;
-	m_toggleButtonDownOn = NULL;
-	m_toggleButtonDownPushed = NULL;
+	m_toggleButtonUpIn = nullptr;
+	m_toggleButtonUpOn = nullptr;
+	m_toggleButtonUpPushed = nullptr;
+	m_toggleButtonDownIn = nullptr;
+	m_toggleButtonDownOn = nullptr;
+	m_toggleButtonDownPushed = nullptr;
 
-	m_commandMarkerImage = NULL;
-	m_expBarForeground = NULL;
-	m_powerPurchaseImage = NULL;
+	m_commandMarkerImage = nullptr;
+	m_expBarForeground = nullptr;
+	m_powerPurchaseImage = nullptr;
 
 }
 
@@ -286,65 +286,65 @@ ControlBarScheme::ControlBarScheme(void)
 	m_name.clear();
 	m_ScreenCreationRes.x = m_ScreenCreationRes.y = 0;
 	m_side.clear();
-	m_buttonQueueImage = NULL;
-	m_rightHUDImage = NULL;
+	m_buttonQueueImage = nullptr;
+	m_rightHUDImage = nullptr;
 	m_buildUpClockColor = GameMakeColor(0,0,0,100);
 	m_borderBuildColor = GAME_COLOR_UNDEFINED;
 	m_borderActionColor = GAME_COLOR_UNDEFINED;
 	m_borderUpgradeColor = GAME_COLOR_UNDEFINED;
 	m_borderSystemColor = GAME_COLOR_UNDEFINED;
 	//m_buttonQueueImage = TheMappedImageCollection("")
-	m_optionsButtonEnable = NULL;
-	m_optionsButtonHightlited = NULL;
-	m_optionsButtonPushed = NULL;
-	m_optionsButtonDisabled = NULL;
+	m_optionsButtonEnable = nullptr;
+	m_optionsButtonHightlited = nullptr;
+	m_optionsButtonPushed = nullptr;
+	m_optionsButtonDisabled = nullptr;
 
 	m_commandBarBorderColor = 0;
 
-	m_idleWorkerButtonEnable = NULL;
-	m_idleWorkerButtonHightlited = NULL;
-	m_idleWorkerButtonPushed = NULL;
-	m_idleWorkerButtonDisabled = NULL;
+	m_idleWorkerButtonEnable = nullptr;
+	m_idleWorkerButtonHightlited = nullptr;
+	m_idleWorkerButtonPushed = nullptr;
+	m_idleWorkerButtonDisabled = nullptr;
 
-	m_buddyButtonEnable = NULL;
-	m_buddyButtonHightlited = NULL;
-	m_buddyButtonPushed = NULL;
-	m_buddyButtonDisabled= NULL;
+	m_buddyButtonEnable = nullptr;
+	m_buddyButtonHightlited = nullptr;
+	m_buddyButtonPushed = nullptr;
+	m_buddyButtonDisabled= nullptr;
 
-	m_beaconButtonEnable = NULL;
-	m_beaconButtonHightlited = NULL;
-	m_beaconButtonPushed = NULL;
-	m_beaconButtonDisabled= NULL;
+	m_beaconButtonEnable = nullptr;
+	m_beaconButtonHightlited = nullptr;
+	m_beaconButtonPushed = nullptr;
+	m_beaconButtonDisabled= nullptr;
 
-	m_genBarButtonIn = NULL;
-	m_genBarButtonOn = NULL;
+	m_genBarButtonIn = nullptr;
+	m_genBarButtonOn = nullptr;
 
-	m_toggleButtonUpIn = NULL;
-	m_toggleButtonUpOn = NULL;
-	m_toggleButtonUpPushed = NULL;
-	m_toggleButtonDownIn = NULL;
-	m_toggleButtonDownOn = NULL;
-	m_toggleButtonDownPushed = NULL;
+	m_toggleButtonUpIn = nullptr;
+	m_toggleButtonUpOn = nullptr;
+	m_toggleButtonUpPushed = nullptr;
+	m_toggleButtonDownIn = nullptr;
+	m_toggleButtonDownOn = nullptr;
+	m_toggleButtonDownPushed = nullptr;
 
-	m_commandMarkerImage = NULL;
-	m_expBarForeground = NULL;
+	m_commandMarkerImage = nullptr;
+	m_expBarForeground = nullptr;
 
-	m_powerPurchaseImage = NULL;
+	m_powerPurchaseImage = nullptr;
 
-	m_generalButtonEnable = NULL;
-	m_generalButtonHightlited = NULL;
-	m_generalButtonPushed = NULL;
-	m_generalButtonDisabled = NULL;
+	m_generalButtonEnable = nullptr;
+	m_generalButtonHightlited = nullptr;
+	m_generalButtonPushed = nullptr;
+	m_generalButtonDisabled = nullptr;
 
-	m_uAttackButtonEnable = NULL;
-	m_uAttackButtonHightlited = NULL;
-	m_uAttackButtonPushed = NULL;
+	m_uAttackButtonEnable = nullptr;
+	m_uAttackButtonHightlited = nullptr;
+	m_uAttackButtonPushed = nullptr;
 
-	m_genArrow = NULL;
+	m_genArrow = nullptr;
 
-	m_minMaxButtonEnable = NULL;
-	m_minMaxButtonHightlited = NULL;
-	m_minMaxButtonPushed = NULL;
+	m_minMaxButtonEnable = nullptr;
+	m_minMaxButtonHightlited = nullptr;
+	m_minMaxButtonPushed = nullptr;
 	m_minMaxUL.x = 0;
 	m_minMaxLR.x = 0;
 
@@ -416,12 +416,12 @@ void ControlBarScheme::init(void)
 		TheControlBar->updateUpDownImages(m_toggleButtonUpIn, m_toggleButtonUpOn, m_toggleButtonUpPushed, m_toggleButtonDownIn, m_toggleButtonDownOn, m_toggleButtonDownPushed, m_generalButtonEnable, m_generalButtonHightlited);
 		TheControlBar->setArrowImage( m_genArrow);
 	}
-	GameWindow *win = NULL;
+	GameWindow *win = nullptr;
 	Coord2D resMultiplier;
 	resMultiplier.x = TheDisplay->getWidth()/INT_TO_REAL(m_ScreenCreationRes.x) ;
 	resMultiplier.y = TheDisplay->getHeight()/INT_TO_REAL(m_ScreenCreationRes.y);
 
-	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:PopupCommunicator" ) );
+	win= TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:PopupCommunicator" ) );
 	if(win)
 	{
 //		DEBUG_ASSERTCRASH(m_buddyButtonEnable,     ("No enable button image for communicator in scheme %s!", m_name.str()));
@@ -449,7 +449,7 @@ void ControlBarScheme::init(void)
 		win->winSetPosition(x,y );
 		win->winSetSize((m_chatLR.x - m_chatUL.x)*resMultiplier.x + COMMAND_BAR_SIZE_OFFSET,(m_chatLR.y - m_chatUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
 	}
-	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonIdleWorker" ) );
+	win= TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonIdleWorker" ) );
 	if(win)
 	{
 		GadgetButtonSetEnabledImage(win, m_idleWorkerButtonEnable);
@@ -476,12 +476,12 @@ void ControlBarScheme::init(void)
 		win->winSetSize((m_workerLR.x - m_workerUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_workerLR.y - m_workerUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
 
 	}
-	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ExpBarForeground" ) );
+	win= TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ExpBarForeground" ) );
 	if(win)
 	{
 		win->winSetEnabledImage(0, m_expBarForeground);
 	}
-	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonOptions" ) );
+	win= TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonOptions" ) );
 	if(win)
 	{
 		GadgetButtonSetEnabledImage(win, m_optionsButtonEnable);
@@ -505,7 +505,7 @@ void ControlBarScheme::init(void)
 		win->winSetPosition(x,y );
 		win->winSetSize((m_optionsLR.x - m_optionsUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_optionsLR.y - m_optionsUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
 	}
-	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonPlaceBeacon" ) );
+	win= TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonPlaceBeacon" ) );
 	if(win)
 	{
 		GadgetButtonSetEnabledImage(win, m_beaconButtonEnable);
@@ -531,7 +531,7 @@ void ControlBarScheme::init(void)
 		win->winSetSize((m_beaconLR.x - m_beaconUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_beaconLR.y - m_beaconUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
 	}
 
-	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:MoneyDisplay" ) );
+	win= TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:MoneyDisplay" ) );
 	if(win)
 	{
 
@@ -553,7 +553,7 @@ void ControlBarScheme::init(void)
 		win->winSetSize((m_moneyLR.x - m_moneyUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_moneyLR.y - m_moneyUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
 	}
 
-	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:PowerWindow" ) );
+	win= TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:PowerWindow" ) );
 	if(win)
 	{
 
@@ -576,7 +576,7 @@ void ControlBarScheme::init(void)
 		DEBUG_LOG(("Power Bar UL X:%d Y:%d LR X:%d Y:%d size X:%d Y:%d",m_powerBarUL.x, m_powerBarUL.y,m_powerBarLR.x, m_powerBarLR.y, (m_powerBarLR.x - m_powerBarUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_powerBarLR.y - m_powerBarUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET  ));
 	}
 
-	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonGeneral" ) );
+	win= TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonGeneral" ) );
 	if(win)
 	{
 
@@ -603,7 +603,7 @@ void ControlBarScheme::init(void)
 		win->winSetSize((m_generalLR.x - m_generalUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_generalLR.y - m_generalUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
 	}
 
-	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonLarge" ) );
+	win= TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonLarge" ) );
 	if(win)
 	{
 		// The images are set above
@@ -629,7 +629,7 @@ void ControlBarScheme::init(void)
 		win->winSetSize((m_minMaxLR.x - m_minMaxUL.x)*resMultiplier.x + COMMAND_BAR_SIZE_OFFSET,(m_minMaxLR.y - m_minMaxUL.y)*resMultiplier.y + COMMAND_BAR_SIZE_OFFSET);
 	}
 
-	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:WinUAttack" ) );
+	win= TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:WinUAttack" ) );
 	if(win)
 	{
 		win->winSetEnabledImage(0,m_uAttackButtonEnable);
@@ -653,7 +653,7 @@ void ControlBarScheme::init(void)
 		win->winSetSize((m_uAttackLR.x - m_uAttackUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_uAttackLR.y - m_uAttackUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
 	}
 
-	win = TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "GeneralsExpPoints.wnd:GenExpParent" ) );
+	win = TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey( "GeneralsExpPoints.wnd:GenExpParent" ) );
 	if(win)
 	{
 		win->winSetEnabledImage(0,m_powerPurchaseImage);
@@ -818,7 +818,7 @@ void ControlBarScheme::drawBackground( Coord2D multi, ICoord2D offset )
 //-----------------------------------------------------------------------------
 ControlBarSchemeManager::ControlBarSchemeManager( void )
 {
-	m_currentScheme = NULL;
+	m_currentScheme = nullptr;
 	m_schemeList.clear();
 	m_multiplyer.x = m_multiplyer.y = 1;
 }
@@ -838,7 +838,7 @@ ControlBarSchemeManager::~ControlBarSchemeManager( void )
 		it ++;
 	}
 	m_schemeList.clear();
-	m_currentScheme = NULL;
+	m_currentScheme = nullptr;
 
 }
 
@@ -849,11 +849,11 @@ void ControlBarSchemeManager::parseImagePart(INI *ini, void *instance, void* /*s
 {
 	static const FieldParse myFieldParse[] =
 		{
-			{ "Position",				INI::parseICoord2D,				NULL, offsetof( ControlBarSchemeImage, m_position ) },
-			{ "Size",						INI::parseICoord2D,				NULL, offsetof( ControlBarSchemeImage, m_size ) },
-      { "ImageName",			INI::parseMappedImage,		NULL, offsetof( ControlBarSchemeImage, m_image ) },
-			{ "Layer",					INI::parseInt,						NULL, offsetof( ControlBarSchemeImage, m_layer ) },
-			{ NULL,							NULL,											NULL, 0 }
+			{ "Position",				INI::parseICoord2D,				nullptr, offsetof( ControlBarSchemeImage, m_position ) },
+			{ "Size",						INI::parseICoord2D,				nullptr, offsetof( ControlBarSchemeImage, m_size ) },
+      { "ImageName",			INI::parseMappedImage,		nullptr, offsetof( ControlBarSchemeImage, m_image ) },
+			{ "Layer",					INI::parseInt,						nullptr, offsetof( ControlBarSchemeImage, m_layer ) },
+			{ nullptr,							nullptr,											nullptr, 0 }
 		};
 
 	ControlBarSchemeImage *schemeImage = NEW ControlBarSchemeImage;
@@ -869,11 +869,11 @@ void ControlBarSchemeManager::parseAnimatingPartImage(INI *ini, void *instance, 
 {
 	static const FieldParse myFieldParse[] =
 		{
-			{ "Position",				INI::parseICoord2D,				NULL, offsetof( ControlBarSchemeImage, m_position ) },
-			{ "Size",						INI::parseICoord2D,				NULL, offsetof( ControlBarSchemeImage, m_size ) },
-      { "ImageName",			INI::parseMappedImage,		NULL, offsetof( ControlBarSchemeImage, m_image ) },
-			{ "Layer",					INI::parseInt,						NULL, offsetof( ControlBarSchemeImage, m_layer ) },
-			{ NULL,							NULL,											NULL, 0 }
+			{ "Position",				INI::parseICoord2D,				nullptr, offsetof( ControlBarSchemeImage, m_position ) },
+			{ "Size",						INI::parseICoord2D,				nullptr, offsetof( ControlBarSchemeImage, m_size ) },
+      { "ImageName",			INI::parseMappedImage,		nullptr, offsetof( ControlBarSchemeImage, m_image ) },
+			{ "Layer",					INI::parseInt,						nullptr, offsetof( ControlBarSchemeImage, m_layer ) },
+			{ nullptr,							nullptr,											nullptr, 0 }
 		};
 
 	ControlBarSchemeImage *schemeImage = NEW ControlBarSchemeImage;
@@ -889,12 +889,12 @@ void ControlBarSchemeManager::parseAnimatingPart(INI *ini, void *instance, void*
 {
 	static const FieldParse myFieldParse[] =
 		{
-			{ "Name",						INI::parseAsciiString,		NULL, offsetof( ControlBarSchemeAnimation, m_name ) },
+			{ "Name",						INI::parseAsciiString,		nullptr, offsetof( ControlBarSchemeAnimation, m_name ) },
       { "Animation",			INI::parseLookupList,			AnimTypeNames, offsetof( ControlBarSchemeAnimation, m_animType ) },
-			{ "Duration",				INI::parseDurationUnsignedInt,			NULL, offsetof( ControlBarSchemeAnimation, m_animDuration ) },
-			{ "FinalPos",				INI::parseICoord2D,			NULL, offsetof( ControlBarSchemeAnimation, m_finalPos ) },
-			{ "ImagePart",			ControlBarSchemeManager::parseAnimatingPartImage,	NULL, NULL },
-			{ NULL,							NULL,											NULL, 0 }
+			{ "Duration",				INI::parseDurationUnsignedInt,			nullptr, offsetof( ControlBarSchemeAnimation, m_animDuration ) },
+			{ "FinalPos",				INI::parseICoord2D,			nullptr, offsetof( ControlBarSchemeAnimation, m_finalPos ) },
+			{ "ImagePart",			ControlBarSchemeManager::parseAnimatingPartImage,	nullptr, 0 },
+			{ nullptr,							nullptr,											nullptr, 0 }
 		};
 
 	ControlBarSchemeAnimation *schemeAnim = NEW ControlBarSchemeAnimation;
@@ -924,7 +924,7 @@ ControlBarScheme *ControlBarSchemeManager::newControlBarScheme( AsciiString name
 	if( !cbScheme  || name.isEmpty() )
 	{
 		DEBUG_ASSERTCRASH(FALSE,("Could not create controlbar %s", name.str()));
-		return NULL;
+		return nullptr;
 	}
 
 	cbScheme->m_name.set( name );
@@ -951,13 +951,13 @@ ControlBarScheme *ControlBarSchemeManager::findControlBarScheme( AsciiString nam
 		if( !CBScheme )
 		{
 			DEBUG_ASSERTCRASH(FALSE,("There's no ControlBarScheme in the ControlBarSchemeList:m_schemeList"));
-			return NULL;
+			return nullptr;
 		}
 		if(CBScheme->m_name.compareNoCase( name ) == 0)
 			return CBScheme;
 		it ++;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //
@@ -1010,8 +1010,8 @@ void ControlBarSchemeManager::init( void )
 
 	INI ini;
 	// Read from INI all the ControlBarSchemes
-	ini.loadFileDirectory( "Data\\INI\\Default\\ControlBarScheme", INI_LOAD_OVERWRITE, NULL );
-	ini.loadFileDirectory( "Data\\INI\\ControlBarScheme", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Default\\ControlBarScheme", INI_LOAD_OVERWRITE, nullptr );
+	ini.loadFileDirectory( "Data\\INI\\ControlBarScheme", INI_LOAD_OVERWRITE, nullptr );
 
 //	//Load the user modified control bar schemes
 //	WIN32_FIND_DATA findData;
@@ -1020,7 +1020,7 @@ void ControlBarSchemeManager::init( void )
 //	{
 //		userDataPath.format("%sINI\\ControlBarScheme",TheGlobalData->getPath_UserData().str());
 //		if	(FindFirstFile(userDataPath.str(), &findData) !=INVALID_HANDLE_VALUE)
-//			ini.loadFileDirectory(userDataPath,  INI_LOAD_OVERWRITE, NULL );
+//			ini.loadFileDirectory(userDataPath,  INI_LOAD_OVERWRITE, nullptr );
 //	}
 	if( m_schemeList.empty() )
 	{
@@ -1047,7 +1047,7 @@ void ControlBarSchemeManager::setControlBarScheme(AsciiString schemeName)
 	else
 	{
 		DEBUG_ASSERTCRASH(FALSE,("There's no ControlBarScheme in the ControlBarSchemeList:m_schemeList"));
-		m_currentScheme = NULL;
+		m_currentScheme = nullptr;
 	}
 	if(m_currentScheme)
 		m_currentScheme->init();
@@ -1095,7 +1095,7 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayerTemplate( const PlayerT
 	if(side.isEmpty())
 		side.set("Observer");
 	DEBUG_LOG(("setControlBarSchemeByPlayer used %s as its side", side.str()));
-	ControlBarScheme *tempScheme = NULL;
+	ControlBarScheme *tempScheme = nullptr;
 
 	ControlBarSchemeList::iterator it = m_schemeList.begin();
 
@@ -1131,7 +1131,7 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayerTemplate( const PlayerT
 		// well, we couldn't find
 		m_currentScheme = findControlBarScheme("Default");
 		DEBUG_LOG(("There's no ControlBarScheme with a side of %s", side.str()));
-//		m_currentScheme = NULL;
+//		m_currentScheme = nullptr;
 	}
 	if(m_currentScheme)
 		m_currentScheme->init();
@@ -1139,7 +1139,7 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayerTemplate( const PlayerT
 //-----------------------------------------------------------------------------
 void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 {
-	GameWindow *communicatorButton = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY("ControlBar.wnd:PopupCommunicator") );
+	GameWindow *communicatorButton = TheWindowManager->winGetWindowFromId( nullptr, NAMEKEY("ControlBar.wnd:PopupCommunicator") );
 	if (communicatorButton && TheControlBar)
 	{
 		if (TheRecorder->isMultiplayer())
@@ -1163,7 +1163,7 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 	if(side.isEmpty())
 		side.set("Observer");
 	DEBUG_LOG(("setControlBarSchemeByPlayer used %s as its side", side.str()));
-	ControlBarScheme *tempScheme = NULL;
+	ControlBarScheme *tempScheme = nullptr;
 
 	ControlBarSchemeList::iterator it = m_schemeList.begin();
 
@@ -1199,7 +1199,7 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 		// well, we couldn't find
 		m_currentScheme = findControlBarScheme("Default");
 		DEBUG_LOG(("There's no ControlBarScheme with a side of %s", side.str()));
-//		m_currentScheme = NULL;
+//		m_currentScheme = nullptr;
 	}
 	if(m_currentScheme)
 		m_currentScheme->init();

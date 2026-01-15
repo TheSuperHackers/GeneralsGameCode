@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
   unixtime.tv_usec=0;
 
   //gettimeofday(&unixtime,&unixtzone);
-  //ttime=time(NULL);
+  //ttime=time(nullptr);
   tmtime=*gmtime(&ttime);
 
   printf("TIME->CTIME = %s\n",ctime(&ttime));

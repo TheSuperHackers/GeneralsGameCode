@@ -91,7 +91,7 @@ protected:
 	class ModuleTemplate
 	{
 	public:
-		ModuleTemplate() : m_createProc(NULL), m_createDataProc(NULL), m_whichInterfaces(0)
+		ModuleTemplate() : m_createProc(nullptr), m_createDataProc(nullptr), m_whichInterfaces(0)
 		{
 		}
 

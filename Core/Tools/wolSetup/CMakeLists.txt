@@ -22,6 +22,7 @@ target_sources(core_wolsetup PRIVATE ${WOLSETUP_SRC})
 
 target_link_libraries(core_wolsetup PRIVATE
     core_config
+    corei_always
     Version
 )
 

@@ -53,7 +53,7 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "MoneyProvided",	INI::parseUnsignedInt,	NULL, offsetof( MoneyCrateCollideModuleData, m_moneyProvided ) },
+			{ "MoneyProvided",	INI::parseUnsignedInt,	nullptr, offsetof( MoneyCrateCollideModuleData, m_moneyProvided ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);

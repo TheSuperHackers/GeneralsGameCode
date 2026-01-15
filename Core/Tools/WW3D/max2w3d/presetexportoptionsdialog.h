@@ -55,7 +55,7 @@ public:
 	//////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////////
-	PresetExportOptionsDialogClass (Interface *maxinterface, HWND parent_wnd = NULL);
+	PresetExportOptionsDialogClass (Interface *maxinterface, HWND parent_wnd = nullptr);
 	~PresetExportOptionsDialogClass (void);
 
 

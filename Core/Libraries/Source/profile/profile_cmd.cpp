@@ -26,6 +26,7 @@
 //
 // Profile module command interface
 //////////////////////////////////////////////////////////////////////////////
+
 #include "profile.h"
 #include "internal.h"
 
@@ -211,7 +212,7 @@ bool ProfileCmdInterface::Execute(class Debug& dbg, const char *cmd, CommandMode
       Profile::lastPatternEntry=cur;
     }
     else
-      Profile::lastPatternEntry=NULL;
+      Profile::lastPatternEntry=nullptr;
     return true;
   }
 
@@ -228,7 +229,7 @@ bool ProfileCmdInterface::Execute(class Debug& dbg, const char *cmd, CommandMode
           ProfileAllocMemory(sizeof(Profile::PatternListEntry));
 
       // init
-      cur->next=NULL;
+      cur->next=nullptr;
       cur->isActive=*argv[0]=='+';
       cur->pattern=(char *)ProfileAllocMemory(strlen(argv[1])+1);
       strcpy(cur->pattern,argv[1]);

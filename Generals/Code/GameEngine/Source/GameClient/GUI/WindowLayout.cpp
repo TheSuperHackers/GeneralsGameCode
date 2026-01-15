@@ -41,15 +41,15 @@ WindowLayout::WindowLayout( void )
 {
 	m_filenameString.set("EmptyLayout");
 
-	m_windowList = NULL;
-	m_windowTail = NULL;
+	m_windowList = nullptr;
+	m_windowTail = nullptr;
 	m_windowCount = 0;
 
 	m_hidden = FALSE;
 
-	m_init = NULL;
-	m_update = NULL;
-	m_shutdown = NULL;
+	m_init = nullptr;
+	m_update = nullptr;
+	m_shutdown = nullptr;
 
 }
 
@@ -63,8 +63,8 @@ WindowLayout::~WindowLayout( void )
 	// layout itself.  This allows for maximum flexibility of the window layouts and you can
 	// use them in any you see fit, as long as they are clean when they go away
 	//
-	DEBUG_ASSERTCRASH( m_windowList == NULL, ("Window layout being destroyed still has window references") );
-	DEBUG_ASSERTCRASH( m_windowTail == NULL, ("Window layout being destroyed still has window references") );
+	DEBUG_ASSERTCRASH( m_windowList == nullptr, ("Window layout being destroyed still has window references") );
+	DEBUG_ASSERTCRASH( m_windowTail == nullptr, ("Window layout being destroyed still has window references") );
 
 }
 
@@ -96,15 +96,15 @@ void WindowLayout::addWindow( GameWindow *window )
 	GameWindow *win = findWindow( window );
 
 	// only add window if window is not in this layout already
-	if( win == NULL )
+	if( win == nullptr )
 	{
 
-		DEBUG_ASSERTCRASH( window->winGetNextInLayout() == NULL,
-											 ("NextInLayout should be NULL before adding") );
-		DEBUG_ASSERTCRASH( window->winGetPrevInLayout() == NULL,
-											 ("PrevInLayout should be NULL before adding") );
+		DEBUG_ASSERTCRASH( window->winGetNextInLayout() == nullptr,
+											 ("NextInLayout should be null before adding") );
+		DEBUG_ASSERTCRASH( window->winGetPrevInLayout() == nullptr,
+											 ("PrevInLayout should be null before adding") );
 
-		window->winSetPrevInLayout( NULL );
+		window->winSetPrevInLayout( nullptr );
 		window->winSetNextInLayout( m_windowList );
 		if( m_windowList )
 			m_windowList->winSetPrevInLayout( window );
@@ -114,7 +114,7 @@ void WindowLayout::addWindow( GameWindow *window )
 		window->winSetLayout( this );
 
 		// if no tail pointer, this is it
-		if( m_windowTail == NULL )
+		if( m_windowTail == nullptr )
 			m_windowTail = window;
 
 		// we gots another window now
@@ -147,9 +147,9 @@ void WindowLayout::removeWindow( GameWindow *window )
 			m_windowList = next;
 
 		// set window as having no layout info
-		win->winSetLayout( NULL );
-		win->winSetNextInLayout( NULL );
-		win->winSetPrevInLayout( NULL );
+		win->winSetLayout( nullptr );
+		win->winSetNextInLayout( nullptr );
+		win->winSetPrevInLayout( nullptr );
 
 		// if we removed the tail, set the new tail
 		if( m_windowTail == win )
@@ -169,7 +169,7 @@ void WindowLayout::destroyWindows( void )
 {
 	GameWindow *window;
 
-	while( (window = getFirstWindow()) != 0 )
+	while( (window = getFirstWindow()) != nullptr )
 	{
 
 		// remove window from this layout
@@ -204,7 +204,7 @@ Bool WindowLayout::load( AsciiString filename )
 	WindowLayoutInfo info;
 
 	target = TheWindowManager->winCreateFromScript( filename, &info );
-	if( target == NULL )
+	if( target == nullptr )
 	{
 
 		DEBUG_ASSERTCRASH( target, ("WindowLayout::load - Failed to load layout") );
@@ -293,6 +293,6 @@ GameWindow *WindowLayout::findWindow( GameWindow *window )
 		if( win == window )
 			return win;
 
-	return NULL;  // window not found
+	return nullptr;  // window not found
 
 }

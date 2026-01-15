@@ -57,21 +57,21 @@
 
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
-static WindowLayout *quitMenuLayout = NULL;
-static WindowLayout *fullQuitMenuLayout = NULL;
-static WindowLayout *noSaveLoadQuitMenuLayout = NULL;
+static WindowLayout *quitMenuLayout = nullptr;
+static WindowLayout *fullQuitMenuLayout = nullptr;
+static WindowLayout *noSaveLoadQuitMenuLayout = nullptr;
 
 static Bool isVisible = FALSE;
 
-static GameWindow *quitConfirmationWindow = NULL;
+static GameWindow *quitConfirmationWindow = nullptr;
 
 //external declarations of the Gadgets the callbacks can use
-static WindowLayout *saveLoadMenuLayout = NULL;
+static WindowLayout *saveLoadMenuLayout = nullptr;
 
-static GameWindow *buttonRestartWin	= NULL;
-static GameWindow *buttonSaveLoadWin = NULL;
-static GameWindow *buttonOptionsWin = NULL;
-static GameWindow *buttonExitWin = NULL;
+static GameWindow *buttonRestartWin	= nullptr;
+static GameWindow *buttonSaveLoadWin = nullptr;
+static GameWindow *buttonOptionsWin = nullptr;
+static GameWindow *buttonExitWin = nullptr;
 
 static NameKeyType buttonExit = NAMEKEY_INVALID;
 static NameKeyType buttonRestart = NAMEKEY_INVALID;
@@ -87,10 +87,10 @@ static void initGadgetsFullQuit( void )
 	buttonOptions = TheNameKeyGenerator->nameToKey( "QuitMenu.wnd:ButtonOptions" );
 	buttonSaveLoad = TheNameKeyGenerator->nameToKey( "QuitMenu.wnd:ButtonSaveLoad" );
 
-	buttonRestartWin	= TheWindowManager->winGetWindowFromId( NULL, buttonRestart );
-	buttonSaveLoadWin = TheWindowManager->winGetWindowFromId( NULL, buttonSaveLoad );
-	buttonOptionsWin = TheWindowManager->winGetWindowFromId( NULL, buttonOptions );
-	buttonExitWin = TheWindowManager->winGetWindowFromId( NULL, buttonExit );
+	buttonRestartWin	= TheWindowManager->winGetWindowFromId( nullptr, buttonRestart );
+	buttonSaveLoadWin = TheWindowManager->winGetWindowFromId( nullptr, buttonSaveLoad );
+	buttonOptionsWin = TheWindowManager->winGetWindowFromId( nullptr, buttonOptions );
+	buttonExitWin = TheWindowManager->winGetWindowFromId( nullptr, buttonExit );
 }
 
 static void initGadgetsNoSaveQuit( void )
@@ -101,10 +101,10 @@ static void initGadgetsNoSaveQuit( void )
 	buttonOptions = TheNameKeyGenerator->nameToKey( "QuitNoSave.wnd:ButtonOptions" );
 	buttonSaveLoad = NAMEKEY_INVALID;
 
-	buttonRestartWin	= TheWindowManager->winGetWindowFromId( NULL, buttonRestart );
-	buttonOptionsWin = TheWindowManager->winGetWindowFromId( NULL, buttonOptions );
-	buttonSaveLoadWin = NULL;
-	buttonExitWin = TheWindowManager->winGetWindowFromId( NULL, buttonExit );
+	buttonRestartWin	= TheWindowManager->winGetWindowFromId( nullptr, buttonRestart );
+	buttonOptionsWin = TheWindowManager->winGetWindowFromId( nullptr, buttonOptions );
+	buttonSaveLoadWin = nullptr;
+	buttonExitWin = TheWindowManager->winGetWindowFromId( nullptr, buttonExit );
 
 }
 
@@ -113,20 +113,20 @@ static void initGadgetsNoSaveQuit( void )
 void destroyQuitMenu()
 {
   // destroy the quit menu
-	quitConfirmationWindow = NULL;
+	quitConfirmationWindow = nullptr;
 	if(fullQuitMenuLayout)
 	{
 		fullQuitMenuLayout->destroyWindows();
 		deleteInstance(fullQuitMenuLayout);
-		fullQuitMenuLayout = NULL;
+		fullQuitMenuLayout = nullptr;
 	}
 	if(noSaveLoadQuitMenuLayout)
 	{
 		noSaveLoadQuitMenuLayout->destroyWindows();
 		deleteInstance(noSaveLoadQuitMenuLayout);
-		noSaveLoadQuitMenuLayout = NULL;
+		noSaveLoadQuitMenuLayout = nullptr;
 	}
-	quitMenuLayout = NULL;
+	quitMenuLayout = nullptr;
 	isVisible = FALSE;
 
 	TheInGameUI->setQuitMenuVisible(FALSE);
@@ -157,7 +157,7 @@ static void exitQuitMenu()
 }
 static void noExitQuitMenu()
 {
-	quitConfirmationWindow = NULL;
+	quitConfirmationWindow = nullptr;
 }
 
 static void quitToDesktopQuitMenu()
@@ -245,7 +245,7 @@ static void restartMissionMenu()
 		//	InitGameLogicRandom(GameClientRandomValue(0, INT_MAX - 1));
 	}
 	//TheTransitionHandler->remove("QuitFull"); //KRISMORNESS ADD
-	//quitMenuLayout = NULL; //KRISMORNESS ADD
+	//quitMenuLayout = nullptr; //KRISMORNESS ADD
 	//isVisible = TRUE; //KRISMORNESS ADD
 	//HideQuitMenu();	//KRISMORNESS ADD
 	TheInGameUI->setClientQuiet( TRUE );
@@ -268,7 +268,7 @@ void HideQuitMenu( void )
 	isVisible = FALSE;
 	if (quitConfirmationWindow)
 		TheWindowManager->winDestroy(quitConfirmationWindow);
-	quitConfirmationWindow = NULL;
+	quitConfirmationWindow = nullptr;
 	if ( !TheGameLogic->isInMultiplayerGame() )
 			TheGameLogic->setGamePaused(FALSE);
 
@@ -283,7 +283,7 @@ void ToggleQuitMenu()
 		return;
 
 	// BGC- If we are currently in the disconnect screen, don't let the quit menu come up.
-	if (TheDisconnectMenu != NULL) {
+	if (TheDisconnectMenu != nullptr) {
 		if (TheDisconnectMenu->isScreenVisible() == TRUE) {
 			return;
 		}
@@ -295,20 +295,20 @@ void ToggleQuitMenu()
 	if (TheShell->getOptionsLayout(FALSE) != FALSE) {
 		WindowLayout *optLayout = TheShell->getOptionsLayout(FALSE);
 		GameWindow *optionsParent = optLayout->getFirstWindow();
-		DEBUG_ASSERTCRASH(optionsParent != NULL, ("Not able to get the options layout parent window"));
+		DEBUG_ASSERTCRASH(optionsParent != nullptr, ("Not able to get the options layout parent window"));
 		GameWindow *optionsBack = TheWindowManager->winGetWindowFromId(optionsParent, TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:ButtonBack" ));
-		DEBUG_ASSERTCRASH(optionsBack != NULL, ("Not able to get the back button window from the options menu"));
-		TheWindowManager->winSendSystemMsg(optLayout->getFirstWindow(), GBM_SELECTED, (WindowMsgData)optionsBack, NULL);
+		DEBUG_ASSERTCRASH(optionsBack != nullptr, ("Not able to get the back button window from the options menu"));
+		TheWindowManager->winSendSystemMsg(optLayout->getFirstWindow(), GBM_SELECTED, (WindowMsgData)optionsBack, 0);
 		return;
 	}
-	if ((saveLoadMenuLayout != NULL) && (saveLoadMenuLayout->isHidden() == FALSE))
+	if ((saveLoadMenuLayout != nullptr) && (saveLoadMenuLayout->isHidden() == FALSE))
 	{
 		GameWindow *saveLoadParent = saveLoadMenuLayout->getFirstWindow();
-		DEBUG_ASSERTCRASH(saveLoadParent != NULL, ("Not able to get the save/load layout parent window"));
+		DEBUG_ASSERTCRASH(saveLoadParent != nullptr, ("Not able to get the save/load layout parent window"));
 		GameWindow *saveLoadBack = TheWindowManager->winGetWindowFromId(saveLoadParent, TheNameKeyGenerator->nameToKey( "PopupSaveLoad.wnd:ButtonBack" ));
-		DEBUG_ASSERTCRASH(saveLoadBack != NULL, ("Not able to get the back button window from the save/load menu"));
-		TheWindowManager->winSendSystemMsg(saveLoadMenuLayout->getFirstWindow(), GBM_SELECTED, (WindowMsgData)saveLoadBack, NULL);
-		saveLoadMenuLayout = NULL;
+		DEBUG_ASSERTCRASH(saveLoadBack != nullptr, ("Not able to get the back button window from the save/load menu"));
+		TheWindowManager->winSendSystemMsg(saveLoadMenuLayout->getFirstWindow(), GBM_SELECTED, (WindowMsgData)saveLoadBack, 0);
+		saveLoadMenuLayout = nullptr;
 		return;
 	}
 
@@ -320,7 +320,7 @@ void ToggleQuitMenu()
 
 		if (quitConfirmationWindow)
 			TheWindowManager->winDestroy(quitConfirmationWindow);
-		quitConfirmationWindow = NULL;
+		quitConfirmationWindow = nullptr;
 
 		if ( !TheGameLogic->isInMultiplayerGame() )
 			TheGameLogic->setGamePaused(FALSE);
@@ -335,7 +335,7 @@ void ToggleQuitMenu()
 			//else
 			//{
 			//	TheTransitionHandler->remove("QuitFull");
-			//	quitMenuLayout = NULL;
+			//	quitMenuLayout = nullptr;
 			//	isVisible = TRUE;
 			//	HideQuitMenu();
 			//}
@@ -369,7 +369,7 @@ void ToggleQuitMenu()
 		}
 
 		// load the quit menu from the layout file if needed
-		if( quitMenuLayout == NULL )
+		if( quitMenuLayout == nullptr )
 		{
 			DEBUG_ASSERTCRASH(FALSE, ("Could not load a quit menu layout"));
 			isVisible = FALSE;
@@ -427,7 +427,7 @@ void ToggleQuitMenu()
 
 		if (quitConfirmationWindow)
 			TheWindowManager->winDestroy(quitConfirmationWindow);
-		quitConfirmationWindow = NULL;
+		quitConfirmationWindow = nullptr;
 		HideDiplomacy();
 		HideInGameChat();
 		TheControlBar->hidePurchaseScience();
@@ -511,7 +511,7 @@ WindowMsgHandledType QuitMenuSystem( GameWindow *window, UnsignedInt msg,
 			else if( buttonOptions == controlID )
 			{
 				WindowLayout *optLayout = TheShell->getOptionsLayout(TRUE);
-				DEBUG_ASSERTCRASH(optLayout != NULL, ("options menu layout is NULL"));
+				DEBUG_ASSERTCRASH(optLayout != nullptr, ("options menu layout is null"));
 				optLayout->runInit();
 				optLayout->hide(FALSE);
 				optLayout->bringForward();

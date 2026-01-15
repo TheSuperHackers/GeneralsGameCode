@@ -31,7 +31,7 @@ class RulerOptions : public COptionsPanel
 // Construction
 public:
 
-	RulerOptions(CWnd* pParent = NULL);   // standard constructor
+	RulerOptions(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(RulerOptions)

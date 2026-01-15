@@ -48,7 +48,7 @@ FrameDataManager::~FrameDataManager() {
 		m_frameData[i].reset();
 	}
 	delete[] m_frameData;
-	m_frameData = NULL;
+	m_frameData = nullptr;
 }
 
 /**

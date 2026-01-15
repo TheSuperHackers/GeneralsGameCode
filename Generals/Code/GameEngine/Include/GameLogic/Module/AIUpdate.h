@@ -105,7 +105,7 @@ static const char *const TheLocomotorSetNames[] =
 	"SET_SUPERSONIC",
 	"SET_SLUGGISH",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheLocomotorSetNames) == LOCOMOTORSET_COUNT + 1, "Incorrect array size");
 #endif
@@ -128,7 +128,7 @@ static const char *const TheAutoAcquireEnemiesNames[] =
 	"NOTWHILEATTACKING",
 	"ATTACK_BUILDINGS",
 
-	NULL
+	nullptr
 };
 #endif
 
@@ -297,19 +297,19 @@ public:
 	virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK( DISABLED_HELD ); }
 
 	// Some very specific, complex behaviors are used by more than one AIUpdate.  Here are their interfaces.
-	virtual DozerAIInterface* getDozerAIInterface() {return NULL;}
-	virtual SupplyTruckAIInterface* getSupplyTruckAIInterface() {return NULL;}
-	virtual const DozerAIInterface* getDozerAIInterface() const {return NULL;}
-	virtual const SupplyTruckAIInterface* getSupplyTruckAIInterface() const {return NULL;}
+	virtual DozerAIInterface* getDozerAIInterface() {return nullptr;}
+	virtual SupplyTruckAIInterface* getSupplyTruckAIInterface() {return nullptr;}
+	virtual const DozerAIInterface* getDozerAIInterface() const {return nullptr;}
+	virtual const SupplyTruckAIInterface* getSupplyTruckAIInterface() const {return nullptr;}
 #ifdef ALLOW_SURRENDER
-	virtual POWTruckAIUpdateInterface *getPOWTruckAIUpdateInterface( void ) { return NULL; }
+	virtual POWTruckAIUpdateInterface *getPOWTruckAIUpdateInterface( void ) { return nullptr; }
 #endif
-	virtual WorkerAIInterface* getWorkerAIInterface( void ) { return NULL; }
-	virtual const WorkerAIInterface* getWorkerAIInterface( void ) const { return NULL; }
-	virtual HackInternetAIInterface* getHackInternetAIInterface() { return NULL; }
-	virtual const HackInternetAIInterface* getHackInternetAIInterface() const { return NULL; }
-	virtual AssaultTransportAIInterface* getAssaultTransportAIInterface() { return NULL; }
-	virtual const AssaultTransportAIInterface* getAssaultTransportAIInterface() const { return NULL; }
+	virtual WorkerAIInterface* getWorkerAIInterface( void ) { return nullptr; }
+	virtual const WorkerAIInterface* getWorkerAIInterface( void ) const { return nullptr; }
+	virtual HackInternetAIInterface* getHackInternetAIInterface() { return nullptr; }
+	virtual const HackInternetAIInterface* getHackInternetAIInterface() const { return nullptr; }
+	virtual AssaultTransportAIInterface* getAssaultTransportAIInterface() { return nullptr; }
+	virtual const AssaultTransportAIInterface* getAssaultTransportAIInterface() const { return nullptr; }
 
 #ifdef ALLOW_SURRENDER
 	void setSurrendered( const Object *objWeSurrenderedTo, Bool surrendered );
@@ -352,7 +352,7 @@ public:
 	virtual Object* construct( const ThingTemplate *what,
 														 const Coord3D *pos, Real angle,
 														 Player *owningPlayer,
-														 Bool isRebuild ) { return NULL; }///< construct a building
+														 Bool isRebuild ) { return nullptr; }///< construct a building
 
 
 	void ignoreObstacle( const Object *obj );			///< tell the pathfinder to ignore the given object as an obstacle
@@ -415,7 +415,7 @@ public:
 	Bool hasLocomotorForSurface(LocomotorSurfaceType surfaceType);
 
 	// turret stuff.
-	WhichTurretType getWhichTurretForWeaponSlot(WeaponSlotType wslot, Real* turretAngle, Real* turretPitch = NULL) const;
+	WhichTurretType getWhichTurretForWeaponSlot(WeaponSlotType wslot, Real* turretAngle, Real* turretPitch = nullptr) const;
 	WhichTurretType getWhichTurretForCurWeapon() const;
 	/**
 		return true iff the weapon is on a turret, that turret is trying to aim at the victim,
@@ -457,7 +457,7 @@ public:
 	void cancelPath(void); ///< Called if we no longer need the path.
 	Path* getPath( void ) { return m_path; }				///< return the agent's current path
 	const Path* getPath( void ) const { return m_path; }				///< return the agent's current path
-	void destroyPath( void );												///< destroy the current path, setting it to NULL
+	void destroyPath( void );												///< destroy the current path, setting it to null
 	UnsignedInt getPathAge( void ) const { return TheGameLogic->getFrame() - m_pathTimestamp; }	///< return the "age" of the path
 	Bool isPathAvailable( const Coord3D *destination ) const; ///< does a path exist between us and the destination
 	Bool isQuickPathAvailable( const Coord3D *destination ) const;  ///< does a path (using quick pathfind) exist between us and the destination

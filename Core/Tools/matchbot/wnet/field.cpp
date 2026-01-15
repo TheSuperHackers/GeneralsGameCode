@@ -51,56 +51,56 @@ void FieldClass::Clear(void)
   strcpy(ID,"");
   DataType=0;
   Size=0;
-  Data=NULL;
-  Next=NULL;
+  Data=nullptr;
+  Next=nullptr;
 }
 
 
 FieldClass::FieldClass(char *id, char data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
 
 FieldClass::FieldClass(char *id, unsigned char data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
 
 FieldClass::FieldClass(char *id, short data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
 
 FieldClass::FieldClass(char *id, unsigned short data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
 
 FieldClass::FieldClass(char *id, long data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
 
 FieldClass::FieldClass(char *id, unsigned long data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
 
 FieldClass::FieldClass(char *id, char *data)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data);
 }
 
 FieldClass::FieldClass(char *id, void *data, int length)
 {
-  Data=NULL;
+  Data=nullptr;
   Set(id,data,length);
 }
 

@@ -27,33 +27,33 @@ CSimplePlayer::CSimplePlayer( HRESULT* phr )
     m_cRef = 1;
     m_cBuffersOutstanding = 0;
 
-    m_pReader = NULL;
+    m_pReader = nullptr;
 
-    m_pHeader = NULL;
-    m_hwo = NULL;
+    m_pHeader = nullptr;
+    m_hwo = nullptr;
 
     m_fEof = FALSE;
-    m_pszUrl = NULL;
+    m_pszUrl = nullptr;
 
 	*phr = S_OK;
 
-    m_hOpenEvent = CreateEvent( NULL, FALSE, FALSE, SIMPLE_PLAYER_OPEN_EVENT );
-	if ( NULL == m_hOpenEvent )
+    m_hOpenEvent = CreateEvent( nullptr, FALSE, FALSE, SIMPLE_PLAYER_OPEN_EVENT );
+	if ( nullptr == m_hOpenEvent )
 	{
 		*phr = E_OUTOFMEMORY;
 	}
-    m_hCloseEvent = CreateEvent( NULL, FALSE, FALSE, SIMPLE_PLAYER_CLOSE_EVENT );
-	if ( NULL == m_hCloseEvent )
+    m_hCloseEvent = CreateEvent( nullptr, FALSE, FALSE, SIMPLE_PLAYER_CLOSE_EVENT );
+	if ( nullptr == m_hCloseEvent )
 	{
 		*phr = E_OUTOFMEMORY;
 	}
 
     m_hrOpen = S_OK;
 
-	m_hCompletionEvent = NULL;
+	m_hCompletionEvent = nullptr;
 
     InitializeCriticalSection( &m_CriSec );
-    m_whdrHead = NULL;
+    m_whdrHead = nullptr;
 }
 
 
@@ -70,19 +70,19 @@ CSimplePlayer::~CSimplePlayer()
     RemoveWaveHeaders();
     DeleteCriticalSection( &m_CriSec );
 
-    if( m_pHeader != NULL )
+    if( m_pHeader != nullptr )
     {
         m_pHeader->Release();
-        m_pHeader = NULL;
+        m_pHeader = nullptr;
     }
 
-    if( m_pReader != NULL )
+    if( m_pReader != nullptr )
     {
         m_pReader->Release();
-        m_pReader = NULL;
+        m_pReader = nullptr;
     }
 
-    if( m_hwo != NULL )
+    if( m_hwo != nullptr )
     {
         waveOutClose( m_hwo );
     }
@@ -164,7 +164,7 @@ HRESULT STDMETHODCALLTYPE CSimplePlayer::OnSample(
 
     LPWAVEHDR pwh = (LPWAVEHDR) new BYTE[ sizeof( WAVEHDR ) + cbData ];
 
-    if( NULL == pwh )
+    if( nullptr == pwh )
     {
         DEBUG_LOG(( "OnSample OUT OF MEMORY! "));
 
@@ -233,7 +233,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
         //
         LPWSTR pszCheck = _wfullpath( wszFullUrl, pszUrl, MAX_PATH );
 
-        if( NULL == pszCheck )
+        if( nullptr == pszCheck )
         {
            DEBUG_LOG(( "internal error %lu" , GetLastError() ));
            return E_UNEXPECTED ;
@@ -249,7 +249,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
 
     m_pszUrl = new WCHAR[ wcslen( pszUrl ) + 1 ];
 
-    if( NULL == m_pszUrl )
+    if( nullptr == m_pszUrl )
     {
         DEBUG_LOG(( "insufficient Memory"  )) ;
         return( E_OUTOFMEMORY );
@@ -266,11 +266,11 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
 
 #ifdef SUPPORT_DRM
 
-    hr = WMCreateReader( NULL, WMT_RIGHT_PLAYBACK, &m_pReader );
+    hr = WMCreateReader( nullptr, WMT_RIGHT_PLAYBACK, &m_pReader );
 
 #else
 
-    hr = WMCreateReader( NULL, 0, &m_pReader );
+    hr = WMCreateReader( nullptr, 0, &m_pReader );
 
 #endif
 
@@ -283,7 +283,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
     //
     // Open the file
     //
-    hr = m_pReader->Open( m_pszUrl, this, NULL );
+    hr = m_pReader->Open( m_pszUrl, this, nullptr );
     if ( SUCCEEDED( hr ) )
     {
         WaitForSingleObject( m_hOpenEvent, INFINITE );
@@ -321,8 +321,8 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
         return( hr );
     }
 
-    WCHAR *pwszName = NULL;
-    BYTE *pValue = NULL;
+    WCHAR *pwszName = nullptr;
+    BYTE *pValue = nullptr;
 
     for ( i = 0; i < wAttrCnt ; i++ )
     {
@@ -331,7 +331,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
         WMT_ATTR_DATATYPE type;
         WORD cbLength = 0;
 
-        hr = m_pHeader->GetAttributeByIndex( i, &wStream, NULL, &cchNamelen, &type, NULL, &cbLength );
+        hr = m_pHeader->GetAttributeByIndex( i, &wStream, nullptr, &cchNamelen, &type, nullptr, &cbLength );
         if ( FAILED( hr ) )
         {
             DEBUG_LOG(( "GetAttributeByIndex Failed (hr=0x%08x)" , hr ));
@@ -341,7 +341,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
         pwszName = new WCHAR[ cchNamelen ];
         pValue = new BYTE[ cbLength ];
 
-        if( NULL == pwszName || NULL == pValue )
+        if( nullptr == pwszName || nullptr == pValue )
         {
             hr = E_OUTOFMEMORY;
             break;
@@ -383,17 +383,17 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
         }
 
         delete pwszName;
-        pwszName = NULL;
+        pwszName = nullptr;
 
         delete pValue;
-        pValue = NULL;
+        pValue = nullptr;
     }
 
     delete pwszName;
-    pwszName = NULL;
+    pwszName = nullptr;
 
     delete pValue;
-    pValue = NULL;
+    pValue = nullptr;
 
     if ( FAILED( hr ) )
     {
@@ -428,7 +428,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
 
     DWORD cbBuffer = 0;
 
-    hr = pProps->GetMediaType( NULL, &cbBuffer );
+    hr = pProps->GetMediaType( nullptr, &cbBuffer );
     if ( FAILED( hr ) )
     {
         pProps->Release( );
@@ -462,7 +462,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
     memcpy( &m_wfx, pwfx, sizeof( WAVEFORMATEX ) + pwfx->cbSize );
 
     delete[] (BYTE *)pMediaType ;
-	pMediaType = NULL ;
+	pMediaType = nullptr ;
 
     MMRESULT mmr;
 
@@ -485,7 +485,7 @@ HRESULT CSimplePlayer::Play( LPCWSTR pszUrl, DWORD dwSecDuration, HANDLE hComple
     // Start reading the data (and rendering the audio)
     //
     QWORD cnsDuration = ( QWORD ) dwSecDuration * 10000000;
-    hr = m_pReader->Start( 0, cnsDuration, 1.0, NULL );
+    hr = m_pReader->Start( 0, cnsDuration, 1.0, nullptr );
 
     if( FAILED( hr ) )
     {
@@ -581,7 +581,7 @@ HRESULT STDMETHODCALLTYPE CSimplePlayer::OnStatus(
 
     case WMT_NO_RIGHTS:
         {
-            LPWSTR pwszEscapedURL = NULL;
+            LPWSTR pwszEscapedURL = nullptr;
 
             hr = MakeEscapedURL( m_pszUrl, &pwszEscapedURL );
 
@@ -599,7 +599,7 @@ HRESULT STDMETHODCALLTYPE CSimplePlayer::OnStatus(
                 }
 
                 delete [] pwszEscapedURL;
-				pwszEscapedURL = NULL ;
+				pwszEscapedURL = nullptr ;
             }
         }
         break;
@@ -624,7 +624,7 @@ HRESULT CSimplePlayer::Close()
 {
     HRESULT hr = S_OK;
 
-    if( NULL != m_pReader )
+    if( nullptr != m_pReader )
     {
         hr = m_pReader->Close();
 
@@ -676,7 +676,7 @@ void CALLBACK CSimplePlayer::WaveProc(
 HRESULT CSimplePlayer::AddWaveHeader( LPWAVEHDR pwh )
 {
     WAVEHDR_LIST *tmp = new WAVEHDR_LIST;
-    if( NULL == tmp )
+    if( nullptr == tmp )
     {
         return( E_OUTOFMEMORY );
     }
@@ -695,7 +695,7 @@ void CSimplePlayer::RemoveWaveHeaders( )
     WAVEHDR_LIST *tmp;
 
     EnterCriticalSection( &m_CriSec );
-    while( NULL != m_whdrHead )
+    while( nullptr != m_whdrHead )
     {
         tmp = m_whdrHead->next;
         DEBUG_ASSERTCRASH( m_whdrHead->pwh->dwFlags & WHDR_DONE, ("RemoveWaveHeaders!") );

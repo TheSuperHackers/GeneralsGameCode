@@ -295,7 +295,7 @@ public:
   Int  getCursorTooltipDelay() { return m_tooltipDelay; }
   void setCursorTooltipDelay(Int delay) { m_tooltipDelay = delay; }
 
-	void setCursorTooltip( UnicodeString tooltip, Int tooltipDelay = -1, const RGBColor *color = NULL, Real width = 1.0f );		///< set tooltip string at cursor
+	void setCursorTooltip( UnicodeString tooltip, Int tooltipDelay = -1, const RGBColor *color = nullptr, Real width = 1.0f );		///< set tooltip string at cursor
 	void setMouseText( UnicodeString text, const RGBAColorInt *color, const RGBAColorInt *dropColor );					///< set the cursor text, *NOT* the tooltip text
 	virtual void setMouseLimits( void );					///< update the limit extents the mouse can move in
 	MouseCursor getMouseCursor(void) { return m_currentCursor; }	///< get the current mouse cursor image type

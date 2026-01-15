@@ -63,11 +63,11 @@ public:
 	{
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "NeedsUpgrade",					INI::parseBool,									NULL, offsetof( SpyVisionUpdateModuleData, m_needsUpgrade ) },
-			{ "SelfPowered",					INI::parseBool,									NULL, offsetof( SpyVisionUpdateModuleData, m_selfPowered ) },
-			{ "SelfPoweredDuration",	INI::parseDurationUnsignedInt,	NULL, offsetof( SpyVisionUpdateModuleData, m_selfPoweredDuration ) },
-			{ "SelfPoweredInterval",	INI::parseDurationUnsignedInt,	NULL, offsetof( SpyVisionUpdateModuleData, m_selfPoweredInterval ) },
-			{ "SpyOnKindof",					KindOfMaskType::parseFromINI,		NULL, offsetof( SpyVisionUpdateModuleData, m_spyOnKindof ) },
+			{ "NeedsUpgrade",					INI::parseBool,									nullptr, offsetof( SpyVisionUpdateModuleData, m_needsUpgrade ) },
+			{ "SelfPowered",					INI::parseBool,									nullptr, offsetof( SpyVisionUpdateModuleData, m_selfPowered ) },
+			{ "SelfPoweredDuration",	INI::parseDurationUnsignedInt,	nullptr, offsetof( SpyVisionUpdateModuleData, m_selfPoweredDuration ) },
+			{ "SelfPoweredInterval",	INI::parseDurationUnsignedInt,	nullptr, offsetof( SpyVisionUpdateModuleData, m_selfPoweredInterval ) },
+			{ "SpyOnKindof",					KindOfMaskType::parseFromINI,		nullptr, offsetof( SpyVisionUpdateModuleData, m_spyOnKindof ) },
 			{ 0, 0, 0, 0 }
 		};
 

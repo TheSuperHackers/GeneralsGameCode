@@ -76,7 +76,7 @@ BOOL CAnimMixingPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	ASSERT(m_Sheet != NULL);
+	ASSERT(m_Sheet != nullptr);
 	FillListCtrl();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -89,10 +89,10 @@ void CAnimMixingPage::FillListCtrl (void)
 	// Get the current render object and it's HTree. If it doesn't have
 	// an HTree, then it's not animating and we're not interested.
 	RenderObjClass *robj = ::GetCurrentDocument()->GetDisplayedObject();
-	if (robj == NULL)
+	if (robj == nullptr)
 		return;
 	const HTreeClass *htree = robj->Get_HTree();
-	if (htree == NULL)
+	if (htree == nullptr)
 		return;
 
 	// Get a sorted array of animations that affect the currently active object.
@@ -114,12 +114,12 @@ void CAnimMixingPage::OnOK()
 	RenderObjClass *current_obj = ::GetCurrentDocument()->GetDisplayedObject();
 	const char *obj_name = current_obj->Get_Name();
 	RenderObjClass *robj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(obj_name);
-	if (num_selected > 0 && robj != NULL)
+	if (num_selected > 0 && robj != nullptr)
 	{
 		HAnimClass **anim = m_Sheet->GetAnims();
 
 		HAnimComboClass *combo = new HAnimComboClass(num_selected);
-		ASSERT(combo != NULL);
+		ASSERT(combo != nullptr);
 
 		POSITION pos = m_AnimList.GetFirstSelectedItemPosition();
 		int array_idx, idx = 0;

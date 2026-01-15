@@ -132,7 +132,7 @@ void __cdecl Msg( int line, const char *filename, const char *fmt, ... )
 	// Make filename.
 	//----------------------------------------------------------------------
 	const char *temp = strrchr( filename, '\\' );
-	if ( temp != NULL || temp[0] != '\0' ) {
+	if ( temp != nullptr || temp[0] != '\0' ) {
 		temp++;
 		strcpy( szFile, temp );
 	}
@@ -203,10 +203,10 @@ void __cdecl Msg( int line, const char *filename, const wchar_t *fmt, UINT codep
 	memset( szBuffer1,	'\0', MAX_PATH * 3 );
 	memset( szBuffer2,	'\0', MAX_PATH * 2 );
 
-	if ( DebugFile == NULL ) {
+	if ( DebugFile == nullptr ) {
 		return;
 	}
-	if ( filename == NULL ) {
+	if ( filename == nullptr ) {
 		return;
 	}
 
@@ -214,7 +214,7 @@ void __cdecl Msg( int line, const char *filename, const wchar_t *fmt, UINT codep
 	// Make filename.
 	//----------------------------------------------------------------------
 	const char *temp = strrchr( filename, '\\' );
-	if ( temp != NULL || temp[0] != '\0' ) {
+	if ( temp != nullptr || temp[0] != '\0' ) {
 		temp++;
 		length = strlen( temp );
 		mbstowcs( szFile, temp, length );
@@ -240,7 +240,7 @@ void __cdecl Msg( int line, const char *filename, const wchar_t *fmt, UINT codep
 		//	950				Chinese (Taiwan; Hong Kong SAR, PRC)
 		//	1252			Windows 3.1 Latin 1 (US, Western Europe)
 		//---------------------------------------------------------------------
-		WideCharToMultiByte( codepage, 0, szBuffer1, -1, szBuffer3, MAX_PATH*3, NULL, NULL );
+		WideCharToMultiByte( codepage, 0, szBuffer1, -1, szBuffer3, MAX_PATH*3, nullptr, nullptr );
 
 		length = strlen( szBuffer3 );
    		nBytes = file.Write( szBuffer3, length );
@@ -306,9 +306,9 @@ void Delete_Msg_File ( void )
 		wsprintf( buff, "===========================================================\r\n" );
 		nBytes = file.Write( buff, strlen( buff ));
 
-		GetDateFormat( LOCALE_USER_DEFAULT, DATE_SHORTDATE, NULL, NULL, date, 50 );
-//		GetTimeFormat( LOCALE_USER_DEFAULT, TIME_NOSECONDS, NULL, NULL, time, 30 );
-		GetTimeFormat( LOCALE_USER_DEFAULT, NULL, NULL, "hh':'mm':'ss tt", time, 30 );
+		GetDateFormat( LOCALE_USER_DEFAULT, DATE_SHORTDATE, nullptr, nullptr, date, 50 );
+//		GetTimeFormat( LOCALE_USER_DEFAULT, TIME_NOSECONDS, nullptr, nullptr, time, 30 );
+		GetTimeFormat( LOCALE_USER_DEFAULT, 0, nullptr, "hh':'mm':'ss tt", time, 30 );
 		wsprintf( buff, "SETUP:  File: %s  Date: %s  Time: %s.\r\n", DebugFile, date, time );
 		nBytes = file.Write( buff, strlen( buff ));
 
@@ -347,7 +347,7 @@ StandardFileClass::~StandardFileClass( void )
 		ASSERT( File_Handle == INVALID_FILE_HANDLE );
 	#endif
 	#if( SUPPORT_STREAMS )
-   		ASSERT( File_Stream_Ptr == NULL );
+   		ASSERT( File_Stream_Ptr == nullptr );
 	#endif
 	ASSERT( Currently_Open == FALSE );
 
@@ -370,7 +370,7 @@ bool StandardFileClass::Open( const char *no_path_file_name, int open_mode )
 	//
 	// debug checks...
 	//
-	ASSERT( no_path_file_name != NULL );
+	ASSERT( no_path_file_name != nullptr );
 	ASSERT( Currently_Open == FALSE );
 	ASSERT( strlen( no_path_file_name ) < MAX_PATH );
 	ASSERT(	open_mode == MODE_READ_ONLY ||
@@ -418,7 +418,7 @@ bool StandardFileClass::Open( const char *no_path_file_name, int open_mode )
 
 	#if( SUPPORT_STREAMS )
 
-		ASSERT( File_Stream_Ptr == NULL );
+		ASSERT( File_Stream_Ptr == nullptr );
 
 		//
 		// "r"  - open existing file for reading.
@@ -475,7 +475,7 @@ bool StandardFileClass::Open( const char *no_path_file_name, int open_mode )
 		//
 		// if not success with HD open, try CD
 		//
-		if ( File_Stream_Ptr == NULL ) {
+		if ( File_Stream_Ptr == nullptr ) {
 
 			//
 			// try CD open
@@ -488,7 +488,7 @@ bool StandardFileClass::Open( const char *no_path_file_name, int open_mode )
 	//
    	// not successful?
    	//
-   	if ( File_Stream_Ptr == NULL ) {
+   	if ( File_Stream_Ptr == nullptr ) {
    		return( FALSE );
    	}
 
@@ -569,12 +569,12 @@ bool StandardFileClass::Close( void )
 
 	#if( SUPPORT_STREAMS )
 
-	ASSERT( File_Stream_Ptr != NULL );
+	ASSERT( File_Stream_Ptr != nullptr );
 
    	//
    	// error?
    	//
-   	if ( File_Stream_Ptr == NULL || Currently_Open == FALSE ) {
+   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
        		//
          	// no success
          	//
@@ -591,7 +591,7 @@ bool StandardFileClass::Close( void )
 	//
    	// reset file data
    	//
-	File_Stream_Ptr = NULL;
+	File_Stream_Ptr = nullptr;
 	Currently_Open = FALSE;
 
    	//
@@ -619,7 +619,7 @@ int StandardFileClass::Read( void *buffer, unsigned long int bytes_to_read )
 	//
 	// debug checks ( Fails if condition is FALSE ).
 	//
-	ASSERT( buffer != NULL );
+	ASSERT( buffer != nullptr );
 	ASSERT( bytes_to_read > 0 );
 	ASSERT( Currently_Open == TRUE );
 
@@ -644,11 +644,11 @@ int StandardFileClass::Read( void *buffer, unsigned long int bytes_to_read )
 
 #if( SUPPORT_STREAMS )
 
-	ASSERT( File_Stream_Ptr != NULL );
+	ASSERT( File_Stream_Ptr != nullptr );
 	//
 	// error?
 	//
-	if ( File_Stream_Ptr == NULL || Currently_Open == FALSE ) {
+	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
    		//
 		// nothing read
 		//
@@ -690,11 +690,11 @@ int StandardFileClass::Write( void *buffer, unsigned long int bytes_to_write )
 	//
 	// debug checks
 	//
-	ASSERT( buffer != NULL );
+	ASSERT( buffer != nullptr );
 	ASSERT( bytes_to_write > 0 );
 	ASSERT( Currently_Open == TRUE );
 
-	if ( buffer == NULL ) {
+	if ( buffer == nullptr ) {
 		return( 0 );
 	}
 	if ( bytes_to_write < 1 ) {
@@ -724,11 +724,11 @@ int StandardFileClass::Write( void *buffer, unsigned long int bytes_to_write )
 
 	#if( SUPPORT_STREAMS )
 
-	ASSERT( File_Stream_Ptr != NULL );
+	ASSERT( File_Stream_Ptr != nullptr );
    	//
    	// error?
    	//
-   	if ( File_Stream_Ptr == NULL || Currently_Open == FALSE ) {
+   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
        		//
          	// nothing written
          	//
@@ -788,12 +788,12 @@ bool StandardFileClass::Seek( int distance, int seek_file_position )
 
 	#if( SUPPORT_STREAMS )
 
-	ASSERT( File_Stream_Ptr != NULL );
+	ASSERT( File_Stream_Ptr != nullptr );
 
    	//
    	// error?
    	//
-   	if ( File_Stream_Ptr == NULL || Currently_Open == FALSE ) {
+   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
        		//
          	// error
          	//
@@ -853,11 +853,11 @@ int StandardFileClass::Tell( void )
 
 	#if( SUPPORT_STREAMS )
 
-	ASSERT( File_Stream_Ptr != NULL );
+	ASSERT( File_Stream_Ptr != nullptr );
    	//
    	// error?
    	//
-   	if ( File_Stream_Ptr == NULL || Currently_Open == FALSE ) {
+   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
        		//
          	// error
          	//
@@ -906,11 +906,11 @@ int StandardFileClass::Query_Size( void )
 	#endif
 
 	#if( SUPPORT_STREAMS )
-	ASSERT( File_Stream_Ptr != NULL );
+	ASSERT( File_Stream_Ptr != nullptr );
    	//
    	// error?
    	//
-   	if ( File_Stream_Ptr == NULL || Currently_Open == FALSE ) {
+   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
        		//
          	// error
          	//
@@ -974,7 +974,7 @@ void StandardFileClass::Reset( void )
 	File_Handle = INVALID_FILE_HANDLE;
 	#endif
 	#if( SUPPORT_STREAMS )
-	File_Stream_Ptr = NULL;
+	File_Stream_Ptr = nullptr;
 	#endif
 	Currently_Open = FALSE;
 	File_Name[ 0 ] = '\0';
@@ -988,8 +988,8 @@ int StandardFileClass::End_Of_File	( void )
 	#endif
 
 	#if( SUPPORT_STREAMS )
-	ASSERT( File_Stream_Ptr != NULL );
-   	if ( File_Stream_Ptr == NULL || Currently_Open == FALSE ) {
+	ASSERT( File_Stream_Ptr != nullptr );
+   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
     	return( -1 );
 	}
    	return( feof( File_Stream_Ptr ));
@@ -999,8 +999,8 @@ int StandardFileClass::End_Of_File	( void )
 int StandardFileClass::Flush ( void )
 {
 	#if( SUPPORT_STREAMS )
-	ASSERT( File_Stream_Ptr != NULL );
-   	if ( File_Stream_Ptr == NULL || Currently_Open == FALSE ) {
+	ASSERT( File_Stream_Ptr != nullptr );
+   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
     	return( -1 );
 	}
    	return( fflush( File_Stream_Ptr ));
@@ -1031,7 +1031,7 @@ HANDLE Open_File( char const *file_name, int mode )
 	//
 	// debug checks...
 	//
-	ASSERT( file_name != NULL );
+	ASSERT( file_name != nullptr );
 	// ASSERT( mode == READ || mode == WRITE );
 	ASSERT( mode == MODE_READ_ONLY	||
 			mode == MODE_WRITE_ONLY	||
@@ -1082,10 +1082,10 @@ HANDLE Open_File( char const *file_name, int mode )
 	windows_file_handle = CreateFile( file_name,
                                      access,
                                      share,
-                                     NULL,
+                                     nullptr,
                                      creation,
                                      FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN,
-                                     NULL );
+                                     nullptr );
 	//
     // error?
     //
@@ -1131,7 +1131,7 @@ bool Close_File( HANDLE handle )
 	// debug checks...
 	//
 	// ASSERT( handle > INVALID_FILE_HANDLE );
-	// ASSERT( Windows_File_Handles[ handle ] != NULL );
+	// ASSERT( Windows_File_Handles[ handle ] != nullptr );
 	ASSERT( handle != INVALID_FILE_HANDLE );
 
 	//
@@ -1149,7 +1149,7 @@ bool Close_File( HANDLE handle )
 	//
 	// free the entry
 	//
-	// Windows_File_Handles[ handle ] = NULL;
+	// Windows_File_Handles[ handle ] = nullptr;
 
 	//
 	// return success or not
@@ -1180,9 +1180,9 @@ int Read_File( HANDLE handle, void *buffer, unsigned long int bytes_to_read )
 	// debug checks...
 	//
 	ASSERT( handle > INVALID_FILE_HANDLE );
-	ASSERT( buffer != NULL );
+	ASSERT( buffer != nullptr );
 	// ASSERT( bytes_to_read > 0 );
-	// ASSERT( Windows_File_Handles[ handle ] != NULL );
+	// ASSERT( Windows_File_Handles[ handle ] != nullptr );
 
 	// Debug_Printf( "Reading file %d\r\n", handle );
 
@@ -1190,7 +1190,7 @@ int Read_File( HANDLE handle, void *buffer, unsigned long int bytes_to_read )
 	//                     (void *) buffer,
 	//                     (DWORD) bytes_to_read,
 	//                     (DWORD *) &bytes_actually_read,
-	//                     NULL );
+	//                     nullptr );
 
 	//
 	// &&& use real HANDLE
@@ -1199,7 +1199,7 @@ int Read_File( HANDLE handle, void *buffer, unsigned long int bytes_to_read )
                        (void *) buffer,
                        (DWORD) bytes_to_read,
                        (DWORD *) &bytes_actually_read,
-                       NULL );
+                       nullptr );
 
 	ASSERT( success == TRUE );
 
@@ -1226,9 +1226,9 @@ int Write_File( HANDLE handle, void const *buffer, unsigned long int bytes_to_wr
 	// debug checks...
 	//
 	ASSERT( handle != INVALID_FILE_HANDLE );
-	ASSERT( buffer != NULL );
+	ASSERT( buffer != nullptr );
 	// ASSERT( bytes_to_write > 0 );
-	// ASSERT( Windows_File_Handles[ handle ] != NULL );
+	// ASSERT( Windows_File_Handles[ handle ] != nullptr );
 
 	// Debug_Printf( "Writing file %d\r\n", handle );
 
@@ -1236,7 +1236,7 @@ int Write_File( HANDLE handle, void const *buffer, unsigned long int bytes_to_wr
 	//                      buffer,
 	//                      (DWORD) bytes_to_write,
 	//                      (DWORD *) &bytes_actually_written,
-	//                      NULL );
+	//                      nullptr );
 
 	//
 	// &&& make this a real handle
@@ -1245,7 +1245,7 @@ int Write_File( HANDLE handle, void const *buffer, unsigned long int bytes_to_wr
                         buffer,
                         (DWORD) bytes_to_write,
                         (DWORD *) &bytes_actually_written,
-                        NULL );
+                        nullptr );
 
 	ASSERT( success == TRUE );
 	ASSERT( bytes_actually_written == bytes_to_write );
@@ -1277,7 +1277,7 @@ bool Seek_File( HANDLE handle, int distance, int seek_file_location )
 	ASSERT( seek_file_location == SEEK_SET ||
    			seek_file_location == SEEK_CUR ||
 			seek_file_location == SEEK_END );
-	// ASSERT( Windows_File_Handles[ handle ] != NULL );
+	// ASSERT( Windows_File_Handles[ handle ] != nullptr );
 
 	//
 	// set the seek movement method
@@ -1294,7 +1294,7 @@ bool Seek_File( HANDLE handle, int distance, int seek_file_location )
 
 	// success = SetFilePointer( Windows_File_Handles[ handle ],
 	//                          distance,
-	//                          NULL,
+	//                          nullptr,
 	//                          move_method );
 
 	//
@@ -1302,7 +1302,7 @@ bool Seek_File( HANDLE handle, int distance, int seek_file_location )
 	//
 	success = SetFilePointer( (HANDLE) handle,
                              distance,
-                             NULL,
+                             nullptr,
                              move_method );
 
 	if ( success == 0xFFFFFFFF ) {
@@ -1324,7 +1324,7 @@ int Tell_File( HANDLE handle )
 	// debug checks...
 	//
 	ASSERT( handle != INVALID_FILE_HANDLE );
-	// ASSERT( Windows_File_Handles[ handle ] != NULL );
+	// ASSERT( Windows_File_Handles[ handle ] != nullptr );
 
 	//
 	// set the seek movement method
@@ -1336,7 +1336,7 @@ int Tell_File( HANDLE handle )
 	//
 	pos = SetFilePointer( handle,
                          0, // distance to move
-                         NULL,
+                         nullptr,
                          move_method );
 
 	if ( pos == 0xFFFFFFFF ) {
@@ -1357,9 +1357,9 @@ int File_Size( HANDLE handle )
 	// debug checks...
 	//
 	ASSERT( handle != INVALID_FILE_HANDLE );
-	// ASSERT( Windows_File_Handles[ handle ] != NULL );
+	// ASSERT( Windows_File_Handles[ handle ] != nullptr );
 
-	file_size = GetFileSize( handle, NULL );
+	file_size = GetFileSize( handle, nullptr );
 	ASSERT( file_size != 0xFFFFFFFF );
 
 	//
@@ -1386,7 +1386,7 @@ bool Full_Path_File_Exists( char const *file_name )
 	//
 	// debug checks...
 	//
-	ASSERT( file_name != NULL );
+	ASSERT( file_name != nullptr );
 
 	//
 	// if we can open the file for read, it exists...
@@ -1424,7 +1424,7 @@ bool HD_File_Exists( char const *file_name )
 	//
 	// debug checks...
 	//
-	ASSERT( file_name != NULL );
+	ASSERT( file_name != nullptr );
 	strcpy( full_path, HD_Path );
 	strcat( full_path, file_name );
 
@@ -1463,7 +1463,7 @@ bool CD_File_Exists( char const *file_name )
 	//
 	// debug checks...
 	//
-	ASSERT( file_name != NULL );
+	ASSERT( file_name != nullptr );
 	strcpy( full_path, CD_Path );
 	strcat( full_path, file_name );
 
@@ -1517,7 +1517,7 @@ int Get_Internal_File_Handle( void )
 	//
 	if ( ! _initialized ) {
    		for ( i = 0; i < MAX_FILES_OPEN_AT_A_TIME; i ++ ) {
-			Windows_File_Handles[ i ] = NULL;
+			Windows_File_Handles[ i ] = nullptr;
 		}
 		_initialized = TRUE;
 	}
@@ -1526,7 +1526,7 @@ int Get_Internal_File_Handle( void )
 	// look for free slot
 	//
   	for ( i = 0; i < MAX_FILES_OPEN_AT_A_TIME; i ++ ) {
-   		if ( Windows_File_Handles[ i ] == NULL ) {
+   		if ( Windows_File_Handles[ i ] == nullptr ) {
       		return( i );
 		}
 	}
@@ -1553,7 +1553,7 @@ bool Full_Path_File_Exists( char const *file_name )
 	FILE *file_stream_ptr;
 
 	file_stream_ptr = fopen( file_name, "rb" );
-	if ( file_stream_ptr != NULL ) {
+	if ( file_stream_ptr != nullptr ) {
    		fclose( file_stream_ptr );
 		return( TRUE );
 	}
@@ -1572,13 +1572,13 @@ bool HD_File_Exists( char const *file_name )
 	//
 	// debug checks...
 	//
-	ASSERT( file_name != NULL );
+	ASSERT( file_name != nullptr );
 
 	strcpy( full_path, HD_Path );
 	strcat( full_path, file_name );
 
 	file_stream_ptr = fopen( full_path, "rb" );
-	if ( file_stream_ptr != NULL ) {
+	if ( file_stream_ptr != nullptr ) {
    		fclose( file_stream_ptr );
 		return( TRUE );
 	}
@@ -1597,13 +1597,13 @@ bool CD_File_Exists( char const *file_name )
 	//
 	// debug checks...
 	//
-	ASSERT( file_name != NULL );
+	ASSERT( file_name != nullptr );
 
 	strcpy( full_path, CD_Path );
 	strcat( full_path, file_name );
 
 	file_stream_ptr = fopen( full_path, "rb" );
-	if ( file_stream_ptr != NULL ) {
+	if ( file_stream_ptr != nullptr ) {
    		fclose( file_stream_ptr );
 		return( TRUE );
 	}

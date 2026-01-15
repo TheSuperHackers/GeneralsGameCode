@@ -79,7 +79,7 @@ TerrainTracksRenderObjClass::~TerrainTracksRenderObjClass(void)
 //=============================================================================
 TerrainTracksRenderObjClass::TerrainTracksRenderObjClass(void)
 {
-	m_stageZeroTexture=NULL;
+	m_stageZeroTexture=nullptr;
 	m_lastAnchor=Vector3(0,1,2.25);
 	m_haveAnchor=false;
 	m_haveCap=true;
@@ -88,7 +88,7 @@ TerrainTracksRenderObjClass::TerrainTracksRenderObjClass(void)
 	m_activeEdgeCount=0;
 	m_totalEdgesAdded=0;
 	m_bound=false;
-	m_ownerDrawable = NULL;
+	m_ownerDrawable = nullptr;
 }
 
 //=============================================================================
@@ -129,7 +129,7 @@ Int TerrainTracksRenderObjClass::Class_ID(void) const
 RenderObjClass *	 TerrainTracksRenderObjClass::Clone(void) const
 {
 	assert(false);
-	return NULL;
+	return nullptr;
 }
 
 //=============================================================================
@@ -146,7 +146,7 @@ Int TerrainTracksRenderObjClass::freeTerrainTracksResources(void)
 	m_bottomIndex=0;
 	m_activeEdgeCount=0;
 	m_totalEdgesAdded=0;
-	m_ownerDrawable = NULL;
+	m_ownerDrawable = nullptr;
 
 	return 0;
 }
@@ -455,7 +455,7 @@ static Real computeTrackSpacing(RenderObjClass *renderObj)
 //=============================================================================
 //TerrainTracksRenderObjClassSystem::bindTrack
 //=============================================================================
-/** Grab a track from the free store. If no free tracks exist, return NULL.
+/** Grab a track from the free store. If no free tracks exist, return null.
 	As long as a track is bound to an object (like a tank) it is ready to accept
 	updates with additional edges.  Once it is unbound, it will expire and return
 	to the free store once all tracks have faded out.
@@ -482,7 +482,7 @@ TerrainTracksRenderObjClass *TerrainTracksRenderObjClassSystem::bindTrack( Rende
 			m_freeModules = mod->m_nextSystem;
 
 		// put module on the used list
-		mod->m_prevSystem = NULL;
+		mod->m_prevSystem = nullptr;
 		mod->m_nextSystem = m_usedModules;
 		if( m_usedModules )
 			m_usedModules->m_prevSystem = mod;
@@ -510,7 +510,7 @@ void TerrainTracksRenderObjClassSystem::unbindTrack( TerrainTracksRenderObjClass
 	//this object should return to free store as soon as there is nothing
 	//left to render.
 	mod->m_bound=false;
-	mod->m_ownerDrawable = NULL;
+	mod->m_ownerDrawable = nullptr;
 }
 
 //=============================================================================
@@ -520,7 +520,7 @@ void TerrainTracksRenderObjClassSystem::unbindTrack( TerrainTracksRenderObjClass
 */
 void TerrainTracksRenderObjClassSystem::releaseTrack( TerrainTracksRenderObjClass *mod )
 {
-	if (mod==NULL)
+	if (mod==nullptr)
 		return;
 
 	DEBUG_ASSERTCRASH(mod->m_bound == false, ("mod is bound."));
@@ -534,7 +534,7 @@ void TerrainTracksRenderObjClassSystem::releaseTrack( TerrainTracksRenderObjClas
 		m_usedModules = mod->m_nextSystem;
 
 	// add module to free list
-	mod->m_prevSystem = NULL;
+	mod->m_prevSystem = nullptr;
 	mod->m_nextSystem = m_freeModules;
 	if( m_freeModules )
 		m_freeModules->m_prevSystem = mod;
@@ -550,13 +550,13 @@ void TerrainTracksRenderObjClassSystem::releaseTrack( TerrainTracksRenderObjClas
 //=============================================================================
 TerrainTracksRenderObjClassSystem::TerrainTracksRenderObjClassSystem()
 {
-	m_usedModules = NULL;
-	m_freeModules = NULL;
-	m_TerrainTracksScene = NULL;
+	m_usedModules = nullptr;
+	m_freeModules = nullptr;
+	m_TerrainTracksScene = nullptr;
 	m_edgesToFlush = 0;
-	m_indexBuffer = NULL;
-	m_vertexMaterialClass = NULL;
-	m_vertexBuffer = NULL;
+	m_indexBuffer = nullptr;
+	m_vertexMaterialClass = nullptr;
+	m_vertexBuffer = nullptr;
 
 	m_maxTankTrackEdges=TheGlobalData->m_maxTankTrackEdges;
 	m_maxTankTrackOpaqueEdges=TheGlobalData->m_maxTankTrackOpaqueEdges;
@@ -574,8 +574,8 @@ TerrainTracksRenderObjClassSystem::~TerrainTracksRenderObjClassSystem( void )
 	// free all data
 	shutdown();
 
-	m_vertexMaterialClass=NULL;
-	m_TerrainTracksScene=NULL;
+	m_vertexMaterialClass=nullptr;
+	m_TerrainTracksScene=nullptr;
 
 }
 
@@ -666,7 +666,7 @@ void TerrainTracksRenderObjClassSystem::init( SceneClass *TerrainTracksScene )
 
 		mod = NEW_REF( TerrainTracksRenderObjClass, () );
 
-		if( mod == NULL )
+		if( mod == nullptr )
 		{
 
 			// unable to allocate modules needed
@@ -675,7 +675,7 @@ void TerrainTracksRenderObjClassSystem::init( SceneClass *TerrainTracksScene )
 
 		}
 
-		mod->m_prevSystem = NULL;
+		mod->m_prevSystem = nullptr;
 		mod->m_nextSystem = m_freeModules;
 		if( m_freeModules )
 			m_freeModules->m_prevSystem = mod;
@@ -709,7 +709,7 @@ void TerrainTracksRenderObjClassSystem::shutdown( void )
 
 
 	// free all attached things and used modules
-	assert( m_usedModules == NULL );
+	assert( m_usedModules == nullptr );
 
 	// free all module storage
 	while( m_freeModules )
@@ -930,7 +930,7 @@ void TerrainTracksRenderObjClassSystem::Reset(void)
 
 
 	// free all attached things and used modules
-	assert( m_usedModules == NULL );
+	assert( m_usedModules == nullptr );
 	m_edgesToFlush=0;
 }
 
@@ -971,4 +971,4 @@ void TerrainTracksRenderObjClassSystem::setDetail(void)
 	ReAcquireResources();
 };
 
-TerrainTracksRenderObjClassSystem *TheTerrainTracksRenderObjClassSystem=NULL;	///< singleton for track drawing system.
+TerrainTracksRenderObjClassSystem *TheTerrainTracksRenderObjClassSystem=nullptr;	///< singleton for track drawing system.

@@ -197,13 +197,13 @@ typedef struct _TGA2Ratio
  *                 TGA2Footer.
  *
  * ExtSize     - Extension area size. (495 bytes for 2.0)
- * AuthName    - Name of the person who created image (NULL terminated ASCII)
- * AuthComment - Comments of the author (NULL terminated ASCII)
+ * AuthName    - Name of the person who created image (null-terminated ASCII)
+ * AuthComment - Comments of the author (null-terminated ASCII)
  * DateStamp   - Date the file was created. (See TGA2DateStamp)
  * TimeStamp   - Time the file was created. (See TGA2TimeStamp)
- * JobName     - Name of job image belongs to (NULL terminated ASCII)
+ * JobName     - Name of job image belongs to (null-terminated ASCII)
  * JobTime     - Elapsed time of the job.
- * SoftID      - ID of software used to create image (NULL terminated ASCII)
+ * SoftID      - ID of software used to create image (null-terminated ASCII)
  * SoftVer     - Version number of software used.
  * KeyColor    - Tranparent color value.
  * Aspect      - Pixel aspect ratio.

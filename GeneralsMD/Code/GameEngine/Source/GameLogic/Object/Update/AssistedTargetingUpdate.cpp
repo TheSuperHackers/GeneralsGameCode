@@ -52,11 +52,11 @@ void AssistedTargetingUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
   UpdateModuleData::buildFieldParse(p);
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "AssistingClipSize",		INI::parseInt,		NULL, offsetof( AssistedTargetingUpdateModuleData, m_clipSize ) },
+		{ "AssistingClipSize",		INI::parseInt,		nullptr, offsetof( AssistedTargetingUpdateModuleData, m_clipSize ) },
 		{ "AssistingWeaponSlot",	INI::parseLookupList,	TheWeaponSlotTypeNamesLookupList, offsetof( AssistedTargetingUpdateModuleData, m_weaponSlot ) },
-		{ "LaserFromAssisted",		INI::parseAsciiString,				NULL, offsetof( AssistedTargetingUpdateModuleData, m_laserFromAssistedName ) },
-		{ "LaserToTarget",				INI::parseAsciiString,				NULL, offsetof( AssistedTargetingUpdateModuleData, m_laserToTargetName ) },
-		{ 0, 0, 0, 0 }
+		{ "LaserFromAssisted",		INI::parseAsciiString,				nullptr, offsetof( AssistedTargetingUpdateModuleData, m_laserFromAssistedName ) },
+		{ "LaserToTarget",				INI::parseAsciiString,				nullptr, offsetof( AssistedTargetingUpdateModuleData, m_laserToTargetName ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -65,8 +65,8 @@ void AssistedTargetingUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-------------------------------------------------------------------------------------------------
 AssistedTargetingUpdate::AssistedTargetingUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
-	m_laserFromAssisted = NULL;
-	m_laserToTarget = NULL;
+	m_laserFromAssisted = nullptr;
+	m_laserToTarget = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------

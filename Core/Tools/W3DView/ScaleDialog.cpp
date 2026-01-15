@@ -138,7 +138,7 @@ ScaleDialogClass::OnNotify
 	//	Update the spinner control if necessary
 	//
 	NMHDR *header = (NMHDR *)lParam;
-	if ((header != NULL) && (header->code == UDN_DELTAPOS)) {
+	if ((header != nullptr) && (header->code == UDN_DELTAPOS)) {
 		//LPNMUPDOWN updown = (LPNMUPDOWN)lParam;
 		//::Update_Spinner_Buddy (header->hwndFrom, updown->iDelta);
 	}

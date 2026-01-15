@@ -68,7 +68,7 @@ AudioEventRTS::AudioEventRTS()
 										m_shouldFade(false),
 										m_isLogicalAudio(false),
 										m_filenameToLoad(AsciiString::TheEmptyString),
-										m_eventInfo(NULL),
+										m_eventInfo(nullptr),
 										m_playingHandle(0),
 										m_killThisHandle(0),
 										m_pitchShift(1.0),
@@ -95,7 +95,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName )
 										m_shouldFade(false),
 										m_isLogicalAudio(false),
 										m_filenameToLoad(AsciiString::TheEmptyString),
-										m_eventInfo(NULL),
+										m_eventInfo(nullptr),
 										m_playingHandle(0),
 										m_killThisHandle(0),
 										m_pitchShift(1.0),
@@ -123,7 +123,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, ObjectID ownerID )
 										m_shouldFade(false),
 										m_isLogicalAudio(false),
 										m_filenameToLoad(AsciiString::TheEmptyString),
-										m_eventInfo(NULL),
+										m_eventInfo(nullptr),
 										m_playingHandle(0),
 										m_killThisHandle(0),
 										m_pitchShift(1.0),
@@ -159,7 +159,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, DrawableID drawableI
 										m_shouldFade(false),
 										m_isLogicalAudio(false),
 										m_filenameToLoad(AsciiString::TheEmptyString),
-										m_eventInfo(NULL),
+										m_eventInfo(nullptr),
 										m_playingHandle(0),
 										m_killThisHandle(0),
 										m_pitchShift(1.0),
@@ -194,7 +194,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, const Coord3D *posit
 										m_shouldFade(false),
 										m_isLogicalAudio(false),
 										m_filenameToLoad(AsciiString::TheEmptyString),
-										m_eventInfo(NULL),
+										m_eventInfo(nullptr),
 										m_playingHandle(0),
 										m_killThisHandle(0),
 										m_pitchShift(1.0),
@@ -302,9 +302,9 @@ AudioEventRTS::~AudioEventRTS()
 //-------------------------------------------------------------------------------------------------
 void AudioEventRTS::setEventName( AsciiString name )
 {
-	if ((name != m_eventName) && m_eventInfo != NULL) {
+	if ((name != m_eventName) && m_eventInfo != nullptr) {
 		// Clear out the audio event info, cause its not valid for the new event.
-		m_eventInfo = NULL;
+		m_eventInfo = nullptr;
 	}
 
 	m_eventName = name;
@@ -526,7 +526,7 @@ const AudioEventInfo *AudioEventRTS::getAudioEventInfo( void ) const
 		if (m_eventInfo->m_audioName == m_eventName) {
 			return m_eventInfo;
 		} else {
-			m_eventInfo = NULL;
+			m_eventInfo = nullptr;
 		}
 	}
 
@@ -568,7 +568,7 @@ const Coord3D* AudioEventRTS::getPosition( void )
 		return &m_positionOfAudio;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -755,7 +755,7 @@ const Coord3D *AudioEventRTS::getCurrentPosition( void )
 		return &m_positionOfAudio;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------

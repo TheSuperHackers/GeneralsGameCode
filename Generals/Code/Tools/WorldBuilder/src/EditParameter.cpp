@@ -74,7 +74,7 @@
 AsciiString EditParameter::m_selectedLocalizedString = AsciiString::TheEmptyString;
 AsciiString EditParameter::m_unitName = AsciiString::TheEmptyString;
 
-EditParameter::EditParameter(CWnd* pParent /*=NULL*/)
+EditParameter::EditParameter(CWnd* pParent /*=nullptr*/)
 	: CDialog(EditParameter::IDD, pParent),
 	m_int(0),
 	m_real(0)
@@ -103,7 +103,7 @@ END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // EditParameter message handlers
-SidesList *EditParameter::m_sidesListP = NULL;
+SidesList *EditParameter::m_sidesListP = nullptr;
 
 Int EditParameter::edit( Parameter *pParm, AsciiString unitName )
 {
@@ -166,13 +166,13 @@ AsciiString EditParameter::getWarningText(Parameter *pParm)
 			DEBUG_CRASH(("Unknown parameter type."));
 			break;
 		case Parameter::SCRIPT:
-			if (!loadScripts(NULL, false, uiString)) {
+			if (!loadScripts(nullptr, false, uiString)) {
 				warningText.format("Script '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::SCRIPT_SUBROUTINE:
-			if (!loadScripts(NULL, true, uiString)) {
-				if (!loadScripts(NULL, false, uiString)) {
+			if (!loadScripts(nullptr, true, uiString)) {
+				if (!loadScripts(nullptr, false, uiString)) {
 					warningText.format("Script '%s' does not exist.", uiString.str());
 				} else {
 					warningText.format("Script '%s' is not a subroutine.", uiString.str());
@@ -180,32 +180,32 @@ AsciiString EditParameter::getWarningText(Parameter *pParm)
 			}
 			break;
 		case Parameter::ATTACK_PRIORITY_SET:
-			if (!loadAttackPrioritySets(NULL, uiString)) {
+			if (!loadAttackPrioritySets(nullptr, uiString)) {
 				warningText.format("Attack priority set '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::WAYPOINT:
-			if (!loadWaypoints(NULL, uiString)) {
+			if (!loadWaypoints(nullptr, uiString)) {
 				warningText.format("Waypoint '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::WAYPOINT_PATH:
-			if (!loadWaypointPaths(NULL, uiString)) {
+			if (!loadWaypointPaths(nullptr, uiString)) {
 				warningText.format("Waypoint '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::TRIGGER_AREA:
-			if (!loadTriggerAreas(NULL, uiString)) {
+			if (!loadTriggerAreas(nullptr, uiString)) {
 				warningText.format("Waypoint '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::COMMAND_BUTTON:
-			if (!loadCommandButtons(NULL, uiString)) {
+			if (!loadCommandButtons(nullptr, uiString)) {
 				warningText.format("Command button '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::FONT_NAME:
-			if(!loadFontNames(NULL, uiString)) {
+			if(!loadFontNames(nullptr, uiString)) {
 				warningText.format("Font '%s' does not exist.", uiString.str());
 			}
 			break;
@@ -214,43 +214,43 @@ AsciiString EditParameter::getWarningText(Parameter *pParm)
 		case Parameter::TEXT_STRING:
 			break;
 		case Parameter::LOCALIZED_TEXT:
-			if (loadLocalizedText(NULL, uiString) == AsciiString::TheEmptyString) {
+			if (loadLocalizedText(nullptr, uiString) == AsciiString::TheEmptyString) {
 				warningText.format("Localized string '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::SOUND:
-			if (!loadAudioType(Parameter::SOUND, NULL, uiString)) {
+			if (!loadAudioType(Parameter::SOUND, nullptr, uiString)) {
 				warningText.format("Sound '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::TEAM:
-			if (!loadTeams(NULL, uiString)) {
+			if (!loadTeams(nullptr, uiString)) {
 				warningText.format("Team '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::BRIDGE:
-			if (!loadBridges(NULL, uiString)) {
+			if (!loadBridges(nullptr, uiString)) {
 				warningText.format("Bridge '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::UNIT:
-			if (!loadUnits(NULL, uiString)) {
+			if (!loadUnits(nullptr, uiString)) {
 				warningText.format("Unit '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::OBJECT_TYPE:
-			if (!loadObjectType(NULL, uiString)) {
+			if (!loadObjectType(nullptr, uiString)) {
 				warningText.format("Object type '%s' does not exist.", uiString.str());
 			}
 			break;
 		case Parameter::SIDE:
-			if (!loadSides(NULL, uiString)) {
+			if (!loadSides(nullptr, uiString)) {
 				warningText.format("Player '%s' does not exist.", uiString.str());
 			}
 			break;
 
 		case Parameter::OBJECT_PANEL_FLAG:
-			if (!loadObjectFlags(NULL, uiString)) {
+			if (!loadObjectFlags(nullptr, uiString)) {
 				warningText.format("Object flag '%s' is unrecognized.", uiString.str());
 			}
 			break;
@@ -297,19 +297,19 @@ AsciiString EditParameter::getWarningText(Parameter *pParm)
 			break;
 
 		case Parameter::DIALOG:
-			if (!loadAudioType(Parameter::DIALOG, NULL, uiString)) {
+			if (!loadAudioType(Parameter::DIALOG, nullptr, uiString)) {
 				warningText.format("Dialog '%s' does not exist.", uiString.str());
 			}
 			break;
 
 		case Parameter::MUSIC:
-			if (!loadAudioType(Parameter::MUSIC, NULL, uiString)) {
+			if (!loadAudioType(Parameter::MUSIC, nullptr, uiString)) {
 				warningText.format("Track '%s' does not exist.", uiString.str());
 			}
 			break;
 
 		case Parameter::MOVIE:
-			if (!loadMovies(NULL, uiString)) {
+			if (!loadMovies(nullptr, uiString)) {
 				AsciiString commentFromINI;
 				if (!getMovieComment(uiString, commentFromINI)) {
 					warningText.format("Movie '%s' does not exit.", uiString.str());
@@ -320,26 +320,26 @@ AsciiString EditParameter::getWarningText(Parameter *pParm)
 			break;
 
 		case Parameter::SPECIAL_POWER:
-			if (!loadSpecialPowers(NULL, uiString)) {
+			if (!loadSpecialPowers(nullptr, uiString)) {
 				warningText.format("Special Power '%s' does not exist.", uiString.str());
 			}
 			break;
 
 		case Parameter::SCIENCE:
-			if (!loadSciences(NULL, uiString)) {
+			if (!loadSciences(nullptr, uiString)) {
 				warningText.format("Science '%s' does not exist.", uiString.str());
 			}
 			break;
 
 		case Parameter::SCIENCE_AVAILABILITY:
-			if( !loadScienceAvailabilities( NULL, uiString ) )
+			if( !loadScienceAvailabilities( nullptr, uiString ) )
 			{
 				warningText.format( "Science availability '%s' does not exist.", uiString.str() );
 			}
 			break;
 
 		case Parameter::UPGRADE:
-			if (!loadUpgrades(NULL, uiString)) {
+			if (!loadUpgrades(nullptr, uiString)) {
 				warningText.format("Upgrade '%s' does not exist.", uiString.str());
 			}
 			break;
@@ -667,7 +667,7 @@ void EditParameter::loadCounters(CComboBox *pCombo)
 	pCombo->ResetContent();
 	Int i;
 	SidesList *sidesListP = m_sidesListP;
-	if (sidesListP==NULL) sidesListP = TheSidesList;
+	if (sidesListP==nullptr) sidesListP = TheSidesList;
 	for (i=0; i<sidesListP->getNumSides(); i++) {
 		ScriptList *pSL = sidesListP->getSideInfo(i)->getScriptList();
 		Script *pScr;
@@ -691,7 +691,7 @@ Bool EditParameter::loadAttackPrioritySets(CComboBox *pCombo, AsciiString match)
 	Int i;
 	Bool found = false;
 	SidesList *sidesListP = m_sidesListP;
-	if (sidesListP==NULL) sidesListP = TheSidesList;
+	if (sidesListP==nullptr) sidesListP = TheSidesList;
 	for (i=0; i<sidesListP->getNumSides(); i++) {
 		ScriptList *pSL = sidesListP->getSideInfo(i)->getScriptList();
 		Script *pScr;
@@ -829,7 +829,7 @@ Bool EditParameter::loadAbilities( CComboBox *pCombo, AsciiString match )
 			break;
 		}
 	}
-	const ThingTemplate *theTemplate = NULL;
+	const ThingTemplate *theTemplate = nullptr;
 
 	if ( theUnit ) {
 		theTemplate = theUnit->getThingTemplate();
@@ -949,7 +949,7 @@ void EditParameter::loadFlags(CComboBox *pCombo)
 	pCombo->ResetContent();
 	Int i;
 	SidesList *sidesListP = m_sidesListP;
-	if (sidesListP==NULL) sidesListP = TheSidesList;
+	if (sidesListP==nullptr) sidesListP = TheSidesList;
 	for (i=0; i<sidesListP->getNumSides(); i++) {
 		ScriptList *pSL = sidesListP->getSideInfo(i)->getScriptList();
 		Script *pScr;
@@ -975,7 +975,7 @@ Bool EditParameter::loadObjectType(CComboBox *pCombo, AsciiString match)
 
 	Bool didMatch = false;
 
-	didMatch = loadObjectTypeList(pCombo, NULL, match);
+	didMatch = loadObjectTypeList(pCombo, nullptr, match);
 
 	// add entries from the thing factory as the available objects to use
 	const ThingTemplate *tTemplate;
@@ -1209,12 +1209,12 @@ Bool EditParameter::loadCommandButtons(CComboBox *pCombo, AsciiString match)
 	while (fp->eof() == FALSE)
 	{
 		token = strtok(string, seps);
-		if( token != NULL )
+		if( token != nullptr )
 		{
 			if( strcmp( token, "CommandButton" ) == 0)
 			{
-				token = strtok(NULL, seps);
-				if( token != NULL )
+				token = strtok(nullptr, seps);
+				if( token != nullptr )
 				{
 					if (pCombo) pCombo->AddString(token);
 					if (strcmp(match.str(), token) == 0) didMatch = true;
@@ -1226,7 +1226,7 @@ Bool EditParameter::loadCommandButtons(CComboBox *pCombo, AsciiString match)
 	}
 
 	fp->close();
-	fp = NULL;
+	fp = nullptr;
 
 	return didMatch;
 }
@@ -1267,7 +1267,7 @@ Bool EditParameter::loadFontNames(CComboBox *pCombo, AsciiString match)
 	// delete the font library
 	TheFontLibrary->reset();
 	delete TheFontLibrary;
-	TheFontLibrary = NULL;
+	TheFontLibrary = nullptr;
 
 	return didMatch;
 }
@@ -1280,17 +1280,17 @@ void EditParameter::readFontFile( const char *filename )
 	File *fp;
 
 	// sanity
-	if( filename == NULL )
+	if( filename == nullptr )
 		return;
 
 	// open the file
 	fp = TheFileSystem->openFile( filename, File::READ | File::TEXT);
-	if( fp == NULL )
+	if( fp == nullptr )
 		return;
 
 	// read how many entries follow
 	Int fontCount;
-	fp->read(NULL, sizeof("AVAILABLE_FONT_COUNT = "));
+	fp->read(nullptr, sizeof("AVAILABLE_FONT_COUNT = "));
 	fp->scanInt(fontCount);
 
 	for( Int i = 0; i < fontCount; i++ )
@@ -1328,7 +1328,7 @@ void EditParameter::readFontFile( const char *filename )
 
 		// set the font
 		GameFont *font = TheFontLibrary->getFont( AsciiString(fontBuffer), size, bold );
-		if( font == NULL )
+		if( font == nullptr )
 		{
 			char buffer[ 1024 ];
 
@@ -1342,7 +1342,7 @@ void EditParameter::readFontFile( const char *filename )
 
 	// close the file
 	fp->close();
-	fp = NULL;
+	fp = nullptr;
 
 }
 
@@ -1419,11 +1419,11 @@ Bool EditParameter::loadScripts(CComboBox *pCombo, Bool subr, AsciiString match)
 	if (pCombo) pCombo->ResetContent();
 	Int i;
 	SidesList *sidesListP = m_sidesListP;
-	if (sidesListP==NULL) sidesListP = TheSidesList;
+	if (sidesListP==nullptr) sidesListP = TheSidesList;
 	Bool didMatch = false;
 	for (i=0; i<sidesListP->getNumSides(); i++) {
 		ScriptList *pSL = sidesListP->getSideInfo(i)->getScriptList();
-		if (pSL == NULL) continue;
+		if (pSL == nullptr) continue;
 		Script *pScr;
 		for (pScr = pSL->getScript(); pScr; pScr=pScr->getNext()) {
 			if (subr && !pScr->isSubroutine()) continue;
@@ -1460,7 +1460,7 @@ Bool EditParameter::loadSides(CComboBox *pCombo, AsciiString match)
 	if (match == THIS_PLAYER_ENEMY) didMatch=true;
 	Int i;
 	SidesList *sidesListP = m_sidesListP;
-	if (sidesListP==NULL) sidesListP = TheSidesList;
+	if (sidesListP==nullptr) sidesListP = TheSidesList;
 	for (i=0; i<sidesListP->getNumSides(); i++) {
 		Dict *d = sidesListP->getSideInfo(i)->getDict();
 		AsciiString name = d->getAsciiString(TheKey_playerName);
@@ -1483,7 +1483,7 @@ Bool EditParameter::loadTeams(CComboBox *pCombo, AsciiString match)
 	if (match == ANY_TEAM) didMatch=true;
 	Int i;
 	SidesList *sidesListP = m_sidesListP;
-	if (sidesListP==NULL) sidesListP = TheSidesList;
+	if (sidesListP==nullptr) sidesListP = TheSidesList;
 	for (i = 0; i < sidesListP->getNumTeams(); i++)
 	{
 		Dict *d = sidesListP->getTeamInfo(i)->getDict();
@@ -1508,7 +1508,7 @@ Bool EditParameter::loadTeamOrUnit(CComboBox *pCombo, AsciiString match)
 	Bool didMatch = false;
 	Int i;
 	SidesList *sidesListP = m_sidesListP;
-	if (sidesListP==NULL) sidesListP = TheSidesList;
+	if (sidesListP==nullptr) sidesListP = TheSidesList;
 	for (i = 0; i < sidesListP->getNumTeams(); i++)
 	{
 		Dict *d = sidesListP->getTeamInfo(i)->getDict();
@@ -1581,7 +1581,7 @@ Bool EditParameter::loadUnits(CComboBox *pCombo, AsciiString match)
 
 	SidesList *sidesListP = m_sidesListP;
 	Int i;
-	if (sidesListP==NULL)
+	if (sidesListP==nullptr)
 	{
 		sidesListP = TheSidesList;
 	}
@@ -2197,7 +2197,7 @@ void EditParameter::OnOK()
 		case Parameter::LOCALIZED_TEXT:
 			pCombo->GetWindowText(txt);
 			comboText = AsciiString(txt);
-			m_parameter->friend_setString(loadLocalizedText(NULL, comboText));
+			m_parameter->friend_setString(loadLocalizedText(nullptr, comboText));
 			break;
 		case Parameter::BOUNDARY:
 		{
@@ -2284,7 +2284,7 @@ void EditParameter::OnPreviewSound()
 		event.generateFilename();
 
 		if (!event.getFilename().isEmpty()) {
-			PlaySound(event.getFilename().str(), NULL, SND_ASYNC | SND_FILENAME | SND_PURGE);
+			PlaySound(event.getFilename().str(), nullptr, SND_ASYNC | SND_FILENAME | SND_PURGE);
 		}
 	}
 }

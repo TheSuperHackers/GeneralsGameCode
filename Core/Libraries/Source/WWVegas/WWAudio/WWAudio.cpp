@@ -65,8 +65,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //	Static member initialization
 ////////////////////////////////////////////////////////////////////////////////////////////////
-WWAudioClass *WWAudioClass::_theInstance = NULL;
-HANDLE WWAudioClass::_TimerSyncEvent = NULL;
+WWAudioClass *WWAudioClass::_theInstance = nullptr;
+HANDLE WWAudioClass::_TimerSyncEvent = nullptr;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -104,14 +104,14 @@ WWAudioClass::Is_OK_To_Give_Handle (const AudibleSoundClass &sound_obj)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 WWAudioClass::WWAudioClass (void)
-	: m_Driver2D (NULL),
-	  m_Driver3D (NULL),
+	: m_Driver2D (nullptr),
+	  m_Driver3D (nullptr),
 	  m_PlaybackRate (44100),
 	  m_PlaybackBits (16),
 	  m_PlaybackStereo (true),
 	  m_ReverbFilter ((HPROVIDER)INVALID_MILES_HANDLE),
 	  m_UpdateTimer (-1),
-	  m_Driver3DPseudo (NULL),
+	  m_Driver3DPseudo (nullptr),
 	  m_MusicVolume (DEF_MUSIC_VOL),
 	  m_SoundVolume (DEF_SFX_VOL),
 	  m_MaxCacheSize (DEF_CACHE_SIZE * 1024),
@@ -120,10 +120,10 @@ WWAudioClass::WWAudioClass (void)
 	  m_Max3DSamples (DEF_3D_SAMPLE_COUNT),
 	  m_Max2DBufferSize (DEF_MAX_2D_BUFFER_SIZE),
 	  m_Max3DBufferSize (DEF_MAX_3D_BUFFER_SIZE),
-	  m_SoundScene (NULL),
+	  m_SoundScene (nullptr),
 	  m_IsMusicEnabled (true),
 	  m_AreSoundEffectsEnabled (true),
-	  m_FileFactory (NULL),
+	  m_FileFactory (nullptr),
 	  m_EffectsLevel (0),
 	  m_ReverbRoomType (ENVIRONMENT_GENERIC)
 {
@@ -134,7 +134,7 @@ WWAudioClass::WWAudioClass (void)
 	//
 	AIL_startup ();
 	_theInstance = this;
-	_TimerSyncEvent = ::CreateEvent (NULL, TRUE, FALSE, "WWAUDIO_TIMER_SYNC");
+	_TimerSyncEvent = ::CreateEvent (nullptr, TRUE, FALSE, "WWAUDIO_TIMER_SYNC");
 
 	//
 	// Set some default values
@@ -162,9 +162,9 @@ WWAudioClass::~WWAudioClass (void)
 	WWAudioThreadsClass::End_Delayed_Release_Thread ();
 
 	Shutdown ();
-	_theInstance = NULL;
+	_theInstance = nullptr;
 	::CloseHandle(_TimerSyncEvent);
-	_TimerSyncEvent = NULL;
+	_TimerSyncEvent = nullptr;
 
 	::DeleteCriticalSection (&MMSLockClass::_MSSLockCriticalSection);
 
@@ -238,11 +238,11 @@ WWAudioClass::Open_2D_Device (LPWAVEFORMAT format)
 	WWASSERT (success == AIL_NO_ERROR);
 
 	// Open the driver
-	success = ::AIL_waveOutOpen (&m_Driver2D, NULL, 0, format);
+	success = ::AIL_waveOutOpen (&m_Driver2D, nullptr, 0, format);
 
 	// Do we need to switch from direct sound to waveout?
 	if ((success == AIL_NO_ERROR) &&
-		 (m_Driver2D != NULL) &&
+		 (m_Driver2D != nullptr) &&
 		 (m_Driver2D->emulated_ds == TRUE)) {
 		::AIL_waveOutClose (m_Driver2D);
 		success = 2;
@@ -258,7 +258,7 @@ WWAudioClass::Open_2D_Device (LPWAVEFORMAT format)
 		WWASSERT (success == AIL_NO_ERROR);
 
 		// Open the driver
-		success = ::AIL_waveOutOpen (&m_Driver2D, NULL, 0, format);
+		success = ::AIL_waveOutOpen (&m_Driver2D, nullptr, 0, format);
 		WWASSERT (success == AIL_NO_ERROR);
 		type = (success == AIL_NO_ERROR) ? DRIVER2D_WAVEOUT : DRIVER2D_ERROR;
 	}
@@ -337,13 +337,13 @@ WWAudioClass::Close_2D_Device (void)
 	//
 	// Do we have an open driver handle to close?
 	//
-	if (m_Driver2D != NULL) {
+	if (m_Driver2D != nullptr) {
 
 		//
 		// Close the driver
 		//
 		::AIL_waveOutClose (m_Driver2D);
-		m_Driver2D = NULL;
+		m_Driver2D = nullptr;
 		retval = true;
 	}
 
@@ -366,9 +366,9 @@ WWAudioClass::Get_Sound_Buffer (const char *filename, bool is_3d)
 	// Try to find the buffer in our cache, otherwise create a new buffer.
 	//
 	SoundBufferClass *buffer = Find_Cached_Buffer (filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		FileClass *file = Get_File (filename);
-		if (file != NULL && file->Is_Available ()) {
+		if (file != nullptr && file->Is_Available ()) {
 			buffer = Create_Sound_Buffer (*file, filename, is_3d);
 		} else {
 			static int count = 0;
@@ -397,7 +397,7 @@ WWAudioClass::Get_Sound_Buffer (FileClass &file, const char *string_id, bool is_
 	// Try to find the buffer in our cache, otherwise create a new buffer.
 	//
 	SoundBufferClass *buffer = Find_Cached_Buffer (string_id);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		buffer = Create_Sound_Buffer (file, string_id, is_3d);
 	}
 
@@ -413,11 +413,11 @@ WWAudioClass::Get_Sound_Buffer (FileClass &file, const char *string_id, bool is_
 SoundBufferClass *
 WWAudioClass::Find_Cached_Buffer (const char *string_id)
 {
-	SoundBufferClass *sound_buffer = NULL;
+	SoundBufferClass *sound_buffer = nullptr;
 
 	// Param OK?
-	WWASSERT (string_id != NULL);
-	if (string_id != NULL) {
+	WWASSERT (string_id != nullptr);
+	if (string_id != nullptr) {
 
 		//
 		// Determine which index in our hash table to use
@@ -471,7 +471,7 @@ WWAudioClass::Free_Cache_Space (int bytes)
 
 			// Can we free this cached buffer?
 			CACHE_ENTRY_STRUCT &info = m_CachedBuffers[hash_index][index];
-			if ((info.buffer != NULL) && (info.buffer->Num_Refs () == 1)) {
+			if ((info.buffer != nullptr) && (info.buffer->Num_Refs () == 1)) {
 
 				// Add the size of this buffer to our count of bytes freed
 				bytes_freed += info.buffer->Get_Raw_Length ();
@@ -512,10 +512,10 @@ WWAudioClass::Cache_Buffer
 	bool retval = false;
 
 	// Params OK?
-	WWASSERT (buffer != NULL);
-	WWASSERT (string_id != NULL);
-	if ((buffer != NULL) &&
-		 (string_id != NULL) &&
+	WWASSERT (buffer != nullptr);
+	WWASSERT (string_id != nullptr);
+	if ((buffer != nullptr) &&
+		 (string_id != nullptr) &&
 		 (buffer->Get_Raw_Length () < (U32)(m_MaxCacheSize / 2))) {
 
 		// Attempt to free space in the cache (if needed)
@@ -565,7 +565,7 @@ WWAudioClass::Create_Sound_Buffer
 	bool			is_3d
 )
 {
-	SoundBufferClass *sound_buffer = NULL;
+	SoundBufferClass *sound_buffer = nullptr;
 
 	//
 	//	Determine how large this buffer can be
@@ -591,8 +591,8 @@ WWAudioClass::Create_Sound_Buffer
 	WWASSERT (success);
 
 	// If we were successful in creating the sound buffer, then
-	// try to cache it as well, otherwise free the buffer and return NULL.
-	if (success && (string_id != NULL)) {
+	// try to cache it as well, otherwise free the buffer and return null.
+	if (success && (string_id != nullptr)) {
 		Cache_Buffer (sound_buffer, string_id);
 	} else if (success == false) {
 		REF_PTR_RELEASE (sound_buffer);
@@ -629,8 +629,8 @@ WWAudioClass::Create_Sound_Buffer
 	WWASSERT (success);
 
 	// If we were successful in creating the sound buffer, then
-	// try to cache it as well, otherwise free the buffer and return NULL.
-	if (success && (string_id != NULL)) {
+	// try to cache it as well, otherwise free the buffer and return null.
+	if (success && (string_id != nullptr)) {
 		Cache_Buffer (sound_buffer, string_id);
 	} else if (success == false) {
 		REF_PTR_RELEASE (sound_buffer);
@@ -675,12 +675,12 @@ AudibleSoundClass *
 WWAudioClass::Create_Sound_Effect (const char *filename)
 {
 	// Assume failure
-	AudibleSoundClass *sound_obj = NULL;
+	AudibleSoundClass *sound_obj = nullptr;
 	if (Is_Disabled () == false) {
 
 		// Param OK?
-		WWASSERT (filename != NULL);
-		if (filename != NULL) {
+		WWASSERT (filename != nullptr);
+		if (filename != nullptr) {
 
 			// Create a file object and pass it onto the appropriate function
 			FileClass *file = Get_File (filename);
@@ -718,7 +718,7 @@ WWAudioClass::Create_Sound_Effect
 
 		// Try to find the buffer in our cache, otherwise create a new buffer.
 		SoundBufferClass *buffer = Find_Cached_Buffer (string_id);
-		if (buffer == NULL) {
+		if (buffer == nullptr) {
 			buffer = Create_Sound_Buffer (raw_wave_data, bytes, string_id, false);
 		}
 
@@ -740,7 +740,7 @@ WWAudioClass::Create_Sound_Effect
 Sound3DClass *
 WWAudioClass::Create_3D_Sound (FileClass &file, const char *string_id, int classid_hint)
 {
-	Sound3DClass *sound_obj = NULL;
+	Sound3DClass *sound_obj = nullptr;
 	if (Is_Disabled () == false) {
 
 		// Try to find the buffer in our cache, otherwise create a new buffer.
@@ -755,7 +755,7 @@ WWAudioClass::Create_3D_Sound (FileClass &file, const char *string_id, int class
 		{
 			sound_obj = W3DNEW SoundPseudo3DClass;
 			sound_obj->Set_Buffer (buffer);
-		} else if (buffer != NULL) {
+		} else if (buffer != nullptr) {
 			sound_obj = W3DNEW Sound3DClass;
 			sound_obj->Set_Buffer (buffer);
 		}
@@ -783,12 +783,12 @@ WWAudioClass::Create_3D_Sound
 	WWMEMLOG(MEM_SOUND);
 
 	// Assume failure
-	Sound3DClass *sound_obj = NULL;
+	Sound3DClass *sound_obj = nullptr;
 	if (Is_Disabled () == false) {
 
 		// Param OK?
-		WWASSERT (filename != NULL);
-		if (filename != NULL) {
+		WWASSERT (filename != nullptr);
+		if (filename != nullptr) {
 
 			// Try to find the buffer in our cache, otherwise create a new buffer.
 			SoundBufferClass *buffer = Get_Sound_Buffer (filename, true);
@@ -802,7 +802,7 @@ WWAudioClass::Create_3D_Sound
 			{
 				sound_obj = W3DNEW SoundPseudo3DClass;
 				sound_obj->Set_Buffer (buffer);
-			} else if (buffer != NULL) {
+			} else if (buffer != nullptr) {
 				sound_obj = W3DNEW Sound3DClass;
 				sound_obj->Set_Buffer (buffer);
 			} else {
@@ -835,14 +835,14 @@ WWAudioClass::Create_3D_Sound
 	int					classid_hint
 )
 {
-	Sound3DClass *sound_obj = NULL;
+	Sound3DClass *sound_obj = nullptr;
 	if (Is_Disabled () == false) {
 
 		//
 		// Try to find the buffer in our cache, otherwise create a new buffer.
 		//
 		SoundBufferClass *buffer = Find_Cached_Buffer (string_id);
-		if (buffer == NULL) {
+		if (buffer == nullptr) {
 			buffer = Create_Sound_Buffer (raw_wave_data, bytes, string_id, true);
 		}
 
@@ -855,7 +855,7 @@ WWAudioClass::Create_3D_Sound
 		{
 			sound_obj = W3DNEW SoundPseudo3DClass;
 			sound_obj->Set_Buffer (buffer);
-		} else if (buffer != NULL) {
+		} else if (buffer != nullptr) {
 			sound_obj = W3DNEW Sound3DClass;
 			sound_obj->Set_Buffer (buffer);
 		}
@@ -882,13 +882,13 @@ WWAudioClass::Create_Sound
 	int				classid_hint
 )
 {
-	AudibleSoundClass *sound = NULL;
+	AudibleSoundClass *sound = nullptr;
 
 	//
 	//	Find the definition
 	//
 	DefinitionClass *definition = DefinitionMgrClass::Find_Definition (definition_id);
-	if (definition != NULL ) {
+	if (definition != nullptr ) {
 
 		//
 		//	Make sure this is really a sound definition
@@ -901,7 +901,7 @@ WWAudioClass::Create_Sound
 			//	Create an instance of the sound
 			//
 			sound = sound_def->Create_Sound (classid_hint);
-			if (sound != NULL) {
+			if (sound != nullptr) {
 				sound->Set_User_Data (user_obj, user_data);
 			}
 		}
@@ -925,13 +925,13 @@ WWAudioClass::Create_Sound
 	int				classid_hint
 )
 {
-	AudibleSoundClass *sound = NULL;
+	AudibleSoundClass *sound = nullptr;
 
 	//
 	//	Find the definition
 	//
 	DefinitionClass *definition = DefinitionMgrClass::Find_Typed_Definition (def_name, CLASSID_SOUND, true);
-	if (definition != NULL ) {
+	if (definition != nullptr ) {
 
 		//
 		//	Make sure this is really a sound definition
@@ -944,7 +944,7 @@ WWAudioClass::Create_Sound
 			//	Create an instance of the sound
 			//
 			sound = sound_def->Create_Sound (classid_hint);
-			if (sound != NULL) {
+			if (sound != nullptr) {
 				sound->Set_User_Data (user_obj, user_data);
 			}
 		}
@@ -972,7 +972,7 @@ WWAudioClass::Create_Continuous_Sound
 	//	Create an instance of the sound and play it
 	//
 	AudibleSoundClass *sound = Create_Sound (definition_id, user_obj, user_data, classid_hint);
-	if (sound != NULL) {
+	if (sound != nullptr) {
 
 		if (sound->Get_Loop_Count () != INFINITE_LOOPS) {
 			WWDEBUG_SAY (("Audio Error:  Creating a continuous sound with a finite loop count!"));
@@ -1004,7 +1004,7 @@ WWAudioClass::Create_Instant_Sound
 	//	Create an instance of the sound and play it
 	//
 	AudibleSoundClass *sound = Create_Sound (definition_id, user_obj, user_data, classid_hint);
-	if (sound != NULL) {
+	if (sound != nullptr) {
 
 		if (sound->Get_Loop_Count () == INFINITE_LOOPS) {
 			WWDEBUG_SAY (("Audio Error:  Creating an instant sound %s with an infinite loop count!",sound->Get_Definition()->Get_Name()));
@@ -1038,7 +1038,7 @@ WWAudioClass::Create_Continuous_Sound
 	//	Create an instance of the sound and play it
 	//
 	AudibleSoundClass *sound = Create_Sound (def_name, user_obj, user_data, classid_hint);
-	if (sound != NULL) {
+	if (sound != nullptr) {
 
 		if (sound->Get_Loop_Count () != INFINITE_LOOPS) {
 			WWDEBUG_SAY (("Audio Error:  Creating a continuous sound with a finite loop count!"));
@@ -1071,7 +1071,7 @@ WWAudioClass::Create_Instant_Sound
 	//	Create an instance of the sound and play it
 	//
 	AudibleSoundClass *sound = Create_Sound (def_name, user_obj, user_data, classid_hint);
-	if (sound != NULL) {
+	if (sound != nullptr) {
 
 		if (sound->Get_Loop_Count () == INFINITE_LOOPS) {
 			WWDEBUG_SAY (("Audio Error:  Creating an instant sound %s with an infinite loop count!",sound->Get_Definition()->Get_Name()));
@@ -1124,7 +1124,7 @@ WWAudioClass::Free_Completed_Sounds (void)
 		for (int index = 0; index < m_CompletedSounds.Count (); index ++) {
 			AudibleSoundClass *sound_obj = m_CompletedSounds[index];
 
-         WWASSERT(sound_obj != NULL); //TSS 05/24/99
+         WWASSERT(sound_obj != nullptr); //TSS 05/24/99
 
 			// Remove this sound from the playlist
 			bool found = false;
@@ -1158,7 +1158,7 @@ WWAudioClass::Free_Completed_Sounds (void)
 AudibleSoundClass *
 WWAudioClass::Get_Playlist_Entry (int index) const
 {
-	AudibleSoundClass *sound_obj = NULL;
+	AudibleSoundClass *sound_obj = nullptr;
 
 	// Params OK?
 	WWASSERT (index >= 0 && index < m_Playlist.Count ());
@@ -1183,8 +1183,8 @@ WWAudioClass::Add_To_Playlist (AudibleSoundClass *sound)
 	// Assume failure
 	bool retval = false;
 
-	WWASSERT (sound != NULL);
-	if (sound != NULL) {
+	WWASSERT (sound != nullptr);
+	if (sound != nullptr) {
 
 		// Loop through all the entries in the playlist
 		bool already_added = false;
@@ -1215,8 +1215,8 @@ WWAudioClass::Remove_From_Playlist (AudibleSoundClass *sound_obj)
 	// Assume failure
 	bool retval = false;
 
-	WWASSERT (sound_obj != NULL);
-	if (sound_obj != NULL) {
+	WWASSERT (sound_obj != nullptr);
+	if (sound_obj != nullptr) {
 
 		// Loop through all the entries in the playlist
 		int index = 0;
@@ -1236,9 +1236,9 @@ WWAudioClass::Remove_From_Playlist (AudibleSoundClass *sound_obj)
 		//
 		if (sound_obj->Get_Loop_Count () != INFINITE_LOOPS) {
 			for (index = 0; index < m_EOSCallbackList.Count (); index ++) {
-				uint32 user_data				= NULL;
+				uint32 user_data				= 0;
 				LPFNEOSCALLBACK callback	= m_EOSCallbackList.Get_Callback (index, &user_data);
-				if (callback != NULL) {
+				if (callback != nullptr) {
 					(*callback) (sound_obj, user_data);
 				}
 			}
@@ -1281,7 +1281,7 @@ WWAudioClass::Is_Sound_In_Playlist (AudibleSoundClass *sound_obj)
 void
 WWAudioClass::Reprioritize_Playlist (void)
 {
-	AudibleSoundClass *sound_to_get_handle = NULL;
+	AudibleSoundClass *sound_to_get_handle = nullptr;
 	float hightest_priority = 0;
 
 	// Loop through all the entries in the playlist
@@ -1289,7 +1289,7 @@ WWAudioClass::Reprioritize_Playlist (void)
 
 		// Is this the highest priority without a miles handle?
 		AudibleSoundClass *sound_obj = m_Playlist[index];
-		if ((sound_obj->Get_Miles_Handle () == NULL) &&
+		if ((sound_obj->Get_Miles_Handle () == nullptr) &&
 			 (sound_obj->Is_Sound_Culled () == false) &&
 			 (sound_obj->Get_Priority () > hightest_priority))
 		{
@@ -1301,7 +1301,7 @@ WWAudioClass::Reprioritize_Playlist (void)
 	}
 
 	// Get a new handle for this sound if necessary
-	if (sound_to_get_handle != NULL) {
+	if (sound_to_get_handle != nullptr) {
 		sound_to_get_handle->Allocate_Miles_Handle ();
 	}
 
@@ -1322,7 +1322,7 @@ WWAudioClass::On_Frame_Update (unsigned int milliseconds)
 	//
 	Free_Completed_Sounds ();
 
-	if (m_SoundScene != NULL) {
+	if (m_SoundScene != nullptr) {
 		m_SoundScene->On_Frame_Update (milliseconds);
 		m_SoundScene->Collect_Logical_Sounds (milliseconds);
 	}
@@ -1356,7 +1356,7 @@ WWAudioClass::Release_2D_Handles (void)
 	// Release our hold on all the samples we've allocated
 	for (int index = 0; index < m_2DSampleHandles.Count (); index ++) {
 		HSAMPLE sample = m_2DSampleHandles[index];
-		if (sample != NULL) {
+		if (sample != nullptr) {
 			::AIL_release_sample_handle (sample);
 		}
 	}
@@ -1379,13 +1379,13 @@ WWAudioClass::Allocate_2D_Handles (void)
 	// Start fresh
 	Release_2D_Handles ();
 
-	if (m_Driver2D != NULL) {
+	if (m_Driver2D != nullptr) {
 
 		// Attempt to allocate our share of 2D sample handles
 		for (int index = 0; index < m_Max2DSamples; index ++) {
 			HSAMPLE sample = ::AIL_allocate_sample_handle (m_Driver2D);
-			if (sample != NULL) {
-				::AIL_set_sample_user_data (sample, INFO_OBJECT_PTR, NULL);
+			if (sample != nullptr) {
+				::AIL_set_sample_user_data (sample, INFO_OBJECT_PTR, nullptr);
 				m_2DSampleHandles.Add (sample);
 			}
 		}
@@ -1414,8 +1414,8 @@ WWAudioClass::Get_2D_Sample (const AudibleSoundClass &sound_obj)
 
 	float lowest_priority					= sound_obj.Get_Priority ();
 	float lowest_runtime_priority			= sound_obj.Get_Runtime_Priority ();
-	AudibleSoundClass *lowest_pri_sound = NULL;
-	HSAMPLE lowest_pri_sample				= NULL;
+	AudibleSoundClass *lowest_pri_sound = nullptr;
+	HSAMPLE lowest_pri_sample				= nullptr;
 	HSAMPLE free_sample						= (HSAMPLE)INVALID_MILES_HANDLE;
 
 	// Loop through all the available sample handles and try to find
@@ -1424,11 +1424,11 @@ WWAudioClass::Get_2D_Sample (const AudibleSoundClass &sound_obj)
 	for (int index = 0; (index < m_2DSampleHandles.Count ()) && !found; index ++) {
 
 		HSAMPLE sample = m_2DSampleHandles[index];
-		if (sample != NULL) {
+		if (sample != nullptr) {
 
 			// Get a pointer to the object that is currently using this sample
 			AudibleSoundClass *sound_obj = (AudibleSoundClass *)::AIL_sample_user_data (sample, INFO_OBJECT_PTR);
-			if (sound_obj == NULL) {
+			if (sound_obj == nullptr) {
 
 				// Return this sample handle to the caller
 				free_sample = sample;
@@ -1456,7 +1456,7 @@ WWAudioClass::Get_2D_Sample (const AudibleSoundClass &sound_obj)
 
 	// Steal the sample handle from the lower priority
 	// sound and return the handle to the caller.
-	if ((found == false) && (lowest_pri_sound != NULL)) {
+	if ((found == false) && (lowest_pri_sound != nullptr)) {
 		lowest_pri_sound->Free_Miles_Handle ();
 		free_sample = lowest_pri_sample;
 	}
@@ -1482,8 +1482,8 @@ WWAudioClass::Get_3D_Sample (const Sound3DClass &sound_obj)
 
 	float lowest_priority					= sound_obj.Get_Priority ();
 	float lowest_runtime_priority			= sound_obj.Get_Runtime_Priority ();
-	AudibleSoundClass *lowest_pri_sound = NULL;
-	H3DSAMPLE lowest_pri_sample			= NULL;
+	AudibleSoundClass *lowest_pri_sound = nullptr;
+	H3DSAMPLE lowest_pri_sample			= nullptr;
 	H3DSAMPLE free_sample					= (H3DSAMPLE)INVALID_MILES_HANDLE;
 
 
@@ -1493,11 +1493,11 @@ WWAudioClass::Get_3D_Sample (const Sound3DClass &sound_obj)
 	for (int index = 0; (index < m_3DSampleHandles.Count ()) && !found; index ++) {
 
 		H3DSAMPLE sample = m_3DSampleHandles[index];
-		if (sample != NULL) {
+		if (sample != nullptr) {
 
 			// Get a pointer to the object that is currently using this sample
 			AudibleSoundClass *sound_obj = (AudibleSoundClass *)::AIL_3D_object_user_data (sample, INFO_OBJECT_PTR);
-			if (sound_obj == NULL) {
+			if (sound_obj == nullptr) {
 
 				// Return this sample handle to the caller
 				free_sample = sample;
@@ -1525,7 +1525,7 @@ WWAudioClass::Get_3D_Sample (const Sound3DClass &sound_obj)
 
 	// Steal the sample handle from the lower priority
 	// sound and return the handle to the caller.
-	if ((found == false) && (lowest_pri_sound != NULL)) {
+	if ((found == false) && (lowest_pri_sound != nullptr)) {
 		lowest_pri_sound->Free_Miles_Handle ();
 		free_sample = lowest_pri_sample;
 	}
@@ -1559,8 +1559,8 @@ WWAudioClass::Build_3D_Driver_List (void)
 	MMSLockClass lock;
 
 	HPROENUM next = HPROENUM_FIRST;
-	HPROVIDER provider = NULL;
-	char *name = NULL;
+	HPROVIDER provider = nullptr;
+	char *name = nullptr;
 	while (::AIL_enumerate_3D_providers (&next, &provider, &name) > 0) {
 
 		// Can we successfully open this provider?
@@ -1616,21 +1616,21 @@ WWAudioClass::Free_3D_Driver_List (void)
 	//
 	for (int index = 0; index < m_Driver3DList.Count (); index ++) {
 		DRIVER_INFO_STRUCT *info = m_Driver3DList[index];
-		if (info != NULL) {
+		if (info != nullptr) {
 
 			//
 			// Free the information we have stored with this driver
 			//
-			if (info->name != NULL) {
+			if (info->name != nullptr) {
 				::free (info->name);
 			}
 			delete info;
 		}
 	}
 
-	if (m_Driver3D != NULL) {
+	if (m_Driver3D != nullptr) {
 		::AIL_close_3D_provider (m_Driver3D);
-		m_Driver3D = NULL;
+		m_Driver3D = nullptr;
 	}
 
 	//
@@ -1656,7 +1656,7 @@ WWAudioClass::Select_3D_Device (const char *device_name)
 	//
 	for (int index = 0; index < m_Driver3DList.Count (); index ++) {
 		DRIVER_INFO_STRUCT *info = m_Driver3DList[index];
-		if (info != NULL) {
+		if (info != nullptr) {
 
 			//
 			//	Is this the device we were looking for?
@@ -1681,7 +1681,7 @@ bool
 WWAudioClass::Select_3D_Device (const char *device_name, HPROVIDER provider)
 {
 	bool retval = false;
-	if ((provider != NULL) && (provider != m_Driver3D)) {
+	if ((provider != nullptr) && (provider != m_Driver3D)) {
 
 		//
 		//	Remove all the handles
@@ -1692,9 +1692,9 @@ WWAudioClass::Select_3D_Device (const char *device_name, HPROVIDER provider)
 		//
 		// Close the previous driver if needs be
 		//
-		if (m_Driver3D != NULL) {
+		if (m_Driver3D != nullptr) {
 			::AIL_close_3D_provider (m_Driver3D);
-			m_Driver3D = NULL;
+			m_Driver3D = nullptr;
 		}
 
 		//
@@ -1711,7 +1711,7 @@ WWAudioClass::Select_3D_Device (const char *device_name, HPROVIDER provider)
 			//
 			StringClass lower_name = device_name;
 			::strlwr (lower_name.Peek_Buffer ());
-			if (::strstr (device_name, "eax") != 0) {
+			if (::strstr (device_name, "eax") != nullptr) {
 				m_EffectsLevel = 1.0F;
 			} else {
 				m_EffectsLevel = 0.0F;
@@ -1802,10 +1802,10 @@ WWAudioClass::Find_3D_Device (DRIVER_TYPE_3D type)
 	int driver_index = -1;
 	for (int index = 0; (index < m_Driver3DList.Count ()) && (driver_index == -1); index ++) {
 		DRIVER_INFO_STRUCT *info = m_Driver3DList[index];
-		if ((info != NULL) && (info->name != NULL)) {
+		if ((info != nullptr) && (info->name != nullptr)) {
 
 			// Is this the driver we were looking for?
-			if (::strstr (info->name, sub_string) != NULL) {
+			if (::strstr (info->name, sub_string) != nullptr) {
 				driver_index = index;
 			}
 		}
@@ -1829,13 +1829,13 @@ WWAudioClass::Allocate_3D_Handles (void)
 	// Start fresh
 	Release_3D_Handles ();
 
-	if (m_Driver3D != NULL) {
+	if (m_Driver3D != nullptr) {
 
 		// Attempt to allocate our share of 3D sample handles
 		for (int index = 0; index < m_Max3DSamples; index ++) {
 			H3DSAMPLE sample = ::AIL_allocate_3D_sample_handle (m_Driver3D);
-			if (sample != NULL) {
-				::AIL_set_3D_object_user_data (sample, INFO_OBJECT_PTR, NULL);
+			if (sample != nullptr) {
+				::AIL_set_3D_object_user_data (sample, INFO_OBJECT_PTR, nullptr);
 				m_3DSampleHandles.Add (sample);
 			}
 		}
@@ -1860,7 +1860,7 @@ WWAudioClass::Release_3D_Handles (void)
 	//
 	for (int index = 0; index < m_3DSampleHandles.Count (); index ++) {
 		H3DSAMPLE sample = m_3DSampleHandles[index];
-		if (sample != NULL) {
+		if (sample != nullptr) {
 			::AIL_release_3D_sample_handle (sample);
 		}
 	}
@@ -1883,7 +1883,7 @@ WWAudioClass::Validate_3D_Sound_Buffer (SoundBufferClass *buffer)
 	//
 	// 3D sound buffer MUST be uncompressed mono WAV data
 	//
-	if ((buffer != NULL) &&
+	if ((buffer != nullptr) &&
 		 (buffer->Get_Channels () == 1) &&
 		 (buffer->Get_Type () == WAVE_FORMAT_PCM) &&
 		 (buffer->Is_Streaming () == false))
@@ -2102,7 +2102,7 @@ WWAudioClass::Initialize (const char *registry_subkey_name)
 		//	Grab the first (and only) filter for use with our 'tinny' effect.
 		//
 		HPROENUM next = HPROENUM_FIRST;
-		char *name = NULL;
+		char *name = nullptr;
 		if (::AIL_enumerate_filters (&next, &m_ReverbFilter, &name) == 0) {
 			m_ReverbFilter = (HPROVIDER)INVALID_MILES_HANDLE;
 		}
@@ -2141,7 +2141,7 @@ WWAudioClass::Initialize
 		//	Grab the first (and only) filter for use with our 'tinny' effect.
 		//
 		HPROENUM next = HPROENUM_FIRST;
-		char *name = NULL;
+		char *name = nullptr;
 		if (::AIL_enumerate_filters (&next, &m_ReverbFilter, &name) == 0) {
 			m_ReverbFilter = (HPROVIDER)INVALID_MILES_HANDLE;
 		}
@@ -2172,14 +2172,14 @@ WWAudioClass::Shutdown (void)
 		// Wait for the timer callback function to end
 		::WaitForSingleObject (_TimerSyncEvent, 20000);
 		::CloseHandle (_TimerSyncEvent);
-		_TimerSyncEvent = NULL;
+		_TimerSyncEvent = nullptr;
 	}
 
 	//
 	// Stop all sounds from playing
 	//
 	Flush_Playlist ();
-	if (m_SoundScene != NULL) {
+	if (m_SoundScene != nullptr) {
 		m_SoundScene->Flush_Scene ();
 	}
 
@@ -2275,7 +2275,7 @@ WWAudioClass::Fire_Text_Callback (AudibleSoundClass *sound_obj, const StringClas
 		for (int index = 0; index < m_TextCallbackList.Count (); index ++) {
 			uint32 user_data				= 0L;
 			LPFNTEXTCALLBACK callback	= m_TextCallbackList.Get_Callback (index, &user_data);
-			if (callback != NULL) {
+			if (callback != nullptr) {
 
 				//
 				//	Fire the notification
@@ -2375,13 +2375,13 @@ WWAudioClass::Simple_Play_2D_Sound_Effect
 {
 	bool retval = false;
 	AudibleSoundClass *sound = Create_Sound_Effect (filename);
-	if (sound != NULL) {
+	if (sound != nullptr) {
 		sound->Set_Priority (priority);
 		sound->Set_Loop_Count (1);
 		sound->Set_Volume(volume);
 		sound->Play ();
 		sound->Release_Ref ();
-		sound = NULL;
+		sound = nullptr;
 		retval = true;
 	}
 
@@ -2404,13 +2404,13 @@ WWAudioClass::Simple_Play_2D_Sound_Effect
 {
 	bool retval = false;
 	AudibleSoundClass *sound = Create_Sound_Effect (file);
-	if (sound != NULL) {
+	if (sound != nullptr) {
 		sound->Set_Priority (priority);
 		sound->Set_Loop_Count (1);
 		sound->Set_Volume(volume);
 		sound->Play ();
 		sound->Release_Ref ();
-		sound = NULL;
+		sound = nullptr;
 		retval = true;
 	}
 
@@ -2426,8 +2426,8 @@ WWAudioClass::Simple_Play_2D_Sound_Effect
 FileClass *
 WWAudioClass::Get_File (LPCTSTR filename)
 {
-	FileClass *file = NULL;
-	if (m_FileFactory != NULL) {
+	FileClass *file = nullptr;
+	if (m_FileFactory != nullptr) {
 		file = m_FileFactory->Get_File (filename);
 	} else {
 		file = _TheFileFactory->Get_File(filename);
@@ -2446,7 +2446,7 @@ WWAudioClass::Get_File (LPCTSTR filename)
 void
 WWAudioClass::Return_File (FileClass *file)
 {
-	if (m_FileFactory != NULL) {
+	if (m_FileFactory != nullptr) {
 		m_FileFactory->Return_File (file);
 	} else {
 		SAFE_DELETE (file);
@@ -2534,7 +2534,7 @@ WWAudioClass::Get_Logical_Type (int index, StringClass &name)
 SoundSceneObjClass *
 WWAudioClass::Find_Sound_Object (uint32 sound_obj_id)
 {
-	SoundSceneObjClass *sound_obj = NULL;
+	SoundSceneObjClass *sound_obj = nullptr;
 
 	//
 	//	Lookup the sound object and return it to the caller
@@ -2673,7 +2673,7 @@ WWAudioClass::Save_To_Registry (const char *subkey_name)
 		//
 		//	Is this the device we were looking for?
 		//
-		if (info != NULL && info->driver == m_Driver3D) {
+		if (info != nullptr && info->driver == m_Driver3D) {
 			device_name = info->name;
 			break;
 		}
@@ -2744,13 +2744,13 @@ WWAudioClass::File_Open_Callback (char const *filename, void **file_handle)
 {
 	U32 retval = false;
 
-	if (Get_Instance () != NULL) {
+	if (Get_Instance () != nullptr) {
 
 		//
 		//	Open the file
 		//
 		FileClass *file = Get_Instance ()->Get_File (filename);
-		if (file != NULL && file->Open ()) {
+		if (file != nullptr && file->Open ()) {
 			(*file_handle) = (void *)file;
 			retval = true;
 		}
@@ -2768,13 +2768,13 @@ WWAudioClass::File_Open_Callback (char const *filename, void **file_handle)
 void AILCALLBACK
 WWAudioClass::File_Close_Callback (void *file_handle)
 {
-	if (Get_Instance () != NULL) {
+	if (Get_Instance () != nullptr) {
 
 		//
 		//	Close the file (if necessary)
 		//
 		FileClass *file = reinterpret_cast<FileClass *> (file_handle);
-		if (file != NULL) {
+		if (file != nullptr) {
 			Get_Instance ()->Return_File (file);
 		}
 	}
@@ -2797,7 +2797,7 @@ WWAudioClass::File_Seek_Callback (void *file_handle, S32 offset, U32 type)
 	//	Convert the handle to a file handle type
 	//
 	FileClass *file = reinterpret_cast<FileClass *> (file_handle);
-	if (file != NULL) {
+	if (file != nullptr) {
 
 		//
 		//	Convert the Miles seek type to one of our own
@@ -2842,7 +2842,7 @@ WWAudioClass::File_Read_Callback (void *file_handle, void *buffer, U32 bytes)
 	//	Convert the handle to a file handle type
 	//
 	FileClass *file = reinterpret_cast<FileClass *> (file_handle);
-	if (file != NULL) {
+	if (file != nullptr) {
 
 		//
 		//	Read the bytes from the file

@@ -51,7 +51,7 @@ public:
 
 	FXListDieModuleData()
 	{
-		m_defaultDeathFX = NULL;
+		m_defaultDeathFX = nullptr;
 		m_orientToObject = TRUE;
 		m_initiallyActive = TRUE; //Patch 1.02 -- Craptacular HACK -- should default to FALSE but only ONE case sets it false out of 847!
 	}
@@ -62,9 +62,9 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "StartsActive",					INI::parseBool, NULL, offsetof( FXListDieModuleData, m_initiallyActive ) },
-			{ "DeathFX",							INI::parseFXList,		NULL, offsetof( FXListDieModuleData, m_defaultDeathFX ) },
-			{ "OrientToObject",				INI::parseBool,		NULL, offsetof( FXListDieModuleData, m_orientToObject ) },
+			{ "StartsActive",					INI::parseBool, nullptr, offsetof( FXListDieModuleData, m_initiallyActive ) },
+			{ "DeathFX",							INI::parseFXList,		nullptr, offsetof( FXListDieModuleData, m_defaultDeathFX ) },
+			{ "OrientToObject",				INI::parseBool,		nullptr, offsetof( FXListDieModuleData, m_orientToObject ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);

@@ -44,14 +44,14 @@ static char THIS_FILE[] = __FILE__;
 // ColorPickerClass
 //
 ColorPickerClass::ColorPickerClass (void)
-	: m_hBitmap (NULL),
+	: m_hBitmap (nullptr),
 	  m_iWidth (0),
 	  m_iHeight (0),
 	  m_CurrentPoint (0, 0),
 	  m_CurrentColor (0),
 	  m_bSelecting (false),
-	  m_pBits (NULL),
-	  m_hMemDC (NULL),
+	  m_pBits (nullptr),
+	  m_hMemDC (nullptr),
 	  m_CurrentHue (0),
 	  CWnd ()
 {
@@ -65,9 +65,9 @@ ColorPickerClass::ColorPickerClass (void)
 //
 ColorPickerClass::~ColorPickerClass (void)
 {
-	if (m_hMemDC != NULL) {
+	if (m_hMemDC != nullptr) {
 		::DeleteObject (m_hMemDC);
-		m_hMemDC = NULL;
+		m_hMemDC = nullptr;
 	}
 
 	Free_Bitmap ();
@@ -97,7 +97,7 @@ ColorPickerClass::OnPaint (void)
 {
 	CPaintDC dc (this);
 
-	if (m_hMemDC != NULL) {
+	if (m_hMemDC != nullptr) {
 
 		HBITMAP hold_bmp = (HBITMAP)::SelectObject (m_hMemDC, m_hBitmap);
 
@@ -132,7 +132,7 @@ RegisterColorPicker (HINSTANCE hinst)
 		wndclass.lpfnWndProc = fnColorPickerProc;
 		wndclass.hInstance = hinst;
 		wndclass.hbrBackground = (HBRUSH)COLOR_3DFACE + 1;
-		wndclass.hCursor = ::LoadCursor (NULL, IDC_ARROW);
+		wndclass.hCursor = ::LoadCursor (nullptr, IDC_ARROW);
 		wndclass.lpszClassName = "WWCOLORPICKER";
 
 		// Let the windows manager know about this global class
@@ -158,7 +158,7 @@ fnColorPickerProc
 	LPARAM lparam
 )
 {
-	//static ColorPickerClass *pwnd = NULL;
+	//static ColorPickerClass *pwnd = nullptr;
 	//static bool bcreated = false;
 
 	switch (message)
@@ -166,12 +166,12 @@ fnColorPickerProc
 		case WM_CREATE:
 		{
 			LPCREATESTRUCT pcreate_info = (LPCREATESTRUCT)lparam;
-			if (pcreate_info != NULL) {
+			if (pcreate_info != nullptr) {
 
 				// Should we create a new class manager for this window?
 				ColorPickerClass *pwnd = (ColorPickerClass *)pcreate_info->lpCreateParams;
 				BOOL created = FALSE;
-				if (pwnd == NULL) {
+				if (pwnd == nullptr) {
 					pwnd = new ColorPickerClass;
 					created = TRUE;
 				}
@@ -185,7 +185,7 @@ fnColorPickerProc
 				WNDPROC *pOldWndProc = pwnd->GetSuperWndProcAddr ();
 				if (pOldWndProc) {
 					WNDPROC pold_proc = (WNDPROC)::SetWindowLong (hwnd, GWL_WNDPROC, (DWORD)::AfxGetAfxWndProc ());
-					ASSERT (pold_proc != NULL);
+					ASSERT (pold_proc != nullptr);
 					(*pOldWndProc) = pold_proc;
 				}
 
@@ -203,30 +203,30 @@ fnColorPickerProc
 			WNDPROC *pOldWndProc = pwnd->GetSuperWndProcAddr ();
 			if (pOldWndProc) {
 				::SetWindowLong (hwnd, GWL_WNDPROC, (DWORD)(*pOldWndProc));
-				(*pOldWndProc) = NULL;
+				(*pOldWndProc) = nullptr;
 			}
 
 			if (bcreated) {
 				delete pwnd;
-				pwnd = NULL;
+				pwnd = nullptr;
 			}*/
 
 			// Get the creation information from the window handle
 			ColorPickerClass *pwnd = (ColorPickerClass *)::GetProp (hwnd, "CLASSPOINTER");
 			BOOL created = (BOOL)::GetProp (hwnd, "CREATED");
 
-			if (pwnd != NULL) {
+			if (pwnd != nullptr) {
 				pwnd->Detach ();
 
 				WNDPROC *pOldWndProc = pwnd->GetSuperWndProcAddr ();
 				if (pOldWndProc) {
 					::SetWindowLong (hwnd, GWL_WNDPROC, (DWORD)(*pOldWndProc));
-					(*pOldWndProc) = NULL;
+					(*pOldWndProc) = nullptr;
 				}
 
 				if (created) {
 					delete pwnd;
-					pwnd = NULL;
+					pwnd = nullptr;
 				}
 			}
 		}
@@ -249,7 +249,7 @@ ColorPickerClass::OnCreate (LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	m_hMemDC = 	::CreateCompatibleDC (NULL);
+	m_hMemDC = 	::CreateCompatibleDC (nullptr);
 	Create_Bitmap ();
 	return 0;
 }
@@ -273,7 +273,7 @@ ColorPickerClass::Create
 )
 {
 	// Create the window (it will force the message map and everthing)
-	HWND hparent_wnd = (pparent_wnd != NULL) ? pparent_wnd->m_hWnd : NULL;
+	HWND hparent_wnd = (pparent_wnd != nullptr) ? pparent_wnd->m_hWnd : nullptr;
 	HWND hwnd = ::CreateWindow ("WWCOLORPICKER",
 										 lpszWindowName,
 										 dwStyle,
@@ -287,7 +287,7 @@ ColorPickerClass::Create
 										 this);
 
 	// Return the true/false result code
-	return (hwnd != NULL);
+	return (hwnd != nullptr);
 }
 
 
@@ -322,18 +322,18 @@ ColorPickerClass::Create_Bitmap (void)
 	bitmap_info.biClrImportant = 0;
 
 	// Get a temporary screen DC
-	HDC hscreen_dc = ::GetDC (NULL);
+	HDC hscreen_dc = ::GetDC (nullptr);
 
 	// Create a bitmap that we can access the bits directly of
 	m_hBitmap = ::CreateDIBSection (hscreen_dc,
 											  (const BITMAPINFO *)&bitmap_info,
 											  DIB_RGB_COLORS,
 											  (void **)&m_pBits,
-											  NULL,
+											  nullptr,
 											  0L);
 
 	// Release our temporary screen DC
-	::ReleaseDC (NULL, hscreen_dc);
+	::ReleaseDC (nullptr, hscreen_dc);
 
 	// Paint the color range into this bitmap
 	Paint_DIB (m_iWidth, m_iHeight, m_pBits);
@@ -695,10 +695,10 @@ ColorPickerClass::Paint_DIB
 void
 ColorPickerClass::Free_Bitmap (void)
 {
-	if (m_hBitmap != NULL) {
+	if (m_hBitmap != nullptr) {
 		::DeleteObject (m_hBitmap);
-		m_hBitmap = NULL;
-		m_pBits = NULL;
+		m_hBitmap = nullptr;
+		m_pBits = nullptr;
 	}
 
 	m_iWidth = 0;
@@ -775,7 +775,7 @@ ColorPickerClass::OnLButtonDown
 	// one of the keyframes
 	//
 	LONG id = ::GetWindowLong (m_hWnd, GWL_ID);
-	CP_NMHDR notify_hdr = { 0 };
+	CP_NMHDR notify_hdr = { nullptr };
 	notify_hdr.hdr.hwndFrom = m_hWnd;
 	notify_hdr.hdr.idFrom = id;
 	notify_hdr.hdr.code = CPN_COLORCHANGE;
@@ -809,7 +809,7 @@ ColorPickerClass::OnLButtonUp
 )
 {
 	if (m_bSelecting) {
-		::ClipCursor (NULL);
+		::ClipCursor (nullptr);
 		ReleaseCapture ();
 		m_bSelecting = false;
 	}
@@ -843,7 +843,7 @@ ColorPickerClass::OnMouseMove
 		// one of the keyframes
 		//
 		LONG id = ::GetWindowLong (m_hWnd, GWL_ID);
-		CP_NMHDR notify_hdr = { 0 };
+		CP_NMHDR notify_hdr = { nullptr };
 		notify_hdr.hdr.hwndFrom = m_hWnd;
 		notify_hdr.hdr.idFrom = id;
 		notify_hdr.hdr.code = CPN_COLORCHANGE;
@@ -896,7 +896,7 @@ void
 ColorPickerClass::Erase_Marker (void)
 {
 	HDC hdc = ::GetDC (m_hWnd);
-	if (m_hMemDC != NULL) {
+	if (m_hMemDC != nullptr) {
 
 		HBITMAP hold_bmp = (HBITMAP)::SelectObject (m_hMemDC, m_hBitmap);
 
@@ -929,7 +929,7 @@ void
 ColorPickerClass::Paint_Marker (void)
 {
 	HDC hdc = ::GetDC (m_hWnd);
-	if (m_hMemDC != NULL) {
+	if (m_hMemDC != nullptr) {
 
 		HBITMAP hmarker_bmp = ::LoadBitmap (::AfxGetResourceHandle (), MAKEINTRESOURCE (IDB_MARKER));
 		HBITMAP hold_bmp = (HBITMAP)::SelectObject (m_hMemDC, hmarker_bmp);
@@ -968,7 +968,7 @@ ColorPickerClass::Select_Color (int red, int green, int blue)
 	m_CurrentColor = Color_From_Point (m_CurrentPoint.x, m_CurrentPoint.y);
 
 	// Refresh the window
-	InvalidateRect (NULL, FALSE);
+	InvalidateRect (nullptr, FALSE);
 	UpdateWindow ();
 	return ;
 }

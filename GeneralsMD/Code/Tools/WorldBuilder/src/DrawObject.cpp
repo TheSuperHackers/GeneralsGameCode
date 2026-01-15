@@ -135,29 +135,29 @@ DrawObject::~DrawObject(void)
 {
 	freeMapResources();
 	REF_PTR_RELEASE(m_waterDrawObject);
-	TheWaterRenderObj = NULL;
+	TheWaterRenderObj = nullptr;
 }
 
 DrawObject::DrawObject(void) :
 	m_drawObjects(true),
 	m_drawPolygonAreas(true),
-	m_indexBuffer(NULL),
-	m_vertexMaterialClass(NULL),
-	m_vertexBufferTile1(NULL),
-	m_vertexBufferTile2(NULL),
-	m_vertexBufferWater(NULL),
-	m_vertexFeedback(NULL),
-	m_indexFeedback(NULL),
-	m_indexWater(NULL),
-	m_moldMesh(NULL),
-	m_lineRenderer(NULL),
+	m_indexBuffer(nullptr),
+	m_vertexMaterialClass(nullptr),
+	m_vertexBufferTile1(nullptr),
+	m_vertexBufferTile2(nullptr),
+	m_vertexBufferWater(nullptr),
+	m_vertexFeedback(nullptr),
+	m_indexFeedback(nullptr),
+	m_indexWater(nullptr),
+	m_moldMesh(nullptr),
+	m_lineRenderer(nullptr),
   m_drawSoundRanges(false)
 {
 	m_feedbackPoint.x = 20;
 	m_feedbackPoint.y = 20;
 	initData();
 	m_waterDrawObject = new WaterRenderObjClass;
-	m_waterDrawObject->init(0, 0, 0, NULL, WaterRenderObjClass::WATER_TYPE_0_TRANSLUCENT);
+	m_waterDrawObject->init(0, 0, 0, nullptr, WaterRenderObjClass::WATER_TYPE_0_TRANSLUCENT);
 	TheWaterRenderObj=m_waterDrawObject;
 
 	//(gth) this was needed to fix the extents bug that is based off water and too small for our maps
@@ -230,7 +230,7 @@ Int DrawObject::freeMapResources(void)
 	REF_PTR_RELEASE(m_moldMesh);
 
 	delete m_lineRenderer;
-	m_lineRenderer = NULL;
+	m_lineRenderer = nullptr;
 
 	return 0;
 }
@@ -297,11 +297,11 @@ void DrawObject::updateMeshVB(void)
 		REF_PTR_RELEASE(m_moldMesh);
 		m_curMeshModelName = MeshMoldOptions::getModelName();
 	}
-	if (m_moldMesh == NULL) {
+	if (m_moldMesh == nullptr) {
  		WW3DAssetManager *pMgr = W3DAssetManager::Get_Instance();
 		pMgr->Set_WW3D_Load_On_Demand(false);	 // We don't want it fishing for these assets in the game assets.
 		m_moldMesh = (MeshClass*)pMgr->Create_Render_Obj(m_curMeshModelName.str());
-		if (m_moldMesh == NULL) {
+		if (m_moldMesh == nullptr) {
 			// Try loading the mold asset.
 			AsciiString path("data\\editor\\molds\\");
 			path.concat(m_curMeshModelName);
@@ -314,7 +314,7 @@ void DrawObject::updateMeshVB(void)
 		}
 		pMgr->Set_WW3D_Load_On_Demand(true);
 	}
-	if (m_moldMesh == NULL) {
+	if (m_moldMesh == nullptr) {
 		return;
 	}
 
@@ -329,7 +329,7 @@ void DrawObject::updateMeshVB(void)
 	VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
 	VertexFormatXYZDUV1 *curVb = vb;
 
-	if (m_moldMesh == NULL) {
+	if (m_moldMesh == nullptr) {
 		return;
 	}
 	Int i;
@@ -369,7 +369,7 @@ void DrawObject::updateMeshVB(void)
 #if 1
 		curVb->diffuse = 0x0000ffff | (theAlpha << 24);		// bright cyan.
 #else
-		TheTerrainRenderObject->doTheLight(&vb, &lightRay, (Vector3 *)(&pNormal[i]), NULL, 1.0f);
+		TheTerrainRenderObject->doTheLight(&vb, &lightRay, (Vector3 *)(&pNormal[i]), nullptr, 1.0f);
 		vb.diffuse &= 0x0000ffff;
 		curVb->diffuse = vb.diffuse | (theAlpha << 24);
 #endif
@@ -592,33 +592,33 @@ void DrawObject::updateBoundaryVB(void)
 				startPt.x = startPt.y = 0;
 				startPt.x *= MAP_XY_FACTOR;
 				startPt.y *= MAP_XY_FACTOR;
-				startPt.z = TheTerrainRenderObject->getHeightMapHeight(startPt.x, startPt.y, NULL);
+				startPt.z = TheTerrainRenderObject->getHeightMapHeight(startPt.x, startPt.y, nullptr);
 				endPt.x = 0;
 				endPt.y = curBoundary.y;
 				endPt.x *= MAP_XY_FACTOR;
 				endPt.y *= MAP_XY_FACTOR;
-				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, NULL);
+				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, nullptr);
 			} else if (j == 1) {
 				startPt = endPt;
 				endPt.x = curBoundary.x;
 				endPt.y = curBoundary.y;
 				endPt.x *= MAP_XY_FACTOR;
 				endPt.y *= MAP_XY_FACTOR;
-				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, NULL);
+				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, nullptr);
 			} else if (j == 2) {
 				startPt = endPt;
 				endPt.x = curBoundary.x;
 				endPt.y = 0;
 				endPt.x *= MAP_XY_FACTOR;
 				endPt.y *= MAP_XY_FACTOR;
-				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, NULL);
+				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, nullptr);
 			} else if (j == 3) {
 				startPt = endPt;
 				endPt.x = 0;
 				endPt.y = 0;
 				endPt.x *= MAP_XY_FACTOR;
 				endPt.y *= MAP_XY_FACTOR;
-				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, NULL);
+				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, nullptr);
 			}
 
 			if (m_feedbackVertexCount + 8 > NUM_FEEDBACK_VERTEX) {
@@ -758,7 +758,7 @@ void DrawObject::updateAmbientSoundVB(void)
 		}
 
 		Coord3D startPt = *mo->getLocation();
-		startPt.z = TheTerrainRenderObject->getHeightMapHeight(startPt.x, startPt.y, NULL);
+		startPt.z = TheTerrainRenderObject->getHeightMapHeight(startPt.x, startPt.y, nullptr);
 
 		if (m_feedbackVertexCount + 6 > NUM_FEEDBACK_VERTEX) {
 			return;
@@ -918,8 +918,8 @@ void DrawObject::updateWaypointVB(void)
 				normal *= 0.5f;
 				// Rotate the normal 90 degrees.
 				normal.Rotate_Z(PI/2);
-				loc1.z = TheTerrainRenderObject->getHeightMapHeight(loc1.x, loc1.y, NULL);
-				loc2.z = TheTerrainRenderObject->getHeightMapHeight(loc2.x, loc2.y, NULL);
+				loc1.z = TheTerrainRenderObject->getHeightMapHeight(loc1.x, loc1.y, nullptr);
+				loc2.z = TheTerrainRenderObject->getHeightMapHeight(loc2.x, loc2.y, nullptr);
 
 				if (m_feedbackVertexCount+9>= NUM_FEEDBACK_VERTEX) {
 					return;
@@ -1104,7 +1104,7 @@ void DrawObject::updatePolygonVB(PolygonTrigger *pTrig, Bool selected, Bool isOp
 		ICoord3D iLoc = *pTrig->getPoint(i);
 		loc1.x = iLoc.x;
 		loc1.y = iLoc.y;
-		loc1.z = TheTerrainRenderObject->getHeightMapHeight(loc1.x, loc1.y, NULL);
+		loc1.z = TheTerrainRenderObject->getHeightMapHeight(loc1.x, loc1.y, nullptr);
 		if (i<pTrig->getNumPoints()-1) {
 			iLoc = *pTrig->getPoint(i+1);
 		} else {
@@ -1113,7 +1113,7 @@ void DrawObject::updatePolygonVB(PolygonTrigger *pTrig, Bool selected, Bool isOp
 		}
 		loc2.x = iLoc.x;
 		loc2.y = iLoc.y;
-		loc2.z = TheTerrainRenderObject->getHeightMapHeight(loc2.x, loc2.y, NULL);
+		loc2.z = TheTerrainRenderObject->getHeightMapHeight(loc2.x, loc2.y, nullptr);
 		Vector3 normal(loc2.x-loc1.x, loc2.y-loc1.y, loc2.z-loc1.z);
 		normal.Normalize();
 		normal *= 0.5f;
@@ -1247,11 +1247,11 @@ void DrawObject::updateFeedbackVB(void)
 			if (doubleResolution) {
 				X = ADJUST_FROM_INDEX_TO_REAL(i)/2.0f + ADJUST_FROM_INDEX_TO_REAL(2*offset+m_cellCenter.x)  / 2.0;
 				Y = ADJUST_FROM_INDEX_TO_REAL(j)/2.0f + ADJUST_FROM_INDEX_TO_REAL(2*offset+m_cellCenter.y)  / 2.0;
-				theZ = TheTerrainRenderObject->getHeightMapHeight(X, Y, NULL);
+				theZ = TheTerrainRenderObject->getHeightMapHeight(X, Y, nullptr);
 			} else {
 				X = ADJUST_FROM_INDEX_TO_REAL(i);
 				Y = ADJUST_FROM_INDEX_TO_REAL(j);
-				theZ = TheTerrainRenderObject->getHeightMapHeight(X, Y, NULL);
+				theZ = TheTerrainRenderObject->getHeightMapHeight(X, Y, nullptr);
 			}
 			curVb->u1 = 0;
 			curVb->v1 = 0;
@@ -1621,7 +1621,7 @@ void DrawObject::updateVBWithBoundingBox(MapObject *pMapObj, CameraClass* camera
 	Coord3D pos = *pMapObj->getLocation();
 	if (TheTerrainRenderObject) {
 		// Make sure that the position is on the terrain.
-		pos.z += TheTerrainRenderObject->getHeightMapHeight(pos.x, pos.y, NULL);
+		pos.z += TheTerrainRenderObject->getHeightMapHeight(pos.x, pos.y, nullptr);
 	}
 
 	switch (ginfo.getGeomType())
@@ -1766,7 +1766,7 @@ void DrawObject::updateVBWithSightRange(MapObject *pMapObj, CameraClass* camera)
 	Coord3D pos = *pMapObj->getLocation();
 	if (TheTerrainRenderObject) {
 		// Make sure that the position is on the terrain.
-		pos.z += TheTerrainRenderObject->getHeightMapHeight(pos.x, pos.y, NULL);
+		pos.z += TheTerrainRenderObject->getHeightMapHeight(pos.x, pos.y, nullptr);
 	}
 
   addCircleToLineRenderer(pos, radius, SIGHT_RANGE_LINE_WIDTH, color, camera );
@@ -1787,7 +1787,7 @@ void DrawObject::updateVBWithWeaponRange(MapObject *pMapObj, CameraClass* camera
 	Coord3D pos = *pMapObj->getLocation();
 	if (TheTerrainRenderObject) {
 		// Make sure that the position is on the terrain.
-		pos.z += TheTerrainRenderObject->getHeightMapHeight(pos.x, pos.y, NULL);
+		pos.z += TheTerrainRenderObject->getHeightMapHeight(pos.x, pos.y, nullptr);
 	}
 
 	const WeaponTemplateSetVector& weapons = pMapObj->getThingTemplate()->getWeaponTemplateSets();
@@ -1800,7 +1800,7 @@ void DrawObject::updateVBWithWeaponRange(MapObject *pMapObj, CameraClass* camera
 		for (int i = 0; i < WEAPONSLOT_COUNT; i++) {
 			const WeaponTemplate* tmpl = it->getNth((WeaponSlotType)i);
 
-			if (tmpl == NULL) {
+			if (tmpl == nullptr) {
 				continue;
 			}
 
@@ -1827,11 +1827,11 @@ void DrawObject::updateVBWithSoundRanges(MapObject *pMapObj, CameraClass* camera
   Coord3D pos = *pMapObj->getLocation();
   if (TheTerrainRenderObject) {
     // Make sure that the position is on the terrain.
-    pos.z += TheTerrainRenderObject->getHeightMapHeight(pos.x, pos.y, NULL);
+    pos.z += TheTerrainRenderObject->getHeightMapHeight(pos.x, pos.y, nullptr);
   }
 
   // Does this object actually have an attached sound?
-  const AudioEventInfo * audioInfo = NULL;
+  const AudioEventInfo * audioInfo = nullptr;
 
   Dict * properties = pMapObj->getProperties();
 
@@ -1847,15 +1847,15 @@ void DrawObject::updateVBWithSoundRanges(MapObject *pMapObj, CameraClass* camera
     }
     else
     {
-      if ( TheAudio == NULL )
+      if ( TheAudio == nullptr )
       {
-        DEBUG_CRASH( ("TheAudio is NULL! Can't draw sound circles") );
+        DEBUG_CRASH( ("TheAudio is null! Can't draw sound circles") );
         return;
       }
 
       audioInfo = TheAudio->findAudioEventInfo( ambientName );
 
-      if ( audioInfo == NULL )
+      if ( audioInfo == nullptr )
       {
         DEBUG_CRASH( ("Override audio named %s is missing; Can't draw sound circles", ambientName.str() ) );
         return;
@@ -1865,7 +1865,7 @@ void DrawObject::updateVBWithSoundRanges(MapObject *pMapObj, CameraClass* camera
   else
   {
     const ThingTemplate * thingTemplate = pMapObj->getThingTemplate();
-    if ( thingTemplate == NULL )
+    if ( thingTemplate == nullptr )
     {
       // No sound if no template
       return;
@@ -1878,25 +1878,25 @@ void DrawObject::updateVBWithSoundRanges(MapObject *pMapObj, CameraClass* camera
 
     const AudioEventRTS * event = thingTemplate->getSoundAmbient();
 
-    if ( event == NULL )
+    if ( event == nullptr )
     {
       return;
     }
 
     audioInfo = event->getAudioEventInfo();
 
-    if ( audioInfo == NULL )
+    if ( audioInfo == nullptr )
     {
       // May just not be set up yet
-      if ( TheAudio == NULL )
+      if ( TheAudio == nullptr )
       {
-        DEBUG_CRASH( ("TheAudio is NULL! Can't draw sound circles") );
+        DEBUG_CRASH( ("TheAudio is null! Can't draw sound circles") );
         return;
       }
 
       audioInfo = TheAudio->findAudioEventInfo( event->getEventName() );
 
-      if ( audioInfo == NULL )
+      if ( audioInfo == nullptr )
       {
         DEBUG_CRASH( ("Default ambient sound %s has no info; Can't draw sound circles", event->getEventName().str() ) );
         return;
@@ -1905,8 +1905,8 @@ void DrawObject::updateVBWithSoundRanges(MapObject *pMapObj, CameraClass* camera
   }
 
   // Should have set up audioInfo or returned by now
-  DEBUG_ASSERTCRASH( audioInfo != NULL, ("Managed to finish setting up audio info without setting it?!?" ) );
-  if ( audioInfo == NULL )
+  DEBUG_ASSERTCRASH( audioInfo != nullptr, ("Managed to finish setting up audio info without setting it?!?" ) );
+  if ( audioInfo == nullptr )
   {
     return;
   }
@@ -1951,7 +1951,7 @@ void DrawObject::updateVBWithTestArtHighlight(MapObject *pMapObj, CameraClass* c
 	Coord3D pos = *pMapObj->getLocation();
 	if (TheTerrainRenderObject) {
 		// Make sure that the position is on the terrain.
-		pos.z += TheTerrainRenderObject->getHeightMapHeight(pos.x, pos.y, NULL);
+		pos.z += TheTerrainRenderObject->getHeightMapHeight(pos.x, pos.y, nullptr);
 	}
 
 	Real angle, inc = PI/2.0f;
@@ -1990,7 +1990,7 @@ void DrawObject::updateVBWithTestArtHighlight(MapObject *pMapObj, CameraClass* c
 bool DrawObject::worldToScreen(const Coord3D *w, ICoord2D *s, CameraClass* camera)
 {
 
-	if ((w == NULL) || (s == NULL) || (camera == NULL)) {
+	if ((w == nullptr) || (s == nullptr) || (camera == nullptr)) {
 		return false;
 	}
 
@@ -2042,7 +2042,7 @@ void DrawObject::setFeedbackPos(Coord3D pos)
 
 void DrawObject::setRampFeedbackParms(const Coord3D *start, const Coord3D *end, Real rampWidth)
 {
-	DEBUG_ASSERTCRASH(start && end, ("Parameter passed into setRampFeedbackParms was NULL. Not allowed"));
+	DEBUG_ASSERTCRASH(start && end, ("Parameter passed into setRampFeedbackParms was null. Not allowed"));
 	if (!(start && end)) {
 		return;
 	}
@@ -2064,7 +2064,7 @@ if (_skip_drawobject_render) {
 	return;
 }
 
-	if (m_lineRenderer == NULL) {
+	if (m_lineRenderer == nullptr) {
 		// This can't be created in init because the doc hasn't been created yet.
 		m_lineRenderer = new Render2DClass();
 		ASSERT(m_lineRenderer);
@@ -2082,7 +2082,7 @@ if (_skip_drawobject_render) {
 
 	DX8Wrapper::Set_Material(m_vertexMaterialClass);
 	DX8Wrapper::Set_Shader(m_shaderClass);
-	DX8Wrapper::Set_Texture(0, NULL);
+	DX8Wrapper::Set_Texture(0, nullptr);
 	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
 	DX8Wrapper::Apply_Render_State_Changes();
 	Int count=0;
@@ -2116,7 +2116,7 @@ if (pMapObj->isSelected()) {
 }
 			Coord3D loc = *pMapObj->getLocation();
 			if (TheTerrainRenderObject) {
-				loc.z += TheTerrainRenderObject->getHeightMapHeight(loc.x, loc.y, NULL);
+				loc.z += TheTerrainRenderObject->getHeightMapHeight(loc.x, loc.y, nullptr);
 			}
 			// Cull.
 			//SphereClass bounds(Vector3(loc.x, loc.y, loc.z), THE_RADIUS);
@@ -2242,7 +2242,7 @@ if (pMapObj->isSelected()) {
 					Coord3D loc;
 					loc.x = iLoc.x;
 					loc.y = iLoc.y;
-					loc.z = TheTerrainRenderObject->getHeightMapHeight(loc.x, loc.y, NULL);
+					loc.z = TheTerrainRenderObject->getHeightMapHeight(loc.x, loc.y, nullptr);
 					SphereClass bounds(Vector3(loc.x, loc.y, loc.z), THE_RADIUS);
 					if (rinfo.Camera.Cull_Sphere(bounds)) {
 						continue;
@@ -2297,7 +2297,7 @@ if (pMapObj->isSelected()) {
 		for (BuildListInfo *pBuild = pSide->getBuildList(); pBuild; pBuild = pBuild->getNext()) {
 			Coord3D loc = *pBuild->getLocation();
 			if (TheTerrainRenderObject) {
-				loc.z += TheTerrainRenderObject->getHeightMapHeight(loc.x, loc.y, NULL);
+				loc.z += TheTerrainRenderObject->getHeightMapHeight(loc.x, loc.y, nullptr);
 			}
 			// Cull.
 			SphereClass bounds(Vector3(loc.x, loc.y, loc.z), THE_RADIUS);
@@ -2406,8 +2406,8 @@ if (pMapObj->isSelected()) {
 	}
 #endif
 
-	DX8Wrapper::Set_Vertex_Buffer(NULL);	//release reference to vertex buffer
-	DX8Wrapper::Set_Index_Buffer(NULL,0);	//release reference to vertex buffer
+	DX8Wrapper::Set_Vertex_Buffer(nullptr);	//release reference to vertex buffer
+	DX8Wrapper::Set_Index_Buffer(nullptr,0);	//release reference to vertex buffer
 
 
 	if (m_ambientSoundFeedback) {

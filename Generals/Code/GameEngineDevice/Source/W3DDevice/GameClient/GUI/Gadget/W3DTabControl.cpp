@@ -418,7 +418,7 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 		tabDeltaY = tabHeight;
 	}
 
-	const Image *image = NULL;
+	const Image *image = nullptr;
 
 	if( tabData->tabCount >= 1 )//Does exist
 	{
@@ -435,7 +435,7 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 			image			= GadgetTabControlGetEnabledImageTabZero( tabControl );
 		}
 
-		if( image != NULL )
+		if( image != nullptr )
 		{
 			TheWindowManager->winDrawImage( image,
 																			tabX,
@@ -464,7 +464,7 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 			image			= GadgetTabControlGetEnabledImageTabOne( tabControl );
 		}
 
-		if( image != NULL )
+		if( image != nullptr )
 		{
 			TheWindowManager->winDrawImage( image,
 																			tabX,
@@ -493,7 +493,7 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 			image			= GadgetTabControlGetEnabledImageTabTwo( tabControl );
 		}
 
-		if( image != NULL )
+		if( image != nullptr )
 		{
 			TheWindowManager->winDrawImage( image,
 																			tabX,
@@ -522,7 +522,7 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 			image			= GadgetTabControlGetEnabledImageTabThree( tabControl );
 		}
 
-		if( image != NULL )
+		if( image != nullptr )
 		{
 			TheWindowManager->winDrawImage( image,
 																			tabX,
@@ -551,7 +551,7 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 			image			= GadgetTabControlGetEnabledImageTabFour( tabControl );
 		}
 
-		if( image != NULL )
+		if( image != nullptr )
 		{
 			TheWindowManager->winDrawImage( image,
 																			tabX,
@@ -580,7 +580,7 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 			image			= GadgetTabControlGetEnabledImageTabFive( tabControl );
 		}
 
-		if( image != NULL )
+		if( image != nullptr )
 		{
 			TheWindowManager->winDrawImage( image,
 																			tabX,
@@ -609,7 +609,7 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 			image			= GadgetTabControlGetEnabledImageTabSix( tabControl );
 		}
 
-		if( image != NULL )
+		if( image != nullptr )
 		{
 			TheWindowManager->winDrawImage( image,
 																			tabX,
@@ -638,7 +638,7 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 			image			= GadgetTabControlGetEnabledImageTabSeven( tabControl );
 		}
 
-		if( image != NULL )
+		if( image != nullptr )
 		{
 			TheWindowManager->winDrawImage( image,
 																			tabX,

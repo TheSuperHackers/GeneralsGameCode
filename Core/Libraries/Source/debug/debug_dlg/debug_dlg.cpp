@@ -138,7 +138,7 @@ BOOL CALLBACK DialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         hf=CreateFont(13,0,0,0,FW_NORMAL,
                       FALSE,FALSE,FALSE,ANSI_CHARSET,
                       OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,
-                      DEFAULT_QUALITY,FIXED_PITCH|FF_MODERN,NULL);
+                      DEFAULT_QUALITY,FIXED_PITCH|FF_MODERN,nullptr);
         SendDlgItemMessage(hWnd,105,WM_SETFONT,(WPARAM)hf,MAKELPARAM(TRUE,0));
         SendDlgItemMessage(hWnd,105,LB_ADDSTRING,0,(LPARAM)"EAX:0x00000666 EBX:0x7ffdf000 ECX:0x00000000");
         SendDlgItemMessage(hWnd,105,LB_ADDSTRING,0,(LPARAM)"EDX:0x00422208 ESI:0x02100210 EDI:0x0012fec4");
@@ -180,7 +180,7 @@ int CALLBACK WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 {
   // show dialog box first
   InitCommonControls();
-  DialogBox(hInst,MAKEINTRESOURCE(100),NULL,DialogProc);
+  DialogBox(hInst,MAKEINTRESOURCE(100),nullptr,DialogProc);
 
   // write out resource data (if possible)
   FILE *f=fopen("..\\rc_exception.inl","wt");

@@ -223,7 +223,7 @@ public:
 
 	// walking the production list from outside
 	virtual const ProductionEntry *firstProduction( void ) const { return m_productionQueue; }
-	virtual const ProductionEntry *nextProduction( const ProductionEntry *p ) const { return p ? p->m_next : NULL; }
+	virtual const ProductionEntry *nextProduction( const ProductionEntry *p ) const { return p ? p->m_next : nullptr; }
 
 	virtual void setHoldDoorOpen(ExitDoorType exitDoor, Bool holdIt);
 

@@ -30,7 +30,7 @@ class CTeamsDialog : public CDialog
 {
 // Construction
 public:
-	CTeamsDialog(CWnd* pParent = NULL);   // standard constructor
+	CTeamsDialog(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CTeamsDialog)

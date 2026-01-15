@@ -39,10 +39,10 @@ extern Bool ClipLine2D( ICoord2D *p1, ICoord2D *p2, ICoord2D *c1, ICoord2D *c2,
 
 ///< IntersectLine2D will take two segments delimited by ab and cd and will return whether
 ///< they intersect within the length of ab. They will also return the intersection point out
-///< intersection if it is non-NULL.
+///< intersection if it is non-null.
 extern Bool IntersectLine2D( const Coord2D *a, const Coord2D *b,
 															const Coord2D *c, const Coord2D *d,
-															Coord2D *intersection = NULL);
+															Coord2D *intersection = nullptr);
 
 ///< PointInsideRect2D will return true iff inputPoint lies iside of the rectangle specified
 ///< by bl, tl, br, tr.

@@ -244,8 +244,8 @@ public:
 	Bool isGameEnding( void ) { return m_endGameTimer >= 0;	}
 	virtual void startQuickEndGameTimer(void); ///< Starts the quick end game timer after a campaign is won or lost.
 	virtual void startCloseWindowTimer(void); ///< Starts the timer to close windows after a mission is won or lost.
-	virtual void runScript(const AsciiString& scriptName, Team *pThisTeam=NULL); ///<  Runs a script.
-	virtual void runObjectScript(const AsciiString& scriptName, Object *pThisObject=NULL); ///<  Runs a script attached to this object.
+	virtual void runScript(const AsciiString& scriptName, Team *pThisTeam=nullptr); ///<  Runs a script.
+	virtual void runObjectScript(const AsciiString& scriptName, Object *pThisObject=nullptr); ///<  Runs a script attached to this object.
 	virtual Team *getTeamNamed(const AsciiString& teamName); ///<  Gets the named team.  May be null.
 	virtual Player *getSkirmishEnemyPlayer(void); ///< Gets the ai's enemy Human player. May be null.
 	virtual Player *getCurrentPlayer(void); ///<  Gets the player that owns the current script.  May be null.
@@ -271,8 +271,8 @@ public:
 	// For other systems to evaluate Conditions, execute Actions, etc.
 
 	///< if pThisTeam is specified, then scripts in here can use <This Team> to mean the team this script is attached to.
-	virtual Bool evaluateConditions( Script *pScript, Team *pThisTeam = NULL, Player *pPlayer=NULL );
-	virtual void friend_executeAction( ScriptAction *pActionHead, Team *pThisTeam = NULL);	///< Use this at yer peril.
+	virtual Bool evaluateConditions( Script *pScript, Team *pThisTeam = nullptr, Player *pPlayer=nullptr );
+	virtual void friend_executeAction( ScriptAction *pActionHead, Team *pThisTeam = nullptr);	///< Use this at yer peril.
 
 	virtual Object *getUnitNamed(const AsciiString& unitName); ///< Gets the named unit. May be null.
 	virtual Bool didUnitExist(const AsciiString& unitName);

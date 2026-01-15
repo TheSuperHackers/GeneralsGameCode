@@ -35,26 +35,26 @@
 
 // GLOBALS ////////////////////////////////////////////////////////////////////////////////////////
 WaterSetting WaterSettings[ TIME_OF_DAY_COUNT ];
-OVERRIDE<WaterTransparencySetting> TheWaterTransparency = NULL;
+OVERRIDE<WaterTransparencySetting> TheWaterTransparency = nullptr;
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 const FieldParse WaterSetting::m_waterSettingFieldParseTable[] =
 {
 
-	{ "SkyTexture",									INI::parseAsciiString,			NULL, offsetof( WaterSetting, m_skyTextureFile ) },
-	{ "WaterTexture",								INI::parseAsciiString,			NULL, offsetof( WaterSetting, m_waterTextureFile ) },
-  { "Vertex00Color",							INI::parseRGBAColorInt,			NULL, offsetof( WaterSetting, m_vertex00Diffuse ) },
-	{ "Vertex10Color",							INI::parseRGBAColorInt,			NULL, offsetof( WaterSetting, m_vertex10Diffuse ) },
-	{ "Vertex01Color",							INI::parseRGBAColorInt,			NULL, offsetof( WaterSetting, m_vertex01Diffuse ) },
-  { "Vertex11Color",							INI::parseRGBAColorInt,			NULL, offsetof( WaterSetting, m_vertex11Diffuse ) },
-	{ "DiffuseColor",								INI::parseRGBAColorInt,			NULL, offsetof( WaterSetting, m_waterDiffuseColor ) },
-  { "TransparentDiffuseColor",		INI::parseRGBAColorInt,			NULL, offsetof( WaterSetting, m_transparentWaterDiffuse ) },
-  { "UScrollPerMS",								INI::parseReal,							NULL, offsetof( WaterSetting, m_uScrollPerMs ) },
-  { "VScrollPerMS",								INI::parseReal,							NULL, offsetof( WaterSetting, m_vScrollPerMs ) },
-	{ "SkyTexelsPerUnit",						INI::parseReal,							NULL, offsetof( WaterSetting, m_skyTexelsPerUnit ) },
-  { "WaterRepeatCount",						INI::parseInt,							NULL, offsetof( WaterSetting, m_waterRepeatCount ) },
+	{ "SkyTexture",									INI::parseAsciiString,			nullptr, offsetof( WaterSetting, m_skyTextureFile ) },
+	{ "WaterTexture",								INI::parseAsciiString,			nullptr, offsetof( WaterSetting, m_waterTextureFile ) },
+  { "Vertex00Color",							INI::parseRGBAColorInt,			nullptr, offsetof( WaterSetting, m_vertex00Diffuse ) },
+	{ "Vertex10Color",							INI::parseRGBAColorInt,			nullptr, offsetof( WaterSetting, m_vertex10Diffuse ) },
+	{ "Vertex01Color",							INI::parseRGBAColorInt,			nullptr, offsetof( WaterSetting, m_vertex01Diffuse ) },
+  { "Vertex11Color",							INI::parseRGBAColorInt,			nullptr, offsetof( WaterSetting, m_vertex11Diffuse ) },
+	{ "DiffuseColor",								INI::parseRGBAColorInt,			nullptr, offsetof( WaterSetting, m_waterDiffuseColor ) },
+  { "TransparentDiffuseColor",		INI::parseRGBAColorInt,			nullptr, offsetof( WaterSetting, m_transparentWaterDiffuse ) },
+  { "UScrollPerMS",								INI::parseReal,							nullptr, offsetof( WaterSetting, m_uScrollPerMs ) },
+  { "VScrollPerMS",								INI::parseReal,							nullptr, offsetof( WaterSetting, m_vScrollPerMs ) },
+	{ "SkyTexelsPerUnit",						INI::parseReal,							nullptr, offsetof( WaterSetting, m_skyTexelsPerUnit ) },
+  { "WaterRepeatCount",						INI::parseInt,							nullptr, offsetof( WaterSetting, m_waterRepeatCount ) },
 
-	{ NULL,													NULL,												NULL, 0 },
+	{ nullptr,													nullptr,												nullptr, 0 },
 
 };
 
@@ -62,20 +62,20 @@ const FieldParse WaterSetting::m_waterSettingFieldParseTable[] =
 const FieldParse WaterTransparencySetting::m_waterTransparencySettingFieldParseTable[] =
 {
 
-	{ "TransparentWaterDepth",			INI::parseReal,				NULL,			offsetof( WaterTransparencySetting, m_transparentWaterDepth ) },
-	{ "TransparentWaterMinOpacity",	INI::parseReal,				NULL,			offsetof( WaterTransparencySetting, m_minWaterOpacity ) },
-	{ "StandingWaterColor",	INI::parseRGBColor,			NULL,			offsetof( WaterTransparencySetting, m_standingWaterColor ) },
-	{ "StandingWaterTexture",INI::parseAsciiString,		NULL,			offsetof( WaterTransparencySetting, m_standingWaterTexture ) },
-	{ "AdditiveBlending", INI::parseBool,				NULL,			offsetof( WaterTransparencySetting, m_additiveBlend) },
-	{ "RadarWaterColor", INI::parseRGBColor,			NULL,			offsetof( WaterTransparencySetting, m_radarColor) },
-	{ "SkyboxTextureN",							INI::parseAsciiString,NULL,			offsetof( WaterTransparencySetting, m_skyboxTextureN ) },
-	{ "SkyboxTextureE",							INI::parseAsciiString,NULL,			offsetof( WaterTransparencySetting, m_skyboxTextureE ) },
-	{ "SkyboxTextureS",							INI::parseAsciiString,NULL,			offsetof( WaterTransparencySetting, m_skyboxTextureS ) },
-	{ "SkyboxTextureW",							INI::parseAsciiString,NULL,			offsetof( WaterTransparencySetting, m_skyboxTextureW ) },
-	{ "SkyboxTextureT",							INI::parseAsciiString,NULL,			offsetof( WaterTransparencySetting, m_skyboxTextureT ) },
+	{ "TransparentWaterDepth",			INI::parseReal,				nullptr,			offsetof( WaterTransparencySetting, m_transparentWaterDepth ) },
+	{ "TransparentWaterMinOpacity",	INI::parseReal,				nullptr,			offsetof( WaterTransparencySetting, m_minWaterOpacity ) },
+	{ "StandingWaterColor",	INI::parseRGBColor,			nullptr,			offsetof( WaterTransparencySetting, m_standingWaterColor ) },
+	{ "StandingWaterTexture",INI::parseAsciiString,		nullptr,			offsetof( WaterTransparencySetting, m_standingWaterTexture ) },
+	{ "AdditiveBlending", INI::parseBool,				nullptr,			offsetof( WaterTransparencySetting, m_additiveBlend) },
+	{ "RadarWaterColor", INI::parseRGBColor,			nullptr,			offsetof( WaterTransparencySetting, m_radarColor) },
+	{ "SkyboxTextureN",							INI::parseAsciiString,nullptr,			offsetof( WaterTransparencySetting, m_skyboxTextureN ) },
+	{ "SkyboxTextureE",							INI::parseAsciiString,nullptr,			offsetof( WaterTransparencySetting, m_skyboxTextureE ) },
+	{ "SkyboxTextureS",							INI::parseAsciiString,nullptr,			offsetof( WaterTransparencySetting, m_skyboxTextureS ) },
+	{ "SkyboxTextureW",							INI::parseAsciiString,nullptr,			offsetof( WaterTransparencySetting, m_skyboxTextureW ) },
+	{ "SkyboxTextureT",							INI::parseAsciiString,nullptr,			offsetof( WaterTransparencySetting, m_skyboxTextureT ) },
 
 
-	{ 0, 0, 0, 0 },
+	{ nullptr, nullptr, nullptr, 0 },
 };
 
 

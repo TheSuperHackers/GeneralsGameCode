@@ -90,7 +90,7 @@ void CRCEngine::operator() (char datum)
  *=============================================================================================*/
 long CRCEngine::operator() (void const * buffer, int length)
 {
-	if (buffer != NULL && length > 0)  {
+	if (buffer != nullptr && length > 0)  {
 		char const * dataptr = (char const *)buffer;
 		int bytes_left = length;
 

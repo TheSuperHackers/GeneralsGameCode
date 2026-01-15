@@ -259,7 +259,7 @@ public:
 	Player *getControllingPlayer() const;
 
 	/**
-		set the team's owner. (NULL is not allowed)
+		set the team's owner. (nullptr is not allowed)
 	*/
 	void setControllingPlayer(Player *newController);
 
@@ -540,7 +540,7 @@ public:
 	Team *findTeamByID( TeamID teamID );
 
 	/**
-		set the team's owner. (NULL is not allowed)
+		set the team's owner. (nullptr is not allowed)
 	*/
 	void setControllingPlayer(Player *newController);
 
@@ -696,10 +696,10 @@ public:
 	/// return the TeamPrototype with the given name. if none exists, return null.
 	TeamPrototype *findTeamPrototype(const AsciiString& name);
 
-	/// return TeamPrototype with matching ID.  if none exists NULL is returned
+	/// return TeamPrototype with matching ID.  if none exists nullptr is returned
 	TeamPrototype *findTeamPrototypeByID( TeamPrototypeID id );
 
-	/// search all prototypes for the team with the matching id, if none found NULL is returned
+	/// search all prototypes for the team with the matching id, if none found nullptr is returned
 	Team *findTeamByID( TeamID teamID );
 
 	// note that there is no way to directly destroy a specific TeamPrototype (or a Team); the only

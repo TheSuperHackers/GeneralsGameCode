@@ -83,13 +83,13 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	*/
 	int argc = 1;
 	char * argv[20];
-	argv[0] = NULL;
+	argv[0] = nullptr;
 
 	char * token = strtok(lpCmdLine, " ");
-	while (argc < 20 && token != NULL)
+	while (argc < 20 && token != nullptr)
 	{
 		argv[argc++] = strtrim(token);
-		token = strtok(NULL, " ");
+		token = strtok(nullptr, " ");
 	}
 
 	int major = 1;
@@ -110,27 +110,27 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 			if (filePtr)
 			{
 				char buffer[256];
-				char *stringPtr = NULL;
+				char *stringPtr = nullptr;
 
 				while (!feof(filePtr))
 				{
 					fread(buffer, 256, 1, filePtr);
-					if ((stringPtr = strstr(buffer, VERSION_STRING)) != NULL)
+					if ((stringPtr = strstr(buffer, VERSION_STRING)) != nullptr)
 					{
 						char *ptr;
 
 						// Looking for '#define VERSION "x.y.z"'
 						ptr = strtok(stringPtr, " ");	// The VERSION
-						ptr = strtok(NULL, "\n");			// The remainder
+						ptr = strtok(nullptr, "\n");			// The remainder
 
 						if (*ptr == '\"')
 						{
 							ptr++; // Inc past the first "
 							ptr = strtok(ptr, ".");	// The first number
 							major = atoi(ptr);
-							ptr = strtok(NULL, ".");  // The second number
+							ptr = strtok(nullptr, ".");  // The second number
 							minor = atoi(ptr);
-							ptr = strtok(NULL, "\""); // The final number
+							ptr = strtok(nullptr, "\""); // The final number
 							build = atoi(ptr);
 							fclose(filePtr);
 

@@ -60,11 +60,11 @@ public:
     UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "UnitCreatePoint",				INI::parseCoord3D,							NULL, offsetof( QueueProductionExitUpdateModuleData, m_unitCreatePoint ) },
-			{ "NaturalRallyPoint",			INI::parseCoord3D,							NULL, offsetof( QueueProductionExitUpdateModuleData, m_naturalRallyPoint ) },
-			{ "ExitDelay",							INI::parseDurationUnsignedInt,	NULL, offsetof( QueueProductionExitUpdateModuleData, m_exitDelayData ) },
-			{ "AllowAirborneCreation",	INI::parseBool,									NULL, offsetof( QueueProductionExitUpdateModuleData, m_allowAirborneCreationData ) },
-			{ "InitialBurst",						INI::parseUnsignedInt,					NULL, offsetof( QueueProductionExitUpdateModuleData, m_initialBurst ) },
+			{ "UnitCreatePoint",				INI::parseCoord3D,							nullptr, offsetof( QueueProductionExitUpdateModuleData, m_unitCreatePoint ) },
+			{ "NaturalRallyPoint",			INI::parseCoord3D,							nullptr, offsetof( QueueProductionExitUpdateModuleData, m_naturalRallyPoint ) },
+			{ "ExitDelay",							INI::parseDurationUnsignedInt,	nullptr, offsetof( QueueProductionExitUpdateModuleData, m_exitDelayData ) },
+			{ "AllowAirborneCreation",	INI::parseBool,									nullptr, offsetof( QueueProductionExitUpdateModuleData, m_allowAirborneCreationData ) },
+			{ "InitialBurst",						INI::parseUnsignedInt,					nullptr, offsetof( QueueProductionExitUpdateModuleData, m_initialBurst ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -121,5 +121,5 @@ inline const Coord3D *QueueProductionExitUpdate::getRallyPoint( void )  const
 	if (m_rallyPointExists)
 		return &m_rallyPoint;
 
-	return NULL;
+	return nullptr;
 }

@@ -84,7 +84,7 @@ static LogClass s_perfLog("Perf.txt");
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 static Bool isShuttingDown = false;
 static Bool buttonPushed = false;
-static const char *nextScreen = NULL;
+static const char *nextScreen = nullptr;
 static Bool raiseMessageBoxes = false;
 static time_t gameListRefreshTime = 0;
 static const time_t gameListRefreshInterval = 10000;
@@ -111,18 +111,18 @@ static NameKeyType comboLobbyGroupRoomsID = NAMEKEY_INVALID;
 //static NameKeyType // sliderChatAdjustID = NAMEKEY_INVALID;
 
 // Window Pointers ------------------------------------------------------------------------
-static GameWindow *parentWOLLobby = NULL;
-static GameWindow *buttonBack = NULL;
-static GameWindow *buttonHost = NULL;
-static GameWindow *buttonRefresh = NULL;
-static GameWindow *buttonJoin = NULL;
-static GameWindow *buttonBuddy = NULL;
-static GameWindow *buttonEmote = NULL;
-static GameWindow *textEntryChat = NULL;
-static GameWindow *listboxLobbyPlayers = NULL;
-static GameWindow *listboxLobbyChat = NULL;
-static GameWindow *comboLobbyGroupRooms = NULL;
-static GameWindow *parent = NULL;
+static GameWindow *parentWOLLobby = nullptr;
+static GameWindow *buttonBack = nullptr;
+static GameWindow *buttonHost = nullptr;
+static GameWindow *buttonRefresh = nullptr;
+static GameWindow *buttonJoin = nullptr;
+static GameWindow *buttonBuddy = nullptr;
+static GameWindow *buttonEmote = nullptr;
+static GameWindow *textEntryChat = nullptr;
+static GameWindow *listboxLobbyPlayers = nullptr;
+static GameWindow *listboxLobbyChat = nullptr;
+static GameWindow *comboLobbyGroupRooms = nullptr;
+static GameWindow *parent = nullptr;
 
 static Int groupRoomToJoin = 0;
 static Int	initialGadgetDelay = 2;
@@ -160,7 +160,7 @@ Bool handleLobbySlashCommands(UnicodeString uText)
 	{
 		UnicodeString s;
 		s.format(L"Hosting qr2:%d thread:%d", getQR2HostingStatus(), isThreadHosting);
-		TheGameSpyInfo->addText(s, GameSpyColor[GSCOLOR_DEFAULT], NULL);
+		TheGameSpyInfo->addText(s, GameSpyColor[GSCOLOR_DEFAULT], nullptr);
 		return TRUE; // was a slash command
 	}
 	else if (token == "me" && uText.getLength()>4)
@@ -201,13 +201,13 @@ Bool handleLobbySlashCommands(UnicodeString uText)
 	else if (token == "fakecrc")
 	{
 		g_fakeCRC = !g_fakeCRC;
-		TheGameSpyInfo->addText(L"Toggled CRC fakery", GameSpyColor[GSCOLOR_DEFAULT], NULL);
+		TheGameSpyInfo->addText(L"Toggled CRC fakery", GameSpyColor[GSCOLOR_DEFAULT], nullptr);
 		return TRUE; // was a slash command
 	}
 	else if (token == "slots")
 	{
 		g_debugSlots = !g_debugSlots;
-		TheGameSpyInfo->addText(L"Toggled SlotList debug", GameSpyColor[GSCOLOR_DEFAULT], NULL);
+		TheGameSpyInfo->addText(L"Toggled SlotList debug", GameSpyColor[GSCOLOR_DEFAULT], nullptr);
 		return TRUE; // was a slash command
 	}
 #endif
@@ -326,7 +326,7 @@ static void playerTooltip(GameWindow *window,
 	tmp.format(L"\n%ls %ls", TheGameText->fetch(sideName).str(), TheGameText->fetch(rankName).str());
 	tooltip.concat(tmp);
 
-	TheMouse->setCursorTooltip( tooltip, -1, NULL, 1.5f ); // the text and width are the only params used.  the others are the default values.
+	TheMouse->setCursorTooltip( tooltip, -1, nullptr, 1.5f ); // the text and width are the only params used.  the others are the default values.
 }
 
 static void populateGroupRoomListbox(GameWindow *lb)
@@ -384,7 +384,7 @@ static_assert(ARRAY_SIZE(rankNames) == MAX_RANKS, "Incorrect array size");
 const Image* LookupSmallRankImage(Int side, Int rankPoints)
 {
 	if (rankPoints == 0)
-		return NULL;
+		return nullptr;
 
 	Int rank = 0;
 	Int i = 0;
@@ -393,7 +393,7 @@ const Image* LookupSmallRankImage(Int side, Int rankPoints)
 	rank = i;
 
 	if (rank < 0 || rank >= 10)
-		return NULL;
+		return nullptr;
 
 	AsciiString sideStr = "N";
 	switch(side)
@@ -457,7 +457,7 @@ static Int insertPlayerInListbox(const PlayerInfo& info, Color color)
 	w = min(GadgetListBoxGetColumnWidth(listboxLobbyPlayers, 0), w);
 	Int h = w;
 	if (!isPreorder)
-		preorderImg = NULL;
+		preorderImg = nullptr;
 
 	const Image *rankImg = LookupSmallRankImage(currentSide, currentRank);
 
@@ -582,7 +582,7 @@ void PopulateLobbyPlayerListbox(void)
 
 		if (indicesToSelect.size() != numSelected)
 		{
-			TheWindowManager->winSetLoneWindow(NULL);
+			TheWindowManager->winSetLoneWindow(nullptr);
 		}
 
 		// restore top visible entry
@@ -596,7 +596,7 @@ void PopulateLobbyPlayerListbox(void)
 //-------------------------------------------------------------------------------------------------
 void WOLLobbyMenuInit( WindowLayout *layout, void *userData )
 {
-	nextScreen = NULL;
+	nextScreen = nullptr;
 	buttonPushed = false;
 	isShuttingDown = false;
 
@@ -606,7 +606,7 @@ void WOLLobbyMenuInit( WindowLayout *layout, void *userData )
 	playerListRefreshTime = 0;
 
 	parentWOLLobbyID = TheNameKeyGenerator->nameToKey( "WOLCustomLobby.wnd:WOLLobbyMenuParent" );
-	parent = TheWindowManager->winGetWindowFromId(NULL, parentWOLLobbyID);
+	parent = TheWindowManager->winGetWindowFromId(nullptr, parentWOLLobbyID);
 
 	buttonBackID = TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:ButtonBack");
 	buttonBack = TheWindowManager->winGetWindowFromId(parent, buttonBackID);
@@ -701,7 +701,7 @@ void WOLLobbyMenuInit( WindowLayout *layout, void *userData )
 	TheLobbyQueuedUTMs.clear();
 	justEntered = TRUE;
 	initialGadgetDelay = 2;
-	GameWindow *win = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:GadgetParent"));
+	GameWindow *win = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("WOLCustomLobby.wnd:GadgetParent"));
 	if(win)
 		win->winHide(TRUE);
 	DontShowMainMenu = TRUE;
@@ -719,14 +719,14 @@ static void shutdownComplete( WindowLayout *layout )
 	layout->hide( TRUE );
 
 	// our shutdown is complete
-	TheShell->shutdownComplete( layout, (nextScreen != NULL) );
+	TheShell->shutdownComplete( layout, (nextScreen != nullptr) );
 
-	if (nextScreen != NULL)
+	if (nextScreen != nullptr)
 	{
 		TheShell->push(nextScreen);
 	}
 
-	nextScreen = NULL;
+	nextScreen = nullptr;
 
 }
 
@@ -760,8 +760,8 @@ void WOLLobbyMenuShutdown( WindowLayout *layout, void *userData )
 	req.peerRequestType = PeerRequest::PEERREQUEST_STOPGAMELIST;
 	TheGameSpyPeerMessageQueue->addRequest(req);
 
-	listboxLobbyChat = NULL;
-	listboxLobbyPlayers = NULL;
+	listboxLobbyChat = nullptr;
+	listboxLobbyPlayers = nullptr;
 
 	isShuttingDown = true;
 
@@ -951,7 +951,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 						GameSpyGroupRoom room = iter->second;
 						UnicodeString msg;
 						msg.format(TheGameText->fetch("GUI:LobbyJoined"), room.m_translatedName.str());
-						TheGameSpyInfo->addText(msg, GameSpyColor[GSCOLOR_DEFAULT], NULL);
+						TheGameSpyInfo->addText(msg, GameSpyColor[GSCOLOR_DEFAULT], nullptr);
 					}
 				}
 				else
@@ -1571,7 +1571,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 									break;
 #endif
 								}
-								Bool unknownLadder = (roomToJoin->getLadderPort() && TheLadderList->findLadder(roomToJoin->getLadderIP(), roomToJoin->getLadderPort()) == NULL);
+								Bool unknownLadder = (roomToJoin->getLadderPort() && TheLadderList->findLadder(roomToJoin->getLadderIP(), roomToJoin->getLadderPort()) == nullptr);
 								if (unknownLadder)
 								{
 									GSMessageBoxOk(TheGameText->fetch("GUI:JoinFailedDefault"), TheGameText->fetch("GUI:JoinFailedUnknownLadder"));
@@ -1605,12 +1605,12 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 						}
 						else
 						{
-							GSMessageBoxOk(TheGameText->fetch("GUI:Error"), TheGameText->fetch("GUI:NoGameInfo"), NULL);
+							GSMessageBoxOk(TheGameText->fetch("GUI:Error"), TheGameText->fetch("GUI:NoGameInfo"), nullptr);
 						}
 					}
 					else
 					{
-						GSMessageBoxOk(TheGameText->fetch("GUI:Error"), TheGameText->fetch("GUI:NoGameSelected"), NULL);
+						GSMessageBoxOk(TheGameText->fetch("GUI:Error"), TheGameText->fetch("GUI:NoGameSelected"), nullptr);
 					}
 				}
 				else if ( controlID == buttonBuddyID )
@@ -1709,7 +1709,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 				if( controlID == listboxLobbyPlayersID )
 				{
 					RightClickStruct *rc = (RightClickStruct *)mData2;
-					WindowLayout *rcLayout = NULL;
+					WindowLayout *rcLayout = nullptr;
 					GameWindow *rcMenu;
 					if(rc->pos < 0)
 					{
@@ -1771,7 +1771,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 				else if( controlID == GetGameListBoxID() )
 				{
 					RightClickStruct *rc = (RightClickStruct *)mData2;
-					WindowLayout *rcLayout = NULL;
+					WindowLayout *rcLayout = nullptr;
 					GameWindow *rcMenu;
 					if(rc->pos < 0)
 					{

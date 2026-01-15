@@ -59,7 +59,7 @@ public:
 	SupplyCenterDockUpdate( Thing *thing, const ModuleData* moduleData );
 
 	virtual DockUpdateInterface* getDockUpdateInterface() { return this; }
-	virtual Bool action( Object* docker, Object *drone = NULL );	///<For me, this means taking boxes and turning them into money for my ownerplayer
+	virtual Bool action( Object* docker, Object *drone = nullptr );	///<For me, this means taking boxes and turning them into money for my ownerplayer
 
 	virtual UpdateSleepTime update();
 

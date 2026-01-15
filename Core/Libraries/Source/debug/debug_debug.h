@@ -365,7 +365,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
 
     \param file file that contains DASSERT or DASSERT_MSG macro
     \param line line where assert macro can be found
-    \param expr expression that triggered the assertion, NULL for 'general failure' (\ref DFAIL)
+    \param expr expression that triggered the assertion, nullptr for 'general failure' (\ref DFAIL)
     \return reference to Debug instance
   */
   static Debug &AssertBegin(const char *file, int line, const char *expr);
@@ -439,7 +439,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
     Starts building the crash string which will then be send to the active
     output destinations.
 
-    \param file file that contains DCRASH or DCRASH_RELEASE macro, if NULL
+    \param file file that contains DCRASH or DCRASH_RELEASE macro, if nullptr
                 then no file info is given (used by DCRASH_RELEASE in release
                 builds)
     \param line line where crash macro can be found, 0 if no line info should
@@ -823,7 +823,7 @@ private:
     /// factory function
     DebugIOInterface* (*factory)(void);
 
-    /// I/O interface (may be NULL)
+    /// I/O interface (may be null)
     DebugIOInterface *io;
 
     /// input buffer
@@ -1040,7 +1040,7 @@ private:
     Returns translated group name.
 
     \param fileOrGroup file or log group
-    \param descr description, may be NULL
+    \param descr description, may be nullptr
     \return translated log group name
   */
   const char *AddLogGroup(const char *fileOrGroup, const char *descr);

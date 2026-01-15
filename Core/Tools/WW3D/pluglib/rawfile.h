@@ -47,7 +47,7 @@
 #ifdef _UNIX
 #include <stdio.h>
 #include "osdep.h"
-  #define	NULL_HANDLE	 	NULL
+  #define	NULL_HANDLE	 	nullptr
   #define	HANDLE_TYPE		FILE*
 #else
   #define	NULL_HANDLE		INVALID_HANDLE_VALUE
@@ -105,7 +105,7 @@ class RawFileClass : public FileClass
 		virtual void Close(void);
 		virtual unsigned long Get_Date_Time(void);
 		virtual bool Set_Date_Time(unsigned long datetime);
-		virtual void Error(int error, int canretry = false, char const * filename=NULL);
+		virtual void Error(int error, int canretry = false, char const * filename=nullptr);
 
 		void Bias(int start, int length=-1);
 
@@ -145,7 +145,7 @@ class RawFileClass : public FileClass
 		#endif
 
 		/*
-		**	This points to the filename as a NULL terminated string. It may point to either a
+		**	This points to the filename as a null-terminated string. It may point to either a
 		**	constant or an allocated string as indicated by the "Allocated" flag.
 		*/
 		char const * Filename;
@@ -179,11 +179,11 @@ class RawFileClass : public FileClass
  * RawFileClass::File_Name -- Returns with the filename associate with the file object.        *
  *                                                                                             *
  *    Use this routine to determine what filename is associated with this file object. If no   *
- *    filename has yet been assigned, then this routing will return NULL.                      *
+ *    filename has yet been assigned, then this routing will return null.                      *
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *
- * OUTPUT:  Returns with a pointer to the file name associated with this file object or NULL   *
+ * OUTPUT:  Returns with a pointer to the file name associated with this file object or nullptr   *
  *          if one doesn't exist.                                                              *
  *                                                                                             *
  * WARNINGS:   none                                                                            *

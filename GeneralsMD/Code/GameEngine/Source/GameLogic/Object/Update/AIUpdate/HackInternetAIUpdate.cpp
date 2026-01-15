@@ -164,7 +164,7 @@ void HackInternetAIUpdate::hackInternet()
 {
 	//if (m_hackInternetStateMachine)
 	//	deleteInstance(m_hackInternetStateMachine);
-	//m_hackInternetStateMachine = NULL;
+	//m_hackInternetStateMachine = nullptr;
 
 	// must make the state machine AFTER initing the other stuff, since it may inquire of its values...
 	//m_hackInternetStateMachine = newInstance(HackInternetStateMachine)( getObject() );
@@ -185,7 +185,7 @@ UnsignedInt HackInternetAIUpdate::getUnpackTime() const
 // ------------------------------------------------------------------------------------------------
 UnsignedInt HackInternetAIUpdate::getPackTime() const
 {
-	if( getObject()->getContainedBy() != NULL )
+	if( getObject()->getContainedBy() != nullptr )
 		return 0; //We don't need to pack if exiting a building
 
 	return getHackInternetAIUpdateModuleData()->m_packTime;
@@ -194,7 +194,7 @@ UnsignedInt HackInternetAIUpdate::getPackTime() const
 // ------------------------------------------------------------------------------------------------
 UnsignedInt HackInternetAIUpdate::getCashUpdateDelay() const
 {
-	if( getObject()->getContainedBy() != NULL )
+	if( getObject()->getContainedBy() != nullptr )
 		return getHackInternetAIUpdateModuleData()->m_cashUpdateDelayFast;
 	else
 		return getHackInternetAIUpdateModuleData()->m_cashUpdateDelay;

@@ -47,7 +47,7 @@
 
 
 
-GameInfo *TheGameInfo = NULL;
+GameInfo *TheGameInfo = nullptr;
 
 // GameSlot ----------------------------------------
 
@@ -285,7 +285,7 @@ GameInfo::GameInfo()
 {
 	for (int i=0; i<MAX_SLOTS; ++i)
 	{
-		m_slot[i] = NULL;
+		m_slot[i] = nullptr;
 	}
 	reset();
 }
@@ -417,7 +417,7 @@ void GameInfo::setSlot( Int slotNum, GameSlot slotInfo )
 	if (slotNum < 0 || slotNum >= MAX_SLOTS)
 		return;
 
-	DEBUG_ASSERTCRASH( m_slot[slotNum], ("NULL slot pointer"));
+	DEBUG_ASSERTCRASH( m_slot[slotNum], ("null slot pointer"));
 	if (!m_slot[slotNum])
 		return;
 
@@ -443,9 +443,9 @@ GameSlot* GameInfo::getSlot( Int slotNum )
 {
 	DEBUG_ASSERTCRASH( slotNum >= 0 && slotNum < MAX_SLOTS, ("GameInfo::getSlot - Invalid slot number"));
 	if (slotNum < 0 || slotNum >= MAX_SLOTS)
-		return NULL;
+		return nullptr;
 
-	DEBUG_ASSERTCRASH( m_slot[slotNum], ("NULL slot pointer") );
+	DEBUG_ASSERTCRASH( m_slot[slotNum], ("null slot pointer") );
 	return m_slot[slotNum];
 }
 
@@ -453,9 +453,9 @@ const GameSlot* GameInfo::getConstSlot( Int slotNum ) const
 {
 	DEBUG_ASSERTCRASH( slotNum >= 0 && slotNum < MAX_SLOTS, ("GameInfo::getSlot - Invalid slot number"));
 	if (slotNum < 0 || slotNum >= MAX_SLOTS)
-		return NULL;
+		return nullptr;
 
-	DEBUG_ASSERTCRASH( m_slot[slotNum], ("NULL slot pointer") );
+	DEBUG_ASSERTCRASH( m_slot[slotNum], ("null slot pointer") );
 	return m_slot[slotNum];
 }
 
@@ -468,7 +468,7 @@ Int GameInfo::getLocalSlotNum( void ) const
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
 		const GameSlot *slot = getConstSlot(i);
-		if (slot == NULL) {
+		if (slot == nullptr) {
 			continue;
 		}
 		if (slot->isPlayer(m_localIP))
@@ -521,7 +521,7 @@ void GameInfo::setMap( AsciiString mapName )
 			{
 				m_mapMask |= 2;
 				fp->close();
-				fp = NULL;
+				fp = nullptr;
 			}
 
 			AsciiString newMapName;
@@ -534,7 +534,7 @@ void GameInfo::setMap( AsciiString mapName )
 				// directory name, we can do this since the filename
 				// is just the directory name with the file extention
 				// added onto it.
-				while (mapName.find('\\') != NULL)
+				while (mapName.find('\\') != nullptr)
 				{
 					if (!newMapName.isEmpty())
 					{
@@ -551,7 +551,7 @@ void GameInfo::setMap( AsciiString mapName )
 			{
 				m_mapMask |= 4;
 				fp->close();
-				fp = NULL;
+				fp = nullptr;
 			}
 
 			path = GetStrFileFromMap(m_mapName);
@@ -561,7 +561,7 @@ void GameInfo::setMap( AsciiString mapName )
 			{
 				m_mapMask |= 8;
 				fp->close();
-				fp = NULL;
+				fp = nullptr;
 			}
 
 			path = GetSoloINIFromMap(m_mapName);
@@ -571,7 +571,7 @@ void GameInfo::setMap( AsciiString mapName )
 			{
 				m_mapMask |= 16;
 				fp->close();
-				fp = NULL;
+				fp = nullptr;
 			}
 
 			path = GetAssetUsageFromMap(m_mapName);
@@ -581,7 +581,7 @@ void GameInfo::setMap( AsciiString mapName )
 			{
 				m_mapMask |= 32;
 				fp->close();
-				fp = NULL;
+				fp = nullptr;
 			}
 
 			path = GetReadmeFromMap(m_mapName);
@@ -591,7 +591,7 @@ void GameInfo::setMap( AsciiString mapName )
 			{
 				m_mapMask |= 64;
 				fp->close();
-				fp = NULL;
+				fp = nullptr;
 			}
 		}
 		else
@@ -737,11 +737,11 @@ void GameInfo::resetAccepted( void )
 
 void GameInfo::resetStartSpots()
 {
-	GameSlot *slot = NULL;
+	GameSlot *slot = nullptr;
 	for (Int i = 0; i < MAX_SLOTS; ++i)
 	{
 		slot = getSlot(i);
-		if (slot != NULL)
+		if (slot != nullptr)
 		{
 			slot->setStartPos(-1);
 		}
@@ -754,7 +754,7 @@ void GameInfo::resetStartSpots()
 void GameInfo::adjustSlotsForMap()
 {
 	const MapMetaData *md = TheMapCache->findMap(m_mapName);
-	if (md != NULL)
+	if (md != nullptr)
 	{
 		// get the number of players allowed from the map.
 		Int numPlayers = md->m_numPlayers;
@@ -905,7 +905,7 @@ AsciiString GameInfoToAsciiString( const GameInfo *game )
 		// directory name, we can do this since the filename
 		// is just the directory name with the file extention
 		// added onto it.
-		while (mapName.find('\\') != NULL)
+		while (mapName.find('\\') != nullptr)
 		{
 			if (!newMapName.isEmpty())
 			{
@@ -997,7 +997,7 @@ static Int grabHexInt(const char *s)
 	char tmp[5] = "0xff";
 	tmp[2] = s[0];
 	tmp[3] = s[1];
-	Int b = strtol(tmp, NULL, 16);
+	Int b = strtol(tmp, nullptr, 16);
 	return b;
 }
 Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
@@ -1033,15 +1033,15 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 	DEBUG_LOG(("ParseAsciiStringToGameInfo - parsing [%s]", options.str()));
 
 
-	while ( (keyValPair = strtok_r(bufPtr, ";", &strPos)) != NULL )
+	while ( (keyValPair = strtok_r(bufPtr, ";", &strPos)) != nullptr )
 	{
-		bufPtr = NULL; // strtok within the same string
+		bufPtr = nullptr; // strtok within the same string
 
 		AsciiString key, val;
-		char *pos = NULL;
+		char *pos = nullptr;
 		char *keyPtr, *valPtr;
 		keyPtr = (strtok_r(keyValPair, "=", &pos));
-		valPtr = (strtok_r(NULL, "\n", &pos));
+		valPtr = (strtok_r(nullptr, "\n", &pos));
 		if (keyPtr)
 			key = keyPtr;
 		if (valPtr)
@@ -1127,7 +1127,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
     }
     else if (key.compare("SC") == 0 )
     {
-      UnsignedInt startingCashAmount = strtoul( val.str(), NULL, 10 );
+      UnsignedInt startingCashAmount = strtoul( val.str(), nullptr, 10 );
       startingCash.init();
       startingCash.deposit( startingCashAmount, FALSE, FALSE );
       sawStartingCash = TRUE;
@@ -1142,7 +1142,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 			sawSlotlist = true;
 			/// @TODO: Need to read in all the slot info... big mess right now.
 			char *rawSlotBuf = strdup(val.str());
-			char *freeMe = NULL;
+			char *freeMe = nullptr;
 			AsciiString rawSlot;
 //			Bool slotsOk = true;	//flag that lets us know whether or not the slot list is good.
 
@@ -1152,13 +1152,13 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 					rawSlot = strtok_r(rawSlotBuf,":",&pos);
 					if( rawSlotBuf )
 						freeMe = rawSlotBuf;
-					rawSlotBuf = NULL;
+					rawSlotBuf = nullptr;
 					switch (*rawSlot.str())
 					{
 						case 'H':
 						{
 //							DEBUG_LOG(("ParseAsciiStringToGameInfo - Human player"));
-							char *slotPos = NULL;
+							char *slotPos = nullptr;
 							//Parse out the Name
 							AsciiString slotValue(strtok_r((char *)rawSlot.str(),",",&slotPos));
 							if(slotValue.isEmpty())
@@ -1173,7 +1173,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 							//DEBUG_LOG(("ParseAsciiStringToGameInfo - name is %s", slotValue.str()+1));
 
 							//Parse out the IP
-							slotValue = strtok_r(NULL,",",&slotPos);
+							slotValue = strtok_r(nullptr,",",&slotPos);
 							if(slotValue.isEmpty())
 							{
 								optionsOk = false;
@@ -1188,7 +1188,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 							newSlot[i].setState(SLOT_PLAYER, name, playerIP);
 
 							// parse out the port
-							slotValue = strtok_r(NULL, ",", &slotPos);
+							slotValue = strtok_r(nullptr, ",", &slotPos);
 							if (slotValue.isEmpty())
 							{
 								optionsOk = false;
@@ -1201,7 +1201,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 							DEBUG_LOG(("ParseAsciiStringToGameInfo - port is %d", playerPort));
 
 							//Read if it's accepted or not
-							slotValue = strtok_r(NULL,",",&slotPos);
+							slotValue = strtok_r(nullptr,",",&slotPos);
 							if(slotValue.getLength() != 2)
 							{
 								optionsOk = false;
@@ -1226,7 +1226,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 							}
 
 							//Read color index
-							slotValue = strtok_r(NULL,",",&slotPos);
+							slotValue = strtok_r(nullptr,",",&slotPos);
 							if(slotValue.isEmpty())
 							{
 								optionsOk = false;
@@ -1244,7 +1244,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 							//DEBUG_LOG(("ParseAsciiStringToGameInfo - player color set to %d", color));
 
 							//Read playerTemplate index
-							slotValue = strtok_r(NULL,",",&slotPos);
+							slotValue = strtok_r(nullptr,",",&slotPos);
 							if(slotValue.isEmpty())
 							{
 								optionsOk = false;
@@ -1262,7 +1262,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 							//DEBUG_LOG(("ParseAsciiStringToGameInfo - player template is %d", playerTemplate));
 
 							//Read start position index
-							slotValue = strtok_r(NULL,",",&slotPos);
+							slotValue = strtok_r(nullptr,",",&slotPos);
 							if(slotValue.isEmpty())
 							{
 								optionsOk = false;
@@ -1280,7 +1280,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 							//DEBUG_LOG(("ParseAsciiStringToGameInfo - player start position is %d", startPos));
 
 							//Read team index
-							slotValue = strtok_r(NULL,",",&slotPos);
+							slotValue = strtok_r(nullptr,",",&slotPos);
 							if(slotValue.isEmpty())
 							{
 								optionsOk = false;
@@ -1298,7 +1298,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 							//DEBUG_LOG(("ParseAsciiStringToGameInfo - team number is %d", team));
 
 							// Read the NAT behavior
-							slotValue = strtok_r(NULL, ",",&slotPos);
+							slotValue = strtok_r(nullptr, ",",&slotPos);
 							if (slotValue.isEmpty())
 							{
 								optionsOk = false;
@@ -1319,7 +1319,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 						case 'C':
 						{
             	DEBUG_LOG(("ParseAsciiStringToGameInfo - AI player"));
-							char *slotPos = NULL;
+							char *slotPos = nullptr;
 							//Parse out the Name
 							AsciiString slotValue(strtok_r((char *)rawSlot.str(),",",&slotPos));
 							if(slotValue.isEmpty())
@@ -1358,7 +1358,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 							}
 
 							//Read color index
-							slotValue = strtok_r(NULL,",",&slotPos);
+							slotValue = strtok_r(nullptr,",",&slotPos);
 							if(slotValue.isEmpty())
 							{
 								optionsOk = false;
@@ -1376,7 +1376,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 							//DEBUG_LOG(("ParseAsciiStringToGameInfo - player color set to %d", color));
 
 							//Read playerTemplate index
-							slotValue = strtok_r(NULL,",",&slotPos);
+							slotValue = strtok_r(nullptr,",",&slotPos);
 							if(slotValue.isEmpty())
 							{
 								optionsOk = false;
@@ -1394,7 +1394,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 							//DEBUG_LOG(("ParseAsciiStringToGameInfo - player template is %d", playerTemplate));
 
 							//Read start pos
-							slotValue = strtok_r(NULL,",",&slotPos);
+							slotValue = strtok_r(nullptr,",",&slotPos);
 							if(slotValue.isEmpty())
 							{
 								optionsOk = false;
@@ -1424,7 +1424,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 							//DEBUG_LOG(("ParseAsciiStringToGameInfo - start spot is %d", startPos));
 
 							//Read team index
-							slotValue = strtok_r(NULL,",",&slotPos);
+							slotValue = strtok_r(nullptr,",",&slotPos);
 							if(slotValue.isEmpty())
 							{
 								optionsOk = false;

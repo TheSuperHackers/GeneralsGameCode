@@ -141,11 +141,11 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "MaxBoxes",					INI::parseInt,		NULL, offsetof( SupplyTruckAIUpdateModuleData, m_maxBoxesData ) },
-			{ "SupplyCenterActionDelay", INI::parseDurationUnsignedInt, NULL, offsetof( SupplyTruckAIUpdateModuleData, m_centerDelay ) },
-			{ "SupplyWarehouseActionDelay", INI::parseDurationUnsignedInt, NULL, offsetof( SupplyTruckAIUpdateModuleData, m_warehouseDelay ) },
-			{ "SupplyWarehouseScanDistance", INI::parseReal, NULL, offsetof( SupplyTruckAIUpdateModuleData, m_warehouseScanDistance ) },
- 			{ "SuppliesDepletedVoice", INI::parseAudioEventRTS, NULL, offsetof( SupplyTruckAIUpdateModuleData, m_suppliesDepletedVoice) },
+			{ "MaxBoxes",					INI::parseInt,		nullptr, offsetof( SupplyTruckAIUpdateModuleData, m_maxBoxesData ) },
+			{ "SupplyCenterActionDelay", INI::parseDurationUnsignedInt, nullptr, offsetof( SupplyTruckAIUpdateModuleData, m_centerDelay ) },
+			{ "SupplyWarehouseActionDelay", INI::parseDurationUnsignedInt, nullptr, offsetof( SupplyTruckAIUpdateModuleData, m_warehouseDelay ) },
+			{ "SupplyWarehouseScanDistance", INI::parseReal, nullptr, offsetof( SupplyTruckAIUpdateModuleData, m_warehouseScanDistance ) },
+ 			{ "SuppliesDepletedVoice", INI::parseAudioEventRTS, nullptr, offsetof( SupplyTruckAIUpdateModuleData, m_suppliesDepletedVoice) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);

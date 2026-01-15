@@ -34,7 +34,7 @@ class ScorchOptions : public COptionsPanel, public PopupSliderOwner
 {
 // Construction
 public:
-	ScorchOptions(CWnd* pParent = NULL);   // standard constructor
+	ScorchOptions(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(ScorchOptions)

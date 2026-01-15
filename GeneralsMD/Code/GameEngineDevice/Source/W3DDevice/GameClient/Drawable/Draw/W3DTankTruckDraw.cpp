@@ -70,25 +70,25 @@ void W3DTankTruckDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "Dust", INI::parseAsciiString, NULL, offsetof(W3DTankTruckDrawModuleData, m_dustEffectName) },
-		{ "DirtSpray", INI::parseAsciiString, NULL, offsetof(W3DTankTruckDrawModuleData, m_dirtEffectName) },
-		{ "PowerslideSpray", INI::parseAsciiString, NULL, offsetof(W3DTankTruckDrawModuleData, m_powerslideEffectName) },
-		{ "LeftFrontTireBone", INI::parseAsciiString, NULL, offsetof(W3DTankTruckDrawModuleData, m_frontLeftTireBoneName) },
-		{ "RightFrontTireBone", INI::parseAsciiString, NULL, offsetof(W3DTankTruckDrawModuleData, m_frontRightTireBoneName) },
-		{ "LeftRearTireBone", INI::parseAsciiString, NULL, offsetof(W3DTankTruckDrawModuleData, m_rearLeftTireBoneName) },
-		{ "RightRearTireBone", INI::parseAsciiString, NULL, offsetof(W3DTankTruckDrawModuleData, m_rearRightTireBoneName) },
-		{ "MidLeftFrontTireBone", INI::parseAsciiString, NULL, offsetof(W3DTankTruckDrawModuleData, m_midFrontLeftTireBoneName) },
-		{ "MidRightFrontTireBone", INI::parseAsciiString, NULL, offsetof(W3DTankTruckDrawModuleData, m_midFrontRightTireBoneName) },
-		{ "MidLeftRearTireBone", INI::parseAsciiString, NULL, offsetof(W3DTankTruckDrawModuleData, m_midRearLeftTireBoneName) },
-		{ "MidRightRearTireBone", INI::parseAsciiString, NULL, offsetof(W3DTankTruckDrawModuleData, m_midRearRightTireBoneName) },
-		{ "TireRotationMultiplier", INI::parseReal, NULL, offsetof(W3DTankTruckDrawModuleData, m_rotationSpeedMultiplier) },
-		{ "PowerslideRotationAddition", INI::parseReal, NULL, offsetof(W3DTankTruckDrawModuleData, m_powerslideRotationAddition) },
-		{ "TreadDebrisLeft", INI::parseAsciiString, NULL, offsetof(W3DTankTruckDrawModuleData, m_treadDebrisNameLeft) },
-		{ "TreadDebrisRight", INI::parseAsciiString, NULL, offsetof(W3DTankTruckDrawModuleData, m_treadDebrisNameRight) },
-		{ "TreadAnimationRate", INI::parseVelocityReal, NULL, offsetof(W3DTankTruckDrawModuleData, m_treadAnimationRate) },
-		{ "TreadPivotSpeedFraction", INI::parseReal, NULL, offsetof(W3DTankTruckDrawModuleData, m_treadPivotSpeedFraction) },
-		{ "TreadDriveSpeedFraction", INI::parseReal, NULL, offsetof(W3DTankTruckDrawModuleData, m_treadDriveSpeedFraction) },
-		{ 0, 0, 0, 0 }
+		{ "Dust", INI::parseAsciiString, nullptr, offsetof(W3DTankTruckDrawModuleData, m_dustEffectName) },
+		{ "DirtSpray", INI::parseAsciiString, nullptr, offsetof(W3DTankTruckDrawModuleData, m_dirtEffectName) },
+		{ "PowerslideSpray", INI::parseAsciiString, nullptr, offsetof(W3DTankTruckDrawModuleData, m_powerslideEffectName) },
+		{ "LeftFrontTireBone", INI::parseAsciiString, nullptr, offsetof(W3DTankTruckDrawModuleData, m_frontLeftTireBoneName) },
+		{ "RightFrontTireBone", INI::parseAsciiString, nullptr, offsetof(W3DTankTruckDrawModuleData, m_frontRightTireBoneName) },
+		{ "LeftRearTireBone", INI::parseAsciiString, nullptr, offsetof(W3DTankTruckDrawModuleData, m_rearLeftTireBoneName) },
+		{ "RightRearTireBone", INI::parseAsciiString, nullptr, offsetof(W3DTankTruckDrawModuleData, m_rearRightTireBoneName) },
+		{ "MidLeftFrontTireBone", INI::parseAsciiString, nullptr, offsetof(W3DTankTruckDrawModuleData, m_midFrontLeftTireBoneName) },
+		{ "MidRightFrontTireBone", INI::parseAsciiString, nullptr, offsetof(W3DTankTruckDrawModuleData, m_midFrontRightTireBoneName) },
+		{ "MidLeftRearTireBone", INI::parseAsciiString, nullptr, offsetof(W3DTankTruckDrawModuleData, m_midRearLeftTireBoneName) },
+		{ "MidRightRearTireBone", INI::parseAsciiString, nullptr, offsetof(W3DTankTruckDrawModuleData, m_midRearRightTireBoneName) },
+		{ "TireRotationMultiplier", INI::parseReal, nullptr, offsetof(W3DTankTruckDrawModuleData, m_rotationSpeedMultiplier) },
+		{ "PowerslideRotationAddition", INI::parseReal, nullptr, offsetof(W3DTankTruckDrawModuleData, m_powerslideRotationAddition) },
+		{ "TreadDebrisLeft", INI::parseAsciiString, nullptr, offsetof(W3DTankTruckDrawModuleData, m_treadDebrisNameLeft) },
+		{ "TreadDebrisRight", INI::parseAsciiString, nullptr, offsetof(W3DTankTruckDrawModuleData, m_treadDebrisNameRight) },
+		{ "TreadAnimationRate", INI::parseVelocityReal, nullptr, offsetof(W3DTankTruckDrawModuleData, m_treadAnimationRate) },
+		{ "TreadPivotSpeedFraction", INI::parseReal, nullptr, offsetof(W3DTankTruckDrawModuleData, m_treadPivotSpeedFraction) },
+		{ "TreadDriveSpeedFraction", INI::parseReal, nullptr, offsetof(W3DTankTruckDrawModuleData, m_treadDriveSpeedFraction) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -96,21 +96,21 @@ void W3DTankTruckDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 W3DTankTruckDraw::W3DTankTruckDraw( Thing *thing, const ModuleData* moduleData ) : W3DModelDraw( thing, moduleData ),
-m_dirtEffect(NULL), m_dustEffect(NULL), m_powerslideEffect(NULL), m_effectsInitialized(false),
+m_dirtEffect(nullptr), m_dustEffect(nullptr), m_powerslideEffect(nullptr), m_effectsInitialized(false),
 m_wasAirborne(false), m_isPowersliding(false), m_frontWheelRotation(0), m_rearWheelRotation(0),
 m_frontRightTireBone(0), m_frontLeftTireBone(0), m_rearLeftTireBone(0),m_rearRightTireBone(0),
-m_prevRenderObj(NULL)
+m_prevRenderObj(nullptr)
 {
 	//Truck Data
 	m_landingSound = *(thing->getTemplate()->getPerUnitSound("TruckLandingSound"));
 	m_powerslideSound = *(thing->getTemplate()->getPerUnitSound("TruckPowerslideSound"));
 
 	//Tank data
-	m_treadDebrisLeft = NULL;
-	m_treadDebrisRight = NULL;
+	m_treadDebrisLeft = nullptr;
+	m_treadDebrisRight = nullptr;
 
 	for (Int i=0; i<MAX_TREADS_PER_TANK; i++)
-		m_treads[i].m_robj = NULL;
+		m_treads[i].m_robj = nullptr;
 
 	m_treadCount=0;
 
@@ -188,21 +188,21 @@ void W3DTankTruckDraw::tossEmitters()
 {
 	if (m_dustEffect)
 	{
-		m_dustEffect->attachToObject(NULL);
+		m_dustEffect->attachToObject(nullptr);
 		m_dustEffect->destroy();
-		m_dustEffect = NULL;
+		m_dustEffect = nullptr;
 	}
 	if (m_dirtEffect)
 	{
-		m_dirtEffect->attachToObject(NULL);
+		m_dirtEffect->attachToObject(nullptr);
 		m_dirtEffect->destroy();
-		m_dirtEffect = NULL;
+		m_dirtEffect = nullptr;
 	}
 	if (m_powerslideEffect)
 	{
-		m_powerslideEffect->attachToObject(NULL);
+		m_powerslideEffect->attachToObject(nullptr);
 		m_powerslideEffect->destroy();
-		m_powerslideEffect = NULL;
+		m_powerslideEffect = nullptr;
 	}
 }
 
@@ -446,7 +446,7 @@ void W3DTankTruckDraw::updateTreadObjects(void)
 			const char *meshName;
 			//Check if subobject name starts with "TREADS".
 			if (subObj && subObj->Class_ID() == RenderObjClass::CLASSID_MESH && subObj->Get_Name()
-				&& ( (meshName=strchr(subObj->Get_Name(),'.') ) != 0 && *(meshName++))
+				&& ( (meshName=strchr(subObj->Get_Name(),'.') ) != nullptr && *(meshName++))
 				&&_strnicmp(meshName,"TREADS", 6) == 0)
 			{	//check if sub-object has the correct material to do texture scrolling.
 				MaterialInfoClass *mat=subObj->Get_Material_Info();
@@ -491,7 +491,7 @@ void W3DTankTruckDraw::onRenderObjRecreated(void)
 	//DEBUG_LOG(("Old obj %x, newObj %x, new bones %d, old bones %d",
 	//	m_prevRenderObj, getRenderObject(), getRenderObject()->Get_Num_Bones(),
 	//	m_prevNumBones));
-	m_prevRenderObj = NULL;
+	m_prevRenderObj = nullptr;
 	m_frontLeftTireBone = 0;
 	m_frontRightTireBone = 0;
 	m_rearLeftTireBone = 0;
@@ -524,17 +524,17 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	const Real SIZE_CAP = 2.0f;
 	// get object from logic
 	Object *obj = getDrawable()->getObject();
-	if (obj == NULL)
+	if (obj == nullptr)
 		return;
 
-	if (getRenderObject()==NULL) return;
+	if (getRenderObject()==nullptr) return;
 	if (getRenderObject() != m_prevRenderObj) {
 		updateBones();
 		updateTreadObjects();
 	}
 	// get object physics state
 	PhysicsBehavior *physics = obj->getPhysics();
-	if (physics == NULL)
+	if (physics == nullptr)
 		return;
 
 	const Coord3D *vel = physics->getVelocity();

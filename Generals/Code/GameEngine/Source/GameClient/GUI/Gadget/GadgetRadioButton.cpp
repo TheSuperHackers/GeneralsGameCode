@@ -372,7 +372,7 @@ WindowMsgHandledType GadgetRadioButtonSystem( GameWindow *window, UnsignedInt ms
 		{
 			// free radio button user data
 			delete (RadioButtonData *)window->winGetUserData();
-			window->winSetUserData( NULL );
+			window->winSetUserData( nullptr );
 
 			break;
 
@@ -411,7 +411,7 @@ void GadgetRadioSetText( GameWindow *g, UnicodeString text )
 {
 
 	// sanity
-	if( g == NULL )
+	if( g == nullptr )
 		return;
 
 	TheWindowManager->winSendSystemMsg( g, GGM_SET_LABEL, (WindowMsgData)&text, 0 );
@@ -439,7 +439,7 @@ void GadgetRadioSetSelection( GameWindow *g, Bool sendMsg )
 {
 
 	// sanity
-	if( g == NULL )
+	if( g == nullptr )
 		return;
 
 	TheWindowManager->winSendSystemMsg( g, GBM_SET_SELECTION, (WindowMsgData)&sendMsg, 0 );

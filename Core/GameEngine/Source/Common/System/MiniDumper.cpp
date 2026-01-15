@@ -24,10 +24,10 @@
 #include "gitinfo.h"
 
 // Globals for storing the pointer to the exception
-_EXCEPTION_POINTERS* g_dumpException = NULL;
+_EXCEPTION_POINTERS* g_dumpException = nullptr;
 DWORD g_dumpExceptionThreadId = 0;
 
-MiniDumper* TheMiniDumper = NULL;
+MiniDumper* TheMiniDumper = nullptr;
 
 // Globals containing state about the current exception that's used for context in the mini dump.
 // These are populated by MiniDumper::DumpingExceptionFilter to store a copy of the exception in case it goes out of scope
@@ -39,7 +39,7 @@ constexpr const char* DumpFileNamePrefix = "Crash";
 
 void MiniDumper::initMiniDumper(const AsciiString& userDirPath)
 {
-	DEBUG_ASSERTCRASH(TheMiniDumper == NULL, ("MiniDumper::initMiniDumper called on already created instance"));
+	DEBUG_ASSERTCRASH(TheMiniDumper == nullptr, ("MiniDumper::initMiniDumper called on already created instance"));
 
 	// Use placement new on the process heap so TheMiniDumper is placed outside the MemoryPoolFactory managed area.
 	// If the crash is due to corrupted MemoryPoolFactory structures, try to mitigate the chances of MiniDumper memory also being corrupted
@@ -53,8 +53,8 @@ void MiniDumper::shutdownMiniDumper()
 	{
 		TheMiniDumper->ShutDown();
 		TheMiniDumper->~MiniDumper();
-		::HeapFree(::GetProcessHeap(), NULL, TheMiniDumper);
-		TheMiniDumper = NULL;
+		::HeapFree(::GetProcessHeap(), 0, TheMiniDumper);
+		TheMiniDumper = nullptr;
 	}
 }
 
@@ -63,10 +63,10 @@ MiniDumper::MiniDumper()
 	m_miniDumpInitialized = false;
 	m_loadedDbgHelp = false;
 	m_requestedDumpType = DumpType_Minimal;
-	m_dumpRequested = NULL;
-	m_dumpComplete = NULL;
-	m_quitting = NULL;
-	m_dumpThread = NULL;
+	m_dumpRequested = nullptr;
+	m_dumpComplete = nullptr;
+	m_quitting = nullptr;
+	m_dumpThread = nullptr;
 	m_dumpThreadId = 0;
 	m_dumpDir[0] = 0;
 	m_dumpFile[0] = 0;
@@ -145,7 +145,7 @@ void MiniDumper::Initialize(const AsciiString& userDirPath)
 		return;
 	}
 
-	DWORD executableSize = ::GetModuleFileNameW(NULL, m_executablePath, ARRAY_SIZE(m_executablePath));
+	DWORD executableSize = ::GetModuleFileNameW(nullptr, m_executablePath, ARRAY_SIZE(m_executablePath));
 	if (executableSize == 0 || executableSize == ARRAY_SIZE(m_executablePath))
 	{
 		DEBUG_LOG(("MiniDumper::Initialize: Could not get executable file name. Returned value=%u", executableSize));
@@ -158,18 +158,18 @@ void MiniDumper::Initialize(const AsciiString& userDirPath)
 		return;
 	}
 
-	m_dumpRequested = CreateEvent(NULL, TRUE, FALSE, NULL);
-	m_dumpComplete = CreateEvent(NULL, TRUE, FALSE, NULL);
-	m_quitting = CreateEvent(NULL, TRUE, FALSE, NULL);
+	m_dumpRequested = CreateEvent(nullptr, TRUE, FALSE, nullptr);
+	m_dumpComplete = CreateEvent(nullptr, TRUE, FALSE, nullptr);
+	m_quitting = CreateEvent(nullptr, TRUE, FALSE, nullptr);
 
-	if (m_dumpRequested == NULL || m_dumpComplete == NULL || m_quitting == NULL)
+	if (m_dumpRequested == nullptr || m_dumpComplete == nullptr || m_quitting == nullptr)
 	{
 		// Something went wrong with the creation of the events..
 		DEBUG_LOG(("MiniDumper::Initialize: Unable to create events: error=%u", ::GetLastError()));
 		return;
 	}
 
-	m_dumpThread = ::CreateThread(NULL, 0, MiniDumpThreadProc, this, CREATE_SUSPENDED, &m_dumpThreadId);
+	m_dumpThread = ::CreateThread(nullptr, 0, MiniDumpThreadProc, this, CREATE_SUSPENDED, &m_dumpThreadId);
 	if (!m_dumpThread)
 	{
 		DEBUG_LOG(("MiniDumper::Initialize: Unable to create thread: error=%u", ::GetLastError()));
@@ -194,7 +194,7 @@ Bool MiniDumper::IsInitialized() const
 Bool MiniDumper::IsDumpThreadStillRunning() const
 {
 	DWORD exitCode;
-	if (m_dumpThread != NULL && ::GetExitCodeThread(m_dumpThread, &exitCode) && exitCode == STILL_ACTIVE)
+	if (m_dumpThread != nullptr && ::GetExitCodeThread(m_dumpThread, &exitCode) && exitCode == STILL_ACTIVE)
 	{
 		return true;
 	}
@@ -211,7 +211,7 @@ Bool MiniDumper::InitializeDumpDirectory(const AsciiString& userDirPath)
 	strlcat(m_dumpDir, "CrashDumps\\", ARRAY_SIZE(m_dumpDir));
 	if (::_access(m_dumpDir, 0) != 0)
 	{
-		if (!::CreateDirectory(m_dumpDir, NULL))
+		if (!::CreateDirectory(m_dumpDir, nullptr))
 		{
 			DEBUG_LOG(("MiniDumper::Initialize: Unable to create path for crash dumps at '%s': error=%u", m_dumpDir, ::GetLastError()));
 			return false;
@@ -229,7 +229,7 @@ void MiniDumper::ShutdownDumpThread()
 {
 	if (IsDumpThreadStillRunning())
 	{
-		DEBUG_ASSERTCRASH(m_quitting != NULL, ("MiniDumper::ShutdownDumpThread: Dump thread still running despite m_quitting being NULL"));
+		DEBUG_ASSERTCRASH(m_quitting != nullptr, ("MiniDumper::ShutdownDumpThread: Dump thread still running despite m_quitting being null"));
 		::SetEvent(m_quitting);
 
 		DWORD waitRet = ::WaitForSingleObject(m_dumpThread, 3000);
@@ -256,29 +256,29 @@ void MiniDumper::ShutDown()
 {
 	ShutdownDumpThread();
 
-	if (m_dumpThread != NULL)
+	if (m_dumpThread != nullptr)
 	{
 		DEBUG_ASSERTCRASH(!IsDumpThreadStillRunning(), ("MiniDumper::ShutDown: ShutdownDumpThread() was unable to stop Dump thread"));
 		::CloseHandle(m_dumpThread);
-		m_dumpThread = NULL;
+		m_dumpThread = nullptr;
 	}
 
-	if (m_quitting != NULL)
+	if (m_quitting != nullptr)
 	{
 		::CloseHandle(m_quitting);
-		m_quitting = NULL;
+		m_quitting = nullptr;
 	}
 
-	if (m_dumpComplete != NULL)
+	if (m_dumpComplete != nullptr)
 	{
 		::CloseHandle(m_dumpComplete);
-		m_dumpComplete = NULL;
+		m_dumpComplete = nullptr;
 	}
 
-	if (m_dumpRequested != NULL)
+	if (m_dumpRequested != nullptr)
 	{
 		::CloseHandle(m_dumpRequested);
-		m_dumpRequested = NULL;
+		m_dumpRequested = nullptr;
 	}
 
 	if (m_loadedDbgHelp)
@@ -320,9 +320,9 @@ DWORD MiniDumper::ThreadProcInternal()
 
 DWORD WINAPI MiniDumper::MiniDumpThreadProc(LPVOID lpParam)
 {
-	if (lpParam == NULL)
+	if (lpParam == nullptr)
 	{
-		DEBUG_LOG(("MiniDumper::MiniDumpThreadProc: The provided parameter was NULL, exiting thread."));
+		DEBUG_LOG(("MiniDumper::MiniDumpThreadProc: The provided parameter was null, exiting thread."));
 		return MiniDumperExitCode_FailureParam;
 	}
 
@@ -350,16 +350,16 @@ void MiniDumper::CreateMiniDump(DumpType dumpType)
 		sysTime.wDay, sysTime.wHour, sysTime.wMinute, sysTime.wSecond,
 		GitShortSHA1, currentProcessId);
 
-	HANDLE dumpFile = ::CreateFile(m_dumpFile, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (dumpFile == NULL || dumpFile == INVALID_HANDLE_VALUE)
+	HANDLE dumpFile = ::CreateFile(m_dumpFile, GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+	if (dumpFile == nullptr || dumpFile == INVALID_HANDLE_VALUE)
 	{
 		DEBUG_LOG(("MiniDumper::CreateMiniDump: Unable to create dump file '%s': error=%u", m_dumpFile, ::GetLastError()));
 		return;
 	}
 
-	PMINIDUMP_EXCEPTION_INFORMATION exceptionInfoPtr = NULL;
+	PMINIDUMP_EXCEPTION_INFORMATION exceptionInfoPtr = nullptr;
 	MINIDUMP_EXCEPTION_INFORMATION exceptionInfo = { 0 };
-	if (g_dumpException != NULL)
+	if (g_dumpException != nullptr)
 	{
 		exceptionInfo.ExceptionPointers = g_dumpException;
 		exceptionInfo.ThreadId = g_dumpExceptionThreadId;
@@ -386,8 +386,8 @@ void MiniDumper::CreateMiniDump(DumpType dumpType)
 		dumpFile,
 		miniDumpType,
 		exceptionInfoPtr,
-		NULL,
-		NULL);
+		nullptr,
+		nullptr);
 
 	if (!success)
 	{

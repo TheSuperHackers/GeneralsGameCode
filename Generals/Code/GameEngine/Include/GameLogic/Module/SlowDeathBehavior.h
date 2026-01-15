@@ -61,7 +61,7 @@ static const char *const TheSlowDeathPhaseNames[] =
 	"MIDPOINT",
 	"FINAL",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheSlowDeathPhaseNames) == SD_PHASE_COUNT + 1, "Incorrect array size");
 #endif

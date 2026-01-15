@@ -171,8 +171,8 @@ RingRenderObjClass::RingRenderObjClass(void)
 		LODBias(1.0f),
 		CurrentLOD(RING_NUM_LOD),	// RING_NUM_LOD does not include the null LOD
 		AnimDuration (0.0F),
-		RingMaterial (NULL),
-		RingTexture (NULL),
+		RingMaterial (nullptr),
+		RingTexture (nullptr),
 		Color (0.75F,0.75F,0.75F),
 		InnerScale (1, 1),
 		OuterScale (1, 1),
@@ -214,8 +214,8 @@ RingRenderObjClass::RingRenderObjClass(const W3dRingStruct & def)
 		LODBias(1.0f),
 		CurrentLOD(RING_NUM_LOD),	// RING_NUM_LOD does not include the null LOD
 		AnimDuration (0.0F),
-		RingMaterial (NULL),
-		RingTexture (NULL),
+		RingMaterial (nullptr),
+		RingTexture (nullptr),
 		Color (0.75F,0.75F,0.75F),
 		InnerScale (1, 1),
 		OuterScale (1, 1),
@@ -265,8 +265,8 @@ RingRenderObjClass::RingRenderObjClass(const RingRenderObjClass & src)
 		LODBias(1.0f),
 		CurrentLOD(RING_NUM_LOD),	// RING_NUM_LOD does not include the null LOD
 		AnimDuration (0.0F),
-		RingMaterial (NULL),
-		RingTexture (NULL),
+		RingMaterial (nullptr),
+		RingTexture (nullptr),
 		Color (0.75F,0.75F,0.75F),
 		InnerScale (1, 1),
 		OuterScale (1, 1),
@@ -373,7 +373,7 @@ void RingRenderObjClass::Generate_Shared_Mesh_Arrays (void)
 		float step = (RING_HIGHEST_LOD - RING_LOWEST_LOD);
 		step /= RING_NUM_LOD;
 
-		// For NULL LOD set Cost to a small nonzero amount to avoid divisions by zero.
+		// For null LOD set Cost to a small nonzero amount to avoid divisions by zero.
 		RingLODCosts[0] = 0.000001f;
 		for(int i=0; i < RING_NUM_LOD; i++) {
 
@@ -501,7 +501,7 @@ const char * RingRenderObjClass::Get_Name(void) const
  *=============================================================================================*/
 void RingRenderObjClass::Set_Name(const char * name)
 {
-	WWASSERT(name != NULL);
+	WWASSERT(name != nullptr);
 	const size_t nameLen = strlcpy(Name, name, ARRAY_SIZE(Name));
 	(void)nameLen; WWASSERT(nameLen < ARRAY_SIZE(Name));
 }
@@ -520,7 +520,7 @@ void RingRenderObjClass::Set_Name(const char * name)
  *=============================================================================================*/
 void RingRenderObjClass::render_ring(RenderInfoClass & rinfo,const Vector3 & center,const Vector3 & extent)
 {
-	// Should never get here with NULL LOD
+	// Should never get here with null LOD
 	if (CurrentLOD == 0) {
 		WWASSERT(0);
 		return;
@@ -670,7 +670,7 @@ int RingRenderObjClass::Class_ID(void) const
  *=============================================================================================*/
 void RingRenderObjClass::Render(RenderInfoClass & rinfo)
 {
-	// NULL LOD
+	// null LOD
 	if (CurrentLOD == 0) return;
 
 	if (Is_Not_Hidden_At_All() == false) {
@@ -707,7 +707,7 @@ void RingRenderObjClass::Render(RenderInfoClass & rinfo)
 		//
 		//	Make sure this mesh uses the correct UV tiling
 		//
-		if (RingTexture != NULL) {
+		if (RingTexture != nullptr) {
 			RingMeshArray[CurrentLOD - 1].Set_Tiling (TextureTileCount);
 		}
 
@@ -859,7 +859,7 @@ void RingRenderObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 	temp.Translate(Transform.Get_Translation());
 
 	if (rinfo.RenderType == SpecialRenderInfoClass::RENDER_VIS) {
-		WWASSERT(rinfo.VisRasterizer != NULL);
+		WWASSERT(rinfo.VisRasterizer != nullptr);
 		rinfo.VisRasterizer->Set_Model_Transform(temp);
 		vis_render_ring(rinfo,ObjSpaceCenter,ObjSpaceExtent);
 	}
@@ -1228,10 +1228,10 @@ RingPrototypeClass::RingPrototypeClass(RingRenderObjClass *ring)
 	//
 	//	Determine the texture name for this ring
 	//
-	if (ring->RingTexture != NULL) {
+	if (ring->RingTexture != nullptr) {
 		StringClass name = ring->RingTexture->Get_Full_Path();
 		const char *filename = ::strrchr (name, '\\');
-		if (filename != NULL) {
+		if (filename != nullptr) {
 			filename ++;
 		} else {
 			filename = name;
@@ -1408,12 +1408,12 @@ RingMeshClass::RingMeshClass(float radius, int slices):
 Radius(radius),
 Slices(slices),
 Vertex_ct(0),			// 1 vertex minimum, for center
-vtx(NULL),
-orig_vtx(NULL),
-vtx_normal(NULL),
-vtx_uv(NULL),
+vtx(nullptr),
+orig_vtx(nullptr),
+vtx_normal(nullptr),
+vtx_uv(nullptr),
 face_ct(0),
-tri_poly(NULL),
+tri_poly(nullptr),
 TileCount (5),
 InnerScale (1.0F, 1.0F),
 OuterScale (1.0F, 1.0F)
@@ -1437,12 +1437,12 @@ RingMeshClass::RingMeshClass(void):
 Radius(0.0f),
 Slices(0),
 Vertex_ct(0),			// 1 vertex minimum, for center
-vtx(NULL),
-orig_vtx(NULL),
-vtx_normal(NULL),
-vtx_uv(NULL),
+vtx(nullptr),
+orig_vtx(nullptr),
+vtx_normal(nullptr),
+vtx_uv(nullptr),
 face_ct(0),
-tri_poly(NULL),
+tri_poly(nullptr),
 TileCount (5),
 InnerScale (1.0F, 1.0F),
 OuterScale (1.0F, 1.0F)
@@ -1635,11 +1635,11 @@ void RingMeshClass::Free(void)
 	delete vtx_uv;
 	delete tri_poly;
 
-	vtx			= NULL;
-	orig_vtx		= NULL;
-	vtx_normal	= NULL;
-	vtx_uv		= NULL;
-	tri_poly		= NULL;
+	vtx			= nullptr;
+	orig_vtx		= nullptr;
+	vtx_normal	= nullptr;
+	vtx_uv		= nullptr;
+	tri_poly		= nullptr;
 
 }
 

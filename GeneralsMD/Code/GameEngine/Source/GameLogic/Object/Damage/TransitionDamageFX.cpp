@@ -50,19 +50,19 @@ TransitionDamageFXModuleData::TransitionDamageFXModuleData( void )
 		for( j = 0; j < DAMAGE_MODULE_MAX_FX; j++ )
 		{
 
-			m_fxList[ i ][ j ].fx = NULL;
+			m_fxList[ i ][ j ].fx = nullptr;
 			m_fxList[ i ][ j ].locInfo.loc.x = 0.0f;
 			m_fxList[ i ][ j ].locInfo.loc.y = 0.0f;
 			m_fxList[ i ][ j ].locInfo.loc.z = 0.0f;
 			m_fxList[ i ][ j ].locInfo.locType = FX_DAMAGE_LOC_TYPE_COORD;
 			m_fxList[ i ][ j ].locInfo.randomBone = FALSE;
-			m_OCL[ i ][ j ].ocl = NULL;
+			m_OCL[ i ][ j ].ocl = nullptr;
 			m_OCL[ i ][ j ].locInfo.loc.x = 0.0f;
 			m_OCL[ i ][ j ].locInfo.loc.y = 0.0f;
 			m_OCL[ i ][ j ].locInfo.loc.z = 0.0f;
 			m_OCL[ i ][ j ].locInfo.locType = FX_DAMAGE_LOC_TYPE_COORD;
 			m_OCL[ i ][ j ].locInfo.randomBone = FALSE;
-			m_particleSystem[ i ][ j ].particleSysTemplate = NULL;
+			m_particleSystem[ i ][ j ].particleSysTemplate = nullptr;
 			m_particleSystem[ i ][ j ].locInfo.loc.x = 0.0f;
 			m_particleSystem[ i ][ j ].locInfo.loc.y = 0.0f;
 			m_particleSystem[ i ][ j ].locInfo.loc.z = 0.0f;
@@ -111,7 +111,7 @@ static void parseFXLocInfo( INI *ini, void *instance, FXLocInfo *locInfo )
 		}
 
 		// parse the Bool definition
-		ini->parseBool( ini, instance, &locInfo->randomBone, NULL );
+		ini->parseBool( ini, instance, &locInfo->randomBone, nullptr );
 
 	}
 	else if( stricmp( token, "loc" ) == 0 )
@@ -158,7 +158,7 @@ void TransitionDamageFXModuleData::parseFXList( INI *ini, void *instance,
 	}
 
 	// parse the fx list name
-	ini->parseFXList( ini, instance, &info->fx, NULL );
+	ini->parseFXList( ini, instance, &info->fx, nullptr );
 
 }
 
@@ -259,7 +259,7 @@ void TransitionDamageFX::onDelete( void )
 static Coord3D getLocalEffectPos( const FXLocInfo *locInfo, Drawable *draw )
 {
 
-	DEBUG_ASSERTCRASH( locInfo, ("getLocalEffectPos: locInfo is NULL") );
+	DEBUG_ASSERTCRASH( locInfo, ("getLocalEffectPos: locInfo is null") );
 
 	if( locInfo->locType == FX_DAMAGE_LOC_TYPE_BONE && draw )
 	{
@@ -269,7 +269,7 @@ static Coord3D getLocalEffectPos( const FXLocInfo *locInfo, Drawable *draw )
 			Coord3D pos;
 
 			// get the bone position
-			Int count = draw->getPristineBonePositions( locInfo->boneName.str(), 0, &pos, NULL, 1 );
+			Int count = draw->getPristineBonePositions( locInfo->boneName.str(), 0, &pos, nullptr, 1 );
 
 			// sanity, if bone not found revert back to location defined in struct (which is 0,0,0)
 			if( count == 0 )
@@ -286,7 +286,7 @@ static Coord3D getLocalEffectPos( const FXLocInfo *locInfo, Drawable *draw )
 
 			// get the bone positions
 			Int boneCount;
-			boneCount = draw->getPristineBonePositions( locInfo->boneName.str(), 1, positions, NULL, MAX_BONES );
+			boneCount = draw->getPristineBonePositions( locInfo->boneName.str(), 1, positions, nullptr, MAX_BONES );
 
 			// sanity, if bone not found revert back to location defined in struct (which is 0,0,0)
 			if( boneCount == 0 )
@@ -311,7 +311,7 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 																									BodyDamageType oldState,
 																									BodyDamageType newState )
 {
-	Object *damageSource = NULL;
+	Object *damageSource = nullptr;
 	Int i;
 	Drawable *draw = getObject()->getDrawable();
 	const TransitionDamageFXModuleData *modData = getTransitionDamageFXModuleData();
@@ -353,12 +353,12 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 			if( modData->m_fxList[ newState ][ i ].fx )
 			{
 
-				if( lastDamageInfo == NULL ||
+				if( lastDamageInfo == nullptr ||
 						getDamageTypeFlag( modData->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )
 				{
 
 					pos = getLocalEffectPos( &modData->m_fxList[ newState ][ i ].locInfo, draw );
-					getObject()->convertBonePosToWorldPos( &pos, NULL, &pos, NULL );
+					getObject()->convertBonePosToWorldPos( &pos, nullptr, &pos, nullptr );
 					FXList::doFXPos( modData->m_fxList[ newState ][ i ].fx, &pos );
 
 				}
@@ -369,12 +369,12 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 			if( damageSource && modData->m_OCL[ newState ][ i ].ocl )
 			{
 
-				if( lastDamageInfo == NULL ||
+				if( lastDamageInfo == nullptr ||
 						getDamageTypeFlag( modData->m_damageOCLTypes, lastDamageInfo->in.m_damageType ) )
 				{
 
 					pos = getLocalEffectPos( &modData->m_OCL[ newState ][ i ].locInfo, draw );
-					getObject()->convertBonePosToWorldPos( &pos, NULL, &pos, NULL );
+					getObject()->convertBonePosToWorldPos( &pos, nullptr, &pos, nullptr );
 					ObjectCreationList::create( modData->m_OCL[ newState ][ i ].ocl,
 																			getObject(), &pos, damageSource->getPosition(), INVALID_ANGLE );
 
@@ -387,7 +387,7 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 			if( pSystemT )
 			{
 
-				if( lastDamageInfo == NULL ||
+				if( lastDamageInfo == nullptr ||
 						getDamageTypeFlag( modData->m_damageParticleTypes, lastDamageInfo->in.m_damageType ) )
 				{
 

@@ -23,6 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "W3DDevice/GameClient/W3DStatusCircle.h"
+#include "W3DDevice/GameClient/WorldHeightMap.h"
 
 #include <stdlib.h>
 #include <assetmgr.h>
@@ -62,8 +63,6 @@
 	ShaderClass::ALPHATEST_DISABLE, ShaderClass::CULL_MODE_ENABLE, \
 	ShaderClass::DETAILCOLOR_DISABLE, ShaderClass::DETAILALPHA_DISABLE) )
 
-#define VERTEX_BUFFER_TILE_LENGTH	32		//tiles of side length 32 (grid of 33x33 vertices).
-#define VERTS_IN_BLOCK_ROW			(VERTEX_BUFFER_TILE_LENGTH+1)
 
 
 static ShaderClass detailOpaqueShader(SC_ALPHA);
@@ -77,10 +76,10 @@ W3DStatusCircle::~W3DStatusCircle(void)
 
 W3DStatusCircle::W3DStatusCircle(void)
 {
-	m_indexBuffer=NULL;
-	m_vertexMaterialClass=NULL;
-	m_vertexBufferCircle=NULL;
-	m_vertexBufferScreen=NULL;
+	m_indexBuffer=nullptr;
+	m_vertexMaterialClass=nullptr;
+	m_vertexBufferCircle=nullptr;
+	m_vertexBufferScreen=nullptr;
 }
 
 
@@ -304,10 +303,10 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 	if (!TheGameLogic->isInGame() || TheGameLogic->getGameMode() == GAME_SHELL)
 		return;
 
-	if (m_indexBuffer == NULL) {
+	if (m_indexBuffer == nullptr) {
 		initData();
 	}
-	if (m_indexBuffer == NULL) {
+	if (m_indexBuffer == nullptr) {
 		return;
 	}
 	Bool setIndex = false;
@@ -320,7 +319,7 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 		//Apply the shader and material
 		DX8Wrapper::Set_Material(m_vertexMaterialClass);
 		DX8Wrapper::Set_Shader(m_shaderClass);
-		DX8Wrapper::Set_Texture(0, NULL);
+		DX8Wrapper::Set_Texture(0, nullptr);
 		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
 		DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferCircle);
 		setIndex = true;
@@ -343,7 +342,7 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 	if (!setIndex) {
 		DX8Wrapper::Set_Material(m_vertexMaterialClass);
 		DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
-		DX8Wrapper::Set_Texture(0, NULL);
+		DX8Wrapper::Set_Texture(0, nullptr);
 	}
 
 	tm.Make_Identity();

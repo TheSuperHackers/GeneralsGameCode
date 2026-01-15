@@ -55,7 +55,7 @@ public:
 	virtual GameWindow *winCreate( GameWindow *parent, UnsignedInt status,
 																 Int x, Int y, Int width, Int height,
 																 GameWinSystemFunc system,
-																 WinInstanceData *instData = NULL );
+																 WinInstanceData *instData = nullptr );
 
 	// **************************************************************************
 	// GUIEdit specific methods *************************************************
@@ -90,7 +90,7 @@ protected:
 	also in the select list */
 	void removeSupervisedChildSelections( void );
 	/** selected windows that are children will cut loose their parents
-	and become adults (their parent will be NULL, otherwise the screen) */
+	and become adults (their parent will be null, otherwise the screen) */
 //	void orphanSelectedChildren( void );
 
   /// dupe a window and its children

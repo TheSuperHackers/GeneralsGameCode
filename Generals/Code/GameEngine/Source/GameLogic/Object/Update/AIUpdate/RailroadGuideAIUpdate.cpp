@@ -135,7 +135,7 @@ RailroadBehavior::RailroadBehavior( Thing *thing, const ModuleData *moduleData )
 	m_whistleSound.setObjectID( getObject()->getID() ) ;
 	m_clicketyClackSound.setObjectID( getObject()->getID() ) ;
 
-	m_track = NULL;
+	m_track = nullptr;
 
 	m_currentPointHandle = 0xfacade;
 	m_waitAtStationTimer = 0;
@@ -168,12 +168,12 @@ RailroadBehavior::~RailroadBehavior( void )
 
 	TheAudio->removeAudioEvent( m_runningSound.getPlayingHandle() );// no more chugchug when I'm dead
 
-	if( m_track != NULL )
+	if( m_track != nullptr )
 	{
 		if (m_track->releaseReference())
 			delete m_track;
 
-		m_track = NULL;
+		m_track = nullptr;
 	}
 
 
@@ -502,7 +502,7 @@ void RailroadBehavior::playImpactSound(Object *victim, const Coord3D *impactPosi
 void RailroadBehavior::loadTrackData( void )
 {
 
-	if ( m_track != NULL )
+	if ( m_track != nullptr )
 		return;// lets do this only once!
 
 
@@ -516,7 +516,7 @@ void RailroadBehavior::loadTrackData( void )
 
 	// m_anchorWaypointID COULD HAVE BEEN RECORDED IN XFER, WHICH MEANS I LOADED MY TRACK DATA IN A PRIOR LIFE,
 	// SO LETS JUST RE_INIT THE TRACK BASED ON THAT POINT, AUTOMAGICALLY
-	Waypoint *anchorWaypoint = NULL;
+	Waypoint *anchorWaypoint = nullptr;
 	if ( m_anchorWaypointID == INVALID_WAYPOINT_ID )
 	{
 		Waypoint *anyWaypoint = TheTerrainLogic->getFirstWaypoint();
@@ -556,7 +556,7 @@ void RailroadBehavior::loadTrackData( void )
 	m_track = NEW( TrainTrack );// this constructor inc's the refcount to 1
 
 	// From now until the next carriage is added, this track is writable using getWritablePointList();
-	// This method will return NULL when refcount is 2 or more
+	// This method will return nullptr when refcount is 2 or more
 	// getPointList returns the list as const to any caller
 	// each carriage must increment the reference when this pointer is passed to it,
 	// any subsequent carriage (destructor) will delete this memory here if it releases refcount to zero
@@ -595,7 +595,7 @@ void RailroadBehavior::loadTrackData( void )
 			Waypoint *anotherWaypoint = scanner->getLink( 0 );
 
 			// if scanner's link is valid, we'll add it to the track. now
-			if ( anotherWaypoint != NULL )
+			if ( anotherWaypoint != nullptr )
 			{
 
 				//measure the track while we are at it
@@ -610,7 +610,7 @@ void RailroadBehavior::loadTrackData( void )
 				trackPoint.m_distanceFromPrev = distFromTo;
 				trackPoint.m_distanceFromFirst = m_track->m_length;
 				trackPoint.m_isFirstPoint = FALSE;
-				trackPoint.m_isLastPoint = anotherWaypoint->getLink( 0 ) == NULL;
+				trackPoint.m_isLastPoint = anotherWaypoint->getLink( 0 ) == nullptr;
 				trackPoint.m_isTunnelOrBridge = anotherWaypoint->getName().endsWith("Tunnel");
 				trackPoint.m_isStation = anotherWaypoint->getName().endsWith("Station");
 				trackPoint.m_isPingPong = scanner->getName().endsWith("PingPong");
@@ -870,7 +870,7 @@ public:
 	{
 
 		// must exist!
-		if ( m_obj == NULL || objOther == NULL)
+		if ( m_obj == nullptr || objOther == nullptr)
 			return FALSE;
 
 		//must not be me!
@@ -919,19 +919,19 @@ void RailroadBehavior::createCarriages( void )
 
 
 	PartitionFilterIsValidCarriage pfivc(self, md);
-	PartitionFilter *filters[] = { &pfivc, 0 };
+	PartitionFilter *filters[] = { &pfivc, nullptr };
 
 
-	Object* xferCarriage = NULL;
-	Object *closeCarriage = NULL;
-	Object *firstCarriage = NULL;
+	Object* xferCarriage = nullptr;
+	Object *closeCarriage = nullptr;
+	Object *firstCarriage = nullptr;
 
 	if ( m_trailerID != INVALID_ID )
 	{
 		xferCarriage = TheGameLogic->findObjectByID( m_trailerID );
 	}
 
-	if (xferCarriage != NULL)
+	if (xferCarriage != nullptr)
 		closeCarriage = xferCarriage;
 	else
 		closeCarriage = ThePartitionManager->getClosestObject( &myHitchLoc, maxRadius, FROM_CENTER_2D, filters);
@@ -1010,7 +1010,7 @@ void RailroadBehavior::hitchNewCarriagebyTemplate( ObjectID locoID, const Templa
 
 	//Okay that's me, now for the next guy
 	//---------------------------------------
-	Object *newCarriage = NULL;
+	Object *newCarriage = nullptr;
 
 	if ( iter != list.end() )// this test is bogus
 	{
@@ -1079,16 +1079,16 @@ void RailroadBehavior::hitchNewCarriagebyProximity( ObjectID locoID, TrainTrack 
 	myHitchLoc.add( & hitchOffset );
 
 	PartitionFilterIsValidCarriage pfivc(self, md);
-	PartitionFilter *filters[] = { &pfivc, 0 };
+	PartitionFilter *filters[] = { &pfivc, nullptr };
 
-	Object* xferCarriage = NULL;
-	Object *closeCarriage = NULL;
+	Object* xferCarriage = nullptr;
+	Object *closeCarriage = nullptr;
 
 	if ( m_trailerID != INVALID_ID )
 	{
 		xferCarriage = TheGameLogic->findObjectByID( m_trailerID );
 	}
-	if (xferCarriage != NULL)
+	if (xferCarriage != nullptr)
 		closeCarriage = xferCarriage;
 	else
 		closeCarriage = ThePartitionManager->getClosestObject( &myHitchLoc, maxRadius, FROM_CENTER_2D, filters);
@@ -1380,7 +1380,7 @@ void RailroadBehavior::FindPosByPathDistance( Coord3D *pos, const Real dist, con
 		if (thisPoint && thisPoint->m_distanceFromFirst < actualDistance)// I am after this point, and
 		{
 			Coord3D thisPointPos = thisPoint->m_position;
-			const TrackPoint *nextPoint = NULL;
+			const TrackPoint *nextPoint = nullptr;
 
 			// TheSuperHackers Mauller 02/04/2025 Prevent dereferencing of endpoint pointer which throws asserts during Debug
 			if (pointIter != pointList->end()) {

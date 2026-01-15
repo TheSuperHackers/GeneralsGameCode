@@ -52,23 +52,23 @@ public:
 
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "PathPrefixName",		INI::parseAsciiString, NULL,	offsetof( RailroadBehaviorModuleData, m_pathPrefixName ) },
-			{ "CrashFXTemplateName",		INI::parseAsciiString, NULL,	offsetof( RailroadBehaviorModuleData, m_CrashFXTemplateName ) },
-			{ "IsLocomotive",		INI::parseBool, NULL,	offsetof( RailroadBehaviorModuleData, m_isLocomotive ) },
-			{ "CarriageTemplateName",  INI::parseAsciiStringVectorAppend, NULL, offsetof(RailroadBehaviorModuleData, m_carriageTemplateNameData) },
-			{ "BigMetalBounceSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_bigMetalImpactDefaultSound) },
-			{ "SmallMetalBounceSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_smallMetalImpactDefaultSound) },
-			{ "MeatyBounceSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_meatyImpactDefaultSound) },
-			{ "RunningGarrisonSpeedMax",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_runningGarrisonSpeedMax) },
-			{ "KillSpeedMin",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_killSpeedMin) },
-			{ "SpeedMax",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_speedMax) },
-			{ "Acceleration",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_acceleration) },
-			{ "Braking",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_braking) },
-			{ "WaitAtStationTime",			INI::parseDurationUnsignedInt,	NULL,	offsetof( RailroadBehaviorModuleData, m_waitAtStationTime) },
-			{ "RunningSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_runningSound) },
-			{ "ClicketyClackSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_clicketyClackSound) },
-			{ "WhistleSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_whistleSound) },
-			{ "Friction",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_friction) },
+			{ "PathPrefixName",		INI::parseAsciiString, nullptr,	offsetof( RailroadBehaviorModuleData, m_pathPrefixName ) },
+			{ "CrashFXTemplateName",		INI::parseAsciiString, nullptr,	offsetof( RailroadBehaviorModuleData, m_CrashFXTemplateName ) },
+			{ "IsLocomotive",		INI::parseBool, nullptr,	offsetof( RailroadBehaviorModuleData, m_isLocomotive ) },
+			{ "CarriageTemplateName",  INI::parseAsciiStringVectorAppend, nullptr, offsetof(RailroadBehaviorModuleData, m_carriageTemplateNameData) },
+			{ "BigMetalBounceSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_bigMetalImpactDefaultSound) },
+			{ "SmallMetalBounceSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_smallMetalImpactDefaultSound) },
+			{ "MeatyBounceSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_meatyImpactDefaultSound) },
+			{ "RunningGarrisonSpeedMax",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_runningGarrisonSpeedMax) },
+			{ "KillSpeedMin",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_killSpeedMin) },
+			{ "SpeedMax",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_speedMax) },
+			{ "Acceleration",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_acceleration) },
+			{ "Braking",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_braking) },
+			{ "WaitAtStationTime",			INI::parseDurationUnsignedInt,	nullptr,	offsetof( RailroadBehaviorModuleData, m_waitAtStationTime) },
+			{ "RunningSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_runningSound) },
+			{ "ClicketyClackSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_clicketyClackSound) },
+			{ "WhistleSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_whistleSound) },
+			{ "Friction",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_friction) },
 			{ 0, 0, 0, 0 }
 		};
 
@@ -173,7 +173,7 @@ struct TrainTrack
 
 	// To protect the track form ever going out of sync between cars on the same train...
 	// I restrict write access to the first referencer, before a second one is added (the locomotive)
-	TrackPointList* getWritablePointList( void ) { return m_refCount == 1 ? &m_pointList : NULL; };
+	TrackPointList* getWritablePointList( void ) { return m_refCount == 1 ? &m_pointList : nullptr; };
 	const TrackPointList* getPointList( void ) { return &m_pointList; };
 
 private:

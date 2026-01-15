@@ -68,8 +68,8 @@
 
 
 
-static Script *s_mtScript = NULL;
-static ScriptGroup *s_mtGroup = NULL;
+static Script *s_mtScript = nullptr;
+static ScriptGroup *s_mtGroup = nullptr;
 
 //
 // These strings must be in the same order as they are in their definitions
@@ -163,7 +163,7 @@ enum { AT_END = 0x00FFFFFF };
 // ******************************** class  ScriptList *********************************************
 //-------------------------------------------------------------------------------------------------
 // Statics ///////////////////////////////////////////////////////////////////////////////////////
-ScriptList *ScriptList::s_readLists[MAX_PLAYER_COUNT] = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
+ScriptList *ScriptList::s_readLists[MAX_PLAYER_COUNT] = {0};
 Int					ScriptList::s_numInReadList = 0;
 
 Int ScriptList::m_curId = 0;
@@ -178,7 +178,7 @@ void ScriptList::updateDefaults(void)
 	for (i=0; i<TheSidesList->getNumSides(); i++)
 	{
 		ScriptList* pList = TheSidesList->getSideInfo(i)->getScriptList();
-		if (pList == NULL) {
+		if (pList == nullptr) {
 			pList = newInstance(ScriptList);
 			TheSidesList->getSideInfo(i)->setScriptList(pList);
 		}
@@ -191,11 +191,11 @@ void ScriptList::updateDefaults(void)
 void ScriptList::reset(void)
 {
 	Int i;
-	if (TheSidesList == NULL) return; /// @todo - move this code into sides list.
+	if (TheSidesList == nullptr) return; /// @todo - move this code into sides list.
 	for (i=0; i<TheSidesList->getNumSides(); i++)
 	{
 		ScriptList* pList = TheSidesList->getSideInfo(i)->getScriptList();
-		TheSidesList->getSideInfo(i)->setScriptList(NULL);
+		TheSidesList->getSideInfo(i)->setScriptList(nullptr);
 		deleteInstance(pList);
 	}
 }
@@ -206,8 +206,8 @@ void ScriptList::reset(void)
   Ctor.
 */
 ScriptList::ScriptList(void) :
-m_firstGroup(NULL),
-m_firstScript(NULL)
+m_firstGroup(nullptr),
+m_firstScript(nullptr)
 {
 }
 
@@ -218,10 +218,10 @@ m_firstScript(NULL)
 ScriptList::~ScriptList(void)
 {
 	deleteInstance(m_firstGroup);
-	m_firstGroup = NULL;
+	m_firstGroup = nullptr;
 
 	deleteInstance(m_firstScript);
-	m_firstScript = NULL;
+	m_firstScript = nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -269,7 +269,7 @@ void ScriptList::xfer( Xfer *xfer )
 	}
 	if (scriptCount>0) {
 		DEBUG_CRASH(("Stripping out extra scripts - Bad..."));
-		if (s_mtScript==NULL) s_mtScript = newInstance(Script);	// Yes it leaks, but this is unusual recovery only. jba.
+		if (s_mtScript==nullptr) s_mtScript = newInstance(Script);	// Yes it leaks, but this is unusual recovery only. jba.
 		while (scriptCount) {
 			xfer->xferSnapshot(s_mtScript);
 			scriptCount--;
@@ -298,7 +298,7 @@ void ScriptList::xfer( Xfer *xfer )
 	}
 	if (scriptGroupCount>0) {
 		DEBUG_CRASH(("Stripping out extra groups. - Bad..."));
-		if (s_mtGroup == NULL) s_mtGroup = newInstance(ScriptGroup);	// Yes it leaks, but this is only for recovery.
+		if (s_mtGroup == nullptr) s_mtGroup = newInstance(ScriptGroup);	// Yes it leaks, but this is only for recovery.
 		while (scriptGroupCount) {
 			xfer->xferSnapshot(s_mtGroup);
 			scriptGroupCount--;
@@ -324,7 +324,7 @@ ScriptList *ScriptList::duplicate(void) const
 
 	{
 		const ScriptGroup *src = this->m_firstGroup;
-		ScriptGroup *dst = NULL;
+		ScriptGroup *dst = nullptr;
 		while (src)
 		{
 			ScriptGroup *tmp = src->duplicate();
@@ -341,7 +341,7 @@ ScriptList *ScriptList::duplicate(void) const
 
 	{
 		const Script *src = this->m_firstScript;
-		Script *dst = NULL;
+		Script *dst = nullptr;
 		while (src)
 		{
 			Script *tmp = src->duplicate();
@@ -370,7 +370,7 @@ ScriptList *ScriptList::duplicateAndQualify(const AsciiString& qualifier,
 
 	{
 		const ScriptGroup *src = this->m_firstGroup;
-		ScriptGroup *dst = NULL;
+		ScriptGroup *dst = nullptr;
 		while (src)
 		{
 			ScriptGroup *tmp = src->duplicateAndQualify( qualifier, playerTemplateName, newPlayerName);
@@ -387,7 +387,7 @@ ScriptList *ScriptList::duplicateAndQualify(const AsciiString& qualifier,
 
 	{
 		const Script *src = this->m_firstScript;
-		Script *dst = NULL;
+		Script *dst = nullptr;
 		while (src)
 		{
 			Script *tmp = src->duplicateAndQualify(qualifier, playerTemplateName, newPlayerName);
@@ -410,8 +410,8 @@ ScriptList *ScriptList::duplicateAndQualify(const AsciiString& qualifier,
 */
 void ScriptList::discard(void)
 {
-	m_firstGroup = NULL;
-	m_firstScript = NULL;
+	m_firstGroup = nullptr;
+	m_firstScript = nullptr;
 	deleteInstance(this);
 }
 
@@ -420,9 +420,9 @@ void ScriptList::discard(void)
 */
 void ScriptList::addGroup(ScriptGroup *pGrp, Int ndx)
 {
-	ScriptGroup *pPrev = NULL;
+	ScriptGroup *pPrev = nullptr;
 	ScriptGroup *pCur = m_firstGroup;
-	DEBUG_ASSERTCRASH(pGrp->getNext()==NULL, ("Adding already linked group."));
+	DEBUG_ASSERTCRASH(pGrp->getNext()==nullptr, ("Adding already linked group."));
 	while (ndx && pCur) {
 		pPrev = pCur;
 		pCur = pCur->getNext();
@@ -444,9 +444,9 @@ void ScriptList::addGroup(ScriptGroup *pGrp, Int ndx)
 */
 void ScriptList::addScript(Script *pScr, Int ndx)
 {
-	Script *pPrev = NULL;
+	Script *pPrev = nullptr;
 	Script *pCur = m_firstScript;
-	DEBUG_ASSERTCRASH(pScr->getNext()==NULL, ("Adding already linked group."));
+	DEBUG_ASSERTCRASH(pScr->getNext()==nullptr, ("Adding already linked group."));
 	while (ndx && pCur) {
 		pPrev = pCur;
 		pCur = pCur->getNext();
@@ -466,14 +466,14 @@ void ScriptList::addScript(Script *pScr, Int ndx)
 */
 void ScriptList::deleteScript(Script *pScr)
 {
-	Script *pPrev = NULL;
+	Script *pPrev = nullptr;
 	Script *pCur = m_firstScript;
 	while (pCur != pScr) {
 		pPrev = pCur;
 		pCur = pCur->getNext();
 	}
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find script."));
-	if (pCur==NULL) return;
+	if (pCur==nullptr) return;
 
 	if (pPrev) {
 		// unlink from previous script.
@@ -483,7 +483,7 @@ void ScriptList::deleteScript(Script *pScr)
 		m_firstScript = pCur->getNext();
 	}
 	// Clear the link & delete.
-	pCur->setNextScript(NULL);
+	pCur->setNextScript(nullptr);
 	deleteInstance(pCur);
 }
 
@@ -492,14 +492,14 @@ void ScriptList::deleteScript(Script *pScr)
 */
 void ScriptList::deleteGroup(ScriptGroup *pGrp)
 {
-	ScriptGroup *pPrev = NULL;
+	ScriptGroup *pPrev = nullptr;
 	ScriptGroup *pCur = m_firstGroup;
 	while (pCur != pGrp) {
 		pPrev = pCur;
 		pCur = pCur->getNext();
 	}
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find group."));
-	if (pCur==NULL) return;
+	if (pCur==nullptr) return;
 	if (pPrev) {
 		// unlink from previous group.
 		pPrev->setNextGroup(pCur->getNext());
@@ -508,7 +508,7 @@ void ScriptList::deleteGroup(ScriptGroup *pGrp)
 		m_firstGroup = pCur->getNext();
 	}
 	// Clear the link & delete.
-	pCur->setNextGroup(NULL);
+	pCur->setNextGroup(nullptr);
 	deleteInstance(pCur);
 }
 
@@ -526,11 +526,11 @@ Bool ScriptList::ParseScriptsDataChunk(DataChunkInput &file, DataChunkInfo *info
 	DEBUG_ASSERTCRASH(s_numInReadList==0, ("Leftover scripts floating aroung."));
 	for (i=0; i<s_numInReadList; i++) {
 		deleteInstance(s_readLists[i]);
-		s_readLists[i] = NULL;
+		s_readLists[i] = nullptr;
 	}
 	TScriptListReadInfo readInfo;
 	for (i=0; i<MAX_PLAYER_COUNT; i++) {
-		readInfo.readLists[i] = 0;
+		readInfo.readLists[i] = nullptr;
 	}
 	readInfo.numLists = 0;
 	if (file.parse(&readInfo)) {
@@ -556,7 +556,7 @@ Int ScriptList::getReadScripts(ScriptList *scriptLists[MAX_PLAYER_COUNT])
 	s_numInReadList = 0;
 	for (i=0; i<count; i++) {
 		scriptLists[i] = s_readLists[i];
-		s_readLists[i] = NULL;
+		s_readLists[i] = nullptr;
 	}
 	return count;
 }
@@ -628,11 +628,11 @@ Bool ScriptList::ParseScriptListDataChunk(DataChunkInput &file, DataChunkInfo *i
   Ctor - gives it a default name.
 */
 ScriptGroup::ScriptGroup(void) :
-m_firstScript(NULL),
+m_firstScript(nullptr),
 m_hasWarnings(false),
 m_isGroupActive(true),
 m_isGroupSubroutine(false),
-m_nextGroup(NULL)
+m_nextGroup(nullptr)
 {
 	m_groupName.format("Script Group %d", ScriptList::getNextID());
 }
@@ -645,7 +645,7 @@ ScriptGroup::~ScriptGroup(void)
 {
 	// Delete the first script.  m_firstScript deletes the entire list.
 	deleteInstance(m_firstScript);
-	m_firstScript = NULL;
+	m_firstScript = nullptr;
 
 	if (m_nextGroup) {
 		// Delete all the subsequent groups in our list.
@@ -653,7 +653,7 @@ ScriptGroup::~ScriptGroup(void)
 		ScriptGroup *next;
 		while (cur) {
 			next = cur->getNext();
-			cur->setNextGroup(NULL); // prevents recursion.
+			cur->setNextGroup(nullptr); // prevents recursion.
 			deleteInstance(cur);
 			cur = next;
 		}
@@ -704,7 +704,7 @@ void ScriptGroup::xfer( Xfer *xfer )
 	}
 	if (scriptCount>0) {
 		DEBUG_CRASH(("Stripping out extra scripts - Bad..."));
-		if (s_mtScript==NULL) s_mtScript = newInstance(Script);	// Yes it leaks, but this is unusual recovery only. jba.
+		if (s_mtScript==nullptr) s_mtScript = newInstance(Script);	// Yes it leaks, but this is unusual recovery only. jba.
 		while (scriptCount) {
 			xfer->xferSnapshot(s_mtScript);
 			scriptCount--;
@@ -723,7 +723,7 @@ void ScriptGroup::loadPostProcess( void )
 
 /**
   ScriptGroup::duplicate - Creates a full, "deep" copy of ScriptGroup.
-	m_nextGroup is NULL on the copy.
+	m_nextGroup is nullptr on the copy.
 */
 ScriptGroup *ScriptGroup::duplicate(void) const
 {
@@ -731,7 +731,7 @@ ScriptGroup *ScriptGroup::duplicate(void) const
 
 	{
 		Script *src = this->m_firstScript;
-		Script *dst = NULL;
+		Script *dst = nullptr;
 		while (src)
 		{
 			Script *tmp = src->duplicate();
@@ -749,7 +749,7 @@ ScriptGroup *ScriptGroup::duplicate(void) const
 	pNew->m_groupName = this->m_groupName;
 	pNew->m_isGroupActive = this->m_isGroupActive;
 	pNew->m_isGroupSubroutine = this->m_isGroupSubroutine;
-	pNew->m_nextGroup = NULL;
+	pNew->m_nextGroup = nullptr;
 
 	return pNew;
 }
@@ -757,7 +757,7 @@ ScriptGroup *ScriptGroup::duplicate(void) const
 /**
   ScriptGroup::duplicateAndQualify - Creates a full, "deep" copy of ScriptGroup,
 	adding qualifier to names.
-	m_nextGroup is NULL on the copy.
+	m_nextGroup is nullptr on the copy.
 */
 ScriptGroup *ScriptGroup::duplicateAndQualify(const AsciiString& qualifier,
 			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const
@@ -766,7 +766,7 @@ ScriptGroup *ScriptGroup::duplicateAndQualify(const AsciiString& qualifier,
 
 	{
 		Script *src = this->m_firstScript;
-		Script *dst = NULL;
+		Script *dst = nullptr;
 		while (src)
 		{
 			Script *tmp = src->duplicateAndQualify(qualifier, playerTemplateName, newPlayerName);
@@ -785,7 +785,7 @@ ScriptGroup *ScriptGroup::duplicateAndQualify(const AsciiString& qualifier,
 	pNew->m_groupName.concat(qualifier);
 	pNew->m_isGroupActive = this->m_isGroupActive;
 	pNew->m_isGroupSubroutine = this->m_isGroupSubroutine;
-	pNew->m_nextGroup = NULL;
+	pNew->m_nextGroup = nullptr;
 
 	return pNew;
 }
@@ -795,21 +795,21 @@ ScriptGroup *ScriptGroup::duplicateAndQualify(const AsciiString& qualifier,
 */
 void ScriptGroup::deleteScript(Script *pScr)
 {
-	Script *pPrev = NULL;
+	Script *pPrev = nullptr;
 	Script *pCur = m_firstScript;
 	while (pScr != pCur) {
 		pPrev = pCur;
 		pCur = pCur->getNext();
 	}
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find script."));
-	if (pCur==NULL) return;
+	if (pCur==nullptr) return;
 	if (pPrev) {
 		pPrev->setNextScript(pCur->getNext());
 	} else {
 		m_firstScript = pCur->getNext();
 	}
 	// Clear link & delete.
-	pCur->setNextScript(NULL);
+	pCur->setNextScript(nullptr);
 	deleteInstance(pCur);
 }
 
@@ -818,9 +818,9 @@ void ScriptGroup::deleteScript(Script *pScr)
 */
 void ScriptGroup::addScript(Script *pScr, Int ndx)
 {
-	Script *pPrev = NULL;
+	Script *pPrev = nullptr;
 	Script *pCur = m_firstScript;
-	DEBUG_ASSERTCRASH(pScr->getNext()==NULL, ("Adding already linked group."));
+	DEBUG_ASSERTCRASH(pScr->getNext()==nullptr, ("Adding already linked group."));
 	while (ndx && pCur) {
 		pPrev = pCur;
 		pCur = pCur->getNext();
@@ -900,10 +900,10 @@ m_conditionExecutedCount(0),
 m_frameToEvaluateAt(0),
 m_isSubroutine(false),
 m_hasWarnings(false),
-m_nextScript(NULL),
-m_condition(NULL),
-m_action(NULL),
-m_actionFalse(NULL),
+m_nextScript(nullptr),
+m_condition(nullptr),
+m_action(nullptr),
+m_actionFalse(nullptr),
 m_curTime(0.0f)
 {
 }
@@ -919,7 +919,7 @@ Script::~Script(void)
 		Script *next;
 		while (cur) {
 			next = cur->getNext();
-			cur->setNextScript(NULL); // prevents recursion.
+			cur->setNextScript(nullptr); // prevents recursion.
 			deleteInstance(cur);
 			cur = next;
 		}
@@ -969,7 +969,7 @@ void Script::loadPostProcess( void )
 /**
   Script::duplicate - Creates a full, "deep" copy of script. Condition list and action
   list is duplicated as well.  Note - just the script, doesn't
-	duplicate a list of scripts.  m_nextScript is NULL on the copy.
+	duplicate a list of scripts.  m_nextScript is nullptr on the copy.
 */
 Script *Script::duplicate(void) const
 {
@@ -1003,7 +1003,7 @@ Script *Script::duplicate(void) const
   Script::duplicate - Creates a full, "deep" copy of script, with qualifier
   added to names. Condition list and action
   list is duplicated as well.  Note - just the script, doesn't
-	duplicate a list of scripts.  m_nextScript is NULL on the copy.
+	duplicate a list of scripts.  m_nextScript is nullptr on the copy.
 */
 Script *Script::duplicateAndQualify(const AsciiString& qualifier,
 			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const
@@ -1057,15 +1057,15 @@ void Script::updateFrom(Script *pSrc)
 
 	deleteInstance(this->m_condition);
 	this->m_condition = pSrc->m_condition;
-	pSrc->m_condition = NULL;
+	pSrc->m_condition = nullptr;
 
 	deleteInstance(this->m_action);
 	this->m_action = pSrc->m_action;
-	pSrc->m_action = NULL;
+	pSrc->m_action = nullptr;
 
 	deleteInstance(this->m_actionFalse);
 	this->m_actionFalse = pSrc->m_actionFalse;
-	pSrc->m_actionFalse = NULL;
+	pSrc->m_actionFalse = nullptr;
 }
 
 /**
@@ -1073,20 +1073,20 @@ void Script::updateFrom(Script *pSrc)
 */
 void Script::deleteOrCondition(OrCondition *pCond)
 {
-	OrCondition *pPrev = NULL;
+	OrCondition *pPrev = nullptr;
 	OrCondition *pCur = m_condition;
 	while (pCond != pCur) {
 		pPrev = pCur;
 		pCur = pCur->getNextOrCondition();
 	}
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find condition."));
-	if (pCur==NULL) return;
+	if (pCur==nullptr) return;
 	if (pPrev) {
 		pPrev->setNextOrCondition(pCur->getNextOrCondition());
 	} else {
 		m_condition = pCur->getNextOrCondition();
 	}
-	pCur->setNextOrCondition(NULL);
+	pCur->setNextOrCondition(nullptr);
 	deleteInstance(pCur);
 }
 
@@ -1096,20 +1096,20 @@ void Script::deleteOrCondition(OrCondition *pCond)
 */
 void Script::deleteAction(ScriptAction *pAct)
 {
-	ScriptAction *pPrev = NULL;
+	ScriptAction *pPrev = nullptr;
 	ScriptAction *pCur = m_action;
 	while (pAct != pCur) {
 		pPrev = pCur;
 		pCur = pCur->getNext();
 	}
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find action."));
-	if (pCur==NULL) return;
+	if (pCur==nullptr) return;
 	if (pPrev) {
 		pPrev->setNextAction(pCur->getNext());
 	} else {
 		m_action = pCur->getNext();
 	}
-	pCur->setNextAction(NULL);
+	pCur->setNextAction(nullptr);
 	deleteInstance(pCur);
 }
 
@@ -1119,20 +1119,20 @@ void Script::deleteAction(ScriptAction *pAct)
 */
 void Script::deleteFalseAction(ScriptAction *pAct)
 {
-	ScriptAction *pPrev = NULL;
+	ScriptAction *pPrev = nullptr;
 	ScriptAction *pCur = m_actionFalse;
 	while (pAct != pCur) {
 		pPrev = pCur;
 		pCur = pCur->getNext();
 	}
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find action."));
-	if (pCur==NULL) return;
+	if (pCur==nullptr) return;
 	if (pPrev) {
 		pPrev->setNextAction(pCur->getNext());
 	} else {
 		m_actionFalse = pCur->getNext();
 	}
-	pCur->setNextAction(NULL);
+	pCur->setNextAction(nullptr);
 	deleteInstance(pCur);
 }
 
@@ -1244,7 +1244,7 @@ Script *Script::ParseScript(DataChunkInput &file, unsigned short version)
 	file.registerParser( "ScriptActionFalse",  "Script", ScriptAction::ParseActionFalseDataChunk );
 	if (! file.parse(pScript) )
 	{
-		return NULL;
+		return nullptr;
 	}
 	DEBUG_ASSERTCRASH(file.atEndOfChunk(), ("Unexpected data left over."));
 	return pScript;
@@ -1292,7 +1292,7 @@ OrCondition *Script::findPreviousOrCondition( OrCondition *curOr )
 {
 	OrCondition *myConditions = getOrCondition();
 	if ( myConditions == curOr ) {
-		return NULL;
+		return nullptr;
 	}
 
 	while (myConditions) {
@@ -1303,7 +1303,7 @@ OrCondition *Script::findPreviousOrCondition( OrCondition *curOr )
 	}
 
 	DEBUG_CRASH(("Tried to find an OrCondition that doesn't seem to exist (jkmcd)"));
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1312,14 +1312,14 @@ OrCondition *Script::findPreviousOrCondition( OrCondition *curOr )
 OrCondition::~OrCondition(void)
 {
 	deleteInstance(m_firstAnd);
-	m_firstAnd = NULL;
+	m_firstAnd = nullptr;
 
 	if (m_nextOr) {
 		OrCondition *cur = m_nextOr;
 		OrCondition *next;
 		while (cur) {
 			next = cur->getNextOrCondition();
-			cur->setNextOrCondition(NULL); // prevents recursion.
+			cur->setNextOrCondition(nullptr); // prevents recursion.
 			deleteInstance(cur);
 			cur = next;
 		}
@@ -1367,7 +1367,7 @@ OrCondition *OrCondition::duplicateAndQualify(const AsciiString& qualifier,
 
 Condition *OrCondition::removeCondition(Condition *pCond)
 {
-	Condition *pPrev = NULL;
+	Condition *pPrev = nullptr;
 	Condition *pCur = m_firstAnd;
 	while (pCond != pCur) {
 		pPrev = pCur;
@@ -1375,15 +1375,15 @@ Condition *OrCondition::removeCondition(Condition *pCond)
 	}
 
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find condition."));
-	if (pCur==NULL)
-		return NULL;
+	if (pCur==nullptr)
+		return nullptr;
 	if (pPrev) {
 		pPrev->setNextCondition(pCur->getNext());
 	} else {
 		m_firstAnd = pCur->getNext();
 	}
 
-	pCur->setNextCondition(NULL);
+	pCur->setNextCondition(nullptr);
 	return pCur;
 }
 
@@ -1391,7 +1391,7 @@ void OrCondition::deleteCondition(Condition *pCond)
 {
 	Condition *pCur = removeCondition(pCond);
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find condition."));
-	if (pCur==NULL)
+	if (pCur==nullptr)
 		return;
 	deleteInstance(pCur);
 }
@@ -1451,7 +1451,7 @@ Condition *OrCondition::findPreviousCondition( Condition *curCond )
 {
 	Condition *myConditions = getFirstAndCondition();
 	if (myConditions == curCond) {
-		return NULL;
+		return nullptr;
 	}
 
 	while (myConditions) {
@@ -1462,7 +1462,7 @@ Condition *OrCondition::findPreviousCondition( Condition *curCond )
 	}
 
 	DEBUG_CRASH(("Searched for non-existent And Condition. (jkmcd)"));
-	return NULL;
+	return nullptr;
 }
 
 
@@ -1474,12 +1474,12 @@ m_conditionType(CONDITION_FALSE),
 m_hasWarnings(false),
 m_customData(0),
 m_numParms(0),
-m_nextAndCondition(NULL)
+m_nextAndCondition(nullptr)
 {
 	Int i;
 	for (i = 0; i < MAX_PARMS; i++)
 	{
-		m_parms[i] = NULL;
+		m_parms[i] = nullptr;
 	}
 }
 
@@ -1489,7 +1489,7 @@ m_numParms(0)
 {
 	Int i;
 	for (i=0; i<MAX_PARMS; i++) {
-		m_parms[i] = NULL;
+		m_parms[i] = nullptr;
 	}
 	setConditionType(type);
 }
@@ -1499,7 +1499,7 @@ void Condition::setConditionType(enum ConditionType type)
 	Int i;
 	for (i=0; i<m_numParms; i++) {
 		deleteInstance(m_parms[i]);
-		m_parms[i] = NULL;
+		m_parms[i] = nullptr;
 	}
 	m_conditionType = type;
 	const ConditionTemplate *pTemplate = TheScriptEngine->getConditionTemplate(m_conditionType);
@@ -1557,14 +1557,14 @@ Condition::~Condition(void)
 	Int i;
 	for (i=0; i<m_numParms; i++) {
 		deleteInstance(m_parms[i]);
-		m_parms[i] = NULL;
+		m_parms[i] = nullptr;
 	}
 	if (m_nextAndCondition) {
 		Condition *cur = m_nextAndCondition;
 		Condition *next;
 		while (cur) {
 			next = cur->getNext();
-			cur->setNextCondition(NULL); // prevents recursion.
+			cur->setNextCondition(nullptr); // prevents recursion.
 			deleteInstance(cur);
 			cur = next;
 		}
@@ -2166,7 +2166,7 @@ ScriptAction::ScriptAction():
 m_actionType(NO_OP),
 m_hasWarnings(false),
 m_numParms(0),
-m_nextAction(NULL)
+m_nextAction(nullptr)
 {
 }
 
@@ -2176,7 +2176,7 @@ m_numParms(0)
 {
 	Int i;
 	for (i=0; i<MAX_PARMS; i++) {
-		m_parms[i] = NULL;
+		m_parms[i] = nullptr;
 	}
 	setActionType(type);
 }
@@ -2186,7 +2186,7 @@ void ScriptAction::setActionType(enum ScriptActionType type)
 	Int i;
 	for (i=0; i<m_numParms; i++) {
 		deleteInstance(m_parms[i]);
-		m_parms[i] = NULL;
+		m_parms[i] = nullptr;
 	}
 	m_actionType = type;
 	const ActionTemplate *pTemplate = TheScriptEngine->getActionTemplate(m_actionType);
@@ -2252,14 +2252,14 @@ ScriptAction::~ScriptAction(void)
 	Int i;
 	for (i=0; i<m_numParms; i++) {
 		deleteInstance(m_parms[i]);
-		m_parms[i] = NULL;
+		m_parms[i] = nullptr;
 	}
 	if (m_nextAction) {
 		ScriptAction *cur = m_nextAction;
 		ScriptAction *next;
 		while (cur) {
 			next = cur->getNext();
-			cur->setNextAction(NULL); // prevents recursion.
+			cur->setNextAction(nullptr); // prevents recursion.
 			deleteInstance(cur);
 			cur = next;
 		}
@@ -2499,5 +2499,5 @@ const char* const TheObjectFlagsNames[] =
 	"Selectable",
 	"AI Recruitable",
 	"Player Targetable",
-	NULL,
+	nullptr,
 };

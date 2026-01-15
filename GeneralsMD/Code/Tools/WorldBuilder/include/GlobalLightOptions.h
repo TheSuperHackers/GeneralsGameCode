@@ -40,7 +40,7 @@ public:
 	int kUIBlueIDs[3];// = {IDC_BD_EDIT, IDC_BD_EDIT1, IDC_BD_EDIT2};
 	CButtonShowColor m_colorButton;
 
-	GlobalLightOptions(CWnd* pParent = NULL);   // standard constructor
+	GlobalLightOptions(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(GlobalLightOptions)

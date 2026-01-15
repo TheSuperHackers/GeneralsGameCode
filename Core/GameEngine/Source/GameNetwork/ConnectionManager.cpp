@@ -66,7 +66,7 @@ static Bool hasValidTransferFileExtension(const AsciiString& filePath)
 
 	const char* fileExt = strrchr(filePath.str(), '.');
 
-	if (fileExt == NULL || fileExt[1] == '\0')
+	if (fileExt == nullptr || fileExt[1] == '\0')
 	{
 		return false;
 	}
@@ -90,38 +90,38 @@ static Bool hasValidTransferFileExtension(const AsciiString& filePath)
 ConnectionManager::~ConnectionManager(void)
 {
 	deleteInstance(m_localUser);
-	m_localUser = NULL;
+	m_localUser = nullptr;
 
 	// Network will delete transports; we just forget them
 	delete m_transport;
-	m_transport = NULL;
+	m_transport = nullptr;
 
 	Int i = 0;
 	for (; i < MAX_SLOTS; ++i) {
 		deleteInstance(m_frameData[i]);
-		m_frameData[i] = NULL;
+		m_frameData[i] = nullptr;
 	}
 
 	for (i = 0; i < NUM_CONNECTIONS; ++i) {
 		deleteInstance(m_connections[i]);
-		m_connections[i] = NULL;
+		m_connections[i] = nullptr;
 	}
 
 	// This is done here since TheDisconnectMenu should only be there if we are in a network game.
 	delete TheDisconnectMenu;
-	TheDisconnectMenu = NULL;
+	TheDisconnectMenu = nullptr;
 
 	delete m_disconnectManager;
-	m_disconnectManager = NULL;
+	m_disconnectManager = nullptr;
 
 	deleteInstance(m_pendingCommands);
-	m_pendingCommands = NULL;
+	m_pendingCommands = nullptr;
 
 	deleteInstance(m_relayedCommands);
-	m_relayedCommands = NULL;
+	m_relayedCommands = nullptr;
 
 	deleteInstance(m_netCommandWrapperList);
-	m_netCommandWrapperList = NULL;
+	m_netCommandWrapperList = nullptr;
 
 	s_fileCommandMap.clear();
 	s_fileRecipientMaskMap.clear();
@@ -136,16 +136,16 @@ ConnectionManager::~ConnectionManager(void)
 ConnectionManager::ConnectionManager(void)
 {
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		m_frameData[i] = NULL;
+		m_frameData[i] = nullptr;
 	}
-	m_transport = NULL;
-	m_disconnectManager = NULL;
-	m_pendingCommands = NULL;
-	m_relayedCommands = NULL;
+	m_transport = nullptr;
+	m_disconnectManager = nullptr;
+	m_pendingCommands = nullptr;
+	m_relayedCommands = nullptr;
 	m_localAddr = 0;
 	m_localPort = 0;
-	m_netCommandWrapperList = NULL;
-	m_localUser = NULL;
+	m_netCommandWrapperList = nullptr;
+	m_localUser = nullptr;
 	m_localUser = newInstance(User);
 }
 
@@ -154,23 +154,23 @@ ConnectionManager::ConnectionManager(void)
  */
 void ConnectionManager::init()
 {
-//	if (m_transport == NULL) {
+//	if (m_transport == nullptr) {
 //		m_transport = new Transport;
 //	}
 //	m_transport->reset();
 
 	UnsignedInt i = 0;
 	for (; i < NUM_CONNECTIONS; ++i) {
-		m_connections[i] = NULL;
+		m_connections[i] = nullptr;
 	}
 
-	if (m_pendingCommands == NULL) {
+	if (m_pendingCommands == nullptr) {
 		m_pendingCommands = newInstance(NetCommandList);
 		m_pendingCommands->init();
 	}
 	m_pendingCommands->reset();
 
-	if (m_relayedCommands == NULL) {
+	if (m_relayedCommands == nullptr) {
 		m_relayedCommands = newInstance(NetCommandList);
 		m_relayedCommands->init();
 	}
@@ -187,7 +187,7 @@ void ConnectionManager::init()
 
 	for (i = 0; i < MAX_SLOTS; ++i) {
 		deleteInstance(m_frameData[i]);
-		m_frameData[i] = NULL;
+		m_frameData[i] = nullptr;
 	}
 
 //	m_averageFps = 30;			// since 30 fps is the desired rate, we'll start off at that.
@@ -227,39 +227,39 @@ void ConnectionManager::init()
  */
 void ConnectionManager::reset()
 {
-//	if (m_transport == NULL) {
+//	if (m_transport == nullptr) {
 //		m_transport = new Transport;
 //	}
 //	m_transport->reset();
 
 	delete m_transport;
-	m_transport = NULL;
+	m_transport = nullptr;
 
 	UnsignedInt i = 0;
 	for (; i < (UnsignedInt)NUM_CONNECTIONS; ++i) {
 		deleteInstance(m_connections[i]);
-		m_connections[i] = NULL;
+		m_connections[i] = nullptr;
 	}
 
 	for (i=0; i<(UnsignedInt)MAX_SLOTS; ++i)
 	{
 		deleteInstance(m_frameData[i]);
-		m_frameData[i] = NULL;
+		m_frameData[i] = nullptr;
 	}
 
-	if (m_pendingCommands == NULL) {
+	if (m_pendingCommands == nullptr) {
 		m_pendingCommands = newInstance(NetCommandList);
 		m_pendingCommands->init();
 	}
 	m_pendingCommands->reset();
 
-	if (m_relayedCommands == NULL) {
+	if (m_relayedCommands == nullptr) {
 		m_relayedCommands = newInstance(NetCommandList);
 		m_relayedCommands->init();
 	}
 	m_relayedCommands->reset();
 
-	if (m_netCommandWrapperList == NULL) {
+	if (m_netCommandWrapperList == nullptr) {
 		m_netCommandWrapperList = newInstance(NetCommandWrapperList);
 		m_netCommandWrapperList->init();
 	}
@@ -316,7 +316,7 @@ void ConnectionManager::attachTransport(Transport *transport) {
  */
 void ConnectionManager::zeroFrames(UnsignedInt startingFrame, UnsignedInt numFrames) {
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (m_frameData[i] != NULL) {
+		if (m_frameData[i] != nullptr) {
 //			DEBUG_LOG(("Calling zeroFrames on player %d, starting frame %d, numFrames %d", i, startingFrame, numFrames));
 			m_frameData[i]->zeroFrames(startingFrame, numFrames);
 		}
@@ -331,7 +331,7 @@ void ConnectionManager::destroyGameMessages() {
 		// Need to destroy these game messages because when the game ends, there are
 		// still some game messages left over because of the run ahead aspect of
 		// network play.
-		if (m_frameData[i] != NULL) {
+		if (m_frameData[i] != nullptr) {
 			m_frameData[i]->destroyGameMessages();
 		}
 	}
@@ -347,7 +347,7 @@ void ConnectionManager::doRelay() {
 	static Int numPackets = 0;
 	static Int numCommands = 0;
 
-	NetPacket *packet = NULL;
+	NetPacket *packet = nullptr;
 
 	for (Int i = 0; i < MAX_MESSAGES; ++i) {
 		if (m_transport->m_inBuffer[i].length != 0) {
@@ -364,7 +364,7 @@ void ConnectionManager::doRelay() {
 			NetCommandRef *cmd = cmdList->getFirstMessage();
 
 			// Iterate through the commands in this packet and send them to the proper connections.
-			while (cmd != NULL) {
+			while (cmd != nullptr) {
 				//DEBUG_LOG(("ConnectionManager::doRelay() - Looking at a command of type %s",
 					//GetNetCommandTypeAsString(cmd->getCommand()->getNetCommandType())));
 				if (CommandRequiresAck(cmd->getCommand())) {
@@ -381,10 +381,10 @@ void ConnectionManager::doRelay() {
 
 			// Delete this packet since we won't be needing it anymore.
 			deleteInstance(packet);
-			packet = NULL;
+			packet = nullptr;
 
 			deleteInstance(cmdList);
-			cmdList = NULL;
+			cmdList = nullptr;
 
 			// signal that this has been processed.
 			m_transport->m_inBuffer[i].length = 0;
@@ -393,7 +393,7 @@ void ConnectionManager::doRelay() {
 
 	NetCommandList *cmdList = m_netCommandWrapperList->getReadyCommands();
 	NetCommandRef *cmd = cmdList->getFirstMessage();
-	while (cmd != NULL) {
+	while (cmd != nullptr) {
 		if (CommandRequiresAck(cmd->getCommand())) {
 			ackCommand(cmd, m_localSlot);
 		}
@@ -408,10 +408,10 @@ void ConnectionManager::doRelay() {
 
 	// Delete this packet since we won't be needing it anymore.
 	deleteInstance(packet);
-	packet = NULL;
+	packet = nullptr;
 
 	deleteInstance(cmdList);
-	cmdList = NULL;
+	cmdList = nullptr;
 }
 
 /**
@@ -431,7 +431,7 @@ Bool ConnectionManager::processNetCommand(NetCommandRef *ref) {
 	}
 
 	// Early validation checks
-	if ((m_connections[msg->getPlayerID()] == NULL) && (msg->getPlayerID() != m_localSlot)) {
+	if ((m_connections[msg->getPlayerID()] == nullptr) && (msg->getPlayerID() != m_localSlot)) {
 		// if this is from a player that is no longer in the game, then ignore them.
 		return TRUE;
 	}
@@ -443,7 +443,7 @@ Bool ConnectionManager::processNetCommand(NetCommandRef *ref) {
 	}
 
 	if ((msg->getPlayerID() >= 0) && (msg->getPlayerID() < MAX_SLOTS) && (msg->getPlayerID() != m_localSlot)) {
-		if (m_connections[msg->getPlayerID()] == NULL) {
+		if (m_connections[msg->getPlayerID()] == nullptr) {
 			return TRUE;
 		}
 	}
@@ -542,7 +542,7 @@ void ConnectionManager::processFrameResendRequest(NetFrameResendRequestCommandMs
 	}
 
 	// make sure this player is still in our game.
-	if ((m_connections[playerID] == NULL) || (m_connections[playerID]->isQuitting() == TRUE)) {
+	if ((m_connections[playerID] == nullptr) || (m_connections[playerID]->isQuitting() == TRUE)) {
 		return;
 	}
 
@@ -638,10 +638,10 @@ void ConnectionManager::processChat(NetChatCommandMsg *msg)
 	//DEBUG_LOG(("processChat(): playerID = %d", playerID));
 	if (playerID == m_localSlot) {
 		name = m_localUser->GetName();
-		//DEBUG_LOG(("connection is NULL, using %ls", name.str()));
-	} else if (((m_connections[playerID] != NULL) && (m_connections[playerID]->isQuitting() == FALSE))) {
+		//DEBUG_LOG(("connection is null, using %ls", name.str()));
+	} else if (((m_connections[playerID] != nullptr) && (m_connections[playerID]->isQuitting() == FALSE))) {
 		name = m_connections[playerID]->getUser()->GetName();
-		//DEBUG_LOG(("connection is non-NULL, using %ls", name.str()));
+		//DEBUG_LOG(("connection is non-null, using %ls", name.str()));
 	}
 	unitext.format(L"[%ls] %ls", name.str(), msg->getText().str());
 //	DEBUG_LOG(("ConnectionManager::processChat - got message from player %d (mask %8.8X), message is %ls", playerID, msg->getPlayerMask(), unitext.str()));
@@ -733,7 +733,7 @@ void ConnectionManager::processFile(NetFileCommandMsg *msg)
 	{
 		fp->write(buf, len);
 		fp->close();
-		fp = NULL;
+		fp = nullptr;
 		DEBUG_LOG(("Wrote %d bytes to file %s!", len, realFileName.str()));
 
 	}
@@ -767,7 +767,7 @@ void ConnectionManager::processFile(NetFileCommandMsg *msg)
 	if (deleteBuf)
 	{
 		delete[] buf;
-		buf = NULL;
+		buf = nullptr;
 	}
 #endif // COMPRESS_TARGAS
 }
@@ -823,7 +823,7 @@ void ConnectionManager::processFrameInfo(NetFrameCommandMsg *msg) {
 	UnsignedInt playerID = msg->getPlayerID();
 
 	if ((playerID >= 0) && (playerID < MAX_SLOTS)) {
-		if (m_frameData[playerID] != NULL) {
+		if (m_frameData[playerID] != nullptr) {
 //			DEBUG_LOG(("ConnectionManager::processFrameInfo - player %d, frame %d, command count %d, received on frame %d", playerID, msg->getExecutionFrame(), msg->getCommandCount(), TheGameLogic->getFrame()));
 			m_frameData[playerID]->setFrameCommandCount(msg->getExecutionFrame(), msg->getCommandCount());
 		}
@@ -840,7 +840,7 @@ void ConnectionManager::processAckStage1(NetCommandMsg *msg) {
 #endif
 
 	UnsignedByte playerID = msg->getPlayerID();
-	NetCommandRef *ref = NULL;
+	NetCommandRef *ref = nullptr;
 
 #if defined(RTS_DEBUG)
 	if (doDebug == TRUE) {
@@ -849,20 +849,20 @@ void ConnectionManager::processAckStage1(NetCommandMsg *msg) {
 #endif
 
 	if ((playerID >= 0) && (playerID < NUM_CONNECTIONS)) {
-		if (m_connections[playerID] != NULL) {
+		if (m_connections[playerID] != nullptr) {
 			ref = m_connections[playerID]->processAck(msg);
 		}
 	} else {
 		DEBUG_ASSERTCRASH((playerID >= 0) && (playerID < NUM_CONNECTIONS), ("ConnectionManager::processAck - %d is an invalid player number", playerID));
 	}
 
-	if (ref != NULL) {
+	if (ref != nullptr) {
 		if (ref->getCommand()->getNetCommandType() == NETCOMMANDTYPE_FRAMEINFO) {
 			m_frameMetrics.processLatencyResponse(((NetFrameCommandMsg *)(ref->getCommand()))->getExecutionFrame());
 		}
 
 		deleteInstance(ref);
-		ref = NULL;
+		ref = nullptr;
 	}
 }
 
@@ -884,18 +884,18 @@ void ConnectionManager::processAckStage2(NetCommandMsg *msg) {
 	}
 
 	NetCommandRef *ref = m_pendingCommands->findMessage(commandID, playerID);
-	if (ref != NULL) {
+	if (ref != nullptr) {
 		//DEBUG_LOG(("ConnectionManager::processAckStage2 - removing command %d from the pending commands list.", commandID));
 		DEBUG_ASSERTCRASH((m_localSlot == playerID), ("Found a command in the pending commands list that wasn't originated by the local player"));
 		m_pendingCommands->removeMessage(ref);
 		deleteInstance(ref);
-		ref = NULL;
+		ref = nullptr;
 	} else {
 		//DEBUG_LOG(("ConnectionManager::processAckStage2 - Couldn't find command %d from player %d in the pending commands list.", commandID, playerID));
 	}
 
 	ref = m_relayedCommands->findMessage(commandID, playerID);
-	if (ref != NULL) {
+	if (ref != nullptr) {
 		//DEBUG_LOG(("ConnectionManager::processAckStage2 - found command ID %d from player %d in the relayed commands list.", commandID, playerID));
 		UnsignedByte prevRelay = ref->getRelay();
 		UnsignedByte relay = prevRelay & ~(1 << msg->getPlayerID());
@@ -906,10 +906,10 @@ void ConnectionManager::processAckStage2(NetCommandMsg *msg) {
 			NetAckStage2CommandMsg *ackmsg = newInstance(NetAckStage2CommandMsg)(ref->getCommand());
 			sendLocalCommand(ackmsg, 1 << ackmsg->getOriginalPlayerID());
 			deleteInstance(ref);
-			ref = NULL;
+			ref = nullptr;
 
 			ackmsg->detach();
-			ackmsg = NULL;
+			ackmsg = nullptr;
 		} else {
 			ref->setRelay(relay);
 		}
@@ -940,12 +940,12 @@ void ConnectionManager::processAck(NetCommandMsg *msg) {
  */
 PlayerLeaveCode ConnectionManager::processPlayerLeave(NetPlayerLeaveCommandMsg *msg) {
 	UnsignedByte playerID = msg->getLeavingPlayerID();
-	if ((playerID != m_localSlot) && (m_connections[playerID] != NULL)) {
+	if ((playerID != m_localSlot) && (m_connections[playerID] != nullptr)) {
 		DEBUG_LOG(("ConnectionManager::processPlayerLeave() - setQuitting() on player %d on frame %d", playerID, TheGameLogic->getFrame()));
 		m_connections[playerID]->setQuitting();
 	}
 	DEBUG_ASSERTCRASH(m_frameData[playerID]->getIsQuitting() == FALSE, ("Player %d is already quitting", playerID));
-	if ((playerID != m_localSlot) && (m_frameData[playerID] != NULL) && (m_frameData[playerID]->getIsQuitting() == FALSE)) {
+	if ((playerID != m_localSlot) && (m_frameData[playerID] != nullptr) && (m_frameData[playerID]->getIsQuitting() == FALSE)) {
 		DEBUG_LOG(("ConnectionManager::processPlayerLeave - setQuitFrame on player %d for frame %d", playerID, TheGameLogic->getFrame()+1));
 		m_frameData[playerID]->setQuitFrame(TheGameLogic->getFrame() + FRAMES_TO_KEEP + 1);
 	}
@@ -986,7 +986,7 @@ UnsignedInt ConnectionManager::getPacketRouterSlot() {
 Bool ConnectionManager::areAllQueuesEmpty(void) {
 	Bool retval = TRUE;
 	for (Int i = 0; (i < MAX_SLOTS) && retval; ++i) {
-		if (m_connections[i] != NULL) {
+		if (m_connections[i] != nullptr) {
 			if (m_connections[i]->isQueueEmpty() == FALSE) {
 				//DEBUG_LOG(("ConnectionManager::areAllQueuesEmpty() - m_connections[%d] is not empty", i));
 				//m_connections[i]->debugPrintCommands();
@@ -1037,7 +1037,7 @@ void ConnectionManager::ackCommand(NetCommandRef *ref, UnsignedInt localSlot) {
 	// Make send relay a bitmask for the connections that the relay will actually be sent to. This is
 	// necessary to determine whether or not we have to wait to send a stage 2 ack.
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (((m_connections[i] != NULL) && (m_connections[i]->isQuitting() == FALSE))) {
+		if (((m_connections[i] != nullptr) && (m_connections[i]->isQuitting() == FALSE))) {
 			sendRelay = sendRelay | (1 << i);
 		}
 	}
@@ -1074,30 +1074,30 @@ void ConnectionManager::ackCommand(NetCommandRef *ref, UnsignedInt localSlot) {
 	if (CommandRequiresDirectSend(msg) && CommandRequiresAck(msg)) {
 		// Send this ack directly back to the sending player, don't go through the packet router.
 		if ((msg->getPlayerID() >= 0) && (msg->getPlayerID() < MAX_SLOTS)) {
-			if (m_connections[msg->getPlayerID()] != NULL) {
+			if (m_connections[msg->getPlayerID()] != nullptr) {
 				m_connections[msg->getPlayerID()]->sendNetCommandMsg(ackmsg, 1 << msg->getPlayerID());
 			}
 		}
 	} else {
-		// The local connection may be the packet router, in that case, the connection would be NULL.  So do something about it!
+		// The local connection may be the packet router, in that case, the connection would be null.  So do something about it!
 		if ((m_packetRouterSlot >= 0) && (m_packetRouterSlot < MAX_SLOTS)) {
-			if (m_connections[m_packetRouterSlot] != NULL) {
+			if (m_connections[m_packetRouterSlot] != nullptr) {
 //				DEBUG_LOG(("ConnectionManager::ackCommand - acking command %d from player %d to packet router.", commandID, m_packetRouterSlot));
 				m_connections[m_packetRouterSlot]->sendNetCommandMsg(ackmsg, 1 << m_packetRouterSlot);
 			} else if (m_localSlot == m_packetRouterSlot) {
 				// we are the packet router, send the ack to the player that sent the command.
 				if ((msg->getPlayerID() >= 0) && (msg->getPlayerID() < MAX_SLOTS)) {
-					if (m_connections[msg->getPlayerID()] != NULL) {
+					if (m_connections[msg->getPlayerID()] != nullptr) {
 //						DEBUG_LOG(("ConnectionManager::ackCommand - acking command %d from player %d directly to player.", commandID, msg->getPlayerID()));
 						m_connections[msg->getPlayerID()]->sendNetCommandMsg(ackmsg, 1 << msg->getPlayerID());
 					} else {
-	//					DEBUG_ASSERTCRASH(m_connections[msg->getPlayerID()] != NULL, ("Connection to player is NULL"));
+	//					DEBUG_ASSERTCRASH(m_connections[msg->getPlayerID()] != nullptr, ("Connection to player is null"));
 					}
 				} else {
 					DEBUG_ASSERTCRASH((msg->getPlayerID() >= 0) && (msg->getPlayerID() < MAX_SLOTS), ("Command sent by an invalid player ID."));
 				}
 			} else {
-				DEBUG_ASSERTCRASH(m_connections[m_packetRouterSlot] != NULL, ("Connection to packet router is NULL"));
+				DEBUG_ASSERTCRASH(m_connections[m_packetRouterSlot] != nullptr, ("Connection to packet router is null"));
 			}
 		} else {
 			DEBUG_ASSERTCRASH((m_packetRouterSlot >= 0) && (m_packetRouterSlot < MAX_SLOTS), ("I don't know who the packet router is."));
@@ -1113,7 +1113,7 @@ void ConnectionManager::ackCommand(NetCommandRef *ref, UnsignedInt localSlot) {
  */
 void ConnectionManager::sendRemoteCommand(NetCommandRef *msg) {
 	UnsignedByte actualRelay = 0;
-	if (msg->getCommand() == NULL) {
+	if (msg->getCommand() == nullptr) {
 		return;
 	}
 
@@ -1121,7 +1121,7 @@ void ConnectionManager::sendRemoteCommand(NetCommandRef *msg) {
 		msg->getCommand()->getID(), GetNetCommandTypeAsString(msg->getCommand()->getNetCommandType()), msg->getCommand()->getPlayerID(), msg->getRelay()));
 
 	UnsignedByte relay = msg->getRelay();
-	if ((relay & (1 << m_localSlot)) && (m_frameData[msg->getCommand()->getPlayerID()] != NULL)) {
+	if ((relay & (1 << m_localSlot)) && (m_frameData[msg->getCommand()->getPlayerID()] != nullptr)) {
 		if (IsCommandSynchronized(msg->getCommand()->getNetCommandType())) {
 			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendRemoteCommand - adding net command of type %s to player %d for frame %d", GetNetCommandTypeAsString(msg->getCommand()->getNetCommandType()), msg->getCommand()->getPlayerID(), msg->getCommand()->getExecutionFrame()));
 			m_frameData[msg->getCommand()->getPlayerID()]->addNetCommandMsg(msg->getCommand());
@@ -1129,7 +1129,7 @@ void ConnectionManager::sendRemoteCommand(NetCommandRef *msg) {
 	}
 
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if ((relay & (1 << i)) && ((m_connections[i] != NULL) && (m_connections[i]->isQuitting() == FALSE))) {
+		if ((relay & (1 << i)) && ((m_connections[i] != nullptr) && (m_connections[i]->isQuitting() == FALSE))) {
 			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendRemoteCommand - relaying command %d to player %d", msg->getCommand()->getID(), i));
 			m_connections[i]->sendNetCommandMsg(msg->getCommand(), 1 << i);
 			actualRelay = actualRelay | (1 << i);
@@ -1138,7 +1138,7 @@ void ConnectionManager::sendRemoteCommand(NetCommandRef *msg) {
 
 	if ((actualRelay != 0) && (CommandRequiresAck(msg->getCommand()) == TRUE)) {
 		NetCommandRef *ref = m_relayedCommands->addMessage(msg->getCommand());
-		if (ref != NULL) {
+		if (ref != nullptr) {
 			ref->setRelay(actualRelay);
 			//DEBUG_LOG(("ConnectionManager::sendRemoteCommand - command %d added to relayed commands with relay %d", msg->getCommand()->getID(), ref->getRelay()));
 		}
@@ -1191,7 +1191,7 @@ void ConnectionManager::update(Bool isInGame) {
 	doKeepAlive();
 
 	for (Int i = 0; i < NUM_CONNECTIONS; ++i) {
-		if (m_connections[i] != NULL) {
+		if (m_connections[i] != nullptr) {
 			/*
 			if (m_connections[i]->isQueueEmpty() == FALSE) {
 //				DEBUG_LOG(("ConnectionManager::update - calling doSend on connection %d", i));
@@ -1204,15 +1204,15 @@ void ConnectionManager::update(Bool isInGame) {
 			{
 				DEBUG_LOG(("ConnectionManager::update - deleting connection for slot %d", i));
 				deleteInstance(m_connections[i]);
-				m_connections[i] = NULL;
+				m_connections[i] = nullptr;
 			}
 		}
 
-		if ((m_frameData[i] != NULL) && (m_frameData[i]->getIsQuitting() == TRUE)) {
+		if ((m_frameData[i] != nullptr) && (m_frameData[i]->getIsQuitting() == TRUE)) {
 			if (m_frameData[i]->getQuitFrame() == TheGameLogic->getFrame()) {
 				DEBUG_LOG(("ConnectionManager::update - deleting frame data for slot %d on quitting frame %d", i, m_frameData[i]->getQuitFrame()));
 				deleteInstance(m_frameData[i]);
-				m_frameData[i] = NULL;
+				m_frameData[i] = nullptr;
 			}
 		}
 	}
@@ -1378,7 +1378,7 @@ void ConnectionManager::getMinimumFps(Int &minFps, Int &minFpsPlayer) {
 	minFpsPlayer = -1;
 //	DEBUG_LOG_RAW(("ConnectionManager::getMinimumFps -"));
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if ((m_connections[i] != NULL) || (i == m_localSlot)) {
+		if ((m_connections[i] != nullptr) || (i == m_localSlot)) {
 //			DEBUG_LOG_RAW((" %d: %d,", i, m_fpsAverages[i]));
 			if (m_fpsAverages[i] != -1) {
 				if ((minFps == -1) || (m_fpsAverages[i] < minFps)) {
@@ -1399,8 +1399,8 @@ UnsignedInt ConnectionManager::getMinimumCushion() {
  * The commands for the given frame are all ready, time to send out our command count for that frame.
  */
 void ConnectionManager::processFrameTick(UnsignedInt frame) {
-	if ((m_frameData[m_localSlot] == NULL) || (m_frameData[m_localSlot]->getIsQuitting() == TRUE)) {
-		// if the local frame data stuff is NULL, we must be leaving the game.
+	if ((m_frameData[m_localSlot] == nullptr) || (m_frameData[m_localSlot]->getIsQuitting() == TRUE)) {
+		// if the local frame data stuff is null, we must be leaving the game.
 		return;
 	}
 	UnsignedShort commandCount = m_frameData[m_localSlot]->getCommandCount(frame);
@@ -1434,7 +1434,7 @@ void ConnectionManager::setLocalAddress(UnsignedInt ip, UnsignedInt port) {
  * Initialize the transport object
  */
 void ConnectionManager::initTransport() {
-	DEBUG_ASSERTCRASH((m_transport == NULL), ("m_transport already exists when trying to init it."));
+	DEBUG_ASSERTCRASH((m_transport == nullptr), ("m_transport already exists when trying to init it."));
 	DEBUG_LOG(("ConnectionManager::initTransport - Initializing Transport"));
 
 	delete m_transport;
@@ -1469,7 +1469,7 @@ void ConnectionManager::sendLocalGameMessage(GameMessage *msg, UnsignedInt frame
  * in the relay field.  Commands sent in this way go through the packet router.
  */
 void ConnectionManager::sendLocalCommand(NetCommandMsg *msg, UnsignedByte relay /* = 0xff by default*/) {
-	if (CommandRequiresDirectSend(msg) || (m_packetRouterSlot < 0) || (m_packetRouterSlot >= MAX_SLOTS) || (m_connections[m_packetRouterSlot] == NULL)) {
+	if (CommandRequiresDirectSend(msg) || (m_packetRouterSlot < 0) || (m_packetRouterSlot >= MAX_SLOTS) || (m_connections[m_packetRouterSlot] == nullptr)) {
 		sendLocalCommandDirect(msg, relay);
 		return;
 	}
@@ -1488,7 +1488,7 @@ void ConnectionManager::sendLocalCommand(NetCommandMsg *msg, UnsignedByte relay 
 		// I am the packet router, I need to send this packet to everyone individually.
 		for (Int i = 0; i < MAX_SLOTS; ++i) {
 			// Send it to all open connections.
-			if (((m_connections[i] != NULL) && (m_connections[i]->isQuitting() == FALSE)) && (relay & (1 << i))) {
+			if (((m_connections[i] != nullptr) && (m_connections[i]->isQuitting() == FALSE)) && (relay & (1 << i))) {
 				// Set the relay mask to only go to this player so he knows not to relay it to anyone else.
 				UnsignedByte temprelay = 1 << i;
 				m_connections[i]->sendNetCommandMsg(msg, temprelay); // This will create a new copy of netmsg for this connection.
@@ -1505,7 +1505,7 @@ void ConnectionManager::sendLocalCommand(NetCommandMsg *msg, UnsignedByte relay 
 		if (CommandRequiresAck(msg)) {
 			NetCommandRef *ref = m_pendingCommands->addMessage(msg);
 			//DEBUG_LOG(("ConnectionManager::sendLocalCommand - added command %d to pending commands list.", msg->getID()));
-			if (ref != NULL) {
+			if (ref != nullptr) {
 				ref->setRelay(temprelay);
 			}
 		}
@@ -1521,7 +1521,7 @@ void ConnectionManager::sendLocalCommand(NetCommandMsg *msg, UnsignedByte relay 
 void ConnectionManager::sendLocalCommandDirect(NetCommandMsg *msg, UnsignedByte relay) {
 	msg->attach();
 
-	if (((relay & (1 << m_localSlot)) != 0) && (m_frameData[m_localSlot] != NULL)) {
+	if (((relay & (1 << m_localSlot)) != 0) && (m_frameData[m_localSlot] != nullptr)) {
 		if (IsCommandSynchronized(msg->getNetCommandType()) == TRUE) {
 			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendLocalCommandDirect - adding net command of type %s to player %d for frame %d", GetNetCommandTypeAsString(msg->getNetCommandType()), msg->getPlayerID(), msg->getExecutionFrame()));
 			m_frameData[m_localSlot]->addNetCommandMsg(msg);
@@ -1530,7 +1530,7 @@ void ConnectionManager::sendLocalCommandDirect(NetCommandMsg *msg, UnsignedByte 
 
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
 		if ((relay & (1 << i)) != 0) {
-			if ((m_connections[i] != NULL) && (m_connections[i]->isQuitting() == FALSE)) {
+			if ((m_connections[i] != nullptr) && (m_connections[i]->isQuitting() == FALSE)) {
 				UnsignedByte temprelay = 1 << i;
 				m_connections[i]->sendNetCommandMsg(msg, temprelay);
 				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendLocalCommandDirect - Sending direct command %d of type %s to player %d", msg->getID(), GetNetCommandTypeAsString(msg->getNetCommandType()), i));
@@ -1552,7 +1552,7 @@ Bool ConnectionManager::allCommandsReady(UnsignedInt frame, Bool justTesting /* 
 //	retval = FALSE;  // ****for testing purposes only!!!!!!****
 	Int i = 0;
 	for (; (i < MAX_SLOTS) && retval; ++i) {
-		if ((m_frameData[i] != NULL) && (m_frameData[i]->getIsQuitting() == FALSE)) {
+		if ((m_frameData[i] != nullptr) && (m_frameData[i]->getIsQuitting() == FALSE)) {
 /*
 			if (!(m_frameData[i]->allCommandsReady(frame, (frame != commandsReadyDebugSpewage) && (justTesting == FALSE)))) {
 				if ((frame != commandsReadyDebugSpewage) && (justTesting == FALSE)) {
@@ -1578,7 +1578,7 @@ Bool ConnectionManager::allCommandsReady(UnsignedInt frame, Bool justTesting /* 
 	if (frameRetVal == FRAMEDATA_RESEND) {
 		// this frame's data is really screwed up, we need to clean it out so it can be resent to us.
 		for (i = 0; i < MAX_SLOTS; ++i) {
-			if ((m_frameData[i] != NULL) && (i != m_localSlot)) {
+			if ((m_frameData[i] != nullptr) && (i != m_localSlot)) {
 				m_frameData[i]->resetFrame(frame, FALSE);
 			}
 		}
@@ -1614,7 +1614,7 @@ NetCommandList *ConnectionManager::getFrameCommandList(UnsignedInt frame)
 	retlist->init();
 
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (m_frameData[i] != NULL) {
+		if (m_frameData[i] != nullptr) {
 			retlist->appendList(m_frameData[i]->getFrameCommandList(frame));
 			if (frame > FRAMES_TO_KEEP) {
 				m_frameData[i]->resetFrame(frame - FRAMES_TO_KEEP);	// After getting the commands for that frame from this
@@ -1637,7 +1637,7 @@ void ConnectionManager::setFrameGrouping(time_t frameGrouping) {
 		frameGrouping = frameGrouping / 2;
 	}
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (m_connections[i] != NULL) {
+		if (m_connections[i] != nullptr) {
 			m_connections[i]->setFrameGrouping(frameGrouping);
 		}
 	}
@@ -1648,7 +1648,7 @@ void ConnectionManager::determineRouterFallbackPlan() {
 	memset(m_packetRouterFallback, 0, sizeof(m_packetRouterFallback));
 	Int curnum = 1;
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (m_connections[i] != NULL) {
+		if (m_connections[i] != nullptr) {
 			m_packetRouterFallback[i] = curnum;
 			if (curnum == 1) {
 				m_packetRouterSlot = i;
@@ -1674,7 +1674,7 @@ void ConnectionManager::doKeepAlive() {
 
 	while ((nextIndex <= numSeconds) && (nextIndex < MAX_SLOTS)) {
 //		DEBUG_LOG(("ConnectionManager::doKeepAlive - trying to send keep alive message to player %d", nextIndex));
-		if (m_connections[nextIndex] != NULL) {
+		if (m_connections[nextIndex] != nullptr) {
 			NetKeepAliveCommandMsg *msg = newInstance(NetKeepAliveCommandMsg);
 			msg->setPlayerID(m_localSlot);
 			if (DoesCommandRequireACommandID(msg->getNetCommandType()) == TRUE) {
@@ -1722,16 +1722,16 @@ PlayerLeaveCode ConnectionManager::disconnectPlayer(Int slot) {
 		TheAudio->addAudioEvent(&leftGameSound);
 	}
 
-	if ((m_frameData[slot] != NULL) && (m_frameData[slot]->getIsQuitting() == FALSE)) {
+	if ((m_frameData[slot] != nullptr) && (m_frameData[slot]->getIsQuitting() == FALSE)) {
 		DEBUG_LOG(("ConnectionManager::disconnectPlayer - deleting player %d frame data", slot));
 		deleteInstance(m_frameData[slot]);
-		m_frameData[slot] = NULL;
+		m_frameData[slot] = nullptr;
 	}
 
-	if (m_connections[slot] != NULL && !m_connections[slot]->isQuitting()) {
+	if (m_connections[slot] != nullptr && !m_connections[slot]->isQuitting()) {
 		DEBUG_LOG(("ConnectionManager::disconnectPlayer - deleting player %d connection", slot));
 		deleteInstance(m_connections[slot]);
-		m_connections[slot] = NULL;
+		m_connections[slot] = nullptr;
 	}
 
 //	if (playerID == m_localSlot) {
@@ -1819,7 +1819,7 @@ void ConnectionManager::disconnectLocalPlayer() {
  */
 void ConnectionManager::flushConnections() {
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (m_connections[i] != NULL) {
+		if (m_connections[i] != nullptr) {
 //			DEBUG_LOG(("ConnectionManager::flushConnections - flushing connection to player %d", i));
 			/*
 			if (m_connections[i]->isQueueEmpty()) {
@@ -1830,19 +1830,19 @@ void ConnectionManager::flushConnections() {
 		}
 	}
 
-	if (m_transport != NULL) {
+	if (m_transport != nullptr) {
 		m_transport->doSend();
 	}
 }
 
 void ConnectionManager::resendPendingCommands() {
 	//DEBUG_LOG(("ConnectionManager::resendPendingCommands()"));
-	if (m_pendingCommands == NULL) {
+	if (m_pendingCommands == nullptr) {
 		return;
 	}
 
 	NetCommandRef *ref = m_pendingCommands->getFirstMessage();
-	while (ref != NULL) {
+	while (ref != nullptr) {
 		//DEBUG_LOG(("ConnectionManager::resendPendingCommands - resending command %d", ref->getCommand()->getID()));
 		sendLocalCommand(ref->getCommand(), ref->getRelay());
 		ref = ref->getNext();
@@ -1857,7 +1857,7 @@ UnicodeString ConnectionManager::getPlayerName(Int playerNum) {
 	UnicodeString retval;
 	if( playerNum == m_localSlot ) {
 		retval = m_localUser->GetName();
-	}	else if (((m_connections[playerNum] != NULL) && (m_connections[playerNum]->isQuitting() == FALSE))) {
+	}	else if (((m_connections[playerNum] != nullptr) && (m_connections[playerNum]->isQuitting() == FALSE))) {
 		retval = m_connections[playerNum]->getUser()->GetName();
 	}
 	return retval;
@@ -1947,14 +1947,14 @@ void ConnectionManager::parseUserList(const GameInfo *game)
 		m_localPort));
 
 	int numUsers = 0;
-	while ( (userStr=strtok_r(listPtr, ",", &listPos)) != NULL )
+	while ( (userStr=strtok_r(listPtr, ",", &listPos)) != nullptr )
 	{
-		listPtr = NULL;
-		char *pos = NULL;
+		listPtr = nullptr;
+		char *pos = nullptr;
 
 		nameStr = strtok_r(userStr, "@", &pos);
-		addrStr = strtok_r(NULL, "@:", &pos);
-		portStr = strtok_r(NULL, ": ", &pos);
+		addrStr = strtok_r(nullptr, "@:", &pos);
+		portStr = strtok_r(nullptr, ": ", &pos);
 
 		if (!portStr || numUsers >= MAX_SLOTS)
 		{
@@ -2000,7 +2000,7 @@ void ConnectionManager::parseUserList(const GameInfo *game)
 	}
 
 	free(list); // from the strdup above.
-	list = NULL;
+	list = nullptr;
 	*/
 }
 
@@ -2168,7 +2168,7 @@ void ConnectionManager::sendFile(AsciiString path, UnsignedByte playerMask, Unsi
 
 	// compress Targas
 #ifdef COMPRESS_TARGAS
-	char *compressedBuf = NULL;
+	char *compressedBuf = nullptr;
 	Int compressedLen = path.endsWith(".tga")?CompressionManager::getMaxCompressedSize(len, CompressionManager::getPreferredCompression()):0;
 	Int compressedSize = 0;
 	if (compressedLen)
@@ -2178,7 +2178,7 @@ void ConnectionManager::sendFile(AsciiString path, UnsignedByte playerMask, Unsi
 	if (!compressedSize)
 	{
 		delete[] compressedBuf;
-		compressedBuf = NULL;
+		compressedBuf = nullptr;
 	}
 #endif // COMPRESS_TARGAS
 
@@ -2203,10 +2203,10 @@ void ConnectionManager::sendFile(AsciiString path, UnsignedByte playerMask, Unsi
 		fileMsg->getID(), fileMsg->getRealFilename().str(), playerMask, fileMsg->getPlayerID(), fileMsg->getFileLength()));
 
 	delete[] buf;
-	buf = NULL;
+	buf = nullptr;
 #ifdef COMPRESS_TARGAS
 	delete[] compressedBuf;
-	compressedBuf = NULL;
+	compressedBuf = nullptr;
 #endif // COMPRESS_TARGAS
 
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Sending file: '%s', len %d, to %X", path.str(), len, playerMask));
@@ -2236,7 +2236,7 @@ Int ConnectionManager::getFileTransferProgress(Int playerID, AsciiString path)
 
 
 void ConnectionManager::voteForPlayerDisconnect(Int slot) {
-	if (m_disconnectManager != NULL) {
+	if (m_disconnectManager != nullptr) {
 		m_disconnectManager->voteForPlayerDisconnect(slot, this);
 	}
 }
@@ -2320,7 +2320,7 @@ Int ConnectionManager::getSlotAverageFPS(Int slot) {
 void ConnectionManager::debugPrintConnectionCommands() {
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::debugPrintConnectionCommands - begin commands"));
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (m_connections[i] != NULL) {
+		if (m_connections[i] != nullptr) {
 			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::debugPrintConnectionCommands - commands for connection %d", i));
 			m_connections[i]->debugPrintCommands();
 		}
@@ -2389,11 +2389,11 @@ void ConnectionManager::sendSingleFrameToPlayer(UnsignedInt playerID, UnsignedIn
 
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendFrameDataToPlayer - sending data for frame %d", frame));
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if ((m_frameData[i] != NULL) && (i != playerID)) { // no need to send his own commands to him.
+		if ((m_frameData[i] != nullptr) && (i != playerID)) { // no need to send his own commands to him.
 			NetCommandList *list = m_frameData[i]->getFrameCommandList(frame);
-			if (list != NULL) {
+			if (list != nullptr) {
 				NetCommandRef *ref = list->getFirstMessage();
-				while (ref != NULL) {
+				while (ref != nullptr) {
 					DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendFrameDataToPlayer - sending command %d from player %d to player %d using relay 0x%x", ref->getCommand()->getID(), i, playerID, relay));
 					sendLocalCommandDirect(ref->getCommand(), relay);
 					ref = ref->getNext();

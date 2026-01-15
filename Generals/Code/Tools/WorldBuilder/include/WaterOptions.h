@@ -35,7 +35,7 @@ class WaterOptions : public COptionsPanel, public PopupSliderOwner
 
 // Construction
 public:
-	WaterOptions(CWnd* pParent = NULL);   // standard constructor
+	WaterOptions(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(WaterOptions)

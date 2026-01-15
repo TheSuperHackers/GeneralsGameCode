@@ -72,7 +72,7 @@ public:
 
 	enum
 	{
-		NIL = -1								// internal enumeration for representing a NULL link
+		NIL = -1								// internal enumeration for representing a null link
 	};
 
 	HashTemplateClass(void);

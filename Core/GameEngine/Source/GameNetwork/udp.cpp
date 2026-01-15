@@ -134,7 +134,7 @@ Int UDP::Bind(const char *Host,UnsignedShort port)
     return ( Bind( ntohl(inet_addr(Host)), port) );
 
   hostStruct = gethostbyname(Host);
-  if (hostStruct == NULL)
+  if (hostStruct == nullptr)
     return (0);
   hostNode = (struct in_addr *) hostStruct->h_addr;
   return ( Bind(ntohl(hostNode->s_addr),port) );
@@ -264,7 +264,7 @@ Int UDP::Read(unsigned char *msg,UnsignedInt len,sockaddr_in *from)
   Int retval;
   int    alen=sizeof(sockaddr_in);
 
-  if (from!=NULL)
+  if (from!=nullptr)
   {
     retval=recvfrom(fd,(char *)msg,len,0,(struct sockaddr *)from,&alen);
     #ifdef _WIN32
@@ -287,7 +287,7 @@ Int UDP::Read(unsigned char *msg,UnsignedInt len,sockaddr_in *from)
   }
   else
   {
-    retval=recvfrom(fd,(char *)msg,len,0,NULL,NULL);
+    retval=recvfrom(fd,(char *)msg,len,0,nullptr,nullptr);
     #ifdef _WIN32
     if (retval==SOCKET_ERROR)
 		{
@@ -434,7 +434,7 @@ int UDP::Wait(Int sec,Int usec,fd_set &givenSet,fd_set &returnSet)
   while( ! done)
   {
     if (noTimeout)
-      retval=select(givenMax+1,&returnSet,0,0,NULL);
+      retval=select(givenMax+1,&returnSet,0,0,nullptr);
     else
     {
       timeout.GetTimevalMT(tv);

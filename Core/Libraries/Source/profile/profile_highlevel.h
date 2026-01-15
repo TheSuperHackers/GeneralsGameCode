@@ -119,7 +119,7 @@ public:
       any consecutive call to any profile module function.
 
       \param frame number of recorded frame/range
-      \return value at given frame, NULL if frame not found
+      \return value at given frame, nullptr if frame not found
     */
     const char *GetValue(unsigned frame) const;
 

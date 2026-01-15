@@ -33,7 +33,7 @@
 
 #include "gitinfo.h"
 
-Version *TheVersion = NULL;	///< The Version singleton
+Version *TheVersion = nullptr;	///< The Version singleton
 
 Version::Version()
 {

@@ -63,7 +63,7 @@ will you be ready to leave grasshopper.
 #define INFMSG(X)\
 {\
   char     timebuf[40]; \
-  time_t   clock=time(NULL); \
+  time_t   clock=time(nullptr); \
   cftime(timebuf,"%D %T",&clock); \
   if (MsgManager::infoStream()) \
     (*(MsgManager::infoStream())) << "INF " << timebuf << " [" << \
@@ -74,7 +74,7 @@ will you be ready to leave grasshopper.
 #define WRNMSG(X)\
 {\
   char     timebuf[40]; \
-  time_t   clock=time(NULL); \
+  time_t   clock=time(nullptr); \
   cftime(timebuf,"%D %T",&clock); \
   if (MsgManager::warnStream()) \
     (*(MsgManager::warnStream())) << "WRN " << timebuf << " [" << \
@@ -85,7 +85,7 @@ will you be ready to leave grasshopper.
 #define ERRMSG(X)\
 {\
   char     timebuf[40]; \
-  time_t   clock=time(NULL); \
+  time_t   clock=time(nullptr); \
   strcpy(timebuf,ctime(&clock)); \
   if (MsgManager::errorStream()) \
     (*(MsgManager::errorStream())) << "ERR " << timebuf << " [" << \

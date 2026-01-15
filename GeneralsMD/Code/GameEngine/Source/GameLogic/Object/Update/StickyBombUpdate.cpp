@@ -84,7 +84,7 @@ void StickyBombUpdate::onObjectCreated()
 			Object *target = ai->getGoalObject();
 			if( target )
 			{
-				initStickyBomb( target, NULL);
+				initStickyBomb( target, nullptr);
 			}
 		}
 	}
@@ -259,7 +259,7 @@ void StickyBombUpdate::detonate()
 			damageInfo.in.m_sourcePlayerMask = getObject()->getControllingPlayer()->getPlayerMask();
 			damageInfo.in.m_damageStatusType = data->m_geometryBasedDamageWeaponTemplate->getDamageStatusType();
 
-			for (; curVictim != NULL; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : NULL)
+			for (; curVictim != nullptr; curVictim = iter ? iter->nextWithNumeric(&curVictimDistSqr) : nullptr)
 			{
 				damageInfo.in.m_amount = (curVictimDistSqr <= primaryDamageRangeSqr) ? primaryDamage : secondaryDamage;
 				curVictim->attemptDamage(&damageInfo);
@@ -268,7 +268,7 @@ void StickyBombUpdate::detonate()
 			if( data->m_geometryBasedDamageFX )
 			{
 				// And we make FX based on that size too.
-				FXList::doFXPos(data->m_geometryBasedDamageFX, boobyTrappedObject->getPosition(), NULL, 0, NULL, secondaryDamageRange);
+				FXList::doFXPos(data->m_geometryBasedDamageFX, boobyTrappedObject->getPosition(), nullptr, 0, nullptr, secondaryDamageRange);
 			}
 		}
 	}

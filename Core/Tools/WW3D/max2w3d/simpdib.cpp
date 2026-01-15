@@ -39,18 +39,18 @@
 
 SimpleDIBClass::SimpleDIBClass(HWND hwnd,int width,int height,PaletteClass & pal):
 	IsZombie(false),
-	Info(NULL),
+	Info(nullptr),
 	Handle(0),
-	Pixels(NULL),
+	Pixels(nullptr),
 	Width(width),
 	Height(height),
-	PixelBase(NULL),
-	Pitch(NULL)
+	PixelBase(nullptr),
+	Pitch(nullptr)
 {
 	// Allocate a BITMAPINFO structure
 	Info = (BITMAPINFO *) new char [sizeof(BITMAPINFO) + 256*sizeof(RGBQUAD)];
 
-	if (Info == NULL) {
+	if (Info == nullptr) {
 		IsZombie = true;
 		return;
 	}
@@ -78,7 +78,7 @@ SimpleDIBClass::SimpleDIBClass(HWND hwnd,int width,int height,PaletteClass & pal
 
 	// Create the DIB.
 	HDC hdc = GetDC(hwnd);
-	Handle = CreateDIBSection(hdc, Info, DIB_RGB_COLORS,(void**)&Pixels, NULL, 0);
+	Handle = CreateDIBSection(hdc, Info, DIB_RGB_COLORS,(void**)&Pixels, nullptr, 0);
 	ReleaseDC(hwnd, hdc);
 
 	if (!Handle) {

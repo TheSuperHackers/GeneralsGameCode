@@ -71,7 +71,7 @@ StringClass::Get_String (int length, bool is_temp)
 		return;
 	}
 
-	TCHAR *string = NULL;
+	TCHAR *string = nullptr;
 
 	//
 	//	Should we attempt to use a temp buffer for this string?
@@ -113,7 +113,7 @@ StringClass::Get_String (int length, bool is_temp)
 		}
 	}
 
-	if (string == NULL) {
+	if (string == nullptr) {
 
 		//
 		//	Allocate a new string as necessary
@@ -316,16 +316,16 @@ StringClass::Release_Resources (void)
 ///////////////////////////////////////////////////////////////////
 bool StringClass::Copy_Wide (const WCHAR *source)
 {
-	if (source != NULL) {
+	if (source != nullptr) {
 
 		int  length;
 		int unmapped;
 
-		length = WideCharToMultiByte (CP_ACP, 0 , source, -1, NULL, 0, NULL, &unmapped);
+		length = WideCharToMultiByte (CP_ACP, 0 , source, -1, nullptr, 0, nullptr, &unmapped);
 		if (length > 0) {
 
 			// Convert.
-			WideCharToMultiByte (CP_ACP, 0, source, -1, Get_Buffer (length), length, NULL, NULL);
+			WideCharToMultiByte (CP_ACP, 0, source, -1, Get_Buffer (length), length, nullptr, nullptr);
 
 			// Update length.
 			Store_Length (length - 1);

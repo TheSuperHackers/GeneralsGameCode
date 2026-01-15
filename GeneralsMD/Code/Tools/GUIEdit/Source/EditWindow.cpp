@@ -74,7 +74,7 @@ const char *EditWindow::m_className = "EditWindowClass";  ///< edit window class
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-EditWindow *TheEditWindow = NULL;  ///< edit window singleton
+EditWindow *TheEditWindow = nullptr;  ///< edit window singleton
 
 ///////////////////////////////////////////////////////////////////////////////
 // PRIVATE PROTOTYPES /////////////////////////////////////////////////////////
@@ -324,9 +324,9 @@ void EditWindow::registerEditWindowClass( void )
 	wcex.cbWndExtra			= 0;
 	wcex.hInstance			= hInst;
 	wcex.hIcon					= LoadIcon( hInst, (LPCTSTR)IDI_GUIEDIT );
-	wcex.hCursor				= NULL;  //LoadCursor(NULL, IDC_ARROW);
+	wcex.hCursor				= nullptr;  //LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)GetStockObject( BLACK_BRUSH );
-	wcex.lpszMenuName		=	NULL;
+	wcex.lpszMenuName		=	nullptr;
 	wcex.lpszClassName	= m_className;
 	wcex.hIconSm				= LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);
 
@@ -352,15 +352,15 @@ EditWindow::EditWindow( void )
 	m_size.x = 0;
 	m_size.y = 0;
 	m_bitDepth = 32;
-	m_editWindowHWnd = NULL;
-	m_assetManager = NULL;
-	m_2DRender = NULL;
+	m_editWindowHWnd = nullptr;
+	m_assetManager = nullptr;
+	m_2DRender = nullptr;
 	m_w3dInitialized = FALSE;
 
 	m_popupMenuClickPos.x = 0;
 	m_popupMenuClickPos.y = 0;
 
-	m_pickedWindow = NULL;
+	m_pickedWindow = nullptr;
 
 	m_dragMoveOrigin.x = 0;
 	m_dragMoveOrigin.y = 0;
@@ -374,7 +374,7 @@ EditWindow::EditWindow( void )
 	m_selectRegion.hi.y = 0;
 
 	m_resizingWindow = FALSE;
-	m_windowToResize = NULL;
+	m_windowToResize = nullptr;
 	m_resizeOrigin.x = 0;
 	m_resizeOrigin.y = 0;
 	m_resizeDest.x = 0;
@@ -447,9 +447,9 @@ void EditWindow::init( UnsignedInt clientWidth, UnsignedInt clientHeight )
 																		 clientRect.right - clientRect.left,  // width
 																		 clientRect.bottom - clientRect.top,  // height,
 																		 TheEditor->getWindowHandle(),  // parent
-																		 NULL,  // menu
+																		 nullptr,  // menu
 																		 TheEditor->getInstance(),  // instance
-																		 NULL );  // creation parameters
+																		 nullptr );  // creation parameters
 
 	// display the window
 	ShowWindow( m_editWindowHWnd, SW_SHOW );
@@ -483,7 +483,7 @@ void EditWindow::init( UnsignedInt clientWidth, UnsignedInt clientHeight )
 	m_w3dInitialized = TRUE;
 
 	// set a timer for updating visual pulse drawing
-	SetTimer( m_editWindowHWnd, TIMER_EDIT_WINDOW_PULSE, 5, NULL );
+	SetTimer( m_editWindowHWnd, TIMER_EDIT_WINDOW_PULSE, 5, nullptr );
 
 }
 
@@ -495,12 +495,12 @@ void EditWindow::shutdown( void )
 
 	// delete 2d renderer
 	delete m_2DRender;
-	m_2DRender = NULL;
+	m_2DRender = nullptr;
 
 	// delete asset manager
 	m_assetManager->Free_Assets();
 	delete m_assetManager;
-	m_assetManager = NULL;
+	m_assetManager = nullptr;
 
 	// shutdown WW3D
 	WW3D::Shutdown();
@@ -508,12 +508,12 @@ void EditWindow::shutdown( void )
 
 	// delete the w3d file system
 	delete TheW3DFileSystem;
-	TheW3DFileSystem = NULL;
+	TheW3DFileSystem = nullptr;
 
 	// destroy the edit window
 	if( m_editWindowHWnd )
 		DestroyWindow( m_editWindowHWnd );
-	m_editWindowHWnd = NULL;
+	m_editWindowHWnd = nullptr;
 
 	// unregister our edit window class
 	UnregisterClass( m_className, TheEditor->getInstance() );
@@ -625,9 +625,9 @@ void EditWindow::mouseEvent( UnsignedInt windowsMessage,
 			// the edit window just make sure all our drag and drop stuff is
 			// clear in the hierarchy
 			//
-			TheHierarchyView->setDragWindow( NULL );
-			TheHierarchyView->setDragTarget( NULL );
-			TheHierarchyView->setPopupTarget( NULL );
+			TheHierarchyView->setDragWindow( nullptr );
+			TheHierarchyView->setDragTarget( nullptr );
+			TheHierarchyView->setPopupTarget( nullptr );
 
 			if( TheEditor->getMode() == MODE_DRAG_MOVE )
 			{
@@ -678,7 +678,7 @@ void EditWindow::mouseEvent( UnsignedInt windowsMessage,
 			//
 			if( TheEditor->getMode() == MODE_DRAG_MOVE &&
 					TheEditor->selectionCount() == 1 &&
-					TheHierarchyView->getPopupTarget() != NULL )
+					TheHierarchyView->getPopupTarget() != nullptr )
 				break;
 
 			//
@@ -791,7 +791,7 @@ void EditWindow::mouseEvent( UnsignedInt windowsMessage,
 					TheEditor->dragMoveSelectedWindows( &m_dragMoveOrigin, &m_dragMoveDest );
 				}
 				// release capture
-				SetCapture( NULL );
+				SetCapture( nullptr );
 
 				// go back to normal mode
 				TheEditor->setMode( MODE_EDIT );
@@ -932,7 +932,7 @@ Bool EditWindow::inCornerTolerance( ICoord2D *dest, ICoord2D *source,
 	IRegion2D region;
 
 	// sanity
-	if( dest == NULL || source == NULL )
+	if( dest == nullptr || source == nullptr )
 		return FALSE;
 
 	/// @todo we should write PointInRegion() stuff again like it was in Nox
@@ -965,7 +965,7 @@ Bool EditWindow::inLineTolerance( ICoord2D *dest,
 	IRegion2D region;
 
 	// sanity
-	if( dest == NULL || lineStart == NULL || lineEnd == NULL )
+	if( dest == nullptr || lineStart == nullptr || lineEnd == nullptr )
 		return FALSE;
 
 	// setup region
@@ -1118,7 +1118,7 @@ void EditWindow::drawSeeThruOutlines( GameWindow *windowList, Color c )
 {
 
 	// end recursion
-	if( windowList == NULL )
+	if( windowList == nullptr )
 		return;
 
 	// draw outline for this window
@@ -1154,7 +1154,7 @@ void EditWindow::drawHiddenOutlines( GameWindow *windowList, Color c )
 {
 
 	// end recursion
-	if( windowList == NULL )
+	if( windowList == nullptr )
 		return;
 
 	//
@@ -1429,7 +1429,7 @@ void EditWindow::drawGrid( void )
 	{
 
 		TheDisplay->drawLine( 0, y, m_size.x, y, 1, color );
-//		MoveToEx( hdc, 0, y, NULL );
+//		MoveToEx( hdc, 0, y, nullptr );
 //		LineTo( hdc, m_size.x, y );
 
 	}
@@ -1438,7 +1438,7 @@ void EditWindow::drawGrid( void )
 	{
 
 		TheDisplay->drawLine( x, 0, x, m_size.y, 1, color );
-//		MoveToEx( hdc, x, 0, NULL );
+//		MoveToEx( hdc, x, 0, nullptr );
 //		LineTo( hdc, x, m_size.y );
 
 	}
@@ -1450,7 +1450,7 @@ void EditWindow::drawGrid( void )
 		for( x = 0; x < m_size.x; x += res )
 		{
 
-			MoveToEx( hdc, x, y, NULL );
+			MoveToEx( hdc, x, y, nullptr );
 			LineTo( hdc, x + 1, y + 1 );
 
 //				TheDisplay->drawLine( x, y, x + 1, y + 1, 1, 0xFFFFFFFF );
@@ -1559,7 +1559,7 @@ void EditWindow::openPopupMenu( Int x, Int y )
 	screen.x = x;
 	screen.y = y;
 	ClientToScreen( m_editWindowHWnd, &screen );
-	TrackPopupMenuEx( subMenu, 0, screen.x, screen.y, m_editWindowHWnd, NULL );
+	TrackPopupMenuEx( subMenu, 0, screen.x, screen.y, m_editWindowHWnd, nullptr );
 
 	// save the location click for the creation of the popup menu
 	m_popupMenuClickPos.x = x;
@@ -1633,7 +1633,7 @@ void EditWindow::drawImage( const Image *image,
 {
 
 	// sanity
-	if( image == NULL )
+	if( image == nullptr )
 		return;
 
 	const Region2D *uv = image->getUV();
@@ -1752,7 +1752,7 @@ void EditWindow::notifyWindowDeleted( GameWindow *window )
 {
 
 	// sanity
-	if( window == NULL )
+	if( window == nullptr )
 		return;
 
 	// check to see if the resizing window was deleted
@@ -1760,7 +1760,7 @@ void EditWindow::notifyWindowDeleted( GameWindow *window )
 	{
 
 		// get back to normal mode and clean up
-		m_windowToResize = NULL;
+		m_windowToResize = nullptr;
 		m_resizingWindow = FALSE;
 		TheEditor->setMode( MODE_EDIT );
 
@@ -1768,7 +1768,7 @@ void EditWindow::notifyWindowDeleted( GameWindow *window )
 
 	// null out picked window if needed
 	if( m_pickedWindow == window )
-		m_pickedWindow = NULL;
+		m_pickedWindow = nullptr;
 
 	//
 	// go back to edit mode, this keeps us from staying in a resize mode

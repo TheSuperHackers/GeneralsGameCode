@@ -54,14 +54,14 @@ DazzleSaveClass::DazzleSaveClass
 	Progress_Meter_Class & meter
 )
 {
-	assert(mesh_name != NULL);
-	assert(container_name != NULL);
+	assert(mesh_name != nullptr);
+	assert(container_name != nullptr);
 
 	/*
 	** Set up the render object name
 	*/
 	memset(&W3DName,0,sizeof(W3DName));
-	if ((container_name != NULL) && (strlen(container_name) > 0)) {
+	if ((container_name != nullptr) && (strlen(container_name) > 0)) {
 		strcpy(W3DName,container_name);
 		strcat(W3DName,".");
 	}

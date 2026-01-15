@@ -266,7 +266,7 @@ public:
 
   static const char* getNameFromSingleBit(Int i)
   {
-    return (i >= 0 && i < NUMBITS) ? s_bitNameList[i] : NULL;
+    return (i >= 0 && i < NUMBITS) ? s_bitNameList[i] : nullptr;
   }
 
   static Int getSingleBitFromName(const char* token)
@@ -284,7 +284,7 @@ public:
 
   const char* getBitNameIfSet(Int i) const
   {
-    return test(i) ? s_bitNameList[i] : NULL;
+    return test(i) ? s_bitNameList[i] : nullptr;
   }
 
   Bool setBitByName(const char* token)
@@ -309,14 +309,14 @@ public:
 
 	void buildDescription( AsciiString* str ) const
 	{
-		if ( str == NULL )
+		if ( str == nullptr )
 			return;//sanity
 
 		for( Int i = 0; i < size(); ++i )
 		{
 			const char* bitName = getBitNameIfSet(i);
 
-			if (bitName != NULL)
+			if (bitName != nullptr)
 			{
 				str->concat( bitName );
 				str->concat( ",\n");

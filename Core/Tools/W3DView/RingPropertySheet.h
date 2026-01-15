@@ -58,8 +58,8 @@ class RingPropertySheetClass : public CPropertySheet
 
 // Construction
 public:
-	RingPropertySheetClass (RingRenderObjClass *ring, UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	RingPropertySheetClass (RingRenderObjClass *ring, LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	RingPropertySheetClass (RingRenderObjClass *ring, UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	RingPropertySheetClass (RingRenderObjClass *ring, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
 // Attributes
 public:

@@ -56,8 +56,8 @@ XferSave::XferSave( void )
 {
 
 	m_xferMode = XFER_SAVE;
-	m_fileFP = NULL;
-	m_blockStack = NULL;
+	m_fileFP = nullptr;
+	m_blockStack = nullptr;
 
 }
 
@@ -67,7 +67,7 @@ XferSave::~XferSave( void )
 {
 
 	// warn the user if a file was left open
-	if( m_fileFP != NULL )
+	if( m_fileFP != nullptr )
 	{
 
 		DEBUG_CRASH(( "Warning: Xfer file '%s' was left open", m_identifier.str() ));
@@ -79,11 +79,11 @@ XferSave::~XferSave( void )
 	// the block stack should be empty, if it's not that means we started blocks but never
 	// called enough matching end blocks
 	//
-	if( m_blockStack != NULL )
+	if( m_blockStack != nullptr )
 	{
 
 		// tell the user there is an error
-		DEBUG_CRASH(( "Warning: XferSave::~XferSave - m_blockStack was not NULL!" ));
+		DEBUG_CRASH(( "Warning: XferSave::~XferSave - m_blockStack was not null!" ));
 
 		// delete the block stack
 		XferBlockData *next;
@@ -107,7 +107,7 @@ void XferSave::open( AsciiString identifier )
 {
 
 	// sanity, check to see if we're already open
-	if( m_fileFP != NULL )
+	if( m_fileFP != nullptr )
 	{
 
 		DEBUG_CRASH(( "Cannot open file '%s' cause we've already got '%s' open",
@@ -121,7 +121,7 @@ void XferSave::open( AsciiString identifier )
 
 	// open the file
 	m_fileFP = fopen( identifier.str(), "w+b" );
-	if( m_fileFP == NULL )
+	if( m_fileFP == nullptr )
 	{
 
 		DEBUG_CRASH(( "File '%s' not found", identifier.str() ));
@@ -138,7 +138,7 @@ void XferSave::close( void )
 {
 
 	// sanity, if we don't have an open file we can do nothing
-	if( m_fileFP == NULL )
+	if( m_fileFP == nullptr )
 	{
 
 		DEBUG_CRASH(( "Xfer close called, but no file was open" ));
@@ -148,7 +148,7 @@ void XferSave::close( void )
 
 	// close the file
 	fclose( m_fileFP );
-	m_fileFP = NULL;
+	m_fileFP = nullptr;
 
 	// erase the filename
 	m_identifier.clear();
@@ -166,7 +166,7 @@ Int XferSave::beginBlock( void )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_fileFP != NULL, ("Xfer begin block - file pointer for '%s' is NULL",
+	DEBUG_ASSERTCRASH( m_fileFP != nullptr, ("Xfer begin block - file pointer for '%s' is null",
 										 m_identifier.str()) );
 
 	// get the current file position so we can back up here for the next end block call
@@ -186,7 +186,7 @@ Int XferSave::beginBlock( void )
 	// save this block position on the top of the "stack"
 	XferBlockData *top = newInstance(XferBlockData);
 // impossible -- exception will be thrown (srj)
-//	if( top == NULL )
+//	if( top == nullptr )
 //	{
 //
 //		DEBUG_CRASH(( "XferSave - Begin block, out of memory - can't save block stack data" ));
@@ -211,11 +211,11 @@ void XferSave::endBlock( void )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_fileFP != NULL, ("Xfer end block - file pointer for '%s' is NULL",
+	DEBUG_ASSERTCRASH( m_fileFP != nullptr, ("Xfer end block - file pointer for '%s' is null",
 										 m_identifier.str()) );
 
 	// sanity, make sure we have a block started
-	if( m_blockStack == NULL )
+	if( m_blockStack == nullptr )
 	{
 
 		DEBUG_CRASH(( "Xfer end block called, but no matching begin block was found" ));
@@ -258,7 +258,7 @@ void XferSave::skip( Int dataSize )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_fileFP != NULL, ("XferSave - file pointer for '%s' is NULL",
+	DEBUG_ASSERTCRASH( m_fileFP != nullptr, ("XferSave - file pointer for '%s' is null",
 										 m_identifier.str()) );
 
 
@@ -273,7 +273,7 @@ void XferSave::skip( Int dataSize )
 void XferSave::xferSnapshot( Snapshot *snapshot )
 {
 
-	if( snapshot == NULL )
+	if( snapshot == nullptr )
 	{
 
 		DEBUG_CRASH(( "XferSave::xferSnapshot - Invalid parameters" ));
@@ -343,7 +343,7 @@ void XferSave::xferImplementation( void *data, Int dataSize )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_fileFP != NULL, ("XferSave - file pointer for '%s' is NULL",
+	DEBUG_ASSERTCRASH( m_fileFP != nullptr, ("XferSave - file pointer for '%s' is null",
 										 m_identifier.str()) );
 
 	// write data to file

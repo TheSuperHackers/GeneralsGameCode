@@ -29,7 +29,7 @@ static unsigned missing_image_depth=24;
 extern unsigned int missing_image_palette[];
 extern unsigned int missing_image_pixels[];
 
-static IDirect3DTexture8 * _MissingTexture = NULL;
+static IDirect3DTexture8 * _MissingTexture = nullptr;
 
 IDirect3DTexture8* MissingTexture::_Get_Missing_Texture()
 {
@@ -40,19 +40,19 @@ IDirect3DTexture8* MissingTexture::_Get_Missing_Texture()
 
 IDirect3DSurface8* MissingTexture::_Create_Missing_Surface()
 {
-	IDirect3DSurface8 *texture_surface = NULL;
+	IDirect3DSurface8 *texture_surface = nullptr;
 	DX8_ErrorCode(_MissingTexture->GetSurfaceLevel(0, &texture_surface));
 	D3DSURFACE_DESC texture_surface_desc;
 	::ZeroMemory(&texture_surface_desc, sizeof(D3DSURFACE_DESC));
 	DX8_ErrorCode(texture_surface->GetDesc(&texture_surface_desc));
 
-	IDirect3DSurface8 *surface = NULL;
+	IDirect3DSurface8 *surface = nullptr;
 	DX8CALL(CreateImageSurface(
 		texture_surface_desc.Width,
 		texture_surface_desc.Height,
 		texture_surface_desc.Format,
 		&surface));
-	DX8CALL(CopyRects(texture_surface, NULL, 0, surface, NULL));
+	DX8CALL(CopyRects(texture_surface, nullptr, 0, surface, nullptr));
 	texture_surface->Release();
 	return surface;
 }
@@ -104,11 +104,11 @@ void MissingTexture::_Init()
 
 		DX8_ErrorCode(D3DXLoadSurfaceFromSurface(
 			dst,
-			NULL,	// palette
-			NULL,	// rect
+			nullptr,	// palette
+			nullptr,	// rect
 			src,
-			NULL,	// palette
-			NULL,	// rect
+			nullptr,	// palette
+			nullptr,	// rect
 			D3DX_FILTER_BOX,	// box is good for 2:1 filtering
 			0));
 
@@ -159,7 +159,7 @@ void MissingTexture::_Init()
 void MissingTexture::_Deinit()
 {
 	_MissingTexture->Release();
-	_MissingTexture=0;
+	_MissingTexture=nullptr;
 }
 
 static unsigned int missing_image_palette[]={

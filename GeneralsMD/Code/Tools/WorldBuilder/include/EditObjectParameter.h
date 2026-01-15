@@ -30,7 +30,7 @@ class EditObjectParameter : public CDialog
 friend class EditParameter;
 // Construction
 public:
-	EditObjectParameter(CWnd* pParent = NULL);   // standard constructor
+	EditObjectParameter(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(EditObjectParameter)

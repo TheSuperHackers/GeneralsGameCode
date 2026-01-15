@@ -67,7 +67,7 @@ MeshDeformSaveClass::Initialize
 	//
 	int test = object->SuperClassID ();
 	int test2 = GEN_DERIVOB_CLASS_ID;
-	if ((object != NULL) &&
+	if ((object != nullptr) &&
 		 (object->SuperClassID () == GEN_DERIVOB_CLASS_ID)) {
 
 		//
@@ -84,13 +84,13 @@ MeshDeformSaveClass::Initialize
 			//	data it contains.
 			//
 			Modifier *modifier = derived_object->GetModifier (index);
-			if ((modifier != NULL) && (modifier->ClassID () == _MeshDeformClassID)) {
+			if ((modifier != nullptr) && (modifier->ClassID () == _MeshDeformClassID)) {
 
 				//
 				//	Attempt to get at the modifier data for this context
 				//
 				ModContext *mod_context = derived_object->GetModContext (index);
-				if ((mod_context != NULL) && (mod_context->localData != NULL)) {
+				if ((mod_context != nullptr) && (mod_context->localData != nullptr)) {
 					MeshDeformModData *mod_data = static_cast<MeshDeformModData *> (mod_context->localData);
 					Initialize (builder, mesh, *mod_data, transform);
 				}

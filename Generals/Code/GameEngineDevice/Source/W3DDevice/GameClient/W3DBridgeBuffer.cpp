@@ -45,6 +45,7 @@
 //-----------------------------------------------------------------------------
 //         Includes
 //-----------------------------------------------------------------------------
+
 #include "W3DDevice/GameClient/W3DBridgeBuffer.h"
 
 #include "W3DDevice/GameClient/W3DAssetManager.h"
@@ -101,10 +102,10 @@ static ShaderClass detailShader(SC_ALPHA_MIRROR);
 /** Initializes pointers & values.  */
 //=============================================================================
 W3DBridge::W3DBridge() :
-m_bridgeTexture(NULL),
-m_leftMesh(NULL),
-m_sectionMesh(NULL),
-m_rightMesh(NULL),
+m_bridgeTexture(nullptr),
+m_leftMesh(nullptr),
+m_sectionMesh(nullptr),
+m_rightMesh(nullptr),
 m_visible(false),
 m_curDamageState(BODY_PRISTINE),
 m_scale(1.0)
@@ -279,13 +280,13 @@ Bool W3DBridge::load(BodyDamageType curDamageState)
 	m_scale = scale;
 
 
-	if (m_leftMesh == NULL) {
+	if (m_leftMesh == nullptr) {
 		clearBridge();
 		return(false);
 	}
 	m_bridgeType = SECTIONAL_BRIDGE;
 
-	if (m_rightMesh == NULL || m_sectionMesh == NULL) {
+	if (m_rightMesh == nullptr || m_sectionMesh == nullptr) {
 		m_bridgeType = FIXED_BRIDGE;
 	}
 
@@ -405,7 +406,7 @@ Int W3DBridge::getModelVertices(VertexFormatXYZNDUV1 *destination_vb, Int curVer
 																const Matrix3D &mtx,
 																MeshClass *pMesh, RefRenderObjListIterator *pLightsIterator)
 {
-	if (pMesh == NULL)
+	if (pMesh == nullptr)
 		return(0);
 
 	Int i;
@@ -464,7 +465,7 @@ Int W3DBridge::getModelVertices(VertexFormatXYZNDUV1 *destination_vb, Int curVer
 #else
 		normal = (normal.X) * vec + normal.Y*vecNormal + normal.Z*vecZ;
 		normal.Normalize();
-		TheTerrainRenderObject->doTheLight(&vb, lightRay, &normal, NULL, 1.0f);
+		TheTerrainRenderObject->doTheLight(&vb, lightRay, &normal, nullptr, 1.0f);
 		curVb->diffuse = vb.diffuse | 0xFF000000;
 #endif
 		curVb++;
@@ -480,7 +481,7 @@ Int W3DBridge::getModelVertices(VertexFormatXYZNDUV1 *destination_vb, Int curVer
 Int W3DBridge::getModelVerticesFixed(VertexFormatXYZNDUV1 *destination_vb, Int curVertex,
 																const Matrix3D &mtx, MeshClass *pMesh, RefRenderObjListIterator *pLightsIterator)
 {
-	if (pMesh == NULL)
+	if (pMesh == nullptr)
 		return(0);
 
 	Vector3 vec = m_end - m_start;
@@ -514,7 +515,7 @@ void W3DBridge::getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatX
 	m_firstIndex = *curIndexP;
 	m_numVertex = 0;
 	m_numPolygons = 0;
-	if (m_sectionMesh == NULL) {
+	if (m_sectionMesh == nullptr) {
 		numV = getModelVerticesFixed(destination_vb, *curVertexP, m_leftMtx, m_leftMesh, pLightsIterator);
 		if (!numV)
 		{	//not enough room for vertices
@@ -632,7 +633,7 @@ void W3DBridge::getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatX
 //=============================================================================
 Int W3DBridge::getModelIndices(UnsignedShort *destination_ib, Int curIndex, Int vertexOffset, MeshClass *pMesh)
 {
-	if (pMesh == NULL)
+	if (pMesh == nullptr)
 		return(0);
 	Int numPoly = pMesh->Peek_Model()->Get_Polygon_Count();
 	const TriIndex *pPoly =pMesh->Peek_Model()->Get_Polygon_Array();
@@ -730,10 +731,10 @@ for the bridges. */
 W3DBridgeBuffer::W3DBridgeBuffer(void)
 {
 	m_initialized = false;
-	m_vertexMaterial = NULL;
-	m_vertexBridge = NULL;
-	m_indexBridge = NULL;
-	m_bridgeTexture = NULL;
+	m_vertexMaterial = nullptr;
+	m_vertexBridge = nullptr;
+	m_indexBridge = nullptr;
+	m_bridgeTexture = nullptr;
 	m_curNumBridgeVertices=0;
 	m_curNumBridgeIndices=0;
 	clearAllBridges();
@@ -814,13 +815,13 @@ void W3DBridgeBuffer::loadBridges(W3DTerrainLogic *pTerrainLogic, Bool saveGame)
 			if ( !pMapObj2 || !pMapObj2->getFlag(FLAG_BRIDGE_POINT2)) {
 				DEBUG_LOG(("Missing second bridge point.  Ignoring first."));
 			}
-			if (pMapObj2==NULL) break;
+			if (pMapObj2==nullptr) break;
 			if (!pMapObj2->getFlag(FLAG_BRIDGE_POINT2)) continue;
 			Vector3 from, to;
 			from.Set(pMapObj->getLocation()->x, pMapObj->getLocation()->y, 0);
-			from.Z = TheTerrainRenderObject->getHeightMapHeight(from.X, from.Y, NULL) + BRIDGE_FLOAT_AMT;
+			from.Z = TheTerrainRenderObject->getHeightMapHeight(from.X, from.Y, nullptr) + BRIDGE_FLOAT_AMT;
 			to.Set(pMapObj2->getLocation()->x, pMapObj2->getLocation()->y, 0);
-			to.Z = TheTerrainRenderObject->getHeightMapHeight(to.X, to.Y, NULL) + BRIDGE_FLOAT_AMT;
+			to.Z = TheTerrainRenderObject->getHeightMapHeight(to.X, to.Y, nullptr) + BRIDGE_FLOAT_AMT;
 			addBridge(from, to, pMapObj->getName(), pTerrainLogic, pMapObj->getProperties());
 			pMapObj = pMapObj2;
 		}
@@ -838,21 +839,21 @@ static RenderObjClass* createTower( SimpleSceneClass *scene,
 																	  BridgeTowerType type,
 																	  BridgeInfo *bridgeInfo )
 {
-	RenderObjClass* tower = NULL;
+	RenderObjClass* tower = nullptr;
 
 	// sanity
-	if( scene == NULL ||
-			assetManager == NULL ||
-			mapObject == NULL ||
-			bridgeInfo == NULL ||
+	if( scene == nullptr ||
+			assetManager == nullptr ||
+			mapObject == nullptr ||
+			bridgeInfo == nullptr ||
 			type < 0 || type >= BRIDGE_MAX_TOWERS )
-		return NULL;
+		return nullptr;
 
 	// get template for this bridge
-	DEBUG_ASSERTCRASH( TheTerrainRoads, ("createTower: TheTerrainRoads is NULL") );
+	DEBUG_ASSERTCRASH( TheTerrainRoads, ("createTower: TheTerrainRoads is null") );
 	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge( mapObject->getName() );
-	if( bridgeTemplate == NULL )
-		return NULL;
+	if( bridgeTemplate == nullptr )
+		return nullptr;
 
 	// given the type of tower (corner position) find the appropriate spot to put the tower
 	Coord3D towerPos;
@@ -863,28 +864,28 @@ static RenderObjClass* createTower( SimpleSceneClass *scene,
 		case BRIDGE_TOWER_FROM_RIGHT: towerPos = bridgeInfo->fromRight;		break;
 		case BRIDGE_TOWER_TO_LEFT:		towerPos = bridgeInfo->toLeft;			break;
 		case BRIDGE_TOWER_TO_RIGHT:		towerPos = bridgeInfo->toRight;			break;
-		default: return NULL;
+		default: return nullptr;
 
 	}
 
 	// set the Z position to that of the terrain
-	towerPos.z = TheTerrainRenderObject->getHeightMapHeight( towerPos.x, towerPos.y, NULL);
+	towerPos.z = TheTerrainRenderObject->getHeightMapHeight( towerPos.x, towerPos.y, nullptr);
 
 	// find the thing template for the tower we want to construct
 	AsciiString towerTemplateName = bridgeTemplate->getTowerObjectName( type );
-	DEBUG_ASSERTCRASH( TheThingFactory, ("createTower: TheThingFactory is NULL") );
+	DEBUG_ASSERTCRASH( TheThingFactory, ("createTower: TheThingFactory is null") );
 	const ThingTemplate *towerTemplate = TheThingFactory->findTemplate( towerTemplateName );
-	if( towerTemplate == NULL )
-		return NULL;
+	if( towerTemplate == nullptr )
+		return nullptr;
 
 	// find the name of the render object to show
 	const ModuleInfo& mi = towerTemplate->getDrawModuleInfo( );
 	if( mi.getCount() <= 0 )
-		return NULL;
+		return nullptr;
 	const ModuleData* mdd = mi.getNthData(0);
-	const W3DModelDrawModuleData* md = mdd ? mdd->getAsW3DModelDrawModuleData() : NULL;
-	if( md == NULL )
-		return NULL;
+	const W3DModelDrawModuleData* md = mdd ? mdd->getAsW3DModelDrawModuleData() : nullptr;
+	if( md == nullptr )
+		return nullptr;
 	ModelConditionFlags state;
 	state.clear();
 	AsciiString modelName = md->getBestModelNameForWB( state );
@@ -923,7 +924,7 @@ static void updateTowerPos( RenderObjClass* tower,
 {
 
 	// sanity
-	if( tower == NULL || type < 0 || type >= BRIDGE_MAX_TOWERS || bridgeInfo == NULL )
+	if( tower == nullptr || type < 0 || type >= BRIDGE_MAX_TOWERS || bridgeInfo == nullptr )
 		return;
 
 	//
@@ -987,7 +988,7 @@ void W3DBridgeBuffer::worldBuilderUpdateBridgeTowers( W3DAssetManager *assetMana
 			if( !pMapObj2 || !pMapObj2->getFlag( FLAG_BRIDGE_POINT2 ) )
 				DEBUG_LOG(("Missing second bridge point.  Ignoring first."));
 
-			if( pMapObj2 == NULL )
+			if( pMapObj2 == nullptr )
 				break;
 			if( !pMapObj2->getFlag( FLAG_BRIDGE_POINT2 ) )
 				continue;
@@ -1025,7 +1026,7 @@ void W3DBridgeBuffer::worldBuilderUpdateBridgeTowers( W3DAssetManager *assetMana
 						// create render object if needed
 						created = FALSE;
 						towerRenderObj = pMapObj->getBridgeRenderObject( (BridgeTowerType)j );
-						if( towerRenderObj == NULL )
+						if( towerRenderObj == nullptr )
 						{
 
 							towerRenderObj = createTower( scene, assetManager, pMapObj, (BridgeTowerType)j, &bridgeInfo );
@@ -1034,7 +1035,7 @@ void W3DBridgeBuffer::worldBuilderUpdateBridgeTowers( W3DAssetManager *assetMana
 						}
 
 						// sanity
-						DEBUG_ASSERTCRASH( towerRenderObj != NULL, ("worldBuilderUpdateBridgeTowers: unable to create tower for bridge '%s'",
+						DEBUG_ASSERTCRASH( towerRenderObj != nullptr, ("worldBuilderUpdateBridgeTowers: unable to create tower for bridge '%s'",
 															 m_bridges[ i ].getTemplateName().str()) );
 
 						// update the position of the towers
@@ -1134,7 +1135,7 @@ void W3DBridgeBuffer::drawBridges(CameraClass * camera, Bool wireframe, TextureC
 			}
 		}
 		if (changed) {
-			loadBridgesInVertexAndIndexBuffers(NULL);
+			loadBridgesInVertexAndIndexBuffers(nullptr);
 		}
 	}	else {
 		// In wb, all are enabled.

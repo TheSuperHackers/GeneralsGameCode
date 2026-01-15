@@ -80,8 +80,8 @@ W3dOptionsDialogClass::W3dOptionsDialogClass(Interface * maxinterface,ExpInterfa
 	if (!_OfnInited) _init_ofn();
 	GotHierarchyFilename = false;
 
-	RangeLowSpin = NULL;
-	RangeHighSpin = NULL;
+	RangeLowSpin = nullptr;
+	RangeHighSpin = nullptr;
 
 	GetMasterUnitInfo(&UnitsType, &UnitsScale);
 }
@@ -171,7 +171,7 @@ bool W3dOptionsDialogClass::Dialog_Proc
 						return 1;
 					}
 
-					SetCursor(LoadCursor (NULL, IDC_WAIT));
+					SetCursor(LoadCursor (nullptr, IDC_WAIT));
 					EndDialog(Hwnd, 1);
 					break;
 
@@ -211,7 +211,7 @@ bool W3dOptionsDialogClass::Dialog_Proc
 
 					// use the open file common dialog to get a hierarchy filename.
 					_HierarchyFileOFN.hwndOwner = Hwnd;
-					_HierarchyFileOFN.lpstrFileTitle = NULL;
+					_HierarchyFileOFN.lpstrFileTitle = nullptr;
 					_HierarchyFileOFN.lpstrFile = Options->HierarchyFilename;
 
 					if (GetOpenFileName(&_HierarchyFileOFN)) {
@@ -234,7 +234,7 @@ bool W3dOptionsDialogClass::Dialog_Proc
 						SetSaveRequiredFlag(true);
 					}
 
-					_HierarchyFileOFN.lpstrFile = NULL;
+					_HierarchyFileOFN.lpstrFile = nullptr;
 					break;
 			}
 			return 1;
@@ -272,7 +272,7 @@ bool W3dOptionsDialogClass::Dialog_Proc
 void W3dOptionsDialogClass::Dialog_Init()
 {
 	CenterWindow(Hwnd, GetParent(Hwnd));
-	SetCursor(LoadCursor (NULL, IDC_ARROW));
+	SetCursor(LoadCursor (nullptr, IDC_ARROW));
 
 	// initialize the export radio buttons
 	if (Options->ExportHierarchy) {
@@ -766,7 +766,7 @@ BOOL CALLBACK _options_dialog_proc
 	LPARAM lParam
 )
 {
-	static W3dOptionsDialogClass * optdialog = NULL;
+	static W3dOptionsDialogClass * optdialog = nullptr;
 
 	if (message == WM_INITDIALOG) {
 		optdialog = (W3dOptionsDialogClass *) lParam;
@@ -798,25 +798,25 @@ void _init_ofn(void)
 	static char _szhierarchyfilter[] = "W3D Files (*.W3D)\0*.W3D\0WHT Files (*.WHT)\0*.WHT\0\0";
 
 	_HierarchyFileOFN.lStructSize = sizeof(OPENFILENAME);
-	_HierarchyFileOFN.hwndOwner = NULL;
-	_HierarchyFileOFN.hInstance = NULL;
+	_HierarchyFileOFN.hwndOwner = nullptr;
+	_HierarchyFileOFN.hInstance = nullptr;
 	_HierarchyFileOFN.lpstrFilter = _szhierarchyfilter;
-	_HierarchyFileOFN.lpstrCustomFilter = NULL;
+	_HierarchyFileOFN.lpstrCustomFilter = nullptr;
 	_HierarchyFileOFN.nMaxCustFilter = 0;
 	_HierarchyFileOFN.nFilterIndex = 0;
-	_HierarchyFileOFN.lpstrFile = NULL;
+	_HierarchyFileOFN.lpstrFile = nullptr;
 	_HierarchyFileOFN.nMaxFile = _MAX_PATH;
-	_HierarchyFileOFN.lpstrFileTitle = NULL;
+	_HierarchyFileOFN.lpstrFileTitle = nullptr;
 	_HierarchyFileOFN.nMaxFileTitle = _MAX_FNAME + _MAX_EXT;
-	_HierarchyFileOFN.lpstrInitialDir = NULL;
-	_HierarchyFileOFN.lpstrTitle = NULL;
+	_HierarchyFileOFN.lpstrInitialDir = nullptr;
+	_HierarchyFileOFN.lpstrTitle = nullptr;
 	_HierarchyFileOFN.Flags = OFN_HIDEREADONLY | OFN_CREATEPROMPT;
 	_HierarchyFileOFN.nFileOffset = 0;
 	_HierarchyFileOFN.nFileExtension = 0;
 	_HierarchyFileOFN.lpstrDefExt = "wht";
 	_HierarchyFileOFN.lCustData = 0L;
-	_HierarchyFileOFN.lpfnHook = NULL;
-	_HierarchyFileOFN.lpTemplateName = NULL;
+	_HierarchyFileOFN.lpfnHook = nullptr;
+	_HierarchyFileOFN.lpTemplateName = nullptr;
 
 	_OfnInited = true;
 }

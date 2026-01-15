@@ -92,7 +92,7 @@
 static Bool theBuildPlan = false;
 static Object *thePlanSubject[ MAX_PATH_SUBJECTS ];
 static int thePlanSubjectCount = 0;
-//static WindowLayout *background = NULL;
+//static WindowLayout *background = nullptr;
 
 // ------------------------------------------------------------------------------------------------
 /** Issue the movement command to the object */
@@ -214,7 +214,7 @@ static Object * getSingleObjectFromSelection(const AIGroup *currentlySelectedGro
 		VecObjectID::const_iterator it = selectedObjects.begin();
 		return TheGameLogic->findObjectByID(*it);
 	}
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -231,8 +231,8 @@ void GameLogic::closeWindows( void )
 
 	// hide the options menu
 	NameKeyType buttonID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:ButtonBack" );
-	GameWindow *button = TheWindowManager->winGetWindowFromId( NULL, buttonID );
-	GameWindow *window = TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey("OptionsMenu.wnd:OptionsMenuParent") );
+	GameWindow *button = TheWindowManager->winGetWindowFromId( nullptr, buttonID );
+	GameWindow *window = TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey("OptionsMenu.wnd:OptionsMenuParent") );
 	if(window)
 		TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																			(WindowMsgData)button, buttonID );
@@ -289,7 +289,7 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 	{
 		m_background->destroyWindows();
 		deleteInstance(m_background);
-		m_background = NULL;
+		m_background = nullptr;
 	}
 
 }
@@ -337,14 +337,14 @@ void GameLogic::prepareNewGame( GameMode gameMode, GameDifficulty diff, Int rank
 void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 {
 #ifdef RTS_DEBUG
-	DEBUG_ASSERTCRASH(msg != NULL && msg != (GameMessage*)0xdeadbeef, ("bad msg"));
+	DEBUG_ASSERTCRASH(msg != nullptr && msg != (GameMessage*)0xdeadbeef, ("bad msg"));
 #endif
 
 	Player *thisPlayer = ThePlayerList->getNthPlayer( msg->getPlayerIndex() );
 	DEBUG_ASSERTCRASH( thisPlayer, ("logicMessageDispatcher: Processing message from unknown player (player index '%d')",
 																	msg->getPlayerIndex()) );
 
-	AIGroupPtr currentlySelectedGroup = NULL;
+	AIGroupPtr currentlySelectedGroup = nullptr;
 
 	if (isInGame())
 	{
@@ -368,13 +368,13 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 #if RETAIL_COMPATIBLE_AIGROUP
 					TheAI->destroyGroup(currentlySelectedGroup);
 #endif
-					currentlySelectedGroup = NULL;
+					currentlySelectedGroup = nullptr;
 				}
 
 				// If there are any units that the player doesn't own, then remove them from the "currentlySelectedGroup"
 				if (currentlySelectedGroup)
 					if (currentlySelectedGroup->removeAnyObjectsNotOwnedByPlayer(thisPlayer))
-						currentlySelectedGroup = NULL;
+						currentlySelectedGroup = nullptr;
 
 				if(TheStatsCollector)
 					TheStatsCollector->collectMsgStats(msg);
@@ -456,7 +456,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				currentlySelectedGroup->removeAll();
 #endif
 			}
-			currentlySelectedGroup = NULL;
+			currentlySelectedGroup = nullptr;
 			clearGameData();
 			break;
 
@@ -520,7 +520,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			// lock it just till the weapon is empty or the attack is "done"
 			if( currentlySelectedGroup && currentlySelectedGroup->setWeaponLockForGroup( weaponSlot, LOCKED_TEMPORARILY ))
 			{
-				currentlySelectedGroup->groupAttackPosition( NULL, maxShotsToFire, CMD_FROM_PLAYER );
+				currentlySelectedGroup->groupAttackPosition( nullptr, maxShotsToFire, CMD_FROM_PLAYER );
 			}
 
 			break;
@@ -558,7 +558,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Coord3D targetLoc = msg->getArgument( 0 )->location;
 
 			if( currentlySelectedGroup )
-				currentlySelectedGroup->groupCombatDrop( NULL, targetLoc, CMD_FROM_PLAYER );
+				currentlySelectedGroup->groupCombatDrop( nullptr, targetLoc, CMD_FROM_PLAYER );
 
 /*
 			if( sourceObject )
@@ -566,7 +566,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				AIUpdateInterface* sourceAI = sourceObject->getAIUpdateInterface();
 				if (sourceAI)
 				{
-					sourceAI->aiCombatDrop( NULL, targetLoc, CMD_FROM_PLAYER );
+					sourceAI->aiCombatDrop( nullptr, targetLoc, CMD_FROM_PLAYER );
 				}
 			}
 */
@@ -585,7 +585,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Int maxShotsToFire = msg->getArgument( 2 )->integer;
 
 			// sanity
-			if( targetObject == NULL )
+			if( targetObject == nullptr )
 				break;
 
 
@@ -655,7 +655,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			// check for possible specific source, ignoring selection.
 			ObjectID sourceID = msg->getArgument(2)->objectID;
 			Object* source = findObjectByID(sourceID);
-			if (source != NULL)
+			if (source != nullptr)
 			{
 				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
@@ -697,7 +697,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			// check for possible specific source, ignoring selection.
 			ObjectID sourceID = msg->getArgument(4)->objectID;
 			Object* source = findObjectByID(sourceID);
-			if (source != NULL)
+			if (source != nullptr)
 			{
 				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
@@ -740,7 +740,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			// check for possible specific source, ignoring selection.
 			ObjectID sourceID = msg->getArgument(3)->objectID;
 			Object* source = findObjectByID(sourceID);
-			if (source != NULL)
+			if (source != nullptr)
 			{
 				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
@@ -975,7 +975,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object *enter = findObjectByID( msg->getArgument( 1 )->objectID );
 
 			// sanity
-			if( enter == NULL )
+			if( enter == nullptr )
 				break;
 
 			if( currentlySelectedGroup )
@@ -999,10 +999,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 #endif
 
 			// sanity
-			if( objectWantingToExit == NULL )
+			if( objectWantingToExit == nullptr )
 				break;
 
-			if( objectContainingExiter == NULL )
+			if( objectContainingExiter == nullptr )
 				break;
 
 			// sanity, the player must actually control this object
@@ -1084,7 +1084,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object *repairDepot = findObjectByID( msg->getArgument( 0 )->objectID );
 
 			// sanity
-			if( repairDepot == NULL )
+			if( repairDepot == nullptr )
 				break;
 
 			// tell the currently selected group to go get repaired
@@ -1101,7 +1101,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object *dockBuilding = findObjectByID( msg->getArgument( 0 )->objectID );
 
 			// sanity
-			if( dockBuilding == NULL )
+			if( dockBuilding == nullptr )
 				break;
 
 			// tell the currently selected group to go get repaired
@@ -1118,7 +1118,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object *healDest = findObjectByID( msg->getArgument( 0 )->objectID );
 
 			// sanity
-			if( healDest == NULL )
+			if( healDest == nullptr )
 				break;
 
 			// tell the currently selected group to enter the building for healing
@@ -1135,7 +1135,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object *repairTarget = findObjectByID( msg->getArgument( 0 )->objectID );
 
 			// sanity
-			if( repairTarget == NULL )
+			if( repairTarget == nullptr )
 				break;
 
 			//
@@ -1155,7 +1155,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object *constructTarget = findObjectByID( msg->getArgument( 0 )->objectID );
 
 			// sanity
-			if( constructTarget == NULL )
+			if( constructTarget == nullptr )
 				break;
 
 			//
@@ -1181,7 +1181,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			ObjectID sourceID = msg->getArgument(2)->objectID;
 			Object* source = findObjectByID(sourceID);
-			if (source != NULL)
+			if (source != nullptr)
 			{
 				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
@@ -1310,7 +1310,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			const UpgradeTemplate *upgradeT = TheUpgradeCenter->findUpgradeByKey( (NameKeyType)(msg->getArgument( 0 )->integer) );
 
 			// sanity
-			if( producer == NULL || upgradeT == NULL )
+			if( producer == nullptr || upgradeT == nullptr )
 				break;
 
 			// the player must actually control the producer object
@@ -1319,7 +1319,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			// producer must have a production update
 				ProductionUpdateInterface *pu = producer->getProductionUpdateInterface();
-				if( pu == NULL )
+				if( pu == nullptr )
 				break;
 
 			// cancel the upgrade
@@ -1345,12 +1345,12 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			productionID = (ProductionID)msg->getArgument( 1 )->integer;
 
 			// sanity
-			if ( producer == NULL || whatToCreate == NULL )
+			if ( producer == nullptr || whatToCreate == nullptr )
 				break;
 
 			// get the production interface for the producer
 			ProductionUpdateInterface *pu = producer->getProductionUpdateInterface();
-			if( pu == NULL )
+			if( pu == nullptr )
 			{
 
 				DEBUG_ASSERTCRASH( 0, ("MSG_QUEUE_UNIT_CREATE: Producer '%s' doesn't have a unit production interface",
@@ -1377,7 +1377,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			ProductionID productionID = (ProductionID)msg->getArgument( 0 )->integer;
 
 			// sanity
-			if( producer == NULL )
+			if( producer == nullptr )
 				break;
 
 			// sanity, the player must control the producer
@@ -1386,7 +1386,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			// get the unit production interface
 			ProductionUpdateInterface *pu = producer->getProductionUpdateInterface();
-			if( pu == NULL )
+			if( pu == nullptr )
 				break;
 
 			// cancel the production
@@ -1414,7 +1414,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			loc = msg->getArgument( 1 )->location;
 			angle = msg->getArgument( 2 )->real;
 
-			if( place == NULL || constructorObject == NULL )
+			if( place == nullptr || constructorObject == nullptr )
 				break;  //These are not crashes, as the object may have died before this message came in
 
 			if( msg->getType() == GameMessage::MSG_DOZER_CONSTRUCT )
@@ -1461,7 +1461,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 #else
 			Object *building = getSingleObjectFromSelection(currentlySelectedGroup.Peek());
 #endif
-			if( building == NULL )
+			if( building == nullptr )
 				break;
 
 			// the player sending this message must actually control this building
@@ -1542,7 +1542,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			// use selected group
 			if( currentlySelectedGroup )
-				currentlySelectedGroup->groupReturnToPrison( NULL, CMD_FROM_PLAYER );
+				currentlySelectedGroup->groupReturnToPrison( nullptr, CMD_FROM_PLAYER );
 
 			break;
 
@@ -1557,7 +1557,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Bool createNewGroup = msg->getArgument( 0 )->boolean;
 			Player *player = ThePlayerList->getNthPlayer(msg->getPlayerIndex());
 
-			if (player == NULL) {
+			if (player == nullptr) {
 				DEBUG_CRASH(("GameLogicDispatch - MSG_CREATE_SELECTED_GROUP had an invalid player nubmer"));
 				break;
 			}
@@ -1583,7 +1583,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		{
 			Player *player = ThePlayerList->getNthPlayer(msg->getPlayerIndex());
 
-			if (player == NULL) {
+			if (player == nullptr) {
 				DEBUG_CRASH(("GameLogicDispatch - MSG_CREATE_SELECTED_GROUP had an invalid player nubmer"));
 				break;
 			}
@@ -1606,9 +1606,9 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_DESTROY_SELECTED_GROUP:
 		{
 			Player *player = ThePlayerList->getNthPlayer(msg->getPlayerIndex());
-			if (player != NULL)
+			if (player != nullptr)
 			{
-				player->setCurrentlySelectedAIGroup(NULL);
+				player->setCurrentlySelectedAIGroup(nullptr);
 			}
 
 			break;
@@ -1626,7 +1626,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_PLACE_BEACON:
 		{
-			if (thisPlayer->getPlayerTemplate() == NULL)
+			if (thisPlayer->getPlayerTemplate() == nullptr)
 				break;
 			Coord3D pos = msg->getArgument( 0 )->location;
 			Region3D r;
@@ -1658,7 +1658,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				}
 				Object *object = TheThingFactory->newObject( thing, thisPlayer->getDefaultTeam() );
 				object->setPosition( &pos );
-				object->setProducer(NULL);
+				object->setProducer(nullptr);
 
 				if (thisPlayer->getRelationship( ThePlayerList->getLocalPlayer()->getDefaultTeam() ) == ALLIES || ThePlayerList->getLocalPlayer()->isPlayerObserver())
 				{
@@ -1776,7 +1776,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				if (allSelectedObjects->isEmpty())
 				{
 					TheAI->destroyGroup(allSelectedObjects);
-					allSelectedObjects = NULL;
+					allSelectedObjects = nullptr;
 				}
 #endif
 			}
@@ -1900,7 +1900,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		{
 			Int playerIndex = msg->getPlayerIndex();
 			Player *player = ThePlayerList->getNthPlayer(playerIndex);
-			DEBUG_ASSERTCRASH(player != NULL, ("Could not find player for create team message"));
+			DEBUG_ASSERTCRASH(player != nullptr, ("Could not find player for create team message"));
 
 			// TheSuperHackers @tweak Stubbjax 17/08/2025 The local player processes this message in CommandXlat for immediate assignment.
 			if (player && !player->isLocalPlayer())
@@ -1922,9 +1922,9 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		{
 			Int playerIndex = msg->getPlayerIndex();
 			Player *player = ThePlayerList->getNthPlayer(playerIndex);
-			DEBUG_ASSERTCRASH(player != NULL, ("Could not find player for select team message"));
+			DEBUG_ASSERTCRASH(player != nullptr, ("Could not find player for select team message"));
 
-			if (player == NULL)
+			if (player == nullptr)
 			{
 				break;
 			}
@@ -1946,9 +1946,9 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		{
 			Int playerIndex = msg->getPlayerIndex();
 			Player *player = ThePlayerList->getNthPlayer(playerIndex);
-			DEBUG_ASSERTCRASH(player != NULL, ("Could not find player for add team message"));
+			DEBUG_ASSERTCRASH(player != nullptr, ("Could not find player for add team message"));
 
-			if (player == NULL)
+			if (player == nullptr)
 			{
 				break;
 			}
@@ -2013,7 +2013,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			ScienceType science = (ScienceType)msg->getArgument( 0 )->integer;
 
 			// sanity
-			if( science == SCIENCE_INVALID || thisPlayer == NULL )
+			if( science == SCIENCE_INVALID || thisPlayer == nullptr )
 				break;
 
 			thisPlayer->attemptToPurchaseScience(science);
@@ -2050,7 +2050,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 	}
 	/**/
 
-	if( currentlySelectedGroup != NULL )
+	if( currentlySelectedGroup != nullptr )
 	{
 #if RETAIL_COMPATIBLE_AIGROUP
 		TheAI->destroyGroup(currentlySelectedGroup);

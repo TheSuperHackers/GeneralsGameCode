@@ -219,7 +219,7 @@ void GameSpyPlayerInfo::threadSetLosses( AsciiString val )
 	free(writable);
 }
 
-GameSpyPlayerInfoInterface *TheGameSpyPlayerInfo = NULL;
+GameSpyPlayerInfoInterface *TheGameSpyPlayerInfo = nullptr;
 
 GameSpyPlayerInfoInterface *createGameSpyPlayerInfo( void )
 {
@@ -358,12 +358,12 @@ static Bool gameSpyInitPersistentStorageConnection( void )
 		in the password for the profile we are authenticating.
 		Again, if this is done in a client/server setting, with the Persistent Storage
 		access being done on the server, and the P&M SDK is used on the client, the
-		server will need to send the challenge (GetChallenge(NULL)) to the client, the
+		server will need to send the challenge (GetChallenge(nullptr)) to the client, the
 		client will create the validation token using GenerateAuth, and send it
 		back to the server for use in PreAuthenticatePlayerPM
 		***********/
 		char *munkeeHack = strdup(TheGameSpyChat->getPassword().str()); // GenerateAuth takes a char*, not a const char* :P
-		GenerateAuth(GetChallenge(NULL), munkeeHack, validate);
+		GenerateAuth(GetChallenge(nullptr), munkeeHack, validate);
 		free (munkeeHack);
 
 		/************
@@ -372,7 +372,7 @@ static Bool gameSpyInitPersistentStorageConnection( void )
 		We pass the same authentication callback as for the first user, but a different
 		localid this time.
 		************/
-		PreAuthenticatePlayerPM(0, TheGameSpyChat->getProfileID(), validate, persAuthCallback, NULL);
+		PreAuthenticatePlayerPM(0, TheGameSpyChat->getProfileID(), validate, persAuthCallback, nullptr);
 	}
 	else
 	{

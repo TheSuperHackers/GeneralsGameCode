@@ -78,12 +78,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-static LayoutScheme *theScheme = NULL;
+static LayoutScheme *theScheme = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-LayoutScheme *TheDefaultScheme = NULL;
+LayoutScheme *TheDefaultScheme = nullptr;
 
 // PRIVATE PROTOTYPES /////////////////////////////////////////////////////////
 
@@ -207,31 +207,31 @@ char *saveAsDialog( void )
 
   ofn.lStructSize       = sizeof( OPENFILENAME );
   ofn.hwndOwner         = TheEditor->getWindowHandle();
-  ofn.hInstance         = NULL;
+  ofn.hInstance         = nullptr;
   ofn.lpstrFilter       = filter;
-  ofn.lpstrCustomFilter = NULL;
+  ofn.lpstrCustomFilter = nullptr;
   ofn.nMaxCustFilter    = 0;
   ofn.nFilterIndex      = 0;
   ofn.lpstrFile         = filename;
   ofn.nMaxFile          = _MAX_PATH;
-  ofn.lpstrFileTitle    = NULL;
+  ofn.lpstrFileTitle    = nullptr;
   ofn.nMaxFileTitle     = 0;
-  ofn.lpstrInitialDir   = NULL;
-  ofn.lpstrTitle        = NULL;
+  ofn.lpstrInitialDir   = nullptr;
+  ofn.lpstrTitle        = nullptr;
   ofn.Flags             = OFN_NOREADONLYRETURN | OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
   ofn.nFileOffset       = 0;
   ofn.nFileExtension    = 0;
   ofn.lpstrDefExt       = "ls";
   ofn.lCustData         = 0L ;
-  ofn.lpfnHook          = NULL ;
-  ofn.lpTemplateName    = NULL ;
+  ofn.lpfnHook          = nullptr ;
+  ofn.lpTemplateName    = nullptr ;
 
   returnCode = GetSaveFileName( &ofn );
 
   if( returnCode )
 		return filename;
 	else
-		return NULL;
+		return nullptr;
 
 }
 
@@ -249,31 +249,31 @@ char *openDialog( void )
 
   ofn.lStructSize       = sizeof( OPENFILENAME );
   ofn.hwndOwner         = TheEditor->getWindowHandle();
-  ofn.hInstance         = NULL;
+  ofn.hInstance         = nullptr;
   ofn.lpstrFilter       = filter;
-  ofn.lpstrCustomFilter = NULL;
+  ofn.lpstrCustomFilter = nullptr;
   ofn.nMaxCustFilter    = 0;
   ofn.nFilterIndex      = 0;
   ofn.lpstrFile         = filename;
   ofn.nMaxFile          = _MAX_PATH;
-  ofn.lpstrFileTitle    = NULL;
+  ofn.lpstrFileTitle    = nullptr;
   ofn.nMaxFileTitle     = 0;
-  ofn.lpstrInitialDir   = NULL;
-  ofn.lpstrTitle        = NULL;
+  ofn.lpstrInitialDir   = nullptr;
+  ofn.lpstrTitle        = nullptr;
   ofn.Flags             = OFN_NOREADONLYRETURN | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
   ofn.nFileOffset       = 0;
   ofn.nFileExtension    = 0;
   ofn.lpstrDefExt       = "ls";
   ofn.lCustData         = 0L ;
-  ofn.lpfnHook          = NULL ;
-  ofn.lpTemplateName    = NULL ;
+  ofn.lpfnHook          = nullptr ;
+  ofn.lpTemplateName    = nullptr ;
 
   returnCode = GetOpenFileName( &ofn );
 
   if( returnCode )
 		return filename;
 	else
-		return NULL;
+		return nullptr;
 
 }
 
@@ -329,7 +329,7 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 					// layout, because this is such a large sweeping change we will
 					// ask them if they are sure
 					//
-					result = MessageBox( NULL, "This will apply these scheme color and image settings to ALL windows and gadgets currently loaded in the edit window.  Are you sure you want to proceed?",
+					result = MessageBox( nullptr, "This will apply these scheme color and image settings to ALL windows and gadgets currently loaded in the edit window.  Are you sure you want to proceed?",
 															 "Are You Sure?", MB_YESNO | MB_ICONWARNING );
 					if( result == IDNO )
 						break;
@@ -441,7 +441,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 {
 
 	// end recursion
-	if( root == NULL )
+	if( root == nullptr )
 		return;
 
 	// apply changes to this window
@@ -1488,7 +1488,7 @@ LayoutScheme::LayoutScheme( void )
 	m_disabledText.borderColor = GAME_COLOR_UNDEFINED;
 	m_hiliteText.color = GAME_COLOR_UNDEFINED;
 	m_hiliteText.borderColor = GAME_COLOR_UNDEFINED;
-	m_font = NULL;
+	m_font = nullptr;
 
 }
 
@@ -1507,8 +1507,8 @@ LayoutScheme::~LayoutScheme( void )
 		{
 
 			delete [] m_imageAndColorTable[ i ].stateNameBuffer;
-			m_imageAndColorTable[ i ].stateNameBuffer = NULL;
-			m_imageAndColorTable[ i ].stateName = NULL;
+			m_imageAndColorTable[ i ].stateNameBuffer = nullptr;
+			m_imageAndColorTable[ i ].stateName = nullptr;
 
 		}
 
@@ -2129,14 +2129,14 @@ void LayoutScheme::init( void )
 	image = TheMappedImageCollection->findImageByName( "TabControlSevenHilite" );
 	storeImageAndColor( TC_TAB_7_HILITE, image, green, darkGreen );
 
-	storeImageAndColor( TAB_CONTROL_ENABLED, NULL, black, white );
-	storeImageAndColor( TAB_CONTROL_DISABLED, NULL, darkGray, white );
-	storeImageAndColor( TAB_CONTROL_HILITE, NULL, black, white );
+	storeImageAndColor( TAB_CONTROL_ENABLED, nullptr, black, white );
+	storeImageAndColor( TAB_CONTROL_DISABLED, nullptr, darkGray, white );
+	storeImageAndColor( TAB_CONTROL_HILITE, nullptr, black, white );
 
 	// generic
-	storeImageAndColor( GENERIC_ENABLED, NULL, darkBlue, white );
-	storeImageAndColor( GENERIC_DISABLED, NULL, darkGray, white );
-	storeImageAndColor( GENERIC_HILITE, NULL, lightBlue, white );
+	storeImageAndColor( GENERIC_ENABLED, nullptr, darkBlue, white );
+	storeImageAndColor( GENERIC_DISABLED, nullptr, darkGray, white );
+	storeImageAndColor( GENERIC_HILITE, nullptr, lightBlue, white );
 
 	// default text colors
 	m_enabledText.color = white;
@@ -2163,7 +2163,7 @@ void LayoutScheme::openDialog( void )
 	DialogBox( TheEditor->getInstance(), (LPCTSTR)LAYOUT_SCHEME_DIALOG,
 						 TheEditor->getWindowHandle(), (DLGPROC)layoutSchemeCallback );
 
-	theScheme = NULL;
+	theScheme = nullptr;
 
 }
 
@@ -2179,7 +2179,7 @@ ImageAndColorInfo *LayoutScheme::findEntry( StateIdentifier id )
 
 		DEBUG_LOG(( "Illegal state to to layout 'findEntry' '%d'", id ));
 		assert( 0 );
-		return NULL;
+		return nullptr;
 
 	}
 
@@ -2192,7 +2192,7 @@ ImageAndColorInfo *LayoutScheme::findEntry( StateIdentifier id )
 
 	}
 
-	return NULL;  // not found
+	return nullptr;  // not found
 
 }
 
@@ -2208,7 +2208,7 @@ ImageAndColorInfo *LayoutScheme::getImageAndColor( StateIdentifier id )
 
 		DEBUG_LOG(( "getImageAndColor: Illegal state '%d'", id ));
 		assert( 0 );
-		return NULL;
+		return nullptr;
 
 	}
 
@@ -2258,7 +2258,7 @@ Bool LayoutScheme::saveScheme( char *filename )
 
 	// open the file
 	fp = fopen( filename, "w" );
-	if( fp == NULL )
+	if( fp == nullptr )
 	{
 
 		DEBUG_LOG(( "saveScheme: Unable to open file '%s'", filename ));
@@ -2340,7 +2340,7 @@ Bool LayoutScheme::loadScheme( char *filename )
 
 	// open the file
 	fp = fopen( filename, "r" );
-	if( fp == NULL )
+	if( fp == nullptr )
 		return FALSE;
 
 	// save the filename we're using now

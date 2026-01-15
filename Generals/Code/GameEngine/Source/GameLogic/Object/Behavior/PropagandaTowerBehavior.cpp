@@ -61,7 +61,7 @@ class ObjectTracker : public MemoryPoolObject
 
 public:
 
-	ObjectTracker( void ) { objectID = INVALID_ID; next = NULL; }
+	ObjectTracker( void ) { objectID = INVALID_ID; next = nullptr; }
 
 	ObjectID objectID;
 	ObjectTracker *next;
@@ -82,9 +82,9 @@ PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData( void )
 	m_scanDelayInFrames = 100;
 	m_autoHealPercentPerSecond = 0.01f;
 	m_upgradedAutoHealPercentPerSecond = 0.02f;
-	m_pulseFX = NULL;
-	m_upgradeRequired = NULL;
-	m_upgradedPulseFX = NULL;
+	m_pulseFX = nullptr;
+	m_upgradeRequired = nullptr;
+	m_upgradedPulseFX = nullptr;
 
 }
 
@@ -96,14 +96,14 @@ PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "Radius",									INI::parseReal,									NULL,	offsetof( PropagandaTowerBehaviorModuleData, m_scanRadius ) },
-		{ "DelayBetweenUpdates",		INI::parseDurationUnsignedInt,	NULL,	offsetof( PropagandaTowerBehaviorModuleData, m_scanDelayInFrames ) },
-		{ "HealPercentEachSecond",	INI::parsePercentToReal,				NULL,	offsetof( PropagandaTowerBehaviorModuleData, m_autoHealPercentPerSecond ) },
-		{ "UpgradedHealPercentEachSecond",	INI::parsePercentToReal,NULL,	offsetof( PropagandaTowerBehaviorModuleData, m_upgradedAutoHealPercentPerSecond ) },
-		{ "PulseFX",								INI::parseFXList,								NULL,	offsetof( PropagandaTowerBehaviorModuleData, m_pulseFX ) },
-		{ "UpgradeRequired",				INI::parseAsciiString,					NULL, offsetof( PropagandaTowerBehaviorModuleData, m_upgradeRequired ) },
-		{ "UpgradedPulseFX",				INI::parseFXList,								NULL, offsetof( PropagandaTowerBehaviorModuleData, m_upgradedPulseFX ) },
-		{ 0, 0, 0, 0 }
+		{ "Radius",									INI::parseReal,									nullptr,	offsetof( PropagandaTowerBehaviorModuleData, m_scanRadius ) },
+		{ "DelayBetweenUpdates",		INI::parseDurationUnsignedInt,	nullptr,	offsetof( PropagandaTowerBehaviorModuleData, m_scanDelayInFrames ) },
+		{ "HealPercentEachSecond",	INI::parsePercentToReal,				nullptr,	offsetof( PropagandaTowerBehaviorModuleData, m_autoHealPercentPerSecond ) },
+		{ "UpgradedHealPercentEachSecond",	INI::parsePercentToReal,nullptr,	offsetof( PropagandaTowerBehaviorModuleData, m_upgradedAutoHealPercentPerSecond ) },
+		{ "PulseFX",								INI::parseFXList,								nullptr,	offsetof( PropagandaTowerBehaviorModuleData, m_pulseFX ) },
+		{ "UpgradeRequired",				INI::parseAsciiString,					nullptr, offsetof( PropagandaTowerBehaviorModuleData, m_upgradeRequired ) },
+		{ "UpgradedPulseFX",				INI::parseFXList,								nullptr, offsetof( PropagandaTowerBehaviorModuleData, m_upgradedPulseFX ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add( dataFieldParse );
@@ -120,7 +120,7 @@ PropagandaTowerBehavior::PropagandaTowerBehavior( Thing *thing, const ModuleData
 											 : UpdateModule( thing, modData )
 {
 	m_lastScanFrame = 0;
-	m_insideList = NULL;
+	m_insideList = nullptr;
 	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
 
 }
@@ -228,7 +228,7 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 
 	// go through any objects in our area of influence and do the effect logic on them
 	Object *obj;
-	ObjectTracker *curr = NULL, *prev = NULL, *next = NULL;
+	ObjectTracker *curr = nullptr, *prev = nullptr, *next = nullptr;
 	for( curr = m_insideList; curr; curr = next )
 	{
 
@@ -381,7 +381,7 @@ void PropagandaTowerBehavior::doScan( void )
 {
 	const PropagandaTowerBehaviorModuleData *modData = getPropagandaTowerBehaviorModuleData();
 	Object *us = getObject();
-	ObjectTracker *newInsideList = NULL;
+	ObjectTracker *newInsideList = nullptr;
 
 	// The act of scanning is when we play our effect
 	Bool upgradePresent = FALSE;
@@ -440,7 +440,7 @@ void PropagandaTowerBehavior::doScan( void )
 																	&filterAlive,
 																	&filterMapStatus,
 																	&filterOutBuildings,
-																	NULL
+																	nullptr
 																};
 
 	// scan objects in our region
@@ -476,13 +476,13 @@ void PropagandaTowerBehavior::doScan( void )
 	{
 
 		// find this entry in the new list
-		ObjectTracker *o = NULL;
+		ObjectTracker *o = nullptr;
 		for( o = newInsideList; o; o = o->next )
 			if( o->objectID == curr->objectID )
 				break;
 
 		// if entry wasn't there, remove the bonus from this object
-		if( o == NULL )
+		if( o == nullptr )
 		{
 
 			obj = TheGameLogic->findObjectByID( curr->objectID );
@@ -562,7 +562,7 @@ void PropagandaTowerBehavior::xfer( Xfer *xfer )
 	{
 
 		// sanity
-		if( m_insideList != NULL )
+		if( m_insideList != nullptr )
 		{
 
 			DEBUG_CRASH(( "PropagandaTowerBehavior::xfer - m_insideList should be empty but is not" ));

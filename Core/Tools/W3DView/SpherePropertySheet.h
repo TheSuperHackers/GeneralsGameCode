@@ -58,8 +58,8 @@ class SpherePropertySheetClass : public CPropertySheet
 
 // Construction
 public:
-	SpherePropertySheetClass (SphereRenderObjClass *sphere, UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	SpherePropertySheetClass (SphereRenderObjClass *sphere, LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	SpherePropertySheetClass (SphereRenderObjClass *sphere, UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	SpherePropertySheetClass (SphereRenderObjClass *sphere, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
 // Attributes
 public:

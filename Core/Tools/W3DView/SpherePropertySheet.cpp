@@ -48,7 +48,7 @@ SpherePropertySheetClass::SpherePropertySheetClass
 	CWnd *						pParentWnd,
 	UINT							iSelectPage
 )
-	:	m_RenderObj (NULL),
+	:	m_RenderObj (nullptr),
 		CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 {
 	REF_PTR_SET (m_RenderObj, sphere);
@@ -69,7 +69,7 @@ SpherePropertySheetClass::SpherePropertySheetClass
 	CWnd *							pParentWnd,
 	UINT								iSelectPage
 )
-	:	m_RenderObj (NULL),
+	:	m_RenderObj (nullptr),
 		CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 {
 	REF_PTR_SET (m_RenderObj, sphere);
@@ -178,7 +178,7 @@ void
 SpherePropertySheetClass::Add_Object_To_Viewer (void)
 {
 	CW3DViewDoc *doc = ::GetCurrentDocument ();
-	if ((doc != NULL) && (m_RenderObj != NULL)) {
+	if ((doc != nullptr) && (m_RenderObj != nullptr)) {
 
 		//
 		// Create a new prototype for this object
@@ -239,7 +239,7 @@ SpherePropertySheetClass::Update_Object (void)
 void
 SpherePropertySheetClass::Initialize (void)
 {
-	if (m_RenderObj == NULL) {
+	if (m_RenderObj == nullptr) {
 		Create_New_Object ();
 	} else {
 		m_LastSavedName = m_RenderObj->Get_Name ();

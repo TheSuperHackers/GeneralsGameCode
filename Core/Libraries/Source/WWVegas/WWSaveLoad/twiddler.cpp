@@ -105,7 +105,7 @@ TwiddlerClass::~TwiddlerClass (void)
 DefinitionClass *
 TwiddlerClass::Twiddle (void) const
 {
-	DefinitionClass *definition = NULL;
+	DefinitionClass *definition = nullptr;
 
 	if (m_DefinitionList.Count () > 0) {
 
@@ -134,13 +134,13 @@ TwiddlerClass::Twiddle (void) const
 PersistClass *
 TwiddlerClass::Create (void) const
 {
-	PersistClass *retval = NULL;
+	PersistClass *retval = nullptr;
 
 	//
 	//	Pick a random definition
 	//
 	DefinitionClass *definition = Twiddle ();
-	if (definition != NULL) {
+	if (definition != nullptr) {
 
 		//
 		//	Indirect the creation to the definition we randomly selected

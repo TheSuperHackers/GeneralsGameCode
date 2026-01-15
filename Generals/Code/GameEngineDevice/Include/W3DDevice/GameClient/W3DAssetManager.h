@@ -73,7 +73,7 @@ public:
 	void Report_Used_Font3DDatas( void );
 	void Report_Used_FontChars (void);
 
-	virtual RenderObjClass * Create_Render_Obj(const char * name,float scale, const int color, const char *oldTexure=NULL, const char *newTexture=NULL);
+	virtual RenderObjClass * Create_Render_Obj(const char * name,float scale, const int color, const char *oldTexure=nullptr, const char *newTexture=nullptr);
 	///Swaps the specified textures in the render object prototype.
 	int replacePrototypeTexture(RenderObjClass *robj, const char * oldname, const char * newname);
 

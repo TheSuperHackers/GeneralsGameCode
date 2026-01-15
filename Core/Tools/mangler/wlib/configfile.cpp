@@ -97,7 +97,7 @@ bit8 ConfigFile::readFile(FILE *in)
       continue;
     }
 
-    if (strchr(cptr,'=')==NULL)   // All config entries must have a '='
+    if (strchr(cptr,'=')==nullptr)   // All config entries must have a '='
       continue;
     key=cptr;
     key.truncate('=');
@@ -152,7 +152,7 @@ bit8 ConfigFile::enumerate(int &index, int &offset, Wstring &key, Wstring &value
     }
     Critsec_.unlock();
 
-    if (section==NULL)  // no specified section, so any will do...
+    if (section==nullptr)  // no specified section, so any will do...
       break;
 
     if (strlen(section)+2 >= strlen(key.get()))  // key should have form: X[section]

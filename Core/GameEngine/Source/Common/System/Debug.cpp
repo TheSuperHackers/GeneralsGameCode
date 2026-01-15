@@ -107,7 +107,7 @@ extern const char *gAppPrefix; /// So WB can have a different log file name.
 // TheSuperHackers @info Must not use static RAII types when set in DebugInit,
 // because DebugInit can be called during static module initialization before the main function is called.
 #ifdef DEBUG_LOGGING
-static FILE *theLogFile = NULL;
+static FILE *theLogFile = nullptr;
 static char theLogFileName[ _MAX_PATH ];
 static char theLogFileNamePrev[ _MAX_PATH ];
 #endif
@@ -119,7 +119,7 @@ static DWORD theMainThreadID = 0;
 // PUBLIC DATA
 // ----------------------------------------------------------------------------
 
-char* TheCurrentIgnoreCrashPtr = NULL;
+char* TheCurrentIgnoreCrashPtr = nullptr;
 #ifdef DEBUG_LOGGING
 UnsignedInt DebugLevelMask = 0;
 const char *TheDebugLevels[DEBUG_LEVEL_MAX] = {
@@ -167,7 +167,7 @@ inline Bool ignoringAsserts()
 // ----------------------------------------------------------------------------
 inline HWND getThreadHWND()
 {
-	return (theMainThreadID == GetCurrentThreadId())?ApplicationHWnd:NULL;
+	return (theMainThreadID == GetCurrentThreadId())?ApplicationHWnd:nullptr;
 }
 
 // ----------------------------------------------------------------------------
@@ -359,7 +359,7 @@ static void whackFunnyCharacters(char *buf)
 void DebugInit(int flags)
 {
 //	if (theDebugFlags != 0)
-//		::MessageBox(NULL, "Debug already inited", "", MB_OK|MB_APPLMODAL);
+//		::MessageBox(nullptr, "Debug already inited", "", MB_OK|MB_APPLMODAL);
 
 	// just quietly allow multiple calls to this, so that static ctors can call it.
 	if (theDebugFlags == 0)
@@ -378,7 +378,7 @@ void DebugInit(int flags)
 			return;
 
 		char dirbuf[ _MAX_PATH ];
-		::GetModuleFileName( NULL, dirbuf, sizeof( dirbuf ) );
+		::GetModuleFileName( nullptr, dirbuf, sizeof( dirbuf ) );
 		if (char *pEnd = strrchr(dirbuf, '\\'))
 		{
 			*(pEnd + 1) = 0;
@@ -421,7 +421,7 @@ void DebugInit(int flags)
 		}
 
 		theLogFile = fopen(theLogFileName, "w");
-		if (theLogFile != NULL)
+		if (theLogFile != nullptr)
 		{
 			DebugLog("Log %s opened: %s", theLogFileName, getCurrentTimeString());
 		}
@@ -553,7 +553,7 @@ void DebugCrash(const char *format, ...)
 
 	const int result = doCrashBox(theCrashBuffer, useLogging);
 
-	if (result == IDIGNORE && TheCurrentIgnoreCrashPtr != NULL)
+	if (result == IDIGNORE && TheCurrentIgnoreCrashPtr != nullptr)
 	{
 		int yn;
 		if (!ignoringAsserts())
@@ -592,7 +592,7 @@ void DebugShutdown()
 		DebugLog("Log closed: %s", getCurrentTimeString());
 		fclose(theLogFile);
 	}
-	theLogFile = NULL;
+	theLogFile = nullptr;
 #endif
 	theDebugFlags = 0;
 }
@@ -719,7 +719,7 @@ double SimpleProfiler::getAverageTime()
 	#define RELEASECRASH_FILE_NAME				"ReleaseCrashInfo.txt"
 	#define RELEASECRASH_FILE_NAME_PREV		"ReleaseCrashInfoPrev.txt"
 
-	static FILE *theReleaseCrashLogFile = NULL;
+	static FILE *theReleaseCrashLogFile = nullptr;
 
 	static void releaseCrashLogOutput(const char *buffer)
 	{
@@ -761,7 +761,7 @@ void ReleaseCrash(const char *reason)
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];
 
-	if (TheGlobalData==NULL) {
+	if (TheGlobalData==nullptr) {
 		return; // We are shutting down, and TheGlobalData has been freed.  jba. [4/15/2003]
 	}
 
@@ -797,7 +797,7 @@ void ReleaseCrash(const char *reason)
 
 		fflush(theReleaseCrashLogFile);
 		fclose(theReleaseCrashLogFile);
-		theReleaseCrashLogFile = NULL;
+		theReleaseCrashLogFile = nullptr;
 	}
 
 	if (!DX8Wrapper_IsWindowed) {
@@ -809,14 +809,14 @@ void ReleaseCrash(const char *reason)
 #if defined(RTS_DEBUG)
 	/* static */ char buff[8192]; // not so static so we can be threadsafe
 	snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);
-	::MessageBox(NULL, buff, "Technical Difficulties...", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
+	::MessageBox(nullptr, buff, "Technical Difficulties...", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
 #else
 // crash error messaged changed 3/6/03 BGC
-//	::MessageBox(NULL, "Sorry, a serious error occurred.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
-//	::MessageBox(NULL, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
+//	::MessageBox(nullptr, "Sorry, a serious error occurred.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
+//	::MessageBox(nullptr, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
 
 // crash error message changed again 8/22/03 M Lorenzen... made this message box modal to the system so it will appear on top of any task-modal windows, splash-screen, etc.
-  ::MessageBox(NULL, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.",
+  ::MessageBox(nullptr, "You have encountered a serious error.  Serious errors can be caused by many things including viruses, overheated hardware and hardware that does not meet the minimum specifications for the game. Please visit the forums at www.generals.ea.com for suggested courses of action or consult your manual for Technical Support contact information.",
    "Technical Difficulties...",
    MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
 
@@ -850,7 +850,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 
 	if (TheSystemIsUnicode)
 	{
-		::MessageBoxW(NULL, mesg.str(), prompt.str(), MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
+		::MessageBoxW(nullptr, mesg.str(), prompt.str(), MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
 	}
 	else
 	{
@@ -861,7 +861,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		mesgA.translate(mesg);
 		//Make sure main window is not TOP_MOST
 		::SetWindowPos(ApplicationHWnd, HWND_NOTOPMOST, 0, 0, 0, 0,SWP_NOSIZE |SWP_NOMOVE);
-		::MessageBoxA(NULL, mesgA.str(), promptA.str(), MB_OK|MB_TASKMODAL|MB_ICONERROR);
+		::MessageBoxA(nullptr, mesgA.str(), promptA.str(), MB_OK|MB_TASKMODAL|MB_ICONERROR);
 	}
 
 	char prevbuf[ _MAX_PATH ];
@@ -899,7 +899,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 
 		fflush(theReleaseCrashLogFile);
 		fclose(theReleaseCrashLogFile);
-		theReleaseCrashLogFile = NULL;
+		theReleaseCrashLogFile = nullptr;
 	}
 
 	_exit(1);

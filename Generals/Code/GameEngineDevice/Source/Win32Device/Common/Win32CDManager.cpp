@@ -131,7 +131,7 @@ void Win32CDDrive::refreshInfo( void )
 	Bool mayRequireUpdate = (m_disk != CD::NO_DISK);
 	Char volName[1024];
 	// read the volume info
-	if ( GetVolumeInformation( m_drivePath.str(), volName, sizeof(volName) -1, NULL, NULL, NULL, NULL, 0 ))
+	if ( GetVolumeInformation( m_drivePath.str(), volName, sizeof(volName) -1, nullptr, nullptr, nullptr, nullptr, 0 ))
 	{
 		m_diskName = volName;
 		m_disk = CD::UNKNOWN_DISK;

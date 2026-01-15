@@ -42,7 +42,7 @@ void GPRecvBuddyMessageCallback(GPConnection * pconnection, GPRecvBuddyMessageAr
 {
 	DEBUG_LOG(("GPRecvBuddyMessageCallback: message from %d is %s", arg->profile, arg->message));
 
-	//gpGetInfo(pconn, arg->profile, GP_DONT_CHECK_CACHE, GP_BLOCKING, (GPCallback)Whois, NULL);
+	//gpGetInfo(pconn, arg->profile, GP_DONT_CHECK_CACHE, GP_BLOCKING, (GPCallback)Whois, nullptr);
 	//printf("MESSAGE (%d): %s: %s\n", msgCount,whois, arg->message);
 }
 
@@ -135,7 +135,7 @@ void GPErrorCallback(GPConnection * pconnection, GPErrorArg * arg, void * param)
 		GameSpyCloseOverlay(GSOVERLAY_BUDDY);
 		if (TheGameSpyChat->isConnected())
 		{
-			GSMessageBoxYesNo(TheGameText->fetch("GUI:GPErrorTitle"), TheGameText->fetch("GUI:GPDisconnected"), buddyTryReconnect, NULL);
+			GSMessageBoxYesNo(TheGameText->fetch("GUI:GPErrorTitle"), TheGameText->fetch("GUI:GPDisconnected"), buddyTryReconnect, nullptr);
 		}
 	}
 	else

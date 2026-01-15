@@ -64,7 +64,7 @@
 // PRIVATE DATA ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 static const char *noNameWindowString = "Un-named Window";
-static GameWindow *currentWindow = NULL;  ///< current window we're editing
+static GameWindow *currentWindow = nullptr;  ///< current window we're editing
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 
@@ -80,7 +80,7 @@ void SaveCallbacks( GameWindow *window, HWND dialog )
 {
 
 	// sanity
-	if( window == NULL || dialog == NULL )
+	if( window == nullptr || dialog == nullptr )
 		return;
 
 	// get edit data for window
@@ -122,7 +122,7 @@ void SaveCallbacks( GameWindow *window, HWND dialog )
 //=============================================================================
 static void setCurrentWindow( GameWindow *window, HWND dialog )
 {
-	GameWindowEditData *editData = NULL;
+	GameWindowEditData *editData = nullptr;
 
 	// get edit data from window if present
 	if( window )
@@ -132,7 +132,7 @@ static void setCurrentWindow( GameWindow *window, HWND dialog )
 	currentWindow = window;
 
 	// sanity
-	if( dialog == NULL )
+	if( dialog == nullptr )
 		return;
 
 	// enable the callback combo boxes
@@ -156,7 +156,7 @@ static void setCurrentWindow( GameWindow *window, HWND dialog )
 											CB_SELECTSTRING, -1, (LPARAM)name.str() );
 
 	// input
-	name = NULL;
+	name = nullptr;
 	if( editData )
 		name = editData->inputCallbackString;
 	if( name.isEmpty() )
@@ -165,7 +165,7 @@ static void setCurrentWindow( GameWindow *window, HWND dialog )
 											CB_SELECTSTRING, -1, (LPARAM)name.str() );
 
 	// tooltip
-	name = NULL;
+	name = nullptr;
 	if( editData )
 		name = editData->tooltipCallbackString;
 	if( name.isEmpty() )
@@ -174,7 +174,7 @@ static void setCurrentWindow( GameWindow *window, HWND dialog )
 											CB_SELECTSTRING, -1, (LPARAM)name.str() );
 
 	// draw
-	name = NULL;
+	name = nullptr;
 	if( editData )
 		name = editData->drawCallbackString;
 	if( name.isEmpty() )
@@ -209,7 +209,7 @@ static void loadUserWindows( HWND listbox, GameWindow *root )
 {
 
 	// end recursion
-	if( root == NULL )
+	if( root == nullptr )
 		return;
 
 	// is this a candidate
@@ -286,7 +286,7 @@ BOOL CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message,
 		{
 
 			// load the combos with the callbacks
-			InitCallbackCombos( hWndDialog, NULL );
+			InitCallbackCombos( hWndDialog, nullptr );
 
 			// select the none string at the top index in each combo
 			SendDlgItemMessage( hWndDialog, COMBO_SYSTEM, CB_SETCURSEL, 0, 0 );
@@ -299,7 +299,7 @@ BOOL CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message,
 											 TheWindowManager->winGetWindowList() );
 
 			// no current window
-			setCurrentWindow( NULL, hWndDialog );
+			setCurrentWindow( nullptr, hWndDialog );
 
 			return TRUE;
 
@@ -337,7 +337,7 @@ BOOL CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message,
 
 
 							// sanity
-							DEBUG_ASSERTCRASH( win, ("NULL window set in listbox item data") );
+							DEBUG_ASSERTCRASH( win, ("null window set in listbox item data") );
 
 							// save the callbacks for the curent window selected
 							SaveCallbacks( currentWindow, hWndDialog );
@@ -361,7 +361,7 @@ BOOL CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message,
 
 					// save callbacks, set current window to empty and end dialog
 					SaveCallbacks( currentWindow, hWndDialog );
-					setCurrentWindow( NULL, hWndDialog );
+					setCurrentWindow( nullptr, hWndDialog );
 
 					// save the layout callbacks
 					saveLayoutCallbacks( hWndDialog );

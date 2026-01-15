@@ -371,10 +371,10 @@ void W3DGadgetHorizontalSliderImageDrawA( GameWindow *window,
 	}
 
 	// sanity, we need to have these images to make it look right
-	if( leftImageLeft == NULL || rightImageLeft == NULL ||
-			centerImageLeft == NULL || smallCenterImageLeft == NULL ||
-			leftImageRight == NULL || rightImageRight == NULL ||
-			centerImageRight == NULL || smallCenterImageRight == NULL )
+	if( leftImageLeft == nullptr || rightImageLeft == nullptr ||
+			centerImageLeft == nullptr || smallCenterImageLeft == nullptr ||
+			leftImageRight == nullptr || rightImageRight == nullptr ||
+			centerImageRight == nullptr || smallCenterImageRight == nullptr )
 		return;
 
 	// get image sizes for the ends

@@ -72,9 +72,9 @@ public:
 	GameWindow *getFirstWindow( void ) const;				///< get first window in list for screen
 
 	// accessing layout callbacks  ------------------------------------------------------------------
-	void runInit( void *userData = NULL );									///< run the init method if available
-	void runUpdate( void *userData = NULL );								///< run the update method if available
-	void runShutdown( void *userData = NULL );							///< run the shutdown method if available
+	void runInit( void *userData = nullptr );									///< run the init method if available
+	void runUpdate( void *userData = nullptr );								///< run the update method if available
+	void runShutdown( void *userData = nullptr );							///< run the shutdown method if available
 	void setInit( WindowLayoutInitFunc init );							///< set the init callback
 	void setUpdate( WindowLayoutUpdateFunc update );				///< set the update callback
 	void setShutdown( WindowLayoutShutdownFunc shutdown);		///< set the shutdown callback

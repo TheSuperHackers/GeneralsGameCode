@@ -84,7 +84,7 @@ public:
 	virtual Int getDisplayModeCount(void) {return 0;}	///<return number of display modes/resolutions supported by video card.
 	virtual void getDisplayModeDescription(Int modeIndex, Int *xres, Int *yres, Int *bitDepth) {}	///<return description of mode
  	virtual void setGamma(Real gamma, Real bright, Real contrast, Bool calibrate) {};
-	virtual Bool testMinSpecRequirements(Bool *videoPassed, Bool *cpuPassed, Bool *memPassed,StaticGameLODLevel *idealVideoLevel=NULL, Real *cpuTime=NULL) {*videoPassed=*cpuPassed=*memPassed=true; return true;}
+	virtual Bool testMinSpecRequirements(Bool *videoPassed, Bool *cpuPassed, Bool *memPassed,StaticGameLODLevel *idealVideoLevel=nullptr, Real *cpuTime=nullptr) {*videoPassed=*cpuPassed=*memPassed=true; return true;}
 	virtual void doSmartAssetPurgeAndPreload(const char* usageFileName) = 0;
 #if defined(RTS_DEBUG)
 	virtual void dumpAssetUsage(const char* mapname) = 0;
@@ -98,7 +98,7 @@ public:
 	{
 		if( view )
 			return view->getNextView();
-		return NULL;
+		return nullptr;
 	}
 
 	virtual void drawViews( void );																///< Render all views of the world
@@ -153,7 +153,7 @@ public:
 	virtual Bool isMoviePlaying(void);
 
 	/// Register debug display callback
-	virtual void setDebugDisplayCallback( DebugDisplayCallback *callback, void *userData = NULL  );
+	virtual void setDebugDisplayCallback( DebugDisplayCallback *callback, void *userData = nullptr  );
 	virtual DebugDisplayCallback *getDebugDisplayCallback();
 
 	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting ) = 0;	  ///< set shroud
@@ -216,7 +216,7 @@ protected:
 // the singleton
 extern Display *TheDisplay;
 
-extern void StatDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp = NULL );
+extern void StatDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp = nullptr );
 
 //Necessary for display resolution confirmation dialog box
 //Holds the previous and current display settings

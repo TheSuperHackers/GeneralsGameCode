@@ -76,18 +76,18 @@ public:
 	{
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "FlareTemplateName",			INI::parseAsciiString,					NULL, offsetof( CountermeasuresBehaviorModuleData, m_flareTemplateName ) },
-			{ "FlareBoneBaseName",			INI::parseAsciiString,					NULL, offsetof( CountermeasuresBehaviorModuleData, m_flareBoneBaseName ) },
-			{ "VolleySize",							INI::parseUnsignedInt,					NULL, offsetof( CountermeasuresBehaviorModuleData, m_volleySize ) },
-			{ "VolleyArcAngle",					INI::parseAngleReal,						NULL, offsetof( CountermeasuresBehaviorModuleData, m_volleyArcAngle ) },
-			{ "VolleyVelocityFactor",		INI::parseReal,						NULL, offsetof( CountermeasuresBehaviorModuleData, m_volleyVelocityFactor ) },
-			{ "DelayBetweenVolleys",		INI::parseDurationUnsignedInt,  NULL, offsetof( CountermeasuresBehaviorModuleData, m_framesBetweenVolleys ) },
-			{ "NumberOfVolleys",				INI::parseUnsignedInt,					NULL, offsetof( CountermeasuresBehaviorModuleData, m_numberOfVolleys ) },
-			{ "ReloadTime",							INI::parseDurationUnsignedInt,  NULL, offsetof( CountermeasuresBehaviorModuleData, m_reloadFrames ) },
-			{ "EvasionRate",						INI::parsePercentToReal,				NULL, offsetof( CountermeasuresBehaviorModuleData, m_evasionRate ) },
-			{ "MustReloadAtAirfield",		INI::parseBool,									NULL, offsetof( CountermeasuresBehaviorModuleData, m_mustReloadAtAirfield ) },
-			{ "MissileDecoyDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( CountermeasuresBehaviorModuleData, m_missileDecoyFrames ) },
-			{ "ReactionLaunchLatency",	INI::parseDurationUnsignedInt,	NULL, offsetof( CountermeasuresBehaviorModuleData, m_countermeasureReactionFrames ) },
+			{ "FlareTemplateName",			INI::parseAsciiString,					nullptr, offsetof( CountermeasuresBehaviorModuleData, m_flareTemplateName ) },
+			{ "FlareBoneBaseName",			INI::parseAsciiString,					nullptr, offsetof( CountermeasuresBehaviorModuleData, m_flareBoneBaseName ) },
+			{ "VolleySize",							INI::parseUnsignedInt,					nullptr, offsetof( CountermeasuresBehaviorModuleData, m_volleySize ) },
+			{ "VolleyArcAngle",					INI::parseAngleReal,						nullptr, offsetof( CountermeasuresBehaviorModuleData, m_volleyArcAngle ) },
+			{ "VolleyVelocityFactor",		INI::parseReal,						nullptr, offsetof( CountermeasuresBehaviorModuleData, m_volleyVelocityFactor ) },
+			{ "DelayBetweenVolleys",		INI::parseDurationUnsignedInt,  nullptr, offsetof( CountermeasuresBehaviorModuleData, m_framesBetweenVolleys ) },
+			{ "NumberOfVolleys",				INI::parseUnsignedInt,					nullptr, offsetof( CountermeasuresBehaviorModuleData, m_numberOfVolleys ) },
+			{ "ReloadTime",							INI::parseDurationUnsignedInt,  nullptr, offsetof( CountermeasuresBehaviorModuleData, m_reloadFrames ) },
+			{ "EvasionRate",						INI::parsePercentToReal,				nullptr, offsetof( CountermeasuresBehaviorModuleData, m_evasionRate ) },
+			{ "MustReloadAtAirfield",		INI::parseBool,									nullptr, offsetof( CountermeasuresBehaviorModuleData, m_mustReloadAtAirfield ) },
+			{ "MissileDecoyDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof( CountermeasuresBehaviorModuleData, m_missileDecoyFrames ) },
+			{ "ReactionLaunchLatency",	INI::parseDurationUnsignedInt,	nullptr, offsetof( CountermeasuresBehaviorModuleData, m_countermeasureReactionFrames ) },
 			{ 0, 0, 0, 0 }
 		};
 

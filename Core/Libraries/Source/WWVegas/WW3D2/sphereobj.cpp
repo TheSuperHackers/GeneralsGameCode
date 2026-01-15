@@ -119,8 +119,8 @@ SphereRenderObjClass::SphereRenderObjClass(void)
 		LODBias(1.0f),
 		CurrentLOD(SPHERE_NUM_LOD),	// SPHERE_NUM_LOD does not include the null LOD
 		AnimDuration (0.0F),
-		SphereMaterial (NULL),
-		SphereTexture (NULL),
+		SphereMaterial (nullptr),
+		SphereTexture (nullptr),
 		CurrentColor(0.75f, 0.75f, 0.75F),
 		CurrentAlpha(1.0f),
 		CurrentScale(1.0f, 1.0f, 1.0f),
@@ -161,8 +161,8 @@ SphereRenderObjClass::SphereRenderObjClass(const W3dSphereStruct & def)
 		LODBias(1.0f),
 		CurrentLOD(SPHERE_NUM_LOD),	// SPHERE_NUM_LOD does not include the null LOD
 		AnimDuration (0.0F),
-		SphereMaterial (NULL),
-		SphereTexture (NULL),
+		SphereMaterial (nullptr),
+		SphereTexture (nullptr),
 		CurrentColor(0.75f, 0.75f, 0.75F),
 		CurrentAlpha(1.0f),
 		CurrentScale(1.0f, 1.0f, 1.0f),
@@ -211,8 +211,8 @@ SphereRenderObjClass::SphereRenderObjClass(const SphereRenderObjClass & src)
 		LODBias(1.0f),
 		CurrentLOD(SPHERE_NUM_LOD),	// SPHERE_NUM_LOD does not include the null LOD
 		AnimDuration (0.0F),
-		SphereMaterial (NULL),
-		SphereTexture (NULL),
+		SphereMaterial (nullptr),
+		SphereTexture (nullptr),
 		CurrentColor(0.75f, 0.75f, 0.75F),
 		CurrentAlpha(1.0f),
 		CurrentScale(1.0f, 1.0f, 1.0f),
@@ -300,7 +300,7 @@ void SphereRenderObjClass::Generate_Shared_Mesh_Arrays (const AlphaVectorStruct 
 		float step = (SPHERE_HIGHEST_LOD - SPHERE_LOWEST_LOD);
 		step /= SPHERE_NUM_LOD;
 
-		// For NULL LOD set Cost to a small nonzero amount to avoid divisions by zero.
+		// For null LOD set Cost to a small nonzero amount to avoid divisions by zero.
 		SphereLODCosts[0] = 0.000001f;
 		for(int i=0; i < SPHERE_NUM_LOD; i++) {
 
@@ -436,7 +436,7 @@ const char * SphereRenderObjClass::Get_Name(void) const
  *=============================================================================================*/
 void SphereRenderObjClass::Set_Name(const char * name)
 {
-	WWASSERT(name != NULL);
+	WWASSERT(name != nullptr);
 	const size_t nameLen = strlcpy(Name, name, ARRAY_SIZE(Name));
 	(void)nameLen; WWASSERT(nameLen < ARRAY_SIZE(Name));
 }
@@ -457,7 +457,7 @@ void SphereRenderObjClass::Set_Name(const char * name)
  *=============================================================================================*/
 void SphereRenderObjClass::render_sphere()
 {
-	// Should never get here with NULL LOD
+	// Should never get here with null LOD
 	if (CurrentLOD == 0) {
 		WWASSERT(0);
 		return;
@@ -600,7 +600,7 @@ int SphereRenderObjClass::Class_ID(void) const
  *=============================================================================================*/
 void SphereRenderObjClass::Render(RenderInfoClass & rinfo)
 {
-	// NULL LOD
+	// null LOD
 	if (CurrentLOD == 0) return;
 
 	if (Is_Not_Hidden_At_All() == false) {
@@ -702,7 +702,7 @@ void SphereRenderObjClass::Special_Render(SpecialRenderInfoClass & rinfo)
 	temp.Translate(Transform.Get_Translation());
 
 	if (rinfo.RenderType == SpecialRenderInfoClass::RENDER_VIS) {
-		WWASSERT(rinfo.VisRasterizer != NULL);
+		WWASSERT(rinfo.VisRasterizer != nullptr);
 		rinfo.VisRasterizer->Set_Model_Transform(temp);
 		vis_render_sphere(rinfo,ObjSpaceCenter,ObjSpaceExtent);
 	}
@@ -1181,10 +1181,10 @@ SpherePrototypeClass::SpherePrototypeClass(SphereRenderObjClass *sphere)
 	//
 	//	Determine the texture name for this sphere
 	//
-	if (sphere->SphereTexture != NULL) {
+	if (sphere->SphereTexture != nullptr) {
 		StringClass name = sphere->SphereTexture->Get_Full_Path();
 		const char *filename = ::strrchr (name, '\\');
-		if (filename != NULL) {
+		if (filename != nullptr) {
 			filename ++;
 		} else {
 			filename = name;
@@ -1360,17 +1360,17 @@ Radius(radius),
 Slices(slices),
 Stacks(stacks),
 Vertex_ct(0),
-vtx(NULL),
-vtx_normal(NULL),
-vtx_uv(NULL),
+vtx(nullptr),
+vtx_normal(nullptr),
+vtx_uv(nullptr),
 strip_ct(0),
 strip_size(0),
-strips(NULL),
+strips(nullptr),
 fan_ct(0),
 fan_size(0),
-fans(NULL),
+fans(nullptr),
 face_ct(0),
-tri_poly(NULL),
+tri_poly(nullptr),
 inverse_alpha(false)
 {
 	// compute # of vertices
@@ -1397,17 +1397,17 @@ Radius(0.0f),
 Slices(0),
 Stacks(0),
 Vertex_ct(0),
-vtx(NULL),
-vtx_normal(NULL),
-vtx_uv(NULL),
+vtx(nullptr),
+vtx_normal(nullptr),
+vtx_uv(nullptr),
 strip_ct(0),
 strip_size(0),
-strips(NULL),
+strips(nullptr),
 fan_ct(0),
 fan_size(0),
-fans(NULL),
+fans(nullptr),
 face_ct(0),
-tri_poly(NULL),
+tri_poly(nullptr),
 inverse_alpha(false)
 {
 
@@ -1736,13 +1736,13 @@ void SphereMeshClass::Free(void)
 	delete [] fans;
 	delete [] tri_poly;
 
-	vtx			= NULL;
-	vtx_normal	= NULL;
-	vtx_uv		= NULL;
- 	dcg			= NULL;
-	strips		= NULL;
-	fans			= NULL;
-	tri_poly		= NULL;
+	vtx			= nullptr;
+	vtx_normal	= nullptr;
+	vtx_uv		= nullptr;
+ 	dcg			= nullptr;
+	strips		= nullptr;
+	fans			= nullptr;
+	tri_poly		= nullptr;
 
 }
 

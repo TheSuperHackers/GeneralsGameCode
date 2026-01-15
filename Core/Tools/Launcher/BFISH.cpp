@@ -81,7 +81,7 @@ typedef union {
 BlowfishEngine::~BlowfishEngine(void)
 {
 	if (IsKeyed) {
-		Submit_Key(NULL, 0);
+		Submit_Key(nullptr, 0);
 	}
 }
 
@@ -95,7 +95,7 @@ BlowfishEngine::~BlowfishEngine(void)
  *    indefinitely. The key must be 56 bytes or less in length. This is necessary because      *
  *    any keys longer than that will not correctly affect the encryption process.              *
  *                                                                                             *
- *    If the key pointer is NULL, then the S-Box tables are reset to identity. This will       *
+ *    If the key pointer is null, then the S-Box tables are reset to identity. This will       *
  *    mask the previous key setting. Use this method to clear the engine after processing in   *
  *    order to gain a measure of security.                                                     *
  *                                                                                             *

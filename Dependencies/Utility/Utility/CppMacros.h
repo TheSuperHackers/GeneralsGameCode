@@ -17,27 +17,12 @@
 */
 
 // This file contains macros to help upgrade the code for newer cpp standards.
+// Must be C compliant
+
 #pragma once
 
 #if __cplusplus >= 201103L
 #include <utility>
-#endif
-
-#if __cplusplus >= 201703L
-#define NOEXCEPT_17 noexcept
-#define REGISTER
-#define FALLTHROUGH [[fallthrough]]
-#else
-#define NOEXCEPT_17
-#define REGISTER register
-#define FALLTHROUGH
-#endif
-
-// noexcept for methods of IUNKNOWN interface
-#if defined(_MSC_VER)
-#define IUNKNOWN_NOEXCEPT NOEXCEPT_17
-#else
-#define IUNKNOWN_NOEXCEPT
 #endif
 
 #if __cplusplus >= 201103L
@@ -46,9 +31,26 @@
 #define CPP_11(code)
 #define static_assert(expr, msg)
 #define constexpr
+#define noexcept
 #define nullptr 0
 #endif
 
+#if __cplusplus >= 201703L
+#define REGISTER
+#define FALLTHROUGH [[fallthrough]]
+#else
+#define REGISTER register
+#define FALLTHROUGH
+#endif
+
+// noexcept for methods of IUNKNOWN interface
+#if defined(_MSC_VER)
+#define IUNKNOWN_NOEXCEPT noexcept
+#else
+#define IUNKNOWN_NOEXCEPT
+#endif
+
+#ifdef __cplusplus
 namespace stl
 {
 
@@ -68,3 +70,4 @@ inline void move_or_swap(T& dest, T& src)
 }
 
 } // namespace stl
+#endif

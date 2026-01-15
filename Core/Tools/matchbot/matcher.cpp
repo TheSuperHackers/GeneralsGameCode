@@ -61,7 +61,7 @@ void MatcherClass::readLoop(void)
 	do
 	{
 		static time_t lastLogTime = 0;
-		time_t now = time(NULL);
+		time_t now = time(nullptr);
 		if (now > lastLogTime + 300)
 		{
 			lastLogTime = now;
@@ -89,7 +89,7 @@ void MatcherClass::readLoop(void)
 #ifdef _UNIX
 			Xtime xtime;
 			time_t curtime;
-			curtime = time(NULL);
+			curtime = time(nullptr);
 			// get the number of seconds that have passed since midnight
 			// of the current day.
 			curtime -= TimezoneOffset();
@@ -219,7 +219,7 @@ static void NickErrorCallback ( PEER peer, int type, const char * badNick, int n
 		else
 		{
 			// Cancel the connect.
-			peerRetryWithNick(peer, NULL);
+			peerRetryWithNick(peer, nullptr);
 			MatcherClass *matcher = (MatcherClass *)param;
 			if (matcher)
 				matcher->handleNickError( badNick );
@@ -228,7 +228,7 @@ static void NickErrorCallback ( PEER peer, int type, const char * badNick, int n
 	else
 	{
 		// Cancel the connect.
-		peerRetryWithNick(peer, NULL);
+		peerRetryWithNick(peer, nullptr);
 		MatcherClass *matcher = (MatcherClass *)param;
 		if (matcher)
 			matcher->handleNickError( badNick );
@@ -272,7 +272,7 @@ void MatcherClass::handleConnect( bool success )
 	m_connectSuccess = success;
 
 	//DEBUG_LOG(("Enumerating chat channels"));
-	//chatEnumChannels( peerGetChat(m_peer), "", callbackEach, callbackAll, NULL, CHATTrue );
+	//chatEnumChannels( peerGetChat(m_peer), "", callbackEach, callbackAll, nullptr, CHATTrue );
 	//DEBUG_LOG(("Done enumerating chat channels"));
 }
 
@@ -396,7 +396,7 @@ void MatcherClass::connectAndLoop(void)
 	}
 
 	m_groupID = 0;
-	peerListGroupRooms(m_peer, NULL, ListGroupRoomsCallback, &m_groupID, PEERTrue);
+	peerListGroupRooms(m_peer, nullptr, ListGroupRoomsCallback, &m_groupID, PEERTrue);
 	m_groupID = s_groupID;
 
 	DBGMSG("QuickMatch room is " << m_groupID);

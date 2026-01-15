@@ -80,7 +80,7 @@ static ErrorLookup errorLookup[] =
 { (HRESULT)DIERR_REPORTFULL, "DIERR_REPORTFULL" },
 { (HRESULT)DIERR_UNPLUGGED, "DIERR_UNPLUGGED" },
 { (HRESULT)DIERR_UNSUPPORTED, "DIERR_UNSUPPORTED" },
-{ 0, NULL }
+{ 0, nullptr }
 };
 
 
@@ -95,7 +95,7 @@ static void printReturnCode( char *label, HRESULT hr )
 {
 	ErrorLookup *error = errorLookup;
 
-	while( error->string != NULL )
+	while( error->string != nullptr )
 	{
 
 		if( error->error == hr )
@@ -121,7 +121,7 @@ void DirectInputKeyboard::openKeyboard( void )
 													 DIRECTINPUT_VERSION,
 													 IID_IDirectInput8,
 													 (void **)&m_pDirectInput,
-													 NULL );
+													 nullptr );
 	if( FAILED( hr ) )
 	{
 
@@ -135,7 +135,7 @@ void DirectInputKeyboard::openKeyboard( void )
 	// obtain an interface to the system keyboard device
 	hr = m_pDirectInput->CreateDevice( GUID_SysKeyboard,
 																		 &m_pKeyboardDevice,
-																		 NULL );
+																		 nullptr );
 	if( FAILED( hr ) )
 	{
 
@@ -222,7 +222,7 @@ void DirectInputKeyboard::closeKeyboard( void )
 
 		m_pKeyboardDevice->Unacquire();
 		m_pKeyboardDevice->Release();
-		m_pKeyboardDevice = NULL;
+		m_pKeyboardDevice = nullptr;
 		DEBUG_LOG(( "OK - Keyboard deviced closed" ));
 
 	}
@@ -230,7 +230,7 @@ void DirectInputKeyboard::closeKeyboard( void )
 	{
 
 		m_pDirectInput->Release();
-		m_pDirectInput = NULL;
+		m_pDirectInput = nullptr;
 		DEBUG_LOG(( "OK - Keyboard direct input interface closed" ));
 
 	}
@@ -345,8 +345,8 @@ void DirectInputKeyboard::getKey( KeyboardIO *key )
 DirectInputKeyboard::DirectInputKeyboard( void )
 {
 
-	m_pDirectInput = NULL;
-	m_pKeyboardDevice = NULL;
+	m_pDirectInput = nullptr;
+	m_pKeyboardDevice = nullptr;
 
 
 	if( GetKeyState( VK_CAPITAL ) & 0x01 )
@@ -411,7 +411,7 @@ void DirectInputKeyboard::update( void )
 		DWORD items = INFINITE;
 
 		m_pKeyboardDevice->GetDeviceData( sizeof( DIDEVICEOBJECTDATA ),
-																			NULL, &items, 0 );
+																			nullptr, &items, 0 );
 
 	}
 */

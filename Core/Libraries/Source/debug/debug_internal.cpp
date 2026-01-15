@@ -26,6 +26,7 @@
 //
 // Implementation of internal code
 //////////////////////////////////////////////////////////////////////////////
+
 #include "debug.h"
 #include <windows.h>
 
@@ -35,7 +36,7 @@ void DebugInternalAssert(const char *file, int line, const char *expr)
   // module only we know how long stuff can get
   char buf[512];
   wsprintf(buf,"File %s, line %i:\n%s",file,line,expr);
-  MessageBox(NULL,buf,"Internal assert failed",
+  MessageBox(nullptr,buf,"Internal assert failed",
                         MB_OK|MB_ICONSTOP|MB_TASKMODAL|MB_SETFOREGROUND);
 
   // stop right now!
@@ -52,15 +53,15 @@ void *DebugAllocMemory(unsigned numBytes)
 
 void *DebugReAllocMemory(void *oldPtr, unsigned newSize)
 {
-  // Windows doesn't like ReAlloc with NULL handle/ptr...
+  // Windows doesn't like ReAlloc with null handle/ptr...
   if (!oldPtr)
-    return newSize?DebugAllocMemory(newSize):0;
+    return newSize?DebugAllocMemory(newSize):nullptr;
 
   // Shrinking to 0 size is basically freeing memory
   if (!newSize)
   {
     GlobalFree((HGLOBAL)oldPtr);
-    return 0;
+    return nullptr;
   }
 
   // now try GlobalReAlloc first

@@ -116,7 +116,7 @@ HierarchySaveClass::HierarchySaveClass
 	/*
 	** Build our tree from the given tree of nodes
 	*/
-	int rootidx = add_node(NULL,-1);
+	int rootidx = add_node(nullptr,-1);
  	assert(rootidx == 0);
 	add_tree(root,rootidx);
 
@@ -170,7 +170,7 @@ HierarchySaveClass::HierarchySaveClass
 	/*
 	** Build the tree with all leaves of all of the nodes given
 	*/
-	int rootidx = add_node(NULL,-1);
+	int rootidx = add_node(nullptr,-1);
  	assert(rootidx == 0);
 
 	for (unsigned int i = 0; i < rootlist->Num_Nodes(); i++) {
@@ -199,7 +199,7 @@ HierarchySaveClass::HierarchySaveClass
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 HierarchySaveClass::HierarchySaveClass():
-	Node(NULL),
+	Node(nullptr),
 	CurNode(0),
 	CurTime(0)
 {
@@ -452,10 +452,10 @@ void HierarchySaveClass::Get_Export_Coordinate_System
 			** Nope, try the next parent
 			*/
 			pbone = pbone->GetParentNode();
-			assert(pbone != NULL);
+			assert(pbone != nullptr);
 
 #if 0
-			if (pbone == NULL) {
+			if (pbone == nullptr) {
 
 				/*
 				** mesh isn't connected to a bone, use the root
@@ -468,13 +468,13 @@ void HierarchySaveClass::Get_Export_Coordinate_System
 		}
 	}
 
-	if (set_bone_index != NULL) {
+	if (set_bone_index != nullptr) {
 		*set_bone_index = boneidx;
 	}
-	if (set_bone_node != NULL) {
+	if (set_bone_node != nullptr) {
 		*set_bone_node = pbone;
 	}
-	if (set_transform != NULL) {
+	if (set_transform != nullptr) {
 		*set_transform = Get_Fixup_Transform(boneidx) * pbone->GetNodeTM(CurTime);
 	}
 }
@@ -678,11 +678,11 @@ int HierarchySaveClass::add_node(INode * node,int pidx)
 	** types of transforms and we want to apply the same
 	** changes to this tree.
 	**
-	** Note that if FixupType is not "NONE", FixupTree must be NULL,
+	** Note that if FixupType is not "NONE", FixupTree must be nullptr,
 	*/
-	assert(!((FixupTree != NULL) && (FixupType != MATRIX_FIXUP_NONE)));
+	assert(!((FixupTree != nullptr) && (FixupType != MATRIX_FIXUP_NONE)));
 
-	if (FixupTree != NULL) {
+	if (FixupTree != nullptr) {
 		int fi = FixupTree->Find_Named_Node(Node[CurNode].Pivot.Name);
 		if (fi == -1) {
 			char buf[128];
@@ -976,7 +976,7 @@ bool HierarchySaveClass::load_header(ChunkLoadClass & cload)
 bool HierarchySaveClass::load_pivots(ChunkLoadClass & cload)
 {
 	for (uint32 i=0; i<HierarchyHeader.NumPivots; i++) {
-		Node[i].MaxNode = NULL;
+		Node[i].MaxNode = nullptr;
 		if (cload.Read(&Node[i].Pivot,sizeof(W3dPivotStruct)) != sizeof(W3dPivotStruct)) {
 			return false;
 		}

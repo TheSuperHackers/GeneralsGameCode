@@ -75,11 +75,11 @@ public:
 		OriginList(origin_list),
 		Origin(origin),
 		OriginTransform(1),
-		ProgressMeter(NULL),
+		ProgressMeter(nullptr),
 		materialColors(materialColors),
 		numMaterialColors(0),
 		numHouseColors(0),
-		materialColorTexture(NULL)
+		materialColorTexture(nullptr)
 	{
 		ModelName = strdup(model_name);
 		OriginTransform = Origin->GetNodeTM(CurTime);

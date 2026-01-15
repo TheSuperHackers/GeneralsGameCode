@@ -39,7 +39,7 @@
 
 
 // GLOBAL /////////////////////////////////////////////////////////////////////////////////////////
-SpecialPowerStore *TheSpecialPowerStore = NULL;
+SpecialPowerStore *TheSpecialPowerStore = nullptr;
 
 #define DEFAULT_DEFECTION_DETECTION_PROTECTION_TIME_LIMIT (LOGICFRAMES_PER_SECOND * 10)
 
@@ -129,7 +129,7 @@ const char* const SpecialPowerMaskType::s_bitNameList[] =
 
 	"SPECIAL_BATTLESHIP_BOMBARDMENT",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(SpecialPowerMaskType::s_bitNameList) == SpecialPowerMaskType::NumBits + 1, "Incorrect array size");
 
@@ -191,20 +191,20 @@ void SpecialPowerStore::parseSpecialPowerDefinition( INI *ini )
 /* static */ const FieldParse SpecialPowerTemplate::m_specialPowerFieldParse[] =
 {
 
-	{ "ReloadTime",								INI::parseDurationUnsignedInt,		NULL,	offsetof( SpecialPowerTemplate, m_reloadTime ) },
-	{ "RequiredScience",					INI::parseScience,								NULL, offsetof( SpecialPowerTemplate, m_requiredScience ) },
-	{ "InitiateSound",						INI::parseAudioEventRTS,					NULL,	offsetof( SpecialPowerTemplate, m_initiateSound ) },
-	{ "InitiateAtLocationSound",	INI::parseAudioEventRTS,					NULL,	offsetof( SpecialPowerTemplate, m_initiateAtLocationSound ) },
-	{ "PublicTimer",							INI::parseBool,										NULL, offsetof( SpecialPowerTemplate, m_publicTimer ) },
+	{ "ReloadTime",								INI::parseDurationUnsignedInt,		nullptr,	offsetof( SpecialPowerTemplate, m_reloadTime ) },
+	{ "RequiredScience",					INI::parseScience,								nullptr, offsetof( SpecialPowerTemplate, m_requiredScience ) },
+	{ "InitiateSound",						INI::parseAudioEventRTS,					nullptr,	offsetof( SpecialPowerTemplate, m_initiateSound ) },
+	{ "InitiateAtLocationSound",	INI::parseAudioEventRTS,					nullptr,	offsetof( SpecialPowerTemplate, m_initiateAtLocationSound ) },
+	{ "PublicTimer",							INI::parseBool,										nullptr, offsetof( SpecialPowerTemplate, m_publicTimer ) },
 	{ "Enum",											INI::parseIndexList,							SpecialPowerMaskType::getBitNames(), offsetof( SpecialPowerTemplate, m_type ) },
-	{ "DetectionTime",						INI::parseDurationUnsignedInt,		NULL,	offsetof( SpecialPowerTemplate, m_detectionTime ) },
-	{ "SharedSyncedTimer",				INI::parseBool,										NULL, offsetof( SpecialPowerTemplate, m_sharedNSync ) },
-	{ "ViewObjectDuration",				INI::parseDurationUnsignedInt,		NULL,	offsetof( SpecialPowerTemplate, m_viewObjectDuration ) },
-	{ "ViewObjectRange",					INI::parseReal,										NULL,	offsetof( SpecialPowerTemplate, m_viewObjectRange ) },
-	{ "RadiusCursorRadius",				INI::parseReal,										NULL,	offsetof( SpecialPowerTemplate, m_radiusCursorRadius ) },
-	{ "ShortcutPower",						INI::parseBool,										NULL, offsetof( SpecialPowerTemplate, m_shortcutPower ) },
+	{ "DetectionTime",						INI::parseDurationUnsignedInt,		nullptr,	offsetof( SpecialPowerTemplate, m_detectionTime ) },
+	{ "SharedSyncedTimer",				INI::parseBool,										nullptr, offsetof( SpecialPowerTemplate, m_sharedNSync ) },
+	{ "ViewObjectDuration",				INI::parseDurationUnsignedInt,		nullptr,	offsetof( SpecialPowerTemplate, m_viewObjectDuration ) },
+	{ "ViewObjectRange",					INI::parseReal,										nullptr,	offsetof( SpecialPowerTemplate, m_viewObjectRange ) },
+	{ "RadiusCursorRadius",				INI::parseReal,										nullptr,	offsetof( SpecialPowerTemplate, m_radiusCursorRadius ) },
+	{ "ShortcutPower",						INI::parseBool,										nullptr, offsetof( SpecialPowerTemplate, m_shortcutPower ) },
 	{ "AcademyClassify",					INI::parseIndexList,			TheAcademyClassificationTypeNames, offsetof( SpecialPowerTemplate, m_academyClassificationType ) },
-	{ NULL,	NULL, NULL,	0 }
+	{ nullptr,	nullptr, nullptr,	0 }
 
 };
 
@@ -273,7 +273,7 @@ SpecialPowerTemplate* SpecialPowerStore::findSpecialPowerTemplatePrivate( AsciiS
 		if( m_specialPowerTemplates[ i ]->getName() == name )
 			return m_specialPowerTemplates[ i ];
 
-	return NULL;  // not found
+	return nullptr;  // not found
 
 }
 
@@ -288,7 +288,7 @@ const SpecialPowerTemplate *SpecialPowerStore::findSpecialPowerTemplateByID( Uns
 		if( m_specialPowerTemplates[ i ]->getID() == id )
 			return m_specialPowerTemplates[ i ];
 
-	return NULL;  // not found
+	return nullptr;  // not found
 
 }
 
@@ -301,7 +301,7 @@ const SpecialPowerTemplate *SpecialPowerStore::getSpecialPowerTemplateByIndex( U
 	if (index >= 0 && index < m_specialPowerTemplates.size())
 		return m_specialPowerTemplates[ index ];
 
-	return NULL;  // not found
+	return nullptr;  // not found
 
 }
 
@@ -322,11 +322,11 @@ Bool SpecialPowerStore::canUseSpecialPower( Object *obj, const SpecialPowerTempl
 {
 
 	// sanity
-	if( obj == NULL || specialPowerTemplate == NULL )
+	if( obj == nullptr || specialPowerTemplate == nullptr )
 		return FALSE;
 
 	// as a first sanity check, the object must have a module capable of executing the power
-	if( obj->getSpecialPowerModule( specialPowerTemplate ) == NULL )
+	if( obj->getSpecialPowerModule( specialPowerTemplate ) == nullptr )
 		return FALSE;
 
 	//
@@ -366,7 +366,7 @@ void SpecialPowerStore::reset( void )
 	{
 		SpecialPowerTemplate* si = *it;
 		Overridable* temp = si->deleteOverrides();
-		if (temp == NULL)
+		if (temp == nullptr)
 		{
 			it = m_specialPowerTemplates.erase(it);
 		}

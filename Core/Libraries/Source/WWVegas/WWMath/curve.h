@@ -116,7 +116,7 @@ public:
 	virtual bool		Is_Looping(void);
 	virtual void		Set_Looping(bool onoff);
 	virtual int			Key_Count(void);
-	virtual void		Get_Key(int i,float * set_point,float * set_t,unsigned int * extra=NULL);
+	virtual void		Get_Key(int i,float * set_point,float * set_t,unsigned int * extra=nullptr);
 	virtual void		Set_Key(int i,float point,unsigned int extra=0);
 	virtual int			Add_Key(float point,float t,unsigned int extra=0);
 	virtual void		Remove_Key(int i);

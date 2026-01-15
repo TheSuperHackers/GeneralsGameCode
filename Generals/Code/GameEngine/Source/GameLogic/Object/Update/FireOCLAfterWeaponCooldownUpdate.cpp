@@ -59,7 +59,7 @@ FireOCLAfterWeaponCooldownUpdateModuleData::FireOCLAfterWeaponCooldownUpdateModu
 	m_minShotsRequired			= 1;
 	m_oclLifetimePerSecond	= 1000;
 	m_oclMaxFrames					= 1000;
-	m_ocl										= NULL;
+	m_ocl										= nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -69,11 +69,11 @@ void FireOCLAfterWeaponCooldownUpdateModuleData::buildFieldParse(MultiIniFieldPa
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "WeaponSlot",						INI::parseLookupList,						TheWeaponSlotTypeNamesLookupList, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_weaponSlot ) },
-		{ "OCL",									INI::parseObjectCreationList,		NULL, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_ocl ) },
-		{ "MinShotsToCreateOCL",  INI::parseUnsignedInt,					NULL, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_minShotsRequired ) },
-		{ "OCLLifetimePerSecond",	INI::parseUnsignedInt,					NULL, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_oclLifetimePerSecond ) },
-		{ "OCLLifetimeMaxCap",		INI::parseDurationUnsignedInt,	NULL, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_oclMaxFrames ) },
-		{ 0, 0, 0, 0 }
+		{ "OCL",									INI::parseObjectCreationList,		nullptr, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_ocl ) },
+		{ "MinShotsToCreateOCL",  INI::parseUnsignedInt,					nullptr, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_minShotsRequired ) },
+		{ "OCLLifetimePerSecond",	INI::parseUnsignedInt,					nullptr, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_oclLifetimePerSecond ) },
+		{ "OCLLifetimeMaxCap",		INI::parseDurationUnsignedInt,	nullptr, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_oclMaxFrames ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 	p.add(UpgradeMuxData::getFieldParse(), offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_upgradeMuxData ));

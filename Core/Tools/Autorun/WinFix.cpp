@@ -93,9 +93,9 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 	// Start recording messages.
 	//--------------------------------------------------------------------------
 	Delete_Msg_File();
-	Msg( __LINE__, __FILE__, "----------------------------------------------", NULL );
-	Msg( __LINE__, __FILE__, "------------------ Setup -----------------", NULL );
-	Msg( __LINE__, __FILE__, "----------------------------------------------", NULL );
+	Msg( __LINE__, __FILE__, "----------------------------------------------", nullptr );
+	Msg( __LINE__, __FILE__, "------------------ Setup -----------------", nullptr );
+	Msg( __LINE__, __FILE__, "----------------------------------------------", nullptr );
 
 	//--------------------------------------------------------------------------
 	// Get the version info from the OS.
@@ -191,7 +191,7 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
             DWORD dwBufLen;
 
             RegOpenKeyEx( HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\ProductOptions", 0, KEY_QUERY_VALUE, &hKey );
-            RegQueryValueEx( hKey, "ProductType", NULL, NULL, (LPBYTE) szProductType, &dwBufLen);
+            RegQueryValueEx( hKey, "ProductType", nullptr, nullptr, (LPBYTE) szProductType, &dwBufLen);
             RegCloseKey( hKey );
 
             if ( lstrcmpi( "WINNT", szProductType) == 0 )

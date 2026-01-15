@@ -70,10 +70,10 @@ static BOOL CALLBACK _gen_mtl_names_dialog_proc(HWND Hwnd,UINT message,WPARAM wP
  * HISTORY:                                                                                    *
  *=============================================================================================*/
 GenMtlNamesDialogClass::GenMtlNamesDialogClass(Interface * maxinterface) :
-	Hwnd(NULL),
-	Options(NULL),
+	Hwnd(nullptr),
+	Options(nullptr),
 	MaxInterface(maxinterface),
-	NameIndexSpin(NULL)
+	NameIndexSpin(nullptr)
 {
 }
 
@@ -192,7 +192,7 @@ bool GenMtlNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LP
 
 			// set initial name to root of the filename
 			char buf[_MAX_FNAME];
-			_splitpath(MaxInterface->GetCurFileName(),NULL,NULL,buf,NULL);
+			_splitpath(MaxInterface->GetCurFileName(),nullptr,nullptr,buf,nullptr);
 			buf[MAX_ROOT_NAME_LEN+1] = 0;
 			SetWindowText(GetDlgItem(Hwnd,IDC_BASE_NAME_EDIT),buf);
 
@@ -244,7 +244,7 @@ bool GenMtlNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LP
  *=============================================================================================*/
 static BOOL CALLBACK _gen_mtl_names_dialog_proc(HWND hwnd,UINT message,WPARAM wparam,LPARAM lparam)
 {
-	static GenMtlNamesDialogClass * dialog = NULL;
+	static GenMtlNamesDialogClass * dialog = nullptr;
 
 	if (message == WM_INITDIALOG) {
 		dialog = (GenMtlNamesDialogClass *)lparam;

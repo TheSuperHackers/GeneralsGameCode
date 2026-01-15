@@ -32,7 +32,7 @@ class BlendMaterial : public COptionsPanel
 {
 // Construction
 public:
-	BlendMaterial(CWnd* pParent = NULL);   // standard constructor
+	BlendMaterial(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(BlendMaterial)

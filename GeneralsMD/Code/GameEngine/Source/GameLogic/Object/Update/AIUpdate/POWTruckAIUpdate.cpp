@@ -67,8 +67,8 @@ void POWTruckAIUpdateModuleData::buildFieldParse( MultiIniFieldParse &p )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "BoredTime",					INI::parseDurationUnsignedInt,	NULL, offsetof( POWTruckAIUpdateModuleData, m_boredTimeInFrames ) },
-		{ "AtPrisonDistance",		INI::parseReal,		NULL,		offsetof( POWTruckAIUpdateModuleData, m_hangAroundPrisonDistance ) },
+		{ "BoredTime",					INI::parseDurationUnsignedInt,	nullptr, offsetof( POWTruckAIUpdateModuleData, m_boredTimeInFrames ) },
+		{ "AtPrisonDistance",		INI::parseReal,		nullptr,		offsetof( POWTruckAIUpdateModuleData, m_hangAroundPrisonDistance ) },
 		{ 0, 0, 0, 0 }
 	};
 
@@ -220,7 +220,7 @@ void POWTruckAIUpdate::setTask( POWTruckTask task, Object *taskObject )
 
 	// sanity, POW_TRUCK_TASK_COLLECTING_TARGET and POW_TRUCK_TASK_RETURNING_PRISONERS require taskObject parameters
 	if( (task == POW_TRUCK_TASK_COLLECTING_TARGET || task == POW_TRUCK_TASK_RETURNING_PRISONERS) &&
-			taskObject == NULL )
+			taskObject == nullptr )
 	{
 
 		DEBUG_CRASH(( "POWTruckAIUpdate::setTask - Illegal arguments" ));
@@ -329,11 +329,11 @@ void POWTruckAIUpdate::privateReturnPrisoners( Object *prison, CommandSourceType
 		setAIMode( AUTOMATIC );
 
 	// if no prison is provided, find one if possible
-	if( prison == NULL )
+	if( prison == nullptr )
 		prison = findBestPrison();
 
 	// still no prison, nothing to do
-	if( prison == NULL )
+	if( prison == nullptr )
 		return;
 
 	// set us into the return prisoners "state"
@@ -430,7 +430,7 @@ void POWTruckAIUpdate::updateFindTarget( void )
 		if( contain->getContainCount() != 0 )
 			doReturnPrisoners();
 		else
-			doReturnToPrison( NULL );
+			doReturnToPrison( nullptr );
 
 	}
 
@@ -509,7 +509,7 @@ static void putContainedInPrison( Object *obj, void *userData )
 	PrisonerReturnData *returnData = (PrisonerReturnData *)userData;
 
 	// sanity
-	DEBUG_ASSERTCRASH( returnData != NULL && returnData->source != NULL && returnData->dest != NULL,
+	DEBUG_ASSERTCRASH( returnData != nullptr && returnData->source != nullptr && returnData->dest != nullptr,
 										 ("putContainedInPrison: Invalid arguments") );
 
 	// take 'obj' out of the source
@@ -541,7 +541,7 @@ void POWTruckAIUpdate::updateReturnPrisoners( void )
 	Object *prison = TheGameLogic->findObjectByID( m_prisonID );
 
 	// prison has gone away, do this all over again
-	if( prison == NULL )
+	if( prison == nullptr )
 	{
 
 		doReturnPrisoners();
@@ -575,7 +575,7 @@ void POWTruckAIUpdate::doReturnPrisoners( void )
 	Object *prison = findBestPrison();
 
 	// if no prison is available, nothing to do
-	if( prison == NULL )
+	if( prison == nullptr )
 	{
 
 		setTask( POW_TRUCK_TASK_WAITING );
@@ -605,11 +605,11 @@ void POWTruckAIUpdate::doReturnToPrison( Object *prison )
 	setTask( POW_TRUCK_TASK_WAITING );
 
 	// find the closest prison if one was not provided
-	if( prison == NULL )
+	if( prison == nullptr )
 		prison = findBestPrison();
 
 	// if no prison found forget it
-	if( prison == NULL )
+	if( prison == nullptr )
 		return;
 
 	// get our info
@@ -634,7 +634,7 @@ Object *POWTruckAIUpdate::findBestPrison( void )
 
 	ObjectID prisonID = getObject()->getProducerID();
 	if( prisonID == INVALID_ID )
-		return NULL;
+		return nullptr;
 
 	// find prison object
 	Object *prison = TheGameLogic->findObjectByID( prisonID );
@@ -652,8 +652,8 @@ Object *POWTruckAIUpdate::findBestTarget( void )
 	Player *player = us->getControllingPlayer();
 
 	// sanity
-	if( player == NULL )
-		return NULL;
+	if( player == nullptr )
+		return nullptr;
 
 	// get our info
 	const AIUpdateInterface *ai = us->getAIUpdateInterface();
@@ -663,7 +663,7 @@ Object *POWTruckAIUpdate::findBestTarget( void )
 	// scan all objects, there is no range
 	Object *other;
 	Real closestTargetDistSq = HUGE_DIST;
-	Object *closestTarget = NULL;
+	Object *closestTarget = nullptr;
 	for( other = TheGameLogic->getFirstObject(); other; other = other->getNextObject() )
 	{
 
@@ -680,7 +680,7 @@ Object *POWTruckAIUpdate::findBestTarget( void )
 
 		// is this target closer than the one we've found so far
 		Real distSq = ThePartitionManager->getDistanceSquared( us, other, FROM_CENTER_2D );
-		if( closestTarget == NULL || distSq < closestTargetDistSq )
+		if( closestTarget == nullptr || distSq < closestTargetDistSq )
 		{
 
 			// we must be able to pathfind to this target
@@ -727,13 +727,13 @@ static void putPrisonersInPrison( Object *obj, void *userData )
 	Object *prison = prisonUnloadData->destPrison;
 
 	// sanity
-	DEBUG_ASSERTCRASH( prison, ("putPrisonersInPrison: NULL user data") );
-	DEBUG_ASSERTCRASH( obj->getContainedBy() != NULL,
+	DEBUG_ASSERTCRASH( prison, ("putPrisonersInPrison: null user data") );
+	DEBUG_ASSERTCRASH( obj->getContainedBy() != nullptr,
 										 ("putPrisonersInPrison: Prisoner '%s' is not contained by anything, it should be contained by a POW truck",
 										 obj->getTemplate()->getName().str()) );
 
 	// extra super sanity, just so that we don't crash ... this is in the assert above
-	if( obj->getContainedBy() == NULL )
+	if( obj->getContainedBy() == nullptr )
 		return;
 
 	// take 'obj' out of the truck
@@ -764,7 +764,7 @@ void POWTruckAIUpdate::unloadPrisonersToPrison( Object *prison )
 	Object *us = getObject();
 
 	// sanity
-	if( prison == NULL )
+	if( prison == nullptr )
 		return;
 
 	// get contain modules
@@ -834,7 +834,7 @@ void POWTruckAIUpdate::loadPrisoner( Object *prisoner )
 	Object *us = getObject();
 
 	// sanity
-	if( prisoner == NULL )
+	if( prisoner == nullptr )
 		return;
 
 	// validate that we can load this prisoner
@@ -862,7 +862,7 @@ void POWTruckAIUpdate::loadPrisoner( Object *prisoner )
 	//
 	AIUpdateInterface *prisonerAI = prisoner->getAIUpdateInterface();
 	if( prisonerAI )
-		prisonerAI->setSurrendered( NULL, FALSE );
+		prisonerAI->setSurrendered( nullptr, FALSE );
 
 	// done adding prisoner, for automatic AI find another target, for manual just wait
 	if( m_aiMode == AUTOMATIC )

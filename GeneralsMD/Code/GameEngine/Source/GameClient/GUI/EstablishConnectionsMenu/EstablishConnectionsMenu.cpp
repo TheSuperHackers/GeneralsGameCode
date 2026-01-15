@@ -34,7 +34,7 @@
 #include "GameClient/GadgetStaticText.h"
 #include "GameClient/GameText.h"
 
-EstablishConnectionsMenu *TheEstablishConnectionsMenu = NULL;
+EstablishConnectionsMenu *TheEstablishConnectionsMenu = nullptr;
 
 const char *const EstablishConnectionsMenu::m_playerReadyControlNames[] = {
 	"EstablishConnectionsScreen.wnd:ButtonAccept1",
@@ -44,7 +44,7 @@ const char *const EstablishConnectionsMenu::m_playerReadyControlNames[] = {
 	"EstablishConnectionsScreen.wnd:ButtonAccept5",
 	"EstablishConnectionsScreen.wnd:ButtonAccept6",
 	"EstablishConnectionsScreen.wnd:ButtonAccept7",
-	NULL};
+	nullptr};
 
 const char *const EstablishConnectionsMenu::m_playerNameControlNames[] = {
 	"EstablishConnectionsScreen.wnd:StaticPlayer1Name",
@@ -54,7 +54,7 @@ const char *const EstablishConnectionsMenu::m_playerNameControlNames[] = {
 	"EstablishConnectionsScreen.wnd:StaticPlayer5Name",
 	"EstablishConnectionsScreen.wnd:StaticPlayer6Name",
 	"EstablishConnectionsScreen.wnd:StaticPlayer7Name",
-	NULL
+	nullptr
 };
 
 const char *const EstablishConnectionsMenu::m_playerStatusControlNames[] = {
@@ -65,7 +65,7 @@ const char *const EstablishConnectionsMenu::m_playerStatusControlNames[] = {
 	"EstablishConnectionsScreen.wnd:StaticPlayer5Status",
 	"EstablishConnectionsScreen.wnd:StaticPlayer6Status",
 	"EstablishConnectionsScreen.wnd:StaticPlayer7Status",
-	NULL
+	nullptr
 };
 
 /**
@@ -107,10 +107,10 @@ void EstablishConnectionsMenu::abortGame() {
 // the slot number passed in is the index we are to use for the menu.
 void EstablishConnectionsMenu::setPlayerName(Int slot, UnicodeString name) {
 	NameKeyType controlID = TheNameKeyGenerator->nameToKey(m_playerNameControlNames[slot]);
-	GameWindow *control = TheWindowManager->winGetWindowFromId(NULL, controlID);
+	GameWindow *control = TheWindowManager->winGetWindowFromId(nullptr, controlID);
 
-	if (control == NULL) {
-		DEBUG_ASSERTCRASH(control != NULL, ("player name control for slot %d is NULL", slot));
+	if (control == nullptr) {
+		DEBUG_ASSERTCRASH(control != nullptr, ("player name control for slot %d is null", slot));
 		return;
 	}
 	GadgetStaticTextSetText(control, name);
@@ -118,10 +118,10 @@ void EstablishConnectionsMenu::setPlayerName(Int slot, UnicodeString name) {
 
 void EstablishConnectionsMenu::setPlayerStatus(Int slot, NATConnectionState state) {
 	NameKeyType controlID = TheNameKeyGenerator->nameToKey(m_playerStatusControlNames[slot]);
-	GameWindow *control = TheWindowManager->winGetWindowFromId(NULL, controlID);
+	GameWindow *control = TheWindowManager->winGetWindowFromId(nullptr, controlID);
 
-	if (control == NULL) {
-		DEBUG_ASSERTCRASH(control != NULL, ("player status control for slot %d is NULL", slot));
+	if (control == nullptr) {
+		DEBUG_ASSERTCRASH(control != nullptr, ("player status control for slot %d is null", slot));
 		return;
 	}
 //	if (state == NATCONNECTIONSTATE_NETGEARDELAY) {

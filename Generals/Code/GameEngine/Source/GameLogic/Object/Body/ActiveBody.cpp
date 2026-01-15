@@ -134,9 +134,9 @@ void ActiveBodyModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "MaxHealth",						INI::parseReal,						NULL,		offsetof( ActiveBodyModuleData, m_maxHealth ) },
-		{ "InitialHealth",				INI::parseReal,						NULL,		offsetof( ActiveBodyModuleData, m_initialHealth ) },
-		{ 0, 0, 0, 0 }
+		{ "MaxHealth",						INI::parseReal,						nullptr,		offsetof( ActiveBodyModuleData, m_maxHealth ) },
+		{ "InitialHealth",				INI::parseReal,						nullptr,		offsetof( ActiveBodyModuleData, m_initialHealth ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -145,8 +145,8 @@ void ActiveBodyModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-------------------------------------------------------------------------------------------------
 ActiveBody::ActiveBody( Thing *thing, const ModuleData* moduleData ) :
 	BodyModule(thing, moduleData),
-	m_curDamageFX(NULL),
-	m_curArmorSet(NULL),
+	m_curDamageFX(nullptr),
+	m_curArmorSet(nullptr),
 	m_frontCrushed(false),
 	m_backCrushed(false),
 	m_lastDamageTimestamp(0xffffffff),// So we don't think we just got damaged on the first frame
@@ -155,7 +155,7 @@ ActiveBody::ActiveBody( Thing *thing, const ModuleData* moduleData ) :
 	m_nextDamageFXTime(0),
 	m_lastDamageFXDone((DamageType)-1),
 	m_lastDamageCleared(false),
-	m_particleSystems(NULL),
+	m_particleSystems(nullptr),
 	m_indestructible(false)
 {
 	m_currentHealth = getActiveBodyModuleData()->m_initialHealth;
@@ -324,7 +324,7 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 	validateArmorAndDamageFX();
 
 	// sanity
-	if( damageInfo == NULL )
+	if( damageInfo == nullptr )
 		return;
 
 	if ( m_indestructible )
@@ -551,7 +551,7 @@ void ActiveBody::attemptHealing( DamageInfo *damageInfo )
 	validateArmorAndDamageFX();
 
 	// sanity
-	if( damageInfo == NULL )
+	if( damageInfo == nullptr )
 		return;
 
 	if( damageInfo->in.m_damageType != DAMAGE_HEALING )
@@ -726,7 +726,7 @@ void ActiveBody::createParticleSystems( const AsciiString &boneBaseName,
 	Object *us = getObject();
 
 	// sanity
-	if( systemTemplate == NULL )
+	if( systemTemplate == nullptr )
 		return;
 
 	// get the bones
@@ -735,7 +735,7 @@ void ActiveBody::createParticleSystems( const AsciiString &boneBaseName,
 	Int numBones = us->getMultiLogicalBonePosition( boneBaseName.str(),
 																									MAX_BONES,
 																									bonePositions,
-																									NULL,
+																									nullptr,
 																									FALSE );
 
 	// if no bones found nothing else to do
@@ -1272,7 +1272,7 @@ void ActiveBody::xfer( Xfer *xfer )
 		ParticleSystemID particleSystemID;
 
 		// the list should be empty at this time
-		if( m_particleSystems != NULL )
+		if( m_particleSystems != nullptr )
 		{
 
 			DEBUG_CRASH(( "ActiveBody::xfer - m_particleSystems should be empty, but is not" ));

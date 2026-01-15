@@ -90,7 +90,7 @@ static const int CmdMsgLen = 6; //< Minimum size of a command packet (Int + Unsi
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 
 /// The Network singleton instance
-NetworkInterface *TheNetwork = NULL;
+NetworkInterface *TheNetwork = nullptr;
 
 // PRIVATE PROTOTYPES /////////////////////////////////////////////////////////
 
@@ -270,8 +270,8 @@ Network::Network()
 	m_frameDataReady = FALSE;
 	m_isStalling = FALSE;
 	m_sawCRCMismatch = FALSE;
-	m_conMgr = NULL;
-	m_messageWindow = NULL;
+	m_conMgr = nullptr;
+	m_messageWindow = nullptr;
 
 #if defined(RTS_DEBUG)
 	m_networkOn = TRUE;
@@ -295,11 +295,11 @@ Bool Network::deinit( void )
 	{
 		m_conMgr->destroyGameMessages();
 		delete m_conMgr;
-		m_conMgr = NULL;
+		m_conMgr = nullptr;
 	}
 	if (m_messageWindow) {
 		TheWindowManager->winDestroy(m_messageWindow);
-		m_messageWindow = NULL;
+		m_messageWindow = nullptr;
 	}
 
 	return true;
@@ -403,7 +403,7 @@ void Network::parseUserList( const GameInfo *game )
 {
 	if (!game)
 	{
-		DEBUG_LOG(("FAILED parseUserList with a NULL game"));
+		DEBUG_LOG(("FAILED parseUserList with a null game"));
 		return;
 	}
 
@@ -425,8 +425,8 @@ void Network::startGame() {
  * it explicitly, but regardless, this is the one we're going to use.
  */
 void Network::setLocalAddress(UnsignedInt ip, UnsignedInt port) {
-	DEBUG_ASSERTCRASH(m_conMgr != NULL, ("Connection manager does not exist."));
-	if (m_conMgr != NULL) {
+	DEBUG_ASSERTCRASH(m_conMgr != nullptr, ("Connection manager does not exist."));
+	if (m_conMgr != nullptr) {
 		m_conMgr->setLocalAddress(ip, port);
 	}
 }
@@ -435,15 +435,15 @@ void Network::setLocalAddress(UnsignedInt ip, UnsignedInt port) {
  * Tell the network to initialize the transport object
  */
 void Network::initTransport() {
-	DEBUG_ASSERTCRASH(m_conMgr != NULL, ("Connection manager does not exist."));
-	if (m_conMgr != NULL) {
+	DEBUG_ASSERTCRASH(m_conMgr != nullptr, ("Connection manager does not exist."));
+	if (m_conMgr != nullptr) {
 		m_conMgr->initTransport();
 	}
 }
 
 void Network::attachTransport(Transport *transport) {
-	DEBUG_ASSERTCRASH(m_conMgr != NULL, ("Connection manager does not exist."));
-	if (m_conMgr != NULL) {
+	DEBUG_ASSERTCRASH(m_conMgr != nullptr, ("Connection manager does not exist."));
+	if (m_conMgr != nullptr) {
 		m_conMgr->attachTransport(transport);
 	}
 }
@@ -452,7 +452,7 @@ void Network::attachTransport(Transport *transport) {
  * Does this command need to be transfered to the other game clients?
  */
 Bool Network::isTransferCommand(GameMessage *msg) {
-	if ((msg != NULL) && ((msg->getType() > GameMessage::MSG_BEGIN_NETWORK_MESSAGES) && (msg->getType() < GameMessage::MSG_END_NETWORK_MESSAGES))) {
+	if ((msg != nullptr) && ((msg->getType() > GameMessage::MSG_BEGIN_NETWORK_MESSAGES) && (msg->getType() < GameMessage::MSG_END_NETWORK_MESSAGES))) {
 		return TRUE;
 	}
 	return FALSE;
@@ -463,8 +463,8 @@ Bool Network::isTransferCommand(GameMessage *msg) {
  */
 void Network::GetCommandsFromCommandList() {
 	GameMessage *msg = TheCommandList->getFirstMessage();
-	GameMessage *next = NULL;
-	while (msg != NULL) {
+	GameMessage *next = nullptr;
+	while (msg != nullptr) {
 		next = msg->next();
 		if (isTransferCommand(msg)) { // Is this something we should be sending to the other players?
 			if (m_localStatus == NETLOCALSTATUS_INGAME) {
@@ -559,7 +559,7 @@ Bool Network::processCommand(GameMessage *msg)
  * returns true if all the commands are ready for the given frame.
  */
 Bool Network::AllCommandsReady(UnsignedInt frame) {
-	if (m_conMgr == NULL) {
+	if (m_conMgr == nullptr) {
 		return TRUE;
 	}
 
@@ -579,13 +579,13 @@ Bool Network::AllCommandsReady(UnsignedInt frame) {
  * The commands need to be put on in the same order across all clients.
  */
 void Network::RelayCommandsToCommandList(UnsignedInt frame) {
-	if ((m_conMgr == NULL) || (m_localStatus == NETLOCALSTATUS_PREGAME)) {
+	if ((m_conMgr == nullptr) || (m_localStatus == NETLOCALSTATUS_PREGAME)) {
 		return;
 	}
 	m_checkCRCsThisFrame = FALSE;
 	NetCommandList *netcmdlist = m_conMgr->getFrameCommandList(frame);
 	NetCommandRef *msg = netcmdlist->getFirstMessage();
-	while (msg != NULL) {
+	while (msg != nullptr) {
 		NetCommandType cmdType = msg->getCommand()->getNetCommandType();
 		if (cmdType == NETCOMMANDTYPE_GAMECOMMAND) {
 			//DEBUG_LOG(("Network::RelayCommandsToCommandList - appending command %d of type %s to command list on frame %d", msg->getCommand()->getID(), ((NetGameCommandMsg *)msg->getCommand())->constructGameMessage()->getCommandAsString(), TheGameLogic->getFrame()));
@@ -700,7 +700,7 @@ void Network::update( void )
 #endif
 
 	GetCommandsFromCommandList(); // Remove commands from TheCommandList and send them to the connection manager.
-	if (m_conMgr != NULL) {
+	if (m_conMgr != nullptr) {
 		if (m_localStatus == NETLOCALSTATUS_INGAME) {
 			m_conMgr->updateRunAhead(m_runAhead, m_frameRate, m_didSelfSlug, getExecutionFrame());
 			m_didSelfSlug = FALSE;
@@ -738,7 +738,7 @@ void Network::liteupdate() {
 	}
 #endif
 
-	if (m_conMgr != NULL) {
+	if (m_conMgr != nullptr) {
 		if (m_localStatus == NETLOCALSTATUS_PREGAME) {
 			m_conMgr->update(FALSE);
 		} else {
@@ -748,7 +748,7 @@ void Network::liteupdate() {
 }
 
 void Network::endOfGameCheck() {
-	if (m_conMgr != NULL) {
+	if (m_conMgr != nullptr) {
 		if (m_conMgr->canILeave()) {
 			m_conMgr->disconnectLocalPlayer();
 			TheGameLogic->exitGame();
@@ -774,7 +774,7 @@ Bool Network::timeForNewFrame() {
 	 * to avoid being frozen by spikes in network lag.  This will happen if another user's computer is
 	 * running too far behind us, so we need to slow down to let them catch up.
 	 */
-	if (m_conMgr != NULL) {
+	if (m_conMgr != nullptr) {
 		Real cushion = m_conMgr->getMinimumCushion();
 		Real runAheadPercentage = m_runAhead * (TheGlobalData->m_networkRunAheadSlack / (Real)100.0); // If we are at least 50% into our slack, we need to slow down.
 		if (cushion < runAheadPercentage) {
@@ -938,7 +938,7 @@ Bool Network::areAllQueuesEmpty(void)
  * Quit the game now.  This should only be called from the disconnect screen.
  */
 void Network::quitGame() {
-	if (m_conMgr != NULL) {
+	if (m_conMgr != nullptr) {
 		m_conMgr->quitGame();
 	}
 
@@ -968,28 +968,28 @@ Bool Network::isPacketRouter( void )
  * Register a vote towards a player being disconnected.
  */
 void Network::voteForPlayerDisconnect(Int slot) {
-	if (m_conMgr != NULL) {
+	if (m_conMgr != nullptr) {
 		m_conMgr->voteForPlayerDisconnect(slot);
 	}
 }
 
 void Network::updateLoadProgress( Int percent )
 {
-	if (m_conMgr != NULL) {
+	if (m_conMgr != nullptr) {
 		m_conMgr->updateLoadProgress( percent );
 	}
 }
 
 void Network::loadProgressComplete( void )
 {
-	if (m_conMgr != NULL) {
+	if (m_conMgr != nullptr) {
 		m_conMgr->loadProgressComplete();
 	}
 }
 
 void Network::sendTimeOutGameStart( void )
 {
-	if (m_conMgr != NULL) {
+	if (m_conMgr != nullptr) {
 		m_conMgr->sendTimeOutGameStart();
 	}
 }
@@ -997,7 +997,7 @@ void Network::sendTimeOutGameStart( void )
 
 UnsignedInt Network::getLocalPlayerID()
 {
-if (m_conMgr != NULL) {
+if (m_conMgr != nullptr) {
 		return m_conMgr->getLocalPlayerID();
 	}
 	return 49;
@@ -1009,21 +1009,21 @@ UnicodeString Network::getPlayerName(Int playerNum)
 			return UnicodeString::TheEmptyString;
 		}
 	}
-	if (m_conMgr != NULL) {
+	if (m_conMgr != nullptr) {
 		return m_conMgr->getPlayerName( playerNum );
 	}
 	return UnicodeString::TheEmptyString;
 }
 Int Network::getNumPlayers()
 {
-	if (m_conMgr != NULL) {
+	if (m_conMgr != nullptr) {
 		return m_conMgr->getNumPlayers();
 	}
 	return -1;
 }
 
 Int Network::getSlotAverageFPS(Int slot) {
-	if (m_conMgr != NULL) {
+	if (m_conMgr != nullptr) {
 		return m_conMgr->getSlotAverageFPS(slot);
 	}
 	return -1;
@@ -1040,13 +1040,13 @@ void Network::toggleNetworkOn() {
 #endif
 
 void Network::notifyOthersOfCurrentFrame() {
-	if (m_conMgr != NULL) {
+	if (m_conMgr != nullptr) {
 		m_conMgr->notifyOthersOfCurrentFrame(TheGameLogic->getFrame());
 	}
 }
 
 void Network::notifyOthersOfNewFrame(UnsignedInt frame) {
-	if (m_conMgr != NULL) {
+	if (m_conMgr != nullptr) {
 		m_conMgr->notifyOthersOfNewFrame(frame);
 	}
 }

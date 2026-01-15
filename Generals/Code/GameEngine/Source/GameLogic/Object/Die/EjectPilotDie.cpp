@@ -43,8 +43,8 @@
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 EjectPilotDieModuleData::EjectPilotDieModuleData() :
-	m_oclInAir(NULL),
-	m_oclOnGround(NULL),
+	m_oclInAir(nullptr),
+	m_oclOnGround(nullptr),
 	m_invulnerableTime(0)
 {
 }
@@ -57,11 +57,11 @@ void EjectPilotDieModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "AirCreationList",		INI::parseObjectCreationList,		NULL, offsetof( EjectPilotDieModuleData, m_oclInAir ) },
-		{ "GroundCreationList",		INI::parseObjectCreationList,		NULL, offsetof( EjectPilotDieModuleData, m_oclOnGround ) },
-		{	"InvulnerableTime",  INI::parseDurationUnsignedInt, NULL, offsetof(EjectPilotDieModuleData, m_invulnerableTime ) },
+		{ "AirCreationList",		INI::parseObjectCreationList,		nullptr, offsetof( EjectPilotDieModuleData, m_oclInAir ) },
+		{ "GroundCreationList",		INI::parseObjectCreationList,		nullptr, offsetof( EjectPilotDieModuleData, m_oclOnGround ) },
+		{	"InvulnerableTime",  INI::parseDurationUnsignedInt, nullptr, offsetof(EjectPilotDieModuleData, m_invulnerableTime ) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }

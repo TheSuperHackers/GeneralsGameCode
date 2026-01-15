@@ -10,4 +10,5 @@ target_sources(core_buildversionupdate PRIVATE ${BUILDVERSIONUPDATE_SRC})
 target_link_libraries(core_buildversionupdate PRIVATE
     core_config
     core_wwlib
+    corei_always
 )

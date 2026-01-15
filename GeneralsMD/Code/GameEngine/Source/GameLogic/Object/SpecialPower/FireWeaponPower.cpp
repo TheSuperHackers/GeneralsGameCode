@@ -71,8 +71,8 @@ FireWeaponPowerModuleData::FireWeaponPowerModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "MaxShotsToFire", INI::parseUnsignedInt, NULL, offsetof( FireWeaponPowerModuleData, m_maxShotsToFire ) },
-		{ 0, 0, 0, 0 }
+		{ "MaxShotsToFire", INI::parseUnsignedInt, nullptr, offsetof( FireWeaponPowerModuleData, m_maxShotsToFire ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 

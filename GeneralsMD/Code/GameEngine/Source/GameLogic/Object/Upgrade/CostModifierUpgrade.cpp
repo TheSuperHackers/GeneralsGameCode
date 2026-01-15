@@ -88,9 +88,9 @@ CostModifierUpgradeModuleData::CostModifierUpgradeModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "EffectKindOf",		KindOfMaskType::parseFromINI, NULL, offsetof( CostModifierUpgradeModuleData, m_kindOf ) },
-		{ "Percentage",			INI::parsePercentToReal, NULL, offsetof( CostModifierUpgradeModuleData, m_percentage ) },
-		{ 0, 0, 0, 0 }
+		{ "EffectKindOf",		KindOfMaskType::parseFromINI, nullptr, offsetof( CostModifierUpgradeModuleData, m_kindOf ) },
+		{ "Percentage",			INI::parsePercentToReal, nullptr, offsetof( CostModifierUpgradeModuleData, m_percentage ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 

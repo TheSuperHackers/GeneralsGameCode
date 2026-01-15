@@ -44,7 +44,7 @@ static char THIS_FILE[] = __FILE__;
 // AnimatedSoundOptionsDialogClass dialog
 
 
-AnimatedSoundOptionsDialogClass::AnimatedSoundOptionsDialogClass(CWnd* pParent /*=NULL*/)
+AnimatedSoundOptionsDialogClass::AnimatedSoundOptionsDialogClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(AnimatedSoundOptionsDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(AnimatedSoundOptionsDialogClass)
@@ -204,7 +204,7 @@ AnimatedSoundOptionsDialogClass::Load_Animated_Sound_Settings (void)
 	//	Try to load the definitions into the definition mgr
 	//
 	FileClass *file = _TheFileFactory->Get_File (sound_def_lib_path);
-	if (file != NULL) {
+	if (file != nullptr) {
 		file->Open (FileClass::READ);
 		ChunkLoadClass cload (file);
 		SaveLoadSystemClass::Load (cload);

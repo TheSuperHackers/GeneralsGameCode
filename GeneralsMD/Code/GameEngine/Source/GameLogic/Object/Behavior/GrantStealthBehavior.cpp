@@ -144,7 +144,7 @@ UpdateSleepTime GrantStealthBehavior::update( void )
 	PartitionFilterRelationship relationship( self, PartitionFilterRelationship::ALLOW_ALLIES );
 	PartitionFilterSameMapStatus filterMapStatus( self );
 	PartitionFilterAlive filterAlive;
-	PartitionFilter *filters[] = { &relationship, &filterAlive, &filterMapStatus, NULL };
+	PartitionFilter *filters[] = { &relationship, &filterAlive, &filterMapStatus, nullptr };
 
 
   m_currentScanRadius += d->m_radiusGrowRate;

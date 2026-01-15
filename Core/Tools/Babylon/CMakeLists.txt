@@ -58,6 +58,7 @@ target_sources(core_babylon PRIVATE ${BABYLON_SRC})
 
 target_link_libraries(core_babylon PRIVATE
     core_config
+    corei_always
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

@@ -266,12 +266,12 @@ StateMachine::StateMachine( Object *owner, AsciiString name )
 	m_sleepTill = 0;
 	m_defaultStateID = INVALID_STATE_ID;
 	m_defaultStateInited = false;
-	m_currentState = NULL;
+	m_currentState = nullptr;
 	m_locked = false;
 #ifdef STATE_MACHINE_DEBUG
 	m_name = name;
 	m_debugOutput = false;
-	m_lockedby = NULL;
+	m_lockedby = nullptr;
 #endif
 	internalClear();
 }
@@ -311,7 +311,7 @@ Bool StateMachine::getWantsDebugOutput() const
 	}
 
 #ifdef DEBUG_OBJECT_ID_EXISTS
-	if (TheObjectIDToDebug != 0 && getOwner() != NULL && getOwner()->getID() == TheObjectIDToDebug)
+	if (TheObjectIDToDebug != 0 && getOwner() != nullptr && getOwner()->getID() == TheObjectIDToDebug)
 	{
 		return true;
 	}
@@ -359,7 +359,7 @@ void StateMachine::clear()
 	if (m_currentState)
 		m_currentState->onExit( EXIT_RESET );
 
-	m_currentState = NULL;
+	m_currentState = nullptr;
 
 	internalClear();
 }
@@ -389,7 +389,7 @@ StateReturnType StateMachine::resetToDefaultState()
 	// allow current state to exit with EXIT_RESET if present
 	if (m_currentState)
 		m_currentState->onExit( EXIT_RESET );
-	m_currentState = NULL;
+	m_currentState = nullptr;
 
 	//
 	// the current state has done an onExit, clear the internal guts before we set
@@ -416,7 +416,7 @@ StateReturnType StateMachine::updateStateMachine()
 	UnsignedInt now = TheGameLogic->getFrame();
 	if (m_sleepTill != 0 && now < m_sleepTill)
 	{
-		if( m_currentState == NULL )
+		if( m_currentState == nullptr )
 		{
 			return STATE_FAILURE;
 		}
@@ -441,7 +441,7 @@ StateReturnType StateMachine::updateStateMachine()
 		StateReturnType status = m_currentState->update();
 
 		// it is possible that the state's update() method clears the state machine.
-		if (m_currentState == NULL)
+		if (m_currentState == nullptr)
 		{
 			return STATE_FAILURE;
 		}
@@ -497,7 +497,7 @@ void StateMachine::defineState( StateID id, State *state, StateID successID, Sta
 	state->friend_onSuccess(successID);
 	state->friend_onFailure(failureID);
 
-	while (conditions && conditions->test != NULL)
+	while (conditions && conditions->test != nullptr)
 	{
 		state->friend_onCondition(conditions->test, conditions->toStateID, conditions->userData);
 		++conditions;
@@ -563,7 +563,7 @@ StateReturnType StateMachine::setState( StateID newStateID )
  */
 StateReturnType StateMachine::internalSetState( StateID newStateID )
 {
-	State *newState = NULL;
+	State *newState = nullptr;
 
 	// anytime the state changes, stop sleeping
 	m_sleepTill = 0;
@@ -624,7 +624,7 @@ StateReturnType StateMachine::internalSetState( StateID newStateID )
 		StateReturnType status = m_currentState->onEnter();
 
 		// it is possible that the state's onEnter() method may cause the state to be destroyed
-		if (m_currentState == NULL)
+		if (m_currentState == nullptr)
 		{
 			return STATE_FAILURE;
 		}
@@ -714,7 +714,7 @@ StateReturnType StateMachine::initDefaultState()
 		}
 		REALLY_VERBOSE_LOG(("\n"));
 		delete ids;
-		ids = NULL;
+		ids = nullptr;
 	}
 	REALLY_VERBOSE_LOG(("SM_END\n\n"));
 #endif
@@ -748,14 +748,14 @@ Bool StateMachine::isGoalObjectDestroyed() const
 	{
 		return false; // never had a goal object
 	}
-	return getGoalObject() == NULL;
+	return getGoalObject() == nullptr;
 }
 
 //-----------------------------------------------------------------------------
 void StateMachine::halt()
 {
 	m_locked = true;
-	m_currentState = NULL; // don't exit current state, just clear it.
+	m_currentState = nullptr; // don't exit current state, just clear it.
 #ifdef STATE_MACHINE_DEBUG
 	if (getWantsDebugOutput())
 	{
@@ -857,7 +857,7 @@ void StateMachine::xfer( Xfer *xfer )
 		}
 		for( i = m_stateMap.begin(); i != m_stateMap.end(); ++i ) {
 			State *state = (*i).second;
-			if( state != NULL )
+			if( state != nullptr )
 			{
 				StateID id = state->getID();
 				xfer->xferUnsignedInt(&id);
@@ -868,8 +868,8 @@ void StateMachine::xfer( Xfer *xfer )
 			}
 			else
 			{
-				DEBUG_CRASH(("state was NULL on xfer, trying to heal..."));
-				// Hmm... too late to find out why we are getting NULL in our state, but if we let it go, we will Throw in xferSnapshot.
+				DEBUG_CRASH(("state was null on xfer, trying to heal..."));
+				// Hmm... too late to find out why we are getting nullptr in our state, but if we let it go, we will Throw in xferSnapshot.
 				state = internalGetState(m_defaultStateID);
 				StateID id = state->getID();
 				xfer->xferUnsignedInt(&id);
@@ -879,10 +879,10 @@ void StateMachine::xfer( Xfer *xfer )
 		}
 
 	}	else {
-		if( m_currentState == NULL )
+		if( m_currentState == nullptr )
 		{
-			DEBUG_ASSERTCRASH(m_currentState != NULL, ("currentState was NULL on xfer, trying to heal..."));
-			// Hmm... too late to find out why we are getting NULL in our state, but if we let it go, we will Throw in xferSnapshot.
+			DEBUG_ASSERTCRASH(m_currentState != nullptr, ("currentState was null on xfer, trying to heal..."));
+			// Hmm... too late to find out why we are getting nullptr in our state, but if we let it go, we will Throw in xferSnapshot.
 			m_currentState = internalGetState(m_defaultStateID);
 		}
 		xfer->xferSnapshot(m_currentState);

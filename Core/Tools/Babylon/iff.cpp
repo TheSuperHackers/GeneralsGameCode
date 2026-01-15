@@ -92,7 +92,7 @@ int		IFF_seek ( IFF_FILE *iff, int pos, int mode )
 
 IFF_FILE	*IFF_Open ( const char *name )
 {
-	IFF_FILE *iff = NULL;
+	IFF_FILE *iff = nullptr;
 
 
 	if ( ! (iff = (IFF_FILE *) malloc ( sizeof (IFF_FILE))))
@@ -118,7 +118,7 @@ error:
 		IFF_Close ( iff );
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /******************************************************************/
@@ -128,7 +128,7 @@ error:
 
 IFF_FILE	*IFF_Load ( const char *name )
 {
-	IFF_FILE *iff = NULL;
+	IFF_FILE *iff = nullptr;
 
 	if ( ! (iff = (IFF_FILE *) malloc ( sizeof (IFF_FILE))))
 	{
@@ -164,7 +164,7 @@ error:
 		IFF_Close ( iff );
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /******************************************************************/
@@ -359,7 +359,7 @@ int		IFF_Read ( IFF_FILE *iff, void *buff, int size )
 
 IFF_FILE		*IFF_New ( const char *name )
 {
-	IFF_FILE *iff = NULL;
+	IFF_FILE *iff = nullptr;
 
 
 	if ( ! (iff = (IFF_FILE *) malloc ( sizeof (IFF_FILE))))
@@ -384,7 +384,7 @@ error:
 		IFF_Close ( iff );
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /******************************************************************/

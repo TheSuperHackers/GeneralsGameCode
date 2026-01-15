@@ -45,9 +45,9 @@ static NameKeyType windowLadderID = NAMEKEY_INVALID;
 
 
 // window pointers --------------------------------------------------------------------------------
-static GameWindow *parentWindow = NULL;
-static GameWindow *buttonBack = NULL;
-static GameWindow *windowLadder = NULL;
+static GameWindow *parentWindow = nullptr;
+static GameWindow *buttonBack = nullptr;
+static GameWindow *windowLadder = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ void WOLLadderScreenInit( WindowLayout *layout, void *userData )
 	buttonBackID = TheNameKeyGenerator->nameToKey( "WOLLadderScreen.wnd:ButtonBack" );
 	windowLadderID = TheNameKeyGenerator->nameToKey( "WOLLadderScreen.wnd:WindowLadder" );
 
-	parentWindow = TheWindowManager->winGetWindowFromId( NULL, parentWindowID );
+	parentWindow = TheWindowManager->winGetWindowFromId( nullptr, parentWindowID );
 	buttonBack = TheWindowManager->winGetWindowFromId( parentWindow, buttonBackID );
 	windowLadder = TheWindowManager->winGetWindowFromId( parentWindow, windowLadderID );
 
@@ -70,7 +70,7 @@ void WOLLadderScreenInit( WindowLayout *layout, void *userData )
 //	PopulateReplayFileListbox(listboxReplayFiles);
 
 	//TheWebBrowser->createBrowserWindow("Westwood", windowLadder);
-	if (TheWebBrowser != NULL)
+	if (TheWebBrowser != nullptr)
 	{
 		TheWebBrowser->createBrowserWindow("MessageBoard", windowLadder);
 	}
@@ -89,7 +89,7 @@ void WOLLadderScreenInit( WindowLayout *layout, void *userData )
 void WOLLadderScreenShutdown( WindowLayout *layout, void *userData )
 {
 
-	if (TheWebBrowser != NULL)
+	if (TheWebBrowser != nullptr)
 	{
 		TheWebBrowser->closeBrowserWindow(windowLadder);
 	}

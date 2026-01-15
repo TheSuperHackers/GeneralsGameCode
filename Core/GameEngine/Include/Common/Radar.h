@@ -143,7 +143,7 @@ static const char *const RadarPriorityNames[] =
 	"UNIT",													// unit level drawing priority
 	"LOCAL_UNIT_ONLY",							// unit priority, but only on the radar if controlled by the local player
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(RadarPriorityNames) == RADAR_PRIORITY_NUM_PRIORITIES + 1, "Incorrect array size");
 #endif  // DEFINE_RADAR_PRIOTITY_NAMES
@@ -165,7 +165,7 @@ public:
 	virtual void update( void );														///< subsystem per frame update
 
 	// is the game window parameter the radar window
-	Bool isRadarWindow( GameWindow *window ) { return (m_radarWindow == window) && (m_radarWindow != NULL); }
+	Bool isRadarWindow( GameWindow *window ) { return (m_radarWindow == window) && (m_radarWindow != nullptr); }
 
 	Bool radarToWorld( const ICoord2D *radar, Coord3D *world );		///< radar point to world point on terrain
 	Bool radarToWorld2D( const ICoord2D *radar, Coord3D *world );		///< radar point to world point (x,y only!)

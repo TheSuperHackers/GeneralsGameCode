@@ -72,9 +72,9 @@ public:
 inline ImageDirectory::~ImageDirectory( void ) { delete m_path; }
 inline ImageDirectory::ImageDirectory( void )
 {
-	m_path = NULL;
-	m_next = NULL;
-	m_prev = NULL;
+	m_path = nullptr;
+	m_next = nullptr;
+	m_prev = nullptr;
 	m_imageCount = 0;
 }
 

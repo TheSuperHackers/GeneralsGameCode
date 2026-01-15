@@ -60,7 +60,7 @@
 /*
 ** Class static members:
 */
-Vector3 * MetalMapManagerClass::_NormalTable = 0;
+Vector3 * MetalMapManagerClass::_NormalTable = nullptr;
 
 /***********************************************************************************************
  * MMMC::MetalMapManagerClass -- Create metal map manager from INI                             *
@@ -77,8 +77,8 @@ Vector3 * MetalMapManagerClass::_NormalTable = 0;
  *=============================================================================================*/
 MetalMapManagerClass::MetalMapManagerClass(INIClass &ini) :
 	MapCount(0),
-	Textures(0),
-	MetalParameters(0),
+	Textures(nullptr),
+	MetalParameters(nullptr),
 	CurrentAmbient(0.0f, 0.0f, 0.0f),
 	CurrentMainLightColor(0.0f, 0.0f, 0.0f),
 	CurrentMainLightDir(1.0f, 0.0f, 0.0f),
@@ -174,11 +174,11 @@ MetalMapManagerClass::~MetalMapManagerClass(void)
 			REF_PTR_RELEASE(Textures[i]);
 		}
 		delete [] Textures;
-		Textures = NULL;
+		Textures = nullptr;
 	}
 
 	delete [] MetalParameters;
-	MetalParameters = NULL;
+	MetalParameters = nullptr;
 }
 
 
@@ -197,7 +197,7 @@ MetalMapManagerClass::~MetalMapManagerClass(void)
  *=============================================================================================*/
 TextureClass * MetalMapManagerClass::Get_Metal_Map(int id)
 {
-	if (id < 0 || id >= MapCount) return 0;
+	if (id < 0 || id >= MapCount) return nullptr;
 	Textures[id]->Add_Ref();
 	return Textures[id];
 }
@@ -284,7 +284,7 @@ void MetalMapManagerClass::Update_Textures(void)
 		MetalParams &cur_params = MetalParameters[i];
 
 		// If shinyness > 1, apply it to specular value array
-		float *specular = 0;
+		float *specular = nullptr;
 		float temp_specular[METALMAP_SIZE_2];
 		float shinyness = cur_params.Shininess;
 		if (shinyness > 1.0f) {

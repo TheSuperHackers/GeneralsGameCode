@@ -93,14 +93,14 @@ public:
     /**
       \brief Returns the source file this Id is in.
 
-      \return source file name, may be NULL
+      \return source file name, may be nullptr
     */
     const char *GetSource(void) const;
 
     /**
       \brief Returns the function name for this Id.
 
-      \return function name, may be NULL
+      \return function name, may be nullptr
     */
     const char *GetFunction(void) const;
 

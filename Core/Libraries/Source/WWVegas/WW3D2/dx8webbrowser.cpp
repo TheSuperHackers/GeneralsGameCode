@@ -57,7 +57,7 @@ typedef _com_ptr_t<_com_IIID<IFEBrowserEngine2, &__uuidof(IFEBrowserEngine2)>> I
 
 static	IFEBrowserEngine2Ptr	pBrowser = 0;
 
-HWND		DX8WebBrowser::hWnd = 0;
+HWND		DX8WebBrowser::hWnd = nullptr;
 
 bool DX8WebBrowser::Initialize(	const char* badpageurl,
 											const char* loadingpageurl,
@@ -67,7 +67,7 @@ bool DX8WebBrowser::Initialize(	const char* badpageurl,
 	if(pBrowser == 0)
 	{
 		// Initialize COM
-		CoInitialize(0);
+		CoInitialize(nullptr);
 
 		// Create an instance of the browser control
 		HRESULT hr = pBrowser.CreateInstance(__uuidof(FEBrowserEngine2));
@@ -126,7 +126,7 @@ void DX8WebBrowser::Shutdown()
 		// Release the smart pointer.
 		pBrowser = 0;
 
-		hWnd = 0;
+		hWnd = nullptr;
 
 		// Shut down COM
 		CoUninitialize();

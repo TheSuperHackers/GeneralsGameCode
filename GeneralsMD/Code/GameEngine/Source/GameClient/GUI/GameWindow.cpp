@@ -94,9 +94,9 @@ GameWindow::GameWindow( void )
 	m_cursorX = 0;
 	m_cursorY = 0;
 
-	m_userData = NULL;
+	m_userData = nullptr;
 
-	m_inputData = NULL;
+	m_inputData = nullptr;
 
 	winSetDrawFunc( TheWindowManager->getDefaultDraw() );
 	winSetInputFunc( TheWindowManager->getDefaultInput() );
@@ -104,18 +104,18 @@ GameWindow::GameWindow( void )
 	// We use to set the default tooltip func to TheWindowManager->getDefaultTooltip()
 	// but I removed this so that we can set in GUI edit a text string that will be the
 	// default tool tip for a control.
-	winSetTooltipFunc( NULL );
+	winSetTooltipFunc( nullptr );
 
-	m_next = NULL;
-	m_prev = NULL;
-	m_parent = NULL;
-	m_child = NULL;
+	m_next = nullptr;
+	m_prev = nullptr;
+	m_parent = nullptr;
+	m_child = nullptr;
 
-	m_nextLayout = NULL;
-	m_prevLayout = NULL;
-	m_layout = NULL;
+	m_nextLayout = nullptr;
+	m_prevLayout = nullptr;
+	m_layout = nullptr;
 
-	m_editData = NULL;
+	m_editData = nullptr;
 
 }
 
@@ -125,10 +125,10 @@ GameWindow::~GameWindow( void )
 {
 
 	delete m_inputData;
-	m_inputData = NULL;
+	m_inputData = nullptr;
 
 	delete m_editData;
-	m_editData = NULL;
+	m_editData = nullptr;
 
 	unlinkFromTransitionWindows();
 
@@ -306,11 +306,11 @@ GameWindow *GameWindow::findPrevLeaf( void )
 		if( leaf )
 			return leaf->findLastLeaf();
 		else
-			return NULL;
+			return nullptr;
 
 	}
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -328,7 +328,7 @@ GameWindow *GameWindow::findNextLeaf( void )
 			return leaf->m_next;
 
 		for( leaf = leaf->m_next; leaf; leaf = leaf->m_child )
-			if( leaf->m_child == NULL || BitIsSet( leaf->m_status,
+			if( leaf->m_child == nullptr || BitIsSet( leaf->m_status,
 																						WIN_STATUS_TAB_STOP ) )
 				return leaf;
 
@@ -345,7 +345,7 @@ GameWindow *GameWindow::findNextLeaf( void )
 			{
 
 				for( leaf = leaf->m_next; leaf; leaf = leaf->m_child )
-					if( leaf->m_child == NULL ||
+					if( leaf->m_child == nullptr ||
 							BitIsSet( leaf->m_status, WIN_STATUS_TAB_STOP ) )
 						return leaf;
 
@@ -356,11 +356,11 @@ GameWindow *GameWindow::findNextLeaf( void )
 		if( leaf )
 			return leaf->findFirstLeaf();
 		else
-			return NULL;
+			return nullptr;
 
 	}
 
-	return NULL;
+	return nullptr;
 
 }
 
@@ -379,7 +379,7 @@ Int GameWindow::winNextTab( void )
 	do
 	{
 
-		if( m_parent == NULL && firstTry )
+		if( m_parent == nullptr && firstTry )
 		{
 
 			newTab = findLastLeaf( newTab );
@@ -414,7 +414,7 @@ Int GameWindow::winPrevTab( void )
 	do
 	{
 
-		if( m_parent == NULL && firstTry )
+		if( m_parent == nullptr && firstTry )
 		{
 
 			newTab = findFirstLeaf( newTab );
@@ -460,7 +460,7 @@ Int GameWindow::winBringToTop( void )
 		for( current = TheWindowManager->winGetWindowList();
 				 current != this;
 				 current = current->m_next)
-			if (current == NULL)
+			if (current == nullptr)
 				return WIN_ERR_INVALID_PARAMETER;
 
 		// move to head of windowList
@@ -537,7 +537,7 @@ Int GameWindow::winGetPosition( Int *x, Int *y )
 {
 
 	// sanity
-	if( x == NULL || y == NULL )
+	if( x == nullptr || y == nullptr )
 		return WIN_ERR_INVALID_PARAMETER;
 
 	*x = m_region.lo.x;
@@ -660,7 +660,7 @@ Int GameWindow::winGetSize( Int *width, Int *height )
 {
 
 	// sanity
-	if( width == NULL || height == NULL )
+	if( width == nullptr || height == nullptr )
 		return WIN_ERR_INVALID_PARAMETER;
 
 	*width  = m_size.x;
@@ -830,7 +830,7 @@ void GameWindow::winGetDrawOffset( Int *x, Int *y )
 {
 
 	// sanity
-	if( x == NULL || y == NULL )
+	if( x == nullptr || y == nullptr )
 		return;
 
 	*x = m_instData.m_imageOffset.x;
@@ -1071,7 +1071,7 @@ Int GameWindow::winSetInstanceData( WinInstanceData *data )
 	m_instData.m_tooltip = tooltipText;
 
 	// make sure we didn't try to copy over a video buffer.
-	m_instData.m_videoBuffer = NULL;
+	m_instData.m_videoBuffer = nullptr;
 
 	// set our text display instance text if present
 	if( data->getTextLength() )
@@ -1151,7 +1151,7 @@ Int GameWindow::winGetWindowId( void )
 Int GameWindow::winSetParent( GameWindow *parent )
 {
 
-	if( m_parent == NULL)
+	if( m_parent == nullptr)
 	{
 		// Top level window so unlink it
 		TheWindowManager->unlinkWindow( this );
@@ -1162,12 +1162,12 @@ Int GameWindow::winSetParent( GameWindow *parent )
 		TheWindowManager->unlinkChildWindow( this );
 	}
 
-	if( parent == NULL )
+	if( parent == nullptr )
 	{
 
 		// Want to make it a top level window so add to window list
 		TheWindowManager->linkWindow( this );
-		m_parent = NULL;
+		m_parent = nullptr;
 
 	}
 	else
@@ -1229,7 +1229,7 @@ GameWindow *GameWindow::winGetChild( void )
 Int GameWindow::winSetOwner( GameWindow *owner )
 {
 
-	if( owner == NULL )
+	if( owner == nullptr )
 		m_instData.m_owner = this;
 	else
 		m_instData.m_owner = owner;
@@ -1553,7 +1553,7 @@ WindowMsgHandledType GameWinBlockInput( GameWindow *window, UnsignedInt msg,
 
 		TheTacticalView->setMouseLock( FALSE );
 		TheInGameUI->setSelecting( FALSE );
-		TheInGameUI->endAreaSelectHint(NULL);
+		TheInGameUI->endAreaSelectHint(nullptr);
 
 	}
 

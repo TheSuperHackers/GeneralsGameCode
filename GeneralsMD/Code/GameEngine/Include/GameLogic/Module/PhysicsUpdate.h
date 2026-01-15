@@ -263,7 +263,7 @@ private:
 	Real												m_yawRate;								///< rate of rotation around up vector
 	Real												m_rollRate;								///< rate of rotation around forward vector
 	Real												m_pitchRate;							///< rate or rotation around side vector
-	DynamicAudioEventRTS*				m_bounceSound;						///< The sound for when this thing bounces, or NULL
+	DynamicAudioEventRTS*				m_bounceSound;						///< The sound for when this thing bounces, or nullptr
 	Coord3D											m_accel;									///< current acceleration
 	Coord3D											m_prevAccel;							///< last frame's acceleration
 	Coord3D											m_vel;										///< current velocity

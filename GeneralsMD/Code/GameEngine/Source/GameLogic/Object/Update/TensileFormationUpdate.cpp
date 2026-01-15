@@ -76,7 +76,7 @@ public:
 #endif
 	virtual Bool allow( Object *objOther )
 	{
-		return ( getTFU( objOther ) != NULL );
+		return ( getTFU( objOther ) != nullptr );
 	}
 };
 
@@ -99,9 +99,9 @@ TensileFormationUpdateModuleData::TensileFormationUpdateModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "Enabled",	    INI::parseBool,	NULL, offsetof( TensileFormationUpdateModuleData, m_enabled ) },
-		{ "CrackSound",	INI::parseAudioEventRTS,	NULL,	offsetof( TensileFormationUpdateModuleData, m_crackSound) },
-		{ 0, 0, 0, 0 }
+		{ "Enabled",	    INI::parseBool,	nullptr, offsetof( TensileFormationUpdateModuleData, m_enabled ) },
+		{ "CrackSound",	INI::parseAudioEventRTS,	nullptr,	offsetof( TensileFormationUpdateModuleData, m_crackSound) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 
@@ -170,8 +170,8 @@ void TensileFormationUpdate::initLinks( void )
 		return;
 
 	PartitionFilterTensileFormationMember tfmFilter( getObject() );
-	PartitionFilter *filters[] = { &tfmFilter, NULL };
-	SimpleObjectIterator *iter = NULL;
+	PartitionFilter *filters[] = { &tfmFilter, nullptr };
+	SimpleObjectIterator *iter = nullptr;
 	iter = ThePartitionManager->iterateObjectsInRange(getObject(), 1000.0f, FROM_BOUNDINGSPHERE_3D, filters);
 	MemoryPoolObjectHolder hold(iter);
 
@@ -386,8 +386,8 @@ UpdateSleepTime TensileFormationUpdate::update( void )
 void TensileFormationUpdate::propagateDislodgement ( Bool enabled )
 {
 	PartitionFilterTensileFormationMember tfmFilter( getObject() );
-	PartitionFilter *filters[] = { &tfmFilter, NULL };
-	SimpleObjectIterator *iter = NULL;
+	PartitionFilter *filters[] = { &tfmFilter, nullptr };
+	SimpleObjectIterator *iter = nullptr;
 	iter = ThePartitionManager->iterateObjectsInRange(getObject(), 100.0f, FROM_BOUNDINGSPHERE_3D, filters);
 	MemoryPoolObjectHolder hold(iter);
 	for (Object* other = iter->first(); other; other = iter->next())
@@ -405,7 +405,7 @@ void TensileFormationUpdate::propagateDislodgement ( Bool enabled )
 
 
 		//TensileFormationUpdate* tfu = getTFU(other);
-		//if ( tfu != NULL )
+		//if ( tfu != nullptr )
 		//{
 		//	tfu->setEnabled( enabled );
 		//}

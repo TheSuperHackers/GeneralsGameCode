@@ -44,8 +44,8 @@ NetCommandRef * NetPacket::ConstructNetCommandMsgFromRawData(UnsignedByte *data,
 	UnsignedByte relay = 0;
 
 	Int offset = 0;
-	NetCommandRef *ref = NULL;
-	NetCommandMsg *msg = NULL;
+	NetCommandRef *ref = nullptr;
+	NetCommandMsg *msg = nullptr;
 
 	while (offset < (Int)dataLength) {
 
@@ -180,7 +180,7 @@ NetCommandRef * NetPacket::ConstructNetCommandMsgFromRawData(UnsignedByte *data,
 			ref->setRelay(relay);
 
 			msg->detach();
-			msg = NULL;
+			msg = nullptr;
 
 			return ref;
 
@@ -203,7 +203,7 @@ NetPacketList NetPacket::ConstructBigCommandPacketList(NetCommandRef *ref) {
 	}
 
 	UnsignedInt bufferSize = GetBufferSizeNeededForCommand(msg);  // need to implement.  I have a drinking problem.
-	UnsignedByte *bigPacketData = NULL;
+	UnsignedByte *bigPacketData = nullptr;
 
 	NetPacketList packetList;
 
@@ -258,15 +258,15 @@ NetPacketList NetPacket::ConstructBigCommandPacketList(NetCommandRef *ref) {
 		packetList.push_back(packet);
 
 		deleteInstance(ref);
-		ref = NULL;
+		ref = nullptr;
 
 		++currentChunk;
 	}
 	wrapperMsg->detach();
-	wrapperMsg = NULL;
+	wrapperMsg = nullptr;
 
 	delete[] bigPacketData;
-	bigPacketData = NULL;
+	bigPacketData = nullptr;
 
 	return packetList;
 }
@@ -274,7 +274,7 @@ NetPacketList NetPacket::ConstructBigCommandPacketList(NetCommandRef *ref) {
 UnsignedInt NetPacket::GetBufferSizeNeededForCommand(NetCommandMsg *msg) {
 	// This is where the fun begins...
 
-	if (msg == NULL) {
+	if (msg == nullptr) {
 		return TRUE; // There was nothing to add, so it was successful.
 	}
 	// Use the virtual function for all command message types
@@ -425,7 +425,7 @@ void NetPacket::FillBufferWithGameCommand(UnsignedByte *buffer, NetCommandRef *m
 	offset += sizeof(numTypes);
 
 	GameMessageParserArgumentType *argType = parser->getFirstArgumentType();
-	while (argType != NULL) {
+	while (argType != nullptr) {
 		UnsignedByte type = (UnsignedByte)(argType->getType());
 		memcpy(buffer + offset, &type, sizeof(type));
 		offset += sizeof(type);
@@ -493,12 +493,12 @@ void NetPacket::FillBufferWithGameCommand(UnsignedByte *buffer, NetCommandRef *m
 	}
 
 	deleteInstance(parser);
-	parser = NULL;
+	parser = nullptr;
 
 //		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addGameMessage - added game message, frame %d, player %d, command ID %d", m_lastFrame, m_lastPlayerID, m_lastCommandID));
 
 	deleteInstance(gmsg);
-	gmsg = NULL;
+	gmsg = nullptr;
 }
 
 void NetPacket::FillBufferWithAckCommand(UnsignedByte *buffer, NetCommandRef *msg) {
@@ -1494,7 +1494,7 @@ NetPacket::NetPacket(TransportMessage *msg) {
  */
 NetPacket::~NetPacket() {
 	deleteInstance(m_lastCommand);
-	m_lastCommand = NULL;
+	m_lastCommand = nullptr;
 }
 
 /**
@@ -1513,12 +1513,12 @@ void NetPacket::init() {
 	m_lastCommandType = 0;
 	m_lastRelay = 0;
 
-	m_lastCommand = NULL;
+	m_lastCommand = nullptr;
 }
 
 void NetPacket::reset() {
 	deleteInstance(m_lastCommand);
-	m_lastCommand = NULL;
+	m_lastCommand = nullptr;
 
 	init();
 }
@@ -1540,7 +1540,7 @@ Bool NetPacket::addCommand(NetCommandRef *msg) {
 
 	NetCommandMsg *cmdMsg = msg->getCommand();
 
-	if (msg == NULL) {
+	if (msg == nullptr) {
 		return TRUE; // There was nothing to add, so it was successful.
 	}
 
@@ -4023,7 +4023,7 @@ Bool NetPacket::isRoomForFrameMessage(NetCommandRef *msg) {
 }
 
 Bool NetPacket::isFrameRepeat(NetCommandRef *msg) {
-	if (m_lastCommand == NULL) {
+	if (m_lastCommand == nullptr) {
 		return FALSE;
 	}
 	if (m_lastCommand->getCommand()->getNetCommandType() != NETCOMMANDTYPE_FRAMEINFO) {
@@ -4153,7 +4153,7 @@ Bool NetPacket::isRoomForAckMessage(NetCommandRef *msg) {
 }
 
 Bool NetPacket::isAckRepeat(NetCommandRef *msg) {
-	if (m_lastCommand == NULL) {
+	if (m_lastCommand == nullptr) {
 		return FALSE;
 	}
 	if (m_lastCommand->getCommand()->getNetCommandType() != msg->getCommand()->getNetCommandType()) {
@@ -4301,7 +4301,7 @@ Bool NetPacket::addGameCommand(NetCommandRef *msg) {
 		m_packetLen += sizeof(numTypes);
 
 		GameMessageParserArgumentType *argType = parser->getFirstArgumentType();
-		while (argType != NULL) {
+		while (argType != nullptr) {
 			UnsignedByte type = (UnsignedByte)(argType->getType());
 			memcpy(m_packet + m_packetLen, &type, sizeof(type));
 			m_packetLen += sizeof(type);
@@ -4321,7 +4321,7 @@ Bool NetPacket::addGameCommand(NetCommandRef *msg) {
 		}
 
 		deleteInstance(parser);
-		parser = NULL;
+		parser = nullptr;
 
 //		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addGameMessage - added game message, frame %d, player %d, command ID %d", m_lastFrame, m_lastPlayerID, m_lastCommandID));
 
@@ -4335,7 +4335,7 @@ Bool NetPacket::addGameCommand(NetCommandRef *msg) {
 	}
 
 	deleteInstance(gmsg);
-	gmsg = NULL;
+	gmsg = nullptr;
 
 	return retval;
 }
@@ -4427,7 +4427,7 @@ Bool NetPacket::isRoomForGameMessage(NetCommandRef *msg, GameMessage *gmsg) {
 	msglen += sizeof(UnsignedByte);
 //	Int numTypes = parser->getNumTypes();
 	GameMessageParserArgumentType *arg = parser->getFirstArgumentType();
-	while (arg != NULL) {
+	while (arg != nullptr) {
 		msglen += sizeof(UnsignedByte); // argument type
 		msglen += sizeof(UnsignedByte); // argument count
 		GameMessageArgumentDataType type = arg->getType();
@@ -4475,7 +4475,7 @@ Bool NetPacket::isRoomForGameMessage(NetCommandRef *msg, GameMessage *gmsg) {
 	}
 
 	deleteInstance(parser);
-	parser = NULL;
+	parser = nullptr;
 
 	// Is there enough room in the packet for this message?
 	if (msglen > (MAX_PACKET_SIZE - m_packetLen)) {
@@ -4498,7 +4498,7 @@ NetCommandList * NetPacket::getCommandList() {
 	UnsignedShort commandID = 1; // The first command is going to be
 	UnsignedByte commandType = 0;
 	UnsignedByte relay = 0;
-	NetCommandRef *lastCommand = NULL;
+	NetCommandRef *lastCommand = nullptr;
 
 	Int i = 0;
 	while (i < m_packetLen) {
@@ -4533,7 +4533,7 @@ NetCommandList * NetPacket::getCommandList() {
 		case NetPacketFieldTypes::Data: {
 			++i;
 
-			NetCommandMsg *msg = NULL;
+			NetCommandMsg *msg = nullptr;
 
 			//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::getCommandList() - command of type %d(%s)", commandType, GetNetCommandTypeAsString((NetCommandType)commandType)));
 
@@ -4648,7 +4648,7 @@ NetCommandList * NetPacket::getCommandList() {
 				break;
 			}
 
-			if (msg == NULL) {
+			if (msg == nullptr) {
 				DEBUG_CRASH(("Didn't read a message from the packet. Things are about to go wrong."));
 				continue;
 			}
@@ -4668,7 +4668,7 @@ NetCommandList * NetPacket::getCommandList() {
 
 			// add the message to the list.
 			NetCommandRef *ref = retval->addMessage(msg);
-			if (ref != NULL) {
+			if (ref != nullptr) {
 				ref->setRelay(relay);
 			} else {
 				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::getCommandList - failed to set relay for message %d", msg->getID()));
@@ -4679,8 +4679,8 @@ NetCommandList * NetPacket::getCommandList() {
 
 			msg->detach();  // Need to detach from new NetCommandMsg created by the "readXMessage" above.
 
-			// since the message is part of the list now, we don't have to keep track of it.  So we'll just set it to NULL.
-			msg = NULL;
+			// since the message is part of the list now, we don't have to keep track of it.  So we'll just set it to null.
+			msg = nullptr;
 			break;
 		}
 
@@ -4688,11 +4688,11 @@ NetCommandList * NetPacket::getCommandList() {
 
 			++i;
 			// Repeat the last command, doing some funky cool byte-saving stuff
-			if (lastCommand == NULL) {
+			if (lastCommand == nullptr) {
 				DEBUG_CRASH(("Got a repeat command with no command to repeat."));
 			}
 
-			NetCommandMsg *msg = NULL;
+			NetCommandMsg *msg = nullptr;
 
 			switch(commandType) {
 
@@ -4744,7 +4744,7 @@ NetCommandList * NetPacket::getCommandList() {
 
 			// add the message to the list.
 			NetCommandRef *ref = retval->addMessage(msg);
-			if (ref != NULL) {
+			if (ref != nullptr) {
 				ref->setRelay(relay);
 			}
 
@@ -4754,8 +4754,8 @@ NetCommandList * NetPacket::getCommandList() {
 
 			msg->detach();  // Need to detach from new NetCommandMsg created by the "readXMessage" above.
 
-			// since the message is part of the list now, we don't have to keep track of it.  So we'll just set it to NULL.
-			msg = NULL;
+			// since the message is part of the list now, we don't have to keep track of it.  So we'll just set it to null.
+			msg = nullptr;
 			break;
 		}
 
@@ -4772,7 +4772,7 @@ NetCommandList * NetPacket::getCommandList() {
 	}
 
 	deleteInstance(lastCommand);
-	lastCommand = NULL;
+	lastCommand = nullptr;
 
 	return retval;
 }
@@ -4817,7 +4817,7 @@ NetCommandMsg * NetPacket::readGameMessage(UnsignedByte *data, Int &i)
 	GameMessageParserArgumentType *parserArgType = parser->getFirstArgumentType();
 	GameMessageArgumentDataType lasttype = ARGUMENTDATATYPE_UNKNOWN;
 	Int argsLeftForType = 0;
-	if (parserArgType != NULL) {
+	if (parserArgType != nullptr) {
 		lasttype = parserArgType->getType();
 		argsLeftForType = parserArgType->getArgCount();
 	}
@@ -4826,14 +4826,14 @@ NetCommandMsg * NetPacket::readGameMessage(UnsignedByte *data, Int &i)
 
 		--argsLeftForType;
 		if (argsLeftForType == 0) {
-			DEBUG_ASSERTCRASH(parserArgType != NULL, ("parserArgType was NULL when it shouldn't have been."));
-			if (parserArgType == NULL) {
-				return NULL;
+			DEBUG_ASSERTCRASH(parserArgType != nullptr, ("parserArgType was null when it shouldn't have been."));
+			if (parserArgType == nullptr) {
+				return nullptr;
 			}
 
 			parserArgType = parserArgType->getNext();
-			// parserArgType is allowed to be NULL here
-			if (parserArgType != NULL) {
+			// parserArgType is allowed to be null here
+			if (parserArgType != nullptr) {
 				argsLeftForType = parserArgType->getArgCount();
 				lasttype = parserArgType->getType();
 			}
@@ -4841,7 +4841,7 @@ NetCommandMsg * NetPacket::readGameMessage(UnsignedByte *data, Int &i)
 	}
 
 	deleteInstance(parser);
-	parser = NULL;
+	parser = nullptr;
 
 	return (NetCommandMsg *)msg;
 }

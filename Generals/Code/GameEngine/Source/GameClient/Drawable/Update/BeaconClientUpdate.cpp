@@ -58,9 +58,9 @@ void BeaconClientUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "RadarPulseFrequency",	INI::parseDurationUnsignedInt, NULL, offsetof(BeaconClientUpdateModuleData, m_framesBetweenRadarPulses) },
-		{ "RadarPulseDuration",		INI::parseDurationUnsignedInt, NULL, offsetof(BeaconClientUpdateModuleData, m_radarPulseDuration) },
-		{ 0, 0, 0, 0 }
+		{ "RadarPulseFrequency",	INI::parseDurationUnsignedInt, nullptr, offsetof(BeaconClientUpdateModuleData, m_framesBetweenRadarPulses) },
+		{ "RadarPulseDuration",		INI::parseDurationUnsignedInt, nullptr, offsetof(BeaconClientUpdateModuleData, m_radarPulseDuration) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -85,7 +85,7 @@ BeaconClientUpdate::~BeaconClientUpdate( void )
 //-------------------------------------------------------------------------------------------------
 static ParticleSystem* createParticleSystem( Drawable *draw )
 {
-	ParticleSystem *system = NULL;
+	ParticleSystem *system = nullptr;
 	if (draw)
 	{
 		Object *obj = draw->getObject();

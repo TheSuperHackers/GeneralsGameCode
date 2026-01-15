@@ -36,7 +36,7 @@ class RingSizePropPageClass : public CPropertyPage
 
 // Construction
 public:
-	RingSizePropPageClass(RingRenderObjClass *ring = NULL);
+	RingSizePropPageClass(RingRenderObjClass *ring = nullptr);
 	~RingSizePropPageClass();
 
 // Dialog Data

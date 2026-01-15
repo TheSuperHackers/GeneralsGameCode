@@ -56,7 +56,7 @@
 #include "GameLogic/ScriptEngine.h"
 
 //external declarations of the Gadgets the callbacks can use
-WindowLayout *popupCommunicatorLayout = NULL;
+WindowLayout *popupCommunicatorLayout = nullptr;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -277,7 +277,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 				{
 
 					// do the command
-					TheGameClient->evaluateContextCommand( NULL, &world, CommandTranslator::DO_COMMAND );
+					TheGameClient->evaluateContextCommand( nullptr, &world, CommandTranslator::DO_COMMAND );
 
 				}
 				else if( command && command->getCommandType() == GUI_COMMAND_ATTACK_MOVE)
@@ -292,7 +292,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 				}
 				else
 				{
-					GameMessage *newMsg = NULL;
+					GameMessage *newMsg = nullptr;
 
 					// Do the superweapon stuff here, before issuing these other messages
 
@@ -407,7 +407,7 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 			else if( controlID == beaconClearTextButtonID && TheGameLogic->isInMultiplayerGame() )
 			{
 				static NameKeyType textID = NAMEKEY("ControlBar.wnd:EditBeaconText");
-				GameWindow *win = TheWindowManager->winGetWindowFromId(NULL, textID);
+				GameWindow *win = TheWindowManager->winGetWindowFromId(nullptr, textID);
 				if (win)
 				{
 					GadgetTextEntrySetText( win, UnicodeString::TheEmptyString );
@@ -471,7 +471,7 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 					{
 						msg->appendWideCharArgument( *c++ );
 					}
-					msg->appendWideCharArgument( L'\0' ); // trailing NULL
+					msg->appendWideCharArgument( L'\0' ); // trailing null
 				}
 			}
 			break;
@@ -504,7 +504,7 @@ void ShowControlBar( Bool immediate )
 	TheControlBar->showSpecialPowerShortcut();
 
 	Int id = (Int)TheNameKeyGenerator->nameToKey("ControlBar.wnd:ControlBarParent");
-	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
+	GameWindow *window = TheWindowManager->winGetWindowFromId(nullptr, id);
 
 	if (window)
 	{
@@ -539,7 +539,7 @@ void HideControlBar( Bool immediate )
 	TheControlBar->hideSpecialPowerShortcut();
 
 	Int id = (Int)TheNameKeyGenerator->nameToKey("ControlBar.wnd:ControlBarParent");
-	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
+	GameWindow *window = TheWindowManager->winGetWindowFromId(nullptr, id);
 
 	if (window)
 	{
@@ -575,7 +575,7 @@ void ToggleControlBar( Bool immediate )
 	toggleReplayControls();
 
 	Int id = (Int)TheNameKeyGenerator->nameToKey("ControlBar.wnd:ControlBarParent");
-	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
+	GameWindow *window = TheWindowManager->winGetWindowFromId(nullptr, id);
 
 	if (window)
 	{

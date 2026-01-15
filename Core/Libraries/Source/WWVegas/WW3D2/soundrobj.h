@@ -231,7 +231,7 @@ public:
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////
 	SoundRenderObjPrototypeClass (SoundRenderObjDefClass *def)
-		: Definition (NULL)													{ Set_Definition (def); }
+		: Definition (nullptr)													{ Set_Definition (def); }
 
 	///////////////////////////////////////////////////////////
 	//	Public methods

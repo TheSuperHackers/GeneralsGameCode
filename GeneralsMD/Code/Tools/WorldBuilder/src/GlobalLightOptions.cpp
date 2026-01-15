@@ -31,7 +31,7 @@
 /// GlobalLightOptions dialog trivial construstor - Create does the real work.
 
 
-GlobalLightOptions::GlobalLightOptions(CWnd* pParent /*=NULL*/)
+GlobalLightOptions::GlobalLightOptions(CWnd* pParent /*=nullptr*/)
 	: CDialog(GlobalLightOptions::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(GlobalLightOptions)

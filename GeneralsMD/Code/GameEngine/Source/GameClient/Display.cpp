@@ -38,31 +38,31 @@
 //#include "GameLogic/GameLogic.h"
 
 /// The Display singleton instance.
-Display *TheDisplay = NULL;
+Display *TheDisplay = nullptr;
 
 
 Display::Display()
 {
-	m_viewList = NULL;
+	m_viewList = nullptr;
 	m_width = 0;
 	m_height = 0;
 	m_bitDepth = 0;
 	m_windowed = FALSE;
-	m_videoBuffer = NULL;
-	m_videoStream = NULL;
-	m_debugDisplayCallback = NULL;
-	m_debugDisplayUserData = NULL;
-	m_debugDisplay = NULL;
+	m_videoBuffer = nullptr;
+	m_videoStream = nullptr;
+	m_debugDisplayCallback = nullptr;
+	m_debugDisplayUserData = nullptr;
+	m_debugDisplay = nullptr;
 	m_letterBoxFadeLevel = 0;
 	m_letterBoxEnabled = FALSE;
 	m_cinematicText = AsciiString::TheEmptyString;
-	m_cinematicFont = NULL;
+	m_cinematicFont = nullptr;
 	m_cinematicTextFrames = 0;
 	m_movieHoldTime	= -1;
 	m_copyrightHoldTime = -1;
 	m_elapsedMovieTime = 0;
 	m_elapsedCopywriteTime = 0;
-	m_copyrightDisplayString = NULL;
+	m_copyrightDisplayString = nullptr;
 
 	m_currentlyPlayingMovie.clear();
 	m_letterBoxFadeStartTime = 0;
@@ -92,7 +92,7 @@ void Display::deleteViews( void )
 		next = v->getNextView();
 		delete v;
 	}
-	m_viewList = NULL;
+	m_viewList = nullptr;
 }
 
 /**
@@ -212,7 +212,7 @@ void Display::playLogoMovie( AsciiString movieName, Int minMovieLength, Int minC
 
 	m_videoStream = TheVideoPlayer->open( movieName );
 
-	if ( m_videoStream == NULL )
+	if ( m_videoStream == nullptr )
 	{
 		return;
 	}
@@ -223,7 +223,7 @@ void Display::playLogoMovie( AsciiString movieName, Int minMovieLength, Int minC
 	m_elapsedMovieTime = timeGetTime();  // we're using time get time becuase legal want's actual "Seconds"
 
 	m_videoBuffer = createVideoBuffer();
-	if (	m_videoBuffer == NULL ||
+	if (	m_videoBuffer == nullptr ||
 				!m_videoBuffer->allocate(	m_videoStream->width(),
 													m_videoStream->height())
 		)
@@ -247,7 +247,7 @@ void Display::playMovie( AsciiString movieName)
 
 	m_videoStream = TheVideoPlayer->open( movieName );
 
-	if ( m_videoStream == NULL )
+	if ( m_videoStream == nullptr )
 	{
 		return;
 	}
@@ -255,7 +255,7 @@ void Display::playMovie( AsciiString movieName)
 	m_currentlyPlayingMovie = movieName;
 
 	m_videoBuffer = createVideoBuffer();
-	if (	m_videoBuffer == NULL ||
+	if (	m_videoBuffer == nullptr ||
 				!m_videoBuffer->allocate(	m_videoStream->width(),
 													m_videoStream->height())
 		)
@@ -273,12 +273,12 @@ void Display::playMovie( AsciiString movieName)
 void Display::stopMovie( void )
 {
 	delete m_videoBuffer;
-	m_videoBuffer = NULL;
+	m_videoBuffer = nullptr;
 
 	if ( m_videoStream )
 	{
 		m_videoStream->close();
-		m_videoStream = NULL;
+		m_videoStream = nullptr;
 	}
 
 	if (!m_currentlyPlayingMovie.isEmpty()) {
@@ -288,7 +288,7 @@ void Display::stopMovie( void )
 	if(m_copyrightDisplayString)
 	{
 		TheDisplayStringManager->freeDisplayString(m_copyrightDisplayString);
-		m_copyrightDisplayString = NULL;
+		m_copyrightDisplayString = nullptr;
 	}
 	m_copyrightHoldTime = -1;
 	m_movieHoldTime = -1;
@@ -366,7 +366,7 @@ void Display::reset()
 
 Bool Display::isMoviePlaying(void)
 {
-	return m_videoStream != NULL && m_videoBuffer != NULL;
+	return m_videoStream != nullptr && m_videoBuffer != nullptr;
 }
 
 //============================================================================

@@ -47,8 +47,8 @@ public:
 	StickyBombUpdateModuleData()
 	{
 		m_offsetZ = 10.0f;
-		m_geometryBasedDamageWeaponTemplate = NULL;
-		m_geometryBasedDamageFX = NULL;
+		m_geometryBasedDamageWeaponTemplate = nullptr;
+		m_geometryBasedDamageFX = nullptr;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
@@ -56,10 +56,10 @@ public:
     UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
-			{ "AttachToTargetBone",				INI::parseAsciiString,		NULL, offsetof( StickyBombUpdateModuleData, m_attachToBone ) },
-			{ "OffsetZ",									INI::parseReal,						NULL, offsetof( StickyBombUpdateModuleData, m_offsetZ ) },
-			{ "GeometryBasedDamageWeapon",INI::parseWeaponTemplate, NULL, offsetof( StickyBombUpdateModuleData, m_geometryBasedDamageWeaponTemplate ) },
-			{ "GeometryBasedDamageFX",		INI::parseFXList,					NULL, offsetof( StickyBombUpdateModuleData, m_geometryBasedDamageFX ) },
+			{ "AttachToTargetBone",				INI::parseAsciiString,		nullptr, offsetof( StickyBombUpdateModuleData, m_attachToBone ) },
+			{ "OffsetZ",									INI::parseReal,						nullptr, offsetof( StickyBombUpdateModuleData, m_offsetZ ) },
+			{ "GeometryBasedDamageWeapon",INI::parseWeaponTemplate, nullptr, offsetof( StickyBombUpdateModuleData, m_geometryBasedDamageWeaponTemplate ) },
+			{ "GeometryBasedDamageFX",		INI::parseFXList,					nullptr, offsetof( StickyBombUpdateModuleData, m_geometryBasedDamageFX ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -82,7 +82,7 @@ public:
 
 	virtual UpdateSleepTime update();							///< called once per frame
 
-	void initStickyBomb( Object *object, const Object *bomber, const Coord3D *specificPos = NULL );
+	void initStickyBomb( Object *object, const Object *bomber, const Coord3D *specificPos = nullptr );
 	void detonate();
 	Bool isTimedBomb() const { return m_dieFrame > 0; }
 	UnsignedInt getDetonationFrame() const { return m_dieFrame; }

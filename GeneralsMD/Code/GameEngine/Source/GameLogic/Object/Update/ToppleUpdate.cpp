@@ -59,8 +59,8 @@ ToppleUpdateModuleData::ToppleUpdateModuleData()
 	const Real START_VELOCITY_PERCENT = 0.2f;
 	const Real START_ACCEL_PERCENT = 0.01f;
 	const Real VELOCITY_BOUNCE_PERCENT = 0.3f;			// multiply the velocity by this when you bounce
-	m_toppleFX = NULL;
-	m_bounceFX = NULL;
+	m_toppleFX = nullptr;
+	m_bounceFX = nullptr;
 	m_stumpName.clear();
 	m_killWhenToppled = true;
 	m_killWhenStartToppled = false;
@@ -80,18 +80,18 @@ void ToppleUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "ToppleFX",	INI::parseFXList, NULL, offsetof( ToppleUpdateModuleData, m_toppleFX ) },
-		{ "BounceFX",	INI::parseFXList, NULL, offsetof( ToppleUpdateModuleData, m_bounceFX ) },
-		{ "StumpName",	INI::parseAsciiString, NULL, offsetof( ToppleUpdateModuleData, m_stumpName ) },
-		{ "KillWhenStartToppling",	INI::parseBool, NULL, offsetof( ToppleUpdateModuleData, m_killWhenStartToppled ) },
-		{ "KillWhenFinishedToppling",	INI::parseBool, NULL, offsetof( ToppleUpdateModuleData, m_killWhenToppled ) },
-		{ "KillStumpWhenToppled",	INI::parseBool, NULL, offsetof( ToppleUpdateModuleData, m_killStumpWhenToppled ) },
-		{ "ToppleLeftOrRightOnly",	INI::parseBool, NULL, offsetof( ToppleUpdateModuleData, m_toppleLeftOrRightOnly ) },
-		{ "ReorientToppledRubble",	INI::parseBool, NULL, offsetof( ToppleUpdateModuleData, m_reorientToppledRubble ) },
-		{ "InitialVelocityPercent",	INI::parsePercentToReal, NULL, offsetof( ToppleUpdateModuleData, m_initialVelocityPercent ) },
-		{ "InitialAccelPercent",	INI::parsePercentToReal, NULL, offsetof( ToppleUpdateModuleData, m_initialAccelPercent ) },
-		{ "BounceVelocityPercent",	INI::parsePercentToReal, NULL, offsetof( ToppleUpdateModuleData, m_bounceVelocityPercent ) },
-		{ 0, 0, 0, 0 }
+		{ "ToppleFX",	INI::parseFXList, nullptr, offsetof( ToppleUpdateModuleData, m_toppleFX ) },
+		{ "BounceFX",	INI::parseFXList, nullptr, offsetof( ToppleUpdateModuleData, m_bounceFX ) },
+		{ "StumpName",	INI::parseAsciiString, nullptr, offsetof( ToppleUpdateModuleData, m_stumpName ) },
+		{ "KillWhenStartToppling",	INI::parseBool, nullptr, offsetof( ToppleUpdateModuleData, m_killWhenStartToppled ) },
+		{ "KillWhenFinishedToppling",	INI::parseBool, nullptr, offsetof( ToppleUpdateModuleData, m_killWhenToppled ) },
+		{ "KillStumpWhenToppled",	INI::parseBool, nullptr, offsetof( ToppleUpdateModuleData, m_killStumpWhenToppled ) },
+		{ "ToppleLeftOrRightOnly",	INI::parseBool, nullptr, offsetof( ToppleUpdateModuleData, m_toppleLeftOrRightOnly ) },
+		{ "ReorientToppledRubble",	INI::parseBool, nullptr, offsetof( ToppleUpdateModuleData, m_reorientToppledRubble ) },
+		{ "InitialVelocityPercent",	INI::parsePercentToReal, nullptr, offsetof( ToppleUpdateModuleData, m_initialVelocityPercent ) },
+		{ "InitialAccelPercent",	INI::parsePercentToReal, nullptr, offsetof( ToppleUpdateModuleData, m_initialAccelPercent ) },
+		{ "BounceVelocityPercent",	INI::parsePercentToReal, nullptr, offsetof( ToppleUpdateModuleData, m_bounceVelocityPercent ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -213,7 +213,7 @@ void ToppleUpdate::applyTopplingForce( const Coord3D* toppleDirection, Real topp
 	if (!d->m_stumpName.isEmpty())
 	{
 		const ThingTemplate* ttn = TheThingFactory->findTemplate(d->m_stumpName);
-		Object *stump = TheThingFactory->newObject( ttn, NULL );
+		Object *stump = TheThingFactory->newObject( ttn, nullptr );
 		if (stump)
 		{
 			stump->setPosition( getObject()->getPosition() );
@@ -364,7 +364,7 @@ void ToppleUpdate::onCollide( Object *other, const Coord3D *loc, const Coord3D *
 {
 	// Note that other == null means "collide with ground"
 	//
-	if (other == NULL)
+	if (other == nullptr)
 		return;
 
 	//@todo JohnA -- Should you get around to adding trees to avoidance pathfinding, then you'll

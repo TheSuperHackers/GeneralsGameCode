@@ -44,8 +44,8 @@ IMPLEMENT_DYNCREATE(SphereColorPropPageClass, CPropertyPage)
 SphereColorPropPageClass::SphereColorPropPageClass (SphereRenderObjClass *sphere)
 	:	m_RenderObj (sphere),
 		m_bValid (true),
-		m_ColorBar (NULL),
-		m_OpacityBar (NULL),
+		m_ColorBar (nullptr),
+		m_OpacityBar (nullptr),
 		m_EnableOpactiyVector (false),
 		m_InvertVector (false),
 		CPropertyPage(SphereColorPropPageClass::IDD)
@@ -110,7 +110,7 @@ SphereColorPropPageClass::Initialize (void)
 	m_VectorChannel.Reset ();
 	m_OrigVectorChannel.Reset ();
 
-	if (m_RenderObj != NULL) {
+	if (m_RenderObj != nullptr) {
 
 		m_ColorChannel			= m_RenderObj->Get_Color_Channel ();
 		m_OrigColorChannel	= m_RenderObj->Get_Color_Channel ();
@@ -247,7 +247,7 @@ SphereColorPropPageClass::OnDestroy (void)
 	int count = m_VectorBar->Get_Point_Count ();
 	for (int index = 0; index < count; index ++) {
 		AlphaVectorStruct *data = (AlphaVectorStruct *)m_VectorBar->Get_User_Data (index);
-		if (data != NULL) {
+		if (data != nullptr) {
 			delete data;
 			m_VectorBar->Set_User_Data (index, 0L);
 		}
@@ -354,7 +354,7 @@ SphereColorPropPageClass::OnNotify
 			if (color_bar_hdr->hdr.code == CBRN_DBLCLK_POINT) {
 
 				AlphaVectorStruct *data = (AlphaVectorStruct *)m_VectorBar->Get_User_Data (color_bar_hdr->key_index);
-				if (data != NULL) {
+				if (data != nullptr) {
 
 					//
 					//	Set-up the dialog so the user can edit this keyframe
@@ -385,7 +385,7 @@ SphereColorPropPageClass::OnNotify
 				AlphaVectorStruct *next_data	= (AlphaVectorStruct *)m_VectorBar->Get_User_Data (color_bar_hdr->key_index + 1);
 				AlphaVectorStruct *new_data	= new AlphaVectorStruct;
 
-				if (next_data == NULL) {
+				if (next_data == nullptr) {
 					(*new_data) = (*prev_data);
 				} else {
 
@@ -542,7 +542,7 @@ SphereColorPropPageClass::Update_Vectors (void)
 		m_VectorBar->Get_Point (index, &position, &red, &green, &blue);
 
 		AlphaVectorStruct *data = (AlphaVectorStruct *)m_VectorBar->Get_User_Data (index);
-		if (data != NULL) {
+		if (data != nullptr) {
 			m_VectorChannel.Add_Key (*data, position);
 		}
 	}

@@ -116,41 +116,34 @@ static NameKeyType checkboxLimitSuperweaponsID = NAMEKEY_INVALID;
 static NameKeyType comboBoxStartingCashID = NAMEKEY_INVALID;
 static NameKeyType windowMapID = NAMEKEY_INVALID;
 // Window Pointers ------------------------------------------------------------------------
-static GameWindow *parentLanGameOptions = NULL;
-static GameWindow *buttonBack = NULL;
-static GameWindow *buttonStart = NULL;
-static GameWindow *buttonSelectMap = NULL;
-static GameWindow *buttonEmote = NULL;
-static GameWindow *textEntryChat = NULL;
-static GameWindow *textEntryMapDisplay = NULL;
-static GameWindow *checkboxLimitSuperweapons = NULL;
-static GameWindow *comboBoxStartingCash = NULL;
-static GameWindow *windowMap = NULL;
+static GameWindow *parentLanGameOptions = nullptr;
+static GameWindow *buttonBack = nullptr;
+static GameWindow *buttonStart = nullptr;
+static GameWindow *buttonSelectMap = nullptr;
+static GameWindow *buttonEmote = nullptr;
+static GameWindow *textEntryChat = nullptr;
+static GameWindow *textEntryMapDisplay = nullptr;
+static GameWindow *checkboxLimitSuperweapons = nullptr;
+static GameWindow *comboBoxStartingCash = nullptr;
+static GameWindow *windowMap = nullptr;
 
-static GameWindow *comboBoxPlayer[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																									 NULL,NULL,NULL,NULL };
-static GameWindow *buttonAccept[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *comboBoxPlayer[MAX_SLOTS] = {0};
+static GameWindow *buttonAccept[MAX_SLOTS] = {0};
 
-static GameWindow *comboBoxColor[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *comboBoxColor[MAX_SLOTS] = {0};
 
-static GameWindow *comboBoxPlayerTemplate[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *comboBoxPlayerTemplate[MAX_SLOTS] = {0};
 
-static GameWindow *comboBoxTeam[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *comboBoxTeam[MAX_SLOTS] = {0};
 
-//static GameWindow *buttonStartPosition[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-//																								NULL,NULL,NULL,NULL };
+//static GameWindow *buttonStartPosition[MAX_SLOTS] = {0};
 //
-static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {0};
 
 //external declarations of the Gadgets the callbacks can use
-GameWindow *listboxChatWindowLanGame = NULL;
+GameWindow *listboxChatWindowLanGame = nullptr;
 NameKeyType listboxChatWindowLanGameID = NAMEKEY_INVALID;
-WindowLayout *mapSelectLayout = NULL;
+WindowLayout *mapSelectLayout = nullptr;
 
 static Int getNextSelectablePlayer(Int start)
 {
@@ -691,7 +684,7 @@ void InitLanGameGadgets( void )
 	windowMapID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:MapWindow" );
 
 	// Initialize the pointers to our gadgets
-	parentLanGameOptions = TheWindowManager->winGetWindowFromId( NULL, parentLanGameOptionsID );
+	parentLanGameOptions = TheWindowManager->winGetWindowFromId( nullptr, parentLanGameOptionsID );
 	DEBUG_ASSERTCRASH(parentLanGameOptions, ("Could not find the parentLanGameOptions"));
 	buttonEmote = TheWindowManager->winGetWindowFromId( parentLanGameOptions,buttonEmoteID  );
 	DEBUG_ASSERTCRASH(buttonEmote, ("Could not find the buttonEmote"));
@@ -797,30 +790,30 @@ void InitLanGameGadgets( void )
 
 void DeinitLanGameGadgets( void )
 {
-	parentLanGameOptions = NULL;
-	buttonEmote = NULL;
-	buttonSelectMap = NULL;
-	buttonStart = NULL;
-	buttonBack = NULL;
-	listboxChatWindowLanGame = NULL;
-	textEntryChat = NULL;
-	textEntryMapDisplay = NULL;
-  checkboxLimitSuperweapons = NULL;
-  comboBoxStartingCash = NULL;
+	parentLanGameOptions = nullptr;
+	buttonEmote = nullptr;
+	buttonSelectMap = nullptr;
+	buttonStart = nullptr;
+	buttonBack = nullptr;
+	listboxChatWindowLanGame = nullptr;
+	textEntryChat = nullptr;
+	textEntryMapDisplay = nullptr;
+  checkboxLimitSuperweapons = nullptr;
+  comboBoxStartingCash = nullptr;
 	if (windowMap)
 	{
-		windowMap->winSetUserData(NULL);
-		windowMap = NULL;
+		windowMap->winSetUserData(nullptr);
+		windowMap = nullptr;
 	}
 	for (Int i = 0; i < MAX_SLOTS; i++)
 	{
-		comboBoxPlayer[i] = NULL;
-		comboBoxColor[i] = NULL;
-		comboBoxPlayerTemplate[i] = NULL;
-		comboBoxTeam[i] = NULL;
-		buttonAccept[i] = NULL;
-//		buttonStartPosition[i] = NULL;
-		buttonMapStartPosition[i] = NULL;
+		comboBoxPlayer[i] = nullptr;
+		comboBoxColor[i] = nullptr;
+		comboBoxPlayerTemplate[i] = nullptr;
+		comboBoxTeam[i] = nullptr;
+		buttonAccept[i] = nullptr;
+//		buttonStartPosition[i] = nullptr;
+		buttonMapStartPosition[i] = nullptr;
 	}
 }
 
@@ -1017,21 +1010,21 @@ void setLANPlayerTooltip(LANPlayer* player)
 static void shutdownComplete( WindowLayout *layout )
 {
 	DeinitLanGameGadgets();
-	textEntryMapDisplay = NULL;
+	textEntryMapDisplay = nullptr;
 	LANisShuttingDown = false;
 
 	// hide the layout
 	layout->hide( TRUE );
 
 	// our shutdown is complete
-	TheShell->shutdownComplete( layout, (LANnextScreen != NULL) );
+	TheShell->shutdownComplete( layout, (LANnextScreen != nullptr) );
 
-	if (LANnextScreen != NULL)
+	if (LANnextScreen != nullptr)
 	{
 		TheShell->push(LANnextScreen);
 	}
 
-	LANnextScreen = NULL;
+	LANnextScreen = nullptr;
 
 }
 
@@ -1041,7 +1034,7 @@ static void shutdownComplete( WindowLayout *layout )
 void LanGameOptionsMenuShutdown( WindowLayout *layout, void *userData )
 {
 	TheMouse->setCursor(Mouse::ARROW);
-	TheMouse->setMouseText(UnicodeString::TheEmptyString,NULL,NULL);
+	TheMouse->setMouseText(UnicodeString::TheEmptyString,nullptr,nullptr);
 	EnableSlotListUpdates(FALSE);
 	LANisShuttingDown = true;
 
@@ -1141,7 +1134,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 		case GWM_DESTROY:
 			{
 				if (windowMap)
-					windowMap->winSetUserData(NULL);
+					windowMap->winSetUserData(nullptr);
 
 				break;
 			}
@@ -1236,7 +1229,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 						{
 							mapSelectLayout->destroyWindows();
 							deleteInstance(mapSelectLayout);
-							mapSelectLayout = NULL;
+							mapSelectLayout = nullptr;
 						}
 					TheLAN->RequestGameLeave();
 					//TheShell->pop();

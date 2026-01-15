@@ -59,14 +59,14 @@ FlammableUpdateModuleData::FlammableUpdateModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "BurnedDelay",						INI::parseDurationUnsignedInt,	NULL, offsetof( FlammableUpdateModuleData, m_burnedDelay ) },
-		{ "AflameDuration",					INI::parseDurationUnsignedInt,	NULL, offsetof( FlammableUpdateModuleData, m_aflameDuration ) },
-		{ "AflameDamageDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( FlammableUpdateModuleData, m_aflameDamageDelay ) },
-		{ "AflameDamageAmount",			INI::parseInt,									NULL, offsetof( FlammableUpdateModuleData, m_aflameDamageAmount ) },
-		{ "BurningSoundName",				INI::parseAsciiString,					NULL,	offsetof( FlammableUpdateModuleData, m_burningSoundName) },
-		{ "FlameDamageLimit",				INI::parseReal,									NULL,	offsetof( FlammableUpdateModuleData, m_flameDamageLimitData ) },
-		{ "FlameDamageExpiration",	INI::parseDurationUnsignedInt,	NULL,	offsetof( FlammableUpdateModuleData, m_flameDamageExpirationDelay ) },
-		{ 0, 0, 0, 0 }
+		{ "BurnedDelay",						INI::parseDurationUnsignedInt,	nullptr, offsetof( FlammableUpdateModuleData, m_burnedDelay ) },
+		{ "AflameDuration",					INI::parseDurationUnsignedInt,	nullptr, offsetof( FlammableUpdateModuleData, m_aflameDuration ) },
+		{ "AflameDamageDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof( FlammableUpdateModuleData, m_aflameDamageDelay ) },
+		{ "AflameDamageAmount",			INI::parseInt,									nullptr, offsetof( FlammableUpdateModuleData, m_aflameDamageAmount ) },
+		{ "BurningSoundName",				INI::parseAsciiString,					nullptr,	offsetof( FlammableUpdateModuleData, m_burningSoundName) },
+		{ "FlameDamageLimit",				INI::parseReal,									nullptr,	offsetof( FlammableUpdateModuleData, m_flameDamageLimitData ) },
+		{ "FlameDamageExpiration",	INI::parseDurationUnsignedInt,	nullptr,	offsetof( FlammableUpdateModuleData, m_flameDamageExpirationDelay ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -79,7 +79,7 @@ FlammableUpdate::FlammableUpdate( Thing *thing, const ModuleData* moduleData ) :
 	m_aflameEndFrame = 0;
 	m_burnedEndFrame = 0;
 	m_damageEndFrame = 0;
-	m_audioHandle = NULL;
+	m_audioHandle = 0;
 	m_flameDamageLimit = getFlammableUpdateModuleData()->m_flameDamageLimitData;
 	m_flameSource = INVALID_ID;
 	m_lastFlameDamageDealt = 0;
@@ -208,7 +208,7 @@ void FlammableUpdate::tryToIgnite()
 		// bleah. this sucks. (srj)
 		static const NameKeyType key_FireSpreadUpdate = NAMEKEY("FireSpreadUpdate");
 		FireSpreadUpdate* fu = (FireSpreadUpdate*)getObject()->findUpdateModule(key_FireSpreadUpdate);
-		if (fu != NULL)
+		if (fu != nullptr)
 		{
 			fu->startFireSpreading();
 		}
@@ -257,7 +257,7 @@ void FlammableUpdate::stopBurningSound()
 	if (m_audioHandle)
 	{
 		TheAudio->removeAudioEvent( m_audioHandle );
-		m_audioHandle = NULL;
+		m_audioHandle = 0;
 	}
 }
 

@@ -70,12 +70,12 @@
 //-----------------------------------------------------------------------------
 W3DShroud::W3DShroud(void)
 {
-	m_finalFogData=NULL;
-	m_currentFogData=NULL;
-	m_pSrcTexture=NULL;
-	m_pDstTexture=NULL;
-	m_srcTextureData=NULL;
-	m_srcTexturePitch=NULL;
+	m_finalFogData=nullptr;
+	m_currentFogData=nullptr;
+	m_pSrcTexture=nullptr;
+	m_pDstTexture=nullptr;
+	m_srcTextureData=nullptr;
+	m_srcTexturePitch=0;
 	m_dstTextureWidth=m_numMaxVisibleCellsX=0;
 	m_dstTextureHeight=m_numMaxVisibleCellsY=0;
 	m_boderShroudLevel = (W3DShroudLevel)TheGlobalData->m_shroudAlpha;	//assume border is black
@@ -109,8 +109,8 @@ W3DShroud::~W3DShroud(void)
 */
 void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSizeY)
 {
-	DEBUG_ASSERTCRASH( m_pSrcTexture == NULL, ("ReAcquire of existing shroud textures"));
-	DEBUG_ASSERTCRASH( pMap != NULL, ("Shroud init with NULL WorldHeightMap"));
+	DEBUG_ASSERTCRASH( m_pSrcTexture == nullptr, ("ReAcquire of existing shroud textures"));
+	DEBUG_ASSERTCRASH( pMap != nullptr, ("Shroud init with null WorldHeightMap"));
 
 	Int dstTextureWidth=0;
 	Int dstTextureHeight=0;
@@ -162,12 +162,12 @@ void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSi
 #endif
 		m_pSrcTexture = DX8Wrapper::_Create_DX8_Surface(srcWidth,srcHeight, WW3D_FORMAT_R5G6B5);
 
-	DEBUG_ASSERTCRASH( m_pSrcTexture != NULL, ("Failed to Allocate Shroud Src Surface"));
+	DEBUG_ASSERTCRASH( m_pSrcTexture != nullptr, ("Failed to Allocate Shroud Src Surface"));
 
 	D3DLOCKED_RECT rect;
 
 	//Get a pointer to source surface pixels.
-	HRESULT res = m_pSrcTexture->LockRect(&rect,NULL,D3DLOCK_NO_DIRTY_UPDATE);
+	HRESULT res = m_pSrcTexture->LockRect(&rect,nullptr,D3DLOCK_NO_DIRTY_UPDATE);
 	m_pSrcTexture->UnlockRect();
 
 	DEBUG_ASSERTCRASH( res == D3D_OK, ("Failed to lock shroud src surface"));
@@ -206,14 +206,14 @@ void W3DShroud::reset()
 	if (m_pSrcTexture)
 	{
 		m_pSrcTexture->Release();
-		m_pSrcTexture=NULL;
+		m_pSrcTexture=nullptr;
 	}
 
 	delete [] m_finalFogData;
-	m_finalFogData=NULL;
+	m_finalFogData=nullptr;
 
 	delete [] m_currentFogData;
-	m_currentFogData=NULL;
+	m_currentFogData=nullptr;
 
 	m_clearDstTexture = TRUE;	//always refill the destination texture after a reset
 }
@@ -232,7 +232,7 @@ Bool W3DShroud::ReAcquireResources(void)
 		if (!m_dstTextureWidth)
 			return TRUE;	//nothing to reaquire since shroud was never initialized with valid data
 
-		DEBUG_ASSERTCRASH( m_pDstTexture == NULL, ("ReAcquire of existing shroud texture"));
+		DEBUG_ASSERTCRASH( m_pDstTexture == nullptr, ("ReAcquire of existing shroud texture"));
 
 		// Create destination texture (stored in video memory).
 		// Since we control the video memory copy, we can do partial updates more efficiently. Or do shift blits.
@@ -243,7 +243,7 @@ Bool W3DShroud::ReAcquireResources(void)
 #endif
 			m_pDstTexture = MSGNEW("TextureClass") TextureClass(m_dstTextureWidth,m_dstTextureHeight,WW3D_FORMAT_R5G6B5,MIP_LEVELS_1, TextureClass::POOL_DEFAULT);
 
-		DEBUG_ASSERTCRASH( m_pDstTexture != NULL, ("Failed ReAcquire of shroud texture"));
+		DEBUG_ASSERTCRASH( m_pDstTexture != nullptr, ("Failed ReAcquire of shroud texture"));
 
 		if (!m_pDstTexture)
 		{	//could not create a valid texture
@@ -262,7 +262,7 @@ Bool W3DShroud::ReAcquireResources(void)
 //-----------------------------------------------------------------------------
 W3DShroudLevel W3DShroud::getShroudLevel(Int x, Int y)
 {
-	DEBUG_ASSERTCRASH( m_pSrcTexture != NULL, ("Reading empty shroud"));
+	DEBUG_ASSERTCRASH( m_pSrcTexture != nullptr, ("Reading empty shroud"));
 
 	if (x < m_numCellsX && y < m_numCellsY)
 	{
@@ -283,7 +283,7 @@ W3DShroudLevel W3DShroud::getShroudLevel(Int x, Int y)
 //-----------------------------------------------------------------------------
 void W3DShroud::setShroudLevel(Int x, Int y, W3DShroudLevel level, Bool textureOnly)
 {
-	DEBUG_ASSERTCRASH( m_pSrcTexture != NULL, ("Writing empty shroud.  Usually means that map failed to load."));
+	DEBUG_ASSERTCRASH( m_pSrcTexture != nullptr, ("Writing empty shroud.  Usually means that map failed to load."));
 
 	if (!m_pSrcTexture)
 		return;
@@ -512,7 +512,7 @@ void W3DShroud::setBorderShroudLevel(W3DShroudLevel level)
 
 //-----------------------------------------------------------------------------
 ///@todo: remove this
-TextureClass *DummyTexture=NULL;
+TextureClass *DummyTexture=nullptr;
 
 //#define LOAD_DUMMY_SHROUD
 
@@ -542,7 +542,7 @@ void W3DShroud::render(CameraClass *cam)
 	}
 #endif
 
-	DEBUG_ASSERTCRASH( m_pSrcTexture != NULL, ("Updating unallocated shroud texture"));
+	DEBUG_ASSERTCRASH( m_pSrcTexture != nullptr, ("Updating unallocated shroud texture"));
 
 #ifdef LOAD_DUMMY_SHROUD
 

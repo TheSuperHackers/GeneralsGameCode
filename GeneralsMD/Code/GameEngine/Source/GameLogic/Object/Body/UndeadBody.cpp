@@ -43,8 +43,8 @@ void UndeadBodyModuleData::buildFieldParse(MultiIniFieldParse& p)
   ActiveBodyModuleData::buildFieldParse(p);
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "SecondLifeMaxHealth",			INI::parseReal,	NULL,		offsetof( UndeadBodyModuleData, m_secondLifeMaxHealth ) },
-		{ 0, 0, 0, 0 }
+		{ "SecondLifeMaxHealth",			INI::parseReal,	nullptr,		offsetof( UndeadBodyModuleData, m_secondLifeMaxHealth ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -122,7 +122,7 @@ void UndeadBody::startSecondLife(DamageInfo *damageInfo)
 	for( ; *update; ++update )
 	{
 		SlowDeathBehaviorInterface* sdu = (*update)->getSlowDeathBehaviorInterface();
-		if (sdu != NULL  && sdu->isDieApplicable(damageInfo) )
+		if (sdu != nullptr  && sdu->isDieApplicable(damageInfo) )
 		{
 			total += sdu->getProbabilityModifier( damageInfo );
 		}
@@ -136,7 +136,7 @@ void UndeadBody::startSecondLife(DamageInfo *damageInfo)
 	for( update = getObject()->getBehaviorModules(); *update; ++update)
 	{
 		SlowDeathBehaviorInterface* sdu = (*update)->getSlowDeathBehaviorInterface();
-		if (sdu != NULL && sdu->isDieApplicable(damageInfo))
+		if (sdu != nullptr && sdu->isDieApplicable(damageInfo))
 		{
 			roll -= sdu->getProbabilityModifier( damageInfo );
 			if (roll <= 0)

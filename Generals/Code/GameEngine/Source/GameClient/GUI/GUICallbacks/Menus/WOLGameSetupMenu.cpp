@@ -85,7 +85,7 @@ void slotListDebugLog(const char *fmt, ...)
 	{
 		UnicodeString msg;
 		msg.translate(buf);
-		TheGameSpyInfo->addText(msg, GameSpyColor[GSCOLOR_DEFAULT], NULL);
+		TheGameSpyInfo->addText(msg, GameSpyColor[GSCOLOR_DEFAULT], nullptr);
 	}
 }
 #define SLOTLIST_DEBUG_LOG(x) slotListDebugLog x
@@ -132,7 +132,7 @@ void SendStatsToOtherPlayers(const GameInfo *game)
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 static Bool isShuttingDown = false;
 static Bool buttonPushed = false;
-static const char *nextScreen = NULL;
+static const char *nextScreen = nullptr;
 static Bool raiseMessageBoxes = false;
 static Bool launchGameNext = FALSE;
 
@@ -192,49 +192,40 @@ static NameKeyType windowMapID = NAMEKEY_INVALID;
 
 static NameKeyType windowMapSelectMapID = NAMEKEY_INVALID;
 // Window Pointers ------------------------------------------------------------------------
-static GameWindow *parentWOLGameSetup = NULL;
-static GameWindow *buttonBack = NULL;
-static GameWindow *buttonStart = NULL;
-static GameWindow *buttonSelectMap = NULL;
-static GameWindow *buttonEmote = NULL;
-static GameWindow *textEntryChat = NULL;
-static GameWindow *textEntryMapDisplay = NULL;
-static GameWindow *windowMap = NULL;
+static GameWindow *parentWOLGameSetup = nullptr;
+static GameWindow *buttonBack = nullptr;
+static GameWindow *buttonStart = nullptr;
+static GameWindow *buttonSelectMap = nullptr;
+static GameWindow *buttonEmote = nullptr;
+static GameWindow *textEntryChat = nullptr;
+static GameWindow *textEntryMapDisplay = nullptr;
+static GameWindow *windowMap = nullptr;
 
-static GameWindow *comboBoxPlayer[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																									 NULL,NULL,NULL,NULL };
-static GameWindow *staticTextPlayer[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																									 NULL,NULL,NULL,NULL };
-static GameWindow *buttonAccept[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *comboBoxPlayer[MAX_SLOTS] = {0};
+static GameWindow *staticTextPlayer[MAX_SLOTS] = {0};
+static GameWindow *buttonAccept[MAX_SLOTS] = {0};
 
-static GameWindow *comboBoxColor[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *comboBoxColor[MAX_SLOTS] = {0};
 
-static GameWindow *comboBoxPlayerTemplate[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *comboBoxPlayerTemplate[MAX_SLOTS] = {0};
 
-static GameWindow *comboBoxTeam[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *comboBoxTeam[MAX_SLOTS] = {0};
 
-//static GameWindow *buttonStartPosition[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-//																								NULL,NULL,NULL,NULL };
+//static GameWindow *buttonStartPosition[MAX_SLOTS] = {0};
 //
-static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {0};
 
-static GameWindow *genericPingWindow[MAX_SLOTS] = {NULL,NULL,NULL,NULL,
-																								NULL,NULL,NULL,NULL };
+static GameWindow *genericPingWindow[MAX_SLOTS] = {0};
 
-static const Image *pingImages[3] = { NULL, NULL, NULL };
+static const Image *pingImages[3] = { nullptr, nullptr, nullptr };
 
-WindowLayout *WOLMapSelectLayout = NULL;
+WindowLayout *WOLMapSelectLayout = nullptr;
 
 void PopBackToLobby( void )
 {
 	// delete TheNAT, its no good for us anymore.
 	delete TheNAT;
-	TheNAT = NULL;
+	TheNAT = nullptr;
 
 	if (TheGameSpyInfo) // this can be blown away by a disconnect on the map transfer screen
 	{
@@ -258,14 +249,14 @@ void WOLPositionStartSpots( void )
 {
 	GameWindow *win = windowMap;
 
-	if (WOLMapSelectLayout != NULL) {
-		win = TheWindowManager->winGetWindowFromId(NULL, windowMapSelectMapID);
+	if (WOLMapSelectLayout != nullptr) {
+		win = TheWindowManager->winGetWindowFromId(nullptr, windowMapSelectMapID);
 
 		// get the controls.
 		NameKeyType listboxMapID = TheNameKeyGenerator->nameToKey( "WOLMapSelectMenu.wnd:ListboxMap" );
-		GameWindow *listboxMap = TheWindowManager->winGetWindowFromId( NULL, listboxMapID );
+		GameWindow *listboxMap = TheWindowManager->winGetWindowFromId( nullptr, listboxMapID );
 
-		if (listboxMap != NULL) {
+		if (listboxMap != nullptr) {
 			Int selected;
 			UnicodeString map;
 
@@ -294,7 +285,7 @@ void WOLPositionStartSpots( void )
 		}
 
 	} else {
-		DEBUG_ASSERTCRASH(win != NULL, ("no map preview window"));
+		DEBUG_ASSERTCRASH(win != nullptr, ("no map preview window"));
 		positionStartSpots( TheGameSpyInfo->getCurrentStagingRoom(), buttonMapStartPosition, win);
 	}
 }
@@ -339,21 +330,21 @@ static void playerTooltip(GameWindow *window,
 	}
 	if (slotIdx < 0)
 	{
-		TheMouse->setCursorTooltip( UnicodeString::TheEmptyString, -1, NULL, 1.5f );
+		TheMouse->setCursorTooltip( UnicodeString::TheEmptyString, -1, nullptr, 1.5f );
 		return;
 	}
 
 	GameSpyStagingRoom *game = TheGameSpyInfo->getCurrentStagingRoom();
 	if (!game)
 	{
-		TheMouse->setCursorTooltip( UnicodeString::TheEmptyString, -1, NULL, 1.5f );
+		TheMouse->setCursorTooltip( UnicodeString::TheEmptyString, -1, nullptr, 1.5f );
 		return;
 	}
 
 	GameSpyGameSlot *slot = game->getGameSpySlot(slotIdx);
 	if (!slot || !slot->isHuman())
 	{
-		TheMouse->setCursorTooltip( UnicodeString::TheEmptyString, -1, NULL, 1.5f );
+		TheMouse->setCursorTooltip( UnicodeString::TheEmptyString, -1, nullptr, 1.5f );
 		return;
 	}
 
@@ -373,7 +364,7 @@ static void playerTooltip(GameWindow *window,
 	PlayerInfoMap::iterator pmIt = TheGameSpyInfo->getPlayerInfoMap()->find(aName);
 	if (pmIt == TheGameSpyInfo->getPlayerInfoMap()->end())
 	{
-		TheMouse->setCursorTooltip( uName, -1, NULL, 1.5f );
+		TheMouse->setCursorTooltip( uName, -1, nullptr, 1.5f );
 		return;
 	}
 	Int profileID = pmIt->second.m_profileID;
@@ -381,7 +372,7 @@ static void playerTooltip(GameWindow *window,
 	PSPlayerStats stats = TheGameSpyPSMessageQueue->findPlayerStatsByID(profileID);
 	if (stats.id == 0)
 	{
-		TheMouse->setCursorTooltip( uName, -1, NULL, 1.5f );
+		TheMouse->setCursorTooltip( uName, -1, nullptr, 1.5f );
 		return;
 	}
 
@@ -472,7 +463,7 @@ static void playerTooltip(GameWindow *window,
 
 	tooltip.concat(playerInfo);
 
-	TheMouse->setCursorTooltip( tooltip, -1, NULL, 1.5f ); // the text and width are the only params used.  the others are the default values.
+	TheMouse->setCursorTooltip( tooltip, -1, nullptr, 1.5f ); // the text and width are the only params used.  the others are the default values.
 }
 
 void gameAcceptTooltip(GameWindow *window, WinInstanceData *instData, UnsignedInt mouse)
@@ -489,7 +480,7 @@ void gameAcceptTooltip(GameWindow *window, WinInstanceData *instData, UnsignedIn
 
 	if ((x > winPosX && x < (winPosX + winWidth)) && (y > winPosY && y < (winPosY + winHeight)))
 	{
-		TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:GameAcceptance"), -1, NULL);
+		TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:GameAcceptance"), -1, nullptr);
 	}
 }
 
@@ -508,12 +499,12 @@ void pingTooltip(GameWindow *window, WinInstanceData *instData, UnsignedInt mous
 
 	if ((x > winPosX && x < (winPosX + winWidth)) && (y > winPosY && y < (winPosY + winHeight)))
 	{
-		TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:ConnectionSpeed"), -1, NULL);
+		TheMouse->setCursorTooltip(TheGameText->fetch("TOOLTIP:ConnectionSpeed"), -1, nullptr);
 	}
 }
 
 //external declarations of the Gadgets the callbacks can use
-GameWindow *listboxGameSetupChat = NULL;
+GameWindow *listboxGameSetupChat = nullptr;
 NameKeyType listboxGameSetupChatID = NAMEKEY_INVALID;
 
 static void handleColorSelection(int index)
@@ -875,7 +866,7 @@ static void StartPressed(void)
 		// we've started, there's no going back
 		// i.e. disable the back button.
 		buttonBack->winEnable(FALSE);
-		GameWindow *buttonBuddy = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("GameSpyGameOptionsMenu.wnd:ButtonCommunicator"));
+		GameWindow *buttonBuddy = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("GameSpyGameOptionsMenu.wnd:ButtonCommunicator"));
 		if (buttonBuddy)
 			buttonBuddy->winEnable(FALSE);
 		GameSpyCloseOverlay(GSOVERLAY_BUDDY);
@@ -905,7 +896,7 @@ void WOLDisplayGameOptions( void )
 	if (!parentWOLGameSetup || !theGame)
 		return;
 
-	const GameSlot *localSlot = NULL;
+	const GameSlot *localSlot = nullptr;
 	if (theGame->getLocalSlotNum() >= 0)
 		localSlot = theGame->getConstSlot(theGame->getLocalSlotNum());
 
@@ -1013,7 +1004,7 @@ void InitWOLGameGadgets( void )
 	NameKeyType staticTextTitleID = NAMEKEY("GameSpyGameOptionsMenu.wnd:StaticTextGameName");
 
 	// Initialize the pointers to our gadgets
-	parentWOLGameSetup = TheWindowManager->winGetWindowFromId( NULL, parentWOLGameSetupID );
+	parentWOLGameSetup = TheWindowManager->winGetWindowFromId( nullptr, parentWOLGameSetupID );
 	buttonEmote = TheWindowManager->winGetWindowFromId( parentWOLGameSetup,buttonEmoteID  );
 	buttonSelectMap = TheWindowManager->winGetWindowFromId( parentWOLGameSetup,buttonSelectMapID  );
 	buttonStart = TheWindowManager->winGetWindowFromId( parentWOLGameSetup,buttonStartID  );
@@ -1115,7 +1106,7 @@ void InitWOLGameGadgets( void )
 	if( buttonAccept[0] )
 		buttonAccept[0]->winEnable(TRUE);
 
-	if (buttonBack != NULL)
+	if (buttonBack != nullptr)
 	{
 		buttonBack->winEnable(TRUE);
 	}
@@ -1124,31 +1115,31 @@ void InitWOLGameGadgets( void )
 
 void DeinitWOLGameGadgets( void )
 {
-	parentWOLGameSetup = NULL;
-	buttonEmote = NULL;
-	buttonSelectMap = NULL;
-	buttonStart = NULL;
-	buttonBack = NULL;
-	listboxGameSetupChat = NULL;
-	textEntryChat = NULL;
-	textEntryMapDisplay = NULL;
+	parentWOLGameSetup = nullptr;
+	buttonEmote = nullptr;
+	buttonSelectMap = nullptr;
+	buttonStart = nullptr;
+	buttonBack = nullptr;
+	listboxGameSetupChat = nullptr;
+	textEntryChat = nullptr;
+	textEntryMapDisplay = nullptr;
 	if (windowMap)
 	{
-		windowMap->winSetUserData(NULL);
-		windowMap = NULL;
+		windowMap->winSetUserData(nullptr);
+		windowMap = nullptr;
 	}
-//	GameWindow *staticTextTitle = NULL;
+//	GameWindow *staticTextTitle = nullptr;
 	for (Int i = 0; i < MAX_SLOTS; i++)
 	{
-		comboBoxPlayer[i] = NULL;
-		staticTextPlayer[i] = NULL;
-		comboBoxColor[i] = NULL;
-		comboBoxPlayerTemplate[i] = NULL;
-		comboBoxTeam[i] = NULL;
-		buttonAccept[i] = NULL;
-//		buttonStartPosition[i] = NULL;
-		buttonMapStartPosition[i] = NULL;
-		genericPingWindow[i] = NULL;
+		comboBoxPlayer[i] = nullptr;
+		staticTextPlayer[i] = nullptr;
+		comboBoxColor[i] = nullptr;
+		comboBoxPlayerTemplate[i] = nullptr;
+		comboBoxTeam[i] = nullptr;
+		buttonAccept[i] = nullptr;
+//		buttonStartPosition[i] = nullptr;
+		buttonMapStartPosition[i] = nullptr;
+		genericPingWindow[i] = nullptr;
 	}
 }
 
@@ -1196,9 +1187,9 @@ void WOLGameSetupMenuInit( WindowLayout *layout, void *userData )
 	TheGameSpyInfo->setCurrentGroupRoom(0);
 
 	delete TheNAT;
-	TheNAT = NULL;
+	TheNAT = nullptr;
 
-	nextScreen = NULL;
+	nextScreen = nullptr;
 	buttonPushed = false;
 	isShuttingDown = false;
 	launchGameNext = FALSE;
@@ -1329,9 +1320,9 @@ static void shutdownComplete( WindowLayout *layout )
 	layout->hide( TRUE );
 
 	// our shutdown is complete
-	TheShell->shutdownComplete( layout, (nextScreen != NULL) );
+	TheShell->shutdownComplete( layout, (nextScreen != nullptr) );
 
-	if (nextScreen != NULL)
+	if (nextScreen != nullptr)
 	{
 		if (!TheGameSpyPeerMessageQueue || !TheGameSpyPeerMessageQueue->isConnected())
 		{
@@ -1351,7 +1342,7 @@ static void shutdownComplete( WindowLayout *layout )
 	}
 	*/
 
-	nextScreen = NULL;
+	nextScreen = nullptr;
 
 }
 
@@ -1366,12 +1357,12 @@ void WOLGameSetupMenuShutdown( WindowLayout *layout, void *userData )
 	{
 		WOLMapSelectLayout->destroyWindows();
 		deleteInstance(WOLMapSelectLayout);
-		WOLMapSelectLayout = NULL;
+		WOLMapSelectLayout = nullptr;
 	}
-	parentWOLGameSetup = NULL;
+	parentWOLGameSetup = nullptr;
 	EnableSlotListUpdates(FALSE);
 	DeinitWOLGameGadgets();
-	if (TheEstablishConnectionsMenu != NULL)
+	if (TheEstablishConnectionsMenu != nullptr)
 	{
 		TheEstablishConnectionsMenu->endMenu();
 	}
@@ -1433,7 +1424,7 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 
 		if (TheGameSpyGame && TheGameSpyGame->isGameInProgress())
 		{
-			if (TheGameSpyInfo->isDisconnectedAfterGameStart(NULL))
+			if (TheGameSpyInfo->isDisconnectedAfterGameStart(nullptr))
 			{
 				return; // already been disconnected, so don't worry.
 			}
@@ -1453,7 +1444,7 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 
 						// check for scorescreen
 						NameKeyType listboxChatWindowScoreScreenID = NAMEKEY("ScoreScreen.wnd:ListboxChatWindowScoreScreen");
-						GameWindow *listboxChatWindowScoreScreen = TheWindowManager->winGetWindowFromId( NULL, listboxChatWindowScoreScreenID );
+						GameWindow *listboxChatWindowScoreScreen = TheWindowManager->winGetWindowFromId( nullptr, listboxChatWindowScoreScreenID );
 						if (listboxChatWindowScoreScreen)
 						{
 							GadgetListBoxAddEntryText(listboxChatWindowScoreScreen, TheGameText->fetch(disconMunkee),
@@ -1493,7 +1484,7 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 			return;
 		}
 
-		if (TheNAT != NULL) {
+		if (TheNAT != nullptr) {
 			NATStateType NATState = TheNAT->update();
 			if (NATState == NATSTATE_DONE)
 			{
@@ -1511,7 +1502,7 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 
 				// delete TheNAT, its no good for us anymore.
 				delete TheNAT;
-				TheNAT = NULL;
+				TheNAT = nullptr;
 
 				TheGameSpyInfo->getCurrentStagingRoom()->reset();
 				TheGameSpyInfo->leaveStagingRoom();
@@ -1550,7 +1541,7 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 			case PeerResponse::PEERRESPONSE_FAILEDTOHOST:
 				{
 					// oops - we've not heard from the qr server.  bail.
-					TheGameSpyInfo->addText(TheGameText->fetch("GUI:GSFailedToHost"), GameSpyColor[GSCOLOR_DEFAULT], NULL);
+					TheGameSpyInfo->addText(TheGameText->fetch("GUI:GSFailedToHost"), GameSpyColor[GSCOLOR_DEFAULT], nullptr);
 				}
 				break;
 			case PeerResponse::PEERRESPONSE_GAMESTART:
@@ -1568,7 +1559,7 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 					// we've started, there's no going back
 					// i.e. disable the back button.
 					buttonBack->winEnable(FALSE);
-					GameWindow *buttonBuddy = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("GameSpyGameOptionsMenu.wnd:ButtonCommunicator"));
+					GameWindow *buttonBuddy = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("GameSpyGameOptionsMenu.wnd:ButtonCommunicator"));
 					if (buttonBuddy)
 						buttonBuddy->winEnable(FALSE);
 					GameSpyCloseOverlay(GSOVERLAY_BUDDY);
@@ -1650,7 +1641,7 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 							// now get the number of starting spots on the map.
 							Int numStartingSpots = MAX_SLOTS;
 							const MapMetaData *md = TheMapCache->findMap(game->getMap());
-							if (md != NULL)
+							if (md != nullptr)
 							{
 								numStartingSpots = md->m_numPlayers;
 							}
@@ -1709,7 +1700,7 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 						break;
 					}
 
-					if (TheNAT == NULL) // don't update slot list if we're trying to start a game
+					if (TheNAT == nullptr) // don't update slot list if we're trying to start a game
 					{
 
 						GameInfo *game = TheGameSpyInfo->getCurrentStagingRoom();
@@ -1965,7 +1956,7 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 					}
 					else if (stricmp(resp.command.c_str(), "NAT") == 0)
 					{
-						if (TheNAT != NULL) {
+						if (TheNAT != nullptr) {
 							TheNAT->processGlobalMessage(-1, resp.commandOptions.c_str());
 						}
 					}
@@ -2009,7 +2000,7 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 						Int slotNum = game->getSlotNum(resp.nick.c_str());
 						if ((slotNum >= 0) && (slotNum < MAX_SLOTS) && (stricmp(resp.command.c_str(), "NAT") == 0)) {
 							// this is a command for NAT negotiations, pass if off to TheNAT
-							if (TheNAT != NULL) {
+							if (TheNAT != nullptr) {
 								TheNAT->processGlobalMessage(slotNum, resp.commandOptions.c_str());
 							}
 						}
@@ -2318,19 +2309,19 @@ Bool handleGameSetupSlashCommands(UnicodeString uText)
 	{
 		UnicodeString s;
 		s.format(L"Hosting qr2:%d thread:%d", getQR2HostingStatus(), isThreadHosting);
-		TheGameSpyInfo->addText(s, GameSpyColor[GSCOLOR_DEFAULT], NULL);
+		TheGameSpyInfo->addText(s, GameSpyColor[GSCOLOR_DEFAULT], nullptr);
 		return TRUE; // was a slash command
 	}
 	else if (token == "me" && uText.getLength()>4)
 	{
-		TheGameSpyInfo->sendChat(UnicodeString(uText.str()+4), TRUE, NULL);
+		TheGameSpyInfo->sendChat(UnicodeString(uText.str()+4), TRUE, nullptr);
 		return TRUE; // was a slash command
 	}
 #if defined(RTS_DEBUG)
 	else if (token == "slots")
 	{
 		g_debugSlots = !g_debugSlots;
-		TheGameSpyInfo->addText(L"Toggled SlotList debug", GameSpyColor[GSCOLOR_DEFAULT], NULL);
+		TheGameSpyInfo->addText(L"Toggled SlotList debug", GameSpyColor[GSCOLOR_DEFAULT], nullptr);
 		return TRUE; // was a slash command
 	}
 	else if (token == "discon")
@@ -2399,7 +2390,7 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 		case GWM_DESTROY:
 			{
 				if (windowMap)
-					windowMap->winSetUserData(NULL);
+					windowMap->winSetUserData(nullptr);
 
 				break;
 			}
@@ -2498,11 +2489,11 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 					{
 						WOLMapSelectLayout->destroyWindows();
 						deleteInstance(WOLMapSelectLayout);
-						WOLMapSelectLayout = NULL;
+						WOLMapSelectLayout = nullptr;
 					}
 
 					TheGameSpyInfo->getCurrentStagingRoom()->reset();
-					//peerLeaveRoom(TheGameSpyChat->getPeer(), StagingRoom, NULL);
+					//peerLeaveRoom(TheGameSpyChat->getPeer(), StagingRoom, nullptr);
 					TheGameSpyInfo->leaveStagingRoom();
 					buttonPushed = true;
 					nextScreen = "Menus/WOLCustomLobby.wnd";
@@ -2524,7 +2515,7 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 					txtInput.trim();
 					// Echo the user's input to the chat window
 					if (!txtInput.isEmpty())
-						TheGameSpyInfo->sendChat(txtInput, FALSE, NULL); // 'emote' button is now carriage-return
+						TheGameSpyInfo->sendChat(txtInput, FALSE, nullptr); // 'emote' button is now carriage-return
 				}
 				else if ( controlID == buttonSelectMapID )
 				{
@@ -2666,7 +2657,7 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 					{
 						if (!handleGameSetupSlashCommands(txtInput))
 						{
-							TheGameSpyInfo->sendChat(txtInput, false, NULL);
+							TheGameSpyInfo->sendChat(txtInput, false, nullptr);
 						}
 					}
 

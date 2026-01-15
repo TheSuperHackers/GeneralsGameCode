@@ -44,8 +44,8 @@
 //
 /////////////////////////////////////////////////////////
 DefinitionFactoryClass::DefinitionFactoryClass (void)
-	:	m_NextFactory (0),
-		m_PrevFactory (0)
+	:	m_NextFactory (nullptr),
+		m_PrevFactory (nullptr)
 {
 	DefinitionFactoryMgrClass::Register_Factory (this);
 	return ;

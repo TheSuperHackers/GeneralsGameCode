@@ -31,7 +31,7 @@ class TerrainModal : public CDialog
 {
 // Construction
 public:
-	TerrainModal(AsciiString path, WorldHeightMapEdit *pMap, CWnd* pParent = NULL);   // standard constructor
+	TerrainModal(AsciiString path, WorldHeightMapEdit *pMap, CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(TerrainModal)

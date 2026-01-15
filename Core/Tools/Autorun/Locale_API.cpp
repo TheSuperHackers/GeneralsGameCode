@@ -94,7 +94,7 @@ const wchar_t *localeStringsMissing[ MISSING_STRING_HINTS_MAX ] =
 /* GLOBAL VARIABLES                                                         */
 /****************************************************************************/
 char		LanguageFile[ _MAX_PATH ];
-void *		LocaleFile		= NULL;
+void *		LocaleFile		= nullptr;
 int			CodePage		= GetACP();
 int			LanguageID		= 0;
 int			PrimaryLanguage = LANG_NEUTRAL;
@@ -144,7 +144,7 @@ int Locale_Init	( int language, char *file )
 	//-------------------------------------------------------------------------
 	// Check for a file passed in.
 	//-------------------------------------------------------------------------
-	if( file == NULL || file[0] == '/0' ) {
+	if( file == nullptr || file[0] == '/0' ) {
 		return 0;
 	}
 	strcpy( LanguageFile, file );
@@ -176,7 +176,7 @@ int Locale_Init	( int language, char *file )
 		HRSRC 	hRsrc;
 		HGLOBAL hGlobal;
 
-		HMODULE module = GetModuleHandle( NULL );
+		HMODULE module = GetModuleHandle( nullptr );
 
 		//-------------------------------------------------------------------------
 		// Find the string file in this program's resources.
@@ -225,7 +225,7 @@ int Locale_Init	( int language, char *file )
 		}
 
 		hRsrc = FindResourceEx( module, RT_RCDATA, "STRINGS", MAKELANGID( PrimaryLanguage, SubLanguage ));
-		if ( hRsrc == NULL ) {
+		if ( hRsrc == nullptr ) {
 			hRsrc = FindResourceEx( module, RT_RCDATA, "STRINGS", MAKELANGID( LANG_ENGLISH, SUBLANG_ENGLISH_US ));
 		}
 		if ( hRsrc ) {
@@ -247,11 +247,11 @@ int Locale_Init	( int language, char *file )
 			FreeResource( hGlobal );
 		}
 
-		if( LocaleFile == NULL ) {
+		if( LocaleFile == nullptr ) {
 			LocaleFile = Load_File( LanguageFile, &filesize );
 		}
 
-		if( LocaleFile != NULL ) {
+		if( LocaleFile != nullptr ) {
 			result = 1;
 		}
 
@@ -291,14 +291,14 @@ int Locale_Init	( int language, char *file )
 void Locale_Restore ( void )
 {
 	delete TheGameText;
-	TheGameText = NULL;
+	TheGameText = nullptr;
 
 	#if( USE_MULTI_FILE_FORMAT )
 		LOCALE_freetable();
 		LOCALE_restore();
 	#else
 		free( LocaleFile );
-		LocaleFile = NULL;
+		LocaleFile = nullptr;
 	#endif
 }
 
@@ -321,9 +321,9 @@ const char* Locale_GetString( int StringID, char *String )
 	#endif
 
 	Remove_Quotes_Around_String( wide_buffer );
-	WideCharToMultiByte( CodePage, 0, wide_buffer, _MAX_PATH, buffer, _MAX_PATH, NULL, NULL );
+	WideCharToMultiByte( CodePage, 0, wide_buffer, _MAX_PATH, buffer, _MAX_PATH, nullptr, nullptr );
 
-	if( String != NULL ) {
+	if( String != nullptr ) {
 		strncpy( String, buffer, _MAX_PATH );
 	}
 
@@ -356,12 +356,12 @@ const wchar_t* Locale_GetString( int StringID, wchar_t *String )
 		wcscpy( wide_buffer, (wchar_t *)LOCALE_getstring( StringID ));
 	#else
 
-		wchar_t *localeStr = NULL;
+		wchar_t *localeStr = nullptr;
 
-		if (TheGameText != NULL)
+		if (TheGameText != nullptr)
 			localeStr = (wchar_t *)TheGameText->fetch( s_stringLabels[StringID] );
 
-		if (localeStr == NULL)
+		if (localeStr == nullptr)
 		{
 			return localeStringsMissing[ min( MISSING_STRING_HINTS_MAX - 1, StringID ) ];
 		}
@@ -373,7 +373,7 @@ const wchar_t* Locale_GetString( int StringID, wchar_t *String )
 
 	Remove_Quotes_Around_String( wide_buffer );
 
-	if( String != NULL ) {
+	if( String != nullptr ) {
 		wcsncpy( String, wide_buffer, _MAX_PATH );
 	}
 
@@ -392,7 +392,7 @@ wchar_t *Remove_Quotes_Around_String ( wchar_t *old_string )
 	int		length;
 
 	//----------------------------------------------------------------------
-	// If string is not NULL...
+	// If string is not null...
 	//----------------------------------------------------------------------
 	if ( *letter == '"' ) {
 

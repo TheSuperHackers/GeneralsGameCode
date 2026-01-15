@@ -160,7 +160,7 @@ public:
 	virtual Bool isActive() const {return m_status != STATUS_IDLE;}
 	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return this; }
 	virtual CommandOption getCommandOption() const { return (CommandOption)0; }
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const;
+	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const;
 
 	virtual void onObjectCreated();
 	virtual UpdateSleepTime update();

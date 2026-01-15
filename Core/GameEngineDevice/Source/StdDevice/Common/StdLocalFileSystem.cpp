@@ -131,13 +131,13 @@ File * StdLocalFileSystem::openFile(const Char *filename, Int access, size_t buf
 
 	// sanity check
 	if (strlen(filename) <= 0) {
-		return NULL;
+		return nullptr;
 	}
 
 	std::filesystem::path path = fixFilenameFromWindowsPath(filename, access);
 
 	if (path.empty()) {
-		return NULL;
+		return nullptr;
 	}
 
 	if (access & File::WRITE) {
@@ -148,7 +148,7 @@ File * StdLocalFileSystem::openFile(const Char *filename, Int access, size_t buf
 		if (!std::filesystem::exists(dir, ec) || ec) {
 			if(!std::filesystem::create_directories(dir, ec) || ec) {
 				DEBUG_LOG(("StdLocalFileSystem::openFile - Error creating directory %s", dir.string().c_str()));
-				return NULL;
+				return nullptr;
 			}
 		}
 	}
@@ -157,7 +157,7 @@ File * StdLocalFileSystem::openFile(const Char *filename, Int access, size_t buf
 
 	if (file->open(path.string().c_str(), access, bufferSize) == FALSE) {
 		deleteInstance(file);
-		file = NULL;
+		file = nullptr;
 	} else {
 		file->deleteOnClose();
 	}

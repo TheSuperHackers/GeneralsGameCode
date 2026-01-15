@@ -81,7 +81,7 @@ const char* const DamageTypeFlags::s_bitNameList[] =
 	"KILL_GARRISONED",
 	"STATUS",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(DamageTypeFlags::s_bitNameList) == DamageTypeFlags::NumBits + 1, "Incorrect array size");
 

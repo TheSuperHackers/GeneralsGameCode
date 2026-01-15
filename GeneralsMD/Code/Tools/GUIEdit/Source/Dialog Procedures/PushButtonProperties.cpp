@@ -206,8 +206,8 @@ HWND InitPushButtonPropertiesDialog( GameWindow *window )
 												 (LPCTSTR)PUSH_BUTTON_PROPERTIES_DIALOG,
 												 TheEditor->getWindowHandle(),
 												 (DLGPROC)pushButtonPropertiesCallback );
-	if( dialog == NULL )
-		return NULL;
+	if( dialog == nullptr )
+		return nullptr;
 
 	// do the common initialization
 	CommonDialogInitialize( window, dialog );

@@ -33,7 +33,6 @@
 #include <string.h>
 // TheSuperHackers @build feliwir 07/04/2025 Adds utility macros for cross-platform compatibility
 #include <Utility/compat.h>
-#include <Utility/CppMacros.h>
 #include <Utility/stdint_adapter.h>
 
 /*
@@ -86,11 +85,6 @@
 #ifndef PI
 #define PI     3.14159265359f
 #define TWO_PI 6.28318530718f
-#endif
-
-#ifndef NULL
-//#define NULL ((void *)0)
-#define NULL 0						// C++ doesn't like casting void *'s into other pointers
 #endif
 
 // MSVC math.h defines overloaded functions with this name...

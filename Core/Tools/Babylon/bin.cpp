@@ -29,7 +29,7 @@ Bin::Bin ( int size )
 {
 	assert ( size > 0 );
 	num_buckets = size;
-	sh_item = NULL;
+	sh_item = nullptr;
 
 	bucket = new List[size];
 
@@ -48,7 +48,7 @@ Bin::~Bin ( )
 void Bin::Clear ( void )
 {
 	int count = num_buckets;
-	sh_item = NULL;
+	sh_item = nullptr;
 	while ( count-- )
 	{
 		List *head = &bucket[count];
@@ -71,7 +71,7 @@ void*				Bin::Get					( OLECHAR *text1, OLECHAR *text2 )
 		return item->Item();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void*				Bin::GetNext			( void )
@@ -83,7 +83,7 @@ void*				Bin::GetNext			( void )
 		return item->Item();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void				Bin::Add					( void *data, OLECHAR *text1, OLECHAR *text2 )
@@ -92,7 +92,7 @@ void				Bin::Add					( void *data, OLECHAR *text1, OLECHAR *text2 )
 	List		*list;
 	int			hash;
 
-	sh_item = NULL;
+	sh_item = nullptr;
 
 	hash = calc_hash ( text1 );
 	item = new BinItem ( data, hash, text1, text2 );
@@ -149,7 +149,7 @@ BinItem*		Bin::GetNextBinItem ( void )
 
 BinItem*		Bin::GetBinItem	( void *item )
 {
-	BinItem *bitem = NULL;
+	BinItem *bitem = nullptr;
 	int i;
 
 
@@ -191,7 +191,7 @@ void				Bin::Remove			( OLECHAR *text1, OLECHAR *text2 )
 
 void				Bin::Remove			( BinItem *item )
 {
-	sh_item = NULL;
+	sh_item = nullptr;
 	item->Remove ();
 	delete item ;
 
@@ -303,7 +303,7 @@ void*				BinID::Get					( int id)
 		return item->Item();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void				BinID::Add					( void *data, int id )
@@ -342,7 +342,7 @@ BinIDItem*		BinID::GetBinIDItem		( int id )
 
 BinIDItem*		BinID::GetBinIDItem	( void *item )
 {
-	BinIDItem *bitem = NULL;
+	BinIDItem *bitem = nullptr;
 	int i;
 
 

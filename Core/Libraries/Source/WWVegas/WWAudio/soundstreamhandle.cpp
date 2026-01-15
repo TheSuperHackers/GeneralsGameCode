@@ -72,7 +72,7 @@ SoundStreamHandleClass::Initialize (SoundBufferClass *buffer)
 {
 	SoundHandleClass::Initialize (buffer);
 
-	if (Buffer != NULL) {
+	if (Buffer != nullptr) {
 
 		//
 		//	Create a stream
@@ -164,7 +164,7 @@ SoundStreamHandleClass::Set_Sample_Pan (S32 pan)
 		// TheSuperHackers @fix xezon 05/04/2025 Upgrades miles call from legacy AIL_set_stream_pan.
 		// TheSuperHackers @todo Perhaps use float natively.
 		float fVolume = 0.0F;
-		::AIL_stream_volume_pan (StreamHandle, &fVolume, NULL);
+		::AIL_stream_volume_pan (StreamHandle, &fVolume, nullptr);
 		float fPan = pan / 127.0F;
 		::AIL_set_stream_volume_pan (StreamHandle, fVolume, fPan);
 	}
@@ -185,7 +185,7 @@ SoundStreamHandleClass::Get_Sample_Pan (void)
 	if (StreamHandle != (HSTREAM)INVALID_MILES_HANDLE) {
 		// TheSuperHackers @fix xezon 05/04/2025 Upgrades miles call from legacy AIL_stream_pan.
 		float fPan = 0.5F;
-		::AIL_stream_volume_pan (StreamHandle, NULL, &fPan);
+		::AIL_stream_volume_pan (StreamHandle, nullptr, &fPan);
 		retval = fPan * 127;
 	}
 
@@ -205,7 +205,7 @@ SoundStreamHandleClass::Set_Sample_Volume (S32 volume)
 		// TheSuperHackers @fix xezon 05/04/2025 Upgrades miles call from legacy AIL_set_stream_volume.
 		// TheSuperHackers @todo Perhaps use float natively.
 		float fPan = 0.5F;
-		::AIL_stream_volume_pan (StreamHandle, NULL, &fPan);
+		::AIL_stream_volume_pan (StreamHandle, nullptr, &fPan);
 		float fVolume = volume / 127.0F;
 		::AIL_set_stream_volume_pan (StreamHandle, fVolume, fPan);
 	}
@@ -226,7 +226,7 @@ SoundStreamHandleClass::Get_Sample_Volume (void)
 	if (StreamHandle != (HSTREAM)INVALID_MILES_HANDLE) {
 		// TheSuperHackers @fix xezon 05/04/2025 Upgrades miles call from legacy AIL_stream_volume.
 		float fVolume = 0.0F;
-		::AIL_stream_volume_pan (StreamHandle, &fVolume, NULL);
+		::AIL_stream_volume_pan (StreamHandle, &fVolume, nullptr);
 		retval = fVolume * 127;
 	}
 
@@ -323,7 +323,7 @@ SoundStreamHandleClass::Set_Sample_User_Data (S32 i, void *val)
 void *
 SoundStreamHandleClass::Get_Sample_User_Data (S32 i)
 {
-	void *retval = NULL;
+	void *retval = nullptr;
 
 	if (SampleHandle != (HSAMPLE)INVALID_MILES_HANDLE) {
 		retval = ::AIL_sample_user_data (SampleHandle, i);

@@ -472,7 +472,7 @@ char *TCP::Gets(char *string,int n,int whichFD)
     whichFD=GetFD();
 
   if (whichFD <= 0)
-    return(NULL);
+    return(nullptr);
 
   memset(string,0,n);
 
@@ -485,7 +485,7 @@ char *TCP::Gets(char *string,int n,int whichFD)
     if (! FD_ISSET(whichFD,&fdSet))
     {
       DBGMSG("Gets timeout: " << inputDelay);
-      return(NULL);
+      return(nullptr);
     }
 
     retval=Read((unsigned char *)&c,1,whichFD);
@@ -499,7 +499,7 @@ char *TCP::Gets(char *string,int n,int whichFD)
     else if ((retval==0)&&(i==0))
     {
       DBGMSG("Remote endpoint closed (1)");
-      return(NULL);
+      return(nullptr);
     }
     else if (retval==0)
       return(string);
@@ -551,8 +551,8 @@ sint32 TCP::TimedRead(uint8 *msg,uint32 len,int seconds,sint32 whichFD)
   sint32    bytes_read=0;
   sint32    retval;
 
-  time_t stop_time=time(NULL)+seconds;
-  while ((time(NULL)<=stop_time)&&((uint32)bytes_read<len))
+  time_t stop_time=time(nullptr)+seconds;
+  while ((time(nullptr)<=stop_time)&&((uint32)bytes_read<len))
   {
     Wait(1,0,set,whichFD);
     //DBGMSG("Calling read");
@@ -792,7 +792,7 @@ int TCP::Wait(sint32 sec,sint32 usec,fd_set &givenSet,fd_set &returnSet)
   while( ! done)
   {
     if (noTimeout)
-      retval=select(givenMax+1,&returnSet,0,0,NULL);
+      retval=select(givenMax+1,&returnSet,0,0,nullptr);
     else
     {
       timeout.GetTimevalMT(tv);
@@ -842,7 +842,7 @@ void TCP::WaitWrite(sint32 whichFD)
   done=0;
   while( ! done)
   {
-    retval=select(maxFD+1,0,&outputSet,0,NULL);
+    retval=select(maxFD+1,0,&outputSet,0,nullptr);
 
     if (retval>=0)
       done=1;
@@ -892,7 +892,7 @@ bit8 TCP::Bind(char *Host,uint16 port,bit8 reuseAddr)
   strcpy(hostName, Host);
 
   hostStruct = gethostbyname(Host);
-  if (hostStruct == NULL)
+  if (hostStruct == nullptr)
     return (0);
   hostNode = (struct in_addr *) hostStruct->h_addr;
   return ( Bind(ntohl(hostNode->s_addr),port,reuseAddr) );
@@ -978,7 +978,7 @@ bit8 TCP::Connect(char *Host,uint16 port)
   strcpy(hostName, Host);
 
   hostStruct = gethostbyname(Host);
-  if (hostStruct == NULL)
+  if (hostStruct == nullptr)
   {ERRMSG("Can't resolve host");return (0);}
   hostNode = (struct in_addr *) hostStruct->h_addr;
   return ( Connect(ntohl(hostNode->s_addr),port) );
@@ -1064,7 +1064,7 @@ bit8 TCP::ConnectAsync(char *Host,uint16 port)
   strcpy(hostName, Host);
 
   hostStruct = gethostbyname(Host);
-  if (hostStruct == NULL)
+  if (hostStruct == nullptr)
     return (0);
   hostNode = (struct in_addr *) hostStruct->h_addr;
   return ( ConnectAsync(ntohl(hostNode->s_addr),port) );

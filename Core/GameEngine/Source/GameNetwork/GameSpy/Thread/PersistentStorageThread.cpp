@@ -416,7 +416,7 @@ GameSpyPSMessageQueueInterface* GameSpyPSMessageQueueInterface::createNewMessage
 	return NEW GameSpyPSMessageQueue;
 }
 
-GameSpyPSMessageQueueInterface *TheGameSpyPSMessageQueue = NULL;
+GameSpyPSMessageQueueInterface *TheGameSpyPSMessageQueue = nullptr;
 #define MESSAGE_QUEUE ((GameSpyPSMessageQueue *)TheGameSpyPSMessageQueue)
 
 //-------------------------------------------------------------------------
@@ -454,7 +454,7 @@ private:
 
 GameSpyPSMessageQueue::GameSpyPSMessageQueue()
 {
-	m_thread = NULL;
+	m_thread = nullptr;
 	m_localPlayerID = 0;
 }
 
@@ -482,7 +482,7 @@ void GameSpyPSMessageQueue::startThread( void )
 void GameSpyPSMessageQueue::endThread( void )
 {
 	delete m_thread;
-	m_thread = NULL;
+	m_thread = nullptr;
 }
 
 Bool GameSpyPSMessageQueue::isThreadRunning( void )
@@ -616,12 +616,12 @@ Bool PSThreadClass::tryLogin( Int id, std::string nick, std::string password, st
 	in the password for the profile we are authenticating.
 	Again, if this is done in a client/server setting, with the Persistent Storage
 	access being done on the server, and the P&M SDK is used on the client, the
-	server will need to send the challenge (GetChallenge(NULL)) to the client, the
+	server will need to send the challenge (GetChallenge(nullptr)) to the client, the
 	client will create the validation token using GenerateAuth, and send it
 	back to the server for use in PreAuthenticatePlayerPM
 	***********/
 	char *munkeeHack = strdup(password.c_str()); // GenerateAuth takes a char*, not a const char* :P
-	GenerateAuth(GetChallenge(NULL), munkeeHack, validate);
+	GenerateAuth(GetChallenge(nullptr), munkeeHack, validate);
 	free (munkeeHack);
 
 	/************
@@ -863,9 +863,9 @@ void PSThreadClass::Thread_Function()
 #ifdef DEBUG_LOGGING
 						Int res =
 #endif // DEBUG_LOGGING
-							SendGameSnapShot(NULL, req.results.c_str(), SNAP_FINAL);
+							SendGameSnapShot(nullptr, req.results.c_str(), SNAP_FINAL);
 						DEBUG_LOG(("Just sent game results - res was %d", res));
-						FreeGame(NULL);
+						FreeGame(nullptr);
 					}
 				}
 				break;
@@ -976,7 +976,7 @@ void PSThreadClass::Thread_Function()
 					}
 					if (!req.player.id)
 					{
-						DEBUG_LOG(("Bailing because ID is NULL!"));
+						DEBUG_LOG(("Bailing because ID is null!"));
 						return;
 					}
 					req.player.desyncs[2] += addedInDesyncs2;
@@ -1030,7 +1030,7 @@ void PSThreadClass::Thread_Function()
 						char validationToken[33] = "";
 						char *munkeeHack = strdup(req.cdkey.c_str()); // GenerateAuth takes a char*, not a const char* :P
 
-						GenerateAuth(GetChallenge(NULL), munkeeHack, validationToken); // validation token
+						GenerateAuth(GetChallenge(nullptr), munkeeHack, validationToken); // validation token
 						GenerateAuth("", munkeeHack, cdkeyHash); // cdkey hash
 
 						free (munkeeHack);

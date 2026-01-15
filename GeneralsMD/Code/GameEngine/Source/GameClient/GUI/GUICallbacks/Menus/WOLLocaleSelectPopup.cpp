@@ -56,9 +56,9 @@ static NameKeyType buttonOkID = NAMEKEY_INVALID;
 static NameKeyType listboxLocaleID = NAMEKEY_INVALID;
 
 // Window Pointers ------------------------------------------------------------------------
-static GameWindow *parentLocaleSelect = NULL;
-static GameWindow *buttonOk = NULL;
-static GameWindow *listboxLocale = NULL;
+static GameWindow *parentLocaleSelect = nullptr;
+static GameWindow *buttonOk = nullptr;
+static GameWindow *listboxLocale = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the WOL Status Menu */
@@ -68,9 +68,9 @@ void WOLLocaleSelectInit( WindowLayout *layout, void *userData )
 	parentLocaleSelectID = TheNameKeyGenerator->nameToKey( "PopupLocaleSelect.wnd:ParentLocaleSelect" );
 	buttonOkID = TheNameKeyGenerator->nameToKey( "PopupLocaleSelect.wnd:ButtonOk" );
 	listboxLocaleID = TheNameKeyGenerator->nameToKey( "PopupLocaleSelect.wnd:ListBoxLocaleSelect" );
-	parentLocaleSelect = TheWindowManager->winGetWindowFromId( NULL, parentLocaleSelectID );
-	buttonOk = TheWindowManager->winGetWindowFromId( NULL,  buttonOkID);
-	listboxLocale = TheWindowManager->winGetWindowFromId( NULL,  listboxLocaleID);
+	parentLocaleSelect = TheWindowManager->winGetWindowFromId( nullptr, parentLocaleSelectID );
+	buttonOk = TheWindowManager->winGetWindowFromId( nullptr,  buttonOkID);
+	listboxLocale = TheWindowManager->winGetWindowFromId( nullptr,  listboxLocaleID);
 
 	for (int i=LOC_MIN; i<=LOC_MAX; ++i)
 	{

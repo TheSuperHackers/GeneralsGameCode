@@ -71,8 +71,8 @@ RegistryClass::RegistryClass( const char * sub_key, bool create ) :
 
 	if (create && !IsLocked) {
 		DWORD disposition;
-		result = RegCreateKeyEx(HKEY_LOCAL_MACHINE, sub_key, 0, NULL, 0,
-			KEY_ALL_ACCESS, NULL, &key, &disposition);
+		result = RegCreateKeyEx(HKEY_LOCAL_MACHINE, sub_key, 0, nullptr, 0,
+			KEY_ALL_ACCESS, nullptr, &key, &disposition);
 	} else {
 		result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, sub_key, 0, IsLocked ? KEY_READ : KEY_ALL_ACCESS, &key);
 	}
@@ -96,7 +96,7 @@ int	RegistryClass::Get_Int( const char * name, int def_value )
 {
 	assert( IsValid );
 	DWORD type, data = 0, data_len = sizeof( data );
-	if (( ::RegQueryValueEx( (HKEY)Key, name, NULL, &type, (LPBYTE)&data, &data_len ) ==
+	if (( ::RegQueryValueEx( (HKEY)Key, name, nullptr, &type, (LPBYTE)&data, &data_len ) ==
 		ERROR_SUCCESS ) && ( type == REG_DWORD )) {
 	} else {
 		data = def_value;
@@ -132,7 +132,7 @@ float	RegistryClass::Get_Float( const char * name, float def_value )
 	assert( IsValid );
 	float data = 0;
 	DWORD type, data_len = sizeof( data );
-	if (( ::RegQueryValueEx( (HKEY)Key, name, NULL, &type, (LPBYTE)&data, &data_len ) ==
+	if (( ::RegQueryValueEx( (HKEY)Key, name, nullptr, &type, (LPBYTE)&data, &data_len ) ==
 		ERROR_SUCCESS ) && ( type == REG_DWORD )) {
 	} else {
 		data = def_value;
@@ -156,7 +156,7 @@ int RegistryClass::Get_Bin_Size( const char * name )
 	assert( IsValid );
 
 	unsigned long size = 0;
-	::RegQueryValueEx( (HKEY)Key, name, NULL, NULL, NULL, &size );
+	::RegQueryValueEx( (HKEY)Key, name, nullptr, nullptr, nullptr, &size );
 	return size;
 }
 
@@ -164,18 +164,18 @@ int RegistryClass::Get_Bin_Size( const char * name )
 void RegistryClass::Get_Bin( const char * name, void *buffer, int buffer_size )
 {
 	assert( IsValid );
-	assert( buffer != NULL );
+	assert( buffer != nullptr );
 	assert( buffer_size > 0 );
 
 	unsigned long size = buffer_size;
-	::RegQueryValueEx( (HKEY)Key, name, NULL, NULL, (LPBYTE)buffer, &size );
+	::RegQueryValueEx( (HKEY)Key, name, nullptr, nullptr, (LPBYTE)buffer, &size );
 	return ;
 }
 
 void	RegistryClass::Set_Bin( const char * name, const void *buffer, int buffer_size )
 {
 	assert( IsValid );
-	assert( buffer != NULL );
+	assert( buffer != nullptr );
 	assert( buffer_size > 0 );
 
 	if (IsLocked) {
@@ -188,20 +188,20 @@ void	RegistryClass::Set_Bin( const char * name, const void *buffer, int buffer_s
 void	RegistryClass::Get_String( const char * name, StringClass &string, const char *default_string )
 {
 	assert( IsValid );
-	string = (default_string == NULL) ? "" : default_string;
+	string = (default_string == nullptr) ? "" : default_string;
 
 	//
 	//	Get the size of the entry
 	//
 	DWORD data_size = 0;
 	DWORD type = 0;
-	LONG result = ::RegQueryValueEx ((HKEY)Key, name, NULL, &type, NULL, &data_size);
+	LONG result = ::RegQueryValueEx ((HKEY)Key, name, nullptr, &type, nullptr, &data_size);
 	if (result == ERROR_SUCCESS && type == REG_SZ) {
 
 		//
 		//	Read the entry from the registry
 		//
-		::RegQueryValueEx ((HKEY)Key, name, NULL, &type,
+		::RegQueryValueEx ((HKEY)Key, name, nullptr, &type,
 			(LPBYTE)string.Get_Buffer (data_size), &data_size);
 	}
 
@@ -214,12 +214,12 @@ char *RegistryClass::Get_String( const char * name, char *value, int value_size,
 {
 	assert( IsValid );
 	DWORD type = 0;
-	if (( ::RegQueryValueEx( (HKEY)Key, name, NULL, &type, (LPBYTE)value, (DWORD*)&value_size ) ==
+	if (( ::RegQueryValueEx( (HKEY)Key, name, nullptr, &type, (LPBYTE)value, (DWORD*)&value_size ) ==
 			ERROR_SUCCESS ) && ( type == REG_SZ )) {
 	} else {
 		//*value = 0;
 		//value = (char *) default_string;
-      if (default_string == NULL) {
+      if (default_string == nullptr) {
 		   *value = 0;
       } else {
          assert(strlen(default_string) < (unsigned int) value_size);
@@ -232,7 +232,7 @@ char *RegistryClass::Get_String( const char * name, char *value, int value_size,
 void	RegistryClass::Set_String( const char * name, const char *value )
 {
 	assert( IsValid );
-   int size = strlen( value ) + 1; // must include NULL
+   int size = strlen( value ) + 1; // must include null terminator
 	if (IsLocked) {
 		return;
 	}
@@ -251,7 +251,7 @@ void	RegistryClass::Get_Value_List( DynamicVectorClass<StringClass> &list )
 	int index = 0;
 	unsigned long sizeof_name = sizeof (value_name);
 	while (::RegEnumValue ((HKEY)Key, index ++,
-					value_name, &sizeof_name, 0, NULL, NULL, NULL) == ERROR_SUCCESS)
+					value_name, &sizeof_name, nullptr, nullptr, nullptr, nullptr) == ERROR_SUCCESS)
 	{
 		sizeof_name = sizeof (value_name);
 
@@ -298,20 +298,20 @@ void	RegistryClass::Deleta_All_Values( void )
 void	RegistryClass::Get_String( const WCHAR * name, WideStringClass &string, const WCHAR *default_string )
 {
 	assert( IsValid );
-	string = (default_string == NULL) ? L"" : default_string;
+	string = (default_string == nullptr) ? L"" : default_string;
 
 	//
 	//	Get the size of the entry
 	//
 	DWORD data_size = 0;
 	DWORD type = 0;
-	LONG result = ::RegQueryValueExW ((HKEY)Key, name, NULL, &type, NULL, &data_size);
+	LONG result = ::RegQueryValueExW ((HKEY)Key, name, nullptr, &type, nullptr, &data_size);
 	if (result == ERROR_SUCCESS && type == REG_SZ) {
 
 		//
 		//	Read the entry from the registry
 		//
-		::RegQueryValueExW ((HKEY)Key, name, NULL, &type,
+		::RegQueryValueExW ((HKEY)Key, name, nullptr, &type,
 			(LPBYTE)string.Get_Buffer ((data_size / 2) + 1), &data_size);
 	}
 
@@ -376,7 +376,7 @@ void RegistryClass::Save_Registry_Values(HKEY key, char *path, INIClass *ini)
 		char value_name[256];
 		unsigned long value_name_size = sizeof(value_name);
 
-		result = RegEnumValue(key, index, value_name, &value_name_size, 0, &type, data, &data_size);
+		result = RegEnumValue(key, index, value_name, &value_name_size, nullptr, &type, data, &data_size);
 
 		if (result == ERROR_SUCCESS) {
 			switch (type) {
@@ -463,7 +463,7 @@ void RegistryClass::Save_Registry_Tree(char *path, INIClass *ini)
 		while (result == ERROR_SUCCESS) {
 			class_name_size = sizeof(class_name);
 			name_size = sizeof(name);
-			result = RegEnumKeyEx(base_key, index, name, &name_size, 0, class_name, &class_name_size, &file_time);
+			result = RegEnumKeyEx(base_key, index, name, &name_size, nullptr, class_name, &class_name_size, &file_time);
 			if (result == ERROR_SUCCESS) {
 
 				/*
@@ -479,7 +479,7 @@ void RegistryClass::Save_Registry_Tree(char *path, INIClass *ini)
 
 				long new_result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, new_key_path, 0, KEY_ALL_ACCESS, &sub_key);
 				if (new_result == ERROR_SUCCESS) {
-					new_result = RegQueryInfoKey(sub_key, NULL, NULL, 0, &num_subs, NULL, NULL, &num_values, NULL, NULL, NULL, NULL);
+					new_result = RegQueryInfoKey(sub_key, nullptr, nullptr, nullptr, &num_subs, nullptr, nullptr, &num_values, nullptr, nullptr, nullptr, nullptr);
 
 					/*
 					** If there are sun keys then enumerate those.
@@ -558,7 +558,7 @@ void RegistryClass::Load_Registry(const char *filename, char *old_path, char *ne
 
 		List<INISection *> &section_list = ini.Get_Section_List();
 
-		for (INISection *section = section_list.First() ; section != NULL ; section = section->Next_Valid()) {
+		for (INISection *section = section_list.First() ; section != nullptr ; section = section->Next_Valid()) {
 
 			/*
 			** Build the new path to use in the registry.
@@ -637,7 +637,7 @@ void RegistryClass::Delete_Registry_Values(HKEY key)
 		char value_name[256];
 		unsigned long value_name_size = sizeof(value_name);
 
-		result = RegEnumValue(key, index, value_name, &value_name_size, 0, &type, data, &data_size);
+		result = RegEnumValue(key, index, value_name, &value_name_size, nullptr, &type, data, &data_size);
 
 		if (result == ERROR_SUCCESS) {
 			result = RegDeleteValue(key, value_name);
@@ -686,7 +686,7 @@ void RegistryClass::Delete_Registry_Tree(char *path)
 			while (result == ERROR_SUCCESS) {
 				class_name_size = sizeof(class_name);
 				name_size = sizeof(name);
-				result = RegEnumKeyEx(base_key, index, name, &name_size, 0, class_name, &class_name_size, &file_time);
+				result = RegEnumKeyEx(base_key, index, name, &name_size, nullptr, class_name, &class_name_size, &file_time);
 				if (result == ERROR_SUCCESS) {
 
 					/*
@@ -702,7 +702,7 @@ void RegistryClass::Delete_Registry_Tree(char *path)
 
 					long new_result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, new_key_path, 0, KEY_ALL_ACCESS, &sub_key);
 					if (new_result == ERROR_SUCCESS) {
-						new_result = RegQueryInfoKey(sub_key, NULL, NULL, 0, &num_subs, NULL, NULL, &num_values, NULL, NULL, NULL, NULL);
+						new_result = RegQueryInfoKey(sub_key, nullptr, nullptr, nullptr, &num_subs, nullptr, nullptr, &num_values, nullptr, nullptr, nullptr, nullptr);
 
 						/*
 						** If there are sub keys then enumerate those.

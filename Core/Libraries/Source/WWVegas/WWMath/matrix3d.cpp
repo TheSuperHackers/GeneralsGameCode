@@ -638,7 +638,7 @@ void Matrix3D::Copy_3x3_Matrix(float matrix[3][3])
 
 void Matrix3D::Multiply(const Matrix3D & A,const Matrix3D & B,Matrix3D * set_res)
 {
-	assert(set_res != NULL);
+	assert(set_res != nullptr);
 
 	Matrix3D tmp;
 	Matrix3D * Aptr;
@@ -695,7 +695,7 @@ void Matrix3D::Multiply(const Matrix3D & A,const Matrix3D & B,Matrix3D * set_res
 #if 0
 void Matrix3D::Multiply(const Matrix3D & A,const Matrix3D & B,Matrix3D * set_res)
 {
-	assert(set_res != NULL);
+	assert(set_res != nullptr);
 
 	float tmp[12];
 // Check for aliased parameters, copy the 'A' matrix into a temporary if the

@@ -94,7 +94,7 @@ class RAMFile : public File
 		virtual Int		writeChar( const WideChar* character );							///< Write a wide character to the file
 		virtual Int		seek( Int new_pos, seekMode mode = CURRENT );				///< Set file position: See File::seek
 		virtual Bool	flush();													///< flush data to disk
-		virtual void	nextLine(Char *buf = NULL, Int bufSize = 0);				///< moves current position to after the next new-line
+		virtual void	nextLine(Char *buf = nullptr, Int bufSize = 0);				///< moves current position to after the next new-line
 
 		virtual Bool	scanInt(Int &newInt);																///< return what gets read as an integer from the current memory position.
 		virtual Bool	scanReal(Real &newReal);														///< return what gets read as a float from the current memory position.

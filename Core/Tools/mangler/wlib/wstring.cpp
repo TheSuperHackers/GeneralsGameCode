@@ -39,15 +39,15 @@ string to it's own memory (for assignment or construction).
 
 #define PADSIZE 32  // include a little padding on alloc for future growth
 
-Wstring::Wstring() : str(NULL), strsize(0)
+Wstring::Wstring() : str(nullptr), strsize(0)
 { }
 
-Wstring::Wstring(const char *string):str(NULL), strsize(0)
+Wstring::Wstring(const char *string):str(nullptr), strsize(0)
 { set(string); }
 
-Wstring::Wstring(const Wstring &other):str(NULL), strsize(0)
+Wstring::Wstring(const Wstring &other):str(nullptr), strsize(0)
 {
-  if (other.str!=NULL)
+  if (other.str!=nullptr)
   {
     str=new char[strlen(other.str)+PADSIZE+1];
     strsize=strlen(other.str)+PADSIZE+1;
@@ -62,10 +62,10 @@ Wstring::~Wstring()
 
 bool Wstring::operator<(const Wstring &other) const
 {
-	if (str == NULL && other.str == NULL)
+	if (str == nullptr && other.str == nullptr)
 		return false;
 
-	if (str == NULL)
+	if (str == nullptr)
 		return true;
 
 	return ( strcmp(str, other.str) < 0 );
@@ -73,7 +73,7 @@ bool Wstring::operator<(const Wstring &other) const
 
 bit8 Wstring::operator==(const char *other) const
 {
-  if ((str==NULL)&&(other==NULL))
+  if ((str==nullptr)&&(other==nullptr))
     return(TRUE);
   if(strcmp(str, other) != 0)
     return(FALSE);
@@ -83,10 +83,10 @@ bit8 Wstring::operator==(const char *other) const
 
 bit8 Wstring::operator==(const Wstring &other) const
 {
- if((str == NULL) && (other.str == NULL))
+ if((str == nullptr) && (other.str == nullptr))
    return(TRUE);
 
- if((str == NULL) || (other.str == NULL))
+ if((str == nullptr) || (other.str == nullptr))
    return(FALSE);
 
  if(strcmp(str, other.str) != 0)
@@ -107,10 +107,10 @@ bit8 Wstring::operator!=(const char *other) const
 
 bit8 Wstring::operator!=(const Wstring &other) const
 {
- if((str == NULL) && (other.str == NULL))
+ if((str == nullptr) && (other.str == nullptr))
    return(FALSE);
 
- if((str == NULL) || (other.str == NULL))
+ if((str == nullptr) || (other.str == nullptr))
    return(TRUE);
 
  if(strcmp(str, other.str) != 0)
@@ -141,7 +141,7 @@ bit8 Wstring::cat(const char *s)
 {
   uint32   len;
 
-  if (s==NULL)   // it's OK to cat nothing
+  if (s==nullptr)   // it's OK to cat nothing
     return(TRUE);
 
   // Determine the length of the resultant string.
@@ -240,14 +240,14 @@ char Wstring::remove(sint32 pos,sint32 count)
 bit8 Wstring::removeChar(char c)
 {
   int     len=0;
-  char   *cptr=NULL;
+  char   *cptr=nullptr;
   bit8    removed=FALSE;
 
-  if (str==NULL)
+  if (str==nullptr)
     return(FALSE);
 
   len=strlen(str);
-  while ((cptr=strchr(str,c)) !=NULL)
+  while ((cptr=strchr(str,c)) !=nullptr)
   {
     memmove(cptr,cptr+1,len-1-((int)(cptr-str)));
     len--;
@@ -267,7 +267,7 @@ void Wstring::clear(void)
 {
  delete[](str);
  strsize=0;
- str=NULL;
+ str=nullptr;
 }
 
 // This is usually used for raw storage instead of string ops...
@@ -308,7 +308,7 @@ char Wstring::get(uint32 index) const
 
 uint32 Wstring::length(void) const
 {
-  if(str == NULL)
+  if(str == nullptr)
     return(0);
   return((uint32)strlen(str));
 }
@@ -317,7 +317,7 @@ uint32 Wstring::length(void) const
 // Insert at given position and shift old stuff to right
 bit8 Wstring::insert(const char *instring, uint32 pos)
 {
-  if (str==NULL)
+  if (str==nullptr)
     return(set(instring));
   if (pos>strlen(str))
     pos=strlen(str);
@@ -397,7 +397,7 @@ bit8 Wstring::replace(const char *replaceThis,const char *withThis)
       if(!dest.cat(src))
         return(FALSE);
 
-      src=NULL;
+      src=nullptr;
     }
   }
   return(set(dest.get()));
@@ -445,7 +445,7 @@ char Wstring::set(uint32 size, const char *string)
 // work in all cases, but this should be good enough for 99% of Wstring usage.
 char Wstring::setFormatted(const char *msg, ...)
 {
-	if( msg == NULL || strlen(msg) <= 0 )  return FALSE;
+	if( msg == nullptr || strlen(msg) <= 0 )  return FALSE;
 
 	char*  string;
         va_list args;
@@ -506,11 +506,11 @@ bit8 Wstring::truncate(char c)
 {
   sint32  len;
 
-  if (str==NULL)
+  if (str==nullptr)
     return(FALSE);
 
   char   *cptr=strchr(str,c);
-  if (cptr==NULL)
+  if (cptr==nullptr)
     return(FALSE);
   len=(sint32)(cptr-str);
   truncate((uint32)len);
@@ -529,7 +529,7 @@ sint32 Wstring::getToken(int offset,const char *delim,Wstring &out) const
     return(-1);
 
   for (i=offset; i<(int)length(); i++) {
-    if(strchr(delim,str[i])==NULL)
+    if(strchr(delim,str[i])==nullptr)
       break;
   }
   if (i>=(int)length())
@@ -537,7 +537,7 @@ sint32 Wstring::getToken(int offset,const char *delim,Wstring &out) const
   start=i;
 
   for (; i<(int)length(); i++) {
-    if(strchr(delim,str[i])!=NULL)
+    if(strchr(delim,str[i])!=nullptr)
       break;
   }
   stop=i-1;
@@ -558,7 +558,7 @@ sint32 Wstring::getLine(int offset, Wstring &out)
     return(-1);
 
   for (; i<(int)length(); i++) {
-    if(strchr("\r\n",str[i])!=NULL)
+    if(strchr("\r\n",str[i])!=nullptr)
       break;
   }
   stop=i;
@@ -575,7 +575,7 @@ sint32 Wstring::getLine(int offset, Wstring &out)
 //
 void Wstring::strgrow(int length)
 {
-  if (str==NULL)
+  if (str==nullptr)
   {
     str=new char[length+PADSIZE];
     str[0]=0;

@@ -160,7 +160,7 @@ public:
 
 	VertexArrayClass(int maxsize,int match_normals = 0)
 	{
-		Verts = NULL;
+		Verts = nullptr;
 		assert(maxsize > 0);
 		Verts = W3DNEWARRAY MeshBuilderClass::VertClass[maxsize];
 		assert(Verts);
@@ -406,7 +406,7 @@ void MeshBuilderClass::VertClass::Reset(void)
 	Attribute1 = 0;
 	UniqueIndex = 0;
 	ShadeIndex = 0;
-	NextHash = NULL;
+	NextHash = nullptr;
 
 }
 
@@ -557,16 +557,16 @@ MeshBuilderClass::MeshBuilderClass(int pass_count,int face_count_guess,int face_
 	State(STATE_ACCEPTING_INPUT),
 	PassCount(pass_count),
 	FaceCount(0),
-	Faces(NULL),
+	Faces(nullptr),
 	InputVertCount(0),
 	VertCount(0),
-	Verts(NULL),
+	Verts(nullptr),
 	CurFace(0),
 	AllocFaceCount(0),
 	AllocFaceGrowth(0),
 	PolyOrderPass(0),
 	PolyOrderStage(0),
-	WorldInfo (NULL)
+	WorldInfo (nullptr)
 {
 	Reset(pass_count,face_count_guess,face_count_growth_rate);
 }
@@ -586,7 +586,7 @@ MeshBuilderClass::MeshBuilderClass(int pass_count,int face_count_guess,int face_
 MeshBuilderClass::~MeshBuilderClass(void)
 {
 	Free();
-	Set_World_Info(NULL);
+	Set_World_Info(nullptr);
 }
 
 
@@ -605,10 +605,10 @@ MeshBuilderClass::~MeshBuilderClass(void)
 void MeshBuilderClass::Free(void)
 {
 	delete[] Faces;
-	Faces = NULL;
+	Faces = nullptr;
 
 	delete Verts;
-	Verts = NULL;
+	Verts = nullptr;
 
 	FaceCount = 0;
 	VertCount = 0;
@@ -823,7 +823,7 @@ void MeshBuilderClass::Compute_Vertex_Normals(void)
 	/*
 	** Smooth this mesh with neighboring meshes!
 	*/
-	if (WorldInfo != NULL && WorldInfo->Are_Meshes_Smoothed ()) {
+	if (WorldInfo != nullptr && WorldInfo->Are_Meshes_Smoothed ()) {
 		for (vertidx = 0; vertidx < VertCount; vertidx++) {
 			if (Verts[vertidx].ShadeIndex == vertidx) {
 				Verts[vertidx].Normal += WorldInfo->Get_Shared_Vertex_Normal(Verts[vertidx].Position, Verts[vertidx].SharedSmGroup);
@@ -1010,8 +1010,8 @@ void MeshBuilderClass::Compute_Bounding_Box(Vector3 * set_min,Vector3 * set_max)
 {
 	int i;
 
-	assert(set_min != NULL);
-	assert(set_max != NULL);
+	assert(set_min != nullptr);
+	assert(set_max != nullptr);
 
 	// Bounding Box
 	// straightforward, axis-aligned bounding box.

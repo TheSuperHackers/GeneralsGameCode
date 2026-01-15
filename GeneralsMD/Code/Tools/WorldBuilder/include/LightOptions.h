@@ -31,7 +31,7 @@ class LightOptions : public COptionsPanel
 
 // Construction
 public:
-	LightOptions(CWnd* pParent = NULL);   // standard constructor
+	LightOptions(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(LightOptions)

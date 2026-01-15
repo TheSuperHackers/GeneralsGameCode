@@ -66,7 +66,7 @@
 //-------------------------------------------------------------------------------------------------
 BattlePlanUpdateModuleData::BattlePlanUpdateModuleData()
 {
-	m_specialPowerTemplate								= NULL;
+	m_specialPowerTemplate								= nullptr;
 	m_bombardmentPlanAnimationFrames			= 0;
 	m_holdTheLinePlanAnimationFrames			= 0;
 	m_searchAndDestroyPlanAnimationFrames = 0;
@@ -89,41 +89,41 @@ BattlePlanUpdateModuleData::BattlePlanUpdateModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "SpecialPowerTemplate",									INI::parseSpecialPowerTemplate,	NULL, offsetof( BattlePlanUpdateModuleData, m_specialPowerTemplate ) },
+		{ "SpecialPowerTemplate",									INI::parseSpecialPowerTemplate,	nullptr, offsetof( BattlePlanUpdateModuleData, m_specialPowerTemplate ) },
 
-    { "BombardmentPlanAnimationTime",					INI::parseDurationUnsignedInt,  NULL, offsetof( BattlePlanUpdateModuleData, m_bombardmentPlanAnimationFrames ) },
-    { "HoldTheLinePlanAnimationTime",					INI::parseDurationUnsignedInt,  NULL, offsetof( BattlePlanUpdateModuleData, m_holdTheLinePlanAnimationFrames ) },
-    { "SearchAndDestroyPlanAnimationTime",		INI::parseDurationUnsignedInt,  NULL, offsetof( BattlePlanUpdateModuleData, m_searchAndDestroyPlanAnimationFrames ) },
-		{ "TransitionIdleTime",										INI::parseDurationUnsignedInt,  NULL, offsetof( BattlePlanUpdateModuleData, m_transitionIdleFrames ) },
+    { "BombardmentPlanAnimationTime",					INI::parseDurationUnsignedInt,  nullptr, offsetof( BattlePlanUpdateModuleData, m_bombardmentPlanAnimationFrames ) },
+    { "HoldTheLinePlanAnimationTime",					INI::parseDurationUnsignedInt,  nullptr, offsetof( BattlePlanUpdateModuleData, m_holdTheLinePlanAnimationFrames ) },
+    { "SearchAndDestroyPlanAnimationTime",		INI::parseDurationUnsignedInt,  nullptr, offsetof( BattlePlanUpdateModuleData, m_searchAndDestroyPlanAnimationFrames ) },
+		{ "TransitionIdleTime",										INI::parseDurationUnsignedInt,  nullptr, offsetof( BattlePlanUpdateModuleData, m_transitionIdleFrames ) },
 
-		{ "BombardmentPlanUnpackSoundName",				INI::parseAsciiString,					NULL, offsetof( BattlePlanUpdateModuleData, m_bombardmentUnpackName ) },
-		{ "BombardmentPlanPackSoundName",					INI::parseAsciiString,					NULL, offsetof( BattlePlanUpdateModuleData, m_bombardmentPackName ) },
-		{ "BombardmentMessageLabel",							INI::parseAsciiString,					NULL,	offsetof( BattlePlanUpdateModuleData, m_bombardmentMessageLabel ) },
-		{ "BombardmentAnnouncementName",					INI::parseAsciiString,					NULL, offsetof( BattlePlanUpdateModuleData, m_bombardmentAnnouncementName ) },
-		{ "SearchAndDestroyPlanUnpackSoundName",	INI::parseAsciiString,					NULL, offsetof( BattlePlanUpdateModuleData, m_searchAndDestroyUnpackName ) },
-		{ "SearchAndDestroyPlanIdleLoopSoundName",INI::parseAsciiString,					NULL, offsetof( BattlePlanUpdateModuleData, m_searchAndDestroyIdleName ) },
-		{ "SearchAndDestroyPlanPackSoundName",		INI::parseAsciiString,					NULL, offsetof( BattlePlanUpdateModuleData, m_searchAndDestroyPackName ) },
-		{ "SearchAndDestroyMessageLabel",					INI::parseAsciiString,					NULL,	offsetof( BattlePlanUpdateModuleData, m_searchAndDestroyMessageLabel ) },
-		{ "SearchAndDestroyAnnouncementName",			INI::parseAsciiString,					NULL, offsetof( BattlePlanUpdateModuleData, m_searchAndDestroyAnnouncementName ) },
-		{ "HoldTheLinePlanUnpackSoundName",				INI::parseAsciiString,					NULL, offsetof( BattlePlanUpdateModuleData, m_holdTheLineUnpackName ) },
-		{ "HoldTheLinePlanPackSoundName",					INI::parseAsciiString,					NULL, offsetof( BattlePlanUpdateModuleData, m_holdTheLinePackName ) },
-		{ "HoldTheLineMessageLabel",							INI::parseAsciiString,					NULL,	offsetof( BattlePlanUpdateModuleData, m_holdTheLineMessageLabel ) },
-		{ "HoldTheLineAnnouncementName",					INI::parseAsciiString,					NULL, offsetof( BattlePlanUpdateModuleData, m_holdTheLineAnnouncementName ) },
+		{ "BombardmentPlanUnpackSoundName",				INI::parseAsciiString,					nullptr, offsetof( BattlePlanUpdateModuleData, m_bombardmentUnpackName ) },
+		{ "BombardmentPlanPackSoundName",					INI::parseAsciiString,					nullptr, offsetof( BattlePlanUpdateModuleData, m_bombardmentPackName ) },
+		{ "BombardmentMessageLabel",							INI::parseAsciiString,					nullptr,	offsetof( BattlePlanUpdateModuleData, m_bombardmentMessageLabel ) },
+		{ "BombardmentAnnouncementName",					INI::parseAsciiString,					nullptr, offsetof( BattlePlanUpdateModuleData, m_bombardmentAnnouncementName ) },
+		{ "SearchAndDestroyPlanUnpackSoundName",	INI::parseAsciiString,					nullptr, offsetof( BattlePlanUpdateModuleData, m_searchAndDestroyUnpackName ) },
+		{ "SearchAndDestroyPlanIdleLoopSoundName",INI::parseAsciiString,					nullptr, offsetof( BattlePlanUpdateModuleData, m_searchAndDestroyIdleName ) },
+		{ "SearchAndDestroyPlanPackSoundName",		INI::parseAsciiString,					nullptr, offsetof( BattlePlanUpdateModuleData, m_searchAndDestroyPackName ) },
+		{ "SearchAndDestroyMessageLabel",					INI::parseAsciiString,					nullptr,	offsetof( BattlePlanUpdateModuleData, m_searchAndDestroyMessageLabel ) },
+		{ "SearchAndDestroyAnnouncementName",			INI::parseAsciiString,					nullptr, offsetof( BattlePlanUpdateModuleData, m_searchAndDestroyAnnouncementName ) },
+		{ "HoldTheLinePlanUnpackSoundName",				INI::parseAsciiString,					nullptr, offsetof( BattlePlanUpdateModuleData, m_holdTheLineUnpackName ) },
+		{ "HoldTheLinePlanPackSoundName",					INI::parseAsciiString,					nullptr, offsetof( BattlePlanUpdateModuleData, m_holdTheLinePackName ) },
+		{ "HoldTheLineMessageLabel",							INI::parseAsciiString,					nullptr,	offsetof( BattlePlanUpdateModuleData, m_holdTheLineMessageLabel ) },
+		{ "HoldTheLineAnnouncementName",					INI::parseAsciiString,					nullptr, offsetof( BattlePlanUpdateModuleData, m_holdTheLineAnnouncementName ) },
 
-		{ "ValidMemberKindOf",										KindOfMaskType::parseFromINI,								NULL, offsetof( BattlePlanUpdateModuleData, m_validMemberKindOf ) },
-		{ "InvalidMemberKindOf",									KindOfMaskType::parseFromINI,								NULL, offsetof( BattlePlanUpdateModuleData, m_invalidMemberKindOf ) },
-		{ "BattlePlanChangeParalyzeTime",					INI::parseDurationUnsignedInt,  NULL, offsetof( BattlePlanUpdateModuleData, m_battlePlanParalyzeFrames ) },
-		{ "HoldTheLinePlanArmorDamageScalar",			INI::parseReal,									NULL, offsetof( BattlePlanUpdateModuleData, m_holdTheLineArmorDamageScalar ) },
-		{ "SearchAndDestroyPlanSightRangeScalar",	INI::parseReal,									NULL, offsetof( BattlePlanUpdateModuleData, m_searchAndDestroySightRangeScalar ) },
+		{ "ValidMemberKindOf",										KindOfMaskType::parseFromINI,								nullptr, offsetof( BattlePlanUpdateModuleData, m_validMemberKindOf ) },
+		{ "InvalidMemberKindOf",									KindOfMaskType::parseFromINI,								nullptr, offsetof( BattlePlanUpdateModuleData, m_invalidMemberKindOf ) },
+		{ "BattlePlanChangeParalyzeTime",					INI::parseDurationUnsignedInt,  nullptr, offsetof( BattlePlanUpdateModuleData, m_battlePlanParalyzeFrames ) },
+		{ "HoldTheLinePlanArmorDamageScalar",			INI::parseReal,									nullptr, offsetof( BattlePlanUpdateModuleData, m_holdTheLineArmorDamageScalar ) },
+		{ "SearchAndDestroyPlanSightRangeScalar",	INI::parseReal,									nullptr, offsetof( BattlePlanUpdateModuleData, m_searchAndDestroySightRangeScalar ) },
 
-		{ "StrategyCenterSearchAndDestroySightRangeScalar", INI::parseReal,				NULL, offsetof( BattlePlanUpdateModuleData, m_strategyCenterSearchAndDestroySightRangeScalar ) },
-		{ "StrategyCenterSearchAndDestroyDetectsStealth",   INI::parseBool,				NULL, offsetof( BattlePlanUpdateModuleData, m_strategyCenterSearchAndDestroyDetectsStealth ) },
-		{ "StrategyCenterHoldTheLineMaxHealthScalar",				INI::parseReal,				NULL, offsetof( BattlePlanUpdateModuleData, m_strategyCenterHoldTheLineMaxHealthScalar ) },
+		{ "StrategyCenterSearchAndDestroySightRangeScalar", INI::parseReal,				nullptr, offsetof( BattlePlanUpdateModuleData, m_strategyCenterSearchAndDestroySightRangeScalar ) },
+		{ "StrategyCenterSearchAndDestroyDetectsStealth",   INI::parseBool,				nullptr, offsetof( BattlePlanUpdateModuleData, m_strategyCenterSearchAndDestroyDetectsStealth ) },
+		{ "StrategyCenterHoldTheLineMaxHealthScalar",				INI::parseReal,				nullptr, offsetof( BattlePlanUpdateModuleData, m_strategyCenterHoldTheLineMaxHealthScalar ) },
     { "StrategyCenterHoldTheLineMaxHealthChangeType",		INI::parseIndexList,  TheMaxHealthChangeTypeNames, offsetof( BattlePlanUpdateModuleData, m_strategyCenterHoldTheLineMaxHealthChangeType ) },
 
-		{ "VisionObjectName",											INI::parseAsciiString,					NULL, offsetof( BattlePlanUpdateModuleData, m_visionObjectName ) },
+		{ "VisionObjectName",											INI::parseAsciiString,					nullptr, offsetof( BattlePlanUpdateModuleData, m_visionObjectName ) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
@@ -131,7 +131,7 @@ BattlePlanUpdateModuleData::BattlePlanUpdateModuleData()
 //-------------------------------------------------------------------------------------------------
 BattlePlanUpdate::BattlePlanUpdate( Thing *thing, const ModuleData* moduleData ) :
 	SpecialPowerUpdateModule( thing, moduleData ),
-	m_bonuses(NULL)
+	m_bonuses(nullptr)
 {
 	const BattlePlanUpdateModuleData *data = getBattlePlanUpdateModuleData();
 
@@ -155,7 +155,7 @@ BattlePlanUpdate::BattlePlanUpdate( Thing *thing, const ModuleData* moduleData )
 
 	m_visionObjectID = INVALID_ID;
 
-	m_specialPowerModule   = NULL;
+	m_specialPowerModule   = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -196,7 +196,7 @@ void BattlePlanUpdate::onDelete()
 	Player* player = getObject()->getControllingPlayer();
 	// however, player CAN legitimately be null during game reset cycles
 	// (and which point it doesn't really matter if we can remove the bonus or not)
-	//DEBUG_ASSERTCRASH(player != NULL, ("Hmm, controller is null"));
+	//DEBUG_ASSERTCRASH(player != nullptr, ("Hmm, controller is null"));
 	if( player && m_planAffectingArmy != PLANSTATUS_NONE )
 	{
 		player->changeBattlePlan( m_planAffectingArmy, -1, m_bonuses );

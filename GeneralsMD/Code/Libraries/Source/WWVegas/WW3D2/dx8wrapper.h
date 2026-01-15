@@ -468,9 +468,9 @@ public:
 	**	WW3D::Render (scene, camera, FALSE, FALSE);
 	**	WW3D::End_Render ();
 	**
-	**	swap_chain_ptr->Present (NULL, NULL, NULL, NULL);
+	**	swap_chain_ptr->Present (nullptr, nullptr, nullptr, nullptr);
 	**
-	**	DX8Wrapper::Set_Render_Target ((IDirect3DSurface8 *)NULL);
+	**	DX8Wrapper::Set_Render_Target ((IDirect3DSurface8 *)nullptr);
 	**
 	*/
 	static IDirect3DSwapChain8 *	Create_Additional_Swap_Chain (HWND render_window);
@@ -496,7 +496,7 @@ public:
 		TextureClass** target,
 		ZTextureClass** depth_buffer
 	);
-	static void					Set_Render_Target_With_Z (TextureClass * texture, ZTextureClass* ztexture=NULL);
+	static void					Set_Render_Target_With_Z (TextureClass * texture, ZTextureClass* ztexture=nullptr);
 
 	static void Set_Shadow_Map(int idx, ZTextureClass* ztex) { Shadow_Map[idx]=ztex; }
 	static ZTextureClass* Get_Shadow_Map(int idx) { return Shadow_Map[idx]; }
@@ -837,7 +837,7 @@ WWINLINE void DX8Wrapper::Set_Ambient(const Vector3& color)
 //
 // Set vertex buffer to be used in the subsequent render calls. If there was
 // a vertex buffer being used earlier, release the reference to it. Passing
-// NULL just will release the vertex buffer.
+// nullptr just will release the vertex buffer.
 //
 // ----------------------------------------------------------------------------
 
@@ -1192,7 +1192,7 @@ WWINLINE void DX8Wrapper::Set_Material(const VertexMaterialClass* material)
 //	}
 	REF_PTR_SET(render_state.material,const_cast<VertexMaterialClass*>(material));
 	render_state_changed|=MATERIAL_CHANGED;
-	SNAPSHOT_SAY(("DX8Wrapper::Set_Material(%s)",material ? material->Get_Name() : "NULL"));
+	SNAPSHOT_SAY(("DX8Wrapper::Set_Material(%s)",material ? material->Get_Name() : "null"));
 }
 
 WWINLINE void DX8Wrapper::Set_Shader(const ShaderClass& shader)

@@ -123,7 +123,7 @@ WindowMsgHandledType GadgetPushButtonInput( GameWindow *window,
 			if( BitIsSet( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) == FALSE )
 				if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 					BitClear( instData->m_state, WIN_STATE_SELECTED );
-			//TheWindowManager->winSetFocus( NULL );
+			//TheWindowManager->winSetFocus( nullptr );
 			if(window->winGetParent() && BitIsSet(window->winGetParent()->winGetStyle(),GWS_HORZ_SLIDER) )
 			{
 				WinInstanceData *instDataParent = window->winGetParent()->winGetInstanceData();
@@ -443,7 +443,7 @@ WindowMsgHandledType GadgetPushButtonSystem( GameWindow *window, UnsignedInt msg
 		case GWM_DESTROY:
 		{
 			delete (PushButtonData *)window->winGetUserData();
-			window->winSetUserData(NULL);
+			window->winSetUserData(nullptr);
 			break;
 		}
 
@@ -482,12 +482,12 @@ void GadgetCheckLikeButtonSetVisualCheck( GameWindow *g, Bool checked )
 {
 
 	// sanity
-	if( g == NULL )
+	if( g == nullptr )
 		return;
 
 	// get instance data
 	WinInstanceData *instData = g->winGetInstanceData();
-	if( instData == NULL )
+	if( instData == nullptr )
 		return;
 
 	// sanity, must be a check like button
@@ -518,12 +518,12 @@ Bool GadgetCheckLikeButtonIsChecked( GameWindow *g )
 {
 
 	// sanity
-	if( g == NULL )
+	if( g == nullptr )
 		return FALSE;
 
 	// get instance data
 	WinInstanceData *instData = g->winGetInstanceData();
-	if( instData == NULL )
+	if( instData == nullptr )
 		return FALSE;
 
 	// we just hold this "check like dual state thingie" using the selected state
@@ -537,12 +537,12 @@ void GadgetButtonEnableCheckLike( GameWindow *g, Bool makeCheckLike, Bool initia
 {
 
 	// sanity
-	if( g == NULL )
+	if( g == nullptr )
 		return;
 
 	// get inst data
 	WinInstanceData *instData = g->winGetInstanceData();
-	if( instData == NULL )
+	if( instData == nullptr )
 		return;
 
 	// make it check like
@@ -566,7 +566,7 @@ void GadgetButtonSetText( GameWindow *g, UnicodeString text )
 {
 
 	// sanity
-	if( g == NULL )
+	if( g == nullptr )
 		return;
 
 	TheWindowManager->winSendSystemMsg( g, GGM_SET_LABEL, (WindowMsgData)&text, 0 );
@@ -577,12 +577,12 @@ PushButtonData * getNewPushButtonData( void )
 {
 	PushButtonData *p = NEW PushButtonData;
 	if(!p)
-		return NULL;
+		return nullptr;
 
-	p->userData = NULL;
+	p->userData = nullptr;
 	p->drawBorder = FALSE;
 	p->drawClock = NO_CLOCK;
-	p->overlayImage = NULL;
+	p->overlayImage = nullptr;
 	return p;
 }
 
@@ -591,7 +591,7 @@ PushButtonData * getNewPushButtonData( void )
 //=============================================================================
 void GadgetButtonSetBorder( GameWindow *g, Color color, Bool drawBorder = TRUE )
 {
-	if( g == NULL )
+	if( g == nullptr )
 		return;
 
 	PushButtonData *pData = (PushButtonData *)g->winGetUserData();
@@ -610,7 +610,7 @@ void GadgetButtonSetBorder( GameWindow *g, Color color, Bool drawBorder = TRUE )
 void GadgetButtonDrawClock( GameWindow *g, Int percent, Color color )
 {
 
-	if( g == NULL )
+	if( g == nullptr )
 		return;
 
 	PushButtonData *pData = (PushButtonData *)g->winGetUserData();
@@ -631,7 +631,7 @@ void GadgetButtonDrawClock( GameWindow *g, Int percent, Color color )
 void GadgetButtonDrawInverseClock( GameWindow *g, Int percent, Color color )
 {
 
-	if( g == NULL )
+	if( g == nullptr )
 		return;
 
 	PushButtonData *pData = (PushButtonData *)g->winGetUserData();
@@ -648,7 +648,7 @@ void GadgetButtonDrawInverseClock( GameWindow *g, Int percent, Color color )
 
 void GadgetButtonDrawOverlayImage( GameWindow *g, const Image *image )
 {
-	if( g == NULL )
+	if( g == nullptr )
 		return;
 
 	PushButtonData *pData = (PushButtonData *)g->winGetUserData();
@@ -666,7 +666,7 @@ void GadgetButtonDrawOverlayImage( GameWindow *g, const Image *image )
 //=============================================================================
 void GadgetButtonSetData(GameWindow *g, void *data)
 {
-	if( g == NULL )
+	if( g == nullptr )
 		return;
 
 	PushButtonData *pData = (PushButtonData *)g->winGetUserData();
@@ -683,13 +683,13 @@ void GadgetButtonSetData(GameWindow *g, void *data)
 //=============================================================================
 void *GadgetButtonGetData(GameWindow *g)
 {
-	if( g == NULL )
-		return NULL;
+	if( g == nullptr )
+		return nullptr;
 
 	PushButtonData *pData = (PushButtonData *)g->winGetUserData();
 	if(!pData)
 	{
-		return NULL;
+		return nullptr;
 	}
 	return pData->userData;
 }

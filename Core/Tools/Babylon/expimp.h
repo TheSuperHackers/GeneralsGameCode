@@ -100,9 +100,9 @@ typedef struct
 
 } CSF_HEADER;
 
-int ExportTranslations ( TransDB *db, const char *filename, LangID langid, TROPTIONS *options, CBabylonDlg *dlg = NULL );
-int ImportTranslations ( TransDB *db, const char *filename, CBabylonDlg *dlg = NULL );
-int UpdateSentTranslations ( TransDB *db, const char *filename, CBabylonDlg *dlg = NULL );
-int GenerateGameFiles ( TransDB *db, const char *filename, GNOPTIONS *option, LangID *languages, CBabylonDlg *dlg = NULL );
-int GenerateReport ( TransDB *db, const char *filename, RPOPTIONS *options, LangID *languages, CBabylonDlg *dlg = NULL );
+int ExportTranslations ( TransDB *db, const char *filename, LangID langid, TROPTIONS *options, CBabylonDlg *dlg = nullptr );
+int ImportTranslations ( TransDB *db, const char *filename, CBabylonDlg *dlg = nullptr );
+int UpdateSentTranslations ( TransDB *db, const char *filename, CBabylonDlg *dlg = nullptr );
+int GenerateGameFiles ( TransDB *db, const char *filename, GNOPTIONS *option, LangID *languages, CBabylonDlg *dlg = nullptr );
+int GenerateReport ( TransDB *db, const char *filename, RPOPTIONS *options, LangID *languages, CBabylonDlg *dlg = nullptr );
 void ProcessWaves ( TransDB *db, const char *filename, CBabylonDlg *dlg );

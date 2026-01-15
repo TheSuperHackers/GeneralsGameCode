@@ -75,7 +75,7 @@ Listener3DClass::Initialize_Miles_Handle (void)
 	MMSLockClass lock;
 
 	// Do we have a valid sample handle from miles?
-	if (m_SoundHandle != NULL) {
+	if (m_SoundHandle != nullptr) {
 
 		::AIL_set_3D_position (m_SoundHandle->Get_H3DSAMPLE (), 0.0F, 0.0F, 0.0F);
 		::AIL_set_3D_orientation (m_SoundHandle->Get_H3DSAMPLE (),

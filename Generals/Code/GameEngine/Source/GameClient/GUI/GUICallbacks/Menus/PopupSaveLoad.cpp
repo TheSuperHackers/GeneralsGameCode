@@ -75,15 +75,15 @@ static NameKeyType buttonSaveDescConfirm	= NAMEKEY_INVALID;
 static NameKeyType buttonDeleteConfirm		= NAMEKEY_INVALID;
 static NameKeyType buttonDeleteCancel			= NAMEKEY_INVALID;
 
-static GameWindow *buttonFrame = NULL;
-static GameWindow *overwriteConfirm = NULL;
-static GameWindow *loadConfirm = NULL;
-static GameWindow *saveDesc = NULL;
-static GameWindow *listboxGames = NULL;
-static GameWindow *editDesc = NULL;
-static GameWindow *deleteConfirm = NULL;
+static GameWindow *buttonFrame = nullptr;
+static GameWindow *overwriteConfirm = nullptr;
+static GameWindow *loadConfirm = nullptr;
+static GameWindow *saveDesc = nullptr;
+static GameWindow *listboxGames = nullptr;
+static GameWindow *editDesc = nullptr;
+static GameWindow *deleteConfirm = nullptr;
 
-static GameWindow *parent = NULL;
+static GameWindow *parent = nullptr;
 static SaveLoadLayoutType currentLayoutType = SLLT_INVALID;
 static Bool isPopup = FALSE;
 static Int	initialGadgetDelay = 2;
@@ -101,7 +101,7 @@ static void updateMenuActions( void )
 {
 
 	// for loading only, disable the save button, otherwise enable it
-	GameWindow *saveButton = TheWindowManager->winGetWindowFromId( NULL, buttonSaveKey );
+	GameWindow *saveButton = TheWindowManager->winGetWindowFromId( nullptr, buttonSaveKey );
 	DEBUG_ASSERTCRASH( saveButton, ("SaveLoadMenuInit: Unable to find save button") );
 	if( currentLayoutType == SLLT_LOAD_ONLY )
 		saveButton->winEnable( FALSE );
@@ -109,17 +109,17 @@ static void updateMenuActions( void )
 		saveButton->winEnable( TRUE );
 
 	// get the games listbox
-	//GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY( "PopupSaveLoad.wnd:ListboxGames" ) );
+	//GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( nullptr, NAMEKEY( "PopupSaveLoad.wnd:ListboxGames" ) );
 
 	// if something with a game file is selected we can use load and delete
 	Int selected;
 	GadgetListBoxGetSelected( listboxGames, &selected );
 	AvailableGameInfo *selectedGameInfo;
 	selectedGameInfo = (AvailableGameInfo *)GadgetListBoxGetItemData( listboxGames, selected );
-	GameWindow *buttonLoad = TheWindowManager->winGetWindowFromId( NULL, buttonLoadKey );
-	buttonLoad->winEnable( selectedGameInfo != NULL );
-	GameWindow *buttonDelete = TheWindowManager->winGetWindowFromId( NULL, buttonDeleteKey );
-	buttonDelete->winEnable( selectedGameInfo != NULL );
+	GameWindow *buttonLoad = TheWindowManager->winGetWindowFromId( nullptr, buttonLoadKey );
+	buttonLoad->winEnable( selectedGameInfo != nullptr );
+	GameWindow *buttonDelete = TheWindowManager->winGetWindowFromId( nullptr, buttonDeleteKey );
+	buttonDelete->winEnable( selectedGameInfo != nullptr );
 
 }
 
@@ -153,7 +153,7 @@ void SaveLoadMenuInit( WindowLayout *layout, void *userData )
 
 	//set keyboard focus to main parent and set modal
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey("PopupSaveLoad.wnd:SaveLoadMenu");
-	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 	TheWindowManager->winSetFocus( parent );
 	TheWindowManager->winSetModal( parent );
 
@@ -171,8 +171,8 @@ void SaveLoadMenuInit( WindowLayout *layout, void *userData )
 	deleteConfirm = TheWindowManager->winGetWindowFromId( parent, NAMEKEY( "PopupSaveLoad.wnd:DeleteConfirmParent" ) );
 	editDesc = TheWindowManager->winGetWindowFromId( parent, NAMEKEY( "PopupSaveLoad.wnd:EntryDesc" ) );
 	// get the listbox that will have the save games in it
-	listboxGames = TheWindowManager->winGetWindowFromId( NULL, listboxGamesKey );
-	DEBUG_ASSERTCRASH( listboxGames != NULL, ("SaveLoadMenuInit - Unable to find games listbox") );
+	listboxGames = TheWindowManager->winGetWindowFromId( nullptr, listboxGamesKey );
+	DEBUG_ASSERTCRASH( listboxGames != nullptr, ("SaveLoadMenuInit - Unable to find games listbox") );
 
 	// populate the listbox with the save games on disk
 	TheGameState->populateSaveGameListbox( listboxGames, currentLayoutType );
@@ -215,7 +215,7 @@ void SaveLoadMenuFullScreenInit( WindowLayout *layout, void *userData )
 
 	//set keyboard focus to main parent and set modal
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey("SaveLoad.wnd:SaveLoadMenu");
-	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 	TheWindowManager->winSetFocus( parent );
 //	TheWindowManager->winSetModal( parent );
 
@@ -234,8 +234,8 @@ void SaveLoadMenuFullScreenInit( WindowLayout *layout, void *userData )
 	editDesc = TheWindowManager->winGetWindowFromId( parent, NAMEKEY( "SaveLoad.wnd:EntryDesc" ) );
 	deleteConfirm = TheWindowManager->winGetWindowFromId( parent, NAMEKEY( "SaveLoad.wnd:DeleteConfirmParent" ) );
 	// get the listbox that will have the save games in it
-	listboxGames = TheWindowManager->winGetWindowFromId( NULL, listboxGamesKey );
-	DEBUG_ASSERTCRASH( listboxGames != NULL, ("SaveLoadMenuInit - Unable to find games listbox") );
+	listboxGames = TheWindowManager->winGetWindowFromId( nullptr, listboxGamesKey );
+	DEBUG_ASSERTCRASH( listboxGames != nullptr, ("SaveLoadMenuInit - Unable to find games listbox") );
 
 	// populate the listbox with the save games on disk
 	TheGameState->populateSaveGameListbox( listboxGames, currentLayoutType );
@@ -357,7 +357,7 @@ static AvailableGameInfo *getSelectedSaveFileInfo( GameWindow *window )
 
 	// get the listbox
 	//GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( window, listboxGamesKey );
-	DEBUG_ASSERTCRASH( listboxGames != NULL, ("SaveLoadMenuInit - Unable to find games listbox") );
+	DEBUG_ASSERTCRASH( listboxGames != nullptr, ("SaveLoadMenuInit - Unable to find games listbox") );
 
 	// which item is selected
 	Int selected;
@@ -544,9 +544,9 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 			{
 				GameWindow *control = (GameWindow *)mData1;
 				GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( window, listboxGamesKey );
-				DEBUG_ASSERTCRASH( listboxGames != NULL, ("SaveLoadMenuInit - Unable to find games listbox") );
+				DEBUG_ASSERTCRASH( listboxGames != nullptr, ("SaveLoadMenuInit - Unable to find games listbox") );
 
-				if (listboxGames != NULL) {
+				if (listboxGames != nullptr) {
 					int rowSelected = mData2;
 					GadgetListBoxSetSelected(listboxGames, rowSelected);
 
@@ -564,7 +564,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 			GameWindow *control = (GameWindow *)mData1;
 
 			GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( window, listboxGamesKey );
-			DEBUG_ASSERTCRASH( listboxGames != NULL, ("SaveLoadMenuInit - Unable to find games listbox") );
+			DEBUG_ASSERTCRASH( listboxGames != nullptr, ("SaveLoadMenuInit - Unable to find games listbox") );
 
 			//
 			// handle games listbox, when certain items are selected in the listbox only some
@@ -600,7 +600,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 				AvailableGameInfo *selectedGameInfo = getSelectedSaveFileInfo( window );
 
 				// if there is no file info, this is a new game
-				if( selectedGameInfo == NULL )
+				if( selectedGameInfo == nullptr )
 				{
 
 					// show the save description window

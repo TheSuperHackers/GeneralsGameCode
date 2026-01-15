@@ -212,7 +212,7 @@ SphereMeshClass::Set_DCG (bool is_additive, int index, float value)
 	return ;
 }
 
-// Note: SPHERE_NUM_LOD does not include the NULL LOD.
+// Note: SPHERE_NUM_LOD does not include the null LOD.
 #define SPHERE_NUM_LOD		(10)
 #define SPHERE_LOWEST_LOD	(7)
 #define SPHERE_HIGHEST_LOD (17)

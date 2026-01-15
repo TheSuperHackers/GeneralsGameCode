@@ -57,7 +57,7 @@ public:
 	OLEInitializer()
 	{
 		// Initialize this instance
-		OleInitialize(NULL);
+		OleInitialize(nullptr);
 	 }
 	~OLEInitializer()
 	{
@@ -67,7 +67,7 @@ public:
 OLEInitializer g_OLEInitializer;
 CComModule _Module;
 
-CComObject<WebBrowser> * TheWebBrowser = NULL;
+CComObject<WebBrowser> * TheWebBrowser = nullptr;
 
 
 /******************************************************************************
@@ -90,7 +90,7 @@ WebBrowser::WebBrowser() :
 		mRefCount(1)
 {
 	DEBUG_LOG(("Instantiating embedded WebBrowser"));
-	m_urlList = NULL;
+	m_urlList = nullptr;
 }
 
 
@@ -114,15 +114,15 @@ WebBrowser::~WebBrowser()
 {
 	DEBUG_LOG(("Destructing embedded WebBrowser"));
 	if (this == TheWebBrowser) {
-		DEBUG_LOG(("WebBrowser::~WebBrowser - setting TheWebBrowser to NULL"));
-		TheWebBrowser = NULL;
+		DEBUG_LOG(("WebBrowser::~WebBrowser - setting TheWebBrowser to null"));
+		TheWebBrowser = nullptr;
 	}
 	WebBrowserURL *url = m_urlList;
-	while (url != NULL) {
+	while (url != nullptr) {
 		WebBrowserURL *temp = url;
 		url = url->m_next;
 		deleteInstance(temp);
-		temp = NULL;
+		temp = nullptr;
 	}
 }
 
@@ -132,14 +132,14 @@ WebBrowser::~WebBrowser()
 const FieldParse WebBrowserURL::m_URLFieldParseTable[] =
 {
 
-	{ "URL",										INI::parseAsciiString,							NULL, offsetof( WebBrowserURL, m_url ) },
-	{ NULL,											NULL,																NULL, 0 },
+	{ "URL",										INI::parseAsciiString,							nullptr, offsetof( WebBrowserURL, m_url ) },
+	{ nullptr,											nullptr,																nullptr, 0 },
 
 };
 
 WebBrowserURL::WebBrowserURL()
 {
-	m_next = NULL;
+	m_next = nullptr;
 	m_tag.clear();
 	m_url.clear();
 }
@@ -165,9 +165,9 @@ WebBrowserURL::~WebBrowserURL()
 
 void WebBrowser::init()
 {
-	m_urlList = NULL;
+	m_urlList = nullptr;
 	INI ini;
-	ini.loadFileDirectory( "Data\\INI\\Webpages", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Webpages", INI_LOAD_OVERWRITE, nullptr );
 }
 
 /******************************************************************************
@@ -198,7 +198,7 @@ WebBrowserURL * WebBrowser::findURL(AsciiString tag)
 {
 	WebBrowserURL *retval = m_urlList;
 
-	while ((retval != NULL) && tag.compareNoCase(retval->m_tag.str()))
+	while ((retval != nullptr) && tag.compareNoCase(retval->m_tag.str()))
 	{
 		retval = retval->m_next;
 	}
@@ -234,7 +234,7 @@ WebBrowserURL * WebBrowser::makeNewURL(AsciiString tag)
 
 STDMETHODIMP WebBrowser::QueryInterface(REFIID iid, void** ppv) IUNKNOWN_NOEXCEPT
 {
-	*ppv = NULL;
+	*ppv = nullptr;
 
 	if ((iid == IID_IUnknown) || (iid == IID_IBrowserDispatch))
 	{
@@ -294,7 +294,7 @@ ULONG STDMETHODCALLTYPE WebBrowser::Release(void) IUNKNOWN_NOEXCEPT
 	{
 		DEBUG_LOG(("WebBrowser::Release - all references released, deleting the object."));
 		if (this == TheWebBrowser) {
-			TheWebBrowser = NULL;
+			TheWebBrowser = nullptr;
 		}
 		delete this;
 		return 0;

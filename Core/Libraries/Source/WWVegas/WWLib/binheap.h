@@ -65,7 +65,7 @@ class HeapNodeClass
 };
 
 // WARNING!
-// To reduce the number of compares, element [0] is a sentinel.  It's key value must be the smallest or NULL.
+// To reduce the number of compares, element [0] is a sentinel.  It's key value must be the smallest or null.
 // Keeps track of pointers to objects.
 template <class Key_Type>
 class BinaryHeapClass
@@ -88,7 +88,7 @@ class BinaryHeapClass
 		BinaryHeapClass(unsigned int max_number_of_elements)
 			:	Max_Number_Of_Elements (max_number_of_elements),
 				Number_Of_Elements (0),
-				Elements (NULL),
+				Elements (nullptr),
 				Own_Array (false)
 		{
 			Resize_Array (max_number_of_elements);
@@ -100,10 +100,10 @@ class BinaryHeapClass
 			Release_Array ();
 		}
 
-		// Reset all entries in the array to NULL
+		// Reset all entries in the array to null
 		void Flush_Array (void)
 		{
-			::memset (Elements, NULL, sizeof (HeapNodeClass<Key_Type> *) * Max_Number_Of_Elements);
+			::memset (Elements, nullptr, sizeof (HeapNodeClass<Key_Type> *) * Max_Number_Of_Elements);
 			Number_Of_Elements = 0;
 		}
 
@@ -119,8 +119,8 @@ class BinaryHeapClass
 			Number_Of_Elements		= 0;
 			Own_Array					= true;
 
-			// Initialize to NULL
-			::memset (Elements, NULL, sizeof (HeapNodeClass<Key_Type> *) * new_size);
+			// Initialize to null
+			::memset (Elements, nullptr, sizeof (HeapNodeClass<Key_Type> *) * new_size);
 			return ;
 		}
 
@@ -128,7 +128,7 @@ class BinaryHeapClass
 		{
 			if (Own_Array) {
 				delete [] Elements;
-				Elements = NULL;
+				Elements = nullptr;
 				Number_Of_Elements = 0;
 				Max_Number_Of_Elements = 0;
 			}
@@ -206,7 +206,7 @@ class BinaryHeapClass
 			HeapNodeClass<Key_Type>* 	min_element;
 
 			if (Number_Of_Elements == 0) {
-				return NULL;
+				return nullptr;
 			}
 
 			assert(Number_Of_Elements > 0);
@@ -214,7 +214,7 @@ class BinaryHeapClass
 
 			// The smallest element is always at this position.
 			min_element = Elements[1];
-			if (min_element != NULL) {
+			if (min_element != nullptr) {
 				min_element->Set_Heap_Location (0);
 			}
 

@@ -41,7 +41,7 @@ static char THIS_FILE[] = __FILE__;
 // CameraSettingsDialogClass
 //
 /////////////////////////////////////////////////////////////////////////////
-CameraSettingsDialogClass::CameraSettingsDialogClass(CWnd* pParent /*=NULL*/)
+CameraSettingsDialogClass::CameraSettingsDialogClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(CameraSettingsDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CameraSettingsDialogClass)
@@ -179,7 +179,7 @@ CameraSettingsDialogClass::OnOK (void)
 	//	Refresh the camera settings
 	//
 	RenderObjClass *render_obj = doc->GetDisplayedObject ();
-	if (render_obj != NULL) {
+	if (render_obj != nullptr) {
 		graphic_view->Reset_Camera_To_Display_Object (*render_obj);
 	}
 
@@ -241,7 +241,7 @@ CameraSettingsDialogClass::OnReset (void)
 
 	graphic_view->Reset_FOV ();
 	RenderObjClass *render_obj = doc->GetDisplayedObject ();
-	if (render_obj != NULL) {
+	if (render_obj != nullptr) {
 		graphic_view->Reset_Camera_To_Display_Object (*render_obj);
 	}
 
@@ -289,7 +289,7 @@ CameraSettingsDialogClass::OnNotify
 	//	Update the spinner control if necessary
 	//
 	NMHDR *header = (NMHDR *)lParam;
-	if ((header != NULL) && (header->code == UDN_DELTAPOS)) {
+	if ((header != nullptr) && (header->code == UDN_DELTAPOS)) {
 		LPNMUPDOWN updown_info = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (header->hwndFrom, updown_info->iDelta);
 

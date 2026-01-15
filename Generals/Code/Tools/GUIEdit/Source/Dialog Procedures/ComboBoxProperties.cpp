@@ -542,11 +542,11 @@ static LRESULT CALLBACK comboBoxPropertiesCallback( HWND hWndDialog,
 						GadgetComboBoxSetLettersAndNumbersOnly(window, IsDlgButtonChecked( hWndDialog, CHECK_LETTERS_AND_NUMBERS ));
 
 						// change in the size of the comboBox
-						Int newMaxChars = GetDlgItemInt( hWndDialog, EDIT_MAX_CHARS, NULL, FALSE );
+						Int newMaxChars = GetDlgItemInt( hWndDialog, EDIT_MAX_CHARS, nullptr, FALSE );
 						if( newMaxChars != comboData->maxChars)
 							GadgetComboBoxSetMaxChars( window, newMaxChars );
 
-						Int newMaxDisplay = GetDlgItemInt( hWndDialog, EDIT_MAX_ITEMS_DISPLAYED, NULL, FALSE );
+						Int newMaxDisplay = GetDlgItemInt( hWndDialog, EDIT_MAX_ITEMS_DISPLAYED, nullptr, FALSE );
 						if( newMaxDisplay != comboData->maxDisplay )
 							GadgetComboBoxSetMaxDisplay( window, newMaxDisplay );
 
@@ -607,8 +607,8 @@ HWND InitComboBoxPropertiesDialog( GameWindow *window )
 												 (LPCTSTR)COMBO_BOX_PROPERTIES_DIALOG,
 												 TheEditor->getWindowHandle(),
 												 (DLGPROC)comboBoxPropertiesCallback );
-	if( dialog == NULL )
-		return NULL;
+	if( dialog == nullptr )
+		return nullptr;
 
 	// do the common initialization
 	CommonDialogInitialize( window, dialog );

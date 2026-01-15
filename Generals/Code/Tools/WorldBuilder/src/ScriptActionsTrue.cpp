@@ -32,7 +32,7 @@
 IMPLEMENT_DYNCREATE(ScriptActionsTrue, CPropertyPage)
 
 ScriptActionsTrue::ScriptActionsTrue() : CPropertyPage(ScriptActionsTrue::IDD),
-m_action(NULL),
+m_action(nullptr),
 m_index(0)
 {
 	//{{AFX_DATA_INIT(ScriptActionsTrue)
@@ -82,7 +82,7 @@ BOOL ScriptActionsTrue::OnInitDialog()
 
 void ScriptActionsTrue::loadList(void)
 {
-	m_action = NULL;
+	m_action = nullptr;
 	ScriptDialog::updateScriptWarning(m_script);
 	CListBox *pList = (CListBox *)GetDlgItem(IDC_ACTION_LIST);
 	Int count = 0;
@@ -111,7 +111,7 @@ void ScriptActionsTrue::loadList(void)
 void ScriptActionsTrue::OnEditAction()
 {
 	CListBox *pList = (CListBox *)GetDlgItem(IDC_ACTION_LIST);
-	if (m_action == NULL) {
+	if (m_action == nullptr) {
 		return;
 	}
 	EditAction cDlg;
@@ -128,13 +128,13 @@ void ScriptActionsTrue::OnEditAction()
 void ScriptActionsTrue::enableUI()
 {
 	CWnd *pWnd = GetDlgItem(IDC_EDIT);
-	pWnd->EnableWindow(m_action!=NULL);
+	pWnd->EnableWindow(m_action!=nullptr);
 
 	pWnd = GetDlgItem(IDC_COPY);
-	pWnd->EnableWindow(m_action!=NULL);
+	pWnd->EnableWindow(m_action!=nullptr);
 
 	pWnd = GetDlgItem(IDC_DELETE);
-	pWnd->EnableWindow(m_action!=NULL);
+	pWnd->EnableWindow(m_action!=nullptr);
 
 	pWnd = GetDlgItem(IDC_MOVE_DOWN);
 	pWnd->EnableWindow(m_action && m_action->getNext());
@@ -146,7 +146,7 @@ void ScriptActionsTrue::enableUI()
 
 void ScriptActionsTrue::OnSelchangeActionList()
 {
-	m_action = NULL;
+	m_action = nullptr;
 	CListBox *pList = (CListBox *)GetDlgItem(IDC_ACTION_LIST);
 	if (pList) {
 		Int count = pList->GetCurSel();
@@ -220,7 +220,7 @@ Bool ScriptActionsTrue::doMoveDown()
 	if (m_action && m_action->getNext()) {
 		ScriptAction *pNext = m_action->getNext();
 		ScriptAction *pCur = m_script->getAction();
-		ScriptAction *pPrev = NULL;
+		ScriptAction *pPrev = nullptr;
 		while (pCur != m_action) {
 			pPrev = pCur;
 			pCur = pCur->getNext();

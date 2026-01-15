@@ -216,7 +216,7 @@ public:
 */
 static ParamBlockDescID MainParameterBlockDesc[] =
 {
-	{ TYPE_INT,			NULL,	FALSE,	0 },		// Pass Count
+	{ TYPE_INT,			nullptr,	FALSE,	0 },		// Pass Count
 };
 
 
@@ -336,366 +336,366 @@ enum
 // Version 0 (old version)
 static ParamBlockDescID PassParameterBlockDescVer0[] =
 {
-	{ TYPE_POINT3,		NULL, TRUE,		0 },		// Ambient
-	{ TYPE_POINT3,		NULL, TRUE,		1 },		// Diffuse
-	{ TYPE_POINT3,		NULL, TRUE,		2 },		// Specular
-	{ TYPE_POINT3,		NULL,	TRUE,		3 },		// Emissive
-	{ TYPE_FLOAT,		NULL, TRUE,		4 },		// Shininess
-	{ TYPE_FLOAT,		NULL, TRUE,		5 },		// Opacity
-	{ TYPE_FLOAT,		NULL, TRUE,		6 },		// Translucency
-	{ TYPE_INT,			NULL,	FALSE,	7 },		// Mapping Type
-	{ TYPE_INT,			NULL, FALSE,	8 },		// PSX Translucency Type
-	{ TYPE_BOOL,		NULL,	FALSE,	9 },		// PSX Lighting Flag
+	{ TYPE_POINT3,		nullptr, TRUE,		0 },		// Ambient
+	{ TYPE_POINT3,		nullptr, TRUE,		1 },		// Diffuse
+	{ TYPE_POINT3,		nullptr, TRUE,		2 },		// Specular
+	{ TYPE_POINT3,		nullptr,	TRUE,		3 },		// Emissive
+	{ TYPE_FLOAT,		nullptr, TRUE,		4 },		// Shininess
+	{ TYPE_FLOAT,		nullptr, TRUE,		5 },		// Opacity
+	{ TYPE_FLOAT,		nullptr, TRUE,		6 },		// Translucency
+	{ TYPE_INT,			nullptr,	FALSE,	7 },		// Mapping Type
+	{ TYPE_INT,			nullptr, FALSE,	8 },		// PSX Translucency Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	9 },		// PSX Lighting Flag
 
-	{ TYPE_INT,			NULL,	FALSE,	10},		// Depth Compare
-	{ TYPE_INT,			NULL,	FALSE,	11},		// Depth Mask
-	{ TYPE_INT,			NULL,	FALSE,	12},		// Color Mask
-	{ TYPE_INT,			NULL,	FALSE,	13},		// Dest Blend
-	{ TYPE_INT,			NULL,	FALSE,	14},		// FogFunc
-	{ TYPE_INT,			NULL,	FALSE,	15},		// PriGradient
-	{ TYPE_INT,			NULL,	FALSE,	16},		// SecGradient
-	{ TYPE_INT,			NULL,	FALSE,	17},		// SrcBlend
-	{ TYPE_INT,			NULL,	FALSE,	18},		// DetailColorFunc
-	{ TYPE_INT,			NULL,	FALSE,	19},		// DetailAlphaFunc
-	{ TYPE_INT,			NULL,	FALSE,	20},		// DitherMask
-	{ TYPE_INT,			NULL,	FALSE,	21},		// Shade Model
+	{ TYPE_INT,			nullptr,	FALSE,	10},		// Depth Compare
+	{ TYPE_INT,			nullptr,	FALSE,	11},		// Depth Mask
+	{ TYPE_INT,			nullptr,	FALSE,	12},		// Color Mask
+	{ TYPE_INT,			nullptr,	FALSE,	13},		// Dest Blend
+	{ TYPE_INT,			nullptr,	FALSE,	14},		// FogFunc
+	{ TYPE_INT,			nullptr,	FALSE,	15},		// PriGradient
+	{ TYPE_INT,			nullptr,	FALSE,	16},		// SecGradient
+	{ TYPE_INT,			nullptr,	FALSE,	17},		// SrcBlend
+	{ TYPE_INT,			nullptr,	FALSE,	18},		// DetailColorFunc
+	{ TYPE_INT,			nullptr,	FALSE,	19},		// DetailAlphaFunc
+	{ TYPE_INT,			nullptr,	FALSE,	20},		// DitherMask
+	{ TYPE_INT,			nullptr,	FALSE,	21},		// Shade Model
 
-	{ TYPE_BOOL,		NULL,	FALSE,	22},		// Stage0 Texture Enable
-	{ TYPE_BOOL,		NULL,	FALSE,	23},		// Stage0 Texture Publish
-	{ TYPE_BOOL,		NULL,	FALSE,	24},		// Stage0 Texture Display (in viewport...)
-	{ TYPE_FLOAT,		NULL,	FALSE,	25},		// Stage0 Frame Rate
-	{ TYPE_INT,			NULL,	FALSE,	26},		// Stage0 Frame Count
-	{ TYPE_INT,			NULL, FALSE,	27},		// Stage0 Animation Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	22},		// Stage0 Texture Enable
+	{ TYPE_BOOL,		nullptr,	FALSE,	23},		// Stage0 Texture Publish
+	{ TYPE_BOOL,		nullptr,	FALSE,	24},		// Stage0 Texture Display (in viewport...)
+	{ TYPE_FLOAT,		nullptr,	FALSE,	25},		// Stage0 Frame Rate
+	{ TYPE_INT,			nullptr,	FALSE,	26},		// Stage0 Frame Count
+	{ TYPE_INT,			nullptr, FALSE,	27},		// Stage0 Animation Type
 
-	{ TYPE_BOOL,		NULL,	FALSE,	28},		// Stage1 Texture Enable
-	{ TYPE_BOOL,		NULL,	FALSE,	29},		// Stage1 Texture Publish
-	{ TYPE_BOOL,		NULL,	FALSE,	30},		// Stage1 Texture Display (in viewport...)
-	{ TYPE_FLOAT,		NULL,	FALSE,	31},		// Stage1 Frame Rate
-	{ TYPE_INT,			NULL,	FALSE,	32},		// Stage1 Frame Count
-	{ TYPE_INT,			NULL, FALSE,	33},		// Stage1 Animation Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	28},		// Stage1 Texture Enable
+	{ TYPE_BOOL,		nullptr,	FALSE,	29},		// Stage1 Texture Publish
+	{ TYPE_BOOL,		nullptr,	FALSE,	30},		// Stage1 Texture Display (in viewport...)
+	{ TYPE_FLOAT,		nullptr,	FALSE,	31},		// Stage1 Frame Rate
+	{ TYPE_INT,			nullptr,	FALSE,	32},		// Stage1 Frame Count
+	{ TYPE_INT,			nullptr, FALSE,	33},		// Stage1 Animation Type
 
 };
 
 // Version 1
 static ParamBlockDescID PassParameterBlockDescVer1[] =
 {
-	{ TYPE_POINT3,		NULL, TRUE,		0 },		// Ambient
-	{ TYPE_POINT3,		NULL, TRUE,		1 },		// Diffuse
-	{ TYPE_POINT3,		NULL, TRUE,		2 },		// Specular
-	{ TYPE_POINT3,		NULL,	TRUE,		3 },		// Emissive
-	{ TYPE_FLOAT,		NULL, TRUE,		4 },		// Shininess
-	{ TYPE_FLOAT,		NULL, TRUE,		5 },		// Opacity
-	{ TYPE_FLOAT,		NULL, TRUE,		6 },		// Translucency
-	{ TYPE_BOOL,		NULL,	FALSE,	34},		// Copy specular to diffuse (new to version 1)
-	{ TYPE_INT,			NULL,	FALSE,	7 },		// Mapping Type
-	{ TYPE_INT,			NULL, FALSE,	8 },		// PSX Translucency Type
-	{ TYPE_BOOL,		NULL,	FALSE,	9 },		// PSX Lighting Flag
+	{ TYPE_POINT3,		nullptr, TRUE,		0 },		// Ambient
+	{ TYPE_POINT3,		nullptr, TRUE,		1 },		// Diffuse
+	{ TYPE_POINT3,		nullptr, TRUE,		2 },		// Specular
+	{ TYPE_POINT3,		nullptr,	TRUE,		3 },		// Emissive
+	{ TYPE_FLOAT,		nullptr, TRUE,		4 },		// Shininess
+	{ TYPE_FLOAT,		nullptr, TRUE,		5 },		// Opacity
+	{ TYPE_FLOAT,		nullptr, TRUE,		6 },		// Translucency
+	{ TYPE_BOOL,		nullptr,	FALSE,	34},		// Copy specular to diffuse (new to version 1)
+	{ TYPE_INT,			nullptr,	FALSE,	7 },		// Mapping Type
+	{ TYPE_INT,			nullptr, FALSE,	8 },		// PSX Translucency Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	9 },		// PSX Lighting Flag
 
-	{ TYPE_INT,			NULL,	FALSE,	10},		// Depth Compare
-	{ TYPE_INT,			NULL,	FALSE,	11},		// Depth Mask
-	{ TYPE_INT,			NULL,	FALSE,	12},		// Color Mask (now obsolete and ignored)
-	{ TYPE_INT,			NULL,	FALSE,	13},		// Dest Blend
-	{ TYPE_INT,			NULL,	FALSE,	14},		// FogFunc (now obsolete and ignored)
-	{ TYPE_INT,			NULL,	FALSE,	15},		// PriGradient
-	{ TYPE_INT,			NULL,	FALSE,	16},		// SecGradient
-	{ TYPE_INT,			NULL,	FALSE,	17},		// SrcBlend
-	{ TYPE_INT,			NULL,	FALSE,	18},		// DetailColorFunc
-	{ TYPE_INT,			NULL,	FALSE,	19},		// DetailAlphaFunc
+	{ TYPE_INT,			nullptr,	FALSE,	10},		// Depth Compare
+	{ TYPE_INT,			nullptr,	FALSE,	11},		// Depth Mask
+	{ TYPE_INT,			nullptr,	FALSE,	12},		// Color Mask (now obsolete and ignored)
+	{ TYPE_INT,			nullptr,	FALSE,	13},		// Dest Blend
+	{ TYPE_INT,			nullptr,	FALSE,	14},		// FogFunc (now obsolete and ignored)
+	{ TYPE_INT,			nullptr,	FALSE,	15},		// PriGradient
+	{ TYPE_INT,			nullptr,	FALSE,	16},		// SecGradient
+	{ TYPE_INT,			nullptr,	FALSE,	17},		// SrcBlend
+	{ TYPE_INT,			nullptr,	FALSE,	18},		// DetailColorFunc
+	{ TYPE_INT,			nullptr,	FALSE,	19},		// DetailAlphaFunc
 
-	{ TYPE_BOOL,		NULL,	FALSE,	22},		// Stage0 Texture Enable
-	{ TYPE_BOOL,		NULL,	FALSE,	23},		// Stage0 Texture Publish
-	{ TYPE_BOOL,		NULL, FALSE,	35},		// Stage0 Texture Resize (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	36},		// Stage0 Texture No Mipmap (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	37},		// Stage0 Texture Clamp U (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	38},		// Stage0 Texture Clamp V (new to version 1)
-	{ TYPE_INT,			NULL, FALSE,	39},		// Stage0 Texture Hint (new to version 1)
-	{ TYPE_BOOL,		NULL,	FALSE,	24},		// Stage0 Texture Display (in viewport...)
-	{ TYPE_FLOAT,		NULL,	FALSE,	25},		// Stage0 Frame Rate
-	{ TYPE_INT,			NULL,	FALSE,	26},		// Stage0 Frame Count
-	{ TYPE_INT,			NULL, FALSE,	27},		// Stage0 Animation Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	22},		// Stage0 Texture Enable
+	{ TYPE_BOOL,		nullptr,	FALSE,	23},		// Stage0 Texture Publish
+	{ TYPE_BOOL,		nullptr, FALSE,	35},		// Stage0 Texture Resize (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	36},		// Stage0 Texture No Mipmap (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	37},		// Stage0 Texture Clamp U (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	38},		// Stage0 Texture Clamp V (new to version 1)
+	{ TYPE_INT,			nullptr, FALSE,	39},		// Stage0 Texture Hint (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	24},		// Stage0 Texture Display (in viewport...)
+	{ TYPE_FLOAT,		nullptr,	FALSE,	25},		// Stage0 Frame Rate
+	{ TYPE_INT,			nullptr,	FALSE,	26},		// Stage0 Frame Count
+	{ TYPE_INT,			nullptr, FALSE,	27},		// Stage0 Animation Type
 
-	{ TYPE_BOOL,		NULL,	FALSE,	28},		// Stage1 Texture Enable
-	{ TYPE_BOOL,		NULL,	FALSE,	29},		// Stage1 Texture Publish
-	{ TYPE_BOOL,		NULL, FALSE,	40},		// Stage1 Texture Resize (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	41},		// Stage1 Texture No Mipmap (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	42},		// Stage1 Texture Clamp U (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	43},		// Stage1 Texture Clamp V (new to version 1)
-	{ TYPE_INT,			NULL, FALSE,	44},		// Stage1 Texture Hint (new to version 1)
-	{ TYPE_BOOL,		NULL,	FALSE,	30},		// Stage1 Texture Display (in viewport...)
-	{ TYPE_FLOAT,		NULL,	FALSE,	31},		// Stage1 Frame Rate
-	{ TYPE_INT,			NULL,	FALSE,	32},		// Stage1 Frame Count
-	{ TYPE_INT,			NULL, FALSE,	33},		// Stage1 Animation Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	28},		// Stage1 Texture Enable
+	{ TYPE_BOOL,		nullptr,	FALSE,	29},		// Stage1 Texture Publish
+	{ TYPE_BOOL,		nullptr, FALSE,	40},		// Stage1 Texture Resize (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	41},		// Stage1 Texture No Mipmap (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	42},		// Stage1 Texture Clamp U (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	43},		// Stage1 Texture Clamp V (new to version 1)
+	{ TYPE_INT,			nullptr, FALSE,	44},		// Stage1 Texture Hint (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	30},		// Stage1 Texture Display (in viewport...)
+	{ TYPE_FLOAT,		nullptr,	FALSE,	31},		// Stage1 Frame Rate
+	{ TYPE_INT,			nullptr,	FALSE,	32},		// Stage1 Frame Count
+	{ TYPE_INT,			nullptr, FALSE,	33},		// Stage1 Animation Type
 
-	{ TYPE_BOOL,		NULL,	FALSE,	45},		// Stage0 Texture Alpha Bitmap (new to version 1)
-	{ TYPE_BOOL,		NULL,	FALSE,	46},		// Stage1 Texture Alpha Bitmap (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	45},		// Stage0 Texture Alpha Bitmap (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	46},		// Stage1 Texture Alpha Bitmap (new to version 1)
 
-	{ TYPE_BOOL,		NULL,	FALSE,	47},		// Alpha Test (new to version 1)
-	{ TYPE_INT,			NULL,	FALSE,	48},		// Shader preset (new to version 1) (now obsolete and ignored)
+	{ TYPE_BOOL,		nullptr,	FALSE,	47},		// Alpha Test (new to version 1)
+	{ TYPE_INT,			nullptr,	FALSE,	48},		// Shader preset (new to version 1) (now obsolete and ignored)
 };
 
 // Version 2 (old version)
 static ParamBlockDescID PassParameterBlockDescVer2[] =
 {
-	{ TYPE_POINT3,		NULL, TRUE,		0 },		// Ambient
-	{ TYPE_POINT3,		NULL, TRUE,		1 },		// Diffuse
-	{ TYPE_POINT3,		NULL, TRUE,		2 },		// Specular
-	{ TYPE_POINT3,		NULL,	TRUE,		3 },		// Emissive
-	{ TYPE_FLOAT,		NULL, TRUE,		4 },		// Shininess
-	{ TYPE_FLOAT,		NULL, TRUE,		5 },		// Opacity
-	{ TYPE_FLOAT,		NULL, TRUE,		6 },		// Translucency
-	{ TYPE_BOOL,		NULL,	FALSE,	34},		// Copy specular to diffuse (new to version 1)
-	{ TYPE_INT,			NULL,	FALSE,	7 },		// Mapping Type
-	{ TYPE_INT,			NULL, FALSE,	8 },		// PSX Translucency Type
-	{ TYPE_BOOL,		NULL,	FALSE,	9 },		// PSX Lighting Flag
+	{ TYPE_POINT3,		nullptr, TRUE,		0 },		// Ambient
+	{ TYPE_POINT3,		nullptr, TRUE,		1 },		// Diffuse
+	{ TYPE_POINT3,		nullptr, TRUE,		2 },		// Specular
+	{ TYPE_POINT3,		nullptr,	TRUE,		3 },		// Emissive
+	{ TYPE_FLOAT,		nullptr, TRUE,		4 },		// Shininess
+	{ TYPE_FLOAT,		nullptr, TRUE,		5 },		// Opacity
+	{ TYPE_FLOAT,		nullptr, TRUE,		6 },		// Translucency
+	{ TYPE_BOOL,		nullptr,	FALSE,	34},		// Copy specular to diffuse (new to version 1)
+	{ TYPE_INT,			nullptr,	FALSE,	7 },		// Mapping Type
+	{ TYPE_INT,			nullptr, FALSE,	8 },		// PSX Translucency Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	9 },		// PSX Lighting Flag
 
-	{ TYPE_INT,			NULL,	FALSE,	10},		// Depth Compare
-	{ TYPE_INT,			NULL,	FALSE,	11},		// Depth Mask
-	{ TYPE_INT,			NULL,	FALSE,	12},		// Color Mask (now obsolete and ignored)
-	{ TYPE_INT,			NULL,	FALSE,	13},		// Dest Blend
-	{ TYPE_INT,			NULL,	FALSE,	14},		// FogFunc (now obsolete and ignored)
-	{ TYPE_INT,			NULL,	FALSE,	15},		// PriGradient
-	{ TYPE_INT,			NULL,	FALSE,	16},		// SecGradient
-	{ TYPE_INT,			NULL,	FALSE,	17},		// SrcBlend
-	{ TYPE_INT,			NULL,	FALSE,	18},		// DetailColorFunc
-	{ TYPE_INT,			NULL,	FALSE,	19},		// DetailAlphaFunc
+	{ TYPE_INT,			nullptr,	FALSE,	10},		// Depth Compare
+	{ TYPE_INT,			nullptr,	FALSE,	11},		// Depth Mask
+	{ TYPE_INT,			nullptr,	FALSE,	12},		// Color Mask (now obsolete and ignored)
+	{ TYPE_INT,			nullptr,	FALSE,	13},		// Dest Blend
+	{ TYPE_INT,			nullptr,	FALSE,	14},		// FogFunc (now obsolete and ignored)
+	{ TYPE_INT,			nullptr,	FALSE,	15},		// PriGradient
+	{ TYPE_INT,			nullptr,	FALSE,	16},		// SecGradient
+	{ TYPE_INT,			nullptr,	FALSE,	17},		// SrcBlend
+	{ TYPE_INT,			nullptr,	FALSE,	18},		// DetailColorFunc
+	{ TYPE_INT,			nullptr,	FALSE,	19},		// DetailAlphaFunc
 
-	{ TYPE_BOOL,		NULL,	FALSE,	22},		// Stage0 Texture Enable
-	{ TYPE_BOOL,		NULL,	FALSE,	23},		// Stage0 Texture Publish
-	{ TYPE_BOOL,		NULL, FALSE,	35},		// Stage0 Texture Resize (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	36},		// Stage0 Texture No Mipmap (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	37},		// Stage0 Texture Clamp U (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	38},		// Stage0 Texture Clamp V (new to version 1)
-	{ TYPE_INT,			NULL, FALSE,	39},		// Stage0 Texture Hint (new to version 1)
-	{ TYPE_BOOL,		NULL,	FALSE,	24},		// Stage0 Texture Display (in viewport...)
-	{ TYPE_FLOAT,		NULL,	FALSE,	25},		// Stage0 Frame Rate
-	{ TYPE_INT,			NULL,	FALSE,	26},		// Stage0 Frame Count
-	{ TYPE_INT,			NULL, FALSE,	27},		// Stage0 Animation Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	22},		// Stage0 Texture Enable
+	{ TYPE_BOOL,		nullptr,	FALSE,	23},		// Stage0 Texture Publish
+	{ TYPE_BOOL,		nullptr, FALSE,	35},		// Stage0 Texture Resize (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	36},		// Stage0 Texture No Mipmap (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	37},		// Stage0 Texture Clamp U (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	38},		// Stage0 Texture Clamp V (new to version 1)
+	{ TYPE_INT,			nullptr, FALSE,	39},		// Stage0 Texture Hint (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	24},		// Stage0 Texture Display (in viewport...)
+	{ TYPE_FLOAT,		nullptr,	FALSE,	25},		// Stage0 Frame Rate
+	{ TYPE_INT,			nullptr,	FALSE,	26},		// Stage0 Frame Count
+	{ TYPE_INT,			nullptr, FALSE,	27},		// Stage0 Animation Type
 
-	{ TYPE_BOOL,		NULL,	FALSE,	28},		// Stage1 Texture Enable
-	{ TYPE_BOOL,		NULL,	FALSE,	29},		// Stage1 Texture Publish
-	{ TYPE_BOOL,		NULL, FALSE,	40},		// Stage1 Texture Resize (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	41},		// Stage1 Texture No Mipmap (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	42},		// Stage1 Texture Clamp U (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	43},		// Stage1 Texture Clamp V (new to version 1)
-	{ TYPE_INT,			NULL, FALSE,	44},		// Stage1 Texture Hint (new to version 1)
-	{ TYPE_BOOL,		NULL,	FALSE,	30},		// Stage1 Texture Display (in viewport...)
-	{ TYPE_FLOAT,		NULL,	FALSE,	31},		// Stage1 Frame Rate
-	{ TYPE_INT,			NULL,	FALSE,	32},		// Stage1 Frame Count
-	{ TYPE_INT,			NULL, FALSE,	33},		// Stage1 Animation Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	28},		// Stage1 Texture Enable
+	{ TYPE_BOOL,		nullptr,	FALSE,	29},		// Stage1 Texture Publish
+	{ TYPE_BOOL,		nullptr, FALSE,	40},		// Stage1 Texture Resize (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	41},		// Stage1 Texture No Mipmap (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	42},		// Stage1 Texture Clamp U (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	43},		// Stage1 Texture Clamp V (new to version 1)
+	{ TYPE_INT,			nullptr, FALSE,	44},		// Stage1 Texture Hint (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	30},		// Stage1 Texture Display (in viewport...)
+	{ TYPE_FLOAT,		nullptr,	FALSE,	31},		// Stage1 Frame Rate
+	{ TYPE_INT,			nullptr,	FALSE,	32},		// Stage1 Frame Count
+	{ TYPE_INT,			nullptr, FALSE,	33},		// Stage1 Animation Type
 
-	{ TYPE_BOOL,		NULL,	FALSE,	45},		// Stage0 Texture Alpha Bitmap (new to version 1)
-	{ TYPE_BOOL,		NULL,	FALSE,	46},		// Stage1 Texture Alpha Bitmap (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	45},		// Stage0 Texture Alpha Bitmap (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	46},		// Stage1 Texture Alpha Bitmap (new to version 1)
 
-	{ TYPE_BOOL,		NULL,	FALSE,	47},		// Alpha Test (new to version 1)
-	{ TYPE_INT,			NULL,	FALSE,	48},		// Shader preset (new to version 1) (now obsolete and ignored)
-	{ TYPE_INT,			NULL,	FALSE,	49},		// PS2 Shader Param A
-	{ TYPE_INT,			NULL,	FALSE,	50},		// PS2 Shader Param B
-	{ TYPE_INT,			NULL,	FALSE,	51},		// PS2 Shader Param C
-	{ TYPE_INT,			NULL,	FALSE,	52},		// PS2 Shader Param D
+	{ TYPE_BOOL,		nullptr,	FALSE,	47},		// Alpha Test (new to version 1)
+	{ TYPE_INT,			nullptr,	FALSE,	48},		// Shader preset (new to version 1) (now obsolete and ignored)
+	{ TYPE_INT,			nullptr,	FALSE,	49},		// PS2 Shader Param A
+	{ TYPE_INT,			nullptr,	FALSE,	50},		// PS2 Shader Param B
+	{ TYPE_INT,			nullptr,	FALSE,	51},		// PS2 Shader Param C
+	{ TYPE_INT,			nullptr,	FALSE,	52},		// PS2 Shader Param D
 };
 
 // Version 3 (old version)
 static ParamBlockDescID PassParameterBlockDescVer3[] =
 {
-	{ TYPE_POINT3,		NULL, TRUE,		0 },		// Ambient
-	{ TYPE_POINT3,		NULL, TRUE,		1 },		// Diffuse
-	{ TYPE_POINT3,		NULL, TRUE,		2 },		// Specular
-	{ TYPE_POINT3,		NULL,	TRUE,		3 },		// Emissive
-	{ TYPE_FLOAT,		NULL, TRUE,		4 },		// Shininess
-	{ TYPE_FLOAT,		NULL, TRUE,		5 },		// Opacity
-	{ TYPE_FLOAT,		NULL, TRUE,		6 },		// Translucency
-	{ TYPE_BOOL,		NULL,	FALSE,	34},		// Copy specular to diffuse (new to version 1)
-	{ TYPE_INT,			NULL,	FALSE,	7 },		// Mapping Type
-	{ TYPE_INT,			NULL, FALSE,	8 },		// PSX Translucency Type
-	{ TYPE_BOOL,		NULL,	FALSE,	9 },		// PSX Lighting Flag
+	{ TYPE_POINT3,		nullptr, TRUE,		0 },		// Ambient
+	{ TYPE_POINT3,		nullptr, TRUE,		1 },		// Diffuse
+	{ TYPE_POINT3,		nullptr, TRUE,		2 },		// Specular
+	{ TYPE_POINT3,		nullptr,	TRUE,		3 },		// Emissive
+	{ TYPE_FLOAT,		nullptr, TRUE,		4 },		// Shininess
+	{ TYPE_FLOAT,		nullptr, TRUE,		5 },		// Opacity
+	{ TYPE_FLOAT,		nullptr, TRUE,		6 },		// Translucency
+	{ TYPE_BOOL,		nullptr,	FALSE,	34},		// Copy specular to diffuse (new to version 1)
+	{ TYPE_INT,			nullptr,	FALSE,	7 },		// Mapping Type
+	{ TYPE_INT,			nullptr, FALSE,	8 },		// PSX Translucency Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	9 },		// PSX Lighting Flag
 
-	{ TYPE_INT,			NULL,	FALSE,	10},		// Depth Compare
-	{ TYPE_INT,			NULL,	FALSE,	11},		// Depth Mask
-	{ TYPE_INT,			NULL,	FALSE,	12},		// Color Mask (now obsolete and ignored)
-	{ TYPE_INT,			NULL,	FALSE,	13},		// Dest Blend
-	{ TYPE_INT,			NULL,	FALSE,	14},		// FogFunc (now obsolete and ignored)
-	{ TYPE_INT,			NULL,	FALSE,	15},		// PriGradient
-	{ TYPE_INT,			NULL,	FALSE,	16},		// SecGradient
-	{ TYPE_INT,			NULL,	FALSE,	17},		// SrcBlend
-	{ TYPE_INT,			NULL,	FALSE,	18},		// DetailColorFunc
-	{ TYPE_INT,			NULL,	FALSE,	19},		// DetailAlphaFunc
+	{ TYPE_INT,			nullptr,	FALSE,	10},		// Depth Compare
+	{ TYPE_INT,			nullptr,	FALSE,	11},		// Depth Mask
+	{ TYPE_INT,			nullptr,	FALSE,	12},		// Color Mask (now obsolete and ignored)
+	{ TYPE_INT,			nullptr,	FALSE,	13},		// Dest Blend
+	{ TYPE_INT,			nullptr,	FALSE,	14},		// FogFunc (now obsolete and ignored)
+	{ TYPE_INT,			nullptr,	FALSE,	15},		// PriGradient
+	{ TYPE_INT,			nullptr,	FALSE,	16},		// SecGradient
+	{ TYPE_INT,			nullptr,	FALSE,	17},		// SrcBlend
+	{ TYPE_INT,			nullptr,	FALSE,	18},		// DetailColorFunc
+	{ TYPE_INT,			nullptr,	FALSE,	19},		// DetailAlphaFunc
 
-	{ TYPE_BOOL,		NULL,	FALSE,	22},		// Stage0 Texture Enable
-	{ TYPE_BOOL,		NULL,	FALSE,	23},		// Stage0 Texture Publish
-	{ TYPE_BOOL,		NULL, FALSE,	35},		// Stage0 Texture Resize (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	36},		// Stage0 Texture No Mipmap (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	37},		// Stage0 Texture Clamp U (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	38},		// Stage0 Texture Clamp V (new to version 1)
-	{ TYPE_INT,			NULL, FALSE,	39},		// Stage0 Texture Hint (new to version 1)
-	{ TYPE_BOOL,		NULL,	FALSE,	24},		// Stage0 Texture Display (in viewport...)
-	{ TYPE_FLOAT,		NULL,	FALSE,	25},		// Stage0 Frame Rate
-	{ TYPE_INT,			NULL,	FALSE,	26},		// Stage0 Frame Count
-	{ TYPE_INT,			NULL, FALSE,	27},		// Stage0 Animation Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	22},		// Stage0 Texture Enable
+	{ TYPE_BOOL,		nullptr,	FALSE,	23},		// Stage0 Texture Publish
+	{ TYPE_BOOL,		nullptr, FALSE,	35},		// Stage0 Texture Resize (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	36},		// Stage0 Texture No Mipmap (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	37},		// Stage0 Texture Clamp U (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	38},		// Stage0 Texture Clamp V (new to version 1)
+	{ TYPE_INT,			nullptr, FALSE,	39},		// Stage0 Texture Hint (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	24},		// Stage0 Texture Display (in viewport...)
+	{ TYPE_FLOAT,		nullptr,	FALSE,	25},		// Stage0 Frame Rate
+	{ TYPE_INT,			nullptr,	FALSE,	26},		// Stage0 Frame Count
+	{ TYPE_INT,			nullptr, FALSE,	27},		// Stage0 Animation Type
 
-	{ TYPE_BOOL,		NULL,	FALSE,	28},		// Stage1 Texture Enable
-	{ TYPE_BOOL,		NULL,	FALSE,	29},		// Stage1 Texture Publish
-	{ TYPE_BOOL,		NULL, FALSE,	40},		// Stage1 Texture Resize (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	41},		// Stage1 Texture No Mipmap (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	42},		// Stage1 Texture Clamp U (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	43},		// Stage1 Texture Clamp V (new to version 1)
-	{ TYPE_INT,			NULL, FALSE,	44},		// Stage1 Texture Hint (new to version 1)
-	{ TYPE_BOOL,		NULL,	FALSE,	30},		// Stage1 Texture Display (in viewport...)
-	{ TYPE_FLOAT,		NULL,	FALSE,	31},		// Stage1 Frame Rate
-	{ TYPE_INT,			NULL,	FALSE,	32},		// Stage1 Frame Count
-	{ TYPE_INT,			NULL, FALSE,	33},		// Stage1 Animation Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	28},		// Stage1 Texture Enable
+	{ TYPE_BOOL,		nullptr,	FALSE,	29},		// Stage1 Texture Publish
+	{ TYPE_BOOL,		nullptr, FALSE,	40},		// Stage1 Texture Resize (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	41},		// Stage1 Texture No Mipmap (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	42},		// Stage1 Texture Clamp U (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	43},		// Stage1 Texture Clamp V (new to version 1)
+	{ TYPE_INT,			nullptr, FALSE,	44},		// Stage1 Texture Hint (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	30},		// Stage1 Texture Display (in viewport...)
+	{ TYPE_FLOAT,		nullptr,	FALSE,	31},		// Stage1 Frame Rate
+	{ TYPE_INT,			nullptr,	FALSE,	32},		// Stage1 Frame Count
+	{ TYPE_INT,			nullptr, FALSE,	33},		// Stage1 Animation Type
 
-	{ TYPE_BOOL,		NULL,	FALSE,	45},		// Stage0 Texture Alpha Bitmap (new to version 1)
-	{ TYPE_BOOL,		NULL,	FALSE,	46},		// Stage1 Texture Alpha Bitmap (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	45},		// Stage0 Texture Alpha Bitmap (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	46},		// Stage1 Texture Alpha Bitmap (new to version 1)
 
-	{ TYPE_BOOL,		NULL,	FALSE,	47},		// Alpha Test (new to version 1)
-	{ TYPE_INT,			NULL,	FALSE,	48},		// Shader preset (new to version 1) (now obsolete and ignored)
-	{ TYPE_INT,			NULL,	FALSE,	49},		// PS2 Shader Param A
-	{ TYPE_INT,			NULL,	FALSE,	50},		// PS2 Shader Param B
-	{ TYPE_INT,			NULL,	FALSE,	51},		// PS2 Shader Param C
-	{ TYPE_INT,			NULL,	FALSE,	52},		// PS2 Shader Param D
+	{ TYPE_BOOL,		nullptr,	FALSE,	47},		// Alpha Test (new to version 1)
+	{ TYPE_INT,			nullptr,	FALSE,	48},		// Shader preset (new to version 1) (now obsolete and ignored)
+	{ TYPE_INT,			nullptr,	FALSE,	49},		// PS2 Shader Param A
+	{ TYPE_INT,			nullptr,	FALSE,	50},		// PS2 Shader Param B
+	{ TYPE_INT,			nullptr,	FALSE,	51},		// PS2 Shader Param C
+	{ TYPE_INT,			nullptr,	FALSE,	52},		// PS2 Shader Param D
 
-	{ TYPE_INT,			NULL,	FALSE,	53},		// Stage0 UV Channel
-	{ TYPE_INT,			NULL,	FALSE,	54},		// Stage1 UV Channel
+	{ TYPE_INT,			nullptr,	FALSE,	53},		// Stage0 UV Channel
+	{ TYPE_INT,			nullptr,	FALSE,	54},		// Stage1 UV Channel
 };
 
 
 // Version 4 (old version)
 static ParamBlockDescID PassParameterBlockDescVer4[] =
 {
-	{ TYPE_POINT3,		NULL, TRUE,		0 },		// Ambient
-	{ TYPE_POINT3,		NULL, TRUE,		1 },		// Diffuse
-	{ TYPE_POINT3,		NULL, TRUE,		2 },		// Specular
-	{ TYPE_POINT3,		NULL,	TRUE,		3 },		// Emissive
-	{ TYPE_FLOAT,		NULL, TRUE,		4 },		// Shininess
-	{ TYPE_FLOAT,		NULL, TRUE,		5 },		// Opacity
-	{ TYPE_FLOAT,		NULL, TRUE,		6 },		// Translucency
-	{ TYPE_BOOL,		NULL,	FALSE,	34},		// Copy specular to diffuse (new to version 1)
-	{ TYPE_INT,			NULL,	FALSE,	7 },		// Stage0 Mapping Type
-	{ TYPE_INT,			NULL, FALSE,	8 },		// PSX Translucency Type
-	{ TYPE_BOOL,		NULL,	FALSE,	9 },		// PSX Lighting Flag
+	{ TYPE_POINT3,		nullptr, TRUE,		0 },		// Ambient
+	{ TYPE_POINT3,		nullptr, TRUE,		1 },		// Diffuse
+	{ TYPE_POINT3,		nullptr, TRUE,		2 },		// Specular
+	{ TYPE_POINT3,		nullptr,	TRUE,		3 },		// Emissive
+	{ TYPE_FLOAT,		nullptr, TRUE,		4 },		// Shininess
+	{ TYPE_FLOAT,		nullptr, TRUE,		5 },		// Opacity
+	{ TYPE_FLOAT,		nullptr, TRUE,		6 },		// Translucency
+	{ TYPE_BOOL,		nullptr,	FALSE,	34},		// Copy specular to diffuse (new to version 1)
+	{ TYPE_INT,			nullptr,	FALSE,	7 },		// Stage0 Mapping Type
+	{ TYPE_INT,			nullptr, FALSE,	8 },		// PSX Translucency Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	9 },		// PSX Lighting Flag
 
-	{ TYPE_INT,			NULL,	FALSE,	10},		// Depth Compare
-	{ TYPE_INT,			NULL,	FALSE,	11},		// Depth Mask
-	{ TYPE_INT,			NULL,	FALSE,	12},		// Color Mask (now obsolete and ignored)
-	{ TYPE_INT,			NULL,	FALSE,	13},		// Dest Blend
-	{ TYPE_INT,			NULL,	FALSE,	14},		// FogFunc (now obsolete and ignored)
-	{ TYPE_INT,			NULL,	FALSE,	15},		// PriGradient
-	{ TYPE_INT,			NULL,	FALSE,	16},		// SecGradient
-	{ TYPE_INT,			NULL,	FALSE,	17},		// SrcBlend
-	{ TYPE_INT,			NULL,	FALSE,	18},		// DetailColorFunc
-	{ TYPE_INT,			NULL,	FALSE,	19},		// DetailAlphaFunc
+	{ TYPE_INT,			nullptr,	FALSE,	10},		// Depth Compare
+	{ TYPE_INT,			nullptr,	FALSE,	11},		// Depth Mask
+	{ TYPE_INT,			nullptr,	FALSE,	12},		// Color Mask (now obsolete and ignored)
+	{ TYPE_INT,			nullptr,	FALSE,	13},		// Dest Blend
+	{ TYPE_INT,			nullptr,	FALSE,	14},		// FogFunc (now obsolete and ignored)
+	{ TYPE_INT,			nullptr,	FALSE,	15},		// PriGradient
+	{ TYPE_INT,			nullptr,	FALSE,	16},		// SecGradient
+	{ TYPE_INT,			nullptr,	FALSE,	17},		// SrcBlend
+	{ TYPE_INT,			nullptr,	FALSE,	18},		// DetailColorFunc
+	{ TYPE_INT,			nullptr,	FALSE,	19},		// DetailAlphaFunc
 
-	{ TYPE_BOOL,		NULL,	FALSE,	22},		// Stage0 Texture Enable
-	{ TYPE_BOOL,		NULL,	FALSE,	23},		// Stage0 Texture Publish
-	{ TYPE_BOOL,		NULL, FALSE,	35},		// Stage0 Texture Resize (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	36},		// Stage0 Texture No Mipmap (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	37},		// Stage0 Texture Clamp U (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	38},		// Stage0 Texture Clamp V (new to version 1)
-	{ TYPE_INT,			NULL, FALSE,	39},		// Stage0 Texture Hint (new to version 1)
-	{ TYPE_BOOL,		NULL,	FALSE,	24},		// Stage0 Texture Display (in viewport...)
-	{ TYPE_FLOAT,		NULL,	FALSE,	25},		// Stage0 Frame Rate
-	{ TYPE_INT,			NULL,	FALSE,	26},		// Stage0 Frame Count
-	{ TYPE_INT,			NULL, FALSE,	27},		// Stage0 Animation Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	22},		// Stage0 Texture Enable
+	{ TYPE_BOOL,		nullptr,	FALSE,	23},		// Stage0 Texture Publish
+	{ TYPE_BOOL,		nullptr, FALSE,	35},		// Stage0 Texture Resize (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	36},		// Stage0 Texture No Mipmap (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	37},		// Stage0 Texture Clamp U (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	38},		// Stage0 Texture Clamp V (new to version 1)
+	{ TYPE_INT,			nullptr, FALSE,	39},		// Stage0 Texture Hint (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	24},		// Stage0 Texture Display (in viewport...)
+	{ TYPE_FLOAT,		nullptr,	FALSE,	25},		// Stage0 Frame Rate
+	{ TYPE_INT,			nullptr,	FALSE,	26},		// Stage0 Frame Count
+	{ TYPE_INT,			nullptr, FALSE,	27},		// Stage0 Animation Type
 
-	{ TYPE_BOOL,		NULL,	FALSE,	28},		// Stage1 Texture Enable
-	{ TYPE_BOOL,		NULL,	FALSE,	29},		// Stage1 Texture Publish
-	{ TYPE_BOOL,		NULL, FALSE,	40},		// Stage1 Texture Resize (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	41},		// Stage1 Texture No Mipmap (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	42},		// Stage1 Texture Clamp U (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	43},		// Stage1 Texture Clamp V (new to version 1)
-	{ TYPE_INT,			NULL, FALSE,	44},		// Stage1 Texture Hint (new to version 1)
-	{ TYPE_BOOL,		NULL,	FALSE,	30},		// Stage1 Texture Display (in viewport...)
-	{ TYPE_FLOAT,		NULL,	FALSE,	31},		// Stage1 Frame Rate
-	{ TYPE_INT,			NULL,	FALSE,	32},		// Stage1 Frame Count
-	{ TYPE_INT,			NULL, FALSE,	33},		// Stage1 Animation Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	28},		// Stage1 Texture Enable
+	{ TYPE_BOOL,		nullptr,	FALSE,	29},		// Stage1 Texture Publish
+	{ TYPE_BOOL,		nullptr, FALSE,	40},		// Stage1 Texture Resize (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	41},		// Stage1 Texture No Mipmap (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	42},		// Stage1 Texture Clamp U (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	43},		// Stage1 Texture Clamp V (new to version 1)
+	{ TYPE_INT,			nullptr, FALSE,	44},		// Stage1 Texture Hint (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	30},		// Stage1 Texture Display (in viewport...)
+	{ TYPE_FLOAT,		nullptr,	FALSE,	31},		// Stage1 Frame Rate
+	{ TYPE_INT,			nullptr,	FALSE,	32},		// Stage1 Frame Count
+	{ TYPE_INT,			nullptr, FALSE,	33},		// Stage1 Animation Type
 
-	{ TYPE_BOOL,		NULL,	FALSE,	45},		// Stage0 Texture Alpha Bitmap (new to version 1)
-	{ TYPE_BOOL,		NULL,	FALSE,	46},		// Stage1 Texture Alpha Bitmap (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	45},		// Stage0 Texture Alpha Bitmap (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	46},		// Stage1 Texture Alpha Bitmap (new to version 1)
 
-	{ TYPE_BOOL,		NULL,	FALSE,	47},		// Alpha Test (new to version 1)
-	{ TYPE_INT,			NULL,	FALSE,	48},		// Shader preset (new to version 1) (now obsolete and ignored)
-	{ TYPE_INT,			NULL,	FALSE,	49},		// PS2 Shader Param A
-	{ TYPE_INT,			NULL,	FALSE,	50},		// PS2 Shader Param B
-	{ TYPE_INT,			NULL,	FALSE,	51},		// PS2 Shader Param C
-	{ TYPE_INT,			NULL,	FALSE,	52},		// PS2 Shader Param D
+	{ TYPE_BOOL,		nullptr,	FALSE,	47},		// Alpha Test (new to version 1)
+	{ TYPE_INT,			nullptr,	FALSE,	48},		// Shader preset (new to version 1) (now obsolete and ignored)
+	{ TYPE_INT,			nullptr,	FALSE,	49},		// PS2 Shader Param A
+	{ TYPE_INT,			nullptr,	FALSE,	50},		// PS2 Shader Param B
+	{ TYPE_INT,			nullptr,	FALSE,	51},		// PS2 Shader Param C
+	{ TYPE_INT,			nullptr,	FALSE,	52},		// PS2 Shader Param D
 
-	{ TYPE_INT,			NULL,	FALSE,	53},		// Stage0 UV Channel
-	{ TYPE_INT,			NULL,	FALSE,	54},		// Stage1 UV Channel
+	{ TYPE_INT,			nullptr,	FALSE,	53},		// Stage0 UV Channel
+	{ TYPE_INT,			nullptr,	FALSE,	54},		// Stage1 UV Channel
 
-	{ TYPE_INT,			NULL,	FALSE,	9998},	// foo
-	{ TYPE_INT,			NULL,	FALSE,	9999},	// bar
+	{ TYPE_INT,			nullptr,	FALSE,	9998},	// foo
+	{ TYPE_INT,			nullptr,	FALSE,	9999},	// bar
 
-	{ TYPE_INT,			NULL,	FALSE,	55},		// Stage1 Mapping Type (new to version 4)
+	{ TYPE_INT,			nullptr,	FALSE,	55},		// Stage1 Mapping Type (new to version 4)
 };
 
 
 // Version 5 (current version)
 static ParamBlockDescID PassParameterBlockDescVer5[] =
 {
-	{ TYPE_POINT3,		NULL, TRUE,		0 },		// Ambient
-	{ TYPE_POINT3,		NULL, TRUE,		1 },		// Diffuse
-	{ TYPE_POINT3,		NULL, TRUE,		2 },		// Specular
-	{ TYPE_POINT3,		NULL,	TRUE,		3 },		// Emissive
-	{ TYPE_FLOAT,		NULL, TRUE,		4 },		// Shininess
-	{ TYPE_FLOAT,		NULL, TRUE,		5 },		// Opacity
-	{ TYPE_FLOAT,		NULL, TRUE,		6 },		// Translucency
-	{ TYPE_BOOL,		NULL,	FALSE,	34},		// Copy specular to diffuse (new to version 1)
-	{ TYPE_INT,			NULL,	FALSE,	7 },		// Stage0 Mapping Type
-	{ TYPE_INT,			NULL, FALSE,	8 },		// PSX Translucency Type
-	{ TYPE_BOOL,		NULL,	FALSE,	9 },		// PSX Lighting Flag
+	{ TYPE_POINT3,		nullptr, TRUE,		0 },		// Ambient
+	{ TYPE_POINT3,		nullptr, TRUE,		1 },		// Diffuse
+	{ TYPE_POINT3,		nullptr, TRUE,		2 },		// Specular
+	{ TYPE_POINT3,		nullptr,	TRUE,		3 },		// Emissive
+	{ TYPE_FLOAT,		nullptr, TRUE,		4 },		// Shininess
+	{ TYPE_FLOAT,		nullptr, TRUE,		5 },		// Opacity
+	{ TYPE_FLOAT,		nullptr, TRUE,		6 },		// Translucency
+	{ TYPE_BOOL,		nullptr,	FALSE,	34},		// Copy specular to diffuse (new to version 1)
+	{ TYPE_INT,			nullptr,	FALSE,	7 },		// Stage0 Mapping Type
+	{ TYPE_INT,			nullptr, FALSE,	8 },		// PSX Translucency Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	9 },		// PSX Lighting Flag
 
-	{ TYPE_INT,			NULL,	FALSE,	10},		// Depth Compare
-	{ TYPE_INT,			NULL,	FALSE,	11},		// Depth Mask
-	{ TYPE_INT,			NULL,	FALSE,	12},		// Color Mask (now obsolete and ignored)
-	{ TYPE_INT,			NULL,	FALSE,	13},		// Dest Blend
-	{ TYPE_INT,			NULL,	FALSE,	14},		// FogFunc (now obsolete and ignored)
-	{ TYPE_INT,			NULL,	FALSE,	15},		// PriGradient
-	{ TYPE_INT,			NULL,	FALSE,	16},		// SecGradient
-	{ TYPE_INT,			NULL,	FALSE,	17},		// SrcBlend
-	{ TYPE_INT,			NULL,	FALSE,	18},		// DetailColorFunc
-	{ TYPE_INT,			NULL,	FALSE,	19},		// DetailAlphaFunc
+	{ TYPE_INT,			nullptr,	FALSE,	10},		// Depth Compare
+	{ TYPE_INT,			nullptr,	FALSE,	11},		// Depth Mask
+	{ TYPE_INT,			nullptr,	FALSE,	12},		// Color Mask (now obsolete and ignored)
+	{ TYPE_INT,			nullptr,	FALSE,	13},		// Dest Blend
+	{ TYPE_INT,			nullptr,	FALSE,	14},		// FogFunc (now obsolete and ignored)
+	{ TYPE_INT,			nullptr,	FALSE,	15},		// PriGradient
+	{ TYPE_INT,			nullptr,	FALSE,	16},		// SecGradient
+	{ TYPE_INT,			nullptr,	FALSE,	17},		// SrcBlend
+	{ TYPE_INT,			nullptr,	FALSE,	18},		// DetailColorFunc
+	{ TYPE_INT,			nullptr,	FALSE,	19},		// DetailAlphaFunc
 
-	{ TYPE_BOOL,		NULL,	FALSE,	22},		// Stage0 Texture Enable
-	{ TYPE_BOOL,		NULL,	FALSE,	23},		// Stage0 Texture Publish
-	{ TYPE_BOOL,		NULL, FALSE,	35},		// Stage0 Texture Resize (new to version 1) OBSOLETE!
-	{ TYPE_BOOL,		NULL, FALSE,	36},		// Stage0 Texture No Mipmap (new to version 1) OBSOLETE!
-	{ TYPE_BOOL,		NULL, FALSE,	37},		// Stage0 Texture Clamp U (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	38},		// Stage0 Texture Clamp V (new to version 1)
-	{ TYPE_INT,			NULL, FALSE,	39},		// Stage0 Texture Hint (new to version 1)
-	{ TYPE_BOOL,		NULL,	FALSE,	24},		// Stage0 Texture Display (in viewport...)
-	{ TYPE_FLOAT,		NULL,	FALSE,	25},		// Stage0 Frame Rate
-	{ TYPE_INT,			NULL,	FALSE,	26},		// Stage0 Frame Count
-	{ TYPE_INT,			NULL, FALSE,	27},		// Stage0 Animation Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	22},		// Stage0 Texture Enable
+	{ TYPE_BOOL,		nullptr,	FALSE,	23},		// Stage0 Texture Publish
+	{ TYPE_BOOL,		nullptr, FALSE,	35},		// Stage0 Texture Resize (new to version 1) OBSOLETE!
+	{ TYPE_BOOL,		nullptr, FALSE,	36},		// Stage0 Texture No Mipmap (new to version 1) OBSOLETE!
+	{ TYPE_BOOL,		nullptr, FALSE,	37},		// Stage0 Texture Clamp U (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	38},		// Stage0 Texture Clamp V (new to version 1)
+	{ TYPE_INT,			nullptr, FALSE,	39},		// Stage0 Texture Hint (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	24},		// Stage0 Texture Display (in viewport...)
+	{ TYPE_FLOAT,		nullptr,	FALSE,	25},		// Stage0 Frame Rate
+	{ TYPE_INT,			nullptr,	FALSE,	26},		// Stage0 Frame Count
+	{ TYPE_INT,			nullptr, FALSE,	27},		// Stage0 Animation Type
 
-	{ TYPE_BOOL,		NULL,	FALSE,	28},		// Stage1 Texture Enable
-	{ TYPE_BOOL,		NULL,	FALSE,	29},		// Stage1 Texture Publish
-	{ TYPE_BOOL,		NULL, FALSE,	40},		// Stage1 Texture Resize (new to version 1)	 OBSOLETE!
-	{ TYPE_BOOL,		NULL, FALSE,	41},		// Stage1 Texture No Mipmap (new to version 1) OBSOLETE!
-	{ TYPE_BOOL,		NULL, FALSE,	42},		// Stage1 Texture Clamp U (new to version 1)
-	{ TYPE_BOOL,		NULL, FALSE,	43},		// Stage1 Texture Clamp V (new to version 1)
-	{ TYPE_INT,			NULL, FALSE,	44},		// Stage1 Texture Hint (new to version 1)
-	{ TYPE_BOOL,		NULL,	FALSE,	30},		// Stage1 Texture Display (in viewport...)
-	{ TYPE_FLOAT,		NULL,	FALSE,	31},		// Stage1 Frame Rate
-	{ TYPE_INT,			NULL,	FALSE,	32},		// Stage1 Frame Count
-	{ TYPE_INT,			NULL, FALSE,	33},		// Stage1 Animation Type
+	{ TYPE_BOOL,		nullptr,	FALSE,	28},		// Stage1 Texture Enable
+	{ TYPE_BOOL,		nullptr,	FALSE,	29},		// Stage1 Texture Publish
+	{ TYPE_BOOL,		nullptr, FALSE,	40},		// Stage1 Texture Resize (new to version 1)	 OBSOLETE!
+	{ TYPE_BOOL,		nullptr, FALSE,	41},		// Stage1 Texture No Mipmap (new to version 1) OBSOLETE!
+	{ TYPE_BOOL,		nullptr, FALSE,	42},		// Stage1 Texture Clamp U (new to version 1)
+	{ TYPE_BOOL,		nullptr, FALSE,	43},		// Stage1 Texture Clamp V (new to version 1)
+	{ TYPE_INT,			nullptr, FALSE,	44},		// Stage1 Texture Hint (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	30},		// Stage1 Texture Display (in viewport...)
+	{ TYPE_FLOAT,		nullptr,	FALSE,	31},		// Stage1 Frame Rate
+	{ TYPE_INT,			nullptr,	FALSE,	32},		// Stage1 Frame Count
+	{ TYPE_INT,			nullptr, FALSE,	33},		// Stage1 Animation Type
 
-	{ TYPE_BOOL,		NULL,	FALSE,	45},		// Stage0 Texture Alpha Bitmap (new to version 1)
-	{ TYPE_BOOL,		NULL,	FALSE,	46},		// Stage1 Texture Alpha Bitmap (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	45},		// Stage0 Texture Alpha Bitmap (new to version 1)
+	{ TYPE_BOOL,		nullptr,	FALSE,	46},		// Stage1 Texture Alpha Bitmap (new to version 1)
 
-	{ TYPE_BOOL,		NULL,	FALSE,	47},		// Alpha Test (new to version 1)
-	{ TYPE_INT,			NULL,	FALSE,	48},		// Shader preset (new to version 1) (now obsolete and ignored)
-	{ TYPE_INT,			NULL,	FALSE,	49},		// PS2 Shader Param A
-	{ TYPE_INT,			NULL,	FALSE,	50},		// PS2 Shader Param B
-	{ TYPE_INT,			NULL,	FALSE,	51},		// PS2 Shader Param C
-	{ TYPE_INT,			NULL,	FALSE,	52},		// PS2 Shader Param D
+	{ TYPE_BOOL,		nullptr,	FALSE,	47},		// Alpha Test (new to version 1)
+	{ TYPE_INT,			nullptr,	FALSE,	48},		// Shader preset (new to version 1) (now obsolete and ignored)
+	{ TYPE_INT,			nullptr,	FALSE,	49},		// PS2 Shader Param A
+	{ TYPE_INT,			nullptr,	FALSE,	50},		// PS2 Shader Param B
+	{ TYPE_INT,			nullptr,	FALSE,	51},		// PS2 Shader Param C
+	{ TYPE_INT,			nullptr,	FALSE,	52},		// PS2 Shader Param D
 
-	{ TYPE_INT,			NULL,	FALSE,	53},		// Stage0 UV Channel
-	{ TYPE_INT,			NULL,	FALSE,	54},		// Stage1 UV Channel
+	{ TYPE_INT,			nullptr,	FALSE,	53},		// Stage0 UV Channel
+	{ TYPE_INT,			nullptr,	FALSE,	54},		// Stage1 UV Channel
 
-	{ TYPE_INT,			NULL,	FALSE,	55	},		// Stage1 Mapping Type (new to version 4)
+	{ TYPE_INT,			nullptr,	FALSE,	55	},		// Stage1 Mapping Type (new to version 4)
 
-	{ TYPE_BOOL,		NULL,	FALSE,	56	},		// Stage0 no texture reduction (new to version 5)
-	{ TYPE_BOOL,		NULL,	FALSE,	57	},		// Stage0 no texture reduction (new to version 5)
+	{ TYPE_BOOL,		nullptr,	FALSE,	56	},		// Stage0 no texture reduction (new to version 5)
+	{ TYPE_BOOL,		nullptr,	FALSE,	57	},		// Stage0 no texture reduction (new to version 5)
 };
 
 // Array of old pass parameter block versions (for backwards compatibility)
@@ -738,7 +738,7 @@ Color scale(const Color& a, const Color& b)
  *=============================================================================================*/
 GameMtl::GameMtl(BOOL loading)
 {
-	MaterialDialog = NULL;
+	MaterialDialog = nullptr;
 	SurfaceType = SURFACE_TYPE_DEFAULT;
 	SortLevel = SORT_LEVEL_NONE;
 
@@ -748,23 +748,23 @@ GameMtl::GameMtl(BOOL loading)
 	Flags |= GAMEMTL_PASSCOUNT_ROLLUP_OPEN;
 	Set_Flag(GAMEMTL_CONVERTED_TO_NOLOD,true);
 
-	DisplacementMap = NULL;
+	DisplacementMap = nullptr;
 	DisplacementAmt = 0.0F;
 
-	Maps = NULL;
-	MainParameterBlock = NULL;
+	Maps = nullptr;
+	MainParameterBlock = nullptr;
 	for (int pass=0; pass<W3dMaterialClass::MAX_PASSES; pass++) {
 		for (int stage=0; stage<W3dMaterialClass::MAX_STAGES; stage++) {
-			Texture[pass][stage] = NULL;
-			MapperArg[pass][stage] = NULL;
+			Texture[pass][stage] = nullptr;
+			MapperArg[pass][stage] = nullptr;
 			MapperArgLen[pass][stage] = 0;
 		}
-		PassParameterBlock[pass] = NULL;
+		PassParameterBlock[pass] = nullptr;
 		CurPage[pass] = 0;
 	}
 
 	ShaderType = STE_PC_SHADER;
-	SubstituteMaterial = NULL;
+	SubstituteMaterial = nullptr;
 
 	if (!loading) {
 		Reset();
@@ -790,7 +790,7 @@ GameMtl::~GameMtl(void)
 		for (int stage=0; stage<W3dMaterialClass::MAX_STAGES; ++stage) {
 			if (MapperArg[pass][stage]) {
 				delete [] (MapperArg[pass][stage]);
-				MapperArg[pass][stage] = NULL;
+				MapperArg[pass][stage] = nullptr;
 			}
 		}
 	}
@@ -910,7 +910,7 @@ TSTR GameMtl::SubAnimName(int i)
  *=============================================================================================*/
 Animatable* GameMtl::SubAnim(int i)
 {
-	return NULL;
+	return nullptr;
 }
 
 
@@ -946,7 +946,7 @@ RefTargetHandle GameMtl::Clone(RemapDir &remap)
 	// replace each pass's parameter block and the textures
 	for (int pass=0; pass < W3dMaterialClass::MAX_PASSES; pass++) {
 
-		IParamBlock * pblock = NULL;
+		IParamBlock * pblock = nullptr;
 		if (PassParameterBlock[pass]) {
 			pblock = (IParamBlock *)remap.CloneRef(PassParameterBlock[pass]);
 		}
@@ -957,7 +957,7 @@ RefTargetHandle GameMtl::Clone(RemapDir &remap)
 			if (Texture[pass][stage]) {
 				mnew->ReplaceReference(texture_ref_index(pass,stage),Texture[pass][stage]->Clone());
 			} else {
-				mnew->ReplaceReference(texture_ref_index(pass,stage),NULL);
+				mnew->ReplaceReference(texture_ref_index(pass,stage),nullptr);
 			}
 
 			// Copy mapper arg strings and lengths
@@ -1120,7 +1120,7 @@ RefTargetHandle GameMtl::GetReference(int i)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -1178,9 +1178,9 @@ void GameMtl::SetSubTexmap(int i, Texmap * m)
 
 	int pass,stage;
 	texmap_index_to_pass_stage(i,&pass,&stage);
-	if (Texture[pass][stage] != NULL) {
+	if (Texture[pass][stage] != nullptr) {
 		UVGen * uvgen = Texture[pass][stage]->GetTheUVGen();
-		if (uvgen != NULL) {
+		if (uvgen != nullptr) {
 			uvgen->SetMapChannel(Get_Map_Channel(pass,stage));
 		}
 	}
@@ -1249,7 +1249,7 @@ ParamDlg * GameMtl::CreateParamDlg(HWND hwnd_mtl_edit, IMtlParams *imp)
 void GameMtl::Notify_Changed(void)
 {
 	NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
-	if (MaterialDialog != NULL) {
+	if (MaterialDialog != nullptr) {
 		MaterialDialog->Update_Display();
 	}
 }
@@ -1283,7 +1283,7 @@ void GameMtl::Reset()
 		ReplaceReference(pass_ref_index(pass), pblock);
 
 		for (int stage = 0;stage < W3dMaterialClass::MAX_STAGES; stage++) {
-			ReplaceReference(texture_ref_index(pass,stage), NULL);
+			ReplaceReference(texture_ref_index(pass,stage), nullptr);
 
 			Set_Texture_Enable(pass,stage,false);
 			Set_Texture_Publish(pass,stage,false);
@@ -1302,7 +1302,7 @@ void GameMtl::Reset()
 
 			if (MapperArg[pass][stage]) {
 				delete [] (MapperArg[pass][stage]);
-				MapperArg[pass][stage] = NULL;
+				MapperArg[pass][stage] = nullptr;
 				MapperArgLen[pass][stage] = 0;
 			}
 		}
@@ -1439,7 +1439,7 @@ IOResult GameMtl::Load(ILoad *iload)
 	int len = 0;
 	unsigned char tmp8;
 	unsigned short tmp16;
-	char * tmpstring = NULL;
+	char * tmpstring = nullptr;
 	float tmpfloat;
 	IOResult res;
 
@@ -3072,7 +3072,7 @@ void GameMtl::Set_Texture_Display(int pass,int stage,bool val)
 	} else {
 
 		SetMtlFlag( MTL_TEX_DISPLAY_ENABLED, FALSE );
-		SetActiveTexmap(NULL);
+		SetActiveTexmap(nullptr);
 		NotifyDependents(FOREVER,PART_ALL,REFMSG_CHANGE);
 
 	}
@@ -3176,9 +3176,9 @@ void GameMtl::Set_Map_Channel(int pass,int stage,int val)
 		PassParameterBlock[pass]->SetValue(PB_STAGE1_MAP_CHANNEL, 0, val);
 	}
 
-	if (Texture[pass][stage] != NULL) {
+	if (Texture[pass][stage] != nullptr) {
 		UVGen * uvgen = Texture[pass][stage]->GetTheUVGen();
-		if (uvgen != NULL) {
+		if (uvgen != nullptr) {
 			uvgen->SetMapChannel(val);
 		}
 	}
@@ -3204,7 +3204,7 @@ char * GameMtl::Get_Mapping_Arg_Buffer(int pass, int stage, unsigned int len)
 			assert(strlen(MapperArg[pass][stage]) <= MapperArgLen[pass][stage]);
 			strcpy(temp, MapperArg[pass][stage]);
 			delete [] (MapperArg[pass][stage]);
-			MapperArg[pass][stage] = NULL;
+			MapperArg[pass][stage] = nullptr;
 		}
 
 		MapperArg[pass][stage] = temp;
@@ -3229,7 +3229,7 @@ void GameMtl::texmap_index_to_pass_stage(int index,int * set_pass,int * set_stag
 float GameMtl::EvalDisplacement(ShadeContext& sc)
 {
 	float displacement = 0.0F;
-	if (DisplacementMap != NULL) {
+	if (DisplacementMap != nullptr) {
 		displacement = DisplacementMap->EvalMono(sc);
 		displacement = displacement * DisplacementAmt;
 	}
@@ -3269,7 +3269,7 @@ void GameMtlPostLoad::proc(ILoad *iload)
 			}
 		}
 
-		m->ReplaceReference(GameMtl::REF_MAPS,NULL);
+		m->ReplaceReference(GameMtl::REF_MAPS,nullptr);
 	}
 
 	// older material formats did not save the map channel and will default to zero,

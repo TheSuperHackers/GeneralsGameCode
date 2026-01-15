@@ -61,7 +61,7 @@ static void doIt(void)
 	// Retrieve install path
 	DWORD type;
 	DWORD sizeOfBuffer = sizeof(installPath);
-	result = RegQueryValueEx(hKey, "InstallPath", NULL, &type, installPath, &sizeOfBuffer);
+	result = RegQueryValueEx(hKey, "InstallPath", nullptr, &type, installPath, &sizeOfBuffer);
 
 	assert((result == ERROR_SUCCESS) && "Failed to obtain game install path!");
 	assert((strlen((const char*)installPath) > 0) && "Game install path invalid!");
@@ -69,14 +69,14 @@ static void doIt(void)
 
 	// Retrieve Hard drive S/N
 	char drive[8];
-	_splitpath((const char*)installPath, drive, NULL, NULL, NULL);
+	_splitpath((const char*)installPath, drive, nullptr, nullptr, nullptr);
 	strcat(drive, "\\");
 
 	DWORD volumeSerialNumber = 0;
 	DWORD maxComponentLength;
 	DWORD fileSystemFlags;
-	BOOL volInfoSuccess = GetVolumeInformation((const char*)drive, NULL, 0,
-		                    &volumeSerialNumber, &maxComponentLength, &fileSystemFlags, NULL, 0);
+	BOOL volInfoSuccess = GetVolumeInformation((const char*)drive, nullptr, 0,
+		                    &volumeSerialNumber, &maxComponentLength, &fileSystemFlags, nullptr, 0);
 
 	if (volInfoSuccess == FALSE)
 	{
@@ -113,7 +113,7 @@ static void doIt(void)
 
 	if (result == ERROR_SUCCESS)
 	{
-		result = RegQueryValueEx(hKey, "", NULL, &type, gameSerialNumber, &sizeOfBuffer);
+		result = RegQueryValueEx(hKey, "", nullptr, &type, gameSerialNumber, &sizeOfBuffer);
 		assert((result == ERROR_SUCCESS) && "Failed to obtain game serial number!");
 		assert((strlen((const char*)gameSerialNumber) > 0) && "Game serial number invalid!");
 	}
@@ -137,7 +137,7 @@ static void doIt(void)
 
 		DWORD type;
 		DWORD sizeOfBuffer = sizeof(winProductID);
-		result = RegQueryValueEx(hKey, "ProductID", NULL, &type, winProductID, &sizeOfBuffer);
+		result = RegQueryValueEx(hKey, "ProductID", nullptr, &type, winProductID, &sizeOfBuffer);
 
 		assert((result == ERROR_SUCCESS) && "Failed to obtain windows product ID!");
 		assert((strlen((const char*)winProductID) > 0) && "Invalid windows product ID");

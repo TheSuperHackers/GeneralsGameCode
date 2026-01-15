@@ -56,7 +56,7 @@
 #include "GameLogic/Module/ParkingPlaceBehavior.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-BuildAssistant *TheBuildAssistant = NULL;
+BuildAssistant *TheBuildAssistant = nullptr;
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ ObjectSellInfo::~ObjectSellInfo( void )
 static Bool isDozer( Object *obj )
 {
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return FALSE;
 
 	if( obj->isKindOf(KINDOF_DOZER))
@@ -107,7 +107,7 @@ static Bool isDozer( Object *obj )
 BuildAssistant::BuildAssistant( void )
 {
 
-	m_buildPositions = NULL;
+	m_buildPositions = nullptr;
 	m_buildPositionSize = 0;
 	m_sellList.clear();
 }
@@ -118,7 +118,7 @@ BuildAssistant::~BuildAssistant( void )
 {
 
 	delete [] m_buildPositions;
-	m_buildPositions = NULL;
+	m_buildPositions = nullptr;
 	m_buildPositionSize = 0;
 
 }
@@ -190,7 +190,7 @@ void BuildAssistant::update( void )
 		// if object is not found, remove it from the list immediately ... this is valid as
 		// the object maybe was destroyed by other means during the sell process
 		//
-		if( obj == NULL )
+		if( obj == nullptr )
 		{
 
 			deleteInstance(sellInfo);
@@ -323,11 +323,11 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 {
 
 	// sanity
-	if( what == NULL || pos == NULL )
-		return NULL;
+	if( what == nullptr || pos == nullptr )
+		return nullptr;
 
-	if( owningPlayer == NULL )
-		return NULL;// Invalid pointer.  Won't happen.
+	if( owningPlayer == nullptr )
+		return nullptr;// Invalid pointer.  Won't happen.
 
 	// sanity
 	if( constructorObject )
@@ -338,9 +338,9 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 	}
 
 	// Need to validate that we can make this in case someone fakes their CommandSet
-	// A NULL constructor Object means a script built building so let it slide.
-	if( (constructorObject != NULL) && !isPossibleToMakeUnit(constructorObject, what) )
-		return NULL;
+	// A nullptr constructor Object means a script built building so let it slide.
+	if( (constructorObject != nullptr) && !isPossibleToMakeUnit(constructorObject, what) )
+		return nullptr;
 
 	// clear out any objects from the building area that are "auto-clearable" when building
 	clearRemovableForConstruction( what, pos, angle );
@@ -350,7 +350,7 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 		// totally bogus. We tried to move our units out of the way, but they wouldn't.
 		// Chode-boys.
 		if (owningPlayer->getPlayerType()==PLAYER_HUMAN) {
-			return NULL;	// ai gets to cheat.  jba.
+			return nullptr;	// ai gets to cheat.  jba.
 		}
 	}
 
@@ -364,7 +364,7 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 			ai->aiIdle(CMD_FROM_AI); // stop any current behavior.
 			return ai->construct( what, pos, angle, owningPlayer, FALSE );
 		}
-		return NULL;
+		return nullptr;
 
 	}
 	else
@@ -431,7 +431,7 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 
 	}
 
-  return NULL;
+  return nullptr;
 
 }
 
@@ -446,7 +446,7 @@ void BuildAssistant::buildObjectLineNow( Object *constructorObject, const ThingT
 	TileBuildInfo *tileBuildInfo;
 
 	// sanity
-	if( what == NULL || start == NULL || end == NULL )
+	if( what == nullptr || start == nullptr || end == nullptr )
 		return;
 
 	// how big are each of our objects
@@ -548,7 +548,7 @@ void BuildAssistant::iterateFootprint( const ThingTemplate *build,
 {
 
 	// sanity
-	if( build == NULL || worldPos == NULL || func == NULL )
+	if( build == nullptr || worldPos == nullptr || func == nullptr )
 		return;
 
 	//
@@ -770,7 +770,7 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 	Real range = 2*(build->getTemplateGeometryInfo().getMajorRadius()+build->getTemplateGeometryInfo().getMinorRadius());
 
 	PartitionFilterAcceptByKindOf f1(MAKE_KINDOF_MASK(KINDOF_STRUCTURE), KINDOFMASK_NONE);
-	PartitionFilter *filters[] = { &f1, NULL };
+	PartitionFilter *filters[] = { &f1, nullptr };
 
 	ObjectIterator *iter2 = ThePartitionManager->iterateObjectsInRange(worldPos, range, FROM_BOUNDINGSPHERE_2D, filters);
 	MemoryPoolObjectHolder hold2(iter2);
@@ -907,7 +907,7 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 //-------------------------------------------------------------------------------------------------
 /** Query if we can build at this location.  Note that 'build' may be null and is NOT required
 	* to be valid to know if a location is legal to build at.  'builderObject' is used
-	* for queries that require a pathfind check and should be NULL if not required */
+	* for queries that require a pathfind check and should be null if not required */
 //-------------------------------------------------------------------------------------------------
 LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 																											 const ThingTemplate *build,
@@ -973,12 +973,12 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 	{
 		// special case for supply centers: can't build too close to supply sources
 		PartitionFilterAcceptByKindOf f1(MAKE_KINDOF_MASK(KINDOF_SUPPLY_SOURCE), KINDOFMASK_NONE);
-		PartitionFilter *filters[] = { &f1, NULL };
+		PartitionFilter *filters[] = { &f1, nullptr };
 
 		// see if there are any reasonably close by
 		Real range = build->getTemplateGeometryInfo().getBoundingCircleRadius() + TheGlobalData->m_SupplyBuildBorder*2;
 		Object* tooClose = ThePartitionManager->getClosestObject(worldPos, range, FROM_BOUNDINGSPHERE_2D, filters);
-		if (tooClose != NULL)
+		if (tooClose != nullptr)
 		{
 			// yep, see if we would collide with an expanded version
 			GeometryInfo tooCloseGeom = tooClose->getGeometryInfo();
@@ -1009,7 +1009,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 		/**todo remove this if we need to change the semantics of this function of the builderObject
 		// actually being able to get to the destination */
 		//
-		if( ai == NULL )
+		if( ai == nullptr )
 			return LBC_NO_CLEAR_PATH;
 
 		if( ai->isQuickPathAvailable( worldPos ) == FALSE )
@@ -1082,7 +1082,7 @@ void BuildAssistant::addBibs(const Coord3D *worldPos,
 	range += 3*build->getTemplateGeometryInfo().getMajorRadius();
 
 	PartitionFilterAcceptByKindOf f1(MAKE_KINDOF_MASK(KINDOF_STRUCTURE), KINDOFMASK_NONE);
-	PartitionFilter *filters[] = { &f1, NULL };
+	PartitionFilter *filters[] = { &f1, nullptr };
 
 	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(worldPos, range, FROM_BOUNDINGSPHERE_2D, filters);
 
@@ -1125,8 +1125,8 @@ BuildAssistant::TileBuildInfo *BuildAssistant::buildTiledLocations( const ThingT
 {
 
 	// sanity
-	if( start == NULL || end == NULL )
-		return 0;
+	if( start == nullptr || end == nullptr )
+		return nullptr;
 
 	//
 	// we will fill out our own internal array of positions, it better be big enough to
@@ -1201,7 +1201,7 @@ BuildAssistant::TileBuildInfo *BuildAssistant::buildTiledLocations( const ThingT
 																BuildAssistant::NO_OBJECT_OVERLAP |
 																BuildAssistant::SHROUD_REVEALED,
 																builderObject,
-																NULL) != LBC_OK )
+																nullptr) != LBC_OK )
 			break;
 
 		// save the position in the output array
@@ -1228,7 +1228,7 @@ BuildAssistant::TileBuildInfo *BuildAssistant::buildTiledLocations( const ThingT
 Bool BuildAssistant::isLineBuildTemplate( const ThingTemplate *tTemplate )
 {
 	// sanity
-	if( tTemplate == NULL )
+	if( tTemplate == nullptr )
 		return FALSE;
 
 	if( tTemplate->isKindOf(KINDOF_LINEBUILD))
@@ -1248,14 +1248,14 @@ Bool BuildAssistant::isPossibleToMakeUnit( Object *builder, const ThingTemplate 
 {
 
 	// sanity
-	if( builder == NULL || whatToBuild == NULL )
+	if( builder == nullptr || whatToBuild == nullptr )
 		return FALSE;
 
 	// get the command set for the producer object
 	const CommandSet *commandSet = TheControlBar->findCommandSet( builder->getCommandSetString() );
 
 	// if no command set we cannot build anything
-	if( commandSet == NULL )
+	if( commandSet == nullptr )
 	{
 
 		DEBUG_ASSERTLOG( 0, ("Can't build a '%s' from the builder '%s' because '%s' doesn't have any command set defined",
@@ -1272,7 +1272,7 @@ Bool BuildAssistant::isPossibleToMakeUnit( Object *builder, const ThingTemplate 
 	// so that nobody can hack one game and cheat to make stuff that they can't usually make
 	//
 	const CommandButton *commandButton;
-	const CommandButton *foundCommand = NULL;
+	const CommandButton *foundCommand = nullptr;
 	Int i;
 	for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
 	{
@@ -1285,7 +1285,7 @@ Bool BuildAssistant::isPossibleToMakeUnit( Object *builder, const ThingTemplate 
 			foundCommand = commandButton;
 
 	}
-	if( foundCommand == NULL )
+	if( foundCommand == nullptr )
 		return FALSE;
 
 	// make sure that the player can actually make this unit by checking prereqs and such
@@ -1307,7 +1307,7 @@ CanMakeType BuildAssistant::canMakeUnit( Object *builder, const ThingTemplate *w
 {
 
 	// sanity
-	if( builder == NULL || whatToBuild == NULL )
+	if( builder == nullptr || whatToBuild == nullptr )
 		return CANMAKE_NO_PREREQ;
 
 	if (builder->testScriptStatusBit(OBJECT_STATUS_SCRIPT_DISABLED) || builder->testScriptStatusBit(OBJECT_STATUS_SCRIPT_UNPOWERED))
@@ -1334,7 +1334,7 @@ CanMakeType BuildAssistant::canMakeUnit( Object *builder, const ThingTemplate *w
 	if (!isPossibleToMakeUnit(builder, whatToBuild))
 		return CANMAKE_NO_PREREQ;
 
-	if (pu != NULL)
+	if (pu != nullptr)
 	{
 		CanMakeType cmt = pu->canQueueCreateUnit(whatToBuild);
 		if (cmt != CANMAKE_OK)
@@ -1359,7 +1359,7 @@ Bool BuildAssistant::isRemovableForConstruction( Object *obj )
 {
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return FALSE;
 
 	if (obj->isKindOf(KINDOF_INERT))
@@ -1503,7 +1503,7 @@ void BuildAssistant::sellObject( Object *obj )
 {
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return;
 
 	// we can only sell structures ... sanity check this
@@ -1511,7 +1511,7 @@ void BuildAssistant::sellObject( Object *obj )
 		return;
 
 	// if object already has an entry in the sell list, we shouldn't try to sell it again
-	ObjectSellInfo *sellInfo = NULL;
+	ObjectSellInfo *sellInfo = nullptr;
 	ObjectSellListIterator it;
 	for( it = m_sellList.begin(); it != m_sellList.end(); ++it )
 	{
@@ -1520,10 +1520,10 @@ void BuildAssistant::sellObject( Object *obj )
 		if( sellInfo->m_id == obj->getID() )
 			break;
 		else
-			sellInfo = NULL;
+			sellInfo = nullptr;
 
 	}
-	if( sellInfo != NULL )
+	if( sellInfo != nullptr )
 		return;
 
 	// set the construction percent of this object just below 100.0% so we can start counting down

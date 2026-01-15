@@ -84,7 +84,7 @@ void Squad::clearSquad() {
 // getAllObjects //////////////////////////////////////////////////////////////////////////////////
 const VecObjectPtr& Squad::getAllObjects(void) // Not a const function cause we clear away dead object here too
 {
-	// prunes all NULL objects
+	// prunes all null objects
 	m_objectsCached.clear();
 	for (VecObjectIDIt it = m_objectIDs.begin(); it != m_objectIDs.end(); ) {
 		Object *obj = TheGameLogic->findObjectByID(*it);

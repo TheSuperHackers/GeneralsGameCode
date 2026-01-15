@@ -30,8 +30,8 @@
 // TheSuperHackers @fix xezon 13/03/2025 Fix debug linker errors by
 // adding "patchget" namespaces and these globals here.
 // just to satisfy the game libraries we link to
-HINSTANCE ApplicationHInstance = NULL;  ///< our application instance
-HWND ApplicationHWnd = NULL;
+HINSTANCE ApplicationHInstance = nullptr;  ///< our application instance
+HWND ApplicationHWnd = nullptr;
 const char *g_strFile = "data\\Generals.str";
 const char *g_csfFile = "data\\%s\\Generals.csf";
 const char *gAppPrefix = "patchget_"; // prefix to the debug log.

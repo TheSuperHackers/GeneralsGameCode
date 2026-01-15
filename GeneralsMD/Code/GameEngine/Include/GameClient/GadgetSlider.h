@@ -220,7 +220,7 @@ inline const Image *GadgetSliderGetEnabledThumbImage( GameWindow *g )
 																							if( thumb )
 																								return GadgetButtonGetEnabledImage( thumb );
 																							else
-																								return NULL;
+																								return nullptr;
 																						}
 inline Color GadgetSliderGetEnabledThumbColor( GameWindow *g )
 																						{
@@ -244,7 +244,7 @@ inline const Image *GadgetSliderGetEnabledSelectedThumbImage( GameWindow *g )
 																							if( thumb )
 																								return GadgetButtonGetEnabledSelectedImage( thumb );
 																							else
-																								return NULL;
+																								return nullptr;
 																						}
 inline Color GadgetSliderGetEnabledSelectedThumbColor( GameWindow *g )
 																						{
@@ -307,7 +307,7 @@ inline const Image *GadgetSliderGetDisabledThumbImage( GameWindow *g )
 																							if( thumb )
 																								return GadgetButtonGetDisabledImage( thumb );
 																							else
-																								return NULL;
+																								return nullptr;
 																						}
 inline Color GadgetSliderGetDisabledThumbColor( GameWindow *g )
 																						{
@@ -331,7 +331,7 @@ inline const Image *GadgetSliderGetDisabledSelectedThumbImage( GameWindow *g )
 																							if( thumb )
 																								return GadgetButtonGetDisabledSelectedImage( thumb );
 																							else
-																								return NULL;
+																								return nullptr;
 																						}
 inline Color GadgetSliderGetDisabledSelectedThumbColor( GameWindow *g )
 																						{
@@ -393,7 +393,7 @@ inline const Image *GadgetSliderGetHiliteThumbImage( GameWindow *g )
 																							if( thumb )
 																								return GadgetButtonGetHiliteImage( thumb );
 																							else
-																								return NULL;
+																								return nullptr;
 																						}
 inline Color GadgetSliderGetHiliteThumbColor( GameWindow *g )
 																						{
@@ -417,7 +417,7 @@ inline const Image *GadgetSliderGetHiliteSelectedThumbImage( GameWindow *g )
 																							if( thumb )
 																								return GadgetButtonGetHiliteSelectedImage( thumb );
 																							else
-																								return NULL;
+																								return nullptr;
 																						}
 inline Color GadgetSliderGetHiliteSelectedThumbColor( GameWindow *g )
 																						{

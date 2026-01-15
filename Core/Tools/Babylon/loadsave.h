@@ -23,5 +23,5 @@
 #pragma once
 
 int WriteMainDB(TransDB *db, const char *filename, CBabylonDlg *dlg );
-int LoadMainDB(TransDB *db, const char *filename, void (*cb) (void ) = NULL );
+int LoadMainDB(TransDB *db, const char *filename, void (*cb) (void ) = nullptr );
 int	GetLabelCountDB ( char *filename );

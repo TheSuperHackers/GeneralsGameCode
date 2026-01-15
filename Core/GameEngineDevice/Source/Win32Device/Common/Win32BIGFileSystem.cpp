@@ -52,8 +52,8 @@ Win32BIGFileSystem::~Win32BIGFileSystem() {
 }
 
 void Win32BIGFileSystem::init() {
-	DEBUG_ASSERTCRASH(TheLocalFileSystem != NULL, ("TheLocalFileSystem must be initialized before TheArchiveFileSystem."));
-	if (TheLocalFileSystem == NULL) {
+	DEBUG_ASSERTCRASH(TheLocalFileSystem != nullptr, ("TheLocalFileSystem must be initialized before TheArchiveFileSystem."));
+	if (TheLocalFileSystem == nullptr) {
 		return;
 	}
 
@@ -89,9 +89,9 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 
 	DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - opening BIG file %s", filename));
 
-	if (fp == NULL) {
+	if (fp == nullptr) {
 		DEBUG_CRASH(("Could not open archive file %s for parsing", filename));
-		return NULL;
+		return nullptr;
 	}
 
 	AsciiString asciibuf;
@@ -101,8 +101,8 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 	if (strcmp(buffer, BIGFileIdentifier) != 0) {
 		DEBUG_CRASH(("Error reading BIG file identifier in file %s", filename));
 		fp->close();
-		fp = NULL;
-		return NULL;
+		fp = nullptr;
+		return nullptr;
 	}
 
 	// read in the file size.
@@ -174,7 +174,7 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 	archiveFile->attachFile(fp);
 
 	delete fileInfo;
-	fileInfo = NULL;
+	fileInfo = nullptr;
 
 	// leave fp open as the archive file will be using it.
 
@@ -228,7 +228,7 @@ Bool Win32BIGFileSystem::loadBigFilesFromDirectory(AsciiString dir, AsciiString 
 
 		ArchiveFile *archiveFile = openArchiveFile((*it).str());
 
-		if (archiveFile != NULL) {
+		if (archiveFile != nullptr) {
 			DEBUG_LOG(("Win32BIGFileSystem::loadBigFilesFromDirectory - loading %s into the directory tree.", (*it).str()));
 			loadIntoDirectoryTree(archiveFile, overwrite);
 			m_archiveFileMap[(*it)] = archiveFile;

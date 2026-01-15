@@ -103,7 +103,7 @@ static const LookupListRec TransitionStyleNames[] =
 	{ "CONTROLBARARROW",			CONTROL_BAR_ARROW_TRANSITION },
 	{ "SCORESCALEUP",			SCORE_SCALE_UP_TRANSITION },
 	{ "REVERSESOUND",			REVERSE_SOUND_TRANSITION },
-	{ NULL, 0	}
+	{ nullptr, 0	}
 };
 static_assert(ARRAY_SIZE(TransitionStyleNames) == MAX_TRANSITION_WINDOW_STYLES + 1, "Incorrect array size");
 
@@ -122,7 +122,7 @@ public:
 
 	virtual void skip( void ) = 0;
 
-	void unlinkGameWindow(GameWindow* win) { if ( m_win == win ) m_win = NULL; }
+	void unlinkGameWindow(GameWindow* win) { if ( m_win == win ) m_win = nullptr; }
 	Bool isFinished( void ) { return m_isFinished;	}
 	Int getFrameLength( void ){ return m_frameLength;	}
 protected:

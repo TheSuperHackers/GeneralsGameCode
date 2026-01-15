@@ -37,7 +37,7 @@
 #include "Common/WellKnownKeys.h"
 #include "wbview3d.h"
 
-BuildList *BuildList::m_staticThis = NULL;
+BuildList *BuildList::m_staticThis = nullptr;
 Bool BuildList::m_updating = false;
 
 
@@ -45,7 +45,7 @@ Bool BuildList::m_updating = false;
 // BuildList dialog
 
 
-BuildList::BuildList(CWnd* pParent /*=NULL*/)
+BuildList::BuildList(CWnd* pParent /*=nullptr*/)
 {
 	//{{AFX_DATA_INIT(BuildList)
 		// NOTE: the ClassWizard will add member initialization here
@@ -213,7 +213,7 @@ void BuildList::OnMoveUp()
 	while (count) {
 		count--;
 		pBuildInfo = pBuildInfo->getNext();
-		if (pBuildInfo == NULL) return;
+		if (pBuildInfo == nullptr) return;
 	}
 	Int newSel = m_curBuildList-1;
 	pSide->reorderInBuildList(pBuildInfo, newSel);
@@ -245,9 +245,9 @@ void BuildList::OnMoveDown()
 	while (count) {
 		count--;
 		pBuildInfo = pBuildInfo->getNext();
-		if (pBuildInfo == NULL) return;
+		if (pBuildInfo == nullptr) return;
 	}
-	if (pBuildInfo->getNext() == NULL) {
+	if (pBuildInfo->getNext() == nullptr) {
 		// there isn't one to move down after.
 		return;
 	}
@@ -336,16 +336,16 @@ void BuildList::OnSelchangeBuildList()
 	m_curBuildList = pList->GetCurSel();
 	Int numBL = pList->GetCount();
 
-	SidesInfo *pSide = NULL;
+	SidesInfo *pSide = nullptr;
 	if (TheSidesList) {
 		pSide = TheSidesList->getSideInfo(m_curSide);
 	}
 	Int count = m_curBuildList;
-	BuildListInfo *pBuildInfo = NULL;
+	BuildListInfo *pBuildInfo = nullptr;
 	if (pSide) {
 		pBuildInfo = pSide->getBuildList();
 	}
-	if (count<0) pBuildInfo = NULL;
+	if (count<0) pBuildInfo = nullptr;
 	while (count && pBuildInfo) {
 		count--;
 		pBuildInfo = pBuildInfo->getNext();
@@ -373,7 +373,7 @@ void BuildList::OnSelchangeBuildList()
 		Bool exists;
 		AsciiString objectTeamName = d->getAsciiString(TheKey_originalOwner, &exists);
 		TeamsInfo *teamInfo = TheSidesList->findTeamInfo(objectTeamName);
-		Dict *teamDict = (teamInfo)?teamInfo->getDict():NULL;
+		Dict *teamDict = (teamInfo)?teamInfo->getDict():nullptr;
 		AsciiString objectOwnerName = (teamDict)?teamDict->getAsciiString(TheKey_teamOwner):AsciiString::TheEmptyString;
 
 		Int energy = 0;
@@ -390,7 +390,7 @@ void BuildList::OnSelchangeBuildList()
 	{
 		count = m_curBuildList;
 		BuildListInfo *pBuildInfo = pSide->getBuildList();
-		if (count<0) pBuildInfo = NULL;
+		if (count<0) pBuildInfo = nullptr;
 		while (count>=0 && pBuildInfo) {
 			AsciiString tName = pBuildInfo->getTemplateName();
 			const ThingTemplate *templ = TheThingFactory->findTemplate(tName);
@@ -427,7 +427,7 @@ void BuildList::OnSelchangeBuildList()
 		progressWnd->SetPos((Int)((1.0f-energyUsed)*100));
 	}
 
-	if (pBuildInfo==NULL) {
+	if (pBuildInfo==nullptr) {
 		enableAttrs = false;
 	}
 	if (m_curBuildList > 0) {
@@ -465,7 +465,7 @@ void BuildList::OnSelchangeBuildList()
 		CButton *pBtn = (CButton *)GetDlgItem(IDC_ALREADY_BUILD);
 		if (pBtn) pBtn->SetCheck(pBuildInfo->isInitiallyBuilt()?1:0);
 		CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_REBUILDS);
-		if (pCombo==NULL) return;
+		if (pCombo==nullptr) return;
 		UnsignedInt nr = pBuildInfo->getNumRebuilds();
 		if (nr == BuildListInfo::UNLIMITED_REBUILDS) {
 			pCombo->SetCurSel(6);
@@ -496,7 +496,7 @@ void BuildList::OnAlreadyBuild()
 	while (count) {
 		count--;
 		pBuildInfo = pBuildInfo->getNext();
-		if (pBuildInfo == NULL) return;
+		if (pBuildInfo == nullptr) return;
 	}
 	CButton *pBtn = (CButton *)GetDlgItem(IDC_ALREADY_BUILD);
 	if (pBtn) {
@@ -522,7 +522,7 @@ void BuildList::OnDeleteBuilding()
 	while (count) {
 		count--;
 		pBuildInfo = pBuildInfo->getNext();
-		if (pBuildInfo == NULL) return;
+		if (pBuildInfo == nullptr) return;
 	}
 	pSide->removeFromBuildList(pBuildInfo);
 
@@ -539,7 +539,7 @@ void BuildList::OnDeleteBuilding()
 void BuildList::OnSelendokRebuilds()
 {
 	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_REBUILDS);
-	if (pCombo==NULL) return;
+	if (pCombo==nullptr) return;
 	Int sel = pCombo->GetCurSel();
 	if (sel<0) return; // no selection.
 	UnsignedInt nr;
@@ -555,7 +555,7 @@ void BuildList::OnSelendokRebuilds()
 	while (count) {
 		count--;
 		pBuildInfo = pBuildInfo->getNext();
-		if (pBuildInfo == NULL) return;
+		if (pBuildInfo == nullptr) return;
 	}
 	pBuildInfo->setNumRebuilds(nr);
 }
@@ -563,7 +563,7 @@ void BuildList::OnSelendokRebuilds()
 void BuildList::OnEditchangeRebuilds()
 {
 	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_REBUILDS);
-	if (pCombo==NULL) return;
+	if (pCombo==nullptr) return;
 	Int sel = pCombo->GetCurSel();
 	if (sel>=0) return; // An entry is selected, and handled by OnSelendokRebuilds..
 	char buffer[_MAX_PATH];
@@ -579,7 +579,7 @@ void BuildList::OnEditchangeRebuilds()
 			while (count) {
 				count--;
 				pBuildInfo = pBuildInfo->getNext();
-				if (pBuildInfo == NULL) return;
+				if (pBuildInfo == nullptr) return;
 			}
 			pBuildInfo->setNumRebuilds(nr);
 	}
@@ -596,7 +596,7 @@ void BuildList::OnDblclkBuildList()
 	while (count) {
 		count--;
 		pBI = pBI->getNext();
-		if (pBI == NULL) return;
+		if (pBI == nullptr) return;
 	}
 
 	BaseBuildProps dlg;
@@ -697,7 +697,7 @@ void BuildList::OnChangeZOffset()
 	while (count) {
 		count--;
 		pBuildInfo = pBuildInfo->getNext();
-		if (pBuildInfo == NULL) return;
+		if (pBuildInfo == nullptr) return;
 	}
 	Coord3D loc = *pBuildInfo->getLocation();
 	loc.z = m_height;
@@ -725,7 +725,7 @@ void BuildList::OnChangeAngle()
 	while (count) {
 		count--;
 		pBuildInfo = pBuildInfo->getNext();
-		if (pBuildInfo == NULL) return;
+		if (pBuildInfo == nullptr) return;
 	}
 	pBuildInfo->setAngle(m_angle * PI/180);
 	WbView3d *p3View = CWorldBuilderDoc::GetActiveDoc()->GetActive3DView();
@@ -734,11 +734,11 @@ void BuildList::OnChangeAngle()
 
 void BuildList::OnExport()
 {
-	static FILE *theLogFile = NULL;
+	static FILE *theLogFile = nullptr;
 	Bool open = false;
 	try {
 		char buffer[_MAX_PATH];
-		::GetModuleFileName(NULL, buffer, sizeof(buffer));
+		::GetModuleFileName(nullptr, buffer, sizeof(buffer));
 		if (char* pEnd = strrchr(buffer, '\\'))
 		{
 			*(pEnd + 1) = 0;
@@ -751,12 +751,12 @@ void BuildList::OnExport()
 		strlcat(buffer, "_BuildList.ini", ARRAY_SIZE(buffer));
 
 		theLogFile = fopen(buffer, "w");
-		if (theLogFile == NULL)
+		if (theLogFile == nullptr)
 			throw;
 
 		AsciiString tmplname = d->getAsciiString(TheKey_playerFaction);
 		const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
-		DEBUG_ASSERTCRASH(pt != NULL, ("PlayerTemplate %s not found -- this is an obsolete map (please open and resave in WB)",tmplname.str()));
+		DEBUG_ASSERTCRASH(pt != nullptr, ("PlayerTemplate %s not found -- this is an obsolete map (please open and resave in WB)",tmplname.str()));
 
 		fprintf(theLogFile, ";Skirmish AI Build List\n");
 		fprintf(theLogFile, "SkirmishBuildList %s\n", pt->getSide().str());

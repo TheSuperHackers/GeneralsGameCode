@@ -61,22 +61,22 @@
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-CreditsManager *TheCredits = NULL;
+CreditsManager *TheCredits = nullptr;
 
 const FieldParse CreditsManager::m_creditsFieldParseTable[] =
 {
 
-	{ "ScrollRate",					INI::parseInt,											NULL, offsetof( CreditsManager, m_scrollRate )	},
-	{ "ScrollRateEveryFrames",	INI::parseInt,											NULL, offsetof( CreditsManager, m_scrollRatePerFrames )	},
-	{ "ScrollDown",					INI::parseBool,											NULL,	offsetof( CreditsManager, m_scrollDown )  },
-	{ "TitleColor",					INI::parseColorInt,									NULL,	offsetof( CreditsManager, m_titleColor )  },
-	{ "MinorTitleColor",		INI::parseColorInt,									NULL,	offsetof( CreditsManager, m_positionColor )  },
-	{ "NormalColor",				INI::parseColorInt,									NULL,	offsetof( CreditsManager, m_normalColor )  },
+	{ "ScrollRate",					INI::parseInt,											nullptr, offsetof( CreditsManager, m_scrollRate )	},
+	{ "ScrollRateEveryFrames",	INI::parseInt,											nullptr, offsetof( CreditsManager, m_scrollRatePerFrames )	},
+	{ "ScrollDown",					INI::parseBool,											nullptr,	offsetof( CreditsManager, m_scrollDown )  },
+	{ "TitleColor",					INI::parseColorInt,									nullptr,	offsetof( CreditsManager, m_titleColor )  },
+	{ "MinorTitleColor",		INI::parseColorInt,									nullptr,	offsetof( CreditsManager, m_positionColor )  },
+	{ "NormalColor",				INI::parseColorInt,									nullptr,	offsetof( CreditsManager, m_normalColor )  },
 	{ "Style",							INI::parseLookupList,								CreditStyleNames,	offsetof( CreditsManager, m_currentStyle )  },
-	{ "Blank",							CreditsManager::parseBlank,					NULL,	NULL  },
-	{ "Text",								CreditsManager::parseText,					NULL,	NULL  },
+	{ "Blank",							CreditsManager::parseBlank,					nullptr, 0  },
+	{ "Text",								CreditsManager::parseText,					nullptr, 0  },
 
-	{ NULL,										NULL,													NULL, 0 }
+	{ nullptr,										nullptr,													nullptr, 0 }
 
 };
 
@@ -102,8 +102,8 @@ CreditsLine::CreditsLine()
 	m_useSecond = FALSE;
 	m_done = FALSE;
 	m_style = CREDIT_STYLE_BLANK;
-	m_displayString = NULL;
-	m_secondDisplayString = NULL;
+	m_displayString = nullptr;
+	m_secondDisplayString = nullptr;
 }
 
 CreditsLine::~CreditsLine()
@@ -113,8 +113,8 @@ CreditsLine::~CreditsLine()
 	if(m_secondDisplayString)
 		TheDisplayStringManager->freeDisplayString(m_secondDisplayString);
 
-	m_displayString = NULL;
-	m_secondDisplayString = NULL;
+	m_displayString = nullptr;
+	m_secondDisplayString = nullptr;
 }
 
 
@@ -155,7 +155,7 @@ void CreditsManager::load(void )
 {
 	INI ini;
 	// Read from INI all the ControlBarSchemes
-	ini.loadFileDirectory( "Data\\INI\\Credits", INI_LOAD_OVERWRITE, NULL );
+	ini.loadFileDirectory( "Data\\INI\\Credits", INI_LOAD_OVERWRITE, nullptr );
 
 	if(m_scrollRatePerFrames <=0)
 		m_scrollRatePerFrames = 1;
@@ -207,8 +207,8 @@ void CreditsManager::update( void )
 		{
 			TheDisplayStringManager->freeDisplayString(cLine->m_displayString);
 			TheDisplayStringManager->freeDisplayString(cLine->m_secondDisplayString);
-			cLine->m_displayString = NULL;
-			cLine->m_secondDisplayString = NULL;
+			cLine->m_displayString = nullptr;
+			cLine->m_secondDisplayString = nullptr;
 			drawIt = m_displayedCreditLineList.erase(drawIt);
 		}
 		else

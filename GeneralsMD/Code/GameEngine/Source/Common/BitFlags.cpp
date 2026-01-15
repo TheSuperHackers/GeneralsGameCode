@@ -172,7 +172,7 @@ const char* const ModelConditionFlags::s_bitNameList[] =
 
 	"DISGUISED",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(ModelConditionFlags::s_bitNameList) == ModelConditionFlags::NumBits + 1, "Incorrect array size");
 
@@ -188,6 +188,6 @@ const char* const ArmorSetFlags::s_bitNameList[] =
 	"CRATE_UPGRADE_ONE",
 	"CRATE_UPGRADE_TWO",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(ArmorSetFlags::s_bitNameList) == ArmorSetFlags::NumBits + 1, "Incorrect array size");

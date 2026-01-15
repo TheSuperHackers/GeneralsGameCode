@@ -285,8 +285,8 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 						// slider data
 						SliderData *sliderData = (SliderData *)window->winGetUserData();
 
-						sliderData->minVal = GetDlgItemInt( hWndDialog, EDIT_SLIDER_MIN, NULL, FALSE );
-						sliderData->maxVal = GetDlgItemInt( hWndDialog, EDIT_SLIDER_MAX, NULL, FALSE );
+						sliderData->minVal = GetDlgItemInt( hWndDialog, EDIT_SLIDER_MIN, nullptr, FALSE );
+						sliderData->maxVal = GetDlgItemInt( hWndDialog, EDIT_SLIDER_MAX, nullptr, FALSE );
 
 						// sanity
 						if( sliderData->minVal > sliderData->maxVal )
@@ -295,7 +295,7 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 							sliderData->minVal = sliderData->maxVal;
 							sliderData->maxVal = temp;
 
-							MessageBox( NULL, "Slider min greated than max, the values were swapped",
+							MessageBox( nullptr, "Slider min greated than max, the values were swapped",
 													"Warning", MB_OK | MB_ICONINFORMATION );
 
 						}
@@ -356,8 +356,8 @@ HWND InitSliderPropertiesDialog( GameWindow *window )
 												 (LPCTSTR)SLIDER_PROPERTIES_DIALOG,
 												 TheEditor->getWindowHandle(),
 												 (DLGPROC)sliderPropertiesCallback );
-	if( dialog == NULL )
-		return NULL;
+	if( dialog == nullptr )
+		return nullptr;
 
 	// do the common initialization
 	CommonDialogInitialize( window, dialog );

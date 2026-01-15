@@ -107,11 +107,11 @@ class AlphaModifierClass : public Modifier
 		// Direct paramblock access
 		int	NumParamBlocks() {return 1;}
 		IParamBlock2* GetParamBlock(int i) { return pblock;}
-		IParamBlock2* GetParamBlockByID(BlockID id) {return (pblock->ID() == id) ? pblock : NULL;}
+		IParamBlock2* GetParamBlockByID(BlockID id) {return (pblock->ID() == id) ? pblock : nullptr;}
 		int GetParamBlockIndex(int id) {return id;}
 
 		// Does not use createmouse callbacks
-		CreateMouseCallBack* GetCreateMouseCallBack() {return NULL;}
+		CreateMouseCallBack* GetCreateMouseCallBack() {return nullptr;}
 
 		// Load and unload our UI
 		void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);

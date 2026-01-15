@@ -50,9 +50,9 @@ static bool Is_LERP (float last_value, float last_time, float curr_value, float 
 SphereSizePropPageClass::SphereSizePropPageClass (SphereRenderObjClass *sphere)
 	:	m_RenderObj (sphere),
 		m_bValid (true),
-		m_ScaleXBar (NULL),
-		m_ScaleYBar (NULL),
-		m_ScaleZBar (NULL),
+		m_ScaleXBar (nullptr),
+		m_ScaleYBar (nullptr),
+		m_ScaleZBar (nullptr),
 		m_Size (0.5F, 0.5F, 0.5F),
 		CPropertyPage(SphereSizePropPageClass::IDD)
 {
@@ -112,7 +112,7 @@ SphereSizePropPageClass::Initialize (void)
 	m_ScaleChannel.Reset ();
 	m_OrigScaleChannel.Reset ();
 
-	if (m_RenderObj != NULL) {
+	if (m_RenderObj != nullptr) {
 		m_Size					= m_RenderObj->Get_Box ().Extent;
 		m_ScaleChannel			= m_RenderObj->Get_Scale_Channel ();
 		m_OrigScaleChannel	= m_RenderObj->Get_Scale_Channel ();
@@ -306,7 +306,7 @@ SphereSizePropPageClass::OnNotify
 			//
 			//	Determine the timeline bar which sent the notification
 			//
-			ColorBarClass *timeline = NULL;
+			ColorBarClass *timeline = nullptr;
 			if (color_bar_hdr->hdr.idFrom == IDC_SCALE_BAR_X) {
 				timeline = m_ScaleXBar;
 			} else if (color_bar_hdr->hdr.idFrom == IDC_SCALE_BAR_Y) {

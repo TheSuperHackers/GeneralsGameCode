@@ -287,10 +287,10 @@ inline void	CameraClass::Set_Depth_Range(float zmin,float zmax)
 
 inline void	CameraClass::Get_Depth_Range(float * set_zmin,float * set_zmax) const
 {
-	if (set_zmin != NULL) {
+	if (set_zmin != nullptr) {
 		*set_zmin = ZBufferMin;
 	}
-	if (set_zmax != NULL) {
+	if (set_zmax != nullptr) {
 		*set_zmax = ZBufferMax;
 	}
 }

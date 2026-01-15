@@ -649,7 +649,7 @@ class AIFollowWaypointPathExactState : public AIInternalMoveToState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIFollowWaypointPathExactState, "AIFollowWaypointPathExactState")
 public:
 	AIFollowWaypointPathExactState( StateMachine *machine, Bool asGroup ) : m_moveAsGroup(asGroup),
-		m_lastWaypoint(NULL),
+		m_lastWaypoint(nullptr),
 		AIInternalMoveToState( machine, "AIFollowWaypointPathExactState" ) { }
 	virtual StateReturnType onEnter();
 	virtual void onExit( StateExitType status );
@@ -1013,7 +1013,7 @@ class AIAttackSquadState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackSquadState, "AIAttackSquadState")
 public:
-	AIAttackSquadState( StateMachine *machine, AttackExitConditionsInterface *attackParameters = NULL) :
+	AIAttackSquadState( StateMachine *machine, AttackExitConditionsInterface *attackParameters = nullptr) :
 			State( machine , "AIAttackSquadState") {	}
 	//~AIAttackSquadState();
 
@@ -1058,7 +1058,7 @@ class AIDockState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDockState, "AIDockState")
 public:
-	AIDockState( StateMachine *machine ) : State( machine, "AIDockState" ), m_dockMachine(NULL), m_usingPrecisionMovement(FALSE) { }
+	AIDockState( StateMachine *machine ) : State( machine, "AIDockState" ), m_dockMachine(nullptr), m_usingPrecisionMovement(FALSE) { }
 	//~AIDockState();
 	virtual StateReturnType onEnter();
 	virtual void onExit( StateExitType status );
@@ -1126,9 +1126,9 @@ class AIGuardState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIGuardState, "AIGuardState")
 public:
-	AIGuardState( StateMachine *machine ) : State( machine, "AIGuardState" ), m_guardMachine(NULL)
+	AIGuardState( StateMachine *machine ) : State( machine, "AIGuardState" ), m_guardMachine(nullptr)
 	{
-		m_guardMachine = NULL;
+		m_guardMachine = nullptr;
 	}
 	//~AIGuardState();
 	virtual StateReturnType onEnter();
@@ -1155,9 +1155,9 @@ class AITunnelNetworkGuardState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AITunnelNetworkGuardState, "AITunnelNetworkGuardState")
 public:
-	AITunnelNetworkGuardState( StateMachine *machine ) : State( machine, "AITunnelNetworkGuardState" ), m_guardMachine(NULL)
+	AITunnelNetworkGuardState( StateMachine *machine ) : State( machine, "AITunnelNetworkGuardState" ), m_guardMachine(nullptr)
 	{
-		m_guardMachine = NULL;
+		m_guardMachine = nullptr;
 	}
 	//~AIGuardState();
 	virtual StateReturnType onEnter();
@@ -1184,7 +1184,7 @@ class AIHuntState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIHuntState, "AIHuntState")
 public:
-	AIHuntState( StateMachine *machine ) : State( machine, "AIHuntState" ), m_huntMachine(NULL)
+	AIHuntState( StateMachine *machine ) : State( machine, "AIHuntState" ), m_huntMachine(nullptr)
 	{
 		m_nextEnemyScanTime = 0;
 	}
@@ -1216,7 +1216,7 @@ class AIAttackAreaState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackAreaState, "AIAttackAreaState")
 public:
-	AIAttackAreaState( StateMachine *machine ) : State( machine, "AIAttackAreaState" ), m_attackMachine(NULL),
+	AIAttackAreaState( StateMachine *machine ) : State( machine, "AIAttackAreaState" ), m_attackMachine(nullptr),
 		m_nextEnemyScanTime(0) { }
 	//~AIAttackAreaState();
 	virtual StateReturnType onEnter();

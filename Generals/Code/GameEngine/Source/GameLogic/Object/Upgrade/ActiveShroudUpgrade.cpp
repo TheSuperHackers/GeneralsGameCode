@@ -51,8 +51,8 @@ ActiveShroudUpgradeModuleData::ActiveShroudUpgradeModuleData( void )
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "NewShroudRange", INI::parseReal, NULL, offsetof( ActiveShroudUpgradeModuleData, m_newShroudRange ) },
-		{ 0, 0, 0, 0 }
+		{ "NewShroudRange", INI::parseReal, nullptr, offsetof( ActiveShroudUpgradeModuleData, m_newShroudRange ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 

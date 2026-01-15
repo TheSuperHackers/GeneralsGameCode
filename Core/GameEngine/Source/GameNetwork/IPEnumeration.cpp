@@ -30,7 +30,7 @@
 
 IPEnumeration::IPEnumeration( void )
 {
-	m_IPlist = NULL;
+	m_IPlist = nullptr;
 	m_isWinsockInitialized = false;
 }
 
@@ -63,12 +63,12 @@ EnumeratedIP * IPEnumeration::getAddresses( void )
 
 		int err = WSAStartup(verReq, &wsadata);
 		if (err != 0) {
-			return NULL;
+			return nullptr;
 		}
 
 		if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) !=2)) {
 			WSACleanup();
-			return NULL;
+			return nullptr;
 		}
 		m_isWinsockInitialized = true;
 	}
@@ -78,23 +78,23 @@ EnumeratedIP * IPEnumeration::getAddresses( void )
 	if (gethostname(hostname, sizeof(hostname)))
 	{
 		DEBUG_LOG(("Failed call to gethostname; WSAGetLastError returned %d", WSAGetLastError()));
-		return NULL;
+		return nullptr;
 	}
 	DEBUG_LOG(("Hostname is '%s'", hostname));
 
 	// get host information from the host name
 	HOSTENT* hostEnt = gethostbyname(hostname);
-	if (hostEnt == NULL)
+	if (hostEnt == nullptr)
 	{
 		DEBUG_LOG(("Failed call to gethostbyname; WSAGetLastError returned %d", WSAGetLastError()));
-		return NULL;
+		return nullptr;
 	}
 
 	// sanity-check the length of the IP adress
 	if (hostEnt->h_length != 4)
 	{
 		DEBUG_LOG(("gethostbyname returns oddly-sized IP addresses!"));
-		return NULL;
+		return nullptr;
 	}
 
 	// TheSuperHackers @feature Add one unique local host IP address for each multi client instance.
@@ -111,7 +111,7 @@ EnumeratedIP * IPEnumeration::getAddresses( void )
 	// construct a list of addresses
 	int numAddresses = 0;
 	char *entry;
-	while ( (entry = hostEnt->h_addr_list[numAddresses++]) != 0 )
+	while ( (entry = hostEnt->h_addr_list[numAddresses++]) != nullptr )
 	{
 		addNewIP(
 			(UnsignedByte)entry[0],
@@ -141,7 +141,7 @@ void IPEnumeration::addNewIP( UnsignedByte a, UnsignedByte b, UnsignedByte c, Un
 	if (!m_IPlist)
 	{
 		m_IPlist = newIP;
-		newIP->setNext(NULL);
+		newIP->setNext(nullptr);
 	}
 	else
 	{

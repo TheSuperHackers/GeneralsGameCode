@@ -54,6 +54,7 @@ enum
 //-----------------------------------------------------------------------------
 //         Includes
 //-----------------------------------------------------------------------------
+
 #include "W3DDevice/GameClient/W3DTreeBuffer.h"
 
 #include <assetmgr.h>
@@ -137,7 +138,7 @@ int W3DTreeBuffer::W3DTreeTextureClass::update(W3DTreeBuffer *buffer)
 	DX8_ErrorCode(Peek_D3D_Texture()->GetSurfaceLevel(0, &surface_level));
 	DX8_ErrorCode(surface_level->GetDesc(&surface_desc));
 
-	DX8_ErrorCode(surface_level->LockRect(&locked_rect, NULL, 0));
+	DX8_ErrorCode(surface_level->LockRect(&locked_rect, nullptr, 0));
 
 	Int tilePixelExtent = TILE_PIXEL_EXTENT;
 //	Int numRows = surface_desc.Height/(tilePixelExtent+TILE_OFFSET);
@@ -188,7 +189,7 @@ int W3DTreeBuffer::W3DTreeTextureClass::update(W3DTreeBuffer *buffer)
 	}
 	DX8_ErrorCode(surface_level->UnlockRect());
 	surface_level->Release();
-	DX8_ErrorCode(D3DXFilterTexture(Peek_D3D_Texture(), NULL, (UINT)0, D3DX_FILTER_BOX));
+	DX8_ErrorCode(D3DXFilterTexture(Peek_D3D_Texture(), nullptr, (UINT)0, D3DX_FILTER_BOX));
 	if (WW3D::Get_Texture_Reduction()) {
 		DX8_ErrorCode(Peek_D3D_Texture()->SetLOD((DWORD)WW3D::Get_Texture_Reduction()));
 	}
@@ -418,7 +419,7 @@ class GDIFileStream2 : public InputStream
 protected:
 	File* m_file;
 public:
-	GDIFileStream2():m_file(NULL) {};
+	GDIFileStream2():m_file(nullptr) {};
 	GDIFileStream2(File* pFile):m_file(pFile) {};
 	virtual Int read(void *pData, Int numBytes) {
 		return(m_file?m_file->read(pData, numBytes):0);
@@ -453,17 +454,17 @@ void W3DTreeBuffer::updateTexture(void)
 		REF_PTR_RELEASE (m_sourceTiles[i]);
 	}
 	m_numTiles = 0;
-	File *theFile = NULL;
+	File *theFile = nullptr;
 	for (i=0; i<m_numTreeTypes; i++) {
 		char texturePath[ _MAX_PATH ];
 		m_treeTypes[i].m_numTiles = 0;
 		sprintf( texturePath, "%s%s", TERRAIN_TGA_DIR_PATH, m_treeTypes[i].m_data->m_textureName.str() );
 		theFile = TheFileSystem->openFile( texturePath, File::READ|File::BINARY);
-		if (theFile==NULL) {
+		if (theFile==nullptr) {
 			sprintf( texturePath, "%s%s", TGA_DIR_PATH, m_treeTypes[i].m_data->m_textureName.str() );
 			theFile = TheFileSystem->openFile( texturePath, File::READ|File::BINARY);
 		}
-		if (theFile != NULL) {
+		if (theFile != nullptr) {
 			GDIFileStream2 theStream(theFile);
 			InputStream *pStr = &theStream;
 			Bool halfTile;
@@ -521,7 +522,7 @@ void W3DTreeBuffer::updateTexture(void)
 	if (m_textureWidth>MAX_TEX_WIDTH) {
 		m_textureWidth = 64;
 		m_textureHeight = 64;
-		if (m_treeTexture==NULL) {
+		if (m_treeTexture==nullptr) {
 			m_treeTexture = new TextureClass("missing.tga");
 		}
 		DEBUG_CRASH(("Too many trees in a scene."));
@@ -694,7 +695,7 @@ void W3DTreeBuffer::loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *p
 		return;
 	}
 
-	if (m_shadow == NULL && TheW3DProjectedShadowManager) {
+	if (m_shadow == nullptr && TheW3DProjectedShadowManager) {
 		Shadow::ShadowTypeInfo shadowInfo;
 		shadowInfo.m_ShadowName[0] = 0;
 		shadowInfo.allowUpdates=FALSE;	//shadow image will never update
@@ -751,7 +752,7 @@ void W3DTreeBuffer::loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *p
 			Vector3 loc = m_trees[curTree].location;
 			Real theSin = m_trees[curTree].sin;
 			Real theCos = m_trees[curTree].cos;
-			if (type<0 || m_treeTypes[type].m_mesh == 0) {
+			if (type<0 || m_treeTypes[type].m_mesh == nullptr) {
 				continue;
 			}
 
@@ -806,7 +807,7 @@ void W3DTreeBuffer::loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *p
 			const unsigned *vecDiffuse = m_treeTypes[type].m_mesh->Peek_Model()->Get_Color_Array(0, false);
 
 			Int diffuse = 0;
-			if (normals == NULL) {
+			if (normals == nullptr) {
 				doVertexLighting = false;
 				Vector3 normal(0.0f,0.0f,1.0f);
 				diffuse = doLighting(&normal, objectLighting, &emissive, 0xFFFFFFFF, 1.0f);
@@ -1014,7 +1015,7 @@ void W3DTreeBuffer::updateVertexBuffer(void)
 			Vector3 loc = m_trees[curTree].location;
 			Real theSin = m_trees[curTree].sin;
 			Real theCos = m_trees[curTree].cos;
-			if (type<0 || m_treeTypes[type].m_mesh == 0) {
+			if (type<0 || m_treeTypes[type].m_mesh == nullptr) {
 				type = 0;
 			}
 
@@ -1078,7 +1079,7 @@ W3DTreeBuffer::~W3DTreeBuffer(void)
 	}
 
 	delete m_shadow;
-	m_shadow = NULL;
+	m_shadow = nullptr;
 }
 
 //=============================================================================
@@ -1092,12 +1093,12 @@ W3DTreeBuffer::W3DTreeBuffer(void)
 	m_initialized = false;
 	Int i;
 	for	(i=0; i<MAX_BUFFERS; i++) {
-		m_vertexTree[i] = NULL;
-		m_indexTree[i] = NULL;
+		m_vertexTree[i] = nullptr;
+		m_indexTree[i] = nullptr;
 		m_curNumTreeVertices[i]=0;
 		m_curNumTreeIndices[i]=0;
 	}
-	m_treeTexture = NULL;
+	m_treeTexture = nullptr;
 	m_dwTreeVertexShader = 0;
 	m_dwTreePixelShader = 0;
 	clearAllTrees();
@@ -1105,7 +1106,7 @@ W3DTreeBuffer::W3DTreeBuffer(void)
 	m_initialized = true;
 	m_curSwayVersion = -1;
 
-	m_shadow = NULL;
+	m_shadow = nullptr;
 
 }
 
@@ -1334,11 +1335,11 @@ Int W3DTreeBuffer::addTreeType(const W3DTreeDrawModuleData *data)
 	}
 	m_needToUpdateTexture = true;
 
-	m_treeTypes[m_numTreeTypes].m_mesh = NULL;
+	m_treeTypes[m_numTreeTypes].m_mesh = nullptr;
 
 	RenderObjClass *robj=WW3DAssetManager::Get_Instance()->Create_Render_Obj(data->m_modelName.str());
 
-	if (robj==NULL) {
+	if (robj==nullptr) {
 		DEBUG_CRASH(("Unable to find model for tree %s", data->m_modelName.str()));
 		return 0;
 	}
@@ -1357,7 +1358,7 @@ Int W3DTreeBuffer::addTreeType(const W3DTreeDrawModuleData *data)
 	if (robj->Class_ID() == RenderObjClass::CLASSID_MESH)
 		m_treeTypes[m_numTreeTypes].m_mesh = (MeshClass*)robj;
 
-	if (m_treeTypes[m_numTreeTypes].m_mesh==NULL) {
+	if (m_treeTypes[m_numTreeTypes].m_mesh==nullptr) {
 		DEBUG_CRASH(("Tree %s is not simple mesh. Tell artist to re-export. Don't Ignore!!!", data->m_modelName.str()));
 		return 0;
 	}
@@ -1565,7 +1566,7 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 		m_needToUpdateTexture = false;
 		updateTexture();
 	}
-	if (m_treeTexture==NULL) {
+	if (m_treeTexture==nullptr) {
 		return;
 	}
 	if (m_updateAllKeys) {
@@ -1707,7 +1708,7 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 	DX8Wrapper::Set_Shader(detailAlphaShader);
 
 	DX8Wrapper::Set_Texture(0,m_treeTexture);
-	DX8Wrapper::Set_Texture(1,NULL);
+	DX8Wrapper::Set_Texture(1,nullptr);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(0,  D3DTSS_TEXCOORDINDEX, 0);
 	DX8Wrapper::Set_DX8_Texture_Stage_State(1,  D3DTSS_TEXCOORDINDEX, 1);
 	// Draw all the trees.
@@ -1737,7 +1738,7 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 		}
 
 		W3DShroud *shroud;
-		if ((shroud=TheTerrainRenderObject->getShroud()) != 0) {
+		if ((shroud=TheTerrainRenderObject->getShroud()) != nullptr) {
 			// Setup shroud texture info [6/6/2003]
 			float xoffset = 0;
 			float yoffset = 0;
@@ -1793,7 +1794,7 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 	}
 
 	DX8Wrapper::Set_Vertex_Shader(DX8_FVF_XYZNDUV1);
-	DX8Wrapper::Set_Pixel_Shader(NULL);
+	DX8Wrapper::Set_Pixel_Shader(0);
 	DX8Wrapper::Invalidate_Cached_Render_States();	//code above mucks around with W3D states so make sure we reset
 
 }

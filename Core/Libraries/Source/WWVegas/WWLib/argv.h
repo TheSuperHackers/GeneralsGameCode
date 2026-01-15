@@ -68,7 +68,7 @@ class ArgvClass
 			CurrentPos = -1;
 			return(Find_Again(arg));
 		}
-		// If NULL passed, original string will be used.
+		// If null passed, original string will be used.
 		const char *Find_Again(const char *arg = 0L);
 
 		// Return pointer to data after 'arg'.
@@ -87,7 +87,7 @@ class ArgvClass
 		void Update_Value(const char *attrib, const char *value);
 
 		// Add a new attrib value pair (or just an option)
-		void Add_Value(const char *attrib, const char *value=NULL);
+		void Add_Value(const char *attrib, const char *value=nullptr);
 
 		// Remove an option (and its value)
 		bool Remove_Value(const char *attrib);

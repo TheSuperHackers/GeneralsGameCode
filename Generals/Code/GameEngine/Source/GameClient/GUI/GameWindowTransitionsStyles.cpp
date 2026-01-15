@@ -83,14 +83,14 @@ Transition::~Transition( void )
 FlashTransition::FlashTransition ( void )
 {
 	m_frameLength = FLASHTRANSITION_END;
-	m_win = NULL;
+	m_win = nullptr;
 	m_drawState = -1;
 	m_isForward = TRUE;
 }
 
 FlashTransition::~FlashTransition( void )
 {
-	m_win = NULL;
+	m_win = nullptr;
 }
 
 void FlashTransition::init( GameWindow *win )
@@ -239,14 +239,14 @@ void FlashTransition::skip( void )
 ButtonFlashTransition::ButtonFlashTransition ( void )
 {
 	m_frameLength = BUTTONFLASHTRANSITION_END;
-	m_win = NULL;
+	m_win = nullptr;
 	m_drawState = -1;
 	m_isForward = TRUE;
 }
 
 ButtonFlashTransition::~ButtonFlashTransition( void )
 {
-	m_win = NULL;
+	m_win = nullptr;
 }
 
 void ButtonFlashTransition::init( GameWindow *win )
@@ -613,14 +613,14 @@ void ButtonFlashTransition::skip( void )
 FadeTransition::FadeTransition ( void )
 {
 	m_frameLength = FADETRANSITION_END;
-	m_win = NULL;
+	m_win = nullptr;
 	m_drawState = -1;
 	m_isForward = TRUE;
 }
 
 FadeTransition::~FadeTransition( void )
 {
-	m_win = NULL;
+	m_win = nullptr;
 }
 
 void FadeTransition::init( GameWindow *win )
@@ -750,14 +750,14 @@ void FadeTransition::skip( void )
 ScaleUpTransition::ScaleUpTransition ( void )
 {
 	m_frameLength = SCALEUPTRANSITION_END;
-	m_win = NULL;
+	m_win = nullptr;
 	m_drawState = -1;
 	m_isForward = TRUE;
 }
 
 ScaleUpTransition::~ScaleUpTransition( void )
 {
-	m_win = NULL;
+	m_win = nullptr;
 }
 
 void ScaleUpTransition::init( GameWindow *win )
@@ -873,14 +873,14 @@ void ScaleUpTransition::skip( void )
 ScoreScaleUpTransition::ScoreScaleUpTransition ( void )
 {
 	m_frameLength = SCORESCALEUPTRANSITION_END;
-	m_win = NULL;
+	m_win = nullptr;
 	m_drawState = -1;
 	m_isForward = TRUE;
 }
 
 ScoreScaleUpTransition::~ScoreScaleUpTransition( void )
 {
-	m_win = NULL;
+	m_win = nullptr;
 }
 
 void ScoreScaleUpTransition::init( GameWindow *win )
@@ -996,14 +996,14 @@ void ScoreScaleUpTransition::skip( void )
 MainMenuScaleUpTransition::MainMenuScaleUpTransition ( void )
 {
 	m_frameLength = MAINMENUSCALEUPTRANSITION_END;
-	m_win = NULL;
+	m_win = nullptr;
 	m_drawState = -1;
 	m_isForward = TRUE;
 }
 
 MainMenuScaleUpTransition::~MainMenuScaleUpTransition( void )
 {
-	m_win = NULL;
+	m_win = nullptr;
 }
 
 void MainMenuScaleUpTransition::init( GameWindow *win )
@@ -1014,7 +1014,7 @@ void MainMenuScaleUpTransition::init( GameWindow *win )
 		m_win->winGetSize(&m_size.x, &m_size.y);
 		m_win->winGetScreenPosition(&m_pos.x, &m_pos.y );
 	}
-	m_growWin = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("MainMenu.wnd:WinGrowMarker"));
+	m_growWin = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("MainMenu.wnd:WinGrowMarker"));
 	if(!m_growWin)
 		return;
 
@@ -1113,14 +1113,14 @@ void MainMenuScaleUpTransition::skip( void )
 MainMenuMediumScaleUpTransition::MainMenuMediumScaleUpTransition ( void )
 {
 	m_frameLength = MAINMENUMEDIUMSCALEUPTRANSITION_END;
-	m_win = NULL;
+	m_win = nullptr;
 	m_drawState = -1;
 	m_isForward = TRUE;
 }
 
 MainMenuMediumScaleUpTransition::~MainMenuMediumScaleUpTransition( void )
 {
-	m_win = NULL;
+	m_win = nullptr;
 }
 
 void MainMenuMediumScaleUpTransition::init( GameWindow *win )
@@ -1134,7 +1134,7 @@ void MainMenuMediumScaleUpTransition::init( GameWindow *win )
 	AsciiString growWinName;
 	growWinName = m_win->winGetInstanceData()->m_decoratedNameString;
 	growWinName.concat("Medium");
-	m_growWin = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(growWinName));
+	m_growWin = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey(growWinName));
 	if(!m_growWin)
 		return;
 
@@ -1232,14 +1232,14 @@ void MainMenuMediumScaleUpTransition::skip( void )
 MainMenuSmallScaleDownTransition::MainMenuSmallScaleDownTransition ( void )
 {
 	m_frameLength = MAINMENUSMALLSCALEDOWNTRANSITION_END;
-	m_win = NULL;
+	m_win = nullptr;
 	m_drawState = -1;
 	m_isForward = TRUE;
 }
 
 MainMenuSmallScaleDownTransition::~MainMenuSmallScaleDownTransition( void )
 {
-	m_win = NULL;
+	m_win = nullptr;
 }
 
 void MainMenuSmallScaleDownTransition::init( GameWindow *win )
@@ -1253,7 +1253,7 @@ void MainMenuSmallScaleDownTransition::init( GameWindow *win )
 	AsciiString growWinName;
 	growWinName = m_win->winGetInstanceData()->m_decoratedNameString;
 	growWinName.concat("Small");
-	m_growWin = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(growWinName));
+	m_growWin = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey(growWinName));
 	if(!m_growWin)
 		return;
 
@@ -1345,18 +1345,18 @@ void MainMenuSmallScaleDownTransition::skip( void )
 TextTypeTransition::TextTypeTransition ( void )
 {
 	m_frameLength = TEXTTYPETRANSITION_END;
-	m_win = NULL;
+	m_win = nullptr;
 	m_drawState = -1;
 	m_isForward = TRUE;
-	m_dStr = NULL;
+	m_dStr = nullptr;
 }
 
 TextTypeTransition::~TextTypeTransition( void )
 {
-	m_win = NULL;
+	m_win = nullptr;
 	if(m_dStr)
 		TheDisplayStringManager->freeDisplayString(m_dStr);
-	m_dStr = NULL;
+	m_dStr = nullptr;
 }
 
 void TextTypeTransition::init( GameWindow *win )
@@ -1457,7 +1457,7 @@ void TextTypeTransition::skip( void )
 CountUpTransition::CountUpTransition ( void )
 {
 	m_frameLength = COUNTUPTRANSITION_END;
-	m_win = NULL;
+	m_win = nullptr;
 	m_drawState = -1;
 	m_isForward = TRUE;
 
@@ -1465,7 +1465,7 @@ CountUpTransition::CountUpTransition ( void )
 
 CountUpTransition::~CountUpTransition( void )
 {
-	m_win = NULL;
+	m_win = nullptr;
 }
 
 void CountUpTransition::init( GameWindow *win )
@@ -1606,7 +1606,7 @@ void CountUpTransition::skip( void )
 ScreenFadeTransition::ScreenFadeTransition ( void )
 {
 	m_frameLength = SCREENFADETRANSITION_END;
-	m_win = NULL;
+	m_win = nullptr;
 	m_drawState = -1;
 	m_isForward = TRUE;
 
@@ -1614,7 +1614,7 @@ ScreenFadeTransition::ScreenFadeTransition ( void )
 
 ScreenFadeTransition::~ScreenFadeTransition( void )
 {
-	m_win = NULL;
+	m_win = nullptr;
 
 }
 
@@ -1681,17 +1681,17 @@ void ScreenFadeTransition::skip( void )
 ControlBarArrowTransition::ControlBarArrowTransition ( void )
 {
 	m_frameLength = CONTROLBARARROWTRANSITION_END;
-	m_win = NULL;
+	m_win = nullptr;
 	m_drawState = -1;
 	m_isForward = TRUE;
-	m_arrowImage = NULL;
+	m_arrowImage = nullptr;
 
 }
 
 ControlBarArrowTransition::~ControlBarArrowTransition( void )
 {
-	m_win = NULL;
-	m_arrowImage = NULL;
+	m_win = nullptr;
+	m_arrowImage = nullptr;
 }
 
 void ControlBarArrowTransition::init( GameWindow *win )
@@ -1705,7 +1705,7 @@ void ControlBarArrowTransition::init( GameWindow *win )
 	m_fadePercent = 1.0f/ (CONTROLBARARROWTRANSITION_END - CONTROLBARARROWTRANSITION_BEGIN_FADE);
 
 	m_arrowImage = TheControlBar->getArrowImage();
-	GameWindow *twin = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonGeneral"));
+	GameWindow *twin = TheWindowManager->winGetWindowFromId(nullptr, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonGeneral"));
 	if(!twin || !m_arrowImage)
 	{
 		m_isFinished = TRUE;
@@ -1790,7 +1790,7 @@ void ControlBarArrowTransition::skip( void )
 FullFadeTransition::FullFadeTransition ( void )
 {
 	m_frameLength = FULLFADETRANSITION_END;
-	m_win = NULL;
+	m_win = nullptr;
 	m_drawState = -1;
 	m_isForward = TRUE;
 
@@ -1798,7 +1798,7 @@ FullFadeTransition::FullFadeTransition ( void )
 
 FullFadeTransition::~FullFadeTransition( void )
 {
-	m_win = NULL;
+	m_win = nullptr;
 
 }
 
@@ -1890,14 +1890,14 @@ void FullFadeTransition::skip( void )
 TextOnFrameTransition::TextOnFrameTransition ( void )
 {
 	m_frameLength = TEXTONFRAMETRANSITION_END;
-	m_win = NULL;
+	m_win = nullptr;
 	m_isForward = TRUE;
 
 }
 
 TextOnFrameTransition::~TextOnFrameTransition( void )
 {
-	m_win = NULL;
+	m_win = nullptr;
 
 }
 
@@ -1980,14 +1980,14 @@ void TextOnFrameTransition::skip( void )
 ReverseSoundTransition::ReverseSoundTransition ( void )
 {
 	m_frameLength = REVERSESOUNDTRANSITION_END;
-	m_win = NULL;
+	m_win = nullptr;
 	m_isForward = TRUE;
 
 }
 
 ReverseSoundTransition::~ReverseSoundTransition( void )
 {
-	m_win = NULL;
+	m_win = nullptr;
 
 }
 
@@ -2080,8 +2080,8 @@ void PushButtonImageDrawThree(GameWindow *window, Int alpha )
 	centerImage				= GadgetButtonGetMiddleEnabledImage( window );
 
 	// sanity, we need to have these images to make it look right
-	if( leftImage == NULL || rightImage == NULL ||
-			centerImage == NULL )
+	if( leftImage == nullptr || rightImage == nullptr ||
+			centerImage == nullptr )
 		return;
 
 	// get image sizes for the ends
@@ -2184,7 +2184,7 @@ static void drawTypeText( GameWindow *window, DisplayString *str)
 	ICoord2D origin, size, textPos;
 	IRegion2D clipRegion;
 	// sanity
-	if( text == NULL || text->getTextLength() == 0 )
+	if( text == nullptr || text->getTextLength() == 0 )
 		return;
 	GameFont *font = text->getFont();
 

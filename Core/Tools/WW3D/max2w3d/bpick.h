@@ -63,14 +63,14 @@ class BonePickerClass : public PickNodeCallback, public PickModeCallback, public
 {
 public:
 
-	BonePickerClass(void) : User(NULL), BoneList(NULL), SinglePick(FALSE) {}
+	BonePickerClass(void) : User(nullptr), BoneList(nullptr), SinglePick(FALSE) {}
 
 	/*
 	** Tell this class who is using it and optionally the list
 	** of bones to allow the user to select from.
 	** Call this before giving this class to MAX...
 	*/
-	void Set_User(BonePickerUserClass * user,int singlepick = FALSE, INodeTab * bonelist = NULL) { User = user; SinglePick = singlepick; BoneList = bonelist; }
+	void Set_User(BonePickerUserClass * user,int singlepick = FALSE, INodeTab * bonelist = nullptr) { User = user; SinglePick = singlepick; BoneList = bonelist; }
 
 	/*
 	** From BonePickNodeCallback:
@@ -111,7 +111,7 @@ protected:
 
 	/*
 	** List of bones that the user is being allowed to pick from.
-	** If this is NULL, then the user can pick any bone
+	** If this is null, then the user can pick any bone
 	*/
 	INodeTab * BoneList;
 

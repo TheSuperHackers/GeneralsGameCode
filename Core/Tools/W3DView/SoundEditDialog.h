@@ -85,7 +85,7 @@ public:
 	//	Public methods
 	///////////////////////////////////////////////////////
 	void							Set_Sound (SoundRenderObjClass *sound)	{ REF_PTR_SET (SoundRObj, sound); }
-	SoundRenderObjClass *	Get_Sound (void) const						{ if (SoundRObj != NULL) SoundRObj->Add_Ref (); return SoundRObj; }
+	SoundRenderObjClass *	Get_Sound (void) const						{ if (SoundRObj != nullptr) SoundRObj->Add_Ref (); return SoundRObj; }
 
 protected:
 

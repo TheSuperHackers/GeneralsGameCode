@@ -73,7 +73,7 @@ static const char *const TheHordeActionTypeNames[] =
 	"HORDE",
 	"HORDE_FIXED",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(TheHordeActionTypeNames) == HORDEACTION_COUNT + 1, "Incorrect array size");
 #endif

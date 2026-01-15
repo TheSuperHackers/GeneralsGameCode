@@ -41,7 +41,7 @@ LRESULT CMyTreeCtrl::WindowProc(	UINT message, WPARAM wParam, LPARAM lParam )
 // EditCondition dialog
 
 
-EditCondition::EditCondition(CWnd* pParent /*=NULL*/)
+EditCondition::EditCondition(CWnd* pParent /*=nullptr*/)
 	: CDialog(EditCondition::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(EditCondition)
@@ -74,7 +74,7 @@ static HTREEITEM findOrAdd(CTreeCtrl *tree, HTREEITEM parent, const char *pLabel
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = tree->GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
@@ -129,7 +129,7 @@ BOOL EditCondition::OnInitDialog()
 	m_myEditCtrl.SetEventMask(m_myEditCtrl.GetEventMask() | ENM_LINK | ENM_SELCHANGE | ENM_KEYEVENTS);
 
 	Int i;
-	HTREEITEM selItem = NULL;
+	HTREEITEM selItem = nullptr;
 	for (i=0; i<Condition::NUM_ITEMS; i++) {
 		const ConditionTemplate *pTemplate = TheScriptEngine->getConditionTemplate(i);
 		char prefix[_MAX_PATH];

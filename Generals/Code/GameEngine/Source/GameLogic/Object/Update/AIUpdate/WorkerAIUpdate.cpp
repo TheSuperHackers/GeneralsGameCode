@@ -85,10 +85,10 @@ WorkerAIUpdate::WorkerAIUpdate( Thing *thing, const ModuleData* moduleData ) :
 {
 
 	//
-	// initialize the dozer machine to NULL, we want to do this and create it during the update
+	// initialize the dozer machine to nullptr, we want to do this and create it during the update
 	// implementation because at this point we don't have the object all setup
 	m_isRebuild = FALSE;
-	m_dozerMachine = NULL;
+	m_dozerMachine = nullptr;
 	for( Int i = 0; i < DOZER_NUM_TASKS; i++ )
 	{
 		m_task[ i ].m_targetObjectID = INVALID_ID;
@@ -102,12 +102,12 @@ WorkerAIUpdate::WorkerAIUpdate( Thing *thing, const ModuleData* moduleData ) :
 	m_currentTask = DOZER_TASK_INVALID;
 	m_buildSubTask = DOZER_SELECT_BUILD_DOCK_LOCATION;  // irrelavant, but I want non-garbage value
 
-	m_supplyTruckStateMachine = NULL;
+	m_supplyTruckStateMachine = nullptr;
 	m_numberBoxes = 0;
 	m_forcePending = FALSE;
 	m_forcedBusyPending = FALSE;
 
-	m_workerMachine = NULL;
+	m_workerMachine = nullptr;
 
  	m_suppliesDepletedVoice = getWorkerAIUpdateModuleData()->m_suppliesDepletedVoice;
 
@@ -172,17 +172,17 @@ Real WorkerAIUpdate::getBoredRange( void ) const
 void WorkerAIUpdate::createMachines( void )
 {
 
-	if( m_workerMachine == NULL )
+	if( m_workerMachine == nullptr )
 	{
 		m_workerMachine = newInstance(WorkerStateMachine)( getObject() );
 
-		if( m_dozerMachine == NULL )
+		if( m_dozerMachine == nullptr )
 		{
 			m_dozerMachine = newInstance(DozerPrimaryStateMachine)( getObject() );
 			m_dozerMachine->initDefaultState();
 		}
 
-		if( m_supplyTruckStateMachine == NULL )
+		if( m_supplyTruckStateMachine == nullptr )
 		{
 			m_supplyTruckStateMachine = newInstance(SupplyTruckStateMachine)( getObject() );
 			m_supplyTruckStateMachine->initDefaultState();
@@ -280,7 +280,7 @@ UpdateSleepTime WorkerAIUpdate::update( void )
 					TheActionManager->canRepairObject( getObject(), targetObject, getLastCommandSource() ) == FALSE )
 				invalidTask = TRUE;
 #if !RETAIL_COMPATIBLE_CRC
-			else if (currentTask == DOZER_TASK_BUILD && targetObject == NULL)
+			else if (currentTask == DOZER_TASK_BUILD && targetObject == nullptr)
 				invalidTask = TRUE;
 #endif
 
@@ -337,8 +337,8 @@ Object *WorkerAIUpdate::construct( const ThingTemplate *what,
 	createMachines();
 
 	// sanity
-	if( what == NULL || pos == NULL || owningPlayer == NULL )
-		return NULL;
+	if( what == nullptr || pos == nullptr || owningPlayer == nullptr )
+		return nullptr;
 
 	// sanity
 	DEBUG_ASSERTCRASH( getObject()->getControllingPlayer() == owningPlayer,
@@ -357,8 +357,8 @@ Object *WorkerAIUpdate::construct( const ThingTemplate *what,
 			if( TheBuildAssistant->isLocationLegalToBuild( pos, what, angle,
 																										 BuildAssistant::CLEAR_PATH |
 																										 BuildAssistant::NO_OBJECT_OVERLAP,
-																										 getObject(), NULL ) != LBC_OK )
-				return NULL;
+																										 getObject(), nullptr ) != LBC_OK )
+				return nullptr;
 
 		}
 		else
@@ -366,7 +366,7 @@ Object *WorkerAIUpdate::construct( const ThingTemplate *what,
 
 			// make sure the player is capable of building this
 			if( TheBuildAssistant->canMakeUnit( getObject(), what ) != CANMAKE_OK )
-				return NULL;
+				return nullptr;
 
 			// validate the the position to build at is valid
 			if( TheBuildAssistant->isLocationLegalToBuild( pos, what, angle,
@@ -374,8 +374,8 @@ Object *WorkerAIUpdate::construct( const ThingTemplate *what,
 																										 BuildAssistant::CLEAR_PATH |
 																										 BuildAssistant::NO_OBJECT_OVERLAP |
 																										 BuildAssistant::SHROUD_REVEALED,
-																										 getObject(), NULL ) != LBC_OK )
-				return NULL;
+																										 getObject(), nullptr ) != LBC_OK )
+				return nullptr;
 
 		}
 
@@ -477,7 +477,7 @@ Bool WorkerAIUpdate::canAcceptNewRepair( Object *obj )
 {
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return FALSE;
 
 	// if we're not repairing right now, we don't have any accept restrictions
@@ -498,14 +498,14 @@ Bool WorkerAIUpdate::canAcceptNewRepair( Object *obj )
 		if( currentRepair->isKindOf( KINDOF_BRIDGE_TOWER ) &&
 				obj->isKindOf( KINDOF_BRIDGE_TOWER ) )
 		{
-			BridgeTowerBehaviorInterface *currentTowerInterface = NULL;
-			BridgeTowerBehaviorInterface *newTowerInterface = NULL;
+			BridgeTowerBehaviorInterface *currentTowerInterface = nullptr;
+			BridgeTowerBehaviorInterface *newTowerInterface = nullptr;
 
 			currentTowerInterface = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( currentRepair );
 			newTowerInterface = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( obj );
 
 			// sanity
-			if( currentTowerInterface == NULL || newTowerInterface == NULL )
+			if( currentTowerInterface == nullptr || newTowerInterface == nullptr )
 			{
 
 				DEBUG_CRASH(( "Unable to find bridge tower interface on object" ));
@@ -588,7 +588,7 @@ void WorkerAIUpdate::privateResumeConstruction( Object *obj, CommandSourceType c
 {
 
 	// sanity
-	if( obj == NULL )
+	if( obj == nullptr )
 		return;
 
 	// make sure we can resume construction on this
@@ -610,7 +610,7 @@ void WorkerAIUpdate::newTask( DozerTask task, Object* target )
 	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'", task) );
 
 	// sanity
-	if( target == NULL )
+	if( target == nullptr )
 		return;
 
 	m_preferredDock = INVALID_ID; // If we are dozing, we don't want any supply truck stuff going on. jba.
@@ -632,7 +632,7 @@ void WorkerAIUpdate::newTask( DozerTask task, Object* target )
 
 		Coord3D position;
 		target = DozerAIUpdate::findGoodBuildOrRepairPositionAndTarget(me, target, position);
-		if (target == NULL)
+		if (target == nullptr)
 			return;	// could happen for some bridges
 
 		//
@@ -819,7 +819,7 @@ void WorkerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 
 			///@todo This would be correct except that we don't have idle crane animations and it is December.
 //			Object* goalObject = TheGameLogic->findObjectByID(m_task[task].m_targetObjectID);
-//			if (goalObject != NULL)
+//			if (goalObject != nullptr)
 //			{
 //				goalObject->clearModelConditionState(MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED);
 //			}
@@ -830,7 +830,7 @@ void WorkerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 		// --------------------------------------------------------------------------------------------
 		case DOZER_TASK_REPAIR:
 		{
-			Object *obj = NULL;
+			Object *obj = nullptr;
 
 			// the builder is no longer actively repairing something
 			getObject()->clearModelConditionState( MODELCONDITION_ACTIVELY_CONSTRUCTING );
@@ -890,7 +890,7 @@ void WorkerAIUpdate::onDelete( void )
 	for( i = 0; i < DOZER_NUM_TASKS; i++ )
 	{
 		Object* goalObject = TheGameLogic->findObjectByID(m_task[i].m_targetObjectID);
-		if (goalObject != NULL)
+		if (goalObject != nullptr)
 		{
 			goalObject->clearModelConditionState(MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED);
 		}
@@ -927,18 +927,18 @@ const Coord3D* WorkerAIUpdate::getDockPoint( DozerTask task, DozerDockPoint poin
 
 	// sanity
 	if( task < 0 || task >= DOZER_NUM_TASKS )
-		return NULL;
+		return nullptr;
 
 	// sanity
 	if( point < 0 || point >= DOZER_NUM_DOCK_POINTS )
-		return NULL;
+		return nullptr;
 
 	// if the point has been set (is valid) then return it
 	if( m_dockPoint[ task ][ point ].valid )
 		return &m_dockPoint[ task ][ point ].location;
 
 	// no valid point has been set for this dock point on this task
-	return NULL;
+	return nullptr;
 
 }
 
@@ -1171,14 +1171,14 @@ WorkerStateMachine::WorkerStateMachine( Object *owner ) : StateMachine( owner, "
 {
 	static const StateConditionInfo asDozerConditions[] =
 	{
-		StateConditionInfo(supplyTruckSubMachineWantsToEnter, AS_SUPPLY_TRUCK, NULL),
-		StateConditionInfo(NULL, NULL, NULL)
+		StateConditionInfo(supplyTruckSubMachineWantsToEnter, AS_SUPPLY_TRUCK, nullptr),
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
 	static const StateConditionInfo asTruckConditions[] =
 	{
-		StateConditionInfo(supplyTruckSubMachineReadyToLeave, AS_DOZER, NULL),
-		StateConditionInfo(NULL, NULL, NULL)
+		StateConditionInfo(supplyTruckSubMachineReadyToLeave, AS_DOZER, nullptr),
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
 	// order matters: first state is the default state.
@@ -1255,7 +1255,7 @@ Bool WorkerStateMachine::supplyTruckSubMachineReadyToLeave( State *thisState, vo
 	// so there is no transition out on the way in.  Active and Busy means it isn't doing
 	// anything Supply related.
 
-	return !supplyTruckSubMachineWantsToEnter( thisState, NULL )
+	return !supplyTruckSubMachineWantsToEnter( thisState, nullptr )
 				&& update->isSupplyTruckBrainActiveAndBusy();
 }
 
@@ -1327,18 +1327,18 @@ void WorkerAIUpdate::createBridgeScaffolding( Object *bridgeTower )
 {
 
 	// sanity
-	if( bridgeTower == NULL )
+	if( bridgeTower == nullptr )
 		return;
 
 	// get the bridge behavior interface from the bridge object that this tower is a part of
 	BridgeTowerBehaviorInterface *btbi = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( bridgeTower );
-	if( btbi == NULL )
+	if( btbi == nullptr )
 		return;
 	Object *bridgeObject = TheGameLogic->findObjectByID( btbi->getBridgeID() );
-	if( bridgeObject == NULL )
+	if( bridgeObject == nullptr )
 		return;
 	BridgeBehaviorInterface *bbi = BridgeBehavior::getBridgeBehaviorInterfaceFromObject( bridgeObject );
-	if( bbi == NULL )
+	if( bbi == nullptr )
 		return;
 
 	// tell the bridge to create scaffolding if necessary
@@ -1353,18 +1353,18 @@ void WorkerAIUpdate::removeBridgeScaffolding( Object *bridgeTower )
 {
 
 	// sanity
-	if( bridgeTower == NULL )
+	if( bridgeTower == nullptr )
 		return;
 
 	// get the bridge behavior interface from the bridge object that this tower is a part of
 	BridgeTowerBehaviorInterface *btbi = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( bridgeTower );
-	if( btbi == NULL )
+	if( btbi == nullptr )
 		return;
 	Object *bridgeObject = TheGameLogic->findObjectByID( btbi->getBridgeID() );
-	if( bridgeObject == NULL )
+	if( bridgeObject == nullptr )
 		return;
 	BridgeBehaviorInterface *bbi = BridgeBehavior::getBridgeBehaviorInterfaceFromObject( bridgeObject );
-	if( bbi == NULL )
+	if( bbi == nullptr )
 		return;
 
 	// tell the bridge to end any scaffolding from repairing

@@ -1174,4 +1174,7 @@ target_link_libraries(z_gameengine PUBLIC
     z_wwvegas
 )
 
-target_precompile_headers(z_gameengine PRIVATE Include/Precompiled/PreRTS.h)
+target_precompile_headers(z_gameengine PRIVATE
+    [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
+    Include/Precompiled/PreRTS.h
+)

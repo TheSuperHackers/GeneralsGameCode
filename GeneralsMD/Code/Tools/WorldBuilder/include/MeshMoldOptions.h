@@ -31,7 +31,7 @@ class MeshMoldOptions : public COptionsPanel , public PopupSliderOwner
 {
 // Construction
 public:
-	MeshMoldOptions(CWnd* pParent = NULL);   // standard constructor
+	MeshMoldOptions(CWnd* pParent = nullptr);   // standard constructor
 	enum {MIN_ANGLE=-180,
 				MAX_ANGLE=180,
 				MIN_HEIGHT=-10,

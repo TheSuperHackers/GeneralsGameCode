@@ -69,7 +69,7 @@ MeshConnectionsClass::MeshConnectionsClass
 	Origin(context.Origin)
 {
 	unsigned int i;
-	assert(Origin != NULL);
+	assert(Origin != nullptr);
 
 	/*
 	** Set the name, count the sub-objects and aggregates

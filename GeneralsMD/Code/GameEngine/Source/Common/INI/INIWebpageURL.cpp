@@ -84,11 +84,11 @@ void INI::parseWebpageURLDefinition( INI* ini )
 	const char* c = ini->getNextToken();
 	tag.set( c );
 
-	if (TheWebBrowser != NULL)
+	if (TheWebBrowser != nullptr)
 	{
 		url = TheWebBrowser->findURL(tag);
 
-		if (url == NULL)
+		if (url == nullptr)
 		{
 			url = TheWebBrowser->makeNewURL(tag);
 		}
@@ -96,7 +96,7 @@ void INI::parseWebpageURLDefinition( INI* ini )
 
 	// find existing item if present
 //	track = TheAudio->Music->getTrack( name );
-//	if( track == NULL )
+//	if( track == nullptr )
 //	{
 
 		// allocate a new track

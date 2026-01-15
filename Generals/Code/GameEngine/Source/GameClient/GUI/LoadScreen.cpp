@@ -127,7 +127,7 @@ FRAME_FUDGE_ADD = 30,
 
 LoadScreen::LoadScreen( void )
 {
-	m_loadScreen = NULL;
+	m_loadScreen = nullptr;
 }
 
 LoadScreen::~LoadScreen( void )
@@ -136,7 +136,7 @@ LoadScreen::~LoadScreen( void )
 	//	delete (m_loadScreen);
 	if(m_loadScreen)
 		TheWindowManager->winDestroy( m_loadScreen );
-	m_loadScreen = NULL;
+	m_loadScreen = nullptr;
 }
 
 void LoadScreen::update( Int percent )
@@ -157,37 +157,37 @@ SinglePlayerLoadScreen::SinglePlayerLoadScreen( void )
 {
 	m_currentObjectiveLine = 0;
 	m_currentObjectiveLineCharacter = 0;
-	m_finishedObjectiveText = NULL;
+	m_finishedObjectiveText = FALSE;
 	m_currentObjectiveWidthOffset = 0;
-	m_progressBar = NULL;
-	m_percent = NULL;
-	m_videoStream = NULL;
-	m_videoBuffer = NULL;
-	m_objectiveWin = NULL;
+	m_progressBar = nullptr;
+	m_percent = nullptr;
+	m_videoStream = nullptr;
+	m_videoBuffer = nullptr;
+	m_objectiveWin = nullptr;
 	for(Int i = 0; i < MAX_OBJECTIVE_LINES; ++i)
-		m_objectiveLines[i] = NULL;
+		m_objectiveLines[i] = nullptr;
 
 }
 
 SinglePlayerLoadScreen::~SinglePlayerLoadScreen( void )
 {
-	m_progressBar = NULL;
-	m_percent = NULL;
-	m_objectiveWin = NULL;
+	m_progressBar = nullptr;
+	m_percent = nullptr;
+	m_objectiveWin = nullptr;
 	for(Int i = 0; i < MAX_OBJECTIVE_LINES; ++i)
-		m_objectiveLines[i] = NULL;
+		m_objectiveLines[i] = nullptr;
 
 	delete m_videoBuffer;
-	m_videoBuffer = NULL;
+	m_videoBuffer = nullptr;
 
 	if ( m_videoStream )
 	{
 		m_videoStream->close();
-		m_videoStream = NULL;
+		m_videoStream = nullptr;
 	}
 
 	TheAudio->removeAudioEvent( m_ambientLoopHandle );
-	m_ambientLoopHandle = NULL;
+	m_ambientLoopHandle = 0;
 
 }
 
@@ -457,7 +457,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 	m_ambientLoop.setEventName("LoadScreenAmbient");
 	// create the new stream
 	m_videoStream = TheVideoPlayer->open( TheCampaignManager->getCurrentMission()->m_movieLabel );
-	if ( m_videoStream == NULL )
+	if ( m_videoStream == nullptr )
 	{
 		m_percent->winHide(TRUE);
 		return;
@@ -465,18 +465,18 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 
 	// Create the new buffer
 	m_videoBuffer = TheDisplay->createVideoBuffer();
-	if (	m_videoBuffer == NULL ||
+	if (	m_videoBuffer == nullptr ||
 				!m_videoBuffer->allocate(	m_videoStream->width(),
 													m_videoStream->height())
 		)
 	{
 		delete m_videoBuffer;
-		m_videoBuffer = NULL;
+		m_videoBuffer = nullptr;
 
 		if ( m_videoStream )
 		{
 			m_videoStream->close();
-			m_videoStream = NULL;
+			m_videoStream = nullptr;
 		}
 
 		return;
@@ -591,8 +591,8 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 
 void SinglePlayerLoadScreen::reset( void )
 {
- setLoadScreen(NULL);
- m_progressBar = NULL;
+ setLoadScreen(nullptr);
+ m_progressBar = nullptr;
 }
 
 void SinglePlayerLoadScreen::update( Int percent )
@@ -617,13 +617,13 @@ void SinglePlayerLoadScreen::setProgressRange( Int min, Int max )
 //-----------------------------------------------------------------------------
 ShellGameLoadScreen::ShellGameLoadScreen( void )
 {
-	m_progressBar = NULL;
+	m_progressBar = nullptr;
 }
 
 ShellGameLoadScreen::~ShellGameLoadScreen( void )
 {
 
-	m_progressBar = NULL;
+	m_progressBar = nullptr;
 }
 
 void ShellGameLoadScreen::init( GameInfo *game )
@@ -658,8 +658,8 @@ void ShellGameLoadScreen::init( GameInfo *game )
 
 void ShellGameLoadScreen::reset( void )
 {
- setLoadScreen(NULL);
- m_progressBar = NULL;
+ setLoadScreen(nullptr);
+ m_progressBar = nullptr;
 }
 
 void ShellGameLoadScreen::update( Int percent )
@@ -675,14 +675,14 @@ void ShellGameLoadScreen::update( Int percent )
 //-----------------------------------------------------------------------------
 MultiPlayerLoadScreen::MultiPlayerLoadScreen( void )
 {
-	m_mapPreview = NULL;
+	m_mapPreview = nullptr;
 
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
-		m_buttonMapStartPosition[i] = NULL;
-		m_progressBars[i] = NULL;
-		m_playerNames[i] = NULL;
-		m_playerSide[i]= NULL;
+		m_buttonMapStartPosition[i] = nullptr;
+		m_progressBars[i] = nullptr;
+		m_playerNames[i] = nullptr;
+		m_playerSide[i]= nullptr;
 		m_playerLookup[i] = -1;
 	}
 }
@@ -691,14 +691,14 @@ MultiPlayerLoadScreen::~MultiPlayerLoadScreen( void )
 {
 	if(m_mapPreview)
 	{
-		m_mapPreview->winSetUserData(NULL);
+		m_mapPreview->winSetUserData(nullptr);
 	}
 
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
-		m_progressBars[i] = NULL;
-		m_playerNames[i] = NULL;
-		m_playerSide[i]= NULL;
+		m_progressBars[i] = nullptr;
+		m_playerNames[i] = nullptr;
+		m_playerSide[i]= nullptr;
 		m_playerLookup[i] = -1;
 	}
 
@@ -745,7 +745,7 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 	Int i = 0;
 	for (; i < MAX_SLOTS; ++i)
 	{
-		teamWin[i] = NULL;
+		teamWin[i] = nullptr;
 	}
 
 	Int netSlot = 0;
@@ -843,12 +843,12 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 
 void MultiPlayerLoadScreen::reset( void )
 {
-	setLoadScreen(NULL);
+	setLoadScreen(nullptr);
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
-		m_progressBars[i] = NULL;
-		m_playerNames[i] = NULL;
-		m_playerSide[i]= NULL;
+		m_progressBars[i] = nullptr;
+		m_playerNames[i] = nullptr;
+		m_playerSide[i]= nullptr;
 	}
 }
 
@@ -892,23 +892,23 @@ void MultiPlayerLoadScreen::processProgress(Int playerId, Int percentage)
 GameSpyLoadScreen::GameSpyLoadScreen( void )
 {
 
-	m_mapPreview = NULL;
+	m_mapPreview = nullptr;
 
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
 
-		m_buttonMapStartPosition[i] = NULL;
-		m_playerRank[i] = NULL;
+		m_buttonMapStartPosition[i] = nullptr;
+		m_playerRank[i] = nullptr;
 
-		m_playerOfficerMedal[i] = NULL;
-		m_progressBars[i] = NULL;
-		m_playerNames[i] = NULL;
-		m_playerSide[i]= NULL;
+		m_playerOfficerMedal[i] = nullptr;
+		m_progressBars[i] = nullptr;
+		m_playerNames[i] = nullptr;
+		m_playerSide[i]= nullptr;
 		m_playerLookup[i] = -1;
-		m_playerFavoriteFactions[i]= NULL;
-		m_playerTotalDisconnects[i]= NULL;
-		m_playerWin[i]= NULL;
-		m_playerWinLosses[i]= NULL;
+		m_playerFavoriteFactions[i]= nullptr;
+		m_playerTotalDisconnects[i]= nullptr;
+		m_playerWin[i]= nullptr;
+		m_playerWinLosses[i]= nullptr;
 	}
 }
 
@@ -916,19 +916,19 @@ GameSpyLoadScreen::~GameSpyLoadScreen( void )
 {
 	if(m_mapPreview)
 	{
-		m_mapPreview->winSetUserData(NULL);
+		m_mapPreview->winSetUserData(nullptr);
 	}
 
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
-		m_progressBars[i] = NULL;
-		m_playerNames[i] = NULL;
-		m_playerSide[i]= NULL;
+		m_progressBars[i] = nullptr;
+		m_playerNames[i] = nullptr;
+		m_playerSide[i]= nullptr;
 		m_playerLookup[i] = -1;
-		m_playerFavoriteFactions[i]= NULL;
-		m_playerTotalDisconnects[i]= NULL;
-		m_playerWin[i]= NULL;
-		m_playerWinLosses[i]= NULL;
+		m_playerFavoriteFactions[i]= nullptr;
+		m_playerTotalDisconnects[i]= nullptr;
+		m_playerWin[i]= nullptr;
+		m_playerWinLosses[i]= nullptr;
 	}
 }
 
@@ -958,7 +958,7 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 	Int i = 0;
 	for (; i < MAX_SLOTS; ++i)
 	{
-		teamWin[i] = NULL;
+		teamWin[i] = nullptr;
 	}
 
 	Int netSlot = 0;
@@ -1043,7 +1043,7 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 		Int favSide = GetFavoriteSide(stats);
 		const Image *preorderImg = TheMappedImageCollection->findImageByName("OfficersClubsmall");
 		if (!isPreorder)
-			preorderImg = NULL;
+			preorderImg = nullptr;
 		const Image *rankImg = LookupSmallRankImage(favSide, rankPoints);
 		m_playerOfficerMedal[i]->winSetEnabledImage(0, preorderImg);
 		m_playerRank[i]->winSetEnabledImage(0, rankImg);
@@ -1173,12 +1173,12 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 
 void GameSpyLoadScreen::reset( void )
 {
-	setLoadScreen(NULL);
+	setLoadScreen(nullptr);
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
-		m_progressBars[i] = NULL;
-		m_playerNames[i] = NULL;
-		m_playerSide[i]= NULL;
+		m_progressBars[i] = nullptr;
+		m_playerNames[i] = nullptr;
+		m_playerSide[i]= nullptr;
 	}
 }
 
@@ -1216,28 +1216,28 @@ MapTransferLoadScreen::MapTransferLoadScreen( void )
 	m_oldTimeout = 0;
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
-		m_progressBars[i] = NULL;
-		m_playerNames[i] = NULL;
-		m_progressText[i]= NULL;
+		m_progressBars[i] = nullptr;
+		m_playerNames[i] = nullptr;
+		m_progressText[i]= nullptr;
 		m_playerLookup[i] = -1;
 		m_oldProgress[i] = -1;
 	}
-	m_fileNameText = NULL;
-	m_timeoutText = NULL;
+	m_fileNameText = nullptr;
+	m_timeoutText = nullptr;
 }
 
 MapTransferLoadScreen::~MapTransferLoadScreen( void )
 {
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
-		m_progressBars[i] = NULL;
-		m_playerNames[i] = NULL;
-		m_progressText[i]= NULL;
+		m_progressBars[i] = nullptr;
+		m_playerNames[i] = nullptr;
+		m_progressText[i]= nullptr;
 		m_playerLookup[i] = -1;
 		m_oldProgress[i] = -1;
 	}
-	m_fileNameText = NULL;
-	m_timeoutText = NULL;
+	m_fileNameText = nullptr;
+	m_timeoutText = nullptr;
 }
 
 void MapTransferLoadScreen::init( GameInfo *game )
@@ -1318,17 +1318,17 @@ void MapTransferLoadScreen::init( GameInfo *game )
 
 void MapTransferLoadScreen::reset( void )
 {
-	setLoadScreen(NULL);
+	setLoadScreen(nullptr);
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
-		m_progressBars[i] = NULL;
-		m_playerNames[i] = NULL;
-		m_progressText[i]= NULL;
+		m_progressBars[i] = nullptr;
+		m_playerNames[i] = nullptr;
+		m_progressText[i]= nullptr;
 		m_playerLookup[i] = -1;
 		m_oldProgress[i] = -1;
 	}
-	m_fileNameText = NULL;
-	m_timeoutText = NULL;
+	m_fileNameText = nullptr;
+	m_timeoutText = nullptr;
 }
 
 void MapTransferLoadScreen::update( Int percent )

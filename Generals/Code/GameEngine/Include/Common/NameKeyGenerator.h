@@ -66,7 +66,7 @@ public:
 	AsciiString		m_nameString;
 };
 
-inline Bucket::Bucket() : m_nextInSocket(NULL), m_key(NAMEKEY_INVALID) { }
+inline Bucket::Bucket() : m_nextInSocket(nullptr), m_key(NAMEKEY_INVALID) { }
 inline Bucket::~Bucket() { }
 
 //-------------------------------------------------------------------------------------------------

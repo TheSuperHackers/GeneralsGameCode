@@ -48,7 +48,7 @@ class HashTableIteratorClass;
 class	HashableClass {
 
 public:
-	HashableClass( void ) : NextHash( NULL ) {}
+	HashableClass( void ) : NextHash( nullptr ) {}
 	virtual	~HashableClass( void ) {}
 
 	virtual	const char * Get_Key( void )				= 0;
@@ -98,7 +98,7 @@ public:
 
 	void					First( void );
 	void					Next( void );
-	bool					Is_Done( void )		{ return CurrentEntry == NULL; }
+	bool					Is_Done( void )		{ return CurrentEntry == nullptr; }
 	HashableClass *	Get_Current( void )	{ return CurrentEntry; }
 
 private:

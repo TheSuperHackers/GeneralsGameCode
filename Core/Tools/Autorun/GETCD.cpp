@@ -184,10 +184,10 @@ int	GetCDClass::Get_CD_Drive_For_This_Volume ( const char *volume_label )
 				(char const *)buffer,
 				&volume_name[0],
 				(unsigned long)sizeof(volume_name)-1,
-				(unsigned long *)NULL,
+				(unsigned long *)nullptr,
 				(unsigned long *)&filename_length,
 				(unsigned long *)&misc_dword,
-				(char *)NULL,
+				(char *)nullptr,
 				(unsigned long)0 )) {
 
 			//---------------------------------------------------------------------
@@ -212,12 +212,12 @@ int	GetCDClass::Get_CD_Drive_For_This_Volume ( const char *volume_label )
 				FORMAT_MESSAGE_ALLOCATE_BUFFER |
 				FORMAT_MESSAGE_FROM_SYSTEM |
 				FORMAT_MESSAGE_IGNORE_INSERTS,
-				NULL,
+				nullptr,
 				GetLastError(),
 				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 				(LPTSTR) &lpMsgBuf,
 				0,
-				NULL
+				nullptr
 			);
 			Msg( __LINE__, __FILE__, (LPTSTR)lpMsgBuf );
 			LocalFree( lpMsgBuf );
@@ -270,8 +270,8 @@ const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *v
 	unsigned		filename_length;
 	static char		volume_label[ MAX_PATH ] = "";	// [OYO] add static
 
-	if ( path == NULL || volume_name == NULL ) {
-		return( NULL );
+	if ( path == nullptr || volume_name == nullptr ) {
+		return( nullptr );
 	}
 
 	memset( volume_name, '\0', sizeof( volume_name ));
@@ -281,10 +281,10 @@ const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *v
 			(char const *)buffer,
 			&volume_label[0],
 			(unsigned long)sizeof(volume_label)-1,
-			(unsigned long *)NULL,
+			(unsigned long *)nullptr,
 			(unsigned long *)&filename_length,
 			(unsigned long *)&misc_dword,
-			(char *)NULL,
+			(char *)nullptr,
 			(unsigned long)0 )) {
 
 		strcpy( volume_name, volume_label );
@@ -296,12 +296,12 @@ const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *v
 		    FORMAT_MESSAGE_ALLOCATE_BUFFER |
 		    FORMAT_MESSAGE_FROM_SYSTEM |
 		    FORMAT_MESSAGE_IGNORE_INSERTS,
-		    NULL,
+		    nullptr,
 		    GetLastError(),
 		    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 		    (LPTSTR) &lpMsgBuf,
 		    0,
-		    NULL
+		    nullptr
 		);
 		Msg( __LINE__, __FILE__, (LPTSTR)lpMsgBuf );
 		LocalFree( lpMsgBuf );
@@ -361,10 +361,10 @@ bool CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_
 				(char const *)buffer,
 				&volume_name[0],
 				(unsigned long)sizeof(volume_name)-1,
-				(unsigned long *)NULL,
+				(unsigned long *)nullptr,
 				(unsigned long *)&filename_length,
 				(unsigned long *)&misc_dword,
-				(char *)NULL,
+				(char *)nullptr,
 				(unsigned long)0 )) {
 
 			/******************************************************************
@@ -381,7 +381,7 @@ bool CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_
 				volume_name[11] = '\0';
 			}
 
-			if ( volume_label != NULL ) {
+			if ( volume_label != nullptr ) {
 				strncpy( volume_label, volume_name, 128 );
 			}
 

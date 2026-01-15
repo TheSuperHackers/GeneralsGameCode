@@ -65,7 +65,7 @@ class WWAudioThreadsClass
 		//
 		//	Delayed release mechanism
 		//
-		static HANDLE		Create_Delayed_Release_Thread (LPVOID param = NULL);
+		static HANDLE		Create_Delayed_Release_Thread (LPVOID param = nullptr);
 		static void			End_Delayed_Release_Thread (DWORD timeout = 20000);
 		static void			Add_Delayed_Release_Object (RefCountClass *object, DWORD delay = 2000);
 		static void			Flush_Delayed_Release_Objects (void);

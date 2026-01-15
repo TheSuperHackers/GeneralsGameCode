@@ -94,7 +94,7 @@ public:
 
 	void						Compute_Texture_Coordinate(const Vector3 & point,Vector3 * set_stq);
 
-	TextureMapperClass*	Clone(void) const { 	WWASSERT(0);	return NULL; }
+	TextureMapperClass*	Clone(void) const { 	WWASSERT(0);	return nullptr; }
 
 	virtual void			Apply(int uv_array_index);
 	virtual void			Calculate_Texture_Matrix(Matrix4x4 &tex_matrix);
@@ -117,7 +117,7 @@ protected:
 ** it with it's own matrix, then applies that. It sets the texture source to camera space
 ** position. The idea is to use some transformation of the camera space position (like a planar
 ** projection) as the 'input coordinates' to some other mapper like a linear offset mapper
-** which usually uses actual texture coordinates as input. If the internal mapper is NULL, it
+** which usually uses actual texture coordinates as input. If the internal mapper is null, it
 ** simply applies it's own matrix.
 */
 class CompositeMatrixMapperClass : public MatrixMapperClass

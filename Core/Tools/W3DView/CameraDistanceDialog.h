@@ -29,7 +29,7 @@ class CameraDistanceDialogClass : public CDialog
 {
 // Construction
 public:
-	CameraDistanceDialogClass(CWnd* pParent = NULL);   // standard constructor
+	CameraDistanceDialogClass(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CameraDistanceDialogClass)

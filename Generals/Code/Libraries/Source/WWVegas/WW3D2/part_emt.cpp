@@ -92,8 +92,8 @@ ParticleEmitterClass::ParticleEmitterClass(float emit_rate, unsigned int burst_s
 	MaxParticles(max_particles),
 	IsComplete(false),
 	RemoveOnComplete(DefaultRemoveOnComplete),
-	NameString(NULL),
-	UserString(NULL),
+	NameString(nullptr),
+	UserString(nullptr),
 	IsInScene(false)
 {
 	EmitRate		= emit_rate	>	0.0f ? (unsigned int)(1000.0f / emit_rate) : 1000U;
@@ -131,13 +131,13 @@ ParticleEmitterClass::ParticleEmitterClass(const ParticleEmitterClass & src) :
 	if (src.PosRand) {
 		PosRand = src.PosRand->Clone();
 	} else {
-		PosRand = NULL;
+		PosRand = nullptr;
 	}
 	BaseVel = src.BaseVel;
 	if (src.VelRand) {
 		VelRand = src.VelRand->Clone();
 	} else {
-		VelRand = NULL;
+		VelRand = nullptr;
 	}
 	OutwardVel = src.OutwardVel;
 	VelInheritFactor = src.VelInheritFactor;
@@ -178,14 +178,14 @@ ParticleEmitterClass::~ParticleEmitterClass(void)
 	Buffer->Release_Ref();
 
 	delete PosRand;
-	PosRand = NULL;
+	PosRand = nullptr;
 
 	delete VelRand;
-	VelRand = NULL;
+	VelRand = nullptr;
 
-	if (NameString != NULL) {
+	if (NameString != nullptr) {
 		::free (NameString);
-		NameString = NULL;
+		NameString = nullptr;
 	}
 
 	return ;
@@ -196,11 +196,11 @@ ParticleEmitterClass *
 ParticleEmitterClass::Create_From_Definition (const ParticleEmitterDefClass &definition)
 {
 	// Assume failure
-	ParticleEmitterClass *pemitter = NULL;
+	ParticleEmitterClass *pemitter = nullptr;
 
 	// Attempt to load the texture for this emitter
 	const char *ptexture_filename = definition.Get_Texture_Filename ();
-	TextureClass *ptexture = NULL;
+	TextureClass *ptexture = nullptr;
 	if (ptexture_filename && ptexture_filename[0]) {
 		ptexture = WW3DAssetManager::Get_Instance()->Get_Texture
 		(
@@ -349,7 +349,7 @@ void ParticleEmitterClass::On_Frame_Update(void)
 
 			// The particle buffer doesn't have a valid Scene yet - the emitter
 			// finds out what scene it belongs to (goes up the container tree
-			// until it finds a non-NULL Scene), and then adds the particle
+			// until it finds a non-null Scene), and then adds the particle
 			// buffer to it.
 			if ( BufferSceneNeeded ) {
 
@@ -451,8 +451,8 @@ void ParticleEmitterClass::Set_Velocity_Randomizer(Vector3Randomizer *rand)
 
 Vector3Randomizer *ParticleEmitterClass::Get_Creation_Volume (void) const
 {
-	Vector3Randomizer *randomizer = NULL;
-	if (PosRand != NULL) {
+	Vector3Randomizer *randomizer = nullptr;
+	if (PosRand != nullptr) {
 		randomizer = PosRand->Clone ();
 		//randomizer->Scale (1000.0F);
 	}
@@ -462,8 +462,8 @@ Vector3Randomizer *ParticleEmitterClass::Get_Creation_Volume (void) const
 
 Vector3Randomizer *ParticleEmitterClass::Get_Velocity_Random (void) const
 {
-	Vector3Randomizer *randomizer = NULL;
-	if (VelRand != NULL) {
+	Vector3Randomizer *randomizer = nullptr;
+	if (VelRand != nullptr) {
 		randomizer = VelRand->Clone ();
 		randomizer->Scale (1000.0F);
 	}
@@ -630,7 +630,7 @@ void ParticleEmitterClass::Create_New_Particles(const Quaternion & curr_quat, co
 
 // Initialize one new particle at the given NewParticleStruct address, with
 // the given age and emitter transform (expressed as a quaternion and origin
-// vector). (must check if address is NULL).
+// vector). (must check if address is nullptr).
 void ParticleEmitterClass::Initialize_Particle(NewParticleStruct * newpart,
    unsigned int timestamp, const Quaternion & quat, const Vector3 & orig)
 {
@@ -686,12 +686,12 @@ ParticleEmitterClass::Build_Definition (void) const
 {
 	// Allocate a new emitter definition object
 	ParticleEmitterDefClass *pdefinition = W3DNEW ParticleEmitterDefClass;
-	WWASSERT (pdefinition != NULL);
-	if (pdefinition != NULL) {
+	WWASSERT (pdefinition != nullptr);
+	if (pdefinition != nullptr) {
 
 		// Set the texture's filename
 		TextureClass *ptexture = Get_Texture ();
-		if (ptexture != NULL) {
+		if (ptexture != nullptr) {
 			pdefinition->Set_Texture_Filename (ptexture->Get_Texture_Name());
 			REF_PTR_RELEASE(ptexture);
 		}
@@ -810,7 +810,7 @@ ParticleEmitterClass::Save (ChunkSaveClass &chunk_save) const
 	// Build a definition from this emitter instance, and save it
 	// to the chunk.
 	ParticleEmitterDefClass *pdefinition = Build_Definition ();
-	if (pdefinition != NULL) {
+	if (pdefinition != nullptr) {
 		ret_val = pdefinition->Save_W3D (chunk_save);
 	}
 
@@ -823,9 +823,9 @@ void
 ParticleEmitterClass::Set_Name (const char *pname)
 {
 	// Free the old name if necessary
-	if (NameString != NULL) {
+	if (NameString != nullptr) {
 		::free (NameString);
-		NameString = NULL;
+		NameString = nullptr;
 	}
 
 	// Copy the provided name
@@ -860,7 +860,7 @@ ParticleEmitterClass::Add_Dependencies_To_List
 	// Get the texture the emitter is using and add it to our list
 	//
 	TextureClass *texture = Get_Texture ();
-	if (texture != NULL) {
+	if (texture != nullptr) {
 		file_list.Add (texture->Get_Full_Path ());
 		REF_PTR_RELEASE(texture);
 	}

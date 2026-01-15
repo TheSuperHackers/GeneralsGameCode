@@ -294,7 +294,7 @@ void RawFileClass::Reset(void)
 	Close();
 	if (Allocated && Filename) {
 		free((char *)Filename);
-		Filename = NULL;
+		Filename = nullptr;
 		Allocated = false;
 	}
 }
@@ -321,18 +321,18 @@ void RawFileClass::Reset(void)
  *=============================================================================================*/
 char const * RawFileClass::Set_Name(char const * filename)
 {
-	if (Filename != NULL && Allocated) {
+	if (Filename != nullptr && Allocated) {
 		free((char *)Filename);
-		Filename = NULL;
+		Filename = nullptr;
 		Allocated = false;
 	}
 
-	if (filename == NULL) return(NULL);
+	if (filename == nullptr) return(nullptr);
 
 	Bias(0);
 
 	char *nameptr = strdup(filename);
-	if (nameptr == NULL) {
+	if (nameptr == nullptr) {
 		Error(ENOMEM, false, filename);
 	}
 
@@ -409,7 +409,7 @@ int RawFileClass::Open(int rights)
 	**	Verify that there is a filename associated with this file object. If not, then this is a
 	**	big error condition.
 	*/
-	if (Filename == NULL) {
+	if (Filename == nullptr) {
 		Error(ENOENT, false);
 	}
 
@@ -442,7 +442,7 @@ int RawFileClass::Open(int rights)
 					Handle = fopen(Filename, "r");
 				#else
 					Handle = CreateFileA(Filename, GENERIC_READ, FILE_SHARE_READ,
-												NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+												nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 				#endif
 				break;
 
@@ -451,7 +451,7 @@ int RawFileClass::Open(int rights)
 					Handle = fopen(Filename, "w");
 				#else
 					Handle = CreateFileA(Filename, GENERIC_WRITE, 0,
-												NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+												nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 				#endif
 				break;
 
@@ -462,7 +462,7 @@ int RawFileClass::Open(int rights)
 					// SKB 5/13/99 use OPEN_ALWAYS instead of CREATE_ALWAYS so that files
 					//					does not get destroyed.
 					Handle = CreateFileA(Filename, GENERIC_READ | GENERIC_WRITE, 0,
-												NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+												nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 				#endif
 				break;
 		}
@@ -511,7 +511,7 @@ int RawFileClass::Open(int rights)
  *=============================================================================================*/
 bool RawFileClass::Is_Available(int forced)
 {
-	if (Filename == NULL) return(false);
+	if (Filename == nullptr) return(false);
 
 	/*
 	**	If the file is already open, then is must have already passed the availability check.
@@ -540,7 +540,7 @@ bool RawFileClass::Is_Available(int forced)
 			Handle=fopen(Filename,"r");
 		#else
 			Handle = CreateFileA(Filename, GENERIC_READ, FILE_SHARE_READ,
-											NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+											nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 		#endif
 
 		if (Handle == NULL_HANDLE) {
@@ -620,10 +620,10 @@ void RawFileClass::Close(void)
  *    the file. This condition can result in fewer bytes being read than requested. Determine  *
  *    this by examining the return value.                                                      *
  *                                                                                             *
- * INPUT:   buffer   -- Pointer to the buffer to read data into. If NULL is passed, no read    *
+ * INPUT:   buffer   -- Pointer to the buffer to read data into. If nullptr is passed, no read    *
  *                      is performed.                                                          *
  *                                                                                             *
- *          size     -- The number of bytes to read. If NULL is passed, then no read is        *
+ *          size     -- The number of bytes to read. If nullptr is passed, then no read is        *
  *                      performed.                                                             *
  *                                                                                             *
  * OUTPUT:  Returns with the number of bytes read into the buffer. If this number is less      *
@@ -675,7 +675,7 @@ int RawFileClass::Read(void * buffer, int size)
 			if ((bytesread == 0)&&( ! feof(Handle)))
 				readok=ferror(Handle);
 		#else
-			readok=ReadFile(Handle, buffer, size, &(unsigned long&)bytesread, NULL);
+			readok=ReadFile(Handle, buffer, size, &(unsigned long&)bytesread, nullptr);
 		#endif
 
 
@@ -741,7 +741,7 @@ int RawFileClass::Write(void const * buffer, int size)
 		if (byteswritten != size)
 			writeok = FALSE;
 	#else
-		writeok=WriteFile(Handle, buffer, size, &(unsigned long&)byteswritten, NULL);
+		writeok=WriteFile(Handle, buffer, size, &(unsigned long&)byteswritten, nullptr);
 	#endif
 
 	if (! writeok) {
@@ -891,7 +891,7 @@ int RawFileClass::Size(void)
 			size=endpos-startpos;
 			fsetpos(Handle,&curpos);
 		#else
-			size = GetFileSize(Handle, NULL);
+			size = GetFileSize(Handle, nullptr);
 		#endif
 
 		/*
@@ -1190,7 +1190,7 @@ int RawFileClass::Raw_Seek(int pos, int dir)
 				dir = FILE_END;
 				break;
 		}
-		pos = SetFilePointer(Handle, pos, NULL, dir);
+		pos = SetFilePointer(Handle, pos, nullptr, dir);
 	#endif
 
 	/*

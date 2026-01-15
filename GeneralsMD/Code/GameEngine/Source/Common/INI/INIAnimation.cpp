@@ -60,7 +60,7 @@ void INI::parseAnim2DDefinition( INI* ini )
 
 	// find existing animation template if present
 	animTemplate = TheAnim2DCollection->findTemplate( name );
-	if( animTemplate == NULL )
+	if( animTemplate == nullptr )
 	{
 
 		// item not found, create a new one

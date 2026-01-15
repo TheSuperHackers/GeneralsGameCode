@@ -62,7 +62,7 @@ BridgeTowerBehavior::~BridgeTowerBehavior( void )
 void BridgeTowerBehavior::setBridge( Object *bridge )
 {
 
-	if( bridge == NULL )
+	if( bridge == nullptr )
 		m_bridgeID = INVALID_ID;
 	else
 		m_bridgeID = bridge->getID();
@@ -94,7 +94,7 @@ void BridgeTowerBehavior::onDamage( DamageInfo *damageInfo )
 	Object *bridge = TheGameLogic->findObjectByID( getBridgeID() );
 
 	// sanity
-	if( bridge == NULL )
+	if( bridge == nullptr )
 		return;
 
 	//
@@ -106,7 +106,7 @@ void BridgeTowerBehavior::onDamage( DamageInfo *damageInfo )
 
 	// get the bridge behavior module for our bridge
 	BehaviorModule **bmi;
-	BridgeBehaviorInterface *bridgeInterface = NULL;
+	BridgeBehaviorInterface *bridgeInterface = nullptr;
 	for( bmi = bridge->getBehaviorModules(); *bmi; ++bmi )
 	{
 
@@ -115,7 +115,7 @@ void BridgeTowerBehavior::onDamage( DamageInfo *damageInfo )
 			break;
 
 	}
-	DEBUG_ASSERTCRASH( bridgeInterface != NULL, ("BridgeTowerBehavior::onDamage - no 'BridgeBehaviorInterface' found") );
+	DEBUG_ASSERTCRASH( bridgeInterface != nullptr, ("BridgeTowerBehavior::onDamage - no 'BridgeBehaviorInterface' found") );
 	if( bridgeInterface )
 	{
 
@@ -124,7 +124,7 @@ void BridgeTowerBehavior::onDamage( DamageInfo *damageInfo )
 		// or other towers
 		//
 		Object *source = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
-		if( source == NULL ||
+		if( source == nullptr ||
 			  (source->isKindOf( KINDOF_BRIDGE ) == FALSE &&
 				 source->isKindOf( KINDOF_BRIDGE_TOWER ) == FALSE) )
 		{
@@ -175,7 +175,7 @@ void BridgeTowerBehavior::onHealing( DamageInfo *damageInfo )
 	Object *bridge = TheGameLogic->findObjectByID( getBridgeID() );
 
 	// sanity
-	if( bridge == NULL )
+	if( bridge == nullptr )
 		return;
 
 	//
@@ -187,7 +187,7 @@ void BridgeTowerBehavior::onHealing( DamageInfo *damageInfo )
 
 	// get the bridge behavior module for our bridge
 	BehaviorModule **bmi;
-	BridgeBehaviorInterface *bridgeInterface = NULL;
+	BridgeBehaviorInterface *bridgeInterface = nullptr;
 	for( bmi = bridge->getBehaviorModules(); *bmi; ++bmi )
 	{
 
@@ -196,7 +196,7 @@ void BridgeTowerBehavior::onHealing( DamageInfo *damageInfo )
 			break;
 
 	}
-	DEBUG_ASSERTCRASH( bridgeInterface != NULL, ("BridgeTowerBehavior::onHealing - no 'BridgeBehaviorInterface' found") );
+	DEBUG_ASSERTCRASH( bridgeInterface != nullptr, ("BridgeTowerBehavior::onHealing - no 'BridgeBehaviorInterface' found") );
 	if( bridgeInterface )
 	{
 
@@ -205,7 +205,7 @@ void BridgeTowerBehavior::onHealing( DamageInfo *damageInfo )
 		// or other towers
 		//
 		Object *source = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
-		if( source == NULL ||
+		if( source == nullptr ||
 			  (source->isKindOf( KINDOF_BRIDGE ) == FALSE &&
 				 source->isKindOf( KINDOF_BRIDGE_TOWER ) == FALSE) )
 		{
@@ -269,11 +269,11 @@ BridgeTowerBehaviorInterface *BridgeTowerBehavior::getBridgeTowerBehaviorInterfa
 {
 
 	// sanity
-	if( obj == NULL || obj->isKindOf( KINDOF_BRIDGE_TOWER ) == FALSE )
-		return NULL;
+	if( obj == nullptr || obj->isKindOf( KINDOF_BRIDGE_TOWER ) == FALSE )
+		return nullptr;
 
 	BehaviorModule **bmi;
-	BridgeTowerBehaviorInterface *bridgeTowerInterface = NULL;
+	BridgeTowerBehaviorInterface *bridgeTowerInterface = nullptr;
 	for( bmi = obj->getBehaviorModules(); *bmi; ++bmi )
 	{
 
@@ -284,7 +284,7 @@ BridgeTowerBehaviorInterface *BridgeTowerBehavior::getBridgeTowerBehaviorInterfa
 	}
 
 	// interface not found
-	return NULL;
+	return nullptr;
 
 }
 

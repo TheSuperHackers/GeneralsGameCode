@@ -55,11 +55,11 @@ LaserUpdateModuleData::LaserUpdateModuleData()
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "MuzzleParticleSystem",		INI::parseAsciiString,	NULL, offsetof( LaserUpdateModuleData, m_particleSystemName ) },
-		{ "TargetParticleSystem",		INI::parseAsciiString,  NULL, offsetof( LaserUpdateModuleData, m_targetParticleSystemName ) },
-		{ "ParentFireBoneName",			INI::parseAsciiString,  NULL, offsetof( LaserUpdateModuleData, m_parentFireBoneName ) },
-		{ "ParentFireBoneOnTurret",	INI::parseAsciiString,  NULL, offsetof( LaserUpdateModuleData, m_parentFireBoneOnTurret ) },
-		{ 0, 0, 0, 0 }
+		{ "MuzzleParticleSystem",		INI::parseAsciiString,	nullptr, offsetof( LaserUpdateModuleData, m_particleSystemName ) },
+		{ "TargetParticleSystem",		INI::parseAsciiString,  nullptr, offsetof( LaserUpdateModuleData, m_targetParticleSystemName ) },
+		{ "ParentFireBoneName",			INI::parseAsciiString,  nullptr, offsetof( LaserUpdateModuleData, m_parentFireBoneName ) },
+		{ "ParentFireBoneOnTurret",	INI::parseAsciiString,  nullptr, offsetof( LaserUpdateModuleData, m_parentFireBoneOnTurret ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
@@ -210,7 +210,7 @@ void LaserUpdate::initLaser( const Object *parent, const Coord3D *startPos, cons
 		// Override startPos with the logic bone position
 		if( data->m_parentFireBoneOnTurret )
 		{
-			if( !parent->getSingleLogicalBonePositionOnTurret( TURRET_MAIN, data->m_parentFireBoneName.str(), &m_startPos, NULL ) )
+			if( !parent->getSingleLogicalBonePositionOnTurret( TURRET_MAIN, data->m_parentFireBoneName.str(), &m_startPos, nullptr ) )
 			{
 				// failed to find the required bone, so just die
 				TheGameClient->destroyDrawable( getDrawable() );
@@ -219,7 +219,7 @@ void LaserUpdate::initLaser( const Object *parent, const Coord3D *startPos, cons
 		}
 		else
 		{
-			if( !parent->getSingleLogicalBonePosition( data->m_parentFireBoneName.str(), &m_startPos, NULL ) )
+			if( !parent->getSingleLogicalBonePosition( data->m_parentFireBoneName.str(), &m_startPos, nullptr ) )
 			{
 				// failed to find the required bone, so just die
 				TheGameClient->destroyDrawable( getDrawable() );
@@ -240,7 +240,7 @@ void LaserUpdate::initLaser( const Object *parent, const Coord3D *startPos, cons
 	}
 
 	//Compute endPos
-	if( endPos != NULL )
+	if( endPos != nullptr )
 	{
 		// just use what they gave, no override here
 		m_endPos = *endPos;
@@ -321,7 +321,7 @@ void LaserUpdate::initLaser( const Object *parent, const Coord3D *startPos, cons
 Real LaserUpdate::getTemplateLaserRadius() const
 {
 	const Drawable *draw = getDrawable();
-	const LaserDrawInterface* ldi = NULL;
+	const LaserDrawInterface* ldi = nullptr;
 	for( const DrawModule** d = draw->getDrawModules(); *d; ++d )
 	{
 		ldi = (*d)->getLaserDrawInterface();

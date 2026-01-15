@@ -37,7 +37,7 @@
 
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-Keyboard *TheKeyboard = NULL;
+Keyboard *TheKeyboard = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE PROTOTYPES /////////////////////////////////////////////////////////////////////////////
@@ -51,11 +51,11 @@ void Keyboard::createStreamMessages( void )
 {
 
 	// sanity
-	if( TheMessageStream == NULL )
+	if( TheMessageStream == nullptr )
 		return;
 
 	KeyboardIO *key = getFirstKey();
-	GameMessage *msg = NULL;
+	GameMessage *msg = nullptr;
 	while( key->key != KEY_NONE )
 	{
 
@@ -804,7 +804,7 @@ KeyboardIO *Keyboard::findKey( KeyDefType key, KeyboardIO::StatusType status )
 			return io;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------

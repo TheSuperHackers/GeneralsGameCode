@@ -159,7 +159,7 @@ const char* const KindOfMaskType::s_bitNameList[] =
 	"CONSERVATIVE_BUILDING",
 	"IGNORE_DOCKING_BONES",
 
-	NULL
+	nullptr
 };
 static_assert(ARRAY_SIZE(KindOfMaskType::s_bitNameList) == KindOfMaskType::NumBits + 1, "Incorrect array size");
 

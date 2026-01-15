@@ -299,13 +299,13 @@ class ParticleBufferClass : public RenderObjClass
 		// At least one keyframe must exist for each property (time 0).
 		// If a randomizer is zero and there are no additional keyframes for
 		// that property (or the keyframes are all equal), all the arrays for
-		// that property are NULL (since they will never be used), except for
+		// that property are nullptr (since they will never be used), except for
 		// the Values array which will have one entry (the constant value).
 		// Note that the rotation and orientation properties are different -
 		// only orientation is used in rendering. The rotation data is only
 		// used to compute the orientations. So the condition is different -
 		// if rotation and orientation randomizers, and all rotation keyframes
-		// are all zero, then all of the arrays will be NULL (including the
+		// are all zero, then all of the arrays will be null (including the
 		// Values array).
 		unsigned int	NumColorKeyFrames;
 		unsigned int *	ColorKeyFrameTimes;		// 0th entry is always 0
@@ -340,7 +340,7 @@ class ParticleBufferClass : public RenderObjClass
 		// randomizer is zero, the table will have one entry (containing zero),
 		// which is why each property has its own NumXXXRandomEntries variable.
 		// If a randomizer is zero and the property has no keyframes, the table
-		// will be NULL since it will never be used (property is constant)).
+		// will be null since it will never be used (property is constant)).
 		unsigned int	NumRandomColorEntriesMinus1;			// 2^n - 1 so can be used as a mask also
 		Vector3 *		RandomColorEntries;
 		unsigned int	NumRandomAlphaEntriesMinus1;			// 2^n - 1 so can be used as a mask also

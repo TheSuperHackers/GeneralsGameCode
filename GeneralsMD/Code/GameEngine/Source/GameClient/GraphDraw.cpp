@@ -119,6 +119,6 @@ void GraphDraw::clear()
 	m_graphEntries.clear();
 }
 
-GraphDraw *TheGraphDraw = NULL;
+GraphDraw *TheGraphDraw = nullptr;
 
 #endif /* PERF_TIMERS */

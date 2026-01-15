@@ -107,7 +107,7 @@ Pinger::Pinger() : m_requestCount(0), m_responseCount(0)
 {
 	for (Int i=0; i<NumWorkerThreads; ++i)
 	{
-		m_workerThreads[i] = NULL;
+		m_workerThreads[i] = nullptr;
 	}
 }
 
@@ -131,7 +131,7 @@ void Pinger::endThreads( void )
 	for (Int i=0; i<NumWorkerThreads; ++i)
 	{
 		delete m_workerThreads[i];
-		m_workerThreads[i] = NULL;
+		m_workerThreads[i] = nullptr;
 	}
 }
 
@@ -272,7 +272,7 @@ void PingThreadClass::Thread_Function()
 				HOSTENT *hostStruct;
 				in_addr *hostNode;
 				hostStruct = gethostbyname(hostnameBuffer);
-				if (hostStruct == NULL)
+				if (hostStruct == nullptr)
 				{
 					DEBUG_LOG(("pinging %s - host lookup failed", hostnameBuffer));
 
@@ -432,7 +432,7 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
    nLoopLimit = LOOPLIMIT;
    nTimeOut = timeout;
    fDontStop = FALSE;
-   lpstIPInfo = NULL;
+   lpstIPInfo = nullptr;
    nTTL = DEFAULT_TTL;
    nTOS = 0;
 
@@ -442,17 +442,17 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
    char achRepData[sizeof(ICMPECHO) + BUFSIZE];
 
 
-   HANDLE ( WINAPI *lpfnIcmpCreateFile )( VOID ) = NULL;
-   BOOL ( WINAPI *lpfnIcmpCloseHandle )( HANDLE ) = NULL;
+   HANDLE ( WINAPI *lpfnIcmpCreateFile )( VOID ) = nullptr;
+   BOOL ( WINAPI *lpfnIcmpCloseHandle )( HANDLE ) = nullptr;
    DWORD (WINAPI *lpfnIcmpSendEcho)(HANDLE, DWORD, LPVOID, WORD, LPVOID,
-                                    LPVOID, DWORD, DWORD) = NULL;
+                                    LPVOID, DWORD, DWORD) = nullptr;
 
 
    /*
     *  Load the ICMP.DLL
     */
    hICMP_DLL = LoadLibrary("ICMP.DLL");
-   if (hICMP_DLL == 0)
+   if (hICMP_DLL == nullptr)
    {
       DEBUG_LOG(("LoadLibrary() failed: Unable to locate ICMP.DLL!"));
       goto cleanup;
@@ -504,7 +504,7 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
    stIPInfo.Tos = nTOS;
    stIPInfo.Flags = 0;
    stIPInfo.OptionsSize = 0;
-   stIPInfo.OptionsData = NULL;
+   stIPInfo.OptionsData = nullptr;
 
 
 

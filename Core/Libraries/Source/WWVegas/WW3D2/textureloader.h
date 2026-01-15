@@ -78,7 +78,7 @@ public:
 	static void Request_Foreground_Loading(TextureBaseClass* tc);
 
 	static void	Flush_Pending_Load_Tasks(void);
-	static void Update(void(*network_callback)(void) = NULL);
+	static void Update(void(*network_callback)(void) = nullptr);
 
 	// returns true if current thread of execution is allowed to make DX8 calls.
 	static bool Is_DX8_Thread(void);
@@ -134,10 +134,10 @@ class TextureLoadTaskListClass
 		// Add a task to end of list
 		void									Push_Back	(TextureLoadTaskClass *task);
 
-		// Remove and return a task from beginning of list, or NULL if list is empty.
+		// Remove and return a task from beginning of list, or null if list is empty.
 		TextureLoadTaskClass *			Pop_Front	(void);
 
-		// Remove and return a task from end of list, or NULL if list is empty
+		// Remove and return a task from end of list, or null if list is empty
 		TextureLoadTaskClass *			Pop_Back		(void);
 
 		// Remove specified task from list, if present
