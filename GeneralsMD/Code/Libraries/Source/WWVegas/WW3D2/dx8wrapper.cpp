@@ -1773,11 +1773,6 @@ void DX8Wrapper::Begin_Scene(void)
 
 	DX8CALL(BeginScene());
 
-#ifdef false
-	ImGui_ImplDX8_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-#endif
-
 	DX8WebBrowser::Update();
 }
 

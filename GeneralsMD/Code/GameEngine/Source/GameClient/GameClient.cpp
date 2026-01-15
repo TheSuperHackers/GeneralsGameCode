@@ -55,7 +55,6 @@
 #include "GameClient/CampaignManager.h"
 #include "GameClient/ChallengeGenerals.h"
 #include "GameClient/CommandXlat.h"
-#include "GameClient/Console.h"
 #include "GameClient/ControlBar.h"
 #include "GameClient/Diplomacy.h"
 #include "GameClient/Display.h"
@@ -523,9 +522,8 @@ void GameClient::update( void )
 	ImGui_ImplDX8_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-	// Draw console UI
+	// Draw ImGui Demo Window
 	{
-		DevConsole.Draw(0.5f);
 		ImGui::ShowDemoWindow();
 	}
 #endif
