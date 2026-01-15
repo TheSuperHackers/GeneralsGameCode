@@ -31,7 +31,7 @@
 #include "Common/GameMemory.h"
 
 /*
-	In order for something to live in an OVERRIDE<> object, it must be derived from Overridable
+	In order for something to live in an OverridePtr<> object, it must be derived from Overridable
 	(publicly).
 
 	This is useful for things like templates, where we want to override the template and make sure

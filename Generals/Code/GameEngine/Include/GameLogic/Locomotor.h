@@ -211,7 +211,7 @@ private:
 	Real											m_wanderAboutPointRadius;
 };
 
-typedef OVERRIDE<LocomotorTemplate> LocomotorTemplateOverride;
+typedef OverridePtr<LocomotorTemplate> LocomotorTemplateOverride;
 
 // ---------------------------------------------------------
 class Locomotor : public MemoryPoolObject, public Snapshot

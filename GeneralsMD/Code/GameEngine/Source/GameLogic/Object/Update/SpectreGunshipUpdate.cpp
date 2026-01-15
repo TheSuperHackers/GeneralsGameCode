@@ -322,7 +322,7 @@ private:
 public:
 	PartitionFilterLiveMapEnemies(const Object *obj) : m_obj(obj) { }
 
-	virtual Bool allow(Object *objOther)
+	Bool allow(Object *objOther) OVERRIDE
 	{
 		// this is way fast (bit test) so do it first.
 		if (objOther->isEffectivelyDead())

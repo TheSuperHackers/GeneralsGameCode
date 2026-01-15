@@ -78,7 +78,7 @@ private:
 
 };
 
-typedef OVERRIDE<CrateTemplate> CrateTemplateOverride;
+typedef OverridePtr<CrateTemplate> CrateTemplateOverride;
 
 
 /**

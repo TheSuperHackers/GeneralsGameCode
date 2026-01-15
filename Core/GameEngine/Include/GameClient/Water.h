@@ -121,4 +121,4 @@ EMPTY_DTOR(WaterTransparencySetting)
 // EXTERNAL ///////////////////////////////////////////////////////////////////////////////////////
 extern WaterSetting WaterSettings[ TIME_OF_DAY_COUNT ];
 
-extern OVERRIDE<WaterTransparencySetting> TheWaterTransparency;
+extern OverridePtr<WaterTransparencySetting> TheWaterTransparency;

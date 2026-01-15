@@ -74,11 +74,11 @@ private:
 
 	enum AnimStateType
 	{
-		INITIAL,
-		FLYING,
-		FINAL,
+		ANIM_INITIAL,
+		ANIM_FLYING,
+		ANIM_FINAL,
 
-		STATECOUNT
+		ANIM_STATECOUNT
 	};
 
 	AsciiString								m_modelName;
@@ -87,7 +87,7 @@ private:
 	AsciiString								m_animFlying;
 	AsciiString								m_animFinal;
 	RenderObjClass*						m_renderObject;										///< W3D Render object for this drawable
-	HAnimClass*								m_anims[STATECOUNT];
+	HAnimClass*								m_anims[ANIM_STATECOUNT];
 	const FXList*							m_fxFinal;
 	Int												m_state;
 	Int												m_frames;
