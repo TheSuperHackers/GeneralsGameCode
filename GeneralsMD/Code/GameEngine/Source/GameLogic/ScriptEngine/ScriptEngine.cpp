@@ -7877,12 +7877,36 @@ void ScriptEngine::setSequentialTimer(Team *team, Int frameCount)
 
 void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 {
+#if (defined(_MSC_VER) && _MSC_VER < 1300) && RETAIL_COMPATIBLE_CRC
+	VecSequentialScriptPtrIt it, lastIt;
+	lastIt = m_sequentialScripts.end();
+#else
 	VecSequentialScriptPtrIt it;
 	SequentialScript* lastScript = NULL;
+#endif
 	Bool itAdvanced = false;
 
 	Int spinCount = 0;
 	for (it = m_sequentialScripts.begin(); it != m_sequentialScripts.end(); /* empty */) {
+#if (defined(_MSC_VER) && _MSC_VER < 1300) && RETAIL_COMPATIBLE_CRC
+		if (it == lastIt) {
+			++spinCount;
+		} else {
+			spinCount = 0;
+		}
+
+		if (spinCount > MAX_SPIN_COUNT) {
+			SequentialScript *seqScript = (*it);
+			if (seqScript) {
+				DEBUG_LOG(("Sequential script %s appears to be in an infinite loop.\n", 
+					seqScript->m_scriptToExecuteSequentially->getName().str()));
+			}
+			++it;
+			continue;
+		}
+
+		lastIt = it;
+#else
 		if ((*it) == lastScript) {
 			++spinCount;
 		} else {
@@ -7900,6 +7924,7 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 		}
 
 		lastScript = (*it);
+#endif
 
 		itAdvanced = false;
 
