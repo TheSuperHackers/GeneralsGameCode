@@ -458,6 +458,42 @@ Int parseJobs(char *args[], int num)
 	return 1;
 }
 
+Int parseSaveAtFrame(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_replaySaveAtFrame = atoi(args[1]);
+		return 2;
+	}
+	return 1;
+}
+
+Int parseSaveTo(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_replaySaveTo = args[1];
+		return 2;
+	}
+	return 1;
+}
+
+Int parseLoadCheckpoint(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_loadReplayCheckpoint = args[1];
+		TheWritableGlobalData->m_playIntro = FALSE;
+		TheWritableGlobalData->m_afterIntro = TRUE;
+		TheWritableGlobalData->m_playSizzle = FALSE;
+		TheWritableGlobalData->m_shellMapOn = FALSE;
+		rts::ClientInstance::setMultiInstance(TRUE);
+		rts::ClientInstance::skipPrimaryInstance();
+		return 2;
+	}
+	return 1;
+}
+
 Int parseXRes(char *args[], int num)
 {
 	if (num > 1)
@@ -1148,6 +1184,15 @@ static CommandLineParam paramsForStartup[] =
 	// (If you have 4 cores, call it with -jobs 4)
 	// If you do not call this, all replays will be simulated in sequence in the same process.
 	{ "-jobs", parseJobs },
+
+	// Auto-save a checkpoint at the specified frame during replay playback.
+	// Usage: -saveAtFrame 49000 -saveTo checkpoint.sav
+	{ "-saveAtFrame", parseSaveAtFrame },
+	{ "-saveTo", parseSaveTo },
+
+	// Load a replay checkpoint and continue playback from that point.
+	// Usage: -loadCheckpoint checkpoint.sav
+	{ "-loadCheckpoint", parseLoadCheckpoint },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded
