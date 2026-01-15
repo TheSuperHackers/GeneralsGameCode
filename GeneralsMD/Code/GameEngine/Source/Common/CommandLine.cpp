@@ -1185,13 +1185,17 @@ static CommandLineParam paramsForStartup[] =
 	// If you do not call this, all replays will be simulated in sequence in the same process.
 	{ "-jobs", parseJobs },
 
+	// TheSuperHackers @feature bobtista 15/01/2026
 	// Auto-save a checkpoint at the specified frame during replay playback.
-	// Usage: -saveAtFrame 49000 -saveTo checkpoint.sav
+	// The file is saved to the Save directory (e.g. "My Documents\Command and Conquer Generals Zero Hour Data\Save\").
+	// Usage: -replay 00000000.rep -saveAtFrame 49000 -saveTo checkpoint.sav
 	{ "-saveAtFrame", parseSaveAtFrame },
 	{ "-saveTo", parseSaveTo },
 
+	// TheSuperHackers @feature bobtista 15/01/2026
 	// Load a replay checkpoint and continue playback from that point.
-	// Usage: -loadCheckpoint checkpoint.sav
+	// The file is loaded from the Save directory.
+	// Usage: -replay 00000000.rep -loadCheckpoint checkpoint.sav
 	{ "-loadCheckpoint", parseLoadCheckpoint },
 };
 

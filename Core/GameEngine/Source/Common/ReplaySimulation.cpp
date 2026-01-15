@@ -21,6 +21,7 @@
 #include "Common/ReplaySimulation.h"
 
 #include "Common/GameEngine.h"
+#include "Common/GameState.h"
 #include "Common/LocalFileSystem.h"
 #include "Common/Recorder.h"
 #include "Common/WorkerProcess.h"
@@ -102,6 +103,29 @@ int ReplaySimulation::simulateReplaysInThisProcess(const std::vector<AsciiString
 				if (TheRecorder->sawCRCMismatch())
 				{
 					numErrors++;
+					break;
+				}
+
+				if (TheGlobalData->m_replaySaveAtFrame != 0 &&
+					TheGameLogic->getFrame() == TheGlobalData->m_replaySaveAtFrame &&
+					!TheGlobalData->m_replaySaveTo.isEmpty())
+				{
+					// TheSuperHackers @info bobtista 19/01/2026
+					// Pass just the filename to saveGame() - it will be saved to the Save directory.
+					printf("Saving checkpoint at frame %d to %s\n", TheGameLogic->getFrame(), TheGlobalData->m_replaySaveTo.str());
+					fflush(stdout);
+					SaveCode result = TheGameState->saveGame(TheGlobalData->m_replaySaveTo, UnicodeString::TheEmptyString, SAVE_FILE_TYPE_NORMAL);
+					if (result == SC_OK)
+					{
+						printf("Checkpoint saved successfully\n");
+					}
+					else
+					{
+						printf("Failed to save checkpoint (error %d)\n", result);
+						numErrors++;
+					}
+					fflush(stdout);
+					TheRecorder->stopPlayback();
 					break;
 				}
 			}
@@ -252,4 +276,72 @@ int ReplaySimulation::simulateReplays(const std::vector<AsciiString> &filenames,
 		return simulateReplaysInThisProcess(filenamesResolved);
 	else
 		return simulateReplaysInWorkerProcesses(filenamesResolved, maxProcesses);
+}
+
+int ReplaySimulation::continueReplayFromCheckpoint(const AsciiString &checkpointFile)
+{
+	int numErrors = 0;
+
+	// TheSuperHackers @info bobtista 19/01/2026
+	// Pass just the filename - loadGame() will look in the Save directory.
+	AvailableGameInfo gameInfo;
+	gameInfo.filename = checkpointFile;
+	TheGameState->getSaveGameInfoFromFile(checkpointFile, &gameInfo.saveGameInfo);
+
+	printf("Loading checkpoint from %s\n", checkpointFile.str());
+	fflush(stdout);
+
+	SaveCode result = TheGameState->loadGame(gameInfo);
+	if (result != SC_OK)
+	{
+		printf("Failed to load checkpoint (error %d)\n", result);
+		return 1;
+	}
+
+	if (!TheRecorder->isPlaybackMode())
+	{
+		printf("Checkpoint was not saved during replay playback\n");
+		return 1;
+	}
+
+	printf("Resuming replay from frame %d\n", TheGameLogic->getFrame());
+	fflush(stdout);
+
+	DWORD startTimeMillis = GetTickCount();
+	UnsignedInt totalTimeSec = TheRecorder->getPlaybackFrameCount() / LOGICFRAMES_PER_SECOND;
+
+	while (TheRecorder->isPlaybackInProgress())
+	{
+		TheGameClient->updateHeadless();
+
+		const int progressFrameInterval = 10*60*LOGICFRAMES_PER_SECOND;
+		if (TheGameLogic->getFrame() != 0 && TheGameLogic->getFrame() % progressFrameInterval == 0)
+		{
+			UnsignedInt gameTimeSec = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
+			UnsignedInt realTimeSec = (GetTickCount()-startTimeMillis) / 1000;
+			printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d\n",
+					realTimeSec/60, realTimeSec%60, gameTimeSec/60, gameTimeSec%60, totalTimeSec/60, totalTimeSec%60);
+			fflush(stdout);
+		}
+		TheGameLogic->UPDATE();
+		if (TheRecorder->sawCRCMismatch())
+		{
+			numErrors++;
+			break;
+		}
+	}
+
+	UnsignedInt gameTimeSec = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
+	UnsignedInt realTimeSec = (GetTickCount()-startTimeMillis) / 1000;
+	printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d\n",
+			realTimeSec/60, realTimeSec%60, gameTimeSec/60, gameTimeSec%60, totalTimeSec/60, totalTimeSec%60);
+	fflush(stdout);
+
+	if (TheRecorder->sawCRCMismatch())
+		printf("CRC Mismatch detected!\n");
+	else
+		printf("Replay completed successfully\n");
+	fflush(stdout);
+
+	return numErrors != 0 ? 1 : 0;
 }
