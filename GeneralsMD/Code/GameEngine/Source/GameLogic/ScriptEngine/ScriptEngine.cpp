@@ -7882,7 +7882,7 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 	lastIt = m_sequentialScripts.end();
 #else
 	VecSequentialScriptPtrIt it;
-	SequentialScript* lastScript = NULL;
+	SequentialScript* lastScript = nullptr;
 #endif
 	Bool itAdvanced = false;
 
