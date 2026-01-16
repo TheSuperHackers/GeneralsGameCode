@@ -636,12 +636,13 @@ void GameClient::update( void )
 
 	if(TheGlobalData->m_playIntro || TheGlobalData->m_afterIntro)
 	{
-		// redraw all views, update the GUI
-		TheDisplay->DRAW();
-		TheDisplay->UPDATE();
 #ifdef RTS_IMGUI_ENABLED
 		ImGui::Render();  // Prepare render data
 #endif
+		// redraw all views, update the GUI
+		TheDisplay->DRAW();
+		TheDisplay->UPDATE();
+
 		return;
 	}
 
