@@ -443,7 +443,11 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 			break;
 	}
 
-	if (!eventToAdd->getUninterruptable()) {
+	// TheSuperHackers @info Scripted audio events are logical, i.e. synchronized across clients.
+	// This early return cannot be taken for logical audio events as it skips code that changes the logical game seed values.
+	const Bool logicalAudio = eventToAdd->getIsLogicalAudio();
+
+	if (!logicalAudio && !eventToAdd->getUninterruptable()) {
 		if (!shouldPlayLocally(eventToAdd)) {
 			return AHSV_NotForLocal;
 		}
@@ -462,6 +466,15 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 			break;
 		}
 	}
+
+#if RETAIL_COMPATIBLE_CRC
+	if (!audioEvent->getUninterruptable()) {
+		if (!shouldPlayLocally(audioEvent)) {
+			releaseAudioEventRTS(audioEvent);
+			return AHSV_NotForLocal;
+		}
+	}
+#endif
 
 	// cull muted audio
 	if (audioEvent->getVolume() < m_audioSettings->m_minVolume) {
