@@ -710,8 +710,10 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 				continue;
 		}
 
+#if !RETAIL_COMPATIBLE_CRC
 		if (builderObject && them->getShroudedStatus(builderObject->getControllingPlayer()->getPlayerIndex()) >= OBJECTSHROUD_FOGGED)
 			return LBC_SHROUD;
+#endif
 
 		//Kris: Patch 1.01 - November 5, 2003
 		//Prevent busy units (black lotus hacking from being moved by trying to place a building -- exploit).

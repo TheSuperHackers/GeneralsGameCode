@@ -688,8 +688,10 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 			}
 		}
 
+#if !RETAIL_COMPATIBLE_CRC
 		if (builderObject && them->getShroudedStatus(builderObject->getControllingPlayer()->getPlayerIndex()) >= OBJECTSHROUD_FOGGED)
 			return false;
+#endif
 
 		// an immobile object may obstruct our building depending on flags.
 		if( them->isKindOf( KINDOF_IMMOBILE ) )	{
