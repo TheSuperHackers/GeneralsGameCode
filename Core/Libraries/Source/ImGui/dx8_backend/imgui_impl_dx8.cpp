@@ -414,7 +414,9 @@ bool ImGui_ImplD3D8_CreateDepthStencilBuffer() {
         IDirect3DSurface8* realDepth;
         D3DSURFACE_DESC sfcDesc;
 
-        bd->pd3dDevice->GetDepthStencilSurface(&realDepth);
+        if (bd->pd3dDevice->GetDepthStencilSurface(&realDepth) || ! realDepth) {
+            return false;
+        }
         if (realDepth->GetDesc(&sfcDesc) != 0) {
             return false;
         }
