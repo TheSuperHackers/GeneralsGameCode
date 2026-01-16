@@ -149,7 +149,8 @@ private:
 
 	Bool m_isFinished;
 
-	Int m_framesSinceStarted;
+	UnsignedInt m_scrollStartTime;
+	Int m_lastScrollPixels;
 	Int m_normalFontHeight;
 };
 
