@@ -357,13 +357,10 @@ static void testRotatedPointsAgainstRect(
 );
 
 #if !RETAIL_COMPATIBLE_CRC && !PRESERVE_RETAIL_BEHAVIOR && USE_ACCURATE_SPHERE_TO_RECT
-static Real fast_hypot(
-	Real x,
-	Real y
-);
 static void testSphereAgainstRect(
 	const Coord2D pts[],			// an array of 4
-	const CollideInfo *a,
+	const Coord3D *a_pos,
+	const Coord3D *b_pos,
 	Real &distSqr
 );
 #endif
@@ -456,89 +453,101 @@ static void testRotatedPointsAgainstRect(
 
 #if !RETAIL_COMPATIBLE_CRC && !PRESERVE_RETAIL_BEHAVIOR && USE_ACCURATE_SPHERE_TO_RECT
 //-----------------------------------------------------------------------------
-static Real fast_hypot(Real x, Real y)
-{
-	Real dx = fabs(x);
-	Real dy = fabs(y);
-
-	// Longest line and shortest between x and y
-	Real a, b;
-	if(dx > dy) {
-		a = dx;
-		b = dy;
-	} else {
-		a = dy;
-		b = dx;
-	}
-
-	Real ratio = b / a;
-	ratio *= ratio;
-
-	// max error ≈ 1.04 %
-	return a * ( 1 + 0.428 * ratio );
-}
-
-//-----------------------------------------------------------------------------
 static void testSphereAgainstRect(
 	const Coord2D pts[],			// an array of 4
-	const CollideInfo *a,
+	const Coord3D *a_pos,
+	const Coord3D *b_pos,
 	Real &distSqr
 )
 {
 	// Get two points that are closest to the source
-	Real dx1, dx2, dy1, dy2;
 	Real minDist = HUGE_DIST_SQR;
 	Real secondMinDist = 0.0f;
-	Int minIdx = -1;
-	Int secondMinIdx = -1;
+	Int minIdx, secondMinIdx;
+	minIdx = secondMinIdx = -1;
 
-	// Get the derivatives between the four points to the source
-	Real derivatives[4][2];
+	Real derivative[4][2];
+	Real dDistSqr[4];
 	for (Int i = 0; i < 4; ++i)
 	{
-		derivatives[i][0] = pts[i].x - a->position.x;
-		derivatives[i][1] = pts[i].y - a->position.y;
+		derivative[i][0] = pts[i].x - a_pos->x;
+		derivative[i][1] = pts[i].y - a_pos->y;
 
-		Real curDistSqr = sqr(derivatives[i][0]) + sqr(derivatives[i][1]);
-		if(minDist > curDistSqr)
+		dDistSqr[i] = sqr(derivative[i][0]) + sqr(derivative[i][1]);
+		//DEBUG_LOG(("Distance for point - %d: %f.", i, dDistSqr[i]));
+
+		if(minDist > dDistSqr[i])
 		{
-			minDist = curDistSqr;
+			secondMinIdx = minIdx;
+			secondMinDist = minDist;
+			minDist = dDistSqr[i];
 			minIdx = i;
+
+			continue;
 		}
-		if( minDist >= secondMinDist ||
-			(secondMinDist > curDistSqr && curDistSqr > minDist) )
+		if( secondMinDist > dDistSqr[i] && dDistSqr[i] > minDist )
 		{
-			secondMinDist = curDistSqr;
+			secondMinDist = dDistSqr[i];
 			secondMinIdx = i;
 		}
 	}
 
-	dx1 = derivatives[minIdx][0];
-	dy1 = derivatives[minIdx][1];
-	dx2 = derivatives[secondMinIdx][0];
-	dy2 = derivatives[secondMinIdx][1];
+	DEBUG_ASSERTCRASH(secondMinIdx >= 0 && secondMinIdx <= 3, ("Hmm, this should not be possible."));
 
-	Bool polarity_x1 = dx1 >= 0;
-	Bool polarity_x2 = dx2 >= 0;
-	Bool polarity_y1 = dy1 >= 0;
-	Bool polarity_y2 = dy2 >= 0;
+	Bool polarity_dx = derivative[minIdx][0] >= 0.0f;
+	Bool polarity_dy = derivative[minIdx][1] >= 0.0f;
+	Bool polarity_dx2 = derivative[secondMinIdx][0] >= 0.0f;
+	Bool polarity_dy2 = derivative[secondMinIdx][1] >= 0.0f;
 
-	// If the polarity of both the closest coordinates are the same, then we simply get the shortest distance
-	if( polarity_x1 == polarity_x2 && polarity_y1 == polarity_y2 )
+	if( polarity_dx == polarity_dx2 && polarity_dy == polarity_dy2 )
 	{
-		distSqr = sqr(derivatives[minIdx][0]) + sqr(derivatives[minIdx][1]);
+		// Same directional vector, so get one that has a different point
+		Bool found = false;
+		secondMinDist = HUGE_DIST_SQR;
+		for (Int i = 0; i < 4; ++i)
+		{
+			if( secondMinDist <= dDistSqr[i] || dDistSqr[i] == minDist )
+				continue;
+
+			polarity_dx2 = derivative[i][0] >= 0.0f;
+			polarity_dy2 = derivative[i][1] >= 0.0f;
+
+			if( polarity_dx == polarity_dx2 && polarity_dy == polarity_dy2 )
+				continue;
+
+			secondMinDist = dDistSqr[i];
+			secondMinIdx = i;
+		}
+
+		// Did not found a different directional vector, so get the closest distance from the min point.
+		if(!found)
+		{
+			distSqr = sqr(derivative[minIdx][0]) + sqr(derivative[minIdx][1]);
+			return;
+		}
+	}
+
+	// Get the "reflected" points of pos B, if the points have higher distance than the current points, that means the current points are within boundary
+	Real other_x1 = pts[minIdx].x - b_pos->x;
+	Real other_y1 = pts[minIdx].y - b_pos->y;
+	Real new_bpos_x = pts[secondMinIdx].x + other_x1;
+	Real new_bpos_y = pts[secondMinIdx].y + other_y1;
+	Real curDistSqr = sqr(b_pos->x - a_pos->x) + sqr(b_pos->y - a_pos->y);
+
+	if(curDistSqr < sqr(new_bpos_x - a_pos->x) + sqr(new_bpos_y - a_pos->y) )
+	{
+		// The points are within the boundary, set the distance to 0
+		distSqr = 0.0f;
 		return;
 	}
 
-	DEBUG_ASSERTCRASH(secondMinIdx >= 0 && secondMinIdx <= 3, ("Hmm, this should not be possible."));
-
 	// Get the Triangle length of all 3 points
-	Real boundary_h = fast_hypot(pts[minIdx].x - pts[secondMinIdx].x, pts[minIdx].y - pts[secondMinIdx].y);
-	Real sqr_boundary_1 = sqr(dx1) + sqr(dy1);
-	Real sqr_boundary_2 = sqr(dx2) + sqr(dy2);
+	Real sqr_boundary_h = sqr(pts[minIdx].x - pts[secondMinIdx].x) + sqr(pts[minIdx].y - pts[secondMinIdx].y);
+	Real sqr_boundary_1 = sqr(derivative[minIdx][0]) + sqr(derivative[minIdx][1]);
+	Real sqr_boundary_2 = sqr(derivative[secondMinIdx][0]) + sqr(derivative[secondMinIdx][1]);
 
 	// By Simplying Law of Cosines, we can get the distSqr;
-	Real boundary_h1 = (sqr_boundary_2 + sqr(boundary_h) - sqr_boundary_1) * 0.5 / boundary_h;
+	Real boundary_h1 = (sqr_boundary_2 + sqr_boundary_h - sqr_boundary_1) * 0.5 / sqrtf(sqr_boundary_h);
 	distSqr = sqr_boundary_2 - sqr(boundary_h1);
 }
 #endif
@@ -615,7 +624,7 @@ static Bool xy_collideTest_Rect_Circle(const CollideInfo *a, const CollideInfo *
 
 	Coord2D pts[4];
 	rectToFourPoints(a, pts);
-	testSphereAgainstRect(pts, b, distSqr);
+	testSphereAgainstRect(pts, &b->position, &a->position, distSqr);
 
 	if(distSqr <= sqr(b->geom.getMajorRadius()))
 	{
