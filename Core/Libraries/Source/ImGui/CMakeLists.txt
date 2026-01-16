@@ -37,9 +37,8 @@ set(IMGUI_INCLUDE_DIRS
 # start target build section
 # we currently have a hard dependency on dx8 and win32 api
 if (WIN32)
-    # for now we only need it in debug builds
-    # RTS_BUILD_OPTION_DEBUG also works since it is a Debug build profile
-    if ( NOT (CMAKE_BUILD_TYPE STREQUAL "Debug") )
+    # for now we only need it in debug configurations
+    if ( NOT ( (CMAKE_BUILD_TYPE STREQUAL "Debug") OR RTS_BUILD_OPTION_DEBUG ) )
         MESSAGE(FATAL_ERROR "ImGui integration is currently only possible in Debug build modes")
     endif ()
         
