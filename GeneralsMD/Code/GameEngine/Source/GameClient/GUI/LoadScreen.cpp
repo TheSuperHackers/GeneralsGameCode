@@ -1308,7 +1308,7 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 		else if (pt->getName() == "FactionChina")
 			portrait = TheMappedImageCollection->findImageByName("SNFactionLogoLg_China");
 		else
-			DEBUG_ASSERTCRASH(nullptr, ("Unexpected player template"));
+			DEBUG_CRASH(("Unexpected player template"));
 
 		localName = pt->getDisplayName();
 	}
@@ -1579,7 +1579,7 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 		else if (pt->getName() == "FactionChina")
 			portrait = TheMappedImageCollection->findImageByName("SNFactionLogo144_China");
 		else
-			DEBUG_ASSERTCRASH(nullptr, ("Unexpected player template"));
+			DEBUG_CRASH(("Unexpected player template"));
 
 		localName = pt->getDisplayName();
 	}

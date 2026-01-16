@@ -133,7 +133,7 @@ const GeneralPersona* ChallengeGenerals::getPlayerGeneralByCampaignName( AsciiSt
 		if (campaignName.compareNoCase( name.str() ) == 0)
 			return &m_position[i];
 	}
-	DEBUG_ASSERTCRASH(nullptr, ("Can't find General by Campaign Name"));
+	DEBUG_CRASH(("Can't find General by Campaign Name"));
 	return nullptr;
 }
 
