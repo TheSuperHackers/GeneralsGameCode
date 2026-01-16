@@ -17,7 +17,7 @@ set(IMGUI_BASE_SRCS
 )
 
 
-# Main Win32 DX8 specific sources we are going to need we can specify moore if we need extra platforms
+# Main Win32 DX8 specific sources we are going to need we can specify more if we need extra platforms
 set(IMGUI_WIN32_DX8_IMPL_SRCS
         "${imgui_SOURCE_DIR}/backends/imgui_impl_win32.cpp"
         "${CMAKE_SOURCE_DIR}/Core/Libraries/Source/ImGui/dx8_backend/imgui_impl_dx8.cpp"
