@@ -662,7 +662,6 @@ bool DX8Wrapper::Create_Device(void)
 	ImGui_ImplDX8_Init(DX8Wrapper::_Get_D3D_Device8());
 	// Font setup
 	io.Fonts->AddFontDefault();
-	//g_BigConsoleFont = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Arial.ttf",25.0f);
 	io.DisplaySize = ImVec2(ResolutionWidth,ResolutionHeight);
 #endif
 	dbgHelpGuard.deactivate();
@@ -698,12 +697,6 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 		DX8TextureManagerClass::Release_Textures();
 		SHD_SHUTDOWN_SHADERS;
 
-//#ifdef RTS_IMGUI_ENABLED
-//		// Shutdown ImGui backend before device reset
-//		ImGui_ImplDX8_Shutdown();
-//		ImGui_ImplWin32_Shutdown();
-//#endif
-
 		// Reset frame count to reflect the flipping chain being reset by Reset()
 		FrameCount = 0;
 
@@ -732,15 +725,6 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 #ifdef RTS_IMGUI_ENABLED
 		ImGui_ImplDX8_CreateDeviceObjects();
 #endif
-//#ifdef RTS_IMGUI_ENABLED
-//		// Reinitialize ImGui backend after device reset
-//		ImGui_ImplWin32_Init(_Hwnd);
-//		ImGui_ImplDX8_Init(DX8Wrapper::_Get_D3D_Device8());
-//		ImGuiIO& io = ImGui::GetIO(); (void)io;
-//		io.DisplaySize = ImVec2(ResolutionWidth,ResolutionHeight);
-//
-//#endif
-
 		WWDEBUG_SAY(("Device reset completed"));
 		return true;
 	}
@@ -1779,8 +1763,6 @@ void DX8Wrapper::End_Scene(bool flip_frames)
 	ImGui::Render();
 	ImGui_ImplDX8_RenderDrawData(ImGui::GetDrawData());
 #endif
-
-
 	DX8CALL(EndScene());
 
 	DX8WebBrowser::Render(0);
