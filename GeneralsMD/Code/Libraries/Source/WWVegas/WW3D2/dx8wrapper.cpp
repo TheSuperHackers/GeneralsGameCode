@@ -1762,10 +1762,6 @@ void DX8_Assert()
 void DX8Wrapper::Begin_Scene(void)
 {
 	DX8_THREAD_ASSERT();
-#if RTS_IMGUI_ENABLED
-	ImGui_ImplDX8_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-#endif
 
 #if ENABLE_EMBEDDED_BROWSER
 	DX8WebBrowser::Update();
