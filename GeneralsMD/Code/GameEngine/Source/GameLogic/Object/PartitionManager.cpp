@@ -352,8 +352,7 @@ static void testRotatedPointsAgainstRect(
 	const Coord2D *pts,				// an array of 4
 	const CollideInfo *a,
 	Coord2D *avg,
-	Int *avgTot,
-	Real *minDistSqr = NULL
+	Int *avgTot
 );
 
 #if !RETAIL_COMPATIBLE_CRC && !PRESERVE_RETAIL_BEHAVIOR && USE_ACCURATE_SPHERE_TO_RECT
@@ -406,8 +405,7 @@ static void testRotatedPointsAgainstRect(
 	const Coord2D *pts,				// an array of 4
 	const CollideInfo *a,
 	Coord2D *avg,
-	Int *avgTot,
-	Real *minDistSqr
+	Int *avgTot
 )
 {
 	//DEBUG_ASSERTCRASH(a->geom.getGeomType() == GEOMETRY_BOX, ("only boxes are ok here"));
@@ -438,20 +436,70 @@ static void testRotatedPointsAgainstRect(
 			avg->x += pts->x;
 			avg->y += pts->y;
 			*avgTot += 1;
-
-#if !RETAIL_COMPATIBLE_CRC && !PRESERVE_RETAIL_BEHAVIOR
-			if(minDistSqr)
-			{
-				Real distanceSqr = sqr(ptx_new) + sqr(pty_new);
-				if(*minDistSqr > distanceSqr)
-					*minDistSqr = distanceSqr;
-			}
-#endif
 		}
 	}
 }
 
 #if !RETAIL_COMPATIBLE_CRC && !PRESERVE_RETAIL_BEHAVIOR && USE_ACCURATE_SPHERE_TO_RECT
+// atan2approx - Credits to ducha-aiki
+#define M_PI_4_P_0273	1.05839816339744830962
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+static Real atan2approx(Real y, Real x)
+{
+  Real absx, absy;
+  absy = fabs(y);
+  absx = fabs(x);
+  short octant = ((x<0) << 2) + ((y<0) << 1 ) + (absx <= absy);
+  switch (octant) {
+    case 0: {
+        if (x == 0 && y == 0)
+          return 0;
+        Real val = absy/absx;
+        return (M_PI_4_P_0273 - 0.273*val)*val; //1st octant
+        break;
+      }
+    case 1:{
+        if (x == 0 && y == 0)
+          return 0.0;
+        Real val = absx/absy;
+        return M_PI_2 - (M_PI_4_P_0273 - 0.273*val)*val; //2nd octant
+        break;
+      }
+    case 2: {
+        Real val =absy/absx;
+        return -(M_PI_4_P_0273 - 0.273*val)*val; //8th octant
+        break;
+      }
+    case 3: {
+        Real val =absx/absy;
+        return -M_PI_2 + (M_PI_4_P_0273 - 0.273*val)*val;//7th octant
+        break;
+      }
+    case 4: {
+        Real val =absy/absx;
+        return  M_PI - (M_PI_4_P_0273 - 0.273*val)*val;  //4th octant
+      }
+    case 5: {
+        Real val =absx/absy;
+        return  M_PI_2 + (M_PI_4_P_0273 - 0.273*val)*val;//3rd octant
+        break;
+      }
+    case 6: {
+        Real val =absy/absx;
+        return -M_PI + (M_PI_4_P_0273 - 0.273*val)*val; //5th octant
+        break;
+      }
+    case 7: {
+        Real val =absx/absy;
+        return -M_PI_2 - (M_PI_4_P_0273 - 0.273*val)*val; //6th octant
+        break;
+      }
+    default:
+      return 0.0f;
+    }
+}
+
 //-----------------------------------------------------------------------------
 static void testSphereAgainstRect(
 	const Coord2D pts[],			// an array of 4
@@ -461,20 +509,20 @@ static void testSphereAgainstRect(
 )
 {
 	// Get two points that are closest to the source
-	Real minDist = HUGE_DIST_SQR;
-	Real secondMinDist = 0.0f;
-	Int minIdx, secondMinIdx;
-	minIdx = secondMinIdx = -1;
+	Real minDist, secondMinDist, thirdMinDist;
+	Int minIdx, secondMinIdx, thirdMinIdx;
+	minDist = secondMinDist = thirdMinDist = HUGE_DIST_SQR;
+	minIdx = secondMinIdx = thirdMinIdx = -1;
 
 	Real derivative[4][2];
 	Real dDistSqr[4];
-	for (Int i = 0; i < 4; ++i)
+	Int i;
+	for (i = 0; i < 4; ++i)
 	{
 		derivative[i][0] = pts[i].x - a_pos->x;
 		derivative[i][1] = pts[i].y - a_pos->y;
 
 		dDistSqr[i] = sqr(derivative[i][0]) + sqr(derivative[i][1]);
-		//DEBUG_LOG(("Distance for point - %d: %f.", i, dDistSqr[i]));
 
 		if(minDist > dDistSqr[i])
 		{
@@ -492,51 +540,56 @@ static void testSphereAgainstRect(
 		}
 	}
 
-	DEBUG_ASSERTCRASH(secondMinIdx >= 0 && secondMinIdx <= 3, ("Hmm, this should not be possible."));
+	for (i = 0; i < 4; ++i)
+	{
+		if( i == minIdx || i == secondMinIdx || secondMinDist >= dDistSqr[i] )
+			continue;
+
+		if( thirdMinDist > dDistSqr[i] )
+		{
+			thirdMinDist = dDistSqr[i];
+			thirdMinIdx = i;
+		}
+	}
+
+	DEBUG_ASSERTCRASH(thirdMinIdx >= 0 && thirdMinIdx <= 3, ("Hmm, this should not be possible."));
 
 	Bool polarity_dx = derivative[minIdx][0] >= 0.0f;
 	Bool polarity_dy = derivative[minIdx][1] >= 0.0f;
 	Bool polarity_dx2 = derivative[secondMinIdx][0] >= 0.0f;
 	Bool polarity_dy2 = derivative[secondMinIdx][1] >= 0.0f;
+	Bool polarity_dx3 = derivative[thirdMinIdx][0] >= 0.0f;
+	Bool polarity_dy3 = derivative[thirdMinIdx][1] >= 0.0f;
 
-	if( polarity_dx == polarity_dx2 && polarity_dy == polarity_dy2 )
+	if( polarity_dx == polarity_dx2 && polarity_dx == polarity_dx3 &&
+		polarity_dy == polarity_dy2 && polarity_dy == polarity_dy3 )
 	{
-		// Same directional vector, so get one that has a different point
-		Bool found = false;
-		secondMinDist = HUGE_DIST_SQR;
-		for (Int i = 0; i < 4; ++i)
-		{
-			if( secondMinDist <= dDistSqr[i] || dDistSqr[i] == minDist )
-				continue;
-
-			polarity_dx2 = derivative[i][0] >= 0.0f;
-			polarity_dy2 = derivative[i][1] >= 0.0f;
-
-			if( polarity_dx == polarity_dx2 && polarity_dy == polarity_dy2 )
-				continue;
-
-			secondMinDist = dDistSqr[i];
-			secondMinIdx = i;
-		}
-
-		// Did not found a different directional vector, so get the closest distance from the min point.
-		if(!found)
-		{
-			distSqr = sqr(derivative[minIdx][0]) + sqr(derivative[minIdx][1]);
-			return;
-		}
+		// Same directional vector, so get the closest distance from a point.
+		distSqr = sqr(derivative[minIdx][0]) + sqr(derivative[minIdx][1]);
+		return;
 	}
+
+	// If the third Min Angle is higher than the Second Min Angle, that means the Second Min Point is actually not the right point for Boundary Checking
+	Real angle1 = atan2approx(derivative[minIdx][1], derivative[minIdx][0]);
+	Real angle2 = atan2approx(derivative[secondMinIdx][1], derivative[secondMinIdx][0]);
+	Real angle3 = atan2approx(derivative[thirdMinIdx][1], derivative[thirdMinIdx][0]);
+	Real relAngle_21 = stdAngleDiff(angle2, angle1);
+	Real relAngle_31 = stdAngleDiff(angle3, angle1);
+
+	if( fabs(relAngle_21) < fabs(relAngle_31) )
+		secondMinIdx = thirdMinIdx;
 
 	// Get the "reflected" points of pos B, if the points have higher distance than the current points, that means the current points are within boundary
 	Real other_x1 = pts[minIdx].x - b_pos->x;
 	Real other_y1 = pts[minIdx].y - b_pos->y;
 	Real new_bpos_x = pts[secondMinIdx].x + other_x1;
 	Real new_bpos_y = pts[secondMinIdx].y + other_y1;
-	Real curDistSqr = sqr(b_pos->x - a_pos->x) + sqr(b_pos->y - a_pos->y);
 
-	if(curDistSqr < sqr(new_bpos_x - a_pos->x) + sqr(new_bpos_y - a_pos->y) )
+	Real curDistSqr = sqr(b_pos->x - a_pos->x) + sqr(b_pos->y - a_pos->y);
+	Real other_distSqr = sqr(new_bpos_x - a_pos->x) + sqr(new_bpos_y - a_pos->y);
+
+	if( curDistSqr < other_distSqr )
 	{
-		// The points are within the boundary, set the distance to 0
 		distSqr = 0.0f;
 		return;
 	}
@@ -589,6 +642,13 @@ static void rectToFourPoints(
 */
 static Bool xy_collideTest_Circle_Rect(const CollideInfo *a, const CollideInfo *b, CollideLocAndNormal *cinfo)
 {
+
+#if !RETAIL_COMPATIBLE_CRC && !PRESERVE_RETAIL_BEHAVIOR && !USE_ACCURATE_SPHERE_TO_RECT
+	CollideInfo atmp = *a;
+	atmp.geom.setMinorRadius(atmp.geom.getMajorRadius());
+	return xy_collideTest_Rect_Rect(&atmp, b, cinfo);
+#endif
+
 	Bool result = xy_collideTest_Rect_Circle(b, a, cinfo);
 	if (cinfo)
 		flipCoord3D(&cinfo->normal);
@@ -635,7 +695,8 @@ static Bool xy_collideTest_Rect_Circle(const CollideInfo *a, const CollideInfo *
 			cinfo->normal.normalize();
 			cinfo->loc = b->position;
 			projectCoord3D(&cinfo->loc, &cinfo->normal, b->geom.getMajorRadius());
-			if(cinfo->getDistance)
+
+			if(cinfo->heightCheck != DEFAULT_HEIGHT_CHECK)
 				cinfo->distSqr = distSqr;
 		}
 		return true;
@@ -676,21 +737,15 @@ static Bool xy_collideTest_Circle_Circle(const CollideInfo *a, const CollideInfo
 */
 static Bool xy_collideTest_Rect_Rect(const CollideInfo *a, const CollideInfo *b, CollideLocAndNormal *cinfo)
 {
-	Coord2D pts[4], pts_b[4];
+	Coord2D pts[4];
 	Coord2D avg; avg.x = avg.y = 0.0f;
 	Int avgTot = 0;
 
 	rectToFourPoints(a, pts);
-	rectToFourPoints(b, pts_b);
-
-#if !RETAIL_COMPATIBLE_CRC && !PRESERVE_RETAIL_BEHAVIOR
-	Real minDistSqr = HUGE_DIST_SQR;
-	testRotatedPointsAgainstRect(pts, b, &avg, &avgTot, cinfo->getDistance ? &minDistSqr : NULL);
-	testRotatedPointsAgainstRect(pts_b, a, &avg, &avgTot, cinfo->getDistance ? &minDistSqr : NULL);
-#else
 	testRotatedPointsAgainstRect(pts, b, &avg, &avgTot);
-	testRotatedPointsAgainstRect(pts_b, a, &avg, &avgTot);
-#endif
+
+	rectToFourPoints(b, pts);
+	testRotatedPointsAgainstRect(pts, a, &avg, &avgTot);
 
 	if (avgTot > 0)
 	{
@@ -715,13 +770,20 @@ static Bool xy_collideTest_Rect_Rect(const CollideInfo *a, const CollideInfo *b,
 			// or (b) come up with a better definition of a useful normal in this case,
 			// I'm not sure we can do a whole lot better... (srj)
 			vecDiff_2D(&b->position, &a->position, &cinfo->normal);
-			cinfo->normal.normalize();
 
 #if !RETAIL_COMPATIBLE_CRC && !PRESERVE_RETAIL_BEHAVIOR
-			// Get the distance for damage calculation
-			if(cinfo->getDistance && minDistSqr < HUGE_DIST_SQR)
-				cinfo->distSqr = minDistSqr;
+			if(cinfo->heightCheck != DEFAULT_HEIGHT_CHECK)
+			{
+				Real distanceSqr = sqr(cinfo->normal.x) + sqr(cinfo->normal.y);
+				if(cinfo->heightCheck == BOUNDARY_HEIGHT_CHECK)
+					distanceSqr += sqr(b->position.z - a->position.z);
+
+				Real distance = sqrtf(distanceSqr) - b->geom.getBoundingSphereRadius();
+				cinfo->distSqr = distance > 0.0f ? sqr(distance) : 0.0f;
+			}
 #endif
+
+			cinfo->normal.normalize();
 		}
 		return true;
 	}
@@ -2201,11 +2263,12 @@ Bool PartitionManager::geomCollidesWithGeom(const Coord3D* pos1,
 		CollideTestProc collideProc = theCollideTestProcs[ (thisGeom - GEOMETRY_FIRST) * GEOMETRY_NUM_TYPES + (thatGeom - GEOMETRY_FIRST) ];
 		CollideLocAndNormal cloc;
 #if !RETAIL_COMPATIBLE_CRC && !PRESERVE_RETAIL_BEHAVIOR
-		cloc.getDistance = heightCheckType == BOUNDARY_HEIGHT_CHECK;
+		cloc.distSqr = 0.0f;
+		cloc.heightCheck = heightCheckType;
 #endif
 		Bool doesCollide = (*collideProc)(&thisInfo, &thatInfo, &cloc);
 #if !RETAIL_COMPATIBLE_CRC && !PRESERVE_RETAIL_BEHAVIOR
-		if(cloc.getDistance && abDistSqr)
+		if(cloc.heightCheck != DEFAULT_HEIGHT_CHECK && abDistSqr)
 			*abDistSqr = cloc.distSqr;
 #endif
 		return doesCollide;
