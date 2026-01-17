@@ -57,7 +57,7 @@ class PrisonVisual : public MemoryPoolObject
 public:
 
 	PrisonVisual( void );
-	// virtual destructor prototype provied by memory pool object
+	// virtual destructor prototype provided by memory pool object
 
 	ObjectID m_objectID;				///< object that is contained
 	DrawableID m_drawableID;		///< associated visual prisoner drawable

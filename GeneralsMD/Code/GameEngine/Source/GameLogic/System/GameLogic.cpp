@@ -908,7 +908,7 @@ static void populateRandomStartPosition( GameInfo *game )
 			else
 			{
 				// We're the first real spot.  Pick randomly.
-				// This while loop shouldn't be neccessary, since we're first.  Why not, though?
+				// This while loop shouldn't be necessary, since we're first.  Why not, though?
 				while (posIdx == -1)
 				{
 					posIdx = GameLogicRandomValue(0, numPlayers-1);
@@ -3984,7 +3984,7 @@ void GameLogic::destroyObject( Object *obj )
 	if (!obj || obj->isDestroyed())
 		return;
 
-	// run the object onDestroy event if provied
+	// run the object onDestroy event if provided
 	for (BehaviorModule** m = obj->getBehaviorModules(); *m; ++m)
 	{
 		DestroyModuleInterface* destroy = (*m)->getDestroy();
@@ -4821,7 +4821,7 @@ void GameLogic::xfer( Xfer *xfer )
 	// !!!DON'T DO THIS!!! ----> xfer->xferObjectID( &m_nextObjectID ); <---- !!!DON'T DO THIS!!!
 
 	//
-	// xfer a table of contents that contain thing template and indentifier pairs.  this
+	// xfer a table of contents that contain thing template and identifier pairs.  this
 	// table of contents is good for this save file only as unique numbers are only
 	// generated and stored for the actual things that are on this map
 	//

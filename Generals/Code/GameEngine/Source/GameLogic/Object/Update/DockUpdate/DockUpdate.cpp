@@ -409,7 +409,7 @@ void DockUpdate::cancelDock( Object* docker )
 
 void DockUpdate::setDockCrippled( Bool setting )
 {
-	// At this level, Crippling means I will accept Approach requests, but I will never grant Enter clearence.
+	// At this level, Crippling means I will accept Approach requests, but I will never grant Enter clearance.
 	m_dockCrippled = setting;
 }
 
@@ -417,7 +417,7 @@ UpdateSleepTime DockUpdate::update()
 {
 	if( m_activeDocker == INVALID_ID  &&  !m_dockCrippled )
 	{
-		// if setDockCrippled has been called, I will never give enterance permission.
+		// if setDockCrippled has been called, I will never give entrance permission.
 		for( size_t positionIndex = 0; positionIndex < m_approachPositionReached.size(); ++positionIndex )
 		{
 			if( m_approachPositionReached[positionIndex] )

@@ -154,7 +154,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 	if( TheInGameUI && TheInGameUI->isInWaypointMode() )
 	{
 		//Create a default light environment with no lights and only full ambient.
-		//@todo: Fix later by copying default scene light environement from W3DScene.cpp.
+		//@todo: Fix later by copying default scene light environment from W3DScene.cpp.
 		LightEnvironmentClass lightEnv;
 		lightEnv.Reset(Vector3(0,0,0), Vector3(1.0f,1.0f,1.0f));
 		lightEnv.Pre_Render_Update(rinfo.Camera.Get_Transform());
@@ -207,7 +207,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 	if (TheInGameUI)
 	{
 		//Create a default light environment with no lights and only full ambient.
-		//@todo: Fix later by copying default scene light environement from W3DScene.cpp.
+		//@todo: Fix later by copying default scene light environment from W3DScene.cpp.
 		LightEnvironmentClass lightEnv;
 		lightEnv.Reset(Vector3(0,0,0), Vector3(1.0f,1.0f,1.0f));
 		lightEnv.Pre_Render_Update(rinfo.Camera.Get_Transform());
