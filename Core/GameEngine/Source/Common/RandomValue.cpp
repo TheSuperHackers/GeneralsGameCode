@@ -241,7 +241,7 @@ Int GetGameLogicRandomValueUnchanged( int lo, int hi, const char *file, int line
 #endif
 
 	if (lo >= hi)
-		return lo;
+		return hi;
 
 	UnsignedInt seed[ARRAY_SIZE(theGameLogicSeed)];
 	memcpy(&seed[0], &theGameLogicSeed[0], sizeof(seed));
@@ -342,7 +342,7 @@ Real GetGameLogicRandomValueRealUnchanged( Real lo, Real hi, const char *file, i
 #endif
 
 	if (lo >= hi)
-		return lo;
+		return hi;
 
 	UnsignedInt seed[ARRAY_SIZE(theGameLogicSeed)];
 	memcpy(&seed[0], &theGameLogicSeed[0], sizeof(seed));
