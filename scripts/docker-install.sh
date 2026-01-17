@@ -163,6 +163,10 @@ detect_game() {
     done
     echo "" >&2
     read -p "Select installation (1-${#candidates[@]}): " selection >&2
+    if [[ ! "$selection" =~ ^[0-9]+$ ]] || [ "$selection" -lt 1 ] || [ "$selection" -gt "${#candidates[@]}" ]; then
+        print_error "Invalid selection" >&2
+        exit 1
+    fi
     echo "${candidates[$((selection-1))]}"
 }
 
