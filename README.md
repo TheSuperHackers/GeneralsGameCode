@@ -75,8 +75,8 @@ cmake --build build/win32 --config Release
 
 **Linux (via Docker)**
 ```bash
-./scripts/build-linux.sh              # Build using Docker
-./scripts/install-to-game.sh --detect # Install to your game
+./scripts/docker-build.sh              # Build using Docker
+./scripts/docker-install.sh --detect # Install to your game
 ```
 
 ### Dependency management
