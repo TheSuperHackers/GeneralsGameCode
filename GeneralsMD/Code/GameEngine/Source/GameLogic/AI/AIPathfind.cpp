@@ -1283,6 +1283,19 @@ Bool PathfindCell::startPathfind( PathfindCell *goalCell  )
 	m_info->m_closed = FALSE;
 	return true;
 }
+
+/**
+ * Set the blocked by ally flag on the pathfind cell info.
+ */
+inline Bool PathfindCell::isBlockedByAlly(void) const
+{
+	return m_info->m_blockedByAlly;
+}
+inline void PathfindCell::setBlockedByAlly(Bool blocked)
+{
+	m_info->m_blockedByAlly = (blocked != 0);
+}
+
 /**
  * Set the parent pointer.
  */
@@ -1486,6 +1499,15 @@ void PathfindCell::setPosUnit(ObjectID unitID, const ICoord2D &pos )
 
 
 /**
+ * Return the relevant obstacle ID.
+ */
+inline ObjectID PathfindCell::getObstacleID(void) const
+{
+	return m_info ? m_info->m_obstacleID : INVALID_ID;
+}
+
+
+/**
  * Flag this cell as an obstacle, from the given one.
  * Return true if cell was flagged.
  */
@@ -1510,7 +1532,7 @@ Bool PathfindCell::setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoo
 		return true;
 	}
 
-	m_type = PathfindCell::CELL_OBSTACLE ;
+	m_type = PathfindCell::CELL_OBSTACLE;
 	if (!m_info) {
 		m_info = PathfindCellInfo::getACellInfo(this, pos);
 		if (!m_info) {
@@ -1749,6 +1771,38 @@ PathfindCell *PathfindCell::removeFromClosedList( PathfindCell *list )
 
 	return list;
 }
+
+/**
+ * Return true if the given object ID is registered as an obstacle in this cell
+ */
+inline Bool PathfindCell::isObstaclePresent(ObjectID objID) const
+{
+	if (objID != INVALID_ID && (getType() == PathfindCell::CELL_OBSTACLE))
+	{
+		DEBUG_ASSERTCRASH(m_info, ("Should have info to be obstacle."));
+		return (m_info && m_info->m_obstacleID == objID);
+	}
+
+	return false;
+}
+
+
+/**
+ * return true if the obstacle in the cell is KINDOF_CAN_SEE_THROUGHT_STRUCTURE
+ */
+inline Bool PathfindCell::isObstacleTransparent() const
+{
+	return m_info ? m_info->m_obstacleIsTransparent : false;
+}
+
+/**
+ * return true if the given obstacle in the cell is a fence.
+ */
+inline Bool PathfindCell::isObstacleFence(void) const
+{
+	return m_info ? m_info->m_obstacleIsFence : false;
+}
+
 
 const Int COST_ORTHOGONAL = 10;
 const Int COST_DIAGONAL = 14;

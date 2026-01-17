@@ -288,9 +288,8 @@ public:
 
 	Bool isObstaclePresent( ObjectID objID ) const;					///< return true if the given object ID is registered as an obstacle in this cell
 
-	Bool isObstacleTransparent( ) const{return m_info?m_info->m_obstacleIsTransparent:false; }					///< return true if the obstacle in the cell is KINDOF_CAN_SEE_THROUGHT_STRUCTURE
-
-	Bool isObstacleFence( void ) const {return m_info?m_info->m_obstacleIsFence:false; }///< return true if the given obstacle in the cell is a fence.
+	inline Bool isObstacleTransparent() const;
+	inline Bool isObstacleFence(void) const;
 
 	/// Return estimated cost from given cell to reach goal cell
 	UnsignedInt costToGoal( PathfindCell *goal );
@@ -322,8 +321,8 @@ public:
 	inline UnsignedShort getXIndex(void) const {return m_info->m_pos.x;}
 	inline UnsignedShort getYIndex(void) const {return m_info->m_pos.y;}
 
-	inline Bool isBlockedByAlly(void) const {return m_info->m_blockedByAlly;}
-	inline void setBlockedByAlly(Bool blocked)  {m_info->m_blockedByAlly = (blocked!=0);}
+	inline Bool isBlockedByAlly(void) const;
+	inline void setBlockedByAlly(Bool blocked);
 
 	inline Bool getOpen(void) const {return m_info->m_open;}
 	inline Bool getClosed(void) const {return m_info->m_closed;}
@@ -354,7 +353,7 @@ public:
 	inline ObjectID getGoalAircraft(void) const {ObjectID id = m_info?m_info->m_goalAircraftID:INVALID_ID; return id;}
 	inline ObjectID getPosUnit(void) const {ObjectID id = m_info?m_info->m_posUnitID:INVALID_ID; return id;}
 
-	inline ObjectID getObstacleID(void) const {ObjectID id = m_info?m_info->m_obstacleID:INVALID_ID; return id;}
+	inline ObjectID getObstacleID(void) const;
 
 	void setLayer( PathfindLayerEnum layer ) { m_layer = layer; }	///< set the cell layer
 	PathfindLayerEnum getLayer( void ) const { return (PathfindLayerEnum)m_layer; }				///< get the cell layer
@@ -364,14 +363,14 @@ public:
 
 private:
 	PathfindCellInfo *m_info;
-	zoneStorageType m_zone:14;			///< Zone. Each zone is a set of adjacent terrain type.  If from & to in the same zone, you can successfully pathfind.  If not,
-														// you still may be able to if you can cross multiple terrain types.
-	UnsignedShort m_aircraftGoal:1; //< This is an aircraft goal cell.
-	UnsignedShort m_pinched:1; //< This cell is surrounded by obstacle cells.
-	UnsignedByte m_type:4;			///< what type of cell terrain this is.
-	UnsignedByte m_flags:4;			///< what type of units are in or moving through this cell.
-	UnsignedByte m_connectsToLayer:4;	///< This cell can pathfind onto this layer, if > LAYER_TOP.
-  UnsignedByte m_layer:4;					 ///< Layer of this cell.
+	zoneStorageType m_zone : 14;              ///< Zone. Each zone is a set of adjacent terrain type.  If from & to in the same zone, you can successfully pathfind.  If not,
+	                                          /// you still may be able to if you can cross multiple terrain types.
+	UnsignedShort m_aircraftGoal : 1;         ///< This is an aircraft goal cell.
+	UnsignedShort m_pinched : 1;              ///< This cell is surrounded by obstacle cells.
+	UnsignedByte m_type : 4;                  ///< what type of cell terrain this is.
+	UnsignedByte m_flags : 4;                 ///< what type of units are in or moving through this cell.
+	UnsignedByte m_connectsToLayer : 4;       ///< This cell can pathfind onto this layer, if > LAYER_TOP.
+	UnsignedByte m_layer : 4;                 ///< Layer of this cell.
 };
 
 typedef PathfindCell *PathfindCellP;
@@ -964,16 +963,3 @@ inline Bool Pathfinder::worldToCell( const Coord3D *pos, ICoord2D *cell )
 	return overflow;
 }
 
-/**
- * Return true if the given object ID is registered as an obstacle in this cell
- */
-inline Bool PathfindCell::isObstaclePresent( ObjectID objID ) const
-{
-	if (objID != INVALID_ID && (getType() == PathfindCell::CELL_OBSTACLE))
-	{
-		DEBUG_ASSERTCRASH(m_info, ("Should have info to be obstacle."));
-		return (m_info && m_info->m_obstacleID == objID);
-	}
-
-	return false;
-}
