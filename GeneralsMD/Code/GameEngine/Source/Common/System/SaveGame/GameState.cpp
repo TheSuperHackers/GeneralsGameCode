@@ -563,7 +563,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 		xferSave.open( filepath );
 	} catch(...) {
 		// print error message to the user
-		if (!TheGlobalData->m_headless)
+		if (TheGlobalData && !TheGlobalData->m_headless)
 			TheInGameUI->message( "GUI:Error" );
 		DEBUG_LOG(( "Error opening file '%s'", filepath.str() ));
 		return SC_ERROR;
@@ -594,7 +594,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 	catch( ... )
 	{
 
-		if (!TheGlobalData->m_headless)
+		if (TheGlobalData && !TheGlobalData->m_headless)
 		{
 			UnicodeString ufilepath;
 			ufilepath.translate(filepath);
@@ -615,7 +615,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 	xferSave.close();
 
 	// print message to the user for game successfully saved
-	if (!TheGlobalData->m_headless)
+	if (TheGlobalData && !TheGlobalData->m_headless)
 	{
 		UnicodeString msg = TheGameText->fetch( "GUI:GameSaveComplete" );
 		TheInGameUI->message( msg );
@@ -726,7 +726,7 @@ SaveCode GameState::loadGame( AvailableGameInfo gameInfo )
 		TheGameEngine->reset();
 
 		// print error message to the user
-		if (!TheGlobalData->m_headless)
+		if (TheGlobalData && !TheGlobalData->m_headless)
 		{
 			UnicodeString ufilepath;
 			ufilepath.translate(filepath);
@@ -1383,7 +1383,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 			}
 
 			// Skip visual-only blocks when saving in headless mode
-			if( TheGlobalData->m_headless &&
+			if( TheGlobalData && TheGlobalData->m_headless &&
 				(blockName.compareNoCase( "CHUNK_TerrainVisual" ) == 0 ||
 				 blockName.compareNoCase( "CHUNK_TacticalView" ) == 0 ||
 				 blockName.compareNoCase( "CHUNK_ParticleSystem" ) == 0 ||
