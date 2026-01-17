@@ -443,9 +443,9 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 			break;
 	}
 
-	// TheSuperHackers @info In retail mode scripted audio events are logical, i.e. synchronized across clients.
-	// This early return cannot be taken for such audio events as it skips code that changes the logical game seed values.
-	// In non-retail mode logical audio events are decoupled from the CRC computation.
+	// TheSuperHackers @info Scripted audio events are logical, i.e. synchronized across clients.
+	// In retail mode this early return cannot be taken for such audio events as it skips code that changes the logical game seed values.
+	// In non-retail mode logical audio events are decoupled from the CRC computation, so this early return is allowed.
 #if RETAIL_COMPATIBLE_CRC
 	const Bool logicalAudio = eventToAdd->getIsLogicalAudio();
 #else
