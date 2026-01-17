@@ -2170,7 +2170,7 @@ void HeightMapRenderObjClass::renderTerrainPass(CameraClass *pCamera)
 //=============================================================================
 // HeightMapRenderObjClass::renderExtraBlendTiles
 //=============================================================================
-/** Renders an additoinal terrain pass including only those tiles which have more than 2 textures
+/** Renders an additional terrain pass including only those tiles which have more than 2 textures
 blended together.  Used primarily for corner cases where 3 different textures meet.*/
 void HeightMapRenderObjClass::renderExtraBlendTiles(void)
 {

@@ -185,7 +185,7 @@ Int SidesInfo::removeFromBuildList(BuildListInfo *pBuildList)
 		m_pBuildList = pBuildList->getNext();
 	} else {
 		position = 1;
-		// Not the first item, so find the preceeding list element.
+		// Not the first item, so find the preceding list element.
 		BuildListInfo *pPrev = m_pBuildList;
 		while (pPrev && (pPrev->getNext()!=pBuildList) ) {
 			pPrev = pPrev->getNext();

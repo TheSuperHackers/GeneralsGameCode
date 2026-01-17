@@ -204,7 +204,7 @@ void BuildAssistant::update( void )
 		{
 			Real previousConstructionPercent = obj->getConstructionPercent();
 
-			// do the constructoin
+			// do the construction
 			obj->setConstructionPercent( previousConstructionPercent - (100.0f / TOTAL_FRAMES_TO_SELL_OBJECT) );
 
 			//
