@@ -383,7 +383,7 @@ void W3DInGameUI::reset( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Draw member for the W3D implemenation of the game user interface */
+/** Draw member for the W3D implementation of the game user interface */
 //-------------------------------------------------------------------------------------------------
 void W3DInGameUI::draw( void )
 {

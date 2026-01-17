@@ -38,7 +38,7 @@
 //
 // Created:    Colin Day, June 2001
 //
-// Desc:       W3D implemenations for the game windowing system
+// Desc:       W3D implementations for the game windowing system
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 
 // W3DGameWindow --------------------------------------------------------------
-/** W3D implemenation for a game window */
+/** W3D implementation for a game window */
 // ----------------------------------------------------------------------------
 class W3DGameWindow : public GameWindow
 {

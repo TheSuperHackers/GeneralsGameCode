@@ -38,7 +38,7 @@
 //
 //	author:		Chris Huybregts
 //
-//	purpose:	Convinience class to gather player stats
+//	purpose:	Convenience class to gather player stats
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////

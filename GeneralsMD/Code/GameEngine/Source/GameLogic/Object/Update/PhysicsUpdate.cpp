@@ -1394,7 +1394,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 
 			// nuke the velocity. why? very simple: we want to ignore the previous vel in favor of
 			// this. in theory, we could be clever and calculate the right force to apply to achieve this,
-			// but then if we were still colliding next frame, we'd get a sudden 'aceleration' of bounce
+			// but then if we were still colliding next frame, we'd get a sudden 'acceleration' of bounce
 			// that would look freakish. so cheat.
 			m_vel.x = 0;
 			m_vel.y = 0;
