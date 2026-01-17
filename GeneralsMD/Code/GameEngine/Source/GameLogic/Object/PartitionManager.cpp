@@ -447,21 +447,20 @@ static void testRotatedPointsAgainstRect(
 //-----------------------------------------------------------------------------
 static Real atan2approx(Real y, Real x)
 {
+  if (x == 0 && y == 0)
+	return 0.0f;
+
   Real absx, absy;
   absy = fabs(y);
   absx = fabs(x);
   short octant = ((x<0) << 2) + ((y<0) << 1 ) + (absx <= absy);
   switch (octant) {
     case 0: {
-        if (x == 0 && y == 0)
-          return 0;
         Real val = absy/absx;
         return (M_PI_4_P_0273 - 0.273*val)*val; //1st octant
         break;
       }
     case 1:{
-        if (x == 0 && y == 0)
-          return 0.0;
         Real val = absx/absy;
         return M_PI_2 - (M_PI_4_P_0273 - 0.273*val)*val; //2nd octant
         break;
@@ -599,7 +598,14 @@ static void testSphereAgainstRect(
 	Real sqr_boundary_1 = sqr(derivative[minIdx][0]) + sqr(derivative[minIdx][1]);
 	Real sqr_boundary_2 = sqr(derivative[secondMinIdx][0]) + sqr(derivative[secondMinIdx][1]);
 
-	// By Simplying Law of Cosines, we can get the distSqr;
+	// Safety checks for potential division by zero from sqr_boundary_h, which makes the value infinite.
+	if(fabs(sqr_boundary_h) < WWMATH_EPSILON * WWMATH_EPSILON)
+	{
+		distSqr = HUGE_DIST_SQR;
+		return;
+	}
+
+	// By Simplifying Law of Cosines, we can get the distSqr;
 	Real boundary_h1 = (sqr_boundary_2 + sqr_boundary_h - sqr_boundary_1) * 0.5 / sqrtf(sqr_boundary_h);
 	distSqr = sqr_boundary_2 - sqr(boundary_h1);
 }
