@@ -206,7 +206,7 @@ Bool SoundManager::canPlayNow( AudioEventRTS *event )
 	// 1) Are we muted because we're beyond our maximum distance?
 	// 2) Are we shrouded and this is a shroud sound?
 	// 3) Are we violating our voice count or are we playing above the limit? (If so, stop now)
-	// 4) is there an avaiable channel open?
+	// 4) is there an available channel open?
 	// 5) if not, then determine if there is anything of lower priority that we can kill
 	// 6) if not, are we an interrupt-sound type?
 	// if so, are there any sounds of our type playing right now that we can interrupt?
