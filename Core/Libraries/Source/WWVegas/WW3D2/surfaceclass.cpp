@@ -683,8 +683,9 @@ void SurfaceClass::Get_Pixel(Vector3 &rgb, int x, int y, void *pBits, int pitch)
 	SurfaceDescription sd;
 	Get_Description(sd);
 
-	unsigned char *ptr = static_cast<unsigned char *>(pBits) + y * pitch + x;
-	Convert_Pixel(rgb,sd,ptr);
+	unsigned int bytesPerPixel = ::Get_Bytes_Per_Pixel(sd.Format);
+	unsigned char* dst = static_cast<unsigned char *>(pBits) + y * pitch + x * bytesPerPixel;
+	Convert_Pixel(rgb,sd,dst);
 }
 
 /***********************************************************************************************
