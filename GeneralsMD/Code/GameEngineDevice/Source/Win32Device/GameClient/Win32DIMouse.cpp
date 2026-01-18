@@ -328,7 +328,7 @@ DirectInputMouse::DirectInputMouse( void )
 DirectInputMouse::~DirectInputMouse( void )
 {
 
-	// relase all mouse resources
+	// release all mouse resources
 	closeMouse();
 //	ShowCursor( TRUE );
 
@@ -409,7 +409,7 @@ void DirectInputMouse::setMouseLimits( void )
 	Mouse::setMouseLimits();
 
 	//
-	// when runing windowed we want to keep the mouse within the game
+	// when running windowed we want to keep the mouse within the game
 	// window cause it's annoying to mouse out of the window and click
 	// on a background window.
 	//

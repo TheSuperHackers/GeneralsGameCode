@@ -85,7 +85,7 @@ void W3DGameClient::init( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Per frame udpate, note we are extending functionality */
+/** Per frame update, note we are extending functionality */
 //-------------------------------------------------------------------------------------------------
 void W3DGameClient::update( void )
 {

@@ -201,7 +201,7 @@ public:
 	bool								Cull_Sphere_On_Frustum_Sides(const SphereClass & sphere) const;
 	bool								Cull_Box(const AABoxClass & box) const;
 
-	// Various properties of the camera's frustum:  These funcitons return a
+	// Various properties of the camera's frustum:  These functions return a
 	// pointer to the internal storage of the descriptions.  there will be
 	// 6 frustum planes, 8 corner points, see the implementations of these
 	// functions for definitions on which points/planes are associated with

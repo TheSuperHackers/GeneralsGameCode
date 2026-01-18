@@ -100,7 +100,7 @@ typedef enum
 } CursorType;
 
 //-------------------------------------------------------------------------------------------------
-/** These entrys make up the selection list of windows */
+/** These entries make up the selection list of windows */
 //-------------------------------------------------------------------------------------------------
 struct WindowSelectionEntry
 {

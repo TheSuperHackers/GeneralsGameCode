@@ -112,7 +112,7 @@ public:
 	FireWeaponWhenDamagedBehavior( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	// module methids
+	// module methods
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_UPGRADE) | (MODULEINTERFACE_DAMAGE); }
 
 	// BehaviorModule

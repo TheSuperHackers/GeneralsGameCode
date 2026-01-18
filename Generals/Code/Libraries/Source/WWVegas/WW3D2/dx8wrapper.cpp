@@ -3146,7 +3146,7 @@ DX8Wrapper::Set_Render_Target(IDirect3DSwapChain8 *swap_chain)
 	swap_chain->GetBackBuffer (0, D3DBACKBUFFER_TYPE_MONO, &render_target);
 
 	//
-	//	Set this back buffer as the render targer
+	//	Set this back buffer as the render target
 	//
 	Set_Render_Target (render_target, true);
 

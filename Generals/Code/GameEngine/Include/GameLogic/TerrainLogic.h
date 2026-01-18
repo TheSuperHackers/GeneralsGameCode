@@ -265,7 +265,7 @@ public:
 	/// Return the closest waypoint on the labeled path
 	virtual Waypoint *getClosestWaypointOnPath( const Coord3D *pos, AsciiString label );
 
-	/// Return true if the waypoint path containint pWay is labeled with the label.
+	/// Return true if the waypoint path containing pWay is labeled with the label.
 	virtual Bool isPurposeOfPath( Waypoint *pWay, AsciiString label );
 
 	/// Return the trigger area with the given name

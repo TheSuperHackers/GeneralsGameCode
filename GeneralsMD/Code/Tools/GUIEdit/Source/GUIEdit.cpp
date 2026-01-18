@@ -591,7 +591,7 @@ void GUIEdit::init( void )
 	// lastly just for testing
 	TheWindowManager->initTestGUI();
 
-	// load the layout scheme now read in from the cofig file
+	// load the layout scheme now read in from the config file
 	TheDefaultScheme->loadScheme( TheDefaultScheme->getSchemeFilename() );
 
 	// create the localized game text interface
@@ -1236,7 +1236,7 @@ GameWindow *GUIEdit::getWindowAtPos( Int x, Int y )
 
 	//
 	// gadget controls are just composed of generic windows and buttons,
-	// we will not allow you to select these componenets themselves in a gadget
+	// we will not allow you to select these components themselves in a gadget
 	// because the gadget is the atomic "unit" as far as GUI editing goes.
 	// If we've picked a gadget component we will instead just return the gadget
 	// itself
@@ -3546,7 +3546,7 @@ void GUIEdit::stripNameDecorations( GameWindow *root )
 		if( c )
 		{
 
-			// skip beyong the scope resolution colon
+			// skip beyond the scope resolution colon
 			c++;
 
 			// put the name only in the decoration field

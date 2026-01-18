@@ -730,7 +730,7 @@ void CWorldBuilderView::drawContours(CDC *pDc, CRgn *pRgn, Int minX, Int maxX, I
 //=============================================================================
 // CWorldBuilderView::interpolate
 //=============================================================================
-/** Given 2 points, pt1 and pt2, with different height valus ht1 and ht2,
+/** Given 2 points, pt1 and pt2, with different height values ht1 and ht2,
 determines where the height ht occurs along the line. */
 //=============================================================================
 void CWorldBuilderView::interpolate(CPoint *pt, Int ht, CPoint pt1, Int ht1, CPoint pt2, Int ht2)

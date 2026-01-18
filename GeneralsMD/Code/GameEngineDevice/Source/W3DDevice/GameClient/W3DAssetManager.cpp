@@ -754,7 +754,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 		return rendobj;
 	}
 
-	// create a new one based on exisiting prototype
+	// create a new one based on existing prototype
 
 	WWPROFILE( "WW3DAssetManager::Create_Render_Obj" );
 	WWMEMLOG(MEM_GEOMETRY);
@@ -1357,7 +1357,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scal
 	}
 
 	// create a new one based on
-	// exisiting prototype
+	// existing prototype
 
 	WWPROFILE( "WW3DAssetManager::Create_Render_Obj" );
 	WWMEMLOG(MEM_GEOMETRY);

@@ -131,7 +131,7 @@ void	MatrixMapperClass::Set_Texture_Transform(const Matrix4x4 & view_to_texture,
 void MatrixMapperClass::Update_View_To_Pixel_Transform(float tex_size)
 {
 	/*
-	** Create a ViewToPixel matrix which also does all of the offseting and flipping that has
+	** Create a ViewToPixel matrix which also does all of the offsetting and flipping that has
 	** to take place to get the actual texture coordinates.
 	**
 	** Here is a description of the math:

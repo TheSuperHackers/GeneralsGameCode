@@ -72,7 +72,7 @@ extern void *GadgetComboBoxGetItemData( GameWindow *comboBox, Int index );
 extern Int  GadgetComboBoxGetLength( GameWindow *comboBox );
 
 extern void GadgetComboBoxHideList( GameWindow *comboBox );
-// Functions that set the ComboBoxData Paramaters
+// Functions that set the ComboBoxData Parameters
 extern void GadgetComboBoxSetAsciiOnly(GameWindow *comboBox, Bool isAsciiOnly  );
 extern void GadgetComboBoxSetLettersAndNumbersOnly(GameWindow *comboBox, Bool isLettersAndNumbersOnly  );
 extern void GadgetComboBoxSetMaxChars( GameWindow *comboBox, Int maxChars );

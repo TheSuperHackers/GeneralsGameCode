@@ -217,7 +217,7 @@ public:
 	virtual Int winDestroyAll( void );  ///< destroy all windows in the system
 	virtual GameWindow *winGetWindowList( void );  ///< get head of master list
 
-	/// hide all windows in a certain range of id's (inclusinve );
+	/// hide all windows in a certain range of id's (inclusive );
 	virtual void hideWindowsInRange( GameWindow *baseWindow, Int first, Int last,
 																	 Bool hideFlag );
 	/// enable all windows in a range of id's (inclusive)

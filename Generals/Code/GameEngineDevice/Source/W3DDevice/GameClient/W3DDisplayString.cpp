@@ -189,7 +189,7 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 	}
 
 	//
-	// if our position has changed, or our colors have chagned, or our
+	// if our position has changed, or our colors have changed, or our
 	// text data has changed, we need to redo the texture quads
 	//
 	if( needNewPolys ||

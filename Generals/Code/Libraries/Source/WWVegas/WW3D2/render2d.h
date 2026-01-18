@@ -139,7 +139,7 @@ public:
 
 	void Set_Hidden( bool hide )			{ IsHidden = hide; }
 
-	// Z-value support (this is usefull for playing tricks with the z-buffer)
+	// Z-value support (this is useful for playing tricks with the z-buffer)
 	void	Set_Z_Value (float z_value)	{ ZValue = z_value; }
 
 	// Move all verts

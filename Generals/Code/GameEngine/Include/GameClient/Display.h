@@ -133,7 +133,7 @@ public:
 	virtual void drawFillRect( Int startX, Int startY, Int width, Int height,
 														 UnsignedInt color ) = 0;
 
-	/// Draw a percentage of a rectange, much like a clock
+	/// Draw a percentage of a rectangle, much like a clock
 	virtual void drawRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color) = 0;
 	virtual void drawRemainingRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color) = 0;
 
