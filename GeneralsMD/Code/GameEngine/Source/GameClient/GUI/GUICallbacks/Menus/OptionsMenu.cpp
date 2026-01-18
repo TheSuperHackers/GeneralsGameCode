@@ -1029,7 +1029,7 @@ static void setDefaults( void )
 	//-------------------------------------------------------------------------------------------------
 	// Resolution
 	//Find index of 800x600 mode.
-	if ((TheGameLogic->isInGame() == FALSE) || (TheGameLogic->isInShellGame() == TRUE)  && !TheGameSpyInfo) {
+	if ((TheGameLogic->isInGame() == FALSE || TheGameLogic->isInShellGame() == TRUE) && !TheGameSpyInfo) {
 		Int numResolutions = TheDisplay->getDisplayModeCount();
 		Int defaultResIndex=0;
 		for( Int i = 0; i < numResolutions; ++i )

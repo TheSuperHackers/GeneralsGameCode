@@ -7213,9 +7213,9 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 #endif
 		}
 
-		if( ai || aigroup ) {
-			if (((ai && (ai->isIdle()) || (aigroup && aigroup->isIdle())) &&
-				seqScript->m_framesToWait < 1) || (seqScript->m_framesToWait == 0)) {
+		if (ai || aigroup) {
+			if (seqScript->m_framesToWait == 0 ||
+				(seqScript->m_framesToWait < 0 && ((ai && ai->isIdle()) || (aigroup && aigroup->isIdle())))) {
 
 				// We want to supress messages if we're repeatedly waiting for an event to occur, cause
 				// it KILLS our debug framerate.
