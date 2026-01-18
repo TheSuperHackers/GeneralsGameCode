@@ -35,7 +35,7 @@
 class Xfer;
 
 //-------------------------------------------------------------------------------------------------
-/** This is the abstract base class from which all game engine subsytems should derive from.
+/** This is the abstract base class from which all game engine subsystems should derive from.
 	* In order to provide consistent behaviors across all these systems, any implementation
 	* must obey the rules defined in here
 	*
@@ -114,6 +114,8 @@ public:
 	void DRAW(void);
 	Real getUpdateTime(void) {return m_curUpdateTime;}
 	Real getDrawTime(void) {return m_curDrawTime;}
+	Bool doDumpUpdate(void) {return m_dumpUpdate;}
+	Bool doDumpDraw(void) {return m_dumpDraw;}
 	static Real getTotalTime(void) {return s_msConsumed;}
 	static void clearTotalTime(void) {s_msConsumed = 0;}
 protected:
@@ -123,6 +125,8 @@ protected:
 
 	Real m_startDrawTimeConsumed;
 	Real m_curDrawTime;
+	Bool m_dumpUpdate;
+	Bool m_dumpDraw;
 #else
 	void UPDATE(void) {update();}
 	void DRAW(void) {draw();}
