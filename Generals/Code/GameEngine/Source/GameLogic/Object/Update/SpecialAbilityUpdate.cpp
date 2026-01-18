@@ -422,7 +422,7 @@ Bool SpecialAbilityUpdate::initiateIntentToDoSpecialPower( const SpecialPowerTem
 	//Determine whether we are triggering a command (rather than executing special at location or target)
 	m_noTargetCommand = !targetObj && !targetPos;
 
-	if( data->m_unpackTime == 0 || m_noTargetCommand && data->m_skipPackingWithNoTarget )
+	if( data->m_unpackTime == 0 || (m_noTargetCommand && data->m_skipPackingWithNoTarget) )
 	{
 		//Only unpack if we need to -- setting it to unpacked will skip step 2 in the update
 		m_packingState = STATE_UNPACKED;
@@ -499,7 +499,7 @@ void SpecialAbilityUpdate::onExit( Bool cleanup )
 	TheAudio->removeAudioEvent( m_prepSoundLoop.getPlayingHandle() );
 	endPreparation();
 
-	if( !data->m_specialObjectsPersistent || cleanup && !data->m_specialObjectsPersistWhenOwnerDies )
+	if( !data->m_specialObjectsPersistent || (cleanup && !data->m_specialObjectsPersistWhenOwnerDies) )
 	{
 		//Delete special objects that aren't considered persistent whenever we turn off
 		//leave the special ability update.

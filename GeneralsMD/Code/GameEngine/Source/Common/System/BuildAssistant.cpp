@@ -719,7 +719,7 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 		//Prevent busy units (black lotus hacking from being moved by trying to place a building -- exploit).
 		if (rel == ALLIES)
 		{
-			if (them->testStatus(OBJECT_STATUS_IS_USING_ABILITY) || them->getAI() && them->getAI()->isBusy())
+			if (them->testStatus(OBJECT_STATUS_IS_USING_ABILITY) || (them->getAI() && them->getAI()->isBusy()))
 			{
 				return LBC_OBJECTS_IN_THE_WAY;
 			}

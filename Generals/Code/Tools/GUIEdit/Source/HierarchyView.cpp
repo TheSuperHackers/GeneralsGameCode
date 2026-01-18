@@ -710,7 +710,7 @@ void HierarchyView::addWindowToTree( GameWindow *window,
 	// add children if requested, but not on gadgets no matter what because
 	// they are "atomic units", except for tab controls.
 	//
-	if( addChildren && TheEditor->windowIsGadget( window ) == FALSE  ||  (window->winGetStyle() & GWS_TAB_CONTROL) )
+	if( (addChildren && TheEditor->windowIsGadget( window ) == FALSE) || (window->winGetStyle() & GWS_TAB_CONTROL) )
 	{
 		GameWindow *child;
 
