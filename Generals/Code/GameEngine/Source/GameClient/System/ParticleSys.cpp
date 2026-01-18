@@ -1857,11 +1857,11 @@ const ParticleInfo *ParticleSystem::generateParticleInfo( Int particleNum, Int p
 	if( m_accumulatedSizeBonus )
 		m_accumulatedSizeBonus = min( m_accumulatedSizeBonus, (float)MAX_SIZE_BONUS );
 
-	int i=0;
-	for( ; i<MAX_KEYFRAMES; i++ )
+	for( int i=0; i<MAX_KEYFRAMES; i++ )
 	{
 		info.m_alphaKey[i].value = m_alphaKey[i].var.getValue();
 		info.m_alphaKey[i].frame = m_alphaKey[i].frame;
+		info.m_colorKey[i] = m_colorKey[i];
 	}
 
 /*
@@ -1869,11 +1869,6 @@ const ParticleInfo *ParticleSystem::generateParticleInfo( Int particleNum, Int p
 	info.m_color.green = m_color.green.getValue();
 	info.m_color.blue = m_color.blue.getValue();
 */
-
-	for( i=0; i<MAX_KEYFRAMES; i++ )
-	{
-		info.m_colorKey[i] = m_colorKey[i];
-	}
 
 	info.m_colorScale = m_colorScale.getValue();
 #ifdef ALLOW_TEMPORARIES

@@ -178,7 +178,7 @@ public:
 
 	Particle( ParticleSystem *system, const ParticleInfo *data );
 
-	inline Bool update( void );												///< update this particle's behavior - return false if dead
+	Bool update( void );												///< update this particle's behavior - return false if dead
 	void doWindMotion( void );									///< do wind motion (if present) from particle system
 
 	void applyForce( const Coord3D *force );		///< add the given acceleration
@@ -190,7 +190,7 @@ public:
 	const RGBColor *getColor( void ) { return &m_color; }
 	void setColor( RGBColor *color ) { m_color = *color; }
 
-	inline Bool isInvisible( void );										///< return true if this particle is invisible
+	Bool isInvisible( void );										///< return true if this particle is invisible
 	Bool isCulled (void) {return m_isCulled;}				///< return true if the particle falls off the edge of the screen
 	void setIsCulled (Bool enable) { m_isCulled = enable;}		///< set particle to not visible because it's outside view frustum
 

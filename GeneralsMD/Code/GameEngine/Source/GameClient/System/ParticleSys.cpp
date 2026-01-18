@@ -492,7 +492,9 @@ Bool Particle::update( void )
 
 
 	// reset the acceleration for accumulation next frame
-	m_accel.z=m_accel.y=m_accel.x= 0.0f;
+	m_accel.x = 0.0f;
+	m_accel.y = 0.0f;
+	m_accel.z = 0.0f;
 
 	// monitor lifetime
 	if (m_lifetimeLeft && --m_lifetimeLeft == 0)
