@@ -213,32 +213,7 @@ enum
 
 
 //todo move this somewhere more useful.
-// ------------------------------------------------------------------------------------------------
-#if 0
-static Real angleBetween(const Coord2D &vecA, const Coord2D &vecB)
-{
-	Real lengthA = vecA->length();
-	if (lengthA < FLT_EPSILON) {
-		return 0.0f;
-	}
-
-	Real lengthB = vecB->length();
-	if (lengthB < FLT_EPSILON) {
-		return 0.0f;
-	}
-
-	Real dotProduct = (vecA->x * vecB->x + vecA->y * vecB->y);
-
-	// If the dotproduct is 0.0, then they are orthogonal
-	if (dotProduct < FLT_EPSILON && dotProduct > -FLT_EPSILON) {
-		return vecB->x > 0.0f ? PI : 0.0f;
-	}
-
-	Real cosTheta = dotProduct / (lengthA * lengthB);
-	Real theta = ACos(cosTheta);
-	return vecB->x > 0.0f ? theta : -theta;
-}
-#endif
+static Real angleBetween(const Coord2D *vecA, const Coord2D *vecB);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Particle ///////////////////////////////////////////////////////////////////////////////////////
@@ -433,25 +408,11 @@ Bool Particle::update( void )
 
 	if (m_particleUpTowardsEmitter) {
 		// adjust the up position back towards the particle
+		static const Coord2D upVec = { 0.0f, 1.0f };
 		Coord2D emitterDir;
 		emitterDir.x = m_pos.x - m_emitterPos.x;
 		emitterDir.y = m_pos.y - m_emitterPos.y;
-#if 0
-		static const Coord2D upVec = { 0.0f, 1.0f };
-		m_angleZ = angleBetween(upVec, emitterDir) + PI;
-#else
-		if (emitterDir.y < FLT_EPSILON && emitterDir.y > -FLT_EPSILON) {
-			m_angleZ = emitterDir.x > 0.0f ? PI + PI : PI;
-		} else {
-			Real emitterDirLength = emitterDir.length();
-			if (emitterDirLength < FLT_EPSILON) {
-				m_angleZ = PI;
-			} else {
-				Real theta = ACos(emitterDir.y/emitterDirLength);
-				m_angleZ = emitterDir.x > 0.0f ? PI + theta : PI - theta;
-			}
-		}
-#endif
+		m_angleZ = (angleBetween(&upVec, &emitterDir) + PI);
 	}
 
 	// update size
@@ -3495,3 +3456,33 @@ void ParticleSystemDebugDisplay( DebugDisplayInterface *dd, void *, FILE *fp )
 }
 
 // ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+static Real angleBetween(const Coord2D *vecA, const Coord2D *vecB)
+{
+	if (!(vecA && vecA->length() && vecB && vecB->length())) {
+		return 0.0;
+	}
+
+	Real lengthA = vecA->length();
+	Real lengthB = vecB->length();
+	Real dotProduct = (vecA->x * vecB->x + vecA->y * vecB->y);
+	Real cosTheta = dotProduct / (lengthA * lengthB);
+
+	// If the dotproduct is 0.0, then they are orthogonal
+	if (dotProduct == 0.0f) {
+		if (vecB->x > 0) {
+			return PI;
+		}
+
+		return 0.0f;
+	}
+
+	Real theta = ACos( cosTheta );
+
+	if (vecB->x > 0) {
+		return theta;
+	}
+
+	return -theta;
+}
+
