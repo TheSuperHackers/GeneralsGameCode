@@ -609,14 +609,14 @@ Bool Particle::isInvisible( void )
 			// check that we're not in the process of going to another color
 			if (m_colorKey[ m_colorTargetKey ].frame == 0)
 			{
-				if ((m_color.red + m_color.green + m_color.blue) <= 0.06f)
+				if (m_color.red < 0.01f && m_color.green < 0.01f && m_color.blue < 0.01f)
 					return true;
 			}
 			return false;
 
 		case ParticleSystemInfo::ALPHA:
 			// if alpha is zero, this particle is invisible
-			if (m_alpha < 0.02f)
+			if (m_alpha < 0.01f)
 				return true;
 			return false;
 
@@ -630,7 +630,7 @@ Bool Particle::isInvisible( void )
 			// check that we're not in the process of going to another color
 			if (m_colorKey[ m_colorTargetKey ].frame == 0)
 			{
-				if ((m_color.red * m_color.green * m_color.blue) > 0.95f)
+				if (m_color.red > 0.99f && m_color.green > 0.99f && m_color.blue > 0.99f)
 					return true;
 			}
 			return false;
