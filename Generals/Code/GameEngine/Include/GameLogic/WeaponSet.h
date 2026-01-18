@@ -32,6 +32,7 @@
 #include "Common/ModelState.h"
 #include "Common/SparseMatchFinder.h"
 #include "Common/Snapshot.h"
+#include "GameLogic/Damage.h"
 
 //-------------------------------------------------------------------------------------------------
 class INI;
@@ -180,7 +181,7 @@ private:
 	WeaponLockType						m_curWeaponLockedStatus;
 	UnsignedInt								m_filledWeaponSlotMask;
 	Int												m_totalAntiMask;						///< anti mask of all current weapons
-	UnsignedInt								m_totalDamageTypeMask;			///< damagetype mask of all current weapons
+	DamageTypeFlags						m_totalDamageTypeMask;			///< damagetype mask of all current weapons
 	Bool											m_hasPitchLimit;
 	Bool											m_hasDamageWeapon;
 
@@ -202,8 +203,8 @@ public:
 	Bool isOutOfAmmo() const;
 	Bool hasAnyWeapon() const { return m_filledWeaponSlotMask != 0; }
 	Bool hasAnyDamageWeapon() const { return m_hasDamageWeapon; }
-	Bool hasWeaponToDealDamageType(DamageType typeToDeal) const { return (m_totalDamageTypeMask & (1 << typeToDeal)) != 0; }
-	Bool hasSingleDamageType(DamageType typeToDeal) const { return m_totalDamageTypeMask == (1 << typeToDeal); }
+	Bool hasWeaponToDealDamageType(DamageType typeToDeal) const { return m_totalDamageTypeMask.test(typeToDeal); }
+	Bool hasSingleDamageType(DamageType typeToDeal) const { return (m_totalDamageTypeMask.test(typeToDeal) && (m_totalDamageTypeMask.count() == 1) ); }
 	Bool isCurWeaponLocked() const { return m_curWeaponLockedStatus != NOT_LOCKED; }
 	Weapon* getCurWeapon() { return m_weapons[m_curWeapon]; }
 	const Weapon* getCurWeapon() const { return m_weapons[m_curWeapon]; }

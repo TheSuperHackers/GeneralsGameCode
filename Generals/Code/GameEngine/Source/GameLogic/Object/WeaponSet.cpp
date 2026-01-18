@@ -172,8 +172,7 @@ WeaponSet::WeaponSet()
 	m_curWeaponTemplateSet = nullptr;
 	m_filledWeaponSlotMask = 0;
 	m_totalAntiMask = 0;
-	m_totalDamageTypeMask = 0;
-	DEBUG_ASSERTCRASH(DAMAGE_NUM_TYPES <= 32, ("m_totalDamageTypeMask will need to be enlarged in WeaponSet"));
+	m_totalDamageTypeMask.clear();
 	m_hasPitchLimit = false;
 	m_hasDamageWeapon = false;
 	for (Int i = 0; i < WEAPONSLOT_COUNT; ++i)
@@ -198,12 +197,19 @@ void WeaponSet::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: TheSuperHackers @tweak Upgrade damage type flags from integer to BitFlags for Generals.
+	*    Zero Hour already had this at version 1.
+	*/
 // ------------------------------------------------------------------------------------------------
 void WeaponSet::xfer( Xfer *xfer )
 {
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 1;
+#else
+	const XferVersion currentVersion = 2;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -269,10 +275,25 @@ void WeaponSet::xfer( Xfer *xfer )
 	xfer->xferUser(&m_curWeaponLockedStatus, sizeof(m_curWeaponLockedStatus));
 	xfer->xferUnsignedInt(&m_filledWeaponSlotMask);
 	xfer->xferInt(&m_totalAntiMask);
-	xfer->xferUnsignedInt(&m_totalDamageTypeMask);
+
+#if RTS_GENERALS
+	if (version < 2)
+	{
+		UnsignedInt totalDamageTypeMask = m_totalDamageTypeMask.toUnsignedInt();
+		xfer->xferUnsignedInt(&totalDamageTypeMask);
+		m_totalDamageTypeMask = DamageTypeFlags(totalDamageTypeMask);
+	}
+#endif
+
 	xfer->xferBool(&m_hasDamageWeapon);
 	xfer->xferBool(&m_hasDamageWeapon);
 
+#if RTS_GENERALS
+	if (version >= 2)
+#endif
+	{
+		m_totalDamageTypeMask.xfer(xfer);// BitSet has built in xfer
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -298,7 +319,7 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 		}
 		m_filledWeaponSlotMask = 0;
 		m_totalAntiMask = 0;
-		m_totalDamageTypeMask = 0;
+		m_totalDamageTypeMask.clear();
 		m_hasPitchLimit = false;
 		m_hasDamageWeapon = false;
 		for (Int i = WEAPONSLOT_COUNT - 1; i >= PRIMARY_WEAPON ; --i)
@@ -312,7 +333,7 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 				m_weapons[i]->loadAmmoNow(obj);	// start 'em all with full clips.
 				m_filledWeaponSlotMask |= (1 << i);
 				m_totalAntiMask |= m_weapons[i]->getAntiMask();
-				m_totalDamageTypeMask |= (1 << m_weapons[i]->getDamageType());
+				m_totalDamageTypeMask.set(m_weapons[i]->getDamageType());
 				if (m_weapons[i]->isPitchLimited())
 					m_hasPitchLimit = true;
 				if (m_weapons[i]->isDamageWeapon())

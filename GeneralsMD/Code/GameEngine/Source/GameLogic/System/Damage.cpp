@@ -80,6 +80,9 @@ const char* const DamageTypeFlags::s_bitNameList[] =
 	"MICROWAVE",
 	"KILL_GARRISONED",
 	"STATUS",
+#if USE_OBSOLETE_GENERALS_CODE
+	"FLESHY_SNIPER",
+#endif
 
 	nullptr
 };
@@ -114,13 +117,19 @@ void DamageInfo::xfer( Xfer *xfer )
 	* Version Info:
 	* 1: Initial version
 	* 2: Damage FX override
+	* 3: Shockwave and damage status type
 */
 // ------------------------------------------------------------------------------------------------
 void DamageInfoInput::xfer( Xfer *xfer )
 {
 
 	// version
+#if RTS_GENERALS && RETAIL_COMPATIBLE_XFER_SAVE
+	XferVersion currentVersion = 1;
+#else
 	XferVersion currentVersion = 3;
+#endif
+
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -149,15 +158,15 @@ void DamageInfoInput::xfer( Xfer *xfer )
 		xfer->xferBool( &m_kill );
 	}
 
-	xfer->xferUser( &m_damageStatusType, sizeof(ObjectStatusTypes) );//It's an enum
-
-	xfer->xferCoord3D(&m_shockWaveVector);
-	xfer->xferReal( &m_shockWaveAmount );
-	xfer->xferReal( &m_shockWaveRadius );
-	xfer->xferReal( &m_shockWaveTaperOff );
-
 	if( version >= 3 )
 	{
+		xfer->xferUser( &m_damageStatusType, sizeof(ObjectStatusTypes) );//It's an enum
+
+		xfer->xferCoord3D(&m_shockWaveVector);
+		xfer->xferReal( &m_shockWaveAmount );
+		xfer->xferReal( &m_shockWaveRadius );
+		xfer->xferReal( &m_shockWaveTaperOff );
+
 		AsciiString thingString = m_sourceTemplate ? m_sourceTemplate->getName() : AsciiString::TheEmptyString;
 		xfer->xferAsciiString( &thingString );
 		if( xfer->getXferMode() == XFER_LOAD )

@@ -71,6 +71,11 @@ public:
 		m_bits.set();
 	}
 
+	BitFlags(UnsignedInt value)
+		: m_bits(static_cast<unsigned long>(value))
+	{
+	}
+
 	// TheSuperHackers @todo Replace with variadic template
 
 	BitFlags(BogusInitType k, Int idx1)
@@ -245,6 +250,17 @@ public:
 			return false;
 
 		return true;
+	}
+
+	// TheSuperHackers @info Function for rare use cases where we must access the flags as an integer.
+	// Not using to_ulong because that can throw. Truncates all bits above 32.
+	UnsignedInt toUnsignedInt() const noexcept
+	{
+		UnsignedInt val = 0;
+		const UnsignedInt count = min(m_bits.size(), sizeof(val));
+		for (UnsignedInt i = 0; i < count; ++i)
+			val |= m_bits.test(i) * (1u << i);
+		return val;
 	}
 
   static const char* const* getBitNames()

@@ -31,8 +31,6 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#define DEFINE_DAMAGE_NAMES						// for DamageNames[]
-
 #include "Common/INI.h"
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
@@ -166,7 +164,7 @@ static void parseCommonStuff(
 	}
 	else
 	{
-		damageFirst = (DamageType)INI::scanIndexList(damageName, TheDamageNames);
+		damageFirst = (DamageType)DamageTypeFlags::getSingleBitFromName(damageName);
 		damageLast = damageFirst;
 	}
 }

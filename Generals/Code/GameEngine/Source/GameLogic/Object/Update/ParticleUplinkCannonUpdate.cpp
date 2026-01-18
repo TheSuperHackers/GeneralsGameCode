@@ -29,7 +29,6 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#define DEFINE_DAMAGE_NAMES
 #define DEFINE_DEATH_NAMES
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
@@ -136,7 +135,7 @@ ParticleUplinkCannonUpdateModuleData::ParticleUplinkCannonUpdateModuleData()
 
 		{ "DamagePerSecond",											INI::parseReal,									nullptr, offsetof( ParticleUplinkCannonUpdateModuleData, m_damagePerSecond ) },
 		{ "TotalDamagePulses",										INI::parseUnsignedInt,					nullptr, offsetof( ParticleUplinkCannonUpdateModuleData, m_totalDamagePulses ) },
-		{ "DamageType",														INI::parseIndexList,						TheDamageNames,	offsetof( ParticleUplinkCannonUpdateModuleData, m_damageType ) },
+		{ "DamageType",														DamageTypeFlags::parseSingleBitFromINI,	nullptr,	offsetof( ParticleUplinkCannonUpdateModuleData, m_damageType ) },
 		{ "DeathType",														INI::parseIndexList,						TheDeathNames,	offsetof( ParticleUplinkCannonUpdateModuleData, m_deathType ) },
 		{ "DamageRadiusScalar",										INI::parseReal,									nullptr, offsetof( ParticleUplinkCannonUpdateModuleData, m_damageRadiusScalar ) },
 
