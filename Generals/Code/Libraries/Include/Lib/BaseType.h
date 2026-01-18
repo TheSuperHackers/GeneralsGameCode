@@ -65,7 +65,7 @@ inline Real deg2rad(Real rad) { return rad * (PI/180); }
 //-----------------------------------------------------------------------------
 // For twiddling bits
 //-----------------------------------------------------------------------------
-// TheSuperHackers @build xezon 22/03/2025 Renames BitTest to BitIsSet to prevent conflict with BitTest macro from winnt.h
+// TheSuperHackers @build xezon 17/03/2025 Renames BitTest to BitIsSet to prevent conflict with BitTest macro from winnt.h
 #define BitIsSet( x, i ) ( ( (x) & (i) ) != 0 )
 #define BitSet( x, i ) ( (x) |= (i) )
 #define BitClear( x, i ) ( (x ) &= ~(i) )
@@ -151,8 +151,13 @@ __forceinline float fast_float_ceil(float f)
 #define INT_TO_REAL(x)						((Real)(x))
 
 // once we've ceiled/floored, trunc and round are identical, and currently, round is faster... (srj)
+#if RTS_GENERALS /*&& RETAIL_COMPATIBLE_CRC*/
 #define REAL_TO_INT_CEIL(x)				(fast_float2long_round(ceilf(x)))
 #define REAL_TO_INT_FLOOR(x)			(fast_float2long_round(floorf(x)))
+#else
+#define REAL_TO_INT_CEIL(x)				(fast_float2long_round(fast_float_ceil(x)))
+#define REAL_TO_INT_FLOOR(x)			(fast_float2long_round(fast_float_floor(x)))
+#endif
 
 #define FAST_REAL_TRUNC(x)        fast_float_trunc(x)
 #define FAST_REAL_CEIL(x)         fast_float_ceil(x)
@@ -195,12 +200,13 @@ struct Coord2D
 		}
 	}
 
-	Real toAngle( void );  ///< turn 2D vector into angle (where angle 0 is down the +x axis)
+	Real toAngle( void ) const;  ///< turn 2D vector into angle (where angle 0 is down the +x axis)
 
 };
 
-inline Real Coord2D::toAngle( void )
+inline Real Coord2D::toAngle( void ) const
 {
+#if RTS_GENERALS /*&& RETAIL_COMPATIBLE_CRC*/
 	Coord2D vector;
 
 	vector.x = x;
@@ -242,7 +248,20 @@ inline Real Coord2D::toAngle( void )
 	// S is sign of angle - MSB
 
 	return value;
+#else
+	const Real len = length();
+	if (len == 0.0f)
+		return 0.0f;
 
+	Real c = x/len;
+	// bound it in case of numerical error
+	if (c < -1.0f)
+		c = -1.0f;
+	else if (c > 1.0f)
+		c = 1.0f;
+
+	return y < 0.0f ? -ACos(c) : ACos(c);
+#endif
 }
 
 struct ICoord2D
