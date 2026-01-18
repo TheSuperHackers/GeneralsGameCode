@@ -1735,8 +1735,15 @@ void AIPlayer::buildUpgrade(const AsciiString &upgrade)
 // ------------------------------------------------------------------------------------------------
 void AIPlayer::buildBySupplies(Int minimumCash, const AsciiString& thingName)
 {
-	Object *bestSupplyWarehouse = findSupplyCenter(minimumCash);
 	const ThingTemplate* tTemplate = TheThingFactory->findTemplate(thingName);
+	if (!tTemplate)
+	{
+		DEBUG_CRASH(("Template %s should exist; check ini and script files.", thingName.str()));
+		return;
+	}
+
+	Object *bestSupplyWarehouse = findSupplyCenter(minimumCash);
+
 	if (!tTemplate->isKindOf(KINDOF_CASH_GENERATOR)) {
 		// Build by the current warehouse.
 		Object *curWarehouse = TheGameLogic->findObjectByID(m_curWarehouseID);
@@ -1746,7 +1753,7 @@ void AIPlayer::buildBySupplies(Int minimumCash, const AsciiString& thingName)
 	}
 
 
-	if (bestSupplyWarehouse && tTemplate) {
+	if (bestSupplyWarehouse) {
 		Coord3D location;
 		location = *bestSupplyWarehouse->getPosition();
 		// offset back towards the base.
