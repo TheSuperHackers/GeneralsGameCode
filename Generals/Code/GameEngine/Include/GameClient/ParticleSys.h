@@ -279,7 +279,7 @@ public:
 
 	enum ParticleType
 	{
-		INVALID_TYPE=0, PARTICLE, DRAWABLE, STREAK, VOLUME_PARTICLE, ///< is a particle a 2D-screen-facing particle, or a Drawable, or a Segment in a streak?
+		INVALID_TYPE=0, PARTICLE, DRAWABLE, STREAK, VOLUME_PARTICLE, SMUDGE, ///< is a particle a 2D-screen-facing particle, or a Drawable, or a Segment in a streak?
 		PARTICLE_TYPE_COUNT
 	}
 	m_particleType;
@@ -471,7 +471,7 @@ static_assert(ARRAY_SIZE(ParticleShaderTypeNames) == ParticleSystemInfo::PARTICL
 
 static const char *const ParticleTypeNames[] =
 {
-	"NONE", "PARTICLE", "DRAWABLE", "STREAK", "VOLUME_PARTICLE", nullptr
+	"NONE", "PARTICLE", "DRAWABLE", "STREAK", "VOLUME_PARTICLE", "SMUDGE", nullptr
 };
 static_assert(ARRAY_SIZE(ParticleTypeNames) == ParticleSystemInfo::PARTICLE_TYPE_COUNT + 1, "Incorrect array size");
 
@@ -605,6 +605,7 @@ public:
 	AsciiString getParticleTypeName( void ) { return m_particleTypeName; }	///< return the name of the particles
 	Bool isUsingDrawables( void ) { return (m_particleType == DRAWABLE) ? true : false; }
 	Bool isUsingStreak( void ) { return (m_particleType == STREAK) ? true : false; }
+	Bool isUsingSmudge( void ) { return (m_particleType == SMUDGE) ? true : false; }
 	UnsignedInt getVolumeParticleDepth( void ) { return ( m_particleType == VOLUME_PARTICLE ) ? OPTIMUM_VOLUME_PARTICLE_DEPTH : 0; }
 
 	Bool shouldBillboard( void ) { return !m_isGroundAligned; }
