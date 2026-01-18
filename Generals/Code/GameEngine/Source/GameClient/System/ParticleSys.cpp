@@ -413,7 +413,11 @@ Bool Particle::update( void )
 	m_pos.z += m_vel.z + driftVel->z;
 
 	// integrate the wind (if specified) into position
-	doWindMotion();
+	ParticleSystemInfo::WindMotion windMotion = m_system->getWindMotion();
+
+	// see if we should even do anything
+	if( windMotion != ParticleSystemInfo::WIND_MOTION_NOT_USED )
+		doWindMotion();
 
 	// update orientation
 #if PARTICLE_USE_XY_ROTATION
@@ -548,11 +552,6 @@ Bool Particle::update( void )
 // ------------------------------------------------------------------------------------------------
 void Particle::doWindMotion( void )
 {
-	ParticleSystemInfo::WindMotion windMotion = m_system->getWindMotion();
-
-	// see if we should even do anything
-	if( windMotion == ParticleSystemInfo::WIND_MOTION_NOT_USED )
-		return;
 
 	// get the angle of the wind
 	Real windAngle = m_system->getWindAngle();
@@ -622,7 +621,7 @@ void Particle::doWindMotion( void )
 			windForceStrength *= (1.0f - ((distFromWind - fullForceDistance) /
 																		(noForceDistance - fullForceDistance)));
 
-		// integate the wind motion into the position
+		// integrate the wind motion into the position
 		m_pos.x += (Cos( windAngle ) * windForceStrength);
 		m_pos.y += (Sin( windAngle ) * windForceStrength);
 
@@ -1954,7 +1953,8 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 	}
 
 	// update the wind motion
-	updateWindMotion();
+	if (m_windMotion != ParticleSystemInfo::WIND_MOTION_NOT_USED )
+		updateWindMotion();
 
 	// if this system is attached to a Drawable/Object, update the current transform
 	// matrix so generated particles' are relative to the parent Drawable's
