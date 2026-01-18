@@ -1521,7 +1521,7 @@ void InGameUI::handleBuildPlacements( void )
 		//
 		// check to see if this is a legal location to build something at and tint or "un-tint"
 		// the cursor icons as appropriate.  This involves a pathfind which could be
-		// expensive so we don't want to do it on every frame (althought that would be ideal)
+		// expensive so we don't want to do it on every frame (although that would be ideal)
 		// If we discover there are cases that this is just too slow we should increase the
 		// delay time between checks or we need to come up with a way of recording what is
 		// valid and what isn't or "fudge" the results to feel "ok"
@@ -2091,7 +2091,7 @@ void InGameUI::freeMessageResources( void )
 	for( i = 0; i < MAX_UI_MESSAGES; i++ )
 	{
 
-		// emtpy text
+		// empty text
 		m_uiMessages[ i ].fullText.clear();
 
 		// free display string
@@ -3421,7 +3421,7 @@ const DrawableList *InGameUI::getAllSelectedLocalDrawables( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Return poiner to the first selected drawable, if any */
+/** Return pointer to the first selected drawable, if any */
 //-------------------------------------------------------------------------------------------------
 Drawable *InGameUI::getFirstSelectedDrawable( void )
 {
@@ -3706,7 +3706,7 @@ void InGameUI::postDraw( void )
 						{
 
 							// We don't draw our timers until we are finished with construction.
-							// It is important that let the SpecialPowerUpdate is add its timer in its contructor,,
+							// It is important that let the SpecialPowerUpdate is add its timer in its constructor,,
 							// since the science for it could be added before construction is finished,
 							// And thus the timer set to READY before the timer is first drawn, here
 							if ( owningObject->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ))
@@ -3727,7 +3727,7 @@ void InGameUI::postDraw( void )
  									readySecs = (module->getReadyFrame() - TheGameLogic->getFrame()) / LOGICFRAMES_PER_SECOND;
 								// Yes, integer math.  We can't have float imprecision display 4:01 on a disabled superweapon.
 
- 								// Similarly, only checking timers is not truly indicitive of readyness.
+ 								// Similarly, only checking timers is not truly indicative of readiness.
  								Bool changeBolding = (readySecs != info->m_timestamp) || (isReady != info->m_ready) || info->m_forceUpdateText;
  								if (changeBolding)
  								{
@@ -4498,7 +4498,7 @@ Bool InGameUI::canSelectedObjectsDoSpecialPower( const CommandButton *command, c
 	//Get the special power template.
 	const SpecialPowerTemplate *spTemplate = command->getSpecialPowerTemplate();
 
-	//Order of precendence:
+	//Order of precedence:
 	//1) NO TARGET OR POS
 	//2) COMMAND_OPTION_NEED_OBJECT_TARGET
 	//3) NEED_TARGET_POS
@@ -4622,7 +4622,7 @@ Bool InGameUI::canSelectedObjectsEffectivelyUseWeapon( const CommandButton *comm
 	//Get the special power template.
 	WeaponSlotType slot = command->getWeaponSlot();
 
-	//Order of precendence:
+	//Order of precedence:
 	//1) NO TARGET OR POS
 	//2) COMMAND_OPTION_NEED_OBJECT_TARGET
 	//3) NEED_TARGET_POS
@@ -4754,7 +4754,7 @@ Int InGameUI::selectAllUnitsByTypeAcrossRegion( IRegion2D *region, KindOfMaskTyp
 }
 
 // ------------------------------------------------------------------------------------------------
-/** Selects maching units on the screen */
+/** Selects matching units on the screen */
 // ------------------------------------------------------------------------------------------------
 Int InGameUI::selectMatchingAcrossRegion( IRegion2D *region )
 {
@@ -4872,7 +4872,7 @@ Int InGameUI::selectAllUnitsByTypeAcrossScreen(KindOfMaskType mustBeSet, KindOfM
 }
 
 // ------------------------------------------------------------------------------------------------
-/** Selects maching units on the screen */
+/** Selects matching units on the screen */
 // ------------------------------------------------------------------------------------------------
 Int InGameUI::selectMatchingAcrossScreen( void )
 {
@@ -5157,7 +5157,7 @@ void InGameUI::updateFloatingText( void )
 			}
 
 		}
-		// increase our itterator
+		// increase our iterator
 		++it;
 
 	}

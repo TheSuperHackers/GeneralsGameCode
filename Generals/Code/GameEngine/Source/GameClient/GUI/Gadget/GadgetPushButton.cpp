@@ -526,7 +526,7 @@ Bool GadgetCheckLikeButtonIsChecked( GameWindow *g )
 	if( instData == nullptr )
 		return FALSE;
 
-	// we just hold this "check like dual state thingie" using the selected state
+	// we just hold this "check like dual state thingy" using the selected state
 	return BitIsSet( instData->m_state, WIN_STATE_SELECTED );
 
 }

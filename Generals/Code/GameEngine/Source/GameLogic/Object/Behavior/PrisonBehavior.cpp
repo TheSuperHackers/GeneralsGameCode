@@ -312,11 +312,11 @@ void PrisonBehavior::addVisual( Object *obj )
 	else
 		draw->setIndicatorColor( obj->getIndicatorColor() );
 
-	// pick a location insid the prison yard
+	// pick a location inside the prison yard
 	Coord3D pos;
 	pickVisualLocation( &pos );
 
-	// place drawable withing the prison yard area
+	// place drawable within the prison yard area
 	draw->setPosition( &pos );
 	draw->setOrientation( GameLogicRandomValueReal( 0, TWO_PI ) );
 	DrawableInfo *drawInfo=draw->getDrawableInfo();

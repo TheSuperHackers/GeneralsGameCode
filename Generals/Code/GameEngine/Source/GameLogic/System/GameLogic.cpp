@@ -1034,7 +1034,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	m_rankLevelLimit = 1000;	// this is reset every game.
 
 	//
-	// only reset the next object ID allocater counter when we're not loading a save game.
+	// only reset the next object ID allocator counter when we're not loading a save game.
 	// for save games, we read this value out of the save game file and it is important
 	// that we preserve it as we load and execute the game
 	//

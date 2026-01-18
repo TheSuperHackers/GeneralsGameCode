@@ -1099,7 +1099,7 @@ void IMEManager::updateCompositionString( void )
 
 	if ( m_context )
 	{
-		// try reading unicode directy
+		// try reading unicode directly
 		LONG result = ImmGetCompositionStringW( m_context, GCS_COMPSTR, m_compositionString, MAX_COMPSTRINGLEN );
 
 		if ( result >= 0 )
@@ -1165,7 +1165,7 @@ void IMEManager::getResultsString ( void )
 
 	if ( m_context )
 	{
-		// try reading unicode directy
+		// try reading unicode directly
 		LONG result = ImmGetCompositionStringW( m_context,  GCS_RESULTSTR, m_resultsString, MAX_COMPSTRINGLEN );
 
 		if ( result >= 0 )
@@ -1244,7 +1244,7 @@ void IMEManager::openCandidateList( Int candidateFlags )
 	{
 		return;
 	}
-	// first get lastest candidate list info
+	// first get latest candidate list info
 	updateCandidateList( candidateFlags );
   resizeCandidateWindow( m_pageSize );
 

@@ -1071,7 +1071,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 		return;
 	}
 
-	// ignore collisions with our "ignore" thingie, if any (and vice versa)
+	// ignore collisions with our "ignore" thingy, if any (and vice versa)
 	AIUpdateInterface* ai = obj->getAIUpdateInterface();
 	if (ai != nullptr  && ai->getIgnoredObstacleID() == other->getID())
 	{

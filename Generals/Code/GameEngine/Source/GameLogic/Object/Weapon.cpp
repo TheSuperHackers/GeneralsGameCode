@@ -1577,7 +1577,7 @@ void WeaponStore::resetWeaponTemplates( void )
 //-------------------------------------------------------------------------------------------------
 void WeaponStore::reset()
 {
-	// clean up any overriddes.
+	// clean up any overrides.
 	for (size_t i = 0; i < m_weaponTemplateVector.size(); ++i)
 	{
 		WeaponTemplate *wt = m_weaponTemplateVector[i];
@@ -2379,7 +2379,7 @@ Bool Weapon::privateFireWeapon(
 		setLeechRangeActive( TRUE );
 	}
 
-	//Special case damge type overrides requiring special handling.
+	//Special case damage type overrides requiring special handling.
 	switch( m_template->getDamageType() )
 	{
 		case DAMAGE_DEPLOY:
@@ -3238,7 +3238,7 @@ void Weapon::xfer( Xfer *xfer )
 	// when can fire again
 	xfer->xferUnsignedInt( &m_whenWeCanFireAgain );
 
-	// wehn pre attack finished
+	// when pre attack finished
 	xfer->xferUnsignedInt( &m_whenPreAttackFinished );
 
 	// when last reload started

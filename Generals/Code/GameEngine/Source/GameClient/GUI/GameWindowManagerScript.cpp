@@ -1351,7 +1351,7 @@ static Bool parseDrawData( const char *token, WinInstanceData *instData,
 // getDataTemplate ============================================================
 /** Given a window type style string return the address of a static
 	* gadget data type used for the generic data pointers in the
-	* GUI gadget contorls */
+	* GUI gadget controls */
 //=============================================================================
 void *getDataTemplate( char *type )
 {

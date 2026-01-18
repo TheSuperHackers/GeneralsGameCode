@@ -6238,7 +6238,7 @@ void ScriptEngine::executeScript( Script *pScript )
 		case DIFFICULTY_NORMAL : if (!pScript->isNormal()) return;  break;
 		case DIFFICULTY_HARD : if (!pScript->isHard()) return;  break;
 	}
-	// If we are doing peridic evaluation, check the frame.
+	// If we are doing periodic evaluation, check the frame.
 	if (TheGameLogic->getFrame()<pScript->getFrameToEvaluate()) {
 		return;
 	}
@@ -6985,7 +6985,7 @@ const ConditionTemplate * ScriptEngine::getConditionTemplate( Int ndx )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Fills the named object cache initally. */
+/** Fills the named object cache initially. */
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::createNamedCache( void )
 {
@@ -7218,7 +7218,7 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 			if (((ai && (ai->isIdle()) || (aigroup && aigroup->isIdle())) &&
 				seqScript->m_framesToWait < 1) || (seqScript->m_framesToWait == 0)) {
 
-				// We want to supress messages if we're repeatedly waiting for an event to occur, cause
+				// We want to suppress messages if we're repeatedly waiting for an event to occur, cause
 				// it KILLS our debug framerate.
 				Bool displayMessage = TRUE;
 
@@ -8260,7 +8260,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	if( xfer->getXferMode() == XFER_SAVE )
 	{
 
-		// iterate elemnts
+		// iterate elements
 		VecNamedRequestsIt it;
 		for( it = m_namedObjects.begin(); it != m_namedObjects.end(); ++it )
 		{

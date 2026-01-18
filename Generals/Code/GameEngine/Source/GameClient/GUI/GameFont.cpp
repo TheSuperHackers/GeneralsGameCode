@@ -116,7 +116,7 @@ void FontLibrary::deleteAllFonts( void )
 		// get temp pointer to this font
 		font = m_fontList;
 
-		// remove font fron the list, this will change m_fontList
+		// remove font from the list, this will change m_fontList
 		unlinkFont( font );
 
 		// release font data

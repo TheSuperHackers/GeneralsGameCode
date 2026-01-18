@@ -311,7 +311,7 @@ GlobalData* GlobalData::m_theOriginal = nullptr;
 	{ "MaxTranslucentObjects",						INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxVisibleTranslucentObjects) },
 	{ "OccludedColorLuminanceScale",				INI::parseReal,				nullptr,			offsetof( GlobalData, m_occludedLuminanceScale) },
 
-/* These are internal use only, they do not need file definitons
+/* These are internal use only, they do not need file definitions
 	{ "TerrainAmbientRGB",				INI::parseRGBColor,		nullptr,			offsetof( GlobalData, m_terrainAmbient ) },
 	{ "TerrainDiffuseRGB",				INI::parseRGBColor,		nullptr,			offsetof( GlobalData, m_terrainDiffuse ) },
 	{ "TerrainLightPos",					INI::parseCoord3D,		nullptr,			offsetof( GlobalData, m_terrainLightPos ) },
@@ -331,7 +331,7 @@ GlobalData* GlobalData::m_theOriginal = nullptr;
 	{ "VideoOn",										INI::parseBool,				nullptr,			offsetof( GlobalData, m_videoOn ) },
 	{ "DisableCameraMovements",			INI::parseBool,				nullptr,			offsetof( GlobalData, m_disableCameraMovement ) },
 
-/* These are internal use only, they do not need file definitons
+/* These are internal use only, they do not need file definitions
 	/// @todo remove this hack
 	{ "InGame",											INI::parseBool,				nullptr,			offsetof( GlobalData, m_inGame ) },
 */
@@ -365,7 +365,7 @@ GlobalData* GlobalData::m_theOriginal = nullptr;
 	{ "AutoAflameParticleSystem",					INI::parseAsciiString,  nullptr,  offsetof( GlobalData, m_autoAflameParticleSystem ) },
 	{ "AutoAflameParticleMax",						INI::parseInt,					nullptr,	 offsetof( GlobalData, m_autoAflameParticleMax ) },
 
-/* These are internal use only, they do not need file definitons
+/* These are internal use only, they do not need file definitions
 	{ "LatencyAverage",							INI::parseInt,				nullptr,			offsetof( GlobalData, m_latencyAverage ) },
 	{ "LatencyAmplitude",						INI::parseInt,				nullptr,			offsetof( GlobalData, m_latencyAmplitude ) },
 	{ "LatencyPeriod",							INI::parseInt,				nullptr,			offsetof( GlobalData, m_latencyPeriod ) },

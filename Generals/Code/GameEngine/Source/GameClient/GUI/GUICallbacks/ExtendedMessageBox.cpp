@@ -73,7 +73,7 @@ static GameWindow *gogoExMessageBox(Int x, Int y, Int width, Int height, Unsigne
 	if( width > 0 && height > 0 )
 	{
 		ICoord2D temp;
-		//First grab the percent increase/decrease compaired to the default size
+		//First grab the percent increase/decrease compared to the default size
 		parent->winGetSize( &temp.x, &temp.y);
 		ratioX = (float)width / (float)temp.x;
 		ratioY = (float)height / (float)temp.y;

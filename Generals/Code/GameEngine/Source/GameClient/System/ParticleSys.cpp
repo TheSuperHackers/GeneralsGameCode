@@ -619,7 +619,7 @@ void Particle::doWindMotion( void )
 			windForceStrength *= (1.0f - ((distFromWind - fullForceDistance) /
 																		(noForceDistance - fullForceDistance)));
 
-		// integate the wind motion into the position
+		// integrate the wind motion into the position
 		m_pos.x += (Cos( windAngle ) * windForceStrength);
 		m_pos.y += (Sin( windAngle ) * windForceStrength);
 

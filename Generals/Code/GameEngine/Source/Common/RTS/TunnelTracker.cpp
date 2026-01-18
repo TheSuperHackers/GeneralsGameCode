@@ -258,7 +258,7 @@ void TunnelTracker::onTunnelDestroyed( const Object *deadTunnel )
 void TunnelTracker::destroyObject( Object *obj, void * )
 {
 	// Now that tunnels consider ContainedBy to be "the tunnel you entered", I need to say goodbye
-	// llike other contain types so they don't look us up on their deletion and crash
+	// like other contain types so they don't look us up on their deletion and crash
 	obj->onRemovedFrom( obj->getContainedBy() );
 	TheGameLogic->destroyObject( obj );
 }

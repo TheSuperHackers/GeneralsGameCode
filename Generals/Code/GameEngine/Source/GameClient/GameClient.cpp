@@ -1008,7 +1008,7 @@ void GameClient::getRayEffectData( Drawable *draw, RayEffectData *effectData )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** remove the drawble from the ray effects sytem if present */
+/** remove the drawable from the ray effects system if present */
 void GameClient::removeFromRayEffects( Drawable *draw )
 {
 
@@ -1049,7 +1049,7 @@ void GameClient::preloadAssets( TimeOfDay timeOfDay )
 		draw->preloadAssets( timeOfDay );
 
 	//
-	// now create a temporary drawble for each of the faction things we can create, preload
+	// now create a temporary drawable for each of the faction things we can create, preload
 	// their assets, and dump the drawable
 	//
 	AsciiString side;
@@ -1575,7 +1575,7 @@ void GameClient::loadPostProcess( void )
 
 	//
 	// due to the fact that during the load process we have called newDrawable for drawables
-	// without objects, and then overwrote their ids with data from the save file, our allocater
+	// without objects, and then overwrote their ids with data from the save file, our allocator
 	// id may be far higher than it needs to be.  We'll pull it back down as low as we can
 	//
 	Drawable *draw;

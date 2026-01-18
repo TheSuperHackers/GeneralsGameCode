@@ -1125,7 +1125,7 @@ Bool TeamPrototype::evaluateProductionCondition(void)
 		return false;
 	}
 	if (m_productionConditionScript) {
-		// If we are doing peridic evaluation, check the frame.
+		// If we are doing periodic evaluation, check the frame.
 		if (TheGameLogic->getFrame()<m_productionConditionScript->getFrameToEvaluate()) {
 			return false;
 		}

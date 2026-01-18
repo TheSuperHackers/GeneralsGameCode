@@ -1087,7 +1087,7 @@ GameMessage::Type CommandTranslator::issueAttackCommand( Drawable *target,
 
 			attackMsg->appendObjectIDArgument( targetObj->getID() );	// must pass target object ID to logic
 
-			// if we have a stats collector, inrement the stats
+			// if we have a stats collector, increment the stats
 			if(TheStatsCollector)
 				TheStatsCollector->incrementAttackCount();
 		}
