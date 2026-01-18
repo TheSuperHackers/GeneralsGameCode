@@ -47,6 +47,9 @@ class PathfindZoneManager;
 
 #define INFANTRY_MOVES_THROUGH_INFANTRY
 
+#if !RETAIL_COMPATIBLE_PATHFINDING
+#undef RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
+#endif
 
   typedef UnsignedShort zoneStorageType;
 
@@ -288,6 +291,11 @@ public:
 	Bool isAircraftGoal( void) const {return m_aircraftGoal != 0;}
 
 	Bool isObstaclePresent( ObjectID objID ) const;					///< return true if the given object ID is registered as an obstacle in this cell
+#if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
+	// TheSuperHackers @info isObstructionInvalid() and clearObstruction() only used during retail compatible pathfinding failover cleanup
+	Bool isObstructionInvalid() const { return m_obstacleID != INVALID_ID && m_info == nullptr && (m_type == CELL_OBSTACLE || m_type == CELL_IMPASSABLE); }
+	void clearObstruction() { m_type = CELL_CLEAR; m_obstacleID = INVALID_ID; m_obstacleIsFence = false; m_obstacleIsTransparent = false; }
+#endif
 
 	inline Bool isObstacleTransparent() const;
 	inline Bool isObstacleFence(void) const;
@@ -364,6 +372,11 @@ public:
 
 private:
 	PathfindCellInfo *m_info;
+	ObjectID m_obstacleID;	                  ///< the object ID who overlaps this cell
+	UnsignedInt m_blockedByAlly : 1;          ///< True if this cell is blocked by an allied unit.
+	UnsignedInt m_obstacleIsFence : 1;        ///< True if occupied by a fence.
+	UnsignedInt m_obstacleIsTransparent : 1;  ///< True if obstacle is transparent (undefined if obstacleid is invalid)
+
 	zoneStorageType m_zone : 14;              ///< Zone. Each zone is a set of adjacent terrain type.  If from & to in the same zone, you can successfully pathfind.  If not,
 	                                          /// you still may be able to if you can cross multiple terrain types.
 	UnsignedShort m_aircraftGoal : 1;         ///< This is an aircraft goal cell.

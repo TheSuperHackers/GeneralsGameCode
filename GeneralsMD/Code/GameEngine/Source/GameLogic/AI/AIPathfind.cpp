@@ -1126,6 +1126,15 @@ void Pathfinder::forceCleanCells()
 
 	for (int j = 0; j <= m_extent.hi.y; ++j) {
 		for (int i = 0; i <= m_extent.hi.x; ++i) {
+#if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
+			// TheSuperHackers @bugfix Mauller/DrGoldFish 20/01/2026 when pathfinding resources cannot be allocated to a pathfindCell,
+			// The function to remove an obstacle returns early and PathfindCells remain flagged as obstacles.
+			// We need to make sure to reset pathfindCells with a set m_obstacleID and no m_info.
+			// The use of PathfindCellInfo data for obstacle handling also exausted them resulting in pathfinding lockups.
+			if (m_map[i][j].isObstructionInvalid()) {
+				m_map[i][j].clearObstruction();
+			}
+#endif
 			if (m_map[i][j].hasInfo()) {
 				m_map[i][j].releaseInfo();
 			}
@@ -1253,6 +1262,11 @@ void PathfindCell::reset( )
 		PathfindCellInfo::releaseACellInfo(m_info);
 		m_info = nullptr;
 	}
+	m_obstacleID = INVALID_ID;
+	m_blockedByAlly = false;
+	m_obstacleIsFence = false;
+	m_obstacleIsTransparent = false;
+
 	m_connectsToLayer = LAYER_INVALID;
 	m_layer = LAYER_GROUND;
 
@@ -1289,11 +1303,29 @@ Bool PathfindCell::startPathfind( PathfindCell *goalCell  )
  */
 inline Bool PathfindCell::isBlockedByAlly(void) const
 {
+#if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
+	if (s_useFixedPathfinding) {
+		return m_blockedByAlly;
+	}
+
 	return m_info->m_blockedByAlly;
+#else
+	return m_blockedByAlly;
+#endif
 }
+
 inline void PathfindCell::setBlockedByAlly(Bool blocked)
 {
+#if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
+	if (s_useFixedPathfinding) {
+		m_blockedByAlly = (blocked != 0);
+		return;
+	}
+
 	m_info->m_blockedByAlly = (blocked != 0);
+#else
+	m_blockedByAlly = (blocked != 0);
+#endif
 }
 
 /**
@@ -1503,7 +1535,15 @@ void PathfindCell::setPosUnit(ObjectID unitID, const ICoord2D &pos )
  */
 inline ObjectID PathfindCell::getObstacleID(void) const
 {
+#if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
+	if (s_useFixedPathfinding) {
+		return m_obstacleID;
+	}
+
 	return m_info ? m_info->m_obstacleID : INVALID_ID;
+#else
+	return m_obstacleID;
+#endif
 }
 
 
@@ -1525,14 +1565,33 @@ Bool PathfindCell::setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoo
 
 	if (isRubble) {
 		m_type = PathfindCell::CELL_RUBBLE;
+		m_obstacleID = INVALID_ID;
+		m_obstacleIsFence = false;
+		m_obstacleIsTransparent = false;
+#if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
+		if (s_useFixedPathfinding) {
+			return true;
+		}
+
 		if (m_info) {
 			m_info->m_obstacleID = INVALID_ID;
 			releaseInfo();
 		}
+#endif
 		return true;
 	}
 
 	m_type = PathfindCell::CELL_OBSTACLE;
+	m_obstacleID = obstacle->getID();
+	m_obstacleIsFence = isFence;
+	m_obstacleIsTransparent = obstacle->isKindOf(KINDOF_CAN_SEE_THROUGH_STRUCTURE);
+#if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
+	// TheSuperHackers @info In retail mode we need to track orphaned cells set as obstacles so we can cleanup and failover properly
+	// So we always make sure to set and clear the local obstacle data on the PathfindCell regardless of retail compat or not
+	if (s_useFixedPathfinding) {
+		return true;
+	}
+
 	if (!m_info) {
 		m_info = PathfindCellInfo::getACellInfo(this, pos);
 		if (!m_info) {
@@ -1543,6 +1602,7 @@ Bool PathfindCell::setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoo
 	m_info->m_obstacleID = obstacle->getID();
 	m_info->m_obstacleIsFence = isFence;
 	m_info->m_obstacleIsTransparent = obstacle->isKindOf(KINDOF_CAN_SEE_THROUGH_STRUCTURE);
+#endif
 	return true;
 }
 
@@ -1551,11 +1611,27 @@ Bool PathfindCell::setTypeAsObstacle( Object *obstacle, Bool isFence, const ICoo
  */
 void PathfindCell::setType( CellType type )
 {
+#if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
+	if (s_useFixedPathfinding) {
+		if (m_obstacleID != INVALID_ID) {
+			DEBUG_ASSERTCRASH(type == PathfindCell::CELL_OBSTACLE, ("Wrong type."));
+			m_type = PathfindCell::CELL_OBSTACLE;
+			return;
+		}
+	}
+
 	if (m_info && (m_info->m_obstacleID != INVALID_ID)) {
 		DEBUG_ASSERTCRASH(type==PathfindCell::CELL_OBSTACLE, ("Wrong type."));
 		m_type = PathfindCell::CELL_OBSTACLE;
 		return;
 	}
+#else
+	if (m_obstacleID != INVALID_ID) {
+		DEBUG_ASSERTCRASH(type == PathfindCell::CELL_OBSTACLE, ("Wrong type."));
+		m_type = PathfindCell::CELL_OBSTACLE;
+		return;
+	}
+#endif
 	m_type = type;
 }
 
@@ -1568,11 +1644,29 @@ Bool PathfindCell::removeObstacle( Object *obstacle )
 	if (m_type == PathfindCell::CELL_RUBBLE) {
 		m_type = PathfindCell::CELL_CLEAR;
 	}
+#if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
+	if (s_useFixedPathfinding) {
+		if (m_obstacleID != obstacle->getID()) return false;
+		m_type = PathfindCell::CELL_CLEAR;
+		m_obstacleID = INVALID_ID;
+		m_obstacleIsFence = false;
+		m_obstacleIsTransparent = false;
+		return true;
+	}
+
 	if (!m_info) return false;
 	if (m_info->m_obstacleID != obstacle->getID()) return false;
 	m_type = PathfindCell::CELL_CLEAR;
 	m_info->m_obstacleID = INVALID_ID;
 	releaseInfo();
+
+#else
+	if (m_obstacleID != obstacle->getID()) return false;
+	m_type = PathfindCell::CELL_CLEAR;
+#endif
+	m_obstacleID = INVALID_ID;
+	m_obstacleIsFence = false;
+	m_obstacleIsTransparent = false;
 	return true;
 }
 
@@ -1779,8 +1873,16 @@ inline Bool PathfindCell::isObstaclePresent(ObjectID objID) const
 {
 	if (objID != INVALID_ID && (getType() == PathfindCell::CELL_OBSTACLE))
 	{
+#if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
+		if (s_useFixedPathfinding) {
+			return m_obstacleID == objID;
+		}
+
 		DEBUG_ASSERTCRASH(m_info, ("Should have info to be obstacle."));
 		return (m_info && m_info->m_obstacleID == objID);
+#else
+		return m_obstacleID == objID;
+#endif
 	}
 
 	return false;
@@ -1792,7 +1894,15 @@ inline Bool PathfindCell::isObstaclePresent(ObjectID objID) const
  */
 inline Bool PathfindCell::isObstacleTransparent() const
 {
+#if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
+	if (s_useFixedPathfinding) {
+		return m_obstacleIsTransparent;
+	}
+
 	return m_info ? m_info->m_obstacleIsTransparent : false;
+#else
+	return m_obstacleIsTransparent;
+#endif
 }
 
 /**
@@ -1800,7 +1910,15 @@ inline Bool PathfindCell::isObstacleTransparent() const
  */
 inline Bool PathfindCell::isObstacleFence(void) const
 {
+#if RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
+	if (s_useFixedPathfinding) {
+		return m_obstacleIsFence;
+	}
+
 	return m_info ? m_info->m_obstacleIsFence : false;
+#else
+	return m_obstacleIsFence;
+#endif
 }
 
 
