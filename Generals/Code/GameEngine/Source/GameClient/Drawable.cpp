@@ -384,7 +384,6 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatusBits statu
 
 	// initially not bound to an object
 	m_object = nullptr;
-	m_particle = nullptr;
 
 	// tintStatusTracking
 	m_tintStatus = 0;
@@ -514,7 +513,6 @@ Drawable::~Drawable()
 
 	// reset object to nullptr so we never mistaken grab "dead" objects
 	m_object = nullptr;
-	m_particle = nullptr;
 
 	// delete any icons present
 	deleteInstance(m_iconInfo);
@@ -760,26 +758,6 @@ Bool Drawable::getCurrentWorldspaceClientBonePositions(const char* boneName, Mat
 			return true;
 	}
 	return false;
-}
-
-//-------------------------------------------------------------------------------------------------
-/** Attach to a particle system */
-//-------------------------------------------------------------------------------------------------
-void Drawable::attachToParticleSystem( Particle *p )
-{
-	m_particle = p;
-}
-
-//-------------------------------------------------------------------------------------------------
-/** Detach from a particle system, if attached */
-//-------------------------------------------------------------------------------------------------
-void Drawable::detachFromParticleSystem( void )
-{
-	if (m_particle)
-	{
-		m_particle->detachDrawable();
-		m_particle = nullptr;
-	}
 }
 
 //-------------------------------------------------------------------------------------------------

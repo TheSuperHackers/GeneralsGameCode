@@ -432,9 +432,6 @@ public:
 	void clearAndSetModelConditionFlags( const ModelConditionFlags& clr, const ModelConditionFlags& set );
 	void replaceModelConditionFlags( const ModelConditionFlags &flags, Bool forceReplace = FALSE );
 
-	void attachToParticleSystem( Particle *p );								///< attach this Drawable to a particle system
-	void detachFromParticleSystem( void );										///< detach this from any particle system
-
 	Bool handleWeaponFireFX(
 							WeaponSlotType wslot,
 							Int specificBarrelToUse,
@@ -538,8 +535,6 @@ public:
 
 	Bool getShouldAnimate( Bool considerPower ) const;
 
-	void friend_setParticle( Particle *particle ) { m_particle = particle; }
-
 	// flash drawable methods ---------------------------------------------------------
   Int getFlashCount( void ) { return m_flashCount; }
 	void setFlashCount( Int count ) { m_flashCount = count; }
@@ -636,7 +631,6 @@ private:
 	Real m_decalOpacity;
 
 	Object *m_object;						///< object (if any) that this drawable represents
-	Particle *m_particle;				///< particle (if any) that this Drawable is associated with
 
 	DrawableID m_id;						///< this drawable's unique ID
 	Drawable *m_nextDrawable;

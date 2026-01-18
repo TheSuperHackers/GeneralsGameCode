@@ -809,9 +809,6 @@ void GameClient::destroyDrawable( Drawable *draw )
 	// remove any notion of the Drawable in the in-game user interface
 	TheInGameUI->disregardDrawable( draw );
 
-	// detach this Drawable from any particle system that may be using it
-	draw->detachFromParticleSystem();
-
 	// remove from the master list
 	draw->removeFromList(&m_drawableList);
 

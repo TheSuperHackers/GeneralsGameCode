@@ -326,18 +326,6 @@ Particle::Particle( ParticleSystem *system, const ParticleInfo *info )
 
 	m_colorScale = info->m_colorScale;
 
-	if (system->isUsingDrawables())
-	{
-		const ThingTemplate *tmpl = TheThingFactory->findTemplate(system->getParticleTypeName());
-		DEBUG_ASSERTCRASH(tmpl, ("Drawable %s not found",system->getParticleTypeName().str()));
-		if (tmpl)
-		{
-			m_drawable = TheThingFactory->newDrawable(tmpl);
-			if (m_drawable)
-				m_drawable->attachToParticleSystem( this );
-		}
-	}
-
 	m_inSystemList = m_inOverallList = FALSE;
 	m_systemPrev = m_systemNext = m_overallPrev = m_overallNext = nullptr;
 
@@ -357,10 +345,6 @@ Particle::~Particle()
 {
 	// tell the particle system that this particle is gone
 	m_system->removeParticle( this );
-
-	if (m_drawable)
-		TheGameClient->destroyDrawable( m_drawable );
-	m_drawable = nullptr;
 
 	// if this particle was controlling another particle system, destroy that system
 	if (m_systemUnderControl)
@@ -517,17 +501,6 @@ Bool Particle::update( void )
 	m_accel.y = 0.0f;
 	m_accel.z = 0.0f;
 
-	if (m_drawable)
-	{
-		Matrix3D rot;
-		rot.Make_Identity();
-		rot.Rotate_X( m_angleX );
-		rot.Rotate_Y( m_angleY );
-		rot.Rotate_Z( m_angleZ );
-		m_drawable->setInstanceMatrix( &rot );
-		m_drawable->setPosition( &m_pos );
-	}
-
 	// monitor lifetime
 	if (m_lifetimeLeft && --m_lifetimeLeft == 0)
 		return false;
@@ -640,11 +613,6 @@ ParticlePriorityType Particle::getPriority( void )
 // ------------------------------------------------------------------------------------------------
 Bool Particle::isInvisible( void )
 {
-	// Drawables are never invisible (yet)
-	/// @todo Allow Drawables to fade via alpha (MSB)
-	if (m_drawable)
-		return false;
-
 	switch (m_system->getShaderType())
 	{
 		case ParticleSystemInfo::ADDITIVE:
@@ -742,31 +710,8 @@ void Particle::xfer( Xfer *xfer )
 	xfer->xferInt( &m_colorTargetKey );
 
 	// drawable
-	DrawableID drawableID = m_drawable ? m_drawable->getID() : INVALID_DRAWABLE_ID;
-	xfer->xferDrawableID( &drawableID );
-	if( xfer->getXferMode() == XFER_LOAD && drawableID != INVALID_DRAWABLE_ID )
-	{
-
-		//
-		// save drawable pointer, note that this xfer block is after all the drawable stuff
-		// so we don't need to post process anything all the correct drawables are loaded
-		// and available to us
-		//
-		m_drawable = TheGameClient->findDrawableByID( drawableID );
-
-		// sanity
-		if( m_drawable == nullptr )
-		{
-
-			DEBUG_CRASH(( "Particle::xfer - Unable to find matching drawable id for particle" ));
-			throw SC_INVALID_DATA;
-
-		}
-
-		// set the particle pointer in the drawable
-		m_drawable->friend_setParticle( this );
-
-	}
+	DrawableID drawableID = INVALID_DRAWABLE_ID;
+	xfer->xferDrawableID( &drawableID );	//saving for backwards compatibility when we supported drawables.
 
 	// system under control as an id
 	ParticleSystemID systemUnderControlID = m_systemUnderControl ? m_systemUnderControl->getSystemID() : INVALID_PARTICLE_SYSTEM_ID;

@@ -174,7 +174,6 @@ public:
 	void doWindMotion( void );									///< do wind motion (if present) from particle system
 
 	void applyForce( const Coord3D *force );		///< add the given acceleration
-	void detachDrawable( void ) { m_drawable = nullptr; }	///< detach the Drawable pointer from this particle
 
 	const Coord3D *getPosition( void ) { return &m_pos; }
 	Real getSize( void ) { return m_size; }
@@ -231,7 +230,6 @@ protected:
 	RGBColor					m_colorRate;												///< current rate of color change
 	Int								m_colorTargetKey;												///< next index into key array
 
-	Drawable *				m_drawable;												///< drawable associated with this particle
 
 	Bool							m_isCulled;														///< status of particle relative to screen bounds
 public:
