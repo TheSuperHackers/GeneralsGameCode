@@ -68,9 +68,17 @@ ParticleSystemManager *TheParticleSystemManager = nullptr;
 // ------------------------------------------------------------------------------------------------
 ParticleInfo::ParticleInfo( void )
 {
-	m_angleX = m_angleY = m_angleZ = 0.0f;
+#if PARTICLE_USE_XY_ROTATION
+	m_angleX = 0.0f;
+	m_angleY = 0.0f;
+#endif
+	m_angleZ = 0.0f;
+#if PARTICLE_USE_XY_ROTATION
+	m_angularRateX = 0.0f;
+	m_angularRateY = 0.0f;
+#endif
+	m_angularRateZ = 0.0f;
 	m_angularDamping = 0.0f;
-	m_angularRateX = m_angularRateY = m_angularRateZ = 0.0f;
 	m_colorScale =0.0f;
   m_size = 0.0f;
 	m_sizeRate = 0.0f;
@@ -122,13 +130,24 @@ void ParticleInfo::xfer( Xfer *xfer )
 	xfer->xferReal( &m_velDamping );
 
 	// angle
+#if PARTICLE_USE_XY_ROTATION
 	xfer->xferReal( &m_angleX );
 	xfer->xferReal( &m_angleY );
+#else
+	Real tempAngle=0;	//temporary value to save out for backwards compatibility when we supported x,y
+	xfer->xferReal( &tempAngle );
+	xfer->xferReal( &tempAngle );
+#endif
 	xfer->xferReal( &m_angleZ );
 
 	// angular rate
+#if PARTICLE_USE_XY_ROTATION
 	xfer->xferReal( &m_angularRateX );
 	xfer->xferReal( &m_angularRateY );
+#else
+	xfer->xferReal( &tempAngle );
+	xfer->xferReal( &tempAngle );
+#endif
 	xfer->xferReal( &m_angularRateZ );
 
 	// lifetime
@@ -281,8 +300,10 @@ Particle::Particle( ParticleSystem *system, const ParticleInfo *info )
 	m_vel = info->m_vel;
 	m_pos = info->m_pos;
 
+#if PARTICLE_USE_XY_ROTATION
 	m_angleX = info->m_angleX;
 	m_angleY = info->m_angleY;
+#endif
 	m_angleZ = info->m_angleZ;
 
 	m_lastPos.zero();
@@ -290,9 +311,10 @@ Particle::Particle( ParticleSystem *system, const ParticleInfo *info )
 	m_particleUpTowardsEmitter = info->m_particleUpTowardsEmitter;
 	m_emitterPos = info->m_emitterPos;
 
-
+#if PARTICLE_USE_XY_ROTATION
 	m_angularRateX = info->m_angularRateX;
 	m_angularRateY = info->m_angularRateY;
+#endif
 	m_angularRateZ = info->m_angularRateZ;
 	m_angularDamping = info->m_angularDamping;
 
@@ -394,11 +416,15 @@ Bool Particle::update( void )
 	doWindMotion();
 
 	// update orientation
+#if PARTICLE_USE_XY_ROTATION
 	m_angleX += m_angularRateX;
 	m_angleY += m_angularRateY;
+#endif
 	m_angleZ += m_angularRateZ;
+#if PARTICLE_USE_XY_ROTATION
 	m_angularRateX *= m_angularDamping;
 	m_angularRateY *= m_angularDamping;
+#endif
 	m_angularRateZ *= m_angularDamping;
 
 	if (m_particleUpTowardsEmitter) {
@@ -841,13 +867,24 @@ void ParticleSystemInfo::xfer( Xfer *xfer )
 	xfer->xferAsciiString( &m_particleTypeName );
 
 	// angles
+#if PARTICLE_USE_XY_ROTATION
 	xfer->xferUser( &m_angleX, sizeof( GameClientRandomVariable ) );
 	xfer->xferUser( &m_angleY, sizeof( GameClientRandomVariable ) );
+#else
+	GameClientRandomVariable	tempRandom;	//for backwards compatibility when we supported x,y
+	xfer->xferUser( &tempRandom, sizeof( GameClientRandomVariable ) );
+	xfer->xferUser( &tempRandom, sizeof( GameClientRandomVariable ) );
+#endif
 	xfer->xferUser( &m_angleZ, sizeof( GameClientRandomVariable ) );
 
 	// angular rate
+#if PARTICLE_USE_XY_ROTATION
 	xfer->xferUser( &m_angularRateX, sizeof( GameClientRandomVariable ) );
 	xfer->xferUser( &m_angularRateY, sizeof( GameClientRandomVariable ) );
+#else
+	xfer->xferUser( &tempRandom, sizeof( GameClientRandomVariable ) );
+	xfer->xferUser( &tempRandom, sizeof( GameClientRandomVariable ) );
+#endif
 	xfer->xferUser( &m_angularRateZ, sizeof( GameClientRandomVariable ) );
 
 	// angular damping
@@ -1145,11 +1182,15 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 
 	m_velDamping = sysTemplate->m_velDamping;
 
+#if PARTICLE_USE_XY_ROTATION
 	m_angleX = sysTemplate->m_angleX;
 	m_angleY = sysTemplate->m_angleY;
+#endif
 	m_angleZ = sysTemplate->m_angleZ;
+#if PARTICLE_USE_XY_ROTATION
 	m_angularRateX = sysTemplate->m_angularRateX;
 	m_angularRateY = sysTemplate->m_angularRateY;
+#endif
 	m_angularRateZ = sysTemplate->m_angularRateZ;
 	m_angularDamping = sysTemplate->m_angularDamping;
 
@@ -1829,11 +1870,15 @@ const ParticleInfo *ParticleSystem::generateParticleInfo( Int particleNum, Int p
 	info.m_velDamping = m_velDamping.getValue();
 	info.m_angularDamping = m_angularDamping.getValue();
 
+#if PARTICLE_USE_XY_ROTATION
 	info.m_angleX = m_angleX.getValue();
 	info.m_angleY = m_angleY.getValue();
+#endif
 	info.m_angleZ = m_angleZ.getValue();
+#if PARTICLE_USE_XY_ROTATION
 	info.m_angularRateX = m_angularRateX.getValue();
 	info.m_angularRateY = m_angularRateY.getValue();
+#endif
 	info.m_angularRateZ = m_angularRateZ.getValue();
 
 	info.m_lifetime = (UnsignedInt)m_lifetime.getValue();
@@ -2352,11 +2397,15 @@ ParticleInfo ParticleSystem::mergeRelatedParticleSystems( ParticleSystem *master
 	mergeInfo.m_sizeRate *= info->m_sizeRate;
 	mergeInfo.m_sizeRateDamping *= info->m_sizeRateDamping;
 
+#if PARTICLE_USE_XY_ROTATION
 	mergeInfo.m_angleX = info->m_angleX;
 	mergeInfo.m_angleY = info->m_angleY;
+#endif
 	mergeInfo.m_angleZ = info->m_angleZ;
+#if PARTICLE_USE_XY_ROTATION
 	mergeInfo.m_angularRateX = info->m_angularRateX;
 	mergeInfo.m_angularRateY = info->m_angularRateY;
+#endif
 	mergeInfo.m_angularRateZ = info->m_angularRateZ;
 	mergeInfo.m_angularDamping = info->m_angularDamping;
 
@@ -2647,11 +2696,15 @@ const FieldParse ParticleSystemTemplate::m_fieldParseTable[] =
 	{ "Shader",									INI::parseIndexList,			ParticleShaderTypeNames,		offsetof( ParticleSystemTemplate, m_shaderType ) },
 	{ "Type",										INI::parseIndexList,			ParticleTypeNames,		offsetof( ParticleSystemTemplate, m_particleType ) },
 	{ "ParticleName",						INI::parseAsciiString,		nullptr,		offsetof( ParticleSystemTemplate, m_particleTypeName ) },
+#if PARTICLE_USE_XY_ROTATION
 	{ "AngleX",									INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_angleX ) },
 	{ "AngleY",									INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_angleY ) },
+#endif
 	{ "AngleZ",									INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_angleZ ) },
+#if PARTICLE_USE_XY_ROTATION
 	{ "AngularRateX",						INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_angularRateX ) },
 	{ "AngularRateY",						INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_angularRateY ) },
+#endif
 	{ "AngularRateZ",						INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_angularRateZ ) },
 	{ "AngularDamping",					INI::parseGameClientRandomVariable,	nullptr,		offsetof( ParticleSystemTemplate, m_angularDamping ) },
 

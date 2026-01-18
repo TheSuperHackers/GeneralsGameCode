@@ -61,6 +61,10 @@ enum ParticleSystemID CPP_11(: Int)
 #define DEFAULT_VOLUME_PARTICLE_DEPTH ( 0 )//The Default is not to do the volume thing!
 #define OPTIMUM_VOLUME_PARTICLE_DEPTH ( 6 )
 
+// TheSuperHackers @info The X and Y angles are not necessary for particles because there are only 2 placement modes:
+// Billboard (always facing camera) and Ground Aligned, which overwrite any rotations on the X and Y axis by design.
+// Therefore particles can only be rotated on the Z axis. Zero Hour never had X and Y angles, but Generals did.
+#define PARTICLE_USE_XY_ROTATION (0)
 
 //--------------------------------------------------------------------------------------------------------------
 
@@ -122,11 +126,15 @@ public:
 	Coord3D m_emitterPos;												///< position of the emitter
 	Real m_velDamping;													///< velocity damping coefficient
 
+#if PARTICLE_USE_XY_ROTATION
 	Real m_angleX;															///< initial angle around X axis
 	Real m_angleY;															///< initial angle around Y axis
+#endif
 	Real m_angleZ;															///< initial angle around Z axis
+#if PARTICLE_USE_XY_ROTATION
 	Real m_angularRateX;												///< initial angle around X axis
 	Real m_angularRateY;												///< initial angle around Y axis
+#endif
 	Real m_angularRateZ;												///< initial angle around Z axis
 	Real m_angularDamping;											///< angular velocity damping coefficient
 
@@ -278,11 +286,15 @@ public:
 
 	AsciiString m_particleTypeName;							///< if PARTICLE, texture filename, if DRAWABLE, Drawable name
 
+#if PARTICLE_USE_XY_ROTATION
 	GameClientRandomVariable m_angleX;										///< initial angle around X axis
 	GameClientRandomVariable m_angleY;										///< initial angle around Y axis
+#endif
 	GameClientRandomVariable m_angleZ;										///< initial angle around Z axis
+#if PARTICLE_USE_XY_ROTATION
 	GameClientRandomVariable m_angularRateX;							///< initial angle around X axis
 	GameClientRandomVariable m_angularRateY;							///< initial angle around Y axis
+#endif
 	GameClientRandomVariable m_angularRateZ;							///< initial angle around Z axis
 	GameClientRandomVariable m_angularDamping;						///< angular velocity damping coefficient
 
