@@ -395,15 +395,9 @@ protected:
 
 	void readLine( void );
 
-	File *m_file;															///< file pointer of file currently loading
-
-  enum
-  {
-    INI_READ_BUFFER = 8192                  ///< size of internal read buffer
-  };
-  char m_readBuffer[INI_READ_BUFFER];       ///< internal read buffer
-  unsigned m_readBufferNext;                ///< next char in read buffer
-  unsigned m_readBufferUsed;                ///< number of bytes in read buffer
+	char* m_readBuffer;                       ///< internal read buffer
+	unsigned m_readBufferNext;                ///< next char in read buffer
+	unsigned m_readBufferUsed;                ///< number of bytes in read buffer
 
 	AsciiString m_filename;										///< filename of file currently loading
 	INILoadType m_loadType;										///< load time for current file

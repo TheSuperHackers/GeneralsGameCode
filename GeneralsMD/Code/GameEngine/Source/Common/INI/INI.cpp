@@ -179,8 +179,9 @@ Bool INI::isValidINIFilename( const char *filename )
 INI::INI( void )
 {
 
-	m_file							= nullptr;
-  m_readBufferNext=m_readBufferUsed=0;
+	m_readBuffer = nullptr;
+	m_readBufferNext = 0;
+	m_readBufferUsed = 0;
 	m_filename					= "None";
 	m_loadType					= INI_LOAD_INVALID;
 	m_lineNum						= 0;
@@ -300,7 +301,7 @@ UnsignedInt INI::loadDirectory( AsciiString dirName, INILoadType loadType, Xfer 
 void INI::prepFile( AsciiString filename, INILoadType loadType )
 {
 	// if we have a file open already -- we can't do another one
-	if( m_file != nullptr )
+	if( m_readBuffer != nullptr )
 	{
 
 		DEBUG_CRASH(( "INI::load, cannot open file '%s', file already open", filename.str() ));
@@ -309,8 +310,8 @@ void INI::prepFile( AsciiString filename, INILoadType loadType )
 	}
 
 	// open the file
-	m_file = TheFileSystem->openFile(filename.str(), File::READ);
-	if( m_file == nullptr )
+	File* file = TheFileSystem->openFile(filename.str(), File::READ);
+	if( file == nullptr )
 	{
 
 		DEBUG_CRASH(( "INI::load, cannot open file '%s'", filename.str() ));
@@ -318,7 +319,9 @@ void INI::prepFile( AsciiString filename, INILoadType loadType )
 
 	}
 
-	m_file = m_file->convertToRAMFile();
+	m_readBufferNext = 0;
+	m_readBufferUsed = file->size();
+	m_readBuffer = file->readEntireAndClose();
 
 	// save our filename
 	m_filename = filename;
@@ -331,10 +334,12 @@ void INI::prepFile( AsciiString filename, INILoadType loadType )
 //-------------------------------------------------------------------------------------------------
 void INI::unPrepFile()
 {
-	// close the file
-	m_file->close();
-	m_file = nullptr;
-  m_readBufferUsed=m_readBufferNext=0;
+	// delete the buffer
+	delete[] m_readBuffer;
+	m_readBuffer = nullptr;
+	m_readBufferNext = 0;
+	m_readBufferUsed = 0;
+
 	m_filename = "None";
 	m_loadType = INI_LOAD_INVALID;
 	m_lineNum = 0;
@@ -454,55 +459,57 @@ UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 
 //-------------------------------------------------------------------------------------------------
 /** Read a line from the already open file.  Any comments will be removed and
-	* therefore ignored from any given line */
+	* therefore ignored from any given line
+	* 
+	* TheSuperHackers @performance xezon 18/01/2026 The file contents are now read directly from a
+	* full File Ram buffer into the INI Line Buffer without a third buffer in between.
+	*/
 //-------------------------------------------------------------------------------------------------
 void INI::readLine( void )
 {
 	// sanity
-	DEBUG_ASSERTCRASH( m_file, ("readLine(), file pointer is null") );
+	DEBUG_ASSERTCRASH( m_readBuffer, ("readLine(), read buffer is null") );
 
-  if (m_endOfFile)
-    *m_buffer=0;
-  else
-  {
-    char *p=m_buffer;
-    while (p!=m_buffer+INI_MAX_CHARS_PER_LINE)
-    {
-      // get next character
-      if (m_readBufferNext==m_readBufferUsed)
-      {
-        // refill buffer
-        m_readBufferNext=0;
-        m_readBufferUsed=m_file->read(m_readBuffer,INI_READ_BUFFER);
+	if (m_endOfFile)
+	{
+		*m_buffer = 0;
+	}
+	else
+	{
+		char *p = m_buffer;
+		while (p != m_buffer+INI_MAX_CHARS_PER_LINE)
+		{
+			// test end of read buffer
+			if (m_readBufferNext==m_readBufferUsed)
+			{
+				m_endOfFile = true;
+				*p = 0;
+				break;
+			}
+			// get next character
+			*p = m_readBuffer[m_readBufferNext++];
 
-        // EOF?
-        if (!m_readBufferUsed)
-        {
-          m_endOfFile=true;
-          *p=0;
-          break;
-        }
-      }
-      *p=m_readBuffer[m_readBufferNext++];
+			// LF?
+			if (*p == '\n')
+			{
+				*p = 0;
+				break;
+			}
 
-      // CR?
-      if (*p=='\n')
-      {
-        *p=0;
-        break;
-      }
+			DEBUG_ASSERTCRASH(*p != '\t', ("tab characters are not allowed in INI files (%s). please check your editor settings. Line Number %d", m_filename.str(), getLineNum()));
 
-      DEBUG_ASSERTCRASH(*p != '\t', ("tab characters are not allowed in INI files (%s). please check your editor settings. Line Number %d",m_filename.str(), getLineNum()));
+			// comment?
+			if (*p == ';')
+				*p = 0;
 
-      // comment?
-      if (*p==';')
-        *p=0;
-      // whitespace?
-      else if (*p>0&&*p<32)
-        *p=' ';
-      p++;
-    }
-    *p=0;
+			// whitespace?
+			else if (*p > 0 && *p < 32)
+				*p = ' ';
+
+			p++;
+		}
+
+		*p = 0;
 
 		// increase our line count
 		m_lineNum++;
@@ -510,18 +517,14 @@ void INI::readLine( void )
 		// check for at the max
 		if ( p == m_buffer+INI_MAX_CHARS_PER_LINE )
 		{
-
-			DEBUG_ASSERTCRASH( 0, ("Buffer too small (%d) and was truncated, increase INI_MAX_CHARS_PER_LINE",
-														 INI_MAX_CHARS_PER_LINE) );
-
+			DEBUG_ASSERTCRASH( 0, ("Buffer too small (%d) and was truncated, increase INI_MAX_CHARS_PER_LINE", INI_MAX_CHARS_PER_LINE) );
 		}
-  }
+	}
 
 	if (s_xfer)
 	{
 		s_xfer->xferUser( m_buffer, sizeof( char ) * strlen( m_buffer ) );
-		//DEBUG_LOG(("Xfer val is now 0x%8.8X in %s, line %s", ((XferCRC *)s_xfer)->getCRC(),
-			//m_filename.str(), m_buffer));
+		//DEBUG_LOG(("Xfer val is now 0x%8.8X in %s, line %s", ((XferCRC *)s_xfer)->getCRC(), m_filename.str(), m_buffer));
 	}
 }
 
