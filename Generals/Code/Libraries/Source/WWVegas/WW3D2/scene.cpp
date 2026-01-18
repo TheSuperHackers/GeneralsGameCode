@@ -45,7 +45,7 @@
  *   SimpleSceneClass::~SimpleSceneClass -- destructor                                         *
  *   SimpleSceneClass::Add_Render_Object -- add a render object to the scene                   *
  *   SimpleSceneClass::Remove_Render_Object -- remove a render object from this scene          *
- *   SimpleSceneClass::Visiblity_Check -- set the visiblity status of the render objects       *
+ *   SimpleSceneClass::Visiblity_Check -- set the visibility status of the render objects      *
  *   SimpleSceneClass::Render -- internal scene rendering function                             *
  *   SimpleSceneClass::Render -- Render this scene                                             *
  *   SimpleSceneClass::Create_Iterator -- create an iterator for this scene                    *
@@ -430,7 +430,7 @@ void SimpleSceneClass::Unregister(RenderObjClass * obj,RegType for_what)
 
 
 /***********************************************************************************************
- * SimpleSceneClass::Visiblity_Check -- set the visiblity status of the render objects         *
+ * SimpleSceneClass::Visiblity_Check -- set the visibility status of the render objects        *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *

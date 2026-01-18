@@ -64,7 +64,7 @@ class VertexMaterialClass;
 ** to the root and be constructed symmetrically...
 **
 ** NOTE3: OBBoxRenderObjClass is an oriented box which is aligned with its transform
-** but can have a center point that is offest from the transform's origin.
+** but can have a center point that is offset from the transform's origin.
 **
 */
 class BoxRenderObjClass : public RenderObjClass

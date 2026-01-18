@@ -492,7 +492,7 @@ public:
 	static ZTextureClass* Get_Shadow_Map(int idx) { return Shadow_Map[idx]; }
 	// for depth map support KJM ^
 
-	// shader system udpates KJM v
+	// shader system updates KJM v
 	static void Apply_Default_State();
 
 	static void Set_Vertex_Shader(DWORD vertex_shader);

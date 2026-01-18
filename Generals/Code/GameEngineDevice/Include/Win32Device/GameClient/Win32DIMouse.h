@@ -82,7 +82,7 @@ protected:
 	/// device implementation to get mouse event
 	virtual UnsignedByte getMouseEvent( MouseIO *result, Bool flush );
 
-	// new internal methods for our direct input implemetation
+	// new internal methods for our direct input implementation
 	void openMouse( void );  ///< create the direct input mouse
 	void closeMouse( void );  ///< close and release mouse resources
 	/// map direct input mouse data to our own format

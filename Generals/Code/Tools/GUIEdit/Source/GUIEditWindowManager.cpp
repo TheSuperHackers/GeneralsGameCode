@@ -739,7 +739,7 @@ void GUIEditWindowManager::pasteClipboard( void )
 	// the first window that we added ... since we know they were added
 	// at the head of the window list we can traverse from the first
 	// window added to the head of the window list to access each new
-	// window we just pasted.  As a convenience we will unselct anything
+	// window we just pasted.  As a convenience we will unselect anything
 	// selected and select all the windows we added
 	//
 	TheEditor->clearSelections();

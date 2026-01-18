@@ -220,7 +220,7 @@ struct GameWindowEditData
 
 // GameWindow -----------------------------------------------------------------
 /** Class definition for a game window.  These are the basic elements of the
-	* whole windowing sytem, all windows are GameWindows, as are all GUI controls
+	* whole windowing system, all windows are GameWindows, as are all GUI controls
 	* etc. */
 //-----------------------------------------------------------------------------
 class GameWindow : public MemoryPoolObject
@@ -324,7 +324,7 @@ public:
 	virtual void *winGetUserData( void );  ///< get the window user data
 	void winSetUserData( void *userData );  ///< set the user data
 
-	// heirarchy methods
+	// hierarchy methods
 	Int winSetParent( GameWindow *parent );  ///< set parent
 	GameWindow *winGetParent( void );  ///< get parent
 	Bool winIsChild( GameWindow *child );  ///< verifies parent
@@ -357,11 +357,11 @@ public:
 	Bool winPointInWindow( Int x, Int y );  /**is point inside this window?
 																					also return TRUE if point is in
 																					a child */
-	/** given a piont, return the child window which contains the mouse pointer,
+	/** given a point, return the child window which contains the mouse pointer,
 	if the point is not in a chilc, the function returns the 'window' paramater
 	back to the caller */
 	GameWindow *winPointInChild( Int x, Int y, Bool ignoreEnableCheck = FALSE, Bool playDisabledSound = FALSE );
-	/** finds the child which contains the mouse pointer - reguardless of
+	/** finds the child which contains the mouse pointer - regardless of
 	the enabled status of the child */
 	GameWindow *winPointInAnyChild( Int x, Int y, Bool ignoreHidden, Bool ignoreEnableCheck = FALSE );
 

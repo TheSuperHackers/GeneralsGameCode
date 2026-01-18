@@ -673,7 +673,7 @@ RenderObjClass * ParticleBufferClass::Clone(void) const
 
 int ParticleBufferClass::Get_Num_Polys(void) const
 {
-	// Currently in particle buffers, the cost happens to be equal to thwe polygon count.
+	// Currently in particle buffers, the cost happens to be equal to the polygon count.
 	return (int)Get_Cost();
 }
 

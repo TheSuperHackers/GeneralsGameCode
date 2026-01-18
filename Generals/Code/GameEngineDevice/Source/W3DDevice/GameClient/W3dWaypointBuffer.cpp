@@ -374,7 +374,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 										numPoints++;
 
 
-										//and for that matter did we find a far side coner?
+										//and for that matter did we find a far side corner?
 										if (pFarElbow)//did we find a nearest corner?
 										{
 											// but let's test the dot of the first elbow against the rally point to find out

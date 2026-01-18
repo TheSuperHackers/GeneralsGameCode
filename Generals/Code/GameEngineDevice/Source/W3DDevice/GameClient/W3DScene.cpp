@@ -1236,7 +1236,7 @@ void renderStenciledPlayerColor( UnsignedInt color, UnsignedInt stencilRef, Bool
 	DWORD	oldColorWriteEnable=0x12345678;
 	if (clear)
 	{
-		//we want to clear the stencil buffer to some known value whereever a player index is stored
+		//we want to clear the stencil buffer to some known value wherever a player index is stored
 		Int occludedMask=TheW3DShadowManager->getStencilShadowMask();
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_STENCILREF,      0x80808080 );
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_STENCILMASK,     occludedMask );	//isolate bits containing occluder|playerIndex
