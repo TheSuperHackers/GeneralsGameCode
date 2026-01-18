@@ -455,26 +455,30 @@ Bool Particle::update( void )
 	m_sizeRate *= m_sizeRateDamping;
 
 	//
-	// Update alpha
+	// Update alpha (if used)
 	//
-	m_alpha += m_alphaRate;
 
-	if (m_alphaTargetKey < MAX_KEYFRAMES && m_alphaKey[ m_alphaTargetKey ].frame)
+	if (m_system->getShaderType() != ParticleSystemInfo::ADDITIVE)
 	{
-		if (TheGameClient->getFrame() - m_createTimestamp >= m_alphaKey[ m_alphaTargetKey ].frame)
-		{
-			m_alpha = m_alphaKey[ m_alphaTargetKey ].value;
-			m_alphaTargetKey++;
-			computeAlphaRate();
-		}
-	}
-	else
-		m_alphaRate = 0.0f;
+		m_alpha += m_alphaRate;
 
-	if (m_alpha < 0.0f)
-		m_alpha = 0.0f;
-	else if (m_alpha > 1.0f)
-		m_alpha = 1.0f;
+		if (m_alphaTargetKey < MAX_KEYFRAMES && m_alphaKey[ m_alphaTargetKey ].frame)
+		{
+			if (TheGameClient->getFrame() - m_createTimestamp >= m_alphaKey[ m_alphaTargetKey ].frame)
+			{
+				m_alpha = m_alphaKey[ m_alphaTargetKey ].value;
+				m_alphaTargetKey++;
+				computeAlphaRate();
+			}
+		}
+		else
+			m_alphaRate = 0.0f;
+
+		if (m_alpha < 0.0f)
+			m_alpha = 0.0f;
+		else if (m_alpha > 1.0f)
+			m_alpha = 1.0f;
+	}
 
 
 	//
