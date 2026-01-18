@@ -1280,7 +1280,7 @@ void ProductionUpdate::xfer( Xfer *xfer )
 	{
 		AsciiString name;
 
-		// the queue should be emtpy now
+		// the queue should be empty now
 		if( m_productionQueue != nullptr )
 		{
 

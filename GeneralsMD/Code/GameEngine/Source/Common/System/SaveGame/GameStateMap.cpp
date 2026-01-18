@@ -291,7 +291,7 @@ void GameStateMap::xfer( Xfer *xfer )
 			// this is also an indication that we are saving for the first time a brand new
 			// map that has never been saved into this save file before (a save is also considered
 			// to be a first save as long as we are writing data to disk without having loaded
-			// this particluar map from the save file ... so if you load USA01 for the first
+			// this particular map from the save file ... so if you load USA01 for the first
 			// time and save, that is a first save ... then, without quitting, if you save
 			// again that is *also* considered a first save).  First save just determines
 			// whether the map file we embed in the save file is taken from the maps directory
@@ -498,7 +498,7 @@ void GameStateMap::clearScratchPadMaps( void )
 
 		//
 		// find the next file before we delete this one, this is probably not necessary
-		// to strcuture things this way so that the find next occurs before the file
+		// to structure things this way so that the find next occurs before the file
 		// delete, but it seems more correct to do so
 		//
 		if( FindNextFile( hFile, &item ) == 0 )

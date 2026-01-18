@@ -73,7 +73,7 @@ public:
 	SpawnPointProductionExitUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	// Required funcs to fufill interface requirements
+	// Required funcs to fulfill interface requirements
 	virtual Bool isExitBusy() const {return FALSE;}	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
 	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject );
 	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor );
@@ -91,7 +91,7 @@ protected:
 	Real m_worldAngleSpawnPoints[MAX_SPAWN_POINTS];		///< And what direction they should face
 	ObjectID m_spawnPointOccupier[MAX_SPAWN_POINTS];	///< Who I think is in each spot.  I can validate their existence to see if I am free to exit something.
 
-	// Required func to fufill Module requirement
+	// Required func to fulfill Module requirement
 
 private:
 	void initializeBonePositions();	///< Look up the bone positions and store them in world space coords

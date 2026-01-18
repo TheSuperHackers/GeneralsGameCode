@@ -617,7 +617,7 @@ Bool FunctionLexicon::validate( void )
 	Int i, j;
 	TableEntry *sourceEntry, *lookAtEntry;
 
-	// scan all talbes
+	// scan all tables
 	for( i = 0; i < MAX_FUNCTION_TABLES; i++ )
 	{
 

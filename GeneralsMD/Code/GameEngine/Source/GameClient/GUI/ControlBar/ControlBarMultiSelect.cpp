@@ -262,7 +262,7 @@ void ControlBar::populateMultiSelect( void )
 			// add the common commands of this drawable to the common command set
 			addCommonCommands( draw, firstDrawable );
 
-			// not adding the first drawble anymore
+			// not adding the first drawable anymore
 			firstDrawable = FALSE;
 
 			//

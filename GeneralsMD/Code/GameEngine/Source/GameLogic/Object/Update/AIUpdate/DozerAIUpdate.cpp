@@ -610,7 +610,7 @@ StateReturnType DozerActionDoActionState::update( void )
 					// this object how has influence in the controlling players' tech tree
 					/// @todo need to write this
 
-					// do some UI stuff for the constrolling player
+					// do some UI stuff for the controlling player
 					if( dozer->isLocallyViewed() )
 					{
 

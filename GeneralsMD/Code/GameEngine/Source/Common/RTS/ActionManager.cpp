@@ -224,7 +224,7 @@ Bool ActionManager::canTransferSuppliesAt( const Object *obj, const Object *tran
 	if( transferDest->testStatus(OBJECT_STATUS_SOLD) )
 		return FALSE;
 
-	// I must be something with a Supply Transfering AI interface
+	// I must be something with a Supply Transferring AI interface
 	const AIUpdateInterface *ai= obj->getAI();
 	if( ai == nullptr )
 		return FALSE;

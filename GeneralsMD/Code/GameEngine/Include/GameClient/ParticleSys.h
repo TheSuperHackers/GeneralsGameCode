@@ -784,7 +784,7 @@ public:
 
 	virtual void preloadAssets( TimeOfDay timeOfDay );
 
-	// these are only for use by partcle systems to link and unlink themselves
+	// these are only for use by particle systems to link and unlink themselves
 	void friend_addParticleSystem( ParticleSystem *particleSystemToAdd );
 	void friend_removeParticleSystem( ParticleSystem *particleSystemToRemove );
 
