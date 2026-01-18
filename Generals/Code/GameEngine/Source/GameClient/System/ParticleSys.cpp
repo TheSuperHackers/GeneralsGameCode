@@ -1083,6 +1083,7 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 
 	m_isIdentity = true;
 	m_transform.Make_Identity();
+	m_skipParentXfrm = false;
 
 	m_isStopped = false;
 	m_isDestroyed = false;
@@ -1935,19 +1936,23 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 			destroy();
 		}
 	}
-
-	if (m_attachedToObjectID)
+	else if (m_attachedToObjectID)
 	{
-		Object *attachedTo = TheGameLogic->findObjectByID( m_attachedToObjectID );
+		Object *objectAttachedTo = TheGameLogic->findObjectByID( m_attachedToObjectID );
 
-		if (attachedTo)
+		if (objectAttachedTo)
 		{
 			if (!isShrouded)
-				isShrouded = (attachedTo->getShroudedStatus(localPlayerIndex) >= OBJECTSHROUD_FOGGED);
+				isShrouded = (objectAttachedTo->getShroudedStatus(localPlayerIndex) >= OBJECTSHROUD_FOGGED);
 
-			parentXfrm = attachedTo->getTransformMatrix();
+			const Drawable * draw = objectAttachedTo->getDrawable();
+			if ( draw )
+				parentXfrm = draw->getTransformMatrix();
+			else
+				parentXfrm = objectAttachedTo->getTransformMatrix();
+
 			m_lastPos = m_pos;
-			m_pos = *attachedTo->getPosition();
+			m_pos = *objectAttachedTo->getPosition();
 		}
 		else
 		{
@@ -1961,15 +1966,23 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 
 	if (parentXfrm)
 	{
-		// if system has its own local transform, concatenate them
-		if (m_isLocalIdentity == false)
-#ifdef ALLOW_TEMPORARIES
-			m_transform = (*parentXfrm) * m_localTransform;
-#else
-			m_transform.mul(*parentXfrm, m_localTransform);
-#endif
+		if (m_skipParentXfrm)
+		{
+			//this particle system is already in world space so no need to apply parent xform.
+			m_transform = m_localTransform;
+		}
 		else
-			m_transform = *parentXfrm;
+		{
+			// if system has its own local transform, concatenate them
+			if (m_isLocalIdentity == false)
+	#ifdef ALLOW_TEMPORARIES
+				m_transform = (*parentXfrm) * m_localTransform;
+	#else
+				m_transform.mul(*parentXfrm, m_localTransform);
+	#endif
+			else
+				m_transform = *parentXfrm;
+		}
 
 		m_isIdentity = false;
 		transformSet = true;

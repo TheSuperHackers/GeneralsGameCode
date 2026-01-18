@@ -557,6 +557,7 @@ public:
 	void rotateLocalTransformX( Real x );				///< rotate local transform matrix
 	void rotateLocalTransformY( Real y );				///< rotate local transform matrix
 	void rotateLocalTransformZ( Real z );				///< rotate local transform matrix
+	void setSkipParentXfrm(Bool enable) { m_skipParentXfrm = enable; } ///<disable transforming particle system with parent matrix.
 
 	const Coord3D *getDriftVelocity( void ) { return &m_driftVelocity; }	///< get the drift velocity of the system
 
@@ -709,6 +710,7 @@ protected:
 	Bool							m_isDestroyed;												///< are we destroyed and waiting for particles to die
 	Bool							m_isFirstPos;													///< true if this system hasn't been drawn before.
 	Bool							m_isSaveable;													///< true if this system should be saved/loaded
+	Bool							m_skipParentXfrm;											///< true if this system is already in world space.
 
 
 	// the actual particle system data is inherited from ParticleSystemInfo
