@@ -3706,7 +3706,7 @@ void InGameUI::postDraw( void )
 						{
 
 							// We don't draw our timers until we are finished with construction.
-							// It is important that let the SpecialPowerUpdate is add its timer in its constructor,,
+							// It is important that let the SpecialPowerUpdate is add its timer in its constructor,
 							// since the science for it could be added before construction is finished,
 							// And thus the timer set to READY before the timer is first drawn, here
 							if ( owningObject->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ))
