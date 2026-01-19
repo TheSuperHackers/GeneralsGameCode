@@ -24,7 +24,6 @@
 #include "WWMath/wwmath.h"
 
 #include <math.h>
-#include <stdio.h>
 
 static void appendMatrixCrc(XferCRC &xfer)
 {
@@ -72,8 +71,4 @@ UnsignedInt SimulationMathCrc::calculate()
     xfer.close();
 
     return xfer.getCRC();
-}
-
-void SimulationMathCrc::print() {
-    printf("Simulation Math CRC: %08X\n", calculate());
 }
