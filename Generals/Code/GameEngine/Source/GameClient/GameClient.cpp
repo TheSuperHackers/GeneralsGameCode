@@ -1358,7 +1358,7 @@ void GameClient::xfer( Xfer *xfer )
 	// !!!DON'T DO THIS!!! ----> xfer->xferDrawableID( &m_nextDrawableID ); <---- !!!DON'T DO THIS!!!
 
 	//
-	// xfer a table of contents that contain thing template and identifier pairs.  this
+	// xfer a table of contents that contains thing template and identifier pairs.  this
 	// table of contents is good for this save file only as unique numbers are only
 	// generated and stored for the actual things that are on this map
 	//
