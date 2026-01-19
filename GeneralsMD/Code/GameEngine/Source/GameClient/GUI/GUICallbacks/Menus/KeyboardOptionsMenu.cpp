@@ -1049,7 +1049,7 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 																							0 );
 							return MSG_HANDLED;
 						}
-						//else check is modifiers are present
+						//else check if modifiers are present
 						else
 						{
 							char c = e->text->getText().getCharAt(e->text->getTextLength() - 1 );
