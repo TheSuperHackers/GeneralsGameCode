@@ -1315,7 +1315,12 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	if (TheGameInfo)
 	{
 
-		if (TheGameEngine->isMultiplayerSession() || isSkirmishOrSkirmishReplay)
+		// TheSuperHackers @info bobtista 19/01/2026
+		// When loading a replay checkpoint, we need to call prepareForMP_or_Skirmish() to ensure
+		// the team setup matches what was saved in the checkpoint. The checkpoint was created
+		// during replay playback which may have had a different team configuration than the map.
+		Bool isReplayCheckpointLoad = loadingSaveGame && TheRecorder && TheRecorder->isPlaybackMode();
+		if (TheGameEngine->isMultiplayerSession() || isSkirmishOrSkirmishReplay || isReplayCheckpointLoad)
 		{
 			// Saves off any player, and resets the sides to 0 players so we can add the skirmish players.
 			TheSidesList->prepareForMP_or_Skirmish();
