@@ -45,13 +45,13 @@ Int GameMain()
 	TheGameEngine = CreateGameEngine();
 	TheGameEngine->init();
 
-	if (!TheGlobalData->m_simulateReplays.empty())
-	{
-		exitcode = ReplaySimulation::simulateReplays(TheGlobalData->m_simulateReplays, TheGlobalData->m_simulateReplayJobs);
-	}
-	else if (!TheGlobalData->m_loadReplayCheckpoint.isEmpty())
+	if (!TheGlobalData->m_loadReplayCheckpoint.isEmpty())
 	{
 		exitcode = ReplaySimulation::continueReplayFromCheckpoint(TheGlobalData->m_loadReplayCheckpoint);
+	}
+	else if (!TheGlobalData->m_simulateReplays.empty())
+	{
+		exitcode = ReplaySimulation::simulateReplays(TheGlobalData->m_simulateReplays, TheGlobalData->m_simulateReplayJobs);
 	}
 	else
 	{
