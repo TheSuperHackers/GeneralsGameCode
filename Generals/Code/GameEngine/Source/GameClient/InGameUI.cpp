@@ -2425,7 +2425,7 @@ void InGameUI::createMouseoverHint( const GameMessage *msg )
 		{
 
 			//Ahh, here is a weird exception: if the moused-over drawable is a mob-member
-			//(e.g. AngryMob), Lets fool the UI into creating the hint for the NEXUS instead...
+			//(e.g. AngryMob), Let's fool the UI into creating the hint for the NEXUS instead...
  			if (obj->isKindOf( KINDOF_IGNORED_IN_GUI ))
  			{
  				static NameKeyType key_MobMemberSlavedUpdate = NAMEKEY( "MobMemberSlavedUpdate" );
