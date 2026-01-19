@@ -24,5 +24,4 @@ class SimulationMathCrc
 {
 public:
 	static UnsignedInt calculate();
-	static void print();
 };
