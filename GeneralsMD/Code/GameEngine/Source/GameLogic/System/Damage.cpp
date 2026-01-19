@@ -73,6 +73,9 @@ const char* const DamageTypeFlags::s_bitNameList[] =
 	"STEALTHJET_MISSILES",
 	"MOLOTOV_COCKTAIL",
 	"COMANCHE_VULCAN",
+#if RTS_GENERALS
+	"FLESHY_SNIPER",
+#endif
 	"SUBDUAL_MISSILE",
 	"SUBDUAL_VEHICLE",
 	"SUBDUAL_BUILDING",
@@ -80,9 +83,6 @@ const char* const DamageTypeFlags::s_bitNameList[] =
 	"MICROWAVE",
 	"KILL_GARRISONED",
 	"STATUS",
-#if USE_OBSOLETE_GENERALS_CODE
-	"FLESHY_SNIPER",
-#endif
 
 	nullptr
 };
