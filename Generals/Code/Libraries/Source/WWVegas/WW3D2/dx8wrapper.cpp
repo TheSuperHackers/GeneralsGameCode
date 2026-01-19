@@ -1665,7 +1665,12 @@ void DX8Wrapper::End_Scene(bool flip_frames)
 {
 	DX8_THREAD_ASSERT();
 #ifdef RTS_IMGUI_ENABLED
-	ImGui_ImplDX8_RenderDrawData(ImGui::GetDrawData());
+	{
+		ImDrawData* data = ImGui::GetDrawData();
+		if (data && data->CmdListsCount > 0) {
+			ImGui_ImplDX8_RenderDrawData(ImGui::GetDrawData());
+		}
+	}
 #endif
 	DX8CALL(EndScene());
 
