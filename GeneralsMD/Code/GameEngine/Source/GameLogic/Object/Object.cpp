@@ -6279,7 +6279,7 @@ void Object::defect( Team* newTeam, UnsignedInt detectionTime )
 
 	// defect any mines that are owned by this structure, right now.
 	// unfortunately, structures don't keep list of mines they own, so we must do
-	// this the hard way :-( [fortunately, this does't happen very often, so this
+	// this the hard way :-( [fortunately, this doesn't happen very often, so this
 	// is probably an acceptable, if icky, solution.] (srj)
 	for (Object* mine = TheGameLogic->getFirstObject(); mine; mine = mine->getNextObject())
 	{
