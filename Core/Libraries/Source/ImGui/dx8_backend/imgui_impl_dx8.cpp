@@ -65,7 +65,10 @@ void ImGui_ImplDX8_SetupRenderState(ImDrawData* draw_data) {
     }
 
     // Setup render state: fixed-pipeline, alpha-blending, no face culling, no depth testing, shade mode (for gradient), bilinear sampling.
-    bd->pd3dDevice->GetDepthStencilSurface(&bd->realDepthStencilBuffer);
+    // Check result to prevent crash when restoring depth buffer with SetRenderTarget
+    if (bd->pd3dDevice->GetDepthStencilSurface(&bd->realDepthStencilBuffer) != D3D_OK) {
+        bd->realDepthStencilBuffer = nullptr;
+    }
     bd->pd3dDevice->SetRenderTarget(nullptr, bd->DepthBuffer);
     bd->pd3dDevice->SetPixelShader(NULL);
     bd->pd3dDevice->SetVertexShader(D3DFVF_CUSTOMVERTEX);
@@ -126,7 +129,10 @@ void ImGui_ImplDX8_SetupRenderState(ImDrawData* draw_data) {
 void build_mask_vbuffer(const RECT* rect) {
     ImGui_ImplDX8_Data* bd = ImGui_ImplDX8_GetBackendData();
     CUSTOMVERTEX* vtx_dst{};
-    bd->maskVB->Lock(0, (UINT)(6 * sizeof(CUSTOMVERTEX)), (BYTE**)&vtx_dst, 0);
+    // Check Lock result to prevent null pointer dereference
+    if (bd->maskVB->Lock(0, (UINT)(6 * sizeof(CUSTOMVERTEX)), (BYTE**)&vtx_dst, 0) != D3D_OK) {
+        return;
+    }
     vtx_dst[0].pos[0] = (float)rect->left;
     vtx_dst[0].pos[1] = (float)rect->bottom;
     vtx_dst[0].pos[2] = 0;
@@ -197,7 +203,10 @@ void ImGui_ImplDX8_RenderDrawData(ImDrawData* draw_data) {
         if (bd->pd3dDevice->CreateVertexBuffer(6 * sizeof(CUSTOMVERTEX), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &bd->maskVB) < 0) return;
         if (bd->pd3dDevice->CreateIndexBuffer(6, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, sizeof(ImDrawIdx) == 2 ? D3DFMT_INDEX16 : D3DFMT_INDEX32, D3DPOOL_DEFAULT, &bd->maskIB) < 0) return;
         ImDrawIdx* idx_dst{};
-        bd->maskIB->Lock(0, 6 * sizeof(ImDrawIdx), (BYTE**)&idx_dst, D3DLOCK_DISCARD);
+        // Check Lock result to prevent null pointer dereference
+        if (bd->maskIB->Lock(0, 6 * sizeof(ImDrawIdx), (BYTE**)&idx_dst, D3DLOCK_DISCARD) != D3D_OK) {
+            return;
+        }
         idx_dst[0] = 0;
         idx_dst[1] = 1;
         idx_dst[2] = 2;
