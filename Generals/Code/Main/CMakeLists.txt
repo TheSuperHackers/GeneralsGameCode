@@ -85,3 +85,9 @@ if(MSVC)
         RTS.RC
     )
 endif()
+
+# Strip debug symbols to separate file for MinGW Release builds
+# This creates generalsv.exe.debug (similar to MSVC .pdb files)
+if(MINGW AND COMMAND add_debug_strip_target)
+    add_debug_strip_target(g_generals)
+endif()

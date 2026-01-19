@@ -34,11 +34,10 @@ if(MSVC)
     add_link_options("/INCREMENTAL:NO")
 else()
     # We go a bit wild here and assume any other compiler we are going to use supports -g for debug info.
-    # For MinGW, skip adding -g to Release builds
-    if(NOT (MINGW AND CMAKE_BUILD_TYPE STREQUAL "Release"))
-        string(APPEND CMAKE_CXX_FLAGS_RELEASE " -g")
-        string(APPEND CMAKE_C_FLAGS_RELEASE " -g")
-    endif()
+    # Add debug symbols to Release builds for crash dump analysis, profiling, and post-mortem debugging.
+    # For MinGW, symbols will be stripped to separate .debug files (matching MSVC PDB workflow).
+    string(APPEND CMAKE_CXX_FLAGS_RELEASE " -g")
+    string(APPEND CMAKE_C_FLAGS_RELEASE " -g")
 endif()
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

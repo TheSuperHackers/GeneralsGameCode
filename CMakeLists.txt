@@ -36,6 +36,9 @@ project(genzh LANGUAGES C CXX)
 # This file handles extra settings wanted/needed for different compilers.
 include(cmake/compilers.cmake)
 
+# Debug symbol stripping for Release builds (MinGW)
+include(cmake/debug_strip.cmake)
+
 include(FetchContent)
 
 # MinGW-w64 specific configuration
