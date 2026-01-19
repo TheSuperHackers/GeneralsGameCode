@@ -430,7 +430,7 @@ void SpecialPowerModule::startPowerRecharge()
 Bool SpecialPowerModule::initiateIntentToDoSpecialPower( const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions )
 {
 	Bool valid = false;
-	// tell our update modules that we intended to do this special power.
+	// tell our update modules that we intend to do this special power.
 	for( BehaviorModule** u = getObject()->getBehaviorModules(); *u; ++u )
 	{
 		SpecialPowerUpdateInterface* spu = (*u)->getSpecialPowerUpdateInterface();
