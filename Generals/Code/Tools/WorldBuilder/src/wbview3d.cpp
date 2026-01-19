@@ -576,7 +576,7 @@ void WbView3d::reset3dEngineDisplaySize(Int width, Int height)
 	// TheSuperHackers @bugfix jurassiclizard 19/01/2026  Fix Generals World-builder Crash
 	// when Switching from one Window size to another (#2008), Brought the logic to be the exact same
 	// as in the generals zero-hour WorldBuilder which is known to work without crashing: Removing shutdown and reinit
-	// appears to resolve the issue.
+	// when resetting the device resolution appears to resolve the issue.
 	// When shutting down and reinitializing the device might not be ready yet by the time
 	// the call is made again to Wd3ShaderManager::init() and this causes the Generals WorldBuilder to crash
 	// when resizing from a resolution to another and then back to that resolution again.
