@@ -630,7 +630,7 @@ void ControlBar::updateContextCommand( void )
 		obj = m_currentSelectedDrawable->getObject();
 
 	//
-	// the contents of objects are usually showed on the UI, when those contents change
+	// the contents of objects are usually shown on the UI, when those contents change
 	// we always to update the UI
 	//
 	ContainModuleInterface *contain = obj ? obj->getContain() : nullptr;
