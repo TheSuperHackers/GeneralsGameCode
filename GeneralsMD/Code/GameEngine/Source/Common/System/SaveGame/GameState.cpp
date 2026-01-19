@@ -1002,8 +1002,9 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 	}
 
 	// open file for partial loading
+	AsciiString filepath = getFilePathInSaveDirectory(filename);
 	XferLoad xferLoad;
-	xferLoad.open( filename );
+	xferLoad.open( filepath );
 
 	//
 	// disable post processing cause we're not really doing a load of game data that
