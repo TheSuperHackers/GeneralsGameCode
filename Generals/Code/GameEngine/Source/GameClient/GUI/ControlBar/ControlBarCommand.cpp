@@ -631,7 +631,7 @@ void ControlBar::updateContextCommand( void )
 
 	//
 	// the contents of objects are usually shown on the UI, when those contents change
-	// we always to update the UI
+	// we always update the UI
 	//
 	ContainModuleInterface *contain = obj ? obj->getContain() : nullptr;
 	if( contain && contain->getContainMax() > 0 &&
