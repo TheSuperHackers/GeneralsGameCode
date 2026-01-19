@@ -145,6 +145,7 @@ public:
 
 	void setArchiveEnabled(Bool enable) { m_archiveReplays = enable; } ///< Enable or disable replay archiving.
 	void stopRecording();															///< Stop recording and close m_file.
+	Bool initializeReplayForCheckpointLoad(const AsciiString &replayFilename);	///< Initialize replay state before loading a checkpoint.
 protected:
 	void startRecording(GameDifficulty diff, Int originalGameMode, Int rankPoints, Int maxFPS);					///< Start recording to m_file.
 	void writeToFile(GameMessage *msg);								///< Write this GameMessage to m_file.
@@ -187,6 +188,8 @@ protected:
 	Int m_originalGameMode; // valid in replays
 
 	UnsignedInt m_nextFrame;												///< The Frame that the next message is to be executed on.  This can be -1.
+
+	Bool m_checkpointLoadInProgress;									///< Set to TRUE during replay checkpoint loading to preserve mode across reset.
 };
 
 extern RecorderClass *TheRecorder;

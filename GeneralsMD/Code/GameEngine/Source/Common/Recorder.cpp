@@ -374,6 +374,7 @@ RecorderClass::RecorderClass()
 	m_archiveReplays = FALSE;
 	m_nextFrame = 0;
 	m_wasDesync = FALSE;
+	m_checkpointLoadInProgress = FALSE;
 	init(); // just for the heck of it.
 }
 
@@ -391,6 +392,19 @@ RecorderClass::~RecorderClass() {
  * will set the recorder mode to RECORDERMODETYPE_PLAYBACK.
  */
 void RecorderClass::init() {
+	// TheSuperHackers @info bobtista 19/01/2026
+	// When loading a replay checkpoint, we need to preserve the mode and game info
+	// that were set by initializeReplayForCheckpointLoad() before loadGame() called reset().
+	if (m_checkpointLoadInProgress)
+	{
+		m_file = nullptr;
+		m_fileName.clear();
+		m_currentFilePosition = 0;
+		m_wasDesync = FALSE;
+		m_doingAnalysis = FALSE;
+		return;
+	}
+
 	m_originalGameMode = GAME_NONE;
 	m_mode = RECORDERMODETYPE_NONE;
 	m_file = nullptr;
@@ -985,6 +999,41 @@ Bool RecorderClass::simulateReplay(AsciiString filename)
 	if (success)
 		m_mode = RECORDERMODETYPE_SIMULATION_PLAYBACK;
 	return success;
+}
+
+// TheSuperHackers @info bobtista 19/01/2026
+// Initialize the recorder state from a replay file, without starting a new game.
+// This is used when loading a checkpoint saved during replay playback.
+// We need to read the replay header to populate m_gameInfo so that when
+// loadGame() calls startNewGame(), it will use the correct team setup from the replay.
+Bool RecorderClass::initializeReplayForCheckpointLoad(const AsciiString &replayFilename)
+{
+	// TheSuperHackers @info bobtista 19/01/2026
+	// Set the flag to preserve mode and game info during loadGame() reset.
+	// This flag will be cleared in loadPostProcess() after the checkpoint is fully loaded.
+	m_checkpointLoadInProgress = TRUE;
+	m_mode = RECORDERMODETYPE_SIMULATION_PLAYBACK;
+
+	ReplayHeader header;
+	header.forPlayback = TRUE;
+	header.filename = replayFilename;
+
+	Bool success = readReplayHeader(header);
+	if (!success)
+	{
+		m_checkpointLoadInProgress = FALSE;
+		m_mode = RECORDERMODETYPE_NONE;
+		return FALSE;
+	}
+
+	// Close the file - it will be reopened at the correct position during loadPostProcess
+	if (m_file != nullptr)
+	{
+		m_file->close();
+		m_file = nullptr;
+	}
+
+	return TRUE;
 }
 
 #if defined(RTS_DEBUG)
@@ -1932,6 +1981,10 @@ void RecorderClass::xferCRCInfo( Xfer *xfer )
 
 void RecorderClass::loadPostProcess( void )
 {
+	// TheSuperHackers @info bobtista 19/01/2026
+	// Clear the checkpoint load flag now that the save data has been fully loaded.
+	m_checkpointLoadInProgress = FALSE;
+
 	if ( !isPlaybackMode() )
 	{
 		return;
