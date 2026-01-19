@@ -360,7 +360,7 @@ public:
 																					also return TRUE if point is in
 																					a child */
 	/** given a point, return the child window which contains the mouse pointer,
-	if the point is not in a chilc, the function returns the 'window' paramater
+	if the point is not in a child, the function returns the 'window' parameter
 	back to the caller */
 	GameWindow *winPointInChild( Int x, Int y, Bool ignoreEnableCheck = FALSE, Bool playDisabledSound = FALSE );
 	/** finds the child which contains the mouse pointer - regardless of
