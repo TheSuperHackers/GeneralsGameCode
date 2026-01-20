@@ -1838,15 +1838,13 @@ void INI::parseSoundsList( INI* ini, void *instance, void *store, const void* /*
 //-------------------------------------------------------------------------------------------------
 void INI::parseDamageTypeFlags(INI* ini, void* /*instance*/, void* store, const void* /*userData*/)
 {
-	DamageTypeFlags flags = DAMAGE_TYPE_FLAGS_NONE;
-	flags.flip();
+	DamageTypeFlags flags = DAMAGE_TYPE_FLAGS_ALL;
 
 	for (const char* token = ini->getNextToken(); token; token = ini->getNextTokenOrNull())
 	{
 		if (stricmp(token, "ALL") == 0)
 		{
-			flags = DAMAGE_TYPE_FLAGS_NONE;
-			flags.flip();
+			flags = DAMAGE_TYPE_FLAGS_ALL;
 			continue;
 		}
 		if (stricmp(token, "NONE") == 0)

@@ -215,4 +215,3 @@ inline void FLIP_KINDOFMASK(KindOfMaskType& m)
 // defined in Common/System/Kindof.cpp
 extern KindOfMaskType KINDOFMASK_NONE;	// inits to all zeroes
 extern KindOfMaskType KINDOFMASK_FS;		// Initializes all FS types for faction structures.
-void initKindOfMasks();

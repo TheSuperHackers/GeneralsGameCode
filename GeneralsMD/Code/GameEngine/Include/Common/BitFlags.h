@@ -58,14 +58,20 @@ public:
 	/*
 		just a little syntactic sugar so that there is no "foo = 0" compatible constructor
 	*/
-	enum BogusInitType
-	{
-		kInit = 0
-	};
+	enum BogusInitType { kInit };
+	enum InitSetAllType { kInitSetAll };
 
 	BitFlags()
 	{
 	}
+
+	// This constructor sets all bits to 1
+	BitFlags(InitSetAllType)
+	{
+		m_bits.set();
+	}
+
+	// TheSuperHackers @todo Replace with variadic template
 
 	BitFlags(BogusInitType k, Int idx1)
 	{
@@ -102,33 +108,15 @@ public:
 		m_bits.set(idx5);
 	}
 
-	BitFlags(BogusInitType k,
-										Int idx1,
-										Int idx2,
-										Int idx3,
-										Int idx4,
-										Int idx5,
-										Int idx6,
-										Int idx7,
-										Int idx8,
-										Int idx9,
-										Int idx10,
-										Int idx11,
-										Int idx12
-									)
+	// Set all given indices in the array.
+	BitFlags(BogusInitType, const Int* idxs, Int count)
 	{
-		m_bits.set(idx1);
-		m_bits.set(idx2);
-		m_bits.set(idx3);
-		m_bits.set(idx4);
-		m_bits.set(idx5);
-		m_bits.set(idx6);
-		m_bits.set(idx7);
-		m_bits.set(idx8);
-		m_bits.set(idx9);
-		m_bits.set(idx10);
-		m_bits.set(idx11);
-		m_bits.set(idx12);
+		const Int* idx = idxs;
+		const Int* end = idxs + count;
+		for (; idx < end; ++idx)
+		{
+			m_bits.set(*idx);
+		}
 	}
 
 	Bool operator==(const BitFlags& that) const
