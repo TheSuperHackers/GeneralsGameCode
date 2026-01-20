@@ -76,6 +76,10 @@ public:
 	//{{AFX_VIRTUAL(WbView3d)
 	protected:
 	virtual void OnDraw(CDC* pDC);      // overridden to draw this view
+#ifdef RTS_HAS_IMGUI
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+#endif
 	//}}AFX_VIRTUAL
 
 // Implementation
