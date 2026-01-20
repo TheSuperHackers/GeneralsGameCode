@@ -322,13 +322,16 @@ int ReplaySimulation::continueReplayFromCheckpoint(const AsciiString &checkpoint
 
 	DEBUG_LOG(("Resuming replay from frame %d", TheGameLogic->getFrame()));
 
+#ifdef _DEBUG
 	DWORD startTimeMillis = GetTickCount();
 	UnsignedInt totalTimeSec = TheRecorder->getPlaybackFrameCount() / LOGICFRAMES_PER_SECOND;
+#endif
 
 	while (TheRecorder->isPlaybackInProgress())
 	{
 		TheGameClient->updateHeadless();
 
+#ifdef _DEBUG
 		const int progressFrameInterval = 10*60*LOGICFRAMES_PER_SECOND;
 		if (TheGameLogic->getFrame() != 0 && TheGameLogic->getFrame() % progressFrameInterval == 0)
 		{
@@ -337,6 +340,7 @@ int ReplaySimulation::continueReplayFromCheckpoint(const AsciiString &checkpoint
 			DEBUG_LOG(("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d",
 					realTimeSec/60, realTimeSec%60, gameTimeSec/60, gameTimeSec%60, totalTimeSec/60, totalTimeSec%60));
 		}
+#endif
 		TheGameLogic->UPDATE();
 		if (TheRecorder->sawCRCMismatch())
 		{
@@ -345,15 +349,19 @@ int ReplaySimulation::continueReplayFromCheckpoint(const AsciiString &checkpoint
 		}
 	}
 
-	UnsignedInt gameTimeSec = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
-	UnsignedInt realTimeSec = (GetTickCount()-startTimeMillis) / 1000;
-	DEBUG_LOG(("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d",
-			realTimeSec/60, realTimeSec%60, gameTimeSec/60, gameTimeSec%60, totalTimeSec/60, totalTimeSec%60));
+#ifdef _DEBUG
+	{
+		UnsignedInt gameTimeSec = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
+		UnsignedInt realTimeSec = (GetTickCount()-startTimeMillis) / 1000;
+		DEBUG_LOG(("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d",
+				realTimeSec/60, realTimeSec%60, gameTimeSec/60, gameTimeSec%60, totalTimeSec/60, totalTimeSec%60));
 
-	if (TheRecorder->sawCRCMismatch())
-		DEBUG_LOG(("CRC Mismatch detected!"));
-	else
-		DEBUG_LOG(("Replay completed successfully"));
+		if (TheRecorder->sawCRCMismatch())
+			DEBUG_LOG(("CRC Mismatch detected!"));
+		else
+			DEBUG_LOG(("Replay completed successfully"));
+	}
+#endif
 
 	return numErrors != 0 ? 1 : 0;
 }

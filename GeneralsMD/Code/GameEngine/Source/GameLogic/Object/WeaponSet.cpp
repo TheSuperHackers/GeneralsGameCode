@@ -317,7 +317,22 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 {
 	const WeaponTemplateSet* set = obj->getTemplate()->findWeaponTemplateSet(obj->getWeaponSetFlags());
 	DEBUG_ASSERTCRASH(set, ("findWeaponSet should never return null"));
-	if (set && set != m_curWeaponTemplateSet)
+	// TheSuperHackers @bugfix bobtista 20/01/2026 After checkpoint load, the m_curWeaponTemplateSet pointer
+	// may differ from set even though they represent the same weapon set (pointer aliasing after load).
+	// Compare by flags instead of by pointer to avoid unnecessary weapon reallocation which corrupts
+	// weapon timing state and causes CRC mismatches during replay.
+	Bool needsUpdate = set && set != m_curWeaponTemplateSet;
+	if (needsUpdate && m_curWeaponTemplateSet)
+	{
+		// If flags match, the weapon sets are logically equivalent - no need to reallocate
+		if (obj->getWeaponSetFlags() == m_curWeaponTemplateSet->friend_getWeaponSetFlags())
+		{
+			// Just update the pointer to the correct address without reallocating weapons
+			m_curWeaponTemplateSet = set;
+			needsUpdate = false;
+		}
+	}
+	if (needsUpdate)
 	{
 		if( ! set->isWeaponLockSharedAcrossSets() )
 		{
