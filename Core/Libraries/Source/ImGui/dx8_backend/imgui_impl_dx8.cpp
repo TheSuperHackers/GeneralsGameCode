@@ -61,7 +61,7 @@ void ImGui_ImplDX8_SetupRenderState(ImDrawData* draw_data) {
     }
     if (pSurface) {
         pSurface->Release();
-        pSurface = NULL;
+        pSurface = nullptr;
     }
 
     // Setup render state: fixed-pipeline, alpha-blending, no face culling, no depth testing, shade mode (for gradient), bilinear sampling.
@@ -70,7 +70,7 @@ void ImGui_ImplDX8_SetupRenderState(ImDrawData* draw_data) {
         bd->realDepthStencilBuffer = nullptr;
     }
     bd->pd3dDevice->SetRenderTarget(nullptr, bd->DepthBuffer);
-    bd->pd3dDevice->SetPixelShader(NULL);
+    bd->pd3dDevice->SetPixelShader(0);
     bd->pd3dDevice->SetVertexShader(D3DFVF_CUSTOMVERTEX);
     bd->pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
     bd->pd3dDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
@@ -308,7 +308,7 @@ void ImGui_ImplDX8_RenderDrawData(ImDrawData* draw_data) {
                 bd->pd3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
                 bd->pd3dDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_REPLACE);
                 bd->pd3dDevice->SetRenderState(D3DRS_STENCILREF, 0xFF);
-                bd->pd3dDevice->Clear(0, NULL, D3DCLEAR_STENCIL, 0, 1.0f, 0);
+                bd->pd3dDevice->Clear(0, nullptr, D3DCLEAR_STENCIL, 0, 1.0f, 0);
                 bd->pd3dDevice->SetStreamSource(0, bd->maskVB, sizeof(CUSTOMVERTEX));
                 bd->pd3dDevice->SetIndices(bd->maskIB, 0);
                 bd->pd3dDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 4, 0, 2);
