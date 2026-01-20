@@ -109,15 +109,9 @@ int ReplaySimulation::simulateReplaysInThisProcess(const std::vector<AsciiString
 				{
 					// TheSuperHackers @info bobtista 19/01/2026
 					// Pass just the filename to saveGame() - it will be saved to the Save directory.
-					DEBUG_LOG(("Saving checkpoint at frame %d to %s", TheGameLogic->getFrame(), TheGlobalData->m_replaySaveTo.str()));
 					SaveCode result = TheGameState->saveGame(TheGlobalData->m_replaySaveTo, UnicodeString::TheEmptyString, SAVE_FILE_TYPE_NORMAL);
-					if (result == SC_OK)
+					if (result != SC_OK)
 					{
-						DEBUG_LOG(("Checkpoint saved successfully"));
-					}
-					else
-					{
-						DEBUG_LOG(("Failed to save checkpoint (error %d)", result));
 						numErrors++;
 					}
 					TheRecorder->stopPlayback();
