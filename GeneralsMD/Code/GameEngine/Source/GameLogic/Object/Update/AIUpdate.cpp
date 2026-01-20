@@ -5145,21 +5145,23 @@ void AIUpdateInterface::xfer( Xfer *xfer )
 	xfer->xferCoord3D(&m_requestedDestination);
 	xfer->xferCoord3D(&m_requestedDestination2);
 
-	// Not needed - we will recompute paths on load.
-	//xfer->xferUnsignedInt(&m_pathTimestamp);
+	// TheSuperHackers @bugfix bobtista 20/01/2026 Serialize m_pathTimestamp to prevent path recomputation
+	// timing differences after loading a checkpoint. Without this, units might recompute paths at
+	// different frames than in the original replay, causing simulation divergence.
+	xfer->xferUnsignedInt(&m_pathTimestamp);
 
 	xfer->xferObjectID(&m_ignoreObstacleID);
 	xfer->xferReal(&m_pathExtraDistance);
 	xfer->xferICoord2D(&m_pathfindGoalCell);
 	xfer->xferICoord2D(&m_pathfindCurCell);
 
-	// Not needed - jba.
-	//Int					m_blockedFrames;						///< Number of frames we've been blocked.
-	//Real				m_curMaxBlockedSpeed;				///< Max speed we can have and not run into blocking things.
-	//Bool				m_isBlocked;
-	//Bool				m_isBlockedAndStuck;				///< True if we are stuck & need to recompute path.
-	//Bool				m_isInUpdate;
-	//Bool				m_fixLocoInPostProcess;
+	// TheSuperHackers @bugfix bobtista 20/01/2026 Serialize blocked state to prevent movement behavior
+	// differences after loading a checkpoint. These fields affect path recomputation decisions.
+	xfer->xferInt(&m_blockedFrames);
+	xfer->xferReal(&m_curMaxBlockedSpeed);
+	xfer->xferBool(&m_isBlocked);
+	xfer->xferBool(&m_isBlockedAndStuck);
+	// m_isInUpdate and m_fixLocoInPostProcess are transient and don't need serialization
 
 	xfer->xferUnsignedInt(&m_ignoreCollisionsUntil);
 	xfer->xferUnsignedInt(&m_queueForPathFrame);
