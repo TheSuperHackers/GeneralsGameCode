@@ -2,8 +2,7 @@
  * The MIT License (MIT)
  *
  * Copyright (c) 2014 - 2025 Omar Cornut (Based on dx9 ImGui Backend)
- * Copyright (c) 2021 KoMaR1911
- * Copyright (c) 2025 Meigyoku-Thmn
+ * Copyright (c) 2025 Meigyoku-Thmn and others
  * Copyright (c) 2026 TheSuperHackers
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
