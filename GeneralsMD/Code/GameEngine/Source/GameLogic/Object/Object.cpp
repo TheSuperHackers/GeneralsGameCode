@@ -4621,7 +4621,7 @@ void Object::onDie( DamageInfo *damageInfo )
 	if( m_radarData )
 		TheRadar->removeObject( this );
 
-	// Just in case I have been sporting one of these fancy Terrain Decals,
+	// Just in case I have been sporting one of those fancy Terrain Decals,
 	//I naturally lose it now, because I'm dead.
 	Drawable *draw = getDrawable();
 	if (draw) draw->setTerrainDecalFadeTarget(0.0f, -0.03f);//fade...

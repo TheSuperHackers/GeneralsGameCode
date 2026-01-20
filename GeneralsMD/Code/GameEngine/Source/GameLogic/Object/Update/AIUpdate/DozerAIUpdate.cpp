@@ -607,7 +607,7 @@ StateReturnType DozerActionDoActionState::update( void )
 					// UnderConstruction just cleared, so update our upgrades
 					goalObject->updateUpgradeModules();
 
-					// this object how has influence in the controlling players' tech tree
+					// this object now has influence in the controlling players' tech tree
 					/// @todo need to write this
 
 					// do some UI stuff for the controlling player

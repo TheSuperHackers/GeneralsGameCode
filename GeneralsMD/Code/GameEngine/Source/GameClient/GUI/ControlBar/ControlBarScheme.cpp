@@ -39,7 +39,7 @@
 //	author:		Chris Huybregts
 //
 //	purpose:	Contains all the Command bar goodness in terms of how it looks
-//						For instructions on how to use, please see it's .h file
+//						For instructions on how to use, please see its .h file
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////

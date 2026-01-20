@@ -80,7 +80,7 @@ static void saturateRGB(RGBColor& color, Real factor)
 EMPUpdate::EMPUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
 
-	//s_lastInstanceSpunPositive = !s_lastInstanceSpunPositive; //Toggles STATIC BOOL
+	//s_lastInstanceSpunPositive = !s_lastInstanceSpunPositive; //TOGGLES STATIC BOOL
 
 	const EMPUpdateModuleData *data = getEMPUpdateModuleData();
 	if ( data )
@@ -414,7 +414,7 @@ LeafletDropBehavior::LeafletDropBehavior( Thing *thing, const ModuleData* module
 {
 
   m_fxFired = FALSE;
-	//s_lastInstanceSpunPositive = !s_lastInstanceSpunPositive; //Toggles STATIC BOOL
+	//s_lastInstanceSpunPositive = !s_lastInstanceSpunPositive; //TOGGLES STATIC BOOL
 
 	const LeafletDropBehaviorModuleData *data = getLeafletDropBehaviorModuleData();
 	if ( data )

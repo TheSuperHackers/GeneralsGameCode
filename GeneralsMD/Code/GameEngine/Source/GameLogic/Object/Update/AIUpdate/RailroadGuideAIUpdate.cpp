@@ -1573,7 +1573,7 @@ void RailroadBehavior::xfer( Xfer *xfer )
 		//Int m_wantsToBeLeadCarriage; ///< Am the carriage in front,
 		xfer->xferInt( &m_wantsToBeLeadCarriage );
 
-		//Bool m_disembark; ///< If I wait at a station, I should also evacuate everybody when I get theres
+		//Bool m_disembark; ///< If I wait at a station, I should also evacuate everybody when I get there
 		xfer->xferBool( &m_disembark );
 
 		//Bool m_inTunnel; ///< Am I in a tunnel, so I wil not snap to ground height, until the next waypoint,
