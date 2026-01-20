@@ -988,9 +988,38 @@ void TAiData::xfer( Xfer *xfer )
 {
 
 	// version
-	XferVersion currentVersion = 1;
+	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
+
+	// TheSuperHackers @info bobtista 20/01/2026 Serialize all TAiData state that is included in CRC.
+	if ( version >= 2 )
+	{
+		xfer->xferReal( &m_structureSeconds );
+		xfer->xferReal( &m_teamSeconds );
+		xfer->xferInt( &m_resourcesWealthy );
+		xfer->xferInt( &m_resourcesPoor );
+		xfer->xferUnsignedInt( &m_forceIdleFramesCount );
+		xfer->xferReal( &m_structuresWealthyMod );
+		xfer->xferReal( &m_teamWealthyMod );
+		xfer->xferReal( &m_structuresPoorMod );
+		xfer->xferReal( &m_teamPoorMod );
+		xfer->xferReal( &m_teamResourcesToBuild );
+		xfer->xferReal( &m_guardInnerModifierAI );
+		xfer->xferReal( &m_guardOuterModifierAI );
+		xfer->xferReal( &m_guardInnerModifierHuman );
+		xfer->xferReal( &m_guardOuterModifierHuman );
+		xfer->xferUnsignedInt( &m_guardChaseUnitFrames );
+		xfer->xferUnsignedInt( &m_guardEnemyScanRate );
+		xfer->xferUnsignedInt( &m_guardEnemyReturnScanRate );
+		xfer->xferReal( &m_alertRangeModifier );
+		xfer->xferReal( &m_aggressiveRangeModifier );
+		xfer->xferReal( &m_attackPriorityDistanceModifier );
+		xfer->xferReal( &m_maxRecruitDistance );
+		xfer->xferReal( &m_skirmishBaseDefenseExtraDistance );
+		xfer->xferReal( &m_repulsedDistance );
+		xfer->xferBool( &m_enableRepulsors );
+	}
 
 }
 
@@ -1034,9 +1063,51 @@ void AI::xfer( Xfer *xfer )
 {
 
 	// version
-	XferVersion currentVersion = 1;
+	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
+
+	// TheSuperHackers @info bobtista 20/01/2026 Serialize AI state that is included in CRC.
+	if ( version >= 2 )
+	{
+		xfer->xferSnapshot( m_pathfinder );
+
+		// Serialize TAiData chain (same as crc())
+		TAiData *aiData = m_aiData;
+		while ( aiData )
+		{
+			xfer->xferSnapshot( aiData );
+			aiData = aiData->m_next;
+		}
+
+		// Serialize AIGroup count and each group
+		Int groupCount = (Int)m_groupList.size();
+		xfer->xferInt( &groupCount );
+
+		if ( xfer->getXferMode() == XFER_SAVE )
+		{
+			for ( std::list<AIGroup *>::iterator groupIt = m_groupList.begin(); groupIt != m_groupList.end(); ++groupIt )
+			{
+				if ( *groupIt )
+				{
+					xfer->xferSnapshot( *groupIt );
+				}
+			}
+		}
+		else
+		{
+			// On load, iterate through existing groups and xfer them
+			// Groups should already exist from normal save/load process
+			std::list<AIGroup *>::iterator groupIt = m_groupList.begin();
+			for ( Int i = 0; i < groupCount && groupIt != m_groupList.end(); ++i, ++groupIt )
+			{
+				if ( *groupIt )
+				{
+					xfer->xferSnapshot( *groupIt );
+				}
+			}
+		}
+	}
 
 }
 

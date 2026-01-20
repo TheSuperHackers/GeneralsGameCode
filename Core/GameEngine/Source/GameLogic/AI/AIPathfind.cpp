@@ -11212,9 +11212,37 @@ void Pathfinder::xfer( Xfer *xfer )
 {
 
 	// version
-	XferVersion currentVersion = 1;
+	XferVersion currentVersion = 3;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
+
+	// TheSuperHackers @info bobtista 20/01/2026 Serialize pathfinder queue state for checkpoint CRC matching.
+	// The queue state is included in CRC calculation and must be restored exactly.
+	if ( version >= 2 )
+	{
+		xfer->xferInt( &m_queuePRHead );
+		xfer->xferInt( &m_queuePRTail );
+		for ( Int i = 0; i < PATHFIND_QUEUE_LEN; ++i )
+		{
+			xfer->xferObjectID( &m_queuedPathfindRequests[i] );
+		}
+	}
+
+	// TheSuperHackers @info bobtista 20/01/2026 Serialize all pathfinder state that is included in CRC.
+	if ( version >= 3 )
+	{
+		xfer->xferUser( &m_extent, sizeof(IRegion2D) );
+		xfer->xferBool( &m_isMapReady );
+		xfer->xferBool( &m_isTunneling );
+		xfer->xferUser( &m_ignoreObstacleID, sizeof(ObjectID) );
+		xfer->xferInt( &m_numWallPieces );
+		for ( Int i = 0; i < MAX_WALL_PIECES; ++i )
+		{
+			xfer->xferObjectID( &m_wallPieces[i] );
+		}
+		xfer->xferReal( &m_wallHeight );
+		xfer->xferInt( &m_cumulativeCellsAllocated );
+	}
 
 }
 
