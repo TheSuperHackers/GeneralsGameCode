@@ -496,11 +496,15 @@ void INI::readLine( void )
 
 			// comment?
 			if (*p == ';')
+			{
 				*p = 0;
+			}
 
 			// whitespace?
 			else if (*p > 0 && *p < 32)
+			{
 				*p = ' ';
+			}
 
 			p++;
 		}
