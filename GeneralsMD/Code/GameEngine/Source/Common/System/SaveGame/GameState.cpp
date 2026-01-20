@@ -1589,6 +1589,16 @@ void GameState::gameStatePostProcessLoad()
 	// clear the snapshot post process list as we are now done with it
 	m_snapshotPostProcessList.clear();
 
+	// TheSuperHackers @bugfix bobtista 20/01/2026 Initialize m_lastCell for all dirty modules before
+	// running the partition update when loading a replay checkpoint. Without this, the partition update
+	// triggers handleShroud() on objects whose m_lastCell (not serialized) differs from their actual
+	// cell position, which causes unlook()+look() to run and corrupts the shroud state.
+	Bool isReplayCheckpoint = (TheRecorder && TheRecorder->isPlaybackMode());
+	if ( isReplayCheckpoint )
+	{
+		ThePartitionManager->initLastCellsForDirtyModules();
+	}
+
 	// evil... must ensure this is updated prior to the script engine running the first time.
 	ThePartitionManager->update();
 
