@@ -41,8 +41,12 @@ if (WIN32)
 
     MESSAGE(STATUS "Enabling ImGui")
 
-    add_library(lib_imgui STATIC ${IMGUI_WIN32_DX8_ALL_SRCS})
-    target_include_directories(lib_imgui PUBLIC ${IMGUI_INCLUDE_DIRS})
+    add_library(lib_imgui STATIC ${IMGUI_WIN32_DX8_ALL_SRCS}
+        "${CMAKE_CURRENT_LIST_DIR}/wrapper/ImGuiFrameManager.cpp"
+    )
+    target_include_directories(lib_imgui
+        PUBLIC ${IMGUI_INCLUDE_DIRS}
+        PUBLIC "${CMAKE_CURRENT_LIST_DIR}/wrapper")
     target_link_libraries(lib_imgui PRIVATE d3d8lib)
 
     # use our own imconfig.h
