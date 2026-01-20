@@ -476,6 +476,7 @@ void INI::readLine( void )
 	}
 	else
 	{
+		// read up till the newline or semicolon character, or until out of space
 		char *p = m_buffer;
 		while (p != m_buffer+INI_MAX_CHARS_PER_LINE)
 		{
@@ -486,10 +487,11 @@ void INI::readLine( void )
 				*p = 0;
 				break;
 			}
+
 			// get next character
 			*p = m_readBuffer[m_readBufferNext++];
 
-			// LF?
+			// check for new line
 			if (*p == '\n')
 			{
 				*p = 0;
@@ -498,13 +500,13 @@ void INI::readLine( void )
 
 			DEBUG_ASSERTCRASH(*p != '\t', ("tab characters are not allowed in INI files (%s). please check your editor settings. Line Number %d", m_filename.str(), getLineNum()));
 
-			// comment?
+			// if this is a semicolon, that represents the start of a comment
 			if (*p == ';')
 			{
 				*p = 0;
 			}
 
-			// whitespace?
+			// make whitespace characters actual spaces
 			else if (*p > 0 && *p < 32)
 			{
 				*p = ' ';
