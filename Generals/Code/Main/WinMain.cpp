@@ -67,7 +67,7 @@
 #ifdef RTS_ENABLE_CRASHDUMP
 #include "Common/MiniDumper.h"
 #endif
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 #include "imgui.h"
 #endif
 
@@ -298,7 +298,7 @@ static const char *messageToString(unsigned int message)
 //              critically before early returns in RTS_DEBUG mode (frame stepping) to ensure frames are properly closed and the demo window displays.
 //
 // See GameClient::update(), DX8Wrapper::Create_Device(), DX8Wrapper::Init(), DX8Wrapper::Shutdown(), DX8Wrapper::End_Scene(), and WndProc() for implementation details.
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND, UINT, WPARAM, LPARAM);
 #endif
 // WndProc ====================================================================
@@ -307,7 +307,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND, UINT, WPARAM,
 LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 													WPARAM wParam, LPARAM lParam )
 {
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam)) {
 		return true;
 	}
