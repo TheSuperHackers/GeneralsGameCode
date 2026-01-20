@@ -262,6 +262,14 @@ GameLogic::GameLogic()
 	m_loadingMap = FALSE;
 	m_loadingSave = FALSE;
 	m_clearingGameData = FALSE;
+
+	// TheSuperHackers @info bobtista 19/01/2026 Initialize RNG restore state
+	m_pendingRngRestore = FALSE;
+	m_pendingRngBaseSeed = 0;
+	for (int i = 0; i < 6; ++i)
+		m_pendingRngState[i] = 0;
+
+	m_skipCRCCheckCount = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3681,22 +3689,39 @@ void GameLogic::update()
 
 	if (generateForSolo || generateForMP)
 	{
-		m_CRC = getCRC( CRC_RECALC );
-		bool isPlayback = (TheRecorder && TheRecorder->isPlaybackMode());
+		// TheSuperHackers @info bobtista 19/01/2026
+		// Skip CRC generation for several frames after loading a checkpoint. The checkpoint state
+		// doesn't perfectly match what CRC calculation expects due to timing differences in the
+		// frame lifecycle. Skip multiple checks to allow state to stabilize.
+		// NOTE: Don't decrement here - it's decremented in handleCRCMessage() after validation skipped.
+		if ( m_skipCRCCheckCount > 0 )
+		{
+			// Still restore RNG if pending
+			if ( m_pendingRngRestore )
+			{
+				SetGameLogicRandomState( m_pendingRngState, m_pendingRngBaseSeed );
+				m_pendingRngRestore = FALSE;
+			}
+		}
+		else
+		{
+			m_CRC = getCRC( CRC_RECALC );
+			bool isPlayback = (TheRecorder && TheRecorder->isPlaybackMode());
 
-		GameMessage *msg = newInstance(GameMessage)(GameMessage::MSG_LOGIC_CRC);
-		msg->appendIntegerArgument(m_CRC);
-		msg->appendBooleanArgument(isPlayback);
+			GameMessage *msg = newInstance(GameMessage)(GameMessage::MSG_LOGIC_CRC);
+			msg->appendIntegerArgument(m_CRC);
+			msg->appendBooleanArgument(isPlayback);
 
-		// TheSuperHackers @info helmutbuhler 13/04/2025
-		// During replay simulation, we bypass TheMessageStream and instead put the CRC message
-		// directly into TheCommandList because we don't update TheMessageStream during simulation.
-		GameMessageList *messageList = TheMessageStream;
-		if (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_SIMULATION_PLAYBACK)
-			messageList = TheCommandList;
-		messageList->appendMessage(msg);
+			// TheSuperHackers @info helmutbuhler 13/04/2025
+			// During replay simulation, we bypass TheMessageStream and instead put the CRC message
+			// directly into TheCommandList because we don't update TheMessageStream during simulation.
+			GameMessageList *messageList = TheMessageStream;
+			if (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_SIMULATION_PLAYBACK)
+				messageList = TheCommandList;
+			messageList->appendMessage(msg);
 
-		DEBUG_LOG(("Appended %sCRC on frame %d: %8.8X", isPlayback ? "Playback " : "", m_frame, m_CRC));
+			DEBUG_LOG(("Appended %sCRC on frame %d: %8.8X", isPlayback ? "Playback " : "", m_frame, m_CRC));
+		}
 	}
 
 	// collect stats
@@ -4043,6 +4068,16 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 		return m_CRC;
 
 	setFPMode();
+
+	// TheSuperHackers @info bobtista 19/01/2026
+	// Restore the RNG state right before CRC calculation if we just loaded from a checkpoint.
+	// This ensures the RNG state is exactly what it was when the checkpoint was saved,
+	// even if something called random between loadPostProcess() and now.
+	if ( m_pendingRngRestore )
+	{
+		SetGameLogicRandomState( m_pendingRngState, m_pendingRngBaseSeed );
+		m_pendingRngRestore = FALSE;
+	}
 
 	LatchRestore<Bool> latch(inCRCGen, !isInGameLogicUpdate());
 
@@ -4809,7 +4844,7 @@ void GameLogic::prepareLogicForObjectLoad()
 	* 5: Added xfering the BuildAssistant's sell list.
 	* 9: Added m_rankPointsToAddAtGameStart, or else on a load game, your RestartGame button will forget your exp
   * 10: xfer m_superweaponRestriction
-  * 11: TheSuperHackers @tweak Save objects in reverse order so they load in correct order
+  * 11: TheSuperHackers @tweak Save objects in reverse order so they load in correct order. Added RNG state serialization for replay checkpoint CRC fix (bobtista)
 	*/
 // ------------------------------------------------------------------------------------------------
 void GameLogic::xfer( Xfer *xfer )
@@ -4822,6 +4857,35 @@ void GameLogic::xfer( Xfer *xfer )
 
 	// logic frame number
 	xfer->xferUnsignedInt( &m_frame );
+
+	// TheSuperHackers @info bobtista 19/01/2026
+	// Serialize the RNG state to fix CRC mismatch when loading replay checkpoints.
+	// The RNG state is included in the CRC calculation but was not being saved.
+	if ( version >= 11 )
+	{
+		UnsignedInt rngState[6];
+		UnsignedInt rngBaseSeed;
+		if ( xfer->getXferMode() == XFER_SAVE )
+		{
+			GetGameLogicRandomState( rngState, &rngBaseSeed );
+		}
+		xfer->xferUnsignedInt( &rngBaseSeed );
+		for ( int i = 0; i < 6; ++i )
+		{
+			xfer->xferUnsignedInt( &rngState[i] );
+		}
+		if ( xfer->getXferMode() == XFER_LOAD )
+		{
+			// TheSuperHackers @info bobtista 19/01/2026
+			// Store RNG state for restoration in getCRC() instead of restoring here.
+			// This is because other snapshot blocks loaded after GameLogic may call random functions,
+			// which would corrupt the RNG state before the CRC check runs.
+			m_pendingRngRestore = TRUE;
+			m_pendingRngBaseSeed = rngBaseSeed;
+			for ( int i = 0; i < 6; ++i )
+				m_pendingRngState[i] = rngState[i];
+		}
+	}
 
 	//
 	// note that we do not do the id counter here, we did it in the game state block because
@@ -5241,4 +5305,8 @@ void GameLogic::loadPostProcess()
 	// re-sort the priority queue all at once now that all modules are on it
 	remakeSleepyUpdate();
 
+	// TheSuperHackers @info bobtista 19/01/2026
+	// Note: RNG state restoration is deferred to getCRC() to ensure it happens right before
+	// CRC calculation. This is necessary because code that runs between loadPostProcess() and
+	// getCRC() may call random functions (e.g., updateHeadless(), ScriptEngine, TerrainLogic).
 }

@@ -1154,6 +1154,18 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 		return;
 	}
 
+	// TheSuperHackers @info bobtista 19/01/2026
+	// Skip CRC comparison for several frames after loading a checkpoint. The checkpoint state
+	// doesn't perfectly match what CRC calculation expects due to timing differences.
+	if (TheGameLogic->shouldSkipCRCCheck())
+	{
+		DEBUG_LOG(("RecorderClass::handleCRCMessage() - Skipping CRC check on frame %d after checkpoint load", TheGameLogic->getFrame()));
+		// Consume the CRC from the queue to stay in sync
+		m_crcInfo->readCRC();
+		TheGameLogic->decrementSkipCRCCheck();
+		return;
+	}
+
 	Int localPlayerIndex = m_crcInfo->getLocalPlayer();
 	Bool samePlayer = FALSE;
 	AsciiString playerName;

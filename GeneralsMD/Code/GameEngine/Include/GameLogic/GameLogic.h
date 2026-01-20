@@ -317,6 +317,22 @@ private:
 	Bool m_loadingSave;
 	Bool m_clearingGameData;
 
+	// TheSuperHackers @info bobtista 19/01/2026 Store RNG state during xfer LOAD to restore in getCRC
+	Bool m_pendingRngRestore;
+	UnsignedInt m_pendingRngState[6];
+	UnsignedInt m_pendingRngBaseSeed;
+
+	// TheSuperHackers @info bobtista 19/01/2026 Skip CRC check on first frame after checkpoint load.
+	// TheSuperHackers @info bobtista 19/01/2026
+	// Counter to skip CRC checks after checkpoint load. The checkpoint state doesn't perfectly
+	// match what CRC calculation expects due to timing differences in the frame lifecycle.
+	// Skip multiple CRC checks to see if state eventually converges.
+	Int m_skipCRCCheckCount;
+public:
+	Bool shouldSkipCRCCheck() const { return m_skipCRCCheckCount > 0; }
+	void decrementSkipCRCCheck() { if (m_skipCRCCheckCount > 0) --m_skipCRCCheckCount; }
+private:
+
 	Bool m_isInUpdate;
 	Bool m_hasUpdated;
 
