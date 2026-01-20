@@ -2069,16 +2069,20 @@ void RecorderClass::preloadNextCRCFromReplay( void )
 		UnsignedByte numTypes = 0;
 		m_file->read( &numTypes, sizeof(numTypes) );
 
-		// Calculate total arguments and their sizes
+		// Calculate total arguments and their sizes (use fixed arrays for VC6 compatibility)
+		enum { MAX_ARG_TYPES = 32 };
+		GameMessageArgumentDataType argTypes[MAX_ARG_TYPES];
+		Int argCounts[MAX_ARG_TYPES];
 		Int totalArgs = 0;
-		std::vector<std::pair<GameMessageArgumentDataType, Int>> argInfo;
-		for ( UnsignedByte i = 0; i < numTypes; ++i )
+		Int actualNumTypes = (numTypes < MAX_ARG_TYPES) ? numTypes : MAX_ARG_TYPES;
+		for ( Int i = 0; i < actualNumTypes; ++i )
 		{
 			UnsignedByte argType = 0;
 			UnsignedByte argCount = 0;
 			m_file->read( &argType, sizeof(argType) );
 			m_file->read( &argCount, sizeof(argCount) );
-			argInfo.push_back( std::make_pair( static_cast<GameMessageArgumentDataType>(argType), static_cast<Int>(argCount) ) );
+			argTypes[i] = static_cast<GameMessageArgumentDataType>(argType);
+			argCounts[i] = static_cast<Int>(argCount);
 			totalArgs += argCount;
 		}
 
@@ -2102,10 +2106,10 @@ void RecorderClass::preloadNextCRCFromReplay( void )
 		{
 			// Skip this message's arguments
 			Bool skipFailed = FALSE;
-			for ( size_t i = 0; i < argInfo.size() && !skipFailed; ++i )
+			for ( Int i = 0; i < actualNumTypes && !skipFailed; ++i )
 			{
-				GameMessageArgumentDataType argType = argInfo[i].first;
-				Int argCount = argInfo[i].second;
+				GameMessageArgumentDataType argType = argTypes[i];
+				Int argCount = argCounts[i];
 
 				Int argSize = getArgumentByteSize( argType );
 				if ( argSize < 0 )

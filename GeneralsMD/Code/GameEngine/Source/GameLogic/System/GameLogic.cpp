@@ -91,6 +91,7 @@
 #include "GameLogic/Module/CreateModule.h"
 #include "GameLogic/Module/DestroyModule.h"
 #include "GameLogic/Module/OpenContain.h"
+#include "GameLogic/Module/PhysicsUpdate.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/PolygonTrigger.h"
 #include "GameLogic/ScriptActions.h"
@@ -3665,6 +3666,15 @@ void GameLogic::update()
 	UnsignedInt now = getFrame();
 	TheGameClient->setFrame(now);
 
+	// TheSuperHackers @info bobtista 20/01/2026
+	// Restore RNG state immediately at start of first logic update after checkpoint load.
+	// This must happen before any scripts, terrain, or object updates run, since they may call random.
+	if ( m_pendingRngRestore )
+	{
+		SetGameLogicRandomState( m_pendingRngState, m_pendingRngBaseSeed );
+		m_pendingRngRestore = FALSE;
+	}
+
 	// update (execute) scripts
 	{
 		TheScriptEngine->UPDATE();
@@ -3695,21 +3705,10 @@ void GameLogic::update()
 		// doesn't perfectly match what CRC calculation expects due to timing differences in the
 		// frame lifecycle. Skip multiple checks to allow state to stabilize.
 		// NOTE: Don't decrement here - it's decremented in handleCRCMessage() after validation skipped.
+		// NOTE: RNG state is now restored at start of update(), so no need to check here.
 		if ( m_skipCRCCheckCount > 0 )
 		{
-			// Still restore RNG and reset transient state if pending
-			if ( m_pendingRngRestore )
-			{
-				SetGameLogicRandomState( m_pendingRngState, m_pendingRngBaseSeed );
-				m_pendingRngRestore = FALSE;
-
-				// TheSuperHackers @info bobtista 19/01/2026
-				// Reset transient AI state that affects CRC but isn't properly serialized.
-				if ( TheAI )
-				{
-					TheAI->resetTransientStateForCheckpoint();
-				}
-			}
+			// Nothing to do here - skip CRC generation
 		}
 		else
 		{
@@ -3867,6 +3866,36 @@ void GameLogic::update()
 	{
 		m_frame++;
 		m_hasUpdated = TRUE;
+	}
+
+	// TheSuperHackers @feature bobtista 20/01/2026 Auto-save checkpoint at specified frame during replay playback
+	// Save AFTER m_frame is incremented so the checkpoint correctly represents
+	// "ready to play frame N+1" when saved after frame N completes.
+	// We check for m_frame == saveAtFrame + 1 since m_frame was just incremented.
+	if (TheGlobalData->m_replaySaveAtFrame > 0 && m_frame == TheGlobalData->m_replaySaveAtFrame + 1)
+	{
+		AsciiString saveName = TheGlobalData->m_replaySaveTo;
+		if (saveName.isEmpty())
+		{
+			saveName.format("checkpoint_%u.sav", TheGlobalData->m_replaySaveAtFrame);
+		}
+		UnicodeString desc;
+		desc.format(L"Replay checkpoint after frame %u", TheGlobalData->m_replaySaveAtFrame);
+		DEBUG_LOG(("Auto-saving checkpoint after frame %u (current frame %u) to %s",
+			TheGlobalData->m_replaySaveAtFrame, m_frame, saveName.str()));
+		SaveCode result = TheGameState->saveGame(saveName, desc, SAVE_FILE_TYPE_NORMAL, SNAPSHOT_SAVELOAD);
+		if (result != SC_OK)
+		{
+			DEBUG_LOG(("WARNING: Failed to save checkpoint, error code %d", result));
+		}
+		else
+		{
+			DEBUG_LOG(("Checkpoint saved successfully, exiting replay simulation"));
+			// Exit the game after saving the checkpoint
+			TheGameEngine->setQuitting(TRUE);
+		}
+		// Clear the save frame so we don't try to save again
+		TheWritableGlobalData->m_replaySaveAtFrame = 0;
 	}
 }
 
@@ -4077,23 +4106,9 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 
 	setFPMode();
 
-	// TheSuperHackers @info bobtista 19/01/2026
-	// Restore the RNG state right before CRC calculation if we just loaded from a checkpoint.
-	// This ensures the RNG state is exactly what it was when the checkpoint was saved,
-	// even if something called random between loadPostProcess() and now.
-	if ( m_pendingRngRestore )
-	{
-		SetGameLogicRandomState( m_pendingRngState, m_pendingRngBaseSeed );
-		m_pendingRngRestore = FALSE;
-
-		// TheSuperHackers @info bobtista 19/01/2026
-		// Reset transient AI state that affects CRC but isn't properly serialized.
-		// This must happen after checkpoint load but before CRC calculation.
-		if ( TheAI )
-		{
-			TheAI->resetTransientStateForCheckpoint();
-		}
-	}
+	// TheSuperHackers @info bobtista 20/01/2026
+	// RNG state is now restored at start of update() instead of here.
+	// This ensures it happens before any game logic runs, not just before CRC check.
 
 	LatchRestore<Bool> latch(inCRCGen, !isInGameLogicUpdate());
 
@@ -5322,8 +5337,8 @@ void GameLogic::loadPostProcess()
 	// re-sort the priority queue all at once now that all modules are on it
 	remakeSleepyUpdate();
 
-	// TheSuperHackers @info bobtista 19/01/2026
-	// Note: RNG state restoration is deferred to getCRC() to ensure it happens right before
-	// CRC calculation. This is necessary because code that runs between loadPostProcess() and
-	// getCRC() may call random functions (e.g., updateHeadless(), ScriptEngine, TerrainLogic).
+	// TheSuperHackers @info bobtista 20/01/2026
+	// Note: RNG state restoration is handled in update() at the start of the first logic update
+	// after checkpoint load. This ensures the RNG is restored before any scripts or game logic
+	// that might call random functions. The m_pendingRngRestore flag signals when restoration is needed.
 }
