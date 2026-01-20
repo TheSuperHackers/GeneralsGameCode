@@ -16,7 +16,6 @@ set(IMGUI_BASE_SRCS
     "${imgui_SOURCE_DIR}/imgui_demo.cpp"
 )
 
-
 # Main Win32 DX8 specific sources we are going to need we can specify more if we need extra platforms
 set(IMGUI_WIN32_DX8_IMPL_SRCS
     "${imgui_SOURCE_DIR}/backends/imgui_impl_win32.cpp"
@@ -42,7 +41,7 @@ if (WIN32)
         MESSAGE(FATAL_ERROR "ImGui is currently only available in Debug build modes")
     endif ()
 
-    MESSAGE(STATUS "Enabling imgui console integration")
+    MESSAGE(STATUS "Enabling ImGui")
 
     add_library(lib_imgui STATIC ${IMGUI_WIN32_DX8_ALL_SRCS})
     target_include_directories(lib_imgui PUBLIC ${IMGUI_INCLUDE_DIRS})
