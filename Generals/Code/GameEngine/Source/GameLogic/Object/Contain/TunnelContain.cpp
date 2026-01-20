@@ -376,6 +376,30 @@ void TunnelContain::onBuildComplete( void )
 	m_isCurrentlyRegistered = TRUE;
 }
 
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void TunnelContain::onCapture( Player *oldOwner, Player *newOwner )
+{
+	if( m_isCurrentlyRegistered )
+	{
+		TunnelTracker *oldTunnelTracker = oldOwner->getTunnelSystem();
+		if( oldTunnelTracker )
+		{
+			DEBUG_ASSERTCRASH( oldTunnelTracker->getContainCount() == 0, ("You shouldn't force a capture of a Tunnel with people in it. Future ExitFromContainer scripts will fail."));
+			oldTunnelTracker->onTunnelDestroyed(getObject());
+		}
+
+		TunnelTracker *newTunnelTracker = newOwner->getTunnelSystem();
+		if( newTunnelTracker )
+		{
+			newTunnelTracker->onTunnelCreated(getObject());
+		}
+	}
+
+	// extend base class
+	OpenContain::onCapture( oldOwner, newOwner );
+}
+
 //-------------------------------------------------------------------------------------------------
 void TunnelContain::orderAllPassengersToExit( CommandSourceType commandSource )
 {
