@@ -415,6 +415,10 @@ public:
 	// this is intended for use ONLY by GameLogic.
 	static void friend_deleteInstance(Object* object) { deleteInstance(object); }
 
+	// TheSuperHackers @info bobtista 19/01/2026 For reversing object list after checkpoint load.
+	void friend_setNextObject( Object *next ) { m_next = next; }
+	void friend_setPrevObject( Object *prev ) { m_prev = prev; }
+
 	/// cache the partition module (should be called only by PartitionData)
 	void friend_setPartitionData(PartitionData *pd) { m_partitionData = pd; }
 	PartitionData *friend_getPartitionData() const { return m_partitionData; }
