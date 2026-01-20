@@ -54,6 +54,7 @@
 #include "GameClient/InGameUI.h"
 #include "GameClient/ParticleSys.h"
 #include "GameClient/TerrainVisual.h"
+#include "GameLogic/AI.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/GhostObject.h"
 #include "GameLogic/PartitionManager.h"
@@ -324,6 +325,8 @@ void GameState::init()
 	addSnapshotBlock( "CHUNK_TerrainVisual",					TheTerrainVisual,					SNAPSHOT_SAVELOAD );
 	addSnapshotBlock( "CHUNK_GhostObject",						TheGhostObjectManager,		SNAPSHOT_SAVELOAD );
 	addSnapshotBlock( "CHUNK_Recorder",							TheRecorder,							SNAPSHOT_SAVELOAD );
+	// TheSuperHackers @info bobtista 19/01/2026 TheAI state is included in CRC but was not saved
+	addSnapshotBlock( "CHUNK_AI",									TheAI,									SNAPSHOT_SAVELOAD );
 
 	// add all the snapshot objects to our list of data blocks for deep CRCs of logic
 	addSnapshotBlock( "CHUNK_TeamFactory",						TheTeamFactory,						SNAPSHOT_DEEPCRC_LOGICONLY );
@@ -332,6 +335,8 @@ void GameState::init()
 	addSnapshotBlock( "CHUNK_ScriptEngine",						TheScriptEngine,					SNAPSHOT_DEEPCRC_LOGICONLY );
 	addSnapshotBlock( "CHUNK_SidesList",							TheSidesList,							SNAPSHOT_DEEPCRC_LOGICONLY );
 	addSnapshotBlock( "CHUNK_Partition",							ThePartitionManager,			SNAPSHOT_DEEPCRC_LOGICONLY );
+	// TheSuperHackers @info bobtista 19/01/2026 TheAI state is included in CRC but was not in deep CRC list
+	addSnapshotBlock( "CHUNK_AI",									TheAI,									SNAPSHOT_DEEPCRC_LOGICONLY );
 
 	m_isInLoadGame = FALSE;
 
