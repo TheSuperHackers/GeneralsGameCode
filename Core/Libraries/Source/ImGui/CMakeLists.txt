@@ -39,7 +39,7 @@ set(IMGUI_INCLUDE_DIRS
 if (WIN32)
     # for now we only need it in debug configurations
     if ( NOT ( (CMAKE_BUILD_TYPE STREQUAL "Debug") OR RTS_BUILD_OPTION_DEBUG ) )
-        MESSAGE(FATAL_ERROR "ImGui integration is currently only possible in Debug build modes")
+        MESSAGE(FATAL_ERROR "ImGui is currently only available in Debug build modes")
     endif ()
 
     MESSAGE(STATUS "Enabling imgui console integration")
@@ -56,6 +56,6 @@ if (WIN32)
     )
 else ()
     # currently only WIN32 DX is supported
-    MESSAGE(FATAL_ERROR "Non-Windows platforms currently not supported for ImGui integration ${MSG_ERR_SUFFIX}")
+    MESSAGE(FATAL_ERROR "Non-Windows platforms currently not supported for ImGui integration")
 endif ()
 # end target build section
