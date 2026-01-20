@@ -121,17 +121,17 @@ void DamageInfo::xfer( Xfer *xfer )
 /** Xfer method
 	* Version Info:
 	* 1: Initial version
-	* 2: Damage FX override
-	* 3: Shockwave and damage status type
+	* 2: Damage FX override (Added for Zero Hour)
+	* 3: Shockwave and damage status type (Added for Zero Hour)
 */
 // ------------------------------------------------------------------------------------------------
 void DamageInfoInput::xfer( Xfer *xfer )
 {
 
 	// version
-#if RTS_GENERALS
+#if RTS_GENERALS && RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
-#elif RTS_ZEROHOUR
+#else
 	XferVersion currentVersion = 3;
 #endif
 

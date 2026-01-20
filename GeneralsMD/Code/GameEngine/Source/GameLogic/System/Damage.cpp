@@ -116,8 +116,8 @@ void DamageInfo::xfer( Xfer *xfer )
 /** Xfer method
 	* Version Info:
 	* 1: Initial version
-	* 2: Damage FX override
-	* 3: Shockwave and damage status type
+	* 2: Damage FX override (Added for Zero Hour)
+	* 3: Shockwave and damage status type (Added for Zero Hour)
 */
 // ------------------------------------------------------------------------------------------------
 void DamageInfoInput::xfer( Xfer *xfer )
