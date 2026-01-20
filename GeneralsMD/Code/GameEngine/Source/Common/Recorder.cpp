@@ -1886,6 +1886,10 @@ void RecorderClass::xfer( Xfer *xfer )
 
 	xfer->xferAsciiString( &m_fileName );
 	xfer->xferAsciiString( &m_currentReplayFilename );
+	if ( xfer->getXferMode() == XFER_SAVE && m_file != nullptr )
+	{
+		m_currentFilePosition = m_file->position();
+	}
 	xfer->xferInt( &m_currentFilePosition );
 	xfer->xferUnsignedInt( &m_nextFrame );
 	xfer->xferUnsignedInt( &m_playbackFrameCount );
@@ -1908,11 +1912,6 @@ void RecorderClass::xfer( Xfer *xfer )
 	}
 
 	xferCRCInfo( xfer );
-
-	if ( xfer->getXferMode() == XFER_SAVE && m_file != nullptr )
-	{
-		m_currentFilePosition = m_file->position();
-	}
 }
 
 void RecorderClass::xferCRCInfo( Xfer *xfer )
