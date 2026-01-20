@@ -275,6 +275,9 @@ public:
 	void xfer( Xfer *xfer );
 	void loadPostProcess();
 
+	// TheSuperHackers @info bobtista 19/01/2026 Reset transient state for checkpoint CRC matching
+	void resetTransientStateForCheckpoint( void );
+
 	// AI Groups -----------------------------------------------------------------------------------------------
 	AIGroupPtr createGroup(); ///< instantiate a new AI Group
 	void destroyGroup( AIGroup *group );	///< destroy the given AI Group

@@ -1046,4 +1046,29 @@ void AI::loadPostProcess()
 
 }
 
+//-----------------------------------------------------------------------------
+// TheSuperHackers @info bobtista 19/01/2026 Reset transient state for checkpoint CRC matching.
+// Some AI state is included in CRC but is transient and not properly serialized. Reset it
+// to a known state after checkpoint load so CRC matches.
+//-----------------------------------------------------------------------------
+void AI::resetTransientStateForCheckpoint( void )
+{
+	// Reset pathfinder transient state
+	if ( m_pathfinder )
+	{
+		m_pathfinder->resetTransientStateForCheckpoint();
+	}
+
+	// Reset AIGroup dirty flags - these change during gameplay but aren't serialized
+	for ( std::list<AIGroup *>::iterator groupIt = m_groupList.begin(); groupIt != m_groupList.end(); ++groupIt )
+	{
+		if ( *groupIt )
+		{
+			(*groupIt)->m_dirty = FALSE;
+		}
+	}
+
+	DEBUG_LOG(("AI::resetTransientStateForCheckpoint - Reset %d AIGroup dirty flags", (Int)m_groupList.size()));
+}
+
 

@@ -3696,11 +3696,18 @@ void GameLogic::update()
 		// NOTE: Don't decrement here - it's decremented in handleCRCMessage() after validation skipped.
 		if ( m_skipCRCCheckCount > 0 )
 		{
-			// Still restore RNG if pending
+			// Still restore RNG and reset transient state if pending
 			if ( m_pendingRngRestore )
 			{
 				SetGameLogicRandomState( m_pendingRngState, m_pendingRngBaseSeed );
 				m_pendingRngRestore = FALSE;
+
+				// TheSuperHackers @info bobtista 19/01/2026
+				// Reset transient AI state that affects CRC but isn't properly serialized.
+				if ( TheAI )
+				{
+					TheAI->resetTransientStateForCheckpoint();
+				}
 			}
 		}
 		else
@@ -4077,6 +4084,14 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	{
 		SetGameLogicRandomState( m_pendingRngState, m_pendingRngBaseSeed );
 		m_pendingRngRestore = FALSE;
+
+		// TheSuperHackers @info bobtista 19/01/2026
+		// Reset transient AI state that affects CRC but isn't properly serialized.
+		// This must happen after checkpoint load but before CRC calculation.
+		if ( TheAI )
+		{
+			TheAI->resetTransientStateForCheckpoint();
+		}
 	}
 
 	LatchRestore<Bool> latch(inCRCGen, !isInGameLogicUpdate());

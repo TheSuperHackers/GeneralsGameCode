@@ -11223,3 +11223,19 @@ void Pathfinder::loadPostProcess()
 {
 
 }
+
+//-----------------------------------------------------------------------------
+// TheSuperHackers @info bobtista 19/01/2026 Reset transient state for checkpoint CRC matching.
+// The pathfind queue state is included in CRC but is transient - path requests are made
+// during gameplay and not serialized. Reset it to a known state after checkpoint load.
+//-----------------------------------------------------------------------------
+void Pathfinder::resetTransientStateForCheckpoint( void )
+{
+	m_queuePRHead = 0;
+	m_queuePRTail = 0;
+	for ( Int i = 0; i < PATHFIND_QUEUE_LEN; ++i )
+	{
+		m_queuedPathfindRequests[i] = INVALID_ID;
+	}
+	DEBUG_LOG(("Pathfinder::resetTransientStateForCheckpoint - Cleared pathfind queue"));
+}
