@@ -547,6 +547,8 @@ public:
 
 	void friend_removeAllTouchedCells() { removeAllTouchedCells(); }	///< this is only for use by PartitionManager
 	void friend_updateCellsTouched()	{ updateCellsTouched(); } ///< this is only for use by PartitionManager
+	void friend_initLastCell();	///< this is only for use by PartitionManager after loading a checkpoint
+	PartitionData* friend_getNextDirty() { return m_nextDirty; }	///< this is only for use by PartitionManager
 	Int friend_getCoiInUseCount() { return m_coiInUseCount; } ///< this is only for use by PartitionManager
 	Bool friend_collidesWith(const PartitionData *that, CollideLocAndNormal *cinfo) const { return collidesWith(that, cinfo); }	///< this is only for use by PartitionContactList
 
@@ -1325,6 +1327,8 @@ public:
 	void crc( Xfer *xfer );
 	void xfer( Xfer *xfer );
 	void loadPostProcess();
+
+	void initLastCellsForDirtyModules( void );	///< initialize m_lastCell for all dirty modules without triggering callbacks
 
 	Bool getUpdatedSinceLastReset() const { return m_updatedSinceLastReset; }
 

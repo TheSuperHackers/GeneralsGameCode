@@ -2172,6 +2172,29 @@ void PartitionData::updateCellsTouched()
 }
 
 //-----------------------------------------------------------------------------
+// TheSuperHackers @bugfix bobtista 20/01/2026 Initialize m_lastCell based on current position
+// without triggering onPartitionCellChange(). Used after loading a checkpoint to prevent
+// spurious handleShroud() calls that would corrupt the shroud state.
+void PartitionData::friend_initLastCell()
+{
+	Object *obj = getObject();
+	if (obj)
+	{
+		const Coord3D *pos = obj->getPosition();
+		Int cellX, cellY;
+		ThePartitionManager->worldToCell( pos->x, pos->y, &cellX, &cellY );
+		m_lastCell = ThePartitionManager->getCellAt( cellX, cellY );
+	}
+	else if (m_ghostObject)
+	{
+		const Coord3D *pos = m_ghostObject->getParentPosition();
+		Int cellX, cellY;
+		ThePartitionManager->worldToCell( pos->x, pos->y, &cellX, &cellY );
+		m_lastCell = ThePartitionManager->getCellAt( cellX, cellY );
+	}
+}
+
+//-----------------------------------------------------------------------------
 void PartitionData::invalidateShroudedStatusForPlayer(Int playerIndex)
 {
 #ifndef DISABLE_INVALID_PREVENTION
@@ -2898,6 +2921,20 @@ void PartitionManager::update()
 		}
 	}
 #endif // defined(RTS_DEBUG)
+}
+
+//------------------------------------------------------------------------------
+// TheSuperHackers @bugfix bobtista 20/01/2026 Initialize m_lastCell for all dirty modules
+// without triggering callbacks. Used after loading a checkpoint to prevent spurious
+// handleShroud() calls that would corrupt the shroud state when update() runs.
+void PartitionManager::initLastCellsForDirtyModules()
+{
+	PartitionData *dirty = m_dirtyModules;
+	while (dirty)
+	{
+		dirty->friend_initLastCell();
+		dirty = dirty->friend_getNextDirty();
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -4737,10 +4774,16 @@ void PartitionManager::xfer( Xfer *xfer )
 
 		if(xfer->getXferMode() == XFER_LOAD)
 		{
-			// have to remove this assert, because during load there is a setTeam call for each guy on a sub-team, and that results
-			// in a queued unlook, so we actually have stuff in here at the start.  I am fairly certain that setTeam should wait
-			// until loadPostProcess, but I ain't gonna change it now.
-//			DEBUG_ASSERTCRASH(m_pendingUndoShroudReveals.empty(), ("At load, we appear to not be in a reset state.") );
+			// TheSuperHackers @bugfix bobtista 20/01/2026 Clear the pending queue before loading saved items.
+			// During load, object creation triggers setTeam calls which can queue unlook operations.
+			// These spurious items would cause extra unlook operations and corrupt shroud state.
+			// We clear the queue here so only the saved items are loaded.
+			while( !m_pendingUndoShroudReveals.empty() )
+			{
+				SightingInfo *info = m_pendingUndoShroudReveals.front();
+				deleteInstance(info);
+				m_pendingUndoShroudReveals.pop();
+			}
 
 			// I have to split this up though, since on Load I need to make new instances.
 			for( Int infoIndex = 0; infoIndex < queueSize; infoIndex++ )
