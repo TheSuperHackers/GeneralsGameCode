@@ -1520,12 +1520,19 @@ void PartitionCell::xfer( Xfer *xfer )
 {
 
 	// version
-	XferVersion currentVersion = 1;
+	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
 	// xfer shroud data
 	xfer->xferUser( &m_shroudLevel, sizeof( ShroudLevel ) * MAX_PLAYER_COUNT );
+
+	// TheSuperHackers @info bobtista 20/01/2026 Serialize cell coordinates that are included in CRC.
+	if ( version >= 2 )
+	{
+		xfer->xferUser( &m_cellX, sizeof(m_cellX) );
+		xfer->xferUser( &m_cellY, sizeof(m_cellY) );
+	}
 
 }
 
