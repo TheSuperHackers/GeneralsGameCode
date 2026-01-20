@@ -87,7 +87,7 @@
 
 #include "shdlib.h"
 
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 #include "imgui.h"
 #include <imgui_impl_win32.h>
 #include "imgui_impl_dx8.h"
@@ -361,7 +361,7 @@ bool DX8Wrapper::Init(void * hwnd, bool lite)
 
 void DX8Wrapper::Shutdown(void)
 {
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 	ImGui_ImplDX8_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
@@ -657,7 +657,7 @@ bool DX8Wrapper::Create_Device(void)
 				return false;
 		}
 	}
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 	// Initialize ImGui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -687,7 +687,7 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 	WWDEBUG_SAY(("Resetting device."));
 	DX8_THREAD_ASSERT();
 	if ((IsInitted) && (D3DDevice != nullptr)) {
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 		ImGui_ImplDX8_InvalidateDeviceObjects();
 #endif
 		// Release all non-MANAGED stuff
@@ -731,7 +731,7 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 		Invalidate_Cached_Render_States();
 		Set_Default_Global_Render_States();
 		SHD_INIT_SHADERS;
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 		ImGui_ImplDX8_CreateDeviceObjects();
 #endif
 		WWDEBUG_SAY(("Device reset completed"));
@@ -1777,7 +1777,7 @@ void DX8Wrapper::Begin_Scene(void)
 void DX8Wrapper::End_Scene(bool flip_frames)
 {
 	DX8_THREAD_ASSERT();
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 	{
 		ImDrawData* data = ImGui::GetDrawData();
 		if (data && data->CmdListsCount > 0 ) {

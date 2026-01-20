@@ -32,7 +32,7 @@
 #include "GameClient/GameClient.h"
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 #include <imgui.h>
 #include <imgui_impl_win32.h>
 #include "imgui_impl_dx8.h"
@@ -529,7 +529,7 @@ void GameClient::update( void )
 	USE_PERF_TIMER(GameClient_update)
 // TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
 // see details in comment before this function's signature
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 	ImGui_ImplDX8_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
@@ -649,7 +649,7 @@ void GameClient::update( void )
 	{
 // TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
 // see details in comment before this function's signature
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 		ImGui::Render();  // Prepare render data
 #endif
 		// redraw all views, update the GUI
@@ -764,7 +764,7 @@ void GameClient::update( void )
 // TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
 // Prepare ImGui renderdata before framestepping to ensure proper display
 // see details in comment before this function's signature
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 		ImGui::Render();
 #endif
 		return;
@@ -793,7 +793,7 @@ void GameClient::update( void )
 
 // TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
 // see details in comment before this function's signature
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 	ImGui::Render();  // Prepare render data
 #endif
 

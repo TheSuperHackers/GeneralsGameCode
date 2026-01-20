@@ -52,7 +52,7 @@ if (WIN32)
     target_compile_definitions(lib_imgui
         PRIVATE IMGUI_DISABLE_DEFAULT_IMCONFIG
         PRIVATE IMGUI_USER_CONFIG="${CMAKE_CURRENT_LIST_DIR}/imconfig.h"
-        INTERFACE RTS_IMGUI_ENABLED
+        INTERFACE RTS_HAS_IMGUI
     )
 else ()
     # currently only WIN32 DX is supported

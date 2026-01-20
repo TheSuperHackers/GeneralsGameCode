@@ -82,7 +82,7 @@
 #include "bound.h"
 #include "DbgHelpGuard.h"
 
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 #include "imgui.h"
 #include "imgui_impl_dx8.h"
 #include "imgui_impl_win32.h"
@@ -363,7 +363,7 @@ bool DX8Wrapper::Init(void * hwnd, bool lite)
 // See GameClient::update(), DX8Wrapper::Create_Device(), DX8Wrapper::Init(), DX8Wrapper::Shutdown(), DX8Wrapper::End_Scene(), and WndProc() for implementation details.
 void DX8Wrapper::Shutdown(void)
 {
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 	ImGui_ImplDX8_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
@@ -618,7 +618,7 @@ bool DX8Wrapper::Create_Device(void)
 	}
 // TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
 // see details in comment before this function's signature
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 	// Initialize ImGui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -656,7 +656,7 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 	if ((IsInitted) && (D3DDevice != nullptr)) {
 // TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
 // see details in comment before this function's signature
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 		ImGui_ImplDX8_InvalidateDeviceObjects();
 #endif
 		// Release all non-MANAGED stuff
@@ -692,7 +692,7 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 		}
 		Invalidate_Cached_Render_States();
 		Set_Default_Global_Render_States();
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 		ImGui_ImplDX8_CreateDeviceObjects();
 #endif
 		WWDEBUG_SAY(("Device reset completed"));
@@ -1664,7 +1664,7 @@ void DX8Wrapper::Begin_Scene(void)
 void DX8Wrapper::End_Scene(bool flip_frames)
 {
 	DX8_THREAD_ASSERT();
-#ifdef RTS_IMGUI_ENABLED
+#ifdef RTS_HAS_IMGUI
 	{
 		ImDrawData* data = ImGui::GetDrawData();
 		if (data && data->CmdListsCount > 0) {
