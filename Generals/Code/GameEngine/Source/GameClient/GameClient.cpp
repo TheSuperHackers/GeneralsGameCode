@@ -487,15 +487,6 @@ void GameClient::registerDrawable( Drawable *draw )
 
 }
 
-// ThSuperHackers @feature jurassiclizard 16/01/2026 introduce ImGui framework (PR#2127)
-// ImGui workflow:
-// - WndProc: forwards input to ImGui via ImGui_ImplWin32_WndProcHandler()
-// - DX8Wrapper: manages context/backend initialization and cleanup,
-// - DX8Wrapper: handles device reset by invalidating/recreating device objects and End_Scene() and renders ImGui draw data after the main scene.
-// - GameClient: GameClient::update() starts each frame with NewFrame() calls and builds UI (ShowDemoWindow), while ImGui::Render() is called before DRAW() operations and
-//              critically before early returns in RTS_DEBUG mode (frame stepping) to ensure frames are properly closed and the demo window displays.
-//
-// See GameClient::update(), DX8Wrapper::Create_Device(), DX8Wrapper::Init(), DX8Wrapper::Shutdown(), DX8Wrapper::End_Scene(), and WndProc() for implementation details.
 /** -----------------------------------------------------------------------------------------------
  * Redraw all views, update the GUI, play sound effects, etc.
  */
@@ -505,7 +496,7 @@ void GameClient::update( void )
 {
 	USE_PERF_TIMER(GameClient_update)
 // TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
-// see details in comment before this function's signature
+// see details under WinMain.cpp (WndProc())
 #ifdef RTS_HAS_IMGUI
 	ImGui_ImplDX8_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -608,7 +599,7 @@ void GameClient::update( void )
 	if(TheGlobalData->m_playIntro || TheGlobalData->m_afterIntro)
 	{
 // TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
-// see details in comment before this function's signature
+// see details under WinMain.cpp (WndProc())
 #ifdef RTS_HAS_IMGUI
 		ImGui::Render();  // Prepare render data
 #endif
@@ -722,7 +713,7 @@ void GameClient::update( void )
 	{
 // TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
 // Prepare ImGui renderdata before framestepping to ensure proper display
-// see details in comment before this function's signature
+// see details under WinMain.cpp (WndProc())
 #ifdef RTS_HAS_IMGUI
 		ImGui::Render();
 #endif
@@ -750,7 +741,7 @@ void GameClient::update( void )
 	}
 
 // TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
-// see details in comment before this function's signature
+// see details under WinMain.cpp (WndProc())
 #ifdef RTS_HAS_IMGUI
 	ImGui::Render();  // Prepare render data
 #endif
