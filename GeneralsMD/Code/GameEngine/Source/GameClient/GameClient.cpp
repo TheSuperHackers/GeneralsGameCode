@@ -804,8 +804,6 @@ void GameClient::update( void )
 	//if(TheGameLogic->getFrame() >= 2)
 
 		TheDisplay->DRAW();
-
-
 	}
 
 	{
