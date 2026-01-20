@@ -1178,7 +1178,10 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 		UnsignedInt playbackCRC = m_crcInfo->readCRC();
 		//DEBUG_LOG(("RecorderClass::handleCRCMessage() - Comparing CRCs of InGame:%8.8X Replay:%8.8X Frame:%d from Player %d",
 		//	playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1, playerIndex));
-		if (TheGameLogic->getFrame() > 0 && newCRC != playbackCRC && !m_crcInfo->sawCRCMismatch())
+		// TheSuperHackers @fix bobtista 20/01/2026 Skip CRC check if queue was empty.
+		// The primary fix is preloadNextCRCFromReplay() which pre-populates the queue after checkpoint load.
+		// This playbackCRC != 0 check serves as a fallback in case the preload fails or misses a CRC.
+		if (TheGameLogic->getFrame() > 0 && playbackCRC != 0 && newCRC != playbackCRC && !m_crcInfo->sawCRCMismatch())
 		{
 			//Kris: Patch 1.01 November 10, 2003 (integrated changes from Matt Campbell)
 			// Since we don't seem to have any *visible* desyncs when replaying games, but get this warning
@@ -1990,6 +1993,170 @@ void RecorderClass::xferCRCInfo( Xfer *xfer )
 	}
 }
 
+// TheSuperHackers @helper bobtista 20/01/2026
+// Returns the byte size of an argument type when stored in the replay file.
+static Int getArgumentByteSize( GameMessageArgumentDataType type )
+{
+	switch ( type )
+	{
+		case ARGUMENTDATATYPE_INTEGER:     return sizeof(Int);
+		case ARGUMENTDATATYPE_REAL:        return sizeof(Real);
+		case ARGUMENTDATATYPE_BOOLEAN:     return sizeof(Bool);
+		case ARGUMENTDATATYPE_OBJECTID:    return sizeof(ObjectID);
+		case ARGUMENTDATATYPE_DRAWABLEID:  return sizeof(DrawableID);
+		case ARGUMENTDATATYPE_TEAMID:      return sizeof(UnsignedInt);
+		case ARGUMENTDATATYPE_LOCATION:    return sizeof(Coord3D);
+		case ARGUMENTDATATYPE_PIXEL:       return sizeof(ICoord2D);
+		case ARGUMENTDATATYPE_PIXELREGION: return sizeof(IRegion2D);
+		case ARGUMENTDATATYPE_TIMESTAMP:   return sizeof(UnsignedInt);
+		case ARGUMENTDATATYPE_WIDECHAR:    return -1; // Variable length, cannot skip
+		default:                           return -1; // Unknown
+	}
+}
+
+// TheSuperHackers @fix bobtista 20/01/2026
+// After loading a checkpoint, the CRC queue is empty. This function scans ahead in the
+// replay file to find the next MSG_LOGIC_CRC message and pre-populates the queue with it.
+// This ensures CRC verification works immediately after checkpoint load.
+//
+// Note: The saved file position (m_currentFilePosition) is the position AFTER the frame number
+// was read into m_nextFrame. So we start reading the message type, not a frame number.
+void RecorderClass::preloadNextCRCFromReplay( void )
+{
+	if ( m_file == nullptr || m_crcInfo == nullptr )
+	{
+		return;
+	}
+
+	Int savedPosition = m_file->position();
+	Bool foundCRC = FALSE;
+	Int frameNum = m_nextFrame;  // Start with the already-read frame number
+	Bool firstMessage = TRUE;
+
+	// Scan ahead looking for MSG_LOGIC_CRC messages
+	while ( !foundCRC )
+	{
+		// For subsequent messages, read the frame number first
+		if ( !firstMessage )
+		{
+			if ( m_file->read( &frameNum, sizeof(frameNum) ) != sizeof(frameNum) )
+			{
+				DEBUG_LOG(("RecorderClass::preloadNextCRCFromReplay - End of file reached while scanning for CRC"));
+				break;
+			}
+
+			if ( frameNum < 0 )
+			{
+				DEBUG_LOG(("RecorderClass::preloadNextCRCFromReplay - Invalid frame number %d", frameNum));
+				break;
+			}
+		}
+		firstMessage = FALSE;
+
+		// Read message type
+		GameMessage::Type msgType;
+		if ( m_file->read( &msgType, sizeof(msgType) ) != sizeof(msgType) )
+		{
+			DEBUG_LOG(("RecorderClass::preloadNextCRCFromReplay - Failed to read message type"));
+			break;
+		}
+
+		// Read player index
+		Int playerIndex = -1;
+		m_file->read( &playerIndex, sizeof(playerIndex) );
+
+		// Read argument type info
+		UnsignedByte numTypes = 0;
+		m_file->read( &numTypes, sizeof(numTypes) );
+
+		// Calculate total arguments and their sizes
+		Int totalArgs = 0;
+		std::vector<std::pair<GameMessageArgumentDataType, Int>> argInfo;
+		for ( UnsignedByte i = 0; i < numTypes; ++i )
+		{
+			UnsignedByte argType = 0;
+			UnsignedByte argCount = 0;
+			m_file->read( &argType, sizeof(argType) );
+			m_file->read( &argCount, sizeof(argCount) );
+			argInfo.push_back( std::make_pair( static_cast<GameMessageArgumentDataType>(argType), static_cast<Int>(argCount) ) );
+			totalArgs += argCount;
+		}
+
+		if ( msgType == GameMessage::MSG_LOGIC_CRC )
+		{
+			// Found a CRC message - read the CRC value (first argument is Integer)
+			if ( totalArgs >= 1 )
+			{
+				Int crcValue = 0;
+				if ( m_file->read( &crcValue, sizeof(crcValue) ) == sizeof(crcValue) )
+				{
+					m_crcInfo->addCRC( static_cast<UnsignedInt>(crcValue) );
+					DEBUG_LOG(("RecorderClass::preloadNextCRCFromReplay - Preloaded CRC 0x%08X from frame %d", crcValue, frameNum));
+					foundCRC = TRUE;
+				}
+			}
+			// Don't need to read remaining arguments, we're done
+			break;
+		}
+		else
+		{
+			// Skip this message's arguments
+			Bool skipFailed = FALSE;
+			for ( size_t i = 0; i < argInfo.size() && !skipFailed; ++i )
+			{
+				GameMessageArgumentDataType argType = argInfo[i].first;
+				Int argCount = argInfo[i].second;
+
+				Int argSize = getArgumentByteSize( argType );
+				if ( argSize < 0 )
+				{
+					// Variable length or unknown - can't skip safely
+					if ( argType == ARGUMENTDATATYPE_WIDECHAR )
+					{
+						// Read wchar_t values until we hit a null terminator
+						for ( Int j = 0; j < argCount; ++j )
+						{
+							wchar_t wc = 0;
+							do
+							{
+								if ( m_file->read( &wc, sizeof(wc) ) != sizeof(wc) )
+								{
+									skipFailed = TRUE;
+									break;
+								}
+							} while ( wc != 0 && !skipFailed );
+						}
+					}
+					else
+					{
+						DEBUG_LOG(("RecorderClass::preloadNextCRCFromReplay - Unknown argument type %d, cannot skip", argType));
+						skipFailed = TRUE;
+					}
+				}
+				else
+				{
+					// Fixed size - seek past it
+					Int bytesToSkip = argSize * argCount;
+					Int currentPos = m_file->position();
+					if ( m_file->seek( currentPos + bytesToSkip, File::seekMode::START ) != currentPos + bytesToSkip )
+					{
+						skipFailed = TRUE;
+					}
+				}
+			}
+
+			if ( skipFailed )
+			{
+				DEBUG_LOG(("RecorderClass::preloadNextCRCFromReplay - Failed to skip message arguments"));
+				break;
+			}
+		}
+	}
+
+	// Seek back to original position
+	m_file->seek( savedPosition, File::seekMode::START );
+}
+
 void RecorderClass::loadPostProcess( void )
 {
 	// TheSuperHackers @info bobtista 19/01/2026
@@ -2014,6 +2181,12 @@ void RecorderClass::loadPostProcess( void )
 	}
 
 	REPLAY_CRC_INTERVAL = m_gameInfo.getCRCInterval();
+
+	// TheSuperHackers @fix bobtista 20/01/2026
+	// Pre-populate the CRC queue by scanning ahead for the next CRC message.
+	// This ensures CRC verification works immediately after checkpoint load.
+	preloadNextCRCFromReplay();
+
 	DEBUG_LOG(("RecorderClass::loadPostProcess - Resumed replay at file position %d, next frame %d", m_currentFilePosition, m_nextFrame));
 }
 

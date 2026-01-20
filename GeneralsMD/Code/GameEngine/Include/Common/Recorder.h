@@ -73,6 +73,7 @@ protected:
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess( void );
+	void preloadNextCRCFromReplay( void );  ///< Scans replay file to pre-populate CRC queue after checkpoint load
 
 public:
 
