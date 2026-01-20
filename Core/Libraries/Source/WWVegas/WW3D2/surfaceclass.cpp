@@ -212,16 +212,16 @@ unsigned int SurfaceClass::Get_Bytes_Per_Pixel()
 	return ::Get_Bytes_Per_Pixel(surfaceDesc.Format);
 }
 
-void *SurfaceClass::Lock(int *pitch)
+SurfaceClass::LockedSurfacePtr SurfaceClass::Lock(int *pitch)
 {
 	D3DLOCKED_RECT lock_rect;
 	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
 	DX8_ErrorCode(D3DSurface->LockRect(&lock_rect, nullptr, 0));
 	*pitch = lock_rect.Pitch;
-	return (void *)lock_rect.pBits;
+	return static_cast<LockedSurfacePtr>(lock_rect.pBits);
 }
 
-void *SurfaceClass::Lock(int *pitch, const Vector2i &min, const Vector2i &max)
+SurfaceClass::LockedSurfacePtr SurfaceClass::Lock(int *pitch, const Vector2i &min, const Vector2i &max)
 {
 	D3DLOCKED_RECT lock_rect;
 	::ZeroMemory(&lock_rect, sizeof(D3DLOCKED_RECT));
@@ -234,7 +234,7 @@ void *SurfaceClass::Lock(int *pitch, const Vector2i &min, const Vector2i &max)
 	DX8_ErrorCode(D3DSurface->LockRect(&lock_rect, &rect, 0));
 
 	*pitch = lock_rect.Pitch;
-	return (void *)lock_rect.pBits;
+	return static_cast<LockedSurfacePtr>(lock_rect.pBits);
 }
 
 void SurfaceClass::Unlock(void)
@@ -678,7 +678,7 @@ bool SurfaceClass::Is_Transparent_Column(unsigned int column)
  *   2/13/2001  hy : Created.                                                                  *
  *   1/10/2025  TheSuperHackers : Added bits and pitch to argument list for better performance *
  *=============================================================================================*/
-void SurfaceClass::Get_Pixel(Vector3 &rgb, int x, int y, void *pBits, int pitch)
+void SurfaceClass::Get_Pixel(Vector3 &rgb, int x, int y, LockedSurfacePtr pBits, int pitch)
 {
 	SurfaceDescription sd;
 	Get_Description(sd);
@@ -764,7 +764,7 @@ void SurfaceClass::Detach (void)
  *   1/10/2025  TheSuperHackers : Added bits and pitch to argument list for better performance *
  *=============================================================================================*/
 void SurfaceClass::Draw_Pixel(const unsigned int x, const unsigned int y, unsigned int color,
-	unsigned int bytesPerPixel, void *pBits, int pitch)
+	unsigned int bytesPerPixel, LockedSurfacePtr pBits, int pitch)
 {
 	unsigned char* dst = static_cast<unsigned char*>(pBits) + y * pitch + x * bytesPerPixel;
 	memcpy(dst, &color, bytesPerPixel);
@@ -789,7 +789,7 @@ void SurfaceClass::Draw_Pixel(const unsigned int x, const unsigned int y, unsign
  *   1/10/2025  TheSuperHackers : Added bits and pitch to argument list for better performance *
  *=============================================================================================*/
 void SurfaceClass::Draw_H_Line(const unsigned int y, const unsigned int x1, const unsigned int x2,
-	unsigned int color, unsigned int bytesPerPixel, void *pBits, int pitch)
+	unsigned int color, unsigned int bytesPerPixel, LockedSurfacePtr pBits, int pitch)
 {
 	unsigned char* row = static_cast<unsigned char*>(pBits) + y * pitch;
 

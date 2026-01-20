@@ -57,6 +57,7 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 {
 	W3DMPO_GLUE(SurfaceClass)
 	public:
+		typedef void *LockedSurfacePtr;
 
 		struct SurfaceDescription {
 			WW3DFormat		Format;	// Surface format
@@ -82,8 +83,8 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 		unsigned int Get_Bytes_Per_Pixel();
 
 		// Lock / unlock the surface
-		void *Lock(int *pitch);
-		void *Lock(int *pitch, const Vector2i &min, const Vector2i &max);
+		LockedSurfacePtr Lock(int *pitch);
+		LockedSurfacePtr Lock(int *pitch, const Vector2i &min, const Vector2i &max);
 		void Unlock(void);
 
 		// HY -- The following functions are support functions for font3d
@@ -127,14 +128,14 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 
 		// draws a horizontal line
 		void Draw_H_Line(const unsigned int y, const unsigned int x1, const unsigned int x2,
-			unsigned int color, unsigned int bytesPerPixel, void *pBits, int pitch);
+			unsigned int color, unsigned int bytesPerPixel, LockedSurfacePtr pBits, int pitch);
 
 		// draws a pixel
 		void Draw_Pixel(const unsigned int x, const unsigned int y, unsigned int color,
-			unsigned int bytesPerPixel, void *pBits, int pitch);
+			unsigned int bytesPerPixel, LockedSurfacePtr pBits, int pitch);
 
 		// get pixel function
-		void Get_Pixel(Vector3 &rgb, int x, int y, void *pBits, int pitch);
+		void Get_Pixel(Vector3 &rgb, int x, int y, LockedSurfacePtr pBits, int pitch);
 
 		void Hue_Shift(const Vector3 &hsv_shift);
 
