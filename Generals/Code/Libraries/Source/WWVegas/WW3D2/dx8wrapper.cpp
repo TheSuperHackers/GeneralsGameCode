@@ -352,15 +352,7 @@ bool DX8Wrapper::Init(void * hwnd, bool lite)
 
 	return(true);
 }
-// ThSuperHackers @feature jurassiclizard 16/01/2026 introduce ImGui framework (PR#2127)
-// ImGui workflow:
-// - WndProc: forwards input to ImGui via ImGui_ImplWin32_WndProcHandler()
-// - DX8Wrapper: manages context/backend initialization and cleanup,
-// - DX8Wrapper: handles device reset by invalidating/recreating device objects and End_Scene() and renders ImGui draw data after the main scene.
-// - GameClient: GameClient::update() starts each frame with NewFrame() calls and builds UI (ShowDemoWindow), while ImGui::Render() is called before DRAW() operations and
-//              critically before early returns in RTS_DEBUG mode (frame stepping) to ensure frames are properly closed and the demo window displays.
-//
-// See GameClient::update(), DX8Wrapper::Create_Device(), DX8Wrapper::Init(), DX8Wrapper::Shutdown(), DX8Wrapper::End_Scene(), and WndProc() for implementation details.
+
 void DX8Wrapper::Shutdown(void)
 {
 #ifdef RTS_HAS_IMGUI
@@ -529,16 +521,6 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Shutdowns(void)
 
 }
 
-
-// ThSuperHackers @feature jurassiclizard 16/01/2026 introduce ImGui framework (PR#2127)
-// ImGui workflow:
-// - WndProc: forwards input to ImGui via ImGui_ImplWin32_WndProcHandler()
-// - DX8Wrapper: manages context/backend initialization and cleanup,
-// - DX8Wrapper: handles device reset by invalidating/recreating device objects and End_Scene() and renders ImGui draw data after the main scene.
-// - GameClient: GameClient::update() starts each frame with NewFrame() calls and builds UI (ShowDemoWindow), while ImGui::Render() is called before DRAW() operations and
-//              critically before early returns in RTS_DEBUG mode (frame stepping) to ensure frames are properly closed and the demo window displays.
-//
-// See GameClient::update(), DX8Wrapper::Create_Device(), DX8Wrapper::Init(), DX8Wrapper::Shutdown(), DX8Wrapper::End_Scene(), and WndProc() for implementation details.
 bool DX8Wrapper::Create_Device(void)
 {
 	WWASSERT(D3DDevice==nullptr);	// for now, once you've created a device, you're stuck with it!
@@ -617,7 +599,7 @@ bool DX8Wrapper::Create_Device(void)
 		return false;
 	}
 // TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
-// see details in comment before this function's signature
+// see details under WinMain.cpp (WndProc())
 #ifdef RTS_HAS_IMGUI
 	// Initialize ImGui
 	IMGUI_CHECKVERSION();
@@ -643,19 +625,13 @@ bool DX8Wrapper::Create_Device(void)
 	return true;
 }
 
-// ThSuperHackers @feature jurassiclizard 16/01/2026 introduce ImGui framework (PR#2127)
-// ImGui workflow: WndProc forwards input to ImGui via ImGui_ImplWin32_WndProcHandler(), DX8Wrapper manages context/backend initialization and cleanup,
-// and End_Scene() renders ImGui draw data after the main scene.GameClient::update() starts each frame with NewFrame() calls and builds UI (ShowDemoWindow),
-// while ImGui::Render() is called before DRAW() operations and critically before early returns in RTS_DEBUG mode (frame stepping) to
-// ensure frames are properly closed and the demo window displays.
-// See GameClient::update(), DX8Wrapper::Create_Device(), DX8Wrapper::Init(), DX8Wrapper::Shutdown(), DX8Wrapper::End_Scene(), and WndProc() for implementation details.
 bool DX8Wrapper::Reset_Device(bool reload_assets)
 {
 	WWDEBUG_SAY(("Resetting device."));
 	DX8_THREAD_ASSERT();
 	if ((IsInitted) && (D3DDevice != nullptr)) {
 // TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
-// see details in comment before this function's signature
+// see details under WinMain.cpp (WndProc())
 #ifdef RTS_HAS_IMGUI
 		ImGui_ImplDX8_InvalidateDeviceObjects();
 #endif
@@ -1652,15 +1628,6 @@ void DX8Wrapper::Begin_Scene(void)
 	DX8WebBrowser::Update();
 }
 
-// ThSuperHackers @feature jurassiclizard 16/01/2026 introduce ImGui framework (PR#2127)
-// ImGui workflow:
-// - WndProc: forwards input to ImGui via ImGui_ImplWin32_WndProcHandler()
-// - DX8Wrapper: manages context/backend initialization and cleanup,
-// - DX8Wrapper: handles device reset by invalidating/recreating device objects and End_Scene() and renders ImGui draw data after the main scene.
-// - GameClient: GameClient::update() starts each frame with NewFrame() calls and builds UI (ShowDemoWindow), while ImGui::Render() is called before DRAW() operations and
-//              critically before early returns in RTS_DEBUG mode (frame stepping) to ensure frames are properly closed and the demo window displays.
-//
-// See GameClient::update(), DX8Wrapper::Create_Device(), DX8Wrapper::Init(), DX8Wrapper::Shutdown(), DX8Wrapper::End_Scene(), and WndProc() for implementation details.
 void DX8Wrapper::End_Scene(bool flip_frames)
 {
 	DX8_THREAD_ASSERT();
