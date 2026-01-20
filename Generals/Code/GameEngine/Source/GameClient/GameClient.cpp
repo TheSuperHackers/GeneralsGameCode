@@ -490,13 +490,13 @@ void GameClient::registerDrawable( Drawable *draw )
 /** -----------------------------------------------------------------------------------------------
  * Redraw all views, update the GUI, play sound effects, etc.
  */
+// TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
+// see details under WinMain.cpp (WndProc())
 DECLARE_PERF_TIMER(GameClient_update)
 DECLARE_PERF_TIMER(GameClient_draw)
 void GameClient::update( void )
 {
 	USE_PERF_TIMER(GameClient_update)
-// TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
-// see details under WinMain.cpp (WndProc())
 #ifdef RTS_HAS_IMGUI
 	ImGui_ImplDX8_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -598,8 +598,6 @@ void GameClient::update( void )
 
 	if(TheGlobalData->m_playIntro || TheGlobalData->m_afterIntro)
 	{
-// TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
-// see details under WinMain.cpp (WndProc())
 #ifdef RTS_HAS_IMGUI
 		ImGui::Render();  // Prepare render data
 #endif
@@ -711,9 +709,6 @@ void GameClient::update( void )
 	// need to draw the first frame, then don't draw again until TheGlobalData->m_noDraw
 	if (TheGlobalData->m_noDraw > TheGameLogic->getFrame() && TheGameLogic->getFrame() > 0)
 	{
-// TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
-// Prepare ImGui renderdata before framestepping to ensure proper display
-// see details under WinMain.cpp (WndProc())
 #ifdef RTS_HAS_IMGUI
 		ImGui::Render();
 #endif
@@ -740,8 +735,6 @@ void GameClient::update( void )
 		TheDisplay->UPDATE();
 	}
 
-// TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
-// see details under WinMain.cpp (WndProc())
 #ifdef RTS_HAS_IMGUI
 	ImGui::Render();  // Prepare render data
 #endif

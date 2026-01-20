@@ -268,7 +268,8 @@ void MoveRectIntoOtherRect(const RECT& inner, const RECT& outer, int* x, int* y)
 	*y += dy;
 }
 
-
+// TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
+// see details under WinMain.cpp (WndProc())
 bool DX8Wrapper::Init(void * hwnd, bool lite)
 {
 	WWASSERT(!IsInitted);
@@ -598,8 +599,6 @@ bool DX8Wrapper::Create_Device(void)
 	{
 		return false;
 	}
-// TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
-// see details under WinMain.cpp (WndProc())
 #ifdef RTS_HAS_IMGUI
 	// Initialize ImGui
 	IMGUI_CHECKVERSION();
@@ -630,8 +629,6 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 	WWDEBUG_SAY(("Resetting device."));
 	DX8_THREAD_ASSERT();
 	if ((IsInitted) && (D3DDevice != nullptr)) {
-// TheSuperHackers @feature jurassiclizard 16/01/2026 imgui integration (PR#2127)
-// see details under WinMain.cpp (WndProc())
 #ifdef RTS_HAS_IMGUI
 		ImGui_ImplDX8_InvalidateDeviceObjects();
 #endif
