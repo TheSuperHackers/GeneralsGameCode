@@ -840,8 +840,15 @@ inline HRESULT D3DXCreateVolumeTexture(
 /**
  * D3DXCreateTextureFromFileExA - Load texture from file
  * 
- * Stub: Returns error to trigger fallback to MissingTexture.
- * Could be implemented using TextureLoader from WW3D2 if needed.
+ * MINIMAL STUB: This function has zero callers in the codebase.
+ * It's only referenced inside DX8Wrapper::_Create_DX8_Texture(filename, mips)
+ * which itself is never called.
+ * 
+ * WW3D2 TextureLoader is the primary texture loading system and parses DDS
+ * files manually without using D3DX. This code path appears to be unused/legacy.
+ * 
+ * Returning error causes graceful fallback to MissingTexture in dx8wrapper.cpp.
+ * If this code path is ever needed, implement DDS/TGA loading here.
  */
 inline HRESULT D3DXCreateTextureFromFileExA(
     LPDIRECT3DDEVICE8 pDevice,
@@ -859,14 +866,23 @@ inline HRESULT D3DXCreateTextureFromFileExA(
     PALETTEENTRY* pPalette,
     LPDIRECT3DTEXTURE8* ppTexture)
 {
-    // Stub: Return error to trigger fallback to existing texture loading
+    // NOTE: Zero usage in codebase (verified via grep).
+    // Returning D3DERR_NOTAVAILABLE causes fallback to MissingTexture.
+    // Stub function acceptable for unused functionality.
     return D3DERR_NOTAVAILABLE;
 }
 
 /**
  * D3DXLoadSurfaceFromSurface - Copy surface data
  * 
- * Stub: Could be implemented using surface Lock/Unlock if needed.
+ * Implementation using D3D8's native IDirect3DDevice8::CopyRects.
+ * 
+ * Note: The codebase has DX8Wrapper::_Copy_DX8_Rects which wraps this API,
+ * but we cannot use it here due to circular header dependencies (D3DXCompat.h is included
+ * before DX8Wrapper class is defined). Instead, we call D3D8's CopyRects directly.
+ * 
+ * This provides hardware-accelerated surface copying, same as the 14 uses of
+ * _Copy_DX8_Rects in the codebase.
  */
 inline HRESULT D3DXLoadSurfaceFromSurface(
     LPDIRECT3DSURFACE8 pDestSurface,
@@ -878,10 +894,34 @@ inline HRESULT D3DXLoadSurfaceFromSurface(
     DWORD Filter,
     D3DCOLOR ColorKey)
 {
-    if (!pDestSurface || !pSrcSurface) return D3DERR_INVALIDCALL;
+    if (!pDestSurface || !pSrcSurface)
+        return D3DERR_INVALIDCALL;
     
-    // Stub: Return error to trigger fallback to existing surface copy code
-    return D3DERR_NOTAVAILABLE;
+    // Get D3D8 device from source surface
+    IDirect3DDevice8* pDevice = nullptr;
+    HRESULT hr = pSrcSurface->GetDevice(&pDevice);
+    if (FAILED(hr))
+        return hr;
+    
+    // Convert destination RECT to POINT for CopyRects API
+    POINT destPoint = {0, 0};
+    if (pDestRect) {
+        destPoint.x = pDestRect->left;
+        destPoint.y = pDestRect->top;
+    }
+    
+    // Use D3D8's native hardware-accelerated CopyRects
+    // This is the same API used by DX8Wrapper::_Copy_DX8_Rects (14 uses in codebase)
+    hr = pDevice->CopyRects(
+        pSrcSurface,
+        pSrcRect,                        // Source rect (nullptr = entire surface)
+        pSrcRect ? 1 : 0,                // Number of rects (0 = full surface)
+        pDestSurface,
+        pDestRect ? &destPoint : nullptr // Dest point (nullptr = 0,0)
+    );
+    
+    pDevice->Release();
+    return hr;
 }
 
 /**
