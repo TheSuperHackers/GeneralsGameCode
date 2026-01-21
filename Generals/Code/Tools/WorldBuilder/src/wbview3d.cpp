@@ -98,7 +98,6 @@
 #ifdef RTS_HAS_IMGUI
 #include <imgui.h>
 #include <imgui_impl_dx8.h>
-#include <imgui_impl_win32.h>
 #include "ImGuiFrameManager.h"
 #endif
 
@@ -2014,12 +2013,11 @@ void WbView3d::render()
 	++m_updateCount;
 
 #ifdef RTS_HAS_IMGUI
-	ImGuiFrameManager::BeginFrame();
-
-	// Build ImGui UI
-	ImGui::ShowDemoWindow();
-
-	ImGuiFrameManager::EndFrame();
+	{
+		ImGui::FrameManager::BeginFrame();
+		ImGui::ShowDemoWindow();
+		ImGui::FrameManager::EndFrame();
+	}
 #endif
 
 	if (WW3D::Begin_Render(true,true,Vector3(0.5f,0.5f,0.5f), TheWaterTransparency->m_minWaterOpacity) == WW3D_ERROR_OK)

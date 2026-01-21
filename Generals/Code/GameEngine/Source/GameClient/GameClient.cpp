@@ -497,7 +497,7 @@ void GameClient::update( void )
 {
 	USE_PERF_TIMER(GameClient_update)
 #ifdef RTS_HAS_IMGUI
-	ImGuiFrameManager::BeginFrame();
+	ImGui::FrameManager::BeginFrame();
 	// Draw ImGui Demo Window
 	{
 		ImGui::ShowDemoWindow();
@@ -596,7 +596,7 @@ void GameClient::update( void )
 	if(TheGlobalData->m_playIntro || TheGlobalData->m_afterIntro)
 	{
 #ifdef RTS_HAS_IMGUI
-		ImGuiFrameManager::EndFrame();
+		ImGui::FrameManager::EndFrame();
 #endif
 		// redraw all views, update the GUI
 		TheDisplay->DRAW();
@@ -707,7 +707,7 @@ void GameClient::update( void )
 	if (TheGlobalData->m_noDraw > TheGameLogic->getFrame() && TheGameLogic->getFrame() > 0)
 	{
 #ifdef RTS_HAS_IMGUI
-		ImGuiFrameManager::EndFrame();
+		ImGui::FrameManager::EndFrame();
 #endif
 		return;
 	}
@@ -733,7 +733,7 @@ void GameClient::update( void )
 	}
 
 #ifdef RTS_HAS_IMGUI
-	ImGuiFrameManager::EndFrame();
+	ImGui::FrameManager::EndFrame();
 #endif
 	{
 		USE_PERF_TIMER(GameClient_draw)

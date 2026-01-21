@@ -76,13 +76,15 @@ public:
 	//{{AFX_VIRTUAL(WbView3d)
 	protected:
 	virtual void OnDraw(CDC* pDC);      // overridden to draw this view
+	//}}AFX_VIRTUAL
+
+// Function overrides needed for ImGui Mouse capture
 #ifdef RTS_HAS_IMGUI
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 #endif
-	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	virtual ~WbView3d();
 #ifdef RTS_DEBUG
