@@ -1,0 +1,551 @@
+/*
+**	Command & Conquer Generals Zero Hour(tm)
+**	Copyright 2026 TheSuperHackers
+**
+**	This program is free software: you can redistribute it and/or modify
+**	it under the terms of the GNU General Public License as published by
+**	the Free Software Foundation, either version 3 of the License, or
+**	(at your option) any later version.
+**
+**	This program is distributed in the hope that it will be useful,
+**	but WITHOUT ANY WARRANTY; without even the implied warranty of
+**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+**	GNU General Public License for more details.
+**
+**	You should have received a copy of the GNU General Public License
+**	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * D3DXCompat.h - D3DX8 compatibility layer using WWMath
+ * 
+ * This header provides replacements for D3DX8 math functions using the existing
+ * WWMath library (Westwood Math). This eliminates the need for d3dx8.dll at runtime.
+ * 
+ * Usage: Define NO_D3DX before including D3DX8 headers
+ */
+
+#pragma once
+
+#ifdef NO_D3DX
+
+// Include D3D8 types
+#include <d3d8.h>
+
+// Only include WWMath if we're in a context that has it
+// (External libraries like gamespy don't need these)
+#if defined(__cplusplus) && !defined(NO_WWMATH_AVAILABLE)
+    // Include utility macros first (CppMacros defines CPP_11 etc.)
+    // This is needed because vector3.h includes STLUtils.h which uses CPP_11
+    #ifndef CPPMACROS_H
+        #include "Utility/CppMacros.h"
+    #endif
+    
+    #include "vector3.h"
+    #include "vector4.h"
+    #include "matrix3d.h"
+    #include "matrix4.h"
+    #define WWMATH_AVAILABLE 1
+#else
+    #define WWMATH_AVAILABLE 0
+#endif
+
+// Forward declare D3DX types (we'll define compatibility layer)
+typedef struct D3DXVECTOR3 D3DXVECTOR3;
+typedef struct D3DXVECTOR4 D3DXVECTOR4;
+typedef struct D3DXMATRIX D3DXMATRIX;
+
+// D3DX8 Vector and Matrix types - map to D3D types
+// Note: D3DXVECTOR3 is identical to D3DVECTOR (Direct3D 8 type)
+// Note: D3DXVECTOR4 is a simple {x,y,z,w} structure
+// Note: D3DXMATRIX is identical to D3DMATRIX (Direct3D 8 type)
+
+#if WWMATH_AVAILABLE
+
+struct D3DXVECTOR3
+{
+    float x, y, z;
+    
+    D3DXVECTOR3() {}
+    D3DXVECTOR3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
+    D3DXVECTOR3(const Vector3& v) : x(v.X), y(v.Y), z(v.Z) {}
+    
+    operator Vector3() const { return Vector3(x, y, z); }
+};
+
+struct D3DXVECTOR4
+{
+    float x, y, z, w;
+    
+    D3DXVECTOR4() {}
+    D3DXVECTOR4(float _x, float _y, float _z, float _w) : x(_x), y(_y), z(_z), w(_w) {}
+    D3DXVECTOR4(const Vector4& v) : x(v.X), y(v.Y), z(v.Z), w(v.W) {}
+    
+    operator Vector4() const { return Vector4(x, y, z, w); }
+};
+
+struct D3DXMATRIX : public D3DMATRIX
+{
+    D3DXMATRIX() {}
+    D3DXMATRIX(const Matrix4x4& m)
+    {
+        // Matrix4x4 stores row-major, D3DMATRIX is also row-major
+        const float* src = (const float*)&m;
+        float* dst = (float*)this;
+        for (int i = 0; i < 16; i++) {
+            dst[i] = src[i];
+        }
+    }
+    
+    operator Matrix4x4() const
+    {
+        Matrix4x4 result;
+        const float* src = (const float*)this;
+        float* dst = (float*)&result;
+        for (int i = 0; i < 16; i++) {
+            dst[i] = src[i];
+        }
+        return result;
+    }
+};
+
+#else
+
+// Simple C-compatible definitions when WWMath not available
+struct D3DXVECTOR3
+{
+    float x, y, z;
+};
+
+struct D3DXVECTOR4
+{
+    float x, y, z, w;
+};
+
+struct D3DXMATRIX
+{
+    float m[4][4];
+};
+
+#endif // WWMATH_AVAILABLE
+
+//=============================================================================
+// D3DX8 Math Functions - Compatibility Layer using WWMath
+//=============================================================================
+
+#if WWMATH_AVAILABLE
+
+//-----------------------------------------------------------------------------
+// Vector4 Operations
+//-----------------------------------------------------------------------------
+
+/**
+ * D3DXVec4Dot - Compute dot product of two 4D vectors
+ * Maps to: Vector4::Dot_Product()
+ */
+inline float D3DXVec4Dot(const D3DXVECTOR4* pV1, const D3DXVECTOR4* pV2)
+{
+    if (!pV1 || !pV2) return 0.0f;
+    
+    Vector4 v1(pV1->x, pV1->y, pV1->z, pV1->w);
+    Vector4 v2(pV2->x, pV2->y, pV2->z, pV2->w);
+    
+    return Vector4::Dot_Product(v1, v2);
+}
+
+/**
+ * D3DXVec4Transform - Transform 4D vector by 4x4 matrix
+ * Maps to: Matrix4x4::Transform_Vector()
+ */
+inline D3DXVECTOR4* D3DXVec4Transform(
+    D3DXVECTOR4* pOut,
+    const D3DXVECTOR4* pV,
+    const D3DXMATRIX* pM)
+{
+    if (!pOut || !pV || !pM) return pOut;
+    
+    Matrix4x4 mat = *(const Matrix4x4*)pM;
+    Vector4 vec(pV->x, pV->y, pV->z, pV->w);
+    Vector4 result;
+    
+    Matrix4x4::Transform_Vector(mat, vec, &result);
+    
+    pOut->x = result.X;
+    pOut->y = result.Y;
+    pOut->z = result.Z;
+    pOut->w = result.W;
+    
+    return pOut;
+}
+
+//-----------------------------------------------------------------------------
+// Vector3 Operations
+//-----------------------------------------------------------------------------
+
+/**
+ * D3DXVec3Transform - Transform 3D vector by 4x4 matrix (homogeneous)
+ * Maps to: Matrix4x4::Transform_Vector()
+ * Note: Treats input as (x, y, z, 1) for position transformation
+ */
+inline D3DXVECTOR4* D3DXVec3Transform(
+    D3DXVECTOR4* pOut,
+    const D3DXVECTOR3* pV,
+    const D3DXMATRIX* pM)
+{
+    if (!pOut || !pV || !pM) return pOut;
+    
+    Matrix4x4 mat = *(const Matrix4x4*)pM;
+    Vector3 vec(pV->x, pV->y, pV->z);
+    Vector4 result;
+    
+    // Transform as homogeneous point (w=1)
+    Matrix4x4::Transform_Vector(mat, vec, &result);
+    
+    pOut->x = result.X;
+    pOut->y = result.Y;
+    pOut->z = result.Z;
+    pOut->w = result.W;
+    
+    return pOut;
+}
+
+//-----------------------------------------------------------------------------
+// Matrix Operations
+//-----------------------------------------------------------------------------
+
+/**
+ * D3DXMatrixTranspose - Transpose a 4x4 matrix
+ * Maps to: Matrix4x4::Transpose()
+ */
+inline D3DXMATRIX* D3DXMatrixTranspose(
+    D3DXMATRIX* pOut,
+    const D3DXMATRIX* pM)
+{
+    if (!pOut || !pM) return pOut;
+    
+    Matrix4x4 mat = *(const Matrix4x4*)pM;
+    Matrix4x4 result = mat.Transpose();
+    
+    *(Matrix4x4*)pOut = result;
+    
+    return pOut;
+}
+
+/**
+ * D3DXMatrixInverse - Compute inverse of a 4x4 matrix
+ * Maps to: Matrix4x4::Inverse()
+ * 
+ * Calculates the matrix inverse using adjugate/determinant method.
+ * Returns nullptr if the matrix is singular (determinant near zero).
+ * Determinant is written to pDeterminant if provided.
+ */
+inline D3DXMATRIX* D3DXMatrixInverse(
+    D3DXMATRIX* pOut,
+    float* pDeterminant,
+    const D3DXMATRIX* pM)
+{
+    if (!pOut || !pM) return pOut;
+    
+    Matrix4x4* result = Matrix4x4::Inverse(
+        (Matrix4x4*)pOut,
+        pDeterminant,
+        (const Matrix4x4*)pM
+    );
+    
+    // Return nullptr if matrix is singular (determinant near zero)
+    return result ? pOut : nullptr;
+}
+
+//-----------------------------------------------------------------------------
+// Utility Functions
+//-----------------------------------------------------------------------------
+
+/**
+ * D3DXGetErrorStringA - Get error string for D3D error code
+ * Simple implementation with common D3D8 error codes
+ */
+inline const char* D3DXGetErrorStringA(HRESULT hr)
+{
+    switch (hr)
+    {
+        case D3D_OK:
+            return "No error";
+        case D3DERR_WRONGTEXTUREFORMAT:
+            return "Wrong texture format";
+        case D3DERR_UNSUPPORTEDCOLOROPERATION:
+            return "Unsupported color operation";
+        case D3DERR_UNSUPPORTEDCOLORARG:
+            return "Unsupported color argument";
+        case D3DERR_UNSUPPORTEDALPHAOPERATION:
+            return "Unsupported alpha operation";
+        case D3DERR_UNSUPPORTEDALPHAARG:
+            return "Unsupported alpha argument";
+        case D3DERR_TOOMANYOPERATIONS:
+            return "Too many operations";
+        case D3DERR_CONFLICTINGTEXTUREFILTER:
+            return "Conflicting texture filter";
+        case D3DERR_UNSUPPORTEDFACTORVALUE:
+            return "Unsupported factor value";
+        case D3DERR_CONFLICTINGRENDERSTATE:
+            return "Conflicting render state";
+        case D3DERR_UNSUPPORTEDTEXTUREFILTER:
+            return "Unsupported texture filter";
+        case D3DERR_CONFLICTINGTEXTUREPALETTE:
+            return "Conflicting texture palette";
+        case D3DERR_DRIVERINTERNALERROR:
+            return "Driver internal error";
+        case D3DERR_NOTFOUND:
+            return "Not found";
+        case D3DERR_MOREDATA:
+            return "More data";
+        case D3DERR_DEVICELOST:
+            return "Device lost";
+        case D3DERR_DEVICENOTRESET:
+            return "Device not reset";
+        case D3DERR_NOTAVAILABLE:
+            return "Not available";
+        case D3DERR_OUTOFVIDEOMEMORY:
+            return "Out of video memory";
+        case D3DERR_INVALIDDEVICE:
+            return "Invalid device";
+        case D3DERR_INVALIDCALL:
+            return "Invalid call";
+        case D3DERR_DRIVERINVALIDCALL:
+            return "Driver invalid call";
+        case E_OUTOFMEMORY:
+            return "Out of memory";
+        default:
+            return "Unknown error";
+    }
+}
+
+/**
+ * D3DXGetFVFVertexSize - Calculate vertex size from FVF flags
+ */
+inline UINT D3DXGetFVFVertexSize(DWORD FVF)
+{
+    UINT size = 0;
+    
+    // Position formats
+    if (FVF & D3DFVF_XYZ) size += 12;       // 3 floats
+    if (FVF & D3DFVF_XYZRHW) size += 16;    // 4 floats
+    if (FVF & D3DFVF_XYZB1) size += 16;     // 3 floats + 1 blend weight
+    if (FVF & D3DFVF_XYZB2) size += 20;     // 3 floats + 2 blend weights
+    if (FVF & D3DFVF_XYZB3) size += 24;     // 3 floats + 3 blend weights
+    if (FVF & D3DFVF_XYZB4) size += 28;     // 3 floats + 4 blend weights
+    if (FVF & D3DFVF_XYZB5) size += 32;     // 3 floats + 5 blend weights
+    
+    // Normal
+    if (FVF & D3DFVF_NORMAL) size += 12;    // 3 floats
+    
+    // Point size
+    if (FVF & D3DFVF_PSIZE) size += 4;      // 1 float
+    
+    // Diffuse color
+    if (FVF & D3DFVF_DIFFUSE) size += 4;    // 1 DWORD (D3DCOLOR)
+    
+    // Specular color
+    if (FVF & D3DFVF_SPECULAR) size += 4;   // 1 DWORD (D3DCOLOR)
+    
+    // Texture coordinates
+    UINT texCount = (FVF & D3DFVF_TEXCOUNT_MASK) >> D3DFVF_TEXCOUNT_SHIFT;
+    for (UINT i = 0; i < texCount; i++)
+    {
+        DWORD texFormat = (FVF >> (16 + i * 2)) & 0x3;
+        switch (texFormat)
+        {
+            case D3DFVF_TEXTUREFORMAT1: size += 4; break;   // 1 float
+            case D3DFVF_TEXTUREFORMAT2: size += 8; break;   // 2 floats
+            case D3DFVF_TEXTUREFORMAT3: size += 12; break;  // 3 floats
+            case D3DFVF_TEXTUREFORMAT4: size += 16; break;  // 4 floats
+            default: size += 8; break;                      // Default to 2 floats
+        }
+    }
+    
+    return size;
+}
+
+#endif // WWMATH_AVAILABLE
+
+//-----------------------------------------------------------------------------
+// Matrix Operations (Additional) - Available even without WWMath
+//-----------------------------------------------------------------------------
+
+#if WWMATH_AVAILABLE
+
+/**
+ * D3DXMatrixMultiply - Multiply two matrices
+ * Maps to: Matrix4x4::operator*
+ */
+inline D3DXMATRIX* D3DXMatrixMultiply(
+    D3DXMATRIX* pOut,
+    const D3DXMATRIX* pM1,
+    const D3DXMATRIX* pM2)
+{
+    if (!pOut || !pM1 || !pM2) return pOut;
+    
+    Matrix4x4 m1 = *(const Matrix4x4*)pM1;
+    Matrix4x4 m2 = *(const Matrix4x4*)pM2;
+    Matrix4x4 result = m1 * m2;
+    
+    *(Matrix4x4*)pOut = result;
+    return pOut;
+}
+
+/**
+ * D3DXMatrixRotationZ - Create rotation matrix around Z axis
+ * Maps to: Manual matrix construction (simple rotation)
+ */
+inline D3DXMATRIX* D3DXMatrixRotationZ(D3DXMATRIX* pOut, float angle)
+{
+    if (!pOut) return pOut;
+    
+    float c = cosf(angle);
+    float s = sinf(angle);
+    
+    Matrix4x4 result(true); // Identity
+    result[0][0] = c;
+    result[0][1] = s;
+    result[1][0] = -s;
+    result[1][1] = c;
+    
+    *(Matrix4x4*)pOut = result;
+    return pOut;
+}
+
+#endif // WWMATH_AVAILABLE
+
+//-----------------------------------------------------------------------------
+// Texture Functions (Direct3D 8 wrappers and stubs)
+// These don't need WWMath
+//-----------------------------------------------------------------------------
+
+#ifdef __cplusplus
+
+/**
+ * D3DXCreateTexture - Create a texture
+ * Direct wrapper for IDirect3DDevice8::CreateTexture
+ * No D3DX dependency - this is pure D3D8!
+ */
+inline HRESULT D3DXCreateTexture(
+    LPDIRECT3DDEVICE8 pDevice,
+    UINT Width,
+    UINT Height,
+    UINT MipLevels,
+    DWORD Usage,
+    D3DFORMAT Format,
+    D3DPOOL Pool,
+    LPDIRECT3DTEXTURE8* ppTexture)
+{
+    if (!pDevice || !ppTexture) return D3DERR_INVALIDCALL;
+    
+    // Direct D3D8 call - no D3DX involved!
+    return pDevice->CreateTexture(Width, Height, MipLevels, Usage, Format, Pool, ppTexture);
+}
+
+/**
+ * D3DXCreateCubeTexture - Create a cube texture
+ * Direct wrapper for IDirect3DDevice8::CreateCubeTexture
+ */
+inline HRESULT D3DXCreateCubeTexture(
+    LPDIRECT3DDEVICE8 pDevice,
+    UINT Size,
+    UINT MipLevels,
+    DWORD Usage,
+    D3DFORMAT Format,
+    D3DPOOL Pool,
+    LPDIRECT3DCUBETEXTURE8* ppCubeTexture)
+{
+    if (!pDevice || !ppCubeTexture) return D3DERR_INVALIDCALL;
+    
+    // Direct D3D8 call
+    return pDevice->CreateCubeTexture(Size, MipLevels, Usage, Format, Pool, ppCubeTexture);
+}
+
+/**
+ * D3DXCreateVolumeTexture - Create a volume texture
+ * Direct wrapper for IDirect3DDevice8::CreateVolumeTexture
+ */
+inline HRESULT D3DXCreateVolumeTexture(
+    LPDIRECT3DDEVICE8 pDevice,
+    UINT Width,
+    UINT Height,
+    UINT Depth,
+    UINT MipLevels,
+    DWORD Usage,
+    D3DFORMAT Format,
+    D3DPOOL Pool,
+    LPDIRECT3DVOLUMETEXTURE8* ppVolumeTexture)
+{
+    if (!pDevice || !ppVolumeTexture) return D3DERR_INVALIDCALL;
+    
+    // Direct D3D8 call
+    return pDevice->CreateVolumeTexture(Width, Height, Depth, MipLevels, Usage, Format, Pool, ppVolumeTexture);
+}
+
+/**
+ * D3DXCreateTextureFromFileExA - Load texture from file
+ * 
+ * Stub: Returns error to trigger fallback to MissingTexture.
+ * Could be implemented using TextureLoader from WW3D2 if needed.
+ */
+inline HRESULT D3DXCreateTextureFromFileExA(
+    LPDIRECT3DDEVICE8 pDevice,
+    LPCSTR pSrcFile,
+    UINT Width,
+    UINT Height,
+    UINT MipLevels,
+    DWORD Usage,
+    D3DFORMAT Format,
+    D3DPOOL Pool,
+    DWORD Filter,
+    DWORD MipFilter,
+    D3DCOLOR ColorKey,
+    void* pSrcInfo,
+    PALETTEENTRY* pPalette,
+    LPDIRECT3DTEXTURE8* ppTexture)
+{
+    // Stub: Return error to trigger fallback to existing texture loading
+    return D3DERR_NOTAVAILABLE;
+}
+
+/**
+ * D3DXLoadSurfaceFromSurface - Copy surface data
+ * 
+ * Stub: Could be implemented using surface Lock/Unlock if needed.
+ */
+inline HRESULT D3DXLoadSurfaceFromSurface(
+    LPDIRECT3DSURFACE8 pDestSurface,
+    const PALETTEENTRY* pDestPalette,
+    const RECT* pDestRect,
+    LPDIRECT3DSURFACE8 pSrcSurface,
+    const PALETTEENTRY* pSrcPalette,
+    const RECT* pSrcRect,
+    DWORD Filter,
+    D3DCOLOR ColorKey)
+{
+    if (!pDestSurface || !pSrcSurface) return D3DERR_INVALIDCALL;
+    
+    // Stub: Return error to trigger fallback to existing surface copy code
+    return D3DERR_NOTAVAILABLE;
+}
+
+/**
+ * D3DXFilterTexture - Generate mipmaps
+ * 
+ * Stub: Returns success without filtering (no-op).
+ * Could be implemented with mipmap generation if needed.
+ */
+inline HRESULT D3DXFilterTexture(
+    LPDIRECT3DBASETEXTURE8 pTexture,
+    const PALETTEENTRY* pPalette,
+    UINT SrcLevel,
+    DWORD Filter)
+{
+    // Stub: No-op, textures use pre-existing mipmaps
+    return D3D_OK;
+}
+
+#endif // __cplusplus
+
+#endif // NO_D3DX
