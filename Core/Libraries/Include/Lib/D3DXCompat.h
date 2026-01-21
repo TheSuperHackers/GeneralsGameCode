@@ -597,6 +597,24 @@ inline D3DXMATRIX* D3DXMatrixTranslation(D3DXMATRIX* pOut, float x, float y, flo
     return pOut;
 }
 
+/**
+ * D3DXMatrixIdentity - Initialize matrix to identity
+ * Maps to: Matrix4x4::Make_Identity()
+ * 
+ * Used in water rendering (W3DWater.cpp) for clipping matrix initialization.
+ * Implementation using WWMath (8+ uses across codebase).
+ */
+inline D3DXMATRIX* D3DXMatrixIdentity(D3DXMATRIX* pOut)
+{
+    if (!pOut) return pOut;
+    
+    Matrix4x4 identity;
+    identity.Make_Identity();
+    
+    *(Matrix4x4*)pOut = identity;
+    return pOut;
+}
+
 #endif // WWMATH_AVAILABLE
 
 //-----------------------------------------------------------------------------
@@ -938,6 +956,43 @@ inline HRESULT D3DXFilterTexture(
 {
     // Stub: No-op, textures use pre-existing mipmaps
     return D3D_OK;
+}
+
+//-----------------------------------------------------------------------------
+// Font Functions (Stubs for unused functionality)
+//-----------------------------------------------------------------------------
+
+// Forward declaration for D3DX Font interface
+struct ID3DXFont;
+typedef struct ID3DXFont *LPD3DXFONT;
+
+/**
+ * D3DXCreateFont - Create D3DX font object
+ * 
+ * STUB: This function is only used in WorldBuilder tools (4 calls in wbview3d.cpp).
+ * WorldBuilder is NOT built in MinGW configuration (RTS_BUILD_GENERALS_TOOLS disabled).
+ * 
+ * Build scope: Tools only, not game executables (generalsv.exe, generalszh.exe)
+ * Usage locations:
+ *   - Generals/Code/Tools/WorldBuilder/src/wbview3d.cpp:543, 2205
+ *   - GeneralsMD/Code/Tools/WorldBuilder/src/wbview3d.cpp:560, 2286
+ * 
+ * If WorldBuilder support is needed in future:
+ * 1. Enable RTS_BUILD_GENERALS_TOOLS in CMake preset
+ * 2. Implement using GDI CreateFont + text rendering system
+ * 3. Or use existing game font system if available
+ * 
+ * Stub function acceptable when unused or out of build scope.
+ * This is consistent with D3DXCreateTextureFromFileExA approach (commit b9b1ea03).
+ */
+inline HRESULT D3DXCreateFont(
+    LPDIRECT3DDEVICE8 pDevice,
+    HFONT hFont,
+    LPD3DXFONT* ppFont)
+{
+    // WorldBuilder not in build scope - stub acceptable
+    if (ppFont) *ppFont = nullptr;
+    return D3DERR_NOTAVAILABLE;
 }
 
 #endif // __cplusplus
