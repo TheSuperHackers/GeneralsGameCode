@@ -3,9 +3,9 @@
 #include "imgui_impl_dx8.h"
 #include "imgui_impl_win32.h"
 
-bool ImGuiFrameManager::s_frameOpen = false;
+bool ImGui::FrameManager::s_frameOpen = false;
 
-void ImGuiFrameManager::BeginFrame()
+void ImGui::FrameManager::BeginFrame()
 {
     if (s_frameOpen) {
         return;
@@ -18,7 +18,7 @@ void ImGuiFrameManager::BeginFrame()
     s_frameOpen = true;
 }
 
-void ImGuiFrameManager::EndFrame()
+void ImGui::FrameManager::EndFrame()
 {
     if (!s_frameOpen) {
         return;
