@@ -497,6 +497,8 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	m_soleHealingBenefactorID = INVALID_ID; ///< who is the only other object that can give me this non-stacking heal benefit?
 	m_soleHealingBenefactorExpirationFrame = 0; ///< on what frame can I accept healing (thus to switch) from a new benefactor
 
+	m_turretNeedPositioning = FALSE;
+
 	// TheSuperHackers @bugfix Mauller/xezon 02/08/2025 sendObjectCreated needs calling before CreateModule's are initialized to prevent drawable related crashes
 	// This predominantly occurs with the veterancy create module when the chemical suits upgrade is unlocked as it tries to set the terrain decal.
 
@@ -4468,6 +4470,7 @@ void Object::loadPostProcess()
 	else
 		m_containedBy = nullptr;
 
+	setNeedUpdateTurretPositioning(TRUE);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -6475,4 +6478,14 @@ ObjectID Object::calculateCountermeasureToDivertTo( const Object& victim )
 		}
 	}
 	return INVALID_ID;
+}
+
+//-------------------------------------------------------------------------------------------------
+void Object::setNeedUpdateTurretPositioning(Bool set)
+{
+	if(m_turretNeedPositioning != set && getDrawable())
+	{
+		m_turretNeedPositioning = set;
+		getDrawable()->setNeedUpdateTurretPositioning(set);
+	}
 }

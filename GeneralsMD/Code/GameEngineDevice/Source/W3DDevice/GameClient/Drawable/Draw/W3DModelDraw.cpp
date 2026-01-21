@@ -1742,6 +1742,8 @@ W3DModelDraw::W3DModelDraw(Thing *thing, const ModuleData* moduleData) : DrawMod
 	}
 	m_needRecalcBoneParticleSystems = false;
 	m_fullyObscuredByShroud = false;
+	m_needUpdateTurretPosition = true;
+	m_doHandleRecoil = true;
 
 	// only validate the current time-of-day and weather conditions by default.
 	getW3DModelDrawModuleData()->validateStuffForTimeAndWeather(getDrawable(),
@@ -2417,7 +2419,7 @@ void W3DModelDraw::stopClientParticleSystems()
 */
 void W3DModelDraw::handleClientTurretPositioning()
 {
-	if (!m_curState || !(m_curState->m_validStuff & ModelConditionInfo::TURRETS_VALID))
+	if (!m_curState || !(m_curState->m_validStuff & ModelConditionInfo::TURRETS_VALID) || !m_needUpdateTurretPosition)
 		return;
 
 	for (int tslot = 0; tslot < MAX_TURRETS; ++tslot)
@@ -2491,13 +2493,17 @@ void W3DModelDraw::handleClientTurretPositioning()
 
 	@todo fix me someday (srj)
 */
+// TheSuperHackers @performance IamInnocent 01/01/26 - Adjust Turret Positioning, Recoil, and Muzzle to only Update when Necessary
 void W3DModelDraw::handleClientRecoil()
 {
 	const W3DModelDrawModuleData* d = getW3DModelDrawModuleData();
-	if (!(m_curState->m_validStuff & ModelConditionInfo::BARRELS_VALID))
+	if (!(m_curState->m_validStuff & ModelConditionInfo::BARRELS_VALID) || !m_doHandleRecoil)
 	{
 		return;
 	}
+
+	// Set the Requirement of Recoil Update to False first, if there is any recoil while checking, it is set to True.
+	m_doHandleRecoil = FALSE;
 
 	// do recoil, if any
 	for (int wslot = 0; wslot < WEAPONSLOT_COUNT; ++wslot)
@@ -2518,6 +2524,8 @@ void W3DModelDraw::handleClientRecoil()
 				Bool hidden = recoils[i].m_state != WeaponRecoilInfo::RECOIL_START;
 				//DEBUG_LOG(("adjust muzzleflash %08lx for Draw %08lx state %s to %d at frame %d",subObjToHide,this,m_curState->m_description.str(),hidden?1:0,TheGameLogic->getFrame()));
 				barrels[i].setMuzzleFlashHidden(m_renderObject, hidden);
+				if(!hidden)
+					m_doHandleRecoil = TRUE; // There's more recoil, need to update
 			}
 
 			const Real TINY_RECOIL = 0.01f;
@@ -2542,6 +2550,7 @@ void W3DModelDraw::handleClientRecoil()
 						{
 							recoils[i].m_state = WeaponRecoilInfo::SETTLE;
 						}
+						m_doHandleRecoil = TRUE; // There's more recoil, need to update
 						break;
 
 					case WeaponRecoilInfo::SETTLE:
@@ -2551,6 +2560,7 @@ void W3DModelDraw::handleClientRecoil()
 							recoils[i].m_shift = 0.0f;
 							recoils[i].m_state = WeaponRecoilInfo::IDLE;
 						}
+						m_doHandleRecoil = TRUE; // There's more recoil, need to update
 						break;
 				}
 
@@ -3764,6 +3774,8 @@ Bool W3DModelDraw::handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelTo
 
 	if (info.m_recoilBone || info.m_muzzleFlashBone)
 	{
+		m_doHandleRecoil = TRUE;
+	
 		//DEBUG_LOG(("START muzzleflash %08lx for Draw %08lx state %s at frame %d",info.m_muzzleFlashBone,this,m_curState->m_description.str(),TheGameLogic->getFrame()));
 		WeaponRecoilInfo& recoil = m_weaponRecoilInfoVec[wslot][specificBarrelToUse];
 		recoil.m_state = WeaponRecoilInfo::RECOIL_START;
@@ -3906,6 +3918,8 @@ void W3DModelDraw::rebuildWeaponRecoilInfo(const ModelConditionInfo* state)
 			}
 		}
 	}
+	// Resetting Model calls for this function, everytime new recoil Info is configured, need to configure to check for new recoil or Muzzle
+	m_doHandleRecoil = TRUE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4014,6 +4028,12 @@ void W3DModelDraw::updateSubObjects()
 			}
 		}
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void W3DModelDraw::setNeedUpdateTurretPositioning(Bool set)
+{
+	m_needUpdateTurretPosition = set;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -4274,6 +4294,9 @@ void W3DModelDraw::loadPostProcess( void )
 
 	// extend base class
 	DrawModule::loadPostProcess();
+
+	m_needUpdateTurretPosition = TRUE;
+	m_doHandleRecoil = TRUE;
 
 }
 

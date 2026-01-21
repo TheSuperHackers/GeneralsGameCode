@@ -518,6 +518,8 @@ public:
 	Real getAnimationScrubScalar( void ) const; // lorenzen // returns 0 to 1... where are we between start and finish?
 #endif
 
+	void setNeedUpdateTurretPositioning(Bool set);
+
 	UnsignedInt getExpirationDate() const { return m_expirationDate; }
 	void setExpirationDate(UnsignedInt frame) { m_expirationDate = frame; }
 

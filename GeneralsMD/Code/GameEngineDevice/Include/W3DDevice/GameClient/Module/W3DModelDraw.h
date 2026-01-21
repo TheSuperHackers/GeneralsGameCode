@@ -418,6 +418,8 @@ public:
 	virtual Real getAnimationScrubScalar( void ) const;
 #endif
 
+	virtual void setNeedUpdateTurretPositioning(Bool set);
+
 	virtual ObjectDrawInterface* getObjectDrawInterface() { return this; }
 	virtual const ObjectDrawInterface* getObjectDrawInterface() const { return this; }
 
@@ -507,6 +509,9 @@ private:
 	Bool													m_hideHeadlights;
 	Bool													m_pauseAnimation;
 	Int														m_animationMode;
+
+	Bool													m_needUpdateTurretPosition;
+	Bool													m_doHandleRecoil;
 
 	void adjustAnimation(const ModelConditionInfo* prevState, Real prevAnimFraction);
 	Real getCurrentAnimFraction() const;
