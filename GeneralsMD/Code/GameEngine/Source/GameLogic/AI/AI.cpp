@@ -1063,7 +1063,7 @@ void AI::xfer( Xfer *xfer )
 {
 
 	// version
-	XferVersion currentVersion = 2;
+	XferVersion currentVersion = 3;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -1071,6 +1071,12 @@ void AI::xfer( Xfer *xfer )
 	if ( version >= 2 )
 	{
 		xfer->xferSnapshot( m_pathfinder );
+
+		// TheSuperHackers @info bobtista 20/01/2026 Serialize the next group ID counter
+		if ( version >= 3 )
+		{
+			xfer->xferUnsignedInt( &m_nextGroupID );
+		}
 
 		// Serialize TAiData chain (same as crc())
 		TAiData *aiData = m_aiData;
@@ -1114,7 +1120,11 @@ void AI::xfer( Xfer *xfer )
 //-----------------------------------------------------------------------------
 void AI::loadPostProcess()
 {
-
+	// TheSuperHackers @fix bobtista 20/01/2026 Call pathfinder post-process to trigger zone recalculation
+	if ( m_pathfinder != nullptr )
+	{
+		m_pathfinder->loadPostProcess();
+	}
 }
 
 
