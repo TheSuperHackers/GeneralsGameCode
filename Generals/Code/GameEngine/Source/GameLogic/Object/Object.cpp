@@ -3459,11 +3459,19 @@ void Object::crc( Xfer *xfer )
 		logString.concat(tmp);
 	}
 #endif // DEBUG_CRC
+#if RETAIL_COMPATIBLE_CRC
 	xfer->xferUser(&m_objectUpgradesCompleted,				sizeof(Int64));
+#else
+	xfer->xferUser(&m_objectUpgradesCompleted, sizeof(BitFlags<UPGRADE_MAX_COUNT>));
+#endif
 #ifdef DEBUG_CRC
 	if (doLogging)
 	{
+#if RETAIL_COMPATIBLE_CRC
 		tmp.format("m_objectUpgradesCompleted: %I64X, ", m_objectUpgradesCompleted);
+#else
+		tmp.format("m_objectUpgradesCompleted: %s, ", m_objectUpgradesCompleted.toHexString().c_str());
+#endif
 		logString.concat(tmp);
 	}
 #endif // DEBUG_CRC
