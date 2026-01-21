@@ -651,9 +651,6 @@ public:
 	void xfer( Xfer *xfer );
 	void loadPostProcess();
 
-	// TheSuperHackers @info bobtista 19/01/2026 Reset transient state for checkpoint CRC matching
-	void resetTransientStateForCheckpoint( void );
-
 	Bool clientSafeQuickDoesPathExist( const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to );  ///< Can we build any path at all between the locations	(terrain & buildings check - fast)
 	Bool clientSafeQuickDoesPathExistForUI( const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to );  ///< Can we build any path at all between the locations	(terrain only - fast)
 	Bool slowDoesPathExist( Object *obj, const Coord3D *from,
