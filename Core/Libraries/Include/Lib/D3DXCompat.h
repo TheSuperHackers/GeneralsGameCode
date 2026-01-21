@@ -29,8 +29,80 @@
 
 #ifdef NO_D3DX
 
+// Prevent min-dx8-sdk headers from defining D3DX functions/types
+// by pre-defining their include guards (Option A: Include Guard Coordination)
+// This allows our compatibility layer to be the sole provider of D3DX functionality
+#ifndef __D3DX8_H__
+#define __D3DX8_H__
+#endif
+
+#ifndef __D3DX8CORE_H__
+#define __D3DX8CORE_H__
+#endif
+
+#ifndef __D3DX8EFFECT_H__
+#define __D3DX8EFFECT_H__
+#endif
+
+#ifndef __D3DX8MATH_H__
+#define __D3DX8MATH_H__
+#endif
+
+#ifndef __D3DX8MATH_INL__
+#define __D3DX8MATH_INL__
+#endif
+
+#ifndef __D3DX8MESH_H__
+#define __D3DX8MESH_H__
+#endif
+
+#ifndef __D3DX8SHAPES_H__
+#define __D3DX8SHAPES_H__
+#endif
+
+#ifndef __D3DX8TEX_H__
+#define __D3DX8TEX_H__
+#endif
+
 // Include D3D8 types
 #include <d3d8.h>
+#include <limits.h>
+#include <float.h>
+
+//-----------------------------------------------------------------------------
+// D3DX Constants
+//-----------------------------------------------------------------------------
+
+// Default values for D3DX functions
+#ifndef D3DX_DEFAULT
+#define D3DX_DEFAULT            ULONG_MAX
+#define D3DX_DEFAULT_FLOAT      FLT_MAX
+#endif
+
+// D3DX math constants
+#ifndef D3DX_PI
+#define D3DX_PI                 ((FLOAT) 3.141592654f)
+#define D3DX_1BYPI              ((FLOAT) 0.318309886f)
+#define D3DXToRadian(degree)    ((degree) * (D3DX_PI / 180.0f))
+#define D3DXToDegree(radian)    ((radian) * (180.0f / D3DX_PI))
+#endif
+
+// D3DX_FILTER flags for texture operations
+#ifndef D3DX_FILTER_NONE
+#define D3DX_FILTER_NONE        (1 << 0)
+#define D3DX_FILTER_POINT       (2 << 0)
+#define D3DX_FILTER_LINEAR      (3 << 0)
+#define D3DX_FILTER_TRIANGLE    (4 << 0)
+#define D3DX_FILTER_BOX         (5 << 0)
+
+#define D3DX_FILTER_MIRROR_U    (1 << 16)
+#define D3DX_FILTER_MIRROR_V    (2 << 16)
+#define D3DX_FILTER_MIRROR_W    (4 << 16)
+#define D3DX_FILTER_MIRROR      (7 << 16)
+#define D3DX_FILTER_DITHER      (8 << 16)
+#endif
+
+//-----------------------------------------------------------------------------
 
 // Only include WWMath if we're in a context that has it
 // (External libraries like gamespy don't need these)
@@ -71,6 +143,10 @@ struct D3DXVECTOR3
     D3DXVECTOR3(const Vector3& v) : x(v.X), y(v.Y), z(v.Z) {}
     
     operator Vector3() const { return Vector3(x, y, z); }
+    
+    // Array access operator for compatibility
+    float& operator[](int i) { return (&x)[i]; }
+    const float& operator[](int i) const { return (&x)[i]; }
 };
 
 struct D3DXVECTOR4
@@ -82,11 +158,33 @@ struct D3DXVECTOR4
     D3DXVECTOR4(const Vector4& v) : x(v.X), y(v.Y), z(v.Z), w(v.W) {}
     
     operator Vector4() const { return Vector4(x, y, z, w); }
+    
+    // Conversion to pointer for passing to D3D functions
+    operator const float*() const { return &x; }
+    operator float*() { return &x; }
+    
+    // Array access operator for compatibility
+    float& operator[](int i) { return (&x)[i]; }
+    const float& operator[](int i) const { return (&x)[i]; }
 };
 
 struct D3DXMATRIX : public D3DMATRIX
 {
     D3DXMATRIX() {}
+    
+    // Constructor from 16 float values (row-major order)
+    D3DXMATRIX(float m00, float m01, float m02, float m03,
+                float m10, float m11, float m12, float m13,
+                float m20, float m21, float m22, float m23,
+                float m30, float m31, float m32, float m33)
+    {
+        // D3DMATRIX uses _11, _12, ... _44 notation
+        _11 = m00; _12 = m01; _13 = m02; _14 = m03;
+        _21 = m10; _22 = m11; _23 = m12; _24 = m13;
+        _31 = m20; _32 = m21; _33 = m22; _34 = m23;
+        _41 = m30; _42 = m31; _43 = m32; _44 = m33;
+    }
+    
     D3DXMATRIX(const Matrix4x4& m)
     {
         // Matrix4x4 stores row-major, D3DMATRIX is also row-major
@@ -106,6 +204,16 @@ struct D3DXMATRIX : public D3DMATRIX
             dst[i] = src[i];
         }
         return result;
+    }
+    
+    // operator*= for matrix multiplication
+    D3DXMATRIX& operator*=(const D3DXMATRIX& other)
+    {
+        Matrix4x4 lhs = *(const Matrix4x4*)this;
+        Matrix4x4 rhs = *(const Matrix4x4*)&other;
+        Matrix4x4 result = lhs * rhs;
+        *(Matrix4x4*)this = result;
+        return *this;
     }
 };
 
@@ -262,61 +370,97 @@ inline D3DXMATRIX* D3DXMatrixInverse(
 
 /**
  * D3DXGetErrorStringA - Get error string for D3D error code
- * Simple implementation with common D3D8 error codes
+ * Original API: HRESULT D3DXGetErrorStringA(HRESULT hr, char* pBuffer, UINT BufferLen)
+ * Compatibility implementation that writes error string to buffer
  */
-inline const char* D3DXGetErrorStringA(HRESULT hr)
+inline HRESULT D3DXGetErrorStringA(HRESULT hr, char* pBuffer, UINT BufferLen)
 {
+    if (!pBuffer || BufferLen == 0)
+        return E_INVALIDARG;
+    
+    const char* errorStr = nullptr;
+    
     switch (hr)
     {
         case D3D_OK:
-            return "No error";
+            errorStr = "No error";
+            break;
         case D3DERR_WRONGTEXTUREFORMAT:
-            return "Wrong texture format";
+            errorStr = "Wrong texture format";
+            break;
         case D3DERR_UNSUPPORTEDCOLOROPERATION:
-            return "Unsupported color operation";
+            errorStr = "Unsupported color operation";
+            break;
         case D3DERR_UNSUPPORTEDCOLORARG:
-            return "Unsupported color argument";
+            errorStr = "Unsupported color argument";
+            break;
         case D3DERR_UNSUPPORTEDALPHAOPERATION:
-            return "Unsupported alpha operation";
+            errorStr = "Unsupported alpha operation";
+            break;
         case D3DERR_UNSUPPORTEDALPHAARG:
-            return "Unsupported alpha argument";
+            errorStr = "Unsupported alpha argument";
+            break;
         case D3DERR_TOOMANYOPERATIONS:
-            return "Too many operations";
+            errorStr = "Too many operations";
+            break;
         case D3DERR_CONFLICTINGTEXTUREFILTER:
-            return "Conflicting texture filter";
+            errorStr = "Conflicting texture filter";
+            break;
         case D3DERR_UNSUPPORTEDFACTORVALUE:
-            return "Unsupported factor value";
+            errorStr = "Unsupported factor value";
+            break;
         case D3DERR_CONFLICTINGRENDERSTATE:
-            return "Conflicting render state";
+            errorStr = "Conflicting render state";
+            break;
         case D3DERR_UNSUPPORTEDTEXTUREFILTER:
-            return "Unsupported texture filter";
+            errorStr = "Unsupported texture filter";
+            break;
         case D3DERR_CONFLICTINGTEXTUREPALETTE:
-            return "Conflicting texture palette";
+            errorStr = "Conflicting texture palette";
+            break;
         case D3DERR_DRIVERINTERNALERROR:
-            return "Driver internal error";
+            errorStr = "Driver internal error";
+            break;
         case D3DERR_NOTFOUND:
-            return "Not found";
+            errorStr = "Not found";
+            break;
         case D3DERR_MOREDATA:
-            return "More data";
+            errorStr = "More data";
+            break;
         case D3DERR_DEVICELOST:
-            return "Device lost";
+            errorStr = "Device lost";
+            break;
         case D3DERR_DEVICENOTRESET:
-            return "Device not reset";
+            errorStr = "Device not reset";
+            break;
         case D3DERR_NOTAVAILABLE:
-            return "Not available";
+            errorStr = "Not available";
+            break;
         case D3DERR_OUTOFVIDEOMEMORY:
-            return "Out of video memory";
+            errorStr = "Out of video memory";
+            break;
         case D3DERR_INVALIDDEVICE:
-            return "Invalid device";
+            errorStr = "Invalid device";
+            break;
         case D3DERR_INVALIDCALL:
-            return "Invalid call";
+            errorStr = "Invalid call";
+            break;
         case D3DERR_DRIVERINVALIDCALL:
-            return "Driver invalid call";
+            errorStr = "Driver invalid call";
+            break;
         case E_OUTOFMEMORY:
-            return "Out of memory";
+            errorStr = "Out of memory";
+            break;
         default:
-            return "Unknown error";
+            errorStr = "Unknown error";
+            break;
     }
+    
+    // Copy error string to buffer (ensure null termination)
+    strncpy(pBuffer, errorStr, BufferLen - 1);
+    pBuffer[BufferLen - 1] = '\0';
+    
+    return D3D_OK;
 }
 
 /**
@@ -413,7 +557,83 @@ inline D3DXMATRIX* D3DXMatrixRotationZ(D3DXMATRIX* pOut, float angle)
     return pOut;
 }
 
+/**
+ * D3DXMatrixScaling - Create scaling matrix
+ * Maps to: Manual matrix construction (simple scaling)
+ */
+inline D3DXMATRIX* D3DXMatrixScaling(D3DXMATRIX* pOut, float sx, float sy, float sz)
+{
+    if (!pOut) return pOut;
+    
+    Matrix4x4 result(true); // Identity
+    result[0][0] = sx;
+    result[1][1] = sy;
+    result[2][2] = sz;
+    
+    *(Matrix4x4*)pOut = result;
+    return pOut;
+}
+
+/**
+ * D3DXMatrixTranslation - Create translation matrix
+ * Maps to: Manual matrix construction (simple translation)
+ * 
+ * Creates a translation matrix in row-major format:
+ * | 1  0  0  0 |
+ * | 0  1  0  0 |
+ * | 0  0  1  0 |
+ * | Tx Ty Tz 1 |
+ */
+inline D3DXMATRIX* D3DXMatrixTranslation(D3DXMATRIX* pOut, float x, float y, float z)
+{
+    if (!pOut) return pOut;
+    
+    Matrix4x4 result(true); // Identity
+    result[3][0] = x;  // Translation X in row 3, column 0 (_41)
+    result[3][1] = y;  // Translation Y in row 3, column 1 (_42)
+    result[3][2] = z;  // Translation Z in row 3, column 2 (_43)
+    
+    *(Matrix4x4*)pOut = result;
+    return pOut;
+}
+
 #endif // WWMATH_AVAILABLE
+
+//-----------------------------------------------------------------------------
+// Shader Functions
+//-----------------------------------------------------------------------------
+
+#ifdef __cplusplus
+
+// ID3DXBuffer interface stub
+struct ID3DXBuffer
+{
+    virtual HRESULT __stdcall QueryInterface(const IID&, void**) { return E_NOTIMPL; }
+    virtual ULONG __stdcall AddRef() { return 1; }
+    virtual ULONG __stdcall Release() { return 0; }
+    virtual void* __stdcall GetBufferPointer() { return nullptr; }
+    virtual DWORD __stdcall GetBufferSize() { return 0; }
+};
+
+/**
+ * D3DXAssembleShader - Assemble shader from source
+ * 
+ * Stub implementation - returns error to indicate shader assembly not available.
+ */
+inline HRESULT D3DXAssembleShader(
+    const char* pSrcData,
+    UINT SrcDataLen,
+    DWORD Flags,
+    void* ppConstants,
+    ID3DXBuffer** ppCompiledShader,
+    ID3DXBuffer** ppCompilationErrors)
+{
+    // Stub: This function needs proper implementation
+    // For now, return error to indicate shader assembly not available
+    return E_NOTIMPL;
+}
+
+#endif // __cplusplus
 
 //-----------------------------------------------------------------------------
 // Texture Functions (Direct3D 8 wrappers and stubs)

@@ -75,9 +75,9 @@ if(MINGW)
     # implementations. No library linking required.
     
     # MinGW-w64 D3DX8 dependency elimination option
-    # Currently OFF due to header conflicts (see CURRENT_STATE_AND_NEXT_STEPS.md)
-    # Set to ON after resolving conflicts (2-8 hours work)
-    option(MINGW_NO_D3DX "Eliminate D3DX8.dll dependency using WWMath compatibility layer" OFF)
+    # Header conflicts resolved using include guard coordination (Option A)
+    # D3DXCompat.h pre-defines min-dx8-sdk include guards to prevent redefinitions
+    option(MINGW_NO_D3DX "Eliminate D3DX8.dll dependency using WWMath compatibility layer" ON)
     
     if(MINGW_NO_D3DX)
         # Use compatibility layer
