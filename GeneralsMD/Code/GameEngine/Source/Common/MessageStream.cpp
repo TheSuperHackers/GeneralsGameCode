@@ -928,7 +928,7 @@ TranslatorID MessageStream::attachTranslator( GameMessageTranslator *translator,
 		return newSS->m_id;
 	}
 
-	// search the Translator list for our priority location
+	// seach the Translator list for our priority location
 	for( ss=m_firstTranslator; ss; ss=ss->m_next )
 		if (ss->m_priority > newSS->m_priority)
 			break;

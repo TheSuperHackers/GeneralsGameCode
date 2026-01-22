@@ -2424,7 +2424,7 @@ void InGameUI::createMouseoverHint( const GameMessage *msg )
 		if( obj )
 		{
 
-			//Ahh, here is a weird exception: if the moused-over drawable is a mob-member
+ 			//Ahh, here is a wierd exception: if the moused-over drawable is a mob-member
 			//(e.g. AngryMob), Lets fool the UI into creating the hint for the NEXUS instead...
  			if (obj->isKindOf( KINDOF_IGNORED_IN_GUI ))
  			{
@@ -4776,7 +4776,7 @@ Int InGameUI::selectMatchingAcrossRegion( IRegion2D *region )
 		draw = *it;
 		if( draw && draw->getObject() && draw->getObject()->isLocallyControlled() )
 		{
-			// Use the Object's thing template, doing so will prevent weirdness for disguised vehicles.
+			// Use the Object's thing template, doing so will prevent wierdness for disguised vehicles.
 			drawableList.insert( draw->getObject()->getTemplate() );
 			if( draw->getObject()->testStatus( OBJECT_STATUS_IS_CARBOMB ) )
 			{
@@ -5618,7 +5618,7 @@ void InGameUI::selectNextIdleWorker( void )
 
 		selectDrawable( selectThisObject->getDrawable() );
 
-		/*// removed because we're already playing a select sound... left in, just in case i'm wrong.
+		/*// removed becuase we're already playing a select sound... left in, just in case i"m wrong.
 		// play the units sound
 				const AudioEventRTS *soundEvent = selectThisObject->getTemplate()->getVoiceSelect();
 				if (soundEvent)
