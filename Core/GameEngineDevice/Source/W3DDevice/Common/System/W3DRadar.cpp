@@ -1431,6 +1431,7 @@ void W3DRadar::endSetShroudLevel()
 		m_shroudSurface->Unlock();
 		m_shroudSurfaceBits = nullptr;
 		m_shroudSurfacePitch = 0;
+		m_shroudSurfaceFormat = WW3D_FORMAT_UNKNOWN;
 		m_shroudSurfacePixelSize = 0;
 	}
 	REF_PTR_RELEASE(m_shroudSurface);
