@@ -171,6 +171,7 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "END_PREFER_SELECTION",											GameMessage::MSG_META_END_PREFER_SELECTION },
 
 	{ "TAKE_SCREENSHOT",													GameMessage::MSG_META_TAKE_SCREENSHOT },
+	{ "TAKE_SCREENSHOT_PNG",											GameMessage::MSG_META_TAKE_SCREENSHOT_PNG },
 	{ "ALL_CHEER",																GameMessage::MSG_META_ALL_CHEER },
 
 	{ "BEGIN_CAMERA_ROTATE_LEFT",									GameMessage::MSG_META_BEGIN_CAMERA_ROTATE_LEFT },
@@ -869,6 +870,26 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 			map->m_transition = DOWN;
 			map->m_modState = CTRL;
 			map->m_usableIn = COMMANDUSABLE_GAME;
+		}
+	}
+	{
+		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_TAKE_SCREENSHOT);
+		if (map->m_key == MK_NONE)
+		{
+			map->m_key = MK_F12;
+			map->m_transition = DOWN;
+			map->m_modState = NONE;
+			map->m_usableIn = COMMANDUSABLE_EVERYWHERE;
+		}
+	}
+	{
+		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_TAKE_SCREENSHOT_PNG);
+		if (map->m_key == MK_NONE)
+		{
+			map->m_key = MK_F12;
+			map->m_transition = DOWN;
+			map->m_modState = CTRL;
+			map->m_usableIn = COMMANDUSABLE_EVERYWHERE;
 		}
 	}
 

@@ -1181,6 +1181,7 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	// override INI values with user preferences
 	OptionPreferences optionPref;
  	TheWritableGlobalData->m_useAlternateMouse = optionPref.getAlternateMouseModeEnabled();
+	TheWritableGlobalData->m_jpegQuality = optionPref.getJPEGQuality();
 	TheWritableGlobalData->m_keyboardScrollFactor = optionPref.getScrollFactor();
 	TheWritableGlobalData->m_drawScrollAnchor = optionPref.getDrawScrollAnchor();
 	TheWritableGlobalData->m_moveScrollAnchor = optionPref.getMoveScrollAnchor();
