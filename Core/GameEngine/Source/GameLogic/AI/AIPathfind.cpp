@@ -11286,9 +11286,10 @@ void Pathfinder::crc( Xfer *xfer )
 
 	xfer->xferInt(&m_numWallPieces);
 	CRCDEBUG_LOG(("m_numWallPieces: %8.8X", ((XferCRC *)xfer)->getCRC()));
+	// TheSuperHackers @bugfix bobtista 22/01/2026 Fix out-of-bounds array access - was using MAX_WALL_PIECES instead of i
 	for (Int i=0; i<MAX_WALL_PIECES; ++i)
 	{
-		xfer->xferObjectID(&m_wallPieces[MAX_WALL_PIECES]);
+		xfer->xferObjectID(&m_wallPieces[i]);
 	}
 	CRCDEBUG_LOG(("m_wallPieces: %8.8X", ((XferCRC *)xfer)->getCRC()));
 
@@ -11507,18 +11508,28 @@ void Pathfinder::loadPostProcess()
 		m_layers[LAYER_WALL].classifyWallCells(m_wallPieces, m_numWallPieces);
 	}
 
-	// Step 7: Recalculate zones to rebuild zone blocks.
-	// We call calculateZones() to rebuild the zone blocks from scratch. This is necessary
-	// because the serialized per-cell zones may include zone 0 for cells under objects,
-	// and zone blocks need to be built with proper connectivity.
-	//
-	// Note: This will assign new zone numbers which may differ from the original gameplay.
-	// However, this should not affect CRC since zones are not directly included in the CRC
-	// calculation. What matters is that zone connectivity is consistent for pathfinding.
-	//
-	// The blockCalculateZones() function has been modified to handle zone-0 cells gracefully,
-	// skipping them when building zone equivalencies since they are not pathable anyway.
-	m_zoneManager.calculateZones(m_map, m_layers, m_extent);
+	// Step 7: Build ZoneBlock equivalencies from the restored per-cell zones.
+	// We can NOT call calculateZones() because it clears all zone values before recomputing.
+	// Instead, call blockCalculateZones() directly for each zone block to build the equivalency
+	// arrays from the existing serialized per-cell zones.
+	// TheSuperHackers @bugfix bobtista 22/01/2026 Build zone equivalencies without reassigning zones.
+	{
+		const Int zoneBlockSize = PathfindZoneManager::ZONE_BLOCK_SIZE;
+		Int xCount = (m_extent.hi.x-m_extent.lo.x+1+zoneBlockSize-1)/zoneBlockSize;
+		Int yCount = (m_extent.hi.y-m_extent.lo.y+1+zoneBlockSize-1)/zoneBlockSize;
+		for (Int xBlock = 0; xBlock<xCount; xBlock++) {
+			for (Int yBlock=0; yBlock<yCount; yBlock++) {
+				IRegion2D bounds;
+				bounds.lo.x = m_extent.lo.x + xBlock*zoneBlockSize;
+				bounds.lo.y = m_extent.lo.y + yBlock*zoneBlockSize;
+				bounds.hi.x = bounds.lo.x + zoneBlockSize - 1;
+				bounds.hi.y = bounds.lo.y + zoneBlockSize - 1;
+				if (bounds.hi.x > m_extent.hi.x) bounds.hi.x = m_extent.hi.x;
+				if (bounds.hi.y > m_extent.hi.y) bounds.hi.y = m_extent.hi.y;
+				m_zoneManager.m_zoneBlocks[xBlock][yBlock].blockCalculateZones(m_map, m_layers, bounds);
+			}
+		}
+	}
 
 	// Step 8: Add footprints for all loaded objects
 	Object *obj;
