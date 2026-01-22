@@ -653,13 +653,15 @@ UpdateSleepTime DumbProjectileBehavior::update()
       //long, blurry projectile graphics which look badly oriented on step 0 of the flight path
       // so lets orient it the same as if it were on frame 1!
     {
+			// TheSuperHackers @bugfix Caball009 10/01/2026 Check vector size before accessing the second element to prevent out of bounds access.
+			// The non-deterministic behavior for retail clients cannot be fixed, so this will remain a source of potential mismatches in retail compatibility mode.
+			// If there are fewer than two elements, set current position to a valid value so that the behavior is deterministic for patched clients.
+			DEBUG_ASSERTCRASH(m_flightPath.size() >= 2, ("Vector is expected to contain two or more elements; check the weapon speed value"));
+
 #if RETAIL_COMPATIBLE_CRC
 			Coord3D prevPos;
 			Coord3D curPos;
 
-			// TheSuperHackers @bugfix Caball009 10/01/2026 Check vector size before accessing the second element to prevent out of bounds access.
-			// The non-deterministic behavior for retail clients cannot be fixed, so this will remain a source of potential mismatches in retail compatibility mode.
-			// If there are fewer than two elements, set current position to a valid value so that the behavior is deterministic for patched clients.
 			if (m_flightPath.size() >= 2)
 			{
 				prevPos = m_flightPath[0];
@@ -667,8 +669,6 @@ UpdateSleepTime DumbProjectileBehavior::update()
 			}
 			else
 			{
-				DEBUG_CRASH(("Vector must contain two or more elements; check the weapon speed value"));
-
 				prevPos.set(0.0f, 0.0f, 0.0f);
 				curPos.set(0.0f, 1.0f, 0.0f);
 			}
