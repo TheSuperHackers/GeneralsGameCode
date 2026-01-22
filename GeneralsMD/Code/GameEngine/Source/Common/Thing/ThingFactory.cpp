@@ -215,6 +215,8 @@ void ThingFactory::reset( void )
 		// t itself can be deleted if it is something created for this map only. Therefore,
 		// we need to store what the next item is so that we don't orphan a bunch of templates.
 		ThingTemplate *nextT = t->friend_getNextTemplate();
+		DEBUG_ASSERTCRASH(!nextT || t->getTemplateID() == nextT->getTemplateID() + 1, ("Next template ID is unexpected"));
+
 		if (t == m_firstTemplate) {
 			possibleAdjustment = TRUE;
 		}
@@ -235,8 +237,6 @@ void ThingFactory::reset( void )
 			// Also needs to be removed from the Hash map.
 			m_templateHashMap.erase(templateName);
 		}
-
-		DEBUG_ASSERTCRASH(!nextT || t->getTemplateID() == nextT->getTemplateID() + 1, ("Next template ID is unexpected"));
 
 		t = nextT;
 	}
