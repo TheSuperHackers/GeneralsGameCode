@@ -51,7 +51,7 @@ enum UpgradeStatusType CPP_11(: Int)
 };
 
 //The maximum number of upgrades.
-#define UPGRADE_MAX_COUNT 64
+#define UPGRADE_MAX_COUNT 100
 
 typedef BitFlags<UPGRADE_MAX_COUNT>	UpgradeMaskType;
 
