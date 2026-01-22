@@ -127,9 +127,9 @@ enum GameWindowMessage CPP_11(: Int)
 	GWM_MOUSE_ENTERING,					GWM_MOUSE_LEAVING,
 	GWM_WHEEL_UP,								GWM_WHEEL_DOWN,
 	GWM_CHAR,										GWM_SCRIPT_CREATE,
-	// note that GWM_MOUSE_POS is only actually propagated to windows if the static
+	// note that GWM_MOUSE_POS is only actually propogated to windows if the static
 	// sendMousePosMessages is set to true in the window manager file.  See the
-	// comment on the static declaration for additional info
+	// comment on the static declaration for addtional info
 	GWM_INPUT_FOCUS,						GWM_MOUSE_POS,
 	GWM_IME_CHAR,								GWM_IME_STRING
 

@@ -152,7 +152,7 @@ public:
 	const Coord3D *getCurrentPosition( void );
 
 	// This will return the directory leading up to the appropriate type, including the trailing '\\'
-	// If localized is true, we'll append a language specific directory to the end of the path.
+	// If localized is true, we'll append a language specifc directory to the end of the path.
 	AsciiString generateFilenamePrefix( AudioType audioTypeToPlay, Bool localized );
 	AsciiString generateFilenameExtension( AudioType audioTypeToPlay );
 protected:

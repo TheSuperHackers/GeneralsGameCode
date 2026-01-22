@@ -355,7 +355,7 @@ protected:
 	static WaterHandle m_gridWaterHandle;		///< water handle for the grid water (we only presently have one)
 
 	//
-	// we will force a limit of MAX_DYNAMIC_WATER as the max dynamically changeable water
+	// we will force a limit of MAX_DYNAMIC_WATER as the max dynamically changable water
 	// tables for a map.  We could use a list, but eh, this is fine and small anyway
 	//
 	enum { MAX_DYNAMIC_WATER = 64 };
