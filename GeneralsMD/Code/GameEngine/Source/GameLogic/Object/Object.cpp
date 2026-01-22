@@ -4524,6 +4524,11 @@ void Object::loadPostProcess()
 	else
 		m_containedBy = nullptr;
 
+	// TheSuperHackers @bugfix bobtista 22/01/2026 Sync weapon set template pointer after load.
+	// This ensures the pointer matches what updateWeaponSet() would use, preventing
+	// unnecessary weapon reallocation that corrupts timing state.
+	m_weaponSet.syncTemplatePointerAfterLoad(this);
+
 	// TheSuperHackers @bugfix bobtista 22/01/2026 Call loadPostProcess on all modules.
 	// This is needed to properly initialize module state after checkpoint load.
 	for (BehaviorModule** b = m_behaviors; *b; ++b)

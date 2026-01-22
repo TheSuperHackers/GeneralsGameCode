@@ -313,26 +313,35 @@ void WeaponSet::loadPostProcess()
 }
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix bobtista 22/01/2026 Properly sync the template pointer after checkpoint load.
+// After load, m_curWeaponTemplateSet might point to a different address than what
+// obj->getTemplate()->findWeaponTemplateSet() returns due to template lookup differences.
+// This method updates the pointer without reallocating weapons, fixing the root cause
+// of weapon timing corruption after checkpoint load.
+//-------------------------------------------------------------------------------------------------
+void WeaponSet::syncTemplatePointerAfterLoad(const Object* obj)
+{
+	if (m_curWeaponTemplateSet == nullptr)
+		return;
+
+	const WeaponTemplateSet* set = obj->getTemplate()->findWeaponTemplateSet(obj->getWeaponSetFlags());
+	if (set != nullptr && set != m_curWeaponTemplateSet)
+	{
+		// Update the pointer to match what updateWeaponSet would use, without reallocating weapons.
+		// The weapons are already correct from xfer load, we just need the pointer to be consistent.
+		m_curWeaponTemplateSet = set;
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
 void WeaponSet::updateWeaponSet(const Object* obj)
 {
 	const WeaponTemplateSet* set = obj->getTemplate()->findWeaponTemplateSet(obj->getWeaponSetFlags());
 	DEBUG_ASSERTCRASH(set, ("findWeaponSet should never return null"));
-	// TheSuperHackers @bugfix bobtista 20/01/2026 After checkpoint load, the m_curWeaponTemplateSet pointer
-	// may differ from set even though they represent the same weapon set (pointer aliasing after load).
-	// Compare by flags instead of by pointer to avoid unnecessary weapon reallocation which corrupts
-	// weapon timing state and causes CRC mismatches during replay.
-	Bool needsUpdate = set && set != m_curWeaponTemplateSet;
-	if (needsUpdate && m_curWeaponTemplateSet)
-	{
-		// If flags match, the weapon sets are logically equivalent - no need to reallocate
-		if (obj->getWeaponSetFlags() == m_curWeaponTemplateSet->friend_getWeaponSetFlags())
-		{
-			// Just update the pointer to the correct address without reallocating weapons
-			m_curWeaponTemplateSet = set;
-			needsUpdate = false;
-		}
-	}
-	if (needsUpdate)
+	// Note: After checkpoint load, syncTemplatePointerAfterLoad() is called from Object::loadPostProcess()
+	// to ensure m_curWeaponTemplateSet matches what this function would look up. This avoids the
+	// unnecessary weapon reallocation that would corrupt timing state.
+	if (set && set != m_curWeaponTemplateSet)
 	{
 		if( ! set->isWeaponLockSharedAcrossSets() )
 		{
