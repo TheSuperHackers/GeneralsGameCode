@@ -309,6 +309,7 @@ public:
 
 	UpdateModule* findUpdateModule(NameKeyType key) const { return (UpdateModule*)findModule(key); }
 	DamageModule* findDamageModule(NameKeyType key) const { return (DamageModule*)findModule(key); }
+	UpdateModule* findUpdateModuleByTag(NameKeyType tagKey) const;  // TheSuperHackers @feature bobtista 21/01/2026
 
 	Bool isSalvageCrate() const;
 
@@ -662,6 +663,7 @@ protected:
 	// If you think you need to make it public, you are wrong. Don't do it.
 	// It will go away someday. Yeah, right. Just like GlobalData.
 	Module* findModule(NameKeyType key) const;
+	Module* findModuleByTagKey(NameKeyType tagKey) const;  // TheSuperHackers @feature bobtista 21/01/2026
 
 	Bool didEnterOrExit() const;
 
