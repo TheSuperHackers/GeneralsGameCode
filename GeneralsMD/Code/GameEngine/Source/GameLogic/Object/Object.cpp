@@ -770,7 +770,7 @@ void Object::onDestroy()
 		(*b)->onDelete();
 	}
 
-	//Have to remove ourself from looking as well.  RebuildHoleWorkers definitely hit here.
+	//Have to remove ourself from looking as well.  RebuildHoleWorkers definately hit here.
 	handlePartitionCellMaintenance();
 }
 
@@ -4840,7 +4840,7 @@ Bool Object::hasGhostObject() const
 }
 
 //-------------------------------------------------------------------------------------------------
-/// We have moved a 'significant' amount, so do maintenance that can be considered 'cell-based'
+/// We have moved a 'significant' amount, so do maintenence that can be considered 'cell-based'
 void Object::onPartitionCellChange()
 {
 	handlePartitionCellMaintenance();

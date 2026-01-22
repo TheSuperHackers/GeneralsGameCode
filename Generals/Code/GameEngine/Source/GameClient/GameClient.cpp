@@ -506,7 +506,7 @@ void GameClient::update( void )
 		playSizzle = TRUE;
 	}
 
-	//Initial Game Condition.  We must show the movie first and then we can display the shell
+	//Initial Game Codition.  We must show the movie first and then we can display the shell
 	if(TheGlobalData->m_afterIntro && !TheDisplay->isMoviePlaying())
 	{
 		if( playSizzle && TheGlobalData->m_playSizzle )
@@ -1356,7 +1356,7 @@ void GameClient::xfer( Xfer *xfer )
 	// !!!DON'T DO THIS!!! ----> xfer->xferDrawableID( &m_nextDrawableID ); <---- !!!DON'T DO THIS!!!
 
 	//
-	// xfer a table of contents that contain thing template and identifier pairs.  this
+	// xfer a table of contents that contain thing template and indentifier pairs.  this
 	// table of contents is good for this save file only as unique numbers are only
 	// generated and stored for the actual things that are on this map
 	//

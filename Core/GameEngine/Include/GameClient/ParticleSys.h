@@ -655,7 +655,7 @@ public:
 	EmissionVolumeType getEmisionVolumeType() const { return m_emissionVolumeType; }
 	ParticlePriorityType getPriority() const { return m_priority; }
 
-	// Access to wind motion
+	// Access to wind motoin
 	Real getWindAngle( void ) { return m_windAngle; }
 	WindMotion getWindMotion( void ) { return m_windMotion; }
 
