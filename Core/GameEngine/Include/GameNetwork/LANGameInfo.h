@@ -70,7 +70,7 @@ private:
 
 /**
   * LANGameInfo class - maintains information about the LAN game and
-	* the contents of its slot list hroughout the game.
+	* the contents of its slot list throughout the game.
 	*/
 class LANGameInfo : public GameInfo
 {

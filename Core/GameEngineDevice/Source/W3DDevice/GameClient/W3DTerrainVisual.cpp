@@ -775,7 +775,7 @@ void W3DTerrainVisual::setWaterGridHeightClamps( const WaterHandle *waterTable,
 }
 
 // ------------------------------------------------------------------------------------------------
-/** adjust fallof parameters for grid change method */
+/** adjust falloff parameters for grid change method */
 // ------------------------------------------------------------------------------------------------
 void W3DTerrainVisual::setWaterAttenuationFactors( const WaterHandle *waterTable,
 																									 Real a, Real b, Real c, Real range )

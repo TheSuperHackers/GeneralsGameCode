@@ -682,7 +682,7 @@ protected:
 
 	UnsignedInt				m_startTimestamp;								///< timestamp when this particle system was (re)started
 	UnsignedInt				m_systemLifetimeLeft;						///< lifetime remaining for entire particle system
-	UnsignedInt				m_personalityStore;							///< increments each time it is aggigned to each new particle
+	UnsignedInt				m_personalityStore;							///< increments each time it is assigned to each new particle
 																										///< so that each particle gets an ever greater number
 
 	Real							m_accumulatedSizeBonus;					///< For a system that wants to make particles start bigger and bigger.  StartSizeRate

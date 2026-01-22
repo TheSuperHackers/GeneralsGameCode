@@ -101,7 +101,7 @@ void OverlordContain::onBodyDamageStateChange( const DamageInfo* damageInfo,
 //-------------------------------------------------------------------------------------------------
 ContainModuleInterface *OverlordContain::getRedirectedContain() const
 {
-	// Naturally, I can not use a redirectible convenience function
+	// Naturally, I can not use a redirectable convenience function
 	// to answer if I am redirecting yet.
 
 	// If I am empty, say no.

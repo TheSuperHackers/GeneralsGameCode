@@ -5618,7 +5618,7 @@ void InGameUI::selectNextIdleWorker( void )
 
 		selectDrawable( selectThisObject->getDrawable() );
 
-		/*// removed because we're already playing a select sound... left in, just in case i'm wrong.
+		/*// removed because we're already playing a select sound... left in, just in case I'm wrong.
 		// play the units sound
 				const AudioEventRTS *soundEvent = selectThisObject->getTemplate()->getVoiceSelect();
 				if (soundEvent)

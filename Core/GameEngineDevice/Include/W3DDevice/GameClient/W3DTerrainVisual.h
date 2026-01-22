@@ -71,7 +71,7 @@ public:
 	virtual void enableWaterGrid( Bool enable );
 	/// set min/max height values allowed in water grid pointed to by waterTable
 	virtual void setWaterGridHeightClamps( const WaterHandle *waterTable, Real minZ, Real maxZ );
-	/// adjust fallof parameters for grid change method
+	/// adjust falloff parameters for grid change method
 	virtual void setWaterAttenuationFactors( const WaterHandle *waterTable,
 																					 Real a, Real b, Real c, Real range );
 	/// set the water table position and orientation in world space

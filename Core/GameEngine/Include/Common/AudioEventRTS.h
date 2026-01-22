@@ -152,7 +152,7 @@ public:
 	const Coord3D *getCurrentPosition( void );
 
 	// This will return the directory leading up to the appropriate type, including the trailing '\\'
-	// If localized is true, we'll append a language specific directory to the end of the path.
+	// If localized is true, we'll append a language-specific directory to the end of the path.
 	AsciiString generateFilenamePrefix( AudioType audioTypeToPlay, Bool localized );
 	AsciiString generateFilenameExtension( AudioType audioTypeToPlay );
 protected:
@@ -163,19 +163,19 @@ protected:
 	mutable const AudioEventInfo *m_eventInfo;	// Mutable so that it can be modified even on const objects
 	AudioHandle m_playingHandle;
 
-	AudioHandle m_killThisHandle;		///< Sometimes sounds will canabilize other sounds in order to take their handle away.
+	AudioHandle m_killThisHandle;		///< Sometimes sounds will cannibalize other sounds in order to take their handle away.
 																	///< This is one of those instances.
 
 	AsciiString m_eventName;				///< This should correspond with an entry in Dialog.ini, Speech.ini, or Audio.ini
 	AsciiString m_attackName;				///< This is the filename that should be used during the attack.
 	AsciiString m_decayName;				///< This is the filename that should be used during the decay.
 
-	AudioPriority m_priority;				///< This should be the priority as given by the event info, or the overrided priority.
-	Real m_volume;									///< This is the override for the volume. It will either be the normal
+	AudioPriority m_priority;				///< This should be the priority as given by the event info, or the overridden priority.
+	Real m_volume;							///< This is the override for the volume. It will either be the normal volume or an overridden value.
 	TimeOfDay m_timeOfDay;					///< This should be the current Time Of Day.
 
 	Coord3D m_positionOfAudio;			///< Position of the sound if no further positional updates are necessary
-	union	// These are now unioned.
+	union	// These are now unionized.
 	{
 		ObjectID m_objectID;						///< ObjectID of the object that this sound is tied to. Position can be automatically updated from this.
 		DrawableID m_drawableID;				///< DrawableID of the drawable that owns this sound
