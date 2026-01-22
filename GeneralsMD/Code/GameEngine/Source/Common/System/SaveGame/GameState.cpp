@@ -786,6 +786,12 @@ AsciiString GameState::getSaveDirectory() const
 //-------------------------------------------------------------------------------------------------
 AsciiString GameState::getFilePathInSaveDirectory(const AsciiString& leaf) const
 {
+	// TheSuperHackers @bugfix bobtista 22/01/2026 Check if path is already absolute (starts with drive letter or UNC path)
+	if (leaf.getLength() >= 2 && leaf.getCharAt(1) == ':')
+		return leaf;  // Already an absolute path like "C:\..."
+	if (leaf.getLength() >= 2 && (leaf.getCharAt(0) == '\\' && leaf.getCharAt(1) == '\\'))
+		return leaf;  // UNC path like "\\server\..."
+
 	AsciiString tmp = getSaveDirectory();
 	tmp.concat(leaf);
 	return tmp;
