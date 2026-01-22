@@ -2927,6 +2927,44 @@ Module* Object::findModule(NameKeyType key) const
 }
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature bobtista 21/01/2026
+// Find a module by its tag key (instance-specific identifier) rather than class name key.
+Module* Object::findModuleByTagKey(NameKeyType tagKey) const
+{
+	for (BehaviorModule** b = m_behaviors; *b; ++b)
+	{
+		if ((*b)->getModuleTagNameKey() == tagKey)
+		{
+			return *b;
+		}
+	}
+	return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature bobtista 21/01/2026
+// Find an update module by its tag key.
+UpdateModule* Object::findUpdateModuleByTag(NameKeyType tagKey) const
+{
+	for (BehaviorModule** b = m_behaviors; *b; ++b)
+	{
+		if ((*b)->getModuleTagNameKey() == tagKey)
+		{
+			UpdateModuleInterface* ui = (*b)->getUpdate();
+			if (ui)
+			{
+#ifdef DIRECT_UPDATEMODULE_ACCESS
+				return static_cast<UpdateModule*>(ui);
+#else
+				return ui;
+#endif
+			}
+		}
+	}
+	return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
 /**
  * Returns true if object is currently able to move.
  */

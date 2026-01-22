@@ -417,6 +417,7 @@ typedef PathfindCell *PathfindCellP;
  */
 class PathfindLayer
 {
+	friend class Pathfinder;  ///< TheSuperHackers @info bobtista 21/01/2026 Allows Pathfinder::xfer to serialize layer state
 public:
 	PathfindLayer();
 	~PathfindLayer();
@@ -527,6 +528,7 @@ typedef ZoneBlock *ZoneBlockP;
  */
 class PathfindZoneManager
 {
+	friend class Pathfinder;  ///< TheSuperHackers @info bobtista 20/01/2026 Allows Pathfinder::xfer to serialize zone state
 public:
 	enum {INITIAL_ZONES = 256};
 	enum {ZONE_BLOCK_SIZE = 10};	// Zones are calculated in blocks of 20x20.  This way, the raw zone numbers can be used to

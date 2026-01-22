@@ -282,6 +282,7 @@ AIUpdateInterface::AIUpdateInterface( Thing *thing, const ModuleData* moduleData
 	m_retryPath = FALSE;
 	m_isInUpdate = FALSE;
 	m_fixLocoInPostProcess = FALSE;
+	m_checkpointLoadFrame = 0;
 
 	// ---------------------------------------------
 
@@ -5087,6 +5088,9 @@ void AIUpdateInterface::xfer( Xfer *xfer )
 	xfer->xferCoord3D(&m_locationToGuard);
 
 	xfer->xferObjectID(&m_objectToGuard);
+	// TheSuperHackers @bugfix bobtista 21/01/2026 Serialize m_guardMode to preserve guard behavior
+	// after loading a checkpoint. Without this, guards would revert to GUARDMODE_NORMAL.
+	xfer->xferUser(&m_guardMode, sizeof(m_guardMode));
 
 	AsciiString triggerName;
 	if (m_areaToGuard) triggerName = m_areaToGuard->getTriggerName();
@@ -5161,6 +5165,17 @@ void AIUpdateInterface::xfer( Xfer *xfer )
 	xfer->xferReal(&m_curMaxBlockedSpeed);
 	xfer->xferBool(&m_isBlocked);
 	xfer->xferBool(&m_isBlockedAndStuck);
+	// TheSuperHackers @bugfix bobtista 21/01/2026 Serialize additional movement-related fields
+	// m_bumpSpeedLimit affects max speed after bumping a unit
+	xfer->xferReal(&m_bumpSpeedLimit);
+	// m_nextGoalPathIndex determines which waypoint in a path we're heading to
+	xfer->xferInt(&m_nextGoalPathIndex);
+	// m_isMoving affects state transitions
+	xfer->xferBool(&m_isMoving);
+	// m_retryPath affects pathfinding retry logic
+	xfer->xferBool(&m_retryPath);
+	// m_allowedToChase affects whether unit can pursue targets
+	xfer->xferBool(&m_allowedToChase);
 	// m_isInUpdate and m_fixLocoInPostProcess are transient and don't need serialization
 
 	xfer->xferUnsignedInt(&m_ignoreCollisionsUntil);
@@ -5289,6 +5304,21 @@ void AIUpdateInterface::xfer( Xfer *xfer )
 void AIUpdateInterface::loadPostProcess()
 {
 	UpdateModule::loadPostProcess();
+
+	// TheSuperHackers @bugfix bobtista 21/01/2026 Clear waiting for path flag if path already exists.
+	// After checkpoint load, the path is restored but m_waitingForPath may still be TRUE from when
+	// the checkpoint was saved. This would cause doPathfind() to recompute and destroy the restored path.
+	if (m_waitingForPath && m_path != nullptr)
+	{
+		m_waitingForPath = FALSE;
+	}
+
+	// TheSuperHackers @bugfix bobtista 21/01/2026 Set checkpoint load frame to suppress path recomputation.
+	// This prevents path destruction from timestamp checks and onEnter() calls after checkpoint load.
+	if (m_path != nullptr && TheGameLogic != nullptr)
+	{
+		m_checkpointLoadFrame = TheGameLogic->getFrame();
+	}
 
 	if (m_fixLocoInPostProcess && m_curLocomotorSet!=LOCOMOTORSET_INVALID)
 	{

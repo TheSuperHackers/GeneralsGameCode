@@ -1094,6 +1094,10 @@ public:
 	Bool getSkippedOne(void) const { return m_skippedOne; }
 	void setSkippedOne(Bool skipped) { m_skippedOne = skipped; }
 
+	// TheSuperHackers @info bobtista 21/01/2026
+	// Clear all queued CRCs. Used after checkpoint load to reset the queue.
+	void clearQueue(void) { m_data.clear(); }
+
 protected:
 
 	Bool m_sawCRCMismatch;
@@ -1149,20 +1153,10 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 {
 	if (fromPlayback)
 	{
-		//DEBUG_LOG(("RecorderClass::handleCRCMessage() - Adding CRC of %X from %d to m_crcInfo", newCRC, playerIndex));
+		DEBUG_LOG(("RecorderClass::handleCRCMessage() - Adding CRC %8.8X to queue (frame %d, queueSize before: %d)",
+			newCRC, TheGameLogic->getFrame(), m_crcInfo->GetQueueSize()));
 		m_crcInfo->addCRC(newCRC);
-		return;
-	}
-
-	// TheSuperHackers @info bobtista 19/01/2026
-	// Skip CRC comparison for several frames after loading a checkpoint. The checkpoint state
-	// doesn't perfectly match what CRC calculation expects due to timing differences.
-	if (TheGameLogic->shouldSkipCRCCheck())
-	{
-		DEBUG_LOG(("RecorderClass::handleCRCMessage() - Skipping CRC check on frame %d after checkpoint load", TheGameLogic->getFrame()));
-		// Consume the CRC from the queue to stay in sync
-		m_crcInfo->readCRC();
-		TheGameLogic->decrementSkipCRCCheck();
+		DEBUG_LOG(("RecorderClass::handleCRCMessage() - Queue size after add: %d", m_crcInfo->GetQueueSize()));
 		return;
 	}
 
@@ -1176,8 +1170,8 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 	if (samePlayer || (localPlayerIndex < 0))
 	{
 		UnsignedInt playbackCRC = m_crcInfo->readCRC();
-		//DEBUG_LOG(("RecorderClass::handleCRCMessage() - Comparing CRCs of InGame:%8.8X Replay:%8.8X Frame:%d from Player %d",
-		//	playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1, playerIndex));
+		DEBUG_LOG(("RecorderClass::handleCRCMessage() - Comparing CRCs: Replay:%8.8X Game:%8.8X Frame:%d QueueSize:%d",
+			playbackCRC, newCRC, TheGameLogic->getFrame(), m_crcInfo->GetQueueSize()));
 		// TheSuperHackers @fix bobtista 20/01/2026 Skip CRC check if queue was empty.
 		// The primary fix is preloadNextCRCFromReplay() which pre-populates the queue after checkpoint load.
 		// This playbackCRC != 0 check serves as a fallback in case the preload fails or misses a CRC.
@@ -1207,6 +1201,19 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 
 			// Print Mismatch in case we are simulating replays from console.
 			printf("CRC Mismatch in Frame %d\n", mismatchFrame);
+			DEBUG_LOG(("Frame:%d", mismatchFrame));
+			DEBUG_LOG(("CRC Mismatch detected!"));
+
+			// TheSuperHackers @fix bobtista 21/01/2026
+			// In headless mode, exit immediately on CRC mismatch instead of pausing.
+			// The pause would hang forever since there's no UI to dismiss it.
+			if (TheGlobalData->m_headless)
+			{
+				m_crcInfo->setSawCRCMismatch();
+				DEBUG_LOG(("Exiting due to CRC mismatch in headless mode"));
+				// Continue running to let the replay finish or hit another stopping point
+				return;
+			}
 
 			// TheSuperHackers @tweak Pause the game on mismatch.
 			// But not when a window with focus is opened, because that can make resuming difficult.
@@ -1984,12 +1991,15 @@ void RecorderClass::xferCRCInfo( Xfer *xfer )
 	}
 	else
 	{
+		DEBUG_LOG(("RecorderClass::xferCRCInfo - Loading %d CRCs from checkpoint", queueSize));
 		for ( UnsignedInt i = 0; i < queueSize; ++i )
 		{
 			UnsignedInt crc = 0;
 			xfer->xferUnsignedInt( &crc );
+			DEBUG_LOG(("RecorderClass::xferCRCInfo - Loading CRC %d: %8.8X", i, crc));
 			m_crcInfo->addCRC( crc );
 		}
+		DEBUG_LOG(("RecorderClass::xferCRCInfo - Queue size after loading: %d", m_crcInfo->GetQueueSize()));
 	}
 }
 
@@ -2172,6 +2182,18 @@ void RecorderClass::loadPostProcess( void )
 		return;
 	}
 
+	// TheSuperHackers @fix bobtista 21/01/2026
+	// Clear the CRC queue when loading a checkpoint. The queue may contain
+	// old CRCs from before the checkpoint that weren't read yet. After loading,
+	// the replay will read CRCs from the new position, so we need a fresh queue.
+	if ( m_crcInfo != nullptr )
+	{
+		DEBUG_LOG(("RecorderClass::loadPostProcess - Clearing CRC queue (had %d entries) at frame %d",
+			m_crcInfo->GetQueueSize(), TheGameLogic ? TheGameLogic->getFrame() : -1));
+		m_crcInfo->clearQueue();
+		DEBUG_LOG(("RecorderClass::loadPostProcess - CRC queue cleared, size now %d", m_crcInfo->GetQueueSize()));
+	}
+
 	if ( m_currentReplayFilename.isEmpty() )
 	{
 		return;
@@ -2186,12 +2208,12 @@ void RecorderClass::loadPostProcess( void )
 
 	REPLAY_CRC_INTERVAL = m_gameInfo.getCRCInterval();
 
-	// TheSuperHackers @fix bobtista 20/01/2026
-	// Pre-populate the CRC queue by scanning ahead for the next CRC message.
-	// This ensures CRC verification works immediately after checkpoint load.
-	preloadNextCRCFromReplay();
+	// TheSuperHackers @info bobtista 20/01/2026
+	// CRC preload removed - normal playback handles CRC message queue population correctly.
+	// The preload was causing duplicate CRCs in the queue which resulted in mismatch errors.
 
-	DEBUG_LOG(("RecorderClass::loadPostProcess - Resumed replay at file position %d, next frame %d", m_currentFilePosition, m_nextFrame));
+	DEBUG_LOG(("RecorderClass::loadPostProcess - Resumed replay at file position %d, next frame %d, actual file pos %d",
+		m_currentFilePosition, m_nextFrame, m_file ? m_file->position() : -1));
 }
 
 Bool RecorderClass::reopenReplayFileAtPosition( Int position )
