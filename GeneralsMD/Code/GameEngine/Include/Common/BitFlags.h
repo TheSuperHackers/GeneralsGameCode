@@ -328,5 +328,42 @@ public:
 		}
 	}
 
+	// TheSuperHackers @feature Stubbjax 23/01/2026 Add function for outputting debug data.
+	AsciiString toHexString() const
+	{
+		const int numChunks = (NUMBITS + 63) / 64;
+		char chunkBuf[32]; // Enough for 16 hex digits + null terminator
+		AsciiString result;
+		bool printedAny = false;
 
+		for (int chunk = numChunks - 1; chunk >= 0; --chunk)
+		{
+			unsigned long long val = 0;
+			for (int bit = 0; bit < 64 && (chunk * 64 + bit) < NUMBITS; ++bit)
+			{
+				if (m_bits.test(chunk * 64 + bit))
+#if defined(_MSC_VER)
+					val |= (1UI64 << bit);
+#else
+					val |= (1ULL << bit);
+#endif
+			}
+
+			if (val != 0 || chunk == 0 || printedAny)
+			{
+				if (printedAny)
+					snprintf(chunkBuf, sizeof(chunkBuf), "%016llX", val);
+				else
+					snprintf(chunkBuf, sizeof(chunkBuf), "%llX", val);
+
+				result.concat(chunkBuf);
+				printedAny = true;
+			}
+		}
+
+		if (!printedAny)
+			result = "0";
+
+		return result;
+	}
 };
