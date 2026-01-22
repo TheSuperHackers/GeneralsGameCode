@@ -38,7 +38,7 @@
 //
 //	author:		Chris Huybregts
 //
-//	purpose:	Convenience class to help with collecting stats.
+//	purpose:	Convinience class to help with collecting stats.
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ public:
 	StatsCollector( void );
 	~StatsCollector( void );
 
-	void reset( void );							///< Resets all values and writes the file header
+	void reset( void );							///< Reset's all values and writes the file header
 
 	void collectMsgStats( const GameMessage *msg );			///< collects Msg Stats if
 	void collectUnitCountStats( void );									///< cycle through all units and takes count

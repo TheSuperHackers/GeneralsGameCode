@@ -3443,7 +3443,7 @@ void GameLogic::destroyObject( Object *obj )
 	if (!obj || obj->isDestroyed())
 		return;
 
-	// run the object onDestroy event if provided
+	// run the object onDestroy event if provied
 	for (BehaviorModule** m = obj->getBehaviorModules(); *m; ++m)
 	{
 		DestroyModuleInterface* destroy = (*m)->getDestroy();
@@ -4261,7 +4261,7 @@ void GameLogic::xfer( Xfer *xfer )
 	// !!!DON'T DO THIS!!! ----> xfer->xferObjectID( &m_nextObjectID ); <---- !!!DON'T DO THIS!!!
 
 	//
-	// xfer a table of contents that contains thing template and identifier pairs.  this
+	// xfer a table of contents that contain thing template and indentifier pairs.  this
 	// table of contents is good for this save file only as unique numbers are only
 	// generated and stored for the actual things that are on this map
 	//

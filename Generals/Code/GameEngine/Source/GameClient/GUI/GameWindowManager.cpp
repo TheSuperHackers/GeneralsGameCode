@@ -63,9 +63,9 @@ UnsignedInt WindowLayoutCurrentVersion = 2;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //
-// with this status set to true, the window system will propagate mouse position
+// with this statis set to true, the window system will propogate mouse position
 // messages to windows.  You may want to disable this if you feel the mouse position
-// messages are "spamming" your window and making a particular debugging situation
+// messages are "spamming" your window and making a particular debuggin situation
 // difficult.  Make sure you do enable this before you check in again tho because
 // it is necessary for any code that needs to look at objects or anything under
 // the radar cursor

@@ -70,7 +70,7 @@ private:
 
 /**
   * LANGameInfo class - maintains information about the LAN game and
-	* the contents of its slot list throughout the game.
+	* the contents of its slot list hroughout the game.
 	*/
 class LANGameInfo : public GameInfo
 {
@@ -97,7 +97,7 @@ public:
 	void setName( UnicodeString name ) { m_gameName = name; }		///< Set the Name of the Game
 	UnicodeString getName( void ) { return m_gameName; }					///< Get the Name of the Game
 
-	// Convenience functions that interface with the LANPlayer held in the slot list
+	// Convinience functions that interface with the LANPlayer held in the slot list
 	virtual void resetAccepted(void);														///< Reset the accepted flag on all players
 	Bool amIHost( void );																///< Convenience function - is the local player the game host?
 

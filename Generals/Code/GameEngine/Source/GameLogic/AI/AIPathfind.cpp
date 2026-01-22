@@ -2493,7 +2493,7 @@ void PathfindZoneManager::reset(void)  ///< Called when the map is reset.
 
 /**
  * Calculate zones.  A zone is an area of the same terrain - clear, water or cliff.
- * The utility of zones is that if current location and destination are in the same zone,
+ * The utility of zones is that if current location and destiontion are in the same zone,
  * you can successfully pathfind.
  * If you are a multiple terrain vehicle, like amphibious transport, the lookup is a little more
  * complicated.
