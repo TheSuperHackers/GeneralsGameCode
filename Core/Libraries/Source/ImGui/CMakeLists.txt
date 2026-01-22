@@ -57,6 +57,6 @@ if (WIN32)
     )
 else ()
     # currently only WIN32 DX is supported
-    MESSAGE(FATAL_ERROR "Non-Windows platforms currently not supported for ImGui integration")
+    MESSAGE(FATAL_ERROR "Non-Windows platforms currently not supported for ImGui")
 endif ()
 # end target build section
