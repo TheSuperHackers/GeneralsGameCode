@@ -1304,6 +1304,7 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 #if RETAIL_COMPATIBLE_CRC
 			else
 #else
+			// TheSuperHackers @bugfix Stubbjax 04/11/2025 Passengers are no longer all dumped in a single frame.
 			else if (getObject()->getContain() && getObject()->getContain()->hasObjectsWantingToEnterOrExit())
 #endif
 			{
