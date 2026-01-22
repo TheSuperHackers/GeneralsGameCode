@@ -447,21 +447,9 @@ Bool DumbProjectileBehavior::calcFlightPath(Bool recalcNumSegments)
 		m_flightPathSegments = ceil( flightDistance / m_flightPathSpeed );
 	}
 
-	// TheSuperHackers @bugfix Caball009 10/01/2026 The way flight paths are used requires at least two curve points.
-	// getSegmentPoints will create only 1 element with default values for m_flightPath if m_flightPathSegments equals 1.
-#if RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @info The way flight paths are used requires at least two curve points.
+	// DumbProjectileBehavior::update has been modified to handle cases where the flight path consists of one or zero curve points.
 	flightCurve.getSegmentPoints(m_flightPathSegments, &m_flightPath);
-#else
-	if (m_flightPathSegments >= 2)
-	{
-		flightCurve.getSegmentPoints(m_flightPathSegments, &m_flightPath);
-	}
-	else
-	{
-		m_flightPathSegments = 0;
-		m_flightPath.clear();
-	}
-#endif
 
 	DEBUG_ASSERTCRASH(m_flightPathSegments == m_flightPath.size(), ("m_flightPathSegments mismatch"));
 
@@ -600,13 +588,8 @@ UpdateSleepTime DumbProjectileBehavior::update()
 		return UPDATE_SLEEP_NONE;
 	}
 
-#if RETAIL_COMPATIBLE_CRC
-	const Bool preventOutOfBounds = FALSE;
-#else
-	const Bool preventOutOfBounds = m_flightPath.size() <= 1;
-#endif
-
-	if( preventOutOfBounds || m_currentFlightPathStep >= m_flightPath.size() )
+	// TheSuperHackers @info This check also covers the case where the flight path consists of zero curve points.
+	if( m_currentFlightPathStep >= m_flightPath.size() )
 	{
 		// No more steps to use. Would go out of bounds on vector, so have to do something.
 		// We could allow physics to take over and make us fall, but the point of this whole task
@@ -676,7 +659,7 @@ UpdateSleepTime DumbProjectileBehavior::update()
 
 			// TheSuperHackers @bugfix Caball009 10/01/2026 Check vector size before accessing the second element to prevent out of bounds access.
 			// The non-deterministic behavior for retail clients cannot be fixed, so this will remain a source of potential mismatches in retail compatibility mode.
-			// If there's only one element, set current position to a valid value so that the behavior is deterministic for patched clients.
+			// If there are fewer than two elements, set current position to a valid value so that the behavior is deterministic for patched clients.
 			if (m_flightPath.size() >= 2)
 			{
 				prevPos = m_flightPath[0];
@@ -690,6 +673,13 @@ UpdateSleepTime DumbProjectileBehavior::update()
 				curPos.set(0.0f, 1.0f, 0.0f);
 			}
 #else
+			if (m_flightPath.size() <= 2)
+			{
+				// there is no valid flight path to calculate but detonation needs to be delayed by a single frame
+				++m_currentFlightPathStep;
+				return UPDATE_SLEEP_NONE;
+			}
+
 			const Coord3D prevPos = m_flightPath[0];
 			const Coord3D curPos = m_flightPath[1];
 #endif
