@@ -673,7 +673,7 @@ UpdateSleepTime DumbProjectileBehavior::update()
 				curPos.set(0.0f, 1.0f, 0.0f);
 			}
 #else
-			if (m_flightPath.size() <= 2)
+			if (m_flightPath.size() < 2)
 			{
 				// there is no valid flight path to calculate but detonation needs to be delayed by a single frame
 				++m_currentFlightPathStep;
