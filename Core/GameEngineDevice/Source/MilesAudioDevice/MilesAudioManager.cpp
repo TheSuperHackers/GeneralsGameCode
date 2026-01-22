@@ -111,7 +111,7 @@ MilesAudioManager::~MilesAudioManager()
 
 //-------------------------------------------------------------------------------------------------
 #if defined(RTS_DEBUG)
-AudioHandle MilesAudioManager::addAudioEvent( const AudioEventRTS *eventToAdd )
+AudioHandle MilesAudioManager::addAudioEvent( AudioEventRTS *eventToAdd )
 {
 	if (TheGlobalData->m_preloadReport) {
 		if (!eventToAdd->getEventName().isEmpty()) {

@@ -138,7 +138,7 @@ class MilesAudioManager : public AudioManager
 	public:
 #if defined(RTS_DEBUG)
 		virtual void audioDebugDisplay(DebugDisplayInterface *dd, void *, FILE *fp = nullptr );
-		virtual AudioHandle addAudioEvent( const AudioEventRTS *eventToAdd );	///< Add an audio event (event must be declared in an INI file)
+		virtual AudioHandle addAudioEvent( AudioEventRTS *eventToAdd );	///< Add an audio event (event must be declared in an INI file)
 #endif
 
 		// from AudioDevice
