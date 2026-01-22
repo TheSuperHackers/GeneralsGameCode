@@ -3864,6 +3864,7 @@ void Object::onDisabledEdge(Bool becomingDisabled)
 		else
 		{
 #if !RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @bugfix Stubbjax 17/11/2025 Resume previous task when re-enabled.
 			dozerAI->resumePreviousTask();
 #endif
 		}

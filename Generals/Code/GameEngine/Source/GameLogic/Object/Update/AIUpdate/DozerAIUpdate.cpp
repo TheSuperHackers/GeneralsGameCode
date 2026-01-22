@@ -2448,7 +2448,8 @@ void DozerAIUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: Save the dozer's previous task */
 // ------------------------------------------------------------------------------------------------
 void DozerAIUpdate::xfer( Xfer *xfer )
 {
