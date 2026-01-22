@@ -3740,7 +3740,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		{
 			if ( TheGameLogic->isInMultiplayerGame() )
 			{
-				TheAudio->addAudioEvent(&TheAudio->getMiscAudio()->m_allCheerSound);
+				TheAudio->addAudioEvent(&TheAudio->friend_getMiscAudio()->m_allCheerSound);
 				disp = DESTROY_MESSAGE;
 				TheMessageStream->appendMessage( GameMessage::MSG_DO_CHEER );
 			}
@@ -5344,7 +5344,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_BATTLE_CRY:
 		{
-			TheAudio->addAudioEvent(&TheAudio->getMiscAudio()->m_battleCrySound);
+			TheAudio->addAudioEvent(&TheAudio->friend_getMiscAudio()->m_battleCrySound);
 
 			disp = DESTROY_MESSAGE;
 			break;
