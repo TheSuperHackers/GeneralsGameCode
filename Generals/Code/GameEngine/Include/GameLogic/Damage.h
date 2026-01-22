@@ -158,7 +158,6 @@ inline void SET_ALL_DAMAGE_TYPE_BITS(DamageTypeFlags& m)
 
 extern DamageTypeFlags DAMAGE_TYPE_FLAGS_NONE;
 extern DamageTypeFlags DAMAGE_TYPE_FLAGS_ALL;
-void initDamageTypeFlags();
 
 
 //-------------------------------------------------------------------------------------------------
