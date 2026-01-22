@@ -154,7 +154,7 @@ class AudioManager : public SubsystemInterface
 		virtual void regainFocus( void );
 
 		// control for AudioEventsRTS
-		virtual AudioHandle addAudioEvent( const AudioEventRTS *eventToAdd );	///< Add an audio event (event must be declared in an INI file)
+		virtual AudioHandle addAudioEvent( AudioEventRTS *eventToAdd );	///< Add an audio event (event must be declared in an INI file)
 		virtual void removeAudioEvent( AudioHandle audioEvent );	///< Remove an audio event, stop for instance.
 		virtual void killAudioEventImmediately( AudioHandle audioEvent ) = 0;
 

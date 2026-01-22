@@ -402,7 +402,7 @@ void AudioManager::getInfoForAudioEvent( const AudioEventRTS *eventToFindAndFill
 }
 
 //-------------------------------------------------------------------------------------------------
-AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
+AudioHandle AudioManager::addAudioEvent(AudioEventRTS *eventToAdd)
 {
 	if (eventToAdd->getEventName().isEmpty() || eventToAdd->getEventName() == "NoSound") {
 		return AHSV_NoSound;
