@@ -4524,6 +4524,13 @@ void Object::loadPostProcess()
 	else
 		m_containedBy = nullptr;
 
+	// TheSuperHackers @bugfix bobtista 22/01/2026 Call loadPostProcess on all modules.
+	// This is needed to properly initialize module state after checkpoint load.
+	for (BehaviorModule** b = m_behaviors; *b; ++b)
+	{
+		(*b)->loadPostProcess();
+	}
+
 }
 
 //-------------------------------------------------------------------------------------------------

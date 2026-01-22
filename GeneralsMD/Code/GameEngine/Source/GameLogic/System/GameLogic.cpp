@@ -5309,8 +5309,14 @@ void GameLogic::loadPostProcess()
 	m_nextObjID = INVALID_ID;
 	Object *obj;
 	for( obj = getFirstObject(); obj; obj = obj->getNextObject() )
+	{
 		if( obj->getID() >= m_nextObjID )
 			m_nextObjID = (ObjectID)((UnsignedInt)obj->getID() + 1);
+
+		// TheSuperHackers @bugfix bobtista 22/01/2026 Call loadPostProcess on each object.
+		// This ensures module state is properly initialized after checkpoint load.
+		obj->loadPostProcess();
+	}
 
 	// blow away the sleepy update and normal update module lists
 	for (std::vector<UpdateModulePtr>::iterator it = m_sleepyUpdates.begin(); it != m_sleepyUpdates.end(); ++it)

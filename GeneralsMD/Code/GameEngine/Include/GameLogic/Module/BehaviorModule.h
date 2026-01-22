@@ -142,6 +142,7 @@ public:
 //-------------------------------------------------------------------------------------------------
 class BehaviorModule : public ObjectModule, public BehaviorModuleInterface
 {
+	friend class Object;  // TheSuperHackers @bugfix bobtista 22/01/2026 Allow Object to call loadPostProcess on its modules
 
 	MEMORY_POOL_GLUE_ABC( BehaviorModule )
 

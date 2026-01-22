@@ -158,6 +158,7 @@ enum CrushSquishTestType CPP_11(: Int)
  */
 class Object : public Thing, public Snapshot
 {
+	friend class GameLogic;  // TheSuperHackers @bugfix bobtista 22/01/2026 Allow GameLogic to call loadPostProcess on objects
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Object, "ObjectPool" )
 
