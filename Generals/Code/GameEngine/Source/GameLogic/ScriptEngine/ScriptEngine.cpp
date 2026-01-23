@@ -349,6 +349,26 @@ void AttackPriorityInfo::loadPostProcess( void )
 // ScriptEngine class
 
 //-------------------------------------------------------------------------------------------------
+/** Parse script action entry.  The InternalName has to match the action's internal name, and then it
+overrides the ui name and help text.  If no entry is present in the ini file, the default code
+initialized value in ScriptEngine::init() is used. jba*/
+//-------------------------------------------------------------------------------------------------
+void ScriptEngine::parseScriptAction( INI* ini )
+{
+}
+
+
+//-------------------------------------------------------------------------------------------------
+/** Parse script condition entry.  The InternalName has to match the condition's internal name, and then it
+overrides the ui name and help text.  If no entry is present in the ini file, the default code
+initialized value in ScriptEngine::init() is used. jba*/
+//-------------------------------------------------------------------------------------------------
+void ScriptEngine::parseScriptCondition( INI* ini )
+{
+}
+
+
+//-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ScriptEngine::ScriptEngine():
 m_numCounters(0),

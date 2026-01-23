@@ -56,6 +56,7 @@
 #include "GameLogic/ExperienceTracker.h"
 #include "GameLogic/FPUControl.h"
 #include "GameLogic/ObjectCreationList.h"
+#include "GameLogic/ScriptEngine.h"
 #include "GameLogic/Weapon.h"
 
 
@@ -84,6 +85,7 @@ static const BlockParse theTypeTable[] =
 	{ "AudioSettings",			INI::parseAudioSettingsDefinition },
 	{ "Bridge",							INI::parseTerrainBridgeDefinition },
 	{ "Campaign",						INI::parseCampaignDefinition },
+ 	{ "ChallengeGenerals",				INI::parseChallengeModeDefinition },
 	{ "CommandButton",			INI::parseCommandButtonDefinition },
 	{ "CommandMap",					INI::parseMetaMapDefinition },
 	{ "CommandSet",					INI::parseCommandSetDefinition },
@@ -108,6 +110,7 @@ static const BlockParse theTypeTable[] =
 	{ "Mouse",							INI::parseMouseDefinition },
 	{ "MouseCursor",				INI::parseMouseCursorDefinition },
 	{ "MultiplayerColor",		INI::parseMultiplayerColorDefinition },
+  { "MultiplayerStartingMoneyChoice",		INI::parseMultiplayerStartingMoneyChoiceDefinition },
 	{ "OnlineChatColors",		INI::parseOnlineChatColorDefinition },
 	{ "MultiplayerSettings",INI::parseMultiplayerSettingsDefinition },
 	{ "MusicTrack",					INI::parseMusicTrackDefinition },
@@ -135,6 +138,8 @@ static const BlockParse theTypeTable[] =
 	{ "LODPreset",					INI::parseLODPreset },
 	{	"BenchProfile",				INI::parseBenchProfile },
 	{	"ReallyLowMHz",				parseReallyLowMHz },
+	{	"ScriptAction",				ScriptEngine::parseScriptAction },
+	{	"ScriptCondition",		ScriptEngine::parseScriptCondition },
 
 	{ nullptr,									nullptr },
 };
@@ -819,20 +824,27 @@ AsciiString INI::getNextAsciiString()
 		else
 		{
 			static char buff[INI_MAX_CHARS_PER_LINE];
-
+			buff[0] = 0;
 			if (strlen(token) > 1)
 			{
 				strlcpy(buff, &token[1], ARRAY_SIZE(buff));
 			}
 
-			token = getNextToken(getSepsQuote());
-
-			if (strlen(token) > 1 && token[1] != '\t')
-			{
-				strlcat(buff, " ", ARRAY_SIZE(buff));
+			token = getNextTokenOrNull(getSepsQuote());
+			if (token) {
+				if (strlen(token) > 1 && token[1] != '\t')
+				{
+					strlcat(buff, " ", ARRAY_SIZE(buff));
+				}
+				strlcat(buff, token, ARRAY_SIZE(buff));
+				result.set(buff);
+			} else {
+				Int len = strlen(buff);
+				if (len && buff[len-1] == '"') { // strip off trailing quote jba. [2/12/2003]
+					buff[len-1] = 0;
+				}
+				result.set(buff);
 			}
-			strlcat(buff, token, ARRAY_SIZE(buff));
-			result.set(buff);
 		}
 	}
 	return result;
@@ -1395,7 +1407,10 @@ void INI::parseSpecialPowerTemplate( INI* ini, void * /*instance*/, void *store,
 	}
 
 	const SpecialPowerTemplate *sPowerT = TheSpecialPowerStore->findSpecialPowerTemplate( AsciiString( token ) );
-	DEBUG_ASSERTCRASH( sPowerT || stricmp( token, "None" ) == 0, ("Specialpower %s not found!",token) );
+	if( !sPowerT && stricmp( token, "None" ) != 0 )
+	{
+		DEBUG_CRASH( ("[LINE: %d in '%s'] Specialpower %s not found!", ini->getLineNum(), ini->getFilename().str(), token) );
+	}
 
 	typedef const SpecialPowerTemplate* ConstSpecialPowerTemplatePtr;
 	ConstSpecialPowerTemplatePtr* theSpecialPowerTemplate = (ConstSpecialPowerTemplatePtr *)store;

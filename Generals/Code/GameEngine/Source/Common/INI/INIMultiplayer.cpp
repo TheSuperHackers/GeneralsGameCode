@@ -78,3 +78,6 @@ void INI::parseMultiplayerColorDefinition( INI* ini )
 	multiplayerColorDefinition->setNightColor(multiplayerColorDefinition->getRGBNightValue());
 }
 
+void INI::parseMultiplayerStartingMoneyChoiceDefinition( INI* ini )
+{
+}

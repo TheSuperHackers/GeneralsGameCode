@@ -160,6 +160,8 @@ typedef void (*BuildMultiIniFieldProc)(MultiIniFieldParse& p);
 //-------------------------------------------------------------------------------------------------
 class INI
 {
+  INI(const INI&);
+  INI& operator=(const INI&);
 
 public:
 
@@ -217,6 +219,7 @@ public:
 	static void parseObjectCreationListDefinition( INI* ini );
 	static void parseMultiplayerSettingsDefinition( INI* ini );
 	static void parseMultiplayerColorDefinition( INI* ini );
+  static void parseMultiplayerStartingMoneyChoiceDefinition( INI* ini );
 	static void parseOnlineChatColorDefinition( INI* ini );
 	static void parseMapCacheDefinition( INI* ini );
 	static void parseVideoDefinition( INI* ini );
@@ -243,7 +246,7 @@ public:
 	static void parseEvaEvent( INI* ini );
 	static void parseCredits( INI* ini );
 	static void parseWindowTransitions( INI* ini );
-
+	static void parseChallengeModeDefinition( INI* ini );
 
 	AsciiString getFilename( void ) const { return m_filename; }
 	INILoadType getLoadType( void ) const { return m_loadType; }

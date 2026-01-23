@@ -352,6 +352,11 @@ public:
 //#if defined(RTS_DEBUG)
 	void debugVictory( void );
 //#endif
+
+
+	static void parseScriptAction( INI* ini );
+	static void parseScriptCondition( INI* ini );
+
 protected:
 
 	// snapshot methods

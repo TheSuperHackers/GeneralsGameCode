@@ -132,6 +132,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/XferSave.h
     Include/GameClient/Anim2D.h
     Include/GameClient/AnimateWindowManager.h
+    Include/GameClient/ChallengeGenerals.h
     Include/GameClient/CampaignManager.h
     Include/GameClient/CDCheck.h
     Include/GameClient/ClientInstance.h
@@ -657,6 +658,7 @@ set(GAMEENGINE_SRC
     Source/GameClient/GlobalLanguage.cpp
     Source/GameClient/GraphDraw.cpp
     Source/GameClient/GUI/AnimateWindowManager.cpp
+    Source/GameClient/GUI/ChallengeGenerals.cpp
     Source/GameClient/GUI/ControlBar/ControlBar.cpp
     Source/GameClient/GUI/ControlBar/ControlBarBeacon.cpp
     Source/GameClient/GUI/ControlBar/ControlBarCommand.cpp
