@@ -805,7 +805,7 @@ protected:
 	/// post process step, after all commands and command sets are loaded
 	void postProcessCommands( void );
 
-	// the following methods are for resetting data for vaious contexts
+	// the following methods are for resetting data for various contexts
 	void resetCommonCommandData( void );	/// reset shared command data
 	void resetContainData( void );			/// reset container data we use to tie controls to objects IDs for containment
 	void resetBuildQueueData( void );			/// reset the build queue data we use to die queue entires to control

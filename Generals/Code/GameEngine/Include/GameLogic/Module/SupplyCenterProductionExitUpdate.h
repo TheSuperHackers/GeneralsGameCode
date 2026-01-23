@@ -74,7 +74,7 @@ public:
 	SupplyCenterProductionExitUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	// Required funcs to fufill interface requirements
+	// Required funcs to fulfill interface requirements
 	virtual Bool isExitBusy() const {return FALSE;}	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
 	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject ) { return DOOR_1; }
 	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor );
@@ -93,7 +93,7 @@ protected:
 	Coord3D m_rallyPoint;						///< Where units should move to after they have reached the "natural" rally point
 	Bool m_rallyPointExists;				///< Only move to the rally point if this is true
 
-	// Required func to fufill Module requirement
+	// Required func to fulfill Module requirement
 };
 
 inline void SupplyCenterProductionExitUpdate::setRallyPoint( const Coord3D *pos )
