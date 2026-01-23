@@ -280,6 +280,8 @@ public:
 
 #ifdef DUMP_PERF_STATS
 	Bool m_dumpPerformanceStatistics;
+  Bool  m_dumpStatsAtInterval;///< should I automatically dum stats every in N frames
+  Int   m_statsInterval;       ///< if so, how many is N?
 #endif
 
 	Bool m_forceBenchmark;	///<forces running of CPU detection benchmark, even on known cpu's.

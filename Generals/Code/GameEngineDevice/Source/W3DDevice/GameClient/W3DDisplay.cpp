@@ -263,7 +263,7 @@ void StatDumpClass::dumpStats()
 	fprintf( m_fp, "  Video RAM: %d\n", Debug_Statistics::Get_Record_Texture_Size() - 1376256 );
 
 	// terrain stats
-	fprintf( m_fp, "  3-Way Blends: %d, Shoreline Blends: %d\n", TheTerrainRenderObject->getNumExtraBlendTiles(), TheTerrainRenderObject->getNumShoreLineTiles() );
+	fprintf( m_fp, "  3-Way Blends: %d/%d, \n Shoreline Blends: %d/%d\n", TheTerrainRenderObject->getNumExtraBlendTiles(TRUE),TheTerrainRenderObject->getNumExtraBlendTiles(FALSE), TheTerrainRenderObject->getNumShoreLineTiles(TRUE),TheTerrainRenderObject->getNumShoreLineTiles(FALSE));
 
 	fprintf( m_fp, "\n" );
 

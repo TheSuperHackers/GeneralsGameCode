@@ -47,6 +47,10 @@
 
 #pragma once
 
+#define DONT_ALLOW_DEBUG_CHEATS_IN_RELEASE ///< Take of the DONT to get cheats back in to release
+
+//#define _CAMPEA_DEMO
+
 // ----------------------------------------------------------------------------------------------
 #include "Lib/BaseType.h"
 #include "WWCommon.h"
@@ -54,7 +58,7 @@
 
 // ----------------------------------------------------------------------------------------------
 #if defined(RTS_DEBUG)
-	#define NO_DUMP_PERF_STATS
+	#define DUMP_PERF_STATS
 #else
 	#define NO_DUMP_PERF_STATS
 #endif
@@ -118,6 +122,18 @@ enum
 #else
 	#error "this is the wrong size"
 #endif
+
+// ----------------------------------------------------------------------------------------------
+enum
+{
+	MAX_GLOBAL_GENERAL_TYPES = 9,		///< number of playable General Types, not including the boss)
+
+	/// The start of the playable global generals playertemplates
+	GLOBAL_GENERAL_BEGIN = 5,
+
+	/// The end of the playable global generals
+	GLOBAL_GENERAL_END = (GLOBAL_GENERAL_BEGIN + MAX_GLOBAL_GENERAL_TYPES - 1)
+};
 
 //-------------------------------------------------------------------------------------------------
 enum GameDifficulty CPP_11(: Int)
@@ -207,6 +223,7 @@ enum CommandSourceType CPP_11(: Int)
 	CMD_FROM_SCRIPT,
 	CMD_FROM_AI,
 	CMD_FROM_DOZER,							// Special rare command when the dozer originates a command to attack a mine. Mines are not ai-attackable, and it seems deceitful for the dozer to generate a player or script command. jba.
+	CMD_DEFAULT_SWITCH_WEAPON,	// Special case: A weapon that can be chosen -- this is the default case (machine gun vs flashbang).
 
 	COMMAND_SOURCE_TYPE_COUNT
 };
