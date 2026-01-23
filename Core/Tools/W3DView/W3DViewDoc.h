@@ -29,6 +29,7 @@
 #include "dynamesh.h"
 #include "rendobj.h"
 #include "LODDefs.h"
+#include "ref_ptr.h"
 
 
 ///////////////////////////////////////////////////////////
@@ -112,12 +113,12 @@ public:
 	CameraClass *			Get2DCamera (void) const				{ return m_pC2DCamera; }
 	CameraClass *			GetBackObjectCamera (void) const		{ return m_pCBackObjectCamera; }
 	SceneClass *			Get2DScene (void) const					{ return m_pC2DScene; }
-	SceneClass *			GetCursorScene (void) const			{ return m_pCursorScene; }
+	SceneClass *			GetCursorScene (void) const			{ return m_pCursorScene.Peek(); }
 	ViewerSceneClass *	GetScene (void) const					{ return m_pCScene; }
 	SceneClass *			GetBackObjectScene (void) const		{ return m_pCBackObjectScene; }
 	LightClass *			GetSceneLight (void) const				{ return m_pCSceneLight; }
-	RenderObjClass *		GetDisplayedObject (void) const		{ return m_pCRenderObj; }
-	HAnimClass *			GetCurrentAnimation (void) const		{ return m_pCAnimation; }
+	RenderObjClass *		GetDisplayedObject (void) const		{ return m_pCRenderObj.Peek(); }
+	HAnimClass *			GetCurrentAnimation (void) const		{ return m_pCAnimation.Peek(); }
 	const HTreeClass *	Get_Current_HTree (void) const;
 
 	//
@@ -291,18 +292,18 @@ private:
 	//////////////////////////////////////////////////////////////////
 	ViewerSceneClass *	m_pCScene;
 	SceneClass *			m_pC2DScene;
-	SceneClass *			m_pCursorScene;
+	RefCountPtr<SceneClass>			m_pCursorScene;
 	SceneClass *			m_pCBackObjectScene;
 	DazzleLayerClass *	m_pDazzleLayer;
-	RenderObjClass *		m_pCRenderObj;
+	RefCountPtr<RenderObjClass>		m_pCRenderObj;
 	RenderObjClass *		m_pCBackgroundObject;
-	HAnimClass *			m_pCAnimation;
+	RefCountPtr<HAnimClass>			m_pCAnimation;
 	HAnimComboClass *		m_pCAnimCombo;
 	LightClass *			m_pCSceneLight;
 	Bitmap2DObjClass *	m_pCBackgroundBMP;
 	CameraClass *			m_pC2DCamera;
 	CameraClass *			m_pCBackObjectCamera;
-	ScreenCursorClass *	m_pCursor;
+	RefCountPtr<ScreenCursorClass>	m_pCursor;
 	Vector3					m_backgroundColor;
 	CString					m_stringBackgroundBMP;
 	CString					m_stringBackgroundObject;
