@@ -2571,6 +2571,28 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 				// don't need (or want) to take off for these
 				break;
 
+#if !RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @tweak Stubbjax 23/01/2026 Parked jets now defer offensive commands when out of ammo.
+			case AICMD_ATTACKMOVE_TO_POSITION:
+			case AICMD_ATTACK_AREA:
+			case AICMD_ATTACK_OBJECT:
+			case AICMD_ATTACK_POSITION:
+			case AICMD_ATTACK_TEAM:
+			case AICMD_FORCE_ATTACK_OBJECT:
+			case AICMD_GUARD_AREA:
+			case AICMD_GUARD_OBJECT:
+			case AICMD_GUARD_POSITION:
+			case AICMD_GUARD_RETALIATE:
+			case AICMD_HUNT:
+				if (isOutOfSpecialReloadAmmo())
+				{
+					setFlag(HAS_PENDING_COMMAND, true);
+					return;
+				}
+
+				FALLTHROUGH;
+#endif
+
 			case AICMD_ENTER:
 			case AICMD_GET_REPAIRED:
 
