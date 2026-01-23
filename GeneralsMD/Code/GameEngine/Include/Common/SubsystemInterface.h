@@ -139,6 +139,72 @@ public:
 
 };
 
+template <typename T>
+class OverridableInterface
+{
+public:
+	virtual T* findInstance(const AsciiString& name) = 0;
+	virtual T* createInstance(const AsciiString& name) = 0;
+	virtual void onCreatedOverride(T* instance) {};
+
+	template <typename F>
+	static T* parseDefinition(INI* ini, F* factory, const AsciiString& name, bool initFromINI = true)
+	{
+		static_assert(requires { static_cast<SubsystemInterface*>(factory); }, "Factory must be able to reset overrides.");
+
+		T* instance = factory->findInstance(name);
+
+		if (!instance)
+		{
+			instance = factory->createInstance(name);
+			DEBUG_ASSERTCRASH(instance, ("Factory create function should not return a nullptr"));
+
+			if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
+			{
+				instance->markAsOverride();
+			}
+		}
+		else if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
+		{
+			instance = createOverride(instance);
+
+			factory->onCreatedOverride(instance);
+		}
+		else
+		{
+			DEBUG_CRASH(("[LINE: %d in '%s'] Duplicate instance of %s found!", ini->getLineNum(), ini->getFilename().str(), name.str()));
+
+			throw INI_INVALID_DATA;
+		}
+
+		if (initFromINI)
+		{
+			ini->initFromINI(instance, instance->getFieldParse());
+		}
+
+		return instance;
+	}
+
+private:
+	static T* createOverride(T* instance)
+	{
+		// find final override of the 'parent' instance
+		T* child = static_cast<T*>(instance->friend_getFinalOverride());
+
+		// allocate new instance
+		T* overrideInstance = new(T::GLUE_NOT_IMPLEMENTED) T;
+
+		// copy data from final override to 'overrideInstance' as a set of initial default values
+		*overrideInstance = *child;
+
+		overrideInstance->markAsOverride();
+		child->setNextOverride(overrideInstance);
+
+		// return the newly created override for us to set values with etc
+		return overrideInstance;
+	}
+};
+
 //-------------------------------------------------------------------------------------------------
 class SubsystemInterfaceList
 {

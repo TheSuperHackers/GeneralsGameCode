@@ -196,8 +196,8 @@
 	#define allocateBlockDoNotZero(ARGLITERAL)					allocateBlockDoNotZeroImplementation(ARGLITERAL MP_LOC_SUFFIX)
 	#define allocateBytes(ARGCOUNT,ARGLITERAL)					allocateBytesImplementation(ARGCOUNT, ARGLITERAL MP_LOC_SUFFIX)
 	#define allocateBytesDoNotZero(ARGCOUNT,ARGLITERAL)	allocateBytesDoNotZeroImplementation(ARGCOUNT, ARGLITERAL MP_LOC_SUFFIX)
-	#define newInstanceDesc(ARGCLASS,ARGLITERAL)				new(ARGCLASS::ARGCLASS##_GLUE_NOT_IMPLEMENTED, ARGLITERAL MP_LOC_SUFFIX) ARGCLASS
-	#define newInstance(ARGCLASS)												new(ARGCLASS::ARGCLASS##_GLUE_NOT_IMPLEMENTED, __FILE__) ARGCLASS
+	#define newInstanceDesc(ARGCLASS,ARGLITERAL)				new(ARGCLASS::GLUE_NOT_IMPLEMENTED, ARGLITERAL MP_LOC_SUFFIX) ARGCLASS
+	#define newInstance(ARGCLASS)												new(ARGCLASS::GLUE_NOT_IMPLEMENTED, __FILE__) ARGCLASS
 
 #else
 
@@ -210,8 +210,8 @@
 	#define allocateBlockDoNotZero(ARGLITERAL)					allocateBlockDoNotZeroImplementation()
 	#define allocateBytes(ARGCOUNT,ARGLITERAL)					allocateBytesImplementation(ARGCOUNT)
 	#define allocateBytesDoNotZero(ARGCOUNT,ARGLITERAL)	allocateBytesDoNotZeroImplementation(ARGCOUNT)
-	#define newInstanceDesc(ARGCLASS,ARGLITERAL)				new(ARGCLASS::ARGCLASS##_GLUE_NOT_IMPLEMENTED) ARGCLASS
-	#define newInstance(ARGCLASS)												new(ARGCLASS::ARGCLASS##_GLUE_NOT_IMPLEMENTED) ARGCLASS
+	#define newInstanceDesc(ARGCLASS,ARGLITERAL)				new(ARGCLASS::GLUE_NOT_IMPLEMENTED) ARGCLASS
+	#define newInstance(ARGCLASS)												new(ARGCLASS::GLUE_NOT_IMPLEMENTED) ARGCLASS
 
 #endif
 
@@ -621,7 +621,7 @@ private: \
 protected: \
 	virtual ~ARGCLASS(); \
 public: \
-	enum ARGCLASS##MagicEnum { ARGCLASS##_GLUE_NOT_IMPLEMENTED = 0 }; \
+	enum ARGCLASS##MagicEnum { GLUE_NOT_IMPLEMENTED = 0 }; \
 public: \
 	inline void *operator new(size_t s, ARGCLASS##MagicEnum e DECLARE_LITERALSTRING_ARG2) \
 	{ \
@@ -692,7 +692,7 @@ public: /* include this line at the end to reset visibility to 'public' */
 protected: \
 	virtual ~ARGCLASS(); \
 public: \
-	enum ARGCLASS##MagicEnum { ARGCLASS##_GLUE_NOT_IMPLEMENTED = 0 }; \
+	enum ARGCLASS##MagicEnum { GLUE_NOT_IMPLEMENTED = 0 }; \
 protected: \
 	inline void *operator new(size_t s, ARGCLASS##MagicEnum e DECLARE_LITERALSTRING_ARG2) \
 	{ \
