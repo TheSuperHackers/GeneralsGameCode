@@ -54,9 +54,4 @@ const char* const DisabledMaskType::s_bitNameList[] =
 static_assert(ARRAY_SIZE(DisabledMaskType::s_bitNameList) == DisabledMaskType::NumBits + 1, "Incorrect array size");
 
 DisabledMaskType DISABLEDMASK_NONE;	// inits to all zeroes
-DisabledMaskType DISABLEDMASK_ALL;
-
-void initDisabledMasks()
-{
-	SET_ALL_DISABLEDMASK_BITS( DISABLEDMASK_ALL );
-}
+DisabledMaskType DISABLEDMASK_ALL(DisabledMaskType::kInitSetAll);

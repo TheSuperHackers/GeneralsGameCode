@@ -438,7 +438,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			if( pu == nullptr )
 			{
 
-				DEBUG_ASSERTCRASH( 0, ("Cannot create '%s' because the factory object '%s' is not capable of producting units",
+				DEBUG_ASSERTCRASH( 0, ("Cannot create '%s' because the factory object '%s' is not capable of producing units",
 																whatToBuild->getName().str(),
 																factory->getTemplate()->getName().str()) );
 				break;

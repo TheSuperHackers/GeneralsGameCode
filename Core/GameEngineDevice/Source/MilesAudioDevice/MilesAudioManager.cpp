@@ -680,7 +680,7 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 			DEBUG_LOG(("- Stream"));
 		#endif
 
-			if ((info->m_soundType == AT_Streaming) && event->getUninterruptable()) {
+			if ((info->m_soundType == AT_Streaming) && event->getUninterruptible()) {
 				stopAllSpeech();
 			}
 
@@ -716,7 +716,7 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 			audio->m_type = PAT_Stream;
 
 			if (stream) {
-				if ((info->m_soundType == AT_Streaming) && event->getUninterruptable()) {
+				if ((info->m_soundType == AT_Streaming) && event->getUninterruptible()) {
 					setDisallowSpeech(TRUE);
 	 			}
 				AIL_set_stream_volume_pan(stream, getEffectiveVolume(event), 0.5f);

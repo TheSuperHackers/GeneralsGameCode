@@ -102,7 +102,7 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 	if( file->read( buffer, fileSize ) != fileSize )
 	{
 
-		DEBUG_CRASH(( "embeddPristineMap - Error reading from file '%s'", map.str() ));
+		DEBUG_CRASH(( "embedPristineMap - Error reading from file '%s'", map.str() ));
 		throw SC_INVALID_DATA;
 
 	}

@@ -1316,6 +1316,14 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 		{
 			const Real THRESH = 3.0f;
 			const Real THRESH_SQR = THRESH*THRESH;
+#if RETAIL_COMPATIBLE_CRC
+			const bool allowExit = true;
+#else
+			// TheSuperHackers @bugfix Stubbjax 04/11/2025 Passengers are no longer all dumped in a single frame.
+			const ContainModuleInterface* contain = getObject()->getContain();
+			const bool allowExit = contain && contain->hasObjectsWantingToEnterOrExit();
+#endif
+
 			if (calcDistSqr(*getObject()->getPosition(), parms->m_pos) > THRESH_SQR &&
 					m_flightStatus == CHINOOK_LANDED)
 			{
@@ -1326,7 +1334,7 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 				setMyState(TAKING_OFF, nullptr, nullptr, CMD_FROM_AI);
 				passItThru = false;
 			}
-			else
+			else if (allowExit)
 			{
 				// do this INSTEAD of the standard stuff
 				setMyState(

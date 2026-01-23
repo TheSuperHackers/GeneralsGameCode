@@ -29,7 +29,6 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
-#define DEFINE_DAMAGE_NAMES
 #define DEFINE_DEATH_NAMES
 
 #include "Common/INI.h"
@@ -1838,6 +1837,7 @@ void INI::parseSoundsList( INI* ini, void *instance, void *store, const void* /*
 void INI::parseDamageTypeFlags(INI* ini, void* /*instance*/, void* store, const void* /*userData*/)
 {
 	DamageTypeFlags flags = DAMAGE_TYPE_FLAGS_ALL;
+
 	for (const char* token = ini->getNextToken(); token; token = ini->getNextTokenOrNull())
 	{
 		if (stricmp(token, "ALL") == 0)
@@ -1852,13 +1852,13 @@ void INI::parseDamageTypeFlags(INI* ini, void* /*instance*/, void* store, const 
 		}
 		if (token[0] == '+')
 		{
-			DamageType dt = (DamageType)INI::scanIndexList(token+1, TheDamageNames);
+			DamageType dt = (DamageType)DamageTypeFlags::getSingleBitFromName(token+1);
 			flags = setDamageTypeFlag(flags, dt);
 			continue;
 		}
 		if (token[0] == '-')
 		{
-			DamageType dt = (DamageType)INI::scanIndexList(token+1, TheDamageNames);
+			DamageType dt = (DamageType)DamageTypeFlags::getSingleBitFromName(token+1);
 			flags = clearDamageTypeFlag(flags, dt);
 			continue;
 		}

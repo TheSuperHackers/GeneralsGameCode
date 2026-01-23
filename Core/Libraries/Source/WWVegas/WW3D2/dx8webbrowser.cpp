@@ -46,6 +46,9 @@
 
 #else
 
+#ifdef __MINGW32__
+#include "Utility/comsupp_compat.h"  // MinGW COM support compatibility
+#endif
 #include <comutil.h>
 #include <comip.h>
 

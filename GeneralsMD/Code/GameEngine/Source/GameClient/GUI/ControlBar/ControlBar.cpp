@@ -956,7 +956,7 @@ ControlBar::ControlBar( void )
 	m_generalButtonHighlight = nullptr;
 	m_genArrow = nullptr;
 	m_sideSelectAnimateDown = FALSE;
-	updateCommanBarBorderColors(GAME_COLOR_UNDEFINED,GAME_COLOR_UNDEFINED,GAME_COLOR_UNDEFINED,GAME_COLOR_UNDEFINED);
+	updateCommandBarBorderColors(GAME_COLOR_UNDEFINED,GAME_COLOR_UNDEFINED,GAME_COLOR_UNDEFINED,GAME_COLOR_UNDEFINED);
 
 	m_radarAttackGlowOn = FALSE;
 	m_remainingRadarAttackGlowFrames = 0;
@@ -2912,7 +2912,7 @@ void ControlBar::updateBuildUpClockColor( Color color)
 
 
 
-void ControlBar::updateCommanBarBorderColors(Color build, Color action, Color upgrade, Color system )
+void ControlBar::updateCommandBarBorderColors(Color build, Color action, Color upgrade, Color system )
 {
 	m_commandButtonBorderBuildColor = build;
 	m_commandButtonBorderActionColor = action;

@@ -409,7 +409,7 @@ void ControlBarScheme::init(void)
 		TheControlBar->updateBuildQueueDisabledImages( m_buttonQueueImage );
 		TheControlBar->updateRightHUDImage(m_rightHUDImage);
 		TheControlBar->updateBuildUpClockColor( m_buildUpClockColor );
-		TheControlBar->updateCommanBarBorderColors(m_borderBuildColor, m_borderActionColor, m_borderUpgradeColor,m_borderSystemColor);
+		TheControlBar->updateCommandBarBorderColors(m_borderBuildColor, m_borderActionColor, m_borderUpgradeColor,m_borderSystemColor);
 		TheControlBar->updateBorderColor(m_commandBarBorderColor);
 		//TheControlBar->updateCommandMarkerImage(m_commandMarkerImage);
 		TheControlBar->updateSlotExitImage(m_commandMarkerImage);

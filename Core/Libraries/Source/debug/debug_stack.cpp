@@ -364,6 +364,7 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
   {
     // walk stack back using current call chain
 	  unsigned long reg_eip, reg_ebp, reg_esp;
+#if defined(_MSC_VER)
 	  __asm
     {
     here:
@@ -372,6 +373,17 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
 		  mov	reg_ebp,ebp
 		  mov	reg_esp,esp
 	  };
+#elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
+	  __asm__ __volatile__ (
+		  "call 1f\n\t"
+		  "1: pop %0\n\t"
+		  "mov %%ebp, %1\n\t"
+		  "mov %%esp, %2"
+		  : "=r" (reg_eip), "=r" (reg_ebp), "=r" (reg_esp)
+	  );
+#else
+#error "Unsupported compiler or architecture for register capture"
+#endif
 	  stackFrame.AddrPC.Offset = reg_eip;
 	  stackFrame.AddrStack.Offset = reg_esp;
 	  stackFrame.AddrFrame.Offset = reg_ebp;

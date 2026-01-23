@@ -58,14 +58,25 @@ public:
 	/*
 		just a little syntactic sugar so that there is no "foo = 0" compatible constructor
 	*/
-	enum BogusInitType
-	{
-		kInit = 0
-	};
+	enum BogusInitType { kInit };
+	enum InitSetAllType { kInitSetAll };
 
 	BitFlags()
 	{
 	}
+
+	// This constructor sets all bits to 1
+	BitFlags(InitSetAllType)
+	{
+		m_bits.set();
+	}
+
+	BitFlags(UnsignedInt value)
+		: m_bits(static_cast<unsigned long>(value))
+	{
+	}
+
+	// TheSuperHackers @todo Replace with variadic template
 
 	BitFlags(BogusInitType k, Int idx1)
 	{
@@ -102,33 +113,15 @@ public:
 		m_bits.set(idx5);
 	}
 
-	BitFlags(BogusInitType k,
-										Int idx1,
-										Int idx2,
-										Int idx3,
-										Int idx4,
-										Int idx5,
-										Int idx6,
-										Int idx7,
-										Int idx8,
-										Int idx9,
-										Int idx10,
-										Int idx11,
-										Int idx12
-									)
+	// Set all given indices in the array.
+	BitFlags(BogusInitType, const Int* idxs, Int count)
 	{
-		m_bits.set(idx1);
-		m_bits.set(idx2);
-		m_bits.set(idx3);
-		m_bits.set(idx4);
-		m_bits.set(idx5);
-		m_bits.set(idx6);
-		m_bits.set(idx7);
-		m_bits.set(idx8);
-		m_bits.set(idx9);
-		m_bits.set(idx10);
-		m_bits.set(idx11);
-		m_bits.set(idx12);
+		const Int* idx = idxs;
+		const Int* end = idxs + count;
+		for (; idx < end; ++idx)
+		{
+			m_bits.set(*idx);
+		}
 	}
 
 	Bool operator==(const BitFlags& that) const
@@ -257,6 +250,17 @@ public:
 			return false;
 
 		return true;
+	}
+
+	// TheSuperHackers @info Function for rare use cases where we must access the flags as an integer.
+	// Not using to_ulong because that can throw. Truncates all bits above 32.
+	UnsignedInt toUnsignedInt() const noexcept
+	{
+		UnsignedInt val = 0;
+		const UnsignedInt count = min(m_bits.size(), sizeof(val) * 8);
+		for (UnsignedInt i = 0; i < count; ++i)
+			val |= m_bits.test(i) * (1u << i);
+		return val;
 	}
 
   static const char* const* getBitNames()

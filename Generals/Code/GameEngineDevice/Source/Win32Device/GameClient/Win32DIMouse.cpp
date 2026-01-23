@@ -139,7 +139,7 @@ void DirectInputMouse::openMouse( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "WARNING - openMouse: Cann't get capabilities of mouse for button setup" ));
+		DEBUG_LOG(( "WARNING - openMouse: Can't get capabilities of mouse for button setup" ));
 
 	}
 	else

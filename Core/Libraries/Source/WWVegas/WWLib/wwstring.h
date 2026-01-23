@@ -114,8 +114,8 @@ public:
 	bool			Is_Empty (void) const;
 
 	void			Erase (int start_index, int char_count);
-	int _cdecl  Format (const TCHAR *format, ...);
-	int _cdecl  Format_Args (const TCHAR *format, va_list arg_list );
+	int __cdecl  Format (const TCHAR *format, ...);
+	int __cdecl  Format_Args (const TCHAR *format, va_list arg_list );
 
 	// Trim leading and trailing whitespace characters (values <= 32)
 	void Trim(void);

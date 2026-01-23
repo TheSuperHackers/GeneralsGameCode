@@ -131,7 +131,7 @@ class MemoryCounterClass
 public:
 	MemoryCounterClass(void) : CurrentAllocation(0), PeakAllocation(0) { }
 
-	void		Memory_Allocated(int size)						{ CurrentAllocation+=size; PeakAllocation = max(PeakAllocation,CurrentAllocation); }
+	void		Memory_Allocated(int size)						{ CurrentAllocation+=size; PeakAllocation = MAX(PeakAllocation,CurrentAllocation); }
 	void		Memory_Released(int size)						{ CurrentAllocation-=size; }
 
 	int		Get_Current_Allocated_Memory(void)			{ return CurrentAllocation; }

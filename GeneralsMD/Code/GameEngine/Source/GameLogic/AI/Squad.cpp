@@ -236,7 +236,7 @@ void Squad::xfer( Xfer *xfer )
 		if( !m_objectsCached.empty() )
 		{
 
-			DEBUG_CRASH(( "Squad::xfer - m_objectsCached should be emtpy, but is not" ));
+			DEBUG_CRASH(( "Squad::xfer - m_objectsCached should be empty, but is not" ));
 			throw SC_INVALID_DATA;
 
 		}

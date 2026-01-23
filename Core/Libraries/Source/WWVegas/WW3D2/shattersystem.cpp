@@ -1180,7 +1180,7 @@ void ShatterSystem::Process_Clip_Pools
 
 					SHATTER_DEBUG_SAY(("Begin Vertex:"));
 					new_mesh->Begin_Vertex();
-					SHATTER_DEBUG_SAY(("postion: %f %f %f",pos.X,pos.Y,pos.Z));
+					SHATTER_DEBUG_SAY(("position: %f %f %f",pos.X,pos.Y,pos.Z));
 					new_mesh->Location_Inline(pos);
 					new_mesh->Normal(norm);
 

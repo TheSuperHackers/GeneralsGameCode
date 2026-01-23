@@ -110,18 +110,24 @@ extern GameTextInterface* CreateGameTextInterface( void );
 // TheGameText->FETCH_OR_SUBSTITUTE("GUI:LabelName", L"Substitute Fallback Text")
 // TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:LabelName", L"Substitute Fallback Text %d %d", 1, 2)
 // The substitute text will be compiled out if ENABLE_GAMETEXT_SUBSTITUTES is not defined.
+//
+// Note: ##__VA_ARGS__ handles zero variadic arguments by removing the preceding comma when empty.
+// Example: FETCH_OR_SUBSTITUTE_FORMAT("Label", L"Text") expands correctly without trailing comma.
+// Without ##, it would expand to fetchOrSubstituteFormat("Label", L"Text",) causing a syntax error.
+// This extension is widely supported (GCC, Clang, MSVC 2015+). C++20 __VA_OPT__ is the standard
+// alternative, but ##__VA_ARGS__ is simpler and compatible across C++11/14/17/20.
 #if ENABLE_GAMETEXT_SUBSTITUTES
 
 #define FETCH_OR_SUBSTITUTE(labelA, substituteTextW) fetchOrSubstitute(labelA, substituteTextW)
 #if __cplusplus >= 201103L // TheSuperHackers @todo Remove condition when abandoning VC6
-#define FETCH_OR_SUBSTITUTE_FORMAT(labelA, substituteFormatW, ...) fetchOrSubstituteFormat(labelA, substituteFormatW, __VA_ARGS__)
+#define FETCH_OR_SUBSTITUTE_FORMAT(labelA, substituteFormatW, ...) fetchOrSubstituteFormat(labelA, substituteFormatW, ##__VA_ARGS__)
 #endif
 
 #else
 
 #define FETCH_OR_SUBSTITUTE(labelA, substituteTextW) fetch(labelA)
 #if __cplusplus >= 201103L // TheSuperHackers @todo Remove condition when abandoning VC6
-#define FETCH_OR_SUBSTITUTE_FORMAT(labelA, substituteTextW, ...) fetchFormat(labelA, __VA_ARGS__)
+#define FETCH_OR_SUBSTITUTE_FORMAT(labelA, substituteFormatW, ...) fetchFormat(labelA, ##__VA_ARGS__)
 #endif
 
 #endif // ENABLE_GAMETEXT_SUBSTITUTES

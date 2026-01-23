@@ -144,8 +144,8 @@ public:
 	Int getPlayingAudioIndex( void ) { return m_playingAudioIndex; };
 	void setPlayingAudioIndex( Int pai )  { m_playingAudioIndex = pai; };
 
-	Bool getUninterruptable( ) const { return m_uninterruptable; }
-	void setUninterruptable( Bool uninterruptable ) { m_uninterruptable = uninterruptable; }
+	Bool getUninterruptible( ) const { return m_uninterruptible; }
+	void setUninterruptible( Bool uninterruptible ) { m_uninterruptible = uninterruptible; }
 
 
 	// This will retrieve the appropriate position based on type.
@@ -184,7 +184,7 @@ protected:
 
 	Bool m_shouldFade;							///< This should fade in or out (if it is starting or stopping)
 	Bool m_isLogicalAudio;					///< Should probably only be true for scripted sounds
-	Bool m_uninterruptable;
+	Bool m_uninterruptible;
 
 	// Playing attributes
 	Real m_pitchShift;							///< Pitch shift that should occur on this piece of audio

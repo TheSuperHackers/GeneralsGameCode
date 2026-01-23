@@ -2505,7 +2505,7 @@ void ParticleSystem::xfer( Xfer *xfer )
 			particle = createParticle( info, priority, TRUE );
 
 			// sanity
-			DEBUG_ASSERTCRASH( particle, ("ParticleSyste::xfer - Unable to create particle for loading") );
+			DEBUG_ASSERTCRASH( particle, ("ParticleSystem::xfer - Unable to create particle for loading") );
 
 			// read in the particle data
 			xfer->xferSnapshot( particle );

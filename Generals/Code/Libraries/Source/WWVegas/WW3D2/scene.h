@@ -94,7 +94,7 @@ public:
 	// RTTI information.
 	///////////////////////////////////////////////////////////////////////////////////
 	enum {
-		SCENE_ID_UNKOWN = 0xFFFFFFFF,
+		SCENE_ID_UNKNOWN = 0xFFFFFFFF,
 		SCENE_ID_SCENE = 0,
 		SCENE_ID_SIMPLE,
 

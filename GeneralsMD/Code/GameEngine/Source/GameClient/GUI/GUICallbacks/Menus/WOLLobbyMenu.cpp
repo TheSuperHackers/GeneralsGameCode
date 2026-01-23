@@ -866,7 +866,7 @@ static const char* getMessageString(Int t)
 /** refreshGameList
 		The Bool is used to force refresh if the refresh button was hit.*/
 //-------------------------------------------------------------------------------------------------
-static void refreshGameList( Bool forceRefresh )
+void refreshGameList( Bool forceRefresh )
 {
 	Int refreshInterval = gameListRefreshInterval;
 
@@ -889,7 +889,7 @@ static void refreshGameList( Bool forceRefresh )
 /** refreshPlayerList
 		The Bool is used to force refresh if the refresh button was hit.*/
 //-------------------------------------------------------------------------------------------------
-static void refreshPlayerList( Bool forceRefresh )
+void refreshPlayerList( Bool forceRefresh )
 {
 		Int refreshInterval = playerListRefreshInterval;
 

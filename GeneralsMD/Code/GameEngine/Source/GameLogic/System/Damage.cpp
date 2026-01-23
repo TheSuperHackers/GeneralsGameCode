@@ -73,6 +73,9 @@ const char* const DamageTypeFlags::s_bitNameList[] =
 	"STEALTHJET_MISSILES",
 	"MOLOTOV_COCKTAIL",
 	"COMANCHE_VULCAN",
+#if RTS_GENERALS
+	"FLESHY_SNIPER",
+#endif
 	"SUBDUAL_MISSILE",
 	"SUBDUAL_VEHICLE",
 	"SUBDUAL_BUILDING",
@@ -86,12 +89,7 @@ const char* const DamageTypeFlags::s_bitNameList[] =
 static_assert(ARRAY_SIZE(DamageTypeFlags::s_bitNameList) == DamageTypeFlags::NumBits + 1, "Incorrect array size");
 
 DamageTypeFlags DAMAGE_TYPE_FLAGS_NONE; 	// inits to all zeroes
-DamageTypeFlags DAMAGE_TYPE_FLAGS_ALL;
-
-void initDamageTypeFlags()
-{
-	SET_ALL_DAMAGE_TYPE_BITS( DAMAGE_TYPE_FLAGS_ALL );
-}
+DamageTypeFlags DAMAGE_TYPE_FLAGS_ALL(DamageTypeFlags::kInitSetAll);
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -118,14 +116,20 @@ void DamageInfo::xfer( Xfer *xfer )
 /** Xfer method
 	* Version Info:
 	* 1: Initial version
-	* 2: Damage FX override
+	* 2: Damage FX override (Added for Zero Hour)
+	* 3: Shock wave and damage status type (Added for Zero Hour)
 */
 // ------------------------------------------------------------------------------------------------
 void DamageInfoInput::xfer( Xfer *xfer )
 {
 
 	// version
+#if RTS_GENERALS && RETAIL_COMPATIBLE_XFER_SAVE
+	XferVersion currentVersion = 1;
+#else
 	XferVersion currentVersion = 3;
+#endif
+
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -154,15 +158,15 @@ void DamageInfoInput::xfer( Xfer *xfer )
 		xfer->xferBool( &m_kill );
 	}
 
-	xfer->xferUser( &m_damageStatusType, sizeof(ObjectStatusTypes) );//It's an enum
-
-	xfer->xferCoord3D(&m_shockWaveVector);
-	xfer->xferReal( &m_shockWaveAmount );
-	xfer->xferReal( &m_shockWaveRadius );
-	xfer->xferReal( &m_shockWaveTaperOff );
-
 	if( version >= 3 )
 	{
+		xfer->xferUser( &m_damageStatusType, sizeof(ObjectStatusTypes) );//It's an enum
+
+		xfer->xferCoord3D(&m_shockWaveVector);
+		xfer->xferReal( &m_shockWaveAmount );
+		xfer->xferReal( &m_shockWaveRadius );
+		xfer->xferReal( &m_shockWaveTaperOff );
+
 		AsciiString thingString = m_sourceTemplate ? m_sourceTemplate->getName() : AsciiString::TheEmptyString;
 		xfer->xferAsciiString( &thingString );
 		if( xfer->getXferMode() == XFER_LOAD )

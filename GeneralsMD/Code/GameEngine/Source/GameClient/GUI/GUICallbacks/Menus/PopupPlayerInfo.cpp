@@ -1408,7 +1408,7 @@ WindowMsgHandledType GameSpyPlayerInfoOverlayInput( GameWindow *window, Unsigned
 
 	return MSG_IGNORED;
 }
-void messageBoxYes( void );
+static void messageBoxYes( void );
 //-------------------------------------------------------------------------------------------------
 /** Overlay window system callback */
 //-------------------------------------------------------------------------------------------------

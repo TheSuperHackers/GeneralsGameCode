@@ -92,12 +92,12 @@
 //#define abs(x) (((x) < 0) ? -(x) : (x))
 //#endif
 
-#ifndef min
-#define min(x,y) (((x)<(y)) ? (x) : (y))
+#ifndef MIN
+#define MIN(x,y) (((x)<(y)) ? (x) : (y))
 #endif
 
-#ifndef max
-#define max(x,y) (((x)>(y)) ? (x) : (y))
+#ifndef MAX
+#define MAX(x,y) (((x)>(y)) ? (x) : (y))
 #endif
 
 #ifndef TRUE

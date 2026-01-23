@@ -382,8 +382,8 @@ protected:
 	void setFlag( ScriptAction *pAction );
 	void pauseTimer( ScriptAction *pAction );
 	void restartTimer( ScriptAction *pAction );
-	void setTimer( ScriptAction *pAction, Bool milisecondTimer, Bool random);
-	void adjustTimer( ScriptAction *pAction, Bool milisecondTimer, Bool add);
+	void setTimer( ScriptAction *pAction, Bool millisecondTimer, Bool random);
+	void adjustTimer( ScriptAction *pAction, Bool millisecondTimer, Bool add);
 	void enableScript( ScriptAction *pAction );
 	void disableScript( ScriptAction *pAction );
 	void callSubroutine( ScriptAction *pAction );

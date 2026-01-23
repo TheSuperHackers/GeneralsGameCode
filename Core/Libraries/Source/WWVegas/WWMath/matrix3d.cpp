@@ -64,7 +64,10 @@
 #include "matrix3.h"
 #include "matrix4.h"
 #include "quat.h"
-#include "d3dx8math.h"
+
+#include "WWLib/win.h"
+#include <d3d8types.h>
+#include <d3dx8math.h>
 
 // some static matrices which are sometimes useful
 const Matrix3D Matrix3D::Identity
@@ -509,32 +512,76 @@ void Matrix3D::Obj_Look_At(const Vector3 &p,const Vector3 &t,float roll)
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   8/7/98     GTH : Created.                                                                 *
+ *   01/03/2026 TheSuperHackers : Implemented.                                                 *
  *=============================================================================================*/
+Matrix3D * Matrix3D::Get_Inverse(Matrix3D * out, float * detOut, const Matrix3D * m)
+{
+	// Read linear + translation elements
+
+	const float m00 = m->Row[0][0], m01 = m->Row[1][0], m02 = m->Row[2][0];
+	const float m10 = m->Row[0][1], m11 = m->Row[1][1], m12 = m->Row[2][1];
+	const float m20 = m->Row[0][2], m21 = m->Row[1][2], m22 = m->Row[2][2];
+
+	const float tx = m->Row[0][3];
+	const float ty = m->Row[1][3];
+	const float tz = m->Row[2][3];
+
+	// Compute 2x2 sub-determinants (minors) for cofactor expansion
+	// These correspond to minors of the 4x4 extended matrix (with last row 0,0,0,1)
+
+	const float s0 = m00 * m11 - m10 * m01;
+	const float s1 = m00 * m12 - m10 * m02;
+	const float s3 = m01 * m12 - m11 * m02;
+
+	const float c5 = m22;
+	const float c4 = m21;
+	const float c2 = m20;
+
+	const float c3 = m21 * tz - ty * m22;
+	const float c1 = m20 * tz - tx * m22;
+	const float c0 = m20 * ty - tx * m21;
+
+	// Compute determinant (matches 4x4 extended determinant)
+
+	const float det = s0 * c5 - s1 * c4 + s3 * c2;
+
+	if (detOut)
+			*detOut = det;
+
+	if (fabsf(det) < 1e-8f)
+			return NULL;
+
+	const float invDet = 1.0f / det;
+
+	// Compute inverse using adjugate / determinant
+	// Adjugate = transpose of cofactor matrix
+	// Multiplies each cofactor by 1/det to get the inverse
+	// Writes in column-major order to match engine conventions
+
+	out->Row[0][0] = ( m11 * c5 - m12 * c4) * invDet;
+	out->Row[1][0] = (-m01 * c5 + m02 * c4) * invDet;
+	out->Row[2][0] = (                  s3) * invDet;
+
+	out->Row[0][1] = (-m10 * c5 + m12 * c2) * invDet;
+	out->Row[1][1] = ( m00 * c5 - m02 * c2) * invDet;
+	out->Row[2][1] = (                 -s1) * invDet;
+
+	out->Row[0][2] = ( m10 * c4 - m11 * c2) * invDet;
+	out->Row[1][2] = (-m00 * c4 + m01 * c2) * invDet;
+	out->Row[2][2] = (                  s0) * invDet;
+
+	// Translation (still from 4x4 cofactors)
+
+	out->Row[0][3] = (-m10 * c3 + m11 * c1 - m12 * c0) * invDet;
+	out->Row[1][3] = ( m00 * c3 - m01 * c1 + m02 * c0) * invDet;
+	out->Row[2][3] = (-tx  * s3 + ty  * s1 - tz  * s0) * invDet;
+
+	return out;
+}
+
 void Matrix3D::Get_Inverse(Matrix3D & inv) const
 {
-	// TODO: Implement the general purpose inverse function here (once we need it :-)
-	//Get_Orthogonal_Inverse(inv);
-
-	Matrix4x4	mat4(*this);
-	Matrix4x4	mat4Inv;
-
-	float det;
-	D3DXMatrixInverse((D3DXMATRIX *)&mat4Inv, &det, (D3DXMATRIX*)&mat4);
-
-	inv.Row[0][0]=mat4Inv[0][0];
-	inv.Row[0][1]=mat4Inv[0][1];
-	inv.Row[0][2]=mat4Inv[0][2];
-	inv.Row[0][3]=mat4Inv[0][3];
-
-	inv.Row[1][0]=mat4Inv[1][0];
-	inv.Row[1][1]=mat4Inv[1][1];
-	inv.Row[1][2]=mat4Inv[1][2];
-	inv.Row[1][3]=mat4Inv[1][3];
-
-	inv.Row[2][0]=mat4Inv[2][0];
-	inv.Row[2][1]=mat4Inv[2][1];
-	inv.Row[2][2]=mat4Inv[2][2];
-	inv.Row[2][3]=mat4Inv[2][3];
+	Get_Inverse(&inv, NULL, this);
 }
 
 /***********************************************************************************************
@@ -641,7 +688,7 @@ void Matrix3D::Multiply(const Matrix3D & A,const Matrix3D & B,Matrix3D * set_res
 	assert(set_res != nullptr);
 
 	Matrix3D tmp;
-	Matrix3D * Aptr;
+	const Matrix3D * Aptr;
 
 	// Check for aliased parameters, copy the 'A' matrix into a temporary if the
 	// result is going into 'A'. (in this case, this function is no better than
@@ -650,7 +697,7 @@ void Matrix3D::Multiply(const Matrix3D & A,const Matrix3D & B,Matrix3D * set_res
 		tmp = A;
 		Aptr = &tmp;
 	} else {
-		Aptr = (Matrix3D *)&A;
+		Aptr = &A;
 	}
 
 #ifdef ALLOW_TEMPORARIES
@@ -1238,4 +1285,42 @@ bool Matrix3D::Solve_Linear_System(Matrix3D & system)
 	system[0] -= system[0][1] * system[1];			// (0,1) now equals 0.0, and we are done!
 
 	return true;
+}
+
+
+void To_D3DMATRIX(_D3DMATRIX& dxm, const Matrix3D& m)
+{
+	dxm.m[0][0] = m[0][0];
+	dxm.m[0][1] = m[1][0];
+	dxm.m[0][2] = m[2][0];
+	dxm.m[0][3] = 0.0f;
+
+	dxm.m[1][0] = m[0][1];
+	dxm.m[1][1] = m[1][1];
+	dxm.m[1][2] = m[2][1];
+	dxm.m[1][3] = 0.0f;
+
+	dxm.m[2][0] = m[0][2];
+	dxm.m[2][1] = m[1][2];
+	dxm.m[2][2] = m[2][2];
+	dxm.m[2][3] = 0.0f;
+
+	dxm.m[3][0] = m[0][3];
+	dxm.m[3][1] = m[1][3];
+	dxm.m[3][2] = m[2][3];
+	dxm.m[3][3] = 1.0f;
+}
+
+_D3DMATRIX To_D3DMATRIX(const Matrix3D& m)
+{
+	_D3DMATRIX dxm;
+	To_D3DMATRIX(dxm, m);
+	return dxm;
+}
+
+D3DXMATRIX To_D3DXMATRIX(const Matrix3D& m)
+{
+	D3DXMATRIX dxm;
+	To_D3DMATRIX(dxm, m);
+	return dxm;
 }

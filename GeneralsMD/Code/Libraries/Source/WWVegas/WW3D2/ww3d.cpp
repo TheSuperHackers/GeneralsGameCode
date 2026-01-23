@@ -1540,7 +1540,7 @@ void WW3D::Stop_Movie_Capture( void )
 #ifdef _WIN32
 	if (IsCapturing) {
 		IsCapturing = false;
-		WWDEBUG_SAY(( "Stoping Movie" ));
+		WWDEBUG_SAY(( "Stopping Movie" ));
 
 		WWASSERT( Movie != nullptr);
 		delete Movie;

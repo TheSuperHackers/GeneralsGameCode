@@ -2964,8 +2964,7 @@ void BaseHeightMapRenderObjClass::renderTrees(CameraClass * camera)
 	if (m_map==nullptr) return;
 	if (Scene==nullptr) return;
 	if (m_treeBuffer) {
-		Matrix3D tm(Transform);
-		DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+		DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);
 		DX8Wrapper::Set_Material(m_vertexMaterialClass);
 		RTS3DScene *pMyScene = (RTS3DScene *)Scene;
 		RefRenderObjListIterator pDynamicLightsIterator(pMyScene->getDynamicLights());

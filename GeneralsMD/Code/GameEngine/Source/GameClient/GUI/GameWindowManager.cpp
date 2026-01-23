@@ -1787,7 +1787,7 @@ GameWindow *GameWindowManager::gogoGadgetPushButton( GameWindow *parent,
 	if( BitIsSet( instData->getStyle(), GWS_PUSH_BUTTON ) == FALSE )
 	{
 
-		DEBUG_LOG(( "Cann't create button gadget, instance data not button type" ));
+		DEBUG_LOG(( "Can't create button gadget, instance data not button type" ));
 		assert( 0 );
 		return nullptr;
 
@@ -1855,7 +1855,7 @@ GameWindow *GameWindowManager::gogoGadgetCheckbox( GameWindow *parent,
 	if( BitIsSet( instData->getStyle(), GWS_CHECK_BOX ) == FALSE )
 	{
 
-		DEBUG_LOG(( "Cann't create checkbox gadget, instance data not checkbox type" ));
+		DEBUG_LOG(( "Can't create checkbox gadget, instance data not checkbox type" ));
 		assert( 0 );
 		return nullptr;
 
@@ -1922,7 +1922,7 @@ GameWindow *GameWindowManager::gogoGadgetRadioButton( GameWindow *parent,
 	if( BitIsSet( instData->getStyle(), GWS_RADIO_BUTTON ) == FALSE )
 	{
 
-		DEBUG_LOG(( "Cann't create radioButton gadget, instance data not radioButton type" ));
+		DEBUG_LOG(( "Can't create radioButton gadget, instance data not radioButton type" ));
 		assert( 0 );
 		return nullptr;
 
@@ -1994,7 +1994,7 @@ GameWindow *GameWindowManager::gogoGadgetTabControl( GameWindow *parent,
 	if( BitIsSet( instData->getStyle(), GWS_TAB_CONTROL ) == FALSE )
 	{
 
-		DEBUG_LOG(( "Cann't create tabControl gadget, instance data not tabControl type" ));
+		DEBUG_LOG(( "Can't create tabControl gadget, instance data not tabControl type" ));
 		assert( 0 );
 		return nullptr;
 
@@ -2066,7 +2066,7 @@ GameWindow *GameWindowManager::gogoGadgetListBox( GameWindow *parent,
 	if( BitIsSet( instData->getStyle(), GWS_SCROLL_LISTBOX ) == FALSE )
 	{
 
-		DEBUG_LOG(( "Cann't create listbox gadget, instance data not listbox type" ));
+		DEBUG_LOG(( "Can't create listbox gadget, instance data not listbox type" ));
 		assert( 0 );
 		return nullptr;
 
@@ -2334,7 +2334,7 @@ GameWindow *GameWindowManager::gogoGadgetComboBox( GameWindow *parent,
 	if( BitIsSet( instData->getStyle(), GWS_COMBO_BOX) == FALSE )
 	{
 
-		DEBUG_LOG(( "Cann't create ComboBox gadget, instance data not ComboBox type" ));
+		DEBUG_LOG(( "Can't create ComboBox gadget, instance data not ComboBox type" ));
 		assert( 0 );
 		return nullptr;
 
@@ -2538,7 +2538,7 @@ GameWindow *GameWindowManager::gogoGadgetProgressBar( GameWindow *parent,
 	if( BitIsSet( instData->getStyle(), GWS_PROGRESS_BAR ) == FALSE )
 	{
 
-		DEBUG_LOG(( "Cann't create progressBar gadget, instance data not progressBar type" ));
+		DEBUG_LOG(( "Can't create progressBar gadget, instance data not progressBar type" ));
 		assert( 0 );
 		return nullptr;
 

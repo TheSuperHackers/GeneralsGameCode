@@ -153,7 +153,7 @@ void W3DRenderObjectSnapshot::update(RenderObjClass *robj, DrawableInfo *drawInf
 // ------------------------------------------------------------------------------------------------
 Bool W3DRenderObjectSnapshot::addToScene(void)
 {
-	if (!m_robj->Is_In_Scene())
+	if (W3DDisplay::m_3DScene != nullptr && !m_robj->Is_In_Scene())
 	{
 		W3DDisplay::m_3DScene->Add_Render_Object(m_robj);
 		return true;
@@ -659,7 +659,7 @@ void W3DGhostObject::xfer( Xfer *xfer )
 		//
 		if( snapshotCount == 0 && m_parentSnapshots[ i ] != nullptr )
 		{
-			DEBUG_CRASH(( "W3DGhostObject::xfer - m_parentShapshots[ %d ] has data present but the count from the xfer stream is empty", i ));
+			DEBUG_CRASH(( "W3DGhostObject::xfer - m_parentSnapshots[ %d ] has data present but the count from the xfer stream is empty", i ));
 			throw INI_INVALID_DATA;
 		}
 

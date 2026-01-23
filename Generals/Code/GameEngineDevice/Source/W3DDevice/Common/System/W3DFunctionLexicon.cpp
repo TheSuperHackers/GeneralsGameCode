@@ -43,59 +43,59 @@
 static FunctionLexicon::TableEntry gameWinDrawTable [] =
 {
 
-	{ NAMEKEY_INVALID, "GameWinDefaultDraw",						GameWinDefaultDraw },
-	{ NAMEKEY_INVALID, "W3DGameWinDefaultDraw",					W3DGameWinDefaultDraw },
+	{ NAMEKEY_INVALID, "GameWinDefaultDraw",                  (void*)GameWinDefaultDraw },
+	{ NAMEKEY_INVALID, "W3DGameWinDefaultDraw",               (void*)W3DGameWinDefaultDraw },
 
-	{ NAMEKEY_INVALID, "W3DGadgetPushButtonDraw",				W3DGadgetPushButtonDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetPushButtonImageDraw",	W3DGadgetPushButtonImageDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetCheckBoxDraw",					W3DGadgetCheckBoxDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetCheckBoxImageDraw",		W3DGadgetCheckBoxImageDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetRadioButtonDraw",			W3DGadgetRadioButtonDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetRadioButtonImageDraw",	W3DGadgetRadioButtonImageDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetTabControlDraw",				W3DGadgetTabControlDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetTabControlImageDraw",	W3DGadgetTabControlImageDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetListBoxDraw",					W3DGadgetListBoxDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetListBoxImageDraw",			W3DGadgetListBoxImageDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetComboBoxDraw",					W3DGadgetComboBoxDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetComboBoxImageDraw",			W3DGadgetComboBoxImageDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetHorizontalSliderDraw",				W3DGadgetHorizontalSliderDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetHorizontalSliderImageDraw",	W3DGadgetHorizontalSliderImageDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetVerticalSliderDraw",					W3DGadgetVerticalSliderDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetVerticalSliderImageDraw",		W3DGadgetVerticalSliderImageDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetProgressBarDraw",			W3DGadgetProgressBarDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetProgressBarImageDraw",	W3DGadgetProgressBarImageDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetStaticTextDraw",				W3DGadgetStaticTextDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetStaticTextImageDraw",	W3DGadgetStaticTextImageDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetTextEntryDraw",				W3DGadgetTextEntryDraw },
-	{ NAMEKEY_INVALID, "W3DGadgetTextEntryImageDraw",		W3DGadgetTextEntryImageDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetPushButtonDraw",             (void*)W3DGadgetPushButtonDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetPushButtonImageDraw",        (void*)W3DGadgetPushButtonImageDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetCheckBoxDraw",               (void*)W3DGadgetCheckBoxDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetCheckBoxImageDraw",          (void*)W3DGadgetCheckBoxImageDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetRadioButtonDraw",            (void*)W3DGadgetRadioButtonDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetRadioButtonImageDraw",       (void*)W3DGadgetRadioButtonImageDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetTabControlDraw",             (void*)W3DGadgetTabControlDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetTabControlImageDraw",        (void*)W3DGadgetTabControlImageDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetListBoxDraw",                (void*)W3DGadgetListBoxDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetListBoxImageDraw",           (void*)W3DGadgetListBoxImageDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetComboBoxDraw",               (void*)W3DGadgetComboBoxDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetComboBoxImageDraw",          (void*)W3DGadgetComboBoxImageDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetHorizontalSliderDraw",       (void*)W3DGadgetHorizontalSliderDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetHorizontalSliderImageDraw",  (void*)W3DGadgetHorizontalSliderImageDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetVerticalSliderDraw",         (void*)W3DGadgetVerticalSliderDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetVerticalSliderImageDraw",    (void*)W3DGadgetVerticalSliderImageDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetProgressBarDraw",            (void*)W3DGadgetProgressBarDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetProgressBarImageDraw",       (void*)W3DGadgetProgressBarImageDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetStaticTextDraw",             (void*)W3DGadgetStaticTextDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetStaticTextImageDraw",        (void*)W3DGadgetStaticTextImageDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetTextEntryDraw",              (void*)W3DGadgetTextEntryDraw },
+	{ NAMEKEY_INVALID, "W3DGadgetTextEntryImageDraw",         (void*)W3DGadgetTextEntryImageDraw },
 
-	{ NAMEKEY_INVALID, "W3DLeftHUDDraw",								W3DLeftHUDDraw },
-	{ NAMEKEY_INVALID, "W3DCameoMovieDraw",							W3DCameoMovieDraw },
-	{ NAMEKEY_INVALID, "W3DRightHUDDraw",								W3DRightHUDDraw },
-	{ NAMEKEY_INVALID, "W3DPowerDraw",									W3DPowerDraw },
-	{ NAMEKEY_INVALID, "W3DMainMenuDraw",								W3DMainMenuDraw },
-	{ NAMEKEY_INVALID, "W3DMainMenuFourDraw",						W3DMainMenuFourDraw },
-	{ NAMEKEY_INVALID, "W3DMetalBarMenuDraw",						W3DMetalBarMenuDraw },
-	{ NAMEKEY_INVALID, "W3DCreditsMenuDraw",						W3DCreditsMenuDraw },
-	{ NAMEKEY_INVALID, "W3DClockDraw",									W3DClockDraw },
-	{ NAMEKEY_INVALID, "W3DMainMenuMapBorder",					W3DMainMenuMapBorder },
-	{ NAMEKEY_INVALID, "W3DMainMenuButtonDropShadowDraw",	W3DMainMenuButtonDropShadowDraw },
-	{ NAMEKEY_INVALID, "W3DMainMenuRandomTextDraw",			W3DMainMenuRandomTextDraw },
-	{ NAMEKEY_INVALID, "W3DThinBorderDraw",							W3DThinBorderDraw },
-	{ NAMEKEY_INVALID, "W3DShellMenuSchemeDraw",				W3DShellMenuSchemeDraw },
-	{ NAMEKEY_INVALID, "W3DCommandBarBackgroundDraw",		W3DCommandBarBackgroundDraw },
-	{ NAMEKEY_INVALID, "W3DCommandBarTopDraw",		W3DCommandBarTopDraw },
-	{ NAMEKEY_INVALID, "W3DCommandBarGenExpDraw",		W3DCommandBarGenExpDraw },
-	{ NAMEKEY_INVALID, "W3DCommandBarHelpPopupDraw",		W3DCommandBarHelpPopupDraw },
+	{ NAMEKEY_INVALID, "W3DLeftHUDDraw",                      (void*)W3DLeftHUDDraw },
+	{ NAMEKEY_INVALID, "W3DCameoMovieDraw",                   (void*)W3DCameoMovieDraw },
+	{ NAMEKEY_INVALID, "W3DRightHUDDraw",                     (void*)W3DRightHUDDraw },
+	{ NAMEKEY_INVALID, "W3DPowerDraw",                        (void*)W3DPowerDraw },
+	{ NAMEKEY_INVALID, "W3DMainMenuDraw",                     (void*)W3DMainMenuDraw },
+	{ NAMEKEY_INVALID, "W3DMainMenuFourDraw",                 (void*)W3DMainMenuFourDraw },
+	{ NAMEKEY_INVALID, "W3DMetalBarMenuDraw",                 (void*)W3DMetalBarMenuDraw },
+	{ NAMEKEY_INVALID, "W3DCreditsMenuDraw",                  (void*)W3DCreditsMenuDraw },
+	{ NAMEKEY_INVALID, "W3DClockDraw",                        (void*)W3DClockDraw },
+	{ NAMEKEY_INVALID, "W3DMainMenuMapBorder",                (void*)W3DMainMenuMapBorder },
+	{ NAMEKEY_INVALID, "W3DMainMenuButtonDropShadowDraw",     (void*)W3DMainMenuButtonDropShadowDraw },
+	{ NAMEKEY_INVALID, "W3DMainMenuRandomTextDraw",           (void*)W3DMainMenuRandomTextDraw },
+	{ NAMEKEY_INVALID, "W3DThinBorderDraw",                   (void*)W3DThinBorderDraw },
+	{ NAMEKEY_INVALID, "W3DShellMenuSchemeDraw",              (void*)W3DShellMenuSchemeDraw },
+	{ NAMEKEY_INVALID, "W3DCommandBarBackgroundDraw",         (void*)W3DCommandBarBackgroundDraw },
+	{ NAMEKEY_INVALID, "W3DCommandBarTopDraw",                (void*)W3DCommandBarTopDraw },
+	{ NAMEKEY_INVALID, "W3DCommandBarGenExpDraw",             (void*)W3DCommandBarGenExpDraw },
+	{ NAMEKEY_INVALID, "W3DCommandBarHelpPopupDraw",          (void*)W3DCommandBarHelpPopupDraw },
 
-	{ NAMEKEY_INVALID, "W3DCommandBarGridDraw",		W3DCommandBarGridDraw },
+	{ NAMEKEY_INVALID, "W3DCommandBarGridDraw",               (void*)W3DCommandBarGridDraw },
 
 
-	{ NAMEKEY_INVALID, "W3DCommandBarForegroundDraw",		W3DCommandBarForegroundDraw },
-	{ NAMEKEY_INVALID, "W3DNoDraw",											W3DNoDraw },
-	{ NAMEKEY_INVALID, "W3DDrawMapPreview",							W3DDrawMapPreview },
+	{ NAMEKEY_INVALID, "W3DCommandBarForegroundDraw",         (void*)W3DCommandBarForegroundDraw },
+	{ NAMEKEY_INVALID, "W3DNoDraw",                           (void*)W3DNoDraw },
+	{ NAMEKEY_INVALID, "W3DDrawMapPreview",                   (void*)W3DDrawMapPreview },
 
-	{ NAMEKEY_INVALID, nullptr,														nullptr },
+	{ NAMEKEY_INVALID, nullptr,                               nullptr }
 
 };
 
@@ -103,9 +103,9 @@ static FunctionLexicon::TableEntry gameWinDrawTable [] =
 static FunctionLexicon::TableEntry layoutInitTable [] =
 {
 
-	{ NAMEKEY_INVALID, "W3DMainMenuInit",								W3DMainMenuInit },
+	{ NAMEKEY_INVALID, "W3DMainMenuInit",  (void*)W3DMainMenuInit },
 
-	{ NAMEKEY_INVALID, nullptr,														nullptr },
+	{ NAMEKEY_INVALID, nullptr,            nullptr }
 
 };
 

@@ -105,4 +105,3 @@ inline void FLIP_DISABLEDMASK(DisabledMaskType& m)
 extern const char *TheDisabledNames[];
 extern DisabledMaskType DISABLEDMASK_NONE;	// inits to all zeroes
 extern DisabledMaskType DISABLEDMASK_ALL;		// inits to all bits set.
-void initDisabledMasks();

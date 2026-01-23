@@ -731,7 +731,7 @@ UpdateSleepTime BridgeBehavior::update( void )
 			// get the bridge template info
 			AsciiString bridgeTemplateName = bridge->getBridgeTemplateName();
 			bridgeTemplate = TheTerrainRoads->findBridge( bridgeTemplateName );
-			DEBUG_ASSERTCRASH( bridgeTemplate, ("BridgeBeahvior::getRandomSurfacePosition - Encountered a bridge with no template!") );
+			DEBUG_ASSERTCRASH( bridgeTemplate, ("BridgeBehavior::getRandomSurfacePosition - Encountered a bridge with no template!") );
 		}
 
 		// how much time has passed between now and our destruction frame

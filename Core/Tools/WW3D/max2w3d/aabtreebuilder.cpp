@@ -309,7 +309,7 @@ AABTreeBuilderClass::Select_Splitting_Plane(int polycount,int * polyindices)
 {
 	WWASSERT(polyindices != nullptr);
 
-	const int NUM_TRYS = 50;
+	const int NUM_TRIES = 50;
 
 	SplitChoiceStruct best_plane_stats;
 	SplitChoiceStruct considered_plane_stats;
@@ -317,7 +317,7 @@ AABTreeBuilderClass::Select_Splitting_Plane(int polycount,int * polyindices)
 	/*
 	** Try putting axis-aligned planes through some random vertices
 	*/
-	for (int trys = 0; trys < MIN(NUM_TRYS,polycount); trys++) {
+	for (int tries = 0; tries < MIN(NUM_TRIES,polycount); tries++) {
 
 		AAPlaneClass plane;
 

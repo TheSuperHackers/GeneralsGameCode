@@ -94,6 +94,7 @@ public:
 	virtual void onContaining( Object *obj );		///< object now contains 'obj'
 	virtual void onRemoving( Object *obj );			///< object no longer contains 'obj'
 	virtual void onSelling();///< Container is being sold.  Tunnel responds by kicking people out if this is the last tunnel.
+	virtual void onCapture( Player *oldOwner, Player *newOwner ); // Need to change who we are registered with.
 
 	virtual void orderAllPassengersToExit( CommandSourceType commandSource ); ///< All of the smarts of exiting are in the passenger's AIExit. removeAllFrommContain is a last ditch system call, this is the game Evacuate
 

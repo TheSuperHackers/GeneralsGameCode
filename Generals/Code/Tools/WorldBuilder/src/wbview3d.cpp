@@ -574,9 +574,7 @@ void WbView3d::reset3dEngineDisplaySize(Int width, Int height)
 	m_actualWinSize.x = width;
 	m_actualWinSize.y = height;
 	if (m_ww3dInited) {
-		W3DShaderManager::shutdown();
 		WW3D::Set_Device_Resolution(m_actualWinSize.x, m_actualWinSize.y, true);
-		W3DShaderManager::init();
 	}
 }
 

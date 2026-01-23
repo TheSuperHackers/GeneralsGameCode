@@ -242,7 +242,7 @@ WideStringClass::Free_String (void)
 //	Format
 //
 ///////////////////////////////////////////////////////////////////
-int _cdecl
+int __cdecl
 WideStringClass::Format_Args (const WCHAR *format, va_list arg_list )
 {
 	if (format == nullptr) {
@@ -273,7 +273,7 @@ WideStringClass::Format_Args (const WCHAR *format, va_list arg_list )
 //	Format
 //
 ///////////////////////////////////////////////////////////////////
-int _cdecl
+int __cdecl
 WideStringClass::Format (const WCHAR *format, ...)
 {
 	if (format == nullptr) {

@@ -272,8 +272,8 @@ Bool W3DProjectedShadowManager::ReAcquireResources(void)
 
 	LPDIRECT3DDEVICE8 m_pDev=DX8Wrapper::_Get_D3D_Device8();
 
-	DEBUG_ASSERTCRASH(m_pDev, ("Trying to ReAquireResources on W3DProjectedShadowManager without device"));
-	DEBUG_ASSERTCRASH(shadowDecalIndexBufferD3D == nullptr && shadowDecalIndexBufferD3D == nullptr, ("ReAquireResources not released in W3DProjectedShadowManager"));
+	DEBUG_ASSERTCRASH(m_pDev, ("Trying to ReAcquireResources on W3DProjectedShadowManager without device"));
+	DEBUG_ASSERTCRASH(shadowDecalIndexBufferD3D == nullptr && shadowDecalIndexBufferD3D == nullptr, ("ReAcquireResources not released in W3DProjectedShadowManager"));
 
 	if (FAILED(m_pDev->CreateIndexBuffer
 	(

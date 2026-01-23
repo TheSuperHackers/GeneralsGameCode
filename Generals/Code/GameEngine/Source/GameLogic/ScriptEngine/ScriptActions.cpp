@@ -2744,7 +2744,7 @@ void ScriptActions::doSpeechPlay(const AsciiString& speechName, Bool allowOverla
 	AudioEventRTS speech(speechName);
 	speech.setIsLogicalAudio(true);
 	speech.setPlayerIndex(ThePlayerList->getLocalPlayer()->getPlayerIndex());
-	speech.setUninterruptable(!allowOverlap);
+	speech.setUninterruptible(!allowOverlap);
 	TheAudio->addAudioEvent(&speech);
 }
 

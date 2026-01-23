@@ -47,7 +47,7 @@
  * Exception_Handler -- Exception handler filter function                                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifdef _MSC_VER
+ #if defined(_WIN32)
 
 #include	"always.h"
 #include <windows.h>
@@ -625,18 +625,13 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 		}
 
 		void *fp_data_ptr = (void*)(&context->FloatSave.RegisterArea[fp*10]);
-		double fp_value;
 
+		// TheSuperHackers @refactor Replaced MSVC inline assembly with portable C++ cast for MinGW compatibility
 		/*
 		** Convert FP dump from temporary real value (10 bytes) to double (8 bytes).
+		** On x86, long double is the 10-byte x87 format, so we can just cast.
 		*/
-		_asm {
-			push	eax
-			mov	eax,fp_data_ptr
-			fld   tbyte ptr [eax]
-			fstp	qword ptr [fp_value]
-			pop	eax
-		}
+		double fp_value = (double)(*(long double*)fp_data_ptr);
 		sprintf(scrap, "   %+#.17e\r\n", fp_value);
 		Add_Txt(scrap);
 	}
@@ -1232,6 +1227,7 @@ int Stack_Walk(unsigned long *return_addresses, int num_addresses, CONTEXT *cont
 
 	unsigned long reg_eip, reg_ebp, reg_esp;
 
+#if defined(_MSC_VER)
 	__asm {
 here:
 		lea	eax,here
@@ -1239,6 +1235,17 @@ here:
 		mov	reg_ebp,ebp
 		mov	reg_esp,esp
 	}
+#elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
+	__asm__ __volatile__ (
+		"call 1f\n\t"
+		"1: pop %0\n\t"
+		"mov %%ebp, %1\n\t"
+		"mov %%esp, %2"
+		: "=r" (reg_eip), "=r" (reg_ebp), "=r" (reg_esp)
+	);
+#else
+#error "Unsupported compiler or architecture for register capture"
+#endif
 
 	stack_frame.AddrPC.Mode = AddrModeFlat;
 	stack_frame.AddrPC.Offset = reg_eip;
@@ -1307,7 +1314,7 @@ bool Is_Trying_To_Exit(void)
 
 
 
-#endif	//_MSC_VER
+#endif	//_WIN32
 
 
 

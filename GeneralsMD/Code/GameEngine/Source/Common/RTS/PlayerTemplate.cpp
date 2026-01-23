@@ -294,7 +294,7 @@ Int PlayerTemplateStore::getTemplateNumByName(AsciiString name) const
 		if (m_playerTemplates[num].getName().compareNoCase(name.str()) == 0)
 			return num;
 	}
-	DEBUG_ASSERTCRASH(nullptr, ("Template doesn't exist for given name"));
+	DEBUG_CRASH(("Template doesn't exist for given name"));
 	return -1;
 }
 

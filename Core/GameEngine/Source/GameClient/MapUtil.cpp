@@ -1290,12 +1290,15 @@ Bool parseMapPreviewChunk(DataChunkInput &file, DataChunkInfo *info, void *userD
 	//texture->Get_Surface_Level();
 
 	DEBUG_LOG(("BeginMapPreviewInfo"));
+	int pitch;
+	void *pBits = surface->Lock(&pitch);
+	const unsigned int bytesPerPixel = surface->Get_Bytes_Per_Pixel();
 	UnsignedInt *buffer = new UnsignedInt[size.x * size.y];
 	Int x,y;
 	for (y=0; y<size.y; y++) {
 		for(x = 0; x< size.x; x++)
 		{
-			surface->DrawPixel( x, y, file.readInt() );
+			surface->Draw_Pixel( x, y, file.readInt(), bytesPerPixel, pBits, pitch );
 			buffer[y + x] = file.readInt();
 			DEBUG_LOG(("x:%d, y:%d, %X", x, y, buffer[y + x]));
 		}
@@ -1303,6 +1306,7 @@ Bool parseMapPreviewChunk(DataChunkInput &file, DataChunkInfo *info, void *userD
 	mapPreviewImage->setRawTextureData(buffer);
 	DEBUG_ASSERTCRASH(file.atEndOfChunk(), ("Unexpected data left over."));
 	DEBUG_LOG(("EndMapPreviewInfo"));
+	surface->Unlock();
 	REF_PTR_RELEASE(surface);
 	return true;
 */

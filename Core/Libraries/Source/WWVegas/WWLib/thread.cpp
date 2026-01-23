@@ -57,6 +57,8 @@ void __cdecl ThreadClass::Internal_Thread_Function(void* params)
 #ifdef _WIN32
 	Register_Thread_ID(tc->ThreadID, tc->ThreadName);
 
+#if defined(_MSC_VER)
+	// MSVC supports structured exception handling (__try/__except)
 	if (tc->ExceptionHandler != nullptr) {
 		__try {
 			tc->Thread_Function();
@@ -64,6 +66,13 @@ void __cdecl ThreadClass::Internal_Thread_Function(void* params)
 	} else {
 		tc->Thread_Function();
 	}
+#elif defined(__GNUC__) && defined(_WIN32)
+	// GCC/MinGW-w64 doesn't support MSVC's __try/__except syntax
+	// Call Thread_Function directly without SEH support
+	tc->Thread_Function();
+#else
+	#error "ThreadClass::Internal_Thread_Function: Unsupported compiler. This code requires MSVC or GCC/MinGW-w64 targeting Windows."
+#endif
 
 #else //_WIN32
 	tc->Thread_Function();

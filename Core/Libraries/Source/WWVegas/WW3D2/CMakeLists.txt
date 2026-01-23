@@ -237,7 +237,7 @@ add_library(corei_ww3d2 INTERFACE)
 
 target_sources(corei_ww3d2 INTERFACE ${WW3D2_SRC})
 
-if (NOT IS_VS6_BUILD)
+if (MSVC AND NOT IS_VS6_BUILD)
     target_link_libraries(corei_ww3d2 INTERFACE
         comsuppw
     )
@@ -245,4 +245,6 @@ endif()
 
 target_link_libraries(corei_ww3d2 INTERFACE
     core_browserengine
+    core_wwlib
+    core_wwmath
 )

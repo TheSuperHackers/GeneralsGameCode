@@ -973,7 +973,7 @@ private:
 
 	void setCommandBarBorder( GameWindow *button, CommandButtonMappedBorderType type);
 public:
-	void updateCommanBarBorderColors(Color build, Color action, Color upgrade, Color system );
+	void updateCommandBarBorderColors(Color build, Color action, Color upgrade, Color system );
 
 private:
 

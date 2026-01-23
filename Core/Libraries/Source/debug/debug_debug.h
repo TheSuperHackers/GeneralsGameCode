@@ -731,6 +731,12 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   void WriteBuildInfo(void);
 
 private:
+#if defined(__GNUC__) && defined(_WIN32)
+  // For GCC/MinGW-w64 targeting Windows, allow constructor functions to call init methods
+  friend void GccPreStaticInit();
+  friend void GccPostStaticInit();
+#endif
+
   // no assignment, no copy constructor
   Debug(const Debug&);
   Debug& operator=(const Debug&);

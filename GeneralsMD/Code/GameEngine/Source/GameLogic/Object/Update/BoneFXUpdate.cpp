@@ -63,12 +63,9 @@ BoneFXUpdateModuleData::BoneFXUpdateModuleData(void)
 		}
 	}
 
-	m_damageFXTypes = DAMAGE_TYPE_FLAGS_NONE;
-	m_damageFXTypes.flip();
-	m_damageOCLTypes = DAMAGE_TYPE_FLAGS_NONE;
-	m_damageOCLTypes.flip();
-	m_damageParticleTypes = DAMAGE_TYPE_FLAGS_NONE;
-	m_damageParticleTypes.flip();
+	m_damageFXTypes = DAMAGE_TYPE_FLAGS_ALL;
+	m_damageOCLTypes = DAMAGE_TYPE_FLAGS_ALL;
+	m_damageParticleTypes = DAMAGE_TYPE_FLAGS_ALL;
 
 }
 

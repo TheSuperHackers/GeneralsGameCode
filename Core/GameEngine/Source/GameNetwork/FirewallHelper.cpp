@@ -1027,7 +1027,7 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 		return FALSE;
 	}
 
-	DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - starting 4th test"));
+	DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - starting 4th test"));
 	/*
 	** Fourth test.
 	**
@@ -1037,7 +1037,7 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 
 		if ((m_behavior & FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION) != 0) {
 
-			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - simple port allocation, Testing to see if the NAT mangles differently per destination port at the same IP"));
+			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - simple port allocation, Testing to see if the NAT mangles differently per destination port at the same IP"));
 
 			/*
 			** We need 2 source ports for this.
@@ -1045,7 +1045,7 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 			m_sparePorts[0] = getNextTemporarySourcePort(0);
 			if (!openSpareSocket(m_sparePorts[0])) {
 				m_currentState = DETECTIONSTATE_DONE;
-				DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - Failed to open first spare port, bailing"));
+				DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - Failed to open first spare port, bailing"));
 				return TRUE;
 			}
 
@@ -1053,7 +1053,7 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 			if (!openSpareSocket(m_sparePorts[1])) {
 				closeSpareSocket(m_sparePorts[0]);
 				m_currentState = DETECTIONSTATE_DONE;
-				DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - Failed to open second spare port, bailing"));
+				DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - Failed to open second spare port, bailing"));
 				return TRUE;
 			}
 
@@ -1076,10 +1076,10 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 			/*
 			** NAT32 uses different mangled source ports for different destination ports.
 			*/
-			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - relative port allocation, NAT32 right?"));
+			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - relative port allocation, NAT32 right?"));
 			UnsignedInt addbehavior = 0;
 			addbehavior = (UnsignedInt)FIREWALL_TYPE_DESTINATION_PORT_DELTA;
-			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - adding DESTINATION PORT DELTA to behavior"));
+			DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - adding DESTINATION PORT DELTA to behavior"));
 			addbehavior |= (UnsignedInt)m_behavior;
 			m_behavior = (FirewallBehaviorType) addbehavior;
 		}
@@ -1087,7 +1087,7 @@ Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
 		DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - We don't have smart mangling, skipping test 4, entering test 5"));
 	}
 
-	DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForRepsonsesUpdate - entering test 5"));
+	DEBUG_LOG(("FirewallHelperClass::detectionTest3WaitForResponsesUpdate - entering test 5"));
 
 	m_currentState = DETECTIONSTATE_TEST5;
 	return FALSE;

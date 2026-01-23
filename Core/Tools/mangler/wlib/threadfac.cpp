@@ -52,7 +52,7 @@ struct ThreadInformation
 //
 // Start a thread inside a class
 //
-bit8 ThreadFactory::startThread(Runnable &runable, void *data, bit8 destroy)
+bit8 ThreadFactory::startThread(Runnable &runnable, void *data, bit8 destroy)
 {
 #ifdef _REENTRANT
 
@@ -64,7 +64,7 @@ bit8 ThreadFactory::startThread(Runnable &runable, void *data, bit8 destroy)
 
 
   ThreadInformation *tInfo=new ThreadInformation;
-  tInfo->startPoint=(void *)&runable;
+  tInfo->startPoint=(void *)&runnable;
   tInfo->data=data;
   tInfo->destroy=destroy;
 
@@ -79,9 +79,9 @@ bit8 ThreadFactory::startThread(Runnable &runable, void *data, bit8 destroy)
     else
     {
       {
-        runable.CritSec_.lock();
-        runable.ThreadCount_--;   // Ok, so it didn't really start
-        runable.CritSec_.unlock();
+        runnable.CritSec_.lock();
+        runnable.ThreadCount_--;   // Ok, so it didn't really start
+        runnable.CritSec_.unlock();
       }
       return(FALSE);
     }
@@ -98,9 +98,9 @@ bit8 ThreadFactory::startThread(Runnable &runable, void *data, bit8 destroy)
     else
     {
       {
-        runable.CritSec_.lock();
-        runable.ThreadCount_--;   // Ok, so it didn't really start
-        runable.CritSec_.unlock();
+        runnable.CritSec_.lock();
+        runnable.ThreadCount_--;   // Ok, so it didn't really start
+        runnable.CritSec_.unlock();
       }
       return(FALSE);
     }

@@ -77,13 +77,16 @@ enum DamageType CPP_11(: Int)
 	DAMAGE_STEALTHJET_MISSILES		= 28,
 	DAMAGE_MOLOTOV_COCKTAIL				= 29,
 	DAMAGE_COMANCHE_VULCAN				= 30,
-	DAMAGE_SUBDUAL_MISSILE				= 31,	///< Damage that does not kill you, but produces some special effect based on your Body Module. Separate HP from normal damage.
-	DAMAGE_SUBDUAL_VEHICLE				= 32,
-	DAMAGE_SUBDUAL_BUILDING				= 33,
-	DAMAGE_SUBDUAL_UNRESISTABLE		= 34,
-	DAMAGE_MICROWAVE							= 35, ///< Radiation that only affects infantry
-	DAMAGE_KILL_GARRISONED				= 36, ///< Kills Passengers up to the number specified in Damage
-	DAMAGE_STATUS									= 37, ///< Damage that gives a status condition, not that does hitpoint damage
+#if RTS_GENERALS
+	DAMAGE_FLESHY_SNIPER					= 31,		// like DAMAGE_SNIPER, but (generally) does no damage to vehicles.
+#endif
+	DAMAGE_SUBDUAL_MISSILE				/*= 31*/,	///< Damage that does not kill you, but produces some special effect based on your Body Module. Separate HP from normal damage.
+	DAMAGE_SUBDUAL_VEHICLE				/*= 32*/,
+	DAMAGE_SUBDUAL_BUILDING				/*= 33*/,
+	DAMAGE_SUBDUAL_UNRESISTABLE		/*= 34*/,
+	DAMAGE_MICROWAVE							/*= 35*/, ///< Radiation that only affects infantry
+	DAMAGE_KILL_GARRISONED				/*= 36*/, ///< Kills Passengers up to the number specified in Damage
+	DAMAGE_STATUS									/*= 37*/, ///< Damage that gives a status condition, not that does hitpoint damage
 
 	// Please note: There is a string array DamageTypeFlags::s_bitNameList[]
 
@@ -155,7 +158,6 @@ inline void SET_ALL_DAMAGE_TYPE_BITS(DamageTypeFlags& m)
 
 extern DamageTypeFlags DAMAGE_TYPE_FLAGS_NONE;
 extern DamageTypeFlags DAMAGE_TYPE_FLAGS_ALL;
-void initDamageTypeFlags();
 
 
 //-------------------------------------------------------------------------------------------------

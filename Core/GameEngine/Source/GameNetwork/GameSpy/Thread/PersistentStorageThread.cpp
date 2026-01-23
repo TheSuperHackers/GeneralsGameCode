@@ -635,7 +635,7 @@ Bool PSThreadClass::tryLogin( Int id, std::string nick, std::string password, st
 	PreAuthenticatePlayerPM(id, id, validate, ::persAuthCallback, this);
 	while (!m_doneTryingToLogin && IsStatsConnected())
 		PersistThink();
-	DEBUG_LOG(("Persistant Storage Login success %d", m_loginOK));
+	DEBUG_LOG(("Persistent Storage Login success %d", m_loginOK));
 	return m_loginOK;
 }
 

@@ -229,6 +229,37 @@ DEBUG_LOG(( "%d: GetGameLogicRandomValue = %d (%d - %d), %s line %d",
 }
 
 //
+// TheSuperHackers @info This function does not change the seed values with retail compatibility disabled.
+// Consecutive calls always return the same value for the same combination of min / max values, assuming the seed values haven't changed in between.
+// The intended use case for this function are randomized values that are desirable to be synchronized across clients,
+// but should not result in a mismatch if they aren't synchronized; e.g. for scripted audio events.
+//
+Int GetGameLogicRandomValueUnchanged( int lo, int hi, const char *file, int line )
+{
+#if RETAIL_COMPATIBLE_CRC
+	return GetGameLogicRandomValue(lo, hi, file, line);
+#endif
+
+	const UnsignedInt delta = hi - lo + 1;
+	if (delta == 0)
+		return hi;
+
+	UnsignedInt seed[ARRAY_SIZE(theGameLogicSeed)];
+	memcpy(&seed[0], &theGameLogicSeed[0], sizeof(seed));
+
+	const Int rval = ((Int)(randomValue(seed) % delta)) + lo;
+
+	DEBUG_ASSERTCRASH(rval >= lo && rval <= hi, ("Bad random val"));
+
+#ifdef DEBUG_RANDOM_LOGIC
+	DEBUG_LOG(( "%d: GetGameLogicRandomValueUnchanged = %d (%d - %d), %s line %d",
+		TheGameLogic->getFrame(), rval, lo, hi, file, line ));
+#endif
+
+	return rval;
+}
+
+//
 // Integer random value
 //
 Int GetGameClientRandomValue( int lo, int hi, const char *file, int line )
@@ -294,6 +325,37 @@ DEBUG_LOG(( "%d: GetGameLogicRandomValueReal = %f, %s line %d",
 					TheGameLogic->getFrame(), rval, file, line ));
 #endif
 /**/
+
+	return rval;
+}
+
+//
+// TheSuperHackers @info This function does not change the seed values with retail compatibility disabled.
+// Consecutive calls always return the same value for the same combination of min / max values, assuming the seed values haven't changed in between.
+// The intended use case for this function are randomized values that are desirable to be synchronized across clients,
+// but should not result in a mismatch if they aren't synchronized; e.g. for scripted audio events.
+//
+Real GetGameLogicRandomValueRealUnchanged( Real lo, Real hi, const char *file, int line )
+{
+#if RETAIL_COMPATIBLE_CRC
+	return GetGameLogicRandomValueReal(lo, hi, file, line);
+#endif
+
+	const Real delta = hi - lo;
+	if (delta <= 0.0f)
+		return hi;
+
+	UnsignedInt seed[ARRAY_SIZE(theGameLogicSeed)];
+	memcpy(&seed[0], &theGameLogicSeed[0], sizeof(seed));
+
+	const Real rval = ((Real)(randomValue(seed)) * theMultFactor) * delta + lo;
+
+	DEBUG_ASSERTCRASH(rval >= lo && rval <= hi, ("Bad random val"));
+
+#ifdef DEBUG_RANDOM_LOGIC
+	DEBUG_LOG(( "%d: GetGameLogicRandomValueRealUnchanged = %f, %s line %d",
+		TheGameLogic->getFrame(), rval, file, line ));
+#endif
 
 	return rval;
 }

@@ -69,6 +69,7 @@ void StackDump(void (*callback)(const char*))
 
 	DWORD myeip,myesp,myebp;
 
+#if defined(_MSC_VER)
 _asm
 {
 MYEIP1:
@@ -79,6 +80,20 @@ MYEIP1:
  mov eax, ebp
  mov dword ptr [myebp] , eax
 }
+#elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
+	// GCC/Clang inline assembly for x86-32
+	__asm__ __volatile__(
+		"call 1f\n\t"
+		"1: pop %0\n\t"
+		"mov %%esp, %1\n\t"
+		"mov %%ebp, %2"
+		: "=r"(myeip), "=r"(myesp), "=r"(myebp)
+		:
+		: "memory"
+	);
+#else
+	#error "Unsupported compiler or architecture for register capture"
+#endif
 
 
 	MakeStackTrace(myeip,myesp,myebp, 2, callback);
@@ -314,6 +329,7 @@ void FillStackAddresses(void**addresses, unsigned int count, unsigned int skip)
     gsContext.ContextFlags = CONTEXT_FULL;
 
 	DWORD myeip,myesp,myebp;
+#if defined(_MSC_VER)
 _asm
 {
 MYEIP2:
@@ -325,6 +341,21 @@ MYEIP2:
  mov dword ptr [myebp] , eax
  xor eax,eax
 }
+#elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
+	// GCC/Clang inline assembly for x86-32
+	__asm__ __volatile__(
+		"call 1f\n\t"
+		"1: pop %0\n\t"
+		"mov %%esp, %1\n\t"
+		"mov %%ebp, %2\n\t"
+		"xor %%eax, %%eax"
+		: "=r"(myeip), "=r"(myesp), "=r"(myebp)
+		:
+		: "eax", "memory"
+	);
+#else
+	#error "Unsupported compiler or architecture for register capture"
+#endif
 memset(&stack_frame, 0, sizeof(STACKFRAME));
 stack_frame.AddrPC.Mode = AddrModeFlat;
 stack_frame.AddrPC.Offset = myeip;

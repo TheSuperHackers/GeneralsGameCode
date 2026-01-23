@@ -4660,7 +4660,7 @@ void Drawable::xfer( Xfer *xfer )
 	//
 #ifdef DIRTY_CONDITION_FLAGS
 	if( xfer->getXferMode() == XFER_SAVE )
-		DEBUG_ASSERTCRASH( m_isModelDirty == FALSE, ("Drawble::xfer - m_isModelDirty is not FALSE!") );
+		DEBUG_ASSERTCRASH( m_isModelDirty == FALSE, ("Drawable::xfer - m_isModelDirty is not FALSE!") );
 	else
 		m_isModelDirty = TRUE;
 #endif

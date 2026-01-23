@@ -126,12 +126,12 @@ void HeightMapRenderObjClass::freeIndexVertexBuffers(void)
 {
 	REF_PTR_RELEASE(m_indexBuffer);
 
-	for (Int i=0; i<m_numVertexBufferTiles; ++i)
-	{
-		(m_vertexBufferTiles + i)->~DX8VertexBufferClass();
+	if (m_vertexBufferTiles) {
+		for (int i=0; i<m_numVertexBufferTiles; i++)
+			REF_PTR_RELEASE(m_vertexBufferTiles[i]);
+		delete[] m_vertexBufferTiles;
+		m_vertexBufferTiles = nullptr;
 	}
-	::operator delete(m_vertexBufferTiles);
-	m_vertexBufferTiles = nullptr;
 
 	delete[] m_vertexBufferBackup;
 	m_vertexBufferBackup = nullptr;
@@ -156,7 +156,7 @@ Int HeightMapRenderObjClass::freeMapResources(void)
 
 DX8VertexBufferClass *HeightMapRenderObjClass::getVertexBufferTile(Int x, Int y)
 {
-	return m_vertexBufferTiles + y*m_numVBTilesX+x;
+	return m_vertexBufferTiles[y*m_numVBTilesX+x];
 }
 
 //=============================================================================
@@ -1321,14 +1321,14 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 		m_x=x;
 		m_y=y;
 
-		m_vertexBufferTiles = (DX8VertexBufferClass*)::operator new(m_numVertexBufferTiles * sizeof(DX8VertexBufferClass));
+		m_vertexBufferTiles = NEW DX8VertexBufferClass*[m_numVertexBufferTiles];
 		m_vertexBufferBackup = NEW VERTEX_FORMAT [m_numVertexBufferTiles * HEIGHTMAP_VERTEX_NUM];
 
 		for (i=0; i<m_numVertexBufferTiles; i++) {
 #ifdef USE_NORMALS
-			new (&m_vertexBufferTiles[i]) DX8VertexBufferClass(DX8_FVF_XYZNUV2,HEIGHTMAP_VERTEX_NUM,DX8VertexBufferClass::USAGE_DEFAULT);
+			m_vertexBufferTiles[i] = NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZNUV2,HEIGHTMAP_VERTEX_NUM,DX8VertexBufferClass::USAGE_DEFAULT));
 #else
-			new (&m_vertexBufferTiles[i]) DX8VertexBufferClass(DX8_VERTEX_FORMAT,HEIGHTMAP_VERTEX_NUM,DX8VertexBufferClass::USAGE_DEFAULT);
+			m_vertexBufferTiles[i] = NEW_REF(DX8VertexBufferClass,(DX8_VERTEX_FORMAT,HEIGHTMAP_VERTEX_NUM,DX8VertexBufferClass::USAGE_DEFAULT));
 #endif
 		}
 
@@ -2013,7 +2013,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 		for (j=0; j<m_numVBTilesY; j++)
 			for (i=0; i<m_numVBTilesX; i++)
 			{
-				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTiles + j*m_numVBTilesX+i);
+				DX8Wrapper::Set_Vertex_Buffer(getVertexBufferTile(i, j));
 #ifdef PRE_TRANSFORM_VERTEX
 				if (m_xformedVertexBuffer && pass==0) {
 					// Note - m_xformedVertexBuffer should only be used for non T&L hardware.  jba.
@@ -2143,7 +2143,7 @@ void HeightMapRenderObjClass::renderTerrainPass(CameraClass *pCamera)
 	for (Int j=0; j<m_numVBTilesY; j++)
 		for (Int i=0; i<m_numVBTilesX; i++)
 		{
-			DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTiles + j*m_numVBTilesX+i);
+			DX8Wrapper::Set_Vertex_Buffer(getVertexBufferTile(i, j));
 #ifdef PRE_TRANSFORM_VERTEX
 			if (m_xformedVertexBuffer && pass==0) {
 				// Note - m_xformedVertexBuffer should only be used for non T&L hardware.  jba.

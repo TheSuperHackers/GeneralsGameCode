@@ -220,9 +220,18 @@ void TunnelTracker::onTunnelCreated( const Object *newTunnel )
 // ------------------------------------------------------------------------
 void TunnelTracker::onTunnelDestroyed( const Object *deadTunnel )
 {
-	m_tunnelCount--;
-	m_tunnelIDs.remove( deadTunnel->getID() );
-	m_needsFullHealTimeUpdate = true;
+	{
+		std::list<ObjectID>::iterator it = std::find(m_tunnelIDs.begin(), m_tunnelIDs.end(), deadTunnel->getID());
+		if (it == m_tunnelIDs.end())
+		{
+			DEBUG_CRASH(("TunnelTracker::onTunnelDestroyed - Attempting to remove object '%s' that has never been tracked as a tunnel", deadTunnel->getName().str()));
+			return;
+		}
+
+		m_tunnelCount--;
+		m_tunnelIDs.erase(it);
+		m_needsFullHealTimeUpdate = true;
+	}
 
 	if( m_tunnelCount == 0 )
 	{

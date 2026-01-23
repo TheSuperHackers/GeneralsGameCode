@@ -1472,7 +1472,7 @@ void Radar::xfer( Xfer *xfer )
 	if( eventCount != eventCountVerify )
 	{
 
-		DEBUG_CRASH(( "Radar::xfer - size of MAX_RADAR_EVENTS has changed, you must version this xfer method to accomodate the new array size.  Was '%d' and is now '%d'",
+		DEBUG_CRASH(( "Radar::xfer - size of MAX_RADAR_EVENTS has changed, you must version this xfer method to accommodate the new array size.  Was '%d' and is now '%d'",
 									eventCount, eventCountVerify ));
 		throw SC_INVALID_DATA;
 

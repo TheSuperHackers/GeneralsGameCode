@@ -895,8 +895,7 @@ Try improving the fit to vertical surfaces like cliffs.
 
 		trackStartIndex=0;
 		mod=m_usedModules;
-		Matrix3D tm(mod->Transform);
-		DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+		DX8Wrapper::Set_Transform(D3DTS_WORLD,mod->Transform);
 		while (mod)
 		{
 			if (mod->m_activeEdgeCount >= 2 && mod->Is_Really_Visible())

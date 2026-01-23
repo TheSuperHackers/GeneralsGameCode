@@ -93,6 +93,8 @@ void MiniDumper::TriggerMiniDump(DumpType dumpType)
 		return;
 	}
 
+#if defined(_MSC_VER)
+	// MSVC supports structured exception handling (__try/__except)
 	__try
 	{
 		// Use DebugBreak to raise an exception that can be caught in the __except block
@@ -102,6 +104,13 @@ void MiniDumper::TriggerMiniDump(DumpType dumpType)
 	{
 		TriggerMiniDumpForException(g_dumpException, dumpType);
 	}
+#elif defined(__GNUC__) && defined(_WIN32)
+	// GCC/MinGW-w64 doesn't support MSVC's __try/__except syntax
+	// Trigger dump directly without SEH support
+	DEBUG_LOG(("MiniDumper::TriggerMiniDump: SEH not supported on this compiler, skipping manual dump trigger."));
+#else
+	#error "MiniDumper::TriggerMiniDump: Unsupported compiler. This code requires MSVC or GCC/MinGW-w64 targeting Windows."
+#endif
 }
 
 void MiniDumper::TriggerMiniDumpForException(_EXCEPTION_POINTERS* e_info, DumpType dumpType)

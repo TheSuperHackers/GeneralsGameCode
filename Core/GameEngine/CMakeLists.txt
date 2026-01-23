@@ -1198,3 +1198,8 @@ target_link_libraries(corei_gameengine_public INTERFACE
     gamespy::gamespy
     stlport
 )
+
+# ReactOS ATL for MinGW-w64 only (MSVC uses native ATL)
+if(MINGW)
+    target_link_libraries(corei_gameengine_public INTERFACE reactos_atl)
+endif()

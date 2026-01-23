@@ -1317,14 +1317,14 @@ void AABTreeNodeClass::Select_Splitting_Plane
 	SimpleDynVecClass<AABoxClass> & boxes
 )
 {
-	const int NUM_TRYS = 300;
+	const int NUM_TRIES = 300;
 
 	/*
 	** Try putting axis-aligned planes through some random vertices
 	*/
 	int objcount = boxes.Count();
-	int trys = 0;
-	for (trys = 0; trys < MIN(NUM_TRYS,objcount); trys++) {
+	int tries = 0;
+	for (tries = 0; tries < MIN(NUM_TRIES,objcount); tries++) {
 
 		int obj_index;
 		SplitChoiceStruct test;
@@ -1361,7 +1361,7 @@ void AABTreeNodeClass::Select_Splitting_Plane
 	/*
 	** Still haven't found a valid splitting plane, uh-oh.
 	*/
-	if ((trys >= MIN(NUM_TRYS,objcount)) && (sc->Cost == FLT_MAX)) {
+	if ((tries >= MIN(NUM_TRIES,objcount)) && (sc->Cost == FLT_MAX)) {
 		Select_Splitting_Plane_Brute_Force(sc,boxes);
 		return;
 	}
