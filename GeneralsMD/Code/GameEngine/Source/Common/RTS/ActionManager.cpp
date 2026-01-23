@@ -483,6 +483,7 @@ Bool ActionManager::canResumeConstructionOf( const Object *obj,
 #if RETAIL_COMPATIBLE_CRC
 	if( builder )
 #else
+	// TheSuperHackers @bugfix Stubbjax 18/11/2025 Allow scaffold to be immediately resumed after builder death.
 	if (builder && !builder->isEffectivelyDead())
 #endif
 	{
