@@ -6369,6 +6369,8 @@ StateReturnType AIEnterState::update()
 #if RETAIL_COMPATIBLE_CRC
 	if (code == STATE_SUCCESS && goal->isAboveTerrain() && !obj->isAboveTerrain())
 #else
+	// TheSuperHackers @bugfix Stubbjax 05/11/2025 Check for vertical overlap when entering containers.
+	// This prevents levitating or airborne units from entering containers they are not actually touching.
 	if (code == STATE_SUCCESS && !hasVerticalOverlap(goal, obj))
 #endif
 	{
