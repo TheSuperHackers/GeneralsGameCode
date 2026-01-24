@@ -73,13 +73,13 @@ void CommandSetUpgrade::upgradeImplementation( )
 
 	if (upgradeTemplate)
 	{
-		UpgradeMaskType upgradeMask = upgradeTemplate->getUpgradeMask();
+		const UpgradeMaskType& upgradeMask = upgradeTemplate->getUpgradeMask();
 
 		// See if upgrade is found in the player completed upgrades
 		Player *player = obj->getControllingPlayer();
 		if (player)
 		{
-			UpgradeMaskType playerMask = player->getCompletedUpgradeMask();
+			const UpgradeMaskType& playerMask = player->getCompletedUpgradeMask();
 			if (playerMask.testForAny(upgradeMask))
 			{
 				obj->setCommandSetStringOverride( getCommandSetUpgradeModuleData()->m_newCommandSetAlt );
@@ -89,7 +89,7 @@ void CommandSetUpgrade::upgradeImplementation( )
 		}
 
 		// See if upgrade is found in the object completed upgrades
-		UpgradeMaskType objMask = obj->getObjectCompletedUpgradeMask();
+		const UpgradeMaskType& objMask = obj->getObjectCompletedUpgradeMask();
 		if (objMask.testForAny(upgradeMask))
 		{
 			obj->setCommandSetStringOverride( getCommandSetUpgradeModuleData()->m_newCommandSetAlt );

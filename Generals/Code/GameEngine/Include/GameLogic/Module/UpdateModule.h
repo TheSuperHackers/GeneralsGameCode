@@ -366,6 +366,6 @@ public:
 class DelayedUpgradeUpdateInterface
 {
 public:
-	virtual Bool isTriggeredBy( UpgradeMaskType potentialMask ) = 0;	///< If you were an upgrade, would you trigger for this?
+	virtual Bool isTriggeredBy( const UpgradeMaskType& potentialMask ) = 0;	///< If you were an upgrade, would you trigger for this?
 	virtual void setDelay( UnsignedInt startingDelay ) = 0;	///< Start the upgrade doing countdown
 };

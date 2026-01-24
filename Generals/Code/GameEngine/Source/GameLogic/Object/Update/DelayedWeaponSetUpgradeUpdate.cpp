@@ -82,7 +82,7 @@ UpdateSleepTime DelayedWeaponSetUpgradeUpdate::update( void )
 	return UPDATE_SLEEP_NONE;
 }
 
-Bool DelayedWeaponSetUpgradeUpdate::isTriggeredBy( UpgradeMaskType potentialMask )
+Bool DelayedWeaponSetUpgradeUpdate::isTriggeredBy(const UpgradeMaskType& potentialMask )
 {
 	potentialMask;
 	return FALSE;

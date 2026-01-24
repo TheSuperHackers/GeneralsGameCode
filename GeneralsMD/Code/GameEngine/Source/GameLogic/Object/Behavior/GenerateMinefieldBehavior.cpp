@@ -464,8 +464,8 @@ UpdateSleepTime GenerateMinefieldBehavior::update()
 
 			if (upgradeTemplate)
 			{
-				UpgradeMaskType upgradeMask = upgradeTemplate->getUpgradeMask();
-				UpgradeMaskType objMask = getObject()->getObjectCompletedUpgradeMask();
+				const UpgradeMaskType& upgradeMask = upgradeTemplate->getUpgradeMask();
+				const UpgradeMaskType& objMask = getObject()->getObjectCompletedUpgradeMask();
 				if (objMask.testForAny(upgradeMask))
 				{
 					m_upgraded = TRUE;

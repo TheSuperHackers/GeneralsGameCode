@@ -51,12 +51,12 @@ class UpgradeModuleInterface
 public:
 
  	virtual Bool isAlreadyUpgraded() const = 0;
-	virtual Bool attemptUpgrade( UpgradeMaskType keyMask ) = 0;
-	virtual Bool wouldUpgrade( UpgradeMaskType keyMask ) const = 0;
-	virtual Bool resetUpgrade( UpgradeMaskType keyMask ) = 0;
+	virtual Bool attemptUpgrade( const UpgradeMaskType& keyMask ) = 0;
+	virtual Bool wouldUpgrade( const UpgradeMaskType& keyMask ) const = 0;
+	virtual Bool resetUpgrade( const UpgradeMaskType& keyMask ) = 0;
 	virtual Bool isSubObjectsUpgrade() = 0;
 	virtual void forceRefreshUpgrade() = 0;
-	virtual Bool testUpgradeConditions( UpgradeMaskType keyMask ) const = 0;
+	virtual Bool testUpgradeConditions( const UpgradeMaskType& keyMask ) const = 0;
 
 };
 
@@ -119,10 +119,10 @@ public:
 	virtual Bool isAlreadyUpgraded() const ;
 	// ***DANGER! DANGER! Don't use this, unless you are forcing an already made upgrade to refresh!!
 	virtual void forceRefreshUpgrade();
-	virtual Bool attemptUpgrade( UpgradeMaskType keyMask );
-	virtual Bool wouldUpgrade( UpgradeMaskType keyMask ) const;
-	virtual Bool resetUpgrade( UpgradeMaskType keyMask );
-	virtual Bool testUpgradeConditions( UpgradeMaskType keyMask ) const;
+	virtual Bool attemptUpgrade( const UpgradeMaskType& keyMask );
+	virtual Bool wouldUpgrade( const UpgradeMaskType& keyMask ) const;
+	virtual Bool resetUpgrade( const UpgradeMaskType& keyMask );
+	virtual Bool testUpgradeConditions( const UpgradeMaskType& keyMask ) const;
 
 protected:
 

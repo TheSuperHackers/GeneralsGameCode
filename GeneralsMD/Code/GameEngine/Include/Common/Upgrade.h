@@ -173,7 +173,7 @@ public:
 	void setUpgradeNameKey( NameKeyType key ) { m_nameKey = key; }
 	NameKeyType getUpgradeNameKey( void ) const { return m_nameKey; }
 	const AsciiString& getDisplayNameLabel( void ) const { return m_displayNameLabel; }
-	UpgradeMaskType getUpgradeMask() const { return m_upgradeMask; }
+	const UpgradeMaskType& getUpgradeMask() const { return m_upgradeMask; }
 	UpgradeType getUpgradeType( void ) const { return m_type; }
 	const AudioEventRTS* getResearchCompleteSound() const { return &m_researchSound; }
 	const AudioEventRTS* getUnitSpecificSound() const { return &m_unitSpecificSound; }

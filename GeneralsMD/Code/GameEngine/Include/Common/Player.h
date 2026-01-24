@@ -310,8 +310,8 @@ public:
 	Bool hasPrereqsForScience(ScienceType t) const;
 
 	Bool hasUpgradeComplete( const UpgradeTemplate *upgradeTemplate ) const;		///< does player have totally done and produced upgrade
-	Bool hasUpgradeComplete( UpgradeMaskType testMask ) const;		///< does player have totally done and produced upgrade
-	UpgradeMaskType getCompletedUpgradeMask() const { return m_upgradesCompleted; }	///< get list of upgrades that are completed
+	Bool hasUpgradeComplete( const UpgradeMaskType& testMask ) const;		///< does player have totally done and produced upgrade
+	const UpgradeMaskType& getCompletedUpgradeMask() const { return m_upgradesCompleted; }	///< get list of upgrades that are completed
 	Bool hasUpgradeInProduction( const UpgradeTemplate *upgradeTemplate );		///< does player have this upgrade in progress right now
 	Upgrade *addUpgrade( const UpgradeTemplate *upgradeTemplate,
 											 UpgradeStatusType status );		///< add upgrade, or update existing upgrade status

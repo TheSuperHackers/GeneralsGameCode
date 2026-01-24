@@ -2185,8 +2185,8 @@ Bool Object::isSalvageCrate() const
  */
 void Object::updateUpgradeModules()
 {
-	UpgradeMaskType playerMask = getControllingPlayer()->getCompletedUpgradeMask();
-	UpgradeMaskType objectMask = getObjectCompletedUpgradeMask();
+	const UpgradeMaskType& playerMask = getControllingPlayer()->getCompletedUpgradeMask();
+	const UpgradeMaskType& objectMask = getObjectCompletedUpgradeMask();
 	UpgradeMaskType maskToCheck = playerMask;
 	maskToCheck.set( objectMask );
 	// We need to add in all of the already owned upgrades to handle "AND" requiring upgrades.
@@ -3973,8 +3973,8 @@ Bool Object::hasUpgrade( const UpgradeTemplate *upgradeT ) const
 //-------------------------------------------------------------------------------------------------
 Bool Object::affectedByUpgrade( const UpgradeTemplate *upgradeT ) const
 {
-	UpgradeMaskType objectMask = getObjectCompletedUpgradeMask();
-	UpgradeMaskType playerMask = getControllingPlayer()->getCompletedUpgradeMask();
+	const UpgradeMaskType& objectMask = getObjectCompletedUpgradeMask();
+	const UpgradeMaskType& playerMask = getControllingPlayer()->getCompletedUpgradeMask();
 	UpgradeMaskType maskToCheck = playerMask;
 	maskToCheck.set( objectMask );
 	maskToCheck.set( upgradeT->getUpgradeMask() );
