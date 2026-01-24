@@ -6082,6 +6082,15 @@ void AIEnterState::onExit( StateExitType status )
 	}
 }
 
+static bool hasVerticalOverlap(const Object* a, const Object* b)
+{
+	const float aLower = a->getPosition()->z;
+	const float aUpper = aLower + a->getGeometryInfo().getMaxHeightAbovePosition();
+	const float bLower = b->getPosition()->z;
+	const float bUpper = bLower + b->getGeometryInfo().getMaxHeightAbovePosition();
+	return aUpper >= bLower && aLower <= bUpper;
+}
+
 //----------------------------------------------------------------------------------------------------------
 StateReturnType AIEnterState::update()
 {
@@ -6148,8 +6157,7 @@ StateReturnType AIEnterState::update()
 #if RETAIL_COMPATIBLE_CRC
 	if (code == STATE_SUCCESS && goal->isAboveTerrain() && !obj->isAboveTerrain())
 #else
-	if (code == STATE_SUCCESS && (goal->getPosition()->z + goal->getGeometryInfo().getMaxHeightAbovePosition() < obj->getPosition()->z ||
-		goal->getPosition()->z > obj->getPosition()->z + obj->getGeometryInfo().getMaxHeightAbovePosition()))
+	if (code == STATE_SUCCESS && !hasVerticalOverlap(goal, obj))
 #endif
 	{
 		code = STATE_CONTINUE;
