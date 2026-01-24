@@ -810,7 +810,15 @@ void Xfer::xferUpgradeMask( UpgradeMaskType *upgradeMaskData )
 	{
 
 		// just xfer implementation the data itself
-		xferImplementation( upgradeMaskData, sizeof( UpgradeMaskType ) );
+#if RETAIL_COMPATIBLE_CRC
+#if RTS_GENERALS
+		xferImplementation(upgradeMaskData, 8); // The original upgrade mask was 8 bytes in Generals.
+#else
+		xferImplementation(upgradeMaskData, 16); // The original upgrade mask was 16 bytes in Zero Hour.
+#endif
+#else
+		xferImplementation(upgradeMaskData, sizeof(UpgradeMaskType));
+#endif
 
 	}
 	else
