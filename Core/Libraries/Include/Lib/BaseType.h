@@ -58,6 +58,28 @@ inline int sign(NUM x)
 	else return 0;
 }
 
+// TheSuperHackers @refactor JohnsterID 24/01/2026 Add lowercase min/max templates for GameEngine layer.
+// GameEngine code typically uses BaseType.h, but may include WWVegas headers (which define min/max in always.h).
+// Header guard prevents duplicate definitions. VC6's <algorithm> lacks std::min/std::max.
+#ifndef _MIN_MAX_TEMPLATES_DEFINED_
+#define _MIN_MAX_TEMPLATES_DEFINED_
+
+#ifdef min
+#undef min
+#endif
+
+#ifdef max
+#undef max
+#endif
+
+template <typename T>
+inline T min(T a, T b) { return (a < b) ? a : b; }
+
+template <typename T>
+inline T max(T a, T b) { return (a > b) ? a : b; }
+
+#endif // _MIN_MAX_TEMPLATES_DEFINED_
+
 //-----------------------------------------------------------------------------
 inline Real rad2deg(Real rad) { return rad * (180/PI); }
 inline Real deg2rad(Real rad) { return rad * (PI/180); }
