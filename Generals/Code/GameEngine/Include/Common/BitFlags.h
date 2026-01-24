@@ -257,7 +257,7 @@ public:
 	UnsignedInt toUnsignedInt() const noexcept
 	{
 		UnsignedInt val = 0;
-		const UnsignedInt count = min(m_bits.size(), sizeof(val) * 8);
+		const UnsignedInt count = (m_bits.size() < sizeof(val) * 8) ? m_bits.size() : sizeof(val) * 8;
 		for (UnsignedInt i = 0; i < count; ++i)
 			val |= m_bits.test(i) * (1u << i);
 		return val;
