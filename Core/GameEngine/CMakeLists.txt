@@ -132,7 +132,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/UnitTimings.h
 #    Include/Common/Upgrade.h
     #Include/Common/urllaunch.h # unused
-#    Include/Common/UserPreferences.h
+    Include/Common/UserPreferences.h
 #    Include/Common/version.h
 #    Include/Common/WellKnownKeys.h
     Include/Common/WorkerProcess.h
@@ -688,7 +688,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/Thing/Thing.cpp
 #    Source/Common/Thing/ThingFactory.cpp
 #    Source/Common/Thing/ThingTemplate.cpp
-#    Source/Common/UserPreferences.cpp
+    Source/Common/UserPreferences.cpp
 #    Source/Common/version.cpp
     Source/Common/WorkerProcess.cpp
 #    Source/GameClient/ClientInstance.cpp
