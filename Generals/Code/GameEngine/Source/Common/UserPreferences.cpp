@@ -48,6 +48,7 @@
 #include "Common/QuotedPrintable.h"
 #include "Common/MultiplayerSettings.h"
 #include "GameClient/MapUtil.h"
+#include "GameClient/ChallengeGenerals.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
 
 
@@ -529,6 +530,18 @@ Int CustomMatchPreferences::getPreferredFaction(void)
 			ret = PLAYERTEMPLATE_RANDOM;
 		else if (fac->getStartingBuilding().isEmpty())
 			ret = PLAYERTEMPLATE_RANDOM;
+		else if (TheGameInfo && TheGameInfo->oldFactionsOnly() && !fac->isOldFaction())
+			ret = PLAYERTEMPLATE_RANDOM;
+		else {
+			// Prevent from loading the disabled Generals, in case you had previously selected one as your preferred faction.
+			// This is also enforced at GUI setup (GUIUtil.cpp and GameLogic.cpp).
+			// @todo: unlock these when something rad happens
+			Bool disallowLockedGenerals = TRUE;
+			const GeneralPersona *general = TheChallengeGenerals->getGeneralByTemplateName(fac->getName());
+			Bool startsLocked = general ? !general->isStartingEnabled() : FALSE;
+			if (disallowLockedGenerals && startsLocked)
+				ret = PLAYERTEMPLATE_RANDOM;
+		}
 	}
 
 	return ret;
@@ -650,19 +663,22 @@ AsciiString CustomMatchPreferences::getPreferredMap(void)
 	AsciiString ret;
 	CustomMatchPreferences::const_iterator it = find("Map");
 	if (it == end())
-	{
-		ret = getDefaultMap(TRUE);
+	{	//map not found, use default instead
+		ret = getDefaultOfficialMap();
 		return ret;
 	}
 
 	ret = QuotedPrintableToAsciiString(it->second);
 	ret.trim();
 	if (ret.isEmpty() || !isValidMap(ret, TRUE))
-	{
-		ret = getDefaultMap(TRUE);
+	{	//map is invalid, use default instead
+		ret = getDefaultOfficialMap();
 		return ret;
 	}
 
+	//can only use official maps if recording stats
+	if( getUseStats() && !isOfficialMap(ret) )
+		ret = getDefaultOfficialMap();
 	return ret;
 }
 

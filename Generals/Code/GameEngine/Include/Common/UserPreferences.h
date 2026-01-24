@@ -91,6 +91,8 @@ public:
 	void setOnlineIPAddress(UnsignedInt IP);	// convenience function
 	Bool getArchiveReplaysEnabled() const;		// convenience function
 	Bool getAlternateMouseModeEnabled(void);	// convenience function
+	Bool getRetaliationModeEnabled();					// convenience function
+	Bool getDoubleClickAttackMoveEnabled(void);	// convenience function
 	Real getScrollFactor(void);								// convenience function
 	Bool getDrawScrollAnchor(void);
 	Bool getMoveScrollAnchor(void);
@@ -130,6 +132,7 @@ public:
 	Bool getSmoothWaterEnabled(void);
 	Bool getTreesEnabled(void);
 	Bool getExtraAnimationsDisabled(void);
+	Bool getUseHeatEffects(void);
 	Bool getDynamicLODEnabled(void);
 	Bool getFPSLimitEnabled(void);
 	Bool getNoDynamicLODEnabled(void);

@@ -330,6 +330,29 @@ Bool OptionPreferences::getAlternateMouseModeEnabled(void)
 	return FALSE;
 }
 
+Bool OptionPreferences::getRetaliationModeEnabled(void)
+{
+	OptionPreferences::const_iterator it = find("Retaliation");
+	if (it == end())
+		return TheGlobalData->m_clientRetaliationModeEnabled;
+
+	if (stricmp(it->second.str(), "yes") == 0) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
+Bool OptionPreferences::getDoubleClickAttackMoveEnabled(void)
+{
+	OptionPreferences::const_iterator it = find("UseDoubleClickAttackMove");
+	if( it == end() )
+		return TheGlobalData->m_doubleClickAttackMove;
+
+	if( stricmp( it->second.str(), "yes" ) == 0 )
+		return TRUE;
+
+	return FALSE;
+}
 
 Real OptionPreferences::getScrollFactor(void)
 {
@@ -727,6 +750,18 @@ Bool OptionPreferences::getExtraAnimationsDisabled(void)
 		return FALSE;	//we are enabling extra animations, so disabled LOD
 	}
 	return TRUE;
+}
+
+Bool OptionPreferences::getUseHeatEffects(void)
+{
+	OptionPreferences::const_iterator it = find("HeatEffects");
+	if (it == end())
+		return TheGlobalData->m_useHeatEffects;
+
+	if (stricmp(it->second.str(), "yes") == 0) {
+		return TRUE;
+	}
+	return FALSE;
 }
 
 Bool OptionPreferences::getDynamicLODEnabled(void)
