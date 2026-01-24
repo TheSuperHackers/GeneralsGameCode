@@ -201,8 +201,8 @@ struct RealRange
 	// both ranges
 	void combine( RealRange &other )
 	{
-		lo = MIN( lo, other.lo );
-		hi = MAX( hi, other.hi );
+		lo = min( lo, other.lo );
+		hi = max( hi, other.hi );
 	}
 };
 
