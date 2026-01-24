@@ -461,7 +461,7 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 	AudioEventRTS *audioEvent = MSGNEW("AudioEventRTS") AudioEventRTS(*eventToAdd);		// poolify
 	audioEvent->setPlayingHandle( allocateNewHandle() );
 	audioEvent->generateFilename();	// which file are we actually going to play?
-	((AudioEventRTS*)eventToAdd)->setPlayingAudioIndex( audioEvent->getPlayingAudioIndex() );
+	eventToAdd->setPlayingAudioIndex( audioEvent->getPlayingAudioIndex() );
 	audioEvent->generatePlayInfo();	// generate pitch shift and volume shift now as well
 
 	std::list<std::pair<AsciiString, Real> >::iterator it;

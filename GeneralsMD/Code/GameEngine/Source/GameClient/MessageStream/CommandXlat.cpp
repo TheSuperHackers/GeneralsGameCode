@@ -850,7 +850,7 @@ void pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type m
 
 		// This seems really hacky, and MarkL admits that it is. However, we do this so that we
 		// can "randomly" pick a different sound the next time, if we have 3 or more sounds. - jkmcd
-		((AudioEventRTS*)soundToPlayPtr)->setPlayingAudioIndex( soundToPlay.getPlayingAudioIndex() );
+		soundToPlayPtr->setPlayingAudioIndex( soundToPlay.getPlayingAudioIndex() );
 
 		if( objectWithSound->testStatus( OBJECT_STATUS_IS_CARBOMB ) )
 		{
